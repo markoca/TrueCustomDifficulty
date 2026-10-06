@@ -225,6 +225,7 @@ private string _statusText = string.Empty;
             mutedBrush);
 
         DrawGlobalLimit(dc, accentBrush);
+        DrawLegendHeader(dc, mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
@@ -244,7 +245,7 @@ private string _statusText = string.Empty;
     private Rect GetInfoRect()
     {
         var left = Math.Max(ActualWidth * 0.47, 390.0);
-        return new Rect(left, 96.0, Math.Max(260.0, ActualWidth - left - 16.0), Math.Max(400.0, ActualHeight - 140.0));
+        return new Rect(left, 122.0, Math.Max(260.0, ActualWidth - left - 16.0), Math.Max(374.0, ActualHeight - 166.0));
     }
 
     private void DrawInfoHeader(DrawingContext dc, string text, Brush brush)
@@ -275,6 +276,38 @@ private string _statusText = string.Empty;
             FontWeights.SemiBold);
     }
 
+    private void DrawLegendHeader(DrawingContext dc, Brush mutedBrush)
+    {
+        var info = GetInfoRect();
+        var nameWidth = info.Width * 0.24;
+        var scaleWidth = info.Width * 0.12;
+        var capsLeft = info.Left + nameWidth + scaleWidth;
+
+        DrawClippedText(
+            dc,
+            "MUTANT",
+            new Rect(info.Left + 6, 88.0, nameWidth - 10, 18.0),
+            8.7,
+            mutedBrush,
+            FontWeights.Bold);
+
+        DrawClippedText(
+            dc,
+            "SCALE",
+            new Rect(info.Left + nameWidth, 88.0, scaleWidth - 6, 18.0),
+            8.7,
+            mutedBrush,
+            FontWeights.Bold);
+
+        DrawClippedText(
+            dc,
+            "CAN SPAWN TOGETHER · Newbie / Experienced / Veteran / Master",
+            new Rect(capsLeft, 88.0, info.Right - capsLeft, 18.0),
+            8.7,
+            mutedBrush,
+            FontWeights.Bold);
+    }
+
     private void DrawLegend(
         DrawingContext dc,
         double[] values,
@@ -283,7 +316,7 @@ private string _statusText = string.Empty;
         Brush accentBrush)
     {
         var info = GetInfoRect();
-        const double rowHeight = 40.0;
+        const double rowHeight = 27.0;
         for (var i = 0; i < Axes.Length; i++)
             DrawLegendRow(dc, i, info, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
     }
@@ -305,34 +338,40 @@ private string _statusText = string.Empty;
         var info = Axes[axis];
         var value = values[axis];
         var y = bounds.Top + yOffset;
-        var selected = axis == _selectedAxis;
         var modified = Math.Abs(value - VanillaMultiplier) > 0.000001;
         var hovered = axis == _hoverAxis;
+
+        var nameWidth = bounds.Width * 0.24;
+        var scaleWidth = bounds.Width * 0.12;
+        var capsLeft = bounds.Left + nameWidth + scaleWidth;
+
         BeginLegendHitArea(axis);
-        _legendHitRects[axis] = new Rect(bounds.Left, y - 2.0, bounds.Width, 40.0);
-DrawClippedText(
+        _legendHitRects[axis] = new Rect(bounds.Left, y - 2.0, bounds.Width, 25.0);
+
+        DrawClippedText(
             dc,
             info.Label,
-            new Rect(bounds.Left + 6, y, bounds.Width * 0.38, 15),
-            9.8,
+            new Rect(bounds.Left + 6, y, nameWidth - 10, 18.0),
+            9.4,
             modified ? accentBrush : hovered ? textBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
-            $"{value:0.##}x · Can spawn together: {FormatEffectiveCaps(info, value)}",
-            new Rect(bounds.Left + bounds.Width * 0.38, y, bounds.Width * 0.62 - 6, 15),
-            9.3,
+            $"{value:0.##}x",
+            new Rect(bounds.Left + nameWidth, y, scaleWidth - 6, 18.0),
+            9.2,
             modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         DrawClippedText(
             dc,
-            info.PlayerHint,
-            new Rect(bounds.Left + 6, y + 18, bounds.Width - 12, 18),
-            8.5,
-            hovered ? textBrush : mutedBrush,
-            FontWeights.Normal);
+            FormatEffectiveCaps(info, value),
+            new Rect(capsLeft, y, bounds.Right - capsLeft - 6, 18.0),
+            9.2,
+            modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            modified ? FontWeights.SemiBold : FontWeights.Normal);
+
         EndLegendHitArea();
     }
 
@@ -360,7 +399,7 @@ DrawClippedText(
             values[i] = effectiveCap.ToString("0", CultureInfo.InvariantCulture);
         }
 
-        return $"Newbie {values[0]} · Experienced {values[1]} · Veteran {values[2]} · Master {values[3]}";
+        return $"{values[0]} / {values[1]} / {values[2]} / {values[3]}";
     }
 
     private double[] GetValues()
