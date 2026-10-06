@@ -357,6 +357,9 @@ DrawClippedText(
 
         var point = e.GetPosition(this);
         var hoverAxis = FindLegendAxis(point);
+        if (hoverAxis < 0)
+            hoverAxis = FindHandleAxis(point, 22.0);
+
         if (hoverAxis != _hoverAxis)
         {
             _hoverAxis = hoverAxis;
