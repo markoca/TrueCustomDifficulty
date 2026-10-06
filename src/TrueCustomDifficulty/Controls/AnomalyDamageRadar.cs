@@ -254,7 +254,7 @@ private string _statusText = string.Empty;
             var hovered = i == _hoverAxis;
             var modified = Math.Abs(parameter.CurrentNumber - vanilla) > 0.000001;
             BeginLegendHitArea(i);
-            _legendHitRects[i] = new Rect(info.Left, y - 2.0, info.Width, 34.0);
+            _legendHitRects[i] = new Rect(bounds.Left, y - 2.0, bounds.Width, 34.0);
 DrawClippedText(
                 dc,
                 Axes[i].Label,
