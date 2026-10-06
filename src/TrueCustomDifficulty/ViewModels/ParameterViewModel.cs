@@ -293,7 +293,8 @@ public sealed class ParameterViewModel : ObservableObject
     // Radar backing parameters remain in the live VM/preset/writer graph but are
     // collapsed as individual rows. Each radar family has one visible aggregate anchor.
     public bool IsControlVisible =>
-        (!IsAmmoDistributionMember || IsAmmoDistributionAnchor)
+        !Id.Equals("alife.mutantSpawn.generic", StringComparison.Ordinal)
+        && (!IsAmmoDistributionMember || IsAmmoDistributionAnchor)
         && (!IsStashAmmoMember || IsStashAmmoAnchor)
         && (!IsMutantDropMember || IsMutantDropAnchor)
         && (!IsIndividualAnomalyDamageMember || IsIndividualAnomalyDamageAnchor)
