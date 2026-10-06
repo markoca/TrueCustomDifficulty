@@ -224,8 +224,6 @@ private string _statusText = string.Empty;
             "How many of each mutant can spawn together",
             mutedBrush);
 
-        DrawGlobalLimit(dc, accentBrush);
-
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
         var instruction = string.IsNullOrWhiteSpace(_statusText)
@@ -244,35 +242,13 @@ private string _statusText = string.Empty;
     private Rect GetInfoRect()
     {
         var left = Math.Max(ActualWidth * 0.47, 390.0);
-        return new Rect(left, 94.0, Math.Max(260.0, ActualWidth - left - 16.0), Math.Max(402.0, ActualHeight - 138.0));
+        return new Rect(left, 72.0, Math.Max(260.0, ActualWidth - left - 16.0), Math.Max(424.0, ActualHeight - 116.0));
     }
 
     private void DrawInfoHeader(DrawingContext dc, string text, Brush brush)
     {
         var info = GetInfoRect();
         DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), 9.8, brush, FontWeights.Normal);
-    }
-
-    private void DrawGlobalLimit(DrawingContext dc, Brush accentBrush)
-    {
-        var info = GetInfoRect();
-        var globalMultiplier = Math.Clamp(
-            _globalParameter?.CurrentNumber ?? VanillaMultiplier,
-            MinimumMultiplier,
-            MaximumMultiplier);
-
-        var caps = GlobalVanillaCaps
-            .Select(value => Math.Max(1.0, Math.Floor(value * globalMultiplier + 0.5)))
-            .Select(value => value.ToString("0", CultureInfo.InvariantCulture))
-            .ToArray();
-
-        DrawClippedText(
-            dc,
-            $"Overall mutant group limit: Newbie {caps[0]} · Experienced {caps[1]} · Veteran {caps[2]} · Master {caps[3]}",
-            new Rect(info.Left, 52.0, info.Width, 28.0),
-            9.4,
-            accentBrush,
-            FontWeights.SemiBold);
     }
 
     private void DrawLegend(
