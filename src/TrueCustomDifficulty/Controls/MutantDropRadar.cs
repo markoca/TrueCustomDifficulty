@@ -229,6 +229,7 @@ private string _statusText = string.Empty;
             var hovered = i == _hoverAxis;
             var isModified = parameter.IsModified;
             BeginLegendHitArea(i);
+            _legendHitRects[i] = new Rect(bounds.Left, y - 2.0, bounds.Width, 36.0);
 DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y, bounds.Width * 0.56, 16), 10.0,
                 isSelected ? accentBrush : textBrush, FontWeights.SemiBold);
 

@@ -250,6 +250,7 @@ private string _statusText = string.Empty;
             var parameter = _parameters[i];
             var modified = parameter?.IsModified ?? false;
             BeginLegendHitArea(i);
+            _legendHitRects[i] = new Rect(info.Left, y - 2.0, info.Width, 34.0);
 DrawClippedText(
                 dc,
                 $"{Axes[i].Label}  {values[i]:0.##}x",

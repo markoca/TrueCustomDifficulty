@@ -282,7 +282,10 @@ private string _statusText = string.Empty;
         var hovered = axis >= 0 && axis == _hoverAxis;
         var headingBrush = parameter == _parameters[_selectedAxis] ? accentBrush : textBrush;
         if (axis >= 0)
+        {
             BeginLegendHitArea(axis);
+            _legendHitRects[axis] = new Rect(bounds.Left - 4.0, bounds.Top - 8.0, bounds.Width + 8.0, bounds.Height + 12.0);
+        }
         DrawClippedText(
             dc,
             $"{heading}  {parameter.CurrentNumber:0.##}x",
