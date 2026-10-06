@@ -9,8 +9,8 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// Four-axis ALife Director group-size multiplier radar.
-/// Each axis scales every mutant-type ALife Director MaxCount for one player rank while preserving authored zero caps.
+/// ALife Director mutant spawn-cap radar.
+/// Each axis independently scales one mutant restriction across Newbie, Experienced, Veteran, and Master ranks while preserving authored zero caps.
 /// </summary>
 public sealed class MutantGroupSizeRadar : FrameworkElement
 {
@@ -21,10 +21,21 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
     private static readonly AxisDefinition[] Axes =
     {
-        new("alife.mutantGroupSize.newbie", "Newbie", -90, new[] { 3.0, 0.0, 4.0, 2.0, 0.0, 1.0, 1.0, 2.0, 1.0, 1.0, 6.0, 1.0, 1.0, 1.0, 1.0 }, "species caps 0–6"),
-        new("alife.mutantGroupSize.experienced", "Experienced", 0, new[] { 4.0, 1.0, 6.0, 3.0, 1.0, 1.0, 3.0, 3.0, 1.0, 1.0, 8.0, 1.0, 1.0, 1.0, 1.0 }, "species caps 1–8"),
-        new("alife.mutantGroupSize.veteran", "Veteran", 90, new[] { 4.0, 1.0, 8.0, 5.0, 1.0, 2.0, 4.0, 5.0, 1.0, 1.0, 12.0, 1.0, 1.0, 1.0, 1.0 }, "species caps 1–12"),
-        new("alife.mutantGroupSize.master", "Master", 180, new[] { 4.0, 1.0, 12.0, 6.0, 1.0, 2.0, 6.0, 6.0, 1.0, 2.0, 16.0, 1.0, 2.0, 1.0, 1.0 }, "species caps 1–16"),
+        new("alife.mutantSpawn.generic", "Generic", -90, new[] { 3.0, 4.0, 4.0, 4.0 }, "3/4/4/4"),
+        new("alife.mutantSpawn.bloodsucker", "Bloodsucker", -66, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1"),
+        new("alife.mutantSpawn.blindDog", "Blind Dog", -42, new[] { 4.0, 6.0, 8.0, 12.0 }, "4/6/8/12"),
+        new("alife.mutantSpawn.flesh", "Flesh", -18, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6"),
+        new("alife.mutantSpawn.controller", "Controller", 6, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1"),
+        new("alife.mutantSpawn.poltergeist", "Poltergeist", 30, new[] { 1.0, 1.0, 2.0, 2.0 }, "1/1/2/2"),
+        new("alife.mutantSpawn.snork", "Snork", 54, new[] { 1.0, 3.0, 4.0, 6.0 }, "1/3/4/6"),
+        new("alife.mutantSpawn.boar", "Boar", 78, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6"),
+        new("alife.mutantSpawn.chimera", "Chimera", 102, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1"),
+        new("alife.mutantSpawn.bayun", "Bayun", 126, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2"),
+        new("alife.mutantSpawn.tushkan", "Tushkan", 150, new[] { 6.0, 8.0, 12.0, 16.0 }, "6/8/12/16"),
+        new("alife.mutantSpawn.ratSwarm", "Rat Swarm", 174, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1"),
+        new("alife.mutantSpawn.burer", "Burer", 198, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2"),
+        new("alife.mutantSpawn.pseudodog", "Pseudodog", 222, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1"),
+        new("alife.mutantSpawn.deer", "Deer", 246, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1"),
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
@@ -51,7 +62,7 @@ private string _statusText = string.Empty;
     public MutantGroupSizeRadar()
     {
         Focusable = true;
-        MinHeight = 500;
+        MinHeight = 620;
         Cursor = Cursors.Cross;
         SnapsToDevicePixels = true;
     }
@@ -59,7 +70,7 @@ private string _statusText = string.Empty;
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 700 : Math.Max(400, availableSize.Width);
-        return new Size(width, 500);
+        return new Size(width, 620);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -198,13 +209,13 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "ALife mutant MaxCount multipliers · 1x = vanilla · 0.05x step",
+            "ALife mutant spawn caps per species · 1x = vanilla · values shown as N/E/V/M · 0.05x step",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
         var instruction = string.IsNullOrWhiteSpace(_statusText)
-            ? "Drag a point · Arrow keys adjust selected rank · Right-click point/legend resets that rank · R resets all Mutant Group Size values"
+            ? "Drag a point · Arrow keys adjust selected mutant · Right-click point/legend resets that mutant · R resets all mutant spawn values"
             : _statusText;
 
         DrawCenteredText(
@@ -218,8 +229,8 @@ private string _statusText = string.Empty;
 
     private Rect GetInfoRect()
     {
-        var left = Math.Max(ActualWidth * 0.44, 340.0);
-        return new Rect(left, 76.0, Math.Max(220.0, ActualWidth - left - 16.0), Math.Max(220.0, ActualHeight - 120.0));
+        var left = Math.Max(ActualWidth * 0.47, 390.0);
+        return new Rect(left, 76.0, Math.Max(260.0, ActualWidth - left - 16.0), Math.Max(420.0, ActualHeight - 120.0));
     }
 
     private void DrawInfoHeader(DrawingContext dc, string text, Brush brush)
@@ -236,7 +247,7 @@ private string _statusText = string.Empty;
         Brush accentBrush)
     {
         var info = GetInfoRect();
-        const double rowHeight = 42.0;
+        const double rowHeight = 28.0;
         for (var i = 0; i < Axes.Length; i++)
             DrawLegendRow(dc, i, info, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
     }
@@ -273,7 +284,7 @@ DrawClippedText(
 
         DrawClippedText(
             dc,
-            $"{value:0.##}x · Effective {FormatEffectiveHp(info, value)}",
+            $"{value:0.##}x · {FormatEffectiveCaps(info, value)}",
             new Rect(bounds.Left + bounds.Width * 0.38, y, bounds.Width * 0.62 - 6, 15),
             9.3,
             modified ? accentBrush : hovered ? textBrush : mutedBrush,
@@ -281,7 +292,7 @@ DrawClippedText(
 
         DrawClippedText(
             dc,
-            $"Vanilla {info.VanillaLabel} · Director group cap",
+            $"Vanilla N/E/V/M {info.VanillaLabel}",
             new Rect(bounds.Left + 6, y + 16, bounds.Width - 12, 14),
             8.7,
             hovered ? textBrush : mutedBrush,
@@ -289,19 +300,15 @@ DrawClippedText(
         EndLegendHitArea();
     }
 
-    private static string FormatEffectiveHp(AxisDefinition info, double multiplier)
+    private static string FormatEffectiveCaps(AxisDefinition info, double multiplier)
     {
-        var positive = info.AuthoredHp
-            .Where(value => value > 0.0)
-            .Select(value => Math.Max(1.0, Math.Floor(value * multiplier + 0.5)))
-            .ToArray();
-        if (positive.Length == 0)
-            return "0 agents";
-        var min = positive.Min();
-        var max = positive.Max();
-        return min == max
-            ? min.ToString("0", CultureInfo.InvariantCulture) + " agents"
-            : min.ToString("0", CultureInfo.InvariantCulture) + "–" + max.ToString("0", CultureInfo.InvariantCulture) + " agents";
+        var values = info.AuthoredHp
+            .Select(value => value <= 0.0
+                ? 0.0
+                : Math.Max(1.0, Math.Floor(value * multiplier + 0.5)))
+            .Select(value => value.ToString("0", CultureInfo.InvariantCulture));
+
+        return "N/E/V/M " + string.Join("/", values);
     }
 
     private double[] GetValues()
@@ -557,8 +564,8 @@ DrawClippedText(
 
     private (Point Center, double Radius) GetGeometry()
     {
-        var radius = Math.Min(122.0, Math.Max(92.0, Math.Min(ActualWidth * 0.15, 122.0)));
-        return (new Point(Math.Min(ActualWidth * 0.25, 255.0), ActualHeight / 2.0), radius);
+        var radius = Math.Min(150.0, Math.Max(112.0, Math.Min(ActualWidth * 0.18, 150.0)));
+        return (new Point(Math.Min(ActualWidth * 0.27, 270.0), ActualHeight / 2.0), radius);
     }
 
     private static double ValueRadius(double value, double radius)
@@ -578,8 +585,8 @@ DrawClippedText(
                 ? TextAnchor.Left
                 : TextAnchor.Center;
 
-        DrawAnchoredText(dc, label, new Point(position.X, position.Y - 6), 9.4, activeBrush, FontWeights.SemiBold, anchor);
-        DrawAnchoredText(dc, value, new Point(position.X, position.Y + 8), 8.8, mutedBrush, FontWeights.Normal, anchor);
+        DrawAnchoredText(dc, label, new Point(position.X, position.Y - 5), 8.2, activeBrush, FontWeights.SemiBold, anchor);
+        DrawAnchoredText(dc, value, new Point(position.X, position.Y + 7), 7.6, mutedBrush, FontWeights.Normal, anchor);
     }
 
     private void DrawRingCaption(DrawingContext dc, string text, Point center, double radius, Brush brush)
