@@ -162,8 +162,21 @@ private string _statusText = string.Empty;
 
         for (var i = 0; i < points.Length; i++)
         {
+            var hovered = i == _hoverAxis;
+            if (hovered)
+            {
+                var outerGlow = accentBrush.Clone();
+                outerGlow.Opacity = 0.12;
+                dc.DrawEllipse(outerGlow, null, points[i], 14.0, 14.0);
+
+                var innerGlow = accentBrush.Clone();
+                innerGlow.Opacity = 0.28;
+                dc.DrawEllipse(innerGlow, null, points[i], 10.0, 10.0);
+            }
+
             var outer = i == _selectedAxis ? 8.5 : 6.0;
-            dc.DrawEllipse(panelBrush, new Pen(accentBrush, i == _selectedAxis ? 2.4 : 1.5), points[i], outer, outer);
+            var outlineWidth = i == _selectedAxis ? 2.4 : hovered ? 2.0 : 1.5;
+            dc.DrawEllipse(panelBrush, new Pen(accentBrush, outlineWidth), points[i], outer, outer);
             dc.DrawEllipse(accentBrush, null, points[i], 3.2, 3.2);
         }
 
