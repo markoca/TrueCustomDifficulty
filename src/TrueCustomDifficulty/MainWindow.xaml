@@ -206,11 +206,31 @@
                                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                                 <Setter Property="Width"
                                                         Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource ResponsiveCardWidthConverter}, ConverterParameter=full}" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                            <Grid HorizontalAlignment="Stretch">
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto" />
+                                                                    <RowDefinition Height="Auto" />
+                                                                </Grid.RowDefinitions>
+                                                                <ContentPresenter Grid.Row="0"
+                                                                                  Content="{TemplateBinding Content}"
+                                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                                  HorizontalAlignment="Stretch" />
+                                                                <ItemsPresenter Grid.Row="1"
+                                                                                HorizontalAlignment="Stretch" />
+                                                            </Grid>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
                                             </Style>
                                         </GroupStyle.ContainerStyle>
                                         <GroupStyle.Panel>
                                             <ItemsPanelTemplate>
-                                                <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
+                                                <WrapPanel IsItemsHost="True"
+                                                           Orientation="Horizontal"
+                                                           HorizontalAlignment="Stretch" />
                                             </ItemsPanelTemplate>
                                         </GroupStyle.Panel>
                                         <GroupStyle.HeaderTemplate>
