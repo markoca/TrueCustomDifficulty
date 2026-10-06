@@ -255,14 +255,25 @@ public sealed class ParameterViewModel : ObservableObject
 
     private static readonly HashSet<string> MutantGroupSizeParameterIds = new(StringComparer.Ordinal)
     {
-        "alife.mutantGroupSize.newbie",
-        "alife.mutantGroupSize.experienced",
-        "alife.mutantGroupSize.veteran",
-        "alife.mutantGroupSize.master"
+        "alife.mutantSpawn.generic",
+        "alife.mutantSpawn.bloodsucker",
+        "alife.mutantSpawn.blindDog",
+        "alife.mutantSpawn.flesh",
+        "alife.mutantSpawn.controller",
+        "alife.mutantSpawn.poltergeist",
+        "alife.mutantSpawn.snork",
+        "alife.mutantSpawn.boar",
+        "alife.mutantSpawn.chimera",
+        "alife.mutantSpawn.bayun",
+        "alife.mutantSpawn.tushkan",
+        "alife.mutantSpawn.ratSwarm",
+        "alife.mutantSpawn.burer",
+        "alife.mutantSpawn.pseudodog",
+        "alife.mutantSpawn.deer"
     };
 
     public bool IsMutantGroupSizeMember => MutantGroupSizeParameterIds.Contains(Id);
-    public bool IsMutantGroupSizeAnchor => Id == "alife.mutantGroupSize.newbie";
+    public bool IsMutantGroupSizeAnchor => Id == "alife.mutantSpawn.generic";
 
     public bool IsAggregateRadarAnchor =>
         IsAmmoDistributionAnchor ||

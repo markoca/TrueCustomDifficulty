@@ -172,10 +172,21 @@ public sealed class MainViewModel : ObservableObject
 
         var mutantGroupSizeParameterIds = new HashSet<string>(StringComparer.Ordinal)
         {
-            "alife.mutantGroupSize.newbie",
-            "alife.mutantGroupSize.experienced",
-            "alife.mutantGroupSize.veteran",
-            "alife.mutantGroupSize.master"
+            "alife.mutantSpawn.generic",
+            "alife.mutantSpawn.bloodsucker",
+            "alife.mutantSpawn.blindDog",
+            "alife.mutantSpawn.flesh",
+            "alife.mutantSpawn.controller",
+            "alife.mutantSpawn.poltergeist",
+            "alife.mutantSpawn.snork",
+            "alife.mutantSpawn.boar",
+            "alife.mutantSpawn.chimera",
+            "alife.mutantSpawn.bayun",
+            "alife.mutantSpawn.tushkan",
+            "alife.mutantSpawn.ratSwarm",
+            "alife.mutantSpawn.burer",
+            "alife.mutantSpawn.pseudodog",
+            "alife.mutantSpawn.deer"
         };
 
         var parameterVMs = catalog.Parameters
@@ -450,7 +461,7 @@ public sealed class MainViewModel : ObservableObject
                 };
         }
 
-        if (parametersById.TryGetValue("alife.mutantGroupSize.newbie", out var mutantGroupSizeAnchor))
+        if (parametersById.TryGetValue("alife.mutantSpawn.generic", out var mutantGroupSizeAnchor))
         {
             var members = mutantGroupSizeParameterIds
                 .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
