@@ -155,6 +155,7 @@
 
                             <ListBox Grid.Column="0"
                                      ItemsSource="{Binding ParametersView}"
+                                     SelectedItem="{Binding SelectedParameter, Mode=TwoWay}"
                                      Background="{StaticResource WindowBackgroundBrush}"
                                      BorderThickness="0"
                                      Margin="5,6,5,9"
@@ -186,66 +187,54 @@
                                 </ListBox.ItemContainerStyle>
                                 <ListBox.GroupStyle>
                                     <GroupStyle>
-                                        <!-- Groups themselves always stay in catalog order, one full-width section after another. -->
-                                        <GroupStyle.Panel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel IsItemsHost="True" Orientation="Vertical" />
-                                            </ItemsPanelTemplate>
-                                        </GroupStyle.Panel>
-
                                         <GroupStyle.ContainerStyle>
                                             <Style TargetType="{x:Type GroupItem}">
                                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                            <StackPanel HorizontalAlignment="Stretch">
-                                                                <Border Background="{StaticResource PanelAltBrush}"
-                                                                        BorderBrush="{StaticResource BorderBrush}"
-                                                                        BorderThickness="1"
-                                                                        CornerRadius="3"
-                                                                        Margin="1,10,1,6"
-                                                                        Padding="9,6">
-                                                                    <StackPanel Orientation="Horizontal">
-                                                                        <Border Width="3"
-                                                                                Background="{StaticResource AccentBrush}"
-                                                                                Margin="0,0,8,0" />
-                                                                        <TextBlock Text="{Binding Name}"
-                                                                                   Foreground="{StaticResource TextBrush}"
-                                                                                   FontSize="11"
-                                                                                   FontWeight="Bold"
-                                                                                   TextOptions.TextFormattingMode="Display" />
-                                                                    </StackPanel>
-                                                                </Border>
-
-                                                                <!-- This list contains only this section's parameters.
-                                                                     It has no ScrollViewer of its own: the tab owns scrolling. -->
-                                                                <ListBox ItemsSource="{Binding Items}"
-                                                                         SelectedItem="{Binding DataContext.SelectedParameter, RelativeSource={RelativeSource AncestorType={x:Type ListBox}, AncestorLevel=2}, Mode=TwoWay}"
-                                                                         ItemTemplate="{Binding ItemTemplate, RelativeSource={RelativeSource AncestorType={x:Type ListBox}, AncestorLevel=2}}"
-                                                                         ItemContainerStyle="{Binding ItemContainerStyle, RelativeSource={RelativeSource AncestorType={x:Type ListBox}, AncestorLevel=2}}"
-                                                                         Background="Transparent"
-                                                                         BorderThickness="0"
-                                                                         Padding="0"
-                                                                         HorizontalContentAlignment="Stretch">
-                                                                    <ListBox.Template>
-                                                                        <ControlTemplate TargetType="{x:Type ListBox}">
-                                                                            <ItemsPresenter HorizontalAlignment="Stretch" />
-                                                                        </ControlTemplate>
-                                                                    </ListBox.Template>
-                                                                    <ListBox.ItemsPanel>
-                                                                        <ItemsPanelTemplate>
-                                                                            <infra:ResponsiveParameterGridPanel IsItemsHost="True"
-                                                                                                                HorizontalAlignment="Stretch" />
-                                                                        </ItemsPanelTemplate>
-                                                                    </ListBox.ItemsPanel>
-                                                                </ListBox>
-                                                            </StackPanel>
+                                                            <Grid HorizontalAlignment="Stretch">
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto" />
+                                                                    <RowDefinition Height="Auto" />
+                                                                </Grid.RowDefinitions>
+                                                                <ContentPresenter Grid.Row="0"
+                                                                                  Content="{TemplateBinding Content}"
+                                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                                  HorizontalAlignment="Stretch" />
+                                                                <ItemsPresenter Grid.Row="1"
+                                                                                HorizontalAlignment="Stretch" />
+                                                            </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                             </Style>
                                         </GroupStyle.ContainerStyle>
+                                        <GroupStyle.Panel>
+                                            <ItemsPanelTemplate>
+                                                <infra:ResponsiveParameterGridPanel IsItemsHost="True"
+                                                                                    HorizontalAlignment="Stretch" />
+                                            </ItemsPanelTemplate>
+                                        </GroupStyle.Panel>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <Border Background="{StaticResource PanelAltBrush}"
+                                                        BorderBrush="{StaticResource BorderBrush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="3"
+                                                        Margin="1,10,1,6"
+                                                        Padding="9,6">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Border Width="3" Background="{StaticResource AccentBrush}" Margin="0,0,8,0" />
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   Foreground="{StaticResource TextBrush}"
+                                                                   FontSize="11"
+                                                                   FontWeight="Bold"
+                                                                   TextOptions.TextFormattingMode="Display" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
                                     </GroupStyle>
                                 </ListBox.GroupStyle>
                                 <ListBox.ItemTemplate>
