@@ -172,7 +172,6 @@ public sealed class MainViewModel : ObservableObject
 
         var mutantGroupSizeParameterIds = new HashSet<string>(StringComparer.Ordinal)
         {
-            "alife.mutantSpawn.generic",
             "alife.mutantSpawn.bloodsucker",
             "alife.mutantSpawn.blindDog",
             "alife.mutantSpawn.flesh",
@@ -461,7 +460,7 @@ public sealed class MainViewModel : ObservableObject
                 };
         }
 
-        if (parametersById.TryGetValue("alife.mutantSpawn.generic", out var mutantGroupSizeAnchor))
+        if (parametersById.TryGetValue("alife.mutantSpawn.bloodsucker", out var mutantGroupSizeAnchor))
         {
             var members = mutantGroupSizeParameterIds
                 .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)

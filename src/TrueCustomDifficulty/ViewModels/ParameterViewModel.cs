@@ -255,7 +255,6 @@ public sealed class ParameterViewModel : ObservableObject
 
     private static readonly HashSet<string> MutantGroupSizeParameterIds = new(StringComparer.Ordinal)
     {
-        "alife.mutantSpawn.generic",
         "alife.mutantSpawn.bloodsucker",
         "alife.mutantSpawn.blindDog",
         "alife.mutantSpawn.flesh",
@@ -273,7 +272,7 @@ public sealed class ParameterViewModel : ObservableObject
     };
 
     public bool IsMutantGroupSizeMember => MutantGroupSizeParameterIds.Contains(Id);
-    public bool IsMutantGroupSizeAnchor => Id == "alife.mutantSpawn.generic";
+    public bool IsMutantGroupSizeAnchor => Id == "alife.mutantSpawn.bloodsucker";
 
     public bool IsAggregateRadarAnchor =>
         IsAmmoDistributionAnchor ||

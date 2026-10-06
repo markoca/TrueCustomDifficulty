@@ -21,21 +21,20 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
     private static readonly AxisDefinition[] Axes =
     {
-        new("alife.mutantSpawn.generic", "Generic", -90, new[] { 3.0, 4.0, 4.0, 4.0 }, "3/4/4/4"),
-        new("alife.mutantSpawn.bloodsucker", "Bloodsucker", -66, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1"),
-        new("alife.mutantSpawn.blindDog", "Blind Dog", -42, new[] { 4.0, 6.0, 8.0, 12.0 }, "4/6/8/12"),
-        new("alife.mutantSpawn.flesh", "Flesh", -18, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6"),
-        new("alife.mutantSpawn.controller", "Controller", 6, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1"),
-        new("alife.mutantSpawn.poltergeist", "Poltergeist", 30, new[] { 1.0, 1.0, 2.0, 2.0 }, "1/1/2/2"),
-        new("alife.mutantSpawn.snork", "Snork", 54, new[] { 1.0, 3.0, 4.0, 6.0 }, "1/3/4/6"),
-        new("alife.mutantSpawn.boar", "Boar", 78, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6"),
-        new("alife.mutantSpawn.chimera", "Chimera", 102, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1"),
-        new("alife.mutantSpawn.bayun", "Bayun", 126, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2"),
-        new("alife.mutantSpawn.tushkan", "Tushkan", 150, new[] { 6.0, 8.0, 12.0, 16.0 }, "6/8/12/16"),
-        new("alife.mutantSpawn.ratSwarm", "Rat Swarm", 174, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1"),
-        new("alife.mutantSpawn.burer", "Burer", 198, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2"),
-        new("alife.mutantSpawn.pseudodog", "Pseudodog", 222, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1"),
-        new("alife.mutantSpawn.deer", "Deer", 246, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1"),
+        new("alife.mutantSpawn.bloodsucker", "Bloodsucker", -90, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1", "Dangerous predator; absent at Newbie cap, solo at higher ranks."),
+        new("alife.mutantSpawn.blindDog", "Blind Dog", -64.286, new[] { 4.0, 6.0, 8.0, 12.0 }, "4/6/8/12", "Pack mutant; higher ranks allow much larger packs."),
+        new("alife.mutantSpawn.flesh", "Flesh", -38.571, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common herd mutant; group size rises steadily with rank."),
+        new("alife.mutantSpawn.controller", "Controller", -12.857, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1", "Rare psi mutant; absent at Newbie cap, solo later."),
+        new("alife.mutantSpawn.poltergeist", "Poltergeist", 12.857, new[] { 1.0, 1.0, 2.0, 2.0 }, "1/1/2/2", "Rare mutant; mostly solo, up to two at higher ranks."),
+        new("alife.mutantSpawn.snork", "Snork", 38.571, new[] { 1.0, 3.0, 4.0, 6.0 }, "1/3/4/6", "Aggressive pack mutant; group size grows strongly with rank."),
+        new("alife.mutantSpawn.boar", "Boar", 64.286, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common pack mutant; larger groups appear at higher ranks."),
+        new("alife.mutantSpawn.chimera", "Chimera", 90, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Elite mutant; vanilla Director keeps it strictly solo."),
+        new("alife.mutantSpawn.bayun", "Bayun", 115.714, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2", "Stealth predator; mostly solo, up to two on Master."),
+        new("alife.mutantSpawn.tushkan", "Tushkan", 141.429, new[] { 6.0, 8.0, 12.0, 16.0 }, "6/8/12/16", "Swarm mutant; vanilla allows the largest groups here."),
+        new("alife.mutantSpawn.ratSwarm", "Rat Swarm", 167.143, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "One Director swarm unit at a time on every rank."),
+        new("alife.mutantSpawn.burer", "Burer", 192.857, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2", "Rare psi mutant; mostly solo, up to two on Master."),
+        new("alife.mutantSpawn.pseudodog", "Pseudodog", 218.571, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Fast predator; vanilla Director keeps this cap at one."),
+        new("alife.mutantSpawn.deer", "Deer", 244.286, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Rare large mutant; vanilla Director keeps this cap at one."),
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
@@ -62,7 +61,7 @@ private string _statusText = string.Empty;
     public MutantGroupSizeRadar()
     {
         Focusable = true;
-        MinHeight = 620;
+        MinHeight = 650;
         Cursor = Cursors.Cross;
         SnapsToDevicePixels = true;
     }
@@ -70,7 +69,7 @@ private string _statusText = string.Empty;
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 700 : Math.Max(400, availableSize.Width);
-        return new Size(width, 620);
+        return new Size(width, 650);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -209,7 +208,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "ALife mutant spawn caps per species · 1x = vanilla · values shown as N/E/V/M · 0.05x step",
+            "Species encounter limits · 1x = vanilla · each point changes only that mutant",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
@@ -247,7 +246,7 @@ private string _statusText = string.Empty;
         Brush accentBrush)
     {
         var info = GetInfoRect();
-        const double rowHeight = 28.0;
+        const double rowHeight = 36.0;
         for (var i = 0; i < Axes.Length; i++)
             DrawLegendRow(dc, i, info, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
     }
@@ -292,9 +291,9 @@ DrawClippedText(
 
         DrawClippedText(
             dc,
-            $"Vanilla N/E/V/M {info.VanillaLabel}",
-            new Rect(bounds.Left + 6, y + 16, bounds.Width - 12, 14),
-            8.7,
+            info.PlayerHint,
+            new Rect(bounds.Left + 6, y + 16, bounds.Width - 12, 17),
+            8.5,
             hovered ? textBrush : mutedBrush,
             FontWeights.Normal);
         EndLegendHitArea();
@@ -308,7 +307,7 @@ DrawClippedText(
                 : Math.Max(1.0, Math.Floor(value * multiplier + 0.5)))
             .Select(value => value.ToString("0", CultureInfo.InvariantCulture));
 
-        return "N/E/V/M " + string.Join("/", values);
+        return "group cap " + string.Join("/", values) + " (N/E/V/M)";
     }
 
     private double[] GetValues()
@@ -704,5 +703,6 @@ DrawClippedText(
         string Label,
         double AngleDegrees,
         double[] AuthoredHp,
-        string VanillaLabel);
+        string VanillaLabel,
+        string PlayerHint);
 }
