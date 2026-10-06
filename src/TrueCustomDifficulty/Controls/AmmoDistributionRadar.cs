@@ -256,7 +256,7 @@ DrawClippedText(
                 $"{Axes[i].Label}  {values[i]:0.##}x",
                 new Rect(info.Left + 6, y, info.Width - 12, 17),
                 10.0,
-                selected ? accentBrush : textBrush,
+                modified ? accentBrush : hovered ? textBrush : textBrush,
                 FontWeights.SemiBold);
 
             y += 16;
@@ -267,7 +267,7 @@ DrawClippedText(
                     detail,
                     new Rect(info.Left + 18, y, info.Width - 24, 16),
                     9.3,
-                    selected || modified ? accentBrush : hovered ? textBrush : mutedBrush,
+                    modified ? accentBrush : hovered ? textBrush : mutedBrush,
                     FontWeights.Normal);
                 y += 15;
             }

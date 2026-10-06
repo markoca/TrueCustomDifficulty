@@ -262,7 +262,7 @@ DrawClippedText(
             Axes[axis].Label,
             new Rect(bounds.Left + 6, y, bounds.Width * 0.42, 16),
             10.0,
-            selected ? accentBrush : textBrush,
+            modified ? accentBrush : hovered ? textBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
@@ -270,8 +270,8 @@ DrawClippedText(
             $"{parameter.CurrentNumber:0.##} HP · {multipliers[axis]:0.##}x",
             new Rect(bounds.Left + (bounds.Width * 0.42), y, bounds.Width * 0.58 - 6, 16),
             9.6,
-            selected || modified ? accentBrush : hovered ? textBrush : mutedBrush,
-            selected || modified ? FontWeights.SemiBold : FontWeights.Normal);
+            modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         DrawClippedText(
             dc,

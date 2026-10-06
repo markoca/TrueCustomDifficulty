@@ -280,7 +280,7 @@ private string _statusText = string.Empty;
 
         var axis = Array.IndexOf(_parameters, parameter);
         var hovered = axis >= 0 && axis == _hoverAxis;
-        var headingBrush = parameter == _parameters[_selectedAxis] ? accentBrush : textBrush;
+        var headingBrush = parameter.IsModified ? accentBrush : hovered ? textBrush : textBrush;
         if (axis >= 0)
         {
             BeginLegendHitArea(axis);

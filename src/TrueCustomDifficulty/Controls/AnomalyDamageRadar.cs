@@ -260,7 +260,7 @@ DrawClippedText(
                 Axes[i].Label,
                 new Rect(bounds.Left + 6, y, bounds.Width * 0.40, 16),
                 9.9,
-                selected ? accentBrush : textBrush,
+                modified ? accentBrush : hovered ? textBrush : textBrush,
                 FontWeights.SemiBold);
 
             var rawValue = parameter.CurrentNumber;
@@ -280,8 +280,8 @@ DrawClippedText(
                 valueText,
                 new Rect(bounds.Left + bounds.Width * 0.40, y, bounds.Width * 0.60 - 6, 16),
                 9.5,
-                selected || modified ? accentBrush : hovered ? textBrush : mutedBrush,
-                selected || modified ? FontWeights.SemiBold : FontWeights.Normal);
+                modified ? accentBrush : hovered ? textBrush : mutedBrush,
+                modified ? FontWeights.SemiBold : FontWeights.Normal);
 
             EndLegendHitArea();
 

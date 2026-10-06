@@ -272,7 +272,7 @@ DrawClippedText(
             info.Label,
             new Rect(bounds.Left + 6, y, bounds.Width * 0.38, 15),
             9.8,
-            selected ? accentBrush : textBrush,
+            modified ? accentBrush : hovered ? textBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
@@ -280,8 +280,8 @@ DrawClippedText(
             $"{value:0.##}x · Effective {FormatEffectiveHp(info, value)}",
             new Rect(bounds.Left + bounds.Width * 0.38, y, bounds.Width * 0.62 - 6, 15),
             9.3,
-            selected || modified ? accentBrush : hovered ? textBrush : mutedBrush,
-            selected || modified ? FontWeights.SemiBold : FontWeights.Normal);
+            modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         DrawClippedText(
             dc,

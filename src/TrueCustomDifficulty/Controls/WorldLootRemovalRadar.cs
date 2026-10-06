@@ -261,7 +261,7 @@ var info = Axes[axis];
             $"{info.Label}  {fraction * 100:0.#}% removed",
             new Rect(bounds.Left + 6, y, bounds.Width - 12, 16),
             10.0,
-            selected ? accentBrush : textBrush,
+            modified ? accentBrush : hovered ? textBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
@@ -269,7 +269,7 @@ var info = Axes[axis];
             $"Base: removes {baseRemoved}/{info.BasePopulation} · With DLC: {dlcRemoved}/{info.DlcInclusivePopulation}",
             new Rect(bounds.Left + 6, y + 18, bounds.Width - 12, 15),
             9.3,
-            selected || modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            modified ? accentBrush : hovered ? textBrush : mutedBrush,
             FontWeights.Normal);
         EndLegendHitArea();
     }
