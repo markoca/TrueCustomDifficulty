@@ -9642,8 +9642,8 @@
     {
       "id": "alife.humanGroupSize.newbie",
       "tab": "alife",
-      "group": "Human Spawn Count per Rank",
-      "label": "Human Spawn Count per Rank",
+      "group": "Human Group Size",
+      "label": "Human Group Size",
       "description": "Scales the ALife Director Human MaxCount for Newbie player rank. The radar exposes one independent spawn-count multiplier per player rank without changing lair population or respawn.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -9689,7 +9689,7 @@
     {
       "id": "alife.humanGroupSize.experienced",
       "tab": "alife",
-      "group": "Human Spawn Count per Rank",
+      "group": "Human Group Size",
       "label": "Experienced Human Group Size",
       "description": "Scales the ALife Director Human MaxCount for Experienced player rank. This changes the general human encounter-group cap without changing lair population or respawn.",
       "control": "slider",
@@ -9736,7 +9736,7 @@
     {
       "id": "alife.humanGroupSize.veteran",
       "tab": "alife",
-      "group": "Human Spawn Count per Rank",
+      "group": "Human Group Size",
       "label": "Veteran Human Group Size",
       "description": "Scales the ALife Director Human MaxCount for Veteran player rank. This changes the general human encounter-group cap without changing lair population or respawn.",
       "control": "slider",
@@ -9783,7 +9783,7 @@
     {
       "id": "alife.humanGroupSize.master",
       "tab": "alife",
-      "group": "Human Spawn Count per Rank",
+      "group": "Human Group Size",
       "label": "Master Human Group Size",
       "description": "Scales the ALife Director Human MaxCount for Master player rank. This changes the general human encounter-group cap without changing lair population or respawn.",
       "control": "slider",
@@ -9830,7 +9830,7 @@
     {
       "id": "alife.mutantSpawn.generic",
       "tab": "alife",
-      "group": "Global Mutant Spawn Count",
+      "group": "Mutant Group Size",
       "label": "Global Mutant Spawn Count",
       "description": "Overall A-Life mutant encounter cap across all player ranks. This global limit can cap mutant encounters even when an individual species limit is set higher.",
       "control": "slider",
@@ -9898,8 +9898,8 @@
     {
       "id": "alife.mutantSpawn.bloodsucker",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
-      "label": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
+      "label": "Mutant Group Size",
       "description": "bloodsucker species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -9966,7 +9966,7 @@
     {
       "id": "alife.mutantSpawn.blindDog",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Blind Dog Spawn",
       "description": "blindDog species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10034,7 +10034,7 @@
     {
       "id": "alife.mutantSpawn.flesh",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Flesh Spawn",
       "description": "flesh species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10102,7 +10102,7 @@
     {
       "id": "alife.mutantSpawn.controller",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Controller Spawn",
       "description": "controller species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10170,7 +10170,7 @@
     {
       "id": "alife.mutantSpawn.poltergeist",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Poltergeist Spawn",
       "description": "poltergeist species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10238,7 +10238,7 @@
     {
       "id": "alife.mutantSpawn.snork",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Snork Spawn",
       "description": "snork species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10306,7 +10306,7 @@
     {
       "id": "alife.mutantSpawn.boar",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Boar Spawn",
       "description": "boar species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10374,7 +10374,7 @@
     {
       "id": "alife.mutantSpawn.chimera",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Chimera Spawn",
       "description": "chimera species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10442,7 +10442,7 @@
     {
       "id": "alife.mutantSpawn.bayun",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Bayun Spawn",
       "description": "bayun species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10510,7 +10510,7 @@
     {
       "id": "alife.mutantSpawn.tushkan",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Tushkan Spawn",
       "description": "tushkan species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10578,7 +10578,7 @@
     {
       "id": "alife.mutantSpawn.ratSwarm",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Rat Swarm Spawn",
       "description": "ratSwarm species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10646,7 +10646,7 @@
     {
       "id": "alife.mutantSpawn.burer",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Burer Spawn",
       "description": "burer species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10714,7 +10714,7 @@
     {
       "id": "alife.mutantSpawn.pseudodog",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Pseudodog Spawn",
       "description": "pseudodog species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
@@ -10782,7 +10782,7 @@
     {
       "id": "alife.mutantSpawn.deer",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
+      "group": "Mutant Group Size",
       "label": "Deer Spawn",
       "description": "deer species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
