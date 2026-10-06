@@ -336,6 +336,16 @@ DrawClippedText(
         Focus();
 
         var point = e.GetPosition(this);
+
+        // The legend is informational for left-clicks. Consume the click here so
+        // it cannot fall through to FindAxis(), which maps arbitrary positions
+        // to the nearest radar axis and can otherwise push that value to max.
+        if (FindLegendAxis(point) >= 0)
+        {
+            e.Handled = true;
+            return;
+        }
+
         var axis = FindAxis(point);
         if (axis < 0)
             return;
