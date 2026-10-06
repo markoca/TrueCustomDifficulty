@@ -25,15 +25,13 @@ The human radar follows the Director player-rank rows:
 
 Each axis is an independent multiplier. `1x` is vanilla.
 
-## Global Mutant Spawn Count
+## MutantGeneric restriction
 
-The Director's `MutantGeneric` restriction is exposed as a normal global slider, not as a radar axis.
-
-Vanilla `MaxCount` across Newbie / Experienced / Veteran / Master is:
+The Director also contains a separate `MutantGeneric` restriction with vanilla `MaxCount` values:
 
 `3 / 4 / 4 / 4`
 
-This is the overall mutant encounter ceiling. It can constrain an encounter even when an individual species cap is configured higher.
+It is a sibling entry beside the concrete mutant restrictions in each player-rank `Restrictions[]` list. The CFG structure does not establish it as a parent ceiling for Bloodsucker, Blind Dog, Tushkan, or the other concrete species, so the tool does **not** compose it with species `MaxCount` values and does not expose it as a player-facing global slider.
 
 ## Mutant Spawn per Species
 
