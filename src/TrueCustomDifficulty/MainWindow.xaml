@@ -10,7 +10,7 @@
         mc:Ignorable="d"
         Title="True Custom Difficulty"
         Icon="Assets/true-custom-difficulty.ico"
-        Width="1240" Height="800"
+        Width="1280" Height="800"
         MinWidth="960" MinHeight="640"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
@@ -201,6 +201,13 @@
                                 </ListBox.ItemContainerStyle>
                                 <ListBox.GroupStyle>
                                     <GroupStyle>
+                                        <GroupStyle.ContainerStyle>
+                                            <Style TargetType="{x:Type GroupItem}">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                <Setter Property="Width"
+                                                        Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ListBox}, Converter={StaticResource ResponsiveCardWidthConverter}, ConverterParameter=full}" />
+                                            </Style>
+                                        </GroupStyle.ContainerStyle>
                                         <GroupStyle.Panel>
                                             <ItemsPanelTemplate>
                                                 <WrapPanel IsItemsHost="True" Orientation="Horizontal" />
