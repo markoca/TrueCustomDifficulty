@@ -37,7 +37,10 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         new("alife.mutantSpawn.tushkan", "Tushkan", 244.286, new[] { 6.0, 8.0, 12.0, 16.0 }, "6/8/12/16", "Swarm mutant; vanilla allows the largest encounter groups here."),
     };
 
+    private static readonly double[] GlobalVanillaCaps = { 3.0, 4.0, 4.0, 4.0 };
+
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
+    private ParameterViewModel? _globalParameter;
     private int _selectedAxis;
     private int _dragAxis = -1;
     private int _hoverAxis = -1;
@@ -83,6 +86,10 @@ private string _statusText = string.Empty;
                 parameter.PropertyChanged -= Parameter_PropertyChanged;
         }
 
+        if (_globalParameter is not null)
+            _globalParameter.PropertyChanged -= Parameter_PropertyChanged;
+
+        _globalParameter = null;
         Array.Clear(_parameters, 0, _parameters.Length);
 
         if (Parameters is not null)
@@ -90,6 +97,12 @@ private string _statusText = string.Empty;
             var byId = Parameters
                 .OfType<ParameterViewModel>()
                 .ToDictionary(x => x.Id, StringComparer.Ordinal);
+
+            if (byId.TryGetValue("alife.mutantSpawn.generic", out var globalParameter))
+            {
+                _globalParameter = globalParameter;
+                _globalParameter.PropertyChanged += Parameter_PropertyChanged;
+            }
 
             for (var i = 0; i < Axes.Length; i++)
             {
@@ -208,7 +221,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Maximum mutants in the group by ALife rank · Newbie / Experienced / Veteran / Master · 1x = vanilla",
+            "Actual maximum mutants after the global limit · Newbie / Experienced / Veteran / Master",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
@@ -299,14 +312,29 @@ DrawClippedText(
         EndLegendHitArea();
     }
 
-    private static string FormatEffectiveCaps(AxisDefinition info, double multiplier)
+    private string FormatEffectiveCaps(AxisDefinition info, double speciesMultiplier)
     {
-        var values = info.AuthoredHp
-            .Select(value => value <= 0.0
+        var globalMultiplier = Math.Clamp(
+            _globalParameter?.CurrentNumber ?? VanillaMultiplier,
+            MinimumMultiplier,
+            MaximumMultiplier);
+
+        var values = new string[info.AuthoredHp.Length];
+
+        for (var i = 0; i < info.AuthoredHp.Length; i++)
+        {
+            var authoredSpeciesCap = info.AuthoredHp[i];
+            var speciesCap = authoredSpeciesCap <= 0.0
                 ? 0.0
-                : Math.Max(1.0, Math.Floor(value * multiplier + 0.5)))
-            .Select(value => value.ToString("0", CultureInfo.InvariantCulture))
-            .ToArray();
+                : Math.Max(1.0, Math.Floor(authoredSpeciesCap * speciesMultiplier + 0.5));
+
+            var globalCap = Math.Max(
+                1.0,
+                Math.Floor(GlobalVanillaCaps[i] * globalMultiplier + 0.5));
+
+            var effectiveCap = Math.Min(speciesCap, globalCap);
+            values[i] = effectiveCap.ToString("0", CultureInfo.InvariantCulture);
+        }
 
         return $"Newbie {values[0]} · Experienced {values[1]} · Veteran {values[2]} · Master {values[3]}";
     }
