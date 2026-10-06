@@ -21,10 +21,10 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
 
     private static readonly AxisDefinition[] Axes =
     {
-        new("alife.humanGroupSize.newbie", "Newbie", -90, new[] { 3.0 }, "3 agents"),
-        new("alife.humanGroupSize.experienced", "Experienced", 0, new[] { 4.0 }, "4 agents"),
-        new("alife.humanGroupSize.veteran", "Veteran", 90, new[] { 5.0 }, "5 agents"),
-        new("alife.humanGroupSize.master", "Master", 180, new[] { 6.0 }, "6 agents"),
+        new("alife.humanGroupSize.newbie", "Newbie", -90, new[] { 3.0 }, "3 NPCs"),
+        new("alife.humanGroupSize.experienced", "Experienced", 0, new[] { 4.0 }, "4 NPCs"),
+        new("alife.humanGroupSize.veteran", "Veteran", 90, new[] { 5.0 }, "5 NPCs"),
+        new("alife.humanGroupSize.master", "Master", 180, new[] { 6.0 }, "6 NPCs"),
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
@@ -273,7 +273,7 @@ DrawClippedText(
 
         DrawClippedText(
             dc,
-            $"{value:0.##}x · Effective {FormatEffectiveHp(info, value)}",
+            $"{value:0.##}x · {FormatEffectiveHp(info, value)}",
             new Rect(bounds.Left + bounds.Width * 0.38, y, bounds.Width * 0.62 - 6, 15),
             9.3,
             modified ? accentBrush : hovered ? textBrush : mutedBrush,
@@ -281,7 +281,7 @@ DrawClippedText(
 
         DrawClippedText(
             dc,
-            $"Vanilla {info.VanillaLabel} · Director group cap",
+            $"Vanilla {info.VanillaLabel} · maximum NPCs in the group",
             new Rect(bounds.Left + 6, y + 16, bounds.Width - 12, 14),
             8.7,
             hovered ? textBrush : mutedBrush,
@@ -292,7 +292,7 @@ DrawClippedText(
     private static string FormatEffectiveHp(AxisDefinition info, double multiplier)
     {
         var count = Math.Max(1.0, Math.Floor(info.AuthoredHp[0] * multiplier + 0.5));
-        return count.ToString("0", CultureInfo.InvariantCulture) + " agents";
+        return count.ToString("0", CultureInfo.InvariantCulture) + " NPCs in group";
     }
 
     private double[] GetValues()
