@@ -9832,13 +9832,13 @@
       "tab": "alife",
       "group": "Mutant Group Size",
       "label": "Global Mutant Spawn Count",
-      "description": "Overall A-Life mutant encounter cap across all player ranks. This global limit can cap mutant encounters even when an individual species limit is set higher.",
+      "description": "Internal MutantGeneric ALife Director restriction. Kept mapped for CFG completeness, but not exposed as a player control because the CFG does not establish it as a parent cap for concrete mutant species.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "overall mutant encounter cap"
+        "valueLabel": "MutantGeneric restriction"
       },
       "vanilla": {
         "All": 1
@@ -9891,9 +9891,9 @@
         ]
       },
       "rationale": "Controls the Director's generic mutant cap separately from the per-species limits, so overall mutant encounter size can be tuned without changing species balance.",
-      "logic": "MutantGeneric MaxCount values 3/4/4/4 × multiplier for Newbie/Experienced/Veteran/Master, integer-rounded.",
-      "interaction": "Use this as the overall mutant encounter-size ceiling. 1x is vanilla.",
-      "exposeInUi": true
+      "logic": "Mapped vanilla MutantGeneric MaxCount values are 3/4/4/4 for Newbie/Experienced/Veteran/Master. This internal parameter is not composed into species caps.",
+      "interaction": "Internal only. Concrete mutant species use their own mapped MaxCount values.",
+      "exposeInUi": false
     },
     {
       "id": "alife.mutantSpawn.bloodsucker",
