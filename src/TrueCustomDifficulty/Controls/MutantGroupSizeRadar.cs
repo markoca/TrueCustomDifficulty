@@ -21,20 +21,20 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
     private static readonly AxisDefinition[] Axes =
     {
-        new("alife.mutantSpawn.bloodsucker", "Bloodsucker", -90, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1", "Dangerous predator; absent at Newbie cap, solo at higher ranks."),
-        new("alife.mutantSpawn.blindDog", "Blind Dog", -64.286, new[] { 4.0, 6.0, 8.0, 12.0 }, "4/6/8/12", "Pack mutant; higher ranks allow much larger packs."),
-        new("alife.mutantSpawn.flesh", "Flesh", -38.571, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common herd mutant; group size rises steadily with rank."),
-        new("alife.mutantSpawn.controller", "Controller", -12.857, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1", "Rare psi mutant; absent at Newbie cap, solo later."),
-        new("alife.mutantSpawn.poltergeist", "Poltergeist", 12.857, new[] { 1.0, 1.0, 2.0, 2.0 }, "1/1/2/2", "Rare mutant; mostly solo, up to two at higher ranks."),
-        new("alife.mutantSpawn.snork", "Snork", 38.571, new[] { 1.0, 3.0, 4.0, 6.0 }, "1/3/4/6", "Aggressive pack mutant; group size grows strongly with rank."),
-        new("alife.mutantSpawn.boar", "Boar", 64.286, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common pack mutant; larger groups appear at higher ranks."),
-        new("alife.mutantSpawn.chimera", "Chimera", 90, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Elite mutant; vanilla Director keeps it strictly solo."),
-        new("alife.mutantSpawn.bayun", "Bayun", 115.714, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2", "Stealth predator; mostly solo, up to two on Master."),
-        new("alife.mutantSpawn.tushkan", "Tushkan", 141.429, new[] { 6.0, 8.0, 12.0, 16.0 }, "6/8/12/16", "Swarm mutant; vanilla allows the largest groups here."),
-        new("alife.mutantSpawn.ratSwarm", "Rat Swarm", 167.143, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "One Director swarm unit at a time on every rank."),
-        new("alife.mutantSpawn.burer", "Burer", 192.857, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2", "Rare psi mutant; mostly solo, up to two on Master."),
-        new("alife.mutantSpawn.pseudodog", "Pseudodog", 218.571, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Fast predator; vanilla Director keeps this cap at one."),
-        new("alife.mutantSpawn.deer", "Deer", 244.286, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Rare large mutant; vanilla Director keeps this cap at one."),
+        new("alife.mutantSpawn.bayun", "Bayun", -90.000, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2", "Mostly solo; Master can allow a pair."),
+        new("alife.mutantSpawn.blindDog", "Blind Dog", -64.286, new[] { 4.0, 6.0, 8.0, 12.0 }, "4/6/8/12", "Pack mutant; higher ALife ranks allow progressively larger packs."),
+        new("alife.mutantSpawn.bloodsucker", "Bloodsucker", -38.571, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1", "Disabled for Newbie; capped at one for Experienced, Veteran and Master."),
+        new("alife.mutantSpawn.boar", "Boar", -12.857, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common pack mutant; cap rises steadily with ALife rank."),
+        new("alife.mutantSpawn.burer", "Burer", 12.857, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2", "Mostly solo; Master can allow a pair."),
+        new("alife.mutantSpawn.chimera", "Chimera", 38.571, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Elite mutant; vanilla keeps the encounter cap at one on every ALife rank."),
+        new("alife.mutantSpawn.controller", "Controller", 64.286, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1", "Disabled for Newbie; capped at one for Experienced, Veteran and Master."),
+        new("alife.mutantSpawn.deer", "Deer", 90.000, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Rare large mutant; vanilla keeps the encounter cap at one on every ALife rank."),
+        new("alife.mutantSpawn.flesh", "Flesh", 115.714, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common herd mutant; cap rises steadily with ALife rank."),
+        new("alife.mutantSpawn.poltergeist", "Poltergeist", 141.429, new[] { 1.0, 1.0, 2.0, 2.0 }, "1/1/2/2", "Solo at lower ALife ranks; Veteran and Master can allow two."),
+        new("alife.mutantSpawn.pseudodog", "Pseudodog", 167.143, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Fast predator; vanilla keeps the encounter cap at one on every ALife rank."),
+        new("alife.mutantSpawn.ratSwarm", "Rat Swarm", 192.857, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "One Director swarm unit at a time on every ALife rank."),
+        new("alife.mutantSpawn.snork", "Snork", 218.571, new[] { 1.0, 3.0, 4.0, 6.0 }, "1/3/4/6", "Aggressive pack mutant; cap grows strongly with ALife rank."),
+        new("alife.mutantSpawn.tushkan", "Tushkan", 244.286, new[] { 6.0, 8.0, 12.0, 16.0 }, "6/8/12/16", "Swarm mutant; vanilla allows the largest encounter groups here."),
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
@@ -61,7 +61,7 @@ private string _statusText = string.Empty;
     public MutantGroupSizeRadar()
     {
         Focusable = true;
-        MinHeight = 650;
+        MinHeight = 720;
         Cursor = Cursors.Cross;
         SnapsToDevicePixels = true;
     }
@@ -69,7 +69,7 @@ private string _statusText = string.Empty;
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 700 : Math.Max(400, availableSize.Width);
-        return new Size(width, 650);
+        return new Size(width, 720);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -208,7 +208,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Species encounter limits · 1x = vanilla · each point changes only that mutant",
+            "Encounter caps by ALife rank · Newbie / Experienced / Veteran / Master · 1x = vanilla",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
@@ -246,7 +246,7 @@ private string _statusText = string.Empty;
         Brush accentBrush)
     {
         var info = GetInfoRect();
-        const double rowHeight = 36.0;
+        const double rowHeight = 40.0;
         for (var i = 0; i < Axes.Length; i++)
             DrawLegendRow(dc, i, info, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
     }
@@ -272,7 +272,7 @@ private string _statusText = string.Empty;
         var modified = Math.Abs(value - VanillaMultiplier) > 0.000001;
         var hovered = axis == _hoverAxis;
         BeginLegendHitArea(axis);
-        _legendHitRects[axis] = new Rect(bounds.Left, y - 2.0, bounds.Width, 36.0);
+        _legendHitRects[axis] = new Rect(bounds.Left, y - 2.0, bounds.Width, 40.0);
 DrawClippedText(
             dc,
             info.Label,
@@ -292,7 +292,7 @@ DrawClippedText(
         DrawClippedText(
             dc,
             info.PlayerHint,
-            new Rect(bounds.Left + 6, y + 16, bounds.Width - 12, 17),
+            new Rect(bounds.Left + 6, y + 18, bounds.Width - 12, 18),
             8.5,
             hovered ? textBrush : mutedBrush,
             FontWeights.Normal);
@@ -305,9 +305,10 @@ DrawClippedText(
             .Select(value => value <= 0.0
                 ? 0.0
                 : Math.Max(1.0, Math.Floor(value * multiplier + 0.5)))
-            .Select(value => value.ToString("0", CultureInfo.InvariantCulture));
+            .Select(value => value.ToString("0", CultureInfo.InvariantCulture))
+            .ToArray();
 
-        return "group cap " + string.Join("/", values) + " (N/E/V/M)";
+        return $"Newbie {values[0]} · Experienced {values[1]} · Veteran {values[2]} · Master {values[3]}";
     }
 
     private double[] GetValues()
