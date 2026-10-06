@@ -9830,15 +9830,15 @@
     {
       "id": "alife.mutantSpawn.generic",
       "tab": "alife",
-      "group": "Mutant Spawn per Species",
-      "label": "Mutant Spawn per Species",
-      "description": "Scales the ALife Director MutantGeneric MaxCount across all player ranks. This is the overall generic mutant cap; the same radar also exposes every species-specific Director cap independently.",
+      "group": "Global Mutant Spawn Count",
+      "label": "Global Mutant Spawn Count",
+      "description": "Overall A-Life mutant encounter cap across all player ranks. This global limit can cap mutant encounters even when an individual species limit is set higher.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "overall mutant encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -9890,23 +9890,23 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Expose the Director's generic mutant cap alongside species-specific caps so species tuning is not silently constrained by an unchangeable aggregate restriction.",
-      "logic": "Generic Mutant Cap MaxCount values 3/4/4/4 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "rationale": "Controls the Director's generic mutant cap separately from the per-species limits, so overall mutant encounter size can be tuned without changing species balance.",
+      "logic": "MutantGeneric MaxCount values 3/4/4/4 × multiplier for Newbie/Experienced/Veteran/Master, integer-rounded.",
+      "interaction": "Use this as the overall mutant encounter-size ceiling. 1x is vanilla.",
       "exposeInUi": true
     },
     {
       "id": "alife.mutantSpawn.bloodsucker",
       "tab": "alife",
       "group": "Mutant Spawn per Species",
-      "label": "Bloodsucker Spawn",
-      "description": "Scales the ALife Director Bloodsucker MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "label": "Mutant Spawn per Species",
+      "description": "bloodsucker species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -9960,21 +9960,21 @@
       },
       "rationale": "Give Bloodsucker an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Bloodsucker MaxCount values 0/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
-      "exposeInUi": false
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "exposeInUi": true
     },
     {
       "id": "alife.mutantSpawn.blindDog",
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Blind Dog Spawn",
-      "description": "Scales the ALife Director Blind Dog MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "blindDog species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10028,7 +10028,7 @@
       },
       "rationale": "Give Blind Dog an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Blind Dog MaxCount values 4/6/8/12 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10036,13 +10036,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Flesh Spawn",
-      "description": "Scales the ALife Director Flesh MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "flesh species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10096,7 +10096,7 @@
       },
       "rationale": "Give Flesh an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Flesh MaxCount values 2/3/5/6 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10104,13 +10104,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Controller Spawn",
-      "description": "Scales the ALife Director Controller MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "controller species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10164,7 +10164,7 @@
       },
       "rationale": "Give Controller an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Controller MaxCount values 0/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10172,13 +10172,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Poltergeist Spawn",
-      "description": "Scales the ALife Director Poltergeist MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "poltergeist species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10232,7 +10232,7 @@
       },
       "rationale": "Give Poltergeist an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Poltergeist MaxCount values 1/1/2/2 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10240,13 +10240,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Snork Spawn",
-      "description": "Scales the ALife Director Snork MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "snork species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10300,7 +10300,7 @@
       },
       "rationale": "Give Snork an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Snork MaxCount values 1/3/4/6 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10308,13 +10308,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Boar Spawn",
-      "description": "Scales the ALife Director Boar MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "boar species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10368,7 +10368,7 @@
       },
       "rationale": "Give Boar an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Boar MaxCount values 2/3/5/6 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10376,13 +10376,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Chimera Spawn",
-      "description": "Scales the ALife Director Chimera MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "chimera species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10436,7 +10436,7 @@
       },
       "rationale": "Give Chimera an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Chimera MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10444,13 +10444,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Bayun Spawn",
-      "description": "Scales the ALife Director Bayun MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "bayun species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10504,7 +10504,7 @@
       },
       "rationale": "Give Bayun an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Bayun MaxCount values 1/1/1/2 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10512,13 +10512,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Tushkan Spawn",
-      "description": "Scales the ALife Director Tushkan MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "tushkan species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10572,7 +10572,7 @@
       },
       "rationale": "Give Tushkan an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Tushkan MaxCount values 6/8/12/16 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10580,13 +10580,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Rat Swarm Spawn",
-      "description": "Scales the ALife Director Rat Swarm MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "ratSwarm species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10640,7 +10640,7 @@
       },
       "rationale": "Give Rat Swarm an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Rat Swarm MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10648,13 +10648,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Burer Spawn",
-      "description": "Scales the ALife Director Burer MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "burer species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10708,7 +10708,7 @@
       },
       "rationale": "Give Burer an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Burer MaxCount values 1/1/1/2 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10716,13 +10716,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Pseudodog Spawn",
-      "description": "Scales the ALife Director Pseudodog MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "pseudodog species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10776,7 +10776,7 @@
       },
       "rationale": "Give Pseudodog an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Pseudodog MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     },
     {
@@ -10784,13 +10784,13 @@
       "tab": "alife",
       "group": "Mutant Spawn per Species",
       "label": "Deer Spawn",
-      "description": "Scales the ALife Director Deer MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "description": "deer species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife mutant spawn cap"
+        "valueLabel": "species encounter cap"
       },
       "vanilla": {
         "All": 1
@@ -10844,7 +10844,7 @@
       },
       "rationale": "Give Deer an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
       "logic": "Deer MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
       "exposeInUi": false
     }
   ],
