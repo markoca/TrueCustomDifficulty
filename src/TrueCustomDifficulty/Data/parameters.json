@@ -26,6 +26,7 @@
       "economy",
       "equipment",
       "environment",
+      "alife",
       "master"
     ],
     "explicitlyExcluded": [
@@ -97,7 +98,7 @@
     },
     {
       "id": "alife",
-      "label": "ALIFE",
+      "label": "A-Life",
       "order": 90
     },
     {
@@ -191,9 +192,9 @@
         "valueLabel": "Human enemy health"
       },
       "vanilla": {
-        "Novice": 1.0,
+        "Novice": 1,
         "Stalker": 1.2,
-        "Veteran": 1.0,
+        "Veteran": 1,
         "Master": 1.5
       },
       "default": {
@@ -201,7 +202,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -244,8 +245,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -279,14 +280,14 @@
         "valueLabel": "Human attack frequency"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
         "min": 0.5,
-        "max": 4.0,
+        "max": 4,
         "step": 0.01
       },
       "targets": [
@@ -320,14 +321,14 @@
         "valueLabel": "Human enemy fire accuracy"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -362,7 +363,7 @@
       },
       "vanilla": {
         "Novice": 0.35,
-        "Stalker": 1.0,
+        "Stalker": 1,
         "Veteran": 1.35,
         "Master": 1.5
       },
@@ -370,8 +371,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -405,14 +406,14 @@
         "valueLabel": "Mutant attack frequency"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
         "min": 0.5,
-        "max": 4.0,
+        "max": 4,
         "step": 0.01
       },
       "targets": [
@@ -447,7 +448,7 @@
       },
       "vanilla": {
         "Novice": 1.3,
-        "Stalker": 1.0,
+        "Stalker": 1,
         "Veteran": 0.75,
         "Master": 0.75
       },
@@ -456,7 +457,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -490,17 +491,17 @@
         "valueLabel": "Your headshot damage"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
-        "Master": 2.0
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
         "min": 0.5,
-        "max": 3.0,
+        "max": 3,
         "step": 0.01
       },
       "targets": [
@@ -534,17 +535,17 @@
         "valueLabel": "Jamming frequency"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 1.5
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -579,16 +580,16 @@
       },
       "vanilla": {
         "Novice": 0.25,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 1.2
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -622,7 +623,7 @@
         "valueLabel": "Maximum repeated-hit protection"
       },
       "vanilla": {
-        "Novice": 1.0,
+        "Novice": 1,
         "Stalker": 0.75,
         "Veteran": 0.5,
         "Master": 0.4
@@ -631,8 +632,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "targets": [
@@ -666,7 +667,7 @@
         "valueLabel": "Minimum repeated-hit protection"
       },
       "vanilla": {
-        "Novice": 1.0,
+        "Novice": 1,
         "Stalker": 0.33,
         "Veteran": 0.15,
         "Master": 0.12
@@ -675,8 +676,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "targets": [
@@ -744,14 +745,14 @@
         "valueLabel": "Maximum health"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -799,9 +800,9 @@
         "valueLabel": "Wait time between special attacks"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 0.5
       },
       "default": {
@@ -809,7 +810,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -853,14 +854,14 @@
         "valueLabel": "Maximum health"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -901,9 +902,9 @@
         "valueLabel": "Wait time between special attacks"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 0.5
       },
       "default": {
@@ -911,7 +912,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -948,14 +949,14 @@
         "valueLabel": "Maximum health"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -996,9 +997,9 @@
         "valueLabel": "Wait time between special attacks"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 0.5
       },
       "default": {
@@ -1006,7 +1007,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -1043,14 +1044,14 @@
         "valueLabel": "Maximum health"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1091,9 +1092,9 @@
         "valueLabel": "Wait time between special attacks"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 0.5
       },
       "default": {
@@ -1101,7 +1102,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -1138,14 +1139,14 @@
         "valueLabel": "Maximum health"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1186,9 +1187,9 @@
         "valueLabel": "Wait time between special attacks"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 0.5
       },
       "default": {
@@ -1196,7 +1197,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -1233,14 +1234,14 @@
         "valueLabel": "Maximum health"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1288,9 +1289,9 @@
         "valueLabel": "Wait time between special attacks"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 0.5
       },
       "default": {
@@ -1298,7 +1299,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -1342,14 +1343,14 @@
         "valueLabel": "Maximum health"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1390,9 +1391,9 @@
         "valueLabel": "Wait time between special attacks"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 0.5
       },
       "default": {
@@ -1400,7 +1401,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -1458,14 +1459,14 @@
         "valueLabel": "Maximum health"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1506,9 +1507,9 @@
         "valueLabel": "Wait time between special attacks"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 0.5
       },
       "default": {
@@ -1516,7 +1517,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -1560,9 +1561,9 @@
         "valueLabel": "Time between Psy spawn cycles"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 0.5
       },
       "default": {
@@ -1570,7 +1571,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -1613,17 +1614,17 @@
         "valueLabel": "Number of Psy phantoms"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
-        "Master": 2.0
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 3.0,
+        "min": 0,
+        "max": 3,
         "step": 0.01
       },
       "targets": [
@@ -1709,17 +1710,17 @@
         "valueLabel": "Equipment damage from Psy phantoms"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
-        "Master": 2.0
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 2
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 3.0,
+        "min": 0,
+        "max": 3,
         "step": 0.01
       },
       "targets": [
@@ -1769,7 +1770,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.03,
         "step": 0.001,
         "stepMode": "absolute"
@@ -1811,7 +1812,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.66,
         "step": 0.01,
         "stepMode": "absolute"
@@ -1853,8 +1854,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.05
       },
       "targets": [
@@ -1895,7 +1896,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.02,
         "step": 0.001
       },
@@ -1930,14 +1931,14 @@
         "valueLabel": "Energy-drink fatigue relief"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -1996,15 +1997,15 @@
         "valueLabel": "Sleep becomes available at"
       },
       "vanilla": {
-        "All": 50.0
+        "All": 50
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 100.0,
-        "step": 5.0,
+        "min": 0,
+        "max": 100,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2047,7 +2048,7 @@
       "slider": {
         "min": 1,
         "max": 14,
-        "step": 1.0,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2082,7 +2083,7 @@
       },
       "vanilla": {
         "Novice": 0.6,
-        "Stalker": 1.0,
+        "Stalker": 1,
         "Veteran": 1.5,
         "Master": 1.85
       },
@@ -2090,7 +2091,7 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 2.5,
         "step": 0.01
       },
@@ -2132,7 +2133,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.1,
         "step": 0.01,
         "stepMode": "absolute"
@@ -2168,14 +2169,14 @@
         "valueLabel": "Radiation health damage"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -2283,16 +2284,16 @@
       },
       "vanilla": {
         "Novice": 0.25,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
+        "Stalker": 1,
+        "Veteran": 1,
         "Master": 1.5
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -2333,7 +2334,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.6,
         "step": 0.05,
         "stepMode": "absolute"
@@ -2378,7 +2379,7 @@
       "slider": {
         "min": 25,
         "max": 200,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2422,7 +2423,7 @@
         "valueLabel": "Passive health recovery"
       },
       "vanilla": {
-        "All": 0.0
+        "All": 0
       },
       "default": {
         "mode": "fixedVanilla"
@@ -2467,15 +2468,15 @@
         "valueLabel": "Health recovery starts after"
       },
       "vanilla": {
-        "All": 5.0
+        "All": 5
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 10.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 10,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2511,8 +2512,8 @@
         "valueLabel": "Health recovery multiplier"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
         "Veteran": 0.75,
         "Master": 0.5
       },
@@ -2520,8 +2521,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -2556,14 +2557,14 @@
         "valueLabel": "Low-health recovery speed"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.1
       },
       "targets": [
@@ -2638,8 +2639,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "targets": [
@@ -2681,9 +2682,9 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 40,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2725,9 +2726,9 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 140,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2769,9 +2770,9 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 170,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2813,9 +2814,9 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 200,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2909,8 +2910,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -2951,8 +2952,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -2993,8 +2994,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -3036,9 +3037,9 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 200,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -3079,9 +3080,9 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 30,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -3122,9 +3123,9 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 70,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -3165,9 +3166,9 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 50,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -3208,9 +3209,9 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 120,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -3251,9 +3252,9 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 200,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -3291,15 +3292,15 @@
         "valueLabel": "Maximum stamina"
       },
       "vanilla": {
-        "All": 100.0
+        "All": 100
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 25.0,
-        "max": 200.0,
-        "step": 5.0,
+        "min": 25,
+        "max": 200,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -3342,7 +3343,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 32.2,
         "step": 0.1
       },
@@ -3381,14 +3382,14 @@
         "valueLabel": "Sprint lockout time"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.1
       },
       "targets": [
@@ -3424,15 +3425,15 @@
         "valueLabel": "Emergency recovery starts below"
       },
       "vanilla": {
-        "All": 30.0
+        "All": 30
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 1.0,
-        "max": 60.0,
-        "step": 1.0
+        "min": 1,
+        "max": 60,
+        "step": 1
       },
       "targets": [
         {
@@ -3468,14 +3469,14 @@
         "valueLabel": "Emergency stamina recovery"
       },
       "vanilla": {
-        "All": 10.0
+        "All": 10
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 20.0,
+        "min": 0,
+        "max": 20,
         "step": 0.25
       },
       "targets": [
@@ -3518,14 +3519,14 @@
         "valueLabel": "Emergency recovery duration"
       },
       "vanilla": {
-        "All": 4.0
+        "All": 4
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.5,
-        "max": 8.0,
+        "max": 8,
         "step": 0.1
       },
       "targets": [
@@ -3567,7 +3568,7 @@
       },
       "slider": {
         "min": -1.3,
-        "max": 0.0,
+        "max": 0,
         "step": 0.05
       },
       "targets": [
@@ -3604,14 +3605,14 @@
         "valueLabel": "Stamina effect in internal Jogging state"
       },
       "vanilla": {
-        "All": 0.0
+        "All": 0
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": -2.0,
-        "max": 1.0,
+        "min": -2,
+        "max": 1,
         "step": 0.05
       },
       "targets": [
@@ -3648,14 +3649,14 @@
         "valueLabel": "Stamina effect in internal SlowRun state"
       },
       "vanilla": {
-        "All": 0.0
+        "All": 0
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": -2.0,
-        "max": 1.0,
+        "min": -2,
+        "max": 1,
         "step": 0.05
       },
       "targets": [
@@ -3693,29 +3694,29 @@
         "valueLabel": "Maximum vault height"
       },
       "vanilla": {
-        "All": 130.0
+        "All": 130
       },
       "markers": [
         {
           "label": "WAIST",
-          "value": 130.0
+          "value": 130
         },
         {
           "label": "EYES",
-          "value": 225.0
+          "value": 225
         },
         {
           "label": "ABOVE EYES",
-          "value": 300.0
+          "value": 300
         }
       ],
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 70.0,
-        "max": 300.0,
-        "step": 1.0
+        "min": 70,
+        "max": 300,
+        "step": 1
       },
       "targets": [
         {
@@ -3751,14 +3752,14 @@
         "valueLabel": "Stamina drain in medium water"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.05
       },
       "targets": [
@@ -3801,14 +3802,14 @@
         "valueLabel": "Stamina drain in deep water"
       },
       "vanilla": {
-        "All": 2.0
+        "All": 2
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 3.0,
+        "min": 0,
+        "max": 3,
         "step": 0.05
       },
       "targets": [
@@ -3850,15 +3851,15 @@
         "valueLabel": "Stamina recovered per second"
       },
       "vanilla": {
-        "All": 5.0
+        "All": 5
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 2.0,
-        "max": 10.0,
-        "step": 1.0,
+        "min": 2,
+        "max": 10,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -3899,7 +3900,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 10.5,
         "step": 0.25,
         "stepMode": "absolute"
@@ -3937,15 +3938,15 @@
         "valueLabel": "Stamina spent per jump"
       },
       "vanilla": {
-        "All": 16.0
+        "All": 16
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 32.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 32,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -3981,15 +3982,15 @@
         "valueLabel": "Stamina spent per vault"
       },
       "vanilla": {
-        "All": 12.0
+        "All": 12
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 24.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 24,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -4025,15 +4026,15 @@
         "valueLabel": "Stamina spent per normal melee"
       },
       "vanilla": {
-        "All": 16.0
+        "All": 16
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 32.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 32,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -4069,15 +4070,15 @@
         "valueLabel": "Stamina spent per strong melee"
       },
       "vanilla": {
-        "All": 25.0
+        "All": 25
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 50.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 50,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -4113,15 +4114,15 @@
         "valueLabel": "Stamina spent per buttstock hit"
       },
       "vanilla": {
-        "All": 12.0
+        "All": 12
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 24.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 24,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -4163,7 +4164,7 @@
       },
       "slider": {
         "min": -2.8,
-        "max": 0.0,
+        "max": 0,
         "step": 0.05
       },
       "targets": [
@@ -4207,7 +4208,7 @@
       },
       "slider": {
         "min": -1.3,
-        "max": 0.0,
+        "max": 0,
         "step": 0.05
       },
       "targets": [
@@ -4250,7 +4251,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.5,
         "step": 0.05,
         "stepMode": "absolute"
@@ -4299,7 +4300,7 @@
       "slider": {
         "min": 20,
         "max": 160,
-        "step": 5.0,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -4372,14 +4373,14 @@
         "valueLabel": "NPC medical loot chance"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -4419,14 +4420,14 @@
         "valueLabel": "NPC weapon ammo"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 3.0,
+        "min": 0,
+        "max": 3,
         "step": 0.25,
         "stepMode": "absolute"
       },
@@ -4466,14 +4467,14 @@
         "valueLabel": "NPC weapon condition"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -4513,14 +4514,14 @@
         "valueLabel": "Ammo amount"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.25,
         "stepMode": "absolute"
       },
@@ -4592,8 +4593,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -4638,15 +4639,15 @@
         "unit": "grenades"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 4.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 4,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -4691,14 +4692,14 @@
         "valueLabel": "Ammo amount"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.25,
         "stepMode": "absolute"
       },
@@ -4795,14 +4796,14 @@
         "valueLabel": "Ammo Amount"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.5,
-        "max": 2.0,
+        "max": 2,
         "step": 0.25,
         "stepMode": "absolute"
       },
@@ -4879,14 +4880,14 @@
         "valueLabel": "Breakable Box Ammo Distribution"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 3.0,
+        "min": 0,
+        "max": 3,
         "step": 0.25,
         "stepMode": "absolute"
       },
@@ -4933,14 +4934,14 @@
         "valueLabel": ".45 ACP Weight"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 3.0,
+        "min": 0,
+        "max": 3,
         "step": 0.25,
         "stepMode": "absolute"
       },
@@ -4978,14 +4979,14 @@
         "valueLabel": "5.45×39 mm Weight"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 3.0,
+        "min": 0,
+        "max": 3,
         "step": 0.25,
         "stepMode": "absolute"
       },
@@ -5023,14 +5024,14 @@
         "valueLabel": "12×70 Buckshot Weight"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 3.0,
+        "min": 0,
+        "max": 3,
         "step": 0.25,
         "stepMode": "absolute"
       },
@@ -5068,14 +5069,14 @@
         "valueLabel": "Grenade Amount"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.5,
-        "max": 2.0,
+        "max": 2,
         "step": 0.5,
         "stepMode": "absolute"
       },
@@ -5131,14 +5132,14 @@
         "valueLabel": "Ammo amount"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 2.0,
+        "max": 2,
         "step": 0.25,
         "stepMode": "absolute"
       },
@@ -5248,8 +5249,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "targets": [
@@ -5291,15 +5292,15 @@
         "valueLabel": "Starting coupons"
       },
       "vanilla": {
-        "All": 0.0
+        "All": 0
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 100000.0,
-        "step": 10.0
+        "min": 0,
+        "max": 100000,
+        "step": 10
       },
       "targets": [
         {
@@ -5335,8 +5336,8 @@
         "valueLabel": "Trader buy pricing setting"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
         "Veteran": 0.65,
         "Master": 0.55
       },
@@ -5344,8 +5345,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -5379,8 +5380,8 @@
         "valueLabel": "Trader sell pricing setting"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
         "Veteran": 1.25,
         "Master": 1.65
       },
@@ -5388,8 +5389,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -5429,8 +5430,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -5476,7 +5477,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.2,
         "step": 0.01
       },
@@ -5511,14 +5512,14 @@
         "valueLabel": "Ammo stock amount"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.25,
         "stepMode": "absolute"
       },
@@ -5558,14 +5559,14 @@
         "valueLabel": "Medic stock amount"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.25,
         "stepMode": "absolute"
       },
@@ -5604,17 +5605,17 @@
         "valueLabel": "Consumable prices"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
-        "Master": 1.0
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -5649,17 +5650,17 @@
         "valueLabel": "Ammo prices"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
-        "Master": 1.0
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -5694,17 +5695,17 @@
         "valueLabel": "Armor prices"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
-        "Master": 1.0
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -5739,17 +5740,17 @@
         "valueLabel": "Weapon prices"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
-        "Master": 1.0
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -5784,17 +5785,17 @@
         "valueLabel": "Artifact prices"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
-        "Master": 1.0
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -5829,14 +5830,14 @@
         "valueLabel": "Parts value"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -5973,14 +5974,14 @@
         "valueLabel": "Guide travel prices"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6017,8 +6018,8 @@
         "valueLabel": "Upgrade prices"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
+        "Novice": 1,
+        "Stalker": 1,
         "Veteran": 1.25,
         "Master": 1.5
       },
@@ -6026,8 +6027,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6061,17 +6062,17 @@
         "valueLabel": "Repair price difficulty setting"
       },
       "vanilla": {
-        "Novice": 1.0,
-        "Stalker": 1.0,
-        "Veteran": 1.0,
-        "Master": 1.0
+        "Novice": 1,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6112,8 +6113,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6147,14 +6148,14 @@
         "valueLabel": "Repair price when hostile"
       },
       "vanilla": {
-        "All": 2.0
+        "All": 2
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 3.0,
+        "min": 0,
+        "max": 3,
         "step": 0.01
       },
       "targets": [
@@ -6194,8 +6195,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6229,14 +6230,14 @@
         "valueLabel": "Repair price when neutral"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6276,8 +6277,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6312,7 +6313,7 @@
       },
       "vanilla": {
         "Novice": 1.35,
-        "Stalker": 1.0,
+        "Stalker": 1,
         "Veteran": 0.75,
         "Master": 0.55
       },
@@ -6320,8 +6321,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6356,7 +6357,7 @@
       },
       "vanilla": {
         "Novice": 1.35,
-        "Stalker": 1.0,
+        "Stalker": 1,
         "Veteran": 0.75,
         "Master": 0.55
       },
@@ -6364,8 +6365,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6400,7 +6401,7 @@
       },
       "vanilla": {
         "Novice": 1.35,
-        "Stalker": 1.0,
+        "Stalker": 1,
         "Veteran": 0.9,
         "Master": 0.6
       },
@@ -6409,7 +6410,7 @@
       },
       "slider": {
         "min": 0.1,
-        "max": 2.0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6443,14 +6444,14 @@
         "valueLabel": "Ammunition weight"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6487,14 +6488,14 @@
         "valueLabel": "Food and medicine weight"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -6539,7 +6540,7 @@
       },
       "vanilla": {
         "Novice": 0.3,
-        "Stalker": 1.0,
+        "Stalker": 1,
         "Veteran": 1.45,
         "Master": 1.75
       },
@@ -6547,7 +6548,7 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 2.5,
         "step": 0.01
       },
@@ -6694,7 +6695,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.4,
         "step": 0.01,
         "stepMode": "absolute"
@@ -6730,14 +6731,14 @@
         "valueLabel": "Extra stamina drain while starving"
       },
       "vanilla": {
-        "All": 2.0
+        "All": 2
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 4.0,
+        "min": 0,
+        "max": 4,
         "step": 0.01
       },
       "targets": [
@@ -6773,14 +6774,14 @@
         "valueLabel": "Starvation health damage"
       },
       "vanilla": {
-        "All": 4.0
+        "All": 4
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 8.0,
+        "min": 0,
+        "max": 8,
         "step": 0.5
       },
       "targets": [
@@ -6816,15 +6817,15 @@
         "valueLabel": "Time between starvation damage ticks"
       },
       "vanilla": {
-        "All": 10.0
+        "All": 10
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 1,
-        "max": 20.0,
-        "step": 1.0,
+        "max": 20,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -6860,14 +6861,14 @@
         "valueLabel": "Delay before starvation penalties begin"
       },
       "vanilla": {
-        "All": 3.0
+        "All": 3
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 6.0,
+        "min": 0,
+        "max": 6,
         "step": 0.5
       },
       "targets": [
@@ -6916,14 +6917,14 @@
         "valueLabel": "Health recovery penalty while starving"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "targets": [
@@ -6964,7 +6965,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.3,
         "step": 0.01
       },
@@ -7005,7 +7006,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.5,
         "step": 0.01
       },
@@ -7046,7 +7047,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.8,
         "step": 0.01
       },
@@ -7087,7 +7088,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.3,
         "step": 0.01
       },
@@ -7128,7 +7129,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.375,
         "step": 0.0025
       },
@@ -7164,15 +7165,15 @@
         "valueLabel": "Health restored after sleep"
       },
       "vanilla": {
-        "All": 300.0
+        "All": 300
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 600.0,
-        "step": 5.0,
+        "min": 0,
+        "max": 600,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -7206,14 +7207,14 @@
         "valueLabel": "Stamina restored after sleep"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -7253,7 +7254,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.4,
         "step": 0.01
       },
@@ -7295,7 +7296,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.4,
         "step": 0.01
       },
@@ -7344,7 +7345,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 1.1,
         "step": 0.01
       },
@@ -7386,7 +7387,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
+        "min": 0,
         "max": 0.8,
         "step": 0.01
       },
@@ -7435,8 +7436,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "targets": [
@@ -7477,8 +7478,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "targets": [
@@ -7514,14 +7515,14 @@
         "valueLabel": "Health damage per bleeding tick"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.1,
         "stepMode": "absolute"
       },
@@ -7563,8 +7564,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 3.0,
+        "min": 0,
+        "max": 3,
         "step": 0.1,
         "stepMode": "absolute"
       },
@@ -7600,14 +7601,14 @@
         "valueLabel": "Health damage per bleeding tick"
       },
       "vanilla": {
-        "All": 2.0
+        "All": 2
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 4.0,
+        "min": 0,
+        "max": 4,
         "step": 0.1,
         "stepMode": "absolute"
       },
@@ -7678,15 +7679,15 @@
         "valueLabel": "Base damage"
       },
       "vanilla": {
-        "All": 65.0
+        "All": 65
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 130.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 130,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -7722,15 +7723,15 @@
         "valueLabel": "Base damage"
       },
       "vanilla": {
-        "All": 30.0
+        "All": 30
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 60.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 60,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -7766,15 +7767,15 @@
         "valueLabel": "Base damage"
       },
       "vanilla": {
-        "All": 60.0
+        "All": 60
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 120.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 120,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -7810,15 +7811,15 @@
         "valueLabel": "Base damage"
       },
       "vanilla": {
-        "All": 105.0
+        "All": 105
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 210.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 210,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -7854,15 +7855,15 @@
         "valueLabel": "Base damage"
       },
       "vanilla": {
-        "All": 25.0
+        "All": 25
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 50.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 50,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -7898,15 +7899,15 @@
         "valueLabel": "Base damage"
       },
       "vanilla": {
-        "All": 60.0
+        "All": 60
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 120.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 120,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -7947,8 +7948,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "targets": [
@@ -7990,8 +7991,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "targets": [
@@ -8035,15 +8036,15 @@
         "valueLabel": "Base health damage"
       },
       "vanilla": {
-        "All": 70.0
+        "All": 70
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 140.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 140,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8078,14 +8079,14 @@
         "valueLabel": "Razor health damage"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -8129,14 +8130,14 @@
         "valueLabel": "Razor bleeding"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -8180,15 +8181,15 @@
         "valueLabel": "Base health damage"
       },
       "vanilla": {
-        "All": 100.0
+        "All": 100
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 200.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 200,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8226,15 +8227,15 @@
         "valueLabel": "Base health damage"
       },
       "vanilla": {
-        "All": 100.0
+        "All": 100
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 200.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 200,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8272,15 +8273,15 @@
         "valueLabel": "Base health damage"
       },
       "vanilla": {
-        "All": 15.0
+        "All": 15
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 30.0,
-        "step": 1.0,
+        "min": 0,
+        "max": 30,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -8318,14 +8319,14 @@
         "valueLabel": "Bleeding strength"
       },
       "vanilla": {
-        "All": 10.0
+        "All": 10
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 20.0,
+        "min": 0,
+        "max": 20,
         "step": 0.5,
         "stepMode": "absolute"
       },
@@ -8362,14 +8363,14 @@
         "valueLabel": "Psy drain intensity"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -8411,8 +8412,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8459,8 +8460,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8507,8 +8508,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8549,14 +8550,14 @@
         "valueLabel": "Drop Chance"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8597,14 +8598,14 @@
         "valueLabel": "Drop Chance"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8645,14 +8646,14 @@
         "valueLabel": "Drop Chance"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8693,14 +8694,14 @@
         "valueLabel": "Drop Chance"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8741,14 +8742,14 @@
         "valueLabel": "Drop Chance"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8795,8 +8796,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8843,8 +8844,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8885,14 +8886,14 @@
         "valueLabel": "Drop Chance"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8933,14 +8934,14 @@
         "valueLabel": "Drop Chance"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -8987,8 +8988,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -9035,8 +9036,8 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01
       },
       "lootHint": {
@@ -9077,14 +9078,14 @@
         "valueLabel": "Weapon condition loss per shot"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 2.0,
+        "min": 0,
+        "max": 2,
         "step": 0.01
       },
       "targets": [
@@ -9129,14 +9130,14 @@
         "valueLabel": "Ammo Boxes Removed"
       },
       "vanilla": {
-        "All": 0.0
+        "All": 0
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -9183,14 +9184,14 @@
         "valueLabel": "F1 Grenade Boxes Removed"
       },
       "vanilla": {
-        "All": 0.0
+        "All": 0
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -9241,14 +9242,14 @@
         "valueLabel": "Food & Drink Boxes Removed"
       },
       "vanilla": {
-        "All": 0.0
+        "All": 0
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -9295,14 +9296,14 @@
         "valueLabel": "Medical Boxes Removed"
       },
       "vanilla": {
-        "All": 0.0
+        "All": 0
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -9349,14 +9350,14 @@
         "valueLabel": "Loose Loot Removed"
       },
       "vanilla": {
-        "All": 0.0
+        "All": 0
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -9453,14 +9454,14 @@
         "valueLabel": "Weapon density"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.0,
-        "max": 1.0,
+        "min": 0,
+        "max": 1,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -9641,9 +9642,9 @@
     {
       "id": "alife.humanGroupSize.newbie",
       "tab": "alife",
-      "group": "Human Group Size",
-      "label": "Human Group Size",
-      "description": "Scales the ALife Director Human MaxCount for Newbie player rank. This changes the general human encounter-group cap without changing lair population or respawn.",
+      "group": "Human Spawn Count per Rank",
+      "label": "Human Spawn Count per Rank",
+      "description": "Scales the ALife Director Human MaxCount for Newbie player rank. The radar exposes one independent spawn-count multiplier per player rank without changing lair population or respawn.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -9652,14 +9653,14 @@
         "valueLabel": "ALife encounter group cap"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -9688,7 +9689,7 @@
     {
       "id": "alife.humanGroupSize.experienced",
       "tab": "alife",
-      "group": "Human Group Size",
+      "group": "Human Spawn Count per Rank",
       "label": "Experienced Human Group Size",
       "description": "Scales the ALife Director Human MaxCount for Experienced player rank. This changes the general human encounter-group cap without changing lair population or respawn.",
       "control": "slider",
@@ -9699,14 +9700,14 @@
         "valueLabel": "ALife encounter group cap"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -9735,7 +9736,7 @@
     {
       "id": "alife.humanGroupSize.veteran",
       "tab": "alife",
-      "group": "Human Group Size",
+      "group": "Human Spawn Count per Rank",
       "label": "Veteran Human Group Size",
       "description": "Scales the ALife Director Human MaxCount for Veteran player rank. This changes the general human encounter-group cap without changing lair population or respawn.",
       "control": "slider",
@@ -9746,14 +9747,14 @@
         "valueLabel": "ALife encounter group cap"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -9782,7 +9783,7 @@
     {
       "id": "alife.humanGroupSize.master",
       "tab": "alife",
-      "group": "Human Group Size",
+      "group": "Human Spawn Count per Rank",
       "label": "Master Human Group Size",
       "description": "Scales the ALife Director Human MaxCount for Master player rank. This changes the general human encounter-group cap without changing lair population or respawn.",
       "control": "slider",
@@ -9793,14 +9794,14 @@
         "valueLabel": "ALife encounter group cap"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -9827,27 +9828,27 @@
       "exposeInUi": false
     },
     {
-      "id": "alife.mutantGroupSize.newbie",
+      "id": "alife.mutantSpawn.generic",
       "tab": "alife",
-      "group": "Mutant Group Size",
-      "label": "Mutant Group Size",
-      "description": "Scales all ALife Director mutant-type MaxCount caps for Newbie player rank together, preserving the vanilla relative composition and zero restrictions.",
+      "group": "Mutant Spawn per Species",
+      "label": "Mutant Spawn per Species",
+      "description": "Scales the ALife Director MutantGeneric MaxCount across all player ranks. This is the overall generic mutant cap; the same radar also exposes every species-specific Director cap independently.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife encounter group cap"
+        "valueLabel": "ALife mutant spawn cap"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -9863,136 +9864,59 @@
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[2].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[1].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[3].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[1].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[4].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[5].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[6].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[7].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[8].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[9].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[10].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[11].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[12].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[13].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[14].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[15].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[1].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         }
       ],
       "support": {
         "status": "confirmed",
         "notes": [
-          "Vanilla Newbie mutant caps range from 0 to 6 across MutantGeneric and specific mutant types.",
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 3/4/4/4.",
           "Authored zero caps remain zero.",
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "One rank-aware radar scales all mutant-type Director caps together, keeping vanilla species balance while changing how large mutant encounters can become.",
-      "logic": "Every Newbie mutant MaxCount is multiplied by this value and integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to the player rank used by the ALife Director. 1x is vanilla; right-click an axis/legend resets that rank.",
+      "rationale": "Expose the Director's generic mutant cap alongside species-specific caps so species tuning is not silently constrained by an unchangeable aggregate restriction.",
+      "logic": "Generic Mutant Cap MaxCount values 3/4/4/4 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
       "exposeInUi": true
     },
     {
-      "id": "alife.mutantGroupSize.experienced",
+      "id": "alife.mutantSpawn.bloodsucker",
       "tab": "alife",
-      "group": "Mutant Group Size",
-      "label": "Experienced Mutant Group Size",
-      "description": "Scales all ALife Director mutant-type MaxCount caps for Experienced player rank together, preserving the vanilla relative composition and zero restrictions.",
+      "group": "Mutant Spawn per Species",
+      "label": "Bloodsucker Spawn",
+      "description": "Scales the ALife Director Bloodsucker MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife encounter group cap"
+        "valueLabel": "ALife mutant spawn cap"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -10001,7 +9925,7 @@
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[1].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[2].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
@@ -10015,129 +9939,52 @@
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[3].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[2].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[4].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[5].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[6].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[7].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[8].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[9].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[10].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[11].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[12].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[13].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[14].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[15].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[2].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         }
       ],
       "support": {
         "status": "confirmed",
         "notes": [
-          "Vanilla Experienced mutant caps range from 1 to 8 across MutantGeneric and specific mutant types.",
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 0/1/1/1.",
           "Authored zero caps remain zero.",
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "One rank-aware radar scales all mutant-type Director caps together, keeping vanilla species balance while changing how large mutant encounters can become.",
-      "logic": "Every Experienced mutant MaxCount is multiplied by this value and integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to the player rank used by the ALife Director. 1x is vanilla; right-click an axis/legend resets that rank.",
+      "rationale": "Give Bloodsucker an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Bloodsucker MaxCount values 0/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
       "exposeInUi": false
     },
     {
-      "id": "alife.mutantGroupSize.veteran",
+      "id": "alife.mutantSpawn.blindDog",
       "tab": "alife",
-      "group": "Mutant Group Size",
-      "label": "Veteran Mutant Group Size",
-      "description": "Scales all ALife Director mutant-type MaxCount caps for Veteran player rank together, preserving the vanilla relative composition and zero restrictions.",
+      "group": "Mutant Spawn per Species",
+      "label": "Blind Dog Spawn",
+      "description": "Scales the ALife Director Blind Dog MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife encounter group cap"
+        "valueLabel": "ALife mutant spawn cap"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -10146,14 +9993,14 @@
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[1].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[3].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[2].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[3].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
@@ -10167,7 +10014,129 @@
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[3].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 4/6/8/12.",
+          "Authored zero caps remain zero.",
+          "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
+        ]
+      },
+      "rationale": "Give Blind Dog an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Blind Dog MaxCount values 4/6/8/12 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "exposeInUi": false
+    },
+    {
+      "id": "alife.mutantSpawn.flesh",
+      "tab": "alife",
+      "group": "Mutant Spawn per Species",
+      "label": "Flesh Spawn",
+      "description": "Scales the ALife Director Flesh MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "ALife mutant spawn cap"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[4].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[4].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
           "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[4].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[4].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 2/3/5/6.",
+          "Authored zero caps remain zero.",
+          "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
+        ]
+      },
+      "rationale": "Give Flesh an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Flesh MaxCount values 2/3/5/6 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "exposeInUi": false
+    },
+    {
+      "id": "alife.mutantSpawn.controller",
+      "tab": "alife",
+      "group": "Mutant Spawn per Species",
+      "label": "Controller Spawn",
+      "description": "Scales the ALife Director Controller MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "ALife mutant spawn cap"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[5].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[5].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
@@ -10181,7 +10150,129 @@
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[5].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 0/1/1/1.",
+          "Authored zero caps remain zero.",
+          "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
+        ]
+      },
+      "rationale": "Give Controller an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Controller MaxCount values 0/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "exposeInUi": false
+    },
+    {
+      "id": "alife.mutantSpawn.poltergeist",
+      "tab": "alife",
+      "group": "Mutant Spawn per Species",
+      "label": "Poltergeist Spawn",
+      "description": "Scales the ALife Director Poltergeist MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "ALife mutant spawn cap"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[6].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[6].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
           "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[6].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[6].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 1/1/2/2.",
+          "Authored zero caps remain zero.",
+          "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
+        ]
+      },
+      "rationale": "Give Poltergeist an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Poltergeist MaxCount values 1/1/2/2 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "exposeInUi": false
+    },
+    {
+      "id": "alife.mutantSpawn.snork",
+      "tab": "alife",
+      "group": "Mutant Spawn per Species",
+      "label": "Snork Spawn",
+      "description": "Scales the ALife Director Snork MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "ALife mutant spawn cap"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[7].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[7].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
@@ -10195,7 +10286,129 @@
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[7].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 1/3/4/6.",
+          "Authored zero caps remain zero.",
+          "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
+        ]
+      },
+      "rationale": "Give Snork an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Snork MaxCount values 1/3/4/6 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "exposeInUi": false
+    },
+    {
+      "id": "alife.mutantSpawn.boar",
+      "tab": "alife",
+      "group": "Mutant Spawn per Species",
+      "label": "Boar Spawn",
+      "description": "Scales the ALife Director Boar MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "ALife mutant spawn cap"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[8].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[8].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
           "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[8].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[8].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 2/3/5/6.",
+          "Authored zero caps remain zero.",
+          "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
+        ]
+      },
+      "rationale": "Give Boar an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Boar MaxCount values 2/3/5/6 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "exposeInUi": false
+    },
+    {
+      "id": "alife.mutantSpawn.chimera",
+      "tab": "alife",
+      "group": "Mutant Spawn per Species",
+      "label": "Chimera Spawn",
+      "description": "Scales the ALife Director Chimera MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "ALife mutant spawn cap"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[9].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[9].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
@@ -10209,7 +10422,129 @@
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[9].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 1/1/1/1.",
+          "Authored zero caps remain zero.",
+          "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
+        ]
+      },
+      "rationale": "Give Chimera an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Chimera MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "exposeInUi": false
+    },
+    {
+      "id": "alife.mutantSpawn.bayun",
+      "tab": "alife",
+      "group": "Mutant Spawn per Species",
+      "label": "Bayun Spawn",
+      "description": "Scales the ALife Director Bayun MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "ALife mutant spawn cap"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[10].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[10].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
           "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[10].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[10].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 1/1/1/2.",
+          "Authored zero caps remain zero.",
+          "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
+        ]
+      },
+      "rationale": "Give Bayun an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Bayun MaxCount values 1/1/1/2 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "exposeInUi": false
+    },
+    {
+      "id": "alife.mutantSpawn.tushkan",
+      "tab": "alife",
+      "group": "Mutant Spawn per Species",
+      "label": "Tushkan Spawn",
+      "description": "Scales the ALife Director Tushkan MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "ALife mutant spawn cap"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[11].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[11].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
@@ -10223,7 +10558,129 @@
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[11].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 6/8/12/16.",
+          "Authored zero caps remain zero.",
+          "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
+        ]
+      },
+      "rationale": "Give Tushkan an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Tushkan MaxCount values 6/8/12/16 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "exposeInUi": false
+    },
+    {
+      "id": "alife.mutantSpawn.ratSwarm",
+      "tab": "alife",
+      "group": "Mutant Spawn per Species",
+      "label": "Rat Swarm Spawn",
+      "description": "Scales the ALife Director Rat Swarm MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "ALife mutant spawn cap"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[12].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[12].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
           "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[12].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[12].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 1/1/1/1.",
+          "Authored zero caps remain zero.",
+          "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
+        ]
+      },
+      "rationale": "Give Rat Swarm an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Rat Swarm MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "exposeInUi": false
+    },
+    {
+      "id": "alife.mutantSpawn.burer",
+      "tab": "alife",
+      "group": "Mutant Spawn per Species",
+      "label": "Burer Spawn",
+      "description": "Scales the ALife Director Burer MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "ALife mutant spawn cap"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[13].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[13].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
@@ -10237,52 +10694,45 @@
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[14].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[15].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[13].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         }
       ],
       "support": {
         "status": "confirmed",
         "notes": [
-          "Vanilla Veteran mutant caps range from 1 to 12 across MutantGeneric and specific mutant types.",
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 1/1/1/2.",
           "Authored zero caps remain zero.",
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "One rank-aware radar scales all mutant-type Director caps together, keeping vanilla species balance while changing how large mutant encounters can become.",
-      "logic": "Every Veteran mutant MaxCount is multiplied by this value and integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to the player rank used by the ALife Director. 1x is vanilla; right-click an axis/legend resets that rank.",
+      "rationale": "Give Burer an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Burer MaxCount values 1/1/1/2 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
       "exposeInUi": false
     },
     {
-      "id": "alife.mutantGroupSize.master",
+      "id": "alife.mutantSpawn.pseudodog",
       "tab": "alife",
-      "group": "Mutant Group Size",
-      "label": "Master Mutant Group Size",
-      "description": "Scales all ALife Director mutant-type MaxCount caps for Master player rank together, preserving the vanilla relative composition and zero restrictions.",
+      "group": "Mutant Spawn per Species",
+      "label": "Pseudodog Spawn",
+      "description": "Scales the ALife Director Pseudodog MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "ALife encounter group cap"
+        "valueLabel": "ALife mutant spawn cap"
       },
       "vanilla": {
-        "All": 1.0
+        "All": 1
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0.25,
-        "max": 3.0,
+        "max": 3,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -10291,91 +10741,21 @@
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[1].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[14].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[2].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[14].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
           "scope": "baseGame",
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[3].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[4].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[5].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[6].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[7].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[8].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[9].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[10].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[11].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[12].MaxCount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-          "prototype": "ALifeDirectorPreset",
-          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[13].MaxCount",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[14].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
@@ -10383,6 +10763,67 @@
           "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
           "prototype": "ALifeDirectorPreset",
           "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[3].Restrictions.[14].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 1/1/1/1.",
+          "Authored zero caps remain zero.",
+          "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
+        ]
+      },
+      "rationale": "Give Pseudodog an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Pseudodog MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
+      "exposeInUi": false
+    },
+    {
+      "id": "alife.mutantSpawn.deer",
+      "tab": "alife",
+      "group": "Mutant Spawn per Species",
+      "label": "Deer Spawn",
+      "description": "Scales the ALife Director Deer MaxCount across Newbie, Experienced, Veteran, and Master player ranks while preserving authored zero restrictions.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "ALife mutant spawn cap"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[0].Restrictions.[15].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[1].Restrictions.[15].MaxCount",
+          "operation": "scaleIntegerHalfUpPreserveZero"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+          "prototype": "ALifeDirectorPreset",
+          "path": "ALifeScenarioNPCArchetypesLimitsPerPlayerRank.[2].Restrictions.[15].MaxCount",
           "operation": "scaleIntegerHalfUpPreserveZero"
         },
         {
@@ -10396,14 +10837,14 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "Vanilla Master mutant caps range from 1 to 16 across MutantGeneric and specific mutant types.",
+          "Vanilla Newbie/Experienced/Veteran/Master MaxCount = 1/1/1/1.",
           "Authored zero caps remain zero.",
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "One rank-aware radar scales all mutant-type Director caps together, keeping vanilla species balance while changing how large mutant encounters can become.",
-      "logic": "Every Master mutant MaxCount is multiplied by this value and integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar axis corresponds to the player rank used by the ALife Director. 1x is vanilla; right-click an axis/legend resets that rank.",
+      "rationale": "Give Deer an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
+      "logic": "Deer MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
+      "interaction": "Each radar axis corresponds to one Director mutant restriction. 1x is vanilla; right-click an axis/legend resets that mutant; R resets the full radar.",
       "exposeInUi": false
     }
   ],
