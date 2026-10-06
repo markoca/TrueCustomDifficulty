@@ -348,7 +348,7 @@
                                                         <controls:MutantGroupSizeRadar x:Name="MutantGroupSizeRadarControl"
                                                                                        Grid.Row="0"
                                                                                        Grid.RowSpan="2"
-                                                                                       MinHeight="620"
+                                                                                       MinHeight="650"
                                                                                        Visibility="Collapsed"
                                                                                        Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
 

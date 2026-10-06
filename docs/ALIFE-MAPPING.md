@@ -25,13 +25,24 @@ The human radar follows the Director player-rank rows:
 
 Each axis is an independent multiplier. `1x` is vanilla.
 
+## Global Mutant Spawn Count
+
+The Director's `MutantGeneric` restriction is exposed as a normal global slider, not as a radar axis.
+
+Vanilla `MaxCount` across Newbie / Experienced / Veteran / Master is:
+
+`3 / 4 / 4 / 4`
+
+This is the overall mutant encounter ceiling. It can constrain an encounter even when an individual species cap is configured higher.
+
 ## Mutant Spawn per Species
 
-The mutant radar exposes one independent multiplier per Director mutant restriction. Each control scales that species across all four player-rank rows while preserving the vanilla rank progression.
+The mutant radar contains only concrete mutant types. Each point changes one species across all four player-rank rows while preserving the vanilla rank progression.
+
+The legend is intentionally player-facing: it explains whether the mutant is normally solo, pack-oriented, swarm-oriented, rare, or disabled at a lower rank, while still showing the resulting group cap.
 
 | Radar axis | N / E / V / M vanilla `MaxCount` |
 |---|---|
-| Generic Mutant Cap | 3 / 4 / 4 / 4 |
 | Bloodsucker | 0 / 1 / 1 / 1 |
 | Blind Dog | 4 / 6 / 8 / 12 |
 | Flesh | 2 / 3 / 5 / 6 |
@@ -49,7 +60,6 @@ The mutant radar exposes one independent multiplier per Director mutant restrict
 
 The multiplier is applied independently to each rank-specific `MaxCount`. Integer rounding is half-up. Authored zero caps remain zero, so increasing a species does not unlock that species at a player rank where the Director explicitly disables it.
 
-`MutantGeneric` is kept as **Generic Mutant Cap** because it is a real Director restriction and can constrain mutant encounters independently of the species-specific caps.
 
 There is no mapped Pseudogiant restriction in this Director `Restrictions[].MaxCount` table, so the UI does not invent a Pseudogiant spawn control.
 
