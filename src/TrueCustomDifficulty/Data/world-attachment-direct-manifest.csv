@@ -1,0 +1,8 @@
+scope,source_file,level_name,actor_sid,item_sid,category,tier
+base,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,13EE5AD14EC96A51401133A536C53A95,GunGP37_MagPaired,Magazine,T2
+base,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,158D249B45AAEF6C774798BBF6526435,GunD12_MagLarge,Magazine,T4
+base,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,4302E38D44E7D30E06A1D68F5C3CD871,GunPM_MagIncreased,Magazine,T2
+base,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,5D05D6414C2268051855D59C5B9566FB,RU_Silen_1,Suppressor,T2
+base,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,66BBF41E4E5C10FF4C03F2B2CBFEF98C,GunPM_MagIncreased,Magazine,T2
+dlc1,DLCGameData/DLC1/SpawnActorPrototypes.cfg,WorldMap_WP,16192CC14DC2EF47D82BB39E958A149B,GunPM_MagIncreased,Magazine,T2
+dlc1,DLCGameData/DLC1/SpawnActorPrototypes.cfg,WorldMap_WP,C9BD462546CAAA37D74C04886F21168C,RU_Silen_3,Suppressor,T3

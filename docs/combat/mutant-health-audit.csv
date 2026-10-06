@@ -1,0 +1,15 @@
+player_name,prototype_sid,max_hp,source,difficulty_scoped
+BlindDog,Blinddog,63,GameData/ObjPrototypes.cfg,no
+Bloodsucker,Bloodsucker,500,GameData/ObjPrototypes.cfg,no
+Boar,Boar,300,GameData/ObjPrototypes.cfg,no
+Burer,Burer,400,GameData/ObjPrototypes.cfg,no
+Bayun,Bayun,400,GameData/ObjPrototypes.cfg,no
+Chimera,Chimera,1400,GameData/ObjPrototypes.cfg,no
+Controller,Controller,500,GameData/ObjPrototypes.cfg,no
+Deer,Deer,600,GameData/ObjPrototypes.cfg,no
+Flesh,Flesh,280,GameData/ObjPrototypes.cfg,no
+Poltergeist,Poltergeist,400,GameData/ObjPrototypes.cfg,no
+Pseudodog,PseudoDogBase,300,GameData/ObjPrototypes.cfg,no
+Pseudogiant,Pseudogiant,2500,GameData/ObjPrototypes.cfg,no
+Snork,Snork,150,GameData/ObjPrototypes.cfg,no
+Tushkan,Tushkan,19,GameData/ObjPrototypes.cfg,no

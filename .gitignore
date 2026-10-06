@@ -1,0 +1,12 @@
+.vs/
+bin/
+obj/
+publish/
+**/Presets/*.json
+**/Output/*
+!**/Presets/README.md
+!**/Output/.gitkeep
+**/CFG/Imported/
+**/CFG/import-report.json
+
+# Portable publish output is isolated under publish/.

@@ -1,0 +1,8 @@
+scope,source_file,actor_sid,item_sid
+base,GameData/SpawnActorPrototypes.cfg,802D5FFC4C6435DEAB4A52A5905CD43F,Echo
+base,GameData/SpawnActorPrototypes.cfg,AD2282A041B10831EED0718CFF231B72,Gilka
+base,GameData/SpawnActorPrototypes.cfg,B4FD041D45C6139F675843A658251A6D,Echo
+base,GameData/SpawnActorPrototypes.cfg,DFB625434374BD72793B73A1B120D756,Gilka
+dlc1,DLCGameData/DLC1/SpawnActorPrototypes.cfg,5BEA57804743EFE0EAFA4382FF273D28,Gilka
+dlc1,DLCGameData/DLC1/SpawnActorPrototypes.cfg,6F1F28BB410482EB0A986B841BF07ADD,Gilka
+dlc1,DLCGameData/DLC1/SpawnActorPrototypes.cfg,71F1909F48D4458BA4CB60BAB91FA1BD,Gilka

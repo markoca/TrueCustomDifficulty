@@ -1,0 +1,1432 @@
+using System.IO;
+using System.Collections.ObjectModel;
+using System.Windows;
+using Microsoft.Win32;
+using TrueCustomDifficulty.Infrastructure;
+using TrueCustomDifficulty.Models;
+using TrueCustomDifficulty.Services;
+
+namespace TrueCustomDifficulty.ViewModels;
+
+public sealed class MainViewModel : ObservableObject
+{
+    private readonly ParameterCatalog _catalog;
+    private readonly PresetService _presetService = new();
+    private readonly PresetDirectoryService _presetDirectoryService = new();
+    private readonly ModBuildService _modBuildService = new();
+    private readonly GameInstallInfo? _gameInstall;
+    private string _selectedReferenceDifficulty;
+    private TabViewModel? _selectedTab;
+    private bool _isApplyingReference;
+    private bool _suspendSliderConstraints;
+    private readonly SliderConstraintCoordinator _sliderConstraintCoordinator;
+    private IReadOnlyList<ParameterViewModel> _anomalyDerivedParameters = Array.Empty<ParameterViewModel>();
+    private PresetListItem? _selectedPreset;
+    private string? _loadedPresetName;
+    private bool _suppressPresetSelection;
+
+    public string AppName => _catalog.App.Name;
+    public string AppVersion => _catalog.App.Version;
+    public string GameVersion => _catalog.Source.GameVersion;
+
+    public ObservableCollection<string> ReferenceDifficulties { get; } = new(new[]
+    {
+        "Novice", "Stalker", "Veteran", "Master"
+    });
+
+    public ObservableCollection<TabViewModel> Tabs { get; } = new();
+    public ObservableCollection<PresetListItem> AvailablePresets { get; } = new();
+    public IReadOnlyList<ParameterViewModel> AllParameters { get; }
+
+    public RelayCommand ResetCurrentTabCommand { get; }
+    public RelayCommand ResetAllCommand { get; }
+    public RelayCommand SavePresetCommand { get; }
+    public RelayCommand LoadPresetCommand { get; }
+    public RelayCommand BuildCommand { get; }
+
+    public MainViewModel(ParameterCatalog catalog)
+    {
+        _catalog = catalog;
+        _presetDirectoryService.Ensure();
+        RefreshPresetList();
+        _gameInstall = new GameInstallLocatorService().Detect();
+        _selectedReferenceDifficulty = catalog.App.DefaultReferenceDifficulty;
+
+        var ammoDistributionParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "loot.ammoBoxWeight918",
+            "loot.ammoBoxWeight045",
+            "loot.ammoBoxWeight545",
+            "loot.ammoBoxWeight012"
+        };
+
+        var stashAmmoParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "loot.cheapStashAmmoQuantity",
+            "loot.mediumStashAmmoQuantity",
+            "loot.expensiveStashAmmoQuantity"
+        };
+
+        var mutantDropParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "loot.mutant.blindDogChance",
+            "loot.mutant.bloodsuckerChance",
+            "loot.mutant.boarChance",
+            "loot.mutant.burerChance",
+            "loot.mutant.catChance",
+            "loot.mutant.chimeraChance",
+            "loot.mutant.controllerChance",
+            "loot.mutant.deerChance",
+            "loot.mutant.fleshChance",
+            "loot.mutant.poltergeistChance",
+            "loot.mutant.pseudodogChance",
+            "loot.mutant.pseudogiantChance",
+            "loot.mutant.snorkChance",
+            "loot.mutant.tushkanChance"
+        };
+
+        var individualAnomalyDamageParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "environment.electroAnomalyDamage",
+            "environment.chemicalAnomalyDamage",
+            "environment.fireAnomalyDamage",
+            "environment.carouselAnomalyDamage",
+            "environment.toxicCloudDamage",
+            "environment.steamAnomalyDamage",
+            "environment.clickerHealthDamage",
+            "environment.razorHealthDamage",
+            "environment.soapBubbleHealthDamage",
+            "environment.fireballHealthDamage",
+            "environment.diamondHealthDamage"
+        };
+
+        var worldLootRemovalParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "loot.worldAmmoCratesRemoved",
+            "loot.worldF1GrenadeBoxes",
+            "loot.worldFoodDrinkCratesRemoved",
+            "loot.worldMedicalCratesRemoved",
+            "loot.looseWorldLootRemoved"
+        };
+
+        var medicalHealingParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "health.bandageHealing",
+            "health.medkitHealing",
+            "health.armyMedkitHealing",
+            "health.ecoMedkitHealing"
+        };
+
+        var actionCostParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "stamina.sprintCost",
+            "stamina.jumpCost",
+            "stamina.vaultCost",
+            "stamina.meleeNormalCost",
+            "stamina.meleeStrongCost",
+            "stamina.butstockCost",
+            "stamina.aimRegenCoef"
+        };
+
+        var itemPriceScalerParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "economy.consumableCost",
+            "economy.ammoCost",
+            "economy.armorCost",
+            "economy.weaponCost",
+            "economy.artifactCost",
+            "economy.mutantPartValue"
+        };
+
+        var mutantHealthParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "combat.mutantHealth.bloodsucker",
+            "combat.mutantHealth.chimera",
+            "combat.mutantHealth.deer",
+            "combat.mutantHealth.pseudogiant",
+            "combat.mutantHealth.pseudodog",
+            "combat.mutantHealth.burer",
+            "combat.mutantHealth.bayun",
+            "combat.mutantHealth.controller"
+        };
+
+        var specialAbilityCooldownParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "combat.mutantCooldown.bloodsucker",
+            "combat.mutantCooldown.chimera",
+            "combat.mutantCooldown.deer",
+            "combat.mutantCooldown.pseudogiant",
+            "combat.mutantCooldown.pseudodog",
+            "combat.mutantCooldown.burer",
+            "combat.mutantCooldown.bayun",
+            "combat.mutantCooldown.controller"
+        };
+
+        var humanGroupSizeParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "alife.humanGroupSize.newbie",
+            "alife.humanGroupSize.experienced",
+            "alife.humanGroupSize.veteran",
+            "alife.humanGroupSize.master"
+        };
+
+        var mutantGroupSizeParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "alife.mutantGroupSize.newbie",
+            "alife.mutantGroupSize.experienced",
+            "alife.mutantGroupSize.veteran",
+            "alife.mutantGroupSize.master"
+        };
+
+        var parameterVMs = catalog.Parameters
+            .Where(p => p.ExposeInUi
+                || ammoDistributionParameterIds.Contains(p.Id)
+                || stashAmmoParameterIds.Contains(p.Id)
+                || mutantDropParameterIds.Contains(p.Id)
+                || individualAnomalyDamageParameterIds.Contains(p.Id)
+                || worldLootRemovalParameterIds.Contains(p.Id)
+                || medicalHealingParameterIds.Contains(p.Id)
+                || actionCostParameterIds.Contains(p.Id)
+                || itemPriceScalerParameterIds.Contains(p.Id)
+                || mutantHealthParameterIds.Contains(p.Id)
+                || specialAbilityCooldownParameterIds.Contains(p.Id)
+                || humanGroupSizeParameterIds.Contains(p.Id)
+                || mutantGroupSizeParameterIds.Contains(p.Id))
+            .Select(p => new ParameterViewModel(p, _selectedReferenceDifficulty))
+            .ToList();
+        AllParameters = parameterVMs;
+        _sliderConstraintCoordinator = new SliderConstraintCoordinator(catalog.SliderConstraints, parameterVMs);
+
+        var globalAnomalyDamage = parameterVMs.FirstOrDefault(p => p.Id == "environment.anomalyDamage");
+        if (globalAnomalyDamage is not null)
+        {
+            _anomalyDerivedParameters = parameterVMs.Where(p => individualAnomalyDamageParameterIds.Contains(p.Id)).ToList();
+            foreach (var p in _anomalyDerivedParameters)
+                p.SetEffectiveDamageMultiplierProvider(() => globalAnomalyDamage.CurrentNumber);
+        }
+
+        var parametersById = parameterVMs.ToDictionary(p => p.Id, StringComparer.Ordinal);
+
+        if (parametersById.TryGetValue("loot.ammoBoxWeight918", out var ammoDistributionAnchor))
+        {
+            var ammoDistributionMembers = ammoDistributionParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            ammoDistributionAnchor.SetAggregateModifiedProvider(
+                () => ammoDistributionMembers.Any(parameter => Math.Abs(parameter.CurrentNumber - 1.0) > 0.0000001));
+
+            foreach (var member in ammoDistributionMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        ammoDistributionAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+
+        if (parametersById.TryGetValue("loot.cheapStashAmmoQuantity", out var stashAmmoAnchor))
+        {
+            var stashAmmoMembers = stashAmmoParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            stashAmmoAnchor.SetAggregateModifiedProvider(
+                () => stashAmmoMembers.Any(parameter => Math.Abs(parameter.CurrentNumber - 1.0) > 0.0000001));
+
+            foreach (var member in stashAmmoMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        stashAmmoAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+        if (parametersById.TryGetValue("loot.mutant.blindDogChance", out var mutantDropAnchor))
+        {
+            var mutantDropMembers = mutantDropParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            mutantDropAnchor.SetAggregateModifiedProvider(
+                () => mutantDropMembers.Any(parameter =>
+                    parameter.Definition.Vanilla.TryGetValue("All", out var vanilla)
+                    && vanilla.ValueKind == System.Text.Json.JsonValueKind.Number
+                    && Math.Abs(parameter.CurrentNumber - vanilla.GetDouble()) > 0.0000001));
+
+            foreach (var member in mutantDropMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        mutantDropAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+
+        if (parametersById.TryGetValue("environment.electroAnomalyDamage", out var individualAnomalyDamageAnchor))
+        {
+            var individualAnomalyDamageMembers = individualAnomalyDamageParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            individualAnomalyDamageAnchor.SetAggregateModifiedProvider(
+                () => individualAnomalyDamageMembers.Any(parameter =>
+                    parameter.Definition.Vanilla.TryGetValue("All", out var vanilla)
+                    && vanilla.ValueKind == System.Text.Json.JsonValueKind.Number
+                    && Math.Abs(parameter.CurrentNumber - vanilla.GetDouble()) > 0.0000001));
+
+            foreach (var member in individualAnomalyDamageMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        individualAnomalyDamageAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+
+        if (parametersById.TryGetValue("loot.worldAmmoCratesRemoved", out var worldLootRemovalAnchor))
+        {
+            var worldLootRemovalMembers = worldLootRemovalParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            worldLootRemovalAnchor.SetAggregateModifiedProvider(
+                () => worldLootRemovalMembers.Any(parameter => Math.Abs(parameter.CurrentNumber) > 0.0000001));
+
+            foreach (var member in worldLootRemovalMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        worldLootRemovalAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+
+        if (parametersById.TryGetValue("health.bandageHealing", out var medicalHealingAnchor))
+        {
+            var medicalHealingMembers = medicalHealingParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            medicalHealingAnchor.SetAggregateModifiedProvider(
+                () => medicalHealingMembers.Any(parameter =>
+                    parameter.Definition.Vanilla.TryGetValue("All", out var vanilla)
+                    && vanilla.ValueKind == System.Text.Json.JsonValueKind.Number
+                    && Math.Abs(parameter.CurrentNumber - vanilla.GetDouble()) > 0.0000001));
+
+            foreach (var member in medicalHealingMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        medicalHealingAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+
+        if (parametersById.TryGetValue("stamina.sprintCost", out var actionCostAnchor))
+        {
+            var actionCostMembers = actionCostParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            actionCostAnchor.SetAggregateModifiedProvider(
+                () => actionCostMembers.Any(parameter =>
+                    parameter.Definition.Vanilla.TryGetValue("All", out var vanilla)
+                    && vanilla.ValueKind == System.Text.Json.JsonValueKind.Number
+                    && Math.Abs(parameter.CurrentNumber - vanilla.GetDouble()) > 0.0000001));
+
+            foreach (var member in actionCostMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        actionCostAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+
+        if (parametersById.TryGetValue("economy.consumableCost", out var itemPriceScalerAnchor))
+        {
+            var itemPriceScalerMembers = itemPriceScalerParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            itemPriceScalerAnchor.SetAggregateModifiedProvider(
+                () => itemPriceScalerMembers.Any(parameter => Math.Abs(parameter.CurrentNumber - 1.0) > 0.0000001));
+
+            foreach (var member in itemPriceScalerMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        itemPriceScalerAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+
+        if (parametersById.TryGetValue("combat.mutantHealth.bloodsucker", out var mutantHealthAnchor))
+        {
+            var mutantHealthMembers = mutantHealthParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            mutantHealthAnchor.SetAggregateModifiedProvider(
+                () => mutantHealthMembers.Any(parameter => Math.Abs(parameter.CurrentNumber - 1.0) > 0.0000001));
+
+            foreach (var member in mutantHealthMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        mutantHealthAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+
+        if (parametersById.TryGetValue("combat.mutantCooldown.bloodsucker", out var specialAbilityCooldownAnchor))
+        {
+            var specialAbilityCooldownMembers = specialAbilityCooldownParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            specialAbilityCooldownAnchor.SetAggregateModifiedProvider(
+                () => specialAbilityCooldownMembers.Any(parameter =>
+                    Math.Abs(parameter.CurrentNumber - parameter.ReferenceNumber) > 0.0000001));
+
+            foreach (var member in specialAbilityCooldownMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber)
+                        || args.PropertyName == nameof(ParameterViewModel.ReferenceLabel))
+                    {
+                        specialAbilityCooldownAnchor.RefreshAggregateModifiedState();
+                    }
+                };
+            }
+        }
+
+
+        if (parametersById.TryGetValue("alife.humanGroupSize.newbie", out var humanGroupSizeAnchor))
+        {
+            var members = humanGroupSizeParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+            humanGroupSizeAnchor.SetAggregateModifiedProvider(
+                () => members.Any(parameter => Math.Abs(parameter.CurrentNumber - 1.0) > 0.0000001));
+            foreach (var member in members)
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        humanGroupSizeAnchor.RefreshAggregateModifiedState();
+                };
+        }
+
+        if (parametersById.TryGetValue("alife.mutantGroupSize.newbie", out var mutantGroupSizeAnchor))
+        {
+            var members = mutantGroupSizeParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+            mutantGroupSizeAnchor.SetAggregateModifiedProvider(
+                () => members.Any(parameter => Math.Abs(parameter.CurrentNumber - 1.0) > 0.0000001));
+            foreach (var member in members)
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        mutantGroupSizeAnchor.RefreshAggregateModifiedState();
+                };
+        }
+
+        var dependencyChildren = new Dictionary<string, List<ParameterViewModel>>(StringComparer.Ordinal);
+        foreach (var child in parameterVMs.Where(p => !string.IsNullOrWhiteSpace(p.Definition.RequiresToggle)))
+        {
+            if (!parametersById.TryGetValue(child.Definition.RequiresToggle, out var parent) || !parent.IsToggle)
+                continue;
+
+            child.SetDependencyEnabledProvider(() => parent.CurrentBoolean);
+            if (!dependencyChildren.TryGetValue(parent.Id, out var children))
+            {
+                children = new List<ParameterViewModel>();
+                dependencyChildren[parent.Id] = children;
+            }
+            children.Add(child);
+        }
+
+        foreach (var p in parameterVMs)
+        {
+            // Constraints are driven directly by the slider's CurrentNumber property change.
+            // This keeps the cascade tied to the actual TwoWay WPF binding update instead of
+            // relying on the broader derived-state notification path.
+            p.PropertyChanged += (_, args) =>
+            {
+                if (!_suspendSliderConstraints
+                    && args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                {
+                    _sliderConstraintCoordinator.ApplyFrom(p);
+                }
+            };
+
+            p.StateChanged += (_, _) =>
+            {
+                if (dependencyChildren.TryGetValue(p.Id, out var children))
+                {
+                    foreach (var child in children)
+                        child.RefreshDependencyState();
+
+                    // If the currently selected child was just hidden by its parent toggle,
+                    // do not leave the rationale panel pointing at a control that no longer
+                    // exists in the visible list.
+                    SelectedTab?.EnsureVisibleSelection();
+                }
+                RefreshState();
+            };
+        }
+
+        foreach (var tab in catalog.Tabs.OrderBy(t => t.Order))
+        {
+            Tabs.Add(new TabViewModel(
+                tab.Id,
+                tab.Label,
+                parameterVMs.Where(p => p.Definition.Tab == tab.Id)
+                            .OrderBy(ParameterSortOrder)
+                            .ThenBy(p => p.Group)
+                            .ThenBy(p => p.Label)));
+        }
+
+        SelectedTab = Tabs.FirstOrDefault();
+
+        ResetCurrentTabCommand = new RelayCommand(_ => ResetCurrentTab(), _ => SelectedTab is not null);
+        ResetAllCommand = new RelayCommand(_ => ApplyReferenceDifficulty(resetAll: true));
+        SavePresetCommand = new RelayCommand(_ => SavePreset());
+        LoadPresetCommand = new RelayCommand(_ => LoadPreset());
+        BuildCommand = new RelayCommand(_ => Build());
+    }
+
+    public string BuildPresetName
+        => string.IsNullOrWhiteSpace(_loadedPresetName)
+            ? "Custom"
+            : _loadedPresetName;
+
+    public PresetListItem? SelectedPreset
+    {
+        get => _selectedPreset;
+        set
+        {
+            if (!SetProperty(ref _selectedPreset, value) || value is null || _suppressPresetSelection)
+                return;
+
+            LoadPresetFromPath(value.Path);
+        }
+    }
+
+    public string SelectedReferenceDifficulty
+    {
+        get => _selectedReferenceDifficulty;
+        set
+        {
+            if (!ReferenceDifficulties.Contains(value))
+                return;
+
+            if (SetProperty(ref _selectedReferenceDifficulty, value))
+            {
+                OnPropertyChanged(nameof(BasePresetIndex));
+                if (!_isApplyingReference)
+                    ApplyReferenceDifficulty(resetAll: true);
+            }
+        }
+    }
+
+    // UI-only numeric position for the four-step Base Preset slider.
+    // Presets continue to store the stable difficulty name, not this index.
+    public double BasePresetIndex
+    {
+        get
+        {
+            var index = ReferenceDifficulties.IndexOf(_selectedReferenceDifficulty);
+            return index < 0 ? 0 : index;
+        }
+        set
+        {
+            var index = (int)Math.Clamp(
+                Math.Round(value, MidpointRounding.AwayFromZero),
+                0,
+                ReferenceDifficulties.Count - 1);
+            SelectedReferenceDifficulty = ReferenceDifficulties[index];
+        }
+    }
+
+    public TabViewModel? SelectedTab
+    {
+        get => _selectedTab;
+        set => SetProperty(ref _selectedTab, value);
+    }
+
+
+
+    // Footer counts reflect controls that are currently active/visible. Hidden dependent
+    // Master children keep their values for preset round-trips, but they are not part of
+    // the effective build while the parent bundle is OFF.
+    public int ModifiedCount => AllParameters.Count(p => p.IsControlEnabled && p.IsControlVisible && p.IsModified);
+    public int UntouchedCount => AllParameters.Count(p => p.IsControlEnabled && p.IsControlVisible && !p.IsModified);
+
+    private void ApplyReferenceDifficulty(bool resetAll)
+    {
+        _isApplyingReference = true;
+        _suspendSliderConstraints = true;
+        try
+        {
+            foreach (var p in AllParameters)
+                p.ChangeReferenceDifficulty(_selectedReferenceDifficulty, resetAll);
+        }
+        finally
+        {
+            _suspendSliderConstraints = false;
+            _isApplyingReference = false;
+        }
+
+        _sliderConstraintCoordinator.NormalizeAll();
+        RefreshState();
+    }
+
+    private void ResetCurrentTab()
+    {
+        if (SelectedTab is null)
+            return;
+
+        _suspendSliderConstraints = true;
+        try
+        {
+            foreach (var p in SelectedTab.Parameters)
+                p.ResetToReference(false);
+        }
+        finally
+        {
+            _suspendSliderConstraints = false;
+        }
+
+        _sliderConstraintCoordinator.NormalizeAll();
+        RefreshState();
+    }
+
+    private void RefreshPresetList(string? selectPath = null)
+    {
+        var items = _presetDirectoryService.List();
+        AvailablePresets.Clear();
+        foreach (var item in items)
+            AvailablePresets.Add(item);
+
+        if (!string.IsNullOrWhiteSpace(selectPath))
+            SelectPresetPath(selectPath);
+    }
+
+    private void SelectPresetPath(string path)
+    {
+        var fullPath = Path.GetFullPath(path);
+        var match = AvailablePresets.FirstOrDefault(p =>
+            string.Equals(Path.GetFullPath(p.Path), fullPath, StringComparison.OrdinalIgnoreCase));
+
+        _suppressPresetSelection = true;
+        try
+        {
+            SelectedPreset = match;
+        }
+        finally
+        {
+            _suppressPresetSelection = false;
+        }
+    }
+
+    private static bool RequiresAttackFrequencyPresetMigration(string? toolVersion)
+    {
+        if (string.IsNullOrWhiteSpace(toolVersion))
+            return true;
+
+        return !Version.TryParse(toolVersion, out var parsed)
+            || parsed < new Version(0, 1, 96);
+    }
+
+    private static bool RequiresPositiveTreatmentMagnitudePresetMigration(string? toolVersion)
+    {
+        if (string.IsNullOrWhiteSpace(toolVersion))
+            return true;
+
+        return !Version.TryParse(toolVersion, out var parsed)
+            || parsed < new Version(0, 2, 45);
+    }
+
+    private static bool IsPositiveTreatmentMagnitudeParameter(string parameterId) => parameterId is
+        "health.bandageBleeding" or
+        "health.medkitBleeding" or
+        "health.armyMedkitBleeding" or
+        "health.ecoMedkitBleeding" or
+        "health.ecoMedkitAntirad" or
+        "health.antiRadRadiation";
+
+    private static bool RequiresPositiveAimingPenaltyMagnitudePresetMigration(string? toolVersion)
+    {
+        if (string.IsNullOrWhiteSpace(toolVersion))
+            return true;
+
+        return !Version.TryParse(toolVersion, out var parsed)
+            || parsed < new Version(0, 2, 46);
+    }
+
+    private static bool RequiresPositiveHungerPenaltyMagnitudePresetMigration(string? toolVersion)
+    {
+        if (string.IsNullOrWhiteSpace(toolVersion))
+            return true;
+
+        return !Version.TryParse(toolVersion, out var parsed)
+            || parsed < new Version(0, 2, 47);
+    }
+
+    private static bool IsPositiveHungerPenaltyMagnitudeParameter(string parameterId) => parameterId is
+        "survival.hungerMediumStaminaRegen" or
+        "survival.hungerStrongStaminaRegen";
+
+    private static bool RequiresPositiveMasterPenaltyMagnitudePresetMigration(string? toolVersion)
+    {
+        if (string.IsNullOrWhiteSpace(toolVersion))
+            return true;
+
+        return !Version.TryParse(toolVersion, out var parsed)
+            || parsed < new Version(0, 2, 50);
+    }
+
+    private static bool IsPositiveMasterPenaltyMagnitudeParameter(string parameterId) => parameterId is
+        "health.masterLowHealthPenalty" or
+        "survival.starvationHealthRegenPenalty" or
+        "survival.severeFatigueMaxStamina" or
+        "survival.severeFatigueCarryWeight";
+
+    private static bool RequiresCrateReductionPresetMigration(string? toolVersion)
+    {
+        if (string.IsNullOrWhiteSpace(toolVersion))
+            return true;
+
+        return !Version.TryParse(toolVersion, out var parsed)
+            || parsed < new Version(0, 3, 5);
+    }
+
+    private static bool RequiresWorldLootSliderPresetMigration(string? toolVersion)
+    {
+        if (string.IsNullOrWhiteSpace(toolVersion))
+            return true;
+        return !Version.TryParse(toolVersion, out var parsed) || parsed < new Version(0, 4, 7);
+    }
+
+    private void SavePreset()
+    {
+        _sliderConstraintCoordinator.NormalizeAll();
+
+        var dialog = new SaveFileDialog
+        {
+            Title = "Save True Custom Difficulty preset",
+            Filter = "JSON preset (*.json)|*.json",
+            DefaultExt = ".json",
+            AddExtension = true,
+            FileName = "custom-preset.json",
+            InitialDirectory = _presetDirectoryService.Ensure()
+        };
+        if (dialog.ShowDialog() != true)
+            return;
+
+        var preset = new PresetFile
+        {
+            PresetFormatVersion = PresetService.CurrentPresetVersion,
+            Name = Path.GetFileNameWithoutExtension(dialog.FileName),
+            ToolVersion = AppVersion,
+            GameVersion = GameVersion,
+            ReferenceDifficulty = SelectedReferenceDifficulty,
+            SavedAtUtc = DateTimeOffset.UtcNow,
+            // Save the complete control state, not only modified values.
+            // This makes a preset deterministic when loaded into a fresh session.
+            Values = AllParameters.ToDictionary(
+                p => p.Id,
+                p => p.ToPresetValue(),
+                StringComparer.Ordinal)
+        };
+
+        try
+        {
+            _presetService.Save(preset, dialog.FileName);
+            RefreshPresetList(Path.GetFullPath(dialog.FileName));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            MessageBox.Show(
+                $"Preset could not be saved.\n\n{ex.Message}",
+                AppName,
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+    }
+
+    private void LoadPreset()
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = "Load True Custom Difficulty preset",
+            Filter = "JSON preset (*.json)|*.json",
+            DefaultExt = ".json",
+            InitialDirectory = _presetDirectoryService.Ensure()
+        };
+        if (dialog.ShowDialog() != true)
+            return;
+
+        LoadPresetFromPath(dialog.FileName);
+    }
+
+    private void LoadPresetFromPath(string path)
+    {
+        try
+        {
+            var preset = _presetService.Load(path);
+
+            if (!ReferenceDifficulties.Contains(preset.ReferenceDifficulty))
+            {
+                throw new InvalidDataException(
+                    $"Preset base preset '{preset.ReferenceDifficulty}' is not supported.");
+            }
+
+            // Always reset every current control to the preset's baseline first.
+            // Older presets may not contain parameters added by newer tool versions;
+            // those controls therefore land on vanilla instead of keeping stale session state.
+            // Constraint propagation is suspended for the bulk import so file ordering cannot
+            // influence the result; one deterministic normalization pass runs afterwards.
+            _isApplyingReference = true;
+            _suspendSliderConstraints = true;
+            try
+            {
+                _selectedReferenceDifficulty = preset.ReferenceDifficulty;
+                OnPropertyChanged(nameof(SelectedReferenceDifficulty));
+                OnPropertyChanged(nameof(BasePresetIndex));
+
+                foreach (var parameter in AllParameters)
+                    parameter.ChangeReferenceDifficulty(_selectedReferenceDifficulty, true);
+
+                var parametersById = AllParameters.ToDictionary(p => p.Id, StringComparer.Ordinal);
+                var migrateAttackFrequency = RequiresAttackFrequencyPresetMigration(preset.ToolVersion);
+                var migratePositiveTreatmentMagnitude = RequiresPositiveTreatmentMagnitudePresetMigration(preset.ToolVersion);
+                var migratePositiveAimingPenaltyMagnitude = RequiresPositiveAimingPenaltyMagnitudePresetMigration(preset.ToolVersion);
+                var migratePositiveHungerPenaltyMagnitude = RequiresPositiveHungerPenaltyMagnitudePresetMigration(preset.ToolVersion);
+                var migratePositiveMasterPenaltyMagnitude = RequiresPositiveMasterPenaltyMagnitudePresetMigration(preset.ToolVersion);
+                var migrateCrateReduction = RequiresCrateReductionPresetMigration(preset.ToolVersion);
+                var migrateWorldLootSliders = RequiresWorldLootSliderPresetMigration(preset.ToolVersion);
+
+                if (migrateCrateReduction)
+                {
+                    // v0.3.4 briefly exposed binary Spawn X Crates toggles where false meant
+                    // remove 100% of the corresponding audited category. Preserve that exact
+                    // gameplay when loading such a preset into the v0.3.5+ category+percentage model.
+                    var migratedAnyCrateRemoval = false;
+                    if (preset.Values.TryGetValue("loot.spawnAmmoCrates", out var oldAmmo)
+                        && oldAmmo.Boolean == false
+                        && parametersById.TryGetValue("loot.reduceAmmoCrates", out var ammoReduction))
+                    {
+                        ammoReduction.CurrentBoolean = true;
+                        migratedAnyCrateRemoval = true;
+                    }
+
+                    if (preset.Values.TryGetValue("loot.spawnFoodDrinkCrates", out var oldFood)
+                        && oldFood.Boolean == false
+                        && parametersById.TryGetValue("loot.reduceFoodDrinkCrates", out var foodReduction))
+                    {
+                        foodReduction.CurrentBoolean = true;
+                        migratedAnyCrateRemoval = true;
+                    }
+
+                    if (preset.Values.TryGetValue("loot.spawnMedicalCrates", out var oldMedical)
+                        && oldMedical.Boolean == false
+                        && parametersById.TryGetValue("loot.reduceMedicalCrates", out var medicalReduction))
+                    {
+                        medicalReduction.CurrentBoolean = true;
+                        migratedAnyCrateRemoval = true;
+                    }
+
+                    if (migratedAnyCrateRemoval
+                        && parametersById.TryGetValue("loot.crateRemovalPercent", out var cratePercent))
+                    {
+                        cratePercent.CurrentNumber = 1.0;
+                    }
+                }
+
+                if (migrateWorldLootSliders)
+                {
+                    // v0.4.8 removes the World Loot enable checkboxes and the shared crate percentage.
+                    // Preserve old gameplay by folding enable-state + amount into each standalone slider.
+                    var sharedCrateFraction = preset.Values.TryGetValue("loot.crateRemovalPercent", out var oldCratePercent)
+                        && oldCratePercent.Number.HasValue
+                        ? Math.Clamp(oldCratePercent.Number.Value, 0.0, 1.0)
+                        : 0.0;
+
+                    void MigrateCrate(string newId, string oldToggleId, string legacySpawnId)
+                    {
+                        var enabled = preset.Values.TryGetValue(oldToggleId, out var oldToggle) && oldToggle.Boolean == true;
+                        if (!enabled && preset.Values.TryGetValue(legacySpawnId, out var oldSpawn) && oldSpawn.Boolean == false)
+                        {
+                            enabled = true;
+                            if (sharedCrateFraction <= 0.0) sharedCrateFraction = 1.0;
+                        }
+                        if (parametersById.TryGetValue(newId, out var target))
+                            target.CurrentNumber = enabled ? sharedCrateFraction : 0.0;
+                    }
+
+                    MigrateCrate("loot.worldAmmoCratesRemoved", "loot.reduceAmmoCrates", "loot.spawnAmmoCrates");
+                    MigrateCrate("loot.worldFoodDrinkCratesRemoved", "loot.reduceFoodDrinkCrates", "loot.spawnFoodDrinkCrates");
+                    MigrateCrate("loot.worldMedicalCratesRemoved", "loot.reduceMedicalCrates", "loot.spawnMedicalCrates");
+
+                    var weaponEnabled = preset.Values.TryGetValue("loot.worldWeaponShuffle", out var oldWeaponToggle)
+                                        && oldWeaponToggle.Boolean == true;
+                    if (!weaponEnabled
+                        && preset.Values.TryGetValue("loot.worldWeaponShuffleAmount", out var oldWeaponAmount)
+                        && oldWeaponAmount.Number.GetValueOrDefault() > 0.0)
+                        weaponEnabled = true;
+                    if (parametersById.TryGetValue("loot.worldWeaponShuffle", out var weaponToggle))
+                        weaponToggle.CurrentBoolean = weaponEnabled;
+                }
+
+                foreach (var pair in preset.Values)
+                {
+                    if (!parametersById.TryGetValue(pair.Key, out var parameter))
+                        continue;
+
+                    if (migrateAttackFrequency
+                        && (pair.Key is "combat.npcAttackCooldown" or "combat.mutantAttackCooldown")
+                        && pair.Value.Number is > 0.0000001)
+                    {
+                        // Before v0.1.96 these controls stored the raw cooldown multiplier.
+                        // v0.1.96 presents an intuitive frequency multiplier instead:
+                        // frequency = 1 / cooldown. Preserve the old preset's gameplay.
+                        var migrated = new PresetValue
+                        {
+                            Kind = pair.Value.Kind,
+                            Number = 1.0 / pair.Value.Number.Value,
+                            MinNumber = pair.Value.MinNumber,
+                            MaxNumber = pair.Value.MaxNumber,
+                            Boolean = pair.Value.Boolean,
+                            Text = pair.Value.Text
+                        };
+                        parameter.ApplyPresetValue(migrated);
+                    }
+                    else if (migratePositiveTreatmentMagnitude
+                        && IsPositiveTreatmentMagnitudeParameter(pair.Key)
+                        && pair.Value.Number is < 0.0)
+                    {
+                        // Before v0.2.45 direct bleeding/radiation treatment controls exposed
+                        // the engine's negative delta. The UI now stores an intuitive positive
+                        // removal magnitude while the writer negates it back to the CFG value.
+                        var migrated = new PresetValue
+                        {
+                            Kind = pair.Value.Kind,
+                            Number = Math.Abs(pair.Value.Number.Value),
+                            MinNumber = pair.Value.MinNumber,
+                            MaxNumber = pair.Value.MaxNumber,
+                            Boolean = pair.Value.Boolean,
+                            Text = pair.Value.Text
+                        };
+                        parameter.ApplyPresetValue(migrated);
+                    }
+                    else if (migratePositiveAimingPenaltyMagnitude
+                        && pair.Key == "stamina.aimRegenCoef"
+                        && pair.Value.Number is < 0.0)
+                    {
+                        // Before v0.2.46 Aiming Stamina Cost exposed the engine's negative
+                        // regeneration coefficient. The UI now stores a positive recovery-penalty
+                        // magnitude and the writer negates it back to the original CFG convention.
+                        var migrated = new PresetValue
+                        {
+                            Kind = pair.Value.Kind,
+                            Number = Math.Abs(pair.Value.Number.Value),
+                            MinNumber = pair.Value.MinNumber,
+                            MaxNumber = pair.Value.MaxNumber,
+                            Boolean = pair.Value.Boolean,
+                            Text = pair.Value.Text
+                        };
+                        parameter.ApplyPresetValue(migrated);
+                    }
+                    else if (migratePositiveHungerPenaltyMagnitude
+                        && IsPositiveHungerPenaltyMagnitudeParameter(pair.Key)
+                        && pair.Value.Number is < 0.0)
+                    {
+                        // Before v0.2.47 the two standard hunger stamina-recovery controls exposed
+                        // the engine's negative regeneration modifier. The UI now stores a positive
+                        // penalty magnitude while the writer negates it back to the CFG convention.
+                        var migrated = new PresetValue
+                        {
+                            Kind = pair.Value.Kind,
+                            Number = Math.Abs(pair.Value.Number.Value),
+                            MinNumber = pair.Value.MinNumber,
+                            MaxNumber = pair.Value.MaxNumber,
+                            Boolean = pair.Value.Boolean,
+                            Text = pair.Value.Text
+                        };
+                        parameter.ApplyPresetValue(migrated);
+                    }
+                    else if (migratePositiveMasterPenaltyMagnitude
+                        && IsPositiveMasterPenaltyMagnitudeParameter(pair.Key)
+                        && pair.Value.Number is < 0.0)
+                    {
+                        // Before v0.2.50 these Master penalty/loss controls exposed the engine's
+                        // negative CFG delta. The UI now stores a positive penalty magnitude while
+                        // negateSet preserves the exact original runtime value.
+                        var migrated = new PresetValue
+                        {
+                            Kind = pair.Value.Kind,
+                            Number = Math.Abs(pair.Value.Number.Value),
+                            MinNumber = pair.Value.MinNumber,
+                            MaxNumber = pair.Value.MaxNumber,
+                            Boolean = pair.Value.Boolean,
+                            Text = pair.Value.Text
+                        };
+                        parameter.ApplyPresetValue(migrated);
+                    }
+                    else
+                    {
+                        parameter.ApplyPresetValue(pair.Value);
+                    }
+                }
+            }
+            finally
+            {
+                _suspendSliderConstraints = false;
+                _isApplyingReference = false;
+            }
+
+            _sliderConstraintCoordinator.NormalizeAll();
+            RefreshState();
+            _loadedPresetName = string.IsNullOrWhiteSpace(preset.Name)
+                ? Path.GetFileNameWithoutExtension(path)
+                : preset.Name;
+            SelectPresetPath(path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            MessageBox.Show(
+                $"Preset could not be loaded.\n\n{ex.Message}",
+                AppName,
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+    }
+
+    private void Build()
+    {
+        try
+        {
+            _sliderConstraintCoordinator.NormalizeAll();
+            var result = _modBuildService.Build(this, _catalog, _gameInstall);
+
+            if (!result.HasMod)
+            {
+                MessageBox.Show(
+                    "No gameplay values differ from the selected vanilla baseline.\n\n" +
+                    "No mod was built and the Output folder was cleared so an older build cannot be mistaken for the current state.",
+                    AppName,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+                return;
+            }
+
+            MessageBox.Show(
+                $"Built True Custom Difficulty successfully.\n\n" +
+                $"{result.PatchFileCount} BPatch CFG file(s)\n" +
+                $"{result.ParameterCount} modified control(s)\n" +
+                $"{result.EditCount} concrete CFG edit(s)\n\n" +
+                $"Output:\n{result.OutputDirectory}\n\n" +
+                "Output contains only:\n" +
+                string.Join("\n", result.Files.Select(Path.GetFileName)),
+                AppName,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            MessageBox.Show(
+                $"Mod could not be built.\n\n{ex.Message}",
+                AppName,
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+    }
+
+    private static int ParameterSortOrder(ParameterViewModel parameter)
+    {
+        if (parameter.Definition.Tab == "environment")
+        {
+            return parameter.Id switch
+            {
+                // Keep the aggregate anomaly controls together at the very bottom:
+                // Global immediately above Individual.
+                "environment.anomalyDamage" => 900,
+                "environment.electroAnomalyDamage" => 910,
+                _ => 100
+            };
+        }
+
+        if (parameter.Definition.Tab == "combat")
+        {
+            return parameter.Id switch
+            {
+                // Human Enemies
+                "combat.npcHealth" => 0,
+                "combat.npcWeaponDamage" => 10,
+                "combat.npcAttackCooldown" => 20,
+                "combat.npcHipAccuracy" => 30,
+
+                // Mutants
+                "combat.mutantDamage" => 40,
+                "combat.mutantAttackCooldown" => 50,
+
+                // Your Weapons
+                "combat.playerWeaponDamage" => 60,
+                "combat.playerHeadshotMultiplier" => 70,
+                "combat.weaponJamming" => 80,
+
+                // Explosives
+                "combat.explosionDamage" => 90,
+
+                // Taking Repeated Hits
+                "combat.accumulatedDamageWeightMax" => 100,
+                "combat.accumulatedDamageWeightMin" => 110,
+                "combat.accumulatedDamageIncludesHealedHealth" => 120,
+
+                // Mutant Health radar, followed by a separate Special Ability Cooldowns list.
+                "combat.mutantHealth.bloodsucker" => 130,
+                "combat.mutantHealth.chimera" => 130,
+                "combat.mutantHealth.deer" => 130,
+                "combat.mutantHealth.pseudogiant" => 130,
+                "combat.mutantHealth.pseudodog" => 130,
+                "combat.mutantHealth.burer" => 130,
+                "combat.mutantHealth.bayun" => 130,
+                "combat.mutantHealth.controller" => 130,
+
+                "combat.mutantCooldown.bloodsucker" => 140,
+                "combat.mutantCooldown.chimera" => 141,
+                "combat.mutantCooldown.deer" => 142,
+                "combat.mutantCooldown.pseudogiant" => 143,
+                "combat.mutantCooldown.pseudodog" => 144,
+                "combat.mutantCooldown.burer" => 145,
+                "combat.mutantCooldown.bayun" => 146,
+                "combat.mutantCooldown.controller" => 147,
+
+                // Psy Combat
+                "combat.psySpawnCycleDelay" => 160,
+                "combat.psyPhantomCount" => 170,
+                "combat.psyBleeding" => 180,
+                "combat.psyDurabilityDamage" => 190,
+                _ => 199
+            };
+        }
+
+        if (parameter.Definition.Tab == "survival")
+        {
+            return parameter.Id switch
+            {
+                // Hunger
+                "survival.hungerRate" => 0,
+                "survival.wellFedStaminaRegen" => 40,
+                "survival.hungerMediumStaminaRegen" => 50,
+                "survival.hungerStrongStaminaRegen" => 60,
+                "survival.satietyScalar" => 70,
+
+                // Extra starvation bundle
+                "advanced.starvationMechanics" => 100,
+                "survival.starvationStaminaDrain" => 120,
+                "survival.starvationDamage" => 130,
+                "survival.starvationDamageInterval" => 140,
+                "survival.starvationPenaltyDelay" => 150,
+                "survival.starvationHealthRegenPenalty" => 160,
+
+                // Standard fatigue
+                "survival.sleepinessRate" => 200,
+                "survival.energyDrinkFatigueRelief" => 210,
+                "survival.fatigueLowAimPenalty" => 240,
+                "survival.fatigueMediumAimPenalty" => 250,
+                "survival.fatigueStrongAimPenalty" => 260,
+                "survival.fatigueMediumReloadPenalty" => 270,
+                "survival.fatigueStrongReloadPenalty" => 280,
+
+                // Sleeping
+                "survival.sleepEligibilityThreshold" => 300,
+                "survival.minimumSleepHours" => 310,
+                "survival.sleepHoursMultiplier" => 320,
+                "survival.sleepHealthRestore" => 340,
+                "survival.sleepStaminaRestore" => 350,
+
+                // Extra Master fatigue bundle
+                "advanced.fatigueMechanics" => 400,
+                "survival.severeFatigueMaxStamina" => 420,
+                "survival.severeFatigueCarryWeight" => 430,
+                "survival.severeFatigueRecoil" => 440,
+                "survival.severeFatigueAimSway" => 450,
+                "survival.severeFatigueDispersion" => 460,
+
+                // Radiation
+                "survival.radiationAccumulation" => 500,
+                "survival.radiationRecovery" => 510,
+                "advanced.radiationMechanics" => 520,
+                "survival.radiationStaminaDrainPenalty" => 540,
+
+                // Bleeding
+                "survival.bleedingSeverity" => 600,
+                "survival.bleedingRecovery" => 610,
+                "survival.bleedingLowDamage" => 650,
+                "survival.bleedingMediumDamage" => 660,
+                "survival.bleedingStrongDamage" => 670,
+                _ => 699
+            };
+        }
+
+        if (parameter.Definition.Tab == "health")
+        {
+            return parameter.Id switch
+            {
+                // Core Health
+                "health.maxHP" => 0,
+                "health.baseRegen" => 10,
+                "health.regenDelay" => 20,
+                "health.regenerationScalar" => 30,
+
+                // Low Health
+                "health.lowHealthRegen" => 110,
+                "advanced.lowHealthMechanics" => 120,
+                "health.masterLowHealthPenalty" => 140,
+
+                // Direct healing
+                "health.bandageHealing" => 200,
+                "health.medkitHealing" => 210,
+                "health.armyMedkitHealing" => 220,
+                "health.ecoMedkitHealing" => 230,
+                "health.foodHealing" => 240,
+
+                // Master medical modifier subset
+                "health.masterBandageModifier" => 300,
+                "health.masterMedkitModifier" => 310,
+                "health.masterArmyMedkitModifier" => 320,
+
+                // Bleeding treatment
+                "health.bandageBleeding" => 400,
+                "health.medkitBleeding" => 410,
+                "health.armyMedkitBleeding" => 420,
+                "health.ecoMedkitBleeding" => 430,
+
+                // Radiation treatment
+                "health.ecoMedkitAntirad" => 500,
+                "health.antiRadRadiation" => 510,
+
+                _ => 699
+            };
+        }
+
+
+        if (parameter.Definition.Tab == "stamina")
+        {
+            return parameter.Id switch
+            {
+                // Core stamina
+                "stamina.maxSP" => 0,
+                "stamina.regeneration" => 10,
+
+                // Exhaustion and recovery
+                "stamina.sprintDisableThreshold" => 100,
+                "stamina.sprintRecoveryDelay" => 110,
+                "stamina.lowRecoveryThreshold" => 120,
+                "stamina.lowRecoveryStrength" => 130,
+                "stamina.lowRecoveryDuration" => 140,
+
+                // Action costs
+                "stamina.sprintCost" => 200,
+                "stamina.aimRegenCoef" => 205,
+                "stamina.jumpCost" => 210,
+                "stamina.vaultCost" => 220,
+                "stamina.meleeNormalCost" => 230,
+                "stamina.meleeStrongCost" => 240,
+                "stamina.butstockCost" => 250,
+
+                // Internal movement-state stamina effects (normal UI-hidden in v0.1.90+).
+                "stamina.sprintRegenCoef" => 300,
+                "stamina.sprintUnderRunSpeedRegenCoef" => 330,
+                "stamina.runRegenCoef" => 340,
+                "stamina.joggingRegenCoef" => 350,
+                "stamina.slowRunRegenCoef" => 360,
+
+                // Traversal
+                "stamina.vaultMaxHeight" => 400,
+
+                // Water
+                "stamina.waterMediumDrain" => 500,
+                "stamina.waterStrongDrain" => 510,
+
+                // Encumbrance
+                "stamina.maxCarryWeight" => 600,
+                _ => 699
+            };
+        }
+
+        if (parameter.Definition.Tab == "economy")
+        {
+            return parameter.Id switch
+            {
+                // Starting Coupons
+                "economy.startingMoney" => 0,
+
+                // Coupon Rewards
+                "economy.mainQuestReward" => 10,
+                "economy.sideQuestReward" => 20,
+
+                // Trading
+                "economy.buyCondition" => 100,
+                "economy.sellCondition" => 110,
+                "economy.traderMinBuyCondition" => 120,
+                "economy.itemValueFloor" => 130,
+                "economy.medicStock" => 150,
+
+                // Item Price Scalers
+                "economy.consumableCost" => 200,
+                "economy.ammoCost" => 210,
+                "economy.armorCost" => 220,
+                "economy.weaponCost" => 230,
+                "economy.artifactCost" => 240,
+
+                // Services
+                "economy.upgradeCost" => 300,
+                "economy.repairDifficultyCost" => 310,
+                "economy.repairCostBase" => 320,
+
+                // Repair per Reputation
+                "economy.repairEnemy" => 400,
+                "economy.repairDisaffection" => 410,
+                "economy.repairNeutral" => 420,
+                "economy.repairFriend" => 430,
+
+                _ => 599
+            };
+        }
+
+        if (parameter.Definition.Tab == "equipment")
+        {
+            return parameter.Id switch
+            {
+                // Armor Wear
+                "equipment.armorDurability" => 0,
+
+                // Weapon Wear
+                "equipment.weaponWearPerShot" => 100,
+                _ => 299
+            };
+        }
+
+        if (parameter.Definition.Tab == "master")
+        {
+            return parameter.Id switch
+            {
+                // Starvation bundle
+                "advanced.starvationMechanics" => 300,
+                "survival.starvationStaminaDrain" => 320,
+                "survival.starvationDamage" => 330,
+                "survival.starvationDamageInterval" => 340,
+                "survival.starvationPenaltyDelay" => 350,
+                "survival.starvationHealthRegenPenalty" => 360,
+
+                // Severe fatigue bundle
+                "advanced.fatigueMechanics" => 400,
+                "survival.severeFatigueMaxStamina" => 420,
+                "survival.severeFatigueCarryWeight" => 430,
+                "survival.severeFatigueRecoil" => 440,
+                "survival.severeFatigueAimSway" => 450,
+                "survival.severeFatigueDispersion" => 460,
+
+                // Radiation bundle
+                "advanced.radiationMechanics" => 500,
+                "survival.radiationStaminaDrainPenalty" => 520,
+
+                // Low-health bundle
+                "advanced.lowHealthMechanics" => 600,
+                "health.masterLowHealthPenalty" => 620,
+
+                // Master EffectModifier bundle
+                "advanced.masterEffectModifierMechanics" => 700,
+                "health.masterBandageModifier" => 710,
+                "health.masterMedkitModifier" => 720,
+                "health.masterArmyMedkitModifier" => 730,
+                _ => 799
+            };
+        }
+
+        if (parameter.Definition.Tab == "loot")
+        {
+            if (parameter.Group == "Mutant Drops")
+                return 300;
+            return parameter.Id switch
+            {
+                "loot.npcCorpseBonus" => 0,
+                "loot.npcMedicalChance" => 10,
+                "loot.npcWeaponAmmoSupply" => 20,
+                "loot.droppedWeaponCondition" => 30,
+                "loot.cheapStashAmmoQuantity" => 100,
+                "loot.cheapStashGrenadeChance" => 110,
+                "loot.cheapStashGrenadeQuantity" => 120,
+                "loot.mediumStashAmmoQuantity" => 130,
+                "loot.destructibleAmmoQuantity" => 140,
+                "loot.ammoBoxWeight918" => 145,
+                "loot.destructibleGrenadeQuantity" => 150,
+                "loot.expensiveStashAmmoQuantity" => 160,
+                "loot.expensiveStashMoneyChance" => 170,
+
+                "loot.worldAmmoCratesRemoved" => 200,
+                "loot.worldF1GrenadeBoxes" => 205,
+                "loot.worldFoodDrinkCratesRemoved" => 210,
+                "loot.worldMedicalCratesRemoved" => 220,
+                "loot.looseWorldLootRemoved" => 230,
+                "loot.worldWeaponShuffle" => 240,
+                "loot.worldWeaponDensity" => 245,
+                "loot.worldAttachmentShuffle" => 250,
+                "loot.worldDetectors" => 255,
+                "loot.blueprintShuffle" => 260,
+                _ => 260
+            };
+        }
+
+        return 100;
+    }
+
+    private void RefreshState()
+    {
+        foreach (var p in _anomalyDerivedParameters)
+            p.RefreshComputedValues();
+
+        OnPropertyChanged(nameof(ModifiedCount));
+        OnPropertyChanged(nameof(UntouchedCount));
+    }
+}

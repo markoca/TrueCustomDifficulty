@@ -1,0 +1,372 @@
+using System.Diagnostics;
+using System.IO;
+using TrueCustomDifficulty.Models;
+using TrueCustomDifficulty.ViewModels;
+
+namespace TrueCustomDifficulty.Services;
+
+/// <summary>
+/// End-to-end player build pipeline:
+/// current UI state -> temporary minimal BPatch CFG tree -> repak .pak ->
+/// retoc companion IoStore container -> final .pak/.utoc/.ucas triplet in Output/.
+///
+/// Third-party executables are never bundled or downloaded by the application.
+/// repak and retoc must be supplied by the user in the tools directory beside the app.
+/// </summary>
+public sealed class ModBuildService
+{
+    private const string OutputPrefix = "zzzzz_TrueCustomDifficulty_";
+    private const string RepakVersion = "V11";
+    private const string RetocEngineVersion = "UE5_5";
+    private const string PakMountPoint = "../../../";
+
+    private readonly CfgPatchWriterService _cfgWriter = new();
+    private readonly ExternalToolsService _tools = new();
+
+    public ModBuildResult Build(
+        MainViewModel vm,
+        ParameterCatalog catalog,
+        GameInstallInfo? gameInstall)
+    {
+        var outputDirectory = Path.Combine(AppContext.BaseDirectory, "Output");
+        var workRoot = Path.Combine(
+            Path.GetTempPath(),
+            "TrueCustomDifficulty",
+            Guid.NewGuid().ToString("N"));
+
+        var stagingRoot = Path.Combine(workRoot, "staging");
+        var packedRoot = Path.Combine(workRoot, "packed");
+
+        try
+        {
+            Directory.CreateDirectory(stagingRoot);
+            Directory.CreateDirectory(packedRoot);
+
+            var cfgResult = _cfgWriter.Write(vm, catalog, gameInstall, stagingRoot);
+
+            if (cfgResult.FileCount == 0)
+            {
+                ReplaceOutputWithEmptyDirectory(outputDirectory);
+                return new ModBuildResult
+                {
+                    OutputDirectory = outputDirectory,
+                    HasMod = false,
+                    PatchFileCount = 0,
+                    ParameterCount = 0,
+                    EditCount = 0
+                };
+            }
+
+            var repakPath = _tools.Require("repak");
+            var retocPath = _tools.Require("retoc");
+
+            var modBaseName = BuildOutputBaseName(vm.BuildPresetName);
+            var pakPath = Path.Combine(packedRoot, modBaseName + ".pak");
+            var utocPath = Path.Combine(packedRoot, modBaseName + ".utoc");
+            var ucasPath = Path.Combine(packedRoot, modBaseName + ".ucas");
+
+            // CFG patches are ordinary loose files and belong in the .pak container.
+            // Explicit V11 + ../../../ produces paths such as
+            // ../../../Stalker2/Content/GameLite/GameData/... inside the archive.
+            RunRepak(repakPath, stagingRoot, pakPath);
+
+            // retoc's to-zen path creates the IoStore companion container. For this
+            // CFG-only staging tree there are no cooked assets to convert, and retoc
+            // intentionally leaves the already-existing .pak untouched.
+            RunRetoc(retocPath, stagingRoot, utocPath);
+
+            var expected = new[] { pakPath, utocPath, ucasPath };
+
+            ValidateTriplet(expected);
+            CommitTriplet(outputDirectory, expected);
+
+            var finalFiles = expected
+                .Select(path => Path.GetFileName(path))
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .Select(name => Path.Combine(outputDirectory, name!))
+                .ToList();
+
+            return new ModBuildResult
+            {
+                OutputDirectory = outputDirectory,
+                HasMod = true,
+                PatchFileCount = cfgResult.FileCount,
+                ParameterCount = cfgResult.ParameterCount,
+                EditCount = cfgResult.EditCount,
+                Files = finalFiles
+            };
+        }
+        finally
+        {
+            TryDeleteDirectory(workRoot);
+            TryDeleteEmptyParent(Path.GetDirectoryName(workRoot));
+        }
+    }
+
+    private static string BuildOutputBaseName(string? presetName)
+    {
+        var raw = string.IsNullOrWhiteSpace(presetName) ? "Custom" : presetName.Trim();
+        var invalid = Path.GetInvalidFileNameChars();
+        var safe = new string(raw
+            .Select(ch => invalid.Contains(ch) || char.IsWhiteSpace(ch) ? '_' : ch)
+            .ToArray());
+
+        while (safe.Contains("__", StringComparison.Ordinal))
+            safe = safe.Replace("__", "_", StringComparison.Ordinal);
+
+        safe = safe.Trim('_', '.');
+        if (string.IsNullOrWhiteSpace(safe))
+            safe = "Custom";
+
+        return OutputPrefix + safe;
+    }
+
+    private static void RunRepak(string repakPath, string stagingRoot, string pakPath)
+    {
+        var args = new[]
+        {
+            "pack",
+            stagingRoot,
+            pakPath,
+            "--mount-point",
+            PakMountPoint,
+            "--version",
+            RepakVersion
+        };
+
+        RunExternalTool(repakPath, args, Path.GetDirectoryName(pakPath), "repak");
+
+        if (!File.Exists(pakPath) || new FileInfo(pakPath).Length == 0)
+        {
+            throw new InvalidDataException(
+                "repak completed without producing a non-empty CFG .pak file." + Environment.NewLine +
+                $"Expected: {pakPath}");
+        }
+    }
+
+    private static void RunRetoc(string retocPath, string stagingRoot, string utocPath)
+    {
+        var args = new[]
+        {
+            "to-zen",
+            stagingRoot,
+            utocPath,
+            "--version",
+            RetocEngineVersion
+        };
+
+        RunExternalTool(retocPath, args, Path.GetDirectoryName(utocPath), "retoc");
+    }
+
+    private static void RunExternalTool(
+        string executablePath,
+        IEnumerable<string> arguments,
+        string? workingDirectory,
+        string displayName)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = executablePath,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            WorkingDirectory = workingDirectory ?? AppContext.BaseDirectory
+        };
+
+        foreach (var argument in arguments)
+            startInfo.ArgumentList.Add(argument);
+
+        try
+        {
+            using var process = Process.Start(startInfo)
+                ?? throw new InvalidDataException($"{displayName} could not be started.");
+
+            var stdoutTask = process.StandardOutput.ReadToEndAsync();
+            var stderrTask = process.StandardError.ReadToEndAsync();
+
+            process.WaitForExit();
+
+            var stdout = stdoutTask.GetAwaiter().GetResult().Trim();
+            var stderr = stderrTask.GetAwaiter().GetResult().Trim();
+
+            if (process.ExitCode != 0)
+            {
+                var details = BuildProcessDetails(stdout, stderr);
+                throw new InvalidDataException(
+                    $"{displayName} failed with exit code {process.ExitCode}." +
+                    (string.IsNullOrWhiteSpace(details)
+                        ? string.Empty
+                        : Environment.NewLine + Environment.NewLine + details));
+            }
+        }
+        catch (InvalidDataException)
+        {
+            throw;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception)
+        {
+            throw new InvalidDataException(
+                $"{displayName} could not be executed from:{Environment.NewLine}  {executablePath}{Environment.NewLine}{Environment.NewLine}{ex.Message}",
+                ex);
+        }
+    }
+
+    private static string BuildProcessDetails(string stdout, string stderr)
+    {
+        var parts = new List<string>();
+        if (!string.IsNullOrWhiteSpace(stderr))
+            parts.Add(stderr);
+        if (!string.IsNullOrWhiteSpace(stdout))
+            parts.Add(stdout);
+
+        var text = string.Join(Environment.NewLine + Environment.NewLine, parts);
+        const int maxLength = 6000;
+        return text.Length <= maxLength ? text : text[^maxLength..];
+    }
+
+    private static void ValidateTriplet(IEnumerable<string> files)
+    {
+        var missing = new List<string>();
+        var empty = new List<string>();
+
+        foreach (var path in files)
+        {
+            if (!File.Exists(path))
+            {
+                missing.Add(Path.GetFileName(path));
+                continue;
+            }
+
+            if (new FileInfo(path).Length == 0)
+                empty.Add(Path.GetFileName(path));
+        }
+
+        if (missing.Count == 0 && empty.Count == 0)
+            return;
+
+        var messages = new List<string>();
+        if (missing.Count > 0)
+            messages.Add("Missing: " + string.Join(", ", missing));
+        if (empty.Count > 0)
+            messages.Add("Empty: " + string.Join(", ", empty));
+
+        throw new InvalidDataException(
+            "Packing did not produce a complete .pak/.utoc/.ucas triplet." + Environment.NewLine +
+            string.Join(Environment.NewLine, messages));
+    }
+
+    private static void CommitTriplet(string outputDirectory, IReadOnlyList<string> sourceFiles)
+    {
+        var baseDirectory = AppContext.BaseDirectory;
+        var candidateDirectory = Path.Combine(
+            baseDirectory,
+            ".tcd-output-" + Guid.NewGuid().ToString("N"));
+        var backupDirectory = Path.Combine(
+            baseDirectory,
+            ".tcd-output-backup-" + Guid.NewGuid().ToString("N"));
+
+        Directory.CreateDirectory(candidateDirectory);
+
+        try
+        {
+            foreach (var source in sourceFiles)
+            {
+                var name = Path.GetFileName(source);
+                if (string.IsNullOrWhiteSpace(name))
+                    throw new InvalidDataException($"Invalid packed output path: {source}");
+
+                File.Copy(source, Path.Combine(candidateDirectory, name), overwrite: true);
+            }
+
+            var hadPreviousOutput = Directory.Exists(outputDirectory);
+            if (hadPreviousOutput)
+                Directory.Move(outputDirectory, backupDirectory);
+
+            try
+            {
+                Directory.Move(candidateDirectory, outputDirectory);
+            }
+            catch
+            {
+                if (hadPreviousOutput && Directory.Exists(backupDirectory) && !Directory.Exists(outputDirectory))
+                    Directory.Move(backupDirectory, outputDirectory);
+                throw;
+            }
+
+            TryDeleteDirectory(backupDirectory);
+        }
+        finally
+        {
+            TryDeleteDirectory(candidateDirectory);
+        }
+    }
+
+    private static void ReplaceOutputWithEmptyDirectory(string outputDirectory)
+    {
+        var baseDirectory = AppContext.BaseDirectory;
+        var candidateDirectory = Path.Combine(
+            baseDirectory,
+            ".tcd-output-empty-" + Guid.NewGuid().ToString("N"));
+        var backupDirectory = Path.Combine(
+            baseDirectory,
+            ".tcd-output-backup-" + Guid.NewGuid().ToString("N"));
+
+        Directory.CreateDirectory(candidateDirectory);
+
+        try
+        {
+            var hadPreviousOutput = Directory.Exists(outputDirectory);
+            if (hadPreviousOutput)
+                Directory.Move(outputDirectory, backupDirectory);
+
+            try
+            {
+                Directory.Move(candidateDirectory, outputDirectory);
+            }
+            catch
+            {
+                if (hadPreviousOutput && Directory.Exists(backupDirectory) && !Directory.Exists(outputDirectory))
+                    Directory.Move(backupDirectory, outputDirectory);
+                throw;
+            }
+
+            TryDeleteDirectory(backupDirectory);
+        }
+        finally
+        {
+            TryDeleteDirectory(candidateDirectory);
+        }
+    }
+
+    private static void TryDeleteDirectory(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+            return;
+
+        try
+        {
+            Directory.Delete(path, recursive: true);
+        }
+        catch
+        {
+            // Best-effort cleanup only. Build success/failure is determined before this point.
+        }
+    }
+
+    private static void TryDeleteEmptyParent(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+            return;
+
+        try
+        {
+            if (!Directory.EnumerateFileSystemEntries(path).Any())
+                Directory.Delete(path);
+        }
+        catch
+        {
+            // Best-effort cleanup only.
+        }
+    }
+}

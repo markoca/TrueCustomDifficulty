@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ApplicationIcon>Assets\true-custom-difficulty.ico</ApplicationIcon>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>TrueCustomDifficulty</AssemblyName>
+    <RootNamespace>TrueCustomDifficulty</RootNamespace>
+    <ApplicationIcon Condition="Exists('app.ico')">app.ico</ApplicationIcon>
+    <Version>0.9.26.52</Version>
+
+    <!-- Release publish defaults: one self-contained Windows executable where possible. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <PublishTrimmed>false</PublishTrimmed>
+    <DebugType>None</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Embedded so the Nexus release does not need a Data directory. -->
+    <EmbeddedResource Include="Data\parameters.json" LogicalName="TrueCustomDifficulty.Data.parameters.json" />
+    <EmbeddedResource Include="Data\cfg-writer-baseline.json" LogicalName="TrueCustomDifficulty.Data.cfg-writer-baseline.json" />
+    <EmbeddedResource Include="Data\cheap-stash-production-redirect-manifest.csv" LogicalName="TrueCustomDifficulty.Data.cheap-stash-production-redirect-manifest.csv" />
+    <EmbeddedResource Include="Data\medium-stash-production-redirect-manifest.csv" LogicalName="TrueCustomDifficulty.Data.medium-stash-production-redirect-manifest.csv" />
+    <EmbeddedResource Include="Data\expensive-stash-production-redirect-manifest.csv" LogicalName="TrueCustomDifficulty.Data.expensive-stash-production-redirect-manifest.csv" />
+    <EmbeddedResource Include="Data\destructible-ammo-production-redirect-manifest.csv" LogicalName="TrueCustomDifficulty.Data.destructible-ammo-production-redirect-manifest.csv" />
+    <EmbeddedResource Include="Data\destructible-grenade-production-redirect-manifest.csv" LogicalName="TrueCustomDifficulty.Data.destructible-grenade-production-redirect-manifest.csv" />
+    <EmbeddedResource Include="Data\npc-medical-production-redirect-manifest.csv" LogicalName="TrueCustomDifficulty.Data.npc-medical-production-redirect-manifest.csv" />
+    <EmbeddedResource Include="Data\crate-spawn-production-manifest.csv" LogicalName="TrueCustomDifficulty.Data.crate-spawn-production-manifest.csv" />
+    <EmbeddedResource Include="Data\loose-world-loot-manifest.csv" LogicalName="TrueCustomDifficulty.Data.loose-world-loot-manifest.csv" />
+    <EmbeddedResource Include="Data\world-weapon-shuffle-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-weapon-shuffle-manifest.csv" />
+    <EmbeddedResource Include="Data\world-weapon-shuffle-pool.csv" LogicalName="TrueCustomDifficulty.Data.world-weapon-shuffle-pool.csv" />
+    <EmbeddedResource Include="Data\world-weapon-direct-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-weapon-direct-manifest.csv" />
+    <EmbeddedResource Include="Data\world-attachment-shuffle-pool.csv" LogicalName="TrueCustomDifficulty.Data.world-attachment-shuffle-pool.csv" />
+    <EmbeddedResource Include="Data\world-attachment-direct-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-attachment-direct-manifest.csv" />
+    <EmbeddedResource Include="Data\world-attachment-generator-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-attachment-generator-manifest.csv" />
+    <EmbeddedResource Include="Data\world-detector-direct-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-detector-direct-manifest.csv" />
+    <EmbeddedResource Include="Data\world-detector-stash-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-detector-stash-manifest.csv" />
+    <EmbeddedResource Include="Data\world-f1-grenade-box-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-f1-grenade-box-manifest.csv" />
+    <EmbeddedResource Include="Data\blueprint-shuffle-manifest.csv" LogicalName="TrueCustomDifficulty.Data.blueprint-shuffle-manifest.csv" />
+    <EmbeddedResource Include="Data\trader-min-buy-condition-manifest.csv" LogicalName="TrueCustomDifficulty.Data.trader-min-buy-condition-manifest.csv" />
+    <EmbeddedResource Include="Presets\README.md" LogicalName="TrueCustomDifficulty.Presets.README.md" />
+    <EmbeddedResource Include="Presets\Immersive.json" LogicalName="TrueCustomDifficulty.Presets.Immersive.json" />
+    <EmbeddedResource Include="Presets\Tactical.json" LogicalName="TrueCustomDifficulty.Presets.Tactical.json" />
+    <EmbeddedResource Include="Presets\Scavenger.json" LogicalName="TrueCustomDifficulty.Presets.Scavenger.json" />
+    <EmbeddedResource Include="Presets\Mutant Hunter.json" LogicalName="TrueCustomDifficulty.Presets.Mutant Hunter.json" />
+    <EmbeddedResource Include="Presets\Anomaly Runner.json" LogicalName="TrueCustomDifficulty.Presets.Anomaly Runner.json" />
+    <EmbeddedResource Include="Presets\Hardcore.json" LogicalName="TrueCustomDifficulty.Presets.Hardcore.json" />
+    <EmbeddedResource Include="Presets\Hardcore+.json" LogicalName="TrueCustomDifficulty.Presets.Hardcore+.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\true-custom-difficulty.ico" />
+    <Resource Include="Assets\true-custom-difficulty.png" />
+  </ItemGroup>
+</Project>

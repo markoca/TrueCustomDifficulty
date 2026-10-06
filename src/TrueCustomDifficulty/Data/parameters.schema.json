@@ -1,0 +1,300 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local/stalker2-true-custom-difficulty/parameters.schema.json",
+  "title": "True Custom Difficulty parameter definitions",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "app",
+    "source",
+    "scope",
+    "difficultyProfiles",
+    "tabs",
+    "parameters"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "app": {
+      "type": "object",
+      "required": [
+        "name",
+        "platform",
+        "defaultReferenceDifficulty"
+      ],
+      "properties": {
+        "name": {
+          "const": "True Custom Difficulty"
+        },
+        "platform": {
+          "const": "Windows"
+        },
+        "defaultReferenceDifficulty": {
+          "enum": [
+            "Novice",
+            "Stalker",
+            "Veteran",
+            "Master"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "source": {
+      "type": "object"
+    },
+    "scope": {
+      "type": "object"
+    },
+    "difficultyProfiles": {
+      "type": "object"
+    },
+    "tabs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "order"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "order": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sliderConstraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "order",
+          "parameterIds"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "order": {
+            "enum": [
+              "nondecreasing",
+              "nonincreasing"
+            ]
+          },
+          "parameterIds": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "tab",
+          "label",
+          "control",
+          "valueKind",
+          "vanilla",
+          "default",
+          "targets",
+          "support"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-zA-Z0-9.]+$"
+          },
+          "tab": {
+            "type": "string"
+          },
+          "group": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "control": {
+            "enum": [
+              "slider",
+              "toggle",
+              "range",
+              "choiceSlider"
+            ]
+          },
+          "valueKind": {
+            "type": "string"
+          },
+          "display": {
+            "type": "object"
+          },
+          "vanilla": {
+            "type": "object"
+          },
+          "default": {
+            "type": "object"
+          },
+          "slider": {
+            "type": "object"
+          },
+          "targets": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object"
+            }
+          },
+          "transform": {
+            "type": "object"
+          },
+          "support": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "confirmed",
+                  "runtime_test_required",
+                  "design_required"
+                ]
+              },
+              "notes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "logic": {
+            "type": "string"
+          },
+          "interaction": {
+            "type": "string"
+          },
+          "lootHint": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "chance": {
+                "type": "number"
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "entries": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "min": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    },
+                    "qualifier": {
+                      "type": "string"
+                    },
+                    "selection": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "min",
+                    "max"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "markers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "label",
+                "value"
+              ],
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "requiresToggle": {
+            "type": "string"
+          },
+          "exposeInUi": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "deferred": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "version": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,49 @@
+# Loot UI Review
+
+Version: 0.9.26.44
+
+## Goal
+
+Reduce Loot-tab slider clutter without collapsing controls that represent different source semantics.
+
+## Decisions
+
+| Surface | UI decision | Reason |
+|---|---|---|
+| Breakable Box Ammo Distribution | Keep radar | Relative distribution across a shared selection system |
+| Basic / Standard / Rare Stash Ammo | **Radar implemented** | Three parallel quantity multipliers with identical semantics |
+| World Ammo / Food & Drink / Medical / Loose Loot removal | Radar candidate | Four parallel `% removed` controls with the same interpretation |
+| F1 Grenade Boxes | Include as World Loot Removal radar axis | Dedicated F1 boxes are a disjoint physical population from ordinary Ammo/RGD boxes |
+| Mutant Part Drop Chance | Do not use radar | Fourteen axes would be harder to read than a compact grid |
+| NPC loot / equipment | Keep existing controls | Mixed concepts and value types |
+| Stash grenade / coupon controls | Keep sliders | Chance and amount are distinct source semantics |
+
+## Stash food / medical review
+
+Do not promote a generic stash food/medical quantity radar yet.
+
+Cheap stash evidence is especially weak for a meaningful quantity multiplier:
+
+- medical: 12 rows, 8 already fixed at `1–1`;
+- food/drink: 33 rows, 28 fixed at `1–1`;
+- selection mixes `Chance` and `Weight`;
+- lowering a quantity multiplier often becomes a no-op unless zero-count behavior is introduced.
+
+Medium/Rare also contain overlapping difficulty/rank blocks, so a single clean quantity scalar needs a more careful production design before normal UI exposure.
+
+## Implemented in v0.9.26.44
+
+`Stash Ammo Amounts` is a three-axis radar:
+
+- Basic
+- Standard
+- Rare
+
+Each axis controls only the existing stash-ammo amount multiplier. Writer routes are unchanged.
+
+
+## Stash Ammo live preview — v0.9.26.44
+
+The aggregate radar now owns the practical quantity display. The former single `PracticalQuantityDisplay` attached to the visible Basic backing parameter is hidden for this radar card.
+
+Below the graph, three fixed columns show the current concrete ammo count ranges for **Basic**, **Standard**, and **Rare**. Values are recalculated from each tier's audited `lootHint.scaledCountEntries` using the same positive round-half-up rule as the production writer.
