@@ -24,16 +24,16 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         new("alife.mutantSpawn.bayun", "Bayun", -90.000, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2", "Mostly solo; Master can allow a pair."),
         new("alife.mutantSpawn.blindDog", "Blind Dog", -64.286, new[] { 4.0, 6.0, 8.0, 12.0 }, "4/6/8/12", "Pack mutant; higher ALife ranks allow progressively larger packs."),
         new("alife.mutantSpawn.bloodsucker", "Bloodsucker", -38.571, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1", "Disabled for Newbie; capped at one for Experienced, Veteran and Master."),
-        new("alife.mutantSpawn.boar", "Boar", -12.857, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common pack mutant; cap rises steadily with ALife rank."),
+        new("alife.mutantSpawn.boar", "Boar", -12.857, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common pack mutant; maximum mutants in the group rises steadily with ALife rank."),
         new("alife.mutantSpawn.burer", "Burer", 12.857, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2", "Mostly solo; Master can allow a pair."),
-        new("alife.mutantSpawn.chimera", "Chimera", 38.571, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Elite mutant; vanilla keeps the encounter cap at one on every ALife rank."),
+        new("alife.mutantSpawn.chimera", "Chimera", 38.571, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Elite mutant; vanilla allows at most one mutant in the group on every ALife rank."),
         new("alife.mutantSpawn.controller", "Controller", 64.286, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1", "Disabled for Newbie; capped at one for Experienced, Veteran and Master."),
-        new("alife.mutantSpawn.deer", "Deer", 90.000, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Rare large mutant; vanilla keeps the encounter cap at one on every ALife rank."),
-        new("alife.mutantSpawn.flesh", "Flesh", 115.714, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common herd mutant; cap rises steadily with ALife rank."),
+        new("alife.mutantSpawn.deer", "Deer", 90.000, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Rare large mutant; vanilla allows at most one mutant in the group on every ALife rank."),
+        new("alife.mutantSpawn.flesh", "Flesh", 115.714, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common herd mutant; maximum mutants in the group rises steadily with ALife rank."),
         new("alife.mutantSpawn.poltergeist", "Poltergeist", 141.429, new[] { 1.0, 1.0, 2.0, 2.0 }, "1/1/2/2", "Solo at lower ALife ranks; Veteran and Master can allow two."),
-        new("alife.mutantSpawn.pseudodog", "Pseudodog", 167.143, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Fast predator; vanilla keeps the encounter cap at one on every ALife rank."),
+        new("alife.mutantSpawn.pseudodog", "Pseudodog", 167.143, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Fast predator; vanilla allows at most one mutant in the group on every ALife rank."),
         new("alife.mutantSpawn.ratSwarm", "Rat Swarm", 192.857, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "One Director swarm unit at a time on every ALife rank."),
-        new("alife.mutantSpawn.snork", "Snork", 218.571, new[] { 1.0, 3.0, 4.0, 6.0 }, "1/3/4/6", "Aggressive pack mutant; cap grows strongly with ALife rank."),
+        new("alife.mutantSpawn.snork", "Snork", 218.571, new[] { 1.0, 3.0, 4.0, 6.0 }, "1/3/4/6", "Aggressive pack mutant; maximum mutants in the group grows strongly with ALife rank."),
         new("alife.mutantSpawn.tushkan", "Tushkan", 244.286, new[] { 6.0, 8.0, 12.0, 16.0 }, "6/8/12/16", "Swarm mutant; vanilla allows the largest encounter groups here."),
     };
 
@@ -208,7 +208,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Encounter caps by ALife rank · Newbie / Experienced / Veteran / Master · 1x = vanilla",
+            "Maximum mutants in the group by ALife rank · Newbie / Experienced / Veteran / Master · 1x = vanilla",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
