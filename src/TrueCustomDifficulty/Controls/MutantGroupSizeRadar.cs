@@ -221,8 +221,10 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Actual maximum mutants after the global limit · Newbie / Experienced / Veteran / Master",
+            "How many of each mutant can spawn together",
             mutedBrush);
+
+        DrawGlobalLimit(dc, accentBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
@@ -242,13 +244,35 @@ private string _statusText = string.Empty;
     private Rect GetInfoRect()
     {
         var left = Math.Max(ActualWidth * 0.47, 390.0);
-        return new Rect(left, 76.0, Math.Max(260.0, ActualWidth - left - 16.0), Math.Max(420.0, ActualHeight - 120.0));
+        return new Rect(left, 96.0, Math.Max(260.0, ActualWidth - left - 16.0), Math.Max(400.0, ActualHeight - 140.0));
     }
 
     private void DrawInfoHeader(DrawingContext dc, string text, Brush brush)
     {
         var info = GetInfoRect();
         DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), 9.8, brush, FontWeights.Normal);
+    }
+
+    private void DrawGlobalLimit(DrawingContext dc, Brush accentBrush)
+    {
+        var info = GetInfoRect();
+        var globalMultiplier = Math.Clamp(
+            _globalParameter?.CurrentNumber ?? VanillaMultiplier,
+            MinimumMultiplier,
+            MaximumMultiplier);
+
+        var caps = GlobalVanillaCaps
+            .Select(value => Math.Max(1.0, Math.Floor(value * globalMultiplier + 0.5)))
+            .Select(value => value.ToString("0", CultureInfo.InvariantCulture))
+            .ToArray();
+
+        DrawClippedText(
+            dc,
+            $"Overall mutant group limit: Newbie {caps[0]} · Experienced {caps[1]} · Veteran {caps[2]} · Master {caps[3]}",
+            new Rect(info.Left, 52.0, info.Width, 28.0),
+            9.4,
+            accentBrush,
+            FontWeights.SemiBold);
     }
 
     private void DrawLegend(
@@ -296,7 +320,7 @@ DrawClippedText(
 
         DrawClippedText(
             dc,
-            $"{value:0.##}x · {FormatEffectiveCaps(info, value)}",
+            $"{value:0.##}x · Can spawn together: {FormatEffectiveCaps(info, value)}",
             new Rect(bounds.Left + bounds.Width * 0.38, y, bounds.Width * 0.62 - 6, 15),
             9.3,
             modified ? accentBrush : hovered ? textBrush : mutedBrush,
