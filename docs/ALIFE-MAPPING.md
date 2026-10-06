@@ -1,10 +1,8 @@
-# ALIFE Group Size Mapping
+# A-Life Spawn Mapping
 
 ## Scope
 
-The ALIFE tab intentionally exposes only the general encounter-group caps used by the ALife Director. It does not change lair capacity, lair refill/respawn, encounter frequency, faction population, expansion timing, or scenario weights.
-
-Source CFG:
+The **A-Life** tab exposes ALife Director spawn-count caps from:
 
 `GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg`
 
@@ -12,11 +10,11 @@ Source structure:
 
 `ALifeDirectorPreset.ALifeScenarioNPCArchetypesLimitsPerPlayerRank[*].Restrictions[*].MaxCount`
 
-The actual source node is named `ALifeScenarioNPCArchetypesLimitsPerPlayerRank` (without the extra `FE`); the spelling above is descriptive only. Writer paths use the exact source node name.
+These controls intentionally do **not** modify lair capacity, lair refill/respawn, encounter frequency, faction population, expansion timing, or scenario weights.
 
-## Human Group Size
+## Human Spawn Count per Rank
 
-Four radar axes follow the Director player-rank rows:
+The human radar follows the Director player-rank rows:
 
 | Axis | Vanilla Human `MaxCount` |
 |---|---:|
@@ -25,23 +23,35 @@ Four radar axes follow the Director player-rank rows:
 | Veteran | 5 |
 | Master | 6 |
 
-Each axis is a multiplier. `1x` is vanilla. Values are rounded half-up to an integer with a minimum of one.
+Each axis is an independent multiplier. `1x` is vanilla.
 
-There is no faction-specific Human `MaxCount` table in this Director restriction block, so the UI deliberately does not pretend to offer separate Duty/Freedom/Bandit/etc. encounter-size controls.
+## Mutant Spawn per Species
 
-## Mutant Group Size
+The mutant radar exposes one independent multiplier per Director mutant restriction. Each control scales that species across all four player-rank rows while preserving the vanilla rank progression.
 
-Four radar axes use the same player-rank rows. Each axis scales every non-Human restriction in that rank together:
+| Radar axis | N / E / V / M vanilla `MaxCount` |
+|---|---|
+| Generic Mutant Cap | 3 / 4 / 4 / 4 |
+| Bloodsucker | 0 / 1 / 1 / 1 |
+| Blind Dog | 4 / 6 / 8 / 12 |
+| Flesh | 2 / 3 / 5 / 6 |
+| Controller | 0 / 1 / 1 / 1 |
+| Poltergeist | 1 / 1 / 2 / 2 |
+| Snork | 1 / 3 / 4 / 6 |
+| Boar | 2 / 3 / 5 / 6 |
+| Chimera | 1 / 1 / 1 / 1 |
+| Bayun | 1 / 1 / 1 / 2 |
+| Tushkan | 6 / 8 / 12 / 16 |
+| Rat Swarm | 1 / 1 / 1 / 1 |
+| Burer | 1 / 1 / 1 / 2 |
+| Pseudodog | 1 / 1 / 1 / 1 |
+| Deer | 1 / 1 / 1 / 1 |
 
-`MutantGeneric`, `Bloodsucker`, `Blinddog`, `Flesh`, `Controller`, `Poltergeist`, `Snork`, `Boar`, `Chimera`, `Cat` (Bayun), `Tushkan`, `RatSwarm`, `Burer`, `PseudoDog`, and `Deer`.
+The multiplier is applied independently to each rank-specific `MaxCount`. Integer rounding is half-up. Authored zero caps remain zero, so increasing a species does not unlock that species at a player rank where the Director explicitly disables it.
 
-The multiplier is applied independently to each authored `MaxCount`, preserving the vanilla species balance. Integer rounding is half-up. Authored zero limits remain zero, so increasing group size does not unlock a mutant type that the source disables for that rank.
+`MutantGeneric` is kept as **Generic Mutant Cap** because it is a real Director restriction and can constrain mutant encounters independently of the species-specific caps.
 
-Examples:
-
-- Newbie Blinddog: `4` at `1x`, `6` at `1.5x`, `8` at `2x`.
-- Master Tushkan: `16` at `1x`, `24` at `1.5x`, `32` at `2x`.
-- Newbie Bloodsucker: `0` at every multiplier because the source restriction is zero.
+There is no mapped Pseudogiant restriction in this Director `Restrictions[].MaxCount` table, so the UI does not invent a Pseudogiant spawn control.
 
 ## Deliberately untouched
 
@@ -53,4 +63,4 @@ Examples:
 - `DefaultExpansionSquadNumMin/Max`
 - faction `MinLairs` / `MaxLairs`
 
-Those controls affect world population, lair lifecycle, or Director timing rather than the general encounter-group size requested for this tab.
+Those values belong to world population, lair lifecycle, or Director timing rather than the spawn-count caps represented by these radars.
