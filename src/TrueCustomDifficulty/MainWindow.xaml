@@ -40,15 +40,31 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
-                    <Border Width="38" Height="38" CornerRadius="19"
-                            BorderBrush="{StaticResource AccentDarkBrush}" BorderThickness="1"
-                            Margin="0,0,9,0">
-                        <Image Source="Assets/true-custom-difficulty.png" Width="34" Height="34" Stretch="Uniform">
-                            <Image.Clip>
-                                <EllipseGeometry Center="17,17" RadiusX="17" RadiusY="17" />
-                            </Image.Clip>
-                        </Image>
-                    </Border>
+                    <Grid Width="38" Height="38" Margin="0,0,9,0">
+                        <Viewbox Width="30" Height="30"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center">
+                            <Canvas Width="34" Height="34">
+                                <Path Fill="{StaticResource AccentBrush}"
+                                      Data="M 14.5,12.67 L 10,4.88 A 14,14 0 0 1 24,4.88 L 19.5,12.67 A 5,5 0 0 0 14.5,12.67 Z" />
+                                <Path Fill="{StaticResource AccentBrush}"
+                                      Data="M 14.5,12.67 L 10,4.88 A 14,14 0 0 1 24,4.88 L 19.5,12.67 A 5,5 0 0 0 14.5,12.67 Z">
+                                    <Path.RenderTransform>
+                                        <RotateTransform Angle="120" CenterX="17" CenterY="17" />
+                                    </Path.RenderTransform>
+                                </Path>
+                                <Path Fill="{StaticResource AccentBrush}"
+                                      Data="M 14.5,12.67 L 10,4.88 A 14,14 0 0 1 24,4.88 L 19.5,12.67 A 5,5 0 0 0 14.5,12.67 Z">
+                                    <Path.RenderTransform>
+                                        <RotateTransform Angle="240" CenterX="17" CenterY="17" />
+                                    </Path.RenderTransform>
+                                </Path>
+                                <Ellipse Width="7" Height="7"
+                                         Canvas.Left="13.5" Canvas.Top="13.5"
+                                         Fill="{StaticResource AccentBrush}" />
+                            </Canvas>
+                        </Viewbox>
+                    </Grid>
                     <TextBlock Text="TRUE" Foreground="{StaticResource AccentBrush}" FontWeight="Bold" FontSize="19" VerticalAlignment="Center" />
                     <TextBlock Text=" CUSTOM DIFFICULTY" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold" FontSize="18" VerticalAlignment="Center" />
                 </StackPanel>
