@@ -4323,7 +4323,7 @@
     {
       "id": "loot.npcCorpseBonus",
       "tab": "loot",
-      "group": "NPC Corpse Loot",
+      "group": "NPC Loot & Equipment",
       "label": "Extra NPC Corpse Loot",
       "description": "Chooses the extra smart-loot package added to human NPC corpses: Medicine + Ammo, Water, or None.",
       "control": "choiceSlider",
@@ -4362,8 +4362,8 @@
     {
       "id": "loot.npcMedicalChance",
       "tab": "loot",
-      "group": "NPC Corpse Loot",
-      "label": "NPC Medical Loot Chance",
+      "group": "NPC Loot & Equipment",
+      "label": "NPC Medical Drop",
       "description": "Scales the vanilla item-level drop chances for Bandages, Medkits, Army Medkits and Anti-Rad carried by ordinary repeatable human NPC loadouts. It does not change stack sizes or non-medical consumables.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -4409,7 +4409,7 @@
     {
       "id": "loot.npcWeaponAmmoSupply",
       "tab": "loot",
-      "group": "NPC Equipment",
+      "group": "NPC Loot & Equipment",
       "label": "NPC Dropped Ammo Amount",
       "description": "Scales AmmoMinCount/AmmoMaxCount attached to the weapon row selected for an ordinary repeatable human NPC. The ammunition follows that specific weapon.",
       "control": "slider",
@@ -4456,7 +4456,7 @@
     {
       "id": "loot.droppedWeaponCondition",
       "tab": "loot",
-      "group": "NPC Equipment",
+      "group": "NPC Loot & Equipment",
       "label": "NPC Weapon Condition",
       "description": "Sets the actual minimum and maximum condition of weapons carried by ordinary repeatable human NPC loadouts. Vanilla is left untouched until this control is changed.",
       "control": "range",
