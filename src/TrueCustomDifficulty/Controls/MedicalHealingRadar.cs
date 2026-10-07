@@ -184,7 +184,7 @@ private readonly RadarStatusMessage _status;
         }
 
         DrawRingCaption(dc, "0.5x", center, radius * 0.25, mutedBrush);
-        DrawRingCaption(dc, "1x = VANILLA", center, radius * 0.50, accentBrush);
+        DrawRingCaption(dc, "1x", center, radius * 0.50, accentBrush);
         DrawRingCaption(dc, "1.5x", center, radius * 0.75, mutedBrush);
         DrawRingCaption(dc, "2x", center, radius, mutedBrush);
 
@@ -271,7 +271,7 @@ DrawClippedText(
 
         DrawClippedText(
             dc,
-            $"Restores {parameter.CurrentNumber:0.##} HP | {multipliers[axis]:0.##}x vanilla",
+            $"Restores {parameter.CurrentNumber:0.##} HP | {multipliers[axis]:0.##}x",
             new Rect(bounds.Left + (bounds.Width * 0.42), y + 7, bounds.Width * 0.58 - 6, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
