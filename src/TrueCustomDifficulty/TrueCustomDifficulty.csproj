@@ -60,11 +60,4 @@
     <Resource Include="Assets\true-custom-difficulty.ico" />
     <Resource Include="Assets\true-custom-difficulty.png" />
   </ItemGroup>
-
-  <!-- Temporary source handoff used only while the GitHub ref-update backend is unavailable.
-       The original file remains the source of truth and is excluded only when the patched copy exists. -->
-  <ItemGroup>
-    <Compile Remove="Controls\BleedingCurveControl.cs"
-             Condition="Exists('Controls\BleedingCurveControl.Patched.cs')" />
-  </ItemGroup>
 </Project>
