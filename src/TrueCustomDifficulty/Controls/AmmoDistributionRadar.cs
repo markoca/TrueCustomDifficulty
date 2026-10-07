@@ -24,7 +24,7 @@ public sealed class AmmoDistributionRadar : FrameworkElement
 
     private static readonly AxisDefinition[] Axes =
     {
-        new("loot.ammoBoxWeight918", "9×18 / 9×19 mm", -90),
+        new("loot.ammoBoxWeight918", "9x18 / 9x19 mm", -90),
         new("loot.ammoBoxWeight545", "5.45 / 5.56 mm", 0),
         new("loot.ammoBoxWeight045", ".45 ACP", 90),
         new("loot.ammoBoxWeight012", "12 Gauge", 180),
@@ -355,13 +355,13 @@ private readonly RadarStatusMessage _status;
         {
             new[]
             {
-                $"9×18 current box share: {P(nine18)}",
-                $"9×19 current box share: {Range(nine19A, nine19B)}",
+                $"9x18 current box share: {P(nine18)}",
+                $"9x19 current box share: {Range(nine19A, nine19B)}",
             },
             new[]
             {
-                $"5.45×39 current box share: {P(five45)}",
-                $"5.56×45 current box share: {P(five56)}",
+                $"5.45x39 current box share: {P(five45)}",
+                $"5.56x45 current box share: {P(five56)}",
             },
             new[]
             {
@@ -369,7 +369,7 @@ private readonly RadarStatusMessage _status;
             },
             new[]
             {
-                $"12×70 current box share: {Range(twelveA, twelveB)}",
+                $"12x70 current box share: {Range(twelveA, twelveB)}",
             },
         };
     }
