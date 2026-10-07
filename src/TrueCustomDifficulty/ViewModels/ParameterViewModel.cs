@@ -532,19 +532,25 @@ public sealed class ParameterViewModel : ObservableObject
         {
             if (IsToggle)
                 return CurrentBoolean ? "ON" : "OFF";
+
             if (IsChoiceSlider)
                 return ChoiceOptions.FirstOrDefault(o => o.Value == CurrentText)?.Label
                     ?? (string.IsNullOrWhiteSpace(CurrentText) ? "None" : CurrentText);
+
             if (IsRange)
-                return $"MIN {RangeMinDisplay} · MAX {RangeMaxDisplay}";
+            {
+                if (Id == "loot.droppedWeaponCondition")
+                    return $"{CurrentMinNumber * 100:0}-{CurrentMaxNumber * 100:0}% condition";
+
+                return $"MIN {RangeMinDisplay} / MAX {RangeMaxDisplay}";
+            }
+
+            var playerFacing = FormatPlayerFacingCurrentValue();
+            if (!string.IsNullOrWhiteSpace(playerFacing))
+                return playerFacing;
 
             if (Definition.Display?.Primary == "percent")
-            {
-                if (Id == "survival.radiationStaminaDrainPenalty")
-                    return $"{CurrentNumber * 100:+0.#;-0.#;0}%";
-
                 return $"{CurrentNumber * 100:0.#}%";
-            }
 
             if (Definition.Display?.Primary == "multiplier")
                 return $"{CurrentNumber:0.##}x";
@@ -555,9 +561,197 @@ public sealed class ParameterViewModel : ObservableObject
             if (Definition.Display?.Primary == "multiplierOfVanilla" && Math.Abs(vanilla) > Epsilon)
                 return $"{CurrentNumber / vanilla:0.##}x";
 
-            return CurrentNumber.ToString("0.###", CultureInfo.InvariantCulture);
+            if (Definition.Display?.Primary == "raw" && !string.IsNullOrWhiteSpace(Definition.Display.Unit))
+                return $"{FormatCompact(CurrentNumber)} {Definition.Display.Unit}";
+
+            return FormatCompact(CurrentNumber);
         }
     }
+
+    private string FormatPlayerFacingCurrentValue()
+    {
+        return Id switch
+        {
+            // Combat: keep true scalers as scalers, but say what is being scaled.
+            "combat.npcHealth" => Times(CurrentNumber, "HP"),
+            "combat.npcWeaponDamage" => Times(CurrentNumber, "gun dmg"),
+            "combat.npcAttackCooldown" => Times(CurrentNumber, "attack rate"),
+            "combat.npcHipAccuracy" => Times(CurrentNumber, "accuracy"),
+            "combat.mutantDamage" => Times(CurrentNumber, "hit dmg"),
+            "combat.mutantAttackCooldown" => Times(CurrentNumber, "attack rate"),
+            "combat.playerWeaponDamage" => Times(CurrentNumber, "weapon dmg"),
+            "combat.playerHeadshotMultiplier" => Times(CurrentNumber, "headshot dmg"),
+            "combat.weaponJamming" => Times(CurrentNumber, "jam rate"),
+            "combat.explosionDamage" => Times(CurrentNumber, "blast dmg"),
+            "combat.accumulatedDamageWeightMax" or "combat.accumulatedDamageWeightMin"
+                => $"{CurrentNumber * 100:0}% strength",
+            "combat.psySpawnCycleDelay" => Times(CurrentNumber, "wait"),
+            "combat.psyPhantomCount" => Times(CurrentNumber, "phantoms"),
+            "combat.psyDurabilityDamage" => Times(CurrentNumber, "wear"),
+
+            // Survival: show actual rates, thresholds, durations and player-facing penalties.
+            "survival.hungerRate" => $"{CurrentNumber:0.000} pts/s",
+            "survival.hungerMediumStaminaRegen" or "survival.hungerStrongStaminaRegen"
+                => $"{CurrentNumber * 100:0.#}% regen loss",
+            "survival.sleepinessRate" => $"{CurrentNumber:0.000} pts/s",
+            "survival.energyDrinkFatigueRelief" => Times(CurrentNumber, "relief"),
+            "survival.sleepEligibilityThreshold" => $"{CurrentNumber:0} pts",
+            "survival.minimumSleepHours" => $"{CurrentNumber:0} h",
+            "survival.radiationAccumulation" => Times(CurrentNumber, "buildup"),
+            "survival.radiationRecovery" => $"{CurrentNumber:0.##} pts/s",
+            "survival.radiationDamage" => Times(CurrentNumber, "rad dmg"),
+            "survival.bleedingSeverity" => Times(CurrentNumber, "bleed"),
+            "survival.bleedingRecovery" => $"{CurrentNumber:0.##} pts/s",
+            "survival.wellFedStaminaRegen" => SignedPercent(CurrentNumber, "regen"),
+            "survival.fatigueLowAimPenalty" or
+            "survival.fatigueMediumAimPenalty" or
+            "survival.fatigueStrongAimPenalty" => SignedPercent(CurrentNumber, "aim time"),
+            "survival.fatigueMediumReloadPenalty" or
+            "survival.fatigueStrongReloadPenalty" => SignedPercent(CurrentNumber, "reload"),
+            "survival.sleepHealthRestore" => $"{CurrentNumber:0} HP",
+            "survival.sleepStaminaRestore" => SignedPercent(CurrentNumber, "stamina"),
+            "survival.bleedingLowDamage" or
+            "survival.bleedingMediumDamage" or
+            "survival.bleedingStrongDamage" => $"{CurrentNumber:0.#} HP/tick",
+
+            // Health: prefer actual HP/radiation/bleeding amounts over percent-of-vanilla abstractions.
+            "health.maxHP" => $"{CurrentNumber:0} HP",
+            "health.baseRegen" => $"{CurrentNumber:0.#} HP/s",
+            "health.regenDelay" => $"{CurrentNumber:0.#} s",
+            "health.regenerationScalar" => $"{CurrentNumber * 100:0.#}% regen",
+            "health.lowHealthRegen" => $"{CurrentNumber:0.#} HP/s",
+            "health.masterLowHealthPenalty" => $"{CurrentNumber * 100:0.#}% regen loss",
+            "health.masterBandageModifier" or
+            "health.masterMedkitModifier" or
+            "health.masterArmyMedkitModifier" => $"{CurrentNumber * 100:0.#}% healing",
+            "health.bandageBleeding" or
+            "health.medkitBleeding" or
+            "health.armyMedkitBleeding" or
+            "health.ecoMedkitBleeding" => $"{CurrentNumber:0} bleed pts",
+            "health.ecoMedkitAntirad" or
+            "health.antiRadRadiation" => $"{CurrentNumber:0} rad pts",
+
+            // Stamina: expose actual SP/time/weight, and translate opaque state coefficients.
+            "stamina.maxSP" => $"{CurrentNumber:0} SP",
+            "stamina.sprintDisableThreshold" => $"{CurrentNumber:0.#} SP",
+            "stamina.sprintRecoveryDelay" => $"{CurrentNumber:0.#} s",
+            "stamina.lowRecoveryThreshold" => $"{CurrentNumber:0} SP",
+            "stamina.lowRecoveryStrength" => $"{CurrentNumber:0.##} SP/s",
+            "stamina.lowRecoveryDuration" => $"{CurrentNumber:0.#} s",
+            "stamina.sprintUnderRunSpeedRegenCoef" or
+            "stamina.joggingRegenCoef" or
+            "stamina.slowRunRegenCoef" or
+            "stamina.sprintRegenCoef" or
+            "stamina.runRegenCoef" => RecoveryModifier(CurrentNumber),
+            "stamina.vaultMaxHeight" => VaultHeight(CurrentNumber),
+            "stamina.waterMediumDrain" or
+            "stamina.waterStrongDrain" => Times(CurrentNumber, "drain"),
+            "stamina.regeneration" => $"{CurrentNumber:0.#} SP/s",
+            "stamina.maxCarryWeight" => $"{CurrentNumber:0} kg",
+
+            // Loot: distinguish literal chance from "times vanilla" amount scalers.
+            "loot.npcMedicalChance" => Times(CurrentNumber, "drop chance"),
+            "loot.npcWeaponAmmoSupply" => Times(CurrentNumber, "ammo"),
+            "loot.cheapStashGrenadeChance" => $"{CurrentNumber * 100:0.#}% chance",
+            "loot.cheapStashGrenadeQuantity" => Count(CurrentNumber, "grenade"),
+            "loot.destructibleAmmoQuantity" => Times(CurrentNumber, "ammo"),
+            "loot.destructibleGrenadeQuantity" => Times(CurrentNumber, "grenades"),
+            "loot.expensiveStashMoneyChance" => $"{CurrentNumber * 100:0.#}% chance",
+            "loot.worldWeaponDensity" => $"{CurrentNumber * 100:0.#}% density",
+
+            // Economy: say whether the scalar changes payout, prices, stock or rewards.
+            "economy.startingMoney" => Count(CurrentNumber, "coupon"),
+            "economy.buyCondition" => Times(CurrentNumber, "payout"),
+            "economy.sellCondition" => Times(CurrentNumber, "shop price"),
+            "economy.traderMinBuyCondition" => $"{CurrentNumber * 100:0.#}% condition",
+            "economy.itemValueFloor" => $"{CurrentNumber * 100:0.#}% value",
+            "economy.traderAmmoStock" or "economy.medicStock" => Times(CurrentNumber, "stock"),
+            "economy.fastTravelCost" or
+            "economy.upgradeCost" or
+            "economy.repairDifficultyCost" => Times(CurrentNumber, "price"),
+            "economy.repairCostBase" => $"{CurrentNumber * 100:0.#}% base price",
+            "economy.repairEnemy" or
+            "economy.repairDisaffection" or
+            "economy.repairNeutral" or
+            "economy.repairFriend" => Times(CurrentNumber, "repair"),
+            "economy.mainQuestReward" or
+            "economy.sideQuestReward" => Times(CurrentNumber, "reward"),
+
+            // Equipment.
+            "equipment.armorDurability" => Times(CurrentNumber, "durability"),
+            "equipment.ammoWeight" or "equipment.consumableWeight" => Times(CurrentNumber, "weight"),
+            "equipment.weaponWearPerShot" => Times(CurrentNumber, "wear"),
+
+            // Anomalies.
+            "environment.anomalyDamage" => Times(CurrentNumber, "anomaly dmg"),
+            "environment.flycatcherMovementSpeed" => $"{CurrentNumber * 100:0.#}% move speed",
+            "environment.flycatcherTurnSpeed" => $"{CurrentNumber * 100:0.#}% turn speed",
+            "environment.razorBleeding" => Times(CurrentNumber, "bleeding"),
+            "environment.diamondBleeding" => $"{CurrentNumber:0.#} bleed pts",
+            "environment.psyAnomalyIntensity" => Times(CurrentNumber, "intensity"),
+
+            // Master-only survival penalties.
+            "survival.starvationStaminaDrain" => SignedPercent(CurrentNumber, "stamina cost"),
+            "survival.starvationDamage" => $"{CurrentNumber:0.#} HP/tick",
+            "survival.starvationDamageInterval" => $"{CurrentNumber:0.#} s",
+            "survival.starvationPenaltyDelay" => $"{CurrentNumber:0.#} s",
+            "survival.starvationHealthRegenPenalty" => $"{CurrentNumber * 100:0.#}% regen loss",
+            "survival.severeFatigueMaxStamina" => NegativePercent(CurrentNumber, "max SP"),
+            "survival.severeFatigueCarryWeight" => NegativePercent(CurrentNumber, "carry"),
+            "survival.severeFatigueRecoil" => SignedPercent(CurrentNumber, "recoil"),
+            "survival.severeFatigueAimSway" => SignedPercent(CurrentNumber, "sway"),
+            "survival.severeFatigueDispersion" => SignedPercent(CurrentNumber, "spread"),
+            "survival.radiationStaminaDrainPenalty" => SignedPercent(CurrentNumber, "stamina cost"),
+
+            _ => string.Empty
+        };
+    }
+
+    private static string Times(double value, string meaning)
+        => $"{value:0.##}x {meaning}";
+
+    private static string SignedPercent(double value, string meaning)
+    {
+        var percent = value * 100.0;
+        return $"{percent:+0.##;-0.##;0}% {meaning}";
+    }
+
+    private static string NegativePercent(double value, string meaning)
+        => $"-{Math.Abs(value) * 100:0.##}% {meaning}";
+
+    private static string RecoveryModifier(double value)
+    {
+        if (Math.Abs(value) <= Epsilon)
+            return "Neutral";
+
+        return SignedPercent(value, "regen");
+    }
+
+    private static string Count(double value, string singular)
+    {
+        var rounded = Math.Round(value, MidpointRounding.AwayFromZero);
+        var word = Math.Abs(rounded - 1.0) <= Epsilon ? singular : singular + "s";
+        return $"{rounded:0} {word}";
+    }
+
+    private static string VaultHeight(double value)
+    {
+        var height = Math.Round(value, MidpointRounding.AwayFromZero);
+        var marker = height switch
+        {
+            <= 129 => "below waist",
+            130 => "WAIST",
+            <= 224 => "waist-eye",
+            225 => "EYES",
+            <= 299 => "above eyes",
+            _ => "ABOVE EYES"
+        };
+
+        return $"{height:0} uu ({marker})";
+    }
+
+    private static string FormatCompact(double value)
+        => value.ToString("0.###", CultureInfo.InvariantCulture);
 
     public string TechnicalDisplay
     {
