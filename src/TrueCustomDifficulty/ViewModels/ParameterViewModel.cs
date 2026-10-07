@@ -55,7 +55,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsDrunkennessAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Choose BEER or VODKA as the reference, then set 1–8 beers or 1–4 vodkas to reach Very Strong drunkenness. The progression row shows the tier reached after each whole drink, using the current Beer/Vodka Strength settings. Right-click the visualizer to restore vanilla tolerance thresholds.";
+                       "The Alcohol Tolerance panel has three linked groups: TOLERANCE, BEER and VODKA. TOLERANCE chooses the reference drink and how many whole drinks reach Very Strong drunkenness. BEER and VODKA independently fine-tune each drink's strength from 25–200%. Right-click any of the three sliders to restore only that setting to VANILLA.";
             }
 
             if (IsAggregateRadarAnchor)
@@ -279,6 +279,14 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsMutantGroupSizeMember => MutantGroupSizeParameterIds.Contains(Id);
     public bool IsMutantGroupSizeAnchor => Id == "alife.mutantSpawn.bloodsucker";
 
+    private static readonly HashSet<string> DrunkennessParameterIds = new(StringComparer.Ordinal)
+    {
+        "survival.drunknessThresholdScale",
+        "survival.beerDrunknessStrength",
+        "survival.vodkaDrunknessStrength"
+    };
+
+    public bool IsDrunkennessMember => DrunkennessParameterIds.Contains(Id);
     public bool IsDrunkennessAnchor => Id == "survival.drunknessThresholdScale";
 
     public bool IsAggregateRadarAnchor =>
@@ -314,6 +322,7 @@ public sealed class ParameterViewModel : ObservableObject
         && (!IsSpecialAbilityCooldownMember || IsSpecialAbilityCooldownAnchor)
         && (!IsHumanGroupSizeMember || IsHumanGroupSizeAnchor)
         && (!IsMutantGroupSizeMember || IsMutantGroupSizeAnchor)
+        && (!IsDrunkennessMember || IsDrunkennessAnchor)
         && (_dependencyEnabledProvider?.Invoke() ?? true);
     public string ToggleStateLabel => CurrentBoolean ? "ON" : "OFF";
     public double Minimum => Definition.Slider?.Min ?? 0;
