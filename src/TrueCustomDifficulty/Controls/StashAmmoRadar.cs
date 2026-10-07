@@ -33,7 +33,7 @@ public sealed class StashAmmoRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Tiers.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
-    private readonly RadarStatusMessage _status;
+    private readonly VisualStatusMessage _status;
 
     private int _selectedTier;
     private int _hoverTier = -1;
@@ -53,7 +53,7 @@ public sealed class StashAmmoRadar : FrameworkElement
 
     public StashAmmoRadar()
     {
-        _status = new RadarStatusMessage(InvalidateVisual);
+        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 530;
         Cursor = Cursors.Arrow;
