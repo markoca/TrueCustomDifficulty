@@ -6,7 +6,8 @@ namespace TrueCustomDifficulty.Infrastructure;
 
 public sealed class ResponsiveParameterGridPanel : Panel
 {
-    private const double Gap = 4.0;
+    private const double RowGap = 4.0;
+    private const double ColumnGap = 18.0;
     private const double TwoColumnThreshold = 700.0;
 
     // Explicit UX pairings. The catalog remains the gameplay/source-of-truth order,
@@ -175,11 +176,11 @@ public sealed class ResponsiveParameterGridPanel : Panel
             }
 
             row.Height = rowHeight;
-            totalHeight += rowHeight + Gap;
+            totalHeight += rowHeight + RowGap;
         }
 
         if (totalHeight > 0.0)
-            totalHeight -= Gap;
+            totalHeight -= RowGap;
 
         return new Size(width, Math.Max(0.0, totalHeight));
     }
@@ -209,13 +210,13 @@ public sealed class ResponsiveParameterGridPanel : Panel
 
                 var column = columns == 1 ? 0 : Math.Clamp(item.Column, 0, 1);
                 item.Element.Arrange(new Rect(
-                    column * (cardWidth + Gap),
+                    column * (cardWidth + ColumnGap),
                     y,
                     cardWidth,
                     rowHeight));
             }
 
-            y += rowHeight + Gap;
+            y += rowHeight + RowGap;
         }
 
         foreach (UIElement child in InternalChildren)
@@ -225,7 +226,7 @@ public sealed class ResponsiveParameterGridPanel : Panel
         }
 
         if (y > 0.0)
-            y -= Gap;
+            y -= RowGap;
 
         return new Size(width, Math.Max(finalSize.Height, y));
     }
@@ -330,7 +331,7 @@ public sealed class ResponsiveParameterGridPanel : Panel
         => width >= TwoColumnThreshold ? 2 : 1;
 
     private static double GetCardWidth(double width, int columns)
-        => Math.Max(260.0, (width - Gap * (columns - 1)) / columns);
+        => Math.Max(260.0, (width - ColumnGap * (columns - 1)) / columns);
 
     private static bool IsLayoutVisible(UIElement child)
     {
