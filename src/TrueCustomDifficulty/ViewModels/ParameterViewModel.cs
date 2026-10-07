@@ -1435,7 +1435,7 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 ["Novice"] = ("N", "N"),
                 ["Stalker"] = ("S", "S"),
-                ["Veteran"] = ("V", "V"),
+                ["Veteran"] = ("VANILLA", "VANILLA"),
                 ["Master"] = ("M", "M")
             };
 
@@ -1477,7 +1477,7 @@ public sealed class ParameterViewModel : ObservableObject
             .GroupBy(x => Math.Round(x.Value, 9))
             .OrderBy(g => g.Key)
             .Select(g => new VanillaMarkerViewModel(
-                string.Join(" / ", g.Select(x => x.Label).Distinct(StringComparer.Ordinal)),
+                NormalizeSliderMarkerLabel(string.Join(" / ", g.Select(x => x.Label).Distinct(StringComparer.Ordinal))),
                 g.First().Value))
             .ToList();
     }
@@ -1494,7 +1494,7 @@ public sealed class ParameterViewModel : ObservableObject
         {
             ["Novice"] = "N",
             ["Stalker"] = "S",
-            ["Veteran"] = "V",
+            ["Veteran"] = "VANILLA",
             ["Master"] = "M"
         };
 
@@ -1528,9 +1528,21 @@ public sealed class ParameterViewModel : ObservableObject
                 var label = labels.Count == 4
                     ? "VANILLA"
                     : string.Join("/", labels);
-                return new VanillaMarkerViewModel(label, g.Key);
+                return new VanillaMarkerViewModel(NormalizeSliderMarkerLabel(label), g.Key);
             })
             .ToList();
+    }
+
+    private static string NormalizeSliderMarkerLabel(string label)
+    {
+        if (string.IsNullOrWhiteSpace(label))
+            return label;
+
+        var tokens = label
+            .Split(new[] { '/', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(token => token is "V" or "VNL" ? "VANILLA" : token);
+
+        return string.Join(" / ", tokens);
     }
 
     private static IReadOnlyList<ChoiceOptionViewModel> BuildChoiceOptions(ParameterDefinition definition)
