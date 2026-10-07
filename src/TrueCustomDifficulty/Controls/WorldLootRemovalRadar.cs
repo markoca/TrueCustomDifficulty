@@ -16,6 +16,10 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class WorldLootRemovalRadar : FrameworkElement
 {
+    private const double RadarInfoTextSize = 11.0;
+    private const double RadarLegendTextSize = 11.0;
+    private const double RadarAxisTextSize = 10.5;
+
     private const double MaximumValue = 1.0;
 
     private static readonly AxisDefinition[] Axes =
@@ -192,13 +196,13 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "World loot density · 0% keeps vanilla · higher removes more of that loot from the world.",
+            "World loot density | 0% keeps vanilla | higher removes more of that loot from the world.",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
         var instruction = string.IsNullOrWhiteSpace(_statusText)
-            ? "Drag a point · Arrow keys adjust selected category · Right-click point/legend resets that category · R resets all"
+            ? "Drag a point | Arrow keys adjust selected category | Right-click point/legend resets that category | R resets all"
             : _statusText;
 
         DrawCenteredText(
@@ -219,7 +223,7 @@ private string _statusText = string.Empty;
     private void DrawInfoHeader(DrawingContext dc, string text, Brush brush)
     {
         var info = GetInfoRect();
-        DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), 9.8, brush, FontWeights.Normal);
+        DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), RadarInfoTextSize, brush, FontWeights.Normal);
     }
 
     private void DrawLegend(
@@ -266,18 +270,14 @@ var info = Axes[axis];
 
         DrawClippedText(
             dc,
-            $"{info.Label} · {fraction * 100:0.#}% removed",
-            new Rect(bounds.Left + 6, y + 6, bounds.Width - 12, 16),
-            10.0,
-            modified ? accentBrush : hovered ? textBrush : textBrush,
+            $"{info.Label} | {fraction * 100:0.#}% removed",
+            new Rect(bounds.Left + 6, y + 6, bounds.Width - 12, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
-            $"Remaining: {info.BasePopulation - baseRemoved}/{info.BasePopulation} base · {info.DlcInclusivePopulation - dlcRemoved}/{info.DlcInclusivePopulation} with DLC",
-            new Rect(bounds.Left + 6, y + 24, bounds.Width - 12, 15),
-            9.3,
-            modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            $"Remaining: {info.BasePopulation - baseRemoved}/{info.BasePopulation} base | {info.DlcInclusivePopulation - dlcRemoved}/{info.DlcInclusivePopulation} with DLC",
+            new Rect(bounds.Left + 6, y + 24, bounds.Width - 12, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
             FontWeights.Normal);
         EndLegendHitArea();
     }
@@ -529,8 +529,8 @@ var info = Axes[axis];
                 ? TextAnchor.Left
                 : TextAnchor.Center;
 
-        DrawAnchoredText(dc, label, new Point(position.X, position.Y - 6), 9.8, activeBrush, FontWeights.SemiBold, anchor);
-        DrawAnchoredText(dc, value, new Point(position.X, position.Y + 8), 9.0, mutedBrush, FontWeights.Normal, anchor);
+        DrawAnchoredText(dc, label, new Point(position.X, position.Y - 6), RadarAxisTextSize, activeBrush, FontWeights.SemiBold, anchor);
+        DrawAnchoredText(dc, value, new Point(position.X, position.Y + 8), RadarAxisTextSize, mutedBrush, FontWeights.Normal, anchor);
     }
 
     private void DrawRingCaption(DrawingContext dc, string text, Point center, double radius, Brush brush)
