@@ -35,6 +35,13 @@
                                                                 <RowDefinition Height="Auto" />
                                                                 <RowDefinition Height="Auto" />
                                                             </Grid.RowDefinitions>
+                                                            <Border x:Name="ModifiedIndicator"
+                                                                    Grid.RowSpan="4"
+                                                                    Width="2"
+                                                                    HorizontalAlignment="Left"
+                                                                    Margin="-8,0,0,0"
+                                                                    Background="{StaticResource AccentBrush}"
+                                                                    Visibility="Collapsed" />
         
                                                             <Grid Grid.Row="0">
                                                                 <Grid.ColumnDefinitions>
@@ -456,9 +463,7 @@
                                                             <Setter TargetName="ParameterLabel" Property="FontWeight" Value="Bold" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsModified}" Value="True">
-                                                            <Setter TargetName="ParameterCard" Property="Background" Value="Transparent" />
-                                                            <Setter TargetName="CurrentValueBox" Property="Background" Value="{StaticResource ModifiedValueBrush}" />
-                                                            <Setter TargetName="CurrentValueBox" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
+                                                            <Setter TargetName="ModifiedIndicator" Property="Visibility" Value="Visible" />
                                                             <Setter TargetName="CurrentValueText" Property="FontWeight" Value="ExtraBold" />
                                                             <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
                                                         </DataTrigger>
@@ -467,6 +472,7 @@
                                                             <Setter TargetName="ParameterCard" Property="BorderThickness" Value="0" />
                                                             <Setter TargetName="ParameterCard" Property="Padding" Value="0" />
                                                             <Setter TargetName="ParameterCard" Property="Margin" Value="0,2,0,8" />
+                                                            <Setter TargetName="ModifiedIndicator" Property="Visibility" Value="Collapsed" />
                                                         </DataTrigger>
                                                         <MultiDataTrigger>
                                                             <MultiDataTrigger.Conditions>
@@ -731,27 +737,29 @@
                             <!-- Context/rationale panel. Uses the existing theme; only the layout changes. -->
                             <Border Grid.Column="1"
                                     Background="{StaticResource PanelBrush}"
-                                    BorderBrush="{StaticResource BorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="4"
-                                    Margin="7,6,5,9"
+                                    BorderThickness="0"
+                                    CornerRadius="0"
+                                    Margin="9,6,5,9"
                                     Padding="0">
                                 <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="3" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
-                                    <Border Background="{StaticResource AccentBrush}" CornerRadius="4,4,0,0" />
-                                <ScrollViewer Grid.Row="1" Margin="13,10,13,11" VerticalScrollBarVisibility="Auto"
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0"
+                                            Background="{StaticResource AccentDarkBrush}" />
+                                <ScrollViewer Grid.Column="1"
+                                              Margin="15,12,13,11"
+                                              VerticalScrollBarVisibility="Auto"
                                               HorizontalScrollBarVisibility="Disabled">
                                     <StackPanel>
                                         <TextBlock Text="{Binding SelectedParameter.Label}"
                                                    Foreground="{StaticResource AccentBrush}"
-                                                   FontSize="16"
-                                                   FontWeight="Bold"
-                                                   Margin="0,0,0,6" />
+                                                   FontSize="15"
+                                                   FontWeight="SemiBold"
+                                                   Margin="0,0,0,8" />
 
-                                        <TextBlock Text="RATIONALE"
+                                        <TextBlock Text="WHAT IT DOES"
                                                    Foreground="{StaticResource MutedTextBrush}"
                                                    FontSize="10"
                                                    FontWeight="Bold"
@@ -764,9 +772,9 @@
                                                    LineHeight="17"
                                                    Margin="0,0,0,11" />
 
-                                        <Border BorderBrush="{StaticResource BorderBrush}"
-                                                BorderThickness="0,1,0,0"
-                                                Padding="0,10,0,0">
+                                        <Border BorderThickness="0"
+                                                Padding="0"
+                                                Margin="0,14,0,0">
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Setter Property="Visibility" Value="Collapsed" />
@@ -791,10 +799,9 @@
                                             </StackPanel>
                                         </Border>
 
-                                        <Border BorderBrush="{StaticResource BorderBrush}"
-                                                BorderThickness="0,1,0,0"
-                                                Padding="0,10,0,0"
-                                                Margin="0,11,0,0">
+                                        <Border BorderThickness="0"
+                                                Padding="0"
+                                                Margin="0,14,0,0">
                                             <StackPanel>
                                                 <TextBlock Text="HIGHER / LOWER"
                                                            Foreground="{StaticResource MutedTextBrush}"
@@ -809,10 +816,9 @@
                                             </StackPanel>
                                         </Border>
 
-                                        <Border BorderBrush="{StaticResource BorderBrush}"
-                                                BorderThickness="0,1,0,0"
-                                                Padding="0,10,0,0"
-                                                Margin="0,11,0,0">
+                                        <Border BorderThickness="0"
+                                                Padding="0"
+                                                Margin="0,14,0,0">
                                             <StackPanel>
                                                 <TextBlock Text="WORKS WITH"
                                                            Foreground="{StaticResource MutedTextBrush}"
@@ -827,10 +833,9 @@
                                             </StackPanel>
                                         </Border>
 
-                                        <Border BorderBrush="{StaticResource BorderBrush}"
-                                                BorderThickness="0,1,0,0"
-                                                Padding="0,10,0,0"
-                                                Margin="0,11,0,0">
+                                        <Border BorderThickness="0"
+                                                Padding="0"
+                                                Margin="0,14,0,0">
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Setter Property="Visibility" Value="Collapsed" />
@@ -855,10 +860,9 @@
                                             </StackPanel>
                                         </Border>
 
-                                        <Border BorderBrush="{StaticResource BorderBrush}"
-                                                BorderThickness="0,1,0,0"
-                                                Padding="0,10,0,0"
-                                                Margin="0,11,0,0">
+                                        <Border BorderThickness="0"
+                                                Padding="0"
+                                                Margin="0,14,0,0">
                                             <StackPanel>
                                                 <TextBlock Text="{Binding TabSummary}"
                                                            Foreground="{StaticResource MutedTextBrush}"
