@@ -217,6 +217,30 @@ public sealed class MainViewModel : ObservableObject
 
         var parametersById = parameterVMs.ToDictionary(p => p.Id, StringComparer.Ordinal);
 
+        if (parametersById.TryGetValue("survival.beerDrunknessStrength", out var alcoholAnchor))
+        {
+            parametersById.TryGetValue("survival.vodkaDrunknessStrength", out var vodkaStrength);
+
+            alcoholAnchor.SetAggregateModifiedProvider(
+                () => Math.Abs(alcoholAnchor.CurrentNumber - 15.0) > 0.0000001
+                    || (vodkaStrength is not null && Math.Abs(vodkaStrength.CurrentNumber - 30.0) > 0.0000001));
+
+            alcoholAnchor.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                    alcoholAnchor.RefreshAggregateModifiedState();
+            };
+
+            if (vodkaStrength is not null)
+            {
+                vodkaStrength.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        alcoholAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+
         if (parametersById.TryGetValue("loot.ammoBoxWeight918", out var ammoDistributionAnchor))
         {
             var ammoDistributionMembers = ammoDistributionParameterIds
