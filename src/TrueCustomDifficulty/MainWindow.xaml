@@ -462,13 +462,6 @@
                                                             <Setter TargetName="CurrentValueText" Property="FontWeight" Value="ExtraBold" />
                                                             <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
                                                         </DataTrigger>
-                                                        <MultiDataTrigger>
-                                                            <MultiDataTrigger.Conditions>
-                                                                <Condition Binding="{Binding IsModified}" Value="True" />
-                                                                <Condition Binding="{Binding IsAggregateRadarAnchor}" Value="True" />
-                                                            </MultiDataTrigger.Conditions>
-                                                            <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource PanelBrush}" />
-                                                        </MultiDataTrigger>
                                                         <DataTrigger Binding="{Binding IsAggregateRadarAnchor}" Value="True">
                                                             <Setter TargetName="ParameterCard" Property="Background" Value="Transparent" />
                                                             <Setter TargetName="ParameterCard" Property="BorderThickness" Value="0" />
@@ -478,7 +471,7 @@
                                                         <MultiDataTrigger>
                                                             <MultiDataTrigger.Conditions>
                                                                 <Condition Binding="{Binding IsAggregateRadarAnchor}" Value="False" />
-                                                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
+                                                                <Condition Binding="{Binding IsMouseOver, ElementName=ParameterCard}" Value="True" />
                                                             </MultiDataTrigger.Conditions>
                                                             <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource PanelHoverBrush}" />
                                                         </MultiDataTrigger>
