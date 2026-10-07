@@ -198,18 +198,8 @@ private readonly RadarStatusMessage _status;
 
         DrawDetailsPanel(dc, values, variantDetails, textBrush, mutedBrush, accentBrush);
 
-        var info = GetInfoRect();
-        DrawClippedText(
-            dc,
-            "A range means that caliber exists in more than one vanilla ammo-box pool.",
-            new Rect(info.Left, ActualHeight - 68, info.Width, 20), RadarInfoTextSize,
-            mutedBrush,
-            FontWeights.Normal);
-
-        var instruction = string.IsNullOrWhiteSpace(_status.Text)
-            ? "Drag a point | Arrow keys adjust selected family | Right click point/legend resets that family | R resets all"
-            : _status.Text;
-        DrawCenteredText(dc, instruction, new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 28), RadarInfoTextSize, string.IsNullOrWhiteSpace(_status.Text) ? mutedBrush : accentBrush, FontWeights.Normal);
+        if (!string.IsNullOrWhiteSpace(_status.Text))
+            DrawCenteredText(dc, _status.Text, new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 28), RadarInfoTextSize, accentBrush, FontWeights.Normal);
     }
 
     private void DrawAxisLabel(
@@ -246,12 +236,6 @@ private readonly RadarStatusMessage _status;
         Brush accentBrush)
     {
         var info = GetInfoRect();
-        DrawClippedText(
-            dc,
-            "AMMO BOX MIX | higher = this family appears more often",
-            new Rect(info.Left, 18, info.Width, 18), RadarInfoTextSize, textBrush,
-            FontWeights.SemiBold);
-
         var rowHeights = details.Select(detail => 28.0 + (detail.Count * 18.0)).ToArray();
         var totalHeight = rowHeights.Sum();
         var y = info.Top + Math.Max(0.0, (info.Height - totalHeight) / 2.0);
