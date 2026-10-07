@@ -114,13 +114,21 @@ private string _statusText = string.Empty;
         base.OnRender(dc);
 
         var textBrush = FindBrush("TextBrush", Brushes.White);
-        var mutedBrush = FindBrush("MutedTextBrush", Brushes.Gray);
+        var mutedBrush = FindBrush("RadarMutedTextBrush", Brushes.Gray);
         var borderBrush = FindBrush("BorderBrush", Brushes.DimGray);
         var accentBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
         var panelBrush = FindBrush("PanelAltBrush", Brushes.Black);
-
-        dc.DrawRoundedRectangle(panelBrush, new Pen(borderBrush, 1),
-            new Rect(2, 2, Math.Max(0, ActualWidth - 4), Math.Max(0, ActualHeight - 4)), 3, 3);
+        var technicalBrush = FindBrush("BorderSoftBrush", borderBrush);
+        IndustrialChrome.DrawFrame(
+            dc,
+            new Rect(2, 2, Math.Max(0, ActualWidth - 4), Math.Max(0, ActualHeight - 4)),
+            panelBrush,
+            borderBrush,
+            accentBrush,
+            technicalBrush,
+            8.0,
+            accentEdge: true,
+            technicalMarks: true);
 
         var (center, radius) = GetGeometry();
         if (radius <= 10)
@@ -582,7 +590,7 @@ DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width
     private FormattedText CreateText(string text, double size, Brush brush, FontWeight weight)
         => new(text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size, brush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+            size * 1.25, brush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
     private enum TextAnchor { Left, Center, Right }
     private sealed record AxisDefinition(string ParameterId, string Label, double AngleDegrees);
