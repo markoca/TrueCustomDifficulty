@@ -562,7 +562,7 @@
                     <TextBlock Text=" CUSTOM DIFFICULTY" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold" FontSize="18" VerticalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" shell:WindowChrome.IsHitTestVisibleInChrome="True">
-                    <Button Content="—" Style="{StaticResource WindowButtonStyle}" Click="MinimizeWindow_Click" />
+                    <Button Content="-" Style="{StaticResource WindowButtonStyle}" Click="MinimizeWindow_Click" />
                     <Button Content="□" Style="{StaticResource WindowButtonStyle}" Click="MaximizeRestoreWindow_Click" />
                     <Button Content="×" Style="{StaticResource CloseWindowButtonStyle}" Click="CloseWindow_Click" FontSize="16" />
                 </StackPanel>
