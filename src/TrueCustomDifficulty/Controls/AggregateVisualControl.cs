@@ -883,7 +883,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 accent,
                 FontWeights.Bold);
 
-            DrawText(dc, preview, new Point(card.Left + 9.0, card.Top + 18.0), 7.7, muted, FontWeights.SemiBold);
+            DrawText(dc, preview, new Point(card.Left + 9.0, card.Top + 18.0), 8.1, text, FontWeights.SemiBold);
 
             var track = new Rect(card.Left + 9.0, card.Bottom - 10.0, card.Width - 18.0, 8.0);
             var y = track.Top + track.Height / 2.0;
@@ -935,14 +935,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(left + half + gap, 56.0, half, 130.0));
 
         DrawText(dc, "SUSTAINED STAMINA", new Point(left + 2.0, 194.0), 8.8, text, FontWeights.Bold);
-        DrawText(dc, "strength only — duration stays independent", new Point(left + 119.0, 194.0), 7.6, muted, FontWeights.Normal);
+        DrawText(dc, "0x–2x strength  •  grey tick = vanilla 1x  •  duration independent", new Point(left + 119.0, 194.0), 7.6, muted, FontWeights.Normal);
 
         DrawSustainedTrack(
             waterStamina,
             "WATER",
             waterStamina is null
                 ? string.Empty
-                : $"{25.0 * waterStamina.CurrentNumber:0.#}% REGEN  •  {10.0 * waterStamina.CurrentNumber:0.#}% LESS ACTION COST",
+                : $"REGEN +{25.0 * waterStamina.CurrentNumber:0.#}%  |  ACTION COST -{10.0 * waterStamina.CurrentNumber:0.#}%",
             new Rect(left, 207.0, half, 40.0));
 
         DrawSustainedTrack(
@@ -950,7 +950,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "ENERGY DRINK",
             energyStamina is null
                 ? string.Empty
-                : $"{200.0 * energyStamina.CurrentNumber:0.#}% REGEN",
+                : $"REGEN +{200.0 * energyStamina.CurrentNumber:0.#}%",
             new Rect(left + half + gap, 207.0, half, 40.0));
 
         DrawText(dc, "TIMED EFFECTS", new Point(left + 2.0, 253.0), 8.8, text, FontWeights.Bold);

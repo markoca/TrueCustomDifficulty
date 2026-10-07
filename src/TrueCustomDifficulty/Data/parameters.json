@@ -5,7 +5,7 @@
     "platform": "Windows",
     "defaultReferenceDifficulty": "Stalker",
     "uiRule": "Show the primary value plus a descriptive CFG value and all relevant vanilla difficulty reference values.",
-    "version": "0.9.26.53"
+    "version": "0.9.26.54"
   },
   "source": {
     "gameVersion": "2.0.5",
