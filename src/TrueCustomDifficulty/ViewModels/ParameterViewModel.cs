@@ -55,7 +55,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsDrunkennessAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "BEER and VODKA are independent drink-strength sliders. Click anywhere on a track or drag with the left mouse button to adjust them. Beer moves in 1-point steps; Vodka moves in 5-point steps. Vanilla is 15 for Beer and 30 for Vodka. The fixed 20 / 40 / 60 thresholds are shown as BUZZED, TIPSY, DRUNK and WASTED, with 1ST / 2ND / 3RD / ... drink progression. Right-click a slider to restore only that drink to VANILLA.";
+                       "BEER and VODKA are independent drink-strength sliders. The current CFG DrunknessMechanics stages are LOW 0.001, MEDIUM 30 and STRONG 80; the drink progression shows which of those stages repeated drinks reach. OverDrunkness is a separate mechanics chain with its own 89-point reference and is intentionally not treated as a fourth stage here. Right-click one drink to reset it; press R to reset both drinks to the Base Preset.";
             }
 
             if (IsBleedingCurveAnchor)
