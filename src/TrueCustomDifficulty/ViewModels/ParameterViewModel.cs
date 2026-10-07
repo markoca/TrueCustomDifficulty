@@ -93,6 +93,13 @@ public sealed class ParameterViewModel : ObservableObject
                        "Each mutant row edits a wait-time multiplier, not absolute cooldown seconds. Lower WAIT means the affected special abilities can return sooner; ABILITY RETURN shows the reciprocal frequency relative to the authored base cooldown (for example 0.5x wait = 2x return rate). The grey tick is the current Base Preset reference. Vanilla Master explicitly uses 0.5x; Novice/Stalker/Veteran are represented as neutral 1x and generated override insertion for those profiles still requires runtime validation. Right-click a row track to reset only that mutant family; press R to reset the whole pacing board.";
             }
 
+            if (IsActionCostAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "Movement and melee rows share a 0–200% of vanilla stamina-load scale while keeping each action's actual raw stamina value visible. Drag a row track to change that action. NORMAL MELEE and STRONG MELEE remain linked by the central constraint so normal cost cannot exceed strong cost. AIMING STAMINA RECOVERY PENALTY is separate because it continuously slows regeneration instead of charging stamina once; 0% removes that aiming penalty and vanilla is 25%. Right-click one track to reset only that value; press R to reset the whole stamina-pressure board.";
+            }
+
+
             if (IsMutantHealthAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
