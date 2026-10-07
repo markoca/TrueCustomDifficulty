@@ -467,6 +467,22 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsDrunkennessMember => DrunkennessParameterIds.Contains(Id);
     public bool IsDrunkennessAnchor => Id == "survival.beerDrunknessStrength";
 
+    public bool IsVisualControlAnchor =>
+        IsStashAmmoAnchor ||
+        IsMutantDropAnchor ||
+        IsIndividualAnomalyDamageAnchor ||
+        IsWorldLootRemovalAnchor ||
+        IsMedicalHealingAnchor ||
+        IsActionCostAnchor ||
+        IsItemPriceScalerAnchor ||
+        IsMutantHealthAnchor ||
+        IsSpecialAbilityCooldownAnchor ||
+        IsHumanGroupSizeAnchor ||
+        IsMutantGroupSizeAnchor ||
+        IsBleedingCurveAnchor ||
+        IsDrunkennessAnchor ||
+        IsVisualAggregateAnchor;
+
     public bool HasEffectiveDamage => _effectiveDamageMultiplierProvider is not null;
     public bool IsControlEnabled => IsVisualAggregateAnchor || (_dependencyEnabledProvider?.Invoke() ?? true);
     // Backing parameters for semantic visual families remain in the live VM/preset/writer graph
