@@ -72,7 +72,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "BleedingTreatmentMixer" => "Drag the four faders on the shared 0–200% of vanilla scale. The 100% line is each item's own vanilla bleeding removal; the raw bleeding value stays visible under the relative value.",
                     "ConsumableMixer" => "Use the two compact effect-strength tracks and the five duration faders to tune consumables from one surface.",
                     "SleepingDashboard" => "Tune the sleep threshold, minimum sleep duration, health restore and stamina restore directly in the Sleeping dashboard.",
-                    "HungerLadder" => "Tune hunger build-up at the top, then adjust the Well Fed, Hungry and Severe Hunger stamina effects on the state ladder.",
+                    "HungerLadder" => "Tune hunger build-up at the top. The shared recovery axis shows WELL FED as a stamina-recovery bonus to the right of NEUTRAL, while HUNGRY and SEVERE penalties extend left. Drag each state on that common gameplay scale; vanilla is marked on every row.",
                     "StarvationTimeline" => "Use the timeline to set when starvation penalties begin and how often damage ticks. The lower tracks tune stamina drain, damage and health-recovery loss.",
                     "RepeatedHitBand" => "Drag MIN and MAX on the protection band. The highlighted span is the allowed repeated-hit protection range; toggle whether healed damage still counts below it.",
                     "RadiationBalance" => "Balance natural recovery against radiation build-up on the split meter, then tune radiation health damage below.",
