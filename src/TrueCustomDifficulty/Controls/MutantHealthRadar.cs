@@ -25,7 +25,7 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     private static readonly AxisDefinition[] Axes =
     {
-        new("combat.mutantHealth.bloodsucker", "Bloodsucker", -90, new[] { 500.0, 1000.0 }, "500 / 1000 HP"),
+        new("combat.mutantHealth.bloodsucker", "Bloodsucker", -90, new[] { 500.0 }, "500 HP"),
         new("combat.mutantHealth.chimera", "Chimera", -45, new[] { 1400.0 }, "1400 HP"),
         new("combat.mutantHealth.deer", "Deer", 0, new[] { 600.0 }, "600 HP"),
         new("combat.mutantHealth.pseudogiant", "Pseudogiant", 45, new[] { 2500.0 }, "2500 HP"),
