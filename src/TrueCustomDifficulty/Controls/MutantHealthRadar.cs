@@ -14,6 +14,10 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class MutantHealthRadar : FrameworkElement
 {
+    private const double RadarInfoTextSize = 11.0;
+    private const double RadarLegendTextSize = 11.0;
+    private const double RadarAxisTextSize = 10.5;
+
     private const double MinimumMultiplier = 0.25;
     private const double MaximumMultiplier = 3.0;
     private const double VanillaMultiplier = 1.0;
@@ -206,20 +210,19 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Mutant HP · 1x is vanilla · each point controls one mutant family.",
+            "Mutant HP | 1x is vanilla | each point controls one mutant family.",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
         var instruction = string.IsNullOrWhiteSpace(_statusText)
-            ? "Drag a point · Arrow keys adjust selected mutant · Right-click point/legend resets that mutant · R resets all"
+            ? "Drag a point | Arrow keys adjust selected mutant | Right-click point/legend resets that mutant | R resets all"
             : _statusText;
 
         DrawCenteredText(
             dc,
             instruction,
-            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18),
-            9.6,
+            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
             string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush,
             FontWeights.Normal);
     }
@@ -233,7 +236,7 @@ private string _statusText = string.Empty;
     private void DrawInfoHeader(DrawingContext dc, string text, Brush brush)
     {
         var info = GetInfoRect();
-        DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), 9.8, brush, FontWeights.Normal);
+        DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), RadarInfoTextSize, brush, FontWeights.Normal);
     }
 
     private void DrawLegend(
@@ -278,25 +281,19 @@ private string _statusText = string.Empty;
 DrawClippedText(
             dc,
             info.Label,
-            new Rect(bounds.Left + 6, y + 5, bounds.Width * 0.38, 15),
-            9.8,
-            modified ? accentBrush : hovered ? textBrush : textBrush,
+            new Rect(bounds.Left + 6, y + 5, bounds.Width * 0.38, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
-            $"{value:0.##}x · {FormatEffectiveHp(info, value)}",
-            new Rect(bounds.Left + bounds.Width * 0.38, y + 5, bounds.Width * 0.62 - 6, 15),
-            9.3,
-            modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            $"{value:0.##}x | {FormatEffectiveHp(info, value)}",
+            new Rect(bounds.Left + bounds.Width * 0.38, y + 5, bounds.Width * 0.62 - 6, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         DrawClippedText(
             dc,
             $"Increase/decrease {info.Label} HP",
-            new Rect(bounds.Left + 6, y + 22, bounds.Width - 12, 14),
-            8.7,
-            hovered ? textBrush : mutedBrush,
+            new Rect(bounds.Left + 6, y + 22, bounds.Width - 12, 18), RadarLegendTextSize, hovered ? textBrush : mutedBrush,
             FontWeights.Normal);
         EndLegendHitArea();
     }
@@ -572,8 +569,8 @@ DrawClippedText(
                 ? TextAnchor.Left
                 : TextAnchor.Center;
 
-        DrawAnchoredText(dc, label, new Point(position.X, position.Y - 6), 9.4, activeBrush, FontWeights.SemiBold, anchor);
-        DrawAnchoredText(dc, value, new Point(position.X, position.Y + 8), 8.8, mutedBrush, FontWeights.Normal, anchor);
+        DrawAnchoredText(dc, label, new Point(position.X, position.Y - 6), RadarAxisTextSize, activeBrush, FontWeights.SemiBold, anchor);
+        DrawAnchoredText(dc, value, new Point(position.X, position.Y + 8), RadarAxisTextSize, mutedBrush, FontWeights.Normal, anchor);
     }
 
     private void DrawRingCaption(DrawingContext dc, string text, Point center, double radius, Brush brush)
