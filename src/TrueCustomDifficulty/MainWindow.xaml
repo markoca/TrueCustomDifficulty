@@ -232,7 +232,7 @@
                                                                                              PreviewMouseLeftButtonDown="Radar_PreviewMouseLeftButtonDown"
                                                                                              Grid.Row="0"
                                                                                              Grid.RowSpan="2"
-                                                                                             MinHeight="300"
+                                                                                             MinHeight="320"
                                                                                              Visibility="Collapsed"
                                                                                              Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
