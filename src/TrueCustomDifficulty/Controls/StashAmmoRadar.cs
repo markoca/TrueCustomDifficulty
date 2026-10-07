@@ -284,7 +284,7 @@ private string _statusText = string.Empty;
         if (axis >= 0)
         {
             BeginLegendHitArea(axis);
-            _legendHitRects[axis] = new Rect(bounds.Left - 4.0, bounds.Top - 8.0, bounds.Width + 8.0, bounds.Height + 12.0);
+
         }
         DrawClippedText(
             dc,
@@ -652,8 +652,12 @@ private string _statusText = string.Empty;
 
         var textWidth = Math.Min(bounds.Width, formatted.WidthIncludingTrailingWhitespace);
         var textHeight = Math.Min(bounds.Height, formatted.Height);
-        var textLeft = bounds.Left + Math.Max(0.0, bounds.Width - textWidth);
-        var textRect = new Rect(textLeft, bounds.Top, Math.Max(1.0, textWidth), Math.Max(1.0, textHeight));
+        var textLeft = bounds.Left;
+        var textRect = new Rect(
+            textLeft - 3.0,
+            bounds.Top - 2.0,
+            Math.Max(1.0, textWidth + 6.0),
+            Math.Max(1.0, textHeight + 4.0));
 
         if (_legendHitRects.TryGetValue(_legendRecordingAxis, out var current))
             _legendHitRects[_legendRecordingAxis] = Rect.Union(current, textRect);
@@ -674,7 +678,7 @@ private string _statusText = string.Empty;
         formatted.MaxTextWidth = Math.Max(1.0, bounds.Width);
         formatted.MaxLineCount = 1;
         formatted.Trimming = TextTrimming.CharacterEllipsis;
-        formatted.TextAlignment = TextAlignment.Right;
+        formatted.TextAlignment = TextAlignment.Left;
         dc.DrawText(formatted, new Point(bounds.Left, bounds.Top));
     }
 
