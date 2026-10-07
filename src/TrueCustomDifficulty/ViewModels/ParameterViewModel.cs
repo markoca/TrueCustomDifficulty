@@ -106,6 +106,18 @@ public sealed class ParameterViewModel : ObservableObject
                        "Each medical row shows the raw BASE HEAL in HP, that output on a shared 0–200 HP comparison bar, and an interactive 0–200% of vanilla strength track. Bandage, Medkit and Army Medkit base healing can be modified again by the separate Master Consumable Effect Penalties layer; Scientific Medkit does not use that same Master healing modifier. Right-click a row track to reset only that item's base heal; press R to reset the whole medical-healing board.";
             }
 
+            if (IsStashAmmoAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "BASIC, STANDARD and RARE each have an independent 0.25x–2x ammo-quantity multiplier. The live sample rows show resulting MinCount–MaxCount round stacks using the same positive round-half-up rule as the writer. These controls change stack amounts only: ammo membership, selection weights, rank gates and progression stay vanilla. Right-click one tier track to reset only that stash tier; press R to reset all three ammo-amount tiers.";
+            }
+
+            if (IsWorldLootRemovalAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "Each row removes an audited physical world-loot population from 0% VANILLA to 100% REMOVED. BASE and +DLC1 show the audited eligible actor populations; ≈ REMOVED / REMAIN are percentage-derived estimates, while the actual actor set is chosen randomly without replacement when you build. Dedicated F1 boxes are their own population, but the broader Ammo Boxes removal can further reduce F1 boxes that survive that row. Right-click one track to reset only that category; press R to reset the whole world-loot depletion board.";
+            }
+
             if (IsItemPriceScalerAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
