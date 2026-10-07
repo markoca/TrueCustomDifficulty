@@ -299,14 +299,14 @@ public sealed class BleedingCurveControl : FrameworkElement
 
         for (var threshold = 0; threshold <= 100; threshold += 25)
         {
-            var x = ThresholdToX(threshold);
+            var gridX = ThresholdToX(threshold);
             dc.DrawLine(
                 new Pen(CloneWithOpacity(softBorder, threshold is 0 or 100 ? 0.8 : 0.45), 1.0)
                 {
                     DashStyle = threshold is 0 or 100 ? DashStyles.Solid : DashStyles.Dot
                 },
-                new Point(x, _plotRect.Top),
-                new Point(x, _plotRect.Bottom));
+                new Point(gridX, _plotRect.Top),
+                new Point(gridX, _plotRect.Bottom));
         }
 
         var currentThresholds = new[]
