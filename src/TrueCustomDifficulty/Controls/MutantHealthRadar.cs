@@ -206,7 +206,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Mutant toughness · 1x is vanilla · higher means more health and longer fights.",
+            "Mutant HP · 1x is vanilla · each point controls one mutant family.",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
