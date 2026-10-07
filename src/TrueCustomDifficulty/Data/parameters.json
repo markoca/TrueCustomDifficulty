@@ -2408,7 +2408,7 @@
       "tab": "survival",
       "group": "Alcohol Tolerance",
       "label": "Beer Strength",
-      "description": "Sets how much Drunkness one Beer adds while the player thresholds stay fixed at vanilla 20 / 40 / 60.",
+      "description": "Sets Beer drink strength against the fixed vanilla 20 / 40 / 60 drunkenness thresholds.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2425,7 +2425,7 @@
       },
       "slider": {
         "min": 8,
-        "max": 60,
+        "max": 30,
         "step": 1,
         "stepMode": "absolute"
       },
@@ -2447,7 +2447,7 @@
         ]
       },
       "rationale": "Controls how strongly one Beer pushes the drunkenness meter.",
-      "logic": "Vanilla is 15 Drunkness per Beer, so the 4th beer first reaches WASTED at the fixed threshold of 60. UI tiers: BUZZED <20, TIPSY 20–39, DRUNK 40–59, WASTED 60+.",
+      "logic": "Vanilla is 15. Beer can be tuned from 8 to 30 Drunkness per drink in exact 1-point steps. The 4th vanilla Beer first reaches WASTED at 60.",
       "interaction": "Always visible beside Vodka Strength. Moving it updates Beer strength, the Beer Very Strong drink count, and the AFTER EACH BEER progression immediately."
     },
     {
