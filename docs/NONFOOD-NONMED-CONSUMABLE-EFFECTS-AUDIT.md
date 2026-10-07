@@ -76,9 +76,10 @@ The current runtime-test implementation exposes:
 - `survival.vodkaEffectDuration`
 - `survival.beerEffectDuration`
 - `survival.magicVodkaEffectDuration`
-- `survival.drunknessThresholdScale`
 - `survival.beerDrunknessStrength`
 - `survival.vodkaDrunknessStrength`
+
+`survival.drunknessThresholdScale` remains in the catalog only as a hidden source/legacy mapping. The player-facing alcohol editor keeps the vanilla 20 / 40 / 60 thresholds fixed.
 
 Alcohol drunkenness duration remains deliberately excluded. Beer/Vodka drunkenness **strength** is now exposed as a direct raw `ValueMin/ValueMax` value in 1-point Drunkness steps and remains marked `runtime_test_required` because those two raw effect rows were cross-checked outside the original 2.0.5 writer-baseline capture.
 
@@ -481,9 +482,10 @@ Safe first-stage tuning:
 - stamina penalty duration
 
 Current controlled surface:
-- shared drunkness thresholds (Medium / Strong / Very Strong) through `survival.drunknessThresholdScale`
+- fixed vanilla player thresholds: Medium 20 / Strong 40 / Very Strong 60
 - direct Beer strength through `BeerDrunkness.ValueMin/ValueMax`
 - direct Vodka strength through `VodkaDrunkness.ValueMin/ValueMax`
+- the drinks-to-Very-Strong UI is derived from the selected drink strength rather than from a shared tolerance scalar
 
 Still deferred:
 - drunkness duration
