@@ -190,7 +190,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "FATIGUE RESPONSE", "build-up + escalating aim / reload penalties", text, muted, accent);
+        DrawHeader(dc, "FATIGUE PENALTIES", "build-up and combat penalties as fatigue worsens", text, muted, accent);
 
         var gap = 10.0;
         var left = 16.0;
@@ -220,7 +220,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             accent,
             panel);
 
-        var plot = new Rect(58.0, 158.0, Math.Max(360.0, ActualWidth - 82.0), 178.0);
+        DrawText(dc, "COMBAT PENALTIES", new Point(16.0, 140.0), 9.0, muted, FontWeights.Bold);
+        DrawText(dc, "reload penalty begins at MEDIUM fatigue", new Point(142.0, 140.0), 8.1, muted, FontWeights.Normal);
+
+        var plot = new Rect(58.0, 162.0, Math.Max(360.0, ActualWidth - 82.0), 174.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
 
         const double yMaximum = 0.8;
@@ -233,7 +236,13 @@ public sealed class AggregateVisualControl : FrameworkElement
                 gridPen.DashStyle = DashStyles.Dot;
 
             dc.DrawLine(gridPen, new Point(plot.Left, y), new Point(plot.Right, y));
-            DrawRightAlignedText(dc, $"{value * 100:0}%", new Point(plot.Left - 8.0, y - 7.0), 8.0, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(
+                dc,
+                $"{value * 100:0}%",
+                new Point(plot.Left - 8.0, y - 7.0),
+                8.0,
+                muted,
+                FontWeights.SemiBold);
         }
 
         var xs = new[]
@@ -252,23 +261,69 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var reload = new[]
         {
-            (ParameterViewModel?)null,
             P("survival.fatigueMediumReloadPenalty"),
             P("survival.fatigueStrongReloadPenalty")
         };
 
         var aimCurrent = aim.Select(x => x?.CurrentNumber ?? 0.0).ToArray();
         var aimVanilla = aim.Select(x => x?.ReferenceNumber ?? 0.0).ToArray();
-        var reloadCurrent = new[] { 0.0, reload[1]?.CurrentNumber ?? 0.0, reload[2]?.CurrentNumber ?? 0.0 };
-        var reloadVanilla = new[] { 0.0, reload[1]?.ReferenceNumber ?? 0.0, reload[2]?.ReferenceNumber ?? 0.0 };
+        var reloadCurrent = reload.Select(x => x?.CurrentNumber ?? 0.0).ToArray();
+        var reloadVanilla = reload.Select(x => x?.ReferenceNumber ?? 0.0).ToArray();
 
-        DrawCurveLine(dc, xs, aimVanilla, plot, 0.0, yMaximum, new Pen(muted, 1.2) { DashStyle = DashStyles.Dash });
-        DrawCurveLine(dc, xs, reloadVanilla, plot, 0.0, yMaximum, new Pen(soft, 1.2) { DashStyle = DashStyles.Dash });
-        DrawCurveLine(dc, xs, aimCurrent, plot, 0.0, yMaximum, new Pen(accent, 2.2));
-        DrawCurveLine(dc, xs, reloadCurrent, plot, 0.0, yMaximum, new Pen(text, 1.7));
+        // AIM exists for LOW / MEDIUM / SEVERE.
+        DrawCurveLine(
+            dc,
+            xs,
+            aimVanilla,
+            plot,
+            0.0,
+            yMaximum,
+            new Pen(muted, 1.2) { DashStyle = DashStyles.Dash });
 
-        DrawText(dc, "AIM", new Point(plot.Left + 8.0, plot.Top + 8.0), 8.5, accent, FontWeights.Bold);
-        DrawText(dc, "RELOAD", new Point(plot.Left + 46.0, plot.Top + 8.0), 8.5, text, FontWeights.Bold);
+        DrawCurveLine(
+            dc,
+            xs,
+            aimCurrent,
+            plot,
+            0.0,
+            yMaximum,
+            new Pen(accent, 2.2));
+
+        // There is no Low-fatigue reload backing parameter. Draw reload only from
+        // MEDIUM to SEVERE instead of inventing a synthetic 0% LOW point.
+        var reloadXs = new[] { xs[1], xs[2] };
+
+        DrawCurveLine(
+            dc,
+            reloadXs,
+            reloadVanilla,
+            plot,
+            0.0,
+            yMaximum,
+            new Pen(soft, 1.2) { DashStyle = DashStyles.Dash });
+
+        DrawCurveLine(
+            dc,
+            reloadXs,
+            reloadCurrent,
+            plot,
+            0.0,
+            yMaximum,
+            new Pen(text, 1.7));
+
+        // Compact legend: shape + line language matches the actual draggable points.
+        var legendY = plot.Top + 10.0;
+        dc.DrawLine(new Pen(accent, 2.2), new Point(plot.Left + 10.0, legendY + 4.0), new Point(plot.Left + 28.0, legendY + 4.0));
+        dc.DrawEllipse(accent, null, new Point(plot.Left + 19.0, legendY + 4.0), 3.0, 3.0);
+        DrawText(dc, "AIM", new Point(plot.Left + 34.0, legendY - 3.0), 8.2, accent, FontWeights.Bold);
+
+        dc.DrawLine(new Pen(text, 1.7), new Point(plot.Left + 72.0, legendY + 4.0), new Point(plot.Left + 90.0, legendY + 4.0));
+        dc.DrawRectangle(panel, new Pen(text, 1.3), new Rect(plot.Left + 78.0, legendY + 1.0, 7.0, 7.0));
+        DrawText(dc, "RELOAD", new Point(plot.Left + 96.0, legendY - 3.0), 8.2, text, FontWeights.Bold);
+
+        var vanillaLegendPen = new Pen(muted, 1.2) { DashStyle = DashStyles.Dash };
+        dc.DrawLine(vanillaLegendPen, new Point(plot.Right - 82.0, legendY + 4.0), new Point(plot.Right - 62.0, legendY + 4.0));
+        DrawText(dc, "VANILLA", new Point(plot.Right - 56.0, legendY - 3.0), 8.0, muted, FontWeights.SemiBold);
 
         var stageLabels = new[] { "LOW", "MEDIUM", "SEVERE" };
 
@@ -283,19 +338,45 @@ public sealed class AggregateVisualControl : FrameworkElement
 
             if (i > 0)
             {
-                var reloadPoint = new Point(xs[i], ValueToY(reloadCurrent[i], 0.0, yMaximum, plot));
-                dc.DrawRectangle(panel, new Pen(text, IsSelected(reload[i]) ? 2.2 : 1.4), new Rect(reloadPoint.X - 5.0, reloadPoint.Y - 5.0, 10.0, 10.0));
+                var reloadIndex = i - 1;
+                var reloadPoint = new Point(xs[i], ValueToY(reloadCurrent[reloadIndex], 0.0, yMaximum, plot));
 
-                if (reload[i] is { } reloadParameter)
+                dc.DrawRectangle(
+                    panel,
+                    new Pen(text, IsSelected(reload[reloadIndex]) ? 2.2 : 1.4),
+                    new Rect(reloadPoint.X - 5.0, reloadPoint.Y - 5.0, 10.0, 10.0));
+
+                if (reload[reloadIndex] is { } reloadParameter)
                     AddVerticalPointTarget(reloadParameter, reloadPoint, plot, 0.0, yMaximum);
             }
 
-            DrawCenteredText(dc, stageLabels[i], new Point(xs[i], plot.Bottom + 10.0), 9.0, text, FontWeights.Bold);
+            DrawCenteredText(
+                dc,
+                stageLabels[i],
+                new Point(xs[i], plot.Bottom + 10.0),
+                9.2,
+                text,
+                FontWeights.Bold);
 
-            var aimLabel = $"{aimCurrent[i] * 100:0}% AIM";
-            var reloadLabel = i == 0 ? "0% RELOAD" : $"{reloadCurrent[i] * 100:0.#}% RELOAD";
-            DrawCenteredText(dc, aimLabel, new Point(xs[i], plot.Bottom + 27.0), 8.1, accent, FontWeights.SemiBold);
-            DrawCenteredText(dc, reloadLabel, new Point(xs[i], plot.Bottom + 41.0), 7.8, muted, FontWeights.Normal);
+            DrawCenteredText(
+                dc,
+                $"{aimCurrent[i] * 100:0}% AIM",
+                new Point(xs[i], plot.Bottom + 27.0),
+                8.4,
+                accent,
+                FontWeights.Bold);
+
+            var reloadLabel = i == 0
+                ? "— RELOAD"
+                : $"{reloadCurrent[i - 1] * 100:0.#}% RELOAD";
+
+            DrawCenteredText(
+                dc,
+                reloadLabel,
+                new Point(xs[i], plot.Bottom + 42.0),
+                8.0,
+                i == 0 ? muted : text,
+                i == 0 ? FontWeights.Normal : FontWeights.SemiBold);
         }
     }
 
