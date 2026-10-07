@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 236,
+  "supportedParameterCount": 238,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -22287,6 +22287,78 @@
       "key": "ConditionValue",
       "sourceRaw": "75",
       "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.waterStaminaEffectStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "WaterStamina2",
+      "nodePath": [],
+      "key": "ValueMin",
+      "sourceRaw": "25%",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.waterStaminaEffectStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "WaterStamina2",
+      "nodePath": [],
+      "key": "ValueMax",
+      "sourceRaw": "25%",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.waterStaminaEffectStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "WaterStaminaPerAction1",
+      "nodePath": [],
+      "key": "ValueMin",
+      "sourceRaw": "-10%",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.waterStaminaEffectStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "WaterStaminaPerAction1",
+      "nodePath": [],
+      "key": "ValueMax",
+      "sourceRaw": "-10%",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.energyDrinkStaminaRecoveryStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "EnergeticStamina",
+      "nodePath": [],
+      "key": "ValueMin",
+      "sourceRaw": "200%",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.energyDrinkStaminaRecoveryStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "EnergeticStamina",
+      "nodePath": [],
+      "key": "ValueMax",
+      "sourceRaw": "200%",
+      "operation": "scale",
       "role": "",
       "difficultySid": ""
     }
