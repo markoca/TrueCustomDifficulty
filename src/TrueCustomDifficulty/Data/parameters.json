@@ -143,6 +143,32 @@
       ]
     },
     {
+      "id": "fatigueStageThresholds",
+      "order": "nondecreasing",
+      "parameterIds": [
+        "survival.sleepLowThreshold",
+        "survival.sleepMediumThreshold",
+        "survival.sleepStrongThreshold"
+      ]
+    },
+    {
+      "id": "hungerStageThresholds",
+      "order": "nondecreasing",
+      "parameterIds": [
+        "survival.hungerLowThreshold",
+        "survival.hungerMediumThreshold",
+        "survival.hungerStrongThreshold"
+      ]
+    },
+    {
+      "id": "bleedingStageThresholds",
+      "order": "nondecreasing",
+      "parameterIds": [
+        "survival.bleedingMediumThreshold",
+        "survival.bleedingStrongThreshold"
+      ]
+    },
+    {
       "id": "hungerStaminaRecoverySeverity",
       "order": "nondecreasing",
       "parameterIds": [
