@@ -198,7 +198,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "ALife Human MaxCount multipliers · 1x = vanilla · 0.05x step",
+            "Human squad size by ALife rank · higher = more NPCs can spawn together in a group.",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
@@ -236,9 +236,13 @@ private string _statusText = string.Empty;
         Brush accentBrush)
     {
         var info = GetInfoRect();
-        const double rowHeight = 42.0;
+        const double rowHeight = 48.0;
+        var totalHeight = Axes.Length * rowHeight;
+        var top = info.Top + Math.Max(0.0, (info.Height - totalHeight) / 2.0);
+        var legendBounds = new Rect(info.Left, top, info.Width, totalHeight);
+
         for (var i = 0; i < Axes.Length; i++)
-            DrawLegendRow(dc, i, info, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
+            DrawLegendRow(dc, i, legendBounds, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
     }
 
     private void DrawLegendRow(
@@ -266,23 +270,23 @@ private string _statusText = string.Empty;
 DrawClippedText(
             dc,
             info.Label,
-            new Rect(bounds.Left + 6, y, bounds.Width * 0.38, 15),
+            new Rect(bounds.Left + 6, y + 7, bounds.Width * 0.38, 15),
             9.8,
             modified ? accentBrush : hovered ? textBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
-            $"{value:0.##}x · {FormatEffectiveHp(info, value)}",
-            new Rect(bounds.Left + bounds.Width * 0.38, y, bounds.Width * 0.62 - 6, 15),
+            $"{value:0.##}x · up to {FormatEffectiveHp(info, value)}",
+            new Rect(bounds.Left + bounds.Width * 0.38, y + 7, bounds.Width * 0.62 - 6, 15),
             9.3,
             modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         DrawClippedText(
             dc,
-            $"Vanilla {info.VanillaLabel} · maximum NPCs in the group",
-            new Rect(bounds.Left + 6, y + 16, bounds.Width - 12, 14),
+            $"Vanilla {info.VanillaLabel} · controls the largest human squad at this ALife rank",
+            new Rect(bounds.Left + 6, y + 25, bounds.Width - 12, 14),
             8.7,
             hovered ? textBrush : mutedBrush,
             FontWeights.Normal);
