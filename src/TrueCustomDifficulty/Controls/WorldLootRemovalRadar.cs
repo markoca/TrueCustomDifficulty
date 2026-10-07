@@ -188,7 +188,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Build-time random removal without replacement. Each axis is an independent audited physical population.",
+            "World loot density · 0% keeps vanilla · higher removes more of that loot from the world.",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
@@ -226,9 +226,13 @@ private string _statusText = string.Empty;
         Brush accentBrush)
     {
         var info = GetInfoRect();
-        var rowHeight = 48.0;
+        const double rowHeight = 48.0;
+        var totalHeight = Axes.Length * rowHeight;
+        var top = info.Top + Math.Max(0.0, (info.Height - totalHeight) / 2.0);
+        var legendBounds = new Rect(info.Left, top, info.Width, totalHeight);
+
         for (var i = 0; i < Axes.Length; i++)
-            DrawLegendRow(dc, i, info, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
+            DrawLegendRow(dc, i, legendBounds, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
     }
 
     private void DrawLegendRow(
@@ -258,16 +262,16 @@ var info = Axes[axis];
 
         DrawClippedText(
             dc,
-            $"{info.Label}  {fraction * 100:0.#}% removed",
-            new Rect(bounds.Left + 6, y, bounds.Width - 12, 16),
+            $"{info.Label} · {fraction * 100:0.#}% removed",
+            new Rect(bounds.Left + 6, y + 6, bounds.Width - 12, 16),
             10.0,
             modified ? accentBrush : hovered ? textBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
-            $"Base: removes {baseRemoved}/{info.BasePopulation} · With DLC: {dlcRemoved}/{info.DlcInclusivePopulation}",
-            new Rect(bounds.Left + 6, y + 18, bounds.Width - 12, 15),
+            $"Remaining: {info.BasePopulation - baseRemoved}/{info.BasePopulation} base · {info.DlcInclusivePopulation - dlcRemoved}/{info.DlcInclusivePopulation} with DLC",
+            new Rect(bounds.Left + 6, y + 24, bounds.Width - 12, 15),
             9.3,
             modified ? accentBrush : hovered ? textBrush : mutedBrush,
             FontWeights.Normal);
