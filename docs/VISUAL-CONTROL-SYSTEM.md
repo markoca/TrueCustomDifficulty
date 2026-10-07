@@ -4,6 +4,18 @@ True Custom Difficulty keeps every gameplay setting as its original parameter in
 
 The visual layer never invents replacement gameplay values. It edits the same live `ParameterViewModel` instances used by the ordinary parameter system.
 
+## Compact readability contract
+
+Semantic controls follow one density/readability baseline:
+
+- The default application window is 1280×800 and the minimum is 1024×640, keeping the 16:10 layout.
+- Large semantic controls are centered and capped at 920 px so maximizing the window does not stretch tracks across the whole screen.
+- Custom-rendered text has a 9.0 minimum FontSize. Important values and labels use larger sizes.
+- Detailed implementation caveats belong in the rationale/help panel; the control surface itself should show only the value, Base Preset reference and immediate gameplay meaning.
+- Large entity families use two columns when that improves scanability instead of growing into very tall single-column dashboards.
+- Grey ticks/markers carry Base Preset reference information so repeated micro-labels such as `VANILLA`, `0%` and `200%` do not need to be printed on every row.
+- Compactness must never change backing parameter values, constraints, preset serialization or CFG-writer behavior.
+
 ## Shared interaction contract
 
 - Left-click or drag a visible handle, point, meter or track to edit its backing value.
