@@ -37,7 +37,7 @@ public sealed class AmmoDistributionRadar : FrameworkElement
         private readonly Dictionary<int, Rect> _legendHitRects = new();
     private int _legendRecordingAxis = -1;
 
-private string _statusText = string.Empty;
+private readonly RadarStatusMessage _status;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -53,6 +53,7 @@ private string _statusText = string.Empty;
 
     public AmmoDistributionRadar()
     {
+        _status = new RadarStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 500;
         Cursor = Cursors.Arrow;
@@ -205,10 +206,10 @@ private string _statusText = string.Empty;
             mutedBrush,
             FontWeights.Normal);
 
-        var instruction = string.IsNullOrWhiteSpace(_statusText)
+        var instruction = string.IsNullOrWhiteSpace(_status.Text)
             ? "Drag a point | Arrow keys adjust selected family | Right click point/legend resets that family | R resets all"
-            : _statusText;
-        DrawCenteredText(dc, instruction, new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 28), RadarInfoTextSize, string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush, FontWeights.Normal);
+            : _status.Text;
+        DrawCenteredText(dc, instruction, new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 28), RadarInfoTextSize, string.IsNullOrWhiteSpace(_status.Text) ? mutedBrush : accentBrush, FontWeights.Normal);
     }
 
     private void DrawAxisLabel(
@@ -449,7 +450,7 @@ private string _statusText = string.Empty;
         _selectedAxis = axis;
         _hoverAxis = axis;
         TrySetAxis(axis, parameter.CurrentNumber + (direction * Step));
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -482,7 +483,7 @@ private string _statusText = string.Empty;
         if (parameter is not null)
             parameter.CurrentNumber = 1.0;
 
-        _statusText = $"{Axes[axis].Label} reset to 1x.";
+        _status.ShowTransient($"{Axes[axis].Label} reset to 1x.");
         InvalidateVisual();
         e.Handled = true;
     }
@@ -508,7 +509,7 @@ private string _statusText = string.Empty;
                 if (resetParameter is not null)
                     resetParameter.CurrentNumber = 1.0;
             }
-            _statusText = string.Empty;
+            _status.Clear();
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -559,12 +560,12 @@ private string _statusText = string.Empty;
         var westSum = proposed[0] + proposed[1] + proposed[2] + proposed[3];
         if (eastSum <= 0.0 || westSum <= 0.0)
         {
-            _statusText = "At least one vanilla ammo family in each box pool must remain above 0x.";
+            _status.SetPersistent("At least one vanilla ammo family in each box pool must remain above 0x.");
             InvalidateVisual();
             return;
         }
 
-        _statusText = string.Empty;
+        _status.Clear();
         parameter.CurrentNumber = value;
         InvalidateVisual();
     }
