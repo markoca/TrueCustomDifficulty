@@ -2347,7 +2347,7 @@
       "tab": "survival",
       "group": "Alcohol Tolerance",
       "label": "Alcohol Tolerance",
-      "description": "Choose Beer or Vodka, then set how many drinks it takes to reach the strongest drunkenness tier. Vanilla is 4 beers or 2 vodkas; the same player tolerance is applied either way.",
+      "description": "Choose Beer or Vodka, then set how many whole drinks it takes to reach the strongest drunkenness tier at the current drink strength.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2362,9 +2362,9 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
-        "max": 1.5,
-        "step": 0.25,
+        "min": 0.05,
+        "max": 4,
+        "step": 0.01,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2394,13 +2394,105 @@
         "status": "confirmed",
         "notes": [
           "Vanilla DrunknessMechanics thresholds are Medium 20, Strong 40 and Very Strong 60.",
-          "Beer contributes 15 Drunkness and Vodka 30, so vanilla Very Strong corresponds to roughly 4 beers or 2 vodkas when drinks are stacked before natural sober-up.",
-          "The control scales thresholds instead of changing Beer/Vodka Drunkness effect strength, preserving their authored 1:2 relationship and avoiding scripted VodkaDrunkness edits."
+          "At vanilla drink strength, Beer contributes 15 Drunkness and Vodka 30, so Very Strong corresponds to 4 beers or 2 vodkas.",
+          "The tolerance control scales all three thresholds together and now exposes 1-8 beers or 1-4 vodkas as the primary whole-drink reference."
         ]
       },
-      "rationale": "Sets how quickly alcohol progresses through Medium, Strong and Very Strong drunkenness without changing the strength of Beer or Vodka themselves.",
-      "logic": "Vanilla is 4 beers or 2 vodkas to the Very Strong threshold of 60. The control scales all three thresholds together, preserving the 20 / 40 / 60 progression.",
-      "interaction": "Choose BEER or VODKA, then use the drink-count slider. 4 beers or 2 vodkas is VANILLA. The effect preview shows what each drunkenness tier does."
+      "rationale": "Sets how many drinks you can stack before alcohol reaches the strongest drunkenness tier.",
+      "logic": "The selected whole-drink count is converted into the shared 20 / 40 / 60 threshold scale using the currently selected Beer or Vodka strength.",
+      "interaction": "Beer Strength and Vodka Strength below change how much drunkenness each individual drink adds. The progression preview updates immediately from both tolerance and drink strength."
+    },
+    {
+      "id": "survival.beerDrunknessStrength",
+      "tab": "survival",
+      "group": "Alcohol Tolerance",
+      "label": "Beer Strength",
+      "description": "Fine-tunes how much drunkenness each Beer adds.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.##x",
+        "valueLabel": "Beer drunkenness strength"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 2,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "BeerDrunkness",
+          "path": "ValueMin|ValueMax",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "BeerDrunkness uses ValueMin = 15 and ValueMax = 15 in the audited vanilla-era/current mod cross-check.",
+          "100% keeps the authored strength of 15 Drunkness per Beer; the slider scales ValueMin and ValueMax together.",
+          "The direct effect fields are source-structured and writer-safe, but the exact 2.0.5 raw row was not part of the original project baseline and should be runtime-tested."
+        ]
+      },
+      "rationale": "Controls how strongly one Beer pushes the drunkenness meter.",
+      "logic": "100% = 15 Drunkness per Beer. 50% = 7.5; 150% = 22.5; 200% = 30.",
+      "interaction": "Works together with Alcohol Tolerance. Changing Beer Strength immediately changes the Beer progression preview and the number of beers needed to cross each tier."
+    },
+    {
+      "id": "survival.vodkaDrunknessStrength",
+      "tab": "survival",
+      "group": "Alcohol Tolerance",
+      "label": "Vodka Strength",
+      "description": "Fine-tunes how much drunkenness each Vodka adds.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.##x",
+        "valueLabel": "Vodka drunkenness strength"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 2,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "VodkaDrunkness",
+          "path": "ValueMin|ValueMax",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "VodkaDrunkness uses ValueMin = 30 and ValueMax = 30 in the audited vanilla-era/current mod cross-check.",
+          "100% keeps the authored strength of 30 Drunkness per Vodka; the slider scales ValueMin and ValueMax together.",
+          "The direct effect fields are source-structured and writer-safe, but the exact 2.0.5 raw row was not part of the original project baseline and should be runtime-tested."
+        ]
+      },
+      "rationale": "Controls how strongly one Vodka pushes the drunkenness meter.",
+      "logic": "100% = 30 Drunkness per Vodka. 50% = 15; 150% = 45; 200% = 60.",
+      "interaction": "Works together with Alcohol Tolerance. Changing Vodka Strength immediately changes the Vodka progression preview and the number of vodkas needed to cross each tier."
     },
     {
       "id": "survival.sleepEligibilityThreshold",
