@@ -8,7 +8,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
 {
     private const double Gap = 8.0;
     private const double TwoColumnThreshold = 700.0;
-    private const double ThreeColumnThreshold = 1160.0;
 
     protected override Size MeasureOverride(Size availableSize)
     {
@@ -22,6 +21,9 @@ public sealed class ResponsiveParameterGridPanel : Panel
 
         foreach (UIElement child in InternalChildren)
         {
+            if (!IsLayoutVisible(child))
+                continue;
+
             var fullWidth = IsFullWidth(child);
 
             if (fullWidth)
@@ -90,6 +92,12 @@ public sealed class ResponsiveParameterGridPanel : Panel
 
         foreach (UIElement child in InternalChildren)
         {
+            if (!IsLayoutVisible(child))
+            {
+                child.Arrange(new Rect(0.0, 0.0, 0.0, 0.0));
+                continue;
+            }
+
             if (IsFullWidth(child))
             {
                 ArrangeRow();
@@ -120,12 +128,18 @@ public sealed class ResponsiveParameterGridPanel : Panel
             : Math.Max(280.0, width);
 
     private static int GetColumnCount(double width)
-        => width >= ThreeColumnThreshold ? 3
-            : width >= TwoColumnThreshold ? 2
-            : 1;
+        => width >= TwoColumnThreshold ? 2 : 1;
 
     private static double GetCardWidth(double width, int columns)
         => Math.Max(260.0, (width - Gap * (columns - 1)) / columns);
+
+    private static bool IsLayoutVisible(UIElement child)
+    {
+        if (child is FrameworkElement { DataContext: ParameterViewModel parameter })
+            return parameter.IsControlVisible;
+
+        return child.Visibility != Visibility.Collapsed;
+    }
 
     private static bool IsFullWidth(UIElement child)
     {
