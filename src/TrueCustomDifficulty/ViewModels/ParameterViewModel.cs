@@ -1451,7 +1451,7 @@ public sealed class ParameterViewModel : ObservableObject
                     var label = items.Count == 4
                         ? "VNL"
                         : items.Count > 1
-                            ? string.Join(" / ", items.Select(x => x.Short))
+                            ? string.Join("/", items.Select(x => x.Short))
                             : items[0].Long;
                     return new VanillaMarkerViewModel(label, items[0].Value);
                 }));
@@ -1516,7 +1516,7 @@ public sealed class ParameterViewModel : ObservableObject
             .GroupBy(x => x.Value)
             .OrderBy(g => g.Key)
             .Select(g => new VanillaMarkerViewModel(
-                string.Join(" / ", g.Select(x => x.Label)),
+                string.Join("/", g.Select(x => x.Label)),
                 g.Key))
             .ToList();
     }
