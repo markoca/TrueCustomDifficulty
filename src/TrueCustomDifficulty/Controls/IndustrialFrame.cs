@@ -1,0 +1,209 @@
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+
+namespace TrueCustomDifficulty.Controls;
+
+/// <summary>
+/// WPF version of the Localization Workbench industrial Zone chrome:
+/// asymmetric chamfers, optional yellow accent rail, and subtle technical corner marks.
+/// Intended for major surfaces only, not for every settings row.
+/// </summary>
+public sealed class IndustrialFrame : Decorator
+{
+    public static readonly DependencyProperty BackgroundProperty = DependencyProperty.Register(
+        nameof(Background),
+        typeof(Brush),
+        typeof(IndustrialFrame),
+        new FrameworkPropertyMetadata(Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public static readonly DependencyProperty BorderBrushProperty = DependencyProperty.Register(
+        nameof(BorderBrush),
+        typeof(Brush),
+        typeof(IndustrialFrame),
+        new FrameworkPropertyMetadata(Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public static readonly DependencyProperty AccentBrushProperty = DependencyProperty.Register(
+        nameof(AccentBrush),
+        typeof(Brush),
+        typeof(IndustrialFrame),
+        new FrameworkPropertyMetadata(Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public static readonly DependencyProperty TechnicalMarkBrushProperty = DependencyProperty.Register(
+        nameof(TechnicalMarkBrush),
+        typeof(Brush),
+        typeof(IndustrialFrame),
+        new FrameworkPropertyMetadata(Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public static readonly DependencyProperty AccentEdgeProperty = DependencyProperty.Register(
+        nameof(AccentEdge),
+        typeof(bool),
+        typeof(IndustrialFrame),
+        new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public static readonly DependencyProperty TechnicalMarksProperty = DependencyProperty.Register(
+        nameof(TechnicalMarks),
+        typeof(bool),
+        typeof(IndustrialFrame),
+        new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public static readonly DependencyProperty ChamferSizeProperty = DependencyProperty.Register(
+        nameof(ChamferSize),
+        typeof(double),
+        typeof(IndustrialFrame),
+        new FrameworkPropertyMetadata(8.0, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    public static readonly DependencyProperty PaddingProperty = DependencyProperty.Register(
+        nameof(Padding),
+        typeof(Thickness),
+        typeof(IndustrialFrame),
+        new FrameworkPropertyMetadata(new Thickness(0), FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+    public Brush Background
+    {
+        get => (Brush)GetValue(BackgroundProperty);
+        set => SetValue(BackgroundProperty, value);
+    }
+
+    public Brush BorderBrush
+    {
+        get => (Brush)GetValue(BorderBrushProperty);
+        set => SetValue(BorderBrushProperty, value);
+    }
+
+    public Brush AccentBrush
+    {
+        get => (Brush)GetValue(AccentBrushProperty);
+        set => SetValue(AccentBrushProperty, value);
+    }
+
+    public Brush TechnicalMarkBrush
+    {
+        get => (Brush)GetValue(TechnicalMarkBrushProperty);
+        set => SetValue(TechnicalMarkBrushProperty, value);
+    }
+
+    public bool AccentEdge
+    {
+        get => (bool)GetValue(AccentEdgeProperty);
+        set => SetValue(AccentEdgeProperty, value);
+    }
+
+    public bool TechnicalMarks
+    {
+        get => (bool)GetValue(TechnicalMarksProperty);
+        set => SetValue(TechnicalMarksProperty, value);
+    }
+
+    public double ChamferSize
+    {
+        get => (double)GetValue(ChamferSizeProperty);
+        set => SetValue(ChamferSizeProperty, value);
+    }
+
+    public Thickness Padding
+    {
+        get => (Thickness)GetValue(PaddingProperty);
+        set => SetValue(PaddingProperty, value);
+    }
+
+    protected override Size MeasureOverride(Size constraint)
+    {
+        if (Child is null)
+            return new Size(Padding.Left + Padding.Right, Padding.Top + Padding.Bottom);
+
+        var childConstraint = new Size(
+            Math.Max(0.0, constraint.Width - Padding.Left - Padding.Right),
+            Math.Max(0.0, constraint.Height - Padding.Top - Padding.Bottom));
+
+        Child.Measure(childConstraint);
+
+        return new Size(
+            Child.DesiredSize.Width + Padding.Left + Padding.Right,
+            Child.DesiredSize.Height + Padding.Top + Padding.Bottom);
+    }
+
+    protected override Size ArrangeOverride(Size arrangeSize)
+    {
+        Child?.Arrange(new Rect(
+            Padding.Left,
+            Padding.Top,
+            Math.Max(0.0, arrangeSize.Width - Padding.Left - Padding.Right),
+            Math.Max(0.0, arrangeSize.Height - Padding.Top - Padding.Bottom)));
+
+        return arrangeSize;
+    }
+
+    protected override void OnRender(DrawingContext dc)
+    {
+        base.OnRender(dc);
+        IndustrialChrome.DrawFrame(
+            dc,
+            new Rect(0.5, 0.5, Math.Max(0.0, ActualWidth - 1.0), Math.Max(0.0, ActualHeight - 1.0)),
+            Background,
+            BorderBrush,
+            AccentBrush,
+            TechnicalMarkBrush,
+            ChamferSize,
+            AccentEdge,
+            TechnicalMarks);
+    }
+}
+
+internal static class IndustrialChrome
+{
+    public static void DrawFrame(
+        DrawingContext dc,
+        Rect rect,
+        Brush background,
+        Brush borderBrush,
+        Brush accentBrush,
+        Brush technicalMarkBrush,
+        double chamfer = 8.0,
+        bool accentEdge = false,
+        bool technicalMarks = true)
+    {
+        if (rect.Width <= 1.0 || rect.Height <= 1.0)
+            return;
+
+        var cut = Math.Max(0.0, Math.Min(chamfer, Math.Min(rect.Width, rect.Height) / 2.0));
+        var geometry = new StreamGeometry();
+
+        using (var context = geometry.Open())
+        {
+            context.BeginFigure(new Point(rect.Left, rect.Top), isFilled: true, isClosed: true);
+            context.LineTo(new Point(rect.Right - cut, rect.Top), true, false);
+            context.LineTo(new Point(rect.Right, rect.Top + cut), true, false);
+            context.LineTo(new Point(rect.Right, rect.Bottom), true, false);
+            context.LineTo(new Point(rect.Left + cut, rect.Bottom), true, false);
+            context.LineTo(new Point(rect.Left, rect.Bottom - cut), true, false);
+        }
+
+        geometry.Freeze();
+        dc.DrawGeometry(background, new Pen(borderBrush, 1.0), geometry);
+
+        if (accentEdge)
+        {
+            dc.DrawLine(
+                new Pen(accentBrush, 3.0),
+                new Point(rect.Left + 1.5, rect.Top + cut + 5.0),
+                new Point(rect.Left + 1.5, rect.Bottom - cut - 5.0));
+        }
+
+        if (!technicalMarks)
+            return;
+
+        var markLength = Math.Min(18.0, Math.Max(8.0, rect.Width / 12.0));
+        var technicalPen = new Pen(technicalMarkBrush, 1.0);
+
+        dc.DrawLine(
+            technicalPen,
+            new Point(Math.Max(rect.Left, rect.Right - cut - markLength), rect.Top + 3.0),
+            new Point(rect.Right - cut - 3.0, rect.Top + 3.0));
+
+        dc.DrawLine(
+            technicalPen,
+            new Point(rect.Left + cut + 3.0, rect.Bottom - 3.0),
+            new Point(Math.Min(rect.Right, rect.Left + cut + markLength), rect.Bottom - 3.0));
+    }
+}
