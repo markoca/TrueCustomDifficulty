@@ -830,7 +830,7 @@ public sealed class ParameterViewModel : ObservableObject
         }
     }
 
-    public bool HasValueMeaning => Definition.Tab == "loot";
+    public bool HasValueMeaning => !string.IsNullOrWhiteSpace(ValueMeaning);
 
     public string ValueMeaning
     {
@@ -840,7 +840,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return string.Empty;
 
             if (IsChoiceSlider)
-                return "Chooses which extra vanilla smart-loot package is used on corpses. This is a named preset, not a percentage.";
+                return "Chooses which extra loot preset ordinary human corpses can use. This is a named choice, not a percentage.";
 
             if (IsToggle)
                 return "Turns this extra vanilla loot rule on or off. It does not change stack size or drop chance by itself.";
@@ -848,8 +848,8 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsRange)
             {
                 if (Definition.ValueKind == "durabilityAbsoluteRange")
-                    return $"MIN {RangeMinDisplay} and MAX {RangeMaxDisplay} are actual weapon-condition bounds. " +
-                           "Vanilla is preserved exactly until you move either bound; then the selected values are written directly to all audited NPC weapon rows.";
+                    return $"MIN {RangeMinDisplay} and MAX {RangeMaxDisplay} are the actual condition limits for dropped NPC weapons. " +
+                           "Vanilla is kept exactly until you move either bound; after that, ordinary human NPC drops use the selected range.";
 
                 if (Definition.ValueKind == "durabilityRangeMultiplier")
                     return $"MIN {RangeMinDisplay} changes the low end of dropped weapon condition; MAX {RangeMaxDisplay} changes the high end. " +
@@ -860,7 +860,7 @@ public sealed class ParameterViewModel : ObservableObject
             }
 
             if (Definition.ValueKind == "probability")
-                return $"{CurrentDisplay} is the actual drop chance. Roughly speaking, {CurrentDisplay} means about {CurrentNumber * 100:0.#} successful drops per 100 eligible rolls.";
+                return $"{CurrentDisplay} is the actual drop chance. Roughly speaking, that means about {CurrentNumber * 100:0.#} successful drops out of 100 eligible chances.";
 
             if (Definition.Display?.Primary == "percentOfVanilla")
             {
@@ -870,7 +870,7 @@ public sealed class ParameterViewModel : ObservableObject
                        "It is not a flat drop chance: for example, a vanilla 20% chance becomes 10% when this control is set to 50%.";
             }
 
-            return TechnicalDisplay;
+            return string.Empty;
         }
     }
 
@@ -892,7 +892,7 @@ public sealed class ParameterViewModel : ObservableObject
 
     public string ReferenceLabel => Definition.Vanilla.ContainsKey("All")
         ? "Same on all difficulties"
-        : $"Baseline: {_referenceDifficulty}";
+        : $"Base Preset: {_referenceDifficulty}";
 
     public double ReferenceNumber => GetReferenceNumber();
 
