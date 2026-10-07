@@ -36,7 +36,7 @@ public sealed class StashAmmoRadar : FrameworkElement
         private readonly Dictionary<int, Rect> _legendHitRects = new();
     private int _legendRecordingAxis = -1;
 
-private string _statusText = string.Empty;
+private readonly RadarStatusMessage _status;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -52,6 +52,7 @@ private string _statusText = string.Empty;
 
     public StashAmmoRadar()
     {
+        _status = new RadarStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 520;
         Cursor = Cursors.Arrow;
@@ -238,15 +239,15 @@ private string _statusText = string.Empty;
             mutedBrush,
             accentBrush);
 
-        var instruction = string.IsNullOrWhiteSpace(_statusText)
+        var instruction = string.IsNullOrWhiteSpace(_status.Text)
             ? "Drag a point | Arrow keys adjust selected tier | Right click point/legend resets that tier | R resets all"
-            : _statusText;
+            : _status.Text;
 
         DrawCenteredText(
             dc,
             instruction,
             new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
-            string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush,
+            string.IsNullOrWhiteSpace(_status.Text) ? mutedBrush : accentBrush,
             FontWeights.Normal);
     }
 
@@ -438,7 +439,7 @@ private string _statusText = string.Empty;
             parameter.CurrentNumber + (direction * Step),
             MinimumValue,
             MaximumValue);
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -471,7 +472,7 @@ private string _statusText = string.Empty;
         if (parameter is not null)
             parameter.CurrentNumber = 1.0;
 
-        _statusText = $"{Axes[axis].Label} reset to 1x.";
+        _status.ShowTransient($"{Axes[axis].Label} reset to 1x.");
         InvalidateVisual();
         e.Handled = true;
     }
@@ -498,7 +499,7 @@ private string _statusText = string.Empty;
                     resetParameter.CurrentNumber = 1.0;
             }
 
-            _statusText = string.Empty;
+            _status.Clear();
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -519,7 +520,7 @@ private string _statusText = string.Empty;
             return;
 
         parameter.CurrentNumber = Math.Clamp(parameter.CurrentNumber + delta, MinimumValue, MaximumValue);
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -540,7 +541,7 @@ private string _statusText = string.Empty;
         if (parameter is not null)
             parameter.CurrentNumber = value;
 
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
     }
 
