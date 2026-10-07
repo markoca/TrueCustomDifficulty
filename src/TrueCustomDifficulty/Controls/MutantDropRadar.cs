@@ -582,7 +582,7 @@ DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width
         IncludeLegendTextHit(bounds, formatted);
         formatted.MaxTextWidth = Math.Max(1.0, bounds.Width);
         formatted.MaxLineCount = 1;
-        formatted.Trimming = TextTrimming.CharacterEllipsis;
+        formatted.Trimming = TextTrimming.None;
         formatted.TextAlignment = TextAlignment.Left;
         dc.DrawText(formatted, new Point(bounds.Left, bounds.Top));
     }
