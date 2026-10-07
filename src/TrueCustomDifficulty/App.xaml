@@ -375,7 +375,7 @@
         </Style>
 
         <Style TargetType="Slider">
-            <Setter Property="Height" Value="17" />
+            <Setter Property="Height" Value="15" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Slider">
@@ -388,19 +388,28 @@
                                     <RepeatButton Command="{x:Static Slider.DecreaseLarge}">
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
-                                                <Border Height="4" Background="{StaticResource AccentBrush}" CornerRadius="2" />
+                                                <Border Height="2" Background="{StaticResource AccentBrush}" CornerRadius="1" />
                                             </ControlTemplate>
                                         </RepeatButton.Template>
                                     </RepeatButton>
                                 </Track.DecreaseRepeatButton>
                                 <Track.Thumb>
-                                    <Thumb Width="11" Height="11">
+                                    <Thumb Width="9" Height="9">
                                         <Thumb.Template>
                                             <ControlTemplate TargetType="Thumb">
-                                                <Border Background="{StaticResource AccentBrush}"
-                                                        BorderBrush="{StaticResource AccentHoverBrush}"
+                                                <Border x:Name="SliderThumb"
+                                                        Background="{StaticResource AccentBrush}"
+                                                        BorderBrush="{StaticResource AccentDarkBrush}"
                                                         BorderThickness="1"
-                                                        CornerRadius="6" />
+                                                        CornerRadius="5" />
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="SliderThumb" Property="BorderBrush" Value="{StaticResource AccentHoverBrush}" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsDragging" Value="True">
+                                                        <Setter TargetName="SliderThumb" Property="Background" Value="{StaticResource AccentHoverBrush}" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
                                             </ControlTemplate>
                                         </Thumb.Template>
                                     </Thumb>
@@ -409,7 +418,7 @@
                                     <RepeatButton Command="{x:Static Slider.IncreaseLarge}">
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
-                                                <Border Height="4" Background="{StaticResource SliderTrackBrush}" CornerRadius="2" />
+                                                <Border Height="2" Background="{StaticResource SliderTrackBrush}" CornerRadius="1" />
                                             </ControlTemplate>
                                         </RepeatButton.Template>
                                     </RepeatButton>
