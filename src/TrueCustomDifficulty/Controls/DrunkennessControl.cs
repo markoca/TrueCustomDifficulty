@@ -499,7 +499,7 @@ public sealed class DrunkennessControl : FrameworkElement
         if (mod100 is >= 11 and <= 13)
             return value.ToString(CultureInfo.InvariantCulture) + "TH";
 
-        var suffix = value % 10 switch
+        var suffix = (value % 10) switch
         {
             1 => "ST",
             2 => "ND",
