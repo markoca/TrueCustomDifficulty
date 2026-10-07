@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 217,
+  "supportedParameterCount": 236,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -20835,1026 +20835,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[1]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "3",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[2]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[3]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "4",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[4]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "2",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[5]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[6]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[7]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[8]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "2",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[9]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[10]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[11]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "6",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[12]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[13]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[14]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.newbie",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[0]",
-        "Restrictions",
-        "[15]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[1]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "4",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[2]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[3]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "6",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[4]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "3",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[5]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[6]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[7]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "3",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[8]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "3",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[9]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[10]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[11]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "8",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[12]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[13]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[14]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.experienced",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[1]",
-        "Restrictions",
-        "[15]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[1]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "4",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[2]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[3]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "8",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[4]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "5",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[5]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[6]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "2",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[7]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "4",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[8]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "5",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[9]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[10]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[11]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "12",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[12]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[13]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[14]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.veteran",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[2]",
-        "Restrictions",
-        "[15]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[1]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "4",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[2]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[3]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "12",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[4]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "6",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[5]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[6]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "2",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[7]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "6",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[8]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "6",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[9]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[10]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "2",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[11]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "16",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[12]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[13]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "2",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[14]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "alife.mutantGroupSize.master",
-      "scope": "baseGame",
-      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
-      "prototype": "ALifeDirectorPreset",
-      "nodePath": [
-        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
-        "[3]",
-        "Restrictions",
-        "[15]"
-      ],
-      "key": "MaxCount",
-      "sourceRaw": "1",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "survival.instantStaminaRestore",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
@@ -22083,6 +21063,1074 @@
       "difficultySid": ""
     },
     {
+      "parameterId": "survival.beerDrunknessStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "BeerDrunkness",
+      "nodePath": [],
+      "key": "ValueMin",
+      "sourceRaw": "15",
+      "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.beerDrunknessStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "BeerDrunkness",
+      "nodePath": [],
+      "key": "ValueMax",
+      "sourceRaw": "15",
+      "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.vodkaDrunknessStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "VodkaDrunkness",
+      "nodePath": [],
+      "key": "ValueMin",
+      "sourceRaw": "30",
+      "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.vodkaDrunknessStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "VodkaDrunkness",
+      "nodePath": [],
+      "key": "ValueMax",
+      "sourceRaw": "30",
+      "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.generic",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[1]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "3",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.generic",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[1]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "4",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.generic",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[1]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "4",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.generic",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[1]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "4",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.bloodsucker",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[2]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "0",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.bloodsucker",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[2]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.bloodsucker",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[2]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.bloodsucker",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[2]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.blindDog",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[3]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "4",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.blindDog",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[3]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "6",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.blindDog",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[3]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "8",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.blindDog",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[3]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "12",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.flesh",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[4]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "2",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.flesh",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[4]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "3",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.flesh",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[4]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "5",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.flesh",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[4]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "6",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.controller",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[5]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "0",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.controller",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[5]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.controller",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[5]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.controller",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[5]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.poltergeist",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[6]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.poltergeist",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[6]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.poltergeist",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[6]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "2",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.poltergeist",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[6]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "2",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.snork",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[7]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.snork",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[7]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "3",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.snork",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[7]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "4",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.snork",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[7]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "6",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.boar",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[8]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "2",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.boar",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[8]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "3",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.boar",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[8]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "5",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.boar",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[8]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "6",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.chimera",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[9]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.chimera",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[9]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.chimera",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[9]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.chimera",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[9]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.bayun",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[10]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.bayun",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[10]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.bayun",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[10]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.bayun",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[10]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "2",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.tushkan",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[11]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "6",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.tushkan",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[11]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "8",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.tushkan",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[11]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "12",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.tushkan",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[11]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "16",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.ratSwarm",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[12]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.ratSwarm",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[12]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.ratSwarm",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[12]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.ratSwarm",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[12]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.burer",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[13]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.burer",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[13]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.burer",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[13]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.burer",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[13]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "2",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.pseudodog",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[14]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.pseudodog",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[14]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.pseudodog",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[14]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.pseudodog",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[14]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.deer",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[0]",
+        "Restrictions",
+        "[15]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.deer",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[1]",
+        "Restrictions",
+        "[15]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.deer",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[2]",
+        "Restrictions",
+        "[15]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "alife.mutantSpawn.deer",
+      "scope": "baseGame",
+      "file": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+      "prototype": "ALifeDirectorPreset",
+      "nodePath": [
+        "ALifeScenarioNPCArchetypesLimitsPerPlayerRank",
+        "[3]",
+        "Restrictions",
+        "[15]"
+      ],
+      "key": "MaxCount",
+      "sourceRaw": "1",
+      "operation": "scaleIntegerHalfUpPreserveZero",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
       "parameterId": "survival.drunknessThresholdScale",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
@@ -22093,7 +22141,7 @@
         "MediumDrunkness"
       ],
       "key": "ConditionValue",
-      "sourceRaw": "20",
+      "sourceRaw": "30",
       "operation": "scale",
       "role": "",
       "difficultySid": ""
@@ -22109,71 +22157,135 @@
         "StrongDrunkness"
       ],
       "key": "ConditionValue",
-      "sourceRaw": "40",
+      "sourceRaw": "80",
       "operation": "scale",
       "role": "",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.drunknessThresholdScale",
+      "parameterId": "survival.sleepLowThreshold",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "DrunknessMechanics",
+      "prototype": "SleepMechanics",
       "nodePath": [
         "MechanicsEffect",
         "ConditionEffects",
-        "VeryStrongDrunkness"
+        "LowSleepiness"
+      ],
+      "key": "ConditionValue",
+      "sourceRaw": "50",
+      "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.sleepMediumThreshold",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "SleepMechanics",
+      "nodePath": [
+        "MechanicsEffect",
+        "ConditionEffects",
+        "MediumSleepiness"
       ],
       "key": "ConditionValue",
       "sourceRaw": "60",
-      "operation": "scale",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "survival.beerDrunknessStrength",
-      "scope": "baseGame",
-      "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "BeerDrunkness",
-      "nodePath": [],
-      "key": "ValueMin",
-      "sourceRaw": "15",
       "operation": "set",
       "role": "",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.beerDrunknessStrength",
+      "parameterId": "survival.sleepStrongThreshold",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "BeerDrunkness",
-      "nodePath": [],
-      "key": "ValueMax",
-      "sourceRaw": "15",
+      "prototype": "SleepMechanics",
+      "nodePath": [
+        "MechanicsEffect",
+        "ConditionEffects",
+        "StrongSleepiness"
+      ],
+      "key": "ConditionValue",
+      "sourceRaw": "80",
       "operation": "set",
       "role": "",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.vodkaDrunknessStrength",
+      "parameterId": "survival.hungerLowThreshold",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "VodkaDrunkness",
-      "nodePath": [],
-      "key": "ValueMin",
-      "sourceRaw": "30",
+      "prototype": "HungerMechanics",
+      "nodePath": [
+        "MechanicsEffect",
+        "ConditionEffects",
+        "LowHunger"
+      ],
+      "key": "ConditionValue",
+      "sourceRaw": "17",
       "operation": "set",
       "role": "",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.vodkaDrunknessStrength",
+      "parameterId": "survival.hungerMediumThreshold",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "VodkaDrunkness",
-      "nodePath": [],
-      "key": "ValueMax",
-      "sourceRaw": "30",
+      "prototype": "HungerMechanics",
+      "nodePath": [
+        "MechanicsEffect",
+        "ConditionEffects",
+        "MediumHunger"
+      ],
+      "key": "ConditionValue",
+      "sourceRaw": "33",
+      "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.hungerStrongThreshold",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "HungerMechanics",
+      "nodePath": [
+        "MechanicsEffect",
+        "ConditionEffects",
+        "StrongHunger"
+      ],
+      "key": "ConditionValue",
+      "sourceRaw": "83",
+      "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.bleedingMediumThreshold",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "BleedingMechanics",
+      "nodePath": [
+        "MechanicsEffect",
+        "ConditionEffects",
+        "MediumBleeding"
+      ],
+      "key": "ConditionValue",
+      "sourceRaw": "50",
+      "operation": "set",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.bleedingStrongThreshold",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "BleedingMechanics",
+      "nodePath": [
+        "MechanicsEffect",
+        "ConditionEffects",
+        "StrongBleeding"
+      ],
+      "key": "ConditionValue",
+      "sourceRaw": "75",
       "operation": "set",
       "role": "",
       "difficultySid": ""
