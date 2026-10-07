@@ -192,7 +192,7 @@ private string _statusText = string.Empty;
         var infoHeader = GetInfoRect();
         DrawClippedText(
             dc,
-            "LIVE AMMO STACK PREVIEW",
+            "STASH AMMO · higher = more rounds in that stash tier",
             new Rect(infoHeader.Left, 20, infoHeader.Width, 18),
             10.2,
             textBrush,
@@ -202,7 +202,7 @@ private string _statusText = string.Empty;
         // This replaces the old single PracticalQuantityDisplay row which only
         // reflected the visible Basic backing parameter.
         var info = GetInfoRect();
-        var sectionHeight = Math.Max(92.0, info.Height / 3.0);
+        var sectionHeight = info.Height / 3.0;
 
         DrawAmmoPreviewColumn(
             dc,
@@ -286,10 +286,14 @@ private string _statusText = string.Empty;
             BeginLegendHitArea(axis);
 
         }
+        var visibleEntries = Math.Min(hint.Entries.Count, Math.Max(1, (int)((bounds.Height - 30.0) / 12.0)));
+        var contentHeight = 20.0 + (visibleEntries * 12.0);
+        var startY = bounds.Top + Math.Max(4.0, (bounds.Height - contentHeight) / 2.0);
+
         DrawClippedText(
             dc,
-            $"{heading}  {parameter.CurrentNumber:0.##}x",
-            new Rect(bounds.Left, bounds.Top - 6, bounds.Width, 14),
+            $"{heading} STASH · {parameter.CurrentNumber:0.##}x ammo",
+            new Rect(bounds.Left, startY, bounds.Width, 16),
             10.3,
             headingBrush,
             FontWeights.SemiBold);
@@ -297,24 +301,24 @@ private string _statusText = string.Empty;
         static int ScaleCount(double source, double multiplier)
             => Math.Max(1, (int)Math.Floor(source * multiplier + 0.5));
 
-        var y = bounds.Top + 14;
+        var y = startY + 21;
         foreach (var entry in hint.Entries)
         {
             var min = ScaleCount(entry.Min, parameter.CurrentNumber);
             var max = ScaleCount(entry.Max, parameter.CurrentNumber);
             var qualifier = string.IsNullOrWhiteSpace(entry.Qualifier) ? string.Empty : $" [{entry.Qualifier}]";
-            var text = $"{entry.Label}{qualifier}  {min}–{max} rounds";
+            var text = $"{entry.Label}{qualifier}: {min}–{max} rounds";
 
             DrawClippedText(
                 dc,
                 text,
-                new Rect(bounds.Left, y - 5, bounds.Width, 12),
+                new Rect(bounds.Left, y, bounds.Width, 12),
                 8.4,
                 hovered ? textBrush : mutedBrush,
                 FontWeights.Normal);
 
-            y += 11;
-            if (y > bounds.Bottom - 6)
+            y += 12;
+            if (y > bounds.Bottom - 12)
                 break;
         }
 
