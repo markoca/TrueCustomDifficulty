@@ -9,18 +9,15 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// Rank-aware editor for ALife Director mutant encounter caps.
-///
-/// The class keeps its historical *Radar name for XAML compatibility, but the renderer
-/// is intentionally a matrix: every species owns one multiplier and the four resulting
-/// Newbie / Experienced / Veteran / Master caps stay visible at the same time.
+/// Compact rank-aware editor for ALife Director mutant encounter caps.
 /// </summary>
 public sealed class MutantGroupSizeRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double RowHeight = 40.0;
-    private const double MinimumMultiplier = 0.25;
-    private const double MaximumMultiplier = 3.0;
+    private const double DesiredHeight = 440.0;
+    private const double MaxContentWidth = 900.0;
+    private const double ColumnGap = 16.0;
+    private const double RowHeight = 46.0;
 
     private static readonly AxisDefinition[] Axes =
     {
@@ -64,7 +61,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 730;
+        MinHeight = DesiredHeight;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -72,7 +69,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(560.0, availableSize.Width);
-        return new Size(width, 730.0);
+        return new Size(width, DesiredHeight);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -142,46 +139,28 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
         _targets.Clear();
 
-        DrawText(dc, "MUTANT ENCOUNTER CAPS", new Point(18.0, 16.0), 12.0, text, FontWeights.Bold);
-        DrawText(
-            dc,
-            "one species multiplier preserves its authored Newbie → Master progression",
-            new Point(18.0, 34.0),
-            8.2,
-            muted,
-            FontWeights.Normal);
+        var content = ContentRect();
+        DrawText(dc, "MUTANT ENCOUNTER CAPS", new Point(content.Left, 16.0), 12.5, text, FontWeights.Bold);
+        DrawText(dc, "N / E / V / M = resulting squad cap by ALife rank", new Point(content.Left, 37.0), 9.5, muted, FontWeights.Normal);
 
-        DrawRightAlignedText(
-            dc,
-            "CAPS ONLY — NO LAIR POPULATION / RESPAWN / SCENARIO-FREQUENCY CHANGES",
-            new Point(Math.Max(520.0, ActualWidth - 18.0), 18.0),
-            7.5,
-            muted,
-            FontWeights.SemiBold);
+        var columnWidth = (content.Width - ColumnGap) / 2.0;
+        var leftColumn = new Rect(content.Left, 66.0, columnWidth, 326.0);
+        var rightColumn = new Rect(content.Left + columnWidth + ColumnGap, 66.0, columnWidth, 326.0);
 
-        var layout = GetLayout();
+        DrawColumnHeader(dc, leftColumn, muted, border);
+        DrawColumnHeader(dc, rightColumn, muted, border);
 
-        DrawText(dc, "MUTANT", new Point(layout.LabelLeft, 61.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "MULT", new Point(layout.MultiplierCenter, 68.0), 8.0, muted, FontWeights.Bold);
+        for (var i = 0; i < 7; i++)
+        {
+            DrawRow(dc, i, new Rect(leftColumn.Left, 88.0 + i * RowHeight, leftColumn.Width, RowHeight - 4.0), text, muted, border, accent, panel);
+            DrawRow(dc, i + 7, new Rect(rightColumn.Left, 88.0 + i * RowHeight, rightColumn.Width, RowHeight - 4.0), text, muted, border, accent, panel);
+        }
 
-        var ranks = new[] { "NEWBIE", "EXPERIENCED", "VETERAN", "MASTER" };
-        for (var i = 0; i < ranks.Length; i++)
-            DrawCenteredText(dc, ranks[i], new Point(layout.RankCenters[i], 68.0), 7.8, muted, FontWeights.Bold);
-
-        DrawCenteredText(dc, "SPECIES MULTIPLIER", new Point(layout.TrackLeft + layout.TrackWidth / 2.0, 68.0), 8.0, muted, FontWeights.Bold);
-
-        var headerY = 82.0;
-        dc.DrawLine(new Pen(border, 1.0), new Point(14.0, headerY), new Point(Math.Max(14.0, ActualWidth - 14.0), headerY));
-
-        for (var row = 0; row < Axes.Length; row++)
-            DrawRow(dc, row, 90.0 + row * RowHeight, layout, text, muted, border, soft, accent, panel);
-
-        var footerY = 90.0 + Axes.Length * RowHeight + 9.0;
         DrawCenteredText(
             dc,
-            "GOLD NUMBERS = CURRENT CAPS   •   SMALL GREY NUMBERS = VANILLA CAPS   •   AUTHORED 0 STAYS 0",
-            new Point(ActualWidth / 2.0, footerY),
-            7.6,
+            "grey tick = Base Preset   •   authored 0 caps stay 0",
+            new Point(ActualWidth / 2.0, 418.0),
+            9.0,
             muted,
             FontWeights.Normal);
 
@@ -190,27 +169,32 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             DrawCenteredText(
                 dc,
                 _status.Text,
-                new Point(ActualWidth / 2.0, footerY + 20.0),
-                8.0,
+                new Point(ActualWidth / 2.0, 433.0),
+                9.5,
                 accent,
                 FontWeights.SemiBold);
         }
     }
 
+    private void DrawColumnHeader(DrawingContext dc, Rect column, Brush muted, Brush border)
+    {
+        DrawText(dc, "MUTANT", new Point(column.Left + 6.0, column.Top), 9.0, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "N / E / V / M", new Point(column.Left + column.Width * 0.57, column.Top + 7.0), 9.0, muted, FontWeights.Bold);
+        DrawRightAlignedText(dc, "MULT", new Point(column.Right - 6.0, column.Top), 9.0, muted, FontWeights.Bold);
+        dc.DrawLine(new Pen(border, 1.0), new Point(column.Left, column.Top + 18.0), new Point(column.Right, column.Top + 18.0));
+    }
+
     private void DrawRow(
         DrawingContext dc,
         int row,
-        double top,
-        Layout layout,
+        Rect card,
         Brush text,
         Brush muted,
         Brush border,
-        Brush soft,
         Brush accent,
         Brush panel)
     {
-        var parameter = _parameters[row];
-        if (parameter is null)
+        if (_parameters[row] is not { } parameter)
             return;
 
         var info = Axes[row];
@@ -218,102 +202,65 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         var hovered = row == _hoverRow;
         var modified = Math.Abs(parameter.CurrentNumber - parameter.ReferenceNumber) > Epsilon;
 
-        var rowRect = new Rect(14.0, top, Math.Max(1.0, ActualWidth - 28.0), RowHeight - 3.0);
-        var rowFill = selected
-            ? CloneWithOpacity(accent, 0.08)
-            : hovered
-                ? CloneWithOpacity(border, 0.10)
-                : CloneWithOpacity(panel, 0.01);
+        dc.DrawRoundedRectangle(
+            selected
+                ? CloneWithOpacity(accent, 0.08)
+                : hovered
+                    ? CloneWithOpacity(border, 0.10)
+                    : CloneWithOpacity(panel, 0.015),
+            new Pen(CloneWithOpacity(border, 0.42), 0.8),
+            card,
+            3.0,
+            3.0);
 
-        dc.DrawRoundedRectangle(rowFill, new Pen(CloneWithOpacity(border, 0.45), 0.8), rowRect, 3.0, 3.0);
+        var currentCaps = EffectiveCaps(info.AuthoredCaps, parameter.CurrentNumber);
+        var capText = string.Join(" / ", currentCaps.Select(x => x.ToString("0", CultureInfo.InvariantCulture)));
 
         DrawText(
             dc,
             info.Label,
-            new Point(layout.LabelLeft, top + 10.0),
-            8.5,
-            hovered ? text : modified ? accent : text,
-            modified ? FontWeights.Bold : FontWeights.SemiBold);
+            new Point(card.Left + 7.0, card.Top + 5.0),
+            9.5,
+            modified ? accent : text,
+            FontWeights.Bold);
 
         DrawCenteredText(
             dc,
+            capText,
+            new Point(card.Left + card.Width * 0.57, card.Top + 12.0),
+            10.0,
+            text,
+            FontWeights.Bold);
+
+        DrawRightAlignedText(
+            dc,
             $"{parameter.CurrentNumber:0.##}x",
-            new Point(layout.MultiplierCenter, top + 18.0),
-            8.4,
+            new Point(card.Right - 7.0, card.Top + 5.0),
+            9.5,
             modified ? accent : muted,
-            modified ? FontWeights.Bold : FontWeights.SemiBold);
+            FontWeights.Bold);
 
-        var currentCaps = EffectiveCaps(info.AuthoredCaps, parameter.CurrentNumber);
-        var vanillaCaps = EffectiveCaps(info.AuthoredCaps, parameter.ReferenceNumber);
-
-        var rowMax = Math.Max(1.0, currentCaps.Concat(vanillaCaps).Max());
-
-        for (var rank = 0; rank < 4; rank++)
-        {
-            var centerX = layout.RankCenters[rank];
-            var cell = new Rect(centerX - layout.RankCellWidth / 2.0, top + 4.0, layout.RankCellWidth, RowHeight - 11.0);
-
-            if (info.AuthoredCaps[rank] <= Epsilon)
-            {
-                dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.08), null, cell, 2.0, 2.0);
-                DrawCenteredText(dc, "0", new Point(centerX, top + 15.0), 9.0, muted, FontWeights.Bold);
-                DrawCenteredText(dc, "LOCKED", new Point(centerX, top + 28.0), 6.6, muted, FontWeights.Normal);
-                continue;
-            }
-
-            var relative = Math.Clamp(currentCaps[rank] / rowMax, 0.0, 1.0);
-            var fillRect = new Rect(
-                cell.Left + 2.0,
-                cell.Bottom - 3.0 - (cell.Height - 6.0) * relative,
-                cell.Width - 4.0,
-                Math.Max(1.0, (cell.Height - 6.0) * relative));
-
-            dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.07), new Pen(CloneWithOpacity(border, 0.35), 0.7), cell, 2.0, 2.0);
-            dc.DrawRectangle(CloneWithOpacity(accent, modified ? 0.16 : 0.08), null, fillRect);
-
-            DrawCenteredText(
-                dc,
-                currentCaps[rank].ToString("0", CultureInfo.InvariantCulture),
-                new Point(centerX, top + 14.0),
-                9.0,
-                modified ? accent : text,
-                FontWeights.Bold);
-
-            DrawCenteredText(
-                dc,
-                $"v{vanillaCaps[rank]:0}",
-                new Point(centerX, top + 28.0),
-                6.8,
-                muted,
-                FontWeights.Normal);
-        }
-
-        var track = new Rect(layout.TrackLeft, top + 9.0, layout.TrackWidth, 20.0);
+        var track = new Rect(card.Left + 7.0, card.Top + 26.0, card.Width - 14.0, 13.0);
         var y = track.Top + track.Height / 2.0;
-
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
 
-        var vanillaX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
+        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
         var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track);
 
-        dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX, y - 7.0), new Point(vanillaX, y + 7.0));
+        dc.DrawLine(new Pen(muted, 1.1), new Point(baseX, y - 6.0), new Point(baseX, y + 6.0));
         dc.DrawLine(new Pen(accent, 3.0), new Point(track.Left, y), new Point(currentX, y));
-
-        dc.DrawEllipse(
-            panel,
-            new Pen(accent, selected ? 2.5 : 1.5),
-            new Point(currentX, y),
-            6.0,
-            6.0);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
-
-        DrawText(dc, "0.25x", new Point(track.Left, top + 27.0), 6.7, muted, FontWeights.Normal);
-        DrawCenteredText(dc, "1x", new Point(vanillaX, top + 31.0), 6.7, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "3x", new Point(track.Right, top + 27.0), 6.7, muted, FontWeights.Normal);
+        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.4 : 1.4), new Point(currentX, y), 5.5, 5.5);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.4, 2.4);
 
         _targets[row] = new HitTarget(
-            new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
+            new Rect(track.Left - 6.0, track.Top - 6.0, track.Width + 12.0, track.Height + 12.0),
             track);
+    }
+
+    private Rect ContentRect()
+    {
+        var width = Math.Min(MaxContentWidth, Math.Max(540.0, ActualWidth - 32.0));
+        return new Rect((ActualWidth - width) / 2.0, 0.0, width, ActualHeight);
     }
 
     private static double[] EffectiveCaps(IReadOnlyList<double> authored, double multiplier)
@@ -436,11 +383,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         if (!_targets.TryGetValue(row, out var target) || _parameters[row] is not { } parameter)
             return;
 
-        var ratio = Math.Clamp(
-            (point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width),
-            0.0,
-            1.0);
-
+        var ratio = Math.Clamp((point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width), 0.0, 1.0);
         var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
         var tick = Math.Max(parameter.TickFrequency, Epsilon);
         var snapped = parameter.Minimum
@@ -460,36 +403,6 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         }
 
         return -1;
-    }
-
-    private Layout GetLayout()
-    {
-        var usable = Math.Max(520.0, ActualWidth - 36.0);
-        var labelWidth = Math.Clamp(usable * 0.16, 92.0, 125.0);
-        var multiplierWidth = 54.0;
-        var rankCellWidth = Math.Clamp(usable * 0.075, 42.0, 58.0);
-        var rankBlockWidth = rankCellWidth * 4.0;
-        var fixedWidth = labelWidth + multiplierWidth + rankBlockWidth + 42.0;
-        var trackWidth = Math.Max(120.0, usable - fixedWidth);
-
-        var left = 22.0;
-        var labelLeft = left;
-        var multiplierCenter = left + labelWidth + multiplierWidth / 2.0;
-        var ranksLeft = left + labelWidth + multiplierWidth + 10.0;
-
-        var rankCenters = Enumerable.Range(0, 4)
-            .Select(i => ranksLeft + rankCellWidth * (i + 0.5))
-            .ToArray();
-
-        var trackLeft = ranksLeft + rankBlockWidth + 18.0;
-
-        return new Layout(
-            labelLeft,
-            multiplierCenter,
-            rankCenters,
-            rankCellWidth,
-            trackLeft,
-            trackWidth);
     }
 
     private static double ValueToX(double value, double minimum, double maximum, Rect track)
@@ -533,7 +446,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
@@ -549,11 +462,4 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
     private sealed record AxisDefinition(string ParameterId, string Label, double[] AuthoredCaps);
     private sealed record HitTarget(Rect HitRect, Rect MapRect);
-    private sealed record Layout(
-        double LabelLeft,
-        double MultiplierCenter,
-        double[] RankCenters,
-        double RankCellWidth,
-        double TrackLeft,
-        double TrackWidth);
 }
