@@ -42,7 +42,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         private readonly Dictionary<int, Rect> _legendHitRects = new();
     private int _legendRecordingAxis = -1;
 
-private string _statusText = string.Empty;
+private readonly RadarStatusMessage _status;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -58,6 +58,7 @@ private string _statusText = string.Empty;
 
     public MutantHealthRadar()
     {
+        _status = new RadarStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 500;
         Cursor = Cursors.Arrow;
@@ -215,15 +216,15 @@ private string _statusText = string.Empty;
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
-        var instruction = string.IsNullOrWhiteSpace(_statusText)
+        var instruction = string.IsNullOrWhiteSpace(_status.Text)
             ? "Drag a point | Arrow keys adjust selected mutant | Right click point/legend resets that mutant | R resets all"
-            : _statusText;
+            : _status.Text;
 
         DrawCenteredText(
             dc,
             instruction,
             new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
-            string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush,
+            string.IsNullOrWhiteSpace(_status.Text) ? mutedBrush : accentBrush,
             FontWeights.Normal);
     }
 
@@ -409,7 +410,7 @@ DrawClippedText(
             parameter.CurrentNumber + (direction * RadarStep),
             parameter.Minimum,
             parameter.Maximum);
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -444,7 +445,7 @@ DrawClippedText(
         if (parameter is not null)
         {
             parameter.CurrentNumber = VanillaMultiplier;
-            _statusText = $"{Axes[axis].Label} reset to vanilla 1x.";
+            _status.ShowTransient($"{Axes[axis].Label} reset to vanilla 1x.");
         }
 
         InvalidateVisual();
@@ -473,7 +474,7 @@ DrawClippedText(
                     resetParameter.CurrentNumber = VanillaMultiplier;
             }
 
-            _statusText = string.Empty;
+            _status.Clear();
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -498,7 +499,7 @@ DrawClippedText(
             parameter.Minimum,
             parameter.Maximum);
 
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -516,7 +517,7 @@ DrawClippedText(
         var value = MinimumMultiplier + normalized * (MaximumMultiplier - MinimumMultiplier);
 
         SetValue(axis, value);
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
     }
 
