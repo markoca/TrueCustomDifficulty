@@ -1420,10 +1420,10 @@ public sealed class MainViewModel : ObservableObject
                 "loot.worldMedicalCratesRemoved" => 220,
                 "loot.looseWorldLootRemoved" => 230,
                 "loot.worldWeaponShuffle" => 240,
-                "loot.worldWeaponDensity" => 245,
-                "loot.worldAttachmentShuffle" => 250,
-                "loot.worldDetectors" => 255,
-                "loot.blueprintShuffle" => 260,
+                "loot.worldAttachmentShuffle" => 245,
+                "loot.worldDetectors" => 250,
+                "loot.blueprintShuffle" => 255,
+                "loot.worldWeaponDensity" => 260,
                 _ => 260
             };
         }
