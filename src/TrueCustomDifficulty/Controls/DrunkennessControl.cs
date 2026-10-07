@@ -45,7 +45,7 @@ public sealed class DrunkennessControl : FrameworkElement
     public DrunkennessControl()
     {
         Focusable = true;
-        MinHeight = 340;
+        MinHeight = 320;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -53,7 +53,7 @@ public sealed class DrunkennessControl : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 720.0 : Math.Max(520.0, availableSize.Width);
-        return new Size(width, 340.0);
+        return new Size(width, 320.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -101,23 +101,22 @@ public sealed class DrunkennessControl : FrameworkElement
         var bounds = new Rect(0.5, 0.5, Math.Max(0.0, ActualWidth - 1.0), Math.Max(0.0, ActualHeight - 1.0));
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), bounds, 4.0, 4.0);
 
-        DrawText(dc, "ALCOHOL TOLERANCE", new Point(16, 13), 12.0, accent, FontWeights.Bold);
-        DrawText(dc, "REFERENCE", new Point(16, 43), 9.0, muted, FontWeights.Bold);
+        DrawText(dc, "REFERENCE", new Point(16, 23), 9.0, muted, FontWeights.Bold);
 
-        _beerRect = new Rect(82, 36, 62, 25);
-        _vodkaRect = new Rect(150, 36, 72, 25);
+        _beerRect = new Rect(82, 16, 62, 25);
+        _vodkaRect = new Rect(150, 16, 72, 25);
         DrawSelector(dc, _beerRect, "BEER", _reference == DrinkReference.Beer, _hoverReference == DrinkReference.Beer, panelAlt, border, accent, text);
         DrawSelector(dc, _vodkaRect, "VODKA", _reference == DrinkReference.Vodka, _hoverReference == DrinkReference.Vodka, panelAlt, border, accent, text);
 
         var scale = CurrentScale;
         var strength = ReferenceStrength;
         var requiredDrinks = VanillaVeryStrong * scale / strength;
-        DrawText(dc, "VERY DRUNK AFTER", new Point(250, 43), 9.0, muted, FontWeights.Bold);
-        DrawText(dc, FormatDrinks(requiredDrinks), new Point(360, 37), 18.0, text, FontWeights.Bold);
+        DrawText(dc, "VERY DRUNK AFTER", new Point(250, 23), 9.0, muted, FontWeights.Bold);
+        DrawText(dc, FormatDrinks(requiredDrinks), new Point(360, 17), 18.0, text, FontWeights.Bold);
 
         var sliderLeft = 30.0;
         var sliderRight = Math.Max(sliderLeft + 220.0, ActualWidth - 30.0);
-        var sliderY = 91.0;
+        var sliderY = 71.0;
         _sliderRect = new Rect(sliderLeft, sliderY - 15.0, sliderRight - sliderLeft, 34.0);
 
         dc.DrawLine(new Pen(track, 3.0), new Point(sliderLeft, sliderY), new Point(sliderRight, sliderY));
@@ -139,7 +138,7 @@ public sealed class DrunkennessControl : FrameworkElement
 
         DrawProgression(dc, panelAlt, border, text, muted, accent);
 
-        DrawText(dc, "EFFECT PREVIEW", new Point(16, 190), 9.0, muted, FontWeights.Bold);
+        DrawText(dc, "EFFECT PREVIEW", new Point(16, 170), 9.0, muted, FontWeights.Bold);
         DrawTierCards(dc, panelAlt, border, radarMuted, accent);
     }
 
@@ -152,12 +151,12 @@ public sealed class DrunkennessControl : FrameworkElement
         Brush accent)
     {
         var title = _reference == DrinkReference.Beer ? "AFTER EACH BEER" : "AFTER EACH VODKA";
-        DrawText(dc, title, new Point(16, 132), 9.0, muted, FontWeights.Bold);
+        DrawText(dc, title, new Point(16, 112), 9.0, muted, FontWeights.Bold);
 
         var count = MaxReferenceDrinks;
         var gap = 7.0;
         var left = 16.0;
-        var top = 149.0;
+        var top = 129.0;
         var totalWidth = Math.Max(420.0, ActualWidth - 32.0);
         var chipWidth = (totalWidth - gap * (count - 1)) / count;
         var chipHeight = 30.0;
@@ -206,7 +205,7 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         var gap = 8.0;
         var left = 16.0;
-        var top = 208.0;
+        var top = 188.0;
         var totalWidth = Math.Max(460.0, ActualWidth - 32.0);
         var cardWidth = (totalWidth - gap * 3.0) / 4.0;
         var cardHeight = 112.0;
