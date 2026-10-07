@@ -27,7 +27,7 @@
                                                             BorderThickness="0,0,0,1"
                                                             CornerRadius="0"
                                                             Margin="0"
-                                                            Padding="8,8">
+                                                            Padding="8,6">
                                                         <Grid>
                                                             <Grid.RowDefinitions>
                                                                 <RowDefinition Height="Auto" />
@@ -65,14 +65,14 @@
                                                                                Visibility="Collapsed" />
         
                                                                     <Border x:Name="CurrentValueBox" Grid.Column="1"
-                                                                            Background="{StaticResource PanelAltBrush}"
+                                                                            Background="Transparent"
                                                                             Cursor="Hand"
                                                                             PreviewMouseWheel="CurrentValueBox_PreviewMouseWheel"
                                                                             PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown"
                                                                             BorderThickness="0"
                                                                             CornerRadius="2"
-                                                                            MinWidth="70"
-                                                                            Padding="6,2">
+                                                                            MinWidth="64"
+                                                                            Padding="5,1">
                                                                         <TextBlock x:Name="CurrentValueText" Text="{Binding CurrentDisplay}"
                                                                                    Foreground="{StaticResource AccentBrush}"
                                                                                    FontSize="12" FontWeight="SemiBold"
@@ -98,7 +98,10 @@
                                                                           Visibility="Collapsed" />
                                                             </Grid>
         
-                                                            <Grid x:Name="TechnicalRow" Grid.Row="1" Margin="0,2,0,0">
+                                                            <Grid x:Name="TechnicalRow"
+                                                                  Grid.Row="1"
+                                                                  Margin="0"
+                                                                  Visibility="Collapsed">
                                                                 <Grid.ColumnDefinitions>
                                                                     <ColumnDefinition Width="*" />
                                                                     <ColumnDefinition Width="Auto" />
@@ -116,7 +119,7 @@
                                                                            VerticalAlignment="Center" />
                                                             </Grid>
         
-                                                            <Grid x:Name="ControlRow" Grid.Row="2" Margin="0,4,0,0">
+                                                            <Grid x:Name="ControlRow" Grid.Row="2" Margin="0,3,0,0">
                                                                 <Grid.RowDefinitions>
                                                                     <RowDefinition Height="Auto" />
                                                                     <RowDefinition Height="16" />
@@ -314,21 +317,13 @@
         
                                                             <TextBlock x:Name="PracticalQuantityText"
                                                                        Grid.Row="3"
+                                                                       Visibility="Collapsed"
                                                                        Text="{Binding PracticalQuantityDisplay}"
                                                                        Foreground="{StaticResource AccentBrush}"
                                                                        FontSize="10"
                                                                        Margin="0,4,0,0"
                                                                        TextWrapping="Wrap">
-                                                                <TextBlock.Style>
-                                                                    <Style TargetType="TextBlock">
-                                                                        <Setter Property="Visibility" Value="Visible" />
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding PracticalQuantityDisplay}" Value="">
-                                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </TextBlock.Style>
+
                                                             </TextBlock>
                                                         </Grid>
                                                     </Border>
@@ -461,7 +456,7 @@
                                                             <Setter TargetName="ParameterLabel" Property="FontWeight" Value="Bold" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsModified}" Value="True">
-                                                            <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource ModifiedCardBrush}" />
+                                                            <Setter TargetName="ParameterCard" Property="Background" Value="Transparent" />
                                                             <Setter TargetName="CurrentValueBox" Property="Background" Value="{StaticResource ModifiedValueBrush}" />
                                                             <Setter TargetName="CurrentValueBox" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
                                                             <Setter TargetName="CurrentValueText" Property="FontWeight" Value="ExtraBold" />
@@ -480,10 +475,14 @@
                                                             <Setter TargetName="ParameterCard" Property="Padding" Value="0" />
                                                             <Setter TargetName="ParameterCard" Property="Margin" Value="0,2,0,8" />
                                                         </DataTrigger>
-                                                        <Trigger SourceName="ParameterCard" Property="IsMouseOver" Value="True">
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsAggregateRadarAnchor}" Value="False" />
+                                                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
+                                                            </MultiDataTrigger.Conditions>
                                                             <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource PanelHoverBrush}" />
-                                                        </Trigger>
-                                                <Trigger SourceName="CurrentValueBox" Property="IsMouseOver" Value="True">
+                                                        </MultiDataTrigger>
+                                                        <Trigger SourceName="CurrentValueBox" Property="IsMouseOver" Value="True">
                                                             <Setter TargetName="CurrentValueBox" Property="Background" Value="{StaticResource PanelHoverBrush}" />
                                                             <Setter TargetName="CurrentValueBox" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
                                                             <Setter TargetName="WheelHintMinus" Property="Visibility" Value="Visible" />
@@ -705,21 +704,30 @@
                                         </GroupStyle.ContainerStyle>
                                         <GroupStyle.HeaderTemplate>
                                             <DataTemplate>
-                                                <Border Background="{StaticResource PanelAltBrush}"
-                                                        BorderBrush="{StaticResource BorderBrush}"
-                                                        BorderThickness="1"
-                                                        CornerRadius="3"
-                                                        Margin="1,10,1,6"
-                                                        Padding="9,6">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <Border Width="3" Background="{StaticResource AccentBrush}" Margin="0,0,8,0" />
-                                                        <TextBlock Text="{Binding Name}"
-                                                                   Foreground="{StaticResource TextBrush}"
-                                                                   FontSize="11"
-                                                                   FontWeight="Bold"
-                                                                   TextOptions.TextFormattingMode="Display" />
-                                                    </StackPanel>
-                                                </Border>
+                                                <Grid Margin="4,14,4,5">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border Width="3"
+                                                            Height="14"
+                                                            Background="{StaticResource AccentBrush}"
+                                                            Margin="0,0,8,0"
+                                                            VerticalAlignment="Center" />
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{Binding Name}"
+                                                               Foreground="{StaticResource TextBrush}"
+                                                               FontSize="11"
+                                                               FontWeight="Bold"
+                                                               Margin="0,0,10,0"
+                                                               VerticalAlignment="Center"
+                                                               TextOptions.TextFormattingMode="Display" />
+                                                    <Border Grid.Column="2"
+                                                            Height="1"
+                                                            Background="{StaticResource BorderBrush}"
+                                                            VerticalAlignment="Center" />
+                                                </Grid>
                                             </DataTemplate>
                                         </GroupStyle.HeaderTemplate>
                                     </GroupStyle>
