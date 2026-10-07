@@ -156,7 +156,6 @@ public sealed class DrunkennessControl : FrameworkElement
         DrawProgressionRow(
             dc,
             "AFTER EACH BEER",
-            "BEER",
             _beerStrengthParameter?.CurrentNumber ?? VanillaBeerDrunkness,
             8,
             142.0,
@@ -169,7 +168,6 @@ public sealed class DrunkennessControl : FrameworkElement
         DrawProgressionRow(
             dc,
             "AFTER EACH VODKA",
-            "VODKA",
             _vodkaStrengthParameter?.CurrentNumber ?? VanillaVodkaDrunkness,
             4,
             198.0,
@@ -252,7 +250,6 @@ public sealed class DrunkennessControl : FrameworkElement
     private void DrawProgressionRow(
         DrawingContext dc,
         string title,
-        string singular,
         double strength,
         int count,
         double titleY,
