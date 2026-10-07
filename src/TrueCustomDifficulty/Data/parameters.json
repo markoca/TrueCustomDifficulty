@@ -2347,7 +2347,7 @@
       "tab": "survival",
       "group": "Alcohol Tolerance",
       "label": "Alcohol Tolerance",
-      "description": "Choose Beer or Vodka, then set how many whole drinks it takes to reach the strongest drunkenness tier at the current drink strength.",
+      "description": "Legacy/internal mapping for the vanilla 20 / 40 / 60 DrunknessMechanics thresholds. Player-facing alcohol tuning keeps these thresholds fixed at vanilla.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2398,16 +2398,17 @@
           "The tolerance control scales all three thresholds together and now exposes 1-8 beers or 1-4 vodkas as the primary whole-drink reference."
         ]
       },
-      "rationale": "Sets how many drinks you can stack before alcohol reaches the strongest drunkenness tier.",
-      "logic": "The selected whole-drink count is converted into the shared 20 / 40 / 60 threshold scale using the currently selected Beer or Vodka strength.",
-      "interaction": "Beer Strength and Vodka Strength below change how much drunkenness each individual drink adds. The progression preview updates immediately from both tolerance and drink strength."
+      "rationale": "Kept out of the UI so Beer and Vodka tolerance can be tuned independently through each drink's own strength.",
+      "logic": "Always remains at 1.0 in normal use: Medium 20, Strong 40, Very Strong 60.",
+      "interaction": "Not player-facing.",
+      "exposeInUi": false
     },
     {
       "id": "survival.beerDrunknessStrength",
       "tab": "survival",
       "group": "Alcohol Tolerance",
       "label": "Beer Strength",
-      "description": "Sets how much Drunkness one Beer adds.",
+      "description": "Sets how much Drunkness one Beer adds while the player thresholds stay fixed at vanilla 20 / 40 / 60.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2423,8 +2424,8 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 1,
-        "max": 30,
+        "min": 8,
+        "max": 60,
         "step": 1,
         "stepMode": "absolute"
       },
@@ -2446,15 +2447,15 @@
         ]
       },
       "rationale": "Controls how strongly one Beer pushes the drunkenness meter.",
-      "logic": "Vanilla is 15 Drunkness per Beer. The slider moves in exact 1-point steps.",
-      "interaction": "Only the strength slider for the currently selected Alcohol Tolerance reference drink is shown."
+      "logic": "Vanilla is 15 Drunkness per Beer, so 4 beers first reach the Very Strong threshold of 60. The slider moves in exact 1-point steps.",
+      "interaction": "BEER selection shows this slider. The drinks-to-Very-Strong slider is a coarse view of the same value; fine tuning here updates the drink count preview."
     },
     {
       "id": "survival.vodkaDrunknessStrength",
       "tab": "survival",
       "group": "Alcohol Tolerance",
       "label": "Vodka Strength",
-      "description": "Sets how much Drunkness one Vodka adds.",
+      "description": "Sets how much Drunkness one Vodka adds while the player thresholds stay fixed at vanilla 20 / 40 / 60.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2470,7 +2471,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 1,
+        "min": 15,
         "max": 60,
         "step": 1,
         "stepMode": "absolute"
@@ -2493,8 +2494,8 @@
         ]
       },
       "rationale": "Controls how strongly one Vodka pushes the drunkenness meter.",
-      "logic": "Vanilla is 30 Drunkness per Vodka. The slider moves in exact 1-point steps.",
-      "interaction": "Only the strength slider for the currently selected Alcohol Tolerance reference drink is shown."
+      "logic": "Vanilla is 30 Drunkness per Vodka, so 2 vodkas first reach the Very Strong threshold of 60. The slider moves in exact 1-point steps.",
+      "interaction": "VODKA selection shows this slider. The drinks-to-Very-Strong slider is a coarse view of the same value; fine tuning here updates the drink count preview."
     },
     {
       "id": "survival.sleepEligibilityThreshold",
