@@ -1,5 +1,7 @@
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 using TrueCustomDifficulty.Controls;
 using TrueCustomDifficulty.Services;
 using TrueCustomDifficulty.ViewModels;
@@ -8,9 +10,21 @@ namespace TrueCustomDifficulty;
 
 public partial class MainWindow : Window
 {
+    private const double AspectRatio = 16.0 / 10.0;
+    private const int WmSizing = 0x0214;
+
+    private bool _isAspectMaximized;
+    private Rect _normalAspectBounds;
+
     public MainWindow()
     {
         InitializeComponent();
+
+        SourceInitialized += (_, _) =>
+        {
+            if (PresentationSource.FromVisual(this) is HwndSource source)
+                source.AddHook(WindowProc);
+        };
 
         try
         {
@@ -31,10 +45,86 @@ public partial class MainWindow : Window
     private void MinimizeWindow_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
     private void MaximizeRestoreWindow_Click(object sender, RoutedEventArgs e)
-        => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+    {
+        if (_isAspectMaximized)
+        {
+            Left = _normalAspectBounds.Left;
+            Top = _normalAspectBounds.Top;
+            Width = _normalAspectBounds.Width;
+            Height = _normalAspectBounds.Height;
+            _isAspectMaximized = false;
+            return;
+        }
+
+        _normalAspectBounds = new Rect(Left, Top, Width, Height);
+
+        var work = SystemParameters.WorkArea;
+        var targetWidth = work.Width;
+        var targetHeight = targetWidth / AspectRatio;
+
+        if (targetHeight > work.Height)
+        {
+            targetHeight = work.Height;
+            targetWidth = targetHeight * AspectRatio;
+        }
+
+        Left = work.Left + (work.Width - targetWidth) / 2.0;
+        Top = work.Top + (work.Height - targetHeight) / 2.0;
+        Width = targetWidth;
+        Height = targetHeight;
+        _isAspectMaximized = true;
+    }
 
     private void CloseWindow_Click(object sender, RoutedEventArgs e) => Close();
 
+
+
+    private IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg != WmSizing || lParam == IntPtr.Zero || _isAspectMaximized)
+            return IntPtr.Zero;
+
+        var rect = Marshal.PtrToStructure<NativeRect>(lParam);
+        var edge = wParam.ToInt32();
+
+        var width = Math.Max(MinWidth, rect.Right - rect.Left);
+        var height = Math.Max(MinHeight, rect.Bottom - rect.Top);
+
+        var proposedRatio = width / height;
+        var adjustHeight = edge is 1 or 2 || (edge is 4 or 5 or 7 or 8 && proposedRatio >= AspectRatio);
+
+        if (adjustHeight)
+        {
+            height = width / AspectRatio;
+
+            if (edge is 4 or 5)
+                rect.Top = rect.Bottom - (int)Math.Round(height);
+            else
+                rect.Bottom = rect.Top + (int)Math.Round(height);
+        }
+        else
+        {
+            width = height * AspectRatio;
+
+            if (edge is 1 or 4 or 7)
+                rect.Left = rect.Right - (int)Math.Round(width);
+            else
+                rect.Right = rect.Left + (int)Math.Round(width);
+        }
+
+        Marshal.StructureToPtr(rect, lParam, fDeleteOld: false);
+        handled = true;
+        return IntPtr.Zero;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativeRect
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
 
 
     private void ParameterCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
