@@ -3279,8 +3279,8 @@
       "tab": "stamina",
       "group": "Core Stamina",
       "label": "Maximum Stamina",
-      "description": "Vanilla Player.MaxSP is 100. This changes the size of the stamina pool itself, not regeneration speed or the cost of any action.",
-      "rationale": "Vanilla Player.MaxSP is 100. This changes the size of the stamina pool itself, not regeneration speed or the cost of any action.",
+      "description": "Vanilla maximum stamina is 100. This changes the size of your stamina pool, not how fast it recovers or how much actions cost.",
+      "rationale": "Changes your maximum stamina pool. Vanilla is 100.",
       "logic": "Higher values let the player absorb more sprint, jump, melee and vault costs before exhaustion; lower values make every existing cost consume a larger share of the bar.",
       "interaction": "Action costs are direct SP values, so changing Maximum Stamina changes how many actions fit into a full bar even when their individual costs are untouched.",
       "control": "slider",
@@ -3324,8 +3324,8 @@
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
       "label": "Sprint Stops Below",
-      "description": "Vanilla Player.StaminaDisableThresholds defines the Sprint state at 16.1 SP. This is the point at which the sprint-specific exhaustion rule engages.",
-      "rationale": "Vanilla Player.StaminaDisableThresholds defines the Sprint state at 16.1 SP. This is the point at which the sprint-specific exhaustion rule engages.",
+      "description": "Sets how low your stamina can fall before sprinting is forced to stop. Vanilla is 16.1 SP.",
+      "rationale": "Sets how low your stamina can fall before sprinting is forced to stop. Vanilla is 16.1 SP.",
       "logic": "Higher values make sprint lock out earlier while stamina is still relatively high; lower values let the player sprint deeper into the stamina bar.",
       "interaction": "This threshold works together with Sprint Recovery Delay, Maximum Stamina, Sprint Stamina Drain and regeneration. It does not change sprint speed.",
       "control": "slider",
@@ -4364,7 +4364,7 @@
       "tab": "loot",
       "group": "NPC Loot & Equipment",
       "label": "NPC Medical Drop",
-      "description": "Scales the vanilla item-level drop chances for Bandages, Medkits, Army Medkits and Anti-Rad carried by ordinary repeatable human NPC loadouts. It does not change stack sizes or non-medical consumables.",
+      "description": "Changes how often ordinary human enemies carry Bandages, Medkits, Army Medkits, or Anti-Rad. It does not change how many items are in each stack.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -4402,8 +4402,8 @@
           "Only 37 audited standard-human SubItemGenerator links are redirected to TCD-owned pool clones; Prologue, zombie, named/scripted and other shared consumers remain vanilla."
         ]
       },
-      "rationale": "Medical consumables are the only standard-human consumable category with a strong vanilla difficulty signal. Scaling only their explicit Chance fields preserves food, drink, stimulant, alcohol and count semantics.",
-      "logic": "0-200% in 5% steps. Each vanilla medical Chance is multiplied by the selected factor and clamped to 100%. For example, a 30% vanilla row becomes 15% at 50%, 30% at 100%, and 60% at 200%; a 100% vanilla row stays at 100% above vanilla.",
+      "rationale": "Changes medical-item drop frequency on ordinary human enemies without changing food, drinks, stimulants, alcohol, or stack sizes.",
+      "logic": "0–200% changes the vanilla medical drop chance. 50% halves it, 100% keeps vanilla, and 200% doubles it up to a maximum of 100%.",
       "interaction": "Affects ordinary human enemies only. It does not change zombies, named/story characters, traders, stash loot, or the amount inside each medical stack."
     },
     {
@@ -4505,7 +4505,7 @@
       "tab": "loot",
       "group": "Stashes",
       "label": "Stash Ammo Amounts",
-      "description": "Adjust ammo stack amounts independently for Basic, Standard and Rare stashes. Selection Chance/Weight and stash contents remain vanilla.",
+      "description": "Changes how much ammo Basic, Standard, and Rare stashes contain. The kinds of ammo they can contain stay vanilla.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -4683,7 +4683,7 @@
       "tab": "loot",
       "group": "Stashes",
       "label": "Standard Stash Ammo",
-      "description": "Changes how much ammo Standard stashes give you. The game still chooses ammo types using its vanilla progression and weighting; only stack sizes change.",
+      "description": "Changes how much ammo Standard stashes give you. Which calibers can appear still follows vanilla progression.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -4721,7 +4721,7 @@
           "The vanilla Newbie block intentionally contains A919D twice; the TCD template preserves that duplicate source row."
         ]
       },
-      "rationale": "Changes only how many rounds a Standard-stash ammo roll produces. Every vanilla ammo-selection Weight and progression-rank gate is preserved, so this does not rebalance which calibers become available or how they are weighted.",
+      "rationale": "Changes only the number of rounds found in Standard stashes, not which ammo types can appear.",
       "logic": "25–200% scales the amount of ammo found in Standard stashes. For example, a vanilla 18–24 round stack becomes about 9–12 at 50% and 36–48 at 200%.",
       "interaction": "Changes ammo amounts in ordinary Standard stashes. Story/scripted stashes and other special loot sources stay vanilla.",
       "lootHint": {
@@ -4787,7 +4787,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "Ammo from Breakable Boxes",
-      "description": "Changes how much ammunition you get from breakable ammo boxes. This control changes quantity only; Ammo Box Distribution controls caliber selection weights separately.",
+      "description": "Changes how much ammunition you get from breakable ammo boxes. Ammo Box Distribution separately changes which ammo families are more common.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -4826,7 +4826,7 @@
           "Test/debug destructibles and the three non-destructible DLC ItemContainer paths remain on vanilla generators."
         ]
       },
-      "rationale": "Changes how much ammunition common breakable ammo boxes yield without itself changing caliber-selection weights.",
+      "rationale": "Changes how many rounds breakable ammo boxes give you without changing which ammo families they favor.",
       "logic": "50–200% changes how many rounds are found in breakable ammo boxes. 100% keeps vanilla amounts.",
       "interaction": "Works with Ammo Box Distribution: Amount changes how many rounds you get, while Distribution changes which ammo families appear more often.",
       "lootHint": {
@@ -4871,7 +4871,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "Breakable Box Ammo Distribution",
-      "description": "Adjust the relative spawn weighting of the vanilla ammo families already present in dedicated breakable ammo boxes. The control never adds new PossibleItems.",
+      "description": "Changes how common each vanilla ammo family is in breakable ammo boxes. It does not add new ammo types.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5098,7 +5098,7 @@
           "There are no audited non-destructible consumers of these two leaf grenade pools."
         ]
       },
-      "rationale": "Changes how many grenades dedicated breakable grenade boxes yield without changing grenade type selection or any chance/weight semantics.",
+      "rationale": "Changes how many grenades breakable grenade boxes give you without changing which grenade type appears.",
       "logic": "50-200% in 50% steps. Vanilla 1-2 becomes 1-1 at 50%, 1-2 at 100%, 2-3 at 150%, and 2-4 at 200%.",
       "interaction": "Changes grenade amounts in breakable grenade boxes only. Normal stashes, corpse loot, and NPC grenade loadouts are unaffected.",
       "lootHint": {
@@ -5161,7 +5161,7 @@
           "The existing Expensive Stash Coupon Chance remains independent and is materialized into TCD-owned Expensive roots whenever this ammo control causes production redirects."
         ]
       },
-      "rationale": "Changes only how many rounds an Rare-stash ammo roll produces. All vanilla ammo Chance/Weight selection fields and progression-rank gates remain unchanged, so this does not rebalance which calibers are selected.",
+      "rationale": "Changes only the number of rounds found in Rare stashes, not which ammo types can appear.",
       "logic": "25–200% changes the amount of ammo found in Rare stashes. 100% keeps vanilla amounts.",
       "interaction": "Changes ammo amounts in ordinary Rare stashes. Story/scripted stashes and other special loot sources stay vanilla.",
       "lootHint": {
@@ -6130,7 +6130,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Single player-facing global repair-price control. It changes CoreVariables.BaseRepairCostModifier, the game-wide repair-price baseline.",
+      "rationale": "The main global setting for making repair services cheaper or more expensive.",
       "logic": "Higher values make repairs more expensive overall; lower values make them cheaper. 70% is vanilla.",
       "interaction": "Reputation-based repair prices still apply and can further raise or lower the final repair bill."
     },
