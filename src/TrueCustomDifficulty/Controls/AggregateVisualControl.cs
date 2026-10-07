@@ -19,7 +19,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private readonly Dictionary<string, ParameterViewModel> _parameters = new(StringComparer.Ordinal);
     private readonly List<HitTarget> _hitTargets = new();
-    private readonly RadarStatusMessage _status;
+    private readonly VisualStatusMessage _status;
 
     private HitTarget? _dragTarget;
     private ParameterViewModel? _selectedParameter;
@@ -50,7 +50,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     public AggregateVisualControl()
     {
-        _status = new RadarStatusMessage(InvalidateVisual);
+        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 320.0;
         SnapsToDevicePixels = true;
