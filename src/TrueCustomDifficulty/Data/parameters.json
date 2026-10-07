@@ -2745,15 +2745,15 @@
         ]
       },
       "rationale": "Controls how strongly one Beer pushes the drunkenness meter.",
-      "logic": "Vanilla is 15. Beer can be tuned from 8 to 30 Drunkness per drink in exact 1-point steps. The 4th vanilla Beer first reaches WASTED at 60.",
-      "interaction": "Always visible beside Vodka Strength. Moving it updates Beer strength, the Beer Very Strong drink count, and the AFTER EACH BEER progression immediately."
+      "logic": "Vanilla is 15 Drunkness per Beer. Against the current Medium 30 / Strong 80 stage boundaries, back-to-back vanilla Beer reaches Medium on the 2nd drink and Strong on the 6th.",
+      "interaction": "Always visible beside Vodka Strength. Moving it updates Beer strength, the Beer Strong-stage drink count, and the back-to-back progression immediately."
     },
     {
       "id": "survival.vodkaDrunknessStrength",
       "tab": "survival",
       "group": "Alcohol Tolerance",
       "label": "Vodka Strength",
-      "description": "Sets how much Drunkness one Vodka adds while the player thresholds stay fixed at vanilla 20 / 40 / 60.",
+      "description": "Sets how much Drunkness one Vodka adds against the current DrunknessMechanics stage boundaries.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2792,8 +2792,8 @@
         ]
       },
       "rationale": "Controls how strongly one Vodka pushes the drunkenness meter.",
-      "logic": "Vanilla is 30 Drunkness per Vodka, so the 2nd vodka first reaches WASTED at the fixed threshold of 60. UI tiers: BUZZED <20, TIPSY 20–39, DRUNK 40–59, WASTED 60+.",
-      "interaction": "Always visible beside Beer Strength. Moving it updates Vodka strength, the Vodka WASTED drink count, and the Vodka progression immediately."
+      "logic": "Vanilla is 30 Drunkness per Vodka. Against the current Medium 30 / Strong 80 stage boundaries, the 1st vodka reaches Medium and the 3rd reaches Strong in the back-to-back preview.",
+      "interaction": "Always visible beside Beer Strength. Moving it updates Vodka strength, the Vodka Strong-stage drink count, and the back-to-back progression immediately."
     },
     {
       "id": "survival.sleepEligibilityThreshold",
