@@ -263,7 +263,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             muted,
             FontWeights.Normal);
 
-        var track = new Rect(trackLeft, top + 10.0, trackWidth, 24.0);
+        var track = new Rect(trackLeft, top + 24.0, trackWidth, 12.0);
         var y = track.Top + track.Height / 2.0;
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
 
@@ -281,9 +281,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             6.5);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.8, 2.8);
 
-        DrawText(dc, $"{parameter.CurrentNumber:0.##}x", new Point(track.Left, top + 35.0), 7.6, modified ? accent : muted, FontWeights.Bold);
-        DrawCenteredText(dc, "1x", new Point(vanillaX, top + 40.0), 6.8, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "3x", new Point(track.Right, top + 35.0), 6.8, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x", new Point(track.Right, top + 5.0), 9.0, modified ? accent : muted, FontWeights.Bold);
 
         _targets[row] = new HitTarget(
             new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
