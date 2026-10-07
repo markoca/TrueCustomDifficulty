@@ -55,7 +55,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsDrunkennessAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "BEER and VODKA are independent strength sliders. Both always stay visible and use exact 1-point Drunkness steps against the fixed vanilla 20 / 40 / 60 thresholds. Each card shows how many drinks currently reach Very Strong, and both AFTER EACH progression rows update live. Right-click a slider to restore only that drink to VANILLA.";
+                       "BEER and VODKA are independent strength sliders. Both always stay visible and use exact 1-point Drunkness steps against the fixed vanilla 20 / 40 / 60 thresholds. Progression is shown as BUZZED, TIPSY, DRUNK and WASTED, with 1ST / 2ND / 3RD / ... drink labels. Each card shows how many drinks currently reach WASTED. Right-click a slider to restore only that drink to VANILLA.";
             }
 
             if (IsAggregateRadarAnchor)
