@@ -8,6 +8,8 @@ set -Eeuo pipefail
 #   WINEPREFIX="$HOME/.wine-s2" WINEDEBUG=-all wine "$ROOT/publish/win-x64/TrueCustomDifficulty.exe"
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT"
+
 PROJECT="$ROOT/src/TrueCustomDifficulty/TrueCustomDifficulty.csproj"
 EXE_NAME="TrueCustomDifficulty.exe"
 PUBLISH_DIR="$ROOT/publish/win-x64"
@@ -21,7 +23,20 @@ trap cleanup EXIT
 
 if ! command -v dotnet >/dev/null 2>&1; then
     echo "ERROR: .NET SDK was not found." >&2
-    echo "Install the .NET 8 SDK and make sure 'dotnet' is available in PATH." >&2
+    echo "Install the .NET 10 SDK and make sure 'dotnet' is available in PATH." >&2
+    echo "CachyOS/Arch: sudo pacman -Syu dotnet-sdk-10.0" >&2
+    exit 1
+fi
+
+if ! SDK_VERSION="$(dotnet --version 2>/dev/null)"; then
+    echo "ERROR: No compatible .NET 10 SDK could be selected for this repository." >&2
+    echo "global.json pins the project to the .NET 10 SDK line." >&2
+    echo "CachyOS/Arch: sudo pacman -Syu dotnet-sdk-10.0" >&2
+    exit 1
+fi
+
+if [[ "$SDK_VERSION" != 10.* ]]; then
+    echo "ERROR: True Custom Difficulty requires a .NET 10 SDK; selected SDK is $SDK_VERSION." >&2
     exit 1
 fi
 
@@ -34,6 +49,8 @@ fi
 echo "Publishing True Custom Difficulty..."
 echo "Host: Linux"
 echo "Target: Windows x64 (win-x64)"
+echo "Framework: net10.0-windows"
+echo "SDK: $SDK_VERSION"
 echo "Final runtime output will be placed in: $PUBLISH_DIR"
 echo
 
