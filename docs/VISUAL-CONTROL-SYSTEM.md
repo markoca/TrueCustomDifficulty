@@ -266,8 +266,8 @@ Dedicated radar/curve controls remain appropriate where the values are independe
 - Bleeding damage curve.
 - Drunkenness.
 - Action costs.
-- Medical healing.
-- Item price scalers.
+- Medical healing output board.
+- Item value layers board.
 - Mutant health.
 - Special ability cooldowns.
 - Human/mutant group sizes.
