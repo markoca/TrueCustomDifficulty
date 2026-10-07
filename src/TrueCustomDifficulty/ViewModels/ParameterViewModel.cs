@@ -58,34 +58,34 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsAggregateRadarAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Mouse: drag a radar point; hover legend text to highlight its branch; mouse wheel over legend text adjusts that branch; right-click a point or its legend text resets only that branch." + Environment.NewLine +
-                       "Keyboard: after selecting a branch, Arrow keys or +/- adjust it; R resets every branch in this radar.";
+                       "Mouse: drag a radar point to make that setting higher or lower. Hover a legend name to highlight the same point, scroll over the name to fine-tune it, and right-click the point or name to return only that setting to your Base Preset." + Environment.NewLine +
+                       "Keyboard: choose a radar point, then use Arrow keys or +/- to fine-tune it. Press R to return the whole radar to your Base Preset.";
             }
 
             if (IsRange)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Mouse: drag either MIN/MAX slider; click a vanilla marker to snap that endpoint; right-click either slider resets the whole range to its reference/default." + Environment.NewLine +
-                       "Keyboard: focus the MIN or MAX slider; Arrow keys adjust by one step, Page Up/Down use the slider large step, Home/End jump to the endpoint limits.";
+                       "Mouse: drag MIN and MAX to choose the range. Click a vanilla marker to copy that vanilla setting. Right-click either slider to return the whole range to your Base Preset." + Environment.NewLine +
+                       "Keyboard: choose MIN or MAX, use Arrow keys for small changes, Page Up/Down for larger changes, and Home/End for the lowest/highest allowed setting.";
             }
 
             if (IsChoiceSlider)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Mouse: drag or click the discrete slider; click a vanilla marker to snap to it; right-click the slider resets to its reference/default." + Environment.NewLine +
-                       "Keyboard: Arrow keys move one choice, Page Up/Down use the slider large step, Home/End jump to the first/last choice.";
+                       "Mouse: drag or click the slider to choose an option. Click a vanilla marker to copy that vanilla choice. Right-click the slider to return to your Base Preset." + Environment.NewLine +
+                       "Keyboard: use Arrow keys to move one choice at a time, Page Up/Down to move faster, and Home/End to jump to the first/last choice.";
             }
 
             if (IsToggle)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Mouse: click the checkbox to toggle the setting." + Environment.NewLine +
-                       "Keyboard: focus the checkbox and press Space to toggle it.";
+                       "Mouse: click the switch to turn this gameplay rule on or off." + Environment.NewLine +
+                       "Keyboard: focus the switch and press Space to toggle it.";
             }
 
             return "CONTROLS" + Environment.NewLine +
-                   "Mouse: drag or click the slider; click a vanilla marker to snap to it; mouse wheel over the current-value box adjusts one step; right-click the slider or current-value box resets to its reference/default." + Environment.NewLine +
-                   "Keyboard: focus the slider; Arrow keys adjust by one step, Page Up/Down use the slider large step, Home/End jump to minimum/maximum.";
+                   "Mouse: drag or click the slider to change the setting. Click a vanilla marker to copy that vanilla setting, scroll over the number on the right to fine-tune it, and right-click the slider or number to return to your Base Preset." + Environment.NewLine +
+                   "Keyboard: use Arrow keys for small changes, Page Up/Down for larger changes, and Home/End for the lowest/highest allowed setting.";
         }
     }
     public string Logic => Definition.Logic;
