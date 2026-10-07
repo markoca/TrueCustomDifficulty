@@ -613,7 +613,7 @@
       "id": "combat.accumulatedDamageWeightMax",
       "tab": "combat",
       "group": "Taking Repeated Hits",
-      "label": "Repeated-Hit Protection — Maximum",
+      "label": "Repeated-Hit Protection - Maximum",
       "description": "Sets the stronger end of the hidden protection the game can apply when several hits land close together.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -651,13 +651,13 @@
       },
       "rationale": "Sets the stronger end of the hidden protection the game can apply when several hits land close together.",
       "logic": "Higher values mean stronger repeated-hit protection and generally easier sustained incoming fire. Lower values reduce that protection. This number is a strength setting, not a literal damage-reduction percentage.",
-      "interaction": "Use it together with Repeated-Hit Protection — Minimum. Human Enemy Gun Damage still controls the damage of each individual bullet hit."
+      "interaction": "Use it together with Repeated-Hit Protection - Minimum. Human Enemy Gun Damage still controls the damage of each individual bullet hit."
     },
     {
       "id": "combat.accumulatedDamageWeightMin",
       "tab": "combat",
       "group": "Taking Repeated Hits",
-      "label": "Repeated-Hit Protection — Minimum",
+      "label": "Repeated-Hit Protection - Minimum",
       "description": "Sets the weaker end of the hidden protection the game can apply when several hits land close together.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -695,7 +695,7 @@
       },
       "rationale": "Sets the weaker end of the hidden protection the game can apply when several hits land close together.",
       "logic": "Higher values mean more protection at the weak end of the system; lower values make repeated hits harsher. This number is a strength setting, not a literal damage-reduction percentage.",
-      "interaction": "Use it together with Repeated-Hit Protection — Maximum. For a vanilla-like setup, keep Minimum at or below Maximum."
+      "interaction": "Use it together with Repeated-Hit Protection - Maximum. For a vanilla-like setup, keep Minimum at or below Maximum."
     },
     {
       "id": "combat.accumulatedDamageIncludesHealedHealth",
@@ -729,7 +729,7 @@
       },
       "rationale": "Repeated-hit protection tracks damage taken over time. When this is ON, healing restores your HP but does not immediately erase that healed damage from the protection tracker, so earlier hits can still contribute to repeated-hit protection. When it is OFF, healed damage no longer remains part of that tracked damage. This does not reduce healing strength or make medkits restore less health.",
       "logic": "OFF matches Novice and Stalker. ON matches Veteran and Master. Healing always restores HP normally; this toggle only decides whether the healed portion is still remembered by the repeated-hit protection system.",
-      "interaction": "Works with Repeated-Hit Protection — Minimum and Maximum. Healing can either clear old damage from the protection system or let it continue to count, depending on this switch."
+      "interaction": "Works with Repeated-Hit Protection - Minimum and Maximum. Healing can either clear old damage from the protection system or let it continue to count, depending on this switch."
     },
     {
       "id": "combat.mutantHealth.bloodsucker",
@@ -2361,7 +2361,7 @@
       "tab": "health",
       "group": "Core Health",
       "label": "Player Max Health",
-      "description": "Changes your maximum health. The game’s full-health feedback stays in sync with the new maximum.",
+      "description": "Changes your maximum health. The game's full-health feedback stays in sync with the new maximum.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2404,7 +2404,7 @@
           "Direct MaxHP field is confirmed; broader assumptions about the 100-point HP scale require runtime validation."
         ]
       },
-      "rationale": "Changes your maximum health. The game’s full-health feedback stays in sync with the new maximum.",
+      "rationale": "Changes your maximum health. The game's full-health feedback stays in sync with the new maximum.",
       "logic": "",
       "interaction": "The game keeps its vanilla low-health state boundary. Other systems may also assume a 100-point health scale, so very large Max Health changes should be tested in game."
     },
@@ -3547,11 +3547,11 @@
     {
       "id": "stamina.sprintUnderRunSpeedRegenCoef",
       "tab": "stamina",
-      "group": "Movement Stamina — Internal Speed States",
+      "group": "Movement Stamina - Internal Speed States",
       "label": "Speed-Limited Sprint Stamina Effect",
       "description": "Changes stamina recovery while you are sprinting but your movement speed is being limited. The game decides when this slower sprint state is active.",
       "rationale": "Changes stamina recovery during speed-limited sprinting.",
-      "logic": "More negative values suppress recovery more strongly; zero adds no state penalty; positive values help recovery. Do not read this as a separate “slow sprint” button.",
+      "logic": "More negative values suppress recovery more strongly; zero adds no state penalty; positive values help recovery. Do not read this as a separate 'slow sprint' button.",
       "interaction": "This works alongside normal Sprint stamina behavior. Encumbrance and other movement limits can affect when the game uses this slower sprint state.",
       "control": "slider",
       "valueKind": "raw",
@@ -3591,7 +3591,7 @@
     {
       "id": "stamina.joggingRegenCoef",
       "tab": "stamina",
-      "group": "Movement Stamina — Internal Speed States",
+      "group": "Movement Stamina - Internal Speed States",
       "label": "Jogging-State Stamina Effect",
       "description": "Changes stamina recovery during the game's lighter running movement state. There is no separate Jogging keybind.",
       "rationale": "Changes stamina recovery while the game treats your movement as jogging.",
@@ -3635,7 +3635,7 @@
     {
       "id": "stamina.slowRunRegenCoef",
       "tab": "stamina",
-      "group": "Movement Stamina — Internal Speed States",
+      "group": "Movement Stamina - Internal Speed States",
       "label": "Slow-Run-State Stamina Effect",
       "description": "Changes stamina recovery during the game's slow-running movement state. There is no separate Slow Run keybind.",
       "rationale": "Changes stamina recovery while the game treats your movement as slow running.",
@@ -4146,7 +4146,7 @@
     {
       "id": "stamina.sprintRegenCoef",
       "tab": "stamina",
-      "group": "Movement Stamina — Player Actions",
+      "group": "Movement Stamina - Player Actions",
       "label": "Full Sprint Stamina Effect",
       "description": "Changes stamina recovery while sprinting.",
       "control": "slider",
@@ -4190,7 +4190,7 @@
     {
       "id": "stamina.runRegenCoef",
       "tab": "stamina",
-      "group": "Movement Stamina — Internal Speed States",
+      "group": "Movement Stamina - Internal Speed States",
       "label": "Run-State Stamina Effect",
       "description": "Changes stamina recovery while the game treats your movement as running.",
       "control": "slider",
@@ -4403,7 +4403,7 @@
         ]
       },
       "rationale": "Changes medical-item drop frequency on ordinary human enemies without changing food, drinks, stimulants, alcohol, or stack sizes.",
-      "logic": "0–200% changes the vanilla medical drop chance. 50% halves it, 100% keeps vanilla, and 200% doubles it up to a maximum of 100%.",
+      "logic": "0-200% changes the vanilla medical drop chance. 50% halves it, 100% keeps vanilla, and 200% doubles it up to a maximum of 100%.",
       "interaction": "Affects ordinary human enemies only. It does not change zombies, named/story characters, traders, stash loot, or the amount inside each medical stack."
     },
     {
@@ -4552,13 +4552,13 @@
         "label": "Contents",
         "entries": [
           {
-            "label": "9×18 FMJ",
+            "label": "9x18 FMJ",
             "min": 2,
             "max": 3,
             "selection": "Weight 40"
           },
           {
-            "label": "9×19 FMJ",
+            "label": "9x19 FMJ",
             "min": 5,
             "max": 7,
             "selection": "Weight 30"
@@ -4668,7 +4668,7 @@
         ]
       },
       "rationale": "Controls how many RGD-5 grenades you get when the Basic-stash grenade roll succeeds.",
-      "logic": "Choose an exact 0–4 grenades when the grenade entry is present. Vanilla is 1.",
+      "logic": "Choose an exact 0-4 grenades when the grenade entry is present. Vanilla is 1.",
       "interaction": "Chance and Amount are separate: 0% Chance means no grenade appears; Amount decides how many are given when it does.",
       "lootHint": {
         "kind": "exactCount",
@@ -4722,19 +4722,19 @@
         ]
       },
       "rationale": "Changes only the number of rounds found in Standard stashes, not which ammo types can appear.",
-      "logic": "25–200% scales the amount of ammo found in Standard stashes. For example, a vanilla 18–24 round stack becomes about 9–12 at 50% and 36–48 at 200%.",
+      "logic": "25-200% scales the amount of ammo found in Standard stashes. For example, a vanilla 18-24 round stack becomes about 9-12 at 50% and 36-48 at 200%.",
       "interaction": "Changes ammo amounts in ordinary Standard stashes. Story/scripted stashes and other special loot sources stay vanilla.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
         "entries": [
           {
-            "label": "9×19 FMJ",
+            "label": "9x19 FMJ",
             "min": 18,
             "max": 24
           },
           {
-            "label": "5.45×39 FMJ",
+            "label": "5.45x39 FMJ",
             "min": 18,
             "max": 24
           },
@@ -4749,31 +4749,31 @@
             "max": 45
           },
           {
-            "label": "5.56×45 FMJ",
+            "label": "5.56x45 FMJ",
             "min": 18,
             "max": 24,
             "qualifier": "Experienced+"
           },
           {
-            "label": "7.62×54 Supersonic",
+            "label": "7.62x54 Supersonic",
             "min": 25,
             "max": 30,
             "qualifier": "Veteran"
           },
           {
-            "label": "7.62×54 Supersonic",
+            "label": "7.62x54 Supersonic",
             "min": 5,
             "max": 10,
             "qualifier": "Master"
           },
           {
-            "label": "7.62×54 FMJ",
+            "label": "7.62x54 FMJ",
             "min": 45,
             "max": 55,
             "qualifier": "Veteran+"
           },
           {
-            "label": "9×39 FMJ",
+            "label": "9x39 FMJ",
             "min": 18,
             "max": 24,
             "qualifier": "Master"
@@ -4827,19 +4827,19 @@
         ]
       },
       "rationale": "Changes how many rounds breakable ammo boxes give you without changing which ammo families they favor.",
-      "logic": "50–200% changes how many rounds are found in breakable ammo boxes. 100% keeps vanilla amounts.",
+      "logic": "50-200% changes how many rounds are found in breakable ammo boxes. 100% keeps vanilla amounts.",
       "interaction": "Works with Ammo Box Distribution: Amount changes how many rounds you get, while Distribution changes which ammo families appear more often.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
         "entries": [
           {
-            "label": "9×18 FMJ",
+            "label": "9x18 FMJ",
             "min": 3,
             "max": 6
           },
           {
-            "label": "9×19 FMJ",
+            "label": "9x19 FMJ",
             "min": 5,
             "max": 10
           },
@@ -4849,12 +4849,12 @@
             "max": 10
           },
           {
-            "label": "5.45×39 FMJ",
+            "label": "5.45x39 FMJ",
             "min": 5,
             "max": 10
           },
           {
-            "label": "5.56×45 FMJ",
+            "label": "5.56x45 FMJ",
             "min": 5,
             "max": 10
           },
@@ -4903,8 +4903,8 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Four family axes: 9×18 / 9×19 mm, 5.45 / 5.56 mm, .45 ACP, and 12 Gauge.",
-          "9×18 / 9×19 mm scales the existing A918D and A919D entries wherever vanilla already contains them.",
+          "Four family axes: 9x18 / 9x19 mm, 5.45 / 5.56 mm, .45 ACP, and 12 Gauge.",
+          "9x18 / 9x19 mm scales the existing A918D and A919D entries wherever vanilla already contains them.",
           "5.45 / 5.56 mm scales the existing A545D and A556D entries wherever vanilla already contains them.",
           ".45 ACP scales only the existing A045D entry.",
           "12 Gauge scales only the existing A012D entries.",
@@ -4976,7 +4976,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "5.45×39 mm Weight"
+        "valueLabel": "5.45x39 mm Weight"
       },
       "vanilla": {
         "All": 1
@@ -5021,7 +5021,7 @@
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "12×70 Buckshot Weight"
+        "valueLabel": "12x70 Buckshot Weight"
       },
       "vanilla": {
         "All": 1
@@ -5162,14 +5162,14 @@
         ]
       },
       "rationale": "Changes only the number of rounds found in Rare stashes, not which ammo types can appear.",
-      "logic": "25–200% changes the amount of ammo found in Rare stashes. 100% keeps vanilla amounts.",
+      "logic": "25-200% changes the amount of ammo found in Rare stashes. 100% keeps vanilla amounts.",
       "interaction": "Changes ammo amounts in ordinary Rare stashes. Story/scripted stashes and other special loot sources stay vanilla.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
         "entries": [
           {
-            "label": "9×18 Armor-Piercing",
+            "label": "9x18 Armor-Piercing",
             "min": 20,
             "max": 25
           },
@@ -5179,12 +5179,12 @@
             "max": 12
           },
           {
-            "label": "5.45×39 Armor-Piercing",
+            "label": "5.45x39 Armor-Piercing",
             "min": 55,
             "max": 65
           },
           {
-            "label": "9×19 Armor-Piercing",
+            "label": "9x19 Armor-Piercing",
             "min": 55,
             "max": 65
           },
@@ -5194,12 +5194,12 @@
             "max": 40
           },
           {
-            "label": "5.56×45 Armor-Piercing",
+            "label": "5.56x45 Armor-Piercing",
             "min": 55,
             "max": 65
           },
           {
-            "label": "7.62×54 Armor-Piercing",
+            "label": "7.62x54 Armor-Piercing",
             "min": 10,
             "max": 15,
             "qualifier": "Veteran+"
@@ -5211,13 +5211,13 @@
             "qualifier": "Veteran+"
           },
           {
-            "label": "7.62×54 FMJ",
+            "label": "7.62x54 FMJ",
             "min": 55,
             "max": 65,
             "qualifier": "Veteran+"
           },
           {
-            "label": "9×39 Armor-Piercing",
+            "label": "9x39 Armor-Piercing",
             "min": 30,
             "max": 40,
             "qualifier": "Master"
@@ -5535,10 +5535,10 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "The audited surface contains exactly 32 direct T1–T4 trader ammo rows and 64 MinCount/MaxCount edit points.",
+          "The audited surface contains exactly 32 direct T1-T4 trader ammo rows and 64 MinCount/MaxCount edit points.",
           "The writer changes only MinCount/MaxCount; ItemPrototypeSID, Chance, PlayerRank, wrapper links and trader refresh remain vanilla.",
           "Trader_SovietAmmo_ItemGenerator and Trader_NatoAmmo_ItemGenerator are deliberately excluded until their consumer scope is separately proven safe.",
-          "DLC1 has no direct rows in this audited T1–T4 ammo surface; DLC trader behavior is not claimed by this control."
+          "DLC1 has no direct rows in this audited T1-T4 ammo surface; DLC trader behavior is not claimed by this control."
         ]
       },
       "rationale": "Changes trader ammo stock without changing what kinds of ammo each trader is meant to sell.",
@@ -6566,7 +6566,7 @@
         "notes": []
       },
       "rationale": "This is the broad anomaly difficulty setting. It scales damaging anomaly output as a group while each anomaly keeps its own base damage value.",
-      "logic": "Effective pre-protection anomaly damage is modeled as: individual base damage × Global Anomaly Damage. The vanilla setting is 30% on Novice, 100% on Stalker, 145% on Veteran and 175% on Master.",
+      "logic": "Effective pre-protection anomaly damage is modeled as: individual base damage x Global Anomaly Damage. The vanilla setting is 30% on Novice, 100% on Stalker, 145% on Veteran and 175% on Master.",
       "interaction": "Individual Base Damage sliders below are a second layer. Changing both layers compounds the result: for example, Fire base 60 at 145% global produces about 87 pre-protection damage; raising Fire base as well increases that result again."
     },
     {
@@ -7748,7 +7748,7 @@
         "notes": []
       },
       "rationale": "Fine-tunes Chemical damage without changing the other anomalies. Global Anomaly Damage still affects it too.",
-      "logic": "Effective pre-protection output is approximately base damage × Global Anomaly Damage. With the vanilla base 30, the four vanilla difficulty references are approximately: Novice 9, Stalker 30, Veteran 43.5, Master 52.5. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
+      "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 30, the four vanilla difficulty references are approximately: Novice 9, Stalker 30, Veteran 43.5, Master 52.5. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
       "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
     },
@@ -7792,7 +7792,7 @@
         "notes": []
       },
       "rationale": "Fine-tunes Fire damage without changing the other anomalies. Global Anomaly Damage still affects it too.",
-      "logic": "Effective pre-protection output is approximately base damage × Global Anomaly Damage. With the vanilla base 60, the four vanilla difficulty references are approximately: Novice 18, Stalker 60, Veteran 87, Master 105. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
+      "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 60, the four vanilla difficulty references are approximately: Novice 18, Stalker 60, Veteran 87, Master 105. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
       "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
     },
@@ -7836,7 +7836,7 @@
         "notes": []
       },
       "rationale": "Fine-tunes Carousel damage without changing the other anomalies. Global Anomaly Damage still affects it too.",
-      "logic": "Effective pre-protection output is approximately base damage × Global Anomaly Damage. With the vanilla base 105, the four vanilla difficulty references are approximately: Novice 31.5, Stalker 105, Veteran 152.25, Master 183.75. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
+      "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 105, the four vanilla difficulty references are approximately: Novice 31.5, Stalker 105, Veteran 152.25, Master 183.75. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
       "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
     },
@@ -7880,7 +7880,7 @@
         "notes": []
       },
       "rationale": "Fine-tunes Toxic Cloud damage without changing the other anomalies. Global Anomaly Damage still affects it too.",
-      "logic": "Effective pre-protection output is approximately base damage × Global Anomaly Damage. With the vanilla base 25, the four vanilla difficulty references are approximately: Novice 7.5, Stalker 25, Veteran 36.25, Master 43.75. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
+      "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 25, the four vanilla difficulty references are approximately: Novice 7.5, Stalker 25, Veteran 36.25, Master 43.75. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
       "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
     },
@@ -7924,7 +7924,7 @@
         "notes": []
       },
       "rationale": "Fine-tunes Steam damage without changing the other anomalies. Global Anomaly Damage still affects it too.",
-      "logic": "Effective pre-protection output is approximately base damage × Global Anomaly Damage. With the vanilla base 60, the four vanilla difficulty references are approximately: Novice 18, Stalker 60, Veteran 87, Master 105. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
+      "logic": "Effective pre-protection output is approximately base damage x Global Anomaly Damage. With the vanilla base 60, the four vanilla difficulty references are approximately: Novice 18, Stalker 60, Veteran 87, Master 105. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
       "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
     },
@@ -7967,7 +7967,7 @@
           "Runtime CFG 2.0.5 stores FlycatcherVelocityChange as -50%. The UI exposes retained movement speed instead: CFG delta = UI value - 1.0."
         ]
       },
-      "rationale": "Shows the Flycatcher movement effect as the speed you keep, rather than exposing the game’s negative velocity-change value.",
+      "rationale": "Shows the Flycatcher movement effect as the speed you keep, rather than exposing the game's negative velocity-change value.",
       "logic": "Vanilla applies a -50% velocity change, so 50% of normal movement speed remains. 100% means no movement slowdown; 0% corresponds to a -100% velocity change.",
       "interaction": "Changes only player movement slowdown inside the Flycatcher. Projectile slowdown, HP/stamina regeneration penalties and turn slowdown remain separate."
     },
@@ -8026,7 +8026,7 @@
       "tab": "environment",
       "group": "Anomalies",
       "label": "Clicker Health Damage",
-      "description": "Controls the direct health damage dealt by a Clicker hit without changing the anomaly’s equipment corrosion or behavior.",
+      "description": "Controls the direct health damage dealt by a Clicker hit without changing the anomaly's equipment corrosion or behavior.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -8060,7 +8060,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Exposes only the Clicker’s clean direct-damage effect. Equipment corrosion, flash behavior, radius, charge time and cooldown stay vanilla.",
+      "rationale": "Exposes only the Clicker's clean direct-damage effect. Equipment corrosion, flash behavior, radius, charge time and cooldown stay vanilla.",
       "logic": "Vanilla ClickerAnomalyHit deals 70 base Burn damage before the normal anomaly-difficulty/protection layers are resolved. 100% keeps that base value; 0% removes this direct health-damage component.",
       "interaction": "This slider changes only the ClickerAnomalyHit base value. Global anomaly difficulty and player protection remain separate layers; Clicker equipment corrosion is intentionally untouched.",
       "exposeInUi": false
@@ -8354,7 +8354,7 @@
       "tab": "environment",
       "group": "Anomalies",
       "label": "Psy Anomaly Intensity",
-      "description": "Scales the Psy anomaly’s continuous negative Psy-point effect without changing its other behavior.",
+      "description": "Scales the Psy anomaly's continuous negative Psy-point effect without changing its other behavior.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -9413,14 +9413,14 @@
           "scope": "baseGame",
           "file": "GameData/SpawnActorPrototypes.cfg",
           "prototype": "282 SAFE_REGULAR_DIRECT actors + 14 proven generator slots",
-          "path": "compatible pistol/primary slot, same tier or ±1 tier",
+          "path": "compatible pistol/primary slot, same tier or +/-1 tier",
           "operation": "compatibleTieredWeaponDistribution"
         },
         {
           "scope": "dlc1",
           "file": "DLCGameData/DLC1/SpawnActorPrototypes.cfg",
           "prototype": "80 SAFE_REGULAR_DIRECT actors",
-          "path": "compatible pistol/primary slot, same tier or ±1 tier",
+          "path": "compatible pistol/primary slot, same tier or +/-1 tier",
           "operation": "compatibleTieredWeaponDistribution"
         }
       ],
@@ -9489,7 +9489,7 @@
           "The minimum guarantee rises automatically as the occupied-location budget grows: once, twice, then 3+ times.",
           "Base-game topology supports a guaranteed maximum of 6 copies per weapon; DLC1 expands that guaranteed maximum to 8.",
           "Additional occupied locations beyond the guaranteed minimum are filled with random compatible regular weapons.",
-          "Compatibility means pistol-to-pistol or primary-to-primary and no more than ±1 progression tier.",
+          "Compatibility means pistol-to-pistol or primary-to-primary and no more than +/-1 progression tier.",
           "The layout is freshly randomized on every Build."
         ]
       },
@@ -9519,14 +9519,14 @@
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
           "prototype": "safe world attachment generator clones + direct pickups",
-          "path": "same attachment category, same or ±1 progression tier",
+          "path": "same attachment category, same or +/-1 progression tier",
           "operation": "worldAttachmentShuffle"
         },
         {
           "scope": "dlc1",
           "file": "DLCGameData/DLC1/SpawnActorPrototypes.cfg",
           "prototype": "DLC1 safe attachment locations",
-          "path": "same attachment category, same or ±1 progression tier",
+          "path": "same attachment category, same or +/-1 progression tier",
           "operation": "worldAttachmentShuffle"
         }
       ],
@@ -9537,7 +9537,7 @@
           "The physical shuffle surface contains 67 attachment placement slots/usages with DLC1 and 62 without DLC1.",
           "Attachment counts are preserved exactly; the shuffle only redistributes the existing safe-world attachment multiset.",
           "Hard category boundaries: Optic, Suppressor, Magazine, Underbarrel.",
-          "An attachment may move only to a slot in the same category and within ±1 progression tier.",
+          "An attachment may move only to a slot in the same category and within +/-1 progression tier.",
           "All 55 generator-backed physical usages are isolated through TCD-owned clone-and-redirect generators so shared vanilla generator definitions cannot couple multiple locations.",
           "Trader, bench, quest/reward, internal/default and unproven attachment surfaces remain untouched.",
           "Every Build creates a fresh compatible distribution."
@@ -10866,7 +10866,7 @@
     },
     {
       "id": "loot.looseAmmoQuantity",
-      "reason": "Deep audit found only one direct standard-human standalone Ammo row (Prolog A545D, fixed 30–30) plus one broader nested path through shared GamePass_Stash_ItemGenerator_Rare. The shared pool also feeds a large world-stash graph, so there is no isolated generic standard-NPC loose-ammo quantity surface.",
+      "reason": "Deep audit found only one direct standard-human standalone Ammo row (Prolog A545D, fixed 30-30) plus one broader nested path through shared GamePass_Stash_ItemGenerator_Rare. The shared pool also feeds a large world-stash graph, so there is no isolated generic standard-NPC loose-ammo quantity surface.",
       "status": "not_1to1_verified"
     },
     {
