@@ -34,8 +34,11 @@ The coordinator receives every `CurrentNumber` change, including changes made th
 Current ordered families include:
 
 - Bleeding damage: `LOW <= MEDIUM <= SEVERE`.
+- Bleeding stage thresholds: `MEDIUM <= SEVERE`; LOW stays fixed at the authored 0.1 boundary.
+- Fatigue stage thresholds: `LOW <= MEDIUM <= SEVERE`.
 - Fatigue aim penalty: `LOW <= MEDIUM <= SEVERE`.
 - Fatigue reload penalty: `MEDIUM <= SEVERE`.
+- Hunger stage thresholds: `LOW <= MEDIUM <= SEVERE`.
 - Hunger stamina-recovery penalty: `HUNGRY <= SEVERE` by penalty magnitude.
 - Repeated-hit protection: `MIN <= MAX`.
 - Repair pricing: `FRIENDLY <= NEUTRAL <= DISLIKED <= HOSTILE`.
@@ -74,10 +77,11 @@ Independent system controls:
 
 Combat response graph:
 
-- Low / Medium / Severe Aim-Time Penalty.
-- Medium / Severe Reload-Time Penalty.
+- Low / Medium / Severe stage thresholds on the real 0–100 SleepinessPoints X axis (vanilla 50 / 60 / 80).
+- Low / Medium / Severe Aim-Time Penalty on the Y axis.
+- Medium / Severe Reload-Time Penalty on the Y axis.
 
-There is no separate Low-fatigue reload backing parameter, so the reload curve begins at Medium rather than inventing a synthetic Low point.
+Threshold handles move horizontally while penalty handles move vertically. There is no separate Low-fatigue reload backing parameter, so the reload curve begins at Medium rather than inventing a synthetic Low point.
 
 ### Bleeding Treatment
 
@@ -133,11 +137,14 @@ The threshold is shown as a sleep gate, minimum sleep as a time ruler, and the t
 `AggregateVisualControl / HungerLadder`
 
 - Hunger Build-up Rate.
+- Low / Medium / Severe thresholds on the real 0–100 HungerPoints scale (vanilla 17 / 33 / 83).
 - Well-Fed Stamina Recovery Bonus.
-- Hunger Stamina Recovery Penalty.
+- Medium Hunger Stamina Recovery Penalty.
 - Severe Hunger Stamina Recovery Penalty.
 
-The three state effects share one semantic axis:
+Medium and Severe retain the vanilla no-sleep state. Threshold timing and recovery-penalty magnitude are edited independently.
+
+The three recovery effects share one semantic axis:
 
 `PENALTY <- NEUTRAL -> BONUS`
 
@@ -277,9 +284,9 @@ Dedicated semantic controls remain appropriate where a parameter family has its 
 
 Current specialized surfaces include:
 
-- Bleeding damage curve.
+- Bleeding damage curve with real Medium/Severe stage-threshold X handles (Low stays fixed at 0.1).
 - Drunkenness threshold control.
-- Stamina pressure board for action costs.
+- Stamina pressure board for action costs, aiming recovery, sprint lockout and emergency low-SP recovery.
 - Medical healing output board.
 - Item value layers board.
 - Mutant health roster.
