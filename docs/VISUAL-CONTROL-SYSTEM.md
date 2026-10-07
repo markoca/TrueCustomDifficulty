@@ -25,6 +25,12 @@ Semantic controls follow one density/readability baseline:
 - Vanilla/Base Preset values are shown with grey ticks, dashed curves, ghost envelopes or labelled reference markers.
 - Preset serialization and CFG writer routes remain unchanged.
 
+### WPF template visibility guard
+
+When an aggregate family is anchored on a toggle (currently `advanced.fatigueMechanics`), the template must keep the `ControlRow` visible for its `AggregateVisualControl`. Ordinary toggle styling is therefore conditioned on **both** `IsToggle=True` and `IsVisualAggregateAnchor=False`. This prevents the later toggle trigger from hiding the entire visual board. The board itself contains the bundle toggle; no second ordinary checkbox should appear.
+
+The static regression check is `python tools/verify_visual_anchor_triggers.py`. It catches a future unguarded toggle trigger and verifies that the visible toggle aggregate anchor and its six backing members remain mapped.
+
 ### Constraint authority
 
 Ordered gameplay relationships are owned by the central `SliderConstraintCoordinator`, not by individual visual controls.

@@ -525,11 +525,17 @@
                                                         <DataTrigger Binding="{Binding IsRange}" Value="False">
                                                             <Setter TargetName="RangeControl" Property="Visibility" Value="Collapsed" />
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsToggle}" Value="True">
+                                                        <!-- A toggle can itself be an aggregate visual anchor (e.g. Master Severe Fatigue).
+                                                             Never collapse its ControlRow or show the ordinary toggle in that case. -->
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsToggle}" Value="True" />
+                                                                <Condition Binding="{Binding IsVisualAggregateAnchor}" Value="False" />
+                                                            </MultiDataTrigger.Conditions>
                                                             <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="ToggleControl" Property="Visibility" Value="Visible" />
                                                             <Setter TargetName="ControlRow" Property="Visibility" Value="Collapsed" />
-                                                        </DataTrigger>
+                                                        </MultiDataTrigger>
                                                         <DataTrigger Binding="{Binding IsChoiceSlider}" Value="False">
                                                             <Setter TargetName="ChoiceSliderControl" Property="Visibility" Value="Collapsed" />
                                                         </DataTrigger>

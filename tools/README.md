@@ -28,6 +28,10 @@ The same tools may also be used manually for extraction/development/maintenance 
 
 `verify_cfg_overrides.py` verifies all visible runtime-pending writer routes from the locked catalog/baseline, including direct edit points, PSY/mutant arrays and generator clone/redirect surfaces. `plan` and `suite` emit field-level plus struct/reference contracts and exact reference BPatch trees; `compare` checks a real isolated production staging tree and fails on missing, unexpected or wrong-value assignments **or structural mode/reference drift**. See `../OVERRIDE-VERIFICATION-HARNESS.md`.
 
+## WPF aggregate / toggle visibility regression
+
+`python tools/verify_visual_anchor_triggers.py` parses the actual WPF parameter-card template and checks that toggle-based aggregate anchors (such as Master Severe Fatigue) are not hidden by the ordinary toggle `ControlRow` collapse trigger. It also checks the toggle anchor and all backing family IDs against the catalog and `ParameterViewModel`. Run after changes to aggregate templates, visibility triggers, or visual-family mappings.
+
 ## CFG placement audit
 
 `python tools/audit_cfg_placement.py --output docs/cfg-placement/v0.2.53` verifies all catalog parameters against their concrete CFG writer routes. It is intentionally static and does not launch the application.
