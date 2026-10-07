@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 215,
+  "supportedParameterCount": 217,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -22126,6 +22126,54 @@
       ],
       "key": "ConditionValue",
       "sourceRaw": "60",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.beerDrunknessStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "BeerDrunkness",
+      "nodePath": [],
+      "key": "ValueMin",
+      "sourceRaw": "15",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.beerDrunknessStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "BeerDrunkness",
+      "nodePath": [],
+      "key": "ValueMax",
+      "sourceRaw": "15",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.vodkaDrunknessStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "VodkaDrunkness",
+      "nodePath": [],
+      "key": "ValueMin",
+      "sourceRaw": "30",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.vodkaDrunknessStrength",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "VodkaDrunkness",
+      "nodePath": [],
+      "key": "ValueMax",
+      "sourceRaw": "30",
       "operation": "scale",
       "role": "",
       "difficultySid": ""
