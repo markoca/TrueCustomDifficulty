@@ -456,7 +456,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "BLEEDING TREATMENT MIXER", "compare treatment strength at a glance", text, muted, accent);
+        DrawHeader(
+            dc,
+            "BLEEDING TREATMENT",
+            "each item is measured against its own vanilla bleeding-removal strength",
+            text,
+            muted,
+            accent);
 
         var parameters = new[]
         {
@@ -467,8 +473,122 @@ public sealed class AggregateVisualControl : FrameworkElement
         };
         var labels = new[] { "BANDAGE", "MEDKIT", "ARMY", "SCIENTIFIC" };
 
-        DrawFaderBank(dc, parameters, labels, new Rect(24.0, 62.0, Math.Max(440.0, ActualWidth - 48.0), 270.0), text, muted, border, accent, panel, showRawAndMultiplier: true);
-        DrawCenteredText(dc, "VANILLA MARKER = 1x", new Point(ActualWidth / 2.0, 350.0), 8.5, muted, FontWeights.SemiBold);
+        var area = new Rect(24.0, 66.0, Math.Max(440.0, ActualWidth - 48.0), 286.0);
+        var scaleWidth = 52.0;
+        var faderArea = new Rect(
+            area.Left + scaleWidth,
+            area.Top,
+            Math.Max(360.0, area.Width - scaleWidth),
+            area.Height);
+
+        var count = Math.Min(parameters.Length, labels.Length);
+        var columnWidth = faderArea.Width / Math.Max(1, count);
+        var trackTop = area.Top + 80.0;
+        var trackBottom = area.Bottom - 40.0;
+        var trackHeight = Math.Max(60.0, trackBottom - trackTop);
+
+        // All four backing sliders are defined as 0..200% of their own vanilla value.
+        // A shared normalized scale makes the mixer visually comparable without
+        // pretending that the raw bleeding-removal values use the same units.
+        var sharedMap = new Rect(faderArea.Left, trackTop, faderArea.Width, trackHeight);
+        var vanillaY = ValueToY(1.0, 0.0, 2.0, sharedMap);
+
+        var strongerFill = CloneWithOpacity(accent, 0.045);
+        var weakerFill = CloneWithOpacity(muted, 0.035);
+
+        dc.DrawRectangle(
+            strongerFill,
+            null,
+            new Rect(faderArea.Left, trackTop, faderArea.Width, Math.Max(0.0, vanillaY - trackTop)));
+
+        dc.DrawRectangle(
+            weakerFill,
+            null,
+            new Rect(faderArea.Left, vanillaY, faderArea.Width, Math.Max(0.0, trackBottom - vanillaY)));
+
+        DrawRightAlignedText(dc, "200%", new Point(area.Left + scaleWidth - 9.0, trackTop - 7.0), 8.0, muted, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, "100%", new Point(area.Left + scaleWidth - 9.0, vanillaY - 7.0), 8.2, accent, FontWeights.Bold);
+        DrawRightAlignedText(dc, "0%", new Point(area.Left + scaleWidth - 9.0, trackBottom - 7.0), 8.0, muted, FontWeights.SemiBold);
+
+        DrawRightAlignedText(dc, "STRONGER", new Point(area.Left + scaleWidth - 9.0, trackTop + 13.0), 7.2, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "WEAKER", new Point(area.Left + scaleWidth - 9.0, trackBottom - 22.0), 7.2, muted, FontWeights.Normal);
+
+        var vanillaPen = new Pen(accent, 1.25) { DashStyle = DashStyles.Dash };
+        dc.DrawLine(vanillaPen, new Point(faderArea.Left, vanillaY), new Point(faderArea.Right, vanillaY));
+
+        DrawText(dc, "VANILLA", new Point(faderArea.Left + 5.0, vanillaY - 18.0), 7.8, accent, FontWeights.Bold);
+
+        for (var i = 0; i < count; i++)
+        {
+            if (parameters[i] is not { } parameter)
+                continue;
+
+            var centerX = faderArea.Left + columnWidth * (i + 0.5);
+            var reference = Math.Abs(parameter.ReferenceNumber) > Epsilon
+                ? parameter.ReferenceNumber
+                : 1.0;
+
+            var relativeMinimum = parameter.Minimum / reference;
+            var relativeMaximum = parameter.Maximum / reference;
+            var relativeCurrent = parameter.CurrentNumber / reference;
+
+            DrawCenteredText(dc, labels[i], new Point(centerX, area.Top + 2.0), 9.0, text, FontWeights.Bold);
+            DrawCenteredText(
+                dc,
+                $"{relativeCurrent * 100.0:0}% VANILLA",
+                new Point(centerX, area.Top + 22.0),
+                9.2,
+                accent,
+                FontWeights.Bold);
+
+            DrawCenteredText(
+                dc,
+                $"{parameter.CurrentNumber:0.##} bleeding",
+                new Point(centerX, area.Top + 39.0),
+                7.9,
+                muted,
+                FontWeights.Normal);
+
+            var mapRect = new Rect(centerX - 14.0, trackTop, 28.0, trackHeight);
+            dc.DrawLine(new Pen(border, 4.0), new Point(centerX, trackTop), new Point(centerX, trackBottom));
+
+            var currentY = ValueToY(relativeCurrent, relativeMinimum, relativeMaximum, mapRect);
+            var thumb = new Rect(centerX - 14.0, currentY - 5.0, 28.0, 10.0);
+            dc.DrawRoundedRectangle(
+                panel,
+                new Pen(accent, IsSelected(parameter) ? 2.5 : 1.7),
+                thumb,
+                2.0,
+                2.0);
+            dc.DrawRectangle(accent, null, new Rect(centerX - 9.0, currentY - 1.0, 18.0, 2.0));
+
+            AddVerticalTarget(
+                parameter,
+                new Rect(
+                    centerX - Math.Max(20.0, columnWidth * 0.36),
+                    trackTop - 9.0,
+                    Math.Max(40.0, columnWidth * 0.72),
+                    trackHeight + 18.0),
+                mapRect,
+                parameter.Minimum,
+                parameter.Maximum);
+
+            DrawCenteredText(
+                dc,
+                $"vanilla {parameter.ReferenceNumber:0.##}",
+                new Point(centerX, trackBottom + 14.0),
+                7.7,
+                muted,
+                FontWeights.Normal);
+        }
+
+        DrawCenteredText(
+            dc,
+            "100% = VANILLA  •  drag to tune  •  right-click a fader to reset it",
+            new Point(ActualWidth / 2.0, 366.0),
+            8.2,
+            muted,
+            FontWeights.SemiBold);
     }
 
     private void DrawConsumableMixer(
