@@ -20,17 +20,24 @@ public sealed class BleedingCurveControl : FrameworkElement
     private const string LowDamageId = "survival.bleedingLowDamage";
     private const string MediumDamageId = "survival.bleedingMediumDamage";
     private const string SevereDamageId = "survival.bleedingStrongDamage";
+    private const string MediumThresholdId = "survival.bleedingMediumThreshold";
+    private const string SevereThresholdId = "survival.bleedingStrongThreshold";
 
     private const double CurveMaximumDamage = 4.0;
+    private const double LowThreshold = 0.1;
 
     private ParameterViewModel? _severity;
     private ParameterViewModel? _recovery;
     private readonly ParameterViewModel?[] _damage = new ParameterViewModel?[3];
+    private ParameterViewModel? _mediumThreshold;
+    private ParameterViewModel? _severeThreshold;
 
     private Rect _severityTrackRect;
     private Rect _recoveryTrackRect;
     private Rect _plotRect;
     private readonly Rect[] _damageHitRects = new Rect[3];
+    private Rect _mediumThresholdHitRect;
+    private Rect _severeThresholdHitRect;
 
     private DragTarget _dragTarget = DragTarget.None;
     private DragTarget _selectedTarget = DragTarget.LowDamage;
@@ -74,6 +81,8 @@ public sealed class BleedingCurveControl : FrameworkElement
 
         _severity = null;
         _recovery = null;
+        _mediumThreshold = null;
+        _severeThreshold = null;
         Array.Clear(_damage, 0, _damage.Length);
 
         if (Parameters is not null)
@@ -92,6 +101,9 @@ public sealed class BleedingCurveControl : FrameworkElement
             if (byId.TryGetValue(SevereDamageId, out var severeDamage))
                 _damage[2] = severeDamage;
 
+            byId.TryGetValue(MediumThresholdId, out _mediumThreshold);
+            byId.TryGetValue(SevereThresholdId, out _severeThreshold);
+
             foreach (var parameter in EnumerateBoundParameters())
             {
                 if (parameter is not null)
@@ -109,6 +121,8 @@ public sealed class BleedingCurveControl : FrameworkElement
         yield return _damage[0];
         yield return _damage[1];
         yield return _damage[2];
+        yield return _mediumThreshold;
+        yield return _severeThreshold;
     }
 
     private void Parameter_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -176,15 +190,15 @@ public sealed class BleedingCurveControl : FrameworkElement
             panel,
             out _recoveryTrackRect);
 
-        DrawText(dc, "DAMAGE PER BLEEDING TICK", new Point(16, 140), 9.5, muted, FontWeights.Bold);
-        DrawText(dc, "drag the curve points", new Point(176, 140), 8.6, muted, FontWeights.Normal);
+        DrawText(dc, "BLEEDING STAGES", new Point(16, 140), 9.5, muted, FontWeights.Bold);
+        DrawText(dc, "X = bleeding threshold   |   Y = HP damage per tick", new Point(126, 140), 9.0, muted, FontWeights.Normal);
 
         _plotRect = new Rect(58.0, 164.0, Math.Max(360.0, ActualWidth - 82.0), 142.0);
         DrawCurve(dc, text, muted, border, softBorder, accent, panel);
 
         DrawCenteredText(
             dc,
-            "LOW  ≤  MEDIUM  ≤  SEVERE",
+            "LOW 0.1 fixed   |   MEDIUM ≤ SEVERE",
             new Point(_plotRect.Left + _plotRect.Width / 2.0, 346.0),
             8.7,
             muted,
@@ -278,12 +292,38 @@ public sealed class BleedingCurveControl : FrameworkElement
                 dc,
                 level.ToString(CultureInfo.InvariantCulture),
                 new Point(_plotRect.Left - 9.0, y - 7.0),
-                8.5,
+                9.0,
                 level == 0 ? text : muted,
                 FontWeights.SemiBold);
         }
 
-        var x = GetCurveXPositions();
+        for (var threshold = 0; threshold <= 100; threshold += 25)
+        {
+            var x = ThresholdToX(threshold);
+            dc.DrawLine(
+                new Pen(CloneWithOpacity(softBorder, threshold is 0 or 100 ? 0.8 : 0.45), 1.0)
+                {
+                    DashStyle = threshold is 0 or 100 ? DashStyles.Solid : DashStyles.Dot
+                },
+                new Point(x, _plotRect.Top),
+                new Point(x, _plotRect.Bottom));
+        }
+
+        var currentThresholds = new[]
+        {
+            LowThreshold,
+            _mediumThreshold?.CurrentNumber ?? 50.0,
+            _severeThreshold?.CurrentNumber ?? 75.0
+        };
+        var referenceThresholds = new[]
+        {
+            LowThreshold,
+            _mediumThreshold?.ReferenceNumber ?? 50.0,
+            _severeThreshold?.ReferenceNumber ?? 75.0
+        };
+
+        var x = currentThresholds.Select(ThresholdToX).ToArray();
+        var vanillaX = referenceThresholds.Select(ThresholdToX).ToArray();
 
         var vanillaValues = new[]
         {
@@ -294,13 +334,12 @@ public sealed class BleedingCurveControl : FrameworkElement
 
         var vanillaPoints = new[]
         {
-            new Point(x[0], DamageToY(vanillaValues[0])),
-            new Point(x[1], DamageToY(vanillaValues[1])),
-            new Point(x[2], DamageToY(vanillaValues[2]))
+            new Point(vanillaX[0], DamageToY(vanillaValues[0])),
+            new Point(vanillaX[1], DamageToY(vanillaValues[1])),
+            new Point(vanillaX[2], DamageToY(vanillaValues[2]))
         };
 
-        var vanillaPen = new Pen(muted, 1.3) { DashStyle = DashStyles.Dash };
-        DrawPolyline(dc, vanillaPoints, vanillaPen);
+        DrawPolyline(dc, vanillaPoints, new Pen(muted, 1.3) { DashStyle = DashStyles.Dash });
 
         var currentValues = new[]
         {
@@ -341,32 +380,43 @@ public sealed class BleedingCurveControl : FrameworkElement
             dc.DrawEllipse(panel, new Pen(accent, selected ? 2.2 : 1.5), points[i], radius, radius);
             dc.DrawEllipse(accent, null, points[i], 2.8, 2.8);
 
-            _damageHitRects[i] = new Rect(x[i] - 48.0, _plotRect.Top, 96.0, _plotRect.Height);
+            _damageHitRects[i] = new Rect(x[i] - 38.0, _plotRect.Top, 76.0, _plotRect.Height - 10.0);
+
+            var thresholdParameter = i switch
+            {
+                1 => _mediumThreshold,
+                2 => _severeThreshold,
+                _ => null
+            };
+
+            if (thresholdParameter is not null)
+            {
+                dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX[i], _plotRect.Bottom - 6.0), new Point(vanillaX[i], _plotRect.Bottom + 8.0));
+                dc.DrawLine(new Pen(accent, IsSelectedThreshold(i) ? 2.8 : 2.0), new Point(x[i], _plotRect.Bottom - 8.0), new Point(x[i], _plotRect.Bottom + 9.0));
+                dc.DrawEllipse(panel, new Pen(accent, IsSelectedThreshold(i) ? 2.4 : 1.5), new Point(x[i], _plotRect.Bottom + 3.0), 5.5, 5.5);
+            }
 
             DrawCenteredText(
                 dc,
-                labels[i],
-                new Point(x[i], _plotRect.Bottom + 9.0),
+                $"{labels[i]} {currentThresholds[i]:0.#}",
+                new Point(x[i], _plotRect.Bottom + 10.0),
                 9.0,
                 text,
                 FontWeights.Bold);
 
             DrawCenteredText(
                 dc,
-                $"{currentValues[i]:0.0}",
-                new Point(x[i], _plotRect.Bottom + 25.0),
-                9.8,
+                $"{currentValues[i]:0.0} HP",
+                new Point(x[i], _plotRect.Bottom + 26.0),
+                9.5,
                 accent,
                 FontWeights.Bold);
         }
 
-        DrawText(
-            dc,
-            "VANILLA",
-            new Point(_plotRect.Right - 58.0, _plotRect.Top + 7.0),
-            8.0,
-            muted,
-            FontWeights.SemiBold);
+        _mediumThresholdHitRect = new Rect(x[1] - 20.0, _plotRect.Bottom - 10.0, 40.0, 34.0);
+        _severeThresholdHitRect = new Rect(x[2] - 20.0, _plotRect.Bottom - 10.0, 40.0, 34.0);
+
+        DrawText(dc, "BASE", new Point(_plotRect.Right - 42.0, _plotRect.Top + 7.0), 9.0, muted, FontWeights.SemiBold);
     }
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -396,6 +446,26 @@ public sealed class BleedingCurveControl : FrameworkElement
             return;
         }
 
+        if (_mediumThresholdHitRect.Contains(point))
+        {
+            _selectedTarget = DragTarget.MediumThreshold;
+            _dragTarget = DragTarget.MediumThreshold;
+            CaptureMouse();
+            UpdateThresholdFromPoint(_mediumThreshold, point.X);
+            e.Handled = true;
+            return;
+        }
+
+        if (_severeThresholdHitRect.Contains(point))
+        {
+            _selectedTarget = DragTarget.SevereThreshold;
+            _dragTarget = DragTarget.SevereThreshold;
+            CaptureMouse();
+            UpdateThresholdFromPoint(_severeThreshold, point.X);
+            e.Handled = true;
+            return;
+        }
+
         var damageIndex = FindDamageColumn(point);
         if (damageIndex < 0)
             return;
@@ -415,6 +485,8 @@ public sealed class BleedingCurveControl : FrameworkElement
         var interactive =
             _severityTrackRect.Contains(point) ||
             _recoveryTrackRect.Contains(point) ||
+            _mediumThresholdHitRect.Contains(point) ||
+            _severeThresholdHitRect.Contains(point) ||
             FindDamageColumn(point) >= 0;
 
         Cursor = interactive ? Cursors.Hand : Cursors.Arrow;
@@ -434,6 +506,12 @@ public sealed class BleedingCurveControl : FrameworkElement
             case DragTarget.MediumDamage:
             case DragTarget.SevereDamage:
                 UpdateDamageFromPoint(DamageIndexForTarget(_dragTarget), point.Y);
+                break;
+            case DragTarget.MediumThreshold:
+                UpdateThresholdFromPoint(_mediumThreshold, point.X);
+                break;
+            case DragTarget.SevereThreshold:
+                UpdateThresholdFromPoint(_severeThreshold, point.X);
                 break;
         }
 
@@ -470,6 +548,24 @@ public sealed class BleedingCurveControl : FrameworkElement
         {
             _recovery?.ResetToReference();
             _selectedTarget = DragTarget.Recovery;
+            e.Handled = true;
+            return;
+        }
+
+        if (_mediumThresholdHitRect.Contains(point))
+        {
+            _mediumThreshold?.ResetToReference();
+            _selectedTarget = DragTarget.MediumThreshold;
+            EnforceThresholdOrder(_mediumThreshold);
+            e.Handled = true;
+            return;
+        }
+
+        if (_severeThresholdHitRect.Contains(point))
+        {
+            _severeThreshold?.ResetToReference();
+            _selectedTarget = DragTarget.SevereThreshold;
+            EnforceThresholdOrder(_severeThreshold);
             e.Handled = true;
             return;
         }
@@ -518,10 +614,13 @@ public sealed class BleedingCurveControl : FrameworkElement
             }
         }
 
+        var thresholdSelected = _selectedTarget is DragTarget.MediumThreshold or DragTarget.SevereThreshold;
         var direction = e.Key switch
         {
             Key.Up or Key.Add or Key.OemPlus => 1,
             Key.Down or Key.Subtract or Key.OemMinus => -1,
+            Key.Right when thresholdSelected => 1,
+            Key.Left when thresholdSelected => -1,
             _ => 0
         };
 
@@ -536,6 +635,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             parameter.CurrentNumber + direction * parameter.TickFrequency,
             parameter.Minimum,
             parameter.Maximum);
+        EnforceThresholdOrder(parameter);
 
         InvalidateVisual();
         e.Handled = true;
@@ -561,6 +661,31 @@ public sealed class BleedingCurveControl : FrameworkElement
         var raw = ratio * CurveMaximumDamage;
         parameter.CurrentNumber = Snap(parameter, Math.Clamp(raw, parameter.Minimum, parameter.Maximum));
         InvalidateVisual();
+    }
+
+    private void UpdateThresholdFromPoint(ParameterViewModel? parameter, double x)
+    {
+        if (parameter is null)
+            return;
+
+        var innerLeft = _plotRect.Left + 12.0;
+        var innerRight = _plotRect.Right - 12.0;
+        var ratio = Math.Clamp((x - innerLeft) / Math.Max(1.0, innerRight - innerLeft), 0.0, 1.0);
+        var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
+        parameter.CurrentNumber = Snap(parameter, raw);
+        EnforceThresholdOrder(parameter);
+        InvalidateVisual();
+    }
+
+    private void EnforceThresholdOrder(ParameterViewModel? moved)
+    {
+        if (_mediumThreshold is null || _severeThreshold is null || moved is null)
+            return;
+
+        if (ReferenceEquals(moved, _mediumThreshold) && _mediumThreshold.CurrentNumber > _severeThreshold.CurrentNumber)
+            _severeThreshold.CurrentNumber = _mediumThreshold.CurrentNumber;
+        else if (ReferenceEquals(moved, _severeThreshold) && _severeThreshold.CurrentNumber < _mediumThreshold.CurrentNumber)
+            _mediumThreshold.CurrentNumber = _severeThreshold.CurrentNumber;
     }
 
     private static double Snap(ParameterViewModel parameter, double raw)
@@ -606,6 +731,8 @@ public sealed class BleedingCurveControl : FrameworkElement
             DragTarget.LowDamage => _damage[0],
             DragTarget.MediumDamage => _damage[1],
             DragTarget.SevereDamage => _damage[2],
+            DragTarget.MediumThreshold => _mediumThreshold,
+            DragTarget.SevereThreshold => _severeThreshold,
             _ => null
         };
 
@@ -629,9 +756,24 @@ public sealed class BleedingCurveControl : FrameworkElement
     private double[] GetCurveXPositions()
         => new[]
         {
-            _plotRect.Left + _plotRect.Width * 0.14,
-            _plotRect.Left + _plotRect.Width * 0.50,
-            _plotRect.Left + _plotRect.Width * 0.86
+            ThresholdToX(LowThreshold),
+            ThresholdToX(_mediumThreshold?.CurrentNumber ?? 50.0),
+            ThresholdToX(_severeThreshold?.CurrentNumber ?? 75.0)
+        };
+
+    private double ThresholdToX(double threshold)
+    {
+        var left = _plotRect.Left + 12.0;
+        var right = _plotRect.Right - 12.0;
+        return left + (right - left) * Math.Clamp(threshold / 100.0, 0.0, 1.0);
+    }
+
+    private bool IsSelectedThreshold(int index)
+        => index switch
+        {
+            1 => _selectedTarget == DragTarget.MediumThreshold,
+            2 => _selectedTarget == DragTarget.SevereThreshold,
+            _ => false
         };
 
     private double DamageToY(double damage)
@@ -702,6 +844,8 @@ public sealed class BleedingCurveControl : FrameworkElement
         Recovery,
         LowDamage,
         MediumDamage,
-        SevereDamage
+        SevereDamage,
+        MediumThreshold,
+        SevereThreshold
     }
 }
