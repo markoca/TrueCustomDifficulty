@@ -14,6 +14,10 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class StashAmmoRadar : FrameworkElement
 {
+    private const double RadarInfoTextSize = 11.0;
+    private const double RadarLegendTextSize = 11.0;
+    private const double RadarAxisTextSize = 10.5;
+
     private const double MinimumValue = 0.25;
     private const double MaximumValue = 2.0;
     private const double Step = 0.25;
@@ -49,7 +53,7 @@ private string _statusText = string.Empty;
     public StashAmmoRadar()
     {
         Focusable = true;
-        MinHeight = 430;
+        MinHeight = 520;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -57,7 +61,7 @@ private string _statusText = string.Empty;
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 520 : Math.Max(320, availableSize.Width);
-        return new Size(width, 430);
+        return new Size(width, 520);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -196,9 +200,8 @@ private string _statusText = string.Empty;
         var infoHeader = GetInfoRect();
         DrawClippedText(
             dc,
-            "STASH AMMO · higher = more rounds in that stash tier",
-            new Rect(infoHeader.Left, 20, infoHeader.Width, 18),
-            10.2,
+            "STASH AMMO | higher = more rounds in that stash tier",
+            new Rect(infoHeader.Left, 20, infoHeader.Width, 20), RadarInfoTextSize,
             textBrush,
             FontWeights.SemiBold);
 
@@ -236,14 +239,13 @@ private string _statusText = string.Empty;
             accentBrush);
 
         var instruction = string.IsNullOrWhiteSpace(_statusText)
-            ? "Drag a point · Arrow keys adjust selected tier · Right-click point/legend resets that tier · R resets all"
+            ? "Drag a point | Arrow keys adjust selected tier | Right-click point/legend resets that tier | R resets all"
             : _statusText;
 
         DrawCenteredText(
             dc,
             instruction,
-            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18),
-            9.6,
+            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
             string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush,
             FontWeights.Normal);
     }
@@ -256,8 +258,8 @@ private string _statusText = string.Empty;
         Brush mutedBrush,
         Brush activeBrush)
     {
-        DrawCenteredText(dc, label, new Point(position.X, position.Y - 6), 10.3, activeBrush, FontWeights.SemiBold);
-        DrawCenteredText(dc, multiplier, new Point(position.X, position.Y + 8), 9.3, mutedBrush, FontWeights.Normal);
+        DrawCenteredText(dc, label, new Point(position.X, position.Y - 6), RadarAxisTextSize, activeBrush, FontWeights.SemiBold);
+        DrawCenteredText(dc, multiplier, new Point(position.X, position.Y + 8), RadarAxisTextSize, mutedBrush, FontWeights.Normal);
     }
 
     private Rect GetInfoRect()
@@ -290,39 +292,35 @@ private string _statusText = string.Empty;
             BeginLegendHitArea(axis);
 
         }
-        var visibleEntries = Math.Min(hint.Entries.Count, Math.Max(1, (int)((bounds.Height - 30.0) / 14.0)));
-        var contentHeight = 20.0 + (visibleEntries * 14.0);
+        var visibleEntries = Math.Min(hint.Entries.Count, Math.Max(1, (int)((bounds.Height - 32.0) / 18.0)));
+        var contentHeight = 22.0 + (visibleEntries * 18.0);
         var startY = bounds.Top + Math.Max(4.0, (bounds.Height - contentHeight) / 2.0);
 
         DrawClippedText(
             dc,
-            $"{heading} STASH · {parameter.CurrentNumber:0.##}x ammo",
-            new Rect(bounds.Left, startY, bounds.Width, 16),
-            10.3,
-            headingBrush,
+            $"{heading} STASH | {parameter.CurrentNumber:0.##}x ammo",
+            new Rect(bounds.Left, startY, bounds.Width, 18), RadarLegendTextSize, headingBrush,
             FontWeights.SemiBold);
 
         static int ScaleCount(double source, double multiplier)
             => Math.Max(1, (int)Math.Floor(source * multiplier + 0.5));
 
-        var y = startY + 21;
+        var y = startY + 24;
         foreach (var entry in hint.Entries)
         {
             var min = ScaleCount(entry.Min, parameter.CurrentNumber);
             var max = ScaleCount(entry.Max, parameter.CurrentNumber);
             var qualifier = string.IsNullOrWhiteSpace(entry.Qualifier) ? string.Empty : $" [{entry.Qualifier}]";
-            var text = $"{entry.Label}{qualifier}: {min}–{max} rounds";
+            var text = $"{entry.Label}{qualifier}: {min}-{max} rounds";
 
             DrawClippedText(
                 dc,
                 text,
-                new Rect(bounds.Left, y, bounds.Width, 14),
-                8.4,
-                hovered ? textBrush : mutedBrush,
+                new Rect(bounds.Left, y, bounds.Width, 18), RadarLegendTextSize, hovered ? textBrush : mutedBrush,
                 FontWeights.Normal);
 
-            y += 14;
-            if (y > bounds.Bottom - 14)
+            y += 18;
+            if (y > bounds.Bottom - 18)
                 break;
         }
 
