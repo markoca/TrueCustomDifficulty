@@ -6389,7 +6389,7 @@
     {
       "id": "equipment.armorDurability",
       "tab": "equipment",
-      "group": "Armor Wear",
+      "group": "Equipment Wear",
       "label": "Armor Durability",
       "description": "Changes how quickly armor loses condition. Higher settings make armor last longer; lower settings make it wear out faster.",
       "control": "slider",
@@ -9067,7 +9067,7 @@
     {
       "id": "equipment.weaponWearPerShot",
       "tab": "equipment",
-      "group": "Weapon Wear",
+      "group": "Equipment Wear",
       "label": "Player Weapon Wear Per Shot",
       "description": "Changes how quickly player weapons lose condition when fired, while keeping each weapon's own vanilla wear rate relative to the others.",
       "control": "slider",
