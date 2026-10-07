@@ -6,7 +6,7 @@ namespace TrueCustomDifficulty.Infrastructure;
 
 public sealed class ResponsiveParameterGridPanel : Panel
 {
-    private const double Gap = 8.0;
+    private const double Gap = 4.0;
     private const double TwoColumnThreshold = 700.0;
 
     // Explicit UX pairings. The catalog remains the gameplay/source-of-truth order,
