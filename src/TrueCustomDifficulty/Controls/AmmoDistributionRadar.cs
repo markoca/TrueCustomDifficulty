@@ -108,18 +108,27 @@ private string _statusText = string.Empty;
         base.OnRender(dc);
 
         var textBrush = FindBrush("TextBrush", Brushes.White);
-        var mutedBrush = FindBrush("MutedTextBrush", Brushes.Gray);
+        var mutedBrush = FindBrush("RadarMutedTextBrush", Brushes.Gray);
         var borderBrush = FindBrush("BorderBrush", Brushes.DimGray);
         var accentBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
         var panelBrush = FindBrush("PanelAltBrush", Brushes.Black);
+        var technicalBrush = FindBrush("BorderSoftBrush", borderBrush);
 
         var (center, radius) = GetGeometry();
         if (radius <= 10)
             return;
 
         // Subtle local panel only behind the radar drawing area.
-        dc.DrawRoundedRectangle(panelBrush, new Pen(borderBrush, 1),
-            new Rect(2, 2, Math.Max(0, ActualWidth - 4), Math.Max(0, ActualHeight - 4)), 3, 3);
+        IndustrialChrome.DrawFrame(
+            dc,
+            new Rect(2, 2, Math.Max(0, ActualWidth - 4), Math.Max(0, ActualHeight - 4)),
+            panelBrush,
+            borderBrush,
+            accentBrush,
+            technicalBrush,
+            8.0,
+            accentEdge: true,
+            technicalMarks: true);
 
         var neutralPen = new Pen(borderBrush, 1);
         var vanillaPen = new Pen(accentBrush, 1.6) { DashStyle = DashStyles.Dash };
@@ -703,7 +712,7 @@ private string _statusText = string.Empty;
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            size * 1.25,
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
