@@ -265,7 +265,7 @@ private readonly RadarStatusMessage _status;
 DrawClippedText(
                 dc,
                 Axes[i].Label,
-                new Rect(bounds.Left + 6, y + 7, bounds.Width * 0.40, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : textBrush,
+                new Rect(bounds.Left + 6, y + 7, bounds.Width * 0.40, 18), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : textBrush,
                 FontWeights.SemiBold);
 
             var rawValue = parameter.CurrentNumber;
@@ -283,7 +283,7 @@ DrawClippedText(
             DrawClippedText(
                 dc,
                 valueText,
-                new Rect(bounds.Left + bounds.Width * 0.40, y + 7, bounds.Width * 0.60 - 6, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
+                new Rect(bounds.Left + bounds.Width * 0.40, y + 7, bounds.Width * 0.60 - 6, 18), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : mutedBrush,
                 modified ? FontWeights.SemiBold : FontWeights.Normal);
 
             EndLegendHitArea();
