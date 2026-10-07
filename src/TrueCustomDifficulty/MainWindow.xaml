@@ -745,14 +745,7 @@
                                                       Margin="9,6,5,9"
                                                       Padding="0">
                                 <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="3" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0"
-                                            Background="{StaticResource AccentDarkBrush}" />
-                                <ScrollViewer Grid.Column="1"
-                                              Margin="15,12,13,11"
+                                <ScrollViewer Margin="17,12,13,11"
                                               VerticalScrollBarVisibility="Auto"
                                               HorizontalScrollBarVisibility="Disabled">
                                     <StackPanel>
