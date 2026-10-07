@@ -187,7 +187,7 @@ private readonly RadarStatusMessage _status;
         }
 
         DrawRingCaption(dc, "0.5x", center, radius * 0.25, mutedBrush);
-        DrawRingCaption(dc, "1x = VANILLA", center, radius * 0.50, accentBrush);
+        DrawRingCaption(dc, "1x", center, radius * 0.50, accentBrush);
         DrawRingCaption(dc, "1.5x", center, radius * 0.75, mutedBrush);
         DrawRingCaption(dc, "2x", center, radius, mutedBrush);
 
@@ -268,8 +268,8 @@ DrawClippedText(
             var rawValue = parameter.CurrentNumber;
             var multiplier = multipliers[i];
             var baseText = Axes[i].ParameterId == "environment.razorHealthDamage"
-                ? $"{multiplier:0.##}x vanilla damage"
-                : $"{rawValue:0.##} dmg | {multiplier:0.##}x vanilla";
+                ? $"{multiplier:0.##}x"
+                : $"{rawValue:0.##} dmg | {multiplier:0.##}x";
 
             var effectiveText = string.IsNullOrWhiteSpace(parameter.EffectiveDisplay)
                 ? string.Empty
