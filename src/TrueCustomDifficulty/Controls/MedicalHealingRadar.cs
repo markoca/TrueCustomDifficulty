@@ -250,14 +250,6 @@ public sealed class MedicalHealingRadar : FrameworkElement
         dc.DrawLine(new Pen(muted, 1.1), new Point(vanillaHpX, hpY - 8.0), new Point(vanillaHpX, hpY + 8.0));
         dc.DrawEllipse(accent, null, new Point(currentHpX, hpY), 4.3, 4.3);
 
-        DrawCenteredText(
-            dc,
-            $"v{reference:0}",
-            new Point(vanillaHpX, top + 43.0),
-            6.6,
-            muted,
-            FontWeights.SemiBold);
-
         var track = new Rect(layout.TrackLeft, top + 11.0, layout.TrackWidth, 20.0);
         var trackY = track.Top + track.Height / 2.0;
 
@@ -277,9 +269,6 @@ public sealed class MedicalHealingRadar : FrameworkElement
             6.0);
         dc.DrawEllipse(accent, null, new Point(currentX, trackY), 2.7, 2.7);
 
-        DrawText(dc, "0%", new Point(track.Left, top + 34.0), 6.6, muted, FontWeights.Normal);
-        DrawCenteredText(dc, "VANILLA", new Point(vanillaX, top + 39.0), 6.5, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "200%", new Point(track.Right, top + 34.0), 6.6, muted, FontWeights.Normal);
 
         _targets[row] = new HitTarget(
             new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
