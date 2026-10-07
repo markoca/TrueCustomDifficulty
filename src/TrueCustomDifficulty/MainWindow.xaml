@@ -10,8 +10,8 @@
         mc:Ignorable="d"
         Title="True Custom Difficulty"
         Icon="Assets/true-custom-difficulty.ico"
-        Width="1440" Height="810"
-        MinWidth="1152" MinHeight="648"
+        Width="1280" Height="800"
+        MinWidth="1024" MinHeight="640"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         ResizeMode="CanResize"
@@ -136,7 +136,7 @@
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                           Grid.Row="0"
                                                                                           Grid.RowSpan="2"
-                                                                                          MinHeight="500"
+                                                                                          MinHeight="470"
                                                                                           Visibility="Collapsed"
                                                                                           Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -144,7 +144,7 @@
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                              Grid.Row="0"
                                                                                              Grid.RowSpan="2"
-                                                                                             MinHeight="550"
+                                                                                             MinHeight="420"
                                                                                              Visibility="Collapsed"
                                                                                              Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -152,7 +152,7 @@
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                 Grid.Row="0"
                                                                                                 Grid.RowSpan="2"
-                                                                                                MinHeight="500"
+                                                                                                MinHeight="400"
                                                                                                 Visibility="Collapsed"
                                                                                                 Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -160,7 +160,7 @@
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                              Grid.Row="0"
                                                                                              Grid.RowSpan="2"
-                                                                                             MinHeight="390"
+                                                                                             MinHeight="320"
                                                                                              Visibility="Collapsed"
                                                                                              Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -168,7 +168,7 @@
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                         Grid.Row="0"
                                                                                         Grid.RowSpan="2"
-                                                                                        MinHeight="505"
+                                                                                        MinHeight="420"
                                                                                         Visibility="Collapsed"
                                                                                         Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -176,7 +176,7 @@
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                              Grid.Row="0"
                                                                                              Grid.RowSpan="2"
-                                                                                             MinHeight="485"
+                                                                                             MinHeight="390"
                                                                                              Visibility="Collapsed"
                                                                                              Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -184,7 +184,7 @@
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                        Grid.Row="0"
                                                                                        Grid.RowSpan="2"
-                                                                                       MinHeight="505"
+                                                                                       MinHeight="380"
                                                                                        Visibility="Collapsed"
                                                                                        Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -192,7 +192,7 @@
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                               Grid.Row="0"
                                                                                               Grid.RowSpan="2"
-                                                                                              MinHeight="390"
+                                                                                              MinHeight="320"
                                                                                               Visibility="Collapsed"
                                                                                               Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -200,7 +200,7 @@
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                Grid.Row="0"
                                                                                                Grid.RowSpan="2"
-                                                                                               MinHeight="730"
+                                                                                               MinHeight="440"
                                                                                                Visibility="Collapsed"
                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -679,7 +679,7 @@
                             <Grid.ColumnDefinitions>
                                 <!-- Controls intentionally do not span the full window width. -->
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="330" />
+                                <ColumnDefinition Width="320" />
                             </Grid.ColumnDefinitions>
 
                             <ListBox x:Name="ParametersList"
