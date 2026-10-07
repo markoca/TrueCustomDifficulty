@@ -55,7 +55,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsDrunkennessAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Choose BEER or VODKA in TOLERANCE. That choice also switches the single strength group shown beside it, so Beer and Vodka are never displayed at the same time. TOLERANCE sets how many whole drinks reach Very Strong drunkenness; the selected drink strength moves in exact 1-point Drunkness steps. Right-click either visible slider to restore only that setting to VANILLA.";
+                       "Choose BEER or VODKA. The game thresholds stay fixed at vanilla 20 / 40 / 60. The left slider is a coarse drinks-to-Very-Strong view of the selected drink's own strength; the right slider fine-tunes that same strength in exact 1-point Drunkness steps. Beer and Vodka are independent. Right-click either visible slider to restore the selected drink to VANILLA.";
             }
 
             if (IsAggregateRadarAnchor)
@@ -281,13 +281,12 @@ public sealed class ParameterViewModel : ObservableObject
 
     private static readonly HashSet<string> DrunkennessParameterIds = new(StringComparer.Ordinal)
     {
-        "survival.drunknessThresholdScale",
         "survival.beerDrunknessStrength",
         "survival.vodkaDrunknessStrength"
     };
 
     public bool IsDrunkennessMember => DrunkennessParameterIds.Contains(Id);
-    public bool IsDrunkennessAnchor => Id == "survival.drunknessThresholdScale";
+    public bool IsDrunkennessAnchor => Id == "survival.beerDrunknessStrength";
 
     public bool IsAggregateRadarAnchor =>
         IsAmmoDistributionAnchor ||
