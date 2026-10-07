@@ -19,7 +19,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
     private const double AbsoluteHpMaximum = 200.0;
-    private const double RowHeight = 61.0;
+    private const double RowHeight = 50.0;
 
     private static readonly HealDefinition[] Items =
     {
@@ -53,7 +53,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 390;
+        MinHeight = 320;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -61,7 +61,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 700.0 : Math.Max(560.0, availableSize.Width);
-        return new Size(width, 390.0);
+        return new Size(width, 320.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -150,12 +150,12 @@ public sealed class MedicalHealingRadar : FrameworkElement
         dc.DrawLine(new Pen(border, 1.0), new Point(14.0, 83.0), new Point(Math.Max(14.0, ActualWidth - 14.0), 83.0));
 
         for (var row = 0; row < Items.Length; row++)
-            DrawRow(dc, row, 94.0 + row * RowHeight, layout, text, muted, border, accent, panel);
+            DrawRow(dc, row, 80.0 + row * RowHeight, layout, text, muted, border, accent, panel);
 
         DrawCenteredText(
             dc,
             "BANDAGE / MEDKIT / ARMY CAN BE MODIFIED AGAIN BY MASTER CONSUMABLE PENALTIES   •   SCIENTIFIC IS NOT",
-            new Point(ActualWidth / 2.0, 345.0),
+            new Point(ActualWidth / 2.0, 286.0),
             7.4,
             muted,
             FontWeights.Normal);
@@ -165,7 +165,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
             DrawCenteredText(
                 dc,
                 _status.Text,
-                new Point(ActualWidth / 2.0, 369.0),
+                new Point(ActualWidth / 2.0, 309.0),
                 8.0,
                 accent,
                 FontWeights.SemiBold);
@@ -216,7 +216,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
         DrawText(
             dc,
-            item.HasMasterModifier ? "MASTER MODIFIER MAY APPLY" : "NO MASTER HEAL MODIFIER",
+            item.HasMasterModifier ? "MASTER MODIFIER" : "DIRECT BASE HEAL",
             new Point(layout.LabelLeft, top + 28.0),
             6.5,
             item.HasMasterModifier ? muted : accent,
@@ -483,7 +483,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
