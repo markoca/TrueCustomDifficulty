@@ -9,51 +9,174 @@ public sealed class ResponsiveParameterGridPanel : Panel
     private const double Gap = 8.0;
     private const double TwoColumnThreshold = 700.0;
 
+    // Explicit UX pairings. The catalog remains the gameplay/source-of-truth order,
+    // while this map decides which related half-width controls should visually share a row.
+    // A one-item row is intentional when the control has no sensible partner.
+    private static readonly IReadOnlyDictionary<string, SemanticSlot> SemanticSlots =
+        new Dictionary<string, SemanticSlot>(StringComparer.Ordinal)
+        {
+            // Combat
+            ["combat.npcHealth"] = new("combat-human-1", 0),
+            ["combat.npcWeaponDamage"] = new("combat-human-1", 1),
+            ["combat.npcAttackCooldown"] = new("combat-human-2", 0),
+            ["combat.npcHipAccuracy"] = new("combat-human-2", 1),
+            ["combat.mutantDamage"] = new("combat-mutant-1", 0),
+            ["combat.mutantAttackCooldown"] = new("combat-mutant-1", 1),
+            ["combat.playerWeaponDamage"] = new("combat-player-1", 0),
+            ["combat.playerHeadshotMultiplier"] = new("combat-player-1", 1),
+            ["combat.accumulatedDamageWeightMax"] = new("combat-repeat-1", 0),
+            ["combat.accumulatedDamageWeightMin"] = new("combat-repeat-1", 1),
+            ["combat.psySpawnCycleDelay"] = new("combat-psy-1", 0),
+            ["combat.psyPhantomCount"] = new("combat-psy-1", 1),
+            ["combat.psyBleeding"] = new("combat-psy-2", 0),
+            ["combat.psyDurabilityDamage"] = new("combat-psy-2", 1),
+
+            // Survival
+            ["survival.hungerRate"] = new("survival-hunger-1", 0),
+            ["survival.wellFedStaminaRegen"] = new("survival-hunger-1", 1),
+            ["survival.hungerMediumStaminaRegen"] = new("survival-hunger-2", 0),
+            ["survival.hungerStrongStaminaRegen"] = new("survival-hunger-2", 1),
+
+            ["survival.sleepinessRate"] = new("survival-fatigue-1", 0),
+            ["survival.energyDrinkFatigueRelief"] = new("survival-fatigue-1", 1),
+            ["survival.fatigueLowAimPenalty"] = new("survival-fatigue-low", 0),
+            ["survival.fatigueMediumAimPenalty"] = new("survival-fatigue-medium", 0),
+            ["survival.fatigueMediumReloadPenalty"] = new("survival-fatigue-medium", 1),
+            ["survival.fatigueStrongAimPenalty"] = new("survival-fatigue-severe", 0),
+            ["survival.fatigueStrongReloadPenalty"] = new("survival-fatigue-severe", 1),
+
+            ["survival.sleepEligibilityThreshold"] = new("survival-sleep-1", 0),
+            ["survival.minimumSleepHours"] = new("survival-sleep-1", 1),
+            ["survival.sleepHealthRestore"] = new("survival-sleep-2", 0),
+            ["survival.sleepStaminaRestore"] = new("survival-sleep-2", 1),
+
+            ["survival.radiationAccumulation"] = new("survival-radiation-1", 0),
+            ["survival.radiationRecovery"] = new("survival-radiation-1", 1),
+
+            ["survival.bleedingSeverity"] = new("survival-bleeding-1", 0),
+            ["survival.bleedingRecovery"] = new("survival-bleeding-1", 1),
+            ["survival.bleedingLowDamage"] = new("survival-bleeding-2", 0),
+            ["survival.bleedingMediumDamage"] = new("survival-bleeding-2", 1),
+            ["survival.bleedingStrongDamage"] = new("survival-bleeding-3", 0),
+
+            // Health
+            ["health.maxHP"] = new("health-core-1", 0),
+            ["health.baseRegen"] = new("health-core-1", 1),
+            ["health.regenDelay"] = new("health-core-2", 0),
+            ["health.regenerationScalar"] = new("health-core-2", 1),
+            ["health.bandageBleeding"] = new("health-bleed-treatment-1", 0),
+            ["health.medkitBleeding"] = new("health-bleed-treatment-1", 1),
+            ["health.armyMedkitBleeding"] = new("health-bleed-treatment-2", 0),
+            ["health.ecoMedkitBleeding"] = new("health-bleed-treatment-2", 1),
+            ["health.ecoMedkitAntirad"] = new("health-rad-treatment-1", 0),
+            ["health.antiRadRadiation"] = new("health-rad-treatment-1", 1),
+
+            // Stamina
+            ["stamina.maxSP"] = new("stamina-core-1", 0),
+            ["stamina.regeneration"] = new("stamina-core-1", 1),
+            ["stamina.sprintDisableThreshold"] = new("stamina-sprint-recovery-1", 0),
+            ["stamina.sprintRecoveryDelay"] = new("stamina-sprint-recovery-1", 1),
+            ["stamina.lowRecoveryThreshold"] = new("stamina-emergency-1", 0),
+            ["stamina.lowRecoveryStrength"] = new("stamina-emergency-1", 1),
+            ["stamina.lowRecoveryDuration"] = new("stamina-emergency-2", 0),
+            ["stamina.sprintUnderRunSpeedRegenCoef"] = new("stamina-speed-state-1", 0),
+            ["stamina.joggingRegenCoef"] = new("stamina-speed-state-1", 1),
+            ["stamina.slowRunRegenCoef"] = new("stamina-speed-state-2", 0),
+            ["stamina.runRegenCoef"] = new("stamina-speed-state-2", 1),
+            ["stamina.waterMediumDrain"] = new("stamina-water-1", 0),
+            ["stamina.waterStrongDrain"] = new("stamina-water-1", 1),
+
+            // Loot
+            ["loot.npcCorpseBonus"] = new("loot-npc-1", 0),
+            ["loot.npcMedicalChance"] = new("loot-npc-1", 1),
+            ["loot.npcWeaponAmmoSupply"] = new("loot-npc-2", 0),
+            ["loot.droppedWeaponCondition"] = new("loot-npc-2", 1),
+            ["loot.cheapStashGrenadeChance"] = new("loot-stash-grenade-1", 0),
+            ["loot.cheapStashGrenadeQuantity"] = new("loot-stash-grenade-1", 1),
+            ["loot.destructibleAmmoQuantity"] = new("loot-breakable-1", 0),
+            ["loot.destructibleGrenadeQuantity"] = new("loot-breakable-1", 1),
+            ["loot.worldWeaponShuffle"] = new("loot-world-weapon-1", 0),
+            ["loot.worldWeaponDensity"] = new("loot-world-weapon-1", 1),
+            ["loot.worldAttachmentShuffle"] = new("loot-world-other-1", 0),
+            ["loot.worldDetectors"] = new("loot-world-other-1", 1),
+
+            // Economy
+            ["economy.buyCondition"] = new("economy-trading-1", 0),
+            ["economy.sellCondition"] = new("economy-trading-1", 1),
+            ["economy.traderMinBuyCondition"] = new("economy-trading-2", 0),
+            ["economy.itemValueFloor"] = new("economy-trading-2", 1),
+            ["economy.traderAmmoStock"] = new("economy-stock-1", 0),
+            ["economy.medicStock"] = new("economy-stock-1", 1),
+            ["economy.fastTravelCost"] = new("economy-services-1", 0),
+            ["economy.upgradeCost"] = new("economy-services-1", 1),
+            ["economy.repairDifficultyCost"] = new("economy-services-2", 0),
+            ["economy.repairCostBase"] = new("economy-services-2", 1),
+            ["economy.repairEnemy"] = new("economy-reputation-1", 0),
+            ["economy.repairDisaffection"] = new("economy-reputation-1", 1),
+            ["economy.repairNeutral"] = new("economy-reputation-2", 0),
+            ["economy.repairFriend"] = new("economy-reputation-2", 1),
+            ["economy.mainQuestReward"] = new("economy-rewards-1", 0),
+            ["economy.sideQuestReward"] = new("economy-rewards-1", 1),
+
+            // Equipment
+            ["equipment.ammoWeight"] = new("equipment-weight-1", 0),
+            ["equipment.consumableWeight"] = new("equipment-weight-1", 1),
+
+            // Environment
+            ["environment.flycatcherMovementSpeed"] = new("environment-flycatcher-1", 0),
+            ["environment.flycatcherTurnSpeed"] = new("environment-flycatcher-1", 1),
+            ["environment.razorBleeding"] = new("environment-bleeding-1", 0),
+            ["environment.diamondBleeding"] = new("environment-bleeding-1", 1),
+
+            // Master
+            ["advanced.lowHealthMechanics"] = new("master-low-health-1", 0),
+            ["health.masterLowHealthPenalty"] = new("master-low-health-1", 1),
+            ["health.masterBandageModifier"] = new("master-medical-1", 0),
+            ["health.masterMedkitModifier"] = new("master-medical-1", 1),
+            ["health.masterArmyMedkitModifier"] = new("master-medical-2", 0),
+            ["advanced.masterEffectModifierMechanics"] = new("master-medical-2", 1),
+
+            ["advanced.starvationMechanics"] = new("master-starvation-1", 0),
+            ["survival.starvationPenaltyDelay"] = new("master-starvation-1", 1),
+            ["survival.starvationDamage"] = new("master-starvation-2", 0),
+            ["survival.starvationDamageInterval"] = new("master-starvation-2", 1),
+            ["survival.starvationStaminaDrain"] = new("master-starvation-3", 0),
+            ["survival.starvationHealthRegenPenalty"] = new("master-starvation-3", 1),
+
+            ["advanced.radiationMechanics"] = new("master-radiation-1", 0),
+            ["survival.radiationStaminaDrainPenalty"] = new("master-radiation-1", 1),
+
+            ["advanced.fatigueMechanics"] = new("master-fatigue-1", 0),
+            ["survival.severeFatigueMaxStamina"] = new("master-fatigue-1", 1),
+            ["survival.severeFatigueCarryWeight"] = new("master-fatigue-2", 0),
+            ["survival.severeFatigueAimSway"] = new("master-fatigue-2", 1),
+            ["survival.severeFatigueRecoil"] = new("master-fatigue-3", 0),
+            ["survival.severeFatigueDispersion"] = new("master-fatigue-3", 1)
+        };
+
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = ResolveWidth(availableSize.Width);
         var columns = GetColumnCount(width);
         var cardWidth = GetCardWidth(width, columns);
+        var rows = BuildRows(columns);
 
         double totalHeight = 0.0;
-        double rowHeight = 0.0;
-        var rowItems = 0;
 
-        foreach (UIElement child in InternalChildren)
+        foreach (var row in rows)
         {
-            if (!IsLayoutVisible(child))
-                continue;
+            var rowHeight = 0.0;
 
-            var fullWidth = IsFullWidth(child);
-
-            if (fullWidth)
+            foreach (var item in row.Items)
             {
-                if (rowItems > 0)
-                {
-                    totalHeight += rowHeight + Gap;
-                    rowHeight = 0.0;
-                    rowItems = 0;
-                }
-
-                child.Measure(new Size(width, double.PositiveInfinity));
-                totalHeight += child.DesiredSize.Height + Gap;
-                continue;
+                var measureWidth = row.FullWidth ? width : cardWidth;
+                item.Element.Measure(new Size(measureWidth, double.PositiveInfinity));
+                rowHeight = Math.Max(rowHeight, item.Element.DesiredSize.Height);
             }
 
-            child.Measure(new Size(cardWidth, double.PositiveInfinity));
-            rowHeight = Math.Max(rowHeight, child.DesiredSize.Height);
-            rowItems++;
-
-            if (rowItems >= columns)
-            {
-                totalHeight += rowHeight + Gap;
-                rowHeight = 0.0;
-                rowItems = 0;
-            }
-        }
-
-        if (rowItems > 0)
+            row.Height = rowHeight;
             totalHeight += rowHeight + Gap;
+        }
 
         if (totalHeight > 0.0)
             totalHeight -= Gap;
@@ -66,60 +189,134 @@ public sealed class ResponsiveParameterGridPanel : Panel
         var width = Math.Max(0.0, finalSize.Width);
         var columns = GetColumnCount(width);
         var cardWidth = GetCardWidth(width, columns);
+        var rows = BuildRows(columns);
 
         double y = 0.0;
-        var row = new List<UIElement>(columns);
-        double rowHeight = 0.0;
 
-        void ArrangeRow()
+        foreach (var row in rows)
         {
-            if (row.Count == 0)
-                return;
+            var rowHeight = row.Items.Count == 0
+                ? 0.0
+                : row.Items.Max(item => item.Element.DesiredSize.Height);
 
-            for (var i = 0; i < row.Count; i++)
+            foreach (var item in row.Items)
             {
-                row[i].Arrange(new Rect(
-                    i * (cardWidth + Gap),
+                if (row.FullWidth)
+                {
+                    item.Element.Arrange(new Rect(0.0, y, width, rowHeight));
+                    continue;
+                }
+
+                var column = columns == 1 ? 0 : Math.Clamp(item.Column, 0, 1);
+                item.Element.Arrange(new Rect(
+                    column * (cardWidth + Gap),
                     y,
                     cardWidth,
                     rowHeight));
             }
 
             y += rowHeight + Gap;
-            row.Clear();
-            rowHeight = 0.0;
         }
 
         foreach (UIElement child in InternalChildren)
         {
             if (!IsLayoutVisible(child))
-            {
                 child.Arrange(new Rect(0.0, 0.0, 0.0, 0.0));
-                continue;
-            }
-
-            if (IsFullWidth(child))
-            {
-                ArrangeRow();
-                var height = child.DesiredSize.Height;
-                child.Arrange(new Rect(0.0, y, width, height));
-                y += height + Gap;
-                continue;
-            }
-
-            row.Add(child);
-            rowHeight = Math.Max(rowHeight, child.DesiredSize.Height);
-
-            if (row.Count >= columns)
-                ArrangeRow();
         }
-
-        ArrangeRow();
 
         if (y > 0.0)
             y -= Gap;
 
         return new Size(width, Math.Max(finalSize.Height, y));
+    }
+
+    private List<LayoutRow> BuildRows(int columns)
+    {
+        var rows = new List<LayoutRow>();
+        LayoutRow? autoRow = null;
+        LayoutRow? semanticRow = null;
+        string? semanticKey = null;
+
+        void FlushAuto()
+        {
+            if (autoRow is null || autoRow.Items.Count == 0)
+                return;
+
+            rows.Add(autoRow);
+            autoRow = null;
+        }
+
+        void FlushSemantic()
+        {
+            if (semanticRow is null || semanticRow.Items.Count == 0)
+                return;
+
+            rows.Add(semanticRow);
+            semanticRow = null;
+            semanticKey = null;
+        }
+
+        foreach (UIElement child in InternalChildren)
+        {
+            if (!IsLayoutVisible(child))
+                continue;
+
+            if (IsFullWidth(child))
+            {
+                FlushAuto();
+                FlushSemantic();
+                rows.Add(new LayoutRow(fullWidth: true)
+                {
+                    Items = { new LayoutItem(child, 0) }
+                });
+                continue;
+            }
+
+            var parameter = (child as FrameworkElement)?.DataContext as ParameterViewModel;
+            var hasSemanticSlot = columns > 1
+                && parameter is not null
+                && SemanticSlots.TryGetValue(parameter.Id, out var slot);
+
+            if (hasSemanticSlot)
+            {
+                FlushAuto();
+
+                if (!string.Equals(semanticKey, slot.RowKey, StringComparison.Ordinal))
+                {
+                    FlushSemantic();
+                    semanticKey = slot.RowKey;
+                    semanticRow = new LayoutRow(fullWidth: false);
+                }
+
+                // If a bad mapping ever targets an occupied column, keep both controls visible
+                // by starting another row rather than overlapping them.
+                if (semanticRow!.Items.Any(item => item.Column == slot.Column))
+                {
+                    FlushSemantic();
+                    semanticKey = slot.RowKey;
+                    semanticRow = new LayoutRow(fullWidth: false);
+                }
+
+                semanticRow.Items.Add(new LayoutItem(child, slot.Column));
+
+                if (semanticRow.Items.Count >= columns)
+                    FlushSemantic();
+
+                continue;
+            }
+
+            FlushSemantic();
+
+            autoRow ??= new LayoutRow(fullWidth: false);
+            autoRow.Items.Add(new LayoutItem(child, autoRow.Items.Count));
+
+            if (autoRow.Items.Count >= columns)
+                FlushAuto();
+        }
+
+        FlushAuto();
+        FlushSemantic();
+        return rows;
     }
 
     private static double ResolveWidth(double width)
@@ -147,5 +344,15 @@ public sealed class ResponsiveParameterGridPanel : Panel
             return false;
 
         return parameter.IsAggregateRadarAnchor;
+    }
+
+    private sealed record SemanticSlot(string RowKey, int Column);
+    private sealed record LayoutItem(UIElement Element, int Column);
+
+    private sealed class LayoutRow(bool fullWidth)
+    {
+        public bool FullWidth { get; } = fullWidth;
+        public List<LayoutItem> Items { get; } = new();
+        public double Height { get; set; }
     }
 }
