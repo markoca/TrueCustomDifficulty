@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ApplicationIcon>Assets\true-custom-difficulty.ico</ApplicationIcon>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <Nullable>enable</Nullable>
