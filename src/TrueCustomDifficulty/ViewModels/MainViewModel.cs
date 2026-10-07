@@ -133,6 +133,12 @@ public sealed class MainViewModel : ObservableObject
             "stamina.lowRecoveryDuration"
         };
 
+        var consumableAggregateParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "survival.waterStaminaEffectStrength",
+            "survival.energyDrinkStaminaRecoveryStrength"
+        };
+
         var itemPriceScalerParameterIds = new HashSet<string>(StringComparer.Ordinal)
         {
             "economy.consumableCost",
@@ -202,6 +208,7 @@ public sealed class MainViewModel : ObservableObject
                 || worldLootRemovalParameterIds.Contains(p.Id)
                 || medicalHealingParameterIds.Contains(p.Id)
                 || actionCostParameterIds.Contains(p.Id)
+                || consumableAggregateParameterIds.Contains(p.Id)
                 || itemPriceScalerParameterIds.Contains(p.Id)
                 || mutantHealthParameterIds.Contains(p.Id)
                 || specialAbilityCooldownParameterIds.Contains(p.Id)
@@ -275,6 +282,8 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             "survival.instantStaminaRestore",
             "survival.instantStaminaRestore",
+            "survival.waterStaminaEffectStrength",
+            "survival.energyDrinkStaminaRecoveryStrength",
             "survival.alcoholRadiationRemoval",
             "survival.waterEffectDuration",
             "survival.energyDrinkEffectDuration",

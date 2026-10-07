@@ -70,7 +70,7 @@ public sealed class ParameterViewModel : ObservableObject
                 {
                     "FatigueCurve" => "The horizontal position of LOW / MEDIUM / SEVERE is now the real 0-100 SleepinessPoints threshold (vanilla 50 / 60 / 80). Drag the stage marker horizontally to change when that stage begins, and drag AIM / RELOAD vertically to change its combat penalty. Thresholds preserve LOW <= MEDIUM <= SEVERE with the actively moved stage taking priority. LOW fatigue has no separate reload parameter.",
                     "BleedingTreatmentMixer" => "Drag the four faders on the shared 0–200% of vanilla scale. The 100% line is each item's own vanilla bleeding removal; the raw bleeding value stays visible under the relative value.",
-                    "ConsumableMixer" => "INSTANT STAMINA BURST previews the authored Water 38%, Energy 50% and Limited Energy 100% refills under one multiplier; ALCOHOL RADIATION CLEANUP previews Beer 10 and Vodka 50 radiation points removed. TIMED EFFECTS share one real seconds axis: Water keeps its 5 s / 30 s timing pair, Energy keeps 45 s / 15 s / 5 s, Vodka and Beer use 20 s stamina penalties, and Magic Vodka uses 90 s psi protection. Drag the gold endpoint for a row to scale that family while preserving its internal timing ratios. Drunkenness is separate.",
+                    "ConsumableMixer" => "INSTANT STAMINA BURST previews the authored Water 38%, Energy 50% and Limited Energy 100% refills under one multiplier. SUSTAINED STAMINA separately scales Water's authored +25% regeneration / 10% action-cost reduction and Energy Drink's +200% regeneration without changing their durations. ALCOHOL RADIATION CLEANUP previews Beer 10 and Vodka 50 radiation points removed. TIMED EFFECTS share one real seconds axis: Water keeps its 5 s / 30 s timing pair, Energy keeps 45 s / 15 s / 5 s, Vodka and Beer use 20 s stamina penalties, and Magic Vodka uses 90 s psi protection. Drag any gold handle to tune that family. Drunkenness is separate.",
                     "SleepingDashboard" => "Tune the sleep threshold, minimum sleep duration, health restore and stamina restore directly in the Sleeping dashboard.",
                     "HungerLadder" => "Tune hunger build-up at the top. The 0-100 HUNGER POINTS strip controls the real Low / Medium / Severe state thresholds (vanilla 17 / 33 / 83); Medium and Severe also carry the vanilla no-sleep state. The lower shared recovery axis independently tunes WELL FED bonus and Medium/Severe stamina-recovery penalties. Thresholds preserve LOW <= MEDIUM <= SEVERE.",
                     "StarvationTimeline" => "The 50-second preview starts when severe hunger activates. Drag PENALTIES START to set the grace period and 1ST DAMAGE to change the repeating damage interval; later tick marks move with it. The three lower meters tune extra action stamina cost, HP per tick and health-recovery loss. DAMAGE PRESSURE shows the resulting average HP loss per second.",
@@ -395,6 +395,8 @@ public sealed class ParameterViewModel : ObservableObject
         ["health.ecoMedkitBleeding"] = "BleedingTreatmentMixer",
 
         ["survival.instantStaminaRestore"] = "ConsumableMixer",
+        ["survival.waterStaminaEffectStrength"] = "ConsumableMixer",
+        ["survival.energyDrinkStaminaRecoveryStrength"] = "ConsumableMixer",
         ["survival.alcoholRadiationRemoval"] = "ConsumableMixer",
         ["survival.waterEffectDuration"] = "ConsumableMixer",
         ["survival.energyDrinkEffectDuration"] = "ConsumableMixer",

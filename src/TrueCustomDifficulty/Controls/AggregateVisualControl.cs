@@ -764,12 +764,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawHeader(
             dc,
             "CONSUMABLE EFFECT BOARD",
-            "instant effects show authored strength; timed effects share one real seconds axis",
+            "instant + sustained strength; timed effects share one real seconds axis",
             text,
             muted,
             accent);
 
         var stamina = P("survival.instantStaminaRestore");
+        var waterStamina = P("survival.waterStaminaEffectStrength");
+        var energyStamina = P("survival.energyDrinkStaminaRecoveryStrength");
         var antirad = P("survival.alcoholRadiationRemoval");
 
         var left = 22.0;
@@ -861,6 +863,52 @@ public sealed class AggregateVisualControl : FrameworkElement
                 parameter.Maximum);
         }
 
+        void DrawSustainedTrack(
+            ParameterViewModel? parameter,
+            string label,
+            string preview,
+            Rect card)
+        {
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.78), new Pen(border, 0.9), card, 3.0, 3.0);
+            DrawText(dc, label, new Point(card.Left + 9.0, card.Top + 5.0), 8.3, text, FontWeights.Bold);
+
+            if (parameter is null)
+                return;
+
+            DrawRightAlignedText(
+                dc,
+                $"{parameter.CurrentNumber:0.##}x",
+                new Point(card.Right - 9.0, card.Top + 4.0),
+                8.8,
+                accent,
+                FontWeights.Bold);
+
+            DrawText(dc, preview, new Point(card.Left + 9.0, card.Top + 18.0), 7.7, muted, FontWeights.SemiBold);
+
+            var track = new Rect(card.Left + 9.0, card.Bottom - 10.0, card.Width - 18.0, 8.0);
+            var y = track.Top + track.Height / 2.0;
+            dc.DrawLine(new Pen(border, 2.6), new Point(track.Left, y), new Point(track.Right, y));
+
+            var vanillaX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
+            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
+
+            dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX, y - 5.0), new Point(vanillaX, y + 5.0));
+            dc.DrawEllipse(
+                panel,
+                new Pen(accent, IsSelected(parameter) ? 2.4 : 1.5),
+                new Point(currentX, y),
+                5.2,
+                5.2);
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.4, 2.4);
+
+            AddHorizontalTarget(
+                parameter,
+                new Rect(track.Left - 6.0, track.Top - 6.0, track.Width + 12.0, track.Height + 12.0),
+                track,
+                parameter.Minimum,
+                parameter.Maximum);
+        }
+
         DrawStrengthCard(
             stamina,
             "INSTANT STAMINA BURST",
@@ -886,16 +934,35 @@ public sealed class AggregateVisualControl : FrameworkElement
             " rad",
             new Rect(left + half + gap, 56.0, half, 130.0));
 
-        DrawText(dc, "TIMED EFFECTS", new Point(left + 2.0, 198.0), 9.0, text, FontWeights.Bold);
+        DrawText(dc, "SUSTAINED STAMINA", new Point(left + 2.0, 194.0), 8.8, text, FontWeights.Bold);
+        DrawText(dc, "strength only — duration stays independent", new Point(left + 119.0, 194.0), 7.6, muted, FontWeights.Normal);
+
+        DrawSustainedTrack(
+            waterStamina,
+            "WATER",
+            waterStamina is null
+                ? string.Empty
+                : $"{25.0 * waterStamina.CurrentNumber:0.#}% REGEN  •  {10.0 * waterStamina.CurrentNumber:0.#}% LESS ACTION COST",
+            new Rect(left, 207.0, half, 40.0));
+
+        DrawSustainedTrack(
+            energyStamina,
+            "ENERGY DRINK",
+            energyStamina is null
+                ? string.Empty
+                : $"{200.0 * energyStamina.CurrentNumber:0.#}% REGEN",
+            new Rect(left + half + gap, 207.0, half, 40.0));
+
+        DrawText(dc, "TIMED EFFECTS", new Point(left + 2.0, 253.0), 8.8, text, FontWeights.Bold);
         DrawText(
             dc,
             "shared real-seconds axis",
-            new Point(left + 112.0, 198.0),
+            new Point(left + 112.0, 253.0),
             7.5,
             muted,
             FontWeights.Normal);
 
-        var plot = new Rect(left + 102.0, 223.0, width - 116.0, 190.0);
+        var plot = new Rect(left + 102.0, 282.0, width - 116.0, 136.0);
         const double timelineMaxSeconds = 270.0;
 
         double SecondsToX(double seconds)
@@ -904,7 +971,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawRoundedRectangle(
             CloneWithOpacity(panel, 0.95),
             new Pen(border, 1.0),
-            new Rect(plot.Left - 10.0, plot.Top - 12.0, plot.Width + 20.0, plot.Height + 24.0),
+            new Rect(plot.Left - 10.0, plot.Top - 12.0, plot.Width + 20.0, plot.Height + 20.0),
             4.0,
             4.0);
 
@@ -951,9 +1018,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         for (var row = 0; row < durationRows.Length; row++)
         {
             var item = durationRows[row];
-            var y = plot.Top + 22.0 + row * 34.0;
+            var y = plot.Top + 18.0 + row * 25.0;
 
-            DrawRightAlignedText(dc, item.Label, new Point(plot.Left - 18.0, y - 8.0), 8.2, text, FontWeights.Bold);
+            DrawRightAlignedText(dc, item.Label, new Point(plot.Left - 18.0, y - 8.0), 8.0, text, FontWeights.Bold);
 
             if (item.Parameter is not { } parameter)
                 continue;
@@ -970,15 +1037,20 @@ public sealed class AggregateVisualControl : FrameworkElement
                 var effect = item.Effects[effectIndex];
                 var effectSeconds = effect.Item2 * scale;
                 var endX = SecondsToX(effectSeconds);
-                var lineY = y + (effectIndex - (item.Effects.Length - 1) / 2.0) * 6.0;
+                var lineY = y + (effectIndex - (item.Effects.Length - 1) / 2.0) * 5.0;
                 var opacity = Math.Max(0.35, 0.95 - effectIndex * 0.22);
 
                 dc.DrawLine(
-                    new Pen(CloneWithOpacity(accent, opacity), effectIndex == 0 ? 4.0 : 2.3),
+                    new Pen(CloneWithOpacity(accent, opacity), effectIndex == 0 ? 3.6 : 2.2),
                     new Point(plot.Left, lineY),
                     new Point(endX, lineY));
 
-                dc.DrawEllipse(CloneWithOpacity(accent, opacity), null, new Point(endX, lineY), effectIndex == 0 ? 4.0 : 3.0, effectIndex == 0 ? 4.0 : 3.0);
+                dc.DrawEllipse(
+                    CloneWithOpacity(accent, opacity),
+                    null,
+                    new Point(endX, lineY),
+                    effectIndex == 0 ? 3.8 : 2.8,
+                    effectIndex == 0 ? 3.8 : 2.8);
 
                 if (effectIndex == 0 || item.Effects.Length == 1)
                 {
@@ -993,30 +1065,30 @@ public sealed class AggregateVisualControl : FrameworkElement
             }
 
             var vanillaLongestX = SecondsToX(longestBase);
-            dc.DrawLine(new Pen(muted, 1.1), new Point(vanillaLongestX, y - 10.0), new Point(vanillaLongestX, y + 10.0));
+            dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaLongestX, y - 9.0), new Point(vanillaLongestX, y + 9.0));
 
             dc.DrawEllipse(
                 panel,
-                new Pen(accent, IsSelected(parameter) ? 2.5 : 1.5),
+                new Pen(accent, IsSelected(parameter) ? 2.4 : 1.5),
                 new Point(longestX, y),
-                6.5,
-                6.5);
-            dc.DrawEllipse(accent, null, new Point(longestX, y), 2.8, 2.8);
+                5.8,
+                5.8);
+            dc.DrawEllipse(accent, null, new Point(longestX, y), 2.6, 2.6);
 
             DrawRightAlignedText(
                 dc,
                 $"{scale:0.##}x",
-                new Point(plot.Right, y - 17.0),
-                7.8,
+                new Point(plot.Right, y - 15.0),
+                7.7,
                 accent,
                 FontWeights.Bold);
 
             var familyMaxSeconds = longestBase * parameter.Maximum;
             var familyMap = new Rect(
                 plot.Left,
-                y - 13.0,
+                y - 11.0,
                 Math.Max(1.0, SecondsToX(familyMaxSeconds) - plot.Left),
-                26.0);
+                22.0);
 
             AddHorizontalTarget(
                 parameter,
@@ -2973,6 +3045,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             "survival.energyDrinkFatigueRelief" => $"{parameter.CurrentNumber:0.##}x",
 
             "survival.instantStaminaRestore" or
+            "survival.waterStaminaEffectStrength" or
+            "survival.energyDrinkStaminaRecoveryStrength" or
             "survival.alcoholRadiationRemoval" or
             "survival.waterEffectDuration" or
             "survival.energyDrinkEffectDuration" or
@@ -3033,6 +3107,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             "ConsumableMixer" => new[]
             {
                 "survival.instantStaminaRestore",
+                "survival.waterStaminaEffectStrength",
+                "survival.energyDrinkStaminaRecoveryStrength",
                 "survival.alcoholRadiationRemoval",
                 "survival.waterEffectDuration",
                 "survival.energyDrinkEffectDuration",
