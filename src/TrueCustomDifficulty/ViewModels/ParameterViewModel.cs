@@ -508,7 +508,9 @@ public sealed class ParameterViewModel : ObservableObject
     // Backing parameters for semantic visual families remain in the live VM/preset/writer graph
     // but are collapsed as individual rows. Each family exposes one visible anchor control.
     public bool IsControlVisible =>
-        !Id.Equals("alife.mutantSpawn.generic", StringComparison.Ordinal)
+        // Catalog-hidden constraint members must not leak into standalone UI rows.
+        (Definition.ExposeInUi || IsVisualControlAnchor)
+        && !Id.Equals("alife.mutantSpawn.generic", StringComparison.Ordinal)
         && (!IsStashAmmoMember || IsStashAmmoAnchor)
         && (!IsMutantDropMember || IsMutantDropAnchor)
         && (!IsIndividualAnomalyDamageMember || IsIndividualAnomalyDamageAnchor)

@@ -199,8 +199,16 @@ public sealed class MainViewModel : ObservableObject
             "alife.mutantSpawn.deer"
         };
 
+        // Every slider constraint member needs a live VM, even when its
+        // value is edited only through a composite visual's handles.
+        // Otherwise SliderConstraintCoordinator indexes a missing ID at startup.
+        var constrainedParameterIds = catalog.SliderConstraints
+            .SelectMany(constraint => constraint.ParameterIds)
+            .ToHashSet(StringComparer.Ordinal);
+
         var parameterVMs = catalog.Parameters
             .Where(p => p.ExposeInUi
+                || constrainedParameterIds.Contains(p.Id)
                 || ammoDistributionParameterIds.Contains(p.Id)
                 || stashAmmoParameterIds.Contains(p.Id)
                 || mutantDropParameterIds.Contains(p.Id)
