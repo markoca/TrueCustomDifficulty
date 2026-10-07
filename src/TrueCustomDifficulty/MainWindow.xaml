@@ -228,6 +228,15 @@
                                                                                          Visibility="Collapsed"
                                                                                          Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
 
+                                                                <controls:AggregateVisualControl x:Name="AggregateVisualControl"
+                                                                                                 PreviewMouseLeftButtonDown="Radar_PreviewMouseLeftButtonDown"
+                                                                                                 Grid.Row="0"
+                                                                                                 Grid.RowSpan="2"
+                                                                                                 MinHeight="320"
+                                                                                                 Visibility="Collapsed"
+                                                                                                 Family="{Binding VisualAggregateFamily}"
+                                                                                                 Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+
                                                                 <controls:BleedingCurveControl x:Name="BleedingCurveControl"
                                                                                                PreviewMouseLeftButtonDown="Radar_PreviewMouseLeftButtonDown"
                                                                                                Grid.Row="0"
@@ -371,13 +380,6 @@
                                                             <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsAmmoDistributionAnchor}" Value="True">
-                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                            <Setter TargetName="AmmoDistributionRadarControl" Property="Visibility" Value="Visible" />
-                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsStashAmmoAnchor}" Value="True">
                                                             <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
@@ -472,6 +474,15 @@
                                                             <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="SpecialAbilityCooldownRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsVisualAggregateAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="AggregateVisualControl" Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsBleedingCurveAnchor}" Value="True">
                                                             <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
