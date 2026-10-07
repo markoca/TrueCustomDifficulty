@@ -185,7 +185,7 @@ private readonly RadarStatusMessage _status;
         DrawRingCaption(dc, "50%", center, radius * 0.50, mutedBrush);
         DrawRingCaption(dc, "75%", center, radius * 0.75, mutedBrush);
         DrawRingCaption(dc, "100%", center, radius, mutedBrush);
-        DrawCenteredText(dc, "0% = VANILLA", new Point(center.X, center.Y + 14), 8.6, accentBrush, FontWeights.SemiBold);
+        DrawCenteredText(dc, "0%", new Point(center.X, center.Y + 14), 8.6, accentBrush, FontWeights.SemiBold);
 
         for (var i = 0; i < Axes.Length; i++)
         {
@@ -271,7 +271,7 @@ var info = Axes[axis];
 
         DrawClippedText(
             dc,
-            $"Remaining: {info.BasePopulation - baseRemoved}/{info.BasePopulation} base | {info.DlcInclusivePopulation - dlcRemoved}/{info.DlcInclusivePopulation} with DLC",
+            $"Removed: {baseRemoved}/{info.BasePopulation} base | {dlcRemoved}/{info.DlcInclusivePopulation} with DLC",
             new Rect(bounds.Left + 6, y + 24, bounds.Width - 12, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
             FontWeights.Normal);
         EndLegendHitArea();
