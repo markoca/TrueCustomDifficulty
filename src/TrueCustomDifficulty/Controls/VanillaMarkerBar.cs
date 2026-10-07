@@ -67,7 +67,8 @@ public sealed class VanillaMarkerBar : FrameworkElement
         if (Markers is null || ActualWidth <= 1 || Maximum <= Minimum)
             return;
 
-        var markerBrush = TryFindResource("AccentBrush") as Brush ?? Brushes.Goldenrod;
+        var markerBrush = TryFindResource("SliderActiveMutedBrush") as Brush ?? Brushes.DarkGoldenrod;
+        var hoverBrush = TryFindResource("AccentBrush") as Brush ?? Brushes.Goldenrod;
         var textBrush = TryFindResource("MutedTextBrush") as Brush ?? Brushes.LightGray;
         var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
         var typeface = new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.SemiBold, FontStretches.Normal);
@@ -75,7 +76,7 @@ public sealed class VanillaMarkerBar : FrameworkElement
         // Keep extreme markers and labels inside the control bounds.
         const double edgePadding = 5d;
         var usableWidth = Math.Max(1d, ActualWidth - edgePadding * 2d);
-        const double dotY = 4d;
+        const double dotY = 3d;
 
         foreach (var item in Markers)
         {
@@ -87,12 +88,14 @@ public sealed class VanillaMarkerBar : FrameworkElement
                 continue;
 
             var x = edgePadding + normalized * usableWidth;
-            dc.DrawEllipse(markerBrush, null, new Point(x, dotY), 2.6, 2.6);
+            var hovered = IsEnabled && Equals(marker, _hoveredMarker);
+            var dotBrush = hovered ? hoverBrush : markerBrush;
+            dc.DrawEllipse(dotBrush, null, new Point(x, dotY), hovered ? 2.25 : 1.8, hovered ? 2.25 : 1.8);
 
-            // A short stem visually connects the marker to the slider above.
-            dc.DrawLine(new Pen(markerBrush, 1d), new Point(x, 0d), new Point(x, 2d));
+            // Keep the connection to the slider subtle; the thumb/value should remain the primary focus.
+            dc.DrawLine(new Pen(dotBrush, hovered ? 1d : 0.7d), new Point(x, 0d), new Point(x, 1.5d));
 
-            var markerTextBrush = IsEnabled && Equals(marker, _hoveredMarker)
+            var markerTextBrush = hovered
                 ? Brushes.White
                 : textBrush;
 
@@ -101,12 +104,12 @@ public sealed class VanillaMarkerBar : FrameworkElement
                 CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight,
                 typeface,
-                8d,
+                7.2d,
                 markerTextBrush,
                 dpi);
 
             var textX = Math.Clamp(x - text.Width / 2d, 0d, Math.Max(0d, ActualWidth - text.Width));
-            var textPoint = new Point(textX, 7d);
+            var textPoint = new Point(textX, 6.5d);
             dc.DrawText(text, textPoint);
 
             // Make both the dot/stem and the visible label easy to click without turning the
