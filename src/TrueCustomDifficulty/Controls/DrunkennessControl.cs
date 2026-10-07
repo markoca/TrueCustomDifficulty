@@ -207,15 +207,17 @@ public sealed class DrunkennessControl : FrameworkElement
         var drinks = RequiredWholeDrinks(strength, maxDrinks);
         var drinkLabel = drinks == 1 ? singular : plural;
 
-        // Row 1: drink name + immediate gameplay consequence.
+        // Row 1: drink name + centered gameplay consequence.
         DrawText(dc, singular, new Point(rect.Left + 10, rect.Top + 7), 10.0, accent, FontWeights.Bold);
-        DrawRightAlignedText(
+        DrawCenteredStatus(
             dc,
-            "WASTED AFTER " + drinks.ToString(CultureInfo.InvariantCulture) + " " + drinkLabel,
-            new Point(rect.Right - 10, rect.Top + 8),
-            8.7,
+            "WASTED AFTER ",
+            drinks.ToString(CultureInfo.InvariantCulture),
+            " " + drinkLabel,
+            new Point(rect.Left + rect.Width / 2.0, rect.Top + 7),
+            9.2,
             text,
-            FontWeights.SemiBold);
+            accent);
 
         // Row 2: label and value stay together instead of being split across the card.
         var labelText = CreateText("DRINK STRENGTH", 8.3, muted, FontWeights.SemiBold);
@@ -262,7 +264,7 @@ public sealed class DrunkennessControl : FrameworkElement
             dc,
             "MIN " + minimum.ToString("0", CultureInfo.InvariantCulture),
             new Point(sliderLeft, scaleY),
-            7.8,
+            9.0,
             muted,
             FontWeights.SemiBold);
 
@@ -270,7 +272,7 @@ public sealed class DrunkennessControl : FrameworkElement
             dc,
             "VANILLA " + vanillaStrength.ToString("0", CultureInfo.InvariantCulture),
             new Point(vanillaX, scaleY),
-            7.8,
+            9.0,
             accentDark,
             FontWeights.Bold);
 
@@ -605,6 +607,35 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         var ft = CreateText(value, size, brush, weight);
         dc.DrawText(ft, new Point(point.X - ft.WidthIncludingTrailingWhitespace, point.Y));
+    }
+
+    private void DrawCenteredStatus(
+        DrawingContext dc,
+        string prefix,
+        string highlighted,
+        string suffix,
+        Point center,
+        double size,
+        Brush textBrush,
+        Brush highlightBrush)
+    {
+        var prefixText = CreateText(prefix, size, textBrush, FontWeights.SemiBold);
+        var highlightedText = CreateText(highlighted, size + 0.6, highlightBrush, FontWeights.Bold);
+        var suffixText = CreateText(suffix, size, textBrush, FontWeights.SemiBold);
+
+        var totalWidth =
+            prefixText.WidthIncludingTrailingWhitespace +
+            highlightedText.WidthIncludingTrailingWhitespace +
+            suffixText.WidthIncludingTrailingWhitespace;
+
+        var x = center.X - totalWidth / 2.0;
+        dc.DrawText(prefixText, new Point(x, center.Y));
+        x += prefixText.WidthIncludingTrailingWhitespace;
+
+        dc.DrawText(highlightedText, new Point(x, center.Y - 0.4));
+        x += highlightedText.WidthIncludingTrailingWhitespace;
+
+        dc.DrawText(suffixText, new Point(x, center.Y));
     }
 
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
