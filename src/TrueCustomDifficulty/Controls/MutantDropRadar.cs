@@ -14,6 +14,10 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class MutantDropRadar : FrameworkElement
 {
+    private const double RadarInfoTextSize = 11.0;
+    private const double RadarLegendTextSize = 11.0;
+    private const double RadarAxisTextSize = 10.5;
+
     private const double MaximumValue = 1.0;
     private const double Step = 0.01;
 
@@ -194,15 +198,15 @@ private string _statusText = string.Empty;
         }
 
         DrawInfoHeader(dc,
-            "Mutant part drop chance · higher = parts drop more often · a successful drop still gives 1 part.",
+            "Mutant part drop chance | higher = parts drop more often | a successful drop still gives 1 part.",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
         var instruction = string.IsNullOrWhiteSpace(_statusText)
-            ? "Drag a point · Arrow keys adjust selected mutant · Right-click point/legend resets that mutant · R resets all"
+            ? "Drag a point | Arrow keys adjust selected mutant | Right-click point/legend resets that mutant | R resets all"
             : _statusText;
-        DrawCenteredText(dc, instruction, new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), 9.6,
+        DrawCenteredText(dc, instruction, new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
             string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush, FontWeights.Normal);
     }
 
@@ -215,7 +219,7 @@ private string _statusText = string.Empty;
     private void DrawInfoHeader(DrawingContext dc, string text, Brush brush)
     {
         var info = GetInfoRect();
-        DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), 9.8, brush, FontWeights.Normal);
+        DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), RadarInfoTextSize, brush, FontWeights.Normal);
     }
 
     private void DrawLegend(DrawingContext dc, double[] values, Brush textBrush, Brush mutedBrush, Brush accentBrush)
@@ -240,16 +244,14 @@ private string _statusText = string.Empty;
             var isModified = parameter.IsModified;
             BeginLegendHitArea(i);
 
-DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width * 0.44, 16), 10.0,
-                isModified ? accentBrush : hovered ? textBrush : textBrush, FontWeights.SemiBold);
+DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width * 0.44, 18), RadarLegendTextSize, isModified ? accentBrush : hovered ? textBrush : textBrush, FontWeights.SemiBold);
 
             var currentPercent = values[i] * 100.0;
             var vanillaPercent = TryGetVanillaValue(parameter, out var vanilla)
                 ? vanilla * 100.0
                 : currentPercent;
-            var detail = $"{currentPercent:0.#}% drop chance · vanilla {vanillaPercent:0.#}%";
-            DrawClippedText(dc, detail, new Rect(bounds.Left + (bounds.Width * 0.44), y + 6, bounds.Width * 0.56 - 6, 16), 9.6,
-                isModified || isSelected ? accentBrush : hovered ? textBrush : mutedBrush, isModified || isSelected ? FontWeights.SemiBold : FontWeights.Normal);
+            var detail = $"{currentPercent:0.#}% drop chance | vanilla {vanillaPercent:0.#}%";
+            DrawClippedText(dc, detail, new Rect(bounds.Left + (bounds.Width * 0.44), y + 6, bounds.Width * 0.56 - 6, 18), RadarLegendTextSize, isModified || isSelected ? accentBrush : hovered ? textBrush : mutedBrush, isModified || isSelected ? FontWeights.SemiBold : FontWeights.Normal);
 
             EndLegendHitArea();
 
@@ -262,7 +264,7 @@ DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width
         var anchor = position.X < GetGeometry().Center.X - 18.0 ? TextAnchor.Right
             : position.X > GetGeometry().Center.X + 18.0 ? TextAnchor.Left
             : TextAnchor.Center;
-        DrawAnchoredText(dc, label, position, 9.1, brush, FontWeights.SemiBold, anchor);
+        DrawAnchoredText(dc, label, position, RadarAxisTextSize, brush, FontWeights.SemiBold, anchor);
     }
 
     private void DrawRingCaption(DrawingContext dc, string text, Point center, double radius, Brush brush)
