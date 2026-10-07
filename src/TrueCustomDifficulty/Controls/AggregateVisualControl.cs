@@ -389,22 +389,55 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "REPAIR PRICE BY REPUTATION", "shape the full reputation curve instead of four separate sliders", text, muted, accent);
+        DrawHeader(
+            dc,
+            "REPAIR PRICE BY REPUTATION",
+            "better faction relations should progressively reduce the repair-price multiplier",
+            text,
+            muted,
+            accent);
 
-        var plot = new Rect(58.0, 78.0, Math.Max(360.0, ActualWidth - 82.0), 190.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
-
+        var plot = new Rect(68.0, 82.0, Math.Max(380.0, ActualWidth - 104.0), 214.0);
+        const double minimum = 0.0;
         const double maximum = 3.0;
+        const double basePrice = 1.0;
+
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 1.0), plot, 4.0, 4.0);
+
+        var baseY = ValueToY(basePrice, minimum, maximum, plot);
+        var surchargeFill = CloneWithOpacity(border, 0.08);
+        var discountFill = CloneWithOpacity(accent, 0.055);
+
+        dc.DrawRectangle(
+            surchargeFill,
+            null,
+            new Rect(plot.Left, plot.Top, plot.Width, Math.Max(0.0, baseY - plot.Top)));
+
+        dc.DrawRectangle(
+            discountFill,
+            null,
+            new Rect(plot.Left, baseY, plot.Width, Math.Max(0.0, plot.Bottom - baseY)));
+
         for (var i = 0; i <= 3; i++)
         {
-            var y = ValueToY(i, 0.0, maximum, plot);
-            var pen = new Pen(i == 0 ? border : soft, 1.0);
-            if (i > 0)
+            var y = ValueToY(i, minimum, maximum, plot);
+            var pen = new Pen(i == 1 ? accent : soft, i == 1 ? 1.4 : 1.0);
+            if (i != 1)
                 pen.DashStyle = DashStyles.Dot;
 
             dc.DrawLine(pen, new Point(plot.Left, y), new Point(plot.Right, y));
-            DrawRightAlignedText(dc, $"{i}x", new Point(plot.Left - 8.0, y - 7.0), 8.3, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(
+                dc,
+                i == 1 ? "1x BASE" : $"{i}x",
+                new Point(plot.Left - 9.0, y - 7.0),
+                8.2,
+                i == 1 ? accent : muted,
+                i == 1 ? FontWeights.Bold : FontWeights.SemiBold);
         }
+
+        DrawText(dc, "SURCHARGE", new Point(plot.Left + 8.0, plot.Top + 7.0), 7.8, muted, FontWeights.Bold);
+        DrawText(dc, "DISCOUNT", new Point(plot.Left + 8.0, baseY + 8.0), 7.8, accent, FontWeights.Bold);
+        DrawRightAlignedText(dc, "REPUTATION IMPROVES →", new Point(plot.Right - 8.0, plot.Top + 7.0), 7.8, muted, FontWeights.Bold);
 
         var parameters = new[]
         {
@@ -426,26 +459,111 @@ public sealed class AggregateVisualControl : FrameworkElement
         var current = parameters.Select(x => x?.CurrentNumber ?? 0.0).ToArray();
         var vanilla = parameters.Select(x => x?.ReferenceNumber ?? 0.0).ToArray();
 
-        DrawCurveLine(dc, xs, vanilla, plot, 0.0, maximum, new Pen(muted, 1.4) { DashStyle = DashStyles.Dash });
-        DrawCurveLine(dc, xs, current, plot, 0.0, maximum, new Pen(accent, 2.3));
+        DrawCurveLine(
+            dc,
+            xs,
+            vanilla,
+            plot,
+            minimum,
+            maximum,
+            new Pen(muted, 1.5) { DashStyle = DashStyles.Dash });
+
+        DrawCurveLine(
+            dc,
+            xs,
+            current,
+            plot,
+            minimum,
+            maximum,
+            new Pen(accent, 2.6));
 
         for (var i = 0; i < parameters.Length; i++)
         {
-            var point = new Point(xs[i], ValueToY(current[i], 0.0, maximum, plot));
-            dc.DrawEllipse(panel, new Pen(accent, IsSelected(parameters[i]) ? 2.5 : 1.6), point, 6.5, 6.5);
-            dc.DrawEllipse(accent, null, point, 3.0, 3.0);
+            if (parameters[i] is not { } parameter)
+                continue;
 
-            if (parameters[i] is { } parameter)
-            {
-                var columnHit = new Rect(xs[i] - 42.0, plot.Top, 84.0, plot.Height);
-                AddVerticalTarget(parameter, columnHit, plot, 0.0, maximum);
-            }
+            var currentPoint = new Point(xs[i], ValueToY(current[i], minimum, maximum, plot));
+            var vanillaPoint = new Point(xs[i], ValueToY(vanilla[i], minimum, maximum, plot));
+
+            // A stem to the 1x base line makes the actual gameplay meaning visible:
+            // above 1x is an added repair-price surcharge, below 1x is a discount.
+            dc.DrawLine(
+                new Pen(CloneWithOpacity(accent, 0.55), 2.0),
+                new Point(xs[i], baseY),
+                currentPoint);
+
+            dc.DrawEllipse(
+                panel,
+                new Pen(muted, 1.2) { DashStyle = DashStyles.Dash },
+                vanillaPoint,
+                5.0,
+                5.0);
+
+            dc.DrawEllipse(
+                panel,
+                new Pen(accent, IsSelected(parameter) ? 2.8 : 1.7),
+                currentPoint,
+                7.0,
+                7.0);
+            dc.DrawEllipse(accent, null, currentPoint, 3.2, 3.2);
+
+            var deltaPercent = (current[i] - 1.0) * 100.0;
+            var deltaLabel = Math.Abs(deltaPercent) <= 0.5
+                ? "BASE PRICE"
+                : deltaPercent > 0.0
+                    ? $"+{deltaPercent:0}% SURCHARGE"
+                    : $"{deltaPercent:0}% DISCOUNT";
+
+            DrawCenteredText(
+                dc,
+                $"{current[i]:0.##}x",
+                new Point(xs[i], currentPoint.Y - 21.0),
+                9.0,
+                accent,
+                FontWeights.Bold);
+
+            DrawCenteredText(
+                dc,
+                deltaLabel,
+                new Point(xs[i], currentPoint.Y + 11.0),
+                7.4,
+                current[i] <= 1.0 + Epsilon ? accent : muted,
+                FontWeights.SemiBold);
+
+            var columnHit = new Rect(xs[i] - 46.0, plot.Top, 92.0, plot.Height);
+            AddVerticalTarget(parameter, columnHit, plot, minimum, maximum);
 
             DrawCenteredText(dc, labels[i], new Point(xs[i], plot.Bottom + 12.0), 9.0, text, FontWeights.Bold);
-            DrawCenteredText(dc, $"{current[i]:0.##}x", new Point(xs[i], plot.Bottom + 29.0), 9.0, accent, FontWeights.SemiBold);
+            DrawCenteredText(
+                dc,
+                $"vanilla {vanilla[i]:0.##}x",
+                new Point(xs[i], plot.Bottom + 29.0),
+                7.7,
+                muted,
+                FontWeights.Normal);
         }
 
-        DrawText(dc, "VANILLA", new Point(plot.Right - 56.0, plot.Top + 8.0), 8.0, muted, FontWeights.SemiBold);
+        var monotonic = current[0] + Epsilon >= current[1]
+            && current[1] + Epsilon >= current[2]
+            && current[2] + Epsilon >= current[3];
+
+        DrawCenteredText(
+            dc,
+            monotonic
+                ? "HOSTILE ≥ DISLIKED ≥ NEUTRAL ≥ FRIENDLY"
+                : "REPUTATION CURVE ORDER WILL BE NORMALIZED WHILE EDITING",
+            new Point(ActualWidth / 2.0, 326.0),
+            8.0,
+            monotonic ? muted : accent,
+            FontWeights.SemiBold);
+
+        DrawCenteredText(
+            dc,
+            "GOLD = CURRENT   •   DASHED = VANILLA   •   1x = UNMODIFIED BASE REPAIR LAYER",
+            new Point(ActualWidth / 2.0, 346.0),
+            7.7,
+            muted,
+            FontWeights.Normal);
     }
 
     private void DrawBleedingTreatmentMixer(
@@ -2171,6 +2289,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         _selectedParameter = target.Parameter;
         target.Parameter.ResetToReference();
         EnforceRepeatedHitOrdering(target.Parameter);
+        EnforceRepairCurveOrdering(target.Parameter);
         _status.ShowTransient($"{ShortLabel(target.Parameter)} reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
@@ -2220,6 +2339,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             _selectedParameter.Minimum,
             _selectedParameter.Maximum);
         EnforceRepeatedHitOrdering(_selectedParameter);
+        EnforceRepairCurveOrdering(_selectedParameter);
 
         _status.ClearTransient();
         InvalidateVisual();
@@ -2256,6 +2376,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         target.Parameter.CurrentNumber = snapped;
 
         EnforceRepeatedHitOrdering(target.Parameter);
+        EnforceRepairCurveOrdering(target.Parameter);
 
         _status.ClearTransient();
         InvalidateVisual();
@@ -2277,6 +2398,43 @@ public sealed class AggregateVisualControl : FrameworkElement
             maximum.CurrentNumber = minimum.CurrentNumber;
         else if (ReferenceEquals(movedParameter, maximum) && maximum.CurrentNumber < minimum.CurrentNumber)
             minimum.CurrentNumber = maximum.CurrentNumber;
+    }
+
+    private void EnforceRepairCurveOrdering(ParameterViewModel movedParameter)
+    {
+        if (Family != "RepairCurve")
+            return;
+
+        var ordered = new[]
+        {
+            P("economy.repairEnemy"),
+            P("economy.repairDisaffection"),
+            P("economy.repairNeutral"),
+            P("economy.repairFriend")
+        };
+
+        var movedIndex = Array.FindIndex(ordered, p => ReferenceEquals(p, movedParameter));
+        if (movedIndex < 0 || ordered.Any(p => p is null))
+            return;
+
+        // Reputation should never make a worse relationship cheaper than the next
+        // better tier. The point being edited has priority; neighbours cascade only
+        // as far as required to preserve HOSTILE >= DISLIKED >= NEUTRAL >= FRIENDLY.
+        for (var i = movedIndex - 1; i >= 0; i--)
+        {
+            var current = ordered[i]!;
+            var right = ordered[i + 1]!;
+            if (current.CurrentNumber < right.CurrentNumber)
+                current.CurrentNumber = Math.Clamp(right.CurrentNumber, current.Minimum, current.Maximum);
+        }
+
+        for (var i = movedIndex + 1; i < ordered.Length; i++)
+        {
+            var current = ordered[i]!;
+            var left = ordered[i - 1]!;
+            if (current.CurrentNumber > left.CurrentNumber)
+                current.CurrentNumber = Math.Clamp(left.CurrentNumber, current.Minimum, current.Maximum);
+        }
     }
 
     private HitTarget? FindTarget(Point point)
@@ -2437,7 +2595,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "RepeatedHitBand" => 335.0,
             "RadiationBalance" => 415.0,
             "TradingDashboard" => 485.0,
-            "RepairCurve" => 330.0,
+            "RepairCurve" => 370.0,
             "AmmoDistribution" => 405.0,
             _ => 340.0
         };
