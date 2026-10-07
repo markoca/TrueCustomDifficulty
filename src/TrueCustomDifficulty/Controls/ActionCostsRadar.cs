@@ -19,7 +19,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class ActionCostsRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double RowHeight = 46.0;
+    private const double RowHeight = 38.0;
 
     private static readonly ActionDefinition[] Actions =
     {
@@ -62,7 +62,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 505;
+        MinHeight = 420;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -70,7 +70,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(560.0, availableSize.Width);
-        return new Size(width, 505.0);
+        return new Size(width, 420.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -154,7 +154,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         DrawText(dc, "STAMINA PRESSURE", new Point(18.0, 16.0), 12.0, text, FontWeights.Bold);
         DrawText(
             dc,
-            "movement and melee costs share one relative load scale; aiming recovery stays separate",
+            "movement / melee load; aiming recovery is separate",
             new Point(18.0, 34.0),
             8.2,
             muted,
@@ -169,22 +169,22 @@ public sealed class ActionCostsRadar : FrameworkElement
 
         dc.DrawLine(new Pen(border, 1.0), new Point(14.0, 81.0), new Point(Math.Max(14.0, ActualWidth - 14.0), 81.0));
 
-        DrawSectionLabel(dc, "MOVEMENT", 92.0, muted, border);
+        DrawSectionLabel(dc, "MOVEMENT", 86.0, muted, border);
         for (var i = 0; i < 3; i++)
-            DrawActionRow(dc, i, 108.0 + i * RowHeight, layout, text, muted, border, accent, panel);
+            DrawActionRow(dc, i, 100.0 + i * RowHeight, layout, text, muted, border, accent, panel);
 
-        DrawSectionLabel(dc, "MELEE", 250.0, muted, border);
+        DrawSectionLabel(dc, "MELEE", 218.0, muted, border);
         for (var i = 3; i < Actions.Length; i++)
-            DrawActionRow(dc, i, 266.0 + (i - 3) * RowHeight, layout, text, muted, border, accent, panel);
+            DrawActionRow(dc, i, 232.0 + (i - 3) * RowHeight, layout, text, muted, border, accent, panel);
 
-        DrawAimPanel(dc, 410.0, text, muted, border, accent, panel);
+        DrawAimPanel(dc, 350.0, text, muted, border, accent, panel);
 
         if (!string.IsNullOrWhiteSpace(_status.Text))
         {
             DrawCenteredText(
                 dc,
                 _status.Text,
-                new Point(ActualWidth / 2.0, 488.0),
+                new Point(ActualWidth / 2.0, 407.0),
                 8.0,
                 accent,
                 FontWeights.SemiBold);
@@ -234,7 +234,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         DrawText(
             dc,
             info.Label,
-            new Point(layout.LabelLeft, top + 12.0),
+            new Point(layout.LabelLeft, top + 7.0),
             8.5,
             modified ? accent : text,
             FontWeights.Bold);
@@ -242,7 +242,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         DrawCenteredText(
             dc,
             FormatRaw(parameter.CurrentNumber),
-            new Point(layout.RawCenter, top + 17.0),
+            new Point(layout.RawCenter, top + 13.0),
             9.4,
             modified ? accent : text,
             FontWeights.Bold);
@@ -250,12 +250,12 @@ public sealed class ActionCostsRadar : FrameworkElement
         DrawCenteredText(
             dc,
             $"{ratio * 100:0}%",
-            new Point(layout.PercentCenter, top + 17.0),
+            new Point(layout.PercentCenter, top + 13.0),
             9.2,
             modified ? accent : muted,
             FontWeights.Bold);
 
-        var track = new Rect(layout.TrackLeft, top + 9.0, layout.TrackWidth, 22.0);
+        var track = new Rect(layout.TrackLeft, top + 23.0, layout.TrackWidth, 9.0);
         var y = track.Top + track.Height / 2.0;
 
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
@@ -274,9 +274,6 @@ public sealed class ActionCostsRadar : FrameworkElement
             6.0);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
 
-        DrawText(dc, "0%", new Point(track.Left, top + 31.0), 6.6, muted, FontWeights.Normal);
-        DrawCenteredText(dc, "VANILLA", new Point(vanillaX, top + 35.0), 6.5, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "200%", new Point(track.Right, top + 31.0), 6.6, muted, FontWeights.Normal);
 
         _targets[row] = new HitTarget(
             new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
@@ -296,7 +293,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         if (parameter is null)
             return;
 
-        var card = new Rect(18.0, top, Math.Max(1.0, ActualWidth - 36.0), 66.0);
+        var card = new Rect(18.0, top, Math.Max(1.0, ActualWidth - 36.0), 50.0);
         dc.DrawRoundedRectangle(
             _aimSelected
                 ? CloneWithOpacity(accent, 0.08)
@@ -309,7 +306,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             3.0);
 
         DrawText(dc, "AIMING STAMINA RECOVERY PENALTY", new Point(card.Left + 10.0, card.Top + 8.0), 8.6, text, FontWeights.Bold);
-        DrawText(dc, "continuous recovery slowdown — not a one-time stamina charge", new Point(card.Left + 10.0, card.Top + 24.0), 7.3, muted, FontWeights.Normal);
+        DrawText(dc, "continuous regen slowdown", new Point(card.Left + 10.0, card.Top + 24.0), 9.0, muted, FontWeights.Normal);
 
         DrawRightAlignedText(
             dc,
@@ -319,7 +316,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             accent,
             FontWeights.Bold);
 
-        var track = new Rect(card.Left + 235.0, card.Top + 38.0, Math.Max(120.0, card.Width - 255.0), 18.0);
+        var track = new Rect(card.Left + 210.0, card.Top + 30.0, Math.Max(120.0, card.Width - 230.0), 12.0);
         var y = track.Top + track.Height / 2.0;
 
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
@@ -338,9 +335,6 @@ public sealed class ActionCostsRadar : FrameworkElement
             6.0);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
 
-        DrawText(dc, "0% — NO AIM PENALTY", new Point(track.Left, card.Top + 54.0), 6.6, muted, FontWeights.Normal);
-        DrawCenteredText(dc, "VANILLA 25%", new Point(baseX, card.Top + 59.0), 6.5, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "50%", new Point(track.Right, card.Top + 54.0), 6.6, muted, FontWeights.Normal);
 
         _aimTarget = new HitTarget(
             new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
@@ -620,7 +614,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
