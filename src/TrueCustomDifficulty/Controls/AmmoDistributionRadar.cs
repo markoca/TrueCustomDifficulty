@@ -334,7 +334,6 @@ private string _statusText = string.Empty;
 
         static double Share(double value, double sum) => sum > 0.0 ? value / sum * 100.0 : 0.0;
         static string P(double value) => $"{value:0.#}%";
-        static string X(double value) => $"{value:0.##}x";
         static string Range(double a, double b)
         {
             var lo = Math.Min(a, b);
