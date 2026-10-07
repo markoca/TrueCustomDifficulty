@@ -55,7 +55,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsDrunkennessAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "BEER is the default tolerance reference: set 1–6 beers to reach Very Strong drunkenness, with 4 beers as VANILLA. VODKA only switches the displayed equivalent. Use BACK-TO-BACK PREVIEW to inspect the active drunkenness tier and its effects without changing the setting. Right-click the visualizer to return the thresholds to VANILLA.";
+                       "Choose BEER or VODKA as the reference, then set 1–8 beers or 1–4 vodkas to reach Very Strong drunkenness. The progression row shows the tier reached after each whole drink, using the current Beer/Vodka Strength settings. Right-click the visualizer to restore vanilla tolerance thresholds.";
             }
 
             if (IsAggregateRadarAnchor)
