@@ -189,8 +189,8 @@ private readonly RadarStatusMessage _status;
             dc.DrawEllipse(accentBrush, null, points[i], 3.2, 3.2);
         }
 
-        DrawRingCaption(dc, "0.5x MASTER VANILLA", center, ValueRadius(0.5, radius), accentBrush);
-        DrawRingCaption(dc, "1x N/S/V VANILLA", center, ValueRadius(1.0, radius), accentBrush);
+        DrawRingCaption(dc, "0.5x", center, ValueRadius(0.5, radius), accentBrush);
+        DrawRingCaption(dc, "1x", center, ValueRadius(1.0, radius), accentBrush);
         DrawRingCaption(dc, "1.5x", center, ValueRadius(1.5, radius), mutedBrush);
         DrawRingCaption(dc, "2x", center, ValueRadius(2.0, radius), mutedBrush);
 
@@ -279,7 +279,7 @@ DrawClippedText(
 
         DrawClippedText(
             dc,
-            $"{value:0.##}x wait time | Base Preset {reference:0.##}x",
+            $"{value:0.##}x wait time",
             new Rect(bounds.Left + bounds.Width * 0.36, y + 5, bounds.Width * 0.64 - 6, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
