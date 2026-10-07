@@ -364,6 +364,13 @@ public sealed class ActionCostsRadar : FrameworkElement
         DrawText(dc, "SPRINT LOCK", new Point(card.Left + 10.0, sprintY - 6.0), 9.0, muted, FontWeights.Bold);
         DrawText(dc, "RECOVERY BELOW", new Point(card.Left + 10.0, recoveryY - 6.0), 9.0, muted, FontWeights.Bold);
 
+        var zeroX = thresholdTrack.Left;
+        var thirtyX = thresholdTrack.Left + thresholdTrack.Width * 0.5;
+        var sixtyX = thresholdTrack.Right;
+        dc.DrawLine(new Pen(soft, 1.0), new Point(zeroX, thresholdTrack.Top - 1.0), new Point(zeroX, thresholdTrack.Bottom + 1.0));
+        dc.DrawLine(new Pen(soft, 1.0) { DashStyle = DashStyles.Dot }, new Point(thirtyX, thresholdTrack.Top - 1.0), new Point(thirtyX, thresholdTrack.Bottom + 1.0));
+        dc.DrawLine(new Pen(soft, 1.0), new Point(sixtyX, thresholdTrack.Top - 1.0), new Point(sixtyX, thresholdTrack.Bottom + 1.0));
+
         DrawAbsoluteThresholdRow(
             dc,
             _sprintDisableThreshold,
@@ -433,12 +440,6 @@ public sealed class ActionCostsRadar : FrameworkElement
             accent,
             panel);
 
-        var zeroX = thresholdTrack.Left;
-        var thirtyX = thresholdTrack.Left + thresholdTrack.Width * 0.5;
-        var sixtyX = thresholdTrack.Right;
-        dc.DrawLine(new Pen(soft, 1.0), new Point(zeroX, thresholdTrack.Top - 1.0), new Point(zeroX, thresholdTrack.Bottom + 1.0));
-        dc.DrawLine(new Pen(soft, 1.0) { DashStyle = DashStyles.Dot }, new Point(thirtyX, thresholdTrack.Top - 1.0), new Point(thirtyX, thresholdTrack.Bottom + 1.0));
-        dc.DrawLine(new Pen(soft, 1.0), new Point(sixtyX, thresholdTrack.Top - 1.0), new Point(sixtyX, thresholdTrack.Bottom + 1.0));
     }
 
     private void DrawAbsoluteThresholdRow(
