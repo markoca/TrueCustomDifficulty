@@ -2,191 +2,507 @@
 
 ## Scope
 
-This audit covers **all consumable items that are neither food nor medicine**.
+This audit covers the **utility consumables** requested for True Custom Difficulty while deliberately excluding normal food and medicine.
 
-Included families currently evidenced by the runtime-derived baseline and generator audits:
+The scope is semantic, not based only on the engine's `ConsumableType` enum. The engine classifies several utility drinks as `Food`, so using that enum literally would incorrectly throw Water, Beer, Vodka and Energy Drinks out of this audit.
+
+### Included
 
 - Water
 - Energy Drink / `Energetic`
-- Vodka
+- Limited Edition Energy Drink / `Energetic_Limited`
 - Beer
-- any additional base-game or DLC consumable discovered through `ItemPrototypes.cfg -> EffectPrototypeSID` traversal that is not food or medicine
+- Vodka
+- quest/special utility drink variants such as `DvupalovVodka` ("Magic Vodka")
 
-Explicitly excluded:
+### Excluded by user request
 
-- food: Bread, Fresh Bread, Sausage, Canned Food, dry rations and equivalent food-family items
-- medicine: Bandage, Medkit, Army Medkit, Scientific/Eco Medkit, Anti-Rad and equivalent medical-family items
+Food:
+- Bread
+- Fresh Bread
+- Sausage
+- Canned Food
+- Spoiled Canned Food
+- Condensed Milk
+- DLC dry-ration / meal-family items such as `MonolithDryRation`
 
-Environmental water-contact mechanics are outside this audit. `WaterMediumStaminaPenalty` and `WaterStrongStaminaPenalty` describe movement through water, not drinking Water.
+Medicine / medicinal drugs:
+- Bandage
+- Medkit
+- Army Medkit
+- Scientific/Eco Medkit
+- Anti-Rad
+- Hercules
+- Vinca / `Cinnamon`
+- PSI-Block / `PSYBlocker`
 
-## Source contract
+Environmental water-contact mechanics are also outside this audit. `WaterMediumStaminaPenalty` and `WaterStrongStaminaPenalty` describe movement through water, not drinking bottled Water.
 
-Runtime CFG remains the source of truth.
+## Evidence policy
+
+Primary source of truth remains the runtime/game + DLC CFG dump 2.0.5 already used by the project baseline.
+
+Evidence grades used below:
+
+- **2.0.5 CONFIRMED** - value/semantics already captured from the project's runtime-derived 2.0.5 baseline.
+- **2.0 CROSS-CHECK** - current 2.0-era mod/config evidence independently exposes the same vanilla SID/value/duration.
+- **DISCOVERY** - an older extracted stats/config source exposes the item-to-effect SID wiring, useful for completing the map but not sufficient by itself to overwrite a 2.0.5 value.
+- **RUNTIME TEST** - CFG target exists, but the complete runtime interaction is not yet safe enough for normal UI.
+
+Consumable effects must be resolved as:
 
 ```text
 ItemPrototype
     -> EffectPrototypeSID
-        -> EffectPrototype values / duration / charge semantics
-            -> player mechanics consuming those effects
+        -> ValueMin / ValueMax
+        -> Duration / Charges / Delay
+        -> EEffectType
+        -> any mechanics that accumulate or react to the effect
 ```
 
-Do not invent one global "consumable effectiveness" scalar. Every supported control must own an explicitly enumerated target family.
+Do not invent one global "Consumable Effectiveness" scalar.
 
-## Water
+---
 
-Confirmed baseline effects:
+# 1. Water
 
-| Effect | Vanilla |
-|---|---:|
-| HungerPoints | -10 |
-| timed stamina effect | +25% over effect duration |
-| instant stamina | +38% |
+## Item effect chain
 
-Known effect SID:
+Discovery wiring:
 
-- `WaterSatiety1` = `-10 HungerPoints`
+```text
+Water
+  WaterSatiety1
+  WaterStamina2
+  RemoveDrunkness5
+  WaterStaminaInstant
+  WaterStaminaPerAction1
+```
+
+Weird Kettle alternative wiring also exists for Water and must be treated as a separate context rather than silently overwritten.
+
+## Confirmed / cross-checked values
+
+| Effect | SID | Vanilla | Evidence | UI suitability |
+|---|---|---:|---|---|
+| hunger change | `WaterSatiety1` | -10 HungerPoints | 2.0.5 CONFIRMED | direct |
+| stamina regeneration | `WaterStamina2` | +25% | 2.0.5 CONFIRMED | direct |
+| stamina regen duration | `WaterStamina2` | 5 s | 2.0 CROSS-CHECK | direct |
+| instant stamina | `WaterStaminaInstant` | +38% | 2.0.5 CONFIRMED + 2.0 CROSS-CHECK | direct |
+| stamina cost reduction | `WaterStaminaPerAction1` | 10% reduction | 2.0 CROSS-CHECK | direct |
+| stamina-cost duration | `WaterStaminaPerAction1` | 30 s | 2.0 CROSS-CHECK | direct |
+| sobering | `RemoveDrunkness5` | direct drunkness removal effect | DISCOVERY | source value still needs 2.0.5 raw confirmation |
 
 Negative HungerPoints reduce hunger.
 
-The instant and timed stamina effects must remain separate until the source chain proves one intentional shared scalar.
+### Verdict
 
-## Energy Drink / Energetic
+Water has enough direct structure for player-facing tuning. Its effects must not be collapsed into one number because it has:
+- instant stamina,
+- short stamina regeneration,
+- longer stamina-cost reduction,
+- hunger change,
+- sobering.
 
-Confirmed baseline effects:
+Recommended normal controls:
+- **Water Instant Stamina**
+- **Water Stamina Recovery**
+- **Water Stamina Recovery Duration**
+- **Water Stamina Cost Reduction**
+- **Water Stamina Cost Duration**
 
-| Effect | Vanilla |
-|---|---:|
-| HungerPoints | +10 |
-| stamina regeneration | +200% for 45 s |
-| instant stamina | +50% |
-| sleepiness/fatigue | -20 |
+Hunger and sobering are lower-priority because they overlap Survival/alcohol state semantics.
 
-Known effect families:
+---
 
-- `EnegeticSatiety1` = `+10 HungerPoints`
-- `EnergeticSleepiness`
-- `Artifact_WeirdKettle_LimitedEnergeticSleepiness`
-- `EnergeticsPoppyFieldSleepiness`
-- `EnergeticsLimitedPoppyFieldSleepiness`
+# 2. Energy Drink
 
-The existing `survival.energyDrinkFatigueRelief` control owns only the fatigue/sleepiness family. It must not absorb stamina, hunger, tolerance or overuse effects.
+## Item effect chain
 
-The Player mechanics graph also contains:
-
-- `EnergeticOveruseMechanics`
-- `EnergeticToleranceMechanics`
-
-These are mandatory parts of this audit before overdose/tolerance controls are considered.
-
-## Vodka
-
-Confirmed baseline effects:
-
-| Effect | Vanilla |
-|---|---:|
-| HungerPoints | +10 |
-| radiation | -50 |
-| stamina/SP drain penalty | +200% for 20 s |
-
-Known effect SID:
-
-- `VodkaSatiety1` = `+10 HungerPoints`
-
-The Player mechanics graph also contains:
-
-- `DrunknessMechanics`
-- `OverDrunknessMechanics`
-
-Radiation relief, stamina-drain penalty, drunkenness buildup and over-drunkness consequences must be treated as separate effect domains.
-
-## Beer
-
-Beer is confirmed as an active consumable in the runtime generator graph, including `GeneralNPC_Consumables_CloseCombat`.
-
-The current baseline does not yet contain a source-exact Beer `ItemPrototype -> EffectPrototypeSID` chain.
-
-Rules:
-
-- Beer remains mandatory audit scope.
-- Do not infer Beer values from Vodka.
-- Do not expose Beer controls until its actual EffectPrototype chain is recovered.
-
-## Relevant shared mechanics
-
-The Player prototype explicitly includes:
-
-- `DrunknessMechanics`
-- `OverDrunknessMechanics`
-- `EnergeticOveruseMechanics`
-- `EnergeticToleranceMechanics`
-- `AdditionalRegenStaminaMechanics` where a consumable effect actually feeds it
-
-Effect/localization metadata also exposes concepts for:
-
-- Water stamina
-- Water stamina regeneration
-- Energetic stamina regeneration
-- Energetic tolerance buildup
-- Energetic overdose buildup
-- overdose removal
-
-These names are discovery evidence only. Normal UI still requires a concrete runtime CFG prototype/path/value chain.
-
-## Candidate player-facing controls
-
-These are audit candidates, not implementation approval.
-
-| Family | Candidate | Status |
-|---|---|---|
-| Water | Instant Stamina Restore | value confirmed; exact catalog target required |
-| Water | Stamina Recovery Boost | value confirmed; duration/source target required |
-| Energy Drink | Instant Stamina Restore | value confirmed; exact catalog target required |
-| Energy Drink | Stamina Recovery Boost | +200% / 45 s confirmed; exact target required |
-| Energy Drink | Fatigue Relief | already implemented and confirmed |
-| Energy Drink | Hunger Impact | +10 HungerPoints confirmed |
-| Energy Drink | Tolerance Build-up | mechanics exist; complete chain required |
-| Energy Drink | Overuse / Overdose Build-up | mechanics exist; complete chain required |
-| Vodka | Radiation Removal | -50 confirmed; exact catalog target required |
-| Vodka | Stamina Drain Penalty | +200% / 20 s confirmed; exact target required |
-| Vodka | Hunger Impact | +10 HungerPoints confirmed |
-| Vodka | Drunkenness | mechanics exist; complete chain required |
-| Vodka | Over-Drunkenness | mechanics exist; complete chain required |
-| Beer | all gameplay effects | raw item/effect chain required |
-
-## Design rules
-
-1. Do not merge direct and timed effects merely because they belong to the same item.
-2. Do not mix bottled Water with environmental water-contact controls.
-3. Do not fold Energy Drink stamina effects into Fatigue Relief.
-4. Do not assume Beer is weaker Vodka.
-5. Preserve effect sign semantics:
-   - negative HungerPoints = hunger reduction
-   - positive HungerPoints = increased hunger
-   - negative Radiation = radiation removal
-6. Treat duration independently from magnitude unless the source intentionally couples them.
-7. Tolerance / overdose / drunkenness controls require their complete threshold, accumulation, recovery and consequence chains.
-8. Trace DLC consumables through DLC ItemPrototypes and EffectPrototypes instead of assuming base inheritance.
-
-## Raw-CFG completion checklist
-
-Before adding controls, enumerate:
-
-- every base-game and DLC non-food/non-med consumable ItemPrototype
-- every referenced EffectPrototype SID per item
-- `ValueMin/ValueMax`
-- `DurationMin/DurationMax`
-- `DelayMin/DelayMax`
-- charges / intervals where present
-- affected vital/stat type
-- tolerance/overuse/drunkenness thresholds, accumulation and recovery
-- MasterEffectModifier entries affecting these consumables
-- DLC-specific overrides
-
-The final table must be source-exact:
+Discovery wiring:
 
 ```text
-Item -> Effect SID -> field -> vanilla value -> unit -> duration
-     -> special mechanic -> proposed UI -> status
+Energetic
+  EnegeticSatiety1
+  EnergeticStamina
+  EnergeticStaminaInstant3
+  EnergeticsPoppyFieldSleepiness
+  EnergeticSleepiness
+  EnergyDrinkPostProcess
+  EnergeticStaminaPerAction1
 ```
 
-No new control should be promoted until its row is source-exact.
+Alternative Weird Kettle effects exist for the same item. The current `survival.energyDrinkFatigueRelief` control already intentionally includes the relevant Weird Kettle/Poppy Field fatigue variants.
+
+## Confirmed / cross-checked values
+
+| Effect | SID | Vanilla | Evidence | UI suitability |
+|---|---|---:|---|---|
+| hunger change | `EnegeticSatiety1` | +10 HungerPoints | 2.0.5 CONFIRMED | direct |
+| stamina regeneration | `EnergeticStamina` | +200% | 2.0.5 CONFIRMED + 2.0 CROSS-CHECK | direct |
+| stamina regen duration | `EnergeticStamina` | 45 s | 2.0.5 CONFIRMED + 2.0 CROSS-CHECK | direct |
+| instant stamina | `EnergeticStaminaInstant3` | +50% | 2.0.5 CONFIRMED | direct |
+| fatigue/sleepiness relief | `EnergeticSleepiness` family | -20 normal effect | 2.0.5 CONFIRMED | already exposed |
+| stamina-per-action effect | `EnergeticStaminaPerAction1` | weak stamina-cost effect | DISCOVERY | magnitude needs raw 2.0.5 confirmation |
+| stamina-per-action duration | `EnergeticStaminaPerAction1` | 15 s | 2.0 CROSS-CHECK | duration is direct |
+| post-process | `EnergyDrinkPostProcess` | presentation effect | DISCOVERY | NO-UI |
+
+### Existing control boundary
+
+`survival.energyDrinkFatigueRelief` owns only fatigue/sleepiness relief. It must **not** absorb stamina, hunger, tolerance or overdose behavior.
+
+### Recommended direct controls
+
+- **Energy Drink Stamina Recovery**
+- **Energy Drink Stamina Recovery Duration**
+- **Energy Drink Instant Stamina**
+- keep existing **Energy Drink Fatigue Relief**
+
+Do not expose `EnergyDrinkPostProcess`.
+
+---
+
+# 3. Limited Edition Energy Drink
+
+## Item effect chain
+
+Discovery wiring:
+
+```text
+Energetic_Limited
+  EnegeticSatiety2
+  EnergeticLimitedStamina
+  EnergeticLimitedStaminaInstant4
+  EnergeticsLimitedPoppyFieldSleepiness
+  EnergyDrinkPostProcess
+```
+
+The item inherits from the normal Energy Drink prototype but overrides its effect list.
+
+Alternative Weird Kettle effects additionally include:
+- Limited Energetic satiety
+- stronger stamina regeneration
+- stronger instant stamina
+- strong sleepiness removal
+- temporary carry-weight / penalty-less-weight effects
+
+Those Weird Kettle variants are artifact-driven alternative effects and should not be silently folded into the normal Limited Edition values.
+
+## Current status
+
+The 2.0.5 baseline confirms the Limited/Poppy fatigue family exists, but it does not yet contain a complete source-exact numeric row for every Limited Edition stamina effect.
+
+2.0-era cross-check confirms:
+- normal Limited Edition stamina-regeneration duration remains based on the Energy Drink family and is tunable,
+- this is a distinct item/effect family and must not be assumed equal to normal `Energetic`.
+
+### Verdict
+
+Promote only after the exact 2.0.5 `ValueMin/ValueMax` for:
+- `EnegeticSatiety2`
+- `EnergeticLimitedStamina`
+- `EnergeticLimitedStaminaInstant4`
+
+are recovered from raw CFG.
+
+Status: **source path confirmed, exact-value completion required**.
+
+---
+
+# 4. Vodka
+
+## Item effect chain
+
+Discovery wiring:
+
+```text
+Vodka
+  VodkaAntirad3
+  VodkaSatiety1
+  VodkaStaminaPenalty
+  VodkaDrunkness
+  VodkaPSYInstaDecrease
+```
+
+Weird Kettle alternatives exist for radiation, satiety and drunkness.
+
+## Confirmed / cross-checked values
+
+| Effect | SID | Vanilla | Evidence | UI suitability |
+|---|---|---:|---|---|
+| radiation removal | `VodkaAntirad3` | -50 Radiation | 2.0.5 CONFIRMED | direct |
+| hunger change | `VodkaSatiety1` | +10 HungerPoints | 2.0.5 CONFIRMED | direct |
+| stamina drain penalty | `VodkaStaminaPenalty` | +200% | 2.0.5 CONFIRMED | direct |
+| stamina penalty duration | `VodkaStaminaPenalty` | 20 s | 2.0.5 CONFIRMED | direct |
+| drunkness | `VodkaDrunkness` | strength 30 in vanilla-era source | 2.0 CROSS-CHECK / raw 2.0.5 still desirable | direct value, mechanics interaction requires care |
+| psi relief | `VodkaPSYInstaDecrease` | direct instant psi decrease | DISCOVERY | raw 2.0.5 magnitude required |
+
+### Verdict
+
+Safe normal candidates:
+- **Vodka Radiation Removal**
+- **Vodka Stamina Drain Penalty**
+- **Vodka Stamina Penalty Duration**
+
+Drunkenness strength is writable, but exposing it should happen only after the `DrunknessMechanics -> OverDrunknessMechanics` thresholds and accumulation/recovery chain are fully documented.
+
+---
+
+# 5. Beer
+
+## Item effect chain
+
+Discovery wiring:
+
+```text
+Beer
+  BeerAntirad1
+  BeerSatiety1
+  BeerStaminaPenalty
+  BeerDrunkness
+  BeerPSYInstaDecrease
+```
+
+Weird Kettle alternatives exist for all five domains plus a possible sleepiness negative effect.
+
+## Confirmed / cross-checked values
+
+| Effect | SID | Vanilla | Evidence | UI suitability |
+|---|---|---:|---|---|
+| radiation removal | `BeerAntirad1` | -10 Radiation | 2.0 CROSS-CHECK | direct |
+| hunger change | `BeerSatiety1` | weak increase; exact 2.0.5 value pending | DISCOVERY | direct after raw confirmation |
+| stamina drain penalty | `BeerStaminaPenalty` | 150% family value seen in extracted effect data | DISCOVERY | direct after 2.0.5 confirmation |
+| drunkness | `BeerDrunkness` | strength 15 in vanilla-era source | 2.0 CROSS-CHECK / raw confirmation desirable | mechanics interaction |
+| psi relief | `BeerPSYInstaDecrease` | direct instant psi decrease | DISCOVERY | exact magnitude pending |
+
+### Verdict
+
+Beer is no longer an unknown item chain. The actual SIDs are mapped.
+
+The first Beer control that is clean enough to promote once the 2.0.5 raw row is copied into the catalog is:
+- **Beer Radiation Removal**
+
+Stamina penalty and drunkness are also promising but should be promoted only with their current exact duration/value rows.
+
+---
+
+# 6. Magic Vodka / Dvupalov Vodka
+
+`DvupalovVodka` is a real quest consumable and is in scope because the request is to cover all non-food/non-med utility consumables, not only generic loot items.
+
+Discovery wiring:
+
+```text
+DvupalovVodka
+  MagicVodkaDrunkness
+  VodkaSatiety1
+  MagicVodkaPSYInstaDecrease
+  MagicVodkaPSYProtection
+```
+
+Important difference from normal Vodka:
+- it does **not** use normal Vodka radiation removal,
+- it is primarily an intoxication + psi utility item.
+
+Current cross-checks:
+- `MagicVodkaPSYProtection` vanilla duration: 90 s
+- player-facing psi protection: +2
+- shared `VodkaSatiety1` hunger increase
+- intoxication is stronger than ordinary alcohol in the item presentation
+
+### Verdict
+
+Potential controls:
+- **Magic Vodka Psi Protection**
+- **Magic Vodka Psi Protection Duration**
+- **Magic Vodka Drunkenness**
+
+Because this is a quest/special consumable, these controls are lower priority than normal Water/Energy/Vodka/Beer tuning.
+
+---
+
+# 7. Energy Drink tolerance and overdose
+
+The Player mechanics graph explicitly contains:
+
+- `EnergeticToleranceMechanics`
+- `EnergeticOveruseMechanics`
+
+Localization/effect metadata exposes concepts corresponding to:
+- stimulant tolerance buildup,
+- stimulant overdose buildup,
+- overdose removal.
+
+This proves that Energy Drink usage has a deeper state machine beyond its direct stamina/fatigue effects.
+
+However, normal UI exposure requires the full chain:
+
+```text
+drink effect
+ -> tolerance / overuse point delta
+ -> thresholds
+ -> decay / removal
+ -> warning state
+ -> gameplay consequence(s)
+```
+
+Until all of those are source-exact, do **not** expose:
+- tolerance threshold,
+- overdose threshold,
+- overdose buildup,
+- overdose recovery,
+- overdose consequence strength
+
+as standalone sliders.
+
+Status: **RUNTIME / COMPLETE-CHAIN AUDIT REQUIRED**.
+
+---
+
+# 8. Alcohol drunkness and over-drunkness
+
+The Player mechanics graph explicitly contains:
+
+- `DrunknessMechanics`
+- `OverDrunknessMechanics`
+
+Vodka and Beer both feed direct drunkness effects. Water and food can also remove some drunkness through `RemoveDrunkness*` effects.
+
+Therefore a naïve "Alcohol Strength" slider can have non-local consequences if the over-drunkness thresholds are crossed more frequently.
+
+Safe first-stage tuning:
+- radiation removal
+- stamina penalty magnitude
+- stamina penalty duration
+
+Deferred until complete chain:
+- drunkness strength
+- drunkness duration
+- over-drunkness threshold
+- over-drunkness consequences
+- sobering/removal magnitude
+
+---
+
+# 9. Master difficulty interaction
+
+The existing `Master Consumable Effect Penalties` system is a separate layer from the base consumable EffectPrototypes.
+
+Rule for future controls:
+
+```text
+base consumable effect
+    x any active MasterEffectModifier entry
+    = effective Master result
+```
+
+No new control should silently edit both the base effect and a Master modifier unless the UI explicitly presents that as one combined control.
+
+The existing Energy Drink Fatigue Relief and future drink controls should therefore remain base-effect controls unless a concrete Master modifier target is intentionally added.
+
+---
+
+# 10. Recommended UI surface
+
+The cleanest player-facing design is **not** one global Consumable Effectiveness slider.
+
+Recommended group: **Consumable Effects** under Survival.
+
+### Ready / nearly ready
+
+Water:
+- Instant Stamina
+- Stamina Recovery
+- Stamina Recovery Duration
+- Stamina Cost Reduction
+- Stamina Cost Duration
+
+Energy Drink:
+- Stamina Recovery
+- Stamina Recovery Duration
+- Instant Stamina
+- existing Fatigue Relief
+
+Vodka:
+- Radiation Removal
+- Stamina Drain Penalty
+- Stamina Penalty Duration
+
+Beer:
+- Radiation Removal once the 2.0.5 row is copied into the catalog
+
+### Do not expose yet
+
+- Energy Drink tolerance/overdose
+- Beer/Vodka drunkenness controls
+- alcohol over-drunkness
+- sobering strength
+- Beer/Vodka psi-relief magnitude
+- Limited Edition exact values until raw 2.0.5 values are recovered
+- Weird Kettle negative-effect chance
+- purely visual post-process effects
+
+---
+
+# 11. Priority implementation set
+
+If the goal is useful difficulty tuning with minimum speculative behavior, implement in this order:
+
+1. **Water Stamina Cost Reduction**
+2. **Water Stamina Cost Duration**
+3. **Water Instant Stamina**
+4. **Water Stamina Recovery**
+5. **Energy Drink Stamina Recovery**
+6. **Energy Drink Stamina Recovery Duration**
+7. **Energy Drink Instant Stamina**
+8. **Vodka Radiation Removal**
+9. **Vodka Stamina Drain Penalty**
+10. **Vodka Stamina Penalty Duration**
+11. **Beer Radiation Removal** after exact 2.0.5 value row is locked
+12. keep existing **Energy Drink Fatigue Relief**
+
+These are direct, understandable effects and do not require inventing a high-level aggregate mechanic.
+
+---
+
+# 12. Remaining raw-CFG completion checklist
+
+To close the audit completely, recover/copy the exact 2.0.5 rows for:
+
+- `WaterStamina2`
+- `WaterStaminaInstant`
+- `WaterStaminaPerAction1`
+- `RemoveDrunkness5`
+- `EnergeticStamina`
+- `EnergeticStaminaInstant3`
+- `EnergeticStaminaPerAction1`
+- `EnegeticSatiety2`
+- `EnergeticLimitedStamina`
+- `EnergeticLimitedStaminaInstant4`
+- `BeerAntirad1`
+- `BeerSatiety1`
+- `BeerStaminaPenalty`
+- `BeerDrunkness`
+- `BeerPSYInstaDecrease`
+- `VodkaDrunkness`
+- `VodkaPSYInstaDecrease`
+- `MagicVodkaDrunkness`
+- `MagicVodkaPSYInstaDecrease`
+- `MagicVodkaPSYProtection`
+
+For each row capture:
+
+```text
+SID
+EEffectType
+ValueMin / ValueMax
+Duration
+Charges
+Delay
+DuplicationType
+Positive
+AffectedStaminaActionTypes (when applicable)
+ApplyExtraEffectPrototypeSIDs
+```
+
+After that, the remaining direct controls can be promoted with the same 1:1 standard used elsewhere in the project.
