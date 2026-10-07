@@ -2393,9 +2393,9 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "Vanilla DrunknessMechanics thresholds are Medium 20, Strong 40 and Very Strong 60.",
-          "At vanilla drink strength, Beer contributes 15 Drunkness and Vodka 30, so Very Strong corresponds to 4 beers or 2 vodkas.",
-          "The tolerance control scales all three thresholds together and now exposes 1-8 beers or 1-4 vodkas as the primary whole-drink reference."
+          "Vanilla DrunknessMechanics thresholds remain fixed at Medium 20, Strong 40 and Very Strong 60.",
+          "This mapping is retained for source documentation/legacy compatibility only and is not instantiated in the player-facing control graph.",
+          "Beer and Vodka tolerance are tuned independently by changing BeerDrunkness and VodkaDrunkness strength."
         ]
       },
       "rationale": "Kept out of the UI so Beer and Vodka tolerance can be tuned independently through each drink's own strength.",
