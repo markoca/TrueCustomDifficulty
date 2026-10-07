@@ -31,7 +31,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Ranks.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
-    private readonly RadarStatusMessage _status;
+    private readonly VisualStatusMessage _status;
 
     private int _selectedRow;
     private int _hoverRow = -1;
@@ -51,7 +51,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
 
     public HumanGroupSizeRadar()
     {
-        _status = new RadarStatusMessage(InvalidateVisual);
+        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 390;
         Cursor = Cursors.Arrow;
