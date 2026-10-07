@@ -717,7 +717,12 @@ public sealed class ParameterViewModel : ObservableObject
     }
 
     private static string NegativePercent(double value, string meaning)
-        => $"-{Math.Abs(value) * 100:0.##}% {meaning}";
+    {
+        if (Math.Abs(value) <= Epsilon)
+            return $"0% {meaning}";
+
+        return $"-{Math.Abs(value) * 100:0.##}% {meaning}";
+    }
 
     private static string RecoveryModifier(double value)
     {
@@ -747,7 +752,7 @@ public sealed class ParameterViewModel : ObservableObject
             _ => "ABOVE EYES"
         };
 
-        return $"{height:0} uu ({marker})";
+        return $"{height:0} ({marker})";
     }
 
     private static string FormatCompact(double value)
