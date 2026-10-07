@@ -10,8 +10,8 @@ public sealed class ResponsiveParameterGridPanel : Panel
     private const double ColumnGap = 18.0;
     private const double TwoColumnThreshold = 700.0;
 
-    // Explicit UX pairings. The catalog remains the gameplay/source-of-truth order,
-    // while this map decides which related half-width controls should visually share a row.
+    // Explicit UX pairings and trios. The catalog remains the gameplay/source-of-truth order,
+    // while this map decides which related controls should visually share a row.
     // A one-item row is intentional when the control has no sensible partner.
     private static readonly IReadOnlyDictionary<string, SemanticSlot> SemanticSlots =
         new Dictionary<string, SemanticSlot>(StringComparer.Ordinal)
@@ -23,14 +23,15 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["combat.npcHipAccuracy"] = new("combat-human-2", 1),
             ["combat.mutantDamage"] = new("combat-mutant-1", 0),
             ["combat.mutantAttackCooldown"] = new("combat-mutant-1", 1),
-            ["combat.playerWeaponDamage"] = new("combat-player-1", 0),
-            ["combat.playerHeadshotMultiplier"] = new("combat-player-1", 1),
+            ["combat.playerWeaponDamage"] = new("combat-player-weapons", 0),
+            ["combat.playerHeadshotMultiplier"] = new("combat-player-weapons", 1),
+            ["combat.weaponJamming"] = new("combat-player-weapons", 2),
             ["combat.accumulatedDamageWeightMax"] = new("combat-repeat-1", 0),
             ["combat.accumulatedDamageWeightMin"] = new("combat-repeat-1", 1),
-            ["combat.psySpawnCycleDelay"] = new("combat-psy-1", 0),
-            ["combat.psyPhantomCount"] = new("combat-psy-1", 1),
-            ["combat.psyBleeding"] = new("combat-psy-2", 0),
-            ["combat.psyDurabilityDamage"] = new("combat-psy-2", 1),
+            ["combat.psySpawnCycleDelay"] = new("combat-psy-sliders", 0),
+            ["combat.psyPhantomCount"] = new("combat-psy-sliders", 1),
+            ["combat.psyDurabilityDamage"] = new("combat-psy-sliders", 2),
+            ["combat.psyBleeding"] = new("combat-psy-toggle", 0),
 
             // Survival
             ["survival.hungerRate"] = new("survival-hunger-1", 0),
@@ -40,19 +41,20 @@ public sealed class ResponsiveParameterGridPanel : Panel
 
             ["survival.sleepinessRate"] = new("survival-fatigue-1", 0),
             ["survival.energyDrinkFatigueRelief"] = new("survival-fatigue-1", 1),
-            ["survival.fatigueLowAimPenalty"] = new("survival-fatigue-low", 0),
-            ["survival.fatigueMediumAimPenalty"] = new("survival-fatigue-medium", 0),
-            ["survival.fatigueMediumReloadPenalty"] = new("survival-fatigue-medium", 1),
-            ["survival.fatigueStrongAimPenalty"] = new("survival-fatigue-severe", 0),
-            ["survival.fatigueStrongReloadPenalty"] = new("survival-fatigue-severe", 1),
+            ["survival.fatigueLowAimPenalty"] = new("survival-fatigue-aim", 0),
+            ["survival.fatigueMediumAimPenalty"] = new("survival-fatigue-aim", 1),
+            ["survival.fatigueStrongAimPenalty"] = new("survival-fatigue-aim", 2),
+            ["survival.fatigueMediumReloadPenalty"] = new("survival-fatigue-reload", 0),
+            ["survival.fatigueStrongReloadPenalty"] = new("survival-fatigue-reload", 1),
 
             ["survival.sleepEligibilityThreshold"] = new("survival-sleep-1", 0),
             ["survival.minimumSleepHours"] = new("survival-sleep-1", 1),
             ["survival.sleepHealthRestore"] = new("survival-sleep-2", 0),
             ["survival.sleepStaminaRestore"] = new("survival-sleep-2", 1),
 
-            ["survival.radiationAccumulation"] = new("survival-radiation-1", 0),
-            ["survival.radiationRecovery"] = new("survival-radiation-1", 1),
+            ["survival.radiationAccumulation"] = new("survival-radiation", 0),
+            ["survival.radiationRecovery"] = new("survival-radiation", 1),
+            ["survival.radiationDamage"] = new("survival-radiation", 2),
 
             ["survival.bleedingSeverity"] = new("survival-bleeding-1", 0),
             ["survival.bleedingRecovery"] = new("survival-bleeding-1", 1),
@@ -108,10 +110,10 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["economy.itemValueFloor"] = new("economy-trading-2", 1),
             ["economy.traderAmmoStock"] = new("economy-stock-1", 0),
             ["economy.medicStock"] = new("economy-stock-1", 1),
-            ["economy.fastTravelCost"] = new("economy-services-1", 0),
-            ["economy.upgradeCost"] = new("economy-services-1", 1),
-            ["economy.repairDifficultyCost"] = new("economy-services-2", 0),
-            ["economy.repairCostBase"] = new("economy-services-2", 1),
+            ["economy.fastTravelCost"] = new("economy-services", 0),
+            ["economy.upgradeCost"] = new("economy-services", 1),
+            ["economy.repairCostBase"] = new("economy-services", 2),
+            ["economy.repairDifficultyCost"] = new("economy-services-hidden", 0),
             ["economy.repairEnemy"] = new("economy-reputation-1", 0),
             ["economy.repairDisaffection"] = new("economy-reputation-1", 1),
             ["economy.repairNeutral"] = new("economy-reputation-2", 0),
@@ -132,10 +134,10 @@ public sealed class ResponsiveParameterGridPanel : Panel
             // Master
             ["advanced.lowHealthMechanics"] = new("master-low-health-1", 0),
             ["health.masterLowHealthPenalty"] = new("master-low-health-1", 1),
-            ["health.masterBandageModifier"] = new("master-medical-1", 0),
-            ["health.masterMedkitModifier"] = new("master-medical-1", 1),
-            ["health.masterArmyMedkitModifier"] = new("master-medical-2", 0),
-            ["advanced.masterEffectModifierMechanics"] = new("master-medical-2", 1),
+            ["advanced.masterEffectModifierMechanics"] = new("master-medical-toggle", 0),
+            ["health.masterBandageModifier"] = new("master-medical-sliders", 0),
+            ["health.masterMedkitModifier"] = new("master-medical-sliders", 1),
+            ["health.masterArmyMedkitModifier"] = new("master-medical-sliders", 2),
 
             ["advanced.starvationMechanics"] = new("master-starvation-1", 0),
             ["survival.starvationPenaltyDelay"] = new("master-starvation-1", 1),
