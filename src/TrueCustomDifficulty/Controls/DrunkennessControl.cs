@@ -242,7 +242,13 @@ public sealed class DrunkennessControl : FrameworkElement
 
         var vanillaX = ValueToX(vanillaStrength, minimum, maximum, sliderLeft, sliderRight);
         dc.DrawLine(new Pen(accentDark, 1.0), new Point(vanillaX, sliderY - 5), new Point(vanillaX, sliderY + 5));
-        DrawCenteredText(dc, "VANILLA", new Point(vanillaX, rect.Bottom - 20), 8.0, accentDark, FontWeights.Bold);
+        DrawCenteredText(
+            dc,
+            "VANILLA " + vanillaStrength.ToString("0", CultureInfo.InvariantCulture),
+            new Point(vanillaX, rect.Bottom - 20),
+            8.0,
+            accentDark,
+            FontWeights.Bold);
 
         DrawText(dc, "MIN " + minimum.ToString("0", CultureInfo.InvariantCulture), new Point(sliderLeft, rect.Bottom - 12), 7.7, muted, FontWeights.SemiBold);
         DrawRightAlignedText(dc, "MAX " + maximum.ToString("0", CultureInfo.InvariantCulture), new Point(sliderRight, rect.Bottom - 12), 7.7, muted, FontWeights.SemiBold);
