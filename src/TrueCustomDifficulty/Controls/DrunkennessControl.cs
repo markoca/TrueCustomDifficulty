@@ -9,9 +9,8 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// Player-facing alcohol editor built on fixed vanilla DrunknessMechanics thresholds.
-/// Beer and Vodka are tuned independently by changing only each drink's Drunkness value.
-/// The drinks-to-Very-Strong slider is a coarse view of the selected drink strength.
+/// Alcohol editor built on fixed vanilla DrunknessMechanics thresholds.
+/// Beer and Vodka are independent controls; only each drink's Drunkness value is edited.
 /// </summary>
 public sealed class DrunkennessControl : FrameworkElement
 {
@@ -26,14 +25,10 @@ public sealed class DrunkennessControl : FrameworkElement
 
     private ParameterViewModel? _beerStrengthParameter;
     private ParameterViewModel? _vodkaStrengthParameter;
-    private DrinkReference _reference = DrinkReference.Beer;
-    private ActiveSlider _activeSlider = ActiveSlider.DrinkCount;
+    private ActiveSlider _activeSlider = ActiveSlider.Beer;
 
-    private Rect _vodkaRect;
-    private Rect _beerRect;
-    private Rect _drinkCountSliderRect;
-    private Rect _strengthSliderRect;
-    private DrinkReference? _hoverReference;
+    private Rect _beerSliderRect;
+    private Rect _vodkaSliderRect;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -50,7 +45,7 @@ public sealed class DrunkennessControl : FrameworkElement
     public DrunkennessControl()
     {
         Focusable = true;
-        MinHeight = 340;
+        MinHeight = 400;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -58,7 +53,7 @@ public sealed class DrunkennessControl : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 720.0 : Math.Max(520.0, availableSize.Width);
-        return new Size(width, 340.0);
+        return new Size(width, 400.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -121,66 +116,82 @@ public sealed class DrunkennessControl : FrameworkElement
         var gap = 8.0;
         var totalWidth = Math.Max(480.0, ActualWidth - 24.0);
         var cardWidth = (totalWidth - gap) / 2.0;
-        var referenceCard = new Rect(12.0, 10.0, cardWidth, 120.0);
-        var strengthCard = new Rect(referenceCard.Right + gap, 10.0, cardWidth, 120.0);
+        var beerCard = new Rect(12.0, 10.0, cardWidth, 118.0);
+        var vodkaCard = new Rect(beerCard.Right + gap, 10.0, cardWidth, 118.0);
 
-        DrawReferenceCard(dc, referenceCard, panelAlt, border, track, text, muted, accent, accentDark);
-        DrawStrengthCard(dc, strengthCard, SelectedStrengthParameter, panelAlt, border, track, text, muted, accent, accentDark);
+        DrawDrinkCard(
+            dc,
+            beerCard,
+            "BEER",
+            "BEERS",
+            _beerStrengthParameter,
+            VanillaBeerDrunkness,
+            8,
+            ActiveSlider.Beer,
+            panelAlt,
+            border,
+            track,
+            text,
+            muted,
+            accent,
+            accentDark);
 
-        DrawProgression(dc, panelAlt, border, text, muted, accent);
-        DrawText(dc, "EFFECT PREVIEW", new Point(16, 200), 9.0, muted, FontWeights.Bold);
+        DrawDrinkCard(
+            dc,
+            vodkaCard,
+            "VODKA",
+            "VODKAS",
+            _vodkaStrengthParameter,
+            VanillaVodkaDrunkness,
+            4,
+            ActiveSlider.Vodka,
+            panelAlt,
+            border,
+            track,
+            text,
+            muted,
+            accent,
+            accentDark);
+
+        DrawProgressionRow(
+            dc,
+            "AFTER EACH BEER",
+            "BEER",
+            _beerStrengthParameter?.CurrentNumber ?? VanillaBeerDrunkness,
+            8,
+            142.0,
+            panelAlt,
+            border,
+            text,
+            muted,
+            accent);
+
+        DrawProgressionRow(
+            dc,
+            "AFTER EACH VODKA",
+            "VODKA",
+            _vodkaStrengthParameter?.CurrentNumber ?? VanillaVodkaDrunkness,
+            4,
+            198.0,
+            panelAlt,
+            border,
+            text,
+            muted,
+            accent);
+
+        DrawText(dc, "TIER EFFECTS", new Point(16, 254), 9.0, muted, FontWeights.Bold);
         DrawTierCards(dc, panelAlt, border, radarMuted, accent);
     }
 
-    private void DrawReferenceCard(
+    private void DrawDrinkCard(
         DrawingContext dc,
         Rect rect,
-        Brush background,
-        Brush border,
-        Brush track,
-        Brush text,
-        Brush muted,
-        Brush accent,
-        Brush accentDark)
-    {
-        dc.DrawRoundedRectangle(background, new Pen(border, 1.0), rect, 3.0, 3.0);
-
-        var requiredDrinks = RequiredWholeDrinks;
-        DrawText(dc, "REFERENCE", new Point(rect.Left + 10, rect.Top + 8), 10.0, accent, FontWeights.Bold);
-        DrawRightAlignedText(dc, FormatDrinks(requiredDrinks), new Point(rect.Right - 10, rect.Top + 6), 12.0, text, FontWeights.Bold);
-
-        _beerRect = new Rect(rect.Left + 10, rect.Top + 31, 50, 22);
-        _vodkaRect = new Rect(rect.Left + 65, rect.Top + 31, 58, 22);
-        DrawSelector(dc, _beerRect, "BEER", _reference == DrinkReference.Beer, _hoverReference == DrinkReference.Beer, background, border, accent, text);
-        DrawSelector(dc, _vodkaRect, "VODKA", _reference == DrinkReference.Vodka, _hoverReference == DrinkReference.Vodka, background, border, accent, text);
-
-        var sliderLeft = rect.Left + 12.0;
-        var sliderRight = rect.Right - 12.0;
-        var sliderY = rect.Top + 77.0;
-        _drinkCountSliderRect = new Rect(sliderLeft, sliderY - 13.0, sliderRight - sliderLeft, 30.0);
-
-        dc.DrawLine(new Pen(track, 3.0), new Point(sliderLeft, sliderY), new Point(sliderRight, sliderY));
-
-        var maxDrinks = MaxReferenceDrinks;
-        for (var i = 1; i <= maxDrinks; i++)
-        {
-            var x = DrinkToX(i, sliderLeft, sliderRight, maxDrinks);
-            dc.DrawLine(new Pen(border, 1.0), new Point(x, sliderY - 4), new Point(x, sliderY + 4));
-            DrawCenteredText(dc, i.ToString(CultureInfo.InvariantCulture), new Point(x, sliderY + 8), 8.0, muted, FontWeights.SemiBold);
-        }
-
-        var handleX = DrinkToX(requiredDrinks, sliderLeft, sliderRight, maxDrinks);
-        dc.DrawEllipse(accent, null, new Point(handleX, sliderY), 5.0, 5.0);
-
-        var vanillaDrinks = _reference == DrinkReference.Beer ? 4.0 : 2.0;
-        var vanillaX = DrinkToX(vanillaDrinks, sliderLeft, sliderRight, maxDrinks);
-        DrawCenteredText(dc, "VANILLA", new Point(vanillaX, rect.Bottom - 15), 8.0, accentDark, FontWeights.Bold);
-    }
-
-    private void DrawStrengthCard(
-        DrawingContext dc,
-        Rect rect,
+        string singular,
+        string plural,
         ParameterViewModel? parameter,
+        double vanillaStrength,
+        int maxDrinks,
+        ActiveSlider slider,
         Brush background,
         Brush border,
         Brush track,
@@ -191,52 +202,78 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         dc.DrawRoundedRectangle(background, new Pen(border, 1.0), rect, 3.0, 3.0);
 
-        var isBeer = _reference == DrinkReference.Beer;
-        var vanillaStrength = isBeer ? VanillaBeerDrunkness : VanillaVodkaDrunkness;
         var strength = parameter?.CurrentNumber ?? vanillaStrength;
+        var drinks = RequiredWholeDrinks(strength, maxDrinks);
+        var drinkLabel = drinks == 1 ? singular : plural;
 
-        DrawText(dc, isBeer ? "BEER" : "VODKA", new Point(rect.Left + 10, rect.Top + 8), 10.0, accent, FontWeights.Bold);
-        DrawRightAlignedText(dc, strength.ToString("0", CultureInfo.InvariantCulture), new Point(rect.Right - 10, rect.Top + 6), 12.0, text, FontWeights.Bold);
-        DrawText(dc, "DRUNKNESS / DRINK", new Point(rect.Left + 10, rect.Top + 34), 8.5, muted, FontWeights.SemiBold);
+        DrawText(dc, singular, new Point(rect.Left + 10, rect.Top + 8), 10.0, accent, FontWeights.Bold);
+        DrawRightAlignedText(
+            dc,
+            "VERY STRONG AFTER " + drinks.ToString(CultureInfo.InvariantCulture) + " " + drinkLabel,
+            new Point(rect.Right - 10, rect.Top + 7),
+            9.2,
+            text,
+            FontWeights.Bold);
+
+        DrawText(dc, "STRENGTH", new Point(rect.Left + 10, rect.Top + 34), 8.5, muted, FontWeights.Bold);
+        DrawRightAlignedText(
+            dc,
+            strength.ToString("0", CultureInfo.InvariantCulture),
+            new Point(rect.Right - 10, rect.Top + 30),
+            15.0,
+            text,
+            FontWeights.Bold);
 
         var sliderLeft = rect.Left + 12.0;
         var sliderRight = rect.Right - 12.0;
-        var sliderY = rect.Top + 77.0;
-        _strengthSliderRect = new Rect(sliderLeft, sliderY - 13.0, sliderRight - sliderLeft, 30.0);
+        var sliderY = rect.Top + 72.0;
+        var sliderRect = new Rect(sliderLeft, sliderY - 13.0, sliderRight - sliderLeft, 30.0);
+
+        if (slider == ActiveSlider.Beer)
+            _beerSliderRect = sliderRect;
+        else
+            _vodkaSliderRect = sliderRect;
 
         dc.DrawLine(new Pen(track, 3.0), new Point(sliderLeft, sliderY), new Point(sliderRight, sliderY));
 
-        var minimum = parameter?.Minimum ?? (isBeer ? 8.0 : 15.0);
+        var minimum = parameter?.Minimum ?? 1.0;
         var maximum = parameter?.Maximum ?? 60.0;
-        dc.DrawEllipse(accent, null, new Point(ValueToX(strength, minimum, maximum, sliderLeft, sliderRight), sliderY), 5.0, 5.0);
+        var handleX = ValueToX(strength, minimum, maximum, sliderLeft, sliderRight);
+        dc.DrawEllipse(accent, null, new Point(handleX, sliderY), 5.0, 5.0);
 
         var vanillaX = ValueToX(vanillaStrength, minimum, maximum, sliderLeft, sliderRight);
         dc.DrawLine(new Pen(accentDark, 1.0), new Point(vanillaX, sliderY - 5), new Point(vanillaX, sliderY + 5));
-        DrawCenteredText(dc, "VANILLA", new Point(vanillaX, rect.Bottom - 15), 8.0, accentDark, FontWeights.Bold);
+        DrawCenteredText(dc, "VANILLA", new Point(vanillaX, rect.Bottom - 20), 8.0, accentDark, FontWeights.Bold);
+
+        DrawText(dc, minimum.ToString("0", CultureInfo.InvariantCulture), new Point(sliderLeft, rect.Bottom - 12), 7.7, muted, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, maximum.ToString("0", CultureInfo.InvariantCulture), new Point(sliderRight, rect.Bottom - 12), 7.7, muted, FontWeights.SemiBold);
     }
 
-    private void DrawProgression(
+    private void DrawProgressionRow(
         DrawingContext dc,
+        string title,
+        string singular,
+        double strength,
+        int count,
+        double titleY,
         Brush panelAlt,
         Brush border,
         Brush text,
         Brush muted,
         Brush accent)
     {
-        var title = _reference == DrinkReference.Beer ? "AFTER EACH BEER" : "AFTER EACH VODKA";
-        DrawText(dc, title, new Point(16, 143), 9.0, muted, FontWeights.Bold);
+        DrawText(dc, title, new Point(16, titleY), 9.0, muted, FontWeights.Bold);
 
-        var count = MaxReferenceDrinks;
         var gap = 7.0;
         var left = 16.0;
-        var top = 160.0;
+        var top = titleY + 17.0;
         var totalWidth = Math.Max(420.0, ActualWidth - 32.0);
         var chipWidth = (totalWidth - gap * (count - 1)) / count;
         var chipHeight = 30.0;
 
         for (var drink = 1; drink <= count; drink++)
         {
-            var tier = GetTierAfterDrink(drink);
+            var tier = GetTierAfterDrink(drink, strength);
             var rect = new Rect(left + (drink - 1) * (chipWidth + gap), top, chipWidth, chipHeight);
             var isVeryStrong = tier == "VERY STRONG";
 
@@ -248,13 +285,13 @@ public sealed class DrunkennessControl : FrameworkElement
                 3.0);
 
             DrawText(dc, drink.ToString(CultureInfo.InvariantCulture), new Point(rect.Left + 8, rect.Top + 6), 10.0, text, FontWeights.Bold);
-            DrawText(dc, tier, new Point(rect.Left + 25, rect.Top + 7), 8.7, isVeryStrong ? accent : muted, FontWeights.Bold);
+            DrawText(dc, tier, new Point(rect.Left + 25, rect.Top + 7), 8.4, isVeryStrong ? accent : muted, FontWeights.Bold);
         }
     }
 
-    private string GetTierAfterDrink(int drinkCount)
+    private static string GetTierAfterDrink(int drinkCount, double strength)
     {
-        var drunkness = drinkCount * ReferenceStrength;
+        var drunkness = drinkCount * strength;
 
         if (drunkness >= VanillaVeryStrong)
             return "VERY STRONG";
@@ -277,10 +314,10 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         var gap = 8.0;
         var left = 16.0;
-        var top = 218.0;
+        var top = 272.0;
         var totalWidth = Math.Max(460.0, ActualWidth - 32.0);
         var cardWidth = (totalWidth - gap * 3.0) / 4.0;
-        var cardHeight = 108.0;
+        var cardHeight = 112.0;
 
         var tiers = new[]
         {
@@ -298,33 +335,13 @@ public sealed class DrunkennessControl : FrameworkElement
             dc.DrawRoundedRectangle(panelAlt, new Pen(border, 1.0), rect, 3.0, 3.0);
             DrawText(dc, tier.Label, new Point(rect.Left + 9, rect.Top + 8), 10.0, accent, FontWeights.Bold);
 
-            var y = rect.Top + 28.0;
+            var y = rect.Top + 29.0;
             foreach (var effect in tier.Effects)
             {
-                DrawText(dc, effect, new Point(rect.Left + 9, y), 8.4, muted, FontWeights.Normal);
-                y += 12.7;
+                DrawText(dc, effect, new Point(rect.Left + 9, y), 8.5, muted, FontWeights.Normal);
+                y += 13.0;
             }
         }
-    }
-
-    private void DrawSelector(
-        DrawingContext dc,
-        Rect rect,
-        string label,
-        bool selected,
-        bool hovered,
-        Brush background,
-        Brush border,
-        Brush accent,
-        Brush text)
-    {
-        dc.DrawRoundedRectangle(
-            background,
-            new Pen(selected || hovered ? accent : border, selected ? 1.5 : 1.0),
-            rect,
-            3.0,
-            3.0);
-        DrawCenteredText(dc, label, new Point(rect.Left + rect.Width / 2.0, rect.Top + 4.0), 9.0, selected || hovered ? Brushes.White : text, FontWeights.Bold);
     }
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -334,36 +351,18 @@ public sealed class DrunkennessControl : FrameworkElement
 
         var point = e.GetPosition(this);
 
-        if (_vodkaRect.Contains(point))
+        if (_beerSliderRect.Contains(point))
         {
-            _reference = DrinkReference.Vodka;
-            _activeSlider = ActiveSlider.DrinkCount;
-            InvalidateVisual();
+            _activeSlider = ActiveSlider.Beer;
+            SetStrengthFromPoint(_beerStrengthParameter, _beerSliderRect, point.X);
             e.Handled = true;
             return;
         }
 
-        if (_beerRect.Contains(point))
+        if (_vodkaSliderRect.Contains(point))
         {
-            _reference = DrinkReference.Beer;
-            _activeSlider = ActiveSlider.DrinkCount;
-            InvalidateVisual();
-            e.Handled = true;
-            return;
-        }
-
-        if (_drinkCountSliderRect.Contains(point))
-        {
-            _activeSlider = ActiveSlider.DrinkCount;
-            SetDrinkCountFromPoint(point.X);
-            e.Handled = true;
-            return;
-        }
-
-        if (_strengthSliderRect.Contains(point))
-        {
-            _activeSlider = ActiveSlider.Strength;
-            SetStrengthFromPoint(point.X);
+            _activeSlider = ActiveSlider.Vodka;
+            SetStrengthFromPoint(_vodkaStrengthParameter, _vodkaSliderRect, point.X);
             e.Handled = true;
         }
     }
@@ -373,11 +372,21 @@ public sealed class DrunkennessControl : FrameworkElement
         base.OnMouseRightButtonDown(e);
 
         var point = e.GetPosition(this);
-        if (!_drinkCountSliderRect.Contains(point) && !_strengthSliderRect.Contains(point))
-            return;
 
-        ResetSelectedDrink();
-        e.Handled = true;
+        if (_beerSliderRect.Contains(point))
+        {
+            _activeSlider = ActiveSlider.Beer;
+            ResetStrength(_beerStrengthParameter, VanillaBeerDrunkness);
+            e.Handled = true;
+            return;
+        }
+
+        if (_vodkaSliderRect.Contains(point))
+        {
+            _activeSlider = ActiveSlider.Vodka;
+            ResetStrength(_vodkaStrengthParameter, VanillaVodkaDrunkness);
+            e.Handled = true;
+        }
     }
 
     protected override void OnMouseWheel(MouseWheelEventArgs e)
@@ -390,18 +399,18 @@ public sealed class DrunkennessControl : FrameworkElement
         var point = e.GetPosition(this);
         var direction = e.Delta > 0 ? 1 : -1;
 
-        if (_drinkCountSliderRect.Contains(point))
+        if (_beerSliderRect.Contains(point))
         {
-            _activeSlider = ActiveSlider.DrinkCount;
-            NudgeDrinkCount(direction);
+            _activeSlider = ActiveSlider.Beer;
+            NudgeStrength(_beerStrengthParameter, direction);
             e.Handled = true;
             return;
         }
 
-        if (_strengthSliderRect.Contains(point))
+        if (_vodkaSliderRect.Contains(point))
         {
-            _activeSlider = ActiveSlider.Strength;
-            NudgeStrength(direction);
+            _activeSlider = ActiveSlider.Vodka;
+            NudgeStrength(_vodkaStrengthParameter, direction);
             e.Handled = true;
         }
     }
@@ -409,33 +418,15 @@ public sealed class DrunkennessControl : FrameworkElement
     protected override void OnMouseMove(MouseEventArgs e)
     {
         base.OnMouseMove(e);
-
         var point = e.GetPosition(this);
-        DrinkReference? hoverReference = _vodkaRect.Contains(point)
-            ? DrinkReference.Vodka
-            : _beerRect.Contains(point)
-                ? DrinkReference.Beer
-                : null;
-
-        var interactive = hoverReference is not null
-            || _drinkCountSliderRect.Contains(point)
-            || _strengthSliderRect.Contains(point);
-
+        var interactive = _beerSliderRect.Contains(point) || _vodkaSliderRect.Contains(point);
         Cursor = interactive ? Cursors.Hand : Cursors.Arrow;
-
-        if (_hoverReference != hoverReference)
-        {
-            _hoverReference = hoverReference;
-            InvalidateVisual();
-        }
     }
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
-        _hoverReference = null;
         Cursor = Cursors.Arrow;
-        InvalidateVisual();
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -444,7 +435,11 @@ public sealed class DrunkennessControl : FrameworkElement
 
         if (e.Key == Key.R)
         {
-            ResetSelectedDrink();
+            if (_activeSlider == ActiveSlider.Beer)
+                ResetStrength(_beerStrengthParameter, VanillaBeerDrunkness);
+            else
+                ResetStrength(_vodkaStrengthParameter, VanillaVodkaDrunkness);
+
             e.Handled = true;
             return;
         }
@@ -459,41 +454,26 @@ public sealed class DrunkennessControl : FrameworkElement
         if (direction == 0)
             return;
 
-        if (_activeSlider == ActiveSlider.DrinkCount)
-            NudgeDrinkCount(direction);
-        else
-            NudgeStrength(direction);
+        NudgeStrength(
+            _activeSlider == ActiveSlider.Beer ? _beerStrengthParameter : _vodkaStrengthParameter,
+            direction);
 
         e.Handled = true;
     }
 
-    private void SetDrinkCountFromPoint(double x)
+    private void SetStrengthFromPoint(ParameterViewModel? parameter, Rect sliderRect, double x)
     {
-        var ratio = Math.Clamp((x - _drinkCountSliderRect.Left) / Math.Max(1.0, _drinkCountSliderRect.Width), 0.0, 1.0);
-        var count = 1 + (int)Math.Round(ratio * (MaxReferenceDrinks - 1), MidpointRounding.AwayFromZero);
-        SetRequiredDrinks(count);
-    }
-
-    private void SetStrengthFromPoint(double x)
-    {
-        var parameter = SelectedStrengthParameter;
         if (parameter is null)
             return;
 
-        var ratio = Math.Clamp((x - _strengthSliderRect.Left) / Math.Max(1.0, _strengthSliderRect.Width), 0.0, 1.0);
-        parameter.CurrentNumber = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
+        var ratio = Math.Clamp((x - sliderRect.Left) / Math.Max(1.0, sliderRect.Width), 0.0, 1.0);
+        var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
+        parameter.CurrentNumber = Math.Round(raw, MidpointRounding.AwayFromZero);
         InvalidateVisual();
     }
 
-    private void NudgeDrinkCount(int direction)
+    private void NudgeStrength(ParameterViewModel? parameter, int direction)
     {
-        var count = RequiredWholeDrinks + direction;
-        SetRequiredDrinks(Math.Clamp(count, 1, MaxReferenceDrinks));
-    }
-
-    private void NudgeStrength(int direction)
-    {
-        var parameter = SelectedStrengthParameter;
         if (parameter is null)
             return;
 
@@ -501,67 +481,20 @@ public sealed class DrunkennessControl : FrameworkElement
         InvalidateVisual();
     }
 
-    private void ResetSelectedDrink()
+    private void ResetStrength(ParameterViewModel? parameter, double vanilla)
     {
-        var parameter = SelectedStrengthParameter;
         if (parameter is null)
             return;
 
-        parameter.CurrentNumber = _reference == DrinkReference.Beer
-            ? VanillaBeerDrunkness
-            : VanillaVodkaDrunkness;
-
+        parameter.CurrentNumber = vanilla;
         InvalidateVisual();
     }
 
-    private void SetRequiredDrinks(int drinks)
-    {
-        var parameter = SelectedStrengthParameter;
-        if (parameter is null)
-            return;
-
-        // Pick the smallest whole-number strength that reaches the fixed vanilla
-        // Very Strong threshold on the requested drink and not before it.
-        var strength = Math.Ceiling(VanillaVeryStrong / drinks);
-        parameter.CurrentNumber = Math.Clamp(strength, parameter.Minimum, parameter.Maximum);
-        InvalidateVisual();
-    }
-
-    private ParameterViewModel? SelectedStrengthParameter
-        => _reference == DrinkReference.Beer
-            ? _beerStrengthParameter
-            : _vodkaStrengthParameter;
-
-    private double ReferenceStrength
-        => SelectedStrengthParameter?.CurrentNumber
-            ?? (_reference == DrinkReference.Beer ? VanillaBeerDrunkness : VanillaVodkaDrunkness);
-
-    private int RequiredWholeDrinks
+    private static int RequiredWholeDrinks(double strength, int maxDrinks)
         => Math.Clamp(
-            Math.Max(1, (int)Math.Ceiling(VanillaVeryStrong / Math.Max(1.0, ReferenceStrength))),
+            Math.Max(1, (int)Math.Ceiling(VanillaVeryStrong / Math.Max(1.0, strength))),
             1,
-            MaxReferenceDrinks);
-
-    private int MaxReferenceDrinks
-        => _reference == DrinkReference.Beer ? 8 : 4;
-
-    private string FormatDrinks(int drinks)
-    {
-        var plural = drinks == 1
-            ? (_reference == DrinkReference.Beer ? "BEER" : "VODKA")
-            : (_reference == DrinkReference.Beer ? "BEERS" : "VODKAS");
-
-        return drinks.ToString(CultureInfo.InvariantCulture) + " " + plural;
-    }
-
-    private static double DrinkToX(double drinks, double left, double right, int maxDrinks)
-    {
-        if (maxDrinks <= 1)
-            return left;
-
-        var ratio = (drinks - 1.0) / (maxDrinks - 1.0);
-        return left + Math.Clamp(ratio, 0.0, 1.0) * (right - left);
-    }
+            maxDrinks);
 
     private static double ValueToX(double value, double minimum, double maximum, double left, double right)
     {
@@ -603,16 +536,10 @@ public sealed class DrunkennessControl : FrameworkElement
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
-    private enum DrinkReference
-    {
-        Vodka,
-        Beer
-    }
-
     private enum ActiveSlider
     {
-        DrinkCount,
-        Strength
+        Beer,
+        Vodka
     }
 
     private sealed record TierInfo(string Label, string[] Effects);
