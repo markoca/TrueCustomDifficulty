@@ -443,6 +443,24 @@ Status: **RUNTIME / COMPLETE-CHAIN AUDIT REQUIRED**.
 
 ---
 
+# Drunkenness threshold visualizer
+
+The test UI now uses one source-exact threshold scaler:
+
+- `survival.drunknessThresholdScale`
+
+It scales the authored `DrunknessMechanics` thresholds together:
+
+- Medium: 20
+- Strong: 40
+- Very Strong: 60
+
+The control presents those thresholds as a human-readable drink count using Beer = 15 Drunkness and Vodka = 30 Drunkness. Vanilla therefore reads as approximately 4 beers or 2 vodkas to Very Strong when drinks are stacked before natural sober-up.
+
+The BEER/VODKA selector is presentation-only; it does not edit the drink effect strengths. A separate BACK-TO-BACK PREVIEW selects a simulated drink count and whitens only the effect text for the currently active drunkness tier.
+
+---
+
 # 8. Alcohol drunkness and over-drunkness
 
 The Player mechanics graph explicitly contains:

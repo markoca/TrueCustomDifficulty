@@ -227,6 +227,14 @@
                                                                                          MinHeight="520"
                                                                                          Visibility="Collapsed"
                                                                                          Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+                                                                <controls:DrunkennessControl x:Name="DrunkennessControl"
+                                                                                             PreviewMouseLeftButtonDown="Radar_PreviewMouseLeftButtonDown"
+                                                                                             Grid.Row="0"
+                                                                                             Grid.RowSpan="2"
+                                                                                             MinHeight="350"
+                                                                                             Visibility="Collapsed"
+                                                                                             Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <Slider x:Name="SliderControl"
                                                                         Grid.Row="0"
@@ -456,6 +464,15 @@
                                                             <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="SpecialAbilityCooldownRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsDrunkennessAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="DrunkennessControl" Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsRange}" Value="False">
                                                             <Setter TargetName="RangeControl" Property="Visibility" Value="Collapsed" />

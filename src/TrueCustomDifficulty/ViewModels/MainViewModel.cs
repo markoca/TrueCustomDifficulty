@@ -1188,6 +1188,7 @@ public sealed class MainViewModel : ObservableObject
                 "survival.fatigueStrongReloadPenalty" => 280,
 
                 // Consumable Effects
+                "survival.drunknessThresholdScale" => 289,
                 "survival.instantStaminaRestore" => 290,
                 "survival.alcoholRadiationRemoval" => 291,
                 "survival.waterEffectDuration" => 292,

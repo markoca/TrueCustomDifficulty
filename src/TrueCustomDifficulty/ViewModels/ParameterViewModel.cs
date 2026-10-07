@@ -52,6 +52,12 @@ public sealed class ParameterViewModel : ObservableObject
     {
         get
         {
+            if (IsDrunkennessAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "Choose BEER or VODKA as the reference drink, then set how many it should take to reach Very Strong drunkenness. Use BACK-TO-BACK PREVIEW to inspect the active drunkenness tier and its effects without changing the setting. Right-click the visualizer to return the thresholds to VANILLA.";
+            }
+
             if (IsAggregateRadarAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
@@ -273,6 +279,8 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsMutantGroupSizeMember => MutantGroupSizeParameterIds.Contains(Id);
     public bool IsMutantGroupSizeAnchor => Id == "alife.mutantSpawn.bloodsucker";
 
+    public bool IsDrunkennessAnchor => Id == "survival.drunknessThresholdScale";
+
     public bool IsAggregateRadarAnchor =>
         IsAmmoDistributionAnchor ||
         IsStashAmmoAnchor ||
@@ -285,7 +293,8 @@ public sealed class ParameterViewModel : ObservableObject
         IsMutantHealthAnchor ||
         IsSpecialAbilityCooldownAnchor ||
         IsHumanGroupSizeAnchor ||
-        IsMutantGroupSizeAnchor;
+        IsMutantGroupSizeAnchor ||
+        IsDrunkennessAnchor;
 
     public bool HasEffectiveDamage => _effectiveDamageMultiplierProvider is not null;
     public bool IsControlEnabled => _dependencyEnabledProvider?.Invoke() ?? true;

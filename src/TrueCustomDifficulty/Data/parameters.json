@@ -1984,6 +1984,66 @@
       "interaction": "Fatigue Build-up Rate controls how quickly tiredness returns. This setting changes how much relief energy drinks provide, including their special Poppy Field and Weird Kettle variants."
     },
     {
+      "id": "survival.drunknessThresholdScale",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Drinks to Get Very Drunk",
+      "description": "Controls how many Beer/Vodka equivalents it takes to reach Very Strong Drunkness by scaling the vanilla 20 / 40 / 60 drunkness thresholds together.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Drunkness thresholds"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 1.5,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "DrunknessMechanics",
+          "path": "MechanicsEffect.ConditionEffects.MediumDrunkness.ConditionValue",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "DrunknessMechanics",
+          "path": "MechanicsEffect.ConditionEffects.StrongDrunkness.ConditionValue",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "DrunknessMechanics",
+          "path": "MechanicsEffect.ConditionEffects.VeryStrongDrunkness.ConditionValue",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla DrunknessMechanics thresholds are Medium 20, Strong 40 and Very Strong 60.",
+          "Beer contributes 15 Drunkness and Vodka 30, so vanilla Very Strong corresponds to roughly 4 beers or 2 vodkas when drinks are stacked before natural sober-up.",
+          "The control scales thresholds instead of changing Beer/Vodka Drunkness effect strength, preserving their authored 1:2 relationship and avoiding scripted VodkaDrunkness edits."
+        ]
+      },
+      "rationale": "Sets how quickly alcohol progresses through Medium, Strong and Very Strong drunkenness without changing the strength of Beer or Vodka themselves.",
+      "logic": "Vanilla is 4 beers or 2 vodkas to the Very Strong threshold of 60. The control scales all three thresholds together, preserving the 20 / 40 / 60 progression.",
+      "interaction": "The BEER/VODKA selector is only a human-readable reference. BACK-TO-BACK PREVIEW shows which drunkenness tier and effects would be active before natural sober-up."
+    },
+    {
       "id": "survival.instantStaminaRestore",
       "tab": "survival",
       "group": "Consumable Effects",

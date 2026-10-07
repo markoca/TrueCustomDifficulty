@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 214,
+  "supportedParameterCount": 215,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -22078,6 +22078,54 @@
       "nodePath": [],
       "key": "Duration",
       "sourceRaw": "90.0",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.drunknessThresholdScale",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "DrunknessMechanics",
+      "nodePath": [
+        "MechanicsEffect",
+        "ConditionEffects",
+        "MediumDrunkness"
+      ],
+      "key": "ConditionValue",
+      "sourceRaw": "20",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.drunknessThresholdScale",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "DrunknessMechanics",
+      "nodePath": [
+        "MechanicsEffect",
+        "ConditionEffects",
+        "StrongDrunkness"
+      ],
+      "key": "ConditionValue",
+      "sourceRaw": "40",
+      "operation": "scale",
+      "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.drunknessThresholdScale",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "DrunknessMechanics",
+      "nodePath": [
+        "MechanicsEffect",
+        "ConditionEffects",
+        "VeryStrongDrunkness"
+      ],
+      "key": "ConditionValue",
+      "sourceRaw": "60",
       "operation": "scale",
       "role": "",
       "difficultySid": ""
