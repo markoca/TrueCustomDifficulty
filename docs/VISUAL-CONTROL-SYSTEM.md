@@ -68,7 +68,7 @@ The existing fatigue severity constraints remain authoritative.
 - Army Medkit Bleeding Removal
 - Scientific Medkit Bleeding Removal
 
-Each fader keeps its raw removal value while the visual position is directly comparable because each catalog range spans 0x to 2x its vanilla value.
+The mixer uses one shared normalized 0–200% of vanilla scale. The 100% line is the vanilla strength of each item, with stronger treatment above it and weaker treatment below it. Each fader also shows the live raw bleeding-removal value and that item's raw vanilla reference, while preserving the original per-parameter range, snapping, preset and writer behavior.
 
 ### Consumable Effects Mixer
 
