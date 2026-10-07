@@ -53,7 +53,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 390;
+        MinHeight = 320;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -61,7 +61,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 700.0 : Math.Max(520.0, availableSize.Width);
-        return new Size(width, 390.0);
+        return new Size(width, 320.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -162,7 +162,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
 
         for (var row = 0; row < Ranks.Length; row++)
         {
-            var top = 99.0 + row * 60.0;
+            var top = 88.0 + row * 50.0;
             DrawRankRow(
                 dc,
                 row,
@@ -182,7 +182,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
         DrawCenteredText(
             dc,
             "GOLD = CURRENT RESULT   •   vN = VANILLA CAP   •   1x MARKER = BASE PRESET",
-            new Point(ActualWidth / 2.0, 342.0),
+            new Point(ActualWidth / 2.0, 286.0),
             7.7,
             muted,
             FontWeights.Normal);
@@ -192,7 +192,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             DrawCenteredText(
                 dc,
                 _status.Text,
-                new Point(ActualWidth / 2.0, 365.0),
+                new Point(ActualWidth / 2.0, 309.0),
                 8.0,
                 accent,
                 FontWeights.SemiBold);
@@ -474,7 +474,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
