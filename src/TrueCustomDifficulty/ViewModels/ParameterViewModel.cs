@@ -61,18 +61,18 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsBleedingCurveAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Bleeding Strength and Natural Recovery use compact click-and-drag tracks. LOW, MEDIUM and SEVERE damage share one curve: click or drag a curve column to change its damage per bleeding tick. The curve always preserves LOW ≤ MEDIUM ≤ SEVERE. Right-click one control to restore only that value to the Base Preset; press R to restore the whole Bleeding system.";
+                       "Bleeding Strength and Natural Recovery use compact tracks. The damage curve uses the real bleeding-state X axis: LOW stays at the authored 0.1 boundary, while MEDIUM and SEVERE threshold handles move their stage boundaries from 1-100 Bleeding points (vanilla 50 / 75). Drag curve points vertically to tune HP damage per tick. Damage preserves LOW ≤ MEDIUM ≤ SEVERE; thresholds preserve MEDIUM ≤ SEVERE. Right-click one handle to reset it; press R to reset the whole Bleeding system.";
             }
 
             if (IsVisualAggregateAnchor)
             {
                 var help = VisualAggregateFamily switch
                 {
-                    "FatigueCurve" => "Drag AIM points across LOW / MEDIUM / SEVERE and RELOAD points across MEDIUM / SEVERE to shape how fatigue penalties escalate. LOW fatigue has no separate reload parameter. The two compact tracks control fatigue build-up and Energy Drink relief.",
+                    "FatigueCurve" => "The horizontal position of LOW / MEDIUM / SEVERE is now the real 0-100 SleepinessPoints threshold (vanilla 50 / 60 / 80). Drag the stage marker horizontally to change when that stage begins, and drag AIM / RELOAD vertically to change its combat penalty. Thresholds preserve LOW <= MEDIUM <= SEVERE with the actively moved stage taking priority. LOW fatigue has no separate reload parameter.",
                     "BleedingTreatmentMixer" => "Drag the four faders on the shared 0–200% of vanilla scale. The 100% line is each item's own vanilla bleeding removal; the raw bleeding value stays visible under the relative value.",
                     "ConsumableMixer" => "INSTANT STAMINA BURST previews the authored Water 38%, Energy 50% and Limited Energy 100% refills under one multiplier; ALCOHOL RADIATION CLEANUP previews Beer 10 and Vodka 50 radiation points removed. TIMED EFFECTS share one real seconds axis: Water keeps its 5 s / 30 s timing pair, Energy keeps 45 s / 15 s / 5 s, Vodka and Beer use 20 s stamina penalties, and Magic Vodka uses 90 s psi protection. Drag the gold endpoint for a row to scale that family while preserving its internal timing ratios. Drunkenness is separate.",
                     "SleepingDashboard" => "Tune the sleep threshold, minimum sleep duration, health restore and stamina restore directly in the Sleeping dashboard.",
-                    "HungerLadder" => "Tune hunger build-up at the top. The shared recovery axis shows WELL FED as a stamina-recovery bonus to the right of NEUTRAL, while HUNGRY and SEVERE penalties extend left. Drag each state on that common gameplay scale; vanilla is marked on every row.",
+                    "HungerLadder" => "Tune hunger build-up at the top. The 0-100 HUNGER POINTS strip controls the real Low / Medium / Severe state thresholds (vanilla 17 / 33 / 83); Medium and Severe also carry the vanilla no-sleep state. The lower shared recovery axis independently tunes WELL FED bonus and Medium/Severe stamina-recovery penalties. Thresholds preserve LOW <= MEDIUM <= SEVERE.",
                     "StarvationTimeline" => "The 50-second preview starts when severe hunger activates. Drag PENALTIES START to set the grace period and 1ST DAMAGE to change the repeating damage interval; later tick marks move with it. The three lower meters tune extra action stamina cost, HP per tick and health-recovery loss. DAMAGE PRESSURE shows the resulting average HP loss per second.",
                     "RepeatedHitBand" => "The gold CURRENT envelope shows the weaker MIN and stronger MAX ends of repeated-hit protection; the dashed VANILLA envelope is the Base Preset reference. These 0.00–1.00 values are curve weights, not literal damage-reduction percentages. Drag MIN or MAX directly; the endpoint you move has priority and the other follows only if needed to keep MIN ≤ MAX. The toggle controls whether healed damage remains in the protection tracker.",
                     "RadiationBalance" => "Tune NATURAL CLEARANCE and EXPOSURE GAIN independently on their real parameter scales. RELATIVE TUNING BIAS compares each value only against its own Base Preset reference, so it shows whether your tuning leans toward faster build-up or stronger clearance without pretending to be a literal net radiation rate. HEALTH DAMAGE below scales all radiation-damage stages while their vanilla thresholds stay unchanged.",
@@ -363,7 +363,9 @@ public sealed class ParameterViewModel : ObservableObject
         "survival.bleedingRecovery",
         "survival.bleedingLowDamage",
         "survival.bleedingMediumDamage",
-        "survival.bleedingStrongDamage"
+        "survival.bleedingStrongDamage",
+        "survival.bleedingMediumThreshold",
+        "survival.bleedingStrongThreshold"
     };
 
     public bool IsBleedingCurveMember => BleedingCurveParameterIds.Contains(Id);
@@ -372,6 +374,9 @@ public sealed class ParameterViewModel : ObservableObject
     private static readonly Dictionary<string, string> VisualAggregateFamilyByParameterId = new(StringComparer.Ordinal)
     {
         ["survival.sleepinessRate"] = "FatigueCurve",
+        ["survival.sleepLowThreshold"] = "FatigueCurve",
+        ["survival.sleepMediumThreshold"] = "FatigueCurve",
+        ["survival.sleepStrongThreshold"] = "FatigueCurve",
         ["survival.energyDrinkFatigueRelief"] = "FatigueCurve",
         ["survival.fatigueLowAimPenalty"] = "FatigueCurve",
         ["survival.fatigueMediumAimPenalty"] = "FatigueCurve",
@@ -398,6 +403,9 @@ public sealed class ParameterViewModel : ObservableObject
         ["survival.sleepStaminaRestore"] = "SleepingDashboard",
 
         ["survival.hungerRate"] = "HungerLadder",
+        ["survival.hungerLowThreshold"] = "HungerLadder",
+        ["survival.hungerMediumThreshold"] = "HungerLadder",
+        ["survival.hungerStrongThreshold"] = "HungerLadder",
         ["survival.hungerMediumStaminaRegen"] = "HungerLadder",
         ["survival.hungerStrongStaminaRegen"] = "HungerLadder",
         ["survival.wellFedStaminaRegen"] = "HungerLadder",
