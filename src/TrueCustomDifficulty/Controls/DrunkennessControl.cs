@@ -154,7 +154,7 @@ public sealed class DrunkennessControl : FrameworkElement
 
         DrawProgressionRow(
             dc,
-            "AFTER EACH BEER",
+            "BEER PROGRESSION",
             _beerStrengthParameter?.CurrentNumber ?? VanillaBeerDrunkness,
             8,
             122.0,
@@ -166,7 +166,7 @@ public sealed class DrunkennessControl : FrameworkElement
 
         DrawProgressionRow(
             dc,
-            "AFTER EACH VODKA",
+            "VODKA PROGRESSION",
             _vodkaStrengthParameter?.CurrentNumber ?? VanillaVodkaDrunkness,
             4,
             178.0,
@@ -294,30 +294,55 @@ public sealed class DrunkennessControl : FrameworkElement
         Brush muted,
         Brush accent)
     {
-        DrawText(dc, title, new Point(16, titleY), 9.0, muted, FontWeights.Bold);
+        DrawText(dc, title, new Point(16, titleY), 9.5, muted, FontWeights.Bold);
 
-        var gap = 7.0;
         var left = 16.0;
-        var top = titleY + 17.0;
+        var top = titleY + 16.0;
         var totalWidth = Math.Max(420.0, ActualWidth - 32.0);
-        var chipWidth = (totalWidth - gap * (count - 1)) / count;
-        var chipHeight = 30.0;
+        var stripHeight = 34.0;
+        var segmentWidth = totalWidth / count;
+        var stripRect = new Rect(left, top, totalWidth, stripHeight);
+
+        dc.DrawRoundedRectangle(panelAlt, new Pen(border, 1.0), stripRect, 4.0, 4.0);
 
         for (var drink = 1; drink <= count; drink++)
         {
             var tier = GetTierAfterDrink(drink, strength);
-            var rect = new Rect(left + (drink - 1) * (chipWidth + gap), top, chipWidth, chipHeight);
             var isWasted = tier == "WASTED";
+            var segmentLeft = left + (drink - 1) * segmentWidth;
+            var segmentCenter = segmentLeft + segmentWidth / 2.0;
 
-            dc.DrawRoundedRectangle(
-                panelAlt,
-                new Pen(isWasted ? accent : border, isWasted ? 1.4 : 1.0),
-                rect,
-                3.0,
-                3.0);
+            if (drink > 1)
+            {
+                dc.DrawLine(
+                    new Pen(border, 1.0),
+                    new Point(segmentLeft, top + 5.0),
+                    new Point(segmentLeft, top + stripHeight - 5.0));
+            }
 
-            DrawText(dc, FormatOrdinal(drink), new Point(rect.Left + 7, rect.Top + 6), 9.0, text, FontWeights.Bold);
-            DrawText(dc, tier, new Point(rect.Left + 34, rect.Top + 7), 8.4, isWasted ? accent : muted, FontWeights.Bold);
+            if (isWasted)
+            {
+                dc.DrawLine(
+                    new Pen(accent, 2.0),
+                    new Point(segmentLeft + 5.0, top + 1.0),
+                    new Point(segmentLeft + segmentWidth - 5.0, top + 1.0));
+            }
+
+            DrawCenteredText(
+                dc,
+                FormatOrdinal(drink),
+                new Point(segmentCenter, top + 4.0),
+                8.7,
+                text,
+                FontWeights.Bold);
+
+            DrawCenteredText(
+                dc,
+                tier,
+                new Point(segmentCenter, top + 18.0),
+                8.8,
+                isWasted ? accent : muted,
+                FontWeights.Bold);
         }
     }
 
