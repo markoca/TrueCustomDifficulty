@@ -2441,7 +2441,7 @@
         "status": "runtime_test_required",
         "notes": [
           "BeerDrunkness uses ValueMin = 15 and ValueMax = 15 in the audited vanilla-era/current mod cross-check.",
-          "100% keeps the authored strength of 15 Drunkness per Beer; the slider scales ValueMin and ValueMax together.",
+          "The control writes the same raw Drunkness value to ValueMin and ValueMax in exact 1-point steps.",
           "The direct effect fields are source-structured and writer-safe, but the exact 2.0.5 raw row was not part of the original project baseline and should be runtime-tested."
         ]
       },
@@ -2488,7 +2488,7 @@
         "status": "runtime_test_required",
         "notes": [
           "VodkaDrunkness uses ValueMin = 30 and ValueMax = 30 in the audited vanilla-era/current mod cross-check.",
-          "100% keeps the authored strength of 30 Drunkness per Vodka; the slider scales ValueMin and ValueMax together.",
+          "The control writes the same raw Drunkness value to ValueMin and ValueMax in exact 1-point steps.",
           "The direct effect fields are source-structured and writer-safe, but the exact 2.0.5 raw row was not part of the original project baseline and should be runtime-tested."
         ]
       },
