@@ -206,7 +206,7 @@ private string _statusText = string.Empty;
             FontWeights.Normal);
 
         var instruction = string.IsNullOrWhiteSpace(_statusText)
-            ? "Drag a point | Arrow keys adjust selected family | Right-click point/legend resets that family | R resets all"
+            ? "Drag a point | Arrow keys adjust selected family | Right click point/legend resets that family | R resets all"
             : _statusText;
         DrawCenteredText(dc, instruction, new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 28), RadarInfoTextSize, string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush, FontWeights.Normal);
     }
@@ -618,7 +618,7 @@ private string _statusText = string.Empty;
         Brush brush,
         FontWeight weight)
     {
-        var formatted = CreateText(text, size * 1.25, brush, weight);
+        var formatted = CreateText(text, size, brush, weight);
         var x = Math.Clamp(center.X - formatted.Width / 2.0, 8.0, Math.Max(8.0, ActualWidth - formatted.Width - 8.0));
         dc.DrawText(formatted, new Point(x, center.Y - formatted.Height / 2.0));
     }
@@ -702,7 +702,9 @@ private string _statusText = string.Empty;
     }
 
     private FormattedText CreateText(string text, double size, Brush brush, FontWeight weight)
-        => new(
+    {
+        var formatted = new FormattedText(
+
             text,
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
@@ -710,6 +712,16 @@ private string _statusText = string.Empty;
             size,
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
+
+        var separatorBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
+        for (var i = 0; i < text.Length; i++)
+        {
+            if (text[i] == '|')
+                formatted.SetForegroundBrush(separatorBrush, i, 1);
+        }
+
+        return formatted;
+    }
 
     private enum TextAnchor { Left, Center, Right }
 
