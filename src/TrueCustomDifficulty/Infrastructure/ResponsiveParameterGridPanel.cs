@@ -372,7 +372,7 @@ public sealed class ResponsiveParameterGridPanel : Panel
         if (child is not FrameworkElement { DataContext: ParameterViewModel parameter })
             return false;
 
-        return parameter.IsAggregateRadarAnchor;
+        return parameter.IsVisualControlAnchor;
     }
 
     private sealed record SemanticSlot(string RowKey, int Column);
