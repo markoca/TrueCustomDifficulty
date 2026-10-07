@@ -808,7 +808,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "HUNGER STATE LADDER", "build-up feeds into progressively harsher stamina states", text, muted, accent);
+        DrawHeader(dc, "HUNGER STATE LADDER", "one shared stamina-recovery axis from penalty to bonus", text, muted, accent);
 
         DrawHorizontalTrackCard(
             dc,
@@ -821,43 +821,133 @@ public sealed class AggregateVisualControl : FrameworkElement
             accent,
             panel);
 
-        var ladderX = 42.0;
-        var topY = 168.0;
-        var rowGap = 66.0;
-        dc.DrawLine(new Pen(soft, 2.0), new Point(ladderX, topY), new Point(ladderX, topY + rowGap * 2.0));
+        var axis = new Rect(218.0, 158.0, Math.Max(280.0, ActualWidth - 250.0), 184.0);
+        const double effectMinimum = -1.0;
+        const double effectMaximum = 0.4;
+
+        double EffectToX(double effect)
+        {
+            var ratio = Math.Clamp(
+                (effect - effectMinimum) / (effectMaximum - effectMinimum),
+                0.0,
+                1.0);
+
+            return axis.Left + axis.Width * ratio;
+        }
+
+        var neutralX = EffectToX(0.0);
+
+        // Shared semantic scale: all three hunger states now read against the same
+        // player-facing stamina-recovery meaning instead of three unrelated slider scales.
+        dc.DrawRoundedRectangle(
+            CloneWithOpacity(panel, 0.92),
+            new Pen(border, 1.0),
+            new Rect(axis.Left - 10.0, axis.Top - 28.0, axis.Width + 20.0, axis.Height + 42.0),
+            4.0,
+            4.0);
+
+        var penaltyZone = new Rect(axis.Left, axis.Top - 4.0, Math.Max(0.0, neutralX - axis.Left), axis.Height + 8.0);
+        var bonusZone = new Rect(neutralX, axis.Top - 4.0, Math.Max(0.0, axis.Right - neutralX), axis.Height + 8.0);
+
+        dc.DrawRectangle(CloneWithOpacity(border, 0.10), null, penaltyZone);
+        dc.DrawRectangle(CloneWithOpacity(accent, 0.06), null, bonusZone);
+
+        DrawText(dc, "PENALTY", new Point(axis.Left, axis.Top - 23.0), 8.2, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "NEUTRAL", new Point(neutralX, axis.Top - 23.0), 8.2, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "BONUS", new Point(axis.Right, axis.Top - 23.0), 8.2, accent, FontWeights.Bold);
+
+        DrawText(dc, "-100%", new Point(axis.Left, axis.Bottom + 12.0), 7.8, muted, FontWeights.Normal);
+        DrawCenteredText(dc, "0%", new Point(neutralX, axis.Bottom + 12.0), 7.8, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "+40%", new Point(axis.Right, axis.Bottom + 12.0), 7.8, muted, FontWeights.Normal);
+
+        dc.DrawLine(
+            new Pen(soft, 1.0) { DashStyle = DashStyles.Dot },
+            new Point(neutralX, axis.Top - 7.0),
+            new Point(neutralX, axis.Bottom + 7.0));
 
         var stages = new[]
         {
-            ("WELL FED", "stamina recovery bonus", P("survival.wellFedStaminaRegen")),
-            ("HUNGRY", "stamina recovery penalty", P("survival.hungerMediumStaminaRegen")),
-            ("SEVERE", "stamina recovery penalty", P("survival.hungerStrongStaminaRegen"))
+            (Label: "WELL FED", Meaning: "stamina recovery bonus", Parameter: P("survival.wellFedStaminaRegen"), IsBonus: true),
+            (Label: "HUNGRY", Meaning: "stamina recovery penalty", Parameter: P("survival.hungerMediumStaminaRegen"), IsBonus: false),
+            (Label: "SEVERE", Meaning: "stamina recovery penalty", Parameter: P("survival.hungerStrongStaminaRegen"), IsBonus: false)
         };
 
         for (var i = 0; i < stages.Length; i++)
         {
-            var y = topY + i * rowGap;
-            dc.DrawEllipse(panel, new Pen(i == 0 ? accent : border, 2.0), new Point(ladderX, y), 6.0, 6.0);
+            var stage = stages[i];
+            var rowY = axis.Top + 27.0 + i * 56.0;
 
-            if (i < stages.Length - 1)
+            DrawText(dc, stage.Label, new Point(24.0, rowY - 14.0), 9.4, i == 0 ? accent : text, FontWeights.Bold);
+            DrawText(dc, stage.Meaning, new Point(24.0, rowY + 1.0), 8.0, muted, FontWeights.Normal);
+
+            if (stage.Parameter is not { } parameter)
+                continue;
+
+            dc.DrawLine(new Pen(border, 3.0), new Point(axis.Left, rowY), new Point(axis.Right, rowY));
+
+            var currentEffect = stage.IsBonus ? parameter.CurrentNumber : -parameter.CurrentNumber;
+            var referenceEffect = stage.IsBonus ? parameter.ReferenceNumber : -parameter.ReferenceNumber;
+            var currentX = EffectToX(currentEffect);
+            var referenceX = EffectToX(referenceEffect);
+
+            dc.DrawLine(
+                new Pen(muted, 1.0),
+                new Point(referenceX, rowY - 7.0),
+                new Point(referenceX, rowY + 7.0));
+
+            dc.DrawLine(
+                new Pen(accent, 3.0),
+                new Point(neutralX, rowY),
+                new Point(currentX, rowY));
+
+            dc.DrawEllipse(
+                panel,
+                new Pen(accent, IsSelected(parameter) ? 2.5 : 1.6),
+                new Point(currentX, rowY),
+                7.0,
+                7.0);
+            dc.DrawEllipse(accent, null, new Point(currentX, rowY), 3.0, 3.0);
+
+            DrawRightAlignedText(
+                dc,
+                FriendlyValue(parameter),
+                new Point(axis.Right, rowY - 19.0),
+                8.8,
+                accent,
+                FontWeights.SemiBold);
+
+            if (stage.IsBonus)
             {
-                var arrowY = y + rowGap / 2.0;
-                dc.DrawLine(new Pen(soft, 1.0), new Point(ladderX - 4.0, arrowY - 3.0), new Point(ladderX, arrowY + 2.0));
-                dc.DrawLine(new Pen(soft, 1.0), new Point(ladderX + 4.0, arrowY - 3.0), new Point(ladderX, arrowY + 2.0));
-            }
+                var maxX = EffectToX(parameter.Maximum);
+                var map = new Rect(
+                    neutralX,
+                    rowY - 14.0,
+                    Math.Max(1.0, maxX - neutralX),
+                    28.0);
 
-            DrawText(dc, stages[i].Item1, new Point(62.0, y - 17.0), 9.4, i == 0 ? accent : text, FontWeights.Bold);
-            DrawText(dc, stages[i].Item2, new Point(62.0, y - 3.0), 8.0, muted, FontWeights.Normal);
-
-            if (stages[i].Item3 is { } parameter)
-            {
-                DrawInlineHorizontalTrack(
-                    dc,
+                AddHorizontalTarget(
                     parameter,
-                    new Rect(250.0, y - 10.0, Math.Max(190.0, ActualWidth - 278.0), 26.0),
-                    text,
-                    muted,
-                    border,
-                    accent);
+                    new Rect(map.Left - 8.0, map.Top - 3.0, map.Width + 16.0, map.Height + 6.0),
+                    map,
+                    parameter.Minimum,
+                    parameter.Maximum);
+            }
+            else
+            {
+                var maxPenaltyX = EffectToX(-parameter.Maximum);
+                var map = new Rect(
+                    maxPenaltyX,
+                    rowY - 14.0,
+                    Math.Max(1.0, neutralX - maxPenaltyX),
+                    28.0);
+
+                AddHorizontalTarget(
+                    parameter,
+                    new Rect(map.Left - 8.0, map.Top - 3.0, map.Width + 16.0, map.Height + 6.0),
+                    map,
+                    parameter.Minimum,
+                    parameter.Maximum,
+                    reverse: true);
             }
         }
     }
