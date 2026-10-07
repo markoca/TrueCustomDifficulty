@@ -10,7 +10,7 @@ namespace TrueCustomDifficulty;
 
 public partial class MainWindow : Window
 {
-    private const double AspectRatio = 16.0 / 10.0;
+    private const double AspectRatio = 16.0 / 9.0;
     private const int WmSizing = 0x0214;
     private const int WmSysCommand = 0x0112;
     private const int ScMaximize = 0xF030;
@@ -96,7 +96,7 @@ public partial class MainWindow : Window
         if (msg != WmSizing || lParam == IntPtr.Zero)
             return IntPtr.Zero;
 
-        // Manual resizing leaves the custom 16:10 maximized state and becomes
+        // Manual resizing leaves the custom 16:9 maximized state and becomes
         // the new normal window geometry, while keeping the aspect lock active.
         _isAspectMaximized = false;
 
