@@ -456,7 +456,7 @@ public sealed class ParameterViewModel : ObservableObject
         && (!IsBleedingCurveMember || IsBleedingCurveAnchor)
         && (!IsDrunkennessMember || IsDrunkennessAnchor)
         && (!IsVisualAggregateMember || IsVisualAggregateAnchor)
-        && (_dependencyEnabledProvider?.Invoke() ?? true);
+        && (IsVisualAggregateAnchor || (_dependencyEnabledProvider?.Invoke() ?? true));
     public string ToggleStateLabel => CurrentBoolean ? "ON" : "OFF";
     public double Minimum => Definition.Slider?.Min ?? 0;
     public double Maximum => Definition.Slider?.Max ?? 1;
