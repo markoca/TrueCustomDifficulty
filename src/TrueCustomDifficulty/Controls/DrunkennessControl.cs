@@ -45,7 +45,7 @@ public sealed class DrunkennessControl : FrameworkElement
     public DrunkennessControl()
     {
         Focusable = true;
-        MinHeight = 300;
+        MinHeight = 340;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -53,7 +53,7 @@ public sealed class DrunkennessControl : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 720.0 : Math.Max(520.0, availableSize.Width);
-        return new Size(width, 300.0);
+        return new Size(width, 340.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -137,8 +137,64 @@ public sealed class DrunkennessControl : FrameworkElement
         var vanillaX = DrinkToX(vanillaDrinks, sliderLeft, sliderRight, maxDrinks);
         DrawCenteredText(dc, "VANILLA", new Point(vanillaX, sliderY + 25), 9.0, accentDark, FontWeights.Bold);
 
-        DrawText(dc, "EFFECT PREVIEW", new Point(16, 139), 9.0, muted, FontWeights.Bold);
+        DrawProgression(dc, panelAlt, border, text, muted, accent);
+
+        DrawText(dc, "EFFECT PREVIEW", new Point(16, 190), 9.0, muted, FontWeights.Bold);
         DrawTierCards(dc, panelAlt, border, radarMuted, accent);
+    }
+
+    private void DrawProgression(
+        DrawingContext dc,
+        Brush panelAlt,
+        Brush border,
+        Brush text,
+        Brush muted,
+        Brush accent)
+    {
+        var title = _reference == DrinkReference.Beer ? "AFTER EACH BEER" : "AFTER EACH VODKA";
+        DrawText(dc, title, new Point(16, 132), 9.0, muted, FontWeights.Bold);
+
+        var count = MaxReferenceDrinks;
+        var gap = 7.0;
+        var left = 16.0;
+        var top = 149.0;
+        var totalWidth = Math.Max(420.0, ActualWidth - 32.0);
+        var chipWidth = (totalWidth - gap * (count - 1)) / count;
+        var chipHeight = 30.0;
+
+        for (var drink = 1; drink <= count; drink++)
+        {
+            var tier = GetTierAfterDrink(drink);
+            var rect = new Rect(left + (drink - 1) * (chipWidth + gap), top, chipWidth, chipHeight);
+            var isVeryStrong = tier == "VERY STRONG";
+
+            dc.DrawRoundedRectangle(
+                panelAlt,
+                new Pen(isVeryStrong ? accent : border, isVeryStrong ? 1.4 : 1.0),
+                rect,
+                3.0,
+                3.0);
+
+            DrawText(dc, drink.ToString(CultureInfo.InvariantCulture), new Point(rect.Left + 8, rect.Top + 6), 10.0, text, FontWeights.Bold);
+            DrawText(dc, tier, new Point(rect.Left + 25, rect.Top + 7), 8.7, isVeryStrong ? accent : muted, FontWeights.Bold);
+        }
+    }
+
+    private string GetTierAfterDrink(int drinkCount)
+    {
+        var drunkness = drinkCount * ReferenceStrength;
+        var scale = CurrentScale;
+
+        if (drunkness >= VanillaVeryStrong * scale)
+            return "VERY STRONG";
+
+        if (drunkness >= 40.0 * scale)
+            return "STRONG";
+
+        if (drunkness >= 20.0 * scale)
+            return "MEDIUM";
+
+        return "LOW";
     }
 
     private void DrawTierCards(
@@ -150,10 +206,10 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         var gap = 8.0;
         var left = 16.0;
-        var top = 157.0;
+        var top = 208.0;
         var totalWidth = Math.Max(460.0, ActualWidth - 32.0);
         var cardWidth = (totalWidth - gap * 3.0) / 4.0;
-        var cardHeight = 116.0;
+        var cardHeight = 112.0;
 
         var tiers = new[]
         {
@@ -355,16 +411,16 @@ public sealed class DrunkennessControl : FrameworkElement
 
     private string FormatDrinks(double drinks)
     {
-        var rounded = Math.Round(drinks, 1, MidpointRounding.AwayFromZero);
-        var countText = Math.Abs(rounded - Math.Round(rounded)) < 0.0001
-            ? Math.Round(rounded).ToString("0", CultureInfo.InvariantCulture)
-            : rounded.ToString("0.#", CultureInfo.InvariantCulture);
+        // Players consume whole bottles/cans in gameplay. If a threshold falls between
+        // two whole drinks (for example 0.5 vodka), show the first whole drink that
+        // actually reaches it instead of exposing the internal fractional math.
+        var wholeDrinks = Math.Max(1, (int)Math.Ceiling(drinks - 0.000001));
 
-        var plural = Math.Abs(rounded - 1.0) < 0.0001
+        var plural = wholeDrinks == 1
             ? (_reference == DrinkReference.Beer ? "BEER" : "VODKA")
             : (_reference == DrinkReference.Beer ? "BEERS" : "VODKAS");
 
-        return $"{countText} {plural}";
+        return $"{wholeDrinks.ToString(CultureInfo.InvariantCulture)} {plural}";
     }
 
     private static double DrinkToX(double drinks, double left, double right, int maxDrinks)
