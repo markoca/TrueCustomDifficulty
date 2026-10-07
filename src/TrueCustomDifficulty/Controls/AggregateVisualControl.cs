@@ -961,65 +961,228 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "STARVATION TIMELINE", "onset, damage cadence and active penalties", text, muted, accent);
+        DrawHeader(dc, "STARVATION TIMELINE", "see the grace period, repeating damage cadence and active penalties together", text, muted, accent);
 
         var toggle = P("advanced.starvationMechanics");
-        DrawTogglePill(dc, toggle, "MASTER STARVATION PENALTIES", new Rect(Math.Max(250.0, ActualWidth - 250.0), 43.0, 222.0, 34.0), text, muted, border, accent, panel);
-
         var delay = P("survival.starvationPenaltyDelay");
         var interval = P("survival.starvationDamageInterval");
+        var staminaDrain = P("survival.starvationStaminaDrain");
+        var damage = P("survival.starvationDamage");
+        var healthRegen = P("survival.starvationHealthRegenPenalty");
 
-        var lineLeft = 38.0;
-        var lineRight = Math.Max(lineLeft + 380.0, ActualWidth - 30.0);
-        var lineY = 119.0;
-        var totalWidth = lineRight - lineLeft;
-        var delayWidth = totalWidth * 0.34;
-        var intervalWidth = totalWidth - delayWidth - 14.0;
-        var intervalLeft = lineLeft + delayWidth + 14.0;
+        DrawTogglePill(
+            dc,
+            toggle,
+            "MASTER STARVATION PENALTIES",
+            new Rect(Math.Max(250.0, ActualWidth - 250.0), 43.0, 222.0, 34.0),
+            text,
+            muted,
+            border,
+            accent,
+            panel);
 
-        DrawText(dc, "STARVING", new Point(lineLeft, 88.0), 8.5, muted, FontWeights.Bold);
+        var timeline = new Rect(42.0, 103.0, Math.Max(390.0, ActualWidth - 84.0), 62.0);
+        var timelineY = timeline.Top + 28.0;
+        const double previewSeconds = 50.0;
 
-        dc.DrawLine(new Pen(border, 3.0), new Point(lineLeft, lineY), new Point(lineLeft + delayWidth, lineY));
-        dc.DrawLine(new Pen(border, 3.0), new Point(intervalLeft, lineY), new Point(lineRight, lineY));
+        double TimeToX(double seconds)
+            => timeline.Left + timeline.Width * Math.Clamp(seconds / previewSeconds, 0.0, 1.0);
+
+        dc.DrawRoundedRectangle(
+            CloneWithOpacity(panel, 0.92),
+            new Pen(border, 1.0),
+            new Rect(timeline.Left - 10.0, timeline.Top - 14.0, timeline.Width + 20.0, timeline.Height + 29.0),
+            4.0,
+            4.0);
+
+        dc.DrawLine(new Pen(border, 3.0), new Point(timeline.Left, timelineY), new Point(timeline.Right, timelineY));
+
+        for (var second = 0; second <= 50; second += 10)
+        {
+            var tickX = TimeToX(second);
+            dc.DrawLine(new Pen(soft, 1.0), new Point(tickX, timelineY - 6.0), new Point(tickX, timelineY + 6.0));
+            DrawCenteredText(dc, $"{second}s", new Point(tickX, timelineY + 13.0), 7.6, muted, FontWeights.Normal);
+        }
+
+        DrawText(dc, "SEVERE HUNGER", new Point(timeline.Left, timeline.Top - 8.0), 8.2, text, FontWeights.Bold);
+        dc.DrawEllipse(accent, null, new Point(timeline.Left, timelineY), 5.5, 5.5);
 
         if (delay is not null)
         {
-            var delayMap = new Rect(lineLeft, lineY - 13.0, delayWidth, 26.0);
-            var delayX = ValueToX(delay.CurrentNumber, delay.Minimum, delay.Maximum, delayMap, reverse: false);
-            var vanillaX = ValueToX(delay.ReferenceNumber, delay.Minimum, delay.Maximum, delayMap, reverse: false);
+            var delayX = TimeToX(delay.CurrentNumber);
+            var delayVanillaX = TimeToX(delay.ReferenceNumber);
 
-            dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX, lineY - 6.0), new Point(vanillaX, lineY + 6.0));
-            dc.DrawEllipse(accent, null, new Point(delayX, lineY), 6.0, 6.0);
-            DrawCenteredText(dc, "PENALTIES BEGIN", new Point(delayX, lineY + 17.0), 8.0, text, FontWeights.Bold);
-            DrawCenteredText(dc, FriendlyValue(delay), new Point(delayX, lineY + 31.0), 8.6, accent, FontWeights.SemiBold);
+            dc.DrawRectangle(
+                CloneWithOpacity(accent, 0.09),
+                null,
+                new Rect(timeline.Left, timelineY - 7.0, Math.Max(1.0, delayX - timeline.Left), 14.0));
 
-            AddHorizontalTarget(delay, delayMap, delayMap, delay.Minimum, delay.Maximum);
+            dc.DrawLine(new Pen(muted, 1.0), new Point(delayVanillaX, timelineY - 12.0), new Point(delayVanillaX, timelineY + 12.0));
+            dc.DrawLine(new Pen(accent, 2.0), new Point(delayX, timelineY - 15.0), new Point(delayX, timelineY + 15.0));
+            dc.DrawEllipse(panel, new Pen(accent, IsSelected(delay) ? 2.5 : 1.6), new Point(delayX, timelineY), 7.0, 7.0);
+
+            DrawCenteredText(dc, "PENALTIES START", new Point(delayX, timeline.Top - 8.0), 8.0, accent, FontWeights.Bold);
+            DrawCenteredText(dc, FriendlyValue(delay), new Point(delayX, timeline.Bottom + 21.0), 8.4, accent, FontWeights.SemiBold);
+
+            var delayMap = new Rect(
+                TimeToX(delay.Minimum),
+                timelineY - 15.0,
+                Math.Max(1.0, TimeToX(delay.Maximum) - TimeToX(delay.Minimum)),
+                30.0);
+
+            AddHorizontalTarget(
+                delay,
+                new Rect(delayMap.Left - 8.0, delayMap.Top - 4.0, delayMap.Width + 16.0, delayMap.Height + 8.0),
+                delayMap,
+                delay.Minimum,
+                delay.Maximum);
         }
 
-        if (interval is not null)
+        if (delay is not null && interval is not null)
         {
-            var intervalMap = new Rect(intervalLeft, lineY - 13.0, intervalWidth, 26.0);
-            var intervalX = ValueToX(interval.CurrentNumber, interval.Minimum, interval.Maximum, intervalMap, reverse: false);
-            var vanillaX = ValueToX(interval.ReferenceNumber, interval.Minimum, interval.Maximum, intervalMap, reverse: false);
+            var firstTickTime = delay.CurrentNumber + interval.CurrentNumber;
+            var firstTickX = TimeToX(firstTickTime);
 
-            dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX, lineY - 6.0), new Point(vanillaX, lineY + 6.0));
-            dc.DrawEllipse(accent, null, new Point(intervalX, lineY), 6.0, 6.0);
-            DrawCenteredText(dc, "DAMAGE EVERY", new Point(intervalX, lineY + 17.0), 8.0, text, FontWeights.Bold);
-            DrawCenteredText(dc, FriendlyValue(interval), new Point(intervalX, lineY + 31.0), 8.6, accent, FontWeights.SemiBold);
+            var intervalVanillaTime = delay.CurrentNumber + interval.ReferenceNumber;
+            var intervalVanillaX = TimeToX(intervalVanillaTime);
 
-            AddHorizontalTarget(interval, intervalMap, intervalMap, interval.Minimum, interval.Maximum);
+            dc.DrawLine(new Pen(muted, 1.0), new Point(intervalVanillaX, timelineY - 11.0), new Point(intervalVanillaX, timelineY + 11.0));
+            dc.DrawEllipse(panel, new Pen(accent, IsSelected(interval) ? 2.5 : 1.6), new Point(firstTickX, timelineY), 7.0, 7.0);
+            dc.DrawEllipse(accent, null, new Point(firstTickX, timelineY), 3.0, 3.0);
+
+            DrawCenteredText(dc, "1ST DAMAGE", new Point(firstTickX, timeline.Top + 2.0), 7.8, text, FontWeights.Bold);
+            DrawCenteredText(dc, $"EVERY {interval.CurrentNumber:0}s", new Point(firstTickX, timeline.Bottom + 21.0), 8.4, accent, FontWeights.SemiBold);
+
+            // Preview the next starvation charges on a real time axis. These are
+            // visual-only markers; the first charge handle edits the interval.
+            for (var tick = 2; tick <= 8; tick++)
+            {
+                var tickTime = delay.CurrentNumber + interval.CurrentNumber * tick;
+                if (tickTime > previewSeconds + Epsilon)
+                    break;
+
+                var tickX = TimeToX(tickTime);
+                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.55), 1.4), new Point(tickX, timelineY - 8.0), new Point(tickX, timelineY + 8.0));
+                dc.DrawEllipse(CloneWithOpacity(accent, 0.60), null, new Point(tickX, timelineY), 3.2, 3.2);
+            }
+
+            var intervalStartX = TimeToX(delay.CurrentNumber + interval.Minimum);
+            var intervalEndX = TimeToX(delay.CurrentNumber + interval.Maximum);
+            var intervalMap = new Rect(
+                intervalStartX,
+                timelineY - 15.0,
+                Math.Max(1.0, intervalEndX - intervalStartX),
+                30.0);
+
+            AddHorizontalTarget(
+                interval,
+                new Rect(intervalMap.Left - 8.0, intervalMap.Top - 4.0, intervalMap.Width + 16.0, intervalMap.Height + 8.0),
+                intervalMap,
+                interval.Minimum,
+                interval.Maximum);
         }
 
-        DrawText(dc, "ACTIVE WHILE STARVING", new Point(18.0, 176.0), 8.8, muted, FontWeights.Bold);
+        var bundleOn = toggle?.CurrentBoolean == true;
+        var pressure = damage is not null && interval is not null && interval.CurrentNumber > Epsilon
+            ? damage.CurrentNumber / interval.CurrentNumber
+            : 0.0;
+        var vanillaPressure = damage is not null && interval is not null && interval.ReferenceNumber > Epsilon
+            ? damage.ReferenceNumber / interval.ReferenceNumber
+            : 0.0;
 
-        var left = 16.0;
-        var width = Math.Max(420.0, ActualWidth - 32.0);
-        var gap = 10.0;
-        var half = (width - gap) / 2.0;
+        DrawText(
+            dc,
+            bundleOn ? "ACTIVE PENALTIES" : "BUNDLE OFF — VALUES ARE STAGED",
+            new Point(22.0, 206.0),
+            8.8,
+            bundleOn ? text : muted,
+            FontWeights.Bold);
 
-        DrawHorizontalTrackCard(dc, P("survival.starvationStaminaDrain"), "STAMINA DRAIN", new Rect(left, 194.0, half, 76.0), text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, P("survival.starvationDamage"), "DAMAGE PER TICK", new Rect(left + half + gap, 194.0, half, 76.0), text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, P("survival.starvationHealthRegenPenalty"), "HEALTH RECOVERY LOSS", new Rect(left, 284.0, width, 76.0), text, muted, border, accent, panel);
+        DrawRightAlignedText(
+            dc,
+            $"DAMAGE PRESSURE  {pressure:0.00} HP/s   |   VANILLA {vanillaPressure:0.00} HP/s",
+            new Point(Math.Max(420.0, ActualWidth - 22.0), 206.0),
+            8.3,
+            pressure > vanillaPressure + Epsilon ? accent : muted,
+            FontWeights.SemiBold);
+
+        var meterArea = new Rect(24.0, 232.0, Math.Max(430.0, ActualWidth - 48.0), 148.0);
+        var meterGap = 12.0;
+        var meterWidth = (meterArea.Width - meterGap * 2.0) / 3.0;
+
+        var meters = new[]
+        {
+            (Parameter: staminaDrain, Label: "ACTION STAMINA COST", Footer: "extra cost"),
+            (Parameter: damage, Label: "HP PER TICK", Footer: "direct damage"),
+            (Parameter: healthRegen, Label: "HEALTH RECOVERY LOSS", Footer: "regen suppressed")
+        };
+
+        for (var i = 0; i < meters.Length; i++)
+        {
+            var meter = meters[i];
+            var card = new Rect(
+                meterArea.Left + i * (meterWidth + meterGap),
+                meterArea.Top,
+                meterWidth,
+                meterArea.Height);
+
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.94), new Pen(border, 1.0), card, 4.0, 4.0);
+            DrawCenteredText(dc, meter.Label, new Point(card.Left + card.Width / 2.0, card.Top + 10.0), 8.2, muted, FontWeights.Bold);
+
+            if (meter.Parameter is not { } parameter)
+                continue;
+
+            DrawCenteredText(
+                dc,
+                FriendlyValue(parameter),
+                new Point(card.Left + card.Width / 2.0, card.Top + 29.0),
+                10.0,
+                accent,
+                FontWeights.Bold);
+
+            var bar = new Rect(
+                card.Left + Math.Max(22.0, card.Width * 0.28),
+                card.Top + 53.0,
+                Math.Max(22.0, card.Width * 0.44),
+                62.0);
+
+            dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.16), new Pen(border, 1.0), bar, 3.0, 3.0);
+
+            var currentY = ValueToY(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, bar);
+            var referenceY = ValueToY(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, bar);
+
+            dc.DrawRectangle(
+                CloneWithOpacity(accent, bundleOn ? 0.28 : 0.12),
+                null,
+                new Rect(bar.Left, currentY, bar.Width, Math.Max(1.0, bar.Bottom - currentY)));
+
+            dc.DrawLine(
+                new Pen(muted, 1.2),
+                new Point(bar.Left - 4.0, referenceY),
+                new Point(bar.Right + 4.0, referenceY));
+
+            dc.DrawLine(
+                new Pen(accent, IsSelected(parameter) ? 3.0 : 2.0),
+                new Point(bar.Left - 3.0, currentY),
+                new Point(bar.Right + 3.0, currentY));
+
+            AddVerticalTarget(
+                parameter,
+                new Rect(card.Left + 8.0, bar.Top - 6.0, card.Width - 16.0, bar.Height + 12.0),
+                bar,
+                parameter.Minimum,
+                parameter.Maximum);
+
+            DrawCenteredText(dc, meter.Footer, new Point(card.Left + card.Width / 2.0, card.Bottom - 21.0), 7.8, muted, FontWeights.Normal);
+        }
+
+        DrawCenteredText(
+            dc,
+            "VANILLA MARKERS ARE THE THIN GREY LINES — DRAG THE GOLD HANDLES / METERS",
+            new Point(ActualWidth / 2.0, 404.0),
+            7.8,
+            muted,
+            FontWeights.Normal);
     }
 
     private void DrawRepeatedHitBand(
@@ -1753,7 +1916,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "ConsumableMixer" => 420.0,
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
-            "StarvationTimeline" => 395.0,
+            "StarvationTimeline" => 430.0,
             "RepeatedHitBand" => 290.0,
             "RadiationBalance" => 300.0,
             "TradingDashboard" => 310.0,
