@@ -29,6 +29,7 @@ public sealed class DrunkennessControl : FrameworkElement
 
     private Rect _beerSliderRect;
     private Rect _vodkaSliderRect;
+    private bool _isDraggingSlider;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -213,7 +214,7 @@ public sealed class DrunkennessControl : FrameworkElement
             text,
             FontWeights.Bold);
 
-        DrawText(dc, "STRENGTH", new Point(rect.Left + 10, rect.Top + 34), 8.5, muted, FontWeights.Bold);
+        DrawText(dc, "DRINK STRENGTH", new Point(rect.Left + 10, rect.Top + 34), 8.5, muted, FontWeights.Bold);
         DrawRightAlignedText(
             dc,
             strength.ToString("0", CultureInfo.InvariantCulture),
@@ -225,7 +226,7 @@ public sealed class DrunkennessControl : FrameworkElement
         var sliderLeft = rect.Left + 12.0;
         var sliderRight = rect.Right - 12.0;
         var sliderY = rect.Top + 72.0;
-        var sliderRect = new Rect(sliderLeft, sliderY - 13.0, sliderRight - sliderLeft, 30.0);
+        var sliderRect = new Rect(sliderLeft, sliderY - 18.0, sliderRight - sliderLeft, 42.0);
 
         if (slider == ActiveSlider.Beer)
             _beerSliderRect = sliderRect;
@@ -243,8 +244,8 @@ public sealed class DrunkennessControl : FrameworkElement
         dc.DrawLine(new Pen(accentDark, 1.0), new Point(vanillaX, sliderY - 5), new Point(vanillaX, sliderY + 5));
         DrawCenteredText(dc, "VANILLA", new Point(vanillaX, rect.Bottom - 20), 8.0, accentDark, FontWeights.Bold);
 
-        DrawText(dc, minimum.ToString("0", CultureInfo.InvariantCulture), new Point(sliderLeft, rect.Bottom - 12), 7.7, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, maximum.ToString("0", CultureInfo.InvariantCulture), new Point(sliderRight, rect.Bottom - 12), 7.7, muted, FontWeights.SemiBold);
+        DrawText(dc, "MIN " + minimum.ToString("0", CultureInfo.InvariantCulture), new Point(sliderLeft, rect.Bottom - 12), 7.7, muted, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, "MAX " + maximum.ToString("0", CultureInfo.InvariantCulture), new Point(sliderRight, rect.Bottom - 12), 7.7, muted, FontWeights.SemiBold);
     }
 
     private void DrawProgressionRow(
@@ -351,6 +352,8 @@ public sealed class DrunkennessControl : FrameworkElement
         if (_beerSliderRect.Contains(point))
         {
             _activeSlider = ActiveSlider.Beer;
+            _isDraggingSlider = true;
+            CaptureMouse();
             SetStrengthFromPoint(_beerStrengthParameter, _beerSliderRect, point.X);
             e.Handled = true;
             return;
@@ -359,6 +362,8 @@ public sealed class DrunkennessControl : FrameworkElement
         if (_vodkaSliderRect.Contains(point))
         {
             _activeSlider = ActiveSlider.Vodka;
+            _isDraggingSlider = true;
+            CaptureMouse();
             SetStrengthFromPoint(_vodkaStrengthParameter, _vodkaSliderRect, point.X);
             e.Handled = true;
         }
@@ -416,8 +421,32 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         base.OnMouseMove(e);
         var point = e.GetPosition(this);
+
+        if (_isDraggingSlider && e.LeftButton == MouseButtonState.Pressed)
+        {
+            if (_activeSlider == ActiveSlider.Beer)
+                SetStrengthFromPoint(_beerStrengthParameter, _beerSliderRect, point.X);
+            else
+                SetStrengthFromPoint(_vodkaStrengthParameter, _vodkaSliderRect, point.X);
+
+            e.Handled = true;
+            return;
+        }
+
         var interactive = _beerSliderRect.Contains(point) || _vodkaSliderRect.Contains(point);
         Cursor = interactive ? Cursors.Hand : Cursors.Arrow;
+    }
+
+    protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+    {
+        base.OnMouseLeftButtonUp(e);
+
+        if (_isDraggingSlider)
+        {
+            _isDraggingSlider = false;
+            ReleaseMouseCapture();
+            e.Handled = true;
+        }
     }
 
     protected override void OnMouseLeave(MouseEventArgs e)
@@ -465,7 +494,10 @@ public sealed class DrunkennessControl : FrameworkElement
 
         var ratio = Math.Clamp((x - sliderRect.Left) / Math.Max(1.0, sliderRect.Width), 0.0, 1.0);
         var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
-        parameter.CurrentNumber = Math.Round(raw, MidpointRounding.AwayFromZero);
+        parameter.CurrentNumber = Math.Clamp(
+            Math.Round(raw, MidpointRounding.AwayFromZero),
+            parameter.Minimum,
+            parameter.Maximum);
         InvalidateVisual();
     }
 
