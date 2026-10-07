@@ -736,7 +736,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Mutant Health",
-      "description": "Adjust the HP of eight mutant families from one radar.",
+      "description": "Changes HP separately for eight mutant families.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -781,9 +781,9 @@
           "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
         ]
       },
-      "rationale": "Compare and tune each mutant's HP from one radar. Every point changes only that mutant family's health.",
+      "rationale": "Set each mutant family's HP independently. Mutant damage and special-attack frequency are separate settings.",
       "logic": "",
-      "interaction": "Each radar point changes one mutant family. Right-click a point or legend name to return only that mutant to vanilla HP; R resets the whole radar.",
+      "interaction": "",
       "exposeInUi": true
     },
     {
@@ -791,7 +791,7 @@
       "tab": "combat",
       "group": "Mutant Special Attack Cooldown",
       "label": "Mutant Special Attack Cooldown",
-      "description": "Adjust how often eight mutant families can reuse their special attacks from one radar.",
+      "description": "Changes how often eight mutant families can reuse special attacks.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -835,9 +835,9 @@
           "Master explicitly defines 0.5 overrides; Novice/Stalker/Veteran contain no agent override block and are represented as neutral 1.0 in the UI. Generated override insertion into Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "Compare how often each mutant can reuse its special attack. Each radar point changes only that mutant's wait time.",
-      "logic": "Lower settings make special attacks return sooner. Higher settings create longer gaps between special attacks. Novice, Stalker, and Veteran use 1x in vanilla; Master uses 0.5x.",
-      "interaction": "Drag one point to change only that mutant family. Right-click resets that family to the currently selected Base Preset; R resets all eight cooldowns to the selected Base Preset.",
+      "rationale": "Set the wait between special attacks for each mutant family. Lower wait times mean more frequent special attacks; damage is unchanged.",
+      "logic": "",
+      "interaction": "",
       "exposeInUi": true
     },
     {
@@ -2494,7 +2494,7 @@
           "The field explicitly uses seconds; the exact set of regeneration sources that honor it requires runtime validation."
         ]
       },
-      "rationale": "Vanilla player VitalParams define RegenHPDelayTimeSeconds = 5.",
+      "rationale": "Sets how many seconds must pass before health recovery can begin. Vanilla is 5 seconds.",
       "logic": "Higher values postpone actor-level HP regeneration for longer; lower values shorten the configured delay.",
       "interaction": "If Passive Health Recovery is set to 0, this delay may have no visible effect until another compatible health-recovery effect is active."
     },
@@ -2580,9 +2580,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "LowHealthRegenHP directly defines the positive regeneration amount used by the ordinary low-health recovery effect; vanilla ValueMin/ValueMax are both 1.0.",
+      "rationale": "Sets the recovery speed used by the normal low-health recovery effect. Vanilla is 1 HP/s.",
       "logic": "",
-      "interaction": "Health Recovery Multiplier can scale this recovery down or up. If Master Low-Health Mechanics is enabled, its separate negative regeneration modifier can further suppress the final recovery."
+      "interaction": "Health Recovery Multiplier can scale this effect, and the Master low-health penalty can reduce it further."
     },
     {
       "id": "advanced.lowHealthMechanics",
@@ -2666,7 +2666,7 @@
       "tab": "health",
       "group": "Healing Amount",
       "label": "Healing Amount",
-      "description": "Adjust the health restored by Bandages, Medkits, Army Medkits, and Scientific Medkits from one combined radar.",
+      "description": "Changes how much HP the main healing items restore.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2700,9 +2700,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Compare how much HP each healing item restores and tune them from one radar.",
+      "rationale": "Set HP restored by Bandages, Medkits, Army Medkits, and Scientific Medkits. Bleeding and radiation removal are controlled separately.",
       "logic": "",
-      "interaction": "Drag one point to change only that medical item's healing. Right-click resets that item to its vanilla healing value; R resets all four Medical Healing values.",
+      "interaction": "",
       "exposeInUi": true
     },
     {
@@ -2886,7 +2886,7 @@
         "notes": []
       },
       "rationale": "Separates food from medical healing. OFF removes the normal HP restoration from the four ordinary healing-food effects while preserving hunger/satiety and every Weird Kettle alternative effect.",
-      "logic": "ON leaves vanilla food healing untouched. OFF writes 0 to ValueMin and ValueMax for BreadHealing1, FreshBreadHealing2, CannedHealing2, and SausageHealing2.",
+      "logic": "ON keeps vanilla food healing. OFF removes healing from the supported food items.",
       "interaction": "Bandage healing remains controlled by the Healing Amount radar. Weird Kettle alternative food effects are deliberately outside this switch.",
       "exposeInUi": true
     },
@@ -3413,7 +3413,7 @@
       "group": "Exhaustion & Recovery",
       "label": "Emergency Stamina Recovery Starts Below",
       "description": "Vanilla AdditionalRegenStaminaMechanics switches into its low-SP branch below the 30 SP boundary and applies IncreaseStaminaPoints.",
-      "rationale": "Vanilla AdditionalRegenStaminaMechanics switches into its low-SP branch below the 30 SP boundary and applies IncreaseStaminaPoints.",
+      "rationale": "Sets the stamina level that triggers emergency low-stamina recovery. Vanilla is 30 SP.",
       "logic": "Higher values allow the low-stamina recovery helper to engage across a larger portion of the bar; lower values reserve it for near-exhaustion.",
       "interaction": "The helper uses Low-Stamina Recovery Strength and Duration. Base Stamina Regeneration still exists underneath it.",
       "control": "slider",
@@ -3458,9 +3458,9 @@
       "group": "Exhaustion & Recovery",
       "label": "Emergency Stamina Recovery Amount",
       "description": "Vanilla IncreaseStaminaPoints is a RegenStamina effect with ValueMin/ValueMax = 10 for 4 seconds when the low-SP branch is active.",
-      "rationale": "Vanilla IncreaseStaminaPoints is a RegenStamina effect with ValueMin/ValueMax = 10 for 4 seconds when the low-SP branch is active.",
+      "rationale": "Sets how strong emergency stamina recovery is while it is active. Vanilla is 10 SP/s.",
       "logic": "Higher values make the emergency recovery effect stronger; lower values make low-stamina recovery closer to the ordinary base rate.",
-      "interaction": "Only applies through AdditionalRegenStaminaMechanics when stamina is in its low-SP branch. Duration is controlled separately.",
+      "interaction": "Emergency Stamina Recovery Duration controls how long the recovery lasts.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -3507,9 +3507,9 @@
       "group": "Exhaustion & Recovery",
       "label": "Emergency Stamina Recovery Duration",
       "description": "Vanilla IncreaseStaminaPoints has Duration = 4 seconds.",
-      "rationale": "Vanilla IncreaseStaminaPoints has Duration = 4 seconds.",
+      "rationale": "Sets how long emergency stamina recovery lasts once it is triggered. Vanilla is 4 seconds.",
       "logic": "Higher values keep the low-stamina recovery effect active longer; lower values shorten the boost.",
-      "interaction": "The effect only becomes relevant when AdditionalRegenStaminaMechanics selects the low-SP branch.",
+      "interaction": "Emergency Stamina Recovery Starts Below controls when this recovery can activate.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -3884,7 +3884,7 @@
       "tab": "stamina",
       "group": "Action Costs",
       "label": "Action Costs",
-      "description": "Adjust sprint, jump, vault, melee, buttstock, and aiming stamina costs from one combined radar.",
+      "description": "Changes stamina pressure from common player actions.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -3918,9 +3918,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Compare how tiring sprinting, jumping, vaulting, melee attacks, and aiming are from one radar.",
-      "logic": "Each axis is normalized to 0x–2x of that control's own vanilla value. Direct action costs still write their original stamina values; Aiming keeps its original recovery-penalty percentage semantics.",
-      "interaction": "Drag one point to change how tiring that action is. Right-click a point or legend name to reset only that action; R resets the whole radar.",
+      "rationale": "Set how tiring sprinting, jumping, vaulting, and melee attacks are. The Aiming point changes stamina recovery while aiming rather than charging a one-time action cost.",
+      "logic": "",
+      "interaction": "",
       "exposeInUi": true
     },
     {
@@ -4505,7 +4505,7 @@
       "tab": "loot",
       "group": "Stashes",
       "label": "Stash Ammo Amounts",
-      "description": "Changes how much ammo Basic, Standard, and Rare stashes contain. The kinds of ammo they can contain stay vanilla.",
+      "description": "Changes ammo amounts in Basic, Standard, and Rare stashes.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -4544,9 +4544,9 @@
           "The existing production-only stash fan-out and exclusions remain unchanged."
         ]
       },
-      "rationale": "Compare how much ammo Basic, Standard, and Rare stashes contain from one radar.",
-      "logic": "25-200% in 25% steps. Counts are scaled with round-half-up and never below 1. At 25%, vanilla 2-3 becomes 1-1 and 5-7 becomes 1-2; at 200%, they become 4-6 and 10-14.",
-      "interaction": "Each radar point controls only its own stash tier. Right-click resets that tier to 1x; R resets all three.",
+      "rationale": "Set how much ammo Basic, Standard, and Rare stashes contain. The ammo types available in each stash tier stay vanilla.",
+      "logic": "",
+      "interaction": "",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
@@ -4871,7 +4871,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "Breakable Box Ammo Distribution",
-      "description": "Changes how common each vanilla ammo family is in breakable ammo boxes. It does not add new ammo types.",
+      "description": "Changes which ammo families are favored in breakable ammo boxes.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -4915,9 +4915,9 @@
           "Ammo from Breakable Boxes remains independent and changes only MinCount/MaxCount."
         ]
       },
-      "rationale": "Choose which ammo families are more or less common in breakable ammo boxes while keeping the game's normal ammo-box mix structure.",
-      "logic": "Move a family outward to make it more common in breakable ammo boxes, or inward to make it less common.",
-      "interaction": "Works with Ammo from Breakable Boxes: Distribution changes which ammo families are favored; Amount changes how many rounds each box gives.",
+      "rationale": "Choose which ammo families are more or less common in breakable ammo boxes. This changes the ammo mix, not the number of rounds per box.",
+      "logic": "1x keeps the vanilla mix. Move a family outward to make it more common or inward to make it less common.",
+      "interaction": "Ammo from Breakable Boxes separately controls how many rounds each box gives.",
       "exposeInUi": true
     },
     {
@@ -5362,7 +5362,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "Changes the difficulty-profile BuyCondition used when a trader buys an item from you. Harder vanilla difficulties lower this setting.",
+      "rationale": "Changes how much traders pay when buying items from you. Harder vanilla presets pay less.",
       "logic": "This is the trader-buying-from-you side of the economy. Do not read the percentage as the exact payout: the final price also depends on trader-specific modifiers and other shop rules.",
       "interaction": "Use the vanilla markers as safe reference points until the full in-game price formula is confirmed."
     },
@@ -5406,7 +5406,7 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "Changes the difficulty-profile SellCondition used when a trader sells an item to you. Harder vanilla difficulties raise this setting.",
+      "rationale": "Changes how much traders charge when selling items to you. Harder vanilla presets charge more.",
       "logic": "This is the trader-selling-to-you side of the economy. Do not read the percentage as the exact shop price: the final price also depends on trader-specific modifiers and other shop rules.",
       "interaction": "Use the vanilla markers as safe reference points until the full in-game price formula is confirmed."
     },
@@ -5596,7 +5596,7 @@
       "tab": "economy",
       "group": "Item Price Scalers",
       "label": "Item Price Scalers",
-      "description": "Adjust the price multipliers for consumables, ammunition, armor, weapons, artifacts, and mutant parts from one combined radar.",
+      "description": "Changes base item value by item category.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5631,9 +5631,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Compare and tune the base value of consumables, ammo, armor, weapons, artifacts, and mutant parts from one radar.",
-      "logic": "1x keeps vanilla base value, 0x removes that category's base value, and 2x doubles it. Each radar point changes only its own category.",
-      "interaction": "Drag one point to change only that item category. Right-click resets that category to its vanilla value; R resets all six Item Price Scalers.",
+      "rationale": "Set the base value of consumables, ammo, armor, weapons, artifacts, and mutant parts. Trader buy/sell pricing still applies separately.",
+      "logic": "",
+      "interaction": "",
       "exposeInUi": true
     },
     {
@@ -6044,7 +6044,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Upgrade_Cost is a direct difficulty setting: 100% on Novice/Stalker, 125% on Veteran and 150% on Master.",
+      "rationale": "Changes upgrade prices. Vanilla is 1x on Novice/Stalker, 1.25x on Veteran, and 1.5x on Master.",
       "logic": "",
       "interaction": "Each upgrade still has its own base price. This setting makes upgrades generally cheaper or more expensive without changing their relative costs."
     },
@@ -6754,9 +6754,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes the extra stamina cost of actions while the Master starvation penalty is active. Vanilla adds +200%.",
-      "logic": "Higher positive values make stamina-consuming actions more expensive during starvation. Zero removes this component without disabling the rest of the bundle.",
-      "interaction": "This stacks conceptually with the standard Severe Hunger stamina-regeneration penalty: one affects drain, the other affects recovery.",
+      "rationale": "Adds extra stamina cost to stamina-consuming actions while the Master starvation penalty is active. Vanilla adds +200%.",
+      "logic": "100% means +100% extra stamina cost, not normal cost. 0% removes this extra starvation cost.",
+      "interaction": "Severe Hunger can also slow stamina recovery; this setting changes stamina drain instead.",
       "requiresToggle": "advanced.starvationMechanics"
     },
     {
@@ -7495,9 +7495,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes the extra stamina cost of actions while the Master heavy-radiation penalty is active. Vanilla adds +50%.",
-      "logic": "Positive values increase stamina cost under heavy radiation: +50% means 50% more stamina drain, not a stamina gain. Zero removes this extra cost.",
-      "interaction": "This does not change radiation damage or build-up speed. It is an additional stamina penalty during the vanilla Master radiation state.",
+      "rationale": "Adds extra stamina cost to stamina-consuming actions during the Master heavy-radiation penalty. Vanilla adds +50%.",
+      "logic": "50% means +50% extra stamina cost. 0% removes this extra radiation cost.",
+      "interaction": "",
       "requiresToggle": "advanced.radiationMechanics"
     },
     {
@@ -7669,7 +7669,7 @@
       "tab": "environment",
       "group": "Anomalies",
       "label": "Individual Anomaly Damage",
-      "description": "Fine-tune the damage of each supported anomaly from one radar. Global Anomaly Damage still affects them all together.",
+      "description": "Changes damage separately for each supported anomaly.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -7703,9 +7703,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Compare and tune each anomaly against its own vanilla damage from one radar.",
-      "logic": "Each point runs from 0x to 2x of that anomaly's vanilla damage. Global Anomaly Damage is applied separately.",
-      "interaction": "Drag a point to change that anomaly only. Right-click resets that anomaly to its vanilla base damage; R resets all individual anomaly damage values. Global Anomaly Damage is not part of this radar.",
+      "rationale": "Set the damage of each supported anomaly independently. Global Anomaly Damage still scales all damaging anomalies together.",
+      "logic": "",
+      "interaction": "Use Global Anomaly Damage when you want to make all damaging anomalies stronger or weaker at once.",
       "exposeInUi": true
     },
     {
@@ -8397,7 +8397,7 @@
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
       "label": "Mutant Part Drop Chances",
-      "description": "Controls how often an eligible Blind Dog kill drops its mutant part. When it drops, you get 1 part.",
+      "description": "Changes mutant-part drop chances by mutant family.",
       "control": "slider",
       "valueKind": "probability",
       "display": {
@@ -8436,9 +8436,9 @@
           "Runtime CFG explicitly stores Chance = 0.15 and Count = 1 for BlinddogLootGenerator."
         ]
       },
-      "rationale": "Controls how often an eligible Blind Dog kill drops its mutant part. When it drops, you get 1 part.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 15%. At 40%, roughly 40 successful part drops are expected per 100 eligible Blind Dog kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "rationale": "Set the part-drop chance for each mutant family. A successful drop gives one part; this does not change mutant spawns or part value.",
+      "logic": "The percentage shown is the actual drop chance for that mutant.",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.bloodsuckerChance",
@@ -9121,7 +9121,7 @@
       "tab": "loot",
       "group": "World Loot",
       "label": "World Loot Removal",
-      "description": "Choose how much ordinary world ammo and RGD grenade box clutter to remove. Dedicated F1 grenade boxes are controlled independently by the F1 axis in World Loot Removal.",
+      "description": "Changes how much supported world loot is removed by category.",
       "control": "slider",
       "valueKind": "ratio",
       "display": {
@@ -9165,9 +9165,9 @@
           "Selection is random without replacement at Build time."
         ]
       },
-      "rationale": "Compare how much ammo, grenade, food, medical, and loose world loot remains in the Zone from one radar.",
-      "logic": "0% keeps vanilla world ammo and grenade boxes. Higher settings remove more of them when you build the mod, making exploration supplies scarcer.",
-      "interaction": "Drag one axis to change only that world-loot category. Right-click resets that category to 0% (vanilla); R resets all four. F1 Grenade Boxes remains separate because it is a subset of the broader ammo-box population.",
+      "rationale": "Choose how much ordinary world loot to remove from each category when the mod is built. 0% keeps vanilla placement.",
+      "logic": "",
+      "interaction": "This radar targets supported exploration loot categories, not quest or story rewards.",
       "exposeInUi": true
     },
     {
@@ -9644,7 +9644,7 @@
       "tab": "alife",
       "group": "Human Group Size",
       "label": "Human Group Size",
-      "description": "Changes the largest human squad that can spawn while the player is at Newbie rank. It does not change lair population or respawn speed.",
+      "description": "Changes the largest human squad that can spawn at each player rank.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -9681,9 +9681,9 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "Use the radar to tune human squad size separately for each player rank.",
-      "logic": "Vanilla Newbie squads cap at 3 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
-      "interaction": "Each radar point represents one player rank. 1x keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
+      "rationale": "Set the maximum human squad size separately for Newbie, Experienced, Veteran, and Master player ranks. This does not change lair population or respawn speed.",
+      "logic": "",
+      "interaction": "",
       "exposeInUi": true
     },
     {
@@ -9900,7 +9900,7 @@
       "tab": "alife",
       "group": "Mutant Group Size",
       "label": "Mutant Group Size",
-      "description": "bloodsucker species-specific A-Life encounter cap. Adjusts how many of this mutant can appear together while preserving the vanilla progression between player ranks.",
+      "description": "Changes group size separately for each mutant species.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -9958,9 +9958,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Change how large Bloodsucker groups can become while keeping the vanilla rank progression.",
-      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 0 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
-      "interaction": "This radar point changes only Bloodsucker group size. 1x keeps vanilla; right-click the point or legend name to reset Bloodsucker.",
+      "rationale": "Set how large each mutant species group can become while keeping its vanilla rank progression. This does not change lair population or respawn speed.",
+      "logic": "",
+      "interaction": "",
       "exposeInUi": true
     },
     {
