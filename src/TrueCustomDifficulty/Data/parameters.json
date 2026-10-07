@@ -1988,7 +1988,7 @@
       "tab": "survival",
       "group": "Consumable Effects",
       "label": "Alcohol Tolerance",
-      "description": "Sets how many beers it takes to reach Very Strong Drunkness. Vanilla is 4 beers; the UI can also show the equivalent vodka count. Under the hood it scales the confirmed 20 / 40 / 60 player drunkness thresholds together.",
+      "description": "Choose Beer or Vodka, then set how many drinks it takes to reach the strongest drunkenness tier. Vanilla is 4 beers or 2 vodkas; the same player tolerance is applied either way.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2041,7 +2041,7 @@
       },
       "rationale": "Sets how quickly alcohol progresses through Medium, Strong and Very Strong drunkenness without changing the strength of Beer or Vodka themselves.",
       "logic": "Vanilla is 4 beers or 2 vodkas to the Very Strong threshold of 60. The control scales all three thresholds together, preserving the 20 / 40 / 60 progression.",
-      "interaction": "Beer is the default human-readable reference: 1–6 beers with 4 as VANILLA. The BEER/VODKA selector only changes the displayed reference. BACK-TO-BACK PREVIEW shows which drunkenness tier and effects would be active before natural sober-up."
+      "interaction": "Choose BEER or VODKA, then use the drink-count slider. 4 beers or 2 vodkas is VANILLA. The effect preview shows what each drunkenness tier does."
     },
     {
       "id": "survival.instantStaminaRestore",
