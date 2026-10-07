@@ -1262,7 +1262,6 @@ public sealed class ParameterViewModel : ObservableObject
         ? "Same on all difficulties"
         : $"Base Preset: {_referenceDifficulty}";
 
-    public double ReferenceNumber => GetReferenceNumber();
 
     public void SetEffectiveDamageMultiplierProvider(Func<double> provider)
     {
