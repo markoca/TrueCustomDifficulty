@@ -183,7 +183,7 @@ private readonly RadarStatusMessage _status;
             dc.DrawEllipse(accentBrush, null, points[i], 3.2, 3.2);
         }
 
-        DrawRingCaption(dc, "1x = VANILLA", center, radius / 3.0, accentBrush);
+        DrawRingCaption(dc, "1x", center, radius / 3.0, accentBrush);
         DrawRingCaption(dc, "2x", center, radius * 2.0 / 3.0, mutedBrush);
         DrawRingCaption(dc, "3x", center, radius, mutedBrush);
 
