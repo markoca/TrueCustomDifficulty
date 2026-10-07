@@ -310,6 +310,12 @@ private readonly RadarStatusMessage _status;
             .Select(value => value.ToString("0", CultureInfo.InvariantCulture))
             .ToArray();
 
+        if (info.ParameterId == "alife.mutantSpawn.ratSwarm")
+        {
+            var count = int.Parse(values[0], CultureInfo.InvariantCulture);
+            return $"Up to {count} {(count == 1 ? "swarm" : "swarms")}";
+        }
+
         return $"Up to {values[0]} Newbie | {values[1]} Experienced | {values[2]} Veteran | {values[3]} Master";
     }
 
