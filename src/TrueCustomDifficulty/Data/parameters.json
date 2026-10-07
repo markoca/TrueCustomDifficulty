@@ -312,7 +312,7 @@
       "tab": "combat",
       "group": "Human Enemies",
       "label": "Human Enemy Fire Accuracy",
-      "description": "Changes the accuracy of human enemy gunfire through the game's exposed fire-accuracy multiplier.",
+      "description": "Changes how accurate human enemy gunfire is.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -344,9 +344,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes the accuracy of human enemy gunfire through the game's exposed fire-accuracy multiplier.",
+      "rationale": "Changes how accurate human enemy gunfire is.",
       "logic": "Higher values make human gunfire more accurate; lower values make it less accurate. Vanilla keeps this at 100% on every difficulty.",
-      "interaction": "This player-facing control maps to the CFG HipAccuracyMultiplier field. It does not represent mutant attacks, melee, grenade use, or every internal AI aiming rule. Pair it with Human Enemy Gun Damage when tuning firefights."
+      "interaction": "Pair it with Human Enemy Gun Damage to tune how threatening firefights feel. It affects human gunfire, not mutant attacks, melee, or grenades."
     },
     {
       "id": "combat.mutantDamage",
@@ -518,7 +518,7 @@
         "notes": []
       },
       "rationale": "Changes the damage multiplier applied when your weapon hit is a headshot.",
-      "logic": "Higher values multiply headshot damage more strongly without directly changing body-shot damage. 100% is a neutral 1.0x multiplier; Master is the only vanilla difficulty that raises this field, to 2.0x.",
+      "logic": "Higher settings make your headshots hit harder without changing normal body-shot damage. 100% keeps headshots at normal strength; Master is the only vanilla preset that boosts them.",
       "interaction": "Your Weapon Damage still affects the underlying hit, so raising both settings makes headshots much more lethal."
     },
     {
@@ -729,7 +729,7 @@
       },
       "rationale": "Repeated-hit protection tracks damage taken over time. When this is ON, healing restores your HP but does not immediately erase that healed damage from the protection tracker, so earlier hits can still contribute to repeated-hit protection. When it is OFF, healed damage no longer remains part of that tracked damage. This does not reduce healing strength or make medkits restore less health.",
       "logic": "OFF matches Novice and Stalker. ON matches Veteran and Master. Healing always restores HP normally; this toggle only decides whether the healed portion is still remembered by the repeated-hit protection system.",
-      "interaction": "Works with the Minimum and Maximum repeated-hit protection settings. The exact internal curve is not exposed by the CFG files."
+      "interaction": "Works with Repeated-Hit Protection — Minimum and Maximum. Healing can either clear old damage from the protection system or let it continue to count, depending on this switch."
     },
     {
       "id": "combat.mutantHealth.bloodsucker",
@@ -781,9 +781,9 @@
           "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
         ]
       },
-      "rationale": "These eight confirmed direct MaxHP controls share the same 0.25x–3x multiplier model, so one radar makes mutant toughness easy to compare while preserving every original MaxHP writer route.",
-      "logic": "Each axis is the existing authored MaxHP multiplier. 1x is vanilla; the legend shows both the multiplier and the effective audited MaxHP.",
-      "interaction": "Drag one point to change only that mutant family. Right-click resets that family to 1x; R resets all eight Mutant Health values.",
+      "rationale": "Compare and tune each mutant's HP from one radar. Every point changes only that mutant family's health.",
+      "logic": "1x keeps vanilla HP. Move a point inward to reduce that mutant's HP or outward to increase it.",
+      "interaction": "Each radar point changes one mutant family. Right-click a point or legend name to return only that mutant to vanilla HP; R resets the whole radar.",
       "exposeInUi": true
     },
     {
@@ -835,8 +835,8 @@
           "Master explicitly defines 0.5 overrides; Novice/Stalker/Veteran contain no agent override block and are represented as neutral 1.0 in the UI. Generated override insertion into Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "All eight cooldown controls share the same 0.25x–2x wait-time multiplier model and vanilla difficulty profile, so one radar makes special-ability pressure easy to compare without changing any writer route.",
-      "logic": "Each axis is the actual wait-time multiplier: lower values make special abilities return sooner; higher values give more breathing room. Vanilla is 1x on Novice/Stalker/Veteran and 0.5x on Master.",
+      "rationale": "Compare how often each mutant can reuse its special attack. Each radar point changes only that mutant's wait time.",
+      "logic": "Lower settings make special attacks return sooner. Higher settings create longer gaps between special attacks. Novice, Stalker, and Veteran use 1x in vanilla; Master uses 0.5x.",
       "interaction": "Drag one point to change only that mutant family. Right-click resets that family to the currently selected Base Preset; R resets all eight cooldowns to the selected Base Preset.",
       "exposeInUi": true
     },
@@ -845,7 +845,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Chimera Health",
-      "description": "Scales the authored MaxHP of Chimera. This is a direct mutant prototype health multiplier and is not difficulty-specific.",
+      "description": "Increase or decrease Chimera HP.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -883,8 +883,8 @@
           "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
         ]
       },
-      "rationale": "Pairs mutant durability with the same mutant family's Special Ability Cooldown control.",
-      "logic": "Effective MaxHP = authored MaxHP × selected multiplier.",
+      "rationale": "Tune Chimera durability without changing its damage or special-attack frequency.",
+      "logic": "1x keeps vanilla Chimera HP. Lower settings reduce HP; higher settings increase HP.",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -940,7 +940,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Deer Health",
-      "description": "Scales the authored MaxHP of Deer. This is a direct mutant prototype health multiplier and is not difficulty-specific.",
+      "description": "Increase or decrease Deer HP.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -978,8 +978,8 @@
           "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
         ]
       },
-      "rationale": "Pairs mutant durability with the same mutant family's Special Ability Cooldown control.",
-      "logic": "Effective MaxHP = authored MaxHP × selected multiplier.",
+      "rationale": "Tune Deer durability without changing its damage or special-attack frequency.",
+      "logic": "1x keeps vanilla Deer HP. Lower settings reduce HP; higher settings increase HP.",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1035,7 +1035,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Pseudogiant Health",
-      "description": "Scales the authored MaxHP of Pseudogiant. This is a direct mutant prototype health multiplier and is not difficulty-specific.",
+      "description": "Increase or decrease Pseudogiant HP.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -1073,8 +1073,8 @@
           "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
         ]
       },
-      "rationale": "Pairs mutant durability with the same mutant family's Special Ability Cooldown control.",
-      "logic": "Effective MaxHP = authored MaxHP × selected multiplier.",
+      "rationale": "Tune Pseudogiant durability without changing its damage or special-attack frequency.",
+      "logic": "1x keeps vanilla Pseudogiant HP. Lower settings reduce HP; higher settings increase HP.",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1130,7 +1130,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Pseudodog Health",
-      "description": "Scales the authored MaxHP of Pseudodog. This is a direct mutant prototype health multiplier and is not difficulty-specific.",
+      "description": "Increase or decrease Pseudodog HP.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -1168,8 +1168,8 @@
           "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
         ]
       },
-      "rationale": "Pairs mutant durability with the same mutant family's Special Ability Cooldown control.",
-      "logic": "Effective MaxHP = authored MaxHP × selected multiplier.",
+      "rationale": "Tune Pseudodog durability without changing its damage or special-attack frequency.",
+      "logic": "1x keeps vanilla Pseudodog HP. Lower settings reduce HP; higher settings increase HP.",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1225,7 +1225,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Burer Health",
-      "description": "Scales the authored MaxHP of Burer. This is a direct mutant prototype health multiplier and is not difficulty-specific.",
+      "description": "Increase or decrease Burer HP.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -1270,8 +1270,8 @@
           "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
         ]
       },
-      "rationale": "Pairs mutant durability with the same mutant family's Special Ability Cooldown control.",
-      "logic": "Effective MaxHP = authored MaxHP × selected multiplier.",
+      "rationale": "Tune Burer durability without changing its damage or special-attack frequency.",
+      "logic": "1x keeps vanilla Burer HP. Lower settings reduce HP; higher settings increase HP.",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1334,7 +1334,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Bayun Health",
-      "description": "Scales the authored MaxHP of Bayun. This is a direct mutant prototype health multiplier and is not difficulty-specific.",
+      "description": "Increase or decrease Bayun HP.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -1372,8 +1372,8 @@
           "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
         ]
       },
-      "rationale": "Pairs mutant durability with the same mutant family's Special Ability Cooldown control.",
-      "logic": "Effective MaxHP = authored MaxHP × selected multiplier.",
+      "rationale": "Tune Bayun durability without changing its damage or special-attack frequency.",
+      "logic": "1x keeps vanilla Bayun HP. Lower settings reduce HP; higher settings increase HP.",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1450,7 +1450,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Controller Health",
-      "description": "Scales the authored MaxHP of Controller. This is a direct mutant prototype health multiplier and is not difficulty-specific.",
+      "description": "Increase or decrease Controller HP.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -1488,8 +1488,8 @@
           "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
         ]
       },
-      "rationale": "Pairs mutant durability with the same mutant family's Special Ability Cooldown control.",
-      "logic": "Effective MaxHP = authored MaxHP × selected multiplier.",
+      "rationale": "Tune Controller durability without changing its damage or special-attack frequency.",
+      "logic": "1x keeps vanilla Controller HP. Lower settings reduce HP; higher settings increase HP.",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1830,8 +1830,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls the magnitude of the stamina-recovery penalty applied during medium hunger. The UI stores a positive penalty magnitude; the CFG stores the effect as a negative regeneration modifier.",
-      "logic": "Higher values reduce stamina recovery more strongly while medium hunger is active. Zero removes this standard hunger recovery penalty. The writer converts the positive UI magnitude to the game CFG negative modifier.",
+      "rationale": "Controls how strongly medium hunger slows stamina recovery.",
+      "logic": "Higher settings slow stamina recovery more while medium hunger is active. 0 removes this stamina-recovery penalty.",
       "interaction": "This modifies regeneration, not the direct stamina cost of sprinting, jumping or melee."
     },
     {
@@ -1871,8 +1871,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls the magnitude of the stamina-recovery penalty applied during severe hunger. The UI stores a positive penalty magnitude; the CFG stores the effect as a negative regeneration modifier.",
-      "logic": "Higher values reduce stamina recovery more strongly while severe hunger is active. Zero removes this standard severe-hunger recovery penalty. The writer converts the positive UI magnitude to the game CFG negative modifier.",
+      "rationale": "Controls how strongly severe hunger slows stamina recovery.",
+      "logic": "Higher settings slow stamina recovery more while severe hunger is active. 0 removes this stamina-recovery penalty.",
       "interaction": "Master Starvation Mechanics can add further stamina drain on top of this standard severe-hunger penalty."
     },
     {
@@ -1979,8 +1979,8 @@
         ]
       },
       "rationale": "Lets the player tune how strongly energy drinks counter fatigue without changing how quickly fatigue naturally accumulates.",
-      "logic": "100% keeps vanilla relief. 50% halves the mapped fatigue reduction, 200% doubles it, and 0% removes the mapped energy-drink fatigue relief.",
-      "interaction": "Fatigue Build-up Rate controls passive SleepinessPoints accumulation. This control changes only the mapped energy-drink relief effects, including their special Poppy Field and Weird Kettle variants."
+      "logic": "100% keeps vanilla fatigue relief. 50% halves it, 200% doubles it, and 0% makes energy drinks provide no fatigue relief.",
+      "interaction": "Fatigue Build-up Rate controls how quickly tiredness returns. This setting changes how much relief energy drinks provide, including their special Poppy Field and Weird Kettle variants."
     },
     {
       "id": "survival.sleepEligibilityThreshold",
@@ -2361,7 +2361,7 @@
       "tab": "health",
       "group": "Core Health",
       "label": "Player Max Health",
-      "description": "Vanilla Player.MaxHP is 100. HealthMechanics also uses a FullHP condition of 100 to stop the low-health sound path, so this control targets both values together instead of leaving the full-health threshold behind.",
+      "description": "Changes your maximum health. The game’s full-health feedback stays in sync with the new maximum.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2404,7 +2404,7 @@
           "Direct MaxHP field is confirmed; broader assumptions about the 100-point HP scale require runtime validation."
         ]
       },
-      "rationale": "Vanilla Player.MaxHP is 100. HealthMechanics also uses a FullHP condition of 100 to stop the low-health sound path, so this control targets both values together instead of leaving the full-health threshold behind.",
+      "rationale": "Changes your maximum health. The game’s full-health feedback stays in sync with the new maximum.",
       "logic": "Higher values increase the player HP pool; lower values reduce it. This is a direct pool-size change, not incoming-damage scaling.",
       "interaction": "The game keeps its vanilla low-health state boundary. Other systems may also assume a 100-point health scale, so very large Max Health changes should be tested in game."
     },
@@ -2496,7 +2496,7 @@
       },
       "rationale": "Vanilla player VitalParams define RegenHPDelayTimeSeconds = 5.",
       "logic": "Higher values postpone actor-level HP regeneration for longer; lower values shorten the configured delay.",
-      "interaction": "With vanilla Base Health Regeneration at 0, this value may be invisible until a compatible regeneration path is active. Whether every RegenHealth effect honors this delay requires in-game testing."
+      "interaction": "If Passive Health Recovery is set to 0, this delay may have no visible effect until another compatible health-recovery effect is active."
     },
     {
       "id": "health.regenerationScalar",
@@ -2700,7 +2700,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "These four controls share the same direct healing semantics, so the radar makes their relative healing strength easy to compare while preserving every original CFG target and vanilla value.",
+      "rationale": "Compare how much HP each healing item restores and tune them from one radar.",
       "logic": "Each axis is normalized to 0x–2x of that item's own vanilla healing value. The legend preserves the concrete HP restored, the relative multiplier, and the vanilla HP reference.",
       "interaction": "Drag one point to change only that medical item's healing. Right-click resets that item to its vanilla healing value; R resets all four Medical Healing values.",
       "exposeInUi": true
@@ -3055,8 +3055,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how much bleeding the Bandage removes when used. UI values are positive treatment magnitudes; the CFG stores removal as a negative delta.",
-      "logic": "Higher values remove more points; 0 removes none. The UI uses a positive treatment magnitude while the writer converts it to the game CFG negative-delta value.",
+      "rationale": "Controls how much bleeding the Bandage removes when used.",
+      "logic": "Higher settings remove more bleeding. 0 removes none.",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
     {
@@ -3098,8 +3098,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how much bleeding the Medkit removes when used. UI values are positive treatment magnitudes; the CFG stores removal as a negative delta.",
-      "logic": "Higher values remove more points; 0 removes none. The UI uses a positive treatment magnitude while the writer converts it to the game CFG negative-delta value.",
+      "rationale": "Controls how much bleeding the Medkit removes when used.",
+      "logic": "Higher settings remove more bleeding. 0 removes none.",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
     {
@@ -3141,8 +3141,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how much bleeding the Army Medkit removes when used. UI values are positive treatment magnitudes; the CFG stores removal as a negative delta.",
-      "logic": "Higher values remove more points; 0 removes none. The UI uses a positive treatment magnitude while the writer converts it to the game CFG negative-delta value.",
+      "rationale": "Controls how much bleeding the Army Medkit removes when used.",
+      "logic": "Higher settings remove more bleeding. 0 removes none.",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
     {
@@ -3184,8 +3184,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how much bleeding the Scientific Medkit removes when used. UI values are positive treatment magnitudes; the CFG stores removal as a negative delta.",
-      "logic": "Higher values remove more points; 0 removes none. The UI uses a positive treatment magnitude while the writer converts it to the game CFG negative-delta value.",
+      "rationale": "Controls how much bleeding the Scientific Medkit removes when used.",
+      "logic": "Higher settings remove more bleeding. 0 removes none.",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
     {
@@ -3227,8 +3227,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how much radiation the Scientific Medkit removes when used. UI values are positive treatment magnitudes; the CFG stores removal as a negative delta.",
-      "logic": "Higher values remove more points; 0 removes none. The UI uses a positive treatment magnitude while the writer converts it to the game CFG negative-delta value.",
+      "rationale": "Controls how much radiation the Scientific Medkit removes when used.",
+      "logic": "Higher settings remove more radiation. 0 removes none.",
       "interaction": "This changes direct treatment only. Radiation build-up and natural radiation recovery remain separate."
     },
     {
@@ -3270,8 +3270,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls how much radiation the Anti-Rad removes when used. UI values are positive treatment magnitudes; the CFG stores removal as a negative delta.",
-      "logic": "Higher values remove more points; 0 removes none. The UI uses a positive treatment magnitude while the writer converts it to the game CFG negative-delta value.",
+      "rationale": "Controls how much radiation the Anti-Rad removes when used.",
+      "logic": "Higher settings remove more radiation. 0 removes none.",
       "interaction": "This changes direct treatment only. Radiation build-up and natural radiation recovery remain separate."
     },
     {
@@ -3549,10 +3549,10 @@
       "tab": "stamina",
       "group": "Movement Stamina — Internal Speed States",
       "label": "Speed-Limited Sprint Stamina Effect",
-      "description": "Applies to the internal EStateTag::SprintUnderRunSpeed state. The name indicates sprint is active while actual movement is under normal Run speed. It is not a separate player keybind. Vanilla is -0.65. The exact engine conditions that switch into this state are not exposed by the CFG and still require runtime verification.",
-      "rationale": "Internal sprint-related stamina state used when sprinting is speed-limited; exact state-selection conditions are engine-controlled.",
+      "description": "Changes stamina recovery while you are sprinting but your movement speed is being limited. The game decides when this slower sprint state is active.",
+      "rationale": "Changes stamina recovery during speed-limited sprinting.",
       "logic": "More negative values suppress recovery more strongly; zero adds no state penalty; positive values help recovery. Do not read this as a separate “slow sprint” button.",
-      "interaction": "Related to full Sprint, but the engine decides when SprintUnderRunSpeed is active. Encumbrance or other speed limits may be relevant, but the CFG alone does not prove the complete transition rule.",
+      "interaction": "This works alongside normal Sprint stamina behavior. Encumbrance and other movement limits can affect when the game uses this slower sprint state.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -3593,8 +3593,8 @@
       "tab": "stamina",
       "group": "Movement Stamina — Internal Speed States",
       "label": "Jogging-State Stamina Effect",
-      "description": "Applies to the internal EStateTag::Jogging state. STALKER 2 has no separate Jogging keybind, so this must not be presented as a direct player action. Vanilla is 0.00 (neutral). The exact transition into this engine state still requires runtime verification.",
-      "rationale": "Internal Jogging-state stamina coefficient; exact state-selection semantics are not exposed by the CFG.",
+      "description": "Changes stamina recovery during the game's lighter running movement state. There is no separate Jogging keybind.",
+      "rationale": "Changes stamina recovery while the game treats your movement as jogging.",
       "logic": "Negative values add a stamina penalty in the Jogging state; zero is neutral; positive values help recovery. This is an engine state, not a dedicated input.",
       "interaction": "The engine chooses between several movement states. This control affects only EStateTag::Jogging when that state is active.",
       "control": "slider",
@@ -3637,10 +3637,10 @@
       "tab": "stamina",
       "group": "Movement Stamina — Internal Speed States",
       "label": "Slow-Run-State Stamina Effect",
-      "description": "Applies to the internal EStateTag::SlowRun state. STALKER 2 has no separate Slow Run keybind. Vanilla is 0.00 (neutral). The runtime data also contains SlowRunThreshold = 0.5, but the CFG dump does not prove exactly how that threshold selects this state.",
-      "rationale": "Internal SlowRun-state stamina coefficient; state-selection semantics remain runtime-test-required.",
+      "description": "Changes stamina recovery during the game's slow-running movement state. There is no separate Slow Run keybind.",
+      "rationale": "Changes stamina recovery while the game treats your movement as slow running.",
       "logic": "Negative values add a stamina penalty in the SlowRun state; zero is neutral; positive values help recovery. Do not treat this as the game's Walk toggle.",
-      "interaction": "A separate player Walk action exists, but this CFG entry is EStateTag::SlowRun, not EStateTag::Walk. The engine transition into SlowRun is not fully documented.",
+      "interaction": "This is separate from walking. The game decides when movement counts as slow running.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -3918,7 +3918,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "All seven Action Costs controls can be expressed cleanly relative to their own vanilla values, while their original raw values, units, catalog steps, presets, and writer routes remain unchanged.",
+      "rationale": "Compare how tiring sprinting, jumping, vaulting, melee attacks, and aiming are from one radar.",
       "logic": "Each axis is normalized to 0x–2x of that control's own vanilla value. Direct action costs still write their original stamina values; Aiming keeps its original recovery-penalty percentage semantics.",
       "interaction": "Drag one point to change only that action. Right-click resets that action to vanilla; R resets all Action Costs. The live legend preserves current value, vanilla value, relative multiplier, unit, and the original value meaning.",
       "exposeInUi": true
@@ -4148,7 +4148,7 @@
       "tab": "stamina",
       "group": "Movement Stamina — Player Actions",
       "label": "Full Sprint Stamina Effect",
-      "description": "Applies to the game's EStateTag::Sprint state: the normal player Sprint action at full sprint state. Vanilla is -1.40, which strongly suppresses stamina recovery while sprinting. A separate internal SprintUnderRunSpeed state handles sprinting when movement is speed-limited.",
+      "description": "Changes stamina recovery while sprinting.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4182,8 +4182,8 @@
           "Player-facing Sprint action; CFG target EStateTag::Sprint is confirmed."
         ]
       },
-      "rationale": "Direct stamina-regeneration coefficient for the player-facing Sprint state.",
-      "logic": "More negative values suppress recovery more strongly and can push stamina downward; zero adds no state penalty; positive values help recovery. This is a state coefficient, separate from Sprint Stamina Drain.",
+      "rationale": "Changes stamina recovery while sprinting.",
+      "logic": "Lower recovery makes sustained sprinting more exhausting. 0 adds no sprint-specific recovery change; higher recovery lets stamina come back faster.",
       "interaction": "Stacks with Base Stamina Regeneration and the separate Sprint Stamina Drain. Speed-limited sprinting can use the separate SprintUnderRunSpeed state instead.",
       "exposeInUi": false
     },
@@ -4192,7 +4192,7 @@
       "tab": "stamina",
       "group": "Movement Stamina — Internal Speed States",
       "label": "Run-State Stamina Effect",
-      "description": "Applies to the internal EStateTag::Run state. This is distinct from Sprint, Jogging and SlowRun in the CFG, but the game does not expose a separate “Run” keybind that maps one-to-one to this tag. Vanilla is -0.65.",
+      "description": "Changes stamina recovery while the game treats your movement as running.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4226,9 +4226,9 @@
           "CFG target EStateTag::Run is confirmed; exact state-selection semantics versus Jogging/SlowRun require runtime verification."
         ]
       },
-      "rationale": "Internal Run-state stamina coefficient. The CFG mapping is confirmed; the exact player movement transition into this state still needs runtime confirmation.",
+      "rationale": "Changes stamina recovery during normal running.",
       "logic": "More negative values suppress recovery more strongly; zero adds no state penalty; positive values help recovery. Treat “Run” here as the engine state name, not a guaranteed keyboard action name.",
-      "interaction": "The engine chooses between Run, Jogging, SlowRun, Sprint and SprintUnderRunSpeed states. This control changes only the Run-state coefficient.",
+      "interaction": "The game switches between several movement states depending on how you move. This setting affects only normal running.",
       "exposeInUi": false
     },
     {
@@ -4236,7 +4236,7 @@
       "tab": "stamina",
       "group": "Action Costs",
       "label": "Aiming Stamina Recovery Penalty",
-      "description": "Controls the magnitude of the continuous stamina-recovery penalty applied while aiming. Vanilla UI magnitude is 25%; the writer stores it as the engine CFG coefficient -0.25.",
+      "description": "Controls how much aiming slows stamina recovery.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4272,8 +4272,8 @@
           "UI stores a positive penalty magnitude; production writer emits the corresponding negative CFG coefficient via negateSet."
         ]
       },
-      "rationale": "The engine field is the Aim-state stamina-regeneration coefficient. The UI exposes the intuitive positive penalty magnitude while the writer negates it back to the CFG coefficient.",
-      "logic": "Higher values suppress stamina recovery more strongly while Aim is held. Zero removes the aiming recovery penalty. Vanilla 25% writes the original CFG value -0.25.",
+      "rationale": "Controls how much aiming slows stamina recovery.",
+      "logic": "Higher settings slow stamina recovery more while aiming. 0 removes the aiming recovery penalty.",
       "interaction": "This is a continuous recovery-state penalty, not a one-time stamina charge. Base Stamina Recovery sets the underlying recovery rate; Sprint, Jump, Vault and melee costs remain independent.",
       "exposeInUi": false
     },
@@ -4450,7 +4450,7 @@
         ]
       },
       "rationale": "Uses the complete isolated attached-ammo surface without touching shared loose-ammo pools or inventing ammo rows.",
-      "logic": "1x preserves vanilla counts. Counts are scaled independently with round-half-up; authored zero minima remain zero.",
+      "logic": "1x keeps vanilla dropped-ammo amounts. Lower settings make NPC weapons carry less spare ammo; higher settings make them carry more.",
       "interaction": "This changes how much matching weapon ammo the NPC carries with the selected weapon. It does not choose the weapon or caliber, and it does not alter loose-ammo loot, corpse bonus loot, traders, zombies or named/story loadouts."
     },
     {
@@ -4544,7 +4544,7 @@
           "The existing production-only stash fan-out and exclusions remain unchanged."
         ]
       },
-      "rationale": "Combines the three existing stash-ammo amount sliders into one comparative control without changing their writer semantics.",
+      "rationale": "Compare how much ammo Basic, Standard, and Rare stashes contain from one radar.",
       "logic": "25-200% in 25% steps. Counts are scaled with round-half-up and never below 1. At 25%, vanilla 2-3 becomes 1-1 and 5-7 becomes 1-2; at 200%, they become 4-6 and 10-14.",
       "interaction": "Each radar point controls only its own stash tier. Right-click resets that tier to 1x; R resets all three.",
       "lootHint": {
@@ -4615,7 +4615,7 @@
           "The production-only redirect manifest excludes quest/test/unresolved Cheap paths."
         ]
       },
-      "rationale": "Controls only whether the RGD-5 entry passes its authored Chance roll. It does not change grenade count, ammo, food, medical items or coupons.",
+      "rationale": "Controls how often an RGD-5 grenade appears in a Basic stash. It does not change the grenade amount or other stash loot.",
       "logic": "0% disables the RGD-5 roll in the TCD production Cheap generator; 10% is vanilla; 100% makes that generator entry always pass its Chance roll.",
       "interaction": "Pair with Basic Stash RGD-5 Grenade Amount: Chance controls whether the entry appears; Amount controls how many RGD-5 grenades that successful entry yields.",
       "lootHint": {
@@ -4668,7 +4668,7 @@
         ]
       },
       "rationale": "Provides the missing count axis for the existing Basic-stash RGD-5 entry without pretending Weight or Chance controls amount.",
-      "logic": "0-4 grenades in whole-number steps. Vanilla is 1. The writer sets both MinCount and MaxCount to the selected exact amount.",
+      "logic": "Choose an exact 0–4 grenades when the grenade entry is present. Vanilla is 1.",
       "interaction": "Chance and Amount are independent: 0% Chance prevents the entry from appearing; Amount 0 writes a zero-size stack even if the Chance roll succeeds.",
       "lootHint": {
         "kind": "exactCount",
@@ -4722,7 +4722,7 @@
         ]
       },
       "rationale": "Changes only how many rounds a Standard-stash ammo roll produces. Every vanilla ammo-selection Weight and progression-rank gate is preserved, so this does not rebalance which calibers become available or how they are weighted.",
-      "logic": "25-200% in 25% steps. Each vanilla MinCount and MaxCount is scaled independently with round-half-up and a minimum of 1. For example, 18-24 becomes 5-6 at 25%, 9-12 at 50%, 23-30 at 125%, and 36-48 at 200%.",
+      "logic": "25–200% scales the amount of ammo found in Standard stashes. For example, a vanilla 18–24 round stack becomes about 9–12 at 50% and 36–48 at 200%.",
       "interaction": "Applies only to audited production-world Standard stash paths. Test-map, quest/DLC logic-level, scripted and unresolved Medium generator paths remain on vanilla generators. SmartLoot on the same physical container remains a separate system.",
       "lootHint": {
         "kind": "scaledCountEntries",
@@ -4827,8 +4827,8 @@
         ]
       },
       "rationale": "Changes how much ammunition common breakable ammo boxes yield without itself changing caliber-selection weights.",
-      "logic": "50-200% in 25% steps. Each vanilla MinCount/MaxCount endpoint is scaled independently from its source value and rounded half-up to a positive integer.",
-      "interaction": "Composes with Ammo Box Distribution in the same TCD-owned ammo pool clones: Amount controls MinCount/MaxCount and Distribution controls Weight.",
+      "logic": "50–200% changes how many rounds are found in breakable ammo boxes. 100% keeps vanilla amounts.",
+      "interaction": "Works with Ammo Box Distribution: Amount changes how many rounds you get, while Distribution changes which ammo families appear more often.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
@@ -4915,9 +4915,9 @@
           "Ammo from Breakable Boxes remains independent and changes only MinCount/MaxCount."
         ]
       },
-      "rationale": "Groups vanilla ammo entries by caliber family while preserving the exact authored PossibleItems membership.",
+      "rationale": "Choose which ammo families are more or less common in breakable ammo boxes while keeping the game's normal ammo-box mix structure.",
       "logic": "Each family multiplier scales only the Weight fields of its existing vanilla PossibleItems entries. PossibleItems membership is immutable.",
-      "interaction": "Composes with Ammo from Breakable Boxes: distribution changes Weight; amount changes MinCount/MaxCount.",
+      "interaction": "Works with Ammo from Breakable Boxes: Distribution changes which ammo families are favored; Amount changes how many rounds each box gives.",
       "exposeInUi": true
     },
     {
@@ -4925,7 +4925,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": ".45 ACP Ammo Box Weight",
-      "description": "Internal backing value for the .45 ACP family axis.",
+      "description": "Changes how common .45 ACP ammo is in breakable ammo boxes.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -4960,8 +4960,8 @@
           "Hidden backing parameter for the .45 ACP radar axis."
         ]
       },
-      "rationale": "Backs the .45 ACP axis of the Ammo Box Distribution radar.",
-      "logic": "Effective generator Weight = vanilla Weight 2 × this backing multiplier.",
+      "rationale": "Changes how common .45 ACP ammo is in breakable ammo boxes.",
+      "logic": "1x keeps the vanilla chance. Lower settings make .45 ACP less common; higher settings make it more common.",
       "interaction": "Controlled through the Ammo Box Distribution radar.",
       "exposeInUi": false
     },
@@ -4970,7 +4970,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "5.45 / 5.56 mm Ammo Box Weight",
-      "description": "Internal backing value for the 5.45 / 5.56 mm family axis.",
+      "description": "Changes how common 5.45 / 5.56 mm ammo is in breakable ammo boxes.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5005,8 +5005,8 @@
           "Hidden backing parameter for the 5.45 / 5.56 mm family axis."
         ]
       },
-      "rationale": "Backs the grouped 5.45 / 5.56 mm radar axis.",
-      "logic": "Effective Weight for existing A545D/A556D entries = authored Weight 2 × family multiplier.",
+      "rationale": "Changes how common 5.45 / 5.56 mm ammo is in breakable ammo boxes.",
+      "logic": "1x keeps the vanilla chance. Lower settings make 5.45 / 5.56 mm less common; higher settings make it more common.",
       "interaction": "Controlled through the Ammo Box Distribution radar.",
       "exposeInUi": false
     },
@@ -5015,7 +5015,7 @@
       "tab": "loot",
       "group": "Breakable Containers",
       "label": "12 Gauge Ammo Box Weight",
-      "description": "Internal backing value for the 12 Gauge family axis.",
+      "description": "Changes how common 12 Gauge ammo is in breakable ammo boxes.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5050,8 +5050,8 @@
           "Hidden backing parameter for the 12 Gauge radar axis."
         ]
       },
-      "rationale": "Backs the 12×70 Buckshot axis of the Ammo Box Distribution radar.",
-      "logic": "Effective generator Weight = vanilla Weight 2 × this backing multiplier.",
+      "rationale": "Changes how common 12 Gauge ammo is in breakable ammo boxes.",
+      "logic": "1x keeps the vanilla chance. Lower settings make 12 Gauge less common; higher settings make it more common.",
       "interaction": "Controlled through the Ammo Box Distribution radar.",
       "exposeInUi": false
     },
@@ -5162,7 +5162,7 @@
         ]
       },
       "rationale": "Changes only how many rounds an Rare-stash ammo roll produces. All vanilla ammo Chance/Weight selection fields and progression-rank gates remain unchanged, so this does not rebalance which calibers are selected.",
-      "logic": "25-200% in 25% steps. Each vanilla ammo MinCount and MaxCount is scaled independently with round-half-up and a minimum of 1.",
+      "logic": "25–200% changes the amount of ammo found in Rare stashes. 100% keeps vanilla amounts.",
       "interaction": "Applies only to audited production-world Rare stash paths. Test, quest-logic, shared-NPC and unresolved paths remain on vanilla generators. Rare Stash Coupon Chance continues to control only coupon inclusion chance.",
       "lootHint": {
         "kind": "scaledCountEntries",
@@ -5415,7 +5415,7 @@
       "tab": "economy",
       "group": "Trading",
       "label": "Trader Minimum Buy Condition",
-      "description": "Sets the minimum condition a weapon or armor must have before mapped traders will buy it from you. 0% allows completely broken equipment; 40% is vanilla.",
+      "description": "Sets the minimum condition a weapon or armor must have before traders will buy it from you. 0% allows completely broken gear; 40% is vanilla.",
       "control": "slider",
       "valueKind": "probability",
       "display": {
@@ -5454,7 +5454,7 @@
         ]
       },
       "rationale": "This is the dedicated sell-condition gate for damaged weapons and armor, separate from Trader Buy-From-You Pricing.",
-      "logic": "0% lets mapped traders accept completely broken weapons and armor. 40% preserves vanilla. 100% would require full condition. The value is written directly to WeaponSellMinDurability and ArmorSellMinDurability.",
+      "logic": "0% lets traders buy completely broken weapons and armor. 40% keeps vanilla. Higher settings make traders refuse more damaged gear.",
       "interaction": "This only changes whether damaged weapons and armor pass the trader condition gate. Their actual payout still follows item durability value loss, Trader Buy-From-You Pricing, trader-specific modifiers and other vanilla economy rules."
     },
     {
@@ -5542,7 +5542,7 @@
         ]
       },
       "rationale": "This is the clean tiered trader-ammo amount surface proven by the generator audit; shared cross-context ammo pools are intentionally excluded.",
-      "logic": "1x preserves vanilla stock counts. Each MinCount and MaxCount is scaled independently with positive round-half-up.",
+      "logic": "1x keeps vanilla trader ammo stock. Lower settings reduce how much ammo traders carry; higher settings increase it.",
       "interaction": "Changes amount only. It does not add ammo types, alter availability chance, bypass player-rank progression, or change refresh timing."
     },
     {
@@ -5550,7 +5550,7 @@
       "tab": "economy",
       "group": "Trader Stock",
       "label": "Medic Stock Amount",
-      "description": "Scales MinCount/MaxCount for the two isolated medic stock pools used by Universal and Noon medic inventories. Item availability Chance, PlayerRank gates and trader refresh settings remain vanilla.",
+      "description": "Changes how many medical supplies medics carry for sale. Item availability, progression requirements, and restock timing stay vanilla.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5588,7 +5588,7 @@
         ]
       },
       "rationale": "This is the isolated amount subdomain that the broader Trader Stock audit proved safe; it deliberately does not claim to control all trader stock.",
-      "logic": "100% preserves vanilla stock counts. Each MinCount and MaxCount is scaled independently with positive round-half-up.",
+      "logic": "100% keeps vanilla medic stock. Lower settings reduce stock; higher settings increase it.",
       "interaction": "Only the two audited medic consumable pools are affected. Other traders, local medic extras, availability Chance, rank gating and refresh timing remain vanilla."
     },
     {
@@ -5631,7 +5631,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "All six item-price controls use the same direct multiplier model and 0x–2x range, so one radar makes their relative economy tuning easy to compare without changing their existing writer routes.",
+      "rationale": "Compare and tune the base value of consumables, ammo, armor, weapons, artifacts, and mutant parts from one radar.",
       "logic": "Each axis is the actual price multiplier for that category: 1x is vanilla, 0x removes its configured value contribution, and 2x doubles it. The live legend preserves the current multiplier, vanilla reference, and original price meaning.",
       "interaction": "Drag one point to change only that item category. Right-click resets that category to its vanilla value; R resets all six Item Price Scalers.",
       "exposeInUi": true
@@ -6053,7 +6053,7 @@
       "tab": "economy",
       "group": "Services",
       "label": "Repair Cost (Difficulty)",
-      "description": "Mapped difficulty-profile repair-cost scalar. Vanilla leaves it at 1.00 on Novice, Stalker, Veteran and Master, so it adds no vanilla difficulty distinction.",
+      "description": "A second repair-price scaling layer exists in the game, but it stays fixed here because every vanilla difficulty uses the same setting.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6088,7 +6088,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Audit-only. This is a real EconomyDifficulty.Repair_Cost field, but exposing it beside Base Repair Price creates a second global repair-price multiplier for the same user goal while vanilla never varies it by difficulty.",
+      "rationale": "Kept fixed to avoid giving you two different global sliders that both do the same job as Base Repair Price.",
       "logic": "Kept at the vanilla 1.00 baseline in normal UI use. Base Repair Price is the single global repair-price control exposed to the user.",
       "interaction": "Documented separately from BaseRepairCostModifier and reputation repair modifiers, but intentionally hidden from the normal UI to avoid redundant global repair controls.",
       "exposeInUi": false
@@ -6132,7 +6132,7 @@
       },
       "rationale": "Single player-facing global repair-price control. It changes CoreVariables.BaseRepairCostModifier, the game-wide repair-price baseline.",
       "logic": "Higher values make repairs more expensive overall; lower values make them cheaper. 70% is vanilla.",
-      "interaction": "Reputation-based repair prices remain separate and can further raise or lower the final service price. The redundant difficulty Repair_Cost scalar is kept audit-only at its vanilla 1.00 baseline."
+      "interaction": "Reputation-based repair prices still apply and can further raise or lower the final repair bill."
     },
     {
       "id": "economy.repairEnemy",
@@ -6391,7 +6391,7 @@
       "tab": "equipment",
       "group": "Armor Wear",
       "label": "Armor Durability",
-      "description": "Controls the difficulty scalar used by armor condition wear. Higher values make armor retain condition longer; lower values make it wear out faster. It does not change the armor's protection values.",
+      "description": "Changes how quickly armor loses condition. Higher settings make armor last longer; lower settings make it wear out faster.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6426,8 +6426,8 @@
         "status": "runtime_test_required",
         "notes": []
       },
-      "rationale": "EnvironmentDifficulty.Armor_Durability is the game's difficulty-specific armor-condition durability scalar. Vanilla uses higher values on easier presets and lower values on harder presets. The exact per-hit wear formula is not exposed in CFG.",
-      "logic": "Higher values make armor lose condition more slowly; lower values make it wear faster. Stalker 1.00 is the neutral vanilla reference, but the value is a scalar rather than a literal wear-rate percentage.",
+      "rationale": "Changes how quickly armor loses condition across the selected Base Preset.",
+      "logic": "Higher settings make armor lose condition more slowly; lower settings make it wear faster.",
       "interaction": "Changes armor condition durability only. It does not change armor protection values, weapon wear or jamming thresholds."
     },
     {
@@ -7703,8 +7703,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "The radar normalizes each anomaly to its own vanilla value, so very different raw damage values can be compared and tuned cleanly without changing their existing CFG writer routes.",
-      "logic": "Each point represents 0x–2x of that anomaly's own vanilla base damage. The underlying raw CFG value is still written using the existing parameter and step. Global Anomaly Damage is applied separately on top.",
+      "rationale": "Compare and tune each anomaly against its own vanilla damage from one radar.",
+      "logic": "Each point runs from 0x to 2x of that anomaly's vanilla damage. Global Anomaly Damage is applied separately.",
       "interaction": "Drag a point to change that anomaly only. Right-click resets that anomaly to its vanilla base damage; R resets all individual anomaly damage values. Global Anomaly Damage is not part of this radar.",
       "exposeInUi": true
     },
@@ -7749,7 +7749,7 @@
       },
       "rationale": "This is fine tuning for this hazard, not a separate difficulty preset. Vanilla base damage is 30; Global Anomaly Damage remains the common difficulty setting applied on top. The UI shows the current effective pre-protection damage live, using the current Global Anomaly Damage setting.",
       "logic": "Effective pre-protection output is approximately base damage × Global Anomaly Damage. With the vanilla base 30, the four vanilla difficulty references are approximately: Novice 9, Stalker 30, Veteran 43.5, Master 52.5. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
-      "interaction": "Keep this at 100% to preserve the anomaly’s original internal balance and use Global Anomaly Damage for broad difficulty changes. Change it only when this specific hazard should be stronger or weaker than the rest. The two sliders multiply rather than replace each other.",
+      "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
     },
     {
@@ -7793,7 +7793,7 @@
       },
       "rationale": "This is fine tuning for this hazard, not a separate difficulty preset. Vanilla base damage is 60; Global Anomaly Damage remains the common difficulty setting applied on top. The UI shows the current effective pre-protection damage live, using the current Global Anomaly Damage setting.",
       "logic": "Effective pre-protection output is approximately base damage × Global Anomaly Damage. With the vanilla base 60, the four vanilla difficulty references are approximately: Novice 18, Stalker 60, Veteran 87, Master 105. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
-      "interaction": "Keep this at 100% to preserve the anomaly’s original internal balance and use Global Anomaly Damage for broad difficulty changes. Change it only when this specific hazard should be stronger or weaker than the rest. The two sliders multiply rather than replace each other.",
+      "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
     },
     {
@@ -7837,7 +7837,7 @@
       },
       "rationale": "This is fine tuning for this hazard, not a separate difficulty preset. Vanilla base damage is 105; Global Anomaly Damage remains the common difficulty setting applied on top. The UI shows the current effective pre-protection damage live, using the current Global Anomaly Damage setting.",
       "logic": "Effective pre-protection output is approximately base damage × Global Anomaly Damage. With the vanilla base 105, the four vanilla difficulty references are approximately: Novice 31.5, Stalker 105, Veteran 152.25, Master 183.75. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
-      "interaction": "Keep this at 100% to preserve the anomaly’s original internal balance and use Global Anomaly Damage for broad difficulty changes. Change it only when this specific hazard should be stronger or weaker than the rest. The two sliders multiply rather than replace each other.",
+      "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
     },
     {
@@ -7881,7 +7881,7 @@
       },
       "rationale": "This is fine tuning for this hazard, not a separate difficulty preset. Vanilla base damage is 25; Global Anomaly Damage remains the common difficulty setting applied on top. The UI shows the current effective pre-protection damage live, using the current Global Anomaly Damage setting.",
       "logic": "Effective pre-protection output is approximately base damage × Global Anomaly Damage. With the vanilla base 25, the four vanilla difficulty references are approximately: Novice 7.5, Stalker 25, Veteran 36.25, Master 43.75. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
-      "interaction": "Keep this at 100% to preserve the anomaly’s original internal balance and use Global Anomaly Damage for broad difficulty changes. Change it only when this specific hazard should be stronger or weaker than the rest. The two sliders multiply rather than replace each other.",
+      "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
     },
     {
@@ -7925,7 +7925,7 @@
       },
       "rationale": "This is fine tuning for this hazard, not a separate difficulty preset. Vanilla base damage is 60; Global Anomaly Damage remains the common difficulty setting applied on top. The UI shows the current effective pre-protection damage live, using the current Global Anomaly Damage setting.",
       "logic": "Effective pre-protection output is approximately base damage × Global Anomaly Damage. With the vanilla base 60, the four vanilla difficulty references are approximately: Novice 18, Stalker 60, Veteran 87, Master 105. The Base value is the game setting written for this anomaly; Effective is the live result after the global anomaly difficulty setting.",
-      "interaction": "Keep this at 100% to preserve the anomaly’s original internal balance and use Global Anomaly Damage for broad difficulty changes. Change it only when this specific hazard should be stronger or weaker than the rest. The two sliders multiply rather than replace each other.",
+      "interaction": "Keep this at 100% to preserve that anomaly's vanilla balance, or change it when this specific hazard should be stronger or weaker than the rest. Global Anomaly Damage stacks with this setting.",
       "exposeInUi": false
     },
     {
@@ -8111,8 +8111,8 @@
           "Runtime CFG stores low-speed Razor damage as 20-25 and high-speed damage as 100. The slider scales both tiers together and leaves MinSpeed/MaxSpeed thresholds unchanged."
         ]
       },
-      "rationale": "Exposes the Razor damage layer without hiding its velocity-dependent design behind one fake raw damage number.",
-      "logic": "100% keeps the vanilla 20-25 low-speed and 100 high-speed values. 0% removes the mapped health-damage values; 200% doubles both tiers.",
+      "rationale": "Changes Razor health damage while preserving its different low-speed and high-speed hit strengths.",
+      "logic": "100% keeps vanilla Razor damage. 0% removes its health damage; 200% doubles both low-speed and high-speed damage.",
       "interaction": "Razor Bleeding and Razor equipment corrosion remain separate effects. This control does not change the anomaly speed thresholds.",
       "exposeInUi": false
     },
@@ -8163,7 +8163,7 @@
         ]
       },
       "rationale": "Keeps Razor bleeding independent from direct health damage and equipment corrosion.",
-      "logic": "100% keeps vanilla bleeding at 20/60. 0% removes the mapped bleeding values; 200% doubles them to 40/120.",
+      "logic": "100% keeps vanilla Razor bleeding. 0% removes it; 200% doubles it.",
       "interaction": "Razor Health Damage is independent. Movement-speed thresholds and corrosion values remain vanilla."
     },
     {
@@ -8208,7 +8208,7 @@
         ]
       },
       "rationale": "Exposes the clearly separated direct health-damage effect without turning the full Soap Bubble behavior into one misleading strength slider.",
-      "logic": "100% corresponds to the vanilla raw damage value 100. The slider ranges from 0 to 200 damage.",
+      "logic": "100% keeps vanilla Soap Bubble health damage. 0% removes it; 200% doubles it.",
       "interaction": "Does not change particle behavior, spread, movement or other Soap Bubble effects.",
       "exposeInUi": false
     },
@@ -8254,7 +8254,7 @@
         ]
       },
       "rationale": "Exposes only the confirmed direct health-damage effect.",
-      "logic": "100% corresponds to the vanilla raw damage value 100. The slider ranges from 0 to 200 damage.",
+      "logic": "100% keeps vanilla Fireball health damage. 0% removes it; 200% doubles it.",
       "interaction": "Does not change Fireball movement, trail, collision or other behavior.",
       "exposeInUi": false
     },
@@ -8300,7 +8300,7 @@
         ]
       },
       "rationale": "Keeps Diamond direct damage separate from its bleeding effect.",
-      "logic": "100% corresponds to vanilla raw damage 15. The slider ranges from 0 to 30 damage.",
+      "logic": "100% keeps vanilla Diamond health damage. 0% removes it; 200% doubles it.",
       "interaction": "Diamond Bleeding is controlled separately.",
       "exposeInUi": false
     },
@@ -8388,8 +8388,8 @@
           "Runtime CFG stores PsyAnomalyIncreaseRegen as DegenPsyPoints with ValueMin/ValueMax = -1.7/-1.7. The UI exposes the magnitude as a positive 0-200% multiplier."
         ]
       },
-      "rationale": "Avoids exposing the engine’s counter-intuitive negative raw value while preserving the real effect semantics.",
-      "logic": "100% keeps the vanilla -1.7 Psy-point effect. 0% sets the mapped effect to zero; 200% doubles its magnitude to -3.4.",
+      "rationale": "Controls how strongly Psy anomalies affect you without exposing confusing behind-the-scenes numbers.",
+      "logic": "100% keeps vanilla Psy intensity. 0% removes this Psy effect; 200% doubles its strength.",
       "interaction": "This changes only PsyAnomalyIncreaseRegen. Other Psy-system thresholds and effects remain vanilla."
     },
     {
@@ -9165,7 +9165,7 @@
           "Selection is random without replacement at Build time."
         ]
       },
-      "rationale": "The four existing world-loot removal sliders share the same 0%-100% removal semantics, so one radar makes their relative scarcity easy to compare while preserving each original writer route and audited spawn population.",
+      "rationale": "Compare how much ammo, grenade, food, medical, and loose world loot remains in the Zone from one radar.",
       "logic": "0% keeps all eligible AmmoSNG, AmmoNATO and RGD boxes. Higher values remove a random audited subset at build time; dedicated DestructibleStash_F1 boxes are excluded from this population.",
       "interaction": "Drag one axis to change only that world-loot category. Right-click resets that category to 0% (vanilla); R resets all four. F1 Grenade Boxes remains separate because it is a subset of the broader ammo-box population.",
       "exposeInUi": true
@@ -9644,7 +9644,7 @@
       "tab": "alife",
       "group": "Human Group Size",
       "label": "Human Group Size",
-      "description": "Scales the ALife Director Human MaxCount for Newbie player rank. The radar exposes one independent spawn-count multiplier per player rank without changing lair population or respawn.",
+      "description": "Changes the largest human squad that can spawn while the player is at Newbie rank. It does not change lair population or respawn speed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -9681,9 +9681,9 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "One rank-aware radar changes the general ALife human group cap without pretending the Director exposes faction-specific human caps.",
-      "logic": "Newbie Human MaxCount 3 × multiplier, rounded to the nearest integer (minimum 1).",
-      "interaction": "Each radar axis corresponds to the player rank used by the ALife Director. 1x is vanilla; right-click an axis/legend resets that rank.",
+      "rationale": "Use the radar to tune human squad size separately for each player rank.",
+      "logic": "Vanilla Newbie squads cap at 3 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
+      "interaction": "Each radar point represents one player rank. 1x keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": true
     },
     {
@@ -9691,7 +9691,7 @@
       "tab": "alife",
       "group": "Human Group Size",
       "label": "Experienced Human Group Size",
-      "description": "Scales the ALife Director Human MaxCount for Experienced player rank. This changes the general human encounter-group cap without changing lair population or respawn.",
+      "description": "Changes the largest human squad that can spawn while the player is at Experienced rank. It does not change lair population or respawn speed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -9728,9 +9728,9 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "One rank-aware radar changes the general ALife human group cap without pretending the Director exposes faction-specific human caps.",
-      "logic": "Experienced Human MaxCount 4 × multiplier, rounded to the nearest integer (minimum 1).",
-      "interaction": "Each radar axis corresponds to the player rank used by the ALife Director. 1x is vanilla; right-click an axis/legend resets that rank.",
+      "rationale": "Use the radar to tune human squad size separately for each player rank.",
+      "logic": "Vanilla Experienced squads cap at 4 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
+      "interaction": "Each radar point represents one player rank. 1x keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
     },
     {
@@ -9738,7 +9738,7 @@
       "tab": "alife",
       "group": "Human Group Size",
       "label": "Veteran Human Group Size",
-      "description": "Scales the ALife Director Human MaxCount for Veteran player rank. This changes the general human encounter-group cap without changing lair population or respawn.",
+      "description": "Changes the largest human squad that can spawn while the player is at Veteran rank. It does not change lair population or respawn speed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -9775,9 +9775,9 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "One rank-aware radar changes the general ALife human group cap without pretending the Director exposes faction-specific human caps.",
-      "logic": "Veteran Human MaxCount 5 × multiplier, rounded to the nearest integer (minimum 1).",
-      "interaction": "Each radar axis corresponds to the player rank used by the ALife Director. 1x is vanilla; right-click an axis/legend resets that rank.",
+      "rationale": "Use the radar to tune human squad size separately for each player rank.",
+      "logic": "Vanilla Veteran squads cap at 5 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
+      "interaction": "Each radar point represents one player rank. 1x keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
     },
     {
@@ -9785,7 +9785,7 @@
       "tab": "alife",
       "group": "Human Group Size",
       "label": "Master Human Group Size",
-      "description": "Scales the ALife Director Human MaxCount for Master player rank. This changes the general human encounter-group cap without changing lair population or respawn.",
+      "description": "Changes the largest human squad that can spawn while the player is at Master rank. It does not change lair population or respawn speed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -9822,9 +9822,9 @@
           "Does not modify LairPrototypes.cfg, respawn timers, faction population, or scenario frequency."
         ]
       },
-      "rationale": "One rank-aware radar changes the general ALife human group cap without pretending the Director exposes faction-specific human caps.",
-      "logic": "Master Human MaxCount 6 × multiplier, rounded to the nearest integer (minimum 1).",
-      "interaction": "Each radar axis corresponds to the player rank used by the ALife Director. 1x is vanilla; right-click an axis/legend resets that rank.",
+      "rationale": "Use the radar to tune human squad size separately for each player rank.",
+      "logic": "Vanilla Master squads cap at 6 NPCs. Lower settings make squads smaller; higher settings allow larger squads.",
+      "interaction": "Each radar point represents one player rank. 1x keeps vanilla squad size; right-click that point or legend name to reset only that rank.",
       "exposeInUi": false
     },
     {
@@ -9832,7 +9832,7 @@
       "tab": "alife",
       "group": "Mutant Group Size",
       "label": "Global Mutant Spawn Count",
-      "description": "Internal MutantGeneric ALife Director restriction. Kept mapped for CFG completeness, but not exposed as a player control because the CFG does not establish it as a parent cap for concrete mutant species.",
+      "description": "A hidden general mutant-group limit exists in the game, but it is not shown because it is not proven to override the separate limits for each mutant species.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -9890,9 +9890,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Controls the Director's generic mutant cap separately from the per-species limits, so overall mutant encounter size can be tuned without changing species balance.",
-      "logic": "Mapped vanilla MutantGeneric MaxCount values are 3/4/4/4 for Newbie/Experienced/Veteran/Master. This internal parameter is not composed into species caps.",
-      "interaction": "Internal only. Concrete mutant species use their own mapped MaxCount values.",
+      "rationale": "Kept hidden so the tool does not pretend there is one proven master slider for every mutant group.",
+      "logic": "The game has separate per-species group limits, so this hidden setting is not used to scale them.",
+      "interaction": "Not shown in the normal UI. Use the species-specific Mutant Group Size radar instead.",
       "exposeInUi": false
     },
     {
@@ -9958,9 +9958,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Bloodsucker an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Bloodsucker MaxCount values 0/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Bloodsucker groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 0 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Bloodsucker group size. 1x keeps vanilla; right-click the point or legend name to reset Bloodsucker.",
       "exposeInUi": true
     },
     {
@@ -10026,9 +10026,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Blind Dog an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Blind Dog MaxCount values 4/6/8/12 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Blind Dog groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 4 / 6 / 8 / 12. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Blind Dog group size. 1x keeps vanilla; right-click the point or legend name to reset Blind Dog.",
       "exposeInUi": false
     },
     {
@@ -10094,9 +10094,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Flesh an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Flesh MaxCount values 2/3/5/6 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Flesh groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 2 / 3 / 5 / 6. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Flesh group size. 1x keeps vanilla; right-click the point or legend name to reset Flesh.",
       "exposeInUi": false
     },
     {
@@ -10162,9 +10162,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Controller an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Controller MaxCount values 0/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Controller groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 0 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Controller group size. 1x keeps vanilla; right-click the point or legend name to reset Controller.",
       "exposeInUi": false
     },
     {
@@ -10230,9 +10230,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Poltergeist an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Poltergeist MaxCount values 1/1/2/2 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Poltergeist groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 2 / 2. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Poltergeist group size. 1x keeps vanilla; right-click the point or legend name to reset Poltergeist.",
       "exposeInUi": false
     },
     {
@@ -10298,9 +10298,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Snork an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Snork MaxCount values 1/3/4/6 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Snork groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 3 / 4 / 6. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Snork group size. 1x keeps vanilla; right-click the point or legend name to reset Snork.",
       "exposeInUi": false
     },
     {
@@ -10366,9 +10366,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Boar an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Boar MaxCount values 2/3/5/6 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Boar groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 2 / 3 / 5 / 6. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Boar group size. 1x keeps vanilla; right-click the point or legend name to reset Boar.",
       "exposeInUi": false
     },
     {
@@ -10434,9 +10434,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Chimera an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Chimera MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Chimera groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Chimera group size. 1x keeps vanilla; right-click the point or legend name to reset Chimera.",
       "exposeInUi": false
     },
     {
@@ -10502,9 +10502,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Bayun an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Bayun MaxCount values 1/1/1/2 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Bayun groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 2. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Bayun group size. 1x keeps vanilla; right-click the point or legend name to reset Bayun.",
       "exposeInUi": false
     },
     {
@@ -10570,9 +10570,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Tushkan an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Tushkan MaxCount values 6/8/12/16 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Tushkan groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 6 / 8 / 12 / 16. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Tushkan group size. 1x keeps vanilla; right-click the point or legend name to reset Tushkan.",
       "exposeInUi": false
     },
     {
@@ -10638,9 +10638,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Rat Swarm an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Rat Swarm MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Rat Swarm groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Rat Swarm group size. 1x keeps vanilla; right-click the point or legend name to reset Rat Swarm.",
       "exposeInUi": false
     },
     {
@@ -10706,9 +10706,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Burer an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Burer MaxCount values 1/1/1/2 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Burer groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 2. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Burer group size. 1x keeps vanilla; right-click the point or legend name to reset Burer.",
       "exposeInUi": false
     },
     {
@@ -10774,9 +10774,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Pseudodog an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Pseudodog MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Pseudodog groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Pseudodog group size. 1x keeps vanilla; right-click the point or legend name to reset Pseudodog.",
       "exposeInUi": false
     },
     {
@@ -10842,9 +10842,9 @@
           "Writes only ALifeDirectorScenarioPrototypes.cfg; no lair capacity/respawn changes."
         ]
       },
-      "rationale": "Give Deer an independent spawn-count multiplier while preserving the Director's vanilla rank progression.",
-      "logic": "Deer MaxCount values 1/1/1/1 × multiplier per rank, integer-rounded; authored zero caps remain zero.",
-      "interaction": "Each radar point controls one mutant species. 1x is vanilla; right-click a point or legend entry resets that species.",
+      "rationale": "Change how large Deer groups can become while keeping the vanilla rank progression.",
+      "logic": "Vanilla Newbie / Experienced / Veteran / Master group limits are 1 / 1 / 1 / 1. Lower settings shrink groups; higher settings allow larger groups.",
+      "interaction": "This radar point changes only Deer group size. 1x keeps vanilla; right-click the point or legend name to reset Deer.",
       "exposeInUi": false
     }
   ],
