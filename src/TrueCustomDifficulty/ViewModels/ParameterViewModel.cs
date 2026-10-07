@@ -436,7 +436,7 @@ public sealed class ParameterViewModel : ObservableObject
         IsVisualAggregateAnchor;
 
     public bool HasEffectiveDamage => _effectiveDamageMultiplierProvider is not null;
-    public bool IsControlEnabled => _dependencyEnabledProvider?.Invoke() ?? true;
+    public bool IsControlEnabled => IsVisualAggregateAnchor || (_dependencyEnabledProvider?.Invoke() ?? true);
     // Radar backing parameters remain in the live VM/preset/writer graph but are
     // collapsed as individual rows. Each radar family has one visible aggregate anchor.
     public bool IsControlVisible =>
