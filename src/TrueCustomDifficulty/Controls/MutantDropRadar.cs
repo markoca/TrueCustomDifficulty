@@ -186,7 +186,7 @@ private string _statusText = string.Empty;
         }
 
         DrawInfoHeader(dc,
-            "Each successful drop still gives 1 mutant part. Drag outward for more frequent drops.",
+            "Mutant part drop chance · higher = parts drop more often · a successful drop still gives 1 part.",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
@@ -218,7 +218,9 @@ private string _statusText = string.Empty;
 
     private void DrawLegendColumn(DrawingContext dc, int start, int end, Rect bounds, double[] values, Brush textBrush, Brush mutedBrush, Brush accentBrush)
     {
-        var y = bounds.Top;
+        const double rowHeight = 28.0;
+        var totalHeight = (end - start) * rowHeight;
+        var y = bounds.Top + Math.Max(0.0, (bounds.Height - totalHeight) / 2.0);
         for (var i = start; i < end; i++)
         {
             var parameter = _parameters[i];
@@ -230,20 +232,20 @@ private string _statusText = string.Empty;
             var isModified = parameter.IsModified;
             BeginLegendHitArea(i);
 
-DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y, bounds.Width * 0.56, 16), 10.0,
+DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width * 0.44, 16), 10.0,
                 isModified ? accentBrush : hovered ? textBrush : textBrush, FontWeights.SemiBold);
 
             var currentPercent = values[i] * 100.0;
             var vanillaPercent = TryGetVanillaValue(parameter, out var vanilla)
                 ? vanilla * 100.0
                 : currentPercent;
-            var detail = $"{currentPercent:0.#}%   (vanilla {vanillaPercent:0.#}%)";
-            DrawClippedText(dc, detail, new Rect(bounds.Left + (bounds.Width * 0.56), y, bounds.Width * 0.44 - 6, 16), 9.6,
+            var detail = $"{currentPercent:0.#}% drop chance · vanilla {vanillaPercent:0.#}%";
+            DrawClippedText(dc, detail, new Rect(bounds.Left + (bounds.Width * 0.44), y + 6, bounds.Width * 0.56 - 6, 16), 9.6,
                 isModified || isSelected ? accentBrush : hovered ? textBrush : mutedBrush, isModified || isSelected ? FontWeights.SemiBold : FontWeights.Normal);
 
             EndLegendHitArea();
 
-            y += 28;
+            y += rowHeight;
         }
     }
 
