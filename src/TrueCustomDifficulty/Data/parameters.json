@@ -2473,7 +2473,7 @@
       "slider": {
         "min": 15,
         "max": 60,
-        "step": 1,
+        "step": 5,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2489,13 +2489,13 @@
         "status": "runtime_test_required",
         "notes": [
           "VodkaDrunkness uses ValueMin = 30 and ValueMax = 30 in the audited vanilla-era/current mod cross-check.",
-          "The control writes the same raw Drunkness value to ValueMin and ValueMax in exact 1-point steps.",
+          "The control writes the same raw Drunkness value to ValueMin and ValueMax in exact 5-point steps.",
           "The direct effect fields are source-structured and writer-safe, but the exact 2.0.5 raw row was not part of the original project baseline and should be runtime-tested."
         ]
       },
       "rationale": "Controls how strongly one Vodka pushes the drunkenness meter.",
       "logic": "Vanilla is 30 Drunkness per Vodka, so the 2nd vodka first reaches WASTED at the fixed threshold of 60. UI tiers: BUZZED <20, TIPSY 20–39, DRUNK 40–59, WASTED 60+.",
-      "interaction": "Always visible beside Beer Strength. Moving it updates Vodka strength, the Vodka Very Strong drink count, and the AFTER EACH VODKA progression immediately."
+      "interaction": "Always visible beside Beer Strength. Moving it updates Vodka strength, the Vodka WASTED drink count, and the Vodka progression immediately."
     },
     {
       "id": "survival.sleepEligibilityThreshold",
