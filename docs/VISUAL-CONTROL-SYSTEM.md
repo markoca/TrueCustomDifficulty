@@ -276,7 +276,8 @@ Current specialized surfaces include:
 - Mutant encounter-cap matrix.
 - Stash ammo tier/stack board.
 - World-loot depletion board.
-- Anomaly damage control.
+- Mutant part drop probability board.
+- Individual anomaly damage table.
 - Other remaining specialized families pending the same semantic audit.
 
 ## Architecture
