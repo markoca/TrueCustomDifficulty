@@ -64,6 +64,29 @@ public sealed class ParameterViewModel : ObservableObject
                        "Bleeding Strength and Natural Recovery use compact click-and-drag tracks. LOW, MEDIUM and SEVERE damage share one curve: click or drag a curve column to change its damage per bleeding tick. The curve always preserves LOW ≤ MEDIUM ≤ SEVERE. Right-click one control to restore only that value to the Base Preset; press R to restore the whole Bleeding system.";
             }
 
+            if (IsVisualAggregateAnchor)
+            {
+                var help = VisualAggregateFamily switch
+                {
+                    "FatigueCurve" => "Drag AIM and RELOAD curve points to shape how fatigue penalties escalate. The two compact tracks control fatigue build-up and Energy Drink relief.",
+                    "BleedingTreatmentMixer" => "Drag the four vertical faders to compare and tune bleeding removal for Bandage, Medkit, Army Medkit and Scientific Medkit.",
+                    "ConsumableMixer" => "Use the two compact effect-strength tracks and the five duration faders to tune consumables from one surface.",
+                    "SleepingDashboard" => "Tune the sleep threshold, minimum sleep duration, health restore and stamina restore directly in the Sleeping dashboard.",
+                    "HungerLadder" => "Tune hunger build-up at the top, then adjust the Well Fed, Hungry and Severe Hunger stamina effects on the state ladder.",
+                    "StarvationTimeline" => "Use the timeline to set when starvation penalties begin and how often damage ticks. The lower tracks tune stamina drain, damage and health-recovery loss.",
+                    "RepeatedHitBand" => "Drag MIN and MAX on the protection band. The highlighted span is the allowed repeated-hit protection range; toggle whether healed damage still counts below it.",
+                    "RadiationBalance" => "Balance natural recovery against radiation build-up on the split meter, then tune radiation health damage below.",
+                    "TradingDashboard" => "Tune trader buy/sell pricing together with minimum accepted condition and the value retained by broken items.",
+                    "RepairCurve" => "Drag the Hostile, Disliked, Neutral and Friendly points to shape repair pricing across reputation.",
+                    "AmmoDistribution" => "The stacked bar shows the resulting ammo mix. Use the four tracks below it to change each ammo weight directly.",
+                    _ => "Click or drag the visual controls to tune the linked gameplay values."
+                };
+
+                return "CONTROLS" + Environment.NewLine +
+                       help + Environment.NewLine +
+                       "Right-click an individual handle/track to restore that value to the Base Preset. Press R while the control is focused to restore the whole visual group.";
+            }
+
             if (IsAggregateRadarAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
@@ -297,6 +320,95 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsBleedingCurveMember => BleedingCurveParameterIds.Contains(Id);
     public bool IsBleedingCurveAnchor => Id == "survival.bleedingSeverity";
 
+    private static readonly Dictionary<string, string> VisualAggregateFamilyByParameterId = new(StringComparer.Ordinal)
+    {
+        ["survival.sleepinessRate"] = "FatigueCurve",
+        ["survival.energyDrinkFatigueRelief"] = "FatigueCurve",
+        ["survival.fatigueLowAimPenalty"] = "FatigueCurve",
+        ["survival.fatigueMediumAimPenalty"] = "FatigueCurve",
+        ["survival.fatigueStrongAimPenalty"] = "FatigueCurve",
+        ["survival.fatigueMediumReloadPenalty"] = "FatigueCurve",
+        ["survival.fatigueStrongReloadPenalty"] = "FatigueCurve",
+
+        ["health.bandageBleeding"] = "BleedingTreatmentMixer",
+        ["health.medkitBleeding"] = "BleedingTreatmentMixer",
+        ["health.armyMedkitBleeding"] = "BleedingTreatmentMixer",
+        ["health.ecoMedkitBleeding"] = "BleedingTreatmentMixer",
+
+        ["survival.instantStaminaRestore"] = "ConsumableMixer",
+        ["survival.alcoholRadiationRemoval"] = "ConsumableMixer",
+        ["survival.waterEffectDuration"] = "ConsumableMixer",
+        ["survival.energyDrinkEffectDuration"] = "ConsumableMixer",
+        ["survival.vodkaEffectDuration"] = "ConsumableMixer",
+        ["survival.beerEffectDuration"] = "ConsumableMixer",
+        ["survival.magicVodkaEffectDuration"] = "ConsumableMixer",
+
+        ["survival.sleepEligibilityThreshold"] = "SleepingDashboard",
+        ["survival.minimumSleepHours"] = "SleepingDashboard",
+        ["survival.sleepHealthRestore"] = "SleepingDashboard",
+        ["survival.sleepStaminaRestore"] = "SleepingDashboard",
+
+        ["survival.hungerRate"] = "HungerLadder",
+        ["survival.hungerMediumStaminaRegen"] = "HungerLadder",
+        ["survival.hungerStrongStaminaRegen"] = "HungerLadder",
+        ["survival.wellFedStaminaRegen"] = "HungerLadder",
+
+        ["advanced.starvationMechanics"] = "StarvationTimeline",
+        ["survival.starvationStaminaDrain"] = "StarvationTimeline",
+        ["survival.starvationDamage"] = "StarvationTimeline",
+        ["survival.starvationDamageInterval"] = "StarvationTimeline",
+        ["survival.starvationPenaltyDelay"] = "StarvationTimeline",
+        ["survival.starvationHealthRegenPenalty"] = "StarvationTimeline",
+
+        ["combat.accumulatedDamageWeightMax"] = "RepeatedHitBand",
+        ["combat.accumulatedDamageWeightMin"] = "RepeatedHitBand",
+        ["combat.accumulatedDamageIncludesHealedHealth"] = "RepeatedHitBand",
+
+        ["survival.radiationAccumulation"] = "RadiationBalance",
+        ["survival.radiationRecovery"] = "RadiationBalance",
+        ["survival.radiationDamage"] = "RadiationBalance",
+
+        ["economy.buyCondition"] = "TradingDashboard",
+        ["economy.sellCondition"] = "TradingDashboard",
+        ["economy.traderMinBuyCondition"] = "TradingDashboard",
+        ["economy.itemValueFloor"] = "TradingDashboard",
+
+        ["economy.repairEnemy"] = "RepairCurve",
+        ["economy.repairDisaffection"] = "RepairCurve",
+        ["economy.repairNeutral"] = "RepairCurve",
+        ["economy.repairFriend"] = "RepairCurve",
+
+        ["loot.ammoBoxWeight918"] = "AmmoDistribution",
+        ["loot.ammoBoxWeight045"] = "AmmoDistribution",
+        ["loot.ammoBoxWeight545"] = "AmmoDistribution",
+        ["loot.ammoBoxWeight012"] = "AmmoDistribution"
+    };
+
+    private static readonly Dictionary<string, string> VisualAggregateAnchorByFamily = new(StringComparer.Ordinal)
+    {
+        ["FatigueCurve"] = "survival.sleepinessRate",
+        ["BleedingTreatmentMixer"] = "health.bandageBleeding",
+        ["ConsumableMixer"] = "survival.instantStaminaRestore",
+        ["SleepingDashboard"] = "survival.sleepEligibilityThreshold",
+        ["HungerLadder"] = "survival.hungerRate",
+        ["StarvationTimeline"] = "survival.starvationStaminaDrain",
+        ["RepeatedHitBand"] = "combat.accumulatedDamageWeightMax",
+        ["RadiationBalance"] = "survival.radiationAccumulation",
+        ["TradingDashboard"] = "economy.buyCondition",
+        ["RepairCurve"] = "economy.repairEnemy",
+        ["AmmoDistribution"] = "loot.ammoBoxWeight918"
+    };
+
+    public bool IsVisualAggregateMember => VisualAggregateFamilyByParameterId.ContainsKey(Id);
+
+    public string VisualAggregateFamily
+        => VisualAggregateFamilyByParameterId.TryGetValue(Id, out var family) ? family : string.Empty;
+
+    public bool IsVisualAggregateAnchor
+        => VisualAggregateFamilyByParameterId.TryGetValue(Id, out var family)
+           && VisualAggregateAnchorByFamily.TryGetValue(family, out var anchorId)
+           && anchorId == Id;
+
     private static readonly HashSet<string> DrunkennessParameterIds = new(StringComparer.Ordinal)
     {
         "survival.beerDrunknessStrength",
@@ -320,7 +432,8 @@ public sealed class ParameterViewModel : ObservableObject
         IsHumanGroupSizeAnchor ||
         IsMutantGroupSizeAnchor ||
         IsBleedingCurveAnchor ||
-        IsDrunkennessAnchor;
+        IsDrunkennessAnchor ||
+        IsVisualAggregateAnchor;
 
     public bool HasEffectiveDamage => _effectiveDamageMultiplierProvider is not null;
     public bool IsControlEnabled => _dependencyEnabledProvider?.Invoke() ?? true;
@@ -342,10 +455,20 @@ public sealed class ParameterViewModel : ObservableObject
         && (!IsMutantGroupSizeMember || IsMutantGroupSizeAnchor)
         && (!IsBleedingCurveMember || IsBleedingCurveAnchor)
         && (!IsDrunkennessMember || IsDrunkennessAnchor)
+        && (!IsVisualAggregateMember || IsVisualAggregateAnchor)
         && (_dependencyEnabledProvider?.Invoke() ?? true);
     public string ToggleStateLabel => CurrentBoolean ? "ON" : "OFF";
     public double Minimum => Definition.Slider?.Min ?? 0;
     public double Maximum => Definition.Slider?.Max ?? 1;
+    public double ReferenceNumber => GetReferenceNumber();
+    public bool ReferenceBoolean
+    {
+        get
+        {
+            var element = GetReferenceElement();
+            return element.ValueKind is JsonValueKind.True or JsonValueKind.False && element.GetBoolean();
+        }
+    }
     public double ChoiceMinimum => 0;
     public double ChoiceMaximum => Math.Max(0, ChoiceOptions.Count - 1);
     public double ChoiceTickFrequency => 1.0;
@@ -534,30 +657,34 @@ public sealed class ParameterViewModel : ObservableObject
     }
 
     public bool IsModified
+        => _aggregateModifiedProvider?.Invoke() ?? IsValueModifiedFromReference();
+
+    public bool IsValueModifiedFromReference()
     {
-        get
+        var vanilla = GetReferenceElement();
+
+        if (IsSlider)
+            return vanilla.ValueKind == JsonValueKind.Number && Math.Abs(CurrentNumber - vanilla.GetDouble()) > Epsilon;
+
+        if (IsRange)
         {
-            if (_aggregateModifiedProvider is not null)
-                return _aggregateModifiedProvider();
+            if (Id == "loot.droppedWeaponCondition")
+                return Math.Abs(CurrentMinNumber - NpcWeaponConditionVanillaMin) > Epsilon
+                    || Math.Abs(CurrentMaxNumber - NpcWeaponConditionVanillaMax) > Epsilon;
 
-            var vanilla = GetReferenceElement();
-            if (IsSlider)
-                return vanilla.ValueKind == JsonValueKind.Number && Math.Abs(CurrentNumber - vanilla.GetDouble()) > Epsilon;
-            if (IsRange)
-            {
-                if (Id == "loot.droppedWeaponCondition")
-                    return Math.Abs(CurrentMinNumber - NpcWeaponConditionVanillaMin) > Epsilon
-                        || Math.Abs(CurrentMaxNumber - NpcWeaponConditionVanillaMax) > Epsilon;
-
-                var reference = GetReferenceNumber();
-                return Math.Abs(CurrentMinNumber - reference) > Epsilon || Math.Abs(CurrentMaxNumber - reference) > Epsilon;
-            }
-            if (IsToggle)
-                return vanilla.ValueKind is JsonValueKind.True or JsonValueKind.False && CurrentBoolean != vanilla.GetBoolean();
-            if (IsChoiceSlider)
-                return CurrentText != ElementToText(vanilla);
-            return false;
+            var reference = GetReferenceNumber();
+            return Math.Abs(CurrentMinNumber - reference) > Epsilon
+                || Math.Abs(CurrentMaxNumber - reference) > Epsilon;
         }
+
+        if (IsToggle)
+            return vanilla.ValueKind is JsonValueKind.True or JsonValueKind.False
+                && CurrentBoolean != vanilla.GetBoolean();
+
+        if (IsChoiceSlider)
+            return CurrentText != ElementToText(vanilla);
+
+        return false;
     }
 
     public string CurrentDisplay
