@@ -18,7 +18,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class WorldLootRemovalRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double RowHeight = 70.0;
+    private const double RowHeight = 56.0;
 
     private static readonly PopulationDefinition[] Populations =
     {
@@ -53,7 +53,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 500;
+        MinHeight = 400;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -61,7 +61,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 780.0 : Math.Max(600.0, availableSize.Width);
-        return new Size(width, 500.0);
+        return new Size(width, 400.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -149,12 +149,12 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             FontWeights.SemiBold);
 
         for (var row = 0; row < Populations.Length; row++)
-            DrawRow(dc, row, 61.0 + row * RowHeight, text, muted, border, accent, panel);
+            DrawRow(dc, row, 58.0 + row * RowHeight, text, muted, border, accent, panel);
 
         DrawCenteredText(
             dc,
             "≈ COUNTS ARE POPULATION ESTIMATES FROM THE SELECTED PERCENTAGE — THE ACTUAL ACTOR SET IS CHOSEN WHEN YOU BUILD",
-            new Point(ActualWidth / 2.0, 430.0),
+            new Point(ActualWidth / 2.0, 350.0),
             7.4,
             muted,
             FontWeights.Normal);
@@ -162,7 +162,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         DrawCenteredText(
             dc,
             "QUEST / STORY REWARDS, TRADERS, NPC LOOT, WEAPONS / ARMOR AND SCRIPTED SOURCES ARE OUTSIDE THIS BOARD",
-            new Point(ActualWidth / 2.0, 449.0),
+            new Point(ActualWidth / 2.0, 370.0),
             7.4,
             muted,
             FontWeights.Normal);
@@ -172,7 +172,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             DrawCenteredText(
                 dc,
                 _status.Text,
-                new Point(ActualWidth / 2.0, 474.0),
+                new Point(ActualWidth / 2.0, 390.0),
                 8.0,
                 accent,
                 FontWeights.SemiBold);
@@ -227,8 +227,8 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         DrawText(
             dc,
             info.Note,
-            new Point(card.Left + 10.0, card.Top + 26.0),
-            6.8,
+            new Point(card.Left + 10.0, card.Top + 24.0),
+            9.0,
             muted,
             FontWeights.Normal);
 
@@ -269,7 +269,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             modified ? accent : text,
             FontWeights.Bold);
 
-        var track = new Rect(trackLeft, card.Top + 31.0, trackWidth, 20.0);
+        var track = new Rect(trackLeft, card.Top + 29.0, trackWidth, 18.0);
         var y = track.Top + track.Height / 2.0;
 
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
@@ -288,9 +288,6 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             6.0);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
 
-        DrawText(dc, "0% VANILLA", new Point(track.Left, card.Top + 52.0), 6.5, muted, FontWeights.SemiBold);
-        DrawCenteredText(dc, "50%", new Point(track.Left + track.Width * 0.5, card.Top + 57.0), 6.4, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, "100% REMOVED", new Point(track.Right, card.Top + 52.0), 6.5, muted, FontWeights.SemiBold);
 
         _targets[row] = new HitTarget(
             new Rect(track.Left - 7.0, track.Top - 7.0, track.Width + 14.0, track.Height + 14.0),
@@ -477,7 +474,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
