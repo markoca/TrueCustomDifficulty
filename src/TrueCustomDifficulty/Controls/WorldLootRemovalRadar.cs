@@ -269,13 +269,13 @@ var info = Axes[axis];
         DrawClippedText(
             dc,
             $"{info.Label} | {fraction * 100:0.#}% removed",
-            new Rect(bounds.Left + 6, y + 6, bounds.Width - 12, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : textBrush,
+            new Rect(bounds.Left + 6, y + 6, bounds.Width - 12, 18), RadarLegendTextSize, hovered ? Brushes.White : hovered ? Brushes.White : modified ? accentBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
             $"Removed: {baseRemoved}/{info.BasePopulation} base | {dlcRemoved}/{info.DlcInclusivePopulation} with DLC",
-            new Rect(bounds.Left + 6, y + 24, bounds.Width - 12, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            new Rect(bounds.Left + 6, y + 24, bounds.Width - 12, 18), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : mutedBrush,
             FontWeights.Normal);
         EndLegendHitArea();
     }
