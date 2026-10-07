@@ -149,6 +149,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "PlayerWeaponProfile":
                 DrawPlayerWeaponProfile(dc, text, muted, border, soft, accent, panel);
                 break;
+            case "CoreHealthDashboard":
+                DrawCoreHealthDashboard(dc, text, muted, border, soft, accent, panel);
+                break;
             case "ConsumableMixer":
                 DrawConsumableMixer(dc, text, muted, border, accent, panel);
                 break;
@@ -438,6 +441,115 @@ public sealed class AggregateVisualControl : FrameworkElement
 
 
 
+
+
+    // This board only previews raw CFG settings. In particular RegenHP's
+    // runtime tick cadence and which heal effects honor its delay are not
+    // proven, so we deliberately do not draw an invented HP-over-time curve.
+    private void DrawCoreHealthDashboard(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(dc, "CORE HEALTH",
+            "health pool, configured regen delay and two independent recovery layers",
+            text, muted, accent);
+
+        var maxHP = P("health.maxHP");
+        var delay = P("health.regenDelay");
+        var passive = P("health.baseRegen");
+        var effectScale = P("health.regenerationScalar");
+        if (maxHP is null || delay is null || passive is null || effectScale is null)
+        {
+            DrawCenteredText(dc, "Core health data unavailable.",
+                new Point(ActualWidth / 2.0, 177.0), 10.0, muted, FontWeights.SemiBold);
+            return;
+        }
+
+        var width = Math.Max(480.0, ActualWidth - 32.0);
+        var hpCard = new Rect(16.0, 54.0, width, 93.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), hpCard, 4.0, 4.0);
+        DrawText(dc, "MAX HEALTH", new Point(hpCard.Left + 12.0, hpCard.Top + 10.0),
+            10.0, text, FontWeights.Bold);
+        DrawRightAlignedText(dc,
+            $"{maxHP.CurrentNumber:0} HP  |  BASE {maxHP.ReferenceNumber:0} HP",
+            new Point(hpCard.Right - 12.0, hpCard.Top + 8.0),
+            10.5, accent, FontWeights.Bold);
+
+        var hpTrack = new Rect(hpCard.Left + 16.0, hpCard.Top + 38.0,
+            hpCard.Width - 32.0, 22.0);
+        var hpY = hpTrack.Top + hpTrack.Height / 2.0;
+        var hpBaseX = ValueToX(maxHP.ReferenceNumber, maxHP.Minimum, maxHP.Maximum, hpTrack, false);
+        var hpCurrentX = ValueToX(maxHP.CurrentNumber, maxHP.Minimum, maxHP.Maximum, hpTrack, false);
+        dc.DrawLine(new Pen(soft, 4.0), new Point(hpTrack.Left, hpY), new Point(hpTrack.Right, hpY));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.45), 5.0),
+            new Point(Math.Min(hpCurrentX, hpBaseX), hpY),
+            new Point(Math.Max(hpCurrentX, hpBaseX), hpY));
+        dc.DrawLine(new Pen(muted, 2.0),
+            new Point(hpBaseX, hpY - 10.0), new Point(hpBaseX, hpY + 10.0));
+        dc.DrawEllipse(panel, new Pen(accent, IsSelected(maxHP) ? 2.8 : 1.8),
+            new Point(hpCurrentX, hpY), 7.0, 7.0);
+        dc.DrawEllipse(accent, null, new Point(hpCurrentX, hpY), 3.0, 3.0);
+        AddHorizontalTarget(maxHP, hpTrack, hpTrack, maxHP.Minimum, maxHP.Maximum);
+        DrawText(dc, $"{maxHP.Minimum:0} HP",
+            new Point(hpTrack.Left, hpCard.Bottom - 20.0),
+            9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{maxHP.Maximum:0} HP",
+            new Point(hpTrack.Right, hpCard.Bottom - 20.0),
+            9.0, muted, FontWeights.Normal);
+
+        var delayCard = new Rect(16.0, 156.0, width, 98.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), delayCard, 4.0, 4.0);
+        DrawText(dc, "CONFIGURED RECOVERY DELAY",
+            new Point(delayCard.Left + 12.0, delayCard.Top + 9.0),
+            9.6, text, FontWeights.Bold);
+        DrawRightAlignedText(dc,
+            $"{delay.CurrentNumber:0} s  |  BASE {delay.ReferenceNumber:0} s",
+            new Point(delayCard.Right - 12.0, delayCard.Top + 8.0),
+            10.2, accent, FontWeights.Bold);
+        DrawText(dc, "Darker section = configured wait before compatible recovery",
+            new Point(delayCard.Left + 12.0, delayCard.Top + 26.0),
+            9.0, muted, FontWeights.Normal);
+
+        var delayTrack = new Rect(delayCard.Left + 16.0, delayCard.Top + 50.0,
+            delayCard.Width - 32.0, 22.0);
+        var delayY = delayTrack.Top + delayTrack.Height / 2.0;
+        var delayBaseX = ValueToX(delay.ReferenceNumber, delay.Minimum, delay.Maximum, delayTrack, false);
+        var delayCurrentX = ValueToX(delay.CurrentNumber, delay.Minimum, delay.Maximum, delayTrack, false);
+        dc.DrawLine(new Pen(soft, 4.0),
+            new Point(delayTrack.Left, delayY), new Point(delayTrack.Right, delayY));
+        if (delayCurrentX > delayTrack.Left)
+            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.85), 5.0),
+                new Point(delayTrack.Left, delayY), new Point(delayCurrentX, delayY));
+        dc.DrawLine(new Pen(muted, 2.0),
+            new Point(delayBaseX, delayY - 9.0), new Point(delayBaseX, delayY + 9.0));
+        dc.DrawEllipse(panel, new Pen(accent, IsSelected(delay) ? 2.8 : 1.8),
+            new Point(delayCurrentX, delayY), 6.5, 6.5);
+        dc.DrawEllipse(accent, null, new Point(delayCurrentX, delayY), 2.5, 2.5);
+        AddHorizontalTarget(delay, delayTrack, delayTrack, delay.Minimum, delay.Maximum);
+        DrawText(dc, "0 s", new Point(delayTrack.Left, delayCard.Bottom - 20.0),
+            9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "10 s", new Point(delayTrack.Right, delayCard.Bottom - 20.0),
+            9.0, muted, FontWeights.Normal);
+
+        var gap = 10.0;
+        var cardWidth = (width - gap) / 2.0;
+        DrawHorizontalTrackCard(dc, passive, "PASSIVE REGEN",
+            new Rect(16.0, 265.0, cardWidth, 72.0),
+            text, muted, border, accent, panel);
+        DrawHorizontalTrackCard(dc, effectScale, "RECOVERY EFFECT SCALE",
+            new Rect(16.0 + cardWidth + gap, 265.0, cardWidth, 72.0),
+            text, muted, border, accent, panel);
+
+        DrawCenteredText(dc,
+            "0 PASSIVE = VANILLA  |  EFFECT SCALE ALONE DOES NOT START REGEN",
+            new Point(ActualWidth / 2.0, 345.0),
+            9.0, text, FontWeights.SemiBold);
+    }
 
     // Three source-exact tuning lanes: no invented headshot damage formula,
     // simulated hit chance, or hard-coded weapon-jam probability.
@@ -3489,6 +3601,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "PsyPhantomPressure" => 390.0,
             "HumanCombatProfile" => 390.0,
             "PlayerWeaponProfile" => 330.0,
+            "CoreHealthDashboard" => 385.0,
             "ConsumableMixer" => 475.0,
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
@@ -3548,6 +3661,13 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "combat.playerWeaponDamage",
                 "combat.playerHeadshotMultiplier",
                 "combat.weaponJamming"
+            },
+            "CoreHealthDashboard" => new[]
+            {
+                "health.maxHP",
+                "health.baseRegen",
+                "health.regenDelay",
+                "health.regenerationScalar"
             },
             "ConsumableMixer" => new[]
             {
