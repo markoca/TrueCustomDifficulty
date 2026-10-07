@@ -98,10 +98,11 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["loot.cheapStashGrenadeQuantity"] = new("loot-stash-grenade-1", 1),
             ["loot.destructibleAmmoQuantity"] = new("loot-breakable-1", 0),
             ["loot.destructibleGrenadeQuantity"] = new("loot-breakable-1", 1),
-            ["loot.worldWeaponShuffle"] = new("loot-world-weapon-1", 0),
-            ["loot.worldWeaponDensity"] = new("loot-world-weapon-1", 1),
-            ["loot.worldAttachmentShuffle"] = new("loot-world-other-1", 0),
-            ["loot.worldDetectors"] = new("loot-world-other-1", 1),
+            ["loot.worldWeaponShuffle"] = new("loot-world-switches-1", 0),
+            ["loot.worldAttachmentShuffle"] = new("loot-world-switches-1", 1),
+            ["loot.worldDetectors"] = new("loot-world-switches-2", 0),
+            ["loot.blueprintShuffle"] = new("loot-world-switches-2", 1),
+            ["loot.worldWeaponDensity"] = new("loot-world-density-1", 0),
 
             // Economy
             ["economy.buyCondition"] = new("economy-trading-1", 0),
