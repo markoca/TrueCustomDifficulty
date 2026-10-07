@@ -425,32 +425,6 @@ public sealed class DrunkennessControl : FrameworkElement
         }
     }
 
-    protected override void OnMouseWheel(MouseWheelEventArgs e)
-    {
-        base.OnMouseWheel(e);
-
-        if (e.Delta == 0)
-            return;
-
-        var point = e.GetPosition(this);
-        var direction = e.Delta > 0 ? 1 : -1;
-
-        if (_beerSliderRect.Contains(point))
-        {
-            _activeSlider = ActiveSlider.Beer;
-            NudgeStrength(_beerStrengthParameter, direction);
-            e.Handled = true;
-            return;
-        }
-
-        if (_vodkaSliderRect.Contains(point))
-        {
-            _activeSlider = ActiveSlider.Vodka;
-            NudgeStrength(_vodkaStrengthParameter, direction);
-            e.Handled = true;
-        }
-    }
-
     protected override void OnMouseMove(MouseEventArgs e)
     {
         base.OnMouseMove(e);
