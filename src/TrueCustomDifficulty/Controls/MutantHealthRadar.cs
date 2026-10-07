@@ -8,34 +8,30 @@ using TrueCustomDifficulty.ViewModels;
 
 namespace TrueCustomDifficulty.Controls;
 
-/// <summary>
-/// Mutant health roster with live authored-HP results.
-///
-/// The historical *Radar class name is kept for XAML compatibility. The visual itself
-/// uses a shared absolute-HP comparison bar plus a direct per-mutant multiplier track.
-/// </summary>
 public sealed class MutantHealthRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double GlobalHpMaximum = 7500.0; // Pseudogiant 2500 HP at the allowed 3x maximum.
-    private const double RowHeight = 48.0;
+    private const double GlobalHpMaximum = 7500.0;
+    private const double DesiredHeight = 380.0;
+    private const double MaxContentWidth = 900.0;
+    private const double ColumnGap = 16.0;
+    private const double RowHeight = 62.0;
 
     private static readonly MutantDefinition[] Mutants =
     {
-        new("combat.mutantHealth.bloodsucker", "Bloodsucker", 500.0, "Mist 1000 HP"),
-        new("combat.mutantHealth.chimera", "Chimera", 1400.0, null),
-        new("combat.mutantHealth.deer", "Deer", 600.0, null),
-        new("combat.mutantHealth.pseudogiant", "Pseudogiant", 2500.0, null),
-        new("combat.mutantHealth.pseudodog", "Pseudodog", 300.0, null),
-        new("combat.mutantHealth.burer", "Burer", 400.0, "Shooting variant follows"),
-        new("combat.mutantHealth.bayun", "Bayun", 400.0, null),
-        new("combat.mutantHealth.controller", "Controller", 500.0, null),
+        new("combat.mutantHealth.bloodsucker", "Bloodsucker", 500.0, true),
+        new("combat.mutantHealth.chimera", "Chimera", 1400.0, false),
+        new("combat.mutantHealth.deer", "Deer", 600.0, false),
+        new("combat.mutantHealth.pseudogiant", "Pseudogiant", 2500.0, false),
+        new("combat.mutantHealth.pseudodog", "Pseudodog", 300.0, false),
+        new("combat.mutantHealth.burer", "Burer", 400.0, false),
+        new("combat.mutantHealth.bayun", "Bayun", 400.0, false),
+        new("combat.mutantHealth.controller", "Controller", 500.0, false),
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Mutants.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
     private readonly VisualStatusMessage _status;
-
     private int _selectedRow;
     private int _hoverRow = -1;
     private int _dragRow = -1;
@@ -56,15 +52,15 @@ public sealed class MutantHealthRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 505;
+        MinHeight = DesiredHeight;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        var width = double.IsInfinity(availableSize.Width) ? 740.0 : Math.Max(560.0, availableSize.Width);
-        return new Size(width, 505.0);
+        var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(560.0, availableSize.Width);
+        return new Size(width, DesiredHeight);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -82,10 +78,7 @@ public sealed class MutantHealthRadar : FrameworkElement
 
         if (Parameters is not null)
         {
-            var byId = Parameters
-                .OfType<ParameterViewModel>()
-                .ToDictionary(x => x.Id, StringComparer.Ordinal);
-
+            var byId = Parameters.OfType<ParameterViewModel>().ToDictionary(x => x.Id, StringComparer.Ordinal);
             for (var i = 0; i < Mutants.Length; i++)
             {
                 if (!byId.TryGetValue(Mutants[i].ParameterId, out var parameter))
@@ -134,69 +127,40 @@ public sealed class MutantHealthRadar : FrameworkElement
 
         _targets.Clear();
 
-        DrawText(dc, "MUTANT HEALTH ROSTER", new Point(18.0, 16.0), 12.0, text, FontWeights.Bold);
-        DrawText(
-            dc,
-            "actual MaxHP stays visible while each mutant keeps its own 0.25x–3x multiplier",
-            new Point(18.0, 34.0),
-            8.2,
-            muted,
-            FontWeights.Normal);
+        var content = ContentRect();
+        DrawText(dc, "MUTANT HEALTH", new Point(content.Left, 16.0), 12.5, text, FontWeights.Bold);
+        DrawText(dc, "live MaxHP + direct multiplier", new Point(content.Left, 37.0), 9.5, muted, FontWeights.Normal);
 
-        DrawRightAlignedText(
-            dc,
-            "HEALTH ONLY — DAMAGE / ABILITY COOLDOWNS STAY SEPARATE",
-            new Point(Math.Max(500.0, ActualWidth - 18.0), 18.0),
-            7.5,
-            muted,
-            FontWeights.SemiBold);
+        var columnWidth = (content.Width - ColumnGap) / 2.0;
+        for (var i = 0; i < 4; i++)
+        {
+            DrawRow(dc, i, new Rect(content.Left, 68.0 + i * RowHeight, columnWidth, RowHeight - 6.0), text, muted, border, accent, panel);
+            DrawRow(dc, i + 4, new Rect(content.Left + columnWidth + ColumnGap, 68.0 + i * RowHeight, columnWidth, RowHeight - 6.0), text, muted, border, accent, panel);
+        }
 
-        var layout = GetLayout();
-
-        DrawText(dc, "MUTANT", new Point(layout.LabelLeft, 62.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "CURRENT HP", new Point(layout.HpCenter, 69.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "ABSOLUTE HP  •  0 → 7500", new Point(layout.HpBarLeft + layout.HpBarWidth / 2.0, 69.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "MULTIPLIER", new Point(layout.TrackLeft + layout.TrackWidth / 2.0, 69.0), 8.0, muted, FontWeights.Bold);
-
-        dc.DrawLine(new Pen(border, 1.0), new Point(14.0, 83.0), new Point(Math.Max(14.0, ActualWidth - 14.0), 83.0));
-
-        for (var row = 0; row < Mutants.Length; row++)
-            DrawRow(dc, row, 92.0 + row * RowHeight, layout, text, muted, border, accent, panel);
-
-        var footerY = 92.0 + Mutants.Length * RowHeight + 10.0;
         DrawCenteredText(
             dc,
-            "THIN GREY HP MARK = VANILLA   •   1x MULTIPLIER = VANILLA   •   RIGHT-CLICK A TRACK TO RESET",
-            new Point(ActualWidth / 2.0, footerY),
-            7.5,
+            "HP bar is shared 0–7500   •   grey tick = Base Preset",
+            new Point(ActualWidth / 2.0, 332.0),
+            9.0,
             muted,
             FontWeights.Normal);
 
         if (!string.IsNullOrWhiteSpace(_status.Text))
-        {
-            DrawCenteredText(
-                dc,
-                _status.Text,
-                new Point(ActualWidth / 2.0, footerY + 19.0),
-                8.0,
-                accent,
-                FontWeights.SemiBold);
-        }
+            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 355.0), 9.5, accent, FontWeights.SemiBold);
     }
 
     private void DrawRow(
         DrawingContext dc,
         int row,
-        double top,
-        Layout layout,
+        Rect card,
         Brush text,
         Brush muted,
         Brush border,
         Brush accent,
         Brush panel)
     {
-        var parameter = _parameters[row];
-        if (parameter is null)
+        if (_parameters[row] is not { } parameter)
             return;
 
         var mutant = Mutants[row];
@@ -204,93 +168,61 @@ public sealed class MutantHealthRadar : FrameworkElement
         var hovered = row == _hoverRow;
         var modified = Math.Abs(parameter.CurrentNumber - parameter.ReferenceNumber) > Epsilon;
 
-        var rowRect = new Rect(14.0, top, Math.Max(1.0, ActualWidth - 28.0), RowHeight - 3.0);
         dc.DrawRoundedRectangle(
-            selected
-                ? CloneWithOpacity(accent, 0.08)
-                : hovered
-                    ? CloneWithOpacity(border, 0.10)
-                    : CloneWithOpacity(panel, 0.01),
+            selected ? CloneWithOpacity(accent, 0.08)
+            : hovered ? CloneWithOpacity(border, 0.10)
+            : CloneWithOpacity(panel, 0.02),
             new Pen(CloneWithOpacity(border, 0.45), 0.8),
-            rowRect,
+            card,
             3.0,
             3.0);
-
-        DrawText(
-            dc,
-            mutant.Label,
-            new Point(layout.LabelLeft, top + 8.0),
-            8.7,
-            modified ? accent : text,
-            FontWeights.Bold);
-
-        if (!string.IsNullOrWhiteSpace(mutant.SecondaryNote))
-        {
-            var note = mutant.ParameterId == "combat.mutantHealth.bloodsucker"
-                ? $"Mist {1000.0 * parameter.CurrentNumber:0} HP"
-                : mutant.SecondaryNote;
-
-            DrawText(dc, note, new Point(layout.LabelLeft, top + 25.0), 6.8, muted, FontWeights.Normal);
-        }
 
         var currentHp = mutant.VanillaHp * parameter.CurrentNumber;
         var vanillaHp = mutant.VanillaHp * parameter.ReferenceNumber;
 
-        DrawCenteredText(
-            dc,
-            currentHp.ToString("0", CultureInfo.InvariantCulture),
-            new Point(layout.HpCenter, top + 17.0),
-            11.0,
-            modified ? accent : text,
-            FontWeights.Bold);
+        DrawText(dc, mutant.Label, new Point(card.Left + 8.0, card.Top + 6.0), 9.5, modified ? accent : text, FontWeights.Bold);
+        DrawRightAlignedText(dc, $"{currentHp:0} HP", new Point(card.Right - 8.0, card.Top + 5.0), 10.5, modified ? accent : text, FontWeights.Bold);
 
-        DrawCenteredText(
-            dc,
-            $"v{vanillaHp:0}",
-            new Point(layout.HpCenter, top + 33.0),
-            6.8,
-            muted,
-            FontWeights.Normal);
+        if (mutant.ShowMist)
+            DrawText(dc, $"Mist {1000.0 * parameter.CurrentNumber:0} HP", new Point(card.Left + 8.0, card.Top + 23.0), 9.0, muted, FontWeights.Normal);
+        else
+            DrawText(dc, $"vanilla {vanillaHp:0} HP", new Point(card.Left + 8.0, card.Top + 23.0), 9.0, muted, FontWeights.Normal);
 
-        var hpBar = new Rect(layout.HpBarLeft, top + 10.0, layout.HpBarWidth, 20.0);
+        var hpBar = new Rect(card.Left + 126.0, card.Top + 25.0, Math.Max(80.0, card.Width - 134.0), 8.0);
         var hpY = hpBar.Top + hpBar.Height / 2.0;
-
-        dc.DrawLine(new Pen(border, 5.0), new Point(hpBar.Left, hpY), new Point(hpBar.Right, hpY));
+        dc.DrawLine(new Pen(border, 4.0), new Point(hpBar.Left, hpY), new Point(hpBar.Right, hpY));
 
         var currentHpX = HpToX(currentHp, hpBar);
         var vanillaHpX = HpToX(vanillaHp, hpBar);
+        dc.DrawLine(new Pen(accent, 4.0), new Point(hpBar.Left, hpY), new Point(currentHpX, hpY));
+        dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaHpX, hpY - 5.0), new Point(vanillaHpX, hpY + 5.0));
 
-        dc.DrawLine(new Pen(accent, 5.0), new Point(hpBar.Left, hpY), new Point(currentHpX, hpY));
-        dc.DrawLine(new Pen(muted, 1.1), new Point(vanillaHpX, hpY - 8.0), new Point(vanillaHpX, hpY + 8.0));
-        dc.DrawEllipse(accent, null, new Point(currentHpX, hpY), 4.5, 4.5);
-
-        var track = new Rect(layout.TrackLeft, top + 10.0, layout.TrackWidth, 20.0);
+        var track = new Rect(card.Left + 8.0, card.Top + 41.0, card.Width - 16.0, 10.0);
         var y = track.Top + track.Height / 2.0;
-
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
 
-        var vanillaX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
+        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
         var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track);
-
-        dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX, y - 7.0), new Point(vanillaX, y + 7.0));
+        dc.DrawLine(new Pen(muted, 1.0), new Point(baseX, y - 5.0), new Point(baseX, y + 5.0));
         dc.DrawLine(new Pen(accent, 3.0), new Point(track.Left, y), new Point(currentX, y));
+        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.4 : 1.4), new Point(currentX, y), 5.3, 5.3);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.3, 2.3);
 
-        dc.DrawEllipse(
-            panel,
-            new Pen(accent, selected ? 2.5 : 1.5),
-            new Point(currentX, y),
-            6.0,
-            6.0);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
-
-        DrawText(dc, $"{parameter.CurrentNumber:0.##}x", new Point(track.Left, top + 31.0), 7.4, modified ? accent : muted, FontWeights.Bold);
-        DrawCenteredText(dc, "1x", new Point(vanillaX, top + 35.0), 6.6, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "3x", new Point(track.Right, top + 31.0), 6.6, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x", new Point(card.Right - 8.0, card.Top + 35.0), 9.0, modified ? accent : muted, FontWeights.SemiBold);
 
         _targets[row] = new HitTarget(
-            new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
+            new Rect(track.Left - 6.0, track.Top - 6.0, track.Width + 12.0, track.Height + 12.0),
             track);
     }
+
+    private Rect ContentRect()
+    {
+        var width = Math.Min(MaxContentWidth, Math.Max(540.0, ActualWidth - 32.0));
+        return new Rect((ActualWidth - width) / 2.0, 0.0, width, ActualHeight);
+    }
+
+    private static double HpToX(double hp, Rect bar)
+        => bar.Left + bar.Width * Math.Clamp(hp / GlobalHpMaximum, 0.0, 1.0);
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
@@ -311,9 +243,9 @@ public sealed class MutantHealthRadar : FrameworkElement
     protected override void OnMouseMove(MouseEventArgs e)
     {
         base.OnMouseMove(e);
-
         var point = e.GetPosition(this);
         var hover = FindTarget(point);
+
         if (hover != _hoverRow)
         {
             _hoverRow = hover;
@@ -322,19 +254,16 @@ public sealed class MutantHealthRadar : FrameworkElement
 
         Cursor = hover >= 0 ? Cursors.Hand : Cursors.Arrow;
 
-        if (_dragRow < 0 || e.LeftButton != MouseButtonState.Pressed)
-            return;
-
-        UpdateFromPoint(_dragRow, point);
-        e.Handled = true;
+        if (_dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed)
+        {
+            UpdateFromPoint(_dragRow, point);
+            e.Handled = true;
+        }
     }
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
-        if (_hoverRow < 0)
-            return;
-
         _hoverRow = -1;
         InvalidateVisual();
     }
@@ -353,7 +282,6 @@ public sealed class MutantHealthRadar : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
-
         var row = FindTarget(e.GetPosition(this));
         if (row < 0 || _parameters[row] is not { } parameter)
             return;
@@ -374,7 +302,7 @@ public sealed class MutantHealthRadar : FrameworkElement
             foreach (var parameter in _parameters)
                 parameter?.ResetToReference();
 
-            _status.ShowTransient("Mutant health roster reset to Base Preset.");
+            _status.ShowTransient("Mutant health reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -405,15 +333,10 @@ public sealed class MutantHealthRadar : FrameworkElement
         if (!_targets.TryGetValue(row, out var target) || _parameters[row] is not { } parameter)
             return;
 
-        var ratio = Math.Clamp(
-            (point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width),
-            0.0,
-            1.0);
-
+        var ratio = Math.Clamp((point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width), 0.0, 1.0);
         var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
         var tick = Math.Max(parameter.TickFrequency, Epsilon);
-        var snapped = parameter.Minimum
-            + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
+        var snapped = parameter.Minimum + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
 
         parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
         _status.Clear();
@@ -430,32 +353,6 @@ public sealed class MutantHealthRadar : FrameworkElement
 
         return -1;
     }
-
-    private Layout GetLayout()
-    {
-        var usable = Math.Max(520.0, ActualWidth - 40.0);
-        var labelWidth = Math.Clamp(usable * 0.17, 100.0, 130.0);
-        var hpNumberWidth = 76.0;
-        var hpBarWidth = Math.Clamp(usable * 0.27, 130.0, 205.0);
-        var fixedWidth = labelWidth + hpNumberWidth + hpBarWidth + 48.0;
-        var trackWidth = Math.Max(150.0, usable - fixedWidth);
-
-        var left = 22.0;
-        var hpCenter = left + labelWidth + hpNumberWidth / 2.0;
-        var hpBarLeft = left + labelWidth + hpNumberWidth + 8.0;
-        var trackLeft = hpBarLeft + hpBarWidth + 24.0;
-
-        return new Layout(
-            left,
-            hpCenter,
-            hpBarLeft,
-            hpBarWidth,
-            trackLeft,
-            trackWidth);
-    }
-
-    private static double HpToX(double hp, Rect bar)
-        => bar.Left + bar.Width * Math.Clamp(hp / GlobalHpMaximum, 0.0, 1.0);
 
     private static double ValueToX(double value, double minimum, double maximum, Rect track)
     {
@@ -498,7 +395,7 @@ public sealed class MutantHealthRadar : FrameworkElement
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
@@ -512,13 +409,6 @@ public sealed class MutantHealthRadar : FrameworkElement
         return formatted;
     }
 
-    private sealed record MutantDefinition(string ParameterId, string Label, double VanillaHp, string? SecondaryNote);
+    private sealed record MutantDefinition(string ParameterId, string Label, double VanillaHp, bool ShowMist);
     private sealed record HitTarget(Rect HitRect, Rect MapRect);
-    private sealed record Layout(
-        double LabelLeft,
-        double HpCenter,
-        double HpBarLeft,
-        double HpBarWidth,
-        double TrackLeft,
-        double TrackWidth);
 }
