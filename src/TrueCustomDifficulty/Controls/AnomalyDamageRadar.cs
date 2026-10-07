@@ -191,7 +191,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Each axis is relative to that anomaly's own vanilla base damage. Global Anomaly Damage stays separate.",
+            "Anomaly lethality · 1x is vanilla · higher means that anomaly hurts you more. Global Anomaly Damage is separate.",
             mutedBrush);
 
         DrawLegend(dc, multipliers, textBrush, mutedBrush, accentBrush);
@@ -242,7 +242,9 @@ private string _statusText = string.Empty;
         Brush mutedBrush,
         Brush accentBrush)
     {
-        var y = bounds.Top;
+        const double rowHeight = 30.0;
+        var totalHeight = (end - start) * rowHeight;
+        var y = bounds.Top + Math.Max(0.0, (bounds.Height - totalHeight) / 2.0);
 
         for (var i = start; i < end; i++)
         {
@@ -258,7 +260,7 @@ private string _statusText = string.Empty;
 DrawClippedText(
                 dc,
                 Axes[i].Label,
-                new Rect(bounds.Left + 6, y, bounds.Width * 0.40, 16),
+                new Rect(bounds.Left + 6, y + 7, bounds.Width * 0.40, 16),
                 9.9,
                 modified ? accentBrush : hovered ? textBrush : textBrush,
                 FontWeights.SemiBold);
@@ -266,8 +268,8 @@ DrawClippedText(
             var rawValue = parameter.CurrentNumber;
             var multiplier = multipliers[i];
             var baseText = Axes[i].ParameterId == "environment.razorHealthDamage"
-                ? $"{multiplier:0.##}x"
-                : $"{rawValue:0.##} dmg · {multiplier:0.##}x";
+                ? $"{multiplier:0.##}x vanilla damage"
+                : $"{rawValue:0.##} dmg · {multiplier:0.##}x vanilla";
 
             var effectiveText = string.IsNullOrWhiteSpace(parameter.EffectiveDisplay)
                 ? string.Empty
@@ -278,14 +280,14 @@ DrawClippedText(
             DrawClippedText(
                 dc,
                 valueText,
-                new Rect(bounds.Left + bounds.Width * 0.40, y, bounds.Width * 0.60 - 6, 16),
+                new Rect(bounds.Left + bounds.Width * 0.40, y + 7, bounds.Width * 0.60 - 6, 16),
                 9.5,
                 modified ? accentBrush : hovered ? textBrush : mutedBrush,
                 modified ? FontWeights.SemiBold : FontWeights.Normal);
 
             EndLegendHitArea();
 
-            y += 30;
+            y += rowHeight;
         }
     }
 
