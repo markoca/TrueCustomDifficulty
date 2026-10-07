@@ -2407,24 +2407,25 @@
       "tab": "survival",
       "group": "Alcohol Tolerance",
       "label": "Beer Strength",
-      "description": "Fine-tunes how much drunkenness each Beer adds.",
+      "description": "Sets how much Drunkness one Beer adds.",
       "control": "slider",
-      "valueKind": "multiplier",
+      "valueKind": "raw",
       "display": {
-        "primary": "percent",
-        "rawFormat": "0.##x",
-        "valueLabel": "Beer drunkenness strength"
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "Drunkness",
+        "valueLabel": "Beer strength"
       },
       "vanilla": {
-        "All": 1
+        "All": 15
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
-        "max": 2,
-        "step": 0.05,
+        "min": 1,
+        "max": 30,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2433,7 +2434,7 @@
           "file": "GameData/EffectPrototypes.cfg",
           "prototype": "BeerDrunkness",
           "path": "ValueMin|ValueMax",
-          "operation": "scale"
+          "operation": "set"
         }
       ],
       "support": {
@@ -2445,32 +2446,33 @@
         ]
       },
       "rationale": "Controls how strongly one Beer pushes the drunkenness meter.",
-      "logic": "100% = 15 Drunkness per Beer. 50% = 7.5; 150% = 22.5; 200% = 30.",
-      "interaction": "Works together with Alcohol Tolerance. Changing Beer Strength immediately changes the Beer progression preview and the number of beers needed to cross each tier."
+      "logic": "Vanilla is 15 Drunkness per Beer. The slider moves in exact 1-point steps.",
+      "interaction": "Only the strength slider for the currently selected Alcohol Tolerance reference drink is shown."
     },
     {
       "id": "survival.vodkaDrunknessStrength",
       "tab": "survival",
       "group": "Alcohol Tolerance",
       "label": "Vodka Strength",
-      "description": "Fine-tunes how much drunkenness each Vodka adds.",
+      "description": "Sets how much Drunkness one Vodka adds.",
       "control": "slider",
-      "valueKind": "multiplier",
+      "valueKind": "raw",
       "display": {
-        "primary": "percent",
-        "rawFormat": "0.##x",
-        "valueLabel": "Vodka drunkenness strength"
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "Drunkness",
+        "valueLabel": "Vodka strength"
       },
       "vanilla": {
-        "All": 1
+        "All": 30
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
-        "max": 2,
-        "step": 0.05,
+        "min": 1,
+        "max": 60,
+        "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -2479,7 +2481,7 @@
           "file": "GameData/EffectPrototypes.cfg",
           "prototype": "VodkaDrunkness",
           "path": "ValueMin|ValueMax",
-          "operation": "scale"
+          "operation": "set"
         }
       ],
       "support": {
@@ -2491,8 +2493,8 @@
         ]
       },
       "rationale": "Controls how strongly one Vodka pushes the drunkenness meter.",
-      "logic": "100% = 30 Drunkness per Vodka. 50% = 15; 150% = 45; 200% = 60.",
-      "interaction": "Works together with Alcohol Tolerance. Changing Vodka Strength immediately changes the Vodka progression preview and the number of vodkas needed to cross each tier."
+      "logic": "Vanilla is 30 Drunkness per Vodka. The slider moves in exact 1-point steps.",
+      "interaction": "Only the strength slider for the currently selected Alcohol Tolerance reference drink is shown."
     },
     {
       "id": "survival.sleepEligibilityThreshold",
