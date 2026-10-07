@@ -1427,7 +1427,7 @@ public sealed class ParameterViewModel : ObservableObject
 
         if (definition.Vanilla.TryGetValue("All", out var shared) && shared.ValueKind == JsonValueKind.Number)
         {
-            result.Add(new VanillaMarkerViewModel("VNL", shared.GetDouble()));
+            result.Add(new VanillaMarkerViewModel("VANILLA", shared.GetDouble()));
         }
         else
         {
@@ -1456,7 +1456,7 @@ public sealed class ParameterViewModel : ObservableObject
                 {
                     var items = g.ToList();
                     var label = items.Count == 4
-                        ? "VNL"
+                        ? "VANILLA"
                         : items.Count > 1
                             ? string.Join("/", items.Select(x => x.Short))
                             : items[0].Long;
@@ -1522,9 +1522,14 @@ public sealed class ParameterViewModel : ObservableObject
         return markers
             .GroupBy(x => x.Value)
             .OrderBy(g => g.Key)
-            .Select(g => new VanillaMarkerViewModel(
-                string.Join("/", g.Select(x => x.Label)),
-                g.Key))
+            .Select(g =>
+            {
+                var labels = g.Select(x => x.Label).ToList();
+                var label = labels.Count == 4
+                    ? "VANILLA"
+                    : string.Join("/", labels);
+                return new VanillaMarkerViewModel(label, g.Key);
+            })
             .ToList();
     }
 
