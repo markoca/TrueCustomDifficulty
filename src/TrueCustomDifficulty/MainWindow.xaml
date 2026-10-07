@@ -522,7 +522,7 @@
                                                             <Setter TargetName="PracticalQuantityText" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                             <Setter TargetName="ToggleControl" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsAggregateRadarAnchor}" Value="True">
+                                                        <DataTrigger Binding="{Binding IsVisualControlAnchor}" Value="True">
                                                             <Setter TargetName="ParameterCard" Property="Background" Value="Transparent" />
                                                             <Setter TargetName="ParameterCard" Property="BorderThickness" Value="0" />
                                                             <Setter TargetName="ParameterCard" Property="Padding" Value="0" />
@@ -531,7 +531,7 @@
                                                         </DataTrigger>
                                                         <MultiDataTrigger>
                                                             <MultiDataTrigger.Conditions>
-                                                                <Condition Binding="{Binding IsAggregateRadarAnchor}" Value="False" />
+                                                                <Condition Binding="{Binding IsVisualControlAnchor}" Value="False" />
                                                                 <Condition Binding="{Binding IsMouseOver, ElementName=ParameterCard}" Value="True" />
                                                             </MultiDataTrigger.Conditions>
                                                             <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource ParameterHoverBrush}" />
