@@ -597,7 +597,7 @@ DrawClippedText(
 
     private void DrawCenteredText(DrawingContext dc, string text, Point center, double size, Brush brush, FontWeight weight)
     {
-        var formatted = CreateText(text, size, brush, weight);
+        var formatted = CreateText(text, size * 1.25, brush, weight);
         var x = Math.Clamp(center.X - formatted.Width / 2.0, 8.0, Math.Max(8.0, ActualWidth - formatted.Width - 8.0));
         dc.DrawText(formatted, new Point(x, center.Y - formatted.Height / 2.0));
     }
@@ -673,7 +673,7 @@ DrawClippedText(
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size * 1.25,
+            size,
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
