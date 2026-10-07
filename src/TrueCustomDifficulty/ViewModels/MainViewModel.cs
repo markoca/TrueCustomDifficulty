@@ -241,6 +241,47 @@ public sealed class MainViewModel : ObservableObject
             }
         }
 
+        if (parametersById.TryGetValue("survival.bleedingSeverity", out var bleedingCurveAnchor))
+        {
+            var bleedingCurveIds = new[]
+            {
+                "survival.bleedingSeverity",
+                "survival.bleedingRecovery",
+                "survival.bleedingLowDamage",
+                "survival.bleedingMediumDamage",
+                "survival.bleedingStrongDamage"
+            };
+
+            var bleedingCurveMembers = bleedingCurveIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            bleedingCurveAnchor.SetAggregateModifiedProvider(
+                () => bleedingCurveMembers.Any(parameter =>
+                {
+                    if (parameter.Definition.Vanilla.TryGetValue(_selectedReferenceDifficulty, out var difficultyVanilla)
+                        && difficultyVanilla.ValueKind == System.Text.Json.JsonValueKind.Number)
+                    {
+                        return Math.Abs(parameter.CurrentNumber - difficultyVanilla.GetDouble()) > 0.0000001;
+                    }
+
+                    return parameter.Definition.Vanilla.TryGetValue("All", out var sharedVanilla)
+                        && sharedVanilla.ValueKind == System.Text.Json.JsonValueKind.Number
+                        && Math.Abs(parameter.CurrentNumber - sharedVanilla.GetDouble()) > 0.0000001;
+                }));
+
+            foreach (var member in bleedingCurveMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        bleedingCurveAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+
         if (parametersById.TryGetValue("loot.ammoBoxWeight918", out var ammoDistributionAnchor))
         {
             var ammoDistributionMembers = ammoDistributionParameterIds
