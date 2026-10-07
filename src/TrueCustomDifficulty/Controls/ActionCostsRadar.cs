@@ -204,7 +204,7 @@ private readonly RadarStatusMessage _status;
                 $"{multipliers[i]:0.##}x",
                 labelPoint,
                 mutedBrush,
-                i == _hoverAxis ? Brushes.White : i == _selectedAxis ? accentBrush : textBrush);
+                i == _hoverAxis ? Brushes.White : i == _hoverAxis ? Brushes.White : i == _selectedAxis ? accentBrush : textBrush);
         }
 
         DrawLegend(dc, multipliers, textBrush, mutedBrush, accentBrush);
