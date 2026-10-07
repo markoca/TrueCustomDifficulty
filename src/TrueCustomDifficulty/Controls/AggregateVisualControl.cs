@@ -1930,74 +1930,201 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "BREAKABLE BOX AMMO DISTRIBUTION", "stacked share preview + direct weight controls", text, muted, accent);
+        DrawHeader(
+            dc,
+            "BREAKABLE BOX AMMO MIXER",
+            "relative selection weights inside the two authored ammo pools",
+            text,
+            muted,
+            accent);
 
-        var parameters = new[]
-        {
-            P("loot.ammoBoxWeight918"),
-            P("loot.ammoBoxWeight045"),
-            P("loot.ammoBoxWeight545"),
-            P("loot.ammoBoxWeight012")
-        };
+        var p918 = P("loot.ammoBoxWeight918");
+        var p045 = P("loot.ammoBoxWeight045");
+        var p545 = P("loot.ammoBoxWeight545");
+        var p012 = P("loot.ammoBoxWeight012");
+
+        var parameters = new[] { p918, p045, p545, p012 };
         var labels = new[] { "9x18 / 9x19", ".45 ACP", "5.45 / 5.56", "12 GAUGE" };
+        var opacities = new[] { 0.95, 0.74, 0.54, 0.34 };
 
-        var weights = parameters.Select(x => Math.Max(0.0, x?.CurrentNumber ?? 0.0)).ToArray();
-        var total = weights.Sum();
-        var stack = new Rect(24.0, 70.0, Math.Max(430.0, ActualWidth - 48.0), 42.0);
+        var w918 = Math.Max(0.0, p918?.CurrentNumber ?? 0.0);
+        var w045 = Math.Max(0.0, p045?.CurrentNumber ?? 0.0);
+        var w545 = Math.Max(0.0, p545?.CurrentNumber ?? 0.0);
+        var w012 = Math.Max(0.0, p012?.CurrentNumber ?? 0.0);
 
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), stack, 3.0, 3.0);
+        // SNG has two entries driven by the 9x18/9x19 family (A918D + A919D),
+        // one 5.45 entry and one 12 Gauge entry. NATO has one entry from each family.
+        var sngRaw = new[] { 2.0 * w918, w545, w012 };
+        var natoRaw = new[] { w045, w918, w545, w012 };
 
-        if (total <= Epsilon)
+        double[] Normalize(IReadOnlyList<double> raw)
         {
-            DrawCenteredText(dc, "ALL WEIGHTS 0", new Point(stack.Left + stack.Width / 2.0, stack.Top + 12.0), 9.0, muted, FontWeights.Bold);
+            var total = raw.Sum();
+            if (total <= Epsilon)
+                return raw.Select(_ => 0.0).ToArray();
+
+            return raw.Select(value => value / total).ToArray();
         }
-        else
-        {
-            var opacities = new[] { 0.95, 0.72, 0.52, 0.32 };
-            var cursor = stack.Left;
 
-            for (var i = 0; i < weights.Length; i++)
+        var sngShares = Normalize(sngRaw);
+        var natoShares = Normalize(natoRaw);
+
+        void DrawPool(
+            string title,
+            string authored,
+            IReadOnlyList<string> poolLabels,
+            IReadOnlyList<double> shares,
+            IReadOnlyList<int> familyOpacityIndices,
+            Rect card,
+            string vanillaSummary)
+        {
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 1.0), card, 4.0, 4.0);
+            DrawText(dc, title, new Point(card.Left + 12.0, card.Top + 8.0), 8.9, text, FontWeights.Bold);
+            DrawText(dc, authored, new Point(card.Left + 12.0, card.Top + 24.0), 7.5, muted, FontWeights.Normal);
+            DrawRightAlignedText(
+                dc,
+                $"VANILLA {vanillaSummary}",
+                new Point(card.Right - 12.0, card.Top + 8.0),
+                7.6,
+                muted,
+                FontWeights.SemiBold);
+
+            var stack = new Rect(card.Left + 14.0, card.Top + 43.0, card.Width - 28.0, 37.0);
+            dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.08), new Pen(border, 1.0), stack, 3.0, 3.0);
+
+            var total = shares.Sum();
+            if (total <= Epsilon)
             {
-                var share = weights[i] / total;
-                var segmentWidth = i == weights.Length - 1
+                DrawCenteredText(
+                    dc,
+                    "NO ACTIVE WEIGHT",
+                    new Point(stack.Left + stack.Width / 2.0, stack.Top + 11.0),
+                    8.4,
+                    muted,
+                    FontWeights.Bold);
+                return;
+            }
+
+            var cursor = stack.Left;
+            for (var i = 0; i < shares.Count; i++)
+            {
+                var share = shares[i];
+                var segmentWidth = i == shares.Count - 1
                     ? stack.Right - cursor
                     : stack.Width * share;
 
                 var segment = new Rect(cursor, stack.Top, Math.Max(0.0, segmentWidth), stack.Height);
-                dc.DrawRectangle(CloneWithOpacity(accent, opacities[i]), null, segment);
+                var opacityIndex = familyOpacityIndices[i];
+                dc.DrawRectangle(CloneWithOpacity(accent, opacities[opacityIndex]), null, segment);
 
-                if (segment.Width >= 62.0)
+                if (segment.Width >= 72.0)
                 {
-                    DrawCenteredText(dc, labels[i], new Point(segment.Left + segment.Width / 2.0, segment.Top + 8.0), 8.2, text, FontWeights.Bold);
-                    DrawCenteredText(dc, $"{share * 100:0}%", new Point(segment.Left + segment.Width / 2.0, segment.Top + 23.0), 8.0, text, FontWeights.SemiBold);
+                    DrawCenteredText(
+                        dc,
+                        poolLabels[i],
+                        new Point(segment.Left + segment.Width / 2.0, segment.Top + 7.0),
+                        7.7,
+                        text,
+                        FontWeights.Bold);
+                    DrawCenteredText(
+                        dc,
+                        $"{share * 100:0}%",
+                        new Point(segment.Left + segment.Width / 2.0, segment.Top + 21.0),
+                        8.1,
+                        text,
+                        FontWeights.SemiBold);
+                }
+                else if (segment.Width >= 34.0)
+                {
+                    DrawCenteredText(
+                        dc,
+                        $"{share * 100:0}%",
+                        new Point(segment.Left + segment.Width / 2.0, segment.Top + 13.0),
+                        7.5,
+                        text,
+                        FontWeights.Bold);
                 }
 
                 cursor += segmentWidth;
             }
         }
 
-        DrawText(dc, "RELATIVE WEIGHTS", new Point(24.0, 126.0), 8.6, muted, FontWeights.Bold);
+        var poolLeft = 24.0;
+        var poolWidth = Math.Max(440.0, ActualWidth - 48.0);
+
+        DrawPool(
+            "SNG POOL",
+            "A918D + A919D  |  A545D  |  A012D",
+            new[] { "9x18/19", "5.45", "12G" },
+            sngShares,
+            new[] { 0, 2, 3 },
+            new Rect(poolLeft, 58.0, poolWidth, 88.0),
+            "50 / 25 / 25");
+
+        DrawPool(
+            "NATO POOL",
+            "A045D  |  A919D  |  A556D  |  A012D",
+            new[] { ".45", "9x19", "5.56", "12G" },
+            natoShares,
+            new[] { 1, 0, 2, 3 },
+            new Rect(poolLeft, 157.0, poolWidth, 88.0),
+            "25 / 25 / 25 / 25");
+
+        DrawText(dc, "FAMILY WEIGHT SCALERS", new Point(24.0, 262.0), 8.6, muted, FontWeights.Bold);
+        DrawRightAlignedText(
+            dc,
+            "1x = authored Weight 2   •   0x = remove existing family entries from weighted selection",
+            new Point(Math.Max(430.0, ActualWidth - 24.0), 262.0),
+            7.5,
+            muted,
+            FontWeights.Normal);
 
         for (var i = 0; i < parameters.Length; i++)
         {
             if (parameters[i] is not { } parameter)
                 continue;
 
-            var rowY = 151.0 + i * 55.0;
-            DrawText(dc, labels[i], new Point(26.0, rowY + 3.0), 9.0, text, FontWeights.Bold);
-            DrawText(dc, $"{parameter.CurrentNumber:0.##}x", new Point(132.0, rowY + 3.0), 9.0, accent, FontWeights.Bold);
+            var rowY = 290.0 + i * 52.0;
+            DrawText(dc, labels[i], new Point(26.0, rowY + 3.0), 8.9, text, FontWeights.Bold);
+            DrawText(dc, $"{parameter.CurrentNumber:0.##}x", new Point(128.0, rowY + 3.0), 9.0, accent, FontWeights.Bold);
+
+            string shareText;
+            if (i == 0)
+                shareText = $"SNG {sngShares[0] * 100:0}%  |  NATO {natoShares[1] * 100:0}%";
+            else if (i == 1)
+                shareText = $"SNG —  |  NATO {natoShares[0] * 100:0}%";
+            else if (i == 2)
+                shareText = $"SNG {sngShares[1] * 100:0}%  |  NATO {natoShares[2] * 100:0}%";
+            else
+                shareText = $"SNG {sngShares[2] * 100:0}%  |  NATO {natoShares[3] * 100:0}%";
+
+            DrawText(dc, shareText, new Point(180.0, rowY + 3.0), 7.8, muted, FontWeights.SemiBold);
 
             DrawInlineHorizontalTrack(
                 dc,
                 parameter,
-                new Rect(190.0, rowY - 2.0, Math.Max(240.0, ActualWidth - 218.0), 26.0),
+                new Rect(330.0, rowY - 2.0, Math.Max(150.0, ActualWidth - 358.0), 26.0),
                 text,
                 muted,
                 border,
                 accent);
         }
 
-        DrawCenteredText(dc, "STACKED BAR IS A PREVIEW — WEIGHTS DO NOT NEED TO SUM TO 100%", new Point(ActualWidth / 2.0, 380.0), 8.0, muted, FontWeights.Normal);
+        DrawCenteredText(
+            dc,
+            "POOL % = NORMALIZED WEIGHT SHARE INSIDE THAT POOL, NOT GLOBAL BOX DROP CHANCE",
+            new Point(ActualWidth / 2.0, 505.0),
+            7.6,
+            muted,
+            FontWeights.Normal);
+
+        DrawCenteredText(
+            dc,
+            "SNG MUST KEEP AT LEAST ONE OF 9x18/19, 5.45/5.56 OR 12 GAUGE ABOVE 0x",
+            new Point(ActualWidth / 2.0, 524.0),
+            7.7,
+            accent,
+            FontWeights.SemiBold);
     }
 
     private void DrawFaderBank(
@@ -2290,6 +2417,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         target.Parameter.ResetToReference();
         EnforceRepeatedHitOrdering(target.Parameter);
         EnforceRepairCurveOrdering(target.Parameter);
+        EnforceAmmoPoolValidity(target.Parameter);
         _status.ShowTransient($"{ShortLabel(target.Parameter)} reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
@@ -2340,6 +2468,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             _selectedParameter.Maximum);
         EnforceRepeatedHitOrdering(_selectedParameter);
         EnforceRepairCurveOrdering(_selectedParameter);
+        EnforceAmmoPoolValidity(_selectedParameter);
 
         _status.ClearTransient();
         InvalidateVisual();
@@ -2377,6 +2506,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         EnforceRepeatedHitOrdering(target.Parameter);
         EnforceRepairCurveOrdering(target.Parameter);
+        EnforceAmmoPoolValidity(target.Parameter);
 
         _status.ClearTransient();
         InvalidateVisual();
@@ -2435,6 +2565,43 @@ public sealed class AggregateVisualControl : FrameworkElement
             if (current.CurrentNumber > left.CurrentNumber)
                 current.CurrentNumber = Math.Clamp(left.CurrentNumber, current.Minimum, current.Maximum);
         }
+    }
+
+    private void EnforceAmmoPoolValidity(ParameterViewModel movedParameter)
+    {
+        if (Family != "AmmoDistribution")
+            return;
+
+        var family918 = P("loot.ammoBoxWeight918");
+        var family545 = P("loot.ammoBoxWeight545");
+        var family012 = P("loot.ammoBoxWeight012");
+        if (family918 is null || family545 is null || family012 is null)
+            return;
+
+        if (family918.CurrentNumber > Epsilon
+            || family545.CurrentNumber > Epsilon
+            || family012.CurrentNumber > Epsilon)
+        {
+            return;
+        }
+
+        // .45 ACP exists only in the NATO pool. The SNG pool therefore needs at least
+        // one of its three shared families to retain a positive weight. If the user
+        // tries to zero the final active SNG family, keep that actively edited family
+        // at one visible tick above zero instead of silently changing another family.
+        var fallback = ReferenceEquals(movedParameter, family918)
+            ? family918
+            : ReferenceEquals(movedParameter, family545)
+                ? family545
+                : ReferenceEquals(movedParameter, family012)
+                    ? family012
+                    : family918;
+
+        var minimumPositive = Math.Max(fallback.TickFrequency, fallback.Minimum);
+        if (minimumPositive <= Epsilon)
+            minimumPositive = 0.25;
+
+        fallback.CurrentNumber = Math.Clamp(minimumPositive, fallback.Minimum, fallback.Maximum);
     }
 
     private HitTarget? FindTarget(Point point)
@@ -2596,7 +2763,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "RadiationBalance" => 415.0,
             "TradingDashboard" => 485.0,
             "RepairCurve" => 370.0,
-            "AmmoDistribution" => 405.0,
+            "AmmoDistribution" => 550.0,
             _ => 340.0
         };
 
