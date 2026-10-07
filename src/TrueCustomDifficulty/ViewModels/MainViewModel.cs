@@ -125,7 +125,12 @@ public sealed class MainViewModel : ObservableObject
             "stamina.meleeNormalCost",
             "stamina.meleeStrongCost",
             "stamina.butstockCost",
-            "stamina.aimRegenCoef"
+            "stamina.aimRegenCoef",
+            "stamina.sprintDisableThreshold",
+            "stamina.sprintRecoveryDelay",
+            "stamina.lowRecoveryThreshold",
+            "stamina.lowRecoveryStrength",
+            "stamina.lowRecoveryDuration"
         };
 
         var itemPriceScalerParameterIds = new HashSet<string>(StringComparer.Ordinal)
