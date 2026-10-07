@@ -204,7 +204,7 @@ public sealed class DrunkennessControl : FrameworkElement
         var strength = parameter?.CurrentNumber ?? vanillaStrength;
         var minimum = parameter?.Minimum ?? 1.0;
         var maximum = parameter?.Maximum ?? 60.0;
-        var drinks = RequiredWholeDrinks(strength, maxDrinks);
+        var drinks = RequiredWholeDrinks(strength);
         var drinkLabel = drinks == 1 ? singular : plural;
 
         // Row 1: drink name + centered gameplay consequence.
@@ -262,7 +262,7 @@ public sealed class DrunkennessControl : FrameworkElement
         var scaleY = rect.Top + 72.0;
         DrawText(
             dc,
-            "MIN " + minimum.ToString("0", CultureInfo.InvariantCulture),
+            minimum.ToString("0", CultureInfo.InvariantCulture),
             new Point(sliderLeft, scaleY),
             9.0,
             muted,
@@ -270,7 +270,7 @@ public sealed class DrunkennessControl : FrameworkElement
 
         DrawCenteredText(
             dc,
-            "VANILLA " + vanillaStrength.ToString("0", CultureInfo.InvariantCulture),
+            "VANILLA",
             new Point(vanillaX, scaleY),
             9.0,
             accentDark,
@@ -278,7 +278,7 @@ public sealed class DrunkennessControl : FrameworkElement
 
         DrawRightAlignedText(
             dc,
-            "MAX " + maximum.ToString("0", CultureInfo.InvariantCulture),
+            maximum.ToString("0", CultureInfo.InvariantCulture),
             new Point(sliderRight, scaleY),
             9.0,
             muted,
@@ -556,11 +556,8 @@ public sealed class DrunkennessControl : FrameworkElement
         InvalidateVisual();
     }
 
-    private static int RequiredWholeDrinks(double strength, int maxDrinks)
-        => Math.Clamp(
-            Math.Max(1, (int)Math.Ceiling(VanillaVeryStrong / Math.Max(1.0, strength))),
-            1,
-            maxDrinks);
+    private static int RequiredWholeDrinks(double strength)
+        => Math.Max(1, (int)Math.Ceiling(VanillaVeryStrong / Math.Max(1.0, strength)));
 
     private static string FormatOrdinal(int value)
     {
@@ -620,7 +617,7 @@ public sealed class DrunkennessControl : FrameworkElement
         Brush highlightBrush)
     {
         var prefixText = CreateText(prefix, size, textBrush, FontWeights.SemiBold);
-        var highlightedText = CreateText(highlighted, size + 0.6, highlightBrush, FontWeights.Bold);
+        var highlightedText = CreateText(highlighted, size + 2.8, highlightBrush, FontWeights.Bold);
         var suffixText = CreateText(suffix, size, textBrush, FontWeights.SemiBold);
 
         var totalWidth =
@@ -632,7 +629,7 @@ public sealed class DrunkennessControl : FrameworkElement
         dc.DrawText(prefixText, new Point(x, center.Y));
         x += prefixText.WidthIncludingTrailingWhitespace;
 
-        dc.DrawText(highlightedText, new Point(x, center.Y - 0.4));
+        dc.DrawText(highlightedText, new Point(x, center.Y - 1.6));
         x += highlightedText.WidthIncludingTrailingWhitespace;
 
         dc.DrawText(suffixText, new Point(x, center.Y));
