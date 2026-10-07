@@ -261,20 +261,23 @@ The SNG pool must keep at least one of 9x18/9x19, 5.45/5.56 or 12 Gauge above 0x
 
 ## Non-aggregate visual controls
 
-Dedicated radar/curve controls remain appropriate where the values are independent axes or use a specialized domain visualization, including:
+Dedicated semantic controls remain appropriate where a parameter family has its own gameplay model rather than belonging in the shared aggregate renderer.
+
+Current specialized surfaces include:
 
 - Bleeding damage curve.
-- Drunkenness.
-- Action costs.
+- Drunkenness threshold control.
+- Stamina pressure board for action costs.
 - Medical healing output board.
 - Item value layers board.
-- Mutant health.
-- Special ability cooldowns.
-- Human/mutant group sizes.
-- Stash ammo.
-- World-loot removal.
-- Anomaly damage.
-- Other existing radar families.
+- Mutant health roster.
+- Mutant special-ability pacing board.
+- Human squad-cap ladder.
+- Mutant encounter-cap matrix.
+- Stash ammo tier/stack board.
+- World-loot depletion board.
+- Anomaly damage control.
+- Other remaining specialized families pending the same semantic audit.
 
 ## Architecture
 
