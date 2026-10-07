@@ -54,7 +54,8 @@
                                                                            FontSize="12"
                                                                            FontWeight="Normal"
                                                                            VerticalAlignment="Center"
-                                                                           TextTrimming="CharacterEllipsis"
+                                                                           TextTrimming="None"
+                                                                           ClipToBounds="True"
                                                                            Margin="0,0,8,0" />
         
                                                                 <Grid Grid.Column="1">
