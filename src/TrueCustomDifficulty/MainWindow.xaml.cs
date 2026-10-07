@@ -144,6 +144,12 @@ public partial class MainWindow : Window
 
 
     private void ParameterCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        => SelectParameterFromElement(sender);
+
+    private void Radar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        => SelectParameterFromElement(sender);
+
+    private void SelectParameterFromElement(object sender)
     {
         if (sender is not FrameworkElement { DataContext: ParameterViewModel parameter })
             return;
