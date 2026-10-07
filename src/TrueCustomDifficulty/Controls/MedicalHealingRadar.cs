@@ -194,7 +194,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Each axis scales that item's own vanilla healing. Raw HP values and vanilla references are shown here.",
+            "Healing strength · higher = more HP restored by that item · 1x matches its vanilla heal.",
             mutedBrush);
 
         DrawLegend(dc, multipliers, textBrush, mutedBrush, accentBrush);
@@ -232,9 +232,13 @@ private string _statusText = string.Empty;
         Brush accentBrush)
     {
         var info = GetInfoRect();
-        var rowHeight = 44.0;
+        const double rowHeight = 48.0;
+        var totalHeight = Axes.Length * rowHeight;
+        var top = info.Top + Math.Max(0.0, (info.Height - totalHeight) / 2.0);
+        var legendBounds = new Rect(info.Left, top, info.Width, totalHeight);
+
         for (var i = 0; i < Axes.Length; i++)
-            DrawLegendRow(dc, i, info, i * rowHeight, multipliers, textBrush, mutedBrush, accentBrush);
+            DrawLegendRow(dc, i, legendBounds, i * rowHeight, multipliers, textBrush, mutedBrush, accentBrush);
     }
 
     private void DrawLegendRow(
@@ -260,23 +264,23 @@ private string _statusText = string.Empty;
 DrawClippedText(
             dc,
             Axes[axis].Label,
-            new Rect(bounds.Left + 6, y, bounds.Width * 0.42, 16),
+            new Rect(bounds.Left + 6, y + 7, bounds.Width * 0.42, 16),
             10.0,
             modified ? accentBrush : hovered ? textBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
-            $"{parameter.CurrentNumber:0.##} HP · {multipliers[axis]:0.##}x",
-            new Rect(bounds.Left + (bounds.Width * 0.42), y, bounds.Width * 0.58 - 6, 16),
+            $"Restores {parameter.CurrentNumber:0.##} HP · {multipliers[axis]:0.##}x vanilla",
+            new Rect(bounds.Left + (bounds.Width * 0.42), y + 7, bounds.Width * 0.58 - 6, 16),
             9.6,
             modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         DrawClippedText(
             dc,
-            $"Vanilla {vanilla:0.##} HP · Health restored",
-            new Rect(bounds.Left + 6, y + 17, bounds.Width - 12, 15),
+            $"Vanilla restores {vanilla:0.##} HP · higher = stronger heal",
+            new Rect(bounds.Left + 6, y + 25, bounds.Width - 12, 15),
             9.0,
             hovered ? textBrush : mutedBrush,
             FontWeights.Normal);
