@@ -9,48 +9,44 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// ALife Director mutant spawn-cap radar.
-/// Each axis independently scales one mutant restriction across Newbie, Experienced, Veteran, and Master ranks while preserving authored zero caps.
+/// Rank-aware editor for ALife Director mutant encounter caps.
+///
+/// The class keeps its historical *Radar name for XAML compatibility, but the renderer
+/// is intentionally a matrix: every species owns one multiplier and the four resulting
+/// Newbie / Experienced / Veteran / Master caps stay visible at the same time.
 /// </summary>
 public sealed class MutantGroupSizeRadar : FrameworkElement
 {
-    private const double RadarInfoTextSize = 11.0;
-    private const double RadarLegendTextSize = 11.0;
-    private const double RadarAxisTextSize = 10.5;
-
+    private const double Epsilon = 0.000001;
+    private const double RowHeight = 40.0;
     private const double MinimumMultiplier = 0.25;
     private const double MaximumMultiplier = 3.0;
-    private const double VanillaMultiplier = 1.0;
-    private const double RadarStep = 0.05;
 
     private static readonly AxisDefinition[] Axes =
     {
-        new("alife.mutantSpawn.bayun", "Bayun", -90.000, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2", "Mostly solo; Master can allow a pair."),
-        new("alife.mutantSpawn.blindDog", "Blind Dog", -64.286, new[] { 4.0, 6.0, 8.0, 12.0 }, "4/6/8/12", "Pack mutant; higher ALife ranks allow progressively larger packs."),
-        new("alife.mutantSpawn.bloodsucker", "Bloodsucker", -38.571, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1", "Disabled for Newbie; capped at one for Experienced, Veteran and Master."),
-        new("alife.mutantSpawn.boar", "Boar", -12.857, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common pack mutant; maximum mutants in the group rises steadily with ALife rank."),
-        new("alife.mutantSpawn.burer", "Burer", 12.857, new[] { 1.0, 1.0, 1.0, 2.0 }, "1/1/1/2", "Mostly solo; Master can allow a pair."),
-        new("alife.mutantSpawn.chimera", "Chimera", 38.571, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Elite mutant; vanilla allows at most one mutant in the group on every ALife rank."),
-        new("alife.mutantSpawn.controller", "Controller", 64.286, new[] { 0.0, 1.0, 1.0, 1.0 }, "0/1/1/1", "Disabled for Newbie; capped at one for Experienced, Veteran and Master."),
-        new("alife.mutantSpawn.deer", "Deer", 90.000, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Rare large mutant; vanilla allows at most one mutant in the group on every ALife rank."),
-        new("alife.mutantSpawn.flesh", "Flesh", 115.714, new[] { 2.0, 3.0, 5.0, 6.0 }, "2/3/5/6", "Common herd mutant; maximum mutants in the group rises steadily with ALife rank."),
-        new("alife.mutantSpawn.poltergeist", "Poltergeist", 141.429, new[] { 1.0, 1.0, 2.0, 2.0 }, "1/1/2/2", "Solo at lower ALife ranks; Veteran and Master can allow two."),
-        new("alife.mutantSpawn.pseudodog", "Pseudodog", 167.143, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "Fast predator; vanilla allows at most one mutant in the group on every ALife rank."),
-        new("alife.mutantSpawn.ratSwarm", "Rat Swarm", 192.857, new[] { 1.0, 1.0, 1.0, 1.0 }, "1/1/1/1", "One Director swarm unit at a time on every ALife rank."),
-        new("alife.mutantSpawn.snork", "Snork", 218.571, new[] { 1.0, 3.0, 4.0, 6.0 }, "1/3/4/6", "Aggressive pack mutant; maximum mutants in the group grows strongly with ALife rank."),
-        new("alife.mutantSpawn.tushkan", "Tushkan", 244.286, new[] { 6.0, 8.0, 12.0, 16.0 }, "6/8/12/16", "Swarm mutant; vanilla allows the largest encounter groups here."),
+        new("alife.mutantSpawn.bayun", "Bayun", new[] { 1.0, 1.0, 1.0, 2.0 }),
+        new("alife.mutantSpawn.blindDog", "Blind Dog", new[] { 4.0, 6.0, 8.0, 12.0 }),
+        new("alife.mutantSpawn.bloodsucker", "Bloodsucker", new[] { 0.0, 1.0, 1.0, 1.0 }),
+        new("alife.mutantSpawn.boar", "Boar", new[] { 2.0, 3.0, 5.0, 6.0 }),
+        new("alife.mutantSpawn.burer", "Burer", new[] { 1.0, 1.0, 1.0, 2.0 }),
+        new("alife.mutantSpawn.chimera", "Chimera", new[] { 1.0, 1.0, 1.0, 1.0 }),
+        new("alife.mutantSpawn.controller", "Controller", new[] { 0.0, 1.0, 1.0, 1.0 }),
+        new("alife.mutantSpawn.deer", "Deer", new[] { 1.0, 1.0, 1.0, 1.0 }),
+        new("alife.mutantSpawn.flesh", "Flesh", new[] { 2.0, 3.0, 5.0, 6.0 }),
+        new("alife.mutantSpawn.poltergeist", "Poltergeist", new[] { 1.0, 1.0, 2.0, 2.0 }),
+        new("alife.mutantSpawn.pseudodog", "Pseudodog", new[] { 1.0, 1.0, 1.0, 1.0 }),
+        new("alife.mutantSpawn.ratSwarm", "Rat Swarm", new[] { 1.0, 1.0, 1.0, 1.0 }),
+        new("alife.mutantSpawn.snork", "Snork", new[] { 1.0, 3.0, 4.0, 6.0 }),
+        new("alife.mutantSpawn.tushkan", "Tushkan", new[] { 6.0, 8.0, 12.0, 16.0 }),
     };
 
-
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
-    private int _selectedAxis;
-    private int _dragAxis = -1;
-    private int _hoverAxis = -1;
-        private readonly Dictionary<int, Rect> _legendHitRects = new();
-    private readonly Dictionary<int, Rect> _axisLabelHitRects = new();
-    private int _legendRecordingAxis = -1;
+    private readonly Dictionary<int, HitTarget> _targets = new();
+    private readonly RadarStatusMessage _status;
 
-private readonly RadarStatusMessage _status;
+    private int _selectedRow;
+    private int _hoverRow = -1;
+    private int _dragRow = -1;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -68,15 +64,15 @@ private readonly RadarStatusMessage _status;
     {
         _status = new RadarStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 720;
+        MinHeight = 730;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        var width = double.IsInfinity(availableSize.Width) ? 700 : Math.Max(400, availableSize.Width);
-        return new Size(width, 720);
+        var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(560.0, availableSize.Width);
+        return new Size(width, 730.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -115,8 +111,8 @@ private readonly RadarStatusMessage _status;
     {
         if (e.PropertyName is nameof(ParameterViewModel.CurrentNumber)
             or nameof(ParameterViewModel.CurrentDisplay)
-            or nameof(ParameterViewModel.TechnicalDisplay)
-            or nameof(ParameterViewModel.IsModified))
+            or nameof(ParameterViewModel.IsModified)
+            or nameof(ParameterViewModel.ReferenceNumber))
         {
             InvalidateVisual();
         }
@@ -126,247 +122,220 @@ private readonly RadarStatusMessage _status;
     {
         base.OnRender(dc);
 
-        var textBrush = FindBrush("TextBrush", Brushes.White);
-        var mutedBrush = FindBrush("RadarMutedTextBrush", Brushes.Gray);
-        var borderBrush = FindBrush("BorderBrush", Brushes.DimGray);
-        var accentBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
-        var panelBrush = FindBrush("PanelAltBrush", Brushes.Black);
-        var technicalBrush = FindBrush("BorderSoftBrush", borderBrush);
+        var text = FindBrush("TextBrush", Brushes.White);
+        var muted = FindBrush("RadarMutedTextBrush", Brushes.Gray);
+        var border = FindBrush("BorderBrush", Brushes.DimGray);
+        var soft = FindBrush("BorderSoftBrush", border);
+        var accent = FindBrush("AccentBrush", Brushes.Goldenrod);
+        var panel = FindBrush("PanelAltBrush", Brushes.Black);
+
         IndustrialChrome.DrawFrame(
             dc,
-            new Rect(2, 2, Math.Max(0, ActualWidth - 4), Math.Max(0, ActualHeight - 4)),
-            panelBrush,
-            borderBrush,
-            accentBrush,
-            technicalBrush,
+            new Rect(2.0, 2.0, Math.Max(0.0, ActualWidth - 4.0), Math.Max(0.0, ActualHeight - 4.0)),
+            panel,
+            border,
+            accent,
+            soft,
             8.0,
             accentEdge: true,
             technicalMarks: true);
 
-        var (center, radius) = GetGeometry();
-        if (radius <= 10)
-            return;
+        _targets.Clear();
 
-        var neutralPen = new Pen(borderBrush, 1);
-        var vanillaPen = new Pen(accentBrush, 1.5) { DashStyle = DashStyles.Dash };
+        DrawText(dc, "MUTANT ENCOUNTER CAPS", new Point(18.0, 16.0), 12.0, text, FontWeights.Bold);
+        DrawText(
+            dc,
+            "one species multiplier preserves its authored Newbie → Master progression",
+            new Point(18.0, 34.0),
+            8.2,
+            muted,
+            FontWeights.Normal);
 
-        DrawRing(dc, center, ValueRadius(0.5, radius), neutralPen);
-        DrawRing(dc, center, ValueRadius(1.0, radius), vanillaPen);
-        DrawRing(dc, center, ValueRadius(1.5, radius), neutralPen);
-        DrawRing(dc, center, ValueRadius(2.0, radius), neutralPen);
-        DrawRing(dc, center, ValueRadius(2.5, radius), neutralPen);
-        DrawRing(dc, center, ValueRadius(3.0, radius), neutralPen);
+        DrawRightAlignedText(
+            dc,
+            "CAPS ONLY — NO LAIR POPULATION / RESPAWN / SCENARIO-FREQUENCY CHANGES",
+            new Point(Math.Max(520.0, ActualWidth - 18.0), 18.0),
+            7.5,
+            muted,
+            FontWeights.SemiBold);
 
-        _axisLabelHitRects.Clear();
-        for (var i = 0; i < Axes.Length; i++)
-        {
-            var unit = UnitVector(Axes[i].AngleDegrees);
-            dc.DrawLine(neutralPen, center, center + unit * radius);
-        }
+        var layout = GetLayout();
 
-        var values = GetValues();
-        var points = new Point[Axes.Length];
+        DrawText(dc, "MUTANT", new Point(layout.LabelLeft, 61.0), 8.0, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "MULT", new Point(layout.MultiplierCenter, 68.0), 8.0, muted, FontWeights.Bold);
 
-        for (var i = 0; i < Axes.Length; i++)
-        {
-            var unit = UnitVector(Axes[i].AngleDegrees);
-            points[i] = center + unit * ValueRadius(values[i], radius);
-        }
+        var ranks = new[] { "NEWBIE", "EXPERIENCED", "VETERAN", "MASTER" };
+        for (var i = 0; i < ranks.Length; i++)
+            DrawCenteredText(dc, ranks[i], new Point(layout.RankCenters[i], 68.0), 7.8, muted, FontWeights.Bold);
 
-        var polygon = BuildClosedGeometry(points);
-        var fill = accentBrush.Clone();
-        fill.Opacity = 0.16;
-        dc.DrawGeometry(fill, new Pen(accentBrush, 2), polygon);
+        DrawCenteredText(dc, "SPECIES MULTIPLIER", new Point(layout.TrackLeft + layout.TrackWidth / 2.0, 68.0), 8.0, muted, FontWeights.Bold);
 
-        for (var i = 0; i < points.Length; i++)
-        {
-            var hovered = i == _hoverAxis;
-            if (hovered)
-            {
-                var outerGlow = accentBrush.Clone();
-                outerGlow.Opacity = 0.12;
-                dc.DrawEllipse(outerGlow, null, points[i], 14.0, 14.0);
+        var headerY = 82.0;
+        dc.DrawLine(new Pen(border, 1.0), new Point(14.0, headerY), new Point(Math.Max(14.0, ActualWidth - 14.0), headerY));
 
-                var innerGlow = accentBrush.Clone();
-                innerGlow.Opacity = 0.28;
-                dc.DrawEllipse(innerGlow, null, points[i], 10.0, 10.0);
-            }
+        for (var row = 0; row < Axes.Length; row++)
+            DrawRow(dc, row, 90.0 + row * RowHeight, layout, text, muted, border, soft, accent, panel);
 
-            var outer = i == _selectedAxis ? 8.5 : 6.0;
-            var outlineWidth = i == _selectedAxis ? 2.4 : hovered ? 2.0 : 1.5;
-            dc.DrawEllipse(panelBrush, new Pen(accentBrush, outlineWidth), points[i], outer, outer);
-            dc.DrawEllipse(accentBrush, null, points[i], 3.2, 3.2);
-        }
-
-        DrawRingCaption(dc, "0.5x", center, ValueRadius(0.5, radius), mutedBrush);
-        DrawRingCaption(dc, "1x", center, ValueRadius(1.0, radius), accentBrush);
-        DrawRingCaption(dc, "1.5x", center, ValueRadius(1.5, radius), mutedBrush);
-        DrawRingCaption(dc, "2x", center, ValueRadius(2.0, radius), mutedBrush);
-        DrawRingCaption(dc, "2.5x", center, ValueRadius(2.5, radius), mutedBrush);
-        DrawRingCaption(dc, "3x", center, ValueRadius(3.0, radius), mutedBrush);
-
-        for (var i = 0; i < Axes.Length; i++)
-        {
-            var unit = UnitVector(Axes[i].AngleDegrees);
-            var labelPoint = center + unit * (radius + 30);
-            _axisLabelHitRects[i] = new Rect(labelPoint.X - 80.0, labelPoint.Y - 20.0, 160.0, 40.0);
-            DrawAxisLabel(
-                dc,
-                Axes[i].Label,
-                $"{values[i]:0.##}x",
-                labelPoint,
-                mutedBrush,
-                i == _hoverAxis ? Brushes.White : i == _selectedAxis ? accentBrush : textBrush);
-        }
-
-        DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
+        var footerY = 90.0 + Axes.Length * RowHeight + 9.0;
+        DrawCenteredText(
+            dc,
+            "GOLD NUMBERS = CURRENT CAPS   •   SMALL GREY NUMBERS = VANILLA CAPS   •   AUTHORED 0 STAYS 0",
+            new Point(ActualWidth / 2.0, footerY),
+            7.6,
+            muted,
+            FontWeights.Normal);
 
         if (!string.IsNullOrWhiteSpace(_status.Text))
         {
             DrawCenteredText(
                 dc,
                 _status.Text,
-                new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
-                accentBrush,
-                FontWeights.Normal);
+                new Point(ActualWidth / 2.0, footerY + 20.0),
+                8.0,
+                accent,
+                FontWeights.SemiBold);
         }
     }
 
-    private Rect GetInfoRect()
-    {
-        var left = Math.Max(ActualWidth * 0.50, 400.0);
-        return new Rect(left, 72.0, Math.Max(260.0, ActualWidth - left - 16.0), Math.Max(424.0, ActualHeight - 116.0));
-    }
-
-    private void DrawInfoHeader(DrawingContext dc, string text, Brush brush)
-    {
-        var info = GetInfoRect();
-        DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), RadarInfoTextSize, brush, FontWeights.Normal);
-    }
-
-    private void DrawLegend(
+    private void DrawRow(
         DrawingContext dc,
-        double[] values,
-        Brush textBrush,
-        Brush mutedBrush,
-        Brush accentBrush)
+        int row,
+        double top,
+        Layout layout,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
     {
-        var info = GetInfoRect();
-        const double rowHeight = 31.0;
-        var totalHeight = Axes.Length * rowHeight;
-        var top = info.Top + Math.Max(0.0, (info.Height - totalHeight) / 2.0);
-        var legendBounds = new Rect(info.Left, top, info.Width, totalHeight);
-
-        for (var i = 0; i < Axes.Length; i++)
-            DrawLegendRow(dc, i, legendBounds, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
-    }
-
-    private void DrawLegendRow(
-        DrawingContext dc,
-        int axis,
-        Rect bounds,
-        double yOffset,
-        double[] values,
-        Brush textBrush,
-        Brush mutedBrush,
-        Brush accentBrush)
-    {
-        var parameter = _parameters[axis];
+        var parameter = _parameters[row];
         if (parameter is null)
             return;
 
-        var info = Axes[axis];
-        var value = values[axis];
-        var y = bounds.Top + yOffset;
-        var modified = Math.Abs(value - VanillaMultiplier) > 0.000001;
-        var hovered = axis == _hoverAxis;
+        var info = Axes[row];
+        var selected = row == _selectedRow;
+        var hovered = row == _hoverRow;
+        var modified = Math.Abs(parameter.CurrentNumber - parameter.ReferenceNumber) > Epsilon;
 
-        BeginLegendHitArea(axis);
+        var rowRect = new Rect(14.0, top, Math.Max(1.0, ActualWidth - 28.0), RowHeight - 3.0);
+        var rowFill = selected
+            ? CloneWithOpacity(accent, 0.08)
+            : hovered
+                ? CloneWithOpacity(border, 0.10)
+                : CloneWithOpacity(panel, 0.01);
 
-        DrawClippedText(
+        dc.DrawRoundedRectangle(rowFill, new Pen(CloneWithOpacity(border, 0.45), 0.8), rowRect, 3.0, 3.0);
+
+        DrawText(
             dc,
             info.Label,
-            new Rect(bounds.Left + 6, y + 6, bounds.Width * 0.24, 18.0), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : textBrush,
-            FontWeights.SemiBold);
+            new Point(layout.LabelLeft, top + 10.0),
+            8.5,
+            hovered ? text : modified ? accent : text,
+            modified ? FontWeights.Bold : FontWeights.SemiBold);
 
-        DrawClippedText(
+        DrawCenteredText(
             dc,
-            $"{value:0.##}x",
-            new Rect(bounds.Left + bounds.Width * 0.24, y + 6, bounds.Width * 0.12, 18.0), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : mutedBrush,
-            modified ? FontWeights.SemiBold : FontWeights.Normal);
+            $"{parameter.CurrentNumber:0.##}x",
+            new Point(layout.MultiplierCenter, top + 18.0),
+            8.4,
+            modified ? accent : muted,
+            modified ? FontWeights.Bold : FontWeights.SemiBold);
 
-        DrawClippedText(
-            dc,
-            FormatEffectiveCaps(info, value),
-            new Rect(bounds.Left + bounds.Width * 0.36, y + 6, bounds.Width * 0.64 - 6, 18.0), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : mutedBrush,
-            modified ? FontWeights.SemiBold : FontWeights.Normal);
+        var currentCaps = EffectiveCaps(info.AuthoredCaps, parameter.CurrentNumber);
+        var vanillaCaps = EffectiveCaps(info.AuthoredCaps, parameter.ReferenceNumber);
 
-        EndLegendHitArea();
-    }
+        var rowMax = Math.Max(1.0, currentCaps.Concat(vanillaCaps).Max());
 
-    private static string FormatEffectiveCaps(AxisDefinition info, double speciesMultiplier)
-    {
-        var values = info.AuthoredHp
-            .Select(authoredCap => authoredCap <= 0.0
-                ? 0.0
-                : Math.Max(1.0, Math.Floor(authoredCap * speciesMultiplier + 0.5)))
-            .Select(value => value.ToString("0", CultureInfo.InvariantCulture))
-            .ToArray();
-
-        if (info.ParameterId == "alife.mutantSpawn.ratSwarm")
+        for (var rank = 0; rank < 4; rank++)
         {
-            var count = int.Parse(values[0], CultureInfo.InvariantCulture);
-            return $"Up to {count} {(count == 1 ? "swarm" : "swarms")}";
+            var centerX = layout.RankCenters[rank];
+            var cell = new Rect(centerX - layout.RankCellWidth / 2.0, top + 4.0, layout.RankCellWidth, RowHeight - 11.0);
+
+            if (info.AuthoredCaps[rank] <= Epsilon)
+            {
+                dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.08), null, cell, 2.0, 2.0);
+                DrawCenteredText(dc, "0", new Point(centerX, top + 15.0), 9.0, muted, FontWeights.Bold);
+                DrawCenteredText(dc, "LOCKED", new Point(centerX, top + 28.0), 6.6, muted, FontWeights.Normal);
+                continue;
+            }
+
+            var relative = Math.Clamp(currentCaps[rank] / rowMax, 0.0, 1.0);
+            var fillRect = new Rect(
+                cell.Left + 2.0,
+                cell.Bottom - 3.0 - (cell.Height - 6.0) * relative,
+                cell.Width - 4.0,
+                Math.Max(1.0, (cell.Height - 6.0) * relative));
+
+            dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.07), new Pen(CloneWithOpacity(border, 0.35), 0.7), cell, 2.0, 2.0);
+            dc.DrawRectangle(CloneWithOpacity(accent, modified ? 0.16 : 0.08), null, fillRect);
+
+            DrawCenteredText(
+                dc,
+                currentCaps[rank].ToString("0", CultureInfo.InvariantCulture),
+                new Point(centerX, top + 14.0),
+                9.0,
+                modified ? accent : text,
+                FontWeights.Bold);
+
+            DrawCenteredText(
+                dc,
+                $"v{vanillaCaps[rank]:0}",
+                new Point(centerX, top + 28.0),
+                6.8,
+                muted,
+                FontWeights.Normal);
         }
 
-        return $"Up to {values[0]} Newbie | {values[1]} Experienced | {values[2]} Veteran | {values[3]} Master";
+        var track = new Rect(layout.TrackLeft, top + 9.0, layout.TrackWidth, 20.0);
+        var y = track.Top + track.Height / 2.0;
+
+        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
+
+        var vanillaX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
+        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track);
+
+        dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX, y - 7.0), new Point(vanillaX, y + 7.0));
+        dc.DrawLine(new Pen(accent, 3.0), new Point(track.Left, y), new Point(currentX, y));
+
+        dc.DrawEllipse(
+            panel,
+            new Pen(accent, selected ? 2.5 : 1.5),
+            new Point(currentX, y),
+            6.0,
+            6.0);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
+
+        DrawText(dc, "0.25x", new Point(track.Left, top + 27.0), 6.7, muted, FontWeights.Normal);
+        DrawCenteredText(dc, "1x", new Point(vanillaX, top + 31.0), 6.7, muted, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, "3x", new Point(track.Right, top + 27.0), 6.7, muted, FontWeights.Normal);
+
+        _targets[row] = new HitTarget(
+            new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
+            track);
     }
 
-    private double[] GetValues()
-    {
-        var values = new double[Axes.Length];
-
-        for (var i = 0; i < Axes.Length; i++)
-            values[i] = Math.Clamp(_parameters[i]?.CurrentNumber ?? VanillaMultiplier, MinimumMultiplier, MaximumMultiplier);
-
-        return values;
-    }
-
-    private void SetValue(int axis, double value)
-    {
-        var parameter = _parameters[axis];
-        if (parameter is null)
-            return;
-
-        value = Math.Clamp(value, parameter.Minimum, parameter.Maximum);
-        value = Math.Round(value / RadarStep, MidpointRounding.AwayFromZero) * RadarStep;
-        parameter.CurrentNumber = Math.Clamp(value, parameter.Minimum, parameter.Maximum);
-    }
+    private static double[] EffectiveCaps(IReadOnlyList<double> authored, double multiplier)
+        => authored
+            .Select(value => value <= Epsilon
+                ? 0.0
+                : Math.Max(1.0, Math.Floor(value * multiplier + 0.5)))
+            .ToArray();
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
         Focus();
 
-        var point = e.GetPosition(this);
-
-        // The legend is informational for left-clicks. Consume the click here so
-        // it cannot fall through to FindAxis(), which maps arbitrary positions
-        // to the nearest radar axis and can otherwise push that value to max.
-        if (FindLegendAxis(point) >= 0 || FindAxisLabelAxis(point) >= 0)
-        {
-            e.Handled = true;
-            return;
-        }
-
-        var axis = FindAxis(point);
-        if (axis < 0)
+        var row = FindTarget(e.GetPosition(this));
+        if (row < 0)
             return;
 
-        _selectedAxis = axis;
-        _dragAxis = axis;
+        _selectedRow = row;
+        _dragRow = row;
         CaptureMouse();
-        UpdateAxisFromPoint(axis, point);
+        UpdateFromPoint(row, e.GetPosition(this));
         e.Handled = true;
     }
 
@@ -375,72 +344,39 @@ private readonly RadarStatusMessage _status;
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
-        var hoverAxis = FindLegendAxis(point);
-        if (hoverAxis < 0)
-            hoverAxis = FindAxisLabelAxis(point);
-        if (hoverAxis < 0)
-            hoverAxis = FindHandleAxis(point, 22.0);
-
-        if (hoverAxis != _hoverAxis)
+        var hover = FindTarget(point);
+        if (hover != _hoverRow)
         {
-            _hoverAxis = hoverAxis;
+            _hoverRow = hover;
             InvalidateVisual();
         }
-        Cursor = hoverAxis >= 0 ? Cursors.Hand : Cursors.Arrow;
 
-        if (_dragAxis < 0 || e.LeftButton != MouseButtonState.Pressed)
+        Cursor = hover >= 0 ? Cursors.Hand : Cursors.Arrow;
+
+        if (_dragRow < 0 || e.LeftButton != MouseButtonState.Pressed)
             return;
 
-        UpdateAxisFromPoint(_dragAxis, point);
+        UpdateFromPoint(_dragRow, point);
         e.Handled = true;
     }
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
-
-        if (_hoverAxis >= 0)
-        {
-            _hoverAxis = -1;
-            InvalidateVisual();
-        }
-    }
-
-    protected override void OnMouseWheel(MouseWheelEventArgs e)
-    {
-        base.OnMouseWheel(e);
-
-        var point = e.GetPosition(this);
-        var axis = FindLegendAxis(point);
-        if (axis < 0)
-            axis = FindAxisLabelAxis(point);
-        if (axis < 0 || e.Delta == 0)
+        if (_hoverRow < 0)
             return;
 
-        var parameter = _parameters[axis];
-        if (parameter is null)
-            return;
-
-        var direction = e.Delta > 0 ? 1 : -1;
-        _selectedAxis = axis;
-        _hoverAxis = axis;
-        parameter.CurrentNumber = Math.Clamp(
-            parameter.CurrentNumber + (direction * RadarStep),
-            parameter.Minimum,
-            parameter.Maximum);
-        _status.Clear();
+        _hoverRow = -1;
         InvalidateVisual();
-        e.Handled = true;
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonUp(e);
-
-        if (_dragAxis < 0)
+        if (_dragRow < 0)
             return;
 
-        _dragAxis = -1;
+        _dragRow = -1;
         ReleaseMouseCapture();
         e.Handled = true;
     }
@@ -449,48 +385,15 @@ private readonly RadarStatusMessage _status;
     {
         base.OnMouseRightButtonDown(e);
 
-                var point = e.GetPosition(this);
-        var axis = FindLegendAxis(point);
-        if (axis < 0)
-            axis = FindAxisLabelAxis(point);
-        if (axis < 0)
-            axis = FindHandleAxis(point, 22.0);
-
-        if (axis < 0)
+        var row = FindTarget(e.GetPosition(this));
+        if (row < 0 || _parameters[row] is not { } parameter)
             return;
 
-        _selectedAxis = axis;
-        var parameter = _parameters[axis];
-
-        if (parameter is not null)
-        {
-            parameter.CurrentNumber = VanillaMultiplier;
-            _status.ShowTransient($"{Axes[axis].Label} reset to vanilla 1x.");
-        }
-
+        _selectedRow = row;
+        parameter.ResetToReference();
+        _status.ShowTransient($"{Axes[row].Label} reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
-    }
-    private int FindAxisLabelAxis(Point point)
-    {
-        foreach (var hit in _axisLabelHitRects)
-        {
-            if (hit.Value.Contains(point))
-                return hit.Key;
-        }
-
-        return -1;
-    }
-
-    private int FindLegendAxis(Point point)
-    {
-        foreach (var hit in _legendHitRects)
-        {
-            if (hit.Value.Contains(point))
-                return hit.Key;
-        }
-
-        return -1;
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -499,13 +402,10 @@ private readonly RadarStatusMessage _status;
 
         if (e.Key == Key.R)
         {
-            foreach (var resetParameter in _parameters)
-            {
-                if (resetParameter is not null)
-                    resetParameter.CurrentNumber = VanillaMultiplier;
-            }
+            foreach (var parameter in _parameters)
+                parameter?.ResetToReference();
 
-            _status.Clear();
+            _status.ShowTransient("Mutant encounter caps reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -518,200 +418,118 @@ private readonly RadarStatusMessage _status;
             _ => 0
         };
 
-        if (direction == 0)
+        if (direction == 0 || _parameters[_selectedRow] is not { } selected)
             return;
 
-        var parameter = _parameters[_selectedAxis];
-        if (parameter is null)
-            return;
-
-        parameter.CurrentNumber = Math.Clamp(
-            parameter.CurrentNumber + (direction * RadarStep),
-            parameter.Minimum,
-            parameter.Maximum);
+        selected.CurrentNumber = Math.Clamp(
+            selected.CurrentNumber + direction * selected.TickFrequency,
+            selected.Minimum,
+            selected.Maximum);
 
         _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
 
-    private void UpdateAxisFromPoint(int axis, Point point)
+    private void UpdateFromPoint(int row, Point point)
     {
-        var (center, radius) = GetGeometry();
-        if (radius <= 0)
+        if (!_targets.TryGetValue(row, out var target) || _parameters[row] is not { } parameter)
             return;
 
-        var unit = UnitVector(Axes[axis].AngleDegrees);
-        var relative = point - center;
-        var projected = relative.X * unit.X + relative.Y * unit.Y;
-        var normalized = Math.Clamp(projected / radius, 0.0, 1.0);
-        var value = MinimumMultiplier + normalized * (MaximumMultiplier - MinimumMultiplier);
+        var ratio = Math.Clamp(
+            (point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width),
+            0.0,
+            1.0);
 
-        SetValue(axis, value);
+        var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
+        var tick = Math.Max(parameter.TickFrequency, Epsilon);
+        var snapped = parameter.Minimum
+            + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
+
+        parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
         _status.Clear();
         InvalidateVisual();
     }
 
-    private int FindAxis(Point point)
-        => FindHandleAxis(point, 14.0);
-
-    private int FindHandleAxis(Point point, double maximumDistance)
+    private int FindTarget(Point point)
     {
-        var values = GetValues();
-        var (center, radius) = GetGeometry();
-
-        var best = -1;
-        var bestDistance = maximumDistance;
-
-        for (var i = 0; i < Axes.Length; i++)
+        foreach (var pair in _targets)
         {
-            var handle = center + UnitVector(Axes[i].AngleDegrees) * ValueRadius(values[i], radius);
-            var distance = (point - handle).Length;
-
-            if (distance <= bestDistance)
-            {
-                bestDistance = distance;
-                best = i;
-            }
+            if (pair.Value.HitRect.Contains(point))
+                return pair.Key;
         }
 
-        return best;
+        return -1;
     }
 
-    private (Point Center, double Radius) GetGeometry()
+    private Layout GetLayout()
     {
-        var radius = Math.Min(150.0, Math.Max(112.0, Math.Min(ActualWidth * 0.18, 150.0)));
-        return (new Point(Math.Min(ActualWidth * 0.27, 270.0), ActualHeight / 2.0), radius);
+        var usable = Math.Max(520.0, ActualWidth - 36.0);
+        var labelWidth = Math.Clamp(usable * 0.16, 92.0, 125.0);
+        var multiplierWidth = 54.0;
+        var rankCellWidth = Math.Clamp(usable * 0.075, 42.0, 58.0);
+        var rankBlockWidth = rankCellWidth * 4.0;
+        var fixedWidth = labelWidth + multiplierWidth + rankBlockWidth + 42.0;
+        var trackWidth = Math.Max(120.0, usable - fixedWidth);
+
+        var left = 22.0;
+        var labelLeft = left;
+        var multiplierCenter = left + labelWidth + multiplierWidth / 2.0;
+        var ranksLeft = left + labelWidth + multiplierWidth + 10.0;
+
+        var rankCenters = Enumerable.Range(0, 4)
+            .Select(i => ranksLeft + rankCellWidth * (i + 0.5))
+            .ToArray();
+
+        var trackLeft = ranksLeft + rankBlockWidth + 18.0;
+
+        return new Layout(
+            labelLeft,
+            multiplierCenter,
+            rankCenters,
+            rankCellWidth,
+            trackLeft,
+            trackWidth);
     }
 
-    private static double ValueRadius(double value, double radius)
-        => radius * Math.Clamp((value - MinimumMultiplier) / (MaximumMultiplier - MinimumMultiplier), 0.0, 1.0);
-
-    private void DrawAxisLabel(
-        DrawingContext dc,
-        string label,
-        string value,
-        Point position,
-        Brush mutedBrush,
-        Brush activeBrush)
+    private static double ValueToX(double value, double minimum, double maximum, Rect track)
     {
-        var anchor = position.X < GetGeometry().Center.X - 20.0
-            ? TextAnchor.Right
-            : position.X > GetGeometry().Center.X + 20.0
-                ? TextAnchor.Left
-                : TextAnchor.Center;
+        if (maximum <= minimum + Epsilon)
+            return track.Left;
 
-        DrawAnchoredText(dc, label, new Point(position.X, position.Y - 5), RadarAxisTextSize, activeBrush, FontWeights.SemiBold, anchor);
-        DrawAnchoredText(dc, value, new Point(position.X, position.Y + 7), RadarAxisTextSize, mutedBrush, FontWeights.Normal, anchor);
-    }
-
-    private void DrawRingCaption(DrawingContext dc, string text, Point center, double radius, Brush brush)
-        => DrawText(dc, text, new Point(center.X + 6, center.Y - radius - 8), 8.6, brush, FontWeights.SemiBold);
-
-    private void DrawRing(DrawingContext dc, Point center, double radius, Pen pen)
-    {
-        var points = Axes.Select(axis => center + UnitVector(axis.AngleDegrees) * radius).ToArray();
-        dc.DrawGeometry(null, pen, BuildClosedGeometry(points));
-    }
-
-    private static StreamGeometry BuildClosedGeometry(IReadOnlyList<Point> points)
-    {
-        var geometry = new StreamGeometry();
-
-        using var context = geometry.Open();
-        context.BeginFigure(points[0], isFilled: true, isClosed: true);
-        context.PolyLineTo(points.Skip(1).ToArray(), isStroked: true, isSmoothJoin: true);
-
-        geometry.Freeze();
-        return geometry;
-    }
-
-    private static Vector UnitVector(double angleDegrees)
-    {
-        var radians = angleDegrees * Math.PI / 180.0;
-        return new Vector(Math.Cos(radians), Math.Sin(radians));
+        var ratio = Math.Clamp((value - minimum) / (maximum - minimum), 0.0, 1.0);
+        return track.Left + track.Width * ratio;
     }
 
     private static Brush FindBrush(string key, Brush fallback)
         => Application.Current?.TryFindResource(key) as Brush ?? fallback;
 
-    private void DrawCenteredText(DrawingContext dc, string text, Point center, double size, Brush brush, FontWeight weight)
+    private static Brush CloneWithOpacity(Brush brush, double opacity)
     {
-        var formatted = CreateText(text, size, brush, weight);
-        var x = Math.Clamp(center.X - formatted.Width / 2.0, 8.0, Math.Max(8.0, ActualWidth - formatted.Width - 8.0));
-        dc.DrawText(formatted, new Point(x, center.Y - formatted.Height / 2.0));
+        var clone = brush.Clone();
+        clone.Opacity = Math.Clamp(opacity, 0.0, 1.0);
+        return clone;
     }
 
-    private void DrawAnchoredText(
-        DrawingContext dc,
-        string text,
-        Point anchor,
-        double size,
-        Brush brush,
-        FontWeight weight,
-        TextAnchor textAnchor)
+    private void DrawText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
+        => dc.DrawText(CreateText(value, size, brush, weight), point);
+
+    private void DrawCenteredText(DrawingContext dc, string value, Point center, double size, Brush brush, FontWeight weight)
     {
-        var formatted = CreateText(text, size, brush, weight);
-
-        double x = textAnchor switch
-        {
-            TextAnchor.Left => anchor.X,
-            TextAnchor.Right => anchor.X - formatted.Width,
-            _ => anchor.X - formatted.Width / 2.0
-        };
-
-        x = Math.Clamp(x, 8.0, Math.Max(8.0, ActualWidth - formatted.Width - 8.0));
-        dc.DrawText(formatted, new Point(x, anchor.Y - formatted.Height / 2.0));
+        var formatted = CreateText(value, size, brush, weight);
+        dc.DrawText(formatted, new Point(center.X - formatted.Width / 2.0, center.Y - formatted.Height / 2.0));
     }
 
-    private void BeginLegendHitArea(int axis)
+    private void DrawRightAlignedText(DrawingContext dc, string value, Point right, double size, Brush brush, FontWeight weight)
     {
-        _legendRecordingAxis = axis;
-        _legendHitRects.Remove(axis);
+        var formatted = CreateText(value, size, brush, weight);
+        dc.DrawText(formatted, new Point(right.X - formatted.Width, right.Y));
     }
 
-    private void EndLegendHitArea()
-        => _legendRecordingAxis = -1;
-
-    private void IncludeLegendTextHit(Rect bounds, FormattedText formatted)
-    {
-        if (_legendRecordingAxis < 0)
-            return;
-
-        var textWidth = Math.Min(bounds.Width, formatted.WidthIncludingTrailingWhitespace);
-        var textHeight = Math.Min(bounds.Height, formatted.Height);
-        var textLeft = bounds.Left;
-        var textRect = new Rect(
-            textLeft - 3.0,
-            bounds.Top - 2.0,
-            Math.Max(1.0, textWidth + 6.0),
-            Math.Max(1.0, textHeight + 4.0));
-
-        if (_legendHitRects.TryGetValue(_legendRecordingAxis, out var current))
-            _legendHitRects[_legendRecordingAxis] = Rect.Union(current, textRect);
-        else
-            _legendHitRects[_legendRecordingAxis] = textRect;
-    }
-
-    private void DrawClippedText(DrawingContext dc, string text, Rect bounds, double size, Brush brush, FontWeight weight)
-    {
-        var formatted = CreateText(text, size, brush, weight);
-        IncludeLegendTextHit(bounds, formatted);
-        formatted.MaxTextWidth = Math.Max(1.0, bounds.Width);
-        formatted.MaxLineCount = 1;
-        formatted.Trimming = TextTrimming.None;
-        formatted.TextAlignment = TextAlignment.Left;
-        dc.DrawText(formatted, new Point(bounds.Left, bounds.Top));
-    }
-
-    private void DrawText(DrawingContext dc, string text, Point point, double size, Brush brush, FontWeight weight)
-        => dc.DrawText(CreateText(text, size, brush, weight), point);
-
-    private FormattedText CreateText(string text, double size, Brush brush, FontWeight weight)
+    private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
     {
         var formatted = new FormattedText(
-
-            text,
+            value,
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
@@ -720,22 +538,22 @@ private readonly RadarStatusMessage _status;
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
         var separatorBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
-        for (var i = 0; i < text.Length; i++)
+        for (var i = 0; i < value.Length; i++)
         {
-            if (text[i] == '|')
+            if (value[i] == '|')
                 formatted.SetForegroundBrush(separatorBrush, i, 1);
         }
 
         return formatted;
     }
 
-    private enum TextAnchor { Left, Center, Right }
-
-    private sealed record AxisDefinition(
-        string ParameterId,
-        string Label,
-        double AngleDegrees,
-        double[] AuthoredHp,
-        string VanillaLabel,
-        string PlayerHint);
+    private sealed record AxisDefinition(string ParameterId, string Label, double[] AuthoredCaps);
+    private sealed record HitTarget(Rect HitRect, Rect MapRect);
+    private sealed record Layout(
+        double LabelLeft,
+        double MultiplierCenter,
+        double[] RankCenters,
+        double RankCellWidth,
+        double TrackLeft,
+        double TrackWidth);
 }
