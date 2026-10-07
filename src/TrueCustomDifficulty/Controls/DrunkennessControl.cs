@@ -361,7 +361,7 @@ public sealed class DrunkennessControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
-        var hoverReference = _vodkaRect.Contains(point)
+        DrinkReference? hoverReference = _vodkaRect.Contains(point)
             ? DrinkReference.Vodka
             : _beerRect.Contains(point)
                 ? DrinkReference.Beer
