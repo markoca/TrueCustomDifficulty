@@ -147,7 +147,7 @@ public sealed class ResponsiveParameterGridPanel : Panel
             return false;
 
         return parameter.IsAggregateRadarAnchor
-            || parameter.IsRange
+            || (parameter.IsRange && !parameter.Id.Equals("loot.droppedWeaponCondition", StringComparison.Ordinal))
             || parameter.IsChoiceSlider;
     }
 }
