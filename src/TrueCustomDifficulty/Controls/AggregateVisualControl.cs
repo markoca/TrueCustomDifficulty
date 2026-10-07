@@ -1312,14 +1312,14 @@ public sealed class AggregateVisualControl : FrameworkElement
 
             AddHorizontalTarget(
                 minimum,
-                new Rect(minX - 22.0, currentY - 22.0, 44.0, 44.0),
+                new Rect(minX - 24.0, currentY - 26.0, 48.0, 26.0),
                 minMap,
                 0.0,
                 1.0);
 
             AddHorizontalTarget(
                 maximum,
-                new Rect(maxX - 22.0, currentY - 22.0, 44.0, 44.0),
+                new Rect(maxX - 24.0, currentY, 48.0, 26.0),
                 maxMap,
                 0.0,
                 1.0);
@@ -1798,6 +1798,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         _selectedParameter = target.Parameter;
         target.Parameter.ResetToReference();
+        EnforceRepeatedHitOrdering(target.Parameter);
         _status.ShowTransient($"{ShortLabel(target.Parameter)} reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
@@ -1846,6 +1847,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             _selectedParameter.CurrentNumber + direction * _selectedParameter.TickFrequency,
             _selectedParameter.Minimum,
             _selectedParameter.Maximum);
+        EnforceRepeatedHitOrdering(_selectedParameter);
 
         _status.ClearTransient();
         InvalidateVisual();
@@ -1881,22 +1883,28 @@ public sealed class AggregateVisualControl : FrameworkElement
         var snapped = Snap(target.Parameter, raw);
         target.Parameter.CurrentNumber = snapped;
 
-        if (Family == "RepeatedHitBand")
-        {
-            var minimum = P("combat.accumulatedDamageWeightMin");
-            var maximum = P("combat.accumulatedDamageWeightMax");
-
-            if (minimum is not null && maximum is not null)
-            {
-                if (ReferenceEquals(target.Parameter, minimum) && minimum.CurrentNumber > maximum.CurrentNumber)
-                    maximum.CurrentNumber = minimum.CurrentNumber;
-                else if (ReferenceEquals(target.Parameter, maximum) && maximum.CurrentNumber < minimum.CurrentNumber)
-                    minimum.CurrentNumber = maximum.CurrentNumber;
-            }
-        }
+        EnforceRepeatedHitOrdering(target.Parameter);
 
         _status.ClearTransient();
         InvalidateVisual();
+    }
+
+    private void EnforceRepeatedHitOrdering(ParameterViewModel movedParameter)
+    {
+        if (Family != "RepeatedHitBand")
+            return;
+
+        var minimum = P("combat.accumulatedDamageWeightMin");
+        var maximum = P("combat.accumulatedDamageWeightMax");
+        if (minimum is null || maximum is null)
+            return;
+
+        // The actively edited endpoint wins. The neighbour moves only as far as
+        // necessary to keep the actual CFG values ordered as MIN <= MAX.
+        if (ReferenceEquals(movedParameter, minimum) && minimum.CurrentNumber > maximum.CurrentNumber)
+            maximum.CurrentNumber = minimum.CurrentNumber;
+        else if (ReferenceEquals(movedParameter, maximum) && maximum.CurrentNumber < minimum.CurrentNumber)
+            minimum.CurrentNumber = maximum.CurrentNumber;
     }
 
     private HitTarget? FindTarget(Point point)
