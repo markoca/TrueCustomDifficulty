@@ -81,8 +81,12 @@ public partial class MainWindow : Window
 
     private IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        if (msg != WmSizing || lParam == IntPtr.Zero || _isAspectMaximized)
+        if (msg != WmSizing || lParam == IntPtr.Zero)
             return IntPtr.Zero;
+
+        // Manual resizing leaves the custom 16:10 maximized state and becomes
+        // the new normal window geometry, while keeping the aspect lock active.
+        _isAspectMaximized = false;
 
         var rect = Marshal.PtrToStructure<NativeRect>(lParam);
         var edge = wParam.ToInt32();
