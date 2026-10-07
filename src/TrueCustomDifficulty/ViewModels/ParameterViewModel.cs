@@ -18,6 +18,7 @@ public sealed class ParameterViewModel : ObservableObject
     private bool _currentBoolean;
     private string _currentText = string.Empty;
     private string _referenceDifficulty;
+    private bool _isSelected;
     private Func<double>? _effectiveDamageMultiplierProvider;
     private Func<bool>? _dependencyEnabledProvider;
     private Func<bool>? _aggregateModifiedProvider;
@@ -25,6 +26,12 @@ public sealed class ParameterViewModel : ObservableObject
     public ParameterDefinition Definition { get; }
     public string Id => Definition.Id;
     public string Label => Definition.Label;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set => SetProperty(ref _isSelected, value);
+    }
+
     public string Description => Definition.Description;
     public string Rationale => string.IsNullOrWhiteSpace(Definition.Rationale) ? Definition.Description : Definition.Rationale;
     public string RationaleDisplay
