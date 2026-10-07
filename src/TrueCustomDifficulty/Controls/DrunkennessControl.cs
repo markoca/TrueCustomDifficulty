@@ -207,7 +207,7 @@ public sealed class DrunkennessControl : FrameworkElement
         DrawText(dc, singular, new Point(rect.Left + 10, rect.Top + 8), 10.0, accent, FontWeights.Bold);
         DrawRightAlignedText(
             dc,
-            "VERY STRONG AFTER " + drinks.ToString(CultureInfo.InvariantCulture) + " " + drinkLabel,
+            "WASTED AFTER " + drinks.ToString(CultureInfo.InvariantCulture) + " " + drinkLabel,
             new Point(rect.Right - 10, rect.Top + 7),
             9.2,
             text,
@@ -272,17 +272,17 @@ public sealed class DrunkennessControl : FrameworkElement
         {
             var tier = GetTierAfterDrink(drink, strength);
             var rect = new Rect(left + (drink - 1) * (chipWidth + gap), top, chipWidth, chipHeight);
-            var isVeryStrong = tier == "VERY STRONG";
+            var isWasted = tier == "WASTED";
 
             dc.DrawRoundedRectangle(
                 panelAlt,
-                new Pen(isVeryStrong ? accent : border, isVeryStrong ? 1.4 : 1.0),
+                new Pen(isWasted ? accent : border, isWasted ? 1.4 : 1.0),
                 rect,
                 3.0,
                 3.0);
 
-            DrawText(dc, drink.ToString(CultureInfo.InvariantCulture), new Point(rect.Left + 8, rect.Top + 6), 10.0, text, FontWeights.Bold);
-            DrawText(dc, tier, new Point(rect.Left + 25, rect.Top + 7), 8.4, isVeryStrong ? accent : muted, FontWeights.Bold);
+            DrawText(dc, FormatOrdinal(drink), new Point(rect.Left + 7, rect.Top + 6), 9.0, text, FontWeights.Bold);
+            DrawText(dc, tier, new Point(rect.Left + 34, rect.Top + 7), 8.4, isWasted ? accent : muted, FontWeights.Bold);
         }
     }
 
@@ -291,15 +291,15 @@ public sealed class DrunkennessControl : FrameworkElement
         var drunkness = drinkCount * strength;
 
         if (drunkness >= VanillaVeryStrong)
-            return "VERY STRONG";
+            return "WASTED";
 
         if (drunkness >= VanillaStrong)
-            return "STRONG";
+            return "DRUNK";
 
         if (drunkness >= VanillaMedium)
-            return "MEDIUM";
+            return "TIPSY";
 
-        return "LOW";
+        return "BUZZED";
     }
 
     private void DrawTierCards(
@@ -318,10 +318,10 @@ public sealed class DrunkennessControl : FrameworkElement
 
         var tiers = new[]
         {
-            new TierInfo("LOW", new[] { "Stamina penalty", "Drunk visuals", "Weapon sway reduction" }),
-            new TierInfo("MEDIUM", new[] { "Stamina drain", "Camera shake", "Weapon sway", "Recoil", "Hunger", "Drunk visuals" }),
-            new TierInfo("STRONG", new[] { "Stronger stamina drain", "Camera shake", "Stronger weapon sway", "Stronger recoil", "Hunger", "Drunk visuals" }),
-            new TierInfo("VERY STRONG", new[] { "Max stamina drain", "Camera shake", "Max weapon sway", "Max recoil", "High hunger", "Drunk visuals" })
+            new TierInfo("BUZZED", new[] { "Stamina penalty", "Drunk visuals", "Weapon sway reduction" }),
+            new TierInfo("TIPSY", new[] { "Stamina drain", "Camera shake", "Weapon sway", "Recoil", "Hunger", "Drunk visuals" }),
+            new TierInfo("DRUNK", new[] { "Stronger stamina drain", "Camera shake", "Stronger weapon sway", "Stronger recoil", "Hunger", "Drunk visuals" }),
+            new TierInfo("WASTED", new[] { "Max stamina drain", "Camera shake", "Max weapon sway", "Max recoil", "High hunger", "Drunk visuals" })
         };
 
         for (var i = 0; i < tiers.Length; i++)
@@ -492,6 +492,23 @@ public sealed class DrunkennessControl : FrameworkElement
             Math.Max(1, (int)Math.Ceiling(VanillaVeryStrong / Math.Max(1.0, strength))),
             1,
             maxDrinks);
+
+    private static string FormatOrdinal(int value)
+    {
+        var mod100 = value % 100;
+        if (mod100 is >= 11 and <= 13)
+            return value.ToString(CultureInfo.InvariantCulture) + "TH";
+
+        var suffix = value % 10 switch
+        {
+            1 => "ST",
+            2 => "ND",
+            3 => "RD",
+            _ => "TH"
+        };
+
+        return value.ToString(CultureInfo.InvariantCulture) + suffix;
+    }
 
     private static double ValueToX(double value, double minimum, double maximum, double left, double right)
     {
