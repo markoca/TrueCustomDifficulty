@@ -31,21 +31,11 @@ public sealed class ParameterViewModel : ObservableObject
     {
         get
         {
-            var description = Description.Trim();
-            var rationale = Rationale.Trim();
-
-            string body;
-            if (string.IsNullOrWhiteSpace(description))
-                body = rationale;
-            else if (string.IsNullOrWhiteSpace(rationale) || string.Equals(description, rationale, StringComparison.Ordinal))
-                body = description;
-            else
-            {
-                // The old hover tooltip exposed Description while the side panel exposed Rationale.
-                // Keep both pieces visible in one persistent side-panel explanation instead of hiding
-                // useful information behind hover-only UI.
-                body = $"{description}{Environment.NewLine}{Environment.NewLine}{rationale}";
-            }
+            // Keep the side panel concise: prefer the authored player-facing rationale
+            // and fall back to Description only when no rationale exists.
+            var body = string.IsNullOrWhiteSpace(Definition.Rationale)
+                ? Description.Trim()
+                : Definition.Rationale.Trim();
 
             return $"{body}{Environment.NewLine}{Environment.NewLine}{ControlHelp}";
         }
@@ -691,7 +681,7 @@ public sealed class ParameterViewModel : ObservableObject
             "environment.psyAnomalyIntensity" => Times(CurrentNumber, "intensity"),
 
             // Master-only survival penalties.
-            "survival.starvationStaminaDrain" => SignedPercent(CurrentNumber, "stamina cost"),
+            "survival.starvationStaminaDrain" => ExtraPercent(CurrentNumber, "stamina cost"),
             "survival.starvationDamage" => $"{CurrentNumber:0.#} HP/tick",
             "survival.starvationDamageInterval" => $"{CurrentNumber:0.#} s",
             "survival.starvationPenaltyDelay" => $"{CurrentNumber:0.#} s",
@@ -701,7 +691,7 @@ public sealed class ParameterViewModel : ObservableObject
             "survival.severeFatigueRecoil" => SignedPercent(CurrentNumber, "recoil"),
             "survival.severeFatigueAimSway" => SignedPercent(CurrentNumber, "sway"),
             "survival.severeFatigueDispersion" => SignedPercent(CurrentNumber, "spread"),
-            "survival.radiationStaminaDrainPenalty" => SignedPercent(CurrentNumber, "stamina cost"),
+            "survival.radiationStaminaDrainPenalty" => ExtraPercent(CurrentNumber, "stamina cost"),
 
             _ => string.Empty
         };
@@ -714,6 +704,14 @@ public sealed class ParameterViewModel : ObservableObject
     {
         var percent = value * 100.0;
         return $"{percent:+0.##;-0.##;0}% {meaning}";
+    }
+
+    private static string ExtraPercent(double value, string meaning)
+    {
+        if (Math.Abs(value) <= Epsilon)
+            return $"No extra {meaning}";
+
+        return $"+{Math.Abs(value) * 100:0.##}% extra {meaning}";
     }
 
     private static string NegativePercent(double value, string meaning)
