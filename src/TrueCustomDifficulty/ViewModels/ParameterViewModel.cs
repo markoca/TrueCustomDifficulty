@@ -55,7 +55,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsDrunkennessAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Choose BEER or VODKA. The game thresholds stay fixed at vanilla 20 / 40 / 60. The left slider is a coarse drinks-to-Very-Strong view of the selected drink's own strength; the right slider fine-tunes that same strength in exact 1-point Drunkness steps. Beer and Vodka are independent. Right-click either visible slider to restore the selected drink to VANILLA.";
+                       "BEER and VODKA are independent strength sliders. Both always stay visible and use exact 1-point Drunkness steps against the fixed vanilla 20 / 40 / 60 thresholds. Each card shows how many drinks currently reach Very Strong, and both AFTER EACH progression rows update live. Right-click a slider to restore only that drink to VANILLA.";
             }
 
             if (IsAggregateRadarAnchor)
