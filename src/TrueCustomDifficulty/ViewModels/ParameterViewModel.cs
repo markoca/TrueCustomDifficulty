@@ -87,6 +87,18 @@ public sealed class ParameterViewModel : ObservableObject
                        "Right-click an individual handle/track to restore that value to the Base Preset. Press R while the control is focused to restore the whole visual group.";
             }
 
+            if (IsMutantGroupSizeAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "Each mutant row has one species multiplier and four live encounter-cap results for NEWBIE / EXPERIENCED / VETERAN / MASTER. Drag the row track to scale that species while preserving its authored rank progression; authored 0 caps stay 0. Gold numbers are current caps and small grey vN numbers are vanilla caps. Right-click a row track to reset only that species; press R to reset the whole mutant-cap matrix.";
+            }
+
+            if (IsHumanGroupSizeAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "Each player-rank row shows the resulting maximum human squad size and its independent multiplier. Drag a row track to tune that rank directly. Gold is the current resulting NPC cap, vN is the vanilla cap and the 1x tick is the Base Preset reference. Right-click a row track to reset only that rank; press R to reset all four human squad caps.";
+            }
+
             if (IsAggregateRadarAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
