@@ -51,7 +51,7 @@ private string _statusText = string.Empty;
     {
         Focusable = true;
         MinHeight = 430;
-        Cursor = Cursors.Cross;
+        Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
 
@@ -221,7 +221,7 @@ private string _statusText = string.Empty;
 
     private Rect GetInfoRect()
     {
-        var left = Math.Max(ActualWidth * 0.44, 340.0);
+        var left = Math.Max(ActualWidth * 0.48, 370.0);
         return new Rect(left, 48.0, Math.Max(220.0, ActualWidth - left - 16.0), Math.Max(220.0, ActualHeight - 126.0));
     }
 
@@ -408,6 +408,7 @@ DrawClippedText(
             _hoverAxis = hoverAxis;
             InvalidateVisual();
         }
+        Cursor = hoverAxis >= 0 ? Cursors.Hand : Cursors.Arrow;
         if (_dragAxis < 0 || e.LeftButton != MouseButtonState.Pressed)
             return;
 
@@ -586,36 +587,7 @@ DrawClippedText(
     }
 
     private int FindAxis(Point point)
-    {
-        var (center, radius) = GetGeometry();
-        if (radius <= 0)
-            return -1;
-
-        var bestHandle = FindHandleAxis(point, 24.0);
-        if (bestHandle >= 0)
-            return bestHandle;
-
-        var relative = point - center;
-        if (relative.Length > radius + 28 || relative.Length < 10)
-            return -1;
-
-        var direction = relative;
-        direction.Normalize();
-        var bestAxis = -1;
-        var bestDot = 0.0;
-        for (var i = 0; i < Axes.Length; i++)
-        {
-            var unit = UnitVector(Axes[i].AngleDegrees);
-            var dot = direction.X * unit.X + direction.Y * unit.Y;
-            if (dot > bestDot)
-            {
-                bestDot = dot;
-                bestAxis = i;
-            }
-        }
-
-        return bestDot >= 0.88 ? bestAxis : -1;
-    }
+        => FindHandleAxis(point, 14.0);
 
     private (Point Center, double Radius) GetGeometry()
     {
