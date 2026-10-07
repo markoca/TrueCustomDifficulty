@@ -68,7 +68,7 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 var help = VisualAggregateFamily switch
                 {
-                    "FatigueCurve" => "Drag AIM and RELOAD curve points to shape how fatigue penalties escalate. The two compact tracks control fatigue build-up and Energy Drink relief.",
+                    "FatigueCurve" => "Drag AIM points across LOW / MEDIUM / SEVERE and RELOAD points across MEDIUM / SEVERE to shape how fatigue penalties escalate. LOW fatigue has no separate reload parameter. The two compact tracks control fatigue build-up and Energy Drink relief.",
                     "BleedingTreatmentMixer" => "Drag the four vertical faders to compare and tune bleeding removal for Bandage, Medkit, Army Medkit and Scientific Medkit.",
                     "ConsumableMixer" => "Use the two compact effect-strength tracks and the five duration faders to tune consumables from one surface.",
                     "SleepingDashboard" => "Tune the sleep threshold, minimum sleep duration, health restore and stamina restore directly in the Sleeping dashboard.",
