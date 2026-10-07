@@ -510,10 +510,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         AddVerticalTarget(weapon, new Rect(plot.Left - 28.0, wearY - 14.0, 27.0, 28.0),
             plot, weapon.Minimum, weapon.Maximum);
 
-        DrawCenteredText(dc, "X: HIGHER = TOUGHER ARMOR   |   Y: HIGHER = MORE WEAPON WEAR",
-            new Point(ActualWidth / 2.0, 285.0), 9.0, text, FontWeights.SemiBold);
-        DrawCenteredText(dc, "BOTTOM HANDLE = ARMOR   |   LEFT HANDLE = WEAPON   |   GREY = BASE",
-            new Point(ActualWidth / 2.0, 301.0), 9.0, muted, FontWeights.Normal);
+        // Leave the status lane below y=290 clear for transient reset messages.
+        DrawCenteredText(dc, "BOTTOM: ARMOR (TOUGHER RIGHT)   |   LEFT: WEAPON (MORE WEAR UP)   |   GREY = BASE",
+            new Point(ActualWidth / 2.0, 280.0), 9.0, muted, FontWeights.SemiBold);
     }
 
     private void DrawRepairCurve(
