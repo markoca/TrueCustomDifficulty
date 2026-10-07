@@ -93,6 +93,8 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["loot.droppedWeaponCondition"] = new("loot-npc-2", 1),
             ["loot.cheapStashGrenadeChance"] = new("loot-stash-grenade-1", 0),
             ["loot.cheapStashGrenadeQuantity"] = new("loot-stash-grenade-1", 1),
+            ["loot.destructibleAmmoQuantity"] = new("loot-breakable-1", 0),
+            ["loot.destructibleGrenadeQuantity"] = new("loot-breakable-1", 1),
             ["loot.worldWeaponShuffle"] = new("loot-world-weapon-1", 0),
             ["loot.worldWeaponDensity"] = new("loot-world-weapon-1", 1),
             ["loot.worldAttachmentShuffle"] = new("loot-world-other-1", 0),
