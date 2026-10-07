@@ -1420,16 +1420,16 @@ public sealed class ParameterViewModel : ObservableObject
 
         if (definition.Vanilla.TryGetValue("All", out var shared) && shared.ValueKind == JsonValueKind.Number)
         {
-            result.Add(new VanillaMarkerViewModel("VANILLA", shared.GetDouble()));
+            result.Add(new VanillaMarkerViewModel("VNL", shared.GetDouble()));
         }
         else
         {
             var labels = new Dictionary<string, (string Long, string Short)>(StringComparer.Ordinal)
             {
-                ["Novice"] = ("NOVICE", "NOVICE"),
-                ["Stalker"] = ("STALKER", "STALKER"),
-                ["Veteran"] = ("VETERAN", "VETERAN"),
-                ["Master"] = ("MASTER", "MASTER")
+                ["Novice"] = ("N", "N"),
+                ["Stalker"] = ("S", "S"),
+                ["Veteran"] = ("V", "V"),
+                ["Master"] = ("M", "M")
             };
 
             var raw = new List<(string Difficulty, string Long, string Short, double Value)>();
@@ -1449,7 +1449,7 @@ public sealed class ParameterViewModel : ObservableObject
                 {
                     var items = g.ToList();
                     var label = items.Count == 4
-                        ? "VANILLA"
+                        ? "VNL"
                         : items.Count > 1
                             ? string.Join(" / ", items.Select(x => x.Short))
                             : items[0].Long;
@@ -1485,10 +1485,10 @@ public sealed class ParameterViewModel : ObservableObject
 
         var difficultyLabels = new Dictionary<string, string>(StringComparer.Ordinal)
         {
-            ["Novice"] = "NOVICE",
-            ["Stalker"] = "STALKER",
-            ["Veteran"] = "VETERAN",
-            ["Master"] = "MASTER"
+            ["Novice"] = "N",
+            ["Stalker"] = "S",
+            ["Veteran"] = "V",
+            ["Master"] = "M"
         };
 
         var markers = new List<(string Label, double Value)>();
