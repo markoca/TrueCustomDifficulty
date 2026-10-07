@@ -187,7 +187,7 @@ private string _statusText = string.Empty;
         var info = GetInfoRect();
         DrawClippedText(
             dc,
-            "Spawn range is shown when the same ammo appears in more than one vanilla box pool.",
+            "A range means that caliber exists in more than one vanilla ammo-box pool.",
             new Rect(info.Left, ActualHeight - 64, info.Width, 18),
             9.6,
             mutedBrush,
@@ -236,44 +236,46 @@ private string _statusText = string.Empty;
         var info = GetInfoRect();
         DrawClippedText(
             dc,
-            "LIVE SPAWN DISTRIBUTION",
+            "AMMO BOX MIX · higher = this family appears more often",
             new Rect(info.Left, 18, info.Width, 18),
             10.2,
             textBrush,
             FontWeights.SemiBold);
 
-        var y = info.Top;
+        var rowHeights = details.Select(detail => 26.0 + (detail.Count * 15.0)).ToArray();
+        var totalHeight = rowHeights.Sum();
+        var y = info.Top + Math.Max(0.0, (info.Height - totalHeight) / 2.0);
+
         for (var i = 0; i < Axes.Length; i++)
         {
-            var selected = i == _selectedAxis;
             var hovered = i == _hoverAxis;
             var parameter = _parameters[i];
             var modified = parameter?.IsModified ?? false;
             BeginLegendHitArea(i);
 
-DrawClippedText(
+            DrawClippedText(
                 dc,
-                $"{Axes[i].Label}  {values[i]:0.##}x",
-                new Rect(info.Left + 6, y, info.Width - 12, 17),
+                $"{Axes[i].Label} · {values[i]:0.##}x weight",
+                new Rect(info.Left + 6, y + 5, info.Width - 12, 17),
                 10.0,
                 modified ? accentBrush : hovered ? textBrush : textBrush,
                 FontWeights.SemiBold);
 
-            y += 16;
+            var detailY = y + 24;
             foreach (var detail in details[i])
             {
                 DrawClippedText(
                     dc,
                     detail,
-                    new Rect(info.Left + 18, y, info.Width - 24, 16),
+                    new Rect(info.Left + 18, detailY, info.Width - 24, 16),
                     9.3,
                     modified ? accentBrush : hovered ? textBrush : mutedBrush,
                     FontWeights.Normal);
-                y += 15;
+                detailY += 15;
             }
 
             EndLegendHitArea();
-            y += 7;
+            y += rowHeights[i];
         }
     }
 
@@ -348,21 +350,21 @@ DrawClippedText(
         {
             new[]
             {
-                $"{X(nine)} · 9×18 · Spawn {P(nine18)}",
-                $"{X(nine)} · 9×19 · Spawn {Range(nine19A, nine19B)}",
+                $"9×18 current box share: {P(nine18)}",
+                $"9×19 current box share: {Range(nine19A, nine19B)}",
             },
             new[]
             {
-                $"{X(five)} · 5.45×39 · Spawn {P(five45)}",
-                $"{X(five)} · 5.56×45 · Spawn {P(five56)}",
+                $"5.45×39 current box share: {P(five45)}",
+                $"5.56×45 current box share: {P(five56)}",
             },
             new[]
             {
-                $"{X(fortyFive)} · .45 ACP · Spawn {P(fortyFiveShare)}",
+                $".45 ACP current box share: {P(fortyFiveShare)}",
             },
             new[]
             {
-                $"{X(twelve)} · 12×70 · Spawn {Range(twelveA, twelveB)}",
+                $"12×70 current box share: {Range(twelveA, twelveB)}",
             },
         };
     }
