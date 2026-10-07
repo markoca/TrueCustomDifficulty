@@ -8,17 +8,13 @@ using TrueCustomDifficulty.ViewModels;
 
 namespace TrueCustomDifficulty.Controls;
 
-/// <summary>
-/// Mutant special-ability pacing board.
-///
-/// The historical *Radar class name is kept for XAML compatibility. Each row edits
-/// the wait-time multiplier for one mutant family and derives the corresponding
-/// relative ability-return rate without inventing absolute cooldown seconds.
-/// </summary>
 public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double RowHeight = 47.0;
+    private const double DesiredHeight = 380.0;
+    private const double MaxContentWidth = 900.0;
+    private const double ColumnGap = 16.0;
+    private const double RowHeight = 62.0;
 
     private static readonly CooldownDefinition[] Mutants =
     {
@@ -56,7 +52,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 505;
+        MinHeight = DesiredHeight;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -64,7 +60,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(560.0, availableSize.Width);
-        return new Size(width, 505.0);
+        return new Size(width, DesiredHeight);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -82,10 +78,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
         if (Parameters is not null)
         {
-            var byId = Parameters
-                .OfType<ParameterViewModel>()
-                .ToDictionary(x => x.Id, StringComparer.Ordinal);
-
+            var byId = Parameters.OfType<ParameterViewModel>().ToDictionary(x => x.Id, StringComparer.Ordinal);
             for (var i = 0; i < Mutants.Length; i++)
             {
                 if (!byId.TryGetValue(Mutants[i].ParameterId, out var parameter))
@@ -135,154 +128,100 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
         _targets.Clear();
 
-        DrawText(dc, "MUTANT SPECIAL-ABILITY PACING", new Point(18.0, 16.0), 12.0, text, FontWeights.Bold);
-        DrawText(
-            dc,
-            "lower wait = abilities return sooner; damage is unchanged",
-            new Point(18.0, 34.0),
-            8.2,
-            muted,
-            FontWeights.Normal);
+        var content = ContentRect();
+        DrawText(dc, "SPECIAL-ABILITY PACING", new Point(content.Left, 16.0), 12.5, text, FontWeights.Bold);
+        DrawText(dc, "WAIT down = ability returns sooner", new Point(content.Left, 37.0), 9.5, muted, FontWeights.Normal);
 
-        DrawRightAlignedText(
-            dc,
-            "WAIT MULTIPLIER — NOT ABSOLUTE COOLDOWN SECONDS",
-            new Point(Math.Max(500.0, ActualWidth - 18.0), 18.0),
-            7.5,
-            muted,
-            FontWeights.SemiBold);
+        var columnWidth = (content.Width - ColumnGap) / 2.0;
+        for (var i = 0; i < 4; i++)
+        {
+            DrawRow(dc, i, new Rect(content.Left, 68.0 + i * RowHeight, columnWidth, RowHeight - 6.0), text, muted, border, accent, panel);
+            DrawRow(dc, i + 4, new Rect(content.Left + columnWidth + ColumnGap, 68.0 + i * RowHeight, columnWidth, RowHeight - 6.0), text, muted, border, accent, panel);
+        }
 
-        var layout = GetLayout();
-
-        DrawText(dc, "MUTANT", new Point(layout.LabelLeft, 62.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "WAIT", new Point(layout.WaitCenter, 69.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "ABILITY RETURN", new Point(layout.ReturnCenter, 69.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "AGGRESSIVE  ←  WAIT TIME  →  BREATHING ROOM", new Point(layout.TrackLeft + layout.TrackWidth / 2.0, 69.0), 7.8, muted, FontWeights.Bold);
-
-        dc.DrawLine(new Pen(border, 1.0), new Point(14.0, 83.0), new Point(Math.Max(14.0, ActualWidth - 14.0), 83.0));
-
-        for (var row = 0; row < Mutants.Length; row++)
-            DrawRow(dc, row, 92.0 + row * RowHeight, layout, text, muted, border, accent, panel);
-
-        var footerY = 92.0 + Mutants.Length * RowHeight + 9.0;
         DrawCenteredText(
             dc,
-            "RETURN RATE = 1 ÷ WAIT MULTIPLIER   •   GREY TICK = BASE PRESET   •   LOWER WAIT = MORE FREQUENT SPECIALS",
-            new Point(ActualWidth / 2.0, footerY),
-            7.5,
+            "return rate = 1 ÷ wait   •   grey tick = Base Preset",
+            new Point(ActualWidth / 2.0, 332.0),
+            9.0,
             muted,
             FontWeights.Normal);
 
         if (!string.IsNullOrWhiteSpace(_status.Text))
-        {
-            DrawCenteredText(
-                dc,
-                _status.Text,
-                new Point(ActualWidth / 2.0, footerY + 19.0),
-                8.0,
-                accent,
-                FontWeights.SemiBold);
-        }
+            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 355.0), 9.5, accent, FontWeights.SemiBold);
     }
 
     private void DrawRow(
         DrawingContext dc,
         int row,
-        double top,
-        Layout layout,
+        Rect card,
         Brush text,
         Brush muted,
         Brush border,
         Brush accent,
         Brush panel)
     {
-        var parameter = _parameters[row];
-        if (parameter is null)
+        if (_parameters[row] is not { } parameter)
             return;
 
         var info = Mutants[row];
         var selected = row == _selectedRow;
         var hovered = row == _hoverRow;
         var modified = Math.Abs(parameter.CurrentNumber - parameter.ReferenceNumber) > Epsilon;
+        var returnRate = parameter.CurrentNumber > Epsilon ? 1.0 / parameter.CurrentNumber : 0.0;
 
-        var rowRect = new Rect(14.0, top, Math.Max(1.0, ActualWidth - 28.0), RowHeight - 3.0);
         dc.DrawRoundedRectangle(
-            selected
-                ? CloneWithOpacity(accent, 0.08)
-                : hovered
-                    ? CloneWithOpacity(border, 0.10)
-                    : CloneWithOpacity(panel, 0.01),
+            selected ? CloneWithOpacity(accent, 0.08)
+            : hovered ? CloneWithOpacity(border, 0.10)
+            : CloneWithOpacity(panel, 0.02),
             new Pen(CloneWithOpacity(border, 0.45), 0.8),
-            rowRect,
+            card,
             3.0,
             3.0);
 
-        DrawText(
+        DrawText(dc, info.Label, new Point(card.Left + 8.0, card.Top + 6.0), 9.5, modified ? accent : text, FontWeights.Bold);
+        DrawRightAlignedText(
             dc,
-            info.Label,
-            new Point(layout.LabelLeft, top + 7.0),
-            8.6,
-            modified ? accent : text,
-            FontWeights.Bold);
-
-        if (!string.IsNullOrWhiteSpace(info.SecondaryNote))
-            DrawText(dc, info.SecondaryNote!, new Point(layout.LabelLeft, top + 24.0), 6.7, muted, FontWeights.Normal);
-
-        DrawCenteredText(
-            dc,
-            $"{parameter.CurrentNumber:0.##}x",
-            new Point(layout.WaitCenter, top + 16.0),
-            10.0,
-            modified ? accent : text,
-            FontWeights.Bold);
-
-        var returnRate = parameter.CurrentNumber > Epsilon ? 1.0 / parameter.CurrentNumber : 0.0;
-        DrawCenteredText(
-            dc,
-            $"{returnRate:0.##}x",
-            new Point(layout.ReturnCenter, top + 13.0),
+            $"{parameter.CurrentNumber:0.##}x WAIT   |   {returnRate:0.##}x RETURN",
+            new Point(card.Right - 8.0, card.Top + 5.0),
             9.3,
             returnRate > 1.0 + Epsilon ? accent : text,
             FontWeights.Bold);
 
-        DrawCenteredText(
-            dc,
-            returnRate > 1.05
-                ? "MORE OFTEN"
-                : returnRate < 0.95
-                    ? "LESS OFTEN"
-                    : "BASE RATE",
-            new Point(layout.ReturnCenter, top + 29.0),
-            6.6,
-            returnRate > 1.05 ? accent : muted,
-            FontWeights.SemiBold);
+        if (!string.IsNullOrWhiteSpace(info.SecondaryNote))
+            DrawText(dc, info.SecondaryNote!, new Point(card.Left + 8.0, card.Top + 23.0), 9.0, muted, FontWeights.Normal);
+        else
+            DrawText(
+                dc,
+                returnRate > 1.05 ? "more frequent"
+                : returnRate < 0.95 ? "less frequent"
+                : "base pacing",
+                new Point(card.Left + 8.0, card.Top + 23.0),
+                9.0,
+                muted,
+                FontWeights.Normal);
 
-        var track = new Rect(layout.TrackLeft, top + 10.0, layout.TrackWidth, 21.0);
+        var track = new Rect(card.Left + 8.0, card.Top + 41.0, card.Width - 16.0, 10.0);
         var y = track.Top + track.Height / 2.0;
-
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
 
         var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
         var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track);
 
-        dc.DrawLine(new Pen(muted, 1.1), new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
+        dc.DrawLine(new Pen(muted, 1.0), new Point(baseX, y - 5.0), new Point(baseX, y + 5.0));
         dc.DrawLine(new Pen(accent, 3.0), new Point(track.Left, y), new Point(currentX, y));
-
-        dc.DrawEllipse(
-            panel,
-            new Pen(accent, selected ? 2.5 : 1.5),
-            new Point(currentX, y),
-            6.0,
-            6.0);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
-
-        DrawText(dc, "0.25x", new Point(track.Left, top + 31.0), 6.6, muted, FontWeights.Normal);
-        DrawCenteredText(dc, $"BASE {parameter.ReferenceNumber:0.##}x", new Point(baseX, top + 35.0), 6.5, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "2x", new Point(track.Right, top + 31.0), 6.6, muted, FontWeights.Normal);
+        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.4 : 1.4), new Point(currentX, y), 5.3, 5.3);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.3, 2.3);
 
         _targets[row] = new HitTarget(
-            new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
+            new Rect(track.Left - 6.0, track.Top - 6.0, track.Width + 12.0, track.Height + 12.0),
             track);
+    }
+
+    private Rect ContentRect()
+    {
+        var width = Math.Min(MaxContentWidth, Math.Max(540.0, ActualWidth - 32.0));
+        return new Rect((ActualWidth - width) / 2.0, 0.0, width, ActualHeight);
     }
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -304,7 +243,6 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
     protected override void OnMouseMove(MouseEventArgs e)
     {
         base.OnMouseMove(e);
-
         var point = e.GetPosition(this);
         var hover = FindTarget(point);
 
@@ -316,19 +254,16 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
         Cursor = hover >= 0 ? Cursors.Hand : Cursors.Arrow;
 
-        if (_dragRow < 0 || e.LeftButton != MouseButtonState.Pressed)
-            return;
-
-        UpdateFromPoint(_dragRow, point);
-        e.Handled = true;
+        if (_dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed)
+        {
+            UpdateFromPoint(_dragRow, point);
+            e.Handled = true;
+        }
     }
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
-        if (_hoverRow < 0)
-            return;
-
         _hoverRow = -1;
         InvalidateVisual();
     }
@@ -347,14 +282,13 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
-
         var row = FindTarget(e.GetPosition(this));
         if (row < 0 || _parameters[row] is not { } parameter)
             return;
 
         _selectedRow = row;
         parameter.ResetToReference();
-        _status.ShowTransient($"{Mutants[row].Label} special-ability wait reset to Base Preset.");
+        _status.ShowTransient($"{Mutants[row].Label} pacing reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
     }
@@ -368,7 +302,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
             foreach (var parameter in _parameters)
                 parameter?.ResetToReference();
 
-            _status.ShowTransient("Mutant special-ability pacing reset to Base Preset.");
+            _status.ShowTransient("Special-ability pacing reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -399,15 +333,10 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         if (!_targets.TryGetValue(row, out var target) || _parameters[row] is not { } parameter)
             return;
 
-        var ratio = Math.Clamp(
-            (point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width),
-            0.0,
-            1.0);
-
+        var ratio = Math.Clamp((point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width), 0.0, 1.0);
         var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
         var tick = Math.Max(parameter.TickFrequency, Epsilon);
-        var snapped = parameter.Minimum
-            + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
+        var snapped = parameter.Minimum + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
 
         parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
         _status.Clear();
@@ -423,23 +352,6 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         }
 
         return -1;
-    }
-
-    private Layout GetLayout()
-    {
-        var usable = Math.Max(520.0, ActualWidth - 40.0);
-        var labelWidth = Math.Clamp(usable * 0.18, 108.0, 138.0);
-        var waitWidth = 68.0;
-        var returnWidth = 88.0;
-        var fixedWidth = labelWidth + waitWidth + returnWidth + 46.0;
-        var trackWidth = Math.Max(170.0, usable - fixedWidth);
-
-        var left = 22.0;
-        var waitCenter = left + labelWidth + waitWidth / 2.0;
-        var returnCenter = left + labelWidth + waitWidth + returnWidth / 2.0;
-        var trackLeft = left + labelWidth + waitWidth + returnWidth + 22.0;
-
-        return new Layout(left, waitCenter, returnCenter, trackLeft, trackWidth);
     }
 
     private static double ValueToX(double value, double minimum, double maximum, Rect track)
@@ -483,7 +395,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
@@ -499,10 +411,4 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
     private sealed record CooldownDefinition(string ParameterId, string Label, string? SecondaryNote);
     private sealed record HitTarget(Rect HitRect, Rect MapRect);
-    private sealed record Layout(
-        double LabelLeft,
-        double WaitCenter,
-        double ReturnCenter,
-        double TrackLeft,
-        double TrackWidth);
 }
