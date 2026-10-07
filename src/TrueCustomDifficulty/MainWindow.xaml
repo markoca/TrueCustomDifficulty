@@ -11,7 +11,7 @@
         Title="True Custom Difficulty"
         Icon="Assets/true-custom-difficulty.ico"
         Width="1280" Height="800"
-        MinWidth="960" MinHeight="640"
+        MinWidth="1024" MinHeight="640"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         ResizeMode="CanResize"
