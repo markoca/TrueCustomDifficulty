@@ -281,6 +281,16 @@ public sealed class MainViewModel : ObservableObject
             "survival.fatigueStrongReloadPenalty");
 
         WireVisualAggregate(
+            "advanced.lowHealthMechanics",
+            "advanced.lowHealthMechanics",
+            "health.masterLowHealthPenalty");
+
+        WireVisualAggregate(
+            "advanced.radiationMechanics",
+            "advanced.radiationMechanics",
+            "survival.radiationStaminaDrainPenalty");
+
+        WireVisualAggregate(
             "advanced.masterEffectModifierMechanics",
             "advanced.masterEffectModifierMechanics",
             "health.masterBandageModifier",

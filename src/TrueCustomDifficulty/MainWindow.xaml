@@ -248,7 +248,7 @@
                                                                                                  PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                  Grid.Row="0"
                                                                                                  Grid.RowSpan="2"
-                                                                                                 MinHeight="320"
+                                                                                                 MinHeight="0"
                                                                                                  Visibility="Collapsed"
                                                                                                  Family="{Binding VisualAggregateFamily}"
                                                                                                  Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />

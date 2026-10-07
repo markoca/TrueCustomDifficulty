@@ -64,6 +64,8 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Core Health | Actual max-HP rail, configured recovery-delay ruler, passive regen and compatible-effect scaling | Semantic |
 | Master Severe Fatigue | On/off bundle plus five independently editable severe-fatigue penalties; inactive tracks preserve stored values | Semantic |
 | Master Medical Healing | Master consumable effect bundle toggle plus three source-exact healing-retention multipliers, on a common 0–200% axis | Semantic |
+| Master Low Health | Compact bundle toggle and linked conditional health recovery loss, on a 0–100% native scale | Semantic |
+| Master Radiation | Compact bundle toggle and linked additional action stamina cost, on a 0–100% native scale | Semantic |
 | Bleeding Treatment | Shared normalized treatment-strength mixer against each item's own vanilla value | Semantic |
 | Consumables | Authored instant-effect previews plus one real-seconds duration timeline | Semantic |
 | Sleeping | Sleep gate, minimum sleep window and wake-up recovery | Semantic |
@@ -164,6 +166,24 @@ Each lane uses its own native absolute multiplier range and 0.01 step. The grey 
 - Golden fills show each currently configured healing-retention multiplier. The grey tick shows the item's vanilla source multiplier. The subtle dashed center marker shows 100% original healing for reference; it is not a separate parameter.
 - Child tracks are disabled while the bundle toggle is off without discarding preset values. There is no invented final HP-restored calculation since base healing can be changed independently on the Health tab.
 - Right-click an individual slider or switch resets that backing parameter; R resets the entire four-parameter family. No CFG writer or preset schema changes.
+
+### Master Low Health and Radiation
+
+`AggregateVisualControl / MasterLowHealth`
+
+- Toggle `advanced.lowHealthMechanics` adds/removes `RegenHealthNegativeMechanics` on the selected Base Preset.
+- Child slider `health.masterLowHealthPenalty` edits the source `RegenHealthNegativeHealthRegeneration.ValueMin/ValueMax` as a 0–100% recovery loss, with the vanilla negative 70% effect encoded by the writer.
+- The authored Master activation threshold remains 30 HP. This control never changes ordinary low-health behavior or the selected Health-tab regeneration multiplier.
+- OFF locks the slider without discarding its setting. Master defaults ON; lower vanilla difficulties default OFF.
+
+`AggregateVisualControl / MasterRadiationPenalty`
+
+- Toggle `advanced.radiationMechanics` adds/removes `RadiationNegativeMechanics` on the selected Base Preset.
+- Child slider `survival.radiationStaminaDrainPenalty` edits `RadiationNegativeStaminaPenalty.ValueMin/ValueMax`, adding 0–100% to action stamina costs when the existing heavy-radiation condition applies. Vanilla is +50%.
+- The radiation accumulation, passive removal, health damage and authored state thresholds do not change.
+- OFF locks the slider without discarding its setting. Master defaults ON; lower vanilla difficulties default OFF.
+
+Both panels use 235px height rather than the global 320px minimum: this is possible because the common WPF control and its XAML declaration no longer impose the old minimum. The other existing aggregate families retain their explicit measured heights (320px and above). Each toggle and its source-true child share one visual card; grey ticks show Base Preset reference values. Right-click one handle to reset it, and R resets its two-member family.
 
 ### Bleeding Treatment
 

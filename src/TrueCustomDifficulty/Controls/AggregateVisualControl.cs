@@ -52,7 +52,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 320.0;
+        // Family heights vary: compact two-setting boards may be under 320px.
+        // WPF must not inflate those boards to a stale global minimum.
+        MinHeight = 0.0;
         SnapsToDevicePixels = true;
         Cursor = Cursors.Arrow;
     }
@@ -157,6 +159,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 break;
             case "MasterMedicalHealing":
                 DrawMasterMedicalHealing(dc, text, muted, border, soft, accent, panel);
+                break;
+            case "MasterLowHealth":
+            case "MasterRadiationPenalty":
+                DrawMasterConditionalPenalty(dc, text, muted, border, soft, accent, panel);
                 break;
             case "ConsumableMixer":
                 DrawConsumableMixer(dc, text, muted, border, accent, panel);
@@ -450,6 +456,94 @@ public sealed class AggregateVisualControl : FrameworkElement
 
 
 
+
+
+    // Low-health and radiation are intentionally two compact, separately
+    // editable conditional panels. Their toggle and sole child slider share
+    // one surface, but they never change unrelated survival systems.
+    private void DrawMasterConditionalPenalty(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
+    {
+        var lowHealth = Family == "MasterLowHealth";
+        var toggle = P(lowHealth ? "advanced.lowHealthMechanics" : "advanced.radiationMechanics");
+        var penalty = P(lowHealth ? "health.masterLowHealthPenalty" : "survival.radiationStaminaDrainPenalty");
+
+        DrawText(dc, lowHealth ? "MASTER LOW HEALTH" : "MASTER RADIATION",
+            new Point(17.0, 13.0), 11.5, accent, FontWeights.Bold);
+        DrawText(dc,
+            lowHealth
+                ? "extra recovery loss at the authored 30 HP low-health boundary"
+                : "extra action stamina cost in the heavy-radiation state",
+            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
+
+        if (toggle is null || penalty is null)
+        {
+            DrawCenteredText(dc, "Master penalty data unavailable.",
+                new Point(ActualWidth / 2.0, 110.0), 10.0, muted, FontWeights.SemiBold);
+            return;
+        }
+
+        DrawTogglePill(dc, toggle,
+            lowHealth ? "LOW-HEALTH BUNDLE" : "RADIATION BUNDLE",
+            new Rect(17.0, 55.0, 251.0, 38.0),
+            text, muted, border, accent, panel);
+        DrawRightAlignedText(dc,
+            $"BASE PRESET: {(toggle.ReferenceBoolean ? "ON" : "OFF")}",
+            new Point(ActualWidth - 18.0, 66.0), 10.0, muted, FontWeights.SemiBold);
+
+        var card = new Rect(17.0, 106.0, Math.Max(480.0, ActualWidth - 34.0), 86.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
+
+        var enabled = penalty.IsControlEnabled;
+        DrawText(dc,
+            lowHealth ? "HEALTH RECOVERY LOSS" : "EXTRA ACTION STAMINA COST",
+            new Point(card.Left + 12.0, card.Top + 8.0), 10.4, text, FontWeights.Bold);
+        DrawRightAlignedText(dc,
+            $"{(lowHealth ? "-" : "+")}{penalty.CurrentNumber * 100:0}%  |  BASE {penalty.ReferenceNumber * 100:0}%",
+            new Point(card.Right - 12.0, card.Top + 7.0),
+            11.0, enabled ? accent : muted, FontWeights.Bold);
+
+        var track = new Rect(card.Left + 16.0, card.Top + 32.0, card.Width - 32.0, 23.0);
+        var y = track.Top + track.Height / 2.0;
+        var currentX = ValueToX(penalty.CurrentNumber,
+            penalty.Minimum, penalty.Maximum, track, reverse: false);
+        var baseX = ValueToX(penalty.ReferenceNumber,
+            penalty.Minimum, penalty.Maximum, track, reverse: false);
+
+        dc.DrawLine(new Pen(soft, 4.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        if (enabled && currentX > track.Left)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.66), 4.5),
+                new Point(track.Left, y), new Point(currentX, y));
+
+        dc.DrawLine(new Pen(muted, 1.9),
+            new Point(baseX, y - 12.0), new Point(baseX, y + 12.0));
+        dc.DrawEllipse(panel,
+            new Pen(enabled ? accent : muted,
+                enabled && IsSelected(penalty) ? 2.8 : 1.9),
+            new Point(currentX, y), 7.2, 7.2);
+        if (enabled)
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
+
+        AddHorizontalTarget(penalty, track, track, penalty.Minimum, penalty.Maximum);
+        DrawText(dc, "0%", new Point(track.Left, card.Bottom - 23.0),
+            9.4, text, FontWeights.Normal);
+        DrawRightAlignedText(dc, "100%", new Point(track.Right, card.Bottom - 23.0),
+            9.4, text, FontWeights.Normal);
+
+        DrawCenteredText(dc,
+            enabled
+                ? "GREY TICK = BASE PRESET  |  THRESHOLD UNCHANGED"
+                : "BUNDLE OFF  |  VALUE PRESERVED  |  ENABLE TO EDIT",
+            new Point(ActualWidth / 2.0, card.Bottom + 5.0),
+            9.1, enabled ? text : muted, FontWeights.SemiBold);
+    }
 
     // This is a comparison of exact authored healing ValueMultipliers,
     // not a computed amount of HP. The underlying medical item's own base heal
@@ -3857,6 +3951,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             "CoreHealthDashboard" => 385.0,
             "SevereFatiguePenaltyBoard" => 390.0,
             "MasterMedicalHealing" => 390.0,
+            "MasterLowHealth" => 235.0,
+            "MasterRadiationPenalty" => 235.0,
             "ConsumableMixer" => 475.0,
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
@@ -3939,6 +4035,16 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "health.masterBandageModifier",
                 "health.masterMedkitModifier",
                 "health.masterArmyMedkitModifier"
+            },
+            "MasterLowHealth" => new[]
+            {
+                "advanced.lowHealthMechanics",
+                "health.masterLowHealthPenalty"
+            },
+            "MasterRadiationPenalty" => new[]
+            {
+                "advanced.radiationMechanics",
+                "survival.radiationStaminaDrainPenalty"
             },
             "ConsumableMixer" => new[]
             {
