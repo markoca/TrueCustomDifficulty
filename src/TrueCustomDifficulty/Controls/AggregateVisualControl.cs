@@ -355,7 +355,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawEllipse(accent, null, point, 3.0, 3.0);
 
             if (parameters[i] is { } parameter)
-                AddVerticalPointTarget(parameter, point, plot, 0.0, maximum);
+            {
+                var columnHit = new Rect(xs[i] - 42.0, plot.Top, 84.0, plot.Height);
+                AddVerticalTarget(parameter, columnHit, plot, 0.0, maximum);
+            }
 
             DrawCenteredText(dc, labels[i], new Point(xs[i], plot.Bottom + 12.0), 9.0, text, FontWeights.Bold);
             DrawCenteredText(dc, $"{current[i]:0.##}x", new Point(xs[i], plot.Bottom + 29.0), 9.0, accent, FontWeights.SemiBold);
@@ -589,7 +592,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             DrawCenteredText(dc, "PENALTIES BEGIN", new Point(delayX, lineY + 17.0), 8.0, text, FontWeights.Bold);
             DrawCenteredText(dc, FriendlyValue(delay), new Point(delayX, lineY + 31.0), 8.6, accent, FontWeights.SemiBold);
 
-            AddHorizontalTarget(delay, new Rect(delayX - 16.0, lineY - 18.0, 32.0, 36.0), delayMap, delay.Minimum, delay.Maximum);
+            AddHorizontalTarget(delay, delayMap, delayMap, delay.Minimum, delay.Maximum);
         }
 
         if (interval is not null)
@@ -603,7 +606,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             DrawCenteredText(dc, "DAMAGE EVERY", new Point(intervalX, lineY + 17.0), 8.0, text, FontWeights.Bold);
             DrawCenteredText(dc, FriendlyValue(interval), new Point(intervalX, lineY + 31.0), 8.6, accent, FontWeights.SemiBold);
 
-            AddHorizontalTarget(interval, new Rect(intervalX - 16.0, lineY - 18.0, 32.0, 36.0), intervalMap, interval.Minimum, interval.Maximum);
+            AddHorizontalTarget(interval, intervalMap, intervalMap, interval.Minimum, interval.Maximum);
         }
 
         DrawText(dc, "ACTIVE WHILE STARVING", new Point(18.0, 176.0), 8.8, muted, FontWeights.Bold);
@@ -711,7 +714,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawLine(new Pen(accent, 3.0), new Point(x, y), new Point(leftMap.Right, y));
             DrawReferenceTick(dc, recovery, leftMap, y, muted, reverse: true);
             dc.DrawEllipse(accent, null, new Point(x, y), 6.0, 6.0);
-            AddHorizontalTarget(recovery, new Rect(x - 16.0, y - 18.0, 32.0, 36.0), leftMap, recovery.Minimum, recovery.Maximum, reverse: true);
+            AddHorizontalTarget(recovery, leftMap, leftMap, recovery.Minimum, recovery.Maximum, reverse: true);
 
             DrawText(dc, "RECOVERY", new Point(leftMap.Left, 70.0), 9.0, text, FontWeights.Bold);
             DrawText(dc, FriendlyValue(recovery), new Point(leftMap.Left, 86.0), 9.2, accent, FontWeights.SemiBold);
@@ -723,7 +726,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawLine(new Pen(accent, 3.0), new Point(rightMap.Left, y), new Point(x, y));
             DrawReferenceTick(dc, buildup, rightMap, y, muted);
             dc.DrawEllipse(accent, null, new Point(x, y), 6.0, 6.0);
-            AddHorizontalTarget(buildup, new Rect(x - 16.0, y - 18.0, 32.0, 36.0), rightMap, buildup.Minimum, buildup.Maximum);
+            AddHorizontalTarget(buildup, rightMap, rightMap, buildup.Minimum, buildup.Maximum);
 
             DrawRightAlignedText(dc, "BUILD-UP", new Point(rightMap.Right, 70.0), 9.0, text, FontWeights.Bold);
             DrawRightAlignedText(dc, FriendlyValue(buildup), new Point(rightMap.Right, 86.0), 9.2, accent, FontWeights.SemiBold);
@@ -761,7 +764,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             P("loot.ammoBoxWeight545"),
             P("loot.ammoBoxWeight012")
         };
-        var labels = new[] { "9x18", ".45 ACP", "5.45 / 5.56", "12 GAUGE" };
+        var labels = new[] { "9x18 / 9x19", ".45 ACP", "5.45 / 5.56", "12 GAUGE" };
 
         var weights = parameters.Select(x => Math.Max(0.0, x?.CurrentNumber ?? 0.0)).ToArray();
         var total = weights.Sum();
