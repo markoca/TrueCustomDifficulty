@@ -67,7 +67,7 @@ Do not invent one global "Consumable Effectiveness" scalar.
 
 # Test implementation
 
-The first runtime-test implementation exposes:
+The current runtime-test implementation exposes:
 
 - `survival.instantStaminaRestore`
 - `survival.alcoholRadiationRemoval`
@@ -76,8 +76,11 @@ The first runtime-test implementation exposes:
 - `survival.vodkaEffectDuration`
 - `survival.beerEffectDuration`
 - `survival.magicVodkaEffectDuration`
+- `survival.drunknessThresholdScale`
+- `survival.beerDrunknessStrength`
+- `survival.vodkaDrunknessStrength`
 
-Alcohol drunkenness duration remains deliberately excluded from this first test build.
+Alcohol drunkenness duration remains deliberately excluded. Beer/Vodka drunkenness **strength** is now exposed as a direct `ValueMin/ValueMax` scale and remains marked `runtime_test_required` because those two raw effect rows were cross-checked outside the original 2.0.5 writer-baseline capture.
 
 ---
 
@@ -477,8 +480,12 @@ Safe first-stage tuning:
 - stamina penalty magnitude
 - stamina penalty duration
 
-Deferred until complete chain:
-- drunkness strength
+Current controlled surface:
+- shared drunkness thresholds (Medium / Strong / Very Strong) through `survival.drunknessThresholdScale`
+- direct Beer strength through `BeerDrunkness.ValueMin/ValueMax`
+- direct Vodka strength through `VodkaDrunkness.ValueMin/ValueMax`
+
+Still deferred:
 - drunkness duration
 - over-drunkness threshold
 - over-drunkness consequences
