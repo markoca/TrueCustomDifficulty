@@ -437,6 +437,13 @@ public sealed class DrunkennessControl : FrameworkElement
         // two whole drinks (for example 0.5 vodka), show the first whole drink that
         // actually reaches it instead of exposing the internal fractional math.
         var wholeDrinks = Math.Max(1, (int)Math.Ceiling(drinks - 0.000001));
+        var maxDrinks = MaxReferenceDrinks;
+
+        if (wholeDrinks > maxDrinks)
+        {
+            var overflowPlural = _reference == DrinkReference.Beer ? "BEERS" : "VODKAS";
+            return $"{maxDrinks.ToString(CultureInfo.InvariantCulture)}+ {overflowPlural}";
+        }
 
         var plural = wholeDrinks == 1
             ? (_reference == DrinkReference.Beer ? "BEER" : "VODKA")
