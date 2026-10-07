@@ -279,13 +279,13 @@ private readonly RadarStatusMessage _status;
 DrawClippedText(
             dc,
             info.Label,
-            new Rect(bounds.Left + 6, y + 5, bounds.Width * 0.38, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : textBrush,
+            new Rect(bounds.Left + 6, y + 5, bounds.Width * 0.38, 18), RadarLegendTextSize, hovered ? Brushes.White : hovered ? Brushes.White : modified ? accentBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
             $"{value:0.##}x | {FormatEffectiveHp(info, value)}",
-            new Rect(bounds.Left + bounds.Width * 0.38, y + 5, bounds.Width * 0.62 - 6, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            new Rect(bounds.Left + bounds.Width * 0.38, y + 5, bounds.Width * 0.62 - 6, 18), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         EndLegendHitArea();
