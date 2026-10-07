@@ -27,12 +27,9 @@ public sealed class DrunkennessControl : FrameworkElement
 
     private ParameterViewModel? _parameter;
     private DrinkReference _reference = DrinkReference.Beer;
-    private int _previewDrinks = 1;
     private Rect _vodkaRect;
     private Rect _beerRect;
     private Rect _sliderRect;
-    private readonly Dictionary<int, Rect> _previewRects = new();
-    private int _hoverPreview = -1;
     private DrinkReference? _hoverReference;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
@@ -50,7 +47,7 @@ public sealed class DrunkennessControl : FrameworkElement
     public DrunkennessControl()
     {
         Focusable = true;
-        MinHeight = 350;
+        MinHeight = 300;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -58,7 +55,7 @@ public sealed class DrunkennessControl : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 720.0 : Math.Max(520.0, availableSize.Width);
-        return new Size(width, 350.0);
+        return new Size(width, 300.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -117,7 +114,7 @@ public sealed class DrunkennessControl : FrameworkElement
         var scale = CurrentScale;
         var strength = ReferenceStrength;
         var requiredDrinks = VanillaVeryStrong * scale / strength;
-        DrawText(dc, "VERY STRONG AFTER", new Point(250, 43), 9.0, muted, FontWeights.Bold);
+        DrawText(dc, "VERY DRUNK AFTER", new Point(250, 43), 9.0, muted, FontWeights.Bold);
         DrawText(dc, FormatDrinks(requiredDrinks), new Point(360, 37), 18.0, text, FontWeights.Bold);
 
         var sliderLeft = 30.0;
@@ -142,120 +139,58 @@ public sealed class DrunkennessControl : FrameworkElement
         var vanillaX = DrinkToX(vanillaDrinks, sliderLeft, sliderRight, maxDrinks);
         DrawCenteredText(dc, "VANILLA", new Point(vanillaX, sliderY + 25), 9.0, accentDark, FontWeights.Bold);
 
-        var medium = VanillaMedium * scale;
-        var strong = VanillaStrong * scale;
-        var veryStrong = VanillaVeryStrong * scale;
-        DrawText(
-            dc,
-            $"THRESHOLDS  MEDIUM {medium:0.#}   |   STRONG {strong:0.#}   |   VERY STRONG {veryStrong:0.#}",
-            new Point(16, 128),
-            9.5,
-            radarMuted,
-            FontWeights.SemiBold);
-
-        DrawText(dc, "BACK-TO-BACK PREVIEW", new Point(16, 158), 9.0, muted, FontWeights.Bold);
-        _previewRects.Clear();
-        var chipX = 145.0;
-        for (var i = 1; i <= maxDrinks; i++)
-        {
-            var rect = new Rect(chipX, 151, 34, 24);
-            _previewRects[i] = rect;
-            var selected = _previewDrinks == i;
-            var hovered = _hoverPreview == i;
-            dc.DrawRoundedRectangle(
-                selected ? accentDark : panelAlt,
-                new Pen(hovered ? accent : border, 1.0),
-                rect,
-                3.0,
-                3.0);
-            DrawCenteredText(dc, i.ToString(CultureInfo.InvariantCulture), new Point(rect.Left + rect.Width / 2.0, rect.Top + 5), 10.0, selected || hovered ? Brushes.White : radarMuted, FontWeights.SemiBold);
-            chipX += 39.0;
-        }
-
-        var previewPoints = _previewDrinks * strength;
-        var state = GetState(previewPoints, medium, strong, veryStrong);
-        DrawText(
-            dc,
-            $"{_previewDrinks} {ReferenceWord(_previewDrinks)}  ->  {StateLabel(state)}",
-            new Point(Math.Max(chipX + 8.0, 430.0), 155),
-            11.0,
-            text,
-            FontWeights.Bold);
-
-        DrawTierCards(dc, state, medium, strong, veryStrong, panelAlt, border, muted, accent, text);
-
-        DrawText(
-            dc,
-            "Beer is the default tolerance reference. The slider moves player drunkness thresholds; BEER/VODKA selection itself does not change gameplay.",
-            new Point(16, ActualHeight - 22),
-            9.0,
-            muted,
-            FontWeights.Normal);
+        DrawText(dc, "EFFECT PREVIEW", new Point(16, 139), 9.0, muted, FontWeights.Bold);
+        DrawTierCards(dc, panelAlt, border, radarMuted, accent);
     }
 
     private void DrawTierCards(
         DrawingContext dc,
-        DrunkState activeState,
-        double medium,
-        double strong,
-        double veryStrong,
         Brush panelAlt,
         Brush border,
         Brush muted,
-        Brush accent,
-        Brush text)
+        Brush accent)
     {
         var gap = 8.0;
         var left = 16.0;
-        var top = 190.0;
+        var top = 157.0;
         var totalWidth = Math.Max(460.0, ActualWidth - 32.0);
         var cardWidth = (totalWidth - gap * 3.0) / 4.0;
-        var cardHeight = 118.0;
+        var cardHeight = 116.0;
 
         var tiers = new[]
         {
             new TierInfo(
-                DrunkState.Low,
                 "LOW",
-                "> 0",
                 new[] { "Stamina penalty", "Drunk visuals", "Weapon sway reduction" }),
             new TierInfo(
-                DrunkState.Medium,
                 "MEDIUM",
-                $">= {medium:0.#}",
                 new[] { "Stamina drain", "Camera shake", "Weapon sway", "Recoil", "Hunger", "Drunk visuals" }),
             new TierInfo(
-                DrunkState.Strong,
                 "STRONG",
-                $">= {strong:0.#}",
                 new[] { "Stronger stamina drain", "Camera shake", "Stronger weapon sway", "Stronger recoil", "Hunger", "Drunk visuals" }),
             new TierInfo(
-                DrunkState.VeryStrong,
                 "VERY STRONG",
-                $">= {veryStrong:0.#}",
                 new[] { "Max stamina drain", "Camera shake", "Max weapon sway", "Max recoil", "High hunger", "Drunk visuals" })
         };
 
         for (var i = 0; i < tiers.Length; i++)
         {
             var tier = tiers[i];
-            var active = tier.State == activeState;
             var rect = new Rect(left + i * (cardWidth + gap), top, cardWidth, cardHeight);
 
             dc.DrawRoundedRectangle(
                 panelAlt,
-                new Pen(active ? accent : border, active ? 1.4 : 1.0),
+                new Pen(border, 1.0),
                 rect,
                 3.0,
                 3.0);
 
-            DrawText(dc, tier.Label, new Point(rect.Left + 9, rect.Top + 7), 10.5, active ? accent : muted, FontWeights.Bold);
-            DrawText(dc, tier.Threshold, new Point(rect.Right - 48, rect.Top + 8), 8.5, active ? text : muted, FontWeights.SemiBold);
+            DrawText(dc, tier.Label, new Point(rect.Left + 9, rect.Top + 8), 10.5, accent, FontWeights.Bold);
 
-            var y = rect.Top + 27.0;
+            var y = rect.Top + 29.0;
             foreach (var effect in tier.Effects)
             {
-                DrawText(dc, effect, new Point(rect.Left + 9, y), 8.7, active ? Brushes.White : muted, active ? FontWeights.SemiBold : FontWeights.Normal);
+                DrawText(dc, effect, new Point(rect.Left + 9, y), 8.7, muted, FontWeights.Normal);
                 y += 13.2;
             }
         }
@@ -291,7 +226,6 @@ public sealed class DrunkennessControl : FrameworkElement
         if (_vodkaRect.Contains(point))
         {
             _reference = DrinkReference.Vodka;
-            _previewDrinks = Math.Clamp(_previewDrinks, 1, MaxReferenceDrinks);
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -300,18 +234,6 @@ public sealed class DrunkennessControl : FrameworkElement
         if (_beerRect.Contains(point))
         {
             _reference = DrinkReference.Beer;
-            _previewDrinks = Math.Clamp(_previewDrinks, 1, MaxReferenceDrinks);
-            InvalidateVisual();
-            e.Handled = true;
-            return;
-        }
-
-        foreach (var hit in _previewRects)
-        {
-            if (!hit.Value.Contains(point))
-                continue;
-
-            _previewDrinks = hit.Key;
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -367,23 +289,12 @@ public sealed class DrunkennessControl : FrameworkElement
                 ? DrinkReference.Beer
                 : null;
 
-        var hoverPreview = -1;
-        foreach (var hit in _previewRects)
-        {
-            if (hit.Value.Contains(point))
-            {
-                hoverPreview = hit.Key;
-                break;
-            }
-        }
-
-        var interactive = hoverReference is not null || hoverPreview >= 0 || _sliderRect.Contains(point);
+        var interactive = hoverReference is not null || _sliderRect.Contains(point);
         Cursor = interactive ? Cursors.Hand : Cursors.Arrow;
 
-        if (_hoverReference != hoverReference || _hoverPreview != hoverPreview)
+        if (_hoverReference != hoverReference)
         {
             _hoverReference = hoverReference;
-            _hoverPreview = hoverPreview;
             InvalidateVisual();
         }
     }
@@ -392,7 +303,6 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         base.OnMouseLeave(e);
         _hoverReference = null;
-        _hoverPreview = -1;
         Cursor = Cursors.Arrow;
         InvalidateVisual();
     }
@@ -445,11 +355,6 @@ public sealed class DrunkennessControl : FrameworkElement
     private int MaxReferenceDrinks
         => _reference == DrinkReference.Beer ? 6 : 3;
 
-    private string ReferenceWord(int count)
-        => _reference == DrinkReference.Beer
-            ? (count == 1 ? "BEER" : "BEERS")
-            : (count == 1 ? "VODKA" : "VODKAS");
-
     private string FormatDrinks(double drinks)
     {
         var rounded = Math.Round(drinks, 1, MidpointRounding.AwayFromZero);
@@ -463,28 +368,6 @@ public sealed class DrunkennessControl : FrameworkElement
 
         return $"{countText} {plural}";
     }
-
-    private static DrunkState GetState(double points, double medium, double strong, double veryStrong)
-    {
-        if (points >= veryStrong)
-            return DrunkState.VeryStrong;
-        if (points >= strong)
-            return DrunkState.Strong;
-        if (points >= medium)
-            return DrunkState.Medium;
-        if (points > 0.0)
-            return DrunkState.Low;
-        return DrunkState.Sober;
-    }
-
-    private static string StateLabel(DrunkState state) => state switch
-    {
-        DrunkState.Low => "LOW",
-        DrunkState.Medium => "MEDIUM",
-        DrunkState.Strong => "STRONG",
-        DrunkState.VeryStrong => "VERY STRONG",
-        _ => "SOBER"
-    };
 
     private static double DrinkToX(double drinks, double left, double right, int maxDrinks)
     {
@@ -526,14 +409,5 @@ public sealed class DrunkennessControl : FrameworkElement
         Beer
     }
 
-    private enum DrunkState
-    {
-        Sober,
-        Low,
-        Medium,
-        Strong,
-        VeryStrong
-    }
-
-    private sealed record TierInfo(DrunkState State, string Label, string Threshold, string[] Effects);
+    private sealed record TierInfo(string Label, string[] Effects);
 }
