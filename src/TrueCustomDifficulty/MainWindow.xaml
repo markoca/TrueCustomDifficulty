@@ -133,6 +133,8 @@
                                                                 </Grid.RowDefinitions>
         
                                                                 <controls:MutantDropRadar x:Name="MutantDropRadarControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                           Grid.Row="0"
                                                                                           Grid.RowSpan="2"
@@ -141,6 +143,8 @@
                                                                                           Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:AnomalyDamageRadar x:Name="AnomalyDamageRadarControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                              Grid.Row="0"
                                                                                              Grid.RowSpan="2"
@@ -149,6 +153,8 @@
                                                                                              Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:WorldLootRemovalRadar x:Name="WorldLootRemovalRadarControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                 Grid.Row="0"
                                                                                                 Grid.RowSpan="2"
@@ -157,6 +163,8 @@
                                                                                                 Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:MedicalHealingRadar x:Name="MedicalHealingRadarControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                              Grid.Row="0"
                                                                                              Grid.RowSpan="2"
@@ -165,6 +173,8 @@
                                                                                              Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:ActionCostsRadar x:Name="ActionCostsRadarControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                         Grid.Row="0"
                                                                                         Grid.RowSpan="2"
@@ -173,6 +183,8 @@
                                                                                         Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:ItemPriceScalersRadar x:Name="ItemPriceScalersRadarControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                              Grid.Row="0"
                                                                                              Grid.RowSpan="2"
@@ -181,6 +193,8 @@
                                                                                              Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:MutantHealthRadar x:Name="MutantHealthRadarControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                        Grid.Row="0"
                                                                                        Grid.RowSpan="2"
@@ -189,6 +203,8 @@
                                                                                        Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:HumanGroupSizeRadar x:Name="HumanGroupSizeRadarControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                               Grid.Row="0"
                                                                                               Grid.RowSpan="2"
@@ -197,6 +213,8 @@
                                                                                               Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:MutantGroupSizeRadar x:Name="MutantGroupSizeRadarControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                Grid.Row="0"
                                                                                                Grid.RowSpan="2"
@@ -205,6 +223,8 @@
                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:SpecialAbilityCooldownRadar x:Name="SpecialAbilityCooldownRadarControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                  Grid.Row="0"
                                                                                                  Grid.RowSpan="2"
@@ -213,6 +233,8 @@
                                                                                                  Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:StashAmmoRadar x:Name="StashAmmoRadarControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                          Grid.Row="0"
                                                                                          Grid.RowSpan="2"
@@ -221,6 +243,8 @@
                                                                                          Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:AggregateVisualControl x:Name="AggregateVisualControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                  PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                  Grid.Row="0"
                                                                                                  Grid.RowSpan="2"
@@ -230,6 +254,8 @@
                                                                                                  Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:BleedingCurveControl x:Name="BleedingCurveControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                                PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                Grid.Row="0"
                                                                                                Grid.RowSpan="2"
@@ -238,6 +264,8 @@
                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:DrunkennessControl x:Name="DrunkennessControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
                                                                                              PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                              Grid.Row="0"
                                                                                              Grid.RowSpan="2"
