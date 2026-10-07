@@ -527,10 +527,11 @@ public sealed class DrunkennessControl : FrameworkElement
 
         var ratio = Math.Clamp((x - sliderRect.Left) / Math.Max(1.0, sliderRect.Width), 0.0, 1.0);
         var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
-        parameter.CurrentNumber = Math.Clamp(
-            Math.Round(raw, MidpointRounding.AwayFromZero),
-            parameter.Minimum,
-            parameter.Maximum);
+        var step = Math.Max(0.0000001, parameter.TickFrequency);
+        var snapped = parameter.Minimum +
+                      Math.Round((raw - parameter.Minimum) / step, MidpointRounding.AwayFromZero) * step;
+
+        parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
         InvalidateVisual();
     }
 
@@ -539,7 +540,10 @@ public sealed class DrunkennessControl : FrameworkElement
         if (parameter is null)
             return;
 
-        parameter.CurrentNumber += direction;
+        parameter.CurrentNumber = Math.Clamp(
+            parameter.CurrentNumber + direction * parameter.TickFrequency,
+            parameter.Minimum,
+            parameter.Maximum);
         InvalidateVisual();
     }
 
