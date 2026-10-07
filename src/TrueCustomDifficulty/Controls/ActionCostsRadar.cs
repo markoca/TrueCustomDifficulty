@@ -31,7 +31,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         new("stamina.meleeNormalCost", "Normal Melee", 64.286, false, "stamina", "Higher = normal melee costs more stamina"),
         new("stamina.meleeStrongCost", "Strong Melee", 115.714, false, "stamina", "Higher = strong melee costs more stamina"),
         new("stamina.butstockCost", "Buttstock", 167.143, false, "stamina", "Higher = buttstock attacks cost more stamina"),
-        new("stamina.aimRegenCoef", "Aiming", 218.571, true, "% penalty", "Higher = stamina recovers more slowly while aiming"),
+        new("stamina.aimRegenCoef", "Aiming", 218.571, true, "regen penalty", "Higher = stamina recovers more slowly while aiming"),
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
@@ -286,7 +286,7 @@ DrawClippedText(
 
     private static string FormatRawValue(AxisDefinition info, double value)
         => info.IsPercent
-            ? $"{value * 100:0.#}%"
+            ? $"{value * 100:0.#}% {info.Unit}"
             : $"{value:0.##} {info.Unit}";
 
     private double[] GetMultipliers()
