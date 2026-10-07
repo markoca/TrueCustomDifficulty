@@ -14,6 +14,10 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class MutantGroupSizeRadar : FrameworkElement
 {
+    private const double RadarInfoTextSize = 11.0;
+    private const double RadarLegendTextSize = 11.0;
+    private const double RadarAxisTextSize = 10.5;
+
     private const double MinimumMultiplier = 0.25;
     private const double MaximumMultiplier = 3.0;
     private const double VanillaMultiplier = 1.0;
@@ -213,20 +217,19 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Mutant pack size · numbers are Newbie / Experienced / Veteran / Master · higher = larger groups.",
+            "Mutant pack size | numbers are Newbie / Experienced / Veteran / Master | higher = larger groups.",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
         var instruction = string.IsNullOrWhiteSpace(_statusText)
-            ? "Drag a point · Arrow keys adjust selected mutant · Right-click point/legend resets that mutant · R resets all mutant spawn values"
+            ? "Drag a point | Arrow keys adjust selected mutant | Right-click point/legend resets that mutant | R resets all mutant spawn values"
             : _statusText;
 
         DrawCenteredText(
             dc,
             instruction,
-            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18),
-            9.6,
+            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
             string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush,
             FontWeights.Normal);
     }
@@ -240,7 +243,7 @@ private string _statusText = string.Empty;
     private void DrawInfoHeader(DrawingContext dc, string text, Brush brush)
     {
         var info = GetInfoRect();
-        DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), 9.8, brush, FontWeights.Normal);
+        DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), RadarInfoTextSize, brush, FontWeights.Normal);
     }
 
     private void DrawLegend(
@@ -285,25 +288,19 @@ private string _statusText = string.Empty;
         DrawClippedText(
             dc,
             info.Label,
-            new Rect(bounds.Left + 6, y + 6, bounds.Width * 0.24, 18.0),
-            9.6,
-            modified ? accentBrush : textBrush,
+            new Rect(bounds.Left + 6, y + 6, bounds.Width * 0.24, 18.0), RadarLegendTextSize, modified ? accentBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
             $"{value:0.##}x",
-            new Rect(bounds.Left + bounds.Width * 0.24, y + 6, bounds.Width * 0.12, 18.0),
-            9.3,
-            modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            new Rect(bounds.Left + bounds.Width * 0.24, y + 6, bounds.Width * 0.12, 18.0), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         DrawClippedText(
             dc,
             FormatEffectiveCaps(info, value),
-            new Rect(bounds.Left + bounds.Width * 0.36, y + 6, bounds.Width * 0.64 - 6, 18.0),
-            9.3,
-            modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            new Rect(bounds.Left + bounds.Width * 0.36, y + 6, bounds.Width * 0.64 - 6, 18.0), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         EndLegendHitArea();
@@ -318,7 +315,7 @@ private string _statusText = string.Empty;
             .Select(value => value.ToString("0", CultureInfo.InvariantCulture))
             .ToArray();
 
-        return $"Up to {values[0]} Newbie · {values[1]} Experienced · {values[2]} Veteran · {values[3]} Master";
+        return $"Up to {values[0]} Newbie | {values[1]} Experienced | {values[2]} Veteran | {values[3]} Master";
     }
 
     private double[] GetValues()
@@ -582,8 +579,8 @@ private string _statusText = string.Empty;
                 ? TextAnchor.Left
                 : TextAnchor.Center;
 
-        DrawAnchoredText(dc, label, new Point(position.X, position.Y - 5), 8.2, activeBrush, FontWeights.SemiBold, anchor);
-        DrawAnchoredText(dc, value, new Point(position.X, position.Y + 7), 7.6, mutedBrush, FontWeights.Normal, anchor);
+        DrawAnchoredText(dc, label, new Point(position.X, position.Y - 5), RadarAxisTextSize, activeBrush, FontWeights.SemiBold, anchor);
+        DrawAnchoredText(dc, value, new Point(position.X, position.Y + 7), RadarAxisTextSize, mutedBrush, FontWeights.Normal, anchor);
     }
 
     private void DrawRingCaption(DrawingContext dc, string text, Point center, double radius, Brush brush)
