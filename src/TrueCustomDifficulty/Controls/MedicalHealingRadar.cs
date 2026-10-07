@@ -269,13 +269,13 @@ private readonly RadarStatusMessage _status;
 DrawClippedText(
             dc,
             Axes[axis].Label,
-            new Rect(bounds.Left + 6, y + 7, bounds.Width * 0.42, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : textBrush,
+            new Rect(bounds.Left + 6, y + 7, bounds.Width * 0.42, 18), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
             $"Restores {parameter.CurrentNumber:0.##} HP | {multipliers[axis]:0.##}x",
-            new Rect(bounds.Left + (bounds.Width * 0.42), y + 7, bounds.Width * 0.58 - 6, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            new Rect(bounds.Left + (bounds.Width * 0.42), y + 7, bounds.Width * 0.58 - 6, 18), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         EndLegendHitArea();
