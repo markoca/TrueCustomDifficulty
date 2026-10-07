@@ -11,19 +11,23 @@ namespace TrueCustomDifficulty.Controls;
 /// <summary>
 /// Player-facing editor for the DrunknessMechanics 20 / 40 / 60 thresholds.
 /// Beer is the primary player-facing tolerance reference; Vodka remains an optional
-/// equivalent view. The single backing parameter scales all thresholds together,
-/// preserving their authored progression without rewriting consumable effect strength.
+/// equivalent view. The tolerance parameter scales all thresholds together, while
+/// Beer/Vodka strength parameters independently scale each drink's Drunkness contribution.
 /// </summary>
 public sealed class DrunkennessControl : FrameworkElement
 {
     private const string ParameterId = "survival.drunknessThresholdScale";
+    private const string BeerStrengthParameterId = "survival.beerDrunknessStrength";
+    private const string VodkaStrengthParameterId = "survival.vodkaDrunknessStrength";
     private const double VanillaVeryStrong = 60.0;
-    private const double BeerDrunkness = 15.0;
-    private const double VodkaDrunkness = 30.0;
-    private const double MinimumScale = 0.25;
-    private const double MaximumScale = 1.50;
+    private const double VanillaBeerDrunkness = 15.0;
+    private const double VanillaVodkaDrunkness = 30.0;
+    private const double MinimumScale = 0.05;
+    private const double MaximumScale = 4.0;
 
     private ParameterViewModel? _parameter;
+    private ParameterViewModel? _beerStrengthParameter;
+    private ParameterViewModel? _vodkaStrengthParameter;
     private DrinkReference _reference = DrinkReference.Beer;
     private Rect _vodkaRect;
     private Rect _beerRect;
@@ -61,17 +65,32 @@ public sealed class DrunkennessControl : FrameworkElement
 
     private void RebindParameter()
     {
-        if (_parameter is not null)
-            _parameter.PropertyChanged -= Parameter_PropertyChanged;
+        Unsubscribe(_parameter);
+        Unsubscribe(_beerStrengthParameter);
+        Unsubscribe(_vodkaStrengthParameter);
 
-        _parameter = Parameters?
-            .OfType<ParameterViewModel>()
-            .FirstOrDefault(x => x.Id.Equals(ParameterId, StringComparison.Ordinal));
+        var parameters = Parameters?.OfType<ParameterViewModel>().ToList();
+        _parameter = parameters?.FirstOrDefault(x => x.Id.Equals(ParameterId, StringComparison.Ordinal));
+        _beerStrengthParameter = parameters?.FirstOrDefault(x => x.Id.Equals(BeerStrengthParameterId, StringComparison.Ordinal));
+        _vodkaStrengthParameter = parameters?.FirstOrDefault(x => x.Id.Equals(VodkaStrengthParameterId, StringComparison.Ordinal));
 
-        if (_parameter is not null)
-            _parameter.PropertyChanged += Parameter_PropertyChanged;
+        Subscribe(_parameter);
+        Subscribe(_beerStrengthParameter);
+        Subscribe(_vodkaStrengthParameter);
 
         InvalidateVisual();
+    }
+
+    private void Subscribe(ParameterViewModel? parameter)
+    {
+        if (parameter is not null)
+            parameter.PropertyChanged += Parameter_PropertyChanged;
+    }
+
+    private void Unsubscribe(ParameterViewModel? parameter)
+    {
+        if (parameter is not null)
+            parameter.PropertyChanged -= Parameter_PropertyChanged;
     }
 
     private void Parameter_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -129,11 +148,13 @@ public sealed class DrunkennessControl : FrameworkElement
             DrawCenteredText(dc, i.ToString(CultureInfo.InvariantCulture), new Point(x, sliderY + 9), 9.0, muted, FontWeights.SemiBold);
         }
 
-        var handleX = DrinkToX(requiredDrinks, sliderLeft, sliderRight, maxDrinks);
+        var displayedRequiredDrinks = Math.Clamp(Math.Ceiling(requiredDrinks - 0.000001), 1.0, maxDrinks);
+        var handleX = DrinkToX(displayedRequiredDrinks, sliderLeft, sliderRight, maxDrinks);
         dc.DrawEllipse(accent, null, new Point(handleX, sliderY), 5.0, 5.0);
 
         var vanillaDrinks = VanillaVeryStrong / strength;
-        var vanillaX = DrinkToX(vanillaDrinks, sliderLeft, sliderRight, maxDrinks);
+        var vanillaDisplayDrinks = Math.Clamp(Math.Ceiling(vanillaDrinks - 0.000001), 1.0, maxDrinks);
+        var vanillaX = DrinkToX(vanillaDisplayDrinks, sliderLeft, sliderRight, maxDrinks);
         DrawCenteredText(dc, "VANILLA", new Point(vanillaX, sliderY + 25), 9.0, accentDark, FontWeights.Bold);
 
         DrawProgression(dc, panelAlt, border, text, muted, accent);
@@ -325,7 +346,7 @@ public sealed class DrunkennessControl : FrameworkElement
             return;
 
         var current = VanillaVeryStrong * CurrentScale / ReferenceStrength;
-        var count = (int)Math.Round(current, MidpointRounding.AwayFromZero);
+        var count = Math.Max(1, (int)Math.Ceiling(current - 0.000001));
         count += e.Delta > 0 ? 1 : -1;
         SetRequiredDrinks(Math.Clamp(count, 1, MaxReferenceDrinks));
         e.Handled = true;
@@ -383,7 +404,7 @@ public sealed class DrunkennessControl : FrameworkElement
             return;
 
         var current = VanillaVeryStrong * CurrentScale / ReferenceStrength;
-        var count = (int)Math.Round(current, MidpointRounding.AwayFromZero) + direction;
+        var count = Math.Max(1, (int)Math.Ceiling(current - 0.000001)) + direction;
         SetRequiredDrinks(Math.Clamp(count, 1, MaxReferenceDrinks));
         e.Handled = true;
     }
@@ -395,7 +416,7 @@ public sealed class DrunkennessControl : FrameworkElement
 
         var scale = drinks * ReferenceStrength / VanillaVeryStrong;
         scale = Math.Clamp(scale, MinimumScale, MaximumScale);
-        _parameter.CurrentNumber = Math.Round(scale / 0.25, MidpointRounding.AwayFromZero) * 0.25;
+        _parameter.SnapCurrentNumberToMarker(scale);
         InvalidateVisual();
     }
 
@@ -403,10 +424,12 @@ public sealed class DrunkennessControl : FrameworkElement
         => Math.Clamp(_parameter?.CurrentNumber ?? 1.0, MinimumScale, MaximumScale);
 
     private double ReferenceStrength
-        => _reference == DrinkReference.Beer ? BeerDrunkness : VodkaDrunkness;
+        => _reference == DrinkReference.Beer
+            ? VanillaBeerDrunkness * (_beerStrengthParameter?.CurrentNumber ?? 1.0)
+            : VanillaVodkaDrunkness * (_vodkaStrengthParameter?.CurrentNumber ?? 1.0);
 
     private int MaxReferenceDrinks
-        => _reference == DrinkReference.Beer ? 6 : 3;
+        => _reference == DrinkReference.Beer ? 8 : 4;
 
     private string FormatDrinks(double drinks)
     {
