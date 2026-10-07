@@ -723,26 +723,30 @@
                                             <DataTemplate>
                                                 <Grid Margin="5,18,4,7">
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
                                                         <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
-                                                    <Border Width="2"
-                                                            Height="12"
+                                                    <Border Grid.Column="0"
+                                                            Width="48"
+                                                            Height="1"
+                                                            Margin="0,0,10,0"
+                                                            HorizontalAlignment="Right"
                                                             Background="{StaticResource SectionAccentBrush}"
-                                                            Margin="0,0,8,0"
+                                                            Opacity="0.42"
                                                             VerticalAlignment="Center" />
                                                     <TextBlock Grid.Column="1"
                                                                Text="{Binding Name}"
                                                                Foreground="{StaticResource RadarMutedTextBrush}"
                                                                FontSize="11.5"
                                                                FontWeight="SemiBold"
-                                                               Margin="0,0,10,0"
+                                                               HorizontalAlignment="Center"
                                                                VerticalAlignment="Center"
                                                                TextOptions.TextFormattingMode="Display" />
                                                     <Border Grid.Column="2"
-                                                            Width="42"
+                                                            Width="48"
                                                             Height="1"
+                                                            Margin="10,0,0,0"
                                                             HorizontalAlignment="Left"
                                                             Background="{StaticResource SectionAccentBrush}"
                                                             Opacity="0.42"
