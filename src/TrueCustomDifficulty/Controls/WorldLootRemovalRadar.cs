@@ -38,7 +38,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         private readonly Dictionary<int, Rect> _legendHitRects = new();
     private int _legendRecordingAxis = -1;
 
-private string _statusText = string.Empty;
+private readonly RadarStatusMessage _status;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -54,6 +54,7 @@ private string _statusText = string.Empty;
 
     public WorldLootRemovalRadar()
     {
+        _status = new RadarStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 455;
         Cursor = Cursors.Arrow;
@@ -201,16 +202,16 @@ private string _statusText = string.Empty;
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
-        var instruction = string.IsNullOrWhiteSpace(_statusText)
+        var instruction = string.IsNullOrWhiteSpace(_status.Text)
             ? "Drag a point | Arrow keys adjust selected category | Right click point/legend resets that category | R resets all"
-            : _statusText;
+            : _status.Text;
 
         DrawCenteredText(
             dc,
             instruction,
             new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 20),
             9.6,
-            string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush,
+            string.IsNullOrWhiteSpace(_status.Text) ? mutedBrush : accentBrush,
             FontWeights.Normal);
     }
 
@@ -375,7 +376,7 @@ var info = Axes[axis];
             parameter.CurrentNumber + (direction * parameter.TickFrequency),
             parameter.Minimum,
             parameter.Maximum);
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -408,7 +409,7 @@ var info = Axes[axis];
         if (parameter is not null)
             parameter.CurrentNumber = 0.0;
 
-        _statusText = $"{Axes[axis].Label} reset to vanilla 0% removed.";
+        _status.ShowTransient($"{Axes[axis].Label} reset to vanilla 0% removed.");
         InvalidateVisual();
         e.Handled = true;
     }
@@ -435,7 +436,7 @@ var info = Axes[axis];
                     resetParameter.CurrentNumber = 0.0;
             }
 
-            _statusText = string.Empty;
+            _status.Clear();
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -460,7 +461,7 @@ var info = Axes[axis];
             parameter.Minimum,
             parameter.Maximum);
 
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -480,7 +481,7 @@ var info = Axes[axis];
         if (parameter is not null)
             parameter.CurrentNumber = value;
 
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
     }
 
