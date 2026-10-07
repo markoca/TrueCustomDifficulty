@@ -154,13 +154,6 @@ public sealed class ParameterViewModel : ObservableObject
                        "Each player-rank row shows the resulting maximum human squad size and its independent multiplier. Drag a row track to tune that rank directly. Gold is the current resulting NPC cap, vN is the vanilla cap and the 1x tick is the Base Preset reference. Right-click a row track to reset only that rank; press R to reset all four human squad caps.";
             }
 
-            if (IsAggregateRadarAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "Mouse: drag a radar point to make that setting higher or lower. Hover a legend name to highlight the same point, scroll over the name to fine-tune it, and right-click the point or name to return only that setting to your Base Preset." + Environment.NewLine +
-                       "Keyboard: choose a radar point, then use Arrow keys or +/- to fine-tune it. Press R to return the whole radar to your Base Preset.";
-            }
-
             if (IsRange)
             {
                 return "CONTROLS" + Environment.NewLine +
@@ -202,17 +195,6 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsToggle => Control == "toggle";
     // The only string-valued gameplay control is rendered as a discrete slider.
     public bool IsChoiceSlider => Control == "choiceSlider";
-
-    private static readonly HashSet<string> AmmoDistributionParameterIds = new(StringComparer.Ordinal)
-    {
-        "loot.ammoBoxWeight918",
-        "loot.ammoBoxWeight045",
-        "loot.ammoBoxWeight545",
-        "loot.ammoBoxWeight012"
-    };
-
-    public bool IsAmmoDistributionMember => AmmoDistributionParameterIds.Contains(Id);
-    public bool IsAmmoDistributionAnchor => Id == "loot.ammoBoxWeight918";
 
     private static readonly HashSet<string> StashAmmoParameterIds = new(StringComparer.Ordinal)
     {
@@ -485,30 +467,12 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsDrunkennessMember => DrunkennessParameterIds.Contains(Id);
     public bool IsDrunkennessAnchor => Id == "survival.beerDrunknessStrength";
 
-    public bool IsAggregateRadarAnchor =>
-        IsAmmoDistributionAnchor ||
-        IsStashAmmoAnchor ||
-        IsMutantDropAnchor ||
-        IsIndividualAnomalyDamageAnchor ||
-        IsWorldLootRemovalAnchor ||
-        IsMedicalHealingAnchor ||
-        IsActionCostAnchor ||
-        IsItemPriceScalerAnchor ||
-        IsMutantHealthAnchor ||
-        IsSpecialAbilityCooldownAnchor ||
-        IsHumanGroupSizeAnchor ||
-        IsMutantGroupSizeAnchor ||
-        IsBleedingCurveAnchor ||
-        IsDrunkennessAnchor ||
-        IsVisualAggregateAnchor;
-
     public bool HasEffectiveDamage => _effectiveDamageMultiplierProvider is not null;
     public bool IsControlEnabled => IsVisualAggregateAnchor || (_dependencyEnabledProvider?.Invoke() ?? true);
-    // Radar backing parameters remain in the live VM/preset/writer graph but are
-    // collapsed as individual rows. Each radar family has one visible aggregate anchor.
+    // Backing parameters for semantic visual families remain in the live VM/preset/writer graph
+    // but are collapsed as individual rows. Each family exposes one visible anchor control.
     public bool IsControlVisible =>
         !Id.Equals("alife.mutantSpawn.generic", StringComparison.Ordinal)
-        && (!IsAmmoDistributionMember || IsAmmoDistributionAnchor)
         && (!IsStashAmmoMember || IsStashAmmoAnchor)
         && (!IsMutantDropMember || IsMutantDropAnchor)
         && (!IsIndividualAnomalyDamageMember || IsIndividualAnomalyDamageAnchor)
