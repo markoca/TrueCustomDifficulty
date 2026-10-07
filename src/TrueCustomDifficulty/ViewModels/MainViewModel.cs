@@ -1188,7 +1188,6 @@ public sealed class MainViewModel : ObservableObject
                 "survival.fatigueStrongReloadPenalty" => 280,
 
                 // Consumable Effects
-                "survival.drunknessThresholdScale" => 289,
                 "survival.instantStaminaRestore" => 290,
                 "survival.alcoholRadiationRemoval" => 291,
                 "survival.waterEffectDuration" => 292,
@@ -1196,6 +1195,10 @@ public sealed class MainViewModel : ObservableObject
                 "survival.vodkaEffectDuration" => 294,
                 "survival.beerEffectDuration" => 295,
                 "survival.magicVodkaEffectDuration" => 296,
+
+                // Alcohol Tolerance
+                "survival.beerDrunknessStrength" => 297,
+                "survival.vodkaDrunknessStrength" => 298,
 
                 // Sleeping
                 "survival.sleepEligibilityThreshold" => 300,
