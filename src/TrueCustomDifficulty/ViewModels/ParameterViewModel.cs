@@ -100,6 +100,18 @@ public sealed class ParameterViewModel : ObservableObject
             }
 
 
+            if (IsMedicalHealingAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "Each medical row shows the raw BASE HEAL in HP, that output on a shared 0–200 HP comparison bar, and an interactive 0–200% of vanilla strength track. Bandage, Medkit and Army Medkit base healing can be modified again by the separate Master Consumable Effect Penalties layer; Scientific Medkit does not use that same Master healing modifier. Right-click a row track to reset only that item's base heal; press R to reset the whole medical-healing board.";
+            }
+
+            if (IsItemPriceScalerAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "CONSUMABLES, AMMO, ARMOR, WEAPONS and ARTIFACTS are difficulty category-cost multipliers from 0x to 2x, with 1x as vanilla. MUTANT PARTS is shown separately because it directly scales authored ItemPrototypes Cost values; the Blind Dog and Chimera coupon examples are base values before trader buy/sell pricing. Right-click one track to reset only that value layer; press R to reset the whole item-value board.";
+            }
+
             if (IsMutantHealthAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
