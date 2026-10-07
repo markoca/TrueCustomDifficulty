@@ -1984,6 +1984,365 @@
       "interaction": "Fatigue Build-up Rate controls how quickly tiredness returns. This setting changes how much relief energy drinks provide, including their special Poppy Field and Weird Kettle variants."
     },
     {
+      "id": "survival.instantStaminaRestore",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Instant Stamina Restore",
+      "description": "Scales the immediate stamina restored by Water, Energy Drink and Limited Energy Drink while preserving their vanilla strength differences.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Instant Stamina Restore"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.05
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "WaterStaminaInstant",
+          "path": "ValueMin|ValueMax",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnergeticStaminaInstant3",
+          "path": "ValueMin|ValueMax",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnergeticLimitedStaminaInstant4",
+          "path": "ValueMin|ValueMax",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla instant stamina values are Water 38%, Energy Drink 50%, and Limited Energy Drink 100%.",
+          "One multiplier preserves those authored differences instead of flattening all drinks to the same refill."
+        ]
+      },
+      "rationale": "Controls the instant stamina burst from stamina-restoring drinks.",
+      "logic": "1x keeps Water 38%, Energy Drink 50% and Limited Energy Drink 100%. 0.5x halves each; 2x doubles each before the player's normal stamina cap is applied.",
+      "interaction": "Timed stamina regeneration, fatigue relief, hunger, tolerance and overdose effects are separate."
+    },
+    {
+      "id": "survival.alcoholRadiationRemoval",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Alcohol Radiation Removal",
+      "description": "Scales radiation removed by Beer and Vodka while preserving their vanilla strength difference.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Alcohol Radiation Removal"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.05
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "BeerAntirad1",
+          "path": "ValueMin|ValueMax",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "VodkaAntirad3",
+          "path": "ValueMin|ValueMax",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla radiation effects are Beer -10 and Vodka -50.",
+          "Magic/Dvupalov Vodka is not part of this control because it uses a different psi-focused effect chain."
+        ]
+      },
+      "rationale": "Controls how much radiation ordinary alcohol removes.",
+      "logic": "1x keeps Beer at 10 radiation removed and Vodka at 50. The same multiplier preserves Vodka as the stronger antiradiation drink.",
+      "interaction": "Alcohol stamina penalties and drunkenness are unchanged."
+    },
+    {
+      "id": "survival.waterEffectDuration",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Water Effect Duration",
+      "description": "Scales the duration of Water's timed stamina effects.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Water Effect Duration"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.05
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "WaterStamina2",
+          "path": "Duration",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "WaterStaminaPerAction1",
+          "path": "Duration",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Water stamina-regeneration duration is 5 s.",
+          "Vanilla Water stamina-cost-reduction duration is 30 s.",
+          "Instant stamina and sobering are intentionally not changed by this duration control."
+        ]
+      },
+      "rationale": "Controls how long Water's stamina buffs last.",
+      "logic": "1x keeps the authored 5 s stamina-recovery effect and 30 s stamina-cost effect. Relative durations stay intact at every multiplier.",
+      "interaction": "Water Instant Stamina Restore controls the immediate refill separately."
+    },
+    {
+      "id": "survival.energyDrinkEffectDuration",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Energy Drink Effect Duration",
+      "description": "Scales the duration of normal and Limited Energy Drink stamina effects.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Energy Drink Effect Duration"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.05
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnergeticStamina",
+          "path": "Duration",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnergeticLimitedStamina",
+          "path": "Duration",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnergeticStaminaPerAction1",
+          "path": "Duration",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnergeticStaminaPerAction2",
+          "path": "Duration",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Normal and Limited Energy Drink stamina-regeneration effects are 45 s vanilla.",
+          "Stamina-per-action effects use 15 s and 5 s authored durations.",
+          "Fatigue relief, tolerance, overdose and instant stamina are not changed by this duration control."
+        ]
+      },
+      "rationale": "Controls how long Energy Drink stamina buffs last.",
+      "logic": "1x preserves the authored 45 s, 15 s and 5 s timing relationships. The same multiplier is applied to normal and Limited Energy Drink timed stamina effects.",
+      "interaction": "Instant Stamina Restore and Energy Drink Fatigue Relief remain separate controls."
+    },
+    {
+      "id": "survival.vodkaEffectDuration",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Vodka Effect Duration",
+      "description": "Scales the duration of Vodka's stamina-drain penalty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Vodka Effect Duration"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.05
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "VodkaStaminaPenalty",
+          "path": "Duration",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Vodka stamina-drain penalty lasts 20 s.",
+          "Drunkenness duration is intentionally excluded until Drunkness/OverDrunkness mechanics are fully audited."
+        ]
+      },
+      "rationale": "Controls how long Vodka's stamina penalty lasts.",
+      "logic": "1x keeps the 20 s vanilla stamina-drain penalty.",
+      "interaction": "Radiation removal strength is controlled separately by Alcohol Radiation Removal."
+    },
+    {
+      "id": "survival.beerEffectDuration",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Beer Effect Duration",
+      "description": "Scales the duration of Beer's stamina-drain penalty.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Beer Effect Duration"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.05
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "BeerStaminaPenalty",
+          "path": "Duration",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla Beer stamina-drain penalty lasts 20 s.",
+          "Drunkenness duration is intentionally excluded until Drunkness/OverDrunkness mechanics are fully audited."
+        ]
+      },
+      "rationale": "Controls how long Beer's stamina penalty lasts.",
+      "logic": "1x keeps the 20 s vanilla stamina-drain penalty.",
+      "interaction": "Radiation removal strength is controlled separately by Alcohol Radiation Removal."
+    },
+    {
+      "id": "survival.magicVodkaEffectDuration",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Magic Vodka Effect Duration",
+      "description": "Scales the duration of Dvupalov/Magic Vodka's psi-protection effect.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Magic Vodka Effect Duration"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.05
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "MagicVodkaPSYProtection",
+          "path": "Duration",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "MagicVodkaPSYProtection is 90 s vanilla.",
+          "Magic Vodka drunkenness is intentionally excluded from this duration control."
+        ]
+      },
+      "rationale": "Controls how long Magic Vodka's psi protection lasts.",
+      "logic": "1x keeps the 90 s vanilla psi-protection duration.",
+      "interaction": "This is a quest/special consumable and does not participate in ordinary Alcohol Radiation Removal."
+    },
+    {
       "id": "survival.sleepEligibilityThreshold",
       "tab": "survival",
       "group": "Sleeping",

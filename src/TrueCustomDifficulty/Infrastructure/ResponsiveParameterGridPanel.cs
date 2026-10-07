@@ -47,6 +47,14 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["survival.fatigueMediumReloadPenalty"] = new("survival-fatigue-reload", 0),
             ["survival.fatigueStrongReloadPenalty"] = new("survival-fatigue-reload", 1),
 
+            ["survival.instantStaminaRestore"] = new("survival-consumables-1", 0),
+            ["survival.alcoholRadiationRemoval"] = new("survival-consumables-1", 1),
+            ["survival.waterEffectDuration"] = new("survival-consumables-duration-1", 0),
+            ["survival.energyDrinkEffectDuration"] = new("survival-consumables-duration-1", 1),
+            ["survival.vodkaEffectDuration"] = new("survival-consumables-duration-2", 0),
+            ["survival.beerEffectDuration"] = new("survival-consumables-duration-2", 1),
+            ["survival.magicVodkaEffectDuration"] = new("survival-consumables-duration-3", 0),
+
             ["survival.sleepEligibilityThreshold"] = new("survival-sleep-1", 0),
             ["survival.minimumSleepHours"] = new("survival-sleep-1", 1),
             ["survival.sleepHealthRestore"] = new("survival-sleep-2", 0),

@@ -65,6 +65,22 @@ Do not invent one global "Consumable Effectiveness" scalar.
 ---
 
 
+# Test implementation
+
+The first runtime-test implementation exposes:
+
+- `survival.instantStaminaRestore`
+- `survival.alcoholRadiationRemoval`
+- `survival.waterEffectDuration`
+- `survival.energyDrinkEffectDuration`
+- `survival.vodkaEffectDuration`
+- `survival.beerEffectDuration`
+- `survival.magicVodkaEffectDuration`
+
+Alcohol drunkenness duration remains deliberately excluded from this first test build.
+
+---
+
 # Selected implementation priorities
 
 The current player-facing priority is intentionally narrow:
