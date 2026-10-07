@@ -278,7 +278,8 @@ Current specialized surfaces include:
 - World-loot depletion board.
 - Mutant part drop probability board.
 - Individual anomaly damage table.
-- Other remaining specialized families pending the same semantic audit.
+
+The semantic-control audit is complete: no polygon/ring radar renderer remains in `Controls/`. Several C# type names still end in `Radar` only as historical internal names used by existing XAML declarations; they no longer describe the rendered UI or interaction model. `RadarMutedTextBrush` is likewise only a legacy theme-resource key.
 
 ## Architecture
 
