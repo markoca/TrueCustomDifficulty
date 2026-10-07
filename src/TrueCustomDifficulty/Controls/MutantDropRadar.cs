@@ -46,7 +46,7 @@ public sealed class MutantDropRadar : FrameworkElement
         private readonly Dictionary<int, Rect> _legendHitRects = new();
     private int _legendRecordingAxis = -1;
 
-private string _statusText = string.Empty;
+private readonly RadarStatusMessage _status;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -62,6 +62,7 @@ private string _statusText = string.Empty;
 
     public MutantDropRadar()
     {
+        _status = new RadarStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 530;
         Cursor = Cursors.Arrow;
@@ -203,11 +204,11 @@ private string _statusText = string.Empty;
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
-        var instruction = string.IsNullOrWhiteSpace(_statusText)
+        var instruction = string.IsNullOrWhiteSpace(_status.Text)
             ? "Drag a point | Arrow keys adjust selected mutant | Right click point/legend resets that mutant | R resets all"
-            : _statusText;
+            : _status.Text;
         DrawCenteredText(dc, instruction, new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
-            string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush, FontWeights.Normal);
+            string.IsNullOrWhiteSpace(_status.Text) ? mutedBrush : accentBrush, FontWeights.Normal);
     }
 
     private Rect GetInfoRect()
@@ -383,7 +384,7 @@ DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width
         _selectedAxis = axis;
         _hoverAxis = axis;
         parameter.CurrentNumber = Math.Clamp(parameter.CurrentNumber + (direction * Step), 0.0, MaximumValue);
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -417,7 +418,7 @@ DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width
         if (parameter is not null)
             parameter.CurrentNumber = vanilla;
 
-        _statusText = $"{Axes[axis].Label} reset to vanilla {vanilla * 100:0.#}%";
+        _status.ShowTransient($"{Axes[axis].Label} reset to vanilla {vanilla * 100:0.#}%");
         InvalidateVisual();
         e.Handled = true;
     }
@@ -442,7 +443,7 @@ DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width
                 if (parameter is not null && TryGetVanillaValue(parameter, out var vanilla))
                     parameter.CurrentNumber = vanilla;
             }
-            _statusText = string.Empty;
+            _status.Clear();
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -463,7 +464,7 @@ DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width
             return;
 
         current.CurrentNumber = Math.Clamp(current.CurrentNumber + delta, 0.0, MaximumValue);
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -484,7 +485,7 @@ DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width
         if (parameter is not null)
             parameter.CurrentNumber = value;
 
-        _statusText = string.Empty;
+        _status.Clear();
         InvalidateVisual();
     }
 
