@@ -1435,7 +1435,7 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 ["Novice"] = ("N", "N"),
                 ["Stalker"] = ("S", "S"),
-                ["Veteran"] = ("VANILLA", "VANILLA"),
+                ["Veteran"] = ("V", "V"),
                 ["Master"] = ("M", "M")
             };
 
@@ -1494,7 +1494,7 @@ public sealed class ParameterViewModel : ObservableObject
         {
             ["Novice"] = "N",
             ["Stalker"] = "S",
-            ["Veteran"] = "VANILLA",
+            ["Veteran"] = "V",
             ["Master"] = "M"
         };
 
@@ -1540,7 +1540,7 @@ public sealed class ParameterViewModel : ObservableObject
 
         var tokens = label
             .Split(new[] { '/', ' ' }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(token => token is "V" or "VNL" ? "VANILLA" : token);
+            .Select(token => token == "VNL" ? "VANILLA" : token);
 
         return string.Join(" / ", tokens);
     }
