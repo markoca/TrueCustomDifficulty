@@ -216,7 +216,7 @@ private string _statusText = string.Empty;
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
         var instruction = string.IsNullOrWhiteSpace(_statusText)
-            ? "Drag a point | Arrow keys adjust selected mutant | Right-click point/legend resets that mutant | R resets all"
+            ? "Drag a point | Arrow keys adjust selected mutant | Right click point/legend resets that mutant | R resets all"
             : _statusText;
 
         DrawCenteredText(
@@ -605,7 +605,7 @@ DrawClippedText(
 
     private void DrawCenteredText(DrawingContext dc, string text, Point center, double size, Brush brush, FontWeight weight)
     {
-        var formatted = CreateText(text, size * 1.25, brush, weight);
+        var formatted = CreateText(text, size, brush, weight);
         var x = Math.Clamp(center.X - formatted.Width / 2.0, 8.0, Math.Max(8.0, ActualWidth - formatted.Width - 8.0));
         dc.DrawText(formatted, new Point(x, center.Y - formatted.Height / 2.0));
     }
@@ -676,7 +676,9 @@ DrawClippedText(
         => dc.DrawText(CreateText(text, size, brush, weight), point);
 
     private FormattedText CreateText(string text, double size, Brush brush, FontWeight weight)
-        => new(
+    {
+        var formatted = new FormattedText(
+
             text,
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
@@ -684,6 +686,16 @@ DrawClippedText(
             size,
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
+
+        var separatorBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
+        for (var i = 0; i < text.Length; i++)
+        {
+            if (text[i] == '|')
+                formatted.SetForegroundBrush(separatorBrush, i, 1);
+        }
+
+        return formatted;
+    }
 
     private enum TextAnchor { Left, Center, Right }
 
