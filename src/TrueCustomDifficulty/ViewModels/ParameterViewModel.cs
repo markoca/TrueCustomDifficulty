@@ -55,7 +55,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsDrunkennessAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "The Alcohol Tolerance panel has three linked groups: TOLERANCE, BEER and VODKA. TOLERANCE chooses the reference drink and how many whole drinks reach Very Strong drunkenness. BEER and VODKA independently fine-tune each drink's strength from 25–200%. Right-click any of the three sliders to restore only that setting to VANILLA.";
+                       "Choose BEER or VODKA in TOLERANCE. That choice also switches the single strength group shown beside it, so Beer and Vodka are never displayed at the same time. TOLERANCE sets how many whole drinks reach Very Strong drunkenness; the selected drink strength moves in exact 1-point Drunkness steps. Right-click either visible slider to restore only that setting to VANILLA.";
             }
 
             if (IsAggregateRadarAnchor)
