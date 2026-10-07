@@ -263,7 +263,7 @@ Well Fed therefore reads to the bonus side while Hungry and Severe extend into t
 - Starvation Damage.
 - Starvation Health Recovery Penalty.
 
-The timeline begins when severe hunger activates. It shows the grace period, first damage charge and later repeating charges over a real-time preview. The lower meters show the active penalty strengths.
+The Master-only bundle toggle gates all five numeric settings without discarding their staged values. Two separate, native-range horizontal timing sliders control the penalty delay (0–6s) and repeat interval (1–20s); their grey ticks show the Base Preset. The charge timeline is **read-only** and expands its seconds scale to keep repeated damage ticks visible without overlapping timing hit targets. Three full-width, horizontal effect strips edit extra stamina cost (0–400%), direct HP lost per tick (0–8 HP) and health recovery blocked (0–100%). Each preserves the original CFG target and shows the Base Preset mark. Right-click an active track to reset just that parameter; press R to reset the family.
 
 `DAMAGE PRESSURE` is derived as:
 
