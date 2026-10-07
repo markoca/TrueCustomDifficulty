@@ -4,14 +4,14 @@ Runtime reference: **STALKER 2 CFG dump 2.0.5**.
 
 ## Result
 
-The normal Stamina tab remains **13 controls**. The end-to-end status split is:
+The current Stamina UI exposes **18 editable dimensions through 7 visible cards**. The Stamina Pressure card contains 12 backing dimensions: the original seven action/aiming axes plus five confirmed exhaustion/recovery axes.
 
-- **12 confirmed** direct controls.
+- **17 confirmed** direct dimensions.
 - **1 runtime-test-required** traversal control: `stamina.vaultMaxHeight`.
 - **0 invalid or partial controls**.
-- **15 concrete writer edit points** across the 13 controls.
+- **21 concrete writer edit points** across the 18 editable dimensions.
 
-No new stamina subsystem was promoted. Walk drain, sprint exhaustion helper fields, emergency low-SP recovery and internal movement-state coefficients remain audit-only / NO-UI.
+The newly promoted backing axes are not separate engine-style cards. They are presented as one semantic **EXHAUSTION & LOW-SP RECOVERY** block inside Stamina Pressure.
 
 ## v0.2.46 corrections
 
@@ -43,6 +43,11 @@ v0.2.46 fixes `slider.max` to **300**. The runtime status remains `runtime_test_
 | Base Stamina Recovery | `stamina.regeneration` | 5 SP/s | `Player.VitalParams.RegenSP` | `set` | confirmed |
 | Sprint Stamina Drain | `stamina.sprintCost` | 5.25 SP | `Player.StaminaPerAction.Sprint` | `set` | confirmed |
 | Aiming Stamina Recovery Penalty | `stamina.aimRegenCoef` | 25% | `StaminaRegenStateCoefs[Aim].Value` | `negateSet` -> `-0.25` | confirmed |
+| Sprint Stops Below | `stamina.sprintDisableThreshold` | 16.1 SP | `Player.VitalParams.StaminaDisableThresholds[0].Threshold` | `set` | confirmed |
+| Sprint Restart Delay | `stamina.sprintRecoveryDelay` | 1 s | `Player.VitalParams.StaminaDisableThresholds[0].RegenerationDelay` | `set` | confirmed |
+| Emergency Recovery Starts Below | `stamina.lowRecoveryThreshold` | 30 SP | `AdditionalRegenStaminaMechanics...NormalSP.ConditionValue` | `set` | confirmed |
+| Emergency Recovery Amount | `stamina.lowRecoveryStrength` | 10 SP/s | `IncreaseStaminaPoints.ValueMin/ValueMax` | `set` x2 | confirmed |
+| Emergency Recovery Duration | `stamina.lowRecoveryDuration` | 4 s | `IncreaseStaminaPoints.Duration` | `set` | confirmed |
 | Jump Stamina Cost | `stamina.jumpCost` | 16 SP | `Player.StaminaPerAction.Jump` | `set` | confirmed |
 | Vault Stamina Cost | `stamina.vaultCost` | 12 SP | `Player.StaminaPerAction.Vault` | `set` | confirmed |
 | Normal Melee Cost | `stamina.meleeNormalCost` | 16 SP | `Player.StaminaPerAction.MeleeNormal` | `set` | confirmed |
@@ -67,8 +72,6 @@ The actively moved slider keeps priority and the neighbor moves only as far as r
 The audit does **not** promote any of the following:
 
 - Walk stamina drain or zero-valued Walk/Run/Jogging/Crouch action-cost entries.
-- Sprint disable threshold or sprint regeneration delay.
-- Emergency low-SP threshold/strength/duration.
 - Sprint, Run, Jogging, SlowRun or SprintUnderRunSpeed regeneration coefficients.
 - `SlowRunThreshold`.
 - Jump movement coefficients or vault search/landing geometry.
