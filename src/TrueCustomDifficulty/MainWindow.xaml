@@ -18,6 +18,467 @@
         Background="{StaticResource WindowBackgroundBrush}">
     <Window.Resources>
         <infra:ResponsiveCardWidthConverter x:Key="ResponsiveCardWidthConverter" />
+
+        <DataTemplate x:Key="ParameterCardTemplate" DataType="{x:Type vm:ParameterViewModel}">
+                                                    <Border x:Name="ParameterCard"
+                                                            PreviewMouseLeftButtonDown="ParameterCard_PreviewMouseLeftButtonDown"
+                                                            Background="{StaticResource PanelBrush}"
+                                                            BorderBrush="{StaticResource BorderBrush}"
+                                                            BorderThickness="1" CornerRadius="2"
+                                                            Margin="0,0,0,4" Padding="8,5">
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="Auto" />
+                                                            </Grid.RowDefinitions>
+        
+                                                            <Grid Grid.Row="0">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+        
+                                                                <TextBlock x:Name="ParameterLabel"
+                                                                           Text="{Binding Label}"
+                                                                           ToolTip="{Binding Label}"
+                                                                           FontSize="12"
+                                                                           FontWeight="Normal"
+                                                                           VerticalAlignment="Center"
+                                                                           TextTrimming="CharacterEllipsis"
+                                                                           Margin="0,0,8,0" />
+        
+                                                                <Grid Grid.Column="1">
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="16" />
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                        <ColumnDefinition Width="16" />
+                                                                    </Grid.ColumnDefinitions>
+        
+                                                                    <TextBlock x:Name="WheelHintMinus" Grid.Column="0" Text="-"
+                                                                               Foreground="{StaticResource AccentBrush}"
+                                                                               FontSize="13" FontWeight="Bold"
+                                                                               VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                                               Visibility="Collapsed" />
+        
+                                                                    <Border x:Name="CurrentValueBox" Grid.Column="1" Background="{StaticResource PanelAltBrush}"
+                                                                            Cursor="Hand"
+                                                                            PreviewMouseWheel="CurrentValueBox_PreviewMouseWheel"
+                                                                            PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown"
+                                                                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                                                                            CornerRadius="3" MinWidth="76" Padding="6,3">
+                                                                        <TextBlock x:Name="CurrentValueText" Text="{Binding CurrentDisplay}"
+                                                                                   Foreground="{StaticResource AccentBrush}"
+                                                                                   FontSize="12" FontWeight="SemiBold"
+                                                                                   TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                                    </Border>
+        
+                                                                    <TextBlock x:Name="WheelHintPlus" Grid.Column="2" Text="+"
+                                                                               Foreground="{StaticResource AccentBrush}"
+                                                                               FontSize="13" FontWeight="Bold"
+                                                                               VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                                               Visibility="Collapsed" />
+                                                                </Grid>
+        
+                                                                <CheckBox x:Name="ToggleControl"
+                                                                          Grid.Column="1"
+                                                                          IsEnabled="{Binding IsControlEnabled}"
+                                                                          Content="{Binding ToggleStateLabel}"
+                                                                          Foreground="{StaticResource AccentBrush}"
+                                                                          FontWeight="SemiBold"
+                                                                          IsChecked="{Binding CurrentBoolean, Mode=TwoWay}"
+                                                                          VerticalAlignment="Center"
+                                                                          HorizontalAlignment="Right"
+                                                                          Visibility="Collapsed" />
+                                                            </Grid>
+        
+                                                            <Grid x:Name="TechnicalRow" Grid.Row="1" Margin="0,2,0,0">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Text="{Binding TechnicalDisplay}"
+                                                                           Foreground="{StaticResource TextBrush}"
+                                                                           FontSize="11" FontWeight="SemiBold"
+                                                                           TextWrapping="Wrap"
+                                                                           VerticalAlignment="Center" />
+                                                                <TextBlock Grid.Column="1" Text="{Binding EffectiveDisplay}"
+                                                                           Foreground="{StaticResource AccentBrush}"
+                                                                           FontSize="11" FontWeight="SemiBold"
+                                                                           Margin="12,0,0,0" HorizontalAlignment="Right"
+                                                                           VerticalAlignment="Center" />
+                                                            </Grid>
+        
+                                                            <Grid x:Name="ControlRow" Grid.Row="2" Margin="0,3,0,0">
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto" />
+                                                                    <RowDefinition Height="16" />
+                                                                </Grid.RowDefinitions>
+        
+                                                                <controls:AmmoDistributionRadar x:Name="AmmoDistributionRadarControl"
+                                                                                                Grid.Row="0"
+                                                                                                Grid.RowSpan="2"
+                                                                                                MinHeight="430"
+                                                                                                Visibility="Collapsed"
+                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <controls:MutantDropRadar x:Name="MutantDropRadarControl"
+                                                                                          Grid.Row="0"
+                                                                                          Grid.RowSpan="2"
+                                                                                          MinHeight="530"
+                                                                                          Visibility="Collapsed"
+                                                                                          Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <controls:AnomalyDamageRadar x:Name="AnomalyDamageRadarControl"
+                                                                                             Grid.Row="0"
+                                                                                             Grid.RowSpan="2"
+                                                                                             MinHeight="500"
+                                                                                             Visibility="Collapsed"
+                                                                                             Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <controls:WorldLootRemovalRadar x:Name="WorldLootRemovalRadarControl"
+                                                                                                Grid.Row="0"
+                                                                                                Grid.RowSpan="2"
+                                                                                                MinHeight="455"
+                                                                                                Visibility="Collapsed"
+                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <controls:MedicalHealingRadar x:Name="MedicalHealingRadarControl"
+                                                                                             Grid.Row="0"
+                                                                                             Grid.RowSpan="2"
+                                                                                             MinHeight="390"
+                                                                                             Visibility="Collapsed"
+                                                                                             Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <controls:ActionCostsRadar x:Name="ActionCostsRadarControl"
+                                                                                        Grid.Row="0"
+                                                                                        Grid.RowSpan="2"
+                                                                                        MinHeight="475"
+                                                                                        Visibility="Collapsed"
+                                                                                        Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <controls:ItemPriceScalersRadar x:Name="ItemPriceScalersRadarControl"
+                                                                                             Grid.Row="0"
+                                                                                             Grid.RowSpan="2"
+                                                                                             MinHeight="435"
+                                                                                             Visibility="Collapsed"
+                                                                                             Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <controls:MutantHealthRadar x:Name="MutantHealthRadarControl"
+                                                                                       Grid.Row="0"
+                                                                                       Grid.RowSpan="2"
+                                                                                       MinHeight="500"
+                                                                                       Visibility="Collapsed"
+                                                                                       Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <controls:HumanGroupSizeRadar x:Name="HumanGroupSizeRadarControl"
+                                                                                              Grid.Row="0"
+                                                                                              Grid.RowSpan="2"
+                                                                                              MinHeight="500"
+                                                                                              Visibility="Collapsed"
+                                                                                              Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <controls:MutantGroupSizeRadar x:Name="MutantGroupSizeRadarControl"
+                                                                                               Grid.Row="0"
+                                                                                               Grid.RowSpan="2"
+                                                                                               MinHeight="650"
+                                                                                               Visibility="Collapsed"
+                                                                                               Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <controls:SpecialAbilityCooldownRadar x:Name="SpecialAbilityCooldownRadarControl"
+                                                                                                 Grid.Row="0"
+                                                                                                 Grid.RowSpan="2"
+                                                                                                 MinHeight="505"
+                                                                                                 Visibility="Collapsed"
+                                                                                                 Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <controls:StashAmmoRadar x:Name="StashAmmoRadarControl"
+                                                                                         Grid.Row="0"
+                                                                                         Grid.RowSpan="2"
+                                                                                         MinHeight="430"
+                                                                                         Visibility="Collapsed"
+                                                                                         Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+        
+                                                                <Slider x:Name="SliderControl"
+                                                                        Grid.Row="0"
+                                                                        IsEnabled="{Binding IsControlEnabled}"
+                                                                        Minimum="{Binding Minimum}"
+                                                                        Maximum="{Binding Maximum}"
+                                                                        SmallChange="{Binding TickFrequency}"
+                                                                        LargeChange="{Binding TickFrequency}"
+                                                                        TickFrequency="{Binding TickFrequency}"
+                                                                        IsSnapToTickEnabled="True"
+                                                                        Value="{Binding CurrentNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                        PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
+        
+                                                                <controls:VanillaMarkerBar x:Name="VanillaMarkerControl"
+                                                                                           Grid.Row="1"
+                                                                                           Height="16"
+                                                                                           Margin="0,-1,0,0"
+                                                                                           IsEnabled="{Binding IsControlEnabled}"
+                                                                                           Tag="number"
+                                                                                           Minimum="{Binding Minimum}"
+                                                                                           Maximum="{Binding Maximum}"
+                                                                                           Markers="{Binding VanillaMarkers}"
+                                                                                           MarkerClicked="VanillaMarkerControl_MarkerClicked" />
+        
+                                                                <!-- Explicit discrete-choice slider. The selected value is shown in the card header;
+                                                                     underneath the track we show only the vanilla difficulty reference positions. -->
+                                                                <Grid x:Name="ChoiceSliderControl"
+                                                                      Grid.Row="0"
+                                                                      Grid.RowSpan="2">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="Auto" />
+                                                                        <RowDefinition Height="16" />
+                                                                    </Grid.RowDefinitions>
+                                                                    <Slider Grid.Row="0"
+                                                                            IsEnabled="{Binding IsControlEnabled}"
+                                                                            Minimum="{Binding ChoiceMinimum}"
+                                                                            Maximum="{Binding ChoiceMaximum}"
+                                                                            SmallChange="{Binding ChoiceTickFrequency}"
+                                                                            LargeChange="{Binding ChoiceTickFrequency}"
+                                                                            TickFrequency="{Binding ChoiceTickFrequency}"
+                                                                            IsSnapToTickEnabled="True"
+                                                                            Value="{Binding ChoiceIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                            PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
+                                                                    <controls:VanillaMarkerBar Grid.Row="1"
+                                                                                               Height="16"
+                                                                                               Margin="0,-1,0,0"
+                                                                                               IsEnabled="{Binding IsControlEnabled}"
+                                                                                               Tag="choice"
+                                                                                               Minimum="{Binding ChoiceMinimum}"
+                                                                                               Maximum="{Binding ChoiceMaximum}"
+                                                                                               Markers="{Binding ChoiceMarkers}"
+                                                                                               MarkerClicked="VanillaMarkerControl_MarkerClicked" />
+                                                                </Grid>
+        
+                                                                <Grid x:Name="RangeControl" Grid.Row="0" Grid.RowSpan="2">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="Auto" />
+                                                                        <RowDefinition Height="14" />
+                                                                        <RowDefinition Height="Auto" />
+                                                                        <RowDefinition Height="14" />
+                                                                    </Grid.RowDefinitions>
+        
+                                                                    <Grid Grid.Row="0">
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="34" />
+                                                                            <ColumnDefinition Width="*" />
+                                                                            <ColumnDefinition Width="54" />
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock Text="MIN" Foreground="{StaticResource MutedTextBrush}" FontSize="9" FontWeight="Bold" VerticalAlignment="Center" />
+                                                                        <Slider Grid.Column="1"
+                                                                                IsEnabled="{Binding IsControlEnabled}"
+                                                                                Minimum="{Binding Minimum}"
+                                                                                Maximum="{Binding Maximum}"
+                                                                                SmallChange="{Binding TickFrequency}"
+                                                                                LargeChange="{Binding TickFrequency}"
+                                                                                TickFrequency="{Binding TickFrequency}"
+                                                                                IsSnapToTickEnabled="True"
+                                                                                Value="{Binding CurrentMinNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                                PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
+                                                                        <TextBlock Grid.Column="2" Text="{Binding RangeMinDisplay}" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                                                    </Grid>
+                                                                    <controls:VanillaMarkerBar Grid.Row="1" Height="14" Margin="34,-1,54,0" IsEnabled="{Binding IsControlEnabled}" Tag="rangeMin" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Markers="{Binding VanillaMarkers}" MarkerClicked="VanillaMarkerControl_MarkerClicked" />
+        
+                                                                    <Grid Grid.Row="2">
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="34" />
+                                                                            <ColumnDefinition Width="*" />
+                                                                            <ColumnDefinition Width="54" />
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock Text="MAX" Foreground="{StaticResource MutedTextBrush}" FontSize="9" FontWeight="Bold" VerticalAlignment="Center" />
+                                                                        <Slider Grid.Column="1"
+                                                                                IsEnabled="{Binding IsControlEnabled}"
+                                                                                Minimum="{Binding Minimum}"
+                                                                                Maximum="{Binding Maximum}"
+                                                                                SmallChange="{Binding TickFrequency}"
+                                                                                LargeChange="{Binding TickFrequency}"
+                                                                                TickFrequency="{Binding TickFrequency}"
+                                                                                IsSnapToTickEnabled="True"
+                                                                                Value="{Binding CurrentMaxNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                                PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
+                                                                        <TextBlock Grid.Column="2" Text="{Binding RangeMaxDisplay}" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                                                    </Grid>
+                                                                    <controls:VanillaMarkerBar Grid.Row="3" Height="14" Margin="34,-1,54,0" IsEnabled="{Binding IsControlEnabled}" Tag="rangeMax" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Markers="{Binding VanillaMarkers}" MarkerClicked="VanillaMarkerControl_MarkerClicked" />
+                                                                </Grid>
+        
+                                                            </Grid>
+        
+                                                            <TextBlock x:Name="PracticalQuantityText"
+                                                                       Grid.Row="3"
+                                                                       Text="{Binding PracticalQuantityDisplay}"
+                                                                       Foreground="{StaticResource AccentBrush}"
+                                                                       FontSize="10"
+                                                                       Margin="0,4,0,0"
+                                                                       TextWrapping="Wrap">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding PracticalQuantityDisplay}" Value="">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </Grid>
+                                                    </Border>
+        
+                                                    <DataTemplate.Triggers>
+                                                        <DataTrigger Binding="{Binding IsControlVisible}" Value="False">
+                                                            <Setter TargetName="ParameterCard" Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsSlider}" Value="False">
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsAmmoDistributionAnchor}" Value="True">
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="AmmoDistributionRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsStashAmmoAnchor}" Value="True">
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="StashAmmoRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsMutantDropAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="MutantDropRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsIndividualAnomalyDamageAnchor}" Value="True">
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="AnomalyDamageRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsWorldLootRemovalAnchor}" Value="True">
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="WorldLootRemovalRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsMedicalHealingAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="MedicalHealingRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsActionCostAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="ActionCostsRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsItemPriceScalerAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="ItemPriceScalersRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsMutantHealthAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="MutantHealthRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsHumanGroupSizeAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="HumanGroupSizeRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsMutantGroupSizeAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="MutantGroupSizeRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsSpecialAbilityCooldownAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SpecialAbilityCooldownRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsRange}" Value="False">
+                                                            <Setter TargetName="RangeControl" Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsToggle}" Value="True">
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="ToggleControl" Property="Visibility" Value="Visible" />
+                                                            <Setter TargetName="ControlRow" Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsChoiceSlider}" Value="False">
+                                                            <Setter TargetName="ChoiceSliderControl" Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsRange}" Value="True">
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="FontWeight" Value="Bold" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsModified}" Value="True">
+                                                            <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource ModifiedCardBrush}" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Background" Value="{StaticResource ModifiedValueBrush}" />
+                                                            <Setter TargetName="CurrentValueBox" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
+                                                            <Setter TargetName="CurrentValueText" Property="FontWeight" Value="ExtraBold" />
+                                                            <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
+                                                        </DataTrigger>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsModified}" Value="True" />
+                                                                <Condition Binding="{Binding IsAggregateRadarAnchor}" Value="True" />
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource PanelBrush}" />
+                                                        </MultiDataTrigger>
+                                                        <Trigger SourceName="CurrentValueBox" Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="CurrentValueBox" Property="Background" Value="{StaticResource PanelHoverBrush}" />
+                                                            <Setter TargetName="CurrentValueBox" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
+                                                            <Setter TargetName="WheelHintMinus" Property="Visibility" Value="Visible" />
+                                                            <Setter TargetName="WheelHintPlus" Property="Visibility" Value="Visible" />
+                                                        </Trigger>
+                                                        <DataTrigger Binding="{Binding IsControlEnabled}" Value="False">
+                                                            <Setter TargetName="ParameterCard" Property="Opacity" Value="0.48" />
+                                                        </DataTrigger>
+                                                    </DataTemplate.Triggers>
+                                                </DataTemplate>
     </Window.Resources>
 
     <shell:WindowChrome.WindowChrome>
@@ -153,9 +614,11 @@
                                 <ColumnDefinition Width="330" />
                             </Grid.ColumnDefinitions>
 
-                            <ListBox Grid.Column="0"
+                            <ListBox x:Name="ParametersList"
+                                     Grid.Column="0"
                                      ItemsSource="{Binding ParametersView}"
                                      SelectedItem="{Binding SelectedParameter, Mode=TwoWay}"
+                                     ItemTemplate="{StaticResource ParameterCardTemplate}"
                                      Background="{StaticResource WindowBackgroundBrush}"
                                      BorderThickness="0"
                                      Margin="5,6,5,9"
@@ -185,37 +648,46 @@
                                         </Style.Triggers>
                                     </Style>
                                 </ListBox.ItemContainerStyle>
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <infra:ResponsiveParameterGridPanel IsItemsHost="True"
+                                                                            HorizontalAlignment="Stretch" />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
                                 <ListBox.GroupStyle>
                                     <GroupStyle>
+                                        <!-- Sections are stacked vertically. Only controls inside a section use the grid. -->
+                                        <GroupStyle.Panel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel IsItemsHost="True" Orientation="Vertical" />
+                                            </ItemsPanelTemplate>
+                                        </GroupStyle.Panel>
                                         <GroupStyle.ContainerStyle>
                                             <Style TargetType="{x:Type GroupItem}">
                                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="{x:Type GroupItem}">
-                                                            <Grid HorizontalAlignment="Stretch">
-                                                                <Grid.RowDefinitions>
-                                                                    <RowDefinition Height="Auto" />
-                                                                    <RowDefinition Height="Auto" />
-                                                                </Grid.RowDefinitions>
-                                                                <ContentPresenter Grid.Row="0"
-                                                                                  Content="{TemplateBinding Content}"
+                                                            <StackPanel HorizontalAlignment="Stretch">
+                                                                <ContentPresenter Content="{TemplateBinding Content}"
                                                                                   ContentTemplate="{TemplateBinding ContentTemplate}"
                                                                                   HorizontalAlignment="Stretch" />
-                                                                <ItemsPresenter Grid.Row="1"
-                                                                                HorizontalAlignment="Stretch" />
-                                                            </Grid>
+                                                                <ItemsControl ItemsSource="{Binding Items}"
+                                                                              ItemTemplate="{StaticResource ParameterCardTemplate}"
+                                                                              HorizontalContentAlignment="Stretch">
+                                                                    <ItemsControl.ItemsPanel>
+                                                                        <ItemsPanelTemplate>
+                                                                            <infra:ResponsiveParameterGridPanel IsItemsHost="True"
+                                                                                                                HorizontalAlignment="Stretch" />
+                                                                        </ItemsPanelTemplate>
+                                                                    </ItemsControl.ItemsPanel>
+                                                                </ItemsControl>
+                                                            </StackPanel>
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                             </Style>
                                         </GroupStyle.ContainerStyle>
-                                        <GroupStyle.Panel>
-                                            <ItemsPanelTemplate>
-                                                <infra:ResponsiveParameterGridPanel IsItemsHost="True"
-                                                                                    HorizontalAlignment="Stretch" />
-                                            </ItemsPanelTemplate>
-                                        </GroupStyle.Panel>
                                         <GroupStyle.HeaderTemplate>
                                             <DataTemplate>
                                                 <Border Background="{StaticResource PanelAltBrush}"
@@ -237,464 +709,7 @@
                                         </GroupStyle.HeaderTemplate>
                                     </GroupStyle>
                                 </ListBox.GroupStyle>
-                                <ListBox.ItemTemplate>
-                                        <DataTemplate DataType="{x:Type vm:ParameterViewModel}">
-                                            <Border x:Name="ParameterCard"
-                                                    Background="{StaticResource PanelBrush}"
-                                                    BorderBrush="{StaticResource BorderBrush}"
-                                                    BorderThickness="1" CornerRadius="2"
-                                                    Margin="0,0,0,4" Padding="8,5">
-                                                <Grid>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition Height="Auto" />
-                                                    </Grid.RowDefinitions>
-
-                                                    <Grid Grid.Row="0">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*" />
-                                                            <ColumnDefinition Width="Auto" />
-                                                        </Grid.ColumnDefinitions>
-
-                                                        <TextBlock x:Name="ParameterLabel"
-                                                                   Text="{Binding Label}"
-                                                                   ToolTip="{Binding Label}"
-                                                                   FontSize="12"
-                                                                   FontWeight="Normal"
-                                                                   VerticalAlignment="Center"
-                                                                   TextTrimming="CharacterEllipsis"
-                                                                   Margin="0,0,8,0" />
-
-                                                        <Grid Grid.Column="1">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="16" />
-                                                                <ColumnDefinition Width="Auto" />
-                                                                <ColumnDefinition Width="16" />
-                                                            </Grid.ColumnDefinitions>
-
-                                                            <TextBlock x:Name="WheelHintMinus" Grid.Column="0" Text="-"
-                                                                       Foreground="{StaticResource AccentBrush}"
-                                                                       FontSize="13" FontWeight="Bold"
-                                                                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                                       Visibility="Collapsed" />
-
-                                                            <Border x:Name="CurrentValueBox" Grid.Column="1" Background="{StaticResource PanelAltBrush}"
-                                                                    Cursor="Hand"
-                                                                    PreviewMouseWheel="CurrentValueBox_PreviewMouseWheel"
-                                                                    PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown"
-                                                                    BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
-                                                                    CornerRadius="3" MinWidth="76" Padding="6,3">
-                                                                <TextBlock x:Name="CurrentValueText" Text="{Binding CurrentDisplay}"
-                                                                           Foreground="{StaticResource AccentBrush}"
-                                                                           FontSize="12" FontWeight="SemiBold"
-                                                                           TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                            </Border>
-
-                                                            <TextBlock x:Name="WheelHintPlus" Grid.Column="2" Text="+"
-                                                                       Foreground="{StaticResource AccentBrush}"
-                                                                       FontSize="13" FontWeight="Bold"
-                                                                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                                       Visibility="Collapsed" />
-                                                        </Grid>
-
-                                                        <CheckBox x:Name="ToggleControl"
-                                                                  Grid.Column="1"
-                                                                  IsEnabled="{Binding IsControlEnabled}"
-                                                                  Content="{Binding ToggleStateLabel}"
-                                                                  Foreground="{StaticResource AccentBrush}"
-                                                                  FontWeight="SemiBold"
-                                                                  IsChecked="{Binding CurrentBoolean, Mode=TwoWay}"
-                                                                  VerticalAlignment="Center"
-                                                                  HorizontalAlignment="Right"
-                                                                  Visibility="Collapsed" />
-                                                    </Grid>
-
-                                                    <Grid x:Name="TechnicalRow" Grid.Row="1" Margin="0,2,0,0">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*" />
-                                                            <ColumnDefinition Width="Auto" />
-                                                        </Grid.ColumnDefinitions>
-                                                        <TextBlock Text="{Binding TechnicalDisplay}"
-                                                                   Foreground="{StaticResource TextBrush}"
-                                                                   FontSize="11" FontWeight="SemiBold"
-                                                                   TextWrapping="Wrap"
-                                                                   VerticalAlignment="Center" />
-                                                        <TextBlock Grid.Column="1" Text="{Binding EffectiveDisplay}"
-                                                                   Foreground="{StaticResource AccentBrush}"
-                                                                   FontSize="11" FontWeight="SemiBold"
-                                                                   Margin="12,0,0,0" HorizontalAlignment="Right"
-                                                                   VerticalAlignment="Center" />
-                                                    </Grid>
-
-                                                    <Grid x:Name="ControlRow" Grid.Row="2" Margin="0,3,0,0">
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="Auto" />
-                                                            <RowDefinition Height="16" />
-                                                        </Grid.RowDefinitions>
-
-                                                        <controls:AmmoDistributionRadar x:Name="AmmoDistributionRadarControl"
-                                                                                        Grid.Row="0"
-                                                                                        Grid.RowSpan="2"
-                                                                                        MinHeight="430"
-                                                                                        Visibility="Collapsed"
-                                                                                        Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <controls:MutantDropRadar x:Name="MutantDropRadarControl"
-                                                                                  Grid.Row="0"
-                                                                                  Grid.RowSpan="2"
-                                                                                  MinHeight="530"
-                                                                                  Visibility="Collapsed"
-                                                                                  Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <controls:AnomalyDamageRadar x:Name="AnomalyDamageRadarControl"
-                                                                                     Grid.Row="0"
-                                                                                     Grid.RowSpan="2"
-                                                                                     MinHeight="500"
-                                                                                     Visibility="Collapsed"
-                                                                                     Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <controls:WorldLootRemovalRadar x:Name="WorldLootRemovalRadarControl"
-                                                                                        Grid.Row="0"
-                                                                                        Grid.RowSpan="2"
-                                                                                        MinHeight="455"
-                                                                                        Visibility="Collapsed"
-                                                                                        Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <controls:MedicalHealingRadar x:Name="MedicalHealingRadarControl"
-                                                                                     Grid.Row="0"
-                                                                                     Grid.RowSpan="2"
-                                                                                     MinHeight="390"
-                                                                                     Visibility="Collapsed"
-                                                                                     Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <controls:ActionCostsRadar x:Name="ActionCostsRadarControl"
-                                                                                Grid.Row="0"
-                                                                                Grid.RowSpan="2"
-                                                                                MinHeight="475"
-                                                                                Visibility="Collapsed"
-                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <controls:ItemPriceScalersRadar x:Name="ItemPriceScalersRadarControl"
-                                                                                     Grid.Row="0"
-                                                                                     Grid.RowSpan="2"
-                                                                                     MinHeight="435"
-                                                                                     Visibility="Collapsed"
-                                                                                     Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <controls:MutantHealthRadar x:Name="MutantHealthRadarControl"
-                                                                               Grid.Row="0"
-                                                                               Grid.RowSpan="2"
-                                                                               MinHeight="500"
-                                                                               Visibility="Collapsed"
-                                                                               Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <controls:HumanGroupSizeRadar x:Name="HumanGroupSizeRadarControl"
-                                                                                      Grid.Row="0"
-                                                                                      Grid.RowSpan="2"
-                                                                                      MinHeight="500"
-                                                                                      Visibility="Collapsed"
-                                                                                      Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <controls:MutantGroupSizeRadar x:Name="MutantGroupSizeRadarControl"
-                                                                                       Grid.Row="0"
-                                                                                       Grid.RowSpan="2"
-                                                                                       MinHeight="650"
-                                                                                       Visibility="Collapsed"
-                                                                                       Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <controls:SpecialAbilityCooldownRadar x:Name="SpecialAbilityCooldownRadarControl"
-                                                                                         Grid.Row="0"
-                                                                                         Grid.RowSpan="2"
-                                                                                         MinHeight="505"
-                                                                                         Visibility="Collapsed"
-                                                                                         Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <controls:StashAmmoRadar x:Name="StashAmmoRadarControl"
-                                                                                 Grid.Row="0"
-                                                                                 Grid.RowSpan="2"
-                                                                                 MinHeight="430"
-                                                                                 Visibility="Collapsed"
-                                                                                 Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
-
-                                                        <Slider x:Name="SliderControl"
-                                                                Grid.Row="0"
-                                                                IsEnabled="{Binding IsControlEnabled}"
-                                                                Minimum="{Binding Minimum}"
-                                                                Maximum="{Binding Maximum}"
-                                                                SmallChange="{Binding TickFrequency}"
-                                                                LargeChange="{Binding TickFrequency}"
-                                                                TickFrequency="{Binding TickFrequency}"
-                                                                IsSnapToTickEnabled="True"
-                                                                Value="{Binding CurrentNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
-
-                                                        <controls:VanillaMarkerBar x:Name="VanillaMarkerControl"
-                                                                                   Grid.Row="1"
-                                                                                   Height="16"
-                                                                                   Margin="0,-1,0,0"
-                                                                                   IsEnabled="{Binding IsControlEnabled}"
-                                                                                   Tag="number"
-                                                                                   Minimum="{Binding Minimum}"
-                                                                                   Maximum="{Binding Maximum}"
-                                                                                   Markers="{Binding VanillaMarkers}"
-                                                                                   MarkerClicked="VanillaMarkerControl_MarkerClicked" />
-
-                                                        <!-- Explicit discrete-choice slider. The selected value is shown in the card header;
-                                                             underneath the track we show only the vanilla difficulty reference positions. -->
-                                                        <Grid x:Name="ChoiceSliderControl"
-                                                              Grid.Row="0"
-                                                              Grid.RowSpan="2">
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition Height="Auto" />
-                                                                <RowDefinition Height="16" />
-                                                            </Grid.RowDefinitions>
-                                                            <Slider Grid.Row="0"
-                                                                    IsEnabled="{Binding IsControlEnabled}"
-                                                                    Minimum="{Binding ChoiceMinimum}"
-                                                                    Maximum="{Binding ChoiceMaximum}"
-                                                                    SmallChange="{Binding ChoiceTickFrequency}"
-                                                                    LargeChange="{Binding ChoiceTickFrequency}"
-                                                                    TickFrequency="{Binding ChoiceTickFrequency}"
-                                                                    IsSnapToTickEnabled="True"
-                                                                    Value="{Binding ChoiceIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                    PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
-                                                            <controls:VanillaMarkerBar Grid.Row="1"
-                                                                                       Height="16"
-                                                                                       Margin="0,-1,0,0"
-                                                                                       IsEnabled="{Binding IsControlEnabled}"
-                                                                                       Tag="choice"
-                                                                                       Minimum="{Binding ChoiceMinimum}"
-                                                                                       Maximum="{Binding ChoiceMaximum}"
-                                                                                       Markers="{Binding ChoiceMarkers}"
-                                                                                       MarkerClicked="VanillaMarkerControl_MarkerClicked" />
-                                                        </Grid>
-
-                                                        <Grid x:Name="RangeControl" Grid.Row="0" Grid.RowSpan="2">
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition Height="Auto" />
-                                                                <RowDefinition Height="14" />
-                                                                <RowDefinition Height="Auto" />
-                                                                <RowDefinition Height="14" />
-                                                            </Grid.RowDefinitions>
-
-                                                            <Grid Grid.Row="0">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="34" />
-                                                                    <ColumnDefinition Width="*" />
-                                                                    <ColumnDefinition Width="54" />
-                                                                </Grid.ColumnDefinitions>
-                                                                <TextBlock Text="MIN" Foreground="{StaticResource MutedTextBrush}" FontSize="9" FontWeight="Bold" VerticalAlignment="Center" />
-                                                                <Slider Grid.Column="1"
-                                                                        IsEnabled="{Binding IsControlEnabled}"
-                                                                        Minimum="{Binding Minimum}"
-                                                                        Maximum="{Binding Maximum}"
-                                                                        SmallChange="{Binding TickFrequency}"
-                                                                        LargeChange="{Binding TickFrequency}"
-                                                                        TickFrequency="{Binding TickFrequency}"
-                                                                        IsSnapToTickEnabled="True"
-                                                                        Value="{Binding CurrentMinNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                        PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
-                                                                <TextBlock Grid.Column="2" Text="{Binding RangeMinDisplay}" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                                                            </Grid>
-                                                            <controls:VanillaMarkerBar Grid.Row="1" Height="14" Margin="34,-1,54,0" IsEnabled="{Binding IsControlEnabled}" Tag="rangeMin" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Markers="{Binding VanillaMarkers}" MarkerClicked="VanillaMarkerControl_MarkerClicked" />
-
-                                                            <Grid Grid.Row="2">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="34" />
-                                                                    <ColumnDefinition Width="*" />
-                                                                    <ColumnDefinition Width="54" />
-                                                                </Grid.ColumnDefinitions>
-                                                                <TextBlock Text="MAX" Foreground="{StaticResource MutedTextBrush}" FontSize="9" FontWeight="Bold" VerticalAlignment="Center" />
-                                                                <Slider Grid.Column="1"
-                                                                        IsEnabled="{Binding IsControlEnabled}"
-                                                                        Minimum="{Binding Minimum}"
-                                                                        Maximum="{Binding Maximum}"
-                                                                        SmallChange="{Binding TickFrequency}"
-                                                                        LargeChange="{Binding TickFrequency}"
-                                                                        TickFrequency="{Binding TickFrequency}"
-                                                                        IsSnapToTickEnabled="True"
-                                                                        Value="{Binding CurrentMaxNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                        PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
-                                                                <TextBlock Grid.Column="2" Text="{Binding RangeMaxDisplay}" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                                                            </Grid>
-                                                            <controls:VanillaMarkerBar Grid.Row="3" Height="14" Margin="34,-1,54,0" IsEnabled="{Binding IsControlEnabled}" Tag="rangeMax" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Markers="{Binding VanillaMarkers}" MarkerClicked="VanillaMarkerControl_MarkerClicked" />
-                                                        </Grid>
-
-                                                    </Grid>
-
-                                                    <TextBlock x:Name="PracticalQuantityText"
-                                                               Grid.Row="3"
-                                                               Text="{Binding PracticalQuantityDisplay}"
-                                                               Foreground="{StaticResource AccentBrush}"
-                                                               FontSize="10"
-                                                               Margin="0,4,0,0"
-                                                               TextWrapping="Wrap">
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="TextBlock">
-                                                                <Setter Property="Visibility" Value="Visible" />
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding PracticalQuantityDisplay}" Value="">
-                                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </TextBlock.Style>
-                                                    </TextBlock>
-                                                </Grid>
-                                            </Border>
-
-                                            <DataTemplate.Triggers>
-                                                <DataTrigger Binding="{Binding IsSlider}" Value="False">
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsAmmoDistributionAnchor}" Value="True">
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="AmmoDistributionRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsStashAmmoAnchor}" Value="True">
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="StashAmmoRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsMutantDropAnchor}" Value="True">
-                                                    <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="MutantDropRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsIndividualAnomalyDamageAnchor}" Value="True">
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="AnomalyDamageRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsWorldLootRemovalAnchor}" Value="True">
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="WorldLootRemovalRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsMedicalHealingAnchor}" Value="True">
-                                                    <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="MedicalHealingRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsActionCostAnchor}" Value="True">
-                                                    <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="ActionCostsRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsItemPriceScalerAnchor}" Value="True">
-                                                    <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="ItemPriceScalersRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsMutantHealthAnchor}" Value="True">
-                                                    <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="MutantHealthRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsHumanGroupSizeAnchor}" Value="True">
-                                                    <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="HumanGroupSizeRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsMutantGroupSizeAnchor}" Value="True">
-                                                    <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="MutantGroupSizeRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsSpecialAbilityCooldownAnchor}" Value="True">
-                                                    <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="SpecialAbilityCooldownRadarControl" Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsRange}" Value="False">
-                                                    <Setter TargetName="RangeControl" Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsToggle}" Value="True">
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                    <Setter TargetName="ToggleControl" Property="Visibility" Value="Visible" />
-                                                    <Setter TargetName="ControlRow" Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsChoiceSlider}" Value="False">
-                                                    <Setter TargetName="ChoiceSliderControl" Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsRange}" Value="True">
-                                                    <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                                    <Setter TargetName="ParameterLabel" Property="FontWeight" Value="Bold" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsModified}" Value="True">
-                                                    <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource ModifiedCardBrush}" />
-                                                    <Setter TargetName="CurrentValueBox" Property="Background" Value="{StaticResource ModifiedValueBrush}" />
-                                                    <Setter TargetName="CurrentValueBox" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
-                                                    <Setter TargetName="CurrentValueText" Property="FontWeight" Value="ExtraBold" />
-                                                    <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
-                                                </DataTrigger>
-                                                <MultiDataTrigger>
-                                                    <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding IsModified}" Value="True" />
-                                                        <Condition Binding="{Binding IsAggregateRadarAnchor}" Value="True" />
-                                                    </MultiDataTrigger.Conditions>
-                                                    <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource PanelBrush}" />
-                                                </MultiDataTrigger>
-                                                <Trigger SourceName="CurrentValueBox" Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="CurrentValueBox" Property="Background" Value="{StaticResource PanelHoverBrush}" />
-                                                    <Setter TargetName="CurrentValueBox" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
-                                                    <Setter TargetName="WheelHintMinus" Property="Visibility" Value="Visible" />
-                                                    <Setter TargetName="WheelHintPlus" Property="Visibility" Value="Visible" />
-                                                </Trigger>
-                                                <DataTrigger Binding="{Binding IsControlEnabled}" Value="False">
-                                                    <Setter TargetName="ParameterCard" Property="Opacity" Value="0.48" />
-                                                </DataTrigger>
-                                            </DataTemplate.Triggers>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
+                                
                             </ListBox>
 
                             <!-- Context/rationale panel. Uses the existing theme; only the layout changes. -->
