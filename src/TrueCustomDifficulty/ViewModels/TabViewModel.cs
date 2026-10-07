@@ -44,7 +44,7 @@ public sealed class TabViewModel : ObservableObject
         ParametersView = CollectionViewSource.GetDefaultView(Parameters);
 
         // Tabs with multiple distinct CFG domains are grouped visibly so unrelated mechanics are not presented as one undifferentiated list.
-        if (Id is "loot" or "combat" or "survival" or "health" or "stamina" or "economy" or "equipment" or "master")
+        if (Id is "loot" or "combat" or "survival" or "health" or "stamina" or "economy" or "equipment" or "alife" or "master")
             ParametersView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ParameterViewModel.Group)));
 
         SelectedParameter = Parameters.FirstOrDefault(p => p.IsControlVisible);
