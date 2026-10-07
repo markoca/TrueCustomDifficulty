@@ -289,7 +289,7 @@ DrawClippedText(
 
         DrawClippedText(
             dc,
-            $"Vanilla {info.VanillaLabel} · higher = tougher mutant, longer fight",
+            $"Increase/decrease {info.Label} HP",
             new Rect(bounds.Left + 6, y + 22, bounds.Width - 12, 14),
             8.7,
             hovered ? textBrush : mutedBrush,
