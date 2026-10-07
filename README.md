@@ -1,3 +1,21 @@
+# True Custom Difficulty
+
+## Supported target
+
+The application targets **Windows x64** on **.NET 10 LTS** (`net10.0-windows`).
+
+Linux/CachyOS is supported as the development host for cross-publishing and Wine testing. The development host requires a .NET 10 SDK; the repository-root `global.json` keeps builds on the .NET 10 SDK line while allowing newer .NET 10 feature/patch releases and prevents an accidental move to the next major SDK.
+
+On CachyOS/Arch:
+
+```bash
+sudo pacman -Syu dotnet-sdk-10.0
+```
+
+`./publish.sh` cross-publishes a **self-contained win-x64** runtime to `publish/win-x64/`, so the target Windows machine does not need a separately installed .NET runtime.
+
+---
+
 # v0.9.26.52 — ALIFE group-size radars
 
 - Added an **ALIFE** tab with separate **Human Group Size** and **Mutant Group Size** radars.
