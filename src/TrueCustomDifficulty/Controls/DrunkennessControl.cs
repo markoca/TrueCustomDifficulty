@@ -125,14 +125,19 @@ public sealed class DrunkennessControl : FrameworkElement
 
         var gap = 8.0;
         var totalWidth = Math.Max(480.0, ActualWidth - 24.0);
-        var cardWidth = (totalWidth - gap * 2.0) / 3.0;
+        var cardWidth = (totalWidth - gap) / 2.0;
         var toleranceCard = new Rect(12.0, 10.0, cardWidth, 120.0);
-        var beerCard = new Rect(toleranceCard.Right + gap, 10.0, cardWidth, 120.0);
-        var vodkaCard = new Rect(beerCard.Right + gap, 10.0, cardWidth, 120.0);
+        var strengthCard = new Rect(toleranceCard.Right + gap, 10.0, cardWidth, 120.0);
+
+        _beerStrengthSliderRect = Rect.Empty;
+        _vodkaStrengthSliderRect = Rect.Empty;
 
         DrawToleranceCard(dc, toleranceCard, panelAlt, border, track, text, muted, accent, accentDark);
-        DrawStrengthCard(dc, beerCard, DrinkReference.Beer, _beerStrengthParameter, panelAlt, border, track, text, muted, accent, accentDark);
-        DrawStrengthCard(dc, vodkaCard, DrinkReference.Vodka, _vodkaStrengthParameter, panelAlt, border, track, text, muted, accent, accentDark);
+
+        var strengthParameter = _reference == DrinkReference.Beer
+            ? _beerStrengthParameter
+            : _vodkaStrengthParameter;
+        DrawStrengthCard(dc, strengthCard, _reference, strengthParameter, panelAlt, border, track, text, muted, accent, accentDark);
 
         DrawProgression(dc, panelAlt, border, text, muted, accent);
         DrawText(dc, "EFFECT PREVIEW", new Point(16, 200), 9.0, muted, FontWeights.Bold);
@@ -201,12 +206,11 @@ public sealed class DrunkennessControl : FrameworkElement
 
         var isBeer = drink == DrinkReference.Beer;
         var vanillaStrength = isBeer ? VanillaBeerDrunkness : VanillaVodkaDrunkness;
-        var multiplier = parameter?.CurrentNumber ?? 1.0;
-        var rawStrength = vanillaStrength * multiplier;
+        var strength = parameter?.CurrentNumber ?? vanillaStrength;
 
         DrawText(dc, isBeer ? "BEER" : "VODKA", new Point(rect.Left + 10, rect.Top + 8), 10.0, accent, FontWeights.Bold);
-        DrawRightAlignedText(dc, (multiplier * 100.0).ToString("0", CultureInfo.InvariantCulture) + "%", new Point(rect.Right - 10, rect.Top + 6), 12.0, text, FontWeights.Bold);
-        DrawText(dc, rawStrength.ToString("0.##", CultureInfo.InvariantCulture) + " DRUNKNESS / DRINK", new Point(rect.Left + 10, rect.Top + 34), 8.5, muted, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, strength.ToString("0", CultureInfo.InvariantCulture), new Point(rect.Right - 10, rect.Top + 6), 12.0, text, FontWeights.Bold);
+        DrawText(dc, "DRUNKNESS / DRINK", new Point(rect.Left + 10, rect.Top + 34), 8.5, muted, FontWeights.SemiBold);
 
         var sliderLeft = rect.Left + 12.0;
         var sliderRight = rect.Right - 12.0;
@@ -217,11 +221,11 @@ public sealed class DrunkennessControl : FrameworkElement
 
         dc.DrawLine(new Pen(track, 3.0), new Point(sliderLeft, sliderY), new Point(sliderRight, sliderY));
 
-        var minimum = parameter?.Minimum ?? 0.25;
-        var maximum = parameter?.Maximum ?? 2.0;
-        dc.DrawEllipse(accent, null, new Point(ValueToX(multiplier, minimum, maximum, sliderLeft, sliderRight), sliderY), 5.0, 5.0);
+        var minimum = parameter?.Minimum ?? 1.0;
+        var maximum = parameter?.Maximum ?? (isBeer ? 30.0 : 60.0);
+        dc.DrawEllipse(accent, null, new Point(ValueToX(strength, minimum, maximum, sliderLeft, sliderRight), sliderY), 5.0, 5.0);
 
-        var vanillaX = ValueToX(1.0, minimum, maximum, sliderLeft, sliderRight);
+        var vanillaX = ValueToX(vanillaStrength, minimum, maximum, sliderLeft, sliderRight);
         dc.DrawLine(new Pen(accentDark, 1.0), new Point(vanillaX, sliderY - 5), new Point(vanillaX, sliderY + 5));
         DrawCenteredText(dc, "VANILLA", new Point(vanillaX, rect.Bottom - 15), 8.0, accentDark, FontWeights.Bold);
     }
@@ -587,10 +591,10 @@ public sealed class DrunkennessControl : FrameworkElement
                 _parameter.CurrentNumber = 1.0;
                 break;
             case ActiveSlider.BeerStrength when _beerStrengthParameter is not null:
-                _beerStrengthParameter.CurrentNumber = 1.0;
+                _beerStrengthParameter.CurrentNumber = VanillaBeerDrunkness;
                 break;
             case ActiveSlider.VodkaStrength when _vodkaStrengthParameter is not null:
-                _vodkaStrengthParameter.CurrentNumber = 1.0;
+                _vodkaStrengthParameter.CurrentNumber = VanillaVodkaDrunkness;
                 break;
         }
 
@@ -613,8 +617,8 @@ public sealed class DrunkennessControl : FrameworkElement
 
     private double ReferenceStrength
         => _reference == DrinkReference.Beer
-            ? VanillaBeerDrunkness * (_beerStrengthParameter?.CurrentNumber ?? 1.0)
-            : VanillaVodkaDrunkness * (_vodkaStrengthParameter?.CurrentNumber ?? 1.0);
+            ? (_beerStrengthParameter?.CurrentNumber ?? VanillaBeerDrunkness)
+            : (_vodkaStrengthParameter?.CurrentNumber ?? VanillaVodkaDrunkness);
 
     private int MaxReferenceDrinks
         => _reference == DrinkReference.Beer ? 8 : 4;
