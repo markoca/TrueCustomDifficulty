@@ -10,8 +10,9 @@ namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
 /// Player-facing editor for the DrunknessMechanics 20 / 40 / 60 thresholds.
-/// Beer/Vodka is a presentation-only reference. The single backing parameter
-/// scales all thresholds together, preserving their authored progression.
+/// Beer is the primary player-facing tolerance reference; Vodka remains an optional
+/// equivalent view. The single backing parameter scales all thresholds together,
+/// preserving their authored progression without rewriting consumable effect strength.
 /// </summary>
 public sealed class DrunkennessControl : FrameworkElement
 {
@@ -25,7 +26,7 @@ public sealed class DrunkennessControl : FrameworkElement
     private const double MaximumScale = 1.50;
 
     private ParameterViewModel? _parameter;
-    private DrinkReference _reference = DrinkReference.Vodka;
+    private DrinkReference _reference = DrinkReference.Beer;
     private int _previewDrinks = 1;
     private Rect _vodkaRect;
     private Rect _beerRect;
@@ -105,13 +106,13 @@ public sealed class DrunkennessControl : FrameworkElement
         var bounds = new Rect(0.5, 0.5, Math.Max(0.0, ActualWidth - 1.0), Math.Max(0.0, ActualHeight - 1.0));
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), bounds, 4.0, 4.0);
 
-        DrawText(dc, "DRINKS TO GET VERY DRUNK", new Point(16, 13), 12.0, accent, FontWeights.Bold);
+        DrawText(dc, "ALCOHOL TOLERANCE", new Point(16, 13), 12.0, accent, FontWeights.Bold);
         DrawText(dc, "REFERENCE", new Point(16, 43), 9.0, muted, FontWeights.Bold);
 
-        _vodkaRect = new Rect(82, 36, 72, 25);
-        _beerRect = new Rect(160, 36, 62, 25);
-        DrawSelector(dc, _vodkaRect, "VODKA", _reference == DrinkReference.Vodka, _hoverReference == DrinkReference.Vodka, panelAlt, border, accent, text);
+        _beerRect = new Rect(82, 36, 62, 25);
+        _vodkaRect = new Rect(150, 36, 72, 25);
         DrawSelector(dc, _beerRect, "BEER", _reference == DrinkReference.Beer, _hoverReference == DrinkReference.Beer, panelAlt, border, accent, text);
+        DrawSelector(dc, _vodkaRect, "VODKA", _reference == DrinkReference.Vodka, _hoverReference == DrinkReference.Vodka, panelAlt, border, accent, text);
 
         var scale = CurrentScale;
         var strength = ReferenceStrength;
@@ -185,7 +186,7 @@ public sealed class DrunkennessControl : FrameworkElement
 
         DrawText(
             dc,
-            "Preview assumes drinks are stacked before natural sober-up. BEER/VODKA selection does not change gameplay by itself.",
+            "Beer is the default tolerance reference. The slider moves player drunkness thresholds; BEER/VODKA selection itself does not change gameplay.",
             new Point(16, ActualHeight - 22),
             9.0,
             muted,
