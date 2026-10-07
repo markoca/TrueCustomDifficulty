@@ -217,6 +217,112 @@ public sealed class MainViewModel : ObservableObject
 
         var parametersById = parameterVMs.ToDictionary(p => p.Id, StringComparer.Ordinal);
 
+        void WireVisualAggregate(string anchorId, params string[] memberIds)
+        {
+            if (!parametersById.TryGetValue(anchorId, out var visualAnchor))
+                return;
+
+            var members = memberIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            visualAnchor.SetAggregateModifiedProvider(
+                () => members.Any(parameter => parameter.IsValueModifiedFromReference()));
+
+            foreach (var visualMember in members)
+            {
+                visualMember.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName is nameof(ParameterViewModel.CurrentNumber)
+                        or nameof(ParameterViewModel.CurrentBoolean)
+                        or nameof(ParameterViewModel.CurrentText)
+                        or nameof(ParameterViewModel.CurrentMinNumber)
+                        or nameof(ParameterViewModel.CurrentMaxNumber))
+                    {
+                        visualAnchor.RefreshAggregateModifiedState();
+                    }
+                };
+            }
+        }
+
+        WireVisualAggregate(
+            "survival.sleepinessRate",
+            "survival.sleepinessRate",
+            "survival.energyDrinkFatigueRelief",
+            "survival.fatigueLowAimPenalty",
+            "survival.fatigueMediumAimPenalty",
+            "survival.fatigueStrongAimPenalty",
+            "survival.fatigueMediumReloadPenalty",
+            "survival.fatigueStrongReloadPenalty");
+
+        WireVisualAggregate(
+            "health.bandageBleeding",
+            "health.bandageBleeding",
+            "health.medkitBleeding",
+            "health.armyMedkitBleeding",
+            "health.ecoMedkitBleeding");
+
+        WireVisualAggregate(
+            "survival.instantStaminaRestore",
+            "survival.instantStaminaRestore",
+            "survival.alcoholRadiationRemoval",
+            "survival.waterEffectDuration",
+            "survival.energyDrinkEffectDuration",
+            "survival.vodkaEffectDuration",
+            "survival.beerEffectDuration",
+            "survival.magicVodkaEffectDuration");
+
+        WireVisualAggregate(
+            "survival.sleepEligibilityThreshold",
+            "survival.sleepEligibilityThreshold",
+            "survival.minimumSleepHours",
+            "survival.sleepHealthRestore",
+            "survival.sleepStaminaRestore");
+
+        WireVisualAggregate(
+            "survival.hungerRate",
+            "survival.hungerRate",
+            "survival.hungerMediumStaminaRegen",
+            "survival.hungerStrongStaminaRegen",
+            "survival.wellFedStaminaRegen");
+
+        WireVisualAggregate(
+            "survival.starvationStaminaDrain",
+            "advanced.starvationMechanics",
+            "survival.starvationStaminaDrain",
+            "survival.starvationDamage",
+            "survival.starvationDamageInterval",
+            "survival.starvationPenaltyDelay",
+            "survival.starvationHealthRegenPenalty");
+
+        WireVisualAggregate(
+            "combat.accumulatedDamageWeightMax",
+            "combat.accumulatedDamageWeightMax",
+            "combat.accumulatedDamageWeightMin",
+            "combat.accumulatedDamageIncludesHealedHealth");
+
+        WireVisualAggregate(
+            "survival.radiationAccumulation",
+            "survival.radiationAccumulation",
+            "survival.radiationRecovery",
+            "survival.radiationDamage");
+
+        WireVisualAggregate(
+            "economy.buyCondition",
+            "economy.buyCondition",
+            "economy.sellCondition",
+            "economy.traderMinBuyCondition",
+            "economy.itemValueFloor");
+
+        WireVisualAggregate(
+            "economy.repairEnemy",
+            "economy.repairEnemy",
+            "economy.repairDisaffection",
+            "economy.repairNeutral",
+            "economy.repairFriend");
+
         if (parametersById.TryGetValue("survival.beerDrunknessStrength", out var alcoholAnchor))
         {
             parametersById.TryGetValue("survival.vodkaDrunknessStrength", out var vodkaStrength);
