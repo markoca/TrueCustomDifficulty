@@ -281,7 +281,7 @@ private readonly RadarStatusMessage _status;
 
         var axis = Array.IndexOf(_parameters, parameter);
         var hovered = axis >= 0 && axis == _hoverAxis;
-        var headingBrush = parameter.IsModified ? accentBrush : hovered ? textBrush : textBrush;
+        var headingBrush = hovered ? Brushes.White : parameter.IsModified ? accentBrush : textBrush;
         if (axis >= 0)
         {
             BeginLegendHitArea(axis);
@@ -311,7 +311,7 @@ private readonly RadarStatusMessage _status;
             DrawClippedText(
                 dc,
                 text,
-                new Rect(bounds.Left, y, bounds.Width, 18), RadarLegendTextSize, hovered ? textBrush : mutedBrush,
+                new Rect(bounds.Left, y, bounds.Width, 18), RadarLegendTextSize, hovered ? Brushes.White : mutedBrush,
                 FontWeights.Normal);
 
             y += 18;
