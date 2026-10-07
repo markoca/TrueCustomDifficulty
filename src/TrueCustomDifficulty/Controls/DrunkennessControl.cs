@@ -222,13 +222,21 @@ public sealed class DrunkennessControl : FrameworkElement
         var labelPoint = new Point(rect.Left + 10, rect.Top + 29);
         dc.DrawText(labelText, labelPoint);
 
+        var valueX = labelPoint.X + labelText.WidthIncludingTrailingWhitespace + 9;
+        var currentText = CreateText(
+            strength.ToString("0", CultureInfo.InvariantCulture),
+            12.5,
+            accent,
+            FontWeights.Bold);
+        dc.DrawText(currentText, new Point(valueX, rect.Top + 25));
+
         DrawText(
             dc,
-            strength.ToString("0", CultureInfo.InvariantCulture) + " / " + maximum.ToString("0", CultureInfo.InvariantCulture),
-            new Point(labelPoint.X + labelText.WidthIncludingTrailingWhitespace + 9, rect.Top + 25),
-            12.5,
-            text,
-            FontWeights.Bold);
+            " / " + maximum.ToString("0", CultureInfo.InvariantCulture),
+            new Point(valueX + currentText.WidthIncludingTrailingWhitespace, rect.Top + 28),
+            9.0,
+            muted,
+            FontWeights.SemiBold);
 
         var sliderLeft = rect.Left + 12.0;
         var sliderRight = rect.Right - 12.0;
