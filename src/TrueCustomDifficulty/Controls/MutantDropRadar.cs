@@ -19,7 +19,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class MutantDropRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double RowHeight = 54.0;
+    private const double RowHeight = 50.0;
 
     private static readonly DropDefinition[] Mutants =
     {
@@ -63,7 +63,7 @@ public sealed class MutantDropRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 500;
+        MinHeight = 470;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -71,7 +71,7 @@ public sealed class MutantDropRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 840.0 : Math.Max(660.0, availableSize.Width);
-        return new Size(width, 500.0);
+        return new Size(width, 470.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -171,7 +171,7 @@ public sealed class MutantDropRadar : FrameworkElement
             DrawRow(
                 dc,
                 i,
-                new Rect(outerLeft, 91.0 + i * RowHeight, columnWidth, RowHeight - 4.0),
+                new Rect(outerLeft, 86.0 + i * RowHeight, columnWidth, RowHeight - 4.0),
                 text,
                 muted,
                 border,
@@ -181,7 +181,7 @@ public sealed class MutantDropRadar : FrameworkElement
             DrawRow(
                 dc,
                 i + 7,
-                new Rect(outerLeft + columnWidth + gap, 91.0 + i * RowHeight, columnWidth, RowHeight - 4.0),
+                new Rect(outerLeft + columnWidth + gap, 86.0 + i * RowHeight, columnWidth, RowHeight - 4.0),
                 text,
                 muted,
                 border,
@@ -192,7 +192,7 @@ public sealed class MutantDropRadar : FrameworkElement
         DrawCenteredText(
             dc,
             "≈ N / 100 KILLS IS A LARGE-SAMPLE EXPECTATION, NOT A GUARANTEED SEQUENCE",
-            new Point(ActualWidth / 2.0, 472.0),
+            new Point(ActualWidth / 2.0, 438.0),
             7.5,
             muted,
             FontWeights.Normal);
@@ -202,7 +202,7 @@ public sealed class MutantDropRadar : FrameworkElement
             DrawCenteredText(
                 dc,
                 _status.Text,
-                new Point(ActualWidth / 2.0, 490.0),
+                new Point(ActualWidth / 2.0, 458.0),
                 8.0,
                 accent,
                 FontWeights.SemiBold);
@@ -283,15 +283,6 @@ public sealed class MutantDropRadar : FrameworkElement
             5.5);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
 
-        DrawText(dc, "0%", new Point(track.Left, card.Top + 44.0), 6.0, muted, FontWeights.Normal);
-        DrawCenteredText(
-            dc,
-            $"VANILLA {vanilla * 100:0}%",
-            new Point(vanillaX, card.Top + 48.0),
-            5.9,
-            muted,
-            FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "100%", new Point(track.Right, card.Top + 44.0), 6.0, muted, FontWeights.Normal);
 
         _targets[row] = new HitTarget(
             new Rect(track.Left - 6.0, track.Top - 6.0, track.Width + 12.0, track.Height + 12.0),
@@ -472,7 +463,7 @@ public sealed class MutantDropRadar : FrameworkElement
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
