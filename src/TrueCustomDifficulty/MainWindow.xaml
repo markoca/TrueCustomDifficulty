@@ -805,6 +805,16 @@
                                         <Border BorderThickness="0"
                                                 Padding="0"
                                                 Margin="0,14,0,0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedParameter.HasLogic}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
                                             <StackPanel>
                                                 <TextBlock Text="HIGHER / LOWER"
                                                            Foreground="{StaticResource MutedTextBrush}"
@@ -822,6 +832,16 @@
                                         <Border BorderThickness="0"
                                                 Padding="0"
                                                 Margin="0,14,0,0">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedParameter.HasInteraction}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
                                             <StackPanel>
                                                 <TextBlock Text="WORKS WITH"
                                                            Foreground="{StaticResource MutedTextBrush}"
