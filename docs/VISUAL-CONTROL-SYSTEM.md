@@ -55,6 +55,8 @@ Curves:
 - Low / Medium / Severe Aim-Time Penalty
 - Medium / Severe Reload-Time Penalty
 
+There is no separate Low-fatigue reload backing parameter, so the reload curve starts at Medium rather than drawing a synthetic 0% Low point.
+
 The existing fatigue severity constraints remain authoritative.
 
 ### Bleeding Treatment Mixer
