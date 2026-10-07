@@ -42,7 +42,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
-    private readonly RadarStatusMessage _status;
+    private readonly VisualStatusMessage _status;
 
     private int _selectedRow;
     private int _hoverRow = -1;
@@ -62,7 +62,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
     public MutantGroupSizeRadar()
     {
-        _status = new RadarStatusMessage(InvalidateVisual);
+        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 730;
         Cursor = Cursors.Arrow;
