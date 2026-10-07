@@ -469,13 +469,17 @@ public sealed class ActionCostsRadar : FrameworkElement
 
         DrawRightAlignedText(dc, formatter(parameter.CurrentNumber), new Point(line.Right, y - 10.0), 9.0, IsSelected(parameter) ? accent : text, FontWeights.Bold);
 
+        var activeLeft = ValueToX(parameter.Minimum, visualMinimum, visualMaximum, line);
+        var activeRight = ValueToX(parameter.Maximum, visualMinimum, visualMaximum, line);
+        var activeMap = new Rect(activeLeft, line.Top, Math.Max(1.0, activeRight - activeLeft), line.Height);
+
         AddTarget(
             parameter,
-            new Rect(line.Left - 6.0, y - 9.0, line.Width + 12.0, 18.0),
-            line,
+            new Rect(activeMap.Left - 6.0, y - 9.0, activeMap.Width + 12.0, 18.0),
+            activeMap,
             MappingKind.Absolute,
-            visualMinimum,
-            visualMaximum);
+            parameter.Minimum,
+            parameter.Maximum);
     }
 
     private void DrawMiniTrack(
