@@ -6,7 +6,7 @@ namespace TrueCustomDifficulty.Infrastructure;
 
 public sealed class ResponsiveParameterGridPanel : Panel
 {
-    private const double RowGap = 4.0;
+    private const double RowGap = 6.0;
     private const double ColumnGap = 18.0;
     private const double TwoColumnThreshold = 700.0;
 
