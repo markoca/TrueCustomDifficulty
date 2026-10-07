@@ -37,6 +37,15 @@ public partial class MainWindow : Window
 
 
 
+    private void ParameterCard_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: ParameterViewModel parameter })
+            return;
+
+        if (DataContext is MainViewModel main && main.SelectedTab is not null)
+            main.SelectedTab.SelectedParameter = parameter;
+    }
+
     private void CurrentValueBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
     {
         if (sender is not FrameworkElement { DataContext: ParameterViewModel parameter } || !parameter.IsSlider)
