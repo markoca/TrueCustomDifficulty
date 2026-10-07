@@ -84,9 +84,13 @@ public sealed class BleedingCurveControl : FrameworkElement
 
             byId.TryGetValue(SeverityId, out _severity);
             byId.TryGetValue(RecoveryId, out _recovery);
-            byId.TryGetValue(LowDamageId, out _damage[0]);
-            byId.TryGetValue(MediumDamageId, out _damage[1]);
-            byId.TryGetValue(SevereDamageId, out _damage[2]);
+
+            if (byId.TryGetValue(LowDamageId, out var lowDamage))
+                _damage[0] = lowDamage;
+            if (byId.TryGetValue(MediumDamageId, out var mediumDamage))
+                _damage[1] = mediumDamage;
+            if (byId.TryGetValue(SevereDamageId, out var severeDamage))
+                _damage[2] = severeDamage;
 
             foreach (var parameter in EnumerateBoundParameters())
             {
