@@ -784,19 +784,221 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "TRADING SYSTEM", "pricing, accepted condition and broken-item value", text, muted, accent);
+        DrawHeader(
+            dc,
+            "TRADING FLOW",
+            "what traders pay, what they charge, what damaged gear they accept and what broken gear is worth",
+            text,
+            muted,
+            accent);
 
-        var left = 16.0;
-        var width = Math.Max(420.0, ActualWidth - 32.0);
-        var gap = 10.0;
-        var cardWidth = (width - gap) / 2.0;
+        var traderBuys = P("economy.buyCondition");
+        var traderSells = P("economy.sellCondition");
+        var minCondition = P("economy.traderMinBuyCondition");
+        var valueFloor = P("economy.itemValueFloor");
 
-        DrawHorizontalTrackCard(dc, P("economy.buyCondition"), "TRADER BUYS FROM YOU", new Rect(left, 58.0, cardWidth, 88.0), text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, P("economy.sellCondition"), "TRADER SELLS TO YOU", new Rect(left + cardWidth + gap, 58.0, cardWidth, 88.0), text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, P("economy.traderMinBuyCondition"), "MINIMUM BUY CONDITION", new Rect(left, 164.0, cardWidth, 88.0), text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, P("economy.itemValueFloor"), "VALUE AT 0% DURABILITY", new Rect(left + cardWidth + gap, 164.0, cardWidth, 88.0), text, muted, border, accent, panel);
+        var left = 24.0;
+        var right = Math.Max(left + 450.0, ActualWidth - 24.0);
+        var width = right - left;
+        var gap = 14.0;
+        var half = (width - gap) / 2.0;
 
-        DrawCenteredText(dc, "BUY / SELL ARE PRICE SCALERS", new Point(ActualWidth / 2.0, 278.0), 8.4, muted, FontWeights.SemiBold);
+        void DrawPricingSide(
+            ParameterViewModel? parameter,
+            string title,
+            string subtitle,
+            string leftLabel,
+            string rightLabel,
+            Rect card)
+        {
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 1.0), card, 4.0, 4.0);
+            DrawText(dc, title, new Point(card.Left + 12.0, card.Top + 9.0), 9.0, text, FontWeights.Bold);
+            DrawText(dc, subtitle, new Point(card.Left + 12.0, card.Top + 25.0), 7.8, muted, FontWeights.Normal);
+
+            DrawText(dc, leftLabel, new Point(card.Left + 12.0, card.Top + 47.0), 7.6, muted, FontWeights.Bold);
+            DrawRightAlignedText(dc, rightLabel, new Point(card.Right - 12.0, card.Top + 47.0), 7.6, accent, FontWeights.Bold);
+
+            if (parameter is null)
+                return;
+
+            DrawRightAlignedText(
+                dc,
+                FriendlyValue(parameter),
+                new Point(card.Right - 12.0, card.Top + 8.0),
+                10.0,
+                accent,
+                FontWeights.Bold);
+
+            var track = new Rect(card.Left + 18.0, card.Top + 69.0, card.Width - 36.0, 24.0);
+            var y = track.Top + track.Height / 2.0;
+            dc.DrawLine(new Pen(border, 4.0), new Point(track.Left, y), new Point(track.Right, y));
+
+            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
+            var vanillaX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
+
+            dc.DrawLine(new Pen(accent, 4.0), new Point(track.Left, y), new Point(currentX, y));
+            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, y - 8.0), new Point(vanillaX, y + 8.0));
+
+            dc.DrawEllipse(
+                panel,
+                new Pen(accent, IsSelected(parameter) ? 2.6 : 1.6),
+                new Point(currentX, y),
+                7.0,
+                7.0);
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 3.0, 3.0);
+
+            DrawText(dc, "0x", new Point(track.Left, y + 10.0), 7.4, muted, FontWeights.Normal);
+            DrawCenteredText(dc, "BASE", new Point(vanillaX, y + 10.0), 7.3, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, "2x", new Point(track.Right, y + 10.0), 7.4, muted, FontWeights.Normal);
+
+            AddHorizontalTarget(
+                parameter,
+                new Rect(track.Left - 8.0, track.Top - 5.0, track.Width + 16.0, track.Height + 10.0),
+                track,
+                parameter.Minimum,
+                parameter.Maximum);
+        }
+
+        DrawPricingSide(
+            traderBuys,
+            "PLAYER  →  TRADER",
+            "trader buys your item",
+            "LOWER PAYOUT SETTING",
+            "HIGHER PAYOUT SETTING",
+            new Rect(left, 58.0, half, 112.0));
+
+        DrawPricingSide(
+            traderSells,
+            "TRADER  →  PLAYER",
+            "trader sells an item to you",
+            "LOWER SHOP SETTING",
+            "HIGHER SHOP SETTING",
+            new Rect(left + half + gap, 58.0, half, 112.0));
+
+        var currentGap = traderBuys is not null && traderSells is not null
+            ? traderSells.CurrentNumber - traderBuys.CurrentNumber
+            : 0.0;
+        var baseGap = traderBuys is not null && traderSells is not null
+            ? traderSells.ReferenceNumber - traderBuys.ReferenceNumber
+            : 0.0;
+
+        var gapCard = new Rect(left, 184.0, width, 54.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.94), new Pen(border, 1.0), gapCard, 4.0, 4.0);
+        DrawText(dc, "DIFFICULTY PRICING GAP", new Point(gapCard.Left + 12.0, gapCard.Top + 8.0), 8.4, muted, FontWeights.Bold);
+        DrawText(
+            dc,
+            "sell-to-you setting minus buy-from-you setting — NOT the final shop-price ratio",
+            new Point(gapCard.Left + 12.0, gapCard.Top + 24.0),
+            7.5,
+            muted,
+            FontWeights.Normal);
+        DrawRightAlignedText(
+            dc,
+            $"{currentGap:+0.00;-0.00;0.00}   |   BASE {baseGap:+0.00;-0.00;0.00}",
+            new Point(gapCard.Right - 12.0, gapCard.Top + 8.0),
+            9.0,
+            Math.Abs(currentGap - baseGap) > Epsilon ? accent : muted,
+            FontWeights.Bold);
+
+        var gateCard = new Rect(left, 253.0, width, 91.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 1.0), gateCard, 4.0, 4.0);
+        DrawText(dc, "TRADER CONDITION GATE", new Point(gateCard.Left + 12.0, gateCard.Top + 9.0), 8.8, text, FontWeights.Bold);
+        DrawText(dc, "weapons / armor below the threshold are refused", new Point(gateCard.Left + 12.0, gateCard.Top + 25.0), 7.7, muted, FontWeights.Normal);
+
+        if (minCondition is not null)
+        {
+            DrawRightAlignedText(
+                dc,
+                $"{minCondition.CurrentNumber * 100:0}% MIN CONDITION",
+                new Point(gateCard.Right - 12.0, gateCard.Top + 8.0),
+                9.5,
+                accent,
+                FontWeights.Bold);
+
+            var gateTrack = new Rect(gateCard.Left + 20.0, gateCard.Top + 54.0, gateCard.Width - 40.0, 24.0);
+            var gateY = gateTrack.Top + gateTrack.Height / 2.0;
+            var currentX = ValueToX(minCondition.CurrentNumber, 0.0, 1.0, gateTrack, reverse: false);
+            var vanillaX = ValueToX(minCondition.ReferenceNumber, 0.0, 1.0, gateTrack, reverse: false);
+
+            dc.DrawLine(new Pen(border, 4.0), new Point(gateTrack.Left, gateY), new Point(gateTrack.Right, gateY));
+
+            dc.DrawRectangle(
+                CloneWithOpacity(border, 0.16),
+                null,
+                new Rect(gateTrack.Left, gateY - 6.0, Math.Max(1.0, currentX - gateTrack.Left), 12.0));
+            dc.DrawRectangle(
+                CloneWithOpacity(accent, 0.16),
+                null,
+                new Rect(currentX, gateY - 6.0, Math.Max(1.0, gateTrack.Right - currentX), 12.0));
+
+            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, gateY - 10.0), new Point(vanillaX, gateY + 10.0));
+            dc.DrawLine(new Pen(accent, 2.4), new Point(currentX, gateY - 12.0), new Point(currentX, gateY + 12.0));
+            dc.DrawEllipse(panel, new Pen(accent, IsSelected(minCondition) ? 2.6 : 1.6), new Point(currentX, gateY), 7.0, 7.0);
+
+            DrawText(dc, "REFUSED", new Point(gateTrack.Left, gateY + 11.0), 7.5, muted, FontWeights.Bold);
+            DrawRightAlignedText(dc, "ACCEPTED", new Point(gateTrack.Right, gateY + 11.0), 7.5, accent, FontWeights.Bold);
+            DrawCenteredText(dc, "VANILLA 40%", new Point(vanillaX, gateY + 11.0), 7.2, muted, FontWeights.SemiBold);
+
+            AddHorizontalTarget(
+                minCondition,
+                new Rect(gateTrack.Left - 8.0, gateTrack.Top - 5.0, gateTrack.Width + 16.0, gateTrack.Height + 10.0),
+                gateTrack,
+                0.0,
+                1.0);
+        }
+
+        var valueCard = new Rect(left, 360.0, width, 78.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 1.0), valueCard, 4.0, 4.0);
+        DrawText(dc, "BROKEN-ITEM VALUE FLOOR", new Point(valueCard.Left + 12.0, valueCard.Top + 9.0), 8.8, text, FontWeights.Bold);
+        DrawText(dc, "base value retained at exactly 0% durability", new Point(valueCard.Left + 12.0, valueCard.Top + 25.0), 7.7, muted, FontWeights.Normal);
+
+        if (valueFloor is not null)
+        {
+            DrawRightAlignedText(
+                dc,
+                $"{valueFloor.CurrentNumber * 100:0}% OF BASE VALUE",
+                new Point(valueCard.Right - 12.0, valueCard.Top + 8.0),
+                9.5,
+                accent,
+                FontWeights.Bold);
+
+            var floorTrack = new Rect(valueCard.Left + 20.0, valueCard.Top + 49.0, valueCard.Width - 40.0, 20.0);
+            var floorY = floorTrack.Top + floorTrack.Height / 2.0;
+            dc.DrawLine(new Pen(border, 4.0), new Point(floorTrack.Left, floorY), new Point(floorTrack.Right, floorY));
+
+            var currentX = ValueToX(valueFloor.CurrentNumber, valueFloor.Minimum, valueFloor.Maximum, floorTrack, reverse: false);
+            var vanillaX = ValueToX(valueFloor.ReferenceNumber, valueFloor.Minimum, valueFloor.Maximum, floorTrack, reverse: false);
+
+            dc.DrawLine(new Pen(accent, 4.0), new Point(floorTrack.Left, floorY), new Point(currentX, floorY));
+            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, floorY - 8.0), new Point(vanillaX, floorY + 8.0));
+
+            dc.DrawEllipse(
+                panel,
+                new Pen(accent, IsSelected(valueFloor) ? 2.6 : 1.6),
+                new Point(currentX, floorY),
+                7.0,
+                7.0);
+            dc.DrawEllipse(accent, null, new Point(currentX, floorY), 3.0, 3.0);
+
+            DrawText(dc, "0%", new Point(floorTrack.Left, floorY + 9.0), 7.3, muted, FontWeights.Normal);
+            DrawCenteredText(dc, "VANILLA 10%", new Point(vanillaX, floorY + 9.0), 7.2, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, "20%", new Point(floorTrack.Right, floorY + 9.0), 7.3, muted, FontWeights.Normal);
+
+            AddHorizontalTarget(
+                valueFloor,
+                new Rect(floorTrack.Left - 8.0, floorTrack.Top - 5.0, floorTrack.Width + 16.0, floorTrack.Height + 10.0),
+                floorTrack,
+                valueFloor.Minimum,
+                valueFloor.Maximum);
+        }
+
+        DrawCenteredText(
+            dc,
+            "PRICING SETTINGS STILL PASS THROUGH TRADER-SPECIFIC MODIFIERS AND OTHER VANILLA SHOP RULES",
+            new Point(ActualWidth / 2.0, 459.0),
+            7.6,
+            muted,
+            FontWeights.Normal);
     }
 
     private void DrawHungerLadder(
@@ -2234,7 +2436,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "StarvationTimeline" => 430.0,
             "RepeatedHitBand" => 335.0,
             "RadiationBalance" => 415.0,
-            "TradingDashboard" => 310.0,
+            "TradingDashboard" => 485.0,
             "RepairCurve" => 330.0,
             "AmmoDistribution" => 405.0,
             _ => 340.0
