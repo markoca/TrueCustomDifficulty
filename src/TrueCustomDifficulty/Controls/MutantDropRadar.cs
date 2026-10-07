@@ -242,14 +242,14 @@ private readonly RadarStatusMessage _status;
             var isModified = parameter.IsModified;
             BeginLegendHitArea(i);
 
-DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width * 0.44, 18), RadarLegendTextSize, isModified ? accentBrush : hovered ? textBrush : textBrush, FontWeights.SemiBold);
+DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width * 0.44, 18), RadarLegendTextSize, hovered ? Brushes.White : isModified ? accentBrush : textBrush, FontWeights.SemiBold);
 
             var currentPercent = values[i] * 100.0;
             var vanillaPercent = TryGetVanillaValue(parameter, out var vanilla)
                 ? vanilla * 100.0
                 : currentPercent;
             var detail = $"{currentPercent:0.#}% drop chance | vanilla {vanillaPercent:0.#}%";
-            DrawClippedText(dc, detail, new Rect(bounds.Left + (bounds.Width * 0.44), y + 6, bounds.Width * 0.56 - 6, 18), RadarLegendTextSize, isModified || isSelected ? accentBrush : hovered ? textBrush : mutedBrush, isModified || isSelected ? FontWeights.SemiBold : FontWeights.Normal);
+            DrawClippedText(dc, detail, new Rect(bounds.Left + (bounds.Width * 0.44), y + 6, bounds.Width * 0.56 - 6, 18), RadarLegendTextSize, isModified || isSelected ? accentBrush : hovered ? Brushes.White : mutedBrush, isModified || isSelected ? FontWeights.SemiBold : FontWeights.Normal);
 
             EndLegendHitArea();
             _legendHitRects[i] = new Rect(bounds.Left, y, bounds.Width, rowHeight);
