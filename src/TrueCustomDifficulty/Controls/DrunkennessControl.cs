@@ -17,8 +17,6 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class DrunkennessControl : FrameworkElement
 {
     private const string ParameterId = "survival.drunknessThresholdScale";
-    private const double VanillaMedium = 20.0;
-    private const double VanillaStrong = 40.0;
     private const double VanillaVeryStrong = 60.0;
     private const double BeerDrunkness = 15.0;
     private const double VodkaDrunkness = 30.0;
