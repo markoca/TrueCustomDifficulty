@@ -2447,7 +2447,7 @@
         ]
       },
       "rationale": "Controls how strongly one Beer pushes the drunkenness meter.",
-      "logic": "Vanilla is 15 Drunkness per Beer, so 4 beers first reach the Very Strong threshold of 60. The slider moves in exact 1-point steps.",
+      "logic": "Vanilla is 15 Drunkness per Beer, so the 4th beer first reaches WASTED at the fixed threshold of 60. UI tiers: BUZZED <20, TIPSY 20–39, DRUNK 40–59, WASTED 60+.",
       "interaction": "Always visible beside Vodka Strength. Moving it updates Beer strength, the Beer Very Strong drink count, and the AFTER EACH BEER progression immediately."
     },
     {
@@ -2494,7 +2494,7 @@
         ]
       },
       "rationale": "Controls how strongly one Vodka pushes the drunkenness meter.",
-      "logic": "Vanilla is 30 Drunkness per Vodka, so 2 vodkas first reach the Very Strong threshold of 60. The slider moves in exact 1-point steps.",
+      "logic": "Vanilla is 30 Drunkness per Vodka, so the 2nd vodka first reaches WASTED at the fixed threshold of 60. UI tiers: BUZZED <20, TIPSY 20–39, DRUNK 40–59, WASTED 60+.",
       "interaction": "Always visible beside Beer Strength. Moving it updates Vodka strength, the Vodka Very Strong drink count, and the AFTER EACH VODKA progression immediately."
     },
     {
