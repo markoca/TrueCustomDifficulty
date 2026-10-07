@@ -2365,64 +2365,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             FontWeights.SemiBold);
     }
 
-    private void DrawFaderBank(
-        DrawingContext dc,
-        IReadOnlyList<ParameterViewModel?> parameters,
-        IReadOnlyList<string> labels,
-        Rect area,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel,
-        bool showRawAndMultiplier)
-    {
-        var count = Math.Min(parameters.Count, labels.Count);
-        if (count == 0)
-            return;
-
-        var columnWidth = area.Width / count;
-
-        for (var i = 0; i < count; i++)
-        {
-            if (parameters[i] is not { } parameter)
-                continue;
-
-            var centerX = area.Left + columnWidth * (i + 0.5);
-            var trackTop = area.Top + 43.0;
-            var trackBottom = area.Bottom - 48.0;
-            var mapRect = new Rect(centerX - 14.0, trackTop, 28.0, Math.Max(30.0, trackBottom - trackTop));
-
-            DrawCenteredText(dc, labels[i], new Point(centerX, area.Top + 3.0), 8.8, text, FontWeights.Bold);
-
-            var valueText = showRawAndMultiplier && Math.Abs(parameter.ReferenceNumber) > Epsilon
-                ? $"{parameter.CurrentNumber:0.##}  |  {parameter.CurrentNumber / parameter.ReferenceNumber:0.##}x"
-                : FriendlyValue(parameter);
-
-            DrawCenteredText(dc, valueText, new Point(centerX, area.Top + 20.0), 8.8, accent, FontWeights.SemiBold);
-
-            dc.DrawLine(new Pen(border, 4.0), new Point(centerX, trackTop), new Point(centerX, trackBottom));
-
-            var vanillaY = ValueToY(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, mapRect);
-            dc.DrawLine(new Pen(muted, 1.2), new Point(centerX - 10.0, vanillaY), new Point(centerX + 10.0, vanillaY));
-
-            var currentY = ValueToY(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, mapRect);
-            var thumb = new Rect(centerX - 13.0, currentY - 5.0, 26.0, 10.0);
-            dc.DrawRoundedRectangle(panel, new Pen(accent, IsSelected(parameter) ? 2.4 : 1.6), thumb, 2.0, 2.0);
-            dc.DrawRectangle(accent, null, new Rect(centerX - 8.0, currentY - 1.0, 16.0, 2.0));
-
-            AddVerticalTarget(
-                parameter,
-                new Rect(centerX - Math.Max(20.0, columnWidth * 0.35), trackTop - 8.0, Math.Max(40.0, columnWidth * 0.70), trackBottom - trackTop + 16.0),
-                mapRect,
-                parameter.Minimum,
-                parameter.Maximum);
-
-            DrawCenteredText(dc, FormatCompact(parameter.Minimum), new Point(centerX, trackBottom + 11.0), 7.8, muted, FontWeights.Normal);
-            DrawCenteredText(dc, FormatCompact(parameter.Maximum), new Point(centerX, trackTop - 16.0), 7.8, muted, FontWeights.Normal);
-        }
-    }
-
     private void DrawHorizontalTrackCard(
         DrawingContext dc,
         ParameterViewModel? parameter,
