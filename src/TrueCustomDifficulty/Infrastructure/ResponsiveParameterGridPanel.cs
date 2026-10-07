@@ -56,9 +56,9 @@ public sealed class ResponsiveParameterGridPanel : Panel
 
             ["survival.bleedingSeverity"] = new("survival-bleeding-1", 0),
             ["survival.bleedingRecovery"] = new("survival-bleeding-1", 1),
-            ["survival.bleedingLowDamage"] = new("survival-bleeding-2", 0),
-            ["survival.bleedingMediumDamage"] = new("survival-bleeding-2", 1),
-            ["survival.bleedingStrongDamage"] = new("survival-bleeding-3", 0),
+            ["survival.bleedingLowDamage"] = new("survival-bleeding-damage", 0),
+            ["survival.bleedingMediumDamage"] = new("survival-bleeding-damage", 1),
+            ["survival.bleedingStrongDamage"] = new("survival-bleeding-damage", 2),
 
             // Health
             ["health.maxHP"] = new("health-core-1", 0),
@@ -159,7 +159,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
     {
         var width = ResolveWidth(availableSize.Width);
         var columns = GetColumnCount(width);
-        var cardWidth = GetCardWidth(width, columns);
         var rows = BuildRows(columns);
 
         double totalHeight = 0.0;
@@ -167,10 +166,12 @@ public sealed class ResponsiveParameterGridPanel : Panel
         foreach (var row in rows)
         {
             var rowHeight = 0.0;
+            var rowColumns = GetRowColumnCount(row, columns);
+            var rowCardWidth = GetCardWidth(width, rowColumns);
 
             foreach (var item in row.Items)
             {
-                var measureWidth = row.FullWidth ? width : cardWidth;
+                var measureWidth = row.FullWidth ? width : rowCardWidth;
                 item.Element.Measure(new Size(measureWidth, double.PositiveInfinity));
                 rowHeight = Math.Max(rowHeight, item.Element.DesiredSize.Height);
             }
@@ -189,7 +190,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
     {
         var width = Math.Max(0.0, finalSize.Width);
         var columns = GetColumnCount(width);
-        var cardWidth = GetCardWidth(width, columns);
         var rows = BuildRows(columns);
 
         double y = 0.0;
@@ -199,6 +199,8 @@ public sealed class ResponsiveParameterGridPanel : Panel
             var rowHeight = row.Items.Count == 0
                 ? 0.0
                 : row.Items.Max(item => item.Element.DesiredSize.Height);
+            var rowColumns = GetRowColumnCount(row, columns);
+            var rowCardWidth = GetCardWidth(width, rowColumns);
 
             foreach (var item in row.Items)
             {
@@ -208,11 +210,11 @@ public sealed class ResponsiveParameterGridPanel : Panel
                     continue;
                 }
 
-                var column = columns == 1 ? 0 : Math.Clamp(item.Column, 0, 1);
+                var column = rowColumns == 1 ? 0 : Math.Clamp(item.Column, 0, rowColumns - 1);
                 item.Element.Arrange(new Rect(
-                    column * (cardWidth + ColumnGap),
+                    column * (rowCardWidth + ColumnGap),
                     y,
-                    cardWidth,
+                    rowCardWidth,
                     rowHeight));
             }
 
@@ -331,7 +333,18 @@ public sealed class ResponsiveParameterGridPanel : Panel
         => width >= TwoColumnThreshold ? 2 : 1;
 
     private static double GetCardWidth(double width, int columns)
-        => Math.Max(260.0, (width - ColumnGap * (columns - 1)) / columns);
+        => Math.Max(columns >= 3 ? 180.0 : 260.0, (width - ColumnGap * (columns - 1)) / columns);
+
+    private static int GetRowColumnCount(LayoutRow row, int availableColumns)
+    {
+        if (row.FullWidth)
+            return 1;
+
+        if (availableColumns <= 1 || row.Items.Count == 0)
+            return 1;
+
+        return Math.Max(availableColumns, row.Items.Max(item => item.Column) + 1);
+    }
 
     private static bool IsLayoutVisible(UIElement child)
     {
