@@ -2502,6 +2502,52 @@
       "interaction": "Water Instant Stamina Restore controls the immediate refill separately."
     },
     {
+      "id": "survival.energyDrinkStaminaRecoveryStrength",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Energy Drink Stamina Recovery Strength",
+      "description": "Scales the sustained stamina-regeneration bonus from the normal Energy Drink without changing its instant refill, fatigue relief or duration.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Energy Drink stamina recovery"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.05
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnergeticStamina",
+          "path": "ValueMin|ValueMax",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "EnergeticStamina is the confirmed sustained stamina-regeneration effect for the normal Energy Drink.",
+          "The authored vanilla regeneration effect is +200%.",
+          "Per-action stamina-cost effects are intentionally excluded here until their raw magnitude is locked source-exact."
+        ]
+      },
+      "rationale": "Controls how strongly the normal Energy Drink boosts sustained stamina recovery.",
+      "logic": "1x keeps the authored Energy Drink stamina-regeneration effect; 0 removes that sustained regeneration bonus; 2x doubles it.",
+      "interaction": "Instant Stamina Restore, Energy Drink Fatigue Relief and Energy Drink Effect Duration remain separate controls.",
+      "exposeInUi": false
+    },
+    {
       "id": "survival.energyDrinkEffectDuration",
       "tab": "survival",
       "group": "Consumable Effects",
