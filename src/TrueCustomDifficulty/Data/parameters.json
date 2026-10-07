@@ -1984,66 +1984,6 @@
       "interaction": "Fatigue Build-up Rate controls how quickly tiredness returns. This setting changes how much relief energy drinks provide, including their special Poppy Field and Weird Kettle variants."
     },
     {
-      "id": "survival.drunknessThresholdScale",
-      "tab": "survival",
-      "group": "Consumable Effects",
-      "label": "Alcohol Tolerance",
-      "description": "Choose Beer or Vodka, then set how many drinks it takes to reach the strongest drunkenness tier. Vanilla is 4 beers or 2 vodkas; the same player tolerance is applied either way.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Drunkness thresholds"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0.25,
-        "max": 1.5,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "DrunknessMechanics",
-          "path": "MechanicsEffect.ConditionEffects.MediumDrunkness.ConditionValue",
-          "operation": "scale"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "DrunknessMechanics",
-          "path": "MechanicsEffect.ConditionEffects.StrongDrunkness.ConditionValue",
-          "operation": "scale"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "DrunknessMechanics",
-          "path": "MechanicsEffect.ConditionEffects.VeryStrongDrunkness.ConditionValue",
-          "operation": "scale"
-        }
-      ],
-      "support": {
-        "status": "confirmed",
-        "notes": [
-          "Vanilla DrunknessMechanics thresholds are Medium 20, Strong 40 and Very Strong 60.",
-          "Beer contributes 15 Drunkness and Vodka 30, so vanilla Very Strong corresponds to roughly 4 beers or 2 vodkas when drinks are stacked before natural sober-up.",
-          "The control scales thresholds instead of changing Beer/Vodka Drunkness effect strength, preserving their authored 1:2 relationship and avoiding scripted VodkaDrunkness edits."
-        ]
-      },
-      "rationale": "Sets how quickly alcohol progresses through Medium, Strong and Very Strong drunkenness without changing the strength of Beer or Vodka themselves.",
-      "logic": "Vanilla is 4 beers or 2 vodkas to the Very Strong threshold of 60. The control scales all three thresholds together, preserving the 20 / 40 / 60 progression.",
-      "interaction": "Choose BEER or VODKA, then use the drink-count slider. 4 beers or 2 vodkas is VANILLA. The effect preview shows what each drunkenness tier does."
-    },
-    {
       "id": "survival.instantStaminaRestore",
       "tab": "survival",
       "group": "Consumable Effects",
@@ -2401,6 +2341,66 @@
       "rationale": "Controls how long Magic Vodka's psi protection lasts.",
       "logic": "1x keeps the 90 s vanilla psi-protection duration.",
       "interaction": "This is a quest/special consumable and does not participate in ordinary Alcohol Radiation Removal."
+    },
+    {
+      "id": "survival.drunknessThresholdScale",
+      "tab": "survival",
+      "group": "Alcohol Tolerance",
+      "label": "Alcohol Tolerance",
+      "description": "Choose Beer or Vodka, then set how many drinks it takes to reach the strongest drunkenness tier. Vanilla is 4 beers or 2 vodkas; the same player tolerance is applied either way.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Drunkness thresholds"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 1.5,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "DrunknessMechanics",
+          "path": "MechanicsEffect.ConditionEffects.MediumDrunkness.ConditionValue",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "DrunknessMechanics",
+          "path": "MechanicsEffect.ConditionEffects.StrongDrunkness.ConditionValue",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "DrunknessMechanics",
+          "path": "MechanicsEffect.ConditionEffects.VeryStrongDrunkness.ConditionValue",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Vanilla DrunknessMechanics thresholds are Medium 20, Strong 40 and Very Strong 60.",
+          "Beer contributes 15 Drunkness and Vodka 30, so vanilla Very Strong corresponds to roughly 4 beers or 2 vodkas when drinks are stacked before natural sober-up.",
+          "The control scales thresholds instead of changing Beer/Vodka Drunkness effect strength, preserving their authored 1:2 relationship and avoiding scripted VodkaDrunkness edits."
+        ]
+      },
+      "rationale": "Sets how quickly alcohol progresses through Medium, Strong and Very Strong drunkenness without changing the strength of Beer or Vodka themselves.",
+      "logic": "Vanilla is 4 beers or 2 vodkas to the Very Strong threshold of 60. The control scales all three thresholds together, preserving the 20 / 40 / 60 progression.",
+      "interaction": "Choose BEER or VODKA, then use the drink-count slider. 4 beers or 2 vodkas is VANILLA. The effect preview shows what each drunkenness tier does."
     },
     {
       "id": "survival.sleepEligibilityThreshold",
