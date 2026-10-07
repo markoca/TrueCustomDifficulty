@@ -286,19 +286,19 @@ private readonly RadarStatusMessage _status;
         DrawClippedText(
             dc,
             info.Label,
-            new Rect(bounds.Left + 6, y + 6, bounds.Width * 0.24, 18.0), RadarLegendTextSize, modified ? accentBrush : textBrush,
+            new Rect(bounds.Left + 6, y + 6, bounds.Width * 0.24, 18.0), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
             $"{value:0.##}x",
-            new Rect(bounds.Left + bounds.Width * 0.24, y + 6, bounds.Width * 0.12, 18.0), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            new Rect(bounds.Left + bounds.Width * 0.24, y + 6, bounds.Width * 0.12, 18.0), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         DrawClippedText(
             dc,
             FormatEffectiveCaps(info, value),
-            new Rect(bounds.Left + bounds.Width * 0.36, y + 6, bounds.Width * 0.64 - 6, 18.0), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
+            new Rect(bounds.Left + bounds.Width * 0.36, y + 6, bounds.Width * 0.64 - 6, 18.0), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
         EndLegendHitArea();
