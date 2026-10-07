@@ -363,6 +363,7 @@ public sealed class DrunkennessControl : FrameworkElement
         if (_vodkaRect.Contains(point))
         {
             _reference = DrinkReference.Vodka;
+            _activeSlider = ActiveSlider.Tolerance;
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -371,6 +372,7 @@ public sealed class DrunkennessControl : FrameworkElement
         if (_beerRect.Contains(point))
         {
             _reference = DrinkReference.Beer;
+            _activeSlider = ActiveSlider.Tolerance;
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -378,9 +380,24 @@ public sealed class DrunkennessControl : FrameworkElement
 
         if (_sliderRect.Contains(point))
         {
-            var ratio = Math.Clamp((point.X - _sliderRect.Left) / Math.Max(1.0, _sliderRect.Width), 0.0, 1.0);
-            var count = 1 + (int)Math.Round(ratio * (MaxReferenceDrinks - 1), MidpointRounding.AwayFromZero);
-            SetRequiredDrinks(count);
+            _activeSlider = ActiveSlider.Tolerance;
+            SetToleranceFromPoint(point.X);
+            e.Handled = true;
+            return;
+        }
+
+        if (_beerStrengthSliderRect.Contains(point))
+        {
+            _activeSlider = ActiveSlider.BeerStrength;
+            SetStrengthFromPoint(_beerStrengthParameter, _beerStrengthSliderRect, point.X);
+            e.Handled = true;
+            return;
+        }
+
+        if (_vodkaStrengthSliderRect.Contains(point))
+        {
+            _activeSlider = ActiveSlider.VodkaStrength;
+            SetStrengthFromPoint(_vodkaStrengthParameter, _vodkaStrengthSliderRect, point.X);
             e.Handled = true;
         }
     }
@@ -389,30 +406,67 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         base.OnMouseRightButtonDown(e);
 
-        if (_parameter is null)
-            return;
+        var point = e.GetPosition(this);
 
-        _parameter.CurrentNumber = 1.0;
-        InvalidateVisual();
-        e.Handled = true;
+        if (_sliderRect.Contains(point) && _parameter is not null)
+        {
+            _activeSlider = ActiveSlider.Tolerance;
+            _parameter.CurrentNumber = 1.0;
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+
+        if (_beerStrengthSliderRect.Contains(point) && _beerStrengthParameter is not null)
+        {
+            _activeSlider = ActiveSlider.BeerStrength;
+            _beerStrengthParameter.CurrentNumber = 1.0;
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+
+        if (_vodkaStrengthSliderRect.Contains(point) && _vodkaStrengthParameter is not null)
+        {
+            _activeSlider = ActiveSlider.VodkaStrength;
+            _vodkaStrengthParameter.CurrentNumber = 1.0;
+            InvalidateVisual();
+            e.Handled = true;
+        }
     }
 
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
 
-        if (_parameter is null || e.Delta == 0)
+        if (e.Delta == 0)
             return;
 
         var point = e.GetPosition(this);
-        if (!_sliderRect.Contains(point))
-            return;
+        var direction = e.Delta > 0 ? 1 : -1;
 
-        var current = VanillaVeryStrong * CurrentScale / ReferenceStrength;
-        var count = Math.Max(1, (int)Math.Ceiling(current - 0.000001));
-        count += e.Delta > 0 ? 1 : -1;
-        SetRequiredDrinks(Math.Clamp(count, 1, MaxReferenceDrinks));
-        e.Handled = true;
+        if (_sliderRect.Contains(point))
+        {
+            _activeSlider = ActiveSlider.Tolerance;
+            NudgeTolerance(direction);
+            e.Handled = true;
+            return;
+        }
+
+        if (_beerStrengthSliderRect.Contains(point))
+        {
+            _activeSlider = ActiveSlider.BeerStrength;
+            NudgeStrength(_beerStrengthParameter, direction);
+            e.Handled = true;
+            return;
+        }
+
+        if (_vodkaStrengthSliderRect.Contains(point))
+        {
+            _activeSlider = ActiveSlider.VodkaStrength;
+            NudgeStrength(_vodkaStrengthParameter, direction);
+            e.Handled = true;
+        }
     }
 
     protected override void OnMouseMove(MouseEventArgs e)
@@ -426,7 +480,11 @@ public sealed class DrunkennessControl : FrameworkElement
                 ? DrinkReference.Beer
                 : null;
 
-        var interactive = hoverReference is not null || _sliderRect.Contains(point);
+        var interactive = hoverReference is not null
+            || _sliderRect.Contains(point)
+            || _beerStrengthSliderRect.Contains(point)
+            || _vodkaStrengthSliderRect.Contains(point);
+
         Cursor = interactive ? Cursors.Hand : Cursors.Arrow;
 
         if (_hoverReference != hoverReference)
@@ -448,10 +506,9 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         base.OnKeyDown(e);
 
-        if (e.Key == Key.R && _parameter is not null)
+        if (e.Key == Key.R)
         {
-            _parameter.CurrentNumber = 1.0;
-            InvalidateVisual();
+            ResetActiveSlider();
             e.Handled = true;
             return;
         }
@@ -463,13 +520,81 @@ public sealed class DrunkennessControl : FrameworkElement
             _ => 0
         };
 
-        if (direction == 0 || _parameter is null)
+        if (direction == 0)
+            return;
+
+        switch (_activeSlider)
+        {
+            case ActiveSlider.Tolerance:
+                NudgeTolerance(direction);
+                break;
+            case ActiveSlider.BeerStrength:
+                NudgeStrength(_beerStrengthParameter, direction);
+                break;
+            case ActiveSlider.VodkaStrength:
+                NudgeStrength(_vodkaStrengthParameter, direction);
+                break;
+        }
+
+        e.Handled = true;
+    }
+
+    private void SetToleranceFromPoint(double x)
+    {
+        if (_parameter is null)
+            return;
+
+        var ratio = Math.Clamp((x - _sliderRect.Left) / Math.Max(1.0, _sliderRect.Width), 0.0, 1.0);
+        var count = 1 + (int)Math.Round(ratio * (MaxReferenceDrinks - 1), MidpointRounding.AwayFromZero);
+        SetRequiredDrinks(count);
+    }
+
+    private void SetStrengthFromPoint(ParameterViewModel? parameter, Rect sliderRect, double x)
+    {
+        if (parameter is null)
+            return;
+
+        var ratio = Math.Clamp((x - sliderRect.Left) / Math.Max(1.0, sliderRect.Width), 0.0, 1.0);
+        parameter.CurrentNumber = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
+        InvalidateVisual();
+    }
+
+    private void NudgeTolerance(int direction)
+    {
+        if (_parameter is null)
             return;
 
         var current = VanillaVeryStrong * CurrentScale / ReferenceStrength;
         var count = Math.Max(1, (int)Math.Ceiling(current - 0.000001)) + direction;
         SetRequiredDrinks(Math.Clamp(count, 1, MaxReferenceDrinks));
-        e.Handled = true;
+    }
+
+    private void NudgeStrength(ParameterViewModel? parameter, int direction)
+    {
+        if (parameter is null)
+            return;
+
+        var step = Math.Max(0.01, parameter.TickFrequency);
+        parameter.CurrentNumber += direction * step;
+        InvalidateVisual();
+    }
+
+    private void ResetActiveSlider()
+    {
+        switch (_activeSlider)
+        {
+            case ActiveSlider.Tolerance when _parameter is not null:
+                _parameter.CurrentNumber = 1.0;
+                break;
+            case ActiveSlider.BeerStrength when _beerStrengthParameter is not null:
+                _beerStrengthParameter.CurrentNumber = 1.0;
+                break;
+            case ActiveSlider.VodkaStrength when _vodkaStrengthParameter is not null:
+                _vodkaStrengthParameter.CurrentNumber = 1.0;
+                break;
+        }
+
+        InvalidateVisual();
     }
 
     private void SetRequiredDrinks(int drinks)
@@ -524,6 +649,15 @@ public sealed class DrunkennessControl : FrameworkElement
         return left + Math.Clamp(ratio, 0.0, 1.0) * (right - left);
     }
 
+    private static double ValueToX(double value, double minimum, double maximum, double left, double right)
+    {
+        if (maximum <= minimum)
+            return left;
+
+        var ratio = (value - minimum) / (maximum - minimum);
+        return left + Math.Clamp(ratio, 0.0, 1.0) * (right - left);
+    }
+
     private Brush BrushResource(string key, Brush fallback)
         => TryFindResource(key) as Brush ?? fallback;
 
@@ -537,6 +671,12 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         var ft = CreateText(value, size, brush, weight);
         dc.DrawText(ft, new Point(point.X - ft.WidthIncludingTrailingWhitespace / 2.0, point.Y));
+    }
+
+    private void DrawRightAlignedText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
+    {
+        var ft = CreateText(value, size, brush, weight);
+        dc.DrawText(ft, new Point(point.X - ft.WidthIncludingTrailingWhitespace, point.Y));
     }
 
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
@@ -553,6 +693,13 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         Vodka,
         Beer
+    }
+
+    private enum ActiveSlider
+    {
+        Tolerance,
+        BeerStrength,
+        VodkaStrength
     }
 
     private sealed record TierInfo(string Label, string[] Effects);
