@@ -36,6 +36,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
     private int _dragAxis = -1;
     private int _hoverAxis = -1;
         private readonly Dictionary<int, Rect> _legendHitRects = new();
+    private readonly Dictionary<int, Rect> _axisLabelHitRects = new();
     private int _legendRecordingAxis = -1;
 
 private readonly RadarStatusMessage _status;
@@ -142,6 +143,7 @@ private readonly RadarStatusMessage _status;
         DrawRing(dc, center, radius, neutralPen);
         dc.DrawEllipse(panelBrush, vanillaPen, center, 5, 5);
 
+        _axisLabelHitRects.Clear();
         for (var i = 0; i < Axes.Length; i++)
         {
             var unit = UnitVector(Axes[i].AngleDegrees);
@@ -191,8 +193,9 @@ private readonly RadarStatusMessage _status;
         {
             var unit = UnitVector(Axes[i].AngleDegrees);
             var labelPoint = center + unit * (radius + 30);
+            _axisLabelHitRects[i] = new Rect(labelPoint.X - 80.0, labelPoint.Y - 20.0, 160.0, 40.0);
             DrawAxisLabel(dc, Axes[i].Label, $"{values[i] * 100:0.#}%", labelPoint,
-                mutedBrush, i == _selectedAxis ? accentBrush : textBrush);
+                mutedBrush, i == _hoverAxis ? Brushes.White : i == _selectedAxis ? accentBrush : textBrush);
         }
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
@@ -301,7 +304,7 @@ var info = Axes[axis];
         // The legend is informational for left-clicks. Consume the click here so
         // it cannot fall through to FindAxis(), which maps arbitrary positions
         // to the nearest radar axis and can otherwise push that value to max.
-        if (FindLegendAxis(point) >= 0)
+        if (FindLegendAxis(point) >= 0 || FindAxisLabelAxis(point) >= 0)
         {
             e.Handled = true;
             return;
@@ -324,6 +327,8 @@ var info = Axes[axis];
 
         var point = e.GetPosition(this);
         var hoverAxis = FindLegendAxis(point);
+        if (hoverAxis < 0)
+            hoverAxis = FindAxisLabelAxis(point);
         if (hoverAxis < 0)
             hoverAxis = FindHandleAxis(point, 22.0);
 
@@ -355,7 +360,10 @@ var info = Axes[axis];
     {
         base.OnMouseWheel(e);
 
-        var axis = FindLegendAxis(e.GetPosition(this));
+        var point = e.GetPosition(this);
+        var axis = FindLegendAxis(point);
+        if (axis < 0)
+            axis = FindAxisLabelAxis(point);
         if (axis < 0 || e.Delta == 0)
             return;
 
@@ -393,6 +401,8 @@ var info = Axes[axis];
                 var point = e.GetPosition(this);
         var axis = FindLegendAxis(point);
         if (axis < 0)
+            axis = FindAxisLabelAxis(point);
+        if (axis < 0)
             axis = FindHandleAxis(point, 22.0);
 
         if (axis < 0)
@@ -407,6 +417,17 @@ var info = Axes[axis];
         InvalidateVisual();
         e.Handled = true;
     }
+    private int FindAxisLabelAxis(Point point)
+    {
+        foreach (var hit in _axisLabelHitRects)
+        {
+            if (hit.Value.Contains(point))
+                return hit.Key;
+        }
+
+        return -1;
+    }
+
     private int FindLegendAxis(Point point)
     {
         foreach (var hit in _legendHitRects)
