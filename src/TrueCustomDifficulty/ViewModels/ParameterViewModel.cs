@@ -89,7 +89,9 @@ public sealed class ParameterViewModel : ObservableObject
         }
     }
     public string Logic => Definition.Logic;
+    public bool HasLogic => !string.IsNullOrWhiteSpace(Logic);
     public string Interaction => Definition.Interaction;
+    public bool HasInteraction => !string.IsNullOrWhiteSpace(Interaction);
     public string Group => Definition.Group;
     public string Control => Definition.Control;
     public string SupportStatus => Definition.Support.Status;
