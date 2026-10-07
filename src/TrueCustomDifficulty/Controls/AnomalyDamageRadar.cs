@@ -17,6 +17,10 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class AnomalyDamageRadar : FrameworkElement
 {
+    private const double RadarInfoTextSize = 11.0;
+    private const double RadarLegendTextSize = 11.0;
+    private const double RadarAxisTextSize = 10.5;
+
     private const double MaximumMultiplier = 2.0;
 
     private static readonly AxisDefinition[] Axes =
@@ -195,20 +199,19 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Anomaly lethality · 1x is vanilla · higher means that anomaly hurts you more. Global Anomaly Damage is separate.",
+            "Anomaly lethality | 1x is vanilla | higher means that anomaly hurts you more. Global Anomaly Damage is separate.",
             mutedBrush);
 
         DrawLegend(dc, multipliers, textBrush, mutedBrush, accentBrush);
 
         var instruction = string.IsNullOrWhiteSpace(_statusText)
-            ? "Drag a point · Arrow keys adjust selected anomaly · Right-click point/legend resets that anomaly · R resets all"
+            ? "Drag a point | Arrow keys adjust selected anomaly | Right-click point/legend resets that anomaly | R resets all"
             : _statusText;
 
         DrawCenteredText(
             dc,
             instruction,
-            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18),
-            9.6,
+            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
             string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush,
             FontWeights.Normal);
     }
@@ -222,7 +225,7 @@ private string _statusText = string.Empty;
     private void DrawInfoHeader(DrawingContext dc, string text, Brush brush)
     {
         var info = GetInfoRect();
-        DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), 9.8, brush, FontWeights.Normal);
+        DrawClippedText(dc, text, new Rect(info.Left, 28.0, info.Width, 34.0), RadarInfoTextSize, brush, FontWeights.Normal);
     }
 
     private void DrawLegend(
@@ -264,29 +267,25 @@ private string _statusText = string.Empty;
 DrawClippedText(
                 dc,
                 Axes[i].Label,
-                new Rect(bounds.Left + 6, y + 7, bounds.Width * 0.40, 16),
-                9.9,
-                modified ? accentBrush : hovered ? textBrush : textBrush,
+                new Rect(bounds.Left + 6, y + 7, bounds.Width * 0.40, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : textBrush,
                 FontWeights.SemiBold);
 
             var rawValue = parameter.CurrentNumber;
             var multiplier = multipliers[i];
             var baseText = Axes[i].ParameterId == "environment.razorHealthDamage"
                 ? $"{multiplier:0.##}x vanilla damage"
-                : $"{rawValue:0.##} dmg · {multiplier:0.##}x vanilla";
+                : $"{rawValue:0.##} dmg | {multiplier:0.##}x vanilla";
 
             var effectiveText = string.IsNullOrWhiteSpace(parameter.EffectiveDisplay)
                 ? string.Empty
-                : $" · {parameter.EffectiveDisplay}";
+                : $" | {parameter.EffectiveDisplay}";
 
             var valueText = $"{baseText}{effectiveText}";
 
             DrawClippedText(
                 dc,
                 valueText,
-                new Rect(bounds.Left + bounds.Width * 0.40, y + 7, bounds.Width * 0.60 - 6, 16),
-                9.5,
-                modified ? accentBrush : hovered ? textBrush : mutedBrush,
+                new Rect(bounds.Left + bounds.Width * 0.40, y + 7, bounds.Width * 0.60 - 6, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
                 modified ? FontWeights.SemiBold : FontWeights.Normal);
 
             EndLegendHitArea();
@@ -563,7 +562,7 @@ DrawClippedText(
                 ? TextAnchor.Left
                 : TextAnchor.Center;
 
-        DrawAnchoredText(dc, label, position, 9.1, brush, FontWeights.SemiBold, anchor);
+        DrawAnchoredText(dc, label, position, RadarAxisTextSize, brush, FontWeights.SemiBold, anchor);
     }
 
     private void DrawRingCaption(DrawingContext dc, string text, Point center, double radius, Brush brush)
