@@ -35,7 +35,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
     private ParameterViewModel? _mutantParts;
     private readonly Dictionary<int, HitTarget> _targets = new();
     private HitTarget? _mutantPartsTarget;
-    private readonly RadarStatusMessage _status;
+    private readonly VisualStatusMessage _status;
 
     private int _selectedRow;
     private int _hoverRow = -1;
@@ -58,7 +58,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
 
     public ItemPriceScalersRadar()
     {
-        _status = new RadarStatusMessage(InvalidateVisual);
+        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 485;
         Cursor = Cursors.Arrow;
