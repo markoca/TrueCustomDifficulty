@@ -209,7 +209,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "How many of each mutant can spawn together",
+            "Mutant pack size · numbers are Newbie / Experienced / Veteran / Master · higher = larger groups.",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
@@ -248,8 +248,12 @@ private string _statusText = string.Empty;
     {
         var info = GetInfoRect();
         const double rowHeight = 31.0;
+        var totalHeight = Axes.Length * rowHeight;
+        var top = info.Top + Math.Max(0.0, (info.Height - totalHeight) / 2.0);
+        var legendBounds = new Rect(info.Left, top, info.Width, totalHeight);
+
         for (var i = 0; i < Axes.Length; i++)
-            DrawLegendRow(dc, i, info, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
+            DrawLegendRow(dc, i, legendBounds, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
     }
 
     private void DrawLegendRow(
@@ -277,7 +281,7 @@ private string _statusText = string.Empty;
         DrawClippedText(
             dc,
             info.Label,
-            new Rect(bounds.Left + 6, y, bounds.Width * 0.22, 20.0),
+            new Rect(bounds.Left + 6, y + 6, bounds.Width * 0.24, 18.0),
             9.6,
             modified ? accentBrush : textBrush,
             FontWeights.SemiBold);
@@ -285,7 +289,7 @@ private string _statusText = string.Empty;
         DrawClippedText(
             dc,
             $"{value:0.##}x",
-            new Rect(bounds.Left + bounds.Width * 0.22, y, bounds.Width * 0.10, 20.0),
+            new Rect(bounds.Left + bounds.Width * 0.24, y + 6, bounds.Width * 0.12, 18.0),
             9.3,
             modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
@@ -293,7 +297,7 @@ private string _statusText = string.Empty;
         DrawClippedText(
             dc,
             FormatEffectiveCaps(info, value),
-            new Rect(bounds.Left + bounds.Width * 0.32, y, bounds.Width * 0.68 - 6, 20.0),
+            new Rect(bounds.Left + bounds.Width * 0.36, y + 6, bounds.Width * 0.64 - 6, 18.0),
             9.3,
             modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
