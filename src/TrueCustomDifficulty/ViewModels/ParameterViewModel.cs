@@ -58,6 +58,12 @@ public sealed class ParameterViewModel : ObservableObject
                        "BEER and VODKA are independent drink-strength sliders. Click anywhere on a track or drag with the left mouse button to adjust them. Beer moves in 1-point steps; Vodka moves in 5-point steps. Vanilla is 15 for Beer and 30 for Vodka. The fixed 20 / 40 / 60 thresholds are shown as BUZZED, TIPSY, DRUNK and WASTED, with 1ST / 2ND / 3RD / ... drink progression. Right-click a slider to restore only that drink to VANILLA.";
             }
 
+            if (IsBleedingCurveAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "Bleeding Strength and Natural Recovery use compact click-and-drag tracks. LOW, MEDIUM and SEVERE damage share one curve: click or drag a curve column to change its damage per bleeding tick. The curve always preserves LOW ≤ MEDIUM ≤ SEVERE. Right-click one control to restore only that value to the Base Preset; press R to restore the whole Bleeding system.";
+            }
+
             if (IsAggregateRadarAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
@@ -279,6 +285,18 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsMutantGroupSizeMember => MutantGroupSizeParameterIds.Contains(Id);
     public bool IsMutantGroupSizeAnchor => Id == "alife.mutantSpawn.bloodsucker";
 
+    private static readonly HashSet<string> BleedingCurveParameterIds = new(StringComparer.Ordinal)
+    {
+        "survival.bleedingSeverity",
+        "survival.bleedingRecovery",
+        "survival.bleedingLowDamage",
+        "survival.bleedingMediumDamage",
+        "survival.bleedingStrongDamage"
+    };
+
+    public bool IsBleedingCurveMember => BleedingCurveParameterIds.Contains(Id);
+    public bool IsBleedingCurveAnchor => Id == "survival.bleedingSeverity";
+
     private static readonly HashSet<string> DrunkennessParameterIds = new(StringComparer.Ordinal)
     {
         "survival.beerDrunknessStrength",
@@ -301,6 +319,7 @@ public sealed class ParameterViewModel : ObservableObject
         IsSpecialAbilityCooldownAnchor ||
         IsHumanGroupSizeAnchor ||
         IsMutantGroupSizeAnchor ||
+        IsBleedingCurveAnchor ||
         IsDrunkennessAnchor;
 
     public bool HasEffectiveDamage => _effectiveDamageMultiplierProvider is not null;
@@ -321,6 +340,7 @@ public sealed class ParameterViewModel : ObservableObject
         && (!IsSpecialAbilityCooldownMember || IsSpecialAbilityCooldownAnchor)
         && (!IsHumanGroupSizeMember || IsHumanGroupSizeAnchor)
         && (!IsMutantGroupSizeMember || IsMutantGroupSizeAnchor)
+        && (!IsBleedingCurveMember || IsBleedingCurveAnchor)
         && (!IsDrunkennessMember || IsDrunkennessAnchor)
         && (_dependencyEnabledProvider?.Invoke() ?? true);
     public string ToggleStateLabel => CurrentBoolean ? "ON" : "OFF";
