@@ -117,8 +117,8 @@ public sealed class DrunkennessControl : FrameworkElement
         var gap = 8.0;
         var totalWidth = Math.Max(480.0, ActualWidth - 24.0);
         var cardWidth = (totalWidth - gap) / 2.0;
-        var beerCard = new Rect(12.0, 10.0, cardWidth, 118.0);
-        var vodkaCard = new Rect(beerCard.Right + gap, 10.0, cardWidth, 118.0);
+        var beerCard = new Rect(12.0, 10.0, cardWidth, 100.0);
+        var vodkaCard = new Rect(beerCard.Right + gap, 10.0, cardWidth, 100.0);
 
         DrawDrinkCard(
             dc,
@@ -159,7 +159,7 @@ public sealed class DrunkennessControl : FrameworkElement
             "AFTER EACH BEER",
             _beerStrengthParameter?.CurrentNumber ?? VanillaBeerDrunkness,
             8,
-            142.0,
+            122.0,
             panelAlt,
             border,
             text,
@@ -171,14 +171,14 @@ public sealed class DrunkennessControl : FrameworkElement
             "AFTER EACH VODKA",
             _vodkaStrengthParameter?.CurrentNumber ?? VanillaVodkaDrunkness,
             4,
-            198.0,
+            178.0,
             panelAlt,
             border,
             text,
             muted,
             accent);
 
-        DrawText(dc, "TIER EFFECTS", new Point(16, 254), 9.0, muted, FontWeights.Bold);
+        DrawText(dc, "TIER EFFECTS", new Point(16, 234), 9.0, muted, FontWeights.Bold);
         DrawTierCards(dc, panelAlt, border, radarMuted, accent);
     }
 
@@ -202,31 +202,38 @@ public sealed class DrunkennessControl : FrameworkElement
         dc.DrawRoundedRectangle(background, new Pen(border, 1.0), rect, 3.0, 3.0);
 
         var strength = parameter?.CurrentNumber ?? vanillaStrength;
+        var minimum = parameter?.Minimum ?? 1.0;
+        var maximum = parameter?.Maximum ?? 60.0;
         var drinks = RequiredWholeDrinks(strength, maxDrinks);
         var drinkLabel = drinks == 1 ? singular : plural;
 
-        DrawText(dc, singular, new Point(rect.Left + 10, rect.Top + 8), 10.0, accent, FontWeights.Bold);
+        // Row 1: drink name + immediate gameplay consequence.
+        DrawText(dc, singular, new Point(rect.Left + 10, rect.Top + 7), 10.0, accent, FontWeights.Bold);
         DrawRightAlignedText(
             dc,
             "WASTED AFTER " + drinks.ToString(CultureInfo.InvariantCulture) + " " + drinkLabel,
-            new Point(rect.Right - 10, rect.Top + 7),
-            9.2,
+            new Point(rect.Right - 10, rect.Top + 8),
+            8.7,
             text,
-            FontWeights.Bold);
+            FontWeights.SemiBold);
 
-        DrawText(dc, "DRINK STRENGTH", new Point(rect.Left + 10, rect.Top + 34), 8.5, muted, FontWeights.Bold);
-        DrawRightAlignedText(
+        // Row 2: label and value stay together instead of being split across the card.
+        var labelText = CreateText("DRINK STRENGTH", 8.3, muted, FontWeights.SemiBold);
+        var labelPoint = new Point(rect.Left + 10, rect.Top + 29);
+        dc.DrawText(labelText, labelPoint);
+
+        DrawText(
             dc,
-            strength.ToString("0", CultureInfo.InvariantCulture),
-            new Point(rect.Right - 10, rect.Top + 30),
-            15.0,
+            strength.ToString("0", CultureInfo.InvariantCulture) + " / " + maximum.ToString("0", CultureInfo.InvariantCulture),
+            new Point(labelPoint.X + labelText.WidthIncludingTrailingWhitespace + 9, rect.Top + 25),
+            12.5,
             text,
             FontWeights.Bold);
 
         var sliderLeft = rect.Left + 12.0;
         var sliderRight = rect.Right - 12.0;
-        var sliderY = rect.Top + 72.0;
-        var sliderRect = new Rect(sliderLeft, sliderY - 18.0, sliderRight - sliderLeft, 42.0);
+        var sliderY = rect.Top + 58.0;
+        var sliderRect = new Rect(sliderLeft, sliderY - 15.0, sliderRight - sliderLeft, 32.0);
 
         if (slider == ActiveSlider.Beer)
             _beerSliderRect = sliderRect;
@@ -235,23 +242,37 @@ public sealed class DrunkennessControl : FrameworkElement
 
         dc.DrawLine(new Pen(track, 3.0), new Point(sliderLeft, sliderY), new Point(sliderRight, sliderY));
 
-        var minimum = parameter?.Minimum ?? 1.0;
-        var maximum = parameter?.Maximum ?? 60.0;
         var handleX = ValueToX(strength, minimum, maximum, sliderLeft, sliderRight);
         dc.DrawEllipse(accent, null, new Point(handleX, sliderY), 5.0, 5.0);
 
         var vanillaX = ValueToX(vanillaStrength, minimum, maximum, sliderLeft, sliderRight);
         dc.DrawLine(new Pen(accentDark, 1.0), new Point(vanillaX, sliderY - 5), new Point(vanillaX, sliderY + 5));
+
+        // One compact scale row directly under the track.
+        var scaleY = rect.Top + 72.0;
+        DrawText(
+            dc,
+            "MIN " + minimum.ToString("0", CultureInfo.InvariantCulture),
+            new Point(sliderLeft, scaleY),
+            7.8,
+            muted,
+            FontWeights.SemiBold);
+
         DrawCenteredText(
             dc,
             "VANILLA " + vanillaStrength.ToString("0", CultureInfo.InvariantCulture),
-            new Point(vanillaX, rect.Bottom - 20),
-            8.0,
+            new Point(vanillaX, scaleY),
+            7.8,
             accentDark,
             FontWeights.Bold);
 
-        DrawText(dc, "MIN " + minimum.ToString("0", CultureInfo.InvariantCulture), new Point(sliderLeft, rect.Bottom - 12), 7.7, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "MAX " + maximum.ToString("0", CultureInfo.InvariantCulture), new Point(sliderRight, rect.Bottom - 12), 7.7, muted, FontWeights.SemiBold);
+        DrawRightAlignedText(
+            dc,
+            "MAX " + maximum.ToString("0", CultureInfo.InvariantCulture),
+            new Point(sliderRight, scaleY),
+            7.8,
+            muted,
+            FontWeights.SemiBold);
     }
 
     private void DrawProgressionRow(
@@ -318,7 +339,7 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         var gap = 8.0;
         var left = 16.0;
-        var top = 272.0;
+        var top = 252.0;
         var totalWidth = Math.Max(460.0, ActualWidth - 32.0);
         var cardWidth = (totalWidth - gap * 3.0) / 4.0;
         var cardHeight = 112.0;
