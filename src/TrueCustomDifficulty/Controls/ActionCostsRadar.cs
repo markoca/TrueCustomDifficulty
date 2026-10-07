@@ -37,7 +37,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     private ParameterViewModel? _aimParameter;
     private readonly Dictionary<int, HitTarget> _targets = new();
     private HitTarget? _aimTarget;
-    private readonly RadarStatusMessage _status;
+    private readonly VisualStatusMessage _status;
 
     private int _selectedRow;
     private int _hoverRow = -1;
@@ -60,7 +60,7 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     public ActionCostsRadar()
     {
-        _status = new RadarStatusMessage(InvalidateVisual);
+        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 505;
         Cursor = Cursors.Arrow;
