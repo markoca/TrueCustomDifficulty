@@ -93,8 +93,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["loot.droppedWeaponCondition"] = new("loot-npc-2", 1),
             ["loot.cheapStashGrenadeChance"] = new("loot-stash-grenade-1", 0),
             ["loot.cheapStashGrenadeQuantity"] = new("loot-stash-grenade-1", 1),
-            ["loot.destructibleAmmoQuantity"] = new("loot-breakable-1", 0),
-            ["loot.destructibleGrenadeQuantity"] = new("loot-breakable-1", 1),
             ["loot.worldWeaponShuffle"] = new("loot-world-weapon-1", 0),
             ["loot.worldWeaponDensity"] = new("loot-world-weapon-1", 1),
             ["loot.worldAttachmentShuffle"] = new("loot-world-other-1", 0),
@@ -232,29 +230,22 @@ public sealed class ResponsiveParameterGridPanel : Panel
 
     private List<LayoutRow> BuildRows(int columns)
     {
-        var rows = new List<LayoutRow>();
+        var stagedRows = new List<(int FirstIndex, LayoutRow Row)>();
+        var semanticRows = new Dictionary<string, (int FirstIndex, LayoutRow Row)>(StringComparer.Ordinal);
         LayoutRow? autoRow = null;
-        LayoutRow? semanticRow = null;
-        string? semanticKey = null;
+        var autoFirstIndex = -1;
 
         void FlushAuto()
         {
             if (autoRow is null || autoRow.Items.Count == 0)
                 return;
 
-            rows.Add(autoRow);
+            stagedRows.Add((autoFirstIndex, autoRow));
             autoRow = null;
+            autoFirstIndex = -1;
         }
 
-        void FlushSemantic()
-        {
-            if (semanticRow is null || semanticRow.Items.Count == 0)
-                return;
-
-            rows.Add(semanticRow);
-            semanticRow = null;
-            semanticKey = null;
-        }
+        var visibleIndex = 0;
 
         foreach (UIElement child in InternalChildren)
         {
@@ -264,59 +255,68 @@ public sealed class ResponsiveParameterGridPanel : Panel
             if (IsFullWidth(child))
             {
                 FlushAuto();
-                FlushSemantic();
-                rows.Add(new LayoutRow(fullWidth: true)
+                stagedRows.Add((visibleIndex, new LayoutRow(fullWidth: true)
                 {
                     Items = { new LayoutItem(child, 0) }
-                });
+                }));
+                visibleIndex++;
                 continue;
             }
 
             var parameter = (child as FrameworkElement)?.DataContext as ParameterViewModel;
-            var hasSemanticSlot = columns > 1
-                && parameter is not null
-                && SemanticSlots.TryGetValue(parameter.Id, out var slot);
 
-            if (hasSemanticSlot)
+            if (columns > 1
+                && parameter is not null
+                && SemanticSlots.TryGetValue(parameter.Id, out var slot))
             {
                 FlushAuto();
 
-                if (!string.Equals(semanticKey, slot.RowKey, StringComparison.Ordinal))
+                if (!semanticRows.TryGetValue(slot.RowKey, out var semantic))
                 {
-                    FlushSemantic();
-                    semanticKey = slot.RowKey;
-                    semanticRow = new LayoutRow(fullWidth: false);
+                    semantic = (visibleIndex, new LayoutRow(fullWidth: false));
+                    semanticRows[slot.RowKey] = semantic;
+                    stagedRows.Add(semantic);
                 }
 
-                // If a bad mapping ever targets an occupied column, keep both controls visible
-                // by starting another row rather than overlapping them.
-                if (semanticRow!.Items.Any(item => item.Column == slot.Column))
+                // Semantic mappings are authored explicitly. If a duplicate column slips in,
+                // keep the later control visible in a normal row rather than overlapping it.
+                if (semantic.Row.Items.Any(item => item.Column == slot.Column))
                 {
-                    FlushSemantic();
-                    semanticKey = slot.RowKey;
-                    semanticRow = new LayoutRow(fullWidth: false);
+                    autoRow ??= new LayoutRow(fullWidth: false);
+                    if (autoFirstIndex < 0)
+                        autoFirstIndex = visibleIndex;
+
+                    autoRow.Items.Add(new LayoutItem(child, autoRow.Items.Count));
+                    if (autoRow.Items.Count >= columns)
+                        FlushAuto();
+                }
+                else
+                {
+                    semantic.Row.Items.Add(new LayoutItem(child, slot.Column));
                 }
 
-                semanticRow.Items.Add(new LayoutItem(child, slot.Column));
-
-                if (semanticRow.Items.Count >= columns)
-                    FlushSemantic();
-
+                visibleIndex++;
                 continue;
             }
 
-            FlushSemantic();
-
             autoRow ??= new LayoutRow(fullWidth: false);
+            if (autoFirstIndex < 0)
+                autoFirstIndex = visibleIndex;
+
             autoRow.Items.Add(new LayoutItem(child, autoRow.Items.Count));
 
             if (autoRow.Items.Count >= columns)
                 FlushAuto();
+
+            visibleIndex++;
         }
 
         FlushAuto();
-        FlushSemantic();
-        return rows;
+
+        return stagedRows
+            .OrderBy(entry => entry.FirstIndex)
+            .Select(entry => entry.Row)
+            .ToList();
     }
 
     private static double ResolveWidth(double width)
