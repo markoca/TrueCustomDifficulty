@@ -220,7 +220,7 @@ public sealed class DrunkennessControl : FrameworkElement
             accent);
 
         // Row 2: label and value stay together instead of being split across the card.
-        var labelText = CreateText("DRINK STRENGTH", 8.3, muted, FontWeights.SemiBold);
+        var labelText = CreateText("DRINK STRENGTH", 9.0, muted, FontWeights.SemiBold);
         var labelPoint = new Point(rect.Left + 10, rect.Top + 29);
         dc.DrawText(labelText, labelPoint);
 
@@ -280,7 +280,7 @@ public sealed class DrunkennessControl : FrameworkElement
             dc,
             "MAX " + maximum.ToString("0", CultureInfo.InvariantCulture),
             new Point(sliderRight, scaleY),
-            7.8,
+            9.0,
             muted,
             FontWeights.SemiBold);
     }
