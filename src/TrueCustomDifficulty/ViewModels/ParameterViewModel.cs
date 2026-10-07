@@ -802,29 +802,29 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsRange)
             {
                 if (Id == "loot.droppedWeaponCondition")
-                    return $"{descriptor} · MIN {CurrentMinNumber * 100:0.#}% / MAX {CurrentMaxNumber * 100:0.#}%";
+                    return $"{descriptor} - MIN {CurrentMinNumber * 100:0.#}% / MAX {CurrentMaxNumber * 100:0.#}%";
 
-                return $"{descriptor} · MIN {CurrentMinNumber * 100:0.#}% / MAX {CurrentMaxNumber * 100:0.#}% of vanilla";
+                return $"{descriptor} - MIN {CurrentMinNumber * 100:0.#}% / MAX {CurrentMaxNumber * 100:0.#}% of vanilla";
             }
 
             if (Definition.Display?.Primary == "percent")
-                return $"{descriptor} · {CurrentNumber * 100:0.#}%";
+                return $"{descriptor} - {CurrentNumber * 100:0.#}%";
 
             if (Definition.Display?.Primary == "multiplierOfVanilla")
             {
                 var reference = GetReferenceNumber();
                 var multiplier = Math.Abs(reference) > Epsilon ? CurrentNumber / reference : 0.0;
-                return $"{descriptor} · {multiplier:0.##}x";
+                return $"{descriptor} - {multiplier:0.##}x";
             }
 
             if (Definition.ValueKind == "probability")
-                return $"{descriptor} · {CurrentNumber * 100:0.#}% chance";
+                return $"{descriptor} - {CurrentNumber * 100:0.#}% chance";
 
             if (IsBleedingRemovalControl())
-                return $"{descriptor} · {Math.Abs(CurrentNumber):0.##} points";
+                return $"{descriptor} - {Math.Abs(CurrentNumber):0.##} points";
 
             if (IsRadiationRemovalControl())
-                return $"{descriptor} · {Math.Abs(CurrentNumber):0.##} points";
+                return $"{descriptor} - {Math.Abs(CurrentNumber):0.##} points";
 
             if (IsMovementStaminaEffect())
             {
@@ -833,27 +833,27 @@ public sealed class ParameterViewModel : ObservableObject
                     : CurrentNumber > Epsilon
                         ? "helps recovery"
                         : "neutral";
-                return $"{descriptor} · {CurrentNumber:+0.##;-0.##;0} ({state})";
+                return $"{descriptor} - {CurrentNumber:+0.##;-0.##;0} ({state})";
             }
 
             if (Id is "combat.accumulatedDamageWeightMax" or "combat.accumulatedDamageWeightMin")
-                return $"{descriptor} · {CurrentNumber:0.##}x of full scale";
+                return $"{descriptor} - {CurrentNumber:0.##}x of full scale";
 
             if (Definition.ValueKind == "multiplier")
             {
                 var basis = Definition.Display?.Primary == "percentOfVanilla" ? "of vanilla" : "of normal";
-                return $"{descriptor} · {CurrentNumber:0.##}x {basis}";
+                return $"{descriptor} - {CurrentNumber:0.##}x {basis}";
             }
 
             if (Definition.Tab == "loot" && Definition.Display?.Primary == "percentOfVanilla")
             {
                 var reference = GetReferenceNumber();
                 var scale = Math.Abs(reference) > Epsilon ? CurrentNumber / reference : CurrentNumber;
-                return $"{descriptor} · {scale:0.##}x of vanilla";
+                return $"{descriptor} - {scale:0.##}x of vanilla";
             }
 
             var value = FormatTechnicalValue(CurrentNumber);
-            return $"{descriptor} · {value}";
+            return $"{descriptor} - {value}";
         }
     }
 
@@ -965,12 +965,12 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 var successes = CurrentNumber * 100.0;
                 if (Id.StartsWith("loot.mutant.", StringComparison.Ordinal))
-                    return $"Expected · {label}: ≈{successes:0.#} part drops / 100 {hint.Unit} · 1 part per successful drop";
+                    return $"Expected - {label}: ~{successes:0.#} part drops / 100 {hint.Unit} - 1 part per successful drop";
 
                 if (Id == "loot.expensiveStashMoneyChance")
-                    return $"Expected · {label}: ≈{successes:0.#} stashes with coupons / 100 {hint.Unit}";
+                    return $"Expected - {label}: ~{successes:0.#} stashes with coupons / 100 {hint.Unit}";
 
-                return $"Expected · {label}: ≈{successes:0.#} successes / 100 {hint.Unit}";
+                return $"Expected - {label}: ~{successes:0.#} successes / 100 {hint.Unit}";
             }
 
             if (hint.Kind == "scaledChanceExample" && IsSlider && hint.Chance.HasValue)
@@ -979,23 +979,23 @@ public sealed class ParameterViewModel : ObservableObject
                 var scale = Math.Abs(reference) > Epsilon ? CurrentNumber / reference : CurrentNumber;
                 var result = Math.Clamp(hint.Chance.Value * scale, 0.0, 1.0);
                 var outcome = hint.Unit.Contains("stash", StringComparison.OrdinalIgnoreCase)
-                    ? $"≈{result * 100:0.#} stashes with this entry / 100 {hint.Unit}"
-                    : $"≈{result * 100:0.#} drops / 100 {hint.Unit}";
-                return $"Example · {label}: {hint.Chance.Value * 100:0.#}% vanilla -> {result * 100:0.#}% current · {outcome}";
+                    ? $"~{result * 100:0.#} stashes with this entry / 100 {hint.Unit}"
+                    : $"~{result * 100:0.#} drops / 100 {hint.Unit}";
+                return $"Example - {label}: {hint.Chance.Value * 100:0.#}% vanilla -> {result * 100:0.#}% current - {outcome}";
             }
 
             if (hint.Kind == "rangeCountExample" && IsRange && hint.Min.HasValue && hint.Max.HasValue)
             {
                 var min = hint.Min.Value * CurrentMinNumber;
                 var max = hint.Max.Value * CurrentMaxNumber;
-                return $"Example · {label}: {hint.Min.Value:0.##}–{hint.Max.Value:0.##} {hint.Unit} vanilla -> ≈{min:0.##}–{max:0.##} {hint.Unit} current · final counts use whole numbers";
+                return $"Example - {label}: {hint.Min.Value:0.##}-{hint.Max.Value:0.##} {hint.Unit} vanilla -> ~{min:0.##}-{max:0.##} {hint.Unit} current - final counts use whole numbers";
             }
 
             if (hint.Kind == "rangePercentExample" && IsRange && hint.Min.HasValue && hint.Max.HasValue)
             {
                 var min = Math.Clamp(hint.Min.Value * CurrentMinNumber, 0.0, 1.0);
                 var max = Math.Clamp(hint.Max.Value * CurrentMaxNumber, 0.0, 1.0);
-                return $"Example · {label}: {hint.Min.Value * 100:0.#}–{hint.Max.Value * 100:0.#}% vanilla -> {min * 100:0.#}–{max * 100:0.#}% current";
+                return $"Example - {label}: {hint.Min.Value * 100:0.#}-{hint.Max.Value * 100:0.#}% vanilla -> {min * 100:0.#}-{max * 100:0.#}% current";
             }
 
             if (hint.Kind == "scaledCountEntries" && IsSlider && hint.Entries.Count > 0)
@@ -1008,20 +1008,20 @@ public sealed class ParameterViewModel : ObservableObject
                     var currentMin = ScaleCount(entry.Min, CurrentNumber);
                     var currentMax = ScaleCount(entry.Max, CurrentNumber);
                     var qualifier = string.IsNullOrWhiteSpace(entry.Qualifier) ? string.Empty : $" [{entry.Qualifier}]";
-                    var selection = string.IsNullOrWhiteSpace(entry.Selection) ? string.Empty : $" · {entry.Selection}";
+                    var selection = string.IsNullOrWhiteSpace(entry.Selection) ? string.Empty : $" - {entry.Selection}";
                     return $"{entry.Label}{qualifier}: {entry.Min:0}-{entry.Max:0} -> {currentMin}-{currentMax}{selection}";
                 });
-                return $"{label} · vanilla -> current{Environment.NewLine}{string.Join(Environment.NewLine, lines)}";
+                return $"{label} - vanilla -> current{Environment.NewLine}{string.Join(Environment.NewLine, lines)}";
             }
 
             if (hint.Kind == "exactCount" && IsSlider)
             {
                 var unit = string.IsNullOrWhiteSpace(hint.Unit) ? "items" : hint.Unit;
-                return $"{label} · vanilla {(hint.Min ?? GetReferenceNumber()):0} {unit} -> current {CurrentNumber:0} {unit}";
+                return $"{label} - vanilla {(hint.Min ?? GetReferenceNumber()):0} {unit} -> current {CurrentNumber:0} {unit}";
             }
 
             if (hint.Kind == "text" && !string.IsNullOrWhiteSpace(hint.Text))
-                return $"{label} · {hint.Text}";
+                return $"{label} - {hint.Text}";
 
             return string.Empty;
         }
@@ -1083,7 +1083,7 @@ public sealed class ParameterViewModel : ObservableObject
                 .Where(Definition.Vanilla.ContainsKey)
                 .Select(k => $"{k}: {FormatVanillaValue(Definition.Vanilla[k], isSharedValue: false)}");
 
-            return "Vanilla · " + string.Join("   ·   ", values);
+            return "Vanilla - " + string.Join("   -   ", values);
         }
     }
 
@@ -1577,7 +1577,7 @@ public sealed class ParameterViewModel : ObservableObject
         JsonValueKind.False => "OFF",
         JsonValueKind.String => element.GetString() ?? string.Empty,
         JsonValueKind.Array => string.Join(", ", element.EnumerateArray().Select(ElementToText)),
-        JsonValueKind.Null => "—",
+        JsonValueKind.Null => "-",
         _ => element.ToString()
     };
 }
