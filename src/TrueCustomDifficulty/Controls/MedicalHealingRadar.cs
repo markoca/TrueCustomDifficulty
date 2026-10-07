@@ -201,23 +201,17 @@ private readonly RadarStatusMessage _status;
                 i == _selectedAxis ? accentBrush : textBrush);
         }
 
-        DrawInfoHeader(
-            dc,
-            "Healing strength | higher = more HP restored by that item | 1x matches its vanilla heal.",
-            mutedBrush);
-
         DrawLegend(dc, multipliers, textBrush, mutedBrush, accentBrush);
 
-        var instruction = string.IsNullOrWhiteSpace(_status.Text)
-            ? "Drag a point | Arrow keys adjust selected item | Right click point/legend resets that item | R resets all"
-            : _status.Text;
-
-        DrawCenteredText(
-            dc,
-            instruction,
-            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
-            string.IsNullOrWhiteSpace(_status.Text) ? mutedBrush : accentBrush,
-            FontWeights.Normal);
+        if (!string.IsNullOrWhiteSpace(_status.Text))
+        {
+            DrawCenteredText(
+                dc,
+                _status.Text,
+                new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
+                accentBrush,
+                FontWeights.Normal);
+        }
     }
 
     private Rect GetInfoRect()
@@ -281,11 +275,6 @@ DrawClippedText(
             new Rect(bounds.Left + (bounds.Width * 0.42), y + 7, bounds.Width * 0.58 - 6, 18), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
 
-        DrawClippedText(
-            dc,
-            $"Vanilla restores {vanilla:0.##} HP | higher = stronger heal",
-            new Rect(bounds.Left + 6, y + 25, bounds.Width - 12, 18), RadarLegendTextSize, hovered ? textBrush : mutedBrush,
-            FontWeights.Normal);
         EndLegendHitArea();
     }
 
