@@ -250,6 +250,9 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             "survival.sleepinessRate",
             "survival.sleepinessRate",
+            "survival.sleepLowThreshold",
+            "survival.sleepMediumThreshold",
+            "survival.sleepStrongThreshold",
             "survival.energyDrinkFatigueRelief",
             "survival.fatigueLowAimPenalty",
             "survival.fatigueMediumAimPenalty",
@@ -284,6 +287,9 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             "survival.hungerRate",
             "survival.hungerRate",
+            "survival.hungerLowThreshold",
+            "survival.hungerMediumThreshold",
+            "survival.hungerStrongThreshold",
             "survival.hungerMediumStaminaRegen",
             "survival.hungerStrongStaminaRegen",
             "survival.wellFedStaminaRegen");
@@ -362,7 +368,9 @@ public sealed class MainViewModel : ObservableObject
                 "survival.bleedingRecovery",
                 "survival.bleedingLowDamage",
                 "survival.bleedingMediumDamage",
-                "survival.bleedingStrongDamage"
+                "survival.bleedingStrongDamage",
+                "survival.bleedingMediumThreshold",
+                "survival.bleedingStrongThreshold"
             };
 
             var bleedingCurveMembers = bleedingCurveIds
