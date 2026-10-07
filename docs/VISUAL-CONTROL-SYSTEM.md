@@ -51,6 +51,7 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Family | Semantic visualization | Status |
 | --- | --- | --- |
 | Fatigue | Combat-penalty curves across LOW / MEDIUM / SEVERE, plus build-up and Energy Drink relief | Semantic |
+| Equipment Wear | Two independent native CFG axes: armor toughness and player-weapon wear per shot, with current/base comparison | Semantic |
 | Bleeding Treatment | Shared normalized treatment-strength mixer against each item's own vanilla value | Semantic |
 | Consumables | Authored instant-effect previews plus one real-seconds duration timeline | Semantic |
 | Sleeping | Sleep gate, minimum sleep window and wake-up recovery | Semantic |
@@ -82,6 +83,18 @@ Combat response graph:
 - Medium / Severe Reload-Time Penalty on the Y axis.
 
 Threshold handles move horizontally while penalty handles move vertically. There is no separate Low-fatigue reload backing parameter, so the reload curve begins at Medium rather than inventing a synthetic Low point.
+
+### Equipment Wear Balance
+
+`AggregateVisualControl / EquipmentWearBalance`
+
+- Horizontal axis = `equipment.armorDurability` (`EnvironmentDifficulty.Armor_Durability`); higher means tougher armor, but is **not** a proven inverse wear percentage.
+- Vertical axis = `equipment.weaponWearPerShot`, scaling each nonzero `DurabilityDamagePerShot` in the existing 41 base + 11 DLC player-weapon routes; higher means faster weapon condition loss.
+- Grey dashed lines/ghost point = the selected Base Preset; yellow lines/point = the current values.
+- Drag only the bottom axis handle to edit armor; drag only the left axis handle to edit weapon wear. The two-axis summary point itself is not draggable.
+- Right-click either handle to reset just that parameter; R resets the pair.
+- Both parameters retain their distinct native ranges/steps, per-difficulty baselines, preset serialization and writer routes. The two item-weight sliders remain separate and unchanged.
+- The visual does **not** claim a specific armor durability-to-wear formula and does **not** alter weapon jamming.
 
 ### Bleeding Treatment
 

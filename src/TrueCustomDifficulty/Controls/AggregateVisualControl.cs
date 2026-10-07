@@ -137,6 +137,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "BleedingTreatmentMixer":
                 DrawBleedingTreatmentMixer(dc, text, muted, border, accent, panel);
                 break;
+            case "EquipmentWearBalance":
+                DrawEquipmentWearBalance(dc, text, muted, border, soft, accent, panel);
+                break;
             case "ConsumableMixer":
                 DrawConsumableMixer(dc, text, muted, border, accent, panel);
                 break;
@@ -422,6 +425,95 @@ public sealed class AggregateVisualControl : FrameworkElement
                 i == 0 ? muted : text,
                 i == 0 ? FontWeights.Normal : FontWeights.SemiBold);
         }
+    }
+
+    // This is a two-axis editor, not a fabricated unified "condition lost %" formula.
+    // X is the difficulty's armor-toughness scalar; Y is the relative per-shot
+    // durability loss for each player weapon. The current point is read-only:
+    // the independent axis handles are the only write surfaces.
+    private void DrawEquipmentWearBalance(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(
+            dc,
+            "EQUIPMENT WEAR BALANCE",
+            "armor toughness (X) vs player weapon wear per shot (Y)",
+            text,
+            muted,
+            accent);
+
+        var armor = P("equipment.armorDurability");
+        var weapon = P("equipment.weaponWearPerShot");
+        if (armor is null || weapon is null)
+        {
+            DrawCenteredText(dc, "Equipment wear data unavailable.", new Point(ActualWidth / 2.0, 150.0), 10.0, muted, FontWeights.SemiBold);
+            return;
+        }
+
+        DrawText(dc, $"WEAPON WEAR   {weapon.CurrentNumber:0.##}x", new Point(18.0, 52.0), 10.0, accent, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, $"ARMOR TOUGHNESS   {armor.CurrentNumber:0.##}x", new Point(ActualWidth - 18.0, 52.0), 10.0, accent, FontWeights.SemiBold);
+
+        var plot = new Rect(94.0, 81.0, Math.Max(350.0, ActualWidth - 132.0), 156.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
+
+        for (var tick = 0; tick <= 4; tick++)
+        {
+            var armorTick = armor.Minimum + (armor.Maximum - armor.Minimum) * tick / 4.0;
+            var armorTickX = ValueToX(armorTick, armor.Minimum, armor.Maximum, plot, reverse: false);
+            var weaponTick = weapon.Minimum + (weapon.Maximum - weapon.Minimum) * tick / 4.0;
+            var weaponTickY = ValueToY(weaponTick, weapon.Minimum, weapon.Maximum, plot);
+
+            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.5), 1.0) { DashStyle = DashStyles.Dot },
+                new Point(armorTickX, plot.Top), new Point(armorTickX, plot.Bottom));
+            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.5), 1.0) { DashStyle = DashStyles.Dot },
+                new Point(plot.Left, weaponTickY), new Point(plot.Right, weaponTickY));
+
+            if (tick is 0 or 2 or 4)
+            {
+                DrawCenteredText(dc, $"{armorTick:0.##}", new Point(armorTickX, plot.Bottom + 29.0), 9.0, muted, FontWeights.Normal);
+                DrawRightAlignedText(dc, $"{weaponTick:0.##}", new Point(plot.Left - 29.0, weaponTickY - 7.0), 9.0, muted, FontWeights.Normal);
+            }
+        }
+
+        var armorX = ValueToX(armor.CurrentNumber, armor.Minimum, armor.Maximum, plot, reverse: false);
+        var wearY = ValueToY(weapon.CurrentNumber, weapon.Minimum, weapon.Maximum, plot);
+        var baseArmorX = ValueToX(armor.ReferenceNumber, armor.Minimum, armor.Maximum, plot, reverse: false);
+        var baseWearY = ValueToY(weapon.ReferenceNumber, weapon.Minimum, weapon.Maximum, plot);
+
+        var basePen = new Pen(CloneWithOpacity(muted, 0.6), 1.1) { DashStyle = DashStyles.Dash };
+        dc.DrawLine(basePen, new Point(baseArmorX, plot.Top), new Point(baseArmorX, plot.Bottom));
+        dc.DrawLine(basePen, new Point(plot.Left, baseWearY), new Point(plot.Right, baseWearY));
+        dc.DrawEllipse(panel, new Pen(muted, 1.8), new Point(baseArmorX, baseWearY), 6.0, 6.0);
+
+        var currentPen = new Pen(CloneWithOpacity(accent, 0.65), 1.2) { DashStyle = DashStyles.Dot };
+        dc.DrawLine(currentPen, new Point(armorX, plot.Top), new Point(armorX, plot.Bottom));
+        dc.DrawLine(currentPen, new Point(plot.Left, wearY), new Point(plot.Right, wearY));
+        dc.DrawEllipse(panel, new Pen(accent, 2.0), new Point(armorX, wearY), 6.5, 6.5);
+        dc.DrawEllipse(accent, null, new Point(armorX, wearY), 2.8, 2.8);
+
+        // Explicit independent handles avoid a joint drag altering both CFG values.
+        var armorHandle = new Point(armorX, plot.Bottom + 10.0);
+        dc.DrawEllipse(panel, new Pen(accent, IsSelected(armor) ? 2.6 : 1.8), armorHandle, 7.0, 7.0);
+        dc.DrawEllipse(accent, null, armorHandle, 2.5, 2.5);
+        AddHorizontalTarget(armor, new Rect(armorX - 17.0, plot.Bottom + 1.0, 34.0, 22.0),
+            plot, armor.Minimum, armor.Maximum);
+
+        var weaponHandle = new Point(plot.Left - 11.0, wearY);
+        dc.DrawRectangle(panel, new Pen(accent, IsSelected(weapon) ? 2.6 : 1.8),
+            new Rect(weaponHandle.X - 6.0, weaponHandle.Y - 6.0, 12.0, 12.0));
+        AddVerticalTarget(weapon, new Rect(plot.Left - 28.0, wearY - 14.0, 27.0, 28.0),
+            plot, weapon.Minimum, weapon.Maximum);
+
+        DrawCenteredText(dc, "X: HIGHER = TOUGHER ARMOR   |   Y: HIGHER = MORE WEAPON WEAR",
+            new Point(ActualWidth / 2.0, 285.0), 9.0, text, FontWeights.SemiBold);
+        DrawCenteredText(dc, "BOTTOM HANDLE = ARMOR   |   LEFT HANDLE = WEAPON   |   GREY = BASE",
+            new Point(ActualWidth / 2.0, 301.0), 9.0, muted, FontWeights.Normal);
     }
 
     private void DrawRepairCurve(
@@ -3069,6 +3161,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             "FatigueCurve" => 420.0,
             "BleedingTreatmentMixer" => 385.0,
+            "EquipmentWearBalance" => 320.0,
             "ConsumableMixer" => 475.0,
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
@@ -3103,6 +3196,11 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "health.medkitBleeding",
                 "health.armyMedkitBleeding",
                 "health.ecoMedkitBleeding"
+            },
+            "EquipmentWearBalance" => new[]
+            {
+                "equipment.armorDurability",
+                "equipment.weaponWearPerShot"
             },
             "ConsumableMixer" => new[]
             {
