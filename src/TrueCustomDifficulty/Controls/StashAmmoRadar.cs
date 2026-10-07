@@ -198,14 +198,6 @@ private readonly RadarStatusMessage _status;
                 _selectedAxis == i ? accentBrush : textBrush);
         }
 
-        var infoHeader = GetInfoRect();
-        DrawClippedText(
-            dc,
-            "STASH AMMO | higher = more rounds in that stash tier",
-            new Rect(infoHeader.Left, 20, infoHeader.Width, 20), RadarInfoTextSize,
-            textBrush,
-            FontWeights.SemiBold);
-
         // Live stash-content preview: Basic / Standard / Rare columns.
         // This replaces the old single PracticalQuantityDisplay row which only
         // reflected the visible Basic backing parameter.
@@ -239,16 +231,15 @@ private readonly RadarStatusMessage _status;
             mutedBrush,
             accentBrush);
 
-        var instruction = string.IsNullOrWhiteSpace(_status.Text)
-            ? "Drag a point | Arrow keys adjust selected tier | Right click point/legend resets that tier | R resets all"
-            : _status.Text;
-
-        DrawCenteredText(
-            dc,
-            instruction,
-            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
-            string.IsNullOrWhiteSpace(_status.Text) ? mutedBrush : accentBrush,
-            FontWeights.Normal);
+        if (!string.IsNullOrWhiteSpace(_status.Text))
+        {
+            DrawCenteredText(
+                dc,
+                _status.Text,
+                new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
+                accentBrush,
+                FontWeights.Normal);
+        }
     }
 
     private void DrawAxisLabel(
