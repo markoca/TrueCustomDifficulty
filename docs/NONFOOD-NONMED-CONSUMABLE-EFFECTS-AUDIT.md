@@ -80,7 +80,7 @@ The current runtime-test implementation exposes:
 - `survival.beerDrunknessStrength`
 - `survival.vodkaDrunknessStrength`
 
-Alcohol drunkenness duration remains deliberately excluded. Beer/Vodka drunkenness **strength** is now exposed as a direct `ValueMin/ValueMax` scale and remains marked `runtime_test_required` because those two raw effect rows were cross-checked outside the original 2.0.5 writer-baseline capture.
+Alcohol drunkenness duration remains deliberately excluded. Beer/Vodka drunkenness **strength** is now exposed as a direct raw `ValueMin/ValueMax` value in 1-point Drunkness steps and remains marked `runtime_test_required` because those two raw effect rows were cross-checked outside the original 2.0.5 writer-baseline capture.
 
 ---
 
