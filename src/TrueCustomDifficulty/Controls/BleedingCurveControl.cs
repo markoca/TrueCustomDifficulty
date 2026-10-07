@@ -809,6 +809,13 @@ public sealed class BleedingCurveControl : FrameworkElement
     private Brush FindBrush(string key, Brush fallback)
         => TryFindResource(key) as Brush ?? fallback;
 
+    private static Brush CloneWithOpacity(Brush brush, double opacity)
+    {
+        var clone = brush.Clone();
+        clone.Opacity = Math.Clamp(opacity, 0.0, 1.0);
+        return clone;
+    }
+
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
         => new(
             value,
