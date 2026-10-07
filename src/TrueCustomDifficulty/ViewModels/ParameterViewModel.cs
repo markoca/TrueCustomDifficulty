@@ -118,6 +118,18 @@ public sealed class ParameterViewModel : ObservableObject
                        "Each row removes an audited physical world-loot population from 0% VANILLA to 100% REMOVED. BASE and +DLC1 show the audited eligible actor populations; ≈ REMOVED / REMAIN are percentage-derived estimates, while the actual actor set is chosen randomly without replacement when you build. Dedicated F1 boxes are their own population, but the broader Ammo Boxes removal can further reduce F1 boxes that survive that row. Right-click one track to reset only that category; press R to reset the whole world-loot depletion board.";
             }
 
+            if (IsMutantDropAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "All fourteen mutant-part rows use one real 0–100% probability scale. The gold value is the current absolute drop chance per eligible kill, the grey tick is that mutant's vanilla chance, and ≈N/100 shows the large-sample expected number of successful one-part drops per 100 eligible kills. These controls do not change mutant spawns, health, part value or progression. Right-click one track to reset only that mutant; press R to reset the whole drop-probability board.";
+            }
+
+            if (IsIndividualAnomalyDamageAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "Each anomaly row shows its raw BASE damage setting, percent of its own vanilla value, EFFECTIVE live output where the model exposes it, and a shared 0–200% individual-strength track. Global Anomaly Damage remains a separate multiplier layer and player protection resolves separately. Razor is the exception in storage: its row is a 0x–2x multiplier that scales both low- and high-speed Razor health damage together while leaving speed thresholds, bleeding and equipment corrosion alone. Right-click one track to reset only that anomaly; press R to reset the whole individual-anomaly table.";
+            }
+
             if (IsItemPriceScalerAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
