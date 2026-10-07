@@ -219,7 +219,7 @@
         "notes": []
       },
       "rationale": "Changes how much damage human enemies can take before they die.",
-      "logic": "Higher values make human enemies tougher and gunfights longer. Lower values make them go down faster. This does not change how much damage they deal.",
+      "logic": "",
       "interaction": "Your Weapon Damage affects the same time-to-kill from the opposite side. Raising enemy health while lowering your weapon damage compounds the effect."
     },
     {
@@ -263,7 +263,7 @@
         "notes": []
       },
       "rationale": "Changes how much damage you take from firearm hits by human enemies.",
-      "logic": "Higher values make successful enemy shots hurt more. Lower values make gunfire less punishing. Vanilla ranges from very forgiving on Novice to substantially harder on Master.",
+      "logic": "",
       "interaction": "Human Enemy Health controls how long enemies survive; this controls how dangerous their shots are. Repeated-Hit Protection can also affect how sustained incoming fire feels."
     },
     {
@@ -345,7 +345,7 @@
         "notes": []
       },
       "rationale": "Changes how accurate human enemy gunfire is.",
-      "logic": "Higher values make human gunfire more accurate; lower values make it less accurate. Vanilla keeps this at 100% on every difficulty.",
+      "logic": "",
       "interaction": "Pair it with Human Enemy Gun Damage to tune how threatening firefights feel. It affects human gunfire, not mutant attacks, melee, or grenades."
     },
     {
@@ -389,7 +389,7 @@
         "notes": []
       },
       "rationale": "Changes how much damage mutant attacks deal when they connect.",
-      "logic": "Higher values make mutant hits more punishing; lower values make them more forgiving. Vanilla goes from 35% on Novice to 150% on Master.",
+      "logic": "",
       "interaction": "Mutant Attack Frequency changes general attack frequency. Master-only special-ability cooldowns are tuned separately in the Master tab."
     },
     {
@@ -474,7 +474,7 @@
         "notes": []
       },
       "rationale": "Changes the base damage dealt by your weapons.",
-      "logic": "Higher values make your weapons hit harder; lower values make enemies take more shots to kill. This applies before separate headshot and weapon-specific behavior.",
+      "logic": "",
       "interaction": "Your Headshot Damage adds another layer on headshots. Human Enemy Health also changes the final time-to-kill."
     },
     {
@@ -518,7 +518,7 @@
         "notes": []
       },
       "rationale": "Changes how much extra damage your headshots deal.",
-      "logic": "Higher settings make your headshots hit harder without changing normal body-shot damage. 100% keeps headshots at normal strength; Master is the only vanilla preset that boosts them.",
+      "logic": "",
       "interaction": "Your Weapon Damage still affects the underlying hit, so raising both settings makes headshots much more lethal."
     },
     {
@@ -562,7 +562,7 @@
         "notes": []
       },
       "rationale": "Changes how often worn weapons jam.",
-      "logic": "Higher settings make jams more frequent; lower settings make them less frequent. Weapon condition still matters.",
+      "logic": "",
       "interaction": "Weapon condition and each weapon's own jam behavior still matter. Use this to make jams generally more or less common."
     },
     {
@@ -606,7 +606,7 @@
         "notes": []
       },
       "rationale": "Changes damage from explosions such as grenades and other explosive effects.",
-      "logic": "Higher values make explosions more lethal; lower values make them more forgiving. It does not change bullet damage or anomaly damage.",
+      "logic": "",
       "interaction": "Each explosion still has its own base damage. This setting scales the difficulty layer applied on top of those base values."
     },
     {
@@ -782,7 +782,7 @@
         ]
       },
       "rationale": "Compare and tune each mutant's HP from one radar. Every point changes only that mutant family's health.",
-      "logic": "1x keeps vanilla HP. Move a point inward to reduce that mutant's HP or outward to increase it.",
+      "logic": "",
       "interaction": "Each radar point changes one mutant family. Right-click a point or legend name to return only that mutant to vanilla HP; R resets the whole radar.",
       "exposeInUi": true
     },
@@ -884,7 +884,7 @@
         ]
       },
       "rationale": "Tune Chimera durability without changing its damage or special-attack frequency.",
-      "logic": "1x keeps vanilla Chimera HP. Lower settings reduce HP; higher settings increase HP.",
+      "logic": "",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -979,7 +979,7 @@
         ]
       },
       "rationale": "Tune Deer durability without changing its damage or special-attack frequency.",
-      "logic": "1x keeps vanilla Deer HP. Lower settings reduce HP; higher settings increase HP.",
+      "logic": "",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1074,7 +1074,7 @@
         ]
       },
       "rationale": "Tune Pseudogiant durability without changing its damage or special-attack frequency.",
-      "logic": "1x keeps vanilla Pseudogiant HP. Lower settings reduce HP; higher settings increase HP.",
+      "logic": "",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1169,7 +1169,7 @@
         ]
       },
       "rationale": "Tune Pseudodog durability without changing its damage or special-attack frequency.",
-      "logic": "1x keeps vanilla Pseudodog HP. Lower settings reduce HP; higher settings increase HP.",
+      "logic": "",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1271,7 +1271,7 @@
         ]
       },
       "rationale": "Tune Burer durability without changing its damage or special-attack frequency.",
-      "logic": "1x keeps vanilla Burer HP. Lower settings reduce HP; higher settings increase HP.",
+      "logic": "",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1373,7 +1373,7 @@
         ]
       },
       "rationale": "Tune Bayun durability without changing its damage or special-attack frequency.",
-      "logic": "1x keeps vanilla Bayun HP. Lower settings reduce HP; higher settings increase HP.",
+      "logic": "",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1489,7 +1489,7 @@
         ]
       },
       "rationale": "Tune Controller durability without changing its damage or special-attack frequency.",
-      "logic": "1x keeps vanilla Controller HP. Lower settings reduce HP; higher settings increase HP.",
+      "logic": "",
       "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
       "exposeInUi": false
     },
@@ -1789,7 +1789,7 @@
         "notes": []
       },
       "rationale": "Changes how quickly you become hungry.",
-      "logic": "Higher values make hunger build faster; lower values stretch the time between hunger states. Zero effectively stops passive hunger build-up.",
+      "logic": "",
       "interaction": "Vanilla hunger states still decide when their effects become active. Food Fullness Effect and consumables determine how quickly hunger is pushed back down."
     },
     {
@@ -1831,7 +1831,7 @@
         "notes": []
       },
       "rationale": "Controls how strongly medium hunger slows stamina recovery.",
-      "logic": "Higher settings slow stamina recovery more while medium hunger is active. 0 removes this stamina-recovery penalty.",
+      "logic": "",
       "interaction": "This modifies regeneration, not the direct stamina cost of sprinting, jumping or melee."
     },
     {
@@ -1872,7 +1872,7 @@
         "notes": []
       },
       "rationale": "Controls how strongly severe hunger slows stamina recovery.",
-      "logic": "Higher settings slow stamina recovery more while severe hunger is active. 0 removes this stamina-recovery penalty.",
+      "logic": "",
       "interaction": "Master Starvation Mechanics can add further stamina drain on top of this standard severe-hunger penalty."
     },
     {
@@ -1914,7 +1914,7 @@
         "notes": []
       },
       "rationale": "Changes how quickly you become tired and need sleep.",
-      "logic": "Higher values make fatigue build faster; lower values extend the time before sleepiness states are reached.",
+      "logic": "",
       "interaction": "Vanilla fatigue states still decide when their penalties become active. Energy drinks can reduce accumulated fatigue separately."
     },
     {
@@ -2065,7 +2065,7 @@
         "notes": []
       },
       "rationale": "Sets the minimum sleep duration used by the default sleep settings.",
-      "logic": "Higher values force a longer minimum rest period; lower values allow shorter sleep sessions.",
+      "logic": "",
       "interaction": "This is a time requirement, not a direct setting for how much each restorative effect heals."
     },
     {
@@ -2109,7 +2109,7 @@
         "notes": []
       },
       "rationale": "Scales the rate at which radiation is accumulated through the difficulty preset.",
-      "logic": "Higher values make radiation exposure build faster; lower values make equivalent exposure accumulate more slowly.",
+      "logic": "",
       "interaction": "Radiation Recovery controls passive reduction separately. Master Radiation Mechanics can also add a stamina penalty at high radiation."
     },
     {
@@ -2152,7 +2152,7 @@
         "notes": []
       },
       "rationale": "Controls the player's base radiation degeneration/recovery rate.",
-      "logic": "Higher values clear accumulated radiation faster; lower values make radiation persist longer.",
+      "logic": "",
       "interaction": "This acts on recovery, not exposure strength. Radiation Accumulation determines how quickly new radiation is gained."
     },
     {
@@ -2353,7 +2353,7 @@
         "notes": []
       },
       "rationale": "Controls the player's base natural bleeding reduction rate.",
-      "logic": "Higher values make bleeding fade faster without treatment; lower values make wounds persist longer.",
+      "logic": "",
       "interaction": "Bandages and medkits apply direct bleeding removal independently of this passive rate."
     },
     {
@@ -2405,7 +2405,7 @@
         ]
       },
       "rationale": "Changes your maximum health. The game’s full-health feedback stays in sync with the new maximum.",
-      "logic": "Higher values increase the player HP pool; lower values reduce it. This is a direct pool-size change, not incoming-damage scaling.",
+      "logic": "",
       "interaction": "The game keeps its vanilla low-health state boundary. Other systems may also assume a 100-point health scale, so very large Max Health changes should be tested in game."
     },
     {
@@ -2581,7 +2581,7 @@
         "notes": []
       },
       "rationale": "LowHealthRegenHP directly defines the positive regeneration amount used by the ordinary low-health recovery effect; vanilla ValueMin/ValueMax are both 1.0.",
-      "logic": "Higher values strengthen low-health recovery; zero removes this recovery contribution.",
+      "logic": "",
       "interaction": "Health Recovery Multiplier can scale this recovery down or up. If Master Low-Health Mechanics is enabled, its separate negative regeneration modifier can further suppress the final recovery."
     },
     {
@@ -2701,7 +2701,7 @@
         "notes": []
       },
       "rationale": "Compare how much HP each healing item restores and tune them from one radar.",
-      "logic": "Each point shows how much HP that item restores compared with its vanilla heal. Move inward for weaker healing or outward for stronger healing.",
+      "logic": "",
       "interaction": "Drag one point to change only that medical item's healing. Right-click resets that item to its vanilla healing value; R resets all four Medical Healing values.",
       "exposeInUi": true
     },
@@ -2745,7 +2745,7 @@
         "notes": []
       },
       "rationale": "Controls how much health a standard Medkit restores before any Master-only healing penalty is applied.",
-      "logic": "Higher values restore more HP per Medkit; lower values restore less. Vanilla restores 70 HP before Master penalties.",
+      "logic": "",
       "interaction": "Bleeding treatment is separate. If Master Consumable Effect Penalties are ON, the Master Medkit Healing setting further changes the final heal.",
       "exposeInUi": false
     },
@@ -2789,7 +2789,7 @@
         "notes": []
       },
       "rationale": "Controls how much health an Army Medkit restores before any Master-only healing penalty is applied.",
-      "logic": "Higher values restore more HP per Army Medkit; lower values restore less. Vanilla restores 85 HP before Master penalties.",
+      "logic": "",
       "interaction": "Bleeding treatment is separate. If Master Consumable Effect Penalties are ON, Master Army Medkit Healing further changes the final heal.",
       "exposeInUi": false
     },
@@ -2833,7 +2833,7 @@
         "notes": []
       },
       "rationale": "Controls how much health a Scientific Medkit restores. Vanilla restores 100 HP.",
-      "logic": "Higher values restore more HP; lower values restore less.",
+      "logic": "",
       "interaction": "Scientific Medkit bleeding and radiation treatment are separate. Vanilla Master does not apply the same healing penalty to Scientific Medkits that it applies to Bandages and the other Medkits.",
       "exposeInUi": false
     },
@@ -3056,7 +3056,7 @@
         "notes": []
       },
       "rationale": "Controls how much bleeding the Bandage removes when used.",
-      "logic": "Higher settings remove more bleeding. 0 removes none.",
+      "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
     {
@@ -3099,7 +3099,7 @@
         "notes": []
       },
       "rationale": "Controls how much bleeding the Medkit removes when used.",
-      "logic": "Higher settings remove more bleeding. 0 removes none.",
+      "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
     {
@@ -3142,7 +3142,7 @@
         "notes": []
       },
       "rationale": "Controls how much bleeding the Army Medkit removes when used.",
-      "logic": "Higher settings remove more bleeding. 0 removes none.",
+      "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
     {
@@ -3185,7 +3185,7 @@
         "notes": []
       },
       "rationale": "Controls how much bleeding the Scientific Medkit removes when used.",
-      "logic": "Higher settings remove more bleeding. 0 removes none.",
+      "logic": "",
       "interaction": "This changes direct treatment only. Natural Bleeding Recovery and bleeding damage remain separate."
     },
     {
@@ -3228,7 +3228,7 @@
         "notes": []
       },
       "rationale": "Controls how much radiation the Scientific Medkit removes when used.",
-      "logic": "Higher settings remove more radiation. 0 removes none.",
+      "logic": "",
       "interaction": "This changes direct treatment only. Radiation build-up and natural radiation recovery remain separate."
     },
     {
@@ -3271,7 +3271,7 @@
         "notes": []
       },
       "rationale": "Controls how much radiation the Anti-Rad removes when used.",
-      "logic": "Higher settings remove more radiation. 0 removes none.",
+      "logic": "",
       "interaction": "This changes direct treatment only. Radiation build-up and natural radiation recovery remain separate."
     },
     {
@@ -3281,7 +3281,7 @@
       "label": "Maximum Stamina",
       "description": "Vanilla maximum stamina is 100. This changes the size of your stamina pool, not how fast it recovers or how much actions cost.",
       "rationale": "Changes your maximum stamina pool. Vanilla is 100.",
-      "logic": "Higher values let the player absorb more sprint, jump, melee and vault costs before exhaustion; lower values make every existing cost consume a larger share of the bar.",
+      "logic": "",
       "interaction": "Action costs are direct SP values, so changing Maximum Stamina changes how many actions fit into a full bar even when their individual costs are untouched.",
       "control": "slider",
       "valueKind": "raw",
@@ -3876,7 +3876,7 @@
         "notes": []
       },
       "rationale": "Controls the player's base stamina regeneration rate.",
-      "logic": "Higher values refill stamina faster when regeneration is allowed; lower values lengthen recovery between strenuous actions.",
+      "logic": "",
       "interaction": "Movement-state values, hunger penalties and fatigue effects can reduce this base regeneration in context."
     },
     {
@@ -3963,7 +3963,7 @@
         "notes": []
       },
       "rationale": "Controls stamina consumed by a jump.",
-      "logic": "Higher values make repeated jumping more expensive; lower values reduce the cost of traversal.",
+      "logic": "",
       "interaction": "This is a per-action cost and does not change stamina regeneration.",
       "exposeInUi": false
     },
@@ -4007,7 +4007,7 @@
         "notes": []
       },
       "rationale": "Controls stamina consumed by vaulting.",
-      "logic": "Higher values make repeated vaults more expensive; lower values reduce their stamina impact.",
+      "logic": "",
       "interaction": "The effect is independent of jump cost even though both affect traversal.",
       "exposeInUi": false
     },
@@ -4051,7 +4051,7 @@
         "notes": []
       },
       "rationale": "Controls stamina consumed by a normal melee attack.",
-      "logic": "Higher values reduce the number of normal melee attacks that can be chained before recovery; lower values make them cheaper.",
+      "logic": "",
       "interaction": "Strong melee and buttstock attacks have independent costs.",
       "exposeInUi": false
     },
@@ -4095,7 +4095,7 @@
         "notes": []
       },
       "rationale": "Controls stamina consumed by a strong melee attack.",
-      "logic": "Higher values make heavy melee more demanding; lower values allow more frequent strong attacks.",
+      "logic": "",
       "interaction": "This does not alter melee damage, only the stamina economy of the action.",
       "exposeInUi": false
     },
@@ -4139,7 +4139,7 @@
         "notes": []
       },
       "rationale": "Controls stamina consumed by a buttstock melee attack.",
-      "logic": "Higher values make buttstock attacks more expensive; lower values reduce their stamina cost.",
+      "logic": "",
       "interaction": "Normal and strong melee use their own stamina values.",
       "exposeInUi": false
     },
@@ -4317,7 +4317,7 @@
         "notes": []
       },
       "rationale": "Sets the player's default maximum inventory mass.",
-      "logic": "Higher values allow more total carried mass before the hard limit; lower values tighten inventory management.",
+      "logic": "",
       "interaction": "Encumbrance thresholds and equipment-derived carry-weight bonuses can affect how the load feels before the absolute maximum is reached."
     },
     {
@@ -5319,7 +5319,7 @@
         ]
       },
       "rationale": "Sets how many coupons a new game starts with. It does not change quest rewards, trader prices, stash coupons, or the balance of an existing save.",
-      "logic": "Higher values give you more coupons at the start of a new game. Vanilla starts at 0.",
+      "logic": "",
       "interaction": "This only changes the starting wallet for a new game. It does not add coupons to an existing save. The slider moves in 10-coupon steps."
     },
     {
@@ -6045,7 +6045,7 @@
         "notes": []
       },
       "rationale": "Upgrade_Cost is a direct difficulty setting: 100% on Novice/Stalker, 125% on Veteran and 150% on Master.",
-      "logic": "Higher values make the difficulty upgrade cost larger; lower values make upgrades cheaper.",
+      "logic": "",
       "interaction": "Each upgrade still has its own base price. This setting makes upgrades generally cheaper or more expensive without changing their relative costs."
     },
     {
@@ -6131,7 +6131,7 @@
         "notes": []
       },
       "rationale": "The main global setting for making repair services cheaper or more expensive.",
-      "logic": "Higher values make repairs more expensive overall; lower values make them cheaper. 70% is vanilla.",
+      "logic": "",
       "interaction": "Reputation-based repair prices still apply and can further raise or lower the final repair bill."
     },
     {
@@ -6339,7 +6339,7 @@
         "notes": []
       },
       "rationale": "Reward_MainLine_Coupon is a direct difficulty setting: 135% on Novice, 100% on Stalker, 75% on Veteran and 55% on Master.",
-      "logic": "Higher values pay more quest coupons; lower values reduce that income stream.",
+      "logic": "",
       "interaction": "This does not change stash coupon rolls, starting coupons or trader prices. Main- and side-line quest income remain independently tunable."
     },
     {
@@ -6383,7 +6383,7 @@
         "notes": []
       },
       "rationale": "Reward_SideLine_Coupon is a direct difficulty setting: 135% on Novice, 100% on Stalker, 75% on Veteran and 55% on Master.",
-      "logic": "Higher values pay more quest coupons; lower values reduce that income stream.",
+      "logic": "",
       "interaction": "This does not change stash coupon rolls, starting coupons or trader prices. Main- and side-line quest income remain independently tunable."
     },
     {
@@ -6427,7 +6427,7 @@
         "notes": []
       },
       "rationale": "Changes how quickly armor loses condition across the selected Base Preset.",
-      "logic": "Higher settings make armor lose condition more slowly; lower settings make it wear faster.",
+      "logic": "",
       "interaction": "Changes armor condition durability only. It does not change armor protection values, weapon wear or jamming thresholds."
     },
     {
@@ -6471,7 +6471,7 @@
         ]
       },
       "rationale": "Provides one carry-weight control for ammunition without flattening the different vanilla weights of bullets, grenades and rockets.",
-      "logic": "100% keeps vanilla ammo weight. 50% halves it, 200% doubles it, and 0% makes ammunition weightless.",
+      "logic": "",
       "interaction": "Carry-capacity and encumbrance controls remain separate. This changes item Weight itself, so existing inventory-weight rules continue to apply normally."
     },
     {
@@ -6522,7 +6522,7 @@
         ]
       },
       "rationale": "Lets consumables contribute more or less to inventory weight without changing their healing, hunger, radiation or other gameplay effects.",
-      "logic": "100% keeps vanilla food and medicine weight. 50% halves it, 200% doubles it, and 0% makes those items weightless.",
+      "logic": "",
       "interaction": "This does not change consumable effect strength or duration. DLC1 dry-ration weight is patched only when DLC1 is installed."
     },
     {
@@ -7190,7 +7190,7 @@
         "notes": []
       },
       "rationale": "Controls the direct health restore you receive after normal sleep. Vanilla uses a very generous value that is effectively enough to refill normal player health.",
-      "logic": "Higher values restore more health after sleeping. Zero removes the direct health restore from sleep.",
+      "logic": "",
       "interaction": "This is separate from passive health recovery and medical healing."
     },
     {
@@ -7231,7 +7231,7 @@
         "notes": []
       },
       "rationale": "Normal sleep restores stamina with a vanilla +100% Stamina effect.",
-      "logic": "Higher values increase the post-sleep stamina restore effect; zero removes this component.",
+      "logic": "",
       "interaction": "This affects the post-sleep restore, not passive stamina regeneration or action costs."
     },
     {
@@ -7363,7 +7363,7 @@
         "notes": []
       },
       "rationale": "Vanilla Master adds a +55% recoil effect while the severe-fatigue bundle is active.",
-      "logic": "Higher values make weapon recoil more pronounced during severe fatigue; zero removes this component.",
+      "logic": "",
       "interaction": "This is an extra Master fatigue layer and is independent from the standard aim-time/reload penalties.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
@@ -7412,7 +7412,7 @@
         "notes": []
       },
       "rationale": "Controls how much extra weapon sway Master severe fatigue adds while aiming.",
-      "logic": "Higher values make the weapon wander more. Lower values steady the aim. Vanilla Master uses 0.4.",
+      "logic": "",
       "interaction": "This works alongside the separate recoil and shot-spread penalties in the same Master severe-fatigue bundle.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
@@ -7454,7 +7454,7 @@
         "notes": []
       },
       "rationale": "Changes how much severe fatigue increases weapon spread.",
-      "logic": "Higher game settings increase the dispersion effect; lower values reduce it. Zero removes this component.",
+      "logic": "",
       "interaction": "This is separate from recoil and aim sway, so all three can contribute to degraded weapon handling.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
@@ -7540,7 +7540,7 @@
         "notes": []
       },
       "rationale": "Changes HP loss while low bleeding is active.",
-      "logic": "Higher values make the low bleeding state cause more direct damage; zero removes this damage component.",
+      "logic": "",
       "interaction": "Applies while the game is in its vanilla low-bleeding state. Natural Bleeding Recovery determines how long bleeding lasts."
     },
     {
@@ -7583,7 +7583,7 @@
         "notes": []
       },
       "rationale": "Controls the health damage dealt by medium bleeding each time its damage tick occurs. Vanilla uses 1.5 damage.",
-      "logic": "Higher values make medium bleeding hurt more. Zero removes direct health damage from this stage.",
+      "logic": "",
       "interaction": "Applies while the game is in its vanilla medium-bleeding state. Movement and sleep penalties remain separate."
     },
     {
@@ -7626,7 +7626,7 @@
         "notes": []
       },
       "rationale": "Controls the health damage dealt by severe bleeding each time its damage tick occurs. Vanilla uses 2 damage.",
-      "logic": "Higher values make severe bleeding hurt more. Zero removes direct health damage from this stage.",
+      "logic": "",
       "interaction": "Applies while the game is in its vanilla severe-bleeding state. Bleeding Effect Strength can further change how dangerous bleeding feels overall."
     },
     {
@@ -9224,7 +9224,7 @@
         ]
       },
       "rationale": "Controls physical F1 box abundance directly using the same removed-percentage convention as the other world box controls.",
-      "logic": "0% emits no patch. Otherwise removeCount = round(eligible F1 box count × selected percentage), midpoint away from zero; remove that many unique actors at Build time.",
+      "logic": "0% keeps every vanilla F1 grenade box. Higher settings remove more of them from the world when you build the mod.",
       "interaction": "Composes with World Ammo Boxes; the global ammo-box removal slider may further reduce the F1 boxes that survive this control.",
       "exposeInUi": false
     },
@@ -9278,7 +9278,7 @@
         ]
       },
       "rationale": "Controls physical food/drink box presence directly without a separate enable checkbox or shared percentage control.",
-      "logic": "Vanilla/0% emits no patch. Otherwise K = round(eligible_actor_count × percentage), midpoint away from zero, and K unique actors are removed at Build time.",
+      "logic": "0% keeps vanilla food and drink boxes. Higher settings remove more of them from the world.",
       "interaction": "Independent of the other World Loot sliders and does not change the contents of surviving boxes.",
       "exposeInUi": false
     },
@@ -9332,7 +9332,7 @@
         ]
       },
       "rationale": "Controls physical medical box presence directly without a separate enable checkbox or shared percentage control.",
-      "logic": "Vanilla/0% emits no patch. Otherwise K = round(eligible_actor_count × percentage), midpoint away from zero, and K unique actors are removed at Build time.",
+      "logic": "0% keeps vanilla medical boxes. Higher settings remove more of them from the world.",
       "interaction": "Independent of the other World Loot sliders and does not change the contents of surviving boxes.",
       "exposeInUi": false
     },
@@ -9387,7 +9387,7 @@
         ]
       },
       "rationale": "Reduces vanilla world generosity without changing stashes, boxes, NPC loot, traders, weapons/armor or scripted rewards.",
-      "logic": "Vanilla/0% emits no patch. Otherwise K = round(eligible_actor_count × percentage), midpoint away from zero, and K unique eligible loose-loot actors are removed at Build time.",
+      "logic": "0% keeps vanilla loose world loot. Higher settings remove more eligible loose pickups from the world.",
       "interaction": "Independent of World Ammo/Food/Medical Boxes and World Weapon Shuffle. Surviving PackOfItems keep their vanilla item pools.",
       "exposeInUi": false
     },
@@ -9494,7 +9494,7 @@
         ]
       },
       "rationale": "The slider controls actual world weapon density while keeping all 36 regular models represented and progressively increasing their guaranteed minimum presence.",
-      "logic": "Occupied locations = 36 + round((available - 36) × density). Guaranteed copies = min(floor(occupied / 36), topology cap): base cap 6, DLC1 cap 8.",
+      "logic": "Higher density leaves more world weapon locations populated; lower density makes found weapons scarcer. Every regular weapon model is still kept in the pool.",
       "interaction": "The live helper shows occupied locations and the exact guaranteed minimum for every weapon at the current slider value."
     },
     {
@@ -9636,7 +9636,7 @@
         ]
       },
       "rationale": "Refreshes blueprint discovery without changing blueprint count, container count, blueprint definitions, quest blueprints or non-world content.",
-      "logic": "OFF emits no blueprint patch. ON generates a fresh build-time one-to-one permutation across the 77 proven world blueprint slots, with no duplicates and no vanilla-position fixed points.",
+      "logic": "OFF keeps vanilla blueprint locations. ON reshuffles the supported world blueprints so each build gives you a fresh layout with no duplicates.",
       "interaction": "Independent of World Weapon Shuffle and the other World Loot controls."
     },
     {
