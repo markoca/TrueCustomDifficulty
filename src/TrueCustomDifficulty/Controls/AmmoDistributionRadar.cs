@@ -253,7 +253,7 @@ private readonly RadarStatusMessage _status;
             DrawClippedText(
                 dc,
                 $"{Axes[i].Label} | {values[i]:0.##}x weight",
-                new Rect(info.Left + 6, y + 5, info.Width - 12, 17), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : textBrush,
+                new Rect(info.Left + 6, y + 5, info.Width - 12, 17), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : textBrush,
                 FontWeights.SemiBold);
 
             var detailY = y + 24;
@@ -262,7 +262,7 @@ private readonly RadarStatusMessage _status;
                 DrawClippedText(
                     dc,
                     detail,
-                    new Rect(info.Left + 18, detailY, info.Width - 24, 16), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
+                    new Rect(info.Left + 18, detailY, info.Width - 24, 16), RadarLegendTextSize, hovered ? Brushes.White : modified ? accentBrush : mutedBrush,
                     FontWeights.Normal);
                 detailY += 18;
             }
