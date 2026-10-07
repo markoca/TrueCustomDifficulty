@@ -22138,7 +22138,7 @@
       "nodePath": [],
       "key": "ValueMin",
       "sourceRaw": "15",
-      "operation": "scale",
+      "operation": "set",
       "role": "",
       "difficultySid": ""
     },
@@ -22150,7 +22150,7 @@
       "nodePath": [],
       "key": "ValueMax",
       "sourceRaw": "15",
-      "operation": "scale",
+      "operation": "set",
       "role": "",
       "difficultySid": ""
     },
@@ -22162,7 +22162,7 @@
       "nodePath": [],
       "key": "ValueMin",
       "sourceRaw": "30",
-      "operation": "scale",
+      "operation": "set",
       "role": "",
       "difficultySid": ""
     },
@@ -22174,7 +22174,7 @@
       "nodePath": [],
       "key": "ValueMax",
       "sourceRaw": "30",
-      "operation": "scale",
+      "operation": "set",
       "role": "",
       "difficultySid": ""
     }
