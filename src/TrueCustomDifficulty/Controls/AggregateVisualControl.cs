@@ -146,6 +146,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "HumanCombatProfile":
                 DrawHumanCombatProfile(dc, text, muted, border, soft, accent, panel);
                 break;
+            case "PlayerWeaponProfile":
+                DrawPlayerWeaponProfile(dc, text, muted, border, soft, accent, panel);
+                break;
             case "ConsumableMixer":
                 DrawConsumableMixer(dc, text, muted, border, accent, panel);
                 break;
@@ -434,6 +437,99 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
 
+
+
+    // Three source-exact tuning lanes: no invented headshot damage formula,
+    // simulated hit chance, or hard-coded weapon-jam probability.
+    private void DrawPlayerWeaponProfile(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(dc, "YOUR WEAPONS",
+            "damage, headshot modifier and jamming stay three independent CFG settings",
+            text, muted, accent);
+
+        DrawPlayerWeaponLane(dc, P("combat.playerWeaponDamage"), "BASE HIT DAMAGE",
+            new Rect(16.0, 57.0, Math.Max(480.0, ActualWidth - 32.0), 68.0),
+            text, muted, border, soft, accent, panel);
+        DrawPlayerWeaponLane(dc, P("combat.playerHeadshotMultiplier"), "HEADSHOT MULTIPLIER",
+            new Rect(16.0, 134.0, Math.Max(480.0, ActualWidth - 32.0), 68.0),
+            text, muted, border, soft, accent, panel);
+        DrawPlayerWeaponLane(dc, P("combat.weaponJamming"), "JAM FREQUENCY",
+            new Rect(16.0, 211.0, Math.Max(480.0, ActualWidth - 32.0), 68.0),
+            text, muted, border, soft, accent, panel);
+
+        DrawCenteredText(dc,
+            "RIGHT = STRONGER HITS / HEADSHOTS  |  MORE JAMS ON THE THIRD TRACK",
+            new Point(ActualWidth / 2.0, 290.0), 9.1, text, FontWeights.SemiBold);
+    }
+
+    private void DrawPlayerWeaponLane(
+        DrawingContext dc,
+        ParameterViewModel? parameter,
+        string label,
+        Rect card,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
+    {
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 3.0, 3.0);
+        DrawText(dc, label, new Point(card.Left + 11.0, card.Top + 7.0),
+            9.5, text, FontWeights.SemiBold);
+        if (parameter is null)
+        {
+            DrawRightAlignedText(dc, "MISSING CFG PARAMETER",
+                new Point(card.Right - 11.0, card.Top + 7.0),
+                9.5, muted, FontWeights.Normal);
+            return;
+        }
+
+        DrawRightAlignedText(dc,
+            $"{parameter.CurrentNumber:0.##}x   |   BASE {parameter.ReferenceNumber:0.##}x",
+            new Point(card.Right - 11.0, card.Top + 7.0),
+            10.0, accent, FontWeights.Bold);
+
+        var track = new Rect(card.Left + 15.0, card.Top + 27.0,
+            Math.Max(80.0, card.Width - 30.0), 20.0);
+        var y = track.Top + track.Height / 2.0;
+        var baselineX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, track, reverse: false);
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track, reverse: false);
+
+        dc.DrawLine(new Pen(soft, 3.5),
+            new Point(track.Left, y), new Point(track.Right, y));
+        if (Math.Abs(currentX - baselineX) > 0.5)
+        {
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.7), 4.5),
+                new Point(Math.Min(currentX, baselineX), y),
+                new Point(Math.Max(currentX, baselineX), y));
+        }
+
+        dc.DrawLine(new Pen(muted, 1.8),
+            new Point(baselineX, y - 9.0), new Point(baselineX, y + 9.0));
+        dc.DrawEllipse(panel,
+            new Pen(accent, IsSelected(parameter) ? 2.6 : 1.7),
+            new Point(currentX, y), 6.4, 6.4);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+
+        // Native range and step are used for hit testing / dragging.
+        AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
+        DrawText(dc, $"{parameter.Minimum:0.##}x",
+            new Point(track.Left, card.Bottom - 16.0),
+            9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
+            new Point(track.Right, card.Bottom - 16.0),
+            9.0, muted, FontWeights.Normal);
+    }
 
     // Two independently editable native CFG axes plus two more distinct controls.
     // The crosshair is a visual pairing, not an effective DPS, TTK or hit-rate model.
@@ -3392,6 +3488,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 390.0,
             "HumanCombatProfile" => 390.0,
+            "PlayerWeaponProfile" => 330.0,
             "ConsumableMixer" => 475.0,
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
@@ -3445,6 +3542,12 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "combat.npcWeaponDamage",
                 "combat.npcAttackCooldown",
                 "combat.npcHipAccuracy"
+            },
+            "PlayerWeaponProfile" => new[]
+            {
+                "combat.playerWeaponDamage",
+                "combat.playerHeadshotMultiplier",
+                "combat.weaponJamming"
             },
             "ConsumableMixer" => new[]
             {

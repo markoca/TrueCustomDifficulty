@@ -54,6 +54,7 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Equipment Wear | Two independent native CFG axes: armor toughness and player-weapon wear per shot, with current/base comparison | Semantic |
 | Psy Phantom Pressure | Two independent phantom-cycle timing/count axes, plus gear damage and bleeding toggle | Semantic |
 | Human Combat Profile | Native human health and gun-damage axes, plus independent attack-frequency and accuracy tracks | Semantic |
+| Your Weapons | Three compact native-value lanes for base hit damage, headshot multiplier and weapon jamming | Semantic |
 | Bleeding Treatment | Shared normalized treatment-strength mixer against each item's own vanilla value | Semantic |
 | Consumables | Authored instant-effect previews plus one real-seconds duration timeline | Semantic |
 | Sleeping | Sleep gate, minimum sleep window and wake-up recovery | Semantic |
@@ -108,6 +109,18 @@ Threshold handles move horizontally while penalty handles move vertically. There
 - Below the plot, `combat.npcAttackCooldown` edits player-facing attack **frequency**, preserving the existing writer's reciprocal `NPC_AttackCooldown` conversion. `combat.npcHipAccuracy` edits the native accuracy multiplier.
 - Both lower tracks retain their own vanilla reference ticks and their exact native range/step.
 - These four independent controls do **not** produce a computed hit chance, attack DPS, or time-to-kill; the engine's complete combat model is not claimed.
+
+### Your Weapons
+
+`AggregateVisualControl / PlayerWeaponProfile`
+
+Three directly adjustable and independent rows:
+
+- `combat.playerWeaponDamage` tunes the selected difficulty's `EnvironmentDifficulty.Weapon_BaseDamage` (0.25x–2x). Its Base Preset reference can be 1.30x, 1x or 0.75x depending on the selected difficulty.
+- `combat.playerHeadshotMultiplier` tunes `NPCCombatDifficulty.PlayerWeapon_HeadshotMultiplier` (0.5x–3x). The selected baseline is 1x for Novice/Stalker/Veteran and 2x for Master.
+- `combat.weaponJamming` tunes `NPCCombatDifficulty.Weapon_JammingMultiplier` (0x–2x). The selected baseline is 1x for Novice/Stalker/Veteran and 1.5x for Master.
+
+Each lane uses its own native absolute multiplier range and 0.01 step. The grey reference tick is the actual selected Base Preset, not a universal 1x. Gold handles edit only the specified CFG setting; the gold segment between base/current communicates a tuning delta, not computed effective damage or jam probability. Right-click resets a single lane, R resets the family. No damage-per-second, hit probability or headshot final-damage calculation is invented.
 
 ### Bleeding Treatment
 

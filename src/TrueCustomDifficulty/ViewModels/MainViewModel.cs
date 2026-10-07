@@ -281,6 +281,12 @@ public sealed class MainViewModel : ObservableObject
             "survival.fatigueStrongReloadPenalty");
 
         WireVisualAggregate(
+            "combat.playerWeaponDamage",
+            "combat.playerWeaponDamage",
+            "combat.playerHeadshotMultiplier",
+            "combat.weaponJamming");
+
+        WireVisualAggregate(
             "combat.npcHealth",
             "combat.npcHealth",
             "combat.npcWeaponDamage",
