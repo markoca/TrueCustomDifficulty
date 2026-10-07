@@ -736,7 +736,7 @@
       "tab": "combat",
       "group": "Mutant Health",
       "label": "Mutant Health",
-      "description": "Changes HP separately for eight mutant families.",
+      "description": "Scales Bloodsucker-family HP with one multiplier. The radar shows the standard Bloodsucker HP; Mist Bloodsucker follows the same multiplier.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -778,12 +778,13 @@
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
           "1x is vanilla.",
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty.",
-          "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
+          "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat.",
+          "The Bloodsucker family control applies the same multiplier to Bloodsucker (500 MaxHP) and MistBloodsucker (1000 MaxHP); the radar displays the standard Bloodsucker value only."
         ]
       },
-      "rationale": "Set each mutant family's HP independently. Mutant damage and special-attack frequency are separate settings.",
+      "rationale": "Set Bloodsucker-family HP with one multiplier. Standard Bloodsucker is the displayed reference; Mist Bloodsucker scales by the same factor.",
       "logic": "",
-      "interaction": "",
+      "interaction": "Both audited Bloodsucker MaxHP targets scale together. Mutant damage and special-attack frequency remain separate.",
       "exposeInUi": true
     },
     {
