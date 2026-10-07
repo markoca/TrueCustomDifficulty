@@ -15,6 +15,10 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class AmmoDistributionRadar : FrameworkElement
 {
+    private const double RadarInfoTextSize = 11.0;
+    private const double RadarLegendTextSize = 11.0;
+    private const double RadarAxisTextSize = 10.5;
+
     private const double MaximumValue = 3.0;
     private const double Step = 0.25;
 
@@ -50,7 +54,7 @@ private string _statusText = string.Empty;
     public AmmoDistributionRadar()
     {
         Focusable = true;
-        MinHeight = 430;
+        MinHeight = 500;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -58,7 +62,7 @@ private string _statusText = string.Empty;
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 560 : Math.Max(320, availableSize.Width);
-        return new Size(width, 430);
+        return new Size(width, 500);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -197,16 +201,14 @@ private string _statusText = string.Empty;
         DrawClippedText(
             dc,
             "A range means that caliber exists in more than one vanilla ammo-box pool.",
-            new Rect(info.Left, ActualHeight - 64, info.Width, 18),
-            9.6,
+            new Rect(info.Left, ActualHeight - 68, info.Width, 20), RadarInfoTextSize,
             mutedBrush,
             FontWeights.Normal);
 
         var instruction = string.IsNullOrWhiteSpace(_statusText)
-            ? "Drag a point · Arrow keys adjust selected family · Right-click point/legend resets that family · R resets all"
+            ? "Drag a point | Arrow keys adjust selected family | Right-click point/legend resets that family | R resets all"
             : _statusText;
-        DrawCenteredText(dc, instruction, new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 28),
-            10.0, string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush, FontWeights.Normal);
+        DrawCenteredText(dc, instruction, new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 28), RadarInfoTextSize, string.IsNullOrWhiteSpace(_statusText) ? mutedBrush : accentBrush, FontWeights.Normal);
     }
 
     private void DrawAxisLabel(
@@ -224,8 +226,8 @@ private string _statusText = string.Empty;
                 ? TextAnchor.Left
                 : TextAnchor.Center;
 
-        DrawAnchoredText(dc, label, new Point(position.X, position.Y - 6), 10.3, activeBrush, FontWeights.SemiBold, anchor);
-        DrawAnchoredText(dc, multiplier, new Point(position.X, position.Y + 8), 9.2, mutedBrush, FontWeights.Normal, anchor);
+        DrawAnchoredText(dc, label, new Point(position.X, position.Y - 6), RadarAxisTextSize, activeBrush, FontWeights.SemiBold, anchor);
+        DrawAnchoredText(dc, multiplier, new Point(position.X, position.Y + 8), RadarAxisTextSize, mutedBrush, FontWeights.Normal, anchor);
     }
 
     private Rect GetInfoRect()
@@ -245,13 +247,11 @@ private string _statusText = string.Empty;
         var info = GetInfoRect();
         DrawClippedText(
             dc,
-            "AMMO BOX MIX · higher = this family appears more often",
-            new Rect(info.Left, 18, info.Width, 18),
-            10.2,
-            textBrush,
+            "AMMO BOX MIX | higher = this family appears more often",
+            new Rect(info.Left, 18, info.Width, 18), RadarInfoTextSize, textBrush,
             FontWeights.SemiBold);
 
-        var rowHeights = details.Select(detail => 26.0 + (detail.Count * 15.0)).ToArray();
+        var rowHeights = details.Select(detail => 28.0 + (detail.Count * 18.0)).ToArray();
         var totalHeight = rowHeights.Sum();
         var y = info.Top + Math.Max(0.0, (info.Height - totalHeight) / 2.0);
 
@@ -264,10 +264,8 @@ private string _statusText = string.Empty;
 
             DrawClippedText(
                 dc,
-                $"{Axes[i].Label} · {values[i]:0.##}x weight",
-                new Rect(info.Left + 6, y + 5, info.Width - 12, 17),
-                10.0,
-                modified ? accentBrush : hovered ? textBrush : textBrush,
+                $"{Axes[i].Label} | {values[i]:0.##}x weight",
+                new Rect(info.Left + 6, y + 5, info.Width - 12, 17), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : textBrush,
                 FontWeights.SemiBold);
 
             var detailY = y + 24;
@@ -276,11 +274,9 @@ private string _statusText = string.Empty;
                 DrawClippedText(
                     dc,
                     detail,
-                    new Rect(info.Left + 18, detailY, info.Width - 24, 16),
-                    9.3,
-                    modified ? accentBrush : hovered ? textBrush : mutedBrush,
+                    new Rect(info.Left + 18, detailY, info.Width - 24, 16), RadarLegendTextSize, modified ? accentBrush : hovered ? textBrush : mutedBrush,
                     FontWeights.Normal);
-                detailY += 15;
+                detailY += 18;
             }
 
             EndLegendHitArea();
@@ -343,7 +339,7 @@ private string _statusText = string.Empty;
         {
             var lo = Math.Min(a, b);
             var hi = Math.Max(a, b);
-            return Math.Abs(hi - lo) < 0.05 ? P(lo) : $"{lo:0.#}–{hi:0.#}%";
+            return Math.Abs(hi - lo) < 0.05 ? P(lo) : $"{lo:0.#}-{hi:0.#}%";
         }
 
         var nine18 = Share(nine, poolA);
