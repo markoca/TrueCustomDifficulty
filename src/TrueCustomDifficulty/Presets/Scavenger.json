@@ -60,7 +60,7 @@
     },
     "combat.mutantHealth.bloodsucker": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantCooldown.bloodsucker": {
       "kind": "slider",
@@ -68,7 +68,7 @@
     },
     "combat.mutantHealth.chimera": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantCooldown.chimera": {
       "kind": "slider",
@@ -100,7 +100,7 @@
     },
     "combat.mutantHealth.burer": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantCooldown.burer": {
       "kind": "slider",
@@ -116,7 +116,7 @@
     },
     "combat.mutantHealth.controller": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "combat.mutantCooldown.controller": {
       "kind": "slider",
@@ -192,11 +192,11 @@
     },
     "health.baseRegen": {
       "kind": "slider",
-      "number": 0.0
+      "number": 0
     },
     "health.regenDelay": {
       "kind": "slider",
-      "number": 7.0
+      "number": 7
     },
     "health.regenerationScalar": {
       "kind": "slider",
@@ -292,7 +292,7 @@
     },
     "stamina.sprintCost": {
       "kind": "slider",
-      "number": 6.0
+      "number": 6
     },
     "stamina.jumpCost": {
       "kind": "slider",
@@ -349,7 +349,7 @@
     },
     "loot.cheapStashGrenadeQuantity": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "loot.mediumStashAmmoQuantity": {
       "kind": "slider",
@@ -381,7 +381,7 @@
     },
     "loot.expensiveStashAmmoQuantity": {
       "kind": "slider",
-      "number": 1.0
+      "number": 1
     },
     "loot.expensiveStashMoneyChance": {
       "kind": "slider",
@@ -509,15 +509,15 @@
     },
     "survival.starvationDamage": {
       "kind": "slider",
-      "number": 3.0
+      "number": 3
     },
     "survival.starvationDamageInterval": {
       "kind": "slider",
-      "number": 10.0
+      "number": 10
     },
     "survival.starvationPenaltyDelay": {
       "kind": "slider",
-      "number": 3.0
+      "number": 3
     },
     "survival.starvationHealthRegenPenalty": {
       "kind": "slider",
@@ -581,7 +581,7 @@
     },
     "survival.bleedingMediumDamage": {
       "kind": "slider",
-      "number": 2.0
+      "number": 2
     },
     "survival.bleedingStrongDamage": {
       "kind": "slider",
@@ -593,27 +593,27 @@
     },
     "environment.electroAnomalyDamage": {
       "kind": "slider",
-      "number": 75.0
+      "number": 75
     },
     "environment.chemicalAnomalyDamage": {
       "kind": "slider",
-      "number": 34.0
+      "number": 34
     },
     "environment.fireAnomalyDamage": {
       "kind": "slider",
-      "number": 69.0
+      "number": 69
     },
     "environment.carouselAnomalyDamage": {
       "kind": "slider",
-      "number": 121.0
+      "number": 121
     },
     "environment.toxicCloudDamage": {
       "kind": "slider",
-      "number": 29.0
+      "number": 29
     },
     "environment.steamAnomalyDamage": {
       "kind": "slider",
-      "number": 69.0
+      "number": 69
     },
     "environment.flycatcherMovementSpeed": {
       "kind": "slider",
@@ -625,7 +625,7 @@
     },
     "environment.clickerHealthDamage": {
       "kind": "slider",
-      "number": 80.0
+      "number": 80
     },
     "environment.razorHealthDamage": {
       "kind": "slider",
@@ -637,19 +637,19 @@
     },
     "environment.soapBubbleHealthDamage": {
       "kind": "slider",
-      "number": 115.0
+      "number": 115
     },
     "environment.fireballHealthDamage": {
       "kind": "slider",
-      "number": 115.0
+      "number": 115
     },
     "environment.diamondHealthDamage": {
       "kind": "slider",
-      "number": 17.0
+      "number": 17
     },
     "environment.diamondBleeding": {
       "kind": "slider",
-      "number": 14.0
+      "number": 14
     },
     "environment.psyAnomalyIntensity": {
       "kind": "slider",
@@ -758,6 +758,38 @@
     "economy.traderMinBuyCondition": {
       "kind": "slider",
       "number": 0.45
+    },
+    "survival.hungerLowThreshold": {
+      "kind": "slider",
+      "number": 17
+    },
+    "survival.hungerMediumThreshold": {
+      "kind": "slider",
+      "number": 33
+    },
+    "survival.hungerStrongThreshold": {
+      "kind": "slider",
+      "number": 83
+    },
+    "survival.sleepLowThreshold": {
+      "kind": "slider",
+      "number": 50
+    },
+    "survival.sleepMediumThreshold": {
+      "kind": "slider",
+      "number": 60
+    },
+    "survival.sleepStrongThreshold": {
+      "kind": "slider",
+      "number": 80
+    },
+    "survival.bleedingMediumThreshold": {
+      "kind": "slider",
+      "number": 50
+    },
+    "survival.bleedingStrongThreshold": {
+      "kind": "slider",
+      "number": 75
     }
   }
 }
