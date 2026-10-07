@@ -183,7 +183,7 @@ public sealed class DrunkennessControl : FrameworkElement
         DrawTierCards(dc, panelAlt, border, radarMuted, accent);
         DrawCenteredText(
             dc,
-            $"OVERDRUNKNESS IS A SEPARATE MECHANICS CHAIN AT {OverDrunknessReference:0} — NOT USED FOR THE DRINK-COUNT PREVIEW",
+            $"OVERDRUNKNESS {OverDrunknessReference:0} IS SEPARATE — NOT USED IN THIS PREVIEW",
             new Point(ActualWidth / 2.0, 344.0),
             9.0,
             muted,
@@ -318,7 +318,7 @@ public sealed class DrunkennessControl : FrameworkElement
         for (var drink = 1; drink <= count; drink++)
         {
             var tier = GetTierAfterDrink(drink, strength);
-            var isWasted = tier == "WASTED";
+            var isStrong = tier == "STRONG";
             var segmentLeft = left + (drink - 1) * segmentWidth;
             var segmentCenter = segmentLeft + segmentWidth / 2.0;
 
@@ -330,7 +330,7 @@ public sealed class DrunkennessControl : FrameworkElement
                     new Point(segmentLeft, top + stripHeight - 5.0));
             }
 
-            if (isWasted)
+            if (isStrong)
             {
                 dc.DrawLine(
                     new Pen(accent, 2.0),
@@ -351,7 +351,7 @@ public sealed class DrunkennessControl : FrameworkElement
                 tier,
                 new Point(segmentCenter, top + 18.0),
                 8.8,
-                isWasted ? accent : muted,
+                isStrong ? accent : muted,
                 FontWeights.Bold);
         }
     }
@@ -505,11 +505,8 @@ public sealed class DrunkennessControl : FrameworkElement
 
         if (e.Key == Key.R)
         {
-            if (_activeSlider == ActiveSlider.Beer)
-                ResetStrength(_beerStrengthParameter, VanillaBeerDrunkness);
-            else
-                ResetStrength(_vodkaStrengthParameter, VanillaVodkaDrunkness);
-
+            ResetStrength(_beerStrengthParameter, VanillaBeerDrunkness);
+            ResetStrength(_vodkaStrengthParameter, VanillaVodkaDrunkness);
             e.Handled = true;
             return;
         }
