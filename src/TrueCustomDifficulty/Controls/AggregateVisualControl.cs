@@ -155,6 +155,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "SevereFatiguePenaltyBoard":
                 DrawSevereFatiguePenaltyBoard(dc, text, muted, border, soft, accent, panel);
                 break;
+            case "MasterMedicalHealing":
+                DrawMasterMedicalHealing(dc, text, muted, border, soft, accent, panel);
+                break;
             case "ConsumableMixer":
                 DrawConsumableMixer(dc, text, muted, border, accent, panel);
                 break;
@@ -446,6 +449,112 @@ public sealed class AggregateVisualControl : FrameworkElement
 
 
 
+
+
+    // This is a comparison of exact authored healing ValueMultipliers,
+    // not a computed amount of HP. The underlying medical item's own base heal
+    // can be edited independently on the Health tab.
+    private void DrawMasterMedicalHealing(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(dc, "MASTER CONSUMABLE PENALTIES",
+            "healing retained after the Master modifier (100% = normal item heal)",
+            text, muted, accent);
+
+        var toggle = P("advanced.masterEffectModifierMechanics");
+        var bandage = P("health.masterBandageModifier");
+        var medkit = P("health.masterMedkitModifier");
+        var army = P("health.masterArmyMedkitModifier");
+        if (toggle is null || bandage is null || medkit is null || army is null)
+        {
+            DrawCenteredText(dc, "Medical effect data unavailable.",
+                new Point(ActualWidth / 2.0, 165.0), 10.0, muted, FontWeights.SemiBold);
+            return;
+        }
+
+        DrawTogglePill(dc, toggle, "MASTER EFFECT BUNDLE",
+            new Rect(17.0, 55.0, Math.Min(257.0, ActualWidth * 0.51), 39.0),
+            text, muted, border, accent, panel);
+        DrawRightAlignedText(dc,
+            toggle.CurrentBoolean ? "BUNDLE ACTIVE" : "BUNDLE DISABLED",
+            new Point(ActualWidth - 18.0, 66.0), 10.2,
+            toggle.CurrentBoolean ? accent : muted, FontWeights.Bold);
+
+        DrawText(dc, "ITEM HEALING STRENGTH",
+            new Point(20.0, 107.0), 9.7, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "0%   /   100% ORIGINAL HEAL   /   200%",
+            new Point(ActualWidth - 20.0, 107.0),
+            9.2, muted, FontWeights.SemiBold);
+
+        var width = Math.Max(480.0, ActualWidth - 36.0);
+        DrawMasterMedicalHealingRow(dc, bandage, "BANDAGE", new Rect(18.0, 130.0, width, 65.0),
+            text, muted, border, soft, accent, panel);
+        DrawMasterMedicalHealingRow(dc, medkit, "MEDKIT", new Rect(18.0, 205.0, width, 65.0),
+            text, muted, border, soft, accent, panel);
+        DrawMasterMedicalHealingRow(dc, army, "ARMY MEDKIT", new Rect(18.0, 280.0, width, 65.0),
+            text, muted, border, soft, accent, panel);
+
+        DrawCenteredText(dc,
+            toggle.CurrentBoolean
+                ? "GREY = BASE PRESET   |   100% = UNMODIFIED ITEM HEALING"
+                : "OFF: SLIDERS LOCKED; VALUES KEPT   |   OTHER CONSUMABLE EFFECTS ALSO IN BUNDLE",
+            new Point(ActualWidth / 2.0, 355.0),
+            9.2, toggle.CurrentBoolean ? text : muted, FontWeights.SemiBold);
+    }
+
+    private void DrawMasterMedicalHealingRow(
+        DrawingContext dc,
+        ParameterViewModel parameter,
+        string label,
+        Rect card,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
+    {
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 3.0, 3.0);
+        var active = parameter.IsControlEnabled;
+        DrawText(dc, label, new Point(card.Left + 11.0, card.Top + 8.0),
+            10.3, text, FontWeights.Bold);
+        DrawRightAlignedText(dc,
+            $"{parameter.CurrentNumber * 100:0}%   |   BASE {parameter.ReferenceNumber * 100:0}%",
+            new Point(card.Right - 12.0, card.Top + 7.0),
+            10.5, active ? accent : muted, FontWeights.Bold);
+
+        var track = new Rect(card.Left + 15.0, card.Top + 29.0,
+            card.Width - 30.0, 24.0);
+        var y = track.Top + track.Height / 2.0;
+        var normalX = ValueToX(1.0, parameter.Minimum, parameter.Maximum, track, reverse: false);
+        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
+        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
+
+        dc.DrawLine(new Pen(soft, 4.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        if (active && currentX > track.Left)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.65), 4.5),
+                new Point(track.Left, y), new Point(currentX, y));
+
+        // The 100%-normal reference is not generally the Master Base Preset.
+        // Show it as a light guide and keep the true difficulty reference grey.
+        dc.DrawLine(new Pen(CloneWithOpacity(text, 0.52), 1.0) { DashStyle = DashStyles.Dash },
+            new Point(normalX, y - 10.0), new Point(normalX, y + 10.0));
+        dc.DrawLine(new Pen(muted, 1.9),
+            new Point(baseX, y - 12.0), new Point(baseX, y + 12.0));
+        dc.DrawEllipse(panel, new Pen(active ? accent : muted, IsSelected(parameter) ? 2.5 : 1.8),
+            new Point(currentX, y), 7.2, 7.2);
+        if (active)
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
+
+        AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
+    }
 
     // Master-only negative mechanics activation owns the six-member family.
     // All five sliders retain their original CFG-backed values even while off,
@@ -3747,6 +3856,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "PlayerWeaponProfile" => 330.0,
             "CoreHealthDashboard" => 385.0,
             "SevereFatiguePenaltyBoard" => 390.0,
+            "MasterMedicalHealing" => 390.0,
             "ConsumableMixer" => 475.0,
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
@@ -3822,6 +3932,13 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "survival.severeFatigueRecoil",
                 "survival.severeFatigueAimSway",
                 "survival.severeFatigueDispersion"
+            },
+            "MasterMedicalHealing" => new[]
+            {
+                "advanced.masterEffectModifierMechanics",
+                "health.masterBandageModifier",
+                "health.masterMedkitModifier",
+                "health.masterArmyMedkitModifier"
             },
             "ConsumableMixer" => new[]
             {

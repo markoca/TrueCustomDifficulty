@@ -69,6 +69,7 @@ public sealed class ParameterViewModel : ObservableObject
                 var help = VisualAggregateFamily switch
                 {
                     "FatigueCurve" => "The horizontal position of LOW / MEDIUM / SEVERE is now the real 0-100 SleepinessPoints threshold (vanilla 50 / 60 / 80). Drag the stage marker horizontally to change when that stage begins, and drag AIM / RELOAD vertically to change its combat penalty. Thresholds preserve LOW <= MEDIUM <= SEVERE with the actively moved stage taking priority. LOW fatigue has no separate reload parameter.",
+                    "MasterMedicalHealing" => "The bundle switch adds or removes MasterEffectModifierNegativeMechanics from the selected Base Preset. This Master-only effect includes other food, energy-drink and artifact modifiers as well as the three healing multipliers shown here. BANDAGE, MEDKIT and ARMY MEDKIT each write their own EffectModifiers.ValueMultiplier in MasterEffectModifier, from 0% to 200% of that item's ordinary heal. 100% preserves normal healing; vanilla Master references are respectively 25%, 71% and 82%. The preview does not calculate actual restored HP because base-item healing amounts can be changed separately. Yellow rails are the current values, grey ticks the true vanilla/selected Base Preset references and the dashed center marker is the 100% normal-healing point. When the bundle is off the sliders are disabled without discarding their values. Right-click a handle to reset its multiplier, right-click the switch to reset the bundle state; R resets all four.",
                     "SevereFatiguePenaltyBoard" => "SEVERE-FATIGUE BUNDLE toggles the additional SleepinessNegativeMechanics effect on the selected Base Preset; vanilla Master has it on, while Novice/Stalker/Veteran have it off. When OFF the five values are preserved but editing is disabled. MAX STAMINA LOSS and CARRY CAPACITY LOSS reduce their respective capacities; the carry setting adjusts both authored carry effects together. RECOIL INCREASE adds a weapon recoil penalty. AIM SWAY adjusts both native horizontal and vertical sway modifiers, while SHOT SPREAD changes the separate dispersion effect. Every control edits the mapped source CFG value independently, with grey Base Preset markers. Low/medium sleepiness and the authored severe-fatigue activation threshold remain unchanged. Right-click a handle to reset its value, right-click the toggle to reset its state, and R resets the full group.",
                     "CoreHealthDashboard" => "The top MAX HEALTH rail changes Player.VitalParams.MaxHP and the linked FullHP boundary, in actual HP (vanilla 100). Large health-pool changes may affect game systems still assuming a 100-HP scale and need in-game testing. CONFIGURED RECOVERY DELAY edits Player.VitalParams.RegenHPDelayTimeSeconds in seconds; the exact recovery sources honoring this delay remain unverified. PASSIVE REGEN edits Player.VitalParams.RegenHP (vanilla 0, so raising it may enable passive healing, but its tick cadence is not proven). RECOVERY EFFECT SCALE edits the selected difficulty's EnvironmentDifficulty.Regen_HP and scales compatible existing regeneration effects; it does not create passive regeneration by itself. Gold controls edit their own native values; grey ticks represent the actual Base Preset. No effective HP-per-second or HP-over-time simulation is asserted.",
                     "PlayerWeaponProfile" => "Three independent source-mapped controls: BASE HIT DAMAGE writes EnvironmentDifficulty.Weapon_BaseDamage, HEADSHOT MULTIPLIER writes PlayerWeapon_HeadshotMultiplier, and JAM FREQUENCY writes Weapon_JammingMultiplier for the selected Base Preset. Each track uses its own exact 0.01-step native range. The grey marker shows this Base Preset's value (which is not always 1x), and the gold handle is the live setting. The gold segment between them shows the tuning delta only: it is not a calculated damage or jam-probability result. Higher values increase the corresponding modifier. Weapon condition and internal weapon-specific behavior still matter. Right-click any handle to reset only that setting; R resets all three.",
@@ -424,6 +425,11 @@ public sealed class ParameterViewModel : ObservableObject
         ["survival.severeFatigueAimSway"] = "SevereFatiguePenaltyBoard",
         ["survival.severeFatigueDispersion"] = "SevereFatiguePenaltyBoard",
 
+        ["advanced.masterEffectModifierMechanics"] = "MasterMedicalHealing",
+        ["health.masterBandageModifier"] = "MasterMedicalHealing",
+        ["health.masterMedkitModifier"] = "MasterMedicalHealing",
+        ["health.masterArmyMedkitModifier"] = "MasterMedicalHealing",
+
         ["health.bandageBleeding"] = "BleedingTreatmentMixer",
         ["health.medkitBleeding"] = "BleedingTreatmentMixer",
         ["health.armyMedkitBleeding"] = "BleedingTreatmentMixer",
@@ -492,6 +498,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["PlayerWeaponProfile"] = "combat.playerWeaponDamage",
         ["CoreHealthDashboard"] = "health.maxHP",
         ["SevereFatiguePenaltyBoard"] = "advanced.fatigueMechanics",
+        ["MasterMedicalHealing"] = "advanced.masterEffectModifierMechanics",
         ["BleedingTreatmentMixer"] = "health.bandageBleeding",
         ["ConsumableMixer"] = "survival.instantStaminaRestore",
         ["SleepingDashboard"] = "survival.sleepEligibilityThreshold",
