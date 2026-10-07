@@ -180,7 +180,7 @@ private readonly RadarStatusMessage _status;
         }
 
         DrawRingCaption(dc, "0.5x", center, radius * 0.25, mutedBrush);
-        DrawRingCaption(dc, "1x = VANILLA", center, radius * 0.50, accentBrush);
+        DrawRingCaption(dc, "1x", center, radius * 0.50, accentBrush);
         DrawRingCaption(dc, "1.5x", center, radius * 0.75, mutedBrush);
         DrawRingCaption(dc, "2x", center, radius, mutedBrush);
 
