@@ -12,6 +12,8 @@ public partial class MainWindow : Window
 {
     private const double AspectRatio = 16.0 / 10.0;
     private const int WmSizing = 0x0214;
+    private const int WmSysCommand = 0x0112;
+    private const int ScMaximize = 0xF030;
 
     private bool _isAspectMaximized;
     private Rect _normalAspectBounds;
@@ -45,6 +47,9 @@ public partial class MainWindow : Window
     private void MinimizeWindow_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
     private void MaximizeRestoreWindow_Click(object sender, RoutedEventArgs e)
+        => ToggleAspectMaximize();
+
+    private void ToggleAspectMaximize()
     {
         if (_isAspectMaximized)
         {
@@ -81,6 +86,13 @@ public partial class MainWindow : Window
 
     private IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        if (msg == WmSysCommand && ((int)wParam.ToInt64() & 0xFFF0) == ScMaximize)
+        {
+            Dispatcher.BeginInvoke(new Action(ToggleAspectMaximize));
+            handled = true;
+            return IntPtr.Zero;
+        }
+
         if (msg != WmSizing || lParam == IntPtr.Zero)
             return IntPtr.Zero;
 
