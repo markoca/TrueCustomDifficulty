@@ -10,6 +10,8 @@
         <SolidColorBrush x:Key="PanelBrush" Color="#171916" />
         <SolidColorBrush x:Key="PanelAltBrush" Color="#20231F" />
         <SolidColorBrush x:Key="PanelHoverBrush" Color="#292D27" />
+        <SolidColorBrush x:Key="ParameterHoverBrush" Color="#1C1F1B" />
+        <SolidColorBrush x:Key="ValuePillBrush" Color="#141613" />
         <SolidColorBrush x:Key="ModifiedValueBrush" Color="#2A2717" />
         <LinearGradientBrush x:Key="ModifiedCardBrush" StartPoint="0,0.5" EndPoint="1,0.5">
             <GradientStop Color="#20231F" Offset="0" />
@@ -26,7 +28,9 @@
         <SolidColorBrush x:Key="AccentBrush" Color="#F0C419" />
         <SolidColorBrush x:Key="AccentHoverBrush" Color="#FFD438" />
         <SolidColorBrush x:Key="AccentDarkBrush" Color="#806B12" />
-        <SolidColorBrush x:Key="SliderTrackBrush" Color="#3E433B" />
+        <SolidColorBrush x:Key="SectionAccentBrush" Color="#6C5D20" />
+        <SolidColorBrush x:Key="SliderActiveMutedBrush" Color="#75651F" />
+        <SolidColorBrush x:Key="SliderTrackBrush" Color="#30352F" />
         <SolidColorBrush x:Key="DangerBrush" Color="#D77A62" />
 
         <Style TargetType="Window">
@@ -405,6 +409,7 @@
 
         <Style TargetType="Slider">
             <Setter Property="Height" Value="15" />
+            <Setter Property="Foreground" Value="{StaticResource SliderActiveMutedBrush}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Slider">
@@ -414,20 +419,25 @@
                                    VerticalAlignment="Center"
                                    IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
                                 <Track.DecreaseRepeatButton>
-                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}">
+                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}"
+                                                  Background="{TemplateBinding Foreground}">
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
-                                                <Border Height="2" Background="{StaticResource AccentBrush}" CornerRadius="1" />
+                                                <Border Height="2"
+                                                        Background="{TemplateBinding Background}"
+                                                        CornerRadius="1" />
                                             </ControlTemplate>
                                         </RepeatButton.Template>
                                     </RepeatButton>
                                 </Track.DecreaseRepeatButton>
                                 <Track.Thumb>
-                                    <Thumb Width="9" Height="9">
+                                    <Thumb Width="9"
+                                           Height="9"
+                                           Background="{TemplateBinding Foreground}">
                                         <Thumb.Template>
                                             <ControlTemplate TargetType="Thumb">
                                                 <Border x:Name="SliderThumb"
-                                                        Background="{StaticResource AccentBrush}"
+                                                        Background="{TemplateBinding Background}"
                                                         BorderBrush="{StaticResource AccentDarkBrush}"
                                                         BorderThickness="1"
                                                         CornerRadius="5" />
@@ -457,6 +467,17 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsModified}" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                </DataTrigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.55" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style TargetType="ScrollBar">

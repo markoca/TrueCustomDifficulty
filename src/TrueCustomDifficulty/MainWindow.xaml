@@ -71,17 +71,18 @@
                                                                                Visibility="Collapsed" />
         
                                                                     <Border x:Name="CurrentValueBox" Grid.Column="1"
-                                                                            Background="Transparent"
+                                                                            Background="{StaticResource ValuePillBrush}"
+                                                                            BorderBrush="{StaticResource BorderSoftBrush}"
                                                                             Cursor="Hand"
                                                                             PreviewMouseWheel="CurrentValueBox_PreviewMouseWheel"
                                                                             PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown"
-                                                                            BorderThickness="0"
-                                                                            CornerRadius="2"
+                                                                            BorderThickness="1"
+                                                                            CornerRadius="3"
                                                                             Width="128"
                                                                             MinWidth="128"
                                                                             Padding="5,1">
                                                                         <TextBlock x:Name="CurrentValueText" Text="{Binding CurrentDisplay}"
-                                                                                   Foreground="{StaticResource AccentBrush}"
+                                                                                   Foreground="{StaticResource TextBrush}"
                                                                                    FontSize="12" FontWeight="SemiBold"
                                                                                    TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                                     </Border>
@@ -97,7 +98,7 @@
                                                                           Grid.Column="1"
                                                                           IsEnabled="{Binding IsControlEnabled}"
                                                                           Content="{Binding ToggleStateLabel}"
-                                                                          Foreground="{StaticResource AccentBrush}"
+                                                                          Foreground="{StaticResource TextBrush}"
                                                                           FontWeight="SemiBold"
                                                                           IsChecked="{Binding CurrentBoolean, Mode=TwoWay}"
                                                                           VerticalAlignment="Center"
@@ -119,8 +120,9 @@
                                                                            FontWeight="Normal"
                                                                            TextWrapping="Wrap"
                                                                            VerticalAlignment="Center" />
-                                                                <TextBlock Grid.Column="1" Text="{Binding EffectiveDisplay}"
-                                                                           Foreground="{StaticResource AccentBrush}"
+                                                                <TextBlock x:Name="EffectiveValueText"
+                                                                           Grid.Column="1" Text="{Binding EffectiveDisplay}"
+                                                                           Foreground="{StaticResource RadarMutedTextBrush}"
                                                                            FontSize="11" FontWeight="SemiBold"
                                                                            Margin="12,0,0,0" HorizontalAlignment="Right"
                                                                            VerticalAlignment="Center" />
@@ -306,7 +308,7 @@
                                                                                 IsSnapToTickEnabled="True"
                                                                                 Value="{Binding CurrentMinNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                                 PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
-                                                                        <TextBlock Grid.Column="2" Text="{Binding RangeMinDisplay}" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                                                        <TextBlock x:Name="RangeMinValueText" Grid.Column="2" Text="{Binding RangeMinDisplay}" Foreground="{StaticResource RadarMutedTextBrush}" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
                                                                     </Grid>
                                                                     <controls:VanillaMarkerBar Grid.Row="1" Height="14" Margin="34,-1,54,0" IsEnabled="{Binding IsControlEnabled}" Tag="rangeMin" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Markers="{Binding VanillaMarkers}" MarkerClicked="VanillaMarkerControl_MarkerClicked" />
         
@@ -327,7 +329,7 @@
                                                                                 IsSnapToTickEnabled="True"
                                                                                 Value="{Binding CurrentMaxNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                                 PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown" />
-                                                                        <TextBlock Grid.Column="2" Text="{Binding RangeMaxDisplay}" Foreground="{StaticResource AccentBrush}" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                                                        <TextBlock x:Name="RangeMaxValueText" Grid.Column="2" Text="{Binding RangeMaxDisplay}" Foreground="{StaticResource RadarMutedTextBrush}" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" />
                                                                     </Grid>
                                                                     <controls:VanillaMarkerBar Grid.Row="3" Height="14" Margin="34,-1,54,0" IsEnabled="{Binding IsControlEnabled}" Tag="rangeMax" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Markers="{Binding VanillaMarkers}" MarkerClicked="VanillaMarkerControl_MarkerClicked" />
                                                                 </Grid>
@@ -338,7 +340,7 @@
                                                                        Grid.Row="3"
                                                                        Visibility="Collapsed"
                                                                        Text="{Binding PracticalQuantityDisplay}"
-                                                                       Foreground="{StaticResource AccentBrush}"
+                                                                       Foreground="{StaticResource MutedTextBrush}"
                                                                        FontSize="10"
                                                                        Margin="0,4,0,0"
                                                                        TextWrapping="Wrap">
@@ -478,6 +480,11 @@
                                                             <Setter TargetName="ModifiedIndicator" Property="Visibility" Value="Visible" />
                                                             <Setter TargetName="CurrentValueText" Property="FontWeight" Value="ExtraBold" />
                                                             <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
+                                                            <Setter TargetName="EffectiveValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                            <Setter TargetName="RangeMinValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                            <Setter TargetName="RangeMaxValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                            <Setter TargetName="ToggleControl" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsAggregateRadarAnchor}" Value="True">
                                                             <Setter TargetName="ParameterCard" Property="Background" Value="Transparent" />
@@ -491,11 +498,12 @@
                                                                 <Condition Binding="{Binding IsAggregateRadarAnchor}" Value="False" />
                                                                 <Condition Binding="{Binding IsMouseOver, ElementName=ParameterCard}" Value="True" />
                                                             </MultiDataTrigger.Conditions>
-                                                            <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource PanelHoverBrush}" />
+                                                            <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource ParameterHoverBrush}" />
                                                         </MultiDataTrigger>
                                                         <Trigger SourceName="CurrentValueBox" Property="IsMouseOver" Value="True">
                                                             <Setter TargetName="CurrentValueBox" Property="Background" Value="{StaticResource PanelHoverBrush}" />
                                                             <Setter TargetName="CurrentValueBox" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
+                                                            <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                             <Setter TargetName="WheelHintMinus" Property="Visibility" Value="Visible" />
                                                             <Setter TargetName="WheelHintPlus" Property="Visibility" Value="Visible" />
                                                         </Trigger>
@@ -715,28 +723,28 @@
                                         </GroupStyle.ContainerStyle>
                                         <GroupStyle.HeaderTemplate>
                                             <DataTemplate>
-                                                <Grid Margin="4,14,4,5">
+                                                <Grid Margin="4,16,4,6">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
-                                                    <Border Width="3"
-                                                            Height="14"
-                                                            Background="{StaticResource AccentBrush}"
+                                                    <Border Width="2"
+                                                            Height="12"
+                                                            Background="{StaticResource SectionAccentBrush}"
                                                             Margin="0,0,8,0"
                                                             VerticalAlignment="Center" />
                                                     <TextBlock Grid.Column="1"
                                                                Text="{Binding Name}"
-                                                               Foreground="{StaticResource TextBrush}"
+                                                               Foreground="{StaticResource RadarMutedTextBrush}"
                                                                FontSize="11"
-                                                               FontWeight="Bold"
+                                                               FontWeight="SemiBold"
                                                                Margin="0,0,10,0"
                                                                VerticalAlignment="Center"
                                                                TextOptions.TextFormattingMode="Display" />
                                                     <Border Grid.Column="2"
                                                             Height="1"
-                                                            Background="{StaticResource BorderBrush}"
+                                                            Background="{StaticResource BorderSoftBrush}"
                                                             VerticalAlignment="Center" />
                                                 </Grid>
                                             </DataTemplate>
