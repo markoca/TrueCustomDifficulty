@@ -182,7 +182,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
         DrawCenteredText(
             dc,
             "GOLD = CURRENT RESULT   •   vN = VANILLA CAP   •   1x MARKER = BASE PRESET",
-            new Point(ActualWidth / 2.0, 286.0),
+            new Point(ActualWidth / 2.0, 294.0),
             7.7,
             muted,
             FontWeights.Normal);
