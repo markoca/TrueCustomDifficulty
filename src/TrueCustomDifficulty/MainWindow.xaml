@@ -71,16 +71,12 @@
                                                                                Visibility="Collapsed" />
         
                                                                     <Border x:Name="CurrentValueBox" Grid.Column="1"
-                                                                            Background="{StaticResource ValuePillBrush}"
-                                                                            BorderBrush="{StaticResource BorderSoftBrush}"
+                                                                            Background="Transparent"
                                                                             Cursor="Hand"
                                                                             PreviewMouseWheel="CurrentValueBox_PreviewMouseWheel"
                                                                             PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown"
-                                                                            BorderThickness="1"
-                                                                            CornerRadius="3"
-                                                                            Width="128"
-                                                                            MinWidth="128"
-                                                                            Padding="5,1">
+                                                                            BorderThickness="0"
+                                                                            Padding="3,1">
                                                                         <TextBlock x:Name="CurrentValueText" Text="{Binding CurrentDisplay}"
                                                                                    Foreground="{StaticResource TextBrush}"
                                                                                    FontSize="12" FontWeight="SemiBold"
@@ -501,8 +497,6 @@
                                                             <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource ParameterHoverBrush}" />
                                                         </MultiDataTrigger>
                                                         <Trigger SourceName="CurrentValueBox" Property="IsMouseOver" Value="True">
-                                                            <Setter TargetName="CurrentValueBox" Property="Background" Value="{StaticResource PanelHoverBrush}" />
-                                                            <Setter TargetName="CurrentValueBox" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
                                                             <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                             <Setter TargetName="WheelHintMinus" Property="Visibility" Value="Visible" />
                                                             <Setter TargetName="WheelHintPlus" Property="Visibility" Value="Visible" />
