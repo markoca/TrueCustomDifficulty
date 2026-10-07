@@ -22,7 +22,7 @@ public sealed class StashAmmoRadar : FrameworkElement
     private const double MinimumValue = 0.25;
     private const double MaximumValue = 2.0;
     private const double Step = 0.25;
-    private const double TierHeight = 142.0;
+    private const double TierHeight = 105.0;
 
     private static readonly TierDefinition[] Tiers =
     {
@@ -55,7 +55,7 @@ public sealed class StashAmmoRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 530;
+        MinHeight = 390;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -63,7 +63,7 @@ public sealed class StashAmmoRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(580.0, availableSize.Width);
-        return new Size(width, 530.0);
+        return new Size(width, 390.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -136,19 +136,19 @@ public sealed class StashAmmoRadar : FrameworkElement
         DrawText(dc, "STASH AMMO AMOUNTS", new Point(18.0, 16.0), 12.0, text, FontWeights.Bold);
         DrawText(
             dc,
-            "scales existing MinCount / MaxCount stacks only — ammo types, weights and progression stay vanilla",
+            "stack amounts only; ammo types and progression stay vanilla",
             new Point(18.0, 34.0),
             8.1,
             muted,
             FontWeights.Normal);
 
         for (var tier = 0; tier < Tiers.Length; tier++)
-            DrawTier(dc, tier, 61.0 + tier * TierHeight, text, muted, border, accent, panel);
+            DrawTier(dc, tier, 58.0 + tier * TierHeight, text, muted, border, accent, panel);
 
         DrawCenteredText(
             dc,
-            "STACK COUNTS USE POSITIVE ROUND-HALF-UP WITH A MINIMUM OF 1 ROUND   •   STORY / SCRIPTED STASHES STAY VANILLA",
-            new Point(ActualWidth / 2.0, 494.0),
+            "story / scripted stashes stay vanilla",
+            new Point(ActualWidth / 2.0, 350.0),
             7.4,
             muted,
             FontWeights.Normal);
@@ -158,7 +158,7 @@ public sealed class StashAmmoRadar : FrameworkElement
             DrawCenteredText(
                 dc,
                 _status.Text,
-                new Point(ActualWidth / 2.0, 515.0),
+                new Point(ActualWidth / 2.0, 374.0),
                 8.0,
                 accent,
                 FontWeights.SemiBold);
@@ -207,20 +207,20 @@ public sealed class StashAmmoRadar : FrameworkElement
         DrawText(
             dc,
             info.Subtitle,
-            new Point(card.Left + 12.0, card.Top + 26.0),
-            7.4,
+            new Point(card.Left + 12.0, card.Top + 25.0),
+            9.0,
             muted,
             FontWeights.Normal);
 
         DrawText(
             dc,
             $"{parameter.CurrentNumber:0.##}x AMMO",
-            new Point(card.Left + 12.0, card.Top + 50.0),
+            new Point(card.Right - 86.0, card.Top + 8.0),
             10.0,
             modified ? accent : text,
             FontWeights.Bold);
 
-        var track = new Rect(card.Left + 12.0, card.Top + 78.0, Math.Max(180.0, card.Width * 0.38), 22.0);
+        var track = new Rect(card.Left + 12.0, card.Top + 48.0, Math.Max(180.0, card.Width * 0.38), 16.0);
         var trackY = track.Top + track.Height / 2.0;
 
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, trackY), new Point(track.Right, trackY));
@@ -239,9 +239,6 @@ public sealed class StashAmmoRadar : FrameworkElement
             6.0);
         dc.DrawEllipse(accent, null, new Point(currentX, trackY), 2.7, 2.7);
 
-        DrawText(dc, "0.25x", new Point(track.Left, card.Top + 101.0), 6.7, muted, FontWeights.Normal);
-        DrawCenteredText(dc, "VANILLA 1x", new Point(vanillaX, card.Top + 106.0), 6.6, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "2x", new Point(track.Right, card.Top + 101.0), 6.7, muted, FontWeights.Normal);
 
         _targets[tier] = new HitTarget(
             new Rect(track.Left - 7.0, track.Top - 7.0, track.Width + 14.0, track.Height + 14.0),
@@ -250,7 +247,7 @@ public sealed class StashAmmoRadar : FrameworkElement
         DrawStackPreview(
             dc,
             parameter,
-            new Rect(track.Right + 28.0, card.Top + 9.0, Math.Max(180.0, card.Right - track.Right - 40.0), card.Height - 18.0),
+            new Rect(track.Right + 28.0, card.Top + 8.0, Math.Max(180.0, card.Right - track.Right - 40.0), card.Height - 16.0),
             text,
             muted,
             accent);
@@ -274,8 +271,8 @@ public sealed class StashAmmoRadar : FrameworkElement
             return;
         }
 
-        var maxRows = Math.Min(4, hint.Entries.Count);
-        var y = bounds.Top + 22.0;
+        var maxRows = Math.Min(3, hint.Entries.Count);
+        var y = bounds.Top + 21.0;
 
         for (var i = 0; i < maxRows; i++)
         {
@@ -300,7 +297,7 @@ public sealed class StashAmmoRadar : FrameworkElement
                 accent,
                 FontWeights.SemiBold);
 
-            y += 21.0;
+            y += 18.0;
         }
 
         if (hint.Entries.Count > maxRows)
@@ -498,7 +495,7 @@ public sealed class StashAmmoRadar : FrameworkElement
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
