@@ -229,7 +229,7 @@ private string _statusText = string.Empty;
             var hovered = i == _hoverAxis;
             var isModified = parameter.IsModified;
             BeginLegendHitArea(i);
-            _legendHitRects[i] = new Rect(bounds.Left, y - 2.0, bounds.Width, 36.0);
+
 DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y, bounds.Width * 0.56, 16), 10.0,
                 isModified ? accentBrush : hovered ? textBrush : textBrush, FontWeights.SemiBold);
 
@@ -573,8 +573,12 @@ DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y, bounds.Width * 0
 
         var textWidth = Math.Min(bounds.Width, formatted.WidthIncludingTrailingWhitespace);
         var textHeight = Math.Min(bounds.Height, formatted.Height);
-        var textLeft = bounds.Left + Math.Max(0.0, bounds.Width - textWidth);
-        var textRect = new Rect(textLeft, bounds.Top, Math.Max(1.0, textWidth), Math.Max(1.0, textHeight));
+        var textLeft = bounds.Left;
+        var textRect = new Rect(
+            textLeft - 3.0,
+            bounds.Top - 2.0,
+            Math.Max(1.0, textWidth + 6.0),
+            Math.Max(1.0, textHeight + 4.0));
 
         if (_legendHitRects.TryGetValue(_legendRecordingAxis, out var current))
             _legendHitRects[_legendRecordingAxis] = Rect.Union(current, textRect);
@@ -589,7 +593,7 @@ DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y, bounds.Width * 0
         formatted.MaxTextWidth = Math.Max(1.0, bounds.Width);
         formatted.MaxLineCount = 1;
         formatted.Trimming = TextTrimming.CharacterEllipsis;
-        formatted.TextAlignment = TextAlignment.Right;
+        formatted.TextAlignment = TextAlignment.Left;
         dc.DrawText(formatted, new Point(bounds.Left, bounds.Top));
     }
 
