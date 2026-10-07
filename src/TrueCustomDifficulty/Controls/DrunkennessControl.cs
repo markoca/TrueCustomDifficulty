@@ -9,17 +9,20 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// Alcohol editor built on fixed vanilla DrunknessMechanics thresholds.
-/// Beer and Vodka are independent controls; only each drink's Drunkness value is edited.
+/// Alcohol editor built on the current DrunknessMechanics stage thresholds.
+/// Beer and Vodka remain independent strength controls. OverDrunknessMechanics is
+/// deliberately shown only as a separate reference because its full accumulation chain
+/// is not folded into this control.
 /// </summary>
 public sealed class DrunkennessControl : FrameworkElement
 {
     private const string BeerStrengthParameterId = "survival.beerDrunknessStrength";
     private const string VodkaStrengthParameterId = "survival.vodkaDrunknessStrength";
 
-    private const double VanillaMedium = 20.0;
-    private const double VanillaStrong = 40.0;
-    private const double VanillaVeryStrong = 60.0;
+    private const double VanillaLow = 0.001;
+    private const double VanillaMedium = 30.0;
+    private const double VanillaStrong = 80.0;
+    private const double OverDrunknessReference = 89.0;
     private const double VanillaBeerDrunkness = 15.0;
     private const double VanillaVodkaDrunkness = 30.0;
 
@@ -46,7 +49,7 @@ public sealed class DrunkennessControl : FrameworkElement
     public DrunkennessControl()
     {
         Focusable = true;
-        MinHeight = 400;
+        MinHeight = 360;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -54,7 +57,7 @@ public sealed class DrunkennessControl : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 720.0 : Math.Max(520.0, availableSize.Width);
-        return new Size(width, 400.0);
+        return new Size(width, 360.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -176,8 +179,15 @@ public sealed class DrunkennessControl : FrameworkElement
             muted,
             accent);
 
-        DrawText(dc, "TIER EFFECTS", new Point(16, 234), 9.0, muted, FontWeights.Bold);
+        DrawText(dc, "DRUNKNESS STAGES", new Point(16, 234), 9.0, muted, FontWeights.Bold);
         DrawTierCards(dc, panelAlt, border, radarMuted, accent);
+        DrawCenteredText(
+            dc,
+            $"OVERDRUNKNESS IS A SEPARATE MECHANICS CHAIN AT {OverDrunknessReference:0} — NOT USED FOR THE DRINK-COUNT PREVIEW",
+            new Point(ActualWidth / 2.0, 344.0),
+            9.0,
+            muted,
+            FontWeights.Normal);
     }
 
     private void DrawDrinkCard(
@@ -208,7 +218,7 @@ public sealed class DrunkennessControl : FrameworkElement
         DrawText(dc, singular, new Point(rect.Left + 10, rect.Top + 7), 10.0, accent, FontWeights.Bold);
         DrawCenteredStatus(
             dc,
-            "WASTED AFTER ",
+            "STRONG AFTER ",
             drinks.ToString(CultureInfo.InvariantCulture),
             " " + drinkLabel,
             new Point(rect.Left + rect.Width / 2.0, rect.Top + 7),
@@ -350,16 +360,16 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         var drunkness = drinkCount * strength;
 
-        if (drunkness >= VanillaVeryStrong)
-            return "WASTED";
-
         if (drunkness >= VanillaStrong)
-            return "DRUNK";
+            return "STRONG";
 
         if (drunkness >= VanillaMedium)
-            return "TIPSY";
+            return "MEDIUM";
 
-        return "BUZZED";
+        if (drunkness >= VanillaLow)
+            return "LOW";
+
+        return "NONE";
     }
 
     private void DrawTierCards(
@@ -373,31 +383,32 @@ public sealed class DrunkennessControl : FrameworkElement
         var left = 16.0;
         var top = 252.0;
         var totalWidth = Math.Max(460.0, ActualWidth - 32.0);
-        var cardWidth = (totalWidth - gap * 3.0) / 4.0;
-        var cardHeight = 112.0;
+        var cardWidth = (totalWidth - gap * 2.0) / 3.0;
+        var cardHeight = 70.0;
 
-        var tiers = new[]
+        var stages = new[]
         {
-            new TierInfo("BUZZED", new[] { "Stamina penalty", "Drunk visuals", "Weapon sway reduction" }),
-            new TierInfo("TIPSY", new[] { "Stamina drain", "Camera shake", "Weapon sway", "Recoil", "Hunger", "Drunk visuals" }),
-            new TierInfo("DRUNK", new[] { "Stronger stamina drain", "Camera shake", "Stronger weapon sway", "Stronger recoil", "Hunger", "Drunk visuals" }),
-            new TierInfo("WASTED", new[] { "Max stamina drain", "Camera shake", "Max weapon sway", "Max recoil", "High hunger", "Drunk visuals" })
+            new StageInfo("LOW", VanillaLow, "first drunkness stage"),
+            new StageInfo("MEDIUM", VanillaMedium, "medium drunkness state"),
+            new StageInfo("STRONG", VanillaStrong, "strong drunkness state")
         };
 
-        for (var i = 0; i < tiers.Length; i++)
+        for (var i = 0; i < stages.Length; i++)
         {
-            var tier = tiers[i];
+            var stage = stages[i];
             var rect = new Rect(left + i * (cardWidth + gap), top, cardWidth, cardHeight);
 
             dc.DrawRoundedRectangle(panelAlt, new Pen(border, 1.0), rect, 3.0, 3.0);
-            DrawText(dc, tier.Label, new Point(rect.Left + 9, rect.Top + 8), 10.0, accent, FontWeights.Bold);
-
-            var y = rect.Top + 29.0;
-            foreach (var effect in tier.Effects)
-            {
-                DrawText(dc, effect, new Point(rect.Left + 9, y), 8.5, muted, FontWeights.Normal);
-                y += 13.0;
-            }
+            DrawText(dc, stage.Label, new Point(rect.Left + 10.0, rect.Top + 8.0), 10.0, accent, FontWeights.Bold);
+            DrawRightAlignedText(
+                dc,
+                stage.Threshold < 1.0 ? stage.Threshold.ToString("0.###", CultureInfo.InvariantCulture) : stage.Threshold.ToString("0", CultureInfo.InvariantCulture),
+                new Point(rect.Right - 10.0, rect.Top + 8.0),
+                10.5,
+                accent,
+                FontWeights.Bold);
+            DrawText(dc, "DRUNKNESS POINTS", new Point(rect.Left + 10.0, rect.Top + 31.0), 9.0, muted, FontWeights.SemiBold);
+            DrawText(dc, stage.Note, new Point(rect.Left + 10.0, rect.Top + 49.0), 9.0, muted, FontWeights.Normal);
         }
     }
 
@@ -557,7 +568,7 @@ public sealed class DrunkennessControl : FrameworkElement
     }
 
     private static int RequiredWholeDrinks(double strength)
-        => Math.Max(1, (int)Math.Ceiling(VanillaVeryStrong / Math.Max(1.0, strength)));
+        => Math.Max(1, (int)Math.Ceiling(VanillaStrong / Math.Max(0.001, strength)));
 
     private static string FormatOrdinal(int value)
     {
@@ -651,5 +662,5 @@ public sealed class DrunkennessControl : FrameworkElement
         Vodka
     }
 
-    private sealed record TierInfo(string Label, string[] Effects);
+    private sealed record StageInfo(string Label, double Threshold, string Note);
 }
