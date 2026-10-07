@@ -459,9 +459,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "MASTER SEVERE FATIGUE",
-            "extra penalties while the vanilla severe-fatigue state is active",
-            text, muted, accent);
+        // Local heading typography: this dashboard contains five dense cards.
+        // A stronger title/subtitle prevents the tiny-label look at 16:10.
+        DrawText(dc, "MASTER SEVERE FATIGUE",
+            new Point(17.0, 12.0), 12.0, accent, FontWeights.Bold);
+        DrawText(dc, "extra penalties while the vanilla severe-fatigue state is active",
+            new Point(17.0, 32.0), 9.7, text, FontWeights.Normal);
 
         var toggle = P("advanced.fatigueMechanics");
         if (toggle is null)
@@ -478,7 +481,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawRightAlignedText(dc,
             toggle.CurrentBoolean ? "PENALTIES ACTIVE" : "PENALTIES DISABLED",
             new Point(ActualWidth - 18.0, 66.0),
-            9.6, toggle.CurrentBoolean ? accent : muted, FontWeights.Bold);
+            10.6, toggle.CurrentBoolean ? accent : muted, FontWeights.Bold);
 
         var width = Math.Max(480.0, ActualWidth - 32.0);
         var gap = 10.0;
@@ -496,25 +499,18 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueAimSway"),
             "AIM SWAY", new Rect(16.0 + half + gap, 191.0, half, 69.0),
             text, muted, border, soft, accent, panel);
+        // Five actual penalties: center the last lane rather than adding a
+        // decorative sixth card which looked like another control in the UI.
         DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueDispersion"),
-            "SHOT SPREAD", new Rect(16.0, 269.0, half, 69.0),
+            "SHOT SPREAD", new Rect(16.0 + (width - half) / 2.0, 269.0, half, 69.0),
             text, muted, border, soft, accent, panel);
-
-        var note = new Rect(16.0 + half + gap, 269.0, half, 69.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), note, 3.0, 3.0);
-        DrawText(dc, "VANILLA THRESHOLDS", new Point(note.Left + 10.0, note.Top + 10.0),
-            9.1, text, FontWeights.Bold);
-        DrawText(dc, "Activation point is unchanged", new Point(note.Left + 10.0, note.Top + 29.0),
-            9.0, muted, FontWeights.Normal);
-        DrawText(dc, "LOW / MEDIUM remain separate", new Point(note.Left + 10.0, note.Top + 46.0),
-            9.0, muted, FontWeights.Normal);
 
         DrawCenteredText(dc,
             toggle.CurrentBoolean
-                ? "YELLOW = EDITABLE  |  GREY TICK = BASE PRESET"
-                : "SWITCH ON TO EDIT  |  STORED VALUES ARE PRESERVED",
+                ? "GOLD = CURRENT  |  GREY TICK = BASE  |  ACTIVATION THRESHOLD UNCHANGED"
+                : "BUNDLE OFF  |  VALUES KEPT  |  ENABLE TO EDIT",
             new Point(ActualWidth / 2.0, 347.0),
-            9.2, toggle.CurrentBoolean ? text : muted, FontWeights.SemiBold);
+            9.7, toggle.CurrentBoolean ? text : muted, FontWeights.SemiBold);
     }
 
     private void DrawSevereFatiguePenaltyCard(
@@ -531,7 +527,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 3.0, 3.0);
         DrawText(dc, label, new Point(card.Left + 10.0, card.Top + 7.0),
-            9.2, text, FontWeights.Bold);
+            10.5, text, FontWeights.Bold);
         if (parameter is null)
             return;
 
@@ -543,45 +539,52 @@ public sealed class AggregateVisualControl : FrameworkElement
             => isPercent ? $"{value * 100:0}%"
                          : $"{value:0.##}x";
 
+        // Keep the current value legible. Shorten the label for narrow cards;
+        // the grey baseline tick stays present regardless of card width.
+        var compact = card.Width < 325.0;
         DrawRightAlignedText(dc,
-            $"{Format(parameter.CurrentNumber)} | BASE {Format(parameter.ReferenceNumber)}",
-            new Point(card.Right - 10.0, card.Top + 7.0),
-            9.5, enabled ? accent : muted, FontWeights.Bold);
+            compact
+                ? Format(parameter.CurrentNumber)
+                : $"{Format(parameter.CurrentNumber)}   /   BASE {Format(parameter.ReferenceNumber)}",
+            new Point(card.Right - 10.0, card.Top + 6.0),
+            11.2, enabled ? accent : muted, FontWeights.Bold);
 
         var track = new Rect(card.Left + 12.0, card.Top + 30.0,
             Math.Max(64.0, card.Width - 24.0), 21.0);
         var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(soft, 3.0),
+        dc.DrawLine(new Pen(soft, 4.0),
             new Point(track.Left, y), new Point(track.Right, y));
         var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum,
             track, reverse: false);
         var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum,
             track, reverse: false);
 
-        if (enabled && Math.Abs(baseX - currentX) > 0.5)
-        {
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.55), 4.0),
-                new Point(Math.Min(baseX, currentX), y),
-                new Point(Math.Max(baseX, currentX), y));
-        }
+        // A visible, understated gold fill communicates the actual configured
+        // magnitude even at vanilla. The previous "base-to-current delta only"
+        // line completely disappeared whenever the values were equal.
+        if (enabled && currentX > track.Left)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.62), 4.0),
+                new Point(track.Left, y), new Point(currentX, y));
 
-        dc.DrawLine(new Pen(muted, 1.6),
-            new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
+        // Put the Base Preset tick behind the handle but extend it beyond the
+        // ring so both remain distinguishable at identical values.
+        dc.DrawLine(new Pen(muted, 1.8),
+            new Point(baseX, y - 11.0), new Point(baseX, y + 11.0));
         dc.DrawEllipse(panel, new Pen(enabled ? accent : muted,
-                enabled && IsSelected(parameter) ? 2.5 : 1.5),
-            new Point(currentX, y), 5.9, 5.9);
+                enabled && IsSelected(parameter) ? 2.8 : 2.0),
+            new Point(currentX, y), 7.2, 7.2);
         if (enabled)
-            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.3, 2.3);
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.8, 2.8);
 
         // AddHorizontalTarget performs the same IsControlEnabled guard used
         // by every other aggregate editor: OFF means no edits, not data loss.
         AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
         DrawText(dc, Format(parameter.Minimum),
-            new Point(track.Left, card.Bottom - 14.0),
-            9.0, muted, FontWeights.Normal);
+            new Point(track.Left, card.Bottom - 15.0),
+            9.6, text, FontWeights.Normal);
         DrawRightAlignedText(dc, Format(parameter.Maximum),
-            new Point(track.Right, card.Bottom - 14.0),
-            9.0, muted, FontWeights.Normal);
+            new Point(track.Right, card.Bottom - 15.0),
+            9.6, text, FontWeights.Normal);
     }
 
     // This board only previews raw CFG settings. In particular RegenHP's
