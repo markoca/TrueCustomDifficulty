@@ -249,6 +249,7 @@ DrawClippedText(dc, Axes[i].Label, new Rect(bounds.Left + 6, y + 6, bounds.Width
             DrawClippedText(dc, detail, new Rect(bounds.Left + (bounds.Width * 0.44), y + 6, bounds.Width * 0.56 - 6, 18), RadarLegendTextSize, isModified || isSelected ? accentBrush : hovered ? textBrush : mutedBrush, isModified || isSelected ? FontWeights.SemiBold : FontWeights.Normal);
 
             EndLegendHitArea();
+            _legendHitRects[i] = new Rect(bounds.Left, y, bounds.Width, rowHeight);
 
             y += rowHeight;
         }
