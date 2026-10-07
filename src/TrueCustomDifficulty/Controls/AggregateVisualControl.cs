@@ -766,7 +766,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             for (var i = 0; i < authored.Count; i++)
             {
                 var item = authored[i];
-                var y = card.Top + 55.0 + i * 25.0;
+                var y = card.Top + 48.0 + i * 21.0;
                 var current = item.VanillaValue * parameter.CurrentNumber;
                 var vanilla = item.VanillaValue;
 
@@ -789,7 +789,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                     FontWeights.SemiBold);
             }
 
-            var controlTrack = new Rect(card.Left + 14.0, card.Bottom - 27.0, card.Width - 28.0, 18.0);
+            var controlTrack = new Rect(card.Left + 14.0, card.Bottom - 22.0, card.Width - 28.0, 14.0);
             var controlY = controlTrack.Top + controlTrack.Height / 2.0;
             dc.DrawLine(new Pen(border, 3.0), new Point(controlTrack.Left, controlY), new Point(controlTrack.Right, controlY));
 
@@ -828,7 +828,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ("LIMITED", 100.0)
             },
             "%",
-            new Rect(left, 56.0, half, 151.0));
+            new Rect(left, 56.0, half, 130.0));
 
         DrawStrengthCard(
             antirad,
@@ -840,18 +840,18 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ("VODKA", 50.0)
             },
             " rad",
-            new Rect(left + half + gap, 56.0, half, 151.0));
+            new Rect(left + half + gap, 56.0, half, 130.0));
 
-        DrawText(dc, "TIMED EFFECTS", new Point(left + 2.0, 225.0), 8.9, text, FontWeights.Bold);
+        DrawText(dc, "TIMED EFFECTS", new Point(left + 2.0, 198.0), 9.0, text, FontWeights.Bold);
         DrawText(
             dc,
-            "all bars use the same seconds axis; one family multiplier preserves its authored internal timing ratios",
-            new Point(left + 112.0, 225.0),
+            "shared real-seconds axis",
+            new Point(left + 112.0, 198.0),
             7.5,
             muted,
             FontWeights.Normal);
 
-        var plot = new Rect(left + 102.0, 252.0, width - 116.0, 230.0);
+        var plot = new Rect(left + 102.0, 223.0, width - 116.0, 190.0);
         const double timelineMaxSeconds = 270.0;
 
         double SecondsToX(double seconds)
@@ -907,7 +907,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         for (var row = 0; row < durationRows.Length; row++)
         {
             var item = durationRows[row];
-            var y = plot.Top + 26.0 + row * 41.0;
+            var y = plot.Top + 22.0 + row * 34.0;
 
             DrawRightAlignedText(dc, item.Label, new Point(plot.Left - 18.0, y - 8.0), 8.2, text, FontWeights.Bold);
 
@@ -985,7 +985,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCenteredText(
             dc,
             "GREY TICK = VANILLA LONGEST EFFECT   •   GOLD ENDPOINT = CURRENT LONGEST EFFECT",
-            new Point(ActualWidth / 2.0, 505.0),
+            new Point(ActualWidth / 2.0, 438.0),
             7.5,
             muted,
             FontWeights.Normal);
@@ -993,7 +993,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCenteredText(
             dc,
             "DRUNKENNESS / OVERDRUNKENNESS ARE CONTROLLED SEPARATELY",
-            new Point(ActualWidth / 2.0, 524.0),
+            new Point(ActualWidth / 2.0, 456.0),
             7.7,
             muted,
             FontWeights.SemiBold);
@@ -2218,7 +2218,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 1.0), card, 4.0, 4.0);
             DrawText(dc, title, new Point(card.Left + 12.0, card.Top + 8.0), 8.9, text, FontWeights.Bold);
-            DrawText(dc, authored, new Point(card.Left + 12.0, card.Top + 24.0), 7.5, muted, FontWeights.Normal);
             DrawRightAlignedText(
                 dc,
                 $"VANILLA {vanillaSummary}",
@@ -2227,7 +2226,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 muted,
                 FontWeights.SemiBold);
 
-            var stack = new Rect(card.Left + 14.0, card.Top + 43.0, card.Width - 28.0, 37.0);
+            var stack = new Rect(card.Left + 14.0, card.Top + 31.0, card.Width - 28.0, 36.0);
             dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.08), new Pen(border, 1.0), stack, 3.0, 3.0);
 
             var total = shares.Sum();
@@ -2296,7 +2295,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new[] { "9x18/19", "5.45", "12G" },
             sngShares,
             new[] { 0, 2, 3 },
-            new Rect(poolLeft, 58.0, poolWidth, 88.0),
+            new Rect(poolLeft, 58.0, poolWidth, 76.0),
             "50 / 25 / 25");
 
         DrawPool(
@@ -2305,14 +2304,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             new[] { ".45", "9x19", "5.56", "12G" },
             natoShares,
             new[] { 1, 0, 2, 3 },
-            new Rect(poolLeft, 157.0, poolWidth, 88.0),
+            new Rect(poolLeft, 142.0, poolWidth, 76.0),
             "25 / 25 / 25 / 25");
 
-        DrawText(dc, "FAMILY WEIGHT SCALERS", new Point(24.0, 262.0), 8.6, muted, FontWeights.Bold);
+        DrawText(dc, "FAMILY WEIGHTS", new Point(24.0, 232.0), 9.0, muted, FontWeights.Bold);
         DrawRightAlignedText(
             dc,
             "1x = authored Weight 2   •   0x = remove existing family entries from weighted selection",
-            new Point(Math.Max(430.0, ActualWidth - 24.0), 262.0),
+            new Point(Math.Max(430.0, ActualWidth - 24.0), 232.0),
             7.5,
             muted,
             FontWeights.Normal);
@@ -2322,7 +2321,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             if (parameters[i] is not { } parameter)
                 continue;
 
-            var rowY = 290.0 + i * 52.0;
+            var rowY = 258.0 + i * 44.0;
             DrawText(dc, labels[i], new Point(26.0, rowY + 3.0), 8.9, text, FontWeights.Bold);
             DrawText(dc, $"{parameter.CurrentNumber:0.##}x", new Point(128.0, rowY + 3.0), 9.0, accent, FontWeights.Bold);
 
@@ -2351,16 +2350,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCenteredText(
             dc,
             "POOL % = NORMALIZED WEIGHT SHARE INSIDE THAT POOL, NOT GLOBAL BOX DROP CHANCE",
-            new Point(ActualWidth / 2.0, 505.0),
-            7.6,
+            new Point(ActualWidth / 2.0, 430.0),
+            9.0,
             muted,
             FontWeights.Normal);
 
         DrawCenteredText(
             dc,
             "SNG MUST KEEP AT LEAST ONE OF 9x18/19, 5.45/5.56 OR 12 GAUGE ABOVE 0x",
-            new Point(ActualWidth / 2.0, 524.0),
-            7.7,
+            new Point(ActualWidth / 2.0, 449.0),
+            9.0,
             accent,
             FontWeights.SemiBold);
     }
@@ -2800,7 +2799,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             CultureInfo.InvariantCulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
@@ -2874,7 +2873,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             "FatigueCurve" => 420.0,
             "BleedingTreatmentMixer" => 385.0,
-            "ConsumableMixer" => 550.0,
+            "ConsumableMixer" => 475.0,
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
             "StarvationTimeline" => 430.0,
@@ -2882,7 +2881,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "RadiationBalance" => 415.0,
             "TradingDashboard" => 485.0,
             "RepairCurve" => 370.0,
-            "AmmoDistribution" => 550.0,
+            "AmmoDistribution" => 470.0,
             _ => 340.0
         };
 
