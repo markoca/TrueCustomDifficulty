@@ -122,6 +122,8 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["economy.sideQuestReward"] = new("economy-rewards-1", 1),
 
             // Equipment
+            ["equipment.armorDurability"] = new("equipment-wear-1", 0),
+            ["equipment.weaponWearPerShot"] = new("equipment-wear-1", 1),
             ["equipment.ammoWeight"] = new("equipment-weight-1", 0),
             ["equipment.consumableWeight"] = new("equipment-weight-1", 1),
 
