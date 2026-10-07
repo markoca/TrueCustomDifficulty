@@ -198,23 +198,17 @@ private readonly RadarStatusMessage _status;
             DrawAxisLabel(dc, Axes[i].Label, labelPoint, _selectedAxis == i ? accentBrush : textBrush);
         }
 
-        DrawInfoHeader(
-            dc,
-            "Anomaly lethality | 1x is vanilla | higher means that anomaly hurts you more. Global Anomaly Damage is separate.",
-            mutedBrush);
-
         DrawLegend(dc, multipliers, textBrush, mutedBrush, accentBrush);
 
-        var instruction = string.IsNullOrWhiteSpace(_status.Text)
-            ? "Drag a point | Arrow keys adjust selected anomaly | Right click point/legend resets that anomaly | R resets all"
-            : _status.Text;
-
-        DrawCenteredText(
-            dc,
-            instruction,
-            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
-            string.IsNullOrWhiteSpace(_status.Text) ? mutedBrush : accentBrush,
-            FontWeights.Normal);
+        if (!string.IsNullOrWhiteSpace(_status.Text))
+        {
+            DrawCenteredText(
+                dc,
+                _status.Text,
+                new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 18), RadarInfoTextSize,
+                accentBrush,
+                FontWeights.Normal);
+        }
     }
 
     private Rect GetInfoRect()
