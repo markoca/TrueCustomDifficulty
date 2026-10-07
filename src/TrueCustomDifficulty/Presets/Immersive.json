@@ -790,6 +790,26 @@
     "survival.bleedingStrongThreshold": {
       "kind": "slider",
       "number": 75
+    },
+    "stamina.sprintDisableThreshold": {
+      "kind": "slider",
+      "number": 16.1
+    },
+    "stamina.sprintRecoveryDelay": {
+      "kind": "slider",
+      "number": 1
+    },
+    "stamina.lowRecoveryThreshold": {
+      "kind": "slider",
+      "number": 30
+    },
+    "stamina.lowRecoveryStrength": {
+      "kind": "slider",
+      "number": 10
+    },
+    "stamina.lowRecoveryDuration": {
+      "kind": "slider",
+      "number": 4
     }
   }
 }
