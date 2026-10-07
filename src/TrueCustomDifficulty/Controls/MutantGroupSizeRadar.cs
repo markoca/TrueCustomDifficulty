@@ -63,7 +63,7 @@ private string _statusText = string.Empty;
     {
         Focusable = true;
         MinHeight = 720;
-        Cursor = Cursors.Cross;
+        Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
 
@@ -229,7 +229,7 @@ private string _statusText = string.Empty;
 
     private Rect GetInfoRect()
     {
-        var left = Math.Max(ActualWidth * 0.47, 390.0);
+        var left = Math.Max(ActualWidth * 0.50, 400.0);
         return new Rect(left, 72.0, Math.Max(260.0, ActualWidth - left - 16.0), Math.Max(424.0, ActualHeight - 116.0));
     }
 
@@ -375,6 +375,7 @@ private string _statusText = string.Empty;
             _hoverAxis = hoverAxis;
             InvalidateVisual();
         }
+        Cursor = hoverAxis >= 0 ? Cursors.Hand : Cursors.Arrow;
 
         if (_dragAxis < 0 || e.LeftButton != MouseButtonState.Pressed)
             return;
@@ -525,34 +526,7 @@ private string _statusText = string.Empty;
     }
 
     private int FindAxis(Point point)
-    {
-        var hit = FindHandleAxis(point, 26.0);
-        if (hit >= 0)
-            return hit;
-
-        var (center, _) = GetGeometry();
-        var relative = point - center;
-        if (relative.Length < 8.0)
-            return _selectedAxis;
-
-        var direction = relative;
-        direction.Normalize();
-
-        var best = -1;
-        var bestDot = double.NegativeInfinity;
-
-        for (var i = 0; i < Axes.Length; i++)
-        {
-            var dot = Vector.Multiply(direction, UnitVector(Axes[i].AngleDegrees));
-            if (dot > bestDot)
-            {
-                bestDot = dot;
-                best = i;
-            }
-        }
-
-        return best;
-    }
+        => FindHandleAxis(point, 14.0);
 
     private int FindHandleAxis(Point point, double maximumDistance)
     {
