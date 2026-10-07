@@ -38,7 +38,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Anomalies.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
-    private readonly RadarStatusMessage _status;
+    private readonly VisualStatusMessage _status;
 
     private int _selectedRow;
     private int _hoverRow = -1;
@@ -58,7 +58,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
     public AnomalyDamageRadar()
     {
-        _status = new RadarStatusMessage(InvalidateVisual);
+        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 550;
         Cursor = Cursors.Arrow;
