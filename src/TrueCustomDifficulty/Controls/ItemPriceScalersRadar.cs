@@ -21,12 +21,12 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
 
     private static readonly AxisDefinition[] Axes =
     {
-        new("economy.consumableCost", "Consumables", -90, "Consumable prices"),
-        new("economy.ammoCost", "Ammo", -30, "Ammo prices"),
-        new("economy.armorCost", "Armor", 30, "Armor prices"),
-        new("economy.weaponCost", "Weapons", 90, "Weapon prices"),
-        new("economy.artifactCost", "Artifacts", 150, "Artifact prices"),
-        new("economy.mutantPartValue", "Mutant Parts", 210, "Parts value"),
+        new("economy.consumableCost", "Consumables", -90, "Higher = consumables have a higher base price"),
+        new("economy.ammoCost", "Ammo", -30, "Higher = ammo has a higher base price"),
+        new("economy.armorCost", "Armor", 30, "Higher = armor has a higher base price"),
+        new("economy.weaponCost", "Weapons", 90, "Higher = weapons have a higher base price"),
+        new("economy.artifactCost", "Artifacts", 150, "Higher = artifacts have a higher base price"),
+        new("economy.mutantPartValue", "Mutant Parts", 210, "Higher = mutant parts are worth more"),
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
@@ -196,7 +196,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Each axis is the actual category price multiplier. 1x keeps vanilla prices. Radar step: 0.25x.",
+            "Base item values · 1x keeps vanilla · higher makes that category more expensive or more valuable.",
             mutedBrush);
 
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
@@ -234,9 +234,13 @@ private string _statusText = string.Empty;
         Brush accentBrush)
     {
         var info = GetInfoRect();
-        var rowHeight = 40.0;
+        const double rowHeight = 44.0;
+        var totalHeight = Axes.Length * rowHeight;
+        var top = info.Top + Math.Max(0.0, (info.Height - totalHeight) / 2.0);
+        var legendBounds = new Rect(info.Left, top, info.Width, totalHeight);
+
         for (var i = 0; i < Axes.Length; i++)
-            DrawLegendRow(dc, i, info, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
+            DrawLegendRow(dc, i, legendBounds, i * rowHeight, values, textBrush, mutedBrush, accentBrush);
     }
 
     private void DrawLegendRow(
@@ -263,15 +267,15 @@ private string _statusText = string.Empty;
 DrawClippedText(
             dc,
             info.Label,
-            new Rect(bounds.Left + 6, y, bounds.Width * 0.38, 16),
+            new Rect(bounds.Left + 6, y + 5, bounds.Width * 0.38, 16),
             9.9,
             modified ? accentBrush : hovered ? textBrush : textBrush,
             FontWeights.SemiBold);
 
         DrawClippedText(
             dc,
-            $"{values[axis]:0.##}x · Vanilla 1x",
-            new Rect(bounds.Left + (bounds.Width * 0.38), y, bounds.Width * 0.62 - 6, 16),
+            $"{values[axis]:0.##}x vanilla value",
+            new Rect(bounds.Left + (bounds.Width * 0.38), y + 5, bounds.Width * 0.62 - 6, 16),
             9.5,
             modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
@@ -279,7 +283,7 @@ DrawClippedText(
         DrawClippedText(
             dc,
             info.ValueMeaning,
-            new Rect(bounds.Left + 6, y + 17, bounds.Width - 12, 15),
+            new Rect(bounds.Left + 6, y + 22, bounds.Width - 12, 15),
             9.0,
             hovered ? textBrush : mutedBrush,
             FontWeights.Normal);
