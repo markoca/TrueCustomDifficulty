@@ -2347,6 +2347,58 @@
       "interaction": "Timed stamina regeneration, fatigue relief, hunger, tolerance and overdose effects are separate."
     },
     {
+      "id": "survival.waterStaminaEffectStrength",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Water Stamina Effect Strength",
+      "description": "Scales Water's sustained stamina-regeneration bonus and per-action stamina-cost reduction together while preserving their authored relationship.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Water sustained stamina effect"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.05
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "WaterStamina2",
+          "path": "ValueMin|ValueMax",
+          "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "WaterStaminaPerAction1",
+          "path": "ValueMin|ValueMax",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "The source CFG defines a sustained Water stamina-regeneration effect and a separate per-action stamina-cost reduction.",
+          "One multiplier preserves the authored relationship between those two Water effects."
+        ]
+      },
+      "rationale": "Controls how strongly Water helps sustained stamina use without changing its instant refill or effect duration.",
+      "logic": "1x keeps both authored Water stamina effects. 0 removes both sustained Water stamina effects; 2x doubles both while preserving their relative strength.",
+      "interaction": "Water Instant Stamina Restore and Water Effect Duration remain separate controls.",
+      "exposeInUi": false
+    },
+    {
       "id": "survival.alcoholRadiationRemoval",
       "tab": "survival",
       "group": "Consumable Effects",
