@@ -87,6 +87,12 @@ public sealed class ParameterViewModel : ObservableObject
                        "Right-click an individual handle/track to restore that value to the Base Preset. Press R while the control is focused to restore the whole visual group.";
             }
 
+            if (IsMutantHealthAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "Each mutant row shows its live MaxHP, the vanilla HP marker on a shared absolute 0–7500 HP bar, and a direct 0.25x–3x multiplier track. Gold HP is the current result; vN is the vanilla reference. Bloodsucker also shows the Mist Bloodsucker result because both MaxHP targets share the same multiplier. Right-click a multiplier track to reset only that mutant family; press R to reset the whole health roster.";
+            }
+
             if (IsMutantGroupSizeAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
