@@ -657,7 +657,7 @@ DrawClippedText(
         IncludeLegendTextHit(bounds, formatted);
         formatted.MaxTextWidth = Math.Max(1.0, bounds.Width);
         formatted.MaxLineCount = 1;
-        formatted.Trimming = TextTrimming.CharacterEllipsis;
+        formatted.Trimming = TextTrimming.None;
         formatted.TextAlignment = TextAlignment.Left;
         dc.DrawText(formatted, new Point(bounds.Left, bounds.Top));
     }
