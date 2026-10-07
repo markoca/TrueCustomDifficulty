@@ -96,7 +96,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsActionCostAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Movement and melee rows share a 0–200% of vanilla stamina-load scale while keeping each action's actual raw stamina value visible. Drag a row track to change that action. NORMAL MELEE and STRONG MELEE remain linked by the central constraint so normal cost cannot exceed strong cost. AIMING STAMINA RECOVERY PENALTY is separate because it continuously slows regeneration instead of charging stamina once; 0% removes that aiming penalty and vanilla is 25%. Right-click one track to reset only that value; press R to reset the whole stamina-pressure board.";
+                       "MOVEMENT and MELEE edit one-time stamina costs on a shared 0–200% of Base Preset scale; NORMAL MELEE cannot exceed STRONG MELEE. AIMING RECOVERY PENALTY is a continuous regeneration slowdown. EXHAUSTION & LOW-SP RECOVERY uses real absolute stamina values: SPRINT LOCK is the SP threshold that forces sprint to stop, RESTART DELAY is the wait before recovery can resume, and RECOVERY BELOW / BOOST / DURATION control the emergency low-stamina recovery effect. These systems are independent, so their thresholds are not artificially linked. Right-click one handle to reset it; press R to reset the whole stamina-pressure board.";
             }
 
 
@@ -276,7 +276,12 @@ public sealed class ParameterViewModel : ObservableObject
         "stamina.meleeNormalCost",
         "stamina.meleeStrongCost",
         "stamina.butstockCost",
-        "stamina.aimRegenCoef"
+        "stamina.aimRegenCoef",
+        "stamina.sprintDisableThreshold",
+        "stamina.sprintRecoveryDelay",
+        "stamina.lowRecoveryThreshold",
+        "stamina.lowRecoveryStrength",
+        "stamina.lowRecoveryDuration"
     };
 
     public bool IsActionCostMember => ActionCostParameterIds.Contains(Id);
