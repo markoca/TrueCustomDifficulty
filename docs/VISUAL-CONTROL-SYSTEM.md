@@ -52,6 +52,8 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | --- | --- | --- |
 | Fatigue | Combat-penalty curves across LOW / MEDIUM / SEVERE, plus build-up and Energy Drink relief | Semantic |
 | Equipment Wear | Two independent native CFG axes: armor toughness and player-weapon wear per shot, with current/base comparison | Semantic |
+| Psy Phantom Pressure | Two independent phantom-cycle timing/count axes, plus gear damage and bleeding toggle | Semantic |
+| Human Combat Profile | Native human health and gun-damage axes, plus independent attack-frequency and accuracy tracks | Semantic |
 | Bleeding Treatment | Shared normalized treatment-strength mixer against each item's own vanilla value | Semantic |
 | Consumables | Authored instant-effect previews plus one real-seconds duration timeline | Semantic |
 | Sleeping | Sleep gate, minimum sleep window and wake-up recovery | Semantic |
@@ -95,6 +97,17 @@ Threshold handles move horizontally while penalty handles move vertically. There
 - Right-click either handle to reset just that parameter; R resets the pair.
 - Both parameters retain their distinct native ranges/steps, per-difficulty baselines, preset serialization and writer routes. The two item-weight sliders remain separate and unchanged.
 - The visual does **not** claim a specific armor durability-to-wear formula and does **not** alter weapon jamming.
+
+### Human Combat Profile
+
+`AggregateVisualControl / HumanCombatProfile`
+
+- X axis: `combat.npcHealth` (the selected difficulty's `NPC_HP` multiplier); farther right = tougher human enemies.
+- Y axis: `combat.npcWeaponDamage` (the selected difficulty's `NPC_Weapon_BaseDamage` multiplier); higher = stronger firearm hits from human enemies.
+- A grey ghost marker is the selected Base Preset; the yellow crosshair is the current pair. The crosshair is display-only; the bottom and left handles adjust one CFG value at a time.
+- Below the plot, `combat.npcAttackCooldown` edits player-facing attack **frequency**, preserving the existing writer's reciprocal `NPC_AttackCooldown` conversion. `combat.npcHipAccuracy` edits the native accuracy multiplier.
+- Both lower tracks retain their own vanilla reference ticks and their exact native range/step.
+- These four independent controls do **not** produce a computed hit chance, attack DPS, or time-to-kill; the engine's complete combat model is not claimed.
 
 ### Bleeding Treatment
 

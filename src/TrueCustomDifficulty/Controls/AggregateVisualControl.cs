@@ -143,6 +143,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "PsyPhantomPressure":
                 DrawPsyPhantomPressure(dc, text, muted, border, soft, accent, panel);
                 break;
+            case "HumanCombatProfile":
+                DrawHumanCombatProfile(dc, text, muted, border, soft, accent, panel);
+                break;
             case "ConsumableMixer":
                 DrawConsumableMixer(dc, text, muted, border, accent, panel);
                 break;
@@ -430,6 +433,111 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
+
+
+    // Two independently editable native CFG axes plus two more distinct controls.
+    // The crosshair is a visual pairing, not an effective DPS, TTK or hit-rate model.
+    private void DrawHumanCombatProfile(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(dc, "HUMAN COMBAT PROFILE",
+            "enemy toughness and gun damage, plus attack tempo and shot accuracy",
+            text, muted, accent);
+
+        var health = P("combat.npcHealth");
+        var damage = P("combat.npcWeaponDamage");
+        var frequency = P("combat.npcAttackCooldown");
+        var accuracy = P("combat.npcHipAccuracy");
+        if (health is null || damage is null || frequency is null || accuracy is null)
+        {
+            DrawCenteredText(dc, "Human combat data unavailable.",
+                new Point(ActualWidth / 2.0, 165.0), 10.0, muted, FontWeights.SemiBold);
+            return;
+        }
+
+        var compact = ActualWidth < 700.0;
+        DrawText(dc,
+            $"{(compact ? "HP" : "ENEMY HEALTH")}  {health.CurrentNumber:0.##}x  |  BASE {health.ReferenceNumber:0.##}x",
+            new Point(18.0, 54.0), 9.8, accent, FontWeights.SemiBold);
+        DrawRightAlignedText(dc,
+            $"{(compact ? "GUN" : "GUN DAMAGE")}  {damage.CurrentNumber:0.##}x  |  BASE {damage.ReferenceNumber:0.##}x",
+            new Point(ActualWidth - 18.0, 54.0), 9.8, accent, FontWeights.SemiBold);
+
+        var plot = new Rect(78.0, 83.0, Math.Max(350.0, ActualWidth - 116.0), 135.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
+
+        for (var tick = 0; tick <= 4; tick++)
+        {
+            var healthTick = health.Minimum + (health.Maximum - health.Minimum) * tick / 4.0;
+            var damageTick = damage.Minimum + (damage.Maximum - damage.Minimum) * tick / 4.0;
+            var gridX = ValueToX(healthTick, health.Minimum, health.Maximum, plot, reverse: false);
+            var gridY = ValueToY(damageTick, damage.Minimum, damage.Maximum, plot);
+            var gridPen = new Pen(CloneWithOpacity(soft, 0.5), 1.0) { DashStyle = DashStyles.Dot };
+            dc.DrawLine(gridPen, new Point(gridX, plot.Top), new Point(gridX, plot.Bottom));
+            dc.DrawLine(gridPen, new Point(plot.Left, gridY), new Point(plot.Right, gridY));
+
+            if (tick is 0 or 2 or 4)
+            {
+                DrawCenteredText(dc, $"{healthTick:0.##}x",
+                    new Point(gridX, plot.Bottom + 29.0), 9.3, text, FontWeights.Normal);
+                DrawRightAlignedText(dc, $"{damageTick:0.##}x",
+                    new Point(plot.Left - 29.0, gridY - 7.0), 9.3, text, FontWeights.Normal);
+            }
+        }
+
+        var baseHealthX = ValueToX(health.ReferenceNumber, health.Minimum, health.Maximum, plot, reverse: false);
+        var baseDamageY = ValueToY(damage.ReferenceNumber, damage.Minimum, damage.Maximum, plot);
+        var healthX = ValueToX(health.CurrentNumber, health.Minimum, health.Maximum, plot, reverse: false);
+        var damageY = ValueToY(damage.CurrentNumber, damage.Minimum, damage.Maximum, plot);
+        var basePen = new Pen(CloneWithOpacity(muted, 0.65), 1.2) { DashStyle = DashStyles.Dash };
+        dc.DrawLine(basePen, new Point(baseHealthX, plot.Top), new Point(baseHealthX, plot.Bottom));
+        dc.DrawLine(basePen, new Point(plot.Left, baseDamageY), new Point(plot.Right, baseDamageY));
+        dc.DrawEllipse(panel, new Pen(muted, 1.7),
+            new Point(baseHealthX, baseDamageY), 6.0, 6.0);
+
+        var currentPen = new Pen(CloneWithOpacity(accent, 0.65), 1.2) { DashStyle = DashStyles.Dot };
+        dc.DrawLine(currentPen, new Point(healthX, plot.Top), new Point(healthX, plot.Bottom));
+        dc.DrawLine(currentPen, new Point(plot.Left, damageY), new Point(plot.Right, damageY));
+        dc.DrawEllipse(panel, new Pen(accent, 2.0),
+            new Point(healthX, damageY), 6.5, 6.5);
+        dc.DrawEllipse(accent, null, new Point(healthX, damageY), 2.8, 2.8);
+
+        // Separate handles prevent accidental simultaneous changes when a user
+        // clicks the crosshair or a blank part of the plotting area.
+        var healthHandle = new Point(healthX, plot.Bottom + 10.0);
+        dc.DrawEllipse(panel, new Pen(accent, IsSelected(health) ? 2.6 : 1.8),
+            healthHandle, 7.0, 7.0);
+        dc.DrawEllipse(accent, null, healthHandle, 2.5, 2.5);
+        AddHorizontalTarget(health, new Rect(healthX - 17.0, plot.Bottom + 1.0, 34.0, 22.0),
+            plot, health.Minimum, health.Maximum);
+
+        var damageHandle = new Point(plot.Left - 11.0, damageY);
+        dc.DrawRectangle(panel, new Pen(accent, IsSelected(damage) ? 2.6 : 1.8),
+            new Rect(damageHandle.X - 6.0, damageHandle.Y - 6.0, 12.0, 12.0));
+        AddVerticalTarget(damage, new Rect(plot.Left - 28.0, damageY - 14.0, 27.0, 28.0),
+            plot, damage.Minimum, damage.Maximum);
+
+        DrawCenteredText(dc,
+            "TOUGHER ENEMIES →   |   MORE GUN DAMAGE ↑   |   GREY = BASE",
+            new Point(ActualWidth / 2.0, 268.0), 9.3, text, FontWeights.SemiBold);
+
+        // The frequency VM already inverts its raw cooldown in the CFG writer.
+        // An accuracy multiplier is not a literal hit probability.
+        var gap = 10.0;
+        var cardWidth = (ActualWidth - 36.0 - gap) / 2.0;
+        DrawHorizontalTrackCard(dc, frequency, "ATTACK FREQUENCY",
+            new Rect(18.0, 287.0, cardWidth, 72.0),
+            text, muted, border, accent, panel);
+        DrawHorizontalTrackCard(dc, accuracy, "FIRE ACCURACY",
+            new Rect(18.0 + cardWidth + gap, 287.0, cardWidth, 72.0),
+            text, muted, border, accent, panel);
+    }
 
     // Editable axes are deliberately independent. The gold crosshair is a
     // read-only summary of the two source-exact Psy spawn override multipliers.
@@ -3283,6 +3391,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "BleedingTreatmentMixer" => 385.0,
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 390.0,
+            "HumanCombatProfile" => 390.0,
             "ConsumableMixer" => 475.0,
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
@@ -3329,6 +3438,13 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "combat.psyPhantomCount",
                 "combat.psyBleeding",
                 "combat.psyDurabilityDamage"
+            },
+            "HumanCombatProfile" => new[]
+            {
+                "combat.npcHealth",
+                "combat.npcWeaponDamage",
+                "combat.npcAttackCooldown",
+                "combat.npcHipAccuracy"
             },
             "ConsumableMixer" => new[]
             {

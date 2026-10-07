@@ -69,6 +69,7 @@ public sealed class ParameterViewModel : ObservableObject
                 var help = VisualAggregateFamily switch
                 {
                     "FatigueCurve" => "The horizontal position of LOW / MEDIUM / SEVERE is now the real 0-100 SleepinessPoints threshold (vanilla 50 / 60 / 80). Drag the stage marker horizontally to change when that stage begins, and drag AIM / RELOAD vertically to change its combat penalty. Thresholds preserve LOW <= MEDIUM <= SEVERE with the actively moved stage taking priority. LOW fatigue has no separate reload parameter.",
+                    "HumanCombatProfile" => "HUMAN HEALTH (horizontal) sets the NPC_HP difficulty multiplier: move right for tougher human enemies. GUN DAMAGE (vertical) sets NPC_Weapon_BaseDamage: move up for harder firearm hits. The yellow crosshair is only a visual pairing of those two independent settings, not a damage-per-second or time-to-kill formula. The two lower tracks set ATTACK FREQUENCY (higher means shorter NPC_AttackCooldown in the CFG writer) and FIRE ACCURACY (the HipAccuracyMultiplier, not a literal hit chance). Grey markers show the currently selected Base Preset. Drag the bottom/left handles to change only one axis; click/drag either lower track to edit that setting. No human attack, accuracy or armor simulation is claimed.",
                     "PsyPhantomPressure" => "This two-axis Psy spawn override shows CYCLE WAIT on X (lower wait = potentially faster waves) and PHANTOM COUNT on Y (higher = more phantoms per affected spawn cycle). The gold intersection is read-only: drag the bottom handle to change only the wait or the left handle to change only the count. PSY GEAR DAMAGE and BLEED are separate settings below. Grey represents the selected Base Preset, not a universal 1x. Novice, Stalker and Veteran do not contain the Master Psy override entries in vanilla; inserting those entries still requires runtime validation. No absolute spawns-per-minute or exact resulting phantom total is claimed.",
                     "EquipmentWearBalance" => "This two-axis plot edits actual independent CFG settings. X = Armor_Durability: higher values mean tougher armor, but the engine's precise condition-loss conversion is not exposed. Y = DurabilityDamagePerShot scale: higher values make player weapons lose condition faster per shot; each weapon keeps its original per-shot differences. The yellow point shows your selected pair; the grey point is the current Base Preset. Drag the bottom handle to change only armor, or the left handle to change only weapon wear. Right-click a handle to reset one value; R resets both.",
                     "BleedingTreatmentMixer" => "Drag the four faders on the shared 0–200% of vanilla scale. The 100% line is each item's own vanilla bleeding removal; the raw bleeding value stays visible under the relative value.",
@@ -399,6 +400,11 @@ public sealed class ParameterViewModel : ObservableObject
         ["combat.psyBleeding"] = "PsyPhantomPressure",
         ["combat.psyDurabilityDamage"] = "PsyPhantomPressure",
 
+        ["combat.npcHealth"] = "HumanCombatProfile",
+        ["combat.npcWeaponDamage"] = "HumanCombatProfile",
+        ["combat.npcAttackCooldown"] = "HumanCombatProfile",
+        ["combat.npcHipAccuracy"] = "HumanCombatProfile",
+
         ["health.bandageBleeding"] = "BleedingTreatmentMixer",
         ["health.medkitBleeding"] = "BleedingTreatmentMixer",
         ["health.armyMedkitBleeding"] = "BleedingTreatmentMixer",
@@ -463,6 +469,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["FatigueCurve"] = "survival.sleepinessRate",
         ["EquipmentWearBalance"] = "equipment.armorDurability",
         ["PsyPhantomPressure"] = "combat.psySpawnCycleDelay",
+        ["HumanCombatProfile"] = "combat.npcHealth",
         ["BleedingTreatmentMixer"] = "health.bandageBleeding",
         ["ConsumableMixer"] = "survival.instantStaminaRestore",
         ["SleepingDashboard"] = "survival.sleepEligibilityThreshold",
