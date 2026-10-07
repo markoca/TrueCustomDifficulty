@@ -11,6 +11,7 @@ ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
 
 PROJECT="$ROOT/src/TrueCustomDifficulty/TrueCustomDifficulty.csproj"
+PROJECT_DIR="$(dirname "$PROJECT")"
 EXE_NAME="TrueCustomDifficulty.exe"
 PUBLISH_DIR="$ROOT/publish/win-x64"
 FINAL_EXE="$PUBLISH_DIR/$EXE_NAME"
@@ -46,11 +47,28 @@ if [[ ! -f "$PROJECT" ]]; then
     exit 1
 fi
 
+TARGET_FRAMEWORK="$(sed -n 's:.*<TargetFramework>\(.*\)</TargetFramework>.*:\1:p' "$PROJECT" | head -n1)"
+if [[ "$TARGET_FRAMEWORK" != "net10.0-windows" ]]; then
+    echo "ERROR: Project target framework is '$TARGET_FRAMEWORK', expected 'net10.0-windows'." >&2
+    echo "Refusing to publish an old/stale project checkout." >&2
+    exit 1
+fi
+
+# WPF creates generated temporary projects under obj/.  Removing both build trees
+# guarantees that an older net8.0-windows temp project cannot leak into a .NET 10 publish.
+rm -rf -- "$PROJECT_DIR/bin" "$PROJECT_DIR/obj"
+
+GIT_HEAD="not-a-git-checkout"
+if command -v git >/dev/null 2>&1 && git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    GIT_HEAD="$(git -C "$ROOT" rev-parse --short HEAD)"
+fi
+
 echo "Publishing True Custom Difficulty..."
 echo "Host: Linux"
 echo "Target: Windows x64 (win-x64)"
-echo "Framework: net10.0-windows"
+echo "Framework: $TARGET_FRAMEWORK"
 echo "SDK: $SDK_VERSION"
+echo "Source commit: $GIT_HEAD"
 echo "Final runtime output will be placed in: $PUBLISH_DIR"
 echo
 
