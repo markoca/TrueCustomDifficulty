@@ -1194,55 +1194,176 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "REPEATED-HIT PROTECTION BAND", "minimum and maximum protection as one editable range", text, muted, accent);
+        DrawHeader(
+            dc,
+            "REPEATED-HIT PROTECTION",
+            "the game varies hidden protection strength between a weaker and stronger end",
+            text,
+            muted,
+            accent);
 
         var minimum = P("combat.accumulatedDamageWeightMin");
         var maximum = P("combat.accumulatedDamageWeightMax");
-        var track = new Rect(52.0, 105.0, Math.Max(360.0, ActualWidth - 104.0), 34.0);
-        var trackY = track.Top + track.Height / 2.0;
+        var healedMemory = P("combat.accumulatedDamageIncludesHealedHealth");
 
-        dc.DrawLine(new Pen(border, 4.0), new Point(track.Left, trackY), new Point(track.Right, trackY));
+        var axis = new Rect(58.0, 104.0, Math.Max(380.0, ActualWidth - 116.0), 62.0);
+        var currentY = axis.Top + 21.0;
+        var vanillaY = axis.Top + 47.0;
+
+        dc.DrawRoundedRectangle(
+            CloneWithOpacity(panel, 0.94),
+            new Pen(border, 1.0),
+            new Rect(axis.Left - 12.0, axis.Top - 28.0, axis.Width + 24.0, axis.Height + 58.0),
+            4.0,
+            4.0);
+
+        DrawText(dc, "WEAKER", new Point(axis.Left, axis.Top - 22.0), 8.0, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "PROTECTION STRENGTH", new Point(axis.Left + axis.Width / 2.0, axis.Top - 22.0), 8.2, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "STRONGER", new Point(axis.Right, axis.Top - 22.0), 8.0, accent, FontWeights.Bold);
+
+        dc.DrawLine(new Pen(border, 3.0), new Point(axis.Left, currentY), new Point(axis.Right, currentY));
+        dc.DrawLine(new Pen(soft, 2.0), new Point(axis.Left, vanillaY), new Point(axis.Right, vanillaY));
+
+        for (var i = 0; i <= 4; i++)
+        {
+            var value = i * 0.25;
+            var x = ValueToX(value, 0.0, 1.0, axis, reverse: false);
+
+            dc.DrawLine(new Pen(soft, 1.0), new Point(x, currentY - 7.0), new Point(x, vanillaY + 7.0));
+            DrawCenteredText(dc, value.ToString("0.00", CultureInfo.InvariantCulture), new Point(x, axis.Bottom + 11.0), 7.6, muted, FontWeights.Normal);
+        }
+
+        DrawRightAlignedText(dc, "CURRENT", new Point(axis.Left - 16.0, currentY - 7.0), 7.8, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "VANILLA", new Point(axis.Left - 16.0, vanillaY - 7.0), 7.8, muted, FontWeights.Bold);
 
         if (minimum is not null && maximum is not null)
         {
-            var minX = ValueToX(minimum.CurrentNumber, 0.0, 1.0, track, reverse: false);
-            var maxX = ValueToX(maximum.CurrentNumber, 0.0, 1.0, track, reverse: false);
+            var minX = ValueToX(minimum.CurrentNumber, 0.0, 1.0, axis, reverse: false);
+            var maxX = ValueToX(maximum.CurrentNumber, 0.0, 1.0, axis, reverse: false);
+            var refMinX = ValueToX(minimum.ReferenceNumber, 0.0, 1.0, axis, reverse: false);
+            var refMaxX = ValueToX(maximum.ReferenceNumber, 0.0, 1.0, axis, reverse: false);
+
             var bandLeft = Math.Min(minX, maxX);
             var bandRight = Math.Max(minX, maxX);
+            var refBandLeft = Math.Min(refMinX, refMaxX);
+            var refBandRight = Math.Max(refMinX, refMaxX);
 
-            var bandBrush = CloneWithOpacity(accent, 0.25);
-            dc.DrawRectangle(bandBrush, null, new Rect(bandLeft, trackY - 7.0, Math.Max(1.0, bandRight - bandLeft), 14.0));
-            dc.DrawLine(new Pen(accent, 3.0), new Point(bandLeft, trackY), new Point(bandRight, trackY));
+            dc.DrawRoundedRectangle(
+                CloneWithOpacity(accent, 0.22),
+                null,
+                new Rect(bandLeft, currentY - 8.0, Math.Max(1.0, bandRight - bandLeft), 16.0),
+                3.0,
+                3.0);
+            dc.DrawLine(new Pen(accent, 3.0), new Point(bandLeft, currentY), new Point(bandRight, currentY));
 
-            DrawReferenceTick(dc, minimum, track, trackY, muted);
-            DrawReferenceTick(dc, maximum, track, trackY, muted);
+            var vanillaPen = new Pen(muted, 1.4) { DashStyle = DashStyles.Dash };
+            dc.DrawRoundedRectangle(
+                CloneWithOpacity(muted, 0.08),
+                vanillaPen,
+                new Rect(refBandLeft, vanillaY - 6.0, Math.Max(1.0, refBandRight - refBandLeft), 12.0),
+                2.0,
+                2.0);
 
-            dc.DrawEllipse(panel, new Pen(accent, IsSelected(minimum) ? 2.5 : 1.6), new Point(minX, trackY), 7.0, 7.0);
-            dc.DrawEllipse(accent, null, new Point(minX, trackY), 3.0, 3.0);
+            dc.DrawLine(new Pen(muted, 1.0), new Point(refMinX, vanillaY - 9.0), new Point(refMinX, vanillaY + 9.0));
+            dc.DrawLine(new Pen(muted, 1.0), new Point(refMaxX, vanillaY - 9.0), new Point(refMaxX, vanillaY + 9.0));
 
-            dc.DrawEllipse(panel, new Pen(accent, IsSelected(maximum) ? 2.5 : 1.6), new Point(maxX, trackY), 7.0, 7.0);
-            dc.DrawEllipse(accent, null, new Point(maxX, trackY), 3.0, 3.0);
+            dc.DrawEllipse(
+                panel,
+                new Pen(accent, IsSelected(minimum) ? 2.8 : 1.7),
+                new Point(minX, currentY),
+                8.0,
+                8.0);
+            dc.DrawEllipse(accent, null, new Point(minX, currentY), 3.2, 3.2);
 
-            AddHorizontalTarget(minimum, new Rect(minX - 17.0, trackY - 19.0, 34.0, 38.0), track, 0.0, 1.0);
-            AddHorizontalTarget(maximum, new Rect(maxX - 17.0, trackY - 19.0, 34.0, 38.0), track, 0.0, 1.0);
+            dc.DrawEllipse(
+                panel,
+                new Pen(accent, IsSelected(maximum) ? 2.8 : 1.7),
+                new Point(maxX, currentY),
+                8.0,
+                8.0);
+            dc.DrawEllipse(accent, null, new Point(maxX, currentY), 3.2, 3.2);
 
-            DrawCenteredText(dc, $"MIN  {minimum.CurrentNumber * 100:0}%", new Point(minX, track.Bottom + 12.0), 9.0, text, FontWeights.Bold);
-            DrawCenteredText(dc, $"MAX  {maximum.CurrentNumber * 100:0}%", new Point(maxX, track.Bottom + 30.0), 9.0, accent, FontWeights.Bold);
+            DrawCenteredText(
+                dc,
+                $"MIN  {minimum.CurrentNumber:0.00}",
+                new Point(minX, currentY - 26.0),
+                8.6,
+                text,
+                FontWeights.Bold);
+
+            DrawCenteredText(
+                dc,
+                $"MAX  {maximum.CurrentNumber:0.00}",
+                new Point(maxX, currentY + 13.0),
+                8.6,
+                accent,
+                FontWeights.Bold);
+
+            DrawCenteredText(
+                dc,
+                $"{minimum.ReferenceNumber:0.00} → {maximum.ReferenceNumber:0.00}",
+                new Point((refMinX + refMaxX) / 2.0, vanillaY + 10.0),
+                7.6,
+                muted,
+                FontWeights.SemiBold);
+
+            var minMap = new Rect(axis.Left, currentY - 17.0, axis.Width, 34.0);
+            var maxMap = new Rect(axis.Left, currentY - 17.0, axis.Width, 34.0);
+
+            AddHorizontalTarget(
+                minimum,
+                new Rect(minX - 22.0, currentY - 22.0, 44.0, 44.0),
+                minMap,
+                0.0,
+                1.0);
+
+            AddHorizontalTarget(
+                maximum,
+                new Rect(maxX - 22.0, currentY - 22.0, 44.0, 44.0),
+                maxMap,
+                0.0,
+                1.0);
+
+            var midpoint = (minimum.CurrentNumber + maximum.CurrentNumber) / 2.0;
+            var width = Math.Max(0.0, maximum.CurrentNumber - minimum.CurrentNumber);
+
+            DrawCenteredText(
+                dc,
+                $"ENVELOPE CENTER {midpoint:0.00}   |   SPAN {width:0.00}",
+                new Point(ActualWidth / 2.0, 204.0),
+                8.2,
+                muted,
+                FontWeights.SemiBold);
         }
 
-        DrawText(dc, "0%", new Point(track.Left, trackY + 43.0), 8.0, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "100%", new Point(track.Right, trackY + 43.0), 8.0, muted, FontWeights.SemiBold);
+        DrawCenteredText(
+            dc,
+            "0.00–1.00 ARE CURVE WEIGHTS, NOT LITERAL DAMAGE-REDUCTION PERCENTAGES",
+            new Point(ActualWidth / 2.0, 226.0),
+            7.8,
+            muted,
+            FontWeights.Normal);
 
         DrawTogglePill(
             dc,
-            P("combat.accumulatedDamageIncludesHealedHealth"),
-            "HEALED DAMAGE STILL COUNTS",
-            new Rect(52.0, 208.0, Math.Max(300.0, ActualWidth - 104.0), 40.0),
+            healedMemory,
+            "HEALED DAMAGE REMAINS IN PROTECTION MEMORY",
+            new Rect(52.0, 252.0, Math.Max(360.0, ActualWidth - 104.0), 42.0),
             text,
             muted,
             border,
             accent,
             panel);
+
+        DrawCenteredText(
+            dc,
+            healedMemory?.CurrentBoolean == true
+                ? "ON: HEALING RESTORES HP, BUT EARLIER HITS STILL COUNT TOWARD REPEATED-HIT PROTECTION"
+                : "OFF: HEALED DAMAGE NO LONGER STAYS IN THE REPEATED-HIT TRACKER",
+            new Point(ActualWidth / 2.0, 307.0),
+            7.8,
+            healedMemory?.CurrentBoolean == true ? accent : muted,
+            FontWeights.SemiBold);
     }
 
     private void DrawRadiationBalance(
@@ -1757,7 +1878,23 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var raw = target.VisualMinimum + ratio * (target.VisualMaximum - target.VisualMinimum);
-        target.Parameter.CurrentNumber = Snap(target.Parameter, raw);
+        var snapped = Snap(target.Parameter, raw);
+        target.Parameter.CurrentNumber = snapped;
+
+        if (Family == "RepeatedHitBand")
+        {
+            var minimum = P("combat.accumulatedDamageWeightMin");
+            var maximum = P("combat.accumulatedDamageWeightMax");
+
+            if (minimum is not null && maximum is not null)
+            {
+                if (ReferenceEquals(target.Parameter, minimum) && minimum.CurrentNumber > maximum.CurrentNumber)
+                    maximum.CurrentNumber = minimum.CurrentNumber;
+                else if (ReferenceEquals(target.Parameter, maximum) && maximum.CurrentNumber < minimum.CurrentNumber)
+                    minimum.CurrentNumber = maximum.CurrentNumber;
+            }
+        }
+
         _status.ClearTransient();
         InvalidateVisual();
     }
@@ -1917,7 +2054,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
             "StarvationTimeline" => 430.0,
-            "RepeatedHitBand" => 290.0,
+            "RepeatedHitBand" => 335.0,
             "RadiationBalance" => 300.0,
             "TradingDashboard" => 310.0,
             "RepairCurve" => 330.0,
