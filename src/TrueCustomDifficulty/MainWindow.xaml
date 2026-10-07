@@ -734,12 +734,16 @@
                             </ListBox>
 
                             <!-- Context/rationale panel. Uses the existing theme; only the layout changes. -->
-                            <Border Grid.Column="1"
-                                    Background="{StaticResource PanelBrush}"
-                                    BorderThickness="0"
-                                    CornerRadius="0"
-                                    Margin="9,6,5,9"
-                                    Padding="0">
+                            <controls:IndustrialFrame Grid.Column="1"
+                                                      Background="{StaticResource PanelBrush}"
+                                                      BorderBrush="{StaticResource BorderBrush}"
+                                                      AccentBrush="{StaticResource AccentBrush}"
+                                                      TechnicalMarkBrush="{StaticResource BorderSoftBrush}"
+                                                      AccentEdge="True"
+                                                      TechnicalMarks="True"
+                                                      ChamferSize="8"
+                                                      Margin="9,6,5,9"
+                                                      Padding="0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="3" />
@@ -879,7 +883,7 @@
                                     </StackPanel>
                                 </ScrollViewer>
                                 </Grid>
-                            </Border>
+                            </controls:IndustrialFrame>
                         </Grid>
                     </DataTemplate>
                 </TabControl.ContentTemplate>
