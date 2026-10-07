@@ -144,7 +144,7 @@
                                                                                                 PreviewMouseLeftButtonDown="Radar_PreviewMouseLeftButtonDown"
                                                                                           Grid.Row="0"
                                                                                           Grid.RowSpan="2"
-                                                                                          MinHeight="530"
+                                                                                          MinHeight="500"
                                                                                           Visibility="Collapsed"
                                                                                           Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -152,7 +152,7 @@
                                                                                                 PreviewMouseLeftButtonDown="Radar_PreviewMouseLeftButtonDown"
                                                                                              Grid.Row="0"
                                                                                              Grid.RowSpan="2"
-                                                                                             MinHeight="500"
+                                                                                             MinHeight="550"
                                                                                              Visibility="Collapsed"
                                                                                              Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
