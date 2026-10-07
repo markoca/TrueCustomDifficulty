@@ -673,7 +673,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             CultureInfo.InvariantCulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
