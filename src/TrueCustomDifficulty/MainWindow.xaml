@@ -134,7 +134,7 @@
                                                                 <controls:AmmoDistributionRadar x:Name="AmmoDistributionRadarControl"
                                                                                                 Grid.Row="0"
                                                                                                 Grid.RowSpan="2"
-                                                                                                MinHeight="430"
+                                                                                                MinHeight="500"
                                                                                                 Visibility="Collapsed"
                                                                                                 Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -211,7 +211,7 @@
                                                                 <controls:StashAmmoRadar x:Name="StashAmmoRadarControl"
                                                                                          Grid.Row="0"
                                                                                          Grid.RowSpan="2"
-                                                                                         MinHeight="430"
+                                                                                         MinHeight="520"
                                                                                          Visibility="Collapsed"
                                                                                          Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
