@@ -447,51 +447,47 @@ Status: **RUNTIME / COMPLETE-CHAIN AUDIT REQUIRED**.
 
 ---
 
-# Drunkenness threshold visualizer
+# Drunkenness stage visualizer
 
-The test UI now uses one source-exact threshold scaler:
+The current source model uses direct Beer/Vodka strength controls against the authored `DrunknessMechanics` stages:
 
-- `survival.drunknessThresholdScale`
+- Low: **0.001**
+- Medium: **30**
+- Strong: **80**
 
-It scales the authored `DrunknessMechanics` thresholds together:
+Beer is 15 Drunkness and Vodka is 30 in the current control baseline. The visualizer therefore derives only the LOW / MEDIUM / STRONG back-to-back progression from the selected drink strength.
 
-- Medium: 20
-- Strong: 40
-- Very Strong: 60
+`survival.drunknessThresholdScale` remains an internal mapping. It now targets only the real Medium/Strong nodes and no longer declares the obsolete `VeryStrongDrunkness` node. It is intentionally not player-facing while the separate over-drunkness chain remains independent.
 
-The control presents those thresholds primarily as a Beer-based alcohol-tolerance scale using Beer = 15 Drunkness and Vodka = 30 Drunkness. Vanilla therefore reads as 4 beers or 2 vodkas to Very Strong when drinks are stacked before natural sober-up. The normal slider surface is 1–6 beers with 4 marked VANILLA.
-
-Beer is the default reference. The BEER/VODKA selector is presentation-only; it does not edit the drink effect strengths. A separate BACK-TO-BACK PREVIEW selects a simulated drink count and whitens only the effect text for the currently active drunkness tier.
+`OverDrunknessMechanics` is a separate player mechanic with its own **89-point** reference. The UI does not present 89 as a fourth ordinary drunkness stage and does not use it for the drink-count preview.
 
 ---
 
 # 8. Alcohol drunkness and over-drunkness
 
-The Player mechanics graph explicitly contains:
+The Player mechanics graph explicitly contains both:
 
 - `DrunknessMechanics`
 - `OverDrunknessMechanics`
 
-Vodka and Beer both feed direct drunkness effects. Water and food can also remove some drunkness through `RemoveDrunkness*` effects.
-
-Therefore a naïve "Alcohol Strength" slider can have non-local consequences if the over-drunkness thresholds are crossed more frequently.
-
-Safe first-stage tuning:
-- radiation removal
-- stamina penalty magnitude
-- stamina penalty duration
+Vodka and Beer feed direct drunkness values. Water/food can also participate in sobering/removal effects, but those are separate from the direct drink-strength controls.
 
 Current controlled surface:
-- fixed vanilla player thresholds: Medium 20 / Strong 40 / Very Strong 60
-- direct Beer strength through `BeerDrunkness.ValueMin/ValueMax`
-- direct Vodka strength through `VodkaDrunkness.ValueMin/ValueMax`
-- the drinks-to-Very-Strong UI is derived from the selected drink strength rather than from a shared tolerance scalar
+
+- Beer strength through `BeerDrunkness.ValueMin/ValueMax`.
+- Vodka strength through `VodkaDrunkness.ValueMin/ValueMax`.
+- LOW / MEDIUM / STRONG progression derived from 0.001 / 30 / 80.
+- OverDrunkness 89 shown only as a separate reference, not silently folded into ordinary stage math.
 
 Still deferred:
-- drunkness duration
-- over-drunkness threshold
-- over-drunkness consequences
-- sobering/removal magnitude
+
+- shared alcohol-stage threshold editing;
+- drunkness duration;
+- over-drunkness threshold editing;
+- over-drunkness consequences;
+- sobering/removal magnitude.
+
+The previous 20 / 40 / 60 BUZZED / TIPSY / DRUNK / WASTED model was retired because it does not match the current audited CFG stage structure.
 
 ---
 
@@ -545,7 +541,7 @@ Beer:
 ### Do not expose yet
 
 - Energy Drink tolerance/overdose
-- Beer/Vodka drunkenness controls
+- shared alcohol-stage threshold editing
 - alcohol over-drunkness
 - sobering strength
 - Beer/Vodka psi-relief magnitude
