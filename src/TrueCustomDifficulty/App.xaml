@@ -10,7 +10,8 @@
         <SolidColorBrush x:Key="PanelBrush" Color="#171916" />
         <SolidColorBrush x:Key="PanelAltBrush" Color="#20231F" />
         <SolidColorBrush x:Key="PanelHoverBrush" Color="#292D27" />
-        <SolidColorBrush x:Key="ParameterHoverBrush" Color="#1C1F1B" />
+        <SolidColorBrush x:Key="ParameterRowBrush" Color="#131512" />
+        <SolidColorBrush x:Key="ParameterHoverBrush" Color="#1B1E1A" />
         <SolidColorBrush x:Key="ValuePillBrush" Color="#141613" />
         <SolidColorBrush x:Key="ModifiedValueBrush" Color="#2A2717" />
         <LinearGradientBrush x:Key="ModifiedCardBrush" StartPoint="0,0.5" EndPoint="1,0.5">
@@ -28,9 +29,9 @@
         <SolidColorBrush x:Key="AccentBrush" Color="#F0C419" />
         <SolidColorBrush x:Key="AccentHoverBrush" Color="#FFD438" />
         <SolidColorBrush x:Key="AccentDarkBrush" Color="#806B12" />
-        <SolidColorBrush x:Key="SectionAccentBrush" Color="#6C5D20" />
-        <SolidColorBrush x:Key="SliderActiveMutedBrush" Color="#75651F" />
-        <SolidColorBrush x:Key="SliderTrackBrush" Color="#30352F" />
+        <SolidColorBrush x:Key="SectionAccentBrush" Color="#5B501E" />
+        <SolidColorBrush x:Key="SliderActiveMutedBrush" Color="#5E521D" />
+        <SolidColorBrush x:Key="SliderTrackBrush" Color="#22251F" />
         <SolidColorBrush x:Key="DangerBrush" Color="#D77A62" />
 
         <Style TargetType="Window">
@@ -408,7 +409,7 @@
         </Style>
 
         <Style TargetType="Slider">
-            <Setter Property="Height" Value="15" />
+            <Setter Property="Height" Value="13" />
             <Setter Property="Foreground" Value="{StaticResource SliderActiveMutedBrush}" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -423,7 +424,7 @@
                                                   Background="{TemplateBinding Foreground}">
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
-                                                <Border Height="2"
+                                                <Border Height="1.5"
                                                         Background="{TemplateBinding Background}"
                                                         CornerRadius="1" />
                                             </ControlTemplate>
@@ -431,8 +432,8 @@
                                     </RepeatButton>
                                 </Track.DecreaseRepeatButton>
                                 <Track.Thumb>
-                                    <Thumb Width="9"
-                                           Height="9"
+                                    <Thumb Width="8"
+                                           Height="8"
                                            Background="{TemplateBinding Foreground}">
                                         <Thumb.Template>
                                             <ControlTemplate TargetType="Thumb">
@@ -457,7 +458,7 @@
                                     <RepeatButton Command="{x:Static Slider.IncreaseLarge}">
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
-                                                <Border Height="2" Background="{StaticResource SliderTrackBrush}" CornerRadius="1" />
+                                                <Border Height="1" Background="{StaticResource SliderTrackBrush}" CornerRadius="0.5" />
                                             </ControlTemplate>
                                         </RepeatButton.Template>
                                     </RepeatButton>
