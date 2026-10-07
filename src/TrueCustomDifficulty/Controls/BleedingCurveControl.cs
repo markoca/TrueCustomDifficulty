@@ -489,8 +489,8 @@ public sealed class BleedingCurveControl : FrameworkElement
 
         if (e.Key == Key.R)
         {
-            foreach (var parameter in EnumerateBoundParameters())
-                parameter?.ResetToReference();
+            foreach (var resetParameter in EnumerateBoundParameters())
+                resetParameter?.ResetToReference();
 
             InvalidateVisual();
             e.Handled = true;
