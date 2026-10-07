@@ -323,6 +323,13 @@ public sealed class MainViewModel : ObservableObject
             "economy.repairNeutral",
             "economy.repairFriend");
 
+        WireVisualAggregate(
+            "loot.ammoBoxWeight918",
+            "loot.ammoBoxWeight918",
+            "loot.ammoBoxWeight045",
+            "loot.ammoBoxWeight545",
+            "loot.ammoBoxWeight012");
+
         if (parametersById.TryGetValue("survival.beerDrunknessStrength", out var alcoholAnchor))
         {
             parametersById.TryGetValue("survival.vodkaDrunknessStrength", out var vodkaStrength);
@@ -384,27 +391,6 @@ public sealed class MainViewModel : ObservableObject
                 {
                     if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
                         bleedingCurveAnchor.RefreshAggregateModifiedState();
-                };
-            }
-        }
-
-        if (parametersById.TryGetValue("loot.ammoBoxWeight918", out var ammoDistributionAnchor))
-        {
-            var ammoDistributionMembers = ammoDistributionParameterIds
-                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
-                .Where(parameter => parameter is not null)
-                .Cast<ParameterViewModel>()
-                .ToArray();
-
-            ammoDistributionAnchor.SetAggregateModifiedProvider(
-                () => ammoDistributionMembers.Any(parameter => Math.Abs(parameter.CurrentNumber - 1.0) > 0.0000001));
-
-            foreach (var member in ammoDistributionMembers)
-            {
-                member.PropertyChanged += (_, args) =>
-                {
-                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
-                        ammoDistributionAnchor.RefreshAggregateModifiedState();
                 };
             }
         }
