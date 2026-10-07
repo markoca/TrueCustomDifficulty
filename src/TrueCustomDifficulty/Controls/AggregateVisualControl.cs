@@ -2595,8 +2595,6 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         _selectedParameter = target.Parameter;
         target.Parameter.ResetToReference();
-        EnforceRepeatedHitOrdering(target.Parameter);
-        EnforceRepairCurveOrdering(target.Parameter);
         EnforceAmmoPoolValidity(target.Parameter);
         _status.ShowTransient($"{ShortLabel(target.Parameter)} reset to Base Preset.");
         InvalidateVisual();
@@ -2646,8 +2644,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             _selectedParameter.CurrentNumber + direction * _selectedParameter.TickFrequency,
             _selectedParameter.Minimum,
             _selectedParameter.Maximum);
-        EnforceRepeatedHitOrdering(_selectedParameter);
-        EnforceRepairCurveOrdering(_selectedParameter);
         EnforceAmmoPoolValidity(_selectedParameter);
 
         _status.ClearTransient();
@@ -2684,67 +2680,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         var snapped = Snap(target.Parameter, raw);
         target.Parameter.CurrentNumber = snapped;
 
-        EnforceRepeatedHitOrdering(target.Parameter);
-        EnforceRepairCurveOrdering(target.Parameter);
         EnforceAmmoPoolValidity(target.Parameter);
 
         _status.ClearTransient();
         InvalidateVisual();
-    }
-
-    private void EnforceRepeatedHitOrdering(ParameterViewModel movedParameter)
-    {
-        if (Family != "RepeatedHitBand")
-            return;
-
-        var minimum = P("combat.accumulatedDamageWeightMin");
-        var maximum = P("combat.accumulatedDamageWeightMax");
-        if (minimum is null || maximum is null)
-            return;
-
-        // The actively edited endpoint wins. The neighbour moves only as far as
-        // necessary to keep the actual CFG values ordered as MIN <= MAX.
-        if (ReferenceEquals(movedParameter, minimum) && minimum.CurrentNumber > maximum.CurrentNumber)
-            maximum.CurrentNumber = minimum.CurrentNumber;
-        else if (ReferenceEquals(movedParameter, maximum) && maximum.CurrentNumber < minimum.CurrentNumber)
-            minimum.CurrentNumber = maximum.CurrentNumber;
-    }
-
-    private void EnforceRepairCurveOrdering(ParameterViewModel movedParameter)
-    {
-        if (Family != "RepairCurve")
-            return;
-
-        var ordered = new[]
-        {
-            P("economy.repairEnemy"),
-            P("economy.repairDisaffection"),
-            P("economy.repairNeutral"),
-            P("economy.repairFriend")
-        };
-
-        var movedIndex = Array.FindIndex(ordered, p => ReferenceEquals(p, movedParameter));
-        if (movedIndex < 0 || ordered.Any(p => p is null))
-            return;
-
-        // Reputation should never make a worse relationship cheaper than the next
-        // better tier. The point being edited has priority; neighbours cascade only
-        // as far as required to preserve HOSTILE >= DISLIKED >= NEUTRAL >= FRIENDLY.
-        for (var i = movedIndex - 1; i >= 0; i--)
-        {
-            var current = ordered[i]!;
-            var right = ordered[i + 1]!;
-            if (current.CurrentNumber < right.CurrentNumber)
-                current.CurrentNumber = Math.Clamp(right.CurrentNumber, current.Minimum, current.Maximum);
-        }
-
-        for (var i = movedIndex + 1; i < ordered.Length; i++)
-        {
-            var current = ordered[i]!;
-            var left = ordered[i - 1]!;
-            if (current.CurrentNumber > left.CurrentNumber)
-                current.CurrentNumber = Math.Clamp(left.CurrentNumber, current.Minimum, current.Maximum);
-        }
     }
 
     private void EnforceAmmoPoolValidity(ParameterViewModel movedParameter)
