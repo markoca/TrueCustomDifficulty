@@ -21,13 +21,13 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     private static readonly AxisDefinition[] Axes =
     {
-        new("stamina.sprintCost", "Sprint", -90, false, "stamina", "Sprint stamina use"),
-        new("stamina.jumpCost", "Jump", -38.571, false, "stamina", "Stamina spent per jump"),
-        new("stamina.vaultCost", "Vault", 12.857, false, "stamina", "Stamina spent per vault"),
-        new("stamina.meleeNormalCost", "Normal Melee", 64.286, false, "stamina", "Stamina spent per normal melee"),
-        new("stamina.meleeStrongCost", "Strong Melee", 115.714, false, "stamina", "Stamina spent per strong melee"),
-        new("stamina.butstockCost", "Buttstock", 167.143, false, "stamina", "Stamina spent per buttstock hit"),
-        new("stamina.aimRegenCoef", "Aiming", 218.571, true, "% penalty", "Aiming stamina recovery penalty"),
+        new("stamina.sprintCost", "Sprint", -90, false, "stamina", "Higher = sprint drains stamina faster"),
+        new("stamina.jumpCost", "Jump", -38.571, false, "stamina", "Higher = each jump costs more stamina"),
+        new("stamina.vaultCost", "Vault", 12.857, false, "stamina", "Higher = each vault costs more stamina"),
+        new("stamina.meleeNormalCost", "Normal Melee", 64.286, false, "stamina", "Higher = normal melee costs more stamina"),
+        new("stamina.meleeStrongCost", "Strong Melee", 115.714, false, "stamina", "Higher = strong melee costs more stamina"),
+        new("stamina.butstockCost", "Buttstock", 167.143, false, "stamina", "Higher = buttstock attacks cost more stamina"),
+        new("stamina.aimRegenCoef", "Aiming", 218.571, true, "% penalty", "Higher = stamina recovers more slowly while aiming"),
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
@@ -197,7 +197,7 @@ private string _statusText = string.Empty;
 
         DrawInfoHeader(
             dc,
-            "Each axis is relative to its own vanilla value. Raw values, units, vanilla references and meanings are preserved here.",
+            "Stamina pressure · higher = that action is more tiring. Aiming controls the recovery penalty while you aim.",
             mutedBrush);
 
         DrawLegend(dc, multipliers, textBrush, mutedBrush, accentBrush);
@@ -235,9 +235,13 @@ private string _statusText = string.Empty;
         Brush accentBrush)
     {
         var info = GetInfoRect();
-        const double rowHeight = 42.0;
+        const double rowHeight = 44.0;
+        var totalHeight = Axes.Length * rowHeight;
+        var top = info.Top + Math.Max(0.0, (info.Height - totalHeight) / 2.0);
+        var legendBounds = new Rect(info.Left, top, info.Width, totalHeight);
+
         for (var i = 0; i < Axes.Length; i++)
-            DrawLegendRow(dc, i, info, i * rowHeight, multipliers, textBrush, mutedBrush, accentBrush);
+            DrawLegendRow(dc, i, legendBounds, i * rowHeight, multipliers, textBrush, mutedBrush, accentBrush);
     }
 
     private void DrawLegendRow(
@@ -264,7 +268,7 @@ private string _statusText = string.Empty;
 DrawClippedText(
             dc,
             info.Label,
-            new Rect(bounds.Left + 6, y, bounds.Width * 0.36, 15),
+            new Rect(bounds.Left + 6, y + 5, bounds.Width * 0.36, 15),
             9.8,
             modified ? accentBrush : hovered ? textBrush : textBrush,
             FontWeights.SemiBold);
@@ -274,8 +278,8 @@ DrawClippedText(
 
         DrawClippedText(
             dc,
-            $"{currentValue} · {multipliers[axis]:0.##}x",
-            new Rect(bounds.Left + (bounds.Width * 0.36), y, bounds.Width * 0.64 - 6, 15),
+            $"{currentValue} · {multipliers[axis]:0.##}x vanilla",
+            new Rect(bounds.Left + (bounds.Width * 0.36), y + 5, bounds.Width * 0.64 - 6, 15),
             9.4,
             modified ? accentBrush : hovered ? textBrush : mutedBrush,
             modified ? FontWeights.SemiBold : FontWeights.Normal);
@@ -283,7 +287,7 @@ DrawClippedText(
         DrawClippedText(
             dc,
             $"Vanilla {vanillaValue} · {info.ValueMeaning}",
-            new Rect(bounds.Left + 6, y + 16, bounds.Width - 12, 14),
+            new Rect(bounds.Left + 6, y + 22, bounds.Width - 12, 14),
             8.7,
             hovered ? textBrush : mutedBrush,
             FontWeights.Normal);
