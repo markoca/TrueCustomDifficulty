@@ -22,10 +22,12 @@
         <DataTemplate x:Key="ParameterCardTemplate" DataType="{x:Type vm:ParameterViewModel}">
                                                     <Border x:Name="ParameterCard"
                                                             PreviewMouseLeftButtonDown="ParameterCard_PreviewMouseLeftButtonDown"
-                                                            Background="{StaticResource PanelBrush}"
+                                                            Background="Transparent"
                                                             BorderBrush="{StaticResource BorderBrush}"
-                                                            BorderThickness="1" CornerRadius="2"
-                                                            Margin="0,0,0,4" Padding="8,5">
+                                                            BorderThickness="0,0,0,1"
+                                                            CornerRadius="0"
+                                                            Margin="0"
+                                                            Padding="8,8">
                                                         <Grid>
                                                             <Grid.RowDefinitions>
                                                                 <RowDefinition Height="Auto" />
@@ -62,12 +64,15 @@
                                                                                VerticalAlignment="Center" HorizontalAlignment="Center"
                                                                                Visibility="Collapsed" />
         
-                                                                    <Border x:Name="CurrentValueBox" Grid.Column="1" Background="{StaticResource PanelAltBrush}"
+                                                                    <Border x:Name="CurrentValueBox" Grid.Column="1"
+                                                                            Background="{StaticResource PanelAltBrush}"
                                                                             Cursor="Hand"
                                                                             PreviewMouseWheel="CurrentValueBox_PreviewMouseWheel"
                                                                             PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown"
-                                                                            BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
-                                                                            CornerRadius="3" MinWidth="76" Padding="6,3">
+                                                                            BorderThickness="0"
+                                                                            CornerRadius="2"
+                                                                            MinWidth="70"
+                                                                            Padding="6,2">
                                                                         <TextBlock x:Name="CurrentValueText" Text="{Binding CurrentDisplay}"
                                                                                    Foreground="{StaticResource AccentBrush}"
                                                                                    FontSize="12" FontWeight="SemiBold"
@@ -99,8 +104,9 @@
                                                                     <ColumnDefinition Width="Auto" />
                                                                 </Grid.ColumnDefinitions>
                                                                 <TextBlock Text="{Binding TechnicalDisplay}"
-                                                                           Foreground="{StaticResource TextBrush}"
-                                                                           FontSize="11" FontWeight="SemiBold"
+                                                                           Foreground="{StaticResource MutedTextBrush}"
+                                                                           FontSize="10"
+                                                                           FontWeight="Normal"
                                                                            TextWrapping="Wrap"
                                                                            VerticalAlignment="Center" />
                                                                 <TextBlock Grid.Column="1" Text="{Binding EffectiveDisplay}"
@@ -110,7 +116,7 @@
                                                                            VerticalAlignment="Center" />
                                                             </Grid>
         
-                                                            <Grid x:Name="ControlRow" Grid.Row="2" Margin="0,3,0,0">
+                                                            <Grid x:Name="ControlRow" Grid.Row="2" Margin="0,4,0,0">
                                                                 <Grid.RowDefinitions>
                                                                     <RowDefinition Height="Auto" />
                                                                     <RowDefinition Height="16" />
@@ -468,9 +474,15 @@
                                                             </MultiDataTrigger.Conditions>
                                                             <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource PanelBrush}" />
                                                         </MultiDataTrigger>
+                                                        <DataTrigger Binding="{Binding IsAggregateRadarAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterCard" Property="Background" Value="Transparent" />
+                                                            <Setter TargetName="ParameterCard" Property="BorderThickness" Value="0" />
+                                                            <Setter TargetName="ParameterCard" Property="Padding" Value="0" />
+                                                            <Setter TargetName="ParameterCard" Property="Margin" Value="0,2,0,8" />
+                                                        </DataTrigger>
                                                         <Trigger SourceName="ParameterCard" Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource PanelHoverBrush}" />
-                                                </Trigger>
+                                                            <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource PanelHoverBrush}" />
+                                                        </Trigger>
                                                 <Trigger SourceName="CurrentValueBox" Property="IsMouseOver" Value="True">
                                                             <Setter TargetName="CurrentValueBox" Property="Background" Value="{StaticResource PanelHoverBrush}" />
                                                             <Setter TargetName="CurrentValueBox" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
