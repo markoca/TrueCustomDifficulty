@@ -31,7 +31,7 @@ public sealed class TabViewModel : ObservableObject
         "stamina" => "Stamina covers the size of your stamina bar, base recovery, clear player action costs, water penalties, vault height and carry limits. Internal movement-state coefficients and emergency-recovery helper fields are documented but intentionally kept out of the normal UI. Click a vanilla marker to snap to it; right-click restores the selected baseline.",
         "master" => "These are extra punishment bundles that vanilla Master adds on top of the normal difficulty settings. Switch a bundle ON to reveal and tune its settings. Switch it OFF to disable the bundle and hide its settings.",
         "economy" => "Economy controls starting coupons, trader pricing behavior, item/service costs, repair-by-reputation effects and quest coupon payouts. Some trader pricing rules are only partly exposed by the game files. Vanilla markers remain exact source reference points and can be clicked to snap a slider directly to them.",
-        "equipment" => "Equipment controls armor wear, player-weapon wear and caps on a few equipment/effect bonuses. Wear controls change how quickly condition is lost; bonus caps only limit how far matching bonuses can stack and do not grant the bonus by themselves. Click a vanilla marker to snap directly to that value.",
+        "equipment" => "Equipment controls armor and player-weapon wear plus item-weight tuning. Wear controls change how quickly condition is lost, while weight controls preserve the vanilla differences between individual items. Click a vanilla marker to snap directly to that value.",
         "environment" => "Global Anomaly Damage is the broad damage layer. Individual damage sliders fine-tune specific hazards. Flycatcher Movement/Turn Speed show how much normal speed remains inside the slowdown: higher means less slowdown. Click a vanilla marker to snap to it; right-click restores the selected baseline.",
         _ => "Yellow shows your current setting. Vanilla markers show the original Novice, Stalker, Veteran and Master values; click a marker to snap directly to it. Right-click a slider to restore the selected vanilla baseline."
     };
@@ -66,7 +66,7 @@ public sealed class TabViewModel : ObservableObject
         "stamina" => "Stamina pool and recovery, action costs, movement penalties, vaulting and carry capacity.",
         "loot" => "Corpse, stash, ammo, weapon-condition and mutant drop amounts while preserving Difficulty and Progression Rank differences.",
         "economy" => "Starting coupons, trader pricing, item and service costs, repair by reputation and quest coupon income.",
-        "equipment" => "Armor and weapon wear plus selected equipment/effect bonus limits.",
+        "equipment" => "Armor and weapon wear plus item-weight tuning.",
         "environment" => "Hazard effect strength only; weather/emission frequency and scheduling remain untouched.",
         "master" => "Optional Master-only punishment bundles for starvation, severe fatigue, radiation, low health and medical effectiveness.",
         _ => "Independent controls built from the vanilla configuration."
