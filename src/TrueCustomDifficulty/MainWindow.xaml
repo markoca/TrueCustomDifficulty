@@ -23,8 +23,7 @@
                                                     <Border x:Name="ParameterCard"
                                                             PreviewMouseLeftButtonDown="ParameterCard_PreviewMouseLeftButtonDown"
                                                             Background="Transparent"
-                                                            BorderBrush="{StaticResource BorderBrush}"
-                                                            BorderThickness="0,0,0,1"
+                                                            BorderThickness="0"
                                                             CornerRadius="0"
                                                             Margin="0"
                                                             Padding="8,6">
