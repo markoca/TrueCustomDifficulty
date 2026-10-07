@@ -19,7 +19,17 @@ public sealed class TabViewModel : ObservableObject
     public ParameterViewModel? SelectedParameter
     {
         get => _selectedParameter;
-        set => SetProperty(ref _selectedParameter, value);
+        set
+        {
+            if (ReferenceEquals(_selectedParameter, value))
+                return;
+
+            if (_selectedParameter is not null)
+                _selectedParameter.IsSelected = false;
+
+            if (SetProperty(ref _selectedParameter, value) && _selectedParameter is not null)
+                _selectedParameter.IsSelected = true;
+        }
     }
 
     public string SliderGuide => Id switch
