@@ -41,7 +41,7 @@ public sealed class MutantDropRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Mutants.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
-    private readonly RadarStatusMessage _status;
+    private readonly VisualStatusMessage _status;
 
     private int _selectedRow;
     private int _hoverRow = -1;
@@ -61,7 +61,7 @@ public sealed class MutantDropRadar : FrameworkElement
 
     public MutantDropRadar()
     {
-        _status = new RadarStatusMessage(InvalidateVisual);
+        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 500;
         Cursor = Cursors.Arrow;
