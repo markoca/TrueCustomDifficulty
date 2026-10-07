@@ -64,6 +64,74 @@ Do not invent one global "Consumable Effectiveness" scalar.
 
 ---
 
+
+# Selected implementation priorities
+
+The current player-facing priority is intentionally narrow:
+
+1. **Instant Stamina**
+2. **Alcohol Radiation Removal**
+3. **Effect Duration for every in-scope utility consumable**
+
+## Instant Stamina
+
+Expose direct instant-stamina strength only for consumables that actually have an instant stamina effect:
+
+- Water -> `WaterStaminaInstant`
+- Energy Drink -> `EnergeticStaminaInstant3`
+- Limited Edition Energy Drink -> `EnergeticLimitedStaminaInstant4`
+
+This control domain changes the immediate stamina refill only. It must not change timed stamina regeneration, fatigue relief, hunger, tolerance or overdose mechanics.
+
+## Alcohol Radiation Removal
+
+Expose the direct radiation-removal effects of normal alcohol:
+
+- Beer -> `BeerAntirad1`
+- Vodka -> `VodkaAntirad3`
+
+Prefer one family multiplier that preserves the authored Beer/Vodka strength ratio unless the final UI deliberately presents them as separate item controls.
+
+Magic/Dvupalov Vodka is excluded from this radiation-removal control because its normal effect chain does not use the standard Vodka radiation-removal effect.
+
+## Effect Duration
+
+Duration is a separate tuning domain from effect magnitude.
+
+A consumable duration control must scale only concrete `Duration` fields belonging to that consumable. Instant effects such as instant stamina and direct radiation removal have no duration and are therefore unaffected.
+
+Desired family coverage:
+
+- **Water Effect Duration**
+  - `WaterStamina2`
+  - `WaterStaminaPerAction1`
+  - other Water timed effects only when source-exact
+
+- **Energy Drink Effect Duration**
+  - `EnergeticStamina`
+  - `EnergeticStaminaPerAction1`
+  - Limited Edition timed effects when their exact 2.0.5 rows are locked
+
+- **Vodka Effect Duration**
+  - `VodkaStaminaPenalty`
+  - `VodkaDrunkness` only if the complete drunkness interaction is intentionally included
+
+- **Beer Effect Duration**
+  - `BeerStaminaPenalty`
+  - `BeerDrunkness` only if the complete drunkness interaction is intentionally included
+
+- **Magic Vodka Effect Duration**
+  - `MagicVodkaPSYProtection`
+  - `MagicVodkaDrunkness` only if intentionally included
+
+A single per-consumable duration multiplier is preferred over exposing one slider for every internal timed effect. This keeps the UI readable while preserving the original relative durations inside each item.
+
+## Safety rule for alcohol duration
+
+Do not automatically scale drunkenness duration together with other alcohol effects until `DrunknessMechanics` / `OverDrunknessMechanics` has been fully source-audited. Until then, the safe alcohol-duration target is the direct stamina-penalty duration; drunkenness duration remains deferred.
+
+---
+
 # 1. Water
 
 ## Item effect chain
