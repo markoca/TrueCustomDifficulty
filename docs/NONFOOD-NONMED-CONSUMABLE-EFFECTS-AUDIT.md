@@ -455,9 +455,9 @@ It scales the authored `DrunknessMechanics` thresholds together:
 - Strong: 40
 - Very Strong: 60
 
-The control presents those thresholds as a human-readable drink count using Beer = 15 Drunkness and Vodka = 30 Drunkness. Vanilla therefore reads as approximately 4 beers or 2 vodkas to Very Strong when drinks are stacked before natural sober-up.
+The control presents those thresholds primarily as a Beer-based alcohol-tolerance scale using Beer = 15 Drunkness and Vodka = 30 Drunkness. Vanilla therefore reads as 4 beers or 2 vodkas to Very Strong when drinks are stacked before natural sober-up. The normal slider surface is 1–6 beers with 4 marked VANILLA.
 
-The BEER/VODKA selector is presentation-only; it does not edit the drink effect strengths. A separate BACK-TO-BACK PREVIEW selects a simulated drink count and whitens only the effect text for the currently active drunkness tier.
+Beer is the default reference. The BEER/VODKA selector is presentation-only; it does not edit the drink effect strengths. A separate BACK-TO-BACK PREVIEW selects a simulated drink count and whitens only the effect text for the currently active drunkness tier.
 
 ---
 
