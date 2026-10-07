@@ -456,8 +456,19 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        DrawText(dc, $"WEAPON WEAR   {weapon.CurrentNumber:0.##}x", new Point(18.0, 52.0), 10.0, accent, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, $"ARMOR TOUGHNESS   {armor.CurrentNumber:0.##}x", new Point(ActualWidth - 18.0, 52.0), 10.0, accent, FontWeights.SemiBold);
+        // Armor references depend on the chosen Base Preset (e.g. Veteran is
+        // 0.9x), while player weapon wear has a shared 1x vanilla reference.
+        // Show both exact CFG multipliers rather than suggesting 1x is always
+        // vanilla for both axes. Short labels protect the minimum 520px layout.
+        var compactLabels = ActualWidth < 690.0;
+        var wearLabel = compactLabels ? "WEAPON" : "WEAPON WEAR";
+        var armorLabel = compactLabels ? "ARMOR" : "ARMOR DURABILITY";
+        DrawText(dc,
+            $"{wearLabel}  {weapon.CurrentNumber:0.##}x  |  BASE {weapon.ReferenceNumber:0.##}x",
+            new Point(18.0, 52.0), 10.5, accent, FontWeights.SemiBold);
+        DrawRightAlignedText(dc,
+            $"{armorLabel}  {armor.CurrentNumber:0.##}x  |  BASE {armor.ReferenceNumber:0.##}x",
+            new Point(ActualWidth - 18.0, 52.0), 10.5, accent, FontWeights.SemiBold);
 
         var plot = new Rect(94.0, 81.0, Math.Max(350.0, ActualWidth - 132.0), 156.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
@@ -476,8 +487,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
             if (tick is 0 or 2 or 4)
             {
-                DrawCenteredText(dc, $"{armorTick:0.##}", new Point(armorTickX, plot.Bottom + 29.0), 9.0, muted, FontWeights.Normal);
-                DrawRightAlignedText(dc, $"{weaponTick:0.##}", new Point(plot.Left - 29.0, weaponTickY - 7.0), 9.0, muted, FontWeights.Normal);
+                DrawCenteredText(dc, $"{armorTick:0.##}", new Point(armorTickX, plot.Bottom + 29.0), 9.8, text, FontWeights.Normal);
+                DrawRightAlignedText(dc, $"{weaponTick:0.##}", new Point(plot.Left - 29.0, weaponTickY - 7.0), 9.8, text, FontWeights.Normal);
             }
         }
 
@@ -511,8 +522,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             plot, weapon.Minimum, weapon.Maximum);
 
         // Leave the status lane below y=290 clear for transient reset messages.
-        DrawCenteredText(dc, "BOTTOM: ARMOR (TOUGHER RIGHT)   |   LEFT: WEAPON (MORE WEAR UP)   |   GREY = BASE",
-            new Point(ActualWidth / 2.0, 280.0), 9.0, muted, FontWeights.SemiBold);
+        DrawCenteredText(dc, "ARMOR → MORE DURABLE   |   WEAPON ↑ MORE WEAR / SHOT   |   GREY = BASE",
+            new Point(ActualWidth / 2.0, 280.0), 9.5, text, FontWeights.SemiBold);
     }
 
     private void DrawRepairCurve(
