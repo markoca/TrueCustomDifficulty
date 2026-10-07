@@ -195,24 +195,18 @@ private readonly RadarStatusMessage _status;
                 mutedBrush, i == _selectedAxis ? accentBrush : textBrush);
         }
 
-        DrawInfoHeader(
-            dc,
-            "World loot density | 0% keeps vanilla | higher removes more of that loot from the world.",
-            mutedBrush);
-
         DrawLegend(dc, values, textBrush, mutedBrush, accentBrush);
 
-        var instruction = string.IsNullOrWhiteSpace(_status.Text)
-            ? "Drag a point | Arrow keys adjust selected category | Right click point/legend resets that category | R resets all"
-            : _status.Text;
-
-        DrawCenteredText(
-            dc,
-            instruction,
-            new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 20),
-            9.6,
-            string.IsNullOrWhiteSpace(_status.Text) ? mutedBrush : accentBrush,
-            FontWeights.Normal);
+        if (!string.IsNullOrWhiteSpace(_status.Text))
+        {
+            DrawCenteredText(
+                dc,
+                _status.Text,
+                new Point(GetInfoRect().Left + GetInfoRect().Width / 2.0, ActualHeight - 20),
+                9.6,
+                accentBrush,
+                FontWeights.Normal);
+        }
     }
 
     private Rect GetInfoRect()
