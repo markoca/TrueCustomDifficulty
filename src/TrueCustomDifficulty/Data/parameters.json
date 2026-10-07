@@ -1794,6 +1794,147 @@
       "interaction": "Vanilla hunger states still decide when their effects become active. Food Fullness Effect and consumables determine how quickly hunger is pushed back down."
     },
     {
+      "id": "survival.hungerLowThreshold",
+      "tab": "survival",
+      "group": "Hunger",
+      "label": "Low Hunger Threshold",
+      "description": "Sets when the Low hunger state begins.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "points",
+        "valueLabel": "Hunger state threshold"
+      },
+      "vanilla": {
+        "All": 17
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "HungerMechanics",
+          "path": "MechanicsEffect.ConditionEffects.LowHunger.ConditionValue",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Runtime CFG threshold is 17 HungerPoints."
+        ]
+      },
+      "rationale": "Controls when the Low hunger state begins on the 0-100 HungerPoints scale.",
+      "logic": "Keep LOW at or below MEDIUM and STRONG. Moving one threshold in the Hunger Ladder minimally pushes adjacent thresholds when needed.",
+      "interaction": "This changes state timing only. Medium/Severe stamina-recovery penalties are tuned separately.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.hungerMediumThreshold",
+      "tab": "survival",
+      "group": "Hunger",
+      "label": "Medium Hunger Threshold",
+      "description": "Sets when Medium hunger begins, including its stamina-recovery penalty and no-sleep state.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "points",
+        "valueLabel": "Hunger state threshold"
+      },
+      "vanilla": {
+        "All": 33
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "HungerMechanics",
+          "path": "MechanicsEffect.ConditionEffects.MediumHunger.ConditionValue",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Runtime CFG threshold is 33 HungerPoints.",
+          "Medium hunger also applies HungerNoSleep."
+        ]
+      },
+      "rationale": "Controls when the standard Medium hunger state begins.",
+      "logic": "Keep LOW <= MEDIUM <= STRONG.",
+      "interaction": "This moves the stage boundary; the Medium stamina-recovery penalty magnitude remains a separate axis.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.hungerStrongThreshold",
+      "tab": "survival",
+      "group": "Hunger",
+      "label": "Severe Hunger Threshold",
+      "description": "Sets when the standard Strong hunger state begins.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "points",
+        "valueLabel": "Hunger state threshold"
+      },
+      "vanilla": {
+        "All": 83
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "HungerMechanics",
+          "path": "MechanicsEffect.ConditionEffects.StrongHunger.ConditionValue",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Runtime CFG threshold is 83 HungerPoints.",
+          "Strong hunger also applies HungerNoSleep.",
+          "This is the standard HungerMechanics boundary; the separate Master HungerNegativeMechanics bundle retains its own authored activation semantics."
+        ]
+      },
+      "rationale": "Controls when the standard Severe hunger state begins.",
+      "logic": "Keep LOW <= MEDIUM <= STRONG.",
+      "interaction": "This changes the standard hunger stage boundary; it does not silently rewrite the separate Master starvation mechanics.",
+      "exposeInUi": false
+    },
+    {
       "id": "survival.hungerMediumStaminaRegen",
       "tab": "survival",
       "group": "Hunger",
@@ -1917,6 +2058,144 @@
       "rationale": "Changes how quickly you become tired and need sleep.",
       "logic": "",
       "interaction": "Vanilla fatigue states still decide when their penalties become active. Energy drinks can reduce accumulated fatigue separately."
+    },
+    {
+      "id": "survival.sleepLowThreshold",
+      "tab": "survival",
+      "group": "Fatigue / Sleepiness",
+      "label": "Low Fatigue Threshold",
+      "description": "Sets when the Low fatigue state begins.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "points",
+        "valueLabel": "Fatigue state threshold"
+      },
+      "vanilla": {
+        "All": 50
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "SleepMechanics",
+          "path": "MechanicsEffect.ConditionEffects.LowSleepiness.ConditionValue",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Runtime CFG threshold is 50 SleepinessPoints."
+        ]
+      },
+      "rationale": "Controls where the Low fatigue stage begins on the real 0-100 SleepinessPoints axis.",
+      "logic": "Keep LOW <= MEDIUM <= SEVERE.",
+      "interaction": "Horizontal movement changes stage timing; vertical AIM/RELOAD handles control penalty magnitude.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.sleepMediumThreshold",
+      "tab": "survival",
+      "group": "Fatigue / Sleepiness",
+      "label": "Medium Fatigue Threshold",
+      "description": "Sets when Medium fatigue begins.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "points",
+        "valueLabel": "Fatigue state threshold"
+      },
+      "vanilla": {
+        "All": 60
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "SleepMechanics",
+          "path": "MechanicsEffect.ConditionEffects.MediumSleepiness.ConditionValue",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Runtime CFG threshold is 60 SleepinessPoints."
+        ]
+      },
+      "rationale": "Controls where Medium fatigue begins.",
+      "logic": "Keep LOW <= MEDIUM <= SEVERE.",
+      "interaction": "The Medium reload penalty begins at this stage.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.sleepStrongThreshold",
+      "tab": "survival",
+      "group": "Fatigue / Sleepiness",
+      "label": "Severe Fatigue Threshold",
+      "description": "Sets when Severe fatigue begins.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "points",
+        "valueLabel": "Fatigue state threshold"
+      },
+      "vanilla": {
+        "All": 80
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "SleepMechanics",
+          "path": "MechanicsEffect.ConditionEffects.StrongSleepiness.ConditionValue",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Runtime CFG threshold is 80 SleepinessPoints."
+        ]
+      },
+      "rationale": "Controls where Severe fatigue begins.",
+      "logic": "Keep LOW <= MEDIUM <= SEVERE.",
+      "interaction": "This moves the Severe stage boundary without changing its AIM/RELOAD penalty magnitudes.",
+      "exposeInUi": false
     },
     {
       "id": "survival.energyDrinkFatigueRelief",
@@ -2346,14 +2625,14 @@
       "id": "survival.drunknessThresholdScale",
       "tab": "survival",
       "group": "Alcohol Tolerance",
-      "label": "Alcohol Tolerance",
-      "description": "Legacy/internal mapping for the vanilla 20 / 40 / 60 DrunknessMechanics thresholds. Player-facing alcohol tuning keeps these thresholds fixed at vanilla.",
+      "label": "Alcohol Stage Threshold Scale",
+      "description": "Internal mapping for the source-correct DrunknessMechanics Medium/Strong thresholds. Kept hidden until the separate OverDrunkness chain is fully modeled.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Drunkness thresholds"
+        "valueLabel": "Drunkness stage thresholds"
       },
       "vanilla": {
         "All": 1
@@ -2381,26 +2660,19 @@
           "prototype": "DrunknessMechanics",
           "path": "MechanicsEffect.ConditionEffects.StrongDrunkness.ConditionValue",
           "operation": "scale"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "DrunknessMechanics",
-          "path": "MechanicsEffect.ConditionEffects.VeryStrongDrunkness.ConditionValue",
-          "operation": "scale"
         }
       ],
       "support": {
         "status": "confirmed",
         "notes": [
-          "Vanilla DrunknessMechanics thresholds remain fixed at Medium 20, Strong 40 and Very Strong 60.",
-          "This mapping is retained for source documentation/legacy compatibility only and is not instantiated in the player-facing control graph.",
-          "Beer and Vodka tolerance are tuned independently by changing BeerDrunkness and VodkaDrunkness strength."
+          "Current source thresholds are Low 0.001, Medium 30 and Strong 80.",
+          "The separate OverDrunknessMechanics chain is not silently folded into this scalar.",
+          "The obsolete VeryStrongDrunkness target was removed because that node is not present in the audited current CFG."
         ]
       },
-      "rationale": "Kept out of the UI so Beer and Vodka tolerance can be tuned independently through each drink's own strength.",
-      "logic": "Always remains at 1.0 in normal use: Medium 20, Strong 40, Very Strong 60.",
-      "interaction": "Not player-facing.",
+      "rationale": "Retained as a source-correct internal mapping while OverDrunkness remains separately audited.",
+      "logic": "At 1x, Medium = 30 and Strong = 80. Low remains at its authored near-zero boundary.",
+      "interaction": "Not player-facing yet; Beer and Vodka direct strength remain the editable alcohol axes.",
       "exposeInUi": false
     },
     {
@@ -2408,7 +2680,7 @@
       "tab": "survival",
       "group": "Alcohol Tolerance",
       "label": "Beer Strength",
-      "description": "Sets Beer drink strength from 8 to 30 against the fixed vanilla 20 / 40 / 60 drunkenness thresholds.",
+      "description": "Sets Beer drink strength against the current DrunknessMechanics stages: Low 0.001, Medium 30 and Strong 80.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -8014,6 +8286,100 @@
       "logic": "50% means +50% extra stamina cost. 0% removes this extra radiation cost.",
       "interaction": "",
       "requiresToggle": "advanced.radiationMechanics"
+    },
+    {
+      "id": "survival.bleedingMediumThreshold",
+      "tab": "survival",
+      "group": "Bleeding",
+      "label": "Medium Bleeding Threshold",
+      "description": "Sets when Medium bleeding begins.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "points",
+        "valueLabel": "Bleeding stage threshold"
+      },
+      "vanilla": {
+        "All": 50
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 1,
+        "max": 99,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "BleedingMechanics",
+          "path": "MechanicsEffect.ConditionEffects.MediumBleeding.ConditionValue",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Runtime CFG threshold is 50 Bleeding points.",
+          "Medium bleeding also carries movement/no-sleep consequences."
+        ]
+      },
+      "rationale": "Controls when Medium bleeding begins.",
+      "logic": "Keep MEDIUM below SEVERE. The Low threshold remains at the authored 0.1 boundary.",
+      "interaction": "Horizontal threshold handles change stage timing; vertical curve handles change HP damage per tick.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.bleedingStrongThreshold",
+      "tab": "survival",
+      "group": "Bleeding",
+      "label": "Severe Bleeding Threshold",
+      "description": "Sets when Severe bleeding begins.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "points",
+        "valueLabel": "Bleeding stage threshold"
+      },
+      "vanilla": {
+        "All": 75
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 1,
+        "max": 100,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "BleedingMechanics",
+          "path": "MechanicsEffect.ConditionEffects.StrongBleeding.ConditionValue",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Runtime CFG threshold is 75 Bleeding points.",
+          "Strong bleeding also carries movement/no-sleep consequences."
+        ]
+      },
+      "rationale": "Controls when Severe bleeding begins.",
+      "logic": "Keep SEVERE above MEDIUM. The Low threshold remains fixed at 0.1.",
+      "interaction": "This changes the stage boundary, not the damage-per-tick value.",
+      "exposeInUi": false
     },
     {
       "id": "survival.bleedingLowDamage",
