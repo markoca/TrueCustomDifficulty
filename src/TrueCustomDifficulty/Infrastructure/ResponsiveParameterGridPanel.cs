@@ -146,8 +146,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
         if (child is not FrameworkElement { DataContext: ParameterViewModel parameter })
             return false;
 
-        return parameter.IsAggregateRadarAnchor
-            || (parameter.IsRange && !parameter.Id.Equals("loot.droppedWeaponCondition", StringComparison.Ordinal))
-            || parameter.IsChoiceSlider;
+        return parameter.IsAggregateRadarAnchor;
     }
 }
