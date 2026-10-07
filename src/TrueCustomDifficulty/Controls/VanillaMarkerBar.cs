@@ -90,7 +90,7 @@ public sealed class VanillaMarkerBar : FrameworkElement
             var x = edgePadding + normalized * usableWidth;
             var hovered = IsEnabled && Equals(marker, _hoveredMarker);
             var dotBrush = hovered ? hoverBrush : markerBrush;
-            dc.DrawEllipse(dotBrush, null, new Point(x, dotY), hovered ? 2.25 : 1.8, hovered ? 2.25 : 1.8);
+            dc.DrawEllipse(dotBrush, null, new Point(x, dotY), hovered ? 2.5 : 2.1, hovered ? 2.5 : 2.1);
 
             // Keep the connection to the slider subtle; the thumb/value should remain the primary focus.
             dc.DrawLine(new Pen(dotBrush, hovered ? 1d : 0.7d), new Point(x, 0d), new Point(x, 1.5d));
@@ -104,12 +104,12 @@ public sealed class VanillaMarkerBar : FrameworkElement
                 CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight,
                 typeface,
-                7.2d,
+                9.0d,
                 markerTextBrush,
                 dpi);
 
             var textX = Math.Clamp(x - text.Width / 2d, 0d, Math.Max(0d, ActualWidth - text.Width));
-            var textPoint = new Point(textX, 6.5d);
+            var textPoint = new Point(textX, 6d);
             dc.DrawText(text, textPoint);
 
             // Make both the dot/stem and the visible label easy to click without turning the
