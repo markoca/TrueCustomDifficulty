@@ -140,6 +140,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "EquipmentWearBalance":
                 DrawEquipmentWearBalance(dc, text, muted, border, soft, accent, panel);
                 break;
+            case "PsyPhantomPressure":
+                DrawPsyPhantomPressure(dc, text, muted, border, soft, accent, panel);
+                break;
             case "ConsumableMixer":
                 DrawConsumableMixer(dc, text, muted, border, accent, panel);
                 break;
@@ -425,6 +428,113 @@ public sealed class AggregateVisualControl : FrameworkElement
                 i == 0 ? muted : text,
                 i == 0 ? FontWeights.Normal : FontWeights.SemiBold);
         }
+    }
+
+
+    // Editable axes are deliberately independent. The gold crosshair is a
+    // read-only summary of the two source-exact Psy spawn override multipliers.
+    // Do not imply a simulated spawns-per-minute formula: base encounter timings
+    // and the effective runtime paths are not fully exposed by the CFG dump.
+    private void DrawPsyPhantomPressure(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(dc, "PSY PHANTOM PRESSURE",
+            "spawn override: delay and phantom count, plus bleeding and gear damage",
+            text, muted, accent);
+
+        var wait = P("combat.psySpawnCycleDelay");
+        var count = P("combat.psyPhantomCount");
+        var wear = P("combat.psyDurabilityDamage");
+        var bleed = P("combat.psyBleeding");
+        if (wait is null || count is null || wear is null || bleed is null)
+        {
+            DrawCenteredText(dc, "Psy combat data unavailable.",
+                new Point(ActualWidth / 2.0, 165.0), 10.0, muted, FontWeights.SemiBold);
+            return;
+        }
+
+        DrawText(dc,
+            $"CYCLE WAIT  {wait.CurrentNumber:0.##}x  |  BASE {wait.ReferenceNumber:0.##}x",
+            new Point(18.0, 54.0), 9.8, accent, FontWeights.SemiBold);
+        DrawRightAlignedText(dc,
+            $"PHANTOM COUNT  {count.CurrentNumber:0.##}x  |  BASE {count.ReferenceNumber:0.##}x",
+            new Point(ActualWidth - 18.0, 54.0), 9.8, accent, FontWeights.SemiBold);
+
+        var plot = new Rect(78.0, 83.0, Math.Max(350.0, ActualWidth - 116.0), 135.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
+
+        for (var tick = 0; tick <= 4; tick++)
+        {
+            var waitTick = wait.Minimum + (wait.Maximum - wait.Minimum) * tick / 4.0;
+            var countTick = count.Minimum + (count.Maximum - count.Minimum) * tick / 4.0;
+            var gridX = ValueToX(waitTick, wait.Minimum, wait.Maximum, plot, reverse: false);
+            var gridY = ValueToY(countTick, count.Minimum, count.Maximum, plot);
+            var gridPen = new Pen(CloneWithOpacity(soft, 0.5), 1.0) { DashStyle = DashStyles.Dot };
+            dc.DrawLine(gridPen, new Point(gridX, plot.Top), new Point(gridX, plot.Bottom));
+            dc.DrawLine(gridPen, new Point(plot.Left, gridY), new Point(plot.Right, gridY));
+
+            if (tick is 0 or 2 or 4)
+            {
+                DrawCenteredText(dc, $"{waitTick:0.##}x", new Point(gridX, plot.Bottom + 29.0),
+                    9.3, text, FontWeights.Normal);
+                DrawRightAlignedText(dc, $"{countTick:0.##}x",
+                    new Point(plot.Left - 29.0, gridY - 7.0), 9.3, text, FontWeights.Normal);
+            }
+        }
+
+        var baseWaitX = ValueToX(wait.ReferenceNumber, wait.Minimum, wait.Maximum, plot, reverse: false);
+        var baseCountY = ValueToY(count.ReferenceNumber, count.Minimum, count.Maximum, plot);
+        var waitX = ValueToX(wait.CurrentNumber, wait.Minimum, wait.Maximum, plot, reverse: false);
+        var countY = ValueToY(count.CurrentNumber, count.Minimum, count.Maximum, plot);
+
+        var basePen = new Pen(CloneWithOpacity(muted, 0.65), 1.2) { DashStyle = DashStyles.Dash };
+        dc.DrawLine(basePen, new Point(baseWaitX, plot.Top), new Point(baseWaitX, plot.Bottom));
+        dc.DrawLine(basePen, new Point(plot.Left, baseCountY), new Point(plot.Right, baseCountY));
+        dc.DrawEllipse(panel, new Pen(muted, 1.7),
+            new Point(baseWaitX, baseCountY), 6.0, 6.0);
+
+        var currentPen = new Pen(CloneWithOpacity(accent, 0.65), 1.2) { DashStyle = DashStyles.Dot };
+        dc.DrawLine(currentPen, new Point(waitX, plot.Top), new Point(waitX, plot.Bottom));
+        dc.DrawLine(currentPen, new Point(plot.Left, countY), new Point(plot.Right, countY));
+        dc.DrawEllipse(panel, new Pen(accent, 2.0),
+            new Point(waitX, countY), 6.5, 6.5);
+        dc.DrawEllipse(accent, null, new Point(waitX, countY), 2.8, 2.8);
+
+        // Only the bottom and left handles change parameters. Clicking inside
+        // the plot (including the crosshair) never unexpectedly changes both.
+        var waitHandle = new Point(waitX, plot.Bottom + 10.0);
+        dc.DrawEllipse(panel, new Pen(accent, IsSelected(wait) ? 2.6 : 1.8),
+            waitHandle, 7.0, 7.0);
+        dc.DrawEllipse(accent, null, waitHandle, 2.5, 2.5);
+        AddHorizontalTarget(wait, new Rect(waitX - 17.0, plot.Bottom + 1.0, 34.0, 22.0),
+            plot, wait.Minimum, wait.Maximum);
+
+        var countHandle = new Point(plot.Left - 11.0, countY);
+        dc.DrawRectangle(panel, new Pen(accent, IsSelected(count) ? 2.6 : 1.8),
+            new Rect(countHandle.X - 6.0, countHandle.Y - 6.0, 12.0, 12.0));
+        AddVerticalTarget(count, new Rect(plot.Left - 28.0, countY - 14.0, 27.0, 28.0),
+            plot, count.Minimum, count.Maximum);
+
+        DrawCenteredText(dc,
+            "LEFT = FASTER WAVES   |   UP = MORE PHANTOMS   |   GREY = BASE",
+            new Point(ActualWidth / 2.0, 267.0), 9.3, text, FontWeights.SemiBold);
+
+        var wearCardWidth = Math.Max(235.0, (ActualWidth - 46.0) * 0.60);
+        var wearCard = new Rect(18.0, 286.0, wearCardWidth, 72.0);
+        DrawHorizontalTrackCard(dc, wear, "PSY GEAR DAMAGE", wearCard,
+            text, muted, border, accent, panel);
+
+        var bleedRect = new Rect(wearCard.Right + 10.0, wearCard.Top + 17.0,
+            Math.Max(90.0, ActualWidth - wearCard.Right - 28.0), 38.0);
+        DrawTogglePill(dc, bleed,
+            bleed.ReferenceBoolean ? "BLEED (BASE ON)" : "BLEED (BASE OFF)",
+            bleedRect, text, muted, border, accent, panel);
     }
 
     // This is a two-axis editor, not a fabricated unified "condition lost %" formula.
@@ -3172,6 +3282,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "FatigueCurve" => 420.0,
             "BleedingTreatmentMixer" => 385.0,
             "EquipmentWearBalance" => 320.0,
+            "PsyPhantomPressure" => 390.0,
             "ConsumableMixer" => 475.0,
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
@@ -3211,6 +3322,13 @@ public sealed class AggregateVisualControl : FrameworkElement
             {
                 "equipment.armorDurability",
                 "equipment.weaponWearPerShot"
+            },
+            "PsyPhantomPressure" => new[]
+            {
+                "combat.psySpawnCycleDelay",
+                "combat.psyPhantomCount",
+                "combat.psyBleeding",
+                "combat.psyDurabilityDamage"
             },
             "ConsumableMixer" => new[]
             {

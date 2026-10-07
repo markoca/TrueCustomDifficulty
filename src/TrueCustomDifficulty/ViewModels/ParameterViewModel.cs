@@ -69,6 +69,7 @@ public sealed class ParameterViewModel : ObservableObject
                 var help = VisualAggregateFamily switch
                 {
                     "FatigueCurve" => "The horizontal position of LOW / MEDIUM / SEVERE is now the real 0-100 SleepinessPoints threshold (vanilla 50 / 60 / 80). Drag the stage marker horizontally to change when that stage begins, and drag AIM / RELOAD vertically to change its combat penalty. Thresholds preserve LOW <= MEDIUM <= SEVERE with the actively moved stage taking priority. LOW fatigue has no separate reload parameter.",
+                    "PsyPhantomPressure" => "This two-axis Psy spawn override shows CYCLE WAIT on X (lower wait = potentially faster waves) and PHANTOM COUNT on Y (higher = more phantoms per affected spawn cycle). The gold intersection is read-only: drag the bottom handle to change only the wait or the left handle to change only the count. PSY GEAR DAMAGE and BLEED are separate settings below. Grey represents the selected Base Preset, not a universal 1x. Novice, Stalker and Veteran do not contain the Master Psy override entries in vanilla; inserting those entries still requires runtime validation. No absolute spawns-per-minute or exact resulting phantom total is claimed.",
                     "EquipmentWearBalance" => "This two-axis plot edits actual independent CFG settings. X = Armor_Durability: higher values mean tougher armor, but the engine's precise condition-loss conversion is not exposed. Y = DurabilityDamagePerShot scale: higher values make player weapons lose condition faster per shot; each weapon keeps its original per-shot differences. The yellow point shows your selected pair; the grey point is the current Base Preset. Drag the bottom handle to change only armor, or the left handle to change only weapon wear. Right-click a handle to reset one value; R resets both.",
                     "BleedingTreatmentMixer" => "Drag the four faders on the shared 0–200% of vanilla scale. The 100% line is each item's own vanilla bleeding removal; the raw bleeding value stays visible under the relative value.",
                     "ConsumableMixer" => "INSTANT STAMINA BURST previews the authored Water 38%, Energy 50% and Limited Energy 100% refills under one multiplier. SUSTAINED STAMINA separately scales Water's authored +25% regeneration / 10% action-cost reduction and Energy Drink's +200% regeneration without changing their durations. ALCOHOL RADIATION CLEANUP previews Beer 10 and Vodka 50 radiation points removed. TIMED EFFECTS share one real seconds axis: Water keeps its 5 s / 30 s timing pair, Energy keeps 45 s / 15 s / 5 s, Vodka and Beer use 20 s stamina penalties, and Magic Vodka uses 90 s psi protection. Drag any gold handle to tune that family. Drunkenness is separate.",
@@ -393,6 +394,11 @@ public sealed class ParameterViewModel : ObservableObject
         ["equipment.armorDurability"] = "EquipmentWearBalance",
         ["equipment.weaponWearPerShot"] = "EquipmentWearBalance",
 
+        ["combat.psySpawnCycleDelay"] = "PsyPhantomPressure",
+        ["combat.psyPhantomCount"] = "PsyPhantomPressure",
+        ["combat.psyBleeding"] = "PsyPhantomPressure",
+        ["combat.psyDurabilityDamage"] = "PsyPhantomPressure",
+
         ["health.bandageBleeding"] = "BleedingTreatmentMixer",
         ["health.medkitBleeding"] = "BleedingTreatmentMixer",
         ["health.armyMedkitBleeding"] = "BleedingTreatmentMixer",
@@ -456,6 +462,7 @@ public sealed class ParameterViewModel : ObservableObject
     {
         ["FatigueCurve"] = "survival.sleepinessRate",
         ["EquipmentWearBalance"] = "equipment.armorDurability",
+        ["PsyPhantomPressure"] = "combat.psySpawnCycleDelay",
         ["BleedingTreatmentMixer"] = "health.bandageBleeding",
         ["ConsumableMixer"] = "survival.instantStaminaRestore",
         ["SleepingDashboard"] = "survival.sleepEligibilityThreshold",

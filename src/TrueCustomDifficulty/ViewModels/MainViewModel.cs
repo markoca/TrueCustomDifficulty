@@ -281,6 +281,13 @@ public sealed class MainViewModel : ObservableObject
             "survival.fatigueStrongReloadPenalty");
 
         WireVisualAggregate(
+            "combat.psySpawnCycleDelay",
+            "combat.psySpawnCycleDelay",
+            "combat.psyPhantomCount",
+            "combat.psyBleeding",
+            "combat.psyDurabilityDamage");
+
+        WireVisualAggregate(
             "health.bandageBleeding",
             "health.bandageBleeding",
             "health.medkitBleeding",
