@@ -238,7 +238,7 @@ private readonly RadarStatusMessage _status;
         Brush accentBrush)
     {
         var info = GetInfoRect();
-        const double rowHeight = 48.0;
+        const double rowHeight = 30.0;
         var totalHeight = Axes.Length * rowHeight;
         var top = info.Top + Math.Max(0.0, (info.Height - totalHeight) / 2.0);
         var legendBounds = new Rect(info.Left, top, info.Width, totalHeight);
