@@ -145,14 +145,6 @@ public sealed class StashAmmoRadar : FrameworkElement
         for (var tier = 0; tier < Tiers.Length; tier++)
             DrawTier(dc, tier, 58.0 + tier * TierHeight, text, muted, border, accent, panel);
 
-        DrawCenteredText(
-            dc,
-            "story / scripted stashes stay vanilla",
-            new Point(ActualWidth / 2.0, 350.0),
-            7.4,
-            muted,
-            FontWeights.Normal);
-
         if (!string.IsNullOrWhiteSpace(_status.Text))
         {
             DrawCenteredText(
