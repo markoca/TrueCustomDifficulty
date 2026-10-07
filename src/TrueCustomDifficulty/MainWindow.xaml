@@ -468,7 +468,10 @@
                                                             </MultiDataTrigger.Conditions>
                                                             <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource PanelBrush}" />
                                                         </MultiDataTrigger>
-                                                        <Trigger SourceName="CurrentValueBox" Property="IsMouseOver" Value="True">
+                                                        <Trigger SourceName="ParameterCard" Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource PanelHoverBrush}" />
+                                                </Trigger>
+                                                <Trigger SourceName="CurrentValueBox" Property="IsMouseOver" Value="True">
                                                             <Setter TargetName="CurrentValueBox" Property="Background" Value="{StaticResource PanelHoverBrush}" />
                                                             <Setter TargetName="CurrentValueBox" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
                                                             <Setter TargetName="WheelHintMinus" Property="Visibility" Value="Visible" />
