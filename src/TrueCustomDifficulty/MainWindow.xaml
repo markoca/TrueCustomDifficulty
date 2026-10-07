@@ -77,7 +77,8 @@
                                                                             PreviewMouseRightButtonDown="SliderControl_PreviewMouseRightButtonDown"
                                                                             BorderThickness="0"
                                                                             CornerRadius="2"
-                                                                            MinWidth="64"
+                                                                            Width="128"
+                                                                            MinWidth="128"
                                                                             Padding="5,1">
                                                                         <TextBlock x:Name="CurrentValueText" Text="{Binding CurrentDisplay}"
                                                                                    Foreground="{StaticResource AccentBrush}"
