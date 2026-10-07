@@ -152,6 +152,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "CoreHealthDashboard":
                 DrawCoreHealthDashboard(dc, text, muted, border, soft, accent, panel);
                 break;
+            case "SevereFatiguePenaltyBoard":
+                DrawSevereFatiguePenaltyBoard(dc, text, muted, border, soft, accent, panel);
+                break;
             case "ConsumableMixer":
                 DrawConsumableMixer(dc, text, muted, border, accent, panel);
                 break;
@@ -442,6 +445,144 @@ public sealed class AggregateVisualControl : FrameworkElement
 
 
 
+
+
+    // Master-only negative mechanics activation owns the six-member family.
+    // All five sliders retain their original CFG-backed values even while off,
+    // but their tracks are intentionally not interactive until enabled.
+    private void DrawSevereFatiguePenaltyBoard(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(dc, "MASTER SEVERE FATIGUE",
+            "extra penalties while the vanilla severe-fatigue state is active",
+            text, muted, accent);
+
+        var toggle = P("advanced.fatigueMechanics");
+        if (toggle is null)
+        {
+            DrawCenteredText(dc, "Master fatigue data unavailable.",
+                new Point(ActualWidth / 2.0, 175.0),
+                10.0, muted, FontWeights.SemiBold);
+            return;
+        }
+
+        DrawTogglePill(dc, toggle, "SEVERE-FATIGUE BUNDLE",
+            new Rect(16.0, 55.0, Math.Min(247.0, ActualWidth * 0.51), 39.0),
+            text, muted, border, accent, panel);
+        DrawRightAlignedText(dc,
+            toggle.CurrentBoolean ? "PENALTIES ACTIVE" : "PENALTIES DISABLED",
+            new Point(ActualWidth - 18.0, 66.0),
+            9.6, toggle.CurrentBoolean ? accent : muted, FontWeights.Bold);
+
+        var width = Math.Max(480.0, ActualWidth - 32.0);
+        var gap = 10.0;
+        var half = (width - gap) / 2.0;
+
+        DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueMaxStamina"),
+            "MAX STAMINA LOSS", new Rect(16.0, 113.0, half, 69.0),
+            text, muted, border, soft, accent, panel);
+        DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueCarryWeight"),
+            "CARRY CAPACITY LOSS", new Rect(16.0 + half + gap, 113.0, half, 69.0),
+            text, muted, border, soft, accent, panel);
+        DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueRecoil"),
+            "RECOIL INCREASE", new Rect(16.0, 191.0, half, 69.0),
+            text, muted, border, soft, accent, panel);
+        DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueAimSway"),
+            "AIM SWAY", new Rect(16.0 + half + gap, 191.0, half, 69.0),
+            text, muted, border, soft, accent, panel);
+        DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueDispersion"),
+            "SHOT SPREAD", new Rect(16.0, 269.0, half, 69.0),
+            text, muted, border, soft, accent, panel);
+
+        var note = new Rect(16.0 + half + gap, 269.0, half, 69.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), note, 3.0, 3.0);
+        DrawText(dc, "VANILLA THRESHOLDS", new Point(note.Left + 10.0, note.Top + 10.0),
+            9.1, text, FontWeights.Bold);
+        DrawText(dc, "Activation point is unchanged", new Point(note.Left + 10.0, note.Top + 29.0),
+            9.0, muted, FontWeights.Normal);
+        DrawText(dc, "LOW / MEDIUM remain separate", new Point(note.Left + 10.0, note.Top + 46.0),
+            9.0, muted, FontWeights.Normal);
+
+        DrawCenteredText(dc,
+            toggle.CurrentBoolean
+                ? "YELLOW = EDITABLE  |  GREY TICK = BASE PRESET"
+                : "SWITCH ON TO EDIT  |  STORED VALUES ARE PRESERVED",
+            new Point(ActualWidth / 2.0, 347.0),
+            9.2, toggle.CurrentBoolean ? text : muted, FontWeights.SemiBold);
+    }
+
+    private void DrawSevereFatiguePenaltyCard(
+        DrawingContext dc,
+        ParameterViewModel? parameter,
+        string label,
+        Rect card,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush soft,
+        Brush accent,
+        Brush panel)
+    {
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 3.0, 3.0);
+        DrawText(dc, label, new Point(card.Left + 10.0, card.Top + 7.0),
+            9.2, text, FontWeights.Bold);
+        if (parameter is null)
+            return;
+
+        var enabled = parameter.IsControlEnabled;
+        var isPercent = parameter.Id is "survival.severeFatigueMaxStamina"
+            or "survival.severeFatigueCarryWeight"
+            or "survival.severeFatigueRecoil";
+        string Format(double value)
+            => isPercent ? $"{value * 100:0}%"
+                         : $"{value:0.##}x";
+
+        DrawRightAlignedText(dc,
+            $"{Format(parameter.CurrentNumber)} | BASE {Format(parameter.ReferenceNumber)}",
+            new Point(card.Right - 10.0, card.Top + 7.0),
+            9.5, enabled ? accent : muted, FontWeights.Bold);
+
+        var track = new Rect(card.Left + 12.0, card.Top + 30.0,
+            Math.Max(64.0, card.Width - 24.0), 21.0);
+        var y = track.Top + track.Height / 2.0;
+        dc.DrawLine(new Pen(soft, 3.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum,
+            track, reverse: false);
+        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum,
+            track, reverse: false);
+
+        if (enabled && Math.Abs(baseX - currentX) > 0.5)
+        {
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.55), 4.0),
+                new Point(Math.Min(baseX, currentX), y),
+                new Point(Math.Max(baseX, currentX), y));
+        }
+
+        dc.DrawLine(new Pen(muted, 1.6),
+            new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
+        dc.DrawEllipse(panel, new Pen(enabled ? accent : muted,
+                enabled && IsSelected(parameter) ? 2.5 : 1.5),
+            new Point(currentX, y), 5.9, 5.9);
+        if (enabled)
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.3, 2.3);
+
+        // AddHorizontalTarget performs the same IsControlEnabled guard used
+        // by every other aggregate editor: OFF means no edits, not data loss.
+        AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
+        DrawText(dc, Format(parameter.Minimum),
+            new Point(track.Left, card.Bottom - 14.0),
+            9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, Format(parameter.Maximum),
+            new Point(track.Right, card.Bottom - 14.0),
+            9.0, muted, FontWeights.Normal);
+    }
 
     // This board only previews raw CFG settings. In particular RegenHP's
     // runtime tick cadence and which heal effects honor its delay are not
@@ -3602,6 +3743,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "HumanCombatProfile" => 390.0,
             "PlayerWeaponProfile" => 330.0,
             "CoreHealthDashboard" => 385.0,
+            "SevereFatiguePenaltyBoard" => 390.0,
             "ConsumableMixer" => 475.0,
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
@@ -3668,6 +3810,15 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "health.baseRegen",
                 "health.regenDelay",
                 "health.regenerationScalar"
+            },
+            "SevereFatiguePenaltyBoard" => new[]
+            {
+                "advanced.fatigueMechanics",
+                "survival.severeFatigueMaxStamina",
+                "survival.severeFatigueCarryWeight",
+                "survival.severeFatigueRecoil",
+                "survival.severeFatigueAimSway",
+                "survival.severeFatigueDispersion"
             },
             "ConsumableMixer" => new[]
             {

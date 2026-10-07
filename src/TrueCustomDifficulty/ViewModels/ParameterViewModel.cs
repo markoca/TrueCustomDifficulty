@@ -69,6 +69,7 @@ public sealed class ParameterViewModel : ObservableObject
                 var help = VisualAggregateFamily switch
                 {
                     "FatigueCurve" => "The horizontal position of LOW / MEDIUM / SEVERE is now the real 0-100 SleepinessPoints threshold (vanilla 50 / 60 / 80). Drag the stage marker horizontally to change when that stage begins, and drag AIM / RELOAD vertically to change its combat penalty. Thresholds preserve LOW <= MEDIUM <= SEVERE with the actively moved stage taking priority. LOW fatigue has no separate reload parameter.",
+                    "SevereFatiguePenaltyBoard" => "SEVERE-FATIGUE BUNDLE toggles the additional SleepinessNegativeMechanics effect on the selected Base Preset; vanilla Master has it on, while Novice/Stalker/Veteran have it off. When OFF the five values are preserved but editing is disabled. MAX STAMINA LOSS and CARRY CAPACITY LOSS reduce their respective capacities; the carry setting adjusts both authored carry effects together. RECOIL INCREASE adds a weapon recoil penalty. AIM SWAY adjusts both native horizontal and vertical sway modifiers, while SHOT SPREAD changes the separate dispersion effect. Every control edits the mapped source CFG value independently, with grey Base Preset markers. Low/medium sleepiness and the authored severe-fatigue activation threshold remain unchanged. Right-click a handle to reset its value, right-click the toggle to reset its state, and R resets the full group.",
                     "CoreHealthDashboard" => "The top MAX HEALTH rail changes Player.VitalParams.MaxHP and the linked FullHP boundary, in actual HP (vanilla 100). Large health-pool changes may affect game systems still assuming a 100-HP scale and need in-game testing. CONFIGURED RECOVERY DELAY edits Player.VitalParams.RegenHPDelayTimeSeconds in seconds; the exact recovery sources honoring this delay remain unverified. PASSIVE REGEN edits Player.VitalParams.RegenHP (vanilla 0, so raising it may enable passive healing, but its tick cadence is not proven). RECOVERY EFFECT SCALE edits the selected difficulty's EnvironmentDifficulty.Regen_HP and scales compatible existing regeneration effects; it does not create passive regeneration by itself. Gold controls edit their own native values; grey ticks represent the actual Base Preset. No effective HP-per-second or HP-over-time simulation is asserted.",
                     "PlayerWeaponProfile" => "Three independent source-mapped controls: BASE HIT DAMAGE writes EnvironmentDifficulty.Weapon_BaseDamage, HEADSHOT MULTIPLIER writes PlayerWeapon_HeadshotMultiplier, and JAM FREQUENCY writes Weapon_JammingMultiplier for the selected Base Preset. Each track uses its own exact 0.01-step native range. The grey marker shows this Base Preset's value (which is not always 1x), and the gold handle is the live setting. The gold segment between them shows the tuning delta only: it is not a calculated damage or jam-probability result. Higher values increase the corresponding modifier. Weapon condition and internal weapon-specific behavior still matter. Right-click any handle to reset only that setting; R resets all three.",
                     "HumanCombatProfile" => "HUMAN HEALTH (horizontal) sets the NPC_HP difficulty multiplier: move right for tougher human enemies. GUN DAMAGE (vertical) sets NPC_Weapon_BaseDamage: move up for harder firearm hits. The yellow crosshair is only a visual pairing of those two independent settings, not a damage-per-second or time-to-kill formula. The two lower tracks set ATTACK FREQUENCY (higher means shorter NPC_AttackCooldown in the CFG writer) and FIRE ACCURACY (the HipAccuracyMultiplier, not a literal hit chance). Grey markers show the currently selected Base Preset. Drag the bottom/left handles to change only one axis; click/drag either lower track to edit that setting. No human attack, accuracy or armor simulation is claimed.",
@@ -416,6 +417,13 @@ public sealed class ParameterViewModel : ObservableObject
         ["health.regenDelay"] = "CoreHealthDashboard",
         ["health.regenerationScalar"] = "CoreHealthDashboard",
 
+        ["advanced.fatigueMechanics"] = "SevereFatiguePenaltyBoard",
+        ["survival.severeFatigueMaxStamina"] = "SevereFatiguePenaltyBoard",
+        ["survival.severeFatigueCarryWeight"] = "SevereFatiguePenaltyBoard",
+        ["survival.severeFatigueRecoil"] = "SevereFatiguePenaltyBoard",
+        ["survival.severeFatigueAimSway"] = "SevereFatiguePenaltyBoard",
+        ["survival.severeFatigueDispersion"] = "SevereFatiguePenaltyBoard",
+
         ["health.bandageBleeding"] = "BleedingTreatmentMixer",
         ["health.medkitBleeding"] = "BleedingTreatmentMixer",
         ["health.armyMedkitBleeding"] = "BleedingTreatmentMixer",
@@ -483,6 +491,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["HumanCombatProfile"] = "combat.npcHealth",
         ["PlayerWeaponProfile"] = "combat.playerWeaponDamage",
         ["CoreHealthDashboard"] = "health.maxHP",
+        ["SevereFatiguePenaltyBoard"] = "advanced.fatigueMechanics",
         ["BleedingTreatmentMixer"] = "health.bandageBleeding",
         ["ConsumableMixer"] = "survival.instantStaminaRestore",
         ["SleepingDashboard"] = "survival.sleepEligibilityThreshold",

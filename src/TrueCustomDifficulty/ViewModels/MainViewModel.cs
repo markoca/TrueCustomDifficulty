@@ -281,6 +281,15 @@ public sealed class MainViewModel : ObservableObject
             "survival.fatigueStrongReloadPenalty");
 
         WireVisualAggregate(
+            "advanced.fatigueMechanics",
+            "advanced.fatigueMechanics",
+            "survival.severeFatigueMaxStamina",
+            "survival.severeFatigueCarryWeight",
+            "survival.severeFatigueRecoil",
+            "survival.severeFatigueAimSway",
+            "survival.severeFatigueDispersion");
+
+        WireVisualAggregate(
             "health.maxHP",
             "health.maxHP",
             "health.baseRegen",
