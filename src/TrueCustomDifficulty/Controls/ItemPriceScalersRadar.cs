@@ -18,7 +18,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class ItemPriceScalersRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double RowHeight = 45.0;
+    private const double RowHeight = 38.0;
 
     private static readonly PriceDefinition[] Categories =
     {
@@ -60,7 +60,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 485;
+        MinHeight = 390;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -68,7 +68,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 740.0 : Math.Max(560.0, availableSize.Width);
-        return new Size(width, 485.0);
+        return new Size(width, 390.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -152,7 +152,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         DrawText(dc, "ITEM VALUE LAYERS", new Point(18.0, 16.0), 12.0, text, FontWeights.Bold);
         DrawText(
             dc,
-            "category cost multipliers change base value before normal trader buy / sell rules",
+            "base-value layers before trader buy / sell pricing",
             new Point(18.0, 34.0),
             8.2,
             muted,
@@ -160,32 +160,32 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
 
         var layout = GetLayout();
 
-        DrawText(dc, "DIFFICULTY CATEGORY COSTS", new Point(18.0, 61.0), 8.3, muted, FontWeights.Bold);
+        DrawText(dc, "CATEGORY COSTS", new Point(18.0, 59.0), 9.0, muted, FontWeights.Bold);
         DrawRightAlignedText(
             dc,
             "0x = zero category-cost layer   •   1x = vanilla   •   2x = double",
-            new Point(Math.Max(470.0, ActualWidth - 18.0), 61.0),
+            new Point(Math.Max(470.0, ActualWidth - 18.0), 59.0),
             7.4,
             muted,
             FontWeights.Normal);
 
-        DrawText(dc, "CATEGORY", new Point(layout.LabelLeft, 82.0), 7.8, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "VALUE", new Point(layout.ValueCenter, 89.0), 7.8, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "CHEAPER  ←  CATEGORY VALUE  →  COSTLIER", new Point(layout.TrackLeft + layout.TrackWidth / 2.0, 89.0), 7.7, muted, FontWeights.Bold);
+        DrawText(dc, "CATEGORY", new Point(layout.LabelLeft, 77.0), 9.0, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "VALUE", new Point(layout.ValueCenter, 84.0), 7.8, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "CHEAPER  ←  CATEGORY VALUE  →  COSTLIER", new Point(layout.TrackLeft + layout.TrackWidth / 2.0, 84.0), 7.7, muted, FontWeights.Bold);
 
-        dc.DrawLine(new Pen(border, 1.0), new Point(14.0, 101.0), new Point(Math.Max(14.0, ActualWidth - 14.0), 101.0));
+        dc.DrawLine(new Pen(border, 1.0), new Point(14.0, 95.0), new Point(Math.Max(14.0, ActualWidth - 14.0), 95.0));
 
         for (var row = 0; row < Categories.Length; row++)
-            DrawCategoryRow(dc, row, 110.0 + row * RowHeight, layout, text, muted, border, accent, panel);
+            DrawCategoryRow(dc, row, 102.0 + row * RowHeight, layout, text, muted, border, accent, panel);
 
-        DrawMutantPartsPanel(dc, 348.0, text, muted, border, accent, panel);
+        DrawMutantPartsPanel(dc, 296.0, text, muted, border, accent, panel);
 
         if (!string.IsNullOrWhiteSpace(_status.Text))
         {
             DrawCenteredText(
                 dc,
                 _status.Text,
-                new Point(ActualWidth / 2.0, 466.0),
+                new Point(ActualWidth / 2.0, 378.0),
                 8.0,
                 accent,
                 FontWeights.SemiBold);
@@ -227,7 +227,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         DrawText(
             dc,
             info.Label,
-            new Point(layout.LabelLeft, top + 12.0),
+            new Point(layout.LabelLeft, top + 7.0),
             8.7,
             modified ? accent : text,
             FontWeights.Bold);
@@ -235,12 +235,12 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         DrawCenteredText(
             dc,
             $"{parameter.CurrentNumber:0.##}x",
-            new Point(layout.ValueCenter, top + 17.0),
+            new Point(layout.ValueCenter, top + 13.0),
             9.5,
             modified ? accent : text,
             FontWeights.Bold);
 
-        var track = new Rect(layout.TrackLeft, top + 9.0, layout.TrackWidth, 21.0);
+        var track = new Rect(layout.TrackLeft, top + 23.0, layout.TrackWidth, 9.0);
         var y = track.Top + track.Height / 2.0;
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
 
@@ -258,9 +258,6 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             6.0);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
 
-        DrawText(dc, "0x", new Point(track.Left, top + 31.0), 6.6, muted, FontWeights.Normal);
-        DrawCenteredText(dc, "VANILLA 1x", new Point(baseX, top + 35.0), 6.5, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "2x", new Point(track.Right, top + 31.0), 6.6, muted, FontWeights.Normal);
 
         _targets[row] = new HitTarget(
             new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
@@ -280,7 +277,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         if (parameter is null)
             return;
 
-        var card = new Rect(18.0, top, Math.Max(1.0, ActualWidth - 36.0), 101.0);
+        var card = new Rect(18.0, top, Math.Max(1.0, ActualWidth - 36.0), 70.0);
         dc.DrawRoundedRectangle(
             _mutantPartsSelected
                 ? CloneWithOpacity(accent, 0.08)
@@ -292,12 +289,12 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             3.0,
             3.0);
 
-        DrawText(dc, "MUTANT PARTS — DIRECT BASE VALUE SCALE", new Point(card.Left + 10.0, card.Top + 8.0), 8.8, text, FontWeights.Bold);
+        DrawText(dc, "MUTANT PARTS", new Point(card.Left + 10.0, card.Top + 8.0), 8.8, text, FontWeights.Bold);
         DrawText(
             dc,
-            "scales authored ItemPrototypes.Cost values; relative rarity/value order is preserved",
+            "direct base-value scale",
             new Point(card.Left + 10.0, card.Top + 24.0),
-            7.3,
+            9.0,
             muted,
             FontWeights.Normal);
 
@@ -315,7 +312,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         DrawText(
             dc,
             $"BLIND DOG  {blindDogValue:0} coupons",
-            new Point(card.Left + 10.0, card.Top + 43.0),
+            new Point(card.Left + 165.0, card.Top + 24.0),
             7.6,
             muted,
             FontWeights.SemiBold);
@@ -323,20 +320,12 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         DrawText(
             dc,
             $"CHIMERA  {chimeraValue:0} coupons",
-            new Point(card.Left + 165.0, card.Top + 43.0),
+            new Point(card.Left + 340.0, card.Top + 24.0),
             7.6,
             accent,
             FontWeights.SemiBold);
 
-        DrawRightAlignedText(
-            dc,
-            "examples are base values before trader pricing",
-            new Point(card.Right - 12.0, card.Top + 43.0),
-            7.1,
-            muted,
-            FontWeights.Normal);
-
-        var track = new Rect(card.Left + 14.0, card.Top + 66.0, card.Width - 28.0, 20.0);
+        var track = new Rect(card.Left + 14.0, card.Top + 48.0, card.Width - 28.0, 12.0);
         var y = track.Top + track.Height / 2.0;
 
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
@@ -355,9 +344,6 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             6.0);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
 
-        DrawText(dc, "0x", new Point(track.Left, card.Top + 87.0), 6.6, muted, FontWeights.Normal);
-        DrawCenteredText(dc, "VANILLA 1x", new Point(baseX, card.Top + 91.0), 6.5, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "2x", new Point(track.Right, card.Top + 87.0), 6.6, muted, FontWeights.Normal);
 
         _mutantPartsTarget = new HitTarget(
             new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
@@ -620,7 +606,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             CultureInfo.CurrentUICulture,
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            size,
+            Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
