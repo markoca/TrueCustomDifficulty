@@ -35,7 +35,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "AnomalyEffectsBoard" or "ServiceCostsBoard"
-            or "TraderStockBoard" or "ItemWeightBoard")
+            or "TraderStockBoard" or "ItemWeightBoard" or "BreakableBoxYields")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
     }
 
@@ -180,7 +180,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrawStashRewardProfile(dc, text, muted, border, accent, panel);
                 break;
             case "BreakableBoxYields":
-                DrawBreakableBoxYields(dc, text, muted, border, accent, panel);
+                DrawNumericMixerBoard(dc, text, muted, border, accent, panel);
                 break;
             case "MutantCombatPressure":
             case "StaminaCore":
@@ -382,12 +382,19 @@ public sealed class AggregateVisualControl : FrameworkElement
         ("equipment.consumableWeight", "FOOD + MED", "WEIGHT")
     };
 
+    private static readonly (string Id, string Top, string Bottom)[] BoxYieldMixerChannels =
+    {
+        ("loot.destructibleAmmoQuantity", "AMMO", "YIELD"),
+        ("loot.destructibleGrenadeQuantity", "GRENADE", "YIELD")
+    };
+
     private static (string Id, string Top, string Bottom)[] GetMixerChannels(string family)
         => family switch
         {
             "ServiceCostsBoard" => ServiceMixerChannels,
             "TraderStockBoard" => TraderMixerChannels,
             "ItemWeightBoard" => WeightMixerChannels,
+            "BreakableBoxYields" => BoxYieldMixerChannels,
             _ => AnomalyMixerChannels
         };
 
@@ -437,12 +444,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             "ServiceCostsBoard" => "SERVICE PRICES / MIXER",
             "TraderStockBoard" => "TRADER STOCK / MIXER",
+            "BreakableBoxYields" => "BREAKABLE BOX YIELDS / MIXER",
             _ => "ITEM WEIGHT / MIXER"
         };
         var description = Family switch
         {
             "ServiceCostsBoard" => "travel, upgrade and repair prices use separate CFG multipliers",
             "TraderStockBoard" => "separate ammo and medical stock quantities",
+            "BreakableBoxYields" => "contents per destroyed box, not box spawn frequency",
             _ => "independent ammunition and consumable item mass"
         };
         DrawMixerBoard(dc, channels, title, description, text, muted, border, accent, panel);
@@ -999,73 +1008,6 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     // Different physical breakable-box populations share a board, but neither
     // their CFG count multipliers nor ammo family selection weights are linked.
-    private void DrawBreakableBoxYields(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
-    {
-        var ammo = P("loot.destructibleAmmoQuantity");
-        var grenades = P("loot.destructibleGrenadeQuantity");
-
-        DrawHeader(dc, "BREAKABLE BOX YIELDS",
-            "contents per breakable box, not box spawn rate or item type",
-            text, muted, accent);
-
-        if (ammo is null || grenades is null)
-        {
-            DrawCenteredText(dc, "Breakable box data unavailable.",
-                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
-            return;
-        }
-
-        var width = Math.Max(1.0, ActualWidth - 32.0);
-        var overview = new Rect(16.0, 55.0, width, 122.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), overview, 4.0, 4.0);
-
-        void YieldLane(ParameterViewModel parameter, string label, double top)
-        {
-            var halfWidth = Math.Max(1.0, (overview.Width - 24.0) / 2.0);
-            dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold, halfWidth),
-                new Point(overview.Left + 12.0, top));
-            DrawRightAlignedText(dc,
-                $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
-                new Point(overview.Right - 12.0, top), 10.0, accent, FontWeights.SemiBold);
-
-            var meter = new Rect(overview.Left + 12.0, top + 23.0,
-                Math.Max(1.0, overview.Width - 24.0), 10.0);
-            var y = meter.Top + meter.Height / 2.0;
-            var currentX = ValueToX(parameter.CurrentNumber,
-                parameter.Minimum, parameter.Maximum, meter, reverse: false);
-            dc.DrawLine(new Pen(border, 7.0),
-                new Point(meter.Left, y), new Point(meter.Right, y));
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.82), 7.0),
-                new Point(meter.Left, y), new Point(currentX, y));
-            DrawReferenceTick(dc, parameter, meter, y, muted);
-            // Read-only comparison; only the lower track accepts mouse input.
-        }
-
-        YieldLane(ammo, "AMMO / SNG + NATO POOLS", 64.0);
-        YieldLane(grenades, "GRENADES / F1 + RGD-5", 118.0);
-
-        DrawHorizontalTrackCard(dc, ammo, "AMMO BOXES / AMOUNT MULTIPLIER",
-            new Rect(16.0, 189.0, width, 72.0),
-            text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, grenades, "GRENADE BOXES / AMOUNT MULTIPLIER",
-            new Rect(16.0, 272.0, width, 72.0),
-            text, muted, border, accent, panel);
-
-        DrawText(dc, "AMMO MIX, GRENADE TYPE AND BOX LOCATIONS STAY SEPARATE",
-            new Point(18.0, 358.0), 9.2, text, FontWeights.SemiBold);
-        DrawText(dc, "GREY = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET BOTH",
-            new Point(18.0, 377.0), 9.0, muted, FontWeights.Normal);
-    }
-
-    // Related, previously standalone gameplay sliders are now edited together.
-    // Each axis keeps its own raw CFG min/max/step and Base Preset reference.
-    // No combined "effective" value is inferred from unrelated parameters.
     private void DrawPairedSystemBoard(
         DrawingContext dc,
         Brush text,
@@ -4750,6 +4692,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "ServiceCostsBoard" => GetMixerHeight(width, ServiceMixerChannels.Length),
             "TraderStockBoard" => GetMixerHeight(width, TraderMixerChannels.Length),
             "ItemWeightBoard" => GetMixerHeight(width, WeightMixerChannels.Length),
+            "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
             "AnomalyEffectsBoard" => GetMixerHeight(width, AnomalyMixerChannels.Length),
             "NpcLootLoadout" => 748.0, // reserve footer/status lane below the native input cards
             "WorldLootLayout" => width >= 720.0 ? 340.0 : 450.0,
