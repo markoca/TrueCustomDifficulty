@@ -159,6 +159,10 @@ def main() -> None:
             "WeightMixerChannels",
             ("equipment.ammoWeight", "equipment.consumableWeight"),
         ),
+        "BreakableBoxYields": (
+            "BoxYieldMixerChannels",
+            ("loot.destructibleAmmoQuantity", "loot.destructibleGrenadeQuantity"),
+        ),
     }
     for family, (array_name, expected_ids) in other_families.items():
         channel_array = re.search(
@@ -166,7 +170,7 @@ def main() -> None:
         )
         require(channel_array is not None, f"missing {array_name}")
         values = tuple(re.findall(
-            r'\("(?:economy|equipment)\.[a-zA-Z]+",',
+            r'\("(?:economy|equipment|loot)\.[a-zA-Z]+",',
             channel_array.group(1),
         ))
         require(len(values) == len(expected_ids), f"{family}: wrong fader count")
@@ -185,6 +189,11 @@ def main() -> None:
             "shared mixer dispatch missing")
     require('"economy.repairCostBase" => $"{raw * 100.0:0.#}%"' in visual,
             "base repair price percent unit display missing")
+    require('"BreakableBoxYields" => "Two independent vertical faders' in vm,
+            "box-yield rationale not updated")
+    require('case "BreakableBoxYields":' in visual
+            and 'DrawBreakableBoxYields(dc,' not in visual,
+            "box-yield old renderer still used")
 
     ET.parse(XAML)
     check_geometry()
