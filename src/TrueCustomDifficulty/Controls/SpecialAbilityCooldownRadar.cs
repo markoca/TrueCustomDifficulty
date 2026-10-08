@@ -17,7 +17,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
     private static readonly CooldownDefinition[] Mutants =
     {
-        new("combat.mutantDamage", "Damage Per Hit", null),
+        new("combat.mutantDamage", "Damage From Mutants", null),
         new("combat.mutantAttackCooldown", "Attack Frequency", null),
         new("combat.mutantCooldown.bloodsucker", "Bloodsucker", "Mist follows"),
         new("combat.mutantCooldown.chimera", "Chimera", null),
@@ -132,8 +132,6 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         var content = ContentRect();
         DrawCenteredText(dc, "MUTANT COMBAT", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "GLOBAL COMBAT  |  damage per hit and normal attack frequency", new Point(ActualWidth / 2.0, 39.0),
-            9.5, muted, FontWeights.Normal);
 
         // Global source controls are separate from each mutant's ability timer.
         // Two horizontal controls make global combat visually distinct from
