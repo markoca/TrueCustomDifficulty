@@ -665,6 +665,8 @@ public sealed class ParameterViewModel : ObservableObject
     {
         "combat.npcAttackCooldown" => Math.Min(2.0, Definition.Slider?.Max ?? 2.0),
         "combat.npcHipAccuracy" => Math.Min(1.0, Definition.Slider?.Max ?? 1.0),
+        _ when Id.StartsWith("combat.mutantHealth.", StringComparison.Ordinal) =>
+            Math.Min(2.0, Definition.Slider?.Max ?? 2.0),
         _ => Definition.Slider?.Max ?? 1.0
     };
     public double ReferenceNumber => GetReferenceNumber();
