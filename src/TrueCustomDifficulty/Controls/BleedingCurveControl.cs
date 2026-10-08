@@ -423,16 +423,17 @@ public sealed class BleedingCurveControl : FrameworkElement
             var cardWidth = (ActualWidth - 44.0) / 3.0;
             var card = new Rect(16 + i * cardWidth, 405, cardWidth - 4, 35);
             dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 3, 3);
-            DrawCenteredText(dc,
+            DrawSourceNumber(dc,
                 $"{labels[i]} AT {currentThresholds[i]:0.#} PTS",
                 new Point(card.Left + card.Width / 2, card.Top + 4),
-                9, text, FontWeights.Bold);
-            DrawCenteredText(dc,
+                9, text, accent, FontWeights.Bold,
+                (i == 1 ? _mediumThreshold : i == 2 ? _severeThreshold : null)
+                    ?.IsValueModifiedFromReference() == true);
+            DrawSourceNumber(dc,
                 $"{currentValues[i]:0.##} HP / TICK",
                 new Point(card.Left + card.Width / 2, card.Top + 19),
-                9.8,
-                _damage[i]?.IsValueModifiedFromReference() == true ? accent : text,
-                FontWeights.Bold);
+                9.8, text, accent, FontWeights.Bold,
+                _damage[i]?.IsValueModifiedFromReference() == true);
         }
 
         _mediumThresholdHitRect = new Rect(x[1] - 20.0, _plotRect.Bottom - 10.0, 40.0, 34.0);
@@ -856,6 +857,21 @@ public sealed class BleedingCurveControl : FrameworkElement
     {
         var ft = CreateText(value, size, brush, weight);
         dc.DrawText(ft, new Point(point.X - ft.WidthIncludingTrailingWhitespace, point.Y));
+    }
+
+    private void DrawSourceNumber(DrawingContext dc, string value, Point point,
+        double size, Brush text, Brush accent, FontWeight weight, bool modified)
+    {
+        var ft = CreateText(value, size, text, weight);
+        if (modified)
+        {
+            var number = System.Text.RegularExpressions.Regex.Match(
+                value, @"\d+(?:\.\d+)?");
+            if (number.Success)
+                ft.SetForegroundBrush(accent, number.Index, number.Length);
+        }
+        dc.DrawText(ft, new Point(point.X - ft.WidthIncludingTrailingWhitespace / 2.0,
+            point.Y));
     }
 
     private void DrawCenteredText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
