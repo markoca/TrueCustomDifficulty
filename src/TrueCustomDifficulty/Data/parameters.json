@@ -778,7 +778,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -888,7 +888,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -983,7 +983,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1078,7 +1078,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1173,7 +1173,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1268,7 +1268,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1377,7 +1377,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1493,7 +1493,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1536,7 +1536,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1579,7 +1579,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1622,7 +1622,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1665,7 +1665,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1708,7 +1708,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
@@ -1751,7 +1751,7 @@
       },
       "slider": {
         "min": 0.25,
-        "max": 3,
+        "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
       },
