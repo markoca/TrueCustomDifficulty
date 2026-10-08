@@ -1702,7 +1702,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             var rect = new Rect(margin + index * (cellWidth + gap),
                 60.0, cellWidth, 76.0);
             DrawHorizontalTrackCard(dc, P(channel.Item1), channel.Item2,
-                rect, text, muted, border, accent, panel);
+                rect, text, muted, border, accent, panel, hideBaseText: true);
         }
         DrawCenteredText(dc, "GOLD = CURRENT  |  GREY TICK = BASE  |  RIGHT-CLICK TO RESET",
             new Point(ActualWidth / 2.0, 150.0), 9.3, muted, FontWeights.SemiBold);
@@ -3983,7 +3983,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush border,
         Brush accent,
         Brush panel,
-        bool pairedValueFormatting = false)
+        bool pairedValueFormatting = false,
+        bool hideBaseText = false)
     {
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
         var textWidth = Math.Max(1.0, card.Width - 24.0);
@@ -4000,6 +4001,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var value = pairedValueFormatting
             ? $"{ComparablePairedValue(parameter, parameter.CurrentNumber)}  |  BASE {ComparablePairedValue(parameter, parameter.ReferenceNumber)}"
+            : hideBaseText ? FriendlyValue(parameter)
             : $"{FriendlyValue(parameter)}  |  BASE {FormatCompact(parameter.ReferenceNumber)}";
         dc.DrawText(CreateText(value, pairedValueFormatting ? 11.1 : 10.1,
                 parameter.IsControlEnabled ? accent : muted,
