@@ -347,3 +347,7 @@ Combat section order is fixed: Your Weapons, Human Enemies, Mutant Combat, Mutan
 ### Single in-card heading contract (2026-10-08)
 
 All visual section controls own one centered accented top title; optional concise description below is also centered. WPF group headers and their decorative separator bars have no visible output or reserved height. Preserve fixed 1x1 external layout; changes to titles are styling only.
+
+### Shared baseline for next-tab passes (2026-10-08)
+
+All tabs use fixed full-width 1x1 sections without duplicate external headings or separator lines. Dedicated radar cards with top headings now use centered 12.5-DIP gold titles and optional centered 9.5-DIP grey subtitles, matching Combat. Specialized control interactions and internal layouts remain for subsequent tab passes. Embedded Drunkenness has no separate top title pending redesign.
