@@ -14,6 +14,14 @@ sudo pacman -Syu dotnet-sdk-10.0
 
 `./publish.sh` cross-publishes a **self-contained win-x64** runtime to `publish/win-x64/`, so the target Windows machine does not need a separately installed .NET runtime.
 
+## 16:9 desktop window
+
+- Default size: **1600 × 900** WPF device-independent units (16:9). Minimum: **1024 × 576** (also 16:9).
+- Startup fits the default to the available screen work area with a small margin; it does not open off-screen on smaller desktop resolutions.
+- The custom maximize button and manual edge/corner resizing both preserve 16:9, including returning to the pre-maximized geometry.
+- **Window ratio is distinct from card layout:** large semantic visual controls currently occupy full-width rows. A subsequent responsive grid pass will compact those panels; this change only makes the surrounding window use the intended screen geometry.
+- Static geometry regression check: `python3 tools/verify_window_aspect.py`.
+
 ---
 
 # v0.9.26.52 — ALIFE group-size radars
