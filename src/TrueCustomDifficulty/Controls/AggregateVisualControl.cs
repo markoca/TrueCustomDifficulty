@@ -3050,7 +3050,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         const double buildTop = 55.0;
         Card(rate, "HUNGER BUILD-UP",
-            $"{rate.CurrentNumber:0.000} pts/s  |  BASE {rate.ReferenceNumber:0.000}",
+            $"{rate.CurrentNumber:0.000} pts/s",
             "0 pts/s", "0.030 pts/s", buildTop, 1, 0);
 
         const double previewTop = buildTop + CompactTrackHeight + 12.0;
@@ -3100,7 +3100,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             var parameter = previewParameters[i];
             var cx = preview.Left + 12.0 + (i + 0.5) * legendWidth;
             DrawCenteredText(dc,
-                $"{previewLabels[i]} {parameter.CurrentNumber:0}  |  BASE {parameter.ReferenceNumber:0}",
+                $"{previewLabels[i]} {parameter.CurrentNumber:0}",
                 new Point(cx, previewTop + 55.0),
                 9.5, i == 2 ? accent : text, FontWeights.SemiBold);
         }
