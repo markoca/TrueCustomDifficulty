@@ -553,6 +553,12 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(center, strip.Top + 260.0),
             strip.Width - 14.0, 9.5, muted, FontWeights.Normal);
 
+        // Clicking the label/value area selects this source for the rationale,
+        // but it must never edit the value; the active rail/marker is above it
+        // in reverse-order hit testing.
+        _hitTargets.Add(new HitTarget(parameter, strip, strip,
+            HitKind.MixerSelect, parameter.Minimum, parameter.Maximum, false));
+
         if (!enabled)
             return;
 
@@ -4142,6 +4148,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
 
+        if (target.Kind == HitKind.MixerSelect)
+        {
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+
         if (target.Kind == HitKind.MixerBaseMarker)
         {
             target.Parameter.ResetToReference();
@@ -4177,7 +4190,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
-            HitKind.Toggle or HitKind.Choice or HitKind.MixerBaseMarker => Cursors.Hand,
+            HitKind.Toggle or HitKind.Choice or HitKind.MixerBaseMarker or HitKind.MixerSelect => Cursors.Hand,
             _ => Cursors.Arrow
         };
 
@@ -4245,6 +4258,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 HitKind.Toggle => $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset",
                 HitKind.Choice => $"{target.Parameter.Label}\nChoose a corpse-loot package · Right-click = Base Preset",
                 HitKind.MixerBaseMarker => $"{target.Parameter.Label}\nClick to snap to selected Base Preset",
+                HitKind.MixerSelect => $"{target.Parameter.Label}\nClick for detailed rationale · Use the fader rail to edit",
                 HitKind.RangeMin => "NPC weapon condition MIN\nDrag or use arrow keys · Right-click = reset full range",
                 HitKind.RangeMax => "NPC weapon condition MAX\nDrag or use arrow keys · Right-click = reset full range",
                 _ => $"{target.Parameter.Label}\nDrag or use arrow keys to adjust · Right-click = Base Preset"
@@ -4957,6 +4971,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Horizontal,
         Vertical,
         MixerBaseMarker,
+        MixerSelect,
         Toggle,
         Choice,
         RangeMin,
