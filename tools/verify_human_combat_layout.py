@@ -48,8 +48,10 @@ assert catalog["combat.npcHipAccuracy"]["slider"]["max"] == 1
 assert 'DrawHumanAxisHandle(dc, new Point(healthX, damageY), accent, panel,' in human
 assert 'DrawHumanAxisHandle(dc, healthHandle, accent, panel,' in human
 assert 'DrawHumanAxisHandle(dc, damageHandle, accent, panel,' in human
-assert 'dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.20 : 0.12)' in visual
-assert 'center, hovered ? 16.0 : 12.0' in visual
+assert 'dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.24 : 0.13)' in visual
+assert 'center, hovered ? 20.0 : 15.0' in visual
+assert 'new Rect(healthX - 18.0, damageY - 18.0, 36.0, 36.0)' in human
+assert 'Enemy Health + Gun Damage reset to Base Preset.' in visual
 assert 'HitKind.HumanJoint' in human
 assert 'HitKind.HumanJoint => Cursors.SizeAll' in visual
 assert 'P("combat.npcWeaponDamage")?.ResetToReference();' in visual
