@@ -139,3 +139,8 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — UI-09 — frameless Human Combat hover and player-readable labels
 
 **Explicit request:** Remove the box on hover (glow only) and arrange the Human Combat control text to be intuitive for players. Human Combat's two fader strips now use an opt-in frameless drawing mode, preserving the interactive hit regions and slider ranges. Hover adds a gold halo to the fader knob rather than an outline around its strip. The second channel is titled SHOT ACCURACY, and the graph footer identifies bottom/left drag actions plus the central dual-value handle. No other mixer family is altered. Runtime visual acceptance pending.
+
+
+### 2026-10-08 — UI-09 — glow only, no hit box; remove redundant Base 1x captions
+
+**Explicit user approval:** Remove the rectangular selection/hit-target overlay around glowing Human Combat controls, suppress redundant `BASE 1x` captions throughout aggregate controls, and enlarge displayed multiplier values. UI-09 no longer paints the global interactive-target rectangle over its round handles or mixer channels; the mouse hit rectangles remain functional. Mixer captions omit the Base value (grey reference tick remains), and other aggregate text suppresses only unit-valued `BASE 1x` labels; non-unit Base references remain available when informative. Mixer live values increase from 13.2 to 16.2 DIP and endpoint multiplier labels from 9.5 to 11.3 DIP. The frequency/accuracy caps and CFG values are untouched. Wine acceptance pending.
