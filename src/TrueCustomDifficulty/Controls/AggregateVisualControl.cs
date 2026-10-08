@@ -3584,146 +3584,39 @@ public sealed class AggregateVisualControl : FrameworkElement
     // rate by subtracting a difficulty gain multiplier from a points/second removal.
     // The summary is read-only; each native-range track is edited independently.
     private void DrawRadiationBalance(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush soft, Brush accent, Brush panel)
     {
         var buildup = P("survival.radiationAccumulation");
         var recovery = P("survival.radiationRecovery");
         var damage = P("survival.radiationDamage");
-
-        DrawText(dc, "RADIATION PRESSURE", new Point(17.0, 13.0),
-            11.5, accent, FontWeights.Bold);
-        DrawText(dc, "radiation gained, naturally cleared and converted to HP damage",
-            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
-
+        DrawHeader(dc, "RADIATION SYSTEM", string.Empty, text, muted, accent);
         if (buildup is null || recovery is null || damage is null)
         {
-            DrawCenteredText(dc, "Radiation control data unavailable.",
-                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            DrawCenteredText(dc, "Radiation settings unavailable.",
+                new Point(ActualWidth / 2.0, 140), 10, muted, FontWeights.Bold);
             return;
         }
 
-        var contentWidth = Math.Max(460.0, ActualWidth - 34.0);
-        var overview = new Rect(17.0, 55.0, contentWidth, 69.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), overview, 4.0, 4.0);
+        var width = Math.Max(460.0, ActualWidth - 34.0);
+        var columns = CompactStageColumns(ActualWidth);
+        // All three are independent native CFG values; this is not a fake
+        // composite dose model or an adjustment to radiation state thresholds.
+        void Track(ParameterViewModel parameter, string label, string value,
+            string minimum, string maximum, int index)
+            => DrawCompactTrack(dc, parameter, label, value, minimum, maximum,
+                CompactSlot(55.0, width, columns, index),
+                text, muted, border, accent, panel);
 
-        var third = overview.Width / 3.0;
-        var headings = new[] { "01  EXPOSURE", "02  CLEARANCE", "03  HP DAMAGE" };
-        var notes = new[]
-        {
-            "incoming radiation gain",
-            "passive removal / sec",
-            "after harmful states"
-        };
-        for (var i = 0; i < 3; i++)
-        {
-            var x = overview.Left + third * i + 12.0;
-            // Keep each explanation inside its own third of the summary.
-            var columnTextWidth = Math.Max(1.0, third - 24.0);
-            dc.DrawText(CreateText(headings[i], 9.5,
-                    i == 0 ? accent : text, FontWeights.Bold, columnTextWidth),
-                new Point(x, 64.0));
-            dc.DrawText(CreateText(notes[i], 9.0, muted,
-                    FontWeights.Normal, columnTextWidth),
-                new Point(x, 84.0));
-            if (i != 0)
-            {
-                var dividerX = overview.Left + third * i;
-                dc.DrawLine(new Pen(soft, 1.0), new Point(dividerX, 65.0),
-                    new Point(dividerX, 99.0));
-            }
-        }
-
-        DrawText(dc, "INDEPENDENT GAME SYSTEMS  /  RADIATION STATE THRESHOLDS STAY VANILLA",
-            new Point(overview.Left + 12.0, 105.0),
-            8.9, muted, FontWeights.SemiBold);
-
-        // Three full-width tracks retain each parameter's real native min/max/step.
-        // A grey Base Preset tick remains visible even when it coincides with gold.
-        void DrawRadiationTrack(
-            ParameterViewModel parameter,
-            string label,
-            string description,
-            string currentAndBase,
-            string minimumLabel,
-            string maximumLabel,
-            double top)
-        {
-            var card = new Rect(17.0, top, contentWidth, 96.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
-                card, 4.0, 4.0);
-
-            // Distinct title/value/meaning rows avoid overlap at minimum width.
-            var cardTextWidth = Math.Max(1.0, card.Width - 24.0);
-            dc.DrawText(CreateText(label, 10.3, text, FontWeights.Bold, cardTextWidth),
-                new Point(card.Left + 12.0, top + 6.0));
-            dc.DrawText(CreateText(currentAndBase, 10.8,
-                    parameter.IsControlEnabled ? accent : muted,
-                    FontWeights.Bold, cardTextWidth),
-                new Point(card.Left + 12.0, top + 23.0));
-            dc.DrawText(CreateText(description, 9.2, muted,
-                    FontWeights.Normal, cardTextWidth),
-                new Point(card.Left + 12.0, top + 40.0));
-
-            var track = new Rect(card.Left + 21.0, top + 59.0,
-                card.Width - 42.0, 14.0);
-            var y = track.Top + track.Height / 2.0;
-            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-            var referenceX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-
-            dc.DrawLine(new Pen(soft, 4.0),
-                new Point(track.Left, y), new Point(track.Right, y));
-            if (parameter.IsControlEnabled)
-                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 4.5),
-                    new Point(track.Left, y), new Point(currentX, y));
-
-            dc.DrawLine(new Pen(muted, 2.0),
-                new Point(referenceX, y - 11.0), new Point(referenceX, y + 11.0));
-            dc.DrawEllipse(panel, new Pen(
-                parameter.IsControlEnabled ? accent : muted,
-                IsSelected(parameter) ? 2.8 : 1.9),
-                new Point(currentX, y), 7.0, 7.0);
-            if (parameter.IsControlEnabled)
-                dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-
-            AddHorizontalTarget(parameter,
-                new Rect(track.Left - 8.0, track.Top - 4.0,
-                    track.Width + 16.0, track.Height + 8.0),
-                track, parameter.Minimum, parameter.Maximum);
-
-            DrawText(dc, minimumLabel, new Point(track.Left, top + 78.0),
-                9.1, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, maximumLabel, new Point(track.Right, top + 78.0),
-                9.1, muted, FontWeights.Normal);
-        }
-
-        DrawRadiationTrack(buildup,
-            "EXPOSURE ACCUMULATION",
-            "Difficulty multiplier on incoming radiation; higher means faster build-up.",
-            $"{buildup.CurrentNumber:0.##}x  |  BASE {buildup.ReferenceNumber:0.##}x",
-            $"{buildup.Minimum:0.##}x", $"{buildup.Maximum:0.##}x", 137.0);
-
-        DrawRadiationTrack(recovery,
-            "NATURAL RADIATION CLEARANCE",
-            "Absolute radiation removed per second; higher means faster clearing.",
-            $"{recovery.CurrentNumber:0.00} pts/s  |  BASE {recovery.ReferenceNumber:0.00}",
-            $"{recovery.Minimum:0.00} pts/s", $"{recovery.Maximum:0.00} pts/s", 244.0);
-
-        DrawRadiationTrack(damage,
-            "HEALTH DAMAGE FROM RADIATION",
-            "Scales damage across all 11 harmful stages without moving state thresholds.",
-            $"{damage.CurrentNumber:0.##}x  |  BASE {damage.ReferenceNumber:0.##}x",
-            $"{damage.Minimum:0.##}x", $"{damage.Maximum:0.##}x", 351.0);
-
-        DrawText(dc, "GREY TICK = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
-            new Point(20.0, 458.0), 9.0, muted, FontWeights.SemiBold);
+        Track(buildup, "RADIATION BUILD-UP",
+            $"{buildup.CurrentNumber:0.##}x",
+            $"{buildup.Minimum:0.##}x", $"{buildup.Maximum:0.##}x", 0);
+        Track(recovery, "NATURAL RAD CLEARANCE",
+            $"{recovery.CurrentNumber:0.00} PTS/S",
+            $"{recovery.Minimum:0.00}", $"{recovery.Maximum:0.00}", 1);
+        Track(damage, "RADIATION HP DAMAGE",
+            $"{damage.CurrentNumber:0.##}x",
+            $"{damage.Minimum:0.##}x", $"{damage.Maximum:0.##}x", 2);
     }
 
     // The real SNG/NATO generator pools are distinct. Their previews show the
@@ -5026,7 +4919,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "HungerLadder" => CompactHungerHeight(width),
             "StarvationTimeline" => 532.0,
             "RepeatedHitBand" => 455.0,
-            "RadiationBalance" => 490.0,
+            "RadiationBalance" => CompactGridEnd(55.0, 3, CompactStageColumns(width)) + 14.0,
             "TradingDashboard" => 590.0,
             "RepairCurve" => 640.0,
             "AmmoDistribution" => 750.0,
