@@ -109,7 +109,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsSpecialAbilityCooldownAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Each mutant row edits a wait-time multiplier, not absolute cooldown seconds. Lower WAIT means the affected special abilities can return sooner; ABILITY RETURN shows the reciprocal frequency relative to the authored base cooldown (for example 0.5x wait = 2x return rate). The grey tick is the current Base Preset reference. Vanilla Master explicitly uses 0.5x; Novice/Stalker/Veteran are represented as neutral 1x and generated override insertion for those profiles still requires runtime validation. Right-click a row track to reset only that mutant family; press R to reset the whole pacing board.";
+                       "The two GLOBAL COMBAT faders edit mutant hit damage and normal attack frequency independently. The eight SPECIAL ABILITY COOLDOWNS below edit wait-time multipliers, not absolute cooldown seconds. Lower WAIT means the affected special abilities can return sooner; ABILITY RETURN shows the reciprocal frequency relative to the authored base cooldown (for example 0.5x wait = 2x return rate). The grey tick is the current Base Preset reference. Vanilla Master explicitly uses 0.5x; Novice/Stalker/Veteran are represented as neutral 1x and generated override insertion for those profiles still requires runtime validation. Right-click a row track to reset only that mutant family; press R to reset the whole pacing board.";
             }
 
             if (IsActionCostAnchor)
@@ -336,6 +336,8 @@ public sealed class ParameterViewModel : ObservableObject
 
     private static readonly HashSet<string> SpecialAbilityCooldownParameterIds = new(StringComparer.Ordinal)
     {
+        "combat.mutantDamage",
+        "combat.mutantAttackCooldown",
         "combat.mutantCooldown.bloodsucker",
         "combat.mutantCooldown.chimera",
         "combat.mutantCooldown.deer",
@@ -398,8 +400,6 @@ public sealed class ParameterViewModel : ObservableObject
     private static readonly Dictionary<string, string> VisualAggregateFamilyByParameterId = new(StringComparer.Ordinal)
     {
         // Remaining paired gameplay controls: independent raw CFG axes in one semantic panel.
-        ["combat.mutantDamage"] = "MutantCombatPressure",
-        ["combat.mutantAttackCooldown"] = "MutantCombatPressure",
         ["stamina.maxSP"] = "StaminaCore",
         ["stamina.regeneration"] = "StaminaCore",
         ["stamina.waterMediumDrain"] = "WaterStaminaPressure",
