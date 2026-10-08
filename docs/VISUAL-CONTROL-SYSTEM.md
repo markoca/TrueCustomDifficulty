@@ -2,13 +2,15 @@
 
 True Custom Difficulty keeps every gameplay setting as its original parameter in the preset and CFG-writer graph, while related parameters may be edited through one aggregate visual surface.
 
+**Mixer and responsive grid implementation must follow [UI-MIXER-GRID-SPEC.md](UI-MIXER-GRID-SPEC.md).** This document continues to describe existing non-mixer visual families and their established interaction contracts.
+
 The visual layer never invents replacement gameplay values. It edits the same live `ParameterViewModel` instances used by the ordinary parameter system.
 
 ## Compact readability contract
 
 Semantic controls follow one density/readability baseline:
 
-- The default application window is 1280×800 and the minimum is 1024×640, keeping the 16:10 layout.
+- The default application window is **1600×900**, minimum **1024×576**, preserving **16:9**. The window fits itself to the available work area. Mixer/grid layout follows the authoritative [Mixer + Responsive Grid UI specification](UI-MIXER-GRID-SPEC.md).
 - Large semantic controls are centered and capped at 920 px so maximizing the window does not stretch tracks across the whole screen.
 - Custom-rendered text has a 9.0 minimum FontSize. Important values and labels use larger sizes.
 - Shared aggregate title/subtitle typography uses 11.5/9.5 px; the shared renderer confines labels to the available horizontal viewport, **trims long labels on one line with an ellipsis**, and shifts centered labels away from clipped panel edges. This does not shrink below the 9 px minimum or change any numeric values.
