@@ -427,6 +427,13 @@ The CFG writer remains the final safety boundary for writer-specific invariants 
 
 No aggregate visual control changes the parameter catalog target, preset serialization format or CFG writer contract.
 
+## Approved Human Combat UI-09 revision (2026-10-08)
+
+- Both independent axis handles use one ring-and-dot glyph, matching hover/selection glow.
+- Center crosshair is interactive: drag edits Health X and Gun Damage Y simultaneously, each using its native range and step; right-click center resets both to Base. Axis rings remain independently draggable.
+- Attack Frequency capped at 2x; Fire Accuracy capped at 1x, with existing minimums and 0.01 steps retained.
+- User explicitly approved these changes; other UI components remain locked.
+
 ## Approved Human Combat Profile layout (2026-10-08, UI-09)
 
 **Status: LOCKED after implementation; runtime visual acceptance pending.** The user explicitly authorized this layout revision.
