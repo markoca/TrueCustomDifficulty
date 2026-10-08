@@ -404,6 +404,16 @@ public sealed class MainViewModel : ObservableObject
             "economy.repairNeutral",
             "economy.repairFriend");
 
+        // Existing World Loot toggles stay independent. Weapon density still
+        // observes its catalog requiresToggle dependency on weapon shuffle.
+        WireVisualAggregate(
+            "loot.worldWeaponShuffle",
+            "loot.worldWeaponShuffle",
+            "loot.worldWeaponDensity",
+            "loot.worldAttachmentShuffle",
+            "loot.worldDetectors",
+            "loot.blueprintShuffle");
+
         // Distinct stash chance/count rolls share one visual board without
         // changing the underlying generator operations or their independence.
         WireVisualAggregate(
