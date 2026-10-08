@@ -176,16 +176,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
 
         DrawMutantPartsPanel(dc, 296.0, text, muted, border, accent, panel);
 
-        if (!string.IsNullOrWhiteSpace(_status.Text))
-        {
-            DrawCenteredText(
-                dc,
-                _status.Text,
-                new Point(ActualWidth / 2.0, 378.0),
-                8.0,
-                accent,
-                FontWeights.SemiBold);
-        }
+        // No transient yellow reset notifications.
     }
 
     private void DrawCategoryRow(
