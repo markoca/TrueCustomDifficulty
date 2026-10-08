@@ -1879,9 +1879,15 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(faderLeft + faderWidth + 10.0, 83.0, faderWidth, MixerStripHeight),
             text, muted, border, accent, panel);
 
-        DrawCenteredText(dc,
-            "BOTTOM = HEALTH  |  LEFT = DAMAGE  |  CENTER = BOTH",
-            new Point(ActualWidth / 2.0, Math.Max(422.0, plot.Bottom + 72.0)), 9.2, text, FontWeights.SemiBold);
+        // Keep both instructions beneath the plot (not centered beneath the faders).
+        // Never identify these controls by different shapes: all three are rings.
+        var legendY = Math.Max(405.0, plot.Bottom + 56.0);
+        DrawCenteredText(dc, "LEFT: DAMAGE  ·  BOTTOM: HEALTH",
+            new Point(plot.Left + plot.Width / 2.0, legendY),
+            8.8, text, FontWeights.SemiBold);
+        DrawCenteredText(dc, "DRAG CENTER: BOTH AXES",
+            new Point(plot.Left + plot.Width / 2.0, legendY + 18.0),
+            8.8, muted, FontWeights.SemiBold);
     }
 
     // Editable axes are deliberately independent. The gold crosshair is a
