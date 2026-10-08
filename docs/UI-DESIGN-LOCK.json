@@ -3,13 +3,13 @@
   "policy": "docs/UI-DESIGN-LOCK.md",
   "state": "LOCKED",
   "baselineDate": "2026-10-08",
-  "approval": "UI-08 + UI-09 (2026-10-08): user-approved square Human Combat graph, vertical faders and neighboring Mutants section",
+  "approval": "UI-09 (2026-10-08): approved Human Combat axis labels, footer clearance and alignment correction",
   "lockedFiles": {
-    "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": "f6f444f31490bedd708d4756f8e3b6cf96287937",
+    "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": "9eb9d0f303ad9a7c23d6319754889e6829ea436c",
     "src/TrueCustomDifficulty/Infrastructure/ResponsiveSectionGridPanel.cs": "8992904d1d7b6e2452f5c995419b2082bcb36582",
     "src/TrueCustomDifficulty/Infrastructure/ResponsiveParameterGridPanel.cs": "86da30e8bc7de1b598baa4844b06cb93451aaf93",
     "src/TrueCustomDifficulty/MainWindow.xaml": "059a4e6b14105b159355e06af78d6e23e8481170",
     "docs/UI-MIXER-GRID-SPEC.md": "6c12f2423a54eaa84f940b7af2dca39964027d03",
-    "docs/VISUAL-CONTROL-SYSTEM.md": "7e22f765c1d24750b805bbe37ba4bc24a32cfa4c"
+    "docs/VISUAL-CONTROL-SYSTEM.md": "4312edeb4958734ac1e1d191e46152a8bd32ec0c"
   }
 }
