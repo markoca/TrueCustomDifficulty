@@ -1762,14 +1762,17 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static void DrawHumanAxisHandle(
         DrawingContext dc, Point center, Brush accent, Brush panel, bool hovered, bool selected)
     {
+        // The X, Y and joint handles intentionally share one visual language.
+        // Draw the halo outside the ring so the current value remains legible.
         if (hovered || selected)
         {
-            dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.20 : 0.12),
-                null, center, hovered ? 16.0 : 12.0, hovered ? 16.0 : 12.0);
-            dc.DrawEllipse(null, new Pen(CloneWithOpacity(accent, 0.65), 1.3),
-                center, 10.0, 10.0);
+            dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.24 : 0.13),
+                null, center, hovered ? 20.0 : 15.0, hovered ? 20.0 : 15.0);
+            dc.DrawEllipse(null,
+                new Pen(CloneWithOpacity(accent, hovered ? 0.90 : 0.55), hovered ? 2.2 : 1.4),
+                center, hovered ? 12.0 : 10.0, hovered ? 12.0 : 10.0);
         }
-        dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 2.8 : 1.8),
+        dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 3.0 : 1.8),
             center, 7.0, 7.0);
         dc.DrawEllipse(accent, null, center, 2.6, 2.6);
     }
@@ -1844,8 +1847,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             _hoverTarget?.Kind == HitKind.HumanJoint,
             _selectedHitKind == HitKind.HumanJoint);
 
-        // Separate handles prevent accidental simultaneous changes when a user
-        // clicks the crosshair or a blank part of the plotting area.
+        // Axis handles modify their own source; the joint ring modifies both.
+        // Empty chart space stays noninteractive.
         var healthHandle = new Point(healthX, plot.Bottom + 10.0);
         DrawHumanAxisHandle(dc, healthHandle, accent, panel,
             _hoverTarget?.Kind == HitKind.Horizontal && ReferenceEquals(_hoverTarget.Parameter, health),
@@ -1862,7 +1865,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         if (health.IsControlEnabled && damage.IsControlEnabled)
             _hitTargets.Add(new HitTarget(health,
-                new Rect(healthX - 14.0, damageY - 14.0, 28.0, 28.0),
+                new Rect(healthX - 18.0, damageY - 18.0, 36.0, 36.0),
                 plot, HitKind.HumanJoint, health.Minimum, health.Maximum, false));
 
         // Retain native source units/steps and individual right-hand rationale.
@@ -4265,7 +4268,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (target.Kind == HitKind.HumanJoint)
             P("combat.npcWeaponDamage")?.ResetToReference();
         EnforceFamilyConstraints(target.Parameter);
-        _status.ShowTransient($"{ShortLabel(target.Parameter)} reset to Base Preset.");
+        _status.ShowTransient(target.Kind == HitKind.HumanJoint
+            ? "Enemy Health + Gun Damage reset to Base Preset."
+            : $"{ShortLabel(target.Parameter)} reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
     }
