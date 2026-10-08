@@ -337,3 +337,9 @@ User correction: in the three live Consumables statistics cards, highlight **onl
 ### 2026-10-08 — Consumables warning cleanup
 
 After the upper four controls returned to horizontal sliders, the local `FaderEnd` calculation in `DrawConsumableMixer` became unused (CS8321). Removed only that dead local helper. Duration faders, layout and all source/editor behavior remain unchanged. The user's previous publish succeeded with this warning; a fresh post-fix publish remains to be run locally.
+
+### 2026-10-08 — Consumables locked; Drunk stage terminology approved
+
+**CONSUMABLE EFFECTS BOARD — LOCKED.** User approved its final mixed editor: four horizontal strength sliders, five compact vertical duration faders, three live statistics cards with **yellow only on affected numeric values**, read-only seconds preview, no redundant footer explanations, original source parameters and rationale. No unsolicited changes.
+
+**DRUNK SYSTEM — authorized labels only.** In DrunkennessControl, player-facing stage names are SOBER (formerly NONE), TIPSY (LOW at 0.001), DRUNK (MEDIUM at 30), and WASTED (STRONG at 80). The beer/vodka drink progression, stage cards and WASTED-after-drinks header use these terms consistently. These are display aliases, not new stages or threshold changes. OverDrunkness remains an independent unmodified system. Slider mappings, gameplay, layout and reset logic stay unchanged. Local Wine check pending.
