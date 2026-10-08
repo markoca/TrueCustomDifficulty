@@ -2455,142 +2455,68 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(20.0, 585.0), 9.0, muted, FontWeights.Normal);
     }
 
-    // Each treatment has its own raw bleeding-removal value. Comparing against
-    // its own vanilla reference is meaningful, but these are not interchangeable
-    // multipliers and must remain independent CFG-backed horizontal editors.
-    // The normalized four-item preview is deliberately read-only.
-    private void DrawBleedingTreatmentMixer(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+    // Four independent source parameters: Bandage on top, three medkits on a
+    // single real-unit scale below. Grey ticks are the authored vanilla values.
+    private void DrawBleedingTreatmentMixer(DrawingContext dc, Brush text,
+        Brush muted, Brush border, Brush accent, Brush panel)
     {
         var bandage = P("health.bandageBleeding");
         var medkit = P("health.medkitBleeding");
         var army = P("health.armyMedkitBleeding");
         var scientific = P("health.ecoMedkitBleeding");
-
-        DrawText(dc, "BLEEDING TREATMENT", new Point(17.0, 13.0),
-            11.5, accent, FontWeights.Bold);
-
+        DrawHeader(dc, "BLEEDING TREATMENT", "", text, muted, accent);
         if (bandage is null || medkit is null || army is null || scientific is null)
-        {
-            DrawCenteredText(dc, "Bleeding treatment data unavailable.",
-                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
             return;
-        }
 
-        var parameters = new[] { bandage, medkit, army, scientific };
-        var labels = new[] { "BANDAGE", "MEDKIT", "ARMY", "SCIENTIFIC" };
-        var width = Math.Max(460.0, ActualWidth - 34.0);
+        // One full-width independent slider for bandage bleeding removal.
+        DrawHorizontalTrackCard(dc, bandage, "BANDAGE",
+            new Rect(17, 50, Math.Max(1.0, ActualWidth - 34), 76),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
 
-        var comparison = new Rect(17.0, 55.0, width, 137.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
-            comparison, 4.0, 4.0);
-        DrawText(dc, "TREATMENT STRENGTH",
-            new Point(comparison.Left + 12.0, 64.0), 10.0, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "RELATIVE STRENGTH",
-            new Point(comparison.Right - 12.0, 64.0),
+        DrawText(dc, "MEDKIT BLEEDING REMOVAL",
+            new Point(18, 150), 10.6, text, FontWeights.Bold);
+        DrawText(dc, "BLEEDING POINTS", new Point(18, 172),
             9.0, muted, FontWeights.SemiBold);
 
-        // Use an identical *relative* 0–200% ruler in each preview column.
-        // All actual edits below use raw values, not these normalized bars.
-        var colWidth = (comparison.Width - 24.0) / parameters.Length;
-        for (var i = 0; i < parameters.Length; i++)
+        var items = new[] { medkit, army, scientific };
+        var names = new[] { "MEDKIT", "ARMY MEDKIT", "SCIENTIFIC MEDKIT" };
+        const double maximum = 70.0; // Shared display scale, not source slider maximum.
+        var plot = new Rect(50, 207, Math.Max(1.0, ActualWidth - 70), 150);
+        for (var tick = 0; tick <= 70; tick += 10)
         {
-            var parameter = parameters[i];
-            var ratio = Math.Abs(parameter.ReferenceNumber) > Epsilon
-                ? parameter.CurrentNumber / parameter.ReferenceNumber
-                : 0.0;
-            var colLeft = comparison.Left + 12.0 + colWidth * i;
-            var centerX = colLeft + colWidth / 2.0;
-            var mini = new Rect(colLeft + 10.0, 119.0,
-                Math.Max(30.0, colWidth - 20.0), 16.0);
-            var y = mini.Top + mini.Height / 2.0;
-            var nowX = mini.Left + mini.Width * Math.Clamp(ratio / 2.0, 0.0, 1.0);
-            var baseX = mini.Left + mini.Width / 2.0;
-
-            DrawCenteredText(dc, labels[i], new Point(centerX, 101.0),
-                9.3, text, FontWeights.Bold);
-            dc.DrawLine(new Pen(border, 4.0),
-                new Point(mini.Left, y), new Point(mini.Right, y));
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.0),
-                new Point(mini.Left, y), new Point(nowX, y));
-            dc.DrawLine(new Pen(muted, 2.0),
-                new Point(baseX, y - 10.0), new Point(baseX, y + 10.0));
-            dc.DrawEllipse(panel, new Pen(accent, 1.6),
-                new Point(nowX, y), 5.0, 5.0);
-            dc.DrawEllipse(accent, null, new Point(nowX, y), 2.0, 2.0);
-
-            DrawCenteredNumericChanges(dc, $"{ratio * 100.0:0}%",
-                new Point(centerX, 143.0), 10.2, text, accent,
-                FontWeights.Bold, parameter.IsValueModifiedFromReference());
-            DrawCenteredNumericChanges(dc, $"{parameter.CurrentNumber:0.##} BLEEDING PTS",
-                new Point(centerX, 164.0), 9.1, muted, accent,
-                FontWeights.Normal, parameter.IsValueModifiedFromReference());
+            var y = plot.Bottom - plot.Height * tick / maximum;
+            dc.DrawLine(new Pen(CloneWithOpacity(border, .55), .8),
+                new Point(plot.Left, y), new Point(plot.Right, y));
+            DrawRightAlignedText(dc, $"{tick}", new Point(plot.Left - 8, y - 8),
+                8.6, muted, FontWeights.Normal);
         }
 
-        DrawText(dc, "EDIT RAW BLEEDING REMOVAL",
-            new Point(19.0, 206.0), 10.5, accent, FontWeights.Bold);
-
-        void DrawTreatmentTrack(ParameterViewModel parameter,
-            string label, double top)
+        var cellWidth = plot.Width / items.Length;
+        for (var i = 0; i < items.Length; i++)
         {
-            var card = new Rect(17.0, top, width, 82.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
-                card, 4.0, 4.0);
-
-            DrawText(dc, label, new Point(card.Left + 12.0, top + 7.0),
-                10.5, text, FontWeights.Bold);
-            DrawChangedNumbers(dc, $"{parameter.CurrentNumber:0.##} PTS",
-                new Point(card.Right - 12.0, top + 7.0),
-                11.0, parameter.IsControlEnabled ? text : muted, accent,
-                FontWeights.Bold, parameter.IsControlEnabled &&
-                    parameter.IsValueModifiedFromReference(), rightAligned: true);
-            DrawText(dc, "BLEEDING REMOVED PER USE",
-                new Point(card.Left + 12.0, top + 26.0),
-                9.3, muted, FontWeights.Normal);
-
-            var track = new Rect(card.Left + 22.0, top + 45.0,
-                card.Width - 44.0, 17.0);
-            var y = track.Top + track.Height / 2.0;
-            var currentX = ValueToX(parameter.CurrentNumber,
-                parameter.Minimum, parameter.Maximum, track, reverse: false);
-            var vanillaX = ValueToX(parameter.ReferenceNumber,
-                parameter.Minimum, parameter.Maximum, track, reverse: false);
-
-            dc.DrawLine(new Pen(border, 4.0),
-                new Point(track.Left, y), new Point(track.Right, y));
-            if (parameter.IsControlEnabled)
-                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
-                    new Point(track.Left, y), new Point(currentX, y));
-            dc.DrawLine(new Pen(muted, 2.0),
-                new Point(vanillaX, y - 10.0), new Point(vanillaX, y + 10.0));
-            dc.DrawEllipse(panel,
-                new Pen(parameter.IsControlEnabled ? accent : muted,
-                    IsSelected(parameter) ? 2.8 : 1.9),
-                new Point(currentX, y), 7.0, 7.0);
-            if (parameter.IsControlEnabled)
-                dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-
-            AddHorizontalTarget(parameter,
-                new Rect(track.Left - 8.0, track.Top - 4.0,
-                    track.Width + 16.0, track.Height + 8.0),
-                track, parameter.Minimum, parameter.Maximum);
-
-            DrawText(dc, $"{parameter.Minimum:0.##} pts",
-                new Point(track.Left, top + 63.0), 9.1, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, $"{parameter.Maximum:0.##} pts",
-                new Point(track.Right, top + 63.0), 9.1, muted, FontWeights.Normal);
+            var p = items[i];
+            var center = plot.Left + cellWidth * (i + .5);
+            var barWidth = Math.Min(72.0, cellWidth * .46);
+            var currentY = plot.Bottom - plot.Height * Math.Clamp(p.CurrentNumber / maximum, 0, 1);
+            var referenceY = plot.Bottom - plot.Height * Math.Clamp(p.ReferenceNumber / maximum, 0, 1);
+            dc.DrawRectangle(CloneWithOpacity(accent, .66), null,
+                new Rect(center - barWidth / 2, currentY, barWidth,
+                    Math.Max(.5, plot.Bottom - currentY)));
+            // Full-width grey notch at this particular medkit's vanilla amount.
+            dc.DrawLine(new Pen(muted, 2.2),
+                new Point(center - barWidth / 2 - 10, referenceY),
+                new Point(center + barWidth / 2 + 10, referenceY));
+            DrawCenteredNumericChanges(dc, $"{p.CurrentNumber:0.#} PTS",
+                new Point(center, 194), 11.2, text, accent, FontWeights.Bold,
+                p.IsValueModifiedFromReference());
+            DrawCenteredText(dc, names[i], new Point(center, 373),
+                9.8, text, FontWeights.Bold);
+            // Native independent 5-point steps/bounds; chart Y is shared for
+            // comparisons, so clamp each interaction to its own source range.
+            var targetRect = new Rect(plot.Left + cellWidth * i + 5,
+                plot.Top, cellWidth - 10, plot.Height);
+            AddVerticalTarget(p, targetRect, plot, 0, maximum);
         }
-
-        DrawTreatmentTrack(bandage, "BANDAGE", 234.0);
-        DrawTreatmentTrack(medkit, "MEDKIT", 327.0);
-        DrawTreatmentTrack(army, "ARMY MEDKIT", 420.0);
-        DrawTreatmentTrack(scientific, "SCIENTIFIC MEDKIT", 513.0);
-
     }
 
     // The game authors separate immediate strength, sustained strength and timed
@@ -5007,7 +4933,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "MutantCombatPressure" or "WaterStaminaPressure"
                 or "RadiationTreatment" => 270.0,
             "FatigueCurve" => CompactFatigueHeight(width),
-            "BleedingTreatmentMixer" => 684.0,
+            "BleedingTreatmentMixer" => 407.0,
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 465.0,
             "HumanCombatProfile" => 465.0,
