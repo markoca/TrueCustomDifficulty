@@ -2800,7 +2800,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(20.0, 393.0), 9.3, text, FontWeights.Normal);
         DrawRightAlignedText(dc, $"BASE PRESET: {(healedMemory.ReferenceBoolean ? "ON" : "OFF")}",
             new Point(ActualWidth - 19.0, 409.0), 9.1, muted, FontWeights.SemiBold);
-        DrawText(dc, "0.00-1.00 ARE CURVE WEIGHTS, NOT DAMAGE-REDUCTION PERCENTAGES",
+        DrawText(dc, "CURVE WEIGHTS, NOT DAMAGE-REDUCTION %",
             new Point(20.0, 409.0), 8.8, muted, FontWeights.Normal);
     }
 
