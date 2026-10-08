@@ -218,7 +218,7 @@ public sealed class DrunkennessControl : FrameworkElement
         DrawText(dc, singular, new Point(rect.Left + 10, rect.Top + 7), 10.0, accent, FontWeights.Bold);
         DrawCenteredStatus(
             dc,
-            "STRONG AFTER ",
+            "WASTED AFTER ",
             drinks.ToString(CultureInfo.InvariantCulture),
             " " + drinkLabel,
             new Point(rect.Left + rect.Width / 2.0, rect.Top + 7),
@@ -318,7 +318,7 @@ public sealed class DrunkennessControl : FrameworkElement
         for (var drink = 1; drink <= count; drink++)
         {
             var tier = GetTierAfterDrink(drink, strength);
-            var isStrong = tier == "STRONG";
+            var isStrong = tier == "WASTED";
             var segmentLeft = left + (drink - 1) * segmentWidth;
             var segmentCenter = segmentLeft + segmentWidth / 2.0;
 
@@ -361,15 +361,15 @@ public sealed class DrunkennessControl : FrameworkElement
         var drunkness = drinkCount * strength;
 
         if (drunkness >= VanillaStrong)
-            return "STRONG";
+            return "WASTED";
 
         if (drunkness >= VanillaMedium)
-            return "MEDIUM";
+            return "DRUNK";
 
         if (drunkness >= VanillaLow)
-            return "LOW";
+            return "TIPSY";
 
-        return "NONE";
+        return "SOBER";
     }
 
     private void DrawTierCards(
@@ -388,9 +388,9 @@ public sealed class DrunkennessControl : FrameworkElement
 
         var stages = new[]
         {
-            new StageInfo("LOW", VanillaLow, "first drunkness stage"),
-            new StageInfo("MEDIUM", VanillaMedium, "medium drunkness state"),
-            new StageInfo("STRONG", VanillaStrong, "strong drunkness state")
+            new StageInfo("TIPSY", VanillaLow, "first signs of alcohol"),
+            new StageInfo("DRUNK", VanillaMedium, "clearly intoxicated"),
+            new StageInfo("WASTED", VanillaStrong, "heavily intoxicated")
         };
 
         for (var i = 0; i < stages.Length; i++)
