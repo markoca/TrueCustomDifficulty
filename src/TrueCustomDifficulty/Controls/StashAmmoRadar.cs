@@ -141,16 +141,7 @@ public sealed class StashAmmoRadar : FrameworkElement
         for (var tier = 0; tier < Tiers.Length; tier++)
             DrawTier(dc, tier, 58.0 + tier * TierHeight, text, muted, border, accent, panel);
 
-        if (!string.IsNullOrWhiteSpace(_status.Text))
-        {
-            DrawCenteredText(
-                dc,
-                _status.Text,
-                new Point(ActualWidth / 2.0, 374.0),
-                8.0,
-                accent,
-                FontWeights.SemiBold);
-        }
+        // Reset notifications intentionally silent.
     }
 
     private void DrawTier(
