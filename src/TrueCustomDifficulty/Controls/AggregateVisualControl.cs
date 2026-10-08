@@ -1262,13 +1262,23 @@ public sealed class AggregateVisualControl : FrameworkElement
             var caption = $"{new[] { "LOW", "MEDIUM", "SEVERE" }[i]} AT {thresholds[i].CurrentNumber:0} PTS | AIM +{aims[i].CurrentNumber * 100:0.#}%" + extra;
             var cell = new Rect(frame.Left + 8 + i * colWidth, top + 280, colWidth, 22);
             dc.PushClip(new RectangleGeometry(cell));
-            DrawCenteredText(dc, caption, new Point(cell.Left + cell.Width / 2, cell.Top + 3),
-                9, i == 0 ? text : accent, FontWeights.Bold);
+            // Numeric tokens belong to threshold, aim penalty and (if present) reload penalty.
+            // Modified source values alone receive the gold, slightly enlarged emphasis.
+            if (i == 0)
+                DrawCenteredNumericChanges(dc, caption,
+                    new Point(cell.Left + cell.Width / 2, cell.Top + 11),
+                    9, text, accent, FontWeights.Bold,
+                    thresholds[i].IsValueModifiedFromReference(),
+                    aims[i].IsValueModifiedFromReference());
+            else
+                DrawCenteredNumericChanges(dc, caption,
+                    new Point(cell.Left + cell.Width / 2, cell.Top + 11),
+                    9, text, accent, FontWeights.Bold,
+                    thresholds[i].IsValueModifiedFromReference(),
+                    aims[i].IsValueModifiedFromReference(),
+                    reloads[i - 1].IsValueModifiedFromReference());
             dc.Pop();
         }
-        DrawCenteredText(dc, "GOLD = SLOWER AIM  |  WHITE = SLOWER RELOAD  |  HIGHER % = LONGER ACTION",
-            new Point(frame.Left + frame.Width / 2, top + 309),
-            9, muted, FontWeights.SemiBold);
     }
 
     private void DrawMasterConditionalPenalty(
