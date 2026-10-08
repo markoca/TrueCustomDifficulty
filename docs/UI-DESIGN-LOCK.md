@@ -269,3 +269,7 @@ The main graph's X-axis ticks retain real 0/25/50/75/100 hunger points but use c
 ### 2026-10-08 — Hunger Survival Profile label cleanup (explicit approval)
 
 The user explicitly approved four presentation-only changes: remove `UP = MORE RECOVERY` beneath the Well-Fed fader; give the rotated `STAMINA RECOVERY LOSS` caption more clearance from percentage ticks by increasing the plot-to-Well-Fed gutter and shifting the caption further left; replace shorthand stage labels such as `33 PTS / -33%` with separate lines `MEDIUM AT 33 PTS` and `-33% RECOVERY` (likewise SEVERE); and remove redundant `NORMAL` from the zero Y tick (`0%` only). The LOW onset is labeled `LOW AT N PTS`. All native values, chart step geometry, colored rings, hit areas, reset semantics, and non-Hunger UI stay locked. Local Wine visual acceptance pending.
+
+### 2026-10-08 — Hunger stage captions: non-overlapping one-line rows
+
+User-approved correction to the Hunger Survival Profile: remove the overlapping three-column/two-line stage footer. Place LOW, MEDIUM, and SEVERE in three separate **full-width one-line rows**, below the hunger-point axis tick labels, with a stable left inset. LOW reads `LOW AT N PTS`; MEDIUM and SEVERE read `MEDIUM AT N PTS | -N% STAMINA RECOVERY` and `SEVERE AT N PTS | -N% STAMINA RECOVERY`. Expand the graph frame from 294 to 334 DIPs and its measured control height by 40 DIPs to contain these labels. The stage rings, graph axes, values, mapping, resets and other UI remain unchanged. Local Wine inspection pending.
