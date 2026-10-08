@@ -351,3 +351,7 @@ All visual section controls own one centered accented top title; optional concis
 ### Shared baseline for next-tab passes (2026-10-08)
 
 All tabs use fixed full-width 1x1 sections without duplicate external headings or separator lines. Dedicated radar cards with top headings now use centered 12.5-DIP gold titles and optional centered 9.5-DIP grey subtitles, matching Combat. Specialized control interactions and internal layouts remain for subsequent tab passes. Embedded Drunkenness has no separate top title pending redesign.
+
+### Your Weapons 3x1 horizontal track lock (2026-10-08)
+
+The Your Weapons card has three equal-width horizontal sliders in one line, with native source min/max, current multiplier, grey Base marker and gold draggable handle. Cell gap 12 DIP, compact card height 169 DIP. This supersedes all earlier vertical Your Weapons mixer layouts.
