@@ -173,3 +173,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — UI-08 — reliable 2x1/1x1 section layout
 
 **User correction:** Human Enemies and Your Weapons were stacking even with the approved responsive pairing. The section grid now resolves names from the actual WPF `GroupItem.Content` (`CollectionViewGroup`) first, falling back to inherited DataContext. This fixes pairing detection without changing the existing 540-DIP minimum per section: 2x1 side-by-side when the usable grid width is at least 1096 DIP; 1x1 stacked below that. Both sections keep independent full-width headers and correct content sizing. Wine acceptance pending.
+
+### 2026-10-08 — UI-08 — fixed Combat two-column placement
+
+**User request:** The Human Enemies and Your Weapons pairing must be a fixed **2x1 row**, not switch automatically to a vertical stack. Their GroupItem pairing is always honored; the section host is at least 1096 DIP wide so each half can retain its 540-DIP minimum plus 16-DIP gutter. On narrower viewports the left content area scrolls horizontally rather than converting these sections into 1x1. Other established section pairs keep their prior responsive behavior. This overrides the earlier responsive Combat stacking approval. Preserve the two panels, all faders and existing CFG mappings. Wine acceptance pending.
