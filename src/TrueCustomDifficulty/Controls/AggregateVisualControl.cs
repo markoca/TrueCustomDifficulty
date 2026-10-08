@@ -278,6 +278,136 @@ public sealed class AggregateVisualControl : FrameworkElement
 
 
 
+
+    // The original difficulty multiplier is the only editable source value.
+    // The second band compares it to the selected Base Preset: it is not
+    // simulated explosion damage, radius or an extra clickable control.
+    private void DrawBlastDamageBoard(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(dc, "EXPLOSION DAMAGE",
+            "blast damage multiplier for the currently selected Base Preset",
+            text, muted, accent);
+
+        var damage = P("combat.explosionDamage");
+        if (damage is null)
+        {
+            DrawCenteredText(dc, "Explosion difficulty data unavailable.",
+                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            return;
+        }
+
+        var width = Math.Max(1.0, ActualWidth - 32.0);
+        DrawHorizontalTrackCard(dc, damage, "BLAST DAMAGE MULTIPLIER",
+            new Rect(16.0, 56.0, width, 72.0),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
+
+        var preview = new Rect(16.0, 141.0, width, 103.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
+        DrawText(dc, "DIFFICULTY REFERENCE / READ-ONLY",
+            new Point(28.0, 150.0), 9.8, text, FontWeights.Bold);
+        DrawRightAlignedText(dc,
+            $"{damage.CurrentNumber:0.##}x  |  BASE {damage.ReferenceNumber:0.##}x",
+            new Point(preview.Right - 12.0, 170.0),
+            10.3, accent, FontWeights.SemiBold);
+
+        var band = new Rect(preview.Left + 18.0, 194.0,
+            Math.Max(1.0, preview.Width - 36.0), 18.0);
+        var y = band.Top + band.Height / 2.0;
+        var selectedX = ValueToX(damage.CurrentNumber,
+            damage.Minimum, damage.Maximum, band, false);
+        var baseX = ValueToX(damage.ReferenceNumber,
+            damage.Minimum, damage.Maximum, band, false);
+        dc.DrawLine(new Pen(border, 5.0),
+            new Point(band.Left, y), new Point(band.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 5.0),
+            new Point(Math.Min(selectedX, baseX), y),
+            new Point(Math.Max(selectedX, baseX), y));
+        dc.DrawLine(new Pen(muted, 2.2),
+            new Point(baseX, y - 10.0), new Point(baseX, y + 10.0));
+        dc.DrawEllipse(accent, null, new Point(selectedX, y), 5.0, 5.0);
+        DrawText(dc, "0x", new Point(band.Left, 218.0),
+            9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "2x", new Point(band.Right, 218.0),
+            9.0, muted, FontWeights.Normal);
+        DrawText(dc, "GOLD = CURRENT  |  GREY = BASE  |  NO BLAST-RADIUS CHANGE",
+            new Point(18.0, 254.0), 9.0, text, FontWeights.SemiBold);
+    }
+
+    // Three distinct merchant service systems; the repair base value must not
+    // be confused with the independent four-tier reputation repair curve.
+    private void DrawServiceCostsBoard(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(dc, "SERVICE PRICES",
+            "travel guides, technicians and repair baseline cost",
+            text, muted, accent);
+
+        var width = Math.Max(1.0, ActualWidth - 32.0);
+        DrawHorizontalTrackCard(dc, P("economy.fastTravelCost"), "GUIDE / FAST TRAVEL PRICE",
+            new Rect(16.0, 56.0, width, 72.0),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
+        DrawHorizontalTrackCard(dc, P("economy.upgradeCost"), "TECHNICIAN / UPGRADE PRICE",
+            new Rect(16.0, 142.0, width, 72.0),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
+        DrawHorizontalTrackCard(dc, P("economy.repairCostBase"), "TECHNICIAN / BASE REPAIR PRICE",
+            new Rect(16.0, 228.0, width, 72.0),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
+
+        DrawText(dc, "REPAIR REPUTATION CURVE IS SEPARATE FROM BASE PRICE",
+            new Point(18.0, 316.0), 9.2, text, FontWeights.SemiBold);
+        DrawText(dc, "GREY = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
+            new Point(18.0, 338.0), 9.0, muted, FontWeights.Normal);
+    }
+
+    // Unlike a radar, six mixed units cannot share a meaningful normalized
+    // radius. Keep each native range with labelled units and exact Base ticks.
+    private void DrawAnomalyEffectsBoard(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(dc, "ANOMALY EFFECTS",
+            "independent damage, snare, bleeding and Psy effect tuning",
+            text, muted, accent);
+
+        var width = Math.Max(1.0, ActualWidth - 32.0);
+        var tracks = new (string Id, string Label)[]
+        {
+            ("environment.anomalyDamage", "GLOBAL ANOMALY DAMAGE"),
+            ("environment.flycatcherMovementSpeed", "FLYCATCHER / MOVEMENT REMAINING"),
+            ("environment.flycatcherTurnSpeed", "FLYCATCHER / TURN SPEED REMAINING"),
+            ("environment.razorBleeding", "RAZOR / BLEEDING MULTIPLIER"),
+            ("environment.diamondBleeding", "DIAMOND / BLEEDING POINTS"),
+            ("environment.psyAnomalyIntensity", "PSY ANOMALY / INTENSITY")
+        };
+        for (var index = 0; index < tracks.Length; index++)
+        {
+            var item = tracks[index];
+            DrawHorizontalTrackCard(dc, P(item.Id), item.Label,
+                new Rect(16.0, 56.0 + index * 84.0, width, 72.0),
+                text, muted, border, accent, panel, pairedValueFormatting: true);
+        }
+
+        DrawText(dc, "LOWER FLYCATCHER SPEED = STRONGER SLOW  |  DIAMOND USES RAW POINTS",
+            new Point(18.0, 565.0), 9.1, text, FontWeights.SemiBold);
+        DrawText(dc, "LOCAL EFFECTS ARE NOT DERIVED FROM THE GLOBAL DAMAGE MULTIPLIER",
+            new Point(18.0, 585.0), 9.0, muted, FontWeights.Normal);
+    }
+
     // The smart-loot extra package is a categorical CFG list, not a multiplier.
     // Ammo/medical controls tune other independent generator surfaces. The actual
     // MIN/MAX weapon condition is an absolute range; its upper band is read-only.
