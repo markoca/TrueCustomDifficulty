@@ -520,8 +520,8 @@ public sealed class ParameterViewModel : ObservableObject
         ["economy.repairFriend"] = "RepairCurve",
 
         ["combat.explosionDamage"] = "HumanCombatProfile",
-        ["stamina.vaultMaxHeight"] = "PhysicalLimits",
-        ["stamina.maxCarryWeight"] = "PhysicalLimits",
+        ["stamina.vaultMaxHeight"] = "StaminaCore",
+        ["stamina.maxCarryWeight"] = "StaminaCore",
         ["economy.traderAmmoStock"] = "TraderStockBoard",
         ["economy.medicStock"] = "TraderStockBoard",
         ["economy.fastTravelCost"] = "ServiceCostsBoard",

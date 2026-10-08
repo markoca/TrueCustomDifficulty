@@ -186,6 +186,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 break;
             case "MutantCombatPressure":
             case "StaminaCore":
+                DrawStaminaMovementBoard(dc, text, muted, border, accent, panel);
+                break;
             case "WaterStaminaPressure":
             case "RadiationTreatment":
             case "PhysicalLimits":
@@ -1048,6 +1050,48 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawText(CreateText(board.Note, 9.4, text, FontWeights.SemiBold,
                 Math.Max(1.0, ActualWidth - 36.0)),
             new Point(18.0, Family == "PhysicalLimits" ? 265.0 : 228.0));
+    }
+
+    // Unified first Stamina card: four native CFG tracks, no redundant subtitle/footer.
+    private void DrawStaminaMovementBoard(DrawingContext dc, Brush text, Brush muted,
+        Brush border, Brush accent, Brush panel)
+    {
+        DrawHeader(dc, "STAMINA & MOVEMENT", "", text, muted, accent);
+        var width = Math.Max(1.0, ActualWidth - 32.0);
+        DrawHorizontalTrackCard(dc, P("stamina.maxSP"), "STAMINA CAPACITY",
+            new Rect(16.0, 53.0, width, 72.0),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
+        DrawHorizontalTrackCard(dc, P("stamina.regeneration"), "BASE RECOVERY RATE",
+            new Rect(16.0, 133.0, width, 72.0),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
+        DrawHorizontalTrackCard(dc, P("stamina.vaultMaxHeight"), "MAXIMUM VAULT HEIGHT",
+            new Rect(16.0, 213.0, width, 105.0),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
+        // Preserve the original clickable authored height landmarks in this unified card.
+        if (P("stamina.vaultMaxHeight") is { } vault)
+        {
+            var track = new Rect(30.0, 252.0, Math.Max(1.0, width - 28.0), 12.0);
+            foreach (var marker in vault.VanillaMarkers)
+            {
+                var x = ValueToX(marker.Value, vault.Minimum, vault.Maximum, track, false);
+                dc.DrawLine(new Pen(muted, 1.8),
+                    new Point(x, 246.0), new Point(x, 252.0));
+                var caption = marker.Label.Replace("VANILLA / ", "", StringComparison.Ordinal)
+                    + $" {marker.Value:0} uu";
+                DrawCenteredText(dc, caption, new Point(x, 294.0),
+                    9.0, muted, FontWeights.SemiBold);
+                const double captionWidth = 112.0;
+                var captionLeft = Math.Clamp(x - captionWidth / 2.0,
+                    13.0, Math.Max(13.0, ActualWidth - captionWidth - 13.0));
+                AddHorizontalTarget(vault,
+                    new Rect(captionLeft, 290.0, captionWidth, 23.0),
+                    new Rect(x, 290.0, 1.0, 23.0),
+                    marker.Value, marker.Value);
+            }
+        }
+        DrawHorizontalTrackCard(dc, P("stamina.maxCarryWeight"), "MAXIMUM CARRY WEIGHT",
+            new Rect(16.0, 326.0, width, 72.0),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
     }
 
     // Fatigue stages affect when penalties begin, while their strengths remain
@@ -4961,7 +5005,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             "WorldLootLayout" => width >= 720.0 ? 340.0 : 450.0,
             "StashRewardProfile" => GetMixerHeight(width, StashRewardMixerChannels.Length),
             "PhysicalLimits" => 335.0,
-            "MutantCombatPressure" or "StaminaCore" or "WaterStaminaPressure"
+            "StaminaCore" => 420.0,
+            "MutantCombatPressure" or "WaterStaminaPressure"
                 or "RadiationTreatment" => 270.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "BleedingTreatmentMixer" => 684.0,
@@ -5084,7 +5129,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "loot.destructibleGrenadeQuantity"
             },
             "MutantCombatPressure" => new[] { "combat.mutantDamage", "combat.mutantAttackCooldown" },
-            "StaminaCore" => new[] { "stamina.maxSP", "stamina.regeneration" },
+            "StaminaCore" => new[] {
+                "stamina.maxSP", "stamina.regeneration",
+                "stamina.vaultMaxHeight", "stamina.maxCarryWeight" },
             "WaterStaminaPressure" => new[] { "stamina.waterMediumDrain", "stamina.waterStrongDrain" },
             "RadiationTreatment" => new[] { "health.ecoMedkitAntirad", "health.antiRadRadiation" },
             "FatigueCurve" => new[]
