@@ -3866,12 +3866,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         // whole control would allow a left-column caption to overlap its neighbor.
         dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold, contentWidth),
             new Point(card.Left + 12.0, card.Top + 7.0));
-        dc.DrawText(CreateText(value, 10.7,
-                parameter.IsControlEnabled &&
-                (Family != "ConsumableMixer" || parameter.IsValueModifiedFromReference())
-                    ? accent : parameter.IsControlEnabled ? text : muted,
-                FontWeights.Bold, contentWidth),
-            new Point(card.Left + 12.0, card.Top + 25.0));
+        var valueText = CreateText(value, 10.7,
+            parameter.IsControlEnabled ? text : muted, FontWeights.Bold, contentWidth);
+        if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())
+            foreach (System.Text.RegularExpressions.Match token in
+                System.Text.RegularExpressions.Regex.Matches(value, @"\d+(?:\.\d+)?"))
+                valueText.SetForegroundBrush(accent, token.Index, token.Length);
+        dc.DrawText(valueText, new Point(card.Left + 12.0, card.Top + 25.0));
 
         var track = new Rect(card.Left + 20.0, card.Top + 45.0,
             Math.Max(1.0, card.Width - 40.0), 16.0);
@@ -3998,10 +3999,17 @@ public sealed class AggregateVisualControl : FrameworkElement
             ? $"{ComparablePairedValue(parameter, parameter.CurrentNumber)}  |  BASE {ComparablePairedValue(parameter, parameter.ReferenceNumber)}"
             : hideBaseText ? FriendlyValue(parameter)
             : $"{FriendlyValue(parameter)}  |  BASE {FormatCompact(parameter.ReferenceNumber)}";
-        dc.DrawText(CreateText(value, pairedValueFormatting ? 11.1 : 10.1,
-                parameter.IsControlEnabled ? accent : muted,
-                FontWeights.SemiBold, textWidth),
-            new Point(card.Left + 12.0, card.Top + 22.0));
+        var valueText = CreateText(value, pairedValueFormatting ? 11.1 : 10.1,
+            parameter.IsControlEnabled ? text : muted,
+            FontWeights.SemiBold, textWidth);
+        if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())
+        {
+            var first = System.Text.RegularExpressions.Regex.Match(
+                value, @"\d+(?:\.\d+)?");
+            if (first.Success)
+                valueText.SetForegroundBrush(accent, first.Index, first.Length);
+        }
+        dc.DrawText(valueText, new Point(card.Left + 12.0, card.Top + 22.0));
 
         var track = new Rect(card.Left + 14.0, card.Top + 39.0,
             Math.Max(1.0, card.Width - 28.0), 12.0);
@@ -4806,6 +4814,23 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawText(formatted, new Point(
             center.X - formatted.Width / 2.0,
             center.Y - formatted.Height / 2.0));
+    }
+
+    private void DrawChangedNumbers(DrawingContext dc, string value, Point position,
+        double size, Brush normal, Brush accent, FontWeight weight,
+        bool modified, bool rightAligned = false)
+    {
+        var formatted = CreateText(value, size, normal, weight);
+        if (modified)
+        {
+            var first = System.Text.RegularExpressions.Regex.Match(
+                value, @"\d+(?:\.\d+)?");
+            if (first.Success)
+                formatted.SetForegroundBrush(accent, first.Index, first.Length);
+        }
+        dc.DrawText(formatted, new Point(
+            rightAligned ? position.X - formatted.WidthIncludingTrailingWhitespace : position.X,
+            position.Y));
     }
 
     private void DrawText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
