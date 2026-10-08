@@ -587,3 +587,7 @@ The reference is Human Combat: no rectangular bounding-box selection overlays an
 ### Hunger visual axis labeling (2026-10-08)
 
 Show WELL-FED / STAMINA RECOVERY / BONUS directly above its vertical positive bonus rail, with UP = MORE RECOVERY below. Main chart captions: horizontal HUNGER POINTS (0–100) and vertical STAMINA RECOVERY LOSS in the dedicated left gutter. Avoid arrows that can render as missing glyphs in Wine; keep axis tick labels apart from the vertical caption. Native parameters and handle interactions remain untouched.
+
+### Hunger axis tick typography (2026-10-08)
+
+The Hunger Survival Profile uses 10-DIP semibold X/Y tick labels, emphasizes the 0/100 endpoints, and labels the Y-axis neutral state `0% NORMAL`. Keep accurate values on the axes (do not replace 100 with MAX). Remove the two redundant bottom instructional captions. Preserve handle behavior, stage markers, axes and game configuration mapping.
