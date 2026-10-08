@@ -18,18 +18,18 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     private static readonly MutantDefinition[] Mutants =
     {
-        new("combat.mutantHealth.bloodsucker", "Bloodsucker", 500.0, true),
-        new("combat.mutantHealth.chimera", "Chimera", 1400.0, false),
-        new("combat.mutantHealth.deer", "Deer", 600.0, false),
-        new("combat.mutantHealth.pseudogiant", "Pseudogiant", 2500.0, false),
-        new("combat.mutantHealth.pseudodog", "Pseudodog", 300.0, false),
-        new("combat.mutantHealth.burer", "Burer", 400.0, false),
         new("combat.mutantHealth.bayun", "Bayun", 400.0, false),
-        new("combat.mutantHealth.controller", "Controller", 500.0, false),
         new("combat.mutantHealth.blinddog", "Blind Dog", 63.0, false),
+        new("combat.mutantHealth.bloodsucker", "Bloodsucker", 500.0, true),
         new("combat.mutantHealth.boar", "Boar", 300.0, false),
+        new("combat.mutantHealth.burer", "Burer", 400.0, false),
+        new("combat.mutantHealth.chimera", "Chimera", 1400.0, false),
+        new("combat.mutantHealth.controller", "Controller", 500.0, false),
+        new("combat.mutantHealth.deer", "Deer", 600.0, false),
         new("combat.mutantHealth.flesh", "Flesh", 280.0, false),
         new("combat.mutantHealth.poltergeist", "Poltergeist", 400.0, false),
+        new("combat.mutantHealth.pseudodog", "Pseudodog", 300.0, false),
+        new("combat.mutantHealth.pseudogiant", "Pseudogiant", 2500.0, false),
         new("combat.mutantHealth.snork", "Snork", 150.0, false),
         new("combat.mutantHealth.tushkan", "Tushkan", 19.0, false),
     };
