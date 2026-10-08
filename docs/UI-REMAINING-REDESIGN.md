@@ -5,7 +5,7 @@ default XAML type (slider, range, choice slider or toggle) rather than a special
 semantic visual family. It is a redesign queue, **not** an indication of broken CFG mappings.
 
 - Catalog: 238 parameters
-- Default-control entries remaining: **35**
+- Default-control entries remaining: **30**
 - Just converted (commit `6f4dd55`): MutantCombatPressure, StaminaCore, WaterStaminaPressure, RadiationTreatment (eight sliders)
 - Scope: visual reorganization only; preserve exact source values, min/max, steps,
   vanilla markers, reset/right-click semantics, dependencies and preset serialization
@@ -41,13 +41,13 @@ semantic visual family. It is a redesign queue, **not** an indication of broken 
 - `loot.npcWeaponAmmoSupply` — NPC Dropped Ammo Amount (`slider`)
 - `loot.droppedWeaponCondition` — NPC Weapon Condition (`range`)
 
-### loot / Stashes (3)
+### loot / Stashes (0 — visual family complete)
 
 - `loot.cheapStashGrenadeChance` — Basic Stash RGD-5 Grenade Chance (`slider`)
 - `loot.cheapStashGrenadeQuantity` — Basic Stash RGD-5 Grenade Amount (`slider`)
 - `loot.expensiveStashMoneyChance` — Rare Stash Coupon Rewards (`slider`)
 
-### loot / Breakable Containers (2)
+### loot / Breakable Containers (0 — visual family complete)
 
 - `loot.destructibleAmmoQuantity` — Ammo from Breakable Boxes (`slider`)
 - `loot.destructibleGrenadeQuantity` — Grenades from Breakable Boxes (`slider`)
