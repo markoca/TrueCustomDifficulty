@@ -140,6 +140,9 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         switch (Family)
         {
+            case "NpcLootLoadout":
+                DrawNpcLootLoadout(dc, text, muted, border, accent, panel);
+                break;
             case "WorldLootLayout":
                 DrawWorldLootLayout(dc, text, muted, border, accent, panel);
                 break;
@@ -252,6 +255,200 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
 
+
+
+    // The smart-loot extra package is a categorical CFG list, not a multiplier.
+    // Ammo/medical controls tune other independent generator surfaces. The actual
+    // MIN/MAX weapon condition is an absolute range; its upper band is read-only.
+    private void DrawNpcLootLoadout(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        var corpse = P("loot.npcCorpseBonus");
+        var medical = P("loot.npcMedicalChance");
+        var ammo = P("loot.npcWeaponAmmoSupply");
+        var condition = P("loot.droppedWeaponCondition");
+
+        DrawHeader(dc, "NPC LOOT & EQUIPMENT",
+            "extra corpse package, normal drops and weapon condition stay separate",
+            text, muted, accent);
+
+        if (corpse is null || medical is null || ammo is null || condition is null
+            || corpse.ChoiceOptions.Count == 0)
+        {
+            DrawCenteredText(dc, "NPC loot parameter data unavailable.",
+                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            return;
+        }
+
+        var width = Math.Max(1.0, ActualWidth - 32.0);
+
+        // Exactly the original distinct smart-loot lists, in their catalog order.
+        // There are no synthetic "low/medium/high" steps between options.
+        var choices = new Rect(16.0, 55.0, width, 152.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), choices, 4.0, 4.0);
+        DrawText(dc, "EXTRA CORPSE LOOT PACKAGE",
+            new Point(28.0, 64.0), 10.3, text, FontWeights.Bold);
+        DrawText(dc, $"CURRENT: {corpse.CurrentDisplay}  |  BASE: " +
+            corpse.ChoiceOptions[(int)Math.Clamp(corpse.ReferenceChoiceIndex, 0.0,
+                corpse.ChoiceMaximum)].Label,
+            new Point(28.0, 85.0), 10.4, accent, FontWeights.SemiBold);
+
+        var optionCount = corpse.ChoiceOptions.Count;
+        var optionGap = 9.0;
+        var optionWidth = Math.Max(1.0, (width - 24.0 - optionGap * (optionCount - 1)) / optionCount);
+        var firstCenter = choices.Left + 12.0 + optionWidth / 2.0;
+        var lastCenter = firstCenter + (optionCount - 1) * (optionWidth + optionGap);
+        for (var i = 0; i < optionCount; i++)
+        {
+            var x = choices.Left + 12.0 + i * (optionWidth + optionGap);
+            var option = new Rect(x, 111.0, optionWidth, 48.0);
+            var selected = Math.Abs(corpse.ChoiceIndex - i) < 0.5;
+            var isBase = Math.Abs(corpse.ReferenceChoiceIndex - i) < 0.5;
+            dc.DrawRoundedRectangle(
+                selected ? CloneWithOpacity(accent, 0.17) : panel,
+                new Pen(selected ? accent : isBase ? muted : border,
+                    selected ? 1.8 : 1.0),
+                option, 4.0, 4.0);
+            var optionText = CreateText(corpse.ChoiceOptions[i].Label, 10.0,
+                selected ? accent : text, FontWeights.SemiBold,
+                Math.Max(1.0, option.Width - 14.0));
+            dc.DrawText(optionText, new Point(
+                option.Left + (option.Width - optionText.WidthIncludingTrailingWhitespace) / 2.0,
+                option.Top + 16.0));
+
+            var difficultyMarker = corpse.ChoiceMarkers.FirstOrDefault(marker =>
+                Math.Abs(marker.Value - i) < Epsilon)?.Label ?? string.Empty;
+            var caption = isBase ? (difficultyMarker.Length == 0
+                ? "BASE PRESET" : difficultyMarker + "  |  BASE") : difficultyMarker;
+            DrawCenteredText(dc, caption, new Point(option.Left + option.Width / 2.0, 168.0),
+                9.0, muted, FontWeights.SemiBold);
+        }
+
+        AddChoiceTarget(corpse,
+            new Rect(choices.Left + 12.0, 111.0, width - 24.0, 48.0),
+            new Rect(firstCenter, 111.0, Math.Max(1.0, lastCenter - firstCenter), 48.0));
+
+        DrawText(dc, "CORPSE BONUS DOES NOT REPLACE GENERATED NPC INVENTORY",
+            new Point(28.0, 189.0), 9.0, muted, FontWeights.Normal);
+
+        DrawHorizontalTrackCard(dc, medical, "NORMAL NPC MEDICAL DROP CHANCE",
+            new Rect(16.0, 218.0, width, 72.0),
+            text, muted, border, accent, panel);
+        DrawHorizontalTrackCard(dc, ammo, "DROPPED WEAPON / ATTACHED AMMO",
+            new Rect(16.0, 300.0, width, 72.0),
+            text, muted, border, accent, panel);
+
+        var preview = new Rect(16.0, 386.0, width, 91.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
+        DrawText(dc, "NPC WEAPON CONDITION RANGE  /  ABSOLUTE %",
+            new Point(28.0, 394.0), 10.1, text, FontWeights.Bold);
+        DrawRightAlignedText(dc,
+            $"{condition.CurrentMinNumber * 100.0:0}% - {condition.CurrentMaxNumber * 100.0:0}%",
+            new Point(preview.Right - 12.0, 394.0), 10.8, accent, FontWeights.Bold);
+
+        var band = new Rect(preview.Left + 19.0, 420.0,
+            Math.Max(1.0, preview.Width - 38.0), 16.0);
+        var bandY = band.Top + band.Height / 2.0;
+        dc.DrawLine(new Pen(border, 7.0), new Point(band.Left, bandY),
+            new Point(band.Right, bandY));
+        // The common authored baseline is 25%-50%. One authored 35%-45%
+        // outlier stays unchanged while the range is at default.
+        var baseMinX = ValueToX(0.25, 0.0, 1.0, band, reverse: false);
+        var baseMaxX = ValueToX(0.50, 0.0, 1.0, band, reverse: false);
+        dc.DrawLine(new Pen(muted, 5.0) { DashStyle = DashStyles.Dash },
+            new Point(baseMinX, bandY), new Point(baseMaxX, bandY));
+        var currentMinX = ValueToX(condition.CurrentMinNumber, 0.0, 1.0, band, reverse: false);
+        var currentMaxX = ValueToX(condition.CurrentMaxNumber, 0.0, 1.0, band, reverse: false);
+        dc.DrawLine(new Pen(accent, 5.0),
+            new Point(currentMinX, bandY), new Point(currentMaxX, bandY));
+        dc.DrawEllipse(accent, null, new Point(currentMinX, bandY), 4.0, 4.0);
+        dc.DrawEllipse(accent, null, new Point(currentMaxX, bandY), 4.0, 4.0);
+        // Read-only comparison: no HitTarget on the overlapping interval handles.
+        DrawText(dc, "0%", new Point(band.Left, 439.0), 9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "100%", new Point(band.Right, 439.0),
+            9.0, muted, FontWeights.Normal);
+        DrawText(dc,
+            condition.IsValueModifiedFromReference()
+                ? "CUSTOM RANGE APPLIES TO ALL 121 AUDITED NPC WEAPON ROWS"
+                : "VANILLA INTACT / ONE WEAPON ROW RETAINS ITS 35-45% RANGE",
+            new Point(28.0, 458.0), 9.0, muted, FontWeights.SemiBold);
+
+        DrawNpcConditionTrack(dc, condition, true,
+            new Rect(16.0, 489.0, width, 72.0),
+            text, muted, border, accent, panel);
+        DrawNpcConditionTrack(dc, condition, false,
+            new Rect(16.0, 573.0, width, 72.0),
+            text, muted, border, accent, panel);
+
+        DrawText(dc,
+            "MIN CANNOT EXCEED MAX  |  MOVED BOUNDARY HAS PRIORITY",
+            new Point(18.0, 659.0), 9.1, text, FontWeights.SemiBold);
+        DrawText(dc,
+            "GREY = BASE  |  RIGHT-CLICK = RESET ONE SETTING  |  R = RESET ALL",
+            new Point(18.0, 681.0), 9.0, muted, FontWeights.Normal);
+    }
+
+    // Two native 0-100%, 1%-step editor tracks for one range-valued parameter.
+    // Property setters own the MIN <= MAX ordering and move the other bound
+    // only when needed. Right-click either track resets the complete range.
+    private void DrawNpcConditionTrack(
+        DrawingContext dc,
+        ParameterViewModel condition,
+        bool minimumBound,
+        Rect card,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
+        var label = minimumBound ? "MINIMUM DROPPED WEAPON CONDITION" :
+            "MAXIMUM DROPPED WEAPON CONDITION";
+        DrawText(dc, label, new Point(card.Left + 12.0, card.Top + 5.0),
+            9.8, text, FontWeights.Bold);
+
+        var current = minimumBound ? condition.CurrentMinNumber : condition.CurrentMaxNumber;
+        var baseline = minimumBound ? 0.25 : 0.50;
+        DrawText(dc, $"{current * 100.0:0}%  |  BASE {baseline * 100.0:0}%",
+            new Point(card.Left + 12.0, card.Top + 22.0), 11.1,
+            condition.IsControlEnabled ? accent : muted, FontWeights.SemiBold);
+
+        var track = new Rect(card.Left + 14.0, card.Top + 39.0,
+            Math.Max(1.0, card.Width - 28.0), 12.0);
+        var y = track.Top + track.Height / 2.0;
+        dc.DrawLine(new Pen(border, 3.5),
+            new Point(track.Left, y), new Point(track.Right, y));
+        var x = ValueToX(current, condition.Minimum, condition.Maximum, track, reverse: false);
+        var referenceX = ValueToX(baseline, condition.Minimum, condition.Maximum, track, reverse: false);
+        if (condition.IsControlEnabled)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.65), 3.5),
+                new Point(track.Left, y), new Point(x, y));
+        dc.DrawLine(new Pen(muted, 2.0),
+            new Point(referenceX, y - 9.0), new Point(referenceX, y + 9.0));
+
+        var kind = minimumBound ? HitKind.RangeMin : HitKind.RangeMax;
+        var selected = IsSelected(condition) && _selectedHitKind == kind;
+        dc.DrawEllipse(panel, new Pen(condition.IsControlEnabled ? accent : muted,
+                selected ? 2.5 : 1.5),
+            new Point(x, y), 6.0, 6.0);
+        if (condition.IsControlEnabled)
+            dc.DrawEllipse(accent, null, new Point(x, y), 2.5, 2.5);
+
+        AddRangeTarget(condition,
+            new Rect(track.Left - 7.0, track.Top - 4.0,
+                track.Width + 14.0, track.Height + 8.0),
+            track, kind);
+        DrawText(dc, "0%", new Point(track.Left, card.Top + 56.0),
+            9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "100%", new Point(track.Right, card.Top + 56.0),
+            9.0, muted, FontWeights.Normal);
+    }
 
     // World-loot placement operations are four separate booleans. The source
     // density value belongs to the weapon-reshuffle operation only; it is not
@@ -4007,6 +4204,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double GetDesiredHeight(string family, double width)
         => family switch
         {
+            "NpcLootLoadout" => 713.0,
             "WorldLootLayout" => width >= 720.0 ? 340.0 : 450.0,
             "StashRewardProfile" => 485.0,
             "BreakableBoxYields" => 413.0,
@@ -4070,6 +4268,13 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static IReadOnlyList<string> GetFamilyIds(string family)
         => family switch
         {
+            "NpcLootLoadout" => new[]
+            {
+                "loot.npcCorpseBonus",
+                "loot.npcMedicalChance",
+                "loot.npcWeaponAmmoSupply",
+                "loot.droppedWeaponCondition"
+            },
             "WorldLootLayout" => new[]
             {
                 "loot.worldWeaponShuffle",
