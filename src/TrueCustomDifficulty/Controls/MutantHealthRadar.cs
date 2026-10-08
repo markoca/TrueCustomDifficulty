@@ -403,7 +403,11 @@ public sealed class MutantHealthRadar : FrameworkElement
             var match = System.Text.RegularExpressions.Regex.Match(
                 label, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
             if (match.Success)
+            {
                 formatted.SetForegroundBrush(accent, match.Index, match.Length);
+                formatted.SetFontSize(Math.Max(9.0, size) + 1.2,
+                    match.Index, match.Length);
+            }
         }
         dc.DrawText(formatted, new Point(center.X - formatted.Width / 2,
             center.Y - formatted.Height / 2));
