@@ -3225,10 +3225,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
         StageCaption(0, $"LOW AT {low.CurrentNumber:0} PTS", text);
         StageCaption(1,
-            $"MEDIUM {medium.CurrentNumber:0} PTS | -{mediumPenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
+            $"MEDIUM AT {medium.CurrentNumber:0} PTS | -{mediumPenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
             accent);
         StageCaption(2,
-            $"SEVERE {severe.CurrentNumber:0} PTS | -{severePenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
+            $"SEVERE AT {severe.CurrentNumber:0} PTS | -{severePenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
             accent);
 
     }
