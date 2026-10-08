@@ -2123,229 +2123,176 @@ public sealed class AggregateVisualControl : FrameworkElement
         AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
     }
 
+    // Separate the two trader price settings, item acceptance gate and broken-value
+    // floor. Price settings are CFG multipliers, not complete shop-price formulas.
     private void DrawTradingDashboard(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+        DrawingContext dc, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        DrawHeader(
-            dc,
-            "TRADING FLOW",
-            "what traders pay, what they charge, what damaged gear they accept and what broken gear is worth",
-            text,
-            muted,
-            accent);
-
         var traderBuys = P("economy.buyCondition");
         var traderSells = P("economy.sellCondition");
         var minCondition = P("economy.traderMinBuyCondition");
         var valueFloor = P("economy.itemValueFloor");
 
-        var left = 24.0;
-        var right = Math.Max(left + 450.0, ActualWidth - 24.0);
-        var width = right - left;
-        var gap = 14.0;
-        var half = (width - gap) / 2.0;
+        DrawText(dc, "TRADING FLOW", new Point(17.0, 13.0),
+            11.5, accent, FontWeights.Bold);
+        DrawText(dc, "what you earn, what you pay and which damaged gear traders accept",
+            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
 
-        void DrawPricingSide(
-            ParameterViewModel? parameter,
-            string title,
-            string subtitle,
-            string leftLabel,
-            string rightLabel,
-            Rect card)
+        if (traderBuys is null || traderSells is null ||
+            minCondition is null || valueFloor is null)
         {
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 1.0), card, 4.0, 4.0);
-            DrawText(dc, title, new Point(card.Left + 12.0, card.Top + 9.0), 9.0, text, FontWeights.Bold);
-            DrawText(dc, subtitle, new Point(card.Left + 12.0, card.Top + 25.0), 7.8, muted, FontWeights.Normal);
+            DrawCenteredText(dc, "Trading controls unavailable.",
+                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            return;
+        }
 
-            DrawText(dc, leftLabel, new Point(card.Left + 12.0, card.Top + 47.0), 7.6, muted, FontWeights.Bold);
-            DrawRightAlignedText(dc, rightLabel, new Point(card.Right - 12.0, card.Top + 47.0), 7.6, accent, FontWeights.Bold);
+        var width = Math.Max(460.0, ActualWidth - 34.0);
+        var overview = new Rect(17.0, 55.0, width, 66.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), overview, 4.0, 4.0);
+        var midpoint = overview.Left + overview.Width / 2.0;
+        dc.DrawLine(new Pen(border, 1.0),
+            new Point(midpoint, overview.Top + 10.0),
+            new Point(midpoint, overview.Bottom - 10.0));
 
-            if (parameter is null)
-                return;
+        DrawText(dc, "YOU SELL  →  TRADER BUYS", new Point(overview.Left + 12.0, 64.0),
+            10.1, accent, FontWeights.Bold);
+        DrawText(dc, "YOU RECEIVE COUPONS", new Point(overview.Left + 12.0, 85.0),
+            9.3, text, FontWeights.SemiBold);
+        DrawText(dc, "TRADER SELLS  →  YOU BUY", new Point(midpoint + 12.0, 64.0),
+            10.1, accent, FontWeights.Bold);
+        DrawText(dc, "YOU SPEND COUPONS", new Point(midpoint + 12.0, 85.0),
+            9.3, text, FontWeights.SemiBold);
+        DrawText(dc, "Difficulty pricing values feed trader-specific shop rules.",
+            new Point(overview.Left + 12.0, 103.0), 9.0, muted, FontWeights.Normal);
 
-            DrawRightAlignedText(
-                dc,
-                FriendlyValue(parameter),
-                new Point(card.Right - 12.0, card.Top + 8.0),
-                10.0,
-                accent,
-                FontWeights.Bold);
+        void DrawPricingTrack(ParameterViewModel parameter, string label, string detail, double top)
+        {
+            var card = new Rect(17.0, top, width, 91.0);
+            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
+            DrawText(dc, label, new Point(card.Left + 12.0, top + 8.0),
+                10.4, text, FontWeights.Bold);
+            DrawRightAlignedText(dc,
+                $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
+                new Point(card.Right - 12.0, top + 7.0), 11.0,
+                parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
+            DrawText(dc, detail, new Point(card.Left + 12.0, top + 27.0),
+                9.4, muted, FontWeights.Normal);
 
-            var track = new Rect(card.Left + 18.0, card.Top + 69.0, card.Width - 36.0, 24.0);
+            var track = new Rect(card.Left + 22.0, top + 44.0, card.Width - 44.0, 22.0);
             var y = track.Top + track.Height / 2.0;
-            dc.DrawLine(new Pen(border, 4.0), new Point(track.Left, y), new Point(track.Right, y));
+            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
+                parameter.Maximum, track, reverse: false);
+            var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
+                parameter.Maximum, track, reverse: false);
 
-            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
-            var vanillaX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
+            dc.DrawLine(new Pen(border, 4.0),
+                new Point(track.Left, y), new Point(track.Right, y));
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
+                new Point(track.Left, y), new Point(currentX, y));
+            dc.DrawLine(new Pen(muted, 2.0),
+                new Point(baseX, y - 11.0), new Point(baseX, y + 11.0));
+            dc.DrawEllipse(panel, new Pen(accent,
+                IsSelected(parameter) ? 2.8 : 1.9),
+                new Point(currentX, y), 7.0, 7.0);
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
 
-            dc.DrawLine(new Pen(accent, 4.0), new Point(track.Left, y), new Point(currentX, y));
-            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, y - 8.0), new Point(vanillaX, y + 8.0));
-
-            dc.DrawEllipse(
-                panel,
-                new Pen(accent, IsSelected(parameter) ? 2.6 : 1.6),
-                new Point(currentX, y),
-                7.0,
-                7.0);
-            dc.DrawEllipse(accent, null, new Point(currentX, y), 3.0, 3.0);
-
-            DrawText(dc, "0x", new Point(track.Left, y + 10.0), 7.4, muted, FontWeights.Normal);
-            DrawCenteredText(dc, "BASE", new Point(vanillaX, y + 10.0), 7.3, muted, FontWeights.SemiBold);
-            DrawRightAlignedText(dc, "2x", new Point(track.Right, y + 10.0), 7.4, muted, FontWeights.Normal);
-
-            AddHorizontalTarget(
-                parameter,
-                new Rect(track.Left - 8.0, track.Top - 5.0, track.Width + 16.0, track.Height + 10.0),
-                track,
-                parameter.Minimum,
-                parameter.Maximum);
+            AddHorizontalTarget(parameter,
+                new Rect(track.Left - 8.0, track.Top - 4.0,
+                    track.Width + 16.0, track.Height + 8.0),
+                track, parameter.Minimum, parameter.Maximum);
+            DrawText(dc, $"{parameter.Minimum:0.##}x",
+                new Point(track.Left, top + 71.0), 9.1, muted, FontWeights.Normal);
+            DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
+                new Point(track.Right, top + 71.0), 9.1, muted, FontWeights.Normal);
         }
 
-        DrawPricingSide(
-            traderBuys,
-            "PLAYER  →  TRADER",
-            "trader buys your item",
-            "LOWER PAYOUT SETTING",
-            "HIGHER PAYOUT SETTING",
-            new Rect(left, 58.0, half, 112.0));
+        DrawPricingTrack(traderBuys,
+            "TRADER BUYS FROM YOU  /  PAYOUT SETTING",
+            "Higher means a better trader-buying setting; not an exact payout.",
+            132.0);
+        DrawPricingTrack(traderSells,
+            "TRADER SELLS TO YOU  /  SHOP SETTING",
+            "Higher means a pricier trader-selling setting; not an exact final price.",
+            232.0);
 
-        DrawPricingSide(
-            traderSells,
-            "TRADER  →  PLAYER",
-            "trader sells an item to you",
-            "LOWER SHOP SETTING",
-            "HIGHER SHOP SETTING",
-            new Rect(left + half + gap, 58.0, half, 112.0));
+        // The condition gate changes eligibility; price calculations are separate.
+        var gate = new Rect(17.0, 333.0, width, 95.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), gate, 4.0, 4.0);
+        DrawText(dc, "MINIMUM CONDITION TRADERS ACCEPT",
+            new Point(gate.Left + 12.0, 341.0), 10.4, text, FontWeights.Bold);
+        DrawRightAlignedText(dc,
+            $"{minCondition.CurrentNumber * 100:0}%  |  BASE {minCondition.ReferenceNumber * 100:0}%",
+            new Point(gate.Right - 12.0, 340.0), 11.0, accent, FontWeights.Bold);
+        DrawText(dc, "Weapons and armor below this durability are refused.",
+            new Point(gate.Left + 12.0, 360.0), 9.4, muted, FontWeights.Normal);
 
-        var currentGap = traderBuys is not null && traderSells is not null
-            ? traderSells.CurrentNumber - traderBuys.CurrentNumber
-            : 0.0;
-        var baseGap = traderBuys is not null && traderSells is not null
-            ? traderSells.ReferenceNumber - traderBuys.ReferenceNumber
-            : 0.0;
+        var gateTrack = new Rect(gate.Left + 22.0, 380.0, gate.Width - 44.0, 22.0);
+        var gateY = gateTrack.Top + gateTrack.Height / 2.0;
+        var gateX = ValueToX(minCondition.CurrentNumber,
+            minCondition.Minimum, minCondition.Maximum, gateTrack, reverse: false);
+        var gateBaseX = ValueToX(minCondition.ReferenceNumber,
+            minCondition.Minimum, minCondition.Maximum, gateTrack, reverse: false);
+        dc.DrawLine(new Pen(border, 4.0),
+            new Point(gateTrack.Left, gateY), new Point(gateTrack.Right, gateY));
+        dc.DrawRectangle(CloneWithOpacity(muted, 0.16), null,
+            new Rect(gateTrack.Left, gateY - 5.0,
+                Math.Max(0.0, gateX - gateTrack.Left), 10.0));
+        dc.DrawRectangle(CloneWithOpacity(accent, 0.19), null,
+            new Rect(gateX, gateY - 5.0,
+                Math.Max(0.0, gateTrack.Right - gateX), 10.0));
+        dc.DrawLine(new Pen(muted, 2.0),
+            new Point(gateBaseX, gateY - 11.0), new Point(gateBaseX, gateY + 11.0));
+        dc.DrawEllipse(panel, new Pen(accent, IsSelected(minCondition) ? 2.8 : 1.9),
+            new Point(gateX, gateY), 7.0, 7.0);
+        dc.DrawEllipse(accent, null, new Point(gateX, gateY), 2.5, 2.5);
+        AddHorizontalTarget(minCondition,
+            new Rect(gateTrack.Left - 8.0, gateTrack.Top - 4.0,
+                gateTrack.Width + 16.0, gateTrack.Height + 8.0),
+            gateTrack, minCondition.Minimum, minCondition.Maximum);
+        DrawText(dc, "0%  /  BROKEN", new Point(gateTrack.Left, 407.0),
+            9.1, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "100%  /  PRISTINE",
+            new Point(gateTrack.Right, 407.0), 9.1, muted, FontWeights.Normal);
 
-        var gapCard = new Rect(left, 184.0, width, 54.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.94), new Pen(border, 1.0), gapCard, 4.0, 4.0);
-        DrawText(dc, "DIFFICULTY PRICING GAP", new Point(gapCard.Left + 12.0, gapCard.Top + 8.0), 8.4, muted, FontWeights.Bold);
-        DrawText(
-            dc,
-            "sell-to-you setting minus buy-from-you setting — NOT the final shop-price ratio",
-            new Point(gapCard.Left + 12.0, gapCard.Top + 24.0),
-            7.5,
-            muted,
-            FontWeights.Normal);
-        DrawRightAlignedText(
-            dc,
-            $"{currentGap:+0.00;-0.00;0.00}   |   BASE {baseGap:+0.00;-0.00;0.00}",
-            new Point(gapCard.Right - 12.0, gapCard.Top + 8.0),
-            9.0,
-            Math.Abs(currentGap - baseGap) > Epsilon ? accent : muted,
-            FontWeights.Bold);
+        // ItemCostMinPercent is a global durability-value layer, not a trader price.
+        var floor = new Rect(17.0, 439.0, width, 95.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), floor, 4.0, 4.0);
+        DrawText(dc, "ITEM VALUE AT 0% DURABILITY",
+            new Point(floor.Left + 12.0, 447.0), 10.4, text, FontWeights.Bold);
+        DrawRightAlignedText(dc,
+            $"{valueFloor.CurrentNumber * 100:0}%  |  BASE {valueFloor.ReferenceNumber * 100:0}%",
+            new Point(floor.Right - 12.0, 446.0), 11.0, accent, FontWeights.Bold);
+        DrawText(dc, "Base value retained when broken; not the final sale price.",
+            new Point(floor.Left + 12.0, 466.0), 9.4, muted, FontWeights.Normal);
 
-        var gateCard = new Rect(left, 253.0, width, 91.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 1.0), gateCard, 4.0, 4.0);
-        DrawText(dc, "TRADER CONDITION GATE", new Point(gateCard.Left + 12.0, gateCard.Top + 9.0), 8.8, text, FontWeights.Bold);
-        DrawText(dc, "weapons / armor below the threshold are refused", new Point(gateCard.Left + 12.0, gateCard.Top + 25.0), 7.7, muted, FontWeights.Normal);
+        var floorTrack = new Rect(floor.Left + 22.0, 486.0, floor.Width - 44.0, 22.0);
+        var floorY = floorTrack.Top + floorTrack.Height / 2.0;
+        var floorX = ValueToX(valueFloor.CurrentNumber,
+            valueFloor.Minimum, valueFloor.Maximum, floorTrack, reverse: false);
+        var floorBaseX = ValueToX(valueFloor.ReferenceNumber,
+            valueFloor.Minimum, valueFloor.Maximum, floorTrack, reverse: false);
+        dc.DrawLine(new Pen(border, 4.0),
+            new Point(floorTrack.Left, floorY), new Point(floorTrack.Right, floorY));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
+            new Point(floorTrack.Left, floorY), new Point(floorX, floorY));
+        dc.DrawLine(new Pen(muted, 2.0),
+            new Point(floorBaseX, floorY - 11.0), new Point(floorBaseX, floorY + 11.0));
+        dc.DrawEllipse(panel, new Pen(accent, IsSelected(valueFloor) ? 2.8 : 1.9),
+            new Point(floorX, floorY), 7.0, 7.0);
+        dc.DrawEllipse(accent, null, new Point(floorX, floorY), 2.5, 2.5);
+        AddHorizontalTarget(valueFloor,
+            new Rect(floorTrack.Left - 8.0, floorTrack.Top - 4.0,
+                floorTrack.Width + 16.0, floorTrack.Height + 8.0),
+            floorTrack, valueFloor.Minimum, valueFloor.Maximum);
+        DrawText(dc, $"{valueFloor.Minimum * 100:0}%",
+            new Point(floorTrack.Left, 513.0), 9.1, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{valueFloor.Maximum * 100:0}%",
+            new Point(floorTrack.Right, 513.0), 9.1, muted, FontWeights.Normal);
 
-        if (minCondition is not null)
-        {
-            DrawRightAlignedText(
-                dc,
-                $"{minCondition.CurrentNumber * 100:0}% MIN CONDITION",
-                new Point(gateCard.Right - 12.0, gateCard.Top + 8.0),
-                9.5,
-                accent,
-                FontWeights.Bold);
-
-            var gateTrack = new Rect(gateCard.Left + 20.0, gateCard.Top + 54.0, gateCard.Width - 40.0, 24.0);
-            var gateY = gateTrack.Top + gateTrack.Height / 2.0;
-            var currentX = ValueToX(minCondition.CurrentNumber, 0.0, 1.0, gateTrack, reverse: false);
-            var vanillaX = ValueToX(minCondition.ReferenceNumber, 0.0, 1.0, gateTrack, reverse: false);
-
-            dc.DrawLine(new Pen(border, 4.0), new Point(gateTrack.Left, gateY), new Point(gateTrack.Right, gateY));
-
-            dc.DrawRectangle(
-                CloneWithOpacity(border, 0.16),
-                null,
-                new Rect(gateTrack.Left, gateY - 6.0, Math.Max(1.0, currentX - gateTrack.Left), 12.0));
-            dc.DrawRectangle(
-                CloneWithOpacity(accent, 0.16),
-                null,
-                new Rect(currentX, gateY - 6.0, Math.Max(1.0, gateTrack.Right - currentX), 12.0));
-
-            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, gateY - 10.0), new Point(vanillaX, gateY + 10.0));
-            dc.DrawLine(new Pen(accent, 2.4), new Point(currentX, gateY - 12.0), new Point(currentX, gateY + 12.0));
-            dc.DrawEllipse(panel, new Pen(accent, IsSelected(minCondition) ? 2.6 : 1.6), new Point(currentX, gateY), 7.0, 7.0);
-
-            DrawText(dc, "REFUSED", new Point(gateTrack.Left, gateY + 11.0), 7.5, muted, FontWeights.Bold);
-            DrawRightAlignedText(dc, "ACCEPTED", new Point(gateTrack.Right, gateY + 11.0), 7.5, accent, FontWeights.Bold);
-            DrawCenteredText(dc, "VANILLA 40%", new Point(vanillaX, gateY + 11.0), 7.2, muted, FontWeights.SemiBold);
-
-            AddHorizontalTarget(
-                minCondition,
-                new Rect(gateTrack.Left - 8.0, gateTrack.Top - 5.0, gateTrack.Width + 16.0, gateTrack.Height + 10.0),
-                gateTrack,
-                0.0,
-                1.0);
-        }
-
-        var valueCard = new Rect(left, 360.0, width, 78.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 1.0), valueCard, 4.0, 4.0);
-        DrawText(dc, "BROKEN-ITEM VALUE FLOOR", new Point(valueCard.Left + 12.0, valueCard.Top + 9.0), 8.8, text, FontWeights.Bold);
-        DrawText(dc, "base value retained at exactly 0% durability", new Point(valueCard.Left + 12.0, valueCard.Top + 25.0), 7.7, muted, FontWeights.Normal);
-
-        if (valueFloor is not null)
-        {
-            DrawRightAlignedText(
-                dc,
-                $"{valueFloor.CurrentNumber * 100:0}% OF BASE VALUE",
-                new Point(valueCard.Right - 12.0, valueCard.Top + 8.0),
-                9.5,
-                accent,
-                FontWeights.Bold);
-
-            var floorTrack = new Rect(valueCard.Left + 20.0, valueCard.Top + 49.0, valueCard.Width - 40.0, 20.0);
-            var floorY = floorTrack.Top + floorTrack.Height / 2.0;
-            dc.DrawLine(new Pen(border, 4.0), new Point(floorTrack.Left, floorY), new Point(floorTrack.Right, floorY));
-
-            var currentX = ValueToX(valueFloor.CurrentNumber, valueFloor.Minimum, valueFloor.Maximum, floorTrack, reverse: false);
-            var vanillaX = ValueToX(valueFloor.ReferenceNumber, valueFloor.Minimum, valueFloor.Maximum, floorTrack, reverse: false);
-
-            dc.DrawLine(new Pen(accent, 4.0), new Point(floorTrack.Left, floorY), new Point(currentX, floorY));
-            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, floorY - 8.0), new Point(vanillaX, floorY + 8.0));
-
-            dc.DrawEllipse(
-                panel,
-                new Pen(accent, IsSelected(valueFloor) ? 2.6 : 1.6),
-                new Point(currentX, floorY),
-                7.0,
-                7.0);
-            dc.DrawEllipse(accent, null, new Point(currentX, floorY), 3.0, 3.0);
-
-            DrawText(dc, "0%", new Point(floorTrack.Left, floorY + 9.0), 7.3, muted, FontWeights.Normal);
-            DrawCenteredText(dc, "VANILLA 10%", new Point(vanillaX, floorY + 9.0), 7.2, muted, FontWeights.SemiBold);
-            DrawRightAlignedText(dc, "20%", new Point(floorTrack.Right, floorY + 9.0), 7.3, muted, FontWeights.Normal);
-
-            AddHorizontalTarget(
-                valueFloor,
-                new Rect(floorTrack.Left - 8.0, floorTrack.Top - 5.0, floorTrack.Width + 16.0, floorTrack.Height + 10.0),
-                floorTrack,
-                valueFloor.Minimum,
-                valueFloor.Maximum);
-        }
-
-        DrawCenteredText(
-            dc,
-            "PRICING SETTINGS STILL PASS THROUGH TRADER-SPECIFIC MODIFIERS AND OTHER VANILLA SHOP RULES",
-            new Point(ActualWidth / 2.0, 459.0),
-            7.6,
-            muted,
-            FontWeights.Normal);
+        DrawText(dc, "GREY TICK = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
+            new Point(20.0, 550.0), 9.1, muted, FontWeights.SemiBold);
+        DrawText(dc, "PRICE SETTINGS ARE DIFFICULTY SCALERS, NOT EXACT SHOP PAYOUTS",
+            new Point(20.0, 567.0), 9.1, muted, FontWeights.Normal);
     }
 
     private void DrawHungerLadder(
@@ -3737,7 +3684,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "StarvationTimeline" => 532.0,
             "RepeatedHitBand" => 455.0,
             "RadiationBalance" => 490.0,
-            "TradingDashboard" => 485.0,
+            "TradingDashboard" => 590.0,
             "RepairCurve" => 370.0,
             "AmmoDistribution" => 470.0,
             _ => 340.0
