@@ -318,23 +318,18 @@ The former `DIFFICULTY PRICING GAP` display is removed. Subtracting two difficul
 
 `AggregateVisualControl / RepairCurve`
 
-- Hostile.
-- Disliked.
-- Neutral.
-- Friendly.
+The panel combines a **read-only reputation curve** with four independently editable full-width horizontal sliders:
 
-All four values share one repair-price graph.
+- **Hostile / Enemy** edits `economy.repairEnemy` (0–3x, vanilla 2x).
+- **Disliked** edits `economy.repairDisaffection` (0–2x, vanilla 1.5x).
+- **Neutral** edits `economy.repairNeutral` (0–2x, vanilla 1x).
+- **Friendly** edits `economy.repairFriend` (0–2x, vanilla 0.75x).
 
-`1x` means the unmodified base repair layer:
+The chart connects current values in gold and Base Preset values with a grey dashed line. It has **no draggable hit targets**: the live handles are on the four wide tracks underneath, with larger live/base numbers, native bounds, grey Base Preset ticks and a subtle separate **1x unmodified-price** reference. The chart uses a common 0–3x axis for accurate visual comparison; each slider retains its own original source range and 0.01 step.
 
-- above 1x = surcharge,
-- below 1x = discount.
+`1x` means no reputation-specific change to the underlying repair price; values above 1x are surcharges and values below 1x are discounts. These are reputation modifiers, **not final repair bills**: base repair price and other underlying repair settings are unchanged.
 
-Current values are gold; vanilla is dashed.
-
-The central slider constraint preserves:
-
-`HOSTILE >= DISLIKED >= NEUTRAL >= FRIENDLY`
+The centralized value-based slider constraint remains `HOSTILE >= DISLIKED >= NEUTRAL >= FRIENDLY`. It prioritizes the actively edited setting and adjusts neighbors minimally. Right-click on a slider resets only its parameter to Base Preset; `R` resets the full four-member family. The control continues writing the four existing `ReputationRepairCostModifiers` entries without changing the CFG or preset schema.
 
 ### Breakable Box Ammo Mixer
 
