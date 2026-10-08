@@ -22,6 +22,9 @@ public sealed class ResponsiveSectionGridPanel : Panel
         new Dictionary<string, string>(StringComparer.Ordinal)
         {
             ["Stashes"] = "Breakable Containers",
+            ["Your Weapons"] = "Explosives",
+            ["Trader Stock"] = "Item Price Scalers",
+            ["Equipment Wear"] = "Item Weight",
         };
 
     protected override Size MeasureOverride(Size availableSize)
