@@ -188,9 +188,12 @@ public sealed class MutantHealthRadar : FrameworkElement
             DrawCenteredText(dc, name,
                 new Point(center, card.Top + 15.0), 9.8, text, FontWeights.Bold);
         DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
-            new Point(center, card.Top + 39.0), 16.2, accent, FontWeights.Bold);
+            new Point(center, card.Top + 39.0), 16.2,
+            parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
         DrawCenteredText(dc, $"{currentHp:0} HP",
-            new Point(center, card.Top + 63.0), 10.6, muted, FontWeights.SemiBold);
+            new Point(center, card.Top + 63.0), 10.6,
+            parameter.IsValueModifiedFromReference() ? accent : muted,
+            FontWeights.SemiBold);
         var rail = new Rect(center - 3.0, card.Top + 110.0, 6.0, 150.0);
         var currentY = ValueToY(parameter.CurrentNumber,
             parameter.Minimum, parameter.Maximum, rail);
