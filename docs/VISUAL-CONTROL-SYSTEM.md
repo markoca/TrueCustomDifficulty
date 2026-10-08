@@ -535,3 +535,7 @@ Eight cooldown multipliers occupy one fixed horizontal row, matching Mutant Heal
 ### Special Ability Cooldowns layout (2026-10-08)
 
 All eight cooldown multipliers now occupy one fixed horizontal row of compact vertical faders, matching Mutant Health. Each gold value and handle controls the original cooldown wait multiplier; the smaller grey `x RETURN` value is its inverse, not a second editable parameter. The grey Base reference tick, native ranges and steps, circular hover glow, individual right-click reset and R reset-all are preserved. Long mutant names wrap onto two lines without rectangular selection boxes.
+
+### Combined Mutant Combat board (2026-10-08)
+
+**GLOBAL COMBAT** is the first tier of the Mutant Combat section, consisting of two larger vertical faders for mutant hit damage and ordinary attack frequency. **SPECIAL ABILITY COOLDOWNS** is the second tier, consisting of eight compact, identical, one-row mutant-specific faders that edit cooldown *wait* values and show inverse `x RETURN`. These are separate CFG paths, not an overall combat pressure formula. Grey reference markers, native slider steps, circular gold hover-only indicators and per-setting reset are maintained. The combined section is one full-width top-level 1x1 block.
