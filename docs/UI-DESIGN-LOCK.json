@@ -3,13 +3,13 @@
   "policy": "docs/UI-DESIGN-LOCK.md",
   "state": "LOCKED",
   "baselineDate": "2026-10-08",
-  "approval": "2026-10-08 user request to preserve every approved UI design; this initial snapshot does not approve a redesign",
+  "approval": "UI-08 + UI-09 (2026-10-08): user-approved square Human Combat graph, vertical faders and neighboring Mutants section",
   "lockedFiles": {
-    "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": "7db680610f23be44b42335a98438fdb01562f650",
-    "src/TrueCustomDifficulty/Infrastructure/ResponsiveSectionGridPanel.cs": "1cb4be34975c317cbaef60b7d3d158bb18cf68b5",
+    "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": "f6f444f31490bedd708d4756f8e3b6cf96287937",
+    "src/TrueCustomDifficulty/Infrastructure/ResponsiveSectionGridPanel.cs": "8992904d1d7b6e2452f5c995419b2082bcb36582",
     "src/TrueCustomDifficulty/Infrastructure/ResponsiveParameterGridPanel.cs": "86da30e8bc7de1b598baa4844b06cb93451aaf93",
     "src/TrueCustomDifficulty/MainWindow.xaml": "059a4e6b14105b159355e06af78d6e23e8481170",
-    "docs/UI-MIXER-GRID-SPEC.md": "0fe055634792e961d9e5e2db9b5afe8bb4c357cd",
-    "docs/VISUAL-CONTROL-SYSTEM.md": "e445abcfc9aeb0a1c6fc5e4b66702cb412f9f859"
+    "docs/UI-MIXER-GRID-SPEC.md": "6c12f2423a54eaa84f940b7af2dca39964027d03",
+    "docs/VISUAL-CONTROL-SYSTEM.md": "7e22f765c1d24750b805bbe37ba4bc24a32cfa4c"
   }
 }
