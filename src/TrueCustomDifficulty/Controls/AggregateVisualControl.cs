@@ -2518,10 +2518,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         for (var i = 0; i < 3; i++)
         {
             var x = overview.Left + third * i + 12.0;
-            DrawText(dc, headings[i], new Point(x, 64.0), 9.5,
-                i == 0 ? accent : text, FontWeights.Bold);
-            DrawText(dc, notes[i], new Point(x, 84.0),
-                9.0, muted, FontWeights.Normal);
+            // Keep each explanation inside its own third of the summary.
+            var columnTextWidth = Math.Max(1.0, third - 24.0);
+            dc.DrawText(CreateText(headings[i], 9.5,
+                    i == 0 ? accent : text, FontWeights.Bold, columnTextWidth),
+                new Point(x, 64.0));
+            dc.DrawText(CreateText(notes[i], 9.0, muted,
+                    FontWeights.Normal, columnTextWidth),
+                new Point(x, 84.0));
             if (i != 0)
             {
                 var dividerX = overview.Left + third * i;
@@ -2549,16 +2553,20 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
                 card, 4.0, 4.0);
 
-            DrawText(dc, label, new Point(card.Left + 12.0, top + 8.0),
-                10.5, text, FontWeights.Bold);
-            DrawRightAlignedText(dc, currentAndBase,
-                new Point(card.Right - 12.0, top + 7.0),
-                11.0, parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
-            DrawText(dc, description, new Point(card.Left + 12.0, top + 27.0),
-                9.4, muted, FontWeights.Normal);
+            // Distinct title/value/meaning rows avoid overlap at minimum width.
+            var cardTextWidth = Math.Max(1.0, card.Width - 24.0);
+            dc.DrawText(CreateText(label, 10.3, text, FontWeights.Bold, cardTextWidth),
+                new Point(card.Left + 12.0, top + 6.0));
+            dc.DrawText(CreateText(currentAndBase, 10.8,
+                    parameter.IsControlEnabled ? accent : muted,
+                    FontWeights.Bold, cardTextWidth),
+                new Point(card.Left + 12.0, top + 23.0));
+            dc.DrawText(CreateText(description, 9.2, muted,
+                    FontWeights.Normal, cardTextWidth),
+                new Point(card.Left + 12.0, top + 40.0));
 
-            var track = new Rect(card.Left + 21.0, top + 48.0,
-                card.Width - 42.0, 22.0);
+            var track = new Rect(card.Left + 21.0, top + 59.0,
+                card.Width - 42.0, 14.0);
             var y = track.Top + track.Height / 2.0;
             var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
                 parameter.Maximum, track, reverse: false);
@@ -2585,9 +2593,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                     track.Width + 16.0, track.Height + 8.0),
                 track, parameter.Minimum, parameter.Maximum);
 
-            DrawText(dc, minimumLabel, new Point(track.Left, top + 73.0),
+            DrawText(dc, minimumLabel, new Point(track.Left, top + 78.0),
                 9.1, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, maximumLabel, new Point(track.Right, top + 73.0),
+            DrawRightAlignedText(dc, maximumLabel, new Point(track.Right, top + 78.0),
                 9.1, muted, FontWeights.Normal);
         }
 
