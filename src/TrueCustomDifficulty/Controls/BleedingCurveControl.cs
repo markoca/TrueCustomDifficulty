@@ -866,7 +866,7 @@ public sealed class BleedingCurveControl : FrameworkElement
         if (modified)
         {
             var number = System.Text.RegularExpressions.Regex.Match(
-                value, @"\d+(?:\.\d+)?");
+                value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
             if (number.Success)
                 ft.SetForegroundBrush(accent, number.Index, number.Length);
         }
