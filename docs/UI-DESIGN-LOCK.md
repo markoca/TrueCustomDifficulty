@@ -181,3 +181,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — UI-08 — explicit Combat 2x1 section slots
 
 **User correction:** Combat is a fixed design, not an adaptive grid. Earlier grouping by WPF `GroupItem.Content` or DataContext did not consistently produce the required side-by-side layout. The Combat tab now explicitly allocates its first two catalog groups to one 2-column row: left **Human Enemies**, right **Your Weapons**. The layout does not use group-name inference for these slots; section order is defined in the Combat catalog. Only the Combat section panel has a 1096-DIP minimum width; narrower viewports scroll horizontally instead of stacking these panels. All other tabs retain their prior responsive behavior. This is the approved locked UI-08 placement; local visual confirmation remains pending.
+
+### 2026-10-08 — UI-08 — correct fixed Combat section identities
+
+**User screenshot:** Human Enemies was incorrectly paired with Mutants, while Your Weapons appeared below. The WPF grouped collection did not respect the assumed Human Enemies / Your Weapons ordering. The section panel now resolves explicit `GroupItem.Tag` values populated with `{Binding Name}`, positions Human Enemies and Your Weapons first in the visual layout, and pairs those actual two sections in a permanent 2x1 row. Mutants remains in the following row. Do not pair by unchecked first/second original group index. Preserves controls and CFG mappings. Runtime acceptance pending.
