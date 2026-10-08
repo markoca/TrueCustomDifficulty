@@ -307,3 +307,7 @@ The locked 2x1 row always contains **Human Enemies | Your Weapons**, identified 
 ### Locked Your Weapons internal 2×2 grid — 2026-10-08
 
 Inside the fixed right-hand Combat section, four faders must be a centered 2-column, 2-row bank with equal cell widths and consistent spacing. Do not reuse the generic mixer column-count algorithm for this family: it produced an overflowing 3+1 arrangement. The fourth Explosion Damage fader must always be visible beneath Headshot Damage. The outer Combat section arrangement remains Human Enemies | Your Weapons.
+
+### 2026-10-08 — All sections fixed 1x1 (supersedes two-column designs)
+
+**Explicit user instruction:** Every top-level section must occupy its own full-width row (1x1). No responsive or fixed side-by-side pairing is permitted, including Human Enemies / Your Weapons, Mutants, trader, equipment, loot and other catalog sections. `ResponsiveSectionGridPanel` now measures and arranges one GroupItem per row, preserving catalog visual order. Combat no longer reserves a 1096-DIP minimum, and horizontal scrolling is disabled again. The four faders **inside** Your Weapons retain their internal 2x2 arrangement; this change concerns top-level sections only. Earlier 2x1 instructions are superseded. No CFG or parameter mappings change. Wine acceptance pending.
