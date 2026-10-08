@@ -951,7 +951,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 Title: "MUTANT COMBAT PRESSURE",
                 Subtitle: "hit strength and attack frequency are independent",
                 First: "combat.mutantDamage",
-                FirstLabel: "DAMAGE PER HIT",
+                FirstLabel: "DAMAGE FROM MUTANTS",
                 Second: "combat.mutantAttackCooldown",
                 SecondLabel: "ATTACK FREQUENCY",
                 Note: "RIGHT = MORE DAMAGE / MORE FREQUENT ATTACKS"),

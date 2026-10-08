@@ -437,3 +437,8 @@ Remove the descriptive `GLOBAL COMBAT | damage per hit and normal attack frequen
 ### 2026-10-09 — Your Weapons bottom legend removed; mutant cooldown rate clarified
 
 The live Your Weapons board is `DrawYourWeaponsFaders`, not the older `DrawPlayerWeaponProfile`. Remove its **remaining bottom legend** (`GOLD = CURRENT | GREY TICK = BASE | RIGHT-CLICK TO RESET`) while leaving three horizontal weapon controls and the board heading intact. In `SpecialAbilityCooldownRadar`, replace the ambiguous secondary readout `N× RETURN` with **`N× ATTACK RATE`**, computed with the existing inverse of the authored ability cooldown multiplier (`1 / CurrentNumber`), and describe it as *more frequent special attacks, not regular attacks*. The underlying parameter remains a **cooldown multiplier**, not an independent attack speed or damage value. This changes UI text only; no cooldown inversion, CFG mapping, limits, editor steps, or reset semantics have changed. Keep these exact layouts as the current lock. Compile/Wine visual check pending.
+
+
+### 2026-10-09 — Mutant Combat label implementation verified
+
+The active `MutantCombatPressure` source control's `FirstLabel` is **DAMAGE FROM MUTANTS**, matching the previously authorized Mutant Combat wording contract. Only the displayed caption changed; `combat.mutantDamage`, slider geometry, ranges, editing, and reset semantics are unchanged.
