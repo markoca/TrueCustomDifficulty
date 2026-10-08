@@ -303,19 +303,16 @@ Each editable slider uses its real catalog limits and step, shows current and Ba
 
 `AggregateVisualControl / TradingDashboard`
 
-- Trader Buy-From-You Pricing.
-- Trader Sell-To-You Pricing.
-- Trader Minimum Buy Condition.
-- Item Value at 0% Durability.
+The redesigned Trading Flow surface separates four independently authored economy settings:
 
-The first two values are shown by transaction direction:
+- **You Sell / Trader Payout** edits `economy.buyCondition` on its real 0–2x axis. This is the difficulty-profile `BuyCondition` used when a trader **buys from the player**, not an exact final payout.
+- **You Buy / Trader Shop Price** edits `economy.sellCondition` on its real 0–2x axis. This is the difficulty-profile `SellCondition` used when a trader **sells to the player**, not the full shop-price formula.
+- **Minimum Condition Traders Accept** edits `economy.traderMinBuyCondition` on a 0–100% durability gate: gear below the chosen threshold is refused. The source maps to the weapon and armor buy-eligibility gates of 86 audited production trading profiles, including DLC1 when installed. Vanilla is 40%.
+- **Item Value at 0% Durability** edits `economy.itemValueFloor` on a 0–20% base-item-value axis. Vanilla is 10%. This changes the value retained by fully broken items independently from whether a trader agrees to buy them.
 
-- `PLAYER -> TRADER`: the difficulty pricing setting used when traders buy from the player.
-- `TRADER -> PLAYER`: the setting used when traders sell to the player.
+A compact read-only **You Sell → Trader Buys / Trader Sells → You Buy** overview establishes the direction of each transaction. All four values have their own full-width horizontal editor, larger live/base numbers, a gold current handle, a grey Base Preset tick and labelled source-range endpoints. The acceptance threshold uses neutral grey for refused condition and gold for accepted condition.
 
-`DIFFICULTY PRICING GAP` is only the difference between those two settings; it is not claimed to be the final shop-price ratio.
-
-The condition gate shows which weapon/armor durability range is refused or accepted. The broken-item value floor is a separate durability-to-value layer.
+The former `DIFFICULTY PRICING GAP` display is removed. Subtracting two difficulty settings is not the player's actual shop markup; trader-specific modifiers, item condition and other vanilla trade rules affect the result. Right-click an editor to reset that parameter; `R` resets the four-member family. All existing CFG mappings, presets, steps and writer behavior remain unchanged.
 
 ### Repair Price Curve
 
