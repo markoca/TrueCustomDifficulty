@@ -3006,10 +3006,25 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var active = parameter.CurrentBoolean;
         var fill = active ? CloneWithOpacity(accent, 0.18) : panel;
-        dc.DrawRoundedRectangle(fill, new Pen(active ? accent : border, active ? 1.8 : 1.0), rect, 4.0, 4.0);
+        dc.DrawRoundedRectangle(fill,
+            new Pen(active ? accent : border, active ? 1.8 : 1.0),
+            rect, 4.0, 4.0);
 
-        DrawText(dc, label, new Point(rect.Left + 10.0, rect.Top + 10.0), 8.7, active ? text : muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, active ? "ON" : "OFF", new Point(rect.Right - 10.0, rect.Top + 9.0), 9.5, active ? accent : muted, FontWeights.Bold);
+        // Reserve a fixed status lane before measuring the caption, so a
+        // long bundle name cannot overwrite its ON/OFF value on narrow cards.
+        var statusLane = 52.0;
+        var labelWidth = Math.Max(1.0, rect.Width - statusLane - 20.0);
+        dc.DrawText(CreateText(label, 9.7,
+                active ? text : muted, FontWeights.Bold, labelWidth),
+            new Point(rect.Left + 10.0, rect.Top + Math.Max(4.0, (rect.Height - 15.0) / 2.0)));
+
+        var status = active ? "ON" : "OFF";
+        var statusText = CreateText(status, 10.2,
+            active ? accent : muted, FontWeights.Bold,
+            statusLane - 12.0);
+        dc.DrawText(statusText,
+            new Point(rect.Right - 10.0 - statusText.WidthIncludingTrailingWhitespace,
+                rect.Top + Math.Max(4.0, (rect.Height - 15.0) / 2.0)));
 
         AddToggleTarget(parameter, rect);
     }
