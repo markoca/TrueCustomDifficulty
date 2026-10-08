@@ -47,6 +47,13 @@ The user requested on 2026-10-08: **"nek se zapise svaki UI dizajn kako bi ostao
 
 ## Change approvals
 
+### 2026-10-08 — UI-09 — runtime caps, not merely catalog caps
+
+**User correction:** Attack Frequency maximum must actually be 2x and Fire Accuracy maximum must actually be 1x; updating the documentation without enforcing runtime behavior is insufficient.
+
+**Implementation:** `ParameterViewModel.Maximum` explicitly caps `combat.npcAttackCooldown` at 2.0x and `combat.npcHipAccuracy` at 1.0x. The existing catalog values match these ceilings. UI faders and normalization take their maximum from this runtime property; dragging, keyboard entry and old preset values cannot exceed it. These are attack *frequency* and human gunfire *accuracy*, not weapon firing rate. No other parameters or UI layout are changed. Static regression checks cover both model-level and catalog-level limits; local native build and Wine QA pending.
+
+
 ### 2026-10-08 — UI-09 — stronger hover feedback on approved handles
 
 **User approval:** Repeated explicit request to implement matching hover glow, interactive X/Y joint, Attack Frequency maximum 2x and Fire Accuracy maximum 1x in code and documentation.
