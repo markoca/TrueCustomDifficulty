@@ -321,3 +321,7 @@ Authorized Consumables Board redesign: four native horizontal strength controls 
 ### 2026-10-08 — Consumables preview compile correction
 
 Removed the duplicate local `previewTop` declaration in `DrawConsumableMixer` (CS0128). The seconds timeline now uses the single preview position derived from its redesigned title (`previewTitle + 23`), consistent with `CompactConsumableHeight`. No parameter, interaction, or approved UI layout was intentionally changed. Local publish/Wine verification pending.
+
+### 2026-10-08 — Consumables compact faders authorized
+
+User authorized replacing all nine consumable editable sliders with compact vertical faders and explicitly requested retaining the approved live effect statistics. Four independent strength controls and five independent drink-duration controls now use 179-DIP vertical channels, split into responsive banks of 3–5 columns. Each fader shows a two-line title, live source multiplier, gold handle, higher-at-top native rail and grey Base reference tick, using existing vertical hit targeting, snapping and reset behavior. Three read-only current-effects cards and the full real-seconds duration timeline are retained unchanged. Hunger and Fatigue design locks and CFG/source mappings are unchanged. Await Wine visual acceptance.
