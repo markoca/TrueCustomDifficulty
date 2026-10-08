@@ -190,6 +190,12 @@ def main() -> None:
                 f"{family}: source family control-help absent")
         require(f'or "{family}"' in visual or f'Family is "{family}"' in visual,
                 f"{family}: rationale selection missing")
+    # Large six-channel Anomaly mixer never stretches faders at intermediate
+    # 16:9 editor widths; narrow view still preserves a 128-DIP minimum.
+    require("var width = Math.Min(148.0, Math.Max(128.0," in visual,
+            "anomaly mixer lacks the shared upper width cap")
+    require("var source = AnomalyMixerChannels[index];" in visual,
+            "anomaly mixer source order changed")
     # Compact banks stay centred without filling the entire board width.
     for board_width, fader_count in ((920.0, 2), (920.0, 3),
                                      (628.0, 2), (520.0, 3), (400.0, 3)):
