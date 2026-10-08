@@ -1796,9 +1796,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "HUMAN COMBAT PROFILE",
-            "enemy toughness and gun damage, plus attack tempo and shot accuracy",
-            text, muted, accent);
+        DrawHeader(dc, "HUMAN COMBAT PROFILE", "", text, muted, accent);
 
         var health = P("combat.npcHealth");
         var damage = P("combat.npcWeaponDamage");
@@ -1811,14 +1809,28 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        DrawDualParameterHeading(dc,
-            health, "ENEMY HEALTH",
-            damage, "GUN DAMAGE",
-            51.0, text, accent);
-
         // Reserve the right-hand lane for two vertically oriented source faders.
         var plotSide = Math.Min(280.0, Math.Max(180.0, ActualWidth - 360.0));
         var plot = new Rect(64.0, 91.0, plotSide, plotSide);
+
+        // Attach each title/value to its physical axis instead of splitting
+        // them across the panel's top row. X = health, Y = gun damage.
+        var axisCenterX = plot.Left + plot.Width / 2.0;
+        DrawCenteredText(dc, "ENEMY HEALTH  →",
+            new Point(axisCenterX, plot.Top - 43.0),
+            10.0, text, FontWeights.Bold);
+        DrawCenteredText(dc, $"{health.CurrentNumber:0.##}x",
+            new Point(axisCenterX, plot.Top - 27.0),
+            12.0, accent, FontWeights.Bold);
+        var axisCenterY = plot.Top + plot.Height / 2.0;
+        dc.PushTransform(new RotateTransform(-90.0, 18.0, axisCenterY));
+        DrawCenteredText(dc, "GUN DAMAGE  ↑",
+            new Point(18.0, axisCenterY - 11.0),
+            10.0, text, FontWeights.Bold);
+        DrawCenteredText(dc, $"{damage.CurrentNumber:0.##}x",
+            new Point(18.0, axisCenterY + 7.0),
+            12.0, accent, FontWeights.Bold);
+        dc.Pop();
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
 
         for (var tick = 0; tick <= 4; tick++)
