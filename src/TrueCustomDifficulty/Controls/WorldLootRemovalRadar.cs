@@ -163,16 +163,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             muted,
             FontWeights.Normal);
 
-        if (!string.IsNullOrWhiteSpace(_status.Text))
-        {
-            DrawCenteredText(
-                dc,
-                _status.Text,
-                new Point(ActualWidth / 2.0, 390.0),
-                8.0,
-                accent,
-                FontWeights.SemiBold);
-        }
+        // Reset notifications intentionally silent.
     }
 
     private void DrawRow(
