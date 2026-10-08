@@ -291,3 +291,7 @@ The four vertical faders in **Your Weapons** are Weapon Damage, Headshot Damage,
 ### GroupItem pairing reliability (2026-10-08)
 
 The responsive section grid uses the actual WPF GroupItem.Content to resolve group names, with DataContext as fallback. Human Enemies + Your Weapons therefore pair at at least 1096 DIP available content width, and stack below that. Do not force narrow side-by-side panels that clip the square human plot or four player-weapon faders.
+
+### Fixed 2x1 Combat pairing (2026-10-08)
+
+Human Enemies and Your Weapons are a permanently fixed side-by-side pair (left/right), not an adaptive 2x1/1x1 switch. The group host reserves at least 1096 DIP, horizontal overflow is scrollable, and each child receives at least 540 DIP. Other mixer groups remain unchanged.
