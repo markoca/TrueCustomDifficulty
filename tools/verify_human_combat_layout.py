@@ -44,6 +44,13 @@ if '"HumanCombatProfile" => "The square graph' not in help_text:
 catalog = {p["id"]: p for p in json.loads((SRC / "Data" / "parameters.json").read_text())["parameters"]}
 assert catalog["combat.npcAttackCooldown"]["slider"]["max"] == 2
 assert catalog["combat.npcHipAccuracy"]["slider"]["max"] == 1
+# Joint handle and independent axes must share the exact glyph and glow renderer.
+assert 'DrawHumanAxisHandle(dc, new Point(healthX, damageY), accent, panel,' in human
+assert 'DrawHumanAxisHandle(dc, healthHandle, accent, panel,' in human
+assert 'DrawHumanAxisHandle(dc, damageHandle, accent, panel,' in human
+assert 'dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.20 : 0.12)' in visual
+assert 'center, hovered ? 16.0 : 12.0' in visual
+assert 'HitKind.HumanJoint' in human
 assert 'HitKind.HumanJoint => Cursors.SizeAll' in visual
 assert 'P("combat.npcWeaponDamage")?.ResetToReference();' in visual
 ET.fromstring(xaml)
