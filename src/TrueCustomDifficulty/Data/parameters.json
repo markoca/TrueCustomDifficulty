@@ -375,6 +375,50 @@
       "interaction": "Pair it with Human Enemy Gun Damage to tune how threatening firefights feel. It affects human gunfire, not mutant attacks, melee, or grenades."
     },
     {
+      "id": "combat.explosionDamage",
+      "tab": "combat",
+      "group": "Human Enemies",
+      "label": "Explosion Damage",
+      "description": "Changes damage from explosions such as grenades and other explosive effects.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Explosion damage"
+      },
+      "vanilla": {
+        "Novice": 0.25,
+        "Stalker": 1,
+        "Veteran": 1,
+        "Master": 1.2
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.01
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "EnvironmentDifficulty.Explosion_BaseDamage",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": []
+      },
+      "rationale": "Changes damage from explosions such as grenades and other explosive effects.",
+      "logic": "",
+      "interaction": "Each explosion still has its own base damage. This setting scales the difficulty layer applied on top of those base values."
+    },
+    {
       "id": "combat.playerWeaponDamage",
       "tab": "combat",
       "group": "Your Weapons",
@@ -505,50 +549,6 @@
       "rationale": "Changes how often worn weapons jam.",
       "logic": "",
       "interaction": "Weapon condition and each weapon's own jam behavior still matter. Use this to make jams generally more or less common."
-    },
-    {
-      "id": "combat.explosionDamage",
-      "tab": "combat",
-      "group": "Your Weapons",
-      "label": "Explosion Damage",
-      "description": "Changes damage from explosions such as grenades and other explosive effects.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Explosion damage"
-      },
-      "vanilla": {
-        "Novice": 0.25,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 1.2
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0,
-        "max": 2,
-        "step": 0.01
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "EnvironmentDifficulty.Explosion_BaseDamage",
-          "operation": "set"
-        }
-      ],
-      "support": {
-        "status": "confirmed",
-        "notes": []
-      },
-      "rationale": "Changes damage from explosions such as grenades and other explosive effects.",
-      "logic": "",
-      "interaction": "Each explosion still has its own base damage. This setting scales the difficulty layer applied on top of those base values."
     },
     {
       "id": "combat.mutantDamage",
