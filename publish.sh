@@ -10,6 +10,16 @@ set -Eeuo pipefail
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
 
+# An older Wine instance can keep showing the former 4x/2x UI even after
+# publishing the correct 2x/1x source. Never present that stale window as QA.
+# Stop before touching the publish output so the operator can close it safely.
+if command -v pgrep >/dev/null 2>&1 && pgrep -af '[T]rueCustomDifficulty\\.exe' >/dev/null 2>&1; then
+    echo "ERROR: A TrueCustomDifficulty.exe process is already running." >&2
+    echo "Close the old Wine application before publishing and testing UI changes." >&2
+    pgrep -af '[T]rueCustomDifficulty\\.exe' >&2 || true
+    exit 1
+fi
+
 PROJECT="$ROOT/src/TrueCustomDifficulty/TrueCustomDifficulty.csproj"
 PROJECT_DIR="$(dirname "$PROJECT")"
 EXE_NAME="TrueCustomDifficulty.exe"
