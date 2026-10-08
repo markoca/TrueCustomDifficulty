@@ -188,7 +188,7 @@ Column thresholds below apply to **board inner width**, not the whole Window wid
 | **ServiceCostsBoard** | **Implemented in source (3 strips); runtime QA pending** | Different price domains; keep base repair price separate from reputation repair curve |
 | **TraderStockBoard** | **Implemented in source (2 strips); runtime QA pending** | Equal numeric ranges, independent inventories; preserve 0.25x absolute steps |
 | **ItemWeightBoard** | **Implemented in source (2 strips); runtime QA pending** | Equal ranges; item weight remains separate from carry limit |
-| **BreakableBoxYields** | Candidate (2 strips) | Distinct absolute step sizes; no claim that box quantity changes box occurrence |
+| **BreakableBoxYields** | **Implemented in source (2 strips); runtime QA pending** | Distinct absolute step sizes; no claim that box quantity changes box occurrence |
 | **StashRewardProfile** | Candidate with caution (3 strips) | Chance vs quantity vs chance; preserve different native units and chance semantics |
 | **CoreHealthDashboard** | **Keep hybrid initially; evaluate later** | Max HP, delay, passive regen, effect scale and low-health regen are semantically distinct; meaningful widgets may remain preferable |
 | **HumanCombatProfile, EquipmentWearBalance, PsyPhantomPressure** | Retain existing 2D/semantic visuals | Spatial relationship is informative; do not replace with faders merely for visual uniformity |
