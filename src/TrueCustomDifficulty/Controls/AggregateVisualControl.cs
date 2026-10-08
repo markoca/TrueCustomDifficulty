@@ -148,6 +148,15 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         switch (Family)
         {
+            case "BlastDamageBoard":
+                DrawBlastDamageBoard(dc, text, muted, border, accent, panel);
+                break;
+            case "ServiceCostsBoard":
+                DrawServiceCostsBoard(dc, text, muted, border, accent, panel);
+                break;
+            case "AnomalyEffectsBoard":
+                DrawAnomalyEffectsBoard(dc, text, muted, border, accent, panel);
+                break;
             case "NpcLootLoadout":
                 DrawNpcLootLoadout(dc, text, muted, border, accent, panel);
                 break;
@@ -164,6 +173,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "StaminaCore":
             case "WaterStaminaPressure":
             case "RadiationTreatment":
+            case "PhysicalLimits":
+            case "TraderStockBoard":
+            case "ItemWeightBoard":
                 DrawPairedSystemBoard(dc, text, muted, border, accent, panel);
                 break;
             case "FatigueCurve":
@@ -700,6 +712,30 @@ public sealed class AggregateVisualControl : FrameworkElement
                 Second: "stamina.regeneration",
                 SecondLabel: "BASE RECOVERY RATE",
                 Note: "CAPACITY AND RECOVERY ARE INDEPENDENT CFG VALUES"),
+            "PhysicalLimits" => (
+                Title: "MOVEMENT LIMITS",
+                Subtitle: "vaulting clearance and equipment carrying capacity",
+                First: "stamina.vaultMaxHeight",
+                FirstLabel: "MAXIMUM VAULT HEIGHT",
+                Second: "stamina.maxCarryWeight",
+                SecondLabel: "MAXIMUM CARRY WEIGHT",
+                Note: "VAULT HEIGHT USES UU  |  INVENTORY CAPACITY USES KG"),
+            "TraderStockBoard" => (
+                Title: "TRADER STOCK",
+                Subtitle: "independent quantity multipliers, not new item selections",
+                First: "economy.traderAmmoStock",
+                FirstLabel: "REGULAR TRADERS / AMMO SUPPLY",
+                Second: "economy.medicStock",
+                SecondLabel: "MEDICS / MEDICAL SUPPLY",
+                Note: "STOCK QUANTITY ONLY  |  RESTOCK RULES STAY VANILLA"),
+            "ItemWeightBoard" => (
+                Title: "ITEM WEIGHT",
+                Subtitle: "relative inventory mass per item category",
+                First: "equipment.ammoWeight",
+                FirstLabel: "AMMUNITION WEIGHT",
+                Second: "equipment.consumableWeight",
+                SecondLabel: "FOOD AND MEDICINE WEIGHT",
+                Note: "ITEM WEIGHT DOES NOT CHANGE MAXIMUM CARRY WEIGHT"),
             "WaterStaminaPressure" => (
                 Title: "WATER STAMINA PRESSURE",
                 Subtitle: "extra stamina drain by water depth",
@@ -1233,7 +1269,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         var delay = P("health.regenDelay");
         var passive = P("health.baseRegen");
         var effectScale = P("health.regenerationScalar");
-        if (maxHP is null || delay is null || passive is null || effectScale is null)
+        var lowHealth = P("health.lowHealthRegen");
+        if (maxHP is null || delay is null || passive is null
+            || effectScale is null || lowHealth is null)
         {
             DrawCenteredText(dc, "Core health data unavailable.",
                 new Point(ActualWidth / 2.0, 177.0), 10.0, muted, FontWeights.SemiBold);
@@ -1315,9 +1353,13 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(16.0 + cardWidth + gap, 265.0, cardWidth, 72.0),
             text, muted, border, accent, panel);
 
+        DrawHorizontalTrackCard(dc, lowHealth, "LOW-HEALTH RECOVERY RATE",
+            new Rect(16.0, 349.0, width, 72.0),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
+
         DrawCenteredText(dc,
-            "0 PASSIVE = VANILLA  |  EFFECT SCALE ALONE DOES NOT START REGEN",
-            new Point(ActualWidth / 2.0, 345.0),
+            "0 PASSIVE = VANILLA  |  LOW-HEALTH RECOVERY IS A SEPARATE EFFECT",
+            new Point(ActualWidth / 2.0, 432.0),
             9.0, text, FontWeights.SemiBold);
     }
 
@@ -3495,6 +3537,19 @@ public sealed class AggregateVisualControl : FrameworkElement
             "stamina.maxSP" => $"{rawValue:0} SP",
             "stamina.regeneration" => $"{rawValue:0.##} SP/s",
             "health.ecoMedkitAntirad" or "health.antiRadRadiation" => $"{rawValue:0} radiation",
+            "health.lowHealthRegen" => $"{rawValue:0.0} rate",
+            "combat.explosionDamage" or
+            "economy.fastTravelCost" or "economy.upgradeCost" or
+            "economy.traderAmmoStock" or "economy.medicStock" or
+            "equipment.ammoWeight" or "equipment.consumableWeight" or
+            "environment.anomalyDamage" or "environment.razorBleeding" or
+            "environment.psyAnomalyIntensity" => $"{rawValue:0.##}x",
+            "economy.repairCostBase" or
+            "environment.flycatcherMovementSpeed" or
+            "environment.flycatcherTurnSpeed" => $"{rawValue * 100.0:0.#}%",
+            "environment.diamondBleeding" => $"{rawValue:0.#} bleed pts",
+            "stamina.vaultMaxHeight" => $"{rawValue:0} uu",
+            "stamina.maxCarryWeight" => $"{rawValue:0} kg",
             _ => FormatCompact(rawValue)
         };
 
@@ -4259,18 +4314,23 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double GetDesiredHeight(string family, double width)
         => family switch
         {
+            "BlastDamageBoard" => 280.0,
+            "ServiceCostsBoard" => 365.0,
+            "AnomalyEffectsBoard" => 628.0,
             "NpcLootLoadout" => 748.0, // reserve footer/status lane below the native input cards
             "WorldLootLayout" => width >= 720.0 ? 340.0 : 450.0,
             "StashRewardProfile" => 485.0,
             "BreakableBoxYields" => 413.0,
-            "MutantCombatPressure" or "StaminaCore" or "WaterStaminaPressure" or "RadiationTreatment" => 270.0,
+            "MutantCombatPressure" or "StaminaCore" or "WaterStaminaPressure"
+                or "RadiationTreatment" or "PhysicalLimits" or "TraderStockBoard"
+                or "ItemWeightBoard" => 270.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "BleedingTreatmentMixer" => 684.0,
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 390.0,
             "HumanCombatProfile" => 390.0,
             "PlayerWeaponProfile" => 330.0,
-            "CoreHealthDashboard" => 385.0,
+            "CoreHealthDashboard" => 475.0,
             "SevereFatiguePenaltyBoard" => 390.0,
             "MasterMedicalHealing" => 390.0,
             "MasterLowHealth" => 235.0,
@@ -4323,6 +4383,40 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static IReadOnlyList<string> GetFamilyIds(string family)
         => family switch
         {
+            "BlastDamageBoard" => new[]
+            {
+                "combat.explosionDamage"
+            },
+            "PhysicalLimits" => new[]
+            {
+                "stamina.vaultMaxHeight",
+                "stamina.maxCarryWeight"
+            },
+            "TraderStockBoard" => new[]
+            {
+                "economy.traderAmmoStock",
+                "economy.medicStock"
+            },
+            "ServiceCostsBoard" => new[]
+            {
+                "economy.fastTravelCost",
+                "economy.upgradeCost",
+                "economy.repairCostBase"
+            },
+            "ItemWeightBoard" => new[]
+            {
+                "equipment.ammoWeight",
+                "equipment.consumableWeight"
+            },
+            "AnomalyEffectsBoard" => new[]
+            {
+                "environment.anomalyDamage",
+                "environment.flycatcherMovementSpeed",
+                "environment.flycatcherTurnSpeed",
+                "environment.razorBleeding",
+                "environment.diamondBleeding",
+                "environment.psyAnomalyIntensity"
+            },
             "NpcLootLoadout" => new[]
             {
                 "loot.npcCorpseBonus",
@@ -4403,7 +4497,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "health.maxHP",
                 "health.baseRegen",
                 "health.regenDelay",
-                "health.regenerationScalar"
+                "health.regenerationScalar",
+                "health.lowHealthRegen"
             },
             "SevereFatiguePenaltyBoard" => new[]
             {
