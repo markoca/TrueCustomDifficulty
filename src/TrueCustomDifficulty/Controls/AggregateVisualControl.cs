@@ -1976,18 +1976,10 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Do not imply a simulated spawns-per-minute formula: base encounter timings
     // and the effective runtime paths are not fully exposed by the CFG dump.
     private void DrawPsyPhantomPressure(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush soft, Brush accent, Brush panel)
     {
-        DrawHeader(dc, "PSY PHANTOM PRESSURE",
-            "spawn override: delay and phantom count, plus bleeding and gear damage",
-            text, muted, accent);
-
+        DrawHeader(dc, "PSY PHANTOM PRESSURE", "", text, muted, accent);
         var wait = P("combat.psySpawnCycleDelay");
         var count = P("combat.psyPhantomCount");
         var wear = P("combat.psyDurabilityDamage");
@@ -1999,80 +1991,99 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        DrawDualParameterHeading(dc,
-            wait, "PHANTOM CYCLE WAIT",
-            count, "PHANTOM COUNT",
-            51.0, text, accent);
+        // Same square plot and glowing axis handles as Human Combat Profile.
+        var side = Math.Min(280.0, Math.Max(180.0, ActualWidth - 345.0));
+        var plot = new Rect(64.0, 91.0, side, side);
+        var axisCenterX = plot.Left + plot.Width / 2.0;
+        var xLabel = CreateText("CYCLE WAIT", 10.5, text, FontWeights.Bold);
+        var xValue = CreateText($"{wait.CurrentNumber:0.##}x", 13.0, accent, FontWeights.Bold);
+        const double labelGap = 9.0;
+        var labelX = axisCenterX -
+            (xLabel.WidthIncludingTrailingWhitespace + labelGap +
+             xValue.WidthIncludingTrailingWhitespace) / 2.0;
+        dc.DrawText(xLabel, new Point(labelX, plot.Top - 32.0));
+        dc.DrawText(xValue, new Point(
+            labelX + xLabel.WidthIncludingTrailingWhitespace + labelGap,
+            plot.Top - 34.0));
+        var centerY = plot.Top + plot.Height / 2.0;
+        var yLabel = CreateText("PHANTOM COUNT", 10.5, text, FontWeights.Bold);
+        var yValue = CreateText($"{count.CurrentNumber:0.##}x", 13.0, accent, FontWeights.Bold);
+        var labelStart = 18.0 -
+            (yLabel.WidthIncludingTrailingWhitespace + labelGap +
+             yValue.WidthIncludingTrailingWhitespace) / 2.0;
+        dc.PushTransform(new RotateTransform(-90.0, 18.0, centerY));
+        dc.DrawText(yLabel, new Point(labelStart, centerY - 7.0));
+        dc.DrawText(yValue, new Point(
+            labelStart + yLabel.WidthIncludingTrailingWhitespace + labelGap,
+            centerY - 9.0));
+        dc.Pop();
 
-        var plot = new Rect(78.0, 83.0, Math.Max(350.0, ActualWidth - 116.0), 135.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
-
         for (var tick = 0; tick <= 4; tick++)
         {
-            var waitTick = wait.Minimum + (wait.Maximum - wait.Minimum) * tick / 4.0;
-            var countTick = count.Minimum + (count.Maximum - count.Minimum) * tick / 4.0;
-            var gridX = ValueToX(waitTick, wait.Minimum, wait.Maximum, plot, reverse: false);
-            var gridY = ValueToY(countTick, count.Minimum, count.Maximum, plot);
-            var gridPen = new Pen(CloneWithOpacity(soft, 0.5), 1.0) { DashStyle = DashStyles.Dot };
-            dc.DrawLine(gridPen, new Point(gridX, plot.Top), new Point(gridX, plot.Bottom));
-            dc.DrawLine(gridPen, new Point(plot.Left, gridY), new Point(plot.Right, gridY));
-
+            var xt = wait.Minimum + (wait.Maximum - wait.Minimum) * tick / 4.0;
+            var yt = count.Minimum + (count.Maximum - count.Minimum) * tick / 4.0;
+            var px = ValueToX(xt, wait.Minimum, wait.Maximum, plot, reverse: false);
+            var py = ValueToY(yt, count.Minimum, count.Maximum, plot);
+            var pen = new Pen(CloneWithOpacity(soft, 0.5), 1.0) { DashStyle = DashStyles.Dot };
+            dc.DrawLine(pen, new Point(px, plot.Top), new Point(px, plot.Bottom));
+            dc.DrawLine(pen, new Point(plot.Left, py), new Point(plot.Right, py));
             if (tick is 0 or 2 or 4)
             {
-                DrawCenteredText(dc, $"{waitTick:0.##}x", new Point(gridX, plot.Bottom + 29.0),
-                    9.3, text, FontWeights.Normal);
-                DrawRightAlignedText(dc, $"{countTick:0.##}x",
-                    new Point(plot.Left - 29.0, gridY - 7.0), 9.3, text, FontWeights.Normal);
+                DrawCenteredText(dc, $"{xt:0.##}x",
+                    new Point(px, plot.Bottom + 32.0), 9.3, text, FontWeights.Normal);
+                DrawRightAlignedText(dc, $"{yt:0.##}x",
+                    new Point(plot.Left - 12.0, py - 7.0), 9.3, text, FontWeights.Normal);
             }
         }
 
-        var baseWaitX = ValueToX(wait.ReferenceNumber, wait.Minimum, wait.Maximum, plot, reverse: false);
-        var baseCountY = ValueToY(count.ReferenceNumber, count.Minimum, count.Maximum, plot);
-        var waitX = ValueToX(wait.CurrentNumber, wait.Minimum, wait.Maximum, plot, reverse: false);
-        var countY = ValueToY(count.CurrentNumber, count.Minimum, count.Maximum, plot);
-
+        var bx = ValueToX(wait.ReferenceNumber, wait.Minimum, wait.Maximum, plot, reverse: false);
+        var by = ValueToY(count.ReferenceNumber, count.Minimum, count.Maximum, plot);
+        var x = ValueToX(wait.CurrentNumber, wait.Minimum, wait.Maximum, plot, reverse: false);
+        var y = ValueToY(count.CurrentNumber, count.Minimum, count.Maximum, plot);
         var basePen = new Pen(CloneWithOpacity(muted, 0.65), 1.2) { DashStyle = DashStyles.Dash };
-        dc.DrawLine(basePen, new Point(baseWaitX, plot.Top), new Point(baseWaitX, plot.Bottom));
-        dc.DrawLine(basePen, new Point(plot.Left, baseCountY), new Point(plot.Right, baseCountY));
-        dc.DrawEllipse(panel, new Pen(muted, 1.7),
-            new Point(baseWaitX, baseCountY), 6.0, 6.0);
-
+        dc.DrawLine(basePen, new Point(bx, plot.Top), new Point(bx, plot.Bottom));
+        dc.DrawLine(basePen, new Point(plot.Left, by), new Point(plot.Right, by));
+        dc.DrawEllipse(panel, new Pen(muted, 1.7), new Point(bx, by), 6.0, 6.0);
         var currentPen = new Pen(CloneWithOpacity(accent, 0.65), 1.2) { DashStyle = DashStyles.Dot };
-        dc.DrawLine(currentPen, new Point(waitX, plot.Top), new Point(waitX, plot.Bottom));
-        dc.DrawLine(currentPen, new Point(plot.Left, countY), new Point(plot.Right, countY));
-        dc.DrawEllipse(panel, new Pen(accent, 2.0),
-            new Point(waitX, countY), 6.5, 6.5);
-        dc.DrawEllipse(accent, null, new Point(waitX, countY), 2.8, 2.8);
+        dc.DrawLine(currentPen, new Point(x, plot.Top), new Point(x, plot.Bottom));
+        dc.DrawLine(currentPen, new Point(plot.Left, y), new Point(plot.Right, y));
 
-        // Only the bottom and left handles change parameters. Clicking inside
-        // the plot (including the crosshair) never unexpectedly changes both.
-        var waitHandle = new Point(waitX, plot.Bottom + 10.0);
-        dc.DrawEllipse(panel, new Pen(accent, IsSelected(wait) ? 2.6 : 1.8),
-            waitHandle, 7.0, 7.0);
-        dc.DrawEllipse(accent, null, waitHandle, 2.5, 2.5);
-        AddHorizontalTarget(wait, new Rect(waitX - 17.0, plot.Bottom + 1.0, 34.0, 22.0),
+        DrawHumanAxisHandle(dc, new Point(x, y), accent, panel,
+            _hoverTarget?.Kind == HitKind.HumanJoint,
+            _selectedHitKind == HitKind.HumanJoint);
+        var bottom = new Point(x, plot.Bottom + 10.0);
+        DrawHumanAxisHandle(dc, bottom, accent, panel,
+            _hoverTarget?.Kind == HitKind.Horizontal && ReferenceEquals(_hoverTarget.Parameter, wait),
+            IsSelected(wait) && _selectedHitKind == HitKind.Horizontal);
+        AddHorizontalTarget(wait,
+            new Rect(x - 17.0, plot.Bottom + 1.0, 34.0, 22.0),
             plot, wait.Minimum, wait.Maximum);
-
-        var countHandle = new Point(plot.Left - 11.0, countY);
-        dc.DrawRectangle(panel, new Pen(accent, IsSelected(count) ? 2.6 : 1.8),
-            new Rect(countHandle.X - 6.0, countHandle.Y - 6.0, 12.0, 12.0));
-        AddVerticalTarget(count, new Rect(plot.Left - 28.0, countY - 14.0, 27.0, 28.0),
+        var left = new Point(plot.Left - 11.0, y);
+        DrawHumanAxisHandle(dc, left, accent, panel,
+            _hoverTarget?.Kind == HitKind.Vertical && ReferenceEquals(_hoverTarget.Parameter, count),
+            IsSelected(count) && _selectedHitKind == HitKind.Vertical);
+        AddVerticalTarget(count,
+            new Rect(plot.Left - 28.0, y - 14.0, 27.0, 28.0),
             plot, count.Minimum, count.Maximum);
+        AddHumanJointTarget(wait, count,
+            new Rect(x - 16.0, y - 16.0, 32.0, 32.0),
+            plot);
 
-        DrawCenteredText(dc,
-            "DRAG BOTTOM CIRCLE: WAIT   |   LEFT SQUARE: COUNT   |   CROSSHAIR = PREVIEW",
-            new Point(ActualWidth / 2.0, 267.0), 9.3, text, FontWeights.SemiBold);
-
-        var wearCardWidth = Math.Max(235.0, (ActualWidth - 46.0) * 0.60);
-        var wearCard = new Rect(18.0, 286.0, wearCardWidth, 72.0);
-        DrawHorizontalTrackCard(dc, wear, "PSY GEAR DAMAGE", wearCard,
-            text, muted, border, accent, panel);
-
-        var bleedRect = new Rect(wearCard.Right + 10.0, wearCard.Top + 17.0,
-            Math.Max(90.0, ActualWidth - wearCard.Right - 28.0), 38.0);
+        // Keep the right lane separate from the plot as in Human Combat.
+        var faderLeft = plot.Right + 34.0;
+        var faderWidth = Math.Min(144.0, Math.Max(112.0, ActualWidth - faderLeft - 22.0));
+        DrawMixerStrip(dc, wear, "PSY GEAR", "DAMAGE",
+            new Rect(faderLeft, 83.0, faderWidth, MixerStripHeight),
+            text, muted, border, accent, panel, frameless: true);
         DrawTogglePill(dc, bleed,
             bleed.ReferenceBoolean ? "BLEED (BASE ON)" : "BLEED (BASE OFF)",
-            bleedRect, text, muted, border, accent, panel);
+            new Rect(faderLeft, 376.0, Math.Max(112.0, ActualWidth - faderLeft - 22.0), 36.0),
+            text, muted, border, accent, panel);
+        DrawCenteredText(dc,
+            "BOTTOM = WAIT  |  LEFT = COUNT  |  CENTER = BOTH",
+            new Point(plot.Left + plot.Width / 2.0, 430.0),
+            9.3, accent, FontWeights.SemiBold);
     }
 
     // This is a two-axis editor, not a fabricated unified "condition lost %" formula.
@@ -4793,7 +4804,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "FatigueCurve" => CompactFatigueHeight(width),
             "BleedingTreatmentMixer" => 684.0,
             "EquipmentWearBalance" => 320.0,
-            "PsyPhantomPressure" => 390.0,
+            "PsyPhantomPressure" => 465.0,
             "HumanCombatProfile" => 465.0,
             "PlayerWeaponProfile" => MixerStripTop + MixerStripHeight + MixerFooterHeight,
             "CoreHealthDashboard" => 475.0,
