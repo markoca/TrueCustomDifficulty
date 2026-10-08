@@ -1473,6 +1473,264 @@
       "exposeInUi": false
     },
     {
+      "id": "combat.mutantHealth.blinddog",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Blind Dog Health",
+      "description": "Scales Blind Dog maximum HP. Vanilla: 63 HP.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Maximum health"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Blinddog",
+          "path": "MaxHP",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
+          "Vanilla 63 HP; no Ability Cooldown prerequisite."
+        ]
+      },
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantHealth.boar",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Boar Health",
+      "description": "Scales Boar maximum HP. Vanilla: 300 HP.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Maximum health"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Boar",
+          "path": "MaxHP",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
+          "Vanilla 300 HP; no Ability Cooldown prerequisite."
+        ]
+      },
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantHealth.flesh",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Flesh Health",
+      "description": "Scales Flesh maximum HP. Vanilla: 280 HP.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Maximum health"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Flesh",
+          "path": "MaxHP",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
+          "Vanilla 280 HP; no Ability Cooldown prerequisite."
+        ]
+      },
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantHealth.poltergeist",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Poltergeist Health",
+      "description": "Scales Poltergeist maximum HP. Vanilla: 400 HP.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Maximum health"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Poltergeist",
+          "path": "MaxHP",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
+          "Vanilla 400 HP; no Ability Cooldown prerequisite."
+        ]
+      },
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantHealth.snork",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Snork Health",
+      "description": "Scales Snork maximum HP. Vanilla: 150 HP.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Maximum health"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Snork",
+          "path": "MaxHP",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
+          "Vanilla 150 HP; no Ability Cooldown prerequisite."
+        ]
+      },
+      "exposeInUi": false
+    },
+    {
+      "id": "combat.mutantHealth.tushkan",
+      "tab": "combat",
+      "group": "Mutant Health",
+      "label": "Tushkan Health",
+      "description": "Scales Tushkan maximum HP. Vanilla: 19 HP.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Maximum health"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0.25,
+        "max": 3,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ObjPrototypes.cfg",
+          "prototype": "Tushkan",
+          "path": "MaxHP",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
+          "Vanilla 19 HP; no Ability Cooldown prerequisite."
+        ]
+      },
+      "exposeInUi": false
+    },
+    {
       "id": "combat.mutantHealth.controller",
       "tab": "combat",
       "group": "Mutant Health",
