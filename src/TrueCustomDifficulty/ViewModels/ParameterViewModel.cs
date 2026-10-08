@@ -122,7 +122,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsMedicalHealingAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Each medical row shows the raw BASE HEAL in HP, that output on a shared 0–200 HP comparison bar, and an interactive 0–200% of vanilla strength track. Bandage, Medkit and Army Medkit base healing can be modified again by the separate Master Consumable Effect Penalties layer; Scientific Medkit does not use that same Master healing modifier. Right-click a row track to reset only that item's base heal; press R to reset the whole medical-healing board.";
+                       "MEDICAL HEALING edits the actual HP restored by Bandage, Medkit, Army Medkit and Scientific Medkit. Each item has fine-tuning buttons (- / +) and quick HALF, NORMAL (selected vanilla difficulty) and MAX settings; keyboard arrows adjust the selected item by its original CFG step. A yellow HP number marks a modified healing value. Food Restores Health controls ordinary Bread, Fresh Bread, Canned Food and Sausage HP restoration; it does not change satiety or Weird Kettle effects. Bandage, Medkit and Army Medkit can be affected separately by Master-only consumable modifiers; Scientific Medkit is not in that subset. Right-click an item or the food switch to reset it, or press R to reset this entire board. No separate preview is shown.";
             }
 
             if (IsStashAmmoAnchor)
@@ -281,7 +281,8 @@ public sealed class ParameterViewModel : ObservableObject
         "health.bandageHealing",
         "health.medkitHealing",
         "health.armyMedkitHealing",
-        "health.ecoMedkitHealing"
+        "health.ecoMedkitHealing",
+        "health.foodHealing"
     };
 
     public bool IsMedicalHealingMember => MedicalHealingParameterIds.Contains(Id);
