@@ -5,9 +5,9 @@ default XAML type (slider, range, choice slider or toggle) rather than a special
 semantic visual family. It is a redesign queue, **not** an indication of broken CFG mappings.
 
 - Catalog: 238 parameters
-- Default-control entries remaining: **30**
+- Default-control entries remaining: **25**
 - Completed prior pass: MutantCombatPressure, StaminaCore, WaterStaminaPressure, RadiationTreatment (eight sliders)
-- Completed this pass: StashRewardProfile, BreakableBoxYields (five sliders)
+- Completed this pass: StashRewardProfile and BreakableBoxYields (five sliders), WorldLootLayout (four toggles and a conditional slider)
 - Scope: visual reorganization only; preserve exact source values, min/max, steps,
   vanilla markers, reset/right-click semantics, dependencies and preset serialization
 - Do not merge sliders across different CFG mappings into synthetic gameplay formulas
@@ -76,18 +76,11 @@ semantic visual family. It is a redesign queue, **not** an indication of broken 
 - `environment.diamondBleeding` — Diamond Bleeding (`slider`)
 - `environment.psyAnomalyIntensity` — Psy Anomaly Intensity (`slider`)
 
-### loot / World Loot (5)
-
-- `loot.worldWeaponShuffle` — World Weapon Shuffle (`toggle`)
-- `loot.worldWeaponDensity` — World Weapon Density (`slider`)
-- `loot.worldAttachmentShuffle` — World Attachment Shuffle (`toggle`)
-- `loot.worldDetectors` — Remove World Detectors (`toggle`)
-- `loot.blueprintShuffle` — Blueprint Shuffle (`toggle`)
-
 ## Loot pass completed (2026-10-08)
 
 - StashRewardProfile: three independent existing source values in one panel, including two separate probability previews.
 - BreakableBoxYields: two independent source multipliers and read-only comparison lanes.
+- WorldLootLayout: four source-exact booleans and one conditional density slider. Toggle-anchored board is compatible with the WPF toggle visibility guard; density stays disabled with weapon shuffle OFF.
 - Underlying CFG patching and presets remain untouched. Source ranges, increments, reference values and reset behavior are preserved.
 
 ## UX follow-up checks
