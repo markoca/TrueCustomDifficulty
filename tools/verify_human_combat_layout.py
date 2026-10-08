@@ -29,10 +29,11 @@ required = (
     'Math.Max(405.0, plot.Bottom + 56.0)',
     'new Point(plot.Left + plot.Width / 2.0, legendY)',
     'new Point(plot.Left + plot.Width / 2.0, legendY + 18.0)',
-    'LEFT: DAMAGE  ·  BOTTOM: HEALTH',
-    'DRAG CENTER: BOTH AXES',
+    'HEALTH  ← BOTTOM  |  LEFT → DAMAGE',
+    'CENTER HANDLE: DRAG BOTH',
 )
 assert 'BOTTOM CIRCLE' not in human and 'LEFT SQUARE' not in human
+assert 'POINT = PREVIEW' not in human
 for fragment in required:
     if fragment not in human:
         raise SystemExit("[FAIL] human square/faders: " + fragment)
