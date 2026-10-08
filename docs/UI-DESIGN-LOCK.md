@@ -233,3 +233,7 @@ Explicit correction to the preceding stacked-layout note: **DAMAGE PER HIT** and
 ### 2026-10-08 — Unified card headings, no external separators
 
 User-approved UI change: WPF group-level headings with left/right separator lines are visually removed across section lists. No empty heading space is reserved. The card's own heading is the sole visible title, centered horizontally, using a consistent 12.5-DIP bold accent heading style and centered 9.5-DIP muted subtitle where present. Aggregate visual families and Mutant Combat / Mutant Health follow the same rule, including the nested Special Ability Cooldowns subsection title. The top-level 1x1 layout and controls are unchanged. Runtime acceptance pending.
+
+### 2026-10-08 — Global Combat-style UI baseline
+
+All tabs share fixed full-width (1x1) top-level sections with no duplicate decorative group headings. All dedicated visual controls with existing card titles now use centered gold 12.5-DIP bold headings and centered muted 9.5-DIP subtitles, aligned with the previously established aggregate controls. The affected editors cover Survival, Health, Stamina, Loot, Economy, Anomalies, and A-Life. Inner widgets and CFG mapping remain unchanged. DrunkennessControl retains its tightly packed beer/vodka editor layout without a new top title, pending its individual tab pass. Subsequent tab-specific redesigns must retain this global visual contract. Wine acceptance pending.
