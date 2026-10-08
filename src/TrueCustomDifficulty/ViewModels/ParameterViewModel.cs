@@ -329,7 +329,13 @@ public sealed class ParameterViewModel : ObservableObject
         "combat.mutantHealth.pseudodog",
         "combat.mutantHealth.burer",
         "combat.mutantHealth.bayun",
-        "combat.mutantHealth.controller"
+        "combat.mutantHealth.controller",
+        "combat.mutantHealth.blinddog",
+        "combat.mutantHealth.boar",
+        "combat.mutantHealth.flesh",
+        "combat.mutantHealth.poltergeist",
+        "combat.mutantHealth.snork",
+        "combat.mutantHealth.tushkan"
     };
 
     public bool IsMutantHealthMember => MutantHealthParameterIds.Contains(Id);
