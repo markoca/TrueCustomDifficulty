@@ -942,13 +942,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        var compact = ActualWidth < 700.0;
-        DrawText(dc,
-            $"{(compact ? "HP" : "ENEMY HEALTH")}  {health.CurrentNumber:0.##}x  |  BASE {health.ReferenceNumber:0.##}x",
-            new Point(18.0, 54.0), 9.8, accent, FontWeights.SemiBold);
-        DrawRightAlignedText(dc,
-            $"{(compact ? "GUN" : "GUN DAMAGE")}  {damage.CurrentNumber:0.##}x  |  BASE {damage.ReferenceNumber:0.##}x",
-            new Point(ActualWidth - 18.0, 54.0), 9.8, accent, FontWeights.SemiBold);
+        DrawDualParameterHeading(dc,
+            health, "ENEMY HEALTH",
+            damage, "GUN DAMAGE",
+            51.0, text, accent);
 
         var plot = new Rect(78.0, 83.0, Math.Max(350.0, ActualWidth - 116.0), 135.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
@@ -1159,15 +1156,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         // 0.9x), while player weapon wear has a shared 1x vanilla reference.
         // Show both exact CFG multipliers rather than suggesting 1x is always
         // vanilla for both axes. Short labels protect the minimum 520px layout.
-        var compactLabels = ActualWidth < 690.0;
-        var wearLabel = compactLabels ? "WEAPON" : "WEAPON WEAR";
-        var armorLabel = compactLabels ? "ARMOR" : "ARMOR DURABILITY";
-        DrawText(dc,
-            $"{wearLabel}  {weapon.CurrentNumber:0.##}x  |  BASE {weapon.ReferenceNumber:0.##}x",
-            new Point(18.0, 52.0), 10.5, accent, FontWeights.SemiBold);
-        DrawRightAlignedText(dc,
-            $"{armorLabel}  {armor.CurrentNumber:0.##}x  |  BASE {armor.ReferenceNumber:0.##}x",
-            new Point(ActualWidth - 18.0, 52.0), 10.5, accent, FontWeights.SemiBold);
+        DrawDualParameterHeading(dc,
+            weapon, "WEAPON WEAR / SHOT",
+            armor, "ARMOR DURABILITY",
+            49.0, text, accent);
 
         var plot = new Rect(94.0, 81.0, Math.Max(350.0, ActualWidth - 132.0), 156.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
@@ -2903,6 +2895,37 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     // Small paired panels share this card. Values and titles occupy separate
     // lines and text is trimmed inside the card, never across the next column.
+    // Exact axis values are given their own line in each half of a crosshair
+    // board. This keeps labels and current/Base Preset values legible at 520 px.
+    private void DrawDualParameterHeading(
+        DrawingContext dc,
+        ParameterViewModel leftParameter,
+        string leftLabel,
+        ParameterViewModel rightParameter,
+        string rightLabel,
+        double top,
+        Brush text,
+        Brush accent)
+    {
+        var leftX = 18.0;
+        var rightX = ActualWidth / 2.0 + 8.0;
+        var cellWidth = Math.Max(1.0, (ActualWidth - 54.0) / 2.0);
+
+        void Cell(ParameterViewModel parameter, string label, double x)
+        {
+            dc.DrawText(CreateText(label, 9.2, text, FontWeights.Bold, cellWidth),
+                new Point(x, top));
+            dc.DrawText(CreateText(
+                    $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
+                    10.1, parameter.IsControlEnabled ? accent : text,
+                    FontWeights.SemiBold, cellWidth),
+                new Point(x, top + 14.0));
+        }
+
+        Cell(leftParameter, leftLabel, leftX);
+        Cell(rightParameter, rightLabel, rightX);
+    }
+
     private void DrawHorizontalTrackCard(
         DrawingContext dc,
         ParameterViewModel? parameter,
