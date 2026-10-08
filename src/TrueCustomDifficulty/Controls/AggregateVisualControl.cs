@@ -2881,6 +2881,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(20.0, 458.0), 9.0, muted, FontWeights.SemiBold);
     }
 
+    // The real SNG/NATO generator pools are distinct. Their previews show the
+    // normalized composition *inside* each pool, never global drop probability.
+    // The preview is read-only; every family has one independent full-width editor.
     private void DrawAmmoDistribution(
         DrawingContext dc,
         Brush text,
@@ -2890,200 +2893,181 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(
-            dc,
-            "BREAKABLE BOX AMMO MIXER",
-            "relative selection weights inside the two authored ammo pools",
-            text,
-            muted,
-            accent);
-
         var p918 = P("loot.ammoBoxWeight918");
         var p045 = P("loot.ammoBoxWeight045");
         var p545 = P("loot.ammoBoxWeight545");
         var p012 = P("loot.ammoBoxWeight012");
 
-        var parameters = new[] { p918, p045, p545, p012 };
-        var labels = new[] { "9x18 / 9x19", ".45 ACP", "5.45 / 5.56", "12 GAUGE" };
-        var opacities = new[] { 0.95, 0.74, 0.54, 0.34 };
+        DrawText(dc, "BREAKABLE BOX AMMO MIXER", new Point(17.0, 13.0),
+            11.5, accent, FontWeights.Bold);
+        DrawText(dc, "change which ammo families appear in boxes, not the number of rounds",
+            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
 
-        var w918 = Math.Max(0.0, p918?.CurrentNumber ?? 0.0);
-        var w045 = Math.Max(0.0, p045?.CurrentNumber ?? 0.0);
-        var w545 = Math.Max(0.0, p545?.CurrentNumber ?? 0.0);
-        var w012 = Math.Max(0.0, p012?.CurrentNumber ?? 0.0);
-
-        // SNG has two entries driven by the 9x18/9x19 family (A918D + A919D),
-        // one 5.45 entry and one 12 Gauge entry. NATO has one entry from each family.
-        var sngRaw = new[] { 2.0 * w918, w545, w012 };
-        var natoRaw = new[] { w045, w918, w545, w012 };
-
-        double[] Normalize(IReadOnlyList<double> raw)
+        if (p918 is null || p045 is null || p545 is null || p012 is null)
         {
-            var total = raw.Sum();
-            if (total <= Epsilon)
-                return raw.Select(_ => 0.0).ToArray();
-
-            return raw.Select(value => value / total).ToArray();
+            DrawCenteredText(dc, "Breakable ammo box data unavailable.",
+                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            return;
         }
 
-        var sngShares = Normalize(sngRaw);
-        var natoShares = Normalize(natoRaw);
+        var w918 = Math.Max(0.0, p918.CurrentNumber);
+        var w045 = Math.Max(0.0, p045.CurrentNumber);
+        var w545 = Math.Max(0.0, p545.CurrentNumber);
+        var w012 = Math.Max(0.0, p012.CurrentNumber);
+
+        static double[] Normalize(IReadOnlyList<double> weights)
+        {
+            var total = weights.Sum();
+            return total <= Epsilon
+                ? weights.Select(_ => 0.0).ToArray()
+                : weights.Select(weight => Math.Max(0.0, weight) / total).ToArray();
+        }
+
+        // The SNG pool has two distinct entries mapped to the same 9x18/9x19
+        // control. NATO has one of each of its four existing authored entries.
+        var sngShares = Normalize(new[] { 2.0 * w918, w545, w012 });
+        var natoShares = Normalize(new[] { w045, w918, w545, w012 });
+        var sngBaseShares = Normalize(new[] { 2.0, 1.0, 1.0 });
+        var natoBaseShares = Normalize(new[] { 1.0, 1.0, 1.0, 1.0 });
+
+        var width = Math.Max(460.0, ActualWidth - 34.0);
+        var shades = new[] { 0.95, 0.72, 0.48, 0.29 };
 
         void DrawPool(
             string title,
-            string authored,
-            IReadOnlyList<string> poolLabels,
+            string sourceNote,
+            IReadOnlyList<string> labels,
             IReadOnlyList<double> shares,
-            IReadOnlyList<int> familyOpacityIndices,
-            Rect card,
-            string vanillaSummary)
+            IReadOnlyList<double> baseShares,
+            IReadOnlyList<int> shadesByEntry,
+            double top)
         {
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 1.0), card, 4.0, 4.0);
-            DrawText(dc, title, new Point(card.Left + 12.0, card.Top + 8.0), 8.9, text, FontWeights.Bold);
-            DrawRightAlignedText(
-                dc,
-                $"VANILLA {vanillaSummary}",
-                new Point(card.Right - 12.0, card.Top + 8.0),
-                7.6,
-                muted,
-                FontWeights.SemiBold);
+            var card = new Rect(17.0, top, width, 107.0);
+            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
 
-            var stack = new Rect(card.Left + 14.0, card.Top + 31.0, card.Width - 28.0, 36.0);
-            dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.08), new Pen(border, 1.0), stack, 3.0, 3.0);
+            DrawText(dc, title, new Point(card.Left + 12.0, top + 7.0),
+                10.4, text, FontWeights.Bold);
+            DrawRightAlignedText(dc, sourceNote, new Point(card.Right - 12.0, top + 8.0),
+                9.1, muted, FontWeights.SemiBold);
+
+            var stack = new Rect(card.Left + 14.0, top + 30.0,
+                card.Width - 28.0, 19.0);
+            dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.09),
+                new Pen(border, 1.0), stack, 3.0, 3.0);
 
             var total = shares.Sum();
             if (total <= Epsilon)
             {
-                DrawCenteredText(
-                    dc,
-                    "NO ACTIVE WEIGHT",
-                    new Point(stack.Left + stack.Width / 2.0, stack.Top + 11.0),
-                    8.4,
-                    muted,
-                    FontWeights.Bold);
-                return;
+                DrawCenteredText(dc, "NO ACTIVE AMMO WEIGHT",
+                    new Point(stack.Left + stack.Width / 2.0, stack.Top + 2.0),
+                    9.5, accent, FontWeights.Bold);
+            }
+            else
+            {
+                var cursor = stack.Left;
+                for (var i = 0; i < shares.Count; i++)
+                {
+                    // Keep the final visible segment precisely inside the bar,
+                    // avoiding a one-pixel rounding gap at 100%.
+                    var length = i == shares.Count - 1
+                        ? Math.Max(0.0, stack.Right - cursor)
+                        : Math.Max(0.0, stack.Width * shares[i]);
+
+                    if (shares[i] > Epsilon && length > Epsilon)
+                        dc.DrawRectangle(
+                            CloneWithOpacity(accent, shades[shadesByEntry[i]]),
+                            new Pen(panel, 0.8),
+                            new Rect(cursor, stack.Top, length, stack.Height));
+                    cursor += length;
+                }
             }
 
-            var cursor = stack.Left;
+            var columnWidth = (card.Width - 24.0) / shares.Count;
             for (var i = 0; i < shares.Count; i++)
             {
-                var share = shares[i];
-                var segmentWidth = i == shares.Count - 1
-                    ? stack.Right - cursor
-                    : stack.Width * share;
-
-                var segment = new Rect(cursor, stack.Top, Math.Max(0.0, segmentWidth), stack.Height);
-                var opacityIndex = familyOpacityIndices[i];
-                dc.DrawRectangle(CloneWithOpacity(accent, opacities[opacityIndex]), null, segment);
-
-                if (segment.Width >= 72.0)
-                {
-                    DrawCenteredText(
-                        dc,
-                        poolLabels[i],
-                        new Point(segment.Left + segment.Width / 2.0, segment.Top + 7.0),
-                        7.7,
-                        text,
-                        FontWeights.Bold);
-                    DrawCenteredText(
-                        dc,
-                        $"{share * 100:0}%",
-                        new Point(segment.Left + segment.Width / 2.0, segment.Top + 21.0),
-                        8.1,
-                        text,
-                        FontWeights.SemiBold);
-                }
-                else if (segment.Width >= 34.0)
-                {
-                    DrawCenteredText(
-                        dc,
-                        $"{share * 100:0}%",
-                        new Point(segment.Left + segment.Width / 2.0, segment.Top + 13.0),
-                        7.5,
-                        text,
-                        FontWeights.Bold);
-                }
-
-                cursor += segmentWidth;
+                var cx = card.Left + 12.0 + columnWidth * (i + 0.5);
+                DrawCenteredText(dc, labels[i], new Point(cx, top + 55.0),
+                    9.2, text, FontWeights.Bold);
+                DrawCenteredText(dc, $"{shares[i] * 100.0:0}%",
+                    new Point(cx, top + 70.0), 10.8, accent, FontWeights.Bold);
+                DrawCenteredText(dc, $"BASE {baseShares[i] * 100.0:0}%",
+                    new Point(cx, top + 89.0), 9.0, muted, FontWeights.Normal);
             }
         }
 
-        var poolLeft = 24.0;
-        var poolWidth = Math.Max(440.0, ActualWidth - 48.0);
+        DrawPool("SNG POOL", "A918D + A919D  /  A545D  /  A012D",
+            new[] { "9x18 / 9x19", "5.45", "12 GAUGE" },
+            sngShares, sngBaseShares, new[] { 0, 2, 3 }, 55.0);
 
-        DrawPool(
-            "SNG POOL",
-            "A918D + A919D  |  A545D  |  A012D",
-            new[] { "9x18/19", "5.45", "12G" },
-            sngShares,
-            new[] { 0, 2, 3 },
-            new Rect(poolLeft, 58.0, poolWidth, 76.0),
-            "50 / 25 / 25");
+        DrawPool("NATO POOL", "A045D  /  A919D  /  A556D  /  A012D",
+            new[] { ".45 ACP", "9x19", "5.56", "12 GAUGE" },
+            natoShares, natoBaseShares, new[] { 1, 0, 2, 3 }, 170.0);
 
-        DrawPool(
-            "NATO POOL",
-            "A045D  |  A919D  |  A556D  |  A012D",
-            new[] { ".45", "9x19", "5.56", "12G" },
-            natoShares,
-            new[] { 1, 0, 2, 3 },
-            new Rect(poolLeft, 142.0, poolWidth, 76.0),
-            "25 / 25 / 25 / 25");
+        DrawText(dc, "AMMO FAMILY WEIGHTS", new Point(19.0, 286.0),
+            10.0, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "1x = ORIGINAL WEIGHT 2  |  0x = REMOVE FROM SELECTION",
+            new Point(ActualWidth - 19.0, 286.0), 8.9, muted, FontWeights.Normal);
 
-        DrawText(dc, "FAMILY WEIGHTS", new Point(24.0, 232.0), 9.0, muted, FontWeights.Bold);
-        DrawRightAlignedText(
-            dc,
-            "1x = authored Weight 2   •   0x = remove existing family entries from weighted selection",
-            new Point(Math.Max(430.0, ActualWidth - 24.0), 232.0),
-            7.5,
-            muted,
-            FontWeights.Normal);
-
-        for (var i = 0; i < parameters.Length; i++)
+        void DrawFamily(ParameterViewModel parameter, string label, string poolShare, double top)
         {
-            if (parameters[i] is not { } parameter)
-                continue;
+            var card = new Rect(17.0, top, width, 83.0);
+            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
+                card, 4.0, 4.0);
+            DrawText(dc, label, new Point(card.Left + 12.0, top + 6.0),
+                10.3, text, FontWeights.Bold);
+            DrawRightAlignedText(dc,
+                $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
+                new Point(card.Right - 12.0, top + 6.0), 11.0,
+                parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
+            DrawText(dc, poolShare, new Point(card.Left + 12.0, top + 24.0),
+                9.3, muted, FontWeights.Normal);
 
-            var rowY = 258.0 + i * 44.0;
-            DrawText(dc, labels[i], new Point(26.0, rowY + 3.0), 8.9, text, FontWeights.Bold);
-            DrawText(dc, $"{parameter.CurrentNumber:0.##}x", new Point(128.0, rowY + 3.0), 9.0, accent, FontWeights.Bold);
+            var track = new Rect(card.Left + 22.0, top + 44.0,
+                card.Width - 44.0, 18.0);
+            var y = track.Top + track.Height / 2.0;
+            var currentX = ValueToX(parameter.CurrentNumber,
+                parameter.Minimum, parameter.Maximum, track, reverse: false);
+            var baseX = ValueToX(parameter.ReferenceNumber,
+                parameter.Minimum, parameter.Maximum, track, reverse: false);
 
-            string shareText;
-            if (i == 0)
-                shareText = $"SNG {sngShares[0] * 100:0}%  |  NATO {natoShares[1] * 100:0}%";
-            else if (i == 1)
-                shareText = $"SNG —  |  NATO {natoShares[0] * 100:0}%";
-            else if (i == 2)
-                shareText = $"SNG {sngShares[1] * 100:0}%  |  NATO {natoShares[2] * 100:0}%";
-            else
-                shareText = $"SNG {sngShares[2] * 100:0}%  |  NATO {natoShares[3] * 100:0}%";
+            dc.DrawLine(new Pen(border, 4.0), new Point(track.Left, y),
+                new Point(track.Right, y));
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
+                new Point(track.Left, y), new Point(currentX, y));
+            dc.DrawLine(new Pen(muted, 2.0),
+                new Point(baseX, y - 10.0), new Point(baseX, y + 10.0));
+            dc.DrawEllipse(panel,
+                new Pen(accent, IsSelected(parameter) ? 2.8 : 1.9),
+                new Point(currentX, y), 7.0, 7.0);
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
 
-            DrawText(dc, shareText, new Point(180.0, rowY + 3.0), 7.8, muted, FontWeights.SemiBold);
-
-            DrawInlineHorizontalTrack(
-                dc,
-                parameter,
-                new Rect(330.0, rowY - 2.0, Math.Max(150.0, ActualWidth - 358.0), 26.0),
-                text,
-                muted,
-                border,
-                accent);
+            AddHorizontalTarget(parameter,
+                new Rect(track.Left - 8.0, track.Top - 4.0,
+                    track.Width + 16.0, track.Height + 8.0),
+                track, parameter.Minimum, parameter.Maximum);
+            DrawText(dc, $"{parameter.Minimum:0.##}x", new Point(track.Left, top + 65.0),
+                9.0, muted, FontWeights.Normal);
+            DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
+                new Point(track.Right, top + 65.0), 9.0, muted, FontWeights.Normal);
         }
 
-        DrawCenteredText(
-            dc,
-            "POOL % = NORMALIZED WEIGHT SHARE INSIDE THAT POOL, NOT GLOBAL BOX DROP CHANCE",
-            new Point(ActualWidth / 2.0, 430.0),
-            9.0,
-            muted,
-            FontWeights.Normal);
+        DrawFamily(p918, "9x18 / 9x19 mm",
+            $"SNG SHARE {sngShares[0] * 100:0}%   |   NATO SHARE {natoShares[1] * 100:0}%",
+            309.0);
+        DrawFamily(p045, ".45 ACP",
+            $"SNG NOT PRESENT   |   NATO SHARE {natoShares[0] * 100:0}%",
+            400.0);
+        DrawFamily(p545, "5.45 / 5.56 mm",
+            $"SNG SHARE {sngShares[1] * 100:0}%   |   NATO SHARE {natoShares[2] * 100:0}%",
+            491.0);
+        DrawFamily(p012, "12 GAUGE",
+            $"SNG SHARE {sngShares[2] * 100:0}%   |   NATO SHARE {natoShares[3] * 100:0}%",
+            582.0);
 
-        DrawCenteredText(
-            dc,
-            "SNG MUST KEEP AT LEAST ONE OF 9x18/19, 5.45/5.56 OR 12 GAUGE ABOVE 0x",
-            new Point(ActualWidth / 2.0, 449.0),
-            9.0,
-            accent,
-            FontWeights.SemiBold);
+        DrawText(dc, "POOL % = SHARE WITHIN THAT POOL, NOT GLOBAL BOX DROP CHANCE",
+            new Point(19.0, 682.0), 9.2, muted, FontWeights.SemiBold);
+        DrawText(dc, "SNG MUST KEEP 9x18/19, 5.45/5.56 OR 12 GAUGE ABOVE 0x",
+            new Point(19.0, 700.0), 9.2, accent, FontWeights.SemiBold);
     }
 
     private void DrawHorizontalTrackCard(
@@ -3678,7 +3662,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "RadiationBalance" => 490.0,
             "TradingDashboard" => 590.0,
             "RepairCurve" => 640.0,
-            "AmmoDistribution" => 470.0,
+            "AmmoDistribution" => 750.0,
             _ => 340.0
         };
 
