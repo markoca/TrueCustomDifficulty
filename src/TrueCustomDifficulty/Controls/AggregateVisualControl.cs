@@ -4117,8 +4117,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush muted,
         Brush accent)
     {
-        DrawText(dc, title, new Point(16.0, 13.0), 11.5, accent, FontWeights.Bold);
-        DrawText(dc, subtitle, new Point(16.0, 31.0), 9.5, muted, FontWeights.Normal);
+        // Consistent centered card heading across every aggregate visual.
+        DrawCenteredText(dc, title, new Point(ActualWidth / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
+        if (!string.IsNullOrWhiteSpace(subtitle))
+            DrawCenteredText(dc, subtitle, new Point(ActualWidth / 2.0, 39.0),
+                9.5, muted, FontWeights.Normal);
     }
 
     private void DrawCurveLine(
