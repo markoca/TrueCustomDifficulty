@@ -22,8 +22,7 @@ public sealed class ResponsiveSectionGridPanel : Panel
         new Dictionary<string, string>(StringComparer.Ordinal)
         {
             ["Stashes"] = "Breakable Containers",
-            ["Human Enemies"] = "Mutants",
-            ["Your Weapons"] = "Explosives",
+            ["Human Enemies"] = "Your Weapons",
             ["Trader Stock"] = "Item Price Scalers",
             ["Equipment Wear"] = "Item Weight",
         };
