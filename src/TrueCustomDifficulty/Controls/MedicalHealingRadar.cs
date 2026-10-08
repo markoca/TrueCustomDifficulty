@@ -156,11 +156,8 @@ public sealed class MedicalHealingRadar : FrameworkElement
         // One readable dosage editor per item: large HP output, a restrained
         // reference mark and one horizontal interaction. No separate preview.
         var hovered = _hoverRow == row;
-        dc.DrawRoundedRectangle(
-            selected ? CloneWithOpacity(accent, .065) : panel,
-            new Pen(selected || hovered ? CloneWithOpacity(accent, .65) : border,
-                selected || hovered ? 1.2 : .8),
-            card, 4, 4);
+        // Selection must not paint the medical lane yellow.
+        dc.DrawRoundedRectangle(panel, new Pen(border, .8), card, 4, 4);
         DrawText(dc, Items[row].Label, new Point(card.Left + 12, card.Top + 10),
             10.3, text, FontWeights.Bold);
         var modified = p.IsValueModifiedFromReference();
@@ -191,10 +188,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
         }
         dc.DrawLine(new Pen(muted, 1.8),
             new Point(referenceX, y - 11), new Point(referenceX, y + 11));
-        if (selected || hovered)
-            dc.DrawEllipse(CloneWithOpacity(accent, .13), null,
-                new Point(currentX, y), 12, 12);
-        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.7 : 1.9),
+        dc.DrawEllipse(panel, new Pen(accent, 1.9),
             new Point(currentX, y), 7, 7);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
         DrawText(dc, $"{p.Minimum:0.#}", new Point(track.Left, card.Bottom - 18),
