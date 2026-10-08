@@ -98,7 +98,7 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Trader Stock | Native trader ammo and medic stock amount controls | Semantic |
 | Service Prices | Guide fast-travel, technician upgrade and separate baseline repair price | Semantic |
 | Item Weight | Independent ammunition and food/medical item mass multipliers | Semantic |
-| Anomaly Effects | Six independent raw-unit global damage, movement, bleed and Psy tracks | Semantic |
+| Anomaly Effects | Six native-value vertical mixer faders with responsive rows, clickable Base marks and per-channel rationale selection; Wine QA pending | Pilot |
 
 The old generic duration fader-bank helper is no longer used.
 
