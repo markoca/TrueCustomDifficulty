@@ -2562,6 +2562,51 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Authored instant/sustained strengths and durations remain nine independent
     // parameters. On wide surfaces, their cards form two columns without any
     // shortened or overlapping native-range slider tracks.
+    private static int ConsumableFaderColumns(double width)
+    {
+        // Keep labels legible: never squeeze a vertical channel below ~130 DIPs.
+        return width >= 750 ? 5 : width >= 600 ? 4 : 3;
+    }
+
+    private void DrawConsumableFader(
+        DrawingContext dc, ParameterViewModel parameter, string title,
+        Rect card, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 4, 4);
+        var segments = title.Split('|');
+        var center = card.Left + card.Width / 2;
+        DrawCenteredText(dc, segments[0], new Point(center, card.Top + 8),
+            9.6, text, FontWeights.Bold);
+        DrawCenteredText(dc, segments.Length > 1 ? segments[1] : string.Empty,
+            new Point(center, card.Top + 23), 9.3, text, FontWeights.Bold);
+        DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
+            new Point(center, card.Top + 44), 13.4,
+            parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
+        var rail = new Rect(center - 3, card.Top + 80, 6, 75);
+        var y = ValueToY(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, rail);
+        var baseY = ValueToY(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, rail);
+        dc.DrawLine(new Pen(border, 4), new Point(center, rail.Top), new Point(center, rail.Bottom));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, .70), 4),
+            new Point(center, rail.Bottom), new Point(center, y));
+        dc.DrawLine(new Pen(muted, 2), new Point(center + 12, baseY),
+            new Point(center + 24, baseY));
+        var hovered = ReferenceEquals(_hoverTarget?.Parameter, parameter);
+        if (hovered)
+            dc.DrawEllipse(CloneWithOpacity(accent, .18), null, new Point(center, y), 15, 15);
+        dc.DrawEllipse(panel, new Pen(parameter.IsControlEnabled ? accent : muted,
+            IsSelected(parameter) ? 2.6 : 1.8), new Point(center, y), 8.5, 8.5);
+        dc.DrawLine(new Pen(accent, 2), new Point(center - 6, y), new Point(center + 6, y));
+        DrawText(dc, $"{parameter.Maximum:0.#}x", new Point(center + 13, rail.Top - 5),
+            8.8, muted, FontWeights.Normal);
+        DrawText(dc, $"{parameter.Minimum:0.#}x", new Point(center + 13, rail.Bottom - 7),
+            8.8, muted, FontWeights.Normal);
+        // Only the vertical rail is interactive, preserving normal snapping,
+        // source IDs, right-click reset and Base Preset markers.
+        AddVerticalTarget(parameter,
+            new Rect(center - 15, rail.Top - 7, 30, rail.Height + 14),
+            rail, parameter.Minimum, parameter.Maximum);
+    }
+
     private void DrawConsumableMixer(
         DrawingContext dc,
         Brush text,
@@ -2609,34 +2654,29 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Point(card.Left + 11, card.Top + 49));
         }
 
-        void Card(ParameterViewModel parameter, string label,
-            string value, string min, string max, double top, int index,
-            int columnsInGroup = 0)
-            => DrawCompactTrack(dc, parameter, label, value, min, max,
-                CompactSlot(top, width,
-                    columnsInGroup == 0 ? columns : columnsInGroup, index),
-                text, muted, border, accent, panel);
-
         const double strengthTop = 55.0;
-        DrawCompactTrack(dc, burst, "INSTANT STAMINA / ALL THREE DRINKS",
-            $"{burst.CurrentNumber:0.##}x", "0x", "2x",
-            CompactSlot(strengthTop, width, columns, 0),
-            text, muted, border, accent, panel);
-        DrawCompactTrack(dc, antiRad, "BEER + VODKA / RADIATION REMOVED",
-            $"{antiRad.CurrentNumber:0.##}x", "0x", "2x",
-            CompactSlot(strengthTop, width, columns, 1),
-            text, muted, border, accent, panel);
-        var sustainTop = CompactGridEnd(strengthTop, 2, columns) + 12.0;
-        DrawCompactTrack(dc, waterStamina, "WATER / STAMINA BUFF STRENGTH",
-            $"{waterStamina.CurrentNumber:0.##}x", "0x", "2x",
-            CompactSlot(sustainTop, width, columns, 0),
-            text, muted, border, accent, panel);
-        DrawCompactTrack(dc, energyStamina, "ENERGY / STAMINA REGEN STRENGTH",
-            $"{energyStamina.CurrentNumber:0.##}x", "0x", "2x",
-            CompactSlot(sustainTop, width, columns, 1),
-            text, muted, border, accent, panel);
-
-        var readoutTop = CompactGridEnd(sustainTop, 2, columns) + 14.0;
+        var faderColumns = ConsumableFaderColumns(ActualWidth);
+        const double faderHeight = 179.0;
+        const double faderGap = 8.0;
+        double FaderEnd(double top, int count) =>
+            top + Math.Ceiling((double)count / faderColumns) * (faderHeight + faderGap) - faderGap;
+        void Bank(ParameterViewModel[] parameters, string[] labels, double top)
+        {
+            var cellWidth = (width - (faderColumns - 1) * faderGap) / faderColumns;
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                var column = i % faderColumns;
+                var row = i / faderColumns;
+                DrawConsumableFader(dc, parameters[i], labels[i],
+                    new Rect(17 + column * (cellWidth + faderGap),
+                        top + row * (faderHeight + faderGap), cellWidth, faderHeight),
+                    text, muted, border, accent, panel);
+            }
+        }
+        Bank(new[] { burst, antiRad, waterStamina, energyStamina },
+            new[] { "INSTANT|STAMINA", "RADIATION|REMOVAL",
+                "WATER|STAMINA BUFF", "ENERGY|STAMINA REGEN" }, strengthTop);
+        var readoutTop = FaderEnd(strengthTop, 4) + 15.0;
         DrawText(dc, "WHAT YOUR DRINKS ACTUALLY DO",
             new Point(19, readoutTop), 10.8, accent, FontWeights.Bold);
         var readoutCardsTop = readoutTop + 22.0;
@@ -2711,23 +2751,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var durationTop = preview.Bottom + 12.0;
-        Card(waterTime, "WATER / REGEN + STAMINA COST DURATION",
-            $"{waterTime.CurrentNumber:0.##}x  |  BASE {waterTime.ReferenceNumber:0.##}x",
-            "0x", "3x", durationTop, 0, durationColumns);
-        Card(energyTime, "ENERGY / TIMED STAMINA BUFF DURATION",
-            $"{energyTime.CurrentNumber:0.##}x  |  BASE {energyTime.ReferenceNumber:0.##}x",
-            "0x", "3x", durationTop, 1, durationColumns);
-        Card(vodkaTime, "VODKA / STAMINA PENALTY TIME",
-            $"{vodkaTime.CurrentNumber:0.##}x  |  BASE {vodkaTime.ReferenceNumber:0.##}x",
-            "0x", "3x", durationTop, 2, durationColumns);
-        Card(beerTime, "BEER / STAMINA PENALTY TIME",
-            $"{beerTime.CurrentNumber:0.##}x  |  BASE {beerTime.ReferenceNumber:0.##}x",
-            "0x", "3x", durationTop, 3, durationColumns);
-        Card(magicTime, "MAGIC VODKA / PSI PROTECTION TIME",
-            $"{magicTime.CurrentNumber:0.##}x  |  BASE {magicTime.ReferenceNumber:0.##}x",
-            "0x", "3x", durationTop, 4, durationColumns);
+        Bank(new[] { waterTime, energyTime, vodkaTime, beerTime, magicTime },
+            new[] { "WATER|BUFF TIME", "ENERGY|BUFF TIME",
+                "VODKA|PENALTY TIME", "BEER|PENALTY TIME",
+                "MAGIC VODKA|PSI TIME" }, durationTop);
 
-        var end = CompactGridEnd(durationTop, 5, durationColumns);
+        var end = FaderEnd(durationTop, 5);
         DrawText(dc, "WATER: REGEN 5s / COST 30s  |  ENERGY: 45s / 15s / 5s (AT 1x)",
             new Point(20, end + 12), 9.1, muted, FontWeights.SemiBold);
         DrawText(dc, "VODKA + BEER: STAMINA PENALTY 20s  |  MAGIC: PSI 90s (AT 1x)",
@@ -5059,14 +5088,15 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private static double CompactConsumableHeight(double width)
     {
-        var columns = CompactColumns(width);
-        var durations = CompactStageColumns(width);
-        var sustainTop = CompactGridEnd(55.0, 2, columns) + 12.0;
-        var readoutTop = CompactGridEnd(sustainTop, 2, columns) + 14.0;
-        var readoutCardsTop = readoutTop + 22.0;
-        var previewTop = CompactGridEnd(readoutCardsTop, 3, durations) + 18.0 + 23.0;
+        var faderColumns = ConsumableFaderColumns(width);
+        static double FaderRows(int count, int columns)
+            => Math.Ceiling((double)count / columns) * (179.0 + 8.0) - 8.0;
+        var readoutTop = 55.0 + FaderRows(4, faderColumns) + 15.0;
+        var cardsTop = readoutTop + 22.0;
+        var previewTop = CompactGridEnd(cardsTop, 3, CompactStageColumns(width))
+            + 18.0 + 23.0;
         var durationTop = previewTop + 160.0 + 12.0;
-        return CompactGridEnd(durationTop, 5, durations) + 90.0;
+        return durationTop + FaderRows(5, faderColumns) + 90.0;
     }
 
     private static double CompactHungerHeight(double width)
