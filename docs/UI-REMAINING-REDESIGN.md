@@ -5,9 +5,10 @@ default XAML type (slider, range, choice slider or toggle) rather than a special
 semantic visual family. It is a redesign queue, **not** an indication of broken CFG mappings.
 
 - Catalog: 238 parameters
-- Default-control entries remaining: **25**
+- Default-control entries remaining: **21**
 - Completed prior pass: MutantCombatPressure, StaminaCore, WaterStaminaPressure, RadiationTreatment (eight sliders)
-- Completed this pass: StashRewardProfile and BreakableBoxYields (five sliders), WorldLootLayout (four toggles and a conditional slider)
+- Completed prior loot pass: StashRewardProfile, BreakableBoxYields, WorldLootLayout (ten controls)
+- Completed current pass: NpcLootLoadout (one choice slider, two numeric sliders and one two-bound range)
 - Scope: visual reorganization only; preserve exact source values, min/max, steps,
   vanilla markers, reset/right-click semantics, dependencies and preset serialization
 - Do not merge sliders across different CFG mappings into synthetic gameplay formulas
@@ -34,13 +35,6 @@ semantic visual family. It is a redesign queue, **not** an indication of broken 
 ### stamina / Encumbrance (1)
 
 - `stamina.maxCarryWeight` — Maximum Carry Weight (`slider`)
-
-### loot / NPC Loot & Equipment (4)
-
-- `loot.npcCorpseBonus` — Extra NPC Corpse Loot (`choiceSlider`)
-- `loot.npcMedicalChance` — NPC Medical Drop (`slider`)
-- `loot.npcWeaponAmmoSupply` — NPC Dropped Ammo Amount (`slider`)
-- `loot.droppedWeaponCondition` — NPC Weapon Condition (`range`)
 
 ### economy / Starting Coupons (1)
 
@@ -75,6 +69,14 @@ semantic visual family. It is a redesign queue, **not** an indication of broken 
 - `environment.razorBleeding` — Razor Bleeding (`slider`)
 - `environment.diamondBleeding` — Diamond Bleeding (`slider`)
 - `environment.psyAnomalyIntensity` — Psy Anomaly Intensity (`slider`)
+
+## NPC Loot & Equipment pass (2026-10-08)
+
+- **NpcLootLoadout** contains one discrete, three-option smart-loot selection (Medicine + Ammo / Water / None), two independent native-range multipliers for normal medical chance and attached weapon ammo, and an absolute weapon-condition range with distinct MIN and MAX editors.
+- The selected difficulty's smart-loot vanilla option is shown separately from the selected option, and N/S/V/M markers are retained on option tiles.
+- Condition's top 0–100% band is read-only; the two lower native tracks edit 1%-step MIN and MAX, retaining existing automatic bound ordering. The 25–50% reference preserves the authored 35–45% exception as long as the range is unchanged; changed ranges apply to all 121 audited direct weapon rows.
+- Range and choice retain their own preset serialization and original CFG writers, keyboard controls, right-click per-setting resets, and R family reset.
+- Native WPF choice and range editors are explicitly hidden under an aggregate anchor to avoid duplicate controls.
 
 ## Loot pass completed (2026-10-08)
 
