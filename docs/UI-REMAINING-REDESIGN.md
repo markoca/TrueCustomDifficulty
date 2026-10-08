@@ -63,5 +63,5 @@ semantic visual family. It is a redesign queue, **not** an indication of broken 
 - Keep Base Preset / Vanilla reference legible even on compact visual controls.
 - For `choiceSlider`, `range` and `toggle`, preserve their native input semantics.
 - Track hidden/advanced and pre-existing specialized families separately; these are **not** standalone-UI leftovers.
-- Check WPF resizing, 16:10 window, wheel changes, keyboard focus, tooltip, and reset behavior.
+- Check WPF resizing, **16:9** window, wheel scrolling, keyboard focus, tooltips and reset behavior. The mixer and outer-grid design is governed by [UI-MIXER-GRID-SPEC.md](UI-MIXER-GRID-SPEC.md).
 - Complete the remaining panels before global UI polish.
