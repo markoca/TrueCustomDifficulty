@@ -295,3 +295,7 @@ The responsive section grid uses the actual WPF GroupItem.Content to resolve gro
 ### Fixed 2x1 Combat pairing (2026-10-08)
 
 Human Enemies and Your Weapons are a permanently fixed side-by-side pair (left/right), not an adaptive 2x1/1x1 switch. The group host reserves at least 1096 DIP, horizontal overflow is scrollable, and each child receives at least 540 DIP. Other mixer groups remain unchanged.
+
+### Locked Combat row (2026-10-08)
+
+The first Combat row is a fixed 2x1 section pair: Human Enemies on the left, Your Weapons on the right. Pairing is driven by explicitly known Combat catalog order and active-tab ID, not responsive group-name inference. Only Combat guarantees the 1096-DIP minimum; other tab layouts remain responsive. Keep this arrangement until the user explicitly changes it.
