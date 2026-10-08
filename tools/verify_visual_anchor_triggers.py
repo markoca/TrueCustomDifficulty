@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Guard WPF aggregate controls against ordinary-toggle visibility precedence.
+"""Check WPF aggregate visibility and source-exact semantic family contracts.
 
-Some aggregate boards are anchored on toggles (Severe Fatigue and World Loot).
-An unguarded IsToggle DataTrigger can collapse ControlRow and hide the board.
-No WPF runtime is needed for this static regression test.
+Covers toggle/choice anchors, range editor collapsing, valid C# help strings,
+source-to-render-to-modified-state mappings, and the orphan-slider queue.
+Runs statically on Linux without WPF or Wine.
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ X = "{http://schemas.microsoft.com/winfx/2006/xaml}"
 
 
 def fail(reason: str) -> None:
-    raise SystemExit(f"[FAIL] WPF aggregate toggle regression: {reason}")
+    raise SystemExit(f"[FAIL] Visual control regression: {reason}")
 
 
 def has_setter(trigger: ET.Element, target: str, value: str) -> bool:
