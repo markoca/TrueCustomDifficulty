@@ -375,3 +375,7 @@ Across the visual control system: do not render interactive hit regions as recta
 ### Hunger fader and chart axes (2026-10-08)
 
 Left Well-Fed slider is explicitly labeled STAMINA RECOVERY BONUS; upward drag increases the bonus. The main staged loss plot has X = HUNGER POINTS (0–100) and a rotated Y = STAMINA RECOVERY LOSS label in its own left margin, separated from numeric percent ticks. Keep labels legible without colliding with handles or cards.
+
+### Hunger graph compact HUD scale (2026-10-08)
+
+Hunger X and Y axis numbers use stronger 10-DIP semibold HUD labels, with a `0% NORMAL` neutral recovery tick. The two helper lines below the graph are eliminated and the widget's desired height shortened accordingly. Keep the in-graph state labels, Well-Fed bonus rail and native CFG semantics.
