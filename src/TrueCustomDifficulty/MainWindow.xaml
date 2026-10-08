@@ -770,6 +770,8 @@
                                         </GroupStyle.Panel>
                                         <GroupStyle.ContainerStyle>
                                             <Style TargetType="{x:Type GroupItem}">
+                                                <!-- Store the concrete group identity on its container for fixed layout slots. -->
+                                                <Setter Property="Tag" Value="{Binding Name}" />
                                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                                 <Setter Property="Template">
                                                     <Setter.Value>
