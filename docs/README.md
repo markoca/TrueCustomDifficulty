@@ -41,6 +41,9 @@ All project documentation lives under `docs/`. The repository root is intentiona
 
 ## UI policy
 
+- [Mixer + responsive grid — authoritative UI specification](UI-MIXER-GRID-SPEC.md)
+- [Existing semantic visual control system](VISUAL-CONTROL-SYSTEM.md)
+- [Standalone control redesign audit](UI-REMAINING-REDESIGN.md)
 - [Slider constraints](UI-SLIDER-CONSTRAINTS.md)
 - [Slider range policy](UI-SLIDER-RANGE-POLICY.md)
 - [Vanilla preset audit](VANILLA-PRESET-AUDIT.md)
