@@ -76,11 +76,13 @@ public sealed class ResponsiveSectionGridPanel : Panel
         for (var i = 0; i < elements.Count; i++)
         {
             var row = new List<UIElement> { elements[i] };
-            // Human Enemies + Your Weapons is an explicitly fixed 2x1 pair.
-            // Other legacy pairs retain their responsive behavior.
+            // Combat catalog order is locked: Human Enemies, then Your Weapons.
+            // Pair those first two groups unconditionally, without relying on
+            // GroupItem.Content or DataContext names during WPF measure.
+            // Unrelated section pairs retain their normal responsive rule.
             if (i + 1 < elements.Count
-                && IsCompatiblePair(elements[i], elements[i + 1])
-                && (canPair || IsHumanWeaponsPair(elements[i], elements[i + 1])))
+                && ((i == 0 && Tag is "combat")
+                    || (canPair && IsCompatiblePair(elements[i], elements[i + 1]))))
             {
                 row.Add(elements[++i]);
             }
@@ -88,10 +90,6 @@ public sealed class ResponsiveSectionGridPanel : Panel
         }
         return rows;
     }
-
-    private static bool IsHumanWeaponsPair(UIElement left, UIElement right)
-        => GroupOf(left)?.Name is "Human Enemies"
-            && GroupOf(right)?.Name is "Your Weapons";
 
     private static CollectionViewGroup? GroupOf(UIElement element)
         => (element as GroupItem)?.Content as CollectionViewGroup
