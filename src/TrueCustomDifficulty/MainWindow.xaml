@@ -764,7 +764,7 @@
                                         <!-- Pair only explicitly eligible adjacent compact sections; others keep their full width. -->
                                         <GroupStyle.Panel>
                                             <ItemsPanelTemplate>
-                                                <infra:ResponsiveSectionGridPanel IsItemsHost="True" HorizontalAlignment="Stretch" MinWidth="1096"
+                                                <infra:ResponsiveSectionGridPanel IsItemsHost="True" HorizontalAlignment="Stretch"
                                                                                  Tag="{Binding DataContext.Id, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" />
                                             </ItemsPanelTemplate>
                                         </GroupStyle.Panel>
