@@ -11,6 +11,8 @@ Semantic controls follow one density/readability baseline:
 - The default application window is 1280×800 and the minimum is 1024×640, keeping the 16:10 layout.
 - Large semantic controls are centered and capped at 920 px so maximizing the window does not stretch tracks across the whole screen.
 - Custom-rendered text has a 9.0 minimum FontSize. Important values and labels use larger sizes.
+- Shared aggregate title/subtitle typography uses 11.5/9.5 px; the shared renderer confines labels to the available horizontal viewport, **trims long labels on one line with an ellipsis**, and shifts centered labels away from clipped panel edges. This does not shrink below the 9 px minimum or change any numeric values.
+- Shared Base Preset reference ticks are visually thicker and taller for legibility.
 - Detailed implementation caveats belong in the rationale/help panel; the control surface itself should show only the value, Base Preset reference and immediate gameplay meaning.
 - Large entity families use two columns when that improves scanability instead of growing into very tall single-column dashboards.
 - Grey ticks/markers carry Base Preset reference information so repeated micro-labels such as `VANILLA`, `0%` and `200%` do not need to be printed on every row.
@@ -19,7 +21,10 @@ Semantic controls follow one density/readability baseline:
 ## Shared interaction contract
 
 - Left-click or drag a visible handle, point, meter or track to edit its backing value.
-- Mouse wheel is not consumed by aggregate visual controls.
+- Mouse wheel is not consumed by aggregate visual controls; the surrounding page continues to scroll.
+- Hovered slider tracks show a subtle gold outline and a short source-parameter tooltip; draggable controls use horizontal/vertical resize cursors, while toggles use a hand cursor. Read-only graphs have no clickable hit target.
+- A keyboard-selected slider retains its outline while the aggregate control has focus, even after the pointer leaves its track.
+- Left/Right and Up/Down adjust the selected slider by its **catalog tick**. PageUp/PageDown move 10 ticks; Home/End select the source minimum/maximum. All keyboard edits use the same source-value snapping as dragging.
 - Right-click an individual interactive element to restore only that backing parameter to the current Base Preset.
 - Press `R` while a visual control has focus to restore the whole visual family to the current Base Preset.
 - Vanilla/Base Preset values are shown with grey ticks, dashed curves, ghost envelopes or labelled reference markers.
