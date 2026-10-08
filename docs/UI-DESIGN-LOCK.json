@@ -3,13 +3,14 @@
   "policy": "docs/UI-DESIGN-LOCK.md",
   "state": "LOCKED",
   "baselineDate": "2026-10-08",
-  "approval": "UI-09 2026-10-08: explicit matching stronger hover glow, joint hit target and reset feedback; 2x/1x caps unchanged",
+  "approval": "UI-09 2026-10-08: enforce combat attack frequency 2x and fire accuracy 1x at runtime and in catalog",
   "lockedFiles": {
     "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": "a88f6d8232ea82c9e4162a595df3fb74b6c51872",
     "src/TrueCustomDifficulty/Infrastructure/ResponsiveSectionGridPanel.cs": "8992904d1d7b6e2452f5c995419b2082bcb36582",
     "src/TrueCustomDifficulty/Infrastructure/ResponsiveParameterGridPanel.cs": "86da30e8bc7de1b598baa4844b06cb93451aaf93",
     "src/TrueCustomDifficulty/MainWindow.xaml": "059a4e6b14105b159355e06af78d6e23e8481170",
     "docs/UI-MIXER-GRID-SPEC.md": "6c12f2423a54eaa84f940b7af2dca39964027d03",
-    "docs/VISUAL-CONTROL-SYSTEM.md": "be047ad6ffd32692386185f23aa4728f4c3e5d16"
+    "docs/VISUAL-CONTROL-SYSTEM.md": "55c171300c03b0eeb25b637a40172eba1bb7a693",
+    "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs": "746500d3ba470388b6c7ceb50d57a785ae3195e3"
   }
 }
