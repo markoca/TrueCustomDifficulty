@@ -3061,8 +3061,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(preview.Left + 12.0, previewTop + 7.0),
             10.2, text, FontWeights.Bold);
 
-        var axis = new Rect(preview.Left + 22.0, previewTop + 32.0,
-            preview.Width - 44.0, 12.0);
+        // Share the exact 0–100 X coordinates with the lower Hunger profile.
+        // The left inset makes room for the profile's rotated Y caption and ticks.
+        var axis = new Rect(preview.Left + 81.0, previewTop + 32.0,
+            preview.Width - 111.0, 12.0);
         var y = axis.Top + axis.Height / 2.0;
         double At(double value) => ValueToX(value, 0.0, 100.0, axis, false);
 
@@ -3116,8 +3118,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(ActualWidth / 2.0, frame.Top - 17.0), 9.2, muted, FontWeights.Normal);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), frame, 4.0, 4.0);
         // Leave room only for Y tick labels/title; no separate Well-Fed lane.
-        var plot = new Rect(frame.Left + 79.0, frame.Top + 43.0,
-            frame.Width - 99.0, 183.0);
+        var plot = new Rect(axis.Left - 2.0, frame.Top + 43.0,
+            axis.Width + 12.0, 183.0);
 
         var area = new Rect(plot.Left + 2.0, plot.Top + 8.0,
             plot.Width - 12.0, plot.Height - 21.0);
