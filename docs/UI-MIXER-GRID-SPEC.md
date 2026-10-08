@@ -355,3 +355,7 @@ All tabs use fixed full-width 1x1 sections without duplicate external headings o
 ### Your Weapons 3x1 horizontal track lock (2026-10-08)
 
 The Your Weapons card has three equal-width horizontal sliders in one line, with native source min/max, current multiplier, grey Base marker and gold draggable handle. Cell gap 12 DIP, compact card height 169 DIP. This supersedes all earlier vertical Your Weapons mixer layouts.
+
+### Hunger triple graphs and clean weapon values (2026-10-08)
+
+Survival > Hunger State Ladder keeps its existing stage preview. The three stage threshold sliders become a connected horizontal-coordinate graph with LOW/MEDIUM/SEVERE node handles and actual 0–100 point mapping. The three recovery sliders become a separate three-node signed-effect graph with vertically dragged Well-Fed (+) / Medium (-) / Severe (-) handles. No fake combined difficulty or percent formula is introduced; curves connect independent native CFG controls. Preserve Base ghost ticks, snapping, resets and native constraints. Your Weapons horizontal tracks suppress the literal BASE value text while keeping the visual grey marker.
