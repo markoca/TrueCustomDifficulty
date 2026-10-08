@@ -363,3 +363,7 @@ Survival > Hunger State Ladder keeps its existing stage preview. The three stage
 ### Hunger Ladder: single 2D effect graph (2026-10-08)
 
 After Hunger Build-Up and the retained read-only stage preview, show one full-width HUNGER EFFECT CURVE. Horizontal axis = hunger points 0–100. Vertical axis = signed stamina regen effect +40% to -100%. LOW has a horizontal threshold ring only. MEDIUM and SEVERE are draggable 2D pairs (threshold X; recovery penalty Y); WELL-FED is a standalone vertical ring on the left of the graph. Draw gold current links and grey Base ghost links. Preserve independent CFG parameters and tick snapping. Compact height is derived from one plot plus footer; never render the previous two graph cards.
+
+### Hunger Survival Profile: intuitive discrete stages (2026-10-08)
+
+Replace sloping Hunger Effect Curve with a discrete step graph to avoid falsely implying continuous effect interpolation. Preserve Hunger Build-Up and stage preview. In one bordered profile, allocate a distinct Well-Fed vertical bonus rail at left and a right-hand 0–100 hunger point / 0..-100% recovery loss chart. LOW threshold ring edits X only. MEDIUM and SEVERE 2D rings edit native threshold and penalty. Highlight gold current stages and dashed grey Base state, with labeled value slots below; keep hover/glow rings, source steps, right-click reset and group-wide R reset. Do not relabel penalties as direct HP damage or fabricate low-state recovery loss.
