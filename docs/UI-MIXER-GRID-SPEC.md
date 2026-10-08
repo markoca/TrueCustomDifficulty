@@ -303,3 +303,7 @@ The first Combat row is a fixed 2x1 section pair: Human Enemies on the left, You
 ### Fixed Combat row identity (2026-10-08)
 
 The locked 2x1 row always contains **Human Enemies | Your Weapons**, identified from each GroupItem's bound group name, regardless of WPF enumeration order. Mutants is not an approved partner and must remain below that row. Keep the four player-weapon faders under Your Weapons.
+
+### Locked Your Weapons internal 2×2 grid — 2026-10-08
+
+Inside the fixed right-hand Combat section, four faders must be a centered 2-column, 2-row bank with equal cell widths and consistent spacing. Do not reuse the generic mixer column-count algorithm for this family: it produced an overflowing 3+1 arrangement. The fourth Explosion Damage fader must always be visible beneath Headshot Damage. The outer Combat section arrangement remains Human Enemies | Your Weapons.
