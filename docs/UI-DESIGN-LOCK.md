@@ -47,6 +47,11 @@ The user requested on 2026-10-08: **"nek se zapise svaki UI dizajn kako bi ostao
 
 ## Change approvals
 
+### 2026-10-08 — UI-09 — screenshot/runtime verification contract
+
+User repeatedly supplied a screenshot with an old square Y handle, `POINT = PREVIEW` footer and 4x/2x fader limits despite newer main-branch source. That screenshot is **evidence of unaccepted runtime UI**, not a new approved design. The model's 2x/1x caps are now asserted directly by the Human Combat drawing path. `run-latest.sh` fetches, publishes, verifies the build receipt against Git HEAD and EXE SHA-256, refuses to run alongside an existing TrueCustomDifficulty.exe, and runs the verified artifact. Never describe UI-09 as visually accepted until the user verifies the running EXE. Approved intended controls remain matching circle handles, interactive center, clear legend and 2x/1x faders. No other UI surfaces are authorized to change.
+
+
 ### 2026-10-08 — UI-09 — runtime screenshot mismatch follow-up
 
 **User report:** A screenshot of the local running EXE still showed the legacy `BOTTOM CIRCLE = HEALTH | LEFT SQUARE = DAMAGE | POINT = PREVIEW` footer and square Y handle, although that text is absent from current main-branch source. This is a source/runtime mismatch, **not** visual acceptance. The lock records implemented source only; the screenshot is explicitly NOT a verified runtime baseline.
