@@ -1245,12 +1245,21 @@ public sealed class AggregateVisualControl : FrameworkElement
         var overview = new Rect(17.0, 55.0, contentWidth, 164.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), overview, 4.0, 4.0);
 
-        DrawText(dc, "REPUTATION REPAIR CURVE", new Point(29.0, 64.0),
-            10.1, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "GOLD: CURRENT  |  DASHED: BASE PRESET",
-            new Point(overview.Right - 12.0, 64.0), 9.0, muted, FontWeights.SemiBold);
-        DrawText(dc, "1x = UNMODIFIED REPAIR PRICE  /  HIGHER = SURCHARGE",
-            new Point(29.0, 81.0), 9.0, muted, FontWeights.Normal);
+        // Constrain both legend halves: source values should never be hidden
+        // under the long comparison caption at the minimum layout width.
+        var headingWidth = Math.Max(1.0, overview.Width / 2.0 - 24.0);
+        dc.DrawText(CreateText("REPUTATION REPAIR CURVE", 10.1,
+                text, FontWeights.Bold, headingWidth),
+            new Point(overview.Left + 12.0, 64.0));
+        var legendText = CreateText("GOLD = NOW  |  DASHED = BASE", 9.0,
+            muted, FontWeights.SemiBold, headingWidth);
+        dc.DrawText(legendText, new Point(
+            overview.Right - 12.0 - legendText.WidthIncludingTrailingWhitespace, 64.0));
+        dc.DrawText(CreateText(
+                "1x = UNMODIFIED REPAIR LAYER  |  ABOVE 1x = SURCHARGE",
+                9.0, muted, FontWeights.Normal,
+                Math.Max(1.0, overview.Width - 24.0)),
+            new Point(overview.Left + 12.0, 81.0));
 
         // Shared plot is explanatory only; values remain editable in the four
         // separate source-range sliders underneath.
@@ -1325,18 +1334,23 @@ public sealed class AggregateVisualControl : FrameworkElement
             var card = new Rect(17.0, top, contentWidth, 75.0);
             dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
                 card, 4.0, 4.0);
-            DrawText(dc, label, new Point(card.Left + 12.0, top + 7.0),
-                10.5, text, FontWeights.Bold);
-            DrawRightAlignedText(dc,
-                $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
-                new Point(card.Right - 12.0, top + 7.0), 11.0,
-                parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
-            DrawText(dc, PriceHint(parameter.CurrentNumber),
-                new Point(card.Left + 12.0, top + 24.0),
-                9.1, muted, FontWeights.SemiBold);
+            // Title, actual source multiplier, and 1x comparison each get
+            // their own line instead of competing across the card header.
+            var cardTextWidth = Math.Max(1.0, card.Width - 24.0);
+            dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold,
+                    cardTextWidth),
+                new Point(card.Left + 12.0, top + 4.0));
+            dc.DrawText(CreateText(
+                    $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
+                    10.7, parameter.IsControlEnabled ? accent : muted,
+                    FontWeights.Bold, cardTextWidth),
+                new Point(card.Left + 12.0, top + 20.0));
+            dc.DrawText(CreateText(PriceHint(parameter.CurrentNumber), 9.0,
+                    muted, FontWeights.SemiBold, cardTextWidth),
+                new Point(card.Left + 12.0, top + 35.0));
 
-            var track = new Rect(card.Left + 22.0, top + 40.0,
-                card.Width - 44.0, 20.0);
+            var track = new Rect(card.Left + 22.0, top + 49.0,
+                card.Width - 44.0, 12.0);
             var y = track.Top + track.Height / 2.0;
             var currentX = ValueToX(parameter.CurrentNumber,
                 parameter.Minimum, parameter.Maximum, track, reverse: false);
@@ -1367,10 +1381,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                     track.Width + 16.0, track.Height + 8.0),
                 track, parameter.Minimum, parameter.Maximum);
             DrawText(dc, $"{parameter.Minimum:0.##}x",
-                new Point(track.Left, top + 61.0),
+                new Point(track.Left, top + 63.0),
                 9.1, muted, FontWeights.Normal);
             DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
-                new Point(track.Right, top + 61.0),
+                new Point(track.Right, top + 63.0),
                 9.1, muted, FontWeights.Normal);
         }
 
