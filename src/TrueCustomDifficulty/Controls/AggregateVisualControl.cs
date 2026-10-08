@@ -2643,16 +2643,27 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Live gameplay readouts describe exactly the sources below, never a
         // fabricated combined multiplier or a new medical/drunkenness effect.
         void Readout(Rect card, string heading, string first, string second,
-            bool firstChanged, bool secondChanged)
+            bool[] firstModified, bool[] secondModified)
         {
             dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 4, 4);
             var usable = Math.Max(1.0, card.Width - 22.0);
             dc.DrawText(CreateText(heading, 10.1, text, FontWeights.Bold, usable),
                 new Point(card.Left + 11, card.Top + 7));
-            dc.DrawText(CreateText(first, 10.0, firstChanged ? accent : text, FontWeights.SemiBold, usable),
-                new Point(card.Left + 11, card.Top + 29));
-            dc.DrawText(CreateText(second, 9.6, secondChanged ? accent : text, FontWeights.SemiBold, usable),
-                new Point(card.Left + 11, card.Top + 49));
+
+            // Highlight only the actual changed numeric values. Names, units,
+            // dividers and unaffected effects always retain their normal color.
+            void EffectLine(string line, double size, double y, bool[] changed)
+            {
+                var formatted = CreateText(line, size, text, FontWeights.SemiBold, usable);
+                var matches = System.Text.RegularExpressions.Regex.Matches(
+                    line, @"[+-]?\d+(?:\.\d+)?");
+                for (var i = 0; i < matches.Count && i < changed.Length; i++)
+                    if (changed[i])
+                        formatted.SetForegroundBrush(accent, matches[i].Index, matches[i].Length);
+                dc.DrawText(formatted, new Point(card.Left + 11, y));
+            }
+            EffectLine(first, 10.0, card.Top + 29, firstModified);
+            EffectLine(second, 9.6, card.Top + 49, secondModified);
         }
 
         const double strengthTop = 55.0;
@@ -2693,18 +2704,20 @@ public sealed class AggregateVisualControl : FrameworkElement
             "INSTANT STAMINA",
             $"WATER +{38 * burst.CurrentNumber:0.#}% | ENERGY +{50 * burst.CurrentNumber:0.#}%",
             $"LIMITED ENERGY +{100 * burst.CurrentNumber:0.#}%",
-            burst.IsValueModifiedFromReference(), burst.IsValueModifiedFromReference());
+            new[] { burst.IsValueModifiedFromReference(), burst.IsValueModifiedFromReference() },
+            new[] { burst.IsValueModifiedFromReference() });
         Readout(CompactSlot(readoutCardsTop, width, durationColumns, 1),
             "SUSTAINED STAMINA",
             $"WATER REGEN +{25 * waterStamina.CurrentNumber:0.#}%",
             $"WATER COST -{10 * waterStamina.CurrentNumber:0.#}% | ENERGY REGEN +{200 * energyStamina.CurrentNumber:0.#}%",
-            waterStamina.IsValueModifiedFromReference(),
-            waterStamina.IsValueModifiedFromReference() || energyStamina.IsValueModifiedFromReference());
+            new[] { waterStamina.IsValueModifiedFromReference() },
+            new[] { waterStamina.IsValueModifiedFromReference(), energyStamina.IsValueModifiedFromReference() });
         Readout(CompactSlot(readoutCardsTop, width, durationColumns, 2),
             "RADIATION REMOVED",
             $"BEER {10 * antiRad.CurrentNumber:0.#} RAD",
             $"VODKA {50 * antiRad.CurrentNumber:0.#} RAD",
-            antiRad.IsValueModifiedFromReference(), antiRad.IsValueModifiedFromReference());
+            new[] { antiRad.IsValueModifiedFromReference() },
+            new[] { antiRad.IsValueModifiedFromReference() });
         var previewTitle = CompactGridEnd(readoutCardsTop, 3, durationColumns) + 18.0;
         DrawText(dc, "HOW LONG THE EFFECTS LAST",
             new Point(19, previewTitle), 10.8, accent, FontWeights.Bold);
