@@ -201,3 +201,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — Single-row Mutant Health and Your Weapons faders
 
 **Explicit user approval:** Mutant Health must put all eight compact vertical faders on **one horizontal row**, without auto-wrapping into four columns and two rows. Use equal cell widths, compact heading typography and split long mutant names onto two lines to prevent collisions. Its section height is reduced accordingly. **Your Weapons** likewise uses one centered row of its three vertical faders (Weapon Damage, Headshot Damage, Weapon Jamming), not the former 2-column layout. Full-width 1x1 top-level sections remain locked. Native CFG ranges, 0.05 mutant steps, per-fader base ticks, right-click reset, gold handle/glow and current HP labels remain unchanged. Local Wine acceptance pending.
+
+### 2026-10-08 — Special Ability Cooldowns: one row of eight vertical faders
+
+**User-approved change:** The eight mutant Special Ability Cooldown controls use the same compact one-row vertical-fader layout as Mutant Health. Retain original native cooldown/wait multipliers and steps, return-rate readout, grey reference tick, gold current handle, circular hover glow without box, vertical dragging, single-control right-click reset and R reset all. Split long mutant names on two lines. Keep all top-level sections full width (1x1); no unrelated UI changes. Wine visual acceptance pending.
