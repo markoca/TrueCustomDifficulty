@@ -315,3 +315,7 @@ Inside the fixed right-hand Combat section, four faders must be a centered 2-col
 ### Human / Mutant Combat mixer contract — 2026-10-08
 
 Human Combat has three vertical tracks next to its graph: Attack Frequency 0.5–2x, Shot Accuracy 0–1x, Explosion Damage 0–2x. Your Weapons excludes explosions. Mutant Health has 8 matching vertical faders in a fixed 4×2 bank on its own full-width section, each with the corresponding native catalog minimum, maximum, Base value marker, gold current handle and circular hover glow; no redundant horizontal HP slider or box. Effective health is displayed in HP as supplementary information, not another draggable control. Do not apply the source maxima of Human Combat to mutant health.
+
+### Mutant Health / Your Weapons row lock (2026-10-08)
+
+Inside the fixed 1x1 full-width section layout, Mutant Health has eight source-native vertical faders in a single row with equal spacing. Your Weapons has three vertical faders in a single centered row. The old Mutant Health 4x2 and Your Weapons 2x2 layout descriptions are superseded. Do not auto-wrap either bank; preserve their native source semantics and grey reference ticks.
