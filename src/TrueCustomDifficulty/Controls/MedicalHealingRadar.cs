@@ -17,8 +17,8 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class MedicalHealingRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double BoardHeight = 305.0;
-    private const double CardHeight = 47.0;
+    private const double BoardHeight = 297.0;
+    private const double CardHeight = 89.0;
     private const double Gap = 10.0;
     private const string FoodHealingId = "health.foodHealing";
 
@@ -134,11 +134,14 @@ public sealed class MedicalHealingRadar : FrameworkElement
             9.5, state ? accent : muted, FontWeights.Bold);
         _hits.Add(new HitArea(switchRect, -1, HitAction.Food));
 
-        // Exactly four full-width horizontal faders; no cards or preview.
+        // Two paired medical lanes per row: compact dose editors, no previews.
+        var cellWidth = (width - 32 - Gap) / 2;
         for (var i = 0; i < Items.Length; i++)
         {
-            var rect = new Rect(16, 94 + i * (CardHeight + Gap),
-                width - 32, CardHeight);
+            var column = i % 2;
+            var row = i / 2;
+            var rect = new Rect(16 + column * (cellWidth + Gap),
+                94 + row * (CardHeight + Gap), cellWidth, CardHeight);
             DrawMedicalCard(dc, rect, i, text, muted, border, accent, panel);
         }
     }
@@ -150,35 +153,55 @@ public sealed class MedicalHealingRadar : FrameworkElement
         var p = _medical[row];
         if (p is null) return;
 
-        // Separate fader lanes instead of a stack of bordered cards.
-        if (row > 0)
-            dc.DrawLine(new Pen(border, .8),
-                new Point(card.Left + 3, card.Top - 4),
-                new Point(card.Right - 3, card.Top - 4));
-        DrawText(dc, Items[row].Label, new Point(card.Left + 4, card.Top + 3),
-            10.0, text, FontWeights.Bold);
+        // One readable dosage editor per item: large HP output, a restrained
+        // reference mark and one horizontal interaction. No separate preview.
+        var hovered = _hoverRow == row;
+        dc.DrawRoundedRectangle(
+            selected ? CloneWithOpacity(accent, .065) : panel,
+            new Pen(selected || hovered ? CloneWithOpacity(accent, .65) : border,
+                selected || hovered ? 1.2 : .8),
+            card, 4, 4);
+        DrawText(dc, Items[row].Label, new Point(card.Left + 12, card.Top + 10),
+            10.3, text, FontWeights.Bold);
         var modified = p.IsValueModifiedFromReference();
         DrawRightAlignedText(dc, $"{p.CurrentNumber:0.#} HP",
-            new Point(card.Right - 5, card.Top + 2),
-            11.5, modified ? accent : text, FontWeights.Bold);
+            new Point(card.Right - 12, card.Top + 8),
+            13.2, modified ? accent : text, FontWeights.Bold);
 
-        var track = new Rect(card.Left + 8, card.Top + 19,
-            card.Width - 16, 24);
+        var track = new Rect(card.Left + 17, card.Top + 37,
+            card.Width - 34, 25);
         var y = track.Top + track.Height / 2;
         var range = Math.Max(Epsilon, p.Maximum - p.Minimum);
         var currentX = track.Left + track.Width *
             Math.Clamp((p.CurrentNumber - p.Minimum) / range, 0, 1);
         var referenceX = track.Left + track.Width *
             Math.Clamp((p.ReferenceNumber - p.Minimum) / range, 0, 1);
-        dc.DrawLine(new Pen(border, 3.5),
+        dc.DrawLine(new Pen(border, 4),
             new Point(track.Left, y), new Point(track.Right, y));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, .70), 3.5),
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, .74), 4),
             new Point(track.Left, y), new Point(currentX, y));
-        dc.DrawLine(new Pen(muted, 1.7),
-            new Point(referenceX, y - 9), new Point(referenceX, y + 9));
-        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.5 : 1.8),
-            new Point(currentX, y), 6.5, 6.5);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.6, 2.6);
+
+        // Source reference remains a subtle landmark rather than a second
+        // output bar. Small divisions make HP fine-tuning easier to orient.
+        for (var step = 1; step < 5; step++)
+        {
+            var tickX = track.Left + track.Width * step / 5.0;
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .35), 1),
+                new Point(tickX, y - 4), new Point(tickX, y + 4));
+        }
+        dc.DrawLine(new Pen(muted, 1.8),
+            new Point(referenceX, y - 11), new Point(referenceX, y + 11));
+        if (selected || hovered)
+            dc.DrawEllipse(CloneWithOpacity(accent, .13), null,
+                new Point(currentX, y), 12, 12);
+        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.7 : 1.9),
+            new Point(currentX, y), 7, 7);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
+        DrawText(dc, $"{p.Minimum:0.#}", new Point(track.Left, card.Bottom - 18),
+            9, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{p.Maximum:0.#} HP",
+            new Point(track.Right, card.Bottom - 18),
+            9, muted, FontWeights.Normal);
         _hits.Add(new HitArea(new Rect(track.Left - 5, track.Top - 4,
             track.Width + 10, track.Height + 8), row, HitAction.Slider));
 
@@ -303,8 +326,11 @@ public sealed class MedicalHealingRadar : FrameworkElement
         if (row < 0 || row >= _medical.Length ||
             _medical[row] is not { } parameter || !parameter.IsControlEnabled)
             return;
-        var trackLeft = 24.0;
-        var trackWidth = Math.Max(560.0, ActualWidth) - 48.0;
+        var hit = _hits.FirstOrDefault(area =>
+            area.Row == row && area.Action == HitAction.Slider);
+        if (hit is null) return;
+        var trackLeft = hit.Bounds.Left + 5;
+        var trackWidth = hit.Bounds.Width - 10;
         var ratio = Math.Clamp((x - trackLeft) / Math.Max(1, trackWidth), 0, 1);
         SetSnapped(parameter, parameter.Minimum +
             ratio * (parameter.Maximum - parameter.Minimum));
