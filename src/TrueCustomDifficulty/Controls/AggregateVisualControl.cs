@@ -1428,10 +1428,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         var active = parameter.IsControlEnabled;
         DrawText(dc, label, new Point(card.Left + 11.0, card.Top + 8.0),
             10.3, text, FontWeights.Bold);
-        DrawRightAlignedText(dc,
+        DrawChangedNumbers(dc,
             $"{parameter.CurrentNumber * 100:0}%   |   BASE {parameter.ReferenceNumber * 100:0}%",
             new Point(card.Right - 12.0, card.Top + 7.0),
-            10.5, active ? accent : muted, FontWeights.Bold);
+            10.5, active ? text : muted, accent, FontWeights.Bold,
+            active && parameter.IsValueModifiedFromReference(), rightAligned: true);
 
         var track = new Rect(card.Left + 15.0, card.Top + 29.0,
             card.Width - 30.0, 24.0);
@@ -1795,10 +1796,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        DrawRightAlignedText(dc,
+        DrawChangedNumbers(dc,
             $"{parameter.CurrentNumber:0.##}x   |   BASE {parameter.ReferenceNumber:0.##}x",
             new Point(card.Right - 11.0, card.Top + 7.0),
-            10.0, accent, FontWeights.Bold);
+            10.0, text, accent, FontWeights.Bold,
+            parameter.IsValueModifiedFromReference(), rightAligned: true);
 
         var track = new Rect(card.Left + 15.0, card.Top + 27.0,
             Math.Max(80.0, card.Width - 30.0), 20.0);
@@ -2471,10 +2473,12 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Point(nowX, y), 5.0, 5.0);
             dc.DrawEllipse(accent, null, new Point(nowX, y), 2.0, 2.0);
 
-            DrawCenteredText(dc, $"{ratio * 100.0:0}%",
-                new Point(centerX, 143.0), 10.2, accent, FontWeights.Bold);
-            DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##} BLEEDING PTS",
-                new Point(centerX, 164.0), 9.1, muted, FontWeights.Normal);
+            DrawCenteredNumericChanges(dc, $"{ratio * 100.0:0}%",
+                new Point(centerX, 143.0), 10.2, text, accent,
+                FontWeights.Bold, parameter.IsValueModifiedFromReference());
+            DrawCenteredNumericChanges(dc, $"{parameter.CurrentNumber:0.##} BLEEDING PTS",
+                new Point(centerX, 164.0), 9.1, muted, accent,
+                FontWeights.Normal, parameter.IsValueModifiedFromReference());
         }
 
         DrawText(dc, "EDIT RAW BLEEDING REMOVAL",
@@ -2489,10 +2493,11 @@ public sealed class AggregateVisualControl : FrameworkElement
 
             DrawText(dc, label, new Point(card.Left + 12.0, top + 7.0),
                 10.5, text, FontWeights.Bold);
-            DrawRightAlignedText(dc,
-                $"{parameter.CurrentNumber:0.##} PTS",
+            DrawChangedNumbers(dc, $"{parameter.CurrentNumber:0.##} PTS",
                 new Point(card.Right - 12.0, top + 7.0),
-                11.0, parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
+                11.0, parameter.IsControlEnabled ? text : muted, accent,
+                FontWeights.Bold, parameter.IsControlEnabled &&
+                    parameter.IsValueModifiedFromReference(), rightAligned: true);
             DrawText(dc, "BLEEDING REMOVED PER USE",
                 new Point(card.Left + 12.0, top + 26.0),
                 9.3, muted, FontWeights.Normal);
