@@ -36,7 +36,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         if (Family is "AnomalyEffectsBoard" or "ServiceCostsBoard"
             or "TraderStockBoard" or "ItemWeightBoard" or "BreakableBoxYields"
-            or "StashRewardProfile" or "HumanCombatProfile")
+            or "StashRewardProfile" or "HumanCombatProfile" or "PlayerWeaponProfile")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
     }
 
@@ -206,7 +206,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrawHumanCombatProfile(dc, text, muted, border, soft, accent, panel);
                 break;
             case "PlayerWeaponProfile":
-                DrawPlayerWeaponProfile(dc, text, muted, border, soft, accent, panel);
+                DrawYourWeaponsFaders(dc, text, muted, border, accent, panel);
                 break;
             case "CoreHealthDashboard":
                 DrawCoreHealthDashboard(dc, text, muted, border, soft, accent, panel);
@@ -1677,6 +1677,21 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     // Three source-exact tuning lanes: no invented headshot damage formula,
     // simulated hit chance, or hard-coded weapon-jam probability.
+    // Four independent player-weapon CFG values, including explosions, in a
+    // responsive two-column vertical fader bank beside Human Combat.
+    private void DrawYourWeaponsFaders(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawMixerBoard(dc, new[]
+        {
+            ("combat.playerWeaponDamage", "WEAPON", "DAMAGE"),
+            ("combat.playerHeadshotMultiplier", "HEADSHOT", "DAMAGE"),
+            ("combat.weaponJamming", "WEAPON", "JAMMING"),
+            ("combat.explosionDamage", "EXPLOSION", "DAMAGE")
+        }, "YOUR WEAPONS", "", text, muted, border, accent, panel);
+    }
+
     private void DrawPlayerWeaponProfile(
         DrawingContext dc,
         Brush text,
@@ -4756,7 +4771,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 390.0,
             "HumanCombatProfile" => 465.0,
-            "PlayerWeaponProfile" => 330.0,
+            "PlayerWeaponProfile" => GetMixerHeight(width, 4),
             "CoreHealthDashboard" => 475.0,
             "SevereFatiguePenaltyBoard" => 390.0,
             "MasterMedicalHealing" => 390.0,
@@ -4917,7 +4932,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             {
                 "combat.playerWeaponDamage",
                 "combat.playerHeadshotMultiplier",
-                "combat.weaponJamming"
+                "combat.weaponJamming",
+                "combat.explosionDamage"
             },
             "CoreHealthDashboard" => new[]
             {
