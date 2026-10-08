@@ -1153,7 +1153,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         var aimMax = Math.Max(lowAim.Maximum, Math.Max(mediumAim.Maximum, severeAim.Maximum));
         var reloadMax = Math.Max(mediumReload.Maximum, severeReload.Maximum);
         double YA(double v) => ValueToY(v, 0, aimMax, area);
-        double YR(double v) => ValueToY(v, 0, reloadMax, area);
+        // Reload uses its own slightly shorter vertical range, while retaining
+        // the exact native source maximum and shared fatigue-point X positions.
+        var reloadArea = new Rect(area.Left, area.Top + 18, area.Width, area.Height - 30);
+        double YR(double v) => ValueToY(v, 0, reloadMax, reloadArea);
         var thresholds = new[] { low, medium, severe };
         var aims = new[] { lowAim, mediumAim, severeAim };
         var reloads = new[] { mediumReload, severeReload };
@@ -1163,10 +1166,15 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.PushTransform(new RotateTransform(-90, left.X, left.Y));
         DrawCenteredText(dc, "AIM TIME", left, 9.2, accent, FontWeights.Bold);
         dc.Pop();
-        var right = new Point(area.Right + 57, area.Top + area.Height / 2);
-        dc.PushTransform(new RotateTransform(90, right.X, right.Y));
-        DrawCenteredText(dc, "RELOAD TIME", right, 9.2, text, FontWeights.Bold);
-        dc.Pop();
+        // Reload begins at MEDIUM: show a distinct, shorter secondary scale
+        // within the chart edge instead of mirroring the complete AIM axis.
+        var reloadAxisX = area.Right - 16.0;
+        dc.DrawLine(new Pen(CloneWithOpacity(text, .48), 1.2),
+            new Point(reloadAxisX, reloadArea.Top),
+            new Point(reloadAxisX, reloadArea.Bottom));
+        DrawRightAlignedText(dc, "RELOAD",
+            new Point(reloadAxisX - 4, reloadArea.Top - 19),
+            9.0, text, FontWeights.Bold);
         for (int i = 0; i <= 4; i++)
         {
             var ratio = i / 4.0;
@@ -1176,16 +1184,24 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Point(area.Left, yy), new Point(area.Right, yy));
             DrawRightAlignedText(dc, $"+{aimMax * ratio * 100:0.#}%",
                 new Point(area.Left - 7, yy - 7), 9, accent, FontWeights.SemiBold);
-            DrawText(dc, $"+{reloadMax * ratio * 100:0.#}%",
-                new Point(area.Right + 7, yy - 7), 9, text, FontWeights.SemiBold);
+            var reloadTickY = reloadArea.Bottom - ratio * reloadArea.Height;
+            dc.DrawLine(new Pen(CloneWithOpacity(text, .5), 1),
+                new Point(reloadAxisX - 3, reloadTickY),
+                new Point(reloadAxisX + 3, reloadTickY));
+            DrawRightAlignedText(dc, $"+{reloadMax * ratio * 100:0.#}%",
+                new Point(reloadAxisX - 5, reloadTickY - 7),
+                9, text, FontWeights.SemiBold);
         }
         for (int t = 0; t <= 100; t += 25)
             DrawCenteredText(dc, $"{t}", new Point(X(t), area.Bottom + 16),
                 9.2, muted, FontWeights.SemiBold);
         void Steps(ParameterViewModel[] effects, bool reload, bool basePreset, Pen pen)
         {
-            var previousX = area.Left;
-            var previousY = area.Bottom;
+            // There is no reload source or white baseline before MEDIUM.
+            var previousX = reload
+                ? X(basePreset ? medium.ReferenceNumber : medium.CurrentNumber)
+                : area.Left;
+            var previousY = reload ? reloadArea.Bottom : area.Bottom;
             for (int i = 0; i < effects.Length; i++)
             {
                 var threshold = thresholds[i + (reload ? 1 : 0)];
@@ -1218,7 +1234,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ReferenceEquals(_hoverTarget?.Parameter, threshold) && _hoverTarget?.Kind == kind,
                 IsSelected(threshold) && _selectedHitKind == kind);
             _hitTargets.Add(new HitTarget(threshold,
-                new Rect(x - 14, yy - 14, 28, 28), area, kind,
+                new Rect(x - 17, yy - 17, 34, 34), reload ? reloadArea : area, kind,
                 threshold.Minimum, threshold.Maximum, false));
         }
         for (int i = 0; i < 3; i++) Ring(thresholds[i], aims[i], false);
@@ -4579,7 +4595,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 _fatigueReloadInteraction ? FatigueReloadMaximum() : FatigueAimMaximum();
             threshold.CurrentNumber = Snap(threshold, threshold.Minimum +
                 x * (threshold.Maximum - threshold.Minimum));
-            effect.CurrentNumber = Snap(effect, Math.Clamp((1 - y) * maximum,
+            effect.CurrentNumber = Snap(effect, Math.Clamp(y * maximum,
                 effect.Minimum, effect.Maximum));
             EnforceFamilyConstraints(threshold);
             _status.ClearTransient();
@@ -4762,6 +4778,30 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private HitTarget? FindTarget(Point point)
     {
+        // Fatigue rings can overlap because both axes share threshold X.
+        // Select the nearest ring center, not whichever was drawn last.
+        if (Family == "FatigueCurve")
+        {
+            HitTarget? nearest = null;
+            var nearestDistance = double.PositiveInfinity;
+            foreach (var candidate in _hitTargets)
+            {
+                if (candidate.Kind is not (HitKind.FatigueJoint or HitKind.FatigueReloadJoint)
+                    || !candidate.HitRect.Contains(point))
+                    continue;
+                var cx = candidate.HitRect.Left + candidate.HitRect.Width / 2;
+                var cy = candidate.HitRect.Top + candidate.HitRect.Height / 2;
+                var distance = (point.X - cx) * (point.X - cx) +
+                    (point.Y - cy) * (point.Y - cy);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearest = candidate;
+                }
+            }
+            if (nearest is not null)
+                return nearest;
+        }
         for (var i = _hitTargets.Count - 1; i >= 0; i--)
         {
             if (_hitTargets[i].HitRect.Contains(point))
