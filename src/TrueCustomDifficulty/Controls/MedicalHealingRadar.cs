@@ -9,39 +9,39 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// Base-healing output board for the four primary medical items.
-///
-/// The historical *Radar class name is kept for XAML compatibility. Every row keeps
-/// the original raw HP backing value, shows that value on one shared absolute HP scale,
-/// and exposes an interactive 0-200% of vanilla strength track.
+/// Direct medical healing editors and the ordinary-food health switch.
+/// The legacy class name remains for the existing XAML template.
+/// All five controls operate on their original CFG-backed parameters;
+/// this board deliberately contains no read-only preview/chart.
 /// </summary>
 public sealed class MedicalHealingRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double AbsoluteHpMaximum = 200.0;
-    private const double RowHeight = 50.0;
+    private const double Height = 390.0;
+    private const double CardHeight = 119.0;
+    private const double Gap = 10.0;
+    private const string FoodHealingId = "health.foodHealing";
 
-    private static readonly HealDefinition[] Items =
+    private static readonly (string Id, string Label)[] Items =
     {
-        new("health.bandageHealing", "BANDAGE", true),
-        new("health.medkitHealing", "MEDKIT", true),
-        new("health.armyMedkitHealing", "ARMY MEDKIT", true),
-        new("health.ecoMedkitHealing", "SCIENTIFIC", false),
+        ("health.bandageHealing", "BANDAGE"),
+        ("health.medkitHealing", "MEDKIT"),
+        ("health.armyMedkitHealing", "ARMY MEDKIT"),
+        ("health.ecoMedkitHealing", "SCIENTIFIC MEDKIT")
     };
 
-    private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Items.Length];
-    private readonly Dictionary<int, HitTarget> _targets = new();
-    private readonly VisualStatusMessage _status;
+    private readonly ParameterViewModel?[] _medical = new ParameterViewModel?[4];
+    private ParameterViewModel? _foodHealing;
+    private readonly List<HitArea> _hits = new();
+    private int _selected = 0;
+    private HitAction _hoverAction = HitAction.Select;
+    private int _hoverRow = -2;
 
-    private int _selectedRow;
-    private int _hoverRow = -1;
-    private int _dragRow = -1;
-
-    public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
-        nameof(Parameters),
-        typeof(IEnumerable),
-        typeof(MedicalHealingRadar),
-        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnParametersChanged));
+    public static readonly DependencyProperty ParametersProperty =
+        DependencyProperty.Register(nameof(Parameters), typeof(IEnumerable),
+            typeof(MedicalHealingRadar),
+            new FrameworkPropertyMetadata(null,
+                FrameworkPropertyMetadataOptions.AffectsRender, OnParametersChanged));
 
     public IEnumerable? Parameters
     {
@@ -51,381 +51,292 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
     public MedicalHealingRadar()
     {
-        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 320;
+        MinHeight = Height;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
 
     protected override Size MeasureOverride(Size availableSize)
-    {
-        var width = double.IsInfinity(availableSize.Width) ? 700.0 : Math.Max(560.0, availableSize.Width);
-        return new Size(width, 320.0);
-    }
+        => new(double.IsInfinity(availableSize.Width)
+            ? 720.0 : Math.Max(560.0, availableSize.Width), Height);
 
-    private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void OnParametersChanged(DependencyObject d,
+        DependencyPropertyChangedEventArgs e)
         => ((MedicalHealingRadar)d).RebindParameters();
 
     private void RebindParameters()
     {
-        foreach (var parameter in _parameters)
+        foreach (var p in _medical)
+            if (p is not null) p.PropertyChanged -= ParameterChanged;
+        if (_foodHealing is not null)
+            _foodHealing.PropertyChanged -= ParameterChanged;
+
+        Array.Clear(_medical, 0, _medical.Length);
+        _foodHealing = null;
+
+        var byId = Parameters?.OfType<ParameterViewModel>()
+            .ToDictionary(p => p.Id, StringComparer.Ordinal);
+        if (byId is not null)
         {
-            if (parameter is not null)
-                parameter.PropertyChanged -= Parameter_PropertyChanged;
-        }
-
-        Array.Clear(_parameters, 0, _parameters.Length);
-
-        if (Parameters is not null)
-        {
-            var byId = Parameters
-                .OfType<ParameterViewModel>()
-                .ToDictionary(x => x.Id, StringComparer.Ordinal);
-
             for (var i = 0; i < Items.Length; i++)
-            {
-                if (!byId.TryGetValue(Items[i].ParameterId, out var parameter))
-                    continue;
-
-                _parameters[i] = parameter;
-                parameter.PropertyChanged += Parameter_PropertyChanged;
-            }
+                byId.TryGetValue(Items[i].Id, out _medical[i]);
+            byId.TryGetValue(FoodHealingId, out _foodHealing);
         }
 
+        foreach (var p in _medical)
+            if (p is not null) p.PropertyChanged += ParameterChanged;
+        if (_foodHealing is not null)
+            _foodHealing.PropertyChanged += ParameterChanged;
         InvalidateVisual();
     }
 
-    private void Parameter_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void ParameterChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName is nameof(ParameterViewModel.CurrentNumber)
-            or nameof(ParameterViewModel.CurrentDisplay)
-            or nameof(ParameterViewModel.IsModified)
-            or nameof(ParameterViewModel.ReferenceNumber))
-        {
+            or nameof(ParameterViewModel.CurrentBoolean)
+            or nameof(ParameterViewModel.ReferenceNumber)
+            or nameof(ParameterViewModel.IsModified))
             InvalidateVisual();
-        }
     }
 
     protected override void OnRender(DrawingContext dc)
     {
         base.OnRender(dc);
-
-        var text = FindBrush("TextBrush", Brushes.White);
+        var text = FindBrush("TextBrush", Brushes.WhiteSmoke);
         var muted = FindBrush("RadarMutedTextBrush", Brushes.Gray);
-        var border = FindBrush("BorderBrush", Brushes.DimGray);
-        var soft = FindBrush("BorderSoftBrush", border);
+        var border = FindBrush("BorderSoftBrush", Brushes.DimGray);
         var accent = FindBrush("AccentBrush", Brushes.Goldenrod);
         var panel = FindBrush("PanelAltBrush", Brushes.Black);
 
-        IndustrialChrome.DrawFrame(
-            dc,
-            new Rect(2.0, 2.0, Math.Max(0.0, ActualWidth - 4.0), Math.Max(0.0, ActualHeight - 4.0)),
-            panel,
-            border,
-            accent,
-            soft,
-            8.0,
-            accentEdge: true,
-            technicalMarks: true);
+        IndustrialChrome.DrawFrame(dc,
+            new Rect(2, 2, Math.Max(0, ActualWidth - 4), Math.Max(0, ActualHeight - 4)),
+            panel, border, accent, border, 8, accentEdge: true, technicalMarks: true);
 
-        _targets.Clear();
-
-        DrawCenteredText(dc, "MEDICAL HEALING OUTPUT", new Point(ActualWidth / 2.0, 21.0),
+        _hits.Clear();
+        DrawCenteredText(dc, "MEDICAL HEALING", new Point(ActualWidth / 2, 21),
             12.5, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "base HP restored by each item, before any separate Master-only healing modifier", new Point(ActualWidth / 2.0, 39.0),
-            9.5, muted, FontWeights.Normal);
 
-        var layout = GetLayout();
+        var width = Math.Max(560.0, ActualWidth);
+        var food = new Rect(16, 45, width - 32, 55);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1), food, 4, 4);
+        DrawText(dc, "FOOD RESTORES HEALTH",
+            new Point(food.Left + 13, food.Top + 11), 10.5, text, FontWeights.Bold);
+        DrawText(dc, "BREAD / CANNED FOOD / SAUSAGE",
+            new Point(food.Left + 13, food.Top + 30), 9, muted, FontWeights.Normal);
+        var state = _foodHealing?.CurrentBoolean == true;
+        var switchRect = new Rect(food.Right - 94, food.Top + 9, 78, 36);
+        dc.DrawRoundedRectangle(state ? CloneWithOpacity(accent, .14) : panel,
+            new Pen(_foodHealing?.IsValueModifiedFromReference() == true ? accent : border, 1.4),
+            switchRect, 4, 4);
+        DrawCenteredText(dc, state ? "ON" : "OFF",
+            new Point(switchRect.Left + switchRect.Width / 2,
+                switchRect.Top + switchRect.Height / 2),
+            12, state ? accent : muted, FontWeights.Bold);
+        _hits.Add(new HitArea(food, -1, HitAction.Food));
 
-        DrawText(dc, "ITEM", new Point(layout.LabelLeft, 62.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "BASE HEAL", new Point(layout.ValueCenter, 69.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "ABSOLUTE HP  •  0 → 200", new Point(layout.HpBarLeft + layout.HpBarWidth / 2.0, 69.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "0%  ←  RELATIVE STRENGTH  →  200%", new Point(layout.TrackLeft + layout.TrackWidth / 2.0, 69.0), 7.7, muted, FontWeights.Bold);
-
-        dc.DrawLine(new Pen(border, 1.0), new Point(14.0, 83.0), new Point(Math.Max(14.0, ActualWidth - 14.0), 83.0));
-
-        for (var row = 0; row < Items.Length; row++)
-            DrawRow(dc, row, 80.0 + row * RowHeight, layout, text, muted, border, accent, panel);
-
-        DrawCenteredText(
-            dc,
-            "BANDAGE / MEDKIT / ARMY CAN BE MODIFIED AGAIN BY MASTER CONSUMABLE PENALTIES   •   SCIENTIFIC IS NOT",
-            new Point(ActualWidth / 2.0, 286.0),
-            7.4,
-            muted,
-            FontWeights.Normal);
-
-        // No transient yellow reset notifications.
+        var cardWidth = (width - 32 - Gap) / 2;
+        for (var i = 0; i < Items.Length; i++)
+        {
+            var col = i % 2;
+            var row = i / 2;
+            var rect = new Rect(16 + col * (cardWidth + Gap),
+                112 + row * (CardHeight + Gap), cardWidth, CardHeight);
+            DrawMedicalCard(dc, rect, i, text, muted, border, accent, panel);
+        }
     }
 
-    private void DrawRow(
-        DrawingContext dc,
-        int row,
-        double top,
-        Layout layout,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+    private void DrawMedicalCard(DrawingContext dc, Rect card, int row,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        var parameter = _parameters[row];
-        if (parameter is null)
-            return;
-
-        var item = Items[row];
-        var reference = parameter.ReferenceNumber;
-        var relative = Math.Abs(reference) > Epsilon ? parameter.CurrentNumber / reference : 0.0;
-        var modified = Math.Abs(parameter.CurrentNumber - reference) > Epsilon;
-        var selected = row == _selectedRow;
-        var hovered = row == _hoverRow;
-
-        var rowRect = new Rect(14.0, top, Math.Max(1.0, ActualWidth - 28.0), RowHeight - 4.0);
+        var selected = _selected == row;
         dc.DrawRoundedRectangle(
-            selected
-                ? CloneWithOpacity(accent, 0.08)
-                : hovered
-                    ? CloneWithOpacity(border, 0.10)
-                    : CloneWithOpacity(panel, 0.01),
-            new Pen(CloneWithOpacity(border, 0.45), 0.8),
-            rowRect,
-            3.0,
-            3.0);
+            selected ? CloneWithOpacity(accent, .055) : panel,
+            new Pen(selected ? CloneWithOpacity(accent, .6) : border, 1),
+            card, 4, 4);
+        _hits.Add(new HitArea(card, row, HitAction.Select));
 
-        DrawText(
-            dc,
-            item.Label,
-            new Point(layout.LabelLeft, top + 9.0),
-            8.7,
-            modified ? accent : text,
-            FontWeights.Bold);
+        var p = _medical[row];
+        DrawText(dc, Items[row].Label, new Point(card.Left + 12, card.Top + 9),
+            10, text, FontWeights.Bold);
+        if (p is null)
+        {
+            DrawRightAlignedText(dc, "UNAVAILABLE",
+                new Point(card.Right - 12, card.Top + 9),
+                9, muted, FontWeights.Bold);
+            return;
+        }
 
-        DrawText(
-            dc,
-            item.HasMasterModifier ? "MASTER MODIFIER" : "DIRECT BASE HEAL",
-            new Point(layout.LabelLeft, top + 28.0),
-            6.5,
-            item.HasMasterModifier ? muted : accent,
-            FontWeights.SemiBold);
+        var modified = p.IsValueModifiedFromReference();
+        DrawRightAlignedText(dc, $"+{p.CurrentNumber:0.#} HP",
+            new Point(card.Right - 12, card.Top + 8),
+            12, modified ? accent : text, FontWeights.Bold);
+        var percent = Math.Abs(p.ReferenceNumber) > Epsilon
+            ? 100 * p.CurrentNumber / p.ReferenceNumber : 0;
+        DrawText(dc, $"{percent:0}% HEALING",
+            new Point(card.Left + 12, card.Top + 36),
+            9.2, muted, FontWeights.SemiBold);
 
-        DrawCenteredText(
-            dc,
-            $"{parameter.CurrentNumber:0} HP",
-            new Point(layout.ValueCenter, top + 17.0),
-            10.2,
-            modified ? accent : text,
-            FontWeights.Bold);
-
-        DrawCenteredText(
-            dc,
-            $"{relative * 100:0}% vanilla",
-            new Point(layout.ValueCenter, top + 36.0),
-            6.9,
-            muted,
-            FontWeights.Normal);
-
-        var hpBar = new Rect(layout.HpBarLeft, top + 11.0, layout.HpBarWidth, 20.0);
-        var hpY = hpBar.Top + hpBar.Height / 2.0;
-
-        dc.DrawLine(new Pen(border, 5.0), new Point(hpBar.Left, hpY), new Point(hpBar.Right, hpY));
-
-        var currentHpX = HpToX(parameter.CurrentNumber, hpBar);
-        var vanillaHpX = HpToX(reference, hpBar);
-
-        dc.DrawLine(new Pen(accent, 5.0), new Point(hpBar.Left, hpY), new Point(currentHpX, hpY));
-        dc.DrawLine(new Pen(muted, 1.1), new Point(vanillaHpX, hpY - 8.0), new Point(vanillaHpX, hpY + 8.0));
-        dc.DrawEllipse(accent, null, new Point(currentHpX, hpY), 4.3, 4.3);
-
-        var track = new Rect(layout.TrackLeft, top + 11.0, layout.TrackWidth, 20.0);
-        var trackY = track.Top + track.Height / 2.0;
-
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, trackY), new Point(track.Right, trackY));
-
-        var currentX = track.Left + track.Width * Math.Clamp(relative / 2.0, 0.0, 1.0);
-        var vanillaX = track.Left + track.Width * 0.5;
-
-        dc.DrawLine(new Pen(muted, 1.1), new Point(vanillaX, trackY - 8.0), new Point(vanillaX, trackY + 8.0));
-        dc.DrawLine(new Pen(accent, 3.1), new Point(track.Left, trackY), new Point(currentX, trackY));
-
-        dc.DrawEllipse(
-            panel,
-            new Pen(accent, selected ? 2.5 : 1.5),
-            new Point(currentX, trackY),
-            6.0,
-            6.0);
-        dc.DrawEllipse(accent, null, new Point(currentX, trackY), 2.7, 2.7);
-
-
-        _targets[row] = new HitTarget(
-            new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
-            track);
+        // Controls change the actual HP source directly: no separate preview.
+        // Fine tuning is available through +/- and the arrow keys, and the three
+        // presets snap to the native tick size. "NORMAL" is the selected
+        // vanilla difficulty's real reference value, not a hard-coded HP amount.
+        var left = card.Left + 12;
+        var available = card.Width - 24;
+        var gap = 5.0;
+        var small = 29.0;
+        var standard = (available - 2 * small - 4 * gap) / 3.0;
+        var actions = new[]
+        {
+            (HitAction.Minus, "-", small),
+            (HitAction.Half, "HALF", standard),
+            (HitAction.Normal, "NORMAL", standard),
+            (HitAction.Max, "MAX", standard),
+            (HitAction.Plus, "+", small)
+        };
+        var x = left;
+        foreach (var (action, label, w) in actions)
+        {
+            var rect = new Rect(x, card.Top + 70, w, 31);
+            var isCurrent = action switch
+            {
+                HitAction.Half => Math.Abs(p.CurrentNumber -
+                    Snap(p, p.ReferenceNumber * .5)) < Epsilon,
+                HitAction.Normal => Math.Abs(p.CurrentNumber -
+                    Snap(p, p.ReferenceNumber)) < Epsilon,
+                HitAction.Max => Math.Abs(p.CurrentNumber - p.Maximum) < Epsilon,
+                _ => false
+            };
+            var hovered = _hoverRow == row && _hoverAction == action;
+            dc.DrawRoundedRectangle(
+                isCurrent ? CloneWithOpacity(accent, .14) : panel,
+                new Pen(isCurrent || hovered ? accent : border,
+                    hovered ? 1.8 : 1), rect, 3, 3);
+            DrawCenteredText(dc, label, new Point(rect.Left + w / 2,
+                rect.Top + rect.Height / 2), 9.1,
+                isCurrent ? accent : text, FontWeights.SemiBold);
+            _hits.Add(new HitArea(rect, row, action));
+            x += w + gap;
+        }
     }
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
+        var hit = FindHit(e.GetPosition(this));
+        if (hit is null) return;
         Focus();
-
-        var row = FindTarget(e.GetPosition(this));
-        if (row < 0)
-            return;
-
-        _selectedRow = row;
-        _dragRow = row;
-        CaptureMouse();
-        UpdateFromPoint(row, e.GetPosition(this));
-        e.Handled = true;
-    }
-
-    protected override void OnMouseMove(MouseEventArgs e)
-    {
-        base.OnMouseMove(e);
-
-        var point = e.GetPosition(this);
-        var hover = FindTarget(point);
-
-        if (hover != _hoverRow)
-        {
-            _hoverRow = hover;
-            InvalidateVisual();
-        }
-
-        Cursor = hover >= 0 ? Cursors.Hand : Cursors.Arrow;
-
-        if (_dragRow < 0 || e.LeftButton != MouseButtonState.Pressed)
-            return;
-
-        UpdateFromPoint(_dragRow, point);
-        e.Handled = true;
-    }
-
-    protected override void OnMouseLeave(MouseEventArgs e)
-    {
-        base.OnMouseLeave(e);
-        if (_hoverRow < 0)
-            return;
-
-        _hoverRow = -1;
-        InvalidateVisual();
-    }
-
-    protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
-    {
-        base.OnMouseLeftButtonUp(e);
-        if (_dragRow < 0)
-            return;
-
-        _dragRow = -1;
-        ReleaseMouseCapture();
+        if (hit.Row >= 0) _selected = hit.Row;
+        Apply(hit);
         e.Handled = true;
     }
 
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
-
-        var row = FindTarget(e.GetPosition(this));
-        if (row < 0 || _parameters[row] is not { } parameter)
-            return;
-
-        _selectedRow = row;
-        parameter.ResetToReference();
-        _status.ShowTransient($"{Items[row].Label} base heal reset to Base Preset.");
+        var hit = FindHit(e.GetPosition(this));
+        if (hit is null) return;
+        if (hit.Row == -1) _foodHealing?.ResetToReference();
+        else
+        {
+            _selected = hit.Row;
+            _medical[hit.Row]?.ResetToReference();
+        }
         InvalidateVisual();
         e.Handled = true;
+    }
+
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+        base.OnMouseMove(e);
+        var hit = FindHit(e.GetPosition(this));
+        var row = hit?.Row ?? -2;
+        var action = hit?.Action ?? HitAction.Select;
+        if (_hoverRow != row || _hoverAction != action)
+        {
+            _hoverRow = row;
+            _hoverAction = action;
+            InvalidateVisual();
+        }
+        Cursor = hit is not null && action != HitAction.Select
+            ? Cursors.Hand : Cursors.Arrow;
+    }
+
+    protected override void OnMouseLeave(MouseEventArgs e)
+    {
+        base.OnMouseLeave(e);
+        _hoverRow = -2;
+        _hoverAction = HitAction.Select;
+        Cursor = Cursors.Arrow;
+        InvalidateVisual();
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
-
         if (e.Key == Key.R)
         {
-            foreach (var parameter in _parameters)
-                parameter?.ResetToReference();
-
-            _status.ShowTransient("Medical healing output reset to Base Preset.");
+            foreach (var p in _medical) p?.ResetToReference();
+            _foodHealing?.ResetToReference();
             InvalidateVisual();
             e.Handled = true;
             return;
         }
 
-        var direction = e.Key switch
+        var p = _medical[_selected];
+        if (p is null) return;
+        var dir = e.Key switch
         {
             Key.Up or Key.Right or Key.Add or Key.OemPlus => 1,
             Key.Down or Key.Left or Key.Subtract or Key.OemMinus => -1,
             _ => 0
         };
-
-        if (direction == 0 || _parameters[_selectedRow] is not { } selected)
-            return;
-
-        selected.CurrentNumber = Math.Clamp(
-            selected.CurrentNumber + direction * selected.TickFrequency,
-            selected.Minimum,
-            selected.Maximum);
-
-        _status.Clear();
+        if (dir == 0) return;
+        SetSnapped(p, p.CurrentNumber + dir * p.TickFrequency);
         InvalidateVisual();
         e.Handled = true;
     }
 
-    private void UpdateFromPoint(int row, Point point)
+    private void Apply(HitArea hit)
     {
-        if (!_targets.TryGetValue(row, out var target) || _parameters[row] is not { } parameter)
-            return;
-
-        var ratio = Math.Clamp(
-            (point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width),
-            0.0,
-            1.0);
-
-        var raw = parameter.ReferenceNumber * ratio * 2.0;
-        SetSnapped(parameter, raw);
-        _status.Clear();
+        if (hit.Action == HitAction.Food)
+        {
+            if (_foodHealing is not null && _foodHealing.IsControlEnabled)
+                _foodHealing.CurrentBoolean = !_foodHealing.CurrentBoolean;
+        }
+        else if (hit.Row >= 0 && _medical[hit.Row] is { } p
+            && p.IsControlEnabled)
+        {
+            switch (hit.Action)
+            {
+                case HitAction.Minus: SetSnapped(p, p.CurrentNumber - p.TickFrequency); break;
+                case HitAction.Plus: SetSnapped(p, p.CurrentNumber + p.TickFrequency); break;
+                case HitAction.Half: SetSnapped(p, p.ReferenceNumber * .5); break;
+                case HitAction.Normal: p.ResetToReference(); break;
+                case HitAction.Max: SetSnapped(p, p.Maximum); break;
+            }
+        }
         InvalidateVisual();
     }
 
-    private static void SetSnapped(ParameterViewModel parameter, double raw)
+    private HitArea? FindHit(Point point)
     {
-        var tick = Math.Max(parameter.TickFrequency, Epsilon);
-        var snapped = parameter.Minimum
-            + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
-
-        parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
+        // Button hits are appended after their card selector and take priority.
+        for (var i = _hits.Count - 1; i >= 0; i--)
+            if (_hits[i].Bounds.Contains(point)) return _hits[i];
+        return null;
     }
 
-    private int FindTarget(Point point)
+    private static void SetSnapped(ParameterViewModel p, double value)
+        => p.CurrentNumber = Snap(p, value);
+
+    private static double Snap(ParameterViewModel p, double value)
     {
-        foreach (var pair in _targets)
-        {
-            if (pair.Value.HitRect.Contains(point))
-                return pair.Key;
-        }
-
-        return -1;
+        var step = Math.Max(p.TickFrequency, Epsilon);
+        var snapped = p.Minimum + Math.Round((value - p.Minimum) / step,
+            MidpointRounding.AwayFromZero) * step;
+        return Math.Clamp(snapped, p.Minimum, p.Maximum);
     }
-
-    private Layout GetLayout()
-    {
-        var usable = Math.Max(520.0, ActualWidth - 40.0);
-        var labelWidth = Math.Clamp(usable * 0.20, 125.0, 155.0);
-        var valueWidth = 88.0;
-        var hpBarWidth = Math.Clamp(usable * 0.22, 110.0, 170.0);
-        var fixedWidth = labelWidth + valueWidth + hpBarWidth + 48.0;
-        var trackWidth = Math.Max(150.0, usable - fixedWidth);
-
-        var left = 22.0;
-        var valueCenter = left + labelWidth + valueWidth / 2.0;
-        var hpBarLeft = left + labelWidth + valueWidth + 8.0;
-        var trackLeft = hpBarLeft + hpBarWidth + 24.0;
-
-        return new Layout(left, valueCenter, hpBarLeft, hpBarWidth, trackLeft, trackWidth);
-    }
-
-    private static double HpToX(double hp, Rect bar)
-        => bar.Left + bar.Width * Math.Clamp(hp / AbsoluteHpMaximum, 0.0, 1.0);
 
     private static Brush FindBrush(string key, Brush fallback)
         => Application.Current?.TryFindResource(key) as Brush ?? fallback;
@@ -433,53 +344,38 @@ public sealed class MedicalHealingRadar : FrameworkElement
     private static Brush CloneWithOpacity(Brush brush, double opacity)
     {
         var clone = brush.Clone();
-        clone.Opacity = Math.Clamp(opacity, 0.0, 1.0);
+        clone.Opacity = Math.Clamp(opacity, 0, 1);
         return clone;
     }
 
-    private void DrawText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
+    private void DrawText(DrawingContext dc, string value, Point point,
+        double size, Brush brush, FontWeight weight)
         => dc.DrawText(CreateText(value, size, brush, weight), point);
 
-    private void DrawCenteredText(DrawingContext dc, string value, Point center, double size, Brush brush, FontWeight weight)
+    private void DrawCenteredText(DrawingContext dc, string value, Point center,
+        double size, Brush brush, FontWeight weight)
     {
         var formatted = CreateText(value, size, brush, weight);
-        dc.DrawText(formatted, new Point(center.X - formatted.Width / 2.0, center.Y - formatted.Height / 2.0));
+        dc.DrawText(formatted,
+            new Point(center.X - formatted.Width / 2,
+                center.Y - formatted.Height / 2));
     }
 
-    private void DrawRightAlignedText(DrawingContext dc, string value, Point right, double size, Brush brush, FontWeight weight)
+    private void DrawRightAlignedText(DrawingContext dc, string value,
+        Point right, double size, Brush brush, FontWeight weight)
     {
         var formatted = CreateText(value, size, brush, weight);
         dc.DrawText(formatted, new Point(right.X - formatted.Width, right.Y));
     }
 
-    private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
-    {
-        var formatted = new FormattedText(
-            value,
-            CultureInfo.CurrentUICulture,
-            FlowDirection.LeftToRight,
-            new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight, FontStretches.Normal),
-            Math.Max(9.0, size),
-            brush,
+    private FormattedText CreateText(string value, double size,
+        Brush brush, FontWeight weight)
+        => new(value, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight,
+            new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal,
+                weight, FontStretches.Normal), Math.Max(9, size), brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
-        var separatorBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
-        for (var i = 0; i < value.Length; i++)
-        {
-            if (value[i] == '|')
-                formatted.SetForegroundBrush(separatorBrush, i, 1);
-        }
+    private sealed record HitArea(Rect Bounds, int Row, HitAction Action);
 
-        return formatted;
-    }
-
-    private sealed record HealDefinition(string ParameterId, string Label, bool HasMasterModifier);
-    private sealed record HitTarget(Rect HitRect, Rect MapRect);
-    private sealed record Layout(
-        double LabelLeft,
-        double ValueCenter,
-        double HpBarLeft,
-        double HpBarWidth,
-        double TrackLeft,
-        double TrackWidth);
+    private enum HitAction { Select, Food, Minus, Half, Normal, Max, Plus }
 }
