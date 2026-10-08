@@ -278,6 +278,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var width = Math.Max(460.0, ActualWidth - 34.0);
         var columns = CompactColumns(ActualWidth);
         var stageColumns = CompactStageColumns(ActualWidth);
+        var combatColumns = stageColumns;
 
         void Card(ParameterViewModel parameter, string label, string value,
             string min, string max, double top, int columnsInGroup, int index)
@@ -365,21 +366,21 @@ public sealed class AggregateVisualControl : FrameworkElement
         var combatTop = combatTitleY + 37.0;
         Card(lowAim, "LOW FATIGUE / AIM SLOWDOWN",
             $"+{lowAim.CurrentNumber * 100:0.##}%  |  BASE +{lowAim.ReferenceNumber * 100:0.##}%",
-            "0%", "+30%", combatTop, columns, 0);
+            "0%", "+30%", combatTop, combatColumns, 0);
         Card(mediumAim, "MEDIUM FATIGUE / AIM SLOWDOWN",
             $"+{mediumAim.CurrentNumber * 100:0.##}%  |  BASE +{mediumAim.ReferenceNumber * 100:0.##}%",
-            "0%", "+50%", combatTop, columns, 1);
+            "0%", "+50%", combatTop, combatColumns, 1);
         Card(severeAim, "SEVERE FATIGUE / AIM SLOWDOWN",
             $"+{severeAim.CurrentNumber * 100:0.##}%  |  BASE +{severeAim.ReferenceNumber * 100:0.##}%",
-            "0%", "+80%", combatTop, columns, 2);
+            "0%", "+80%", combatTop, combatColumns, 2);
         Card(mediumReload, "MEDIUM FATIGUE / RELOAD SLOWDOWN",
             $"+{mediumReload.CurrentNumber * 100:0.##}%  |  BASE +{mediumReload.ReferenceNumber * 100:0.##}%",
-            "0%", "+30%", combatTop, columns, 3);
+            "0%", "+30%", combatTop, combatColumns, 3);
         Card(severeReload, "SEVERE FATIGUE / RELOAD SLOWDOWN",
             $"+{severeReload.CurrentNumber * 100:0.##}%  |  BASE +{severeReload.ReferenceNumber * 100:0.##}%",
-            "0%", "+37.5%", combatTop, columns, 4);
+            "0%", "+37.5%", combatTop, combatColumns, 4);
 
-        var end = CompactGridEnd(combatTop, 5, columns);
+        var end = CompactGridEnd(combatTop, 5, combatColumns);
         DrawText(dc, "NO LOW-FATIGUE RELOAD EFFECT EXISTS IN THE GAME CFG",
             new Point(20.0, end + 12.0), 9.1, muted, FontWeights.SemiBold);
         DrawText(dc, "GREY = BASE  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
@@ -1592,6 +1593,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var width = Math.Max(460.0, ActualWidth - 34.0);
         var columns = CompactColumns(ActualWidth);
+        var durationColumns = CompactStageColumns(ActualWidth);
         const double summaryTop = 55.0;
 
         void SummaryCard(Rect card, string heading, string first, string second)
@@ -1616,9 +1618,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             $"VODKA {50.0 * antiRad.CurrentNumber:0.#} rad points");
 
         void Card(ParameterViewModel parameter, string label,
-            string value, string min, string max, double top, int index)
+            string value, string min, string max, double top, int index,
+            int columnsInGroup = 0)
             => DrawCompactTrack(dc, parameter, label, value, min, max,
-                CompactSlot(top, width, columns, index),
+                CompactSlot(top, width,
+                    columnsInGroup == 0 ? columns : columnsInGroup, index),
                 text, muted, border, accent, panel);
 
         var strengthTitle = CompactGridEnd(summaryTop, 2, columns) + 13.0;
@@ -1704,21 +1708,21 @@ public sealed class AggregateVisualControl : FrameworkElement
         var durationTop = preview.Bottom + 12.0;
         Card(waterTime, "WATER / EFFECT DURATION",
             $"{waterTime.CurrentNumber:0.##}x  |  BASE {waterTime.ReferenceNumber:0.##}x",
-            "0x", "3x", durationTop, 0);
+            "0x", "3x", durationTop, 0, durationColumns);
         Card(energyTime, "ENERGY DRINK / EFFECT DURATION",
             $"{energyTime.CurrentNumber:0.##}x  |  BASE {energyTime.ReferenceNumber:0.##}x",
-            "0x", "3x", durationTop, 1);
+            "0x", "3x", durationTop, 1, durationColumns);
         Card(vodkaTime, "VODKA / STAMINA PENALTY DURATION",
             $"{vodkaTime.CurrentNumber:0.##}x  |  BASE {vodkaTime.ReferenceNumber:0.##}x",
-            "0x", "3x", durationTop, 2);
+            "0x", "3x", durationTop, 2, durationColumns);
         Card(beerTime, "BEER / STAMINA PENALTY DURATION",
             $"{beerTime.CurrentNumber:0.##}x  |  BASE {beerTime.ReferenceNumber:0.##}x",
-            "0x", "3x", durationTop, 3);
-        Card(magicTime, "MAGIC VODKA / PSI PROTECTION DURATION",
+            "0x", "3x", durationTop, 3, durationColumns);
+        Card(magicTime, "MAGIC VODKA / PSI DURATION",
             $"{magicTime.CurrentNumber:0.##}x  |  BASE {magicTime.ReferenceNumber:0.##}x",
-            "0x", "3x", durationTop, 4);
+            "0x", "3x", durationTop, 4, durationColumns);
 
-        var end = CompactGridEnd(durationTop, 5, columns);
+        var end = CompactGridEnd(durationTop, 5, durationColumns);
         DrawText(dc,
             $"WATER: {5.0 * waterTime.CurrentNumber:0.#}/{30.0 * waterTime.CurrentNumber:0.#}s  |  ENERGY: {45.0 * energyTime.CurrentNumber:0.#}/{15.0 * energyTime.CurrentNumber:0.#}/{5.0 * energyTime.CurrentNumber:0.#}s",
             new Point(20.0, end + 12.0), 9.1, muted, FontWeights.Normal);
@@ -2810,7 +2814,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private const double CompactColumnGap = 10.0;
 
     private static int CompactColumns(double width)
-        => width >= 760.0 ? 2 : 1;
+        => width >= 700.0 ? 2 : 1;
 
     private static int CompactStageColumns(double width)
         => width >= 850.0 ? 3 : CompactColumns(width);
@@ -3595,7 +3599,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var stagesTop = previewTop + 80.0 + 12.0;
         var combatTitle = CompactGridEnd(stagesTop, 3, stageColumns) + 13.0;
         var combatTop = combatTitle + 37.0;
-        return CompactGridEnd(combatTop, 5, columns) + 71.0;
+        return CompactGridEnd(combatTop, 5, stageColumns) + 71.0;
     }
 
     private static double CompactConsumableHeight(double width)
@@ -3606,7 +3610,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var previewTitle = CompactGridEnd(strengthTop, 4, columns) + 13.0;
         var previewTop = previewTitle + 37.0;
         var durationTop = previewTop + 160.0 + 12.0;
-        return CompactGridEnd(durationTop, 5, columns) + 71.0;
+        return CompactGridEnd(durationTop, 5, CompactStageColumns(width)) + 71.0;
     }
 
     private static double CompactHungerHeight(double width)
