@@ -119,7 +119,7 @@ def main() -> None:
         )
         if arm is None:
             fail(f"missing control-help arm: {family}")
-        if not arm.endswith('",') or arm.endswith('\\\\",'):
+        if not arm.endswith('",') or arm.endswith(chr(92) + '",'):
             fail(f"malformed or escaped C# control-help closing quote for {family}")
     toggle_families = [
         (
