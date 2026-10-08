@@ -190,6 +190,22 @@ def main() -> None:
                 f"{family}: source family control-help absent")
         require(f'or "{family}"' in visual or f'Family is "{family}"' in visual,
                 f"{family}: rationale selection missing")
+    # Compact banks stay centred without filling the entire board width.
+    for board_width, fader_count in ((920.0, 2), (920.0, 3),
+                                     (628.0, 2), (520.0, 3), (400.0, 3)):
+        available = board_width - 32.0
+        columns = min(columns_for_width(board_width), fader_count)
+        strip_width = min(148.0, max(128.0,
+            (available - (columns - 1) * 10.0) / columns))
+        for start in range(0, fader_count, columns):
+            in_row = min(columns, fader_count - start)
+            row_width = in_row * strip_width + (in_row - 1) * 10.0
+            left = max(16.0, (board_width - row_width) / 2.0)
+            require(left >= 16.0 and left + row_width <= board_width - 16.0 + 1e-7,
+                    f"compact bank overflows {board_width} DIP board")
+    require("var rowLeft = Math.Max(MixerSidePadding, (ActualWidth - rowWidth) / 2.0);"
+            in visual, "compact mixer banks are no longer centered")
+
     require("DrawNumericMixerBoard(dc, text, muted, border, accent, panel);" in visual,
             "shared mixer dispatch missing")
     require('"economy.repairCostBase" => $"{raw * 100.0:0.#}%"' in visual,
