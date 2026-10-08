@@ -543,3 +543,7 @@ All eight cooldown multipliers now occupy one fixed horizontal row of compact ve
 ### Mutant Combat orthogonal slider directions (2026-10-08)
 
 The top **GLOBAL COMBAT** zone uses two long **horizontal** sliders in separate rows: Damage Per Hit and Attack Frequency. Their values increase left to right; the gold ring glows on hover, a grey Base tick remains visible, and right-click restores the individual native CFG value. The lower SPECIAL ABILITY COOLDOWNS zone remains one horizontal bank of eight **vertical** faders, with wait multipliers increasing upward. Do not mix axis mapping between these zones.
+
+### Corrected Global Combat positioning — 2026-10-08
+
+The two horizontal sliders are **side by side**, not stacked: Damage Per Hit on the left, Attack Frequency on the right, equal-width columns separated by 24 DIP. The eight vertical cooldown faders remain underneath. Only their placement changes; mouse mapping and range semantics stay as before.
