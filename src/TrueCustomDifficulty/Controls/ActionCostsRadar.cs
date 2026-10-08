@@ -229,16 +229,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             accent,
             panel);
 
-        if (!string.IsNullOrWhiteSpace(_status.Text))
-        {
-            DrawCenteredText(
-                dc,
-                _status.Text,
-                new Point(ActualWidth / 2.0, 406.0),
-                9.0,
-                accent,
-                FontWeights.SemiBold);
-        }
+        // Silent reset: no transient status text.
     }
 
     private void DrawActionGroup(
