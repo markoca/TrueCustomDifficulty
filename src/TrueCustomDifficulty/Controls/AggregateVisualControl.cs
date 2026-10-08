@@ -1487,7 +1487,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
             DrawCenteredText(dc, labels[i], new Point(centerX, 101.0),
                 9.3, text, FontWeights.Bold);
-            dc.DrawLine(new Pen(soft, 4.0),
+            dc.DrawLine(new Pen(border, 4.0),
                 new Point(mini.Left, y), new Point(mini.Right, y));
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.0),
                 new Point(mini.Left, y), new Point(nowX, y));
@@ -1538,7 +1538,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             var vanillaX = ValueToX(parameter.ReferenceNumber,
                 parameter.Minimum, parameter.Maximum, track, reverse: false);
 
-            dc.DrawLine(new Pen(soft, 4.0),
+            dc.DrawLine(new Pen(border, 4.0),
                 new Point(track.Left, y), new Point(track.Right, y));
             if (parameter.IsControlEnabled)
                 dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
