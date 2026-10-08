@@ -90,7 +90,7 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Repair | Reputation-to-repair-price curve with surcharge/base/discount regions | Semantic |
 | Ammo Distribution | Separate SNG/NATO pool composition previews plus family-weight editors | Semantic |
 | Stash Reward Rolls | Two absolute stash chance previews and three independent source editors (chance/count/coupons) | Semantic |
-| Breakable Box Yields | Separate ammo and dedicated grenade box quantity multipliers; does not edit item-family weights | Semantic |
+| Breakable Box Yields | Two vertical mixer faders for ammo and grenade counts; original 0.25x / 0.5x steps retained; Wine QA pending | Mixer pilot |
 | World Loot Layout | Four independent reshuffle/removal toggles and a weapon-shuffle-dependent density track | Semantic |
 | NPC Loot & Equipment | Discrete corpse-loot selector, independent medical/ammo tracks and MIN/MAX dropped-weapon condition | Semantic |
 | Explosion Damage | Direct blast-damage multiplier and read-only Base Preset comparison band | Semantic |
