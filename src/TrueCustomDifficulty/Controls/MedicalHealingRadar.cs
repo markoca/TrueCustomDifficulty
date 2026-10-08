@@ -276,7 +276,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
         base.OnKeyDown(e);
         if (e.Key == Key.R)
         {
-            foreach (var p in _medical) p?.ResetToReference();
+            foreach (var medicalItem in _medical) medicalItem?.ResetToReference();
             _foodHealing?.ResetToReference();
             InvalidateVisual();
             e.Handled = true;
