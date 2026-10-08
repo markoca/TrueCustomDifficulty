@@ -287,3 +287,7 @@ Family: **AnomalyEffectsBoard** (Anomalies tab → Anomalies section). Six strip
 ### Combat: Your Weapons mixer (2026-10-08)
 
 The four vertical faders in **Your Weapons** are Weapon Damage, Headshot Damage, Weapon Jamming, Explosion Damage (catalog-native ranges and steps). Their section sits to the right of Human Enemies when the two-column section breakpoint is met; otherwise sections stack. There is no separate Explosives section or blast-impact preview in the player-facing UI. Each fader uses the same source-exact mixer interaction, grey reference marker and right-click reset as existing mixers. This is an explicitly user-approved locked UI redesign.
+
+### GroupItem pairing reliability (2026-10-08)
+
+The responsive section grid uses the actual WPF GroupItem.Content to resolve group names, with DataContext as fallback. Human Enemies + Your Weapons therefore pair at at least 1096 DIP available content width, and stack below that. Do not force narrow side-by-side panels that clip the square human plot or four player-weapon faders.
