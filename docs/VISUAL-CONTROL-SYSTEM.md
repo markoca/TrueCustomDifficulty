@@ -289,15 +289,15 @@ Right-click on either slider or the switch resets that single source value to Ba
 
 `AggregateVisualControl / RadiationBalance`
 
-- Radiation Recovery.
-- Radiation Accumulation.
-- Radiation Damage.
+Three independent, **full-width horizontal tracks** replace the old dual half-width meters and inferred relative-bias display:
 
-Radiation Recovery is an absolute passive-removal rate in points/s. Radiation Accumulation is a difficulty scaler on incoming radiation. They therefore remain on separate native scales.
+- **Exposure Accumulation** edits `survival.radiationAccumulation` as the selected difficulty's incoming radiation **multiplier** (0–2.5x; base differs by difficulty).
+- **Natural Radiation Clearance** edits `survival.radiationRecovery` as the Player's absolute passive radiation removal (0.00–0.10 points/s; base 0.05 points/s). More clearance means less radiation retained.
+- **Health Damage from Radiation** edits `survival.radiationDamage` as a 0–2x scaler on the eleven existing harmful-radiation effect prototypes, without changing their relative strengths or state thresholds.
 
-`RELATIVE TUNING BIAS` compares each setting only against its own Base Preset reference. It is not presented as a literal net radiation rate.
+A compact, read-only **Exposure / Clearance / HP Damage** overview explains the three distinct game systems without pretending that the gain multiplier and the absolute removal rate can be subtracted into a net rate. The former `RELATIVE TUNING BIAS` indicator is removed to avoid suggesting such a calculation.
 
-Radiation Damage separately scales health damage after the game has already entered harmful radiation states. Vanilla state thresholds are not moved.
+Each editable slider uses its real catalog limits and step, shows current and Base Preset values side-by-side, and keeps a grey reference tick behind the gold handle. Right-click resets one slider; `R` resets all three. There are no new parameters or CFG-writer changes.
 
 ### Trading Flow
 
