@@ -177,3 +177,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — UI-08 — fixed Combat two-column placement
 
 **User request:** The Human Enemies and Your Weapons pairing must be a fixed **2x1 row**, not switch automatically to a vertical stack. Their GroupItem pairing is always honored; the section host is at least 1096 DIP wide so each half can retain its 540-DIP minimum plus 16-DIP gutter. On narrower viewports the left content area scrolls horizontally rather than converting these sections into 1x1. Other established section pairs keep their prior responsive behavior. This overrides the earlier responsive Combat stacking approval. Preserve the two panels, all faders and existing CFG mappings. Wine acceptance pending.
+
+### 2026-10-08 — UI-08 — explicit Combat 2x1 section slots
+
+**User correction:** Combat is a fixed design, not an adaptive grid. Earlier grouping by WPF `GroupItem.Content` or DataContext did not consistently produce the required side-by-side layout. The Combat tab now explicitly allocates its first two catalog groups to one 2-column row: left **Human Enemies**, right **Your Weapons**. The layout does not use group-name inference for these slots; section order is defined in the Combat catalog. Only the Combat section panel has a 1096-DIP minimum width; narrower viewports scroll horizontally instead of stacking these panels. All other tabs retain their prior responsive behavior. This is the approved locked UI-08 placement; local visual confirmation remains pending.
