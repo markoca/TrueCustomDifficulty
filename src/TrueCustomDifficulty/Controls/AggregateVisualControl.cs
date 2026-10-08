@@ -2,6 +2,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using TrueCustomDifficulty.ViewModels;
@@ -22,6 +23,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private readonly VisualStatusMessage _status;
 
     private HitTarget? _dragTarget;
+    private HitTarget? _hoverTarget;
     private ParameterViewModel? _selectedParameter;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
@@ -57,6 +59,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         MinHeight = 0.0;
         SnapsToDevicePixels = true;
         Cursor = Cursors.Arrow;
+        ToolTipService.SetInitialShowDelay(this, 550);
+        ToolTipService.SetShowDuration(this, 10000);
     }
 
     protected override Size MeasureOverride(Size availableSize)
@@ -91,6 +95,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         _dragTarget = null;
+        _hoverTarget = null;
+        ToolTip = null;
+        Cursor = Cursors.Arrow;
         _selectedParameter = null;
         InvalidateMeasure();
         InvalidateVisual();
@@ -194,6 +201,23 @@ public sealed class AggregateVisualControl : FrameworkElement
             default:
                 DrawHeader(dc, "VISUAL CONTROL", "No visual family is configured.", text, muted, accent);
                 break;
+        }
+
+        // Subtle, consistent feedback for interactive tracks and toggles across
+        // every aggregate family. Previews have no HitTarget and stay read-only.
+        var activeTarget = _dragTarget ?? _hoverTarget;
+        if (activeTarget is not null)
+        {
+            dc.PushClip(new RectangleGeometry(
+                new Rect(5.0, 5.0, Math.Max(0.0, ActualWidth - 10.0),
+                    Math.Max(0.0, ActualHeight - 10.0))));
+            dc.DrawRoundedRectangle(
+                null,
+                new Pen(CloneWithOpacity(accent,
+                    _dragTarget is null ? 0.55 : 0.9),
+                    _dragTarget is null ? 1.1 : 1.6),
+                activeTarget.HitRect, 4.0, 4.0);
+            dc.Pop();
         }
 
         if (!string.IsNullOrWhiteSpace(_status.Text))
@@ -3002,8 +3026,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush muted,
         Brush accent)
     {
-        DrawText(dc, title, new Point(16.0, 13.0), 10.5, accent, FontWeights.Bold);
-        DrawText(dc, subtitle, new Point(16.0, 31.0), 8.5, muted, FontWeights.Normal);
+        DrawText(dc, title, new Point(16.0, 13.0), 11.5, accent, FontWeights.Bold);
+        DrawText(dc, subtitle, new Point(16.0, 31.0), 9.5, muted, FontWeights.Normal);
     }
 
     private void DrawCurveLine(
@@ -3034,7 +3058,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         bool reverse = false)
     {
         var x = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, mapRect, reverse);
-        dc.DrawLine(new Pen(muted, 1.0), new Point(x, y - 6.0), new Point(x, y + 6.0));
+        dc.DrawLine(new Pen(muted, 2.0), new Point(x, y - 9.0), new Point(x, y + 9.0));
     }
 
     private void AddHorizontalTarget(
@@ -3093,6 +3117,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         _selectedParameter = target.Parameter;
+        SetHoverTarget(target);
 
         if (target.Kind == HitKind.Toggle)
         {
@@ -3114,7 +3139,15 @@ public sealed class AggregateVisualControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
-        Cursor = FindTarget(point) is null ? Cursors.Arrow : Cursors.Hand;
+        var target = FindTarget(point);
+        SetHoverTarget(target);
+        Cursor = target?.Kind switch
+        {
+            HitKind.Horizontal => Cursors.SizeWE,
+            HitKind.Vertical => Cursors.SizeNS,
+            HitKind.Toggle => Cursors.Hand,
+            _ => Cursors.Arrow
+        };
 
         if (_dragTarget is null || e.LeftButton != MouseButtonState.Pressed)
             return;
@@ -3132,7 +3165,53 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         _dragTarget = null;
         ReleaseMouseCapture();
+        InvalidateVisual();
         e.Handled = true;
+    }
+
+    protected override void OnMouseLeave(MouseEventArgs e)
+    {
+        base.OnMouseLeave(e);
+        if (_dragTarget is null)
+        {
+            SetHoverTarget(null);
+            Cursor = Cursors.Arrow;
+        }
+    }
+
+    protected override void OnLostMouseCapture(MouseEventArgs e)
+    {
+        base.OnLostMouseCapture(e);
+        if (_dragTarget is null)
+            return;
+
+        _dragTarget = null;
+        SetHoverTarget(null);
+        Cursor = Cursors.Arrow;
+        InvalidateVisual();
+    }
+
+    private void SetHoverTarget(HitTarget? target)
+    {
+        // HitTarget records are rebuilt on every render. Compare their source
+        // parameter and geometry, not object identity, to avoid invalidating
+        // the whole control for every mouse movement.
+        if ((_hoverTarget is null && target is null)
+            || (_hoverTarget is not null && target is not null
+                && ReferenceEquals(_hoverTarget.Parameter, target.Parameter)
+                && _hoverTarget.Kind == target.Kind
+                && _hoverTarget.HitRect.Equals(target.HitRect)))
+        {
+            return;
+        }
+
+        _hoverTarget = target;
+        ToolTip = target is null
+            ? null
+            : target.Kind == HitKind.Toggle
+                ? $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset"
+                : $"{target.Parameter.Label}\nDrag or use arrow keys to adjust · Right-click = Base Preset";
+        InvalidateVisual();
     }
 
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
@@ -3144,6 +3223,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         _selectedParameter = target.Parameter;
+        SetHoverTarget(target);
         target.Parameter.ResetToReference();
         EnforceFamilyConstraints(target.Parameter);
         _status.ShowTransient($"{ShortLabel(target.Parameter)} reset to Base Preset.");
@@ -3180,20 +3260,29 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (!_selectedParameter.IsSlider)
             return;
 
-        var direction = e.Key switch
+        var stepCount = e.Key switch
         {
             Key.Up or Key.Right or Key.Add or Key.OemPlus => 1,
             Key.Down or Key.Left or Key.Subtract or Key.OemMinus => -1,
+            Key.PageUp => 10,
+            Key.PageDown => -10,
             _ => 0
         };
 
-        if (direction == 0)
+        double next;
+        if (e.Key == Key.Home)
+            next = _selectedParameter.Minimum;
+        else if (e.Key == Key.End)
+            next = _selectedParameter.Maximum;
+        else if (stepCount != 0)
+            next = _selectedParameter.CurrentNumber
+                + stepCount * _selectedParameter.TickFrequency;
+        else
             return;
 
-        _selectedParameter.CurrentNumber = Math.Clamp(
-            _selectedParameter.CurrentNumber + direction * _selectedParameter.TickFrequency,
-            _selectedParameter.Minimum,
-            _selectedParameter.Maximum);
+        // Match mouse snapping, including absolute raw CFG steps and unusual
+        // fine-grained values (for example 0.0025-step reload modifiers).
+        _selectedParameter.CurrentNumber = Snap(_selectedParameter, next);
         EnforceFamilyConstraints(_selectedParameter);
 
         _status.ClearTransient();
@@ -3402,8 +3491,10 @@ public sealed class AggregateVisualControl : FrameworkElement
     private Brush FindBrush(string key, Brush fallback)
         => TryFindResource(key) as Brush ?? fallback;
 
-    private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
-        => new(
+    private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight,
+        double maxWidth = double.PositiveInfinity)
+    {
+        var formatted = new FormattedText(
             value,
             CultureInfo.InvariantCulture,
             FlowDirection.LeftToRight,
@@ -3412,19 +3503,43 @@ public sealed class AggregateVisualControl : FrameworkElement
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
+        if (!double.IsInfinity(maxWidth))
+        {
+            // Ellipsize instead of allowing long CFG labels and percentage
+            // values to escape the card at 1024-wide / high-DPI layouts.
+            formatted.MaxTextWidth = Math.Max(1.0, maxWidth);
+            formatted.Trimming = TextTrimming.CharacterEllipsis;
+        }
+
+        return formatted;
+    }
+
     private void DrawText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
-        => dc.DrawText(CreateText(value, size, brush, weight), point);
+    {
+        const double edge = 12.0;
+        var maxWidth = Math.Max(1.0, ActualWidth - edge - point.X);
+        dc.DrawText(CreateText(value, size, brush, weight, maxWidth), point);
+    }
 
     private void DrawRightAlignedText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
     {
-        var formatted = CreateText(value, size, brush, weight);
-        dc.DrawText(formatted, new Point(point.X - formatted.WidthIncludingTrailingWhitespace, point.Y));
+        const double edge = 12.0;
+        var right = Math.Min(point.X, ActualWidth - edge);
+        var formatted = CreateText(value, size, brush, weight,
+            Math.Max(1.0, right - edge));
+        dc.DrawText(formatted,
+            new Point(right - formatted.WidthIncludingTrailingWhitespace, point.Y));
     }
 
     private void DrawCenteredText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
     {
-        var formatted = CreateText(value, size, brush, weight);
-        dc.DrawText(formatted, new Point(point.X - formatted.WidthIncludingTrailingWhitespace / 2.0, point.Y));
+        const double edge = 12.0;
+        var formatted = CreateText(value, size, brush, weight,
+            Math.Max(1.0, ActualWidth - edge * 2.0));
+        var left = Math.Clamp(
+            point.X - formatted.WidthIncludingTrailingWhitespace / 2.0,
+            edge, Math.Max(edge, ActualWidth - edge - formatted.WidthIncludingTrailingWhitespace));
+        dc.DrawText(formatted, new Point(left, point.Y));
     }
 
     private static string FriendlyValue(ParameterViewModel parameter)
