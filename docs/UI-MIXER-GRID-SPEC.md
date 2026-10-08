@@ -39,6 +39,28 @@ This specification exists because the current full-width horizontal-track boards
 - The editor remains independently vertically scrollable. Do not introduce a nested vertical scroll area inside a normal mixer board.
 - At minimum window size, all active tracks, label/value rows and the rationale must remain reachable; horizontal page scrolling is not allowed.
 
+### Conceptual wide-screen arrangement (not pixel-accurate)
+
+~~~text
+1600 x 900 — left editor (right rationale remains visible)
+
+  ANOMALY EFFECTS                         SELECTED PARAMETER → RIGHT RATIONALE
+  ┌────────────────────────────────────────────────────────────────────────┐
+  │  DAMAGE    FC MOVE    FC TURN    RAZOR     DIAMOND     PSY DRAIN       │
+  │  1.45x     0.50x      0.30x      1.00x     10 pts      1.00x           │
+  │  base 1x   base .5x   base .3x   base 1x   base 10     base 1x          │
+  │     │         │          │         │          │           │             │
+  │     ║         ║          ║         ║          ║           ║             │
+  │     ║         ║          ║         ║          ║           ║             │
+  │     ━         ━          ━         ━          ━           ━  ← handle   │
+  │     │         │          │         │          │           │             │
+  │   0–2.5     0–1        0–1       0–2       0–20       0–2            │
+  └────────────────────────────────────────────────────────────────────────┘
+
+At narrower editor widths, strips reflow into 4+2, 3+3 or 2+2+2.
+The track and labels retain their width; the board grows in height.
+~~~
+
 ## 3. The reusable MixerStrip contract
 
 One strip edits **exactly one existing ParameterViewModel numeric slider**.
@@ -154,7 +176,7 @@ Column thresholds below apply to **board inner width**, not the whole Window wid
 - Introduce an **opt-in semantic board grid**, separate from the strip grid.
 - At sufficiently wide left-editor widths (initial target **≥ 900 DIPs usable**), two **compact, independent** boards may share a row; aim for at least **420 DIPs per board** including internal padding.
 - At narrower widths, or if a board declares a wide/minimum layout requirement, stack it full width. Never put a large radar, complex timeline or six-channel mixer into an unusably narrow two-column slot.
-- Recommended side-by-side candidates: **Trader Stock + Item Weight** only if they are in the *same tab and appropriate context*; do not combine tabs. Within Economy, Services can sit alongside another compatible Economy board if its content and available width permit.
+- Recommended side-by-side candidate within **Economy**: **Trader Stock + Service Prices**, provided their boards remain comfortably readable. Do not pair Trader Stock (Economy) with Item Weight (Equipment): they belong to different tabs. Independently group smaller boards within each tab.
 - Tab grouping, natural reading order, section headings and right rationale panel stay intact.
 - Reflow must not change source parameter order, family membership or which settings the Reset Tab button affects.
 
