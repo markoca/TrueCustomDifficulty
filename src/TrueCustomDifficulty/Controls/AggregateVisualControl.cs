@@ -3115,8 +3115,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(ActualWidth / 2.0, frame.Top - 17.0), 9.2, muted, FontWeights.Normal);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), frame, 4.0, 4.0);
         var bonusLane = new Rect(frame.Left + 11.0, frame.Top + 15.0, 124.0, 236.0);
-        var plot = new Rect(bonusLane.Right + 53.0, frame.Top + 43.0,
-            Math.Max(220.0, frame.Right - bonusLane.Right - 71.0), 183.0);
+        var plot = new Rect(bonusLane.Right + 73.0, frame.Top + 43.0,
+            Math.Max(220.0, frame.Right - bonusLane.Right - 91.0), 183.0);
         dc.DrawRoundedRectangle(CloneWithOpacity(soft, 0.075),
             new Pen(CloneWithOpacity(border, 0.75), 1.0), bonusLane, 3.0, 3.0);
         DrawCenteredText(dc, "WELL-FED", new Point(bonusLane.Left + bonusLane.Width / 2.0,
@@ -3150,9 +3150,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCenteredText(dc, $"+{wellFed.CurrentNumber * 100:0}% RECOVERY",
             new Point(bonusLane.Left + bonusLane.Width / 2.0, bonusLane.Bottom - 26.0),
             10.3, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "UP = MORE RECOVERY",
-            new Point(bonusLane.Left + bonusLane.Width / 2.0, bonusLane.Bottom - 10.0),
-            8.5, muted, FontWeights.Normal);
 
         var area = new Rect(plot.Left + 2.0, plot.Top + 8.0,
             plot.Width - 12.0, plot.Height - 21.0);
@@ -3173,7 +3170,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCenteredText(dc, "HUNGER POINTS (0–100)", new Point(plot.Left + plot.Width / 2.0,
             frame.Top + 27.0), 9.2, text, FontWeights.Bold);
         // Separate vertical axis caption from tick values; rotation is only visual.
-        var yAxisCenter = new Point(plot.Left - 37.0, plot.Top + plot.Height / 2.0);
+        var yAxisCenter = new Point(plot.Left - 52.0, plot.Top + plot.Height / 2.0);
         dc.PushTransform(new RotateTransform(-90.0, yAxisCenter.X, yAxisCenter.Y));
         DrawCenteredText(dc, "STAMINA RECOVERY LOSS", yAxisCenter,
             9.2, text, FontWeights.Bold);
@@ -3184,7 +3181,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawLine(new Pen(CloneWithOpacity(soft, tick == 0 ? 0.85 : 0.35),
                 tick == 0 ? 1.5 : 1.0) { DashStyle = tick == 0 ? DashStyles.Solid : DashStyles.Dot },
                 new Point(area.Left, yy), new Point(area.Right, yy));
-            DrawRightAlignedText(dc, tick == 0 ? "0% NORMAL" : $"{tick:0}%",
+            DrawRightAlignedText(dc, tick == 0 ? "0%" : $"{tick:0}%",
                 new Point(plot.Left - 7.0, yy - 7.0),
                 10.0, tick == 0 ? text : muted, FontWeights.SemiBold);
         }
@@ -3242,15 +3239,21 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // Labels use fixed lanes rather than following the rings, so values
         // cannot collide when thresholds approach each other.
-        DrawCenteredText(dc, $"LOW  {low.CurrentNumber:0} PTS",
-            new Point(plot.Left + plot.Width / 6.0, frame.Top + 255.0),
-            9.4, text, FontWeights.Bold);
-        DrawCenteredText(dc, $"MEDIUM  {medium.CurrentNumber:0} PTS  /  -{mediumPenalty.CurrentNumber * 100:0}%",
-            new Point(plot.Left + plot.Width / 2.0, frame.Top + 255.0),
-            9.4, accent, FontWeights.Bold);
-        DrawCenteredText(dc, $"SEVERE  {severe.CurrentNumber:0} PTS  /  -{severePenalty.CurrentNumber * 100:0}%",
-            new Point(plot.Left + plot.Width * 5.0 / 6.0, frame.Top + 255.0),
-            9.4, accent, FontWeights.Bold);
+        DrawCenteredText(dc, $"LOW AT {low.CurrentNumber:0} PTS",
+            new Point(plot.Left + plot.Width / 6.0, frame.Top + 246.0),
+            9.2, text, FontWeights.Bold);
+        DrawCenteredText(dc, $"MEDIUM AT {medium.CurrentNumber:0} PTS",
+            new Point(plot.Left + plot.Width / 2.0, frame.Top + 246.0),
+            9.2, accent, FontWeights.Bold);
+        DrawCenteredText(dc, $"-{mediumPenalty.CurrentNumber * 100:0}% RECOVERY",
+            new Point(plot.Left + plot.Width / 2.0, frame.Top + 264.0),
+            9.2, accent, FontWeights.SemiBold);
+        DrawCenteredText(dc, $"SEVERE AT {severe.CurrentNumber:0} PTS",
+            new Point(plot.Left + plot.Width * 5.0 / 6.0, frame.Top + 246.0),
+            9.2, accent, FontWeights.Bold);
+        DrawCenteredText(dc, $"-{severePenalty.CurrentNumber * 100:0}% RECOVERY",
+            new Point(plot.Left + plot.Width * 5.0 / 6.0, frame.Top + 264.0),
+            9.2, accent, FontWeights.SemiBold);
 
     }
 
