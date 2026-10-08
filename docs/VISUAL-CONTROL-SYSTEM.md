@@ -335,42 +335,24 @@ The centralized value-based slider constraint remains `HOSTILE >= DISLIKED >= NE
 
 `AggregateVisualControl / AmmoDistribution`
 
-Family controls:
+The redesigned panel has two **read-only, full-width distribution previews** and four **full-width editable family-weight tracks**. It retains the two real authored breakable-box ammo generators rather than simulating a single merged ammunition pool.
 
-- 9x18 / 9x19 mm.
-- .45 ACP.
-- 5.45 / 5.56 mm.
-- 12 Gauge.
+**SNG pool:** `A918D`, `A919D`, `A545D`, `A012D`. The first two entries are controlled together by the 9x18/9x19 slider, so the authored vanilla weights of 2 each produce normalized shares of **50% 9x18/9x19, 25% 5.45, 25% 12 Gauge**.
 
-The control previews the two actual authored destructible-ammo pools separately.
+**NATO pool:** `A045D`, `A919D`, `A556D`, `A012D`. Their authored weights are all 2, so the vanilla normalized shares are **25% .45 ACP, 25% 9x19, 25% 5.56, 25% 12 Gauge**.
 
-SNG pool:
+Each preview renders a proportional stacked bar and a separate, always-visible legend beneath it. The legend includes the **current normalized percentage and vanilla percentage** for every authored candidate family, including families currently at 0%, without trying to squeeze text inside narrow bar segments. Pool order and source entry membership are preserved. **The percentage is a selection-weight share within that pool, not a global box spawn chance and not the number of bullets generated.**
 
-- A918D.
-- A919D.
-- A545D.
-- A012D.
+The independent family editors are:
 
-Because A918D and A919D share the same 9x18/9x19 family control and all four authored entries start at `Weight = 2`, vanilla normalized pool share is:
+- **9x18 / 9x19 mm:** influences both SNG candidates (`A918D` and `A919D`) and the NATO `A919D` candidate.
+- **.45 ACP:** changes NATO `A045D` only; does not add a .45 candidate to SNG.
+- **5.45 / 5.56 mm:** controls existing SNG `A545D` and NATO `A556D` entries.
+- **12 Gauge:** controls existing `A012D` entries in both pools.
 
-`50% 9x18/9x19 / 25% 5.45 / 25% 12 Gauge`
+All four tracks use their existing **0x–3x range in 0.25x steps**. At `1x` an authored `Weight = 2` entry remains unchanged; at `0x` that family's existing entries receive no positive selection weight. Each track shows its exact current multiplier, a grey Base Preset marker (`1x` in the unmodified source), its slider bounds and the current SNG/NATO shares.
 
-NATO pool:
-
-- A045D.
-- A919D.
-- A556D.
-- A012D.
-
-Vanilla normalized pool share is:
-
-`25% / 25% / 25% / 25%`
-
-Pool percentages are normalized relative weight shares inside that pool, not global breakable-box spawn probabilities.
-
-A family scaler of `1x` preserves authored `Weight = 2`; `0x` removes that family's existing entries from weighted selection. No new candidate ammo entries are created.
-
-The SNG pool must keep at least one of 9x18/9x19, 5.45/5.56 or 12 Gauge above 0x. The CFG writer independently validates that every generated ammo pool retains at least one positive effective weight.
+The live SNG guard remains mandatory: at least one of the **9x18/9x19, 5.45/5.56 or 12 Gauge** family sliders must stay above `0x`. The editor corrects an attempted all-zero SNG selection, and the CFG writer retains its own non-empty-pool validation. The previews are not draggable; only the four family tracks create edit hit targets. Right-click resets one track, while `R` resets all four. No extra candidate entries, CFG routes, preset fields or spawn/quantity controls have been introduced.
 
 ## Non-aggregate visual controls
 
