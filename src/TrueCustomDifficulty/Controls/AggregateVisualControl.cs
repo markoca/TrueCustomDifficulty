@@ -2716,13 +2716,18 @@ public sealed class AggregateVisualControl : FrameworkElement
             var card = new Rect(17.0, top, width, 107.0);
             dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
 
-            DrawText(dc, title, new Point(card.Left + 12.0, top + 7.0),
-                10.4, text, FontWeights.Bold);
-            DrawRightAlignedText(dc, sourceNote, new Point(card.Right - 12.0, top + 8.0),
-                9.1, muted, FontWeights.SemiBold);
+            // Authored pool-entry IDs get a separate caption under the title.
+            // Both strings are clipped to this pool instead of competing on a line.
+            var poolTextWidth = Math.Max(1.0, card.Width - 24.0);
+            dc.DrawText(CreateText(title, 10.4, text,
+                    FontWeights.Bold, poolTextWidth),
+                new Point(card.Left + 12.0, top + 5.0));
+            dc.DrawText(CreateText(sourceNote, 9.1, muted,
+                    FontWeights.SemiBold, poolTextWidth),
+                new Point(card.Left + 12.0, top + 22.0));
 
-            var stack = new Rect(card.Left + 14.0, top + 30.0,
-                card.Width - 28.0, 19.0);
+            var stack = new Rect(card.Left + 14.0, top + 38.0,
+                card.Width - 28.0, 14.0);
             dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.09),
                 new Pen(border, 1.0), stack, 3.0, 3.0);
 
@@ -2757,12 +2762,21 @@ public sealed class AggregateVisualControl : FrameworkElement
             for (var i = 0; i < shares.Count; i++)
             {
                 var cx = card.Left + 12.0 + columnWidth * (i + 0.5);
-                DrawCenteredText(dc, labels[i], new Point(cx, top + 55.0),
-                    9.2, text, FontWeights.Bold);
-                DrawCenteredText(dc, $"{shares[i] * 100.0:0}%",
-                    new Point(cx, top + 70.0), 10.8, accent, FontWeights.Bold);
-                DrawCenteredText(dc, $"BASE {baseShares[i] * 100.0:0}%",
-                    new Point(cx, top + 89.0), 9.0, muted, FontWeights.Normal);
+                // Column-local bounds prevent one ammo-family caption from
+                // intruding into the neighboring family at narrow widths.
+                var cellTextWidth = Math.Max(1.0, columnWidth - 6.0);
+                void CellText(string value, double size, Brush brush,
+                    FontWeight weight, double lineY)
+                {
+                    var content = CreateText(value, size, brush, weight, cellTextWidth);
+                    dc.DrawText(content,
+                        new Point(cx - content.WidthIncludingTrailingWhitespace / 2.0, lineY));
+                }
+                CellText(labels[i], 9.3, text, FontWeights.Bold, top + 55.0);
+                CellText($"{shares[i] * 100.0:0}%", 10.8,
+                    accent, FontWeights.Bold, top + 70.0);
+                CellText($"BASE {baseShares[i] * 100.0:0}%", 9.0,
+                    muted, FontWeights.Normal, top + 87.0);
             }
         }
 
@@ -2774,27 +2788,35 @@ public sealed class AggregateVisualControl : FrameworkElement
             new[] { ".45 ACP", "9x19", "5.56", "12 GAUGE" },
             natoShares, natoBaseShares, new[] { 1, 0, 2, 3 }, 170.0);
 
-        DrawText(dc, "AMMO FAMILY WEIGHTS", new Point(19.0, 286.0),
-            10.0, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "1x = ORIGINAL WEIGHT 2  |  0x = REMOVE FROM SELECTION",
-            new Point(ActualWidth - 19.0, 286.0), 8.9, muted, FontWeights.Normal);
+        var headingWidth = Math.Max(1.0, (ActualWidth - 54.0) / 2.0);
+        dc.DrawText(CreateText("AMMO FAMILY WEIGHTS", 10.0, text,
+                FontWeights.Bold, headingWidth), new Point(19.0, 286.0));
+        var selectionHint = CreateText("1x = ORIGINAL  |  0x = DISABLED",
+            9.0, muted, FontWeights.Normal, headingWidth);
+        dc.DrawText(selectionHint,
+            new Point(ActualWidth - 19.0 -
+                selectionHint.WidthIncludingTrailingWhitespace, 286.0));
 
         void DrawFamily(ParameterViewModel parameter, string label, string poolShare, double top)
         {
             var card = new Rect(17.0, top, width, 83.0);
             dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
                 card, 4.0, 4.0);
-            DrawText(dc, label, new Point(card.Left + 12.0, top + 6.0),
-                10.3, text, FontWeights.Bold);
-            DrawRightAlignedText(dc,
-                $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
-                new Point(card.Right - 12.0, top + 6.0), 11.0,
-                parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
-            DrawText(dc, poolShare, new Point(card.Left + 12.0, top + 24.0),
-                9.3, muted, FontWeights.Normal);
+            var cardTextWidth = Math.Max(1.0, card.Width - 24.0);
+            dc.DrawText(CreateText(label, 10.3, text,
+                    FontWeights.Bold, cardTextWidth),
+                new Point(card.Left + 12.0, top + 5.0));
+            dc.DrawText(CreateText(
+                    $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
+                    10.8, parameter.IsControlEnabled ? accent : muted,
+                    FontWeights.Bold, cardTextWidth),
+                new Point(card.Left + 12.0, top + 21.0));
+            dc.DrawText(CreateText(poolShare, 9.3, muted,
+                    FontWeights.Normal, cardTextWidth),
+                new Point(card.Left + 12.0, top + 37.0));
 
-            var track = new Rect(card.Left + 22.0, top + 44.0,
-                card.Width - 44.0, 18.0);
+            var track = new Rect(card.Left + 22.0, top + 52.0,
+                card.Width - 44.0, 14.0);
             var y = track.Top + track.Height / 2.0;
             var currentX = ValueToX(parameter.CurrentNumber,
                 parameter.Minimum, parameter.Maximum, track, reverse: false);
@@ -2816,10 +2838,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Rect(track.Left - 8.0, track.Top - 4.0,
                     track.Width + 16.0, track.Height + 8.0),
                 track, parameter.Minimum, parameter.Maximum);
-            DrawText(dc, $"{parameter.Minimum:0.##}x", new Point(track.Left, top + 65.0),
+            DrawText(dc, $"{parameter.Minimum:0.##}x", new Point(track.Left, top + 68.0),
                 9.0, muted, FontWeights.Normal);
             DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
-                new Point(track.Right, top + 65.0), 9.0, muted, FontWeights.Normal);
+                new Point(track.Right, top + 68.0), 9.0, muted, FontWeights.Normal);
         }
 
         DrawFamily(p918, "9x18 / 9x19 mm",
