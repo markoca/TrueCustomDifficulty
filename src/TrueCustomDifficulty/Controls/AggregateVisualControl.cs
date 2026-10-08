@@ -1743,8 +1743,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             DrawHorizontalTrackCard(dc, P(channel.Item1), channel.Item2,
                 rect, text, muted, border, accent, panel, hideBaseText: true);
         }
-        DrawCenteredText(dc, "GOLD = CURRENT  |  GREY TICK = BASE  |  RIGHT-CLICK TO RESET",
-            new Point(ActualWidth / 2.0, 150.0), 9.3, muted, FontWeights.SemiBold);
+
     }
 
     private void DrawPlayerWeaponProfile(
