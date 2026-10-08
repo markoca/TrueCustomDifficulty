@@ -3891,7 +3891,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        if (!_selectedParameter.IsSlider)
+        var isChoice = _selectedParameter.IsChoiceSlider && _selectedHitKind == HitKind.Choice;
+        var isRangeMin = _selectedParameter.IsRange && _selectedHitKind == HitKind.RangeMin;
+        var isRangeMax = _selectedParameter.IsRange && _selectedHitKind == HitKind.RangeMax;
+        if (!_selectedParameter.IsSlider && !isChoice && !isRangeMin && !isRangeMax)
             return;
 
         var stepCount = e.Key switch
@@ -3903,22 +3906,34 @@ public sealed class AggregateVisualControl : FrameworkElement
             _ => 0
         };
 
+        var minimum = isChoice ? _selectedParameter.ChoiceMinimum : _selectedParameter.Minimum;
+        var maximum = isChoice ? _selectedParameter.ChoiceMaximum : _selectedParameter.Maximum;
+        var current = isChoice ? _selectedParameter.ChoiceIndex
+            : isRangeMin ? _selectedParameter.CurrentMinNumber
+            : isRangeMax ? _selectedParameter.CurrentMaxNumber
+            : _selectedParameter.CurrentNumber;
+        var step = isChoice ? _selectedParameter.ChoiceTickFrequency : _selectedParameter.TickFrequency;
+
         double next;
         if (e.Key == Key.Home)
-            next = _selectedParameter.Minimum;
+            next = minimum;
         else if (e.Key == Key.End)
-            next = _selectedParameter.Maximum;
+            next = maximum;
         else if (stepCount != 0)
-            next = _selectedParameter.CurrentNumber
-                + stepCount * _selectedParameter.TickFrequency;
+            next = current + stepCount * step;
         else
             return;
 
-        // Match mouse snapping, including absolute raw CFG steps and unusual
-        // fine-grained values (for example 0.0025-step reload modifiers).
-        _selectedParameter.CurrentNumber = Snap(_selectedParameter, next);
-        EnforceFamilyConstraints(_selectedParameter);
+        if (isChoice)
+            _selectedParameter.ChoiceIndex = Math.Clamp(next, minimum, maximum);
+        else if (isRangeMin)
+            _selectedParameter.CurrentMinNumber = Snap(_selectedParameter, next);
+        else if (isRangeMax)
+            _selectedParameter.CurrentMaxNumber = Snap(_selectedParameter, next);
+        else
+            _selectedParameter.CurrentNumber = Snap(_selectedParameter, next);
 
+        EnforceFamilyConstraints(_selectedParameter);
         _status.ClearTransient();
         InvalidateVisual();
         e.Handled = true;
@@ -3950,8 +3965,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var raw = target.VisualMinimum + ratio * (target.VisualMaximum - target.VisualMinimum);
-        var snapped = Snap(target.Parameter, raw);
-        target.Parameter.CurrentNumber = snapped;
+        if (target.Kind == HitKind.Choice)
+            target.Parameter.ChoiceIndex = Math.Round(raw, MidpointRounding.AwayFromZero);
+        else if (target.Kind == HitKind.RangeMin)
+            target.Parameter.CurrentMinNumber = Snap(target.Parameter, raw);
+        else if (target.Kind == HitKind.RangeMax)
+            target.Parameter.CurrentMaxNumber = Snap(target.Parameter, raw);
+        else
+            target.Parameter.CurrentNumber = Snap(target.Parameter, raw);
 
         EnforceFamilyConstraints(target.Parameter);
 
