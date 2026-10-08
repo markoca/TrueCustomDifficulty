@@ -335,3 +335,7 @@ Global Hit Damage and Attack Frequency are two stacked horizontal rail controls 
 ### Locked Mutant Combat horizontal pair — 2026-10-08
 
 Global Hit Damage and Attack Frequency must sit in one 2-column row (left/right), each featuring a horizontal rail. They are not vertically stacked. Their cooldown bank is a separate eight-fader row below.
+
+### Compact Mutant Combat and Psy axis styling — 2026-10-08
+
+Mutant Combat's global side-by-side horizontal controls occupy the top row without a tall reserved vertical lane. Eight vertical ability faders occupy the next band, preserving exact native wait semantics. Psy Phantom Pressure adopts a square Human Combat-style interactive crosshair, circular glowing X/Y/center handles, and a right-side vertical Gear Damage mixer plus Bleed toggle. Repeated-hit controls are internal-only; their source CFG fields persist. Top-level sections stay 1x1.
