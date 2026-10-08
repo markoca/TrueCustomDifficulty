@@ -13,9 +13,9 @@ public sealed class ResponsiveSectionGridPanel : Panel
 {
     private const double ColumnGap = 16.0;
     private const double RowGap = 12.0;
-    private const double MinSectionWidth = 420.0;
+    private const double MinSectionWidth = 540.0;
 
-    // Only pairs whose contents remain useful at half editor width are opted in.
+    // Only pairs whose content respects the existing 520-DIP aggregate minimum at half width are opted in.
     // Other (including complex radar, repair curve and timeline) sections stay
     // full width. Section adjacency remains required to preserve reading order.
     private static readonly IReadOnlyDictionary<string, string> CompactPairs =
