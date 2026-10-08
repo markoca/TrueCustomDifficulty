@@ -206,6 +206,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Subtle, consistent feedback for interactive tracks and toggles across
         // every aggregate family. Previews have no HitTarget and stay read-only.
         var activeTarget = _dragTarget ?? _hoverTarget;
+        if (activeTarget is null && IsKeyboardFocused && _selectedParameter is not null)
+            activeTarget = _hitTargets.FirstOrDefault(target =>
+                ReferenceEquals(target.Parameter, _selectedParameter));
+
         if (activeTarget is not null)
         {
             dc.PushClip(new RectangleGeometry(
