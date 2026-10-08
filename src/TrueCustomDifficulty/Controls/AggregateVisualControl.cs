@@ -1770,9 +1770,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(16.0, 211.0, Math.Max(480.0, ActualWidth - 32.0), 68.0),
             text, muted, border, soft, accent, panel);
 
-        DrawCenteredText(dc,
-            "RIGHT = STRONGER HITS / HEADSHOTS  |  MORE JAMS ON THE THIRD TRACK",
-            new Point(ActualWidth / 2.0, 290.0), 9.1, text, FontWeights.SemiBold);
+
     }
 
     private void DrawPlayerWeaponLane(
@@ -3878,7 +3876,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())
             foreach (System.Text.RegularExpressions.Match token in
                 System.Text.RegularExpressions.Regex.Matches(value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
+            {
                 valueText.SetForegroundBrush(accent, token.Index, token.Length);
+                valueText.SetFontSize(11.9, token.Index, token.Length);
+            }
         dc.DrawText(valueText, new Point(card.Left + 12.0, card.Top + 25.0));
 
         var track = new Rect(card.Left + 20.0, card.Top + 45.0,
@@ -4014,7 +4015,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             var first = System.Text.RegularExpressions.Regex.Match(
                 value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
             if (first.Success)
+            {
                 valueText.SetForegroundBrush(accent, first.Index, first.Length);
+                valueText.SetFontSize((pairedValueFormatting ? 11.1 : 10.1) + 1.2,
+                    first.Index, first.Length);
+            }
         }
         dc.DrawText(valueText, new Point(card.Left + 12.0, card.Top + 22.0));
 
@@ -4815,8 +4820,12 @@ public sealed class AggregateVisualControl : FrameworkElement
             caption, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
         for (var i = 0; i < numbers.Count && i < changed.Length; i++)
             if (changed[i])
+            {
                 formatted.SetForegroundBrush(changedBrush,
                     numbers[i].Index, numbers[i].Length);
+                formatted.SetFontSize(Math.Max(9.0, size) + 1.2,
+                    numbers[i].Index, numbers[i].Length);
+            }
         // Same centered alignment as existing labels, no layout shifts.
         dc.DrawText(formatted, new Point(
             center.X - formatted.Width / 2.0,
@@ -4833,7 +4842,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             var first = System.Text.RegularExpressions.Regex.Match(
                 value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
             if (first.Success)
+            {
                 formatted.SetForegroundBrush(accent, first.Index, first.Length);
+                formatted.SetFontSize(Math.Max(9.0, size) + 1.2,
+                    first.Index, first.Length);
+            }
         }
         dc.DrawText(formatted, new Point(
             rightAligned ? position.X - formatted.WidthIncludingTrailingWhitespace : position.X,
