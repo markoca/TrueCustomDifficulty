@@ -2901,6 +2901,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 card.Top + 64.0));
     }
 
+    // Small paired panels share this card. Values and titles occupy separate
+    // lines and text is trimmed inside the card, never across the next column.
     private void DrawHorizontalTrackCard(
         DrawingContext dc,
         ParameterViewModel? parameter,
@@ -2912,27 +2914,59 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 3.0, 3.0);
-        DrawText(dc, label, new Point(card.Left + 10.0, card.Top + 8.0), 8.8, muted, FontWeights.Bold);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
+        var textWidth = Math.Max(1.0, card.Width - 24.0);
+        dc.DrawText(CreateText(label, 9.8, text, FontWeights.Bold, textWidth),
+            new Point(card.Left + 12.0, card.Top + 5.0));
 
         if (parameter is null)
+        {
+            dc.DrawText(CreateText("CFG PARAMETER UNAVAILABLE", 9.0, muted,
+                    FontWeights.Normal, textWidth),
+                new Point(card.Left + 12.0, card.Top + 22.0));
             return;
+        }
 
-        DrawRightAlignedText(dc, FriendlyValue(parameter), new Point(card.Right - 10.0, card.Top + 6.0), 10.2, accent, FontWeights.Bold);
+        var value = $"{FriendlyValue(parameter)}  |  BASE {FormatCompact(parameter.ReferenceNumber)}";
+        dc.DrawText(CreateText(value, 10.1,
+                parameter.IsControlEnabled ? accent : muted,
+                FontWeights.SemiBold, textWidth),
+            new Point(card.Left + 12.0, card.Top + 22.0));
 
-        var track = new Rect(card.Left + 12.0, card.Top + 38.0, Math.Max(50.0, card.Width - 24.0), 28.0);
+        var track = new Rect(card.Left + 14.0, card.Top + 39.0,
+            Math.Max(1.0, card.Width - 28.0), 12.0);
         var y = track.Top + track.Height / 2.0;
 
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
+        dc.DrawLine(new Pen(border, 3.5),
+            new Point(track.Left, y), new Point(track.Right, y));
+        var x = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track, reverse: false);
+        if (parameter.IsControlEnabled)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.65), 3.5),
+                new Point(track.Left, y), new Point(x, y));
+
         DrawReferenceTick(dc, parameter, track, y, muted);
+        dc.DrawEllipse(panel,
+            new Pen(parameter.IsControlEnabled ? accent : muted,
+                IsSelected(parameter) ? 2.5 : 1.5),
+            new Point(x, y), 6.0, 6.0);
+        if (parameter.IsControlEnabled)
+            dc.DrawEllipse(accent, null, new Point(x, y), 2.5, 2.5);
 
-        var x = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
-        dc.DrawEllipse(accent, null, new Point(x, y), 5.5, 5.5);
+        AddHorizontalTarget(parameter,
+            new Rect(track.Left - 7.0, track.Top - 4.0,
+                track.Width + 14.0, track.Height + 8.0),
+            track, parameter.Minimum, parameter.Maximum);
 
-        AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
-
-        DrawText(dc, FormatCompact(parameter.Minimum), new Point(track.Left, card.Bottom - 14.0), 7.8, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, FormatCompact(parameter.Maximum), new Point(track.Right, card.Bottom - 14.0), 7.8, muted, FontWeights.Normal);
+        var halfWidth = Math.Max(1.0, track.Width / 2.0 - 4.0);
+        dc.DrawText(CreateText(FormatCompact(parameter.Minimum), 9.0,
+                muted, FontWeights.Normal, halfWidth),
+            new Point(track.Left, card.Top + 56.0));
+        var right = CreateText(FormatCompact(parameter.Maximum), 9.0,
+            muted, FontWeights.Normal, halfWidth);
+        dc.DrawText(right, new Point(
+            track.Right - right.WidthIncludingTrailingWhitespace,
+            card.Top + 56.0));
     }
 
     private void DrawInlineHorizontalTrack(
