@@ -2152,7 +2152,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var midpoint = overview.Left + overview.Width / 2.0;
         dc.DrawLine(new Pen(border, 1.0),
             new Point(midpoint, overview.Top + 10.0),
-            new Point(midpoint, overview.Bottom - 10.0));
+            new Point(midpoint, overview.Bottom - 21.0));
 
         DrawText(dc, "YOU SELL  →  TRADER BUYS", new Point(overview.Left + 12.0, 64.0),
             10.1, accent, FontWeights.Bold);
@@ -2207,11 +2207,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         DrawPricingTrack(traderBuys,
-            "TRADER BUYS FROM YOU  /  PAYOUT SETTING",
+            "YOU SELL  /  TRADER PAYOUT",
             "Higher means a better trader-buying setting; not an exact payout.",
             132.0);
         DrawPricingTrack(traderSells,
-            "TRADER SELLS TO YOU  /  SHOP SETTING",
+            "YOU BUY  /  TRADER SHOP PRICE",
             "Higher means a pricier trader-selling setting; not an exact final price.",
             232.0);
 
