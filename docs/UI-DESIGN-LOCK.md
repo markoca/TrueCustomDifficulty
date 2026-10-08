@@ -209,3 +209,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — Special Ability Cooldowns single-row layout
 
 User-approved change: eight mutant cooldown controls now use one compact horizontal row of vertical faders, matching Mutant Health. Their original source values, steps, grey Base ticks, return-rate readouts, glow-only handles, vertical dragging, individual right-click reset and R reset-all are preserved. Long labels are split across two lines. Top-level sections remain 1x1. Runtime acceptance pending.
+
+### 2026-10-08 — Mutant Combat and ability pacing combined
+
+User-authorized consolidation: The former Mutants and Mutant Special Attack Cooldown sections are now one full-width **Mutant Combat** section. The upper **GLOBAL COMBAT** zone contains two independent vertical controls: DAMAGE PER HIT and ATTACK FREQUENCY (the normal mutant attack tempo). A distinct lower **SPECIAL ABILITY COOLDOWNS** zone contains eight compact wait-multiplier faders, one per mutant, with inverse `x RETURN` readouts. The source parameters, native ranges/steps and per-mutant variants are unchanged. Separating normal attack frequency from special cooldown avoids conflating those mechanics. Both zones retain circular glowing handles, grey reference ticks and right-click reset. The top-level layout remains fixed 1x1. The old separate mutant combat aggregate is no longer shown. Local build and Wine acceptance pending.
