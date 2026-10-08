@@ -2356,11 +2356,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         var contentWidth = Math.Max(460.0, ActualWidth - 34.0);
         var preview = new Rect(17.0, 56.0, contentWidth, 107.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
-        DrawText(dc, "PROTECTION WINDOW", new Point(29.0, 66.0),
-            10.0, text, FontWeights.Bold);
-        DrawRightAlignedText(dc,
-            $"NOW {minimum.CurrentNumber:0.00}-{maximum.CurrentNumber:0.00}  |  BASE {minimum.ReferenceNumber:0.00}-{maximum.ReferenceNumber:0.00}",
-            new Point(preview.Right - 12.0, 66.0), 9.4, accent, FontWeights.SemiBold);
+        // Current and Base Preset values get their own line. Independent
+        // left/right headings formerly overlapped at the minimum width.
+        var previewTextWidth = Math.Max(1.0, preview.Width - 24.0);
+        dc.DrawText(CreateText("PROTECTION WINDOW  /  READ ONLY",
+                10.0, text, FontWeights.Bold, previewTextWidth),
+            new Point(preview.Left + 12.0, 63.0));
+        dc.DrawText(CreateText(
+                $"NOW {minimum.CurrentNumber:0.00}–{maximum.CurrentNumber:0.00}  |  BASE {minimum.ReferenceNumber:0.00}–{maximum.ReferenceNumber:0.00}",
+                9.8, accent, FontWeights.SemiBold, previewTextWidth),
+            new Point(preview.Left + 12.0, 81.0));
 
         var axis = new Rect(preview.Left + 79.0, 93.0, preview.Width - 98.0, 47.0);
         var currentY = 105.0;
