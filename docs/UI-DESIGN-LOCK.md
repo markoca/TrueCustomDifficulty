@@ -261,3 +261,7 @@ Global UI instruction: all transient yellow confirmation text after resetting vi
 ### 2026-10-08 — Hunger axes and bonus fader labels
 
 User-approved clarification: the left-hand WELL-FED control explicitly reads STAMINA RECOVERY / BONUS and UP = MORE RECOVERY. The main stepped graph visibly labels its horizontal HUNGER POINTS (0–100) axis and has a rotated vertical STAMINA RECOVERY LOSS caption, separate from the numeric percent ticks. Spacing between left bonus lane and main chart increases so the Y label does not overlap controls. Plot values and native CFG interactions do not change. Wine verification pending.
+
+### 2026-10-08 — Hunger Survival Profile axis polish
+
+The main graph's X-axis ticks retain real 0/25/50/75/100 hunger points but use clear 10-DIP semibold HUD-style typography with stronger endpoints. Y ticks are also 10-DIP semibold, with the zero reference explicitly marked `0% NORMAL`; remaining values retain accurate negative percent labels. Remove both redundant helper/rationale footer rows underneath the graph; keep in-chart axis headings and state labels. Reduce Hunger Ladder measured card height by 48 DIP to reclaim space. Gameplay values and mouse interaction remain unchanged. Wine verification pending.
