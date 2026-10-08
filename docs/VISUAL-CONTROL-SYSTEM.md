@@ -511,3 +511,7 @@ Combat section row 1 is always **Human Enemies | Your Weapons**, two equal colum
 ### Combat group identity resolution (2026-10-08)
 
 The actual WPF group enumeration may put Mutants between Human Enemies and Your Weapons. Read the group name from each GroupItem's bound Tag; for the Combat layout, arrange the Human Enemies and Your Weapons group elements first and together in a fixed 2-column row, with Mutants following. Never pair the first two raw WPF elements merely by index.
+
+### Your Weapons fader alignment — 2026-10-08
+
+The Combat Your Weapons section uses a fixed **2×2 mixer layout** (two columns, two rows), not generic automatic 3-column/4-column packing. The order is Weapon Damage | Headshot Damage on row one and Weapon Jamming | Explosion Damage on row two. All four faders share equal widths, centered within the section, with a consistent row gap and sufficient panel height. They retain their independent actual CFG ranges, steps and markers.
