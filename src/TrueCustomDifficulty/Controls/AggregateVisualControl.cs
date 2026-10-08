@@ -1691,8 +1691,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             ("combat.playerWeaponDamage", "WEAPON", "DAMAGE"),
             ("combat.playerHeadshotMultiplier", "HEADSHOT", "DAMAGE"),
-            ("combat.weaponJamming", "WEAPON", "JAMMING"),
-            ("combat.explosionDamage", "EXPLOSION", "DAMAGE")
+            ("combat.weaponJamming", "WEAPON", "JAMMING")
         };
         const int columns = 2;
         const double margin = 20.0;
@@ -1842,7 +1841,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var damage = P("combat.npcWeaponDamage");
         var frequency = P("combat.npcAttackCooldown");
         var accuracy = P("combat.npcHipAccuracy");
-        if (health is null || damage is null || frequency is null || accuracy is null)
+        var explosion = P("combat.explosionDamage");
+        if (health is null || damage is null || frequency is null || accuracy is null || explosion is null)
         {
             DrawCenteredText(dc, "Human combat data unavailable.",
                 new Point(ActualWidth / 2.0, 165.0), 10.0, muted, FontWeights.SemiBold);
@@ -1942,22 +1942,22 @@ public sealed class AggregateVisualControl : FrameworkElement
                 plot, HitKind.HumanJoint, health.Minimum, health.Maximum, false));
 
         // Retain native source units/steps and individual right-hand rationale.
-        var faderWidth = Math.Min(140.0, Math.Max(128.0,
-            (ActualWidth - plot.Right - 32.0) / 2.0 - 5.0));
+        const double faderGap = 10.0;
+        var faderWidth = Math.Min(140.0, Math.Max(112.0,
+            (ActualWidth - plot.Right - 30.0 - 2.0 * faderGap) / 3.0));
         var faderLeft = plot.Right + 14.0;
-        // Source-level contract: these runtime maxima MUST feed the displayed
-        // faders, not merely be written in the UI design documentation.
-        // Both controls use ParameterViewModel.Maximum for their top ticks.
         if (frequency.Maximum > 2.0 || accuracy.Maximum > 1.0)
             throw new InvalidOperationException(
-                "Human Combat limits violated: Attack Frequency <= 2x, Fire Accuracy <= 1x.");
-        // The two human combat channels are frameless; keep their gameplay
-        // labels grouped, and make clear these are source multipliers.
+                "Human Combat limits violated: Attack Frequency <= 2x, Shot Accuracy <= 1x.");
         DrawMixerStrip(dc, frequency, "ATTACK", "FREQUENCY",
             new Rect(faderLeft, 83.0, faderWidth, MixerStripHeight),
             text, muted, border, accent, panel, frameless: true);
         DrawMixerStrip(dc, accuracy, "SHOT", "ACCURACY",
-            new Rect(faderLeft + faderWidth + 10.0, 83.0, faderWidth, MixerStripHeight),
+            new Rect(faderLeft + faderWidth + faderGap, 83.0, faderWidth, MixerStripHeight),
+            text, muted, border, accent, panel, frameless: true);
+        DrawMixerStrip(dc, explosion, "EXPLOSION", "DAMAGE",
+            new Rect(faderLeft + 2.0 * (faderWidth + faderGap), 83.0,
+                faderWidth, MixerStripHeight),
             text, muted, border, accent, panel, frameless: true);
 
         // A short two-line legend belongs to the plot, not to the entire panel.
@@ -4951,14 +4951,14 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "combat.npcHealth",
                 "combat.npcWeaponDamage",
                 "combat.npcAttackCooldown",
-                "combat.npcHipAccuracy"
+                "combat.npcHipAccuracy",
+                "combat.explosionDamage"
             },
             "PlayerWeaponProfile" => new[]
             {
                 "combat.playerWeaponDamage",
                 "combat.playerHeadshotMultiplier",
-                "combat.weaponJamming",
-                "combat.explosionDamage"
+                "combat.weaponJamming"
             },
             "CoreHealthDashboard" => new[]
             {
