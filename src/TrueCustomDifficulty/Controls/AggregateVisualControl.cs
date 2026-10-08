@@ -1982,6 +1982,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             FontWeights.SemiBold);
     }
 
+    // Sleeping is four independent CFG settings, not a simulated fatigue-to-HP
+    // formula. Keep the sleep gate and time requirement distinct from wake-up
+    // effects, and give every setting its native-range horizontal editor.
     private void DrawSleepingDashboard(
         DrawingContext dc,
         Brush text,
@@ -1990,96 +1993,117 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "SLEEPING SYSTEM", "sleep gate, minimum rest window and wake-up recovery", text, muted, accent);
-
         var threshold = P("survival.sleepEligibilityThreshold");
         var minimumHours = P("survival.minimumSleepHours");
         var healthRestore = P("survival.sleepHealthRestore");
         var staminaRestore = P("survival.sleepStaminaRestore");
 
-        var left = 16.0;
-        var width = Math.Max(420.0, ActualWidth - 32.0);
+        DrawText(dc, "SLEEPING SYSTEM", new Point(17.0, 13.0),
+            11.5, accent, FontWeights.Bold);
+        DrawText(dc, "when you can sleep, how long you must rest and what you recover",
+            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
 
-        // Sleep gate: this is not player runtime fatigue. It is the configured
-        // sleepiness threshold at which normal sleep becomes available.
-        var gateCard = new Rect(left, 56.0, width, 92.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), gateCard, 3.0, 3.0);
-        DrawText(dc, "SLEEP GATE", new Point(gateCard.Left + 12.0, gateCard.Top + 9.0), 9.0, text, FontWeights.Bold);
-        DrawText(dc, "how tired you must be before normal sleep is allowed", new Point(gateCard.Left + 12.0, gateCard.Top + 25.0), 8.0, muted, FontWeights.Normal);
-
-        if (threshold is not null)
+        if (threshold is null || minimumHours is null ||
+            healthRestore is null || staminaRestore is null)
         {
-            DrawRightAlignedText(dc, FriendlyValue(threshold), new Point(gateCard.Right - 12.0, gateCard.Top + 8.0), 10.4, accent, FontWeights.Bold);
-
-            var gateTrack = new Rect(gateCard.Left + 16.0, gateCard.Top + 52.0, gateCard.Width - 32.0, 22.0);
-            var gateY = gateTrack.Top + gateTrack.Height / 2.0;
-            dc.DrawLine(new Pen(border, 4.0), new Point(gateTrack.Left, gateY), new Point(gateTrack.Right, gateY));
-
-            var vanillaX = ValueToX(threshold.ReferenceNumber, threshold.Minimum, threshold.Maximum, gateTrack, reverse: false);
-            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, gateY - 8.0), new Point(vanillaX, gateY + 8.0));
-            DrawCenteredText(dc, "VANILLA", new Point(vanillaX, gateY + 10.0), 7.3, muted, FontWeights.SemiBold);
-
-            var currentX = ValueToX(threshold.CurrentNumber, threshold.Minimum, threshold.Maximum, gateTrack, reverse: false);
-            dc.DrawEllipse(accent, null, new Point(currentX, gateY), 6.0, 6.0);
-
-            DrawText(dc, "EARLIER", new Point(gateTrack.Left, gateY + 10.0), 7.4, muted, FontWeights.SemiBold);
-            DrawRightAlignedText(dc, "MORE TIRED", new Point(gateTrack.Right, gateY + 10.0), 7.4, muted, FontWeights.SemiBold);
-            AddHorizontalTarget(threshold, gateTrack, gateTrack, threshold.Minimum, threshold.Maximum);
+            DrawCenteredText(dc, "Sleeping system data unavailable.",
+                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            return;
         }
 
-        // Minimum rest window shown as a clock-like ruler rather than another generic card.
-        var timeCard = new Rect(left, 160.0, width, 88.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), timeCard, 3.0, 3.0);
-        DrawText(dc, "MINIMUM SLEEP WINDOW", new Point(timeCard.Left + 12.0, timeCard.Top + 9.0), 9.0, text, FontWeights.Bold);
-        DrawText(dc, "shortest normal sleep cycle", new Point(timeCard.Left + 12.0, timeCard.Top + 25.0), 8.0, muted, FontWeights.Normal);
+        var width = Math.Max(460.0, ActualWidth - 34.0);
 
-        if (minimumHours is not null)
+        // Both access controls operate on the authored sleep settings, not the
+        // player's current in-game sleepiness or a forecast of actual sleep time.
+        void DrawSleepTrack(
+            ParameterViewModel parameter,
+            string title,
+            string explanation,
+            string displayedValue,
+            string leftLabel,
+            string rightLabel,
+            double top)
         {
-            DrawRightAlignedText(dc, FriendlyValue(minimumHours), new Point(timeCard.Right - 12.0, timeCard.Top + 8.0), 10.4, accent, FontWeights.Bold);
+            var card = new Rect(17.0, top, width, 82.0);
+            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
+                card, 4.0, 4.0);
 
-            var timeTrack = new Rect(timeCard.Left + 16.0, timeCard.Top + 49.0, timeCard.Width - 32.0, 22.0);
-            var timeY = timeTrack.Top + timeTrack.Height / 2.0;
-            dc.DrawLine(new Pen(border, 4.0), new Point(timeTrack.Left, timeY), new Point(timeTrack.Right, timeY));
+            DrawText(dc, title, new Point(card.Left + 12.0, top + 7.0),
+                10.4, text, FontWeights.Bold);
+            DrawRightAlignedText(dc, displayedValue,
+                new Point(card.Right - 12.0, top + 7.0), 11.0,
+                parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
+            DrawText(dc, explanation, new Point(card.Left + 12.0, top + 26.0),
+                9.4, muted, FontWeights.Normal);
 
-            var vanillaX = ValueToX(minimumHours.ReferenceNumber, minimumHours.Minimum, minimumHours.Maximum, timeTrack, reverse: false);
-            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, timeY - 8.0), new Point(vanillaX, timeY + 8.0));
+            var track = new Rect(card.Left + 22.0, top + 44.0,
+                card.Width - 44.0, 18.0);
+            var y = track.Top + track.Height / 2.0;
+            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
+                parameter.Maximum, track, reverse: false);
+            var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
+                parameter.Maximum, track, reverse: false);
 
-            var currentX = ValueToX(minimumHours.CurrentNumber, minimumHours.Minimum, minimumHours.Maximum, timeTrack, reverse: false);
-            dc.DrawLine(new Pen(accent, 4.0), new Point(timeTrack.Left, timeY), new Point(currentX, timeY));
-            dc.DrawEllipse(accent, null, new Point(currentX, timeY), 6.0, 6.0);
+            dc.DrawLine(new Pen(border, 4.0),
+                new Point(track.Left, y), new Point(track.Right, y));
+            if (parameter.IsControlEnabled)
+                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
+                    new Point(track.Left, y), new Point(currentX, y));
 
-            DrawText(dc, $"{minimumHours.Minimum:0}H", new Point(timeTrack.Left, timeY + 10.0), 7.4, muted, FontWeights.SemiBold);
-            DrawCenteredText(dc, "VANILLA", new Point(vanillaX, timeY + 10.0), 7.3, muted, FontWeights.SemiBold);
-            DrawRightAlignedText(dc, $"{minimumHours.Maximum:0}H", new Point(timeTrack.Right, timeY + 10.0), 7.4, muted, FontWeights.SemiBold);
-            AddHorizontalTarget(minimumHours, timeTrack, timeTrack, minimumHours.Minimum, minimumHours.Maximum);
+            // Base Preset marker is drawn behind the active gold handle even
+            // when both are at the same coordinate.
+            dc.DrawLine(new Pen(muted, 2.0),
+                new Point(baseX, y - 11.0), new Point(baseX, y + 11.0));
+            dc.DrawEllipse(panel,
+                new Pen(parameter.IsControlEnabled ? accent : muted,
+                    IsSelected(parameter) ? 2.8 : 1.9),
+                new Point(currentX, y), 7.0, 7.0);
+            if (parameter.IsControlEnabled)
+                dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+
+            AddHorizontalTarget(parameter,
+                new Rect(track.Left - 8.0, track.Top - 4.0,
+                    track.Width + 16.0, track.Height + 8.0),
+                track, parameter.Minimum, parameter.Maximum);
+            DrawText(dc, leftLabel, new Point(track.Left, top + 65.0),
+                9.1, muted, FontWeights.Normal);
+            DrawRightAlignedText(dc, rightLabel, new Point(track.Right, top + 65.0),
+                9.1, muted, FontWeights.Normal);
         }
 
-        DrawText(dc, "WAKE-UP RECOVERY", new Point(left + 2.0, 266.0), 9.0, text, FontWeights.Bold);
-        DrawText(dc, "direct restore applied after normal sleep", new Point(left + 2.0, 282.0), 8.0, muted, FontWeights.Normal);
+        DrawSleepTrack(threshold,
+            "SLEEP BECOMES AVAILABLE AT",
+            "Required sleepiness points; this is a rule, not your live fatigue meter.",
+            $"{threshold.CurrentNumber:0} pts  |  BASE {threshold.ReferenceNumber:0} pts",
+            $"{threshold.Minimum:0} pts", $"{threshold.Maximum:0} pts", 55.0);
 
-        var gap = 10.0;
-        var recoveryWidth = (width - gap) / 2.0;
-        DrawRecoveryMeter(
-            dc,
-            healthRestore,
-            "HEALTH",
-            new Rect(left, 302.0, recoveryWidth, 66.0),
-            text,
-            muted,
-            border,
-            accent,
-            panel);
+        DrawSleepTrack(minimumHours,
+            "MINIMUM SLEEP",
+            "Minimum hours allowed by the normal sleep configuration.",
+            $"{minimumHours.CurrentNumber:0} h  |  BASE {minimumHours.ReferenceNumber:0} h",
+            $"{minimumHours.Minimum:0} h", $"{minimumHours.Maximum:0} h", 148.0);
 
-        DrawRecoveryMeter(
-            dc,
-            staminaRestore,
-            "STAMINA",
-            new Rect(left + recoveryWidth + gap, 302.0, recoveryWidth, 66.0),
-            text,
-            muted,
-            border,
-            accent,
-            panel);
+        DrawText(dc, "WHEN YOU WAKE UP", new Point(19.0, 248.0),
+            10.5, accent, FontWeights.Bold);
+        DrawRightAlignedText(dc, "RESTORE EFFECTS, NOT PASSIVE REGENERATION",
+            new Point(ActualWidth - 19.0, 248.0),
+            9.1, muted, FontWeights.SemiBold);
+
+        DrawSleepTrack(healthRestore,
+            "POST-SLEEP HEALTH RESTORE",
+            "Direct health restoration; actual HP cannot exceed your health cap.",
+            $"{healthRestore.CurrentNumber:0} HP  |  BASE {healthRestore.ReferenceNumber:0} HP",
+            $"{healthRestore.Minimum:0} HP", $"{healthRestore.Maximum:0} HP", 272.0);
+
+        DrawSleepTrack(staminaRestore,
+            "POST-SLEEP STAMINA EFFECT",
+            "Source effect strength; does not change your maximum stamina.",
+            $"+{staminaRestore.CurrentNumber * 100:0}%  |  BASE +{staminaRestore.ReferenceNumber * 100:0}%",
+            $"{staminaRestore.Minimum * 100:0}%", $"{staminaRestore.Maximum * 100:0}%", 365.0);
+
+        DrawText(dc,
+            "GREY TICK = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
+            new Point(20.0, 470.0), 9.1, muted, FontWeights.SemiBold);
     }
 
     private void DrawRecoveryMeter(
@@ -3655,7 +3679,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "MasterLowHealth" => 235.0,
             "MasterRadiationPenalty" => 235.0,
             "ConsumableMixer" => 475.0,
-            "SleepingDashboard" => 390.0,
+            "SleepingDashboard" => 525.0,
             "HungerLadder" => 380.0,
             "StarvationTimeline" => 532.0,
             "RepeatedHitBand" => 455.0,
