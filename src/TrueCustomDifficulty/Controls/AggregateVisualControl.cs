@@ -1025,8 +1025,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 var x = ValueToX(marker.Value, vault.Minimum, vault.Maximum, track, false);
                 dc.DrawLine(new Pen(muted, 1.8),
                     new Point(x, 89.0), new Point(x, 95.0));
-                var caption = marker.Label.Replace("VANILLA / ", "", StringComparison.Ordinal)
-                    + $" {marker.Value:0} uu";
+                var caption = marker.Label.Replace("VANILLA / ", "", StringComparison.Ordinal);
                 DrawCenteredText(dc, caption, new Point(x, 136.0),
                     9.0, muted, FontWeights.SemiBold);
                 // Clicking the printed landmark (not just the 12px track)
@@ -1076,8 +1075,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 var x = ValueToX(marker.Value, vault.Minimum, vault.Maximum, track, false);
                 dc.DrawLine(new Pen(muted, 1.8),
                     new Point(x, 246.0), new Point(x, 252.0));
-                var caption = marker.Label.Replace("VANILLA / ", "", StringComparison.Ordinal)
-                    + $" {marker.Value:0} uu";
+                var caption = marker.Label.Replace("VANILLA / ", "", StringComparison.Ordinal);
                 DrawCenteredText(dc, caption, new Point(x, 294.0),
                     9.0, muted, FontWeights.SemiBold);
                 const double captionWidth = 112.0;
