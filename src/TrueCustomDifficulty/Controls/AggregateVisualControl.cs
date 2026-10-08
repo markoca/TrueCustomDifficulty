@@ -1644,7 +1644,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var previewTitle = CompactGridEnd(strengthTop, 4, columns) + 13.0;
         DrawText(dc, "TIMED EFFECTS",
             new Point(19.0, previewTitle), 10.8, accent, FontWeights.Bold);
-        DrawText(dc, "Duration multipliers preserve each drink's original timing ratios.",
+        DrawText(dc,
+            $"WATER: REGEN +{25.0 * waterStamina.CurrentNumber:0.#}% / COST -{10.0 * waterStamina.CurrentNumber:0.#}%  |  ENERGY: REGEN +{200.0 * energyStamina.CurrentNumber:0.#}%",
             new Point(19.0, previewTitle + 17.0), 9.3, muted, FontWeights.Normal);
 
         // Longest effects share a real seconds scale. This chart is a preview,
@@ -1718,9 +1719,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             "0x", "3x", durationTop, 4);
 
         var end = CompactGridEnd(durationTop, 5, columns);
-        DrawText(dc, "CURRENT DURATION: WATER 5/30s · ENERGY 45/15/5s AT 1x",
+        DrawText(dc,
+            $"WATER: {5.0 * waterTime.CurrentNumber:0.#}/{30.0 * waterTime.CurrentNumber:0.#}s  |  ENERGY: {45.0 * energyTime.CurrentNumber:0.#}/{15.0 * energyTime.CurrentNumber:0.#}/{5.0 * energyTime.CurrentNumber:0.#}s",
             new Point(20.0, end + 12.0), 9.1, muted, FontWeights.Normal);
-        DrawText(dc, "VODKA/BEER 20s · MAGIC VODKA 90s AT 1x  |  DRUNKENNESS SEPARATE",
+        DrawText(dc,
+            $"VODKA: {20.0 * vodkaTime.CurrentNumber:0.#}s  |  BEER: {20.0 * beerTime.CurrentNumber:0.#}s  |  MAGIC: {90.0 * magicTime.CurrentNumber:0.#}s  |  DRUNKENNESS SEPARATE",
             new Point(20.0, end + 30.0), 9.1, muted, FontWeights.Normal);
     }
 
