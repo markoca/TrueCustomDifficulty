@@ -331,3 +331,7 @@ One Mutant Combat section replaces separate global pressure and special cooldown
 ### Mutant Combat horizontal/vertical split (2026-10-08)
 
 Global Hit Damage and Attack Frequency are two stacked horizontal rail controls with circular gold handles, Base ticks, labels, live multipliers and native bounds. Each uses pointer X to determine value. The eight one-row mutant-specific cooldowns remain vertical and use pointer Y. This visually distinguishes generic mutant attacks from individual special-ability timers.
+
+### Locked Mutant Combat horizontal pair — 2026-10-08
+
+Global Hit Damage and Attack Frequency must sit in one 2-column row (left/right), each featuring a horizontal rail. They are not vertically stacked. Their cooldown bank is a separate eight-fader row below.
