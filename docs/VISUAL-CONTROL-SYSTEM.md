@@ -523,3 +523,7 @@ The Combat Your Weapons section uses a fixed **2×2 mixer layout** (two columns,
 ### Combat visual update — 2026-10-08
 
 HUMAN COMBAT PROFILE combines the health/damage X/Y graph and three frameless right-hand vertical faders: Attack Frequency, Shot Accuracy, and Explosion Damage. Explosion Damage is the original difficulty blast multiplier, **not** radius and not ordinary gun hit damage. YOUR WEAPONS now has three source-exact faders, excluding Explosion Damage. MUTANT HEALTH displays all eight mutant health multipliers as identical gold-ring vertical faders arranged across four columns and two rows, with grey clickable Base indicators, source-native min/max, 0.05 steps and derived HP below each name. No rectangular hover highlight. Preserve full-width, 1x1 top-level sections.
+
+### Single-row faders — Mutant Health and Your Weapons (2026-10-08)
+
+Mutant Health renders all eight equal-width vertical controls in **one row**, with 8-DIP gaps and compact long labels broken into two lines. Its minimum measured width is 760 DIP; it maintains vertical source ranges and ring-only hover feedback. Your Weapons renders its three independent source faders in one centered row (no second row), with the common mixer geometry. Each stays within its full-width top-level section, and the shorter content determines section height.
