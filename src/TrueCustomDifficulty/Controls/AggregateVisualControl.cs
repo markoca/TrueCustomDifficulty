@@ -2644,7 +2644,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             {
                 var formatted = CreateText(line, size, text, FontWeights.SemiBold, usable);
                 var matches = System.Text.RegularExpressions.Regex.Matches(
-                    line, @"[+-]?\d+(?:\.\d+)?");
+                    line, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
                 for (var i = 0; i < matches.Count && i < changed.Length; i++)
                     if (changed[i])
                         formatted.SetForegroundBrush(accent, matches[i].Index, matches[i].Length);
@@ -3877,7 +3877,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             parameter.IsControlEnabled ? text : muted, FontWeights.Bold, contentWidth);
         if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())
             foreach (System.Text.RegularExpressions.Match token in
-                System.Text.RegularExpressions.Regex.Matches(value, @"\d+(?:\.\d+)?"))
+                System.Text.RegularExpressions.Regex.Matches(value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
                 valueText.SetForegroundBrush(accent, token.Index, token.Length);
         dc.DrawText(valueText, new Point(card.Left + 12.0, card.Top + 25.0));
 
@@ -4012,7 +4012,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())
         {
             var first = System.Text.RegularExpressions.Regex.Match(
-                value, @"\d+(?:\.\d+)?");
+                value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
             if (first.Success)
                 valueText.SetForegroundBrush(accent, first.Index, first.Length);
         }
@@ -4812,7 +4812,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         var formatted = CreateText(caption, size, normal, weight);
         var numbers = System.Text.RegularExpressions.Regex.Matches(
-            caption, @"\d+(?:\.\d+)?");
+            caption, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
         for (var i = 0; i < numbers.Count && i < changed.Length; i++)
             if (changed[i])
                 formatted.SetForegroundBrush(changedBrush,
@@ -4831,7 +4831,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (modified)
         {
             var first = System.Text.RegularExpressions.Regex.Match(
-                value, @"\d+(?:\.\d+)?");
+                value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
             if (first.Success)
                 formatted.SetForegroundBrush(accent, first.Index, first.Length);
         }
