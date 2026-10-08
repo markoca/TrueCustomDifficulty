@@ -87,6 +87,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "RadiationBalance" => "Tune NATURAL CLEARANCE and EXPOSURE GAIN independently on their real parameter scales. RELATIVE TUNING BIAS compares each value only against its own Base Preset reference, so it shows whether your tuning leans toward faster build-up or stronger clearance without pretending to be a literal net radiation rate. HEALTH DAMAGE below scales all radiation-damage stages while their vanilla thresholds stay unchanged.",
                     "TradingDashboard" => "PLAYER → TRADER controls the difficulty pricing setting used when traders buy from you; TRADER → PLAYER controls the setting used when they sell to you. DIFFICULTY PRICING GAP is only the difference between those two settings, not a final shop-price ratio. The CONDITION GATE sets the minimum weapon/armor durability traders accept, and BROKEN-ITEM VALUE FLOOR sets how much base value remains at exactly 0% durability.",
                     "RepairCurve" => "The gold line is the current repair-price multiplier across HOSTILE → DISLIKED → NEUTRAL → FRIENDLY reputation; the dashed line is vanilla. The 1x line is the unmodified base repair layer: points above it are surcharges and points below it are discounts. Drag any reputation point vertically. The point you move has priority and neighbouring tiers cascade only as needed to preserve HOSTILE ≥ DISLIKED ≥ NEUTRAL ≥ FRIENDLY.",
+                    "WorldLootLayout" => "WORLD WEAPON SHUFFLE reshuffles only audited compatible regular weapon locations and retains every one of the 36 regular weapon models. WEAPON DENSITY changes how many compatible locations stay occupied; even at 0% the authored allocator keeps one of every regular weapon model. Density is editable only when World Weapon Shuffle is ON; switching shuffle OFF preserves its stored value without applying it. ATTACHMENT SHUFFLE independently changes compatible loose attachment placements, REMOVE WORLD DETECTORS removes supported non-quest detectors, and BLUEPRINT SHUFFLE independently redistributes supported blueprint locations. The four toggles neither trigger nor change each other. Right-click one toggle or the density track to restore only its Base Preset value; R resets all five settings.\",
                     "StashRewardProfile" => "The read-only CHANCE meters compare two separate stash rewards: Basic RGD-5 grenade rolls and eligible Rare stash coupon rolls. Each chance is an absolute 0-100% probability with its own Base Preset tick (Rare coupons vary by selected difficulty). BASIC GRENADE AMOUNT is an independent exact 0-4 count used only if the RGD-5 roll succeeds; setting Chance to 0% does not modify the stored amount. No chance/quantity multiplication is written to CFG, and coupon tier selection remains progression-based. Drag each lower source track separately, right-click one to reset, or press R to restore all three.\",
                     "BreakableBoxYields" => "AMMO BOX YIELD scales only the authored ammo MinCount/MaxCount entries for audited destructible SNG/NATO boxes; ammo-family selection weights are controlled elsewhere. GRENADE BOX YIELD independently scales F1 and RGD-5 dedicated destructible-box item counts; it does not shuffle grenade types. The upper scaling lanes compare each multiplier to the actual selected Base Preset, and the lower editable tracks preserve original source steps (0.25x ammo, 0.5x grenades). Quantity scaling uses positive round-half-up counts; individual source stacks may not change on every tick. Drag one track to edit just its own CFG multiplier, right-click to reset one or press R to reset both.\",
                     "AmmoDistribution" => "The SNG and NATO bars show normalized weight share inside each authored breakable-ammo pool, not global box drop chance. SNG contains A918D + A919D under the shared 9x18/9x19 control plus A545D and A012D, so vanilla weight share is 50/25/25. NATO contains one .45, 9x19, 5.56 and 12 Gauge entry, so vanilla is 25/25/25/25. The four tracks scale existing Weight=2 entries from 0x to 3x; no new ammo candidates are created. SNG must always keep at least one of 9x18/9x19, 5.45/5.56 or 12 Gauge above 0x.",
@@ -503,6 +504,12 @@ public sealed class ParameterViewModel : ObservableObject
         ["economy.repairNeutral"] = "RepairCurve",
         ["economy.repairFriend"] = "RepairCurve",
 
+        ["loot.worldWeaponShuffle"] = "WorldLootLayout",
+        ["loot.worldWeaponDensity"] = "WorldLootLayout",
+        ["loot.worldAttachmentShuffle"] = "WorldLootLayout",
+        ["loot.worldDetectors"] = "WorldLootLayout",
+        ["loot.blueprintShuffle"] = "WorldLootLayout",
+
         ["loot.cheapStashGrenadeChance"] = "StashRewardProfile",
         ["loot.cheapStashGrenadeQuantity"] = "StashRewardProfile",
         ["loot.expensiveStashMoneyChance"] = "StashRewardProfile",
@@ -540,6 +547,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["RadiationBalance"] = "survival.radiationAccumulation",
         ["TradingDashboard"] = "economy.buyCondition",
         ["RepairCurve"] = "economy.repairEnemy",
+        ["WorldLootLayout"] = "loot.worldWeaponShuffle",
         ["StashRewardProfile"] = "loot.cheapStashGrenadeChance",
         ["BreakableBoxYields"] = "loot.destructibleAmmoQuantity",
         ["AmmoDistribution"] = "loot.ammoBoxWeight918"
