@@ -34,7 +34,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
-        if (Family == "AnomalyEffectsBoard")
+        if (Family is "AnomalyEffectsBoard" or "ServiceCostsBoard"
+            or "TraderStockBoard" or "ItemWeightBoard")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
     }
 
@@ -162,7 +163,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrawBlastDamageBoard(dc, text, muted, border, accent, panel);
                 break;
             case "ServiceCostsBoard":
-                DrawServiceCostsBoard(dc, text, muted, border, accent, panel);
+            case "TraderStockBoard":
+            case "ItemWeightBoard":
+                DrawNumericMixerBoard(dc, text, muted, border, accent, panel);
                 break;
             case "AnomalyEffectsBoard":
                 DrawAnomalyEffectsBoard(dc, text, muted, border, accent, panel);
@@ -184,8 +187,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "WaterStaminaPressure":
             case "RadiationTreatment":
             case "PhysicalLimits":
-            case "TraderStockBoard":
-            case "ItemWeightBoard":
                 DrawPairedSystemBoard(dc, text, muted, border, accent, panel);
                 break;
             case "FatigueCurve":
@@ -349,37 +350,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(18.0, 254.0), 9.0, text, FontWeights.SemiBold);
     }
 
-    // Three distinct merchant service systems; the repair base value must not
-    // be confused with the independent four-tier reputation repair curve.
-    private void DrawServiceCostsBoard(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
-    {
-        DrawHeader(dc, "SERVICE PRICES",
-            "travel guides, technicians and repair baseline cost",
-            text, muted, accent);
-
-        var width = Math.Max(1.0, ActualWidth - 32.0);
-        DrawHorizontalTrackCard(dc, P("economy.fastTravelCost"), "GUIDE / FAST TRAVEL PRICE",
-            new Rect(16.0, 56.0, width, 72.0),
-            text, muted, border, accent, panel, pairedValueFormatting: true);
-        DrawHorizontalTrackCard(dc, P("economy.upgradeCost"), "TECHNICIAN / UPGRADE PRICE",
-            new Rect(16.0, 142.0, width, 72.0),
-            text, muted, border, accent, panel, pairedValueFormatting: true);
-        DrawHorizontalTrackCard(dc, P("economy.repairCostBase"), "TECHNICIAN / BASE REPAIR PRICE",
-            new Rect(16.0, 228.0, width, 72.0),
-            text, muted, border, accent, panel, pairedValueFormatting: true);
-
-        DrawText(dc, "REPAIR REPUTATION CURVE IS SEPARATE FROM BASE PRICE",
-            new Point(18.0, 316.0), 9.2, text, FontWeights.SemiBold);
-        DrawText(dc, "GREY = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
-            new Point(18.0, 338.0), 9.0, muted, FontWeights.Normal);
-    }
-
     // Mixer channels are a visual projection of the existing six catalog IDs,
     // never independent values or a new aggregated gameplay multiplier.
     private static readonly (string Id, string Top, string Bottom)[] AnomalyMixerChannels =
@@ -391,6 +361,35 @@ public sealed class AggregateVisualControl : FrameworkElement
         ("environment.diamondBleeding", "DIAMOND", "BLEED"),
         ("environment.psyAnomalyIntensity", "PSY", "DRAIN")
     };
+
+
+    private static readonly (string Id, string Top, string Bottom)[] ServiceMixerChannels =
+    {
+        ("economy.fastTravelCost", "FAST", "TRAVEL"),
+        ("economy.upgradeCost", "UPGRADE", "COST"),
+        ("economy.repairCostBase", "BASE", "REPAIR")
+    };
+
+    private static readonly (string Id, string Top, string Bottom)[] TraderMixerChannels =
+    {
+        ("economy.traderAmmoStock", "TRADER", "AMMO"),
+        ("economy.medicStock", "MEDIC", "STOCK")
+    };
+
+    private static readonly (string Id, string Top, string Bottom)[] WeightMixerChannels =
+    {
+        ("equipment.ammoWeight", "AMMO", "WEIGHT"),
+        ("equipment.consumableWeight", "FOOD + MED", "WEIGHT")
+    };
+
+    private static readonly (string Id, string Top, string Bottom)[] GetMixerChannels(string family)
+        => family switch
+        {
+            "ServiceCostsBoard" => ServiceMixerChannels,
+            "TraderStockBoard" => TraderMixerChannels,
+            "ItemWeightBoard" => WeightMixerChannels,
+            _ => AnomalyMixerChannels
+        };
 
     private const double MixerSidePadding = 16.0;
     private const double MixerStripGap = 10.0;
@@ -423,6 +422,68 @@ public sealed class AggregateVisualControl : FrameworkElement
         var rows = (channelCount + columns - 1) / columns;
         return MixerStripTop + rows * MixerStripHeight
             + (rows - 1) * MixerRowGap + MixerFooterHeight;
+    }
+
+    private void DrawNumericMixerBoard(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        var channels = GetMixerChannels(Family);
+        var title = Family switch
+        {
+            "ServiceCostsBoard" => "SERVICE PRICES / MIXER",
+            "TraderStockBoard" => "TRADER STOCK / MIXER",
+            _ => "ITEM WEIGHT / MIXER"
+        };
+        var description = Family switch
+        {
+            "ServiceCostsBoard" => "travel, upgrade and repair prices use separate CFG multipliers",
+            "TraderStockBoard" => "separate ammo and medical stock quantities",
+            _ => "independent ammunition and consumable item mass"
+        };
+        DrawMixerBoard(dc, channels, title, description, text, muted, border, accent, panel);
+    }
+
+    private void DrawMixerBoard(
+        DrawingContext dc,
+        (string Id, string Top, string Bottom)[] channels,
+        string title,
+        string subtitle,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(dc, title, subtitle, text, muted, accent);
+        var count = channels.Length;
+        var inner = Math.Max(1.0, ActualWidth - 2.0 * MixerSidePadding);
+        var columns = GetMixerColumns(ActualWidth, count);
+        var width = Math.Max(128.0, (inner - (columns - 1) * MixerStripGap) / columns);
+        for (var index = 0; index < count; index++)
+        {
+            var channel = channels[index];
+            var row = index / columns;
+            var column = index % columns;
+            var rect = new Rect(
+                MixerSidePadding + column * (width + MixerStripGap),
+                MixerStripTop + row * (MixerStripHeight + MixerRowGap),
+                width, MixerStripHeight);
+            DrawMixerStrip(dc, P(channel.Id), channel.Top, channel.Bottom, rect,
+                text, muted, border, accent, panel);
+        }
+        var rows = (count + columns - 1) / columns;
+        var footerY = MixerStripTop + rows * MixerStripHeight
+            + (rows - 1) * MixerRowGap + 8.0;
+        dc.DrawText(CreateText(
+            "GOLD = CURRENT  |  GREY = BASE PRESET  |  RIGHT-CLICK ONE / R ALL",
+            9.5, muted, FontWeights.SemiBold,
+            Math.Max(1.0, ActualWidth - 2.0 * MixerSidePadding)),
+            new Point(MixerSidePadding, footerY));
     }
 
     private void DrawAnomalyEffectsBoard(
@@ -574,9 +635,12 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
     private static string MixerValue(ParameterViewModel parameter, double raw)
-        => parameter.Id == "environment.diamondBleeding"
-            ? $"{raw:0.#} pts"
-            : $"{raw:0.##}x";
+        => parameter.Id switch
+        {
+            "environment.diamondBleeding" => $"{raw:0.#} pts",
+            "economy.repairCostBase" => $"{raw * 100.0:0.#}%",
+            _ => $"{raw:0.##}x"
+        };
 
     private void DrawMixerCentered(
         DrawingContext dc,
@@ -4682,7 +4746,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         => family switch
         {
             "BlastDamageBoard" => 305.0,
-            "ServiceCostsBoard" => 385.0,
+            "ServiceCostsBoard" => GetMixerHeight(width, ServiceMixerChannels.Length),
+            "TraderStockBoard" => GetMixerHeight(width, TraderMixerChannels.Length),
+            "ItemWeightBoard" => GetMixerHeight(width, WeightMixerChannels.Length),
             "AnomalyEffectsBoard" => GetMixerHeight(width, AnomalyMixerChannels.Length),
             "NpcLootLoadout" => 748.0, // reserve footer/status lane below the native input cards
             "WorldLootLayout" => width >= 720.0 ? 340.0 : 450.0,
@@ -4690,8 +4756,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "BreakableBoxYields" => 413.0,
             "PhysicalLimits" => 335.0,
             "MutantCombatPressure" or "StaminaCore" or "WaterStaminaPressure"
-                or "RadiationTreatment" or "TraderStockBoard"
-                or "ItemWeightBoard" => 270.0,
+                or "RadiationTreatment" => 270.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "BleedingTreatmentMixer" => 684.0,
             "EquipmentWearBalance" => 320.0,
