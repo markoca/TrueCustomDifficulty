@@ -114,7 +114,8 @@ public sealed class MainViewModel : ObservableObject
             "health.bandageHealing",
             "health.medkitHealing",
             "health.armyMedkitHealing",
-            "health.ecoMedkitHealing"
+            "health.ecoMedkitHealing",
+            "health.foodHealing"
         };
 
         var actionCostParameterIds = new HashSet<string>(StringComparer.Ordinal)
@@ -647,15 +648,14 @@ public sealed class MainViewModel : ObservableObject
 
             medicalHealingAnchor.SetAggregateModifiedProvider(
                 () => medicalHealingMembers.Any(parameter =>
-                    parameter.Definition.Vanilla.TryGetValue("All", out var vanilla)
-                    && vanilla.ValueKind == System.Text.Json.JsonValueKind.Number
-                    && Math.Abs(parameter.CurrentNumber - vanilla.GetDouble()) > 0.0000001));
+                    parameter.IsValueModifiedFromReference()));
 
             foreach (var member in medicalHealingMembers)
             {
                 member.PropertyChanged += (_, args) =>
                 {
-                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                    if (args.PropertyName is nameof(ParameterViewModel.CurrentNumber)
+                        or nameof(ParameterViewModel.CurrentBoolean))
                         medicalHealingAnchor.RefreshAggregateModifiedState();
                 };
             }
