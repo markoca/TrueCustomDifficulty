@@ -1556,6 +1556,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     // The game authors separate immediate strength, sustained strength and timed
     // effects. The previews below are read-only; exactly nine original source
     // controls retain their independent 0-x native multiplier sliders.
+    // Authored instant/sustained strengths and durations remain nine independent
+    // parameters. On wide surfaces, their cards form two columns without any
+    // shortened or overlapping native-range slider tracks.
     private void DrawConsumableMixer(
         DrawingContext dc,
         Brush text,
@@ -1574,10 +1577,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         var beerTime = P("survival.beerEffectDuration");
         var magicTime = P("survival.magicVodkaEffectDuration");
 
-        DrawText(dc, "CONSUMABLE EFFECT BOARD", new Point(17.0, 13.0),
-            11.5, accent, FontWeights.Bold);
-        DrawText(dc, "drink strength and effect duration are independent controls",
-            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
+        DrawHeader(dc, "CONSUMABLE EFFECT BOARD",
+            "immediate strength, sustained bonuses and effect durations",
+            text, muted, accent);
 
         if (burst is null || waterStamina is null || energyStamina is null ||
             antiRad is null || waterTime is null || energyTime is null ||
@@ -1589,119 +1591,74 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var width = Math.Max(460.0, ActualWidth - 34.0);
-        var half = (width - 10.0) / 2.0;
-        var instant = new Rect(17.0, 55.0, half, 83.0);
-        var radiation = new Rect(27.0 + half, 55.0, half, 83.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), instant, 4.0, 4.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), radiation, 4.0, 4.0);
+        var columns = CompactColumns(ActualWidth);
+        const double summaryTop = 55.0;
 
-        // Numbers here are the existing authored effects multiplied by the
-        // current family settings, not a promise of net current player SP or HP.
-        DrawText(dc, "INSTANT STAMINA REFILL", new Point(instant.Left + 10.0, 64.0),
-            9.6, text, FontWeights.Bold);
-        DrawText(dc, $"WATER {38.0 * burst.CurrentNumber:0.#}%  |  ENERGY {50.0 * burst.CurrentNumber:0.#}%",
-            new Point(instant.Left + 10.0, 87.0), 9.3, accent, FontWeights.SemiBold);
-        DrawText(dc, $"LIMITED ENERGY {100.0 * burst.CurrentNumber:0.#}%",
-            new Point(instant.Left + 10.0, 107.0), 10.0, accent, FontWeights.Bold);
-
-        DrawText(dc, "ALCOHOL RADIATION REMOVAL", new Point(radiation.Left + 10.0, 64.0),
-            9.5, text, FontWeights.Bold);
-        DrawText(dc, $"BEER {10.0 * antiRad.CurrentNumber:0.#} rad points",
-            new Point(radiation.Left + 10.0, 87.0), 9.3, accent, FontWeights.SemiBold);
-        DrawText(dc, $"VODKA {50.0 * antiRad.CurrentNumber:0.#} rad points",
-            new Point(radiation.Left + 10.0, 107.0), 10.0, accent, FontWeights.Bold);
-
-        // This editor draws one horizontal hit target and uses the real
-        // ParameterViewModel minimum, maximum, reference and tick frequency.
-        void DrawEffectTrack(ParameterViewModel parameter,
-            string label, string currentAndBase, string note,
-            string minLabel, string maxLabel, double top)
+        void SummaryCard(Rect card, string heading, string first, string second)
         {
-            var card = new Rect(17.0, top, width, 63.0);
             dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
-            DrawText(dc, label, new Point(card.Left + 12.0, top + 5.0),
-                10.1, text, FontWeights.Bold);
-            DrawRightAlignedText(dc, currentAndBase,
-                new Point(card.Right - 12.0, top + 5.0), 10.6,
-                parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
-            DrawText(dc, note, new Point(card.Left + 12.0, top + 21.0),
-                9.0, muted, FontWeights.Normal);
-
-            var track = new Rect(card.Left + 21.0, top + 31.0,
-                card.Width - 42.0, 16.0);
-            var y = track.Top + track.Height / 2.0;
-            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-            var referenceX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-
-            dc.DrawLine(new Pen(border, 4.0), new Point(track.Left, y),
-                new Point(track.Right, y));
-            if (parameter.IsControlEnabled)
-                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
-                    new Point(track.Left, y), new Point(currentX, y));
-            dc.DrawLine(new Pen(muted, 2.0),
-                new Point(referenceX, y - 10.0), new Point(referenceX, y + 10.0));
-            dc.DrawEllipse(panel,
-                new Pen(parameter.IsControlEnabled ? accent : muted,
-                    IsSelected(parameter) ? 2.8 : 1.9),
-                new Point(currentX, y), 7.0, 7.0);
-            if (parameter.IsControlEnabled)
-                dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-
-            AddHorizontalTarget(parameter,
-                new Rect(track.Left - 8.0, track.Top - 3.0,
-                    track.Width + 16.0, track.Height + 6.0),
-                track, parameter.Minimum, parameter.Maximum);
-            DrawText(dc, minLabel, new Point(track.Left, top + 48.0),
-                9.0, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, maxLabel,
-                new Point(track.Right, top + 48.0),
-                9.0, muted, FontWeights.Normal);
+            var allowed = Math.Max(1.0, card.Width - 24.0);
+            dc.DrawText(CreateText(heading, 10.2, text, FontWeights.Bold, allowed),
+                new Point(card.Left + 12.0, card.Top + 8.0));
+            dc.DrawText(CreateText(first, 10.1, accent, FontWeights.SemiBold, allowed),
+                new Point(card.Left + 12.0, card.Top + 32.0));
+            dc.DrawText(CreateText(second, 10.2, accent, FontWeights.Bold, allowed),
+                new Point(card.Left + 12.0, card.Top + 55.0));
         }
 
-        DrawText(dc, "EFFECT STRENGTH", new Point(19.0, 149.0),
-            10.5, accent, FontWeights.Bold);
-        DrawRightAlignedText(dc, "CHANGES STRENGTH, NOT DURATION",
-            new Point(ActualWidth - 19.0, 149.0),
-            9.0, muted, FontWeights.SemiBold);
+        SummaryCard(CompactSlot(summaryTop, width, columns, 0),
+            "INSTANT STAMINA REFILL",
+            $"WATER {38.0 * burst.CurrentNumber:0.#}%  |  ENERGY {50.0 * burst.CurrentNumber:0.#}%",
+            $"LIMITED ENERGY {100.0 * burst.CurrentNumber:0.#}%");
+        SummaryCard(CompactSlot(summaryTop, width, columns, 1),
+            "ALCOHOL RADIATION REMOVAL",
+            $"BEER {10.0 * antiRad.CurrentNumber:0.#} rad points",
+            $"VODKA {50.0 * antiRad.CurrentNumber:0.#} rad points");
 
-        DrawEffectTrack(burst, "INSTANT STAMINA BURST",
+        void Card(ParameterViewModel parameter, string label,
+            string value, string min, string max, double top, int index)
+            => DrawCompactTrack(dc, parameter, label, value, min, max,
+                CompactSlot(top, width, columns, index),
+                text, muted, border, accent, panel);
+
+        var strengthTitle = CompactGridEnd(summaryTop, 2, columns) + 13.0;
+        DrawText(dc, "EFFECT STRENGTH",
+            new Point(19.0, strengthTitle), 10.8, accent, FontWeights.Bold);
+        DrawText(dc, "Strength changes do not alter effect duration.",
+            new Point(19.0, strengthTitle + 17.0), 9.3, muted, FontWeights.Normal);
+        var strengthTop = strengthTitle + 37.0;
+
+        Card(burst, "INSTANT STAMINA BURST",
             $"{burst.CurrentNumber:0.##}x  |  BASE {burst.ReferenceNumber:0.##}x",
-            "Shared scaler for water, normal and limited energy drinks.",
-            "0x", "2x", 172.0);
-        DrawEffectTrack(antiRad, "BEER / VODKA RADIATION REMOVAL",
+            "0x", "2x", strengthTop, 0);
+        Card(antiRad, "BEER / VODKA RADIATION REMOVAL",
             $"{antiRad.CurrentNumber:0.##}x  |  BASE {antiRad.ReferenceNumber:0.##}x",
-            "Scales only the two authored anti-radiation effects.",
-            "0x", "2x", 242.0);
-        DrawEffectTrack(waterStamina, "WATER / SUSTAINED STAMINA",
+            "0x", "2x", strengthTop, 1);
+        Card(waterStamina, "WATER / SUSTAINED STAMINA",
             $"{waterStamina.CurrentNumber:0.##}x  |  BASE {waterStamina.ReferenceNumber:0.##}x",
-            $"REGEN +{25.0 * waterStamina.CurrentNumber:0.#}%  |  ACTION COST -{10.0 * waterStamina.CurrentNumber:0.#}%",
-            "0x", "2x", 312.0);
-        DrawEffectTrack(energyStamina, "ENERGY DRINK / SUSTAINED STAMINA",
+            "0x", "2x", strengthTop, 2);
+        Card(energyStamina, "ENERGY DRINK / SUSTAINED STAMINA",
             $"{energyStamina.CurrentNumber:0.##}x  |  BASE {energyStamina.ReferenceNumber:0.##}x",
-            $"STAMINA REGEN +{200.0 * energyStamina.CurrentNumber:0.#}%",
-            "0x", "2x", 382.0);
+            "0x", "2x", strengthTop, 3);
 
-        DrawText(dc, "TIMED EFFECTS", new Point(19.0, 457.0),
-            10.5, accent, FontWeights.Bold);
-        DrawRightAlignedText(dc, "ACTUAL SECONDS / ONE PREVIEW SCALE",
-            new Point(ActualWidth - 19.0, 457.0),
-            9.0, muted, FontWeights.SemiBold);
+        var previewTitle = CompactGridEnd(strengthTop, 4, columns) + 13.0;
+        DrawText(dc, "TIMED EFFECTS",
+            new Point(19.0, previewTitle), 10.8, accent, FontWeights.Bold);
+        DrawText(dc, "Duration multipliers preserve each drink's original timing ratios.",
+            new Point(19.0, previewTitle + 17.0), 9.3, muted, FontWeights.Normal);
 
-        // The preview uses the longest authored effect of each drink. Shorter
-        // effects stay visible in the text notes on the editable rows below.
-        // All duration multipliers are 0-3x, so 90s * 3x = 270s maximum.
-        var preview = new Rect(17.0, 479.0, width, 162.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
+        // Longest effects share a real seconds scale. This chart is a preview,
+        // not a fifth hit area or an alternate value-to-seconds editor.
+        var previewTop = previewTitle + 37.0;
+        var preview = new Rect(17.0, previewTop, width, 160.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
+            preview, 4.0, 4.0);
         DrawText(dc, "LONGEST EFFECT PER DRINK  /  READ ONLY",
-            new Point(preview.Left + 12.0, 486.0),
-            9.8, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "GOLD = NOW  |  GREY = BASE",
-            new Point(preview.Right - 12.0, 486.0), 8.9, muted, FontWeights.SemiBold);
+            new Point(preview.Left + 12.0, previewTop + 7.0),
+            10.0, text, FontWeights.Bold);
 
-        var timeline = new Rect(preview.Left + 123.0, 511.0,
-            Math.Max(265.0, preview.Width - 210.0), 107.0);
+        var timeline = new Rect(preview.Left + 117.0, previewTop + 32.0,
+            Math.Max(170.0, preview.Width - 213.0), 116.0);
         const double timelineMax = 270.0;
         double SecondsToX(double seconds) => timeline.Left + timeline.Width *
             Math.Clamp(seconds / timelineMax, 0.0, 1.0);
@@ -1710,68 +1667,63 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             var x = SecondsToX(seconds);
             dc.DrawLine(new Pen(border, 1.0) { DashStyle = DashStyles.Dot },
-                new Point(x, timeline.Top - 2.0), new Point(x, timeline.Bottom));
-            DrawCenteredText(dc, $"{seconds:0}s", new Point(x, timeline.Top - 13.0),
-                8.7, muted, FontWeights.Normal);
+                new Point(x, timeline.Top - 3.0), new Point(x, timeline.Bottom));
+            DrawCenteredText(dc, $"{seconds:0}s",
+                new Point(x, previewTop + 16.0),
+                9.0, muted, FontWeights.SemiBold);
         }
 
-        var previewParameters = new[] { waterTime, energyTime, vodkaTime, beerTime, magicTime };
-        var previewLabels = new[] { "WATER", "ENERGY", "VODKA", "BEER", "MAGIC VODKA" };
-        var previewLongest = new[] { 30.0, 45.0, 20.0, 20.0, 90.0 };
-        for (var i = 0; i < previewParameters.Length; i++)
+        var durationParameters = new[] { waterTime, energyTime, vodkaTime, beerTime, magicTime };
+        var durationLabels = new[] { "WATER", "ENERGY", "VODKA", "BEER", "MAGIC VODKA" };
+        var longestSeconds = new[] { 30.0, 45.0, 20.0, 20.0, 90.0 };
+        for (var i = 0; i < durationParameters.Length; i++)
         {
-            var parameter = previewParameters[i];
-            var y = 532.0 + i * 21.0;
-            var seconds = previewLongest[i] * parameter.CurrentNumber;
-            var baseSeconds = previewLongest[i] * parameter.ReferenceNumber;
-            var nowX = SecondsToX(seconds);
-            var baseX = SecondsToX(baseSeconds);
+            var parameter = durationParameters[i];
+            var y = previewTop + 43.0 + i * 22.0;
+            var currentSeconds = longestSeconds[i] * parameter.CurrentNumber;
+            var referenceSeconds = longestSeconds[i] * parameter.ReferenceNumber;
+            var currentX = SecondsToX(currentSeconds);
+            var referenceX = SecondsToX(referenceSeconds);
 
-            DrawRightAlignedText(dc, previewLabels[i],
+            DrawRightAlignedText(dc, durationLabels[i],
                 new Point(timeline.Left - 13.0, y - 7.0),
-                9.0, text, FontWeights.Bold);
+                9.2, text, FontWeights.Bold);
             dc.DrawLine(new Pen(border, 3.0),
                 new Point(timeline.Left, y), new Point(timeline.Right, y));
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 4.0),
-                new Point(timeline.Left, y), new Point(nowX, y));
+                new Point(timeline.Left, y), new Point(currentX, y));
             dc.DrawLine(new Pen(muted, 1.8),
-                new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
-            dc.DrawEllipse(accent, null, new Point(nowX, y), 4.0, 4.0);
-            DrawRightAlignedText(dc, $"{seconds:0.#}s",
-                new Point(preview.Right - 13.0, y - 7.0),
-                9.1, accent, FontWeights.SemiBold);
+                new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 4.0, 4.0);
+            DrawRightAlignedText(dc, $"{currentSeconds:0.#}s",
+                new Point(preview.Right - 12.0, y - 7.0),
+                9.2, accent, FontWeights.SemiBold);
         }
 
-        DrawEffectTrack(waterTime, "WATER / EFFECT DURATION",
+        var durationTop = preview.Bottom + 12.0;
+        Card(waterTime, "WATER / EFFECT DURATION",
             $"{waterTime.CurrentNumber:0.##}x  |  BASE {waterTime.ReferenceNumber:0.##}x",
-            $"REGEN {5.0 * waterTime.CurrentNumber:0.#}s  |  ACTION COST {30.0 * waterTime.CurrentNumber:0.#}s",
-            "0x", "3x", 657.0);
-        DrawEffectTrack(energyTime, "ENERGY DRINK / EFFECT DURATION",
+            "0x", "3x", durationTop, 0);
+        Card(energyTime, "ENERGY DRINK / EFFECT DURATION",
             $"{energyTime.CurrentNumber:0.##}x  |  BASE {energyTime.ReferenceNumber:0.##}x",
-            $"AUTHORED DURATION SET {45.0 * energyTime.CurrentNumber:0.#}s / {15.0 * energyTime.CurrentNumber:0.#}s / {5.0 * energyTime.CurrentNumber:0.#}s",
-            "0x", "3x", 727.0);
-        DrawEffectTrack(vodkaTime, "VODKA / STAMINA PENALTY DURATION",
+            "0x", "3x", durationTop, 1);
+        Card(vodkaTime, "VODKA / STAMINA PENALTY DURATION",
             $"{vodkaTime.CurrentNumber:0.##}x  |  BASE {vodkaTime.ReferenceNumber:0.##}x",
-            $"STAMINA DRAIN PENALTY {20.0 * vodkaTime.CurrentNumber:0.#}s",
-            "0x", "3x", 797.0);
-        DrawEffectTrack(beerTime, "BEER / STAMINA PENALTY DURATION",
+            "0x", "3x", durationTop, 2);
+        Card(beerTime, "BEER / STAMINA PENALTY DURATION",
             $"{beerTime.CurrentNumber:0.##}x  |  BASE {beerTime.ReferenceNumber:0.##}x",
-            $"STAMINA DRAIN PENALTY {20.0 * beerTime.CurrentNumber:0.#}s",
-            "0x", "3x", 867.0);
-        DrawEffectTrack(magicTime, "MAGIC VODKA / PSI PROTECTION DURATION",
+            "0x", "3x", durationTop, 3);
+        Card(magicTime, "MAGIC VODKA / PSI PROTECTION DURATION",
             $"{magicTime.CurrentNumber:0.##}x  |  BASE {magicTime.ReferenceNumber:0.##}x",
-            $"PSI PROTECTION {90.0 * magicTime.CurrentNumber:0.#}s",
-            "0x", "3x", 937.0);
+            "0x", "3x", durationTop, 4);
 
-        DrawText(dc, "DRUNKENNESS / OVERDRUNKENNESS ARE EDITED SEPARATELY",
-            new Point(20.0, 1013.0), 9.1, muted, FontWeights.SemiBold);
-        DrawText(dc, "GREY TICK = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
-            new Point(20.0, 1030.0), 9.0, muted, FontWeights.Normal);
+        var end = CompactGridEnd(durationTop, 5, columns);
+        DrawText(dc, "CURRENT DURATION: WATER 5/30s · ENERGY 45/15/5s AT 1x",
+            new Point(20.0, end + 12.0), 9.1, muted, FontWeights.Normal);
+        DrawText(dc, "VODKA/BEER 20s · MAGIC VODKA 90s AT 1x  |  DRUNKENNESS SEPARATE",
+            new Point(20.0, end + 30.0), 9.1, muted, FontWeights.Normal);
     }
 
-    // Sleeping is four independent CFG settings, not a simulated fatigue-to-HP
-    // formula. Keep the sleep gate and time requirement distinct from wake-up
-    // effects, and give every setting its native-range horizontal editor.
     private void DrawSleepingDashboard(
         DrawingContext dc,
         Brush text,
