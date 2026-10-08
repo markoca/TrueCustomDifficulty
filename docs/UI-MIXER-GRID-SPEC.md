@@ -174,6 +174,8 @@ Column thresholds below apply to **board inner width**, not the whole Window wid
 ### Tab-level grid composition (independent boards)
 
 - Introduce an **opt-in semantic board grid**, separate from the strip grid.
+- **Implemented first section-grid pass:** adjacent **Stashes + Breakable Containers** in Loot may share one row if the left-editor content width is at least **1096 DIPs** (two sections ≥ 540 DIPs with 16-DIP gap). Their section headers stay attached to their contents. All other sections remain full width; narrower editors stack them. This conservative threshold respects existing aggregate controls' 520-DIP minimum measure. The separate Economy Trader Stock and Services sections are not adjacent in catalog order and must not be re-ordered to force pairing.
+- Static regression: `python3 tools/verify_section_grid.py`. Actual WPF/Wine sizing, clipping and section header presentation remain to be checked.
 - At sufficiently wide left-editor widths (initial target **≥ 900 DIPs usable**), two **compact, independent** boards may share a row; aim for at least **420 DIPs per board** including internal padding.
 - At narrower widths, or if a board declares a wide/minimum layout requirement, stack it full width. Never put a large radar, complex timeline or six-channel mixer into an unusably narrow two-column slot.
 - Recommended side-by-side candidate within **Economy**: **Trader Stock + Service Prices**, provided their boards remain comfortably readable. Do not pair Trader Stock (Economy) with Item Weight (Equipment): they belong to different tabs. Independently group smaller boards within each tab.
