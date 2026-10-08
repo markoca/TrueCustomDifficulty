@@ -4271,7 +4271,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         base.OnMouseRightButtonDown(e);
 
         var target = FindTarget(e.GetPosition(this));
-        if (target is null)
+        // A disabled mixer strip remains selectable for its rationale but
+        // right-click must not mutate a dependency-disabled source value.
+        if (target is null || !target.Parameter.IsControlEnabled)
             return;
 
         _selectedParameter = target.Parameter;
