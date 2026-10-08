@@ -261,7 +261,11 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ReferenceEquals(target.Parameter, _selectedParameter)
                 && (_selectedHitKind is null || target.Kind == _selectedHitKind));
 
-        if (activeTarget is not null)
+        // The Human Combat handles already draw their own circular glow.
+        // Do not overlay their rectangular mouse hit boxes as visual selection.
+        if (activeTarget is not null && !(Family == "HumanCombatProfile"
+            && activeTarget.Kind is HitKind.Horizontal or HitKind.Vertical or HitKind.HumanJoint
+                or HitKind.MixerSelect or HitKind.MixerBaseMarker))
         {
             dc.PushClip(new RectangleGeometry(
                 new Rect(5.0, 5.0, Math.Max(0.0, ActualWidth - 10.0),
@@ -612,13 +616,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         var center = strip.Left + strip.Width / 2.0;
         DrawMixerCentered(dc, MixerValue(parameter, parameter.CurrentNumber),
             new Point(center, strip.Top + 38.0),
-            strip.Width - 14.0, 13.2, valueBrush, FontWeights.Bold);
-        DrawMixerCentered(dc, "BASE " + MixerValue(parameter, parameter.ReferenceNumber),
-            new Point(center, strip.Top + 59.0),
-            strip.Width - 14.0, 10.1, muted, FontWeights.SemiBold);
+            strip.Width - 14.0, 16.2, valueBrush, FontWeights.Bold);
+        // The grey reference tick conveys Base without redundant "BASE 1x" text.
+        // Remove the text across all mixer families, preserving the reference marker.
         DrawMixerCentered(dc, MixerValue(parameter, parameter.Maximum),
             new Point(center, strip.Top + 78.0),
-            strip.Width - 14.0, 9.5, muted, FontWeights.Normal);
+            strip.Width - 14.0, 11.3, muted, FontWeights.Normal);
 
         // Vertical source scale: top is real maximum, bottom real minimum.
         // The strip layout normalizes only screen position, never the stored CFG.
@@ -4598,6 +4601,11 @@ public sealed class AggregateVisualControl : FrameworkElement
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight,
         double maxWidth = double.PositiveInfinity)
     {
+        // Across aggregate labels, suppress redundant Base 1x badges while
+        // retaining the live value and non-unit reference values.
+        value = System.Text.RegularExpressions.Regex.Replace(value,
+            @"\s*(?:\||/)\s*BASE\s+1(?:\.0+)?x\b|\bBASE\s+1(?:\.0+)?x\b",
+            "", System.Text.RegularExpressions.RegexOptions.IgnoreCase).TrimEnd();
         var formatted = new FormattedText(
             value,
             CultureInfo.InvariantCulture,
