@@ -387,6 +387,16 @@ public sealed class ParameterViewModel : ObservableObject
 
     private static readonly Dictionary<string, string> VisualAggregateFamilyByParameterId = new(StringComparer.Ordinal)
     {
+        // Remaining paired gameplay controls: independent raw CFG axes in one semantic panel.
+        ["combat.mutantDamage"] = "MutantCombatPressure",
+        ["combat.mutantAttackCooldown"] = "MutantCombatPressure",
+        ["stamina.maxSP"] = "StaminaCore",
+        ["stamina.regeneration"] = "StaminaCore",
+        ["stamina.waterMediumDrain"] = "WaterStaminaPressure",
+        ["stamina.waterStrongDrain"] = "WaterStaminaPressure",
+        ["health.ecoMedkitAntirad"] = "RadiationTreatment",
+        ["health.antiRadRadiation"] = "RadiationTreatment",
+
         ["survival.sleepinessRate"] = "FatigueCurve",
         ["survival.sleepLowThreshold"] = "FatigueCurve",
         ["survival.sleepMediumThreshold"] = "FatigueCurve",
@@ -499,6 +509,10 @@ public sealed class ParameterViewModel : ObservableObject
 
     private static readonly Dictionary<string, string> VisualAggregateAnchorByFamily = new(StringComparer.Ordinal)
     {
+        ["MutantCombatPressure"] = "combat.mutantDamage",
+        ["StaminaCore"] = "stamina.maxSP",
+        ["WaterStaminaPressure"] = "stamina.waterMediumDrain",
+        ["RadiationTreatment"] = "health.ecoMedkitAntirad",
         ["FatigueCurve"] = "survival.sleepinessRate",
         ["EquipmentWearBalance"] = "equipment.armorDurability",
         ["PsyPhantomPressure"] = "combat.psySpawnCycleDelay",
