@@ -189,3 +189,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — UI-09 — fixed Your Weapons 2x2 fader grid
 
 **User-approved refinement:** The previous generic mixer layout placed three faders across and pushed/clipped the fourth in the fixed-width Combat right column. Your Weapons now always shows a centered 2-column × 2-row grid, source order: Weapon Damage, Headshot Damage / Weapon Jamming, Explosion Damage. Every strip has equal width and spacing; labels, multiplier values, rails, hover, grey reference ticks, native ranges and reset behavior remain intact. A dedicated two-row height accommodates every fader and the footer without overlapping other sections. Other mixer layouts are unchanged. Wine visual acceptance pending.
+
+### 2026-10-08 — All sections fixed 1x1 (supersedes two-column designs)
+
+**Explicit user instruction:** Every top-level section must occupy its own full-width row (1x1). No responsive or fixed side-by-side pairing is permitted, including Human Enemies / Your Weapons, Mutants, trader, equipment, loot and other catalog sections. `ResponsiveSectionGridPanel` now measures and arranges one GroupItem per row, preserving catalog visual order. Combat no longer reserves a 1096-DIP minimum, and horizontal scrolling is disabled again. The four faders **inside** Your Weapons retain their internal 2x2 arrangement; this change concerns top-level sections only. Earlier 2x1 instructions are superseded. No CFG or parameter mappings change. Wine acceptance pending.
