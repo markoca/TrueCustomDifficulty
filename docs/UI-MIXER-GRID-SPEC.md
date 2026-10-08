@@ -299,3 +299,7 @@ Human Enemies and Your Weapons are a permanently fixed side-by-side pair (left/r
 ### Locked Combat row (2026-10-08)
 
 The first Combat row is a fixed 2x1 section pair: Human Enemies on the left, Your Weapons on the right. Pairing is driven by explicitly known Combat catalog order and active-tab ID, not responsive group-name inference. Only Combat guarantees the 1096-DIP minimum; other tab layouts remain responsive. Keep this arrangement until the user explicitly changes it.
+
+### Fixed Combat row identity (2026-10-08)
+
+The locked 2x1 row always contains **Human Enemies | Your Weapons**, identified from each GroupItem's bound group name, regardless of WPF enumeration order. Mutants is not an approved partner and must remain below that row. Keep the four player-weapon faders under Your Weapons.
