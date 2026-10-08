@@ -47,6 +47,11 @@ The user requested on 2026-10-08: **"nek se zapise svaki UI dizajn kako bi ostao
 
 ## Change approvals
 
+### 2026-10-08 — UI-09 — unified handle cues and plot-local instructions
+
+**Explicit user request:** "oba handlea trebaju da imaju isku ikonu, i njihov opis mora da je intuitivnije postavljen"; implement in code and document. Left and bottom handle glyphs remain one identical circular ring-and-dot design (with equal hover feedback). The misleading full-panel-width footer is replaced with two concise plot-centered instructions: `LEFT: DAMAGE · BOTTOM: HEALTH` and `DRAG CENTER: BOTH AXES`. The first is at max(405, plot bottom + 56) and the second 18 DIPs lower. The center remains draggable on both native axes. All original square plot dimensions, controls, source values, attack/accuracy caps, and Mutants pairing remain unchanged. Runtime/Wine acceptance pending.
+
+
 ### 2026-10-08 — UI-09 — runtime caps, not merely catalog caps
 
 **User correction:** Attack Frequency maximum must actually be 2x and Fire Accuracy maximum must actually be 1x; updating the documentation without enforcing runtime behavior is insufficient.
