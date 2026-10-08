@@ -2785,124 +2785,57 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
     private void DrawSleepingDashboard(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
     {
         var threshold = P("survival.sleepEligibilityThreshold");
         var minimumHours = P("survival.minimumSleepHours");
         var healthRestore = P("survival.sleepHealthRestore");
         var staminaRestore = P("survival.sleepStaminaRestore");
 
-        DrawText(dc, "SLEEPING SYSTEM", new Point(17.0, 13.0),
-            11.5, accent, FontWeights.Bold);
-        DrawText(dc, "when you can sleep, how long you must rest and what you recover",
-            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
-
+        DrawHeader(dc, "SLEEP SYSTEM", string.Empty, text, muted, accent);
         if (threshold is null || minimumHours is null ||
             healthRestore is null || staminaRestore is null)
         {
-            DrawCenteredText(dc, "Sleeping system data unavailable.",
-                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            DrawCenteredText(dc, "Sleep settings unavailable.",
+                new Point(ActualWidth / 2.0, 140), 10, muted, FontWeights.Bold);
             return;
         }
 
         var width = Math.Max(460.0, ActualWidth - 34.0);
+        // The two access rules and the two wake-up benefits are separate CFG
+        // parameters. Keep their native ranges, snapping and Base reference
+        // ticks while presenting only gameplay-relevant information.
+        void SleepSlider(ParameterViewModel parameter, string label, string value,
+            string minimum, string maximum, double top, int index)
+            => DrawCompactTrack(dc, parameter, label, value, minimum, maximum,
+                CompactSlot(top, width, CompactColumns(ActualWidth), index),
+                text, muted, border, accent, panel);
 
-        // Both access controls operate on the authored sleep settings, not the
-        // player's current in-game sleepiness or a forecast of actual sleep time.
-        void DrawSleepTrack(
-            ParameterViewModel parameter,
-            string title,
-            string explanation,
-            string displayedValue,
-            string leftLabel,
-            string rightLabel,
-            double top)
-        {
-            var card = new Rect(17.0, top, width, 82.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
-                card, 4.0, 4.0);
+        const double rulesTop = 55.0;
+        SleepSlider(threshold, "SLEEP UNLOCKS AT",
+            $"{threshold.CurrentNumber:0} FATIGUE PTS",
+            $"{threshold.Minimum:0} PTS", $"{threshold.Maximum:0} PTS",
+            rulesTop, 0);
+        SleepSlider(minimumHours, "MINIMUM TIME ASLEEP",
+            $"{minimumHours.CurrentNumber:0.#} HOURS",
+            $"{minimumHours.Minimum:0.#} H", $"{minimumHours.Maximum:0.#} H",
+            rulesTop, 1);
 
-            DrawText(dc, title, new Point(card.Left + 12.0, top + 7.0),
-                10.4, text, FontWeights.Bold);
-            DrawRightAlignedText(dc, displayedValue,
-                new Point(card.Right - 12.0, top + 7.0), 11.0,
-                parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
-            DrawText(dc, explanation, new Point(card.Left + 12.0, top + 26.0),
-                9.4, muted, FontWeights.Normal);
-
-            var track = new Rect(card.Left + 22.0, top + 44.0,
-                card.Width - 44.0, 18.0);
-            var y = track.Top + track.Height / 2.0;
-            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-            var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-
-            dc.DrawLine(new Pen(border, 4.0),
-                new Point(track.Left, y), new Point(track.Right, y));
-            if (parameter.IsControlEnabled)
-                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
-                    new Point(track.Left, y), new Point(currentX, y));
-
-            // Base Preset marker is drawn behind the active gold handle even
-            // when both are at the same coordinate.
-            dc.DrawLine(new Pen(muted, 2.0),
-                new Point(baseX, y - 11.0), new Point(baseX, y + 11.0));
-            dc.DrawEllipse(panel,
-                new Pen(parameter.IsControlEnabled ? accent : muted,
-                    IsSelected(parameter) ? 2.8 : 1.9),
-                new Point(currentX, y), 7.0, 7.0);
-            if (parameter.IsControlEnabled)
-                dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-
-            AddHorizontalTarget(parameter,
-                new Rect(track.Left - 8.0, track.Top - 4.0,
-                    track.Width + 16.0, track.Height + 8.0),
-                track, parameter.Minimum, parameter.Maximum);
-            DrawText(dc, leftLabel, new Point(track.Left, top + 65.0),
-                9.1, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, rightLabel, new Point(track.Right, top + 65.0),
-                9.1, muted, FontWeights.Normal);
-        }
-
-        DrawSleepTrack(threshold,
-            "SLEEP BECOMES AVAILABLE AT",
-            "Required sleepiness points; this is a rule, not your live fatigue meter.",
-            $"{threshold.CurrentNumber:0} pts  |  BASE {threshold.ReferenceNumber:0} pts",
-            $"{threshold.Minimum:0} pts", $"{threshold.Maximum:0} pts", 55.0);
-
-        DrawSleepTrack(minimumHours,
-            "MINIMUM SLEEP",
-            "Minimum hours allowed by the normal sleep configuration.",
-            $"{minimumHours.CurrentNumber:0} h  |  BASE {minimumHours.ReferenceNumber:0} h",
-            $"{minimumHours.Minimum:0} h", $"{minimumHours.Maximum:0} h", 148.0);
-
-        DrawText(dc, "WHEN YOU WAKE UP", new Point(19.0, 248.0),
-            10.5, accent, FontWeights.Bold);
-        DrawRightAlignedText(dc, "RESTORE EFFECTS, NOT PASSIVE REGENERATION",
-            new Point(ActualWidth - 19.0, 248.0),
-            9.1, muted, FontWeights.SemiBold);
-
-        DrawSleepTrack(healthRestore,
-            "POST-SLEEP HEALTH RESTORE",
-            "Direct health restoration; actual HP cannot exceed your health cap.",
-            $"{healthRestore.CurrentNumber:0} HP  |  BASE {healthRestore.ReferenceNumber:0} HP",
-            $"{healthRestore.Minimum:0} HP", $"{healthRestore.Maximum:0} HP", 272.0);
-
-        DrawSleepTrack(staminaRestore,
-            "POST-SLEEP STAMINA EFFECT",
-            "Source effect strength; does not change your maximum stamina.",
-            $"+{staminaRestore.CurrentNumber * 100:0}%  |  BASE +{staminaRestore.ReferenceNumber * 100:0}%",
-            $"{staminaRestore.Minimum * 100:0}%", $"{staminaRestore.Maximum * 100:0}%", 365.0);
-
-        DrawText(dc,
-            "GREY TICK = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
-            new Point(20.0, 470.0), 9.1, muted, FontWeights.SemiBold);
+        var benefitsTitle = CompactGridEnd(rulesTop, 2,
+            CompactColumns(ActualWidth)) + 21.0;
+        DrawText(dc, "RECOVERY WHEN YOU WAKE UP",
+            new Point(19, benefitsTitle), 10.8, accent, FontWeights.Bold);
+        var benefitsTop = benefitsTitle + 25.0;
+        SleepSlider(healthRestore, "HEALTH RESTORED",
+            $"+{healthRestore.CurrentNumber:0.#} HP",
+            $"{healthRestore.Minimum:0.#} HP", $"{healthRestore.Maximum:0.#} HP",
+            benefitsTop, 0);
+        SleepSlider(staminaRestore, "STAMINA RESTORED",
+            $"+{staminaRestore.CurrentNumber * 100:0.#}%",
+            $"{staminaRestore.Minimum * 100:0.#}%",
+            $"{staminaRestore.Maximum * 100:0.#}%",
+            benefitsTop, 1);
     }
 
     private void DrawRecoveryMeter(
@@ -5089,7 +5022,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "MasterLowHealth" => 235.0,
             "MasterRadiationPenalty" => 235.0,
             "ConsumableMixer" => CompactConsumableHeight(width),
-            "SleepingDashboard" => 525.0,
+            "SleepingDashboard" => CompactSleepHeight(width),
             "HungerLadder" => CompactHungerHeight(width),
             "StarvationTimeline" => 532.0,
             "RepeatedHitBand" => 455.0,
@@ -5105,6 +5038,13 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double CompactFatigueHeight(double width)
     {
         return 55.0 + CompactTrackHeight + 12.0 + 80.0 + 51.0 + 320.0 + 12.0;
+    }
+
+    private static double CompactSleepHeight(double width)
+    {
+        var columns = CompactColumns(width);
+        var benefitsTitle = CompactGridEnd(55.0, 2, columns) + 21.0;
+        return CompactGridEnd(benefitsTitle + 25.0, 2, columns) + 14.0;
     }
 
     private static double CompactConsumableHeight(double width)
