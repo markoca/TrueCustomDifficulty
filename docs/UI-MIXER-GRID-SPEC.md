@@ -359,3 +359,7 @@ The Your Weapons card has three equal-width horizontal sliders in one line, with
 ### Hunger triple graphs and clean weapon values (2026-10-08)
 
 Survival > Hunger State Ladder keeps its existing stage preview. The three stage threshold sliders become a connected horizontal-coordinate graph with LOW/MEDIUM/SEVERE node handles and actual 0–100 point mapping. The three recovery sliders become a separate three-node signed-effect graph with vertically dragged Well-Fed (+) / Medium (-) / Severe (-) handles. No fake combined difficulty or percent formula is introduced; curves connect independent native CFG controls. Preserve Base ghost ticks, snapping, resets and native constraints. Your Weapons horizontal tracks suppress the literal BASE value text while keeping the visual grey marker.
+
+### Hunger Ladder: single 2D effect graph (2026-10-08)
+
+After Hunger Build-Up and the retained read-only stage preview, show one full-width HUNGER EFFECT CURVE. Horizontal axis = hunger points 0–100. Vertical axis = signed stamina regen effect +40% to -100%. LOW has a horizontal threshold ring only. MEDIUM and SEVERE are draggable 2D pairs (threshold X; recovery penalty Y); WELL-FED is a standalone vertical ring on the left of the graph. Draw gold current links and grey Base ghost links. Preserve independent CFG parameters and tick snapping. Compact height is derived from one plot plus footer; never render the previous two graph cards.
