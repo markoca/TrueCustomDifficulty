@@ -243,6 +243,7 @@
                                                                                          Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:AggregateVisualControl x:Name="AggregateVisualControl"
+                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                 MaxWidth="920"
                                                                                                 HorizontalAlignment="Center"
                                                                                                  PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
