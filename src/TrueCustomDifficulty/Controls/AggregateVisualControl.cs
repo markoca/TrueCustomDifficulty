@@ -2660,6 +2660,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             "0%", "100%", 442);
     }
 
+    // The summary band is deliberately read-only. MIN/MAX use separate full-width
+    // tracks so identical or near-identical weights never produce overlapping handles.
     private void DrawRepeatedHitBand(
         DrawingContext dc,
         Brush text,
@@ -2669,176 +2671,137 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(
-            dc,
-            "REPEATED-HIT PROTECTION",
-            "the game varies hidden protection strength between a weaker and stronger end",
-            text,
-            muted,
-            accent);
-
         var minimum = P("combat.accumulatedDamageWeightMin");
         var maximum = P("combat.accumulatedDamageWeightMax");
         var healedMemory = P("combat.accumulatedDamageIncludesHealedHealth");
 
-        var axis = new Rect(58.0, 104.0, Math.Max(380.0, ActualWidth - 116.0), 62.0);
-        var currentY = axis.Top + 21.0;
-        var vanillaY = axis.Top + 47.0;
+        DrawText(dc, "REPEATED-HIT PROTECTION", new Point(17.0, 13.0),
+            11.5, accent, FontWeights.Bold);
+        DrawText(dc, "hidden protection during sustained incoming fire", new Point(17.0, 32.0),
+            9.5, text, FontWeights.Normal);
 
-        dc.DrawRoundedRectangle(
-            CloneWithOpacity(panel, 0.94),
-            new Pen(border, 1.0),
-            new Rect(axis.Left - 12.0, axis.Top - 28.0, axis.Width + 24.0, axis.Height + 58.0),
-            4.0,
-            4.0);
+        if (minimum is null || maximum is null || healedMemory is null)
+        {
+            DrawCenteredText(dc, "Repeated-hit protection data unavailable.",
+                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            return;
+        }
 
-        DrawText(dc, "WEAKER", new Point(axis.Left, axis.Top - 22.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "PROTECTION STRENGTH", new Point(axis.Left + axis.Width / 2.0, axis.Top - 22.0), 8.2, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "STRONGER", new Point(axis.Right, axis.Top - 22.0), 8.0, accent, FontWeights.Bold);
+        var contentWidth = Math.Max(460.0, ActualWidth - 34.0);
+        var preview = new Rect(17.0, 56.0, contentWidth, 107.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
+        DrawText(dc, "PROTECTION WINDOW", new Point(29.0, 66.0),
+            10.0, text, FontWeights.Bold);
+        DrawRightAlignedText(dc,
+            $"NOW {minimum.CurrentNumber:0.00}-{maximum.CurrentNumber:0.00}  |  BASE {minimum.ReferenceNumber:0.00}-{maximum.ReferenceNumber:0.00}",
+            new Point(preview.Right - 12.0, 66.0), 9.4, accent, FontWeights.SemiBold);
 
-        dc.DrawLine(new Pen(border, 3.0), new Point(axis.Left, currentY), new Point(axis.Right, currentY));
-        dc.DrawLine(new Pen(soft, 2.0), new Point(axis.Left, vanillaY), new Point(axis.Right, vanillaY));
+        var axis = new Rect(preview.Left + 79.0, 93.0, preview.Width - 98.0, 47.0);
+        var currentY = 105.0;
+        var referenceY = 134.0;
+        double At(double value) => ValueToX(value, 0.0, 1.0, axis, reverse: false);
+
+        DrawText(dc, "CURRENT", new Point(preview.Left + 12.0, currentY - 7.0),
+            9.0, accent, FontWeights.Bold);
+        DrawText(dc, "BASE", new Point(preview.Left + 12.0, referenceY - 7.0),
+            9.0, muted, FontWeights.Bold);
+        dc.DrawLine(new Pen(soft, 4.0), new Point(axis.Left, currentY),
+            new Point(axis.Right, currentY));
+        dc.DrawLine(new Pen(soft, 2.0), new Point(axis.Left, referenceY),
+            new Point(axis.Right, referenceY));
 
         for (var i = 0; i <= 4; i++)
         {
-            var value = i * 0.25;
-            var x = ValueToX(value, 0.0, 1.0, axis, reverse: false);
-
-            dc.DrawLine(new Pen(soft, 1.0), new Point(x, currentY - 7.0), new Point(x, vanillaY + 7.0));
-            DrawCenteredText(dc, value.ToString("0.00", CultureInfo.InvariantCulture), new Point(x, axis.Bottom + 11.0), 7.6, muted, FontWeights.Normal);
+            var x = At(i * 0.25);
+            dc.DrawLine(new Pen(soft, 1.0), new Point(x, currentY - 8.0),
+                new Point(x, referenceY + 8.0));
         }
 
-        DrawRightAlignedText(dc, "CURRENT", new Point(axis.Left - 16.0, currentY - 7.0), 7.8, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "VANILLA", new Point(axis.Left - 16.0, vanillaY - 7.0), 7.8, muted, FontWeights.Bold);
+        var liveMinX = At(minimum.CurrentNumber);
+        var liveMaxX = At(maximum.CurrentNumber);
+        var baseMinX = At(minimum.ReferenceNumber);
+        var baseMaxX = At(maximum.ReferenceNumber);
 
-        if (minimum is not null && maximum is not null)
+        // The global value-based slider constraint maintains MIN <= MAX.
+        // Math.Min/Max also keeps the preview safe while a preset is loading.
+        var liveLeft = Math.Min(liveMinX, liveMaxX);
+        var liveRight = Math.Max(liveMinX, liveMaxX);
+        var baseLeft = Math.Min(baseMinX, baseMaxX);
+        var baseRight = Math.Max(baseMinX, baseMaxX);
+        dc.DrawRoundedRectangle(CloneWithOpacity(accent, 0.24), null,
+            new Rect(liveLeft, currentY - 7.0, Math.Max(1.0, liveRight - liveLeft), 14.0),
+            3.0, 3.0);
+        dc.DrawLine(new Pen(accent, 3.0), new Point(liveLeft, currentY),
+            new Point(liveRight, currentY));
+        dc.DrawEllipse(accent, null, new Point(liveMinX, currentY), 4.5, 4.5);
+        dc.DrawEllipse(accent, null, new Point(liveMaxX, currentY), 4.5, 4.5);
+
+        var basePen = new Pen(muted, 2.0) { DashStyle = DashStyles.Dash };
+        dc.DrawLine(basePen, new Point(baseLeft, referenceY),
+            new Point(baseRight, referenceY));
+        dc.DrawLine(new Pen(muted, 2.0), new Point(baseMinX, referenceY - 7.0),
+            new Point(baseMinX, referenceY + 7.0));
+        dc.DrawLine(new Pen(muted, 2.0), new Point(baseMaxX, referenceY - 7.0),
+            new Point(baseMaxX, referenceY + 7.0));
+        DrawText(dc, "0.00", new Point(axis.Left, 146.0), 9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "1.00", new Point(axis.Right, 146.0),
+            9.0, muted, FontWeights.Normal);
+
+        void DrawWeightTrack(ParameterViewModel parameter, string label, double top)
         {
-            var minX = ValueToX(minimum.CurrentNumber, 0.0, 1.0, axis, reverse: false);
-            var maxX = ValueToX(maximum.CurrentNumber, 0.0, 1.0, axis, reverse: false);
-            var refMinX = ValueToX(minimum.ReferenceNumber, 0.0, 1.0, axis, reverse: false);
-            var refMaxX = ValueToX(maximum.ReferenceNumber, 0.0, 1.0, axis, reverse: false);
+            var card = new Rect(17.0, top, contentWidth, 75.0);
+            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
+            DrawText(dc, label, new Point(card.Left + 12.0, top + 9.0),
+                10.2, text, FontWeights.Bold);
+            DrawRightAlignedText(dc,
+                $"{parameter.CurrentNumber:0.00}  |  BASE {parameter.ReferenceNumber:0.00}",
+                new Point(card.Right - 12.0, top + 8.0), 11.0,
+                parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
 
-            var bandLeft = Math.Min(minX, maxX);
-            var bandRight = Math.Max(minX, maxX);
-            var refBandLeft = Math.Min(refMinX, refMaxX);
-            var refBandRight = Math.Max(refMinX, refMaxX);
+            var track = new Rect(card.Left + 22.0, top + 33.0, card.Width - 44.0, 19.0);
+            var y = track.Top + track.Height / 2.0;
+            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
+                parameter.Maximum, track, reverse: false);
+            var referenceX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
+                parameter.Maximum, track, reverse: false);
 
-            dc.DrawRoundedRectangle(
-                CloneWithOpacity(accent, 0.22),
-                null,
-                new Rect(bandLeft, currentY - 8.0, Math.Max(1.0, bandRight - bandLeft), 16.0),
-                3.0,
-                3.0);
-            dc.DrawLine(new Pen(accent, 3.0), new Point(bandLeft, currentY), new Point(bandRight, currentY));
+            dc.DrawLine(new Pen(soft, 4.0), new Point(track.Left, y),
+                new Point(track.Right, y));
+            if (parameter.IsControlEnabled)
+                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
+                    new Point(track.Left, y), new Point(currentX, y));
+            // Keep the Base Preset marker behind the handle, including when values match.
+            dc.DrawLine(new Pen(muted, 2.0), new Point(referenceX, y - 11.0),
+                new Point(referenceX, y + 11.0));
+            dc.DrawEllipse(panel,
+                new Pen(parameter.IsControlEnabled ? accent : muted,
+                    IsSelected(parameter) ? 2.8 : 1.9),
+                new Point(currentX, y), 7.0, 7.0);
+            if (parameter.IsControlEnabled)
+                dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
 
-            var vanillaPen = new Pen(muted, 1.4) { DashStyle = DashStyles.Dash };
-            dc.DrawRoundedRectangle(
-                CloneWithOpacity(muted, 0.08),
-                vanillaPen,
-                new Rect(refBandLeft, vanillaY - 6.0, Math.Max(1.0, refBandRight - refBandLeft), 12.0),
-                2.0,
-                2.0);
-
-            dc.DrawLine(new Pen(muted, 1.0), new Point(refMinX, vanillaY - 9.0), new Point(refMinX, vanillaY + 9.0));
-            dc.DrawLine(new Pen(muted, 1.0), new Point(refMaxX, vanillaY - 9.0), new Point(refMaxX, vanillaY + 9.0));
-
-            dc.DrawEllipse(
-                panel,
-                new Pen(accent, IsSelected(minimum) ? 2.8 : 1.7),
-                new Point(minX, currentY),
-                8.0,
-                8.0);
-            dc.DrawEllipse(accent, null, new Point(minX, currentY), 3.2, 3.2);
-
-            dc.DrawEllipse(
-                panel,
-                new Pen(accent, IsSelected(maximum) ? 2.8 : 1.7),
-                new Point(maxX, currentY),
-                8.0,
-                8.0);
-            dc.DrawEllipse(accent, null, new Point(maxX, currentY), 3.2, 3.2);
-
-            DrawCenteredText(
-                dc,
-                $"MIN  {minimum.CurrentNumber:0.00}",
-                new Point(minX, currentY - 26.0),
-                8.6,
-                text,
-                FontWeights.Bold);
-
-            DrawCenteredText(
-                dc,
-                $"MAX  {maximum.CurrentNumber:0.00}",
-                new Point(maxX, currentY + 13.0),
-                8.6,
-                accent,
-                FontWeights.Bold);
-
-            DrawCenteredText(
-                dc,
-                $"{minimum.ReferenceNumber:0.00} → {maximum.ReferenceNumber:0.00}",
-                new Point((refMinX + refMaxX) / 2.0, vanillaY + 10.0),
-                7.6,
-                muted,
-                FontWeights.SemiBold);
-
-            var minMap = new Rect(axis.Left, currentY - 17.0, axis.Width, 34.0);
-            var maxMap = new Rect(axis.Left, currentY - 17.0, axis.Width, 34.0);
-
-            AddHorizontalTarget(
-                minimum,
-                new Rect(minX - 24.0, currentY - 26.0, 48.0, 26.0),
-                minMap,
-                0.0,
-                1.0);
-
-            AddHorizontalTarget(
-                maximum,
-                new Rect(maxX - 24.0, currentY, 48.0, 26.0),
-                maxMap,
-                0.0,
-                1.0);
-
-            var midpoint = (minimum.CurrentNumber + maximum.CurrentNumber) / 2.0;
-            var width = Math.Max(0.0, maximum.CurrentNumber - minimum.CurrentNumber);
-
-            DrawCenteredText(
-                dc,
-                $"ENVELOPE CENTER {midpoint:0.00}   |   SPAN {width:0.00}",
-                new Point(ActualWidth / 2.0, 204.0),
-                8.2,
-                muted,
-                FontWeights.SemiBold);
+            AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
+            DrawText(dc, "0.00 - NO WEIGHT", new Point(track.Left, top + 56.0),
+                8.9, muted, FontWeights.Normal);
+            DrawRightAlignedText(dc, "1.00 - MAX WEIGHT",
+                new Point(track.Right, top + 56.0), 8.9, muted, FontWeights.Normal);
         }
 
-        DrawCenteredText(
-            dc,
-            "0.00–1.00 ARE CURVE WEIGHTS, NOT LITERAL DAMAGE-REDUCTION PERCENTAGES",
-            new Point(ActualWidth / 2.0, 226.0),
-            7.8,
-            muted,
-            FontWeights.Normal);
+        DrawWeightTrack(minimum, "MINIMUM PROTECTION  /  WEAKER END", 174.0);
+        DrawWeightTrack(maximum, "MAXIMUM PROTECTION  /  STRONGER END", 260.0);
 
-        DrawTogglePill(
-            dc,
-            healedMemory,
-            "HEALED DAMAGE REMAINS IN PROTECTION MEMORY",
-            new Rect(52.0, 252.0, Math.Max(360.0, ActualWidth - 104.0), 42.0),
-            text,
-            muted,
-            border,
-            accent,
-            panel);
-
-        DrawCenteredText(
-            dc,
-            healedMemory?.CurrentBoolean == true
-                ? "ON: HEALING RESTORES HP, BUT EARLIER HITS STILL COUNT TOWARD REPEATED-HIT PROTECTION"
-                : "OFF: HEALED DAMAGE NO LONGER STAYS IN THE REPEATED-HIT TRACKER",
-            new Point(ActualWidth / 2.0, 307.0),
-            7.8,
-            healedMemory?.CurrentBoolean == true ? accent : muted,
-            FontWeights.SemiBold);
+        DrawTogglePill(dc, healedMemory, "HEALED DAMAGE STILL COUNTS",
+            new Rect(17.0, 346.0, contentWidth, 40.0),
+            text, muted, border, accent, panel);
+        DrawText(dc,
+            healedMemory.CurrentBoolean
+                ? "ON: restored HP does not erase earlier hits from the protection tracker."
+                : "OFF: healed damage is excluded from the protection tracker.",
+            new Point(20.0, 393.0), 9.3, text, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"BASE PRESET: {(healedMemory.ReferenceBoolean ? "ON" : "OFF")}",
+            new Point(ActualWidth - 19.0, 409.0), 9.1, muted, FontWeights.SemiBold);
+        DrawText(dc, "0.00-1.00 ARE CURVE WEIGHTS, NOT DAMAGE-REDUCTION PERCENTAGES",
+            new Point(20.0, 409.0), 8.8, muted, FontWeights.Normal);
     }
 
     private void DrawRadiationBalance(
@@ -3869,7 +3832,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "SleepingDashboard" => 390.0,
             "HungerLadder" => 380.0,
             "StarvationTimeline" => 532.0,
-            "RepeatedHitBand" => 335.0,
+            "RepeatedHitBand" => 455.0,
             "RadiationBalance" => 415.0,
             "TradingDashboard" => 485.0,
             "RepairCurve" => 370.0,
