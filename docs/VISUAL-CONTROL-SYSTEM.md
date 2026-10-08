@@ -651,3 +651,7 @@ All nine independent source sliders survive. Four 0–2x strength tracks appear 
 ### 2026-10-08 — Consumables preview compile correction
 
 Removed the duplicate local `previewTop` declaration in `DrawConsumableMixer` (CS0128). The seconds timeline now uses the single preview position derived from its redesigned title (`previewTitle + 23`), consistent with `CompactConsumableHeight`. No parameter, interaction, or approved UI layout was intentionally changed. Local publish/Wine verification pending.
+
+### Consumables vertical compact fader layout (2026-10-08)
+
+The nine independent editable ConsumableMixer tracks use a reusable compact 179-DIP vertical fader: two-line effect title, live native multiplier, gold vertical rail and knob, top max / bottom min labels, and side grey Base marker. Four strength faders precede the read-only instant/sustained/radiation statistics; five duration faders follow the retained read-only five-row real-seconds preview. Layout uses 3/4/5 columns by available width with measured height matched to the number of rows. Original source IDs, value bounds, ticks, reset semantics and all displayed effects remain. No Hunger/Fatigue modifications. Wine acceptance pending.
