@@ -127,8 +127,10 @@ public sealed class MutantHealthRadar : FrameworkElement
         _targets.Clear();
 
         var content = ContentRect();
-        DrawText(dc, "MUTANT HEALTH", new Point(content.Left, 16.0), 12.5, text, FontWeights.Bold);
-        DrawText(dc, "live MaxHP + direct multiplier", new Point(content.Left, 37.0), 9.5, muted, FontWeights.Normal);
+        DrawCenteredText(dc, "MUTANT HEALTH", new Point(ActualWidth / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "live MaxHP + direct multiplier", new Point(ActualWidth / 2.0, 39.0),
+            9.5, muted, FontWeights.Normal);
 
         // One locked row of eight compact, equal-width vertical faders.
         const int columns = 8;
