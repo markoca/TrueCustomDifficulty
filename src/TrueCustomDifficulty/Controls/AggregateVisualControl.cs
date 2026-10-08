@@ -906,6 +906,16 @@ public sealed class AggregateVisualControl : FrameworkElement
                     + $" {marker.Value:0} uu";
                 DrawCenteredText(dc, caption, new Point(x, 136.0),
                     9.0, muted, FontWeights.SemiBold);
+                // Clicking the printed landmark (not just the 12px track)
+                // chooses the exact authored height. Keep the hit rect inside
+                // the card even for the rightmost ABOVE EYES marker.
+                var captionWidth = 112.0;
+                var captionLeft = Math.Clamp(x - captionWidth / 2.0,
+                    13.0, Math.Max(13.0, ActualWidth - captionWidth - 13.0));
+                AddHorizontalTarget(vault,
+                    new Rect(captionLeft, 132.0, captionWidth, 23.0),
+                    new Rect(x, 132.0, 1.0, 23.0),
+                    marker.Value, marker.Value);
             }
         }
 
