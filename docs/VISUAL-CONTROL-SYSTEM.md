@@ -483,3 +483,7 @@ Keep ENEMY HEALTH and the current multiplier centered above the chart. The GUN D
 ### Human Combat inline axis values (2026-10-08)
 
 Draw the selected multiplier beside its axis title rather than on a different row: `ENEMY HEALTH` and its value share one horizontal line centered above the square; `GUN DAMAGE` and its value share one line that is rotated together along the left side. Use a small fixed gap, maintain title and value colors, and preserve the native axes and edit interactions.
+
+### Human Combat grey fader endpoint typography (2026-10-08)
+
+The Attack Frequency and Shot Accuracy grey minimum/maximum multiplier captions are 13.0 DIP. This applies only to Human Combat's frameless vertical mixer strips; other control families retain their established font sizes.
