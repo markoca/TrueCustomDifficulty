@@ -1477,6 +1477,646 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(20.0, 585.0), 9.0, muted, FontWeights.Normal);
     }
 
+    private void DrawBleedingTreatmentMixer(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(
+            dc,
+            "BLEEDING TREATMENT",
+            "each item is measured against its own vanilla bleeding-removal strength",
+            text,
+            muted,
+            accent);
+
+        var parameters = new[]
+        {
+            P("health.bandageBleeding"),
+            P("health.medkitBleeding"),
+            P("health.armyMedkitBleeding"),
+            P("health.ecoMedkitBleeding")
+        };
+        var labels = new[] { "BANDAGE", "MEDKIT", "ARMY", "SCIENTIFIC" };
+
+        var area = new Rect(24.0, 66.0, Math.Max(440.0, ActualWidth - 48.0), 286.0);
+        var scaleWidth = 52.0;
+        var faderArea = new Rect(
+            area.Left + scaleWidth,
+            area.Top,
+            Math.Max(360.0, area.Width - scaleWidth),
+            area.Height);
+
+        var count = Math.Min(parameters.Length, labels.Length);
+        var columnWidth = faderArea.Width / Math.Max(1, count);
+        var trackTop = area.Top + 80.0;
+        var trackBottom = area.Bottom - 40.0;
+        var trackHeight = Math.Max(60.0, trackBottom - trackTop);
+
+        // All four backing sliders are defined as 0..200% of their own vanilla value.
+        // A shared normalized scale makes the mixer visually comparable without
+        // pretending that the raw bleeding-removal values use the same units.
+        var sharedMap = new Rect(faderArea.Left, trackTop, faderArea.Width, trackHeight);
+        var vanillaY = ValueToY(1.0, 0.0, 2.0, sharedMap);
+
+        var strongerFill = CloneWithOpacity(accent, 0.045);
+        var weakerFill = CloneWithOpacity(muted, 0.035);
+
+        dc.DrawRectangle(
+            strongerFill,
+            null,
+            new Rect(faderArea.Left, trackTop, faderArea.Width, Math.Max(0.0, vanillaY - trackTop)));
+
+        dc.DrawRectangle(
+            weakerFill,
+            null,
+            new Rect(faderArea.Left, vanillaY, faderArea.Width, Math.Max(0.0, trackBottom - vanillaY)));
+
+        DrawRightAlignedText(dc, "200%", new Point(area.Left + scaleWidth - 9.0, trackTop - 7.0), 8.0, muted, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, "100%", new Point(area.Left + scaleWidth - 9.0, vanillaY - 7.0), 8.2, accent, FontWeights.Bold);
+        DrawRightAlignedText(dc, "0%", new Point(area.Left + scaleWidth - 9.0, trackBottom - 7.0), 8.0, muted, FontWeights.SemiBold);
+
+        DrawRightAlignedText(dc, "STRONGER", new Point(area.Left + scaleWidth - 9.0, trackTop + 13.0), 7.2, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "WEAKER", new Point(area.Left + scaleWidth - 9.0, trackBottom - 22.0), 7.2, muted, FontWeights.Normal);
+
+        var vanillaPen = new Pen(accent, 1.25) { DashStyle = DashStyles.Dash };
+        dc.DrawLine(vanillaPen, new Point(faderArea.Left, vanillaY), new Point(faderArea.Right, vanillaY));
+
+        DrawText(dc, "VANILLA", new Point(faderArea.Left + 5.0, vanillaY - 18.0), 7.8, accent, FontWeights.Bold);
+
+        for (var i = 0; i < count; i++)
+        {
+            if (parameters[i] is not { } parameter)
+                continue;
+
+            var centerX = faderArea.Left + columnWidth * (i + 0.5);
+            var reference = Math.Abs(parameter.ReferenceNumber) > Epsilon
+                ? parameter.ReferenceNumber
+                : 1.0;
+
+            var relativeMinimum = parameter.Minimum / reference;
+            var relativeMaximum = parameter.Maximum / reference;
+            var relativeCurrent = parameter.CurrentNumber / reference;
+
+            DrawCenteredText(dc, labels[i], new Point(centerX, area.Top + 2.0), 9.0, text, FontWeights.Bold);
+            DrawCenteredText(
+                dc,
+                $"{relativeCurrent * 100.0:0}% VANILLA",
+                new Point(centerX, area.Top + 22.0),
+                9.2,
+                accent,
+                FontWeights.Bold);
+
+            DrawCenteredText(
+                dc,
+                $"{parameter.CurrentNumber:0.##} bleeding",
+                new Point(centerX, area.Top + 39.0),
+                7.9,
+                muted,
+                FontWeights.Normal);
+
+            var mapRect = new Rect(centerX - 14.0, trackTop, 28.0, trackHeight);
+            dc.DrawLine(new Pen(border, 4.0), new Point(centerX, trackTop), new Point(centerX, trackBottom));
+
+            var currentY = ValueToY(relativeCurrent, relativeMinimum, relativeMaximum, mapRect);
+            var thumb = new Rect(centerX - 14.0, currentY - 5.0, 28.0, 10.0);
+            dc.DrawRoundedRectangle(
+                panel,
+                new Pen(accent, IsSelected(parameter) ? 2.5 : 1.7),
+                thumb,
+                2.0,
+                2.0);
+            dc.DrawRectangle(accent, null, new Rect(centerX - 9.0, currentY - 1.0, 18.0, 2.0));
+
+            AddVerticalTarget(
+                parameter,
+                new Rect(
+                    centerX - Math.Max(20.0, columnWidth * 0.36),
+                    trackTop - 9.0,
+                    Math.Max(40.0, columnWidth * 0.72),
+                    trackHeight + 18.0),
+                mapRect,
+                parameter.Minimum,
+                parameter.Maximum);
+
+            DrawCenteredText(
+                dc,
+                $"vanilla {parameter.ReferenceNumber:0.##}",
+                new Point(centerX, trackBottom + 14.0),
+                7.7,
+                muted,
+                FontWeights.Normal);
+        }
+
+        DrawCenteredText(
+            dc,
+            "100% = VANILLA  •  drag to tune  •  right-click a fader to reset it",
+            new Point(ActualWidth / 2.0, 366.0),
+            8.2,
+            muted,
+            FontWeights.SemiBold);
+    }
+
+    private void DrawConsumableMixer(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(
+            dc,
+            "CONSUMABLE EFFECT BOARD",
+            "instant + sustained strength; timed effects share one real seconds axis",
+            text,
+            muted,
+            accent);
+
+        var stamina = P("survival.instantStaminaRestore");
+        var waterStamina = P("survival.waterStaminaEffectStrength");
+        var energyStamina = P("survival.energyDrinkStaminaRecoveryStrength");
+        var antirad = P("survival.alcoholRadiationRemoval");
+
+        var left = 22.0;
+        var right = Math.Max(left + 460.0, ActualWidth - 22.0);
+        var width = right - left;
+        var gap = 12.0;
+        var half = (width - gap) / 2.0;
+
+        void DrawStrengthCard(
+            ParameterViewModel? parameter,
+            string title,
+            string subtitle,
+            IReadOnlyList<(string Label, double VanillaValue)> authored,
+            string unit,
+            Rect card)
+        {
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 1.0), card, 4.0, 4.0);
+            DrawText(dc, title, new Point(card.Left + 12.0, card.Top + 9.0), 8.9, text, FontWeights.Bold);
+            DrawText(dc, subtitle, new Point(card.Left + 12.0, card.Top + 25.0), 7.5, muted, FontWeights.Normal);
+
+            if (parameter is null)
+                return;
+
+            DrawRightAlignedText(
+                dc,
+                $"{parameter.CurrentNumber:0.##}x",
+                new Point(card.Right - 12.0, card.Top + 8.0),
+                10.0,
+                accent,
+                FontWeights.Bold);
+
+            var maxAuthored = authored.Max(x => x.VanillaValue);
+            var maxPreview = Math.Max(Epsilon, maxAuthored * parameter.Maximum);
+            var barLeft = card.Left + 74.0;
+            var barRight = card.Right - 14.0;
+            var barWidth = Math.Max(80.0, barRight - barLeft);
+
+            for (var i = 0; i < authored.Count; i++)
+            {
+                var item = authored[i];
+                var y = card.Top + 48.0 + i * 21.0;
+                var current = item.VanillaValue * parameter.CurrentNumber;
+                var vanilla = item.VanillaValue;
+
+                DrawRightAlignedText(dc, item.Label, new Point(barLeft - 8.0, y - 7.0), 7.6, muted, FontWeights.Bold);
+                dc.DrawLine(new Pen(border, 4.0), new Point(barLeft, y), new Point(barRight, y));
+
+                var vanillaX = barLeft + barWidth * Math.Clamp(vanilla / maxPreview, 0.0, 1.0);
+                var currentX = barLeft + barWidth * Math.Clamp(current / maxPreview, 0.0, 1.0);
+
+                dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX, y - 7.0), new Point(vanillaX, y + 7.0));
+                dc.DrawLine(new Pen(accent, 4.0), new Point(barLeft, y), new Point(currentX, y));
+                dc.DrawEllipse(accent, null, new Point(currentX, y), 4.5, 4.5);
+
+                DrawRightAlignedText(
+                    dc,
+                    $"{current:0.#}{unit}",
+                    new Point(barRight, y - 17.0),
+                    7.6,
+                    accent,
+                    FontWeights.SemiBold);
+            }
+
+            var controlTrack = new Rect(card.Left + 14.0, card.Bottom - 22.0, card.Width - 28.0, 14.0);
+            var controlY = controlTrack.Top + controlTrack.Height / 2.0;
+            dc.DrawLine(new Pen(border, 3.0), new Point(controlTrack.Left, controlY), new Point(controlTrack.Right, controlY));
+
+            var vanillaControlX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, controlTrack, reverse: false);
+            var currentControlX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, controlTrack, reverse: false);
+
+            dc.DrawLine(new Pen(muted, 1.1), new Point(vanillaControlX, controlY - 7.0), new Point(vanillaControlX, controlY + 7.0));
+            dc.DrawEllipse(
+                panel,
+                new Pen(accent, IsSelected(parameter) ? 2.5 : 1.6),
+                new Point(currentControlX, controlY),
+                6.0,
+                6.0);
+            dc.DrawEllipse(accent, null, new Point(currentControlX, controlY), 2.8, 2.8);
+
+            DrawText(dc, "0x", new Point(controlTrack.Left, controlY + 8.0), 7.2, muted, FontWeights.Normal);
+            DrawCenteredText(dc, "VANILLA 1x", new Point(vanillaControlX, controlY + 8.0), 7.1, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, "2x", new Point(controlTrack.Right, controlY + 8.0), 7.2, muted, FontWeights.Normal);
+
+            AddHorizontalTarget(
+                parameter,
+                new Rect(controlTrack.Left - 7.0, controlTrack.Top - 5.0, controlTrack.Width + 14.0, controlTrack.Height + 10.0),
+                controlTrack,
+                parameter.Minimum,
+                parameter.Maximum);
+        }
+
+        void DrawSustainedTrack(
+            ParameterViewModel? parameter,
+            string label,
+            string preview,
+            Rect card)
+        {
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.78), new Pen(border, 0.9), card, 3.0, 3.0);
+            DrawText(dc, label, new Point(card.Left + 9.0, card.Top + 5.0), 8.3, text, FontWeights.Bold);
+
+            if (parameter is null)
+                return;
+
+            DrawRightAlignedText(
+                dc,
+                $"{parameter.CurrentNumber:0.##}x",
+                new Point(card.Right - 9.0, card.Top + 4.0),
+                8.8,
+                accent,
+                FontWeights.Bold);
+
+            DrawText(dc, preview, new Point(card.Left + 9.0, card.Top + 18.0), 8.1, text, FontWeights.SemiBold);
+
+            var track = new Rect(card.Left + 9.0, card.Bottom - 10.0, card.Width - 18.0, 8.0);
+            var y = track.Top + track.Height / 2.0;
+            dc.DrawLine(new Pen(border, 2.6), new Point(track.Left, y), new Point(track.Right, y));
+
+            var vanillaX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
+            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
+
+            dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX, y - 5.0), new Point(vanillaX, y + 5.0));
+            dc.DrawEllipse(
+                panel,
+                new Pen(accent, IsSelected(parameter) ? 2.4 : 1.5),
+                new Point(currentX, y),
+                5.2,
+                5.2);
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.4, 2.4);
+
+            AddHorizontalTarget(
+                parameter,
+                new Rect(track.Left - 6.0, track.Top - 6.0, track.Width + 12.0, track.Height + 12.0),
+                track,
+                parameter.Minimum,
+                parameter.Maximum);
+        }
+
+        DrawStrengthCard(
+            stamina,
+            "INSTANT STAMINA BURST",
+            "same multiplier preserves each drink's authored refill strength",
+            new[]
+            {
+                ("WATER", 38.0),
+                ("ENERGY", 50.0),
+                ("LIMITED", 100.0)
+            },
+            "%",
+            new Rect(left, 56.0, half, 130.0));
+
+        DrawStrengthCard(
+            antirad,
+            "ALCOHOL RADIATION CLEANUP",
+            "ordinary beer and vodka only — Magic Vodka is separate",
+            new[]
+            {
+                ("BEER", 10.0),
+                ("VODKA", 50.0)
+            },
+            " rad",
+            new Rect(left + half + gap, 56.0, half, 130.0));
+
+        DrawText(dc, "SUSTAINED STAMINA", new Point(left + 2.0, 194.0), 8.8, text, FontWeights.Bold);
+        DrawText(dc, "0x–2x strength  •  grey tick = vanilla 1x  •  duration independent", new Point(left + 119.0, 194.0), 7.6, muted, FontWeights.Normal);
+
+        DrawSustainedTrack(
+            waterStamina,
+            "WATER",
+            waterStamina is null
+                ? string.Empty
+                : $"REGEN +{25.0 * waterStamina.CurrentNumber:0.#}%  |  ACTION COST -{10.0 * waterStamina.CurrentNumber:0.#}%",
+            new Rect(left, 207.0, half, 40.0));
+
+        DrawSustainedTrack(
+            energyStamina,
+            "ENERGY DRINK",
+            energyStamina is null
+                ? string.Empty
+                : $"REGEN +{200.0 * energyStamina.CurrentNumber:0.#}%",
+            new Rect(left + half + gap, 207.0, half, 40.0));
+
+        DrawText(dc, "TIMED EFFECTS", new Point(left + 2.0, 253.0), 8.8, text, FontWeights.Bold);
+        DrawText(
+            dc,
+            "shared real-seconds axis",
+            new Point(left + 112.0, 253.0),
+            7.5,
+            muted,
+            FontWeights.Normal);
+
+        var plot = new Rect(left + 102.0, 282.0, width - 116.0, 136.0);
+        const double timelineMaxSeconds = 270.0;
+
+        double SecondsToX(double seconds)
+            => plot.Left + plot.Width * Math.Clamp(seconds / timelineMaxSeconds, 0.0, 1.0);
+
+        dc.DrawRoundedRectangle(
+            CloneWithOpacity(panel, 0.95),
+            new Pen(border, 1.0),
+            new Rect(plot.Left - 10.0, plot.Top - 12.0, plot.Width + 20.0, plot.Height + 20.0),
+            4.0,
+            4.0);
+
+        for (var seconds = 0; seconds <= 270; seconds += 30)
+        {
+            var x = SecondsToX(seconds);
+            var pen = new Pen(seconds == 90 ? accent : border, seconds == 90 ? 1.1 : 0.8);
+            if (seconds != 90)
+                pen.DashStyle = DashStyles.Dot;
+
+            dc.DrawLine(pen, new Point(x, plot.Top), new Point(x, plot.Bottom));
+            DrawCenteredText(dc, $"{seconds}s", new Point(x, plot.Top - 19.0), 7.1, seconds == 90 ? accent : muted, FontWeights.SemiBold);
+        }
+
+        var durationRows = new[]
+        {
+            (
+                Label: "WATER",
+                Parameter: P("survival.waterEffectDuration"),
+                Effects: new[] { ("REGEN", 5.0), ("COST", 30.0) }
+            ),
+            (
+                Label: "ENERGY",
+                Parameter: P("survival.energyDrinkEffectDuration"),
+                Effects: new[] { ("MAIN", 45.0), ("ACTION", 15.0), ("SHORT", 5.0) }
+            ),
+            (
+                Label: "VODKA",
+                Parameter: P("survival.vodkaEffectDuration"),
+                Effects: new[] { ("STAMINA PENALTY", 20.0) }
+            ),
+            (
+                Label: "BEER",
+                Parameter: P("survival.beerEffectDuration"),
+                Effects: new[] { ("STAMINA PENALTY", 20.0) }
+            ),
+            (
+                Label: "MAGIC",
+                Parameter: P("survival.magicVodkaEffectDuration"),
+                Effects: new[] { ("PSI PROTECTION", 90.0) }
+            )
+        };
+
+        for (var row = 0; row < durationRows.Length; row++)
+        {
+            var item = durationRows[row];
+            var y = plot.Top + 18.0 + row * 25.0;
+
+            DrawRightAlignedText(dc, item.Label, new Point(plot.Left - 18.0, y - 8.0), 8.0, text, FontWeights.Bold);
+
+            if (item.Parameter is not { } parameter)
+                continue;
+
+            var scale = parameter.CurrentNumber;
+            var longestBase = item.Effects.Max(x => x.Item2);
+            var longestCurrent = longestBase * scale;
+            var longestX = SecondsToX(longestCurrent);
+
+            dc.DrawLine(new Pen(border, 3.0), new Point(plot.Left, y), new Point(SecondsToX(longestBase * parameter.Maximum), y));
+
+            for (var effectIndex = 0; effectIndex < item.Effects.Length; effectIndex++)
+            {
+                var effect = item.Effects[effectIndex];
+                var effectSeconds = effect.Item2 * scale;
+                var endX = SecondsToX(effectSeconds);
+                var lineY = y + (effectIndex - (item.Effects.Length - 1) / 2.0) * 5.0;
+                var opacity = Math.Max(0.35, 0.95 - effectIndex * 0.22);
+
+                dc.DrawLine(
+                    new Pen(CloneWithOpacity(accent, opacity), effectIndex == 0 ? 3.6 : 2.2),
+                    new Point(plot.Left, lineY),
+                    new Point(endX, lineY));
+
+                dc.DrawEllipse(
+                    CloneWithOpacity(accent, opacity),
+                    null,
+                    new Point(endX, lineY),
+                    effectIndex == 0 ? 3.8 : 2.8,
+                    effectIndex == 0 ? 3.8 : 2.8);
+
+                if (effectIndex == 0 || item.Effects.Length == 1)
+                {
+                    DrawText(
+                        dc,
+                        $"{effect.Item1} {effectSeconds:0.#}s",
+                        new Point(Math.Min(endX + 7.0, plot.Right - 92.0), lineY - 8.0),
+                        7.2,
+                        effectIndex == 0 ? accent : muted,
+                        FontWeights.SemiBold);
+                }
+            }
+
+            var vanillaLongestX = SecondsToX(longestBase);
+            dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaLongestX, y - 9.0), new Point(vanillaLongestX, y + 9.0));
+
+            dc.DrawEllipse(
+                panel,
+                new Pen(accent, IsSelected(parameter) ? 2.4 : 1.5),
+                new Point(longestX, y),
+                5.8,
+                5.8);
+            dc.DrawEllipse(accent, null, new Point(longestX, y), 2.6, 2.6);
+
+            DrawRightAlignedText(
+                dc,
+                $"{scale:0.##}x",
+                new Point(plot.Right, y - 15.0),
+                7.7,
+                accent,
+                FontWeights.Bold);
+
+            var familyMaxSeconds = longestBase * parameter.Maximum;
+            var familyMap = new Rect(
+                plot.Left,
+                y - 11.0,
+                Math.Max(1.0, SecondsToX(familyMaxSeconds) - plot.Left),
+                22.0);
+
+            AddHorizontalTarget(
+                parameter,
+                new Rect(familyMap.Left - 7.0, familyMap.Top - 4.0, familyMap.Width + 14.0, familyMap.Height + 8.0),
+                familyMap,
+                parameter.Minimum,
+                parameter.Maximum);
+        }
+
+        DrawCenteredText(
+            dc,
+            "GREY TICK = VANILLA LONGEST EFFECT   •   GOLD ENDPOINT = CURRENT LONGEST EFFECT",
+            new Point(ActualWidth / 2.0, 438.0),
+            7.5,
+            muted,
+            FontWeights.Normal);
+
+        DrawCenteredText(
+            dc,
+            "DRUNKENNESS / OVERDRUNKENNESS ARE CONTROLLED SEPARATELY",
+            new Point(ActualWidth / 2.0, 456.0),
+            7.7,
+            muted,
+            FontWeights.SemiBold);
+    }
+
+    private void DrawSleepingDashboard(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        DrawHeader(dc, "SLEEPING SYSTEM", "sleep gate, minimum rest window and wake-up recovery", text, muted, accent);
+
+        var threshold = P("survival.sleepEligibilityThreshold");
+        var minimumHours = P("survival.minimumSleepHours");
+        var healthRestore = P("survival.sleepHealthRestore");
+        var staminaRestore = P("survival.sleepStaminaRestore");
+
+        var left = 16.0;
+        var width = Math.Max(420.0, ActualWidth - 32.0);
+
+        // Sleep gate: this is not player runtime fatigue. It is the configured
+        // sleepiness threshold at which normal sleep becomes available.
+        var gateCard = new Rect(left, 56.0, width, 92.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), gateCard, 3.0, 3.0);
+        DrawText(dc, "SLEEP GATE", new Point(gateCard.Left + 12.0, gateCard.Top + 9.0), 9.0, text, FontWeights.Bold);
+        DrawText(dc, "how tired you must be before normal sleep is allowed", new Point(gateCard.Left + 12.0, gateCard.Top + 25.0), 8.0, muted, FontWeights.Normal);
+
+        if (threshold is not null)
+        {
+            DrawRightAlignedText(dc, FriendlyValue(threshold), new Point(gateCard.Right - 12.0, gateCard.Top + 8.0), 10.4, accent, FontWeights.Bold);
+
+            var gateTrack = new Rect(gateCard.Left + 16.0, gateCard.Top + 52.0, gateCard.Width - 32.0, 22.0);
+            var gateY = gateTrack.Top + gateTrack.Height / 2.0;
+            dc.DrawLine(new Pen(border, 4.0), new Point(gateTrack.Left, gateY), new Point(gateTrack.Right, gateY));
+
+            var vanillaX = ValueToX(threshold.ReferenceNumber, threshold.Minimum, threshold.Maximum, gateTrack, reverse: false);
+            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, gateY - 8.0), new Point(vanillaX, gateY + 8.0));
+            DrawCenteredText(dc, "VANILLA", new Point(vanillaX, gateY + 10.0), 7.3, muted, FontWeights.SemiBold);
+
+            var currentX = ValueToX(threshold.CurrentNumber, threshold.Minimum, threshold.Maximum, gateTrack, reverse: false);
+            dc.DrawEllipse(accent, null, new Point(currentX, gateY), 6.0, 6.0);
+
+            DrawText(dc, "EARLIER", new Point(gateTrack.Left, gateY + 10.0), 7.4, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, "MORE TIRED", new Point(gateTrack.Right, gateY + 10.0), 7.4, muted, FontWeights.SemiBold);
+            AddHorizontalTarget(threshold, gateTrack, gateTrack, threshold.Minimum, threshold.Maximum);
+        }
+
+        // Minimum rest window shown as a clock-like ruler rather than another generic card.
+        var timeCard = new Rect(left, 160.0, width, 88.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), timeCard, 3.0, 3.0);
+        DrawText(dc, "MINIMUM SLEEP WINDOW", new Point(timeCard.Left + 12.0, timeCard.Top + 9.0), 9.0, text, FontWeights.Bold);
+        DrawText(dc, "shortest normal sleep cycle", new Point(timeCard.Left + 12.0, timeCard.Top + 25.0), 8.0, muted, FontWeights.Normal);
+
+        if (minimumHours is not null)
+        {
+            DrawRightAlignedText(dc, FriendlyValue(minimumHours), new Point(timeCard.Right - 12.0, timeCard.Top + 8.0), 10.4, accent, FontWeights.Bold);
+
+            var timeTrack = new Rect(timeCard.Left + 16.0, timeCard.Top + 49.0, timeCard.Width - 32.0, 22.0);
+            var timeY = timeTrack.Top + timeTrack.Height / 2.0;
+            dc.DrawLine(new Pen(border, 4.0), new Point(timeTrack.Left, timeY), new Point(timeTrack.Right, timeY));
+
+            var vanillaX = ValueToX(minimumHours.ReferenceNumber, minimumHours.Minimum, minimumHours.Maximum, timeTrack, reverse: false);
+            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, timeY - 8.0), new Point(vanillaX, timeY + 8.0));
+
+            var currentX = ValueToX(minimumHours.CurrentNumber, minimumHours.Minimum, minimumHours.Maximum, timeTrack, reverse: false);
+            dc.DrawLine(new Pen(accent, 4.0), new Point(timeTrack.Left, timeY), new Point(currentX, timeY));
+            dc.DrawEllipse(accent, null, new Point(currentX, timeY), 6.0, 6.0);
+
+            DrawText(dc, $"{minimumHours.Minimum:0}H", new Point(timeTrack.Left, timeY + 10.0), 7.4, muted, FontWeights.SemiBold);
+            DrawCenteredText(dc, "VANILLA", new Point(vanillaX, timeY + 10.0), 7.3, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, $"{minimumHours.Maximum:0}H", new Point(timeTrack.Right, timeY + 10.0), 7.4, muted, FontWeights.SemiBold);
+            AddHorizontalTarget(minimumHours, timeTrack, timeTrack, minimumHours.Minimum, minimumHours.Maximum);
+        }
+
+        DrawText(dc, "WAKE-UP RECOVERY", new Point(left + 2.0, 266.0), 9.0, text, FontWeights.Bold);
+        DrawText(dc, "direct restore applied after normal sleep", new Point(left + 2.0, 282.0), 8.0, muted, FontWeights.Normal);
+
+        var gap = 10.0;
+        var recoveryWidth = (width - gap) / 2.0;
+        DrawRecoveryMeter(
+            dc,
+            healthRestore,
+            "HEALTH",
+            new Rect(left, 302.0, recoveryWidth, 66.0),
+            text,
+            muted,
+            border,
+            accent,
+            panel);
+
+        DrawRecoveryMeter(
+            dc,
+            staminaRestore,
+            "STAMINA",
+            new Rect(left + recoveryWidth + gap, 302.0, recoveryWidth, 66.0),
+            text,
+            muted,
+            border,
+            accent,
+            panel);
+    }
+
+    private void DrawRecoveryMeter(
+        DrawingContext dc,
+        ParameterViewModel? parameter,
+        string label,
+        Rect card,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 3.0, 3.0);
+        DrawText(dc, label, new Point(card.Left + 10.0, card.Top + 8.0), 8.8, muted, FontWeights.Bold);
+
+        if (parameter is null)
+            return;
+
+        DrawRightAlignedText(dc, FriendlyValue(parameter), new Point(card.Right - 10.0, card.Top + 6.0), 10.0, accent, FontWeights.Bold);
+
+        var track = new Rect(card.Left + 12.0, card.Top + 35.0, Math.Max(50.0, card.Width - 24.0), 20.0);
+        var y = track.Top + track.Height / 2.0;
+        dc.DrawLine(new Pen(border, 5.0), new Point(track.Left, y), new Point(track.Right, y));
+
+        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
+        dc.DrawLine(new Pen(accent, 5.0), new Point(track.Left, y), new Point(currentX, y));
+
+        var vanillaX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
+        dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, y - 8.0), new Point(vanillaX, y + 8.0));
+
+        dc.DrawEllipse(panel, new Pen(accent, IsSelected(parameter) ? 2.4 : 1.6), new Point(currentX, y), 6.0, 6.0);
+        AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
+    }
+
+    // Separate the two trader price settings, item acceptance gate and broken-value
+    // floor. Price settings are CFG multipliers, not complete shop-price formulas.
     private void DrawTradingDashboard(
         DrawingContext dc, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
