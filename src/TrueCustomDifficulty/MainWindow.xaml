@@ -761,10 +761,10 @@
                                 </ListBox.ItemsPanel>
                                 <ListBox.GroupStyle>
                                     <GroupStyle>
-                                        <!-- Sections are stacked vertically. Only controls inside a section use the grid. -->
+                                        <!-- Pair only explicitly eligible adjacent compact sections; others keep their full width. -->
                                         <GroupStyle.Panel>
                                             <ItemsPanelTemplate>
-                                                <StackPanel IsItemsHost="True" Orientation="Vertical" />
+                                                <infra:ResponsiveSectionGridPanel IsItemsHost="True" HorizontalAlignment="Stretch" />
                                             </ItemsPanelTemplate>
                                         </GroupStyle.Panel>
                                         <GroupStyle.ContainerStyle>
