@@ -15,8 +15,8 @@ Reduce Loot-tab slider clutter without collapsing controls that represent differ
 | World Ammo / Food & Drink / Medical / Loose Loot removal | Radar candidate | Four parallel `% removed` controls with the same interpretation |
 | F1 Grenade Boxes | Include as World Loot Removal radar axis | Dedicated F1 boxes are a disjoint physical population from ordinary Ammo/RGD boxes |
 | Mutant Part Drop Chance | Do not use radar | Fourteen axes would be harder to read than a compact grid |
-| NPC loot / equipment | Keep existing controls | Mixed concepts and value types |
-| Stash grenade / coupon controls | Keep sliders | Chance and amount are distinct source semantics |
+| NPC loot / equipment | **Mixed-input visual board implemented** | Retains real discrete choice, two independent multipliers, and absolute MIN/MAX condition |
+| Stash grenade / coupon controls | **Independent source tracks in one board** | Chance and amount remain distinct source semantics |
 
 ## Stash food / medical review
 
