@@ -3028,7 +3028,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var severePenalty = P("survival.hungerStrongStaminaRegen");
 
         DrawHeader(dc, "HUNGER STATE LADDER",
-            "hunger-point thresholds and their stamina recovery effects",
+            string.Empty,
             text, muted, accent);
 
         if (rate is null || low is null || medium is null || severe is null ||
@@ -3140,7 +3140,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCenteredText(dc, "HUNGER POINTS (0–100)", new Point(plot.Left + plot.Width / 2.0,
             frame.Top + 27.0), 9.2, text, FontWeights.Bold);
         // Separate vertical axis caption from tick values; rotation is only visual.
-        var yAxisCenter = new Point(plot.Left - 52.0, plot.Top + plot.Height / 2.0);
+        var yAxisCenter = new Point(plot.Left - 52.0, area.Top + area.Height / 2.0);
         dc.PushTransform(new RotateTransform(-90.0, yAxisCenter.X, yAxisCenter.Y));
         DrawCenteredText(dc, "STAMINA RECOVERY LOSS", yAxisCenter,
             9.2, text, FontWeights.Bold);
