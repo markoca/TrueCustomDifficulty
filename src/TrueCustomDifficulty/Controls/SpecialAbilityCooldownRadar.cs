@@ -11,12 +11,14 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double DesiredHeight = 400.0;
+    private const double DesiredHeight = 752.0;
     private const double MaxContentWidth = 1080.0;
     private const double ColumnGap = 8.0;
 
     private static readonly CooldownDefinition[] Mutants =
     {
+        new("combat.mutantDamage", "Damage Per Hit", null),
+        new("combat.mutantAttackCooldown", "Attack Frequency", null),
         new("combat.mutantCooldown.bloodsucker", "Bloodsucker", "Mist follows"),
         new("combat.mutantCooldown.chimera", "Chimera", null),
         new("combat.mutantCooldown.deer", "Deer", null),
@@ -128,24 +130,35 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         _targets.Clear();
 
         var content = ContentRect();
-        DrawText(dc, "SPECIAL-ABILITY PACING", new Point(content.Left, 16.0), 12.5, text, FontWeights.Bold);
-        DrawText(dc, "WAIT down = ability returns sooner", new Point(content.Left, 37.0), 9.5, muted, FontWeights.Normal);
+        DrawText(dc, "MUTANT COMBAT", new Point(content.Left, 16.0), 12.5, text, FontWeights.Bold);
+        DrawText(dc, "GLOBAL COMBAT  |  damage per hit and normal attack frequency", new Point(content.Left, 37.0), 9.5, muted, FontWeights.Normal);
 
-        // Fixed one-row, eight-channel bank matching Mutant Health.
+        // Global source controls are separate from each mutant's ability timer.
+        var globalWidth = 150.0;
+        var globalLeft = content.Left + (content.Width - 2.0 * globalWidth - 20.0) / 2.0;
+        for (var i = 0; i < 2; i++)
+            DrawRow(dc, i, new Rect(globalLeft + i * (globalWidth + 20.0),
+                65.0, globalWidth, 280.0), text, muted, border, accent, panel);
+
+        DrawText(dc, "SPECIAL ABILITY COOLDOWNS",
+            new Point(content.Left, 370.0), 12.0, text, FontWeights.Bold);
+        DrawText(dc, "Lower wait = faster ability return (not normal attack speed)",
+            new Point(content.Left, 393.0), 9.5, muted, FontWeights.Normal);
+
         const int columns = 8;
         var stripWidth = (content.Width - (columns - 1) * ColumnGap) / columns;
-        for (var i = 0; i < Mutants.Length; i++)
+        for (var i = 2; i < Mutants.Length; i++)
             DrawRow(dc, i, new Rect(
-                content.Left + i * (stripWidth + ColumnGap),
-                65.0, stripWidth, 280.0),
+                content.Left + (i - 2) * (stripWidth + ColumnGap),
+                420.0, stripWidth, 280.0),
                 text, muted, border, accent, panel);
 
         DrawCenteredText(dc,
-            "HIGHER WAIT = SLOWER ABILITY  |  GREY TICK = BASE  |  RIGHT-CLICK = RESET",
-            new Point(ActualWidth / 2.0, 369.0), 10.0, muted, FontWeights.SemiBold);
+            "GOLD = CURRENT  |  GREY TICK = BASE  |  RIGHT-CLICK = RESET",
+            new Point(ActualWidth / 2.0, 718.0), 10.0, muted, FontWeights.SemiBold);
 
         if (!string.IsNullOrWhiteSpace(_status.Text))
-            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 387.0), 9.5, accent, FontWeights.SemiBold);
+            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 739.0), 9.5, accent, FontWeights.SemiBold);
     }
 
     private void DrawRow(
@@ -174,10 +187,16 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
         DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
             new Point(center, card.Top + 39.0), 16.2, accent, FontWeights.Bold);
-        var returnRate = parameter.CurrentNumber > Epsilon
-            ? 1.0 / parameter.CurrentNumber : 0.0;
-        DrawCenteredText(dc, $"{returnRate:0.##}x RETURN",
-            new Point(center, card.Top + 63.0), 9.7, muted, FontWeights.SemiBold);
+        if (row >= 2)
+        {
+            var returnRate = parameter.CurrentNumber > Epsilon
+                ? 1.0 / parameter.CurrentNumber : 0.0;
+            DrawCenteredText(dc, $"{returnRate:0.##}x RETURN",
+                new Point(center, card.Top + 63.0), 9.7, muted, FontWeights.SemiBold);
+        }
+        else
+            DrawCenteredText(dc, row == 0 ? "HIT STRENGTH" : "ATTACK TEMPO",
+                new Point(center, card.Top + 63.0), 9.7, muted, FontWeights.SemiBold);
 
         var rail = new Rect(center - 3.0, card.Top + 110.0, 6.0, 150.0);
         var currentY = ValueToY(parameter.CurrentNumber,
@@ -281,7 +300,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
         _selectedRow = row;
         parameter.ResetToReference();
-        _status.ShowTransient($"{Mutants[row].Label} pacing reset to Base Preset.");
+        _status.ShowTransient($"{Mutants[row].Label} reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
     }
