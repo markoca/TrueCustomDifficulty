@@ -72,7 +72,7 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Psy Phantom Pressure | Two independent phantom-cycle timing/count axes, plus gear damage and bleeding toggle | Semantic |
 | Human Combat Profile | Native human health and gun-damage axes, plus independent attack-frequency and accuracy tracks | Semantic |
 | Your Weapons | Three compact native-value lanes for base hit damage, headshot multiplier and weapon jamming | Semantic |
-| Core Health | Actual max-HP rail, configured recovery-delay ruler, passive regen and compatible-effect scaling | Semantic |
+| Core Health | Max-HP rail, recovery-delay ruler, passive regen, difficulty effect scaling and a separate low-health recovery track | Semantic |
 | Master Severe Fatigue | On/off bundle plus five independently editable severe-fatigue penalties; inactive tracks preserve stored values | Semantic |
 | Master Medical Healing | Master consumable effect bundle toggle plus three source-exact healing-retention multipliers, on a common 0–200% axis | Semantic |
 | Master Low Health | Compact bundle toggle and linked conditional health recovery loss, on a 0–100% native scale | Semantic |
@@ -91,7 +91,6 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Breakable Box Yields | Separate ammo and dedicated grenade box quantity multipliers; does not edit item-family weights | Semantic |
 | World Loot Layout | Four independent reshuffle/removal toggles and a weapon-shuffle-dependent density track | Semantic |
 | NPC Loot & Equipment | Discrete corpse-loot selector, independent medical/ammo tracks and MIN/MAX dropped-weapon condition | Semantic |
-| Core Health + Low-Health Recovery | Existing health pool/delay/recovery dashboard plus its separate normal low-health effect | Semantic |
 | Explosion Damage | Direct blast-damage multiplier and read-only Base Preset comparison band | Semantic |
 | Physical Limits | Independent vault height (uu) / carry mass (kg) source tracks with original vault landmarks | Semantic |
 | Trader Stock | Native trader ammo and medic stock amount controls | Semantic |
