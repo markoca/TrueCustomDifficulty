@@ -343,3 +343,7 @@ Mutant Combat's global side-by-side horizontal controls occupy the top row witho
 ### Combat view grouping lock (2026-10-08)
 
 Combat section order is fixed: Your Weapons, Human Enemies, Mutant Combat, Mutant Health. Do not depend on alphabetical or incidental raw catalogue ordering; explicitly order before WPF group formation. The source-only Psy Combat and Repeated Hit Protection domains must not form visible group headers. Your Weapons: exactly three centered, equal-size vertical faders in a single line with correctly accounted two gaps. Top-level sections remain 1x1.
+
+### Single in-card heading contract (2026-10-08)
+
+All visual section controls own one centered accented top title; optional concise description below is also centered. WPF group headers and their decorative separator bars have no visible output or reserved height. Preserve fixed 1x1 external layout; changes to titles are styling only.
