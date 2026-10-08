@@ -35,7 +35,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "AnomalyEffectsBoard" or "ServiceCostsBoard"
-            or "TraderStockBoard" or "ItemWeightBoard" or "BreakableBoxYields")
+            or "TraderStockBoard" or "ItemWeightBoard" or "BreakableBoxYields"
+            or "StashRewardProfile")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
     }
 
@@ -177,7 +178,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrawWorldLootLayout(dc, text, muted, border, accent, panel);
                 break;
             case "StashRewardProfile":
-                DrawStashRewardProfile(dc, text, muted, border, accent, panel);
+                DrawNumericMixerBoard(dc, text, muted, border, accent, panel);
                 break;
             case "BreakableBoxYields":
                 DrawNumericMixerBoard(dc, text, muted, border, accent, panel);
@@ -388,6 +389,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         ("loot.destructibleGrenadeQuantity", "GRENADE", "YIELD")
     };
 
+    private static readonly (string Id, string Top, string Bottom)[] StashRewardMixerChannels =
+    {
+        ("loot.cheapStashGrenadeChance", "BASIC", "RGD-5 %"),
+        ("loot.cheapStashGrenadeQuantity", "RGD-5", "AMOUNT"),
+        ("loot.expensiveStashMoneyChance", "RARE", "COUPON %")
+    };
+
     private static (string Id, string Top, string Bottom)[] GetMixerChannels(string family)
         => family switch
         {
@@ -395,6 +403,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "TraderStockBoard" => TraderMixerChannels,
             "ItemWeightBoard" => WeightMixerChannels,
             "BreakableBoxYields" => BoxYieldMixerChannels,
+            "StashRewardProfile" => StashRewardMixerChannels,
             _ => AnomalyMixerChannels
         };
 
@@ -445,6 +454,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "ServiceCostsBoard" => "SERVICE PRICES / MIXER",
             "TraderStockBoard" => "TRADER STOCK / MIXER",
             "BreakableBoxYields" => "BREAKABLE BOX YIELDS / MIXER",
+            "StashRewardProfile" => "STASH REWARD ROLLS / MIXER",
             _ => "ITEM WEIGHT / MIXER"
         };
         var description = Family switch
@@ -452,6 +462,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "ServiceCostsBoard" => "travel, upgrade and repair prices use separate CFG multipliers",
             "TraderStockBoard" => "separate ammo and medical stock quantities",
             "BreakableBoxYields" => "contents per destroyed box, not box spawn frequency",
+            "StashRewardProfile" => "Basic RGD-5 chance/amount and eligible Rare coupon chance are separate",
             _ => "independent ammunition and consumable item mass"
         };
         DrawMixerBoard(dc, channels, title, description, text, muted, border, accent, panel);
@@ -649,6 +660,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             "environment.diamondBleeding" => $"{raw:0.#} pts",
             "economy.repairCostBase" => $"{raw * 100.0:0.#}%",
+            "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance" => $"{raw * 100.0:0.#}%",
+            "loot.cheapStashGrenadeQuantity" => $"{raw:0} pcs",
             _ => $"{raw:0.##}x"
         };
 
@@ -935,79 +948,6 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Chance, successful-roll amount and a different stash tier's coupon roll
     // remain three independent source parameters. The preview bars are deliberately
     // read-only and never combine them into an inferred expected-loot value.
-    private void DrawStashRewardProfile(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
-    {
-        var grenadeChance = P("loot.cheapStashGrenadeChance");
-        var grenadeCount = P("loot.cheapStashGrenadeQuantity");
-        var couponChance = P("loot.expensiveStashMoneyChance");
-
-        DrawHeader(dc, "STASH REWARD ROLLS",
-            "Basic stash grenade rolls and eligible Rare stash coupon rolls",
-            text, muted, accent);
-
-        if (grenadeChance is null || grenadeCount is null || couponChance is null)
-        {
-            DrawCenteredText(dc, "Stash reward data unavailable.",
-                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
-            return;
-        }
-
-        var width = Math.Max(1.0, ActualWidth - 32.0);
-        var preview = new Rect(16.0, 55.0, width, 115.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
-
-        void ProbabilityLane(ParameterViewModel parameter, string label, double top)
-        {
-            var textWidth = Math.Max(1.0, (preview.Width - 24.0) / 2.0);
-            dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold, textWidth),
-                new Point(preview.Left + 12.0, top));
-            DrawRightAlignedText(dc,
-                $"{parameter.CurrentNumber * 100.0:0.#}%  |  BASE {parameter.ReferenceNumber * 100.0:0.#}%",
-                new Point(preview.Right - 12.0, top), 10.0, accent, FontWeights.SemiBold);
-
-            var meter = new Rect(preview.Left + 12.0, top + 23.0,
-                Math.Max(1.0, preview.Width - 24.0), 10.0);
-            var y = meter.Top + meter.Height / 2.0;
-            var currentX = ValueToX(parameter.CurrentNumber, 0.0, 1.0, meter, reverse: false);
-            var referenceX = ValueToX(parameter.ReferenceNumber, 0.0, 1.0, meter, reverse: false);
-            dc.DrawLine(new Pen(border, 7.0),
-                new Point(meter.Left, y), new Point(meter.Right, y));
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.82), 7.0),
-                new Point(meter.Left, y), new Point(currentX, y));
-            dc.DrawLine(new Pen(muted, 2.3),
-                new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
-            // No HitTarget: editing belongs to the full native-range tracks below.
-        }
-
-        ProbabilityLane(grenadeChance, "BASIC STASH / RGD-5", 63.0);
-        ProbabilityLane(couponChance, "RARE STASH / COUPONS", 115.0);
-
-        DrawHorizontalTrackCard(dc, grenadeChance, "BASIC RGD-5 / DROP CHANCE",
-            new Rect(16.0, 182.0, width, 72.0),
-            text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, grenadeCount, "BASIC RGD-5 / AMOUNT IF DROPPED",
-            new Rect(16.0, 264.0, width, 72.0),
-            text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, couponChance, "RARE STASH / COUPON CHANCE",
-            new Rect(16.0, 346.0, width, 72.0),
-            text, muted, border, accent, panel);
-
-        DrawText(dc,
-            "CHANCE DOES NOT CHANGE STACK SIZE  |  AMOUNT DOES NOT CHANGE CHANCE",
-            new Point(18.0, 432.0), 9.1, text, FontWeights.SemiBold);
-        DrawText(dc,
-            "GREY = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
-            new Point(18.0, 451.0), 9.0, muted, FontWeights.Normal);
-    }
-
-    // Different physical breakable-box populations share a board, but neither
-    // their CFG count multipliers nor ammo family selection weights are linked.
     private void DrawPairedSystemBoard(
         DrawingContext dc,
         Brush text,
@@ -4696,7 +4636,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "AnomalyEffectsBoard" => GetMixerHeight(width, AnomalyMixerChannels.Length),
             "NpcLootLoadout" => 748.0, // reserve footer/status lane below the native input cards
             "WorldLootLayout" => width >= 720.0 ? 340.0 : 450.0,
-            "StashRewardProfile" => 485.0,
+            "StashRewardProfile" => GetMixerHeight(width, StashRewardMixerChannels.Length),
             "PhysicalLimits" => 335.0,
             "MutantCombatPressure" or "StaminaCore" or "WaterStaminaPressure"
                 or "RadiationTreatment" => 270.0,
