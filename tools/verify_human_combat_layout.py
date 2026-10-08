@@ -3,6 +3,7 @@
 from pathlib import Path
 from xml.etree import ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
+import json
 SRC = ROOT / "src" / "TrueCustomDifficulty"
 visual = (SRC / "Controls" / "AggregateVisualControl.cs").read_text()
 grid = (SRC / "Infrastructure" / "ResponsiveSectionGridPanel.cs").read_text()
@@ -20,6 +21,9 @@ required = (
     'new Rect(faderLeft + faderWidth + 10.0, 83.0, faderWidth, MixerStripHeight)',
     'AddHorizontalTarget(health,',
     'AddVerticalTarget(damage,',
+    'HitKind.HumanJoint, health.Minimum, health.Maximum',
+    'DrawHumanAxisHandle(dc, healthHandle,',
+    'DrawHumanAxisHandle(dc, damageHandle,',
     'new Point(plot.Left - 12.0, gridY - 7.0)',
     'new Point(gridX, plot.Bottom + 32.0)',
     'Math.Max(422.0, plot.Bottom + 72.0)',
@@ -37,6 +41,11 @@ if '["Human Enemies"] = "Mutants"' not in grid:
     raise SystemExit("[FAIL] human: missing explicitly approved adjacent section pairing")
 if '"HumanCombatProfile" => "The square graph' not in help_text:
     raise SystemExit("[FAIL] human: rationale not updated")
+catalog = {p["id"]: p for p in json.loads((SRC / "Data" / "parameters.json").read_text())["parameters"]}
+assert catalog["combat.npcAttackCooldown"]["slider"]["max"] == 2
+assert catalog["combat.npcHipAccuracy"]["slider"]["max"] == 1
+assert 'HitKind.HumanJoint => Cursors.SizeAll' in visual
+assert 'P("combat.npcWeaponDamage")?.ResetToReference();' in visual
 ET.fromstring(xaml)
 # At both width extremes, the square and the two 128+ DIP fader hit regions fit.
 for board_width in (540.0, 600.0, 920.0):
