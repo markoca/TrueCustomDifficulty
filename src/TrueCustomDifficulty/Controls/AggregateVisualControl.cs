@@ -3137,126 +3137,117 @@ public sealed class AggregateVisualControl : FrameworkElement
                 9.5, i == 2 ? accent : text, FontWeights.SemiBold);
         }
 
-        // Two direct-manipulation curves replace the six separate sliders.
-        // Stage thresholds use real hunger points on X; the fixed step levels
-        // on Y distinguish LOW/MEDIUM/SEVERE without inventing an extra CFG.
-        var stagePlot = new Rect(48.0, preview.Bottom + 44.0,
-            Math.Max(350.0, ActualWidth - 93.0), 112.0);
-        DrawText(dc, "HUNGER STAGE THRESHOLDS",
-            new Point(20.0, stagePlot.Top - 27.0), 10.8, accent, FontWeights.Bold);
-        DrawText(dc, "Drag each ring left or right  |  X = hunger points (0–100)",
-            new Point(20.0, stagePlot.Top - 11.0), 9.2, muted, FontWeights.Normal);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), stagePlot, 4.0, 4.0);
-        var stageParams = new[] { low, medium, severe };
-        var stageNames = new[] { "LOW", "MEDIUM", "SEVERE" };
-        var stageYs = new[]
+        // One meaningful shared graph: X = hunger threshold (0..100 points),
+        // Y = signed stamina recovery effect (+40% bonus to -100% loss).
+        // MEDIUM and SEVERE each control exactly two underlying CFG parameters.
+        var plot = new Rect(76.0, preview.Bottom + 63.0,
+            Math.Max(340.0, ActualWidth - 124.0), 224.0);
+        DrawCenteredText(dc, "HUNGER EFFECT CURVE",
+            new Point(ActualWidth / 2.0, plot.Top - 43.0),
+            11.2, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "X = HUNGER POINTS  |  Y = STAMINA RECOVERY EFFECT",
+            new Point(ActualWidth / 2.0, plot.Top - 25.0),
+            9.3, muted, FontWeights.Normal);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
+
+        var area = new Rect(plot.Left + 13.0, plot.Top + 12.0,
+            plot.Width - 26.0, plot.Height - 38.0);
+        double X(double points) => ValueToX(points, 0.0, 100.0, area, false);
+        // Keep all values on a real signed effect axis. At 0% the hunger
+        // state neither boosts nor reduces stamina regeneration.
+        double Y(double effect) => area.Bottom -
+            (effect + 100.0) / 140.0 * area.Height;
+        double Effect(ParameterViewModel p) => -p.CurrentNumber * 100.0;
+        double BaseEffect(ParameterViewModel p) => -p.ReferenceNumber * 100.0;
+
+        foreach (var tick in new[] { -100.0, -50.0, 0.0, 40.0 })
         {
-            stagePlot.Bottom - 20.0, stagePlot.Top + stagePlot.Height / 2.0,
-            stagePlot.Top + 20.0
-        };
-        var stageXs = new double[3];
-        var stageBaseXs = new double[3];
-        for (var i = 0; i < 3; i++)
-        {
-            var p = stageParams[i];
-            stageXs[i] = ValueToX(p.CurrentNumber, p.Minimum, p.Maximum, stagePlot, false);
-            stageBaseXs[i] = ValueToX(p.ReferenceNumber, p.Minimum, p.Maximum, stagePlot, false);
-            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.45), 1.0) { DashStyle = DashStyles.Dot },
-                new Point(stagePlot.Left, stageYs[i]), new Point(stagePlot.Right, stageYs[i]));
+            var ty = Y(tick);
+            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.55), 1.0)
+                { DashStyle = DashStyles.Dot },
+                new Point(area.Left, ty), new Point(area.Right, ty));
+            DrawRightAlignedText(dc, $"{(tick > 0 ? "+" : "")}{tick:0}%",
+                new Point(plot.Left + 9.0, ty - 6.0), 8.3, muted, FontWeights.Normal);
         }
-        for (var i = 1; i < 3; i++)
+        for (var tick = 0; tick <= 100; tick += 25)
         {
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.6), 1.5) { DashStyle = DashStyles.Dash },
-                new Point(stageBaseXs[i - 1], stageYs[i - 1]),
-                new Point(stageBaseXs[i], stageYs[i]));
-            dc.DrawLine(new Pen(accent, 2.5),
-                new Point(stageXs[i - 1], stageYs[i - 1]),
-                new Point(stageXs[i], stageYs[i]));
-        }
-        for (var i = 0; i < 3; i++)
-        {
-            var p = stageParams[i];
-            var center = new Point(stageXs[i], stageYs[i]);
-            dc.DrawEllipse(panel, new Pen(muted, 1.5),
-                new Point(stageBaseXs[i], stageYs[i]), 5.0, 5.0);
-            dc.DrawEllipse(panel, new Pen(accent, IsSelected(p) ? 3.0 : 2.0),
-                center, 9.0, 9.0);
-            dc.DrawEllipse(accent, null, center, 2.7, 2.7);
-            DrawCenteredText(dc, $"{stageNames[i]}  {p.CurrentNumber:0} pts",
-                new Point(center.X, center.Y - 17.0), 9.2, text, FontWeights.SemiBold);
-            AddHorizontalTarget(p, new Rect(center.X - 17.0, center.Y - 17.0, 34.0, 34.0),
-                stagePlot, p.Minimum, p.Maximum);
+            var tx = X(tick);
+            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.25), 1.0),
+                new Point(tx, area.Top), new Point(tx, area.Bottom));
+            DrawCenteredText(dc, $"{tick}", new Point(tx, plot.Bottom - 12.0),
+                8.8, muted, FontWeights.Normal);
         }
 
-        var recoveryPlot = new Rect(59.0, stagePlot.Bottom + 78.0,
-            Math.Max(330.0, ActualWidth - 118.0), 138.0);
-        DrawText(dc, "STAMINA RECOVERY BY HUNGER STATE",
-            new Point(20.0, recoveryPlot.Top - 51.0), 10.8, accent, FontWeights.Bold);
-        DrawText(dc, "Drag each ring up or down  |  Well-fed bonus / Medium and Severe losses",
-            new Point(20.0, recoveryPlot.Top - 34.0), 9.2, muted, FontWeights.Normal);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), recoveryPlot, 4.0, 4.0);
-        var recoveryParameters = new[] { wellFed, mediumPenalty, severePenalty };
-        var recoveryNames = new[] { "WELL-FED", "MEDIUM", "SEVERE" };
-        var recoveryXs = new double[3];
-        var recoveryYs = new double[3];
-        var recoveryBaseYs = new double[3];
-        // The shared physical Y axis is signed: +40% recovery at top,
-        // 0% at the center band and -100% at the bottom.
-        var recoveryMap = new Rect(recoveryPlot.Left, recoveryPlot.Top + 13.0,
-            recoveryPlot.Width, recoveryPlot.Height - 26.0);
-        double RecoveryY(int i, double value)
-            => recoveryMap.Bottom - (i == 0 ? (value * 100.0 + 100.0) : (100.0 - value * 100.0))
-                / 140.0 * recoveryMap.Height;
-        for (var i = 0; i < 3; i++)
+        // LOW is an X-only threshold: no invented recovery modifier.
+        var lowX = X(low.CurrentNumber);
+        var lowBaseX = X(low.ReferenceNumber);
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.8), 1.6),
+            new Point(lowBaseX, area.Top), new Point(lowBaseX, area.Bottom));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.65), 1.6),
+            new Point(lowX, area.Top), new Point(lowX, area.Bottom));
+        var lowHandle = new Point(lowX, area.Bottom + 3.0);
+        DrawHumanAxisHandle(dc, lowHandle, accent, panel,
+            ReferenceEquals(_hoverTarget?.Parameter, low), IsSelected(low));
+        AddHorizontalTarget(low,
+            new Rect(lowX - 16.0, lowHandle.Y - 12.0, 32.0, 24.0),
+            area, low.Minimum, low.Maximum);
+        DrawCenteredText(dc, $"LOW {low.CurrentNumber:0}",
+            new Point(lowX, plot.Bottom + 11.0), 9.0, text, FontWeights.SemiBold);
+
+        // WELL-FED stays within the same graph as a distinct bonus handle.
+        // Its X location is fixed at zero; dragging edits only its Y.
+        var fedX = X(0.0);
+        var fedY = Y(wellFed.CurrentNumber * 100.0);
+        var fedBaseY = Y(wellFed.ReferenceNumber * 100.0);
+        dc.DrawEllipse(panel, new Pen(muted, 1.4),
+            new Point(fedX, fedBaseY), 6.0, 6.0);
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.65), 1.6),
+            new Point(fedX, fedY), new Point(fedX, Y(0)));
+        DrawHumanAxisHandle(dc, new Point(fedX, fedY), accent, panel,
+            ReferenceEquals(_hoverTarget?.Parameter, wellFed), IsSelected(wellFed));
+        var fedTop = Y(wellFed.Maximum * 100.0);
+        var fedBottom = Y(wellFed.Minimum * 100.0);
+        AddVerticalTarget(wellFed,
+            new Rect(fedX - 17.0, fedY - 17.0, 34.0, 34.0),
+            new Rect(fedX - 1.0, fedTop, 2.0, Math.Max(1.0, fedBottom - fedTop)),
+            wellFed.Minimum, wellFed.Maximum);
+        DrawText(dc, $"WELL-FED +{wellFed.CurrentNumber * 100:0}%",
+            new Point(plot.Left + 19.0, plot.Top - 12.0), 9.0, text, FontWeights.SemiBold);
+
+        var mediumPoint = new Point(X(medium.CurrentNumber), Y(Effect(mediumPenalty)));
+        var severePoint = new Point(X(severe.CurrentNumber), Y(Effect(severePenalty)));
+        var mediumBase = new Point(X(medium.ReferenceNumber), Y(BaseEffect(mediumPenalty)));
+        var severeBase = new Point(X(severe.ReferenceNumber), Y(BaseEffect(severePenalty)));
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.70), 1.6)
+            { DashStyle = DashStyles.Dash }, mediumBase, severeBase);
+        dc.DrawLine(new Pen(accent, 2.8), mediumPoint, severePoint);
+
+        void DrawCombined(ParameterViewModel threshold, ParameterViewModel effect,
+            Point point, Point reference, string caption)
         {
-            var p = recoveryParameters[i];
-            recoveryXs[i] = recoveryPlot.Left + recoveryPlot.Width * (i + 0.5) / 3.0;
-            recoveryYs[i] = RecoveryY(i, p.CurrentNumber);
-            recoveryBaseYs[i] = RecoveryY(i, p.ReferenceNumber);
-            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.50), 1.0) { DashStyle = DashStyles.Dot },
-                new Point(recoveryXs[i], recoveryMap.Top),
-                new Point(recoveryXs[i], recoveryMap.Bottom));
+            dc.DrawEllipse(panel, new Pen(muted, 1.5), reference, 7.0, 7.0);
+            DrawHumanAxisHandle(dc, point, accent, panel,
+                ReferenceEquals(_hoverTarget?.Parameter, threshold),
+                IsSelected(threshold));
+            DrawCenteredText(dc,
+                $"{caption}  {threshold.CurrentNumber:0} pts / -{effect.CurrentNumber * 100:0}%",
+                new Point(point.X, point.Y - 22.0), 9.2, text, FontWeights.SemiBold);
+            if (threshold.IsControlEnabled && effect.IsControlEnabled)
+                _hitTargets.Add(new HitTarget(threshold,
+                    new Rect(point.X - 19.0, point.Y - 19.0, 38.0, 38.0),
+                    area, HitKind.HungerJoint, threshold.Minimum, threshold.Maximum, false));
         }
-        for (var i = 1; i < 3; i++)
-        {
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.6), 1.5) { DashStyle = DashStyles.Dash },
-                new Point(recoveryXs[i - 1], recoveryBaseYs[i - 1]),
-                new Point(recoveryXs[i], recoveryBaseYs[i]));
-            dc.DrawLine(new Pen(accent, 2.5),
-                new Point(recoveryXs[i - 1], recoveryYs[i - 1]),
-                new Point(recoveryXs[i], recoveryYs[i]));
-        }
-        for (var i = 0; i < 3; i++)
-        {
-            var p = recoveryParameters[i];
-            var center = new Point(recoveryXs[i], recoveryYs[i]);
-            dc.DrawEllipse(panel, new Pen(muted, 1.5),
-                new Point(recoveryXs[i], recoveryBaseYs[i]), 5.0, 5.0);
-            dc.DrawEllipse(panel, new Pen(accent, IsSelected(p) ? 3.0 : 2.0),
-                center, 9.0, 9.0);
-            dc.DrawEllipse(accent, null, center, 2.7, 2.7);
-            DrawCenteredText(dc, $"{recoveryNames[i]}  {(i == 0 ? "+" : "-")}{p.CurrentNumber * 100:0}%",
-                new Point(recoveryXs[i], recoveryPlot.Bottom + 19.0),
-                9.5, text, FontWeights.SemiBold);
-            // Vertical interaction maps the native non-negative CFG value.
-            // The well-fed positive scalar increases upward; losses increase downward.
-            var nativeMap = i == 0
-                ? new Rect(recoveryXs[i] - 2.0,
-                    RecoveryY(i, p.Maximum), 4.0,
-                    Math.Max(1.0, RecoveryY(i, p.Minimum) - RecoveryY(i, p.Maximum)))
-                : new Rect(recoveryXs[i] - 2.0,
-                    RecoveryY(i, p.Minimum), 4.0,
-                    Math.Max(1.0, RecoveryY(i, p.Maximum) - RecoveryY(i, p.Minimum)));
-            AddVerticalTarget(p,
-                new Rect(center.X - 18.0, center.Y - 18.0, 36.0, 36.0),
-                nativeMap,
-                i == 0 ? p.Minimum : p.Maximum,
-                i == 0 ? p.Maximum : p.Minimum);
-        }
-        DrawText(dc, "MEDIUM / SEVERE KEEP THE ORIGINAL NO-SLEEP EFFECT",
-            new Point(20.0, recoveryPlot.Bottom + 43.0), 9.1, muted, FontWeights.SemiBold);
-        DrawText(dc, "GREY = BASE  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
-            new Point(20.0, recoveryPlot.Bottom + 61.0), 9.1, muted, FontWeights.Normal);
+        DrawCombined(medium, mediumPenalty, mediumPoint, mediumBase, "MEDIUM");
+        DrawCombined(severe, severePenalty, severePoint, severeBase, "SEVERE");
+
+        DrawCenteredText(dc,
+            "LOW = HORIZONTAL  |  MEDIUM / SEVERE = BOTH AXES  |  WELL-FED = VERTICAL",
+            new Point(ActualWidth / 2.0, plot.Bottom + 34.0),
+            9.1, muted, FontWeights.SemiBold);
+        DrawCenteredText(dc,
+            "GREY = BASE  |  RIGHT-CLICK = RESET  |  R = RESET ALL",
+            new Point(ActualWidth / 2.0, plot.Bottom + 51.0),
+            9.1, muted, FontWeights.Normal);
     }
 
     private void DrawStarvationTimeline(
@@ -4357,7 +4348,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
-            HitKind.HumanJoint => Cursors.SizeAll,
+            HitKind.HumanJoint or HitKind.HungerJoint => Cursors.SizeAll,
             HitKind.Toggle or HitKind.Choice or HitKind.MixerBaseMarker or HitKind.MixerSelect => Cursors.Hand,
             _ => Cursors.Arrow
         };
@@ -4449,6 +4440,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
         target.Parameter.ResetToReference();
+        if (target.Kind == HitKind.HungerJoint)
+            P(target.Parameter.Id == "survival.hungerMediumThreshold"
+                ? "survival.hungerMediumStaminaRegen"
+                : "survival.hungerStrongStaminaRegen")?.ResetToReference();
         if (target.Kind == HitKind.HumanJoint)
             P(Family == "PsyPhantomPressure"
                 ? "combat.psyPhantomCount" : "combat.npcWeaponDamage")?.ResetToReference();
@@ -4540,6 +4535,31 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         if (target.Kind == HitKind.Toggle)
             return;
+
+        if (target.Kind == HitKind.HungerJoint)
+        {
+            var threshold = target.Parameter;
+            var effect = P(threshold.Id == "survival.hungerMediumThreshold"
+                ? "survival.hungerMediumStaminaRegen"
+                : "survival.hungerStrongStaminaRegen");
+            if (effect is null || !threshold.IsControlEnabled || !effect.IsControlEnabled)
+                return;
+            var x = Math.Clamp((point.X - target.MapRect.Left) /
+                Math.Max(1.0, target.MapRect.Width), 0.0, 1.0);
+            var y = Math.Clamp((target.MapRect.Bottom - point.Y) /
+                Math.Max(1.0, target.MapRect.Height), 0.0, 1.0);
+            threshold.CurrentNumber = Snap(threshold,
+                threshold.Minimum + x * (threshold.Maximum - threshold.Minimum));
+            // Y represents an effect in the signed interval [-100%, +40%].
+            // Only negative values map into Medium/Severe recovery loss.
+            var signedEffect = -100.0 + y * 140.0;
+            effect.CurrentNumber = Snap(effect,
+                Math.Clamp(-signedEffect / 100.0, effect.Minimum, effect.Maximum));
+            EnforceFamilyConstraints(threshold);
+            _status.ClearTransient();
+            InvalidateVisual();
+            return;
+        }
 
         if (target.Kind == HitKind.HumanJoint)
         {
@@ -4942,9 +4962,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double CompactHungerHeight(double width)
     {
         var previewBottom = 55.0 + CompactTrackHeight + 12.0 + 80.0;
-        var stageBottom = previewBottom + 44.0 + 112.0;
-        var recoveryBottom = stageBottom + 78.0 + 138.0;
-        return recoveryBottom + 82.0;
+        var plotBottom = previewBottom + 63.0 + 224.0;
+        return plotBottom + 72.0;
     }
 
     private static IReadOnlyList<string> GetFamilyIds(string family)
@@ -5173,6 +5192,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Horizontal,
         Vertical,
         HumanJoint,
+        HungerJoint,
         MixerBaseMarker,
         MixerSelect,
         Toggle,
