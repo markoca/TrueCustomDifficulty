@@ -128,7 +128,7 @@ def main() -> None:
         "if (target.Kind == HitKind.MixerSelect)",
         "target.Parameter.ResetToReference();",
         "parameter?.IsValueModifiedFromReference() == true",
-        'Family == "AnomalyEffectsBoard"',
+        'Family is "AnomalyEffectsBoard" or "ServiceCostsBoard"',
         "ParameterSelected?.Invoke(this,",
     ):
         require(fragment in visual, f"renderer feature missing: {fragment}")
