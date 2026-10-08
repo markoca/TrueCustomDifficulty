@@ -166,16 +166,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             muted,
             FontWeights.Normal);
 
-        if (!string.IsNullOrWhiteSpace(_status.Text))
-        {
-            DrawCenteredText(
-                dc,
-                _status.Text,
-                new Point(ActualWidth / 2.0, 433.0),
-                9.5,
-                accent,
-                FontWeights.SemiBold);
-        }
+        // No transient yellow reset notifications.
     }
 
     private void DrawColumnHeader(DrawingContext dc, Rect column, Brush muted, Brush border)
