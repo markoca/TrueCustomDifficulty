@@ -667,3 +667,9 @@ User correction: in the three live Consumables statistics cards, highlight **onl
 ### 2026-10-08 — Consumables warning cleanup
 
 After the upper four controls returned to horizontal sliders, the local `FaderEnd` calculation in `DrawConsumableMixer` became unused (CS8321). Removed only that dead local helper. Duration faders, layout and all source/editor behavior remain unchanged. The user's previous publish succeeded with this warning; a fresh post-fix publish remains to be run locally.
+
+### Locked Consumables and gamer-facing Drunk stages (2026-10-08)
+
+Final Consumables design is **locked by user instruction**: top four compact horizontal effect-strength sliders; bottom five compact vertical effect-duration faders; three read-only live gameplay-statistic cards whose only modified **numeric substrings** turn yellow, not their labels/units; retained five-drink seconds timeline; no extra footer prose. The nine native parameter IDs, ranges, reset/CFG behavior are preserved.
+
+DrunkennessControl keeps vanilla stage thresholds and existing beer/vodka strength controls. Visible stages use SOBER (<0.001), TIPSY (LOW 0.001), DRUNK (MEDIUM 30), WASTED (STRONG 80), with progression tiles, threshold reference cards and headline vocabulary updated consistently. This does not change intoxication math, the separate OverDrunkness 89 reference, or any source CFG mechanics.
