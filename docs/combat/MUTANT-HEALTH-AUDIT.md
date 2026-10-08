@@ -101,3 +101,10 @@ The remaining audited MaxHP values stay documented but are not exposed as standa
 ## Production UI extension — 2026-10-09
 
 The earlier eight-family-only UI restriction is superseded by the user's explicit approval to add **all audited mutant MaxHP families**, even where no separately verifiable Ability Cooldown editor exists. Added standalone health multiplier mapping for Blinddog (63 HP), Boar (300 HP), Flesh (280 HP), Poltergeist (400 HP), Snork (150 HP) and Tushkan (19 HP). The existing eight mapped families are retained. The combined Mutant Health board is now a two-row, seven-column editor. These remain **direct prototype MaxHP scalars**, not difficulty-specific health settings. No additional cooldown mechanism is introduced. The previous eight-only notes above remain as historical release decisions, not as current UI scope. Compile, runtime and generated CFG validation still require local verification.
+
+
+## Alphabetical HP and special-ability cooldown verification — 2026-10-09
+
+The production Mutant Health editor now lists all fourteen supported families alphabetically and caps each HP multiplier at **2×** instead of 3× (0.25× minimum, 0.05× tick). The catalog and ViewModel both enforce the maximum.
+
+Only eight family-specific ability cooldown mappings are currently verified and implemented through `MutantCombatDifficulty.AgentCooldownMultipliers` in selected difficulty profiles: Bloodsucker, Chimera, Deer, Pseudogiant, Pseudodog, Burer, Bayun, Controller (with authored related variants). Blind Dog, Boar, Flesh, Poltergeist, Snork and Tushkan have audited MaxHP but **no verified equivalent special ability cooldown entry**. This does not prove those mutants have no cooldown of any kind; it prohibits representing unverified special ability controls as genuine CFG mappings. Global ordinary attack frequency is a separate control. No new cooldown CFG mappings were fabricated.
