@@ -551,3 +551,7 @@ The two horizontal sliders are **side by side**, not stacked: Damage Per Hit on 
 ### Combat UI density and Psy graph — 2026-10-08
 
 Mutant Combat's two horizontal global tracks share one row directly below the header, with the eight vertical ability cooldowns below after only the section label/subtitle. Keep vertical dead space minimal and preserve independent controls. Repeated Hit Protection is not a normal UI control (parameter state/mappings remain available internally). Psy Phantom Pressure follows Human Combat's square graph geometry, dotted crosshair and three circular handles: X=Cycle Wait, Y=Phantom Count, center=both. Gear Damage is a frameless vertical side fader, while Bleed retains its original boolean toggle. The Base marker represents the selected vanilla preset; this display does not derive spawns/minute.
+
+### Locked Combat section order — 2026-10-08
+
+The four visible Combat groups are ordered **Your Weapons → Human Enemies → Mutant Combat → Mutant Health**, one full-width card per row. The Psy Combat section and Repeated Hit Protection section are completely absent from the Combat view, including their headers; source CFG definitions remain available internally. Your Weapons uses one centered row of three equal-width faders, with two equal gaps rather than the former off-center bank calculation. Combat explanatory text must not mention repeated-hit protection as a visible control.
