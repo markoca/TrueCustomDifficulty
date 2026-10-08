@@ -11,10 +11,9 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double DesiredHeight = 380.0;
-    private const double MaxContentWidth = 900.0;
-    private const double ColumnGap = 16.0;
-    private const double RowHeight = 62.0;
+    private const double DesiredHeight = 400.0;
+    private const double MaxContentWidth = 1080.0;
+    private const double ColumnGap = 8.0;
 
     private static readonly CooldownDefinition[] Mutants =
     {
@@ -59,7 +58,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(560.0, availableSize.Width);
+        var width = double.IsInfinity(availableSize.Width) ? 900.0 : Math.Max(760.0, availableSize.Width);
         return new Size(width, DesiredHeight);
     }
 
@@ -132,95 +131,89 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         DrawText(dc, "SPECIAL-ABILITY PACING", new Point(content.Left, 16.0), 12.5, text, FontWeights.Bold);
         DrawText(dc, "WAIT down = ability returns sooner", new Point(content.Left, 37.0), 9.5, muted, FontWeights.Normal);
 
-        var columnWidth = (content.Width - ColumnGap) / 2.0;
-        for (var i = 0; i < 4; i++)
-        {
-            DrawRow(dc, i, new Rect(content.Left, 68.0 + i * RowHeight, columnWidth, RowHeight - 6.0), text, muted, border, accent, panel);
-            DrawRow(dc, i + 4, new Rect(content.Left + columnWidth + ColumnGap, 68.0 + i * RowHeight, columnWidth, RowHeight - 6.0), text, muted, border, accent, panel);
-        }
+        // Fixed one-row, eight-channel bank matching Mutant Health.
+        const int columns = 8;
+        var stripWidth = (content.Width - (columns - 1) * ColumnGap) / columns;
+        for (var i = 0; i < Mutants.Length; i++)
+            DrawRow(dc, i, new Rect(
+                content.Left + i * (stripWidth + ColumnGap),
+                65.0, stripWidth, 280.0),
+                text, muted, border, accent, panel);
 
-        DrawCenteredText(
-            dc,
-            "return rate = 1 ÷ wait   •   grey tick = Base Preset",
-            new Point(ActualWidth / 2.0, 332.0),
-            9.0,
-            muted,
-            FontWeights.Normal);
+        DrawCenteredText(dc,
+            "HIGHER WAIT = SLOWER ABILITY  |  GREY TICK = BASE  |  RIGHT-CLICK = RESET",
+            new Point(ActualWidth / 2.0, 369.0), 10.0, muted, FontWeights.SemiBold);
 
         if (!string.IsNullOrWhiteSpace(_status.Text))
-            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 355.0), 9.5, accent, FontWeights.SemiBold);
+            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 387.0), 9.5, accent, FontWeights.SemiBold);
     }
 
     private void DrawRow(
-        DrawingContext dc,
-        int row,
-        Rect card,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+        DrawingContext dc, int row, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         if (_parameters[row] is not { } parameter)
             return;
 
-        var info = Mutants[row];
+        var mutant = Mutants[row];
         var selected = row == _selectedRow;
         var hovered = row == _hoverRow;
-        var modified = Math.Abs(parameter.CurrentNumber - parameter.ReferenceNumber) > Epsilon;
-        var returnRate = parameter.CurrentNumber > Epsilon ? 1.0 / parameter.CurrentNumber : 0.0;
-
-        dc.DrawRoundedRectangle(
-            selected ? CloneWithOpacity(accent, 0.08)
-            : hovered ? CloneWithOpacity(border, 0.10)
-            : CloneWithOpacity(panel, 0.02),
-            new Pen(CloneWithOpacity(border, 0.45), 0.8),
-            card,
-            3.0,
-            3.0);
-
-        DrawText(dc, info.Label, new Point(card.Left + 8.0, card.Top + 6.0), 9.5, modified ? accent : text, FontWeights.Bold);
-        DrawRightAlignedText(
-            dc,
-            $"{parameter.CurrentNumber:0.##}x WAIT   |   {returnRate:0.##}x RETURN",
-            new Point(card.Right - 8.0, card.Top + 5.0),
-            9.3,
-            returnRate > 1.0 + Epsilon ? accent : text,
-            FontWeights.Bold);
-
-        if (!string.IsNullOrWhiteSpace(info.SecondaryNote))
-            DrawText(dc, info.SecondaryNote!, new Point(card.Left + 8.0, card.Top + 23.0), 9.0, muted, FontWeights.Normal);
+        var center = card.Left + card.Width / 2.0;
+        var name = mutant.Label.ToUpperInvariant();
+        if (name is "BLOODSUCKER" or "PSEUDOGIANT" or "PSEUDODOG")
+        {
+            var split = name is "BLOODSUCKER" ? 5 : 6;
+            DrawCenteredText(dc, name[..split],
+                new Point(center, card.Top + 8.0), 9.8, text, FontWeights.Bold);
+            DrawCenteredText(dc, name[split..],
+                new Point(center, card.Top + 21.0), 9.8, text, FontWeights.Bold);
+        }
         else
-            DrawText(
-                dc,
-                returnRate > 1.05 ? "more frequent"
-                : returnRate < 0.95 ? "less frequent"
-                : "base pacing",
-                new Point(card.Left + 8.0, card.Top + 23.0),
-                9.0,
-                muted,
-                FontWeights.Normal);
+            DrawCenteredText(dc, name,
+                new Point(center, card.Top + 15.0), 9.8, text, FontWeights.Bold);
 
-        var track = new Rect(card.Left + 8.0, card.Top + 41.0, card.Width - 16.0, 10.0);
-        var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
+        DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
+            new Point(center, card.Top + 39.0), 16.2, accent, FontWeights.Bold);
+        var returnRate = parameter.CurrentNumber > Epsilon
+            ? 1.0 / parameter.CurrentNumber : 0.0;
+        DrawCenteredText(dc, $"{returnRate:0.##}x RETURN",
+            new Point(center, card.Top + 63.0), 9.7, muted, FontWeights.SemiBold);
 
-        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
-        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track);
-
-        dc.DrawLine(new Pen(muted, 1.0), new Point(baseX, y - 5.0), new Point(baseX, y + 5.0));
-        dc.DrawLine(new Pen(accent, 3.0), new Point(track.Left, y), new Point(currentX, y));
-        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.4 : 1.4), new Point(currentX, y), 5.3, 5.3);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.3, 2.3);
-
+        var rail = new Rect(center - 3.0, card.Top + 110.0, 6.0, 150.0);
+        var currentY = ValueToY(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, rail);
+        var baseY = ValueToY(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, rail);
+        DrawCenteredText(dc, $"{parameter.Maximum:0.##}x",
+            new Point(center, rail.Top - 15.0), 13.0, muted, FontWeights.Normal);
+        dc.DrawLine(new Pen(border, 5.0),
+            new Point(center, rail.Top), new Point(center, rail.Bottom));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 5.0),
+            new Point(center, rail.Bottom), new Point(center, currentY));
+        dc.DrawLine(new Pen(muted, 2.2),
+            new Point(center + 13.0, baseY), new Point(center + 29.0, baseY));
+        if (hovered || selected)
+        {
+            dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.24 : 0.13),
+                null, new Point(center, currentY),
+                hovered ? 20.0 : 15.0, hovered ? 20.0 : 15.0);
+            dc.DrawEllipse(null, new Pen(CloneWithOpacity(accent, 0.8), 1.8),
+                new Point(center, currentY), 12.0, 12.0);
+        }
+        dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 3.0 : 1.8),
+            new Point(center, currentY), 9.0, 9.0);
+        dc.DrawLine(new Pen(accent, 2.2),
+            new Point(center - 7.0, currentY), new Point(center + 7.0, currentY));
+        DrawCenteredText(dc, $"{parameter.Minimum:0.##}x",
+            new Point(center, rail.Bottom + 17.0), 13.0, muted, FontWeights.Normal);
         _targets[row] = new HitTarget(
-            new Rect(track.Left - 6.0, track.Top - 6.0, track.Width + 12.0, track.Height + 12.0),
-            track);
+            new Rect(center - 16.0, rail.Top - 9.0, 32.0, rail.Height + 18.0),
+            rail);
     }
 
     private Rect ContentRect()
     {
-        var width = Math.Min(MaxContentWidth, Math.Max(540.0, ActualWidth - 32.0));
+        var width = Math.Min(MaxContentWidth, Math.Max(760.0, ActualWidth - 32.0));
         return new Rect((ActualWidth - width) / 2.0, 0.0, width, ActualHeight);
     }
 
@@ -333,7 +326,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         if (!_targets.TryGetValue(row, out var target) || _parameters[row] is not { } parameter)
             return;
 
-        var ratio = Math.Clamp((point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width), 0.0, 1.0);
+        var ratio = 1.0 - Math.Clamp((point.Y - target.MapRect.Top) / Math.Max(1.0, target.MapRect.Height), 0.0, 1.0);
         var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
         var tick = Math.Max(parameter.TickFrequency, Epsilon);
         var snapped = parameter.Minimum + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
@@ -353,6 +346,10 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
         return -1;
     }
+
+    private static double ValueToY(double value, double minimum, double maximum, Rect track)
+        => track.Bottom - track.Height * Math.Clamp(
+            (value - minimum) / Math.Max(Epsilon, maximum - minimum), 0.0, 1.0);
 
     private static double ValueToX(double value, double minimum, double maximum, Rect track)
     {
