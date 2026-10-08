@@ -507,3 +507,7 @@ Human Enemies occupies the left column and Your Weapons the right column of a pe
 ### Combat fixed layout slots (2026-10-08)
 
 Combat section row 1 is always **Human Enemies | Your Weapons**, two equal columns separated by 16 DIP. This relationship is defined by fixed first/second Combat catalog group positions, not automatic pairing or WPF group-name extraction. The Combat section panel reserves at least 1096 DIP, preserving each section's usable width; horizontal scrolling handles smaller viewports. The other Combat sections follow underneath, and other tabs do not inherit this fixed minimum.
+
+### Combat group identity resolution (2026-10-08)
+
+The actual WPF group enumeration may put Mutants between Human Enemies and Your Weapons. Read the group name from each GroupItem's bound Tag; for the Combat layout, arrange the Human Enemies and Your Weapons group elements first and together in a fixed 2-column row, with Mutants following. Never pair the first two raw WPF elements merely by index.
