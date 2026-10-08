@@ -131,14 +131,10 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
 
         _targets.Clear();
 
-        DrawText(dc, "HUMAN SQUAD CAPS", new Point(18.0, 16.0), 12.0, text, FontWeights.Bold);
-        DrawText(
-            dc,
-            "maximum ALife squad size at each player rank",
-            new Point(18.0, 34.0),
-            8.2,
-            muted,
-            FontWeights.Normal);
+        DrawCenteredText(dc, "HUMAN SQUAD CAPS", new Point(ActualWidth / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "maximum ALife squad size at each player rank", new Point(ActualWidth / 2.0, 39.0),
+            9.5, muted, FontWeights.Normal);
 
         DrawRightAlignedText(
             dc,
