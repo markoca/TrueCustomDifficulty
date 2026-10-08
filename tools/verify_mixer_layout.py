@@ -144,6 +144,48 @@ def main() -> None:
     require('"AnomalyEffectsBoard" => "Six vertical faders' in vm,
             "anomaly rationale still describes old horizontal controls")
 
+    # Second mixer wave: three existing families reuse precisely the same
+    # channel renderer, snap-to-native-step and selected-parameter event.
+    other_families = {
+        "ServiceCostsBoard": (
+            "ServiceMixerChannels",
+            ("economy.fastTravelCost", "economy.upgradeCost", "economy.repairCostBase"),
+        ),
+        "TraderStockBoard": (
+            "TraderMixerChannels",
+            ("economy.traderAmmoStock", "economy.medicStock"),
+        ),
+        "ItemWeightBoard": (
+            "WeightMixerChannels",
+            ("equipment.ammoWeight", "equipment.consumableWeight"),
+        ),
+    }
+    for family, (array_name, expected_ids) in other_families.items():
+        channel_array = re.search(
+            rf"{array_name}\\s*=\\s*\\{{(.*?)\\}};", visual, re.S,
+        )
+        require(channel_array is not None, f"missing {array_name}")
+        values = tuple(re.findall(
+            r'\\("(?:economy|equipment)\\.[a-zA-Z]+",',
+            channel_array.group(1),
+        ))
+        require(len(values) == len(expected_ids), f"{family}: wrong fader count")
+        for source_id in expected_ids:
+            require(f'("{source_id}",' in channel_array.group(1),
+                    f"{family}: missing source {source_id}")
+            require(source_id in by_id and by_id[source_id]["control"] == "slider",
+                    f"{family}: missing native slider {source_id}")
+        require(f'"{family}" => GetMixerHeight(width, {array_name}.Length)' in visual,
+                f"{family}: missing dynamic measure")
+        require(f'"{family}" => "{expected_ids[0]}"' in vm or family == "ItemWeightBoard",
+                f"{family}: source family control-help absent")
+        require(f'or "{family}"' in visual or f'Family is "{family}"' in visual,
+                f"{family}: rationale selection missing")
+    require("DrawNumericMixerBoard(dc, text, muted, border, accent, panel);" in visual,
+            "shared mixer dispatch missing")
+    require('"economy.repairCostBase" => $"{raw * 100.0:0.#}%"' in visual,
+            "base repair price percent unit display missing")
+
     ET.parse(XAML)
     check_geometry()
     print("[PASS] Six source-exact anomaly faders, Base/selection, layout and XAML guards")
