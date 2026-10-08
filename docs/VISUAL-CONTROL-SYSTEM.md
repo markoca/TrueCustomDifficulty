@@ -487,3 +487,7 @@ Draw the selected multiplier beside its axis title rather than on a different ro
 ### Human Combat grey fader endpoint typography (2026-10-08)
 
 The Attack Frequency and Shot Accuracy grey minimum/maximum multiplier captions are 13.0 DIP. This applies only to Human Combat's frameless vertical mixer strips; other control families retain their established font sizes.
+
+### Human Combat terminology — 2026-10-08
+
+The vertical Human Combat axis label is **ENEMY GUN DAMAGE** (not GUN DAMAGE). Its multiplier remains inline with the rotated label; the footer names the left handle ENEMY GUN DAMAGE.
