@@ -367,3 +367,7 @@ After Hunger Build-Up and the retained read-only stage preview, show one full-wi
 ### Hunger Survival Profile: intuitive discrete stages (2026-10-08)
 
 Replace sloping Hunger Effect Curve with a discrete step graph to avoid falsely implying continuous effect interpolation. Preserve Hunger Build-Up and stage preview. In one bordered profile, allocate a distinct Well-Fed vertical bonus rail at left and a right-hand 0–100 hunger point / 0..-100% recovery loss chart. LOW threshold ring edits X only. MEDIUM and SEVERE 2D rings edit native threshold and penalty. Highlight gold current stages and dashed grey Base state, with labeled value slots below; keep hover/glow rings, source steps, right-click reset and group-wide R reset. Do not relabel penalties as direct HP damage or fabricate low-state recovery loss.
+
+### Hover/reset and reference-label lock (2026-10-08)
+
+Across the visual control system: do not render interactive hit regions as rectangular outlines; emphasize the active ring handle instead. Reset gestures stay active but are visually silent (no ephemeral gold text). Remove textual BASE from Hunger State Ladder while retaining its grey reference geometry. Mixer strips should be frameless.
