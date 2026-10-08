@@ -155,8 +155,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             muted,
             FontWeights.Normal);
 
-        if (!string.IsNullOrWhiteSpace(_status.Text))
-            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 395.0), 9.5, accent, FontWeights.SemiBold);
+        // No transient yellow reset notifications.
     }
 
     private void DrawRow(
