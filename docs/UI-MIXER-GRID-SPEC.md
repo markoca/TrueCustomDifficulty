@@ -319,3 +319,7 @@ Human Combat has three vertical tracks next to its graph: Attack Frequency 0.5â€
 ### Mutant Health / Your Weapons row lock (2026-10-08)
 
 Inside the fixed 1x1 full-width section layout, Mutant Health has eight source-native vertical faders in a single row with equal spacing. Your Weapons has three vertical faders in a single centered row. The old Mutant Health 4x2 and Your Weapons 2x2 layout descriptions are superseded. Do not auto-wrap either bank; preserve their native source semantics and grey reference ticks.
+
+### Special Ability Cooldowns fader bank (2026-10-08)
+
+Eight compact, equally spaced vertical cooldown controls remain on one horizontal row, aligned with the single-row Mutant Health pattern. Preserve each CFG cooldown wait multiplier, grey Base tick, gold glowing handle, native source step, individual reset and inverse return-rate annotation. This layout does not auto-wrap.
