@@ -1314,10 +1314,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc,
             lowHealth ? "HEALTH RECOVERY LOSS" : "EXTRA ACTION STAMINA COST",
             new Point(card.Left + 12.0, card.Top + 8.0), 10.4, text, FontWeights.Bold);
-        DrawRightAlignedText(dc,
+        DrawChangedNumbers(dc,
             $"{(lowHealth ? "-" : "+")}{penalty.CurrentNumber * 100:0}%  |  BASE {penalty.ReferenceNumber * 100:0}%",
             new Point(card.Right - 12.0, card.Top + 7.0),
-            11.0, enabled ? accent : muted, FontWeights.Bold);
+            11.0, enabled ? text : muted, accent, FontWeights.Bold,
+            enabled && penalty.IsValueModifiedFromReference(), rightAligned: true);
 
         var track = new Rect(card.Left + 16.0, card.Top + 32.0, card.Width - 32.0, 23.0);
         var y = track.Top + track.Height / 2.0;
@@ -1556,12 +1557,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Keep the current value legible. Shorten the label for narrow cards;
         // the grey baseline tick stays present regardless of card width.
         var compact = card.Width < 325.0;
-        DrawRightAlignedText(dc,
+        DrawChangedNumbers(dc,
             compact
                 ? Format(parameter.CurrentNumber)
                 : $"{Format(parameter.CurrentNumber)}   /   BASE {Format(parameter.ReferenceNumber)}",
             new Point(card.Right - 10.0, card.Top + 6.0),
-            11.2, enabled ? accent : muted, FontWeights.Bold);
+            11.2, enabled ? text : muted, accent, FontWeights.Bold,
+            enabled && parameter.IsValueModifiedFromReference(), rightAligned: true);
 
         var track = new Rect(card.Left + 12.0, card.Top + 30.0,
             Math.Max(64.0, card.Width - 24.0), 21.0);
