@@ -13,6 +13,9 @@ Semantic controls follow one density/readability baseline:
 - Custom-rendered text has a 9.0 minimum FontSize. Important values and labels use larger sizes.
 - Shared aggregate title/subtitle typography uses 11.5/9.5 px; the shared renderer confines labels to the available horizontal viewport, **trims long labels on one line with an ellipsis**, and shifts centered labels away from clipped panel edges. This does not shrink below the 9 px minimum or change any numeric values.
 - Shared Base Preset reference ticks are visually thicker and taller for legibility.
+- Paired **72 px** source-value cards (Core Health, Human Combat, Psy Phantom Pressure) have a fixed hierarchy: title, current/Base Preset value, native-range track, and legible min/max. Titles and values occupy separate rows and are clipped **inside their own card**, not to the right edge of the full panel.
+- Bundle toggle pills reserve a dedicated 52 px ON/OFF lane. Long captions ellipsize before that lane instead of painting over the current state.
+- Equipment Wear and Human Combat crosshair panels show both independent axis captions and the current/Base Preset multipliers on separate, half-width rows above the plot. No crosshair drag semantics, sliders, or CFG values change.
 - Detailed implementation caveats belong in the rationale/help panel; the control surface itself should show only the value, Base Preset reference and immediate gameplay meaning.
 - Large entity families use multiple columns when that improves scanability instead of growing into very tall single-column dashboards.
 - The Fatigue, Consumables and Hunger aggregate panels use a shared 82 px source-value card, with native-range sliders, 9.2+ px axis labels, 10+ px headings and a grey Base Preset reference tick. The heading and current/base values have separate lines and are clipped to their own card, not across neighboring columns.
@@ -114,6 +117,7 @@ The centralized value-based `LOW <= MEDIUM <= SEVERE` threshold constraint remai
 - Grey dashed lines/ghost point = the selected Base Preset; yellow lines/point = the current values.
 - Drag only the bottom axis handle to edit armor; drag only the left axis handle to edit weapon wear. The two-axis summary point itself is not draggable.
 - Right-click either handle to reset just that parameter; R resets the pair.
+- Both axis headings and live/Base Preset values now occupy separate, width-bounded text lines, eliminating the left/right label collision at the minimum window width.
 - Both parameters retain their distinct native ranges/steps, per-difficulty baselines, preset serialization and writer routes. The two item-weight sliders remain separate and unchanged.
 - The visual does **not** claim a specific armor durability-to-wear formula and does **not** alter weapon jamming.
 
@@ -125,7 +129,8 @@ The centralized value-based `LOW <= MEDIUM <= SEVERE` threshold constraint remai
 - Y axis: `combat.npcWeaponDamage` (the selected difficulty's `NPC_Weapon_BaseDamage` multiplier); higher = stronger firearm hits from human enemies.
 - A grey ghost marker is the selected Base Preset; the yellow crosshair is the current pair. The crosshair is display-only; the bottom and left handles adjust one CFG value at a time.
 - Below the plot, `combat.npcAttackCooldown` edits player-facing attack **frequency**, preserving the existing writer's reciprocal `NPC_AttackCooldown` conversion. `combat.npcHipAccuracy` edits the native accuracy multiplier.
-- Both lower tracks retain their own vanilla reference ticks and their exact native range/step.
+- Each axis has its own two-line title and exact current/Base Preset value, with a strict left/right half-width text boundary so the two headings do not overlap.
+- Both lower tracks use separate title/value lines, a gold editable handle, grey Base Preset marker, native range labels and the original step.
 - These four independent controls do **not** produce a computed hit chance, attack DPS, or time-to-kill; the engine's complete combat model is not claimed.
 
 ### Your Weapons
@@ -148,6 +153,7 @@ Each lane uses its own native absolute multiplier range and 0.01 step. The grey 
 - CONFIGURED RECOVERY DELAY edits `health.regenDelay` in the raw 0–10 second range. The shaded section represents the *configured delay*, not a proven HP recovery timeline: not every recovery source is confirmed to honor it.
 - PASSIVE REGEN edits `health.baseRegen` (0–5 native `VitalParams.RegenHP`, 0.5 step). The source field's actual tick cadence and effect layering still need a runtime test, so it is not labeled as HP/s.
 - RECOVERY EFFECT SCALE edits `health.regenerationScalar` (0x–2x, 0.01 step), the selected difficulty's `EnvironmentDifficulty.Regen_HP` multiplier. This changes compatible regeneration effects but does not create passive healing by itself.
+- The paired PASSIVE REGEN and RECOVERY EFFECT SCALE cards now put the heading above the exact current/Base Preset value instead of trying to fit both on a single line. Both keep native ranges, grey reference markers, and independent draggable hit targets.
 - Four independent controls preserve their own ranges, steps, presets, and CFG routes. Gold handles are editable, grey ticks are Base Preset references. Right-click restores a single setting; R restores all four. No fabricated healing-rate curve or effective HP-per-second arithmetic is shown.
 
 ### Master Severe Fatigue
