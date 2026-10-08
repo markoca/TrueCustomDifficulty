@@ -21,6 +21,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private readonly Dictionary<string, ParameterViewModel> _parameters = new(StringComparer.Ordinal);
     private readonly List<HitTarget> _hitTargets = new();
     private readonly VisualStatusMessage _status;
+    private bool _fatigueReloadInteraction;
 
     private HitTarget? _dragTarget;
     private HitTarget? _hoverTarget;
@@ -1055,14 +1056,24 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Each CFG value instead has one full-width, native-range slider below.
     // Two-column editing on wide surfaces; single-column fallback when narrow.
     // Stage graph is read-only to avoid overlapping draggable graph handles.
+    private ParameterViewModel? FatigueEffectFor(ParameterViewModel threshold)
+    {
+        var stage = threshold.Id == "survival.sleepLowThreshold" ? "Low" :
+            threshold.Id == "survival.sleepMediumThreshold" ? "Medium" : "Strong";
+        return P("survival.fatigue" + stage +
+            (_fatigueReloadInteraction ? "ReloadPenalty" : "AimPenalty"));
+    }
+    private double FatigueAimMaximum()
+        => Math.Max(P("survival.fatigueLowAimPenalty")?.Maximum ?? 0,
+            Math.Max(P("survival.fatigueMediumAimPenalty")?.Maximum ?? 0,
+                P("survival.fatigueStrongAimPenalty")?.Maximum ?? 0));
+    private double FatigueReloadMaximum()
+        => Math.Max(P("survival.fatigueMediumReloadPenalty")?.Maximum ?? 0,
+            P("survival.fatigueStrongReloadPenalty")?.Maximum ?? 0);
+
     private void DrawFatigueCurve(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
+        DrawingContext dc, Brush text, Brush muted, Brush border, Brush soft,
+        Brush accent, Brush panel)
     {
         var rate = P("survival.sleepinessRate");
         var relief = P("survival.energyDrinkFatigueRelief");
@@ -1075,129 +1086,167 @@ public sealed class AggregateVisualControl : FrameworkElement
         var mediumReload = P("survival.fatigueMediumReloadPenalty");
         var severeReload = P("survival.fatigueStrongReloadPenalty");
 
-        DrawHeader(dc, "FATIGUE PENALTIES",
-            "sleepiness thresholds and the combat penalties they trigger",
-            text, muted, accent);
-
+        DrawHeader(dc, "FATIGUE PROFILE", string.Empty, text, muted, accent);
         if (rate is null || relief is null || low is null || medium is null ||
             severe is null || lowAim is null || mediumAim is null ||
             severeAim is null || mediumReload is null || severeReload is null)
         {
-            DrawCenteredText(dc, "Fatigue control data unavailable.",
-                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            DrawCenteredText(dc, "Fatigue settings unavailable.",
+                new Point(ActualWidth / 2.0, 140), 10, muted, FontWeights.Bold);
             return;
         }
 
         var width = Math.Max(460.0, ActualWidth - 34.0);
-        var columns = CompactColumns(ActualWidth);
-        var stageColumns = CompactStageColumns(ActualWidth);
-        var combatColumns = stageColumns;
-
-        void Card(ParameterViewModel parameter, string label, string value,
-            string min, string max, double top, int columnsInGroup, int index)
-            => DrawCompactTrack(dc, parameter, label, value, min, max,
-                CompactSlot(top, width, columnsInGroup, index),
-                text, muted, border, accent, panel);
-
         const double buildTop = 55.0;
-        Card(rate, "FATIGUE BUILD-UP",
-            $"{rate.CurrentNumber:0.000} pts/s  |  BASE {rate.ReferenceNumber:0.000}",
-            "0 pts/s", "0.020 pts/s", buildTop, columns, 0);
-        Card(relief, "ENERGY DRINK FATIGUE RELIEF",
-            $"{relief.CurrentNumber:0.##}x  |  BASE {relief.ReferenceNumber:0.##}x",
-            "0x", "2x", buildTop, columns, 1);
+        DrawCompactTrack(dc, rate, "FATIGUE BUILD-UP",
+            $"{rate.CurrentNumber:0.000} pts/s", "0 pts/s", "0.020 pts/s",
+            CompactSlot(buildTop, width, 2, 0), text, muted, border, accent, panel);
+        DrawCompactTrack(dc, relief, "ENERGY DRINK FATIGUE RELIEF",
+            $"{relief.CurrentNumber:0.##}x", "0x", "2x",
+            CompactSlot(buildTop, width, 2, 1), text, muted, border, accent, panel);
 
-        var previewTop = CompactGridEnd(buildTop, 2, columns) + 12.0;
-        var preview = new Rect(17.0, previewTop, width, 80.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
-        DrawText(dc, "SLEEPINESS POINTS  /  STAGE PREVIEW",
-            new Point(preview.Left + 12.0, previewTop + 7.0),
-            10.2, text, FontWeights.Bold);
-
-        var track = new Rect(preview.Left + 22.0, previewTop + 32.0,
-            preview.Width - 44.0, 12.0);
-        var y = track.Top + track.Height / 2.0;
-        double At(double value) => ValueToX(value, 0.0, 100.0, track, false);
-
-        var stops = new[]
-        {
-            0.0,
-            Math.Clamp(low.CurrentNumber, 0.0, 100.0),
-            Math.Clamp(medium.CurrentNumber, 0.0, 100.0),
-            Math.Clamp(severe.CurrentNumber, 0.0, 100.0),
-            100.0
-        };
-        for (var i = 0; i < stops.Length - 1; i++)
-        {
-            var x1 = At(stops[i]);
-            var x2 = At(stops[i + 1]);
-            dc.DrawRectangle(CloneWithOpacity(i == 3 ? accent : soft,
-                    i == 3 ? 0.7 : 0.20 + i * 0.13), null,
-                new Rect(x1, y - 4.0, Math.Max(0.0, x2 - x1), 8.0));
-        }
-
-        foreach (var parameter in new[] { low, medium, severe })
-        {
-            var currentX = At(parameter.CurrentNumber);
-            var baseX = At(parameter.ReferenceNumber);
-            dc.DrawLine(new Pen(muted, 1.5),
-                new Point(baseX, y - 10.0), new Point(baseX, y + 10.0));
-            dc.DrawLine(new Pen(accent, 2.0),
-                new Point(currentX, y - 11.0), new Point(currentX, y + 11.0));
-        }
-
-        var previewStages = new[] { low, medium, severe };
-        var previewLabels = new[] { "LOW", "MEDIUM", "SEVERE" };
-        var legendWidth = (preview.Width - 24.0) / 3.0;
+        var previewTop = buildTop + CompactTrackHeight + 12.0;
+        var preview = new Rect(17, previewTop, width, 80);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1), preview, 4, 4);
+        DrawText(dc, "FATIGUE POINTS / STAGE PREVIEW",
+            new Point(preview.Left + 12, preview.Top + 7), 10.2, text, FontWeights.Bold);
+        var axis = new Rect(preview.Left + 81, preview.Top + 32, preview.Width - 111, 12);
+        double X(double value) => ValueToX(value, 0, 100, axis, false);
+        var y = axis.Top + axis.Height / 2;
+        var thresholds = new[] { low, medium, severe };
+        var stops = new[] { 0.0, low.CurrentNumber, medium.CurrentNumber, severe.CurrentNumber, 100.0 };
+        for (var i = 0; i < 4; i++)
+            dc.DrawRectangle(CloneWithOpacity(i == 3 ? accent : soft, i == 3 ? 0.72 : 0.2 + i * 0.12),
+                null, new Rect(X(stops[i]), y - 4, Math.Max(0, X(stops[i + 1]) - X(stops[i])), 8));
         for (var i = 0; i < 3; i++)
         {
-            var parameter = previewStages[i];
-            var cx = preview.Left + 12.0 + (i + 0.5) * legendWidth;
-            DrawCenteredText(dc,
-                $"{previewLabels[i]} {parameter.CurrentNumber:0}  |  BASE {parameter.ReferenceNumber:0}",
-                new Point(cx, previewTop + 55.0),
+            dc.DrawLine(new Pen(muted, 1.5), new Point(X(thresholds[i].ReferenceNumber), y - 10),
+                new Point(X(thresholds[i].ReferenceNumber), y + 10));
+            dc.DrawLine(new Pen(accent, 2), new Point(X(thresholds[i].CurrentNumber), y - 11),
+                new Point(X(thresholds[i].CurrentNumber), y + 11));
+            DrawCenteredText(dc, new[] { "LOW", "MEDIUM", "SEVERE" }[i] +
+                $" {thresholds[i].CurrentNumber:0}",
+                new Point(preview.Left + 12 + (i + 0.5) * (preview.Width - 24) / 3, preview.Top + 55),
                 9.5, i == 2 ? accent : text, FontWeights.SemiBold);
         }
 
-        var stagesTop = preview.Bottom + 12.0;
-        Card(low, "LOW FATIGUE BEGINS",
-            $"{low.CurrentNumber:0} pts  |  BASE {low.ReferenceNumber:0}",
-            "0 pts", "100 pts", stagesTop, stageColumns, 0);
-        Card(medium, "MEDIUM FATIGUE BEGINS",
-            $"{medium.CurrentNumber:0} pts  |  BASE {medium.ReferenceNumber:0}",
-            "0 pts", "100 pts", stagesTop, stageColumns, 1);
-        Card(severe, "SEVERE FATIGUE BEGINS",
-            $"{severe.CurrentNumber:0} pts  |  BASE {severe.ReferenceNumber:0}",
-            "0 pts", "100 pts", stagesTop, stageColumns, 2);
+        var firstTop = preview.Bottom + 51.0;
+        DrawFatiguePenaltyGraph(dc, "AIM SLOWDOWN", "EXTRA AIM TIME", firstTop, width,
+            low, medium, severe, lowAim, mediumAim, severeAim,
+            text, muted, border, soft, accent, panel);
+        DrawFatiguePenaltyGraph(dc, "RELOAD SLOWDOWN", "EXTRA RELOAD TIME", firstTop + 317, width,
+            low, medium, severe, null, mediumReload, severeReload,
+            text, muted, border, soft, accent, panel);
+    }
 
-        var combatTitleY = CompactGridEnd(stagesTop, 3, stageColumns) + 13.0;
-        DrawText(dc, "COMBAT PENALTIES WHEN TIRED",
-            new Point(19.0, combatTitleY), 10.8, accent, FontWeights.Bold);
-        DrawText(dc, "Aim-time slowdown; reload penalties start at Medium fatigue.",
-            new Point(19.0, combatTitleY + 17.0), 9.3, muted, FontWeights.Normal);
+    private void DrawFatiguePenaltyGraph(
+        DrawingContext dc, string title, string yCaption, double top, double width,
+        ParameterViewModel low, ParameterViewModel medium, ParameterViewModel severe,
+        ParameterViewModel? lowEffect, ParameterViewModel mediumEffect,
+        ParameterViewModel severeEffect, Brush text, Brush muted, Brush border,
+        Brush soft, Brush accent, Brush panel)
+    {
+        var frame = new Rect(17, top, width, 282);
+        DrawCenteredText(dc, title, new Point(frame.Left + frame.Width / 2, top - 29),
+            11.5, accent, FontWeights.Bold);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1), frame, 4, 4);
+        var chart = new Rect(frame.Left + 79, frame.Top + 43, frame.Width - 99, 183);
+        var area = new Rect(chart.Left + 2, chart.Top + 8, chart.Width - 12, chart.Height - 21);
+        var max = lowEffect is null
+            ? Math.Max(mediumEffect.Maximum, severeEffect.Maximum)
+            : Math.Max(lowEffect.Maximum, Math.Max(mediumEffect.Maximum, severeEffect.Maximum));
+        // Each graph scales to the largest *native* source ceiling of its penalty family.
+        double X(double pts) => ValueToX(pts, 0, 100, area, false);
+        double Y(double value) => ValueToY(value, 0, max, area);
+        var originY = Y(0);
+        var lowY = Y(lowEffect?.CurrentNumber ?? 0);
+        var midY = Y(mediumEffect.CurrentNumber);
+        var highY = Y(severeEffect.CurrentNumber);
+        var baseLowY = Y(lowEffect?.ReferenceNumber ?? 0);
+        var baseMidY = Y(mediumEffect.ReferenceNumber);
+        var baseHighY = Y(severeEffect.ReferenceNumber);
+        var lowX = X(low.CurrentNumber);
+        var midX = X(medium.CurrentNumber);
+        var highX = X(severe.CurrentNumber);
+        var baseLowX = X(low.ReferenceNumber);
+        var baseMidX = X(medium.ReferenceNumber);
+        var baseHighX = X(severe.ReferenceNumber);
+        DrawCenteredText(dc, "FATIGUE POINTS (0–100)", new Point(chart.Left + chart.Width / 2, top + 27),
+            9.2, text, FontWeights.Bold);
+        var captionCenter = new Point(chart.Left - 52, area.Top + area.Height / 2);
+        dc.PushTransform(new RotateTransform(-90, captionCenter.X, captionCenter.Y));
+        DrawCenteredText(dc, yCaption, captionCenter, 9.2, text, FontWeights.Bold);
+        dc.Pop();
+        for (var tick = 0; tick <= 4; tick++)
+        {
+            var value = max * tick / 4;
+            var yy = Y(value);
+            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.35), 1) { DashStyle = DashStyles.Dot },
+                new Point(area.Left, yy), new Point(area.Right, yy));
+            DrawRightAlignedText(dc, $"+{value * 100:0.#}%", new Point(chart.Left - 7, yy - 7),
+                9.0, muted, FontWeights.SemiBold);
+        }
+        for (var tick = 0; tick <= 100; tick += 25)
+            DrawCenteredText(dc, $"{tick}", new Point(X(tick), chart.Bottom + 17),
+                9.2, muted, FontWeights.SemiBold);
+        var ghost = new Pen(CloneWithOpacity(muted, 0.75), 1.6) { DashStyle = DashStyles.Dash };
+        var gold = new Pen(accent, 2.8);
+        void Step(Pen pen, double x0, double x1, double x2, double y0, double y1, double y2)
+        {
+            dc.DrawLine(pen, new Point(area.Left, y0), new Point(x0, y0));
+            dc.DrawLine(pen, new Point(x0, y0), new Point(x0, y1));
+            dc.DrawLine(pen, new Point(x0, y1), new Point(x1, y1));
+            dc.DrawLine(pen, new Point(x1, y1), new Point(x1, y2));
+            dc.DrawLine(pen, new Point(x1, y2), new Point(area.Right, y2));
+        }
+        // With no native LOW reload modifier, reload remains 0 through MEDIUM onset.
+        if (lowEffect is null)
+        {
+            Step(ghost, baseMidX, baseHighX, area.Right, originY, baseMidY, baseHighY);
+            Step(gold, midX, highX, area.Right, originY, midY, highY);
+        }
+        else
+        {
+            Step(ghost, baseLowX, baseMidX, baseHighX, baseLowY, baseMidY, baseHighY);
+            Step(gold, lowX, midX, highX, lowY, midY, highY);
+        }
 
-        var combatTop = combatTitleY + 37.0;
-        Card(lowAim, "LOW FATIGUE / AIM SLOWDOWN",
-            $"+{lowAim.CurrentNumber * 100:0.##}%  |  BASE +{lowAim.ReferenceNumber * 100:0.##}%",
-            "0%", "+30%", combatTop, combatColumns, 0);
-        Card(mediumAim, "MEDIUM FATIGUE / AIM SLOWDOWN",
-            $"+{mediumAim.CurrentNumber * 100:0.##}%  |  BASE +{mediumAim.ReferenceNumber * 100:0.##}%",
-            "0%", "+50%", combatTop, combatColumns, 1);
-        Card(severeAim, "SEVERE FATIGUE / AIM SLOWDOWN",
-            $"+{severeAim.CurrentNumber * 100:0.##}%  |  BASE +{severeAim.ReferenceNumber * 100:0.##}%",
-            "0%", "+80%", combatTop, combatColumns, 2);
-        Card(mediumReload, "MEDIUM FATIGUE / RELOAD SLOWDOWN",
-            $"+{mediumReload.CurrentNumber * 100:0.##}%  |  BASE +{mediumReload.ReferenceNumber * 100:0.##}%",
-            "0%", "+30%", combatTop, combatColumns, 3);
-        Card(severeReload, "SEVERE FATIGUE / RELOAD SLOWDOWN",
-            $"+{severeReload.CurrentNumber * 100:0.##}%  |  BASE +{severeReload.ReferenceNumber * 100:0.##}%",
-            "0%", "+37.5%", combatTop, combatColumns, 4);
-
-        var end = CompactGridEnd(combatTop, 5, combatColumns);
-        DrawText(dc, "NO LOW-FATIGUE RELOAD EFFECT EXISTS IN THE GAME CFG",
-            new Point(20.0, end + 12.0), 9.1, muted, FontWeights.SemiBold);
-        DrawText(dc, "GREY = BASE  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
-            new Point(20.0, end + 30.0), 9.1, muted, FontWeights.Normal);
+        void Handle(ParameterViewModel parameter, ParameterViewModel effect,
+            double x, double yy, double bx, double by)
+        {
+            dc.DrawEllipse(panel, new Pen(muted, 1.5), new Point(bx, by), 6, 6);
+            DrawHumanAxisHandle(dc, new Point(x, yy), accent, panel,
+                ReferenceEquals(_hoverTarget?.Parameter, parameter), IsSelected(parameter));
+            _hitTargets.Add(new HitTarget(parameter,
+                new Rect(x - 18, yy - 18, 36, 36), area, HitKind.FatigueJoint,
+                parameter.Minimum, parameter.Maximum, false));
+        }
+        if (lowEffect is not null)
+            Handle(low, lowEffect, lowX, lowY, baseLowX, baseLowY);
+        Handle(medium, mediumEffect, midX, midY, baseMidX, baseMidY);
+        Handle(severe, severeEffect, highX, highY, baseHighX, baseHighY);
+        if (lowEffect is null)
+        {
+            // LOW still edits its threshold, with no fabricated reload multiplier.
+            DrawHumanAxisHandle(dc, new Point(lowX, originY), accent, panel,
+                ReferenceEquals(_hoverTarget?.Parameter, low), IsSelected(low));
+            AddHorizontalTarget(low, new Rect(lowX - 16, originY - 16, 32, 32),
+                area, low.Minimum, low.Maximum);
+        }
+        var labelWidth = (frame.Width - 16) / 3;
+        var captions = new[] {
+            $"LOW AT {low.CurrentNumber:0} PTS" + (lowEffect is null ? "" : $" | +{lowEffect.CurrentNumber * 100:0.#}% AIM TIME"),
+            $"MEDIUM AT {medium.CurrentNumber:0} PTS | +{mediumEffect.CurrentNumber * 100:0.#}% {(lowEffect is null ? "RELOAD" : "AIM")} TIME",
+            $"SEVERE AT {severe.CurrentNumber:0} PTS | +{severeEffect.CurrentNumber * 100:0.#}% {(lowEffect is null ? "RELOAD" : "AIM")} TIME"
+        };
+        for (var i = 0; i < 3; i++)
+        {
+            var cell = new Rect(frame.Left + 8 + i * labelWidth, frame.Top + 254, labelWidth, 21);
+            dc.PushClip(new RectangleGeometry(cell));
+            DrawCenteredText(dc, captions[i], new Point(cell.Left + cell.Width / 2, cell.Top + 2),
+                9.0, i == 0 ? text : accent, FontWeights.Bold);
+            dc.Pop();
+        }
     }
 
     private void DrawMasterConditionalPenalty(
@@ -4331,7 +4380,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
-            HitKind.HumanJoint or HitKind.HungerJoint => Cursors.SizeAll,
+            HitKind.HumanJoint or HitKind.HungerJoint or HitKind.FatigueJoint => Cursors.SizeAll,
             HitKind.Toggle or HitKind.Choice or HitKind.MixerBaseMarker or HitKind.MixerSelect => Cursors.Hand,
             _ => Cursors.Arrow
         };
@@ -4423,6 +4472,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
         target.Parameter.ResetToReference();
+        if (target.Kind == HitKind.FatigueJoint)
+        {
+            _fatigueReloadInteraction = target.MapRect.Top > 450.0;
+            FatigueEffectFor(target.Parameter)?.ResetToReference();
+        }
         if (target.Kind == HitKind.HungerJoint)
             P(target.Parameter.Id == "survival.hungerMediumThreshold"
                 ? "survival.hungerMediumStaminaRegen"
@@ -4519,6 +4573,28 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (target.Kind == HitKind.Toggle)
             return;
 
+        if (target.Kind == HitKind.FatigueJoint)
+        {
+            _fatigueReloadInteraction = target.MapRect.Top > 450.0;
+            var threshold = target.Parameter;
+            var effect = FatigueEffectFor(threshold);
+            if (effect is null || !threshold.IsControlEnabled || !effect.IsControlEnabled)
+                return;
+            var x = Math.Clamp((point.X - target.MapRect.Left) /
+                Math.Max(1.0, target.MapRect.Width), 0, 1);
+            var y = Math.Clamp((target.MapRect.Bottom - point.Y) /
+                Math.Max(1.0, target.MapRect.Height), 0, 1);
+            var maximum = Family == "FatigueCurve" &&
+                _fatigueReloadInteraction ? FatigueReloadMaximum() : FatigueAimMaximum();
+            threshold.CurrentNumber = Snap(threshold, threshold.Minimum +
+                x * (threshold.Maximum - threshold.Minimum));
+            effect.CurrentNumber = Snap(effect, Math.Clamp((1 - y) * maximum,
+                effect.Minimum, effect.Maximum));
+            EnforceFamilyConstraints(threshold);
+            _status.ClearTransient();
+            InvalidateVisual();
+            return;
+        }
         if (target.Kind == HitKind.HungerJoint)
         {
             var threshold = target.Parameter;
@@ -4921,13 +4997,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     // their renderers. Measure and OnRender must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
     {
-        var columns = CompactColumns(width);
-        var stageColumns = CompactStageColumns(width);
-        var previewTop = CompactGridEnd(55.0, 2, columns) + 12.0;
-        var stagesTop = previewTop + 80.0 + 12.0;
-        var combatTitle = CompactGridEnd(stagesTop, 3, stageColumns) + 13.0;
-        var combatTop = combatTitle + 37.0;
-        return CompactGridEnd(combatTop, 5, stageColumns) + 71.0;
+        return 55.0 + CompactTrackHeight + 12.0 + 80.0 + 51.0 + 317.0 + 282.0 + 12.0;
     }
 
     private static double CompactConsumableHeight(double width)
@@ -5175,6 +5245,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Vertical,
         HumanJoint,
         HungerJoint,
+        FatigueJoint,
         MixerBaseMarker,
         MixerSelect,
         Toggle,
