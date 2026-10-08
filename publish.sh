@@ -65,6 +65,7 @@ if command -v python3 >/dev/null 2>&1; then
     python3 "$ROOT/tools/verify_ui_design_lock.py"
     python3 "$ROOT/tools/verify_mixer_layout.py"
     python3 "$ROOT/tools/verify_section_grid.py"
+    python3 "$ROOT/tools/verify_human_combat_layout.py"
 fi
 
 # WPF creates generated temporary projects under obj/.  Removing both build trees
