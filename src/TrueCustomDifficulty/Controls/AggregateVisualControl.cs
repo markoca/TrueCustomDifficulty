@@ -463,7 +463,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var count = channels.Length;
         var inner = Math.Max(1.0, ActualWidth - 2.0 * MixerSidePadding);
         var columns = GetMixerColumns(ActualWidth, count);
-        var width = Math.Max(128.0, (inner - (columns - 1) * MixerStripGap) / columns);
+        var width = Math.Min(148.0,
+            Math.Max(128.0, (inner - (columns - 1) * MixerStripGap) / columns));
         for (var index = 0; index < count; index++)
         {
             var channel = channels[index];
