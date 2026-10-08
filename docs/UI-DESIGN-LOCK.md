@@ -285,3 +285,7 @@ User-approved correction: the upper HUNGER POINTS / STAGE PREVIEW native 0–100
 ### 2026-10-08 — Hunger heading and vertical axis centering
 
 Explicitly approved: remove the redundant `hunger-point thresholds and their stamina recovery effects` subtitle beneath the HUNGER STATE LADDER title. Preserve the heading itself. Vertically center the rotated `STAMINA RECOVERY LOSS` caption against the actual inner plotting area (`area.Top + area.Height / 2`) rather than the larger outer `plot` rectangle, retaining the existing X offset and separation from tick values. All other Hunger geometry, values, and UI remain locked; local Wine visual review pending.
+
+### 2026-10-08 — Hunger stage caption wording consistency
+
+Explicit user change: the MEDIUM and SEVERE one-line footer captions now include `AT` before the hunger-point threshold, matching LOW: `MEDIUM AT N PTS | -N% STAMINA RECOVERY` and `SEVERE AT N PTS | -N% STAMINA RECOVERY`. This is a text-only change, with no changes to layout, ranges, or CFG mapping. Wine acceptance pending.
