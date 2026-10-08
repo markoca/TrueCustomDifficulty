@@ -21,6 +21,7 @@ sudo pacman -Syu dotnet-sdk-10.0
 - The custom maximize button and manual edge/corner resizing both preserve 16:9, including returning to the pre-maximized geometry.
 - **Window ratio is distinct from card layout:** large semantic visual controls currently occupy full-width rows. A subsequent responsive grid pass will compact those panels; this change only makes the surrounding window use the intended screen geometry.
 - Static geometry regression check: `python3 tools/verify_window_aspect.py`.
+- **Next UI redesign source of truth:** [Mixer faders + 16:9 responsive board grid](docs/UI-MIXER-GRID-SPEC.md). This is a design specification, not an implemented control yet.
 
 ---
 
