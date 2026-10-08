@@ -165,3 +165,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — UI-09 — enemy gun damage label
 
 **User-approved terminology:** Rename the Human Combat vertical axis from `GUN DAMAGE` to `ENEMY GUN DAMAGE`, including its footer legend. Preserve the same axis placement, inline multiplier and gameplay mapping; no other controls change.
+
+### 2026-10-08 — UI-08/UI-09 — Human Combat beside Your Weapons; explosion joins weapon faders
+
+**Explicit redesign approval:** Place YOUR WEAPONS immediately to the right of HUMAN ENEMIES / HUMAN COMBAT PROFILE at the existing responsive two-column breakpoint. The prior Human Enemies + Mutants pairing and Your Weapons + Explosives pairing are superseded. Reorder the Combat catalog so Human Enemies and Your Weapons are adjacent and Mutants follows. Consolidate the former separate Explosives section into Your Weapons, retaining `combat.explosionDamage` as its original CFG parameter with unchanged native 0–2x and 0.01 increments. YOUR WEAPONS renders four independent responsive vertical mixer faders: WEAPON DAMAGE, HEADSHOT DAMAGE, WEAPON JAMMING and EXPLOSION DAMAGE. No redundant separate blast impact preview or horizontal explosion slider is shown. Each fader retains a current value, range labels, grey Base marker, independent drag/reset and per-parameter rationale. Human Combat controls, unrelated sections and gameplay writer mappings are unchanged. This is the new locked layout, subject to user's Wine visual acceptance.
