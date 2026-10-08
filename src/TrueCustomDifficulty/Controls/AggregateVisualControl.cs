@@ -3115,15 +3115,18 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(ActualWidth / 2.0, frame.Top - 17.0), 9.2, muted, FontWeights.Normal);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), frame, 4.0, 4.0);
         var bonusLane = new Rect(frame.Left + 11.0, frame.Top + 15.0, 124.0, 236.0);
-        var plot = new Rect(bonusLane.Right + 30.0, frame.Top + 43.0,
-            Math.Max(220.0, frame.Right - bonusLane.Right - 48.0), 183.0);
+        var plot = new Rect(bonusLane.Right + 53.0, frame.Top + 43.0,
+            Math.Max(220.0, frame.Right - bonusLane.Right - 71.0), 183.0);
         dc.DrawRoundedRectangle(CloneWithOpacity(soft, 0.075),
             new Pen(CloneWithOpacity(border, 0.75), 1.0), bonusLane, 3.0, 3.0);
         DrawCenteredText(dc, "WELL-FED", new Point(bonusLane.Left + bonusLane.Width / 2.0,
             bonusLane.Top + 15.0), 10.4, text, FontWeights.Bold);
-        DrawCenteredText(dc, "RECOVERY BONUS",
+        DrawCenteredText(dc, "STAMINA RECOVERY",
             new Point(bonusLane.Left + bonusLane.Width / 2.0, bonusLane.Top + 31.0),
-            8.6, muted, FontWeights.Normal);
+            9.0, muted, FontWeights.SemiBold);
+        DrawCenteredText(dc, "BONUS",
+            new Point(bonusLane.Left + bonusLane.Width / 2.0, bonusLane.Top + 45.0),
+            9.0, muted, FontWeights.Normal);
 
         // Standalone WELL-FED bonus has no hunger threshold to edit.
         var fedRail = new Rect(bonusLane.Left + bonusLane.Width / 2.0 - 2.0,
@@ -3147,7 +3150,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCenteredText(dc, $"+{wellFed.CurrentNumber * 100:0}% RECOVERY",
             new Point(bonusLane.Left + bonusLane.Width / 2.0, bonusLane.Bottom - 26.0),
             10.3, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "DRAG UP / DOWN",
+        DrawCenteredText(dc, "UP = MORE RECOVERY",
             new Point(bonusLane.Left + bonusLane.Width / 2.0, bonusLane.Bottom - 10.0),
             8.5, muted, FontWeights.Normal);
 
@@ -3167,8 +3170,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         var baseMedX = X(medium.ReferenceNumber);
         var baseSevX = X(severe.ReferenceNumber);
 
-        DrawCenteredText(dc, "HUNGER POINTS  →", new Point(plot.Left + plot.Width / 2.0,
+        DrawCenteredText(dc, "HUNGER POINTS (0–100)", new Point(plot.Left + plot.Width / 2.0,
             frame.Top + 27.0), 9.2, text, FontWeights.Bold);
+        // Separate vertical axis caption from tick values; rotation is only visual.
+        var yAxisCenter = new Point(plot.Left - 37.0, plot.Top + plot.Height / 2.0);
+        dc.PushTransform(new RotateTransform(-90.0, yAxisCenter.X, yAxisCenter.Y));
+        DrawCenteredText(dc, "STAMINA RECOVERY LOSS", yAxisCenter,
+            9.2, text, FontWeights.Bold);
+        dc.Pop();
         foreach (var tick in new[] { -100.0, -75.0, -50.0, -25.0, 0.0 })
         {
             var yy = Y(tick);
