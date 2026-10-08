@@ -1613,7 +1613,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush panel)
     {
         DrawHeader(dc, "CORE HEALTH",
-            "health pool, configured regen delay and two independent recovery layers",
+            "",
             text, muted, accent);
 
         var maxHP = P("health.maxHP");
@@ -1635,7 +1635,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, "MAX HEALTH", new Point(hpCard.Left + 12.0, hpCard.Top + 10.0),
             10.0, text, FontWeights.Bold);
         DrawRightAlignedText(dc,
-            $"{maxHP.CurrentNumber:0} HP  |  BASE {maxHP.ReferenceNumber:0} HP",
+            $"{maxHP.CurrentNumber:0} HP",
             new Point(hpCard.Right - 12.0, hpCard.Top + 8.0),
             10.5, accent, FontWeights.Bold);
 
@@ -1667,12 +1667,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(delayCard.Left + 12.0, delayCard.Top + 9.0),
             9.6, text, FontWeights.Bold);
         DrawRightAlignedText(dc,
-            $"{delay.CurrentNumber:0} s  |  BASE {delay.ReferenceNumber:0} s",
+            $"{delay.CurrentNumber:0} s",
             new Point(delayCard.Right - 12.0, delayCard.Top + 8.0),
             10.2, accent, FontWeights.Bold);
-        DrawText(dc, "Darker section = configured wait before compatible recovery",
-            new Point(delayCard.Left + 12.0, delayCard.Top + 26.0),
-            9.0, muted, FontWeights.Normal);
+        DrawText(dc, "WAIT BEFORE RECOVERY", new Point(delayCard.Left + 12.0,
+            delayCard.Top + 26.0), 9.0, muted, FontWeights.SemiBold);
 
         var delayTrack = new Rect(delayCard.Left + 16.0, delayCard.Top + 50.0,
             delayCard.Width - 32.0, 22.0);
@@ -1695,23 +1694,53 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawRightAlignedText(dc, "10 s", new Point(delayTrack.Right, delayCard.Bottom - 20.0),
             9.0, muted, FontWeights.Normal);
 
+        // The three distinct recovery mechanisms are not combined into a
+        // misleading effective healing rate. Compact faders keep each source
+        // adjustable with its own native range and unit.
+        DrawText(dc, "HEALTH RECOVERY", new Point(19.0, 268.0),
+            10.5, accent, FontWeights.Bold);
         var gap = 10.0;
-        var cardWidth = (width - gap) / 2.0;
-        DrawHorizontalTrackCard(dc, passive, "PASSIVE REGEN",
-            new Rect(16.0, 265.0, cardWidth, 72.0),
-            text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, effectScale, "RECOVERY EFFECT SCALE",
-            new Rect(16.0 + cardWidth + gap, 265.0, cardWidth, 72.0),
-            text, muted, border, accent, panel);
-
-        DrawHorizontalTrackCard(dc, lowHealth, "LOW-HEALTH RECOVERY RATE",
-            new Rect(16.0, 349.0, width, 72.0),
-            text, muted, border, accent, panel, pairedValueFormatting: true);
-
-        DrawCenteredText(dc,
-            "0 PASSIVE = VANILLA  |  LOW-HEALTH RECOVERY IS A SEPARATE EFFECT",
-            new Point(ActualWidth / 2.0, 432.0),
-            9.0, text, FontWeights.SemiBold);
+        var channelWidth = (width - 2 * gap) / 3.0;
+        void RecoveryFader(ParameterViewModel parameter, string title,
+            string value, int index)
+        {
+            var card = new Rect(16 + index * (channelWidth + gap),
+                291, channelWidth, 165);
+            dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 4, 4);
+            var center = card.Left + card.Width / 2;
+            DrawCenteredText(dc, title, new Point(center, card.Top + 8),
+                9.3, text, FontWeights.Bold);
+            DrawCenteredText(dc, value, new Point(center, card.Top + 29),
+                11.8, parameter.IsValueModifiedFromReference() ? accent : text,
+                FontWeights.Bold);
+            var rail = new Rect(center - 3, card.Top + 70, 6, 72);
+            var y = ValueToY(parameter.CurrentNumber, parameter.Minimum,
+                parameter.Maximum, rail);
+            var baseY = ValueToY(parameter.ReferenceNumber, parameter.Minimum,
+                parameter.Maximum, rail);
+            dc.DrawLine(new Pen(soft, 4),
+                new Point(center, rail.Top), new Point(center, rail.Bottom));
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, .7), 4),
+                new Point(center, rail.Bottom), new Point(center, y));
+            dc.DrawLine(new Pen(muted, 2),
+                new Point(center + 11, baseY), new Point(center + 23, baseY));
+            DrawHumanAxisHandle(dc, new Point(center, y), accent, panel,
+                ReferenceEquals(_hoverTarget?.Parameter, parameter),
+                IsSelected(parameter));
+            AddVerticalTarget(parameter,
+                new Rect(center - 17, rail.Top - 7, 34, rail.Height + 14),
+                rail, parameter.Minimum, parameter.Maximum);
+            DrawText(dc, $"{parameter.Maximum:0.##}",
+                new Point(center + 12, rail.Top - 7), 8.8, muted, FontWeights.Normal);
+            DrawText(dc, $"{parameter.Minimum:0.##}",
+                new Point(center + 12, rail.Bottom - 8), 8.8, muted, FontWeights.Normal);
+        }
+        RecoveryFader(passive, "PASSIVE HEALING",
+            passive.CurrentNumber.ToString("0.###"), 0);
+        RecoveryFader(effectScale, "HEALING EFFECTS",
+            $"{effectScale.CurrentNumber:0.##}x", 1);
+        RecoveryFader(lowHealth, "LOW-HP RECOVERY",
+            lowHealth.CurrentDisplay, 2);
     }
 
     // Three source-exact tuning lanes: no invented headshot damage formula,
@@ -4909,7 +4938,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "PsyPhantomPressure" => 465.0,
             "HumanCombatProfile" => 465.0,
             "PlayerWeaponProfile" => 169.0,
-            "CoreHealthDashboard" => 475.0,
+            "CoreHealthDashboard" => 476.0,
             "SevereFatiguePenaltyBoard" => 390.0,
             "MasterMedicalHealing" => 390.0,
             "MasterLowHealth" => 235.0,
