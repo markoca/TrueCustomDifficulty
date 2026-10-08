@@ -145,8 +145,7 @@ public sealed class MutantHealthRadar : FrameworkElement
             "GOLD = CURRENT  |  GREY TICK = BASE  |  RIGHT-CLICK = RESET",
             new Point(ActualWidth / 2.0, 369.0), 10.0, muted, FontWeights.SemiBold);
 
-        if (!string.IsNullOrWhiteSpace(_status.Text))
-            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 387.0), 9.5, accent, FontWeights.SemiBold);
+        // Silent reset: no transient gold status overlay.
     }
 
     private void DrawRow(
