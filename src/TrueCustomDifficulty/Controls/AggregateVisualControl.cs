@@ -1130,130 +1130,114 @@ public sealed class AggregateVisualControl : FrameworkElement
                 9.5, i == 2 ? accent : text, FontWeights.SemiBold);
         }
 
-        var firstTop = preview.Bottom + 51.0;
-        DrawFatiguePenaltyGraph(dc, "AIM SLOWDOWN", "EXTRA AIM TIME", firstTop, width,
+        DrawFatigueCombined(dc, preview.Bottom + 51.0, width,
             low, medium, severe, lowAim, mediumAim, severeAim,
-            text, muted, border, soft, accent, panel);
-        DrawFatiguePenaltyGraph(dc, "RELOAD SLOWDOWN", "EXTRA RELOAD TIME", firstTop + 317, width,
-            low, medium, severe, null, mediumReload, severeReload,
-            text, muted, border, soft, accent, panel);
+            mediumReload, severeReload, text, muted, border, soft, accent, panel);
     }
 
-    private void DrawFatiguePenaltyGraph(
-        DrawingContext dc, string title, string yCaption, double top, double width,
+    // Gold aim curve and white reload curve share fatigue-point thresholds
+    // but have independent native Y scales and individually draggable rings.
+    private void DrawFatigueCombined(DrawingContext dc, double top, double width,
         ParameterViewModel low, ParameterViewModel medium, ParameterViewModel severe,
-        ParameterViewModel? lowEffect, ParameterViewModel mediumEffect,
-        ParameterViewModel severeEffect, Brush text, Brush muted, Brush border,
-        Brush soft, Brush accent, Brush panel)
+        ParameterViewModel lowAim, ParameterViewModel mediumAim,
+        ParameterViewModel severeAim, ParameterViewModel mediumReload,
+        ParameterViewModel severeReload, Brush text, Brush muted,
+        Brush border, Brush soft, Brush accent, Brush panel)
     {
-        var frame = new Rect(17, top, width, 282);
-        DrawCenteredText(dc, title, new Point(frame.Left + frame.Width / 2, top - 29),
-            11.5, accent, FontWeights.Bold);
+        var frame = new Rect(17, top, width, 320);
+        DrawCenteredText(dc, "FATIGUE COMBAT PROFILE",
+            new Point(frame.Left + frame.Width / 2, top - 29), 11.5, accent, FontWeights.Bold);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1), frame, 4, 4);
-        var chart = new Rect(frame.Left + 79, frame.Top + 43, frame.Width - 99, 183);
-        var area = new Rect(chart.Left + 2, chart.Top + 8, chart.Width - 12, chart.Height - 21);
-        var max = lowEffect is null
-            ? Math.Max(mediumEffect.Maximum, severeEffect.Maximum)
-            : Math.Max(lowEffect.Maximum, Math.Max(mediumEffect.Maximum, severeEffect.Maximum));
-        // Each graph scales to the largest *native* source ceiling of its penalty family.
-        double X(double pts) => ValueToX(pts, 0, 100, area, false);
-        double Y(double value) => ValueToY(value, 0, max, area);
-        var originY = Y(0);
-        var lowY = Y(lowEffect?.CurrentNumber ?? 0);
-        var midY = Y(mediumEffect.CurrentNumber);
-        var highY = Y(severeEffect.CurrentNumber);
-        var baseLowY = Y(lowEffect?.ReferenceNumber ?? 0);
-        var baseMidY = Y(mediumEffect.ReferenceNumber);
-        var baseHighY = Y(severeEffect.ReferenceNumber);
-        var lowX = X(low.CurrentNumber);
-        var midX = X(medium.CurrentNumber);
-        var highX = X(severe.CurrentNumber);
-        var baseLowX = X(low.ReferenceNumber);
-        var baseMidX = X(medium.ReferenceNumber);
-        var baseHighX = X(severe.ReferenceNumber);
-        DrawCenteredText(dc, "FATIGUE POINTS (0–100)", new Point(chart.Left + chart.Width / 2, top + 27),
-            9.2, text, FontWeights.Bold);
-        var captionCenter = new Point(chart.Left - 52, area.Top + area.Height / 2);
-        dc.PushTransform(new RotateTransform(-90, captionCenter.X, captionCenter.Y));
-        DrawCenteredText(dc, yCaption, captionCenter, 9.2, text, FontWeights.Bold);
+        var area = new Rect(frame.Left + 81, top + 52, frame.Width - 111, 164);
+        double X(double v) => ValueToX(v, 0, 100, area, false);
+        var aimMax = Math.Max(lowAim.Maximum, Math.Max(mediumAim.Maximum, severeAim.Maximum));
+        var reloadMax = Math.Max(mediumReload.Maximum, severeReload.Maximum);
+        double YA(double v) => ValueToY(v, 0, aimMax, area);
+        double YR(double v) => ValueToY(v, 0, reloadMax, area);
+        var thresholds = new[] { low, medium, severe };
+        var aims = new[] { lowAim, mediumAim, severeAim };
+        var reloads = new[] { mediumReload, severeReload };
+        DrawCenteredText(dc, "FATIGUE POINTS (0-100)",
+            new Point(area.Left + area.Width / 2, top + 25), 9.2, text, FontWeights.Bold);
+        var left = new Point(area.Left - 55, area.Top + area.Height / 2);
+        dc.PushTransform(new RotateTransform(-90, left.X, left.Y));
+        DrawCenteredText(dc, "AIM TIME", left, 9.2, accent, FontWeights.Bold);
         dc.Pop();
-        for (var tick = 0; tick <= 4; tick++)
+        var right = new Point(area.Right + 57, area.Top + area.Height / 2);
+        dc.PushTransform(new RotateTransform(90, right.X, right.Y));
+        DrawCenteredText(dc, "RELOAD TIME", right, 9.2, text, FontWeights.Bold);
+        dc.Pop();
+        for (int i = 0; i <= 4; i++)
         {
-            var value = max * tick / 4;
-            var yy = Y(value);
-            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.35), 1) { DashStyle = DashStyles.Dot },
+            var ratio = i / 4.0;
+            var yy = area.Bottom - ratio * area.Height;
+            dc.DrawLine(new Pen(CloneWithOpacity(soft, .35), 1)
+                { DashStyle = DashStyles.Dot },
                 new Point(area.Left, yy), new Point(area.Right, yy));
-            DrawRightAlignedText(dc, $"+{value * 100:0.#}%", new Point(chart.Left - 7, yy - 7),
-                9.0, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, $"+{aimMax * ratio * 100:0.#}%",
+                new Point(area.Left - 7, yy - 7), 9, accent, FontWeights.SemiBold);
+            DrawText(dc, $"+{reloadMax * ratio * 100:0.#}%",
+                new Point(area.Right + 7, yy - 7), 9, text, FontWeights.SemiBold);
         }
-        for (var tick = 0; tick <= 100; tick += 25)
-            DrawCenteredText(dc, $"{tick}", new Point(X(tick), chart.Bottom + 17),
+        for (int t = 0; t <= 100; t += 25)
+            DrawCenteredText(dc, $"{t}", new Point(X(t), area.Bottom + 16),
                 9.2, muted, FontWeights.SemiBold);
-        var ghost = new Pen(CloneWithOpacity(muted, 0.75), 1.6) { DashStyle = DashStyles.Dash };
-        var gold = new Pen(accent, 2.8);
-        void DrawSteps(Pen pen, bool reference)
+        void Steps(ParameterViewModel[] effects, bool reload, bool basePreset, Pen pen)
         {
-            var xs = reference
-                ? new[] { baseLowX, baseMidX, baseHighX }
-                : new[] { lowX, midX, highX };
-            var ys = reference
-                ? new[] { baseLowY, baseMidY, baseHighY }
-                : new[] { lowY, midY, highY };
             var previousX = area.Left;
-            var previousY = originY;
-            var begin = lowEffect is null ? 1 : 0;
-            for (var i = begin; i < 3; i++)
+            var previousY = area.Bottom;
+            for (int i = 0; i < effects.Length; i++)
             {
-                dc.DrawLine(pen, new Point(previousX, previousY),
-                    new Point(xs[i], previousY));
-                dc.DrawLine(pen, new Point(xs[i], previousY),
-                    new Point(xs[i], ys[i]));
-                previousX = xs[i];
-                previousY = ys[i];
+                var threshold = thresholds[i + (reload ? 1 : 0)];
+                var x = X(basePreset ? threshold.ReferenceNumber : threshold.CurrentNumber);
+                var value = basePreset ? effects[i].ReferenceNumber : effects[i].CurrentNumber;
+                var yy = reload ? YR(value) : YA(value);
+                dc.DrawLine(pen, new Point(previousX, previousY), new Point(x, previousY));
+                dc.DrawLine(pen, new Point(x, previousY), new Point(x, yy));
+                previousX = x;
+                previousY = yy;
             }
             dc.DrawLine(pen, new Point(previousX, previousY),
                 new Point(area.Right, previousY));
         }
-        // No native LOW reload effect: the reload line remains neutral until MEDIUM.
-        DrawSteps(ghost, true);
-        DrawSteps(gold, false);
-
-        void Handle(ParameterViewModel parameter, ParameterViewModel effect,
-            double x, double yy, double bx, double by)
+        Steps(aims, false, true, new Pen(CloneWithOpacity(accent, .38), 1.5)
+            { DashStyle = DashStyles.Dash });
+        Steps(reloads, true, true, new Pen(CloneWithOpacity(muted, .7), 1.5)
+            { DashStyle = DashStyles.Dash });
+        Steps(aims, false, false, new Pen(accent, 2.8));
+        Steps(reloads, true, false, new Pen(text, 2.6));
+        void Ring(ParameterViewModel threshold, ParameterViewModel effect, bool reload)
         {
-            dc.DrawEllipse(panel, new Pen(muted, 1.5), new Point(bx, by), 6, 6);
-            DrawHumanAxisHandle(dc, new Point(x, yy), accent, panel,
-                ReferenceEquals(_hoverTarget?.Parameter, parameter), IsSelected(parameter));
-            _hitTargets.Add(new HitTarget(parameter,
-                new Rect(x - 18, yy - 18, 36, 36), area, HitKind.FatigueJoint,
-                parameter.Minimum, parameter.Maximum, false));
+            var x = X(threshold.CurrentNumber);
+            var yy = reload ? YR(effect.CurrentNumber) : YA(effect.CurrentNumber);
+            var by = reload ? YR(effect.ReferenceNumber) : YA(effect.ReferenceNumber);
+            dc.DrawEllipse(panel, new Pen(muted, 1.4),
+                new Point(X(threshold.ReferenceNumber), by), 6, 6);
+            var kind = reload ? HitKind.FatigueReloadJoint : HitKind.FatigueJoint;
+            DrawHumanAxisHandle(dc, new Point(x, yy), reload ? text : accent, panel,
+                ReferenceEquals(_hoverTarget?.Parameter, threshold) && _hoverTarget?.Kind == kind,
+                IsSelected(threshold) && _selectedHitKind == kind);
+            _hitTargets.Add(new HitTarget(threshold,
+                new Rect(x - 14, yy - 14, 28, 28), area, kind,
+                threshold.Minimum, threshold.Maximum, false));
         }
-        if (lowEffect is not null)
-            Handle(low, lowEffect, lowX, lowY, baseLowX, baseLowY);
-        Handle(medium, mediumEffect, midX, midY, baseMidX, baseMidY);
-        Handle(severe, severeEffect, highX, highY, baseHighX, baseHighY);
-        if (lowEffect is null)
+        for (int i = 0; i < 3; i++) Ring(thresholds[i], aims[i], false);
+        for (int i = 0; i < 2; i++) Ring(thresholds[i + 1], reloads[i], true);
+        // Each stage owns a clipped one-line readout.
+        var colWidth = (frame.Width - 16) / 3;
+        for (int i = 0; i < 3; i++)
         {
-            // LOW still edits its threshold, with no fabricated reload multiplier.
-            DrawHumanAxisHandle(dc, new Point(lowX, originY), accent, panel,
-                ReferenceEquals(_hoverTarget?.Parameter, low), IsSelected(low));
-            AddHorizontalTarget(low, new Rect(lowX - 16, originY - 16, 32, 32),
-                area, low.Minimum, low.Maximum);
-        }
-        var labelWidth = (frame.Width - 16) / 3;
-        var captions = new[] {
-            $"LOW AT {low.CurrentNumber:0} PTS" + (lowEffect is null ? "" : $" | +{lowEffect.CurrentNumber * 100:0.#}% AIM TIME"),
-            $"MEDIUM AT {medium.CurrentNumber:0} PTS | +{mediumEffect.CurrentNumber * 100:0.#}% {(lowEffect is null ? "RELOAD" : "AIM")} TIME",
-            $"SEVERE AT {severe.CurrentNumber:0} PTS | +{severeEffect.CurrentNumber * 100:0.#}% {(lowEffect is null ? "RELOAD" : "AIM")} TIME"
-        };
-        for (var i = 0; i < 3; i++)
-        {
-            var cell = new Rect(frame.Left + 8 + i * labelWidth, frame.Top + 254, labelWidth, 21);
+            var extra = i == 0 ? "" : $" | +{reloads[i - 1].CurrentNumber * 100:0.#}% RELOAD";
+            var caption = $"{new[] { "LOW", "MEDIUM", "SEVERE" }[i]} AT {thresholds[i].CurrentNumber:0} PTS | +{aims[i].CurrentNumber * 100:0.#}% AIM" + extra;
+            var cell = new Rect(frame.Left + 8 + i * colWidth, top + 280, colWidth, 22);
             dc.PushClip(new RectangleGeometry(cell));
-            DrawCenteredText(dc, captions[i], new Point(cell.Left + cell.Width / 2, cell.Top + 2),
-                9.0, i == 0 ? text : accent, FontWeights.Bold);
+            DrawCenteredText(dc, caption, new Point(cell.Left + cell.Width / 2, cell.Top + 3),
+                9, i == 0 ? text : accent, FontWeights.Bold);
             dc.Pop();
         }
+        DrawCenteredText(dc, "GOLD = AIM TIME  |  WHITE = RELOAD TIME",
+            new Point(frame.Left + frame.Width / 2, top + 309),
+            9, muted, FontWeights.SemiBold);
     }
 
     private void DrawMasterConditionalPenalty(
@@ -4387,7 +4371,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
-            HitKind.HumanJoint or HitKind.HungerJoint or HitKind.FatigueJoint => Cursors.SizeAll,
+            HitKind.HumanJoint or HitKind.HungerJoint or HitKind.FatigueJoint or HitKind.FatigueReloadJoint => Cursors.SizeAll,
             HitKind.Toggle or HitKind.Choice or HitKind.MixerBaseMarker or HitKind.MixerSelect => Cursors.Hand,
             _ => Cursors.Arrow
         };
@@ -4479,9 +4463,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
         target.Parameter.ResetToReference();
-        if (target.Kind == HitKind.FatigueJoint)
+        if (target.Kind is HitKind.FatigueJoint or HitKind.FatigueReloadJoint)
         {
-            _fatigueReloadInteraction = target.MapRect.Top > 450.0;
+            _fatigueReloadInteraction = target.Kind == HitKind.FatigueReloadJoint;
             FatigueEffectFor(target.Parameter)?.ResetToReference();
         }
         if (target.Kind == HitKind.HungerJoint)
@@ -4580,9 +4564,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (target.Kind == HitKind.Toggle)
             return;
 
-        if (target.Kind == HitKind.FatigueJoint)
+        if (target.Kind is HitKind.FatigueJoint or HitKind.FatigueReloadJoint)
         {
-            _fatigueReloadInteraction = target.MapRect.Top > 450.0;
+            _fatigueReloadInteraction = target.Kind == HitKind.FatigueReloadJoint;
             var threshold = target.Parameter;
             var effect = FatigueEffectFor(threshold);
             if (effect is null || !threshold.IsControlEnabled || !effect.IsControlEnabled)
@@ -5004,7 +4988,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     // their renderers. Measure and OnRender must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
     {
-        return 55.0 + CompactTrackHeight + 12.0 + 80.0 + 51.0 + 317.0 + 282.0 + 12.0;
+        return 55.0 + CompactTrackHeight + 12.0 + 80.0 + 51.0 + 320.0 + 12.0;
     }
 
     private static double CompactConsumableHeight(double width)
@@ -5253,6 +5237,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         HumanJoint,
         HungerJoint,
         FatigueJoint,
+        FatigueReloadJoint,
         MixerBaseMarker,
         MixerSelect,
         Toggle,
