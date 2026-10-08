@@ -163,8 +163,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
             "GOLD = CURRENT  |  GREY TICK = BASE  |  RIGHT-CLICK = RESET",
             new Point(ActualWidth / 2.0, 521.0), 10.0, muted, FontWeights.SemiBold);
 
-        if (!string.IsNullOrWhiteSpace(_status.Text))
-            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 536.0), 9.5, accent, FontWeights.SemiBold);
+        // Silent reset: no transient gold status overlay.
     }
 
     private void DrawGlobalHorizontal(
