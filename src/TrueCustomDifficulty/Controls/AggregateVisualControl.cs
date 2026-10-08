@@ -1831,7 +1831,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Rotate the complete Y-axis label/value pair as one line. Keeping
         // them in the same local coordinate space guarantees visual alignment.
         var axisCenterY = plot.Top + plot.Height / 2.0;
-        var damageLabel = CreateText("GUN DAMAGE", 10.5, text, FontWeights.Bold);
+        var damageLabel = CreateText("ENEMY GUN DAMAGE", 10.5, text, FontWeights.Bold);
         var damageValue = CreateText($"{damage.CurrentNumber:0.##}x", 13.0, accent, FontWeights.Bold);
         var damageStart = 18.0 -
             (damageLabel.WidthIncludingTrailingWhitespace + axisLabelGap +
@@ -1924,7 +1924,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // All three draggable glyphs are the same ring-and-dot shape; position
         // and these action labels explain which CFG setting is affected.
         var legendY = Math.Max(405.0, plot.Bottom + 56.0);
-        DrawCenteredText(dc, "BOTTOM: ENEMY HEALTH  |  LEFT: GUN DAMAGE",
+        DrawCenteredText(dc, "BOTTOM: ENEMY HEALTH  |  LEFT: ENEMY GUN DAMAGE",
             new Point(plot.Left + plot.Width / 2.0, legendY),
             9.0, text, FontWeights.SemiBold);
         DrawCenteredText(dc, "DRAG CENTER: BOTH VALUES",
