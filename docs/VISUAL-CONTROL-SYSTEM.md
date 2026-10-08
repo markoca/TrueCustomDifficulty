@@ -527,3 +527,7 @@ HUMAN COMBAT PROFILE combines the health/damage X/Y graph and three frameless ri
 ### Single-row faders — Mutant Health and Your Weapons (2026-10-08)
 
 Mutant Health renders all eight equal-width vertical controls in **one row**, with 8-DIP gaps and compact long labels broken into two lines. Its minimum measured width is 760 DIP; it maintains vertical source ranges and ring-only hover feedback. Your Weapons renders its three independent source faders in one centered row (no second row), with the common mixer geometry. Each stays within its full-width top-level section, and the shorter content determines section height.
+
+### Special Ability Cooldowns — single-row faders (2026-10-08)
+
+Eight cooldown multipliers occupy one fixed horizontal row, matching Mutant Health's 8-DIP channel gaps, value typography and glowing circular handles. Each current number represents the cooldown **wait multiplier**; the smaller grey `x RETURN` value is the inverse rate (1 / wait). Drag vertically to edit the original source wait factor, not the displayed inverse rate. Grey reference markers and native bounds remain. No rectangular highlight or secondary horizontal slider.
