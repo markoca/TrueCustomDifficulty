@@ -13,20 +13,23 @@ end = visual.index("    // Editable axes are deliberately independent.", start)
 human = visual[start:end]
 required = (
     'var plotSide = Math.Min(280.0, Math.Max(180.0, ActualWidth - 360.0));',
-    'var plot = new Rect(48.0, 91.0, plotSide, plotSide);',
+    'var plot = new Rect(64.0, 91.0, plotSide, plotSide);',
     'DrawMixerStrip(dc, frequency, "ATTACK", "FREQUENCY",',
     'DrawMixerStrip(dc, accuracy, "FIRE", "ACCURACY",',
     'new Rect(faderLeft, 83.0, faderWidth, MixerStripHeight)',
     'new Rect(faderLeft + faderWidth + 10.0, 83.0, faderWidth, MixerStripHeight)',
     'AddHorizontalTarget(health,',
     'AddVerticalTarget(damage,',
+    'new Point(plot.Left - 12.0, gridY - 7.0)',
+    'new Point(gridX, plot.Bottom + 32.0)',
+    'Math.Max(422.0, plot.Bottom + 72.0)',
 )
 for fragment in required:
     if fragment not in human:
         raise SystemExit("[FAIL] human square/faders: " + fragment)
 if "DrawHorizontalTrackCard(dc, frequency" in human or "DrawHorizontalTrackCard(dc, accuracy" in human:
     raise SystemExit("[FAIL] human: old horizontal controls remain")
-if '"HumanCombatProfile" => 415.0' not in visual:
+if '"HumanCombatProfile" => 465.0' not in visual:
     raise SystemExit("[FAIL] human: incorrect aggregate height")
 if 'or "HumanCombatProfile")' not in visual:
     raise SystemExit("[FAIL] human: per-fader rationale selection not wired")
@@ -38,7 +41,7 @@ ET.fromstring(xaml)
 # At both width extremes, the square and the two 128+ DIP fader hit regions fit.
 for board_width in (540.0, 600.0, 920.0):
     square = min(280.0, max(180.0, board_width - 360.0))
-    right = 48.0 + square
+    right = 64.0 + square
     strip = min(140.0, max(128.0, (board_width - right - 32.0) / 2.0 - 5.0))
     last = right + 14.0 + strip + 10.0 + strip
     if last > board_width - 12.0:
