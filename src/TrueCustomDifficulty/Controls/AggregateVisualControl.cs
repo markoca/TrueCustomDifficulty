@@ -1679,17 +1679,42 @@ public sealed class AggregateVisualControl : FrameworkElement
     // simulated hit chance, or hard-coded weapon-jam probability.
     // Four independent player-weapon CFG values, including explosions, in a
     // responsive two-column vertical fader bank beside Human Combat.
+    // Locked Combat layout: exactly two columns and two rows inside the
+    // right-hand Your Weapons section. Never let the generic mixer grid
+    // produce three columns that clip the fourth control.
     private void DrawYourWeaponsFaders(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        DrawMixerBoard(dc, new[]
+        DrawHeader(dc, "YOUR WEAPONS", "", text, muted, accent);
+        var channels = new[]
         {
             ("combat.playerWeaponDamage", "WEAPON", "DAMAGE"),
             ("combat.playerHeadshotMultiplier", "HEADSHOT", "DAMAGE"),
             ("combat.weaponJamming", "WEAPON", "JAMMING"),
             ("combat.explosionDamage", "EXPLOSION", "DAMAGE")
-        }, "YOUR WEAPONS", "", text, muted, border, accent, panel);
+        };
+        const int columns = 2;
+        const double margin = 20.0;
+        var usableWidth = Math.Max(1.0, ActualWidth - 2.0 * margin);
+        var width = Math.Min(148.0, (usableWidth - MixerStripGap) / columns);
+        var bankWidth = columns * width + MixerStripGap;
+        var left = (ActualWidth - bankWidth) / 2.0;
+        for (var index = 0; index < channels.Length; index++)
+        {
+            var channel = channels[index];
+            var column = index % columns;
+            var row = index / columns;
+            var rect = new Rect(left + column * (width + MixerStripGap),
+                MixerStripTop + row * (MixerStripHeight + MixerRowGap),
+                width, MixerStripHeight);
+            DrawMixerStrip(dc, P(channel.Item1), channel.Item2, channel.Item3,
+                rect, text, muted, border, accent, panel);
+        }
+        var footerY = MixerStripTop + 2.0 * MixerStripHeight + MixerRowGap + 8.0;
+        DrawCenteredText(dc, "GOLD = CURRENT  |  GREY = BASE  |  RIGHT-CLICK TO RESET",
+            new Point(ActualWidth / 2.0, footerY),
+            9.5, muted, FontWeights.SemiBold);
     }
 
     private void DrawPlayerWeaponProfile(
@@ -4771,7 +4796,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 390.0,
             "HumanCombatProfile" => 465.0,
-            "PlayerWeaponProfile" => GetMixerHeight(width, 4),
+            "PlayerWeaponProfile" => MixerStripTop + 2.0 * MixerStripHeight + MixerRowGap + MixerFooterHeight,
             "CoreHealthDashboard" => 475.0,
             "SevereFatiguePenaltyBoard" => 390.0,
             "MasterMedicalHealing" => 390.0,
