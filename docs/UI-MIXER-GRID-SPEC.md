@@ -311,3 +311,7 @@ Inside the fixed right-hand Combat section, four faders must be a centered 2-col
 ### 2026-10-08 — All sections fixed 1x1 (supersedes two-column designs)
 
 **Explicit user instruction:** Every top-level section must occupy its own full-width row (1x1). No responsive or fixed side-by-side pairing is permitted, including Human Enemies / Your Weapons, Mutants, trader, equipment, loot and other catalog sections. `ResponsiveSectionGridPanel` now measures and arranges one GroupItem per row, preserving catalog visual order. Combat no longer reserves a 1096-DIP minimum, and horizontal scrolling is disabled again. The four faders **inside** Your Weapons retain their internal 2x2 arrangement; this change concerns top-level sections only. Earlier 2x1 instructions are superseded. No CFG or parameter mappings change. Wine acceptance pending.
+
+### Human / Mutant Combat mixer contract — 2026-10-08
+
+Human Combat has three vertical tracks next to its graph: Attack Frequency 0.5–2x, Shot Accuracy 0–1x, Explosion Damage 0–2x. Your Weapons excludes explosions. Mutant Health has 8 matching vertical faders in a fixed 4×2 bank on its own full-width section, each with the corresponding native catalog minimum, maximum, Base value marker, gold current handle and circular hover glow; no redundant horizontal HP slider or box. Effective health is displayed in HP as supplementary information, not another draggable control. Do not apply the source maxima of Human Combat to mutant health.
