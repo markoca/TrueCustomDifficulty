@@ -12,10 +12,9 @@ public sealed class MutantHealthRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
     private const double GlobalHpMaximum = 7500.0;
-    private const double DesiredHeight = 726.0;
-    private const double MaxContentWidth = 960.0;
-    private const double ColumnGap = 16.0;
-    private const double RowHeight = 312.0;
+    private const double DesiredHeight = 400.0;
+    private const double MaxContentWidth = 1080.0;
+    private const double ColumnGap = 8.0;
 
     private static readonly MutantDefinition[] Mutants =
     {
@@ -59,7 +58,7 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(560.0, availableSize.Width);
+        var width = double.IsInfinity(availableSize.Width) ? 900.0 : Math.Max(760.0, availableSize.Width);
         return new Size(width, DesiredHeight);
     }
 
@@ -131,29 +130,21 @@ public sealed class MutantHealthRadar : FrameworkElement
         DrawText(dc, "MUTANT HEALTH", new Point(content.Left, 16.0), 12.5, text, FontWeights.Bold);
         DrawText(dc, "live MaxHP + direct multiplier", new Point(content.Left, 37.0), 9.5, muted, FontWeights.Normal);
 
-        // Eight full-height, source-native faders in four even columns and
-        // two rows. All controls use the Human Combat ring/halo visual language.
-        const int columns = 4;
-        var stripWidth = Math.Min(150.0,
-            (content.Width - (columns - 1) * ColumnGap) / columns);
-        var bankWidth = columns * stripWidth + (columns - 1) * ColumnGap;
-        var bankLeft = content.Left + (content.Width - bankWidth) / 2.0;
+        // One locked row of eight compact, equal-width vertical faders.
+        const int columns = 8;
+        var stripWidth = (content.Width - (columns - 1) * ColumnGap) / columns;
         for (var i = 0; i < Mutants.Length; i++)
-        {
-            var column = i % columns;
-            var row = i / columns;
             DrawRow(dc, i, new Rect(
-                bankLeft + column * (stripWidth + ColumnGap),
-                72.0 + row * RowHeight, stripWidth, RowHeight - 12.0),
+                content.Left + i * (stripWidth + ColumnGap),
+                65.0, stripWidth, 280.0),
                 text, muted, border, accent, panel);
-        }
 
         DrawCenteredText(dc,
             "GOLD = CURRENT  |  GREY TICK = BASE  |  RIGHT-CLICK = RESET",
-            new Point(ActualWidth / 2.0, 693.0), 10.0, muted, FontWeights.SemiBold);
+            new Point(ActualWidth / 2.0, 369.0), 10.0, muted, FontWeights.SemiBold);
 
         if (!string.IsNullOrWhiteSpace(_status.Text))
-            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 711.0), 9.5, accent, FontWeights.SemiBold);
+            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 387.0), 9.5, accent, FontWeights.SemiBold);
     }
 
     private void DrawRow(
@@ -169,8 +160,19 @@ public sealed class MutantHealthRadar : FrameworkElement
         var center = card.Left + card.Width / 2.0;
         var currentHp = mutant.VanillaHp * parameter.CurrentNumber;
         // No rectangular selection frame: only the ring and golden glow.
-        DrawCenteredText(dc, mutant.Label.ToUpperInvariant(),
-            new Point(center, card.Top + 13.0), 10.7, text, FontWeights.Bold);
+        // Compact names must not collide with neighboring fader headings.
+        var name = mutant.Label.ToUpperInvariant();
+        if (name is "BLOODSUCKER" or "PSEUDOGIANT" or "PSEUDODOG")
+        {
+            var split = name is "BLOODSUCKER" ? 5 : 6;
+            DrawCenteredText(dc, name[..split],
+                new Point(center, card.Top + 8.0), 9.8, text, FontWeights.Bold);
+            DrawCenteredText(dc, name[split..],
+                new Point(center, card.Top + 21.0), 9.8, text, FontWeights.Bold);
+        }
+        else
+            DrawCenteredText(dc, name,
+                new Point(center, card.Top + 15.0), 9.8, text, FontWeights.Bold);
         DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
             new Point(center, card.Top + 39.0), 16.2, accent, FontWeights.Bold);
         DrawCenteredText(dc, $"{currentHp:0} HP",
@@ -212,7 +214,7 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     private Rect ContentRect()
     {
-        var width = Math.Min(MaxContentWidth, Math.Max(700.0, ActualWidth - 32.0));
+        var width = Math.Min(MaxContentWidth, Math.Max(760.0, ActualWidth - 32.0));
         return new Rect((ActualWidth - width) / 2.0, 0.0, width, ActualHeight);
     }
 
