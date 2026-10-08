@@ -12,7 +12,7 @@ public sealed class MutantHealthRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
     private const double GlobalHpMaximum = 7500.0;
-    private const double DesiredHeight = 400.0;
+    private const double DesiredHeight = 672.0;
     private const double MaxContentWidth = 1080.0;
     private const double ColumnGap = 8.0;
 
@@ -26,6 +26,12 @@ public sealed class MutantHealthRadar : FrameworkElement
         new("combat.mutantHealth.burer", "Burer", 400.0, false),
         new("combat.mutantHealth.bayun", "Bayun", 400.0, false),
         new("combat.mutantHealth.controller", "Controller", 500.0, false),
+        new("combat.mutantHealth.blinddog", "Blind Dog", 63.0, false),
+        new("combat.mutantHealth.boar", "Boar", 300.0, false),
+        new("combat.mutantHealth.flesh", "Flesh", 280.0, false),
+        new("combat.mutantHealth.poltergeist", "Poltergeist", 400.0, false),
+        new("combat.mutantHealth.snork", "Snork", 150.0, false),
+        new("combat.mutantHealth.tushkan", "Tushkan", 19.0, false),
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Mutants.Length];
@@ -132,18 +138,19 @@ public sealed class MutantHealthRadar : FrameworkElement
         DrawCenteredText(dc, "live MaxHP + direct multiplier", new Point(ActualWidth / 2.0, 39.0),
             9.5, muted, FontWeights.Normal);
 
-        // One locked row of eight compact, equal-width vertical faders.
-        const int columns = 8;
+        // All fourteen independently editable mutant MaxHP scalars.
+        // Two balanced rows of seven avoid squeezed names and tiny handles.
+        const int columns = 7;
         var stripWidth = (content.Width - (columns - 1) * ColumnGap) / columns;
         for (var i = 0; i < Mutants.Length; i++)
             DrawRow(dc, i, new Rect(
-                content.Left + i * (stripWidth + ColumnGap),
-                65.0, stripWidth, 280.0),
+                content.Left + (i % columns) * (stripWidth + ColumnGap),
+                65.0 + (i / columns) * 281.0, stripWidth, 280.0),
                 text, muted, border, accent, panel);
 
         DrawCenteredText(dc,
             "GOLD = CURRENT  |  GREY TICK = BASE  |  RIGHT-CLICK = RESET",
-            new Point(ActualWidth / 2.0, 369.0), 10.0, muted, FontWeights.SemiBold);
+            new Point(ActualWidth / 2.0, 653.0), 10.0, muted, FontWeights.SemiBold);
 
         // Silent reset: no transient gold status overlay.
     }
@@ -163,9 +170,15 @@ public sealed class MutantHealthRadar : FrameworkElement
         // No rectangular selection frame: only the ring and golden glow.
         // Compact names must not collide with neighboring fader headings.
         var name = mutant.Label.ToUpperInvariant();
-        if (name is "BLOODSUCKER" or "PSEUDOGIANT" or "PSEUDODOG")
+        if (name is "BLOODSUCKER" or "PSEUDOGIANT" or "PSEUDODOG"
+            or "POLTERGEIST" or "BLIND DOG")
         {
-            var split = name is "BLOODSUCKER" ? 5 : 6;
+            var split = name switch
+            {
+                "BLOODSUCKER" => 5,
+                "BLIND DOG" => 5,
+                _ => 6
+            };
             DrawCenteredText(dc, name[..split],
                 new Point(center, card.Top + 8.0), 9.8, text, FontWeights.Bold);
             DrawCenteredText(dc, name[split..],
