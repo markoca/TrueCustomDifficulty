@@ -134,11 +134,14 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         DrawText(dc, "GLOBAL COMBAT  |  damage per hit and normal attack frequency", new Point(content.Left, 37.0), 9.5, muted, FontWeights.Normal);
 
         // Global source controls are separate from each mutant's ability timer.
-        var globalWidth = 150.0;
-        var globalLeft = content.Left + (content.Width - 2.0 * globalWidth - 20.0) / 2.0;
+        // Two horizontal controls make global combat visually distinct from
+        // the eight mutant-specific vertical ability timers below.
+        var globalWidth = Math.Min(660.0, content.Width - 40.0);
+        var globalLeft = content.Left + (content.Width - globalWidth) / 2.0;
         for (var i = 0; i < 2; i++)
-            DrawRow(dc, i, new Rect(globalLeft + i * (globalWidth + 20.0),
-                65.0, globalWidth, 280.0), text, muted, border, accent, panel);
+            DrawGlobalHorizontal(dc, i, new Rect(globalLeft,
+                83.0 + i * 118.0, globalWidth, 98.0),
+                text, muted, border, accent, panel);
 
         DrawText(dc, "SPECIAL ABILITY COOLDOWNS",
             new Point(content.Left, 370.0), 12.0, text, FontWeights.Bold);
@@ -159,6 +162,57 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
         if (!string.IsNullOrWhiteSpace(_status.Text))
             DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 739.0), 9.5, accent, FontWeights.SemiBold);
+    }
+
+    private void DrawGlobalHorizontal(
+        DrawingContext dc, int row, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        if (_parameters[row] is not { } parameter)
+            return;
+
+        var selected = row == _selectedRow;
+        var hovered = row == _hoverRow;
+        var label = row == 0 ? "DAMAGE PER HIT" : "ATTACK FREQUENCY";
+        DrawText(dc, label, new Point(card.Left + 12.0, card.Top + 5.0),
+            11.0, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
+            new Point(card.Right - 12.0, card.Top + 1.0),
+            16.0, accent, FontWeights.Bold);
+
+        var rail = new Rect(card.Left + 42.0, card.Top + 48.0,
+            Math.Max(40.0, card.Width - 84.0), 6.0);
+        var y = rail.Top + rail.Height / 2.0;
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, rail);
+        var baseX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, rail);
+        dc.DrawLine(new Pen(border, 5.0),
+            new Point(rail.Left, y), new Point(rail.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 5.0),
+            new Point(rail.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 2.2),
+            new Point(baseX, y - 14.0), new Point(baseX, y + 14.0));
+        if (hovered || selected)
+        {
+            dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.24 : 0.13),
+                null, new Point(currentX, y),
+                hovered ? 20.0 : 15.0, hovered ? 20.0 : 15.0);
+            dc.DrawEllipse(null, new Pen(CloneWithOpacity(accent, 0.8), 1.8),
+                new Point(currentX, y), 12.0, 12.0);
+        }
+        dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 3.0 : 1.8),
+            new Point(currentX, y), 9.0, 9.0);
+        dc.DrawLine(new Pen(accent, 2.2),
+            new Point(currentX, y - 7.0), new Point(currentX, y + 7.0));
+        DrawText(dc, $"{parameter.Minimum:0.##}x",
+            new Point(rail.Left, rail.Bottom + 13.0), 10.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
+            new Point(rail.Right, rail.Bottom + 13.0), 10.0, muted, FontWeights.Normal);
+
+        _targets[row] = new HitTarget(
+            new Rect(rail.Left - 8.0, rail.Top - 18.0,
+                rail.Width + 16.0, 42.0), rail);
     }
 
     private void DrawRow(
@@ -345,7 +399,9 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         if (!_targets.TryGetValue(row, out var target) || _parameters[row] is not { } parameter)
             return;
 
-        var ratio = 1.0 - Math.Clamp((point.Y - target.MapRect.Top) / Math.Max(1.0, target.MapRect.Height), 0.0, 1.0);
+        var ratio = row < 2
+            ? Math.Clamp((point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width), 0.0, 1.0)
+            : 1.0 - Math.Clamp((point.Y - target.MapRect.Top) / Math.Max(1.0, target.MapRect.Height), 0.0, 1.0);
         var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
         var tick = Math.Max(parameter.TickFrequency, Epsilon);
         var snapped = parameter.Minimum + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
