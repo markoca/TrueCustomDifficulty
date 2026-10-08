@@ -47,6 +47,13 @@ The user requested on 2026-10-08: **"nek se zapise svaki UI dizajn kako bi ostao
 
 ## Change approvals
 
+### 2026-10-08 — UI-09 — runtime screenshot mismatch follow-up
+
+**User report:** A screenshot of the local running EXE still showed the legacy `BOTTOM CIRCLE = HEALTH | LEFT SQUARE = DAMAGE | POINT = PREVIEW` footer and square Y handle, although that text is absent from current main-branch source. This is a source/runtime mismatch, **not** visual acceptance. The lock records implemented source only; the screenshot is explicitly NOT a verified runtime baseline.
+
+**Approved source update:** Center two concise instructions beneath the existing square plot, `HEALTH ← BOTTOM | LEFT → DAMAGE` in the normal foreground, and `CENTER HANDLE: DRAG BOTH` in gold. All three handles use the same ring renderer, native X/Y dragging and center joint remain interactive. The plot dimensions and adjacent faders are unchanged. Publish now emits a BUILD-INFO.txt containing the exact source commit and SHA-256 of the compiled EXE, allowing local verification that the intended binary is launched. Runtime confirmation pending from user.
+
+
 ### 2026-10-08 — UI-09 — unified handle cues and plot-local instructions
 
 **Explicit user request:** "oba handlea trebaju da imaju isku ikonu, i njihov opis mora da je intuitivnije postavljen"; implement in code and document. Left and bottom handle glyphs remain one identical circular ring-and-dot design (with equal hover feedback). The misleading full-panel-width footer is replaced with two concise plot-centered instructions: `LEFT: DAMAGE · BOTTOM: HEALTH` and `DRAG CENTER: BOTH AXES`. The first is at max(405, plot bottom + 56) and the second 18 DIPs lower. The center remains draggable on both native axes. All original square plot dimensions, controls, source values, attack/accuracy caps, and Mutants pairing remain unchanged. Runtime/Wine acceptance pending.
