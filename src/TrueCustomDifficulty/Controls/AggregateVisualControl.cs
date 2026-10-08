@@ -2804,6 +2804,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(20.0, 409.0), 8.8, muted, FontWeights.Normal);
     }
 
+    // Radiation has three independent source units. Do not infer a net radiation
+    // rate by subtracting a difficulty gain multiplier from a points/second removal.
+    // The summary is read-only; each native-range track is edited independently.
     private void DrawRadiationBalance(
         DrawingContext dc,
         Brush text,
@@ -2813,230 +2816,130 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(
-            dc,
-            "RADIATION PRESSURE",
-            "exposure gain, natural clearance and downstream health damage are separate systems",
-            text,
-            muted,
-            accent);
-
         var buildup = P("survival.radiationAccumulation");
         var recovery = P("survival.radiationRecovery");
         var damage = P("survival.radiationDamage");
 
-        var left = 34.0;
-        var right = Math.Max(left + 440.0, ActualWidth - 34.0);
-        var centerX = (left + right) / 2.0;
-        var gap = 22.0;
-        var flowY = 112.0;
+        DrawText(dc, "RADIATION PRESSURE", new Point(17.0, 13.0),
+            11.5, accent, FontWeights.Bold);
+        DrawText(dc, "radiation gained, naturally cleared and converted to HP damage",
+            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
 
-        var recoveryMap = new Rect(left, flowY - 16.0, Math.Max(150.0, centerX - gap - left), 32.0);
-        var buildupMap = new Rect(centerX + gap, flowY - 16.0, Math.Max(150.0, right - (centerX + gap)), 32.0);
-
-        dc.DrawRoundedRectangle(
-            CloneWithOpacity(panel, 0.94),
-            new Pen(border, 1.0),
-            new Rect(left - 12.0, 62.0, right - left + 24.0, 105.0),
-            4.0,
-            4.0);
-
-        dc.DrawLine(new Pen(soft, 1.0), new Point(centerX, 76.0), new Point(centerX, 153.0));
-
-        DrawText(dc, "NATURAL CLEARANCE", new Point(recoveryMap.Left, 72.0), 8.7, text, FontWeights.Bold);
-        DrawText(dc, "absolute passive removal", new Point(recoveryMap.Left, 87.0), 7.7, muted, FontWeights.Normal);
-
-        DrawRightAlignedText(dc, "EXPOSURE GAIN", new Point(buildupMap.Right, 72.0), 8.7, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "difficulty scaler on incoming radiation", new Point(buildupMap.Right, 87.0), 7.7, muted, FontWeights.Normal);
-
-        dc.DrawLine(new Pen(border, 4.0), new Point(recoveryMap.Left, flowY), new Point(recoveryMap.Right, flowY));
-        dc.DrawLine(new Pen(border, 4.0), new Point(buildupMap.Left, flowY), new Point(buildupMap.Right, flowY));
-
-        if (recovery is not null)
+        if (buildup is null || recovery is null || damage is null)
         {
-            var currentX = ValueToX(recovery.CurrentNumber, recovery.Minimum, recovery.Maximum, recoveryMap, reverse: true);
-            var vanillaX = ValueToX(recovery.ReferenceNumber, recovery.Minimum, recovery.Maximum, recoveryMap, reverse: true);
-
-            dc.DrawLine(new Pen(accent, 4.0), new Point(currentX, flowY), new Point(recoveryMap.Right, flowY));
-            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, flowY - 9.0), new Point(vanillaX, flowY + 9.0));
-            dc.DrawEllipse(
-                panel,
-                new Pen(accent, IsSelected(recovery) ? 2.6 : 1.6),
-                new Point(currentX, flowY),
-                7.0,
-                7.0);
-            dc.DrawEllipse(accent, null, new Point(currentX, flowY), 3.0, 3.0);
-
-            DrawText(dc, FriendlyValue(recovery), new Point(recoveryMap.Left, 132.0), 9.2, accent, FontWeights.Bold);
-
-            var recoveryFactor = Math.Abs(recovery.ReferenceNumber) > Epsilon
-                ? recovery.CurrentNumber / recovery.ReferenceNumber
-                : 0.0;
-            DrawRightAlignedText(
-                dc,
-                $"{recoveryFactor:0.##}x BASE",
-                new Point(recoveryMap.Right, 132.0),
-                8.2,
-                muted,
-                FontWeights.SemiBold);
-
-            AddHorizontalTarget(
-                recovery,
-                new Rect(recoveryMap.Left - 8.0, recoveryMap.Top - 5.0, recoveryMap.Width + 16.0, recoveryMap.Height + 10.0),
-                recoveryMap,
-                recovery.Minimum,
-                recovery.Maximum,
-                reverse: true);
+            DrawCenteredText(dc, "Radiation control data unavailable.",
+                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            return;
         }
 
-        if (buildup is not null)
+        var contentWidth = Math.Max(460.0, ActualWidth - 34.0);
+        var overview = new Rect(17.0, 55.0, contentWidth, 69.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), overview, 4.0, 4.0);
+
+        var third = overview.Width / 3.0;
+        var headings = new[] { "01  EXPOSURE", "02  CLEARANCE", "03  HP DAMAGE" };
+        var notes = new[]
         {
-            var currentX = ValueToX(buildup.CurrentNumber, buildup.Minimum, buildup.Maximum, buildupMap, reverse: false);
-            var vanillaX = ValueToX(buildup.ReferenceNumber, buildup.Minimum, buildup.Maximum, buildupMap, reverse: false);
-
-            dc.DrawLine(new Pen(accent, 4.0), new Point(buildupMap.Left, flowY), new Point(currentX, flowY));
-            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, flowY - 9.0), new Point(vanillaX, flowY + 9.0));
-            dc.DrawEllipse(
-                panel,
-                new Pen(accent, IsSelected(buildup) ? 2.6 : 1.6),
-                new Point(currentX, flowY),
-                7.0,
-                7.0);
-            dc.DrawEllipse(accent, null, new Point(currentX, flowY), 3.0, 3.0);
-
-            DrawText(dc, $"{buildup.CurrentNumber:0.##}x gain", new Point(buildupMap.Left, 132.0), 9.2, accent, FontWeights.Bold);
-
-            var buildupFactor = Math.Abs(buildup.ReferenceNumber) > Epsilon
-                ? buildup.CurrentNumber / buildup.ReferenceNumber
-                : 0.0;
-            DrawRightAlignedText(
-                dc,
-                $"{buildupFactor:0.##}x BASE",
-                new Point(buildupMap.Right, 132.0),
-                8.2,
-                muted,
-                FontWeights.SemiBold);
-
-            AddHorizontalTarget(
-                buildup,
-                new Rect(buildupMap.Left - 8.0, buildupMap.Top - 5.0, buildupMap.Width + 16.0, buildupMap.Height + 10.0),
-                buildupMap,
-                buildup.Minimum,
-                buildup.Maximum);
+            "incoming radiation gain",
+            "passive removal / sec",
+            "after harmful states"
+        };
+        for (var i = 0; i < 3; i++)
+        {
+            var x = overview.Left + third * i + 12.0;
+            DrawText(dc, headings[i], new Point(x, 64.0), 9.5,
+                i == 0 ? accent : text, FontWeights.Bold);
+            DrawText(dc, notes[i], new Point(x, 84.0),
+                9.0, muted, FontWeights.Normal);
+            if (i != 0)
+            {
+                var dividerX = overview.Left + third * i;
+                dc.DrawLine(new Pen(soft, 1.0), new Point(dividerX, 65.0),
+                    new Point(dividerX, 99.0));
+            }
         }
 
-        var recoveryRelative = recovery is not null && Math.Abs(recovery.ReferenceNumber) > Epsilon
-            ? recovery.CurrentNumber / recovery.ReferenceNumber
-            : 0.0;
-        var buildupRelative = buildup is not null && Math.Abs(buildup.ReferenceNumber) > Epsilon
-            ? buildup.CurrentNumber / buildup.ReferenceNumber
-            : 0.0;
-        var relativeBias = buildupRelative - recoveryRelative;
+        DrawText(dc, "INDEPENDENT GAME SYSTEMS  /  RADIATION STATE THRESHOLDS STAY VANILLA",
+            new Point(overview.Left + 12.0, 105.0),
+            8.9, muted, FontWeights.SemiBold);
 
-        var biasCard = new Rect(left, 183.0, right - left, 76.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.94), new Pen(border, 1.0), biasCard, 4.0, 4.0);
-
-        DrawText(dc, "RELATIVE TUNING BIAS", new Point(biasCard.Left + 12.0, biasCard.Top + 9.0), 8.6, muted, FontWeights.Bold);
-        DrawRightAlignedText(
-            dc,
-            "NORMALIZED TO BASE PRESET — NOT A LITERAL NET RAD/S",
-            new Point(biasCard.Right - 12.0, biasCard.Top + 9.0),
-            7.5,
-            muted,
-            FontWeights.Normal);
-
-        var biasAxis = new Rect(biasCard.Left + 24.0, biasCard.Top + 42.0, biasCard.Width - 48.0, 20.0);
-        var biasY = biasAxis.Top + biasAxis.Height / 2.0;
-        var biasCenterX = biasAxis.Left + biasAxis.Width / 2.0;
-        dc.DrawLine(new Pen(border, 3.0), new Point(biasAxis.Left, biasY), new Point(biasAxis.Right, biasY));
-        dc.DrawLine(new Pen(soft, 1.0), new Point(biasCenterX, biasY - 11.0), new Point(biasCenterX, biasY + 11.0));
-
-        var biasMagnitude = Math.Clamp(Math.Abs(relativeBias) / 3.0, 0.0, 1.0);
-        var biasX = relativeBias >= 0.0
-            ? biasCenterX + (biasAxis.Width / 2.0) * biasMagnitude
-            : biasCenterX - (biasAxis.Width / 2.0) * biasMagnitude;
-
-        dc.DrawLine(new Pen(accent, 4.0), new Point(biasCenterX, biasY), new Point(biasX, biasY));
-        dc.DrawEllipse(accent, null, new Point(biasX, biasY), 5.5, 5.5);
-
-        DrawText(dc, "MORE CLEARANCE", new Point(biasAxis.Left, biasY - 24.0), 7.6, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "BASELINE", new Point(biasCenterX, biasY - 24.0), 7.6, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "MORE BUILD-UP", new Point(biasAxis.Right, biasY - 24.0), 7.6, accent, FontWeights.Bold);
-
-        var biasLabel = Math.Abs(relativeBias) <= 0.05
-            ? "BASE-PRESET BALANCE"
-            : relativeBias > 0.0
-                ? $"{relativeBias:+0.00;-0.00;0.00} RELATIVE PRESSURE"
-                : $"{relativeBias:+0.00;-0.00;0.00} RELATIVE PRESSURE";
-
-        DrawCenteredText(
-            dc,
-            biasLabel,
-            new Point(biasCenterX, biasY + 12.0),
-            8.4,
-            Math.Abs(relativeBias) <= 0.05 ? muted : accent,
-            FontWeights.SemiBold);
-
-        var damageCard = new Rect(left, 278.0, right - left, 88.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.94), new Pen(border, 1.0), damageCard, 4.0, 4.0);
-
-        DrawText(dc, "HEALTH DAMAGE AFTER RADIATION BECOMES HARMFUL", new Point(damageCard.Left + 12.0, damageCard.Top + 9.0), 8.5, text, FontWeights.Bold);
-        DrawRightAlignedText(
-            dc,
-            "RADIATION STATE THRESHOLDS STAY VANILLA",
-            new Point(damageCard.Right - 12.0, damageCard.Top + 9.0),
-            7.7,
-            muted,
-            FontWeights.Normal);
-
-        if (damage is not null)
+        // Three full-width tracks retain each parameter's real native min/max/step.
+        // A grey Base Preset tick remains visible even when it coincides with gold.
+        void DrawRadiationTrack(
+            ParameterViewModel parameter,
+            string label,
+            string description,
+            string currentAndBase,
+            string minimumLabel,
+            string maximumLabel,
+            double top)
         {
-            DrawRightAlignedText(
-                dc,
-                FriendlyValue(damage),
-                new Point(damageCard.Right - 12.0, damageCard.Top + 28.0),
-                10.0,
-                accent,
-                FontWeights.Bold);
+            var card = new Rect(17.0, top, contentWidth, 96.0);
+            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
+                card, 4.0, 4.0);
 
-            var damageTrack = new Rect(damageCard.Left + 18.0, damageCard.Top + 50.0, damageCard.Width - 36.0, 24.0);
-            var damageY = damageTrack.Top + damageTrack.Height / 2.0;
+            DrawText(dc, label, new Point(card.Left + 12.0, top + 8.0),
+                10.5, text, FontWeights.Bold);
+            DrawRightAlignedText(dc, currentAndBase,
+                new Point(card.Right - 12.0, top + 7.0),
+                11.0, parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
+            DrawText(dc, description, new Point(card.Left + 12.0, top + 27.0),
+                9.4, muted, FontWeights.Normal);
 
-            dc.DrawLine(new Pen(border, 4.0), new Point(damageTrack.Left, damageY), new Point(damageTrack.Right, damageY));
+            var track = new Rect(card.Left + 21.0, top + 48.0,
+                card.Width - 42.0, 22.0);
+            var y = track.Top + track.Height / 2.0;
+            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
+                parameter.Maximum, track, reverse: false);
+            var referenceX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
+                parameter.Maximum, track, reverse: false);
 
-            var currentX = ValueToX(damage.CurrentNumber, damage.Minimum, damage.Maximum, damageTrack, reverse: false);
-            var vanillaX = ValueToX(damage.ReferenceNumber, damage.Minimum, damage.Maximum, damageTrack, reverse: false);
+            dc.DrawLine(new Pen(soft, 4.0),
+                new Point(track.Left, y), new Point(track.Right, y));
+            if (parameter.IsControlEnabled)
+                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 4.5),
+                    new Point(track.Left, y), new Point(currentX, y));
 
-            dc.DrawLine(new Pen(accent, 4.0), new Point(damageTrack.Left, damageY), new Point(currentX, damageY));
-            dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, damageY - 9.0), new Point(vanillaX, damageY + 9.0));
+            dc.DrawLine(new Pen(muted, 2.0),
+                new Point(referenceX, y - 11.0), new Point(referenceX, y + 11.0));
+            dc.DrawEllipse(panel, new Pen(
+                parameter.IsControlEnabled ? accent : muted,
+                IsSelected(parameter) ? 2.8 : 1.9),
+                new Point(currentX, y), 7.0, 7.0);
+            if (parameter.IsControlEnabled)
+                dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
 
-            dc.DrawEllipse(
-                panel,
-                new Pen(accent, IsSelected(damage) ? 2.6 : 1.6),
-                new Point(currentX, damageY),
-                7.0,
-                7.0);
-            dc.DrawEllipse(accent, null, new Point(currentX, damageY), 3.0, 3.0);
+            AddHorizontalTarget(parameter,
+                new Rect(track.Left - 8.0, track.Top - 4.0,
+                    track.Width + 16.0, track.Height + 8.0),
+                track, parameter.Minimum, parameter.Maximum);
 
-            DrawText(dc, "0x", new Point(damageTrack.Left, damageY + 10.0), 7.5, muted, FontWeights.Normal);
-            DrawCenteredText(dc, "VANILLA 1x", new Point(vanillaX, damageY + 10.0), 7.5, muted, FontWeights.SemiBold);
-            DrawRightAlignedText(dc, "2x", new Point(damageTrack.Right, damageY + 10.0), 7.5, muted, FontWeights.Normal);
-
-            AddHorizontalTarget(
-                damage,
-                new Rect(damageTrack.Left - 8.0, damageTrack.Top - 5.0, damageTrack.Width + 16.0, damageTrack.Height + 10.0),
-                damageTrack,
-                damage.Minimum,
-                damage.Maximum);
+            DrawText(dc, minimumLabel, new Point(track.Left, top + 73.0),
+                9.1, muted, FontWeights.Normal);
+            DrawRightAlignedText(dc, maximumLabel, new Point(track.Right, top + 73.0),
+                9.1, muted, FontWeights.Normal);
         }
 
-        DrawCenteredText(
-            dc,
-            "GREY MARKERS = BASE PRESET / VANILLA REFERENCES",
-            new Point(ActualWidth / 2.0, 389.0),
-            7.7,
-            muted,
-            FontWeights.Normal);
+        DrawRadiationTrack(buildup,
+            "EXPOSURE ACCUMULATION",
+            "Difficulty multiplier on incoming radiation; higher means faster build-up.",
+            $"{buildup.CurrentNumber:0.##}x  |  BASE {buildup.ReferenceNumber:0.##}x",
+            $"{buildup.Minimum:0.##}x", $"{buildup.Maximum:0.##}x", 137.0);
+
+        DrawRadiationTrack(recovery,
+            "NATURAL RADIATION CLEARANCE",
+            "Absolute radiation removed per second; higher means faster clearing.",
+            $"{recovery.CurrentNumber:0.00} pts/s  |  BASE {recovery.ReferenceNumber:0.00}",
+            $"{recovery.Minimum:0.00} pts/s", $"{recovery.Maximum:0.00} pts/s", 244.0);
+
+        DrawRadiationTrack(damage,
+            "HEALTH DAMAGE FROM RADIATION",
+            "Scales damage across all 11 harmful stages without moving state thresholds.",
+            $"{damage.CurrentNumber:0.##}x  |  BASE {damage.ReferenceNumber:0.##}x",
+            $"{damage.Minimum:0.##}x", $"{damage.Maximum:0.##}x", 351.0);
+
+        DrawText(dc, "GREY TICK = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
+            new Point(20.0, 458.0), 9.0, muted, FontWeights.SemiBold);
     }
 
     private void DrawAmmoDistribution(
@@ -3833,7 +3736,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "HungerLadder" => 380.0,
             "StarvationTimeline" => 532.0,
             "RepeatedHitBand" => 455.0,
-            "RadiationBalance" => 415.0,
+            "RadiationBalance" => 490.0,
             "TradingDashboard" => 485.0,
             "RepairCurve" => 370.0,
             "AmmoDistribution" => 470.0,
