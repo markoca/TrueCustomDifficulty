@@ -165,6 +165,7 @@ Column thresholds below apply to **board inner width**, not the whole Window wid
 
 - The actual implementation must also enforce **strip width ≥ 128 DIPs**, minimum gap and padding. If a threshold and true measured width disagree due to fonts/DPI, use fewer columns.
 - Prefer rows of 6/4/3/2 over artificially narrow strips. For the six-channel **Anomaly Effects** board, continuation rows stay **left aligned** in source order. For compact two/three-channel banks (Services, Trader Stock, Item Weight, Breakable Box Yields, Stash Rewards), **center each complete or incomplete row** within the board without stretching strips beyond 148 DIPs. Both choices preserve source order and per-strip minimum 128 DIPs.
+- **Responsive width polish:** both the six-channel Anomaly Effects board and smaller mixer banks cap strip width at **148 DIPs** while maintaining **128 DIPs** minimum; surplus horizontal width stays available as whitespace rather than stretching sliders. Anomaly continuation rows remain left aligned, compact banks are centered.
 - Row height is determined by the tallest label/legend in that row; each track must retain the same vertical alignment within its row.
 - Preserve authored semantic order on wrap: global effect first, then related local effects. No dynamic reorder based on current numeric values.
 - Board header and a short source-accurate guidance/footer line can span all columns. Do not repeat a long “Current/Base Preset” explanation in each strip.
