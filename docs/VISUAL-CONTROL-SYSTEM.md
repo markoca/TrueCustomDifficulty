@@ -559,3 +559,7 @@ The four visible Combat groups are ordered **Your Weapons → Human Enemies → 
 ### Centered card title system (2026-10-08)
 
 Remove duplicated section titles and decorative line separators above cards. Draw the title inside the actual control frame, centered in 12.5-DIP bold accent typography (and optional 9.5-DIP centered muted subtitle), for aggregate families and both dedicated mutant control families. The secondary Special Ability Cooldowns heading is centered and accent colored. Group templates reserve zero vertical height for unused section headers.
+
+### Unified heading system across all tabs (2026-10-08)
+
+Full-width 1x1 section cards and removal of duplicate section separators apply globally. Dedicated visual control titles are centered, bold, gold and 12.5 DIP, with centered 9.5-DIP grey explanatory subtitles, matching the Combat aggregate family. Gameplay ranges, interactions, visuals inside each specialized chart and CFG mapping stay unchanged. The beer/vodka drunkenness editor has no standalone top heading and retains its custom compact internal arrangement until its tab's individual redesign.
