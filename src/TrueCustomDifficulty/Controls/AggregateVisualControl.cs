@@ -1191,25 +1191,32 @@ public sealed class AggregateVisualControl : FrameworkElement
                 9.2, muted, FontWeights.SemiBold);
         var ghost = new Pen(CloneWithOpacity(muted, 0.75), 1.6) { DashStyle = DashStyles.Dash };
         var gold = new Pen(accent, 2.8);
-        void Step(Pen pen, double x0, double x1, double x2, double y0, double y1, double y2)
+        void DrawSteps(Pen pen, bool reference)
         {
-            dc.DrawLine(pen, new Point(area.Left, y0), new Point(x0, y0));
-            dc.DrawLine(pen, new Point(x0, y0), new Point(x0, y1));
-            dc.DrawLine(pen, new Point(x0, y1), new Point(x1, y1));
-            dc.DrawLine(pen, new Point(x1, y1), new Point(x1, y2));
-            dc.DrawLine(pen, new Point(x1, y2), new Point(area.Right, y2));
+            var xs = reference
+                ? new[] { baseLowX, baseMidX, baseHighX }
+                : new[] { lowX, midX, highX };
+            var ys = reference
+                ? new[] { baseLowY, baseMidY, baseHighY }
+                : new[] { lowY, midY, highY };
+            var previousX = area.Left;
+            var previousY = originY;
+            var begin = lowEffect is null ? 1 : 0;
+            for (var i = begin; i < 3; i++)
+            {
+                dc.DrawLine(pen, new Point(previousX, previousY),
+                    new Point(xs[i], previousY));
+                dc.DrawLine(pen, new Point(xs[i], previousY),
+                    new Point(xs[i], ys[i]));
+                previousX = xs[i];
+                previousY = ys[i];
+            }
+            dc.DrawLine(pen, new Point(previousX, previousY),
+                new Point(area.Right, previousY));
         }
-        // With no native LOW reload modifier, reload remains 0 through MEDIUM onset.
-        if (lowEffect is null)
-        {
-            Step(ghost, baseMidX, baseHighX, area.Right, originY, baseMidY, baseHighY);
-            Step(gold, midX, highX, area.Right, originY, midY, highY);
-        }
-        else
-        {
-            Step(ghost, baseLowX, baseMidX, baseHighX, baseLowY, baseMidY, baseHighY);
-            Step(gold, lowX, midX, highX, lowY, midY, highY);
-        }
+        // No native LOW reload effect: the reload line remains neutral until MEDIUM.
+        DrawSteps(ghost, true);
+        DrawSteps(gold, false);
 
         void Handle(ParameterViewModel parameter, ParameterViewModel effect,
             double x, double yy, double bx, double by)
