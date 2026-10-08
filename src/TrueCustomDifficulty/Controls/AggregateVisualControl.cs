@@ -1197,12 +1197,15 @@ public sealed class AggregateVisualControl : FrameworkElement
                 9.2, muted, FontWeights.SemiBold);
         void Steps(ParameterViewModel[] effects, bool reload, bool basePreset, Pen pen)
         {
-            // There is no reload source or white baseline before MEDIUM.
+            // Reload's white response is shown only in its MEDIUM–SEVERE
+            // domain: no lead-in from zero and no trailing white segment.
             var previousX = reload
                 ? X(basePreset ? medium.ReferenceNumber : medium.CurrentNumber)
                 : area.Left;
-            var previousY = reload ? reloadArea.Bottom : area.Bottom;
-            for (int i = 0; i < effects.Length; i++)
+            var previousY = reload
+                ? YR(basePreset ? mediumReload.ReferenceNumber : mediumReload.CurrentNumber)
+                : area.Bottom;
+            for (int i = reload ? 1 : 0; i < effects.Length; i++)
             {
                 var threshold = thresholds[i + (reload ? 1 : 0)];
                 var x = X(basePreset ? threshold.ReferenceNumber : threshold.CurrentNumber);
@@ -1213,8 +1216,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                 previousX = x;
                 previousY = yy;
             }
-            dc.DrawLine(pen, new Point(previousX, previousY),
-                new Point(area.Right, previousY));
+            if (!reload)
+                dc.DrawLine(pen, new Point(previousX, previousY),
+                    new Point(area.Right, previousY));
         }
         Steps(aims, false, true, new Pen(CloneWithOpacity(accent, .38), 1.5)
             { DashStyle = DashStyles.Dash });
@@ -4478,7 +4482,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         _selectedHitKind = target.Kind == HitKind.MixerBaseMarker ? HitKind.Vertical : target.Kind;
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
-        target.Parameter.ResetToReference();
+        if (target.Kind != HitKind.FatigueReloadJoint)
+            target.Parameter.ResetToReference();
         if (target.Kind is HitKind.FatigueJoint or HitKind.FatigueReloadJoint)
         {
             _fatigueReloadInteraction = target.Kind == HitKind.FatigueReloadJoint;
@@ -4593,8 +4598,11 @@ public sealed class AggregateVisualControl : FrameworkElement
                 Math.Max(1.0, target.MapRect.Height), 0, 1);
             var maximum = Family == "FatigueCurve" &&
                 _fatigueReloadInteraction ? FatigueReloadMaximum() : FatigueAimMaximum();
-            threshold.CurrentNumber = Snap(threshold, threshold.Minimum +
-                x * (threshold.Maximum - threshold.Minimum));
+            // White reload ring edits only its own penalty. The gold onset
+            // threshold is exclusively owned by the gold aim ring.
+            if (!_fatigueReloadInteraction)
+                threshold.CurrentNumber = Snap(threshold, threshold.Minimum +
+                    x * (threshold.Maximum - threshold.Minimum));
             effect.CurrentNumber = Snap(effect, Math.Clamp(y * maximum,
                 effect.Minimum, effect.Maximum));
             EnforceFamilyConstraints(threshold);
