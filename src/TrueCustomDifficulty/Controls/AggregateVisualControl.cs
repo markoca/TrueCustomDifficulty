@@ -1872,6 +1872,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         var faderWidth = Math.Min(140.0, Math.Max(128.0,
             (ActualWidth - plot.Right - 32.0) / 2.0 - 5.0));
         var faderLeft = plot.Right + 14.0;
+        // Source-level contract: these runtime maxima MUST feed the displayed
+        // faders, not merely be written in the UI design documentation.
+        // Both controls use ParameterViewModel.Maximum for their top ticks.
+        if (frequency.Maximum > 2.0 || accuracy.Maximum > 1.0)
+            throw new InvalidOperationException(
+                "Human Combat limits violated: Attack Frequency <= 2x, Fire Accuracy <= 1x.");
         DrawMixerStrip(dc, frequency, "ATTACK", "FREQUENCY",
             new Rect(faderLeft, 83.0, faderWidth, MixerStripHeight),
             text, muted, border, accent, panel);
