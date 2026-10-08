@@ -153,3 +153,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — UI-09 — axis spacing and missing arrow glyphs
 
 **User correction:** The earlier axis headings were cramped and Wine showed unsupported arrow glyphs as squares. ENEMY HEALTH remains centered above the X-axis, without an arrow; GUN DAMAGE is now a single vertical title in the left gutter and its numeric multiplier appears separately above the left-hand Y scale. The numeric ticks, handles, faders, ranges, and interactions are unchanged. Runtime acceptance pending.
+
+### 2026-10-08 — UI-09 — axis values inline
+
+**User request:** Place each X multiplier on the same line as its axis description, including the vertical axis. The Human Combat X heading is rendered as `ENEMY HEALTH  [value]` on a single centered horizontal row; the Y heading is one jointly rotated `GUN DAMAGE  [value]` row. Both use the existing contrasting text/gold colors and a shared 9-DIP gap, leaving the plot, tick labels and controls unchanged. Runtime visual acceptance pending.
