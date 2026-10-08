@@ -146,7 +146,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
         DrawCenteredText(dc, "SPECIAL ABILITY COOLDOWNS",
             new Point(ActualWidth / 2.0, 187.0), 11.0, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "Lower wait = faster ability return (not normal attack speed)",
+        DrawCenteredText(dc, "Higher rate = more frequent special attacks (not regular attacks)",
             new Point(ActualWidth / 2.0, 206.0), 9.5, muted, FontWeights.Normal);
 
         const int columns = 8;
@@ -242,7 +242,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         {
             var returnRate = parameter.CurrentNumber > Epsilon
                 ? 1.0 / parameter.CurrentNumber : 0.0;
-            DrawCenteredText(dc, $"{returnRate:0.##}x RETURN",
+            DrawCenteredText(dc, $"{returnRate:0.##}x ATTACK RATE",
                 new Point(center, card.Top + 63.0), 9.7, muted, FontWeights.SemiBold);
         }
         else
