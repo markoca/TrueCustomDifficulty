@@ -371,3 +371,7 @@ Replace sloping Hunger Effect Curve with a discrete step graph to avoid falsely 
 ### Hover/reset and reference-label lock (2026-10-08)
 
 Across the visual control system: do not render interactive hit regions as rectangular outlines; emphasize the active ring handle instead. Reset gestures stay active but are visually silent (no ephemeral gold text). Remove textual BASE from Hunger State Ladder while retaining its grey reference geometry. Mixer strips should be frameless.
+
+### Hunger fader and chart axes (2026-10-08)
+
+Left Well-Fed slider is explicitly labeled STAMINA RECOVERY BONUS; upward drag increases the bonus. The main staged loss plot has X = HUNGER POINTS (0–100) and a rotated Y = STAMINA RECOVERY LOSS label in its own left margin, separated from numeric percent ticks. Keep labels legible without colliding with handles or cards.
