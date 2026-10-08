@@ -11,6 +11,7 @@ namespace TrueCustomDifficulty;
 public partial class MainWindow : Window
 {
     private const double AspectRatio = 16.0 / 9.0;
+    private const double StartupWorkAreaFraction = 0.94;
     private const int WmSizing = 0x0214;
     private const int WmSysCommand = 0x0112;
     private const int ScMaximize = 0xF030;
@@ -26,6 +27,10 @@ public partial class MainWindow : Window
         {
             if (PresentationSource.FromVisual(this) is HwndSource source)
                 source.AddHook(WindowProc);
+
+            // The XAML default is 1600x900. Fit it to smaller work areas while
+            // keeping 16:9 intact rather than letting the taskbar clip the UI.
+            FitInitialWindowToWorkArea();
         };
 
         try
@@ -42,6 +47,28 @@ public partial class MainWindow : Window
                 MessageBoxImage.Error);
             Close();
         }
+    }
+
+    private void FitInitialWindowToWorkArea()
+    {
+        var work = SystemParameters.WorkArea;
+        if (work.Width <= 0.0 || work.Height <= 0.0)
+            return;
+
+        // Width, Height and work-area coordinates are WPF DIPs. The same
+        // ratio lock is applied to physical pixels during WM_SIZING.
+        var usableWidth = Math.Max(MinWidth, work.Width * StartupWorkAreaFraction);
+        var usableHeight = Math.Max(MinHeight, work.Height * StartupWorkAreaFraction);
+        var width = Math.Clamp(
+            Math.Min(Width, Math.Min(usableWidth, usableHeight * AspectRatio)),
+            MinWidth,
+            Width);
+        var height = width / AspectRatio;
+
+        Width = width;
+        Height = height;
+        Left = work.Left + (work.Width - width) / 2.0;
+        Top = work.Top + (work.Height - height) / 2.0;
     }
 
     private void MinimizeWindow_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
