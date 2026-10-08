@@ -2660,7 +2660,6 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // Longest effects share a real seconds scale. This chart is a preview,
         // not a fifth hit area or an alternate value-to-seconds editor.
-        var previewTop = previewTitle + 37.0;
         var preview = new Rect(17.0, previewTop, width, 160.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             preview, 4.0, 4.0);
