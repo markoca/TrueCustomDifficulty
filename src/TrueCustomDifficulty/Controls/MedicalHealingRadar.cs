@@ -17,7 +17,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class MedicalHealingRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double BoardHeight = 297.0;
+    private const double BoardHeight = 400.0;
     private const double CardHeight = 89.0;
     private const double Gap = 10.0;
     private const string FoodHealingId = "health.foodHealing";
@@ -119,30 +119,80 @@ public sealed class MedicalHealingRadar : FrameworkElement
             12.5, accent, FontWeights.Bold);
 
         var width = Math.Max(560.0, ActualWidth);
-        var food = new Rect(16, 43, width - 32, 39);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1), food, 4, 4);
-        DrawText(dc, "FOOD RESTORES HEALTH",
-            new Point(food.Left + 13, food.Top + 12), 10.5, text, FontWeights.Bold);
-        var state = _foodHealing?.CurrentBoolean == true;
-        var switchRect = new Rect(food.Right - 68, food.Top + 8, 52, 23);
-        dc.DrawRoundedRectangle(state ? CloneWithOpacity(accent, .14) : panel,
-            new Pen(_foodHealing?.IsValueModifiedFromReference() == true ? accent : border, 1.4),
-            switchRect, 4, 4);
-        DrawCenteredText(dc, state ? "ON" : "OFF",
-            new Point(switchRect.Left + switchRect.Width / 2,
-                switchRect.Top + switchRect.Height / 2),
-            9.5, state ? accent : muted, FontWeights.Bold);
-        _hits.Add(new HitArea(switchRect, -1, HitAction.Food));
+        var contentWidth = width - 32.0;
+        var bandageWidth = contentWidth * .66;
+        DrawMedicalCard(dc, new Rect(16, 48, bandageWidth - Gap, CardHeight),
+            0, text, muted, border, accent, panel);
 
-        // Two paired medical lanes per row: compact dose editors, no previews.
-        var cellWidth = (width - 32 - Gap) / 2;
-        for (var i = 0; i < Items.Length; i++)
+        var food = new Rect(16 + bandageWidth, 48, contentWidth - bandageWidth, CardHeight);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1), food, 4, 4);
+        DrawText(dc, "FOOD HEALING", new Point(food.Left + 12, food.Top + 12),
+            10.3, text, FontWeights.Bold);
+        var state = _foodHealing?.CurrentBoolean == true;
+        var box = new Rect(food.Right - 42, food.Top + 41, 24, 24);
+        dc.DrawRoundedRectangle(panel,
+            new Pen(_foodHealing?.IsValueModifiedFromReference() == true ? accent : muted, 1.7),
+            box, 3, 3);
+        if (state)
         {
-            var column = i % 2;
-            var row = i / 2;
-            var rect = new Rect(16 + column * (cellWidth + Gap),
-                94 + row * (CardHeight + Gap), cellWidth, CardHeight);
-            DrawMedicalCard(dc, rect, i, text, muted, border, accent, panel);
+            dc.DrawLine(new Pen(text, 2.2),
+                new Point(box.Left + 5, box.Top + 12),
+                new Point(box.Left + 10, box.Top + 17));
+            dc.DrawLine(new Pen(text, 2.2),
+                new Point(box.Left + 10, box.Top + 17),
+                new Point(box.Left + 19, box.Top + 6));
+        }
+        DrawText(dc, state ? "ON" : "OFF",
+            new Point(food.Left + 12, food.Top + 46), 11, text, FontWeights.Bold);
+        _hits.Add(new HitArea(food, -1, HitAction.Food));
+
+        DrawText(dc, "MEDKIT HEALING", new Point(18, 157), 10.8, text, FontWeights.Bold);
+        DrawText(dc, "HP RESTORED", new Point(18, 178), 9, muted, FontWeights.SemiBold);
+        // One common HP scale makes the three medkits directly comparable.
+        // Grey ticks retain each item's individual authored vanilla value.
+        const double chartTop = 210.0;
+        const double chartHeight = 136.0;
+        const double chartMaximum = 200.0;
+        var chartLeft = 46.0;
+        var chartWidth = width - 65.0;
+        for (var tick = 0; tick <= 200; tick += 50)
+        {
+            var y = chartTop + chartHeight * (1.0 - tick / chartMaximum);
+            dc.DrawLine(new Pen(CloneWithOpacity(border, .55), .8),
+                new Point(chartLeft, y), new Point(chartLeft + chartWidth, y));
+            DrawRightAlignedText(dc, $"{tick}", new Point(chartLeft - 7, y - 7),
+                8.4, muted, FontWeights.Normal);
+        }
+        var columnWidth = chartWidth / 3.0;
+        for (var i = 1; i < Items.Length; i++)
+        {
+            var p = _medical[i];
+            if (p is null) continue;
+            var centerX = chartLeft + (i - .5) * columnWidth;
+            var barWidth = Math.Min(72.0, columnWidth * .45);
+            var barBottom = chartTop + chartHeight;
+            var barTop = chartTop + chartHeight *
+                (1.0 - Math.Clamp(p.CurrentNumber / chartMaximum, 0, 1));
+            var vanillaY = chartTop + chartHeight *
+                (1.0 - Math.Clamp(p.ReferenceNumber / chartMaximum, 0, 1));
+            dc.DrawRectangle(CloneWithOpacity(accent, .65), null,
+                new Rect(centerX - barWidth / 2, barTop,
+                    barWidth, Math.Max(0.5, barBottom - barTop)));
+            dc.DrawLine(new Pen(muted, 2.4),
+                new Point(centerX - barWidth / 2 - 11, vanillaY),
+                new Point(centerX + barWidth / 2 + 11, vanillaY));
+            var numeric = $"{p.CurrentNumber:0.#}";
+            var label = CreateText(numeric + " HP", 12.2, text, FontWeights.Bold);
+            if (p.IsValueModifiedFromReference())
+            {
+                label.SetForegroundBrush(accent, 0, numeric.Length);
+                label.SetFontSize(13.4, 0, numeric.Length);
+            }
+            dc.DrawText(label, new Point(centerX - label.Width / 2, chartTop - 23));
+            DrawCenteredText(dc, Items[i].Label, new Point(centerX, 366),
+                9.8, text, FontWeights.Bold);
+            _hits.Add(new HitArea(new Rect(centerX - columnWidth / 2 + 5,
+                chartTop, columnWidth - 10, chartHeight), i, HitAction.Chart));
         }
     }
 
@@ -207,11 +257,11 @@ public sealed class MedicalHealingRadar : FrameworkElement
         if (hit is null) return;
         Focus();
         if (hit.Row >= 0) _selected = hit.Row;
-        if (hit.Action == HitAction.Slider)
+        if (hit.Action is HitAction.Slider or HitAction.Chart)
         {
             _dragRow = hit.Row;
             CaptureMouse();
-            UpdateSlider(hit.Row, e.GetPosition(this).X);
+            UpdateSlider(hit.Row, e.GetPosition(this).X, e.GetPosition(this).Y);
         }
         else
             Apply(hit);
@@ -249,7 +299,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
             ? Cursors.Hand : Cursors.Arrow;
         if (_dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed)
         {
-            UpdateSlider(_dragRow, e.GetPosition(this).X);
+            UpdateSlider(_dragRow, e.GetPosition(this).X, e.GetPosition(this).Y);
             e.Handled = true;
         }
     }
@@ -314,17 +364,19 @@ public sealed class MedicalHealingRadar : FrameworkElement
         InvalidateVisual();
     }
 
-    private void UpdateSlider(int row, double x)
+    private void UpdateSlider(int row, double x, double y)
     {
         if (row < 0 || row >= _medical.Length ||
             _medical[row] is not { } parameter || !parameter.IsControlEnabled)
             return;
         var hit = _hits.FirstOrDefault(area =>
-            area.Row == row && area.Action == HitAction.Slider);
+            area.Row == row && (area.Action == HitAction.Slider || area.Action == HitAction.Chart));
         if (hit is null) return;
         var trackLeft = hit.Bounds.Left + 5;
         var trackWidth = hit.Bounds.Width - 10;
-        var ratio = Math.Clamp((x - trackLeft) / Math.Max(1, trackWidth), 0, 1);
+        var ratio = hit.Action == HitAction.Chart
+            ? Math.Clamp(1.0 - (y - hit.Bounds.Top) / hit.Bounds.Height, 0, 1)
+            : Math.Clamp((x - trackLeft) / Math.Max(1, trackWidth), 0, 1);
         SetSnapped(parameter, parameter.Minimum +
             ratio * (parameter.Maximum - parameter.Minimum));
         InvalidateVisual();
@@ -388,5 +440,5 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
     private sealed record HitArea(Rect Bounds, int Row, HitAction Action);
 
-    private enum HitAction { Select, Food, Slider }
+    private enum HitAction { Select, Food, Slider, Chart }
 }

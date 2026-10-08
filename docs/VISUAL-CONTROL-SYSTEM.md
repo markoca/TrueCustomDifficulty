@@ -808,3 +808,8 @@ In **Stamina & Movement → Maximum Vault Height**, show only authored body-refe
 ### 2026-10-09 — Amok DLC1 boss mapping verification gate
 
 Amok is excluded from the current fourteen Mutant Health faders. Do not invent a MaxHP override or add a UI channel until the DLC1 boss prototype, health path and three-phase/weak-point mechanics are verified against original CFG and runtime. See docs/combat/MUTANT-HEALTH-AUDIT.md. Existing 2 × 7 layout and gameplay remain unchanged.
+
+
+### 2026-10-09 — Medical Healing combined card
+
+Medical Healing uses one 400-DIP board: top row has the editable Bandage Healing horizontal rail left and Food Healing checkbox right; below, an interactive three-column shared 0–200 HP graph compares Medkit, Army Medkit and Scientific Medkit. Each bar is draggable vertically, with a small grey line at that item's actual vanilla reference (70/85/100 HP respectively). Current numeric HP values turn yellow and grow by 1.2 DIP only if changed from the selected Base preset; static HP and names remain neutral. The Bandage readout uses the same changed-numeric-only rule. No bottom explanatory text, duplicated per-medkit sliders or extra subtitle. Five original CFG-backed parameters, references, native discrete 5 HP steps, and reset interactions remain preserved. No game values are modified by this layout change.
