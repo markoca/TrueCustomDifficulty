@@ -579,3 +579,7 @@ The Hunger State Ladder has one interactive 2D graph beneath the existing Hunger
 ### Gamer-style hunger stage graph (2026-10-08)
 
 Survival's Hunger State Ladder retains build-up control and threshold preview, with an updated **HUNGER SURVIVAL PROFILE**. Inside the profile the WELL-FED bonus has its own dedicated vertical channel, visually separate from the thresholds. A stepped, not diagonal, curve depicts discrete LOW, MEDIUM and SEVERE effects. LOW moves horizontally only; MEDIUM/SEVERE gold rings move in two dimensions (hunger onset X / negative stamina regeneration effect Y), with grey baseline markers and dashed baseline steps. Persistent state captions are in separate slots beneath the graph, not floating above handles. Intuitive instructions use WHEN and HOW MUCH. Keep original vanilla CFG semantics and threshold ordering.
+
+### Interaction polish (2026-10-08)
+
+The reference is Human Combat: no rectangular bounding-box selection overlays and no gold transient reset confirmation text. Gold ring handles and hover glow remain; underlying source reset behavior is unchanged. Shared mixer faders no longer draw selection card frames. Dedicated radar control reset messages are never rendered. Hunger Survival Profile removes the word BASE from its live value/preview/footer; grey reference ticks and dashed reference step profile stay visible.
