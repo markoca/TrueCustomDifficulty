@@ -1879,15 +1879,16 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(faderLeft + faderWidth + 10.0, 83.0, faderWidth, MixerStripHeight),
             text, muted, border, accent, panel);
 
-        // Keep both instructions beneath the plot (not centered beneath the faders).
-        // Never identify these controls by different shapes: all three are rings.
+        // A short two-line legend belongs to the plot, not to the entire panel.
+        // All three draggable glyphs are the same ring-and-dot shape; position
+        // and these action labels explain which CFG setting is affected.
         var legendY = Math.Max(405.0, plot.Bottom + 56.0);
-        DrawCenteredText(dc, "LEFT: DAMAGE  ·  BOTTOM: HEALTH",
+        DrawCenteredText(dc, "HEALTH  ← BOTTOM  |  LEFT → DAMAGE",
             new Point(plot.Left + plot.Width / 2.0, legendY),
-            8.8, text, FontWeights.SemiBold);
-        DrawCenteredText(dc, "DRAG CENTER: BOTH AXES",
+            9.0, text, FontWeights.SemiBold);
+        DrawCenteredText(dc, "CENTER HANDLE: DRAG BOTH",
             new Point(plot.Left + plot.Width / 2.0, legendY + 18.0),
-            8.8, muted, FontWeights.SemiBold);
+            9.0, accent, FontWeights.SemiBold);
     }
 
     // Editable axes are deliberately independent. The gold crosshair is a
