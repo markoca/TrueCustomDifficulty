@@ -87,6 +87,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "RadiationBalance" => "Tune NATURAL CLEARANCE and EXPOSURE GAIN independently on their real parameter scales. RELATIVE TUNING BIAS compares each value only against its own Base Preset reference, so it shows whether your tuning leans toward faster build-up or stronger clearance without pretending to be a literal net radiation rate. HEALTH DAMAGE below scales all radiation-damage stages while their vanilla thresholds stay unchanged.",
                     "TradingDashboard" => "PLAYER → TRADER controls the difficulty pricing setting used when traders buy from you; TRADER → PLAYER controls the setting used when they sell to you. DIFFICULTY PRICING GAP is only the difference between those two settings, not a final shop-price ratio. The CONDITION GATE sets the minimum weapon/armor durability traders accept, and BROKEN-ITEM VALUE FLOOR sets how much base value remains at exactly 0% durability.",
                     "RepairCurve" => "The gold line is the current repair-price multiplier across HOSTILE → DISLIKED → NEUTRAL → FRIENDLY reputation; the dashed line is vanilla. The 1x line is the unmodified base repair layer: points above it are surcharges and points below it are discounts. Drag any reputation point vertically. The point you move has priority and neighbouring tiers cascade only as needed to preserve HOSTILE ≥ DISLIKED ≥ NEUTRAL ≥ FRIENDLY.",
+                    "NpcLootLoadout" => "EXTRA CORPSE LOOT is a discrete choice of Medicine + Ammo, Water or None for the selected Base Preset. Its three options are real EconomyDifficulty.CorpseSmartLoot.GeneralNPC lists, not a numeric drop multiplier. The two independent inventory sliders change ordinary NPC medical drop frequency (0-200% of each authored chance, clamped to 100%) and ammo attached to dropped weapon rows (0-3x); neither changes the corpse bonus package. WEAPON CONDITION sets absolute MIN and MAX durability percentages on the audited 121 repeatable-NPC weapon rows. MIN cannot exceed MAX; moving one boundary pushes its neighbour only when required. At the unchanged default 25-50%, the writer emits no durability patch, preserving the one authored 35-45% outlier. Once changed, both chosen bounds apply to all 121 rows. The upper condition band is a read-only comparison, not a second hit area. Right-click any editor to reset its source setting; right-click either condition bound to reset the whole weapon-condition range; R resets all four source settings.\",
                     "WorldLootLayout" => "WORLD WEAPON SHUFFLE reshuffles only audited compatible regular weapon locations and retains every one of the 36 regular weapon models. WEAPON DENSITY changes how many compatible locations stay occupied; even at 0% the authored allocator keeps one of every regular weapon model. Density is editable only when World Weapon Shuffle is ON; switching shuffle OFF preserves its stored value without applying it. ATTACHMENT SHUFFLE independently changes compatible loose attachment placements, REMOVE WORLD DETECTORS removes supported non-quest detectors, and BLUEPRINT SHUFFLE independently redistributes supported blueprint locations. The four toggles neither trigger nor change each other. Right-click one toggle or the density track to restore only its Base Preset value; R resets all five settings.\",
                     "StashRewardProfile" => "The read-only CHANCE meters compare two separate stash rewards: Basic RGD-5 grenade rolls and eligible Rare stash coupon rolls. Each chance is an absolute 0-100% probability with its own Base Preset tick (Rare coupons vary by selected difficulty). BASIC GRENADE AMOUNT is an independent exact 0-4 count used only if the RGD-5 roll succeeds; setting Chance to 0% does not modify the stored amount. No chance/quantity multiplication is written to CFG, and coupon tier selection remains progression-based. Drag each lower source track separately, right-click one to reset, or press R to restore all three.\",
                     "BreakableBoxYields" => "AMMO BOX YIELD scales only the authored ammo MinCount/MaxCount entries for audited destructible SNG/NATO boxes; ammo-family selection weights are controlled elsewhere. GRENADE BOX YIELD independently scales F1 and RGD-5 dedicated destructible-box item counts; it does not shuffle grenade types. The upper scaling lanes compare each multiplier to the actual selected Base Preset, and the lower editable tracks preserve original source steps (0.25x ammo, 0.5x grenades). Quantity scaling uses positive round-half-up counts; individual source stacks may not change on every tick. Drag one track to edit just its own CFG multiplier, right-click to reset one or press R to reset both.\",
@@ -504,6 +505,11 @@ public sealed class ParameterViewModel : ObservableObject
         ["economy.repairNeutral"] = "RepairCurve",
         ["economy.repairFriend"] = "RepairCurve",
 
+        ["loot.npcCorpseBonus"] = "NpcLootLoadout",
+        ["loot.npcMedicalChance"] = "NpcLootLoadout",
+        ["loot.npcWeaponAmmoSupply"] = "NpcLootLoadout",
+        ["loot.droppedWeaponCondition"] = "NpcLootLoadout",
+
         ["loot.worldWeaponShuffle"] = "WorldLootLayout",
         ["loot.worldWeaponDensity"] = "WorldLootLayout",
         ["loot.worldAttachmentShuffle"] = "WorldLootLayout",
@@ -547,6 +553,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["RadiationBalance"] = "survival.radiationAccumulation",
         ["TradingDashboard"] = "economy.buyCondition",
         ["RepairCurve"] = "economy.repairEnemy",
+        ["NpcLootLoadout"] = "loot.npcCorpseBonus",
         ["WorldLootLayout"] = "loot.worldWeaponShuffle",
         ["StashRewardProfile"] = "loot.cheapStashGrenadeChance",
         ["BreakableBoxYields"] = "loot.destructibleAmmoQuantity",
@@ -626,6 +633,25 @@ public sealed class ParameterViewModel : ObservableObject
     public double ChoiceMinimum => 0;
     public double ChoiceMaximum => Math.Max(0, ChoiceOptions.Count - 1);
     public double ChoiceTickFrequency => 1.0;
+    // The difficulty-specific discrete option used by the visual corpse-loot selector.
+    // Unlike ReferenceNumber (numeric-only), this resolves array-valued vanilla choices.
+    public double ReferenceChoiceIndex
+    {
+        get
+        {
+            if (!IsChoiceSlider || ChoiceOptions.Count == 0)
+                return 0;
+
+            var reference = ElementToText(GetReferenceElement());
+            for (var i = 0; i < ChoiceOptions.Count; i++)
+            {
+                if (string.Equals(ChoiceOptions[i].Value, reference, StringComparison.Ordinal))
+                    return i;
+            }
+
+            return 0;
+        }
+    }
 
     // Percentage controls move in 5 percentage-point increments. Point-based
     // controls can opt into an absolute catalog step (for example 0.25 SP or
@@ -1460,6 +1486,7 @@ public sealed class ParameterViewModel : ObservableObject
         _referenceDifficulty = difficulty;
         OnPropertyChanged(nameof(ReferenceLabel));
         OnPropertyChanged(nameof(ReferenceNumber));
+        OnPropertyChanged(nameof(ReferenceChoiceIndex));
         OnPropertyChanged(nameof(VanillaReferenceText));
         OnPropertyChanged(nameof(TickFrequency));
 
@@ -1524,6 +1551,7 @@ public sealed class ParameterViewModel : ObservableObject
         OnPropertyChanged(nameof(EffectiveDetails));
         OnPropertyChanged(nameof(IsModified));
         OnPropertyChanged(nameof(ReferenceLabel));
+        OnPropertyChanged(nameof(ReferenceChoiceIndex));
         OnPropertyChanged(nameof(TickFrequency));
         OnPropertyChanged(nameof(ValueMeaning));
         OnPropertyChanged(nameof(PracticalQuantityDisplay));
