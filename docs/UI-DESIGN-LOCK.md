@@ -237,3 +237,7 @@ User-approved UI change: WPF group-level headings with left/right separator line
 ### 2026-10-08 — Global Combat-style UI baseline
 
 All tabs share fixed full-width (1x1) top-level sections with no duplicate decorative group headings. All dedicated visual controls with existing card titles now use centered gold 12.5-DIP bold headings and centered muted 9.5-DIP subtitles, aligned with the previously established aggregate controls. The affected editors cover Survival, Health, Stamina, Loot, Economy, Anomalies, and A-Life. Inner widgets and CFG mapping remain unchanged. DrunkennessControl retains its tightly packed beer/vodka editor layout without a new top title, pending its individual tab pass. Subsequent tab-specific redesigns must retain this global visual contract. Wine acceptance pending.
+
+### 2026-10-08 — Your Weapons: compact horizontal triplet
+
+User-approved redesign: Weapon Damage, Headshot Damage, and Weapon Jamming are three equally wide **horizontal** controls side by side in a single row. The group retains one centered in-card header, 12-DIP gaps, live values, original per-parameter CFG ranges and steps, grey Base ticks, gold current handles and individual right-click reset. The section height is reduced to 169 DIP. The previous vertical three-fader design is superseded; other Combat panels and global 1x1 section layout remain unchanged. Local Wine acceptance pending.
