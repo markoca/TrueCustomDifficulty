@@ -404,6 +404,15 @@ public sealed class MainViewModel : ObservableObject
             "economy.repairNeutral",
             "economy.repairFriend");
 
+        // The NPC card combines distinct native shapes: discrete smart-loot
+        // choice, medical and attached-ammo multipliers, and MIN/MAX durability.
+        WireVisualAggregate(
+            "loot.npcCorpseBonus",
+            "loot.npcCorpseBonus",
+            "loot.npcMedicalChance",
+            "loot.npcWeaponAmmoSupply",
+            "loot.droppedWeaponCondition");
+
         // Existing World Loot toggles stay independent. Weapon density still
         // observes its catalog requiresToggle dependency on weapon shuffle.
         WireVisualAggregate(
