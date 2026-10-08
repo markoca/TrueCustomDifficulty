@@ -547,3 +547,7 @@ The top **GLOBAL COMBAT** zone uses two long **horizontal** sliders in separate 
 ### Corrected Global Combat positioning — 2026-10-08
 
 The two horizontal sliders are **side by side**, not stacked: Damage Per Hit on the left, Attack Frequency on the right, equal-width columns separated by 24 DIP. The eight vertical cooldown faders remain underneath. Only their placement changes; mouse mapping and range semantics stay as before.
+
+### Combat UI density and Psy graph — 2026-10-08
+
+Mutant Combat's two horizontal global tracks share one row directly below the header, with the eight vertical ability cooldowns below after only the section label/subtitle. Keep vertical dead space minimal and preserve independent controls. Repeated Hit Protection is not a normal UI control (parameter state/mappings remain available internally). Psy Phantom Pressure follows Human Combat's square graph geometry, dotted crosshair and three circular handles: X=Cycle Wait, Y=Phantom Count, center=both. Gear Damage is a frameless vertical side fader, while Bleed retains its original boolean toggle. The Base marker represents the selected vanilla preset; this display does not derive spawns/minute.
