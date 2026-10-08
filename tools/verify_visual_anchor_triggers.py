@@ -18,6 +18,9 @@ ROOT = Path(__file__).resolve().parents[1]
 XAML = ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml"
 VM = ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs"
 CATALOG = ROOT / "src" / "TrueCustomDifficulty" / "Data" / "parameters.json"
+MAIN_VM = ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs"
+AGGREGATE = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs"
+REMAINING = ROOT / "docs" / "UI-REMAINING-REDESIGN.md"
 
 WPF = "{http://schemas.microsoft.com/winfx/2006/xaml/presentation}"
 X = "{http://schemas.microsoft.com/winfx/2006/xaml}"
@@ -111,7 +114,11 @@ def main() -> None:
     # A previous Loot UI pass accidentally wrote C# help arms ending in \\",
     # escaping the closing quote. That makes the next source line part of the
     # string and produces CS1010/CS1003 before WPF can even compile.
-    for family in ("NpcLootLoadout", "WorldLootLayout", "StashRewardProfile", "BreakableBoxYields"):
+    for family in (
+        "NpcLootLoadout", "WorldLootLayout", "StashRewardProfile", "BreakableBoxYields",
+        "BlastDamageBoard", "PhysicalLimits", "TraderStockBoard", "ServiceCostsBoard",
+        "ItemWeightBoard", "AnomalyEffectsBoard",
+    ):
         prefix = f'"{family}" => "'
         arm = next(
             (line.strip() for line in vm.splitlines() if line.strip().startswith(prefix)),
@@ -172,7 +179,82 @@ def main() -> None:
         if f'["{member}"] = "{npc_family}"' not in vm:
             fail(f"NPC aggregate mapping missing {member}")
 
-    print("[PASS] Toggle and choice anchors stay visible; native choice/range editors stay hidden")
+    # Regression guard for the remaining-slider consolidation. Membership must
+    # agree across VM visibility, aggregate rendering/measurement and modified-state
+    # wiring. This is intentionally source-only and runs on Linux before publish.
+    orphan_families = {
+        "BlastDamageBoard": ("combat.explosionDamage", [
+            "combat.explosionDamage",
+        ]),
+        "CoreHealthDashboard": ("health.maxHP", [
+            "health.maxHP", "health.baseRegen", "health.regenDelay",
+            "health.regenerationScalar", "health.lowHealthRegen",
+        ]),
+        "PhysicalLimits": ("stamina.vaultMaxHeight", [
+            "stamina.vaultMaxHeight", "stamina.maxCarryWeight",
+        ]),
+        "TraderStockBoard": ("economy.traderAmmoStock", [
+            "economy.traderAmmoStock", "economy.medicStock",
+        ]),
+        "ServiceCostsBoard": ("economy.fastTravelCost", [
+            "economy.fastTravelCost", "economy.upgradeCost",
+            "economy.repairCostBase",
+        ]),
+        "ItemWeightBoard": ("equipment.ammoWeight", [
+            "equipment.ammoWeight", "equipment.consumableWeight",
+        ]),
+        "AnomalyEffectsBoard": ("environment.anomalyDamage", [
+            "environment.anomalyDamage", "environment.flycatcherMovementSpeed",
+            "environment.flycatcherTurnSpeed", "environment.razorBleeding",
+            "environment.diamondBleeding", "environment.psyAnomalyIntensity",
+        ]),
+    }
+    main_vm = MAIN_VM.read_text(encoding="utf-8")
+    visual = AGGREGATE.read_text(encoding="utf-8")
+    for family, (anchor_id, members) in orphan_families.items():
+        if f'["{family}"] = "{anchor_id}"' not in vm:
+            fail(f"visual family {family} lacks its visible anchor")
+        if f'case "{family}":' not in visual:
+            fail(f"visual family {family} lacks OnRender dispatch")
+        ids_match = re.search(
+            rf'"{re.escape(family)}"\s*=>\s*new\[\]\s*\{{(.*?)\}}',
+            visual, re.S,
+        )
+        if ids_match is None:
+            fail(f"visual family {family} lacks source member binding")
+        wire = re.search(
+            rf'WireVisualAggregate\(\s*"{re.escape(anchor_id)}",(?P<rest>.*?)\);',
+            main_vm, re.S,
+        )
+        if wire is None:
+            fail(f"visual family {family} has no aggregate modified-state wiring")
+        for param_id in members:
+            definition = by_id.get(param_id)
+            if definition is None or definition.get("control") != "slider":
+                fail(f"native catalog slider changed or missing: {param_id}")
+            if definition.get("tab") != by_id[anchor_id].get("tab"):
+                fail(f"family crosses tabs: {family} / {param_id}")
+            if f'["{param_id}"] = "{family}"' not in vm:
+                fail(f"VM family map missing: {param_id}")
+            if f'"{param_id}"' not in ids_match.group(1):
+                fail(f"renderer GetFamilyIds missing: {param_id}")
+            if f'"{param_id}"' not in wire.group("rest"):
+                fail(f"modified-state listener missing: {param_id}")
+
+    if "foreach (var marker in vault.VanillaMarkers)" not in visual or (
+        "AddHorizontalTarget(vault," not in visual
+    ):
+        fail("vault height source markers lost their click-to-snap editor")
+
+    remaining_text = REMAINING.read_text(encoding="utf-8")
+    remaining_ids = re.findall(r"^- `([a-z][a-zA-Z0-9.]*)`", remaining_text, re.M)
+    if len(remaining_ids) != 4 or "Default-control entries remaining: **4**" not in remaining_text:
+        fail("remaining standalone-control audit is stale")
+    for _family, (_anchor, members) in orphan_families.items():
+        if set(members) & set(remaining_ids):
+            fail(f"audited family still appears as standalone: {_family}")
+
+    print("[PASS] WPF aggregate anchors and all orphan-control family bindings are valid")
 
 
 if __name__ == "__main__":
