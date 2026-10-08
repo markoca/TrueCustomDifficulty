@@ -2455,7 +2455,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(20.0, 585.0), 9.0, muted, FontWeights.Normal);
     }
 
-    // Four independent source parameters: Bandage on top, three medkits on a
+    // Four independent source parameters: Bandage and three medkits on a
     // single real-unit scale below. Grey ticks are the authored vanilla values.
     private void DrawBleedingTreatmentMixer(DrawingContext dc, Brush text,
         Brush muted, Brush border, Brush accent, Brush panel)
@@ -2468,21 +2468,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (bandage is null || medkit is null || army is null || scientific is null)
             return;
 
-        // One full-width independent slider for bandage bleeding removal.
-        DrawHorizontalTrackCard(dc, bandage, "BANDAGE",
-            new Rect(17, 50, Math.Max(1.0, ActualWidth - 34), 76),
-            text, muted, border, accent, panel, pairedValueFormatting: true);
-
-        DrawText(dc, "MEDKIT BLEEDING REMOVAL",
-            new Point(18, 150), 10.6, text, FontWeights.Bold);
-        DrawText(dc, "BLEEDING POINTS", new Point(18, 172),
+        DrawText(dc, "BLEEDING REMOVAL",
+            new Point(18, 56), 10.6, text, FontWeights.Bold);
+        DrawText(dc, "BLEEDING POINTS", new Point(18, 78),
             9.0, muted, FontWeights.SemiBold);
 
-        var items = new[] { medkit, army, scientific };
-        var names = new[] { "MEDKIT", "ARMY MEDKIT", "SCIENTIFIC MEDKIT" };
-        const double maximum = 70.0; // Shared display scale, not source slider maximum.
-        var plot = new Rect(50, 207, Math.Max(1.0, ActualWidth - 70), 150);
-        for (var tick = 0; tick <= 70; tick += 10)
+        var items = new[] { bandage, medkit, army, scientific };
+        var names = new[] { "BANDAGE", "MEDKIT", "ARMY MEDKIT", "SCIENTIFIC MEDKIT" };
+        const double maximum = 200.0; // Shared display scale, not source slider maximum.
+        var plot = new Rect(50, 115, Math.Max(1.0, ActualWidth - 70), 209);
+        for (var tick = 0; tick <= 200; tick += 50)
         {
             var y = plot.Bottom - plot.Height * tick / maximum;
             dc.DrawLine(new Pen(CloneWithOpacity(border, .55), .8),
@@ -2507,9 +2502,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Point(center - barWidth / 2 - 10, referenceY),
                 new Point(center + barWidth / 2 + 10, referenceY));
             DrawCenteredNumericChanges(dc, $"{p.CurrentNumber:0.#} PTS",
-                new Point(center, 194), 11.2, text, accent, FontWeights.Bold,
+                new Point(center, 92), 11.2, text, accent, FontWeights.Bold,
                 p.IsValueModifiedFromReference());
-            DrawCenteredText(dc, names[i], new Point(center, 373),
+            DrawCenteredText(dc, names[i], new Point(center, 345),
                 9.8, text, FontWeights.Bold);
             // Native independent 5-point steps/bounds; chart Y is shared for
             // comparisons, so clamp each interaction to its own source range.
@@ -4933,7 +4928,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "MutantCombatPressure" or "WaterStaminaPressure"
                 or "RadiationTreatment" => 270.0,
             "FatigueCurve" => CompactFatigueHeight(width),
-            "BleedingTreatmentMixer" => 407.0,
+            "BleedingTreatmentMixer" => 376.0,
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 465.0,
             "HumanCombatProfile" => 465.0,
