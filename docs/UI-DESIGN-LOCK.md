@@ -217,3 +217,7 @@ User-authorized consolidation: The former Mutants and Mutant Special Attack Cool
 ### 2026-10-08 — Mutant Combat global controls horizontal
 
 User-approved refinement: In the combined Mutant Combat section, **DAMAGE PER HIT** and **ATTACK FREQUENCY** are now two wide horizontal sliders stacked vertically, using glowing gold circular handles and the original CFG min/max, steps and Base reference. The eight SPECIAL ABILITY COOLDOWNS underneath remain compact vertical faders in one row. Dragging of the two upper controls uses horizontal X coordinates; dragging the eight timers continues to use vertical Y coordinates. This explicit two-tier direction contrast is locked. No gameplay or catalog change. Local Wine verification pending.
+
+### 2026-10-08 — Mutant Combat: two horizontal controls side by side
+
+Explicit correction to the preceding stacked-layout note: **DAMAGE PER HIT** and **ATTACK FREQUENCY** occupy the SAME horizontal row, in left and right half-width panels respectively, with a 24-DIP gap. Both use horizontal tracks and independent CFG values. The eight vertical special-ability cooldown faders remain in the full-width row beneath them. This supersedes the prior description of two horizontally oriented controls stacked vertically.
