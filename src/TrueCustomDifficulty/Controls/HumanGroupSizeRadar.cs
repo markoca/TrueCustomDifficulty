@@ -183,16 +183,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             muted,
             FontWeights.Normal);
 
-        if (!string.IsNullOrWhiteSpace(_status.Text))
-        {
-            DrawCenteredText(
-                dc,
-                _status.Text,
-                new Point(ActualWidth / 2.0, 309.0),
-                8.0,
-                accent,
-                FontWeights.SemiBold);
-        }
+        // No transient yellow reset notifications.
     }
 
     private void DrawRankRow(
