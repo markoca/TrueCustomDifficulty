@@ -3138,10 +3138,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             var parameter = previewParameters[i];
             var cx = preview.Left + 12.0 + (i + 0.5) * legendWidth;
-            DrawCenteredText(dc,
+            DrawCenteredNumericChanges(dc,
                 $"{previewLabels[i]} {parameter.CurrentNumber:0}",
                 new Point(cx, previewTop + 55.0),
-                9.5, i == 2 ? accent : text, FontWeights.SemiBold);
+                9.5, text, accent, FontWeights.SemiBold,
+                parameter.IsValueModifiedFromReference());
         }
 
         // Game-facing state profile: the bonus is now edited in the top row.
@@ -3249,23 +3250,26 @@ public sealed class AggregateVisualControl : FrameworkElement
         var footerLeft = frame.Left + 8.0;
         var footerWidth = (frame.Width - 16.0) / 3.0;
         var footerY = frame.Top + 259.0;
-        void StageCaption(int index, string caption, Brush color)
+        void StageCaption(int index, string caption, params bool[] changed)
         {
             var cell = new Rect(footerLeft + index * footerWidth,
                 footerY - 2.0, footerWidth, 20.0);
             dc.PushClip(new RectangleGeometry(cell));
-            DrawCenteredText(dc, caption,
+            DrawCenteredNumericChanges(dc, caption,
                 new Point(cell.Left + cell.Width / 2.0, footerY),
-                9.0, color, FontWeights.Bold);
+                9.0, text, accent, FontWeights.Bold, changed);
             dc.Pop();
         }
-        StageCaption(0, $"LOW AT {low.CurrentNumber:0} PTS", text);
+        StageCaption(0, $"LOW AT {low.CurrentNumber:0} PTS",
+            low.IsValueModifiedFromReference());
         StageCaption(1,
             $"MEDIUM AT {medium.CurrentNumber:0} PTS | -{mediumPenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
-            accent);
+            medium.IsValueModifiedFromReference(),
+            mediumPenalty.IsValueModifiedFromReference());
         StageCaption(2,
             $"SEVERE AT {severe.CurrentNumber:0} PTS | -{severePenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
-            accent);
+            severe.IsValueModifiedFromReference(),
+            severePenalty.IsValueModifiedFromReference());
 
     }
 
@@ -4781,6 +4785,27 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         return formatted;
+    }
+
+    // Shared rule for compound gamer-facing captions. Numeric tokens map 1:1
+    // to their source parameters: only changed values turn gold. Labels,
+    // units, signs, percentage symbols and unchanged numbers stay neutral.
+    // Callers must provide the change flag in the same order as numeric tokens.
+    private void DrawCenteredNumericChanges(
+        DrawingContext dc, string caption, Point center, double size,
+        Brush normal, Brush changedBrush, FontWeight weight, params bool[] changed)
+    {
+        var formatted = CreateText(caption, size, normal, weight);
+        var numbers = System.Text.RegularExpressions.Regex.Matches(
+            caption, @"\d+(?:\.\d+)?");
+        for (var i = 0; i < numbers.Count && i < changed.Length; i++)
+            if (changed[i])
+                formatted.SetForegroundBrush(changedBrush,
+                    numbers[i].Index, numbers[i].Length);
+        // Same centered alignment as existing labels, no layout shifts.
+        dc.DrawText(formatted, new Point(
+            center.X - formatted.Width / 2.0,
+            center.Y - formatted.Height / 2.0));
     }
 
     private void DrawText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
