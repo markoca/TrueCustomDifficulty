@@ -3040,8 +3040,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var width = Math.Max(460.0, ActualWidth - 34.0);
-        var stageColumns = CompactStageColumns(ActualWidth);
-
         void Card(ParameterViewModel parameter, string label, string value,
             string minimum, string maximum, double top, int columns, int index)
             => DrawCompactTrack(dc, parameter, label, value, minimum, maximum,
@@ -3051,7 +3049,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         const double buildTop = 55.0;
         Card(rate, "HUNGER BUILD-UP",
             $"{rate.CurrentNumber:0.000} pts/s",
-            "0 pts/s", "0.030 pts/s", buildTop, 1, 0);
+            "0 pts/s", "0.030 pts/s", buildTop, 2, 0);
+        Card(wellFed, "WELL-FED STAMINA RECOVERY",
+            $"+{wellFed.CurrentNumber * 100:0}% STAMINA RECOVERY",
+            "0%", "+40%", buildTop, 2, 1);
 
         const double previewTop = buildTop + CompactTrackHeight + 12.0;
         var preview = new Rect(17.0, previewTop, width, 80.0);
@@ -3105,51 +3106,18 @@ public sealed class AggregateVisualControl : FrameworkElement
                 9.5, i == 2 ? accent : text, FontWeights.SemiBold);
         }
 
-        // Game-facing state profile: stepped bands, never an interpolated slope.
-        // A separate WELL-FED column avoids overlapping LOW at X=0.
+        // Game-facing state profile: the bonus is now edited in the top row.
+        // The lower plot spans the same full-width panel as the stage preview.
         var frame = new Rect(17.0, preview.Bottom + 55.0,
-            Math.Max(460.0, ActualWidth - 34.0), 334.0);
+            Math.Max(460.0, ActualWidth - 34.0), 294.0);
         DrawCenteredText(dc, "HUNGER SURVIVAL PROFILE",
             new Point(ActualWidth / 2.0, frame.Top - 36.0), 11.5, accent, FontWeights.Bold);
         DrawCenteredText(dc, "DRAG GOLD RINGS TO CHANGE WHEN HUNGER HITS AND HOW HARD",
             new Point(ActualWidth / 2.0, frame.Top - 17.0), 9.2, muted, FontWeights.Normal);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), frame, 4.0, 4.0);
-        var bonusLane = new Rect(frame.Left + 11.0, frame.Top + 15.0, 124.0, 236.0);
-        var plot = new Rect(bonusLane.Right + 73.0, frame.Top + 43.0,
-            Math.Max(220.0, frame.Right - bonusLane.Right - 91.0), 183.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(soft, 0.075),
-            new Pen(CloneWithOpacity(border, 0.75), 1.0), bonusLane, 3.0, 3.0);
-        DrawCenteredText(dc, "WELL-FED", new Point(bonusLane.Left + bonusLane.Width / 2.0,
-            bonusLane.Top + 15.0), 10.4, text, FontWeights.Bold);
-        DrawCenteredText(dc, "STAMINA RECOVERY",
-            new Point(bonusLane.Left + bonusLane.Width / 2.0, bonusLane.Top + 31.0),
-            9.0, muted, FontWeights.SemiBold);
-        DrawCenteredText(dc, "BONUS",
-            new Point(bonusLane.Left + bonusLane.Width / 2.0, bonusLane.Top + 45.0),
-            9.0, muted, FontWeights.Normal);
-
-        // Standalone WELL-FED bonus has no hunger threshold to edit.
-        var fedRail = new Rect(bonusLane.Left + bonusLane.Width / 2.0 - 2.0,
-            bonusLane.Top + 81.0, 4.0, 104.0);
-        var fedY = ValueToY(wellFed.CurrentNumber, wellFed.Minimum, wellFed.Maximum, fedRail);
-        var fedBaseY = ValueToY(wellFed.ReferenceNumber, wellFed.Minimum, wellFed.Maximum, fedRail);
-        dc.DrawLine(new Pen(border, 5.0),
-            new Point(fedRail.Left + 2.0, fedRail.Top),
-            new Point(fedRail.Left + 2.0, fedRail.Bottom));
-        dc.DrawLine(new Pen(accent, 4.0),
-            new Point(fedRail.Left + 2.0, fedRail.Bottom),
-            new Point(fedRail.Left + 2.0, fedY));
-        dc.DrawLine(new Pen(muted, 1.8),
-            new Point(fedRail.Right + 9.0, fedBaseY),
-            new Point(fedRail.Right + 25.0, fedBaseY));
-        DrawHumanAxisHandle(dc, new Point(fedRail.Left + 2.0, fedY),
-            accent, panel, ReferenceEquals(_hoverTarget?.Parameter, wellFed), IsSelected(wellFed));
-        AddVerticalTarget(wellFed,
-            new Rect(fedRail.Left - 15.0, fedY - 16.0, 34.0, 32.0),
-            fedRail, wellFed.Minimum, wellFed.Maximum);
-        DrawCenteredText(dc, $"+{wellFed.CurrentNumber * 100:0}% RECOVERY",
-            new Point(bonusLane.Left + bonusLane.Width / 2.0, bonusLane.Bottom - 26.0),
-            10.3, accent, FontWeights.Bold);
+        // Leave room only for Y tick labels/title; no separate Well-Fed lane.
+        var plot = new Rect(frame.Left + 79.0, frame.Top + 43.0,
+            frame.Width - 99.0, 183.0);
 
         var area = new Rect(plot.Left + 2.0, plot.Top + 8.0,
             plot.Width - 12.0, plot.Height - 21.0);
@@ -3237,21 +3205,29 @@ public sealed class AggregateVisualControl : FrameworkElement
         StateNode(severe, severePenalty,
             new Point(sevX, sevY), new Point(baseSevX, baseSevY), "SEVERE");
 
-        // Each stage owns one full-width footer row, below the X-axis ticks.
-        // Do not anchor long descriptions beneath their plotted X positions:
-        // nearby stages otherwise collide with each other and with tick labels.
-        var stageLabelLeft = frame.Left + 16.0;
-        DrawText(dc, $"LOW AT {low.CurrentNumber:0} PTS",
-            new Point(stageLabelLeft, frame.Top + 266.0),
-            9.4, text, FontWeights.Bold);
-        DrawText(dc,
-            $"MEDIUM AT {medium.CurrentNumber:0} PTS  |  -{mediumPenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
-            new Point(stageLabelLeft, frame.Top + 286.0),
-            9.4, accent, FontWeights.Bold);
-        DrawText(dc,
-            $"SEVERE AT {severe.CurrentNumber:0} PTS  |  -{severePenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
-            new Point(stageLabelLeft, frame.Top + 306.0),
-            9.4, accent, FontWeights.Bold);
+        // Three horizontally allocated one-line readouts stay fixed even when
+        // the draggable thresholds move together. Clip each to its own third,
+        // so a narrow layout never paints over the next stage's label.
+        var footerLeft = frame.Left + 8.0;
+        var footerWidth = (frame.Width - 16.0) / 3.0;
+        var footerY = frame.Top + 259.0;
+        void StageCaption(int index, string caption, Brush color)
+        {
+            var cell = new Rect(footerLeft + index * footerWidth,
+                footerY - 2.0, footerWidth, 20.0);
+            dc.PushClip(new RectangleGeometry(cell));
+            DrawCenteredText(dc, caption,
+                new Point(cell.Left + cell.Width / 2.0, footerY),
+                9.0, color, FontWeights.Bold);
+            dc.Pop();
+        }
+        StageCaption(0, $"LOW AT {low.CurrentNumber:0} PTS", text);
+        StageCaption(1,
+            $"MEDIUM {medium.CurrentNumber:0} PTS | -{mediumPenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
+            accent);
+        StageCaption(2,
+            $"SEVERE {severe.CurrentNumber:0} PTS | -{severePenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
+            accent);
 
     }
 
@@ -4966,7 +4942,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double CompactHungerHeight(double width)
     {
         var previewBottom = 55.0 + CompactTrackHeight + 12.0 + 80.0;
-        var frameBottom = previewBottom + 55.0 + 334.0;
+        var frameBottom = previewBottom + 55.0 + 294.0;
         return frameBottom + 12.0;
     }
 
