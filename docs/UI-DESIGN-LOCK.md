@@ -205,3 +205,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — Special Ability Cooldowns: one row of eight vertical faders
 
 **User-approved change:** The eight mutant Special Ability Cooldown controls use the same compact one-row vertical-fader layout as Mutant Health. Retain original native cooldown/wait multipliers and steps, return-rate readout, grey reference tick, gold current handle, circular hover glow without box, vertical dragging, single-control right-click reset and R reset all. Split long mutant names on two lines. Keep all top-level sections full width (1x1); no unrelated UI changes. Wine visual acceptance pending.
+
+### 2026-10-08 — Special Ability Cooldowns single-row layout
+
+User-approved change: eight mutant cooldown controls now use one compact horizontal row of vertical faders, matching Mutant Health. Their original source values, steps, grey Base ticks, return-rate readouts, glow-only handles, vertical dragging, individual right-click reset and R reset-all are preserved. Long labels are split across two lines. Top-level sections remain 1x1. Runtime acceptance pending.
