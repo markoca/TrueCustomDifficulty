@@ -889,14 +889,34 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawHorizontalTrackCard(dc, P(board.First), board.FirstLabel,
             new Rect(16.0, 56.0, cardWidth, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
+
+        // The vault-height track retains the authored WAIST/EYES landmarks.
+        // The tick marks share the native track hit area: clicking a tick snaps
+        // to that exact source height (130/225/300 uu) with no extra control.
+        var isPhysicalLimits = Family == "PhysicalLimits";
+        if (isPhysicalLimits && P(board.First) is { } vault)
+        {
+            var track = new Rect(30.0, 95.0, Math.Max(1.0, cardWidth - 28.0), 12.0);
+            foreach (var marker in vault.VanillaMarkers)
+            {
+                var x = ValueToX(marker.Value, vault.Minimum, vault.Maximum, track, false);
+                dc.DrawLine(new Pen(muted, 1.8),
+                    new Point(x, 89.0), new Point(x, 95.0));
+                var caption = marker.Label.Replace("VANILLA / ", "", StringComparison.Ordinal)
+                    + $" {marker.Value:0} uu";
+                DrawCenteredText(dc, caption, new Point(x, 136.0),
+                    9.0, muted, FontWeights.SemiBold);
+            }
+        }
+
         DrawHorizontalTrackCard(dc, P(board.Second), board.SecondLabel,
-            new Rect(16.0, 139.0, cardWidth, 72.0),
+            new Rect(16.0, isPhysicalLimits ? 178.0 : 139.0, cardWidth, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
 
         // Bounded, one-line help avoids collision at 520px minimum width.
         dc.DrawText(CreateText(board.Note, 9.4, text, FontWeights.SemiBold,
                 Math.Max(1.0, ActualWidth - 36.0)),
-            new Point(18.0, 228.0));
+            new Point(18.0, Family == "PhysicalLimits" ? 265.0 : 228.0));
     }
 
     // Fatigue stages affect when penalties begin, while their strengths remain
@@ -4444,15 +4464,16 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double GetDesiredHeight(string family, double width)
         => family switch
         {
-            "BlastDamageBoard" => 280.0,
-            "ServiceCostsBoard" => 365.0,
+            "BlastDamageBoard" => 305.0,
+            "ServiceCostsBoard" => 385.0,
             "AnomalyEffectsBoard" => 628.0,
             "NpcLootLoadout" => 748.0, // reserve footer/status lane below the native input cards
             "WorldLootLayout" => width >= 720.0 ? 340.0 : 450.0,
             "StashRewardProfile" => 485.0,
             "BreakableBoxYields" => 413.0,
+            "PhysicalLimits" => 335.0,
             "MutantCombatPressure" or "StaminaCore" or "WaterStaminaPressure"
-                or "RadiationTreatment" or "PhysicalLimits" or "TraderStockBoard"
+                or "RadiationTreatment" or "TraderStockBoard"
                 or "ItemWeightBoard" => 270.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "BleedingTreatmentMixer" => 684.0,
