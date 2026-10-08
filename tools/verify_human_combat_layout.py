@@ -44,6 +44,8 @@ if '"HumanCombatProfile" => "The square graph' not in help_text:
 catalog = {p["id"]: p for p in json.loads((SRC / "Data" / "parameters.json").read_text())["parameters"]}
 assert catalog["combat.npcAttackCooldown"]["slider"]["max"] == 2
 assert catalog["combat.npcHipAccuracy"]["slider"]["max"] == 1
+assert '"combat.npcAttackCooldown" => Math.Min(2.0, Definition.Slider?.Max ?? 2.0)' in help_text
+assert '"combat.npcHipAccuracy" => Math.Min(1.0, Definition.Slider?.Max ?? 1.0)' in help_text
 # Joint handle and independent axes must share the exact glyph and glow renderer.
 assert 'DrawHumanAxisHandle(dc, new Point(healthX, damageY), accent, panel,' in human
 assert 'DrawHumanAxisHandle(dc, healthHandle, accent, panel,' in human
