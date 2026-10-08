@@ -36,7 +36,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         if (Family is "AnomalyEffectsBoard" or "ServiceCostsBoard"
             or "TraderStockBoard" or "ItemWeightBoard" or "BreakableBoxYields"
-            or "StashRewardProfile")
+            or "StashRewardProfile" or "HumanCombatProfile")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
     }
 
@@ -1788,7 +1788,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             damage, "GUN DAMAGE",
             51.0, text, accent);
 
-        var plot = new Rect(78.0, 83.0, Math.Max(350.0, ActualWidth - 116.0), 135.0);
+        // Reserve the right-hand lane for two vertically oriented source faders.
+        var plotSide = Math.Min(280.0, Math.Max(180.0, ActualWidth - 360.0));
+        var plot = new Rect(48.0, 91.0, plotSide, plotSide);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
 
         for (var tick = 0; tick <= 4; tick++)
@@ -1842,20 +1844,20 @@ public sealed class AggregateVisualControl : FrameworkElement
         AddVerticalTarget(damage, new Rect(plot.Left - 28.0, damageY - 14.0, 27.0, 28.0),
             plot, damage.Minimum, damage.Maximum);
 
-        DrawCenteredText(dc,
-            "BOTTOM CIRCLE: ENEMY HEALTH   |   LEFT SQUARE: GUN DAMAGE   |   POINT = PREVIEW",
-            new Point(ActualWidth / 2.0, 268.0), 9.3, text, FontWeights.SemiBold);
+        // Retain native source units/steps and individual right-hand rationale.
+        var faderWidth = Math.Min(140.0, Math.Max(128.0,
+            (ActualWidth - plot.Right - 32.0) / 2.0 - 5.0));
+        var faderLeft = plot.Right + 14.0;
+        DrawMixerStrip(dc, frequency, "ATTACK", "FREQUENCY",
+            new Rect(faderLeft, 83.0, faderWidth, MixerStripHeight),
+            text, muted, border, accent, panel);
+        DrawMixerStrip(dc, accuracy, "FIRE", "ACCURACY",
+            new Rect(faderLeft + faderWidth + 10.0, 83.0, faderWidth, MixerStripHeight),
+            text, muted, border, accent, panel);
 
-        // The frequency VM already inverts its raw cooldown in the CFG writer.
-        // An accuracy multiplier is not a literal hit probability.
-        var gap = 10.0;
-        var cardWidth = (ActualWidth - 36.0 - gap) / 2.0;
-        DrawHorizontalTrackCard(dc, frequency, "ATTACK FREQUENCY",
-            new Rect(18.0, 287.0, cardWidth, 72.0),
-            text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, accuracy, "FIRE ACCURACY",
-            new Rect(18.0 + cardWidth + gap, 287.0, cardWidth, 72.0),
-            text, muted, border, accent, panel);
+        DrawCenteredText(dc,
+            "BOTTOM CIRCLE = HEALTH  |  LEFT SQUARE = DAMAGE  |  POINT = PREVIEW",
+            new Point(ActualWidth / 2.0, 386.0), 9.2, text, FontWeights.SemiBold);
     }
 
     // Editable axes are deliberately independent. The gold crosshair is a
@@ -4654,7 +4656,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "BleedingTreatmentMixer" => 684.0,
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 390.0,
-            "HumanCombatProfile" => 390.0,
+            "HumanCombatProfile" => 415.0,
             "PlayerWeaponProfile" => 330.0,
             "CoreHealthDashboard" => 475.0,
             "SevereFatiguePenaltyBoard" => 390.0,
