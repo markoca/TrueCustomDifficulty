@@ -134,3 +134,8 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — Remove repository test scripts and references
 
 **User instruction:** Remove the tests everywhere, not merely from the publish entry point. Removed Python `verify_*` scripts, runtime test utilities, test-only fixtures, and the unused UI snapshot manifest. Removed active test instructions from documentation. `publish.sh` now performs the .NET publish without any automated Python UI/layout test. UI-DESIGN-LOCK.md and VISUAL-CONTROL-SYSTEM.md remain mandatory UI specifications, not executable tests. Existing gameplay implementation and control limits remain unchanged.
+
+
+### 2026-10-08 — UI-09 — frameless Human Combat hover and player-readable labels
+
+**Explicit request:** Remove the box on hover (glow only) and arrange the Human Combat control text to be intuitive for players. Human Combat's two fader strips now use an opt-in frameless drawing mode, preserving the interactive hit regions and slider ranges. Hover adds a gold halo to the fader knob rather than an outline around its strip. The second channel is titled SHOT ACCURACY, and the graph footer identifies bottom/left drag actions plus the central dual-value handle. No other mixer family is altered. Runtime visual acceptance pending.
