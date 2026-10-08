@@ -1816,21 +1816,32 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Labels are attached to their axes without overlapping the scale.
         // Avoid Unicode arrows, which may render as squares in Wine.
         var axisCenterX = plot.Left + plot.Width / 2.0;
-        DrawCenteredText(dc, "ENEMY HEALTH",
-            new Point(axisCenterX, plot.Top - 43.0),
-            10.5, text, FontWeights.Bold);
-        DrawCenteredText(dc, $"{health.CurrentNumber:0.##}x",
-            new Point(axisCenterX, plot.Top - 27.0),
-            13.0, accent, FontWeights.Bold);
+        var healthLabel = CreateText("ENEMY HEALTH", 10.5, text, FontWeights.Bold);
+        var healthValue = CreateText($"{health.CurrentNumber:0.##}x", 13.0, accent, FontWeights.Bold);
+        const double axisLabelGap = 9.0;
+        var healthStart = axisCenterX -
+            (healthLabel.WidthIncludingTrailingWhitespace + axisLabelGap +
+             healthValue.WidthIncludingTrailingWhitespace) / 2.0;
+        var axisHeadingY = plot.Top - 32.0;
+        dc.DrawText(healthLabel, new Point(healthStart, axisHeadingY));
+        dc.DrawText(healthValue, new Point(
+            healthStart + healthLabel.WidthIncludingTrailingWhitespace + axisLabelGap,
+            axisHeadingY - 2.0));
+
+        // Rotate the complete Y-axis label/value pair as one line. Keeping
+        // them in the same local coordinate space guarantees visual alignment.
         var axisCenterY = plot.Top + plot.Height / 2.0;
+        var damageLabel = CreateText("GUN DAMAGE", 10.5, text, FontWeights.Bold);
+        var damageValue = CreateText($"{damage.CurrentNumber:0.##}x", 13.0, accent, FontWeights.Bold);
+        var damageStart = 18.0 -
+            (damageLabel.WidthIncludingTrailingWhitespace + axisLabelGap +
+             damageValue.WidthIncludingTrailingWhitespace) / 2.0;
         dc.PushTransform(new RotateTransform(-90.0, 18.0, axisCenterY));
-        DrawCenteredText(dc, "GUN DAMAGE",
-            new Point(18.0, axisCenterY),
-            10.5, text, FontWeights.Bold);
+        dc.DrawText(damageLabel, new Point(damageStart, axisCenterY - 7.0));
+        dc.DrawText(damageValue, new Point(
+            damageStart + damageLabel.WidthIncludingTrailingWhitespace + axisLabelGap,
+            axisCenterY - 9.0));
         dc.Pop();
-        DrawCenteredText(dc, $"{damage.CurrentNumber:0.##}x",
-            new Point(plot.Left - 28.0, plot.Top - 23.0),
-            12.0, accent, FontWeights.Bold);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
 
         for (var tick = 0; tick <= 4; tick++)
