@@ -1906,14 +1906,18 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(midpoint, overview.Top + 10.0),
             new Point(midpoint, overview.Bottom - 21.0));
 
-        DrawText(dc, "YOU SELL  →  TRADER BUYS", new Point(overview.Left + 12.0, 64.0),
-            10.1, accent, FontWeights.Bold);
-        DrawText(dc, "YOU RECEIVE COUPONS", new Point(overview.Left + 12.0, 85.0),
-            9.3, text, FontWeights.SemiBold);
-        DrawText(dc, "TRADER SELLS  →  YOU BUY", new Point(midpoint + 12.0, 64.0),
-            10.1, accent, FontWeights.Bold);
-        DrawText(dc, "YOU SPEND COUPONS", new Point(midpoint + 12.0, 85.0),
-            9.3, text, FontWeights.SemiBold);
+        var halfTextWidth = Math.Max(1.0, overview.Width / 2.0 - 24.0);
+        void OverviewLabel(string heading, string meaning, double x)
+        {
+            dc.DrawText(CreateText(heading, 10.1, accent,
+                    FontWeights.Bold, halfTextWidth), new Point(x, 64.0));
+            dc.DrawText(CreateText(meaning, 9.3, text,
+                    FontWeights.SemiBold, halfTextWidth), new Point(x, 85.0));
+        }
+        OverviewLabel("YOU SELL  →  TRADER BUYS",
+            "YOU RECEIVE COUPONS", overview.Left + 12.0);
+        OverviewLabel("TRADER SELLS  →  YOU BUY",
+            "YOU SPEND COUPONS", midpoint + 12.0);
         DrawText(dc, "Difficulty pricing values feed trader-specific shop rules.",
             new Point(overview.Left + 12.0, 103.0), 9.0, muted, FontWeights.Normal);
 
@@ -1921,16 +1925,21 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             var card = new Rect(17.0, top, width, 91.0);
             dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
-            DrawText(dc, label, new Point(card.Left + 12.0, top + 8.0),
-                10.4, text, FontWeights.Bold);
-            DrawRightAlignedText(dc,
-                $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
-                new Point(card.Right - 12.0, top + 7.0), 11.0,
-                parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
-            DrawText(dc, detail, new Point(card.Left + 12.0, top + 27.0),
-                9.4, muted, FontWeights.Normal);
+            // Each title, value and gameplay hint has a dedicated bounded line.
+            var cardTextWidth = Math.Max(1.0, card.Width - 24.0);
+            dc.DrawText(CreateText(label, 10.4, text,
+                    FontWeights.Bold, cardTextWidth),
+                new Point(card.Left + 12.0, top + 6.0));
+            dc.DrawText(CreateText(
+                    $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
+                    11.0, parameter.IsControlEnabled ? accent : muted,
+                    FontWeights.Bold, cardTextWidth),
+                new Point(card.Left + 12.0, top + 23.0));
+            dc.DrawText(CreateText(detail, 9.4, muted,
+                    FontWeights.Normal, cardTextWidth),
+                new Point(card.Left + 12.0, top + 41.0));
 
-            var track = new Rect(card.Left + 22.0, top + 44.0, card.Width - 44.0, 22.0);
+            var track = new Rect(card.Left + 22.0, top + 57.0, card.Width - 44.0, 16.0);
             var y = track.Top + track.Height / 2.0;
             var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
                 parameter.Maximum, track, reverse: false);
@@ -1953,9 +1962,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                     track.Width + 16.0, track.Height + 8.0),
                 track, parameter.Minimum, parameter.Maximum);
             DrawText(dc, $"{parameter.Minimum:0.##}x",
-                new Point(track.Left, top + 71.0), 9.1, muted, FontWeights.Normal);
+                new Point(track.Left, top + 76.0), 9.1, muted, FontWeights.Normal);
             DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
-                new Point(track.Right, top + 71.0), 9.1, muted, FontWeights.Normal);
+                new Point(track.Right, top + 76.0), 9.1, muted, FontWeights.Normal);
         }
 
         DrawPricingTrack(traderBuys,
@@ -1970,15 +1979,19 @@ public sealed class AggregateVisualControl : FrameworkElement
         // The condition gate changes eligibility; price calculations are separate.
         var gate = new Rect(17.0, 333.0, width, 95.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), gate, 4.0, 4.0);
-        DrawText(dc, "MINIMUM CONDITION TRADERS ACCEPT",
-            new Point(gate.Left + 12.0, 341.0), 10.4, text, FontWeights.Bold);
-        DrawRightAlignedText(dc,
-            $"{minCondition.CurrentNumber * 100:0}%  |  BASE {minCondition.ReferenceNumber * 100:0}%",
-            new Point(gate.Right - 12.0, 340.0), 11.0, accent, FontWeights.Bold);
-        DrawText(dc, "Weapons and armor below this durability are refused.",
-            new Point(gate.Left + 12.0, 360.0), 9.4, muted, FontWeights.Normal);
+        var gateTextWidth = Math.Max(1.0, gate.Width - 24.0);
+        dc.DrawText(CreateText("MINIMUM CONDITION TRADERS ACCEPT", 10.4, text,
+                FontWeights.Bold, gateTextWidth),
+            new Point(gate.Left + 12.0, 339.0));
+        dc.DrawText(CreateText(
+                $"{minCondition.CurrentNumber * 100:0}%  |  BASE {minCondition.ReferenceNumber * 100:0}%",
+                11.0, accent, FontWeights.Bold, gateTextWidth),
+            new Point(gate.Left + 12.0, 356.0));
+        dc.DrawText(CreateText("Weapons and armor below this durability are refused.", 9.4, muted,
+                FontWeights.Normal, gateTextWidth),
+            new Point(gate.Left + 12.0, 374.0));
 
-        var gateTrack = new Rect(gate.Left + 22.0, 380.0, gate.Width - 44.0, 22.0);
+        var gateTrack = new Rect(gate.Left + 22.0, 390.0, gate.Width - 44.0, 16.0);
         var gateY = gateTrack.Top + gateTrack.Height / 2.0;
         var gateX = ValueToX(minCondition.CurrentNumber,
             minCondition.Minimum, minCondition.Maximum, gateTrack, reverse: false);
@@ -2001,23 +2014,27 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(gateTrack.Left - 8.0, gateTrack.Top - 4.0,
                 gateTrack.Width + 16.0, gateTrack.Height + 8.0),
             gateTrack, minCondition.Minimum, minCondition.Maximum);
-        DrawText(dc, "0%  /  BROKEN", new Point(gateTrack.Left, 407.0),
+        DrawText(dc, "0%  /  BROKEN", new Point(gateTrack.Left, 411.0),
             9.1, muted, FontWeights.Normal);
         DrawRightAlignedText(dc, "100%  /  PRISTINE",
-            new Point(gateTrack.Right, 407.0), 9.1, muted, FontWeights.Normal);
+            new Point(gateTrack.Right, 411.0), 9.1, muted, FontWeights.Normal);
 
         // ItemCostMinPercent is a global durability-value layer, not a trader price.
         var floor = new Rect(17.0, 439.0, width, 95.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), floor, 4.0, 4.0);
-        DrawText(dc, "ITEM VALUE AT 0% DURABILITY",
-            new Point(floor.Left + 12.0, 447.0), 10.4, text, FontWeights.Bold);
-        DrawRightAlignedText(dc,
-            $"{valueFloor.CurrentNumber * 100:0}%  |  BASE {valueFloor.ReferenceNumber * 100:0}%",
-            new Point(floor.Right - 12.0, 446.0), 11.0, accent, FontWeights.Bold);
-        DrawText(dc, "Base value retained when broken; not the final sale price.",
-            new Point(floor.Left + 12.0, 466.0), 9.4, muted, FontWeights.Normal);
+        var floorTextWidth = Math.Max(1.0, floor.Width - 24.0);
+        dc.DrawText(CreateText("ITEM VALUE AT 0% DURABILITY", 10.4, text,
+                FontWeights.Bold, floorTextWidth),
+            new Point(floor.Left + 12.0, 445.0));
+        dc.DrawText(CreateText(
+                $"{valueFloor.CurrentNumber * 100:0}%  |  BASE {valueFloor.ReferenceNumber * 100:0}%",
+                11.0, accent, FontWeights.Bold, floorTextWidth),
+            new Point(floor.Left + 12.0, 462.0));
+        dc.DrawText(CreateText("Base value retained when broken; not the final sale price.", 9.4, muted,
+                FontWeights.Normal, floorTextWidth),
+            new Point(floor.Left + 12.0, 480.0));
 
-        var floorTrack = new Rect(floor.Left + 22.0, 486.0, floor.Width - 44.0, 22.0);
+        var floorTrack = new Rect(floor.Left + 22.0, 496.0, floor.Width - 44.0, 16.0);
         var floorY = floorTrack.Top + floorTrack.Height / 2.0;
         var floorX = ValueToX(valueFloor.CurrentNumber,
             valueFloor.Minimum, valueFloor.Maximum, floorTrack, reverse: false);
@@ -2037,9 +2054,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                 floorTrack.Width + 16.0, floorTrack.Height + 8.0),
             floorTrack, valueFloor.Minimum, valueFloor.Maximum);
         DrawText(dc, $"{valueFloor.Minimum * 100:0}%",
-            new Point(floorTrack.Left, 513.0), 9.1, muted, FontWeights.Normal);
+            new Point(floorTrack.Left, 517.0), 9.1, muted, FontWeights.Normal);
         DrawRightAlignedText(dc, $"{valueFloor.Maximum * 100:0}%",
-            new Point(floorTrack.Right, 513.0), 9.1, muted, FontWeights.Normal);
+            new Point(floorTrack.Right, 517.0), 9.1, muted, FontWeights.Normal);
 
         DrawText(dc, "GREY TICK = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
             new Point(20.0, 550.0), 9.1, muted, FontWeights.SemiBold);
