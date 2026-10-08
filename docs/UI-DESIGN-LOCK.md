@@ -185,3 +185,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — UI-08 — correct fixed Combat section identities
 
 **User screenshot:** Human Enemies was incorrectly paired with Mutants, while Your Weapons appeared below. The WPF grouped collection did not respect the assumed Human Enemies / Your Weapons ordering. The section panel now resolves explicit `GroupItem.Tag` values populated with `{Binding Name}`, positions Human Enemies and Your Weapons first in the visual layout, and pairs those actual two sections in a permanent 2x1 row. Mutants remains in the following row. Do not pair by unchecked first/second original group index. Preserves controls and CFG mappings. Runtime acceptance pending.
+
+### 2026-10-08 — UI-09 — fixed Your Weapons 2x2 fader grid
+
+**User-approved refinement:** The previous generic mixer layout placed three faders across and pushed/clipped the fourth in the fixed-width Combat right column. Your Weapons now always shows a centered 2-column × 2-row grid, source order: Weapon Damage, Headshot Damage / Weapon Jamming, Explosion Damage. Every strip has equal width and spacing; labels, multiplier values, rails, hover, grey reference ticks, native ranges and reset behavior remain intact. A dedicated two-row height accommodates every fader and the footer without overlapping other sections. Other mixer layouts are unchanged. Wine visual acceptance pending.
