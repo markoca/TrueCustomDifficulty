@@ -283,3 +283,7 @@ Family: **AnomalyEffectsBoard** (Anomalies tab → Anomalies section). Six strip
 7. **Final polish:** typography consistency, whitespace, section rhythm, clipping/DPI audit, and documented acceptance pass.
 
 **Repository synchronization rule:** Always build and test against the latest fetched remote main commit. A failed pull or diverging/dirty local checkout is a stop condition, not permission to build an older source tree. Never discard local changes implicitly; save/reconcile them before syncing. Every GitHub implementation update must include the latest commit SHA and a complete copy-pasteable local fetch/verify/publish/run sequence.
+
+### Combat: Your Weapons mixer (2026-10-08)
+
+The four vertical faders in **Your Weapons** are Weapon Damage, Headshot Damage, Weapon Jamming, Explosion Damage (catalog-native ranges and steps). Their section sits to the right of Human Enemies when the two-column section breakpoint is met; otherwise sections stack. There is no separate Explosives section or blast-impact preview in the player-facing UI. Each fader uses the same source-exact mixer interaction, grey reference marker and right-click reset as existing mixers. This is an explicitly user-approved locked UI redesign.
