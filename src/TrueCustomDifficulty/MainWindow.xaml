@@ -498,6 +498,8 @@
                                                         <DataTrigger Binding="{Binding IsVisualAggregateAnchor}" Value="True">
                                                             <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="ChoiceSliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="RangeControl" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
