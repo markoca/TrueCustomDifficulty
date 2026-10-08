@@ -149,3 +149,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — UI-09 — axis-attached Human Combat labels
 
 **Approved change:** Enemy Health is labeled and valued directly above the horizontal X axis, with a right-arrow cue. Gun Damage is labeled and valued along the left-hand vertical Y axis, rotated for a clear upward-axis cue. The previous split top-row headings have been removed from this control, and the descriptive subtitle beginning “enemy toughness and gun damage” has been removed. The square plot, faders, mouse interaction, values and all other panels remain unchanged. Wine visual acceptance pending.
+
+### 2026-10-08 — UI-09 — axis spacing and missing arrow glyphs
+
+**User correction:** The earlier axis headings were cramped and Wine showed unsupported arrow glyphs as squares. ENEMY HEALTH remains centered above the X-axis, without an arrow; GUN DAMAGE is now a single vertical title in the left gutter and its numeric multiplier appears separately above the left-hand Y scale. The numeric ticks, handles, faders, ranges, and interactions are unchanged. Runtime acceptance pending.
