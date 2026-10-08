@@ -3184,12 +3184,13 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawLine(new Pen(CloneWithOpacity(soft, tick == 0 ? 0.85 : 0.35),
                 tick == 0 ? 1.5 : 1.0) { DashStyle = tick == 0 ? DashStyles.Solid : DashStyles.Dot },
                 new Point(area.Left, yy), new Point(area.Right, yy));
-            DrawRightAlignedText(dc, $"{tick:0}%",
-                new Point(plot.Left - 7.0, yy - 6.0), 8.4, muted, FontWeights.Normal);
+            DrawRightAlignedText(dc, tick == 0 ? "0% NORMAL" : $"{tick:0}%",
+                new Point(plot.Left - 7.0, yy - 7.0),
+                10.0, tick == 0 ? text : muted, FontWeights.SemiBold);
         }
         for (var tick = 0; tick <= 100; tick += 25)
             DrawCenteredText(dc, $"{tick}", new Point(X(tick), plot.Bottom + 17.0),
-                8.8, muted, FontWeights.Normal);
+                10.0, tick == 0 || tick == 100 ? text : muted, FontWeights.SemiBold);
 
         // Transparent stage bands distinguish the three difficulty transitions.
         dc.DrawRectangle(CloneWithOpacity(accent, 0.035), null,
@@ -3251,12 +3252,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(plot.Left + plot.Width * 5.0 / 6.0, frame.Top + 255.0),
             9.4, accent, FontWeights.Bold);
 
-        DrawCenteredText(dc, "LOW = WHEN  |  MEDIUM / SEVERE = WHEN + HOW MUCH",
-            new Point(ActualWidth / 2.0, frame.Bottom + 22.0),
-            9.2, text, FontWeights.SemiBold);
-        DrawCenteredText(dc, "GOLD = CURRENT  |  GREY = REFERENCE  |  RIGHT-CLICK RESET",
-            new Point(ActualWidth / 2.0, frame.Bottom + 40.0),
-            9.0, muted, FontWeights.Normal);
     }
 
     private void DrawStarvationTimeline(
@@ -4971,7 +4966,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         var previewBottom = 55.0 + CompactTrackHeight + 12.0 + 80.0;
         var frameBottom = previewBottom + 55.0 + 294.0;
-        return frameBottom + 60.0;
+        return frameBottom + 12.0;
     }
 
     private static IReadOnlyList<string> GetFamilyIds(string family)
