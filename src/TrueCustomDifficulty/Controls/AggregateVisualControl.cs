@@ -485,13 +485,20 @@ public sealed class AggregateVisualControl : FrameworkElement
         var columns = GetMixerColumns(ActualWidth, count);
         var width = Math.Min(148.0,
             Math.Max(128.0, (inner - (columns - 1) * MixerStripGap) / columns));
+        // Center compact fader banks inside wider boards instead of leaving a
+        // large, visually unbalanced empty area to the right. The column
+        // calculation and source order remain unchanged; the final short row
+        // is independently centered without stretching its channels.
         for (var index = 0; index < count; index++)
         {
             var channel = channels[index];
             var row = index / columns;
             var column = index % columns;
+            var rowCount = Math.Min(columns, count - row * columns);
+            var rowWidth = rowCount * width + (rowCount - 1) * MixerStripGap;
+            var rowLeft = Math.Max(MixerSidePadding, (ActualWidth - rowWidth) / 2.0);
             var rect = new Rect(
-                MixerSidePadding + column * (width + MixerStripGap),
+                rowLeft + column * (width + MixerStripGap),
                 MixerStripTop + row * (MixerStripHeight + MixerRowGap),
                 width, MixerStripHeight);
             DrawMixerStrip(dc, P(channel.Id), channel.Top, channel.Bottom, rect,
