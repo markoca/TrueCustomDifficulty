@@ -3108,7 +3108,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Game-facing state profile: stepped bands, never an interpolated slope.
         // A separate WELL-FED column avoids overlapping LOW at X=0.
         var frame = new Rect(17.0, preview.Bottom + 55.0,
-            Math.Max(460.0, ActualWidth - 34.0), 294.0);
+            Math.Max(460.0, ActualWidth - 34.0), 334.0);
         DrawCenteredText(dc, "HUNGER SURVIVAL PROFILE",
             new Point(ActualWidth / 2.0, frame.Top - 36.0), 11.5, accent, FontWeights.Bold);
         DrawCenteredText(dc, "DRAG GOLD RINGS TO CHANGE WHEN HUNGER HITS AND HOW HARD",
@@ -3237,23 +3237,21 @@ public sealed class AggregateVisualControl : FrameworkElement
         StateNode(severe, severePenalty,
             new Point(sevX, sevY), new Point(baseSevX, baseSevY), "SEVERE");
 
-        // Labels use fixed lanes rather than following the rings, so values
-        // cannot collide when thresholds approach each other.
-        DrawCenteredText(dc, $"LOW AT {low.CurrentNumber:0} PTS",
-            new Point(plot.Left + plot.Width / 6.0, frame.Top + 246.0),
-            9.2, text, FontWeights.Bold);
-        DrawCenteredText(dc, $"MEDIUM AT {medium.CurrentNumber:0} PTS",
-            new Point(plot.Left + plot.Width / 2.0, frame.Top + 246.0),
-            9.2, accent, FontWeights.Bold);
-        DrawCenteredText(dc, $"-{mediumPenalty.CurrentNumber * 100:0}% RECOVERY",
-            new Point(plot.Left + plot.Width / 2.0, frame.Top + 264.0),
-            9.2, accent, FontWeights.SemiBold);
-        DrawCenteredText(dc, $"SEVERE AT {severe.CurrentNumber:0} PTS",
-            new Point(plot.Left + plot.Width * 5.0 / 6.0, frame.Top + 246.0),
-            9.2, accent, FontWeights.Bold);
-        DrawCenteredText(dc, $"-{severePenalty.CurrentNumber * 100:0}% RECOVERY",
-            new Point(plot.Left + plot.Width * 5.0 / 6.0, frame.Top + 264.0),
-            9.2, accent, FontWeights.SemiBold);
+        // Each stage owns one full-width footer row, below the X-axis ticks.
+        // Do not anchor long descriptions beneath their plotted X positions:
+        // nearby stages otherwise collide with each other and with tick labels.
+        var stageLabelLeft = frame.Left + 16.0;
+        DrawText(dc, $"LOW AT {low.CurrentNumber:0} PTS",
+            new Point(stageLabelLeft, frame.Top + 266.0),
+            9.4, text, FontWeights.Bold);
+        DrawText(dc,
+            $"MEDIUM AT {medium.CurrentNumber:0} PTS  |  -{mediumPenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
+            new Point(stageLabelLeft, frame.Top + 286.0),
+            9.4, accent, FontWeights.Bold);
+        DrawText(dc,
+            $"SEVERE AT {severe.CurrentNumber:0} PTS  |  -{severePenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
+            new Point(stageLabelLeft, frame.Top + 306.0),
+            9.4, accent, FontWeights.Bold);
 
     }
 
@@ -4968,7 +4966,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double CompactHungerHeight(double width)
     {
         var previewBottom = 55.0 + CompactTrackHeight + 12.0 + 80.0;
-        var frameBottom = previewBottom + 55.0 + 294.0;
+        var frameBottom = previewBottom + 55.0 + 334.0;
         return frameBottom + 12.0;
     }
 
