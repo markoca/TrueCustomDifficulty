@@ -3,14 +3,14 @@
   "policy": "docs/UI-DESIGN-LOCK.md",
   "state": "LOCKED",
   "baselineDate": "2026-10-08",
-  "approval": "UI-09 2026-10-08: real source legend cues; runtime screenshot mismatch unresolved pending Wine acceptance",
+  "approval": "UI-09 2026-10-08: source runtime fader cap guard, fresh verified runner; visual acceptance pending",
   "lockedFiles": {
-    "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": "7dc6a9d31cf169366787c0bffddf81a1c0be7e18",
+    "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": "81ae1545a0bfe66b75af8809cf9884d4b97cc39d",
     "src/TrueCustomDifficulty/Infrastructure/ResponsiveSectionGridPanel.cs": "8992904d1d7b6e2452f5c995419b2082bcb36582",
     "src/TrueCustomDifficulty/Infrastructure/ResponsiveParameterGridPanel.cs": "86da30e8bc7de1b598baa4844b06cb93451aaf93",
     "src/TrueCustomDifficulty/MainWindow.xaml": "059a4e6b14105b159355e06af78d6e23e8481170",
     "docs/UI-MIXER-GRID-SPEC.md": "6c12f2423a54eaa84f940b7af2dca39964027d03",
-    "docs/VISUAL-CONTROL-SYSTEM.md": "01a586249ea3b32bf45757b4ee4989fd9205b137",
+    "docs/VISUAL-CONTROL-SYSTEM.md": "aab2a1481d6d06b80dbb5553b265f6a806cecb9e",
     "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs": "746500d3ba470388b6c7ceb50d57a785ae3195e3"
   }
 }
