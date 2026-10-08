@@ -611,3 +611,7 @@ The preview and profile share identical 0–100 hunger-point X coordinates, not 
 ### Hunger header and Y-axis caption correction (2026-10-08)
 
 The HUNGER STATE LADDER header has no explanatory subtitle. The rotated STAMINA RECOVERY LOSS text is aligned to the exact middle of the interior charting area, not the surrounding plot padding; its horizontal location is unchanged, preserving the gap to percentage tick labels. Preview/profile X-axis alignment, existing layout and native editing semantics remain intact.
+
+### Hunger stage labels — consistent AT wording (2026-10-08)
+
+All three stage footer captions include `AT` before the threshold value. LOW: `LOW AT N PTS`; MEDIUM: `MEDIUM AT N PTS | -N% STAMINA RECOVERY`; SEVERE: `SEVERE AT N PTS | -N% STAMINA RECOVERY`. This wording update does not affect the fixed three-zone layout or any interactions.
