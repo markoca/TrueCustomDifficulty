@@ -621,7 +621,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Remove the text across all mixer families, preserving the reference marker.
         DrawMixerCentered(dc, MixerValue(parameter, parameter.Maximum),
             new Point(center, strip.Top + 78.0),
-            strip.Width - 14.0, 11.3, muted, FontWeights.Normal);
+            strip.Width - 14.0, frameless ? 13.0 : 11.3, muted, FontWeights.Normal);
 
         // Vertical source scale: top is real maximum, bottom real minimum.
         // The strip layout normalizes only screen position, never the stored CFG.
@@ -653,7 +653,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         DrawMixerCentered(dc, MixerValue(parameter, parameter.Minimum),
             new Point(center, strip.Top + 260.0),
-            strip.Width - 14.0, 9.5, muted, FontWeights.Normal);
+            strip.Width - 14.0, frameless ? 13.0 : 9.5, muted, FontWeights.Normal);
 
         // Clicking the label/value area selects this source for the rationale,
         // but it must never edit the value; the active rail/marker is above it
