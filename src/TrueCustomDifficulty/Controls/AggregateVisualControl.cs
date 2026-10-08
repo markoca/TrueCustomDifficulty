@@ -2670,8 +2670,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         var faderColumns = ConsumableFaderColumns(ActualWidth);
         const double faderHeight = 179.0;
         const double faderGap = 8.0;
-        double FaderEnd(double top, int count) =>
-            top + Math.Ceiling((double)count / faderColumns) * (faderHeight + faderGap) - faderGap;
         void Bank(ParameterViewModel[] parameters, string[] labels, double top)
         {
             var cellWidth = (width - (faderColumns - 1) * faderGap) / faderColumns;
