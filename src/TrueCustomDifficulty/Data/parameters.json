@@ -553,7 +553,7 @@
     {
       "id": "combat.mutantDamage",
       "tab": "combat",
-      "group": "Mutants",
+      "group": "Mutant Combat",
       "label": "Mutant Hit Damage",
       "description": "Changes how much damage mutant attacks deal when they connect.",
       "control": "slider",
@@ -597,7 +597,7 @@
     {
       "id": "combat.mutantAttackCooldown",
       "tab": "combat",
-      "group": "Mutants",
+      "group": "Mutant Combat",
       "label": "Mutant Attack Frequency",
       "description": "Controls how frequently mutants can make another general attack.",
       "control": "slider",
@@ -816,7 +816,7 @@
     {
       "id": "combat.mutantCooldown.bloodsucker",
       "tab": "combat",
-      "group": "Mutant Special Attack Cooldown",
+      "group": "Mutant Combat",
       "label": "Mutant Special Attack Cooldown",
       "description": "Changes how often eight mutant families can reuse special attacks.",
       "control": "slider",
@@ -918,7 +918,7 @@
     {
       "id": "combat.mutantCooldown.chimera",
       "tab": "combat",
-      "group": "Mutant Special Attack Cooldown",
+      "group": "Mutant Combat",
       "label": "Chimera Special Ability Cooldown",
       "description": "Controls how long Chimera must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
       "control": "slider",
@@ -1013,7 +1013,7 @@
     {
       "id": "combat.mutantCooldown.deer",
       "tab": "combat",
-      "group": "Mutant Special Attack Cooldown",
+      "group": "Mutant Combat",
       "label": "Deer Special Ability Cooldown",
       "description": "Controls how long Deer must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
       "control": "slider",
@@ -1108,7 +1108,7 @@
     {
       "id": "combat.mutantCooldown.pseudogiant",
       "tab": "combat",
-      "group": "Mutant Special Attack Cooldown",
+      "group": "Mutant Combat",
       "label": "Pseudogiant Special Ability Cooldown",
       "description": "Controls how long Pseudogiant must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
       "control": "slider",
@@ -1203,7 +1203,7 @@
     {
       "id": "combat.mutantCooldown.pseudodog",
       "tab": "combat",
-      "group": "Mutant Special Attack Cooldown",
+      "group": "Mutant Combat",
       "label": "Pseudodog Special Ability Cooldown",
       "description": "Controls how long Pseudodog must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
       "control": "slider",
@@ -1305,7 +1305,7 @@
     {
       "id": "combat.mutantCooldown.burer",
       "tab": "combat",
-      "group": "Mutant Special Attack Cooldown",
+      "group": "Mutant Combat",
       "label": "Burer Special Ability Cooldown",
       "description": "Controls how long Burer must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
       "control": "slider",
@@ -1407,7 +1407,7 @@
     {
       "id": "combat.mutantCooldown.bayun",
       "tab": "combat",
-      "group": "Mutant Special Attack Cooldown",
+      "group": "Mutant Combat",
       "label": "Bayun Special Ability Cooldown",
       "description": "Controls how long Bayun must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
       "control": "slider",
@@ -1523,7 +1523,7 @@
     {
       "id": "combat.mutantCooldown.controller",
       "tab": "combat",
-      "group": "Mutant Special Attack Cooldown",
+      "group": "Mutant Combat",
       "label": "Controller Special Ability Cooldown",
       "description": "Controls how long Controller must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
       "control": "slider",
