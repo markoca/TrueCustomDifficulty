@@ -29,7 +29,9 @@ public sealed class ResponsiveSectionGridPanel : Panel
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        var width = ResolveWidth(availableSize.Width);
+        var width = Tag is "combat"
+            ? Math.Max(1096.0, ResolveWidth(availableSize.Width))
+            : ResolveWidth(availableSize.Width);
         var rows = BuildRows(width);
         double height = 0.0;
         foreach (var row in rows)
@@ -50,7 +52,9 @@ public sealed class ResponsiveSectionGridPanel : Panel
 
     protected override Size ArrangeOverride(Size finalSize)
     {
-        var width = Math.Max(0.0, finalSize.Width);
+        var width = Tag is "combat"
+            ? Math.Max(1096.0, finalSize.Width)
+            : Math.Max(0.0, finalSize.Width);
         var rows = BuildRows(width);
         double y = 0.0;
         foreach (var row in rows)
