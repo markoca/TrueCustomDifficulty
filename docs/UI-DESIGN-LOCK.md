@@ -128,3 +128,7 @@ To refresh the lock after authorized changes, intentionally run `python3 tools/v
 ### 2026-10-08 — UI-09 — fix stale EXE detection in publish preflight
 
 **Screenshot remains unaccepted:** Attack Frequency shows 4x, Fire Accuracy shows 2x, and the legacy square/preview glyphs remain visible. The approved runtime bounds are 2x/1x. The previous `publish.sh` process check accidentally used a doubled backslash in its `pgrep -f` regular expression, which could miss an already-running Wine executable. Corrected both matches to `[T]rueCustomDifficulty\.exe` (single regex escape before the period). Publishing now fails before replacing output while the named process is present. This is a publish/verification defect correction, not a change to locked UI geometry or to CFG semantics. Visual/runtime acceptance is still pending a genuinely fresh launch; inspect `publish/win-x64/BUILD-INFO.txt` and run `./run-latest.sh` after closing old windows.
+
+### 2026-10-08 — Remove Python publish preflight gates
+
+**User request:** Remove the pre-publish UI/layout tests because they blocked local EXE publishing (notably a stale `human: rationale not updated` text assertion). `publish.sh` no longer runs the six Python preflight scripts. The tests remain available for optional manual execution; they are not required for publishing. UI design requirements in `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md` remain binding, and this change does not alter UI rendering, control ranges, or gameplay behavior. Local build and visual verification remain pending.
