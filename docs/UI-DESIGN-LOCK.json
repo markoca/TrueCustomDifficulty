@@ -3,13 +3,13 @@
   "policy": "docs/UI-DESIGN-LOCK.md",
   "state": "LOCKED",
   "baselineDate": "2026-10-08",
-  "approval": "UI-09 2026-10-08: document approved interactive Human Combat center joint; no runtime design change",
+  "approval": "UI-09 2026-10-08: explicit matching stronger hover glow, joint hit target and reset feedback; 2x/1x caps unchanged",
   "lockedFiles": {
-    "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": "8c8198220ecb04ca59a51a8936e9ecc6783a76b7",
+    "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": "a88f6d8232ea82c9e4162a595df3fb74b6c51872",
     "src/TrueCustomDifficulty/Infrastructure/ResponsiveSectionGridPanel.cs": "8992904d1d7b6e2452f5c995419b2082bcb36582",
     "src/TrueCustomDifficulty/Infrastructure/ResponsiveParameterGridPanel.cs": "86da30e8bc7de1b598baa4844b06cb93451aaf93",
     "src/TrueCustomDifficulty/MainWindow.xaml": "059a4e6b14105b159355e06af78d6e23e8481170",
     "docs/UI-MIXER-GRID-SPEC.md": "6c12f2423a54eaa84f940b7af2dca39964027d03",
-    "docs/VISUAL-CONTROL-SYSTEM.md": "dcc9a04551cd0a10381322516459ddb5d10f9d66"
+    "docs/VISUAL-CONTROL-SYSTEM.md": "be047ad6ffd32692386185f23aa4728f4c3e5d16"
   }
 }
