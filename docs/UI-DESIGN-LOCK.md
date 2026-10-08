@@ -118,3 +118,9 @@ When the user later authorizes a specific design change, append a dated entry he
 - The new locked baseline after acceptance.
 
 To refresh the lock after authorized changes, intentionally run `python3 tools/verify_ui_design_lock.py --update --approval UI-XX` on the changed checkout and commit both the revised manifest and this approval record. **Never** automatically refresh the lock during normal build.
+
+### 2026-10-08 — UI-09 — reject stale Wine process during publish
+
+**User report:** The running application still shows Attack Frequency 4x and Fire Accuracy 2x, contrary to the approved 2x/1x limits. The embedded catalog, `ParameterViewModel.Maximum`, and Human Combat source already enforce 2x/1x on `main`; do not alter unrelated controls or falsely claim these values were missing in the source.
+
+**Implementation:** `publish.sh` now refuses to publish while an existing `TrueCustomDifficulty.exe` Wine process is active, displays the detected process and asks for it to be closed. This prevents testing the pre-existing 4x/2x window while believing a freshly published EXE is running. The existing `run-latest.sh` independently verifies source commit and EXE checksum. UI implementation and UI lock snapshots are unchanged. Actual Wine runtime acceptance still requires the user to close prior windows, pull `main`, publish and launch the new EXE.
