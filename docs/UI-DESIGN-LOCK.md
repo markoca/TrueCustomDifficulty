@@ -14,15 +14,13 @@
 4. If a necessary bug fix would affect approved UI appearance or behavior, explain the conflict and obtain explicit permission before changing the locked design. A requested UI change may update only the approved scope.
 5. When a new visual family is built and user confirms it looks/works correctly, record its exact layout and interactions, then mark that version LOCKED.
 6. Never silently update screenshots, UI specs or lock signatures to conceal drift. A new authorized visual design needs an entry in **Change approvals** and updated lock manifest in the *same commit*.
-7. The build runs `tools/verify_ui_design_lock.py`. A failed UI lock check **must stop publishing**. Never bypass the test simply to get a green build.
-8. Tests and docs are additional evidence, not an excuse to alter the visual design. Preserve native gameplay parameters, references and CFG mappings.
+7. Publishing does not execute automated UI/layout tests; this document remains the required design specification.
+8. Preserve native gameplay parameters, references and CFG mappings when implementing UI changes.
 
 ## Canonical design references
 
 - [Mixer & responsive grid specification](UI-MIXER-GRID-SPEC.md): strip geometry, per-source values, reference indicators, hit targets, independent board and section grid layout.
 - [Visual Control System](VISUAL-CONTROL-SYSTEM.md): non-mixer families, specialized diagrams and interaction semantics.
-- [UI design snapshot manifest](UI-DESIGN-LOCK.json): exact Git blob SHA-1 for the canonical specifications and currently approved UI implementation files. It detects file-level changes, not semantic equivalence.
-- `tools/verify_mixer_layout.py`, `tools/verify_section_grid.py` and `tools/verify_visual_anchor_triggers.py` verify additional design contracts.
 
 ## Baseline design registry
 
@@ -75,7 +73,7 @@ User repeatedly supplied a screenshot with an old square Y handle, `POINT = PREV
 
 **User approval:** Repeated explicit request to implement matching hover glow, interactive X/Y joint, Attack Frequency maximum 2x and Fire Accuracy maximum 1x in code and documentation.
 
-**Implementation:** All three Human Combat rings (X, Y and joint) use the same stronger 20-DIP halo and 12-DIP hover ring. The center joint's hit area is 36×36 DIP; dragging edits both native CFG values, right-click resets both with an accurate status message. Empty plot remains inert. The existing catalog caps are retained at 2x and 1x. No other panels, CFG mappings, preset data, layout dimensions or section pairings are changed. Static tests updated; local Wine visual acceptance pending.
+**Implementation:** All three Human Combat rings (X, Y and joint) use the same stronger 20-DIP halo and 12-DIP hover ring. The center joint's hit area is 36×36 DIP; dragging edits both native CFG values, right-click resets both with an accurate status message. Empty plot remains inert. The existing catalog caps are retained at 2x and 1x. No other panels, CFG mappings, preset data, layout dimensions or section pairings are changed. local Wine visual acceptance pending.
 
 
 ### 2026-10-08 — Canonical UI rules clarified (no visual modification)
@@ -96,7 +94,7 @@ Authorized: same glowing ring glyph for both X/Y handles; central joint handle d
 
 **Scope:** Keep the square health/damage plot, the two right-hand source faders, and the adjacent Mutants section; only increase left margin for the Y labels, move X labels and footer apart, and allow more aggregate vertical height. No CFG/preset or other UI family changes.
 
-**Changed locked files:** `src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs` and `docs/VISUAL-CONTROL-SYSTEM.md`. Test: `tools/verify_human_combat_layout.py`. Runtime visual acceptance pending.
+**Changed locked files:** `src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs` and `docs/VISUAL-CONTROL-SYSTEM.md`.  Runtime visual acceptance pending.
 
 
 ### 2026-10-08 — UI-09, UI-08 — Human Combat Profile redesign
@@ -107,9 +105,9 @@ Authorized: same glowing ring glyph for both X/Y handles; central joint handle d
 
 **Affected lock IDs:** UI-09 (Human Combat Profile visual family) and UI-08 (approved adjacent section pairing); implementation in `AggregateVisualControl.cs`, `ResponsiveSectionGridPanel.cs`; canonical design contracts in `VISUAL-CONTROL-SYSTEM.md` and `UI-MIXER-GRID-SPEC.md`.
 
-**Implementation:** Approved source revision on main branch dated 2026-10-08. Static regression checks required; local .NET build and Wine screenshot acceptance remain pending.
+**Implementation:** Approved source revision on main branch dated 2026-10-08. local .NET build and Wine screenshot acceptance remain pending.
 
-**Lock disposition:** Newly documented layout is locked against unrelated future changes. Refresh exactly the affected tracked files in `UI-DESIGN-LOCK.json` for this explicit authorization; all other baseline snapshots remain unchanged.
+**Lock disposition:** Newly documented layout is locked against unrelated future changes. Update the affected design documentation when a change is explicitly authorized.
 
 When the user later authorizes a specific design change, append a dated entry here stating:
 - Exact affected UI registry IDs and relevant source files.
@@ -117,7 +115,7 @@ When the user later authorizes a specific design change, append a dated entry he
 - The implementation commit, tests, and explicit user acceptance status.
 - The new locked baseline after acceptance.
 
-To refresh the lock after authorized changes, intentionally run `python3 tools/verify_ui_design_lock.py --update --approval UI-XX` on the changed checkout and commit both the revised manifest and this approval record. **Never** automatically refresh the lock during normal build.
+When an authorized design change is implemented, update this document and `VISUAL-CONTROL-SYSTEM.md` alongside the actual UI source.
 
 ### 2026-10-08 — UI-09 — reject stale Wine process during publish
 
@@ -131,4 +129,8 @@ To refresh the lock after authorized changes, intentionally run `python3 tools/v
 
 ### 2026-10-08 — Remove Python publish preflight gates
 
-**User request:** Remove the pre-publish UI/layout tests because they blocked local EXE publishing (notably a stale `human: rationale not updated` text assertion). `publish.sh` no longer runs the six Python preflight scripts. The tests remain available for optional manual execution; they are not required for publishing. UI design requirements in `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md` remain binding, and this change does not alter UI rendering, control ranges, or gameplay behavior. Local build and visual verification remain pending.
+**User request:** Remove the pre-publish UI/layout tests because they blocked local EXE publishing (notably a stale `human: rationale not updated` text assertion). `publish.sh` no longer runs the six Python preflight scripts. The test scripts are removed from the repository. UI design requirements in `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md` remain binding, and this change does not alter UI rendering, control ranges, or gameplay behavior. Local build and visual verification remain pending.
+
+### 2026-10-08 — Remove repository test scripts and references
+
+**User instruction:** Remove the tests everywhere, not merely from the publish entry point. Removed Python `verify_*` scripts, runtime test utilities, test-only fixtures, and the unused UI snapshot manifest. Removed active test instructions from documentation. `publish.sh` now performs the .NET publish without any automated Python UI/layout test. UI-DESIGN-LOCK.md and VISUAL-CONTROL-SYSTEM.md remain mandatory UI specifications, not executable tests. Existing gameplay implementation and control limits remain unchanged.

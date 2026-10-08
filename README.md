@@ -20,8 +20,7 @@ sudo pacman -Syu dotnet-sdk-10.0
 - Startup fits the default to the available screen work area with a small margin; it does not open off-screen on smaller desktop resolutions.
 - The custom maximize button and manual edge/corner resizing both preserve 16:9, including returning to the pre-maximized geometry.
 - **Window ratio is distinct from card layout:** large semantic visual controls currently occupy full-width rows. A subsequent responsive grid pass will compact those panels; this change only makes the surrounding window use the intended screen geometry.
-- Static geometry regression check: `python3 tools/verify_window_aspect.py`.
-- **Mixer + responsive grid source of truth:** [UI-MIXER-GRID-SPEC.md](docs/UI-MIXER-GRID-SPEC.md). Anomaly Effects is now the first coded six-channel vertical mixer prototype; .NET/Wine verification remains pending. Preflight: `python3 tools/verify_mixer_layout.py`.
+- **Mixer + responsive grid source of truth:** [UI-MIXER-GRID-SPEC.md](docs/UI-MIXER-GRID-SPEC.md). Anomaly Effects is now the first coded six-channel vertical mixer prototype; .NET/Wine verification remains pending.
 
 ---
 

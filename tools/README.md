@@ -26,15 +26,15 @@ The same tools may also be used manually for extraction/development/maintenance 
 
 ## Override verification harness
 
-`verify_cfg_overrides.py` verifies all visible runtime-pending writer routes from the locked catalog/baseline, including direct edit points, PSY/mutant arrays and generator clone/redirect surfaces. `plan` and `suite` emit field-level plus struct/reference contracts and exact reference BPatch trees; `compare` checks a real isolated production staging tree and fails on missing, unexpected or wrong-value assignments **or structural mode/reference drift**. See `../OVERRIDE-VERIFICATION-HARNESS.md`.
+Override mapping evidence is documented in `../OVERRIDE-VERIFICATION-HARNESS.md`; there is no automated verification harness in this repository.
 
 ## WPF aggregate / toggle visibility regression
 
-`python tools/verify_visual_anchor_triggers.py` parses the actual WPF parameter-card template and checks that toggle-based aggregate anchors (such as Master Severe Fatigue) are not hidden by the ordinary toggle `ControlRow` collapse trigger. It also checks the toggle anchor and all backing family IDs against the catalog and `ParameterViewModel`. Run after changes to aggregate templates, visibility triggers, or visual-family mappings.
+UI aggregate bindings are maintained directly in WPF source and the UI documentation.
 
 ## Mixer fader pilot regression
 
-`python3 tools/verify_mixer_layout.py` verifies the Anomaly Effects six-channel mixer against the live catalog (native min/max/steps and difficulty baselines), checks responsive strip geometry, XML validity, Base marker behavior and per-channel rationale wiring. `publish.sh` runs it as a preflight when Python 3 is available. This is not a replacement for an actual WPF build and Wine interaction test.
+The mixer contract is described in the UI design documentation; publishing does not run any UI test scripts.
 
 ## CFG placement audit
 

@@ -64,10 +64,7 @@ if [[ "$TARGET_FRAMEWORK" != "net10.0-windows" ]]; then
     exit 1
 fi
 
-# The publish workflow intentionally performs no Python UI/layout preflight tests.
-# The UI design contract remains documented and must be respected by code changes;
-# publishing a fresh EXE must not be blocked by stale source-text assertions.
-
+# Publish the current source without running test or verification scripts.
 # WPF creates generated temporary projects under obj/.  Removing both build trees
 # guarantees that an older net8.0-windows temp project cannot leak into a .NET 10 publish.
 rm -rf -- "$PROJECT_DIR/bin" "$PROJECT_DIR/obj"

@@ -42,7 +42,7 @@ Semantic controls follow one density/readability baseline:
 
 When an aggregate family is anchored on a toggle (currently `advanced.fatigueMechanics`), the template must keep the `ControlRow` visible for its `AggregateVisualControl`. Ordinary toggle styling is therefore conditioned on **both** `IsToggle=True` and `IsVisualAggregateAnchor=False`. This prevents the later toggle trigger from hiding the entire visual board. The board itself contains the bundle toggle; no second ordinary checkbox should appear.
 
-The static regression check is `python tools/verify_visual_anchor_triggers.py`. It catches a future unguarded toggle trigger and verifies that the visible toggle aggregate anchor and its six backing members remain mapped.
+The WPF visual-anchor contract is maintained in the source and the UI design documentation.
 
 ### Constraint authority
 
