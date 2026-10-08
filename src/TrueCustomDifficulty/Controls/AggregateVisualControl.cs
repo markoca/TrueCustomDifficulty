@@ -1813,24 +1813,24 @@ public sealed class AggregateVisualControl : FrameworkElement
         var plotSide = Math.Min(280.0, Math.Max(180.0, ActualWidth - 360.0));
         var plot = new Rect(64.0, 91.0, plotSide, plotSide);
 
-        // Attach each title/value to its physical axis instead of splitting
-        // them across the panel's top row. X = health, Y = gun damage.
+        // Labels are attached to their axes without overlapping the scale.
+        // Avoid Unicode arrows, which may render as squares in Wine.
         var axisCenterX = plot.Left + plot.Width / 2.0;
-        DrawCenteredText(dc, "ENEMY HEALTH  →",
+        DrawCenteredText(dc, "ENEMY HEALTH",
             new Point(axisCenterX, plot.Top - 43.0),
-            10.0, text, FontWeights.Bold);
+            10.5, text, FontWeights.Bold);
         DrawCenteredText(dc, $"{health.CurrentNumber:0.##}x",
             new Point(axisCenterX, plot.Top - 27.0),
-            12.0, accent, FontWeights.Bold);
+            13.0, accent, FontWeights.Bold);
         var axisCenterY = plot.Top + plot.Height / 2.0;
         dc.PushTransform(new RotateTransform(-90.0, 18.0, axisCenterY));
-        DrawCenteredText(dc, "GUN DAMAGE  ↑",
-            new Point(18.0, axisCenterY - 11.0),
-            10.0, text, FontWeights.Bold);
-        DrawCenteredText(dc, $"{damage.CurrentNumber:0.##}x",
-            new Point(18.0, axisCenterY + 7.0),
-            12.0, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "GUN DAMAGE",
+            new Point(18.0, axisCenterY),
+            10.5, text, FontWeights.Bold);
         dc.Pop();
+        DrawCenteredText(dc, $"{damage.CurrentNumber:0.##}x",
+            new Point(plot.Left - 28.0, plot.Top - 23.0),
+            12.0, accent, FontWeights.Bold);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
 
         for (var tick = 0; tick <= 4; tick++)
