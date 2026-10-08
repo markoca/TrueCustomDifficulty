@@ -135,8 +135,6 @@ public sealed class MutantHealthRadar : FrameworkElement
         var content = ContentRect();
         DrawCenteredText(dc, "MUTANT HEALTH", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "live MaxHP + direct multiplier", new Point(ActualWidth / 2.0, 39.0),
-            9.5, muted, FontWeights.Normal);
 
         // All fourteen independently editable mutant MaxHP scalars.
         // Two balanced rows of seven avoid squeezed names and tiny handles.

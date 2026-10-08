@@ -768,3 +768,8 @@ The live Your Weapons board is `DrawYourWeaponsFaders`, not the older `DrawPlaye
 ### 2026-10-09 — Mutant Combat label implementation verified
 
 The active `MutantCombatPressure` source control's `FirstLabel` is **DAMAGE FROM MUTANTS**, matching the previously authorized Mutant Combat wording contract. Only the displayed caption changed; `combat.mutantDamage`, slider geometry, ranges, editing, and reset semantics are unchanged.
+
+
+### 2026-10-09 — Mutant Health subtitle removed
+
+The Mutant Health card displays only its centered **MUTANT HEALTH** title: remove the `live MaxHP + direct multiplier` subtitle directly beneath it. Preserve the 14 editable faders, positions, source parameters, HP readouts, ranges and reset interactions; no gameplay change.
