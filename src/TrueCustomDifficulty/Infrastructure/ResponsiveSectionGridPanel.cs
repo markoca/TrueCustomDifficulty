@@ -88,8 +88,14 @@ public sealed class ResponsiveSectionGridPanel : Panel
 
     private static bool IsCompatiblePair(UIElement left, UIElement right)
     {
-        var first = (left as FrameworkElement)?.DataContext as CollectionViewGroup;
-        var second = (right as FrameworkElement)?.DataContext as CollectionViewGroup;
+        // GroupItem frequently exposes the CollectionViewGroup through Content,
+        // while DataContext may inherit the parent view model. Resolve both.
+        static CollectionViewGroup? GroupOf(UIElement element)
+            => (element as GroupItem)?.Content as CollectionViewGroup
+                ?? (element as FrameworkElement)?.DataContext as CollectionViewGroup;
+
+        var first = GroupOf(left);
+        var second = GroupOf(right);
         return first?.Name is string label
             && second?.Name is string next
             && CompactPairs.TryGetValue(label, out var partner)
