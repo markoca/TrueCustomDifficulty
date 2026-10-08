@@ -555,3 +555,7 @@ Mutant Combat's two horizontal global tracks share one row directly below the he
 ### Locked Combat section order — 2026-10-08
 
 The four visible Combat groups are ordered **Your Weapons → Human Enemies → Mutant Combat → Mutant Health**, one full-width card per row. The Psy Combat section and Repeated Hit Protection section are completely absent from the Combat view, including their headers; source CFG definitions remain available internally. Your Weapons uses one centered row of three equal-width faders, with two equal gaps rather than the former off-center bank calculation. Combat explanatory text must not mention repeated-hit protection as a visible control.
+
+### Centered card title system (2026-10-08)
+
+Remove duplicated section titles and decorative line separators above cards. Draw the title inside the actual control frame, centered in 12.5-DIP bold accent typography (and optional 9.5-DIP centered muted subtitle), for aggregate families and both dedicated mutant control families. The secondary Special Ability Cooldowns heading is centered and accent colored. Group templates reserve zero vertical height for unused section headers.
