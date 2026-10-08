@@ -778,3 +778,8 @@ The Mutant Health card displays only its centered **MUTANT HEALTH** title: remov
 ### 2026-10-09 — Mutant Health lower bound 0.05×
 
 All fourteen Mutant Health multiplier controls now range from **0.05× to 2.00×**, with the existing **0.05× step**, 1.00× vanilla reference, and unchanged CFG mappings. The catalog slider minimum, runtime lower label and drag/keyboard bounds must agree; 0.25× is no longer the minimum. Existing values remain unchanged unless outside the new range.
+
+
+### 2026-10-09 — Mutant Health two-row spacing
+
+The seven-fader top row and seven-fader bottom row have a subtle **12-DIP vertical gap** instead of a 1-DIP gap. This changes only the second row's Y placement; individual fader height, width, order, hit targets, slider range/step, and outer card height stay unchanged.

@@ -139,11 +139,12 @@ public sealed class MutantHealthRadar : FrameworkElement
         // All fourteen independently editable mutant MaxHP scalars.
         // Two balanced rows of seven avoid squeezed names and tiny handles.
         const int columns = 7;
+        const double RowGap = 12.0;
         var stripWidth = (content.Width - (columns - 1) * ColumnGap) / columns;
         for (var i = 0; i < Mutants.Length; i++)
             DrawRow(dc, i, new Rect(
                 content.Left + (i % columns) * (stripWidth + ColumnGap),
-                65.0 + (i / columns) * 281.0, stripWidth, 280.0),
+                65.0 + (i / columns) * (280.0 + RowGap), stripWidth, 280.0),
                 text, muted, border, accent, panel);
 
 
