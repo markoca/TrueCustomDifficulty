@@ -1,7 +1,7 @@
 # Mixer & Responsive Grid UI — Source of Truth
 
 **Project:** True Custom Difficulty  
-**Status:** Anomaly Effects, Service Prices, Trader Stock and Item Weight mixer boards implemented in source; .NET/Wine validation pending for the new wave.  
+**Status:** Anomaly Effects, Service Prices, Trader Stock, Item Weight, Breakable Box Yields and Stash Reward Rolls migrated in source; runtime QA pending for new families.  
 **Scope:** Visual layout and interaction only.  
 **Canonical document:** This file is the source of truth for the mixer-style parameter controls and the accompanying responsive grid layout.
 
@@ -189,7 +189,7 @@ Column thresholds below apply to **board inner width**, not the whole Window wid
 | **TraderStockBoard** | **Implemented in source (2 strips); runtime QA pending** | Equal numeric ranges, independent inventories; preserve 0.25x absolute steps |
 | **ItemWeightBoard** | **Implemented in source (2 strips); runtime QA pending** | Equal ranges; item weight remains separate from carry limit |
 | **BreakableBoxYields** | **Implemented in source (2 strips); runtime QA pending** | Distinct absolute step sizes; no claim that box quantity changes box occurrence |
-| **StashRewardProfile** | Candidate with caution (3 strips) | Chance vs quantity vs chance; preserve different native units and chance semantics |
+| **StashRewardProfile** | **Implemented in source (3 strips); runtime QA pending** | Chance vs quantity vs chance; preserve different native units and chance semantics |
 | **CoreHealthDashboard** | **Keep hybrid initially; evaluate later** | Max HP, delay, passive regen, effect scale and low-health regen are semantically distinct; meaningful widgets may remain preferable |
 | **HumanCombatProfile, EquipmentWearBalance, PsyPhantomPressure** | Retain existing 2D/semantic visuals | Spatial relationship is informative; do not replace with faders merely for visual uniformity |
 | **RepairCurve, RadiationBalance, StarvationTimeline** | Retain semantic graphics | Actual reputation, exposure/recovery or timing relationships are the purpose of these boards |
