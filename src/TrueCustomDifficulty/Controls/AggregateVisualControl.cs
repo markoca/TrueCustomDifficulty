@@ -2053,6 +2053,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Hunger progress and stamina regeneration changes are distinct systems.
     // The threshold ladder is a read-only preview: LOW/MEDIUM/SEVERE can share
     // a source value without creating overlapping drag targets.
+    // Compact three-across stage and recovery editing when room permits. At
+    // narrow sizes, rows wrap rather than reducing fonts or slider hit areas.
     private void DrawHungerLadder(
         DrawingContext dc,
         Brush text,
@@ -2070,10 +2072,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         var mediumPenalty = P("survival.hungerMediumStaminaRegen");
         var severePenalty = P("survival.hungerStrongStaminaRegen");
 
-        DrawText(dc, "HUNGER STATE LADDER", new Point(17.0, 13.0),
-            11.5, accent, FontWeights.Bold);
-        DrawText(dc, "hunger points determine stage; each stage has its own stamina effect",
-            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
+        DrawHeader(dc, "HUNGER STATE LADDER",
+            "hunger-point thresholds and their stamina recovery effects",
+            text, muted, accent);
 
         if (rate is null || low is null || medium is null || severe is null ||
             wellFed is null || mediumPenalty is null || severePenalty is null)
@@ -2084,80 +2085,32 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var width = Math.Max(460.0, ActualWidth - 34.0);
+        var stageColumns = CompactStageColumns(ActualWidth);
 
-        void DrawHungerTrack(
-            ParameterViewModel parameter,
-            string label,
-            string value,
-            string note,
-            string leftLabel,
-            string rightLabel,
-            double top)
-        {
-            var card = new Rect(17.0, top, width, 64.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
-            DrawText(dc, label, new Point(card.Left + 12.0, top + 5.0),
-                10.1, text, FontWeights.Bold);
-            DrawRightAlignedText(dc, value, new Point(card.Right - 12.0, top + 5.0),
-                10.5, parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
+        void Card(ParameterViewModel parameter, string label, string value,
+            string minimum, string maximum, double top, int columns, int index)
+            => DrawCompactTrack(dc, parameter, label, value, minimum, maximum,
+                CompactSlot(top, width, columns, index),
+                text, muted, border, accent, panel);
 
-            // Small notes sit above the track and away from the actual click area.
-            // Some rows have no extra note to keep the stage controls compact.
-            if (!string.IsNullOrWhiteSpace(note))
-                DrawText(dc, note, new Point(card.Left + 12.0, top + 21.0),
-                    8.9, muted, FontWeights.Normal);
-
-            var track = new Rect(card.Left + 20.0, top + 31.0,
-                card.Width - 40.0, 16.0);
-            var y = track.Top + track.Height / 2.0;
-            var currentX = ValueToX(parameter.CurrentNumber,
-                parameter.Minimum, parameter.Maximum, track, reverse: false);
-            var baseX = ValueToX(parameter.ReferenceNumber,
-                parameter.Minimum, parameter.Maximum, track, reverse: false);
-
-            dc.DrawLine(new Pen(soft, 4.0), new Point(track.Left, y),
-                new Point(track.Right, y));
-            if (parameter.IsControlEnabled)
-                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 4.5),
-                    new Point(track.Left, y), new Point(currentX, y));
-            dc.DrawLine(new Pen(muted, 2.0),
-                new Point(baseX, y - 10.0), new Point(baseX, y + 10.0));
-            dc.DrawEllipse(panel,
-                new Pen(parameter.IsControlEnabled ? accent : muted,
-                    IsSelected(parameter) ? 2.8 : 1.9),
-                new Point(currentX, y), 7.0, 7.0);
-            if (parameter.IsControlEnabled)
-                dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-
-            AddHorizontalTarget(parameter,
-                new Rect(track.Left - 8.0, track.Top - 3.0,
-                    track.Width + 16.0, track.Height + 6.0),
-                track, parameter.Minimum, parameter.Maximum);
-
-            DrawText(dc, leftLabel, new Point(track.Left, top + 48.0),
-                8.9, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, rightLabel, new Point(track.Right, top + 48.0),
-                8.9, muted, FontWeights.Normal);
-        }
-
-        DrawHungerTrack(rate, "HUNGER BUILD-UP",
+        const double buildTop = 55.0;
+        Card(rate, "HUNGER BUILD-UP",
             $"{rate.CurrentNumber:0.000} pts/s  |  BASE {rate.ReferenceNumber:0.000}",
-            "How fast HungerPoints increase while time passes.",
-            $"{rate.Minimum:0.000} pts/s", $"{rate.Maximum:0.000} pts/s",
-            52.0);
+            "0 pts/s", "0.030 pts/s", buildTop, 1, 0);
 
-        var stage = new Rect(17.0, 128.0, width, 76.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), stage, 4.0, 4.0);
+        const double previewTop = buildTop + CompactTrackHeight + 12.0;
+        var preview = new Rect(17.0, previewTop, width, 80.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
         DrawText(dc, "HUNGER POINTS  /  STAGE PREVIEW",
-            new Point(stage.Left + 12.0, 133.0), 10.1, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "READ ONLY  |  0-100 POINTS",
-            new Point(stage.Right - 12.0, 133.0), 8.9, muted, FontWeights.SemiBold);
+            new Point(preview.Left + 12.0, previewTop + 7.0),
+            10.2, text, FontWeights.Bold);
 
-        var axis = new Rect(stage.Left + 20.0, 156.0, stage.Width - 40.0, 12.0);
-        var axisY = axis.Top + axis.Height / 2.0;
+        var axis = new Rect(preview.Left + 22.0, previewTop + 32.0,
+            preview.Width - 44.0, 12.0);
+        var y = axis.Top + axis.Height / 2.0;
         double At(double value) => ValueToX(value, 0.0, 100.0, axis, false);
 
-        var boundaries = new[]
+        var stops = new[]
         {
             0.0,
             Math.Clamp(low.CurrentNumber, 0.0, 100.0),
@@ -2165,73 +2118,74 @@ public sealed class AggregateVisualControl : FrameworkElement
             Math.Clamp(severe.CurrentNumber, 0.0, 100.0),
             100.0
         };
-        for (var i = 0; i < boundaries.Length - 1; i++)
+        for (var i = 0; i < stops.Length - 1; i++)
         {
-            var x1 = At(boundaries[i]);
-            var x2 = At(boundaries[i + 1]);
+            var a = At(stops[i]);
+            var b = At(stops[i + 1]);
             dc.DrawRectangle(CloneWithOpacity(i == 3 ? accent : soft,
-                i == 3 ? 0.72 : 0.22 + i * 0.12), null,
-                new Rect(x1, axisY - 4.0, Math.Max(0.0, x2 - x1), 8.0));
+                    i == 3 ? 0.72 : 0.22 + i * 0.12), null,
+                new Rect(a, y - 4.0, Math.Max(0.0, b - a), 8.0));
         }
 
-        var thresholds = new[] { low, medium, severe };
-        foreach (var parameter in thresholds)
+        foreach (var threshold in new[] { low, medium, severe })
         {
-            var liveX = At(parameter.CurrentNumber);
-            var baseX = At(parameter.ReferenceNumber);
+            var now = At(threshold.CurrentNumber);
+            var reference = At(threshold.ReferenceNumber);
             dc.DrawLine(new Pen(muted, 1.5),
-                new Point(baseX, axisY - 11.0), new Point(baseX, axisY + 11.0));
+                new Point(reference, y - 10.0), new Point(reference, y + 10.0));
             dc.DrawLine(new Pen(accent, 2.0),
-                new Point(liveX, axisY - 11.0), new Point(liveX, axisY + 11.0));
+                new Point(now, y - 11.0), new Point(now, y + 11.0));
         }
 
-        // Fixed legend columns remain legible even when stage thresholds coincide.
-        var legendWidth = (stage.Width - 24.0) / 3.0;
-        var legendParams = new[] { low, medium, severe };
-        var legendLabels = new[] { "LOW", "MEDIUM", "SEVERE" };
+        var previewParameters = new[] { low, medium, severe };
+        var previewLabels = new[] { "LOW", "MEDIUM", "SEVERE" };
+        var legendWidth = (preview.Width - 24.0) / 3.0;
         for (var i = 0; i < 3; i++)
         {
-            var p = legendParams[i];
-            var cx = stage.Left + 12.0 + legendWidth * (i + 0.5);
+            var parameter = previewParameters[i];
+            var cx = preview.Left + 12.0 + (i + 0.5) * legendWidth;
             DrawCenteredText(dc,
-                $"{legendLabels[i]} {p.CurrentNumber:0}  |  BASE {p.ReferenceNumber:0}",
-                new Point(cx, 181.0), 9.4,
-                i == 2 ? accent : text, FontWeights.SemiBold);
+                $"{previewLabels[i]} {parameter.CurrentNumber:0}  |  BASE {parameter.ReferenceNumber:0}",
+                new Point(cx, previewTop + 55.0),
+                9.5, i == 2 ? accent : text, FontWeights.SemiBold);
         }
 
-        DrawHungerTrack(low, "LOW HUNGER THRESHOLD",
+        var stagesTop = preview.Bottom + 12.0;
+        Card(low, "LOW HUNGER BEGINS",
             $"{low.CurrentNumber:0} pts  |  BASE {low.ReferenceNumber:0}",
-            "", "0 pts", "100 pts", 214.0);
-        DrawHungerTrack(medium, "MEDIUM HUNGER THRESHOLD",
+            "0 pts", "100 pts", stagesTop, stageColumns, 0);
+        Card(medium, "MEDIUM HUNGER BEGINS",
             $"{medium.CurrentNumber:0} pts  |  BASE {medium.ReferenceNumber:0}",
-            "", "0 pts", "100 pts", 282.0);
-        DrawHungerTrack(severe, "SEVERE HUNGER THRESHOLD",
+            "0 pts", "100 pts", stagesTop, stageColumns, 1);
+        Card(severe, "SEVERE HUNGER BEGINS",
             $"{severe.CurrentNumber:0} pts  |  BASE {severe.ReferenceNumber:0}",
-            "", "0 pts", "100 pts", 350.0);
+            "0 pts", "100 pts", stagesTop, stageColumns, 2);
 
+        var recoveryTitleY = CompactGridEnd(stagesTop, 3, stageColumns) + 14.0;
         DrawText(dc, "STAMINA RECOVERY BY HUNGER STATE",
-            new Point(19.0, 429.0), 10.5, accent, FontWeights.Bold);
-        DrawText(dc, "Well fed gives a bonus; medium and severe hunger reduce recovery.",
-            new Point(19.0, 447.0), 9.3, muted, FontWeights.Normal);
+            new Point(19.0, recoveryTitleY), 10.8, accent, FontWeights.Bold);
+        DrawText(dc, "Well-fed increases recovery; Medium and Severe apply losses.",
+            new Point(19.0, recoveryTitleY + 17.0),
+            9.3, muted, FontWeights.Normal);
 
-        DrawHungerTrack(wellFed, "WELL-FED RECOVERY BONUS",
+        var recoveryTop = recoveryTitleY + 37.0;
+        Card(wellFed, "WELL-FED RECOVERY BONUS",
             $"+{wellFed.CurrentNumber * 100:0}%  |  BASE +{wellFed.ReferenceNumber * 100:0}%",
-            "", "0% BONUS", "+40% BONUS", 465.0);
-        DrawHungerTrack(mediumPenalty, "MEDIUM HUNGER  /  RECOVERY LOSS",
+            "0%", "+40%", recoveryTop, stageColumns, 0);
+        Card(mediumPenalty, "MEDIUM HUNGER RECOVERY LOSS",
             $"-{mediumPenalty.CurrentNumber * 100:0}%  |  BASE -{mediumPenalty.ReferenceNumber * 100:0}%",
-            "", "0% LOSS", "66% LOSS", 533.0);
-        DrawHungerTrack(severePenalty, "SEVERE HUNGER  /  RECOVERY LOSS",
+            "0%", "-66%", recoveryTop, stageColumns, 1);
+        Card(severePenalty, "SEVERE HUNGER RECOVERY LOSS",
             $"-{severePenalty.CurrentNumber * 100:0}%  |  BASE -{severePenalty.ReferenceNumber * 100:0}%",
-            "", "0% LOSS", "100% LOSS", 601.0);
+            "0%", "-100%", recoveryTop, stageColumns, 2);
 
-        DrawText(dc, "MEDIUM AND SEVERE KEEP THEIR ORIGINAL NO-SLEEP EFFECT",
-            new Point(20.0, 676.0), 9.1, muted, FontWeights.SemiBold);
-        DrawText(dc, "GREY TICK = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
-            new Point(20.0, 692.0), 8.9, muted, FontWeights.Normal);
+        var end = CompactGridEnd(recoveryTop, 3, stageColumns);
+        DrawText(dc, "MEDIUM / SEVERE KEEP THE ORIGINAL NO-SLEEP EFFECT",
+            new Point(20.0, end + 12.0), 9.1, muted, FontWeights.SemiBold);
+        DrawText(dc, "GREY = BASE  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
+            new Point(20.0, end + 30.0), 9.1, muted, FontWeights.Normal);
     }
 
-    // Each gameplay value is edited independently. The charge preview is deliberately
-    // read-only: timing handles should never collide when the delay approaches zero.
     private void DrawStarvationTimeline(
         DrawingContext dc, Brush text, Brush muted, Brush border, Brush soft, Brush accent, Brush panel)
     {
