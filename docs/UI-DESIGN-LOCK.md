@@ -281,3 +281,7 @@ User requested moving WELL-FED into the same top editing row as HUNGER BUILD-UP,
 ### 2026-10-08 — Hunger preview/profile exact horizontal alignment
 
 User-approved correction: the upper HUNGER POINTS / STAGE PREVIEW native 0–100 axis must share the **exact same screen X endpoints** as the lower HUNGER SURVIVAL PROFILE. The rotated `STAMINA RECOVERY LOSS` caption and Y tick labels require a fixed left gutter, so the preview's editable-independent read-only rail adopts the same 81-DIP left/30-DIP right plot-axis insets. The lower profile constructs its plot from the preview `axis` rectangle (including its internal 2-DIP/12-DIP padding), guaranteeing identical native threshold X coordinates at all widths. Legend/caption arrangements, Well-Fed top-row slider, native source edit behavior and all unrelated UI stay unchanged. Wine verification pending.
+
+### 2026-10-08 — Hunger heading and vertical axis centering
+
+Explicitly approved: remove the redundant `hunger-point thresholds and their stamina recovery effects` subtitle beneath the HUNGER STATE LADDER title. Preserve the heading itself. Vertically center the rotated `STAMINA RECOVERY LOSS` caption against the actual inner plotting area (`area.Top + area.Height / 2`) rather than the larger outer `plot` rectangle, retaining the existing X offset and separation from tick values. All other Hunger geometry, values, and UI remain locked; local Wine visual review pending.
