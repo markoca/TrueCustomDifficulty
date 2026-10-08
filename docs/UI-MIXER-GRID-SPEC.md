@@ -327,3 +327,7 @@ Eight compact, equally spaced vertical cooldown controls remain on one horizonta
 ### Mutant Combat: two-tier fixed composition (2026-10-08)
 
 One Mutant Combat section replaces separate global pressure and special cooldown sections. The upper tier has two centered global faders (Hit Damage and Attack Frequency). The lower tier has eight evenly spaced vertical ability wait faders in one row. All ten retain source-native bounds, independent hit regions, Base markers, glow-only handles and individual resets. The layout must keep the two mechanics visually distinct and never suggest that regular attack frequency is a mutant ability cooldown.
+
+### Mutant Combat horizontal/vertical split (2026-10-08)
+
+Global Hit Damage and Attack Frequency are two stacked horizontal rail controls with circular gold handles, Base ticks, labels, live multipliers and native bounds. Each uses pointer X to determine value. The eight one-row mutant-specific cooldowns remain vertical and use pointer Y. This visually distinguishes generic mutant attacks from individual special-ability timers.
