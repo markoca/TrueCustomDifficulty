@@ -607,3 +607,7 @@ HUNGER BUILD-UP (`survival.hungerRate`) and WELL-FED STAMINA RECOVERY (`survival
 ### Hunger preview/profile X-axis alignment (2026-10-08)
 
 The preview and profile share identical 0–100 hunger-point X coordinates, not merely the same outer frame width. Preview axis starts at `preview.Left + 81` and spans `preview.Width - 111`; the lower profile derives its plot from that rectangle (`plot.Left = axis.Left - 2`, `plot.Width = axis.Width + 12`; internal profile `area` restores the same `axis.Left`/`axis.Width`). This deliberately reserves the Y-axis caption/tick gutter without shifting only the lower graph. All threshold markers, step transitions and ghost references therefore align vertically with the preview's threshold markers at any supported panel width. No gameplay or other controls are changed.
+
+### Hunger header and Y-axis caption correction (2026-10-08)
+
+The HUNGER STATE LADDER header has no explanatory subtitle. The rotated STAMINA RECOVERY LOSS text is aligned to the exact middle of the interior charting area, not the surrounding plot padding; its horizontal location is unchanged, preserving the gap to percentage tick labels. Preview/profile X-axis alignment, existing layout and native editing semantics remain intact.
