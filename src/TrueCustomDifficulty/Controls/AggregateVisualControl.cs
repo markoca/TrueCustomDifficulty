@@ -1730,7 +1730,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         foreach (var seconds in new[] { 0.0, 90.0, 180.0, 270.0 })
         {
             var x = SecondsToX(seconds);
-            dc.DrawLine(new Pen(soft, 1.0) { DashStyle = DashStyles.Dot },
+            dc.DrawLine(new Pen(border, 1.0) { DashStyle = DashStyles.Dot },
                 new Point(x, timeline.Top - 2.0), new Point(x, timeline.Bottom));
             DrawCenteredText(dc, $"{seconds:0}s", new Point(x, timeline.Top - 13.0),
                 8.7, muted, FontWeights.Normal);
