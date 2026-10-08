@@ -95,9 +95,9 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | NPC Loot & Equipment | Discrete corpse-loot selector, independent medical/ammo tracks and MIN/MAX dropped-weapon condition | Semantic |
 | Explosion Damage | Direct blast-damage multiplier and read-only Base Preset comparison band | Semantic |
 | Physical Limits | Independent vault height (uu) / carry mass (kg) source tracks with original vault landmarks | Semantic |
-| Trader Stock | Native trader ammo and medic stock amount controls | Semantic |
-| Service Prices | Guide fast-travel, technician upgrade and separate baseline repair price | Semantic |
-| Item Weight | Independent ammunition and food/medical item mass multipliers | Semantic |
+| Trader Stock | Two responsive vertical faders for ammo and medic supply (0.25x native steps); Wine QA pending | Mixer pilot |
+| Service Prices | Three source-bound vertical faders for guide, upgrade and base repair prices; Wine QA pending | Mixer pilot |
+| Item Weight | Two independent native-value vertical weight faders; Wine QA pending | Mixer pilot |
 | Anomaly Effects | Six native-value vertical mixer faders with responsive rows, clickable Base marks and per-channel rationale selection; Wine QA pending | Pilot |
 
 The old generic duration fader-bank helper is no longer used.
