@@ -163,6 +163,11 @@ def main() -> None:
             "BoxYieldMixerChannels",
             ("loot.destructibleAmmoQuantity", "loot.destructibleGrenadeQuantity"),
         ),
+        "StashRewardProfile": (
+            "StashRewardMixerChannels",
+            ("loot.cheapStashGrenadeChance", "loot.cheapStashGrenadeQuantity",
+             "loot.expensiveStashMoneyChance"),
+        ),
     }
     for family, (array_name, expected_ids) in other_families.items():
         channel_array = re.search(
@@ -191,6 +196,14 @@ def main() -> None:
             "base repair price percent unit display missing")
     require('"BreakableBoxYields" => "Two independent vertical faders' in vm,
             "box-yield rationale not updated")
+    require('"StashRewardProfile" => "Three independent vertical faders' in vm,
+            "stash mixer rationale not updated")
+    require('"loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance"'
+            in visual, "stash chance faders must show percentages")
+    require('"loot.cheapStashGrenadeQuantity" => $"{raw:0} pcs"' in visual,
+            "stash amount fader must show counts")
+    require("DrawStashRewardProfile(dc," not in visual,
+            "old stash track renderer still dispatched")
     require('case "BreakableBoxYields":' in visual
             and 'DrawBreakableBoxYields(dc,' not in visual,
             "box-yield old renderer still used")
