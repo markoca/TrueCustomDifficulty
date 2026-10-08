@@ -265,3 +265,7 @@ User-approved clarification: the left-hand WELL-FED control explicitly reads STA
 ### 2026-10-08 — Hunger Survival Profile axis polish
 
 The main graph's X-axis ticks retain real 0/25/50/75/100 hunger points but use clear 10-DIP semibold HUD-style typography with stronger endpoints. Y ticks are also 10-DIP semibold, with the zero reference explicitly marked `0% NORMAL`; remaining values retain accurate negative percent labels. Remove both redundant helper/rationale footer rows underneath the graph; keep in-chart axis headings and state labels. Reduce Hunger Ladder measured card height by 48 DIP to reclaim space. Gameplay values and mouse interaction remain unchanged. Wine verification pending.
+
+### 2026-10-08 — Hunger Survival Profile label cleanup (explicit approval)
+
+The user explicitly approved four presentation-only changes: remove `UP = MORE RECOVERY` beneath the Well-Fed fader; give the rotated `STAMINA RECOVERY LOSS` caption more clearance from percentage ticks by increasing the plot-to-Well-Fed gutter and shifting the caption further left; replace shorthand stage labels such as `33 PTS / -33%` with separate lines `MEDIUM AT 33 PTS` and `-33% RECOVERY` (likewise SEVERE); and remove redundant `NORMAL` from the zero Y tick (`0%` only). The LOW onset is labeled `LOW AT N PTS`. All native values, chart step geometry, colored rings, hit areas, reset semantics, and non-Hunger UI stay locked. Local Wine visual acceptance pending.
