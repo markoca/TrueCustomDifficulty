@@ -124,6 +124,8 @@ def main() -> None:
         "var baseY = ValueToY(parameter.ReferenceNumber,",
         "AddVerticalTarget(parameter,",
         "HitKind.MixerBaseMarker",
+        "HitKind.MixerSelect",
+        "if (target.Kind == HitKind.MixerSelect)",
         "target.Parameter.ResetToReference();",
         "parameter?.IsValueModifiedFromReference() == true",
         'Family == "AnomalyEffectsBoard"',
