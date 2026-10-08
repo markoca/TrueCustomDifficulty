@@ -149,14 +149,10 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         _targets.Clear();
         _mutantPartsTarget = null;
 
-        DrawText(dc, "ITEM VALUE LAYERS", new Point(18.0, 16.0), 12.0, text, FontWeights.Bold);
-        DrawText(
-            dc,
-            "base-value layers before trader buy / sell pricing",
-            new Point(18.0, 34.0),
-            8.2,
-            muted,
-            FontWeights.Normal);
+        DrawCenteredText(dc, "ITEM VALUE LAYERS", new Point(ActualWidth / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "base-value layers before trader buy / sell pricing", new Point(ActualWidth / 2.0, 39.0),
+            9.5, muted, FontWeights.Normal);
 
         var layout = GetLayout();
 
