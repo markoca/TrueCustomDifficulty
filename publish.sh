@@ -63,6 +63,7 @@ if command -v python3 >/dev/null 2>&1; then
     echo "Checking visual aggregate bindings and mixer layout..."
     python3 "$ROOT/tools/verify_visual_anchor_triggers.py"
     python3 "$ROOT/tools/verify_mixer_layout.py"
+    python3 "$ROOT/tools/verify_section_grid.py"
 fi
 
 # WPF creates generated temporary projects under obj/.  Removing both build trees
