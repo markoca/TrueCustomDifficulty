@@ -131,8 +131,10 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         _targets.Clear();
 
         var content = ContentRect();
-        DrawText(dc, "INDIVIDUAL ANOMALY DAMAGE", new Point(content.Left, 16.0), 12.5, text, FontWeights.Bold);
-        DrawText(dc, "each row = 0–200% of its own vanilla damage", new Point(content.Left, 37.0), 9.5, muted, FontWeights.Normal);
+        DrawCenteredText(dc, "INDIVIDUAL ANOMALY DAMAGE", new Point(ActualWidth / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "each row = 0–200% of its own vanilla damage", new Point(ActualWidth / 2.0, 39.0),
+            9.5, muted, FontWeights.Normal);
 
         var columnWidth = (content.Width - ColumnGap) / 2.0;
         for (var i = 0; i < 6; i++)
