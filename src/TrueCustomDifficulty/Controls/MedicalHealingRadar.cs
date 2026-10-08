@@ -131,14 +131,10 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
         _targets.Clear();
 
-        DrawText(dc, "MEDICAL HEALING OUTPUT", new Point(18.0, 16.0), 12.0, text, FontWeights.Bold);
-        DrawText(
-            dc,
-            "base HP restored by each item, before any separate Master-only healing modifier",
-            new Point(18.0, 34.0),
-            8.2,
-            muted,
-            FontWeights.Normal);
+        DrawCenteredText(dc, "MEDICAL HEALING OUTPUT", new Point(ActualWidth / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "base HP restored by each item, before any separate Master-only healing modifier", new Point(ActualWidth / 2.0, 39.0),
+            9.5, muted, FontWeights.Normal);
 
         var layout = GetLayout();
 
