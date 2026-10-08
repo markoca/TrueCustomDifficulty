@@ -2066,9 +2066,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         AddVerticalTarget(count,
             new Rect(plot.Left - 28.0, y - 14.0, 27.0, 28.0),
             plot, count.Minimum, count.Maximum);
-        AddHumanJointTarget(wait, count,
-            new Rect(x - 16.0, y - 16.0, 32.0, 32.0),
-            plot);
+        if (wait.IsControlEnabled && count.IsControlEnabled)
+            _hitTargets.Add(new HitTarget(wait,
+                new Rect(x - 18.0, y - 18.0, 36.0, 36.0),
+                plot, HitKind.HumanJoint, wait.Minimum, wait.Maximum, false));
 
         // Keep the right lane separate from the plot as in Human Combat.
         var faderLeft = plot.Right + 34.0;
@@ -4364,10 +4365,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         RaiseParameterSelected(target.Parameter);
         target.Parameter.ResetToReference();
         if (target.Kind == HitKind.HumanJoint)
-            P("combat.npcWeaponDamage")?.ResetToReference();
+            P(Family == "PsyPhantomPressure"
+                ? "combat.psyPhantomCount" : "combat.npcWeaponDamage")?.ResetToReference();
         EnforceFamilyConstraints(target.Parameter);
         _status.ShowTransient(target.Kind == HitKind.HumanJoint
-            ? "Enemy Health + Gun Damage reset to Base Preset."
+            ? (Family == "PsyPhantomPressure"
+                ? "Psy Cycle Wait + Phantom Count reset to Base Preset."
+                : "Enemy Health + Gun Damage reset to Base Preset.")
             : $"{ShortLabel(target.Parameter)} reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
@@ -4454,8 +4458,10 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         if (target.Kind == HitKind.HumanJoint)
         {
-            var h = P("combat.npcHealth");
-            var d = P("combat.npcWeaponDamage");
+            var h = P(Family == "PsyPhantomPressure"
+                ? "combat.psySpawnCycleDelay" : "combat.npcHealth");
+            var d = P(Family == "PsyPhantomPressure"
+                ? "combat.psyPhantomCount" : "combat.npcWeaponDamage");
             if (h is null || d is null || !h.IsControlEnabled || !d.IsControlEnabled)
                 return;
             var x = Math.Clamp((point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width), 0.0, 1.0);
