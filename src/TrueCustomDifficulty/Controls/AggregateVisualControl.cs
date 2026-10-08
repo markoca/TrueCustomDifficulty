@@ -2580,9 +2580,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var beerTime = P("survival.beerEffectDuration");
         var magicTime = P("survival.magicVodkaEffectDuration");
 
-        DrawHeader(dc, "CONSUMABLE EFFECT BOARD",
-            "immediate strength, sustained bonuses and effect durations",
-            text, muted, accent);
+        DrawHeader(dc, "CONSUMABLE EFFECTS",
+            string.Empty, text, muted, accent);
 
         if (burst is null || waterStamina is null || energyStamina is null ||
             antiRad is null || waterTime is null || energyTime is null ||
@@ -2596,28 +2595,19 @@ public sealed class AggregateVisualControl : FrameworkElement
         var width = Math.Max(460.0, ActualWidth - 34.0);
         var columns = CompactColumns(ActualWidth);
         var durationColumns = CompactStageColumns(ActualWidth);
-        const double summaryTop = 55.0;
-
-        void SummaryCard(Rect card, string heading, string first, string second)
+        // Live gameplay readouts describe exactly the sources below, never a
+        // fabricated combined multiplier or a new medical/drunkenness effect.
+        void Readout(Rect card, string heading, string first, string second)
         {
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
-            var allowed = Math.Max(1.0, card.Width - 24.0);
-            dc.DrawText(CreateText(heading, 10.2, text, FontWeights.Bold, allowed),
-                new Point(card.Left + 12.0, card.Top + 8.0));
-            dc.DrawText(CreateText(first, 10.1, accent, FontWeights.SemiBold, allowed),
-                new Point(card.Left + 12.0, card.Top + 32.0));
-            dc.DrawText(CreateText(second, 10.2, accent, FontWeights.Bold, allowed),
-                new Point(card.Left + 12.0, card.Top + 55.0));
+            dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 4, 4);
+            var usable = Math.Max(1.0, card.Width - 22.0);
+            dc.DrawText(CreateText(heading, 10.1, text, FontWeights.Bold, usable),
+                new Point(card.Left + 11, card.Top + 7));
+            dc.DrawText(CreateText(first, 10.0, accent, FontWeights.SemiBold, usable),
+                new Point(card.Left + 11, card.Top + 29));
+            dc.DrawText(CreateText(second, 9.6, muted, FontWeights.SemiBold, usable),
+                new Point(card.Left + 11, card.Top + 49));
         }
-
-        SummaryCard(CompactSlot(summaryTop, width, columns, 0),
-            "INSTANT STAMINA REFILL",
-            $"WATER {38.0 * burst.CurrentNumber:0.#}%  |  ENERGY {50.0 * burst.CurrentNumber:0.#}%",
-            $"LIMITED ENERGY {100.0 * burst.CurrentNumber:0.#}%");
-        SummaryCard(CompactSlot(summaryTop, width, columns, 1),
-            "ALCOHOL RADIATION REMOVAL",
-            $"BEER {10.0 * antiRad.CurrentNumber:0.#} rad points",
-            $"VODKA {50.0 * antiRad.CurrentNumber:0.#} rad points");
 
         void Card(ParameterViewModel parameter, string label,
             string value, string min, string max, double top, int index,
@@ -2627,32 +2617,46 @@ public sealed class AggregateVisualControl : FrameworkElement
                     columnsInGroup == 0 ? columns : columnsInGroup, index),
                 text, muted, border, accent, panel);
 
-        var strengthTitle = CompactGridEnd(summaryTop, 2, columns) + 13.0;
-        DrawText(dc, "EFFECT STRENGTH",
-            new Point(19.0, strengthTitle), 10.8, accent, FontWeights.Bold);
-        DrawText(dc, "Strength changes do not alter effect duration.",
-            new Point(19.0, strengthTitle + 17.0), 9.3, muted, FontWeights.Normal);
-        var strengthTop = strengthTitle + 37.0;
+        const double strengthTop = 55.0;
+        DrawCompactTrack(dc, burst, "INSTANT STAMINA / ALL THREE DRINKS",
+            $"{burst.CurrentNumber:0.##}x", "0x", "2x",
+            CompactSlot(strengthTop, width, columns, 0),
+            text, muted, border, accent, panel);
+        DrawCompactTrack(dc, antiRad, "BEER + VODKA / RADIATION REMOVED",
+            $"{antiRad.CurrentNumber:0.##}x", "0x", "2x",
+            CompactSlot(strengthTop, width, columns, 1),
+            text, muted, border, accent, panel);
+        var sustainTop = CompactGridEnd(strengthTop, 2, columns) + 12.0;
+        DrawCompactTrack(dc, waterStamina, "WATER / STAMINA BUFF STRENGTH",
+            $"{waterStamina.CurrentNumber:0.##}x", "0x", "2x",
+            CompactSlot(sustainTop, width, columns, 0),
+            text, muted, border, accent, panel);
+        DrawCompactTrack(dc, energyStamina, "ENERGY / STAMINA REGEN STRENGTH",
+            $"{energyStamina.CurrentNumber:0.##}x", "0x", "2x",
+            CompactSlot(sustainTop, width, columns, 1),
+            text, muted, border, accent, panel);
 
-        Card(burst, "INSTANT STAMINA BURST",
-            $"{burst.CurrentNumber:0.##}x  |  BASE {burst.ReferenceNumber:0.##}x",
-            "0x", "2x", strengthTop, 0);
-        Card(antiRad, "BEER / VODKA RADIATION REMOVAL",
-            $"{antiRad.CurrentNumber:0.##}x  |  BASE {antiRad.ReferenceNumber:0.##}x",
-            "0x", "2x", strengthTop, 1);
-        Card(waterStamina, "WATER / SUSTAINED STAMINA",
-            $"{waterStamina.CurrentNumber:0.##}x  |  BASE {waterStamina.ReferenceNumber:0.##}x",
-            "0x", "2x", strengthTop, 2);
-        Card(energyStamina, "ENERGY DRINK / SUSTAINED STAMINA",
-            $"{energyStamina.CurrentNumber:0.##}x  |  BASE {energyStamina.ReferenceNumber:0.##}x",
-            "0x", "2x", strengthTop, 3);
-
-        var previewTitle = CompactGridEnd(strengthTop, 4, columns) + 13.0;
-        DrawText(dc, "TIMED EFFECTS",
-            new Point(19.0, previewTitle), 10.8, accent, FontWeights.Bold);
-        DrawText(dc,
-            $"WATER: REGEN +{25.0 * waterStamina.CurrentNumber:0.#}% / COST -{10.0 * waterStamina.CurrentNumber:0.#}%  |  ENERGY: REGEN +{200.0 * energyStamina.CurrentNumber:0.#}%",
-            new Point(19.0, previewTitle + 17.0), 9.3, muted, FontWeights.Normal);
+        var readoutTop = CompactGridEnd(sustainTop, 2, columns) + 14.0;
+        DrawText(dc, "WHAT YOUR DRINKS ACTUALLY DO",
+            new Point(19, readoutTop), 10.8, accent, FontWeights.Bold);
+        var readoutCardsTop = readoutTop + 22.0;
+        // The three effects are previews only; source controls stay independent.
+        Readout(CompactSlot(readoutCardsTop, width, durationColumns, 0),
+            "INSTANT STAMINA",
+            $"WATER +{38 * burst.CurrentNumber:0.#}% | ENERGY +{50 * burst.CurrentNumber:0.#}%",
+            $"LIMITED ENERGY +{100 * burst.CurrentNumber:0.#}%");
+        Readout(CompactSlot(readoutCardsTop, width, durationColumns, 1),
+            "SUSTAINED STAMINA",
+            $"WATER REGEN +{25 * waterStamina.CurrentNumber:0.#}%",
+            $"WATER COST -{10 * waterStamina.CurrentNumber:0.#}% | ENERGY REGEN +{200 * energyStamina.CurrentNumber:0.#}%");
+        Readout(CompactSlot(readoutCardsTop, width, durationColumns, 2),
+            "RADIATION REMOVED",
+            $"BEER {10 * antiRad.CurrentNumber:0.#} RAD",
+            $"VODKA {50 * antiRad.CurrentNumber:0.#} RAD");
+        var previewTitle = CompactGridEnd(readoutCardsTop, 3, durationColumns) + 18.0;
+        DrawText(dc, "HOW LONG THE EFFECTS LAST",
+            new Point(19, previewTitle), 10.8, accent, FontWeights.Bold);
+        var previewTop = previewTitle + 23.0;
 
         // Longest effects share a real seconds scale. This chart is a preview,
         // not a fifth hit area or an alternate value-to-seconds editor.
@@ -2660,7 +2664,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var preview = new Rect(17.0, previewTop, width, 160.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             preview, 4.0, 4.0);
-        DrawText(dc, "LONGEST EFFECT PER DRINK  /  READ ONLY",
+        DrawText(dc, "LONGEST EFFECT PER DRINK  /  SECONDS",
             new Point(preview.Left + 12.0, previewTop + 7.0),
             10.0, text, FontWeights.Bold);
 
@@ -2708,29 +2712,29 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var durationTop = preview.Bottom + 12.0;
-        Card(waterTime, "WATER / EFFECT DURATION",
+        Card(waterTime, "WATER / REGEN + STAMINA COST DURATION",
             $"{waterTime.CurrentNumber:0.##}x  |  BASE {waterTime.ReferenceNumber:0.##}x",
             "0x", "3x", durationTop, 0, durationColumns);
-        Card(energyTime, "ENERGY DRINK / EFFECT DURATION",
+        Card(energyTime, "ENERGY / TIMED STAMINA BUFF DURATION",
             $"{energyTime.CurrentNumber:0.##}x  |  BASE {energyTime.ReferenceNumber:0.##}x",
             "0x", "3x", durationTop, 1, durationColumns);
-        Card(vodkaTime, "VODKA / STAMINA PENALTY DURATION",
+        Card(vodkaTime, "VODKA / STAMINA PENALTY TIME",
             $"{vodkaTime.CurrentNumber:0.##}x  |  BASE {vodkaTime.ReferenceNumber:0.##}x",
             "0x", "3x", durationTop, 2, durationColumns);
-        Card(beerTime, "BEER / STAMINA PENALTY DURATION",
+        Card(beerTime, "BEER / STAMINA PENALTY TIME",
             $"{beerTime.CurrentNumber:0.##}x  |  BASE {beerTime.ReferenceNumber:0.##}x",
             "0x", "3x", durationTop, 3, durationColumns);
-        Card(magicTime, "MAGIC VODKA / PSI DURATION",
+        Card(magicTime, "MAGIC VODKA / PSI PROTECTION TIME",
             $"{magicTime.CurrentNumber:0.##}x  |  BASE {magicTime.ReferenceNumber:0.##}x",
             "0x", "3x", durationTop, 4, durationColumns);
 
         var end = CompactGridEnd(durationTop, 5, durationColumns);
-        DrawText(dc,
-            $"WATER: {5.0 * waterTime.CurrentNumber:0.#}/{30.0 * waterTime.CurrentNumber:0.#}s  |  ENERGY: {45.0 * energyTime.CurrentNumber:0.#}/{15.0 * energyTime.CurrentNumber:0.#}/{5.0 * energyTime.CurrentNumber:0.#}s",
-            new Point(20.0, end + 12.0), 9.1, muted, FontWeights.Normal);
-        DrawText(dc,
-            $"VODKA: {20.0 * vodkaTime.CurrentNumber:0.#}s  |  BEER: {20.0 * beerTime.CurrentNumber:0.#}s  |  MAGIC: {90.0 * magicTime.CurrentNumber:0.#}s  |  DRUNKENNESS SEPARATE",
-            new Point(20.0, end + 30.0), 9.1, muted, FontWeights.Normal);
+        DrawText(dc, "WATER: REGEN 5s / COST 30s  |  ENERGY: 45s / 15s / 5s (AT 1x)",
+            new Point(20, end + 12), 9.1, muted, FontWeights.SemiBold);
+        DrawText(dc, "VODKA + BEER: STAMINA PENALTY 20s  |  MAGIC: PSI 90s (AT 1x)",
+            new Point(20, end + 30), 9.1, muted, FontWeights.SemiBold);
+        DrawText(dc, "DURATION DOES NOT CHANGE DRUNKENNESS OR STRENGTH",
+            new Point(20, end + 48), 9.1, muted, FontWeights.SemiBold);
     }
 
     private void DrawSleepingDashboard(
@@ -5057,12 +5061,13 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double CompactConsumableHeight(double width)
     {
         var columns = CompactColumns(width);
-        var strengthTitle = CompactGridEnd(55.0, 2, columns) + 13.0;
-        var strengthTop = strengthTitle + 37.0;
-        var previewTitle = CompactGridEnd(strengthTop, 4, columns) + 13.0;
-        var previewTop = previewTitle + 37.0;
+        var durations = CompactStageColumns(width);
+        var sustainTop = CompactGridEnd(55.0, 2, columns) + 12.0;
+        var readoutTop = CompactGridEnd(sustainTop, 2, columns) + 14.0;
+        var readoutCardsTop = readoutTop + 22.0;
+        var previewTop = CompactGridEnd(readoutCardsTop, 3, durations) + 18.0 + 23.0;
         var durationTop = previewTop + 160.0 + 12.0;
-        return CompactGridEnd(durationTop, 5, CompactStageColumns(width)) + 71.0;
+        return CompactGridEnd(durationTop, 5, durations) + 90.0;
     }
 
     private static double CompactHungerHeight(double width)
