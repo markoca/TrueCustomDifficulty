@@ -131,6 +131,12 @@ echo
 echo "Published successfully."
 echo "EXE: $EXE_NAME ($SIZE_MB MB)"
 echo "Location: $PUBLISH_DIR"
+# A readable source/binary receipt makes it possible to distinguish an old
+# Wine process or stale executable from the currently published artifact.
+EXE_SHA256="$(sha256sum "$FINAL_EXE" | cut -d' ' -f1)"
+printf 'source_commit=%s\nexe_sha256=%s\n' "$GIT_HEAD" "$EXE_SHA256" > "$PUBLISH_DIR/BUILD-INFO.txt"
+echo "Build receipt: $PUBLISH_DIR/BUILD-INFO.txt"
+echo "Executable SHA-256: $EXE_SHA256"
 echo
 echo "Run on Linux with wine-s2:"
 echo '  WINEPREFIX="$HOME/.wine-s2" WINEDEBUG=-all wine "'"$FINAL_EXE"'"'
