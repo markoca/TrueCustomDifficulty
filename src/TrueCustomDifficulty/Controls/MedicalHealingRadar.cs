@@ -155,7 +155,6 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
         // One readable dosage editor per item: large HP output, a restrained
         // reference mark and one horizontal interaction. No separate preview.
-        var hovered = _hoverRow == row;
         // Selection must not paint the medical lane yellow.
         dc.DrawRoundedRectangle(panel, new Pen(border, .8), card, 4, 4);
         DrawText(dc, Items[row].Label, new Point(card.Left + 12, card.Top + 10),
