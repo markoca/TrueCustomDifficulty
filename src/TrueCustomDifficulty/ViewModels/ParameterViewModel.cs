@@ -650,7 +650,14 @@ public sealed class ParameterViewModel : ObservableObject
         && (IsVisualAggregateAnchor || (_dependencyEnabledProvider?.Invoke() ?? true));
     public string ToggleStateLabel => CurrentBoolean ? "ON" : "OFF";
     public double Minimum => Definition.Slider?.Min ?? 0;
-    public double Maximum => Definition.Slider?.Max ?? 1;
+    // Combat UI hard limits: preserve these gameplay-safe maximums even if an old
+    // preset or a future catalog update reintroduces the former 4x / >1x ranges.
+    public double Maximum => Id switch
+    {
+        "combat.npcAttackCooldown" => Math.Min(2.0, Definition.Slider?.Max ?? 2.0),
+        "combat.npcHipAccuracy" => Math.Min(1.0, Definition.Slider?.Max ?? 1.0),
+        _ => Definition.Slider?.Max ?? 1.0
+    };
     public double ReferenceNumber => GetReferenceNumber();
     public bool ReferenceBoolean
     {
