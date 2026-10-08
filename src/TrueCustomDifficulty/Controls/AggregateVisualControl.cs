@@ -1790,7 +1790,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // Reserve the right-hand lane for two vertically oriented source faders.
         var plotSide = Math.Min(280.0, Math.Max(180.0, ActualWidth - 360.0));
-        var plot = new Rect(48.0, 91.0, plotSide, plotSide);
+        var plot = new Rect(64.0, 91.0, plotSide, plotSide);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
 
         for (var tick = 0; tick <= 4; tick++)
@@ -1806,9 +1806,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             if (tick is 0 or 2 or 4)
             {
                 DrawCenteredText(dc, $"{healthTick:0.##}x",
-                    new Point(gridX, plot.Bottom + 29.0), 9.3, text, FontWeights.Normal);
+                    new Point(gridX, plot.Bottom + 32.0), 9.3, text, FontWeights.Normal);
                 DrawRightAlignedText(dc, $"{damageTick:0.##}x",
-                    new Point(plot.Left - 29.0, gridY - 7.0), 9.3, text, FontWeights.Normal);
+                    new Point(plot.Left - 12.0, gridY - 7.0), 9.3, text, FontWeights.Normal);
             }
         }
 
@@ -1857,7 +1857,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         DrawCenteredText(dc,
             "BOTTOM CIRCLE = HEALTH  |  LEFT SQUARE = DAMAGE  |  POINT = PREVIEW",
-            new Point(ActualWidth / 2.0, 386.0), 9.2, text, FontWeights.SemiBold);
+            new Point(ActualWidth / 2.0, Math.Max(422.0, plot.Bottom + 72.0)), 9.2, text, FontWeights.SemiBold);
     }
 
     // Editable axes are deliberately independent. The gold crosshair is a
@@ -4656,7 +4656,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "BleedingTreatmentMixer" => 684.0,
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 390.0,
-            "HumanCombatProfile" => 415.0,
+            "HumanCombatProfile" => 465.0,
             "PlayerWeaponProfile" => 330.0,
             "CoreHealthDashboard" => 475.0,
             "SevereFatiguePenaltyBoard" => 390.0,
