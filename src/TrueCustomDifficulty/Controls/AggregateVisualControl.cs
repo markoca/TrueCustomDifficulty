@@ -2421,8 +2421,6 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         DrawText(dc, "BLEEDING TREATMENT", new Point(17.0, 13.0),
             11.5, accent, FontWeights.Bold);
-        DrawText(dc, "compare removal strength, then adjust each item's real bleeding points",
-            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
 
         if (bandage is null || medkit is null || army is null || scientific is null)
         {
@@ -2438,14 +2436,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         var comparison = new Rect(17.0, 55.0, width, 137.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             comparison, 4.0, 4.0);
-        DrawText(dc, "TREATMENT STRENGTH  /  READ-ONLY COMPARISON",
+        DrawText(dc, "TREATMENT STRENGTH",
             new Point(comparison.Left + 12.0, 64.0), 10.0, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "0–200% OF OWN VANILLA VALUE",
+        DrawRightAlignedText(dc, "RELATIVE STRENGTH",
             new Point(comparison.Right - 12.0, 64.0),
             9.0, muted, FontWeights.SemiBold);
-        DrawText(dc, "100% = that item's original effect, not the same number of bleeding points.",
-            new Point(comparison.Left + 12.0, 84.0),
-            9.1, muted, FontWeights.Normal);
 
         // Use an identical *relative* 0–200% ruler in each preview column.
         // All actual edits below use raw values, not these normalized bars.
@@ -2476,7 +2471,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Point(nowX, y), 5.0, 5.0);
             dc.DrawEllipse(accent, null, new Point(nowX, y), 2.0, 2.0);
 
-            DrawCenteredText(dc, $"{ratio * 100.0:0}% VANILLA",
+            DrawCenteredText(dc, $"{ratio * 100.0:0}%",
                 new Point(centerX, 143.0), 10.2, accent, FontWeights.Bold);
             DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##} BLEEDING PTS",
                 new Point(centerX, 164.0), 9.1, muted, FontWeights.Normal);
@@ -2484,9 +2479,6 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         DrawText(dc, "EDIT RAW BLEEDING REMOVAL",
             new Point(19.0, 206.0), 10.5, accent, FontWeights.Bold);
-        DrawRightAlignedText(dc, "EACH ITEM HAS ITS OWN VANILLA STRENGTH",
-            new Point(ActualWidth - 19.0, 206.0),
-            9.0, muted, FontWeights.Normal);
 
         void DrawTreatmentTrack(ParameterViewModel parameter,
             string label, double top)
@@ -2495,17 +2487,13 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
                 card, 4.0, 4.0);
 
-            var percent = Math.Abs(parameter.ReferenceNumber) > Epsilon
-                ? parameter.CurrentNumber / parameter.ReferenceNumber * 100.0
-                : 0.0;
-
             DrawText(dc, label, new Point(card.Left + 12.0, top + 7.0),
                 10.5, text, FontWeights.Bold);
             DrawRightAlignedText(dc,
-                $"{parameter.CurrentNumber:0.##} pts  |  BASE {parameter.ReferenceNumber:0.##} pts",
+                $"{parameter.CurrentNumber:0.##} PTS",
                 new Point(card.Right - 12.0, top + 7.0),
                 11.0, parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
-            DrawText(dc, $"BLEEDING REMOVED ON USE  |  {percent:0}% OF VANILLA",
+            DrawText(dc, "BLEEDING REMOVED PER USE",
                 new Point(card.Left + 12.0, top + 26.0),
                 9.3, muted, FontWeights.Normal);
 
@@ -2547,10 +2535,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawTreatmentTrack(army, "ARMY MEDKIT", 420.0);
         DrawTreatmentTrack(scientific, "SCIENTIFIC MEDKIT", 513.0);
 
-        DrawText(dc, "BLEEDING REMOVAL, NOT HP HEALING  |  ORIGINAL 5-POINT STEPS",
-            new Point(20.0, 614.0), 9.1, muted, FontWeights.SemiBold);
-        DrawText(dc, "GREY TICK = BASE PRESET  |  RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
-            new Point(20.0, 632.0), 9.0, muted, FontWeights.Normal);
     }
 
     // The game authors separate immediate strength, sustained strength and timed
