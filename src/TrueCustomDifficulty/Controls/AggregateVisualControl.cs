@@ -1177,9 +1177,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawLine(new Pen(CloneWithOpacity(text, .48), 1.2),
             new Point(reloadAxisX, reloadArea.Top),
             new Point(reloadAxisX, reloadArea.Bottom));
-        DrawRightAlignedText(dc, "RELOAD",
-            new Point(reloadAxisX - 4, reloadArea.Top - 19),
-            9.0, text, FontWeights.Bold);
+        // Place the white Y-axis title vertically at the outer right margin.
+        // Do not move the plot, its X mapping or the preview alignment.
+        var reloadTitle = new Point(frame.Right - 8.0,
+            reloadArea.Top + reloadArea.Height / 2.0);
+        dc.PushTransform(new RotateTransform(90, reloadTitle.X, reloadTitle.Y));
+        DrawCenteredText(dc, "RELOAD TIME", reloadTitle, 9.2, text, FontWeights.Bold);
+        dc.Pop();
         for (int i = 0; i <= 4; i++)
         {
             var ratio = i / 4.0;
@@ -1253,15 +1257,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         var colWidth = (frame.Width - 16) / 3;
         for (int i = 0; i < 3; i++)
         {
-            var extra = i == 0 ? "" : $" | +{reloads[i - 1].CurrentNumber * 100:0.#}% RELOAD";
-            var caption = $"{new[] { "LOW", "MEDIUM", "SEVERE" }[i]} AT {thresholds[i].CurrentNumber:0} PTS | +{aims[i].CurrentNumber * 100:0.#}% AIM" + extra;
+            var extra = i == 0 ? "" :
+                $" | RELOAD +{reloads[i - 1].CurrentNumber * 100:0.#}%";
+            var caption = $"{new[] { "LOW", "MEDIUM", "SEVERE" }[i]} AT {thresholds[i].CurrentNumber:0} PTS | AIM +{aims[i].CurrentNumber * 100:0.#}%" + extra;
             var cell = new Rect(frame.Left + 8 + i * colWidth, top + 280, colWidth, 22);
             dc.PushClip(new RectangleGeometry(cell));
             DrawCenteredText(dc, caption, new Point(cell.Left + cell.Width / 2, cell.Top + 3),
                 9, i == 0 ? text : accent, FontWeights.Bold);
             dc.Pop();
         }
-        DrawCenteredText(dc, "GOLD = AIM TIME  |  WHITE = RELOAD TIME",
+        DrawCenteredText(dc, "GOLD = SLOWER AIM  |  WHITE = SLOWER RELOAD  |  HIGHER % = LONGER ACTION",
             new Point(frame.Left + frame.Width / 2, top + 309),
             9, muted, FontWeights.SemiBold);
     }
