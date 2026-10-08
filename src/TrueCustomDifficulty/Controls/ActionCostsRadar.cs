@@ -178,8 +178,10 @@ public sealed class ActionCostsRadar : FrameworkElement
 
         _targets.Clear();
 
-        DrawText(dc, "STAMINA PRESSURE", new Point(18.0, 16.0), 12.5, text, FontWeights.Bold);
-        DrawText(dc, "action load, aiming recovery and low-SP exhaustion in one board", new Point(18.0, 36.0), 9.0, muted, FontWeights.Normal);
+        DrawCenteredText(dc, "STAMINA PRESSURE", new Point(ActualWidth / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "action load, aiming recovery and low-SP exhaustion in one board", new Point(ActualWidth / 2.0, 39.0),
+            9.5, muted, FontWeights.Normal);
 
         var left = 18.0;
         var width = Math.Max(540.0, ActualWidth - 36.0);
