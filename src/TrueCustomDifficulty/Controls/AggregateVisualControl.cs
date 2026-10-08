@@ -66,7 +66,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(520.0, availableSize.Width);
-        return new Size(width, GetDesiredHeight(Family));
+        return new Size(width, GetDesiredHeight(Family, width));
     }
 
     private static void OnBindingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -3556,10 +3556,10 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static string FormatCompact(double value)
         => value.ToString(Math.Abs(value) < 1.0 ? "0.###" : "0.##", CultureInfo.InvariantCulture);
 
-    private static double GetDesiredHeight(string family)
+    private static double GetDesiredHeight(string family, double width)
         => family switch
         {
-            "FatigueCurve" => 975.0,
+            "FatigueCurve" => CompactFatigueHeight(width),
             "BleedingTreatmentMixer" => 684.0,
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 390.0,
@@ -3570,9 +3570,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             "MasterMedicalHealing" => 390.0,
             "MasterLowHealth" => 235.0,
             "MasterRadiationPenalty" => 235.0,
-            "ConsumableMixer" => 1080.0,
+            "ConsumableMixer" => CompactConsumableHeight(width),
             "SleepingDashboard" => 525.0,
-            "HungerLadder" => 748.0,
+            "HungerLadder" => CompactHungerHeight(width),
             "StarvationTimeline" => 532.0,
             "RepeatedHitBand" => 455.0,
             "RadiationBalance" => 490.0,
@@ -3581,6 +3581,39 @@ public sealed class AggregateVisualControl : FrameworkElement
             "AmmoDistribution" => 750.0,
             _ => 340.0
         };
+
+    // These use the same section coordinates and CompactGridEnd layout as
+    // their renderers. Measure and OnRender must agree at every breakpoint.
+    private static double CompactFatigueHeight(double width)
+    {
+        var columns = CompactColumns(width);
+        var stageColumns = CompactStageColumns(width);
+        var previewTop = CompactGridEnd(55.0, 2, columns) + 12.0;
+        var stagesTop = previewTop + 80.0 + 12.0;
+        var combatTitle = CompactGridEnd(stagesTop, 3, stageColumns) + 13.0;
+        var combatTop = combatTitle + 37.0;
+        return CompactGridEnd(combatTop, 5, columns) + 71.0;
+    }
+
+    private static double CompactConsumableHeight(double width)
+    {
+        var columns = CompactColumns(width);
+        var strengthTitle = CompactGridEnd(55.0, 2, columns) + 13.0;
+        var strengthTop = strengthTitle + 37.0;
+        var previewTitle = CompactGridEnd(strengthTop, 4, columns) + 13.0;
+        var previewTop = previewTitle + 37.0;
+        var durationTop = previewTop + 160.0 + 12.0;
+        return CompactGridEnd(durationTop, 5, columns) + 71.0;
+    }
+
+    private static double CompactHungerHeight(double width)
+    {
+        var columns = CompactStageColumns(width);
+        var stagesTop = 55.0 + CompactTrackHeight + 12.0 + 80.0 + 12.0;
+        var recoveryTitle = CompactGridEnd(stagesTop, 3, columns) + 14.0;
+        var recoveryTop = recoveryTitle + 37.0;
+        return CompactGridEnd(recoveryTop, 3, columns) + 71.0;
+    }
 
     private static IReadOnlyList<string> GetFamilyIds(string family)
         => family switch
