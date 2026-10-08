@@ -1693,7 +1693,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("combat.playerHeadshotMultiplier", "HEADSHOT", "DAMAGE"),
             ("combat.weaponJamming", "WEAPON", "JAMMING")
         };
-        const int columns = 2;
+        const int columns = 3;
         const double margin = 20.0;
         var usableWidth = Math.Max(1.0, ActualWidth - 2.0 * margin);
         var width = Math.Min(148.0, (usableWidth - MixerStripGap) / columns);
@@ -1703,14 +1703,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             var channel = channels[index];
             var column = index % columns;
-            var row = index / columns;
-            var rect = new Rect(left + column * (width + MixerStripGap),
-                MixerStripTop + row * (MixerStripHeight + MixerRowGap),
+                        var rect = new Rect(left + column * (width + MixerStripGap),
+                MixerStripTop,
                 width, MixerStripHeight);
             DrawMixerStrip(dc, P(channel.Item1), channel.Item2, channel.Item3,
                 rect, text, muted, border, accent, panel);
         }
-        var footerY = MixerStripTop + 2.0 * MixerStripHeight + MixerRowGap + 8.0;
+        var footerY = MixerStripTop + MixerStripHeight + 8.0;
         DrawCenteredText(dc, "GOLD = CURRENT  |  GREY = BASE  |  RIGHT-CLICK TO RESET",
             new Point(ActualWidth / 2.0, footerY),
             9.5, muted, FontWeights.SemiBold);
@@ -4796,7 +4795,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 390.0,
             "HumanCombatProfile" => 465.0,
-            "PlayerWeaponProfile" => MixerStripTop + 2.0 * MixerStripHeight + MixerRowGap + MixerFooterHeight,
+            "PlayerWeaponProfile" => MixerStripTop + MixerStripHeight + MixerFooterHeight,
             "CoreHealthDashboard" => 475.0,
             "SevereFatiguePenaltyBoard" => 390.0,
             "MasterMedicalHealing" => 390.0,
