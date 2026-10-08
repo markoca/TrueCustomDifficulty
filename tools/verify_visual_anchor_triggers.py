@@ -63,6 +63,11 @@ def main() -> None:
         fail("aggregate trigger does not expose AggregateVisualControl")
     if has_setter(aggregate[0], "ControlRow", "Collapsed"):
         fail("aggregate trigger collapses its own ControlRow")
+    # An aggregate can be anchored on choiceSlider (NPC corpse bonus) or range.
+    # Its native editing controls must not stay visible beneath the board.
+    for native in ("ChoiceSliderControl", "RangeControl"):
+        if not has_setter(aggregate[0], native, "Collapsed"):
+            fail(f"aggregate trigger does not hide native {native}")
 
     guarded = []
     for trigger in triggers:
@@ -138,7 +143,22 @@ def main() -> None:
             if f'["{member}"] = "{family}"' not in vm:
                 fail(f"missing family mapping for {member}")
 
-    print("[PASS] Severe Fatigue and World Loot toggle aggregates remain visible")
+    npc_family = "NpcLootLoadout"
+    npc_members = {
+        "loot.npcCorpseBonus": "choiceSlider",
+        "loot.npcMedicalChance": "slider",
+        "loot.npcWeaponAmmoSupply": "slider",
+        "loot.droppedWeaponCondition": "range",
+    }
+    if f'["{npc_family}"] = "loot.npcCorpseBonus"' not in vm:
+        fail("NPC loot aggregate has no discrete-choice anchor")
+    for member, control in npc_members.items():
+        if by_id.get(member, {}).get("control") != control:
+            fail(f"NPC native control type changed for {member}")
+        if f'["{member}"] = "{npc_family}"' not in vm:
+            fail(f"NPC aggregate mapping missing {member}")
+
+    print("[PASS] Toggle and choice anchors stay visible; native choice/range editors stay hidden")
 
 
 if __name__ == "__main__":
