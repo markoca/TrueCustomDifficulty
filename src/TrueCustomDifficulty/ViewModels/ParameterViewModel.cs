@@ -1711,9 +1711,17 @@ public sealed class ParameterViewModel : ObservableObject
         if (step <= Epsilon)
             return clamped;
 
-        var offset = clamped - Minimum;
+        // Combat multipliers are tuned in 0.10x increments around 1.00x,
+        // not around their sometimes-offset minimum (e.g. 0.25x).
+        // Keep vanilla 1.00x reachable without changing native min/max.
+        var origin = Id.StartsWith("combat.", StringComparison.Ordinal)
+            && !Id.StartsWith("combat.playerWeaponDamage", StringComparison.Ordinal)
+            && !Id.StartsWith("combat.playerHeadshotMultiplier", StringComparison.Ordinal)
+            && !Id.StartsWith("combat.weaponJamming", StringComparison.Ordinal)
+            && Math.Abs(step - 0.1) < Epsilon ? 1.0 : Minimum;
+        var offset = clamped - origin;
         var snappedSteps = Math.Round(offset / step, MidpointRounding.AwayFromZero);
-        var snappedValue = Minimum + snappedSteps * step;
+        var snappedValue = origin + snappedSteps * step;
         return Math.Clamp(snappedValue, Minimum, Maximum);
     }
 
