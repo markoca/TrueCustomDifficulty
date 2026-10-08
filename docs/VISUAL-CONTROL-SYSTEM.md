@@ -240,19 +240,17 @@ Each wide row displays the current value and Base Preset value in the appropriat
 
 `AggregateVisualControl / HungerLadder`
 
-- Hunger Build-up Rate.
-- Low / Medium / Severe thresholds on the real 0–100 HungerPoints scale (vanilla 17 / 33 / 83).
-- Well-Fed Stamina Recovery Bonus.
-- Medium Hunger Stamina Recovery Penalty.
-- Severe Hunger Stamina Recovery Penalty.
+This panel now separates the **actual hunger build-up source**, a **read-only 0–100 HungerPoints stage preview**, three **native-range stage-threshold editors** and three **independent stamina-recovery effects**. No overlapping threshold handles remain on the overview: even when two thresholds have the same value, all three remain editable on separate full-width sliders.
 
-Medium and Severe retain the vanilla no-sleep state. Threshold timing and recovery-penalty magnitude are edited independently.
+- **Hunger Build-up**: `survival.hungerRate`, raw `VitalParams.RegenHungerPoints` (0–0.030 points/s, 0.001 step; vanilla 0.015).
+- **Low / Medium / Severe Hunger Thresholds**: `survival.hungerLowThreshold`, `survival.hungerMediumThreshold`, `survival.hungerStrongThreshold`. Each uses the true 0–100 HungerPoints range, in whole points; vanilla 17 / 33 / 83. The read-only overview colors the four consecutive regions and shows fixed-position live/base legends, so labels never collide when thresholds converge.
+- **Well-Fed Stamina Recovery Bonus**: `survival.wellFedStaminaRegen`, 0–40% bonus (1% step; vanilla +20%). The direct `VeryLowHungerStaminaRegeneration` effect remains a positive value.
+- **Medium Hunger Recovery Loss**: `survival.hungerMediumStaminaRegen`, 0–66% loss (1% step; vanilla −33%).
+- **Severe Hunger Recovery Loss**: `survival.hungerStrongStaminaRegen`, 0–100% loss (5% step; vanilla −70%).
 
-The three recovery effects share one semantic axis:
+The Medium and Severe effect values remain stored as **positive magnitudes** while their CFG writer uses the original `negateSet` operation; the UI explicitly displays them as negative stamina-recovery changes. The three recovery effects are independent of the threshold positions. Medium and Severe hunger retain their separate authored **no-sleep** state without creating any new sleep control.
 
-`PENALTY <- NEUTRAL -> BONUS`
-
-Well Fed therefore reads to the bonus side while Hungry and Severe extend into the penalty side.
+Every slider displays its current value and actual Base Preset reference, with the source min/max, a gold editable handle and a grey Base Preset tick. The existing value-based `LOW <= MEDIUM <= SEVERE` constraint still prioritizes the actively edited threshold and minimally moves neighbors. Right-click resets the targeted slider; `R` resets all seven source parameters. No new CFG mapping, preset field, simulated time-to-starvation result or writer behavior has been introduced.
 
 ### Starvation Timeline
 
