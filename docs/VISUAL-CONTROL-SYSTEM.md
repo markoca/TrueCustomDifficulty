@@ -199,28 +199,23 @@ Each item keeps its own raw bleeding-removal range, but the visual comparison is
 
 `AggregateVisualControl / ConsumableMixer`
 
-Instant stamina preview:
+The redesigned panel replaces small side-by-side strength graphs and narrow duration hit targets with **nine independent full-width, native-range horizontal sliders** and two **read-only, source-based visual previews**. Actual CFG targets and original slider steps remain unchanged.
 
-- Water: 38% authored instant refill.
-- Energy Drink: 50%.
-- Limited Energy Drink: 100%.
+**Immediate-effect preview:** current authored stamina refill shown separately for Water (vanilla 38%), Energy Drink (50%) and Limited Energy Drink (100%). The `survival.instantStaminaRestore` multiplier scales all three existing effects together (0–2x, step 0.05) without changing their proportions or effect durations. The adjacent alcohol preview displays Beer (10 radiation points removed) and ordinary Vodka (50 radiation points removed), controlled together by `survival.alcoholRadiationRemoval` (0–2x, step 0.05). Magic Vodka remains separate.
 
-One multiplier scales all three while preserving those authored differences.
+**Sustained stamina strength:** `survival.waterStaminaEffectStrength` scales Water's existing +25% stamina regeneration and −10% action-stamina cost effects together; `survival.energyDrinkStaminaRecoveryStrength` independently scales the ordinary Energy Drink's +200% sustained stamina regeneration. Both range from 0–2x in 0.05x steps. Neither strength control changes a timed effect's duration.
 
-Alcohol radiation-cleanup preview:
+**Duration preview:** a five-row **read-only real-seconds overview (0–270 seconds)** shows the longest current effect for each drink as a gold line and its Base Preset reference as a grey tick. Its endpoints cannot be dragged; each actual duration is edited using the separate full-width slider underneath. Five authored duration families (0–3x, 0.05x step) are:
 
-- Beer: 10 radiation points removed.
-- Vodka: 50 radiation points removed.
+- **Water** `survival.waterEffectDuration`: 5-second stamina regeneration + 30-second stamina-cost effect.
+- **Energy Drink** `survival.energyDrinkEffectDuration`: the original 45 / 15 / 5-second timed stamina-effect set, including the normal/Limited and per-action effects.
+- **Vodka** `survival.vodkaEffectDuration`: original 20-second stamina-drain penalty.
+- **Beer** `survival.beerEffectDuration`: original 20-second stamina-drain penalty.
+- **Magic Vodka** `survival.magicVodkaEffectDuration`: original 90-second psi protection.
 
-Timed effects share one seconds axis:
+Each duration slider keeps the original relative durations **inside its own source family**, with the live scaled seconds shown in its note. The control never invents new effect prototypes or silently combines unrelated modifiers. Gold handles show current multipliers; grey ticks and explicit text display the Base Preset reference, and the slider endpoints use the original catalog limits. Right-click resets the one selected slider; `R` resets all nine source settings.
 
-- Water: 5 s stamina regeneration + 30 s stamina-cost effect.
-- Energy Drink: 45 s / 15 s / 5 s authored stamina timings.
-- Vodka: 20 s stamina-drain penalty.
-- Beer: 20 s stamina-drain penalty.
-- Magic Vodka: 90 s psi protection.
-
-Each duration control scales its whole authored family while preserving the internal timing ratios. Drunkenness and OverDrunkenness are separate controls.
+**Drunkenness and OverDrunkenness are separate parameters and stay outside this board.** Neither alcoholic duration control changes how quickly the player becomes drunk; duration in this panel refers to its specifically authored stamina or psi effect.
 
 ### Sleeping System
 
