@@ -60,6 +60,9 @@ fi
 if command -v python3 >/dev/null 2>&1; then
     echo "Checking 16:9 window XAML and startup geometry..."
     python3 "$ROOT/tools/verify_window_aspect.py"
+    echo "Checking visual aggregate bindings and mixer layout..."
+    python3 "$ROOT/tools/verify_visual_anchor_triggers.py"
+    python3 "$ROOT/tools/verify_mixer_layout.py"
 fi
 
 # WPF creates generated temporary projects under obj/.  Removing both build trees
