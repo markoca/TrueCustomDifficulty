@@ -161,3 +161,7 @@ When an authorized design change is implemented, update this document and `VISUA
 ### 2026-10-08 — UI-09 — larger grey fader tick labels
 
 **User request:** Enlarge grey upper/lower multiplier labels for the two Human Combat vertical faders. Both endpoints use 13.0 DIP for frameless Human Combat channels; other mixer strips retain their existing sizes (11.3 DIP maximum, 9.5 DIP minimum). No slider behavior or geometry changes. Runtime visual acceptance pending.
+
+### 2026-10-08 — UI-09 — enemy gun damage label
+
+**User-approved terminology:** Rename the Human Combat vertical axis from `GUN DAMAGE` to `ENEMY GUN DAMAGE`, including its footer legend. Preserve the same axis placement, inline multiplier and gameplay mapping; no other controls change.
