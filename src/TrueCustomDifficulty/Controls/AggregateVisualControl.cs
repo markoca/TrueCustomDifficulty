@@ -140,6 +140,12 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         switch (Family)
         {
+            case "MutantCombatPressure":
+            case "StaminaCore":
+            case "WaterStaminaPressure":
+            case "RadiationTreatment":
+                DrawPairedSystemBoard(dc, text, muted, border, accent, panel);
+                break;
             case "FatigueCurve":
                 DrawFatigueCurve(dc, text, muted, border, soft, accent, panel);
                 break;
@@ -234,6 +240,68 @@ public sealed class AggregateVisualControl : FrameworkElement
                 accent,
                 FontWeights.SemiBold);
         }
+    }
+
+    // Related, previously standalone gameplay sliders are now edited together.
+    // Each axis keeps its own raw CFG min/max/step and Base Preset reference.
+    // No combined "effective" value is inferred from unrelated parameters.
+    private void DrawPairedSystemBoard(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        var board = Family switch
+        {
+            "MutantCombatPressure" => (
+                Title: "MUTANT COMBAT PRESSURE",
+                Subtitle: "hit strength and attack frequency are independent",
+                First: "combat.mutantDamage",
+                FirstLabel: "DAMAGE PER HIT",
+                Second: "combat.mutantAttackCooldown",
+                SecondLabel: "ATTACK FREQUENCY",
+                Note: "RIGHT = MORE DAMAGE / MORE FREQUENT ATTACKS"),
+            "StaminaCore" => (
+                Title: "CORE STAMINA",
+                Subtitle: "total stamina pool and base recovery per second",
+                First: "stamina.maxSP",
+                FirstLabel: "STAMINA CAPACITY",
+                Second: "stamina.regeneration",
+                SecondLabel: "BASE RECOVERY RATE",
+                Note: "CAPACITY AND RECOVERY ARE INDEPENDENT CFG VALUES"),
+            "WaterStaminaPressure" => (
+                Title: "WATER STAMINA PRESSURE",
+                Subtitle: "extra stamina drain by water depth",
+                First: "stamina.waterMediumDrain",
+                FirstLabel: "MEDIUM WATER DRAIN",
+                Second: "stamina.waterStrongDrain",
+                SecondLabel: "DEEP WATER DRAIN",
+                Note: "RIGHT = MORE STAMINA DRAIN AT THAT DEPTH"),
+            _ => (
+                Title: "RADIATION TREATMENT",
+                Subtitle: "radiation removed per item use (raw CFG points)",
+                First: "health.ecoMedkitAntirad",
+                FirstLabel: "SCIENTIFIC MEDKIT",
+                Second: "health.antiRadRadiation",
+                SecondLabel: "ANTI-RAD",
+                Note: "RIGHT = MORE RADIATION REMOVED PER USE")
+        };
+
+        DrawHeader(dc, board.Title, board.Subtitle, text, muted, accent);
+        var cardWidth = Math.Max(1.0, ActualWidth - 32.0);
+        DrawHorizontalTrackCard(dc, P(board.First), board.FirstLabel,
+            new Rect(16.0, 56.0, cardWidth, 72.0),
+            text, muted, border, accent, panel);
+        DrawHorizontalTrackCard(dc, P(board.Second), board.SecondLabel,
+            new Rect(16.0, 139.0, cardWidth, 72.0),
+            text, muted, border, accent, panel);
+
+        // Bounded, one-line help avoids collision at 520px minimum width.
+        dc.DrawText(CreateText(board.Note, 9.4, text, FontWeights.SemiBold,
+                Math.Max(1.0, ActualWidth - 36.0)),
+            new Point(18.0, 228.0));
     }
 
     // Fatigue stages affect when penalties begin, while their strengths remain
@@ -3702,6 +3770,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double GetDesiredHeight(string family, double width)
         => family switch
         {
+            "MutantCombatPressure" or "StaminaCore" or "WaterStaminaPressure" or "RadiationTreatment" => 270.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "BleedingTreatmentMixer" => 684.0,
             "EquipmentWearBalance" => 320.0,
@@ -3761,6 +3830,10 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static IReadOnlyList<string> GetFamilyIds(string family)
         => family switch
         {
+            "MutantCombatPressure" => new[] { "combat.mutantDamage", "combat.mutantAttackCooldown" },
+            "StaminaCore" => new[] { "stamina.maxSP", "stamina.regeneration" },
+            "WaterStaminaPressure" => new[] { "stamina.waterMediumDrain", "stamina.waterStrongDrain" },
+            "RadiationTreatment" => new[] { "health.ecoMedkitAntirad", "health.antiRadRadiation" },
             "FatigueCurve" => new[]
             {
                 "survival.sleepinessRate",
