@@ -26,8 +26,13 @@ required = (
     'DrawHumanAxisHandle(dc, damageHandle,',
     'new Point(plot.Left - 12.0, gridY - 7.0)',
     'new Point(gridX, plot.Bottom + 32.0)',
-    'Math.Max(422.0, plot.Bottom + 72.0)',
+    'Math.Max(405.0, plot.Bottom + 56.0)',
+    'new Point(plot.Left + plot.Width / 2.0, legendY)',
+    'new Point(plot.Left + plot.Width / 2.0, legendY + 18.0)',
+    'LEFT: DAMAGE  ·  BOTTOM: HEALTH',
+    'DRAG CENTER: BOTH AXES',
 )
+assert 'BOTTOM CIRCLE' not in human and 'LEFT SQUARE' not in human
 for fragment in required:
     if fragment not in human:
         raise SystemExit("[FAIL] human square/faders: " + fragment)
