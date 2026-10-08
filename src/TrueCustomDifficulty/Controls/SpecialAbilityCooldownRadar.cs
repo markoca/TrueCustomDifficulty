@@ -130,8 +130,10 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         _targets.Clear();
 
         var content = ContentRect();
-        DrawText(dc, "MUTANT COMBAT", new Point(content.Left, 16.0), 12.5, text, FontWeights.Bold);
-        DrawText(dc, "GLOBAL COMBAT  |  damage per hit and normal attack frequency", new Point(content.Left, 37.0), 9.5, muted, FontWeights.Normal);
+        DrawCenteredText(dc, "MUTANT COMBAT", new Point(ActualWidth / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "GLOBAL COMBAT  |  damage per hit and normal attack frequency", new Point(ActualWidth / 2.0, 39.0),
+            9.5, muted, FontWeights.Normal);
 
         // Global source controls are separate from each mutant's ability timer.
         // Two horizontal controls make global combat visually distinct from
@@ -144,10 +146,10 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
                 74.0, globalWidth, 88.0),
                 text, muted, border, accent, panel);
 
-        DrawText(dc, "SPECIAL ABILITY COOLDOWNS",
-            new Point(content.Left, 181.0), 12.0, text, FontWeights.Bold);
-        DrawText(dc, "Lower wait = faster ability return (not normal attack speed)",
-            new Point(content.Left, 202.0), 9.5, muted, FontWeights.Normal);
+        DrawCenteredText(dc, "SPECIAL ABILITY COOLDOWNS",
+            new Point(ActualWidth / 2.0, 187.0), 11.0, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "Lower wait = faster ability return (not normal attack speed)",
+            new Point(ActualWidth / 2.0, 206.0), 9.5, muted, FontWeights.Normal);
 
         const int columns = 8;
         var stripWidth = (content.Width - (columns - 1) * ColumnGap) / columns;
