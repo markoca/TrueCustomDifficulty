@@ -275,15 +275,15 @@ and is displayed only as an explanatory average health-pressure metric.
 
 `AggregateVisualControl / RepeatedHitBand`
 
-- Repeated-Hit Protection Minimum.
-- Repeated-Hit Protection Maximum.
-- Healed Damage Still Counts.
+- **Minimum Protection / Weaker End** edits `combat.accumulatedDamageWeightMin`.
+- **Maximum Protection / Stronger End** edits `combat.accumulatedDamageWeightMax`.
+- **Healed Damage Still Counts** edits `combat.accumulatedDamageIncludesHealedHealth`.
 
-The current gold envelope and dashed vanilla envelope are drawn on the same 0.00-1.00 curve-weight scale.
+The wide, read-only **Protection Window** previews the two current golden endpoints and the two grey Base Preset endpoints on the same 0.00-1.00 source curve-weight axis. It is intentionally not draggable: when MIN and MAX are equal, there are no overlapping drag handles or ambiguous click targets. The two full-width horizontal sliders below it are independent editors, with current values, Base Preset numbers and grey reference ticks.
 
-These values are hidden protection-strength weights, not literal damage-reduction percentages.
+These source values are hidden protection-strength weights, **not literal damage-reduction percentages**. The catalog's value-based `MIN <= MAX` slider constraint is preserved, with the actively dragged value taking priority. The switch changes only whether healed damage remains in the repeated-hit tracker; it does not change the actual amount of healing.
 
-The central slider constraint preserves `MIN <= MAX`.
+Right-click on either slider or the switch resets that single source value to Base Preset. `R` resets all three settings. All three CFG mappings and preset schema remain unchanged.
 
 ### Radiation Pressure
 
