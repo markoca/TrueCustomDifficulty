@@ -176,6 +176,18 @@ public partial class MainWindow : Window
     private void VisualControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         => SelectParameterFromElement(sender);
 
+    // An aggregate is represented by its anchor in the list, but interacting
+    // with a mixer strip should explain that specific parameter at the right.
+    private void AggregateVisualControl_ParameterSelected(
+        object sender, AggregateParameterSelectedEventArgs e)
+    {
+        if (DataContext is MainViewModel main && main.SelectedTab is not null
+            && main.SelectedTab.Parameters.Contains(e.Parameter))
+        {
+            main.SelectedTab.SelectedParameter = e.Parameter;
+        }
+    }
+
     private void SelectParameterFromElement(object sender)
     {
         if (sender is not FrameworkElement { DataContext: ParameterViewModel parameter })
