@@ -49,3 +49,8 @@ All project documentation lives under `docs/`. The repository root is intentiona
 - [Vanilla preset audit](VANILLA-PRESET-AUDIT.md)
 
 Historical machine-readable evidence remains in the versioned subdirectories below `docs/`.
+
+## Locked UI design
+
+- [UI Design Lock — mandatory approval-only contract](UI-DESIGN-LOCK.md)
+- [UI snapshot manifest](UI-DESIGN-LOCK.json) — source hashes verified during publish
