@@ -375,91 +375,6 @@
       "interaction": "Pair it with Human Enemy Gun Damage to tune how threatening firefights feel. It affects human gunfire, not mutant attacks, melee, or grenades."
     },
     {
-      "id": "combat.mutantDamage",
-      "tab": "combat",
-      "group": "Mutants",
-      "label": "Mutant Hit Damage",
-      "description": "Changes how much damage mutant attacks deal when they connect.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Damage from mutant hits"
-      },
-      "vanilla": {
-        "Novice": 0.35,
-        "Stalker": 1,
-        "Veteran": 1.35,
-        "Master": 1.5
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0,
-        "max": 2,
-        "step": 0.01
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.Mutant_BaseDamage",
-          "operation": "set"
-        }
-      ],
-      "support": {
-        "status": "confirmed",
-        "notes": []
-      },
-      "rationale": "Changes how much damage mutant attacks deal when they connect.",
-      "logic": "",
-      "interaction": "Mutant Attack Frequency changes general attack frequency. Master-only special-ability cooldowns are tuned separately in the Master tab."
-    },
-    {
-      "id": "combat.mutantAttackCooldown",
-      "tab": "combat",
-      "group": "Mutants",
-      "label": "Mutant Attack Frequency",
-      "description": "Controls how frequently mutants can make another general attack.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Mutant attack frequency"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.5,
-        "max": 4,
-        "step": 0.01
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.Mutant_AttackCooldown",
-          "operation": "inverseScale"
-        }
-      ],
-      "support": {
-        "status": "confirmed",
-        "notes": []
-      },
-      "rationale": "Controls how frequently mutants can make another general attack.",
-      "logic": "100% is vanilla. Above 100% shortens the underlying mutant attack cooldown and makes attacks more frequent; below 100% lengthens the cooldown and creates longer gaps. Vanilla uses 100% on all four standard difficulties.",
-      "interaction": "Mutant Hit Damage controls how hard attacks land. Master-only species special-ability cooldowns are separate controls."
-    },
-    {
       "id": "combat.playerWeaponDamage",
       "tab": "combat",
       "group": "Your Weapons",
@@ -594,7 +509,7 @@
     {
       "id": "combat.explosionDamage",
       "tab": "combat",
-      "group": "Explosives",
+      "group": "Your Weapons",
       "label": "Explosion Damage",
       "description": "Changes damage from explosions such as grenades and other explosive effects.",
       "control": "slider",
@@ -634,6 +549,91 @@
       "rationale": "Changes damage from explosions such as grenades and other explosive effects.",
       "logic": "",
       "interaction": "Each explosion still has its own base damage. This setting scales the difficulty layer applied on top of those base values."
+    },
+    {
+      "id": "combat.mutantDamage",
+      "tab": "combat",
+      "group": "Mutants",
+      "label": "Mutant Hit Damage",
+      "description": "Changes how much damage mutant attacks deal when they connect.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Damage from mutant hits"
+      },
+      "vanilla": {
+        "Novice": 0.35,
+        "Stalker": 1,
+        "Veteran": 1.35,
+        "Master": 1.5
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.01
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.Mutant_BaseDamage",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": []
+      },
+      "rationale": "Changes how much damage mutant attacks deal when they connect.",
+      "logic": "",
+      "interaction": "Mutant Attack Frequency changes general attack frequency. Master-only special-ability cooldowns are tuned separately in the Master tab."
+    },
+    {
+      "id": "combat.mutantAttackCooldown",
+      "tab": "combat",
+      "group": "Mutants",
+      "label": "Mutant Attack Frequency",
+      "description": "Controls how frequently mutants can make another general attack.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Mutant attack frequency"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "referenceDifficulty"
+      },
+      "slider": {
+        "min": 0.5,
+        "max": 4,
+        "step": 0.01
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/DifficultyPrototypes.cfg",
+          "prototype": "$selectedDifficultySID",
+          "path": "MutantCombatDifficulty.Mutant_AttackCooldown",
+          "operation": "inverseScale"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": []
+      },
+      "rationale": "Controls how frequently mutants can make another general attack.",
+      "logic": "100% is vanilla. Above 100% shortens the underlying mutant attack cooldown and makes attacks more frequent; below 100% lengthens the cooldown and creates longer gaps. Vanilla uses 100% on all four standard difficulties.",
+      "interaction": "Mutant Hit Damage controls how hard attacks land. Master-only species special-ability cooldowns are separate controls."
     },
     {
       "id": "combat.accumulatedDamageWeightMax",
