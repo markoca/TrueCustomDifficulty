@@ -1696,14 +1696,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         const int columns = 3;
         const double margin = 20.0;
         var usableWidth = Math.Max(1.0, ActualWidth - 2.0 * margin);
-        var width = Math.Min(148.0, (usableWidth - MixerStripGap) / columns);
-        var bankWidth = columns * width + MixerStripGap;
+        var width = Math.Min(148.0, (usableWidth - (columns - 1) * MixerStripGap) / columns);
+        var bankWidth = columns * width + (columns - 1) * MixerStripGap;
         var left = (ActualWidth - bankWidth) / 2.0;
         for (var index = 0; index < channels.Length; index++)
         {
             var channel = channels[index];
-            var column = index % columns;
-                        var rect = new Rect(left + column * (width + MixerStripGap),
+            var column = index;
+            var rect = new Rect(left + column * (width + MixerStripGap),
                 MixerStripTop,
                 width, MixerStripHeight);
             DrawMixerStrip(dc, P(channel.Item1), channel.Item2, channel.Item3,
