@@ -323,3 +323,7 @@ Inside the fixed 1x1 full-width section layout, Mutant Health has eight source-n
 ### Special Ability Cooldowns fader bank (2026-10-08)
 
 Eight compact, equally spaced vertical cooldown controls remain on one horizontal row, aligned with the single-row Mutant Health pattern. Preserve each CFG cooldown wait multiplier, grey Base tick, gold glowing handle, native source step, individual reset and inverse return-rate annotation. This layout does not auto-wrap.
+
+### Mutant Combat: two-tier fixed composition (2026-10-08)
+
+One Mutant Combat section replaces separate global pressure and special cooldown sections. The upper tier has two centered global faders (Hit Damage and Attack Frequency). The lower tier has eight evenly spaced vertical ability wait faders in one row. All ten retain source-native bounds, independent hit regions, Base markers, glow-only handles and individual resets. The layout must keep the two mechanics visually distinct and never suggest that regular attack frequency is a mutant ability cooldown.
