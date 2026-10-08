@@ -17,7 +17,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class MedicalHealingRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double Height = 390.0;
+    private const double BoardHeight = 390.0;
     private const double CardHeight = 119.0;
     private const double Gap = 10.0;
     private const string FoodHealingId = "health.foodHealing";
@@ -52,14 +52,14 @@ public sealed class MedicalHealingRadar : FrameworkElement
     public MedicalHealingRadar()
     {
         Focusable = true;
-        MinHeight = Height;
+        MinHeight = BoardHeight;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
 
     protected override Size MeasureOverride(Size availableSize)
         => new(double.IsInfinity(availableSize.Width)
-            ? 720.0 : Math.Max(560.0, availableSize.Width), Height);
+            ? 720.0 : Math.Max(560.0, availableSize.Width), BoardHeight);
 
     private static void OnParametersChanged(DependencyObject d,
         DependencyPropertyChangedEventArgs e)
