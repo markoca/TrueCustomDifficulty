@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Guard WPF aggregate controls against ordinary-toggle visibility precedence.
 
-The Master Severe Fatigue aggregate is anchored on a toggle. A plain IsToggle
-DataTrigger later in DataTemplate.Triggers can collapse ControlRow and hide the
-whole graph, leaving only a checkbox. No WPF runtime is needed for this test.
+Some aggregate boards are anchored on toggles (Severe Fatigue and World Loot).
+An unguarded IsToggle DataTrigger can collapse ControlRow and hide the board.
+No WPF runtime is needed for this static regression test.
 """
 
 from __future__ import annotations
@@ -102,28 +102,43 @@ def main() -> None:
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     by_id = {p["id"]: p for p in catalog["parameters"]}
     vm = VM.read_text(encoding="utf-8")
-    family = "SevereFatiguePenaltyBoard"
-    anchor = "advanced.fatigueMechanics"
-    members = [
-        anchor,
-        "survival.severeFatigueMaxStamina",
-        "survival.severeFatigueCarryWeight",
-        "survival.severeFatigueRecoil",
-        "survival.severeFatigueAimSway",
-        "survival.severeFatigueDispersion",
+    toggle_families = [
+        (
+            "SevereFatiguePenaltyBoard",
+            "advanced.fatigueMechanics",
+            [
+                "advanced.fatigueMechanics",
+                "survival.severeFatigueMaxStamina",
+                "survival.severeFatigueCarryWeight",
+                "survival.severeFatigueRecoil",
+                "survival.severeFatigueAimSway",
+                "survival.severeFatigueDispersion",
+            ],
+        ),
+        (
+            "WorldLootLayout",
+            "loot.worldWeaponShuffle",
+            [
+                "loot.worldWeaponShuffle",
+                "loot.worldWeaponDensity",
+                "loot.worldAttachmentShuffle",
+                "loot.worldDetectors",
+                "loot.blueprintShuffle",
+            ],
+        ),
     ]
-    if by_id.get(anchor, {}).get("control") != "toggle":
-        fail("the Severe Fatigue aggregate's toggle anchor changed")
-    if f'["{family}"] = "{anchor}"' not in vm:
-        fail("the Severe Fatigue anchor map is missing")
-    for member in members:
-        if member not in by_id:
-            fail(f"missing catalog backing member {member}")
-        mapping = f'["{member}"] = "{family}"'
-        if mapping not in vm:
-            fail(f"missing family mapping {member}")
+    for family, anchor, members in toggle_families:
+        if by_id.get(anchor, {}).get("control") != "toggle":
+            fail(f"{family} no longer has the expected toggle anchor")
+        if f'["{family}"] = "{anchor}"' not in vm:
+            fail(f"missing aggregate anchor for {family}")
+        for member in members:
+            if member not in by_id:
+                fail(f"missing catalog member {member}")
+            if f'["{member}"] = "{family}"' not in vm:
+                fail(f"missing family mapping for {member}")
 
-    print("[PASS] Master Severe Fatigue aggregate stays visible; ordinary toggles stay ordinary")
+    print("[PASS] Severe Fatigue and World Loot toggle aggregates remain visible")
 
 
 if __name__ == "__main__":
