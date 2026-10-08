@@ -257,3 +257,7 @@ Hunger Build-Up and the existing Hunger Points / Stage Preview remain. The forme
 ### 2026-10-08 — Silent reset, no rectangular selection bounding boxes, no BASE labels in Hunger
 
 Global UI instruction: all transient yellow confirmation text after resetting visual controls is suppressed; the parameter still resets normally with no tooltip/status message. The shared AggregateVisualControl no longer draws rectangular hover/selection hit-target bounds, and its mixer faders are frameless like Human Combat. Gold circular handles/glow remain the only interaction highlight. Hunger State Ladder suppresses all literal BASE captions on the build-up value, state preview legends and plot footer, while retaining grey source-reference markers and ghost profiles. This applies to all dedicated radar editors too. Do not reintroduce reset notices, colored target rectangles or redundant BASE labels without explicit instruction. Build/Wine validation pending.
+
+### 2026-10-08 — Hunger axes and bonus fader labels
+
+User-approved clarification: the left-hand WELL-FED control explicitly reads STAMINA RECOVERY / BONUS and UP = MORE RECOVERY. The main stepped graph visibly labels its horizontal HUNGER POINTS (0–100) axis and has a rotated vertical STAMINA RECOVERY LOSS caption, separate from the numeric percent ticks. Spacing between left bonus lane and main chart increases so the Y label does not overlap controls. Plot values and native CFG interactions do not change. Wine verification pending.
