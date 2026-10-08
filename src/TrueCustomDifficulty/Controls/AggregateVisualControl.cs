@@ -140,6 +140,9 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         switch (Family)
         {
+            case "WorldLootLayout":
+                DrawWorldLootLayout(dc, text, muted, border, accent, panel);
+                break;
             case "StashRewardProfile":
                 DrawStashRewardProfile(dc, text, muted, border, accent, panel);
                 break;
@@ -248,6 +251,79 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
+
+
+    // World-loot placement operations are four separate booleans. The source
+    // density value belongs to the weapon-reshuffle operation only; it is not
+    // a universal percentage of weapons removed from the base game world.
+    private void DrawWorldLootLayout(
+        DrawingContext dc,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        var weapons = P("loot.worldWeaponShuffle");
+        var density = P("loot.worldWeaponDensity");
+        var attachments = P("loot.worldAttachmentShuffle");
+        var detectors = P("loot.worldDetectors");
+        var blueprints = P("loot.blueprintShuffle");
+
+        DrawHeader(dc, "WORLD LOOT LAYOUT",
+            "four independent world changes and one weapon-density setting",
+            text, muted, accent);
+
+        if (weapons is null || density is null || attachments is null
+            || detectors is null || blueprints is null)
+        {
+            DrawCenteredText(dc, "World loot layout data unavailable.",
+                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            return;
+        }
+
+        var fullWidth = Math.Max(1.0, ActualWidth - 32.0);
+        var wide = ActualWidth >= 720.0;
+        var tileHeight = wide ? 42.0 : 40.0;
+        var gap = wide ? 10.0 : 9.0;
+        var columns = wide ? 2 : 1;
+        var tileWidth = wide ? (fullWidth - 10.0) / 2.0 : fullWidth;
+
+        var toggles = new (ParameterViewModel Parameter, string Label)[]
+        {
+            (weapons, "SHUFFLE WORLD WEAPONS"),
+            (attachments, "SHUFFLE WORLD ATTACHMENTS"),
+            (detectors, "REMOVE WORLD DETECTORS"),
+            (blueprints, "SHUFFLE BLUEPRINTS")
+        };
+
+        for (var index = 0; index < toggles.Length; index++)
+        {
+            var column = index % columns;
+            var row = index / columns;
+            var rect = new Rect(16.0 + column * (tileWidth + gap),
+                56.0 + row * (tileHeight + gap), tileWidth, tileHeight);
+            DrawTogglePill(dc, toggles[index].Parameter, toggles[index].Label,
+                rect, text, muted, border, accent, panel);
+        }
+
+        var toggleRows = (toggles.Length + columns - 1) / columns;
+        var densityTop = 56.0 + toggleRows * (tileHeight + gap) + 6.0;
+        DrawHorizontalTrackCard(dc, density, "WORLD WEAPON DENSITY",
+            new Rect(16.0, densityTop, fullWidth, 72.0),
+            text, muted, border, accent, panel);
+
+        var noteTop = densityTop + 86.0;
+        var note = weapons.CurrentBoolean
+            ? $"SHUFFLE ON  |  DENSITY {density.CurrentNumber * 100.0:0.#}%"
+            : "SHUFFLE OFF  |  DENSITY VALUE SAVED BUT NOT APPLIED";
+        DrawText(dc, note, new Point(18.0, noteTop),
+            9.5, weapons.CurrentBoolean ? accent : text, FontWeights.Bold);
+        DrawText(dc, "0% STILL GUARANTEES ONE OF EACH OF THE 36 REGULAR WEAPON MODELS",
+            new Point(18.0, noteTop + 19.0), 9.0, muted, FontWeights.Normal);
+        DrawText(dc, "RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
+            new Point(18.0, noteTop + 38.0), 9.0, muted, FontWeights.Normal);
+    }
 
     // Chance, successful-roll amount and a different stash tier's coupon roll
     // remain three independent source parameters. The preview bars are deliberately
@@ -3931,6 +4007,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double GetDesiredHeight(string family, double width)
         => family switch
         {
+            "WorldLootLayout" => width >= 720.0 ? 340.0 : 450.0,
             "StashRewardProfile" => 485.0,
             "BreakableBoxYields" => 413.0,
             "MutantCombatPressure" or "StaminaCore" or "WaterStaminaPressure" or "RadiationTreatment" => 270.0,
@@ -3993,6 +4070,14 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static IReadOnlyList<string> GetFamilyIds(string family)
         => family switch
         {
+            "WorldLootLayout" => new[]
+            {
+                "loot.worldWeaponShuffle",
+                "loot.worldWeaponDensity",
+                "loot.worldAttachmentShuffle",
+                "loot.worldDetectors",
+                "loot.blueprintShuffle"
+            },
             "StashRewardProfile" => new[]
             {
                 "loot.cheapStashGrenadeChance",
