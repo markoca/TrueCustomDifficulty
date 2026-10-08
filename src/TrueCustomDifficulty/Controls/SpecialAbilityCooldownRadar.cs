@@ -159,9 +159,6 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
                 232.0, stripWidth, 280.0),
                 text, muted, border, accent, panel);
 
-        DrawCenteredText(dc,
-            "GOLD = CURRENT  |  GREY TICK = BASE  |  RIGHT-CLICK = RESET",
-            new Point(ActualWidth / 2.0, 521.0), 10.0, muted, FontWeights.SemiBold);
 
         // Silent reset: no transient gold status overlay.
     }
