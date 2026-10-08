@@ -60,6 +60,7 @@ assert 'dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.24 : 0.13)' in visua
 assert 'center, hovered ? 20.0 : 15.0' in visual
 assert 'new Rect(healthX - 18.0, damageY - 18.0, 36.0, 36.0)' in human
 assert 'Enemy Health + Gun Damage reset to Base Preset.' in visual
+assert 'if (frequency.Maximum > 2.0 || accuracy.Maximum > 1.0)' in human
 assert 'HitKind.HumanJoint' in human
 assert 'HitKind.HumanJoint => Cursors.SizeAll' in visual
 assert 'P("combat.npcWeaponDamage")?.ResetToReference();' in visual
