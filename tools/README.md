@@ -32,6 +32,10 @@ The same tools may also be used manually for extraction/development/maintenance 
 
 `python tools/verify_visual_anchor_triggers.py` parses the actual WPF parameter-card template and checks that toggle-based aggregate anchors (such as Master Severe Fatigue) are not hidden by the ordinary toggle `ControlRow` collapse trigger. It also checks the toggle anchor and all backing family IDs against the catalog and `ParameterViewModel`. Run after changes to aggregate templates, visibility triggers, or visual-family mappings.
 
+## Mixer fader pilot regression
+
+`python3 tools/verify_mixer_layout.py` verifies the Anomaly Effects six-channel mixer against the live catalog (native min/max/steps and difficulty baselines), checks responsive strip geometry, XML validity, Base marker behavior and per-channel rationale wiring. `publish.sh` runs it as a preflight when Python 3 is available. This is not a replacement for an actual WPF build and Wine interaction test.
+
 ## CFG placement audit
 
 `python tools/audit_cfg_placement.py --output docs/cfg-placement/v0.2.53` verifies all catalog parameters against their concrete CFG writer routes. It is intentionally static and does not launch the application.
