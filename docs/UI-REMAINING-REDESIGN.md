@@ -6,7 +6,8 @@ semantic visual family. It is a redesign queue, **not** an indication of broken 
 
 - Catalog: 238 parameters
 - Default-control entries remaining: **30**
-- Just converted (commit `6f4dd55`): MutantCombatPressure, StaminaCore, WaterStaminaPressure, RadiationTreatment (eight sliders)
+- Completed prior pass: MutantCombatPressure, StaminaCore, WaterStaminaPressure, RadiationTreatment (eight sliders)
+- Completed this pass: StashRewardProfile, BreakableBoxYields (five sliders)
 - Scope: visual reorganization only; preserve exact source values, min/max, steps,
   vanilla markers, reset/right-click semantics, dependencies and preset serialization
 - Do not merge sliders across different CFG mappings into synthetic gameplay formulas
@@ -40,17 +41,6 @@ semantic visual family. It is a redesign queue, **not** an indication of broken 
 - `loot.npcMedicalChance` — NPC Medical Drop (`slider`)
 - `loot.npcWeaponAmmoSupply` — NPC Dropped Ammo Amount (`slider`)
 - `loot.droppedWeaponCondition` — NPC Weapon Condition (`range`)
-
-### loot / Stashes (0 — visual family complete)
-
-- `loot.cheapStashGrenadeChance` — Basic Stash RGD-5 Grenade Chance (`slider`)
-- `loot.cheapStashGrenadeQuantity` — Basic Stash RGD-5 Grenade Amount (`slider`)
-- `loot.expensiveStashMoneyChance` — Rare Stash Coupon Rewards (`slider`)
-
-### loot / Breakable Containers (0 — visual family complete)
-
-- `loot.destructibleAmmoQuantity` — Ammo from Breakable Boxes (`slider`)
-- `loot.destructibleGrenadeQuantity` — Grenades from Breakable Boxes (`slider`)
 
 ### economy / Starting Coupons (1)
 
@@ -93,6 +83,12 @@ semantic visual family. It is a redesign queue, **not** an indication of broken 
 - `loot.worldAttachmentShuffle` — World Attachment Shuffle (`toggle`)
 - `loot.worldDetectors` — Remove World Detectors (`toggle`)
 - `loot.blueprintShuffle` — Blueprint Shuffle (`toggle`)
+
+## Loot pass completed (2026-10-08)
+
+- StashRewardProfile: three independent existing source values in one panel, including two separate probability previews.
+- BreakableBoxYields: two independent source multipliers and read-only comparison lanes.
+- Underlying CFG patching and presets remain untouched. Source ranges, increments, reference values and reset behavior are preserved.
 
 ## UX follow-up checks
 
