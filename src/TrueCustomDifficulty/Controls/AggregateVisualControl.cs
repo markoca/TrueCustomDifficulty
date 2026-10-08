@@ -382,7 +382,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         ("equipment.consumableWeight", "FOOD + MED", "WEIGHT")
     };
 
-    private static readonly (string Id, string Top, string Bottom)[] GetMixerChannels(string family)
+    private static (string Id, string Top, string Bottom)[] GetMixerChannels(string family)
         => family switch
         {
             "ServiceCostsBoard" => ServiceMixerChannels,
