@@ -350,7 +350,9 @@ public sealed class MutantHealthRadar : FrameworkElement
         var ratio = 1.0 - Math.Clamp((point.Y - target.MapRect.Top) / Math.Max(1.0, target.MapRect.Height), 0.0, 1.0);
         var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
         var tick = Math.Max(parameter.TickFrequency, Epsilon);
-        var snapped = parameter.Minimum + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
+        // Align discrete multiplier steps with vanilla 1.00x. The old
+        // minimum-anchored grid at 0.25x excluded 1.00x for 0.10x steps.
+        var snapped = 1.0 + Math.Round((raw - 1.0) / tick, MidpointRounding.AwayFromZero) * tick;
 
         parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
         _status.Clear();
