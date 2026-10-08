@@ -529,8 +529,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         var count = AnomalyMixerChannels.Length;
         var inner = Math.Max(1.0, ActualWidth - 2.0 * MixerSidePadding);
         var columns = GetMixerColumns(ActualWidth, count);
-        var width = Math.Max(128.0,
-            (inner - (columns - 1) * MixerStripGap) / columns);
+        // Keep the six-channel bank readable at every responsive width:
+        // never widen its faders beyond the same 148-DIP cap used by compact
+        // mixer boards. Incomplete rows remain source-ordered and left aligned.
+        var width = Math.Min(148.0, Math.Max(128.0,
+            (inner - (columns - 1) * MixerStripGap) / columns));
 
         for (var index = 0; index < count; index++)
         {
