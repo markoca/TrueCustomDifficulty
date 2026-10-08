@@ -28,6 +28,16 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Distinguish the two handles that edit one range-valued source parameter.
     private HitKind? _selectedHitKind;
 
+    // The aggregate anchor owns the visible row, but each mixer channel must
+    // activate its own parameter rationale in the parent view model.
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
+
+    private void RaiseParameterSelected(ParameterViewModel parameter)
+    {
+        if (Family == "AnomalyEffectsBoard")
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
+    }
+
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
         typeof(IEnumerable),
@@ -3961,6 +3971,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         _selectedParameter = target.Parameter;
         _selectedHitKind = target.Kind;
         SetHoverTarget(target);
+        RaiseParameterSelected(target.Parameter);
+
+        if (target.Kind == HitKind.MixerBaseMarker)
+        {
+            target.Parameter.ResetToReference();
+            _status.ClearTransient();
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
 
         if (target.Kind == HitKind.Toggle)
         {
@@ -3988,7 +4008,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
-            HitKind.Toggle or HitKind.Choice => Cursors.Hand,
+            HitKind.Toggle or HitKind.Choice or HitKind.MixerBaseMarker => Cursors.Hand,
             _ => Cursors.Arrow
         };
 
@@ -4055,6 +4075,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             {
                 HitKind.Toggle => $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset",
                 HitKind.Choice => $"{target.Parameter.Label}\nChoose a corpse-loot package · Right-click = Base Preset",
+                HitKind.MixerBaseMarker => $"{target.Parameter.Label}\nClick to snap to selected Base Preset",
                 HitKind.RangeMin => "NPC weapon condition MIN\nDrag or use arrow keys · Right-click = reset full range",
                 HitKind.RangeMax => "NPC weapon condition MAX\nDrag or use arrow keys · Right-click = reset full range",
                 _ => $"{target.Parameter.Label}\nDrag or use arrow keys to adjust · Right-click = Base Preset"
@@ -4071,8 +4092,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         _selectedParameter = target.Parameter;
-        _selectedHitKind = target.Kind;
+        _selectedHitKind = target.Kind == HitKind.MixerBaseMarker ? HitKind.Vertical : target.Kind;
         SetHoverTarget(target);
+        RaiseParameterSelected(target.Parameter);
         target.Parameter.ResetToReference();
         EnforceFamilyConstraints(target.Parameter);
         _status.ShowTransient($"{ShortLabel(target.Parameter)} reset to Base Preset.");
@@ -4765,6 +4787,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         Horizontal,
         Vertical,
+        MixerBaseMarker,
         Toggle,
         Choice,
         RangeMin,
@@ -4779,4 +4802,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         double VisualMinimum,
         double VisualMaximum,
         bool Reverse);
+}
+
+public sealed class AggregateParameterSelectedEventArgs : EventArgs
+{
+    public AggregateParameterSelectedEventArgs(ParameterViewModel parameter) => Parameter = parameter;
+    public ParameterViewModel Parameter { get; }
 }
