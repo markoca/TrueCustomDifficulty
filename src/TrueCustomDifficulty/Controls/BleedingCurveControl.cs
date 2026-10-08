@@ -240,30 +240,32 @@ public sealed class BleedingCurveControl : FrameworkElement
 
         dc.DrawLine(new Pen(border, 3.0), new Point(trackLeft, trackY), new Point(trackRight, trackY));
 
+        // Difficulty markers are meaningful only where the source actually differs
+        // between vanilla difficulties (Bleeding Strength: N / S+V / M).
+        var difficultyMarkers = parameter.Id == "survival.bleedingSeverity"
+            ? parameter.VanillaMarkers
+            : Array.Empty<VanillaMarkerViewModel>();
         foreach (var marker in parameter.VanillaMarkers)
         {
             var markerX = ValueToX(marker.Value, parameter.Minimum, parameter.Maximum, trackLeft, trackRight);
             dc.DrawLine(new Pen(muted, 1.0), new Point(markerX, trackY - 5), new Point(markerX, trackY + 5));
+            if (difficultyMarkers.Count > 1)
+                DrawCenteredText(dc, marker.Label, new Point(markerX, trackY + 10.0),
+                    8.3, muted, FontWeights.SemiBold);
         }
 
         var handleX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, trackLeft, trackRight);
         dc.DrawEllipse(accent, null, new Point(handleX, trackY), 5.0, 5.0);
 
-        DrawText(
-            dc,
-            FormatNumber(parameter.Minimum),
-            new Point(trackLeft, rect.Bottom - 16.0),
-            8.5,
-            muted,
-            FontWeights.SemiBold);
-
-        DrawRightAlignedText(
-            dc,
-            FormatNumber(parameter.Maximum),
-            new Point(trackRight, rect.Bottom - 16.0),
-            8.5,
-            muted,
-            FontWeights.SemiBold);
+        // On the difficulty-specific rail, reserve the lower lane for N, S/V, M
+        // instead of colliding with the minimum and maximum captions.
+        if (difficultyMarkers.Count <= 1)
+        {
+            DrawText(dc, FormatNumber(parameter.Minimum),
+                new Point(trackLeft, rect.Bottom - 16.0), 8.5, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, FormatNumber(parameter.Maximum),
+                new Point(trackRight, rect.Bottom - 16.0), 8.5, muted, FontWeights.SemiBold);
+        }
     }
 
     private void DrawCurve(
