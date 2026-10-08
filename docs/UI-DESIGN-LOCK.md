@@ -477,3 +477,8 @@ The first Stamina card is **STAMINA & MOVEMENT** and combines four independent f
 ### 2026-10-09 — Vault-height landmarks use body references only
 
 In **Stamina & Movement → Maximum Vault Height**, show only authored body-reference labels (for example **WAIST**, **EYES**, **ABOVE EYES**) beneath the rail. Do **not** append raw Unreal-unit numbers or `uu` to those labels. Landmark positions and clickable snap targets retain the original source values; only the visible label text is simplified. The retired PhysicalLimits renderer follows the same caption rule for consistency.
+
+
+### 2026-10-09 — Amok DLC1 boss mapping verification gate
+
+Amok is excluded from the current fourteen Mutant Health faders. Do not invent a MaxHP override or add a UI channel until the DLC1 boss prototype, health path and three-phase/weak-point mechanics are verified against original CFG and runtime. See docs/combat/MUTANT-HEALTH-AUDIT.md. Existing 2 × 7 layout and gameplay remain unchanged.

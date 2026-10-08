@@ -108,3 +108,13 @@ The earlier eight-family-only UI restriction is superseded by the user's explici
 The production Mutant Health editor now lists all fourteen supported families alphabetically and caps each HP multiplier at **2×** instead of 3× (0.25× minimum, 0.05× tick). The catalog and ViewModel both enforce the maximum.
 
 Only eight family-specific ability cooldown mappings are currently verified and implemented through `MutantCombatDifficulty.AgentCooldownMultipliers` in selected difficulty profiles: Bloodsucker, Chimera, Deer, Pseudogiant, Pseudodog, Burer, Bayun, Controller (with authored related variants). Blind Dog, Boar, Flesh, Poltergeist, Snork and Tushkan have audited MaxHP but **no verified equivalent special ability cooldown entry**. This does not prove those mutants have no cooldown of any kind; it prohibits representing unverified special ability controls as genuine CFG mappings. Global ordinary attack frequency is a separate control. No new cooldown CFG mappings were fabricated.
+
+
+## DLC1 Amok — pending original CFG verification (2026-10-09)
+
+- Amok is a separate Cost of Hope boss. Do not combine with regular Bloodsucker HP scaling or automatically include in the fourteen Mutant Health channels.
+- EXTERNAL MODDER REPORT (not verified from CFG): Grounded Combat reports a separate 24,000 HP three-phase boss encounter and deliberately leaves Amok unmodified pending encounter-specific verification. Source: https://www.nexusmods.com/stalker2heartofchornobyl/mods/2396
+- The existing parameter catalog, CFG writer baseline and mutant health/entry audits have no confirmed Amok source mapping. A prior DLC1 file inventory references DLCGameData/DLC1/NPCPrototypes.cfg.bin, but the file name alone does not establish an Amok prototype ID or HP field.
+- Next evidence: extracted DLC1 runtime NPCPrototypes.cfg and related files, resolved prototype/inheritance chain, actual MaxHP, phase/weak-point gating and quest completion conditions.
+- No user-facing slider, hardcoded health default, or CFG writer mapping until the source target and encounter behavior are verified. If supported, use an independent boss-specific control, not the shared ordinary mutant health family.
+- STATUS: CFG unconfirmed; runtime testing required. No gameplay override implemented.
