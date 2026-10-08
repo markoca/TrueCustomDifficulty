@@ -4259,7 +4259,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double GetDesiredHeight(string family, double width)
         => family switch
         {
-            "NpcLootLoadout" => 713.0,
+            "NpcLootLoadout" => 748.0, // reserve footer/status lane below the native input cards
             "WorldLootLayout" => width >= 720.0 ? 340.0 : 450.0,
             "StashRewardProfile" => 485.0,
             "BreakableBoxYields" => 413.0,
