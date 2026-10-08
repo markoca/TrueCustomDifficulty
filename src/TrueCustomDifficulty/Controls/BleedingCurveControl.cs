@@ -57,7 +57,7 @@ public sealed class BleedingCurveControl : FrameworkElement
     public BleedingCurveControl()
     {
         Focusable = true;
-        MinHeight = 380;
+        MinHeight = 458;
         SnapsToDevicePixels = true;
         Cursor = Cursors.Arrow;
     }
@@ -65,7 +65,7 @@ public sealed class BleedingCurveControl : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(520.0, availableSize.Width);
-        return new Size(width, 380.0);
+        return new Size(width, 458.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -191,19 +191,15 @@ public sealed class BleedingCurveControl : FrameworkElement
             panel,
             out _recoveryTrackRect);
 
-        DrawText(dc, "BLEEDING STAGES", new Point(16, 140), 9.5, muted, FontWeights.Bold);
-        DrawText(dc, "X = bleeding threshold   |   Y = HP damage per tick", new Point(126, 140), 9.0, muted, FontWeights.Normal);
+        DrawText(dc, "BLEEDING DAMAGE PROFILE", new Point(16, 142),
+            10.2, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "BLEEDING POINTS  /  0-100",
+            new Point(ActualWidth / 2.0 + 14, 160), 9.2, text, FontWeights.Bold);
+        DrawText(dc, "HP / TICK", new Point(12, 182),
+            9.1, accent, FontWeights.Bold);
 
-        _plotRect = new Rect(58.0, 164.0, Math.Max(360.0, ActualWidth - 82.0), 142.0);
+        _plotRect = new Rect(64.0, 185.0, Math.Max(360.0, ActualWidth - 89.0), 185.0);
         DrawCurve(dc, text, muted, border, softBorder, accent, panel);
-
-        DrawCenteredText(
-            dc,
-            "LOW 0.1 fixed   |   MEDIUM ≤ SEVERE",
-            new Point(_plotRect.Left + _plotRect.Width / 2.0, 346.0),
-            8.7,
-            muted,
-            FontWeights.SemiBold);
     }
 
     private void DrawCompactSlider(
@@ -281,6 +277,20 @@ public sealed class BleedingCurveControl : FrameworkElement
     {
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), _plotRect, 4.0, 4.0);
 
+        // Graduated risk bands distinguish mild, moderate and heavy bleeding.
+        // These colors are purely visual; authored CFG thresholds stay intact.
+        var mediumStart = ThresholdToX(_mediumThreshold?.CurrentNumber ?? 50.0);
+        var severeStart = ThresholdToX(_severeThreshold?.CurrentNumber ?? 75.0);
+        void Band(double from, double to, double opacity)
+        {
+            if (to <= from) return;
+            dc.DrawRectangle(CloneWithOpacity(accent, opacity), null,
+                new Rect(from, _plotRect.Top + 1, to - from, _plotRect.Height - 2));
+        }
+        Band(_plotRect.Left + 1, mediumStart, .025);
+        Band(mediumStart, severeStart, .055);
+        Band(severeStart, _plotRect.Right - 1, .095);
+
         for (var level = 0; level <= 4; level++)
         {
             var y = DamageToY(level);
@@ -323,6 +333,10 @@ public sealed class BleedingCurveControl : FrameworkElement
             _severeThreshold?.ReferenceNumber ?? 75.0
         };
 
+        for (var threshold = 0; threshold <= 100; threshold += 25)
+            DrawCenteredText(dc, $"{threshold}", new Point(ThresholdToX(threshold),
+                _plotRect.Bottom + 13), 8.8, muted, FontWeights.SemiBold);
+
         var x = currentThresholds.Select(ThresholdToX).ToArray();
         var vanillaX = referenceThresholds.Select(ThresholdToX).ToArray();
 
@@ -340,7 +354,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             new Point(vanillaX[2], DamageToY(vanillaValues[2]))
         };
 
-        DrawPolyline(dc, vanillaPoints, new Pen(muted, 1.3) { DashStyle = DashStyles.Dash });
+        DrawPolyline(dc, vanillaPoints, new Pen(muted, 1.6) { DashStyle = DashStyles.Dash });
 
         var currentValues = new[]
         {
@@ -368,9 +382,16 @@ public sealed class BleedingCurveControl : FrameworkElement
         fillGeometry.Freeze();
 
         var fill = accent.Clone();
-        fill.Opacity = 0.10;
+        fill.Opacity = 0.15;
         dc.DrawGeometry(fill, null, fillGeometry);
-        DrawPolyline(dc, points, new Pen(accent, 2.2));
+        // Project each live stage point to the baseline to make its location
+        // and damage independently readable at a glance.
+        for (var i = 0; i < points.Length; i++)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, .42), 1.1)
+                    { DashStyle = DashStyles.Dot },
+                new Point(points[i].X, points[i].Y),
+                new Point(points[i].X, _plotRect.Bottom));
+        DrawPolyline(dc, points, new Pen(accent, 2.8));
 
         var labels = new[] { "LOW", "MEDIUM", "SEVERE" };
         for (var i = 0; i < 3; i++)
@@ -397,27 +418,28 @@ public sealed class BleedingCurveControl : FrameworkElement
                 dc.DrawEllipse(panel, new Pen(accent, IsSelectedThreshold(i) ? 2.4 : 1.5), new Point(x[i], _plotRect.Bottom + 3.0), 5.5, 5.5);
             }
 
-            DrawCenteredText(
-                dc,
-                $"{labels[i]} {currentThresholds[i]:0.#}",
-                new Point(x[i], _plotRect.Bottom + 10.0),
-                9.0,
-                text,
-                FontWeights.Bold);
-
-            DrawCenteredText(
-                dc,
-                $"{currentValues[i]:0.0} HP",
-                new Point(x[i], _plotRect.Bottom + 26.0),
-                9.5,
-                accent,
+            // Each stage owns a separate caption column; threshold points
+            // may be dragged close together without text collisions.
+            var cardWidth = (ActualWidth - 44.0) / 3.0;
+            var card = new Rect(16 + i * cardWidth, 405, cardWidth - 4, 35);
+            dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 3, 3);
+            DrawCenteredText(dc,
+                $"{labels[i]} AT {currentThresholds[i]:0.#} PTS",
+                new Point(card.Left + card.Width / 2, card.Top + 4),
+                9, text, FontWeights.Bold);
+            DrawCenteredText(dc,
+                $"{currentValues[i]:0.##} HP / TICK",
+                new Point(card.Left + card.Width / 2, card.Top + 19),
+                9.8,
+                _damage[i]?.IsValueModifiedFromReference() == true ? accent : text,
                 FontWeights.Bold);
         }
 
         _mediumThresholdHitRect = new Rect(x[1] - 20.0, _plotRect.Bottom - 10.0, 40.0, 34.0);
         _severeThresholdHitRect = new Rect(x[2] - 20.0, _plotRect.Bottom - 10.0, 40.0, 34.0);
 
-        DrawText(dc, "BASE", new Point(_plotRect.Right - 42.0, _plotRect.Top + 7.0), 9.0, muted, FontWeights.SemiBold);
+        DrawText(dc, "DASHED = VANILLA", new Point(_plotRect.Left + 10, _plotRect.Top + 7),
+            8.7, muted, FontWeights.SemiBold);
     }
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
