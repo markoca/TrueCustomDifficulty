@@ -11,7 +11,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double DesiredHeight = 752.0;
+    private const double DesiredHeight = 542.0;
     private const double MaxContentWidth = 1080.0;
     private const double ColumnGap = 8.0;
 
@@ -141,28 +141,28 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         for (var i = 0; i < 2; i++)
             DrawGlobalHorizontal(dc, i, new Rect(
                 content.Left + i * (globalWidth + globalGap),
-                138.0, globalWidth, 98.0),
+                74.0, globalWidth, 88.0),
                 text, muted, border, accent, panel);
 
         DrawText(dc, "SPECIAL ABILITY COOLDOWNS",
-            new Point(content.Left, 370.0), 12.0, text, FontWeights.Bold);
+            new Point(content.Left, 181.0), 12.0, text, FontWeights.Bold);
         DrawText(dc, "Lower wait = faster ability return (not normal attack speed)",
-            new Point(content.Left, 393.0), 9.5, muted, FontWeights.Normal);
+            new Point(content.Left, 202.0), 9.5, muted, FontWeights.Normal);
 
         const int columns = 8;
         var stripWidth = (content.Width - (columns - 1) * ColumnGap) / columns;
         for (var i = 2; i < Mutants.Length; i++)
             DrawRow(dc, i, new Rect(
                 content.Left + (i - 2) * (stripWidth + ColumnGap),
-                420.0, stripWidth, 280.0),
+                232.0, stripWidth, 280.0),
                 text, muted, border, accent, panel);
 
         DrawCenteredText(dc,
             "GOLD = CURRENT  |  GREY TICK = BASE  |  RIGHT-CLICK = RESET",
-            new Point(ActualWidth / 2.0, 718.0), 10.0, muted, FontWeights.SemiBold);
+            new Point(ActualWidth / 2.0, 521.0), 10.0, muted, FontWeights.SemiBold);
 
         if (!string.IsNullOrWhiteSpace(_status.Text))
-            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 739.0), 9.5, accent, FontWeights.SemiBold);
+            DrawCenteredText(dc, _status.Text, new Point(ActualWidth / 2.0, 536.0), 9.5, accent, FontWeights.SemiBold);
     }
 
     private void DrawGlobalHorizontal(
