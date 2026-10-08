@@ -2581,7 +2581,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(center, card.Top + 23), 9.3, text, FontWeights.Bold);
         DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
             new Point(center, card.Top + 44), 13.4,
-            parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
+            parameter.IsControlEnabled && parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
         var rail = new Rect(center - 3, card.Top + 80, 6, 75);
         var y = ValueToY(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, rail);
         var baseY = ValueToY(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, rail);
@@ -2642,15 +2642,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         var durationColumns = CompactStageColumns(ActualWidth);
         // Live gameplay readouts describe exactly the sources below, never a
         // fabricated combined multiplier or a new medical/drunkenness effect.
-        void Readout(Rect card, string heading, string first, string second)
+        void Readout(Rect card, string heading, string first, string second,
+            bool firstChanged, bool secondChanged)
         {
             dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 4, 4);
             var usable = Math.Max(1.0, card.Width - 22.0);
             dc.DrawText(CreateText(heading, 10.1, text, FontWeights.Bold, usable),
                 new Point(card.Left + 11, card.Top + 7));
-            dc.DrawText(CreateText(first, 10.0, accent, FontWeights.SemiBold, usable),
+            dc.DrawText(CreateText(first, 10.0, firstChanged ? accent : text, FontWeights.SemiBold, usable),
                 new Point(card.Left + 11, card.Top + 29));
-            dc.DrawText(CreateText(second, 9.6, muted, FontWeights.SemiBold, usable),
+            dc.DrawText(CreateText(second, 9.6, secondChanged ? accent : text, FontWeights.SemiBold, usable),
                 new Point(card.Left + 11, card.Top + 49));
         }
 
@@ -2673,10 +2674,17 @@ public sealed class AggregateVisualControl : FrameworkElement
                     text, muted, border, accent, panel);
             }
         }
-        Bank(new[] { burst, antiRad, waterStamina, energyStamina },
-            new[] { "INSTANT|STAMINA", "RADIATION|REMOVAL",
-                "WATER|STAMINA BUFF", "ENERGY|STAMINA REGEN" }, strengthTop);
-        var readoutTop = FaderEnd(strengthTop, 4) + 15.0;
+        // The four strength controls remain compact horizontal source tracks;
+        // only the five duration controls use the vertical fader bank.
+        void Strength(ParameterViewModel p, string label, int index)
+            => DrawCompactTrack(dc, p, label, $"{p.CurrentNumber:0.##}x",
+                "0x", "2x", CompactSlot(strengthTop, width, columns, index),
+                text, muted, border, accent, panel);
+        Strength(burst, "INSTANT STAMINA / ALL THREE DRINKS", 0);
+        Strength(antiRad, "BEER + VODKA / RADIATION REMOVED", 1);
+        Strength(waterStamina, "WATER / STAMINA BUFF STRENGTH", 2);
+        Strength(energyStamina, "ENERGY / STAMINA REGEN STRENGTH", 3);
+        var readoutTop = CompactGridEnd(strengthTop, 4, columns) + 15.0;
         DrawText(dc, "WHAT YOUR DRINKS ACTUALLY DO",
             new Point(19, readoutTop), 10.8, accent, FontWeights.Bold);
         var readoutCardsTop = readoutTop + 22.0;
@@ -2684,15 +2692,19 @@ public sealed class AggregateVisualControl : FrameworkElement
         Readout(CompactSlot(readoutCardsTop, width, durationColumns, 0),
             "INSTANT STAMINA",
             $"WATER +{38 * burst.CurrentNumber:0.#}% | ENERGY +{50 * burst.CurrentNumber:0.#}%",
-            $"LIMITED ENERGY +{100 * burst.CurrentNumber:0.#}%");
+            $"LIMITED ENERGY +{100 * burst.CurrentNumber:0.#}%",
+            burst.IsValueModifiedFromReference(), burst.IsValueModifiedFromReference());
         Readout(CompactSlot(readoutCardsTop, width, durationColumns, 1),
             "SUSTAINED STAMINA",
             $"WATER REGEN +{25 * waterStamina.CurrentNumber:0.#}%",
-            $"WATER COST -{10 * waterStamina.CurrentNumber:0.#}% | ENERGY REGEN +{200 * energyStamina.CurrentNumber:0.#}%");
+            $"WATER COST -{10 * waterStamina.CurrentNumber:0.#}% | ENERGY REGEN +{200 * energyStamina.CurrentNumber:0.#}%",
+            waterStamina.IsValueModifiedFromReference(),
+            waterStamina.IsValueModifiedFromReference() || energyStamina.IsValueModifiedFromReference());
         Readout(CompactSlot(readoutCardsTop, width, durationColumns, 2),
             "RADIATION REMOVED",
             $"BEER {10 * antiRad.CurrentNumber:0.#} RAD",
-            $"VODKA {50 * antiRad.CurrentNumber:0.#} RAD");
+            $"VODKA {50 * antiRad.CurrentNumber:0.#} RAD",
+            antiRad.IsValueModifiedFromReference(), antiRad.IsValueModifiedFromReference());
         var previewTitle = CompactGridEnd(readoutCardsTop, 3, durationColumns) + 18.0;
         DrawText(dc, "HOW LONG THE EFFECTS LAST",
             new Point(19, previewTitle), 10.8, accent, FontWeights.Bold);
@@ -2747,7 +2759,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawEllipse(accent, null, new Point(currentX, y), 4.0, 4.0);
             DrawRightAlignedText(dc, $"{currentSeconds:0.#}s",
                 new Point(preview.Right - 12.0, y - 7.0),
-                9.2, accent, FontWeights.SemiBold);
+                9.2, parameter.IsValueModifiedFromReference() ? accent : text,
+                FontWeights.SemiBold);
         }
 
         var durationTop = preview.Bottom + 12.0;
@@ -2756,13 +2769,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "VODKA|PENALTY TIME", "BEER|PENALTY TIME",
                 "MAGIC VODKA|PSI TIME" }, durationTop);
 
-        var end = FaderEnd(durationTop, 5);
-        DrawText(dc, "WATER: REGEN 5s / COST 30s  |  ENERGY: 45s / 15s / 5s (AT 1x)",
-            new Point(20, end + 12), 9.1, muted, FontWeights.SemiBold);
-        DrawText(dc, "VODKA + BEER: STAMINA PENALTY 20s  |  MAGIC: PSI 90s (AT 1x)",
-            new Point(20, end + 30), 9.1, muted, FontWeights.SemiBold);
-        DrawText(dc, "DURATION DOES NOT CHANGE DRUNKENNESS OR STRENGTH",
-            new Point(20, end + 48), 9.1, muted, FontWeights.SemiBold);
+        // Detailed effect explanations belong to the parameter rationale,
+        // not redundant footer lines beneath the fader bank.
     }
 
     private void DrawSleepingDashboard(
@@ -4037,7 +4045,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold, contentWidth),
             new Point(card.Left + 12.0, card.Top + 7.0));
         dc.DrawText(CreateText(value, 10.7,
-                parameter.IsControlEnabled ? accent : muted,
+                parameter.IsControlEnabled &&
+                (Family != "ConsumableMixer" || parameter.IsValueModifiedFromReference())
+                    ? accent : parameter.IsControlEnabled ? text : muted,
                 FontWeights.Bold, contentWidth),
             new Point(card.Left + 12.0, card.Top + 25.0));
 
@@ -5088,15 +5098,15 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private static double CompactConsumableHeight(double width)
     {
+        var columns = CompactColumns(width);
         var faderColumns = ConsumableFaderColumns(width);
-        static double FaderRows(int count, int columns)
-            => Math.Ceiling((double)count / columns) * (179.0 + 8.0) - 8.0;
-        var readoutTop = 55.0 + FaderRows(4, faderColumns) + 15.0;
+        var readoutTop = CompactGridEnd(55.0, 4, columns) + 15.0;
         var cardsTop = readoutTop + 22.0;
         var previewTop = CompactGridEnd(cardsTop, 3, CompactStageColumns(width))
             + 18.0 + 23.0;
         var durationTop = previewTop + 160.0 + 12.0;
-        return durationTop + FaderRows(5, faderColumns) + 90.0;
+        var faderRows = Math.Ceiling(5.0 / faderColumns);
+        return durationTop + faderRows * (179.0 + 8.0) - 8.0 + 14.0;
     }
 
     private static double CompactHungerHeight(double width)
