@@ -1056,6 +1056,11 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Each CFG value instead has one full-width, native-range slider below.
     // Two-column editing on wide surfaces; single-column fallback when narrow.
     // Stage graph is read-only to avoid overlapping draggable graph handles.
+    private ParameterViewModel? ReloadEffectFor(ParameterViewModel threshold)
+        => P(threshold.Id == "survival.sleepMediumThreshold"
+            ? "survival.fatigueMediumReloadPenalty"
+            : "survival.fatigueStrongReloadPenalty");
+
     private ParameterViewModel? FatigueEffectFor(ParameterViewModel threshold)
     {
         var stage = threshold.Id == "survival.sleepLowThreshold" ? "Low" :
@@ -1236,7 +1241,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             var kind = reload ? HitKind.FatigueReloadJoint : HitKind.FatigueJoint;
             DrawHumanAxisHandle(dc, new Point(x, yy), reload ? text : accent, panel,
                 ReferenceEquals(_hoverTarget?.Parameter, threshold) && _hoverTarget?.Kind == kind,
-                IsSelected(threshold) && _selectedHitKind == kind);
+                (reload ? ReferenceEquals(_selectedParameter, effect)
+                        : IsSelected(threshold)) && _selectedHitKind == kind);
             _hitTargets.Add(new HitTarget(threshold,
                 new Rect(x - 17, yy - 17, 34, 34), reload ? reloadArea : area, kind,
                 threshold.Minimum, threshold.Maximum, false));
@@ -4344,7 +4350,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (target is null)
             return;
 
-        _selectedParameter = target.Parameter;
+        _selectedParameter = target.Kind == HitKind.FatigueReloadJoint
+            ? ReloadEffectFor(target.Parameter) ?? target.Parameter
+            : target.Parameter;
         _selectedHitKind = target.Kind;
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
@@ -4478,7 +4486,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (target is null || !target.Parameter.IsControlEnabled)
             return;
 
-        _selectedParameter = target.Parameter;
+        _selectedParameter = target.Kind == HitKind.FatigueReloadJoint
+            ? ReloadEffectFor(target.Parameter) ?? target.Parameter
+            : target.Parameter;
         _selectedHitKind = target.Kind == HitKind.MixerBaseMarker ? HitKind.Vertical : target.Kind;
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
