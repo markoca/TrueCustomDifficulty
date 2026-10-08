@@ -2943,6 +2943,100 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(19.0, 700.0), 9.2, accent, FontWeights.SemiBold);
     }
 
+    // Shared density for the large Survival/Health aggregate panels. Rows are
+    // column-aware; no independent sliders are stacked inside the same hit area.
+    private const double CompactTrackHeight = 82.0;
+    private const double CompactRowGap = 8.0;
+    private const double CompactColumnGap = 10.0;
+
+    private static int CompactColumns(double width)
+        => width >= 760.0 ? 2 : 1;
+
+    private static int CompactStageColumns(double width)
+        => width >= 850.0 ? 3 : CompactColumns(width);
+
+    private static double CompactGridEnd(double top, int count, int columns)
+    {
+        var rows = (count + columns - 1) / columns;
+        return top + rows * CompactTrackHeight
+            + Math.Max(0, rows - 1) * CompactRowGap;
+    }
+
+    private static Rect CompactSlot(double top, double width, int columns, int index)
+    {
+        var columnWidth = (width - (columns - 1) * CompactColumnGap) / columns;
+        var column = index % columns;
+        var row = index / columns;
+        return new Rect(
+            17.0 + column * (columnWidth + CompactColumnGap),
+            top + row * (CompactTrackHeight + CompactRowGap),
+            columnWidth, CompactTrackHeight);
+    }
+
+    private void DrawCompactTrack(
+        DrawingContext dc,
+        ParameterViewModel parameter,
+        string label,
+        string value,
+        string minimumLabel,
+        string maximumLabel,
+        Rect card,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
+        var contentWidth = Math.Max(1.0, card.Width - 24.0);
+
+        // Every compact card gets its own text boundary. Clipping against the
+        // whole control would allow a left-column caption to overlap its neighbor.
+        dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold, contentWidth),
+            new Point(card.Left + 12.0, card.Top + 7.0));
+        dc.DrawText(CreateText(value, 10.7,
+                parameter.IsControlEnabled ? accent : muted,
+                FontWeights.Bold, contentWidth),
+            new Point(card.Left + 12.0, card.Top + 25.0));
+
+        var track = new Rect(card.Left + 20.0, card.Top + 45.0,
+            Math.Max(1.0, card.Width - 40.0), 16.0);
+        var y = track.Top + track.Height / 2.0;
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track, reverse: false);
+        var baseX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, track, reverse: false);
+
+        dc.DrawLine(new Pen(border, 4.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        if (parameter.IsControlEnabled)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
+                new Point(track.Left, y), new Point(currentX, y));
+
+        dc.DrawLine(new Pen(muted, 2.0),
+            new Point(baseX, y - 10.0), new Point(baseX, y + 10.0));
+        dc.DrawEllipse(panel,
+            new Pen(parameter.IsControlEnabled ? accent : muted,
+                IsSelected(parameter) ? 2.8 : 1.9),
+            new Point(currentX, y), 7.0, 7.0);
+        if (parameter.IsControlEnabled)
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+
+        AddHorizontalTarget(parameter,
+            new Rect(track.Left - 7.0, track.Top - 3.0,
+                track.Width + 14.0, track.Height + 6.0),
+            track, parameter.Minimum, parameter.Maximum);
+
+        dc.DrawText(CreateText(minimumLabel, 9.2, muted, FontWeights.Normal,
+                Math.Max(1.0, track.Width / 2.0 - 4.0)),
+            new Point(track.Left, card.Top + 64.0));
+        var maxLabelText = CreateText(maximumLabel, 9.2, muted,
+            FontWeights.Normal, Math.Max(1.0, track.Width / 2.0 - 4.0));
+        dc.DrawText(maxLabelText,
+            new Point(track.Right - maxLabelText.WidthIncludingTrailingWhitespace,
+                card.Top + 64.0));
+    }
+
     private void DrawHorizontalTrackCard(
         DrawingContext dc,
         ParameterViewModel? parameter,
