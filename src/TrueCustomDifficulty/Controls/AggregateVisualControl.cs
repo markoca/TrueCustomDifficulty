@@ -1002,7 +1002,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             plot, damage.Minimum, damage.Maximum);
 
         DrawCenteredText(dc,
-            "TOUGHER ENEMIES →   |   MORE GUN DAMAGE ↑   |   GREY = BASE",
+            "BOTTOM CIRCLE: ENEMY HEALTH   |   LEFT SQUARE: GUN DAMAGE   |   POINT = PREVIEW",
             new Point(ActualWidth / 2.0, 268.0), 9.3, text, FontWeights.SemiBold);
 
         // The frequency VM already inverts its raw cooldown in the CFG writer.
@@ -1045,12 +1045,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        DrawText(dc,
-            $"CYCLE WAIT  {wait.CurrentNumber:0.##}x  |  BASE {wait.ReferenceNumber:0.##}x",
-            new Point(18.0, 54.0), 9.8, accent, FontWeights.SemiBold);
-        DrawRightAlignedText(dc,
-            $"PHANTOM COUNT  {count.CurrentNumber:0.##}x  |  BASE {count.ReferenceNumber:0.##}x",
-            new Point(ActualWidth - 18.0, 54.0), 9.8, accent, FontWeights.SemiBold);
+        DrawDualParameterHeading(dc,
+            wait, "PHANTOM CYCLE WAIT",
+            count, "PHANTOM COUNT",
+            51.0, text, accent);
 
         var plot = new Rect(78.0, 83.0, Math.Max(350.0, ActualWidth - 116.0), 135.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
@@ -1108,7 +1106,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             plot, count.Minimum, count.Maximum);
 
         DrawCenteredText(dc,
-            "LEFT = FASTER WAVES   |   UP = MORE PHANTOMS   |   GREY = BASE",
+            "DRAG BOTTOM CIRCLE: WAIT   |   LEFT SQUARE: COUNT   |   CROSSHAIR = PREVIEW",
             new Point(ActualWidth / 2.0, 267.0), 9.3, text, FontWeights.SemiBold);
 
         var wearCardWidth = Math.Max(235.0, (ActualWidth - 46.0) * 0.60);
@@ -1213,7 +1211,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             plot, weapon.Minimum, weapon.Maximum);
 
         // Leave the status lane below y=290 clear for transient reset messages.
-        DrawCenteredText(dc, "ARMOR → MORE DURABLE   |   WEAPON ↑ MORE WEAR / SHOT   |   GREY = BASE",
+        DrawCenteredText(dc, "BOTTOM CIRCLE: ARMOR TOUGHNESS   |   LEFT SQUARE: WEAPON WEAR   |   POINT = PREVIEW",
             new Point(ActualWidth / 2.0, 280.0), 9.5, text, FontWeights.SemiBold);
     }
 
