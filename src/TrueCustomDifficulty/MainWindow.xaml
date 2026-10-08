@@ -728,7 +728,7 @@
                                      BorderThickness="0"
                                      Margin="5,6,5,9"
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                      ScrollViewer.CanContentScroll="False">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
@@ -764,8 +764,7 @@
                                         <!-- Pair only explicitly eligible adjacent compact sections; others keep their full width. -->
                                         <GroupStyle.Panel>
                                             <ItemsPanelTemplate>
-                                                <infra:ResponsiveSectionGridPanel IsItemsHost="True" HorizontalAlignment="Stretch"
-                                                                                 Tag="{Binding DataContext.Id, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" />
+                                                <infra:ResponsiveSectionGridPanel IsItemsHost="True" HorizontalAlignment="Stretch" />
                                             </ItemsPanelTemplate>
                                         </GroupStyle.Panel>
                                         <GroupStyle.ContainerStyle>
