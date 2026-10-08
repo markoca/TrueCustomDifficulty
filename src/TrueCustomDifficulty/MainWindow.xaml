@@ -761,7 +761,7 @@
                                 </ListBox.ItemsPanel>
                                 <ListBox.GroupStyle>
                                     <GroupStyle>
-                                        <!-- Pair only explicitly eligible adjacent compact sections; others keep their full width. -->
+                                        <!-- Every top-level section has its own full-width row. -->
                                         <GroupStyle.Panel>
                                             <ItemsPanelTemplate>
                                                 <infra:ResponsiveSectionGridPanel IsItemsHost="True" HorizontalAlignment="Stretch" />
@@ -795,39 +795,11 @@
                                                 </Setter>
                                             </Style>
                                         </GroupStyle.ContainerStyle>
+                                        <!-- Section titles are drawn inside their cards; do not repeat them
+                                             with separator lines or reserve space for an empty header. -->
                                         <GroupStyle.HeaderTemplate>
                                             <DataTemplate>
-                                                <Grid Margin="5,18,4,7">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <Border Grid.Column="0"
-                                                            Width="48"
-                                                            Height="1"
-                                                            Margin="0,0,10,0"
-                                                            HorizontalAlignment="Right"
-                                                            Background="{StaticResource SectionAccentBrush}"
-                                                            Opacity="0.42"
-                                                            VerticalAlignment="Center" />
-                                                    <TextBlock Grid.Column="1"
-                                                               Text="{Binding Name}"
-                                                               Foreground="{StaticResource RadarMutedTextBrush}"
-                                                               FontSize="11.5"
-                                                               FontWeight="SemiBold"
-                                                               HorizontalAlignment="Center"
-                                                               VerticalAlignment="Center"
-                                                               TextOptions.TextFormattingMode="Display" />
-                                                    <Border Grid.Column="2"
-                                                            Width="48"
-                                                            Height="1"
-                                                            Margin="10,0,0,0"
-                                                            HorizontalAlignment="Left"
-                                                            Background="{StaticResource SectionAccentBrush}"
-                                                            Opacity="0.42"
-                                                            VerticalAlignment="Center" />
-                                                </Grid>
+                                                <Grid Height="0" />
                                             </DataTemplate>
                                         </GroupStyle.HeaderTemplate>
                                     </GroupStyle>
