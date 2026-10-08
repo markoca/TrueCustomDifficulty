@@ -261,34 +261,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ReferenceEquals(target.Parameter, _selectedParameter)
                 && (_selectedHitKind is null || target.Kind == _selectedHitKind));
 
-        // The Human Combat handles already draw their own circular glow.
-        // Do not overlay their rectangular mouse hit boxes as visual selection.
-        if (activeTarget is not null && !(Family == "HumanCombatProfile"
-            && activeTarget.Kind is HitKind.Horizontal or HitKind.Vertical or HitKind.HumanJoint
-                or HitKind.MixerSelect or HitKind.MixerBaseMarker))
-        {
-            dc.PushClip(new RectangleGeometry(
-                new Rect(5.0, 5.0, Math.Max(0.0, ActualWidth - 10.0),
-                    Math.Max(0.0, ActualHeight - 10.0))));
-            dc.DrawRoundedRectangle(
-                null,
-                new Pen(CloneWithOpacity(accent,
-                    _dragTarget is null ? 0.55 : 0.9),
-                    _dragTarget is null ? 1.1 : 1.6),
-                activeTarget.HitRect, 4.0, 4.0);
-            dc.Pop();
-        }
-
-        if (!string.IsNullOrWhiteSpace(_status.Text))
-        {
-            DrawCenteredText(
-                dc,
-                _status.Text,
-                new Point(ActualWidth / 2.0, Math.Max(18.0, ActualHeight - 21.0)),
-                9.0,
-                accent,
-                FontWeights.SemiBold);
-        }
+        // Handles own their circular hover/selection glow; no hit-box rectangles.
+        // Reset notices are intentionally silent across the visual control system.
     }
 
 
@@ -584,13 +558,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var foreground = enabled ? text : muted;
         var valueBrush = enabled ? accent : muted;
 
-        // Human Combat uses frameless faders: hover emphasizes the active
-        // handle only, never a rectangular outline around the whole strip.
-        if (!frameless)
-            dc.DrawRoundedRectangle(panel,
-                new Pen(selected ? accent
-                    : hover ? CloneWithOpacity(accent, 0.7) : border,
-                    selected ? 1.8 : 1.0), strip, 4.0, 4.0);
+        // All mixer strips use handle-only hover; never draw rectangular selection frames.
         if (parameter?.IsValueModifiedFromReference() == true)
         {
             dc.DrawLine(new Pen(accent, 2.5),
@@ -3277,7 +3245,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCenteredText(dc, "LOW = WHEN  |  MEDIUM / SEVERE = WHEN + HOW MUCH",
             new Point(ActualWidth / 2.0, frame.Bottom + 22.0),
             9.2, text, FontWeights.SemiBold);
-        DrawCenteredText(dc, "GOLD = CURRENT  |  GREY = BASE  |  RIGHT-CLICK RESET",
+        DrawCenteredText(dc, "GOLD = CURRENT  |  GREY = REFERENCE  |  RIGHT-CLICK RESET",
             new Point(ActualWidth / 2.0, frame.Bottom + 40.0),
             9.0, muted, FontWeights.Normal);
     }
