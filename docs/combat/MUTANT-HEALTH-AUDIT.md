@@ -96,3 +96,8 @@ Eight paired health controls are enabled:
 - Controller
 
 The remaining audited MaxHP values stay documented but are not exposed as standalone health sliders yet, because there is no corresponding verified ability-cooldown control to pair them with.
+
+
+## Production UI extension — 2026-10-09
+
+The earlier eight-family-only UI restriction is superseded by the user's explicit approval to add **all audited mutant MaxHP families**, even where no separately verifiable Ability Cooldown editor exists. Added standalone health multiplier mapping for Blinddog (63 HP), Boar (300 HP), Flesh (280 HP), Poltergeist (400 HP), Snork (150 HP) and Tushkan (19 HP). The existing eight mapped families are retained. The combined Mutant Health board is now a two-row, seven-column editor. These remain **direct prototype MaxHP scalars**, not difficulty-specific health settings. No additional cooldown mechanism is introduced. The previous eight-only notes above remain as historical release decisions, not as current UI scope. Compile, runtime and generated CFG validation still require local verification.
