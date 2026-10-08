@@ -3,13 +3,13 @@
   "policy": "docs/UI-DESIGN-LOCK.md",
   "state": "LOCKED",
   "baselineDate": "2026-10-08",
-  "approval": "UI-09 (2026-10-08): approved Human Combat axis labels, footer clearance and alignment correction",
+  "approval": "UI-09 2026-10-08: approved joint glowing graph handles and 2x attack/1x accuracy range caps",
   "lockedFiles": {
-    "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": "9eb9d0f303ad9a7c23d6319754889e6829ea436c",
+    "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs": "8c8198220ecb04ca59a51a8936e9ecc6783a76b7",
     "src/TrueCustomDifficulty/Infrastructure/ResponsiveSectionGridPanel.cs": "8992904d1d7b6e2452f5c995419b2082bcb36582",
     "src/TrueCustomDifficulty/Infrastructure/ResponsiveParameterGridPanel.cs": "86da30e8bc7de1b598baa4844b06cb93451aaf93",
     "src/TrueCustomDifficulty/MainWindow.xaml": "059a4e6b14105b159355e06af78d6e23e8481170",
     "docs/UI-MIXER-GRID-SPEC.md": "6c12f2423a54eaa84f940b7af2dca39964027d03",
-    "docs/VISUAL-CONTROL-SYSTEM.md": "4312edeb4958734ac1e1d191e46152a8bd32ec0c"
+    "docs/VISUAL-CONTROL-SYSTEM.md": "ee50874090816e10cbbeabc0e5cbd69f759483f4"
   }
 }
