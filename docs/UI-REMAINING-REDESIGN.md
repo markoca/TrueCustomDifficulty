@@ -5,10 +5,11 @@ default XAML type (slider, range, choice slider or toggle) rather than a special
 semantic visual family. It is a redesign queue, **not** an indication of broken CFG mappings.
 
 - Catalog: 238 parameters
-- Default-control entries remaining: **21**
+- Default-control entries remaining: **4**
 - Completed prior pass: MutantCombatPressure, StaminaCore, WaterStaminaPressure, RadiationTreatment (eight sliders)
 - Completed prior loot pass: StashRewardProfile, BreakableBoxYields, WorldLootLayout (ten controls)
-- Completed current pass: NpcLootLoadout (one choice slider, two numeric sliders and one two-bound range)
+- Completed prior pass: NpcLootLoadout (one choice slider, two numeric sliders and one two-bound range)
+- Completed current pass: the 17 listed orphaned controls across Combat, Health, Stamina, Economy, Equipment and Anomalies
 - Scope: visual reorganization only; preserve exact source values, min/max, steps,
   vanilla markers, reset/right-click semantics, dependencies and preset serialization
 - Do not merge sliders across different CFG mappings into synthetic gameplay formulas
@@ -16,59 +17,30 @@ semantic visual family. It is a redesign queue, **not** an indication of broken 
 
 ## Remaining by tab and section
 
-### combat / Explosives (1)
-
-- `combat.explosionDamage` — Explosion Damage (`slider`)
-
-### health / Low Health (1)
-
-- `health.lowHealthRegen` — Low-Health Recovery Rate (`slider`)
-
 ### health / Healing Amount (1)
 
 - `health.foodHealing` — Food Restores Health (`toggle`)
 
-### stamina / Traversal (1)
-
-- `stamina.vaultMaxHeight` — Maximum Vault Height (`slider`)
-
-### stamina / Encumbrance (1)
-
-- `stamina.maxCarryWeight` — Maximum Carry Weight (`slider`)
-
 ### economy / Starting Coupons (1)
 
 - `economy.startingMoney` — Starting Coupons (`slider`)
-
-### economy / Trader Stock (2)
-
-- `economy.traderAmmoStock` — Trader Ammo Stock Amount (`slider`)
-- `economy.medicStock` — Medic Stock Amount (`slider`)
-
-### economy / Services (3)
-
-- `economy.fastTravelCost` — Fast Travel Cost (`slider`)
-- `economy.upgradeCost` — Upgrade Cost (`slider`)
-- `economy.repairCostBase` — Base Repair Price (`slider`)
 
 ### economy / Coupon Rewards (2)
 
 - `economy.mainQuestReward` — Main Quest Coupon Rewards (`slider`)
 - `economy.sideQuestReward` — Side Quest Coupon Rewards (`slider`)
 
-### equipment / Item Weight (2)
 
-- `equipment.ammoWeight` — Ammo Weight (`slider`)
-- `equipment.consumableWeight` — Consumable Weight (`slider`)
+## Orphan-control consolidation (2026-10-08)
 
-### environment / Anomalies (6)
-
-- `environment.anomalyDamage` — Global Anomaly Damage (`slider`)
-- `environment.flycatcherMovementSpeed` — Flycatcher Movement Speed (`slider`)
-- `environment.flycatcherTurnSpeed` — Flycatcher Turn Speed (`slider`)
-- `environment.razorBleeding` — Razor Bleeding (`slider`)
-- `environment.diamondBleeding` — Diamond Bleeding (`slider`)
-- `environment.psyAnomalyIntensity` — Psy Anomaly Intensity (`slider`)
+- **Explosion Damage**: stand-alone source mapping remains intact, but its UI is now the BlastDamageBoard with an independent editable blast multiplier and read-only Current/Base comparison.
+- **Core Health**: Low-Health Recovery Rate moves into CoreHealthDashboard as a fifth native editor; it still writes its own LowHealthRegenHP CFG values.
+- **Physical Limits**: Maximum Vault Height and Maximum Carry Weight are grouped without linking the independent uu/kg source parameters. The WAIST/EYES/ABOVE EYES catalogue ticks remain visible and clickable on the vault's actual native range.
+- **Trader Stock**: two 0.25x-step native source controls are gathered into TraderStockBoard.
+- **Services**: Guide Fast Travel, Upgrade Cost, Base Repair Price are separate editors in ServiceCostsBoard. The base repair-price percentage is not the separate reputation pricing curve.
+- **Item Weight**: ammunition and consumables remain independent category multipliers in ItemWeightBoard.
+- **Anomalies**: AnomalyEffectsBoard keeps all six raw source domains separate: global damage, Flycatcher movement/turn retention, Razor bleeding, Diamond bleeding points, and Psy intensity.
+- No CFG writers, preset fields, source bounds/steps, or difficulty baselines were changed. Full WPF compile and visual resizing remain to be tested.
 
 ## NPC Loot & Equipment pass (2026-10-08)
 
