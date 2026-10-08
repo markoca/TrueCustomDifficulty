@@ -571,3 +571,7 @@ Three compact horizontal tracks occupy one row, left to right: Weapon Damage, He
 ### Hunger graph interaction and Your Weapons labels (2026-10-08)
 
 Hunger State Ladder: keep the top Hunger Build-up slider and the existing HUNGER POINTS/STAGE PREVIEW. Replace both three-slider arrays with connected three-handle graphs. Stage thresholds use X=the native hunger points; their three levels are visual categories only, not extra config variables. Recovery handles use Y with an actual signed recovery axis: Well-Fed positive bonus versus Medium/Severe negative loss. Click or drag only the rings to edit one real parameter at a time; preserve source ordering constraints, native snapping, reference ghosts and reset behavior. The three Your Weapons horizontal sliders show live value only, not redundant `BASE 1` caption; reference ticks remain.
+
+### Unified Hunger Effect Curve (2026-10-08)
+
+The Hunger State Ladder has one interactive 2D graph beneath the existing Hunger Points preview. X maps thresholds in hunger points; Y maps signed stamina recovery (+ bonus, - penalty). LOW edits X only; MEDIUM and SEVERE are true 2D controls, each bound to its own native threshold and recovery-loss CFG values; WELL-FED is a separate Y-only bonus ring at zero hunger. Current connected effect curve in gold, Base in dashed grey. Right-click a MEDIUM/SEVERE ring resets both underlying values, with native snapping and existing low <= medium <= severe constraints. The previous separate Threshold and Recovery plots are superseded.
