@@ -1,7 +1,7 @@
 # Mixer & Responsive Grid UI — Source of Truth
 
 **Project:** True Custom Difficulty  
-**Status:** First Anomaly Effects mixer pilot implemented in source; Windows build, Wine visual and interaction validation still pending.  
+**Status:** Anomaly Effects, Service Prices, Trader Stock and Item Weight mixer boards implemented in source; .NET/Wine validation pending for the new wave.  
 **Scope:** Visual layout and interaction only.  
 **Canonical document:** This file is the source of truth for the mixer-style parameter controls and the accompanying responsive grid layout.
 
@@ -185,9 +185,9 @@ Column thresholds below apply to **board inner width**, not the whole Window wid
 | Visual family | Treatment | Reason / constraints |
 | --- | --- | --- |
 | **AnomalyEffectsBoard** | **First mixer prototype (6 strips)** | Six independent source sliders, current tall stacked board; exercises mixed raw units and selected-difficulty vanilla references |
-| **ServiceCostsBoard** | Mixer after prototype approval (3 strips) | Different price domains; keep base repair price separate from reputation repair curve |
-| **TraderStockBoard** | Mixer after prototype approval (2 strips) | Equal numeric ranges, independent inventories; preserve 0.25x absolute steps |
-| **ItemWeightBoard** | Mixer after prototype approval (2 strips) | Equal ranges; item weight remains separate from carry limit |
+| **ServiceCostsBoard** | **Implemented in source (3 strips); runtime QA pending** | Different price domains; keep base repair price separate from reputation repair curve |
+| **TraderStockBoard** | **Implemented in source (2 strips); runtime QA pending** | Equal numeric ranges, independent inventories; preserve 0.25x absolute steps |
+| **ItemWeightBoard** | **Implemented in source (2 strips); runtime QA pending** | Equal ranges; item weight remains separate from carry limit |
 | **BreakableBoxYields** | Candidate (2 strips) | Distinct absolute step sizes; no claim that box quantity changes box occurrence |
 | **StashRewardProfile** | Candidate with caution (3 strips) | Chance vs quantity vs chance; preserve different native units and chance semantics |
 | **CoreHealthDashboard** | **Keep hybrid initially; evaluate later** | Max HP, delay, passive regen, effect scale and low-health regen are semantically distinct; meaningful widgets may remain preferable |
@@ -243,6 +243,14 @@ Family: **AnomalyEffectsBoard** (Anomalies tab → Anomalies section). Six strip
 - The original source sliders remain hidden as aggregate members; CFG writer and preset serialization remain untouched.
 - **Static safeguard:** `python3 tools/verify_mixer_layout.py` (also run by `publish.sh`) checks six IDs, native ranges, references, layout widths, XAML binding and per-member selection.
 - **Not yet accepted:** WPF compilation, Wine runtime interaction, clipping on narrow screens, and screenshots at both target sizes. Checkboxes below remain unchecked until those are actually tested.
+
+### Second-wave implementation
+
+- Service Costs, Trader Stock and Item Weight now use the same source-bound `DrawMixerStrip` and responsive row-height calculation as the Anomaly Effects pilot.
+- Service Costs retains selected-difficulty Upgrade references and shows Base Repair Cost as a percentage of its raw pricing factor (e.g. 0.70 = 70%).
+- Trader Stock retains separate 0.25x absolute steps; Item Weight retains independent 0.01 steps.
+- Clicking a strip selects its individual backing parameter for the rationale pane; no CFG writer, serialisation, parameter IDs or base values changed.
+- Full 16:9 runtime QA, keyboard/drag interaction and screenshots are still required before marking the second wave accepted.
 
 ## 11. Acceptance checklist (all required)
 
