@@ -591,3 +591,7 @@ Show WELL-FED / STAMINA RECOVERY / BONUS directly above its vertical positive bo
 ### Hunger axis tick typography (2026-10-08)
 
 The Hunger Survival Profile uses 10-DIP semibold X/Y tick labels, emphasizes the 0/100 endpoints, and labels the Y-axis neutral state `0% NORMAL`. Keep accurate values on the axes (do not replace 100 with MAX). Remove the two redundant bottom instructional captions. Preserve handle behavior, stage markers, axes and game configuration mapping.
+
+### Hunger Survival Profile — player-facing axis and stage captions (2026-10-08)
+
+The Well-Fed bonus fader shows its live `+N% RECOVERY` value without the redundant `UP = MORE RECOVERY` explanation. Keep adequate physical separation between the vertically rotated `STAMINA RECOVERY LOSS` axis title and its numeric percent ticks; the profile plot starts 20 DIPs farther right, with its title 15 DIPs farther left relative to the plot. The vertical zero tick is simply `0%` rather than `0% NORMAL`. Stage summaries distinguish the onset point from the actual recovery reduction on two lines: `LOW AT N PTS` (no invented LOW penalty), `MEDIUM AT N PTS` / `-N% RECOVERY`, and `SEVERE AT N PTS` / `-N% RECOVERY`. This is labeling and spacing only: the native X/Y edit mapping, baseline ghosts, snapped source values and reset actions stay unchanged.
