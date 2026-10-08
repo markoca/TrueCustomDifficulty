@@ -91,6 +91,13 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Breakable Box Yields | Separate ammo and dedicated grenade box quantity multipliers; does not edit item-family weights | Semantic |
 | World Loot Layout | Four independent reshuffle/removal toggles and a weapon-shuffle-dependent density track | Semantic |
 | NPC Loot & Equipment | Discrete corpse-loot selector, independent medical/ammo tracks and MIN/MAX dropped-weapon condition | Semantic |
+| Core Health + Low-Health Recovery | Existing health pool/delay/recovery dashboard plus its separate normal low-health effect | Semantic |
+| Explosion Damage | Direct blast-damage multiplier and read-only Base Preset comparison band | Semantic |
+| Physical Limits | Independent vault height (uu) / carry mass (kg) source tracks with original vault landmarks | Semantic |
+| Trader Stock | Native trader ammo and medic stock amount controls | Semantic |
+| Service Prices | Guide fast-travel, technician upgrade and separate baseline repair price | Semantic |
+| Item Weight | Independent ammunition and food/medical item mass multipliers | Semantic |
+| Anomaly Effects | Six independent raw-unit global damage, movement, bleed and Psy tracks | Semantic |
 
 The old generic duration fader-bank helper is no longer used.
 
