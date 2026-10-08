@@ -90,6 +90,7 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Stash Reward Rolls | Two absolute stash chance previews and three independent source editors (chance/count/coupons) | Semantic |
 | Breakable Box Yields | Separate ammo and dedicated grenade box quantity multipliers; does not edit item-family weights | Semantic |
 | World Loot Layout | Four independent reshuffle/removal toggles and a weapon-shuffle-dependent density track | Semantic |
+| NPC Loot & Equipment | Discrete corpse-loot selector, independent medical/ammo tracks and MIN/MAX dropped-weapon condition | Semantic |
 
 The old generic duration fader-bank helper is no longer used.
 
