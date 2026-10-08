@@ -539,3 +539,7 @@ All eight cooldown multipliers now occupy one fixed horizontal row of compact ve
 ### Combined Mutant Combat board (2026-10-08)
 
 **GLOBAL COMBAT** is the first tier of the Mutant Combat section, consisting of two larger vertical faders for mutant hit damage and ordinary attack frequency. **SPECIAL ABILITY COOLDOWNS** is the second tier, consisting of eight compact, identical, one-row mutant-specific faders that edit cooldown *wait* values and show inverse `x RETURN`. These are separate CFG paths, not an overall combat pressure formula. Grey reference markers, native slider steps, circular gold hover-only indicators and per-setting reset are maintained. The combined section is one full-width top-level 1x1 block.
+
+### Mutant Combat orthogonal slider directions (2026-10-08)
+
+The top **GLOBAL COMBAT** zone uses two long **horizontal** sliders in separate rows: Damage Per Hit and Attack Frequency. Their values increase left to right; the gold ring glows on hover, a grey Base tick remains visible, and right-click restores the individual native CFG value. The lower SPECIAL ABILITY COOLDOWNS zone remains one horizontal bank of eight **vertical** faders, with wait multipliers increasing upward. Do not mix axis mapping between these zones.
