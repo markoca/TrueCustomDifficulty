@@ -17,8 +17,8 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class MedicalHealingRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double BoardHeight = 304.0;
-    private const double CardHeight = 86.0;
+    private const double BoardHeight = 305.0;
+    private const double CardHeight = 47.0;
     private const double Gap = 10.0;
     private const string FoodHealingId = "health.foodHealing";
 
@@ -134,13 +134,11 @@ public sealed class MedicalHealingRadar : FrameworkElement
             9.5, state ? accent : muted, FontWeights.Bold);
         _hits.Add(new HitArea(switchRect, -1, HitAction.Food));
 
-        var cardWidth = (width - 32 - Gap) / 2;
+        // Exactly four full-width horizontal faders; no cards or preview.
         for (var i = 0; i < Items.Length; i++)
         {
-            var col = i % 2;
-            var row = i / 2;
-            var rect = new Rect(16 + col * (cardWidth + Gap),
-                94 + row * (CardHeight + Gap), cardWidth, CardHeight);
+            var rect = new Rect(16, 94 + i * (CardHeight + Gap),
+                width - 32, CardHeight);
             DrawMedicalCard(dc, rect, i, text, muted, border, accent, panel);
         }
     }
@@ -149,53 +147,40 @@ public sealed class MedicalHealingRadar : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         var selected = _selected == row;
-        dc.DrawRoundedRectangle(
-            selected ? CloneWithOpacity(accent, .055) : panel,
-            new Pen(selected ? CloneWithOpacity(accent, .6) : border, 1),
-            card, 4, 4);
-        _hits.Add(new HitArea(card, row, HitAction.Select));
-
         var p = _medical[row];
-        DrawText(dc, Items[row].Label, new Point(card.Left + 12, card.Top + 9),
-            10, text, FontWeights.Bold);
-        if (p is null)
-        {
-            DrawRightAlignedText(dc, "UNAVAILABLE",
-                new Point(card.Right - 12, card.Top + 9),
-                9, muted, FontWeights.Bold);
-            return;
-        }
+        if (p is null) return;
 
+        // Separate fader lanes instead of a stack of bordered cards.
+        if (row > 0)
+            dc.DrawLine(new Pen(border, .8),
+                new Point(card.Left + 3, card.Top - 4),
+                new Point(card.Right - 3, card.Top - 4));
+        DrawText(dc, Items[row].Label, new Point(card.Left + 4, card.Top + 3),
+            10.0, text, FontWeights.Bold);
         var modified = p.IsValueModifiedFromReference();
-        DrawRightAlignedText(dc, $"+{p.CurrentNumber:0.#} HP",
-            new Point(card.Right - 12, card.Top + 8),
-            12, modified ? accent : text, FontWeights.Bold);
-        // One native horizontal HP slider, not a stack of preset buttons.
-        // Its grey tick indicates the reference difficulty; no preview bar.
-        var track = new Rect(card.Left + 15, card.Top + 31,
-            card.Width - 30, 23);
+        DrawRightAlignedText(dc, $"{p.CurrentNumber:0.#} HP",
+            new Point(card.Right - 5, card.Top + 2),
+            11.5, modified ? accent : text, FontWeights.Bold);
+
+        var track = new Rect(card.Left + 8, card.Top + 19,
+            card.Width - 16, 24);
         var y = track.Top + track.Height / 2;
+        var range = Math.Max(Epsilon, p.Maximum - p.Minimum);
         var currentX = track.Left + track.Width *
-            Math.Clamp((p.CurrentNumber - p.Minimum) /
-                Math.Max(Epsilon, p.Maximum - p.Minimum), 0, 1);
+            Math.Clamp((p.CurrentNumber - p.Minimum) / range, 0, 1);
         var referenceX = track.Left + track.Width *
-            Math.Clamp((p.ReferenceNumber - p.Minimum) /
-                Math.Max(Epsilon, p.Maximum - p.Minimum), 0, 1);
+            Math.Clamp((p.ReferenceNumber - p.Minimum) / range, 0, 1);
         dc.DrawLine(new Pen(border, 3.5),
             new Point(track.Left, y), new Point(track.Right, y));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, .67), 3.5),
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, .70), 3.5),
             new Point(track.Left, y), new Point(currentX, y));
-        dc.DrawLine(new Pen(muted, 1.6),
+        dc.DrawLine(new Pen(muted, 1.7),
             new Point(referenceX, y - 9), new Point(referenceX, y + 9));
-        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.6 : 1.9),
+        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.5 : 1.8),
             new Point(currentX, y), 6.5, 6.5);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-        DrawText(dc, $"{p.Minimum:0.#} HP",
-            new Point(track.Left, card.Top + 62), 9, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, $"{p.Maximum:0.#} HP",
-            new Point(track.Right, card.Top + 62), 9, muted, FontWeights.Normal);
-        _hits.Add(new HitArea(new Rect(track.Left - 5, track.Top - 5,
-            track.Width + 10, track.Height + 10), row, HitAction.Slider));
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.6, 2.6);
+        _hits.Add(new HitArea(new Rect(track.Left - 5, track.Top - 4,
+            track.Width + 10, track.Height + 8), row, HitAction.Slider));
 
     }
 
@@ -318,9 +303,8 @@ public sealed class MedicalHealingRadar : FrameworkElement
         if (row < 0 || row >= _medical.Length ||
             _medical[row] is not { } parameter || !parameter.IsControlEnabled)
             return;
-        var trackLeft = 16 + (row % 2) *
-            ((Math.Max(560, ActualWidth) - 32 - Gap) / 2 + Gap) + 15;
-        var trackWidth = (Math.Max(560, ActualWidth) - 32 - Gap) / 2 - 30;
+        var trackLeft = 24.0;
+        var trackWidth = Math.Max(560.0, ActualWidth) - 48.0;
         var ratio = Math.Clamp((x - trackLeft) / Math.Max(1, trackWidth), 0, 1);
         SetSnapped(parameter, parameter.Minimum +
             ratio * (parameter.Maximum - parameter.Minimum));
