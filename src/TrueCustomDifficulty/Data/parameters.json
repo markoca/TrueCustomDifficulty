@@ -786,7 +786,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -897,7 +897,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -993,7 +993,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -1089,7 +1089,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -1185,7 +1185,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -1281,7 +1281,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -1391,7 +1391,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -1508,7 +1508,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -1551,7 +1551,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -1594,7 +1594,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -1637,7 +1637,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -1680,7 +1680,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -1723,7 +1723,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"
@@ -1766,7 +1766,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.05,
         "max": 2,
         "step": 0.05,
         "stepMode": "absolute"

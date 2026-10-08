@@ -447,3 +447,8 @@ The active `MutantCombatPressure` source control's `FirstLabel` is **DAMAGE FROM
 ### 2026-10-09 — Mutant Health subtitle removed
 
 The Mutant Health card displays only its centered **MUTANT HEALTH** title: remove the `live MaxHP + direct multiplier` subtitle directly beneath it. Preserve the 14 editable faders, positions, source parameters, HP readouts, ranges and reset interactions; no gameplay change.
+
+
+### 2026-10-09 — Mutant Health lower bound 0.05×
+
+All fourteen Mutant Health multiplier controls now range from **0.05× to 2.00×**, with the existing **0.05× step**, 1.00× vanilla reference, and unchanged CFG mappings. The catalog slider minimum, runtime lower label and drag/keyboard bounds must agree; 0.25× is no longer the minimum. Existing values remain unchanged unless outside the new range.

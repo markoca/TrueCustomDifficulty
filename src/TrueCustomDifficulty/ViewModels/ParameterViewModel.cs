@@ -158,7 +158,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsMutantHealthAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Each mutant row shows its live MaxHP, the vanilla HP marker on a shared absolute 0–7500 HP bar, and a direct 0.25x–3x multiplier track. Gold HP is the current result; vN is the vanilla reference. Bloodsucker also shows the Mist Bloodsucker result because both MaxHP targets share the same multiplier. Right-click a multiplier track to reset only that mutant family; press R to reset the whole health roster.";
+                       "Each mutant row shows its live MaxHP, the vanilla HP marker on a shared absolute 0–7500 HP bar, and a direct 0.05x–2x multiplier track. Gold HP is the current result; vN is the vanilla reference. Bloodsucker also shows the Mist Bloodsucker result because both MaxHP targets share the same multiplier. Right-click a multiplier track to reset only that mutant family; press R to reset the whole health roster.";
             }
 
             if (IsMutantGroupSizeAnchor)
