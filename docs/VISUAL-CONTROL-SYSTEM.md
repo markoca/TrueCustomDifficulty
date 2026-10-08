@@ -531,3 +531,7 @@ Mutant Health renders all eight equal-width vertical controls in **one row**, wi
 ### Special Ability Cooldowns — single-row faders (2026-10-08)
 
 Eight cooldown multipliers occupy one fixed horizontal row, matching Mutant Health's 8-DIP channel gaps, value typography and glowing circular handles. Each current number represents the cooldown **wait multiplier**; the smaller grey `x RETURN` value is the inverse rate (1 / wait). Drag vertically to edit the original source wait factor, not the displayed inverse rate. Grey reference markers and native bounds remain. No rectangular highlight or secondary horizontal slider.
+
+### Special Ability Cooldowns layout (2026-10-08)
+
+All eight cooldown multipliers now occupy one fixed horizontal row of compact vertical faders, matching Mutant Health. Each gold value and handle controls the original cooldown wait multiplier; the smaller grey `x RETURN` value is its inverse, not a second editable parameter. The grey Base reference tick, native ranges and steps, circular hover glow, individual right-click reset and R reset-all are preserved. Long mutant names wrap onto two lines without rectangular selection boxes.
