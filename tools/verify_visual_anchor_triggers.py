@@ -107,6 +107,20 @@ def main() -> None:
     catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
     by_id = {p["id"]: p for p in catalog["parameters"]}
     vm = VM.read_text(encoding="utf-8")
+
+    # A previous Loot UI pass accidentally wrote C# help arms ending in \\",
+    # escaping the closing quote. That makes the next source line part of the
+    # string and produces CS1010/CS1003 before WPF can even compile.
+    for family in ("NpcLootLoadout", "WorldLootLayout", "StashRewardProfile", "BreakableBoxYields"):
+        prefix = f'"{family}" => "'
+        arm = next(
+            (line.strip() for line in vm.splitlines() if line.strip().startswith(prefix)),
+            None,
+        )
+        if arm is None:
+            fail(f"missing control-help arm: {family}")
+        if not arm.endswith('",') or arm.endswith('\\\\",'):
+            fail(f"malformed or escaped C# control-help closing quote for {family}")
     toggle_families = [
         (
             "SevereFatiguePenaltyBoard",
