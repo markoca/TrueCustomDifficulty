@@ -491,7 +491,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Pen(selected ? accent
                 : hover ? CloneWithOpacity(accent, 0.7) : border,
                 selected ? 1.8 : 1.0), strip, 4.0, 4.0);
-        if (parameter?.IsModified == true)
+        if (parameter?.IsValueModifiedFromReference() == true)
         {
             dc.DrawLine(new Pen(accent, 2.5),
                 new Point(strip.Left + 3.0, strip.Top + 9.0),
