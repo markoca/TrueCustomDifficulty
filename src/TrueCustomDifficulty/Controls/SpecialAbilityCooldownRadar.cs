@@ -136,11 +136,12 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         // Global source controls are separate from each mutant's ability timer.
         // Two horizontal controls make global combat visually distinct from
         // the eight mutant-specific vertical ability timers below.
-        var globalWidth = Math.Min(660.0, content.Width - 40.0);
-        var globalLeft = content.Left + (content.Width - globalWidth) / 2.0;
+        const double globalGap = 24.0;
+        var globalWidth = (content.Width - globalGap) / 2.0;
         for (var i = 0; i < 2; i++)
-            DrawGlobalHorizontal(dc, i, new Rect(globalLeft,
-                83.0 + i * 118.0, globalWidth, 98.0),
+            DrawGlobalHorizontal(dc, i, new Rect(
+                content.Left + i * (globalWidth + globalGap),
+                138.0, globalWidth, 98.0),
                 text, muted, border, accent, panel);
 
         DrawText(dc, "SPECIAL ABILITY COOLDOWNS",
