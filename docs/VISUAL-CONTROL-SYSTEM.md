@@ -87,6 +87,9 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Trading | Transaction-direction pricing flow, condition gate and broken-item value floor | Semantic |
 | Repair | Reputation-to-repair-price curve with surcharge/base/discount regions | Semantic |
 | Ammo Distribution | Separate SNG/NATO pool composition previews plus family-weight editors | Semantic |
+| Stash Reward Rolls | Two absolute stash chance previews and three independent source editors (chance/count/coupons) | Semantic |
+| Breakable Box Yields | Separate ammo and dedicated grenade box quantity multipliers; does not edit item-family weights | Semantic |
+| World Loot Layout | Four independent reshuffle/removal toggles and a weapon-shuffle-dependent density track | Semantic |
 
 The old generic duration fader-bank helper is no longer used.
 
