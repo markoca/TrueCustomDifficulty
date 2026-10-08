@@ -162,11 +162,11 @@ def main() -> None:
     }
     for family, (array_name, expected_ids) in other_families.items():
         channel_array = re.search(
-            rf"{array_name}\\s*=\\s*\\{{(.*?)\\}};", visual, re.S,
+            rf"{array_name}\s*=\s*\{{(.*?)\}};", visual, re.S,
         )
         require(channel_array is not None, f"missing {array_name}")
         values = tuple(re.findall(
-            r'\\("(?:economy|equipment)\\.[a-zA-Z]+",',
+            r'\("(?:economy|equipment)\.[a-zA-Z]+",',
             channel_array.group(1),
         ))
         require(len(values) == len(expected_ids), f"{family}: wrong fader count")
@@ -177,7 +177,7 @@ def main() -> None:
                     f"{family}: missing native slider {source_id}")
         require(f'"{family}" => GetMixerHeight(width, {array_name}.Length)' in visual,
                 f"{family}: missing dynamic measure")
-        require(f'"{family}" => "{expected_ids[0]}"' in vm or family == "ItemWeightBoard",
+        require(f'["{expected_ids[0]}"] = "{family}"' in vm,
                 f"{family}: source family control-help absent")
         require(f'or "{family}"' in visual or f'Family is "{family}"' in visual,
                 f"{family}: rationale selection missing")
