@@ -47,6 +47,14 @@ The user requested on 2026-10-08: **"nek se zapise svaki UI dizajn kako bi ostao
 
 ## Change approvals
 
+### 2026-10-08 — UI-09 + native parameter caps — explicit approval
+
+User: "ok, nek vertikalni i horizontalni imaju glowup na hoveru i nek budu iste ikone, a njihov presek mora da je isto interactive; attack frequency nek ide do 2x umesto 4x; fire accuracy nek ide max do 1x" and "uradi sve".
+
+Authorized: same glowing ring glyph for both X/Y handles; central joint handle drags both with independent source steps and resets both on right-click; attack cap 2x and accuracy cap 1x. Prior square layout, two right-hand faders, adjacent Mutants section and all unrelated designs remain locked. Runtime QA pending.
+
+
+
 ### 2026-10-08 — UI-09 — Human Combat readability corrections
 
 **User approval:** "ajde" in direct response to the proposed four fixes: readable Y labels, separated X labels and explanation, vertical alignment of faders, and restored spacing within the existing approved Human Combat layout.
