@@ -35,7 +35,7 @@ public sealed class TabViewModel : ObservableObject
     public string SliderGuide => Id switch
     {
         "loot" => "Difficulty chooses the loot rules; Progression Rank chooses the tier inside those rules. Drop Chance controls affect how often something appears, while MIN/MAX controls affect how much can appear at once. Yellow shows your current setting; vanilla markers show the original game values. Click a marker to snap directly to it; right-click a slider to restore the selected vanilla baseline.",
-        "combat" => "Use these controls to shape how dangerous fights feel: enemy toughness, damage, attack frequency, accuracy, repeated-hit protection and explosives. Master-only special rules live in the Master tab. Yellow shows your current setting; click a vanilla marker to snap to it, or right-click any slider to restore vanilla.",
+        "combat" => "Use these controls to shape how dangerous fights feel: enemy toughness, damage, attack frequency, accuracy and explosions. Master-only special rules live in the Master tab. Yellow shows your current setting; click a vanilla marker to snap to it, or right-click any slider to restore vanilla.",
         "survival" => "These controls shape hunger, fatigue, sleep, radiation and bleeding. Rate controls decide how quickly survival states build up, while effect controls decide what those states do to you. Vanilla keeps the status-onset thresholds fixed; Master-only punishment bundles live in the Master tab. Click any vanilla marker under a slider to snap directly to that value.",
         "health" => "Health covers your HP pool, recovery and direct medical treatment. Master-only low-health and medical penalties live in the Master tab. Bleeding and radiation buildup remain in Survival; this tab controls how treatment removes them. Click any vanilla marker under a slider to snap directly to that value.",
         "stamina" => "Stamina covers the size of your stamina bar, base recovery, clear player action costs, water penalties, vault height and carry limits. Internal movement-state coefficients and emergency-recovery helper fields are documented but intentionally kept out of the normal UI. Click a vanilla marker to snap to it; right-click restores the selected baseline.",
@@ -50,8 +50,23 @@ public sealed class TabViewModel : ObservableObject
     {
         Id = id;
         Label = label;
-        Parameters = new ObservableCollection<ParameterViewModel>(parameters);
+        // Explicit order of the four visible Combat sections.
+        var ordered = Id == "combat"
+            ? parameters.OrderBy(p => p.Group switch
+            {
+                "Your Weapons" => 0,
+                "Human Enemies" => 1,
+                "Mutant Combat" => 2,
+                "Mutant Health" => 3,
+                _ => 4
+            }).ToList()
+            : parameters.ToList();
+        Parameters = new ObservableCollection<ParameterViewModel>(ordered);
         ParametersView = CollectionViewSource.GetDefaultView(Parameters);
+        if (Id == "combat")
+            ParametersView.Filter = item => item is ParameterViewModel p
+                && !p.Id.StartsWith("combat.psy", StringComparison.Ordinal)
+                && !p.Id.StartsWith("combat.accumulatedDamage", StringComparison.Ordinal);
 
         // Tabs with multiple distinct CFG domains are grouped visibly so unrelated mechanics are not presented as one undifferentiated list.
         if (Id is "loot" or "combat" or "survival" or "health" or "stamina" or "economy" or "equipment" or "alife" or "master")
@@ -70,7 +85,7 @@ public sealed class TabViewModel : ObservableObject
 
     private static string GetTabSummary(string id) => id switch
     {
-        "combat" => "Enemy toughness and damage, attack pressure, player lethality, repeated-hit protection, mutant danger and explosives.",
+        "combat" => "Enemy toughness and damage, attack pressure, player lethality, mutant danger and explosions.",
         "survival" => "Hunger, fatigue, sleeping, radiation and bleeding behavior.",
         "health" => "Player health, recovery and direct medical treatment.",
         "stamina" => "Stamina pool and recovery, action costs, movement penalties, vaulting and carry capacity.",
