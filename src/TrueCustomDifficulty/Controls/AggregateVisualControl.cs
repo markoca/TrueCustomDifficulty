@@ -3508,6 +3508,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             // Ellipsize instead of allowing long CFG labels and percentage
             // values to escape the card at 1024-wide / high-DPI layouts.
             formatted.MaxTextWidth = Math.Max(1.0, maxWidth);
+            formatted.MaxLineCount = 1;
             formatted.Trimming = TextTrimming.CharacterEllipsis;
         }
 
