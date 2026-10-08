@@ -311,7 +311,8 @@ public sealed class MainViewModel : ObservableObject
             "health.maxHP",
             "health.baseRegen",
             "health.regenDelay",
-            "health.regenerationScalar");
+            "health.regenerationScalar",
+            "health.lowHealthRegen");
 
         WireVisualAggregate(
             "combat.playerWeaponDamage",
@@ -403,6 +404,42 @@ public sealed class MainViewModel : ObservableObject
             "economy.repairDisaffection",
             "economy.repairNeutral",
             "economy.repairFriend");
+
+        // Each formerly orphaned control now belongs to a source-exact semantic
+        // panel. Cross-section members share a tab; only the anchor stays visible.
+        WireVisualAggregate(
+            "combat.explosionDamage",
+            "combat.explosionDamage");
+
+        WireVisualAggregate(
+            "stamina.vaultMaxHeight",
+            "stamina.vaultMaxHeight",
+            "stamina.maxCarryWeight");
+
+        WireVisualAggregate(
+            "economy.traderAmmoStock",
+            "economy.traderAmmoStock",
+            "economy.medicStock");
+
+        WireVisualAggregate(
+            "economy.fastTravelCost",
+            "economy.fastTravelCost",
+            "economy.upgradeCost",
+            "economy.repairCostBase");
+
+        WireVisualAggregate(
+            "equipment.ammoWeight",
+            "equipment.ammoWeight",
+            "equipment.consumableWeight");
+
+        WireVisualAggregate(
+            "environment.anomalyDamage",
+            "environment.anomalyDamage",
+            "environment.flycatcherMovementSpeed",
+            "environment.flycatcherTurnSpeed",
+            "environment.razorBleeding",
+            "environment.diamondBleeding",
+            "environment.psyAnomalyIntensity");
 
         // The NPC card combines distinct native shapes: discrete smart-loot
         // choice, medical and attached-ammo multipliers, and MIN/MAX durability.
