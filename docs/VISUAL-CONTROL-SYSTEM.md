@@ -818,3 +818,8 @@ Medical Healing uses one 400-DIP board: top row has the editable Bandage Healing
 ### 2026-10-09 — Bleeding Treatment compact shared comparison
 
 The Bleeding Treatment card is now 407 DIP tall. Top: a full-width editable Bandage bleeding-removal slider. Below: one interactive three-column chart for Medkit, Army Medkit, and Scientific Medkit on the same 0–70 bleeding-points display axis. Vanilla grey reference ticks are specific to each source (15, 35 and 25 pts), rather than normalized to 100%; the shared chart shows their real relative bleeding removal. Each column edits its original native CFG parameter with existing 5-point snapping and its own legal bounds. Only numeric values changed from Base turn gold and grow slightly, including associated +/-/%/x when present. No redundant preview, slider duplicates, explanatory footer or fabricated healing/HP units; this card is about bleeding removal, not health restored. Existing bandage and medkit CFG semantics remain unchanged.
+
+
+### 2026-10-09 — Bandage joins the Bleeding Treatment chart
+
+Bleeding Treatment now uses one interactive four-column chart for Bandage, Medkit, Army Medkit, and Scientific Medkit. A shared 0–200 bleeding-points scale compares actual values; each column has a grey vanilla/Base tick (100, 15, 35, 25 respectively), independently editable underlying CFG value, original legal range, and 5-point snapping. Remove the standalone Bandage slider, explanatory footer and duplicate preview. Numeric values follow changed-only yellow/enlarged styling; all other text stays neutral. Board height: 376 DIP.
