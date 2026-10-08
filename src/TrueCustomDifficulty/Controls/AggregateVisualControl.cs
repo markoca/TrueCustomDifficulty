@@ -570,7 +570,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush muted,
         Brush border,
         Brush accent,
-        Brush panel)
+        Brush panel,
+        bool frameless = false)
     {
         var selected = IsSelected(parameter);
         var hover = parameter is not null
@@ -579,10 +580,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         var foreground = enabled ? text : muted;
         var valueBrush = enabled ? accent : muted;
 
-        dc.DrawRoundedRectangle(panel,
-            new Pen(selected ? accent
-                : hover ? CloneWithOpacity(accent, 0.7) : border,
-                selected ? 1.8 : 1.0), strip, 4.0, 4.0);
+        // Human Combat uses frameless faders: hover emphasizes the active
+        // handle only, never a rectangular outline around the whole strip.
+        if (!frameless)
+            dc.DrawRoundedRectangle(panel,
+                new Pen(selected ? accent
+                    : hover ? CloneWithOpacity(accent, 0.7) : border,
+                    selected ? 1.8 : 1.0), strip, 4.0, 4.0);
         if (parameter?.IsValueModifiedFromReference() == true)
         {
             dc.DrawLine(new Pen(accent, 2.5),
@@ -634,6 +638,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawLine(new Pen(muted, 2.2),
             new Point(center + 13.0, baseY),
             new Point(center + 29.0, baseY));
+        if (frameless && hover)
+            dc.DrawEllipse(CloneWithOpacity(accent, 0.20), null,
+                new Point(center, currentY), 18.0, 18.0);
         dc.DrawEllipse(panel,
             new Pen(valueBrush, selected ? 2.4 : 1.7),
             new Point(center, currentY), 9.0, 9.0);
@@ -1878,21 +1885,23 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (frequency.Maximum > 2.0 || accuracy.Maximum > 1.0)
             throw new InvalidOperationException(
                 "Human Combat limits violated: Attack Frequency <= 2x, Fire Accuracy <= 1x.");
+        // The two human combat channels are frameless; keep their gameplay
+        // labels grouped, and make clear these are source multipliers.
         DrawMixerStrip(dc, frequency, "ATTACK", "FREQUENCY",
             new Rect(faderLeft, 83.0, faderWidth, MixerStripHeight),
-            text, muted, border, accent, panel);
-        DrawMixerStrip(dc, accuracy, "FIRE", "ACCURACY",
+            text, muted, border, accent, panel, frameless: true);
+        DrawMixerStrip(dc, accuracy, "SHOT", "ACCURACY",
             new Rect(faderLeft + faderWidth + 10.0, 83.0, faderWidth, MixerStripHeight),
-            text, muted, border, accent, panel);
+            text, muted, border, accent, panel, frameless: true);
 
         // A short two-line legend belongs to the plot, not to the entire panel.
         // All three draggable glyphs are the same ring-and-dot shape; position
         // and these action labels explain which CFG setting is affected.
         var legendY = Math.Max(405.0, plot.Bottom + 56.0);
-        DrawCenteredText(dc, "HEALTH  ← BOTTOM  |  LEFT → DAMAGE",
+        DrawCenteredText(dc, "BOTTOM: ENEMY HEALTH  |  LEFT: GUN DAMAGE",
             new Point(plot.Left + plot.Width / 2.0, legendY),
             9.0, text, FontWeights.SemiBold);
-        DrawCenteredText(dc, "CENTER HANDLE: DRAG BOTH",
+        DrawCenteredText(dc, "DRAG CENTER: BOTH VALUES",
             new Point(plot.Left + plot.Width / 2.0, legendY + 18.0),
             9.0, accent, FontWeights.SemiBold);
     }
