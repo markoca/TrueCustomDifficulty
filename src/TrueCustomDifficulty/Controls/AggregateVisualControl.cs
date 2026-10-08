@@ -25,6 +25,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     private HitTarget? _dragTarget;
     private HitTarget? _hoverTarget;
     private ParameterViewModel? _selectedParameter;
+    // Distinguish the two handles that edit one range-valued source parameter.
+    private HitKind? _selectedHitKind;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -99,6 +101,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         ToolTip = null;
         Cursor = Cursors.Arrow;
         _selectedParameter = null;
+        _selectedHitKind = null;
         InvalidateMeasure();
         InvalidateVisual();
     }
@@ -107,6 +110,11 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         if (e.PropertyName is nameof(ParameterViewModel.CurrentNumber)
             or nameof(ParameterViewModel.CurrentBoolean)
+            or nameof(ParameterViewModel.CurrentText)
+            or nameof(ParameterViewModel.CurrentMinNumber)
+            or nameof(ParameterViewModel.CurrentMaxNumber)
+            or nameof(ParameterViewModel.ReferenceChoiceIndex)
+            or nameof(ParameterViewModel.ReferenceNumber)
             or nameof(ParameterViewModel.CurrentDisplay)
             or nameof(ParameterViewModel.IsModified)
             or nameof(ParameterViewModel.IsControlEnabled))
@@ -226,7 +234,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var activeTarget = _dragTarget ?? _hoverTarget;
         if (activeTarget is null && IsKeyboardFocused && _selectedParameter is not null)
             activeTarget = _hitTargets.FirstOrDefault(target =>
-                ReferenceEquals(target.Parameter, _selectedParameter));
+                ReferenceEquals(target.Parameter, _selectedParameter)
+                && (_selectedHitKind is null || target.Kind == _selectedHitKind));
 
         if (activeTarget is not null)
         {
@@ -3706,6 +3715,24 @@ public sealed class AggregateVisualControl : FrameworkElement
         _hitTargets.Add(new HitTarget(parameter, hitRect, hitRect, HitKind.Toggle, 0.0, 1.0, false));
     }
 
+    private void AddChoiceTarget(ParameterViewModel parameter, Rect hitRect, Rect mapRect)
+    {
+        if (!parameter.IsControlEnabled)
+            return;
+
+        _hitTargets.Add(new HitTarget(parameter, hitRect, mapRect, HitKind.Choice,
+            parameter.ChoiceMinimum, parameter.ChoiceMaximum, false));
+    }
+
+    private void AddRangeTarget(ParameterViewModel parameter, Rect hitRect, Rect mapRect, HitKind kind)
+    {
+        if (!parameter.IsControlEnabled)
+            return;
+
+        _hitTargets.Add(new HitTarget(parameter, hitRect, mapRect, kind,
+            parameter.Minimum, parameter.Maximum, false));
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
@@ -3717,6 +3744,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         _selectedParameter = target.Parameter;
+        _selectedHitKind = target.Kind;
         SetHoverTarget(target);
 
         if (target.Kind == HitKind.Toggle)
@@ -3743,9 +3771,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         SetHoverTarget(target);
         Cursor = target?.Kind switch
         {
-            HitKind.Horizontal => Cursors.SizeWE,
+            HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
-            HitKind.Toggle => Cursors.Hand,
+            HitKind.Toggle or HitKind.Choice => Cursors.Hand,
             _ => Cursors.Arrow
         };
 
@@ -3808,9 +3836,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         _hoverTarget = target;
         ToolTip = target is null
             ? null
-            : target.Kind == HitKind.Toggle
-                ? $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset"
-                : $"{target.Parameter.Label}\nDrag or use arrow keys to adjust · Right-click = Base Preset";
+            : target.Kind switch
+            {
+                HitKind.Toggle => $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset",
+                HitKind.Choice => $"{target.Parameter.Label}\nChoose a corpse-loot package · Right-click = Base Preset",
+                HitKind.RangeMin => "NPC weapon condition MIN\nDrag or use arrow keys · Right-click = reset full range",
+                HitKind.RangeMax => "NPC weapon condition MAX\nDrag or use arrow keys · Right-click = reset full range",
+                _ => $"{target.Parameter.Label}\nDrag or use arrow keys to adjust · Right-click = Base Preset"
+            };
         InvalidateVisual();
     }
 
@@ -3823,6 +3856,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         _selectedParameter = target.Parameter;
+        _selectedHitKind = target.Kind;
         SetHoverTarget(target);
         target.Parameter.ResetToReference();
         EnforceFamilyConstraints(target.Parameter);
@@ -4454,7 +4488,10 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         Horizontal,
         Vertical,
-        Toggle
+        Toggle,
+        Choice,
+        RangeMin,
+        RangeMax
     }
 
     private sealed record HitTarget(
