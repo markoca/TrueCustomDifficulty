@@ -293,10 +293,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         var cardWidth = Math.Max(1.0, ActualWidth - 32.0);
         DrawHorizontalTrackCard(dc, P(board.First), board.FirstLabel,
             new Rect(16.0, 56.0, cardWidth, 72.0),
-            text, muted, border, accent, panel);
+            text, muted, border, accent, panel, pairedValueFormatting: true);
         DrawHorizontalTrackCard(dc, P(board.Second), board.SecondLabel,
             new Rect(16.0, 139.0, cardWidth, 72.0),
-            text, muted, border, accent, panel);
+            text, muted, border, accent, panel, pairedValueFormatting: true);
 
         // Bounded, one-line help avoids collision at 520px minimum width.
         dc.DrawText(CreateText(board.Note, 9.4, text, FontWeights.SemiBold,
@@ -3058,6 +3058,17 @@ public sealed class AggregateVisualControl : FrameworkElement
         Cell(rightParameter, rightLabel, rightX);
     }
 
+    private static string ComparablePairedValue(ParameterViewModel parameter, double rawValue)
+        => parameter.Id switch
+        {
+            "combat.mutantDamage" or "combat.mutantAttackCooldown" or
+            "stamina.waterMediumDrain" or "stamina.waterStrongDrain" => $"{rawValue:0.##}x",
+            "stamina.maxSP" => $"{rawValue:0} SP",
+            "stamina.regeneration" => $"{rawValue:0.##} SP/s",
+            "health.ecoMedkitAntirad" or "health.antiRadRadiation" => $"{rawValue:0} radiation",
+            _ => FormatCompact(rawValue)
+        };
+
     private void DrawHorizontalTrackCard(
         DrawingContext dc,
         ParameterViewModel? parameter,
@@ -3067,7 +3078,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush muted,
         Brush border,
         Brush accent,
-        Brush panel)
+        Brush panel,
+        bool pairedValueFormatting = false)
     {
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
         var textWidth = Math.Max(1.0, card.Width - 24.0);
@@ -3082,8 +3094,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        var value = $"{FriendlyValue(parameter)}  |  BASE {FormatCompact(parameter.ReferenceNumber)}";
-        dc.DrawText(CreateText(value, 10.1,
+        var value = pairedValueFormatting
+            ? $"{ComparablePairedValue(parameter, parameter.CurrentNumber)}  |  BASE {ComparablePairedValue(parameter, parameter.ReferenceNumber)}"
+            : $"{FriendlyValue(parameter)}  |  BASE {FormatCompact(parameter.ReferenceNumber)}";
+        dc.DrawText(CreateText(value, pairedValueFormatting ? 11.1 : 10.1,
                 parameter.IsControlEnabled ? accent : muted,
                 FontWeights.SemiBold, textWidth),
             new Point(card.Left + 12.0, card.Top + 22.0));
