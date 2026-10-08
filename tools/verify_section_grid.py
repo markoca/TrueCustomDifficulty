@@ -8,6 +8,9 @@ panel = (ROOT / "src/TrueCustomDifficulty/Infrastructure/ResponsiveSectionGridPa
 xaml = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml").read_text()
 required = (
     '["Stashes"] = "Breakable Containers"',
+    '["Your Weapons"] = "Explosives"',
+    '["Trader Stock"] = "Item Price Scalers"',
+    '["Equipment Wear"] = "Item Weight"',
     'private const double MinSectionWidth = 540.0;',
     'private const double ColumnGap = 16.0;',
     'i + 1 < elements.Count',
