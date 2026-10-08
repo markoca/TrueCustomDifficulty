@@ -1,7 +1,7 @@
 # Mixer & Responsive Grid UI — Source of Truth
 
 **Project:** True Custom Difficulty  
-**Status:** Approved design direction, implementation pending.  
+**Status:** First Anomaly Effects mixer pilot implemented in source; Windows build, Wine visual and interaction validation still pending.  
 **Scope:** Visual layout and interaction only.  
 **Canonical document:** This file is the source of truth for the mixer-style parameter controls and the accompanying responsive grid layout.
 
@@ -234,6 +234,16 @@ Family: **AnomalyEffectsBoard** (Anomalies tab → Anomalies section). Six strip
 - **No CFG writer, saved preset JSON, default reference or runtime gameplay change is allowed** in the mixer/grid passes.
 - If an implementation proposes a behavior not specified here, update this document as part of the same reviewed design change **before** implementing that behavior.
 
+### Implementation notes for the first pilot
+
+- The current implementation uses a **shared parameter-driven DrawMixerStrip renderer** inside AggregateVisualControl, rather than six duplicated custom WPF elements.
+- The AnomalyEffectsBoard renders exactly six columns at a wide 920-DIP board and reflows from the same source-defined column threshold and row count used during measuring.
+- The selected parameter is reported through AggregateVisualControl.ParameterSelected to MainWindow, which selects the actual source ParameterViewModel for the rationale panel. This fixes the old anchor-only rationale behavior.
+- A distinct grey Base-marker hit target is positioned beside (not directly over) the live fader rail.
+- The original source sliders remain hidden as aggregate members; CFG writer and preset serialization remain untouched.
+- **Static safeguard:** `python3 tools/verify_mixer_layout.py` (also run by `publish.sh`) checks six IDs, native ranges, references, layout widths, XAML binding and per-member selection.
+- **Not yet accepted:** WPF compilation, Wine runtime interaction, clipping on narrow screens, and screenshots at both target sizes. Checkboxes below remain unchecked until those are actually tested.
+
 ## 11. Acceptance checklist (all required)
 
 - [ ] All six pilot faders render at default 1600×900 and minimum 1024×576 without overlap, clipped labels or horizontal scrolling.
@@ -252,10 +262,10 @@ Family: **AnomalyEffectsBoard** (Anomalies tab → Anomalies section). Six strip
 
 ## 12. Phased execution and change discipline
 
-1. **Spec only (this commit):** establish this file and cross-link it from project UI docs. No app code should be changed in this phase.
-2. **Reusable fader foundation:** input/rendering/helper architecture and regression checks, preserving existing family wiring.
-3. **Anomaly Effects pilot:** six working strips, exact per-source values, explicit rationale activation.
-4. **Pilot verification:** build + Wine visual pass; fix readability/hit targets/breakpoints before expanding.
+1. **Specification (completed):** establish this canonical contract and cross-link it from the UI documentation.
+2. **Reusable fader foundation (coded, awaiting runtime verification):** shared DrawMixerStrip and responsive wrap/height helpers within AggregateVisualControl, with new selection notification and Base-marker snap hit zones.
+3. **Anomaly Effects pilot (coded, awaiting runtime verification):** six source-exact vertical strips, one/member reset and explicit rationale activation.
+4. **Pilot verification (pending):** build + Wine visual pass; fix readability/hit targets/breakpoints before expanding.
 5. **Additional eligible families:** Services, Trader Stock, Item Weight, then selectively Box Yields/Stash Rewards.
 6. **Outer semantic grid:** arrange compatible small boards side-by-side within their existing tab and section, keep complex full-width boards full-width.
 7. **Final polish:** typography consistency, whitespace, section rhythm, clipping/DPI audit, and documented acceptance pass.
