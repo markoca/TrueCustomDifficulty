@@ -76,8 +76,11 @@ public sealed class ResponsiveSectionGridPanel : Panel
         for (var i = 0; i < elements.Count; i++)
         {
             var row = new List<UIElement> { elements[i] };
-            if (canPair && i + 1 < elements.Count
-                && IsCompatiblePair(elements[i], elements[i + 1]))
+            // Human Enemies + Your Weapons is an explicitly fixed 2x1 pair.
+            // Other legacy pairs retain their responsive behavior.
+            if (i + 1 < elements.Count
+                && IsCompatiblePair(elements[i], elements[i + 1])
+                && (canPair || IsHumanWeaponsPair(elements[i], elements[i + 1])))
             {
                 row.Add(elements[++i]);
             }
@@ -86,14 +89,16 @@ public sealed class ResponsiveSectionGridPanel : Panel
         return rows;
     }
 
+    private static bool IsHumanWeaponsPair(UIElement left, UIElement right)
+        => GroupOf(left)?.Name is "Human Enemies"
+            && GroupOf(right)?.Name is "Your Weapons";
+
+    private static CollectionViewGroup? GroupOf(UIElement element)
+        => (element as GroupItem)?.Content as CollectionViewGroup
+            ?? (element as FrameworkElement)?.DataContext as CollectionViewGroup;
+
     private static bool IsCompatiblePair(UIElement left, UIElement right)
     {
-        // GroupItem frequently exposes the CollectionViewGroup through Content,
-        // while DataContext may inherit the parent view model. Resolve both.
-        static CollectionViewGroup? GroupOf(UIElement element)
-            => (element as GroupItem)?.Content as CollectionViewGroup
-                ?? (element as FrameworkElement)?.DataContext as CollectionViewGroup;
-
         var first = GroupOf(left);
         var second = GroupOf(right);
         return first?.Name is string label
