@@ -47,7 +47,17 @@ The user requested on 2026-10-08: **"nek se zapise svaki UI dizajn kako bi ostao
 
 ## Change approvals
 
-No post-baseline UI design changes approved yet.
+### 2026-10-08 — UI-09, UI-08 — Human Combat Profile redesign
+
+**User approval:** "human combat profile graf bi mogao da bude kvadratan a ne da se prosiruje, a njegovi slajderi desno od toga kao vertikalne kontrole, i onda pored te sekcije ubacimo neku drugu".
+
+**Authorized scope:** Replace the old wide Human Combat Profile plot with a square X/Y plot, move Attack Frequency and Fire Accuracy to two vertical faders at its right, and place the adjacent Combat **Mutants** section alongside **Human Enemies** on sufficiently wide editors. Preserve original axes, source CFG ranges/steps, presets, other panels and all other section pairings.
+
+**Affected lock IDs:** UI-09 (Human Combat Profile visual family) and UI-08 (approved adjacent section pairing); implementation in `AggregateVisualControl.cs`, `ResponsiveSectionGridPanel.cs`; canonical design contracts in `VISUAL-CONTROL-SYSTEM.md` and `UI-MIXER-GRID-SPEC.md`.
+
+**Implementation:** Approved source revision on main branch dated 2026-10-08. Static regression checks required; local .NET build and Wine screenshot acceptance remain pending.
+
+**Lock disposition:** Newly documented layout is locked against unrelated future changes. Refresh exactly the affected tracked files in `UI-DESIGN-LOCK.json` for this explicit authorization; all other baseline snapshots remain unchanged.
 
 When the user later authorizes a specific design change, append a dated entry here stating:
 - Exact affected UI registry IDs and relevant source files.
