@@ -404,6 +404,20 @@ public sealed class MainViewModel : ObservableObject
             "economy.repairNeutral",
             "economy.repairFriend");
 
+        // Distinct stash chance/count rolls share one visual board without
+        // changing the underlying generator operations or their independence.
+        WireVisualAggregate(
+            "loot.cheapStashGrenadeChance",
+            "loot.cheapStashGrenadeChance",
+            "loot.cheapStashGrenadeQuantity",
+            "loot.expensiveStashMoneyChance");
+
+        // Box yield scalers are separate from the existing ammo-family weights.
+        WireVisualAggregate(
+            "loot.destructibleAmmoQuantity",
+            "loot.destructibleAmmoQuantity",
+            "loot.destructibleGrenadeQuantity");
+
         WireVisualAggregate(
             "loot.ammoBoxWeight918",
             "loot.ammoBoxWeight918",
