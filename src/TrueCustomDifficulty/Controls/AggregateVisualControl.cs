@@ -1759,6 +1759,21 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     // Two independently editable native CFG axes plus two more distinct controls.
     // The crosshair is a visual pairing, not an effective DPS, TTK or hit-rate model.
+    private static void DrawHumanAxisHandle(
+        DrawingContext dc, Point center, Brush accent, Brush panel, bool hovered, bool selected)
+    {
+        if (hovered || selected)
+        {
+            dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.20 : 0.12),
+                null, center, hovered ? 16.0 : 12.0, hovered ? 16.0 : 12.0);
+            dc.DrawEllipse(null, new Pen(CloneWithOpacity(accent, 0.65), 1.3),
+                center, 10.0, 10.0);
+        }
+        dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 2.8 : 1.8),
+            center, 7.0, 7.0);
+        dc.DrawEllipse(accent, null, center, 2.6, 2.6);
+    }
+
     private void DrawHumanCombatProfile(
         DrawingContext dc,
         Brush text,
@@ -1825,24 +1840,30 @@ public sealed class AggregateVisualControl : FrameworkElement
         var currentPen = new Pen(CloneWithOpacity(accent, 0.65), 1.2) { DashStyle = DashStyles.Dot };
         dc.DrawLine(currentPen, new Point(healthX, plot.Top), new Point(healthX, plot.Bottom));
         dc.DrawLine(currentPen, new Point(plot.Left, damageY), new Point(plot.Right, damageY));
-        dc.DrawEllipse(panel, new Pen(accent, 2.0),
-            new Point(healthX, damageY), 6.5, 6.5);
-        dc.DrawEllipse(accent, null, new Point(healthX, damageY), 2.8, 2.8);
+        DrawHumanAxisHandle(dc, new Point(healthX, damageY), accent, panel,
+            _hoverTarget?.Kind == HitKind.HumanJoint,
+            _selectedHitKind == HitKind.HumanJoint);
 
         // Separate handles prevent accidental simultaneous changes when a user
         // clicks the crosshair or a blank part of the plotting area.
         var healthHandle = new Point(healthX, plot.Bottom + 10.0);
-        dc.DrawEllipse(panel, new Pen(accent, IsSelected(health) ? 2.6 : 1.8),
-            healthHandle, 7.0, 7.0);
-        dc.DrawEllipse(accent, null, healthHandle, 2.5, 2.5);
+        DrawHumanAxisHandle(dc, healthHandle, accent, panel,
+            _hoverTarget?.Kind == HitKind.Horizontal && ReferenceEquals(_hoverTarget.Parameter, health),
+            IsSelected(health) && _selectedHitKind == HitKind.Horizontal);
         AddHorizontalTarget(health, new Rect(healthX - 17.0, plot.Bottom + 1.0, 34.0, 22.0),
             plot, health.Minimum, health.Maximum);
 
         var damageHandle = new Point(plot.Left - 11.0, damageY);
-        dc.DrawRectangle(panel, new Pen(accent, IsSelected(damage) ? 2.6 : 1.8),
-            new Rect(damageHandle.X - 6.0, damageHandle.Y - 6.0, 12.0, 12.0));
+        DrawHumanAxisHandle(dc, damageHandle, accent, panel,
+            _hoverTarget?.Kind == HitKind.Vertical && ReferenceEquals(_hoverTarget.Parameter, damage),
+            IsSelected(damage) && _selectedHitKind == HitKind.Vertical);
         AddVerticalTarget(damage, new Rect(plot.Left - 28.0, damageY - 14.0, 27.0, 28.0),
             plot, damage.Minimum, damage.Maximum);
+
+        if (health.IsControlEnabled && damage.IsControlEnabled)
+            _hitTargets.Add(new HitTarget(health,
+                new Rect(healthX - 14.0, damageY - 14.0, 28.0, 28.0),
+                plot, HitKind.HumanJoint, health.Minimum, health.Maximum, false));
 
         // Retain native source units/steps and individual right-hand rationale.
         var faderWidth = Math.Min(140.0, Math.Max(128.0,
@@ -1856,7 +1877,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel);
 
         DrawCenteredText(dc,
-            "BOTTOM CIRCLE = HEALTH  |  LEFT SQUARE = DAMAGE  |  POINT = PREVIEW",
+            "BOTTOM = HEALTH  |  LEFT = DAMAGE  |  CENTER = BOTH",
             new Point(ActualWidth / 2.0, Math.Max(422.0, plot.Bottom + 72.0)), 9.2, text, FontWeights.SemiBold);
     }
 
@@ -4149,6 +4170,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
+            HitKind.HumanJoint => Cursors.SizeAll,
             HitKind.Toggle or HitKind.Choice or HitKind.MixerBaseMarker or HitKind.MixerSelect => Cursors.Hand,
             _ => Cursors.Arrow
         };
@@ -4240,6 +4262,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
         target.Parameter.ResetToReference();
+        if (target.Kind == HitKind.HumanJoint)
+            P("combat.npcWeaponDamage")?.ResetToReference();
         EnforceFamilyConstraints(target.Parameter);
         _status.ShowTransient($"{ShortLabel(target.Parameter)} reset to Base Preset.");
         InvalidateVisual();
@@ -4324,6 +4348,23 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         if (target.Kind == HitKind.Toggle)
             return;
+
+        if (target.Kind == HitKind.HumanJoint)
+        {
+            var h = P("combat.npcHealth");
+            var d = P("combat.npcWeaponDamage");
+            if (h is null || d is null || !h.IsControlEnabled || !d.IsControlEnabled)
+                return;
+            var x = Math.Clamp((point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width), 0.0, 1.0);
+            var y = Math.Clamp((target.MapRect.Bottom - point.Y) / Math.Max(1.0, target.MapRect.Height), 0.0, 1.0);
+            h.CurrentNumber = Snap(h, h.Minimum + x * (h.Maximum - h.Minimum));
+            d.CurrentNumber = Snap(d, d.Minimum + y * (d.Maximum - d.Minimum));
+            EnforceFamilyConstraints(h);
+            EnforceFamilyConstraints(d);
+            _status.ClearTransient();
+            InvalidateVisual();
+            return;
+        }
 
         double ratio;
 
@@ -4932,6 +4973,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         Horizontal,
         Vertical,
+        HumanJoint,
         MixerBaseMarker,
         MixerSelect,
         Toggle,
