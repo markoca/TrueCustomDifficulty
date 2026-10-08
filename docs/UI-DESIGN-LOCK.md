@@ -371,3 +371,7 @@ The previous read-only absolute HP comparison bars and separate 0–200% drag-sl
 Four medicine cards form a legible 2x2 grid: BANDAGE, MEDKIT, ARMY MEDKIT, SCIENTIFIC MEDKIT. Each displays the **actual source HP** and healing % relative to the selected difficulty's reference, with a yellow HP numeric readout only when modified. The interactive controls are explicit `-`, `HALF`, `NORMAL`, `MAX`, `+` buttons, no slider/preview. `HALF` sets half reference HP, `NORMAL` restores the selected difficulty reference, `MAX` applies the real catalog maximum, and +/- adjust by the existing native tick. All values clamp/snap to the original source CFG bounds; keyboard arrows nudge the selected item; right-click resets only the chosen item or food toggle, and R resets the five board parameters. Click the Food row to toggle; the status is ON/OFF. Modified-state propagation of the medical board now includes changes to the Food Boolean.
 
 Keep all original medical healing source IDs, reference difficulty, preset serialization, writer rules and Master-only layering unchanged. XAML control height increased to 390 DIP to fit the new layout. All other approved boards unchanged; local publish/Wine verification pending.
+
+### 2026-10-08 — MedicalHealingRadar CS0136 compile correction
+
+Resolved the C# CS0136 name-shadowing error in `OnKeyDown` by renaming the R-reset foreach variable from `p` to `medicalItem`, preserving all reset behavior and the separately declared selected parameter `p`. No UI, source mapping or editor behavior change. Fresh publish/Wine check pending.
