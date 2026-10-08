@@ -75,6 +75,23 @@ public sealed class ResponsiveSectionGridPanel : Panel
     {
         var elements = InternalChildren.Cast<UIElement>()
             .Where(item => item.Visibility != Visibility.Collapsed).ToList();
+
+        // The live WPF grouped view can enumerate Mutants before Your Weapons,
+        // regardless of the catalog's source order. Position the two approved
+        // Combat sections by explicit group identity, not by list index.
+        if (Tag is "combat")
+        {
+            var humans = elements.FirstOrDefault(item => GroupName(item) == "Human Enemies");
+            var weapons = elements.FirstOrDefault(item => GroupName(item) == "Your Weapons");
+            if (humans is not null && weapons is not null)
+            {
+                elements.Remove(humans);
+                elements.Remove(weapons);
+                elements.Insert(0, weapons);
+                elements.Insert(0, humans);
+            }
+        }
+
         var rows = new List<List<UIElement>>();
         var canPair = (width - ColumnGap) / 2.0 >= MinSectionWidth;
         for (var i = 0; i < elements.Count; i++)
@@ -95,16 +112,20 @@ public sealed class ResponsiveSectionGridPanel : Panel
         return rows;
     }
 
+    private static string? GroupName(UIElement element)
+        => (element as FrameworkElement)?.Tag as string
+            ?? GroupOf(element)?.Name as string;
+
     private static CollectionViewGroup? GroupOf(UIElement element)
         => (element as GroupItem)?.Content as CollectionViewGroup
             ?? (element as FrameworkElement)?.DataContext as CollectionViewGroup;
 
     private static bool IsCompatiblePair(UIElement left, UIElement right)
     {
-        var first = GroupOf(left);
-        var second = GroupOf(right);
-        return first?.Name is string label
-            && second?.Name is string next
+        var label = GroupName(left);
+        var next = GroupName(right);
+        return label is not null
+            && next is not null
             && CompactPairs.TryGetValue(label, out var partner)
             && partner == next;
     }
