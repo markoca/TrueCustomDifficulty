@@ -1689,30 +1689,23 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawHeader(dc, "YOUR WEAPONS", "", text, muted, accent);
         var channels = new[]
         {
-            ("combat.playerWeaponDamage", "WEAPON", "DAMAGE"),
-            ("combat.playerHeadshotMultiplier", "HEADSHOT", "DAMAGE"),
-            ("combat.weaponJamming", "WEAPON", "JAMMING")
+            ("combat.playerWeaponDamage", "WEAPON DAMAGE"),
+            ("combat.playerHeadshotMultiplier", "HEADSHOT DAMAGE"),
+            ("combat.weaponJamming", "WEAPON JAMMING")
         };
-        const int columns = 3;
-        const double margin = 20.0;
-        var usableWidth = Math.Max(1.0, ActualWidth - 2.0 * margin);
-        var width = Math.Min(148.0, (usableWidth - (columns - 1) * MixerStripGap) / columns);
-        var bankWidth = columns * width + (columns - 1) * MixerStripGap;
-        var left = (ActualWidth - bankWidth) / 2.0;
+        const double gap = 12.0;
+        const double margin = 18.0;
+        var cellWidth = (Math.Max(520.0, ActualWidth) - 2.0 * margin - 2.0 * gap) / 3.0;
         for (var index = 0; index < channels.Length; index++)
         {
             var channel = channels[index];
-            var column = index;
-            var rect = new Rect(left + column * (width + MixerStripGap),
-                MixerStripTop,
-                width, MixerStripHeight);
-            DrawMixerStrip(dc, P(channel.Item1), channel.Item2, channel.Item3,
+            var rect = new Rect(margin + index * (cellWidth + gap),
+                60.0, cellWidth, 76.0);
+            DrawHorizontalTrackCard(dc, P(channel.Item1), channel.Item2,
                 rect, text, muted, border, accent, panel);
         }
-        var footerY = MixerStripTop + MixerStripHeight + 8.0;
-        DrawCenteredText(dc, "GOLD = CURRENT  |  GREY = BASE  |  RIGHT-CLICK TO RESET",
-            new Point(ActualWidth / 2.0, footerY),
-            9.5, muted, FontWeights.SemiBold);
+        DrawCenteredText(dc, "GOLD = CURRENT  |  GREY TICK = BASE  |  RIGHT-CLICK TO RESET",
+            new Point(ActualWidth / 2.0, 150.0), 9.3, muted, FontWeights.SemiBold);
     }
 
     private void DrawPlayerWeaponProfile(
@@ -4816,7 +4809,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 465.0,
             "HumanCombatProfile" => 465.0,
-            "PlayerWeaponProfile" => MixerStripTop + MixerStripHeight + MixerFooterHeight,
+            "PlayerWeaponProfile" => 169.0,
             "CoreHealthDashboard" => 475.0,
             "SevereFatiguePenaltyBoard" => 390.0,
             "MasterMedicalHealing" => 390.0,
