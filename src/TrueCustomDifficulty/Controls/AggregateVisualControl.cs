@@ -380,8 +380,51 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(18.0, 338.0), 9.0, muted, FontWeights.Normal);
     }
 
-    // Unlike a radar, six mixed units cannot share a meaningful normalized
-    // radius. Keep each native range with labelled units and exact Base ticks.
+    // Mixer channels are a visual projection of the existing six catalog IDs,
+    // never independent values or a new aggregated gameplay multiplier.
+    private static readonly (string Id, string Top, string Bottom)[] AnomalyMixerChannels =
+    {
+        ("environment.anomalyDamage", "ANOMALY", "DAMAGE"),
+        ("environment.flycatcherMovementSpeed", "FLYCATCHER", "MOVE"),
+        ("environment.flycatcherTurnSpeed", "FLYCATCHER", "TURN"),
+        ("environment.razorBleeding", "RAZOR", "BLEED"),
+        ("environment.diamondBleeding", "DIAMOND", "BLEED"),
+        ("environment.psyAnomalyIntensity", "PSY", "DRAIN")
+    };
+
+    private const double MixerSidePadding = 16.0;
+    private const double MixerStripGap = 10.0;
+    private const double MixerStripTop = 56.0;
+    private const double MixerStripHeight = 280.0;
+    private const double MixerRowGap = 12.0;
+    private const double MixerFooterHeight = 30.0;
+
+    private static int GetMixerColumns(double boardWidth, int channelCount)
+    {
+        var inner = Math.Max(0.0, boardWidth - 2.0 * MixerSidePadding);
+        var columns = inner >= 852.0 ? 6
+            : inner >= 596.0 ? 4
+            : inner >= 420.0 ? 3
+            : inner >= 272.0 ? 2 : 1;
+        columns = Math.Min(columns, channelCount);
+
+        // A threshold is only advisory; never squeeze a strip below 128 DIPs.
+        while (columns > 1
+            && (inner - (columns - 1) * MixerStripGap) / columns < 128.0)
+        {
+            columns--;
+        }
+        return Math.Max(1, columns);
+    }
+
+    private static double GetMixerHeight(double boardWidth, int channelCount)
+    {
+        var columns = GetMixerColumns(boardWidth, channelCount);
+        var rows = (channelCount + columns - 1) / columns;
+        return MixerStripTop + rows * MixerStripHeight
+            + (rows - 1) * MixerRowGap + MixerFooterHeight;
+    }
+
     private void DrawAnomalyEffectsBoard(
         DrawingContext dc,
         Brush text,
@@ -390,32 +433,158 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        DrawHeader(dc, "ANOMALY EFFECTS",
-            "independent damage, snare, bleeding and Psy effect tuning",
+        DrawHeader(dc, "ANOMALY EFFECTS / MIXER",
+            "six independent CFG channels  |  grey = Base Preset, gold = current",
             text, muted, accent);
 
-        var width = Math.Max(1.0, ActualWidth - 32.0);
-        var tracks = new (string Id, string Label)[]
+        var count = AnomalyMixerChannels.Length;
+        var inner = Math.Max(1.0, ActualWidth - 2.0 * MixerSidePadding);
+        var columns = GetMixerColumns(ActualWidth, count);
+        var width = Math.Max(128.0,
+            (inner - (columns - 1) * MixerStripGap) / columns);
+
+        for (var index = 0; index < count; index++)
         {
-            ("environment.anomalyDamage", "GLOBAL ANOMALY DAMAGE"),
-            ("environment.flycatcherMovementSpeed", "FLYCATCHER / MOVEMENT REMAINING"),
-            ("environment.flycatcherTurnSpeed", "FLYCATCHER / TURN SPEED REMAINING"),
-            ("environment.razorBleeding", "RAZOR / BLEEDING MULTIPLIER"),
-            ("environment.diamondBleeding", "DIAMOND / BLEEDING POINTS"),
-            ("environment.psyAnomalyIntensity", "PSY ANOMALY / INTENSITY")
-        };
-        for (var index = 0; index < tracks.Length; index++)
-        {
-            var item = tracks[index];
-            DrawHorizontalTrackCard(dc, P(item.Id), item.Label,
-                new Rect(16.0, 56.0 + index * 84.0, width, 72.0),
-                text, muted, border, accent, panel, pairedValueFormatting: true);
+            var source = AnomalyMixerChannels[index];
+            var row = index / columns;
+            var column = index % columns;
+            var rect = new Rect(
+                MixerSidePadding + column * (width + MixerStripGap),
+                MixerStripTop + row * (MixerStripHeight + MixerRowGap),
+                width,
+                MixerStripHeight);
+
+            DrawMixerStrip(dc, P(source.Id), source.Top, source.Bottom,
+                rect, text, muted, border, accent, panel);
         }
 
-        DrawText(dc, "LOWER FLYCATCHER SPEED = STRONGER SLOW  |  DIAMOND USES RAW POINTS",
-            new Point(18.0, 565.0), 9.1, text, FontWeights.SemiBold);
-        DrawText(dc, "LOCAL EFFECTS ARE NOT DERIVED FROM THE GLOBAL DAMAGE MULTIPLIER",
-            new Point(18.0, 585.0), 9.0, muted, FontWeights.Normal);
+        var rowCount = (count + columns - 1) / columns;
+        var footerY = MixerStripTop + rowCount * MixerStripHeight
+            + (rowCount - 1) * MixerRowGap + 8.0;
+        dc.DrawText(CreateText(
+                "HIGHER SOURCE VALUE = HIGHER FADER  |  FLYCATCHER = SPEED REMAINING",
+                9.5, muted, FontWeights.SemiBold,
+                Math.Max(1.0, ActualWidth - 2.0 * MixerSidePadding)),
+            new Point(MixerSidePadding, footerY));
+    }
+
+    private void DrawMixerStrip(
+        DrawingContext dc,
+        ParameterViewModel? parameter,
+        string topLabel,
+        string bottomLabel,
+        Rect strip,
+        Brush text,
+        Brush muted,
+        Brush border,
+        Brush accent,
+        Brush panel)
+    {
+        var selected = IsSelected(parameter);
+        var hover = parameter is not null
+            && ReferenceEquals(_hoverTarget?.Parameter, parameter);
+        var enabled = parameter?.IsControlEnabled == true;
+        var foreground = enabled ? text : muted;
+        var valueBrush = enabled ? accent : muted;
+
+        dc.DrawRoundedRectangle(panel,
+            new Pen(selected ? accent
+                : hover ? CloneWithOpacity(accent, 0.7) : border,
+                selected ? 1.8 : 1.0), strip, 4.0, 4.0);
+        if (parameter?.IsModified == true)
+        {
+            dc.DrawLine(new Pen(accent, 2.5),
+                new Point(strip.Left + 3.0, strip.Top + 9.0),
+                new Point(strip.Left + 3.0, strip.Bottom - 9.0));
+        }
+
+        DrawMixerCentered(dc, topLabel,
+            new Point(strip.Left + strip.Width / 2.0, strip.Top + 8.0),
+            strip.Width - 13.0, 10.7, foreground, FontWeights.Bold);
+        DrawMixerCentered(dc, bottomLabel,
+            new Point(strip.Left + strip.Width / 2.0, strip.Top + 22.0),
+            strip.Width - 13.0, 10.7, foreground, FontWeights.Bold);
+
+        if (parameter is null)
+        {
+            DrawMixerCentered(dc, "CFG UNAVAILABLE",
+                new Point(strip.Left + strip.Width / 2.0, strip.Top + 58.0),
+                strip.Width - 13.0, 10.0, muted, FontWeights.SemiBold);
+            return;
+        }
+
+        var center = strip.Left + strip.Width / 2.0;
+        DrawMixerCentered(dc, MixerValue(parameter, parameter.CurrentNumber),
+            new Point(center, strip.Top + 38.0),
+            strip.Width - 14.0, 13.2, valueBrush, FontWeights.Bold);
+        DrawMixerCentered(dc, "BASE " + MixerValue(parameter, parameter.ReferenceNumber),
+            new Point(center, strip.Top + 59.0),
+            strip.Width - 14.0, 10.1, muted, FontWeights.SemiBold);
+        DrawMixerCentered(dc, MixerValue(parameter, parameter.Maximum),
+            new Point(center, strip.Top + 78.0),
+            strip.Width - 14.0, 9.5, muted, FontWeights.Normal);
+
+        // Vertical source scale: top is real maximum, bottom real minimum.
+        // The strip layout normalizes only screen position, never the stored CFG.
+        var rail = new Rect(center - 3.0, strip.Top + 100.0, 6.0, 150.0);
+        var currentY = ValueToY(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, rail);
+        var baseY = ValueToY(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, rail);
+
+        dc.DrawLine(new Pen(border, 5.0),
+            new Point(center, rail.Top), new Point(center, rail.Bottom));
+        dc.DrawLine(new Pen(CloneWithOpacity(valueBrush, enabled ? 0.75 : 0.3), 5.0),
+            new Point(center, rail.Bottom), new Point(center, currentY));
+
+        // Base marker lives next to the rail to avoid stealing the live
+        // handle's drag area. Its clickable rectangle is registered last.
+        dc.DrawLine(new Pen(muted, 2.2),
+            new Point(center + 13.0, baseY),
+            new Point(center + 29.0, baseY));
+        dc.DrawEllipse(panel,
+            new Pen(valueBrush, selected ? 2.4 : 1.7),
+            new Point(center, currentY), 9.0, 9.0);
+        dc.DrawLine(new Pen(valueBrush, 2.2),
+            new Point(center - 7.0, currentY),
+            new Point(center + 7.0, currentY));
+
+        DrawMixerCentered(dc, MixerValue(parameter, parameter.Minimum),
+            new Point(center, strip.Top + 260.0),
+            strip.Width - 14.0, 9.5, muted, FontWeights.Normal);
+
+        if (!enabled)
+            return;
+
+        // Drag/click owns only this exact source value. Existing Snap() and
+        // centralized constraints determine the actual stored numeric step.
+        AddVerticalTarget(parameter,
+            new Rect(center - 15.0, rail.Top - 7.0, 30.0, rail.Height + 14.0),
+            rail, parameter.Minimum, parameter.Maximum);
+        _hitTargets.Add(new HitTarget(parameter,
+            new Rect(center + 16.0, baseY - 8.0, 20.0, 16.0),
+            rail, HitKind.MixerBaseMarker, parameter.Minimum,
+            parameter.Maximum, false));
+    }
+
+    private static string MixerValue(ParameterViewModel parameter, double raw)
+        => parameter.Id == "environment.diamondBleeding"
+            ? $"{raw:0.#} pts"
+            : $"{raw:0.##}x";
+
+    private void DrawMixerCentered(
+        DrawingContext dc,
+        string label,
+        Point centerTop,
+        double maxWidth,
+        double size,
+        Brush color,
+        FontWeight weight)
+    {
+        var formatted = CreateText(label, size, color, weight, maxWidth);
+        dc.DrawText(formatted, new Point(
+            centerTop.X - formatted.WidthIncludingTrailingWhitespace / 2.0,
+            centerTop.Y));
     }
 
     // The smart-loot extra package is a categorical CFG list, not a multiplier.
@@ -4498,7 +4667,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             "BlastDamageBoard" => 305.0,
             "ServiceCostsBoard" => 385.0,
-            "AnomalyEffectsBoard" => 628.0,
+            "AnomalyEffectsBoard" => GetMixerHeight(width, AnomalyMixerChannels.Length),
             "NpcLootLoadout" => 748.0, // reserve footer/status lane below the native input cards
             "WorldLootLayout" => width >= 720.0 ? 340.0 : 450.0,
             "StashRewardProfile" => 485.0,
