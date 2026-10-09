@@ -875,32 +875,65 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(margin + half + gap, 155.0, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
 
-        // Audited NPC_Ammo_Smart Newbie counts (12 Gauge, 5.45, .45 ACP).
-        // Read-only examples, updated at the same half-up precision as the writer.
+        // Audited NPC_Ammo_Smart Newbie counts: read-only actual generator
+        // ranges, using the same half-up integer rounding as the CFG writer.
+        // Only the count range is a modified numeric token: caliber names
+        // (including their embedded digits) remain neutral.
         var examples = new (string Label, int Min, int Max)[]
         {
             ("12 GA", 2, 6), ("5.45", 15, 20), (".45 ACP", 8, 12)
         };
-        var sampleCard = new Rect(margin, 238.0, width, 43.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 0.8), sampleCard, 4.0, 4.0);
-        DrawText(dc,
-            corpse.CurrentText.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)
-                ? "NPC AMMO SAMPLES · NEWBIE RANK"
-                : "NPC AMMO SAMPLES · WHEN MEDICINE + AMMO",
-            new Point(sampleCard.Left + 10.0, sampleCard.Top + 5.0),
-            9.7, muted, FontWeights.Bold);
+        var ammoPackageActive = corpse.CurrentText.Split(',',
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Contains("NPC_Ammo_Smart", StringComparer.Ordinal);
+        var countsModified = ammo.IsValueModifiedFromReference();
+        var sampleCard = new Rect(margin, 238.0, width, 104.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+            sampleCard, 4.0, 4.0);
+        DrawText(dc, "NPC AMMO PREVIEW",
+            new Point(sampleCard.Left + 11.0, sampleCard.Top + 7.0),
+            10.3, ammoPackageActive ? text : muted, FontWeights.Bold);
+        DrawRightAlignedText(dc, "NEWBIE SOURCE",
+            new Point(sampleCard.Right - 11.0, sampleCard.Top + 7.0),
+            9.4, muted, FontWeights.SemiBold);
+
+        const double previewGap = 8.0;
+        const double previewInset = 11.0;
+        var previewWidth = (sampleCard.Width - 2.0 * previewInset
+            - 2.0 * previewGap) / 3.0;
         for (var i = 0; i < examples.Length; i++)
         {
-            var e = examples[i];
-            var low = Math.Max(0, (int)Math.Floor(e.Min * ammo.CurrentNumber + 0.5));
-            var high = Math.Max(0, (int)Math.Floor(e.Max * ammo.CurrentNumber + 0.5));
-            DrawText(dc, $"{e.Label} {low}–{high}",
-                new Point(sampleCard.Left + 11.0 + i * (width - 22.0) / 3.0,
-                    sampleCard.Top + 22.0),
-                10.6, text, FontWeights.SemiBold);
+            var sample = examples[i];
+            var tile = new Rect(sampleCard.Left + previewInset
+                    + i * (previewWidth + previewGap),
+                sampleCard.Top + 29.0, previewWidth, 52.0);
+            dc.DrawRoundedRectangle(
+                ammoPackageActive ? CloneWithOpacity(panel, 0.95)
+                    : CloneWithOpacity(panel, 0.55),
+                new Pen(CloneWithOpacity(border, ammoPackageActive ? 0.85 : 0.5), 0.9),
+                tile, 4.0, 4.0);
+            var low = Math.Max(0, (int)Math.Floor(sample.Min * ammo.CurrentNumber + 0.5));
+            var high = Math.Max(0, (int)Math.Floor(sample.Max * ammo.CurrentNumber + 0.5));
+            DrawCenteredText(dc, sample.Label,
+                new Point(tile.Left + tile.Width / 2.0, tile.Top + 5.0),
+                10.0, muted, FontWeights.SemiBold);
+            // Include the en dash in the numeric highlight and apply the
+            // approved +1.2 DIP only when this source differs from Base.
+            DrawCenteredText(dc, $"{low}–{high}",
+                new Point(tile.Left + tile.Width / 2.0, tile.Top + 22.0),
+                countsModified ? 14.2 : 13.0,
+                countsModified ? accent : ammoPackageActive ? text : muted,
+                FontWeights.SemiBold);
         }
 
-        var rangeCard = new Rect(margin, 290.0, width, 97.0);
+        if (!ammoPackageActive)
+        {
+            DrawText(dc, "Inactive until Medicine + Ammo is selected",
+                new Point(sampleCard.Left + 12.0, sampleCard.Top + 86.0),
+                9.5, muted, FontWeights.Normal);
+        }
+
+        var rangeCard = new Rect(margin, 352.0, width, 97.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             rangeCard, 4.0, 4.0);
         DrawText(dc, "DROPPED WEAPON CONDITION",
@@ -4977,7 +5010,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "ItemWeightBoard" => GetMixerHeight(width, WeightMixerChannels.Length),
             "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
             "AnomalyEffectsBoard" => GetMixerHeight(width, AnomalyMixerChannels.Length),
-            "NpcLootLoadout" => 401.0,
+            "NpcLootLoadout" => 463.0,
             "WorldLootLayout" => 238.0,
             "StashRewardProfile" => width >= 750.0 ? 263.0 : 418.0,
             "PhysicalLimits" => 335.0,
