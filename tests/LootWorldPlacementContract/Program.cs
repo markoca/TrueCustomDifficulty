@@ -57,6 +57,7 @@ internal static class Program
             }
             Case("Veteran",true,false,null,false,true,true,"detectors-and-blueprints");
             Case("Veteran",true,false,null,true,true,false,"detectors-and-attachments");
+            Case("Veteran",true,true,0.5,false,true,false,"weapons-and-detectors");
             Check(Passed==20,"Expected 20 world-weapon, attachment, blueprint and detector production writer scenarios");
             Console.WriteLine($"PASS: {Passed} World Loot placement production BPatch scenarios");
             Console.WriteLine("NOT VERIFIED: original physical manifest ZIP provenance, Unreal loading, gameplay");
