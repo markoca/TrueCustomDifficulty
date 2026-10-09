@@ -1,3 +1,5 @@
+> **Phase 13 original CFG audit (2026-10-10):** The uploaded decoded original source confirms all **64/64** Director MaxCount field values, all **64** physical AgentType identities and four exact rank labels. The app loads **18/19** source-defined A-Life inputs; MutantGeneric is intentionally catalog-only, not a player-facing slider or a parent ceiling. Source provenance, writer tests and limitations: [Phase 13 audit](DEEP-CFG-AUDIT-PHASE13-ALIFE-2026-10-10.md). Lair population, refill and encounter frequency remain separate, excluded systems; nothing here establishes Unreal runtime array patch behavior.
+
 # A-Life Spawn Mapping
 
 ## Current A-Life UI layout (2026-10-09)
