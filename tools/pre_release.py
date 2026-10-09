@@ -47,6 +47,8 @@ WRITERS = (
     ("alife-bpatch-writer", "ALifePatchContract", "alife-patch-fixtures", 94),
     ("loot-direct-bpatch-writer", "LootDirectPatchContract", "loot-direct-patch-fixtures", 117),
     ("loot-special-generators-writer", "LootSpecialGeneratorsContract", "loot-special-generators-fixtures", 63),
+    ("loot-world-removals-writer", "LootWorldRemovalsContract", "loot-world-removals-fixtures", 27),
+    ("loot-world-placement-writer", "LootWorldPlacementContract", "loot-world-placement-fixtures", 20),
 )
 MANUAL = (
     "S.T.A.L.K.E.R. 2 Combat BPatch loading and gameplay effects",

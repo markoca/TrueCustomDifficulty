@@ -250,3 +250,47 @@ jobs:
           path: audit/loot-special-generators-fixtures
           if-no-files-found: ignore
           retention-days: 7
+
+  loot-world-removals-windows:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+      - name: Install .NET 10 WPF dependencies
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Validate all five randomized physical world actor removal domains
+        shell: pwsh
+        run: dotnet run --project tests/LootWorldRemovalsContract/LootWorldRemovalsContract.csproj -c Release -- --out audit/loot-world-removals-fixtures
+      - name: Preserve physical world actor removal CFGs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: loot-world-removals-contract
+          path: audit/loot-world-removals-fixtures
+          if-no-files-found: ignore
+          retention-days: 7
+
+  loot-world-placement-windows:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+      - name: Install .NET 10 WPF dependencies
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Verify world weapon, attachment, blueprint and detector BPatch invariants
+        shell: pwsh
+        run: dotnet run --project tests/LootWorldPlacementContract/LootWorldPlacementContract.csproj -c Release -- --out audit/loot-world-placement-fixtures
+      - name: Preserve shuffled world placement CFGs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: loot-world-placement-contract
+          path: audit/loot-world-placement-fixtures
+          if-no-files-found: ignore
+          retention-days: 7

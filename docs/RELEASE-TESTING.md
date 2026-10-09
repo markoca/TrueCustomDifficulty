@@ -320,3 +320,9 @@ removal, weapon/attachment/blueprint shuffle, detectors or loose loot.
 Those require Phase 14B2. The generator templates and embedded redirect
 manifests also require original-source provenance and gameplay checks.
 Do not treat registered tests as PASS before CI execution.
+
+### Phase 14B2: Physical world Loot writer contracts
+
+Run `dotnet run --project tests/LootWorldRemovalsContract/LootWorldRemovalsContract.csproj -c Release -- --out audit/loot-world-removals-fixtures` (**27 randomized-domain physical actor removal tests**) and `dotnet run --project tests/LootWorldPlacementContract/LootWorldPlacementContract.csproj -c Release -- --out audit/loot-world-placement-fixtures` (**20 weapon/attachment/blueprint/detector placement tests**) in Windows .NET 10. Both are registered in the pre-release writer runner and as `loot-world-removals-windows` and `loot-world-placement-windows` CI jobs. Expected results are invariant-based, never seeded snapshots. Covers all 10 previously untested special world Loot source controls. See [Phase 14B2](DEEP-CFG-AUDIT-PHASE14B2-WORLD-LOOT-2026-10-10.md).
+
+These two suites validate actual app → BPatch paths and randomized target legality, not the original archive provenance or Unreal runtime.
