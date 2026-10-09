@@ -981,3 +981,15 @@ This is a visual presentation change, not a global rescale: preserve sliders' na
 - Disabled controls remain non-editable and do not receive active handle halos. Preserve focus styling, keyboard/touch/mouse behavior, native snapping, preset reset, CFG and value-reference calculations. Handle-only hover is strictly visual; no new gameplay parameter or hit surface.
 
 The canonical drawing parameters are deliberately fixed in one class and the WPF equivalent is a single named effect resource. Do not introduce another custom blur, radius, selector-opacity or full-card hover wash in later UI work without an explicit user-approved change. Local publish + Wine acceptance is still required.
+
+### Hunger Survival Profile — fixed stage caption clearance (2026-10-09)
+
+**Current authoritative override** to the 2026-10-08 one-line stage-footer notes: real Wine view showed long `MEDIUM AT N PTS | -N% STAMINA RECOVERY` and `SEVERE AT N PTS | -N% STAMINA RECOVERY` sentences truncated in three narrow footer columns. Keep the profile's plotting/interactive geometry and aligned read-only preview, but switch to separate short centered footer lines within three fixed plot-aligned columns:
+
+| Stage | Line 1 | Line 2 | Line 3 |
+| --- | --- | --- | --- |
+| LOW | LOW | AT N PTS | — |
+| MEDIUM | MEDIUM | AT N PTS | -N% RECOVERY |
+| SEVERE | SEVERE | AT N PTS | -N% RECOVERY |
+
+The editable threshold and penalty numbers color independently and grow +1.2 DIP **only if source-modified**. The chart Y-axis already defines the meaning of RECOVERY. Footer begins at frame offset +269 DIP, below X-tick text; stage names start +270, threshold centers +296, penalty centers +316. Stage zones are plot-aligned thirds and clipped only as a safety boundary, not to hide long text. Increase the chart frame from 294 to 344 DIP, using the same `HungerProfileHeight` constant in renderer and measured height `CompactHungerHeight` so WPF scroll layout reserves sufficient space. Redundant drag-help subtitle is removed. The 0–100 axes, horizontal alignment, handles, native parameter bounds, reference ghosts, hover glow and cfg writer are unchanged.

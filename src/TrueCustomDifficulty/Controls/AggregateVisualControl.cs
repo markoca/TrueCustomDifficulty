@@ -2981,11 +2981,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Game-facing state profile: the bonus is now edited in the top row.
         // The lower plot spans the same full-width panel as the stage preview.
         var frame = new Rect(17.0, preview.Bottom + 55.0,
-            Math.Max(460.0, ActualWidth - 34.0), 294.0);
+            Math.Max(460.0, ActualWidth - 34.0), HungerProfileHeight);
         DrawCenteredText(dc, "HUNGER SURVIVAL PROFILE",
             new Point(ActualWidth / 2.0, frame.Top - 36.0), 11.5, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "DRAG GOLD RINGS TO CHANGE WHEN HUNGER HITS AND HOW HARD",
-            new Point(ActualWidth / 2.0, frame.Top - 17.0), 9.2, muted, FontWeights.Normal);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), frame, 4.0, 4.0);
         // Leave room only for Y tick labels/title; no separate Well-Fed lane.
         var plot = new Rect(axis.Left - 2.0, frame.Top + 43.0,
@@ -3077,32 +3075,42 @@ public sealed class AggregateVisualControl : FrameworkElement
         StateNode(severe, severePenalty,
             new Point(sevX, sevY), new Point(baseSevX, baseSevY), "SEVERE");
 
-        // Three horizontally allocated one-line readouts stay fixed even when
-        // the draggable thresholds move together. Clip each to its own third,
-        // so a narrow layout never paints over the next stage's label.
-        var footerLeft = frame.Left + 8.0;
-        var footerWidth = (frame.Width - 16.0) / 3.0;
-        var footerY = frame.Top + 259.0;
-        void StageCaption(int index, string caption, params bool[] changed)
+        // The X-axis labels end above this dedicated footer. Each state gets
+        // three reserved, short lines instead of a clipped paragraph.
+        // Keep the rows anchored to the plot rather than moving with handles.
+        var footerTop = frame.Top + 269.0;
+        var stageWidth = plot.Width / 3.0;
+        void StageCaption(int index, string stageName,
+            ParameterViewModel threshold, ParameterViewModel? recoveryLoss)
         {
-            var cell = new Rect(footerLeft + index * footerWidth,
-                footerY - 2.0, footerWidth, 20.0);
+            var cell = new Rect(plot.Left + index * stageWidth,
+                footerTop, stageWidth, 63.0);
             dc.PushClip(new RectangleGeometry(cell));
-            DrawCenteredNumericChanges(dc, caption,
-                new Point(cell.Left + cell.Width / 2.0, footerY),
-                9.0, text, accent, FontWeights.Bold, changed);
+            var cx = cell.Left + cell.Width / 2.0;
+
+            DrawCenteredText(dc, stageName,
+                new Point(cx, footerTop + 1.0),
+                10.0, text, FontWeights.Bold);
+            DrawCenteredNumericChanges(dc,
+                $"AT {threshold.CurrentNumber:0} PTS",
+                new Point(cx, footerTop + 27.0),
+                10.0, text, accent, FontWeights.SemiBold,
+                threshold.IsValueModifiedFromReference());
+
+            if (recoveryLoss is not null)
+            {
+                DrawCenteredNumericChanges(dc,
+                    $"-{recoveryLoss.CurrentNumber * 100:0}% RECOVERY",
+                    new Point(cx, footerTop + 47.0),
+                    9.6, text, accent, FontWeights.SemiBold,
+                    recoveryLoss.IsValueModifiedFromReference());
+            }
             dc.Pop();
         }
-        StageCaption(0, $"LOW AT {low.CurrentNumber:0} PTS",
-            low.IsValueModifiedFromReference());
-        StageCaption(1,
-            $"MEDIUM AT {medium.CurrentNumber:0} PTS | -{mediumPenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
-            medium.IsValueModifiedFromReference(),
-            mediumPenalty.IsValueModifiedFromReference());
-        StageCaption(2,
-            $"SEVERE AT {severe.CurrentNumber:0} PTS | -{severePenalty.CurrentNumber * 100:0}% STAMINA RECOVERY",
-            severe.IsValueModifiedFromReference(),
-            severePenalty.IsValueModifiedFromReference());
+
+        StageCaption(0, "LOW", low, null);
+        StageCaption(1, "MEDIUM", medium, mediumPenalty);
+        StageCaption(2, "SEVERE", severe, severePenalty);
 
     }
 
@@ -3646,6 +3654,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Shared density for the large Survival/Health aggregate panels. Rows are
     // column-aware; no independent sliders are stacked inside the same hit area.
     private const double CompactTrackHeight = 82.0;
+    // Reserved space for plot ticks plus three independently readable stage lines.
+    private const double HungerProfileHeight = 344.0;
     private const double CompactRowGap = 8.0;
     private const double CompactColumnGap = 10.0;
 
@@ -4861,7 +4871,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double CompactHungerHeight(double width)
     {
         var previewBottom = 55.0 + CompactTrackHeight + 12.0 + 80.0;
-        var frameBottom = previewBottom + 55.0 + 294.0;
+        var frameBottom = previewBottom + 55.0 + HungerProfileHeight;
         return frameBottom + 12.0;
     }
 

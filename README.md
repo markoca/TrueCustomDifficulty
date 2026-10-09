@@ -1074,3 +1074,7 @@ This is a visual presentation change, not a global rescale: preserve sliders' na
 - Disabled controls remain non-editable and do not receive active handle halos. Preserve focus styling, keyboard/touch/mouse behavior, native snapping, preset reset, CFG and value-reference calculations. Handle-only hover is strictly visual; no new gameplay parameter or hit surface.
 
 The canonical drawing parameters are deliberately fixed in one class and the WPF equivalent is a single named effect resource. Do not introduce another custom blur, radius, selector-opacity or full-card hover wash in later UI work without an explicit user-approved change. Local publish + Wine acceptance is still required.
+
+### Hunger Survival Profile stage captions (2026-10-09)
+
+Fixed the Survival > Hunger State Ladder lower chart footer after a Wine screenshot showed that Medium/Severe stage descriptions were cut off and crowding the Hunger Points X-axis. LOW / MEDIUM / SEVERE now each have a fixed three-line-safe stage cell under the axis: stage name, `AT N PTS`, and (only for Medium/Severe) a concise `-N% RECOVERY`. A shared 344-DIP height constant reserves sufficient room both in rendering and WPF measure; no repeated dragging instruction is shown. Source-linked yellow numerics, axes, stage handles, baselines and gameplay settings are unchanged. Publish under Wine and inspect at minimum and normal window widths before accepting the result.
