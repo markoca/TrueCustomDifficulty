@@ -1066,3 +1066,27 @@ The visual catalog is a **selection system, not a slider-only library**. Before 
 For medical bars the plotted shared HP axis is 0–200; native editable ceilings are 140, 170 and 200 for Medkit, Army and Scientific. For bleeding-removal bars the same 0–200 visual-unit principle applies with native editable ceilings 200, 30, 70 and 50. Each vertical target's `MapRect` begins at the plotted native ceiling, and its `VisualMaximum` is the real source maximum, preserving exact native chart Y mapping and hit testing; data remain in 5-point steps. Radiation's two lanes share a fixed visual 0–200 scale, but the Scientific lane's editable `MapRect` physically stops at 120 while Anti-Rad continues to 200. Grey beyond-native tails are never hit targets. The HP ruler reads real 25–200 MaxHealth in 5-HP steps and does not depict current in-game HP damage.
 
 All charts use true CFG source points, the existing `ControlHoverGlow`, a tiny muted per-source reference tick, current-value-only gold highlighting (+1.2 DIP when changed), neutral labels and accessible direct mouse/keyboard source edits. Food Healing retains its neutral square checkbox with minimal-border hover. Existing `HealthTypography` stays in force and no other tab's controls are restyled.
+
+### 2026-10-09 — Approved Stamina four-panel wireframe (implemented on main)
+
+The approved four-card Stamina arrangement is implemented with **two visual families and one split editor family**, not an aggregate all-in-one knob.
+
+| Tab order | Source-bound UI family | Editable sources | Actual interface |
+| --- | --- | ---: | --- |
+| 1. Stamina & Movement | `AggregateVisualControl / StaminaCore` | 4 | Compact 2×2 horizontal native sliders; Vault body-reference landmark snapping |
+| 2. Stamina Usage | `ActionCostsRadar / Mode=Usage` | 6 | Two columns of three action SP costs, Movement and Melee |
+| 3. Exhaustion & Recovery | `ActionCostsRadar / Mode=Exhaustion` | 6 | Independent Sprint Lock/Recovery Below on common 0–60 SP axis; four native recovery/slowing/time source cards |
+| 4. Water Stamina Drain | `AggregateVisualControl / WaterStaminaPressure` | 2 | Two compact native multiplier sliders in one row |
+
+**Actual Stamina source map (18 visible controls, no synthetic parameters):**
+- Core: `stamina.maxSP`, `stamina.regeneration`, `stamina.vaultMaxHeight`, `stamina.maxCarryWeight`.
+- Usage: `stamina.sprintCost`, `stamina.jumpCost`, `stamina.vaultCost`, `stamina.meleeNormalCost`, `stamina.meleeStrongCost`, `stamina.butstockCost`.
+- Exhaustion: `stamina.sprintDisableThreshold`, `stamina.lowRecoveryThreshold`, `stamina.aimRegenCoef`, `stamina.sprintRecoveryDelay`, `stamina.lowRecoveryStrength`, `stamina.lowRecoveryDuration`.
+- Water: `stamina.waterMediumDrain`, `stamina.waterStrongDrain`.
+
+The two `ActionCostsRadar` instances bind to the same live `AllParameters` store but each mode subscribes to, paints and resets **only its own six source values**. Their anchors are `stamina.sprintCost` and `stamina.sprintDisableThreshold` respectively; `ParameterViewModel.IsControlVisible` hides other family members as standalone rows. Their modified-state provider scopes are likewise independent. The explicitly configured Stamina sort places the anchor rows in approved order. The water family uses `DrawWaterStaminaBoard` rather than reusing the unrelated radiation treatment renderer.
+
+Exhaustion threshold tracks have a *common visual domain* of 0–60 actual SP with independently native-limited hit mapping (Sprint Lock 0..32.2, Recovery Below 1..60). The right recovery cards do not normalize different units onto the threshold axis. Usage's native raw SP values are editable via existing relative-to-reference two-times rails and retain original snapping/constraints. Water retains source-native 0–2x and 0–3x domains and the native Medium ≤ Deep ordering. All 18 source parameters remain part of the original catalog/preset/writer graph. The five internal movement-state coefficient definitions stay unexposed.
+
+Visual contract: compact dark panels, one centered gold section title, neutral source labels and units, value above rail, only genuinely modified numeric tokens highlighted +1.2 DIP, understated grey reference marks, handle-only gold hover. No redundant explanatory text, current-vs-Base tables or made-up simulation. Wide mode height 240 DIP for Exhaustion with threshold and 2×2 cards side-by-side; narrow mode 419 DIP with thresholds stacked above the 2×2 bank. Confirm the WPF live result in Wine; source checks alone do not establish visual acceptance.
+
