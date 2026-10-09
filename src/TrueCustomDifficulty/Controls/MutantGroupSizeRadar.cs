@@ -213,7 +213,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             info.Label,
             new Point(card.Left + 7.0, card.Top + 5.0),
             9.5,
-            modified ? accent : text,
+            text,
             FontWeights.Bold);
 
         DrawCenteredText(
@@ -232,7 +232,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             modified ? accent : muted,
             FontWeights.Bold);
 
-        var track = new Rect(card.Left + 7.0, card.Top + 26.0, card.Width - 14.0, 13.0);
+        var track = new Rect(card.Left + 10.0, card.Top + 26.0, card.Width - 20.0, 12.0);
         var y = track.Top + track.Height / 2.0;
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
 
