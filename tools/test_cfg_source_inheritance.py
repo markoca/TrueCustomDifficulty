@@ -14,7 +14,9 @@ Medium : struct.begin {refkey=Empty}
 struct.end
 """
 
-def probe(key: str, expected: str, text: str = SOURCE,\n          *, filename: str = "GameData/DifficultyPrototypes.cfg",\n          prototype: str = "Medium"):
+def probe(key: str, expected: str, text: str = SOURCE,
+          *, filename: str = "GameData/DifficultyPrototypes.cfg",
+          prototype: str = "Medium"):
     point = dict(parameterId="combat.originalInheritance", scope="baseGame",
                  file="GameData/DifficultyPrototypes.cfg",
                  prototype="Medium", nodePath=["MutantCombatDifficulty"],
