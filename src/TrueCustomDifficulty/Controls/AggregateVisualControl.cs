@@ -76,6 +76,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Cursor = Cursors.Arrow;
         ToolTipService.SetInitialShowDelay(this, 550);
         ToolTipService.SetShowDuration(this, 10000);
+        Loaded += (_, _) => RebindParameters();
     }
 
     protected override Size MeasureOverride(Size availableSize)
@@ -4656,7 +4657,23 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
     private ParameterViewModel? P(string id)
-        => _parameters.TryGetValue(id, out var parameter) ? parameter : null;
+    {
+        if (_parameters.TryGetValue(id, out var parameter))
+            return parameter;
+
+        // Some WPF data templates resolve Family before their Window-level
+        // Parameters binding has fully settled. Recover the real source VM
+        // from the bound collection instead of showing a false missing-CFG
+        // placeholder. Rebind on Loaded also covers reused template instances.
+        parameter = Parameters?.OfType<ParameterViewModel>()
+            .FirstOrDefault(p => string.Equals(p.Id, id, StringComparison.Ordinal));
+        if (parameter is not null && GetFamilyIds(Family).Contains(id))
+        {
+            _parameters[id] = parameter;
+            parameter.PropertyChanged += Parameter_PropertyChanged;
+        }
+        return parameter;
+    }
 
     private bool IsSelected(ParameterViewModel? parameter)
         => parameter is not null && ReferenceEquals(parameter, _selectedParameter);
