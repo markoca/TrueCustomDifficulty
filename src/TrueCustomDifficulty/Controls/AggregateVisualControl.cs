@@ -288,6 +288,15 @@ public sealed class AggregateVisualControl : FrameworkElement
             && target.MapRect.Width > 100.0 && target.MapRect.Height > 100.0)
             return;
         var range = Math.Max(0.000001, target.VisualMaximum - target.VisualMinimum);
+        // The two NPC condition handles share one rail except when they
+        // nearly overlap, where both real centers are separated by 7 DIP.
+        // Hover glow must follow the rendered center, not the track center.
+        var conditionSplit = Family == "NpcLootLoadout" && source.IsRange
+            && Math.Abs(ValueToX(source.CurrentMinNumber, target.VisualMinimum,
+                    target.VisualMaximum, target.MapRect, false)
+                - ValueToX(source.CurrentMaxNumber, target.VisualMinimum,
+                    target.VisualMaximum, target.MapRect, false)) < 16.0;
+        var conditionOffset = conditionSplit ? 7.0 : 0.0;
         var center = target.Kind switch
         {
             HitKind.Horizontal => new Point(
@@ -302,12 +311,12 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ValueToX(source.CurrentMinNumber, target.VisualMinimum,
                     target.VisualMaximum, target.MapRect, false),
                 target.MapRect.Top + target.MapRect.Height / 2.0
-                    - (Family == "NpcLootLoadout" ? 8.0 : 0.0)),
+                    - conditionOffset),
             HitKind.RangeMax => new Point(
                 ValueToX(source.CurrentMaxNumber, target.VisualMinimum,
                     target.VisualMaximum, target.MapRect, false),
                 target.MapRect.Top + target.MapRect.Height / 2.0
-                    + (Family == "NpcLootLoadout" ? 8.0 : 0.0)),
+                    + conditionOffset),
             HitKind.Choice when Family == "NpcLootLoadout" =>
                 new Point(double.NaN, double.NaN), // chip hover uses chip border
             HitKind.Choice => new Point(
@@ -933,59 +942,108 @@ public sealed class AggregateVisualControl : FrameworkElement
                 9.5, muted, FontWeights.Normal);
         }
 
-        var rangeCard = new Rect(margin, 352.0, width, 97.0);
+        // This is a dual-ended native RANGE, not two normal slider
+        // headers. Show the two editable figures together in the middle
+        // of the card, immediately above their shared physical rail.
+        var rangeCard = new Rect(margin, 352.0, width, 130.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             rangeCard, 4.0, 4.0);
         DrawText(dc, "DROPPED WEAPON CONDITION",
             new Point(rangeCard.Left + 11.0, rangeCard.Top + 8.0),
-            10.7, text, FontWeights.Bold);
-        var changedMin = Math.Abs(condition.CurrentMinNumber - 0.25) > Epsilon;
-        var changedMax = Math.Abs(condition.CurrentMaxNumber - 0.50) > Epsilon;
-        DrawText(dc, "MIN", new Point(rangeCard.Right - 180.0, rangeCard.Top + 9.0),
-            10.0, muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, $"{condition.CurrentMinNumber * 100.0:0}%",
-            new Point(rangeCard.Right - 113.0, rangeCard.Top + 7.0),
-            changedMin ? 12.6 : 11.4, changedMin ? accent : text, FontWeights.Bold);
-        DrawText(dc, "MAX", new Point(rangeCard.Right - 97.0, rangeCard.Top + 9.0),
-            10.0, muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, $"{condition.CurrentMaxNumber * 100.0:0}%",
-            new Point(rangeCard.Right - 13.0, rangeCard.Top + 7.0),
-            changedMax ? 12.6 : 11.4, changedMax ? accent : text, FontWeights.Bold);
+            10.8, text, FontWeights.Bold);
 
-        var rail = new Rect(rangeCard.Left + 20.0, rangeCard.Top + 49.0,
+        var minModified = Math.Abs(condition.CurrentMinNumber - 0.25) > Epsilon;
+        var maxModified = Math.Abs(condition.CurrentMaxNumber - 0.50) > Epsilon;
+        var center = rangeCard.Left + rangeCard.Width / 2.0;
+        var minReadoutX = center - 73.0;
+        var maxReadoutX = center + 73.0;
+
+        // Fixed central readouts never collide, even at MIN == MAX,
+        // unlike labels following handles to the same X coordinate.
+        DrawCenteredText(dc, "MIN",
+            new Point(minReadoutX, rangeCard.Top + 27.0),
+            9.6, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "MAX",
+            new Point(maxReadoutX, rangeCard.Top + 27.0),
+            9.6, muted, FontWeights.Bold);
+        DrawCenteredText(dc, $"{condition.CurrentMinNumber * 100.0:0}%",
+            new Point(minReadoutX, rangeCard.Top + 43.0),
+            minModified ? 14.2 : 13.0,
+            minModified ? accent : text, FontWeights.SemiBold);
+        DrawCenteredText(dc, $"{condition.CurrentMaxNumber * 100.0:0}%",
+            new Point(maxReadoutX, rangeCard.Top + 43.0),
+            maxModified ? 14.2 : 13.0,
+            maxModified ? accent : text, FontWeights.SemiBold);
+        dc.DrawLine(new Pen(CloneWithOpacity(border, 0.60), 0.8),
+            new Point(center, rangeCard.Top + 28.0),
+            new Point(center, rangeCard.Top + 61.0));
+
+        var rail = new Rect(rangeCard.Left + 20.0, rangeCard.Top + 81.0,
             Math.Max(1.0, rangeCard.Width - 40.0), 12.0);
         var y = rail.Top + rail.Height / 2.0;
         var xMin = ValueToX(condition.CurrentMinNumber, 0.0, 1.0, rail, false);
         var xMax = ValueToX(condition.CurrentMaxNumber, 0.0, 1.0, rail, false);
-        dc.DrawLine(new Pen(border, 5.0), new Point(rail.Left, y),
+
+        var backPen = new Pen(CloneWithOpacity(border, 0.85), 3.5)
+        {
+            StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round
+        };
+        dc.DrawLine(backPen, new Point(rail.Left, y),
             new Point(rail.Right, y));
-        // Ghost the common authored 25%-50% condition band; one vanilla
-        // 35%-45% outlier is intentionally untouched until a custom edit.
+
+        // The common 25-50% authored baseline is a faint SOLID reference
+        // segment with tiny endpoint ticks (not conspicuous dashed blocks).
+        // The isolated 35-45% vanilla weapon-row outlier remains untouched
+        // until the condition is actually edited.
         var ghostMin = ValueToX(0.25, 0.0, 1.0, rail, false);
         var ghostMax = ValueToX(0.50, 0.0, 1.0, rail, false);
-        dc.DrawLine(new Pen(muted, 3.0) { DashStyle = DashStyles.Dash },
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.32), 3.0),
             new Point(ghostMin, y), new Point(ghostMax, y));
-        dc.DrawLine(new Pen(accent, 5.0),
-            new Point(xMin, y), new Point(xMax, y));
-        var minPoint = new Point(xMin, y - 8.0);
-        var maxPoint = new Point(xMax, y + 8.0);
-        dc.DrawLine(new Pen(accent, 1.4), minPoint, new Point(xMin, y));
-        dc.DrawLine(new Pen(accent, 1.4), maxPoint, new Point(xMax, y));
-        dc.DrawEllipse(panel, new Pen(accent, 1.8), minPoint, 6.0, 6.0);
-        dc.DrawEllipse(panel, new Pen(accent, 1.8), maxPoint, 6.0, 6.0);
-        dc.DrawEllipse(accent, null, minPoint, 2.2, 2.2);
-        dc.DrawEllipse(accent, null, maxPoint, 2.2, 2.2);
-        // Both endpoints share a generous rail hit area. Hit testing
-        // resolves actual proximity to the two drawn handle centers.
+        var ghostTick = new Pen(CloneWithOpacity(muted, 0.50), 1.0);
+        dc.DrawLine(ghostTick, new Point(ghostMin, y - 6.0),
+            new Point(ghostMin, y + 6.0));
+        dc.DrawLine(ghostTick, new Point(ghostMax, y - 6.0),
+            new Point(ghostMax, y + 6.0));
+
+        // The active selected condition band is always the only prominent
+        // colored length, with both endpoints ON its single centerline.
+        var activePen = new Pen(accent, 4.5)
+        {
+            StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round
+        };
+        dc.DrawLine(activePen, new Point(xMin, y), new Point(xMax, y));
+
+        // At nearly coincident X coordinates, briefly stagger the two
+        // SAME-looking handles so each remains visible/clickable. Otherwise
+        // both lie directly on the rail; no permanent odd vertical offset.
+        var overlapping = Math.Abs(xMax - xMin) < 16.0;
+        var handleSeparation = overlapping ? 7.0 : 0.0;
+        var minPoint = new Point(xMin, y - handleSeparation);
+        var maxPoint = new Point(xMax, y + handleSeparation);
+        if (overlapping)
+        {
+            var stem = new Pen(CloneWithOpacity(accent, 0.80), 1.5);
+            dc.DrawLine(stem, minPoint, new Point(xMin, y));
+            dc.DrawLine(stem, maxPoint, new Point(xMax, y));
+        }
+        foreach (var point in new[] { minPoint, maxPoint })
+        {
+            dc.DrawEllipse(panel, new Pen(accent, 1.8), point, 6.5, 6.5);
+            dc.DrawEllipse(accent, null, point, 2.3, 2.3);
+        }
+
+        // Preserve full-length, 38-DIP tall physical track hit areas for
+        // BOTH targets. FindTarget chooses by nearest X, then by actual
+        // two-dimensional handle position when X coordinates overlap.
         var fullHit = new Rect(rail.Left - 14.0, y - 19.0,
             rail.Width + 28.0, 38.0);
         AddRangeTarget(condition, fullHit, rail, HitKind.RangeMin);
         AddRangeTarget(condition, fullHit, rail, HitKind.RangeMax);
 
-        DrawText(dc, "0%", new Point(rail.Left, rangeCard.Bottom - 20.0),
+        DrawText(dc, "0%", new Point(rail.Left, rangeCard.Bottom - 19.0),
             9.5, muted, FontWeights.Normal);
         DrawRightAlignedText(dc, "100%",
-            new Point(rail.Right, rangeCard.Bottom - 20.0),
+            new Point(rail.Right, rangeCard.Bottom - 19.0),
             9.5, muted, FontWeights.Normal);
     }
 
@@ -4717,8 +4775,11 @@ public sealed class AggregateVisualControl : FrameworkElement
                 var centerY = lower.MapRect.Top + lower.MapRect.Height / 2.0;
                 if (dMinX <= 14.0 && dMaxX <= 14.0)
                 {
-                    var a = Math.Pow(dMinX, 2) + Math.Pow(point.Y - centerY + 8.0, 2);
-                    var b = Math.Pow(dMaxX, 2) + Math.Pow(point.Y - centerY - 8.0, 2);
+                    var separation = Math.Abs(maxX - minX) < 16.0 ? 7.0 : 0.0;
+                    var a = Math.Pow(dMinX, 2) +
+                        Math.Pow(point.Y - (centerY - separation), 2);
+                    var b = Math.Pow(dMaxX, 2) +
+                        Math.Pow(point.Y - (centerY + separation), 2);
                     if (Math.Abs(a - b) > Epsilon)
                         return a < b ? lower : upper;
                 }
@@ -5010,7 +5071,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "ItemWeightBoard" => GetMixerHeight(width, WeightMixerChannels.Length),
             "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
             "AnomalyEffectsBoard" => GetMixerHeight(width, AnomalyMixerChannels.Length),
-            "NpcLootLoadout" => 463.0,
+            "NpcLootLoadout" => 496.0,
             "WorldLootLayout" => 238.0,
             "StashRewardProfile" => width >= 750.0 ? 263.0 : 418.0,
             "PhysicalLimits" => 335.0,
