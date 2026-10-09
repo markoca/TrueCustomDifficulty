@@ -190,21 +190,16 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             ? $"{parameter.CurrentNumber:0.##}x"
             : $"{parameter.CurrentNumber:0.##}";
 
-        DrawText(dc, info.Label, new Point(card.Left + 8.0, card.Top + 5.0), 9.3, modified ? accent : text, FontWeights.Bold);
+        DrawText(dc, info.Label, new Point(card.Left + 8.0, card.Top + 5.0), 9.3, text, FontWeights.Bold);
         DrawRightAlignedText(
             dc,
-            $"{baseText}   |   {relative * 100:0}%",
+            baseText,
             new Point(card.Right - 8.0, card.Top + 5.0),
             9.3,
             modified ? accent : text,
             FontWeights.Bold);
 
-        if (!string.IsNullOrWhiteSpace(parameter.EffectiveDisplay))
-            DrawText(dc, $"eff {Compact(parameter.EffectiveDisplay, 28)}", new Point(card.Left + 8.0, card.Top + 22.0), 9.0, muted, FontWeights.Normal);
-        else if (info.IsMultiplier)
-            DrawText(dc, "scales Razor low/high-speed damage", new Point(card.Left + 8.0, card.Top + 22.0), 9.0, muted, FontWeights.Normal);
-
-        var track = new Rect(card.Left + 8.0, card.Top + 34.0, card.Width - 16.0, 8.0);
+        var track = new Rect(card.Left + 10.0, card.Top + 27.0, card.Width - 20.0, 10.0);
         var y = track.Top + track.Height / 2.0;
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
 
