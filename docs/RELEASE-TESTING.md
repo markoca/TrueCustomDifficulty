@@ -288,3 +288,17 @@ Phase 14B writer/fixture audits, original generator provenance and
 manual in-game acceptance. See
 [Phase 14A](DEEP-CFG-AUDIT-PHASE14A-LOOT-DIRECT-2026-10-10.md)
 and [archive fingerprints](evidence/LOOT-DIRECT-ORIGINAL-CFG-2026-10-10.json).
+
+### Phase 14A Windows verification result (2026-10-10)
+
+The real `loot-direct-writer-windows` test suite passed **117/117**
+on commit `2c4d8b5770ef0199a0f814df367001a4bcfd8e97` in
+GitHub Actions run `37999482003`. The first run had caught a
+production defect: writer selection incorrectly used visual
+`IsModified` (which includes aggregate highlights) instead of the
+actual `IsValueModifiedFromReference()` source-change predicate.
+Production selection was corrected; subsequent tests confirmed that
+changing rare-stash coupon chance does **not** fan out into unrelated
+stash ammo writer output. This is a real writer regression fix, not
+a change in the UI. Source 320-point result is independent of this
+C# validation; special Loot writers are still a separate Phase 14B.

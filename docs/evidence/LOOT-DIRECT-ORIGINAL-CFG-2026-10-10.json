@@ -71,8 +71,11 @@
   "sourceAuditMethod": "Independent manual 320-field original ZIP parser matching current production manifest targets; maintain reproducible strict repo gates audit_cfg_source_values.py loot. and audit_loot_direct_source.py.",
   "directWriterContract": {
     "tests": 117,
-    "verified": "NOT YET VERIFIED at authoring",
-    "job": "loot-direct-writer-windows"
+    "verified": "PASS",
+    "commit": "2c4d8b5770ef0199a0f814df367001a4bcfd8e97",
+    "githubActionsRun": 37999482003,
+    "job": "loot-direct-writer-windows",
+    "notes": "Verified production aggregate highlight is not treated as a source edit; no collateral ammo-special writer fanout when only Rare Stash coupon changes."
   },
   "specialWriterAudits": "NOT INCLUDED - 24 catalog IDs handled via specialized production writers require next phase",
   "inGame": "NOT RUN",

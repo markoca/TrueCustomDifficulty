@@ -128,8 +128,14 @@ dotnet run --project tests/LootDirectPatchContract/LootDirectPatchContract.cspro
 ```
 
 The `loot-direct-writer-windows` job runs under .NET 10 on Windows.
-**Status at writing: registered, result pending same-SHA CI.** No
-claims of 117/117 PASS until an actual green job is recorded.
+**Verified: 117/117 PASS on the actual Windows production writer.**
+The CI job `loot-direct-writer-windows` completed successfully on
+commit `2c4d8b5770ef0199a0f814df367001a4bcfd8e97`,
+GitHub Actions run `37999482003`. It includes both the cross-family
+regression where only Rare Stash coupon changes and the deliberately
+highlighted-but-source-vanilla stash aggregate anchor, plus the 259-leaf
+three-domain shared-output test. The rest of Loot's specialized
+writers and Unreal/gameplay semantics remain **NOT VERIFIED**.
 
 ## Production defect found by the new writer contract
 
