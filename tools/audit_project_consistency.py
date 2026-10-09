@@ -1876,7 +1876,7 @@ for _source_path in ROOT.rglob("*"):
     # Standalone test projects are not duplicate production source trees.
     # Only explicitly registered Windows writer contract projects are exempt.
     if any(_source_path.is_relative_to(ROOT / "tests" / test_project)
-           for test_project in ("CombatPatchContract", "HealthStaminaPatchContract", "SurvivalPatchContract", "EconomyPatchContract")):
+           for test_project in ("CombatPatchContract", "HealthStaminaPatchContract", "SurvivalPatchContract", "EconomyPatchContract", "EquipmentPatchContract")):
         continue
     if _source_path.suffix.lower() in {".cs", ".xaml", ".csproj"}:
         _legacy_source.append(_source_path.relative_to(ROOT).as_posix())
