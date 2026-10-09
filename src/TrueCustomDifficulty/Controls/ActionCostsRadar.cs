@@ -18,7 +18,10 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class ActionCostsRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double DesiredHeight = 393.0;
+    private const double UsageHeight = 207.0;
+    private const double ExhaustionWideHeight = 240.0;
+    private const double ExhaustionNarrowHeight = 419.0;
+    private bool IsExhaustion => string.Equals(Mode, "Exhaustion", StringComparison.Ordinal);
 
     private const string AimParameterId = "stamina.aimRegenCoef";
     private const string SprintDisableThresholdId = "stamina.sprintDisableThreshold";
@@ -58,6 +61,18 @@ public sealed class ActionCostsRadar : FrameworkElement
         typeof(ActionCostsRadar),
         new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnParametersChanged));
 
+    public static readonly DependencyProperty ModeProperty = DependencyProperty.Register(
+        nameof(Mode), typeof(string), typeof(ActionCostsRadar),
+        new FrameworkPropertyMetadata("Usage",
+            FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure,
+            OnParametersChanged));
+
+    public string Mode
+    {
+        get => (string)GetValue(ModeProperty);
+        set => SetValue(ModeProperty, value);
+    }
+
     public IEnumerable? Parameters
     {
         get => (IEnumerable?)GetValue(ParametersProperty);
@@ -68,7 +83,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = DesiredHeight;
+        MinHeight = 0.0;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -76,7 +91,9 @@ public sealed class ActionCostsRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(560.0, availableSize.Width);
-        return new Size(width, DesiredHeight);
+        return new Size(width, IsExhaustion
+            ? width >= 780.0 ? ExhaustionWideHeight : ExhaustionNarrowHeight
+            : UsageHeight);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -132,15 +149,20 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     private IEnumerable<ParameterViewModel?> EnumerateBoundParameters()
     {
-        foreach (var parameter in _actionParameters)
-            yield return parameter;
-
-        yield return _aimParameter;
-        yield return _sprintDisableThreshold;
-        yield return _sprintRecoveryDelay;
-        yield return _lowRecoveryThreshold;
-        yield return _lowRecoveryStrength;
-        yield return _lowRecoveryDuration;
+        if (IsExhaustion)
+        {
+            yield return _aimParameter;
+            yield return _sprintDisableThreshold;
+            yield return _sprintRecoveryDelay;
+            yield return _lowRecoveryThreshold;
+            yield return _lowRecoveryStrength;
+            yield return _lowRecoveryDuration;
+        }
+        else
+        {
+            foreach (var parameter in _actionParameters)
+                yield return parameter;
+        }
     }
 
     private void Parameter_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -178,54 +200,29 @@ public sealed class ActionCostsRadar : FrameworkElement
 
         _targets.Clear();
 
-        DrawCenteredText(dc, "STAMINA USAGE", new Point(ActualWidth / 2.0, 21.0),
+        DrawCenteredText(dc,
+            IsExhaustion ? "EXHAUSTION & RECOVERY" : "STAMINA USAGE",
+            new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
 
-        var left = 18.0;
-        var width = Math.Max(540.0, ActualWidth - 36.0);
-        var gap = 12.0;
+        const double left = 18.0;
+        var width = Math.Max(1.0, ActualWidth - 36.0);
+        const double gap = 12.0;
         var half = (width - gap) / 2.0;
 
-        DrawActionGroup(
-            dc,
-            ActionGroup.Movement,
-            "MOVEMENT",
-            new Rect(left, 47.0, half, 132.0),
-            text,
-            muted,
-            border,
-            accent,
-            panel);
-
-        DrawActionGroup(
-            dc,
-            ActionGroup.Melee,
-            "MELEE",
-            new Rect(left + half + gap, 47.0, half, 132.0),
-            text,
-            muted,
-            border,
-            accent,
-            panel);
-
-        DrawAimPanel(
-            dc,
-            new Rect(left, 189.0, width, 54.0),
-            text,
-            muted,
-            border,
-            accent,
-            panel);
-
-        DrawExhaustionPanel(
-            dc,
-            new Rect(left, 255.0, width, 119.0),
-            text,
-            muted,
-            border,
-            soft,
-            accent,
-            panel);
+        if (IsExhaustion)
+        {
+            DrawExhaustionBoard(dc, left, width, text, muted, border, accent, panel);
+        }
+        else
+        {
+            DrawActionGroup(dc, ActionGroup.Movement, "MOVEMENT",
+                new Rect(left, 48.0, half, 137.0),
+                text, muted, border, accent, panel);
+            DrawActionGroup(dc, ActionGroup.Melee, "MELEE",
+                new Rect(left + half + gap, 48.0, half, 137.0),
+                text, muted, border, accent, panel);
+        }
 
         // Silent reset: no transient status text.
     }
@@ -258,17 +255,11 @@ public sealed class ActionCostsRadar : FrameworkElement
             var top = card.Top + 27.0 + local * 34.0;
             var reference = parameter.ReferenceNumber;
             var relative = Math.Abs(reference) > Epsilon ? parameter.CurrentNumber / reference : 0.0;
-            var modified = Math.Abs(parameter.CurrentNumber - reference) > Epsilon;
-
             DrawText(dc, Actions[index].Label, new Point(card.Left + 9.0, top), 9.2,
                 text, FontWeights.Bold);
-            DrawRightAlignedText(
-                dc,
+            DrawSourceValue(dc, parameter,
                 $"{FormatRaw(parameter.CurrentNumber)} SP",
-                new Point(card.Right - 9.0, top),
-                modified ? 10.4 : 9.2,
-                modified ? accent : text,
-                FontWeights.Bold);
+                new Point(card.Right - 9.0, top), 10.4, text, accent);
 
             var track = new Rect(card.Left + 9.0, top + 20.0, card.Width - 18.0, 8.0);
             var y = track.Top + track.Height / 2.0;
@@ -291,232 +282,160 @@ public sealed class ActionCostsRadar : FrameworkElement
         }
     }
 
-    private void DrawAimPanel(
-        DrawingContext dc,
-        Rect card,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+    // All six recovery/exhaustion editors use their original CFG sources.
+    // The two threshold lanes share a true 0-60 SP ruler without linking values.
+    private void DrawExhaustionBoard(
+        DrawingContext dc, double left, double width,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        dc.DrawRoundedRectangle(
-            IsSelected(_aimParameter) ? CloneWithOpacity(accent, 0.08) : CloneWithOpacity(panel, 0.95),
-            new Pen(border, 0.9),
-            card,
-            4.0,
-            4.0);
+        const double gap = 12.0;
+        var wide = ActualWidth >= 780.0;
+        var leftWidth = wide ? (width - gap) / 2.0 : width;
+        var thresholdCard = new Rect(left, 48.0, leftWidth, 174.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+            thresholdCard, 4.0, 4.0);
+        DrawText(dc, "STAMINA THRESHOLDS",
+            new Point(thresholdCard.Left + 10.0, thresholdCard.Top + 8.0),
+            10.2, muted, FontWeights.Bold);
 
-        DrawText(dc, "AIM REGEN SLOWDOWN", new Point(card.Left + 10.0, card.Top + 8.0), 9.4, text, FontWeights.Bold);
+        DrawThresholdLane(dc, _sprintDisableThreshold, "SPRINT LOCK",
+            thresholdCard, 40.0, value => $"{value:0.#} SP",
+            text, muted, border, accent, panel);
+        DrawThresholdLane(dc, _lowRecoveryThreshold, "RECOVERY BELOW",
+            thresholdCard, 99.0, value => $"{value:0} SP",
+            text, muted, border, accent, panel);
 
-        if (_aimParameter is not { } parameter)
-            return;
+        var ruler = new Rect(thresholdCard.Left + 132.0, 0.0,
+            Math.Max(1.0, thresholdCard.Width - 146.0), 1.0);
+        DrawText(dc, "0", new Point(ruler.Left, thresholdCard.Bottom - 15.0),
+            9.0, muted, FontWeights.Normal);
+        DrawCenteredText(dc, "30", new Point(ruler.Left + ruler.Width * 0.5,
+            thresholdCard.Bottom - 10.0), 9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "60 SP",
+            new Point(ruler.Right, thresholdCard.Bottom - 15.0),
+            9.0, muted, FontWeights.Normal);
 
-        DrawRightAlignedText(dc, $"{parameter.CurrentNumber * 100:0}%",
-            new Point(card.Right - 10.0, card.Top + 7.0),
-            parameter.IsValueModifiedFromReference() ? 11.2 : 10.0,
-            parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
-
-        var track = new Rect(card.Left + 235.0, card.Top + 31.0, Math.Max(150.0, card.Width - 250.0), 10.0);
-        var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
-
-        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track);
-        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
-        dc.DrawLine(new Pen(muted, 1.0), new Point(baseX, y - 6.0), new Point(baseX, y + 6.0));
-        dc.DrawLine(new Pen(accent, 3.0), new Point(track.Left, y), new Point(currentX, y));
-        DrawHandle(dc, parameter, new Point(currentX, y), panel, accent);
-
-        AddTarget(
-            parameter,
-            new Rect(track.Left - 6.0, track.Top - 6.0, track.Width + 12.0, track.Height + 12.0),
-            track,
-            MappingKind.Absolute,
-            parameter.Minimum,
-            parameter.Maximum);
-    }
-
-    private void DrawExhaustionPanel(
-        DrawingContext dc,
-        Rect card,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
-    {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 0.9), card, 4.0, 4.0);
-        DrawText(dc, "EXHAUSTION & LOW-SP RECOVERY", new Point(card.Left + 10.0, card.Top + 7.0), 9.5, text, FontWeights.Bold);
-
-        var thresholdTrack = new Rect(card.Left + 145.0, card.Top + 30.0, card.Width - 160.0, 38.0);
-        var sprintY = thresholdTrack.Top + 7.0;
-        var recoveryY = thresholdTrack.Top + 28.0;
-
-        DrawText(dc, "SPRINT LOCK", new Point(card.Left + 10.0, sprintY - 6.0), 9.0, muted, FontWeights.Bold);
-        DrawText(dc, "RECOVERY BELOW", new Point(card.Left + 10.0, recoveryY - 6.0), 9.0, muted, FontWeights.Bold);
-
-        var zeroX = thresholdTrack.Left;
-        var thirtyX = thresholdTrack.Left + thresholdTrack.Width * 0.5;
-        var sixtyX = thresholdTrack.Right;
-        dc.DrawLine(new Pen(soft, 1.0), new Point(zeroX, thresholdTrack.Top - 1.0), new Point(zeroX, thresholdTrack.Bottom + 1.0));
-        dc.DrawLine(new Pen(soft, 1.0) { DashStyle = DashStyles.Dot }, new Point(thirtyX, thresholdTrack.Top - 1.0), new Point(thirtyX, thresholdTrack.Bottom + 1.0));
-        dc.DrawLine(new Pen(soft, 1.0), new Point(sixtyX, thresholdTrack.Top - 1.0), new Point(sixtyX, thresholdTrack.Bottom + 1.0));
-
-        DrawAbsoluteThresholdRow(
-            dc,
-            _sprintDisableThreshold,
-            thresholdTrack,
-            sprintY,
-            0.0,
-            60.0,
-            value => $"{value:0.0} SP",
-            text,
-            muted,
-            border,
-            accent,
-            panel);
-
-        DrawAbsoluteThresholdRow(
-            dc,
-            _lowRecoveryThreshold,
-            thresholdTrack,
-            recoveryY,
-            0.0,
-            60.0,
-            value => $"{value:0} SP",
-            text,
-            muted,
-            border,
-            accent,
-            panel);
-
-        var miniGap = 10.0;
-        var miniLeft = card.Left + 10.0;
-        var miniTop = card.Top + 76.0;
-        var miniWidth = (card.Width - 20.0 - miniGap * 2.0) / 3.0;
-
-        DrawMiniTrack(
-            dc,
-            _sprintRecoveryDelay,
-            "RESTART DELAY",
+        var gridLeft = wide ? left + leftWidth + gap : left;
+        var gridTop = wide ? 48.0 : thresholdCard.Bottom + 13.0;
+        var gridWidth = wide ? leftWidth : width;
+        var cellWidth = (gridWidth - 10.0) / 2.0;
+        const double cardHeight = 80.0;
+        const double rowGap = 13.0;
+        DrawRecoveryCard(dc, _aimParameter, "AIM REGEN SLOWDOWN",
+            value => $"{value * 100.0:0.#}%",
+            new Rect(gridLeft, gridTop, cellWidth, cardHeight),
+            text, muted, border, accent, panel);
+        DrawRecoveryCard(dc, _sprintRecoveryDelay, "RESTART DELAY",
             value => $"{value:0.0} s",
-            new Rect(miniLeft, miniTop, miniWidth, 34.0),
-            text,
-            muted,
-            border,
-            accent,
-            panel);
-
-        DrawMiniTrack(
-            dc,
-            _lowRecoveryStrength,
-            "RECOVERY BOOST",
+            new Rect(gridLeft + cellWidth + 10.0, gridTop, cellWidth, cardHeight),
+            text, muted, border, accent, panel);
+        DrawRecoveryCard(dc, _lowRecoveryStrength, "RECOVERY BOOST",
             value => $"+{value:0.##} SP/s",
-            new Rect(miniLeft + miniWidth + miniGap, miniTop, miniWidth, 34.0),
-            text,
-            muted,
-            border,
-            accent,
-            panel);
-
-        DrawMiniTrack(
-            dc,
-            _lowRecoveryDuration,
-            "BOOST DURATION",
+            new Rect(gridLeft, gridTop + cardHeight + rowGap, cellWidth, cardHeight),
+            text, muted, border, accent, panel);
+        DrawRecoveryCard(dc, _lowRecoveryDuration, "BOOST DURATION",
             value => $"{value:0.0} s",
-            new Rect(miniLeft + (miniWidth + miniGap) * 2.0, miniTop, miniWidth, 34.0),
-            text,
-            muted,
-            border,
-            accent,
-            panel);
-
+            new Rect(gridLeft + cellWidth + 10.0, gridTop + cardHeight + rowGap,
+                cellWidth, cardHeight),
+            text, muted, border, accent, panel);
     }
 
-    private void DrawAbsoluteThresholdRow(
-        DrawingContext dc,
-        ParameterViewModel? parameter,
-        Rect trackArea,
-        double y,
-        double visualMinimum,
-        double visualMaximum,
-        Func<double, string> formatter,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+    private void DrawThresholdLane(
+        DrawingContext dc, ParameterViewModel? parameter, string label,
+        Rect card, double offset, Func<double, string> formatter,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         if (parameter is null)
             return;
 
-        var line = new Rect(trackArea.Left, y - 5.0, trackArea.Width, 10.0);
-        dc.DrawLine(new Pen(border, 3.0), new Point(line.Left, y), new Point(line.Right, y));
+        DrawText(dc, label, new Point(card.Left + 10.0, card.Top + offset),
+            10.0, text, FontWeights.Bold);
+        DrawSourceValue(dc, parameter, formatter(parameter.CurrentNumber),
+            new Point(card.Right - 14.0, card.Top + offset),
+            11.5, text, accent);
 
-        var currentX = ValueToX(parameter.CurrentNumber, visualMinimum, visualMaximum, line);
-        var baseX = ValueToX(parameter.ReferenceNumber, visualMinimum, visualMaximum, line);
-        dc.DrawLine(new Pen(muted, 1.0), new Point(baseX, y - 6.0), new Point(baseX, y + 6.0));
-        dc.DrawLine(new Pen(accent, 2.8), new Point(line.Left, y), new Point(currentX, y));
+        // Full muted ruler stays at 0..60, while ONLY the native source span
+        // can be dragged (Sprint Lock ends at the real 32.2 SP maximum).
+        var ruler = new Rect(card.Left + 132.0, card.Top + offset + 27.0,
+            Math.Max(1.0, card.Width - 146.0), 10.0);
+        var y = ruler.Top + ruler.Height / 2.0;
+        var nativeLeft = ValueToX(parameter.Minimum, 0.0, 60.0, ruler);
+        var nativeRight = ValueToX(parameter.Maximum, 0.0, 60.0, ruler);
+        var active = new Rect(nativeLeft, ruler.Top,
+            Math.Max(1.0, nativeRight - nativeLeft), ruler.Height);
+        var currentX = ValueToX(parameter.CurrentNumber, 0.0, 60.0, ruler);
+        var referenceX = ValueToX(parameter.ReferenceNumber, 0.0, 60.0, ruler);
+
+        dc.DrawLine(new Pen(border, 2.0),
+            new Point(ruler.Left, y), new Point(ruler.Right, y));
+        dc.DrawLine(new Pen(muted, 3.0),
+            new Point(active.Left, y), new Point(active.Right, y));
+        dc.DrawLine(new Pen(accent, 3.0),
+            new Point(active.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 1.5),
+            new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
         DrawHandle(dc, parameter, new Point(currentX, y), panel, accent);
 
-        DrawRightAlignedText(dc, formatter(parameter.CurrentNumber),
-            new Point(line.Right, y - 10.0),
-            parameter.IsValueModifiedFromReference() ? 10.2 : 9.0,
-            parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
-
-        var activeLeft = ValueToX(parameter.Minimum, visualMinimum, visualMaximum, line);
-        var activeRight = ValueToX(parameter.Maximum, visualMinimum, visualMaximum, line);
-        var activeMap = new Rect(activeLeft, line.Top, Math.Max(1.0, activeRight - activeLeft), line.Height);
-
-        AddTarget(
-            parameter,
-            new Rect(activeMap.Left - 6.0, y - 9.0, activeMap.Width + 12.0, 18.0),
-            activeMap,
-            MappingKind.Absolute,
-            parameter.Minimum,
-            parameter.Maximum);
+        AddTarget(parameter,
+            new Rect(active.Left - 4.0, active.Top - 7.0,
+                active.Width + 8.0, active.Height + 14.0),
+            active, MappingKind.Absolute, parameter.Minimum, parameter.Maximum);
     }
 
-    private void DrawMiniTrack(
-        DrawingContext dc,
-        ParameterViewModel? parameter,
-        string label,
-        Func<double, string> formatter,
-        Rect rect,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+    private void DrawRecoveryCard(
+        DrawingContext dc, ParameterViewModel? parameter, string label,
+        Func<double, string> formatter, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+            card, 4.0, 4.0);
+        DrawText(dc, label, new Point(card.Left + 10.0, card.Top + 7.0),
+            9.7, text, FontWeights.Bold);
         if (parameter is null)
             return;
 
-        DrawText(dc, label, new Point(rect.Left, rect.Top), 9.0,
-            muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, formatter(parameter.CurrentNumber),
-            new Point(rect.Right, rect.Top),
-            parameter.IsValueModifiedFromReference() ? 10.2 : 9.0,
-            parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
-
-        var track = new Rect(rect.Left, rect.Top + 21.0, rect.Width, 8.0);
+        DrawSourceValue(dc, parameter, formatter(parameter.CurrentNumber),
+            new Point(card.Right - 11.0, card.Top + 28.0),
+            11.3, text, accent);
+        var track = new Rect(card.Left + 12.0, card.Top + 53.0,
+            Math.Max(1.0, card.Width - 24.0), 10.0);
         var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
-
-        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track);
-        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
-        dc.DrawLine(new Pen(muted, 1.0), new Point(baseX, y - 5.0), new Point(baseX, y + 5.0));
-        dc.DrawLine(new Pen(accent, 2.8), new Point(track.Left, y), new Point(currentX, y));
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track);
+        var referenceX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, track);
+        dc.DrawLine(new Pen(border, 3.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        dc.DrawLine(new Pen(accent, 3.0),
+            new Point(track.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 1.5),
+            new Point(referenceX, y - 7.0), new Point(referenceX, y + 7.0));
         DrawHandle(dc, parameter, new Point(currentX, y), panel, accent);
+        AddTarget(parameter,
+            new Rect(track.Left - 6.0, track.Top - 6.0,
+                track.Width + 12.0, track.Height + 12.0),
+            track, MappingKind.Absolute, parameter.Minimum, parameter.Maximum);
+    }
 
-        AddTarget(
-            parameter,
-            new Rect(track.Left - 5.0, track.Top - 6.0, track.Width + 10.0, track.Height + 12.0),
-            track,
-            MappingKind.Absolute,
-            parameter.Minimum,
-            parameter.Maximum);
+    // Only the numeric token (including its +/-/%/x) becomes gold when changed.
+    // SP, SP/s, s and other static units remain neutral.
+    private void DrawSourceValue(
+        DrawingContext dc, ParameterViewModel parameter, string value,
+        Point right, double size, Brush text, Brush accent)
+    {
+        var formatted = CreateText(value, size, text, FontWeights.Bold);
+        if (parameter.IsValueModifiedFromReference())
+        {
+            foreach (System.Text.RegularExpressions.Match token in
+                System.Text.RegularExpressions.Regex.Matches(
+                    value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
+            {
+                formatted.SetForegroundBrush(accent, token.Index, token.Length);
+                formatted.SetFontSize(size + 1.2, token.Index, token.Length);
+            }
+        }
+        dc.DrawText(formatted,
+            new Point(right.X - formatted.WidthIncludingTrailingWhitespace, right.Y));
     }
 
     private void DrawHandle(DrawingContext dc, ParameterViewModel parameter, Point point, Brush panel, Brush accent)
@@ -632,7 +551,9 @@ public sealed class ActionCostsRadar : FrameworkElement
             foreach (var parameter in EnumerateBoundParameters())
                 parameter?.ResetToReference();
 
-            _status.ShowTransient("Stamina pressure board reset to Base Preset.");
+            _status.ShowTransient(IsExhaustion
+                ? "Exhaustion & Recovery reset to Base Preset."
+                : "Stamina Usage reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
