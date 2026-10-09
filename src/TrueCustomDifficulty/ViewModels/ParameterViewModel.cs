@@ -228,8 +228,10 @@ public sealed class ParameterViewModel : ObservableObject
         "loot.expensiveStashAmmoQuantity"
     };
 
-    public bool IsStashAmmoMember => StashAmmoParameterIds.Contains(Id);
-    public bool IsStashAmmoAnchor => Id == "loot.cheapStashAmmoQuantity";
+    // The stash tiers are now native members of StashRewardProfile rather than
+    // a second overlapping special StashAmmo radar.
+    public bool IsStashAmmoMember => StashAmmoParameterIds.Contains(Id) && !IsVisualAggregateMember;
+    public bool IsStashAmmoAnchor => Id == "loot.cheapStashAmmoQuantity" && !IsVisualAggregateMember;
 
     private static readonly HashSet<string> MutantDropParameterIds = new(StringComparer.Ordinal)
     {
@@ -557,11 +559,14 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.worldDetectors"] = "WorldLootLayout",
         ["loot.blueprintShuffle"] = "WorldLootLayout",
 
+        ["loot.cheapStashAmmoQuantity"] = "StashRewardProfile",
+        ["loot.mediumStashAmmoQuantity"] = "StashRewardProfile",
+        ["loot.expensiveStashAmmoQuantity"] = "StashRewardProfile",
         ["loot.cheapStashGrenadeChance"] = "StashRewardProfile",
         ["loot.cheapStashGrenadeQuantity"] = "StashRewardProfile",
         ["loot.expensiveStashMoneyChance"] = "StashRewardProfile",
-        ["loot.destructibleAmmoQuantity"] = "BreakableBoxYields",
-        ["loot.destructibleGrenadeQuantity"] = "BreakableBoxYields",
+        ["loot.destructibleAmmoQuantity"] = "AmmoDistribution",
+        ["loot.destructibleGrenadeQuantity"] = "AmmoDistribution",
 
         ["loot.ammoBoxWeight918"] = "AmmoDistribution",
         ["loot.ammoBoxWeight045"] = "AmmoDistribution",
@@ -603,9 +608,8 @@ public sealed class ParameterViewModel : ObservableObject
         ["AnomalyEffectsBoard"] = "environment.anomalyDamage",
         ["NpcLootLoadout"] = "loot.npcCorpseBonus",
         ["WorldLootLayout"] = "loot.worldWeaponShuffle",
-        ["StashRewardProfile"] = "loot.cheapStashGrenadeChance",
-        ["BreakableBoxYields"] = "loot.destructibleAmmoQuantity",
-        ["AmmoDistribution"] = "loot.ammoBoxWeight918"
+        ["StashRewardProfile"] = "loot.cheapStashAmmoQuantity",
+         ["AmmoDistribution"] = "loot.ammoBoxWeight918"
     };
 
     public bool IsVisualAggregateMember => VisualAggregateFamilyByParameterId.ContainsKey(Id);
