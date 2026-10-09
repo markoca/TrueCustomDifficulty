@@ -8,7 +8,7 @@ namespace TrueCustomDifficulty.Services;
 
 /// <summary>
 /// Owns the portable Presets directory beside the executable.
-/// Owns the seven shipped factory presets and migrates away the retired vanilla-named factory files.
+/// Owns the ten shipped factory presets and migrates away the retired vanilla-named factory files.
 /// Unrelated user-created preset files are never deleted.
 /// </summary>
 public sealed class PresetDirectoryService
@@ -21,6 +21,9 @@ public sealed class PresetDirectoryService
         "Scavenger",
         "Mutant Hunter",
         "Anomaly Runner",
+        "Mercenary",
+        "Wanderer",
+        "Outcast",
         "Hardcore",
         "Hardcore+"
     };

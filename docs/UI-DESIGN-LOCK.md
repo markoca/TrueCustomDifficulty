@@ -502,3 +502,8 @@ Bleeding Treatment now uses one interactive four-column chart for Bandage, Medki
 ### 2026-10-09 — Factory presets: role-first balancing
 
 All seven factory profiles were rebuilt across combat, mutant health/cooldowns, environment, stamina/movement, health/medicine, economy, equipment wear and loot while retaining their 201 existing catalogue entries and source baseline difficulty. Do not infer new UI components or a new in-game difficulty from profile differences. Existing yellow-modified-number rule applies when values differ from the selected baseline. Profile-specific rationales and guardrails are described in `docs/FACTORY-PRESETS.md`.
+
+
+### 2026-10-09 — Three additional factory role profiles
+
+Add Mercenary, Wanderer and Outcast to the shipped Presets list (ten total). These are preset-data additions only: no new slider, UI card, difficulty mode or input behavior. All numeric changes remain subject to the existing yellow-only-when-modified number rule; baseline references are Veteran, Stalker and Veteran, respectively. See docs/FACTORY-PRESETS.md for authored playstyles.
