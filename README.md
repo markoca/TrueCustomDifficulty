@@ -1,5 +1,9 @@
 # True Custom Difficulty
 
+## Stamina editor layout (2026-10-09)
+
+The approved Stamina UI has four compact, source-bound cards in order: **Stamina & Movement** (4 native controls), **Stamina Usage** (six Movement/Melee action costs), **Exhaustion & Recovery** (two real-SP thresholds and four recovery controls), **Water Stamina Drain** (Medium and Deep water scalers). All 18 existing Stamina settings retain their native CFG paths, ranges, steps, saved presets and references. The two Stamina Usage/Exhaustion cards have separate source anchors and independent R/reset scopes; the water order constraint is preserved. Layout and interaction details are locked in [UI-DESIGN-LOCK.md](docs/UI-DESIGN-LOCK.md) and [VISUAL-CONTROL-SYSTEM.md](docs/VISUAL-CONTROL-SYSTEM.md). Local Wine acceptance remains pending.
+
 ## Supported target
 
 The application targets **Windows x64** on **.NET 10 LTS** (`net10.0-windows`).
