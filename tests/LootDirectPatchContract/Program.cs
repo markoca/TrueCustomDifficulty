@@ -214,7 +214,11 @@ internal static class Program
                 : new[] { OutputPath(outRoot, Source) };
             var actualFiles = Directory.GetFiles(outRoot, "*TrueCustomDifficulty*", SearchOption.AllDirectories);
             Check(actualFiles.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(expectedFiles),
-                type + ": unexpected files / missing primary direct output");
+                type + ": unexpected files / missing primary direct output: actual=[" +
+                string.Join(";", actualFiles) + "] expected=[" +
+                string.Join(";", expectedFiles) + "] counts=" +
+                result.FileCount + "/" + result.ParameterCount + "/" + result.EditCount +
+                " expectedPoints=" + points.Length);
             Check(result.FileCount == expectedFiles.Length
                 && result.EditCount == points.Length && result.ParameterCount == selected.Count,
                 type + ": wrong emitted file/parameter/edit counts "
