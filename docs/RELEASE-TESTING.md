@@ -188,3 +188,7 @@ The `survival-writer-windows` CI job executes the real WPF ViewModel and product
 ### Phase 9 original decoded Survival evidence (2026-10-09)
 
 Using the matching uploaded original CFG ZIPs, all **139/139 Survival direct source field identities and literal raw values** matched, with no refkey inheritance required. The immutable source ZIP SHA-256 fingerprints, counts by all 54 IDs and limitations are recorded in [Survival source evidence](evidence/SURVIVAL-ORIGINAL-CFG-2026-10-09.json). The same source comparison is automatically repeated by the B6 gate when matching archives are provided to `pre_release.py source`. This is **not** a gameplay acceptance result.
+
+### Phase 10 Economy (2026-10-09)
+
+A strict original-source Economy prefix gate audits **409 direct CFG fields**, while Windows `economy-writer-windows` runs **34 real application-to-BPatch scenarios** including 68 base trader profile minimum-condition cases. Source ZIPs are required for the independent source gate, and installed-DLC plus game-load evidence remain NOT RUN. See [Phase 10](DEEP-CFG-AUDIT-PHASE10-ECONOMY-2026-10-09.md).
