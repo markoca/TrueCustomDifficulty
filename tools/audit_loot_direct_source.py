@@ -148,7 +148,7 @@ def main() -> int:
                         raise ValueError("Money category index outside difficulty-specific quartet")
                     if path[2:] != ("PossibleItems", "[0]") or path[0] != "ItemGenerator":
                         raise ValueError("Money path no longer an eligible first coupon row")
-                    expected_item = MONEY[int(category.strip("[]")) % 4]
+                    expected_item = MONEY[(int(category.strip("[]")) - 11) % 4]
                     item = descend(parent, path)
                     group = descend(parent, path[:2])
                     if item.values.get("ItemPrototypeSID") != expected_item or (
