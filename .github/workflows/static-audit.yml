@@ -152,3 +152,25 @@ jobs:
           path: audit/equipment-patch-fixtures
           if-no-files-found: ignore
           retention-days: 7
+
+  environment-writer-windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+      - name: Install .NET 10 for production WPF writer
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Validate Environment BPatch paths and numeric values
+        shell: pwsh
+        run: dotnet run --project tests/EnvironmentPatchContract/EnvironmentPatchContract.csproj -c Release -- --out audit/environment-patch-fixtures
+      - name: Preserve Environment writer CFG fixtures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-patch-contract
+          path: audit/environment-patch-fixtures
+          if-no-files-found: ignore
+          retention-days: 7
