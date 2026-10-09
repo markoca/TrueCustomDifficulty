@@ -203,7 +203,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             selected
                 ? CloneWithOpacity(accent, 0.08)
                 : hovered
-                    ? CloneWithOpacity(accent, 0.09)
+                    ? CloneWithOpacity(panel, 0.02)
                     : CloneWithOpacity(panel, 0.01),
             new Pen(CloneWithOpacity(border, 0.45), 0.8),
             rowRect,
@@ -223,7 +223,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             $"{parameter.CurrentNumber:0.##}x",
             new Point(layout.ValueCenter, top + 13.0),
             9.5,
-            hovered ? accent : text,
+            text,
             FontWeights.Bold);
 
         var track = new Rect(layout.TrackLeft, top + 23.0, layout.TrackWidth, 9.0);
