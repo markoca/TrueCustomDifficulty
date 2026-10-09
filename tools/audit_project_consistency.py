@@ -1873,6 +1873,10 @@ for _source_path in ROOT.rglob("*"):
         continue
     except ValueError:
         pass
+    # Standalone regression tests are not production source mirrors.
+    # Only the explicit Windows Combat writer contract test project is exempt.
+    if _source_path.is_relative_to(ROOT / "tests" / "CombatPatchContract"):
+        continue
     if _source_path.suffix.lower() in {".cs", ".xaml", ".csproj"}:
         _legacy_source.append(_source_path.relative_to(ROOT).as_posix())
 if _legacy_source:

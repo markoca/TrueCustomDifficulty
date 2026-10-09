@@ -174,6 +174,10 @@ whether Unreal successfully merges BPatch arrays or the game uses every
 override as expected. Those remain runtime-test-required; no gameplay
 status is promoted by this phase.
 
+The historical single-source-tree check explicitly excludes this one
+standalone test project from the forbidden production mirror scan. All other
+unexpected external C#/XAML/CSPROJ copies continue to fail.
+
 Local Windows command:
 ```powershell
 dotnet run --project tests/CombatPatchContract/CombatPatchContract.csproj -c Release -- --out audit/combat-patch-fixtures
