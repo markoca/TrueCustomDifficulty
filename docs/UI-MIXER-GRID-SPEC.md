@@ -1,7 +1,7 @@
 # Mixer & Responsive Grid UI — Source of Truth
 
 **Project:** True Custom Difficulty  
-**Status:** Anomaly Effects and Item Weight remain mixer-style. Loot Breakable Boxes and Stash Rewards were explicitly converted to compact native horizontal editors (2026-10-09), as were Economy Service Prices and Trader Stock. Earlier mixer examples for those families are historical only. Runtime/Wine QA pending.  
+**Status:** Anomaly Effects remains mixer-style. Item Weight, Loot Breakable Boxes, Stash Rewards, Economy Service Prices and Trader Stock use compact native horizontal editors (2026-10-09). Earlier mixer examples for those families are historical only. Runtime/Wine QA pending.  
 **Scope:** Visual layout and interaction only.  
 **Canonical document:** This file is the source of truth for the mixer-style parameter controls and the accompanying responsive grid layout.
 
@@ -17,6 +17,10 @@ User-approved Loot redraw replaces the old separate vertical `BreakableBoxYields
 Exactly six visible Loot panels in order: **World Loot Depletion (5 sources), World Placement (5), NPC Loot & Equipment (4), Stash Rewards (6), Breakable Boxes (6), Mutant Part Drops (14)**. Stash Rewards uses three columns at >=750 DIP and two below, with measured 263/418 DIP heights; the two World depletion columns stay readable and the mutant-drop bank is 2×7. All Loot controls follow Stamina Usage label/current/rail hierarchy, with native ranges, reference ticks and hover-only gold handles. See `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md` for the authoritative exact source-to-panel mapping and mouse/keyboard/reset behavior.
 
 **Ammo family bar semantics:** The SNG chart has three segments `9×18/9×19`, `5.45`, `12 Gauge`; NATO chart has four `.45 ACP`, `9×19`, `5.56`, `12 Gauge`. Every segment is permanently keyed by a matching swatch, caliber text and share percent inside its own chart card. The same underlying family weight MUST use the same bar/swatch color in both pools regardless of segment ordering; zero-width segments must preserve a labeled 0% entry. Numeric legends show composition *within that pool*, not global drop probability. The two yield controls are independent of weight composition and remain native source-bound sliders. No duplicated preview lines, phantom selectors or new gameplay values.
+
+## Latest Equipment override — two compact sections (2026-10-09)
+
+**Item Weight is NO LONGER a vertical mixer.** The prior status and pilot design sections regarding two Item Weight strips are historical. Equipment now shows two full-width top-level sections; `EquipmentWearBalance` preserves a smaller semantic crosshair with independent outer armor/weapon handles, while `ItemWeightBoard` uses two ordinary compact **horizontal** source cards (Ammo Weight, Food & Medicine Weight). Render weights using the same native horizontal `DrawEconomyCard` rail grammar as Stamina Usage, max 370 DIP per 2-column card >=672 editor width and max 440 DIP in a narrow single column. Measured height 154 DIP or 248 DIP. Two independent 0–2x source multipliers retain 0.01x increments, native ticks, muted reference and handle-only glow. The graph and readout column are bounded to prevent stretching, with a 354-DIP wear panel. Do not use vertical Item Weight `DrawMixerStrip` again without explicit approval. The four historical Equipment Bonus Caps are **audit-only** and do not appear in the active four-source Equipment UI; their real effects beyond maximum-value upper bounds have not been proven. Source/preset/writer mappings are untouched. See the latest UI lock and visual-control catalog.
 
 ## Current Economy override — supersedes vertical mixer examples (2026-10-09)
 

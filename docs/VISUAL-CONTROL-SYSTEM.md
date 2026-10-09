@@ -26,6 +26,16 @@ Semantic controls follow one density/readability baseline:
 - Grey ticks/markers carry Base Preset reference information so repeated micro-labels such as `VANILLA`, `0%` and `200%` do not need to be printed on every row.
 - Compactness must never change backing parameter values, constraints, preset serialization or CFG-writer behavior.
 
+## Equipment UI — authoritative compact two-panel contract (2026-10-09)
+
+This latest approved Equipment contract **supersedes the historical Equipment Wear Balance graph layout and Item Weight vertical-fader descriptions below**. Equipment currently has *four* player-facing sources and two full-width section rows, not the eight controls counted in the older v0.2.49 audit.
+
+**Equipment Wear** (`EquipmentWearBalance`): A small near-square 178–208-DIP plot sits to the left of two compact readout cards, all centered within the 354-DIP-high board. Real source axes: X `equipment.armorDurability` (0.1–2x, +right = tougher armor) and Y `equipment.weaponWearPerShot` (0–2x, +up = more durability lost per shot), each 0.01 native tick. The gold **bottom circle** edits only X, the gold **left square** only Y. Their central crossing is a **noninteractive read-only preview**, with neutral source-difficulty dashed ghost. Source values appear once in a name-left/current-right readout; numeric tokens turn gold and +1.2 DIP only if modified. Native end/mid tick labels and terse axes remain neutral; remove redundant former footer and duplicated Base readouts. Use standard 15-DIP halo/11-DIP ring `ControlHoverGlow` only at the hovered outer handle. Right-click resets just its source; R resets both, while mouse/keyboard edits stay native. Important limit: `Armor_Durability` was source-audited but its in-engine wear formula remains unconfirmed; do **not** convert 0.9x to an invented percent of armor wear. Player-weapon durability applies to authored nonzero `DurabilityDamagePerShot` entries, without changing weapon jamming.
+
+**Item Weight** (`ItemWeightBoard`): exactly two independent source-bound horizontal `DrawEconomyCard` controls, AMMO WEIGHT and FOOD & MEDICINE, both in 0–2x with 0.01x catalog steps, 1x fixed reference, neutral endpoints, centered bank and bounded text. Cards: 80 DIP each, gap 12 DIP, native slider hit rail; >=672 DIP gives two columns with each card capped to 370 DIP (154-DIP board height), below 672 gives one column with 440-DIP cap (248-DIP height). The source reference tick stays muted. Handle-only glow, one-line value alignment, right-click-one and R reset-both match Stamina Usage. These are item-mass scalers, not carry-capacity controls.
+
+**Bonus caps excluded:** historical `RegenStamina.MaxValue`, `DegenBleeding.MaxValue`, `AdditionalInventoryWeight.MaxValue`, `PenaltyLessWeight.MaxValue` represent upper limits only; the actual gameplay composition is not yet source/runtime-verified. Do not render them. In the **current** live parameter catalog only the above four Equipment sources exist. Do not infer that the older eight-control audit describes eight still-visible editors. Preserve all existing current writer/preset semantics; do not fabricate cap parameters.
+
 ## Shared interaction contract
 
 - Left-click or drag a visible handle, point, meter or track to edit its backing value.

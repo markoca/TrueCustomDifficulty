@@ -444,6 +444,12 @@ public sealed class MainViewModel : ObservableObject
             "economy.upgradeCost",
             "economy.repairCostBase");
 
+        // Equipment Wear has two independent sources behind one crosshair
+        // anchor; both must update the group's modified state.
+        WireVisualAggregate(
+            "equipment.armorDurability",
+            "equipment.armorDurability",
+            "equipment.weaponWearPerShot");
         WireVisualAggregate(
             "equipment.ammoWeight",
             "equipment.ammoWeight",

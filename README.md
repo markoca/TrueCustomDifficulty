@@ -1,5 +1,11 @@
 # True Custom Difficulty
 
+## Equipment tab — two compact source-backed sections (2026-10-09)
+
+The live Equipment UI has **four** editable source parameters and **two** full-width top-level sections. **Equipment Wear** uses a centered, small two-axis plot with separate outer handles for selected-difficulty Armor Toughness and player-weapon Wear Per Shot. The graph intersection is a read-only preview, not a coupled editor. Two adjacent readouts follow Stamina Usage: label left, current value right; only changed numeric values (including x units) become gold. The four historical Equipment Bonus Caps (Stamina Recovery, Bleeding Recovery, Carry Weight Bonus, Encumbrance Relief) remain **audit-only**. Their upper limits are known, but the game's complete use of those caps has not been validated; the current parameter catalog already excludes them.
+
+**Item Weight** now uses two short horizontal native tracks for Ammo and Food & Medicine, 0–2x at 0.01x increments, replacing the tall two-fader mixer. All four live Equipment sources, distinct reference difficulties, native limits, stored preset values, source mappings and CFG writer behavior remain unchanged. UI contract updated in `docs/UI-DESIGN-LOCK.md`, `docs/VISUAL-CONTROL-SYSTEM.md`, `docs/UI-MIXER-GRID-SPEC.md`, `docs/EQUIPMENT-MAPPING.md` and `docs/EQUIPMENT-CONTROL-DEEP-AUDIT.md`. Local .NET build/Wine visual and actual gameplay checks remain required.
+
 ## Economy tab compact UI polish (2026-10-09)
 
 The Economy tab still exposes all **22 existing player-facing source settings** across Coupons & Rewards (3), Trading (4), Trader Stock (2), Item Value Layers (6), Service Prices (3), and Repair Price by Reputation (4). This presentation-only update caps and centers editable Economy cards: up to 370 DIP each in two columns or 440 DIP in the narrow single column, rather than stretching each slider along a wide full-width section. Shared source cards have measured nonoverlapping left labels/right values, native min/max and reference ticks, and the universal **handle-only** hover glow. Numbers are accent-colored only when different from the reference, without redundant Base labels. Item Value category cards now center as a capped 2×3 bank with value-safe heading clipping.

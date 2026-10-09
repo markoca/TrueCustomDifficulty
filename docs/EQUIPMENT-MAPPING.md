@@ -1,5 +1,9 @@
 # Equipment Mapping
 
+**Current Equipment UI (2026-10-09):** Two source-accurate sections, **Equipment Wear** (`equipment.armorDurability` and `equipment.weaponWearPerShot`) and **Item Weight** (`equipment.ammoWeight` and `equipment.consumableWeight`). The former is a compact, two-axis plot with independent bottom-circle/left-square handles and read-only crossing; the latter consists of two compact horizontal Stamina Usage-style tracks, not mixer faders. All four real ranges/steps, CFG routes and native sources below are unchanged. Full UI anatomy is locked in `UI-DESIGN-LOCK.md` / `VISUAL-CONTROL-SYSTEM.md`.
+
+**Equipment bonus cap decision:** historical `RegenStamina.MaxValue` (stamina recovery), `DegenBleeding.MaxValue` (bleeding recovery), `AdditionalInventoryWeight.MaxValue` (carry bonus) and `PenaltyLessWeight.MaxValue` (encumbrance relief) are **audit-only / no Equipment UI**. They set upper bounds, but their actual stacking, gameplay effects and interpretation are not proven. They were already absent from the current four-source `Data/parameters.json`; do not add mock sliders, calculate derived effects, or modify unrelated CFG outputs.
+
 Source of truth for this pass: runtime STALKER 2 CFG dump 2.0.5.
 
 The Equipment tab deliberately avoids protection-cap tuning. The protection caps previously removed from the UI remain excluded. This pass focuses on the confirmed difficulty armor-wear control, player-weapon wear, and confirmed item-weight controls.

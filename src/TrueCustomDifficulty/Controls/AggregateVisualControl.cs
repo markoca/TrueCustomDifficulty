@@ -36,7 +36,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "AnomalyEffectsBoard" or "ServiceCostsBoard"
-            or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "BreakableBoxYields"
+            or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "EquipmentWearBalance" or "BreakableBoxYields"
             or "StashRewardProfile" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
     }
@@ -171,7 +171,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrawEconomyBoard(dc, text, muted, border, accent, panel);
                 break;
             case "ItemWeightBoard":
-                DrawNumericMixerBoard(dc, text, muted, border, accent, panel);
+                DrawEquipmentWeightBoard(dc, text, muted, border, accent, panel);
                 break;
             case "AnomalyEffectsBoard":
                 DrawAnomalyEffectsBoard(dc, text, muted, border, accent, panel);
@@ -281,6 +281,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         var source = target.Parameter;
+        // Equipment's handles live outside the plot and draw their own halo.
+        // The generic map-center glow would be in the wrong position here.
+        if (Family == "EquipmentWearBalance")
+            return;
         // Crosshair X/Y handles already draw the exact shared glow at their
         // own axes. Avoid a second overlay from their broad plot map rect.
         if (Family is "HumanCombatProfile" or "PsyPhantomPressure"
@@ -554,11 +558,34 @@ public sealed class AggregateVisualControl : FrameworkElement
             9.0, muted, FontWeights.Normal);
     }
 
-    private static readonly (string Id, string Top, string Bottom)[] WeightMixerChannels =
+    // Item Weight is two independent compact source cards, not vertical mixer
+    // strips. The current value is the native item-mass multiplier in both.
+    private void DrawEquipmentWeightBoard(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
     {
-        ("equipment.ammoWeight", "AMMO", "WEIGHT"),
-        ("equipment.consumableWeight", "FOOD + MED", "WEIGHT")
-    };
+        DrawCenteredText(dc, "ITEM WEIGHT",
+            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
+
+        var controls = new (string Id, string Label)[]
+        {
+            ("equipment.ammoWeight", "AMMO WEIGHT"),
+            ("equipment.consumableWeight", "FOOD & MEDICINE")
+        };
+        var columns = EconomyColumns(ActualWidth);
+        var cardWidth = EconomyCardWidth(ActualWidth, columns);
+        const double gap = 12.0;
+        var bankWidth = columns * cardWidth + (columns - 1) * gap;
+        var left = (ActualWidth - bankWidth) / 2.0;
+
+        for (var i = 0; i < controls.Length; i++)
+        {
+            var rect = new Rect(left + (i % columns) * (cardWidth + gap),
+                48.0 + (i / columns) * 94.0, cardWidth, 80.0);
+            DrawEconomyCard(dc, P(controls[i].Id), controls[i].Label,
+                rect, text, muted, border, accent, panel);
+        }
+    }
 
     private static readonly (string Id, string Top, string Bottom)[] BoxYieldMixerChannels =
     {
@@ -576,7 +603,6 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static (string Id, string Top, string Bottom)[] GetMixerChannels(string family)
         => family switch
         {
-            "ItemWeightBoard" => WeightMixerChannels,
             "BreakableBoxYields" => BoxYieldMixerChannels,
             "StashRewardProfile" => StashRewardMixerChannels,
             _ => AnomalyMixerChannels
@@ -2482,98 +2508,158 @@ public sealed class AggregateVisualControl : FrameworkElement
             9.3, accent, FontWeights.SemiBold);
     }
 
-    // This is a two-axis editor, not a fabricated unified "condition lost %" formula.
-    // X is the difficulty's armor-toughness scalar; Y is the relative per-shot
-    // durability loss for each player weapon. The current point is read-only:
-    // the independent axis handles are the only write surfaces.
+    // Source-accurate Equipment Wear crosshair. Only the two OUTER handles
+    // edit sources; their intersection and both reference lines are read-only.
+    // Actual weapon damage per shot and armor wear formulas are not inferred.
     private void DrawEquipmentWearBalance(
         DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
+        Brush text, Brush muted, Brush border, Brush soft,
+        Brush accent, Brush panel)
     {
-        DrawHeader(
-            dc,
-            "EQUIPMENT WEAR BALANCE",
-            "armor toughness (X) vs player weapon wear per shot (Y)",
-            text,
-            muted,
-            accent);
+        DrawCenteredText(dc, "EQUIPMENT WEAR",
+            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
 
         var armor = P("equipment.armorDurability");
         var weapon = P("equipment.weaponWearPerShot");
         if (armor is null || weapon is null)
         {
-            DrawCenteredText(dc, "Equipment wear data unavailable.", new Point(ActualWidth / 2.0, 150.0), 10.0, muted, FontWeights.SemiBold);
+            DrawCenteredText(dc, "Equipment wear data unavailable.",
+                new Point(ActualWidth / 2.0, 100.0), 10.0, muted, FontWeights.SemiBold);
             return;
         }
 
-        // Armor references depend on the chosen Base Preset (e.g. Veteran is
-        // 0.9x), while player weapon wear has a shared 1x vanilla reference.
-        // Show both exact CFG multipliers rather than suggesting 1x is always
-        // vanilla for both axes. Short labels protect the minimum 520px layout.
-        DrawDualParameterHeading(dc,
-            weapon, "WEAPON WEAR / SHOT",
-            armor, "ARMOR DURABILITY",
-            49.0, text, accent);
+        // Fixed-size, centered composition prevents the graph from expanding
+        // to 920 DIP and leaves a value column even at a 520-DIP viewport.
+        var graphSize = Math.Clamp((ActualWidth - 32.0) * 0.39, 178.0, 208.0);
+        var valueWidth = Math.Clamp((ActualWidth - 32.0) * 0.39, 185.0, 234.0);
+        var bankWidth = 40.0 + graphSize + 30.0 + valueWidth;
+        var bankLeft = (ActualWidth - bankWidth) / 2.0;
+        var plot = new Rect(bankLeft + 40.0, 73.0, graphSize, graphSize);
+        var valueLeft = plot.Right + 30.0;
 
-        var plot = new Rect(94.0, 81.0, Math.Max(350.0, ActualWidth - 132.0), 156.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), plot, 4.0, 4.0);
 
-        for (var tick = 0; tick <= 4; tick++)
+        // Native horizontal/vertical CFG ranges; labels never assume that
+        // the selected difficulty has a 1x Armor_Durability reference.
+        for (var i = 0; i <= 4; i++)
         {
-            var armorTick = armor.Minimum + (armor.Maximum - armor.Minimum) * tick / 4.0;
-            var armorTickX = ValueToX(armorTick, armor.Minimum, armor.Maximum, plot, reverse: false);
-            var weaponTick = weapon.Minimum + (weapon.Maximum - weapon.Minimum) * tick / 4.0;
-            var weaponTickY = ValueToY(weaponTick, weapon.Minimum, weapon.Maximum, plot);
+            var armorTick = armor.Minimum +
+                (armor.Maximum - armor.Minimum) * i / 4.0;
+            var wearTick = weapon.Minimum +
+                (weapon.Maximum - weapon.Minimum) * i / 4.0;
+            var tx = ValueToX(armorTick, armor.Minimum, armor.Maximum, plot, false);
+            var ty = ValueToY(wearTick, weapon.Minimum, weapon.Maximum, plot);
+            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.45), 1.0)
+                { DashStyle = DashStyles.Dot },
+                new Point(tx, plot.Top), new Point(tx, plot.Bottom));
+            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.45), 1.0)
+                { DashStyle = DashStyles.Dot },
+                new Point(plot.Left, ty), new Point(plot.Right, ty));
 
-            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.5), 1.0) { DashStyle = DashStyles.Dot },
-                new Point(armorTickX, plot.Top), new Point(armorTickX, plot.Bottom));
-            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.5), 1.0) { DashStyle = DashStyles.Dot },
-                new Point(plot.Left, weaponTickY), new Point(plot.Right, weaponTickY));
-
-            if (tick is 0 or 2 or 4)
+            if (i is 0 or 2 or 4)
             {
-                DrawCenteredText(dc, $"{armorTick:0.##}", new Point(armorTickX, plot.Bottom + 29.0), 9.8, text, FontWeights.Normal);
-                DrawRightAlignedText(dc, $"{weaponTick:0.##}", new Point(plot.Left - 29.0, weaponTickY - 7.0), 9.8, text, FontWeights.Normal);
+                DrawCenteredText(dc, $"{armorTick:0.##}x",
+                    new Point(tx, plot.Bottom + 25.0),
+                    9.2, muted, FontWeights.Normal);
+                // Y ticks live inside the graph, away from the left drag
+                // handle and its hit rectangle.
+                DrawText(dc, $"{wearTick:0.##}x",
+                    new Point(plot.Left + 7.0, ty - 12.0),
+                    9.0, muted, FontWeights.Normal);
             }
         }
 
-        var armorX = ValueToX(armor.CurrentNumber, armor.Minimum, armor.Maximum, plot, reverse: false);
-        var wearY = ValueToY(weapon.CurrentNumber, weapon.Minimum, weapon.Maximum, plot);
-        var baseArmorX = ValueToX(armor.ReferenceNumber, armor.Minimum, armor.Maximum, plot, reverse: false);
-        var baseWearY = ValueToY(weapon.ReferenceNumber, weapon.Minimum, weapon.Maximum, plot);
+        var axisOrigin = new Point(plot.Left - 37.0,
+            plot.Top + plot.Height / 2.0);
+        dc.PushTransform(new RotateTransform(-90.0,
+            axisOrigin.X, axisOrigin.Y));
+        DrawCenteredText(dc, "FASTER WEAPON WEAR",
+            axisOrigin, 9.5, muted, FontWeights.SemiBold);
+        dc.Pop();
+        DrawCenteredText(dc, "TOUGHER ARMOR",
+            new Point(plot.Left + plot.Width / 2.0, plot.Bottom + 48.0),
+            9.5, muted, FontWeights.SemiBold);
 
-        var basePen = new Pen(CloneWithOpacity(muted, 0.6), 1.1) { DashStyle = DashStyles.Dash };
-        dc.DrawLine(basePen, new Point(baseArmorX, plot.Top), new Point(baseArmorX, plot.Bottom));
-        dc.DrawLine(basePen, new Point(plot.Left, baseWearY), new Point(plot.Right, baseWearY));
-        dc.DrawEllipse(panel, new Pen(muted, 1.8), new Point(baseArmorX, baseWearY), 6.0, 6.0);
+        var armorX = ValueToX(armor.CurrentNumber,
+            armor.Minimum, armor.Maximum, plot, false);
+        var weaponY = ValueToY(weapon.CurrentNumber,
+            weapon.Minimum, weapon.Maximum, plot);
+        var refX = ValueToX(armor.ReferenceNumber,
+            armor.Minimum, armor.Maximum, plot, false);
+        var refY = ValueToY(weapon.ReferenceNumber,
+            weapon.Minimum, weapon.Maximum, plot);
 
-        var currentPen = new Pen(CloneWithOpacity(accent, 0.65), 1.2) { DashStyle = DashStyles.Dot };
-        dc.DrawLine(currentPen, new Point(armorX, plot.Top), new Point(armorX, plot.Bottom));
-        dc.DrawLine(currentPen, new Point(plot.Left, wearY), new Point(plot.Right, wearY));
-        dc.DrawEllipse(panel, new Pen(accent, 2.0), new Point(armorX, wearY), 6.5, 6.5);
-        dc.DrawEllipse(accent, null, new Point(armorX, wearY), 2.8, 2.8);
+        var referencePen = new Pen(CloneWithOpacity(muted, 0.55), 1.0)
+            { DashStyle = DashStyles.Dash };
+        dc.DrawLine(referencePen,
+            new Point(refX, plot.Top), new Point(refX, plot.Bottom));
+        dc.DrawLine(referencePen,
+            new Point(plot.Left, refY), new Point(plot.Right, refY));
+        dc.DrawEllipse(null, new Pen(CloneWithOpacity(muted, 0.7), 1.4),
+            new Point(refX, refY), 5.0, 5.0);
 
-        // Explicit independent handles avoid a joint drag altering both CFG values.
+        var currentPen = new Pen(CloneWithOpacity(accent, 0.67), 1.1)
+            { DashStyle = DashStyles.Dot };
+        dc.DrawLine(currentPen,
+            new Point(armorX, plot.Top), new Point(armorX, plot.Bottom));
+        dc.DrawLine(currentPen,
+            new Point(plot.Left, weaponY), new Point(plot.Right, weaponY));
+        dc.DrawEllipse(panel, new Pen(accent, 1.8),
+            new Point(armorX, weaponY), 5.7, 5.7);
+
+        // Only these two handles are active; the crossing point stays a
+        // semantic preview and may not silently edit both settings.
         var armorHandle = new Point(armorX, plot.Bottom + 10.0);
-        dc.DrawEllipse(panel, new Pen(accent, IsSelected(armor) ? 2.6 : 1.8), armorHandle, 7.0, 7.0);
+        var wearHandle = new Point(plot.Left - 10.0, weaponY);
+        var armorHover = ReferenceEquals(_hoverTarget?.Parameter, armor);
+        var weaponHover = ReferenceEquals(_hoverTarget?.Parameter, weapon);
+        ControlHoverGlow.Draw(dc, armorHandle, accent, armorHover);
+        ControlHoverGlow.Draw(dc, wearHandle, accent, weaponHover);
+        dc.DrawEllipse(panel, new Pen(accent,
+                armorHover || IsSelected(armor) ? 2.5 : 1.6),
+            armorHandle, 7.0, 7.0);
         dc.DrawEllipse(accent, null, armorHandle, 2.5, 2.5);
-        AddHorizontalTarget(armor, new Rect(armorX - 17.0, plot.Bottom + 1.0, 34.0, 22.0),
+        dc.DrawRoundedRectangle(panel, new Pen(accent,
+                weaponHover || IsSelected(weapon) ? 2.5 : 1.6),
+            new Rect(wearHandle.X - 6.0, wearHandle.Y - 6.0, 12.0, 12.0),
+            2.0, 2.0);
+        dc.DrawRectangle(accent, null,
+            new Rect(wearHandle.X - 2.0, wearHandle.Y - 2.0, 4.0, 4.0));
+        AddHorizontalTarget(armor,
+            new Rect(armorX - 17.0, plot.Bottom + 1.0, 34.0, 22.0),
             plot, armor.Minimum, armor.Maximum);
-
-        var weaponHandle = new Point(plot.Left - 11.0, wearY);
-        dc.DrawRectangle(panel, new Pen(accent, IsSelected(weapon) ? 2.6 : 1.8),
-            new Rect(weaponHandle.X - 6.0, weaponHandle.Y - 6.0, 12.0, 12.0));
-        AddVerticalTarget(weapon, new Rect(plot.Left - 28.0, wearY - 14.0, 27.0, 28.0),
+        AddVerticalTarget(weapon,
+            new Rect(plot.Left - 27.0, weaponY - 16.0, 30.0, 32.0),
             plot, weapon.Minimum, weapon.Maximum);
 
-        // Leave the status lane below y=290 clear for transient reset messages.
-        DrawCenteredText(dc, "BOTTOM CIRCLE: ARMOR TOUGHNESS   |   LEFT SQUARE: WEAPON WEAR   |   POINT = PREVIEW",
-            new Point(ActualWidth / 2.0, 280.0), 9.5, text, FontWeights.SemiBold);
+        // Value cards are read-only representations of the two real axis
+        // handles; they are not duplicate sliders or additional parameters.
+        void Readout(ParameterViewModel parameter, string label,
+            string meaning, double top)
+        {
+            var card = new Rect(valueLeft, top, valueWidth, 72.0);
+            dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+                card, 4.0, 4.0);
+            var value = $"{parameter.CurrentNumber:0.##}x";
+            var isChanged = parameter.IsValueModifiedFromReference();
+            var sizedValue = CreateText(value, isChanged ? 12.2 : 11.0,
+                isChanged ? accent : text, FontWeights.Bold);
+            var captionWidth = Math.Max(1.0, card.Width - 36.0 -
+                sizedValue.WidthIncludingTrailingWhitespace - 9.0);
+            dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold, captionWidth),
+                new Point(card.Left + 12.0, card.Top + 10.0));
+            dc.DrawText(sizedValue, new Point(
+                card.Right - 12.0 - sizedValue.WidthIncludingTrailingWhitespace,
+                card.Top + 9.0));
+            dc.DrawText(CreateText(meaning, 9.2, muted, FontWeights.Normal,
+                    Math.Max(1.0, card.Width - 24.0)),
+                new Point(card.Left + 12.0, card.Top + 40.0));
+        }
+
+        Readout(armor, "ARMOR TOUGHNESS", "Higher = tougher armor",
+            plot.Top + 20.0);
+        Readout(weapon, "WEAPON WEAR / SHOT", "Higher = faster wear",
+            plot.Top + 109.0);
     }
 
     // Compact native reputation editors keep the real source-value ordering
@@ -5097,7 +5183,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "CouponFlow" => EconomyBoardHeight(width, CouponEconomyChannels.Length),
             "ServiceCostsBoard" => EconomyBoardHeight(width, ServiceEconomyChannels.Length),
             "TraderStockBoard" => EconomyBoardHeight(width, StockEconomyChannels.Length),
-            "ItemWeightBoard" => GetMixerHeight(width, WeightMixerChannels.Length),
+            "ItemWeightBoard" => EconomyBoardHeight(width, 2),
             "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
             "AnomalyEffectsBoard" => GetMixerHeight(width, AnomalyMixerChannels.Length),
             "NpcLootLoadout" => 496.0,
@@ -5109,7 +5195,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "RadiationTreatment" => 250.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "BleedingTreatmentMixer" => 376.0,
-            "EquipmentWearBalance" => 320.0,
+            "EquipmentWearBalance" => 354.0,
             "PsyPhantomPressure" => 465.0,
             "HumanCombatProfile" => 465.0,
             "PlayerWeaponProfile" => 169.0,
