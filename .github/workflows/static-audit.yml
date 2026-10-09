@@ -174,3 +174,25 @@ jobs:
           path: audit/environment-patch-fixtures
           if-no-files-found: ignore
           retention-days: 7
+
+  alife-writer-windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+      - name: Install .NET 10 WPF production writer dependencies
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Verify A-Life Director BPatch rank and species assignments
+        shell: pwsh
+        run: dotnet run --project tests/ALifePatchContract/ALifePatchContract.csproj -c Release -- --out audit/alife-patch-fixtures
+      - name: Preserve generated A-Life director CFG evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alife-patch-contract
+          path: audit/alife-patch-fixtures
+          if-no-files-found: ignore
+          retention-days: 7
