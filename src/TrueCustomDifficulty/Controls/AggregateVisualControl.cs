@@ -287,7 +287,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush panel)
     {
         DrawHeader(dc, "EXPLOSION DAMAGE",
-            "blast damage multiplier for the currently selected Base Preset",
+            "",
             text, muted, accent);
 
         var damage = P("combat.explosionDamage");
@@ -507,7 +507,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush panel)
     {
         DrawHeader(dc, "ANOMALY EFFECTS / MIXER",
-            "six independent CFG channels  |  grey = Base Preset, gold = current",
+            "",
             text, muted, accent);
 
         var count = AnomalyMixerChannels.Length;
@@ -691,7 +691,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var condition = P("loot.droppedWeaponCondition");
 
         DrawHeader(dc, "NPC LOOT & EQUIPMENT",
-            "extra corpse package, normal drops and weapon condition stay separate",
+            "",
             text, muted, accent);
 
         if (corpse is null || medical is null || ammo is null || condition is null
@@ -885,7 +885,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var blueprints = P("loot.blueprintShuffle");
 
         DrawHeader(dc, "WORLD LOOT LAYOUT",
-            "four independent world changes and one weapon-density setting",
+            "",
             text, muted, accent);
 
         if (weapons is null || density is null || attachments is null
@@ -1441,7 +1441,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush panel)
     {
         DrawHeader(dc, "MASTER CONSUMABLE PENALTIES",
-            "healing retained after the Master modifier (100% = normal item heal)",
+            "",
             text, muted, accent);
 
         var toggle = P("advanced.masterEffectModifierMechanics");
@@ -1765,7 +1765,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush panel)
     {
         DrawHeader(dc, "YOUR WEAPONS",
-            "damage, headshot modifier and jamming stay three independent CFG settings",
+            "",
             text, muted, accent);
 
         DrawPlayerWeaponLane(dc, P("combat.playerWeaponDamage"), "BASE HIT DAMAGE",
