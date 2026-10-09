@@ -1,0 +1,62 @@
+{
+  "phase": 12,
+  "date": "2026-10-09",
+  "scope": "Environment/Anomalies",
+  "catalogBackingParameters": 17,
+  "directWriterEditPoints": 42,
+  "statusCounts": {
+    "exact": 42,
+    "inherited": 0,
+    "equivalent_numeric": 0,
+    "missing": 0,
+    "mismatch": 0
+  },
+  "sourceArchives": [
+    {
+      "name": "STALKER2-GameData-CFG(2)(2).zip",
+      "size": 31408298,
+      "sha256": "7610b16218310c7345796ff26b1554c73e3d2ca775f6a50108a7406cb7f33da1"
+    },
+    {
+      "name": "STALKER2-DLC1-CFG(2)(2).zip",
+      "size": 6207878,
+      "sha256": "3c5cb53f1769619b510ae3780142d92639c083a4a755a8717a267710c3c849e6"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "GameData/DifficultyPrototypes.cfg",
+      "sha256": "43d041e6895fbf8443d2c3abcfa502dc360dd53cd3ea9acbaca38e5e6e5d0aac",
+      "targetCount": 4
+    },
+    {
+      "path": "GameData/EffectPrototypes.cfg",
+      "sha256": "28d5aaf5f6a2c04618bf76ad705e3e82d99b93fec8c67f49d2a798866348cdc1",
+      "targetCount": 38
+    }
+  ],
+  "sourceExactByParameter": {
+    "environment.anomalyDamage": 4,
+    "environment.electroAnomalyDamage": 2,
+    "environment.chemicalAnomalyDamage": 2,
+    "environment.fireAnomalyDamage": 2,
+    "environment.carouselAnomalyDamage": 2,
+    "environment.toxicCloudDamage": 2,
+    "environment.steamAnomalyDamage": 2,
+    "environment.flycatcherMovementSpeed": 2,
+    "environment.flycatcherTurnSpeed": 4,
+    "environment.clickerHealthDamage": 2,
+    "environment.razorHealthDamage": 4,
+    "environment.razorBleeding": 4,
+    "environment.soapBubbleHealthDamage": 2,
+    "environment.fireballHealthDamage": 2,
+    "environment.diamondHealthDamage": 2,
+    "environment.diamondBleeding": 2,
+    "environment.psyAnomalyIntensity": 2
+  },
+  "method": "Original decoded ZIP member/prototype/nested field/raw value vs current production manifest point; independently extracted; current writer checks separate",
+  "constraints": [
+    "No Environment DLC1 manifest points; DLC1 archive availability is not game feature exhaustiveness",
+    "In-game effect and UE BPatch merging NOT VERIFIED"
+  ]
+}
