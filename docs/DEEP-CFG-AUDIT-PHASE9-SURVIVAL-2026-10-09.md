@@ -38,9 +38,27 @@ UI anchors that are yellow because a child changed must not add
 unchanged BPatch fields or unrelated Master mechanics replacements.
 The test also locks the exact one-item catalog vs app exclusion.
 
+### Original decoded ZIP parity — independently executed
+
+The supplied original decoded CFG archives were inspected directly on
+**2026-10-09**. The 139 manifest source routes were compared with the
+actual original file, prototype, nested node path, leaf key and
+literal raw string, with **139/139 directly authored exact matches**,
+**zero inherited source routes**, and **zero mismatches**.
+
+- Base archive SHA-256:
+  `7610b16218310c7345796ff26b1554c73e3d2ca775f6a50108a7406cb7f33da1`
+- DLC1 archive SHA-256:
+  `3c5cb53f1769619b510ae3780142d92639c083a4a755a8717a267710c3c849e6`
+
+Permanent [Survival source audit evidence](evidence/SURVIVAL-ORIGINAL-CFG-2026-10-09.json)
+records source identities, matching SHA fingerprints, all 54 parameter
+source-point counts and explicit verification boundaries. The raw
+decoded original archives were **not** committed to GitHub.
+
 ### Original decoded ZIP parity is a separate source gate
 
-The manifest source paths are *not themselves game-source evidence*.
+The successful original-source comparison above is independent of the writer manifest; a future game/CFG update must be rechecked against that release's source ZIPs.
 Re-run the existing original CFG comparison with `--parameter-prefix
 survival.`, including all **139** source fields, using matching
 user-supplied decoded ZIPs:

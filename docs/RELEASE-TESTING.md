@@ -184,3 +184,7 @@ C2 now includes five Master original-mechanics full-list replacement cases in ad
 ### Phase 9: Survival real-writer validation
 
 The `survival-writer-windows` CI job executes the real WPF ViewModel and production CFG writer for **53 live Survival parameters + 6 difficulty variants (59 tests)**. All **139 direct source fields** are covered separately by strict original ZIP value comparison (B6) during `pre_release.py source`. One source-mapped alcohol threshold remains catalog-only, not an app control. Game loading/effects stay NOT RUN. See [Phase 9](DEEP-CFG-AUDIT-PHASE9-SURVIVAL-2026-10-09.md).
+
+### Phase 9 original decoded Survival evidence (2026-10-09)
+
+Using the matching uploaded original CFG ZIPs, all **139/139 Survival direct source field identities and literal raw values** matched, with no refkey inheritance required. The immutable source ZIP SHA-256 fingerprints, counts by all 54 IDs and limitations are recorded in [Survival source evidence](evidence/SURVIVAL-ORIGINAL-CFG-2026-10-09.json). The same source comparison is automatically repeated by the B6 gate when matching archives are provided to `pre_release.py source`. This is **not** a gameplay acceptance result.
