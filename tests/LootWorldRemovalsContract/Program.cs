@@ -1,5 +1,7 @@
 using System.Globalization;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using TrueCustomDifficulty.Models;
 using TrueCustomDifficulty.Services;
 using TrueCustomDifficulty.ViewModels;
@@ -160,6 +162,28 @@ internal static class Program
                 Check(checkedCounts.GetValueOrDefault(id) == wanted,
                     label + ": wrong individual domain count " + id + ": " +
                     checkedCounts.GetValueOrDefault(id) + " instead of " + wanted);
+            if (Keep is not null)
+            {
+                // Do not ask Actions to upload tens of thousands of tiny
+                // actor files. Verify ALL of them first, retain a digest and
+                // a handful of genuine generated CFG fixtures per case.
+                var normalized = string.Join("\\n", observed.OrderBy(x => x, StringComparer.Ordinal));
+                var digest = Convert.ToHexString(
+                    SHA256.HashData(Encoding.UTF8.GetBytes(normalized)));
+                var receipt = new List<string>
+                {
+                    "Scenario=" + label,
+                    "Difficulty=" + difficulty,
+                    "HasDlc1=" + dlc,
+                    "VerifiedPhysicalRemovals=" + paths.Length,
+                    "SortedActorIdentitySHA256=" + digest
+                };
+                receipt.AddRange(wantedCounts.OrderBy(x => x.Key, StringComparer.Ordinal)
+                    .Select(x => x.Key + "=" + x.Value));
+                File.WriteAllLines(Path.Combine(root, "removal-contract-evidence.txt"), receipt);
+                foreach (var file in paths.OrderBy(x => x, StringComparer.Ordinal).Skip(5))
+                    File.Delete(file);
+            }
             Console.WriteLine("PASS " + difficulty + " " + label + " (" +
                 paths.Length + " physically eligible removenode files)");
             Passed++;
