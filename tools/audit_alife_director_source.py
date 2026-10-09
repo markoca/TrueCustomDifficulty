@@ -83,7 +83,8 @@ def main() -> int:
                                      "actual": sorted(ranks)})
                 for rank, rank_name in enumerate(RANKS):
                     rank_path = ["ALifeScenarioNPCArchetypesLimitsPerPlayerRank", f"[{rank}]"]
-                    target = dict(prototype="ALifeDirectorPreset", nodePath=rank_path,
+                    target = dict(parameterId="alife.__rank", scope="baseGame", file=FILE,
+                                  prototype="ALifeDirectorPreset", nodePath=rank_path,
                                   key="Rank", sourceRaw=f"ERank::{rank_name}")
                     status = check_point(target, roots)
                     if status["status"] != "exact":
@@ -117,8 +118,8 @@ def main() -> int:
                                              "rank": rank, "slot": slot,
                                              "actual": mapped})
                         raw = check_point(mapped, roots)
-                        tag = check_point(dict(prototype="ALifeDirectorPreset",
-                            nodePath=path, key="AgentType", sourceRaw=f"EAgentType::{agent}"), roots)
+                        tag = check_point(dict(parameterId=mapped["parameterId"], scope="baseGame", file=FILE,
+                            prototype="ALifeDirectorPreset", nodePath=path, key="AgentType", sourceRaw=f"EAgentType::{agent}"), roots)
                         record = {"rank": rank_name, "agentType": agent, "slot": slot,
                                   "parameterId": mapped["parameterId"],
                                   "maxCountStatus": raw["status"],
