@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <SelfContained>false</SelfContained>
+    <SelfContained>true</SelfContained>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/TrueCustomDifficulty/TrueCustomDifficulty.csproj" />

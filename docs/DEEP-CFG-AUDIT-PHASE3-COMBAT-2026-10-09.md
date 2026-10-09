@@ -149,7 +149,7 @@ gate could then reject that non-value change. Now the special-family
 selection and final modified-support check use each parameter's
 `IsValueModifiedFromReference()`. Aggregate UI coloring remains untouched.
 
-A standalone **Windows/.NET 10** console contract test project at
+A standalone **Windows/.NET 10** self-contained console contract test project at
 `tests/CombatPatchContract` runs the **real**
 `CfgPatchWriterService.Write`, generates `DifficultyPrototypes.cfg`
 patches, parses their nodes and assignments, and asserts:
