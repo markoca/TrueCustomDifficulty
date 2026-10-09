@@ -103,8 +103,13 @@ dotnet run --project tests/ALifePatchContract/ALifePatchContract.csproj -c Relea
 ```
 
 The `alife-writer-windows` job runs on Windows/.NET 10 and retains
-generated CFG fixture evidence. **At authoring, same-SHA CI execution
-is pending: do not call 94/94 PASS until that job finishes green.**
+generated CFG fixture evidence. **VERIFIED: 94/94 PASS.** The real Windows production writer job
+`alife-writer-windows` completed successfully in GitHub Actions run
+`37997251466` on source commit `bb2c08bffba8b9afe5827fb8d1eb282e602b6971`.
+The CI log includes the two zero-preserving mutant case (six emitted
+fields), and a final `PASS: 94 A-Life production BPatch writer scenarios`.
+The source archive and in-game behavior are separate verification boundaries;
+repeat this suite against the exact future release commit.
 
 ## Hard boundaries: not a world population control
 
