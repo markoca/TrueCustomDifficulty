@@ -46,6 +46,9 @@ jobs:
           python -m py_compile tools/audit_loot_world_source.py
           python tools/audit_loot_world_source.py --help
 
+      - name: Original nested stash weapon mechanics and minimal source patch regression
+        run: python tools/audit_world_weapon_nested_source.py
+
       - name: Pre-release runner and documented inventory smoke
         run: |
           python tools/pre_release.py list
