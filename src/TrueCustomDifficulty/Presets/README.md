@@ -1,6 +1,6 @@
 # True Custom Difficulty — Factory Presets
 
-The application ships with ten custom factory presets:
+The application ships with twelve custom factory presets:
 
 1. Immersive
 2. Tactical
@@ -42,3 +42,25 @@ New role-focused presets:
 - **Outcast** (Veteran base): marginal survivor, scarce medicine and ammunition, expensive repairs and risky encounters.
 
 All three include the full 201-value source mapping. The factory list now has ten profiles. Existing user presets and any personalized files remain untouched.
+
+
+## Alphabetical factory presets — 2026-10-09
+
+1. Anomaly Runner
+2. Field Medic
+3. Hardcore
+4. Hardcore+
+5. Immersive
+6. Mercenary
+7. Mutant Hunter
+8. Outcast
+9. Scavenger
+10. Smuggler
+11. Tactical
+12. Wanderer
+
+**Field Medic** (Stalker baseline): wound stabilisation, medicine, bleeding removal and sustained rescue expeditions; modest firepower.
+
+**Smuggler** (Veteran baseline): black-market expeditions for valuable artifacts and trophies, fast retreats, gear wear and expensive supply chains.
+
+Both new factory files contain all 201 existing preset keys, are embedded in the executable and only seeded when absent. Existing customized presets remain untouched.

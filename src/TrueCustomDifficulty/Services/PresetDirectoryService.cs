@@ -8,7 +8,7 @@ namespace TrueCustomDifficulty.Services;
 
 /// <summary>
 /// Owns the portable Presets directory beside the executable.
-/// Owns the ten shipped factory presets and migrates away the retired vanilla-named factory files.
+/// Owns the twelve shipped factory presets and migrates away the retired vanilla-named factory files.
 /// Unrelated user-created preset files are never deleted.
 /// </summary>
 public sealed class PresetDirectoryService
@@ -16,16 +16,18 @@ public sealed class PresetDirectoryService
     private const string ReadmeResourceName = "TrueCustomDifficulty.Presets.README.md";
     private static readonly string[] FactoryPresetNames =
     {
-        "Immersive",
-        "Tactical",
-        "Scavenger",
-        "Mutant Hunter",
         "Anomaly Runner",
-        "Mercenary",
-        "Wanderer",
-        "Outcast",
+        "Field Medic",
         "Hardcore",
-        "Hardcore+"
+        "Hardcore+",
+        "Immersive",
+        "Mercenary",
+        "Mutant Hunter",
+        "Outcast",
+        "Scavenger",
+        "Smuggler",
+        "Tactical",
+        "Wanderer"
     };
 
     private static readonly string[] LegacyFactoryPresetNames = { "Novice", "Stalker", "Veteran", "Master" };

@@ -1,6 +1,6 @@
 # Factory Presets
 
-True Custom Difficulty ships with ten custom factory presets. They replace the old
+True Custom Difficulty ships with twelve custom factory presets. They replace the old
 factory preset files named after the four vanilla game difficulties.
 
 The vanilla difficulties still remain the **reference/baseline model** used internally
@@ -103,3 +103,15 @@ Each new profile was validated against its catalog slider ranges: **201 serializ
 ### 2026-10-09 — Factory preset embedding fix
 
 The three new JSON preset files (Mercenary, Wanderer, Outcast) must be explicitly included in `TrueCustomDifficulty.csproj` as embedded resources with `TrueCustomDifficulty.Presets.<Name>.json` logical names. `PresetDirectoryService.WriteEmbedded()` uses those exact manifest names during first-run factory seeding; a file present in the repository but absent from the embedded manifest causes startup failure. All ten factory JSON resources now have explicit entries. No gameplay parameters or UI layout changed.
+
+
+## 2026-10-09 — Field Medic, Smuggler, and alphabetical sorting
+
+All twelve factory profiles are listed alphabetically in the picker: Anomaly Runner, Field Medic, Hardcore, Hardcore+, Immersive, Mercenary, Mutant Hunter, Outcast, Scavenger, Smuggler, Tactical, Wanderer. Custom preset files remain untouched and still sort by name after the factory choices.
+
+| New profile | Reference difficulty | Mindset | Complementary systems |
+|---|---|---|---|
+| **Field Medic** | Stalker | The responder who survives by controlling wounds and medical supplies, not overpowering foes | Strong HP healing, bandages, medkits, bleeding treatment, medical merchant stocks, affordable care, stable stamina, moderate combat and predictable hazards |
+| **Smuggler** | Veteran | The opportunist who navigates risky routes to profit from rare finds, managing losses instead of winning every fight | Higher artifact and mutant-trophy value, speed and cargo capacity, sparse field resources and traders, steep supply and repair costs, faster equipment wear, dangerous but avoidable enemies |
+
+Both are complete 201-entry presets using existing source IDs, source ranges and Base difficulty semantics. No new UI controls or game difficulty were introduced. Both JSONs are explicitly embedded into the executable to avoid missing-resource startup failures.

@@ -55,6 +55,8 @@
     <EmbeddedResource Include="Presets\Mercenary.json" LogicalName="TrueCustomDifficulty.Presets.Mercenary.json" />
     <EmbeddedResource Include="Presets\Wanderer.json" LogicalName="TrueCustomDifficulty.Presets.Wanderer.json" />
     <EmbeddedResource Include="Presets\Outcast.json" LogicalName="TrueCustomDifficulty.Presets.Outcast.json" />
+    <EmbeddedResource Include="Presets\Field Medic.json" LogicalName="TrueCustomDifficulty.Presets.Field Medic.json" />
+    <EmbeddedResource Include="Presets\Smuggler.json" LogicalName="TrueCustomDifficulty.Presets.Smuggler.json" />
     <EmbeddedResource Include="Presets\Hardcore.json" LogicalName="TrueCustomDifficulty.Presets.Hardcore.json" />
     <EmbeddedResource Include="Presets\Hardcore+.json" LogicalName="TrueCustomDifficulty.Presets.Hardcore+.json" />
   </ItemGroup>
