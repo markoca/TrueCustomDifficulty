@@ -131,6 +131,31 @@ The `loot-direct-writer-windows` job runs under .NET 10 on Windows.
 **Status at writing: registered, result pending same-SHA CI.** No
 claims of 117/117 PASS until an actual green job is recorded.
 
+## Production defect found by the new writer contract
+
+The first Windows run of `LootDirectPatchContract` passed the
+independent mutant-drop tests but failed when Rare Stash coupon chance
+changed: the writer emitted additional files unrelated to that one
+source. This uncovered a pre-existing mistake in the production writer
+input selection. `ParameterViewModel.IsModified` is intentionally an
+**aggregate UI highlight**: changing a child in the stash profile may
+mark the `loot.cheapStashAmmoQuantity` visual parent as modified even
+when its own 1x quantity source was untouched. The production writer
+previously used that UI highlight as its source-edit selector and could
+therefore activate unrelated special stash fanout writers.
+
+The production `CfgPatchWriterService` now selects only
+`IsValueModifiedFromReference()` inputs, while retaining the existing
+`IsControlEnabled` requirement. All actual child source parameters
+already live independently in `MainViewModel.AllParameters`.
+This deliberately changes **writer selection**, not any UI rendering,
+preset ID, physical source value or gameplay multiplier.
+
+The direct suite checks cross-family collateral output and all existing
+Windows writer suites remain mandatory regressions. **Do not call this
+regression fixed in a published build until the same-SHA Windows CI is
+green.**
+
 ## In-game and engine acceptance — NOT RUN
 
 Source identity and a writer's generated text do not establish that
