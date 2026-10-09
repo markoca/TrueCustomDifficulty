@@ -557,3 +557,8 @@ Rename the Action Costs radar panel title from **STAMINA PRESSURE** to **STAMINA
 ### 2026-10-09 — Aim stamina terminology
 
 In Stamina Usage, display **AIM REGEN SLOWDOWN** instead of `AIMING RECOVERY PENALTY`. This names the gameplay effect precisely: aiming slows stamina regeneration, rather than directly spending stamina. Keep the original CFG setting, percent readout, reference tick, and modified-value coloring.
+
+
+### 2026-10-09 — Cross-panel Stamina Usage visual consistency pass
+
+Adopt Stamina Usage text economy for specialized slider dashboards without replacing meaning-bearing diagrams: short titles, no generic explanatory subtitle, no duplicated Base-vs-current prose where grey source ticks already show the reference, neutral static labels, and gold numeric readouts only when their parameter differs from its Base. Applied to Anomaly Damage, Human Group Size, Item Value Layers, Mutant Part Drops, Mutant Group Size, Stash Ammo, World Loot Depletion and Mutant Special Ability controls; removed redundant generic subtitles in aggregate editors. Preserve native control maps, original interactive charts, hit targets, baseline semantics and CFG values. Further per-panel geometry tuning must be tested in Wine; do not assume every specialized slider can be replaced by an ordinary horizontal track.
