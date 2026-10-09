@@ -495,7 +495,7 @@ internal static class Program
                     Check(stack.Count>0,"Extra struct.end "+file);
                     stack.RemoveAt(stack.Count-1);continue;
                 }
-                var open=Regex.Match(line,@"^(?<name>\S+)\s*:\s*struct\.begin(?<extra>.*)$");
+                var open=Regex.Match(line,@"^(?<name>.+?)\s*:\s*struct\.begin(?<extra>.*)$");
                 if(open.Success)
                 {
                     var name=open.Groups["name"].Value;
