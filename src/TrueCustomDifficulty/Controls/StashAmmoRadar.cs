@@ -167,7 +167,7 @@ public sealed class StashAmmoRadar : FrameworkElement
             selected
                 ? CloneWithOpacity(accent, 0.08)
                 : hovered
-                    ? CloneWithOpacity(accent, 0.09)
+                    ? CloneWithOpacity(panel, 0.02)
                     : CloneWithOpacity(panel, 0.04),
             new Pen(border, 0.9),
             card,
@@ -187,7 +187,7 @@ public sealed class StashAmmoRadar : FrameworkElement
             $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Left + 12.0 + Math.Max(180.0, card.Width * 0.41), card.Top + 8.0),
             10.0,
-            hovered ? accent : text,
+            text,
             FontWeights.Bold);
 
         var track = new Rect(card.Left + 12.0, card.Top + 41.0, Math.Max(180.0, card.Width * 0.41), 12.0);
