@@ -3640,7 +3640,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             10.2, muted, FontWeights.Bold);
         var weights = new (ParameterViewModel Parameter, string Label)[]
         {
-            (weight918, "9x18 / 9x19"),
+            (weight918, "9×18 / 9×19"),
             (weight045, ".45 ACP"),
             (weight545, "5.45 / 5.56"),
             (weight012, "12 GAUGE")
@@ -3716,10 +3716,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         Pool("SNG POOL",
-            new[] { "9x18 / 9x19", "5.45", "12 GAUGE" }, sng,
+            new[] { "9×18 / 9×19", "5.45", "12 GAUGE" }, sng,
             new[] { 0, 2, 3 }, 351.0);
         Pool("NATO POOL",
-            new[] { ".45 ACP", "9x19", "5.56", "12 GAUGE" }, nato,
+            new[] { ".45 ACP", "9×19", "5.56", "12 GAUGE" }, nato,
             new[] { 1, 0, 2, 3 }, 445.0);
     }
 
