@@ -281,7 +281,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         var source = target.Parameter;
-        // Equipment's handles live outside the plot and draw their own halo.
+        // All three Equipment rings draw their own matching Combat-style halo.
         // The generic map-center glow would be in the wrong position here.
         if (Family == "EquipmentWearBalance")
             return;
@@ -2508,9 +2508,16 @@ public sealed class AggregateVisualControl : FrameworkElement
             9.3, accent, FontWeights.SemiBold);
     }
 
-    // Source-accurate Equipment Wear crosshair. Only the two OUTER handles
-    // edit sources; their intersection and both reference lines are read-only.
-    // Actual weapon damage per shot and armor wear formulas are not inferred.
+    // Equipment Wear has the same graph grammar AND three-hit-target behavior
+    // as Human Combat Profile: bottom X, left Y and draggable center X+Y.
+    // All coordinates use real independent source ranges, never a derived
+    // armor-wear percentage or a combined gameplay multiplier.
+    private static double EquipmentWearPlotSide(double width)
+        => Math.Min(240.0, Math.Max(200.0, width - 360.0));
+
+    private static double EquipmentWearBoardHeight(double width)
+        => 86.0 + EquipmentWearPlotSide(width) + 61.0;
+
     private void DrawEquipmentWearBalance(
         DrawingContext dc,
         Brush text, Brush muted, Brush border, Brush soft,
@@ -2520,146 +2527,130 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
 
         var armor = P("equipment.armorDurability");
-        var weapon = P("equipment.weaponWearPerShot");
-        if (armor is null || weapon is null)
+        var wear = P("equipment.weaponWearPerShot");
+        if (armor is null || wear is null)
         {
             DrawCenteredText(dc, "Equipment wear data unavailable.",
-                new Point(ActualWidth / 2.0, 100.0), 10.0, muted, FontWeights.SemiBold);
+                new Point(ActualWidth / 2.0, 150.0), 10.0, muted, FontWeights.SemiBold);
             return;
         }
 
-        // Fixed-size, centered composition prevents the graph from expanding
-        // to 920 DIP and leaves a value column even at a 520-DIP viewport.
-        var graphSize = Math.Clamp((ActualWidth - 32.0) * 0.39, 178.0, 208.0);
-        var valueWidth = Math.Clamp((ActualWidth - 32.0) * 0.39, 185.0, 234.0);
-        var bankWidth = 40.0 + graphSize + 30.0 + valueWidth;
-        var bankLeft = (ActualWidth - bankWidth) / 2.0;
-        var plot = new Rect(bankLeft + 40.0, 73.0, graphSize, graphSize);
-        var valueLeft = plot.Right + 30.0;
+        // Same 2D plot, labels and handles as Human Combat, centered to avoid
+        // an unnecessarily wide source plot in Equipment's full-width row.
+        var side = EquipmentWearPlotSide(ActualWidth);
+        var plot = new Rect((ActualWidth - side) / 2.0, 86.0, side, side);
+        const double axisLabelGap = 9.0;
 
-        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), plot, 4.0, 4.0);
+        var armorLabel = CreateText("ARMOR TOUGHNESS", 10.5, text, FontWeights.Bold);
+        var armorChanged = armor.IsValueModifiedFromReference();
+        var armorValue = CreateText($"{armor.CurrentNumber:0.##}x",
+            armorChanged ? 14.2 : 13.0,
+            armorChanged ? accent : text, FontWeights.Bold);
+        var armorCenterX = plot.Left + plot.Width / 2.0;
+        var armorStart = armorCenterX -
+            (armorLabel.WidthIncludingTrailingWhitespace + axisLabelGap +
+             armorValue.WidthIncludingTrailingWhitespace) / 2.0;
+        dc.DrawText(armorLabel, new Point(armorStart, plot.Top - 32.0));
+        dc.DrawText(armorValue,
+            new Point(armorStart + armorLabel.WidthIncludingTrailingWhitespace +
+                axisLabelGap, plot.Top - 34.0));
 
-        // Native horizontal/vertical CFG ranges; labels never assume that
-        // the selected difficulty has a 1x Armor_Durability reference.
-        for (var i = 0; i <= 4; i++)
+        // Same rotated Y caption and inline live value as Human Combat.
+        // This keeps the two source readouts attached to the axes instead of
+        // duplicating them in detached right-hand panels.
+        var axisCenterY = plot.Top + plot.Height / 2.0;
+        var wearLabel = CreateText("WEAPON WEAR / SHOT", 10.5, text, FontWeights.Bold);
+        var wearChanged = wear.IsValueModifiedFromReference();
+        var wearValue = CreateText($"{wear.CurrentNumber:0.##}x",
+            wearChanged ? 14.2 : 13.0,
+            wearChanged ? accent : text, FontWeights.Bold);
+        var axisCaptionX = plot.Left - 46.0;
+        var wearStart = axisCaptionX -
+            (wearLabel.WidthIncludingTrailingWhitespace + axisLabelGap +
+             wearValue.WidthIncludingTrailingWhitespace) / 2.0;
+        dc.PushTransform(new RotateTransform(-90.0, axisCaptionX, axisCenterY));
+        dc.DrawText(wearLabel, new Point(wearStart, axisCenterY - 7.0));
+        dc.DrawText(wearValue,
+            new Point(wearStart + wearLabel.WidthIncludingTrailingWhitespace +
+                axisLabelGap, axisCenterY - 9.0));
+        dc.Pop();
+
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
+        for (var tick = 0; tick <= 4; tick++)
         {
-            var armorTick = armor.Minimum +
-                (armor.Maximum - armor.Minimum) * i / 4.0;
-            var wearTick = weapon.Minimum +
-                (weapon.Maximum - weapon.Minimum) * i / 4.0;
-            var tx = ValueToX(armorTick, armor.Minimum, armor.Maximum, plot, false);
-            var ty = ValueToY(wearTick, weapon.Minimum, weapon.Maximum, plot);
-            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.45), 1.0)
-                { DashStyle = DashStyles.Dot },
-                new Point(tx, plot.Top), new Point(tx, plot.Bottom));
-            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.45), 1.0)
-                { DashStyle = DashStyles.Dot },
-                new Point(plot.Left, ty), new Point(plot.Right, ty));
-
-            if (i is 0 or 2 or 4)
+            var armorTick = armor.Minimum + (armor.Maximum - armor.Minimum) * tick / 4.0;
+            var wearTick = wear.Minimum + (wear.Maximum - wear.Minimum) * tick / 4.0;
+            var gridX = ValueToX(armorTick, armor.Minimum, armor.Maximum, plot, false);
+            var gridY = ValueToY(wearTick, wear.Minimum, wear.Maximum, plot);
+            var gridPen = new Pen(CloneWithOpacity(soft, 0.5), 1.0)
+                { DashStyle = DashStyles.Dot };
+            dc.DrawLine(gridPen,
+                new Point(gridX, plot.Top), new Point(gridX, plot.Bottom));
+            dc.DrawLine(gridPen,
+                new Point(plot.Left, gridY), new Point(plot.Right, gridY));
+            if (tick is 0 or 2 or 4)
             {
                 DrawCenteredText(dc, $"{armorTick:0.##}x",
-                    new Point(tx, plot.Bottom + 25.0),
-                    9.2, muted, FontWeights.Normal);
-                // Y ticks live inside the graph, away from the left drag
-                // handle and its hit rectangle.
-                DrawText(dc, $"{wearTick:0.##}x",
-                    new Point(plot.Left + 7.0, ty - 12.0),
-                    9.0, muted, FontWeights.Normal);
+                    new Point(gridX, plot.Bottom + 32.0),
+                    9.3, text, FontWeights.Normal);
+                DrawRightAlignedText(dc, $"{wearTick:0.##}x",
+                    new Point(plot.Left - 12.0, gridY - 7.0),
+                    9.3, text, FontWeights.Normal);
             }
         }
 
-        var axisOrigin = new Point(plot.Left - 37.0,
-            plot.Top + plot.Height / 2.0);
-        dc.PushTransform(new RotateTransform(-90.0,
-            axisOrigin.X, axisOrigin.Y));
-        DrawCenteredText(dc, "FASTER WEAPON WEAR",
-            axisOrigin, 9.5, muted, FontWeights.SemiBold);
-        dc.Pop();
-        DrawCenteredText(dc, "TOUGHER ARMOR",
-            new Point(plot.Left + plot.Width / 2.0, plot.Bottom + 48.0),
-            9.5, muted, FontWeights.SemiBold);
-
-        var armorX = ValueToX(armor.CurrentNumber,
-            armor.Minimum, armor.Maximum, plot, false);
-        var weaponY = ValueToY(weapon.CurrentNumber,
-            weapon.Minimum, weapon.Maximum, plot);
         var refX = ValueToX(armor.ReferenceNumber,
             armor.Minimum, armor.Maximum, plot, false);
-        var refY = ValueToY(weapon.ReferenceNumber,
-            weapon.Minimum, weapon.Maximum, plot);
+        var refY = ValueToY(wear.ReferenceNumber,
+            wear.Minimum, wear.Maximum, plot);
+        var currentX = ValueToX(armor.CurrentNumber,
+            armor.Minimum, armor.Maximum, plot, false);
+        var currentY = ValueToY(wear.CurrentNumber,
+            wear.Minimum, wear.Maximum, plot);
 
-        var referencePen = new Pen(CloneWithOpacity(muted, 0.55), 1.0)
+        var basePen = new Pen(CloneWithOpacity(muted, 0.65), 1.2)
             { DashStyle = DashStyles.Dash };
-        dc.DrawLine(referencePen,
-            new Point(refX, plot.Top), new Point(refX, plot.Bottom));
-        dc.DrawLine(referencePen,
-            new Point(plot.Left, refY), new Point(plot.Right, refY));
-        dc.DrawEllipse(null, new Pen(CloneWithOpacity(muted, 0.7), 1.4),
-            new Point(refX, refY), 5.0, 5.0);
+        dc.DrawLine(basePen, new Point(refX, plot.Top), new Point(refX, plot.Bottom));
+        dc.DrawLine(basePen, new Point(plot.Left, refY), new Point(plot.Right, refY));
+        dc.DrawEllipse(panel, new Pen(muted, 1.7),
+            new Point(refX, refY), 6.0, 6.0);
 
-        var currentPen = new Pen(CloneWithOpacity(accent, 0.67), 1.1)
+        var currentPen = new Pen(CloneWithOpacity(accent, 0.65), 1.2)
             { DashStyle = DashStyles.Dot };
         dc.DrawLine(currentPen,
-            new Point(armorX, plot.Top), new Point(armorX, plot.Bottom));
+            new Point(currentX, plot.Top), new Point(currentX, plot.Bottom));
         dc.DrawLine(currentPen,
-            new Point(plot.Left, weaponY), new Point(plot.Right, weaponY));
-        dc.DrawEllipse(panel, new Pen(accent, 1.8),
-            new Point(armorX, weaponY), 5.7, 5.7);
+            new Point(plot.Left, currentY), new Point(plot.Right, currentY));
 
-        // Only these two handles are active; the crossing point stays a
-        // semantic preview and may not silently edit both settings.
-        var armorHandle = new Point(armorX, plot.Bottom + 10.0);
-        var wearHandle = new Point(plot.Left - 10.0, weaponY);
-        var armorHover = ReferenceEquals(_hoverTarget?.Parameter, armor);
-        var weaponHover = ReferenceEquals(_hoverTarget?.Parameter, weapon);
-        ControlHoverGlow.Draw(dc, armorHandle, accent, armorHover);
-        ControlHoverGlow.Draw(dc, wearHandle, accent, weaponHover);
-        dc.DrawEllipse(panel, new Pen(accent,
-                armorHover || IsSelected(armor) ? 2.5 : 1.6),
-            armorHandle, 7.0, 7.0);
-        dc.DrawEllipse(accent, null, armorHandle, 2.5, 2.5);
-        dc.DrawRoundedRectangle(panel, new Pen(accent,
-                weaponHover || IsSelected(weapon) ? 2.5 : 1.6),
-            new Rect(wearHandle.X - 6.0, wearHandle.Y - 6.0, 12.0, 12.0),
-            2.0, 2.0);
-        dc.DrawRectangle(accent, null,
-            new Rect(wearHandle.X - 2.0, wearHandle.Y - 2.0, 4.0, 4.0));
+        // Same three matching gold rings as Human Combat:
+        // center = BOTH independent source values, bottom = armor only,
+        // left = weapon wear only. The rest of the graph is read-only.
+        DrawHumanAxisHandle(dc, new Point(currentX, currentY), accent, panel,
+            _hoverTarget?.Kind == HitKind.HumanJoint,
+            _selectedHitKind == HitKind.HumanJoint);
+
+        var armorHandle = new Point(currentX, plot.Bottom + 10.0);
+        DrawHumanAxisHandle(dc, armorHandle, accent, panel,
+            _hoverTarget?.Kind == HitKind.Horizontal &&
+                ReferenceEquals(_hoverTarget.Parameter, armor),
+            IsSelected(armor) && _selectedHitKind == HitKind.Horizontal);
         AddHorizontalTarget(armor,
-            new Rect(armorX - 17.0, plot.Bottom + 1.0, 34.0, 22.0),
+            new Rect(currentX - 17.0, plot.Bottom + 1.0, 34.0, 22.0),
             plot, armor.Minimum, armor.Maximum);
-        AddVerticalTarget(weapon,
-            new Rect(plot.Left - 27.0, weaponY - 16.0, 30.0, 32.0),
-            plot, weapon.Minimum, weapon.Maximum);
 
-        // Value cards are read-only representations of the two real axis
-        // handles; they are not duplicate sliders or additional parameters.
-        void Readout(ParameterViewModel parameter, string label,
-            string meaning, double top)
-        {
-            var card = new Rect(valueLeft, top, valueWidth, 72.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
-                card, 4.0, 4.0);
-            var value = $"{parameter.CurrentNumber:0.##}x";
-            var isChanged = parameter.IsValueModifiedFromReference();
-            var sizedValue = CreateText(value, isChanged ? 12.2 : 11.0,
-                isChanged ? accent : text, FontWeights.Bold);
-            var captionWidth = Math.Max(1.0, card.Width - 36.0 -
-                sizedValue.WidthIncludingTrailingWhitespace - 9.0);
-            dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold, captionWidth),
-                new Point(card.Left + 12.0, card.Top + 10.0));
-            dc.DrawText(sizedValue, new Point(
-                card.Right - 12.0 - sizedValue.WidthIncludingTrailingWhitespace,
-                card.Top + 9.0));
-            dc.DrawText(CreateText(meaning, 9.2, muted, FontWeights.Normal,
-                    Math.Max(1.0, card.Width - 24.0)),
-                new Point(card.Left + 12.0, card.Top + 40.0));
-        }
+        var wearHandle = new Point(plot.Left - 11.0, currentY);
+        DrawHumanAxisHandle(dc, wearHandle, accent, panel,
+            _hoverTarget?.Kind == HitKind.Vertical &&
+                ReferenceEquals(_hoverTarget.Parameter, wear),
+            IsSelected(wear) && _selectedHitKind == HitKind.Vertical);
+        AddVerticalTarget(wear,
+            new Rect(plot.Left - 28.0, currentY - 14.0, 27.0, 28.0),
+            plot, wear.Minimum, wear.Maximum);
 
-        Readout(armor, "ARMOR TOUGHNESS", "Higher = tougher armor",
-            plot.Top + 20.0);
-        Readout(weapon, "WEAPON WEAR / SHOT", "Higher = faster wear",
-            plot.Top + 109.0);
+        if (armor.IsControlEnabled && wear.IsControlEnabled)
+            _hitTargets.Add(new HitTarget(armor,
+                new Rect(currentX - 18.0, currentY - 18.0, 36.0, 36.0),
+                plot, HitKind.HumanJoint, armor.Minimum, armor.Maximum, false));
     }
 
     // Compact native reputation editors keep the real source-value ordering
@@ -4532,6 +4523,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 HitKind.MixerSelect => $"{target.Parameter.Label}\nClick for detailed rationale · Use the fader rail to edit",
                 HitKind.RangeMin => "NPC weapon condition MIN\nDrag or use arrow keys · Right-click = reset full range",
                 HitKind.RangeMax => "NPC weapon condition MAX\nDrag or use arrow keys · Right-click = reset full range",
+                HitKind.HumanJoint when Family == "EquipmentWearBalance" =>
+                    "Armor Toughness + Weapon Wear / Shot\nDrag in both directions · Right-click resets both",
                 _ => $"{target.Parameter.Label}\nDrag or use arrow keys to adjust · Right-click = Base Preset"
             };
         InvalidateVisual();
@@ -4565,13 +4558,20 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ? "survival.hungerMediumStaminaRegen"
                 : "survival.hungerStrongStaminaRegen")?.ResetToReference();
         if (target.Kind == HitKind.HumanJoint)
-            P(Family == "PsyPhantomPressure"
-                ? "combat.psyPhantomCount" : "combat.npcWeaponDamage")?.ResetToReference();
+            P(Family switch
+            {
+                "PsyPhantomPressure" => "combat.psyPhantomCount",
+                "EquipmentWearBalance" => "equipment.weaponWearPerShot",
+                _ => "combat.npcWeaponDamage"
+            })?.ResetToReference();
         EnforceFamilyConstraints(target.Parameter);
         _status.ShowTransient(target.Kind == HitKind.HumanJoint
-            ? (Family == "PsyPhantomPressure"
-                ? "Psy Cycle Wait + Phantom Count reset to Base Preset."
-                : "Enemy Health + Gun Damage reset to Base Preset.")
+            ? (Family switch
+            {
+                "PsyPhantomPressure" => "Psy Cycle Wait + Phantom Count reset to Base Preset.",
+                "EquipmentWearBalance" => "Armor Toughness + Weapon Wear reset to Base Preset.",
+                _ => "Enemy Health + Gun Damage reset to Base Preset."
+            })
             : $"{ShortLabel(target.Parameter)} reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
@@ -4713,10 +4713,18 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         if (target.Kind == HitKind.HumanJoint)
         {
-            var h = P(Family == "PsyPhantomPressure"
-                ? "combat.psySpawnCycleDelay" : "combat.npcHealth");
-            var d = P(Family == "PsyPhantomPressure"
-                ? "combat.psyPhantomCount" : "combat.npcWeaponDamage");
+            var h = P(Family switch
+            {
+                "PsyPhantomPressure" => "combat.psySpawnCycleDelay",
+                "EquipmentWearBalance" => "equipment.armorDurability",
+                _ => "combat.npcHealth"
+            });
+            var d = P(Family switch
+            {
+                "PsyPhantomPressure" => "combat.psyPhantomCount",
+                "EquipmentWearBalance" => "equipment.weaponWearPerShot",
+                _ => "combat.npcWeaponDamage"
+            });
             if (h is null || d is null || !h.IsControlEnabled || !d.IsControlEnabled)
                 return;
             var x = Math.Clamp((point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width), 0.0, 1.0);
@@ -5195,7 +5203,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "RadiationTreatment" => 250.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "BleedingTreatmentMixer" => 376.0,
-            "EquipmentWearBalance" => 354.0,
+            "EquipmentWearBalance" => EquipmentWearBoardHeight(width),
             "PsyPhantomPressure" => 465.0,
             "HumanCombatProfile" => 465.0,
             "PlayerWeaponProfile" => 169.0,
