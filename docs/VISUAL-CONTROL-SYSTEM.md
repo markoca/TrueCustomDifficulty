@@ -893,3 +893,8 @@ Adopt Stamina Usage text economy for specialized slider dashboards without repla
 ### 2026-10-09 — Specialized slider geometry pass (Stamina Usage alignment)
 
 Retain original interactive ranges, native CFG backing IDs, vanilla/base ticks and panel-specific charts. Across Anomaly Damage, Mutant Part Drops, Stash Ammo, Human Group Size, Mutant Group Size, Item Value Layers and World Loot Depletion, use compact horizontal tracks with consistent approximately 10–12 DIP rails, 10 DIP side padding where applicable, neutral static names, and right-aligned current values that turn gold only when modified from Base. Remove duplicated conversion percentages on Anomaly Damage where the source value already labels the rail; show one chance percentage rather than repeating expected rolls in Mutant Drops. Stash Ammo keeps distinct sample-stack values alongside its shortened native slider, with no redundant tier subtitle. Human and Mutant Group Size preserve authored effective-cap references and species/rank breakdowns. World Loot preserves base/DLC1 population estimates and removal semantics. Do not flatten specialized radar/fader interactions into ordinary sliders; further per-panel geometry changes require local Wine visual verification. No source CFG values, preset values, or mappings changed.
+
+
+### 2026-10-09 — Mutant cooldown fader numeric emphasis
+
+Mutant special-ability cooldown faders retain their original vertical slider geometry and Base ticks. Current cooldown multiplier text stays neutral at Base, becoming gold and +1.2 DIP larger only after modification. Names remain neutral. Preserve the distinct cooldown and derived attack-frequency meaning.
