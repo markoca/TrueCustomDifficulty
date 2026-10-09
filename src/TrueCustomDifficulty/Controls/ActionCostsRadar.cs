@@ -9,7 +9,7 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// Compact stamina-pressure board.
+/// Compact stamina-usage board.
 ///
 /// One-time movement/melee costs share a relative-to-Base-Preset scale. Aiming is a
 /// continuous recovery penalty. Exhaustion/recovery uses the actual absolute stamina
@@ -18,7 +18,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class ActionCostsRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double DesiredHeight = 420.0;
+    private const double DesiredHeight = 393.0;
 
     private const string AimParameterId = "stamina.aimRegenCoef";
     private const string SprintDisableThresholdId = "stamina.sprintDisableThreshold";
@@ -178,10 +178,8 @@ public sealed class ActionCostsRadar : FrameworkElement
 
         _targets.Clear();
 
-        DrawCenteredText(dc, "STAMINA PRESSURE", new Point(ActualWidth / 2.0, 21.0),
+        DrawCenteredText(dc, "STAMINA USAGE", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "action load, aiming recovery and low-SP exhaustion in one board", new Point(ActualWidth / 2.0, 39.0),
-            9.5, muted, FontWeights.Normal);
 
         var left = 18.0;
         var width = Math.Max(540.0, ActualWidth - 36.0);
@@ -192,7 +190,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             dc,
             ActionGroup.Movement,
             "MOVEMENT",
-            new Rect(left, 58.0, half, 132.0),
+            new Rect(left, 47.0, half, 132.0),
             text,
             muted,
             border,
@@ -203,7 +201,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             dc,
             ActionGroup.Melee,
             "MELEE",
-            new Rect(left + half + gap, 58.0, half, 132.0),
+            new Rect(left + half + gap, 47.0, half, 132.0),
             text,
             muted,
             border,
@@ -212,7 +210,7 @@ public sealed class ActionCostsRadar : FrameworkElement
 
         DrawAimPanel(
             dc,
-            new Rect(left, 202.0, width, 54.0),
+            new Rect(left, 189.0, width, 54.0),
             text,
             muted,
             border,
@@ -221,7 +219,7 @@ public sealed class ActionCostsRadar : FrameworkElement
 
         DrawExhaustionPanel(
             dc,
-            new Rect(left, 268.0, width, 119.0),
+            new Rect(left, 255.0, width, 119.0),
             text,
             muted,
             border,
@@ -245,7 +243,6 @@ public sealed class ActionCostsRadar : FrameworkElement
     {
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 0.9), card, 4.0, 4.0);
         DrawText(dc, title, new Point(card.Left + 9.0, card.Top + 7.0), 9.3, muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, "gold = current   |   grey tick = Base Preset", new Point(card.Right - 9.0, card.Top + 7.0), 9.0, muted, FontWeights.Normal);
 
         var indices = Enumerable.Range(0, Actions.Length)
             .Where(i => Actions[i].Group == group)
@@ -263,10 +260,10 @@ public sealed class ActionCostsRadar : FrameworkElement
             var relative = Math.Abs(reference) > Epsilon ? parameter.CurrentNumber / reference : 0.0;
             var modified = Math.Abs(parameter.CurrentNumber - reference) > Epsilon;
 
-            DrawText(dc, Actions[index].Label, new Point(card.Left + 9.0, top), 9.2, modified ? accent : text, FontWeights.Bold);
+            DrawText(dc, Actions[index].Label, new Point(card.Left + 9.0, top), 9.2, text, FontWeights.Bold);
             DrawRightAlignedText(
                 dc,
-                $"{FormatRaw(parameter.CurrentNumber)} SP   |   {relative * 100:0}%",
+                $"{FormatRaw(parameter.CurrentNumber)} SP",
                 new Point(card.Right - 9.0, top),
                 9.2,
                 modified ? accent : text,
@@ -310,12 +307,12 @@ public sealed class ActionCostsRadar : FrameworkElement
             4.0);
 
         DrawText(dc, "AIMING RECOVERY PENALTY", new Point(card.Left + 10.0, card.Top + 8.0), 9.4, text, FontWeights.Bold);
-        DrawText(dc, "continuous stamina-regeneration slowdown", new Point(card.Left + 10.0, card.Top + 26.0), 9.0, muted, FontWeights.Normal);
 
         if (_aimParameter is not { } parameter)
             return;
 
-        DrawRightAlignedText(dc, $"{parameter.CurrentNumber * 100:0}%", new Point(card.Right - 10.0, card.Top + 7.0), 10.0, accent, FontWeights.Bold);
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber * 100:0}%", new Point(card.Right - 10.0, card.Top + 7.0), 10.0,
+            parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
 
         var track = new Rect(card.Left + 235.0, card.Top + 31.0, Math.Max(150.0, card.Width - 250.0), 10.0);
         var y = track.Top + track.Height / 2.0;
@@ -348,7 +345,6 @@ public sealed class ActionCostsRadar : FrameworkElement
     {
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 0.9), card, 4.0, 4.0);
         DrawText(dc, "EXHAUSTION & LOW-SP RECOVERY", new Point(card.Left + 10.0, card.Top + 7.0), 9.5, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "absolute stamina values", new Point(card.Right - 10.0, card.Top + 7.0), 9.0, muted, FontWeights.Normal);
 
         var thresholdTrack = new Rect(card.Left + 145.0, card.Top + 30.0, card.Width - 160.0, 38.0);
         var sprintY = thresholdTrack.Top + 7.0;
@@ -461,7 +457,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         dc.DrawLine(new Pen(accent, 2.8), new Point(line.Left, y), new Point(currentX, y));
         DrawHandle(dc, parameter, new Point(currentX, y), panel, accent);
 
-        DrawRightAlignedText(dc, formatter(parameter.CurrentNumber), new Point(line.Right, y - 10.0), 9.0, IsSelected(parameter) ? accent : text, FontWeights.Bold);
+        DrawRightAlignedText(dc, formatter(parameter.CurrentNumber), new Point(line.Right, y - 10.0), 9.0, parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
 
         var activeLeft = ValueToX(parameter.Minimum, visualMinimum, visualMaximum, line);
         var activeRight = ValueToX(parameter.Maximum, visualMinimum, visualMaximum, line);
