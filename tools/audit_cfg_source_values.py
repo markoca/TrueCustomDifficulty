@@ -152,19 +152,27 @@ def resolve_refkey_inheritance(point: dict, roots: list[CfgNode],
                         inheritanceStatus="no_explicit_refkey_ancestor")
         refurl = directives.get("refurl")
         if refurl:
-            # Original decoded GameData/ItemPrototypes.cfg physically consolidates
-            # ConsumablePrototypes.cfg; the matching parent must still be found
-            # exactly once in these SAME decoded file roots. Other refurls stay
-            # unresolved until their own original files are independently read.
-            if not (point["file"] == "GameData/ItemPrototypes.cfg"
-                    and refurl == "ConsumablePrototypes.cfg"):
+            # Original decoded ItemPrototypes and ItemGeneratorPrototypes CFGs
+            # physically consolidate the narrow refurl root families listed
+            # below. Never infer values from unrelated refurls or missing roots.
+            # Deliberately allow only source-pack layouts independently seen
+            # in the original decoded ZIPs. Both referenced ancestor roots must
+            # actually exist in the SAME consolidated original source text.
+            verified = {
+                ("GameData/ItemPrototypes.cfg", "ConsumablePrototypes.cfg"):
+                    "physical_parent_in_consolidated_ItemPrototypes",
+                ("GameData/ItemGeneratorPrototypes.cfg",
+                 "ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg"):
+                    "physical_parent_in_consolidated_ItemGeneratorPrototypes",
+            }
+            resolution = verified.get((point["file"], refurl))
+            if resolution is None:
                 return dict(direct_result, refkeyChain=chain,
                             refurlEdges=refurl_edges,
                             unresolvedRefurl=refurl,
                             inheritanceStatus="refurl_not_verified")
             refurl_edges.append({"from": current.name, "refurl": refurl,
-                                 "refkey": parent,
-                                 "resolution": "physical_parent_in_consolidated_ItemPrototypes"})
+                                 "refkey": parent, "resolution": resolution})
         chain.append(parent)
         if parent in seen:
             return dict(direct_result, refkeyChain=chain,
