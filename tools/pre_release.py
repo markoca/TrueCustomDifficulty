@@ -32,6 +32,8 @@ SOURCE = (
     ("economy-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("equipment-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("environment-direct-source-values", "tools/audit_cfg_source_values.py"),
+    ("alife-direct-source-values", "tools/audit_cfg_source_values.py"),
+    ("alife-director-source-structure", "tools/audit_alife_director_source.py"),
 )
 WRITERS = (
     ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 82),
@@ -40,6 +42,7 @@ WRITERS = (
     ("economy-bpatch-writer", "EconomyPatchContract", "economy-patch-fixtures", 34),
     ("equipment-bpatch-writer", "EquipmentPatchContract", "equipment-patch-fixtures", 32),
     ("environment-bpatch-writer", "EnvironmentPatchContract", "environment-patch-fixtures", 90),
+    ("alife-bpatch-writer", "ALifePatchContract", "alife-patch-fixtures", 94),
 )
 MANUAL = (
     "S.T.A.L.K.E.R. 2 Combat BPatch loading and gameplay effects",
@@ -152,6 +155,11 @@ def main():
             if label == "environment-direct-source-values":
                 command.extend(["--out", str(out / "environment-source-values.json"),
                                 "--parameter-prefix", "environment.", "--strict"])
+            if label == "alife-direct-source-values":
+                command.extend(["--out", str(out / "alife-source-values.json"),
+                                "--parameter-prefix", "alife.", "--strict"])
+            if label == "alife-director-source-structure":
+                command.extend(["--out", str(out / "alife-director-structure.json")])
             if label == "survival-direct-source-values":
                 command.extend(["--out", str(out / "survival-source-values.json"),
                                 "--parameter-prefix", "survival.", "--strict"])
