@@ -361,7 +361,10 @@
   "writerCheck": {
     "scenarios": 94,
     "ciJob": "alife-writer-windows",
-    "state": "Not yet verified at authoring"
+    "result": "PASS",
+    "verifiedCommit": "bb2c08bffba8b9afe5827fb8d1eb282e602b6971",
+    "githubActionsRun": 37997251466,
+    "gameplayStatus": "NOT RUN"
   },
   "limitations": [
     "This verifies the uploaded original decoded game source and current mapped path list; does not prove Unreal BPatch merge semantics",
