@@ -477,22 +477,22 @@ public sealed class MainViewModel : ObservableObject
             "loot.worldDetectors",
             "loot.blueprintShuffle");
 
-        // Distinct stash chance/count rolls share one visual board without
-        // changing the underlying generator operations or their independence.
+        // Six real stash sources: three tier ammo amounts and three bonus rolls.
         WireVisualAggregate(
-            "loot.cheapStashGrenadeChance",
+            "loot.cheapStashAmmoQuantity",
+            "loot.cheapStashAmmoQuantity",
+            "loot.mediumStashAmmoQuantity",
+            "loot.expensiveStashAmmoQuantity",
             "loot.cheapStashGrenadeChance",
             "loot.cheapStashGrenadeQuantity",
             "loot.expensiveStashMoneyChance");
 
-        // Box yield scalers are separate from the existing ammo-family weights.
-        WireVisualAggregate(
-            "loot.destructibleAmmoQuantity",
-            "loot.destructibleAmmoQuantity",
-            "loot.destructibleGrenadeQuantity");
-
+        // Breakable box quantities and relative SNG/NATO ammo weights are
+        // independent sources in one compact control, not duplicate editors.
         WireVisualAggregate(
             "loot.ammoBoxWeight918",
+            "loot.destructibleAmmoQuantity",
+            "loot.destructibleGrenadeQuantity",
             "loot.ammoBoxWeight918",
             "loot.ammoBoxWeight045",
             "loot.ammoBoxWeight545",
