@@ -833,3 +833,8 @@ All seven factory profiles were rebuilt across combat, mutant health/cooldowns, 
 ### 2026-10-09 — Three additional factory role profiles
 
 Add Mercenary, Wanderer and Outcast to the shipped Presets list (ten total). These are preset-data additions only: no new slider, UI card, difficulty mode or input behavior. All numeric changes remain subject to the existing yellow-only-when-modified number rule; baseline references are Veteran, Stalker and Veteran, respectively. See docs/FACTORY-PRESETS.md for authored playstyles.
+
+
+### 2026-10-09 — Factory preset embedding fix
+
+The three new JSON preset files (Mercenary, Wanderer, Outcast) must be explicitly included in `TrueCustomDifficulty.csproj` as embedded resources with `TrueCustomDifficulty.Presets.<Name>.json` logical names. `PresetDirectoryService.WriteEmbedded()` uses those exact manifest names during first-run factory seeding; a file present in the repository but absent from the embedded manifest causes startup failure. All ten factory JSON resources now have explicit entries. No gameplay parameters or UI layout changed.
