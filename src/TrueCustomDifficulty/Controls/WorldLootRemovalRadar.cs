@@ -133,8 +133,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
 
         DrawCenteredText(dc, "WORLD LOOT DEPLETION", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "removes audited physical world actors at build time; 0% keeps vanilla placement", new Point(ActualWidth / 2.0, 39.0),
-            9.5, muted, FontWeights.Normal);
+
 
         DrawRightAlignedText(
             dc,
