@@ -142,8 +142,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         var content = ContentRect();
         DrawCenteredText(dc, "MUTANT ENCOUNTER CAPS", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "N / E / V / M = resulting squad cap by ALife rank", new Point(ActualWidth / 2.0, 39.0),
-            9.5, muted, FontWeights.Normal);
+
 
         var columnWidth = (content.Width - ColumnGap) / 2.0;
         var leftColumn = new Rect(content.Left, 66.0, columnWidth, 326.0);
