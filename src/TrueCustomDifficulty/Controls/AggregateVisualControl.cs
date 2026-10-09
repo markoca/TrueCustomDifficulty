@@ -422,6 +422,15 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private static int EconomyColumns(double width) => width >= 672.0 ? 2 : 1;
 
+    // Full-width top-level sections may be wide; their editable cards stay compact.
+    // Measure and render use the same 672-DIP single/two-column breakpoint.
+    private static double EconomyCardWidth(double width, int columns)
+    {
+        const double gap = 12.0;
+        var available = (Math.Max(1.0, width - 32.0) - gap * (columns - 1)) / columns;
+        return Math.Max(1.0, Math.Min(available, columns == 2 ? 370.0 : 440.0));
+    }
+
     private static double EconomyBoardHeight(double width, int count)
     {
         var rows = (count + EconomyColumns(width) - 1) / EconomyColumns(width);
@@ -451,8 +460,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var columns = EconomyColumns(ActualWidth);
         const double gap = 12.0;
-        var contentWidth = Math.Max(1.0, ActualWidth - 32.0);
-        var cardWidth = (contentWidth - gap * (columns - 1)) / columns;
+        var cardWidth = EconomyCardWidth(ActualWidth, columns);
         for (var i = 0; i < channels.Length; i++)
         {
             var row = i / columns;
@@ -473,11 +481,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
-        dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold,
-                Math.Max(1.0, card.Width - 95.0)),
-            new Point(card.Left + 12.0, card.Top + 9.0));
         if (parameter is null)
         {
+            dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold,
+                    Math.Max(1.0, card.Width - 24.0)),
+                new Point(card.Left + 12.0, card.Top + 9.0));
             DrawText(dc, "PARAMETER UNAVAILABLE",
                 new Point(card.Left + 12.0, card.Top + 34.0),
                 9.0, muted, FontWeights.Normal);
@@ -485,9 +493,18 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var modified = parameter.IsValueModifiedFromReference();
-        DrawRightAlignedText(dc, EconomyValue(parameter, parameter.CurrentNumber),
-            new Point(card.Right - 12.0, card.Top + 8.0),
-            modified ? 12.2 : 11.0, modified ? accent : text, FontWeights.Bold);
+        var value = EconomyValue(parameter, parameter.CurrentNumber);
+        var readout = CreateText(value, modified ? 12.2 : 11.0,
+            modified ? accent : text, FontWeights.Bold);
+        // Reserve the measured readout width, not an arbitrary 95-DIP lane.
+        // At minimum window width titles cannot overwrite the live value.
+        var labelWidth = Math.Max(1.0, card.Width - 36.0
+            - readout.WidthIncludingTrailingWhitespace - 10.0);
+        dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold, labelWidth),
+            new Point(card.Left + 12.0, card.Top + 9.0));
+        dc.DrawText(readout, new Point(
+            card.Right - 12.0 - readout.WidthIncludingTrailingWhitespace,
+            card.Top + 8.0));
 
         var track = new Rect(card.Left + 14.0, card.Top + 40.0,
             Math.Max(1.0, card.Width - 28.0), 12.0);
@@ -501,10 +518,23 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(track.Left, y), new Point(track.Right, y));
         dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 3.0),
             new Point(track.Left, y), new Point(x, y));
+        // Repair reputation has a meaningful separate 1x "no modifier"
+        // reference; it is NOT the selected-difficulty Base marker.
+        if (parameter.Id is "economy.repairFriend" or "economy.repairNeutral"
+            or "economy.repairDisaffection" or "economy.repairEnemy")
+        {
+            var unmodifiedX = ValueToX(1.0, parameter.Minimum,
+                parameter.Maximum, track, reverse: false);
+            if (Math.Abs(unmodifiedX - referenceX) >= 2.0)
+                dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.55), 1.0)
+                    { DashStyle = DashStyles.Dash },
+                    new Point(unmodifiedX, y - 8.0), new Point(unmodifiedX, y + 8.0));
+        }
         dc.DrawLine(new Pen(muted, 1.8),
             new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
 
         var hovered = ReferenceEquals(_hoverTarget?.Parameter, parameter);
+        ControlHoverGlow.Draw(dc, new Point(x, y), accent, hovered);
 
         dc.DrawEllipse(panel, new Pen(accent,
             hovered || IsSelected(parameter) ? 2.5 : 1.5),
@@ -2547,7 +2577,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
     // Compact reputation modifiers: preserve the value-based ordering constraint
-    // in the shared coordinator, and edit the four original source parameters.
+    // Repair reputation retains four native sliders and the actual-value
+    // ordering constraint enforced by the shared coordinator; no fake bill preview.
     private void DrawRepairCurve(
         DrawingContext dc, Brush text, Brush muted, Brush border, Brush soft,
         Brush accent, Brush panel)
@@ -2563,66 +2594,17 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("economy.repairEnemy", "HOSTILE")
         };
 
-        var contentWidth = Math.Max(1.0, ActualWidth - 32.0);
-        var columns = contentWidth >= 640.0 ? 2 : 1;
+        var columns = EconomyColumns(ActualWidth);
+        var cardWidth = EconomyCardWidth(ActualWidth, columns);
         const double gap = 12.0;
-        const double pitch = 116.0;
-        const double cardHeight = 104.0;
-        var cardWidth = (contentWidth - (columns - 1) * gap) / columns;
-
+        var groupWidth = columns * cardWidth + (columns - 1) * gap;
+        var left = (ActualWidth - groupWidth) / 2.0;
         for (var i = 0; i < channels.Length; i++)
         {
-            var channel = channels[i];
-            var card = new Rect(16.0 + i % columns * (cardWidth + gap),
-                48.0 + i / columns * pitch, cardWidth, cardHeight);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
-            DrawText(dc, channel.Label, new Point(card.Left + 12.0, card.Top + 8.0),
-                10.0, text, FontWeights.Bold);
-            var parameter = P(channel.Id);
-            if (parameter is null)
-            {
-                DrawText(dc, "PARAMETER UNAVAILABLE", new Point(card.Left + 12.0, card.Top + 30.0),
-                    9.0, muted, FontWeights.Normal);
-                continue;
-            }
-
-            var modified = parameter.IsValueModifiedFromReference();
-            DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
-                new Point(card.Right - 12.0, card.Top + 7.0),
-                modified ? 12.2 : 11.0, modified ? accent : text, FontWeights.Bold);
-            var delta = (parameter.CurrentNumber - 1.0) * 100.0;
-            var meaning = Math.Abs(delta) < 0.5 ? "NO REPUTATION ADJUSTMENT"
-                : delta > 0.0 ? $"{delta:0}% REPAIR SURCHARGE"
-                : $"{-delta:0}% REPAIR DISCOUNT";
-            DrawText(dc, meaning, new Point(card.Left + 12.0, card.Top + 30.0),
-                9.2, muted, FontWeights.Normal);
-
-            var track = new Rect(card.Left + 16.0, card.Top + 56.0,
-                Math.Max(1.0, card.Width - 32.0), 16.0);
-            var y = track.Top + track.Height / 2.0;
-            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-            var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-            var unitX = ValueToX(1.0, parameter.Minimum, parameter.Maximum, track, reverse: false);
-            dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 3.0),
-                new Point(track.Left, y), new Point(currentX, y));
-            dc.DrawLine(new Pen(soft, 1.2) { DashStyle = DashStyles.Dash },
-                new Point(unitX, y - 8.0), new Point(unitX, y + 8.0));
-            dc.DrawLine(new Pen(muted, 1.8),
-                new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
-            dc.DrawEllipse(panel, new Pen(accent, IsSelected(parameter) ? 2.5 : 1.5),
-                new Point(currentX, y), 6.0, 6.0);
-            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-            AddHorizontalTarget(parameter,
-                new Rect(track.Left - 6.0, track.Top - 6.0,
-                    track.Width + 12.0, track.Height + 12.0),
-                track, parameter.Minimum, parameter.Maximum);
-            DrawText(dc, $"{parameter.Minimum:0.##}x",
-                new Point(track.Left, card.Top + 79.0), 9.0, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
-                new Point(track.Right, card.Top + 79.0), 9.0, muted, FontWeights.Normal);
+            var card = new Rect(left + (i % columns) * (cardWidth + gap),
+                48.0 + (i / columns) * 94.0, cardWidth, 80.0);
+            DrawEconomyCard(dc, P(channels[i].Id), channels[i].Label,
+                card, text, muted, border, accent, panel);
         }
     }
 
@@ -3043,11 +3025,12 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var columns = EconomyColumns(ActualWidth);
         const double gap = 12.0;
-        var contentWidth = Math.Max(1.0, ActualWidth - 32.0);
-        var cardWidth = (contentWidth - gap * (columns - 1)) / columns;
+        var cardWidth = EconomyCardWidth(ActualWidth, columns);
+        var groupWidth = columns * cardWidth + (columns - 1) * gap;
+        var left = (ActualWidth - groupWidth) / 2.0;
         for (var i = 0; i < controls.Length; i++)
         {
-            var card = new Rect(16.0 + (i % columns) * (cardWidth + gap),
+            var card = new Rect(left + (i % columns) * (cardWidth + gap),
                 48.0 + (i / columns) * 94.0, cardWidth, 80.0);
             var item = controls[i];
             DrawEconomyCard(dc, P(item.Id), item.Label, card,
@@ -5143,7 +5126,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "RepeatedHitBand" => 455.0,
             "RadiationBalance" => CompactGridEnd(55.0, 3, CompactStageColumns(width)) + 14.0,
             "TradingDashboard" => EconomyBoardHeight(width, 4),
-            "RepairCurve" => (width >= 672.0 ? 300.0 : 526.0),
+            "RepairCurve" => EconomyBoardHeight(width, 4),
             "AmmoDistribution" => 680.0,
             _ => 340.0
         };
