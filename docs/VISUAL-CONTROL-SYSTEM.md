@@ -1022,3 +1022,23 @@ The user approved the four-part Combat wireframe and specifically requested sour
 **Global rules:** all displayed current numerics are neutral if equal to the selected difficulty reference; on change, only the numeric token (and attached ×/x) turns gold and grows 1.2 DIP; static labels and native endpoints remain neutral. No full-card hover, no hover on Base reference, no repeated section title, no instruction footer, no checkbox changes. Preserve existing same-source hit targets, source range/bounds, catalog steps, reference reset, keyboard drag semantics except for the explicitly approved rightward inverted **recharge-speed UI axis**, and preset/CFG writer. Psy/Repeated-Hit family mappings remain available in the catalog but are not added as new top-level Combat cards. Do not change the gameplay parameters, source ranges or writer from this UI redesign.
 
 **Acceptance after publish:** verify that all visible Combat families render once and their full labels/values remain readable at normal and minimum WPF sizes; hover is identical; all 8 recharge cards have increasing speed values left→right, including non-1x Base reference, and edits round-trip in their native source wait multipliers; keyboard Right increases displayed speed while right-click/R return to selected-difficulty reference. A local Wine build and visual test is still required.
+
+### Global CFG-to-visual selection grammar (approved 2026-10-09)
+
+The visual catalog is a **selection system, not a slider-only library**. Before redesigning a tab, audit every relevant catalog source (`parameters.json`, constraints, native steps/ranges, authored relations and CFG writer) and make an explicit decision for each semantic group:
+
+| CFG relationship | Preferred editable representation | Reject when |
+| --- | --- | --- |
+| One scalar source | Compact slider/ruler | A decorative chart would obscure the real current value |
+| Two meaningful independent scalar axes | X/Y interactive graph with source-accurate axis and optional joint handle | Either axis is synthetic or the joint cannot write both |
+| Discrete threshold/effect stages | Editable stepped profile or threshold band | A smooth line suggests nonexistent interpolation |
+| Real timing windows/intervals | Timeline with editable native event points | The depicted cadence is stochastic or inferred |
+| Source-backed min/max / ordering | Dual-handle range band, native-value cascade | Relative baseline percentages hide required absolute ordering |
+| Comparable category channels | Compact grouped bank, proportional bar or meaningful radar | Units/scales are incompatible or normalization is unexplained |
+| Boolean | Locked minimal 20-DIP checkbox | Full-card hover or glowing switch competes with checked state |
+| Enum/discrete option | Segmented choice / native selector | A continuous slider would invent intermediate states |
+| Actual derivable result | Read-only preview with explicit unit and proven formula | Game/runtime behavior is not deterministically supported by CFG |
+
+**Interaction invariants:** no synthetic gameplay knobs; preserve native source IDs, limits, tick snapping, constraints, CFG/preset round-tripping, selected vanilla-difficulty reference and individual right-click/R resets. Current editable numbers are neutral at reference, yellow and +1.2 DIP on genuine change. The canonical hover halo belongs only to interactive handles; checkbox hover is deliberately restrained. Graph axes must name real units, handle geometry must match the CFG transform (including inverses), and labels/values must not overlap at minimum editor width. Every chart must provide equivalent discrete keyboard access through its real underlying source parameters. Avoid extra descriptive footer copy when labels and controls already communicate meaning.
+
+**Process:** propose a compact wireframe and map each visual back to source parameters; seek user approval for a tab redesign; then update the implementation, `UI-DESIGN-LOCK.md` and this file together in the GitHub `main` branch. This approval broadens the available control vocabulary but **does not silently unlock existing layouts** or authorize replacing a working control without a specific request.
