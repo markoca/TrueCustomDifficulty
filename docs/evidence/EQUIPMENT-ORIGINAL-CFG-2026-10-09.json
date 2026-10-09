@@ -1,0 +1,168 @@
+{
+  "phase": "11-equipment",
+  "checkedAt": "2026-10-09",
+  "catalogVersion": "2.0.5",
+  "type": "independent original ZIP comparison to the current Equipment writer target inventory",
+  "archiveSHA256": [
+    {
+      "file": "STALKER2-GameData-CFG(2)(2).zip",
+      "size": 31408298,
+      "sha256": "7610b16218310c7345796ff26b1554c73e3d2ca775f6a50108a7406cb7f33da1"
+    },
+    {
+      "file": "STALKER2-DLC1-CFG(2)(2).zip",
+      "size": 6207878,
+      "sha256": "3c5cb53f1769619b510ae3780142d92639c083a4a755a8717a267710c3c849e6"
+    }
+  ],
+  "targetCount": 113,
+  "statusCounts": {
+    "exact": 103,
+    "inherited_exact": 10
+  },
+  "unresolved": 0,
+  "byParameter": {
+    "equipment.armorDurability": {
+      "exact": 4,
+      "inherited_exact": 0
+    },
+    "equipment.weaponWearPerShot": {
+      "exact": 51,
+      "inherited_exact": 1
+    },
+    "equipment.ammoWeight": {
+      "exact": 31,
+      "inherited_exact": 3
+    },
+    "equipment.consumableWeight": {
+      "exact": 17,
+      "inherited_exact": 6
+    }
+  },
+  "originalSourceFiles": [
+    {
+      "file": "GameData/DifficultyPrototypes.cfg",
+      "points": 4,
+      "sha256": "43d041e6895fbf8443d2c3abcfa502dc360dd53cd3ea9acbaca38e5e6e5d0aac"
+    },
+    {
+      "file": "GameData/WeaponData/CharacterWeaponSettingsPrototypes.cfg",
+      "points": 41,
+      "sha256": "090d91df78fd07a6674c53d94a80903c8c2421aaedc232b534813e014981eb76"
+    },
+    {
+      "file": "DLCGameData/DLC1/WeaponData/CharacterWeaponSettingsPrototypes.cfg",
+      "points": 11,
+      "sha256": "4ed9d2a093a82d8540b332e828634d013da8d78fd9a79a8f1dfa50f9ade5cb41"
+    },
+    {
+      "file": "GameData/ItemPrototypes.cfg",
+      "points": 56,
+      "sha256": "f6b98e5931a3c936cd9f279aac23b39b45527b1995fc7008b0a7940eed790d42"
+    },
+    {
+      "file": "DLCGameData/DLC1/ItemPrototypes.cfg",
+      "points": 1,
+      "sha256": "4b823f79487751cbc13577d48ae9aa124828d8a60f1fcb39af811b34ea933a50"
+    }
+  ],
+  "refkeyAncestry": [
+    [
+      "equipment.weaponWearPerShot",
+      "GunPKP_Korshunov_MG_Player",
+      [
+        "GunPKP_MG_Player"
+      ],
+      "1.38"
+    ],
+    [
+      "equipment.ammoWeight",
+      "A918A",
+      [
+        "A918D"
+      ],
+      "0.006"
+    ],
+    [
+      "equipment.ammoWeight",
+      "A545A",
+      [
+        "A545D"
+      ],
+      "0.011"
+    ],
+    [
+      "equipment.ammoWeight",
+      "A545E",
+      [
+        "A545D"
+      ],
+      "0.011"
+    ],
+    [
+      "equipment.consumableWeight",
+      "FreshBread",
+      [
+        "Bread"
+      ],
+      "0.2"
+    ],
+    [
+      "equipment.consumableWeight",
+      "SpoiledCannedFood",
+      [
+        "CannedFood"
+      ],
+      "0.2"
+    ],
+    [
+      "equipment.consumableWeight",
+      "Energetic_Limited",
+      [
+        "Energetic"
+      ],
+      "0.25"
+    ],
+    [
+      "equipment.consumableWeight",
+      "DvupalovVodka",
+      [
+        "Vodka"
+      ],
+      "0.35"
+    ],
+    [
+      "equipment.consumableWeight",
+      "EQ08_FreshBread",
+      [
+        "FreshBread",
+        "Bread"
+      ],
+      "0.2"
+    ],
+    [
+      "equipment.consumableWeight",
+      "EQ82_konserva",
+      [
+        "SpoiledCannedFood",
+        "CannedFood"
+      ],
+      "0.2"
+    ]
+  ],
+  "flattenedRefurlPrototypes": [
+    "DvupalovVodka",
+    "EQ08_FreshBread",
+    "EQ82_konserva"
+  ],
+  "flattenedRefurl": "ConsumablePrototypes.cfg",
+  "explanation": "Three refurl ancestor names were resolved in the physically present flattened ItemPrototypes source file; the separately named ConsumablePrototypes.cfg is not present as its own ZIP member.",
+  "writerRegression": {
+    "suite": "EquipmentPatchContract",
+    "cases": 32,
+    "verifiedCommit": "0ab7938e1e1d1f7bce4a4f8ef233807c460cdcc3",
+    "githubActionsRun": 37992058371
+  },
+  "gameplayAcceptance": "NOT RUN",
+  "bpachGameMerge": "NOT RUN"
+}

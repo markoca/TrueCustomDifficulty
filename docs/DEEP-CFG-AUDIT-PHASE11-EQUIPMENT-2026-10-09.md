@@ -45,15 +45,17 @@ dotnet run --project tests/EquipmentPatchContract/EquipmentPatchContract.csproj 
 python tools/pre_release.py writer
 ```
 
-**Verification status at authoring:** registered, Windows execution pending
-a green same-SHA CI run. Do not mark PASS from registration alone.
+**Verified CI writer result:** 32/32 PASS on commit `0ab7938e1e1d1f7bce4a4f8ef233807c460cdcc3` (GitHub Actions run `37992058371`). Original source evidence is independently recorded below. Re-run both on a release SHA.
 
 ## Independent original decoded source gate (B8)
 
-The existing source comparator checks direct authored values and explicitly
-traces an inherited `{refkey=...}` chain when a concrete ammo/consumable
-weight is absent on the child prototype. Source inheritance is not proof
-of Unreal BPatch behavior.
+The original source comparator checks authored values and traces explicit
+vanilla `{refkey=...}` chains. The decoded base-game `ItemPrototypes.cfg` also
+physically consolidates parents referenced as
+`{refurl=ConsumablePrototypes.cfg;refkey=...}`. A narrowly scoped source
+resolver verifies the parent exists in this exact consolidated source file;
+unsupported external `refurl` values fail closed. Source inheritance is not
+proof of Unreal BPatch behavior.
 
 ```bash
 python tools/audit_cfg_source_values.py \
@@ -62,11 +64,34 @@ python tools/audit_cfg_source_values.py \
   --parameter-prefix equipment. --out audit/equipment-source-values.json --strict
 ```
 
-The `tools/pre_release.py source` runner also executes B8. **Original
-archives NOT RUN here** (the named original ZIPs from the earlier conversation
-are not mounted in this execution environment). Required acceptance is
-113 source identities/raw values, including physically authored and explicitly
-verified inherited values, not merely agreement with the writer manifest.
+The `tools/pre_release.py source` runner also executes B8.
+
+### Uploaded original archive evidence — 2026-10-09
+
+The independently executed archive-to-writer-target comparison of the two
+supplied original CFG ZIPs verified **113/113 effective source values**:
+
+| Result | Count |
+| --- | ---: |
+| Physically authored raw-value exact matches | 103 |
+| Exact values through explicit, physically located `{refkey=...}` ancestry | 10 |
+| Missing/prototype/field/value discrepancies | 0 |
+
+By parameter: armor 4 direct, weapon wear 51 direct + 1 inherited
+(`GunPKP_Korshunov_MG_Player`), ammo 31 direct + 3 inherited,
+consumables 17 direct + 6 inherited. **Three** of the inherited consumables
+(`DvupalovVodka`, `EQ08_FreshBread`, `EQ82_konserva`) explicitly
+declare `refurl=ConsumablePrototypes.cfg` but their inherited original
+`Weight` is physically traceable in the consolidated
+`GameData/ItemPrototypes.cfg`. This is a verified *source dump* lineage;
+the separately named `ConsumablePrototypes.cfg` does not appear as a
+separate archive member. Do not claim independent verification of that
+unavailable external file or Unreal's cross-file resolution.
+
+See [immutable uploaded ZIP fingerprints and all 10 ancestry chains](evidence/EQUIPMENT-ORIGINAL-CFG-2026-10-09.json).
+The existing command above is the canonical reproducible source gate
+with these ZIPs; the current main source validator includes a targeted
+regression for the consolidated refurl form. **In-game loading remains NOT RUN.**
 
 ## Manual / in-game acceptance (still NOT RUN)
 

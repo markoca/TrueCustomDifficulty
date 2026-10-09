@@ -121,7 +121,7 @@ def resolve_refkey_inheritance(point: dict, roots: list[CfgNode],
     """Classify a missing direct field by checking explicit vanilla {refkey=...}.
 
     Never infer inherited values without an actual reference chain and a
-    physically authored ancestor field. Preserve direct-result diagnostics
+    physically authored ancestor field. Limited flattened refurl resolution\n    requires a separately identified physically present source parent. Preserve direct-result diagnostics
     when there is no qualifying ancestor. Inheritance matching is SOURCE
     provenance, not proof of runtime Unreal BPatch merge behavior.
     """
@@ -135,15 +135,39 @@ def resolve_refkey_inheritance(point: dict, roots: list[CfgNode],
     current = matches[0]
     seen = {point["prototype"]}
     chain: list[str] = []
+    refurl_edges: list[dict[str, str]] = []
     while True:
-        match = re.search(r"\{refkey=([^}\s]+)\}", source_lines[current.line - 1])
-        if not match:
+        # Runtime consolidated CFGs can contain combined refurl/refkey clauses:
+        # {refurl=ConsumablePrototypes.cfg;refkey=FreshBread}.
+        # Do not treat an arbitrary unresolved cross-file refurl as a local parent.
+        header = source_lines[current.line - 1]
+        clauses = re.search(r"struct\.begin\s*\{([^}]+)\}", header)
+        directives = (dict(re.findall(r"(?:^|;)\s*(refkey|refurl)=([^;\s}]+)",
+                                      clauses.group(1))) if clauses else {})
+        parent = directives.get("refkey")
+        if not parent:
             return dict(direct_result, refkeyChain=chain,
+                        refurlEdges=refurl_edges,
                         inheritanceStatus="no_explicit_refkey_ancestor")
-        parent = match.group(1)
+        refurl = directives.get("refurl")
+        if refurl:
+            # Original decoded GameData/ItemPrototypes.cfg physically consolidates
+            # ConsumablePrototypes.cfg; the matching parent must still be found
+            # exactly once in these SAME decoded file roots. Other refurls stay
+            # unresolved until their own original files are independently read.
+            if not (point["file"] == "GameData/ItemPrototypes.cfg"
+                    and refurl == "ConsumablePrototypes.cfg"):
+                return dict(direct_result, refkeyChain=chain,
+                            refurlEdges=refurl_edges,
+                            unresolvedRefurl=refurl,
+                            inheritanceStatus="refurl_not_verified")
+            refurl_edges.append({"from": current.name, "refurl": refurl,
+                                 "refkey": parent,
+                                 "resolution": "physical_parent_in_consolidated_ItemPrototypes"})
         chain.append(parent)
         if parent in seen:
             return dict(direct_result, refkeyChain=chain,
+                        refurlEdges=refurl_edges,
                         inheritanceStatus="cycle")
         seen.add(parent)
         parents = [r for r in roots if r.name == parent]
@@ -151,6 +175,7 @@ def resolve_refkey_inheritance(point: dict, roots: list[CfgNode],
             parents = [r for r in roots if r.values.get("SID") == parent]
         if len(parents) != 1:
             return dict(direct_result, refkeyChain=chain,
+                        refurlEdges=refurl_edges,
                         inheritanceStatus="missing_or_ambiguous_ancestor")
         current = parents[0]
         ancestor = check_point(dict(point, prototype=parent), roots)
@@ -163,7 +188,8 @@ def resolve_refkey_inheritance(point: dict, roots: list[CfgNode],
                         inheritedFrom=parent,
                         inheritedRaw=ancestor.get("actualRaw"),
                         inheritedLeafLine=ancestor.get("leafNodeLine"),
-                        refkeyChain=chain)
+                        refkeyChain=chain,
+                        refurlEdges=refurl_edges)
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
@@ -220,7 +246,7 @@ def main() -> int:
             "optional; investigate before changing a writer. This audit does not "
             "validate special writers, mod order or runtime gameplay. "
             "An inherited_exact source field is traced through an actual "
-            "vanilla {refkey=...} chain, but its BPatch runtime effect remains unverified."
+            "vanilla {refkey=...} chain, including a specifically verified flattened\n            ConsumablePrototypes refurl where applicable. Such inheritance is\n            source provenance, not verification of BPatch runtime semantics."
         ),
     }
     if args.out:

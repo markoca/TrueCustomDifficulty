@@ -40,7 +40,7 @@ Field:
 
 `DurabilityDamagePerShot`
 
-The base-game runtime file contains 41 `*_Player` entries with explicit `DurabilityDamagePerShot`: 40 are non-zero and `UA_GLaunch_Player` is explicitly `0.0`. The DLC1 file contains 11 non-zero player entries. Values differ by weapon. Examples from the supplied runtime dump include:
+The base-game runtime file has 41 mapped `*_Player` entries with effective `DurabilityDamagePerShot`: 40 are non-zero and `UA_GLaunch_Player` is explicitly `0.0`. Of the 41, one (`GunPKP_Korshunov_MG_Player`) inherits its value from `GunPKP_MG_Player` through an explicit `{refkey=...}` chain. The DLC1 file contains 11 directly authored non-zero player entries. Values differ by weapon. Examples from the supplied runtime dump include:
 
 - `GunUDP_HG_Player = 3.3`
 - `GunAPB_HG_Player = 4.76`
@@ -97,7 +97,7 @@ The same aggregate approach is used for Food/Medicine consumables:
 - 22 base-game Food/Medicine consumable prototypes with non-zero effective weight
 - DLC1 `MonolithDryRation = 0.15`
 
-Quest/special consumable variants that inherit ordinary food weights are resolved to their effective vanilla value and patched explicitly. The control changes only item `Weight`; healing, hunger, radiation and other consumable effects are not modified.
+Quest/special consumable variants that inherit ordinary food weights are resolved to their effective vanilla value and patched explicitly. The original archive audit confirmed `DvupalovVodka`, `EQ08_FreshBread` and `EQ82_konserva` use `refurl=ConsumablePrototypes.cfg` with an explicit `refkey`; their parents are physically present in the original consolidated `GameData/ItemPrototypes.cfg` and were resolved by exact source ancestry, not guessed. The control changes only item `Weight`; healing, hunger, radiation and other consumable effects are not modified.
 
 
 

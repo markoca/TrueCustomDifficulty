@@ -212,3 +212,18 @@ The independent **B8** source gate checks exact original ZIP content and
 reports inherited {refkey} resolution separately. Both gates are required for
 source confidence; neither is in-game acceptance. See
 [Phase 11](DEEP-CFG-AUDIT-PHASE11-EQUIPMENT-2026-10-09.md).
+
+### Phase 11 original Equipment archive evidence (2026-10-09)
+
+The two uploaded original decoded CFG archives were checked independently
+against the full 113-point current Equipment writer mapping: **103 directly
+authored exact values + 10 explicit physically traced refkey values = 113/113**.
+Three quest/special consumables use `{refurl=ConsumablePrototypes.cfg;refkey=...}`;
+the required parents and original Weight fields exist in the runtime dump's
+consolidated `GameData/ItemPrototypes.cfg`. The source validator's specifically
+allowlisted flattened-refurl resolver and CI regression cover that layout; all
+other unknown refurls remain findings. See
+[original archive evidence](evidence/EQUIPMENT-ORIGINAL-CFG-2026-10-09.json)
+and [Phase 11 details](DEEP-CFG-AUDIT-PHASE11-EQUIPMENT-2026-10-09.md).
+Windows 32/32 production Equipment writer scenarios were PASS at 0ab7938.
+**This does not verify Unreal BPatch interpretation or in-game effects.**

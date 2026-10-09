@@ -1,5 +1,7 @@
 # Equipment Control Deep Audit — v0.2.49
 
+> **Source archive evidence:** The 2026-10-09 uploaded GameData/DLC1 ZIPs match all 113 effective Equipment source values (103 physically authored exact, 10 explicitly inherited exact). Three of the inherited special consumables use `refurl=ConsumablePrototypes.cfg` with physically located parents in consolidated `ItemPrototypes.cfg`; see [Phase 11 evidence](evidence/EQUIPMENT-ORIGINAL-CFG-2026-10-09.json). Not in-game verified.
+
 > **Phase 11 update (2026-10-09):** Executable current four-control source and writer gates are described in [Phase 11](DEEP-CFG-AUDIT-PHASE11-EQUIPMENT-2026-10-09.md). The live manifest has 113 points (101 base and 12 DLC1), not the historical eight-control 117. The phase's test results are tracked separately from original-source and gameplay acceptance.\n\n> **Current-surface note (2026-10-09):** This v0.2.49 eight-control audit is **historical**, not a statement about the current Equipment UI. The active `Data/parameters.json` contains four source controls: `equipment.armorDurability` (runtime-test-required), `equipment.weaponWearPerShot`, `equipment.ammoWeight` and `equipment.consumableWeight` (confirmed). The four bonus MaxValue fields listed in the old table (Stamina Recovery, Bleeding Recovery, Carry Weight Bonus and Encumbrance Relief) are now **audit-only**; their upper-limit function is known, but their actual player-facing behavior is insufficiently understood to expose as sliders. Preserve this audit record and the existing CFG mapping evidence, but do not recreate eight visible editors or claim the historical 117 edit-point number is the current four-control UI count. Current Equipment section layout: Equipment Wear dual-axis plot with Combat-parity circular X/Y/interactive center handles + two compact horizontal Item Weight sliders. See `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md`.
 
 This release re-audits every normal **Equipment** control from player-facing metadata through the locked writer baseline to concrete CFG edit points. No new Equipment control is promoted and no existing control is removed.
@@ -29,8 +31,8 @@ This release re-audits every normal **Equipment** control from player-facing met
 
 The production writer already contained the current weapon-wear surface, but the Equipment mapping and catalog note still described the older count as **40 base-game entries / 39 non-zero**. The audited writer baseline contains:
 
-- **41** base-game `*_Player` entries;
-- **40** non-zero `DurabilityDamagePerShot` values;
+- **41** base-game `*_Player` entries (40 directly authored including the zero + one `GunPKP_Korshunov_MG_Player` inherited from `GunPKP_MG_Player`);
+- **40** non-zero effective `DurabilityDamagePerShot` values;
 - one explicit zero: `UA_GLaunch_Player = 0.0`;
 - **11** DLC1 non-zero player entries;
 - **52** total writer edit points.
