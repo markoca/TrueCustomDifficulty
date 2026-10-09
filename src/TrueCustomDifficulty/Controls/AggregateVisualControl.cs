@@ -1303,7 +1303,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var preview = new Rect(17, previewTop, width, 80);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1), preview, 4, 4);
         DrawText(dc, "FATIGUE POINTS / STAGE PREVIEW",
-            new Point(preview.Left + 12, preview.Top + 7), 10.2, text, FontWeights.Bold);
+            new Point(preview.Left + 12, preview.Top + 7),
+            11.0, text, FontWeights.Bold);
         var axis = new Rect(preview.Left + 81, preview.Top + 32, preview.Width - 111, 12);
         double X(double value) => ValueToX(value, 0, 100, axis, false);
         var y = axis.Top + axis.Height / 2;
@@ -1338,7 +1339,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         ParameterViewModel severeReload, Brush text, Brush muted,
         Brush border, Brush soft, Brush accent, Brush panel)
     {
-        var frame = new Rect(17, top, width, 320);
+        var frame = new Rect(17, top, width, 365);
         DrawCenteredText(dc, "FATIGUE COMBAT PROFILE",
             new Point(frame.Left + frame.Width / 2, top - 29), 11.5, accent, FontWeights.Bold);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1), frame, 4, 4);
@@ -1355,10 +1356,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         var aims = new[] { lowAim, mediumAim, severeAim };
         var reloads = new[] { mediumReload, severeReload };
         DrawCenteredText(dc, "FATIGUE POINTS (0-100)",
-            new Point(area.Left + area.Width / 2, top + 25), 9.2, text, FontWeights.Bold);
+            new Point(area.Left + area.Width / 2, top + 25), 10.2, text, FontWeights.Bold);
         var left = new Point(area.Left - 55, area.Top + area.Height / 2);
         dc.PushTransform(new RotateTransform(-90, left.X, left.Y));
-        DrawCenteredText(dc, "AIM TIME", left, 9.2, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "AIM TIME", left, 10.2, accent, FontWeights.Bold);
         dc.Pop();
         // Reload begins at MEDIUM: show a distinct, shorter secondary scale
         // within the chart edge instead of mirroring the complete AIM axis.
@@ -1371,7 +1372,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var reloadTitle = new Point(frame.Right - 8.0,
             reloadArea.Top + reloadArea.Height / 2.0);
         dc.PushTransform(new RotateTransform(90, reloadTitle.X, reloadTitle.Y));
-        DrawCenteredText(dc, "RELOAD TIME", reloadTitle, 9.2, text, FontWeights.Bold);
+        DrawCenteredText(dc, "RELOAD TIME", reloadTitle, 10.2, text, FontWeights.Bold);
         dc.Pop();
         for (int i = 0; i <= 4; i++)
         {
@@ -1442,32 +1443,37 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
         for (int i = 0; i < 3; i++) Ring(thresholds[i], aims[i], false);
         for (int i = 0; i < 2; i++) Ring(thresholds[i + 1], reloads[i], true);
-        // Each stage owns a clipped one-line readout.
-        var colWidth = (frame.Width - 16) / 3;
-        for (int i = 0; i < 3; i++)
+        // Separate source-accurate stage readouts. The old long, clipped
+        // one-line sentences could not fit three equal-width columns.
+        var cellWidth = (frame.Width - 16.0) / 3.0;
+        for (var i = 0; i < 3; i++)
         {
-            var extra = i == 0 ? "" :
-                $" | RELOAD +{reloads[i - 1].CurrentNumber * 100:0.#}%";
-            var caption = $"{new[] { "LOW", "MEDIUM", "SEVERE" }[i]} AT {thresholds[i].CurrentNumber:0} PTS | AIM +{aims[i].CurrentNumber * 100:0.#}%" + extra;
-            var cell = new Rect(frame.Left + 8 + i * colWidth, top + 280, colWidth, 22);
+            var cell = new Rect(frame.Left + 8.0 + i * cellWidth,
+                top + 260.0, cellWidth, 93.0);
             dc.PushClip(new RectangleGeometry(cell));
-            // Numeric tokens belong to threshold, aim penalty and (if present) reload penalty.
-            // Modified source values alone receive the gold, slightly enlarged emphasis.
-            if (i == 0)
-                DrawCenteredNumericChanges(dc, caption,
-                    new Point(cell.Left + cell.Width / 2, cell.Top + 11),
-                    9, text, accent, FontWeights.Bold,
-                    thresholds[i].IsValueModifiedFromReference(),
-                    aims[i].IsValueModifiedFromReference());
-            else
-                DrawCenteredNumericChanges(dc, caption,
-                    new Point(cell.Left + cell.Width / 2, cell.Top + 11),
-                    9, text, accent, FontWeights.Bold,
-                    thresholds[i].IsValueModifiedFromReference(),
-                    aims[i].IsValueModifiedFromReference(),
+            var cx = cell.Left + cell.Width / 2.0;
+            DrawCenteredText(dc, new[] { "LOW", "MEDIUM", "SEVERE" }[i],
+                new Point(cx, top + 262.0),
+                10.3, text, FontWeights.Bold);
+            DrawCenteredNumericChanges(dc,
+                $"AT {thresholds[i].CurrentNumber:0} PTS",
+                new Point(cx, top + 282.0),
+                10.1, text, accent, FontWeights.SemiBold,
+                thresholds[i].IsValueModifiedFromReference());
+            DrawCenteredNumericChanges(dc,
+                $"AIM +{aims[i].CurrentNumber * 100:0.#}%",
+                new Point(cx, top + 304.0),
+                10.1, text, accent, FontWeights.SemiBold,
+                aims[i].IsValueModifiedFromReference());
+            if (i > 0)
+                DrawCenteredNumericChanges(dc,
+                    $"RELOAD +{reloads[i - 1].CurrentNumber * 100:0.##}%",
+                    new Point(cx, top + 326.0),
+                    10.1, text, accent, FontWeights.SemiBold,
                     reloads[i - 1].IsValueModifiedFromReference());
             dc.Pop();
         }
+
     }
 
     private void DrawMasterConditionalPenalty(
@@ -2520,50 +2526,6 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Authored instant/sustained strengths and durations remain nine independent
     // parameters. On wide surfaces, their cards form two columns without any
     // shortened or overlapping native-range slider tracks.
-    private static int ConsumableFaderColumns(double width)
-    {
-        // Keep labels legible: never squeeze a vertical channel below ~130 DIPs.
-        return width >= 750 ? 5 : width >= 600 ? 4 : 3;
-    }
-
-    private void DrawConsumableFader(
-        DrawingContext dc, ParameterViewModel parameter, string title,
-        Rect card, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
-    {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 4, 4);
-        var segments = title.Split('|');
-        var center = card.Left + card.Width / 2;
-        DrawCenteredText(dc, segments[0], new Point(center, card.Top + 8),
-            9.6, text, FontWeights.Bold);
-        DrawCenteredText(dc, segments.Length > 1 ? segments[1] : string.Empty,
-            new Point(center, card.Top + 23), 9.3, text, FontWeights.Bold);
-        DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
-            new Point(center, card.Top + 44), 13.4,
-            parameter.IsControlEnabled && parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
-        var rail = new Rect(center - 3, card.Top + 80, 6, 75);
-        var y = ValueToY(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, rail);
-        var baseY = ValueToY(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, rail);
-        dc.DrawLine(new Pen(border, 4), new Point(center, rail.Top), new Point(center, rail.Bottom));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, .70), 4),
-            new Point(center, rail.Bottom), new Point(center, y));
-        dc.DrawLine(new Pen(muted, 2), new Point(center + 12, baseY),
-            new Point(center + 24, baseY));
-        var hovered = ReferenceEquals(_hoverTarget?.Parameter, parameter);
-
-        dc.DrawEllipse(panel, new Pen(parameter.IsControlEnabled ? accent : muted,
-            IsSelected(parameter) ? 2.6 : 1.8), new Point(center, y), 8.5, 8.5);
-        dc.DrawLine(new Pen(accent, 2), new Point(center - 6, y), new Point(center + 6, y));
-        DrawText(dc, $"{parameter.Maximum:0.#}x", new Point(center + 13, rail.Top - 5),
-            8.8, muted, FontWeights.Normal);
-        DrawText(dc, $"{parameter.Minimum:0.#}x", new Point(center + 13, rail.Bottom - 7),
-            8.8, muted, FontWeights.Normal);
-        // Only the vertical rail is interactive, preserving normal snapping,
-        // source IDs, right-click reset and Base Preset markers.
-        AddVerticalTarget(parameter,
-            new Rect(center - 15, rail.Top - 7, 30, rail.Height + 14),
-            rail, parameter.Minimum, parameter.Maximum);
-    }
-
     private void DrawConsumableMixer(
         DrawingContext dc,
         Brush text,
@@ -2597,51 +2559,37 @@ public sealed class AggregateVisualControl : FrameworkElement
         var width = Math.Max(460.0, ActualWidth - 34.0);
         var columns = CompactColumns(ActualWidth);
         var durationColumns = CompactStageColumns(ActualWidth);
-        // Live gameplay readouts describe exactly the sources below, never a
-        // fabricated combined multiplier or a new medical/drunkenness effect.
-        void Readout(Rect card, string heading, string first, string second,
-            bool[] firstModified, bool[] secondModified)
+        // Read-only derived effect values each occupy a dedicated line,
+        // including at the smallest three-column breakpoint. Gold emphasis
+        // belongs only to changed numerics, never entire effect captions.
+        void Readout(Rect card, string heading, string[] effects, bool[] modified)
         {
             dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 4, 4);
             var usable = Math.Max(1.0, card.Width - 22.0);
-            dc.DrawText(CreateText(heading, 10.1, text, FontWeights.Bold, usable),
-                new Point(card.Left + 11, card.Top + 7));
-
-            // Highlight only the actual changed numeric values. Names, units,
-            // dividers and unaffected effects always retain their normal color.
-            void EffectLine(string line, double size, double y, bool[] changed)
+            dc.DrawText(CreateText(heading, 10.4, text,
+                    FontWeights.Bold, usable),
+                new Point(card.Left + 11, card.Top + 6));
+            for (var i = 0; i < effects.Length; i++)
             {
-                var formatted = CreateText(line, size, text, FontWeights.SemiBold, usable);
-                var matches = System.Text.RegularExpressions.Regex.Matches(
-                    line, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
-                for (var i = 0; i < matches.Count && i < changed.Length; i++)
-                    if (changed[i])
-                        formatted.SetForegroundBrush(accent, matches[i].Index, matches[i].Length);
-                dc.DrawText(formatted, new Point(card.Left + 11, y));
+                var line = effects[i];
+                var ft = CreateText(line, 9.8, text, FontWeights.SemiBold, usable);
+                if (i < modified.Length && modified[i])
+                {
+                    foreach (System.Text.RegularExpressions.Match token in
+                        System.Text.RegularExpressions.Regex.Matches(line,
+                            @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
+                    {
+                        ft.SetForegroundBrush(accent, token.Index, token.Length);
+                        ft.SetFontSize(11.0, token.Index, token.Length);
+                    }
+                }
+                dc.DrawText(ft, new Point(card.Left + 11, card.Top + 26 + i * 17));
             }
-            EffectLine(first, 10.0, card.Top + 29, firstModified);
-            EffectLine(second, 9.6, card.Top + 49, secondModified);
         }
 
         const double strengthTop = 55.0;
-        var faderColumns = ConsumableFaderColumns(ActualWidth);
-        const double faderHeight = 179.0;
-        const double faderGap = 8.0;
-        void Bank(ParameterViewModel[] parameters, string[] labels, double top)
-        {
-            var cellWidth = (width - (faderColumns - 1) * faderGap) / faderColumns;
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                var column = i % faderColumns;
-                var row = i / faderColumns;
-                DrawConsumableFader(dc, parameters[i], labels[i],
-                    new Rect(17 + column * (cellWidth + faderGap),
-                        top + row * (faderHeight + faderGap), cellWidth, faderHeight),
-                    text, muted, border, accent, panel);
-            }
-        }
-        // The four strength controls remain compact horizontal source tracks;
-        // only the five duration controls use the vertical fader bank.
+        // Four independent strength tracks above; time editors now use their
+        // own shared real-seconds ruler below instead of vertical faders.
         void Strength(ParameterViewModel p, string label, int index)
             => DrawCompactTrack(dc, p, label, $"{p.CurrentNumber:0.##}x",
                 "0x", "2x", CompactSlot(strengthTop, width, columns, index),
@@ -2651,94 +2599,134 @@ public sealed class AggregateVisualControl : FrameworkElement
         Strength(waterStamina, "WATER / STAMINA BUFF STRENGTH", 2);
         Strength(energyStamina, "ENERGY / STAMINA REGEN STRENGTH", 3);
         var readoutTop = CompactGridEnd(strengthTop, 4, columns) + 15.0;
-        DrawText(dc, "WHAT YOUR DRINKS ACTUALLY DO",
-            new Point(19, readoutTop), 10.8, accent, FontWeights.Bold);
-        var readoutCardsTop = readoutTop + 22.0;
+        var readoutCardsTop = readoutTop;
         // The three effects are previews only; source controls stay independent.
         Readout(CompactSlot(readoutCardsTop, width, durationColumns, 0),
             "INSTANT STAMINA",
-            $"WATER +{38 * burst.CurrentNumber:0.#}% | ENERGY +{50 * burst.CurrentNumber:0.#}%",
-            $"LIMITED ENERGY +{100 * burst.CurrentNumber:0.#}%",
-            new[] { burst.IsValueModifiedFromReference(), burst.IsValueModifiedFromReference() },
-            new[] { burst.IsValueModifiedFromReference() });
+            new[]
+            {
+                $"WATER +{38 * burst.CurrentNumber:0.#}%",
+                $"ENERGY +{50 * burst.CurrentNumber:0.#}%",
+                $"LIMITED ENERGY +{100 * burst.CurrentNumber:0.#}%"
+            },
+            new[]
+            {
+                burst.IsValueModifiedFromReference(),
+                burst.IsValueModifiedFromReference(),
+                burst.IsValueModifiedFromReference()
+            });
         Readout(CompactSlot(readoutCardsTop, width, durationColumns, 1),
             "SUSTAINED STAMINA",
-            $"WATER REGEN +{25 * waterStamina.CurrentNumber:0.#}%",
-            $"WATER COST -{10 * waterStamina.CurrentNumber:0.#}% | ENERGY REGEN +{200 * energyStamina.CurrentNumber:0.#}%",
-            new[] { waterStamina.IsValueModifiedFromReference() },
-            new[] { waterStamina.IsValueModifiedFromReference(), energyStamina.IsValueModifiedFromReference() });
+            new[]
+            {
+                $"WATER REGEN +{25 * waterStamina.CurrentNumber:0.#}%",
+                $"WATER COST -{10 * waterStamina.CurrentNumber:0.#}%",
+                $"ENERGY REGEN +{200 * energyStamina.CurrentNumber:0.#}%"
+            },
+            new[]
+            {
+                waterStamina.IsValueModifiedFromReference(),
+                waterStamina.IsValueModifiedFromReference(),
+                energyStamina.IsValueModifiedFromReference()
+            });
         Readout(CompactSlot(readoutCardsTop, width, durationColumns, 2),
             "RADIATION REMOVED",
-            $"BEER {10 * antiRad.CurrentNumber:0.#} RAD",
-            $"VODKA {50 * antiRad.CurrentNumber:0.#} RAD",
-            new[] { antiRad.IsValueModifiedFromReference() },
-            new[] { antiRad.IsValueModifiedFromReference() });
-        var previewTitle = CompactGridEnd(readoutCardsTop, 3, durationColumns) + 18.0;
-        DrawText(dc, "HOW LONG THE EFFECTS LAST",
-            new Point(19, previewTitle), 10.8, accent, FontWeights.Bold);
-        var previewTop = previewTitle + 23.0;
+            new[]
+            {
+                $"BEER {10 * antiRad.CurrentNumber:0.#} RAD",
+                $"VODKA {50 * antiRad.CurrentNumber:0.#} RAD"
+            },
+            new[]
+            {
+                antiRad.IsValueModifiedFromReference(),
+                antiRad.IsValueModifiedFromReference()
+            });
+        var previewTop = CompactGridEnd(readoutCardsTop, 3, durationColumns) + 18.0;
 
-        // Longest effects share a real seconds scale. This chart is a preview,
-        // not a fifth hit area or an alternate value-to-seconds editor.
-        var preview = new Rect(17.0, previewTop, width, 160.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
-            preview, 4.0, 4.0);
-        DrawText(dc, "LONGEST EFFECT PER DRINK  /  SECONDS",
-            new Point(preview.Left + 12.0, previewTop + 7.0),
-            10.0, text, FontWeights.Bold);
 
-        var timeline = new Rect(preview.Left + 117.0, previewTop + 32.0,
-            Math.Max(170.0, preview.Width - 213.0), 116.0);
-        const double timelineMax = 270.0;
-        double SecondsToX(double seconds) => timeline.Left + timeline.Width *
-            Math.Clamp(seconds / timelineMax, 0.0, 1.0);
+        // A true seconds-space editor, where each row converts the pointer
+        // back to its own untouched native source multiplier (0..3, 0.05x).
+        var preview = new Rect(17.0, previewTop, width, 181.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
+        DrawText(dc, "EFFECT DURATION  /  SECONDS",
+            new Point(preview.Left + 12.0, previewTop + 8.0),
+            11.0, text, FontWeights.Bold);
+        var timeline = new Rect(preview.Left + 112.0, previewTop + 40.0,
+            Math.Max(160.0, preview.Width - 207.0), 120.0);
+        const double maxSeconds = 270.0;
+        double SecondsX(double seconds) => timeline.Left + timeline.Width *
+            Math.Clamp(seconds / maxSeconds, 0.0, 1.0);
 
         foreach (var seconds in new[] { 0.0, 90.0, 180.0, 270.0 })
         {
-            var x = SecondsToX(seconds);
+            var x = SecondsX(seconds);
             dc.DrawLine(new Pen(border, 1.0) { DashStyle = DashStyles.Dot },
-                new Point(x, timeline.Top - 3.0), new Point(x, timeline.Bottom));
+                new Point(x, timeline.Top - 11.0),
+                new Point(x, timeline.Bottom + 1.0));
             DrawCenteredText(dc, $"{seconds:0}s",
-                new Point(x, previewTop + 16.0),
-                9.0, muted, FontWeights.SemiBold);
+                new Point(x, timeline.Top - 20.0),
+                9.6, muted, FontWeights.SemiBold);
         }
 
-        var durationParameters = new[] { waterTime, energyTime, vodkaTime, beerTime, magicTime };
-        var durationLabels = new[] { "WATER", "ENERGY", "VODKA", "BEER", "MAGIC VODKA" };
-        var longestSeconds = new[] { 30.0, 45.0, 20.0, 20.0, 90.0 };
-        for (var i = 0; i < durationParameters.Length; i++)
+        var sources = new[] { waterTime, energyTime, vodkaTime, beerTime, magicTime };
+        var names = new[] { "WATER", "ENERGY", "VODKA", "BEER", "MAGIC VODKA" };
+        var durations = new[] { 30.0, 45.0, 20.0, 20.0, 90.0 };
+        // Shorter members of multi-effect families are passive grey ticks.
+        // They edit nothing separately: their source is the same multiplier.
+        var subDurations = new[]
         {
-            var parameter = durationParameters[i];
-            var y = previewTop + 43.0 + i * 22.0;
-            var currentSeconds = longestSeconds[i] * parameter.CurrentNumber;
-            var referenceSeconds = longestSeconds[i] * parameter.ReferenceNumber;
-            var currentX = SecondsToX(currentSeconds);
-            var referenceX = SecondsToX(referenceSeconds);
+            new[] { 5.0 }, new[] { 5.0, 15.0 },
+            Array.Empty<double>(), Array.Empty<double>(), Array.Empty<double>()
+        };
+        for (var i = 0; i < sources.Length; i++)
+        {
+            var parameter = sources[i];
+            var y = timeline.Top + 8.0 + i * 23.0;
+            var currentX = SecondsX(durations[i] * parameter.CurrentNumber);
+            var referenceX = SecondsX(durations[i] * parameter.ReferenceNumber);
+            var maximumX = SecondsX(durations[i] * parameter.Maximum);
+            var track = new Rect(timeline.Left, y - 6.0,
+                Math.Max(1.0, maximumX - timeline.Left), 12.0);
 
-            DrawRightAlignedText(dc, durationLabels[i],
-                new Point(timeline.Left - 13.0, y - 7.0),
-                9.2, text, FontWeights.Bold);
-            dc.DrawLine(new Pen(border, 3.0),
+            DrawRightAlignedText(dc, names[i],
+                new Point(timeline.Left - 13.0, y - 8.0),
+                10.4, text, FontWeights.Bold);
+            // Any grey tail after this source's own max is not editable.
+            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.4), 2.0),
                 new Point(timeline.Left, y), new Point(timeline.Right, y));
+            dc.DrawLine(new Pen(border, 3.0),
+                new Point(timeline.Left, y), new Point(maximumX, y));
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 4.0),
                 new Point(timeline.Left, y), new Point(currentX, y));
-            dc.DrawLine(new Pen(muted, 1.8),
+            foreach (var shortDuration in subDurations[i])
+            {
+                var secondaryX = SecondsX(shortDuration * parameter.CurrentNumber);
+                dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.65), 1.5),
+                    new Point(secondaryX, y - 6.0),
+                    new Point(secondaryX, y + 6.0));
+            }
+            dc.DrawLine(new Pen(muted, 1.7),
                 new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
-            dc.DrawEllipse(accent, null, new Point(currentX, y), 4.0, 4.0);
-            DrawRightAlignedText(dc, $"{currentSeconds:0.#}s",
-                new Point(preview.Right - 12.0, y - 7.0),
-                9.2, parameter.IsValueModifiedFromReference() ? accent : text,
-                FontWeights.SemiBold);
+            dc.DrawEllipse(panel,
+                new Pen(accent, IsSelected(parameter) ? 2.5 : 1.6),
+                new Point(currentX, y), 6.0, 6.0);
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+
+            var modified = parameter.IsValueModifiedFromReference();
+            DrawRightAlignedText(dc,
+                $"{durations[i] * parameter.CurrentNumber:0.#}s",
+                new Point(preview.Right - 12.0, y - 9.0),
+                modified ? 12.2 : 11.0, modified ? accent : text,
+                FontWeights.Bold);
+
+            // Keep native source snapping and right-click/R reset. The hit
+            // lane spans the chart, while the native editor clamps at max.
+            AddHorizontalTarget(parameter,
+                new Rect(timeline.Left - 6.0, y - 10.0,
+                    Math.Max(1.0, maximumX - timeline.Left) + 12.0, 20.0),
+                track, parameter.Minimum, parameter.Maximum);
         }
 
-        var durationTop = preview.Bottom + 12.0;
-        Bank(new[] { waterTime, energyTime, vodkaTime, beerTime, magicTime },
-            new[] { "WATER|BUFF TIME", "ENERGY|BUFF TIME",
-                "VODKA|PENALTY TIME", "BEER|PENALTY TIME",
-                "MAGIC VODKA|PSI TIME" }, durationTop);
-
-        // Detailed effect explanations belong to the parameter rationale,
-        // not redundant footer lines beneath the fader bank.
     }
 
     private void DrawSleepingDashboard(
@@ -2782,7 +2770,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var benefitsTitle = CompactGridEnd(rulesTop, 2,
             CompactColumns(ActualWidth)) + 21.0;
         DrawText(dc, "RECOVERY WHEN YOU WAKE UP",
-            new Point(19, benefitsTitle), 10.8, accent, FontWeights.Bold);
+            new Point(19, benefitsTitle), 11.4, accent, FontWeights.Bold);
         var benefitsTop = benefitsTitle + 25.0;
         SleepSlider(healthRestore, "HEALTH RESTORED",
             $"+{healthRestore.CurrentNumber:0.#} HP",
@@ -2964,7 +2952,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
         DrawText(dc, "HUNGER POINTS  /  STAGE PREVIEW",
             new Point(preview.Left + 12.0, previewTop + 7.0),
-            10.2, text, FontWeights.Bold);
+            11.0, text, FontWeights.Bold);
 
         // Share the exact 0–100 X coordinates with the lower Hunger profile.
         // The left inset makes room for the profile's rotated Y caption and ticks.
@@ -4893,7 +4881,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     // their renderers. Measure and OnRender must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
     {
-        return 55.0 + CompactTrackHeight + 12.0 + 80.0 + 51.0 + 320.0 + 12.0;
+        return 55.0 + CompactTrackHeight + 12.0 + 80.0 + 51.0 + 365.0 + 12.0;
     }
 
     private static double CompactSleepHeight(double width)
@@ -4906,14 +4894,11 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double CompactConsumableHeight(double width)
     {
         var columns = CompactColumns(width);
-        var faderColumns = ConsumableFaderColumns(width);
         var readoutTop = CompactGridEnd(55.0, 4, columns) + 15.0;
-        var cardsTop = readoutTop + 22.0;
+        var cardsTop = readoutTop;
         var previewTop = CompactGridEnd(cardsTop, 3, CompactStageColumns(width))
-            + 18.0 + 23.0;
-        var durationTop = previewTop + 160.0 + 12.0;
-        var faderRows = Math.Ceiling(5.0 / faderColumns);
-        return durationTop + faderRows * (179.0 + 8.0) - 8.0 + 14.0;
+            + 18.0;
+        return previewTop + 181.0 + 14.0;
     }
 
     private static double CompactHungerHeight(double width)

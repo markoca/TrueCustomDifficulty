@@ -193,11 +193,11 @@ public sealed class BleedingCurveControl : FrameworkElement
             out _recoveryTrackRect);
 
         DrawText(dc, "BLEEDING DAMAGE PROFILE", new Point(16, 142),
-            10.2, accent, FontWeights.Bold);
+            11.4, accent, FontWeights.Bold);
         DrawCenteredText(dc, "BLEEDING POINTS  /  0-100",
-            new Point(ActualWidth / 2.0 + 14, 160), 9.2, text, FontWeights.Bold);
+            new Point(ActualWidth / 2.0 + 14, 160), 10.2, text, FontWeights.Bold);
         DrawText(dc, "HP / TICK", new Point(12, 182),
-            9.1, accent, FontWeights.Bold);
+            10.2, text, FontWeights.Bold);
 
         _plotRect = new Rect(64.0, 185.0, Math.Max(360.0, ActualWidth - 89.0), 185.0);
         DrawCurve(dc, text, muted, border, softBorder, accent, panel);
@@ -217,7 +217,8 @@ public sealed class BleedingCurveControl : FrameworkElement
     {
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), rect, 3.0, 3.0);
 
-        DrawText(dc, label, new Point(rect.Left + 10, rect.Top + 8), 9.2, muted, FontWeights.Bold);
+        DrawText(dc, label, new Point(rect.Left + 10, rect.Top + 8),
+            10.8, text, FontWeights.Bold);
 
         if (parameter is null)
         {
@@ -230,8 +231,8 @@ public sealed class BleedingCurveControl : FrameworkElement
             dc,
             parameter.CurrentDisplay,
             new Point(rect.Right - 10, rect.Top + 6),
-            10.8,
-            accent,
+            parameter.IsValueModifiedFromReference() ? 12.0 : 10.8,
+            parameter.IsValueModifiedFromReference() ? accent : text,
             FontWeights.Bold);
 
         var trackLeft = rect.Left + 12.0;
@@ -308,7 +309,7 @@ public sealed class BleedingCurveControl : FrameworkElement
                 dc,
                 level.ToString(CultureInfo.InvariantCulture),
                 new Point(_plotRect.Left - 9.0, y - 7.0),
-                9.0,
+                10.0,
                 level == 0 ? text : muted,
                 FontWeights.SemiBold);
         }
@@ -340,7 +341,7 @@ public sealed class BleedingCurveControl : FrameworkElement
 
         for (var threshold = 0; threshold <= 100; threshold += 25)
             DrawCenteredText(dc, $"{threshold}", new Point(ThresholdToX(threshold),
-                _plotRect.Bottom + 13), 8.8, muted, FontWeights.SemiBold);
+                _plotRect.Bottom + 13), 10.0, muted, FontWeights.SemiBold);
 
         var x = currentThresholds.Select(ThresholdToX).ToArray();
         var vanillaX = referenceThresholds.Select(ThresholdToX).ToArray();
@@ -359,7 +360,23 @@ public sealed class BleedingCurveControl : FrameworkElement
             new Point(vanillaX[2], DamageToY(vanillaValues[2]))
         };
 
-        DrawPolyline(dc, vanillaPoints, new Pen(muted, 1.6) { DashStyle = DashStyles.Dash });
+        // BLEEDING uses authored LOW / MEDIUM / SEVERE steps. A sloped
+        // interpolating line suggests an effect that does not exist.
+        void DrawStageCurve(Point[] values, Pen pen)
+        {
+            for (var i = 0; i < values.Length - 1; i++)
+            {
+                dc.DrawLine(pen, values[i],
+                    new Point(values[i + 1].X, values[i].Y));
+                dc.DrawLine(pen, new Point(values[i + 1].X, values[i].Y),
+                    values[i + 1]);
+            }
+            dc.DrawLine(pen, values[^1],
+                new Point(_plotRect.Right, values[^1].Y));
+        }
+
+        DrawStageCurve(vanillaPoints,
+            new Pen(muted, 1.6) { DashStyle = DashStyles.Dash });
 
         var currentValues = new[]
         {
@@ -380,9 +397,13 @@ public sealed class BleedingCurveControl : FrameworkElement
         {
             context.BeginFigure(new Point(points[0].X, _plotRect.Bottom), true, true);
             context.LineTo(points[0], true, false);
-            context.LineTo(points[1], true, false);
-            context.LineTo(points[2], true, false);
-            context.LineTo(new Point(points[2].X, _plotRect.Bottom), true, false);
+            for (var i = 1; i < points.Length; i++)
+            {
+                context.LineTo(new Point(points[i].X, points[i - 1].Y), true, false);
+                context.LineTo(points[i], true, false);
+            }
+            context.LineTo(new Point(_plotRect.Right, points[^1].Y), true, false);
+            context.LineTo(new Point(_plotRect.Right, _plotRect.Bottom), true, false);
         }
         fillGeometry.Freeze();
 
@@ -396,7 +417,7 @@ public sealed class BleedingCurveControl : FrameworkElement
                     { DashStyle = DashStyles.Dot },
                 new Point(points[i].X, points[i].Y),
                 new Point(points[i].X, _plotRect.Bottom));
-        DrawPolyline(dc, points, new Pen(accent, 2.8));
+        DrawStageCurve(points, new Pen(accent, 2.8));
 
         var labels = new[] { "LOW", "MEDIUM", "SEVERE" };
         for (var i = 0; i < 3; i++)
@@ -430,18 +451,18 @@ public sealed class BleedingCurveControl : FrameworkElement
             // Each stage owns a separate caption column; threshold points
             // may be dragged close together without text collisions.
             var cardWidth = (ActualWidth - 44.0) / 3.0;
-            var card = new Rect(16 + i * cardWidth, 405, cardWidth - 4, 35);
+            var card = new Rect(16 + i * cardWidth, 405, cardWidth - 4, 44);
             dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 3, 3);
             DrawSourceNumber(dc,
                 $"{labels[i]} AT {currentThresholds[i]:0.#} PTS",
-                new Point(card.Left + card.Width / 2, card.Top + 4),
-                9, text, accent, FontWeights.Bold,
+                new Point(card.Left + card.Width / 2, card.Top + 5),
+                10.1, text, accent, FontWeights.Bold,
                 (i == 1 ? _mediumThreshold : i == 2 ? _severeThreshold : null)
                     ?.IsValueModifiedFromReference() == true);
             DrawSourceNumber(dc,
                 $"{currentValues[i]:0.##} HP / TICK",
-                new Point(card.Left + card.Width / 2, card.Top + 19),
-                9.8, text, accent, FontWeights.Bold,
+                new Point(card.Left + card.Width / 2, card.Top + 25),
+                10.4, text, accent, FontWeights.Bold,
                 _damage[i]?.IsValueModifiedFromReference() == true);
         }
 

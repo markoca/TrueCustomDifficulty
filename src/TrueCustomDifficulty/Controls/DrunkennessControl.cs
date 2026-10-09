@@ -112,7 +112,6 @@ public sealed class DrunkennessControl : FrameworkElement
         var muted = BrushResource("MutedTextBrush", Brushes.Gray);
         var radarMuted = BrushResource("RadarMutedTextBrush", Brushes.LightGray);
         var accent = BrushResource("AccentBrush", Brushes.Gold);
-        var accentDark = BrushResource("AccentDarkBrush", Brushes.DarkGoldenrod);
         var track = BrushResource("SliderTrackBrush", new SolidColorBrush(Color.FromRgb(34, 37, 31)));
 
         var bounds = new Rect(0.5, 0.5, Math.Max(0.0, ActualWidth - 1.0), Math.Max(0.0, ActualHeight - 1.0));
@@ -137,8 +136,7 @@ public sealed class DrunkennessControl : FrameworkElement
             track,
             text,
             muted,
-            accent,
-            accentDark);
+            accent);
 
         DrawDrinkCard(
             dc,
@@ -153,8 +151,7 @@ public sealed class DrunkennessControl : FrameworkElement
             track,
             text,
             muted,
-            accent,
-            accentDark);
+            accent);
 
         DrawProgressionRow(
             dc,
@@ -180,8 +177,9 @@ public sealed class DrunkennessControl : FrameworkElement
             muted,
             accent);
 
-        DrawText(dc, "DRUNKNESS STAGES", new Point(16, 234), 9.0, muted, FontWeights.Bold);
-        DrawTierCards(dc, panelAlt, border, radarMuted, accent);
+        DrawText(dc, "DRUNKNESS STAGES", new Point(16, 234),
+            11.2, text, FontWeights.Bold);
+        DrawTierCards(dc, panelAlt, border, radarMuted);
     }
 
     private void DrawDrinkCard(
@@ -197,8 +195,7 @@ public sealed class DrunkennessControl : FrameworkElement
         Brush track,
         Brush text,
         Brush muted,
-        Brush accent,
-        Brush accentDark)
+        Brush accent)
     {
         dc.DrawRoundedRectangle(background, new Pen(border, 1.0), rect, 3.0, 3.0);
 
@@ -209,27 +206,28 @@ public sealed class DrunkennessControl : FrameworkElement
         var drinkLabel = drinks == 1 ? singular : plural;
 
         // Row 1: drink name + centered gameplay consequence.
-        DrawText(dc, singular, new Point(rect.Left + 10, rect.Top + 7), 10.0, accent, FontWeights.Bold);
+        DrawText(dc, singular, new Point(rect.Left + 10, rect.Top + 7), 11.0, text, FontWeights.Bold);
         DrawCenteredStatus(
             dc,
             "WASTED AFTER ",
             drinks.ToString(CultureInfo.InvariantCulture),
             " " + drinkLabel,
             new Point(rect.Left + rect.Width / 2.0, rect.Top + 7),
-            9.2,
+            11.2,
             text,
-            accent);
+            parameter?.IsValueModifiedFromReference() == true);
 
         // Row 2: label and value stay together instead of being split across the card.
-        var labelText = CreateText("DRINK STRENGTH", 9.0, muted, FontWeights.SemiBold);
+        var labelText = CreateText("DRINK STRENGTH", 10.0, muted, FontWeights.SemiBold);
         var labelPoint = new Point(rect.Left + 10, rect.Top + 29);
         dc.DrawText(labelText, labelPoint);
 
         var valueX = labelPoint.X + labelText.WidthIncludingTrailingWhitespace + 9;
+        var changed = parameter?.IsValueModifiedFromReference() == true;
         var currentText = CreateText(
             strength.ToString("0", CultureInfo.InvariantCulture),
-            12.5,
-            accent,
+            changed ? 13.7 : 12.5,
+            changed ? accent : text,
             FontWeights.Bold);
         dc.DrawText(currentText, new Point(valueX, rect.Top + 25));
 
@@ -237,7 +235,7 @@ public sealed class DrunkennessControl : FrameworkElement
             dc,
             " / " + maximum.ToString("0", CultureInfo.InvariantCulture),
             new Point(valueX + currentText.WidthIncludingTrailingWhitespace, rect.Top + 28),
-            9.0,
+            10.0,
             muted,
             FontWeights.SemiBold);
 
@@ -259,7 +257,8 @@ public sealed class DrunkennessControl : FrameworkElement
         dc.DrawEllipse(accent, null, new Point(handleX, sliderY), 5.0, 5.0);
 
         var vanillaX = ValueToX(vanillaStrength, minimum, maximum, sliderLeft, sliderRight);
-        dc.DrawLine(new Pen(accentDark, 1.0), new Point(vanillaX, sliderY - 5), new Point(vanillaX, sliderY + 5));
+        dc.DrawLine(new Pen(muted, 1.2),
+            new Point(vanillaX, sliderY - 7), new Point(vanillaX, sliderY + 7));
 
         // One compact scale row directly under the track.
         var scaleY = rect.Top + 72.0;
@@ -267,23 +266,15 @@ public sealed class DrunkennessControl : FrameworkElement
             dc,
             minimum.ToString("0", CultureInfo.InvariantCulture),
             new Point(sliderLeft, scaleY),
-            9.0,
+            10.0,
             muted,
             FontWeights.SemiBold);
-
-        DrawCenteredText(
-            dc,
-            "VANILLA",
-            new Point(vanillaX, scaleY),
-            9.0,
-            accentDark,
-            FontWeights.Bold);
 
         DrawRightAlignedText(
             dc,
             maximum.ToString("0", CultureInfo.InvariantCulture),
             new Point(sliderRight, scaleY),
-            9.0,
+            10.0,
             muted,
             FontWeights.SemiBold);
     }
@@ -300,7 +291,7 @@ public sealed class DrunkennessControl : FrameworkElement
         Brush muted,
         Brush accent)
     {
-        DrawText(dc, title, new Point(16, titleY), 9.5, muted, FontWeights.Bold);
+        DrawText(dc, title, new Point(16, titleY), 10.4, text, FontWeights.Bold);
 
         var left = 16.0;
         var top = titleY + 16.0;
@@ -338,7 +329,7 @@ public sealed class DrunkennessControl : FrameworkElement
                 dc,
                 FormatOrdinal(drink),
                 new Point(segmentCenter, top + 4.0),
-                8.7,
+                10.0,
                 text,
                 FontWeights.Bold);
 
@@ -346,7 +337,7 @@ public sealed class DrunkennessControl : FrameworkElement
                 dc,
                 tier,
                 new Point(segmentCenter, top + 18.0),
-                8.8,
+                10.0,
                 isStrong ? accent : muted,
                 FontWeights.Bold);
         }
@@ -369,42 +360,36 @@ public sealed class DrunkennessControl : FrameworkElement
     }
 
     private void DrawTierCards(
-        DrawingContext dc,
-        Brush panelAlt,
-        Brush border,
-        Brush muted,
-        Brush accent)
+        DrawingContext dc, Brush panelAlt, Brush border,
+        Brush muted)
     {
-        var gap = 8.0;
-        var left = 16.0;
-        var top = 252.0;
+        const double gap = 8.0;
+        const double left = 16.0;
+        const double top = 252.0;
         var totalWidth = Math.Max(460.0, ActualWidth - 32.0);
-        var cardWidth = (totalWidth - gap * 2.0) / 3.0;
-        var cardHeight = 70.0;
-
+        var cardWidth = (totalWidth - gap * 3.0) / 4.0;
         var stages = new[]
         {
-            new StageInfo("TIPSY", VanillaLow, "first signs of alcohol"),
-            new StageInfo("DRUNK", VanillaMedium, "clearly intoxicated"),
-            new StageInfo("WASTED", VanillaStrong, "heavily intoxicated")
+            ("SOBER", "BELOW 0.001"),
+            ("TIPSY", "0.001+"),
+            ("DRUNK", "30+"),
+            ("WASTED", "80+")
         };
 
         for (var i = 0; i < stages.Length; i++)
         {
             var stage = stages[i];
-            var rect = new Rect(left + i * (cardWidth + gap), top, cardWidth, cardHeight);
-
-            dc.DrawRoundedRectangle(panelAlt, new Pen(border, 1.0), rect, 3.0, 3.0);
-            DrawText(dc, stage.Label, new Point(rect.Left + 10.0, rect.Top + 8.0), 10.0, accent, FontWeights.Bold);
-            DrawRightAlignedText(
-                dc,
-                stage.Threshold < 1.0 ? stage.Threshold.ToString("0.###", CultureInfo.InvariantCulture) : stage.Threshold.ToString("0", CultureInfo.InvariantCulture),
-                new Point(rect.Right - 10.0, rect.Top + 8.0),
-                10.5,
-                accent,
-                FontWeights.Bold);
-            DrawText(dc, "DRUNKNESS POINTS", new Point(rect.Left + 10.0, rect.Top + 31.0), 9.0, muted, FontWeights.SemiBold);
-            DrawText(dc, stage.Note, new Point(rect.Left + 10.0, rect.Top + 49.0), 9.0, muted, FontWeights.Normal);
+            var rect = new Rect(left + i * (cardWidth + gap),
+                top, cardWidth, 70.0);
+            dc.DrawRoundedRectangle(panelAlt, new Pen(border, 1.0),
+                rect, 3.0, 3.0);
+            DrawText(dc, stage.Item1,
+                new Point(rect.Left + 10.0, rect.Top + 9.0),
+                11.2, muted, FontWeights.Bold);
+            // Fixed authored stage boundaries are read-only and neutral.
+            DrawText(dc, stage.Item2,
+                new Point(rect.Left + 10.0, rect.Top + 35.0),
+                10.4, muted, FontWeights.SemiBold);
         }
     }
 
@@ -626,10 +611,13 @@ public sealed class DrunkennessControl : FrameworkElement
         Point center,
         double size,
         Brush textBrush,
-        Brush highlightBrush)
+        bool modified)
     {
         var prefixText = CreateText(prefix, size, textBrush, FontWeights.SemiBold);
-        var highlightedText = CreateText(highlighted, size + 2.8, highlightBrush, FontWeights.Bold);
+        var highlightedText = CreateText(highlighted,
+            modified ? size + 1.2 : size,
+            modified ? BrushResource("AccentBrush", Brushes.Gold) : textBrush,
+            FontWeights.Bold);
         var suffixText = CreateText(suffix, size, textBrush, FontWeights.SemiBold);
 
         var totalWidth =
@@ -663,5 +651,4 @@ public sealed class DrunkennessControl : FrameworkElement
         Vodka
     }
 
-    private sealed record StageInfo(string Label, double Threshold, string Note);
 }
