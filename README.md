@@ -1,5 +1,9 @@
 # True Custom Difficulty
 
+### Anomalies build and four-section grouping fix (2026-10-09)
+
+Fixed the duplicate `"environment"` case in `TabViewModel.SliderGuide` that caused **CS8510** during `net10.0-windows` publish. Added `environment` to the tab's `PropertyGroupDescription` grouping whitelist so the four source-backed Anomalies sections actually appear separately and in the approved order. Updated Equipment tooltip text to reflect its existing three-ring center control. The change does not touch CFG writer behavior, source parameters, or preset serialization. Compilation and Wine rendering must be verified using the local `publish.sh` workflow.
+
 ## Anomalies tab redesign — four independent panels (2026-10-09)
 
 The `environment` (Anomalies) tab has **17 unchanged source-backed values** regrouped into four full-width sections: **Global Anomaly Damage** (one compact horizontal native slider), **Individual Anomaly Damage** (11 source-specific damage editors, two columns), **Flycatcher Slowdown** (Combat-style square with bottom movement, left turn and interactive center joint), and **Special Anomaly Effects** (Razor Bleeding, Diamond Bleeding and Psy Drain as three compact horizontal native sliders). The previous six-vertical-fader mixer has been retired. Native CFG ranges/steps, selected-difficulty reference, preset IDs and writer mappings remain unchanged. Diamond Bleeding still edits real bleeding points, and Flycatcher still edits percentage of movement/turning speed retained — not absolute slowdown. The individual damage radar now selects the edited row's own rationale. Numerical highlights and handle hover follow the established Stamina/Combat design contracts. Full visual contract is in `docs/UI-DESIGN-LOCK.md`, `docs/VISUAL-CONTROL-SYSTEM.md`, `docs/UI-MIXER-GRID-SPEC.md` and `docs/ANOMALIES-MAPPING.md`. Local WPF/Wine build and visual acceptance remain pending.

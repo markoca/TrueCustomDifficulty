@@ -42,8 +42,7 @@ public sealed class TabViewModel : ObservableObject
         "master" => "These are extra punishment bundles that vanilla Master adds on top of the normal difficulty settings. Switch a bundle ON to reveal and tune its settings. Switch it OFF to disable the bundle and hide its settings.",
         "environment" => "Anomalies are divided into Global Damage, Individual Damage, Flycatcher Slowdown and Special Effects. Global Damage and individual sources remain independent. Flycatcher handles edit retained movement and turning speed (higher means less slowdown). The center ring edits both axes. Native ranges, reference ticks and per-source resets stay intact.",
         "economy" => "Economy controls starting coupons, trader pricing behavior, item/service costs, repair-by-reputation effects and quest coupon payouts. Some trader pricing rules are only partly exposed by the game files. Vanilla markers remain exact source reference points and can be clicked to snap a slider directly to them.",
-        "equipment" => "Equipment Wear has two independent axis handles: armor toughness below the graph, weapon wear per shot on the left. Item Weight has separate compact ammo and food/medicine sliders. Source values retain their native scales; bonus caps are not exposed pending a proven gameplay effect.",
-        "environment" => "Global Anomaly Damage is the broad damage layer. Individual damage sliders fine-tune specific hazards. Flycatcher Movement/Turn Speed show how much normal speed remains inside the slowdown: higher means less slowdown. Click a vanilla marker to snap to it; right-click restores the selected baseline.",
+        "equipment" => "Equipment Wear uses three Combat-style rings: bottom adjusts armor toughness, left adjusts weapon wear per shot and center adjusts both independently. Item Weight has separate compact ammo and food/medicine sliders. Source values retain their native scales; bonus caps remain audit-only.",
         _ => "Yellow shows your current setting. Vanilla markers show the original Novice, Stalker, Veteran and Master values; click a marker to snap directly to it. Right-click a slider to restore the selected vanilla baseline."
     };
 
@@ -70,7 +69,7 @@ public sealed class TabViewModel : ObservableObject
                 && !p.Id.StartsWith("combat.accumulatedDamage", StringComparison.Ordinal);
 
         // Tabs with multiple distinct CFG domains are grouped visibly so unrelated mechanics are not presented as one undifferentiated list.
-        if (Id is "loot" or "combat" or "survival" or "health" or "stamina" or "economy" or "equipment" or "alife" or "master")
+        if (Id is "loot" or "combat" or "survival" or "health" or "stamina" or "economy" or "equipment" or "environment" or "alife" or "master")
             ParametersView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ParameterViewModel.Group)));
 
         SelectedParameter = Parameters.FirstOrDefault(p => p.IsControlVisible);

@@ -39,6 +39,10 @@
 
 **Important:** An in-code lock is a precise source snapshot. It is deliberately broad: even a harmless UI code modification will fail the check until the user has authorized it and the baseline is intentionally updated. Non-UI work is not blocked.
 
+### 2026-10-09 — Anomalies compile and section-grouping fix (current main)
+
+After the initial four-panel Anomalies commit, the user reported .NET compiler **CS8510** in `TabViewModel.SliderGuide`: two identical `"environment"` switch arms. The obsolete second arm was removed; the first, four-panel-aware help text remains. **Critical UI correction:** `environment` is now explicitly included in `TabViewModel.ParametersView.GroupDescriptions`, so `Global Anomaly Damage`, `Individual Anomaly Damage`, `Flycatcher Slowdown`, and `Special Anomaly Effects` render as **four distinct top-level grouped sections** rather than ungrouped cards. Existing `MainViewModel.ParameterSortOrder` keeps that exact order. Equipment help text also now accurately mentions the already-implemented interactive three-ring center. No game parameter values, IDs, source mappings, or presets are changed by this fix. A local .NET/Wine build is still needed for runtime verification.
+
 ## 2026-10-09 — Anomalies gamer-centric four-panel redesign (explicitly approved)
 
 **Authoritative for the Anomalies tab.** Supersedes UI-02's old six-vertical-fader Anomaly Effects mixer, any obsolete 'global immediately before individual at bottom' ordering, and the historical one-section Anomalies catalog groups. The tab still has exactly **17 native gameplay parameters**, stored under its unchanged `environment` ID, split into four independently visible **full-width** group cards, in this order:

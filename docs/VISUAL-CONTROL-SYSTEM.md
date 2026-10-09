@@ -26,6 +26,10 @@ Semantic controls follow one density/readability baseline:
 - Grey ticks/markers carry Base Preset reference information so repeated micro-labels such as `VANILLA`, `0%` and `200%` do not need to be printed on every row.
 - Compactness must never change backing parameter values, constraints, preset serialization or CFG-writer behavior.
 
+### 2026-10-09 — Anomalies actual grouped rendering / CS8510 follow-up
+
+`TabViewModel.SliderGuide` must contain **only one** `"environment"` arm (the four-panel-specific guide). The previous duplicate caused CS8510 and prevented publishing. `environment` must also appear in the explicit `ParametersView.GroupDescriptions` tab whitelist; without it the named families would not render as four independent top-level group cards, contrary to the Anomalies UI contract. Source sort order 0/100/200/300 for the four family names is unchanged. Compile and Wine smoke test remain pending on the user's local setup.
+
 ## Anomalies — four distinct source-bound boards (2026-10-09, latest)
 
 **This explicitly supersedes the earlier six-column `AnomalyEffectsBoard` mixer and older one-section Anomalies presentation.** The `environment` tab's four top-level sections contain 1+11+2+3 = **17** existing gameplay settings. Group names are exact: `Global Anomaly Damage`, `Individual Anomaly Damage`, `Flycatcher Slowdown`, `Special Anomaly Effects`, in that order; each occupies a full-width section.
