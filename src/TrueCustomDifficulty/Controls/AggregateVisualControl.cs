@@ -37,7 +37,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         if (Family is "AnomalyEffectsBoard" or "ServiceCostsBoard"
             or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "BreakableBoxYields"
-            or "StashRewardProfile" or "HumanCombatProfile" or "PlayerWeaponProfile")
+            or "StashRewardProfile" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
     }
 
@@ -306,6 +306,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ValueToX(source.CurrentMaxNumber, target.VisualMinimum,
                     target.VisualMaximum, target.MapRect, false),
                 target.MapRect.Top + target.MapRect.Height / 2.0),
+            HitKind.Choice when Family == "NpcLootLoadout" =>
+                new Point(double.NaN, double.NaN), // chip hover uses chip border
             HitKind.Choice => new Point(
                 target.MapRect.Left + target.MapRect.Width *
                     Math.Clamp((source.ChoiceIndex - target.VisualMinimum) / range, 0.0, 1.0),
@@ -840,38 +842,60 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, "EXTRA CORPSE LOOT", new Point(margin + 11.0, 61.0),
             10.6, text, FontWeights.Bold);
         var count = corpse.ChoiceOptions.Count;
-        var cell = (width - 22.0 - (count - 1) * gap) / count;
-        var centerStart = margin + 11.0 + cell / 2.0;
-        var centerEnd = centerStart + (count - 1) * (cell + gap);
+        var cell = Math.Min(180.0, (width - 22.0 - (count - 1) * gap) / count);
+        var groupWidth = count * cell + (count - 1) * gap;
+        var start = margin + (width - groupWidth) / 2.0;
         for (var i = 0; i < count; i++)
         {
-            var rect = new Rect(margin + 11.0 + i * (cell + gap),
-                88.0, cell, 43.0);
+            var rect = new Rect(start + i * (cell + gap), 88.0, cell, 43.0);
             var selected = Math.Abs(corpse.ChoiceIndex - i) < 0.5;
+            var hover = _hoverTarget?.Kind == HitKind.Choice
+                && Math.Abs(_hoverTarget.VisualMinimum - i) < Epsilon;
             dc.DrawRoundedRectangle(
                 selected ? CloneWithOpacity(accent, 0.10) : panel,
-                new Pen(selected ? accent : border, selected ? 1.6 : 0.9),
-                rect, 4.0, 4.0);
+                new Pen(selected ? accent : hover ? CloneWithOpacity(accent, 0.7) : border,
+                    selected ? 1.6 : 0.9), rect, 4.0, 4.0);
             var caption = CreateText(corpse.ChoiceOptions[i].Label, 10.6,
-                text, FontWeights.SemiBold, Math.Max(1.0, cell - 12.0));
+                selected ? accent : text, FontWeights.SemiBold,
+                Math.Max(1.0, cell - 12.0));
             dc.DrawText(caption, new Point(
                 rect.Left + (rect.Width - caption.WidthIncludingTrailingWhitespace) / 2.0,
                 rect.Top + (rect.Height - caption.Height) / 2.0));
+            if (corpse.IsControlEnabled)
+                _hitTargets.Add(new HitTarget(corpse, rect, rect, HitKind.Choice, i, i, false));
         }
-        AddChoiceTarget(corpse,
-            new Rect(margin + 11.0, 88.0, width - 22.0, 43.0),
-            new Rect(centerStart, 88.0,
-                Math.Max(1.0, centerEnd - centerStart), 43.0));
 
         var half = (width - gap) / 2.0;
         DrawHorizontalTrackCard(dc, medical, "MEDICAL DROPS",
             new Rect(margin, 155.0, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
-        DrawHorizontalTrackCard(dc, ammo, "DROPPED AMMO",
+        DrawHorizontalTrackCard(dc, ammo, "NPC AMMO",
             new Rect(margin + half + gap, 155.0, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
 
-        var rangeCard = new Rect(margin, 238.0, width, 103.0);
+        // Audited NPC_Ammo_Smart Newbie counts (12 Gauge, 5.45, .45 ACP).
+        // Read-only examples, updated at the same half-up precision as the writer.
+        var examples = new (string Label, int Min, int Max)[]
+        {
+            ("12 GA", 2, 6), ("5.45", 15, 20), (".45 ACP", 8, 12)
+        };
+        var sampleCard = new Rect(margin, 238.0, width, 43.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.8), sampleCard, 4.0, 4.0);
+        DrawText(dc, "NPC AMMO EXAMPLES · NEWBIE RANK",
+            new Point(sampleCard.Left + 10.0, sampleCard.Top + 5.0),
+            9.7, muted, FontWeights.Bold);
+        for (var i = 0; i < examples.Length; i++)
+        {
+            var e = examples[i];
+            var low = Math.Max(0, (int)Math.Floor(e.Min * ammo.CurrentNumber + 0.5));
+            var high = Math.Max(0, (int)Math.Floor(e.Max * ammo.CurrentNumber + 0.5));
+            DrawText(dc, $"{e.Label} {low}–{high}",
+                new Point(sampleCard.Left + 11.0 + i * (width - 22.0) / 3.0,
+                    sampleCard.Top + 22.0),
+                10.6, text, FontWeights.SemiBold);
+        }
+
+        var rangeCard = new Rect(margin, 290.0, width, 97.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             rangeCard, 4.0, 4.0);
         DrawText(dc, "DROPPED WEAPON CONDITION",
@@ -913,14 +937,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawEllipse(panel, new Pen(accent, 1.8), maxPoint, 6.0, 6.0);
         dc.DrawEllipse(accent, null, minPoint, 2.2, 2.2);
         dc.DrawEllipse(accent, null, maxPoint, 2.2, 2.2);
-        // Distinct upper and lower hit lanes prevent overlaid MIN/MAX knobs.
-        // Their map rect Y-centers match the actual visible handle centers.
-        AddRangeTarget(condition,
-            new Rect(rail.Left - 6.0, y - 18.0, rail.Width + 12.0, 16.0),
-            new Rect(rail.Left, y - 13.0, rail.Width, 10.0), HitKind.RangeMin);
-        AddRangeTarget(condition,
-            new Rect(rail.Left - 6.0, y + 2.0, rail.Width + 12.0, 16.0),
-            new Rect(rail.Left, y + 3.0, rail.Width, 10.0), HitKind.RangeMax);
+        // Both endpoints share a generous rail hit area. Hit testing
+        // resolves actual proximity to the two drawn handle centers.
+        var fullHit = new Rect(rail.Left - 14.0, y - 19.0,
+            rail.Width + 28.0, 38.0);
+        AddRangeTarget(condition, fullHit, rail, HitKind.RangeMin);
+        AddRangeTarget(condition, fullHit, rail, HitKind.RangeMax);
 
         DrawText(dc, "0%", new Point(rail.Left, rangeCard.Bottom - 20.0),
             9.5, muted, FontWeights.Normal);
@@ -4371,6 +4393,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var isChoice = _selectedParameter.IsChoiceSlider && _selectedHitKind == HitKind.Choice;
+        if (isChoice && (e.Key == Key.Space || e.Key == Key.Enter))
+        {
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
         var isRangeMin = _selectedParameter.IsRange && _selectedHitKind == HitKind.RangeMin;
         var isRangeMax = _selectedParameter.IsRange && _selectedHitKind == HitKind.RangeMax;
         if (!_selectedParameter.IsSlider && !isChoice && !isRangeMin && !isRangeMax)
@@ -4493,7 +4521,15 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         double ratio;
 
-        if (target.Kind == HitKind.Horizontal)
+        if (target.Kind == HitKind.Choice && Family == "NpcLootLoadout")
+        {
+            target.Parameter.ChoiceIndex = target.VisualMinimum;
+            _status.ClearTransient();
+            InvalidateVisual();
+            return;
+        }
+
+        if (target.Kind is HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax)
         {
             ratio = Math.Clamp(
                 (point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width),
@@ -4624,6 +4660,38 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private HitTarget? FindTarget(Point point)
     {
+        if (Family == "NpcLootLoadout")
+        {
+            var condition = P("loot.droppedWeaponCondition");
+            var lower = _hitTargets.FirstOrDefault(t =>
+                ReferenceEquals(t.Parameter, condition) && t.Kind == HitKind.RangeMin);
+            var upper = _hitTargets.FirstOrDefault(t =>
+                ReferenceEquals(t.Parameter, condition) && t.Kind == HitKind.RangeMax);
+            if (condition is not null && lower is not null && upper is not null
+                && lower.HitRect.Contains(point))
+            {
+                var minX = ValueToX(condition.CurrentMinNumber,
+                    condition.Minimum, condition.Maximum, lower.MapRect, false);
+                var maxX = ValueToX(condition.CurrentMaxNumber,
+                    condition.Minimum, condition.Maximum, upper.MapRect, false);
+                var dMinX = Math.Abs(point.X - minX);
+                var dMaxX = Math.Abs(point.X - maxX);
+                var centerY = lower.MapRect.Top + lower.MapRect.Height / 2.0;
+                if (dMinX <= 14.0 && dMaxX <= 14.0)
+                {
+                    var a = Math.Pow(dMinX, 2) + Math.Pow(point.Y - centerY + 8.0, 2);
+                    var b = Math.Pow(dMaxX, 2) + Math.Pow(point.Y - centerY - 8.0, 2);
+                    if (Math.Abs(a - b) > Epsilon)
+                        return a < b ? lower : upper;
+                }
+                if (Math.Abs(dMinX - dMaxX) > 0.001)
+                    return dMinX < dMaxX ? lower : upper;
+                return _selectedHitKind == HitKind.RangeMax ? upper
+                    : _selectedHitKind == HitKind.RangeMin ? lower
+                    : point.Y > centerY ? upper : lower;
+            }
+        }
+
         // Fatigue rings can overlap because both axes share threshold X.
         // Select the nearest ring center, not whichever was drawn last.
         if (Family == "FatigueCurve")
@@ -4904,7 +4972,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "ItemWeightBoard" => GetMixerHeight(width, WeightMixerChannels.Length),
             "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
             "AnomalyEffectsBoard" => GetMixerHeight(width, AnomalyMixerChannels.Length),
-            "NpcLootLoadout" => 354.0,
+            "NpcLootLoadout" => 401.0,
             "WorldLootLayout" => 238.0,
             "StashRewardProfile" => width >= 750.0 ? 263.0 : 418.0,
             "PhysicalLimits" => 335.0,
