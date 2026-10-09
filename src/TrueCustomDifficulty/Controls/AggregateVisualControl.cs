@@ -301,11 +301,13 @@ public sealed class AggregateVisualControl : FrameworkElement
             HitKind.RangeMin => new Point(
                 ValueToX(source.CurrentMinNumber, target.VisualMinimum,
                     target.VisualMaximum, target.MapRect, false),
-                target.MapRect.Top + target.MapRect.Height / 2.0),
+                target.MapRect.Top + target.MapRect.Height / 2.0
+                    - (Family == "NpcLootLoadout" ? 8.0 : 0.0)),
             HitKind.RangeMax => new Point(
                 ValueToX(source.CurrentMaxNumber, target.VisualMinimum,
                     target.VisualMaximum, target.MapRect, false),
-                target.MapRect.Top + target.MapRect.Height / 2.0),
+                target.MapRect.Top + target.MapRect.Height / 2.0
+                    + (Family == "NpcLootLoadout" ? 8.0 : 0.0)),
             HitKind.Choice when Family == "NpcLootLoadout" =>
                 new Point(double.NaN, double.NaN), // chip hover uses chip border
             HitKind.Choice => new Point(
@@ -881,7 +883,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         };
         var sampleCard = new Rect(margin, 238.0, width, 43.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.8), sampleCard, 4.0, 4.0);
-        DrawText(dc, "NPC AMMO EXAMPLES · NEWBIE RANK",
+        DrawText(dc,
+            corpse.CurrentText.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)
+                ? "NPC AMMO SAMPLES · NEWBIE RANK"
+                : "NPC AMMO SAMPLES · WHEN MEDICINE + AMMO",
             new Point(sampleCard.Left + 10.0, sampleCard.Top + 5.0),
             9.7, muted, FontWeights.Bold);
         for (var i = 0; i < examples.Length; i++)
