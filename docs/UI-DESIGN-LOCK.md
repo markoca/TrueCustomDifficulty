@@ -522,3 +522,8 @@ Twelve factory presets are ordered alphabetically, adding full 201-value Field M
 ### 2026-10-09 — A-Life factory preset depth
 
 All twelve shipped factory presets now include the four human Director group size values and fourteen species-specific mutant Director group size values (219 entries total). The hidden generic mutant scaler remains excluded. Profiles preserve existing visual group radar controls and yellow-number-on-change behavior; A-Life Director group sizes are not conflated with lair population, encounter cadence or respawn. See docs/FACTORY-PRESETS.md.
+
+
+### 2026-10-09 — Health tab compact boards
+
+**Core Health** uses a compact two-column, three-row layout (302 DIP): Max Health, Recovery Delay, Passive Healing, Healing Effects and Low-HP Recovery. All five original CFG-backed native-range sliders remain editable, with subdued vanilla tick marks. Remove the old giant full-width HP/recovery-delay lanes, their min/max captions and redundant recovery heading. **Radiation Treatment** uses two side-by-side native-range sliders (Scientific Medkit and Anti-Rad) in a 149-DIP card, with no subtitle/footer. Preserve source values and changed-numeric-only gold highlight, neutral label/unit text, slider drag and resets. No catalog or gameplay values changed.
