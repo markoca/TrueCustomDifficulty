@@ -908,3 +908,8 @@ Interactive hover styling is standardized across the Stamina Usage slider rail/h
 ### 2026-10-09 — Hover target-only rule (user-approved correction)
 
 For **all sliders**, hovering must not turn the whole card, track label, helper text or value text gold. Only the interactive slider **handle/control point** receives hover glow/outline. Current numeric text becomes gold only for an actual change from the selected Base Preset, never due solely to hover or selection. Specifically, the three bottom Stamina Usage mini-sliders keep their labels neutral while hovering; Radiation Treatment's two horizontal cards keep neutral panel/labels but their handles visibly respond to hover. Standard aggregate tracks, world-loot, anomaly, stash-ammo, mutant-drop, economy and A-Life slider row cards must not tint their entire surface gold on hover. Standalone toggle/buttons remain buttons and may retain their normal surface-hover feedback. Do not alter CFG mappings, native slider ranges, baseline markers or input hit targets.
+
+
+### 2026-10-09 — Anomaly hover syntax correction
+
+The Anomaly Damage row fill must use a syntactically valid two-branch conditional (`selected ? accent-tinted : neutral panel`). A prior hover-only cleanup accidentally left a third `:` branch and broke compilation (CS1003, lines 182–183); this has been corrected without changing slider targets, source CFG parameters, reset behavior or the handle-only hover policy.
