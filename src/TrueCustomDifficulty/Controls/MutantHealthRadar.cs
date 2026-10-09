@@ -165,16 +165,27 @@ public sealed class MutantHealthRadar : FrameworkElement
             new Point(card.Left + 11.0, card.Top + 6.0),
             9.8, text, FontWeights.Bold);
 
-        var multiplier = CreateText($"{parameter.CurrentNumber:0.##}x",
-            modified ? 11.4 : 10.2, modified ? accent : text, FontWeights.Bold);
-        dc.DrawText(multiplier,
-            new Point(card.Right - 11.0 - multiplier.WidthIncludingTrailingWhitespace,
-                card.Top + 5.0));
+        // Top row: species left, current multiplier centered, derived real HP right.
+        // Modified values alone gain the accent and +1.2 DIP, never the HP unit.
+        DrawSourceNumber(dc, $"{parameter.CurrentNumber:0.##}x",
+            new Point(card.Left + card.Width / 2.0, card.Top + 12.0),
+            10.2, text, accent, FontWeights.Bold, modified);
 
         var currentHp = mutant.VanillaHp * parameter.CurrentNumber;
-        DrawText(dc, $"{currentHp:0} HP",
-            new Point(card.Left + 11.0, card.Top + 23.0),
-            9.0, muted, FontWeights.SemiBold);
+        var hpLabel = $"{currentHp:0} HP";
+        var hpText = CreateText(hpLabel, 9.0, muted, FontWeights.SemiBold);
+        if (modified)
+        {
+            var hpDigits = hpLabel.IndexOf(' ');
+            if (hpDigits > 0)
+            {
+                hpText.SetForegroundBrush(accent, 0, hpDigits);
+                hpText.SetFontSize(10.2, 0, hpDigits);
+            }
+        }
+        dc.DrawText(hpText,
+            new Point(card.Right - 11.0 - hpText.WidthIncludingTrailingWhitespace,
+                card.Top + 6.0));
 
         var track = new Rect(card.Left + 12.0, card.Top + 42.0,
             Math.Max(1.0, card.Width - 24.0), 10.0);
