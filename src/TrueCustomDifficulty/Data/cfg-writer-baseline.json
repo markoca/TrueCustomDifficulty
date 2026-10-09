@@ -9637,40 +9637,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GeneralNPC_Neutral_Sniper_ItemGeneratorCustom",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GeneralNPC_Neutral_Sniper_ItemGeneratorCustom",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -9701,40 +9667,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GeneralNPC_Neutral_Sniper_ItemGeneratorCustom",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GeneralNPC_Neutral_Sniper_ItemGeneratorCustom",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -9773,40 +9705,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GeneralNPC_Neutral_Sniper_ItemGeneratorCustom",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GeneralNPC_Neutral_Sniper_ItemGeneratorCustom",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -9837,40 +9735,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GeneralNPC_Neutral_Sniper_ItemGeneratorCustom",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "3.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GeneralNPC_Neutral_Sniper_ItemGeneratorCustom",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -9909,40 +9773,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GeneralNPC_SIRCAA_Scientist_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GeneralNPC_SIRCAA_Scientist_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "3.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -9977,40 +9807,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -10041,40 +9837,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -10113,40 +9875,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_Heavy_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_Heavy_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "20.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -10181,40 +9909,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -10245,40 +9939,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -10317,40 +9977,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Bandit_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -10381,40 +10007,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -10453,40 +10045,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "4.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "6.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -10517,40 +10075,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Heavy_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Heavy_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "20.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -10589,40 +10113,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Heavy_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "25.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Heavy_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "35.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -10657,40 +10147,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -10721,40 +10177,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -10793,40 +10215,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -10861,40 +10249,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -10929,40 +10283,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -10993,40 +10313,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -11065,40 +10351,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "3.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -11133,40 +10385,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -11197,40 +10415,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -11265,40 +10449,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -11337,40 +10487,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -11401,40 +10517,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -11473,40 +10555,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -11537,40 +10585,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "1.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -11609,40 +10623,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "3.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -11673,40 +10653,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[5]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[5]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -11745,40 +10691,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[5]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[5]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -11813,40 +10725,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -11877,40 +10755,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -11949,40 +10793,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Heavy_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Heavy_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "20.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -12017,40 +10827,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "10.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -12081,40 +10857,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -12153,40 +10895,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -12217,40 +10925,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -12289,40 +10963,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "3.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -12357,40 +10997,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -12421,40 +11027,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -12493,40 +11065,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -12557,40 +11095,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -12629,40 +11133,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -12693,40 +11163,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -12765,40 +11201,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -12829,40 +11231,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -12897,40 +11265,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "3.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -12969,40 +11303,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -13033,40 +11333,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Duty_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -13105,40 +11371,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -13173,40 +11405,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -13237,40 +11435,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -13309,40 +11473,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -13377,40 +11507,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -13441,40 +11537,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -13513,40 +11575,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[5]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[5]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "4.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -13577,40 +11605,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[5]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Freedom_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[5]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "4.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -13649,40 +11643,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -13713,40 +11673,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -13785,40 +11711,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "15.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "20.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -13849,40 +11741,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "4.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "6.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -13921,40 +11779,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -13989,40 +11813,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -14057,40 +11847,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -14121,40 +11877,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -14193,40 +11915,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[2]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[2]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -14257,40 +11945,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -14329,40 +11983,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -14397,40 +12017,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "4.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -14461,40 +12047,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -14533,40 +12085,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -14597,40 +12115,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -14669,40 +12153,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxcount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -14737,40 +12187,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxcount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -14801,40 +12217,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxcount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -14873,40 +12255,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[2]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[2]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -14937,40 +12285,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -15009,40 +12323,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "8.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "12.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -15077,40 +12357,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -15141,40 +12387,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "10.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "15.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -15213,40 +12425,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[5]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Monolith_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[5]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "4.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -15277,40 +12455,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -15349,40 +12493,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -15413,40 +12523,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -15485,40 +12561,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -15553,40 +12595,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "7.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -15617,40 +12625,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -15689,40 +12663,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "4.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -15753,40 +12693,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "4.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -15825,40 +12731,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -15889,40 +12761,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -15961,40 +12799,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -16025,40 +12829,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Neutral_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -16097,40 +12867,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -16161,40 +12897,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -16233,40 +12935,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -16301,40 +12969,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -16365,40 +12999,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -16437,40 +13037,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[2]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[2]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -16505,40 +13071,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "4.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -16569,40 +13101,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -16641,40 +13139,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -16705,40 +13169,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -16777,40 +13207,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Noon_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[1]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -16845,40 +13241,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -16909,40 +13271,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "15.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_CloseCombat_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "20.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -16981,40 +13309,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Heavy_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "25.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Heavy_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "35.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -17045,40 +13339,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -17117,40 +13377,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Recon_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -17185,40 +13411,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -17249,40 +13441,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "10.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "15.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -17321,40 +13479,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -17389,40 +13513,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -17453,40 +13543,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Sniper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "4.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -17525,40 +13581,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[0]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "5.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -17589,40 +13611,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[1]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -17661,40 +13649,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "30.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[2]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "45.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -17729,40 +13683,6 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "0.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[3]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "1.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
       "parameterId": "loot.droppedWeaponCondition",
       "scope": "baseGame",
       "file": "GameData/ItemGeneratorPrototypes.cfg",
@@ -17793,40 +13713,6 @@
       "key": "MaxDurability",
       "sourceRaw": "0.5",
       "operation": "setRangeBound",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMinCount",
-      "sourceRaw": "2.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
-      "role": "production-repeatable-human",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "loot.npcWeaponAmmoSupply",
-      "scope": "baseGame",
-      "file": "GameData/ItemGeneratorPrototypes.cfg",
-      "prototype": "GuardNPC_Varta_Stormtrooper_ItemGenerator",
-      "nodePath": [
-        "ItemGenerator",
-        "[4]",
-        "PossibleItems",
-        "[0]"
-      ],
-      "key": "AmmoMaxCount",
-      "sourceRaw": "4.0",
-      "operation": "scaleIntegerHalfUpPreserveZero",
       "role": "production-repeatable-human",
       "difficultySid": ""
     },
@@ -26650,6 +22536,361 @@
       "expectedBaseActorCount": 61,
       "expectedDlc1ActorCount": 40,
       "expectedActorCount": 101
+    },
+    "npcCorpseAmmoProduction": {
+      "parameterId": "loot.npcWeaponAmmoSupply",
+      "corpseChoiceParameterId": "loot.npcCorpseBonus",
+      "sourceSid": "NPC_Ammo_Smart",
+      "targetSid": "TCD_NPC_Ammo_Smart",
+      "file": "GameData/StashPrototypes.cfg",
+      "baseTemplateRefUrl": "../StashPrototypes.cfg",
+      "baseTemplateRefKey": "NPC_Ammo_Smart",
+      "entries": [
+        {
+          "rankIndex": 0,
+          "groupIndex": 0,
+          "itemIndex": 0,
+          "sourceSid": "A012D",
+          "minCount": 2,
+          "maxCount": 6
+        },
+        {
+          "rankIndex": 0,
+          "groupIndex": 1,
+          "itemIndex": 0,
+          "sourceSid": "A545D",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 0,
+          "groupIndex": 2,
+          "itemIndex": 0,
+          "sourceSid": "A919D",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 0,
+          "groupIndex": 3,
+          "itemIndex": 0,
+          "sourceSid": "A045D",
+          "minCount": 8,
+          "maxCount": 12
+        },
+        {
+          "rankIndex": 1,
+          "groupIndex": 0,
+          "itemIndex": 0,
+          "sourceSid": "A012D",
+          "minCount": 2,
+          "maxCount": 6
+        },
+        {
+          "rankIndex": 1,
+          "groupIndex": 1,
+          "itemIndex": 0,
+          "sourceSid": "A545D",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 1,
+          "groupIndex": 2,
+          "itemIndex": 0,
+          "sourceSid": "A919D",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 1,
+          "groupIndex": 3,
+          "itemIndex": 0,
+          "sourceSid": "A045D",
+          "minCount": 8,
+          "maxCount": 12
+        },
+        {
+          "rankIndex": 1,
+          "groupIndex": 4,
+          "itemIndex": 0,
+          "sourceSid": "A556D",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 0,
+          "itemIndex": 0,
+          "sourceSid": "A918D",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 1,
+          "itemIndex": 0,
+          "sourceSid": "A545D",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 1,
+          "itemIndex": 1,
+          "sourceSid": "A545A",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 2,
+          "itemIndex": 0,
+          "sourceSid": "A762SniperD",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 2,
+          "itemIndex": 1,
+          "sourceSid": "A762SniperA",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 2,
+          "itemIndex": 2,
+          "sourceSid": "A762SniperS",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 3,
+          "itemIndex": 0,
+          "sourceSid": "A012D",
+          "minCount": 4,
+          "maxCount": 6
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 3,
+          "itemIndex": 1,
+          "sourceSid": "A012A",
+          "minCount": 8,
+          "maxCount": 10
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 3,
+          "itemIndex": 2,
+          "sourceSid": "A012E",
+          "minCount": 6,
+          "maxCount": 10
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 4,
+          "itemIndex": 0,
+          "sourceSid": "A762SniperD",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 4,
+          "itemIndex": 1,
+          "sourceSid": "A762SniperD",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 4,
+          "itemIndex": 2,
+          "sourceSid": "A762SniperD",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 5,
+          "itemIndex": 0,
+          "sourceSid": "A045D",
+          "minCount": 8,
+          "maxCount": 12
+        },
+        {
+          "rankIndex": 2,
+          "groupIndex": 6,
+          "itemIndex": 0,
+          "sourceSid": "A556D",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 0,
+          "itemIndex": 0,
+          "sourceSid": "A918D",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 0,
+          "itemIndex": 1,
+          "sourceSid": "A918A",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 1,
+          "itemIndex": 0,
+          "sourceSid": "A545D",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 1,
+          "itemIndex": 1,
+          "sourceSid": "A545A",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 1,
+          "itemIndex": 2,
+          "sourceSid": "A545E",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 2,
+          "itemIndex": 0,
+          "sourceSid": "A939D",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 2,
+          "itemIndex": 1,
+          "sourceSid": "A939A",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 2,
+          "itemIndex": 2,
+          "sourceSid": "A939S",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 2,
+          "itemIndex": 3,
+          "sourceSid": "A939E",
+          "minCount": 15,
+          "maxCount": 20
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 3,
+          "itemIndex": 0,
+          "sourceSid": "A762SniperD",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 3,
+          "itemIndex": 1,
+          "sourceSid": "A762SniperA",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 3,
+          "itemIndex": 2,
+          "sourceSid": "A762SniperS",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 4,
+          "itemIndex": 0,
+          "sourceSid": "A012D",
+          "minCount": 4,
+          "maxCount": 6
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 4,
+          "itemIndex": 1,
+          "sourceSid": "A012A",
+          "minCount": 4,
+          "maxCount": 6
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 4,
+          "itemIndex": 2,
+          "sourceSid": "A012E",
+          "minCount": 4,
+          "maxCount": 6
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 5,
+          "itemIndex": 0,
+          "sourceSid": "A762SniperD",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 5,
+          "itemIndex": 1,
+          "sourceSid": "A762SniperD",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 5,
+          "itemIndex": 2,
+          "sourceSid": "A762SniperD",
+          "minCount": 25,
+          "maxCount": 30
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 6,
+          "itemIndex": 0,
+          "sourceSid": "A045D",
+          "minCount": 8,
+          "maxCount": 12
+        },
+        {
+          "rankIndex": 3,
+          "groupIndex": 7,
+          "itemIndex": 0,
+          "sourceSid": "A556D",
+          "minCount": 15,
+          "maxCount": 20
+        }
+      ]
     }
   }
 }
