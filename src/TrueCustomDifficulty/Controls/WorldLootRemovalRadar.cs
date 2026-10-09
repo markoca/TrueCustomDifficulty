@@ -18,7 +18,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class WorldLootRemovalRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double RowHeight = 56.0;
+    private const double RowHeight = 75.0;
 
     private static readonly PopulationDefinition[] Populations =
     {
@@ -53,7 +53,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 400;
+        MinHeight = 0;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -61,7 +61,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 780.0 : Math.Max(600.0, availableSize.Width);
-        return new Size(width, 400.0);
+        return new Size(width, 304.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -135,131 +135,64 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             12.5, accent, FontWeights.Bold);
 
 
+        // Five genuinely independent depletion sources in a compact 2-column
+        // bank, not long tracks whose labels/count estimates are hard to read.
+        const double margin = 17.0;
+        const double gap = 10.0;
+        var cardWidth = (Math.Max(600.0, ActualWidth) - 2.0 * margin - gap) / 2.0;
         for (var row = 0; row < Populations.Length; row++)
-            DrawRow(dc, row, 58.0 + row * RowHeight, text, muted, border, accent, panel);
+        {
+            var card = new Rect(margin + (row % 2) * (cardWidth + gap),
+                54.0 + (row / 2) * RowHeight, cardWidth, RowHeight - 7.0);
+            DrawRow(dc, row, card, text, muted, border, accent, panel);
+        }
 
         // Reset notifications intentionally silent.
     }
 
     private void DrawRow(
-        DrawingContext dc,
-        int row,
-        double top,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+        DrawingContext dc, int row, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         var parameter = _parameters[row];
-        if (parameter is null)
-            return;
-
+        if (parameter is null) return;
         var info = Populations[row];
-        var selected = row == _selectedRow;
-        var hovered = row == _hoverRow;
         var removal = Math.Clamp(parameter.CurrentNumber, 0.0, 1.0);
-        var modified = removal > Epsilon;
+        var modified = parameter.IsValueModifiedFromReference();
+        var hovered = _hoverRow == row;
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.8),
+            new Pen(CloneWithOpacity(border, 0.68), 0.9),
+            card, 4.0, 4.0);
 
-        var card = new Rect(14.0, top, Math.Max(1.0, ActualWidth - 28.0), RowHeight - 5.0);
-        dc.DrawRoundedRectangle(
-            selected
-                ? CloneWithOpacity(accent, 0.08)
-                : CloneWithOpacity(panel, 0.025),
-            new Pen(CloneWithOpacity(border, 0.50), 0.8),
-            card,
-            3.0,
-            3.0);
-
-        var labelWidth = Math.Clamp(card.Width * 0.25, 150.0, 205.0);
-        var statsWidth = Math.Clamp(card.Width * 0.25, 170.0, 220.0);
-        var trackLeft = card.Left + labelWidth + statsWidth + 14.0;
-        var trackWidth = Math.Max(170.0, card.Right - trackLeft - 12.0);
-
-        DrawText(
-            dc,
-            info.Label,
-            new Point(card.Left + 10.0, card.Top + 8.0),
-            8.6,
-            text,
-            FontWeights.Bold);
-
-        DrawText(
-            dc,
-            info.Note,
-            new Point(card.Left + 10.0, card.Top + 24.0),
-            9.0,
-            muted,
-            FontWeights.Normal);
-
-        DrawText(
-            dc,
-            $"BASE {info.BasePopulation:N0}  |  +DLC1 {info.DlcInclusivePopulation:N0}",
-            new Point(card.Left + labelWidth, card.Top + 8.0),
-            7.4,
-            muted,
-            FontWeights.SemiBold);
-
-        var removedBase = EstimateRemoved(info.BasePopulation, removal);
-        var remainingBase = Math.Max(0, info.BasePopulation - removedBase);
-        var removedDlc = EstimateRemoved(info.DlcInclusivePopulation, removal);
-        var remainingDlc = Math.Max(0, info.DlcInclusivePopulation - removedDlc);
-
-        DrawText(
-            dc,
-            $"≈ REMOVED {removedBase:N0} / {removedDlc:N0}",
-            new Point(card.Left + labelWidth, card.Top + 25.0),
-            7.5,
-            muted,
-            FontWeights.SemiBold);
-
-        DrawText(
-            dc,
-            $"≈ REMAIN {remainingBase:N0} / {remainingDlc:N0}",
-            new Point(card.Left + labelWidth, card.Top + 42.0),
-            7.5,
-            text,
-            FontWeights.SemiBold);
-
-        DrawRightAlignedText(
-            dc,
-            $"{removal * 100:0}%",
+        DrawText(dc, info.Label,
+            new Point(card.Left + 10.0, card.Top + 9.0),
+            10.9, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, $"{removal * 100.0:0}%",
             new Point(card.Right - 12.0, card.Top + 7.0),
-            parameter.IsValueModifiedFromReference() ? 10.6 : 9.4,
-            parameter.IsValueModifiedFromReference() ? accent : text,
-            FontWeights.Bold);
+            modified ? 13.0 : 11.8,
+            modified ? accent : text, FontWeights.Bold);
 
-        var track = new Rect(trackLeft, card.Top + 30.0, trackWidth, 12.0);
+        var track = new Rect(card.Left + 12.0, card.Top + 40.0,
+            Math.Max(1.0, card.Width - 24.0), 10.0);
         var y = track.Top + track.Height / 2.0;
-
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
-
-        var vanillaX = track.Left;
+        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y),
+            new Point(track.Right, y));
         var currentX = track.Left + track.Width * removal;
-
-        dc.DrawLine(new Pen(muted, 1.1), new Point(vanillaX, y - 8.0), new Point(vanillaX, y + 8.0));
-        dc.DrawLine(new Pen(accent, 3.2), new Point(track.Left, y), new Point(currentX, y));
-
+        var vanillaX = track.Left + track.Width * Math.Clamp(
+            parameter.ReferenceNumber, 0.0, 1.0);
+        dc.DrawLine(new Pen(muted, 1.3), new Point(vanillaX, y - 8.0),
+            new Point(vanillaX, y + 8.0));
+        dc.DrawLine(new Pen(accent, 3.0), new Point(track.Left, y),
+            new Point(currentX, y));
         ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
-        dc.DrawEllipse(
-            panel,
-            new Pen(accent, selected ? 2.5 : 1.5),
-            new Point(currentX, y),
-            6.0,
-            6.0);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
-
-
+        dc.DrawEllipse(panel,
+            new Pen(accent, _selectedRow == row ? 2.3 : 1.5),
+            new Point(currentX, y), 6.0, 6.0);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
         _targets[row] = new HitTarget(
-            new Rect(track.Left - 7.0, track.Top - 7.0, track.Width + 14.0, track.Height + 14.0),
-            track);
+            new Rect(track.Left - 7.0, track.Top - 8.0,
+                track.Width + 14.0, track.Height + 16.0), track);
     }
-
-    private static int EstimateRemoved(int population, double removal)
-        => Math.Clamp(
-            (int)Math.Round(population * removal, MidpointRounding.AwayFromZero),
-            0,
-            population);
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
