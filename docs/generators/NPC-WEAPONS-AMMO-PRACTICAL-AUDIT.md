@@ -2,6 +2,11 @@
 **Version:** v0.2.15  
 **Source:** existing deep audit plus production-only policy filtering  
 **Status:** documentation/audit only; no writer or UI behavior added
+
+### 2026-10-09 — Source-verified NPC Ammo / Breakable Box Ammo boundary (current override)
+
+This audit remains correct for the **121 original weapon-attached NPC item rows** and their `AmmoMinCount/AmmoMaxCount` fields. **The generic NPC Ammo UI no longer edits those fields**. The 242 prior attached-ammo edit points were retired in favor of a source-inherited `TCD_NPC_Ammo_Smart` corpse-bonus clone sourced exclusively from `GameData/StashPrototypes.cfg`, with 43 MinCount/MaxCount item edits in 24 SmartLoot groups. The stable preset key `loot.npcWeaponAmmoSupply` is retained for compatibility, but now means generic **extra corpse package ammo quantity**. It is only active with Extra Corpse Loot = Medicine + Ammo. Breakable Box Ammo is a separate `DestructibleStash_AmmoSNG/NATO` ItemGenerator system. Historical notes below describing weapon-attached ammo as the current generic ammo control are superseded. The dropped NPC weapon condition still edits its 121 audited weapon rows. Runtime acceptance remains unverified.
+
 ## Verdict
 After applying the project hard-exclusion policy, the repeatable standard-human weapon surface is cleaner than the older audit implied. The two Prologue loadouts and four named DLC `GeneralNPC_MIK_*` loadouts are excluded. Every one of the **6 nested shared-pistol links** belonged to those excluded roots. The remaining production surface therefore contains **33 loadout generators**, **36 standard-human archetype consumers**, **121 local weapon rows**, **37 unique weapon SIDs**, and **0 nested/shared weapon dependencies**.
 This means the repeatable standard-human weapon **condition** and attached **ammo-count** fields form complete local target surfaces. That does not yet prove the final corpse/drop result in game, so both remain runtime-test candidates rather than automatic UI controls.
