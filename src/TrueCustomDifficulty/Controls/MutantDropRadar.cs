@@ -239,18 +239,18 @@ public sealed class MutantDropRadar : FrameworkElement
             info.Label,
             new Point(card.Left + 7.0, card.Top + 7.0),
             7.9,
-            modified ? accent : text,
+            text,
             FontWeights.Bold);
 
         DrawRightAlignedText(
             dc,
-            $"{chance * 100:0}%  •  ≈{chance * 100:0}/100",
-            new Point(card.Right - 7.0, card.Top + 6.0),
-            7.8,
+            $"{chance * 100:0}%",
+            new Point(card.Right - 9.0, card.Top + 6.0),
+            9.2,
             modified ? accent : text,
             FontWeights.Bold);
 
-        var track = new Rect(card.Left + 8.0, card.Top + 27.0, card.Width - 16.0, 17.0);
+        var track = new Rect(card.Left + 10.0, card.Top + 27.0, card.Width - 20.0, 12.0);
         var y = track.Top + track.Height / 2.0;
 
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
