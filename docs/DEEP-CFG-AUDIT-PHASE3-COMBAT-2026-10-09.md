@@ -98,6 +98,21 @@ modified by this validator repair. The full project validator must still be
 run locally and any reported `[FAIL]` is not considered resolved by this
 migration.
 
+### Whole-project validator modernization (2026-10-09)
+
+The live `audit_ui_cfg_contract.py` audit passes with 244 catalog records,
+231 editable dimensions, 1,224 direct edit points and zero direct collisions.
+The legacy whole-project validator still included fixed assumptions from
+v0.2.x (178 catalog parameters, CSV evidence since removed, the original
+polar radar UIs, 242 weapon-attached NPC ammo edits). These must not be
+misrepresented as current release tests. The validator now treats absent
+archived snapshots as **HISTORICAL NOT RUN**, while checking embedded
+production manifests and the source-backed live contracts separately.
+No gameplay balances or existing factory preset numbers were altered by
+this reconciliation. The headshot multiplier description and assembly
+version metadata were synchronized to their existing runtime/catalog meaning.
+Full local Python verification and in-game runtime tests remain separate.
+
 ## Automated reproductions
 
 From the project root:

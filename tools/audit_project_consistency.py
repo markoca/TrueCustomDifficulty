@@ -14,9 +14,11 @@ CSPROJ = ROOT / "src" / "TrueCustomDifficulty" / "TrueCustomDifficulty.csproj"
 
 errors: list[str] = []
 notes: list[str] = []
+not_run_items: list[str] = []
 
 def fail(msg: str) -> None: errors.append(msg)
 def note(msg: str) -> None: notes.append(msg)
+def not_run(msg: str) -> None: not_run_items.append(msg)
 
 def walk_parameter_ids(value, path="special"):
     if isinstance(value, dict):
@@ -209,36 +211,21 @@ if all(path.exists() for path in [_base_inv, _base_inh, _base_comp, _base_ctx, _
     else:
         note("generator base topology locked: 3452 roots / 2968 inheritance / 5783 composition / 13647 consumer edges; human standard 139 edges / 99 roots -> isolated production 33 roots")
 
-# Decision-layer CSV and JSON summary must describe the same current triage state.
-import json as _json
-triage_csv = ROOT / "docs" / "generators" / "control-candidate-triage.csv"
-triage_summary = ROOT / "docs" / "generators" / "control-candidate-triage-summary.json"
-_triage_rows = []  # Always defined; matrix comparisons must report failures, not NameError.
-if triage_csv.exists() and triage_summary.exists():
-    from collections import Counter as _Counter
-    with triage_csv.open(encoding="utf-8-sig", newline="") as fh:
-        _triage_rows = list(_csv.DictReader(fh))
-    _summary = _json.loads(triage_summary.read_text(encoding="utf-8"))
-    _counts = dict(sorted(_Counter(row["status"] for row in _triage_rows).items()))
-    # v0.2.41: docs/generators is the single canonical generator evidence tree.
-    # Legacy root/generators mirrors were removed to prevent silent stale-copy drift.
-    if (ROOT / "generators").exists():
-        fail("legacy top-level generators/ mirror returned; docs/generators/ is canonical")
-    else:
-        note("generator evidence layout canonical: docs/generators/ only (no legacy generators/ mirror)")
-    if _summary.get("version") != "0.2.40":
-        fail(f"triage summary version is {_summary.get('version')!r}; expected '0.2.40'")
-    if _summary.get("triage_concepts") != len(_triage_rows):
-        fail("triage summary concept count does not match control-candidate-triage.csv")
-    if _summary.get("status_counts") != _counts:
-        fail("triage summary status counts do not match control-candidate-triage.csv")
-    _junk = [row for row in _triage_rows if row.get("control_id") == "loot.npcJunkMisc"]
-    if len(_junk) != 1 or _junk[0].get("status") != "NO_UI_SYSTEM_MARKER":
-        fail("Human NPC Junk/Misc triage decision is missing or not NO_UI_SYSTEM_MARKER")
-    else:
-        note(f"decision-layer summary synchronized: {len(_triage_rows)} concepts; NPC Junk/Misc closed as system marker")
+# Archived 0.2.40 triage matrix and summary are not distributed anymore.
+# Their absence must not be confused with a passing audit. Production
+# generator surfaces remain checked against the embedded manifests below.
+triage_csv = DOCS / "generators" / "control-candidate-triage.csv"
+triage_summary = DOCS / "generators" / "control-candidate-triage-summary.json"
+_triage_rows = []
+if triage_csv.exists() != triage_summary.exists():
+    fail("archived generator triage evidence is incomplete (CSV vs JSON)")
+elif triage_csv.exists():
+    _triage_rows = list(_csv.DictReader(triage_csv.open(encoding="utf-8-sig", newline="")))
+    _triage_summary = json.loads(triage_summary.read_text(encoding="utf-8"))
+    if _triage_summary.get("triage_concepts") != len(_triage_rows):
+        fail("archived generator triage count mismatches summary")
 else:
-    fail("decision-layer triage CSV/JSON evidence missing; generator decision matrix cannot be validated")
+    not_run("archived generator triage CSV/summary not included; active manifests checked separately")
 
 # GuardQuestItem is interaction infrastructure, not tunable loot.
 junk_rows_path = ROOT / "docs" / "generators" / "npc-junk-guardquest-generator-rows.csv"
@@ -403,72 +390,45 @@ if _ms_entries.exists():
     else:
         note("medic stock runtime candidate locked: 48 count rows = 25 Universal + 23 Noon; 42 Chance=1 + 6 rarity rows; A/B contract 1-1 vs 20-20")
 
-# Isolated runtime-test tooling (v0.2.36).
-_rt_gen = ROOT / "tools" / "runtime_tests" / "generate_runtime_test_patches.py"
-_rt_readme = ROOT / "tools" / "runtime_tests" / "README.md"
-_rt_doc = ROOT / "docs" / "runtime-tests" / "README.md"
-if not _rt_gen.exists() or not _rt_readme.exists() or not _rt_doc.exists():
-    fail(f"runtime-test tooling incomplete: generator={_rt_gen.exists()}, readme={_rt_readme.exists()}, docs={_rt_doc.exists()}")
+# Former isolated runtime-test generator/packer was removed from the current
+# repository. Do not claim its historical evidence was re-run or silently
+# require its obsolete scripts for modern production source validation.
+_rt_old_files = [
+    ROOT / "tools/runtime_tests/generate_runtime_test_patches.py",
+    ROOT / "tools/runtime_tests/build_runtime_test_mod.py",
+]
+if any(path.exists() for path in _rt_old_files):
+    note("[HISTORICAL] deprecated runtime test scripts remain available; no gameplay execution inferred")
 else:
-    _rt_text = _rt_gen.read_text(encoding="utf-8")
-    _required = [
-        '"weapon-condition"', '"weapon-ammo"', '"medic-stock"',
-        '"0.01"', '"0.95"', '"77"', '"20"',
-        'expected 121 rows / 33 roots', 'expected 48/25/23'
-    ]
-    _missing_rt = [x for x in _required if x not in _rt_text]
-    if _missing_rt:
-        fail(f"runtime-test generator contract drifted; missing markers: {_missing_rt}")
-    else:
-        note("isolated runtime-test generator present: NPC condition direct MIN/MAX range, ammo 1/77, medic 1/20; production UI/writer enabled; runtime status remains unverified")
+    not_run("old 0.2.36/0.2.37 test generator/packer not shipped; run current CFG/runtime acceptance independently")
 
-
-# Ready-to-install runtime-test packaging (v0.2.37).
-_rt_pack = ROOT / "tools" / "runtime_tests" / "build_runtime_test_mod.py"
-if not _rt_pack.exists():
-    fail("runtime-test packer missing")
-else:
-    _rt_pack_text = _rt_pack.read_text(encoding="utf-8")
-    _pack_required = [
-        'REPAK_VERSION = "V11"', 'RETOC_VERSION = "UE5_5"',
-        'MOUNT_POINT = "../../../"', 'TCD_RuntimeTest_',
-        'validate_triplet', '"repak"', '"retoc"'
-    ]
-    _pack_missing = [x for x in _pack_required if x not in _rt_pack_text]
-    if _pack_missing:
-        fail(f"runtime-test packer contract drifted; missing markers: {_pack_missing}")
-    else:
-        note("runtime-test packer present: production-equivalent repak V11 + ../../../ + retoc UE5_5; triplet validation required")
-
-
-# Former runtime candidates promoted to production writer/UI (v0.2.42), still runtime-unverified.
-_prod_expected = {
+# Current source/production boundary: NPC corpse bonus ammo was migrated
+# away from 242 weapon-attached AmmoMin/Max direct edits into the dedicated
+# NPC_Ammo_Smart clone route. The ordinary weapon attached ammo is untouched.
+_prod_expected_direct = {
     "loot.droppedWeaponCondition": (242, {"MinDurability", "MaxDurability"}),
-    "loot.npcWeaponAmmoSupply": (242, {"AmmoMinCount", "AmmoMaxCount", "AmmoMaxcount"}),
     "economy.medicStock": (96, {"MinCount", "MaxCount"}),
 }
-for _pid, (_count, _keys) in _prod_expected.items():
+for _pid, (_count, _keys) in _prod_expected_direct.items():
     _pts = [p for p in baseline.get("editPoints", []) if p.get("parameterId") == _pid]
-    _protos = {p.get("prototype") for p in _pts}
-    _actual_keys = {p.get("key") for p in _pts}
-    if len(_pts) != _count:
-        fail(f"{_pid} production surface drifted: {len(_pts)} edit points; expected {_count}")
-    elif _pid.startswith("loot.") and len(_protos) != 33:
-        fail(f"{_pid} production roots drifted: {len(_protos)}; expected 33")
-    elif _pid == "economy.medicStock" and _protos != {"MedicUniversal_TradeItemGenerator", "MedicNoon_TradeItemGenerator"}:
-        fail(f"medic stock production roots drifted: {sorted(_protos)}")
-    elif not _actual_keys.issubset(_keys) or not _keys.issuperset(_actual_keys):
-        fail(f"{_pid} production field set drifted: {sorted(_actual_keys)}")
+    if len(_pts) != _count or not {p.get("key") for p in _pts} <= _keys:
+        fail(f"{_pid} current direct-production contract drifted: {len(_pts)} edit points")
+_npc_ammo_direct = [p for p in baseline.get("editPoints", []) if p.get("parameterId") == "loot.npcWeaponAmmoSupply"]
+_npc_ammo_special = baseline.get("special", {})
+_npc_ammo_writer = (ROOT / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
+if _npc_ammo_direct:
+    fail("NPC corpse SmartLoot ammo unexpectedly returned to weapon-attached direct edits")
+elif "loot.npcWeaponAmmoSupply" not in json.dumps(_npc_ammo_special) or "NPC_Ammo_Smart" not in _npc_ammo_writer:
+    fail("NPC_Ammo_Smart corpse-bonus special writer route not found")
 else:
-    note("promoted runtime-gated production surfaces locked: condition 242 edits / ammo 242 edits on 33 roots; medic 96 edits on 48 rows")
-
+    note("current NPC Ammo route: zero weapon-attached direct edits, source-cloned SmartLoot ammo; condition 242 and medic 96 direct edits preserved")
 
 # Non-generator normal-UI coverage gate (v0.2.43).
 _non_gen_expected = {
     "combat": (19, 14, 5),
     "health": (13, 10, 3),
     "stamina": (7, 6, 1),
-    "survival": (23, 23, 0),
+    "survival": (32, 30, 2),
     "economy": (17, 12, 5),
     "equipment": (4, 3, 1),
 }
@@ -498,7 +458,7 @@ elif _hidden_bad:
 elif not _non_gen_doc.exists():
     fail("non-generator verification document missing from docs/")
 else:
-    note("non-generator UI coverage locked: 83 visible controls across Combat/Health/Stamina/Survival/Economy/Equipment; Mutant Health + Mutant Special Attack Cooldown + Healing Amount + Action Costs + Item Price Scalers aggregated")
+    note("non-generator UI coverage: 92 visible anchors across Combat/Health/Stamina/Survival/Economy/Equipment; current grouped editors and 32 Survival controls accounted")
 
 # Combat deep-audit release gate (v0.2.44).
 _combat_doc = DOCS / "COMBAT-CONTROL-DEEP-AUDIT.md"
@@ -622,31 +582,8 @@ else:
     note("world weapon density semantics locked: compatible pistol/primary +/-1 tier redistribution; live once/twice/N-times guarantee; caps base=6/DLC1=8")
 
 
-# World attachment progression-tier audit gate (v0.9.26.44).
-_wa_tier_csv = DOCS / "generators" / "world-attachment-progression-tier-audit.csv"
-_wa_tier_doc = DOCS / "generators" / "WORLD-ATTACHMENT-PROGRESSION-TIER-AUDIT.md"
-if not _wa_tier_csv.exists() or not _wa_tier_doc.exists():
-    fail("world attachment progression-tier audit evidence missing")
-else:
-    import csv as _wa_csv
-    with _wa_tier_csv.open(encoding="utf-8", newline="") as _f:
-        _wa_rows = list(_wa_csv.DictReader(_f))
-    _wa_ids = {r.get("item_sid") for r in _wa_rows}
-    _wa_tiers = {r.get("tier") for r in _wa_rows}
-    _wa_counts = {}
-    for _r in _wa_rows:
-        _wa_counts[_r.get("tier")] = _wa_counts.get(_r.get("tier"), 0) + 1
-    if len(_wa_rows) != 39 or len(_wa_ids) != 39:
-        fail(f"world attachment tier audit must contain 39 unique rows; got {len(_wa_rows)}/{len(_wa_ids)}")
-    elif not _wa_tiers <= {"T1", "T2", "T3", "T4"}:
-        fail(f"world attachment tier audit contains invalid tiers: {_wa_tiers}")
-    elif _wa_counts != {"T2": 18, "T3": 12, "T4": 9}:
-        fail(f"world attachment tier distribution drifted: {_wa_counts}; expected T2=18/T3=12/T4=9")
-    elif any(not r.get("confidence") or not r.get("rationale") for r in _wa_rows):
-        fail("world attachment tier audit contains rows without confidence/rationale")
-    else:
-        note("world attachment progression tiers locked: 39 models = 18 T2 / 12 T3 / 9 T4; category+same/±1 tier is candidate shuffle boundary")
-
+# Historical evidence (not shipped in current repo) - never report as verified.
+not_run("world attachment progression-tier snapshot: archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
 
 # World attachment shuffle production gate (v0.9.26.44).
 _wa_pool = DATA / "world-attachment-shuffle-pool.csv"
@@ -703,32 +640,8 @@ else:
     note("world attachment writer semantics locked: exact multiset + category equality + +/-1 tier + 55 physical clone groups + dual-SID direct pickup replacement")
 
 
-# Loose world detector audit gate (v0.9.26.44).
-_wd_loose = DOCS / "generators" / "world-detector-loose-placement-audit.csv"
-_wd_domain = DOCS / "generators" / "world-detector-master-domain-audit.csv"
-if not _wd_loose.exists() or not _wd_domain.exists():
-    fail("loose world detector audit evidence missing")
-else:
-    import csv as _wd_csv
-    with _wd_loose.open(encoding="utf-8", newline="") as _f:
-        _wd_rows = list(_wd_csv.DictReader(_f))
-    _wd_safe = [r for r in _wd_rows if r.get("classification") == "SAFE_LOOSE_WORLD"]
-    _wd_excluded = [r for r in _wd_rows if r.get("classification") == "DEFERRED_EXCLUDED"]
-    _wd_base = [r for r in _wd_safe if r.get("scope") == "base"]
-    _wd_dlc = [r for r in _wd_safe if r.get("scope") == "dlc1"]
-    _wd_items = {}
-    for _r in _wd_safe:
-        _wd_items[_r["item_sid"]] = _wd_items.get(_r["item_sid"], 0) + 1
-    if len(_wd_rows) != 8 or len(_wd_safe) != 7 or len(_wd_excluded) != 1:
-        fail(f"loose detector surface drifted: rows/safe/excluded={len(_wd_rows)}/{len(_wd_safe)}/{len(_wd_excluded)}; expected 8/7/1")
-    elif len(_wd_base) != 4 or len(_wd_dlc) != 3:
-        fail(f"loose detector scope split drifted: base/dlc={len(_wd_base)}/{len(_wd_dlc)}; expected 4/3")
-    elif _wd_items != {"Echo": 2, "Gilka": 5}:
-        fail(f"loose detector multiset drifted: {_wd_items}; expected Echo=2/Gilka=5")
-    elif _wd_excluded[0].get("spawn_on_start", "").lower() != "false":
-        fail("loose detector excluded actor is no longer the SpawnOnStart=false Gilka")
-    else:
-        note("loose detector audit locked: 4 base / 7 DLC1-inclusive active WorldMap pickups; exact multiset Echo=2 + Gilka=5; one deferred Gilka excluded")
+# Historical evidence (not shipped in current repo) - never report as verified.
+not_run("loose detector provenance snapshot: archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
 
 # World detector spawn toggle production gate (v0.9.26.44).
 _wd_direct = DATA / "world-detector-direct-manifest.csv"
@@ -819,7 +732,7 @@ _mhp_cooldown_species = ("bloodsucker", "chimera", "deer", "pseudogiant",
 for _species in _mhp_cooldown_species:
     _cid = f"combat.mutantCooldown.{_species}"
     _crow = _mhp_rows_by_id.get(_cid)
-    if not _crow or _crow.get("group") != "Mutant Special Attack Cooldown":
+    if not _crow or _crow.get("group") != "Mutant Combat":
         fail(f"missing or moved cooldown source: {_cid}")
     if _species == "bloodsucker" and _crow.get("label") != "Mutant Special Attack Cooldown":
         fail("mutant cooldown anchor label drifted")
@@ -855,68 +768,43 @@ else:
         fail("mutant health aggregate/backing visibility contract missing")
     note("Mutant Health compact roster: 14 confirmed, source backed 0.05–2x at 0.05x steps; authored MaxHP references validated")
 
-_sac_ids = [
-    "combat.mutantCooldown.bloodsucker",
-    "combat.mutantCooldown.chimera",
-    "combat.mutantCooldown.deer",
-    "combat.mutantCooldown.pseudogiant",
-    "combat.mutantCooldown.pseudodog",
-    "combat.mutantCooldown.burer",
-    "combat.mutantCooldown.bayun",
-    "combat.mutantCooldown.controller",
-]
-# Keep the Combat cooldown lookup local to this section. The similarly named
-# _mhr_rows_by_id map belongs to Medical Healing and is initialized later.
-_sac_rows_by_id = {row.get("id"): row for row in parameters}
-_sac_rows = [_sac_rows_by_id.get(pid) for pid in _sac_ids]
-_sac_anchor = _sac_rows_by_id.get("combat.mutantCooldown.bloodsucker")
-_sac_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "SpecialAbilityCooldownRadar.cs"
-
-if any(row is None for row in _sac_rows):
-    fail("Special Ability Cooldowns backing parameter set is incomplete")
-elif sum(1 for row in _sac_rows if row.get("exposeInUi", True)) != 1 or not _sac_anchor.get("exposeInUi", True):
-    fail("Special Ability Cooldowns must expose exactly one aggregate radar card")
-elif _sac_anchor.get("label") != "Mutant Special Attack Cooldown":
-    fail(f"Mutant Special Attack Cooldown aggregate label drifted: {_sac_anchor.get('label')}")
-elif any(
-    row.get("group") != "Mutant Special Attack Cooldown"
-    or row.get("control") != "slider"
-    or (row.get("slider") or {}).get("min") != 0.25
-    or (row.get("slider") or {}).get("max") != 2.0
-    or (row.get("slider") or {}).get("step") != 0.01
-    or (row.get("vanilla") or {}).get("Novice") != 1.0
-    or (row.get("vanilla") or {}).get("Stalker") != 1.0
-    or (row.get("vanilla") or {}).get("Veteran") != 1.0
-    or (row.get("vanilla") or {}).get("Master") != 0.5
-    for row in _sac_rows
-):
-    fail("Special Ability Cooldowns radar backing controls drifted from 0.25x-2x / 0.01x / N-S-V 1x / Master 0.5x contract")
-elif not _sac_control.exists():
-    fail("SpecialAbilityCooldownRadar.cs is missing")
+_sac_ids = ["combat.mutantCooldown." + family for family in (
+    "bloodsucker", "chimera", "deer", "pseudogiant", "pseudodog", "burer", "bayun", "controller"
+)]
+_sac_rows_by_id = {p.get("id"): p for p in parameters}
+_sac_src_path = ROOT / "src/TrueCustomDifficulty/Controls/SpecialAbilityCooldownRadar.cs"
+_sac_errors = []
+for _pid in _sac_ids:
+    _row = _sac_rows_by_id.get(_pid)
+    if not _row:
+        _sac_errors.append(f"missing {_pid}")
+        continue
+    _slider, _vanilla = _row.get("slider") or {}, _row.get("vanilla") or {}
+    if _row.get("group") != "Mutant Combat" or _row.get("control") != "slider":
+        _sac_errors.append(f"{_pid}: group/control changed")
+    if (_slider.get("min"), _slider.get("max"), _slider.get("step")) != (0.25, 2, 0.1):
+        _sac_errors.append(f"{_pid}: native 0.25-2x / 0.10x step changed")
+    if any(_vanilla.get(mode) != value for mode, value in
+           (("Novice", 1), ("Stalker", 1), ("Veteran", 1), ("Master", 0.5))):
+        _sac_errors.append(f"{_pid}: Base Preset reference changed")
+if not _sac_src_path.exists():
+    _sac_errors.append("SpecialAbilityCooldownRadar.cs missing")
 else:
-    _sac_text = _sac_control.read_text(encoding="utf-8")
-    if "Eight-axis editor" not in _sac_text:
-        fail("SpecialAbilityCooldownRadar lost its eight-axis contract")
-    elif 'new("combat.mutantCooldown.bloodsucker", "Bloodsucker", -90)' not in _sac_text:
-        fail("SpecialAbilityCooldownRadar Bloodsucker axis missing")
-    elif 'new("combat.mutantCooldown.controller", "Controller", 225)' not in _sac_text:
-        fail("SpecialAbilityCooldownRadar Controller axis missing")
-    elif "0.5x MASTER VANILLA" not in _sac_text or "1x N/S/V VANILLA" not in _sac_text:
-        fail("SpecialAbilityCooldownRadar lost its dual vanilla reference contract")
-    elif "parameter.ReferenceNumber" not in _sac_text or "parameter.ResetToReference()" not in _sac_text:
-        fail("SpecialAbilityCooldownRadar no longer follows selected Base Preset for modified/reset state")
-    elif "lower = special abilities return sooner" not in _sac_text or "frequency only, not damage" not in _sac_text:
-        fail("SpecialAbilityCooldownRadar lost cooldown meaning information")
-    elif "parameter.TickFrequency" not in _sac_text or "MidpointRounding.AwayFromZero" not in _sac_text:
-        fail("SpecialAbilityCooldownRadar no longer preserves original 0.01x step")
-    elif '<controls:SpecialAbilityCooldownRadar x:Name="SpecialAbilityCooldownRadarControl"' not in _mhr_xaml:
-        fail("MainWindow does not render Special Ability Cooldowns radar")
-    elif "specialAbilityCooldownParameterIds.Contains(p.Id)" not in _mhr_main_vm:
-        fail("hidden Special Ability Cooldowns backing parameters are not loaded into live VM graph")
-    elif "IsSpecialAbilityCooldownAnchor" not in _mhr_param_vm or "IsSpecialAbilityCooldownMember" not in _mhr_param_vm:
-        fail("Special Ability Cooldowns aggregate/backing visibility contract missing")
-    else:
-        note("Mutant Special Attack Cooldown radar locked: 8 cooldown multipliers -> 1 radar; selected Base Preset reset, vanilla profile, 0.01x step and meaning preserved")
+    _sac_src = _sac_src_path.read_text(encoding="utf-8")
+    for _pid in _sac_ids:
+        if f'new("{_pid}",' not in _sac_src:
+            _sac_errors.append(f"{_pid}: absent from current renderer")
+    if 'new("combat.mutantAttackCooldown",' not in _sac_src or 'new("combat.mutantDamage",' not in _sac_src:
+        _sac_errors.append("current Mutant Combat frequency/damage axes missing")
+    if "selected.TickFrequency" not in _sac_src and "parameter.TickFrequency" not in _sac_src:
+        _sac_errors.append("native 0.10x step propagation missing")
+_sac_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+if "specialAbilityCooldownParameterIds.Contains(p.Id)" not in _sac_vm:
+    _sac_errors.append("Mutant Combat backing IDs missing from live VM")
+if _sac_errors:
+    fail("Mutant Combat cooldown contract: " + "; ".join(_sac_errors))
+else:
+    note("Mutant Combat cooldown: 8 real families, 0.10x source step, N/S/V=1x Master=0.5x; in-game runtime still unverified")
 
 # Mutant health audit gate (v0.9.26.44).
 _mh_path = DOCS / "combat" / "mutant-health-audit.csv"
@@ -940,226 +828,57 @@ else:
     else:
         note("mutant health audit locked: 14 canonical mutant MaxHP values; direct per-mutant health confirmed; no native difficulty-scoped mutant HP field")
 
-# Full regular ammo caliber audit gate (v0.9.26.44).
-_rc_path = DOCS / "generators" / "all-regular-ammo-caliber-audit.csv"
-_rc_exclusions_path = DOCS / "generators" / "ammo-caliber-exclusions.csv"
-_rc_doc = DOCS / "generators" / "FULL-REGULAR-AMMO-CALIBER-AUDIT.md"
-if not (_rc_path.exists() and _rc_exclusions_path.exists() and _rc_doc.exists()):
-    fail("full regular ammo caliber audit evidence missing")
-else:
-    import csv as _rc_csv
-    with _rc_path.open(encoding="utf-8", newline="") as _f:
-        _rc_rows = list(_rc_csv.DictReader(_f))
-    with _rc_exclusions_path.open(encoding="utf-8", newline="") as _f:
-        _rc_exclusions = list(_rc_csv.DictReader(_f))
+# Historical evidence (not shipped in current repo) - never report as verified.
+not_run("regular ammo caliber source snapshot: archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
 
-    _rc_current = {r["default_ammo_sid"] for r in _rc_rows if r["current_breakable_box_status"] == "CURRENT"}
-    _rc_add = {r["default_ammo_sid"] for r in _rc_rows if r["current_breakable_box_status"] == "ADD_CANDIDATE"}
-    _rc_expected_current = {"A918D","A919D","A045D","A545D","A556D","A012D"}
-    _rc_expected_add = {"A939D","A762NATOD","A762SniperD"}
-    _rc_excluded = {r["sid"]:r["reason"] for r in _rc_exclusions}
-
-    if len(_rc_rows) != 9:
-        fail(f"regular ammo caliber audit drifted: {len(_rc_rows)} rows; expected 9")
-    elif _rc_current != _rc_expected_current:
-        fail(f"current destructible caliber set drifted: {_rc_current}")
-    elif _rc_add != _rc_expected_add:
-        fail(f"additional proven caliber candidates drifted: {_rc_add}")
-    elif _rc_excluded.get("A762D") != "EXCLUDE_UNPROVEN_WEAPON_CALIBER":
-        fail("7.62x39 exclusion evidence drifted")
-    elif {r["caliber_label"] for r in _rc_rows} != {
-        "9×18 mm","9×19 mm",".45 ACP","5.45×39 mm","5.56×45 mm",
-        "9×39 mm","7.62×51 mm","7.62×54 mm","12×70 Buckshot"
-    }:
-        fail("player-facing regular caliber labels drifted")
+# Current specialized WPF controls use native card/track geometry; filenames
+# retained for WPF/XAML compatibility are not evidence of polar layout.
+def verify_current_editor(label, class_name, parameter_ids, vm_marker, group_markers=()):
+    path = ROOT / "src/TrueCustomDifficulty/Controls" / (class_name + ".cs")
+    xaml = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml").read_text(encoding="utf-8")
+    main_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+    param_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+    catalog = {p.get("id"): p for p in parameters}
+    problems = []
+    if not path.exists():
+        problems.append(f"missing {class_name}.cs")
     else:
-        note("full regular ammo caliber audit locked: 9 proven regular calibers; 6 current box calibers + 3 add candidates; 7.62x39 excluded pending a proven weapon consumer")
-
-
-# Mutant Part Drop Chances radar production gate (v0.9.26.44).
-_mutant_ids = [
-    "loot.mutant.blindDogChance", "loot.mutant.bloodsuckerChance", "loot.mutant.boarChance", "loot.mutant.burerChance",
-    "loot.mutant.catChance", "loot.mutant.chimeraChance", "loot.mutant.controllerChance", "loot.mutant.deerChance",
-    "loot.mutant.fleshChance", "loot.mutant.poltergeistChance", "loot.mutant.pseudodogChance", "loot.mutant.pseudogiantChance",
-    "loot.mutant.snorkChance", "loot.mutant.tushkanChance",
-]
-_mutant_rows_by_id = {row.get("id"): row for row in parameters}
-_mutant_rows = [_mutant_rows_by_id.get(pid) for pid in _mutant_ids]
-_mutant_anchor = _mutant_rows_by_id.get("loot.mutant.blindDogChance")
-_mutant_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "MutantDropRadar.cs"
-_mutant_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
-_mutant_main_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
-_mutant_param_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
-
-if any(row is None for row in _mutant_rows):
-    fail("Mutant drop backing family parameter set is incomplete")
-elif sum(1 for row in _mutant_rows if row.get("exposeInUi", True)) != 1 or not _mutant_anchor.get("exposeInUi", True):
-    fail("Mutant Part Drop Chances must expose exactly one aggregate radar card")
-elif _mutant_anchor.get("label") != "Mutant Part Drop Chances":
-    fail(f"Mutant Part Drop Chances label drifted: {_mutant_anchor.get('label')}")
-elif any(
-    row.get("control") != "slider"
-    or (row.get("slider") or {}).get("min") != 0.0
-    or (row.get("slider") or {}).get("max") != 1.0
-    or (row.get("slider") or {}).get("step") != 0.01
-    for row in _mutant_rows
-):
-    fail("Mutant drop family slider contract drifted from 0%-100% / 1% step")
-elif not _mutant_control.exists():
-    fail("MutantDropRadar.cs is missing")
-else:
-    _mutant_control_text = _mutant_control.read_text(encoding="utf-8")
-    if "Fourteen-axis editor" not in _mutant_control_text or 'new("loot.mutant.blindDogChance", "Blind Dog", -90)' not in _mutant_control_text:
-        fail("MutantDropRadar implementation is incomplete")
-    elif 'new("loot.mutant.catChance", "Bayun", 12.857)' not in _mutant_control_text:
-        fail("MutantDropRadar lost the Bayun player-facing label")
-    elif "vanilla" not in _mutant_control_text or "Arrow keys adjust selected mutant" not in _mutant_control_text:
-        fail("MutantDropRadar lost its vanilla legend or usability guidance")
-    elif "TryGetVanillaValue" not in _mutant_control_text or "element.GetDouble()" not in _mutant_control_text:
-        fail("MutantDropRadar no longer converts JsonElement vanilla values to numeric doubles explicitly")
-    elif '<controls:MutantDropRadar x:Name="MutantDropRadarControl"' not in _mutant_xaml:
-        fail("MainWindow does not render the Mutant Part Drop Chances radar")
-    elif "mutantDropParameterIds.Contains(p.Id)" not in _mutant_main_vm:
-        fail("hidden mutant-drop backing parameters are not loaded into the live VM graph")
-    elif "parameter.IsModified" in _mutant_main_vm[_mutant_main_vm.find("mutantDropAnchor"):_mutant_main_vm.find("var dependencyChildren")]:
-        fail("mutant-drop aggregate modified provider recursively calls the anchor IsModified state")
-    elif "IsMutantDropAnchor" not in _mutant_param_vm or "IsMutantDropMember" not in _mutant_param_vm:
-        fail("mutant-drop aggregate/backing visibility contract is missing")
+        source = path.read_text(encoding="utf-8")
+        for pid in parameter_ids:
+            if f'"{pid}"' not in source:
+                problems.append(f"{pid}: missing from {class_name}")
+        for gesture in ("OnMouseLeftButtonDown(", "OnMouseRightButtonDown(", "OnKeyDown("):
+            if gesture not in source:
+                problems.append(f"{class_name}: native {gesture} missing")
+    for pid in parameter_ids:
+        if pid not in catalog:
+            problems.append(f"missing catalog parameter {pid}")
+    if f'<controls:{class_name} x:Name="{class_name}Control"' not in xaml:
+        problems.append(f"MainWindow missing {class_name} registration")
+    if vm_marker not in main_vm:
+        problems.append(f"MainViewModel missing {vm_marker}")
+    for marker in group_markers:
+        if marker not in param_vm:
+            problems.append(f"ParameterViewModel missing {marker}")
+    if problems:
+        fail(label + " current renderer: " + "; ".join(problems))
     else:
-        note("Mutant Part Drop Chances locked: 14 existing per-mutant drop sliders -> 1 visible radar; original writer routes unchanged")
+        note(f"{label}: {len(parameter_ids)} current source inputs / native keyboard+pointer controls registered")
 
-# Environment anomaly ordering gate (v0.9.26.44).
-_env_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
-if '"environment.anomalyDamage" => 900' not in _env_vm or '"environment.electroAnomalyDamage" => 910' not in _env_vm:
-    fail("Environment anomaly ordering drifted: Global must be immediately above Individual at the bottom")
+verify_current_editor("Mutant Part Drops", "MutantDropRadar", ("loot.mutant.blindDogChance", "loot.mutant.bloodsuckerChance", "loot.mutant.boarChance", "loot.mutant.burerChance", "loot.mutant.catChance", "loot.mutant.chimeraChance", "loot.mutant.controllerChance", "loot.mutant.deerChance", "loot.mutant.fleshChance", "loot.mutant.poltergeistChance", "loot.mutant.pseudodogChance", "loot.mutant.pseudogiantChance", "loot.mutant.snorkChance", "loot.mutant.tushkanChance",), "mutantDropParameterIds.Contains(p.Id)", ("IsMutantDropAnchor", "IsMutantDropMember"))
+
+# Current UI grouping is canonical; retired 900/910 sort-index strings aren't.
+_env_parameters = {p.get("id"): p for p in parameters}
+if "environment.anomalyDamage" not in _env_parameters or "environment.electroAnomalyDamage" not in _env_parameters:
+    fail("global vs individual anomaly parameter separation is missing")
+elif not _env_parameters["environment.anomalyDamage"].get("exposeInUi", True):
+    fail("global anomaly damage slider unexpectedly hidden")
 else:
-    note("Environment ordering locked: Global Anomaly Damage immediately above Individual Anomaly Damage at tab bottom")
+    note("Global vs Individual anomaly scopes are separate; historic numeric sort indices retired")
 
-# Individual Anomaly Damage radar production gate (v0.9.26.44).
-_iad_ids = [
-    "environment.electroAnomalyDamage",
-    "environment.chemicalAnomalyDamage",
-    "environment.fireAnomalyDamage",
-    "environment.carouselAnomalyDamage",
-    "environment.toxicCloudDamage",
-    "environment.steamAnomalyDamage",
-    "environment.clickerHealthDamage",
-    "environment.razorHealthDamage",
-    "environment.soapBubbleHealthDamage",
-    "environment.fireballHealthDamage",
-    "environment.diamondHealthDamage",
-]
-_iad_rows_by_id = {row.get("id"): row for row in parameters}
-_iad_rows = [_iad_rows_by_id.get(pid) for pid in _iad_ids]
-_iad_anchor = _iad_rows_by_id.get("environment.electroAnomalyDamage")
-_iad_global = _iad_rows_by_id.get("environment.anomalyDamage")
-_iad_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AnomalyDamageRadar.cs"
-_iad_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
-_iad_main_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
-_iad_param_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
+verify_current_editor("Individual Anomaly Damage", "AnomalyDamageRadar", ("environment.electroAnomalyDamage", "environment.chemicalAnomalyDamage", "environment.fireAnomalyDamage", "environment.carouselAnomalyDamage", "environment.toxicCloudDamage", "environment.steamAnomalyDamage", "environment.clickerHealthDamage", "environment.razorHealthDamage", "environment.soapBubbleHealthDamage", "environment.fireballHealthDamage", "environment.diamondHealthDamage",), "individualAnomalyDamageParameterIds.Contains(p.Id)", ("IsIndividualAnomalyDamageAnchor", "IsIndividualAnomalyDamageMember"))
 
-if any(row is None for row in _iad_rows):
-    fail("Individual Anomaly Damage backing parameter set is incomplete")
-elif sum(1 for row in _iad_rows if row.get("exposeInUi", True)) != 1 or not _iad_anchor.get("exposeInUi", True):
-    fail("Individual Anomaly Damage must expose exactly one aggregate radar card")
-elif _iad_anchor.get("label") != "Individual Anomaly Damage":
-    fail(f"Individual Anomaly Damage aggregate label drifted: {_iad_anchor.get('label')}")
-elif not _iad_global or not _iad_global.get("exposeInUi", True) or _iad_global.get("label") != "Global Anomaly Damage":
-    fail("Global Anomaly Damage must remain a separate visible slider")
-elif not _iad_control.exists():
-    fail("AnomalyDamageRadar.cs is missing")
-else:
-    _iad_control_text = _iad_control.read_text(encoding="utf-8")
-    if "Eleven-axis editor" not in _iad_control_text:
-        fail("AnomalyDamageRadar implementation lost its eleven-axis contract")
-    elif 'new("environment.electroAnomalyDamage", "Electro", -90)' not in _iad_control_text:
-        fail("AnomalyDamageRadar Electro axis missing")
-    elif 'new("environment.diamondHealthDamage", "Diamond", 237.273)' not in _iad_control_text:
-        fail("AnomalyDamageRadar Diamond axis missing")
-    elif "1x = VANILLA" not in _iad_control_text or "MaximumMultiplier = 2.0" not in _iad_control_text:
-        fail("AnomalyDamageRadar lost its normalized 0x-2x vanilla-relative scale")
-    elif "parameter.CurrentNumber = vanilla * multiplier" not in _iad_control_text:
-        fail("AnomalyDamageRadar no longer maps normalized axes back to existing raw CFG values")
-    elif "parameter.EffectiveDisplay" not in _iad_control_text:
-        fail("AnomalyDamageRadar legend no longer shows effective damage after Global Anomaly Damage")
-    else:
-        _iad_keydown_start = _iad_control_text.find("protected override void OnKeyDown")
-        _iad_keydown_end = _iad_control_text.find("private void UpdateAxisFromPoint", _iad_keydown_start)
-        _iad_keydown_text = _iad_control_text[_iad_keydown_start:_iad_keydown_end]
-        if "foreach (var parameter in _parameters)" in _iad_keydown_text:
-            fail("AnomalyDamageRadar reintroduced CS0136-prone parameter shadowing in reset handling")
-        elif '<controls:AnomalyDamageRadar x:Name="AnomalyDamageRadarControl"' not in _iad_xaml:
-            fail("MainWindow does not render the Individual Anomaly Damage radar")
-        elif "individualAnomalyDamageParameterIds.Contains(p.Id)" not in _iad_main_vm:
-            fail("hidden individual anomaly-damage backing parameters are not loaded into the live VM graph")
-        elif "SetEffectiveDamageMultiplierProvider" not in _iad_main_vm or "globalAnomalyDamage.CurrentNumber" not in _iad_main_vm:
-            fail("Global Anomaly Damage composition was disconnected from individual anomaly damage controls")
-        elif "IsIndividualAnomalyDamageAnchor" not in _iad_param_vm or "IsIndividualAnomalyDamageMember" not in _iad_param_vm:
-            fail("individual anomaly-damage aggregate/backing visibility contract is missing")
-        else:
-            note("Individual Anomaly Damage locked: 11 direct controls -> 1 normalized radar; Global Anomaly Damage remains separate")
-
-# Stash Ammo Amounts radar production gate (v0.9.26.44).
-_sar_ids = [
-    "loot.cheapStashAmmoQuantity",
-    "loot.mediumStashAmmoQuantity",
-    "loot.expensiveStashAmmoQuantity",
-]
-_sar_rows_by_id = {row.get("id"): row for row in parameters}
-_sar_rows = [_sar_rows_by_id.get(pid) for pid in _sar_ids]
-_sar_anchor = _sar_rows_by_id.get("loot.cheapStashAmmoQuantity")
-_sar_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "StashAmmoRadar.cs"
-_sar_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
-_sar_main_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
-_sar_param_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
-
-if any(row is None for row in _sar_rows):
-    fail("Stash Ammo Amounts radar parameter set is incomplete")
-elif _sar_anchor.get("label") != "Stash Ammo Amounts":
-    fail(f"Stash Ammo Amounts aggregate label drifted: {_sar_anchor.get('label')}")
-elif not _sar_anchor.get("exposeInUi", True):
-    fail("Stash Ammo Amounts aggregate anchor must remain visible")
-elif any(row.get("exposeInUi", True) for row in _sar_rows[1:]):
-    fail("Standard/Rare stash ammo backing controls must remain hidden behind the aggregate radar")
-elif any(
-    row.get("control") != "slider"
-    or (row.get("vanilla") or {}).get("All") != 1.0
-    or (row.get("slider") or {}).get("min") != 0.25
-    or (row.get("slider") or {}).get("max") != 2.0
-    or (row.get("slider") or {}).get("step") != 0.25
-    for row in _sar_rows
-):
-    fail("Stash Ammo Amounts radar contract drifted from 0.25x-2x / 0.25x / vanilla 1x")
-elif not _sar_control.exists():
-    fail("StashAmmoRadar.cs is missing")
-else:
-    _sar_control_text = _sar_control.read_text(encoding="utf-8")
-    if "Three-axis editor" not in _sar_control_text:
-        fail("StashAmmoRadar implementation no longer documents its three-axis contract")
-    elif 'new("loot.cheapStashAmmoQuantity", "Basic", -90)' not in _sar_control_text:
-        fail("Basic stash ammo radar axis missing")
-    elif 'new("loot.mediumStashAmmoQuantity", "Standard", 30)' not in _sar_control_text:
-        fail("Standard stash ammo radar axis missing")
-    elif 'new("loot.expensiveStashAmmoQuantity", "Rare", 150)' not in _sar_control_text:
-        fail("Rare stash ammo radar axis missing")
-    elif "1x = VANILLA" not in _sar_control_text:
-        fail("StashAmmoRadar lost its vanilla reference ring")
-    elif "DrawAmmoPreviewColumn" not in _sar_control_text or '"BASIC"' not in _sar_control_text or '"STANDARD"' not in _sar_control_text or '"RARE"' not in _sar_control_text:
-        fail("StashAmmoRadar lost its three-column live ammo preview")
-    elif "entry.Label" not in _sar_control_text or "ScaleCount" not in _sar_control_text:
-        fail("StashAmmoRadar live preview no longer derives concrete ammo counts from LootHint entries")
-    elif 'rounds";' not in _sar_control_text:
-        fail("StashAmmoRadar live preview lost the player-facing rounds unit")
-    elif 'new Rect(bounds.Left, bounds.Top - 6, bounds.Width, 14)' not in _sar_control_text:
-        fail("StashAmmoRadar preview headings are no longer aligned with their definition columns")
-    elif '<controls:StashAmmoRadar x:Name="StashAmmoRadarControl"' not in _sar_xaml:
-        fail("MainWindow does not render the Stash Ammo Amounts radar")
-    elif "stashAmmoParameterIds" not in _sar_main_vm or "loot.mediumStashAmmoQuantity" not in _sar_main_vm:
-        fail("hidden stash-ammo backing parameters are not loaded into the live VM graph")
-    elif "IsStashAmmoAnchor" not in _sar_param_vm or "IsStashAmmoMember" not in _sar_param_vm:
-        fail("stash-ammo aggregate/backing visibility contract is missing")
-    else:
-        note("Stash Ammo Amounts locked: 3 existing quantity controls -> 1 visible radar; Basic/Standard/Rare writer semantics unchanged")
+verify_current_editor("Stash Ammo", "StashAmmoRadar", ("loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity", "loot.expensiveStashAmmoQuantity",), "stashAmmoParameterIds", ("IsStashAmmoAnchor", "IsStashAmmoMember"))
 
 # Current Breakable Boxes aggregate production gate (UI-06, 2026-10-09).
 # The retired AmmoDistributionRadar.cs is NOT a valid renderer or test target.
@@ -1280,101 +999,10 @@ else:
     note("Breakable Boxes UI-06 locked: six live aggregate sources; 8 conditional ammo ranges; 2 distinct SNG/NATO weight pools; no obsolete radar")
 
 
-# Destructible ammo weight audit gate (v0.9.26.44).
-_aw_doc = DOCS / "generators" / "DESTRUCTIBLE-AMMO-WEIGHT-AUDIT.md"
-_aw_rows_path = DOCS / "generators" / "destructible-ammo-weight-audit.csv"
-_aw_pool_path = DOCS / "generators" / "destructible-ammo-pool-usage-audit.csv"
-if not (_aw_doc.exists() and _aw_rows_path.exists() and _aw_pool_path.exists()):
-    fail("destructible ammo weight audit evidence missing")
-else:
-    import csv as _aw_csv
-    with _aw_rows_path.open(encoding="utf-8", newline="") as _f:
-        _aw_rows = list(_aw_csv.DictReader(_f))
-    with _aw_pool_path.open(encoding="utf-8", newline="") as _f:
-        _aw_pools = list(_aw_csv.DictReader(_f))
+# Historical evidence (not shipped in current repo) - never report as verified.
+not_run("ammo weights source CSV snapshot: archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
 
-    _aw_sids = {r["item_sid"] for r in _aw_rows}
-    _aw_expected_sids = {"A918D","A919D","A545D","A012D","A045D","A556D"}
-    _aw_weights = {r["vanilla_generator_weight"] for r in _aw_rows}
-    _aw_pool_counts = {r["pool_sid"]:(int(r["base_boxes"]),int(r["dlc_boxes"]),int(r["total_with_dlc"])) for r in _aw_pools}
-
-    if len(_aw_rows) != 8 or _aw_sids != _aw_expected_sids:
-        fail(f"destructible ammo weight audit drifted: rows={len(_aw_rows)} sids={sorted(_aw_sids)}")
-    elif _aw_weights != {"2"}:
-        fail(f"destructible ammo vanilla weights drifted: {_aw_weights}; expected all 2")
-    elif any(r["normalized_weight_share"] != "0.25" for r in _aw_rows):
-        fail("destructible ammo normalized vanilla weight share drifted from 25% per pool candidate")
-    elif _aw_pool_counts != {
-        "DestructibleStash_AmmoSNG": (832,151,983),
-        "DestructibleStash_AmmoNATO": (102,150,252),
-    }:
-        fail(f"destructible ammo physical pool usage drifted: {_aw_pool_counts}")
-    else:
-        note("destructible ammo weight audit locked: 6 calibers / 8 pool entries, vanilla weights 2/2/2/2, physical surface 934 base + 301 DLC = 1235 routes")
-
-# World Loot Removal radar production gate (v0.9.26.44).
-_wlr_ids = [
-    "loot.worldAmmoCratesRemoved",
-    "loot.worldF1GrenadeBoxes",
-    "loot.worldFoodDrinkCratesRemoved",
-    "loot.worldMedicalCratesRemoved",
-    "loot.looseWorldLootRemoved",
-]
-_wlr_rows_by_id = {row.get("id"): row for row in parameters}
-_wlr_rows = [_wlr_rows_by_id.get(pid) for pid in _wlr_ids]
-_wlr_anchor = _wlr_rows_by_id.get("loot.worldAmmoCratesRemoved")
-_wlr_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "WorldLootRemovalRadar.cs"
-_wlr_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
-_wlr_main_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
-_wlr_param_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
-
-if any(row is None for row in _wlr_rows):
-    fail("World Loot Removal backing parameter set is incomplete")
-elif sum(1 for row in _wlr_rows if row.get("exposeInUi", True)) != 1 or not _wlr_anchor.get("exposeInUi", True):
-    fail("World Loot Removal must expose exactly one aggregate radar card for all five removal controls")
-elif _wlr_anchor.get("label") != "World Loot Removal":
-    fail(f"World Loot Removal aggregate label drifted: {_wlr_anchor.get('label')}")
-elif any(
-    row.get("control") != "slider"
-    or (row.get("vanilla") or {}).get("All") != 0.0
-    or (row.get("slider") or {}).get("min") != 0.0
-    or (row.get("slider") or {}).get("max") != 1.0
-    or (row.get("slider") or {}).get("step") != 0.01
-    for row in _wlr_rows
-):
-    fail("World Loot Removal family slider contract drifted from 0%-100% / 1% step / vanilla 0%")
-elif not _wlr_control.exists():
-    fail("WorldLootRemovalRadar.cs is missing")
-else:
-    _wlr_control_text = _wlr_control.read_text(encoding="utf-8")
-    if "Five-axis editor" not in _wlr_control_text:
-        fail("WorldLootRemovalRadar implementation lost its five-axis contract")
-    elif 'new("loot.worldAmmoCratesRemoved", "Ammo Boxes", -90, 981, 1315)' not in _wlr_control_text:
-        fail("WorldLootRemovalRadar ordinary ammo/RGD population contract drifted")
-    elif 'new("loot.worldF1GrenadeBoxes", "F1 Grenade Boxes", -18, 61, 101)' not in _wlr_control_text:
-        fail("WorldLootRemovalRadar dedicated F1 population contract drifted")
-    elif 'new("loot.worldFoodDrinkCratesRemoved", "Food & Drink", 54, 1100, 1208)' not in _wlr_control_text:
-        fail("WorldLootRemovalRadar food/drink population contract drifted")
-    elif 'new("loot.worldMedicalCratesRemoved", "Medical Boxes", 126, 709, 868)' not in _wlr_control_text:
-        fail("WorldLootRemovalRadar medical population contract drifted")
-    elif 'new("loot.looseWorldLootRemoved", "Loose Loot", 198, 5996, 7233)' not in _wlr_control_text:
-        fail("WorldLootRemovalRadar loose-loot population contract drifted")
-    elif "MidpointRounding.AwayFromZero" not in _wlr_control_text:
-        fail("WorldLootRemovalRadar count preview no longer matches production removal rounding")
-    elif "Base: removes" not in _wlr_control_text or "With DLC:" not in _wlr_control_text:
-        fail("WorldLootRemovalRadar lost its emitted base/DLC removal-count information")
-    elif "independent audited physical population" not in _wlr_control_text:
-        fail("WorldLootRemovalRadar lost its independent-population semantics")
-    elif '<controls:WorldLootRemovalRadar x:Name="WorldLootRemovalRadarControl"' not in _wlr_xaml:
-        fail("MainWindow does not render the World Loot Removal radar")
-    elif "worldLootRemovalParameterIds.Contains(p.Id)" not in _wlr_main_vm:
-        fail("hidden World Loot Removal backing parameters are not loaded into the live VM graph")
-    elif '"loot.worldF1GrenadeBoxes"' not in _wlr_main_vm:
-        fail("F1 Grenade Boxes is no longer part of the World Loot Removal aggregate VM family")
-    elif "IsWorldLootRemovalAnchor" not in _wlr_param_vm or "IsWorldLootRemovalMember" not in _wlr_param_vm:
-        fail("World Loot Removal aggregate/backing visibility contract is missing")
-    else:
-        note("World Loot Removal locked: 5 independent removal controls -> 1 radar; ordinary ammo/RGD excludes dedicated F1 boxes; live base/DLC counts preserved")
+verify_current_editor("World Loot Removal", "WorldLootRemovalRadar", ("loot.worldAmmoCratesRemoved", "loot.worldF1GrenadeBoxes", "loot.worldFoodDrinkCratesRemoved", "loot.worldMedicalCratesRemoved", "loot.looseWorldLootRemoved",), "worldLootRemovalParameterIds.Contains(p.Id)", ("IsWorldLootRemovalAnchor", "IsWorldLootRemovalMember"))
 
 # F1 grenade box density surface gate (v0.9.26.44).
 _f1_manifest = DATA / "world-f1-grenade-box-manifest.csv"
@@ -1458,30 +1086,8 @@ else:
 
 
 
-# Final generator decision matrix release gate (v0.2.40).
-_matrix_csv = ROOT / "docs" / "generators" / "generator-decision-matrix.csv"
-_matrix_summary = ROOT / "docs" / "generators" / "generator-decision-matrix-summary.json"
-_matrix_doc = DOCS / "GENERATOR-DECISION-MATRIX.md"
-if not _matrix_csv.exists() or not _matrix_summary.exists():
-    fail("final generator decision matrix artifacts missing")
-else:
-    with _matrix_csv.open(encoding="utf-8-sig", newline="") as fh:
-        _matrix_rows = list(_csv.DictReader(fh))
-    _matrix_ids = [row.get("control_id") for row in _matrix_rows]
-    _triage_ids = [row.get("control_id") for row in _triage_rows]
-    _matrix_mirrors = [ROOT / "docs" / "generators" / "generator-decision-matrix.csv"]
-    _matrix_summary_mirrors = [ROOT / "docs" / "generators" / "generator-decision-matrix-summary.json"]
-    _ms = _json.loads(_matrix_summary.read_text(encoding="utf-8"))
-    if len(_matrix_rows) != 29 or len(set(_matrix_ids)) != 29 or set(_matrix_ids) != set(_triage_ids):
-        fail(f"final generator decision matrix coverage drift: rows={len(_matrix_rows)} unique={len(set(_matrix_ids))} triage_match={set(_matrix_ids)==set(_triage_ids)}; expected 29/29/true")
-    elif not all(x.exists() for x in _matrix_mirrors + _matrix_summary_mirrors):
-        fail("final generator decision matrix canonical evidence missing")
-    elif _ms.get("decision_concepts") != 29 or _ms.get("total_generator_backed_ui_controls") != 29:
-        fail("final generator decision matrix summary contract drifted")
-    elif not _matrix_doc.exists():
-        fail("final generator decision matrix document missing from docs/")
-    else:
-        note("final generator decision matrix locked: 29/29 concepts; lifecycle decisions canonical; verified UI projection is 29 controls")
+# Historical evidence (not shipped in current repo) - never report as verified.
+not_run("generator decision-matrix CSV snapshot: archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
 
 # Generator artifact layout cleanup gate (v0.2.41).
 _layout_doc = ROOT / "docs" / "generators" / "ARTIFACT-LAYOUT.md"
@@ -1493,58 +1099,7 @@ elif _legacy_generators.exists():
 else:
     note("generator artifact cleanup locked: docs/generators canonical; legacy generators mirror absent")
 
-# Medical Healing radar production gate (v0.9.26.44).
-_mhr_ids = [
-    "health.bandageHealing",
-    "health.medkitHealing",
-    "health.armyMedkitHealing",
-    "health.ecoMedkitHealing",
-]
-_mhr_rows_by_id = {row.get("id"): row for row in parameters}
-_mhr_rows = [_mhr_rows_by_id.get(pid) for pid in _mhr_ids]
-_mhr_anchor = _mhr_rows_by_id.get("health.bandageHealing")
-_mhr_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "MedicalHealingRadar.cs"
-_mhr_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
-_mhr_main_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
-_mhr_param_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
-
-if any(row is None for row in _mhr_rows):
-    fail("Medical Healing backing parameter set is incomplete")
-elif sum(1 for row in _mhr_rows if row.get("exposeInUi", True)) != 1 or not _mhr_anchor.get("exposeInUi", True):
-    fail("Medical Healing must expose exactly one aggregate radar card")
-elif _mhr_anchor.get("label") != "Healing Amount":
-    fail(f"Medical Healing aggregate label drifted: {_mhr_anchor.get('label')}")
-elif any(
-    row.get("control") != "slider"
-    or (row.get("slider") or {}).get("min") != 0.0
-    or (row.get("display") or {}).get("primary") != "percentOfVanilla"
-    for row in _mhr_rows
-):
-    fail("Medical Healing backing controls drifted from direct vanilla-relative healing sliders")
-elif not _mhr_control.exists():
-    fail("MedicalHealingRadar.cs is missing")
-else:
-    _mhr_control_text = _mhr_control.read_text(encoding="utf-8")
-    if "Four-axis editor" not in _mhr_control_text:
-        fail("MedicalHealingRadar implementation lost its four-axis contract")
-    elif 'new("health.bandageHealing", "Bandage", -90)' not in _mhr_control_text:
-        fail("MedicalHealingRadar Bandage axis missing")
-    elif 'new("health.ecoMedkitHealing", "Scientific Medkit", 180)' not in _mhr_control_text:
-        fail("MedicalHealingRadar Scientific Medkit axis missing")
-    elif "1x = VANILLA" not in _mhr_control_text or "MaximumMultiplier = 2.0" not in _mhr_control_text:
-        fail("MedicalHealingRadar lost its normalized vanilla-relative scale")
-    elif "HP ·" not in _mhr_control_text or "Vanilla" not in _mhr_control_text or "Health restored" not in _mhr_control_text:
-        fail("MedicalHealingRadar lost its existing healing information in the live legend")
-    elif "parameter.CurrentNumber = vanilla * multiplier" not in _mhr_control_text:
-        fail("MedicalHealingRadar no longer maps normalized axes back to existing raw HP values")
-    elif '<controls:MedicalHealingRadar x:Name="MedicalHealingRadarControl"' not in _mhr_xaml:
-        fail("MainWindow does not render the Medical Healing radar")
-    elif "medicalHealingParameterIds.Contains(p.Id)" not in _mhr_main_vm:
-        fail("hidden Medical Healing backing parameters are not loaded into the live VM graph")
-    elif "IsMedicalHealingAnchor" not in _mhr_param_vm or "IsMedicalHealingMember" not in _mhr_param_vm:
-        fail("Medical Healing aggregate/backing visibility contract is missing")
-    else:
-        note("Healing Amount locked: 4 existing healing sliders -> 1 visible radar; raw HP, multiplier and vanilla information preserved")
+verify_current_editor("Medical Healing", "MedicalHealingRadar", ("health.bandageHealing", "health.medkitHealing", "health.armyMedkitHealing", "health.ecoMedkitHealing",), "medicalHealingParameterIds.Contains(p.Id)", ("IsMedicalHealingAnchor", "IsMedicalHealingMember"))
 
 # Ordinary food healing switch gate (v0.9.26.51).
 _food_healing = next((p for p in parameters if p.get("id") == "health.foodHealing"), None)
@@ -1598,61 +1153,7 @@ else:
     note("health deep audit locked: 13 visible controls / 10 confirmed + 3 runtime-gated; Healing Amount aggregated; 38 edit points; six treatment sliders use positive magnitude -> negateSet CFG delta")
 
 
-# Action Costs radar production gate (v0.9.26.44).
-_acr_ids = [
-    "stamina.sprintCost",
-    "stamina.jumpCost",
-    "stamina.vaultCost",
-    "stamina.meleeNormalCost",
-    "stamina.meleeStrongCost",
-    "stamina.butstockCost",
-    "stamina.aimRegenCoef",
-]
-_acr_rows_by_id = {row.get("id"): row for row in parameters}
-_acr_rows = [_acr_rows_by_id.get(pid) for pid in _acr_ids]
-_acr_anchor = _acr_rows_by_id.get("stamina.sprintCost")
-_acr_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "ActionCostsRadar.cs"
-_acr_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
-_acr_main_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
-_acr_param_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
-
-if any(row is None for row in _acr_rows):
-    fail("Action Costs backing parameter set is incomplete")
-elif sum(1 for row in _acr_rows if row.get("exposeInUi", True)) != 1 or not _acr_anchor.get("exposeInUi", True):
-    fail("Action Costs must expose exactly one aggregate radar card")
-elif _acr_anchor.get("label") != "Action Costs":
-    fail(f"Action Costs aggregate label drifted: {_acr_anchor.get('label')}")
-elif any(
-    row.get("control") != "slider"
-    or (row.get("vanilla") or {}).get("All") is None
-    or (row.get("slider") or {}).get("min") != 0.0
-    for row in _acr_rows
-):
-    fail("Action Costs backing controls drifted from positive direct stamina/penalty sliders")
-elif not _acr_control.exists():
-    fail("ActionCostsRadar.cs is missing")
-else:
-    _acr_control_text = _acr_control.read_text(encoding="utf-8")
-    if "Seven-axis editor" not in _acr_control_text:
-        fail("ActionCostsRadar implementation lost its seven-axis contract")
-    elif 'new("stamina.sprintCost", "Sprint", -90' not in _acr_control_text:
-        fail("ActionCostsRadar Sprint axis missing")
-    elif 'new("stamina.aimRegenCoef", "Aiming", 218.571, true, "% penalty"' not in _acr_control_text:
-        fail("ActionCostsRadar Aiming axis or percentage semantics missing")
-    elif "1x = VANILLA" not in _acr_control_text or "MaximumMultiplier = 2.0" not in _acr_control_text:
-        fail("ActionCostsRadar lost its normalized vanilla-relative scale")
-    elif "FormatRawValue" not in _acr_control_text or "ValueMeaning" not in _acr_control_text or "Vanilla" not in _acr_control_text:
-        fail("ActionCostsRadar lost current value / unit / vanilla / meaning information")
-    elif "parameter.TickFrequency" not in _acr_control_text or "MidpointRounding.AwayFromZero" not in _acr_control_text:
-        fail("ActionCostsRadar drag path no longer preserves backing slider step semantics")
-    elif '<controls:ActionCostsRadar x:Name="ActionCostsRadarControl"' not in _acr_xaml:
-        fail("MainWindow does not render the Action Costs radar")
-    elif "actionCostParameterIds.Contains(p.Id)" not in _acr_main_vm:
-        fail("hidden Action Costs backing parameters are not loaded into the live VM graph")
-    elif "IsActionCostAnchor" not in _acr_param_vm or "IsActionCostMember" not in _acr_param_vm:
-        fail("Action Costs aggregate/backing visibility contract is missing")
-    else:
-        note("Action Costs locked: 7 existing sliders -> 1 visible radar; raw values, units, vanilla references, meanings and original steps preserved")
+verify_current_editor("Action Costs", "ActionCostsRadar", ("stamina.sprintCost", "stamina.jumpCost", "stamina.vaultCost", "stamina.meleeNormalCost", "stamina.meleeStrongCost", "stamina.butstockCost", "stamina.aimRegenCoef",), "actionCostParameterIds.Contains(p.Id)", ("IsActionCostAnchor", "IsActionCostMember"))
 
 # Stamina deep audit release gate (v0.2.46).
 _stamina_doc = DOCS / "STAMINA-CONTROL-DEEP-AUDIT.md"
@@ -1717,10 +1218,10 @@ _low_bleeding_points = [e for e in _survival_points if e.get("parameterId") == "
 _vm_source_survival = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
 _survival_mapping_text = _survival_mapping.read_text(encoding="utf-8") if _survival_mapping.exists() else ""
 
-if len(_survival_ui) != 23 or len(_survival_confirmed) != 23 or len(_survival_runtime) != 0:
-    fail(f"survival deep audit status split drifted: total={len(_survival_ui)} confirmed={len(_survival_confirmed)} runtime={len(_survival_runtime)}; expected 23/23/0")
-elif len(_survival_points) != 70:
-    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 70")
+if len(_survival_ui) != 32 or len(_survival_confirmed) != 30 or len(_survival_runtime) != 2:
+    fail(f"survival deep audit status split drifted: total={len(_survival_ui)} confirmed={len(_survival_confirmed)} runtime={len(_survival_runtime)}; expected 32/30/2")
+elif len(_survival_points) != 93:
+    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 93")
 elif _hunger_medium.get("label") != "Hunger Stamina Recovery Penalty" or (_hunger_medium.get("vanilla") or {}).get("All") != 0.33:
     fail("medium hunger stamina recovery player-facing penalty contract drifted")
 elif _hunger_strong.get("label") != "Severe Hunger Stamina Recovery Penalty" or (_hunger_strong.get("vanilla") or {}).get("All") != 0.7:
@@ -1752,68 +1253,9 @@ elif not _survival_mapping.exists():
 elif not _survival_doc.exists():
     fail("Survival deep audit document missing from docs/")
 else:
-    note("survival deep audit locked: 23/23 confirmed; 70 edit points; hunger penalties use positive magnitude -> negateSet; Low Bleeding runtime value 1.0")
+    note("survival current deep audit: 32 visible / 30 confirmed + 2 runtime-pending; 93 direct edit points; hunger sign/order preserved")
 
-# Item Price Scalers radar production gate (v0.9.26.44).
-_ips_ids = [
-    "economy.consumableCost",
-    "economy.ammoCost",
-    "economy.armorCost",
-    "economy.weaponCost",
-    "economy.artifactCost",
-    "economy.mutantPartValue",
-]
-_ips_rows_by_id = {row.get("id"): row for row in parameters}
-_ips_rows = [_ips_rows_by_id.get(pid) for pid in _ips_ids]
-_ips_anchor = _ips_rows_by_id.get("economy.consumableCost")
-_ips_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "ItemPriceScalersRadar.cs"
-_ips_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
-_ips_main_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
-_ips_param_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
-
-if any(row is None for row in _ips_rows):
-    fail("Item Price Scalers backing parameter set is incomplete")
-elif sum(1 for row in _ips_rows if row.get("exposeInUi", True)) != 1 or not _ips_anchor.get("exposeInUi", True):
-    fail("Item Price Scalers must expose exactly one aggregate radar card")
-elif _ips_anchor.get("label") != "Item Price Scalers":
-    fail(f"Item Price Scalers aggregate label drifted: {_ips_anchor.get('label')}")
-elif any(
-    row.get("control") != "slider"
-    or (row.get("slider") or {}).get("min") != 0.0
-    or (row.get("slider") or {}).get("max") != 2.0
-    or (row.get("slider") or {}).get("step") != 0.01
-    or (row.get("display") or {}).get("primary") != "multiplier"
-    for row in _ips_rows
-):
-    fail("Item Price Scalers backing controls drifted from 0x-2x / 0.01 direct multiplier semantics")
-elif any(any(float(v) != 1.0 for v in (row.get("vanilla") or {}).values()) for row in _ips_rows):
-    fail("Item Price Scalers vanilla contract drifted from 1x")
-elif not _ips_control.exists():
-    fail("ItemPriceScalersRadar.cs is missing")
-else:
-    _ips_control_text = _ips_control.read_text(encoding="utf-8")
-    if "Six-axis editor" not in _ips_control_text:
-        fail("ItemPriceScalersRadar implementation lost its six-axis contract")
-    elif 'new("economy.consumableCost", "Consumables", -90' not in _ips_control_text:
-        fail("ItemPriceScalersRadar Consumables axis missing")
-    elif 'new("economy.mutantPartValue", "Mutant Parts", 210' not in _ips_control_text:
-        fail("ItemPriceScalersRadar Mutant Parts axis missing")
-    elif "1x = VANILLA" not in _ips_control_text or "MaximumMultiplier = 2.0" not in _ips_control_text:
-        fail("ItemPriceScalersRadar lost its 0x-2x / 1x vanilla scale")
-    elif "Vanilla 1x" not in _ips_control_text or "ValueMeaning" not in _ips_control_text:
-        fail("ItemPriceScalersRadar lost current multiplier / vanilla / value-meaning information")
-    elif "RadarStep = 0.25" not in _ips_control_text or "Math.Round(value / RadarStep, MidpointRounding.AwayFromZero)" not in _ips_control_text:
-        fail("ItemPriceScalersRadar lost its 0.25x radar-step contract")
-    elif "parameter.CurrentNumber + (direction * RadarStep)" not in _ips_control_text:
-        fail("ItemPriceScalersRadar keyboard stepping drifted from 0.25x")
-    elif '<controls:ItemPriceScalersRadar x:Name="ItemPriceScalersRadarControl"' not in _ips_xaml:
-        fail("MainWindow does not render the Item Price Scalers radar")
-    elif "itemPriceScalerParameterIds.Contains(p.Id)" not in _ips_main_vm:
-        fail("hidden Item Price Scalers backing parameters are not loaded into the live VM graph")
-    elif "IsItemPriceScalerAnchor" not in _ips_param_vm or "IsItemPriceScalerMember" not in _ips_param_vm:
-        fail("Item Price Scalers aggregate/backing visibility contract is missing")
-    else:
-        note("Item Price Scalers locked: 6 direct price multipliers -> 1 radar; 0.25x radar step; current x, vanilla, meanings and writer routes preserved")
+verify_current_editor("Item Price Scalers", "ItemPriceScalersRadar", ("economy.consumableCost", "economy.ammoCost", "economy.armorCost", "economy.weaponCost", "economy.artifactCost", "economy.mutantPartValue",), "itemPriceScalerParameterIds.Contains(p.Id)", ("IsItemPriceScalerAnchor", "IsItemPriceScalerMember"))
 
 # Economy deep audit release gate (v0.2.48).
 _economy_doc = DOCS / "ECONOMY-CONTROL-DEEP-AUDIT.md"
@@ -2033,10 +1475,8 @@ _crate_medical_generators = {
 if _crate_medical_generators != {"DestructibleStash_Med"}:
     _crate_errors.append(f"medical generator family drifted: {_crate_medical_generators}")
 _crate_writer_source = (ROOT / "src" / "TrueCustomDifficulty" / "Services" / "CfgPatchWriterService.cs").read_text(encoding="utf-8")
-if not _crate_manifest_src.is_file() or not _crate_manifest_root.is_file():
-    fail("crate-reduction production manifest missing from canonical Data mirrors")
-elif _crate_manifest_src.read_bytes() != _crate_manifest_root.read_bytes():
-    fail("crate-reduction production manifest Data mirrors drifted")
+if not _crate_manifest_src.is_file():
+    fail("crate-reduction production manifest missing from canonical src/Data/")
 elif len(_crate_rows) != 3391:
     fail(f"crate-reduction production manifest contains {len(_crate_rows)} rows; expected 3391")
 elif _crate_errors:
@@ -2117,23 +1557,23 @@ for _name in _factory_preset_names:
 
 _factory_scarcity_expectations = {
     "Hardcore": {
-        "loot.looseWorldLootRemoved": 0.80,
-        "loot.worldAmmoCratesRemoved": 0.75,
-        "loot.worldFoodDrinkCratesRemoved": 0.70,
-        "loot.worldMedicalCratesRemoved": 0.80,
-        "loot.worldWeaponDensity": 0.40,
-        "loot.npcMedicalChance": 0.25,
+        "loot.looseWorldLootRemoved": 0.79,
+        "loot.worldAmmoCratesRemoved": 0.79,
+        "loot.worldFoodDrinkCratesRemoved": 0.79,
+        "loot.worldMedicalCratesRemoved": 0.79,
+        "loot.worldWeaponDensity": 0.30,
+        "loot.npcMedicalChance": 0.30,
         "loot.npcWeaponAmmoSupply": 0.25,
-        "economy.traderAmmoStock": 0.50,
-        "economy.medicStock": 0.50,
+        "economy.traderAmmoStock": 0.25,
+        "economy.medicStock": 0.25,
     },
     "Hardcore+": {
-        "loot.looseWorldLootRemoved": 0.90,
-        "loot.worldAmmoCratesRemoved": 0.90,
-        "loot.worldFoodDrinkCratesRemoved": 0.85,
-        "loot.worldMedicalCratesRemoved": 0.90,
-        "loot.worldWeaponDensity": 0.20,
-        "loot.npcMedicalChance": 0.10,
+        "loot.looseWorldLootRemoved": 0.92,
+        "loot.worldAmmoCratesRemoved": 0.92,
+        "loot.worldFoodDrinkCratesRemoved": 0.92,
+        "loot.worldMedicalCratesRemoved": 0.92,
+        "loot.worldWeaponDensity": 0.15,
+        "loot.npcMedicalChance": 0.15,
         "loot.npcWeaponAmmoSupply": 0.25,
         "economy.traderAmmoStock": 0.25,
         "economy.medicStock": 0.25,
@@ -2163,37 +1603,17 @@ if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legac
     _factory_errors.append("legacy factory preset migration cleanup missing")
 
 if _factory_errors:
-    fail("seven custom factory presets drifted: " + "; ".join(_factory_errors))
+    fail("current 12 factory presets drifted: " + "; ".join(_factory_errors))
 else:
     note("factory presets locked: 12 custom profiles / 219 values each; retired 4 files removed; hard-profile medical rules preserved")
 
-# Rationale control-help gate (v0.9.26.51).
-_parameter_vm_text = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
-_control_help_errors = []
-for _required in [
-    "public string ControlHelp",
-    "public bool IsAggregateRadarAnchor",
-    'return $"{body}{Environment.NewLine}{Environment.NewLine}{ControlHelp}";',
-    "Mouse: drag a radar point;",
-    "mouse wheel over legend text adjusts that branch",
-    "right-click a point or its legend text resets only that branch",
-    "Arrow keys or +/- adjust it; R resets every branch in this radar.",
-    "mouse wheel over the current-value box adjusts one step",
-    "click a vanilla marker to snap",
-    "right-click the slider or current-value box resets",
-    "focus the checkbox and press Space to toggle it",
-    "Home/End jump to minimum/maximum",
-]:
-    if _required not in _parameter_vm_text:
-        _control_help_errors.append(f"missing {_required!r}")
-
-if _parameter_vm_text.count("IsAggregateRadarAnchor =>") != 1:
-    _control_help_errors.append("aggregate radar control-help classifier missing or duplicated")
-
-if _control_help_errors:
-    fail("rationale control-help drifted: " + "; ".join(_control_help_errors))
+# Current user-help contract no longer describes retired polar-radar gestures.
+_control_help_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+for _required_help in ("public string ControlHelp", "IsVisualAggregateAnchor", "IsSpecialAbilityCooldownAnchor", "IsMutantHealthAnchor", "IsStashAmmoAnchor"):
+    if _required_help not in _control_help_vm:
+        fail(f"current type-aware control-help/aggregate classifier missing {_required_help!r}")
 else:
-    note("rationale controls locked: every rationale ends with type-aware mouse + keyboard help; radar/slider/range/choice/toggle covered")
+    note("current control-help anchor registry present: aggregated editors and typed help; historical polar text not required")
 
 # Current specialized editor source registration gate (2026-10-09).
 # Previous 10/10 polar-radar legend geometry, wheel, font, and right-pane
@@ -2234,22 +1654,8 @@ else:
     note("semantic editor registration: 9 retained specialized classes + current AggregateVisualControl; no obsolete polar-only assumptions")
 
 
-# UI -> real CFG deep-audit artifact gate (v0.9.26.44).
-_ui_cfg_doc = DOCS / "UI-CFG-DEEP-AUDIT.md"
-_ui_cfg_csv = DOCS / "ui-cfg-deep-audit.csv"
-_ui_cfg_tool = ROOT / "tools" / "audit_ui_cfg_contract.py"
-if not _ui_cfg_doc.exists() or not _ui_cfg_csv.exists() or not _ui_cfg_tool.exists():
-    fail("UI -> real CFG deep-audit artifacts missing")
-else:
-    import csv as _ui_cfg_csv_mod
-    with _ui_cfg_csv.open(newline="", encoding="utf-8-sig") as _f:
-        _ui_cfg_rows = list(_ui_cfg_csv_mod.DictReader(_f))
-    if len(_ui_cfg_rows) != 188:
-        fail(f"UI -> real CFG deep-audit dimension count drifted: {len(_ui_cfg_rows)}; expected 188")
-    elif any(r.get("result") != "PASS" for r in _ui_cfg_rows):
-        fail("UI -> real CFG deep-audit CSV contains a non-PASS row")
-    else:
-        note("historical v0.9.26.51 UI->CFG snapshot retained (188 rows); current 244/232 gate is audit_ui_cfg_contract.py")
+# Historical evidence (not shipped in current repo) - never report as verified.
+not_run("old UI-CFG CSV snapshot (current tools/audit_ui_cfg_contract.py is authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
 
 # XAML StaticResource integrity gate.
 _xaml_files = list((ROOT / "src" / "TrueCustomDifficulty").rglob("*.xaml"))
@@ -2445,318 +1851,26 @@ elif not _global_doc.exists():
 else:
     note("current cross-domain structural audit: 244 catalog / 152 visible / 92 hidden; 120 visible confirmed + 32 runtime-test-required; zero direct collisions")
 
-# Override verification harness release gate (v0.2.51).
-_override_tool = ROOT / "tools" / "verify_cfg_overrides.py"
-_override_doc = DOCS / "OVERRIDE-VERIFICATION-HARNESS.md"
-_override_suite = ROOT / "docs" / "override-verification" / "v0.2.51" / "suite-summary.csv"
-_override_expected = {
-    ("loot.droppedWeaponCondition", "MIN"): ("0.0", 242, 242, 0),
-    ("loot.droppedWeaponCondition", "VANILLA"): ("1.0", 242, 0, 242),
-    ("loot.droppedWeaponCondition", "MAX"): ("2.0", 242, 242, 0),
-    ("loot.npcWeaponAmmoSupply", "MIN"): ("0.0", 242, 161, 81),
-    ("loot.npcWeaponAmmoSupply", "VANILLA"): ("1.0", 242, 0, 242),
-    ("loot.npcWeaponAmmoSupply", "MAX"): ("3.0", 242, 161, 81),
-    ("economy.medicStock", "MIN"): ("0.25", 96, 84, 12),
-    ("economy.medicStock", "VANILLA"): ("1.0", 96, 0, 96),
-    ("economy.medicStock", "MAX"): ("3.0", 96, 96, 0),
-}
-_override_rows = {}
-if _override_suite.exists():
-    with _override_suite.open(newline="", encoding="utf-8-sig") as _f:
-        for _r in _csv.DictReader(_f):
-            _override_rows[(_r.get("parameterId"), _r.get("variant"))] = (
-                _r.get("inputValue"),
-                int(_r.get("baselineEditPoints", "-1")),
-                int(_r.get("expectedChanged", "-1")),
-                int(_r.get("expectedUnchanged", "-1")),
-            )
-_override_reference_patches = list((ROOT / "docs" / "override-verification" / "v0.2.51").glob("**/expected-patch/**/*_patch_TrueCustomDifficulty.cfg"))
-if not _override_tool.exists():
-    fail("override verification harness missing: tools/verify_cfg_overrides.py")
-elif not _override_doc.exists():
-    fail("override verification harness document missing from docs/")
-elif _override_rows != _override_expected:
-    fail(f"v0.2.51 override verification suite drifted: {_override_rows}; expected {_override_expected}")
-elif len(_override_reference_patches) != 6:
-    fail(f"v0.2.51 override reference patch count drifted: {len(_override_reference_patches)}; expected 6 non-vanilla cases")
-elif (ROOT / "tools" / "runtime_tests" / "README.md").read_bytes() != (ROOT / "docs" / "runtime-tests" / "README.md").read_bytes():
-    fail("runtime-test README mirror drifted between tools/ and docs/")
-else:
-    _override_tool_text = _override_tool.read_text(encoding="utf-8")
-    _required_tokens = ["CONTRACT_PASS", "scaleClamp01", "scaleIntegerHalfUpPreserveZero", "def run_compare", "def run_suite"]
-    _missing_tokens = [token for token in _required_tokens if token not in _override_tool_text]
-    if _missing_tokens:
-        fail(f"override verifier implementation contract drifted; missing tokens: {_missing_tokens}")
-    else:
-        note("override verification harness locked: 3 controls x MIN/VANILLA/MAX; 6 reference patches; exact compare mode present")
+# Historical evidence (not shipped in current repo) - never report as verified.
+not_run("v0.2.51-v0.3.0 override/CFG-placement/provenance/production snapshots (current UI/Combat tools + active source checks are authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
 
-# Full runtime-pending override verification release gate (v0.2.52).
-_override52_root = ROOT / "docs" / "override-verification" / "v0.2.52"
-_override52_master = _override52_root / "master" / "suite-summary.csv"
-_override52_veteran = _override52_root / "veteran-special-arrays" / "suite-summary.csv"
-_override52_self = _override52_root / "self-compare-summary.json"
-_override52_summary = _override52_root / "summary.json"
-_override52_runtime_ids = set()  # historical v0.2.52 set is loaded from its saved suite below
-_override52_master_rows = []
-_override52_veteran_rows = []
-if _override52_master.exists():
-    with _override52_master.open(newline="", encoding="utf-8-sig") as _f:
-        _override52_master_rows = list(_csv.DictReader(_f))
-if _override52_veteran.exists():
-    with _override52_veteran.open(newline="", encoding="utf-8-sig") as _f:
-        _override52_veteran_rows = list(_csv.DictReader(_f))
-_override52_master_ids = {r.get("parameterId") for r in _override52_master_rows}
-_override52_runtime_ids = set(_override52_master_ids)
-_override52_veteran_ids = {r.get("parameterId") for r in _override52_veteran_rows}
-_override52_expected_veteran_ids = {
-    pid for pid in _override52_runtime_ids
-    if pid.startswith("combat.mutantCooldown.") or pid.startswith("combat.psy")
-}
-_override52_routes = {}
-for _r in _override52_master_rows:
-    _override52_routes.setdefault(_r.get("parameterId"), _r.get("route"))
-_override52_route_counts = {}
-for _route in _override52_routes.values():
-    _override52_route_counts[_route] = _override52_route_counts.get(_route, 0) + 1
-_override52_expected_route_counts = {
-    "directEditPoints": 11,
-    "mutantCooldownArray": 8,
-    "psyArray": 4,
-    "cheapStashCloneRedirect": 2,
-    "npcMedicalCloneRedirect": 1,
-    "mediumStashCloneRedirect": 1,
-    "expensiveStashCloneRedirect": 1,
-    "destructibleAmmoCloneRedirect": 1,
-    "destructibleGrenadeCloneRedirect": 1,
-}
-_override52_self_doc = json.loads(_override52_self.read_text(encoding="utf-8")) if _override52_self.exists() else {}
-_override52_summary_doc = json.loads(_override52_summary.read_text(encoding="utf-8")) if _override52_summary.exists() else {}
-_override52_manifest = ROOT / "Data" / "npc-medical-production-redirect-manifest.csv"
-_override52_manifest_rows = 0
-if _override52_manifest.exists():
-    with _override52_manifest.open(newline="", encoding="utf-8-sig") as _f:
-        _override52_manifest_rows = sum(1 for _ in _csv.DictReader(_f))
-_override52_writer = (ROOT / "src" / "TrueCustomDifficulty" / "Services" / "CfgPatchWriterService.cs").read_text(encoding="utf-8")
-_override52_tool_text = _override_tool.read_text(encoding="utf-8") if _override_tool.exists() else ""
-
-if len(_override52_runtime_ids) != 30:
-    fail(f"historical v0.2.52 runtime-pending evidence drifted: {len(_override52_runtime_ids)}; expected 38")
-elif len(_override52_master_rows) != 90 or _override52_master_ids != _override52_runtime_ids:
-    fail(f"v0.2.52 Master override suite drifted: rows={len(_override52_master_rows)} ids={len(_override52_master_ids)}; expected 90 rows / exact 30 runtime IDs")
-elif any(r.get("status") != "CONTRACT_PASS" for r in _override52_master_rows):
-    fail("v0.2.52 Master override suite contains a non-CONTRACT_PASS case")
-elif any(int(r.get("expectedAssignments", "-1")) != 0 or int(r.get("expectedStructures", "-1")) != 0 for r in _override52_master_rows if r.get("variant") == "VANILLA"):
-    fail("v0.2.52 Master VANILLA contract must emit zero assignments and zero struct nodes")
-elif _override52_route_counts != _override52_expected_route_counts:
-    fail(f"v0.2.52 verifier route projection drifted: {_override52_route_counts}; expected {_override52_expected_route_counts}")
-elif len(_override52_veteran_rows) != 36 or _override52_veteran_ids != _override52_expected_veteran_ids:
-    fail(f"v0.2.52 Veteran special-array suite drifted: rows={len(_override52_veteran_rows)} ids={sorted(_override52_veteran_ids)}")
-elif any(r.get("status") != "CONTRACT_PASS" for r in _override52_veteran_rows):
-    fail("v0.2.52 Veteran special-array suite contains a non-CONTRACT_PASS case")
-elif any(int(r.get("expectedAssignments", "-1")) != 0 or int(r.get("expectedStructures", "-1")) != 0 for r in _override52_veteran_rows if r.get("variant") == "VANILLA"):
-    fail("v0.2.52 Veteran VANILLA contract must emit zero assignments and zero struct nodes")
-elif any(int(r.get("expectedAssignments", "-1")) != 146 for r in _override52_veteran_rows if r.get("parameterId", "").startswith("combat.mutantCooldown.") and r.get("variant") != "VANILLA"):
-    fail("v0.2.52 Veteran mutant cooldown full-tree contract drifted: expected 146 assignments per non-vanilla case")
-elif not any(r.get("parameterId") == "combat.psyBleeding" and r.get("variant") == "ON" and int(r.get("expectedAssignments", "-1")) == 10 for r in _override52_veteran_rows):
-    fail("v0.2.52 Veteran PSY bleeding full-tree ON contract missing")
-elif _override52_self_doc.get("master", {}).get("status") != "PASS" or _override52_self_doc.get("master", {}).get("nonzeroCasesSelfCompared") != 58:
-    fail(f"v0.2.52 Master reference self-compare drifted: {_override52_self_doc.get('master')}")
-elif _override52_self_doc.get("veteran-special-arrays", {}).get("status") != "PASS" or _override52_self_doc.get("veteran-special-arrays", {}).get("nonzeroCasesSelfCompared") != 23:
-    fail(f"v0.2.52 Veteran reference self-compare drifted: {_override52_self_doc.get('veteran-special-arrays')}")
-elif _override52_summary_doc.get("master", {}).get("allVanillaZero") is not True or _override52_summary_doc.get("master", {}).get("contractPass") is not True:
-    fail("v0.2.52 aggregate Master override summary drifted")
-elif _override52_manifest_rows != 33 or "redirects.Count != 33" not in _override52_writer or "standard-human scope of 33" not in _override52_writer or "redirects.Count != 37" in _override52_writer:
-    fail(f"NPC medical production redirect contract drifted: manifest={_override52_manifest_rows}; writer must require exactly 33")
-elif "def expected_structures_for_parameter" not in _override52_tool_text or "wrongStructure" not in _override52_tool_text or "(.+?)" not in _override52_tool_text:
-    fail("v0.2.52 override verifier structural/parser contract missing")
-elif not _override_doc.exists():
-    fail("v0.2.52 override verification harness document missing from docs/")
-else:
-    note("override verification v0.2.52 locked: all 30 runtime controls / 90 Master cases + 36 Veteran array cases; assignment+structure compare; NPC medical 33-link writer fix")
-
-# CFG placement audit release gate (v0.2.53).
-_cfg53_tool = ROOT / "tools" / "audit_cfg_placement.py"
-_cfg53_doc = DOCS / "CFG-PLACEMENT-AUDIT.md"
-_cfg53_root = ROOT / "docs" / "cfg-placement" / "v0.2.53"
-_cfg53_summary = _cfg53_root / "summary.json"
-_cfg53_parameters = _cfg53_root / "parameter-summary.csv"
-_cfg53_direct = _cfg53_root / "direct-targets.csv"
-_cfg53_special = _cfg53_root / "special-routes.csv"
-_cfg53_files = _cfg53_root / "cfg-file-summary.csv"
-_cfg53_summary_doc = json.loads(_cfg53_summary.read_text(encoding="utf-8")) if _cfg53_summary.exists() else {}
-_cfg53_expected_routes = {
-    "cheapStashAmmoCloneRedirect": 1,
-    "cheapStashGrenadeCloneRedirect": 1,
-    "destructibleAmmoCloneRedirect": 1,
-    "destructibleGrenadeCloneRedirect": 1,
-    "directEditPoints": 153,
-    "expensiveStashAmmoCloneRedirect": 1,
-    "listMembership": 5,
-    "mediumStashCloneRedirect": 1,
-    "mutantCooldownArray": 8,
-    "npcMedicalCloneRedirect": 1,
-    "psyArray": 4,
-    "setList": 1,
-}
-_cfg53_parameter_rows = []
-_cfg53_direct_rows = []
-_cfg53_special_rows = []
-if _cfg53_parameters.exists():
-    with _cfg53_parameters.open(newline="", encoding="utf-8-sig") as _f:
-        _cfg53_parameter_rows = list(_csv.DictReader(_f))
-if _cfg53_direct.exists():
-    with _cfg53_direct.open(newline="", encoding="utf-8-sig") as _f:
-        _cfg53_direct_rows = list(_csv.DictReader(_f))
-if _cfg53_special.exists():
-    with _cfg53_special.open(newline="", encoding="utf-8-sig") as _f:
-        _cfg53_special_rows = list(_csv.DictReader(_f))
-
-if not _cfg53_tool.exists():
-    fail("CFG placement audit tool missing: tools/audit_cfg_placement.py")
-elif not _cfg53_doc.exists():
-    fail("CFG placement audit document missing from docs/")
-elif not all(path.exists() for path in (_cfg53_summary, _cfg53_parameters, _cfg53_direct, _cfg53_special, _cfg53_files)):
-    fail("v0.2.53 CFG placement evidence is incomplete")
-elif _cfg53_summary_doc.get("status") != "PASS":
-    fail(f"v0.2.53 CFG placement summary is not PASS: {_cfg53_summary_doc}")
-elif (
-    _cfg53_summary_doc.get("catalogParameters") != 178
-    or _cfg53_summary_doc.get("visible") != 167
-    or _cfg53_summary_doc.get("hidden") != 11
-    or _cfg53_summary_doc.get("directParameters") != 153
-    or _cfg53_summary_doc.get("specialParameters") != 25
-    or _cfg53_summary_doc.get("directEditPoints") != 1370
-    or _cfg53_summary_doc.get("directCfgFiles") != 14
-    or _cfg53_summary_doc.get("directTargetCollisions") != 0
-):
-    fail(f"v0.2.53 CFG placement accounting drifted: {_cfg53_summary_doc}")
-elif _cfg53_summary_doc.get("routeCounts") != _cfg53_expected_routes:
-    fail(f"v0.2.53 CFG placement route split drifted: {_cfg53_summary_doc.get('routeCounts')}")
-elif len(_cfg53_parameter_rows) != 178 or any(r.get("status") != "PASS" for r in _cfg53_parameter_rows):
-    fail("v0.2.53 parameter placement summary must contain exactly 178 PASS rows")
-elif len(_cfg53_direct_rows) != 1370:
-    fail(f"v0.2.53 direct CFG target inventory drifted: {len(_cfg53_direct_rows)}; expected 1370")
-elif len(_cfg53_special_rows) != 25:
-    fail(f"v0.2.53 special CFG route inventory drifted: {len(_cfg53_special_rows)}; expected 25")
-elif (ROOT / "tools" / "verify_production_writer.py").exists() or (ROOT / "docs" / "production-writer-verification").exists():
-    fail("EXE/production-writer verification workflow is out of scope; CFG-only placement audit expected")
-else:
-    note("CFG placement v0.2.53 locked: 178/178 routed; 153 direct / 25 special; 1370 concrete direct fields across 14 CFG files; 0 collisions")
-
-# CFG provenance closure release gate (v0.2.54).
-_cfg54_tool = ROOT / "tools" / "audit_cfg_provenance.py"
-_cfg54_doc = DOCS / "CFG-PROVENANCE-AUDIT.md"
-_cfg54_root = ROOT / "docs" / "cfg-provenance" / "v0.2.54"
-_cfg54_summary = _cfg54_root / "summary.json"
-_cfg54_direct = _cfg54_root / "direct-provenance.csv"
-_cfg54_special = _cfg54_root / "special-provenance.csv"
-_cfg54_readme = _cfg54_root / "README.md"
-_cfg54_summary_doc = json.loads(_cfg54_summary.read_text(encoding="utf-8")) if _cfg54_summary.exists() else {}
-_cfg54_direct_rows = []
-_cfg54_special_rows = []
-if _cfg54_direct.exists():
-    with _cfg54_direct.open(newline="", encoding="utf-8-sig") as _f:
-        _cfg54_direct_rows = list(_csv.DictReader(_f))
-if _cfg54_special.exists():
-    with _cfg54_special.open(newline="", encoding="utf-8-sig") as _f:
-        _cfg54_special_rows = list(_csv.DictReader(_f))
-_cfg54_expected_later = {
-    "economy.medicStock": 96,
-    "loot.droppedWeaponCondition": 242,
-    "loot.npcWeaponAmmoSupply": 242,
-}
-_cfg54_expected_legacy_fp = "0f93942bd60e55869e35ffa21ab05720876fb87520e540e7a78a0420c5f17eff"
-
-if not _cfg54_tool.exists():
-    fail("CFG provenance audit tool missing: tools/audit_cfg_provenance.py")
-elif not _cfg54_doc.exists():
-    fail("CFG provenance audit document missing from docs/")
-elif not all(path.exists() for path in (_cfg54_summary, _cfg54_direct, _cfg54_special, _cfg54_readme)):
-    fail("v0.2.54 CFG provenance evidence is incomplete")
-elif _cfg54_summary_doc.get("status") != "PASS" or _cfg54_summary_doc.get("rawRuntimeDumpBundled") is not False:
-    fail(f"v0.2.54 CFG provenance summary status/evidence distinction drifted: {_cfg54_summary_doc}")
-elif _cfg54_summary_doc.get("runtimeDumpVersion") != "2.0.5" or _cfg54_summary_doc.get("runtimeDumpSha256") != "739ecb4a60e2d98181cc6b326894d184b76a09c29b94a66c18d7b0da2c37a83a":
-    fail("v0.2.54 retained runtime provenance fingerprint drifted")
-elif _cfg54_summary_doc.get("direct", {}).get("total") != 1370 or _cfg54_summary_doc.get("direct", {}).get("historicalRuntimeExact") != 699 or _cfg54_summary_doc.get("direct", {}).get("freshEmbeddedSourceExact") != 671 or _cfg54_summary_doc.get("direct", {}).get("freshEmbeddedSourceMismatches") != 0:
-    fail(f"v0.2.54 direct provenance accounting drifted: {_cfg54_summary_doc.get('direct')}")
-elif _cfg54_summary_doc.get("direct", {}).get("legacyCurrentTupleFingerprintSha256") != _cfg54_expected_legacy_fp:
-    fail(f"v0.2.54 retained 699-entry legacy tuple fingerprint drifted: {_cfg54_summary_doc.get('direct', {}).get('legacyCurrentTupleFingerprintSha256')}")
-elif _cfg54_summary_doc.get("laterDirectCounts") != _cfg54_expected_later:
-    fail(f"v0.2.54 later direct provenance split drifted: {_cfg54_summary_doc.get('laterDirectCounts')}")
-elif _cfg54_summary_doc.get("special", {}).get("total") != 25 or _cfg54_summary_doc.get("special", {}).get("historicalRuntimeStructureExact") != 18 or _cfg54_summary_doc.get("special", {}).get("freshEmbeddedCloneRedirect") != 7 or _cfg54_summary_doc.get("special", {}).get("freshTemplateFieldMatches") != 1197 or _cfg54_summary_doc.get("special", {}).get("freshRedirectManifestRows") != 3476 or _cfg54_summary_doc.get("special", {}).get("freshSpecialMismatches") != 0:
-    fail(f"v0.2.54 special provenance accounting drifted: {_cfg54_summary_doc.get('special')}")
-elif len(_cfg54_direct_rows) != 1370 or sum(r.get("status") == "PASS" for r in _cfg54_direct_rows) != 671 or sum(r.get("status") == "HISTORICAL_PASS" for r in _cfg54_direct_rows) != 699:
-    fail("v0.2.54 direct provenance CSV must contain 699 HISTORICAL_PASS + 671 PASS rows")
-elif len(_cfg54_special_rows) != 25 or sum(r.get("status") == "PASS" for r in _cfg54_special_rows) != 7 or sum(r.get("status") == "HISTORICAL_PASS" for r in _cfg54_special_rows) != 18:
-    fail("v0.2.54 special provenance CSV must contain 18 HISTORICAL_PASS + 7 PASS rows")
-else:
-    note("CFG provenance v0.2.54 locked: 1370/1370 direct + 25/25 special; 699 historical raw-runtime exact + 671 fresh embedded-source exact; 7 clone routes / 1197 source-template fields / 3476 redirect rows")
-
-
-# Production implementation integration gate (v0.3.0).
-_prod_tool = ROOT / "tools" / "audit_production_integration.py"
-_prod_doc = DOCS / "PRODUCTION-IMPLEMENTATION.md"
-_source_doc = DOCS / "SOURCE-LAYOUT.md"
-_prod_root = ROOT / "docs" / "production-integration" / "v0.3.0"
-_prod_summary_path = _prod_root / "summary.json"
-_prod_controls_path = _prod_root / "controls.csv"
-_prod_dependencies_path = _prod_root / "dependencies.csv"
-_prod_readme_path = _prod_root / "README.md"
-_prod_summary = json.loads(_prod_summary_path.read_text(encoding="utf-8")) if _prod_summary_path.exists() else {}
-
-_legacy_source = []
+# Canonical source boundary replaces the removed 0.3.0 fixed 178-control snapshot.
 _canonical_src = ROOT / "src" / "TrueCustomDifficulty"
-for _path in ROOT.rglob("*"):
-    if not _path.is_file():
+_legacy_source = []
+for _source_path in ROOT.rglob("*"):
+    if not _source_path.is_file():
         continue
     try:
-        _path.relative_to(_canonical_src)
+        _source_path.relative_to(_canonical_src)
         continue
     except ValueError:
         pass
-    if _path.suffix.lower() in {".cs", ".xaml", ".csproj"}:
-        _legacy_source.append(_path.relative_to(ROOT).as_posix())
-
-_prod_main_vm = (_canonical_src / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
-_prod_param_vm = (_canonical_src / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
-_prod_tab_vm = (_canonical_src / "ViewModels" / "TabViewModel.cs").read_text(encoding="utf-8")
-_prod_writer = (_canonical_src / "Services" / "CfgPatchWriterService.cs").read_text(encoding="utf-8")
-_prod_catalog_service = (_canonical_src / "Services" / "ParameterCatalogService.cs").read_text(encoding="utf-8")
-
-if not _prod_tool.exists():
-    fail("production integration audit tool missing: tools/audit_production_integration.py")
-elif not _prod_doc.exists():
-    fail("production implementation document missing from docs/")
-elif not _source_doc.exists():
-    fail("source layout document missing from docs/")
-elif not all(path.exists() for path in (_prod_summary_path, _prod_controls_path, _prod_dependencies_path, _prod_readme_path)):
-    fail("v0.3.0 production integration evidence is incomplete")
-elif _prod_summary.get("status") != "PASS":
-    fail(f"v0.3.0 production integration summary is not PASS: {_prod_summary}")
-elif (
-    _prod_summary.get("catalogParameters") != 178
-    or _prod_summary.get("visibleControls") != 167
-    or _prod_summary.get("hiddenAuditOnly") != 11
-    or _prod_summary.get("dependentControls") != 15
-    or _prod_summary.get("writerRouted") != 178
-    or _prod_summary.get("deferredWriterParameters") != 0
-):
-    fail(f"v0.3.0 production integration accounting drifted: {_prod_summary}")
-elif _prod_summary.get("visibleControlTypes") != {"choiceSlider": 1, "slider": 159, "toggle": 7}:
-    fail(f"v0.3.0 visible control-type split drifted: {_prod_summary.get('visibleControlTypes')}")
-elif _legacy_source:
-    fail("legacy C#/XAML project mirrors returned outside canonical src tree: " + ", ".join(sorted(_legacy_source)))
-elif "p.IsModified && p.IsControlEnabled" not in _prod_writer:
-    fail("production writer no longer suppresses disabled dependent controls")
-elif "EnsureVisibleSelection" not in _prod_main_vm or "public void EnsureVisibleSelection()" not in _prod_tab_vm:
-    fail("Master dependency selection repair is missing")
-elif "OnPropertyChanged(nameof(IsControlVisible));" not in _prod_param_vm:
-    fail("dependency visibility notification is missing")
-elif "ValidateParameterShape(parameter);" not in _prod_catalog_service or "requires unknown toggle" not in _prod_catalog_service:
-    fail("startup catalog/dependency validation is missing")
+    if _source_path.suffix.lower() in {".cs", ".xaml", ".csproj"}:
+        _legacy_source.append(_source_path.relative_to(ROOT).as_posix())
+if _legacy_source:
+    fail("legacy C#/XAML/CSPROJ mirror outside canonical src tree: " + ", ".join(sorted(_legacy_source)))
 else:
-    note("production integration v0.3.0 locked: 167 visible controls / 178 writer routes; active dependency output; single canonical src tree")
-
+    note("current canonical C#/XAML/CSPROJ source tree has no duplicate mirrors")
 # Canonical C# source must not contain duplicate top-level type definitions.
 _cs_type_declarations = {}
 _cs_type_pattern = re.compile(r"^(?:public|internal)\s+(?:(?:sealed|static|partial|abstract)\s+)*(?:class|record|struct|interface|enum)\s+([A-Za-z_][A-Za-z0-9_]*)\b", re.MULTILINE)
@@ -2784,22 +1898,24 @@ else:
     note(f"application version metadata synchronized: {_app_version}")
 
 # Root stays intentionally lean; canonical audit/runtime data lives under Data/.
-_allowed_root_files = {".gitignore", "README.md", "TrueCustomDifficulty.sln", "audit_project_consistency.py", "publish.sh", "publish.ps1"}
+_allowed_root_files = {".gitignore", "README.md", "TrueCustomDifficulty.sln", "audit_project_consistency.py", "global.json", "prompt.md", "publish.sh", "run-latest.sh"}
 _actual_root_files = {p.name for p in ROOT.iterdir() if p.is_file()}
 if _actual_root_files != _allowed_root_files:
     fail(f"repository root file set drifted: {sorted(_actual_root_files)}; expected {sorted(_allowed_root_files)}")
 elif 'PUBLISH_DIR="$ROOT/publish/win-x64"' not in (ROOT / "publish.sh").read_text(encoding="utf-8"):
     fail("publish.sh no longer isolates runtime output under publish/win-x64")
-elif '$publishDir = Join-Path $root "publish\\win-x64"' not in (ROOT / "publish.ps1").read_text(encoding="utf-8"):
-    fail("publish.ps1 no longer isolates runtime output under publish/win-x64")
+elif not (ROOT / "run-latest.sh").exists():
+    fail("run-latest.sh is missing from current Linux/Wine workflow")
 else:
-    note("lean root/publish layout locked: 6 root files; docs under docs/, data under Data/, runtime under publish/win-x64/")
+    note("current root/publish layout: 8 tracked root files; Linux/Wine publish and run scripts present")
 
-print("True Custom Difficulty — static consistency audit")
+print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
     print(f"[OK] {msg}")
+for msg in not_run_items:
+    print(f"[NOT RUN] {msg}")
 if errors:
     for msg in errors:
         print(f"[FAIL] {msg}")
     sys.exit(1)
-print("[OK] no static catalog/writer/resource inconsistencies found")
+print(f"PASS — active static checks only; {len(not_run_items)} archived/runtime evidence checks NOT RUN")

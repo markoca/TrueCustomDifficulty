@@ -1,5 +1,11 @@
 # True Custom Difficulty
 
+Current consistency audit is based on active sources and writer data, not deleted
+v0.2.x CSV snapshots. See [Consistency audit modernization](docs/PROJECT-CONSISTENCY-AUDIT-2026-10-09.md)
+for the distinction between static PASS and historical/runtime NOT RUN. Run:
+`python tools/audit_ui_cfg_contract.py`, `python tools/audit_combat_contract.py`,
+and `python tools/audit_project_consistency.py` after pulling main.
+
 ## Deep CFG audit — Phase 3: Combat (2026-10-09)
 
 The live Combat catalog currently has **39 dimensions**: 27 source-confirmed direct controls (52 difficulty-field plus 16 mutant-health writer routes), and 12 Master-derived mutant cooldown / PSY controls still requiring gameplay verification. Static catalog-to-writer verification identified no new direct route mismatch; it does **not** establish runtime behavior. Added `tools/audit_combat_contract.py` for reproducible Combat guards and `--parameter-prefix combat.` to the decoded-ZIP source checker. Legacy presets may still apply hidden repeated-hit or PSY fields: see [Phase 3 Combat audit](docs/DEEP-CFG-AUDIT-PHASE3-COMBAT-2026-10-09.md) for the risk boundary, test matrix and exact commands. No gameplay sliders, design locks or production writer semantics changed in this pass.

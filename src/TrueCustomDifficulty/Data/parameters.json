@@ -472,7 +472,7 @@
       "tab": "combat",
       "group": "Your Weapons",
       "label": "Your Headshot Damage",
-      "description": "Changes how much extra damage your headshots deal.",
+      "description": "Scales the damage multiplier applied to your headshots; 1x is normal and 2x doubles the configured headshot damage.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -507,9 +507,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Changes how much extra damage your headshots deal.",
-      "logic": "",
-      "interaction": "Your Weapon Damage still affects the underlying hit, so raising both settings makes headshots much more lethal."
+      "rationale": "Controls your headshot damage multiplier, not a separate bonus added to the hit.",
+      "logic": "1.0x is the normal multiplier. 2.0x doubles the headshot damage multiplier used by the selected Base Preset; it is not an additive extra-damage percentage.",
+      "interaction": "Your Weapon Damage also affects the underlying hit. The headshot multiplier scales that hit; changing both settings compounds their effect."
     },
     {
       "id": "combat.weaponJamming",

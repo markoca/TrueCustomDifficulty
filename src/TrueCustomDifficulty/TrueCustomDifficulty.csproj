@@ -10,7 +10,7 @@
     <AssemblyName>TrueCustomDifficulty</AssemblyName>
     <RootNamespace>TrueCustomDifficulty</RootNamespace>
     <ApplicationIcon Condition="Exists('app.ico')">app.ico</ApplicationIcon>
-    <Version>0.9.26.52</Version>
+    <Version>0.9.26.82</Version>
 
     <!-- Release publish defaults: one self-contained Windows executable where possible. -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
