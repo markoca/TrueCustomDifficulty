@@ -50,11 +50,11 @@ The standard `tools/pre_release.py source` now includes this scope.
 parameter, including the internal editors hidden under their native
 grouped UI panels, and checks the generated CFG text.
 
-- **43 unique Health/Stamina source parameters**, including
+- **38 live Health/Stamina parameters** (20 Health + 18 Stamina), including
   **4 Master-dependent Health modifiers** tested on Master where
   their `advanced` parent toggles are already enabled.
 - `health.regenerationScalar` is separately checked on
-  Novice/Stalker/Veteran/Master, for **46 executable scenarios**.
+  Novice/Stalker/Veteran/Master, for **41 executable scenarios**.
 - Strict path/section assertion for every generated leaf: prototype
   SID, nested `{bpatch}` flags, exact numeric transformation (set,
   negateSet, toggleSourceOrZero), destination file, edit count and
@@ -138,3 +138,29 @@ toggles still follow the original full-list replacement path.
 This targeted correction leaves UI coloring, enabled-state behavior,
 preset values, and all gameplay default numbers unchanged. Generated
 source structure remains distinct from verified gameplay behavior.
+
+## Phase 8: catalog vs live application graph
+
+The first extended Windows execution exposed that the **43 catalog
+parameters are not all active app controls**. The 5 Stamina
+internal-speed-state source definitions below are intentionally
+**excluded from MainViewModel.AllParameters**:
+
+- `stamina.sprintUnderRunSpeedRegenCoef`
+- `stamina.joggingRegenCoef`
+- `stamina.slowRunRegenCoef`
+- `stamina.sprintRegenCoef`
+- `stamina.runRegenCoef`
+
+They remain legitimate, verified original CFG paths in the manifest
+but are **not writable through the current app**. The harness now pins
+this exact intentional exclusion to fail on unexpected catalog/UI
+regressions, and executes the **38 live loaded Health/Stamina
+parameters**, plus three extra Health regeneration difficulty baselines
+(**41 live writer scenarios**). No new UI controls were added.
+The source provenance check still covers all 69 direct source fields:
+its scope is original source correctness, not a claim of active UI
+control coverage.
+
+This distinction is essential to release reports: never label the
+five internal-only Stamina values as functioning app-to-BPatch routes.

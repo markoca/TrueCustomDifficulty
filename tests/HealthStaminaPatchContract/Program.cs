@@ -30,7 +30,7 @@ internal static class Program
                 Directory.CreateDirectory(_keepRoot);
             }
 
-            // A unique concrete edit for every Health/Stamina catalog
+            // A unique concrete edit for every live Health/Stamina catalog
             // parameter. Master-only modifiers use Master because their
             // parent AdditionalMechanics switch is naturally enabled there.
             var cohort = Catalog.Parameters
@@ -40,12 +40,36 @@ internal static class Program
                 .ToArray();
             Check(cohort.Length == 43, "Health/Stamina catalog cohort is no longer 43 controls");
 
-            foreach (var def in cohort)
+            // These five source-backed speed-state definitions are intentionally
+            // excluded from MainViewModel. They are documented internal CFG
+            // research, not exposed/active UI controls or valid writer inputs.
+            // Pin the exclusion rather than inventing UI coverage for them.
+            var internalOnly = new HashSet<string>(StringComparer.Ordinal)
+            {
+                "stamina.sprintUnderRunSpeedRegenCoef",
+                "stamina.joggingRegenCoef",
+                "stamina.slowRunRegenCoef",
+                "stamina.sprintRegenCoef",
+                "stamina.runRegenCoef"
+            };
+            var initialVm = new MainViewModel(Catalog);
+            var liveIds = initialVm.AllParameters.Select(p => p.Id)
+                .ToHashSet(StringComparer.Ordinal);
+            var notLoaded = cohort.Where(p => !liveIds.Contains(p.Id))
+                .Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
+            Check(notLoaded.SetEquals(internalOnly),
+                "Unexpected Health/Stamina app VM exclusions: "
+                + string.Join(", ", notLoaded.OrderBy(s => s)));
+            var liveCohort = cohort.Where(p => liveIds.Contains(p.Id)).ToArray();
+            Check(liveCohort.Length == 38,
+                "Health/Stamina live VM count is not 38");
+            foreach (var def in liveCohort)
             {
                 var diff = def.Id.StartsWith("health.master", StringComparison.Ordinal)
                     ? "Master" : "Veteran";
                 Test(def.Id, diff);
             }
+            Console.WriteLine("INTERNAL SOURCE ONLY: 5 intentionally non-VM stamina speed-state CFG definitions");
 
             // The 4 selected Base Presets must map scalar Regen_HP to the
             // correct Easy/Medium/Hard/Stalker DifficultyPrototypes row.

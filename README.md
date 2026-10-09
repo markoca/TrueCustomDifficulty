@@ -6,8 +6,8 @@ Verified **69 original source CFG fields** from the supplied
 GameData/DLC1 archives: **68 directly authored exact** plus one
 original-source inherited `Player.VaultingParams.MaxObstacleHeight`
 through `{refkey=[0]}`. New Windows/.NET writer contract covers all
-**43 Health/Stamina backing settings + 3 additional difficulty cases
-(46 total scenarios)** with actual production WPF ViewModels and
+**38 live Health/Stamina settings + 3 additional difficulty cases
+(41 total scenarios)** with actual production WPF ViewModels and
 BPatch output. See [Phase 8 evidence and runtime gaps](docs/DEEP-CFG-AUDIT-PHASE8-HEALTH-STAMINA-2026-10-09.md).
 Actual in-game effects and the inherited nested BPatch merge remain
 `NOT RUN` until manually confirmed.
