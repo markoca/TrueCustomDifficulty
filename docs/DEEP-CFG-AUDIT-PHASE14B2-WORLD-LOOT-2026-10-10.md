@@ -44,6 +44,14 @@ Registered in `tools/pre_release.py writer` and independent Windows jobs `loot-w
 
 The 320-path Phase 14A original ZIP audit is not sufficient for world actor manifest provenance. In a later original-source pass, verify the actual actor IDs, `SpawnedPrototypeSID`, generator references, DLC scopes, rank/tier/category and physical levels against the supplied decoded GameData and DLC1 originals. Where the data is not in the original CFG, mark it unverifiable rather than inferring it. Randomized selection means tests must use invariant constraints, not fixed sample snapshots.
 
+A new strict original decoded CFG gate,
+`tools/audit_loot_world_source.py`, verifies every source row's
+actual physical actor identity and selected generator assignments
+directly against both original ZIP archives, using memory-limited
+streamed original root extraction. It is registered in the pre-release
+source runner. **The original source gate still needs an actual run
+with the ZIPs before its outcome can be declared PASS.**
+
 Still **NOT RUN**: original archive revalidation of all world manifest rows; actual Unreal file nesting and BPatch merge behavior; mod PAK/UTOC/UCAS packaging and load order; gameplay impact on crate counts, direct weapon placement, loot respawn, developer quest references and pickups. Original-source confirmation, writer output and in-game acceptance are distinct evidence layers.
 
 See Phase 14A and 14B1 reports for other Loot families and their independently verified CI receipts.

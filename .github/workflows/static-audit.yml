@@ -41,6 +41,11 @@ jobs:
           python -m py_compile tools/audit_loot_direct_source.py
           python tools/audit_loot_direct_source.py --help
 
+      - name: Streaming World Loot decoded ZIP source checker syntax and CLI
+        run: |
+          python -m py_compile tools/audit_loot_world_source.py
+          python tools/audit_loot_world_source.py --help
+
       - name: Pre-release runner and documented inventory smoke
         run: |
           python tools/pre_release.py list

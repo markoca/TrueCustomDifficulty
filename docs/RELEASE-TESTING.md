@@ -326,3 +326,19 @@ Do not treat registered tests as PASS before CI execution.
 Run `dotnet run --project tests/LootWorldRemovalsContract/LootWorldRemovalsContract.csproj -c Release -- --out audit/loot-world-removals-fixtures` (**27 randomized-domain physical actor removal tests**) and `dotnet run --project tests/LootWorldPlacementContract/LootWorldPlacementContract.csproj -c Release -- --out audit/loot-world-placement-fixtures` (**20 weapon/attachment/blueprint/detector placement tests**) in Windows .NET 10. Both are registered in the pre-release writer runner and as `loot-world-removals-windows` and `loot-world-placement-windows` CI jobs. Expected results are invariant-based, never seeded snapshots. Covers all 10 previously untested special world Loot source controls. See [Phase 14B2](DEEP-CFG-AUDIT-PHASE14B2-WORLD-LOOT-2026-10-10.md).
 
 These two suites validate actual app → BPatch paths and randomized target legality, not the original archive provenance or Unreal runtime.
+
+### World Loot decoded original archive source gate (B14)
+
+The `loot-world-original-source-structures` gate invokes:
+`python tools/audit_loot_world_source.py --base-zip BASE --dlc1-zip DLC1 --out audit/loot-world-original-source.json`.
+It streams only the selected physical root prototypes from the large
+original GameData/DLC1 `SpawnActorPrototypes.cfg` files and checks
+the physical actor identities, direct item prototype fields, each
+box's generator family, precise blueprint and weapon/attachment
+generator item indices, physical generator redirects and the one
+DLC1 detector stash item. Every mismatch is a failing finding.
+**This requires matching source ZIPs supplied locally and is not a
+GitHub Windows CI original-source check** (CI has only the repo).
+Run `python tools/pre_release.py source --base-zip ... --dlc1-zip ...`
+before release; store the gate's output JSON. This still does not
+prove in-game Unreal BPatch loading.
