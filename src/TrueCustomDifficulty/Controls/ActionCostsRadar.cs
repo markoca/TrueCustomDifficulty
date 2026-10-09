@@ -306,7 +306,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             4.0,
             4.0);
 
-        DrawText(dc, "AIMING RECOVERY PENALTY", new Point(card.Left + 10.0, card.Top + 8.0), 9.4, text, FontWeights.Bold);
+        DrawText(dc, "AIM REGEN SLOWDOWN", new Point(card.Left + 10.0, card.Top + 8.0), 9.4, text, FontWeights.Bold);
 
         if (_aimParameter is not { } parameter)
             return;
