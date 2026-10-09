@@ -55,3 +55,9 @@ A confirmed boolean control now owns exactly eight concrete assignments: `ValueM
 - Medical `InventoryActionTime` remains intentionally outside difficulty tuning.
 - NPC wounded-state regeneration remains outside the player Health domain.
 - Master-only health controls remain on the Master tab and are not counted among these 16 normal Health controls.
+
+## 2026-10-09 — Display-vs-source reconciliation for Health redesign
+
+The approved Health redesign maps to all 16 previously accepted source controls. Source-by-source native steps, bounds, difficulty references, sign normalization and producer/writer domains are **unchanged**. The large Max Health editor stays bounded 25–200 HP, step 5. The per-medkit source maxima (140/170/200 healing HP), bleeding-treatment maxima (200/30/70/50 removed points) and radiation-treatment maxima (120/200 removed points) are now visible as *real physical chart boundaries*: unlike an unbounded shared graph, clicking outside one item's native range no longer modifies that item. Each source retains native 5-point snapping and individual reference reset.
+
+The fixed 0–200 shared chart is purely a comparison coordinate system, never a new 200-point maximum for every source. Signed treatment CFG deltas remain a separate writer concern. Food Healing remains a boolean checkbox and the two low-health/rate channels remain independent. No synthetic total effective healing, time simulation or runtime-derived regeneration claim is introduced. UI heights in order: Core Health 348, Medical Healing 400, Bleeding Treatment 376, Radiation Treatment 250 DIP. Native geometry and CFG mappings must be checked with the local Wine build.

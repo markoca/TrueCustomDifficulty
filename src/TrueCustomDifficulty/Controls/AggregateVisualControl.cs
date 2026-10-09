@@ -1802,52 +1802,165 @@ public sealed class AggregateVisualControl : FrameworkElement
             9.6, text, FontWeights.Normal);
     }
 
-    // This board only previews raw CFG settings. In particular RegenHP's
-    // runtime tick cadence and which heal effects honor its delay are not
-    // proven, so we deliberately do not draw an invented HP-over-time curve.
-    // Compact 2-column native source controls; no duplicated readout legends.
+    // CORE HEALTH — one large, source-bound HP-capacity ruler followed by
+    // four independent recovery controls. No invented HP-per-second preview.
     private void DrawCoreHealthDashboard(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
     {
         DrawHeader(dc, "CORE HEALTH", "", text, muted, accent);
+
+        if (P("health.maxHP") is { } hp)
+            DrawMaxHealthRuler(dc, hp,
+                new Rect(16.0, 53.0, Math.Max(1.0, ActualWidth - 32.0), 105.0),
+                text, muted, border, accent, panel);
+
         var width = Math.Max(1.0, ActualWidth - 32.0);
-        const double gap = 10.0;
-        var cell = (width - gap) / 2.0;
-        var tracks = new[]
+        const double gap = 12.0;
+        var cellWidth = (width - gap) / 2.0;
+        var controls = new[]
         {
-            ("health.maxHP", "MAX HEALTH"),
             ("health.regenDelay", "RECOVERY DELAY"),
             ("health.baseRegen", "PASSIVE HEALING"),
             ("health.regenerationScalar", "HEALING EFFECTS"),
             ("health.lowHealthRegen", "LOW-HP RECOVERY")
         };
-        for (var i = 0; i < tracks.Length; i++)
+        for (var i = 0; i < controls.Length; i++)
         {
+            var column = i % 2;
             var row = i / 2;
-            var col = i % 2;
-            DrawHorizontalTrackCard(dc, P(tracks[i].Item1), tracks[i].Item2,
-                new Rect(16.0 + col * (cell + gap), 52.0 + row * 79.0,
-                    cell, 71.0), text, muted, border, accent, panel,
+            DrawHorizontalTrackCard(dc, P(controls[i].Item1), controls[i].Item2,
+                new Rect(16.0 + column * (cellWidth + gap),
+                    172.0 + row * 79.0, cellWidth, 71.0),
+                text, muted, border, accent, panel,
                 hideBaseText: true, healthTypography: true);
         }
     }
 
-    // Dedicated compact two-column radiation treatment; each item keeps
-    // its own editable native source value and vanilla reference marker.
-    private void DrawRadiationTreatmentCompact(DrawingContext dc,
+    private void DrawMaxHealthRuler(
+        DrawingContext dc, ParameterViewModel hp, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
+            card, 4.0, 4.0);
+
+        DrawText(dc, "MAX HEALTH",
+            new Point(card.Left + 15.0, card.Top + 12.0),
+            12.0, text, FontWeights.Bold);
+        var modified = hp.IsValueModifiedFromReference();
+        DrawRightAlignedText(dc, $"{hp.CurrentNumber:0} HP",
+            new Point(card.Right - 15.0, card.Top + 6.0),
+            modified ? 20.2 : 19.0, modified ? accent : text,
+            FontWeights.Bold);
+
+        // The gold rail shows the selected maximum HP setting, never
+        // current in-game damage or a simulated regeneration trajectory.
+        var track = new Rect(card.Left + 18.0, card.Top + 58.0,
+            Math.Max(1.0, card.Width - 36.0), 14.0);
+        var y = track.Top + track.Height / 2.0;
+        var currentX = ValueToX(hp.CurrentNumber, hp.Minimum,
+            hp.Maximum, track, reverse: false);
+        var referenceX = ValueToX(hp.ReferenceNumber, hp.Minimum,
+            hp.Maximum, track, reverse: false);
+
+        dc.DrawLine(new Pen(border, 5.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 5.0),
+            new Point(track.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 1.8),
+            new Point(referenceX, y - 10.0),
+            new Point(referenceX, y + 10.0));
+        dc.DrawEllipse(panel, new Pen(accent,
+            IsSelected(hp) ? 2.6 : 1.8),
+            new Point(currentX, y), 7.0, 7.0);
+        dc.DrawEllipse(accent, null,
+            new Point(currentX, y), 2.5, 2.5);
+
+        AddHorizontalTarget(hp,
+            new Rect(track.Left - 7.0, track.Top - 9.0,
+                track.Width + 14.0, track.Height + 18.0),
+            track, hp.Minimum, hp.Maximum);
+
+        DrawText(dc, $"{hp.Minimum:0} HP",
+            new Point(track.Left, card.Bottom - 20.0),
+            10.4, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{hp.Maximum:0} HP",
+            new Point(track.Right, card.Bottom - 20.0),
+            10.4, muted, FontWeights.Normal);
+    }
+
+    // Common 0..200 radiation-point ruler, with per-source native maximums.
+    // The grey tail on the shorter Scientific Medkit lane is never editable.
+    private void DrawRadiationTreatmentCompact(
+        DrawingContext dc, Brush text, Brush muted,
+        Brush border, Brush accent, Brush panel)
+    {
         DrawHeader(dc, "RADIATION TREATMENT", "", text, muted, accent);
-        var width = Math.Max(1.0, ActualWidth - 32.0);
-        const double gap = 10.0;
-        var cell = (width - gap) / 2.0;
-        DrawHorizontalTrackCard(dc, P("health.ecoMedkitAntirad"),
-            "SCIENTIFIC MEDKIT", new Rect(16.0, 54.0, cell, 72.0),
-            text, muted, border, accent, panel, hideBaseText: true);
-        DrawHorizontalTrackCard(dc, P("health.antiRadRadiation"),
-            "ANTI-RAD", new Rect(16.0 + cell + gap, 54.0, cell, 72.0),
-            text, muted, border, accent, panel, hideBaseText: true);
+        var sources = new[]
+        {
+            (Id: "health.ecoMedkitAntirad", Label: "SCIENTIFIC MEDKIT"),
+            (Id: "health.antiRadRadiation", Label: "ANTI-RAD")
+        };
+
+        const double commonMax = 200.0;
+        var axis = new Rect(164.0, 79.0,
+            Math.Max(1.0, ActualWidth - 192.0), 135.0);
+        DrawText(dc, "RADIATION POINTS REMOVED",
+            new Point(18.0, 55.0), 10.6, muted, FontWeights.SemiBold);
+        foreach (var mark in new[] { 0.0, 50.0, 100.0, 150.0, 200.0 })
+        {
+            var x = axis.Left + axis.Width * mark / commonMax;
+            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.42), 1.0)
+                { DashStyle = DashStyles.Dot },
+                new Point(x, 84.0), new Point(x, 212.0));
+            DrawCenteredText(dc, $"{mark:0}",
+                new Point(x, 76.0), 10.0, muted, FontWeights.Normal);
+        }
+
+        for (var i = 0; i < sources.Length; i++)
+        {
+            var parameter = P(sources[i].Id);
+            if (parameter is null) continue;
+
+            var rowTop = 102.0 + i * 84.0;
+            var modified = parameter.IsValueModifiedFromReference();
+            DrawText(dc, sources[i].Label,
+                new Point(18.0, rowTop - 2.0),
+                11.4, text, FontWeights.Bold);
+            DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.#} PTS",
+                new Point(ActualWidth - 29.0, rowTop - 4.0),
+                modified ? 13.8 : 12.6, modified ? accent : text,
+                FontWeights.Bold);
+
+            var y = rowTop + 31.0;
+            var nativeWidth = Math.Max(1.0,
+                axis.Width * parameter.Maximum / commonMax);
+            var track = new Rect(axis.Left, y - 6.0, nativeWidth, 12.0);
+            var nativeEndX = track.Right;
+            var currentX = ValueToX(parameter.CurrentNumber,
+                parameter.Minimum, parameter.Maximum, track, false);
+            var referenceX = ValueToX(parameter.ReferenceNumber,
+                parameter.Minimum, parameter.Maximum, track, false);
+
+            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.32), 2.0),
+                new Point(nativeEndX, y), new Point(axis.Right, y));
+            dc.DrawLine(new Pen(border, 4.0),
+                new Point(track.Left, y), new Point(track.Right, y));
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.0),
+                new Point(track.Left, y), new Point(currentX, y));
+            dc.DrawLine(new Pen(muted, 1.8),
+                new Point(referenceX, y - 9.0),
+                new Point(referenceX, y + 9.0));
+            dc.DrawEllipse(panel, new Pen(accent,
+                IsSelected(parameter) ? 2.6 : 1.7),
+                new Point(currentX, y), 6.5, 6.5);
+            dc.DrawEllipse(accent, null,
+                new Point(currentX, y), 2.5, 2.5);
+            AddHorizontalTarget(parameter,
+                new Rect(track.Left - 5.0, track.Top - 10.0,
+                    track.Width + 5.0, track.Height + 20.0),
+                track, parameter.Minimum, parameter.Maximum);
+        }
     }
 
     // Three source-exact tuning lanes: no invented headshot damage formula,
@@ -2461,62 +2574,103 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // Four independent source parameters: Bandage and three medkits on a
-    // single real-unit scale below. Grey ticks are the authored vanilla values.
-    private void DrawBleedingTreatmentMixer(DrawingContext dc, Brush text,
-        Brush muted, Brush border, Brush accent, Brush panel)
+    // BLEEDING TREATMENT — four native point quantities on a comparable
+    // common 0–200 ruler. Every lane remains a separate CFG source.
+    private void DrawBleedingTreatmentMixer(
+        DrawingContext dc, Brush text, Brush muted,
+        Brush border, Brush accent, Brush panel)
     {
-        var bandage = P("health.bandageBleeding");
-        var medkit = P("health.medkitBleeding");
-        var army = P("health.armyMedkitBleeding");
-        var scientific = P("health.ecoMedkitBleeding");
-        DrawHeader(dc, "BLEEDING TREATMENT", "", text, muted, accent);
-        if (bandage is null || medkit is null || army is null || scientific is null)
+        var parameters = new[]
+        {
+            P("health.bandageBleeding"),
+            P("health.medkitBleeding"),
+            P("health.armyMedkitBleeding"),
+            P("health.ecoMedkitBleeding")
+        };
+        if (parameters.Any(p => p is null))
             return;
 
-        DrawText(dc, "BLEEDING REMOVAL",
-            new Point(18, 56), 10.6, text, FontWeights.Bold);
-        DrawText(dc, "BLEEDING POINTS", new Point(18, 78),
-            9.0, muted, FontWeights.SemiBold);
+        DrawHeader(dc, "BLEEDING TREATMENT", "", text, muted, accent);
+        DrawText(dc, "BLEEDING POINTS REMOVED",
+            new Point(18.0, 58.0),
+            11.0, muted, FontWeights.SemiBold);
 
-        var items = new[] { bandage, medkit, army, scientific };
-        var names = new[] { "BANDAGE", "MEDKIT", "ARMY MEDKIT", "SCIENTIFIC MEDKIT" };
-        const double maximum = 200.0; // Shared display scale, not source slider maximum.
-        var plot = new Rect(50, 115, Math.Max(1.0, ActualWidth - 70), 209);
+        const double commonMaximum = 200.0;
+        var chart = new Rect(51.0, 119.0,
+            Math.Max(1.0, ActualWidth - 76.0), 197.0);
+
         for (var tick = 0; tick <= 200; tick += 50)
         {
-            var y = plot.Bottom - plot.Height * tick / maximum;
-            dc.DrawLine(new Pen(CloneWithOpacity(border, .55), .8),
-                new Point(plot.Left, y), new Point(plot.Right, y));
-            DrawRightAlignedText(dc, $"{tick}", new Point(plot.Left - 8, y - 8),
-                8.6, muted, FontWeights.Normal);
+            var y = ValueToY(tick, 0.0, commonMaximum, chart);
+            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.47), 1.0),
+                new Point(chart.Left, y),
+                new Point(chart.Right, y));
+            DrawRightAlignedText(dc, $"{tick}",
+                new Point(chart.Left - 9.0, y - 7.0),
+                10.4, muted, FontWeights.SemiBold);
         }
 
-        var cellWidth = plot.Width / items.Length;
-        for (var i = 0; i < items.Length; i++)
+        var width = chart.Width / parameters.Length;
+        var titles = new[]
         {
-            var p = items[i];
-            var center = plot.Left + cellWidth * (i + .5);
-            var barWidth = Math.Min(72.0, cellWidth * .46);
-            var currentY = plot.Bottom - plot.Height * Math.Clamp(p.CurrentNumber / maximum, 0, 1);
-            var referenceY = plot.Bottom - plot.Height * Math.Clamp(p.ReferenceNumber / maximum, 0, 1);
-            dc.DrawRectangle(CloneWithOpacity(accent, .66), null,
-                new Rect(center - barWidth / 2, currentY, barWidth,
-                    Math.Max(.5, plot.Bottom - currentY)));
-            // Full-width grey notch at this particular medkit's vanilla amount.
-            dc.DrawLine(new Pen(muted, 2.2),
-                new Point(center - barWidth / 2 - 10, referenceY),
-                new Point(center + barWidth / 2 + 10, referenceY));
-            DrawCenteredNumericChanges(dc, $"{p.CurrentNumber:0.#} PTS",
-                new Point(center, 92), 11.2, text, accent, FontWeights.Bold,
-                p.IsValueModifiedFromReference());
-            DrawCenteredText(dc, names[i], new Point(center, 345),
-                9.8, text, FontWeights.Bold);
-            // Native independent 5-point steps/bounds; chart Y is shared for
-            // comparisons, so clamp each interaction to its own source range.
-            var targetRect = new Rect(plot.Left + cellWidth * i + 5,
-                plot.Top, cellWidth - 10, plot.Height);
-            AddVerticalTarget(p, targetRect, plot, 0, maximum);
+            ("BANDAGE", ""),
+            ("MEDKIT", ""),
+            ("ARMY", "MEDKIT"),
+            ("SCIENTIFIC", "MEDKIT")
+        };
+
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            var parameter = parameters[i]!;
+            var centerX = chart.Left + (i + .5) * width;
+            var barWidth = Math.Min(75.0, width * .45);
+            var currentY = ValueToY(parameter.CurrentNumber,
+                0.0, commonMaximum, chart);
+            var referenceY = ValueToY(parameter.ReferenceNumber,
+                0.0, commonMaximum, chart);
+            var nativeTop = ValueToY(parameter.Maximum,
+                0.0, commonMaximum, chart);
+            var label = titles[i];
+
+            // Pale vertical band denotes the allowed native domain,
+            // not a fictitious ability to edit this channel to 200 PTS.
+            dc.DrawRectangle(CloneWithOpacity(border, 0.11), null,
+                new Rect(centerX - barWidth / 2.0, nativeTop, barWidth,
+                    Math.Max(1.0, chart.Bottom - nativeTop)));
+            dc.DrawRectangle(CloneWithOpacity(accent, 0.65), null,
+                new Rect(centerX - barWidth / 2.0, currentY, barWidth,
+                    Math.Max(0.5, chart.Bottom - currentY)));
+            dc.DrawLine(new Pen(muted, 2.0),
+                new Point(centerX - barWidth / 2.0 - 7.0, referenceY),
+                new Point(centerX + barWidth / 2.0 + 7.0, referenceY));
+            // Real channel maximum remains readable without duplicating
+            // a Base / Vanilla label or brightening a reference value.
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.65), 1.0),
+                new Point(centerX - barWidth / 2.0, nativeTop),
+                new Point(centerX + barWidth / 2.0, nativeTop));
+
+            DrawCenteredNumericChanges(dc,
+                $"{parameter.CurrentNumber:0.#} PTS",
+                new Point(centerX, 98.0),
+                12.4, text, accent, FontWeights.Bold,
+                parameter.IsValueModifiedFromReference());
+            DrawCenteredText(dc, label.Item1,
+                new Point(centerX, 337.0),
+                11.2, text, FontWeights.Bold);
+            if (!string.IsNullOrEmpty(label.Item2))
+                DrawCenteredText(dc, label.Item2,
+                    new Point(centerX, 353.0),
+                    10.4, text, FontWeights.SemiBold);
+
+            // Hit map includes only this channel's real 0..source.Maximum.
+            // Mapping a shorter vertical rectangle to the native range
+            // keeps the existing 5-point snapping and precise hover halo.
+            var map = new Rect(centerX - barWidth / 2.0,
+                nativeTop, barWidth, Math.Max(1.0, chart.Bottom - nativeTop));
+            var hit = new Rect(centerX - width / 2.0 + 5.0,
+                nativeTop, Math.Max(1.0, width - 10.0),
+                Math.Max(1.0, chart.Bottom - nativeTop));
+            AddVerticalTarget(parameter, hit, map, 0.0, parameter.Maximum);
         }
     }
 
@@ -4852,15 +5006,15 @@ public sealed class AggregateVisualControl : FrameworkElement
             "StashRewardProfile" => GetMixerHeight(width, StashRewardMixerChannels.Length),
             "PhysicalLimits" => 335.0,
             "StaminaCore" => 259.0,
-            "MutantCombatPressure" or "WaterStaminaPressure"
-                or "RadiationTreatment" => 149.0,
+            "MutantCombatPressure" or "WaterStaminaPressure" => 149.0,
+            "RadiationTreatment" => 250.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "BleedingTreatmentMixer" => 376.0,
             "EquipmentWearBalance" => 320.0,
             "PsyPhantomPressure" => 465.0,
             "HumanCombatProfile" => 465.0,
             "PlayerWeaponProfile" => 169.0,
-            "CoreHealthDashboard" => 302.0,
+            "CoreHealthDashboard" => 348.0,
             "SevereFatiguePenaltyBoard" => 390.0,
             "MasterMedicalHealing" => 390.0,
             "MasterLowHealth" => 235.0,

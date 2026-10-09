@@ -171,6 +171,13 @@ public sealed class MedicalHealingRadar : FrameworkElement
                 (1.0 - Math.Clamp(p.CurrentNumber / chartMaximum, 0, 1));
             var vanillaY = chartTop + chartHeight *
                 (1.0 - Math.Clamp(p.ReferenceNumber / chartMaximum, 0, 1));
+            var nativeTop = chartTop + chartHeight *
+                (1.0 - Math.Clamp(p.Maximum / chartMaximum, 0, 1));
+            // Visualize only the real editable ceiling for this particular
+            // medkit. Shared HP units must never stretch 140 HP to 200 HP.
+            dc.DrawRectangle(CloneWithOpacity(border, .10), null,
+                new Rect(centerX - barWidth / 2, nativeTop,
+                    barWidth, Math.Max(.5, barBottom - nativeTop)));
             dc.DrawRectangle(CloneWithOpacity(accent, .65), null,
                 new Rect(centerX - barWidth / 2, barTop,
                     barWidth, Math.Max(0.5, barBottom - barTop)));
@@ -178,6 +185,14 @@ public sealed class MedicalHealingRadar : FrameworkElement
             // the top of the active bar gets the shared handle halo.
             ControlHoverGlow.Draw(dc, new Point(centerX, barTop), accent,
                 _hoverRow == i && _hoverAction == HitAction.Chart);
+            dc.DrawEllipse(panel, new Pen(accent,
+                _selected == i ? 2.5 : 1.7),
+                new Point(centerX, barTop), 6.3, 6.3);
+            dc.DrawEllipse(accent, null,
+                new Point(centerX, barTop), 2.4, 2.4);
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .6), 1.0),
+                new Point(centerX - barWidth / 2.0, nativeTop),
+                new Point(centerX + barWidth / 2.0, nativeTop));
             dc.DrawLine(new Pen(muted, 2.4),
                 new Point(centerX - barWidth / 2 - 11, vanillaY),
                 new Point(centerX + barWidth / 2 + 11, vanillaY));
@@ -193,7 +208,8 @@ public sealed class MedicalHealingRadar : FrameworkElement
             DrawCenteredText(dc, Items[i].Label, new Point(centerX, 366),
                 HealthTypography.Label, text, FontWeights.Bold);
             _hits.Add(new HitArea(new Rect(centerX - columnWidth / 2 + 5,
-                chartTop, columnWidth - 10, chartHeight), i, HitAction.Chart));
+                nativeTop, columnWidth - 10,
+                Math.Max(1.0, barBottom - nativeTop)), i, HitAction.Chart));
         }
     }
 

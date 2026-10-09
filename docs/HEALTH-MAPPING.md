@@ -91,3 +91,9 @@ Negative values subtract RadiationPoints. These direct treatments do not alter r
 ## v0.2.45 UI sign boundary
 
 Bleeding/radiation treatment rows above document the **raw CFG values**. The normal UI now presents their positive removal magnitude (for example Bandage `100` removal), and the writer emits the corresponding negative CFG delta (`-100`) with `negateSet`. This keeps stronger treatment moving to the right while preserving the original engine value at vanilla.
+
+## 2026-10-09 — Health graphic UI mapping (no CFG writer changes)
+
+Sixteen player-facing source parameters are still present: Core Health five (`maxHP`, `regenDelay`, `baseRegen`, `regenerationScalar`, `lowHealthRegen`), Medical Healing five (`bandageHealing`, `medkitHealing`, `armyMedkitHealing`, `ecoMedkitHealing`, `foodHealing`), Bleeding Treatment four (`bandageBleeding`, `medkitBleeding`, `armyMedkitBleeding`, `ecoMedkitBleeding`) and Radiation Treatment two (`ecoMedkitAntirad`, `antiRadRadiation`), all with prefix `health.`.
+
+The 25–200 HP ruler and all three treatment charts are **direct editors of these existing sources**. Comparison axes use common units but do not overwrite per-source limits: Medkit HP 140, Army HP 170, Scientific HP 200; bleeding removal 200/30/70/50; Scientific radiation removal 120 and Anti-Rad removal 200. Vertical treatment bars have individually bounded hit regions; Radiation Scientific's excess 120–200 area is read-only grey. Five-point native amount steps remain. Current positive recovery/removal magnitudes stay normal Health UI numbers; the underlying sign inversion for CFG deltas remains handled by the existing writer. This is visual-only and does not add effects, durations, change other runtime fields, or touch the existing audited NO-UI boundaries.
