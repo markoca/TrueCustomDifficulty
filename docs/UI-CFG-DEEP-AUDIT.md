@@ -1,4 +1,8 @@
 # UI → Real CFG Deep Audit
+
+> **HISTORICAL SNAPSHOT ONLY — v0.9.26.51.** The counts below (199 catalog / 188 editable) and its PASS apply **only to that earlier snapshot**. They do NOT describe the current 2026-10-09 source tree. The active catalog is 244 parameters / 232 editable dimensions, and this earlier audit missed six subsequently introduced mutant MaxHP writer routes. See [Deep CFG audit phase 1 (2026-10-09)](DEEP-CFG-AUDIT-2026-10-09.md) for the source-verified correction and current counts. Retained as an archived comparison, not as the current release approval.
+
+
 **Project:** True Custom Difficulty  
 **Audit target:** v0.9.26.51  
 **Scope:** every player-editable UI dimension, including every backing axis hidden behind aggregate radar cards.

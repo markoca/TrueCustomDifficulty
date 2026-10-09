@@ -1,5 +1,13 @@
 # Mutant Health Audit
 
+## 2026-10-09 — Writer-route deep CFG verification (supersedes historical release notes)
+
+The active 14-source Mutant Health editor and catalog had six members lacking direct writer edit points. The missing routes have now been added to `src/TrueCustomDifficulty/Data/cfg-writer-baseline.json`, **source-verified against the user's actual decoded GameData archive**, not invented: `Blinddog=63`, `Boar=300`, `Flesh=280`, `Poltergeist=400`, `Snork=150`, `Tushkan=19`. Combined with the previously supported eight family scalers (Bloodsucker+MistBloodsucker and Burer+ShootingSpecial included), this is now **14 controls / 16 direct MaxHP edit points**. Base-game `GameData/ObjPrototypes.cfg`, under each exact named prototype's `VitalParams.MaxHP`, confirms every 16 baseline `sourceRaw` values. `tools/audit_cfg_dump_provenance.py` reproduces this test with actual CFG ZIP inputs. **Native slider is 0.05–2×, step 0.05×**, not the historical 0.25× minimum stated farther below. UI layout is **seven rows × two columns** (14 cards), not two rows × seven columns. No DLC boss source or difficulty-scoped mutant MaxHP field was added. This is a concrete writer-route repair and source value verification, not a runtime gameplay test.
+
+Source dump: `STALKER2-GameData-CFG(4).zip` SHA-256 `937b3fb4c74d1311b6e052c010aa0795073ccdc60d2ca6d8b5228ee3ce0b6083`. Full counts, source scope and remaining unknowns: [DEEP-CFG-AUDIT-2026-10-09.md](../DEEP-CFG-AUDIT-2026-10-09.md).
+
+
+
 Version: 0.9.26.44 — audit-only
 
 ## Result

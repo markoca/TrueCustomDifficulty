@@ -1,5 +1,13 @@
 # True Custom Difficulty
 
+## Deep CFG audit — Phase 1 source-backed repair (2026-10-09)
+
+A fresh audit against the user's vanilla GameData and DLC1 CFG archives found **six missing production writer baseline entries** for existing Mutant Health cards (Blind Dog, Boar, Flesh, Poltergeist, Snork and Tushkan). Their actual authored `VitalParams.MaxHP` values, along with all prior mutant HP sources, were independently checked: **14 mutant families / 16 actual MaxHP fields verified**. The writer baseline now covers the current **244-parameter catalog** with **1,224 direct CFG edit points** (202 distinct direct parameter IDs). All **13 direct-input CFG filenames** exist in the correct supplied base or DLC1 archive; no direct concrete target is multiply owned. 231 active editable dimensions are represented by 152 visible catalog anchors plus 79 hidden composite backings; 13 internal/audit-only controls remain excluded, including `survival.drunknessThresholdScale` (explicitly hidden until the OverDrunkness chain is understood).
+
+Updated the outdated production integration and UI→CFG audit gates and repaired the former eight-mutant-health consistency gate. Added `tools/audit_cfg_dump_provenance.py` for reproducible archive-level input and Mutant HP verification. The older `docs/UI-CFG-DEEP-AUDIT.md` represents a **historical v0.9.26.51 snapshot**, not current release evidence; the authoritative initial phase results and follow-up audit queue are in [docs/DEEP-CFG-AUDIT-2026-10-09.md](docs/DEEP-CFG-AUDIT-2026-10-09.md). **Do not treat file presence or direct writer route coverage as runtime gameplay confirmation.** Other 1,208 direct source values and the special writer families remain for subsequent deep CFG passes; no v1.0 release is authorized.
+
+
+
 ## Master tab — final UI redesign pass (2026-10-09)
 
 Master now has five compact, player-facing punishment panels: **Starvation Penalties**, **Severe Fatigue**, **Radiation Penalty**, **Low Health Penalty**, and **Consumable Effect Penalties**. The existing **5 native mechanics toggles and 15 source-bound child editors** are preserved, as are all original `AdditionalMechanicsEffects` dependencies, toggle-gated CFG output rules and preset IDs. ON makes the children editable; OFF preserves their staged values in disabled/muted tracks. All cards share the Stamina Usage-style label/current/rail anatomy, bounded native min/max references, gold only for changed numerics and attached units, and shared handle-only hover glow. Two compact columns reflow to one below 672 editor DIP.

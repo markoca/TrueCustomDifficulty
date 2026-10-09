@@ -47,6 +47,8 @@ AGGREGATES = {
         "combat.mutantHealth.bloodsucker","combat.mutantHealth.chimera","combat.mutantHealth.deer",
         "combat.mutantHealth.pseudogiant","combat.mutantHealth.pseudodog","combat.mutantHealth.burer",
         "combat.mutantHealth.bayun","combat.mutantHealth.controller",
+        "combat.mutantHealth.blinddog","combat.mutantHealth.boar","combat.mutantHealth.flesh",
+        "combat.mutantHealth.poltergeist","combat.mutantHealth.snork","combat.mutantHealth.tushkan",
     ],
     "Mutant Special Attack Cooldown": [
         "combat.mutantCooldown.bloodsucker","combat.mutantCooldown.chimera","combat.mutantCooldown.deer",
@@ -55,8 +57,12 @@ AGGREGATES = {
     ],
 }
 
+# Unlike aggregate backing members, these source IDs are intentionally
+# audit-only, not exposed by a native or aggregate editor.
 EXPECTED_HIDDEN_NON_UI = {
     "economy.repairDifficultyCost",
+    "alife.mutantSpawn.generic",
+    "survival.drunknessThresholdScale",
     "stamina.sprintDisableThreshold",
     "stamina.sprintRecoveryDelay",
     "stamina.lowRecoveryThreshold",
@@ -93,33 +99,51 @@ def main():
     by_id = {p["id"]: p for p in parameters}
     all_ids = set(by_id)
 
-    if len(parameters) != 199:
-        fail(f"catalog count drifted: {len(parameters)} != 199")
+    # These are the CURRENT catalog invariants, not v0.9.26.51's 199/188
+    # obsolete snapshot. The core must route every parameter, even hidden
+    # aggregate backings; 13 independent source IDs are audit-only.
+    if len(parameters) != 244:
+        fail(f"catalog count drifted: {len(parameters)} != 244")
+    if len(all_ids) != len(parameters):
+        fail("duplicate catalog parameter IDs")
 
     visible_ids = {p["id"] for p in parameters if p.get("exposeInUi", True)}
+    hidden_ids = all_ids - visible_ids
     aggregate_ids = {pid for ids in AGGREGATES.values() for pid in ids}
-    effective_ui_ids = visible_ids | aggregate_ids
+    effective_ui_ids = all_ids - EXPECTED_HIDDEN_NON_UI
     hidden_non_ui = all_ids - effective_ui_ids
+    backing_ids = hidden_ids - EXPECTED_HIDDEN_NON_UI
 
-    if len(visible_ids) != 128:
-        fail(f"visible card count drifted: {len(visible_ids)} != 128")
-    if len(aggregate_ids) != 70:
-        fail(f"aggregate backing dimension count drifted: {len(aggregate_ids)} != 70")
-    if len(effective_ui_ids) != 188:
-        fail(f"effective UI dimension count drifted: {len(effective_ui_ids)} != 188")
-    if hidden_non_ui != EXPECTED_HIDDEN_NON_UI:
-        fail(f"hidden non-UI contract drifted: {sorted(hidden_non_ui)}")
+    if len(visible_ids) != 152 or len(hidden_ids) != 92:
+        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 152/92")
+    if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
+        fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
+    if len(effective_ui_ids) != 231 or len(backing_ids) != 79:
+        fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
-    # Every aggregate must have exactly one visible anchor, and all backing IDs must exist.
+    # Named legacy aggregate cohorts are evidence, not the complete editor
+    # roster. Some families (e.g. individual mutant drops) have more than one
+    # visible member; enforcing 'exactly one visible anchor' was already stale.
     for name, ids in AGGREGATES.items():
+        if len(set(ids)) != len(ids):
+            fail(f"{name}: duplicate backing source in aggregate cohort")
         missing = [pid for pid in ids if pid not in by_id]
         if missing:
-            fail(f"{name}: missing backing IDs {missing}")
-        visible_members = [pid for pid in ids if by_id[pid].get("exposeInUi", True)]
-        if len(visible_members) != 1:
-            fail(f"{name}: expected one visible anchor, got {visible_members}")
-        if by_id[visible_members[0]].get("label") != name:
-            fail(f"{name}: visible anchor label drifted to {by_id[visible_members[0]].get('label')!r}")
+            fail(f"{name}: missing source IDs {missing}")
+        if not any(pid in visible_ids for pid in ids):
+            fail(f"{name}: no player-visible entry for aggregate cohort")
+
+    # Every hidden-but-editable parameter must be referenced by live source
+    # code, rather than present only in catalog/baseline/documentation.
+    live_sources = [
+        ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs",
+        ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs",
+        *sorted((ROOT / "src" / "TrueCustomDifficulty" / "Controls").glob("*.cs")),
+    ]
+    rendered_text = "\n".join(path.read_text(encoding="utf-8") for path in live_sources)
+    unreferenced = sorted(pid for pid in backing_ids if f'"{pid}"' not in rendered_text)
+    if unreferenced:
+        fail(f"hidden editable source IDs without live UI/VM reference: {unreferenced}")
 
     edit_points = baseline.get("editPoints", [])
     direct_ids = {e["parameterId"] for e in edit_points}
@@ -189,8 +213,9 @@ def main():
 
     print("True Custom Difficulty — UI → real CFG contract audit")
     print(f"[OK] catalog: {len(parameters)} parameters")
-    print(f"[OK] visible UI cards: {len(visible_ids)}")
-    print(f"[OK] aggregate radars/cards: {len(AGGREGATES)} / {len(aggregate_ids)} backing dimensions")
+    print(f"[OK] visible anchor parameters: {len(visible_ids)}")
+    print(f"[OK] named audited aggregate cohorts: {len(AGGREGATES)} / {len(aggregate_ids)} member references")
+    print(f"[OK] hidden active aggregate backings referenced by UI code: {len(backing_ids)}")
     print(f"[OK] effective player-editable dimensions: {len(effective_ui_ids)}")
     print(f"[OK] intentionally hidden non-UI settings: {len(hidden_non_ui)}")
     print(f"[OK] direct writer parameters: {len(direct_ids)} / {len(edit_points)} concrete edit points")

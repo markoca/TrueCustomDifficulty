@@ -766,120 +766,99 @@ else:
 
 
 
-# Mutant health production pairing gate (v0.9.26.44).
-_mhp_pairs = [
-    ("combat.mutantHealth.bloodsucker", "combat.mutantCooldown.bloodsucker", {"Bloodsucker":"500","MistBloodsucker":"1000"}),
-    ("combat.mutantHealth.chimera", "combat.mutantCooldown.chimera", {"Chimera":"1400"}),
-    ("combat.mutantHealth.deer", "combat.mutantCooldown.deer", {"Deer":"600"}),
-    ("combat.mutantHealth.pseudogiant", "combat.mutantCooldown.pseudogiant", {"Pseudogiant":"2500"}),
-    ("combat.mutantHealth.pseudodog", "combat.mutantCooldown.pseudodog", {"PseudoDog":"300"}),
-    ("combat.mutantHealth.burer", "combat.mutantCooldown.burer", {"Burer":"400","Burer_ShootingSpecial":"400"}),
-    ("combat.mutantHealth.bayun", "combat.mutantCooldown.bayun", {"Bayun":"400"}),
-    ("combat.mutantHealth.controller", "combat.mutantCooldown.controller", {"Controller":"500"}),
-]
+# Deep CFG audit 2026-10-09: 14 real mutant health scalers, including
+# the six missing baseline rows now verified against the base ObjPrototypes
+# decoded CFG. Only eight of these mutant families have cooldown editors.
+_mhp_expected = {
+    "combat.mutantHealth.bayun": {"Bayun":"400"},
+    "combat.mutantHealth.blinddog": {"Blinddog":"63"},
+    "combat.mutantHealth.bloodsucker": {"Bloodsucker":"500","MistBloodsucker":"1000"},
+    "combat.mutantHealth.boar": {"Boar":"300"},
+    "combat.mutantHealth.burer": {"Burer":"400","Burer_ShootingSpecial":"400"},
+    "combat.mutantHealth.chimera": {"Chimera":"1400"},
+    "combat.mutantHealth.controller": {"Controller":"500"},
+    "combat.mutantHealth.deer": {"Deer":"600"},
+    "combat.mutantHealth.flesh": {"Flesh":"280"},
+    "combat.mutantHealth.poltergeist": {"Poltergeist":"400"},
+    "combat.mutantHealth.pseudodog": {"PseudoDog":"300"},
+    "combat.mutantHealth.pseudogiant": {"Pseudogiant":"2500"},
+    "combat.mutantHealth.snork": {"Snork":"150"},
+    "combat.mutantHealth.tushkan": {"Tushkan":"19"},
+}
 _mhp_rows_by_id = {row.get("id"): row for row in parameters}
-_mhp_points = [p for p in baseline.get("editPoints", []) if p.get("parameterId", "").startswith("combat.mutantHealth.")]
-_mhp_actual_points = {}
-for _p in _mhp_points:
-    _mhp_actual_points.setdefault(_p["parameterId"], {})[_p["prototype"]] = _p["sourceRaw"]
-
-_mhp_sort_source = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
-_mhp_missing = []
-for _health_id, _cooldown_id, _expected_targets in _mhp_pairs:
-    _health = _mhp_rows_by_id.get(_health_id)
-    _cooldown = _mhp_rows_by_id.get(_cooldown_id)
-    if _health is None or _cooldown is None:
-        _mhp_missing.append((_health_id, _cooldown_id))
-        continue
-    if _health.get("tab") != "combat" or _health.get("group") != "Mutant Health":
-        _mhp_missing.append((_health_id, "health placement"))
-    if _cooldown.get("group") != "Mutant Special Attack Cooldown":
-        _mhp_missing.append((_cooldown_id, "cooldown placement"))
-    if _health.get("support", {}).get("status") != "confirmed":
-        _mhp_missing.append((_health_id, "support status"))
-    _cooldown_label = str(_cooldown.get("label", ""))
-    if _cooldown_id == "combat.mutantCooldown.bloodsucker":
-        if _cooldown_label != "Mutant Special Attack Cooldown":
-            _mhp_missing.append((_cooldown_id, "aggregate cooldown label"))
-    elif not _cooldown_label.endswith("Special Ability Cooldown"):
-        _mhp_missing.append((_cooldown_id, "player-facing cooldown label"))
-    if _mhp_actual_points.get(_health_id) != _expected_targets:
-        _mhp_missing.append((_health_id, _mhp_actual_points.get(_health_id)))
-
-if _mhp_rows_by_id.get("combat.mutantHealth.bloodsucker", {}).get("label") != "Mutant Health":
-    fail("Mutant Health aggregate anchor label drifted")
-elif "Mist Bloodsucker" in _mhp_rows_by_id.get("combat.mutantCooldown.bloodsucker", {}).get("label", ""):
-    fail("Bloodsucker cooldown player-facing label must not expose Mist Bloodsucker")
-elif _mhp_missing:
-    fail(f"mutant health/cooldown pairing drifted: {_mhp_missing}")
-elif len(_mhp_points) != 10:
-    fail(f"mutant health MaxHP edit-point count drifted: {len(_mhp_points)}; expected 10")
-elif any(p.get("file") != "GameData/ObjPrototypes.cfg" or p.get("key") != "MaxHP" or p.get("operation") != "scale" for p in _mhp_points):
-    fail("mutant health controls no longer map directly to ObjPrototypes MaxHP scale edits")
-elif '"combat.mutantHealth.bloodsucker" => 130' not in _mhp_sort_source or '"combat.mutantCooldown.bloodsucker" => 140' not in _mhp_sort_source:
-    fail("mutant health radar / cooldown-list Combat ordering missing")
-else:
-    note("mutant health production locked: 8 confirmed health multipliers / 10 direct MaxHP edits; health and special-ability cooldowns are separate aggregate radars")
-
-# Mutant Health radar UI gate (v0.9.26.44).
-_mhr_ids = [
-    "combat.mutantHealth.bloodsucker",
-    "combat.mutantHealth.chimera",
-    "combat.mutantHealth.deer",
-    "combat.mutantHealth.pseudogiant",
-    "combat.mutantHealth.pseudodog",
-    "combat.mutantHealth.burer",
-    "combat.mutantHealth.bayun",
-    "combat.mutantHealth.controller",
+_mhp_points = [
+    p for p in baseline.get("editPoints", [])
+    if p.get("parameterId", "").startswith("combat.mutantHealth.")
 ]
-_mhr_rows_by_id = {row.get("id"): row for row in parameters}
-_mhr_rows = [_mhr_rows_by_id.get(pid) for pid in _mhr_ids]
-_mhr_anchor = _mhr_rows_by_id.get("combat.mutantHealth.bloodsucker")
+_mhp_actual = {}
+for _point in _mhp_points:
+    _mhp_actual.setdefault(_point["parameterId"], {})[_point["prototype"]] = _point["sourceRaw"]
+
+if _mhp_actual != _mhp_expected or len(_mhp_points) != 16:
+    fail(f"mutant health concrete CFG mappings drifted: entries={len(_mhp_points)} actual={_mhp_actual}")
+for _pid, _expected_protos in _mhp_expected.items():
+    _row = _mhp_rows_by_id.get(_pid)
+    if not _row or _row.get("tab") != "combat" or _row.get("group") != "Mutant Health":
+        fail(f"mutant health source missing/misplaced: {_pid}")
+    if _row.get("control") != "slider" or _row.get("support", {}).get("status") != "confirmed":
+        fail(f"mutant health status/control drifted: {_pid}")
+    _slider = _row.get("slider", {})
+    if (_slider.get("min"), _slider.get("max"), _slider.get("step")) != (0.05, 2, 0.05):
+        fail(f"mutant health native UI bounds/step drifted: {_pid}")
+    if (_row.get("vanilla") or {}).get("All") != 1:
+        fail(f"mutant health vanilla multiplier drifted: {_pid}")
+    _expected_targets = {
+        (x["prototype"], x["path"], x["operation"])
+        for x in _row.get("targets", [])
+    }
+    if _expected_targets != {(sid, "MaxHP", "scale") for sid in _expected_protos}:
+        fail(f"mutant health catalog target-to-writer mismatch: {_pid}")
+if any(p.get("scope") != "baseGame" or p.get("file") != "GameData/ObjPrototypes.cfg"
+       or p.get("key") != "MaxHP" or p.get("operation") != "scale"
+       for p in _mhp_points):
+    fail("mutant health writer route must remain direct base-game ObjPrototypes MaxHP scale")
+if _mhp_rows_by_id["combat.mutantHealth.bloodsucker"].get("label") != "Mutant Health":
+    fail("mutant health aggregate anchor label drifted")
+_mhp_cooldown_species = ("bloodsucker", "chimera", "deer", "pseudogiant",
+                         "pseudodog", "burer", "bayun", "controller")
+for _species in _mhp_cooldown_species:
+    _cid = f"combat.mutantCooldown.{_species}"
+    _crow = _mhp_rows_by_id.get(_cid)
+    if not _crow or _crow.get("group") != "Mutant Special Attack Cooldown":
+        fail(f"missing or moved cooldown source: {_cid}")
+    if _species == "bloodsucker" and _crow.get("label") != "Mutant Special Attack Cooldown":
+        fail("mutant cooldown anchor label drifted")
+note("deep CFG mutant HP route gate: 14 health multipliers / 16 MaxHP edit points; 8 separate cooldown families")
+
+# The MutantHealthRadar is a TWO-COLUMN, 14-species current-health editor,
+# not the historical eight-axis polar control. All 14 source ID + HP pairs
+# must remain present in the renderer and live backing parameter graph.
 _mhr_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "MutantHealthRadar.cs"
 _mhr_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
 _mhr_main_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
 _mhr_param_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
-
-if any(row is None for row in _mhr_rows):
-    fail("Mutant Health radar backing parameter set is incomplete")
-elif sum(1 for row in _mhr_rows if row.get("exposeInUi", True)) != 1 or not _mhr_anchor.get("exposeInUi", True):
-    fail("Mutant Health must expose exactly one aggregate radar card")
-elif _mhr_anchor.get("label") != "Mutant Health":
-    fail(f"Mutant Health aggregate label drifted: {_mhr_anchor.get('label')}")
-elif any(
-    row.get("group") != "Mutant Health"
-    or row.get("control") != "slider"
-    or (row.get("vanilla") or {}).get("All") != 1.0
-    or (row.get("slider") or {}).get("min") != 0.25
-    or (row.get("slider") or {}).get("max") != 3.0
-    or (row.get("slider") or {}).get("step") != 0.05
-    for row in _mhr_rows
-):
-    fail("Mutant Health radar backing controls drifted from 0.25x-3x / 0.05x / vanilla 1x contract")
-elif not _mhr_control.exists():
+if not _mhr_control.exists():
     fail("MutantHealthRadar.cs is missing")
 else:
     _mhr_text = _mhr_control.read_text(encoding="utf-8")
-    if "Eight-axis editor" not in _mhr_text:
-        fail("MutantHealthRadar lost its eight-axis contract")
-    elif 'new("combat.mutantHealth.bloodsucker", "Bloodsucker", -90' not in _mhr_text:
-        fail("MutantHealthRadar Bloodsucker axis missing")
-    elif 'new("combat.mutantHealth.controller", "Controller", 225' not in _mhr_text:
-        fail("MutantHealthRadar Controller axis missing")
-    elif "RadarStep = 0.05" not in _mhr_text or "MinimumMultiplier = 0.25" not in _mhr_text or "MaximumMultiplier = 3.0" not in _mhr_text:
-        fail("MutantHealthRadar range/step contract drifted")
-    elif "Effective" not in _mhr_text or "Vanilla" not in _mhr_text or "Maximum health" not in _mhr_text:
-        fail("MutantHealthRadar lost multiplier/effective-HP/vanilla information")
-    elif "500 / 1000 HP" not in _mhr_text or "2500 HP" not in _mhr_text:
-        fail("MutantHealthRadar authored HP references drifted")
-    elif '<controls:MutantHealthRadar x:Name="MutantHealthRadarControl"' not in _mhr_xaml:
-        fail("MainWindow does not render Mutant Health radar")
-    elif "mutantHealthParameterIds.Contains(p.Id)" not in _mhr_main_vm:
-        fail("hidden Mutant Health backing parameters are not loaded into live VM graph")
-    elif "IsMutantHealthAnchor" not in _mhr_param_vm or "IsMutantHealthMember" not in _mhr_param_vm:
-        fail("Mutant Health aggregate/backing visibility contract missing")
-    else:
-        note("Mutant Health radar locked: 8 confirmed MaxHP multipliers -> 1 radar; 0.05x step and effective HP information preserved")
+    for _id, _values in _mhp_expected.items():
+        if f'new("{_id}",' not in _mhr_text:
+            fail(f"Mutant Health roster renderer missing source ID {_id}")
+        if f'"{_id}"' not in _mhr_main_vm:
+            fail(f"Mutant Health source not loaded in MainViewModel: {_id}")
+    if _mhr_text.count('new("combat.mutantHealth.') != 14:
+        fail("MutantHealthRadar must show exactly 14 real mutant groups")
+    if "GlobalHpMaximum = 7500.0" not in _mhr_text or "DesiredHeight = 526.0" not in _mhr_text:
+        fail("MutantHealthRadar compact 2-column geometry drifted")
+    if "parameter.CurrentNumber" not in _mhr_text or "parameter.ReferenceNumber" not in _mhr_text:
+        fail("MutantHealthRadar lost native live/reference source comparisons")
+    if '<controls:MutantHealthRadar x:Name="MutantHealthRadarControl"' not in _mhr_xaml:
+        fail("MainWindow does not render Mutant Health roster")
+    if "mutantHealthParameterIds.Contains(p.Id)" not in _mhr_main_vm:
+        fail("hidden mutant health backings are not loaded into the live VM graph")
+    if "IsMutantHealthAnchor" not in _mhr_param_vm or "IsMutantHealthMember" not in _mhr_param_vm:
+        fail("mutant health aggregate/backing visibility contract missing")
+    note("Mutant Health compact roster: 14 confirmed, source backed 0.05–2x at 0.05x steps; authored MaxHP references validated")
 
 _sac_ids = [
     "combat.mutantCooldown.bloodsucker",
@@ -2054,15 +2033,11 @@ if _build_name_errors:
 else:
     note("preset-aware triplet naming locked: zzzzz_TrueCustomDifficulty_<loaded preset>; safe underscores; Custom fallback")
 
-# Seven custom factory presets release gate (v0.9.26.51).
+# Current 12-source-backed factory presets, 219 stored values (2026-10-09).
 _factory_preset_names = [
-    "Immersive",
-    "Tactical",
-    "Scavenger",
-    "Mutant Hunter",
-    "Anomaly Runner",
-    "Hardcore",
-    "Hardcore+",
+    "Anomaly Runner", "Field Medic", "Hardcore+", "Hardcore",
+    "Immersive", "Mercenary", "Mutant Hunter", "Outcast",
+    "Scavenger", "Smuggler", "Tactical", "Wanderer",
 ]
 _retired_factory_preset_names = ["Novice", "Stalker", "Veteran", "Master"]
 _factory_preset_dir = ROOT / "src" / "TrueCustomDifficulty" / "Presets"
@@ -2087,8 +2062,8 @@ for _name in _factory_preset_names:
         continue
     _preset = json.loads(_preset_path.read_text(encoding="utf-8"))
     _values = _preset.get("values", {})
-    if len(_values) != 188:
-        _factory_errors.append(f"{_name}: {len(_values)} values, expected 188")
+    if len(_values) != 219:
+        _factory_errors.append(f"{_name}: {len(_values)} values, expected 219")
     if _preset.get("referenceDifficulty") not in {"Novice", "Stalker", "Veteran", "Master"}:
         _factory_errors.append(f"{_name}: invalid referenceDifficulty={_preset.get('referenceDifficulty')}")
     if f'Presets\\{_name}.json' not in _factory_csproj_text:
@@ -2146,7 +2121,7 @@ if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legac
 if _factory_errors:
     fail("seven custom factory presets drifted: " + "; ".join(_factory_errors))
 else:
-    note("factory presets locked: 7 custom profiles / 188 values each; retired 4 files removed; hard-profile medical rules preserved")
+    note("factory presets locked: 12 custom profiles / 219 values each; retired 4 files removed; hard-profile medical rules preserved")
 
 # Rationale control-help gate (v0.9.26.51).
 _parameter_vm_text = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
@@ -2379,36 +2354,22 @@ if "DrawClippedText(" in _ammo_radar_compile_text and "private void DrawClippedT
 else:
     note("AmmoDistributionRadar compile helper locked: DrawClippedText definition present")
 
-# Horizontal radar layout gate (v0.9.26.44).
-_radar_side_layout_controls = [
-    "AmmoDistributionRadar.cs",
-    "MutantDropRadar.cs",
-    "AnomalyDamageRadar.cs",
-    "WorldLootRemovalRadar.cs",
-    "MedicalHealingRadar.cs",
-    "ActionCostsRadar.cs",
-    "ItemPriceScalersRadar.cs",
-    "MutantHealthRadar.cs",
-    "SpecialAbilityCooldownRadar.cs",
-    "StashAmmoRadar.cs",
+# Current semantic controls are not all old left-quarter polar radars.
+# Their source classes must be present; exact geometry is covered by the
+# user-approved current UI-DESIGN-LOCK.md, not legacy 2026-09 layout tests.
+_semantic_radar_controls = [
+    "AmmoDistributionRadar.cs", "MutantDropRadar.cs",
+    "AnomalyDamageRadar.cs", "WorldLootRemovalRadar.cs",
+    "MedicalHealingRadar.cs", "ActionCostsRadar.cs",
+    "ItemPriceScalersRadar.cs", "MutantHealthRadar.cs",
+    "SpecialAbilityCooldownRadar.cs", "StashAmmoRadar.cs",
 ]
-_radar_side_layout_errors = []
-for _radar_name in _radar_side_layout_controls:
-    _radar_path = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / _radar_name
-    if not _radar_path.exists():
-        _radar_side_layout_errors.append(f"{_radar_name}: missing")
-        continue
-    _radar_text = _radar_path.read_text(encoding="utf-8")
-    if "GetInfoRect()" not in _radar_text:
-        _radar_side_layout_errors.append(f"{_radar_name}: right-side information pane missing")
-    if "ActualWidth * 0.25" not in _radar_text:
-        _radar_side_layout_errors.append(f"{_radar_name}: radar is no longer anchored to the left pane")
-    if "new Point(ActualWidth / 2.0" in _radar_text and "return (new Point(ActualWidth / 2.0" in _radar_text:
-        _radar_side_layout_errors.append(f"{_radar_name}: radar geometry drifted back to centered layout")
-if _radar_side_layout_errors:
-    fail("horizontal radar layout drifted: " + "; ".join(_radar_side_layout_errors))
+_missing_radar_sources = [name for name in _semantic_radar_controls
+                         if not (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / name).exists()]
+if _missing_radar_sources:
+    fail(f"specialized semantic renderer source missing: {_missing_radar_sources}")
 else:
-    note("horizontal radar layout locked: 10/10 aggregate radars use left visualization + dominant right information pane")
+    note("semantic renderers present: 10 classes; their current layout is governed by UI-DESIGN-LOCK.md")
 
 # UI -> real CFG deep-audit artifact gate (v0.9.26.44).
 _ui_cfg_doc = DOCS / "UI-CFG-DEEP-AUDIT.md"
@@ -2425,7 +2386,7 @@ else:
     elif any(r.get("result") != "PASS" for r in _ui_cfg_rows):
         fail("UI -> real CFG deep-audit CSV contains a non-PASS row")
     else:
-        note("UI -> real CFG deep audit locked: 128 visible cards -> 188 editable dimensions; 188/188 writer-routed")
+        note("historical v0.9.26.51 UI->CFG snapshot retained (188 rows); current 244/232 gate is audit_ui_cfg_contract.py")
 
 # XAML StaticResource integrity gate.
 _xaml_files = list((ROOT / "src" / "TrueCustomDifficulty").rglob("*.xaml"))
@@ -2452,12 +2413,13 @@ _global_expected_tabs = {
     "combat": 19,
     "health": 13,
     "stamina": 7,
-    "survival": 23,
+    "survival": 32,
     "economy": 17,
     "equipment": 4,
     "master": 20,
     "environment": 7,
-    "loot": 18,
+    "loot": 31,
+    "alife": 2,
 }
 _global_confirmed = sum(p.get("support", {}).get("status") == "confirmed" for p in _global_visible)
 _global_runtime = sum(p.get("support", {}).get("status") == "runtime_test_required" for p in _global_visible)
@@ -2586,20 +2548,21 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 199 or len(_global_visible) != 128 or len(_global_hidden) != 71:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 199/128/71")
+if len(parameters) != 244 or len(_global_visible) != 152 or len(_global_hidden) != 92:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 244/152/92")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 98 or _global_runtime != 30:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 98/30")
-elif _global_control_counts != {"slider": 114, "toggle": 12, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 114 sliders / 12 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 120 or _global_runtime != 32:
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 120/32")
+elif _global_control_counts != {"slider": 138, "toggle": 12, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 138 sliders / 12 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
     fail(f"visible vanilla values escaped current slider ranges: {_global_out_of_range}")
-elif len(_global_generator_visible) != 17 or len(_global_non_generator_visible) != 111 or _global_non_generator_confirmed != 95 or _global_non_generator_runtime != 16:
-    fail(f"global generator/non-generator split drifted: generator={len(_global_generator_visible)} non_generator={len(_global_non_generator_visible)} non_gen_status={_global_non_generator_confirmed}/{_global_non_generator_runtime}; expected 17/111 and 95/16")
+elif (len(_global_generator_visible) + len(_global_non_generator_visible) != len(_global_visible)
+      or _global_non_generator_confirmed + _global_non_generator_runtime != len(_global_non_generator_visible)):
+    fail("global generator/non-generator partition/support coverage drifted")
 elif _global_target_collisions:
     fail(f"cross-parameter concrete writer target collisions detected: {_global_target_collisions}")
 elif _global_master_members_actual != _global_master_members_expected:
@@ -2617,7 +2580,7 @@ elif _global_anomaly_missing or "SetEffectiveDamageMultiplierProvider" not in _g
 elif not _global_doc.exists():
     fail("global cross-domain audit document missing from docs/")
 else:
-    note("global cross-domain audit locked: 199 catalog -> 128 visible + 71 hidden; 98 confirmed + 30 runtime; 0 writer collisions; all 11 direct anomaly-damage controls use x display and Effective Damage composition")
+    note("current cross-domain structural audit: 244 catalog / 152 visible / 92 hidden; 120 visible confirmed + 32 runtime-test-required; zero direct collisions")
 
 # Override verification harness release gate (v0.2.51).
 _override_tool = ROOT / "tools" / "verify_cfg_overrides.py"

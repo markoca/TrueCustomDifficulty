@@ -22,20 +22,23 @@ SRC = ROOT / "src" / "TrueCustomDifficulty"
 CATALOG = SRC / "Data" / "parameters.json"
 BASELINE = SRC / "Data" / "cfg-writer-baseline.json"
 
-EXPECTED_VISIBLE = 128
-EXPECTED_HIDDEN = 71
-EXPECTED_TOTAL = 199
-EXPECTED_CONTROLS = {"slider": 114, "toggle": 12, "choiceSlider": 1, "range": 1}
+# Locked to the current 244-parameter source catalog. Update only after a
+# provenance-backed change to the catalog and writer baseline in the SAME commit.
+EXPECTED_VISIBLE = 152
+EXPECTED_HIDDEN = 92
+EXPECTED_TOTAL = 244
+EXPECTED_CONTROLS = {"slider": 138, "toggle": 12, "choiceSlider": 1, "range": 1}
 EXPECTED_TAB_COUNTS = {
     "combat": 19,
     "health": 13,
     "stamina": 7,
-    "survival": 23,
+    "survival": 32,
     "economy": 17,
     "equipment": 4,
     "master": 20,
     "environment": 7,
-    "loot": 18,
+    "loot": 31,
+    "alife": 2,
 }
 EXPECTED_DEPENDENCIES = 16
 
