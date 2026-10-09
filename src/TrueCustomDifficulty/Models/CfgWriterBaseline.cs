@@ -88,6 +88,9 @@ public sealed class CfgWriterSpecialBaseline
     [JsonPropertyName("npcMedicalLootProduction")]
     public CfgWriterNpcMedicalLootProduction NpcMedicalLootProduction { get; set; } = new();
 
+    [JsonPropertyName("npcCorpseAmmoProduction")]
+    public CfgWriterNpcCorpseAmmoProduction NpcCorpseAmmoProduction { get; set; } = new();
+
     [JsonPropertyName("destructibleAmmoProduction")]
     public CfgWriterDestructibleAmmoProduction DestructibleAmmoProduction { get; set; } = new();
 
@@ -96,6 +99,57 @@ public sealed class CfgWriterSpecialBaseline
 
     [JsonPropertyName("crateSpawnProduction")]
     public CfgWriterCrateSpawnProduction CrateSpawnProduction { get; set; } = new();
+}
+
+// Audited 2.0.5 NPC_Ammo_Smart: 43 individually authored item/count rows
+// in 24 groups across four progression rank blocks. This is NOT the 121
+// weapon-attached ammo field surface and NOT DestructibleStash_AmmoSNG/NATO.
+public sealed class CfgWriterNpcCorpseAmmoProduction
+{
+    [JsonPropertyName("parameterId")]
+    public string ParameterId { get; set; } = string.Empty;
+
+    [JsonPropertyName("corpseChoiceParameterId")]
+    public string CorpseChoiceParameterId { get; set; } = string.Empty;
+
+    [JsonPropertyName("sourceSid")]
+    public string SourceSid { get; set; } = string.Empty;
+
+    [JsonPropertyName("targetSid")]
+    public string TargetSid { get; set; } = string.Empty;
+
+    [JsonPropertyName("file")]
+    public string File { get; set; } = string.Empty;
+
+    [JsonPropertyName("baseTemplateRefUrl")]
+    public string BaseTemplateRefUrl { get; set; } = string.Empty;
+
+    [JsonPropertyName("baseTemplateRefKey")]
+    public string BaseTemplateRefKey { get; set; } = string.Empty;
+
+    [JsonPropertyName("entries")]
+    public List<CfgWriterNpcCorpseAmmoEntry> Entries { get; set; } = new();
+}
+
+public sealed class CfgWriterNpcCorpseAmmoEntry
+{
+    [JsonPropertyName("rankIndex")]
+    public int RankIndex { get; set; }
+
+    [JsonPropertyName("groupIndex")]
+    public int GroupIndex { get; set; }
+
+    [JsonPropertyName("itemIndex")]
+    public int ItemIndex { get; set; }
+
+    [JsonPropertyName("sourceSid")]
+    public string SourceSid { get; set; } = string.Empty;
+
+    [JsonPropertyName("minCount")]
+    public int MinCount { get; set; }
+
+    [JsonPropertyName("maxCount")]
+    public int MaxCount { get; set; }
 }
 
 public sealed class CfgWriterCheapStashProduction
