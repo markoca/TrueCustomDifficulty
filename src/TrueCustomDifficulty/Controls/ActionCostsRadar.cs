@@ -260,7 +260,8 @@ public sealed class ActionCostsRadar : FrameworkElement
             var relative = Math.Abs(reference) > Epsilon ? parameter.CurrentNumber / reference : 0.0;
             var modified = Math.Abs(parameter.CurrentNumber - reference) > Epsilon;
 
-            DrawText(dc, Actions[index].Label, new Point(card.Left + 9.0, top), 9.2, text, FontWeights.Bold);
+            DrawText(dc, Actions[index].Label, new Point(card.Left + 9.0, top), 9.2,
+                ReferenceEquals(_hoverParameter, parameter) ? accent : text, FontWeights.Bold);
             DrawRightAlignedText(
                 dc,
                 $"{FormatRaw(parameter.CurrentNumber)} SP",
@@ -487,8 +488,9 @@ public sealed class ActionCostsRadar : FrameworkElement
         if (parameter is null)
             return;
 
-        DrawText(dc, label, new Point(rect.Left, rect.Top), 9.0, muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, formatter(parameter.CurrentNumber), new Point(rect.Right, rect.Top), 9.0, IsSelected(parameter) ? accent : text, FontWeights.Bold);
+        DrawText(dc, label, new Point(rect.Left, rect.Top), 9.0,
+            ReferenceEquals(_hoverParameter, parameter) ? accent : muted, FontWeights.Bold);
+        DrawRightAlignedText(dc, formatter(parameter.CurrentNumber), new Point(rect.Right, rect.Top), 9.0, parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
 
         var track = new Rect(rect.Left, rect.Top + 21.0, rect.Width, 8.0);
         var y = track.Top + track.Height / 2.0;
@@ -513,10 +515,12 @@ public sealed class ActionCostsRadar : FrameworkElement
     {
         dc.DrawEllipse(
             panel,
-            new Pen(accent, IsSelected(parameter) ? 2.4 : 1.4),
+            new Pen(accent, IsSelected(parameter) || ReferenceEquals(_hoverParameter, parameter) ? 2.4 : 1.4),
             point,
             5.5,
             5.5);
+        if (ReferenceEquals(_hoverParameter, parameter))
+            dc.DrawEllipse(null, new Pen(CloneWithOpacity(accent, 0.55), 1.6), point, 10.0, 10.0);
         dc.DrawEllipse(accent, null, point, 2.4, 2.4);
     }
 
