@@ -51,6 +51,17 @@ use direct `CooldownMultiplier` values, **not** inverseScale. Repeated-hit
   as an editable Combat row. Do not silently declare these inactive; review
   UI/preset policy separately before changing compatibility.
 
+## Consistency audit runner regression (2026-10-09)
+
+The whole-app `audit_project_consistency.py` initially raised a
+`NameError` at the Special Ability Cooldowns radar check because its row
+lookup referenced `_mhr_rows_by_id`. That map is created later in the
+unrelated Medical Healing check. The cooldown section now initializes and
+uses its own `_sac_rows_by_id` map before checking all eight parameter IDs.
+This is a validator-only fix: gameplay mappings, UI and preset behavior are
+unchanged. Run `python tools/audit_project_consistency.py` to verify the
+complete audit in the local repository.
+
 ## Automated reproductions
 
 From the project root:

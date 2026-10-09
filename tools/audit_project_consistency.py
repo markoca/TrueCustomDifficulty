@@ -870,8 +870,11 @@ _sac_ids = [
     "combat.mutantCooldown.bayun",
     "combat.mutantCooldown.controller",
 ]
-_sac_rows = [_mhr_rows_by_id.get(pid) for pid in _sac_ids]
-_sac_anchor = _mhr_rows_by_id.get("combat.mutantCooldown.bloodsucker")
+# Keep the Combat cooldown lookup local to this section. The similarly named
+# _mhr_rows_by_id map belongs to Medical Healing and is initialized later.
+_sac_rows_by_id = {row.get("id"): row for row in parameters}
+_sac_rows = [_sac_rows_by_id.get(pid) for pid in _sac_ids]
+_sac_anchor = _sac_rows_by_id.get("combat.mutantCooldown.bloodsucker")
 _sac_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "SpecialAbilityCooldownRadar.cs"
 
 if any(row is None for row in _sac_rows):
