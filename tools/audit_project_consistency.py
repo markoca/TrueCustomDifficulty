@@ -811,10 +811,10 @@ for _pid, _expected_protos in _mhp_expected.items():
         (x["prototype"], x["path"], x["operation"])
         for x in _row.get("targets", [])
     }
-    if _expected_targets != {(sid, "MaxHP", "scale") for sid in _expected_protos}:
+    if _expected_targets != {(sid, "VitalParams.MaxHP", "scale") for sid in _expected_protos}:
         fail(f"mutant health catalog target-to-writer mismatch: {_pid}")
 if any(p.get("scope") != "baseGame" or p.get("file") != "GameData/ObjPrototypes.cfg"
-       or p.get("key") != "MaxHP" or p.get("operation") != "scale"
+       or p.get("nodePath") != ["VitalParams"] or p.get("key") != "MaxHP" or p.get("operation") != "scale"
        for p in _mhp_points):
     fail("mutant health writer route must remain direct base-game ObjPrototypes MaxHP scale")
 if _mhp_rows_by_id["combat.mutantHealth.bloodsucker"].get("label") != "Mutant Health":

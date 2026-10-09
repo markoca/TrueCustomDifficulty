@@ -796,14 +796,14 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Bloodsucker",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         },
         {
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "MistBloodsucker",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -907,7 +907,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Chimera",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1003,7 +1003,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Deer",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1099,7 +1099,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Pseudogiant",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1195,7 +1195,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "PseudoDog",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1291,14 +1291,14 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Burer",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         },
         {
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Burer_ShootingSpecial",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1401,7 +1401,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Bayun",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1518,7 +1518,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Blinddog",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1561,7 +1561,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Boar",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1604,7 +1604,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Flesh",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1647,7 +1647,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Poltergeist",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1690,7 +1690,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Snork",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1733,7 +1733,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Tushkan",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],
@@ -1776,7 +1776,7 @@
           "scope": "baseGame",
           "file": "GameData/ObjPrototypes.cfg",
           "prototype": "Controller",
-          "path": "MaxHP",
+          "path": "VitalParams.MaxHP",
           "operation": "scale"
         }
       ],

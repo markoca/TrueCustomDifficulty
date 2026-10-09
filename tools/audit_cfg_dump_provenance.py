@@ -101,8 +101,8 @@ def main() -> int:
                 "baseGame", "GameData/ObjPrototypes.cfg", "MaxHP", "scale"
             ):
                 die(f"{pid}: incorrect direct MaxHP writer mapping")
-            if point.get("nodePath"):
-                die(f"{pid}: unexpected writer nodePath")
+            if point.get("nodePath") != ["VitalParams"]:
+                die(f"{pid}: expected nested VitalParams target")
             prototype = point["prototype"]
             if prototype in actual.setdefault(pid, {}):
                 die(f"{pid}: duplicate edit target for {prototype}")
@@ -120,7 +120,7 @@ def main() -> int:
             written = {x["prototype"] for x in targets
                        if x["scope"] == "baseGame"
                        and x["file"] == "GameData/ObjPrototypes.cfg"
-                       and x["path"] == "MaxHP"
+                       and x["path"] == "VitalParams.MaxHP"
                        and x["operation"] == "scale"}
             if written != set(EXPECTED_HEALTH[p["id"]]):
                 die(f"{p['id']}: catalog targets differ from concrete baseline")

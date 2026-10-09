@@ -1,5 +1,11 @@
 # Mutant Health Audit
 
+## Phase 2 deep structural CFG repair (2026-10-09)
+
+**New critical discovery:** in addition to the six missing scalar entries addressed in Phase 1, **all 16** original/new Mutant Health `MaxHP` writer entries mistakenly used an empty `nodePath`. The actual CFG field is nested at `VitalParams.MaxHP`, not at the mutant prototype root. The C# patch writer emits BPatch children according to `nodePath`; the old edit points would generate a structurally wrong root-level MaxHP assignment. All 16 entries are now explicitly routed through `nodePath=["VitalParams"]`, and all fourteen catalog targets read `path="VitalParams.MaxHP"`. All sixteen exact vanilla nested HP values were rechecked against the supplied source dump. Native `0.05–2x`, `0.05x` tick, preset IDs, species and cooldown controls are unchanged. The executable still requires a generated BPatch/gameplay test. See [DEEP-CFG-AUDIT-PHASE2-2026-10-09.md](../DEEP-CFG-AUDIT-PHASE2-2026-10-09.md) and run `tools/audit_cfg_source_values.py` to extend the structural parity test to every direct edit point.
+
+
+
 ## 2026-10-09 — Writer-route deep CFG verification (supersedes historical release notes)
 
 The active 14-source Mutant Health editor and catalog had six members lacking direct writer edit points. The missing routes have now been added to `src/TrueCustomDifficulty/Data/cfg-writer-baseline.json`, **source-verified against the user's actual decoded GameData archive**, not invented: `Blinddog=63`, `Boar=300`, `Flesh=280`, `Poltergeist=400`, `Snork=150`, `Tushkan=19`. Combined with the previously supported eight family scalers (Bloodsucker+MistBloodsucker and Burer+ShootingSpecial included), this is now **14 controls / 16 direct MaxHP edit points**. Base-game `GameData/ObjPrototypes.cfg`, under each exact named prototype's `VitalParams.MaxHP`, confirms every 16 baseline `sourceRaw` values. `tools/audit_cfg_dump_provenance.py` reproduces this test with actual CFG ZIP inputs. **Native slider is 0.05–2×, step 0.05×**, not the historical 0.25× minimum stated farther below. UI layout is **seven rows × two columns** (14 cards), not two rows × seven columns. No DLC boss source or difficulty-scoped mutant MaxHP field was added. This is a concrete writer-route repair and source value verification, not a runtime gameplay test.

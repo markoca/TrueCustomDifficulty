@@ -16441,7 +16441,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Bloodsucker",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "500",
       "operation": "scale",
@@ -16453,7 +16455,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "MistBloodsucker",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "1000",
       "operation": "scale",
@@ -16465,7 +16469,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Chimera",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "1400",
       "operation": "scale",
@@ -16477,7 +16483,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Deer",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "600",
       "operation": "scale",
@@ -16489,7 +16497,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Pseudogiant",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "2500",
       "operation": "scale",
@@ -16501,7 +16511,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "PseudoDog",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "300",
       "operation": "scale",
@@ -16513,7 +16525,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Burer",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "400",
       "operation": "scale",
@@ -16525,7 +16539,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Burer_ShootingSpecial",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "400",
       "operation": "scale",
@@ -16537,7 +16553,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Bayun",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "400",
       "operation": "scale",
@@ -16549,7 +16567,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Controller",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "500",
       "operation": "scale",
@@ -18253,7 +18273,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Blinddog",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "63",
       "operation": "scale",
@@ -18265,7 +18287,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Boar",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "300",
       "operation": "scale",
@@ -18277,7 +18301,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Flesh",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "280",
       "operation": "scale",
@@ -18289,7 +18315,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Poltergeist",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "400",
       "operation": "scale",
@@ -18301,7 +18329,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Snork",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "150",
       "operation": "scale",
@@ -18313,7 +18343,9 @@
       "scope": "baseGame",
       "file": "GameData/ObjPrototypes.cfg",
       "prototype": "Tushkan",
-      "nodePath": [],
+      "nodePath": [
+        "VitalParams"
+      ],
       "key": "MaxHP",
       "sourceRaw": "19",
       "operation": "scale",

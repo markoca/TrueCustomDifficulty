@@ -1,5 +1,9 @@
 # Deep CFG audit — Phase 1: catalog/writer and Mutant Health source provenance
 
+> **Important Phase 2 correction:** This Phase 1 report verified the numeric values for all sixteen Mutant Health prototypes but had **not** verified that the writer emitted them at the correct nested CFG location. Phase 2 found all 16 writer `nodePath` entries were empty despite the actual key being `VitalParams.MaxHP`. All 16 writer paths and 14 catalog target paths have since been corrected and source-verified. See [Phase 2: structural source paths](DEEP-CFG-AUDIT-PHASE2-2026-10-09.md). Do not interpret Phase 1 value parity as successful BPatch location validation.
+
+
+
 **Date:** 2026-10-09
 **Branch:** main
 **Evidence:** original user-supplied current vanilla GameData and DLC1 decoded CFG archives, production parameter catalog and production writer baseline.

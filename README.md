@@ -1,5 +1,11 @@
 # True Custom Difficulty
 
+## Deep CFG audit — Phase 2: actual writer paths (2026-10-09)
+
+Verified a **production-important structural issue**: all sixteen Mutant Health `MaxHP` writer routes used an empty nested path even though vanilla stores those values under `VitalParams.MaxHP`. Phase 1 had validated their source numbers but **not** the emitted BPatch hierarchy. Fixed all sixteen direct `nodePath=["VitalParams"]` edit points and aligned all fourteen catalog `targets[].path="VitalParams.MaxHP"` entries, without modifying presets or UI values. All sixteen nested values independently match the supplied original GameData CFG. Added `tools/audit_cfg_source_values.py`, a decoded-ZIP parser that checks the **complete 1,224 direct edit-point** source path/raw-value surface when run with the original vanilla + DLC1 archives, producing a triage report instead of silently assuming inherited fields are direct. Source parser correctness was checked across all 13 referenced input CFG files; the complete 1,224-point comparison and .NET/Wine/game runtime test are still pending. Detailed evidence and commands: [Phase 2 structural source audit](docs/DEEP-CFG-AUDIT-PHASE2-2026-10-09.md). All current UI design locks remain unchanged.
+
+
+
 ## Deep CFG audit — Phase 1 source-backed repair (2026-10-09)
 
 A fresh audit against the user's vanilla GameData and DLC1 CFG archives found **six missing production writer baseline entries** for existing Mutant Health cards (Blind Dog, Boar, Flesh, Poltergeist, Snork and Tushkan). Their actual authored `VitalParams.MaxHP` values, along with all prior mutant HP sources, were independently checked: **14 mutant families / 16 actual MaxHP fields verified**. The writer baseline now covers the current **244-parameter catalog** with **1,224 direct CFG edit points** (202 distinct direct parameter IDs). All **13 direct-input CFG filenames** exist in the correct supplied base or DLC1 archive; no direct concrete target is multiply owned. 231 active editable dimensions are represented by 152 visible catalog anchors plus 79 hidden composite backings; 13 internal/audit-only controls remain excluded, including `survival.drunknessThresholdScale` (explicitly hidden until the OverDrunkness chain is understood).
