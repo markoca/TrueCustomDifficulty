@@ -3025,82 +3025,33 @@ public sealed class AggregateVisualControl : FrameworkElement
         AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
     }
 
-    // Economy trading: four independent source-backed compact editors, using
-    // the same horizontal handle and Base-reference grammar as Stamina Usage.
+    // Trading directions and durability rules are independent authored CFG sources.
+    // Reuse the compact Economy card grammar: label/current on one line, rail, bounds.
     private void DrawTradingDashboard(
         DrawingContext dc, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         DrawCenteredText(dc, "TRADING", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
 
-        var controls = new (string Id, string Label, string Meaning, bool Percent)[]
+        var controls = new (string Id, string Label)[]
         {
-            ("economy.buyCondition", "YOU SELL TO TRADERS", "Trader buys from you", false),
-            ("economy.sellCondition", "YOU BUY FROM TRADERS", "Trader sells to you", false),
-            ("economy.traderMinBuyCondition", "MINIMUM ACCEPTED CONDITION", "Below this durability, gear is refused", true),
-            ("economy.itemValueFloor", "BROKEN ITEM VALUE", "Value retained at zero durability", true)
+            ("economy.buyCondition", "YOU SELL TO TRADERS"),
+            ("economy.sellCondition", "YOU BUY FROM TRADERS"),
+            ("economy.traderMinBuyCondition", "MINIMUM ACCEPTED CONDITION"),
+            ("economy.itemValueFloor", "BROKEN ITEM VALUE")
         };
 
-        var fullWidth = Math.Max(1.0, ActualWidth - 32.0);
-        var columns = fullWidth >= 640.0 ? 2 : 1;
+        var columns = EconomyColumns(ActualWidth);
         const double gap = 12.0;
-        const double cardHeight = 106.0;
-        const double rowPitch = 118.0;
-        var cardWidth = (fullWidth - (columns - 1) * gap) / columns;
-
+        var contentWidth = Math.Max(1.0, ActualWidth - 32.0);
+        var cardWidth = (contentWidth - gap * (columns - 1)) / columns;
         for (var i = 0; i < controls.Length; i++)
         {
-            var item = controls[i];
             var card = new Rect(16.0 + (i % columns) * (cardWidth + gap),
-                48.0 + (i / columns) * rowPitch, cardWidth, cardHeight);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
-            var parameter = P(item.Id);
-            DrawText(dc, item.Label, new Point(card.Left + 12.0, card.Top + 9.0),
-                10.0, text, FontWeights.Bold);
-            if (parameter is null)
-            {
-                DrawText(dc, "PARAMETER UNAVAILABLE", new Point(card.Left + 12.0, card.Top + 33.0),
-                    9.0, muted, FontWeights.Normal);
-                continue;
-            }
-
-            var modified = parameter.IsValueModifiedFromReference();
-            var number = item.Percent
-                ? $"{parameter.CurrentNumber * 100.0:0.#}%"
-                : $"{parameter.CurrentNumber:0.##}x";
-            DrawRightAlignedText(dc, number,
-                new Point(card.Right - 12.0, card.Top + 8.0),
-                modified ? 12.2 : 11.0, modified ? accent : text, FontWeights.Bold);
-            DrawText(dc, item.Meaning, new Point(card.Left + 12.0, card.Top + 30.0),
-                9.2, muted, FontWeights.Normal);
-
-            var track = new Rect(card.Left + 16.0, card.Top + 58.0,
-                Math.Max(1.0, card.Width - 32.0), 16.0);
-            var y = track.Top + track.Height / 2.0;
-            var x = ValueToX(parameter.CurrentNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-            var referenceX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-            dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 3.0),
-                new Point(track.Left, y), new Point(x, y));
-            dc.DrawLine(new Pen(muted, 1.8),
-                new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
-            dc.DrawEllipse(panel, new Pen(accent, IsSelected(parameter) ? 2.5 : 1.5),
-                new Point(x, y), 6.0, 6.0);
-            dc.DrawEllipse(accent, null, new Point(x, y), 2.5, 2.5);
-
-            AddHorizontalTarget(parameter,
-                new Rect(track.Left - 6.0, track.Top - 6.0,
-                    track.Width + 12.0, track.Height + 12.0),
-                track, parameter.Minimum, parameter.Maximum);
-
-            var min = item.Percent ? $"{parameter.Minimum * 100.0:0.#}%" : $"{parameter.Minimum:0.##}x";
-            var max = item.Percent ? $"{parameter.Maximum * 100.0:0.#}%" : $"{parameter.Maximum:0.##}x";
-            DrawText(dc, min, new Point(track.Left, card.Top + 81.0),
-                9.0, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, max, new Point(track.Right, card.Top + 81.0),
-                9.0, muted, FontWeights.Normal);
+                48.0 + (i / columns) * 94.0, cardWidth, 80.0);
+            var item = controls[i];
+            DrawEconomyCard(dc, P(item.Id), item.Label, card,
+                text, muted, border, accent, panel);
         }
     }
 
@@ -5191,7 +5142,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "StarvationTimeline" => 532.0,
             "RepeatedHitBand" => 455.0,
             "RadiationBalance" => CompactGridEnd(55.0, 3, CompactStageColumns(width)) + 14.0,
-            "TradingDashboard" => (width >= 672.0 ? 300.0 : 536.0),
+            "TradingDashboard" => EconomyBoardHeight(width, 4),
             "RepairCurve" => (width >= 672.0 ? 300.0 : 526.0),
             "AmmoDistribution" => 680.0,
             _ => 340.0
