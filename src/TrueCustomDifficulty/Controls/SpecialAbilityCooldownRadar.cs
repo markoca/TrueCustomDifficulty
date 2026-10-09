@@ -146,8 +146,6 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
         DrawCenteredText(dc, "SPECIAL ABILITY COOLDOWNS",
             new Point(ActualWidth / 2.0, 187.0), 11.0, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "Higher rate = more frequent special attacks (not regular attacks)",
-            new Point(ActualWidth / 2.0, 206.0), 9.5, muted, FontWeights.Normal);
 
         const int columns = 8;
         var stripWidth = (content.Width - (columns - 1) * ColumnGap) / columns;
@@ -175,7 +173,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
             11.0, text, FontWeights.Bold);
         DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Right - 12.0, card.Top + 1.0),
-            16.0, accent, FontWeights.Bold);
+            16.0, parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
 
         var rail = new Rect(card.Left + 42.0, card.Top + 48.0,
             Math.Max(40.0, card.Width - 84.0), 6.0);
