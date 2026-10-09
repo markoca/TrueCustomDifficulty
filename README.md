@@ -1,5 +1,16 @@
 # True Custom Difficulty
 
+## Source-verified NPC Ammo and Breakable Box Ammo — 2026-10-09
+
+The user-provided base GameData and DLC1 CFG dumps establish **three separate ammo domains**:
+
+1. **NPC AMMO** (persistent key `loot.npcWeaponAmmoSupply`) now scales **generic NPC corpse-bonus** ammo from `GameData/StashPrototypes.cfg / NPC_Ammo_Smart`. The source has 43 items / 24 groups / 4 ranks, matched against the uploaded dump by all item coordinates and source counts (FNV32 **0x61073f67**). Writer creates `TCD_NPC_Ammo_Smart` from the real source and references it **only** on the selected difficulty when Extra Corpse Loot = `Medicine + Ammo`. Water/None preserve the chosen multiplier without emitting unused ammo overrides. Real Newbie-rank examples at 1x: 12 Gauge **2–6**, 5.45 **15–20**, .45 ACP **8–12**, live scaled with the writer's integer-half-up count rule. Original spawn chance, caliber, rank, item weight and `MainWeaponAmmoCount` policies are inherited unchanged.
+2. **BREAKABLE BOX AMMO** independently uses `GameData/ItemGeneratorPrototypes.cfg / DestructibleStash_AmmoSNG/NATO`. Its Ammo Yield edits counts in eight generator rows; the four Ammo Family Weights independently edit those source weights. Physical SpawnActor wooden ammo boxes in base GameData and DLC1 reference these roots. The stacked SNG/NATO graphs label each caliber and live share, never using an NPC-source amount.
+3. **WEAPON-ATTACHED NPC AMMO** is a third audited-only, currently unedited surface: 121 local standard-human weapon rows with `AmmoMinCount/AmmoMaxCount`. The old **242** direct editpoints have been retired from the current writer; earlier README release notes calling those edits the active `NPC Dropped Ammo Amount` describe historical behavior only.
+
+The four-source `NPC LOOT & EQUIPMENT` panel now uses three compact full-click Extra Corpse Loot chips, live generic ammo examples, and a larger nearest-endpoint click/drag zone for the native MIN/MAX Dropped Weapon Condition range. The source mapping and interaction rules are authoritative in `docs/UI-DESIGN-LOCK.md` and `docs/VISUAL-CONTROL-SYSTEM.md`. **Only the CFG structures/values are verified**, not game runtime behavior, WPF build success, inheritance patch resolution or actual NPC corpse loot odds.
+
+
 ## Loot editor redesign (2026-10-09)
 
 The approved Loot tab now shows **six** compact source-bound sections: World Loot Depletion (5), World Placement (5), NPC Loot & Equipment (4), Stash Rewards (6), Breakable Boxes (6) and Mutant Part Drops (14). All **40 original Loot source definitions**, native min/max/steps, selected vanilla-difficulty references, preset persistence, CFG mappings and reset behavior are retained.
