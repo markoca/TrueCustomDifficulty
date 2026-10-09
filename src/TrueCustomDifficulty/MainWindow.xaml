@@ -178,7 +178,17 @@
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                         Grid.Row="0"
                                                                                         Grid.RowSpan="2"
-                                                                                        MinHeight="420"
+                                                                                        MinHeight="207"
+                                                                                        Visibility="Collapsed"
+                                                                                        Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+                                                                <controls:ActionCostsRadar Mode="Exhaustion" x:Name="ExhaustionRecoveryControl"
+                                                                                                MaxWidth="920"
+                                                                                                HorizontalAlignment="Center"
+                                                                                                PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
+                                                                                        Grid.Row="0"
+                                                                                        Grid.RowSpan="2"
+                                                                                        MinHeight="0"
                                                                                         Visibility="Collapsed"
                                                                                         Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
@@ -450,6 +460,15 @@
                                                             <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
                                                             <Setter TargetName="ActionCostsRadarControl" Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsExhaustionRecoveryAnchor}" Value="True">
+                                                            <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="SliderControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="VanillaMarkerControl" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="CurrentValueBox" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="TechnicalRow" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Visibility" Value="Collapsed" />
+                                                            <Setter TargetName="ExhaustionRecoveryControl" Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsItemPriceScalerAnchor}" Value="True">
                                                             <Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />
