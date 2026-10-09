@@ -145,3 +145,21 @@ Two production rows use normal world-stash wrappers (`Stash_Cheap_Newbie` / `Sta
 ## Required rule for future writer work
 
 A destructible control must be built from an explicit allowlist of **raw/local generator rows plus resolved production physical consumers**. No control may target all `DestructibleStash*` definitions by prefix. Missing generator definitions and cross-context leaf pools must remain excluded unless separately resolved.
+
+
+### 2026-10-09 — Breakable box ammunition source counts displayed by Ammo Yield
+
+The real `loot.destructibleAmmoQuantity` scaler (native 0.5–2x, step 0.25x) now produces a **read-only live per-caliber stack-count preview**, independent of all four weight controls and of NPC corpse SmartLoot. The physical generator `GameData/ItemGeneratorPrototypes.cfg` defines these eight source entries, preserved in the writer's `special.destructibleAmmoProduction.pools`:
+
+| Pool | Caliber | Item SID | Source stack at 1x |
+| --- | --- | --- | ---: |
+| SNG | 9×18 | `A918D` | 3–6 |
+| SNG | 9×19 | `A919D` | 5–10 |
+| SNG | 5.45 | `A545D` | 5–10 |
+| SNG | 12 Gauge | `A012D` | 2–4 |
+| NATO | .45 ACP | `A045D` | 5–10 |
+| NATO | 9×19 | `A919D` | 5–10 |
+| NATO | 5.56 | `A556D` | 5–10 |
+| NATO | 12 Gauge | `A012D` | 5–10 |
+
+Both min/max endpoints are scaled with the writer's **`ScalePositiveInteger(source, multiplier) = max(1, floor(source × multiplier + 0.5))`**, so 9×18 at 0.5x becomes **2–3**, at 1x remains **3–6**, and at 2x becomes **6–12**. The SNG and NATO 12 Gauge sources must not be merged because their counts differ. Preview label `ROUNDS IF ROLLED` makes clear these are possible stack sizes conditional on a generator selection, **not guaranteed drops**. A disabled 0x caliber weight retains the source amount for illustration but the card is subdued. The amounts never read `NPC_Ammo_Smart`, weapon-attached NPC ammo, world stashes, or other generator sources. Only WPF preview code and documentation changed; native CFG writer mappings remain intact. Local publish/Wine and in-game validation pending.
