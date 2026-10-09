@@ -308,9 +308,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 target.MapRect.Left + target.MapRect.Width *
                     Math.Clamp((source.ChoiceIndex - target.VisualMinimum) / range, 0.0, 1.0),
                 target.MapRect.Top + target.MapRect.Height / 2.0),
-            HitKind.Toggle => new Point(
-                target.HitRect.Right - 28.0,
-                target.HitRect.Top + target.HitRect.Height / 2.0),
             // Hovering the reference/Base marker must remain unobtrusive.
             _ => new Point(double.NaN, double.NaN)
         };
@@ -3939,29 +3936,27 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (parameter is null)
             return;
 
-        var active = parameter.CurrentBoolean;
-        var hovered = parameter.IsControlEnabled && ReferenceEquals(_hoverTarget?.Parameter, parameter);
-        var fill = active ? CloneWithOpacity(accent, 0.18) : panel;
-        dc.DrawRoundedRectangle(fill,
-            new Pen(active ? accent : border, active ? 1.8 : 1.0),
+        var enabled = parameter.IsControlEnabled;
+        var hovered = enabled && _hoverTarget?.Kind == HitKind.Toggle
+            && ReferenceEquals(_hoverTarget.Parameter, parameter);
+
+        // Same 20-DIP square, 3-DIP corners and gold check mark as
+        // the WPF CheckBox template. The card and caption never glow.
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             rect, 4.0, 4.0);
+        var box = new Rect(rect.Right - BooleanCheckboxChrome.Size - 11.0,
+            rect.Top + (rect.Height - BooleanCheckboxChrome.Size) / 2.0,
+            BooleanCheckboxChrome.Size, BooleanCheckboxChrome.Size);
+        BooleanCheckboxChrome.Draw(dc, box, parameter.CurrentBoolean,
+            enabled, hovered, panel, border, accent);
 
-        // Reserve a fixed status lane before measuring the caption, so a
-        // long bundle name cannot overwrite its ON/OFF value on narrow cards.
-        var statusLane = 52.0;
-        var labelWidth = Math.Max(1.0, rect.Width - statusLane - 20.0);
         dc.DrawText(CreateText(label, 9.7,
-                active ? text : muted, FontWeights.Bold, labelWidth),
-            new Point(rect.Left + 10.0, rect.Top + Math.Max(4.0, (rect.Height - 15.0) / 2.0)));
-
-        var status = active ? "ON" : "OFF";
-        var statusText = CreateText(status, 10.2,
-            active ? accent : muted, FontWeights.Bold,
-            statusLane - 12.0);
-        dc.DrawText(statusText,
-            new Point(rect.Right - 10.0 - statusText.WidthIncludingTrailingWhitespace,
+                enabled ? text : muted, FontWeights.Bold,
+                Math.Max(1.0, box.Left - rect.Left - 20.0)),
+            new Point(rect.Left + 10.0,
                 rect.Top + Math.Max(4.0, (rect.Height - 15.0) / 2.0)));
 
+        // Keep the original click / keyboard / right-click hit contract.
         AddToggleTarget(parameter, rect);
     }
 

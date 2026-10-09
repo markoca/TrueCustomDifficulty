@@ -95,7 +95,7 @@
                                                                 <CheckBox x:Name="ToggleControl"
                                                                           Grid.Column="1"
                                                                           IsEnabled="{Binding IsControlEnabled}"
-                                                                          Content="{Binding ToggleStateLabel}"
+                                                                          AutomationProperties.Name="{Binding Label}"
                                                                           Foreground="{StaticResource TextBrush}"
                                                                           FontWeight="SemiBold"
                                                                           IsChecked="{Binding CurrentBoolean, Mode=TwoWay}"
@@ -558,7 +558,6 @@
                                                             <Setter TargetName="RangeMinValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                             <Setter TargetName="RangeMaxValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                             <Setter TargetName="PracticalQuantityText" Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                                            <Setter TargetName="ToggleControl" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsVisualControlAnchor}" Value="True">
                                                             <Setter TargetName="ParameterCard" Property="Background" Value="Transparent" />

@@ -37,6 +37,8 @@ public sealed class MedicalHealingRadar : FrameworkElement
     private int _dragRow = -1;
     private HitAction _hoverAction = HitAction.Select;
     private int _hoverRow = -2;
+    private Rect _foodCheckboxRect;
+    private bool _foodCheckboxHovered;
 
     public static readonly DependencyProperty ParametersProperty =
         DependencyProperty.Register(nameof(Parameters), typeof(IEnumerable),
@@ -128,24 +130,14 @@ public sealed class MedicalHealingRadar : FrameworkElement
         dc.DrawRoundedRectangle(panel, new Pen(border, 1), food, 4, 4);
         DrawText(dc, "FOOD HEALING", new Point(food.Left + 12, food.Top + 12),
             10.3, text, FontWeights.Bold);
-        var state = _foodHealing?.CurrentBoolean == true;
-        var box = new Rect(food.Right - 42, food.Top + 41, 24, 24);
-        dc.DrawRoundedRectangle(panel,
-            new Pen(_foodHealing?.IsValueModifiedFromReference() == true ? accent : muted, 1.7),
-            box, 3, 3);
-        if (state)
-        {
-            dc.DrawLine(new Pen(text, 2.2),
-                new Point(box.Left + 5, box.Top + 12),
-                new Point(box.Left + 10, box.Top + 17));
-            dc.DrawLine(new Pen(text, 2.2),
-                new Point(box.Left + 10, box.Top + 17),
-                new Point(box.Left + 19, box.Top + 6));
-        }
-        ControlHoverGlow.Draw(dc, new Point(box.Left + 12, box.Top + 12), accent,
-            _hoverAction == HitAction.Food && _hoverRow == -1);
-        DrawText(dc, state ? "ON" : "OFF",
-            new Point(food.Left + 12, food.Top + 46), 11, text, FontWeights.Bold);
+        _foodCheckboxRect = new Rect(
+            food.Right - BooleanCheckboxChrome.Size - 12.0,
+            food.Top + 10.0,
+            BooleanCheckboxChrome.Size, BooleanCheckboxChrome.Size);
+        BooleanCheckboxChrome.Draw(dc, _foodCheckboxRect,
+            _foodHealing?.CurrentBoolean == true,
+            _foodHealing?.IsControlEnabled == true,
+            _foodCheckboxHovered, panel, border, accent);
         _hits.Add(new HitArea(food, -1, HitAction.Food));
 
         DrawText(dc, "MEDKIT HEALING", new Point(18, 157), 10.8, text, FontWeights.Bold);
@@ -294,13 +286,18 @@ public sealed class MedicalHealingRadar : FrameworkElement
     protected override void OnMouseMove(MouseEventArgs e)
     {
         base.OnMouseMove(e);
-        var hit = FindHit(e.GetPosition(this));
+        var point = e.GetPosition(this);
+        var hit = FindHit(point);
         var row = hit?.Row ?? -2;
         var action = hit?.Action ?? HitAction.Select;
-        if (_hoverRow != row || _hoverAction != action)
+        var foodCheckHover = _foodHealing?.IsControlEnabled == true
+            && _foodCheckboxRect.Contains(point);
+        if (_hoverRow != row || _hoverAction != action ||
+            _foodCheckboxHovered != foodCheckHover)
         {
             _hoverRow = row;
             _hoverAction = action;
+            _foodCheckboxHovered = foodCheckHover;
             InvalidateVisual();
         }
         Cursor = hit is not null && action != HitAction.Select
@@ -326,6 +323,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
         base.OnMouseLeave(e);
         _hoverRow = -2;
         _hoverAction = HitAction.Select;
+        _foodCheckboxHovered = false;
         Cursor = Cursors.Arrow;
         InvalidateVisual();
     }

@@ -313,7 +313,8 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Boolean controls use a compact switch instead of a checkbox. -->
+        <!-- Canonical boolean editor: identical 20-DIP checkbox geometry to
+             BooleanCheckboxChrome. Hover is a quiet border change, no glow. -->
         <Style TargetType="CheckBox">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -321,33 +322,35 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="CheckBox">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Border x:Name="SwitchTrack"
-                                    Width="42" Height="22"
+                        <Grid Background="Transparent"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center">
+                            <Border x:Name="CheckSquare"
+                                    Width="20" Height="20"
+                                    CornerRadius="3"
                                     Background="{StaticResource PanelAltBrush}"
                                     BorderBrush="{StaticResource BorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="11"
-                                    VerticalAlignment="Center">
-                                <Grid Margin="2">
-                                    <Ellipse x:Name="SwitchThumb"
-                                             Width="16" Height="16"
-                                             HorizontalAlignment="Left"
-                                             VerticalAlignment="Center"
-                                             Fill="{StaticResource MutedTextBrush}" />
-                                </Grid>
+                                    BorderThickness="1">
+                                <Path x:Name="CheckMark"
+                                      Width="20" Height="20"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Data="M 4.5,10.2 L 8.4,14.2 L 15.5,5.8"
+                                      Stroke="{StaticResource AccentBrush}"
+                                      StrokeThickness="2.2"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round"
+                                      Stretch="None"
+                                      Visibility="Collapsed" />
                             </Border>
-                            <ContentPresenter Margin="9,0,0,0" VerticalAlignment="Center" />
-                        </StackPanel>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="SwitchTrack" Property="Background" Value="{StaticResource AccentDarkBrush}" />
-                                <Setter TargetName="SwitchTrack" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
-                                <Setter TargetName="SwitchThumb" Property="HorizontalAlignment" Value="Right" />
-                                <Setter TargetName="SwitchThumb" Property="Fill" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="SwitchThumb" Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
+                                <Setter TargetName="CheckSquare" Property="BorderBrush" Value="{StaticResource RadarMutedTextBrush}" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.45" />
