@@ -36,7 +36,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "AnomalyEffectsBoard" or "ServiceCostsBoard"
-            or "TraderStockBoard" or "ItemWeightBoard" or "BreakableBoxYields"
+            or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "BreakableBoxYields"
             or "StashRewardProfile" or "HumanCombatProfile" or "PlayerWeaponProfile")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
     }
@@ -167,6 +167,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                 break;
             case "ServiceCostsBoard":
             case "TraderStockBoard":
+            case "CouponFlow":
+                DrawEconomyBoard(dc, text, muted, border, accent, panel);
+                break;
             case "ItemWeightBoard":
                 DrawNumericMixerBoard(dc, text, muted, border, accent, panel);
                 break;
@@ -346,18 +349,133 @@ public sealed class AggregateVisualControl : FrameworkElement
     };
 
 
-    private static readonly (string Id, string Top, string Bottom)[] ServiceMixerChannels =
+    // Economy panels reuse the same compact Stamina-style horizontal controls.
+    // These are projections of real source VMs, never synthetic coupon or price totals.
+    private static readonly (string Id, string Label)[] CouponEconomyChannels =
     {
-        ("economy.fastTravelCost", "FAST", "TRAVEL"),
-        ("economy.upgradeCost", "UPGRADE", "COST"),
-        ("economy.repairCostBase", "BASE", "REPAIR")
+        ("economy.startingMoney", "STARTING COUPONS"),
+        ("economy.mainQuestReward", "MAIN QUEST REWARDS"),
+        ("economy.sideQuestReward", "SIDE QUEST REWARDS")
     };
 
-    private static readonly (string Id, string Top, string Bottom)[] TraderMixerChannels =
+    private static readonly (string Id, string Label)[] ServiceEconomyChannels =
     {
-        ("economy.traderAmmoStock", "TRADER", "AMMO"),
-        ("economy.medicStock", "MEDIC", "STOCK")
+        ("economy.fastTravelCost", "FAST TRAVEL"),
+        ("economy.upgradeCost", "UPGRADES"),
+        ("economy.repairCostBase", "BASE REPAIR PRICE")
     };
+
+    private static readonly (string Id, string Label)[] StockEconomyChannels =
+    {
+        ("economy.traderAmmoStock", "TRADER AMMO"),
+        ("economy.medicStock", "MEDIC SUPPLIES")
+    };
+
+    private static int EconomyColumns(double width) => width >= 672.0 ? 2 : 1;
+
+    private static double EconomyBoardHeight(double width, int count)
+    {
+        var rows = (count + EconomyColumns(width) - 1) / EconomyColumns(width);
+        return 48.0 + rows * 94.0 + 12.0;
+    }
+
+    private static string EconomyValue(ParameterViewModel parameter, double value)
+        => parameter.Id switch
+        {
+            "economy.startingMoney" => value.ToString("N0", CultureInfo.InvariantCulture),
+            "economy.repairCostBase" => $"{value * 100.0:0.#}%",
+            _ => $"{value:0.##}x"
+        };
+
+    private void DrawEconomyBoard(
+        DrawingContext dc, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        var (title, channels) = Family switch
+        {
+            "CouponFlow" => ("COUPONS & REWARDS", CouponEconomyChannels),
+            "TraderStockBoard" => ("TRADER STOCK", StockEconomyChannels),
+            _ => ("SERVICE PRICES", ServiceEconomyChannels)
+        };
+
+        DrawCenteredText(dc, title, new Point(ActualWidth / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
+
+        var columns = EconomyColumns(ActualWidth);
+        const double gap = 12.0;
+        var contentWidth = Math.Max(1.0, ActualWidth - 32.0);
+        var cardWidth = (contentWidth - gap * (columns - 1)) / columns;
+        for (var i = 0; i < channels.Length; i++)
+        {
+            var row = i / columns;
+            var column = i % columns;
+            // A short final row remains centered, rather than stretching a single track.
+            var rowCount = Math.Min(columns, channels.Length - row * columns);
+            var rowWidth = rowCount * cardWidth + (rowCount - 1) * gap;
+            var left = (ActualWidth - rowWidth) / 2.0;
+            DrawEconomyCard(dc, P(channels[i].Id), channels[i].Label,
+                new Rect(left + column * (cardWidth + gap), 48.0 + row * 94.0,
+                    cardWidth, 80.0),
+                text, muted, border, accent, panel);
+        }
+    }
+
+    private void DrawEconomyCard(
+        DrawingContext dc, ParameterViewModel? parameter, string label, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+        dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold,
+                Math.Max(1.0, card.Width - 95.0)),
+            new Point(card.Left + 12.0, card.Top + 9.0));
+        if (parameter is null)
+        {
+            DrawText(dc, "PARAMETER UNAVAILABLE",
+                new Point(card.Left + 12.0, card.Top + 34.0),
+                9.0, muted, FontWeights.Normal);
+            return;
+        }
+
+        var modified = parameter.IsValueModifiedFromReference();
+        DrawRightAlignedText(dc, EconomyValue(parameter, parameter.CurrentNumber),
+            new Point(card.Right - 12.0, card.Top + 8.0),
+            modified ? 12.2 : 11.0, modified ? accent : text, FontWeights.Bold);
+
+        var track = new Rect(card.Left + 14.0, card.Top + 40.0,
+            Math.Max(1.0, card.Width - 28.0), 12.0);
+        var y = track.Top + track.Height / 2.0;
+        var x = ValueToX(parameter.CurrentNumber, parameter.Minimum,
+            parameter.Maximum, track, reverse: false);
+        var referenceX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
+            parameter.Maximum, track, reverse: false);
+
+        dc.DrawLine(new Pen(border, 3.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 3.0),
+            new Point(track.Left, y), new Point(x, y));
+        dc.DrawLine(new Pen(muted, 1.8),
+            new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
+
+        var hovered = ReferenceEquals(_hoverTarget?.Parameter, parameter);
+        if (hovered)
+            dc.DrawEllipse(CloneWithOpacity(accent, 0.17), null,
+                new Point(x, y), 12.0, 12.0);
+        dc.DrawEllipse(panel, new Pen(accent,
+            hovered || IsSelected(parameter) ? 2.5 : 1.5),
+            new Point(x, y), 6.0, 6.0);
+        dc.DrawEllipse(accent, null, new Point(x, y), 2.5, 2.5);
+
+        AddHorizontalTarget(parameter,
+            new Rect(track.Left - 6.0, track.Top - 6.0,
+                track.Width + 12.0, track.Height + 12.0),
+            track, parameter.Minimum, parameter.Maximum);
+
+        DrawText(dc, EconomyValue(parameter, parameter.Minimum),
+            new Point(track.Left, card.Top + 60.0),
+            9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, EconomyValue(parameter, parameter.Maximum),
+            new Point(track.Right, card.Top + 60.0),
+            9.0, muted, FontWeights.Normal);
+    }
 
     private static readonly (string Id, string Top, string Bottom)[] WeightMixerChannels =
     {
@@ -381,8 +499,6 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static (string Id, string Top, string Bottom)[] GetMixerChannels(string family)
         => family switch
         {
-            "ServiceCostsBoard" => ServiceMixerChannels,
-            "TraderStockBoard" => TraderMixerChannels,
             "ItemWeightBoard" => WeightMixerChannels,
             "BreakableBoxYields" => BoxYieldMixerChannels,
             "StashRewardProfile" => StashRewardMixerChannels,
@@ -433,16 +549,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         var channels = GetMixerChannels(Family);
         var title = Family switch
         {
-            "ServiceCostsBoard" => "SERVICE PRICES / MIXER",
-            "TraderStockBoard" => "TRADER STOCK / MIXER",
             "BreakableBoxYields" => "BREAKABLE BOX YIELDS / MIXER",
             "StashRewardProfile" => "STASH REWARD ROLLS / MIXER",
             _ => "ITEM WEIGHT / MIXER"
         };
         var description = Family switch
         {
-            "ServiceCostsBoard" => "travel, upgrade and repair prices use separate CFG multipliers",
-            "TraderStockBoard" => "separate ammo and medical stock quantities",
             "BreakableBoxYields" => "contents per destroyed box, not box spawn frequency",
             "StashRewardProfile" => "Basic RGD-5 chance/amount and eligible Rare coupon chance are separate",
             _ => "independent ammunition and consumable item mass"
@@ -4650,8 +4762,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         => family switch
         {
             "BlastDamageBoard" => 305.0,
-            "ServiceCostsBoard" => GetMixerHeight(width, ServiceMixerChannels.Length),
-            "TraderStockBoard" => GetMixerHeight(width, TraderMixerChannels.Length),
+            "CouponFlow" => EconomyBoardHeight(width, CouponEconomyChannels.Length),
+            "ServiceCostsBoard" => EconomyBoardHeight(width, ServiceEconomyChannels.Length),
+            "TraderStockBoard" => EconomyBoardHeight(width, StockEconomyChannels.Length),
             "ItemWeightBoard" => GetMixerHeight(width, WeightMixerChannels.Length),
             "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
             "AnomalyEffectsBoard" => GetMixerHeight(width, AnomalyMixerChannels.Length),
@@ -4725,6 +4838,12 @@ public sealed class AggregateVisualControl : FrameworkElement
             "BlastDamageBoard" => new[]
             {
                 "combat.explosionDamage"
+            },
+            "CouponFlow" => new[]
+            {
+                "economy.startingMoney",
+                "economy.mainQuestReward",
+                "economy.sideQuestReward"
             },
             "PhysicalLimits" => new[]
             {

@@ -402,6 +402,14 @@ public sealed class MainViewModel : ObservableObject
             "survival.radiationRecovery",
             "survival.radiationDamage");
 
+        // One compact Coupon Flow board owns all three original coupon sources;
+        // the reward parameters remain live for presets and CFG generation.
+        WireVisualAggregate(
+            "economy.startingMoney",
+            "economy.startingMoney",
+            "economy.mainQuestReward",
+            "economy.sideQuestReward");
+
         WireVisualAggregate(
             "economy.buyCondition",
             "economy.buyCondition",

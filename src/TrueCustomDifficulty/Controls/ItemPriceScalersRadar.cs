@@ -60,7 +60,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 390;
+        MinHeight = 326;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -68,7 +68,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 740.0 : Math.Max(560.0, availableSize.Width);
-        return new Size(width, 390.0);
+        return new Size(width, 326.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -138,185 +138,97 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         IndustrialChrome.DrawFrame(
             dc,
             new Rect(2.0, 2.0, Math.Max(0.0, ActualWidth - 4.0), Math.Max(0.0, ActualHeight - 4.0)),
-            panel,
-            border,
-            accent,
-            soft,
-            8.0,
-            accentEdge: true,
-            technicalMarks: true);
+            panel, border, accent, soft, 8.0,
+            accentEdge: true, technicalMarks: true);
 
         _targets.Clear();
         _mutantPartsTarget = null;
-
-        DrawCenteredText(dc, "ITEM VALUE LAYERS", new Point(ActualWidth / 2.0, 21.0),
+        DrawCenteredText(dc, "ITEM VALUE LAYERS",
+            new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
 
-
-        var layout = GetLayout();
-
-        DrawText(dc, "CATEGORY COSTS", new Point(18.0, 59.0), 9.0, muted, FontWeights.Bold);
-        DrawText(dc, "CATEGORY", new Point(layout.LabelLeft, 77.0), 9.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "VALUE", new Point(layout.ValueCenter, 84.0), 7.8, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "CHEAPER  ←  CATEGORY VALUE  →  COSTLIER", new Point(layout.TrackLeft + layout.TrackWidth / 2.0, 84.0), 7.7, muted, FontWeights.Bold);
-
-        dc.DrawLine(new Pen(border, 1.0), new Point(14.0, 95.0), new Point(Math.Max(14.0, ActualWidth - 14.0), 95.0));
-
-        for (var row = 0; row < Categories.Length; row++)
-            DrawCategoryRow(dc, row, 102.0 + row * RowHeight, layout, text, muted, border, accent, panel);
-
-        DrawMutantPartsPanel(dc, 296.0, text, muted, border, accent, panel);
-
-        // No transient yellow reset notifications.
+        // Six real CFG sources. The parts lane edits item Cost rather than
+        // a difficulty-profile category, but shares the same input grammar.
+        const double gap = 12.0;
+        const double rowPitch = 90.0;
+        var cardWidth = (Math.Max(1.0, ActualWidth - 32.0) - gap) / 2.0;
+        for (var index = 0; index < Categories.Length + 1; index++)
+        {
+            var isParts = index == Categories.Length;
+            var parameter = isParts ? _mutantParts : _parameters[index];
+            var label = isParts ? "MUTANT PARTS" : Categories[index].Label;
+            var card = new Rect(16.0 + (index % 2) * (cardWidth + gap),
+                48.0 + (index / 2) * rowPitch, cardWidth, 78.0);
+            var selected = isParts ? _mutantPartsSelected
+                : !_mutantPartsSelected && _selectedRow == index;
+            var hovered = isParts ? _mutantPartsHovered
+                : !_mutantPartsHovered && _hoverRow == index;
+            var hit = DrawPriceCard(dc, parameter, label, card, selected, hovered,
+                text, muted, border, accent, panel);
+            if (hit is null)
+                continue;
+            if (isParts)
+                _mutantPartsTarget = hit;
+            else
+                _targets[index] = hit;
+        }
     }
 
-    private void DrawCategoryRow(
-        DrawingContext dc,
-        int row,
-        double top,
-        Layout layout,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+    private HitTarget? DrawPriceCard(
+        DrawingContext dc, ParameterViewModel? parameter, string label,
+        Rect card, bool selected, bool hovered,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        var parameter = _parameters[row];
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+        dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold),
+            new Point(card.Left + 12.0, card.Top + 9.0));
+
         if (parameter is null)
-            return;
+        {
+            DrawText(dc, "PARAMETER UNAVAILABLE",
+                new Point(card.Left + 12.0, card.Top + 31.0),
+                9.0, muted, FontWeights.Normal);
+            return null;
+        }
 
-        var info = Categories[row];
-        var selected = !_mutantPartsSelected && row == _selectedRow;
-        var hovered = !_mutantPartsHovered && row == _hoverRow;
-        var modified = Math.Abs(parameter.CurrentNumber - parameter.ReferenceNumber) > Epsilon;
-
-        var rowRect = new Rect(14.0, top, Math.Max(1.0, ActualWidth - 28.0), RowHeight - 4.0);
-        dc.DrawRoundedRectangle(
-            selected
-                ? CloneWithOpacity(accent, 0.08)
-                : hovered
-                    ? CloneWithOpacity(panel, 0.02)
-                    : CloneWithOpacity(panel, 0.01),
-            new Pen(CloneWithOpacity(border, 0.45), 0.8),
-            rowRect,
-            3.0,
-            3.0);
-
-        DrawText(
-            dc,
-            info.Label,
-            new Point(layout.LabelLeft, top + 7.0),
-            8.7,
-            text,
-            FontWeights.Bold);
-
-        DrawCenteredText(
-            dc,
-            $"{parameter.CurrentNumber:0.##}x",
-            new Point(layout.ValueCenter, top + 13.0),
-            9.5,
-            text,
-            FontWeights.Bold);
-
-        var track = new Rect(layout.TrackLeft, top + 23.0, layout.TrackWidth, 9.0);
-        var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
-
-        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track);
-        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
-
-        dc.DrawLine(new Pen(muted, 1.1), new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
-        dc.DrawLine(new Pen(accent, 3.1), new Point(track.Left, y), new Point(currentX, y));
-
-        dc.DrawEllipse(
-            panel,
-            new Pen(accent, selected ? 2.5 : 1.5),
-            new Point(currentX, y),
-            6.0,
-            6.0);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
-
-
-        _targets[row] = new HitTarget(
-            new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
-            track);
-    }
-
-    private void DrawMutantPartsPanel(
-        DrawingContext dc,
-        double top,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
-    {
-        var parameter = _mutantParts;
-        if (parameter is null)
-            return;
-
-        var card = new Rect(18.0, top, Math.Max(1.0, ActualWidth - 36.0), 70.0);
-        dc.DrawRoundedRectangle(
-            _mutantPartsSelected
-                ? CloneWithOpacity(accent, 0.08)
-                : _mutantPartsHovered
-                    ? CloneWithOpacity(border, 0.10)
-                    : CloneWithOpacity(panel, 0.04),
-            new Pen(border, 0.9),
-            card,
-            3.0,
-            3.0);
-
-        DrawText(dc, "MUTANT PARTS", new Point(card.Left + 10.0, card.Top + 8.0), 8.8, text, FontWeights.Bold);
-        DrawRightAlignedText(
-            dc,
-            $"{parameter.CurrentNumber:0.##}x",
+        var modified = parameter.IsValueModifiedFromReference();
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Right - 12.0, card.Top + 8.0),
-            10.0,
-            parameter.IsValueModifiedFromReference() ? accent : text,
-            FontWeights.Bold);
+            modified ? 12.2 : 11.0, modified ? accent : text, FontWeights.Bold);
 
-        var blindDogValue = 1000.0 * parameter.CurrentNumber;
-        var chimeraValue = 18000.0 * parameter.CurrentNumber;
-
-        DrawText(
-            dc,
-            $"BLIND DOG  {blindDogValue:0} coupons",
-            new Point(card.Left + 165.0, card.Top + 24.0),
-            7.6,
-            muted,
-            FontWeights.SemiBold);
-
-        DrawText(
-            dc,
-            $"CHIMERA  {chimeraValue:0} coupons",
-            new Point(card.Left + 340.0, card.Top + 24.0),
-            7.6,
-            accent,
-            FontWeights.SemiBold);
-
-        var track = new Rect(card.Left + 14.0, card.Top + 48.0, card.Width - 28.0, 12.0);
+        var track = new Rect(card.Left + 14.0, card.Top + 39.0,
+            Math.Max(1.0, card.Width - 28.0), 12.0);
         var y = track.Top + track.Height / 2.0;
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track);
+        var baseX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, track);
+        dc.DrawLine(new Pen(border, 3.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 3.0),
+            new Point(track.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 1.8),
+            new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
 
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
+        // Never accent the whole card on hover; only the editable control point.
+        if (hovered)
+            dc.DrawEllipse(CloneWithOpacity(accent, 0.17), null,
+                new Point(currentX, y), 12.0, 12.0);
+        dc.DrawEllipse(panel, new Pen(accent,
+                selected || hovered ? 2.5 : 1.5),
+            new Point(currentX, y), 6.0, 6.0);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
 
-        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track);
-        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
+        DrawText(dc, $"{parameter.Minimum:0.##}x",
+            new Point(track.Left, card.Top + 58.0),
+            9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
+            new Point(track.Right, card.Top + 58.0),
+            9.0, muted, FontWeights.Normal);
 
-        dc.DrawLine(new Pen(muted, 1.1), new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
-        dc.DrawLine(new Pen(accent, 3.2), new Point(track.Left, y), new Point(currentX, y));
-
-        dc.DrawEllipse(
-            panel,
-            new Pen(accent, _mutantPartsSelected ? 2.5 : 1.5),
-            new Point(currentX, y),
-            6.0,
-            6.0);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
-
-
-        _mutantPartsTarget = new HitTarget(
-            new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
+        return new HitTarget(
+            new Rect(track.Left - 7.0, track.Top - 6.0,
+                track.Width + 14.0, track.Height + 12.0),
             track);
     }
 
@@ -520,21 +432,6 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         return -1;
     }
 
-    private Layout GetLayout()
-    {
-        var usable = Math.Max(520.0, ActualWidth - 40.0);
-        var labelWidth = Math.Clamp(usable * 0.20, 125.0, 155.0);
-        var valueWidth = 78.0;
-        var fixedWidth = labelWidth + valueWidth + 30.0;
-        var trackWidth = Math.Max(230.0, usable - fixedWidth);
-
-        var left = 22.0;
-        var valueCenter = left + labelWidth + valueWidth / 2.0;
-        var trackLeft = left + labelWidth + valueWidth + 18.0;
-
-        return new Layout(left, valueCenter, trackLeft, trackWidth);
-    }
-
     private static double ValueToX(double value, double minimum, double maximum, Rect track)
     {
         if (maximum <= minimum + Epsilon)
@@ -592,5 +489,4 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
 
     private sealed record PriceDefinition(string ParameterId, string Label);
     private sealed record HitTarget(Rect HitRect, Rect MapRect);
-    private sealed record Layout(double LabelLeft, double ValueCenter, double TrackLeft, double TrackWidth);
 }

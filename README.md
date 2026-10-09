@@ -1038,3 +1038,18 @@ Apply across all tabs and all reusable visual-control families: remove redundant
 ### 2026-10-09 — Global compact-text cleanup: dedicated visual families
 
 Approved continuation of the global no-redundant-text rule. Audited all thirteen dedicated editor controls in `src/TrueCustomDifficulty/Controls` (excluding the reusable `AggregateVisualControl` and non-editor chrome). Removed redundant visible explanations from **eight**: `HumanGroupSizeRadar` (scope disclaimer and gold/Base legend), `MutantGroupSizeRadar` (grey tick/zero-cap footnote), `ItemPriceScalersRadar` (0x/1x/2x explanation already conveyed by the native axis), `BleedingCurveControl` (dashed/vanilla legend), `MutantDropRadar` (scope disclaimer and repeated explanation of EXPECTED / 100), `WorldLootRemovalRadar` (RNG caption and bottom count/scope footnotes), `DrunkennessControl` (overdrunkness stage-preview disclaimer), and `AnomalyDamageRadar` (global-vs-individual footer). No named editor, unit, native numeric value, meaningful graph axis, draggable handle, current/Base reference marker, read-only numeric output or hit target was removed. **Gameplay semantics remain unchanged:** world-loot selection occurs at build and excludes protected story/trader/scripted domains; Drunkenness stages do not include overdrunkness; authored zero group caps remain zero; EXPECTED/100 drops are statistical expectations, not guaranteed sequences. The other five dedicated editors (`ActionCostsRadar`, `MedicalHealingRadar`, `MutantHealthRadar`, `SpecialAbilityCooldownRadar`, `StashAmmoRadar`) retain their nonredundant labels. A now-unused local calculation in `AggregateVisualControl.DrawMixerBoard` was also removed. No CFG mapping, gameplay value, preset, source bound, mouse/keyboard reset behavior, hit geometry or sizing changes. Wine visual acceptance pending.
+
+## Economy tab — full compact source-bound redesign (2026-10-09)
+
+The Economy tab now has **six full-width semantic sections** with all **22** existing playable source settings visible once, plus one catalog audit-only repair scaler that deliberately stays hidden:
+
+- COUPONS & REWARDS (3): starting coupons, main quest rewards, side quest rewards
+- TRADING (4): buy-from-you / sell-to-you pricing, minimum acceptable condition, broken-item value floor
+- TRADER STOCK (2): ammunition and medicine quantity scalers
+- ITEM VALUE LAYERS (6): consumables, ammo, armor, weapons, artifacts and mutant parts
+- SERVICE PRICES (3): fast travel, upgrades and global base repair %
+- REPAIR PRICE BY REPUTATION (4): Friendly, Neutral, Disliked and Hostile
+
+The former separate starting/reward rows and the former tall Services/Trader Stock mixer strips have been replaced by compact native horizontal sliders, matching the current Stamina-style controls. Six Item Value Layers use a 2×3 horizontal grid without redundant headings or payout examples. Trading and Repair remain their approved compact four-card layouts. Every native CFG source/slider range, tick, selected Base marker, preset, reset behavior and right-side rationale remains; only modified numeric tokens become gold and slightly larger. See `docs/UI-DESIGN-LOCK.md`, `docs/VISUAL-CONTROL-SYSTEM.md` and the authoritative `docs/UI-MIXER-GRID-SPEC.md` override.
+
+GitHub source changes do not themselves demonstrate a successful .NET publish or Wine runtime. Local build and 16:9 responsiveness verification are required before visual acceptance.

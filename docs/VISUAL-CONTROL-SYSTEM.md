@@ -86,8 +86,9 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Starvation | Real-time grace period, repeating damage cadence and active penalty meters | Semantic |
 | Repeated Hits | Current and vanilla protection envelopes on one curve-weight scale | Semantic |
 | Radiation | Separate exposure/clearance controls, normalized tuning bias and downstream damage | Semantic |
-| Trading | Transaction-direction pricing flow, condition gate and broken-item value floor | Semantic |
-| Repair | Reputation-to-repair-price curve with surcharge/base/discount regions | Semantic |
+| Coupons & Rewards | Three independent native horizontal source cards: starting coupons, main and side quest reward multipliers | Semantic |
+| Trading | Four independent compact horizontal cards for buy/sell scalers, acceptance condition and value floor | Semantic |
+| Repair | Four independent compact native horizontal reputation modifiers, actual-value-linked ordering | Semantic |
 | Ammo Distribution | Separate SNG/NATO pool composition previews plus family-weight editors | Semantic |
 | Stash Reward Rolls | Three source-native vertical faders: Basic grenade chance, Basic grenade count, Rare coupon chance; Wine QA pending | Mixer pilot |
 | Breakable Box Yields | Two vertical mixer faders for ammo and grenade counts; original 0.25x / 0.5x steps retained; Wine QA pending | Mixer pilot |
@@ -95,8 +96,8 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | NPC Loot & Equipment | Discrete corpse-loot selector, independent medical/ammo tracks and MIN/MAX dropped-weapon condition | Semantic |
 | Explosion Damage | Direct blast-damage multiplier and read-only Base Preset comparison band | Semantic |
 | Physical Limits | Independent vault height (uu) / carry mass (kg) source tracks with original vault landmarks | Semantic |
-| Trader Stock | Two responsive vertical faders for ammo and medic supply (0.25x native steps); Wine QA pending | Mixer pilot |
-| Service Prices | Three source-bound vertical faders for guide, upgrade and base repair prices; Wine QA pending | Mixer pilot |
+| Trader Stock | Two compact native horizontal source cards for ammo and medic supply (0.25x steps), 2-column/single-column responsive | Semantic |
+| Service Prices | Three compact horizontal source cards for fast travel, upgrade cost and base repair %; 2-column/single-column responsive | Semantic |
 | Item Weight | Two independent native-value vertical weight faders; Wine QA pending | Mixer pilot |
 | Anomaly Effects | Six native-value vertical mixer faders with responsive rows, clickable Base marks and per-channel rationale selection; Wine QA pending | Pilot |
 
@@ -938,3 +939,24 @@ Apply across all tabs and all reusable visual-control families: remove redundant
 ### 2026-10-09 — Global compact-text cleanup: dedicated visual families
 
 Approved continuation of the global no-redundant-text rule. Audited all thirteen dedicated editor controls in `src/TrueCustomDifficulty/Controls` (excluding the reusable `AggregateVisualControl` and non-editor chrome). Removed redundant visible explanations from **eight**: `HumanGroupSizeRadar` (scope disclaimer and gold/Base legend), `MutantGroupSizeRadar` (grey tick/zero-cap footnote), `ItemPriceScalersRadar` (0x/1x/2x explanation already conveyed by the native axis), `BleedingCurveControl` (dashed/vanilla legend), `MutantDropRadar` (scope disclaimer and repeated explanation of EXPECTED / 100), `WorldLootRemovalRadar` (RNG caption and bottom count/scope footnotes), `DrunkennessControl` (overdrunkness stage-preview disclaimer), and `AnomalyDamageRadar` (global-vs-individual footer). No named editor, unit, native numeric value, meaningful graph axis, draggable handle, current/Base reference marker, read-only numeric output or hit target was removed. **Gameplay semantics remain unchanged:** world-loot selection occurs at build and excludes protected story/trader/scripted domains; Drunkenness stages do not include overdrunkness; authored zero group caps remain zero; EXPECTED/100 drops are statistical expectations, not guaranteed sequences. The other five dedicated editors (`ActionCostsRadar`, `MedicalHealingRadar`, `MutantHealthRadar`, `SpecialAbilityCooldownRadar`, `StashAmmoRadar`) retain their nonredundant labels. A now-unused local calculation in `AggregateVisualControl.DrawMixerBoard` was also removed. No CFG mapping, gameplay value, preset, source bound, mouse/keyboard reset behavior, hit geometry or sizing changes. Wine visual acceptance pending.
+
+### Economy — six complete compact source-bound boards (2026-10-09)
+
+This entry **supersedes** the historical Trading Flow/Repair Curve diagrams and the former Services/Trader Stock vertical-mixer examples in this document. The earlier sections remain as development history; the current source renderer contracts below are authoritative alongside `docs/UI-DESIGN-LOCK.md`:
+
+| Board | Source VMs (all independent) | Layout |
+| --- | --- | --- |
+| `CouponFlow` | `startingMoney`, `mainQuestReward`, `sideQuestReward` (economy namespace) | 3 cards, two columns then one centered; one column at narrow widths |
+| `TradingDashboard` | `buyCondition`, `sellCondition`, `traderMinBuyCondition`, `itemValueFloor` | Existing compact four-card layout |
+| `TraderStockBoard` | `traderAmmoStock`, `medicStock` | 2 compact horizontal cards |
+| `ItemPriceScalersRadar` | `consumableCost`, `ammoCost`, `armorCost`, `weaponCost`, `artifactCost`, `mutantPartValue` | 2×3 compact horizontal source cards |
+| `ServiceCostsBoard` | `fastTravelCost`, `upgradeCost`, `repairCostBase` | 3 compact horizontal cards, 2+1 centered |
+| `RepairCurve` | `repairFriend`, `repairNeutral`, `repairDisaffection`, `repairEnemy` | Existing four-card horizontal layout, real CFG-value linked ordering |
+
+All IDs above have prefix `economy.`. There are **22** source-editable Economy values. `economy.repairDifficultyCost` stays audit-only and nonvisible. Service price values are not collapsed into reputation price, trader payout formulae are not invented, starting coupons affect only new-game initialization, and Mutant Parts retains its actual per-item `Cost` scaling.
+
+The reusable `DrawEconomyCard` grammar and Item Value Layers renderer preserve one true numeric value, native endpoints and steps, grey Base tick, gold handle and handle-only hover glow. Only the number changed from selected Base is accent-colored and +1.2 DIP larger. No Base prose, bottom legend or long footnote is rendered. Right-side parameter rationale remains available for fuller technical context. These are source-value editors, not fake previews.
+
+### Economy QA requirements
+
+At full and minimum 16:9 window sizes, verify that all 22 source controls appear once, within their intended six boards, with no missing parameter placeholders. Confirm drag and keyboard steps preserve the native slider limits, coupon amounts snap to 10, Trader/Medic stock snaps to 0.25x, single-source right-click reset, R reset-all per family, source-modified highlighting, correct selected-difficulty reference ticks and preset-save round trip. Build and Wine visual acceptance is still pending.

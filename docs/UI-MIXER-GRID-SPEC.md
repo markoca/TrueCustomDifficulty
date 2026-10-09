@@ -1,13 +1,26 @@
 # Mixer & Responsive Grid UI — Source of Truth
 
 **Project:** True Custom Difficulty  
-**Status:** Anomaly Effects, Service Prices, Trader Stock, Item Weight, Breakable Box Yields and Stash Reward Rolls migrated in source; runtime QA pending for new families.  
+**Status:** Anomaly Effects, Item Weight, Breakable Box Yields and Stash Reward Rolls remain mixer-style. Economy Service Prices and Trader Stock have been explicitly redesigned as compact horizontal source cards (2026-10-09); their earlier mixer references below are historical, superseded examples. Runtime/Wine QA pending.  
 **Scope:** Visual layout and interaction only.  
 **Canonical document:** This file is the source of truth for the mixer-style parameter controls and the accompanying responsive grid layout.
 
 This specification exists because the current full-width horizontal-track boards consume too much height and repeat slider affordances that are difficult to scan at a glance. The application window uses **16:9**; the editing area must take advantage of that shape without making numeric labels smaller or widening individual tracks indefinitely.
 
 > **Precedence:** For mixer/grid appearance, behavior, breakpoints, and acceptance criteria, follow this file. For individual parameter IDs, current range/step, vanilla difficulty reference, constraints and CFG effects, the live parameter catalog, ParameterViewModel, central constraint coordinator and CFG writer remain authoritative. The existing [Visual Control System](VISUAL-CONTROL-SYSTEM.md) governs non-mixer visual families. Do not silently change this specification while implementing a panel: update the source-of-truth document first.
+
+
+## Current Economy override — supersedes vertical mixer examples (2026-10-09)
+
+The user explicitly authorized a tab-wide Economy redesign. **Only for Economy**, override the earlier Service Prices / Trader Stock mixer-strip rules and the old section-grid Economy pairing examples: all top-level Economy sections are now individually full-width (1×1), and internal controls use compact horizontal native-range cards. The Services and Trader Stock panels are no longer rendered by `DrawMixerStrip`; other tabs' mixers remain unchanged.
+
+- `CouponFlow` — 3 native controls, two columns plus centered final row at editor widths >=672 DIP; one column below.
+- `TraderStockBoard` — 2 horizontal native supply scalers, original independent 0.25× increments.
+- `ServiceCostsBoard` — 3 horizontal native price controls; base repair source shown as a percentage.
+- `ItemPriceScalersRadar` — 6 compact horizontal source cards in 2×3 layout, covering all five category layers plus actual mutant-part Cost scaling.
+- Trading and Reputation Repair retain their previous user-approved compact horizontal designs.
+
+Each new shared Economy card is 80 DIP tall, 94-DIP pitch, 12-DIP intercolumn gap, with a centered gold title and no nonessential subtitles or legends. Breakpoint: 672-DIP editor width for two columns. Last short row remains centered. Item Price uses a dedicated 326-DIP canvas and 78-DIP cards with 90-DIP pitch. Current numeric tokens alone turn gold and grow 1.2 DIP when changed against the selected Base difficulty; grey reference ticks remain. Only circular handles glow on hover. Controls retain their original native parameter IDs, ranges, keyboard/drag/right-click/R semantics and right-panel rationale. See `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md` for the exact current designs; older notes on Economy strip faders are superseded, not live acceptance criteria.
 
 ## 1. Goals and non-goals
 
