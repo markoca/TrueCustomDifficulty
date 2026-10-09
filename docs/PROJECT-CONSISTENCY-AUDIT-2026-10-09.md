@@ -97,3 +97,8 @@ on `_acr_ids`, whose original definition was located in a retired Action
 Costs radar gate. The current source-backed seven-ID cohort is now declared
 explicitly for the stamina audit so the validator does not depend on
 historical geometry checks.
+
+The CI runner also exposed a local-only root-file assumption: `prompt.md`
+is not present in the workflow checkout. The validator now requires the seven
+operational root files, allows the optional prompt when present, and still
+fails on unexpected root files; it does not require local notes to build.

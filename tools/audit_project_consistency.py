@@ -1906,16 +1906,17 @@ else:
     note(f"application version metadata synchronized: {_app_version}")
 
 # Root stays intentionally lean; canonical audit/runtime data lives under Data/.
-_allowed_root_files = {".gitignore", "README.md", "TrueCustomDifficulty.sln", "audit_project_consistency.py", "global.json", "prompt.md", "publish.sh", "run-latest.sh"}
+_required_root_files = {".gitignore", "README.md", "TrueCustomDifficulty.sln", "audit_project_consistency.py", "global.json", "publish.sh", "run-latest.sh"}
+_optional_root_files = {"prompt.md"}  # local prompt may exist but is not needed for build/audit.
 _actual_root_files = {p.name for p in ROOT.iterdir() if p.is_file()}
-if _actual_root_files != _allowed_root_files:
-    fail(f"repository root file set drifted: {sorted(_actual_root_files)}; expected {sorted(_allowed_root_files)}")
+_root_missing = sorted(_required_root_files - _actual_root_files)
+_root_unexpected = sorted(_actual_root_files - _required_root_files - _optional_root_files)
+if _root_missing or _root_unexpected:
+    fail(f"repository root file set drifted: missing={_root_missing}; unexpected={_root_unexpected}")
 elif 'PUBLISH_DIR="$ROOT/publish/win-x64"' not in (ROOT / "publish.sh").read_text(encoding="utf-8"):
     fail("publish.sh no longer isolates runtime output under publish/win-x64")
-elif not (ROOT / "run-latest.sh").exists():
-    fail("run-latest.sh is missing from current Linux/Wine workflow")
 else:
-    note("current root/publish layout: 8 tracked root files; Linux/Wine publish and run scripts present")
+    note(f"current root/publish layout: required {len(_required_root_files)} files present; optional prompt.md not required; no unexpected root files")
 
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
