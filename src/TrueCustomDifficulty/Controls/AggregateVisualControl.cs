@@ -254,7 +254,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrawTradingDashboard(dc, text, muted, border, accent, panel);
                 break;
             case "RepairCurve":
-                DrawRepairCurve(dc, text, muted, border, soft, accent, panel);
+                DrawRepairCurve(dc, text, muted, border, accent, panel);
                 break;
             case "AmmoDistribution":
                 DrawAmmoDistribution(dc, text, muted, border, soft, accent, panel);
@@ -2576,11 +2576,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(ActualWidth / 2.0, 280.0), 9.5, text, FontWeights.SemiBold);
     }
 
-    // Compact reputation modifiers: preserve the value-based ordering constraint
-    // Repair reputation retains four native sliders and the actual-value
-    // ordering constraint enforced by the shared coordinator; no fake bill preview.
+    // Compact native reputation editors keep the real source-value ordering
+    // constraint in the shared coordinator; no invented final repair bill.
     private void DrawRepairCurve(
-        DrawingContext dc, Brush text, Brush muted, Brush border, Brush soft,
+        DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawCenteredText(dc, "REPAIR PRICE BY REPUTATION",
