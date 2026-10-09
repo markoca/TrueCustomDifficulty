@@ -179,7 +179,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
         dc.DrawRoundedRectangle(
             selected ? CloneWithOpacity(accent, 0.08)
-            : CloneWithOpacity(panel, 0.02)
             : CloneWithOpacity(panel, 0.02),
             new Pen(CloneWithOpacity(border, 0.45), 0.8),
             card,
