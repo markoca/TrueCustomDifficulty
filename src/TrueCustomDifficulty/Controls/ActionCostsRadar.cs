@@ -261,7 +261,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             var modified = Math.Abs(parameter.CurrentNumber - reference) > Epsilon;
 
             DrawText(dc, Actions[index].Label, new Point(card.Left + 9.0, top), 9.2,
-                ReferenceEquals(_hoverParameter, parameter) ? accent : text, FontWeights.Bold);
+                text, FontWeights.Bold);
             DrawRightAlignedText(
                 dc,
                 $"{FormatRaw(parameter.CurrentNumber)} SP",
@@ -489,7 +489,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             return;
 
         DrawText(dc, label, new Point(rect.Left, rect.Top), 9.0,
-            ReferenceEquals(_hoverParameter, parameter) ? accent : muted, FontWeights.Bold);
+            muted, FontWeights.Bold);
         DrawRightAlignedText(dc, formatter(parameter.CurrentNumber), new Point(rect.Right, rect.Top), 9.0, parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
 
         var track = new Rect(rect.Left, rect.Top + 21.0, rect.Width, 8.0);
