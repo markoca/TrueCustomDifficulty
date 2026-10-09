@@ -3728,11 +3728,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush soft, Brush accent, Brush panel)
     {
         DrawHeader(dc, "BREAKABLE BOXES", "", text, muted, accent);
+        var ammoYield = P("loot.destructibleAmmoQuantity");
         var weight918 = P("loot.ammoBoxWeight918");
         var weight045 = P("loot.ammoBoxWeight045");
         var weight545 = P("loot.ammoBoxWeight545");
         var weight012 = P("loot.ammoBoxWeight012");
-        if (weight918 is null || weight045 is null ||
+        if (ammoYield is null || weight918 is null || weight045 is null ||
             weight545 is null || weight012 is null)
         {
             DrawCenteredText(dc, "Ammo distribution data unavailable.",
@@ -3747,14 +3748,100 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         DrawText(dc, "YIELD PER BOX", new Point(margin, 47.0),
             10.2, muted, FontWeights.Bold);
-        DrawHorizontalTrackCard(dc, P("loot.destructibleAmmoQuantity"),
+        DrawHorizontalTrackCard(dc, ammoYield,
             "AMMO YIELD", new Rect(margin, 66.0, cell, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
         DrawHorizontalTrackCard(dc, P("loot.destructibleGrenadeQuantity"),
             "GRENADE YIELD", new Rect(margin + cell + gap, 66.0, cell, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
 
-        DrawText(dc, "AMMO FAMILY WEIGHTS", new Point(margin, 149.0),
+        // Live, source-exact read-only output counts for EACH of the eight
+        // destructible ammo rows. These are ItemGeneratorPrototypes.cfg's
+        // DestructibleStash_AmmoSNG/NATO source MinCount/MaxCount fields,
+        // NOT the generic NPC_Ammo_Smart corpse package. Only Ammo Yield
+        // scales stack size; family Weight determines relative eligibility.
+        // Keep the same positive integer half-up arithmetic as
+        // CfgPatchWriterService.ScalePositiveInteger (native 0.5..2x).
+        var countsModified = ammoYield.IsValueModifiedFromReference();
+        var preview = new Rect(margin, 147.0,
+            Math.Max(1.0, ActualWidth - 2.0 * margin), 121.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+            preview, 4.0, 4.0);
+        DrawText(dc, "AMMO YIELD PREVIEW",
+            new Point(preview.Left + 11.0, preview.Top + 6.0),
+            10.2, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "ROUNDS IF ROLLED",
+            new Point(preview.Right - 11.0, preview.Top + 6.0),
+            9.4, muted, FontWeights.SemiBold);
+
+        void YieldRow(string pool, double rowTop,
+            (string Caliber, int MinCount, int MaxCount, ParameterViewModel Weight)[] items)
+        {
+            // Source pools have four entries each. Cap sample tile width at
+            // 143 DIP and center the full row, so a wide host never leaves
+            // four comically stretched read-only tiles.
+            const double rowInset = 11.0;
+            const double poolLabelWidth = 42.0;
+            const double gapToTiles = 9.0;
+            const double sampleGap = 7.0;
+            var innerWidth = Math.Max(1.0, preview.Width - 2.0 * rowInset);
+            var tileWidth = Math.Min(143.0,
+                Math.Max(1.0, (innerWidth - poolLabelWidth - gapToTiles
+                    - 3.0 * sampleGap) / 4.0));
+            var groupWidth = poolLabelWidth + gapToTiles
+                + 4.0 * tileWidth + 3.0 * sampleGap;
+            var rowLeft = preview.Left + (preview.Width - groupWidth) / 2.0;
+            DrawCenteredText(dc, pool,
+                new Point(rowLeft + poolLabelWidth / 2.0, rowTop + 12.0),
+                10.0, muted, FontWeights.Bold);
+
+            for (var i = 0; i < items.Length; i++)
+            {
+                var item = items[i];
+                var tile = new Rect(rowLeft + poolLabelWidth + gapToTiles
+                        + i * (tileWidth + sampleGap),
+                    rowTop, tileWidth, 39.0);
+                // An individually zero-weighted ammo family cannot be
+                // rolled, though its authored quantity values are retained.
+                var eligible = item.Weight.CurrentNumber > Epsilon;
+                dc.DrawRoundedRectangle(
+                    CloneWithOpacity(panel, eligible ? 0.93 : 0.55),
+                    new Pen(CloneWithOpacity(border, eligible ? 0.80 : 0.45), 0.9),
+                    tile, 3.0, 3.0);
+                var low = Math.Max(1, (int)Math.Floor(
+                    item.MinCount * ammoYield.CurrentNumber + 0.5));
+                var high = Math.Max(1, (int)Math.Floor(
+                    item.MaxCount * ammoYield.CurrentNumber + 0.5));
+                DrawCenteredText(dc, item.Caliber,
+                    new Point(tile.Left + tile.Width / 2.0, tile.Top + 3.0),
+                    9.7, muted, FontWeights.SemiBold);
+                // Count + en dash is one value token; caliber digits are
+                // neutral. The 1.2-DIP increase and gold apply only when
+                // Ammo Yield itself differs from selected Base Preset.
+                DrawCenteredText(dc, $"{low}–{high}",
+                    new Point(tile.Left + tile.Width / 2.0, tile.Top + 18.0),
+                    countsModified ? 12.8 : 11.6,
+                    countsModified ? accent : eligible ? text : muted,
+                    FontWeights.SemiBold);
+            }
+        }
+
+        YieldRow("SNG", 173.0, new[]
+        {
+            (Caliber: "9×18", MinCount: 3, MaxCount: 6, Weight: weight918),
+            (Caliber: "9×19", MinCount: 5, MaxCount: 10, Weight: weight918),
+            (Caliber: "5.45", MinCount: 5, MaxCount: 10, Weight: weight545),
+            (Caliber: "12 GA", MinCount: 2, MaxCount: 4, Weight: weight012)
+        });
+        YieldRow("NATO", 219.0, new[]
+        {
+            (Caliber: ".45 ACP", MinCount: 5, MaxCount: 10, Weight: weight045),
+            (Caliber: "9×19", MinCount: 5, MaxCount: 10, Weight: weight918),
+            (Caliber: "5.56", MinCount: 5, MaxCount: 10, Weight: weight545),
+            (Caliber: "12 GA", MinCount: 5, MaxCount: 10, Weight: weight012)
+        });
+
+        DrawText(dc, "AMMO FAMILY WEIGHTS", new Point(margin, 279.0),
             10.2, muted, FontWeights.Bold);
         var weights = new (ParameterViewModel Parameter, string Label)[]
         {
@@ -3767,11 +3854,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             DrawHorizontalTrackCard(dc, weights[i].Parameter, weights[i].Label,
                 new Rect(margin + (i % 2) * (cell + gap),
-                    167.0 + (i / 2) * 80.0, cell, 72.0),
+                    297.0 + (i / 2) * 80.0, cell, 72.0),
                 text, muted, border, accent, panel, pairedValueFormatting: true);
         }
 
-        DrawText(dc, "AMMO POOL COMPOSITION", new Point(margin, 329.0),
+        DrawText(dc, "AMMO POOL COMPOSITION", new Point(margin, 459.0),
             10.2, muted, FontWeights.Bold);
 
         var w918 = Math.Max(0.0, weight918.CurrentNumber);
@@ -3835,10 +3922,10 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         Pool("SNG POOL",
             new[] { "9×18 / 9×19", "5.45", "12 GAUGE" }, sng,
-            new[] { 0, 2, 3 }, 351.0);
+            new[] { 0, 2, 3 }, 481.0);
         Pool("NATO POOL",
             new[] { ".45 ACP", "9×19", "5.56", "12 GAUGE" }, nato,
-            new[] { 1, 0, 2, 3 }, 445.0);
+            new[] { 1, 0, 2, 3 }, 575.0);
     }
 
     // Shared density for the large Survival/Health aggregate panels. Rows are
@@ -5106,7 +5193,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "RadiationBalance" => CompactGridEnd(55.0, 3, CompactStageColumns(width)) + 14.0,
             "TradingDashboard" => (width >= 672.0 ? 300.0 : 536.0),
             "RepairCurve" => (width >= 672.0 ? 300.0 : 526.0),
-            "AmmoDistribution" => 536.0,
+            "AmmoDistribution" => 680.0,
             _ => 340.0
         };
 
