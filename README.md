@@ -1,5 +1,10 @@
 # True Custom Difficulty
 
+## Deep CFG audit — Phase 3: Combat (2026-10-09)
+
+The live Combat catalog currently has **39 dimensions**: 27 source-confirmed direct controls (52 difficulty-field plus 16 mutant-health writer routes), and 12 Master-derived mutant cooldown / PSY controls still requiring gameplay verification. Static catalog-to-writer verification identified no new direct route mismatch; it does **not** establish runtime behavior. Added `tools/audit_combat_contract.py` for reproducible Combat guards and `--parameter-prefix combat.` to the decoded-ZIP source checker. Legacy presets may still apply hidden repeated-hit or PSY fields: see [Phase 3 Combat audit](docs/DEEP-CFG-AUDIT-PHASE3-COMBAT-2026-10-09.md) for the risk boundary, test matrix and exact commands. No gameplay sliders, design locks or production writer semantics changed in this pass.
+
+
 ## Deep CFG audit — Phase 2: actual writer paths (2026-10-09)
 
 Verified a **production-important structural issue**: all sixteen Mutant Health `MaxHP` writer routes used an empty nested path even though vanilla stores those values under `VitalParams.MaxHP`. Phase 1 had validated their source numbers but **not** the emitted BPatch hierarchy. Fixed all sixteen direct `nodePath=["VitalParams"]` edit points and aligned all fourteen catalog `targets[].path="VitalParams.MaxHP"` entries, without modifying presets or UI values. All sixteen nested values independently match the supplied original GameData CFG. Added `tools/audit_cfg_source_values.py`, a decoded-ZIP parser that checks the **complete 1,224 direct edit-point** source path/raw-value surface when run with the original vanilla + DLC1 archives, producing a triage report instead of silently assuming inherited fields are direct. Source parser correctness was checked across all 13 referenced input CFG files; the complete 1,224-point comparison and .NET/Wine/game runtime test are still pending. Detailed evidence and commands: [Phase 2 structural source audit](docs/DEEP-CFG-AUDIT-PHASE2-2026-10-09.md). All current UI design locks remain unchanged.

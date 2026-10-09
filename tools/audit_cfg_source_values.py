@@ -120,11 +120,17 @@ def main() -> int:
     ap.add_argument("--base-zip", required=True, type=Path)
     ap.add_argument("--dlc1-zip", required=True, type=Path)
     ap.add_argument("--out", type=Path)
+    ap.add_argument("--parameter-prefix", default="",
+                    help="Limit direct edit-point checks to a parameter ID prefix (e.g. combat.)")
     ap.add_argument("--strict", action="store_true",
                     help="Exit nonzero on any discrepancy, including raw formatting")
     args = ap.parse_args()
     baseline = json.loads(BASELINE.read_text(encoding="utf-8"))
     points = baseline["editPoints"]
+    if args.parameter_prefix:
+        points = [p for p in points if p["parameterId"].startswith(args.parameter_prefix)]
+    if not points:
+        ap.error(f"No direct edit points matched prefix {args.parameter_prefix!r}")
     by_file = collections.defaultdict(list)
     for point in points:
         by_file[(point["scope"], point["file"])].append(point)
@@ -150,6 +156,7 @@ def main() -> int:
     statuses = dict(sorted(collections.Counter(r["status"] for r in results).items()))
     findings = [r for r in results if r["status"] != "exact"]
     report = {
+        "parameterPrefix": args.parameter_prefix or None,
         "totalDirectEditPoints": len(points), "statusCounts": statuses,
         "files": file_summaries, "findings": findings,
         "interpretation": (
@@ -163,6 +170,7 @@ def main() -> int:
         args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n",
                             encoding="utf-8")
     print("Direct CFG source value and structure audit")
+    print(f"Scope: {args.parameter_prefix or 'all parameters'}")
     print(f"Targets checked: {len(points)} | Status: {statuses}")
     for f in file_summaries:
         print(f"  {f['scope']}/{f['file']}: {f['counts']}")

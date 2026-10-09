@@ -1,5 +1,8 @@
 # Combat Mapping
 
+> **Current inventory:** This document describes the original difficulty-layer Combat map. The 2026-10-09 deep audit covers **39 active Combat parameters**, including 14 mutant-health dimensions / 16 nested `MaxHP` edit points. See [Phase 3 Combat audit](DEEP-CFG-AUDIT-PHASE3-COMBAT-2026-10-09.md) for current catalog/writer checks, special-writer boundaries and open runtime tests; the historical sections below remain as source semantics, not current UI counts.
+
+
 Source of truth: runtime `Stalker2/Content/GameLite/GameData/DifficultyPrototypes.cfg` from the supplied STALKER 2 2.0.5 CFG dump.
 
 This document records only combat controls that map to fields already present in the vanilla difficulty structures. It deliberately does not pull low-level weapon, perception, recoil, dispersion or AI-behavior tuning from unrelated CFGs into the difficulty editor.

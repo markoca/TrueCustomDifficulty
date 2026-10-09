@@ -1,5 +1,8 @@
 # Combat Control Deep Audit
 
+> **Current deep CFG audit (2026-10-09):** This document is a historical v0.2.44 25-control snapshot, not the current Combat inventory. The active catalog has **39 Combat dimensions: 27 direct controls (68 source edit points) and 12 special runtime-gated controls**. The current source-to-writer findings, safety boundaries and reproduction commands are in [Phase 3 Combat audit](DEEP-CFG-AUDIT-PHASE3-COMBAT-2026-10-09.md). The 16 direct mutant HP routes were repaired in [Phase 2](DEEP-CFG-AUDIT-PHASE2-2026-10-09.md). Do not use the old visible-count or route-quality claims below as a current production test result.
+
+
 Release: v0.2.44
 
 Scope: all 25 normal UI controls in the `combat` tab. This audit traces each control from player-facing semantics through catalog metadata to the concrete `DifficultyPrototypes.cfg` target/operator. It does not promote new controls.
