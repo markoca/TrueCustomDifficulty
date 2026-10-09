@@ -295,6 +295,43 @@ and non-Master inserted arrays likewise need in-game testing.
 No existing CFG writer implementation, UI design, gameplay balance or
 saved preset value was changed in this source audit.
 
+
+## Phase 7 — inherited Medium real writer fixtures / controlled game run
+
+Five importable, isolated preset JSON files have been added under
+`tests/CombatRuntimeAcceptance/Presets/`. The same real production
+`PresetService` and live `ParameterViewModel` used by the application
+are now exercised by the Windows harness to generate and validate
+the exact BPatch for:
+
+1. Stalker vanilla (no edit → no CFG patch).
+2. Stalker Mutant Hit Damage = 0.5x →
+   `Medium.MutantCombatDifficulty.Mutant_BaseDamage=0.5`.
+3. Stalker Mutant Attack Frequency = 1.5x →
+   `Medium.MutantCombatDifficulty.Mutant_AttackCooldown=0.666667`.
+4. Stalker combined → only those two assignments under one
+   nested `MutantCombatDifficulty : struct.begin {bpatch}`.
+5. Veteran control with the same values → target `Hard`,
+   where the original mutant section is physically authored.
+
+These **five new production writer scenarios** extend the existing 77
+to **82**. The tests verify selected-game-difficulty → CFG SID
+translation, importable serialized preset values, output structure,
+field values, counts and no unrelated fields or mutant ability
+arrays. The original Stalker `Medium` refkey and original Veteran
+`Hard` source have already been independently verified in Phase 6.
+
+**They do NOT prove that the engine applies BPatch to an inherited
+subsection.** That requires actual one-mod-at-a-time in-game
+observation, comparing Stalker vanilla, Stalker damage, Stalker
+frequency, Stalker combined and Veteran combined. The complete
+manual test instructions, expected output, safety and recording
+table are in
+[CombatRuntimeAcceptance](../tests/CombatRuntimeAcceptance/README.md).
+All game outcomes start at **NOT RUN**. Do not change the production
+writer, UI or runtime support flags based only on these static
+or .NET-generated patch checks.
+
 ## Before releasing a build
 
 The C# writer contract suite and Combat source checks are registered in [the pre-release test runbook](RELEASE-TESTING.md). Run `python tools/pre_release.py list` and follow its static/source/Windows writer procedure. The generated CFG test checks do not promote mutant cooldown or PSY runtime support states without in-game evidence.

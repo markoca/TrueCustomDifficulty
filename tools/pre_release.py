@@ -87,7 +87,7 @@ def main():
         print("SOURCE (requires matching original base and DLC1 CFG ZIPs):")
         for label, path in SOURCE:
             print(f"  {label}: python {path}")
-        print("WINDOWS + .NET 10: tests/CombatPatchContract (77 real writer cases)")
+        print("WINDOWS + .NET 10: tests/CombatPatchContract (82 real writer cases)")
         print("MANUAL (never automatically PASS):")
         for name in MANUAL:
             print(f"  [NOT RUN] {name}")

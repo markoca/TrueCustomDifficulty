@@ -1,5 +1,10 @@
 # True Custom Difficulty
 
+## Phase 7 — inherited Medium BPatch and game-test presets
+
+Five JSON presets under [Combat Runtime Acceptance](tests/CombatRuntimeAcceptance/README.md) isolate the in-game Stalker / CFG Medium inherited mutant section, with a Veteran / CFG Hard control. The real Windows contract harness imports these files through PresetService, applies live ViewModel values and checks their exact CFG output; total **82 production writer scenarios**. The game/Unreal runtime behavior remains explicitly **NOT RUN** until manually verified. No UI or gameplay/writer code was changed.
+
+
 ## Phase 6: original Combat CFG sources
 
 Original GameData/DLC1 CFG archives confirm 66 directly authored

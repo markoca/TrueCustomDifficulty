@@ -145,6 +145,14 @@ internal static class Program
                          p.Id.StartsWith("combat.mutantHealth.", StringComparison.Ordinal)))
                 MutantHealthCase(parameter.Id);
 
+            // Phase 7 uses five real, loadable user preset JSON fixtures.
+            // The engine's handling of nested inherited BPatch is NOT simulated.
+            InheritedSourcePresetCase("Stalker Vanilla.json", "Stalker", null, null);
+            InheritedSourcePresetCase("Stalker Mutant Damage.json", "Stalker", 0.5, null);
+            InheritedSourcePresetCase("Stalker Mutant Frequency.json", "Stalker", null, 1.5);
+            InheritedSourcePresetCase("Stalker Combined.json", "Stalker", 0.5, 1.5);
+            InheritedSourcePresetCase("Veteran Control.json", "Veteran", 0.5, 1.5);
+
             Console.WriteLine($"PASS: {_passed} executed production CFG writer scenarios.");
             Console.WriteLine("NOT VERIFIED: game runtime, vanilla decoded source arrays, UE BPatch loader semantics.");
             return 0;
@@ -154,6 +162,80 @@ internal static class Program
             Console.Error.WriteLine("FAIL: " + ex);
             return 1;
         }
+    }
+
+    // In-game Stalker difficulty = CFG Medium; Veteran = CFG Hard.
+    // Original Medium has no local MutantCombatDifficulty, inheriting
+    // the section from Empty. Here we verify the real UI→writer output,
+    // not the Unreal engine's resolution of inherited BPatch sections.
+    private static void InheritedSourcePresetCase(
+        string fileName, string difficulty, double? damage, double? frequency)
+    {
+        var path = Path.Combine(Directory.GetCurrentDirectory(),
+            "tests", "CombatRuntimeAcceptance", "Presets", fileName);
+        Check(File.Exists(path), "Missing runtime acceptance preset " + path);
+        var preset = new PresetService().Load(path);
+        Check(preset.ReferenceDifficulty == difficulty, "Preset base difficulty drift: " + fileName);
+
+        var expectedIds = new HashSet<string>(StringComparer.Ordinal);
+        if (damage.HasValue) expectedIds.Add("combat.mutantDamage");
+        if (frequency.HasValue) expectedIds.Add("combat.mutantAttackCooldown");
+        Check(preset.Values.Keys.ToHashSet(StringComparer.Ordinal).SetEquals(expectedIds),
+              fileName + ": unexpected extra/missing control IDs");
+
+        Case("runtime-" + Path.GetFileNameWithoutExtension(fileName)
+                        .Replace(" ", "-", StringComparison.Ordinal),
+            difficulty,
+            vm =>
+            {
+                // Same PresetService + ParameterViewModel.ApplyPresetValue as
+                // the production Load Preset path after its baseline reset.
+                foreach (var pair in preset.Values)
+                    Get(vm, pair.Key).ApplyPresetValue(pair.Value);
+                Check(vm.SelectedReferenceDifficulty == difficulty, "Wrong loaded baseline");
+                foreach (var id in expectedIds)
+                    Check(Get(vm, id).IsValueModifiedFromReference(),
+                        fileName + ": imported value is not an active edit " + id);
+            },
+            (root, result) =>
+            {
+                if (expectedIds.Count == 0)
+                {
+                    Check(result.FileCount == 0 && result.EditCount == 0
+                          && result.ParameterCount == 0,
+                        "vanilla Stalker preset emitted a patch");
+                    return;
+                }
+
+                Check(result.FileCount == 1
+                      && result.EditCount == expectedIds.Count
+                      && result.ParameterCount == expectedIds.Count,
+                    fileName + ": generated an unexpected edit or file");
+                Check(root.Bpatch && root.Children.Count == 1
+                      && root.Assignments.Count == 0
+                      && root.Children.ContainsKey("MutantCombatDifficulty"),
+                    fileName + ": patch must contain exactly one mutant section");
+                var mutant = root.Get("MutantCombatDifficulty");
+                Check(mutant.Bpatch && mutant.Children.Count == 0
+                      && mutant.Assignments.Count == expectedIds.Count,
+                    fileName + ": nested BPatch contents or flags invalid");
+                if (damage.HasValue)
+                    Approx(mutant.Value("Mutant_BaseDamage"), damage.Value);
+                else
+                    Check(!mutant.Assignments.ContainsKey("Mutant_BaseDamage"),
+                        fileName + ": unmodified damage leaked into patch");
+                if (frequency.HasValue)
+                    Approx(mutant.Value("Mutant_AttackCooldown"), 1 / frequency.Value);
+                else
+                    Check(!mutant.Assignments.ContainsKey("Mutant_AttackCooldown"),
+                        fileName + ": unmodified frequency leaked into patch");
+
+                var expectedSid = difficulty == "Stalker" ? "Medium" : "Hard";
+                Check(Catalog.DifficultyProfiles[difficulty].Sid == expectedSid,
+                    fileName + ": game difficulty-to-CFG SID mismatch");
+                Check(!mutant.Children.ContainsKey("AgentCooldownMultipliers"),
+                    fileName + ": special ability cooldown array leaked into direct test");
+            });
     }
 
     // Deliberately pin the expected vanilla field identities independently

@@ -14,7 +14,7 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | B1 | `python tools/audit_cfg_dump_provenance.py --base-zip BASE --dlc1-zip DLC1` | Linux / Windows | Actual source CFG filenames and 16 Mutant Health MaxHP fields |
 | B2 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --out REPORT.json --strict` | Linux / Windows | Every 1,224 direct source/CFG field check (strict) |
 | B3 | Same as B2 plus `--parameter-prefix combat.` | Linux / Windows | 68 direct Combat source checks (strict) |
-| C1 | `dotnet run --project tests/CombatPatchContract/CombatPatchContract.csproj -c Release -- --out audit/combat-patch-fixtures` | Windows / .NET 10 | 77 **real production writer** Master/Novice/Stalker/Veteran/PSY BPatch scenarios |
+| C1 | `dotnet run --project tests/CombatPatchContract/CombatPatchContract.csproj -c Release -- --out audit/combat-patch-fixtures` | Windows / .NET 10 | 82 **real production writer** Master/Novice/Stalker/Veteran/PSY BPatch scenarios |
 | D1 | `chmod +x publish.sh && ./publish.sh` | Linux / .NET 10 | Published executable and matching `BUILD-INFO.txt` source receipt |
 | D2 | Wine UI + in-game manual test | Linux / game | Visual design lock, preset round-trip, PAK/UTOC/UCAS build, actual game effects |
 
@@ -129,7 +129,7 @@ merge semantics** or quest-specific side effects. Preserve
 | Candidate SHA, 0.x version and `git status --short` | NOT RECORDED |
 | A1–A3 `summary.json` static PASS at that SHA | NOT RUN |
 | B1–B4 original matching decoded archive evidence | NOT RUN |
-| C1 Windows CI 77/77 writer at that SHA | NOT RUN |
+| C1 Windows CI 82/82 writer at that SHA | NOT RUN |
 | D1 publish and `BUILD-INFO.txt` SHA match | NOT RUN |
 | D2 Wine UI and preset smoke | NOT RUN |
 | D2 PAK/UTOC/UCAS build, mod load and in-game test | NOT RUN |
@@ -142,10 +142,20 @@ together with the candidate commit SHA.
 
 ### Phase 5 runtime contract coverage
 
-The Windows production-writer job is extended to **77 separate executable
+The Windows production-writer job is extended to **82 separate executable
 scenarios**: 11 special-array PSY/mutant cases, 52 direct difficulty
 control cases and 14 Mutant Health family cases (16 nested MaxHP fields).
 The current bound ViewModels and real `CfgPatchWriterService` are used.
 These scenarios prove output structure/value and no collateral edits,
 not independent correctness of every vanilla source value or in-game load.
 The original GameData/DLC1 ZIP checks remain an independent B1–B4 gate.
+
+### Phase 7 runtime acceptance: inherited mutant section
+
+The Windows writer job now tests **82 scenarios**, including five importable
+JSON presets for Stalker/Medium (inherited from Empty) and Veteran/Hard
+(directly authored). Use
+[Combat runtime test kit](../tests/CombatRuntimeAcceptance/README.md)
+for isolated in-game tests. Even a green 82/82 C# result is **not**
+gameplay evidence: game loading, Unreal inheritance/merge behavior and
+mod packaging remain manual gates.
