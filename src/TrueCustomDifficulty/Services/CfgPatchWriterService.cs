@@ -1739,7 +1739,14 @@ public sealed class CfgPatchWriterService
         ISet<string> writtenParameters)
     {
         var psyIds = baseline.Special.PsyParameterKeys.Keys.ToHashSet(StringComparer.Ordinal);
-        var changed = psyIds.Where(modifiedById.ContainsKey).ToList();
+        // PsyPhantomPressure uses the Spawn-Cycle Delay parameter as a visual
+        // aggregate anchor. A changed Phantom Count makes that anchor's
+        // IsModified true for the UI, even if its own delay remains vanilla.
+        // Select only actual source-value changes for emitted PSY fields.
+        var changed = psyIds
+            .Where(id => modifiedById.TryGetValue(id, out var parameter)
+                && parameter.IsValueModifiedFromReference())
+            .ToList();
         if (changed.Count == 0)
             return 0;
 

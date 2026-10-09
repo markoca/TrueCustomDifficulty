@@ -149,6 +149,14 @@ gate could then reject that non-value change. Now the special-family
 selection and final modified-support check use each parameter's
 `IsValueModifiedFromReference()`. Aggregate UI coloring remains untouched.
 
+The Windows contract harness additionally exposed the same aggregate
+leak in `WritePsyOverrides`: changing Phantom Count made the
+`PsyPhantomPressure` anchor (Spawn-Cycle Delay) look modified to the
+production writer and generated an unnecessary `PSYDelayBeforeNewSpawnCycleModifier`
+field on Master. PSY now also selects changed fields by independent
+`IsValueModifiedFromReference()` checks. The shipped effect defaults and
+control values are unchanged.
+
 A standalone **Windows/.NET 10** self-contained console contract test project at
 `tests/CombatPatchContract` runs the **real**
 `CfgPatchWriterService.Write`, generates `DifficultyPrototypes.cfg`
