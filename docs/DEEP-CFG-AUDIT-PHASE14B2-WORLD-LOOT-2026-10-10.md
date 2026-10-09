@@ -38,7 +38,16 @@ dotnet run --project tests/LootWorldRemovalsContract/LootWorldRemovalsContract.c
 dotnet run --project tests/LootWorldPlacementContract/LootWorldPlacementContract.csproj -c Release -- --out audit/loot-world-placement-fixtures
 ```
 
-Registered in `tools/pre_release.py writer` and independent Windows jobs `loot-world-removals-windows` and `loot-world-placement-windows`. **As of test registration: not yet confirmed on same-SHA CI.** Do not mark the suites PASS until the corresponding jobs finish successfully.
+Registered in `tools/pre_release.py writer` and independent Windows jobs `loot-world-removals-windows` and `loot-world-placement-windows`. **VERIFIED: C10 27/27 PASS and C11 20/20 PASS on the same
+production commit `fb59fb36b14a7e8d8593aaf0dcc67e5cdf8736d1`.**
+GitHub Actions run `38003085576` executed both Windows jobs,
+`loot-world-removals-windows` and `loot-world-placement-windows`,
+against the actual application writer. The former retained compact
+per-scenario SHA-256 actor identity receipts and representative physical
+CFG files instead of archiving tens of thousands of identical tiny files;
+**all** generated files were checked before the remaining examples were
+pruned. These results prove the manifest-to-production-writer contract
+only, not original ZIP fidelity or the game's Unreal loading behavior.
 
 ## Independent original CFG and runtime gates
 

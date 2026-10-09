@@ -1,0 +1,89 @@
+{
+  "phase": "14B2 World Loot",
+  "date": "2026-10-10",
+  "status": {
+    "staticAudit": "PASS",
+    "physicalRemovalWriter": "PASS",
+    "worldPlacementWriter": "PASS",
+    "independentOriginalSourceArchiveAudit": "NOT RUN",
+    "unrealPatchLoad": "NOT RUN",
+    "gameplay": "NOT RUN"
+  },
+  "verification": {
+    "testedCommit": "fb59fb36b14a7e8d8593aaf0dcc67e5cdf8736d1",
+    "githubActionsRun": 38003085576,
+    "physicalRemovalJob": "loot-world-removals-windows",
+    "physicalRemovalScenarios": 27,
+    "worldPlacementJob": "loot-world-placement-windows",
+    "worldPlacementScenarios": 20
+  },
+  "physicalActorManifests": {
+    "ammo": {
+      "base": 981,
+      "dlc1": 334,
+      "total": 1315
+    },
+    "foodDrink": {
+      "base": 1100,
+      "dlc1": 108,
+      "total": 1208
+    },
+    "medical": {
+      "base": 709,
+      "dlc1": 159,
+      "total": 868
+    },
+    "dedicatedF1": {
+      "base": 61,
+      "dlc1": 40,
+      "total": 101
+    },
+    "loosePickups": {
+      "base": 5996,
+      "dlc1": 1237,
+      "total": 7233
+    },
+    "dedicatedF1OverlapsBroadAmmo": false
+  },
+  "placement": {
+    "regularWeaponModels": 36,
+    "safeDirectWeaponActors": {
+      "base": 282,
+      "dlc1": 80
+    },
+    "safeWeaponGenerators": 14,
+    "weaponDensityRange": [
+      0,
+      1
+    ],
+    "weaponTierDistanceMax": 1,
+    "attachmentModels": 39,
+    "attachmentDirectActors": {
+      "base": 5,
+      "dlc1": 2
+    },
+    "attachmentGeneratorSlots": {
+      "base": 57,
+      "dlc1": 3
+    },
+    "worldBlueprints": 77,
+    "worldDetectorDirectActors": {
+      "base": 4,
+      "dlc1": 3
+    },
+    "worldDetectorDlcStashEntries": 1
+  },
+  "productionRegression": "Source-only actual values trigger writer; aggregate UI highlights are ignored. Random actor membership, count, absence of collateral modifications, archetype/tier, guaranteed minimum, blueprint derangement, detector eligible targets, and DLC1 gating tested on production output.",
+  "sourceGate": {
+    "script": "tools/audit_loot_world_source.py",
+    "registry": "tools/pre_release.py source",
+    "status": "NOT RUN with complete original ZIP in this environment; intended to verify every mapped physical actor/generator row against GameData/DLC1 original decoded archives",
+    "baseZipSha256": "7610b16218310c7345796ff26b1554c73e3d2ca775f6a50108a7406cb7f33da1",
+    "dlc1ZipSha256": "3c5cb53f1769619b510ae3780142d92639c083a4a755a8717a267710c3c849e6"
+  },
+  "limitations": [
+    "Windows writer PASS is not evidence of original CFG archive correspondence or Unreal BPatch merge semantics",
+    "In-game mod load order, quest/story exclusion in runtime, randomized replay and respawn need acceptance tests",
+    "Fixed-seed snapshots are intentionally avoided: every generated actor is checked against the allowed source membership and expected exact count."
+  ]
+}

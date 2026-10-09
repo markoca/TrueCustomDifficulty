@@ -342,3 +342,20 @@ GitHub Windows CI original-source check** (CI has only the repo).
 Run `python tools/pre_release.py source --base-zip ... --dlc1-zip ...`
 before release; store the gate's output JSON. This still does not
 prove in-game Unreal BPatch loading.
+
+### Phase 14B2 verified Windows writer receipt
+
+The same-SHA production CI run `38003085576`, commit
+`fb59fb36b14a7e8d8593aaf0dcc67e5cdf8736d1`, has
+**27/27 PASS** for randomized World Loot physical actor removals and
+**20/20 PASS** for world weapon/shuffle/density, attachment multiset,
+77-blueprint derangement and detector removal. The physical-removal
+artifact retains per-scenario SHA-256 actor identity receipts and samples
+after verifying every emitted actor. Also audited and corrected the
+outdated Loot catalog statement that dedicated F1 boxes overlap ordinary
+ammo/RGD boxes; these source manifests are disjoint, and the current
+Ammo Box population is 981 base + 334 DLC1, not the older numbers.
+`loot-world-original-source-structures` has been registered as a
+separate strict original-ZIP source gate but **must actually run
+against the original decoded archives** before B14 source provenance
+can be marked PASS. Gameplay and Unreal mod loading remain NOT RUN.
