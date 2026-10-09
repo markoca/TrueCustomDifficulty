@@ -3671,7 +3671,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var nato = Normalize(new[] { w045, w918, w545, w012 });
 
         void Pool(string name, IReadOnlyList<string> calibers,
-            IReadOnlyList<double> percentages, double top)
+            IReadOnlyList<double> percentages, IReadOnlyList<int> colorIndices, double top)
         {
             var card = new Rect(margin, top,
                 Math.Max(1.0, ActualWidth - margin * 2.0), 89.0);
@@ -3691,7 +3691,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                     ? Math.Max(0.0, bar.Right - cursor)
                     : Math.Max(0.0, bar.Width * percentages[i]);
                 if (percentages[i] > Epsilon && span > Epsilon)
-                    dc.DrawRectangle(CloneWithOpacity(accent, tones[i]), null,
+                    dc.DrawRectangle(CloneWithOpacity(accent, tones[colorIndices[i]]), null,
                         new Rect(cursor, bar.Top, span, bar.Height));
                 cursor += span;
             }
@@ -3705,7 +3705,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 var x = bar.Left + i * legendWidth;
                 var labelWidth = Math.Max(1.0, legendWidth - 17.0);
                 var swatch = new Rect(x, top + 49.0, 10.0, 10.0);
-                dc.DrawRectangle(CloneWithOpacity(accent, tones[i]), null, swatch);
+                dc.DrawRectangle(CloneWithOpacity(accent, tones[colorIndices[i]]), null, swatch);
                 dc.DrawText(CreateText(calibers[i], 10.2,
                         text, FontWeights.SemiBold, labelWidth),
                     new Point(x + 14.0, top + 46.0));
@@ -3716,9 +3716,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         Pool("SNG POOL",
-            new[] { "9x18 / 9x19", "5.45", "12 GAUGE" }, sng, 351.0);
+            new[] { "9x18 / 9x19", "5.45", "12 GAUGE" }, sng,
+            new[] { 0, 2, 3 }, 351.0);
         Pool("NATO POOL",
-            new[] { ".45 ACP", "9x19", "5.56", "12 GAUGE" }, nato, 445.0);
+            new[] { ".45 ACP", "9x19", "5.56", "12 GAUGE" }, nato,
+            new[] { 1, 0, 2, 3 }, 445.0);
     }
 
     // Shared density for the large Survival/Health aggregate panels. Rows are
