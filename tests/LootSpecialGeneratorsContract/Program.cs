@@ -388,7 +388,9 @@ internal static class Program
             foreach(var (key,expectedValue) in expected)
             {
                 var parts=key.Split('|',2);
-                Check(paths.TryGetValue(parts[0],out var doc) && doc.TryGetValue(parts[1],out var actualVal),
+                Check(paths.TryGetValue(parts[0],out var doc),
+                    label+": missing CFG document "+parts[0]);
+                Check(doc!.TryGetValue(parts[1],out var actualVal),
                     label+": missing CFG field "+key);
                 if(double.TryParse(expectedValue,CultureInfo.InvariantCulture,out var expectedNum)
                     && double.TryParse(actualVal,CultureInfo.InvariantCulture,out var actualNum))
