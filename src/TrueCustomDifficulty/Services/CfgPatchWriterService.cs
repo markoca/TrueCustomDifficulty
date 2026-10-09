@@ -537,7 +537,13 @@ public sealed class CfgPatchWriterService
         ISet<string> writtenParameters)
     {
         var members = baseline.Special.ListMembership;
-        var changed = members.Where(m => modifiedById.ContainsKey(m.ParameterId)).ToList();
+        // An AdditionalMechanics parent toggle can report IsModified because
+        // a grouped Master child value changed, even if the parent's own
+        // boolean stayed at its vanilla state. Rebuild the full list only
+        // when an actual parent checkbox value differs from its baseline.
+        var changed = members.Where(m =>
+            modifiedById.TryGetValue(m.ParameterId, out var parameter)
+            && parameter.IsValueModifiedFromReference()).ToList();
         if (changed.Count == 0)
             return 0;
 

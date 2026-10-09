@@ -116,3 +116,25 @@ No v1.0 release, UI changes or gameplay balance changes are included.
 | Master-dependent modifier behavior with parent enabled / disabled | NOT RUN |
 
 The first Windows harness execution caught a **test path-normalization bug**: root-level effect values were represented with a duplicated `/` delimiter in the expected string, despite their correct generated CFG paths. The test was corrected to omit the empty intermediate path; production writer and its CFG values are unchanged.
+
+## Phase 8 regression: Master parent false-positive list replacement
+
+The first real Windows writer execution reproduced a genuine production
+issue: changing one subordinate Master medical effect (for example
+`health.masterArmyMedkitModifier`) also made the grouped
+`advanced.masterEffectModifierMechanics` checkbox appear modified,
+although its actual ON/OFF value had not changed. The original
+`WriteAdditionalMechanics` looked only for membership in the
+aggregate `modifiedById` list and consequently rewrote the entire
+`AdditionalMechanicsEffects` section (seven total edits / two
+parameter IDs instead of the expected one nested effect multiplier).
+
+The production writer now checks each **parent toggle's actual
+`IsValueModifiedFromReference()`** before regenerating the list.
+A child-only edit therefore writes its own BPatch field and does not
+recreate an unrelated master mechanics list; genuinely changed parent
+toggles still follow the original full-list replacement path.
+
+This targeted correction leaves UI coloring, enabled-state behavior,
+preset values, and all gameplay default numbers unchanged. Generated
+source structure remains distinct from verified gameplay behavior.
