@@ -1871,7 +1871,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             var rect = new Rect(margin + index * (cellWidth + gap),
                 60.0, cellWidth, 76.0);
             DrawHorizontalTrackCard(dc, P(channel.Item1), channel.Item2,
-                rect, text, muted, border, accent, panel, hideBaseText: true);
+                rect, text, muted, border, accent, panel,
+                hideBaseText: true, combatTypography: true);
         }
 
     }
@@ -2011,7 +2012,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Avoid Unicode arrows, which may render as squares in Wine.
         var axisCenterX = plot.Left + plot.Width / 2.0;
         var healthLabel = CreateText("ENEMY HEALTH", 10.5, text, FontWeights.Bold);
-        var healthValue = CreateText($"{health.CurrentNumber:0.##}x", 13.0, accent, FontWeights.Bold);
+        var healthModified = health.IsValueModifiedFromReference();
+        var healthValue = CreateText($"{health.CurrentNumber:0.##}x",
+            healthModified ? 14.2 : 13.0,
+            healthModified ? accent : text, FontWeights.Bold);
         const double axisLabelGap = 9.0;
         var healthStart = axisCenterX -
             (healthLabel.WidthIncludingTrailingWhitespace + axisLabelGap +
@@ -2026,7 +2030,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         // them in the same local coordinate space guarantees visual alignment.
         var axisCenterY = plot.Top + plot.Height / 2.0;
         var damageLabel = CreateText("ENEMY GUN DAMAGE", 10.5, text, FontWeights.Bold);
-        var damageValue = CreateText($"{damage.CurrentNumber:0.##}x", 13.0, accent, FontWeights.Bold);
+        var damageModified = damage.IsValueModifiedFromReference();
+        var damageValue = CreateText($"{damage.CurrentNumber:0.##}x",
+            damageModified ? 14.2 : 13.0,
+            damageModified ? accent : text, FontWeights.Bold);
         var damageStart = 18.0 -
             (damageLabel.WidthIncludingTrailingWhitespace + axisLabelGap +
              damageValue.WidthIncludingTrailingWhitespace) / 2.0;
@@ -2095,35 +2102,67 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Rect(healthX - 18.0, damageY - 18.0, 36.0, 36.0),
                 plot, HitKind.HumanJoint, health.Minimum, health.Maximum, false));
 
-        // Retain native source units/steps and individual right-hand rationale.
-        const double faderGap = 10.0;
-        var faderWidth = Math.Min(140.0, Math.Max(112.0,
-            (ActualWidth - plot.Right - 30.0 - 2.0 * faderGap) / 3.0));
-        var faderLeft = plot.Right + 14.0;
-        if (frequency.Maximum > 2.0 || accuracy.Maximum > 1.0)
-            throw new InvalidOperationException(
-                "Human Combat limits violated: Attack Frequency <= 2x, Shot Accuracy <= 1x.");
-        DrawMixerStrip(dc, frequency, "ATTACK", "FREQUENCY",
-            new Rect(faderLeft, 83.0, faderWidth, MixerStripHeight),
-            text, muted, border, accent, panel, frameless: true);
-        DrawMixerStrip(dc, accuracy, "SHOT", "ACCURACY",
-            new Rect(faderLeft + faderWidth + faderGap, 83.0, faderWidth, MixerStripHeight),
-            text, muted, border, accent, panel, frameless: true);
-        DrawMixerStrip(dc, explosion, "EXPLOSION", "DAMAGE",
-            new Rect(faderLeft + 2.0 * (faderWidth + faderGap), 83.0,
-                faderWidth, MixerStripHeight),
-            text, muted, border, accent, panel, frameless: true);
+        // The square graph owns the two linked axes. Independent source
+        // editors at right follow the same Stamina-style horizontal grammar.
+        var cardLeft = plot.Right + 16.0;
+        var cardWidth = Math.Max(1.0, ActualWidth - cardLeft - 18.0);
+        var extra = new (ParameterViewModel Source, string Label)[]
+        {
+            (frequency, "ATTACK FREQUENCY"),
+            (accuracy, "FIRE ACCURACY"),
+            (explosion, "EXPLOSION DAMAGE")
+        };
+        for (var i = 0; i < extra.Length; i++)
+            DrawHumanCombatSideCard(dc, extra[i].Source, extra[i].Label,
+                new Rect(cardLeft, 91.0 + 101.0 * i, cardWidth, 90.0),
+                text, muted, border, accent, panel);
+    }
 
-        // A short two-line legend belongs to the plot, not to the entire panel.
-        // All three draggable glyphs are the same ring-and-dot shape; position
-        // and these action labels explain which CFG setting is affected.
-        var legendY = Math.Max(405.0, plot.Bottom + 56.0);
-        DrawCenteredText(dc, "BOTTOM: ENEMY HEALTH  |  LEFT: ENEMY GUN DAMAGE",
-            new Point(plot.Left + plot.Width / 2.0, legendY),
-            9.0, text, FontWeights.SemiBold);
-        DrawCenteredText(dc, "DRAG CENTER: BOTH VALUES",
-            new Point(plot.Left + plot.Width / 2.0, legendY + 18.0),
-            9.0, accent, FontWeights.SemiBold);
+    private void DrawHumanCombatSideCard(
+        DrawingContext dc, ParameterViewModel parameter, string label, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+        var changed = parameter.IsValueModifiedFromReference();
+        var number = CreateText($"{parameter.CurrentNumber:0.##}x",
+            changed ? 13.8 : 12.6, changed ? accent : text,
+            FontWeights.Bold);
+        dc.DrawText(CreateText(label, 10.8, text, FontWeights.Bold,
+                Math.Max(1.0, card.Width - number.WidthIncludingTrailingWhitespace - 35.0)),
+            new Point(card.Left + 12.0, card.Top + 10.0));
+        dc.DrawText(number,
+            new Point(card.Right - 12.0 - number.WidthIncludingTrailingWhitespace,
+                card.Top + 8.0));
+
+        var rail = new Rect(card.Left + 16.0, card.Top + 49.0,
+            Math.Max(1.0, card.Width - 32.0), 12.0);
+        var y = rail.Top + rail.Height / 2.0;
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, rail, reverse: false);
+        var referenceX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, rail, reverse: false);
+        dc.DrawLine(new Pen(border, 3.0),
+            new Point(rail.Left, y), new Point(rail.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.7), 3.0),
+            new Point(rail.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 1.5),
+            new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
+        var hovered = ReferenceEquals(_hoverTarget?.Parameter, parameter);
+        dc.DrawEllipse(panel, new Pen(accent, hovered || IsSelected(parameter) ? 2.5 : 1.5),
+            new Point(currentX, y), 6.0, 6.0);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+
+        AddHorizontalTarget(parameter,
+            new Rect(rail.Left - 7.0, rail.Top - 8.0,
+                rail.Width + 14.0, rail.Height + 16.0),
+            rail, parameter.Minimum, parameter.Maximum);
+
+        DrawText(dc, $"{parameter.Minimum:0.##}x",
+            new Point(rail.Left, card.Bottom - 18.0),
+            10.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
+            new Point(rail.Right, card.Bottom - 18.0),
+            10.0, muted, FontWeights.Normal);
     }
 
     // Editable axes are deliberately independent. The gold crosshair is a
@@ -3824,7 +3863,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush panel,
         bool pairedValueFormatting = false,
         bool hideBaseText = false,
-        bool healthTypography = false)
+        bool healthTypography = false,
+        bool combatTypography = false)
     {
         var hovered = parameter is not null && parameter.IsControlEnabled &&
             ReferenceEquals(_hoverTarget?.Parameter, parameter);
@@ -3832,12 +3872,15 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Pen(border, 1.0),
             card, 4.0, 4.0);
         var textWidth = Math.Max(1.0, card.Width - 24.0);
-        var labelSize = healthTypography ? HealthTypography.Label : 9.8;
-        var axisSize = healthTypography ? HealthTypography.Axis : 9.0;
+        var labelSize = healthTypography ? HealthTypography.Label
+            : combatTypography ? 11.2 : 9.8;
+        var axisSize = healthTypography ? HealthTypography.Axis
+            : combatTypography ? 10.0 : 9.0;
         // Reserve the actual width of the current HP/rate readout, not a
         // hard-coded 150 DIP lane that would clip health names on small windows.
-        var valueReserve = healthTypography && parameter is not null
-            ? CreateText(FriendlyValue(parameter), HealthTypography.Value + 1.2,
+        var valueReserve = (healthTypography || combatTypography) && parameter is not null
+            ? CreateText(combatTypography ? $"{parameter.CurrentNumber:0.##}x" : FriendlyValue(parameter),
+                (healthTypography ? HealthTypography.Value : 12.0) + 1.2,
                 text, FontWeights.SemiBold).WidthIncludingTrailingWhitespace + 12.0
             : 126.0;
         dc.DrawText(CreateText(label, labelSize, text, FontWeights.Bold,
@@ -3854,11 +3897,11 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // Stamina Usage: one readable header line; the muted rail tick
         // alone communicates the selected reference difficulty.
-        var value = pairedValueFormatting
-            ? ComparablePairedValue(parameter, parameter.CurrentNumber)
+        var value = combatTypography ? $"{parameter.CurrentNumber:0.##}x"
+            : pairedValueFormatting ? ComparablePairedValue(parameter, parameter.CurrentNumber)
             : FriendlyValue(parameter);
         var baseSize = healthTypography ? HealthTypography.Value
-            : pairedValueFormatting ? 11.1 : 10.1;
+            : combatTypography ? 12.0 : pairedValueFormatting ? 11.1 : 10.1;
         var valueText = CreateText(value, baseSize,
             parameter.IsControlEnabled ? text : muted, FontWeights.SemiBold, textWidth);
         if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())

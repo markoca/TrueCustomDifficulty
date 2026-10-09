@@ -163,24 +163,24 @@ public sealed class MutantHealthRadar : FrameworkElement
             new Pen(border, 0.9), card, 4.0, 4.0);
         DrawText(dc, mutant.Label.ToUpperInvariant(),
             new Point(card.Left + 11.0, card.Top + 6.0),
-            9.8, text, FontWeights.Bold);
+            10.8, text, FontWeights.Bold);
 
         // Top row: species left, current multiplier centered, derived real HP right.
         // Modified values alone gain the accent and +1.2 DIP, never the HP unit.
         DrawSourceNumber(dc, $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Left + card.Width / 2.0, card.Top + 12.0),
-            10.2, text, accent, FontWeights.Bold, modified);
+            11.2, text, accent, FontWeights.Bold, modified);
 
         var currentHp = mutant.VanillaHp * parameter.CurrentNumber;
         var hpLabel = $"{currentHp:0} HP";
-        var hpText = CreateText(hpLabel, 9.0, muted, FontWeights.SemiBold);
+        var hpText = CreateText(hpLabel, 10.5, muted, FontWeights.SemiBold);
         if (modified)
         {
             var hpDigits = hpLabel.IndexOf(' ');
             if (hpDigits > 0)
             {
                 hpText.SetForegroundBrush(accent, 0, hpDigits);
-                hpText.SetFontSize(10.2, 0, hpDigits);
+                hpText.SetFontSize(11.7, 0, hpDigits);
             }
         }
         dc.DrawText(hpText,

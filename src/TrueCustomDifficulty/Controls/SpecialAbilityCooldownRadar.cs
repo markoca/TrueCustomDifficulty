@@ -11,9 +11,9 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double DesiredHeight = 542.0;
+    private const double DesiredHeight = 402.0;
     private const double MaxContentWidth = 1080.0;
-    private const double ColumnGap = 8.0;
+    private const double ColumnGap = 12.0;
 
     private static readonly CooldownDefinition[] Mutants =
     {
@@ -105,168 +105,161 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         }
     }
 
+
     protected override void OnRender(DrawingContext dc)
     {
         base.OnRender(dc);
-
         var text = FindBrush("TextBrush", Brushes.White);
         var muted = FindBrush("RadarMutedTextBrush", Brushes.Gray);
         var border = FindBrush("BorderBrush", Brushes.DimGray);
         var soft = FindBrush("BorderSoftBrush", border);
         var accent = FindBrush("AccentBrush", Brushes.Goldenrod);
         var panel = FindBrush("PanelAltBrush", Brushes.Black);
-
-        IndustrialChrome.DrawFrame(
-            dc,
-            new Rect(2.0, 2.0, Math.Max(0.0, ActualWidth - 4.0), Math.Max(0.0, ActualHeight - 4.0)),
-            panel,
-            border,
-            accent,
-            soft,
-            8.0,
-            accentEdge: true,
-            technicalMarks: true);
-
+        IndustrialChrome.DrawFrame(dc,
+            new Rect(2.0, 2.0, Math.Max(0.0, ActualWidth - 4.0),
+                Math.Max(0.0, ActualHeight - 4.0)),
+            panel, border, accent, soft, 8.0,
+            accentEdge: true, technicalMarks: true);
         _targets.Clear();
-
         var content = ContentRect();
-        DrawCenteredText(dc, "MUTANT COMBAT", new Point(ActualWidth / 2.0, 21.0),
+        DrawCenteredText(dc, "MUTANT COMBAT",
+            new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
-
-        // Global source controls are separate from each mutant's ability timer.
-        // Two horizontal controls make global combat visually distinct from
-        // the eight mutant-specific vertical ability timers below.
-        const double globalGap = 24.0;
+        const double globalGap = 12.0;
         var globalWidth = (content.Width - globalGap) / 2.0;
         for (var i = 0; i < 2; i++)
-            DrawGlobalHorizontal(dc, i, new Rect(
-                content.Left + i * (globalWidth + globalGap),
-                74.0, globalWidth, 88.0),
+            DrawGlobalHorizontal(dc, i,
+                new Rect(content.Left + i * (globalWidth + globalGap),
+                    53.0, globalWidth, 85.0),
                 text, muted, border, accent, panel);
-
-        DrawCenteredText(dc, "SPECIAL ABILITY COOLDOWNS",
-            new Point(ActualWidth / 2.0, 187.0), 11.0, accent, FontWeights.Bold);
-
-        const int columns = 8;
-        var stripWidth = (content.Width - (columns - 1) * ColumnGap) / columns;
-        for (var i = 2; i < Mutants.Length; i++)
-            DrawRow(dc, i, new Rect(
-                content.Left + (i - 2) * (stripWidth + ColumnGap),
-                232.0, stripWidth, 280.0),
+        DrawCenteredText(dc, "SPECIAL ABILITY RECHARGE",
+            new Point(ActualWidth / 2.0, 172.0),
+            11.4, accent, FontWeights.Bold);
+        const int columns = 4;
+        const double cardHeight = 79.0;
+        const double rowPitch = 92.0;
+        var cardWidth = (content.Width - (columns - 1) * ColumnGap) / columns;
+        for (var index = 2; index < Mutants.Length; index++)
+        {
+            var slot = index - 2;
+            DrawRechargeCard(dc, index,
+                new Rect(content.Left + slot % columns * (cardWidth + ColumnGap),
+                    198.0 + slot / columns * rowPitch, cardWidth, cardHeight),
                 text, muted, border, accent, panel);
-
-
-        // Silent reset: no transient gold status overlay.
+        }
     }
 
-    private void DrawGlobalHorizontal(
-        DrawingContext dc, int row, Rect card,
+    private void DrawGlobalHorizontal(DrawingContext dc, int row, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        if (_parameters[row] is not { } parameter)
-            return;
-
-        var selected = row == _selectedRow;
+        if (_parameters[row] is not { } parameter) return;
         var hovered = row == _hoverRow;
-        var label = row == 0 ? "DAMAGE PER HIT" : "ATTACK FREQUENCY";
-        DrawText(dc, label, new Point(card.Left + 12.0, card.Top + 5.0),
-            11.0, text, FontWeights.Bold);
+        var selected = row == _selectedRow;
+        var changed = parameter.IsValueModifiedFromReference();
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+        DrawText(dc, row == 0 ? "DAMAGE FROM MUTANTS" : "ATTACK FREQUENCY",
+            new Point(card.Left + 12.0, card.Top + 9.0),
+            11.2, text, FontWeights.Bold);
         DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
-            new Point(card.Right - 12.0, card.Top + 1.0),
-            parameter.IsValueModifiedFromReference() ? 17.2 : 16.0,
-            parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
-
-        var rail = new Rect(card.Left + 42.0, card.Top + 48.0,
-            Math.Max(40.0, card.Width - 84.0), 6.0);
+            new Point(card.Right - 12.0, card.Top + 7.0),
+            changed ? 14.0 : 12.8, changed ? accent : text, FontWeights.Bold);
+        var rail = new Rect(card.Left + 16.0, card.Top + 44.0,
+            Math.Max(1.0, card.Width - 32.0), 12.0);
         var y = rail.Top + rail.Height / 2.0;
-        var currentX = ValueToX(parameter.CurrentNumber,
+        var x = ValueToX(parameter.CurrentNumber,
             parameter.Minimum, parameter.Maximum, rail);
-        var baseX = ValueToX(parameter.ReferenceNumber,
+        var referenceX = ValueToX(parameter.ReferenceNumber,
             parameter.Minimum, parameter.Maximum, rail);
-        dc.DrawLine(new Pen(border, 5.0),
+        dc.DrawLine(new Pen(border, 3.0),
             new Point(rail.Left, y), new Point(rail.Right, y));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 5.0),
-            new Point(rail.Left, y), new Point(currentX, y));
-        dc.DrawLine(new Pen(muted, 2.2),
-            new Point(baseX, y - 14.0), new Point(baseX, y + 14.0));
-        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
-        dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 3.0 : 1.8),
-            new Point(currentX, y), 9.0, 9.0);
-        dc.DrawLine(new Pen(accent, 2.2),
-            new Point(currentX, y - 7.0), new Point(currentX, y + 7.0));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 3.0),
+            new Point(rail.Left, y), new Point(x, y));
+        dc.DrawLine(new Pen(muted, 1.6),
+            new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
+        ControlHoverGlow.Draw(dc, new Point(x, y), accent, hovered);
+        dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 2.5 : 1.5),
+            new Point(x, y), 6.0, 6.0);
+        dc.DrawEllipse(accent, null, new Point(x, y), 2.5, 2.5);
         DrawText(dc, $"{parameter.Minimum:0.##}x",
-            new Point(rail.Left, rail.Bottom + 13.0), 10.0, muted, FontWeights.Normal);
+            new Point(rail.Left, card.Bottom - 17.0),
+            10.0, muted, FontWeights.Normal);
         DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
-            new Point(rail.Right, rail.Bottom + 13.0), 10.0, muted, FontWeights.Normal);
-
+            new Point(rail.Right, card.Bottom - 17.0),
+            10.0, muted, FontWeights.Normal);
         _targets[row] = new HitTarget(
-            new Rect(rail.Left - 8.0, rail.Top - 18.0,
-                rail.Width + 16.0, 42.0), rail);
+            new Rect(rail.Left - 8.0, rail.Top - 8.0,
+                rail.Width + 16.0, rail.Height + 16.0), rail);
     }
 
-    private void DrawRow(
-        DrawingContext dc, int row, Rect card,
+    private void DrawRechargeCard(DrawingContext dc, int row, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        if (_parameters[row] is not { } parameter)
-            return;
-
-        var mutant = Mutants[row];
-        var selected = row == _selectedRow;
+        if (_parameters[row] is not { } parameter) return;
         var hovered = row == _hoverRow;
-        var center = card.Left + card.Width / 2.0;
-        var name = mutant.Label.ToUpperInvariant();
-        if (name is "BLOODSUCKER" or "PSEUDOGIANT" or "PSEUDODOG")
-        {
-            var split = name is "BLOODSUCKER" ? 5 : 6;
-            DrawCenteredText(dc, name[..split],
-                new Point(center, card.Top + 8.0), 9.8, text, FontWeights.Bold);
-            DrawCenteredText(dc, name[split..],
-                new Point(center, card.Top + 21.0), 9.8, text, FontWeights.Bold);
-        }
-        else
-            DrawCenteredText(dc, name,
-                new Point(center, card.Top + 15.0), 9.8, text, FontWeights.Bold);
-
-        DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
-            new Point(center, card.Top + 39.0),
-            parameter.IsValueModifiedFromReference() ? 17.4 : 16.2,
-            parameter.IsValueModifiedFromReference() ? accent : text,
+        var selected = row == _selectedRow;
+        var changed = parameter.IsValueModifiedFromReference();
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+        var rate = RechargeRate(parameter.CurrentNumber);
+        var valueText = CreateText($"{rate:0.##}x",
+            changed ? 13.4 : 12.2, changed ? accent : text,
             FontWeights.Bold);
-        if (row >= 2)
-        {
-            var returnRate = parameter.CurrentNumber > Epsilon
-                ? 1.0 / parameter.CurrentNumber : 0.0;
-            DrawCenteredText(dc, $"{returnRate:0.##}x ATTACK RATE",
-                new Point(center, card.Top + 63.0), 9.7, muted, FontWeights.SemiBold);
-        }
-        else
-            DrawCenteredText(dc, row == 0 ? "HIT STRENGTH" : "ATTACK TEMPO",
-                new Point(center, card.Top + 63.0), 9.7, muted, FontWeights.SemiBold);
-
-        var rail = new Rect(center - 3.0, card.Top + 110.0, 6.0, 150.0);
-        var currentY = ValueToY(parameter.CurrentNumber,
-            parameter.Minimum, parameter.Maximum, rail);
-        var baseY = ValueToY(parameter.ReferenceNumber,
-            parameter.Minimum, parameter.Maximum, rail);
-        DrawCenteredText(dc, $"{parameter.Maximum:0.##}x",
-            new Point(center, rail.Top - 15.0), 13.0, muted, FontWeights.Normal);
-        dc.DrawLine(new Pen(border, 5.0),
-            new Point(center, rail.Top), new Point(center, rail.Bottom));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 5.0),
-            new Point(center, rail.Bottom), new Point(center, currentY));
-        dc.DrawLine(new Pen(muted, 2.2),
-            new Point(center + 13.0, baseY), new Point(center + 29.0, baseY));
-        ControlHoverGlow.Draw(dc, new Point(center, currentY), accent, hovered);
-        dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 3.0 : 1.8),
-            new Point(center, currentY), 9.0, 9.0);
-        dc.DrawLine(new Pen(accent, 2.2),
-            new Point(center - 7.0, currentY), new Point(center + 7.0, currentY));
-        DrawCenteredText(dc, $"{parameter.Minimum:0.##}x",
-            new Point(center, rail.Bottom + 17.0), 13.0, muted, FontWeights.Normal);
+        var maxNameWidth = Math.Max(1.0,
+            card.Width - valueText.WidthIncludingTrailingWhitespace - 35.0);
+        var nameText = CreateText(Mutants[row].Label.ToUpperInvariant(),
+            10.3, text, FontWeights.Bold);
+        if (nameText.WidthIncludingTrailingWhitespace > maxNameWidth)
+            nameText.MaxTextWidth = maxNameWidth;
+        dc.DrawText(nameText, new Point(card.Left + 11.0, card.Top + 9.0));
+        dc.DrawText(valueText,
+            new Point(card.Right - 11.0 - valueText.WidthIncludingTrailingWhitespace,
+                card.Top + 7.0));
+        var rail = new Rect(card.Left + 13.0, card.Top + 39.0,
+            Math.Max(1.0, card.Width - 26.0), 12.0);
+        var y = rail.Top + rail.Height / 2.0;
+        var currentX = RechargeToX(parameter.CurrentNumber, parameter, rail);
+        var referenceX = RechargeToX(parameter.ReferenceNumber, parameter, rail);
+        dc.DrawLine(new Pen(border, 3.0),
+            new Point(rail.Left, y), new Point(rail.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 3.0),
+            new Point(rail.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 1.6),
+            new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
+        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
+        dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 2.5 : 1.5),
+            new Point(currentX, y), 6.0, 6.0);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+        // Native source min/max are inverted into rate-space UI endpoints.
+        DrawText(dc, $"{RechargeRate(parameter.Maximum):0.##}x",
+            new Point(rail.Left, card.Bottom - 16.0),
+            9.7, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{RechargeRate(parameter.Minimum):0.##}x",
+            new Point(rail.Right, card.Bottom - 16.0),
+            9.7, muted, FontWeights.Normal);
         _targets[row] = new HitTarget(
-            new Rect(center - 16.0, rail.Top - 9.0, 32.0, rail.Height + 18.0),
-            rail);
+            new Rect(rail.Left - 6.0, rail.Top - 6.0,
+                rail.Width + 12.0, rail.Height + 12.0), rail);
+    }
+
+    private static double RechargeRate(double wait)
+        => 1.0 / Math.Max(Epsilon, wait);
+
+    // Native editing happens in wait-time units; only the GUI axis is inverted.
+    private static double RechargeToX(double wait, ParameterViewModel parameter, Rect track)
+    {
+        var minRate = RechargeRate(parameter.Maximum);
+        var maxRate = RechargeRate(parameter.Minimum);
+        var ratio = Math.Clamp((RechargeRate(wait) - minRate) /
+            Math.Max(Epsilon, maxRate - minRate), 0.0, 1.0);
+        return track.Left + track.Width * ratio;
+    }
+
+    private static double XToSourceWait(double x, ParameterViewModel parameter, Rect track)
+    {
+        var ratio = Math.Clamp((x - track.Left) /
+            Math.Max(Epsilon, track.Width), 0.0, 1.0);
+        var minRate = RechargeRate(parameter.Maximum);
+        var maxRate = RechargeRate(parameter.Minimum);
+        return 1.0 / Math.Max(Epsilon, minRate + ratio * (maxRate - minRate));
     }
 
     private Rect ContentRect()
@@ -369,10 +362,24 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         if (direction == 0 || _parameters[_selectedRow] is not { } selected)
             return;
 
-        selected.CurrentNumber = Math.Clamp(
-            selected.CurrentNumber + direction * selected.TickFrequency,
-            selected.Minimum,
-            selected.Maximum);
+        if (_selectedRow < 2)
+        {
+            // Global Combat keeps its previous keyboard editing contract.
+            selected.CurrentNumber = Math.Clamp(
+                selected.CurrentNumber + direction * selected.TickFrequency,
+                selected.Minimum, selected.Maximum);
+        }
+        else
+        {
+            // On recharge cards the right/up arrow means a shorter wait.
+            // Snap the *source* wait to its unchanged 1x-anchored tick grid.
+            var native = selected.CurrentNumber - direction * selected.TickFrequency;
+            selected.CurrentNumber = Math.Clamp(
+                1.0 + Math.Round((native - 1.0) /
+                    Math.Max(Epsilon, selected.TickFrequency),
+                    MidpointRounding.AwayFromZero) * selected.TickFrequency,
+                selected.Minimum, selected.Maximum);
+        }
 
         _status.Clear();
         InvalidateVisual();
@@ -384,10 +391,12 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         if (!_targets.TryGetValue(row, out var target) || _parameters[row] is not { } parameter)
             return;
 
-        var ratio = row < 2
-            ? Math.Clamp((point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width), 0.0, 1.0)
-            : 1.0 - Math.Clamp((point.Y - target.MapRect.Top) / Math.Max(1.0, target.MapRect.Height), 0.0, 1.0);
-        var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
+        var raw = row < 2
+            ? parameter.Minimum +
+                Math.Clamp((point.X - target.MapRect.Left) /
+                    Math.Max(1.0, target.MapRect.Width), 0.0, 1.0) *
+                (parameter.Maximum - parameter.Minimum)
+            : XToSourceWait(point.X, parameter, target.MapRect);
         var tick = Math.Max(parameter.TickFrequency, Epsilon);
         // Align discrete multiplier steps with vanilla 1.00x. The old
         // minimum-anchored grid at 0.25x excluded 1.00x for 0.10x steps.
@@ -408,10 +417,6 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
 
         return -1;
     }
-
-    private static double ValueToY(double value, double minimum, double maximum, Rect track)
-        => track.Bottom - track.Height * Math.Clamp(
-            (value - minimum) / Math.Max(Epsilon, maximum - minimum), 0.0, 1.0);
 
     private static double ValueToX(double value, double minimum, double maximum, Rect track)
     {
