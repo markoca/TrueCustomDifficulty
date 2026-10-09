@@ -207,7 +207,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             info.Label,
             new Point(card.Left + 10.0, card.Top + 8.0),
             8.6,
-            modified ? accent : text,
+            text,
             FontWeights.Bold);
 
         DrawText(
@@ -236,7 +236,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             $"≈ REMOVED {removedBase:N0} / {removedDlc:N0}",
             new Point(card.Left + labelWidth, card.Top + 25.0),
             7.5,
-            modified ? accent : muted,
+            muted,
             FontWeights.SemiBold);
 
         DrawText(
@@ -255,7 +255,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             modified ? accent : text,
             FontWeights.Bold);
 
-        var track = new Rect(trackLeft, card.Top + 29.0, trackWidth, 18.0);
+        var track = new Rect(trackLeft, card.Top + 30.0, trackWidth, 12.0);
         var y = track.Top + track.Height / 2.0;
 
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
