@@ -486,7 +486,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             DrawMixerStrip(dc, P(channel.Id), channel.Top, channel.Bottom, rect,
                 text, muted, border, accent, panel);
         }
-        var rows = (count + columns - 1) / columns;
     }
 
     private void DrawAnomalyEffectsBoard(

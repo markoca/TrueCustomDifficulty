@@ -441,8 +441,6 @@ public sealed class BleedingCurveControl : FrameworkElement
         _mediumThresholdHitRect = new Rect(x[1] - 20.0, _plotRect.Bottom - 10.0, 40.0, 34.0);
         _severeThresholdHitRect = new Rect(x[2] - 20.0, _plotRect.Bottom - 10.0, 40.0, 34.0);
 
-        DrawText(dc, "DASHED = VANILLA", new Point(_plotRect.Left + 10, _plotRect.Top + 7),
-            8.7, muted, FontWeights.SemiBold);
     }
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)

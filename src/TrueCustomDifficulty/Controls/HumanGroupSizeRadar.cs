@@ -135,14 +135,6 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             12.5, accent, FontWeights.Bold);
 
 
-        DrawRightAlignedText(
-            dc,
-            "NO LAIR POPULATION / RESPAWN / SCENARIO-FREQUENCY CHANGES",
-            new Point(Math.Max(470.0, ActualWidth - 18.0), 18.0),
-            7.5,
-            muted,
-            FontWeights.SemiBold);
-
         var left = 24.0;
         var labelWidth = 108.0;
         var capWidth = 118.0;
@@ -173,14 +165,6 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
                 accent,
                 panel);
         }
-
-        DrawCenteredText(
-            dc,
-            "GOLD = CURRENT RESULT   •   vN = VANILLA CAP   •   1x MARKER = BASE PRESET",
-            new Point(ActualWidth / 2.0, 294.0),
-            7.7,
-            muted,
-            FontWeights.Normal);
 
         // No transient yellow reset notifications.
     }

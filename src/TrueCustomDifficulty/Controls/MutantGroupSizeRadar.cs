@@ -157,14 +157,6 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             DrawRow(dc, i + 7, new Rect(rightColumn.Left, 88.0 + i * RowHeight, rightColumn.Width, RowHeight - 4.0), text, muted, border, accent, panel);
         }
 
-        DrawCenteredText(
-            dc,
-            "grey tick = Base Preset   •   authored 0 caps stay 0",
-            new Point(ActualWidth / 2.0, 418.0),
-            9.0,
-            muted,
-            FontWeights.Normal);
-
         // No transient yellow reset notifications.
     }
 

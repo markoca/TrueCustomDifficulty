@@ -146,14 +146,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
                 DrawRow(dc, right, new Rect(content.Left + columnWidth + ColumnGap, 68.0 + i * RowHeight, columnWidth, RowHeight - 5.0), text, muted, border, accent, panel);
         }
 
-        DrawCenteredText(
-            dc,
-            "Global Anomaly Damage and player protection stay separate",
-            new Point(ActualWidth / 2.0, 372.0),
-            9.0,
-            muted,
-            FontWeights.Normal);
-
         // No transient yellow reset notifications.
     }
 

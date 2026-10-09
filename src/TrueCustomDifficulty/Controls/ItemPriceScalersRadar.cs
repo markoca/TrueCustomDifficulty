@@ -156,14 +156,6 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         var layout = GetLayout();
 
         DrawText(dc, "CATEGORY COSTS", new Point(18.0, 59.0), 9.0, muted, FontWeights.Bold);
-        DrawRightAlignedText(
-            dc,
-            "0x = zero category-cost layer   •   1x = vanilla   •   2x = double",
-            new Point(Math.Max(470.0, ActualWidth - 18.0), 59.0),
-            7.4,
-            muted,
-            FontWeights.Normal);
-
         DrawText(dc, "CATEGORY", new Point(layout.LabelLeft, 77.0), 9.0, muted, FontWeights.Bold);
         DrawCenteredText(dc, "VALUE", new Point(layout.ValueCenter, 84.0), 7.8, muted, FontWeights.Bold);
         DrawCenteredText(dc, "CHEAPER  ←  CATEGORY VALUE  →  COSTLIER", new Point(layout.TrackLeft + layout.TrackWidth / 2.0, 84.0), 7.7, muted, FontWeights.Bold);

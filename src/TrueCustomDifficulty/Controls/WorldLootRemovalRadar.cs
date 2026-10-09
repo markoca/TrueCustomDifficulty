@@ -135,32 +135,8 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             12.5, accent, FontWeights.Bold);
 
 
-        DrawRightAlignedText(
-            dc,
-            "RANDOM WITHOUT REPLACEMENT ON EACH BUILD",
-            new Point(Math.Max(520.0, ActualWidth - 18.0), 18.0),
-            7.5,
-            muted,
-            FontWeights.SemiBold);
-
         for (var row = 0; row < Populations.Length; row++)
             DrawRow(dc, row, 58.0 + row * RowHeight, text, muted, border, accent, panel);
-
-        DrawCenteredText(
-            dc,
-            "≈ COUNTS ARE POPULATION ESTIMATES FROM THE SELECTED PERCENTAGE — THE ACTUAL ACTOR SET IS CHOSEN WHEN YOU BUILD",
-            new Point(ActualWidth / 2.0, 350.0),
-            7.4,
-            muted,
-            FontWeights.Normal);
-
-        DrawCenteredText(
-            dc,
-            "QUEST / STORY REWARDS, TRADERS, NPC LOOT, WEAPONS / ARMOR AND SCRIPTED SOURCES ARE OUTSIDE THIS BOARD",
-            new Point(ActualWidth / 2.0, 370.0),
-            7.4,
-            muted,
-            FontWeights.Normal);
 
         // Reset notifications intentionally silent.
     }

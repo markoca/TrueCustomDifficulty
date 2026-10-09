@@ -181,13 +181,6 @@ public sealed class DrunkennessControl : FrameworkElement
 
         DrawText(dc, "DRUNKNESS STAGES", new Point(16, 234), 9.0, muted, FontWeights.Bold);
         DrawTierCards(dc, panelAlt, border, radarMuted, accent);
-        DrawCenteredText(
-            dc,
-            $"OVERDRUNKNESS {OverDrunknessReference:0} IS SEPARATE — NOT USED IN THIS PREVIEW",
-            new Point(ActualWidth / 2.0, 344.0),
-            9.0,
-            muted,
-            FontWeights.Normal);
     }
 
     private void DrawDrinkCard(

@@ -145,14 +145,6 @@ public sealed class MutantDropRadar : FrameworkElement
             12.5, accent, FontWeights.Bold);
 
 
-        DrawRightAlignedText(
-            dc,
-            "SPAWNS / HEALTH / PART VALUE / PROGRESSION STAY SEPARATE",
-            new Point(Math.Max(560.0, ActualWidth - 18.0), 18.0),
-            7.5,
-            muted,
-            FontWeights.SemiBold);
-
         var outerLeft = 18.0;
         var outerRight = Math.Max(outerLeft + 610.0, ActualWidth - 18.0);
         var gap = 18.0;
@@ -183,14 +175,6 @@ public sealed class MutantDropRadar : FrameworkElement
                 accent,
                 panel);
         }
-
-        DrawCenteredText(
-            dc,
-            "≈ N / 100 KILLS IS A LARGE-SAMPLE EXPECTATION, NOT A GUARANTEED SEQUENCE",
-            new Point(ActualWidth / 2.0, 438.0),
-            7.5,
-            muted,
-            FontWeights.Normal);
 
         // No transient yellow reset notifications.
     }
