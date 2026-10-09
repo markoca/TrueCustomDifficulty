@@ -67,11 +67,12 @@ public sealed class VanillaMarkerBar : FrameworkElement
         if (Markers is null || ActualWidth <= 1 || Maximum <= Minimum)
             return;
 
-        var markerBrush = TryFindResource("SliderActiveMutedBrush") as Brush ?? Brushes.DarkGoldenrod;
-        var hoverBrush = TryFindResource("AccentBrush") as Brush ?? Brushes.Goldenrod;
-        var textBrush = TryFindResource("MutedTextBrush") as Brush ?? Brushes.LightGray;
+        // Reference markers are intentionally low contrast, even on hover.
+        // They stay clickable but never compete with the live slider value/handle.
+        var markerBrush = TryFindResource("RadarMutedTextBrush") as Brush ?? Brushes.Gray;
+        var textBrush = TryFindResource("RadarMutedTextBrush") as Brush ?? Brushes.Gray;
         var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-        var typeface = new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.SemiBold, FontStretches.Normal);
+        var typeface = new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
 
         // Keep extreme markers and labels inside the control bounds.
         const double edgePadding = 5d;
@@ -88,16 +89,13 @@ public sealed class VanillaMarkerBar : FrameworkElement
                 continue;
 
             var x = edgePadding + normalized * usableWidth;
-            var hovered = IsEnabled && Equals(marker, _hoveredMarker);
-            var dotBrush = hovered ? hoverBrush : markerBrush;
-            dc.DrawEllipse(dotBrush, null, new Point(x, dotY), hovered ? 2.5 : 2.1, hovered ? 2.5 : 2.1);
+            var dotBrush = markerBrush;
+            dc.DrawEllipse(dotBrush, null, new Point(x, dotY), 2.1, 2.1);
 
             // Keep the connection to the slider subtle; the thumb/value should remain the primary focus.
-            dc.DrawLine(new Pen(dotBrush, hovered ? 1d : 0.7d), new Point(x, 0d), new Point(x, 1.5d));
+            dc.DrawLine(new Pen(dotBrush, 0.7d), new Point(x, 0d), new Point(x, 1.5d));
 
-            var markerTextBrush = hovered
-                ? Brushes.White
-                : textBrush;
+            var markerTextBrush = textBrush;
 
             var text = new FormattedText(
                 marker.Label,

@@ -551,7 +551,8 @@
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsModified}" Value="True">
                                                             <Setter TargetName="ModifiedIndicator" Property="Visibility" Value="Visible" />
-                                                            <Setter TargetName="CurrentValueText" Property="FontWeight" Value="ExtraBold" />
+                                                            <Setter TargetName="CurrentValueText" Property="FontWeight" Value="Bold" />
+                                                            <Setter TargetName="CurrentValueText" Property="FontSize" Value="13.7" />
                                                             <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
                                                             <Setter TargetName="EffectiveValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                             <Setter TargetName="RangeMinValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
@@ -575,7 +576,6 @@
                                                             <Setter TargetName="ParameterLabel" Property="Foreground" Value="{StaticResource TextBrush}" />
                                                         </MultiDataTrigger>
                                                         <Trigger SourceName="CurrentValueBox" Property="IsMouseOver" Value="True">
-                                                            <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                             <Setter TargetName="WheelHintMinus" Property="Visibility" Value="Visible" />
                                                             <Setter TargetName="WheelHintPlus" Property="Visibility" Value="Visible" />
                                                         </Trigger>

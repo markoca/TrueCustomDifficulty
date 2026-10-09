@@ -227,8 +227,8 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             dc,
             $"{removal * 100:0}%",
             new Point(card.Right - 12.0, card.Top + 7.0),
-            9.4,
-            text,
+            parameter.IsValueModifiedFromReference() ? 10.6 : 9.4,
+            parameter.IsValueModifiedFromReference() ? accent : text,
             FontWeights.Bold);
 
         var track = new Rect(trackLeft, card.Top + 30.0, trackWidth, 12.0);

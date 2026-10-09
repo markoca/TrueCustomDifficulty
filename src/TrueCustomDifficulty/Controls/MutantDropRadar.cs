@@ -230,8 +230,8 @@ public sealed class MutantDropRadar : FrameworkElement
             dc,
             $"{chance * 100:0}%",
             new Point(card.Right - 9.0, card.Top + 6.0),
-            9.2,
-            text,
+            modified ? 10.4 : 9.2,
+            modified ? accent : text,
             FontWeights.Bold);
 
         var track = new Rect(card.Left + 10.0, card.Top + 27.0, card.Width - 20.0, 12.0);

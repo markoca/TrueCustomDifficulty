@@ -173,7 +173,8 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
             11.0, text, FontWeights.Bold);
         DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Right - 12.0, card.Top + 1.0),
-            16.0, parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
+            parameter.IsValueModifiedFromReference() ? 17.2 : 16.0,
+            parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
 
         var rail = new Rect(card.Left + 42.0, card.Top + 48.0,
             Math.Max(40.0, card.Width - 84.0), 6.0);

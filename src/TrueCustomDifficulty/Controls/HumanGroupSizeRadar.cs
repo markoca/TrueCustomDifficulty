@@ -251,7 +251,9 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             6.5);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.8, 2.8);
 
-        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x", new Point(track.Right, top + 5.0), 9.0, modified ? accent : muted, FontWeights.Bold);
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
+            new Point(track.Right, top + 5.0),
+            modified ? 10.2 : 9.0, modified ? accent : text, FontWeights.Bold);
 
         _targets[row] = new HitTarget(
             new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),

@@ -220,8 +220,8 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             dc,
             $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Right - 7.0, card.Top + 5.0),
-            9.5,
-            modified ? accent : muted,
+            modified ? 10.7 : 9.5,
+            modified ? accent : text,
             FontWeights.Bold);
 
         var track = new Rect(card.Left + 10.0, card.Top + 26.0, card.Width - 20.0, 12.0);

@@ -310,10 +310,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
         DrawText(dc, "DIFFICULTY REFERENCE / READ-ONLY",
             new Point(28.0, 150.0), 9.8, text, FontWeights.Bold);
-        DrawRightAlignedText(dc,
-            $"{damage.CurrentNumber:0.##}x  |  BASE {damage.ReferenceNumber:0.##}x",
-            new Point(preview.Right - 12.0, 170.0),
-            10.3, accent, FontWeights.SemiBold);
 
         var band = new Rect(preview.Left + 18.0, 194.0,
             Math.Max(1.0, preview.Width - 36.0), 18.0);
@@ -664,7 +660,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             && ReferenceEquals(_hoverTarget?.Parameter, parameter);
         var enabled = parameter?.IsControlEnabled == true;
         var foreground = enabled ? text : muted;
-        var valueBrush = enabled ? accent : muted;
+        var valueBrush = !enabled ? muted :
+            parameter?.IsValueModifiedFromReference() == true ? accent : text;
 
         // All mixer strips use handle-only hover; never draw rectangular selection frames.
         if (parameter?.IsValueModifiedFromReference() == true)
@@ -692,7 +689,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var center = strip.Left + strip.Width / 2.0;
         DrawMixerCentered(dc, MixerValue(parameter, parameter.CurrentNumber),
             new Point(center, strip.Top + 38.0),
-            strip.Width - 14.0, 16.2, valueBrush, FontWeights.Bold);
+            strip.Width - 14.0, parameter.IsValueModifiedFromReference() ? 17.4 : 16.2,
+            valueBrush, FontWeights.Bold);
         // The grey reference tick conveys Base without redundant "BASE 1x" text.
         // Remove the text across all mixer families, preserving the reference marker.
         DrawMixerCentered(dc, MixerValue(parameter, parameter.Maximum),
@@ -709,7 +707,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         dc.DrawLine(new Pen(border, 5.0),
             new Point(center, rail.Top), new Point(center, rail.Bottom));
-        dc.DrawLine(new Pen(CloneWithOpacity(valueBrush, enabled ? 0.75 : 0.3), 5.0),
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, enabled ? 0.75 : 0.3), 5.0),
             new Point(center, rail.Bottom), new Point(center, currentY));
 
         // Base marker lives next to the rail to avoid stealing the live
@@ -721,9 +719,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawEllipse(CloneWithOpacity(accent, 0.20), null,
                 new Point(center, currentY), 18.0, 18.0);
         dc.DrawEllipse(panel,
-            new Pen(valueBrush, selected ? 2.4 : 1.7),
+            new Pen(accent, selected ? 2.4 : 1.7),
             new Point(center, currentY), 9.0, 9.0);
-        dc.DrawLine(new Pen(valueBrush, 2.2),
+        dc.DrawLine(new Pen(accent, 2.2),
             new Point(center - 7.0, currentY),
             new Point(center + 7.0, currentY));
 
@@ -1481,7 +1479,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             lowHealth ? "HEALTH RECOVERY LOSS" : "EXTRA ACTION STAMINA COST",
             new Point(card.Left + 12.0, card.Top + 8.0), 10.4, text, FontWeights.Bold);
         DrawChangedNumbers(dc,
-            $"{(lowHealth ? "-" : "+")}{penalty.CurrentNumber * 100:0}%  |  BASE {penalty.ReferenceNumber * 100:0}%",
+            $"{(lowHealth ? "-" : "+")}{penalty.CurrentNumber * 100:0}%",
             new Point(card.Right - 12.0, card.Top + 7.0),
             11.0, enabled ? text : muted, accent, FontWeights.Bold,
             enabled && penalty.IsValueModifiedFromReference(), rightAligned: true);
@@ -1596,7 +1594,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, label, new Point(card.Left + 11.0, card.Top + 8.0),
             10.3, text, FontWeights.Bold);
         DrawChangedNumbers(dc,
-            $"{parameter.CurrentNumber * 100:0}%   |   BASE {parameter.ReferenceNumber * 100:0}%",
+            $"{parameter.CurrentNumber * 100:0}%",
             new Point(card.Right - 12.0, card.Top + 7.0),
             10.5, active ? text : muted, accent, FontWeights.Bold,
             active && parameter.IsValueModifiedFromReference(), rightAligned: true);
@@ -1722,11 +1720,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // Keep the current value legible. Shorten the label for narrow cards;
         // the grey baseline tick stays present regardless of card width.
-        var compact = card.Width < 325.0;
         DrawChangedNumbers(dc,
-            compact
-                ? Format(parameter.CurrentNumber)
-                : $"{Format(parameter.CurrentNumber)}   /   BASE {Format(parameter.ReferenceNumber)}",
+            Format(parameter.CurrentNumber),
             new Point(card.Right - 10.0, card.Top + 6.0),
             11.2, enabled ? text : muted, accent, FontWeights.Bold,
             enabled && parameter.IsValueModifiedFromReference(), rightAligned: true);
@@ -1899,7 +1894,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         DrawChangedNumbers(dc,
-            $"{parameter.CurrentNumber:0.##}x   |   BASE {parameter.ReferenceNumber:0.##}x",
+            $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Right - 11.0, card.Top + 7.0),
             10.0, text, accent, FontWeights.Bold,
             parameter.IsValueModifiedFromReference(), rightAligned: true);
@@ -2752,7 +2747,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (parameter is null)
             return;
 
-        DrawRightAlignedText(dc, FriendlyValue(parameter), new Point(card.Right - 10.0, card.Top + 6.0), 10.0, accent, FontWeights.Bold);
+        var changed = parameter.IsValueModifiedFromReference();
+        DrawRightAlignedText(dc, FriendlyValue(parameter),
+            new Point(card.Right - 10.0, card.Top + 6.0),
+            changed ? 11.2 : 10.0, changed ? accent : text, FontWeights.Bold);
 
         var track = new Rect(card.Left + 12.0, card.Top + 35.0, Math.Max(50.0, card.Width - 24.0), 20.0);
         var y = track.Top + track.Height / 2.0;
@@ -3167,13 +3165,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, "0s", new Point(axis.Left, 258), 9.2, muted, FontWeights.Normal);
         DrawRightAlignedText(dc, $"{duration:0}s", new Point(axis.Right, 258),
             9.2, muted, FontWeights.Normal);
-        DrawCenteredText(dc, "GREY TICK = PENALTIES BEGIN",
-            new Point(preview.Left + preview.Width / 2, 260),
-            9.0, text, FontWeights.SemiBold);
 
         var pressure = damage.CurrentNumber / Math.Max(Epsilon, interval.CurrentNumber);
-        var basePressure = damage.ReferenceNumber / Math.Max(Epsilon, interval.ReferenceNumber);
-        DrawText(dc, $"DAMAGE PRESSURE  {pressure:0.00} HP/s  |  BASE {basePressure:0.00} HP/s",
+        DrawText(dc, $"DAMAGE PRESSURE  {pressure:0.00} HP/s",
             new Point(20, 295), 10, active ? text : muted, FontWeights.SemiBold);
         DrawRightAlignedText(dc, active ? "ACTIVE" : "OFF - VALUES STAGED",
             new Point(ActualWidth - 20, 295), 9.5,
@@ -3210,13 +3204,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         DrawEffect(stamina, "EXTRA ACTION STAMINA COST",
-            $"+{stamina.CurrentNumber * 100:0}%  |  BASE +{stamina.ReferenceNumber * 100:0}%",
+            $"+{stamina.CurrentNumber * 100:0}%",
             "0%", "400%", 318);
         DrawEffect(damage, "HP LOST PER TICK",
-            $"{damage.CurrentNumber:0.#} HP  |  BASE {damage.ReferenceNumber:0.#}",
+            $"{damage.CurrentNumber:0.#} HP",
             "0 HP", "8 HP", 380);
         DrawEffect(recovery, "HEALTH RECOVERY BLOCKED",
-            $"{recovery.CurrentNumber * 100:0}%  |  BASE {recovery.ReferenceNumber * 100:0}%",
+            $"{recovery.CurrentNumber * 100:0}%",
             "0%", "100%", 442);
     }
 
@@ -3257,8 +3251,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 10.0, text, FontWeights.Bold, previewTextWidth),
             new Point(preview.Left + 12.0, 63.0));
         dc.DrawText(CreateText(
-                $"NOW {minimum.CurrentNumber:0.00}–{maximum.CurrentNumber:0.00}  |  BASE {minimum.ReferenceNumber:0.00}–{maximum.ReferenceNumber:0.00}",
-                9.8, accent, FontWeights.SemiBold, previewTextWidth),
+                $"PROTECTION  {minimum.CurrentNumber:0.00}–{maximum.CurrentNumber:0.00}",
+                9.8, minimum.IsValueModifiedFromReference() ||
+                    maximum.IsValueModifiedFromReference() ? accent : text,
+                FontWeights.SemiBold, previewTextWidth),
             new Point(preview.Left + 12.0, 81.0));
 
         var axis = new Rect(preview.Left + 79.0, 93.0, preview.Width - 98.0, 47.0);
@@ -3319,7 +3315,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             DrawText(dc, label, new Point(card.Left + 12.0, top + 9.0),
                 10.2, text, FontWeights.Bold);
             DrawRightAlignedText(dc,
-                $"{parameter.CurrentNumber:0.00}  |  BASE {parameter.ReferenceNumber:0.00}",
+                $"{parameter.CurrentNumber:0.00}",
                 new Point(card.Right - 12.0, top + 8.0), 11.0,
                 parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
 
@@ -3558,13 +3554,14 @@ public sealed class AggregateVisualControl : FrameworkElement
                 card, 4.0, 4.0);
             var cardTextWidth = Math.Max(1.0, card.Width - 24.0);
             dc.DrawText(CreateText(label, 10.3, text,
-                    FontWeights.Bold, cardTextWidth),
+                    FontWeights.Bold, Math.Max(1.0, card.Width - 148.0)),
                 new Point(card.Left + 12.0, top + 5.0));
-            dc.DrawText(CreateText(
-                    $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
-                    10.8, parameter.IsControlEnabled ? accent : muted,
-                    FontWeights.Bold, cardTextWidth),
-                new Point(card.Left + 12.0, top + 21.0));
+            var changed = parameter.IsControlEnabled && parameter.IsValueModifiedFromReference();
+            var current = CreateText($"{parameter.CurrentNumber:0.##}x",
+                changed ? 12.0 : 10.8, changed ? accent : text,
+                FontWeights.Bold, cardTextWidth);
+            dc.DrawText(current, new Point(
+                card.Right - 12.0 - current.WidthIncludingTrailingWhitespace, top + 5.0));
             dc.DrawText(CreateText(poolShare, 9.3, muted,
                     FontWeights.Normal, cardTextWidth),
                 new Point(card.Left + 12.0, top + 37.0));
@@ -3666,7 +3663,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // Every compact card gets its own text boundary. Clipping against the
         // whole control would allow a left-column caption to overlap its neighbor.
-        dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold, contentWidth),
+        dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold,
+                Math.Max(1.0, card.Width - 155.0)),
             new Point(card.Left + 12.0, card.Top + 7.0));
         var valueText = CreateText(value, 10.7,
             parameter.IsControlEnabled ? text : muted, FontWeights.Bold, contentWidth);
@@ -3677,7 +3675,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                 valueText.SetForegroundBrush(accent, token.Index, token.Length);
                 valueText.SetFontSize(11.9, token.Index, token.Length);
             }
-        dc.DrawText(valueText, new Point(card.Left + 12.0, card.Top + 25.0));
+        dc.DrawText(valueText,
+            new Point(card.Right - 12.0 - valueText.WidthIncludingTrailingWhitespace,
+                card.Top + 6.0));
 
         var track = new Rect(card.Left + 20.0, card.Top + 45.0,
             Math.Max(1.0, card.Width - 40.0), 16.0);
@@ -3737,13 +3737,15 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         void Cell(ParameterViewModel parameter, string label, double x)
         {
-            dc.DrawText(CreateText(label, 9.2, text, FontWeights.Bold, cellWidth),
-                new Point(x, top));
-            dc.DrawText(CreateText(
-                    $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
-                    10.1, parameter.IsControlEnabled ? accent : text,
-                    FontWeights.SemiBold, cellWidth),
-                new Point(x, top + 14.0));
+            dc.DrawText(CreateText(label, 9.2, text, FontWeights.Bold,
+                    Math.Max(1.0, cellWidth - 110.0)), new Point(x, top));
+            var changed = parameter.IsControlEnabled &&
+                parameter.IsValueModifiedFromReference();
+            var current = CreateText($"{parameter.CurrentNumber:0.##}x",
+                changed ? 11.3 : 10.1, changed ? accent : text,
+                FontWeights.SemiBold, cellWidth);
+            dc.DrawText(current, new Point(
+                x + cellWidth - current.WidthIncludingTrailingWhitespace, top));
         }
 
         Cell(leftParameter, leftLabel, leftX);
@@ -3793,7 +3795,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Pen(border, 1.0),
             card, 4.0, 4.0);
         var textWidth = Math.Max(1.0, card.Width - 24.0);
-        dc.DrawText(CreateText(label, 9.8, text, FontWeights.Bold, textWidth),
+        dc.DrawText(CreateText(label, 9.8, text, FontWeights.Bold,
+                Math.Max(1.0, card.Width - 150.0)),
             new Point(card.Left + 12.0, card.Top + 5.0));
 
         if (parameter is null)
@@ -3804,27 +3807,29 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
+        // Stamina Usage: one readable header line; the muted rail tick
+        // alone communicates the selected reference difficulty.
         var value = pairedValueFormatting
-            ? $"{ComparablePairedValue(parameter, parameter.CurrentNumber)}  |  BASE {ComparablePairedValue(parameter, parameter.ReferenceNumber)}"
-            : hideBaseText ? FriendlyValue(parameter)
-            : $"{FriendlyValue(parameter)}  |  BASE {FormatCompact(parameter.ReferenceNumber)}";
-        var valueText = CreateText(value, pairedValueFormatting ? 11.1 : 10.1,
-            parameter.IsControlEnabled ? text : muted,
-            FontWeights.SemiBold, textWidth);
+            ? ComparablePairedValue(parameter, parameter.CurrentNumber)
+            : FriendlyValue(parameter);
+        var baseSize = pairedValueFormatting ? 11.1 : 10.1;
+        var valueText = CreateText(value, baseSize,
+            parameter.IsControlEnabled ? text : muted, FontWeights.SemiBold, textWidth);
         if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())
         {
-            var first = System.Text.RegularExpressions.Regex.Match(
-                value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
-            if (first.Success)
+            foreach (System.Text.RegularExpressions.Match token in
+                System.Text.RegularExpressions.Regex.Matches(
+                    value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
             {
-                valueText.SetForegroundBrush(accent, first.Index, first.Length);
-                valueText.SetFontSize((pairedValueFormatting ? 11.1 : 10.1) + 1.2,
-                    first.Index, first.Length);
+                valueText.SetForegroundBrush(accent, token.Index, token.Length);
+                valueText.SetFontSize(baseSize + 1.2, token.Index, token.Length);
             }
         }
-        dc.DrawText(valueText, new Point(card.Left + 12.0, card.Top + 22.0));
+        dc.DrawText(valueText,
+            new Point(card.Right - 12.0 - valueText.WidthIncludingTrailingWhitespace,
+                card.Top + 5.0));
 
-        var track = new Rect(card.Left + 14.0, card.Top + 39.0,
+        var track = new Rect(card.Left + 14.0, card.Top + 34.0,
             Math.Max(1.0, card.Width - 28.0), 12.0);
         var y = track.Top + track.Height / 2.0;
 
@@ -3852,12 +3857,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         var halfWidth = Math.Max(1.0, track.Width / 2.0 - 4.0);
         dc.DrawText(CreateText(FormatCompact(parameter.Minimum), 9.0,
                 muted, FontWeights.Normal, halfWidth),
-            new Point(track.Left, card.Top + 56.0));
+            new Point(track.Left, card.Top + 52.0));
         var right = CreateText(FormatCompact(parameter.Maximum), 9.0,
             muted, FontWeights.Normal, halfWidth);
         dc.DrawText(right, new Point(
             track.Right - right.WidthIncludingTrailingWhitespace,
-            card.Top + 56.0));
+            card.Top + 52.0));
     }
 
     private void DrawInlineHorizontalTrack(

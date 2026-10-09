@@ -212,7 +212,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
         var modified = p.IsValueModifiedFromReference();
         DrawRightAlignedText(dc, $"{p.CurrentNumber:0.#} HP",
             new Point(card.Right - 12, card.Top + 8),
-            13.2, modified ? accent : text, FontWeights.Bold);
+            modified ? 14.4 : 13.2, modified ? accent : text, FontWeights.Bold);
 
         var track = new Rect(card.Left + 17, card.Top + 37,
             card.Width - 34, 25);

@@ -186,8 +186,8 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             dc,
             baseText,
             new Point(card.Right - 8.0, card.Top + 5.0),
-            9.3,
-            text,
+            parameter.IsValueModifiedFromReference() ? 10.5 : 9.3,
+            parameter.IsValueModifiedFromReference() ? accent : text,
             FontWeights.Bold);
 
         var track = new Rect(card.Left + 10.0, card.Top + 27.0, card.Width - 20.0, 10.0);

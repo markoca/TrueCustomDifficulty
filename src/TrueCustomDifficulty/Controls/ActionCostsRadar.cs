@@ -266,7 +266,7 @@ public sealed class ActionCostsRadar : FrameworkElement
                 dc,
                 $"{FormatRaw(parameter.CurrentNumber)} SP",
                 new Point(card.Right - 9.0, top),
-                9.2,
+                modified ? 10.4 : 9.2,
                 modified ? accent : text,
                 FontWeights.Bold);
 
@@ -312,7 +312,9 @@ public sealed class ActionCostsRadar : FrameworkElement
         if (_aimParameter is not { } parameter)
             return;
 
-        DrawRightAlignedText(dc, $"{parameter.CurrentNumber * 100:0}%", new Point(card.Right - 10.0, card.Top + 7.0), 10.0,
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber * 100:0}%",
+            new Point(card.Right - 10.0, card.Top + 7.0),
+            parameter.IsValueModifiedFromReference() ? 11.2 : 10.0,
             parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
 
         var track = new Rect(card.Left + 235.0, card.Top + 31.0, Math.Max(150.0, card.Width - 250.0), 10.0);
@@ -458,7 +460,10 @@ public sealed class ActionCostsRadar : FrameworkElement
         dc.DrawLine(new Pen(accent, 2.8), new Point(line.Left, y), new Point(currentX, y));
         DrawHandle(dc, parameter, new Point(currentX, y), panel, accent);
 
-        DrawRightAlignedText(dc, formatter(parameter.CurrentNumber), new Point(line.Right, y - 10.0), 9.0, parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
+        DrawRightAlignedText(dc, formatter(parameter.CurrentNumber),
+            new Point(line.Right, y - 10.0),
+            parameter.IsValueModifiedFromReference() ? 10.2 : 9.0,
+            parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
 
         var activeLeft = ValueToX(parameter.Minimum, visualMinimum, visualMaximum, line);
         var activeRight = ValueToX(parameter.Maximum, visualMinimum, visualMaximum, line);
@@ -490,7 +495,10 @@ public sealed class ActionCostsRadar : FrameworkElement
 
         DrawText(dc, label, new Point(rect.Left, rect.Top), 9.0,
             muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, formatter(parameter.CurrentNumber), new Point(rect.Right, rect.Top), 9.0, parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
+        DrawRightAlignedText(dc, formatter(parameter.CurrentNumber),
+            new Point(rect.Right, rect.Top),
+            parameter.IsValueModifiedFromReference() ? 10.2 : 9.0,
+            parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
 
         var track = new Rect(rect.Left, rect.Top + 21.0, rect.Width, 8.0);
         var y = track.Top + track.Height / 2.0;
