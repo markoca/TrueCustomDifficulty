@@ -19,7 +19,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class MutantDropRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double RowHeight = 50.0;
+    private const double RowHeight = 58.0;
 
     private static readonly DropDefinition[] Mutants =
     {
@@ -63,7 +63,7 @@ public sealed class MutantDropRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 470;
+        MinHeight = 0;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -71,7 +71,7 @@ public sealed class MutantDropRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 840.0 : Math.Max(660.0, availableSize.Width);
-        return new Size(width, 470.0);
+        return new Size(width, 508.0);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -150,15 +150,15 @@ public sealed class MutantDropRadar : FrameworkElement
         var gap = 18.0;
         var columnWidth = (outerRight - outerLeft - gap) / 2.0;
 
-        DrawColumnHeader(dc, new Rect(outerLeft, 61.0, columnWidth, 24.0), muted, border);
-        DrawColumnHeader(dc, new Rect(outerLeft + columnWidth + gap, 61.0, columnWidth, 24.0), muted, border);
+        DrawColumnHeader(dc, new Rect(outerLeft, 57.0, columnWidth, 20.0), muted, border);
+        DrawColumnHeader(dc, new Rect(outerLeft + columnWidth + gap, 57.0, columnWidth, 20.0), muted, border);
 
         for (var i = 0; i < 7; i++)
         {
             DrawRow(
                 dc,
                 i,
-                new Rect(outerLeft, 86.0 + i * RowHeight, columnWidth, RowHeight - 4.0),
+                new Rect(outerLeft, 80.0 + i * RowHeight, columnWidth, RowHeight - 5.0),
                 text,
                 muted,
                 border,
@@ -168,7 +168,7 @@ public sealed class MutantDropRadar : FrameworkElement
             DrawRow(
                 dc,
                 i + 7,
-                new Rect(outerLeft + columnWidth + gap, 86.0 + i * RowHeight, columnWidth, RowHeight - 4.0),
+                new Rect(outerLeft + columnWidth + gap, 80.0 + i * RowHeight, columnWidth, RowHeight - 5.0),
                 text,
                 muted,
                 border,
@@ -181,8 +181,8 @@ public sealed class MutantDropRadar : FrameworkElement
 
     private void DrawColumnHeader(DrawingContext dc, Rect bounds, Brush muted, Brush border)
     {
-        DrawText(dc, "MUTANT", new Point(bounds.Left + 6.0, bounds.Top + 3.0), 7.6, muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, "DROP CHANCE  •  EXPECTED / 100", new Point(bounds.Right - 6.0, bounds.Top + 3.0), 7.4, muted, FontWeights.Bold);
+        DrawText(dc, "MUTANT", new Point(bounds.Left + 6.0, bounds.Top + 1.0), 10.0, muted, FontWeights.Bold);
+        DrawRightAlignedText(dc, "DROP CHANCE", new Point(bounds.Right - 6.0, bounds.Top + 1.0), 10.0, muted, FontWeights.Bold);
         dc.DrawLine(new Pen(border, 1.0), new Point(bounds.Left, bounds.Bottom), new Point(bounds.Right, bounds.Bottom));
     }
 
@@ -208,9 +208,7 @@ public sealed class MutantDropRadar : FrameworkElement
         var modified = Math.Abs(chance - vanilla) > Epsilon;
 
         dc.DrawRoundedRectangle(
-            selected
-                ? CloneWithOpacity(accent, 0.08)
-                : CloneWithOpacity(panel, 0.02),
+            CloneWithOpacity(panel, 0.55),
             new Pen(CloneWithOpacity(border, 0.45), 0.8),
             card,
             3.0,
@@ -220,7 +218,7 @@ public sealed class MutantDropRadar : FrameworkElement
             dc,
             info.Label,
             new Point(card.Left + 7.0, card.Top + 7.0),
-            7.9,
+            10.8,
             text,
             FontWeights.Bold);
 
@@ -228,11 +226,11 @@ public sealed class MutantDropRadar : FrameworkElement
             dc,
             $"{chance * 100:0}%",
             new Point(card.Right - 9.0, card.Top + 6.0),
-            modified ? 10.4 : 9.2,
+            modified ? 13.0 : 11.8,
             modified ? accent : text,
             FontWeights.Bold);
 
-        var track = new Rect(card.Left + 10.0, card.Top + 27.0, card.Width - 20.0, 12.0);
+        var track = new Rect(card.Left + 11.0, card.Top + 36.0, card.Width - 22.0, 12.0);
         var y = track.Top + track.Height / 2.0;
 
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
