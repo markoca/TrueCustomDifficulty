@@ -4029,8 +4029,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var active = parameter.CurrentBoolean;
         var hovered = parameter.IsControlEnabled && ReferenceEquals(_hoverTarget?.Parameter, parameter);
-        var fill = active ? CloneWithOpacity(accent, hovered ? 0.24 : 0.18)
-            : panel;
+        var fill = active ? CloneWithOpacity(accent, 0.18)
+            : hovered ? CloneWithOpacity(accent, 0.09) : panel;
         dc.DrawRoundedRectangle(fill,
             new Pen(active || hovered ? accent : border, active || hovered ? 1.8 : 1.0),
             rect, 4.0, 4.0);
