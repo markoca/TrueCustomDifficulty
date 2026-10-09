@@ -198,7 +198,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             selected
                 ? CloneWithOpacity(accent, 0.08)
                 : hovered
-                    ? CloneWithOpacity(accent, 0.09)
+                    ? CloneWithOpacity(panel, 0.02)
                     : CloneWithOpacity(panel, 0.015),
             new Pen(CloneWithOpacity(border, 0.42), 0.8),
             card,
