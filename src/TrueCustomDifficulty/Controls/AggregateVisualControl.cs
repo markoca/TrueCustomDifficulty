@@ -2220,196 +2220,84 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(ActualWidth / 2.0, 280.0), 9.5, text, FontWeights.SemiBold);
     }
 
-    // The reputation curve is a read-only overview. Each modifier is adjusted on
-    // its own full-width track, avoiding overlapping handles or text on the graph.
-    // The global value-based constraint still owns HOSTILE >= DISLIKED >= NEUTRAL >= FRIENDLY.
+    // Compact reputation modifiers: preserve the value-based ordering constraint
+    // in the shared coordinator, and edit the four original source parameters.
     private void DrawRepairCurve(
         DrawingContext dc, Brush text, Brush muted, Brush border, Brush soft,
         Brush accent, Brush panel)
     {
-        var hostile = P("economy.repairEnemy");
-        var disliked = P("economy.repairDisaffection");
-        var neutral = P("economy.repairNeutral");
-        var friendly = P("economy.repairFriend");
+        DrawCenteredText(dc, "REPAIR PRICE BY REPUTATION",
+            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
 
-        DrawText(dc, "REPAIR PRICE BY REPUTATION", new Point(17.0, 13.0),
-            11.5, accent, FontWeights.Bold);
-        DrawText(dc, "your standing with a technician's faction changes repair costs",
-            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
-
-        if (hostile is null || disliked is null || neutral is null || friendly is null)
+        var channels = new (string Id, string Label)[]
         {
-            DrawCenteredText(dc, "Repair price controls unavailable.",
-                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
-            return;
-        }
-
-        var parameters = new[] { hostile, disliked, neutral, friendly };
-        var labels = new[] { "HOSTILE", "DISLIKED", "NEUTRAL", "FRIENDLY" };
-        var contentWidth = Math.Max(460.0, ActualWidth - 34.0);
-        var overview = new Rect(17.0, 55.0, contentWidth, 164.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), overview, 4.0, 4.0);
-
-        // Constrain both legend halves: source values should never be hidden
-        // under the long comparison caption at the minimum layout width.
-        var headingWidth = Math.Max(1.0, overview.Width / 2.0 - 24.0);
-        dc.DrawText(CreateText("REPUTATION REPAIR CURVE", 10.1,
-                text, FontWeights.Bold, headingWidth),
-            new Point(overview.Left + 12.0, 64.0));
-        var legendText = CreateText("GOLD = NOW  |  DASHED = BASE", 9.0,
-            muted, FontWeights.SemiBold, headingWidth);
-        dc.DrawText(legendText, new Point(
-            overview.Right - 12.0 - legendText.WidthIncludingTrailingWhitespace, 64.0));
-        dc.DrawText(CreateText(
-                "1x = UNMODIFIED REPAIR LAYER  |  ABOVE 1x = SURCHARGE",
-                9.0, muted, FontWeights.Normal,
-                Math.Max(1.0, overview.Width - 24.0)),
-            new Point(overview.Left + 12.0, 81.0));
-
-        // Shared plot is explanatory only; values remain editable in the four
-        // separate source-range sliders underneath.
-        var plot = new Rect(76.0, 101.0, Math.Max(360.0, ActualWidth - 114.0), 66.0);
-        const double chartMin = 0.0;
-        const double chartMax = 3.0;
-        var xs = new[]
-        {
-            plot.Left + plot.Width * 0.10,
-            plot.Left + plot.Width * 0.36,
-            plot.Left + plot.Width * 0.64,
-            plot.Left + plot.Width * 0.90
+            ("economy.repairFriend", "FRIENDLY"),
+            ("economy.repairNeutral", "NEUTRAL"),
+            ("economy.repairDisaffection", "DISLIKED"),
+            ("economy.repairEnemy", "HOSTILE")
         };
-        var live = parameters.Select(p => p.CurrentNumber).ToArray();
-        var reference = parameters.Select(p => p.ReferenceNumber).ToArray();
 
-        var baseY = ValueToY(1.0, chartMin, chartMax, plot);
-        dc.DrawRectangle(CloneWithOpacity(muted, 0.06), null,
-            new Rect(plot.Left, plot.Top, plot.Width, Math.Max(0.0, baseY - plot.Top)));
-        dc.DrawRectangle(CloneWithOpacity(accent, 0.04), null,
-            new Rect(plot.Left, baseY, plot.Width, Math.Max(0.0, plot.Bottom - baseY)));
+        var contentWidth = Math.Max(1.0, ActualWidth - 32.0);
+        var columns = contentWidth >= 640.0 ? 2 : 1;
+        const double gap = 12.0;
+        const double pitch = 116.0;
+        const double cardHeight = 104.0;
+        var cardWidth = (contentWidth - (columns - 1) * gap) / columns;
 
-        for (var value = 0; value <= 3; value++)
+        for (var i = 0; i < channels.Length; i++)
         {
-            var y = ValueToY(value, chartMin, chartMax, plot);
-            var pen = new Pen(value == 1 ? accent : soft, value == 1 ? 1.4 : 1.0);
-            if (value != 1)
-                pen.DashStyle = DashStyles.Dot;
-            dc.DrawLine(pen, new Point(plot.Left, y), new Point(plot.Right, y));
-            DrawRightAlignedText(dc, value == 1 ? "1x BASE" : $"{value}x",
-                new Point(plot.Left - 9.0, y - 7.0),
-                9.0, value == 1 ? accent : muted, FontWeights.SemiBold);
-        }
+            var channel = channels[i];
+            var card = new Rect(16.0 + i % columns * (cardWidth + gap),
+                48.0 + i / columns * pitch, cardWidth, cardHeight);
+            dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+            DrawText(dc, channel.Label, new Point(card.Left + 12.0, card.Top + 8.0),
+                10.0, text, FontWeights.Bold);
+            var parameter = P(channel.Id);
+            if (parameter is null)
+            {
+                DrawText(dc, "PARAMETER UNAVAILABLE", new Point(card.Left + 12.0, card.Top + 30.0),
+                    9.0, muted, FontWeights.Normal);
+                continue;
+            }
 
-        DrawCurveLine(dc, xs, reference, plot, chartMin, chartMax,
-            new Pen(muted, 1.6) { DashStyle = DashStyles.Dash });
-        DrawCurveLine(dc, xs, live, plot, chartMin, chartMax,
-            new Pen(accent, 2.8));
+            var modified = parameter.IsValueModifiedFromReference();
+            DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
+                new Point(card.Right - 12.0, card.Top + 7.0),
+                modified ? 12.2 : 11.0, modified ? accent : text, FontWeights.Bold);
+            var delta = (parameter.CurrentNumber - 1.0) * 100.0;
+            var meaning = Math.Abs(delta) < 0.5 ? "NO REPUTATION ADJUSTMENT"
+                : delta > 0.0 ? $"{delta:0}% REPAIR SURCHARGE"
+                : $"{-delta:0}% REPAIR DISCOUNT";
+            DrawText(dc, meaning, new Point(card.Left + 12.0, card.Top + 30.0),
+                9.2, muted, FontWeights.Normal);
 
-        for (var i = 0; i < parameters.Length; i++)
-        {
-            var point = new Point(xs[i], ValueToY(live[i], chartMin, chartMax, plot));
-            var referencePoint = new Point(xs[i],
-                ValueToY(reference[i], chartMin, chartMax, plot));
-
-            dc.DrawEllipse(panel,
-                new Pen(muted, 1.4) { DashStyle = DashStyles.Dash },
-                referencePoint, 5.0, 5.0);
-            dc.DrawEllipse(panel,
-                new Pen(accent, IsSelected(parameters[i]) ? 2.8 : 1.7),
-                point, 6.5, 6.5);
-            dc.DrawEllipse(accent, null, point, 2.6, 2.6);
-
-            DrawCenteredText(dc, labels[i], new Point(xs[i], 174.0),
-                9.2, text, FontWeights.Bold);
-            DrawCenteredText(dc, $"{live[i]:0.##}x", new Point(xs[i], 191.0),
-                10.1, accent, FontWeights.Bold);
-        }
-
-        string PriceHint(double multiplier)
-        {
-            var delta = (multiplier - 1.0) * 100.0;
-            if (Math.Abs(delta) < 0.5)
-                return "UNCHANGED BASE REPAIR LAYER";
-            return delta > 0.0
-                ? $"+{delta:0}% SURCHARGE VS 1x"
-                : $"{-delta:0}% DISCOUNT VS 1x";
-        }
-
-        void DrawReputationTrack(ParameterViewModel parameter, string label, double top)
-        {
-            var card = new Rect(17.0, top, contentWidth, 75.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
-                card, 4.0, 4.0);
-            // Title, actual source multiplier, and 1x comparison each get
-            // their own line instead of competing across the card header.
-            var cardTextWidth = Math.Max(1.0, card.Width - 24.0);
-            dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold,
-                    cardTextWidth),
-                new Point(card.Left + 12.0, top + 4.0));
-            dc.DrawText(CreateText(
-                    $"{parameter.CurrentNumber:0.##}x  |  BASE {parameter.ReferenceNumber:0.##}x",
-                    10.7, parameter.IsControlEnabled ? accent : muted,
-                    FontWeights.Bold, cardTextWidth),
-                new Point(card.Left + 12.0, top + 20.0));
-            dc.DrawText(CreateText(PriceHint(parameter.CurrentNumber), 9.0,
-                    muted, FontWeights.SemiBold, cardTextWidth),
-                new Point(card.Left + 12.0, top + 35.0));
-
-            var track = new Rect(card.Left + 22.0, top + 49.0,
-                card.Width - 44.0, 12.0);
+            var track = new Rect(card.Left + 16.0, card.Top + 56.0,
+                Math.Max(1.0, card.Width - 32.0), 16.0);
             var y = track.Top + track.Height / 2.0;
-            var currentX = ValueToX(parameter.CurrentNumber,
-                parameter.Minimum, parameter.Maximum, track, reverse: false);
-            var referenceX = ValueToX(parameter.ReferenceNumber,
-                parameter.Minimum, parameter.Maximum, track, reverse: false);
-            var unmodifiedX = ValueToX(1.0,
-                parameter.Minimum, parameter.Maximum, track, reverse: false);
-
-            dc.DrawLine(new Pen(soft, 4.0),
-                new Point(track.Left, y), new Point(track.Right, y));
-            if (parameter.IsControlEnabled)
-                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
-                    new Point(track.Left, y), new Point(currentX, y));
-            // Pale tick: unmodified 1x. Grey tick: selected Base Preset.
-            dc.DrawLine(new Pen(soft, 1.3) { DashStyle = DashStyles.Dash },
-                new Point(unmodifiedX, y - 12.0), new Point(unmodifiedX, y + 12.0));
-            dc.DrawLine(new Pen(muted, 2.0),
-                new Point(referenceX, y - 10.0), new Point(referenceX, y + 10.0));
-            dc.DrawEllipse(panel,
-                new Pen(parameter.IsControlEnabled ? accent : muted,
-                    IsSelected(parameter) ? 2.8 : 1.9),
-                new Point(currentX, y), 7.0, 7.0);
-            if (parameter.IsControlEnabled)
-                dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-
+            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
+                parameter.Maximum, track, reverse: false);
+            var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
+                parameter.Maximum, track, reverse: false);
+            var unitX = ValueToX(1.0, parameter.Minimum, parameter.Maximum, track, reverse: false);
+            dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 3.0),
+                new Point(track.Left, y), new Point(currentX, y));
+            dc.DrawLine(new Pen(soft, 1.2) { DashStyle = DashStyles.Dash },
+                new Point(unitX, y - 8.0), new Point(unitX, y + 8.0));
+            dc.DrawLine(new Pen(muted, 1.8),
+                new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
+            dc.DrawEllipse(panel, new Pen(accent, IsSelected(parameter) ? 2.5 : 1.5),
+                new Point(currentX, y), 6.0, 6.0);
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
             AddHorizontalTarget(parameter,
-                new Rect(track.Left - 8.0, track.Top - 4.0,
-                    track.Width + 16.0, track.Height + 8.0),
+                new Rect(track.Left - 6.0, track.Top - 6.0,
+                    track.Width + 12.0, track.Height + 12.0),
                 track, parameter.Minimum, parameter.Maximum);
             DrawText(dc, $"{parameter.Minimum:0.##}x",
-                new Point(track.Left, top + 63.0),
-                9.1, muted, FontWeights.Normal);
+                new Point(track.Left, card.Top + 79.0), 9.0, muted, FontWeights.Normal);
             DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
-                new Point(track.Right, top + 63.0),
-                9.1, muted, FontWeights.Normal);
+                new Point(track.Right, card.Top + 79.0), 9.0, muted, FontWeights.Normal);
         }
-
-        DrawReputationTrack(hostile, "HOSTILE / ENEMY", 231.0);
-        DrawReputationTrack(disliked, "DISLIKED", 312.0);
-        DrawReputationTrack(neutral, "NEUTRAL", 393.0);
-        DrawReputationTrack(friendly, "FRIENDLY", 474.0);
-
-        var monotonic = hostile.CurrentNumber + Epsilon >= disliked.CurrentNumber
-            && disliked.CurrentNumber + Epsilon >= neutral.CurrentNumber
-            && neutral.CurrentNumber + Epsilon >= friendly.CurrentNumber;
-        DrawText(dc,
-            monotonic
-                ? "ORDER: HOSTILE >= DISLIKED >= NEUTRAL >= FRIENDLY"
-                : "REPUTATION ORDER IS BEING NORMALIZED",
-            new Point(20.0, 566.0), 9.2, monotonic ? muted : accent,
-            FontWeights.SemiBold);
-        DrawText(dc,
-            "RIGHT-CLICK = RESET ONE  |  R = RESET ALL  |  PRICE MODIFIER, NOT FINAL REPAIR BILL",
-            new Point(20.0, 585.0), 9.0, muted, FontWeights.Normal);
     }
 
     // Four independent source parameters: Bandage and three medkits on a
@@ -4814,7 +4702,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "RepeatedHitBand" => 455.0,
             "RadiationBalance" => CompactGridEnd(55.0, 3, CompactStageColumns(width)) + 14.0,
             "TradingDashboard" => (width >= 672.0 ? 300.0 : 536.0),
-            "RepairCurve" => 640.0,
+            "RepairCurve" => (width >= 672.0 ? 300.0 : 526.0),
             "AmmoDistribution" => 750.0,
             _ => 340.0
         };
