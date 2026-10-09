@@ -21,6 +21,8 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | C3 | `dotnet run --project tests/SurvivalPatchContract/SurvivalPatchContract.csproj -c Release -- --out audit/survival-patch-fixtures` | Windows / .NET 10 | 59 actual app-to-Survival-BPatch writer scenarios |
 | B8 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix equipment. --out REPORT.json --strict` | Linux / Windows | 113 active Equipment source points (101 base, 12 DLC1; inherited source reported explicitly) |
 | C5 | `dotnet run --project tests/EquipmentPatchContract/EquipmentPatchContract.csproj -c Release -- --out audit/equipment-patch-fixtures` | Windows / .NET 10 | 32 real ViewModel-to-BPatch scenarios: four difficulties, edge cases, combined axes and DLC1 conditional routes |
+| B9 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix environment. --out REPORT.json --strict` | Linux / Windows | 42 Environment raw-value source paths, 4 difficulty and 38 effects |
+| C6 | `dotnet run --project tests/EnvironmentPatchContract/EnvironmentPatchContract.csproj -c Release -- --out audit/environment-patch-fixtures` | Windows / .NET 10 | 90 live Environment ViewModel-to-BPatch writer scenarios |
 | D1 | `chmod +x publish.sh && ./publish.sh` | Linux / .NET 10 | Published executable and matching `BUILD-INFO.txt` source receipt |
 | D2 | Wine UI + in-game manual test | Linux / game | Visual design lock, preset round-trip, PAK/UTOC/UCAS build, actual game effects |
 
@@ -227,3 +229,14 @@ other unknown refurls remain findings. See
 and [Phase 11 details](DEEP-CFG-AUDIT-PHASE11-EQUIPMENT-2026-10-09.md).
 Windows 32/32 production Equipment writer scenarios were PASS at 0ab7938.
 **This does not verify Unreal BPatch interpretation or in-game effects.**
+
+### Phase 12: Environment / Anomalies original source and BPatch contracts (2026-10-09)
+
+All **17** live Environment backing source IDs are mapped to **42** original
+base-game CFG edit points. The supplied original ZIPs confirm **42/42 physically
+authored raw-value matches**, no inherited/missing/mismatched fields.
+See [Phase 12](DEEP-CFG-AUDIT-PHASE12-ENVIRONMENT-2026-10-09.md) and
+[original archive SHA-256 evidence](evidence/ENVIRONMENT-ORIGINAL-CFG-2026-10-09.json).
+The Windows `environment-writer-windows` job independently executes **90**
+production ViewModel-to-BPatch scenarios. Both checks are pre-release gates;
+they are NOT evidence of Unreal runtime merge or gameplay effectiveness.
