@@ -35,8 +35,14 @@ public sealed class CfgPatchWriterService
         // Only active controls are allowed to contribute production output.
         // A dependent Master child can retain a custom value in memory/presets while
         // its parent bundle is OFF, but that inactive value must not leak into CFG output.
+        // IsModified is intentionally an aggregate *visual* state for radar
+        // anchors. A child source can highlight its parent even when the
+        // parent's own CFG input remains vanilla. Never treat that highlight
+        // as a writer change: doing so can trigger unrelated special
+        // production fanouts (notably the Rare Stash coupon source).
+        // Source-backed children remain independent live parameters.
         var modified = vm.AllParameters
-            .Where(p => p.IsModified && p.IsControlEnabled)
+            .Where(p => p.IsValueModifiedFromReference() && p.IsControlEnabled)
             .ToList();
         var modifiedById = modified.ToDictionary(p => p.Id, StringComparer.Ordinal);
         var allById = vm.AllParameters.ToDictionary(p => p.Id, StringComparer.Ordinal);
