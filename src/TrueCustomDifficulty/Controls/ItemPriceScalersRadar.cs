@@ -151,13 +151,15 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         // a difficulty-profile category, but shares the same input grammar.
         const double gap = 12.0;
         const double rowPitch = 90.0;
-        var cardWidth = (Math.Max(1.0, ActualWidth - 32.0) - gap) / 2.0;
+        var cardWidth = Math.Max(1.0, Math.Min(370.0,
+            (Math.Max(1.0, ActualWidth - 32.0) - gap) / 2.0));
+        var boardLeft = (ActualWidth - (cardWidth * 2.0 + gap)) / 2.0;
         for (var index = 0; index < Categories.Length + 1; index++)
         {
             var isParts = index == Categories.Length;
             var parameter = isParts ? _mutantParts : _parameters[index];
             var label = isParts ? "MUTANT PARTS" : Categories[index].Label;
-            var card = new Rect(16.0 + (index % 2) * (cardWidth + gap),
+            var card = new Rect(boardLeft + (index % 2) * (cardWidth + gap),
                 48.0 + (index / 2) * rowPitch, cardWidth, 78.0);
             var selected = isParts ? _mutantPartsSelected
                 : !_mutantPartsSelected && _selectedRow == index;
@@ -180,11 +182,11 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
-        dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold),
-            new Point(card.Left + 12.0, card.Top + 9.0));
-
         if (parameter is null)
         {
+            dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold,
+                Math.Max(1.0, card.Width - 24.0)),
+                new Point(card.Left + 12.0, card.Top + 9.0));
             DrawText(dc, "PARAMETER UNAVAILABLE",
                 new Point(card.Left + 12.0, card.Top + 31.0),
                 9.0, muted, FontWeights.Normal);
@@ -192,9 +194,15 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         }
 
         var modified = parameter.IsValueModifiedFromReference();
-        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
-            new Point(card.Right - 12.0, card.Top + 8.0),
+        var liveText = CreateText($"{parameter.CurrentNumber:0.##}x",
             modified ? 12.2 : 11.0, modified ? accent : text, FontWeights.Bold);
+        var titleWidth = Math.Max(1.0, card.Width - 36.0
+            - liveText.WidthIncludingTrailingWhitespace - 10.0);
+        dc.DrawText(CreateText(label, 10.0, text, FontWeights.Bold, titleWidth),
+            new Point(card.Left + 12.0, card.Top + 9.0));
+        dc.DrawText(liveText, new Point(
+            card.Right - 12.0 - liveText.WidthIncludingTrailingWhitespace,
+            card.Top + 8.0));
 
         var track = new Rect(card.Left + 14.0, card.Top + 39.0,
             Math.Max(1.0, card.Width - 28.0), 12.0);
@@ -463,7 +471,8 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         dc.DrawText(formatted, new Point(right.X - formatted.Width, right.Y));
     }
 
-    private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
+    private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight,
+        double maxWidth = double.PositiveInfinity)
     {
         var formatted = new FormattedText(
             value,
@@ -473,6 +482,13 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
+
+        if (!double.IsInfinity(maxWidth))
+        {
+            formatted.MaxTextWidth = Math.Max(1.0, maxWidth);
+            formatted.MaxLineCount = 1;
+            formatted.Trimming = TextTrimming.CharacterEllipsis;
+        }
 
         var separatorBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
         for (var i = 0; i < value.Length; i++)
