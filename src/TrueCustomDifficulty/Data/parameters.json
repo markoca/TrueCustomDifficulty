@@ -10486,14 +10486,14 @@
           "file": "GameData/SpawnActorPrototypes/WorldMap_WP/<ActorSID>.cfg",
           "prototype": "61 audited D_WoodenAmmoCrate_01 actors using DestructibleStash_F1",
           "path": "<ActorSID>",
-          "operation": "randomKeepNodePercent"
+          "operation": "randomRemoveNodePercent"
         },
         {
           "scope": "dlc1",
           "file": "DLCGameData/DLC1/SpawnActorPrototypes/WorldMap_WP/<ActorSID>.cfg",
           "prototype": "40 additional audited DLC1 D_WoodenAmmoCrate_01 actors using DestructibleStash_F1",
           "path": "<ActorSID>",
-          "operation": "randomKeepNodePercent"
+          "operation": "randomRemoveNodePercent"
         }
       ],
       "support": {
