@@ -1,7 +1,7 @@
 # Mixer & Responsive Grid UI — Source of Truth
 
 **Project:** True Custom Difficulty  
-**Status:** Anomaly Effects, Item Weight, Breakable Box Yields and Stash Reward Rolls remain mixer-style. Economy Service Prices and Trader Stock have been explicitly redesigned as compact horizontal source cards (2026-10-09); their earlier mixer references below are historical, superseded examples. Runtime/Wine QA pending.  
+**Status:** Anomaly Effects and Item Weight remain mixer-style. Loot Breakable Boxes and Stash Rewards were explicitly converted to compact native horizontal editors (2026-10-09), as were Economy Service Prices and Trader Stock. Earlier mixer examples for those families are historical only. Runtime/Wine QA pending.  
 **Scope:** Visual layout and interaction only.  
 **Canonical document:** This file is the source of truth for the mixer-style parameter controls and the accompanying responsive grid layout.
 
@@ -9,6 +9,14 @@ This specification exists because the current full-width horizontal-track boards
 
 > **Precedence:** For mixer/grid appearance, behavior, breakpoints, and acceptance criteria, follow this file. For individual parameter IDs, current range/step, vanilla difficulty reference, constraints and CFG effects, the live parameter catalog, ParameterViewModel, central constraint coordinator and CFG writer remain authoritative. The existing [Visual Control System](VISUAL-CONTROL-SYSTEM.md) governs non-mixer visual families. Do not silently change this specification while implementing a panel: update the source-of-truth document first.
 
+
+## Latest Loot override — six compact semantic panels (2026-10-09)
+
+User-approved Loot redraw replaces the old separate vertical `BreakableBoxYields` and `StashRewardProfile` faders, the standalone `StashAmmoRadar` preview, the former 750-DIP `AmmoDistribution` graph and separate giant NPC/World Loot boards. **This override is authoritative for Loot** over earlier generic mixer examples in this document; other tabs' mixers and responsive rules remain locked.
+
+Exactly six visible Loot panels in order: **World Loot Depletion (5 sources), World Placement (5), NPC Loot & Equipment (4), Stash Rewards (6), Breakable Boxes (6), Mutant Part Drops (14)**. Stash Rewards uses three columns at >=750 DIP and two below, with measured 263/418 DIP heights; the two World depletion columns stay readable and the mutant-drop bank is 2×7. All Loot controls follow Stamina Usage label/current/rail hierarchy, with native ranges, reference ticks and hover-only gold handles. See `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md` for the authoritative exact source-to-panel mapping and mouse/keyboard/reset behavior.
+
+**Ammo family bar semantics:** The SNG chart has three segments `9×18/9×19`, `5.45`, `12 Gauge`; NATO chart has four `.45 ACP`, `9×19`, `5.56`, `12 Gauge`. Every segment is permanently keyed by a matching swatch, caliber text and share percent inside its own chart card. The same underlying family weight MUST use the same bar/swatch color in both pools regardless of segment ordering; zero-width segments must preserve a labeled 0% entry. Numeric legends show composition *within that pool*, not global drop probability. The two yield controls are independent of weight composition and remain native source-bound sliders. No duplicated preview lines, phantom selectors or new gameplay values.
 
 ## Current Economy override — supersedes vertical mixer examples (2026-10-09)
 
