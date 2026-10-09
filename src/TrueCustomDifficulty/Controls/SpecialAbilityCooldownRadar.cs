@@ -235,7 +235,10 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
                 new Point(center, card.Top + 15.0), 9.8, text, FontWeights.Bold);
 
         DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
-            new Point(center, card.Top + 39.0), 16.2, accent, FontWeights.Bold);
+            new Point(center, card.Top + 39.0),
+            parameter.IsValueModifiedFromReference() ? 17.4 : 16.2,
+            parameter.IsValueModifiedFromReference() ? accent : text,
+            FontWeights.Bold);
         if (row >= 2)
         {
             var returnRate = parameter.CurrentNumber > Epsilon
