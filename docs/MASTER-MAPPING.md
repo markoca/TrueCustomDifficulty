@@ -1,5 +1,13 @@
 # MASTER-MAPPING.md
 
+## Master UI presentation — final tab redesign (2026-10-09)
+
+**Current five-section order:** STARVATION PENALTIES, SEVERE FATIGUE, RADIATION PENALTY, LOW HEALTH PENALTY, CONSUMABLE EFFECT PENALTIES, using existing groups `Starvation`, `Severe Fatigue`, `Radiation`, `Low Health`, `Medical Effect Modifier`. This is UI-only; no group or parameter ID has changed in the catalog and all **5 mechanics toggles + 15 child values** remain connected to the audited CFG targets and 15 dependency edges below.
+
+The shared Master card uses one native horizontal source track, the selected difficulty's grey baseline tick, source-min/source-max labels, changed-only larger gold numeric value, and common handle-only hover glow. Child controls are muted and uneditable with their custom preset values preserved while the parent mechanic is OFF; the parent universal square checkbox itself stays editable. With sufficient width 2 columns are centered (each card capped at 370 DIP); narrow viewports use one capped 440-DIP column. The Starvation panel keeps two timing sources and a **read-only timeline of exactly three repeated damage tick positions** after the configured grace delay; this is a visual timing illustration, not the engine runtime health-loss/damage-reduction model. Under that timeline: extra stamina cost, per-tick damage and health regeneration loss. Severe Fatigue retains the five individual magnitude controls in 2×3. Radiation and Low Health have one native conditional source each. Consumable Effects retains three separate healing multipliers and a distinct muted 100%-original-heal reference: 25% Bandage, 71% Medkit and 82% Army Medkit are **authored vanilla Master source values**, not effective HP healed after other item changes. The consumable bundle also affects other non-medical consumable modifiers; unchanged.
+
+This layout change is **not** the deeper CFG audit; its findings and unresolved non-Master override behavior remain governed by this source map and later validation. UI lock details are in `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md`.
+
 ## Activation thresholds remain vanilla
 
 Master bundle activation thresholds are intentionally not exposed. Starvation, severe fatigue, radiation and low-health bundles enter when the game reaches their vanilla status-state conditions. The Master tab only controls whether the bundle is enabled and how strong its consequences are.

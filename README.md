@@ -1,5 +1,11 @@
 # True Custom Difficulty
 
+## Master tab — final UI redesign pass (2026-10-09)
+
+Master now has five compact, player-facing punishment panels: **Starvation Penalties**, **Severe Fatigue**, **Radiation Penalty**, **Low Health Penalty**, and **Consumable Effect Penalties**. The existing **5 native mechanics toggles and 15 source-bound child editors** are preserved, as are all original `AdditionalMechanicsEffects` dependencies, toggle-gated CFG output rules and preset IDs. ON makes the children editable; OFF preserves their staged values in disabled/muted tracks. All cards share the Stamina Usage-style label/current/rail anatomy, bounded native min/max references, gold only for changed numerics and attached units, and shared handle-only hover glow. Two compact columns reflow to one below 672 editor DIP.
+
+Starvation has two native timing editors and a read-only preview of the authored delay plus three repeating damage tick positions, followed by three independently edited penalty scalers—no synthetic HP/s. Severe Fatigue is a five-card 2×3 group; Radiation and Low Health are each a compact switch/slider pairing. Consumable Effects is a three-card healing-retention group with the original 25%/71%/82% authored Master references and a subdued distinct 100%-healing guideline. No existing source CFG mapping, native step, parent-toggle behavior, authored activation threshold or actual effective item healing calculation is changed. `README.md`, `docs/MASTER-MAPPING.md`, `docs/UI-DESIGN-LOCK.md` and `docs/VISUAL-CONTROL-SYSTEM.md` are updated together. This concludes the requested tab-by-tab UI pass; **deep CFG audit follows separately**. Local .NET/Wine compile and acceptance remain pending.
+
 ### Anomalies build and four-section grouping fix (2026-10-09)
 
 Fixed the duplicate `"environment"` case in `TabViewModel.SliderGuide` that caused **CS8510** during `net10.0-windows` publish. Added `environment` to the tab's `PropertyGroupDescription` grouping whitelist so the four source-backed Anomalies sections actually appear separately and in the approved order. Updated Equipment tooltip text to reflect its existing three-ring center control. The change does not touch CFG writer behavior, source parameters, or preset serialization. Compilation and Wine rendering must be verified using the local `publish.sh` workflow.

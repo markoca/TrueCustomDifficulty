@@ -37,7 +37,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         if (Family is "AnomalyGlobalDamage" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
             or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "EquipmentWearBalance" or "BreakableBoxYields"
-            or "StashRewardProfile" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile")
+            or "StashRewardProfile" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
+            or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
+            or "MasterLowHealth" or "MasterRadiationPenalty" or "MasterMedicalHealing")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
     }
 
@@ -1713,330 +1715,216 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     }
 
-    private void DrawMasterConditionalPenalty(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
+    // Master panels share Stamina Usage's compact source-first grammar.
+    // Only ACTUAL native parameters are drawn; switch-disabled children retain
+    // their staged values and remain non-interactive until enabled.
+    private static (int Columns, double CardWidth) MasterCardGrid(double width)
     {
-        var lowHealth = Family == "MasterLowHealth";
-        var toggle = P(lowHealth ? "advanced.lowHealthMechanics" : "advanced.radiationMechanics");
-        var penalty = P(lowHealth ? "health.masterLowHealthPenalty" : "survival.radiationStaminaDrainPenalty");
-
-        DrawText(dc, lowHealth ? "MASTER LOW HEALTH" : "MASTER RADIATION",
-            new Point(17.0, 13.0), 11.5, accent, FontWeights.Bold);
-        DrawText(dc,
-            lowHealth
-                ? "extra recovery loss at the authored 30 HP low-health boundary"
-                : "extra action stamina cost in the heavy-radiation state",
-            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
-
-        if (toggle is null || penalty is null)
-        {
-            DrawCenteredText(dc, "Master penalty data unavailable.",
-                new Point(ActualWidth / 2.0, 110.0), 10.0, muted, FontWeights.SemiBold);
-            return;
-        }
-
-        DrawTogglePill(dc, toggle,
-            lowHealth ? "LOW-HEALTH BUNDLE" : "RADIATION BUNDLE",
-            new Rect(17.0, 55.0, 251.0, 38.0),
-            text, muted, border, accent, panel);
-
-        var card = new Rect(17.0, 106.0, Math.Max(480.0, ActualWidth - 34.0), 86.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
-
-        var enabled = penalty.IsControlEnabled;
-        DrawText(dc,
-            lowHealth ? "HEALTH RECOVERY LOSS" : "EXTRA ACTION STAMINA COST",
-            new Point(card.Left + 12.0, card.Top + 8.0), 10.4, text, FontWeights.Bold);
-        DrawChangedNumbers(dc,
-            $"{(lowHealth ? "-" : "+")}{penalty.CurrentNumber * 100:0}%",
-            new Point(card.Right - 12.0, card.Top + 7.0),
-            11.0, enabled ? text : muted, accent, FontWeights.Bold,
-            enabled && penalty.IsValueModifiedFromReference(), rightAligned: true);
-
-        var track = new Rect(card.Left + 16.0, card.Top + 32.0, card.Width - 32.0, 23.0);
-        var y = track.Top + track.Height / 2.0;
-        var currentX = ValueToX(penalty.CurrentNumber,
-            penalty.Minimum, penalty.Maximum, track, reverse: false);
-        var baseX = ValueToX(penalty.ReferenceNumber,
-            penalty.Minimum, penalty.Maximum, track, reverse: false);
-
-        dc.DrawLine(new Pen(soft, 4.0),
-            new Point(track.Left, y), new Point(track.Right, y));
-        if (enabled && currentX > track.Left)
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.66), 4.5),
-                new Point(track.Left, y), new Point(currentX, y));
-
-        dc.DrawLine(new Pen(muted, 1.9),
-            new Point(baseX, y - 12.0), new Point(baseX, y + 12.0));
-        dc.DrawEllipse(panel,
-            new Pen(enabled ? accent : muted,
-                enabled && IsSelected(penalty) ? 2.8 : 1.9),
-            new Point(currentX, y), 7.2, 7.2);
-        if (enabled)
-            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
-
-        AddHorizontalTarget(penalty, track, track, penalty.Minimum, penalty.Maximum);
-        DrawText(dc, "0%", new Point(track.Left, card.Bottom - 23.0),
-            9.4, text, FontWeights.Normal);
-        DrawRightAlignedText(dc, "100%", new Point(track.Right, card.Bottom - 23.0),
-            9.4, text, FontWeights.Normal);
-
-        DrawCenteredText(dc,
-            enabled
-                ? ""
-                : "BUNDLE OFF  |  VALUE PRESERVED",
-            new Point(ActualWidth / 2.0, card.Bottom + 5.0),
-            9.1, enabled ? text : muted, FontWeights.SemiBold);
+        var columns = EconomyColumns(width);
+        return (columns, EconomyCardWidth(width, columns));
     }
 
-    // This is a comparison of exact authored healing ValueMultipliers,
-    // not a computed amount of HP. The underlying medical item's own base heal
-    // can be edited independently on the Health tab.
-    private void DrawMasterMedicalHealing(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
+    private static int MasterRows(double width, int count)
+        => (count + EconomyColumns(width) - 1) / EconomyColumns(width);
+
+    private static double MasterConditionalHeight(double width) => 204.0;
+    private static double MasterCardBankHeight(double width, int count)
+        => 107.0 + MasterRows(width, count) * 94.0 + 12.0;
+    private static double MasterStarvationHeight(double width)
+        => 110.0 + MasterRows(width, 2) * 94.0 +
+            92.0 + MasterRows(width, 3) * 94.0 + 12.0;
+
+    private void DrawMasterSectionTitle(DrawingContext dc, string title, Brush accent)
+        => DrawCenteredText(dc, title, new Point(ActualWidth / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
+
+    private void DrawMasterBundleToggle(
+        DrawingContext dc, ParameterViewModel? toggle, string label,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        DrawHeader(dc, "MASTER CONSUMABLE PENALTIES",
-            "",
-            text, muted, accent);
-
-        var toggle = P("advanced.masterEffectModifierMechanics");
-        var bandage = P("health.masterBandageModifier");
-        var medkit = P("health.masterMedkitModifier");
-        var army = P("health.masterArmyMedkitModifier");
-        if (toggle is null || bandage is null || medkit is null || army is null)
-        {
-            DrawCenteredText(dc, "Medical effect data unavailable.",
-                new Point(ActualWidth / 2.0, 165.0), 10.0, muted, FontWeights.SemiBold);
-            return;
-        }
-
-        DrawTogglePill(dc, toggle, "MASTER EFFECT BUNDLE",
-            new Rect(17.0, 55.0, Math.Min(257.0, ActualWidth * 0.51), 39.0),
-            text, muted, border, accent, panel);
-        DrawRightAlignedText(dc,
-            toggle.CurrentBoolean ? "BUNDLE ACTIVE" : "BUNDLE DISABLED",
-            new Point(ActualWidth - 18.0, 66.0), 10.2,
-            toggle.CurrentBoolean ? accent : muted, FontWeights.Bold);
-
-        DrawText(dc, "ITEM HEALING STRENGTH",
-            new Point(20.0, 107.0), 9.7, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "0%   /   100% ORIGINAL HEAL   /   200%",
-            new Point(ActualWidth - 20.0, 107.0),
-            9.2, muted, FontWeights.SemiBold);
-
-        var width = Math.Max(480.0, ActualWidth - 36.0);
-        DrawMasterMedicalHealingRow(dc, bandage, "BANDAGE", new Rect(18.0, 130.0, width, 65.0),
-            text, muted, border, soft, accent, panel);
-        DrawMasterMedicalHealingRow(dc, medkit, "MEDKIT", new Rect(18.0, 205.0, width, 65.0),
-            text, muted, border, soft, accent, panel);
-        DrawMasterMedicalHealingRow(dc, army, "ARMY MEDKIT", new Rect(18.0, 280.0, width, 65.0),
-            text, muted, border, soft, accent, panel);
-
-        DrawCenteredText(dc,
-            toggle.CurrentBoolean
-                ? ""
-                : "OFF: VALUES PRESERVED",
-            new Point(ActualWidth / 2.0, 355.0),
-            9.2, toggle.CurrentBoolean ? text : muted, FontWeights.SemiBold);
-    }
-
-    private void DrawMasterMedicalHealingRow(
-        DrawingContext dc,
-        ParameterViewModel parameter,
-        string label,
-        Rect card,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
-    {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 3.0, 3.0);
-        var active = parameter.IsControlEnabled;
-        DrawText(dc, label, new Point(card.Left + 11.0, card.Top + 8.0),
-            10.3, text, FontWeights.Bold);
-        DrawChangedNumbers(dc,
-            $"{parameter.CurrentNumber * 100:0}%",
-            new Point(card.Right - 12.0, card.Top + 7.0),
-            10.5, active ? text : muted, accent, FontWeights.Bold,
-            active && parameter.IsValueModifiedFromReference(), rightAligned: true);
-
-        var track = new Rect(card.Left + 15.0, card.Top + 29.0,
-            card.Width - 30.0, 24.0);
-        var y = track.Top + track.Height / 2.0;
-        var normalX = ValueToX(1.0, parameter.Minimum, parameter.Maximum, track, reverse: false);
-        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
-        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
-
-        dc.DrawLine(new Pen(soft, 4.0),
-            new Point(track.Left, y), new Point(track.Right, y));
-        if (active && currentX > track.Left)
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.65), 4.5),
-                new Point(track.Left, y), new Point(currentX, y));
-
-        // The 100%-normal reference is not generally the Master Base Preset.
-        // Show it as a light guide and keep the true difficulty reference grey.
-        dc.DrawLine(new Pen(CloneWithOpacity(text, 0.52), 1.0) { DashStyle = DashStyles.Dash },
-            new Point(normalX, y - 10.0), new Point(normalX, y + 10.0));
-        dc.DrawLine(new Pen(muted, 1.9),
-            new Point(baseX, y - 12.0), new Point(baseX, y + 12.0));
-        dc.DrawEllipse(panel, new Pen(active ? accent : muted, IsSelected(parameter) ? 2.5 : 1.8),
-            new Point(currentX, y), 7.2, 7.2);
-        if (active)
-            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
-
-        AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
-    }
-
-    // Master-only negative mechanics activation owns the six-member family.
-    // All five sliders retain their original CFG-backed values even while off,
-    // but their tracks are intentionally not interactive until enabled.
-    private void DrawSevereFatiguePenaltyBoard(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
-    {
-        // Local heading typography: this dashboard contains five dense cards.
-        // A stronger title/subtitle prevents the tiny-label look at 16:10.
-        DrawText(dc, "MASTER SEVERE FATIGUE",
-            new Point(17.0, 12.0), 12.0, accent, FontWeights.Bold);
-        DrawText(dc, "extra penalties while the vanilla severe-fatigue state is active",
-            new Point(17.0, 32.0), 9.7, text, FontWeights.Normal);
-
-        var toggle = P("advanced.fatigueMechanics");
         if (toggle is null)
-        {
-            DrawCenteredText(dc, "Master fatigue data unavailable.",
-                new Point(ActualWidth / 2.0, 175.0),
-                10.0, muted, FontWeights.SemiBold);
             return;
-        }
-
-        DrawTogglePill(dc, toggle, "SEVERE-FATIGUE BUNDLE",
-            new Rect(16.0, 55.0, Math.Min(247.0, ActualWidth * 0.51), 39.0),
+        var width = Math.Min(320.0, Math.Max(1.0, ActualWidth - 32.0));
+        DrawTogglePill(dc, toggle, label,
+            new Rect((ActualWidth - width) / 2.0, 52.0, width, 39.0),
             text, muted, border, accent, panel);
-        DrawRightAlignedText(dc,
-            toggle.CurrentBoolean ? "PENALTIES ACTIVE" : "PENALTIES DISABLED",
-            new Point(ActualWidth - 18.0, 66.0),
-            10.6, toggle.CurrentBoolean ? accent : muted, FontWeights.Bold);
-
-        var width = Math.Max(480.0, ActualWidth - 32.0);
-        var gap = 10.0;
-        var half = (width - gap) / 2.0;
-
-        DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueMaxStamina"),
-            "MAX STAMINA LOSS", new Rect(16.0, 113.0, half, 69.0),
-            text, muted, border, soft, accent, panel);
-        DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueCarryWeight"),
-            "CARRY CAPACITY LOSS", new Rect(16.0 + half + gap, 113.0, half, 69.0),
-            text, muted, border, soft, accent, panel);
-        DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueRecoil"),
-            "RECOIL INCREASE", new Rect(16.0, 191.0, half, 69.0),
-            text, muted, border, soft, accent, panel);
-        DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueAimSway"),
-            "AIM SWAY", new Rect(16.0 + half + gap, 191.0, half, 69.0),
-            text, muted, border, soft, accent, panel);
-        // Five actual penalties: center the last lane rather than adding a
-        // decorative sixth card which looked like another control in the UI.
-        DrawSevereFatiguePenaltyCard(dc, P("survival.severeFatigueDispersion"),
-            "SHOT SPREAD", new Rect(16.0 + (width - half) / 2.0, 269.0, half, 69.0),
-            text, muted, border, soft, accent, panel);
-
-        DrawCenteredText(dc,
-            toggle.CurrentBoolean
-                ? ""
-                : "BUNDLE OFF  |  VALUES PRESERVED",
-            new Point(ActualWidth / 2.0, 347.0),
-            9.7, toggle.CurrentBoolean ? text : muted, FontWeights.SemiBold);
     }
 
-    private void DrawSevereFatiguePenaltyCard(
-        DrawingContext dc,
-        ParameterViewModel? parameter,
-        string label,
-        Rect card,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
+    // A single native range track. A separate difficulty reference marker is
+    // never the same thing as 100% normal healing or the zero penalty point.
+    private void DrawMasterNativeCard(
+        DrawingContext dc, ParameterViewModel? parameter, string title,
+        Func<double, string> valueText, Rect card,
+        Brush text, Brush muted, Brush border, Brush soft,
+        Brush accent, Brush panel)
     {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 3.0, 3.0);
-        DrawText(dc, label, new Point(card.Left + 10.0, card.Top + 7.0),
-            10.5, text, FontWeights.Bold);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+            card, 4.0, 4.0);
         if (parameter is null)
+        {
+            dc.DrawText(CreateText(title, 10.0, muted, FontWeights.Bold,
+                    Math.Max(1.0, card.Width - 24.0)),
+                new Point(card.Left + 12.0, card.Top + 8.0));
             return;
+        }
 
         var enabled = parameter.IsControlEnabled;
-        var isPercent = parameter.Id is "survival.severeFatigueMaxStamina"
-            or "survival.severeFatigueCarryWeight"
-            or "survival.severeFatigueRecoil";
-        string Format(double value)
-            => isPercent ? $"{value * 100:0}%"
-                         : $"{value:0.##}x";
+        var changed = enabled && parameter.IsValueModifiedFromReference();
+        var display = CreateText(valueText(parameter.CurrentNumber),
+            changed ? 12.2 : 11.0,
+            enabled ? changed ? accent : text : muted, FontWeights.Bold);
+        var labelWidth = Math.Max(1.0, card.Width - 36.0 -
+            display.WidthIncludingTrailingWhitespace - 9.0);
+        dc.DrawText(CreateText(title, 10.1, enabled ? text : muted,
+                FontWeights.Bold, labelWidth),
+            new Point(card.Left + 12.0, card.Top + 8.0));
+        dc.DrawText(display, new Point(
+            card.Right - 12.0 - display.WidthIncludingTrailingWhitespace,
+            card.Top + 7.0));
 
-        // Keep the current value legible. Shorten the label for narrow cards;
-        // the grey baseline tick stays present regardless of card width.
-        DrawChangedNumbers(dc,
-            Format(parameter.CurrentNumber),
-            new Point(card.Right - 10.0, card.Top + 6.0),
-            11.2, enabled ? text : muted, accent, FontWeights.Bold,
-            enabled && parameter.IsValueModifiedFromReference(), rightAligned: true);
-
-        var track = new Rect(card.Left + 12.0, card.Top + 30.0,
-            Math.Max(64.0, card.Width - 24.0), 21.0);
+        var track = new Rect(card.Left + 14.0, card.Top + 38.0,
+            Math.Max(1.0, card.Width - 28.0), 14.0);
         var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(soft, 4.0),
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track, false);
+        var referenceX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, track, false);
+        dc.DrawLine(new Pen(soft, 3.0),
             new Point(track.Left, y), new Point(track.Right, y));
-        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum,
-            track, reverse: false);
-        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum,
-            track, reverse: false);
-
-        // A visible, understated gold fill communicates the actual configured
-        // magnitude even at vanilla. The previous "base-to-current delta only"
-        // line completely disappeared whenever the values were equal.
-        if (enabled && currentX > track.Left)
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.62), 4.0),
+        if (enabled)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 3.0),
                 new Point(track.Left, y), new Point(currentX, y));
 
-        // Put the Base Preset tick behind the handle but extend it beyond the
-        // ring so both remain distinguishable at identical values.
+        // In Master consumable effects 100% means original healing strength,
+        // whereas the source Base tick can be Bandage 25%, Medkit 71% or
+        // Army Medkit 82%. Preserve this distinct meaningful reference.
+        if (parameter.Id is "health.masterBandageModifier"
+            or "health.masterMedkitModifier"
+            or "health.masterArmyMedkitModifier")
+        {
+            var normalX = ValueToX(1.0, parameter.Minimum,
+                parameter.Maximum, track, false);
+            if (Math.Abs(normalX - referenceX) >= 2.0)
+                dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.55), 1.0)
+                    { DashStyle = DashStyles.Dash },
+                    new Point(normalX, y - 9.0), new Point(normalX, y + 9.0));
+        }
         dc.DrawLine(new Pen(muted, 1.8),
-            new Point(baseX, y - 11.0), new Point(baseX, y + 11.0));
+            new Point(referenceX, y - 8.0),
+            new Point(referenceX, y + 8.0));
         dc.DrawEllipse(panel, new Pen(enabled ? accent : muted,
-                enabled && IsSelected(parameter) ? 2.8 : 2.0),
-            new Point(currentX, y), 7.2, 7.2);
+                enabled && IsSelected(parameter) ? 2.4 : 1.5),
+            new Point(currentX, y), 6.0, 6.0);
         if (enabled)
-            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.8, 2.8);
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
 
-        // AddHorizontalTarget performs the same IsControlEnabled guard used
-        // by every other aggregate editor: OFF means no edits, not data loss.
-        AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
-        DrawText(dc, Format(parameter.Minimum),
-            new Point(track.Left, card.Bottom - 15.0),
-            9.6, text, FontWeights.Normal);
-        DrawRightAlignedText(dc, Format(parameter.Maximum),
-            new Point(track.Right, card.Bottom - 15.0),
-            9.6, text, FontWeights.Normal);
+        // Hover halo comes from the common DrawHoveredHandle overlay, not
+        // from card/label hover. One target edits exactly this source.
+        AddHorizontalTarget(parameter,
+            new Rect(track.Left - 6.0, track.Top - 6.0,
+                track.Width + 12.0, track.Height + 12.0),
+            track, parameter.Minimum, parameter.Maximum);
+        DrawText(dc, valueText(parameter.Minimum),
+            new Point(track.Left, card.Top + 59.0),
+            9.1, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, valueText(parameter.Maximum),
+            new Point(track.Right, card.Top + 59.0),
+            9.1, muted, FontWeights.Normal);
+    }
+
+    private void DrawMasterCardBank(
+        DrawingContext dc,
+        (string Id, string Label, Func<double, string> Format)[] sources,
+        double top,
+        Brush text, Brush muted, Brush border, Brush soft, Brush accent,
+        Brush panel)
+    {
+        var (columns, width) = MasterCardGrid(ActualWidth);
+        const double gap = 12.0;
+        for (var i = 0; i < sources.Length; i++)
+        {
+            var row = i / columns;
+            var inRow = Math.Min(columns, sources.Length - row * columns);
+            var rowWidth = inRow * width + (inRow - 1) * gap;
+            var left = (ActualWidth - rowWidth) / 2.0;
+            var card = new Rect(left + (i % columns) * (width + gap),
+                top + row * 94.0, width, 80.0);
+            DrawMasterNativeCard(dc, P(sources[i].Id),
+                sources[i].Label, sources[i].Format, card,
+                text, muted, border, soft, accent, panel);
+        }
+    }
+
+    private static string MasterPercent(double value) => $"{value * 100:0.#}%";
+    private static string MasterPositivePercent(double value) => $"+{value * 100:0.#}%";
+    private static string MasterNegativePercent(double value) => $"-{value * 100:0.#}%";
+    private static string MasterSeconds(double value) => $"{value:0.#}s";
+    private static string MasterHp(double value) => $"{value:0.#} HP";
+    private static string MasterScalar(double value) => $"{value:0.##}x";
+
+    private void DrawMasterConditionalPenalty(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush soft, Brush accent, Brush panel)
+    {
+        var isLowHealth = Family == "MasterLowHealth";
+        DrawMasterSectionTitle(dc,
+            isLowHealth ? "LOW HEALTH PENALTY" : "RADIATION PENALTY", accent);
+        var toggle = P(isLowHealth
+            ? "advanced.lowHealthMechanics" : "advanced.radiationMechanics");
+        DrawMasterBundleToggle(dc, toggle,
+            isLowHealth ? "LOW HEALTH MECHANICS" : "RADIATION MECHANICS",
+            text, muted, border, accent, panel);
+
+        var source = P(isLowHealth
+            ? "health.masterLowHealthPenalty"
+            : "survival.radiationStaminaDrainPenalty");
+        var width = Math.Min(440.0, Math.Max(1.0, ActualWidth - 32.0));
+        DrawMasterNativeCard(dc, source,
+            isLowHealth ? "HEALTH RECOVERY LOSS" : "EXTRA ACTION STAMINA COST",
+            isLowHealth ? MasterNegativePercent : MasterPositivePercent,
+            new Rect((ActualWidth - width) / 2.0, 108.0, width, 80.0),
+            text, muted, border, soft, accent, panel);
+    }
+
+    // The modifier controls are independent source ValueMultipliers,
+    // not effective HP previews. The toggle also governs other non-medical
+    // MasterEffectModifier effects which are not exposed as separate sliders.
+    private void DrawMasterMedicalHealing(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush soft, Brush accent, Brush panel)
+    {
+        DrawMasterSectionTitle(dc, "CONSUMABLE EFFECT PENALTIES", accent);
+        DrawMasterBundleToggle(dc, P("advanced.masterEffectModifierMechanics"),
+            "CONSUMABLE EFFECT BUNDLE",
+            text, muted, border, accent, panel);
+        var sources = new (string Id, string Label, Func<double, string> Format)[]
+        {
+            ("health.masterBandageModifier", "BANDAGE HEALING", MasterPercent),
+            ("health.masterMedkitModifier", "MEDKIT HEALING", MasterPercent),
+            ("health.masterArmyMedkitModifier", "ARMY MEDKIT HEALING", MasterPercent)
+        };
+        DrawMasterCardBank(dc, sources, 107.0,
+            text, muted, border, soft, accent, panel);
+    }
+
+    private void DrawSevereFatiguePenaltyBoard(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush soft, Brush accent, Brush panel)
+    {
+        DrawMasterSectionTitle(dc, "SEVERE FATIGUE", accent);
+        DrawMasterBundleToggle(dc, P("advanced.fatigueMechanics"),
+            "SEVERE FATIGUE MECHANICS",
+            text, muted, border, accent, panel);
+        var sources = new (string Id, string Label, Func<double, string> Format)[]
+        {
+            ("survival.severeFatigueMaxStamina", "MAX STAMINA LOST", MasterNegativePercent),
+            ("survival.severeFatigueCarryWeight", "CARRY CAPACITY LOST", MasterNegativePercent),
+            ("survival.severeFatigueRecoil", "EXTRA RECOIL", MasterPositivePercent),
+            ("survival.severeFatigueAimSway", "AIM SWAY", MasterScalar),
+            ("survival.severeFatigueDispersion", "SHOT SPREAD", MasterScalar)
+        };
+        DrawMasterCardBank(dc, sources, 107.0,
+            text, muted, border, soft, accent, panel);
     }
 
     // CORE HEALTH — one large, source-bound HP-capacity ruler followed by
@@ -3483,141 +3371,85 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     }
 
+    // A source-grounded timing visualization. The axis marks the authored
+    // delay and repeat interval; tick dots are NOT a simulation of survival
+    // state transitions, damage reduction or final player HP.
     private void DrawStarvationTimeline(
-        DrawingContext dc, Brush text, Brush muted, Brush border, Brush soft, Brush accent, Brush panel)
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush soft, Brush accent, Brush panel)
     {
+        DrawMasterSectionTitle(dc, "STARVATION PENALTIES", accent);
         var toggle = P("advanced.starvationMechanics");
         var delay = P("survival.starvationPenaltyDelay");
         var interval = P("survival.starvationDamageInterval");
-        var stamina = P("survival.starvationStaminaDrain");
         var damage = P("survival.starvationDamage");
-        var recovery = P("survival.starvationHealthRegenPenalty");
 
-        DrawText(dc, "MASTER STARVATION", new Point(17, 13), 11.5, accent, FontWeights.Bold);
-        DrawText(dc, "extra punishment after severe hunger begins", new Point(17, 32),
-            9.5, text, FontWeights.Normal);
-        if (toggle is null || delay is null || interval is null ||
-            stamina is null || damage is null || recovery is null)
-        {
-            DrawCenteredText(dc, "Master starvation data unavailable.",
-                new Point(ActualWidth / 2, 140), 10, muted, FontWeights.Bold);
-            return;
-        }
-
-        var active = toggle.CurrentBoolean;
-        DrawTogglePill(dc, toggle, "STARVATION BUNDLE", new Rect(17, 55, 252, 38),
+        DrawMasterBundleToggle(dc, toggle, "STARVATION MECHANICS",
             text, muted, border, accent, panel);
 
-        var fullWidth = Math.Max(480, ActualWidth - 34);
-        var timingWidth = (fullWidth - 12) / 2;
-        void DrawTiming(ParameterViewModel p, string label, double left)
+        var timing = new (string Id, string Label, Func<double, string> Format)[]
         {
-            var card = new Rect(left, 105, timingWidth, 84);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 4, 4);
-            DrawText(dc, label, new Point(left + 12, 114), 10.1, text, FontWeights.Bold);
-            DrawRightAlignedText(dc, $"{p.CurrentNumber:0.#}s",
-                new Point(card.Right - 12, 113), 11.4,
-                p.IsControlEnabled ? accent : muted, FontWeights.Bold);
-            var track = new Rect(left + 17, 142, timingWidth - 34, 19);
-            var y = track.Top + track.Height / 2;
-            var x = ValueToX(p.CurrentNumber, p.Minimum, p.Maximum, track, false);
-            var baseX = ValueToX(p.ReferenceNumber, p.Minimum, p.Maximum, track, false);
-            dc.DrawLine(new Pen(soft, 4), new Point(track.Left, y), new Point(track.Right, y));
-            if (p.IsControlEnabled)
-                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.67), 4.5),
-                    new Point(track.Left, y), new Point(x, y));
-            dc.DrawLine(new Pen(muted, 2), new Point(baseX, y - 11), new Point(baseX, y + 11));
-            dc.DrawEllipse(panel, new Pen(p.IsControlEnabled ? accent : muted,
-                IsSelected(p) ? 2.8 : 1.9), new Point(x, y), 7, 7);
-            if (p.IsControlEnabled)
-                dc.DrawEllipse(accent, null, new Point(x, y), 2.5, 2.5);
-            AddHorizontalTarget(p, track, track, p.Minimum, p.Maximum);
-            DrawText(dc, $"{p.Minimum:0.#}s", new Point(track.Left, 167),
-                9.3, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, $"{p.Maximum:0.#}s", new Point(track.Right, 167),
-                9.3, muted, FontWeights.Normal);
-        }
+            ("survival.starvationPenaltyDelay", "PENALTIES START", MasterSeconds),
+            ("survival.starvationDamageInterval", "DAMAGE EVERY", MasterSeconds)
+        };
+        DrawMasterCardBank(dc, timing, 110.0,
+            text, muted, border, soft, accent, panel);
 
-        DrawTiming(delay, "PENALTY DELAY", 17);
-        DrawTiming(interval, "DAMAGE INTERVAL", 29 + timingWidth);
-
-        var preview = new Rect(17, 200, fullWidth, 84);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1), preview, 4, 4);
-        DrawText(dc, "HP DAMAGE TICK PREVIEW", new Point(29, 208),
+        var previewTop = 110.0 + MasterRows(ActualWidth, 2) * 94.0;
+        var bankWidth = Math.Min(760.0, Math.Max(1.0, ActualWidth - 32.0));
+        var preview = new Rect((ActualWidth - bankWidth) / 2.0,
+            previewTop, bankWidth, 80.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+            preview, 4.0, 4.0);
+        DrawText(dc, "DAMAGE TICK TIMELINE",
+            new Point(preview.Left + 12.0, preview.Top + 9.0),
             10.2, text, FontWeights.Bold);
-        var duration = Math.Max(30,
-            Math.Ceiling((delay.CurrentNumber + 2 * interval.CurrentNumber) / 10) * 10);
-        DrawRightAlignedText(dc, $"0–{duration:0}s",
-            new Point(preview.Right - 12, 208), 9.2, muted, FontWeights.SemiBold);
-        var axis = new Rect(preview.Left + 24, 233, preview.Width - 48, 22);
-        var ay = axis.Top + axis.Height / 2;
-        double At(double seconds) => axis.Left + axis.Width *
-            Math.Clamp(seconds / duration, 0, 1);
-        dc.DrawLine(new Pen(soft, 3), new Point(axis.Left, ay), new Point(axis.Right, ay));
-        var startX = At(delay.CurrentNumber);
-        dc.DrawLine(new Pen(muted, 2), new Point(startX, ay - 12),
-            new Point(startX, ay + 12));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, active ? 0.7 : 0.25), 3),
-            new Point(axis.Left, ay), new Point(startX, ay));
-        for (var tick = 1; tick <= 3; tick++)
-        {
-            var seconds = delay.CurrentNumber + tick * interval.CurrentNumber;
-            if (seconds > duration + Epsilon) break;
-            var x = At(seconds);
-            dc.DrawEllipse(panel, new Pen(active ? accent : muted, 2),
-                new Point(x, ay), 6, 6);
-            dc.DrawEllipse(active ? accent : muted, null, new Point(x, ay), 2.5, 2.5);
-        }
-        DrawText(dc, "0s", new Point(axis.Left, 258), 9.2, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, $"{duration:0}s", new Point(axis.Right, 258),
-            9.2, muted, FontWeights.Normal);
 
-        var pressure = damage.CurrentNumber / Math.Max(Epsilon, interval.CurrentNumber);
-        DrawText(dc, $"DAMAGE PRESSURE  {pressure:0.00} HP/s",
-            new Point(20, 295), 10, active ? text : muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, active ? "ACTIVE" : "OFF - VALUES STAGED",
-            new Point(ActualWidth - 20, 295), 9.5,
-            active ? accent : muted, FontWeights.Bold);
-
-        // Three full-width editors replace the former cramped 3-column vertical faders.
-        void DrawEffect(ParameterViewModel p, string label, string value,
-            string minimumLabel, string maximumLabel, double top)
+        if (delay is not null && interval is not null && damage is not null)
         {
-            var card = new Rect(17, top, fullWidth, 57);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 4, 4);
-            DrawText(dc, label, new Point(card.Left + 12, top + 6),
-                10.1, text, FontWeights.Bold);
-            DrawRightAlignedText(dc, value, new Point(card.Right - 12, top + 6),
-                10.5, p.IsControlEnabled ? accent : muted, FontWeights.Bold);
-            var track = new Rect(card.Left + 17, top + 26, card.Width - 34, 17);
-            var y = track.Top + track.Height / 2;
-            var x = ValueToX(p.CurrentNumber, p.Minimum, p.Maximum, track, false);
-            var baseX = ValueToX(p.ReferenceNumber, p.Minimum, p.Maximum, track, false);
-            dc.DrawLine(new Pen(soft, 4), new Point(track.Left, y), new Point(track.Right, y));
-            if (p.IsControlEnabled)
-                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.67), 4.5),
-                    new Point(track.Left, y), new Point(x, y));
-            dc.DrawLine(new Pen(muted, 2), new Point(baseX, y - 10), new Point(baseX, y + 10));
-            dc.DrawEllipse(panel, new Pen(p.IsControlEnabled ? accent : muted,
-                IsSelected(p) ? 2.8 : 1.9), new Point(x, y), 7, 7);
-            if (p.IsControlEnabled)
-                dc.DrawEllipse(accent, null, new Point(x, y), 2.5, 2.5);
-            AddHorizontalTarget(p, track, track, p.Minimum, p.Maximum);
-            DrawText(dc, minimumLabel, new Point(track.Left, top + 45),
-                9, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, maximumLabel, new Point(track.Right, top + 45),
-                9, muted, FontWeights.Normal);
+            var active = toggle?.CurrentBoolean == true;
+            // The preview advances exactly to the third scheduled damage
+            // point after the configured delay, with no derived HP/s claim.
+            var total = Math.Max(1.0,
+                delay.CurrentNumber + 3.0 * interval.CurrentNumber);
+            DrawRightAlignedText(dc, $"{total:0.#}s",
+                new Point(preview.Right - 12.0, preview.Top + 9.0),
+                9.5, muted, FontWeights.SemiBold);
+
+            var axis = new Rect(preview.Left + 22.0,
+                preview.Top + 39.0, Math.Max(1.0, preview.Width - 44.0), 10.0);
+            var y = axis.Top + axis.Height / 2.0;
+            double At(double seconds)
+                => axis.Left + axis.Width * Math.Clamp(seconds / total, 0.0, 1.0);
+
+            dc.DrawLine(new Pen(soft, 3.0),
+                new Point(axis.Left, y), new Point(axis.Right, y));
+            var firstX = At(delay.CurrentNumber);
+            dc.DrawLine(new Pen(muted, 1.7),
+                new Point(firstX, y - 9.0), new Point(firstX, y + 9.0));
+            for (var tick = 1; tick <= 3; tick++)
+            {
+                var x = At(delay.CurrentNumber + tick * interval.CurrentNumber);
+                var tickBrush = active ? accent : muted;
+                dc.DrawEllipse(panel, new Pen(tickBrush, 1.7),
+                    new Point(x, y), 5.0, 5.0);
+                dc.DrawEllipse(tickBrush, null, new Point(x, y), 2.0, 2.0);
+            }
+            DrawText(dc, "0s", new Point(axis.Left, preview.Top + 56.0),
+                9.1, muted, FontWeights.Normal);
+            DrawRightAlignedText(dc, "3 DAMAGE TICKS",
+                new Point(axis.Right, preview.Top + 56.0),
+                9.1, muted, FontWeights.Normal);
         }
 
-        DrawEffect(stamina, "EXTRA ACTION STAMINA COST",
-            $"+{stamina.CurrentNumber * 100:0}%",
-            "0%", "400%", 318);
-        DrawEffect(damage, "HP LOST PER TICK",
-            $"{damage.CurrentNumber:0.#} HP",
-            "0 HP", "8 HP", 380);
-        DrawEffect(recovery, "HEALTH RECOVERY BLOCKED",
-            $"{recovery.CurrentNumber * 100:0}%",
-            "0%", "100%", 442);
+        var effects = new (string Id, string Label, Func<double, string> Format)[]
+        {
+            ("survival.starvationStaminaDrain", "EXTRA STAMINA COST", MasterPositivePercent),
+            ("survival.starvationDamage", "HP LOST PER TICK", MasterHp),
+            ("survival.starvationHealthRegenPenalty", "HEALTH RECOVERY BLOCKED", MasterPercent)
+        };
+        DrawMasterCardBank(dc, effects, previewTop + 92.0,
+            text, muted, border, soft, accent, panel);
     }
 
     // The summary band is deliberately read-only. MIN/MAX use separate full-width
@@ -5345,14 +5177,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             "HumanCombatProfile" => 465.0,
             "PlayerWeaponProfile" => 169.0,
             "CoreHealthDashboard" => 348.0,
-            "SevereFatiguePenaltyBoard" => 390.0,
-            "MasterMedicalHealing" => 390.0,
-            "MasterLowHealth" => 235.0,
-            "MasterRadiationPenalty" => 235.0,
+            "SevereFatiguePenaltyBoard" => MasterCardBankHeight(width, 5),
+            "MasterMedicalHealing" => MasterCardBankHeight(width, 3),
+            "MasterLowHealth" => MasterConditionalHeight(width),
+            "MasterRadiationPenalty" => MasterConditionalHeight(width),
             "ConsumableMixer" => CompactConsumableHeight(width),
             "SleepingDashboard" => CompactSleepHeight(width),
             "HungerLadder" => CompactHungerHeight(width),
-            "StarvationTimeline" => 532.0,
+            "StarvationTimeline" => MasterStarvationHeight(width),
             "RepeatedHitBand" => 455.0,
             "RadiationBalance" => CompactGridEnd(55.0, 3, CompactStageColumns(width)) + 14.0,
             "TradingDashboard" => EconomyBoardHeight(width, 4),
