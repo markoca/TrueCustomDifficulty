@@ -183,10 +183,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrawWorldLootLayout(dc, text, muted, border, accent, panel);
                 break;
             case "StashRewardProfile":
-                DrawNumericMixerBoard(dc, text, muted, border, accent, panel);
+                DrawCompactStashRewards(dc, text, muted, border, accent, panel);
                 break;
             case "BreakableBoxYields":
-                DrawNumericMixerBoard(dc, text, muted, border, accent, panel);
+                // Retired family: its two sources are now drawn by AmmoDistribution.
                 break;
             case "MutantCombatPressure":
             case "StaminaCore":
@@ -3639,216 +3639,174 @@ public sealed class AggregateVisualControl : FrameworkElement
             $"{damage.Minimum:0.##}x", $"{damage.Maximum:0.##}x", 2);
     }
 
+    // Three native stash ammo quantities + three independent bonus rewards.
+    // Current/source label/rail obey the Stamina Usage anatomy; no simulated
+    // certainty is suggested for independent chance/count rolls.
+    private void DrawCompactStashRewards(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawHeader(dc, "STASH REWARDS", "", text, muted, accent);
+        var columns = ActualWidth >= 750.0 ? 3 : 2;
+        const double margin = 17.0;
+        const double gap = 10.0;
+        const double pitch = 80.0;
+        var cardWidth = Math.Max(1.0, (ActualWidth - 2.0 * margin -
+            (columns - 1) * gap) / columns);
+        var ammo = new (string Id, string Label)[]
+        {
+            ("loot.cheapStashAmmoQuantity", "BASIC AMMO"),
+            ("loot.mediumStashAmmoQuantity", "STANDARD AMMO"),
+            ("loot.expensiveStashAmmoQuantity", "RARE AMMO")
+        };
+        var rewards = new (string Id, string Label)[]
+        {
+            ("loot.cheapStashGrenadeChance", "RGD-5 CHANCE"),
+            ("loot.cheapStashGrenadeQuantity", "RGD-5 AMOUNT"),
+            ("loot.expensiveStashMoneyChance", "COUPON CHANCE")
+        };
+        void Row((string Id, string Label)[] sources, double top)
+        {
+            for (var i = 0; i < sources.Length; i++)
+            {
+                var x = margin + (i % columns) * (cardWidth + gap);
+                var y = top + (i / columns) * pitch;
+                DrawHorizontalTrackCard(dc, P(sources[i].Id), sources[i].Label,
+                    new Rect(x, y, cardWidth, 72.0), text, muted, border, accent,
+                    panel, pairedValueFormatting: true, hideBaseText: true);
+            }
+        }
+
+        DrawText(dc, "AMMO BY STASH TIER", new Point(margin + 1.0, 46.0),
+            10.0, muted, FontWeights.Bold);
+        Row(ammo, 68.0);
+        var bonusTitle = 68.0 + Math.Ceiling(3.0 / columns) * pitch + 6.0;
+        DrawText(dc, "BONUS REWARDS", new Point(margin + 1.0, bonusTitle),
+            10.0, muted, FontWeights.Bold);
+        Row(rewards, bonusTitle + 20.0);
+    }
+
     // The real SNG/NATO generator pools are distinct. Their previews show the
     // normalized composition *inside* each pool, never global drop probability.
     // The preview is read-only; every family has one independent full-width editor.
+    // SNG and NATO are different authored generator pools. Every colored bar
+    // segment is keyed directly underneath by exact caliber and share; legend
+    // swatches use the SAME opacity/brush as the segment, even at 0%.
+    // SNG 9x18/9x19 maps two source rows; NATO 9x19 maps one.
     private void DrawAmmoDistribution(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush soft, Brush accent, Brush panel)
     {
-        var p918 = P("loot.ammoBoxWeight918");
-        var p045 = P("loot.ammoBoxWeight045");
-        var p545 = P("loot.ammoBoxWeight545");
-        var p012 = P("loot.ammoBoxWeight012");
-
-        DrawText(dc, "BREAKABLE BOX AMMO MIXER", new Point(17.0, 13.0),
-            11.5, accent, FontWeights.Bold);
-        DrawText(dc, "change which ammo families appear in boxes, not the number of rounds",
-            new Point(17.0, 32.0), 9.5, text, FontWeights.Normal);
-
-        if (p918 is null || p045 is null || p545 is null || p012 is null)
+        DrawHeader(dc, "BREAKABLE BOXES", "", text, muted, accent);
+        var weight918 = P("loot.ammoBoxWeight918");
+        var weight045 = P("loot.ammoBoxWeight045");
+        var weight545 = P("loot.ammoBoxWeight545");
+        var weight012 = P("loot.ammoBoxWeight012");
+        if (weight918 is null || weight045 is null ||
+            weight545 is null || weight012 is null)
         {
-            DrawCenteredText(dc, "Breakable ammo box data unavailable.",
-                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
+            DrawCenteredText(dc, "Ammo distribution data unavailable.",
+                new Point(ActualWidth / 2.0, 150.0),
+                10.0, muted, FontWeights.Bold);
             return;
         }
 
-        var w918 = Math.Max(0.0, p918.CurrentNumber);
-        var w045 = Math.Max(0.0, p045.CurrentNumber);
-        var w545 = Math.Max(0.0, p545.CurrentNumber);
-        var w012 = Math.Max(0.0, p012.CurrentNumber);
+        const double margin = 17.0;
+        const double gap = 10.0;
+        var cell = (Math.Max(1.0, ActualWidth - margin * 2.0) - gap) / 2.0;
 
+        DrawText(dc, "YIELD PER BOX", new Point(margin, 47.0),
+            10.2, muted, FontWeights.Bold);
+        DrawHorizontalTrackCard(dc, P("loot.destructibleAmmoQuantity"),
+            "AMMO YIELD", new Rect(margin, 66.0, cell, 72.0),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
+        DrawHorizontalTrackCard(dc, P("loot.destructibleGrenadeQuantity"),
+            "GRENADE YIELD", new Rect(margin + cell + gap, 66.0, cell, 72.0),
+            text, muted, border, accent, panel, pairedValueFormatting: true);
+
+        DrawText(dc, "AMMO FAMILY WEIGHTS", new Point(margin, 149.0),
+            10.2, muted, FontWeights.Bold);
+        var weights = new (ParameterViewModel Parameter, string Label)[]
+        {
+            (weight918, "9x18 / 9x19"),
+            (weight045, ".45 ACP"),
+            (weight545, "5.45 / 5.56"),
+            (weight012, "12 GAUGE")
+        };
+        for (var i = 0; i < weights.Length; i++)
+        {
+            DrawHorizontalTrackCard(dc, weights[i].Parameter, weights[i].Label,
+                new Rect(margin + (i % 2) * (cell + gap),
+                    167.0 + (i / 2) * 80.0, cell, 72.0),
+                text, muted, border, accent, panel, pairedValueFormatting: true);
+        }
+
+        DrawText(dc, "AMMO POOL COMPOSITION", new Point(margin, 329.0),
+            10.2, muted, FontWeights.Bold);
+
+        var w918 = Math.Max(0.0, weight918.CurrentNumber);
+        var w045 = Math.Max(0.0, weight045.CurrentNumber);
+        var w545 = Math.Max(0.0, weight545.CurrentNumber);
+        var w012 = Math.Max(0.0, weight012.CurrentNumber);
         static double[] Normalize(IReadOnlyList<double> weights)
         {
-            var total = weights.Sum();
-            return total <= Epsilon
+            var sum = weights.Sum();
+            return sum <= Epsilon
                 ? weights.Select(_ => 0.0).ToArray()
-                : weights.Select(weight => Math.Max(0.0, weight) / total).ToArray();
+                : weights.Select(v => Math.Max(0.0, v) / sum).ToArray();
         }
+        var sng = Normalize(new[] { 2.0 * w918, w545, w012 });
+        var nato = Normalize(new[] { w045, w918, w545, w012 });
 
-        // The SNG pool has two distinct entries mapped to the same 9x18/9x19
-        // control. NATO has one of each of its four existing authored entries.
-        var sngShares = Normalize(new[] { 2.0 * w918, w545, w012 });
-        var natoShares = Normalize(new[] { w045, w918, w545, w012 });
-        var sngBaseShares = Normalize(new[] { 2.0, 1.0, 1.0 });
-        var natoBaseShares = Normalize(new[] { 1.0, 1.0, 1.0, 1.0 });
-
-        var width = Math.Max(460.0, ActualWidth - 34.0);
-        var shades = new[] { 0.95, 0.72, 0.48, 0.29 };
-
-        void DrawPool(
-            string title,
-            string sourceNote,
-            IReadOnlyList<string> labels,
-            IReadOnlyList<double> shares,
-            IReadOnlyList<double> baseShares,
-            IReadOnlyList<int> shadesByEntry,
-            double top)
+        void Pool(string name, IReadOnlyList<string> calibers,
+            IReadOnlyList<double> percentages, double top)
         {
-            var card = new Rect(17.0, top, width, 107.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
-
-            // Authored pool-entry IDs get a separate caption under the title.
-            // Both strings are clipped to this pool instead of competing on a line.
-            var poolTextWidth = Math.Max(1.0, card.Width - 24.0);
-            dc.DrawText(CreateText(title, 10.4, text,
-                    FontWeights.Bold, poolTextWidth),
-                new Point(card.Left + 12.0, top + 5.0));
-            dc.DrawText(CreateText(sourceNote, 9.1, muted,
-                    FontWeights.SemiBold, poolTextWidth),
-                new Point(card.Left + 12.0, top + 22.0));
-
-            var stack = new Rect(card.Left + 14.0, top + 38.0,
-                card.Width - 28.0, 14.0);
-            dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.09),
-                new Pen(border, 1.0), stack, 3.0, 3.0);
-
-            var total = shares.Sum();
-            if (total <= Epsilon)
-            {
-                DrawCenteredText(dc, "NO ACTIVE AMMO WEIGHT",
-                    new Point(stack.Left + stack.Width / 2.0, stack.Top + 2.0),
-                    9.5, accent, FontWeights.Bold);
-            }
-            else
-            {
-                var cursor = stack.Left;
-                for (var i = 0; i < shares.Count; i++)
-                {
-                    // Keep the final visible segment precisely inside the bar,
-                    // avoiding a one-pixel rounding gap at 100%.
-                    var length = i == shares.Count - 1
-                        ? Math.Max(0.0, stack.Right - cursor)
-                        : Math.Max(0.0, stack.Width * shares[i]);
-
-                    if (shares[i] > Epsilon && length > Epsilon)
-                        dc.DrawRectangle(
-                            CloneWithOpacity(accent, shades[shadesByEntry[i]]),
-                            new Pen(panel, 0.8),
-                            new Rect(cursor, stack.Top, length, stack.Height));
-                    cursor += length;
-                }
-            }
-
-            var columnWidth = (card.Width - 24.0) / shares.Count;
-            for (var i = 0; i < shares.Count; i++)
-            {
-                var cx = card.Left + 12.0 + columnWidth * (i + 0.5);
-                // Column-local bounds prevent one ammo-family caption from
-                // intruding into the neighboring family at narrow widths.
-                var cellTextWidth = Math.Max(1.0, columnWidth - 6.0);
-                void CellText(string value, double size, Brush brush,
-                    FontWeight weight, double lineY)
-                {
-                    var content = CreateText(value, size, brush, weight, cellTextWidth);
-                    dc.DrawText(content,
-                        new Point(cx - content.WidthIncludingTrailingWhitespace / 2.0, lineY));
-                }
-                CellText(labels[i], 9.3, text, FontWeights.Bold, top + 55.0);
-                CellText($"{shares[i] * 100.0:0}%", 10.8,
-                    accent, FontWeights.Bold, top + 70.0);
-                CellText($"BASE {baseShares[i] * 100.0:0}%", 9.0,
-                    muted, FontWeights.Normal, top + 87.0);
-            }
-        }
-
-        DrawPool("SNG POOL", "A918D + A919D  /  A545D  /  A012D",
-            new[] { "9x18 / 9x19", "5.45", "12 GAUGE" },
-            sngShares, sngBaseShares, new[] { 0, 2, 3 }, 55.0);
-
-        DrawPool("NATO POOL", "A045D  /  A919D  /  A556D  /  A012D",
-            new[] { ".45 ACP", "9x19", "5.56", "12 GAUGE" },
-            natoShares, natoBaseShares, new[] { 1, 0, 2, 3 }, 170.0);
-
-        var headingWidth = Math.Max(1.0, (ActualWidth - 54.0) / 2.0);
-        dc.DrawText(CreateText("AMMO FAMILY WEIGHTS", 10.0, text,
-                FontWeights.Bold, headingWidth), new Point(19.0, 286.0));
-        var selectionHint = CreateText("1x = ORIGINAL  |  0x = DISABLED",
-            9.0, muted, FontWeights.Normal, headingWidth);
-        dc.DrawText(selectionHint,
-            new Point(ActualWidth - 19.0 -
-                selectionHint.WidthIncludingTrailingWhitespace, 286.0));
-
-        void DrawFamily(ParameterViewModel parameter, string label, string poolShare, double top)
-        {
-            var card = new Rect(17.0, top, width, 83.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
+            var card = new Rect(margin, top,
+                Math.Max(1.0, ActualWidth - margin * 2.0), 89.0);
+            dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
                 card, 4.0, 4.0);
-            var cardTextWidth = Math.Max(1.0, card.Width - 24.0);
-            dc.DrawText(CreateText(label, 10.3, text,
-                    FontWeights.Bold, Math.Max(1.0, card.Width - 148.0)),
-                new Point(card.Left + 12.0, top + 5.0));
-            var changed = parameter.IsControlEnabled && parameter.IsValueModifiedFromReference();
-            var current = CreateText($"{parameter.CurrentNumber:0.##}x",
-                changed ? 12.0 : 10.8, changed ? accent : text,
-                FontWeights.Bold, cardTextWidth);
-            dc.DrawText(current, new Point(
-                card.Right - 12.0 - current.WidthIncludingTrailingWhitespace, top + 5.0));
-            dc.DrawText(CreateText(poolShare, 9.3, muted,
-                    FontWeights.Normal, cardTextWidth),
-                new Point(card.Left + 12.0, top + 37.0));
+            DrawText(dc, name, new Point(card.Left + 10.0, top + 5.0),
+                10.5, text, FontWeights.Bold);
+            var bar = new Rect(card.Left + 10.0, top + 26.0,
+                Math.Max(1.0, card.Width - 20.0), 13.0);
+            dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.22),
+                new Pen(border, 0.7), bar, 2.0, 2.0);
+            var tones = new[] { 0.95, 0.72, 0.50, 0.30 };
+            var cursor = bar.Left;
+            for (var i = 0; i < percentages.Count; i++)
+            {
+                var span = i == percentages.Count - 1
+                    ? Math.Max(0.0, bar.Right - cursor)
+                    : Math.Max(0.0, bar.Width * percentages[i]);
+                if (percentages[i] > Epsilon && span > Epsilon)
+                    dc.DrawRectangle(CloneWithOpacity(accent, tones[i]), null,
+                        new Rect(cursor, bar.Top, span, bar.Height));
+                cursor += span;
+            }
 
-            var track = new Rect(card.Left + 22.0, top + 52.0,
-                card.Width - 44.0, 14.0);
-            var y = track.Top + track.Height / 2.0;
-            var currentX = ValueToX(parameter.CurrentNumber,
-                parameter.Minimum, parameter.Maximum, track, reverse: false);
-            var baseX = ValueToX(parameter.ReferenceNumber,
-                parameter.Minimum, parameter.Maximum, track, reverse: false);
-
-            dc.DrawLine(new Pen(border, 4.0), new Point(track.Left, y),
-                new Point(track.Right, y));
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
-                new Point(track.Left, y), new Point(currentX, y));
-            dc.DrawLine(new Pen(muted, 2.0),
-                new Point(baseX, y - 10.0), new Point(baseX, y + 10.0));
-            dc.DrawEllipse(panel,
-                new Pen(accent, IsSelected(parameter) ? 2.8 : 1.9),
-                new Point(currentX, y), 7.0, 7.0);
-            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-
-            AddHorizontalTarget(parameter,
-                new Rect(track.Left - 8.0, track.Top - 4.0,
-                    track.Width + 16.0, track.Height + 8.0),
-                track, parameter.Minimum, parameter.Maximum);
-            DrawText(dc, $"{parameter.Minimum:0.##}x", new Point(track.Left, top + 68.0),
-                9.0, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
-                new Point(track.Right, top + 68.0), 9.0, muted, FontWeights.Normal);
+            // Swatch + caliber label live IN the pool card. No reliance on
+            // tooltip, color memory, hover or room inside a tiny 0% segment.
+            // The fixed cells are responsive and correspond 1:1 to segments.
+            var legendWidth = bar.Width / calibers.Count;
+            for (var i = 0; i < calibers.Count; i++)
+            {
+                var x = bar.Left + i * legendWidth;
+                var labelWidth = Math.Max(1.0, legendWidth - 17.0);
+                var swatch = new Rect(x, top + 49.0, 10.0, 10.0);
+                dc.DrawRectangle(CloneWithOpacity(accent, tones[i]), null, swatch);
+                dc.DrawText(CreateText(calibers[i], 10.2,
+                        text, FontWeights.SemiBold, labelWidth),
+                    new Point(x + 14.0, top + 46.0));
+                DrawText(dc, $"{percentages[i] * 100.0:0.#}%",
+                    new Point(x + 14.0, top + 63.0),
+                    10.4, muted, FontWeights.SemiBold);
+            }
         }
 
-        DrawFamily(p918, "9x18 / 9x19 mm",
-            $"SNG SHARE {sngShares[0] * 100:0}%   |   NATO SHARE {natoShares[1] * 100:0}%",
-            309.0);
-        DrawFamily(p045, ".45 ACP",
-            $"SNG NOT PRESENT   |   NATO SHARE {natoShares[0] * 100:0}%",
-            400.0);
-        DrawFamily(p545, "5.45 / 5.56 mm",
-            $"SNG SHARE {sngShares[1] * 100:0}%   |   NATO SHARE {natoShares[2] * 100:0}%",
-            491.0);
-        DrawFamily(p012, "12 GAUGE",
-            $"SNG SHARE {sngShares[2] * 100:0}%   |   NATO SHARE {natoShares[3] * 100:0}%",
-            582.0);
-
-        DrawText(dc, "POOL % = SHARE WITHIN THAT POOL, NOT GLOBAL BOX DROP CHANCE",
-            new Point(19.0, 682.0), 9.2, muted, FontWeights.SemiBold);
-        DrawText(dc, "SNG MUST KEEP 9x18/19, 5.45/5.56 OR 12 GAUGE ABOVE 0x",
-            new Point(19.0, 700.0), 9.2, accent, FontWeights.SemiBold);
+        Pool("SNG POOL",
+            new[] { "9x18 / 9x19", "5.45", "12 GAUGE" }, sng, 351.0);
+        Pool("NATO POOL",
+            new[] { ".45 ACP", "9x19", "5.56", "12 GAUGE" }, nato, 445.0);
     }
 
     // Shared density for the large Survival/Health aggregate panels. Rows are
@@ -4012,6 +3970,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             "environment.diamondBleeding" => $"{rawValue:0.#} bleed pts",
             "stamina.vaultMaxHeight" => $"{rawValue:0} uu",
             "stamina.maxCarryWeight" => $"{rawValue:0} kg",
+            "loot.destructibleAmmoQuantity" or "loot.destructibleGrenadeQuantity" or
+            "loot.cheapStashAmmoQuantity" or "loot.mediumStashAmmoQuantity" or
+            "loot.expensiveStashAmmoQuantity" or
+            "loot.ammoBoxWeight918" or "loot.ammoBoxWeight045" or
+            "loot.ammoBoxWeight545" or "loot.ammoBoxWeight012" => $"{rawValue:0.##}x",
+            "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance" =>
+                $"{rawValue * 100.0:0}%",
+            "loot.cheapStashGrenadeQuantity" => $"{rawValue:0}",
             _ => FormatCompact(rawValue)
         };
 
@@ -5025,7 +4991,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "AnomalyEffectsBoard" => GetMixerHeight(width, AnomalyMixerChannels.Length),
             "NpcLootLoadout" => 748.0, // reserve footer/status lane below the native input cards
             "WorldLootLayout" => width >= 720.0 ? 340.0 : 450.0,
-            "StashRewardProfile" => GetMixerHeight(width, StashRewardMixerChannels.Length),
+            "StashRewardProfile" => width >= 750.0 ? 263.0 : 418.0,
             "PhysicalLimits" => 335.0,
             "StaminaCore" => 259.0,
             "MutantCombatPressure" or "WaterStaminaPressure" => 149.0,
@@ -5049,7 +5015,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "RadiationBalance" => CompactGridEnd(55.0, 3, CompactStageColumns(width)) + 14.0,
             "TradingDashboard" => (width >= 672.0 ? 300.0 : 536.0),
             "RepairCurve" => (width >= 672.0 ? 300.0 : 526.0),
-            "AmmoDistribution" => 750.0,
+            "AmmoDistribution" => 536.0,
             _ => 340.0
         };
 
@@ -5144,15 +5110,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             },
             "StashRewardProfile" => new[]
             {
+                "loot.cheapStashAmmoQuantity",
+                "loot.mediumStashAmmoQuantity",
+                "loot.expensiveStashAmmoQuantity",
                 "loot.cheapStashGrenadeChance",
                 "loot.cheapStashGrenadeQuantity",
                 "loot.expensiveStashMoneyChance"
             },
-            "BreakableBoxYields" => new[]
-            {
-                "loot.destructibleAmmoQuantity",
-                "loot.destructibleGrenadeQuantity"
-            },
+            "BreakableBoxYields" => Array.Empty<string>(),
             "MutantCombatPressure" => new[] { "combat.mutantDamage", "combat.mutantAttackCooldown" },
             "StaminaCore" => new[] {
                 "stamina.maxSP", "stamina.regeneration",
@@ -5305,6 +5270,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             },
             "AmmoDistribution" => new[]
             {
+                "loot.destructibleAmmoQuantity",
+                "loot.destructibleGrenadeQuantity",
                 "loot.ammoBoxWeight918",
                 "loot.ammoBoxWeight045",
                 "loot.ammoBoxWeight545",
