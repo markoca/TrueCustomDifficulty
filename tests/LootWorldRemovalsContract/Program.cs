@@ -174,7 +174,7 @@ internal static class Program
         Check(parts.Length >= 4 && parts[^2] == "WorldMap_WP",
             "Nonstandard SpawnActorPrototypes layout " + relative);
         var actorSid = Path.GetFileNameWithoutExtension(parts[^1]);
-        var source = string.Join("/", parts.Take(parts.Length - 3)) + ".cfg";
+        var source = string.Join("/", parts.Take(parts.Length - 2)) + ".cfg";
         return source + "|WorldMap_WP|" + actorSid;
     }
 
