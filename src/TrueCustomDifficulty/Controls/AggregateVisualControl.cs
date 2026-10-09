@@ -3919,9 +3919,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         bool pairedValueFormatting = false,
         bool hideBaseText = false)
     {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
+        var hovered = parameter is not null && parameter.IsControlEnabled &&
+            ReferenceEquals(_hoverTarget?.Parameter, parameter);
+        dc.DrawRoundedRectangle(hovered ? CloneWithOpacity(accent, 0.09) : panel,
+            new Pen(hovered ? CloneWithOpacity(accent, 0.65) : border, hovered ? 1.3 : 1.0),
+            card, 4.0, 4.0);
         var textWidth = Math.Max(1.0, card.Width - 24.0);
-        dc.DrawText(CreateText(label, 9.8, text, FontWeights.Bold, textWidth),
+        dc.DrawText(CreateText(label, 9.8, hovered ? accent : text, FontWeights.Bold, textWidth),
             new Point(card.Left + 12.0, card.Top + 5.0));
 
         if (parameter is null)
@@ -3967,7 +3971,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawReferenceTick(dc, parameter, track, y, muted);
         dc.DrawEllipse(panel,
             new Pen(parameter.IsControlEnabled ? accent : muted,
-                IsSelected(parameter) ? 2.5 : 1.5),
+                hovered || IsSelected(parameter) ? 2.5 : 1.5),
             new Point(x, y), 6.0, 6.0);
         if (parameter.IsControlEnabled)
             dc.DrawEllipse(accent, null, new Point(x, y), 2.5, 2.5);
@@ -4024,9 +4028,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         var active = parameter.CurrentBoolean;
-        var fill = active ? CloneWithOpacity(accent, 0.18) : panel;
+        var hovered = parameter.IsControlEnabled && ReferenceEquals(_hoverTarget?.Parameter, parameter);
+        var fill = active ? CloneWithOpacity(accent, hovered ? 0.24 : 0.18)
+            : hovered ? CloneWithOpacity(accent, 0.09) : panel;
         dc.DrawRoundedRectangle(fill,
-            new Pen(active ? accent : border, active ? 1.8 : 1.0),
+            new Pen(active || hovered ? accent : border, active || hovered ? 1.8 : 1.0),
             rect, 4.0, 4.0);
 
         // Reserve a fixed status lane before measuring the caption, so a
@@ -4034,7 +4040,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var statusLane = 52.0;
         var labelWidth = Math.Max(1.0, rect.Width - statusLane - 20.0);
         dc.DrawText(CreateText(label, 9.7,
-                active ? text : muted, FontWeights.Bold, labelWidth),
+                hovered ? accent : active ? text : muted, FontWeights.Bold, labelWidth),
             new Point(rect.Left + 10.0, rect.Top + Math.Max(4.0, (rect.Height - 15.0) / 2.0)));
 
         var status = active ? "ON" : "OFF";
