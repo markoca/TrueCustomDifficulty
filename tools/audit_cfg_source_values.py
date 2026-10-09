@@ -121,7 +121,8 @@ def resolve_refkey_inheritance(point: dict, roots: list[CfgNode],
     """Classify a missing direct field by checking explicit vanilla {refkey=...}.
 
     Never infer inherited values without an actual reference chain and a
-    physically authored ancestor field. Limited flattened refurl resolution\n    requires a separately identified physically present source parent. Preserve direct-result diagnostics
+    physically authored ancestor field. Limited flattened refurl resolution
+    requires a separately identified physically present source parent. Preserve direct-result diagnostics
     when there is no qualifying ancestor. Inheritance matching is SOURCE
     provenance, not proof of runtime Unreal BPatch merge behavior.
     """
@@ -246,7 +247,7 @@ def main() -> int:
             "optional; investigate before changing a writer. This audit does not "
             "validate special writers, mod order or runtime gameplay. "
             "An inherited_exact source field is traced through an actual "
-            "vanilla {refkey=...} chain, including a specifically verified flattened\n            ConsumablePrototypes refurl where applicable. Such inheritance is\n            source provenance, not verification of BPatch runtime semantics."
+            "vanilla {refkey=...} chain, including a specifically verified flattened  refurl where applicable. Such inheritance is source provenance, not verification of BPatch runtime semantics."
         ),
     }
     if args.out:
