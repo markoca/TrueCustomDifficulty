@@ -82,8 +82,12 @@ dotnet run --project tests/EnvironmentPatchContract/EnvironmentPatchContract.csp
 ```
 
 CI job `environment-writer-windows` retains actual CFG output evidence.
-**Registration alone is not a PASS.** Record the same-SHA CI result
-separately after completion.
+**Verified execution:** GitHub Actions workflow run `37993946447` ran the
+production Windows suite at commit `589cbdeee8e2a265a6afbe994f06d1fba98fb1ea`:
+**90/90 PASS**, including all six two-control shared-file tests. The
+same run's static audit and pre-existing writer jobs were also PASS.
+Re-check the exact candidate SHA at release; a green C# suite is not
+runtime/gameplay proof.
 
 ## Runtime / user acceptance — NOT RUN
 
