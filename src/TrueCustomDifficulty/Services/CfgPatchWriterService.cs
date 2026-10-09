@@ -2201,16 +2201,15 @@ public sealed class CfgPatchWriterService
             if (string.Equals(assigned.ItemSid, slot.ItemSid, StringComparison.Ordinal))
                 continue;
 
-            var node = itemGeneratorDocument.AddReplacementNode(slot.GeneratorSid, path[..^1], path[^1]);
-            node.SetAssignment("ItemPrototypeSID", assigned.ItemSid);
-            CopyIfPresent(node, "Chance", slot.Chance);
-            CopyIfPresent(node, "Weight", slot.Weight);
-            CopyIfPresent(node, "MinDurability", slot.MinDurability);
-            CopyIfPresent(node, "MaxDurability", slot.MaxDurability);
-            CopyIfPresent(node, "AmmoMinCount", slot.AmmoMinCount);
-            CopyIfPresent(node, "AmmoMaxCount", slot.AmmoMaxCount);
-            CopyIfPresent(node, "MinCount", slot.MinCount);
-            CopyIfPresent(node, "MaxCount", slot.MaxCount);
+            // Preserve the physical original item node and ALL of its
+            // authored nested Upgrades / Attaches structures. These nested
+            // blocks may themselves contain Chance, MinCount and MaxCount;
+            // copying those values as if they were direct item properties
+            // corrupts the vanilla reward shape. A minimal indexed {bpatch}
+            // changes only the selected weapon SID, leaving other fields
+            // (and nested upgrade/attachment rewards) untouched.
+            itemGeneratorDocument.AddAssignment(
+                slot.GeneratorSid, path, "ItemPrototypeSID", assigned.ItemSid);
             edits++;
         }
 
