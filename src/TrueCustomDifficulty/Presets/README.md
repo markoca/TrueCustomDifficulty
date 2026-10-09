@@ -26,3 +26,8 @@ The Food Restores Health toggle only affects ordinary Bread, Fresh Bread,
 Canned Food and Sausage. Weird Kettle alternative effects are intentionally untouched.
 
 Rebuilt playstyle descriptions and verified 201-entry catalogue coverage are maintained in `docs/FACTORY-PRESETS.md`. Factory presets are curated starting points; loading one retains the usual Base difficulty and CFG writer behavior.
+
+
+## Factory profile upgrade (2026-10-09)
+
+When the executable starts, it replaces a previously shipped factory preset **only if its complete local file still exactly matches the prior official factory JSON**. User-edited factory files, even those still using a factory filename, are preserved; custom preset filenames are never overwritten. Missing factory files are seeded normally. This is an intentional one-generation upgrade for the seven role-first profiles, not a universal forced reset. To adopt the new official balancing if an existing factory file was customized, save the customization under a separate name and remove the old factory-named file before restarting the application.
