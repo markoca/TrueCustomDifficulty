@@ -1,5 +1,14 @@
 # True Custom Difficulty
 
+## Loot editor redesign (2026-10-09)
+
+The approved Loot tab now shows **six** compact source-bound sections: World Loot Depletion (5), World Placement (5), NPC Loot & Equipment (4), Stash Rewards (6), Breakable Boxes (6) and Mutant Part Drops (14). All **40 original Loot source definitions**, native min/max/steps, selected vanilla-difficulty references, preset persistence, CFG mappings and reset behavior are retained.
+
+**Breakable Boxes weights are caliber-identifiable inside both graphs:** SNG segments identify `9×18/9×19`, `5.45`, `12 Gauge`; NATO identifies `.45 ACP`, `9×19`, `5.56`, `12 Gauge`. Each segment has a permanent exact same-color swatch, caliber name and live normalized percentage. Color follows the actual weight source across both pools, even when segment order differs or share is zero. The two physical box-yield scalers remain separate from four relative ammo family weights. Stash tier amounts and three reward-roll sources are consolidated into one six-control board; dropped NPC weapon condition is one genuine MIN/MAX two-handle editor. No simulated global loot probabilities or writer behavior changes.
+
+The effective Loot design is locked by [UI-DESIGN-LOCK.md](docs/UI-DESIGN-LOCK.md), [VISUAL-CONTROL-SYSTEM.md](docs/VISUAL-CONTROL-SYSTEM.md), and the relevant mixer override in [UI-MIXER-GRID-SPEC.md](docs/UI-MIXER-GRID-SPEC.md). A local .NET publish/Wine interaction check remains required.
+
+
 ## Stamina editor layout (2026-10-09)
 
 The approved Stamina UI has four compact, source-bound cards in order: **Stamina & Movement** (4 native controls), **Stamina Usage** (six Movement/Melee action costs), **Exhaustion & Recovery** (two real-SP thresholds and four recovery controls), **Water Stamina Drain** (Medium and Deep water scalers). All 18 existing Stamina settings retain their native CFG paths, ranges, steps, saved presets and references. The two Stamina Usage/Exhaustion cards have separate source anchors and independent R/reset scopes; the water order constraint is preserved. Layout and interaction details are locked in [UI-DESIGN-LOCK.md](docs/UI-DESIGN-LOCK.md) and [VISUAL-CONTROL-SYSTEM.md](docs/VISUAL-CONTROL-SYSTEM.md). Local Wine acceptance remains pending.
