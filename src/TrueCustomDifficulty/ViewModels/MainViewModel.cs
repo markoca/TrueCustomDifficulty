@@ -124,18 +124,15 @@ public sealed class MainViewModel : ObservableObject
 
         var actionCostParameterIds = new HashSet<string>(StringComparer.Ordinal)
         {
-            "stamina.sprintCost",
-            "stamina.jumpCost",
-            "stamina.vaultCost",
-            "stamina.meleeNormalCost",
-            "stamina.meleeStrongCost",
-            "stamina.butstockCost",
-            "stamina.aimRegenCoef",
-            "stamina.sprintDisableThreshold",
-            "stamina.sprintRecoveryDelay",
-            "stamina.lowRecoveryThreshold",
-            "stamina.lowRecoveryStrength",
-            "stamina.lowRecoveryDuration"
+            "stamina.sprintCost", "stamina.jumpCost", "stamina.vaultCost",
+            "stamina.meleeNormalCost", "stamina.meleeStrongCost",
+            "stamina.butstockCost"
+        };
+        var exhaustionRecoveryParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "stamina.aimRegenCoef", "stamina.sprintDisableThreshold",
+            "stamina.sprintRecoveryDelay", "stamina.lowRecoveryThreshold",
+            "stamina.lowRecoveryStrength", "stamina.lowRecoveryDuration"
         };
 
         var consumableAggregateParameterIds = new HashSet<string>(StringComparer.Ordinal)
@@ -227,6 +224,7 @@ public sealed class MainViewModel : ObservableObject
                 || worldLootRemovalParameterIds.Contains(p.Id)
                 || medicalHealingParameterIds.Contains(p.Id)
                 || actionCostParameterIds.Contains(p.Id)
+                || exhaustionRecoveryParameterIds.Contains(p.Id)
                 || consumableAggregateParameterIds.Contains(p.Id)
                 || itemPriceScalerParameterIds.Contains(p.Id)
                 || mutantHealthParameterIds.Contains(p.Id)
@@ -699,6 +697,30 @@ public sealed class MainViewModel : ObservableObject
                 {
                     if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
                         actionCostAnchor.RefreshAggregateModifiedState();
+                };
+            }
+        }
+
+        if (parametersById.TryGetValue("stamina.sprintDisableThreshold", out var exhaustionRecoveryAnchor))
+        {
+            var exhaustionRecoveryMembers = exhaustionRecoveryParameterIds
+                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
+                .Where(parameter => parameter is not null)
+                .Cast<ParameterViewModel>()
+                .ToArray();
+
+            exhaustionRecoveryAnchor.SetAggregateModifiedProvider(
+                () => exhaustionRecoveryMembers.Any(parameter =>
+                    parameter.Definition.Vanilla.TryGetValue("All", out var vanilla)
+                    && vanilla.ValueKind == System.Text.Json.JsonValueKind.Number
+                    && Math.Abs(parameter.CurrentNumber - vanilla.GetDouble()) > 0.0000001));
+
+            foreach (var member in exhaustionRecoveryMembers)
+            {
+                member.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                        exhaustionRecoveryAnchor.RefreshAggregateModifiedState();
                 };
             }
         }
@@ -1610,14 +1632,14 @@ public sealed class MainViewModel : ObservableObject
                 "stamina.regeneration" => 10,
 
                 // Exhaustion and recovery
-                "stamina.sprintDisableThreshold" => 100,
+                "stamina.sprintDisableThreshold" => 200,
                 "stamina.sprintRecoveryDelay" => 110,
                 "stamina.lowRecoveryThreshold" => 120,
                 "stamina.lowRecoveryStrength" => 130,
                 "stamina.lowRecoveryDuration" => 140,
 
                 // Action costs
-                "stamina.sprintCost" => 200,
+                "stamina.sprintCost" => 100,
                 "stamina.aimRegenCoef" => 205,
                 "stamina.jumpCost" => 210,
                 "stamina.vaultCost" => 220,
