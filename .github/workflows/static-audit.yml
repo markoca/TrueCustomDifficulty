@@ -1,0 +1,29 @@
+name: Static source and CFG contracts
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+
+      - name: Use Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Combat catalog-to-writer contract
+        run: python tools/audit_combat_contract.py
+
+      - name: Active UI-to-CFG contract
+        run: python tools/audit_ui_cfg_contract.py
+
+      - name: Whole-project active source consistency
+        run: python tools/audit_project_consistency.py

@@ -82,3 +82,12 @@ For the 68 Combat direct edit-point comparison, execute
 `tools/audit_cfg_source_values.py --parameter-prefix combat.`
 against the actual decoded base/DLC1 CFG archives. The Master and
 Veteran special-array effects require in-game validation.
+
+## Automated CI guard
+
+`.github/workflows/static-audit.yml` executes the three active Python
+validators on changes to `main`, pull requests, and manual dispatch. This
+prevents old NameError/path-regression failures from being declared fixed
+without at least executing the complete static validator. GitHub Actions
+status must be checked before claiming CI PASS. It does not perform .NET
+publishing or prove runtime effects in S.T.A.L.K.E.R. 2.

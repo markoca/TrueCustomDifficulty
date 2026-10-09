@@ -1,5 +1,8 @@
 # True Custom Difficulty
 
+A [GitHub Actions static contract workflow](.github/workflows/static-audit.yml) runs all three validators on main and pull requests.
+This does not replace .NET publish or in-game runtime validation.
+
 Current consistency audit is based on active sources and writer data, not deleted
 v0.2.x CSV snapshots. See [Consistency audit modernization](docs/PROJECT-CONSISTENCY-AUDIT-2026-10-09.md)
 for the distinction between static PASS and historical/runtime NOT RUN. Run:
