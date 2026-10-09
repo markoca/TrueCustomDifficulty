@@ -116,9 +116,14 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsActionCostAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "MOVEMENT and MELEE edit one-time stamina costs on a shared 0–200% of Base Preset scale; NORMAL MELEE cannot exceed STRONG MELEE. AIMING RECOVERY PENALTY is a continuous regeneration slowdown. EXHAUSTION & LOW-SP RECOVERY uses real absolute stamina values: SPRINT LOCK is the SP threshold that forces sprint to stop, RESTART DELAY is the wait before recovery can resume, and RECOVERY BELOW / BOOST / DURATION control the emergency low-stamina recovery effect. These systems are independent, so their thresholds are not artificially linked. Right-click one handle to reset it; press R to reset the whole stamina-pressure board.";
+                       "STAMINA USAGE edits six independent actual one-time movement/melee stamina costs. Source values are mapped onto a relative 0–2x rail while each live number remains raw SP. NORMAL MELEE cannot exceed STRONG MELEE. Right-click resets one action, R resets all six.";
             }
 
+            if (IsExhaustionRecoveryAnchor)
+            {
+                return "CONTROLS" + Environment.NewLine +
+                       "SPRINT LOCK and RECOVERY BELOW share a 0–60 SP ruler but edit independent native thresholds (0–32.2 SP and 1–60 SP). Aiming slows regeneration continuously; RESTART DELAY, RECOVERY BOOST and BOOST DURATION edit their individual native sources. Muted ruler tails beyond actual source bounds are not interactive. Right-click resets one source, R resets these six only.";
+            }
 
             if (IsMedicalHealingAnchor)
             {
@@ -291,22 +296,22 @@ public sealed class ParameterViewModel : ObservableObject
 
     private static readonly HashSet<string> ActionCostParameterIds = new(StringComparer.Ordinal)
     {
-        "stamina.sprintCost",
-        "stamina.jumpCost",
-        "stamina.vaultCost",
-        "stamina.meleeNormalCost",
-        "stamina.meleeStrongCost",
-        "stamina.butstockCost",
-        "stamina.aimRegenCoef",
-        "stamina.sprintDisableThreshold",
-        "stamina.sprintRecoveryDelay",
-        "stamina.lowRecoveryThreshold",
-        "stamina.lowRecoveryStrength",
-        "stamina.lowRecoveryDuration"
+        "stamina.sprintCost", "stamina.jumpCost", "stamina.vaultCost",
+        "stamina.meleeNormalCost", "stamina.meleeStrongCost",
+        "stamina.butstockCost"
+    };
+
+    private static readonly HashSet<string> ExhaustionRecoveryParameterIds = new(StringComparer.Ordinal)
+    {
+        "stamina.aimRegenCoef", "stamina.sprintDisableThreshold",
+        "stamina.sprintRecoveryDelay", "stamina.lowRecoveryThreshold",
+        "stamina.lowRecoveryStrength", "stamina.lowRecoveryDuration"
     };
 
     public bool IsActionCostMember => ActionCostParameterIds.Contains(Id);
     public bool IsActionCostAnchor => Id == "stamina.sprintCost";
+    public bool IsExhaustionRecoveryMember => ExhaustionRecoveryParameterIds.Contains(Id);
+    public bool IsExhaustionRecoveryAnchor => Id == "stamina.sprintDisableThreshold";
 
     private static readonly HashSet<string> ItemPriceScalerParameterIds = new(StringComparer.Ordinal)
     {
@@ -629,6 +634,7 @@ public sealed class ParameterViewModel : ObservableObject
         IsWorldLootRemovalAnchor ||
         IsMedicalHealingAnchor ||
         IsActionCostAnchor ||
+        IsExhaustionRecoveryAnchor ||
         IsItemPriceScalerAnchor ||
         IsMutantHealthAnchor ||
         IsSpecialAbilityCooldownAnchor ||
@@ -654,6 +660,7 @@ public sealed class ParameterViewModel : ObservableObject
         && (!IsWorldLootRemovalMember || IsWorldLootRemovalAnchor)
         && (!IsMedicalHealingMember || IsMedicalHealingAnchor)
         && (!IsActionCostMember || IsActionCostAnchor)
+        && (!IsExhaustionRecoveryMember || IsExhaustionRecoveryAnchor)
         && (!IsItemPriceScalerMember || IsItemPriceScalerAnchor)
         && (!IsMutantHealthMember || IsMutantHealthAnchor)
         && (!IsSpecialAbilityCooldownMember || IsSpecialAbilityCooldownAnchor)
