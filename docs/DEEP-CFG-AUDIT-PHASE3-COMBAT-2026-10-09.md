@@ -62,6 +62,23 @@ This is a validator-only fix: gameplay mappings, UI and preset behavior are
 unchanged. Run `python tools/audit_project_consistency.py` to verify the
 complete audit in the local repository.
 
+### Runner import and triage guard follow-up (2026-10-09)
+
+The same whole-app validator then raised `NameError: _csv is not defined`
+at the Blueprint Shuffle manifest gate, because its `csv as _csv` imports
+were all inside earlier optional evidence branches. The CSV alias is now
+imported unconditionally at module load, and the 11 redundant conditional
+imports have been removed. This also covers later Trader, Generator Matrix,
+Override Verification, and CFG Provenance CSV readers.
+
+The triage rows used by the later Generator Decision Matrix are now
+initialized independently of optional triage evidence. When that evidence
+is missing, the validator records a clear `[FAIL]` rather than raising a
+second `NameError`. These are audit-runner resilience changes only; no
+production CFG or UI behavior changes. The complete validator still needs
+local execution and any reported assertion failures must be assessed
+independently.
+
 ## Automated reproductions
 
 From the project root:

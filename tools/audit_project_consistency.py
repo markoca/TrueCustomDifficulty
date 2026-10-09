@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Static consistency checks for the source package; requires only Python 3."""
 from __future__ import annotations
+import csv as _csv
 import json
-import re, re, sys
+import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -211,8 +213,8 @@ if all(path.exists() for path in [_base_inv, _base_inh, _base_comp, _base_ctx, _
 import json as _json
 triage_csv = ROOT / "docs" / "generators" / "control-candidate-triage.csv"
 triage_summary = ROOT / "docs" / "generators" / "control-candidate-triage-summary.json"
+_triage_rows = []  # Always defined; matrix comparisons must report failures, not NameError.
 if triage_csv.exists() and triage_summary.exists():
-    import csv as _csv
     from collections import Counter as _Counter
     with triage_csv.open(encoding="utf-8-sig", newline="") as fh:
         _triage_rows = list(_csv.DictReader(fh))
@@ -235,12 +237,13 @@ if triage_csv.exists() and triage_summary.exists():
         fail("Human NPC Junk/Misc triage decision is missing or not NO_UI_SYSTEM_MARKER")
     else:
         note(f"decision-layer summary synchronized: {len(_triage_rows)} concepts; NPC Junk/Misc closed as system marker")
+else:
+    fail("decision-layer triage CSV/JSON evidence missing; generator decision matrix cannot be validated")
 
 # GuardQuestItem is interaction infrastructure, not tunable loot.
 junk_rows_path = ROOT / "docs" / "generators" / "npc-junk-guardquest-generator-rows.csv"
 context_rows_path = ROOT / "docs" / "generators" / "guardquest-contextual-action-preconditions.csv"
 if junk_rows_path.exists():
-    import csv as _csv
     with junk_rows_path.open(encoding="utf-8-sig", newline="") as fh:
         _junk_rows = list(_csv.DictReader(fh))
     _bad = [row for row in _junk_rows if row.get("Chance") != "1.0" or row.get("MinCount") != "1.0" or row.get("MaxCount") != "1.0"]
@@ -260,7 +263,6 @@ if junk_rows_path.exists():
 _nw_entries = ROOT / "docs" / "generators" / "npc-weapon-production-entries.csv"
 _nw_excl = ROOT / "docs" / "generators" / "npc-weapon-production-exclusions.csv"
 if _nw_entries.exists() and _nw_excl.exists():
-    import csv as _csv
     with _nw_entries.open(encoding="utf-8-sig", newline="") as fh:
         _nwr = list(_csv.DictReader(fh))
     with _nw_excl.open(encoding="utf-8-sig", newline="") as fh:
@@ -278,7 +280,6 @@ if _nw_entries.exists() and _nw_excl.exists():
 # Human NPC NVG has no eligible repeatable generic-human source edge after hard exclusions.
 nvg_links_path = ROOT / "docs" / "generators" / "npc-equipment-nested-links.csv"
 if nvg_links_path.exists():
-    import csv as _csv
     with nvg_links_path.open(encoding="utf-8-sig", newline="") as fh:
         _links = list(_csv.DictReader(fh))
     _nvg = [r for r in _links if r.get("target_pool") in {"GeneralNPC_Freedom_NVG", "GeneralNPC_Neutral_NVG"}]
@@ -292,7 +293,6 @@ if nvg_links_path.exists():
 # Medic stock quantity candidate is exactly the two isolated direct-item medic pools.
 _medic_entries = ROOT / "docs" / "generators" / "trader-local-source-entries.csv"
 if _medic_entries.exists():
-    import csv as _csv
     with _medic_entries.open(encoding="utf-8-sig", newline="") as fh:
         _mr = list(_csv.DictReader(fh))
     _surface = [r for r in _mr if r.get("sid") in {"MedicUniversal_TradeItemGenerator", "MedicNoon_TradeItemGenerator"} and r.get("ItemPrototypeSID")]
@@ -316,7 +316,6 @@ if triage_csv.exists():
 # Trader ammo quantity is incomplete by one vanilla no-count AVOG row.
 _ammo_surface = ROOT / "docs" / "generators" / "trader-ammo-stock-quantity-surface.csv"
 if _ammo_surface.exists():
-    import csv as _csv
     with _ammo_surface.open(encoding="utf-8-sig", newline="") as fh:
         _ar = list(_csv.DictReader(fh))
     _counted = [r for r in _ar if r.get("has_count") == "yes"]
@@ -330,7 +329,6 @@ if _ammo_surface.exists():
 # Trader weapon stock has mixed quantity/availability models; no global scalar.
 _tw_path = ROOT / "docs" / "generators" / "trader-local-source-entries.csv"
 if _tw_path.exists():
-    import csv as _csv
     with _tw_path.open(encoding="utf-8-sig", newline="") as fh:
         _twr = list(_csv.DictReader(fh))
     _weapon_cats = {"EItemGenerationCategory::WeaponPrimary", "EItemGenerationCategory::WeaponSecondary", "EItemGenerationCategory::WeaponPistol"}
@@ -349,7 +347,6 @@ if _tw_path.exists():
 _ta_path = ROOT / "docs" / "generators" / "trader-local-source-entries.csv"
 _tn_path = ROOT / "docs" / "generators" / "trader-nested-targets.csv"
 if _ta_path.exists() and _tn_path.exists():
-    import csv as _csv
     with _ta_path.open(encoding="utf-8-sig", newline="") as fh:
         _tar = list(_csv.DictReader(fh))
     _attach = [r for r in _tar if r.get("category") == "EItemGenerationCategory::Attach" and r.get("ItemPrototypeSID")]
@@ -371,7 +368,6 @@ _nwa_entries = ROOT / "docs" / "generators" / "npc-weapon-production-entries.csv
 _nwa_excl = ROOT / "docs" / "generators" / "npc-weapon-production-exclusions.csv"
 _nwa_contract = ROOT / "docs" / "generators" / "HUMAN-NPC-WEAPON-AMMO-RUNTIME-TEST.md"
 if _nwa_entries.exists() and _nwa_excl.exists():
-    import csv as _csv
     with _nwa_entries.open(encoding="utf-8-sig", newline="") as fh:
         _awar = list(_csv.DictReader(fh))
     with _nwa_excl.open(encoding="utf-8-sig", newline="") as fh:
@@ -393,7 +389,6 @@ if _nwa_entries.exists() and _nwa_excl.exists():
 _ms_entries = ROOT / "docs" / "generators" / "generator-local-source-item-entries.csv"
 _ms_contract = ROOT / "docs" / "generators" / "MEDIC-STOCK-QUANTITY-RUNTIME-TEST.md"
 if _ms_entries.exists():
-    import csv as _csv
     with _ms_entries.open(encoding="utf-8-sig", newline="") as fh:
         _ms_all = list(_csv.DictReader(fh))
     _ms = [r for r in _ms_all if r.get("sid") in {"MedicUniversal_TradeItemGenerator", "MedicNoon_TradeItemGenerator"} and r.get("ItemPrototypeSID")]
@@ -2602,7 +2597,6 @@ _override_expected = {
 }
 _override_rows = {}
 if _override_suite.exists():
-    import csv as _csv
     with _override_suite.open(newline="", encoding="utf-8-sig") as _f:
         for _r in _csv.DictReader(_f):
             _override_rows[(_r.get("parameterId"), _r.get("variant"))] = (
