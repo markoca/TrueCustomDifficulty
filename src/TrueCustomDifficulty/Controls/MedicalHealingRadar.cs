@@ -118,7 +118,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
         _hits.Clear();
         DrawCenteredText(dc, "MEDICAL HEALING", new Point(ActualWidth / 2, 21),
-            12.5, accent, FontWeights.Bold);
+            HealthTypography.Title, accent, FontWeights.Bold);
 
         var width = Math.Max(560.0, ActualWidth);
         var contentWidth = width - 32.0;
@@ -129,7 +129,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
         var food = new Rect(16 + bandageWidth, 48, contentWidth - bandageWidth, CardHeight);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1), food, 4, 4);
         DrawText(dc, "FOOD HEALING", new Point(food.Left + 12, food.Top + 12),
-            10.3, text, FontWeights.Bold);
+            HealthTypography.Label, text, FontWeights.Bold);
         _foodCheckboxRect = new Rect(
             food.Right - BooleanCheckboxChrome.Size - 12.0,
             food.Top + 10.0,
@@ -140,8 +140,10 @@ public sealed class MedicalHealingRadar : FrameworkElement
             _foodCheckboxHovered, panel, border, accent);
         _hits.Add(new HitArea(food, -1, HitAction.Food));
 
-        DrawText(dc, "MEDKIT HEALING", new Point(18, 157), 10.8, text, FontWeights.Bold);
-        DrawText(dc, "HP RESTORED", new Point(18, 178), 9, muted, FontWeights.SemiBold);
+        DrawText(dc, "MEDKIT HEALING", new Point(18, 157),
+            HealthTypography.Section, text, FontWeights.Bold);
+        DrawText(dc, "HP RESTORED", new Point(18, 178),
+            HealthTypography.Axis, muted, FontWeights.SemiBold);
         // One common HP scale makes the three medkits directly comparable.
         // Grey ticks retain each item's individual authored vanilla value.
         const double chartTop = 210.0;
@@ -154,8 +156,8 @@ public sealed class MedicalHealingRadar : FrameworkElement
             var y = chartTop + chartHeight * (1.0 - tick / chartMaximum);
             dc.DrawLine(new Pen(CloneWithOpacity(border, .55), .8),
                 new Point(chartLeft, y), new Point(chartLeft + chartWidth, y));
-            DrawRightAlignedText(dc, $"{tick}", new Point(chartLeft - 7, y - 7),
-                8.4, muted, FontWeights.Normal);
+            DrawRightAlignedText(dc, $"{tick}", new Point(chartLeft - 8, y - 8),
+                HealthTypography.Axis, muted, FontWeights.SemiBold);
         }
         var columnWidth = chartWidth / 3.0;
         for (var i = 1; i < Items.Length; i++)
@@ -180,15 +182,16 @@ public sealed class MedicalHealingRadar : FrameworkElement
                 new Point(centerX - barWidth / 2 - 11, vanillaY),
                 new Point(centerX + barWidth / 2 + 11, vanillaY));
             var numeric = $"{p.CurrentNumber:0.#}";
-            var label = CreateText(numeric + " HP", 12.2, text, FontWeights.Bold);
+            var label = CreateText(numeric + " HP", HealthTypography.Value,
+                text, FontWeights.Bold);
             if (p.IsValueModifiedFromReference())
             {
                 label.SetForegroundBrush(accent, 0, numeric.Length);
-                label.SetFontSize(13.4, 0, numeric.Length);
+                label.SetFontSize(HealthTypography.Value + 1.2, 0, numeric.Length);
             }
             dc.DrawText(label, new Point(centerX - label.Width / 2, chartTop - 23));
             DrawCenteredText(dc, Items[i].Label, new Point(centerX, 366),
-                9.8, text, FontWeights.Bold);
+                HealthTypography.Label, text, FontWeights.Bold);
             _hits.Add(new HitArea(new Rect(centerX - columnWidth / 2 + 5,
                 chartTop, columnWidth - 10, chartHeight), i, HitAction.Chart));
         }
@@ -206,11 +209,12 @@ public sealed class MedicalHealingRadar : FrameworkElement
         // Selection must not paint the medical lane yellow.
         dc.DrawRoundedRectangle(panel, new Pen(border, .8), card, 4, 4);
         DrawText(dc, Items[row].Label, new Point(card.Left + 12, card.Top + 10),
-            10.3, text, FontWeights.Bold);
+            HealthTypography.Label, text, FontWeights.Bold);
         var modified = p.IsValueModifiedFromReference();
         DrawRightAlignedText(dc, $"{p.CurrentNumber:0.#} HP",
             new Point(card.Right - 12, card.Top + 8),
-            modified ? 14.4 : 13.2, modified ? accent : text, FontWeights.Bold);
+            modified ? HealthTypography.Value + 1.2 : HealthTypography.Value,
+            modified ? accent : text, FontWeights.Bold);
 
         var track = new Rect(card.Left + 17, card.Top + 37,
             card.Width - 34, 25);
@@ -241,10 +245,10 @@ public sealed class MedicalHealingRadar : FrameworkElement
             new Point(currentX, y), 7, 7);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);
         DrawText(dc, $"{p.Minimum:0.#}", new Point(track.Left, card.Bottom - 18),
-            9, muted, FontWeights.Normal);
+            HealthTypography.Axis, muted, FontWeights.Normal);
         DrawRightAlignedText(dc, $"{p.Maximum:0.#} HP",
             new Point(track.Right, card.Bottom - 18),
-            9, muted, FontWeights.Normal);
+            HealthTypography.Axis, muted, FontWeights.Normal);
         _hits.Add(new HitArea(new Rect(track.Left - 5, track.Top - 4,
             track.Width + 10, track.Height + 8), row, HitAction.Slider));
 

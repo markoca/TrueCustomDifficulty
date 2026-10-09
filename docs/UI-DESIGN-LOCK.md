@@ -668,3 +668,17 @@ Use a single `HungerProfileHeight = 344` DIP constant for both the actual graph 
 **Single implementation contract:** WPF's global `CheckBox` template in `App.xaml` and the drawn `BooleanCheckboxChrome.Draw` in `Controls/BooleanCheckboxChrome.cs` share exactly the same size, corner radius, border, stroke, color and hover behavior. `AggregateVisualControl.DrawTogglePill` uses this chrome for all toggle-led panels (World Loot Layout, bundle toggles, healing/radiation/fatigue, starvation, equipment mechanics); `MedicalHealingRadar` uses it for Food Healing. No old slider-style toggle halo overlay may activate for `HitKind.Toggle`. Regular WPF parameter checkbox rows keep one label at left and the same square at right, without repeating ON/OFF.
 
 **Nonvisual behavior unchanged:** each boolean retains its real `ParameterViewModel.CurrentBoolean`, enabled state, existing clickable row/target, click/Space/keyboard selection, right-click reference reset, visual-family R reset, preset persistence, source catalog and CFG writing. The Food Healing card remains clickable in its existing hit area, but only hovering the 20-DIP checkbox brightens its border. No changes to sliders, graphs, native step limits or gameplay values. Inspect the WPF template and draw-based panels under Wine; source/UI geometry checks are not a substitute for a runtime build.
+
+### 2026-10-09 — Core Health / Medical Healing typography harmonization (user-approved)
+
+The user-supplied application screenshot shows Core Health slider labels/endpoints and Medical Healing's graph axis as noticeably smaller than neighboring current-value readouts. **Change only the typography of the two Health panels**, without rearranging their locked geometry or changing editor interactions. Introduce the shared `HealthTypography` constants in `src/TrueCustomDifficulty/Controls/HealthTypography.cs` and use them in both renderers:
+
+| Element | Font size (DIP) | Weight / behavior |
+| --- | ---: | --- |
+| Panel title | 12.5 | Bold, existing gold title |
+| Source/control label (all five Core Health cards, Bandage, Food and three medkit names) | 11.4 | Bold, neutral |
+| Current editable HP / rate and chart HP result | 12.8 | Bold or semi-bold, neutral when unchanged; numeric token increases to 14.0 when modified |
+| Secondary headings (MEDKIT HEALING) | 11.4 | Bold |
+| Native slider endpoints, medkit axis ticks and HP RESTORED caption | 10.4 | Neutral / muted |
+
+Core Health uses an **opt-in** `healthTypography` switch on shared `DrawHorizontalTrackCard`, leaving other panels' locked font sizes untouched. The reserved name area measures the actual current-value width instead of imposing a fixed 150-DIP lane, preventing labels and live values from colliding at narrow editor widths. Medical Healing uses the same constants for its Food checkbox caption, Bandage label/current/rail endpoints and the three-bar medkit section, Y ticks, HP results and item captions. Keep the 71-DIP Core Health slider cards, the 400-DIP Medical Healing board, positions of labels/rails/axis and identical gold-handle hover contract. Do not change reference ticks, heal source IDs, controls, sliders, checkbox behavior, CFG map, preset serialization or snapping. The font hierarchy is now the approved locked style for these two panels; local Wine visual confirmation is pending.

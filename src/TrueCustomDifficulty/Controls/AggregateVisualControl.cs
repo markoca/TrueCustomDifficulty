@@ -1823,7 +1823,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             DrawHorizontalTrackCard(dc, P(tracks[i].Item1), tracks[i].Item2,
                 new Rect(16.0 + col * (cell + gap), 52.0 + row * 79.0,
                     cell, 71.0), text, muted, border, accent, panel,
-                hideBaseText: true);
+                hideBaseText: true, healthTypography: true);
         }
     }
 
@@ -3823,7 +3823,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel,
         bool pairedValueFormatting = false,
-        bool hideBaseText = false)
+        bool hideBaseText = false,
+        bool healthTypography = false)
     {
         var hovered = parameter is not null && parameter.IsControlEnabled &&
             ReferenceEquals(_hoverTarget?.Parameter, parameter);
@@ -3831,8 +3832,16 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Pen(border, 1.0),
             card, 4.0, 4.0);
         var textWidth = Math.Max(1.0, card.Width - 24.0);
-        dc.DrawText(CreateText(label, 9.8, text, FontWeights.Bold,
-                Math.Max(1.0, card.Width - 150.0)),
+        var labelSize = healthTypography ? HealthTypography.Label : 9.8;
+        var axisSize = healthTypography ? HealthTypography.Axis : 9.0;
+        // Reserve the actual width of the current HP/rate readout, not a
+        // hard-coded 150 DIP lane that would clip health names on small windows.
+        var valueReserve = healthTypography && parameter is not null
+            ? CreateText(FriendlyValue(parameter), HealthTypography.Value + 1.2,
+                text, FontWeights.SemiBold).WidthIncludingTrailingWhitespace + 12.0
+            : 126.0;
+        dc.DrawText(CreateText(label, labelSize, text, FontWeights.Bold,
+                Math.Max(1.0, card.Width - 24.0 - valueReserve)),
             new Point(card.Left + 12.0, card.Top + 5.0));
 
         if (parameter is null)
@@ -3848,7 +3857,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var value = pairedValueFormatting
             ? ComparablePairedValue(parameter, parameter.CurrentNumber)
             : FriendlyValue(parameter);
-        var baseSize = pairedValueFormatting ? 11.1 : 10.1;
+        var baseSize = healthTypography ? HealthTypography.Value
+            : pairedValueFormatting ? 11.1 : 10.1;
         var valueText = CreateText(value, baseSize,
             parameter.IsControlEnabled ? text : muted, FontWeights.SemiBold, textWidth);
         if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())
@@ -3891,10 +3901,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             track, parameter.Minimum, parameter.Maximum);
 
         var halfWidth = Math.Max(1.0, track.Width / 2.0 - 4.0);
-        dc.DrawText(CreateText(FormatCompact(parameter.Minimum), 9.0,
+        dc.DrawText(CreateText(FormatCompact(parameter.Minimum), axisSize,
                 muted, FontWeights.Normal, halfWidth),
             new Point(track.Left, card.Top + 52.0));
-        var right = CreateText(FormatCompact(parameter.Maximum), 9.0,
+        var right = CreateText(FormatCompact(parameter.Maximum), axisSize,
             muted, FontWeights.Normal, halfWidth);
         dc.DrawText(right, new Point(
             track.Right - right.WidthIncludingTrailingWhitespace,
