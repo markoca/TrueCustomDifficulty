@@ -172,11 +172,15 @@ internal static class Program
         var relative = Path.GetRelativePath(Path.Combine(root, "Stalker2", "Content", "GameLite"), file)
             .Replace('\\', '/');
         var parts = relative.Split('/');
-        Check(parts.Length >= 4 && parts[^2] == "WorldMap_WP",
+        var stem = Array.FindIndex(parts, part => part == "SpawnActorPrototypes");
+        Check(stem >= 1 && stem < parts.Length - 2,
             "Nonstandard SpawnActorPrototypes layout " + relative);
         var actorSid = Path.GetFileNameWithoutExtension(parts[^1]);
-        var source = string.Join("/", parts.Take(parts.Length - 2)) + ".cfg";
-        return source + "|WorldMap_WP|" + actorSid;
+        // DLC1 actor levels can legitimately be nested, for example
+        // WorldMap_WP/DLC01_CNPP_Hub_Level. Preserve their FULL LevelName.
+        var source = string.Join("/", parts.Take(stem + 1)) + ".cfg";
+        var level = string.Join("/", parts.Skip(stem + 1).Take(parts.Length - stem - 2));
+        return source + "|" + level + "|" + actorSid;
     }
 
     private static List<Actor> LoadActors()
