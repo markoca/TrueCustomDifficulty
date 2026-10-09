@@ -210,6 +210,11 @@ prototype or field changes, and accurate EditCount/ParameterCount. The
 expected direct field identities are pinned independently of the live
 baseline; its authored original values are used for numeric transformations.
 
+The source-backed field identity assertion also pins
+`Weapon_JammingMultiplier` under `NPCCombatDifficulty`, not
+`EnvironmentDifficulty`—these nested WPF value routes are checked directly
+against emitted CFG, not guessed from their gameplay labels.
+
 Particular edge cases: both `NPC_AttackCooldown` and
 `Mutant_AttackCooldown` use reciprocal scaling; boolean repeated-hit
 source records serialize actual toggle state; moving Novice's maximum

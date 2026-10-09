@@ -171,7 +171,7 @@ internal static class Program
         new("combat.explosionDamage", "EnvironmentDifficulty", "Explosion_BaseDamage", "set", 1.5),
         new("combat.playerWeaponDamage", "EnvironmentDifficulty", "Weapon_BaseDamage", "set", 1.25),
         new("combat.playerHeadshotMultiplier", "NPCCombatDifficulty", "PlayerWeapon_HeadshotMultiplier", "set", 1.5),
-        new("combat.weaponJamming", "EnvironmentDifficulty", "Weapon_JammingMultiplier", "set", 0.5),
+        new("combat.weaponJamming", "NPCCombatDifficulty", "Weapon_JammingMultiplier", "set", 0.5),
         new("combat.mutantDamage", "MutantCombatDifficulty", "Mutant_BaseDamage", "set", 0.8),
         new("combat.mutantAttackCooldown", "MutantCombatDifficulty", "Mutant_AttackCooldown", "inverseScale", 1.5),
         new("combat.accumulatedDamageWeightMax", "NPCCombatDifficulty", "AccumulatedDamageReductionCurveWeightMax", "set", 0.9),
