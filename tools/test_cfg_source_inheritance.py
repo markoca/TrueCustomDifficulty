@@ -77,7 +77,58 @@ struct.end
         check_point(item, read_tree(missing_parent_text)))
     assert missing_parent["status"] == "missing_key", missing_parent
     assert missing_parent["inheritanceStatus"] == "missing_or_ambiguous_ancestor", missing_parent
-    print("PASS: vanilla refkey inheritance and validated flattened refurl; missing parents and foreign refurls fail closed")
+    # Gamepass Rare Stash production wrappers are thin refurl aliases.
+    # The actual coupon Chance rows are authored under the parent SID
+    # in the very same flattened decoded ItemGeneratorPrototypes.cfg.
+    loot_source = """GamePass_Stash_ItemGenerator_Rare : struct.begin
+   SID = GamePass_Stash_ItemGenerator_Rare
+   ItemGenerator : struct.begin
+      [11] : struct.begin
+         PossibleItems : struct.begin
+            [0] : struct.begin
+               Chance = 0.2f
+            struct.end
+         struct.end
+      struct.end
+   struct.end
+struct.end
+Stash_Expensive_Newbie : struct.begin {refurl=ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg;refkey=GamePass_Stash_ItemGenerator_Rare}
+   SID = Stash_Expensive_Newbie
+struct.end
+"""
+    loot = dict(parameterId="loot.expensiveStashMoneyChance", scope="baseGame",
+                file="GameData/ItemGeneratorPrototypes.cfg",
+                prototype="Stash_Expensive_Newbie",
+                nodePath=["ItemGenerator", "[11]", "PossibleItems", "[0]"],
+                key="Chance", sourceRaw="0.2f")
+    roots = read_tree(loot_source)
+    direct = check_point(loot, roots)
+    assert direct["status"] == "missing_node", direct
+    found = resolve_refkey_inheritance(loot, roots, loot_source.splitlines(), direct)
+    assert found["status"] == "inherited_exact" and found["inheritedRaw"] == "0.2f", found
+    assert found["refkeyChain"] == ["GamePass_Stash_ItemGenerator_Rare"], found
+    assert found["refurlEdges"] == [{
+        "from": "Stash_Expensive_Newbie",
+        "refurl": "ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg",
+        "refkey": "GamePass_Stash_ItemGenerator_Rare",
+        "resolution": "physical_parent_in_consolidated_ItemGeneratorPrototypes"
+    }], found
+    absent = loot_source.replace("Chance = 0.2f", "Chance = 0.1f")
+    raw_mismatch = resolve_refkey_inheritance(
+        loot, read_tree(absent), absent.splitlines(),
+        check_point(loot, read_tree(absent)))
+    assert raw_mismatch["status"] == "inherited_raw_mismatch", raw_mismatch
+    no_parent = loot_source.replace("refkey=GamePass_Stash_ItemGenerator_Rare",
+                                     "refkey=MissingGamePassTemplate")
+    unresolved = resolve_refkey_inheritance(
+        loot, read_tree(no_parent), no_parent.splitlines(),
+        check_point(loot, read_tree(no_parent)))
+    assert unresolved["inheritanceStatus"] == "missing_or_ambiguous_ancestor", unresolved
+    foreign = dict(loot, file="GameData/StashPrototypes.cfg")
+    blocked_foreign = resolve_refkey_inheritance(
+        foreign, roots, loot_source.splitlines(), check_point(foreign, roots))
+    assert blocked_foreign["inheritanceStatus"] == "refurl_not_verified", blocked_foreign
+    print("PASS: vanilla refkey and restricted flattened Consumable/Gamepass aliases (mismatch/missing/foreign fail closed)")
 
 if __name__ == "__main__":
     main()
