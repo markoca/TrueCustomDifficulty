@@ -52,6 +52,9 @@
     <EmbeddedResource Include="Presets\Scavenger.json" LogicalName="TrueCustomDifficulty.Presets.Scavenger.json" />
     <EmbeddedResource Include="Presets\Mutant Hunter.json" LogicalName="TrueCustomDifficulty.Presets.Mutant Hunter.json" />
     <EmbeddedResource Include="Presets\Anomaly Runner.json" LogicalName="TrueCustomDifficulty.Presets.Anomaly Runner.json" />
+    <EmbeddedResource Include="Presets\Mercenary.json" LogicalName="TrueCustomDifficulty.Presets.Mercenary.json" />
+    <EmbeddedResource Include="Presets\Wanderer.json" LogicalName="TrueCustomDifficulty.Presets.Wanderer.json" />
+    <EmbeddedResource Include="Presets\Outcast.json" LogicalName="TrueCustomDifficulty.Presets.Outcast.json" />
     <EmbeddedResource Include="Presets\Hardcore.json" LogicalName="TrueCustomDifficulty.Presets.Hardcore.json" />
     <EmbeddedResource Include="Presets\Hardcore+.json" LogicalName="TrueCustomDifficulty.Presets.Hardcore+.json" />
   </ItemGroup>
