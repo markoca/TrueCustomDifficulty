@@ -565,26 +565,10 @@ public sealed class MainViewModel : ObservableObject
             }
         }
 
-        if (parametersById.TryGetValue("loot.cheapStashAmmoQuantity", out var stashAmmoAnchor))
-        {
-            var stashAmmoMembers = stashAmmoParameterIds
-                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
-                .Where(parameter => parameter is not null)
-                .Cast<ParameterViewModel>()
-                .ToArray();
+        // Stash Ammo is no longer a separate special editor. The native
+        // StashRewardProfile aggregate tracks all six stash members including
+        // the grenade/coupon rewards; avoid overriding that source provider.
 
-            stashAmmoAnchor.SetAggregateModifiedProvider(
-                () => stashAmmoMembers.Any(parameter => Math.Abs(parameter.CurrentNumber - 1.0) > 0.0000001));
-
-            foreach (var member in stashAmmoMembers)
-            {
-                member.PropertyChanged += (_, args) =>
-                {
-                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
-                        stashAmmoAnchor.RefreshAggregateModifiedState();
-                };
-            }
-        }
         if (parametersById.TryGetValue("loot.mutant.blindDogChance", out var mutantDropAnchor))
         {
             var mutantDropMembers = mutantDropParameterIds
