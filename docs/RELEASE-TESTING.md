@@ -26,6 +26,9 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | B10 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix alife. --out REPORT.json --strict` | Linux / Windows | 64 original A-Life Director MaxCount raw-value targets |
 | B11 | `python tools/audit_alife_director_source.py --base-zip BASE --dlc1-zip DLC1 --out REPORT.json` | Linux / Windows | Four exact Rank identities, 64 AgentType/MaxCount slots, index-to-species identity, two original zero ceilings |
 | C7 | `dotnet run --project tests/ALifePatchContract/ALifePatchContract.csproj -c Release -- --out audit/alife-patch-fixtures` | Windows / .NET 10 | 94 real WPF ViewModel-to-Director BPatch scenarios |
+| B12 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix loot. --out REPORT.json --strict` | Linux / Windows | 320 Loot direct source fields, including verified physical rare-stash template inheritance |
+| B13 | `python tools/audit_loot_direct_source.py --base-zip BASE --dlc1-zip DLC1 --out REPORT.json` | Linux / Windows | 14 mutant one-part drops, 121 NPC weapon rows in 33 generators, Gamepass coupon progression identities |
+| C8 | `dotnet run --project tests/LootDirectPatchContract/LootDirectPatchContract.csproj -c Release -- --out audit/loot-direct-patch-fixtures` | Windows / .NET 10 | 117 real direct Loot BPatch writer scenarios across four difficulties and mixed controls |
 | D1 | `chmod +x publish.sh && ./publish.sh` | Linux / .NET 10 | Published executable and matching `BUILD-INFO.txt` source receipt |
 | D2 | Wine UI + in-game manual test | Linux / game | Visual design lock, preset round-trip, PAK/UTOC/UCAS build, actual game effects |
 
@@ -261,3 +264,27 @@ AgentType / rank consistency checks. `alife-writer-windows` runs **94**
 production WPF ViewModel to BPatch scenarios (C7). **Verified C7 PASS 94/94** at commit `bb2c08bffba8b9afe5827fb8d1eb282e602b6971`, GitHub Actions run `37997251466`. Source verification
 and writer verification do not prove Unreal merge semantics or the
 actual A-Life world/encounter results.
+
+### Phase 14A: Direct Loot original source and production writer (2026-10-10)
+
+Of the **40 current Loot parameters**, only **16** have **320 direct
+CFG source points**: 14 mutant drop chances, 64 rare-stash
+coupon assignments and 242 NPC weapon condition bounds.
+All 320 original effective values match the uploaded decoded ZIP:
+**256 authored exact + 64 physically traced inherited exact**,
+zero source-value mismatches. Coupon routes are explicitly
+refkey/refurl inherited from the *physically present consolidated*
+`GamePass_Stash_ItemGenerator_Rare` source prototype. The 121
+generic NPC weapon entries span 33 production generator roots and
+include one original 35-45% condition outlier. The new B12 and B13
+source gates reproduce the independent source and identity checks.
+C8 runs 117 actual WPF ViewModel-to-CFG writer scenarios.
+
+**Do not conflate this direct audit with complete Loot verification.**
+The remaining **24 Loot catalog parameters use specialized writers**,
+including stash production, corpse loot, breakable boxes, world
+placements/removals and shuffle mechanics. They require distinct
+Phase 14B writer/fixture audits, original generator provenance and
+manual in-game acceptance. See
+[Phase 14A](DEEP-CFG-AUDIT-PHASE14A-LOOT-DIRECT-2026-10-10.md)
+and [archive fingerprints](evidence/LOOT-DIRECT-ORIGINAL-CFG-2026-10-10.json).
