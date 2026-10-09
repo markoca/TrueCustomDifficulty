@@ -35,6 +35,7 @@ SOURCE = (
     ("alife-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("alife-director-source-structure", "tools/audit_alife_director_source.py"),
     ("loot-direct-source-values", "tools/audit_cfg_source_values.py"),
+    ("loot-direct-source-structures", "tools/audit_loot_direct_source.py"),
 )
 WRITERS = (
     ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 82),
@@ -165,6 +166,8 @@ def main():
             if label == "loot-direct-source-values":
                 command.extend(["--out", str(out / "loot-direct-source-values.json"),
                                 "--parameter-prefix", "loot.", "--strict"])
+            if label == "loot-direct-source-structures":
+                command.extend(["--out", str(out / "loot-direct-source-structures.json")])
             if label == "survival-direct-source-values":
                 command.extend(["--out", str(out / "survival-source-values.json"),
                                 "--parameter-prefix", "survival.", "--strict"])
