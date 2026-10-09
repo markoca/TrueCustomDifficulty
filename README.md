@@ -1,5 +1,11 @@
 # True Custom Difficulty
 
+## Economy tab compact UI polish (2026-10-09)
+
+The Economy tab still exposes all **22 existing player-facing source settings** across Coupons & Rewards (3), Trading (4), Trader Stock (2), Item Value Layers (6), Service Prices (3), and Repair Price by Reputation (4). This presentation-only update caps and centers editable Economy cards: up to 370 DIP each in two columns or 440 DIP in the narrow single column, rather than stretching each slider along a wide full-width section. Shared source cards have measured nonoverlapping left labels/right values, native min/max and reference ticks, and the universal **handle-only** hover glow. Numbers are accent-colored only when different from the reference, without redundant Base labels. Item Value category cards now center as a capped 2×3 bank with value-safe heading clipping.
+
+Repair-by-reputation now shares the compact source-card layout, preserves its four real source-value-linked order constraints, and uses a subdued separate 1x reference marker in place of extra discount/surcharge text. Trader accepted-condition and broken-value editors still show their real percentage units. No simulated final prices, invented trader-stock amounts or CFG/preset semantics were changed. Both authoritative design catalogs were updated; local `.NET 10` publish and Wine visual acceptance are still required.
+
 ## Source-verified NPC Ammo and Breakable Box Ammo — 2026-10-09
 
 The user-provided base GameData and DLC1 CFG dumps establish **three separate ammo domains**:
