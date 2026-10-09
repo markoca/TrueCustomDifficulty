@@ -16,7 +16,7 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | B3 | Same as B2 plus `--parameter-prefix combat.` | Linux / Windows | 68 direct Combat source checks (strict) |
 | C1 | `dotnet run --project tests/CombatPatchContract/CombatPatchContract.csproj -c Release -- --out audit/combat-patch-fixtures` | Windows / .NET 10 | 82 **real production writer** Master/Novice/Stalker/Veteran/PSY BPatch scenarios |
 | B5 | `python tools/audit_health_stamina_source.py --base-zip BASE --dlc1-zip DLC1` | Linux / Windows | 69 Health/Stamina original source fields, including Player→[0] inheritance |
-| C2 | `dotnet run --project tests/HealthStaminaPatchContract/HealthStaminaPatchContract.csproj -c Release -- --out audit/health-stamina-patch-fixtures` | Windows / .NET 10 | 41 live source-backed Health/Stamina BPatch writer cases |
+| C2 | `dotnet run --project tests/HealthStaminaPatchContract/HealthStaminaPatchContract.csproj -c Release -- --out audit/health-stamina-patch-fixtures` | Windows / .NET 10 | 46 writer Health/Stamina BPatch writer cases |
 | D1 | `chmod +x publish.sh && ./publish.sh` | Linux / .NET 10 | Published executable and matching `BUILD-INFO.txt` source receipt |
 | D2 | Wine UI + in-game manual test | Linux / game | Visual design lock, preset round-trip, PAK/UTOC/UCAS build, actual game effects |
 
@@ -131,7 +131,7 @@ merge semantics** or quest-specific side effects. Preserve
 | Candidate SHA, 0.x version and `git status --short` | NOT RECORDED |
 | A1–A3 `summary.json` static PASS at that SHA | NOT RUN |
 | B1–B5 original matching decoded archive evidence | NOT RUN |
-| C1 Windows CI 82/82 + C2 41/41 writer at that SHA | NOT RUN |
+| C1 Windows CI 82/82 + C2 46/46 writer at that SHA | NOT RUN |
 | D1 publish and `BUILD-INFO.txt` SHA match | NOT RUN |
 | D2 Wine UI and preset smoke | NOT RUN |
 | D2 PAK/UTOC/UCAS build, mod load and in-game test | NOT RUN |
@@ -168,7 +168,7 @@ The fifth archive source gate, `B5`, confirms all **69 original
 Health/Stamina direct writer field paths** and explicitly reports
 `stamina.vaultMaxHeight` as inherited from
 `Player : struct.begin {refkey=[0]}`. The Windows `C2` writer job
-runs **41 independent production ViewModel→BPatch scenarios**,
+runs **46 independent production ViewModel→BPatch scenarios**,
 with separate generated CFG evidence. Both CI jobs must be green
 on the **same release commit**. Never confuse original source
 ancestry with in-game BPatch merging.
@@ -176,3 +176,5 @@ ancestry with in-game BPatch merging.
 See [Phase 8 detailed audit](DEEP-CFG-AUDIT-PHASE8-HEALTH-STAMINA-2026-10-09.md).
 
 The five catalog-only Stamina internal speed-state parameters are intentionally absent from the actual application ViewModel and are **not** counted among C2 active writer scenarios. See Phase 8 for their precise IDs.
+
+C2 now includes five Master original-mechanics full-list replacement cases in addition to its 41 live Health/Stamina scalar/toggle tests. The five internal-only stamina CFG definitions remain non-VM and are not counted as writer inputs.

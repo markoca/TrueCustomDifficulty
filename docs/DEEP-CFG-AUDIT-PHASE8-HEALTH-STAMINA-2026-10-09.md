@@ -164,3 +164,22 @@ control coverage.
 
 This distinction is essential to release reports: never label the
 five internal-only Stamina values as functioning app-to-BPatch routes.
+
+## Phase 8: five positive Master toggle regression cases
+
+To ensure the previous false-positive suppression has not disabled
+intentional mechanics-list writes, the Windows contract harness also
+executes five **parent-toggle OFF** cases on the original **Master**
+baseline: starvation, radiation, fatigue, low-health and Master
+medical-effect mechanics. Each scenario starts with all five
+original `AdditionalMechanicsEffects` members enabled, changes
+**only** one actual parent boolean, and verifies that the generated
+`Stalker.EnvironmentDifficulty.AdditionalMechanicsEffects` is a
+**four-member full-subtree replacement**, preserving correct original
+order and identities, with exactly five emitted edits, one modified
+parameter and no unrelated fields.
+
+Combined C2 Windows verification is thus **41 live Health/Stamina
+parameter scenarios + five deliberate Master mechanics parent
+toggles = 46 writer scenarios**. The 69 original-source edit points
+are a separate original-archive verification contract.

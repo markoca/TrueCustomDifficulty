@@ -76,6 +76,19 @@ internal static class Program
             foreach (var difficulty in new[] { "Novice", "Stalker", "Master" })
                 Test("health.regenerationScalar", difficulty);
 
+            // Parent toggles are intentionally full-list replacements.
+            // Regression: the child-only modifier tests above must NOT
+            // trigger this list; a genuinely changed parent must still do so.
+            foreach (var (id, member) in new[]
+            {
+                ("advanced.starvationMechanics", "HungerNegativeMechanics"),
+                ("advanced.radiationMechanics", "RadiationNegativeMechanics"),
+                ("advanced.fatigueMechanics", "SleepinessNegativeMechanics"),
+                ("advanced.lowHealthMechanics", "RegenHealthNegativeMechanics"),
+                ("advanced.masterEffectModifierMechanics", "MasterEffectModifierNegativeMechanics")
+            })
+                MasterParentToggleCase(id, member);
+
             Console.WriteLine($"PASS: {_passed} Health/Stamina production BPatch writer scenarios.");
             Console.WriteLine("NOT VERIFIED: in-game runtime, UE nested inherited VaultingParams BPatch, original-source archive parity.");
             return 0;
@@ -84,6 +97,63 @@ internal static class Program
         {
             Console.Error.WriteLine("FAIL: " + exc);
             return 1;
+        }
+    }
+
+    private static void MasterParentToggleCase(string toggleId, string removedMember)
+    {
+        var label = "Master-mechanics-" + toggleId.Replace(".", "-", StringComparison.Ordinal);
+        var output = Path.Combine(_keepRoot ?? Path.GetTempPath(),
+            "TCD_Health_Stamina", label);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Master" };
+            var toggle = vm.AllParameters.Single(p => p.Id == toggleId);
+            Check(toggle.IsToggle && toggle.ReferenceBoolean && toggle.CurrentBoolean,
+                label + ": Master mechanics parent no longer has its original ON baseline");
+            toggle.CurrentBoolean = false;
+            Check(toggle.IsValueModifiedFromReference(),
+                label + ": deliberate parent change did not register");
+
+            var result = new CfgPatchWriterService().Write(vm, Catalog, null, output);
+            Check(result.FileCount == 1 && result.ParameterCount == 1
+                  && result.EditCount == 5,
+                label + ": complete four-member list replacement expected (5 edits)");
+            var file = ExpectedFile(output, "GameData/DifficultyPrototypes.cfg");
+            var document = Parse(File.ReadAllText(file));
+            Check(document.Children.Count == 1
+                  && document.Children.ContainsKey("Stalker"),
+                label + ": wrong Master CFG SID");
+            var root = document.Get("Stalker");
+            var environment = root.Get("EnvironmentDifficulty");
+            Check(root.Bpatch && environment.Bpatch
+                  && environment.Children.Count == 1
+                  && environment.Assignments.Count == 0,
+                label + ": parent replacement has unrelated assignments");
+            var list = environment.Get("AdditionalMechanicsEffects");
+            Check(!list.Bpatch && list.Children.Count == 0
+                  && list.Assignments.Count == 4,
+                label + ": mechanics array must be a four-entry full replacement");
+            var vanillaMembers = new[]
+            {
+                "HungerNegativeMechanics",
+                "RadiationNegativeMechanics",
+                "SleepinessNegativeMechanics",
+                "RegenHealthNegativeMechanics",
+                "MasterEffectModifierNegativeMechanics"
+            };
+            var expected = vanillaMembers.Where(s => s != removedMember).ToArray();
+            for (var index = 0; index < expected.Length; index++)
+                Check(list.Value($"[{index}]") == expected[index],
+                    label + ": original mechanics list order/member mismatch at " + index);
+
+            _passed++;
+            Console.WriteLine("PASS " + label + " (full 4-item mechanics list replacement)");
+        }
+        finally
+        {
+            if (_keepRoot is null && Directory.Exists(output))
+                Directory.Delete(output, recursive: true);
         }
     }
 

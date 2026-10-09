@@ -7,7 +7,7 @@ GameData/DLC1 archives: **68 directly authored exact** plus one
 original-source inherited `Player.VaultingParams.MaxObstacleHeight`
 through `{refkey=[0]}`. New Windows/.NET writer contract covers all
 **38 live Health/Stamina settings + 3 additional difficulty cases
-(41 total scenarios)** with actual production WPF ViewModels and
+(41 direct-parameter scenarios) plus five Master parent-toggle regression cases = 46 total)** with actual production WPF ViewModels and
 BPatch output. See [Phase 8 evidence and runtime gaps](docs/DEEP-CFG-AUDIT-PHASE8-HEALTH-STAMINA-2026-10-09.md).
 Actual in-game effects and the inherited nested BPatch merge remain
 `NOT RUN` until manually confirmed.
@@ -1287,3 +1287,7 @@ The Loot > NPC Loot & Equipment section now measures **496 DIP**. Its dropped-we
 Loot > Breakable Boxes now measures **680 DIP** and contains a compact read-only **Ammo Yield Preview** below its two native Yield controls. Four separately labeled SNG stack count ranges at 1x: **9×18 3–6**, **9×19 5–10**, **5.45 5–10**, **12 Gauge 2–4**. NATO: **.45 ACP 5–10**, **9×19 5–10**, **5.56 5–10**, **12 Gauge 5–10**. These are eight real `DestructibleStash_AmmoSNG/NATO` source item rows, not samples from generic NPC SmartLoot. Every number updates immediately with **Ammo Yield 0.5–2x**, step **0.25x**, and the writer's positive integer half-up formula. These are *rounds if that caliber is rolled*, not guaranteed per box.
 
 Three gameplay concepts remain independently displayed: Ammo Yield changes round counts; four Ammo Family Weights change their relative chance and appear in the already color-keyed SNG/NATO composition graphs; Grenade Yield changes only grenade box counts. Every caliber name stays neutral, and only the entire computed **MIN–MAX** numerical token becomes gold and +1.2 DIP when the Ammo Yield source differs from selected Base. Any 0x-weight caliber preview remains visible but subdued. No new CFG source or separate interactive hit target was introduced; the same six Loot edit sources, writer and reset semantics remain. Native mappings are recorded in `docs/UI-DESIGN-LOCK.md`, `docs/VISUAL-CONTROL-SYSTEM.md`, `docs/UI-MIXER-GRID-SPEC.md`, and `docs/generators/DESTRUCTIBLE-LOOT-AUDIT.md`. Local Windows publish/Wine and in-game behavior still require checking.
+
+### Master mechanics full-list writer regression
+
+Five additional executable checks confirm that a **real** Master mechanics parent toggle edits the full `AdditionalMechanicsEffects` array, while a child-only Health change leaves it untouched. The CI Health/Stamina writer suite therefore contains **46 scenarios**, independently of the **69 original source CFG values** and **five deliberately non-VM Stamina internal states**.

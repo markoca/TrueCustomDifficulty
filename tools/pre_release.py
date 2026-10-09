@@ -31,7 +31,7 @@ SOURCE = (
 )
 WRITERS = (
     ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 82),
-    ("health-stamina-bpatch-writer", "HealthStaminaPatchContract", "health-stamina-patch-fixtures", 41),
+    ("health-stamina-bpatch-writer", "HealthStaminaPatchContract", "health-stamina-patch-fixtures", 46),
 )
 MANUAL = (
     "S.T.A.L.K.E.R. 2 Combat BPatch loading and gameplay effects",
