@@ -166,9 +166,7 @@ public sealed class StashAmmoRadar : FrameworkElement
         dc.DrawRoundedRectangle(
             selected
                 ? CloneWithOpacity(accent, 0.08)
-                : hovered
-                    ? CloneWithOpacity(panel, 0.02)
-                    : CloneWithOpacity(panel, 0.04),
+                : CloneWithOpacity(panel, 0.04),
             new Pen(border, 0.9),
             card,
             4.0,
@@ -201,6 +199,7 @@ public sealed class StashAmmoRadar : FrameworkElement
         dc.DrawLine(new Pen(muted, 1.1), new Point(vanillaX, trackY - 8.0), new Point(vanillaX, trackY + 8.0));
         dc.DrawLine(new Pen(accent, 3.2), new Point(track.Left, trackY), new Point(currentX, trackY));
 
+        ControlHoverGlow.Draw(dc, new Point(currentX, trackY), accent, hovered);
         dc.DrawEllipse(
             panel,
             new Pen(accent, selected ? 2.5 : 1.5),

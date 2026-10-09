@@ -165,9 +165,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         dc.DrawRoundedRectangle(
             selected
                 ? CloneWithOpacity(accent, 0.08)
-                : hovered
-                    ? CloneWithOpacity(panel, 0.02)
-                    : CloneWithOpacity(panel, 0.025),
+                : CloneWithOpacity(panel, 0.025),
             new Pen(CloneWithOpacity(border, 0.50), 0.8),
             card,
             3.0,
@@ -242,6 +240,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         dc.DrawLine(new Pen(muted, 1.1), new Point(vanillaX, y - 8.0), new Point(vanillaX, y + 8.0));
         dc.DrawLine(new Pen(accent, 3.2), new Point(track.Left, y), new Point(currentX, y));
 
+        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
         dc.DrawEllipse(
             panel,
             new Pen(accent, selected ? 2.5 : 1.5),

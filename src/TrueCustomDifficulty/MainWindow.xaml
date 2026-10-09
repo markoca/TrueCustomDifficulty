@@ -572,10 +572,10 @@
                                                                 <Condition Binding="{Binding IsVisualControlAnchor}" Value="False" />
                                                                 <Condition Binding="{Binding IsMouseOver, ElementName=ParameterCard}" Value="True" />
                                                             </MultiDataTrigger.Conditions>
-                                                            <Setter TargetName="ParameterCard" Property="Background" Value="{StaticResource ParameterHoverBrush}" />
-                                                            <Setter TargetName="ParameterLabel" Property="Foreground" Value="{StaticResource TextBrush}" />
+                                                            <!-- Hover is reserved for the actual editable control, not the full card. -->
                                                         </MultiDataTrigger>
                                                         <Trigger SourceName="CurrentValueBox" Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="CurrentValueBox" Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
                                                             <Setter TargetName="WheelHintMinus" Property="Visibility" Value="Visible" />
                                                             <Setter TargetName="WheelHintPlus" Property="Visibility" Value="Visible" />
                                                         </Trigger>

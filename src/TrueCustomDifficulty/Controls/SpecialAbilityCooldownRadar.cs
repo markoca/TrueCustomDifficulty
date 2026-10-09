@@ -189,14 +189,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
             new Point(rail.Left, y), new Point(currentX, y));
         dc.DrawLine(new Pen(muted, 2.2),
             new Point(baseX, y - 14.0), new Point(baseX, y + 14.0));
-        if (hovered || selected)
-        {
-            dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.24 : 0.13),
-                null, new Point(currentX, y),
-                hovered ? 20.0 : 15.0, hovered ? 20.0 : 15.0);
-            dc.DrawEllipse(null, new Pen(CloneWithOpacity(accent, 0.8), 1.8),
-                new Point(currentX, y), 12.0, 12.0);
-        }
+        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
         dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 3.0 : 1.8),
             new Point(currentX, y), 9.0, 9.0);
         dc.DrawLine(new Pen(accent, 2.2),
@@ -264,14 +257,7 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
             new Point(center, rail.Bottom), new Point(center, currentY));
         dc.DrawLine(new Pen(muted, 2.2),
             new Point(center + 13.0, baseY), new Point(center + 29.0, baseY));
-        if (hovered || selected)
-        {
-            dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.24 : 0.13),
-                null, new Point(center, currentY),
-                hovered ? 20.0 : 15.0, hovered ? 20.0 : 15.0);
-            dc.DrawEllipse(null, new Pen(CloneWithOpacity(accent, 0.8), 1.8),
-                new Point(center, currentY), 12.0, 12.0);
-        }
+        ControlHoverGlow.Draw(dc, new Point(center, currentY), accent, hovered);
         dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 3.0 : 1.8),
             new Point(center, currentY), 9.0, 9.0);
         dc.DrawLine(new Pen(accent, 2.2),

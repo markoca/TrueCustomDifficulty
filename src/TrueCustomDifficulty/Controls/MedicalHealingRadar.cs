@@ -142,6 +142,8 @@ public sealed class MedicalHealingRadar : FrameworkElement
                 new Point(box.Left + 10, box.Top + 17),
                 new Point(box.Left + 19, box.Top + 6));
         }
+        ControlHoverGlow.Draw(dc, new Point(box.Left + 12, box.Top + 12), accent,
+            _hoverAction == HitAction.Food && _hoverRow == -1);
         DrawText(dc, state ? "ON" : "OFF",
             new Point(food.Left + 12, food.Top + 46), 11, text, FontWeights.Bold);
         _hits.Add(new HitArea(food, -1, HitAction.Food));
@@ -178,6 +180,10 @@ public sealed class MedicalHealingRadar : FrameworkElement
             dc.DrawRectangle(CloneWithOpacity(accent, .65), null,
                 new Rect(centerX - barWidth / 2, barTop,
                     barWidth, Math.Max(0.5, barBottom - barTop)));
+            // The chart column edits the same source as its slider, so only
+            // the top of the active bar gets the shared handle halo.
+            ControlHoverGlow.Draw(dc, new Point(centerX, barTop), accent,
+                _hoverRow == i && _hoverAction == HitAction.Chart);
             dc.DrawLine(new Pen(muted, 2.4),
                 new Point(centerX - barWidth / 2 - 11, vanillaY),
                 new Point(centerX + barWidth / 2 + 11, vanillaY));
@@ -237,6 +243,8 @@ public sealed class MedicalHealingRadar : FrameworkElement
         }
         dc.DrawLine(new Pen(muted, 1.8),
             new Point(referenceX, y - 11), new Point(referenceX, y + 11));
+        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent,
+            _hoverRow == row && _hoverAction == HitAction.Slider);
         dc.DrawEllipse(panel, new Pen(accent, 1.9),
             new Point(currentX, y), 7, 7);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.7, 2.7);

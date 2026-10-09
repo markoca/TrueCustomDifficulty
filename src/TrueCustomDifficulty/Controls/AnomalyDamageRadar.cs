@@ -199,6 +199,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
         dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX, y - 5.0), new Point(vanillaX, y + 5.0));
         dc.DrawLine(new Pen(accent, 3.0), new Point(track.Left, y), new Point(currentX, y));
+        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
         dc.DrawEllipse(panel, new Pen(accent, selected ? 2.4 : 1.4), new Point(currentX, y), 5.1, 5.1);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.2, 2.2);
 

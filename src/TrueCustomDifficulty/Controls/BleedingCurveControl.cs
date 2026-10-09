@@ -39,6 +39,7 @@ public sealed class BleedingCurveControl : FrameworkElement
     private Rect _mediumThresholdHitRect;
     private Rect _severeThresholdHitRect;
 
+    private DragTarget _hoverTarget = DragTarget.None;
     private DragTarget _dragTarget = DragTarget.None;
     private DragTarget _selectedTarget = DragTarget.LowDamage;
 
@@ -255,6 +256,8 @@ public sealed class BleedingCurveControl : FrameworkElement
         }
 
         var handleX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, trackLeft, trackRight);
+        ControlHoverGlow.Draw(dc, new Point(handleX, trackY), accent,
+            _hoverTarget == (parameter.Id == SeverityId ? DragTarget.Severity : DragTarget.Recovery));
         dc.DrawEllipse(accent, null, new Point(handleX, trackY), 5.0, 5.0);
 
         // On the difficulty-specific rail, reserve the lower lane for N, S/V, M
@@ -401,6 +404,8 @@ public sealed class BleedingCurveControl : FrameworkElement
             var selected = DamageTargetForIndex(i) == _selectedTarget;
             var radius = selected ? 7.0 : 5.5;
 
+            ControlHoverGlow.Draw(dc, points[i], accent,
+                _hoverTarget == DamageTargetForIndex(i));
             dc.DrawEllipse(panel, new Pen(accent, selected ? 2.2 : 1.5), points[i], radius, radius);
             dc.DrawEllipse(accent, null, points[i], 2.8, 2.8);
 
@@ -417,6 +422,8 @@ public sealed class BleedingCurveControl : FrameworkElement
             {
                 dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX[i], _plotRect.Bottom - 6.0), new Point(vanillaX[i], _plotRect.Bottom + 8.0));
                 dc.DrawLine(new Pen(accent, IsSelectedThreshold(i) ? 2.8 : 2.0), new Point(x[i], _plotRect.Bottom - 8.0), new Point(x[i], _plotRect.Bottom + 9.0));
+                ControlHoverGlow.Draw(dc, new Point(x[i], _plotRect.Bottom + 3.0), accent,
+                    _hoverTarget == (i == 1 ? DragTarget.MediumThreshold : DragTarget.SevereThreshold));
                 dc.DrawEllipse(panel, new Pen(accent, IsSelectedThreshold(i) ? 2.4 : 1.5), new Point(x[i], _plotRect.Bottom + 3.0), 5.5, 5.5);
             }
 
@@ -513,6 +520,17 @@ public sealed class BleedingCurveControl : FrameworkElement
             _severeThresholdHitRect.Contains(point) ||
             FindDamageColumn(point) >= 0;
 
+        var hovered = _severityTrackRect.Contains(point) ? DragTarget.Severity
+            : _recoveryTrackRect.Contains(point) ? DragTarget.Recovery
+            : _mediumThresholdHitRect.Contains(point) ? DragTarget.MediumThreshold
+            : _severeThresholdHitRect.Contains(point) ? DragTarget.SevereThreshold
+            : FindDamageColumn(point) is var row && row >= 0
+                ? DamageTargetForIndex(row) : DragTarget.None;
+        if (_hoverTarget != hovered)
+        {
+            _hoverTarget = hovered;
+            InvalidateVisual();
+        }
         Cursor = interactive ? Cursors.Hand : Cursors.Arrow;
 
         if (_dragTarget == DragTarget.None || e.LeftButton != MouseButtonState.Pressed)
@@ -540,6 +558,14 @@ public sealed class BleedingCurveControl : FrameworkElement
         }
 
         e.Handled = true;
+    }
+
+    protected override void OnMouseLeave(MouseEventArgs e)
+    {
+        base.OnMouseLeave(e);
+        _hoverTarget = DragTarget.None;
+        Cursor = Cursors.Arrow;
+        InvalidateVisual();
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)

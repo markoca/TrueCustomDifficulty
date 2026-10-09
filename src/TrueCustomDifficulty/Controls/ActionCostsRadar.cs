@@ -527,8 +527,8 @@ public sealed class ActionCostsRadar : FrameworkElement
             point,
             5.5,
             5.5);
-        if (ReferenceEquals(_hoverParameter, parameter))
-            dc.DrawEllipse(null, new Pen(CloneWithOpacity(accent, 0.55), 1.6), point, 10.0, 10.0);
+        ControlHoverGlow.Draw(dc, point, accent,
+            ReferenceEquals(_hoverParameter, parameter));
         dc.DrawEllipse(accent, null, point, 2.4, 2.4);
     }
 

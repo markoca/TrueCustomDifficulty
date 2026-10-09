@@ -27,6 +27,10 @@
         <SolidColorBrush x:Key="MutedTextBrush" Color="#8E9188" />
         <SolidColorBrush x:Key="RadarMutedTextBrush" Color="#B8BBB2" />
         <SolidColorBrush x:Key="AccentBrush" Color="#F0C419" />
+        <!-- Shared WPF hover effect: same hue, radius and strength as ControlHoverGlow. -->
+        <DropShadowEffect x:Key="UniversalHoverGlowEffect"
+                          Color="#F0C419" BlurRadius="15"
+                          ShadowDepth="0" Opacity="0.67" />
         <SolidColorBrush x:Key="AccentHoverBrush" Color="#FFD438" />
         <SolidColorBrush x:Key="AccentDarkBrush" Color="#806B12" />
         <SolidColorBrush x:Key="SectionAccentBrush" Color="#5B501E" />
@@ -71,6 +75,7 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="ButtonFrame" Property="Background" Value="{StaticResource PanelHoverBrush}" />
+                                <Setter TargetName="ButtonFrame" Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
                                 <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
                                 <Setter Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
                             </Trigger>
@@ -115,6 +120,7 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="PrimaryFrame" Property="Background" Value="{StaticResource AccentHoverBrush}" />
+                                <Setter TargetName="PrimaryFrame" Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="PrimaryFrame" Property="Background" Value="{StaticResource AccentDarkBrush}" />
@@ -148,6 +154,7 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="WindowButtonSurface" Property="Background" Value="{StaticResource PanelHoverBrush}" />
+                                <Setter TargetName="WindowButtonSurface" Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
                                 <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
@@ -245,6 +252,7 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
+                                <Setter TargetName="OuterBorder" Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
                             </Trigger>
                             <Trigger Property="IsDropDownOpen" Value="True">
                                 <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
@@ -276,6 +284,7 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsHighlighted" Value="True">
                                 <Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource PanelHoverBrush}" />
+                                <Setter TargetName="ItemBorder" Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
                                 <Setter Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
@@ -297,6 +306,11 @@
             <Setter Property="SelectionBrush" Value="{StaticResource AccentDarkBrush}" />
             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
             <Setter Property="BorderThickness" Value="1" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <!-- Boolean controls use a compact switch instead of a checkbox. -->
@@ -333,7 +347,7 @@
                                 <Setter TargetName="SwitchThumb" Property="Fill" Value="{StaticResource AccentBrush}" />
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="SwitchTrack" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="SwitchThumb" Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.45" />
@@ -400,6 +414,7 @@
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="TabBorder" Property="Background" Value="{StaticResource PanelHoverBrush}" />
+                                <Setter TargetName="TabBorder" Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
                                 <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -445,6 +460,7 @@
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter TargetName="SliderThumb" Property="BorderBrush" Value="{StaticResource AccentHoverBrush}" />
+                                                        <Setter TargetName="SliderThumb" Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
                                                     </Trigger>
                                                     <Trigger Property="IsDragging" Value="True">
                                                         <Setter TargetName="SliderThumb" Property="Background" Value="{StaticResource AccentHoverBrush}" />
@@ -472,9 +488,7 @@
                 <DataTrigger Binding="{Binding IsModified}" Value="True">
                     <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
                 </DataTrigger>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
-                </Trigger>
+                <!-- Hover never recolors the whole slider rail; the thumb glows. -->
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter Property="Opacity" Value="0.55" />
                 </Trigger>

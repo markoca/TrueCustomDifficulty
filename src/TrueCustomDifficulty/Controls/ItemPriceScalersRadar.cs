@@ -210,10 +210,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         dc.DrawLine(new Pen(muted, 1.8),
             new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
 
-        // Never accent the whole card on hover; only the editable control point.
-        if (hovered)
-            dc.DrawEllipse(CloneWithOpacity(accent, 0.17), null,
-                new Point(currentX, y), 12.0, 12.0);
+        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
         dc.DrawEllipse(panel, new Pen(accent,
                 selected || hovered ? 2.5 : 1.5),
             new Point(currentX, y), 6.0, 6.0);

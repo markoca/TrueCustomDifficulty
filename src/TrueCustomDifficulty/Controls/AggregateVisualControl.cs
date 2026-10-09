@@ -262,21 +262,62 @@ public sealed class AggregateVisualControl : FrameworkElement
                 break;
         }
 
-        // Subtle, consistent feedback for interactive tracks and toggles across
-        // every aggregate family. Previews have no HitTarget and stay read-only.
-        var activeTarget = _dragTarget ?? _hoverTarget;
-        if (activeTarget is null && IsKeyboardFocused && _selectedParameter is not null)
-            activeTarget = _hitTargets.FirstOrDefault(target =>
-                ReferenceEquals(target.Parameter, _selectedParameter)
-                && (_selectedHitKind is null || target.Kind == _selectedHitKind));
-
-        // Handles own their circular hover/selection glow; no hit-box rectangles.
-        // Reset notices are intentionally silent across the visual control system.
+        // One canonical overlay owns hover feedback for all ordinary native
+        // horizontal / vertical / range / choice handles and switch indicators.
+        // Graph joint handles call the same helper at their derived coordinates.
+        DrawHoveredHandle(dc, accent);
     }
 
 
 
 
+
+    private void DrawHoveredHandle(DrawingContext dc, Brush accent)
+    {
+        var target = _hoverTarget;
+        if (target is null || !target.Parameter.IsControlEnabled)
+            return;
+
+        var source = target.Parameter;
+        // Crosshair X/Y handles already draw the exact shared glow at their
+        // own axes. Avoid a second overlay from their broad plot map rect.
+        if (Family is "HumanCombatProfile" or "PsyPhantomPressure"
+            && target.Kind is HitKind.Horizontal or HitKind.Vertical
+            && target.MapRect.Width > 100.0 && target.MapRect.Height > 100.0)
+            return;
+        var range = Math.Max(0.000001, target.VisualMaximum - target.VisualMinimum);
+        var center = target.Kind switch
+        {
+            HitKind.Horizontal => new Point(
+                ValueToX(source.CurrentNumber, target.VisualMinimum,
+                    target.VisualMaximum, target.MapRect, target.Reverse),
+                target.MapRect.Top + target.MapRect.Height / 2.0),
+            HitKind.Vertical => new Point(
+                target.MapRect.Left + target.MapRect.Width / 2.0,
+                ValueToY(source.CurrentNumber, target.VisualMinimum,
+                    target.VisualMaximum, target.MapRect)),
+            HitKind.RangeMin => new Point(
+                ValueToX(source.CurrentMinNumber, target.VisualMinimum,
+                    target.VisualMaximum, target.MapRect, false),
+                target.MapRect.Top + target.MapRect.Height / 2.0),
+            HitKind.RangeMax => new Point(
+                ValueToX(source.CurrentMaxNumber, target.VisualMinimum,
+                    target.VisualMaximum, target.MapRect, false),
+                target.MapRect.Top + target.MapRect.Height / 2.0),
+            HitKind.Choice => new Point(
+                target.MapRect.Left + target.MapRect.Width *
+                    Math.Clamp((source.ChoiceIndex - target.VisualMinimum) / range, 0.0, 1.0),
+                target.MapRect.Top + target.MapRect.Height / 2.0),
+            HitKind.Toggle => new Point(
+                target.HitRect.Right - 28.0,
+                target.HitRect.Top + target.HitRect.Height / 2.0),
+            // Hovering the reference/Base marker must remain unobtrusive.
+            _ => new Point(double.NaN, double.NaN)
+        };
+
+        if (double.IsFinite(center.X) && double.IsFinite(center.Y))
+            ControlHoverGlow.Draw(dc, center, accent, hovered: true);
+    }
 
     // The original difficulty multiplier is the only editable source value.
     // The second band compares it to the selected Base Preset: it is not
@@ -452,9 +493,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
 
         var hovered = ReferenceEquals(_hoverTarget?.Parameter, parameter);
-        if (hovered)
-            dc.DrawEllipse(CloneWithOpacity(accent, 0.17), null,
-                new Point(x, y), 12.0, 12.0);
+
         dc.DrawEllipse(panel, new Pen(accent,
             hovered || IsSelected(parameter) ? 2.5 : 1.5),
             new Point(x, y), 6.0, 6.0);
@@ -656,8 +695,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         bool frameless = false)
     {
         var selected = IsSelected(parameter);
-        var hover = parameter is not null
-            && ReferenceEquals(_hoverTarget?.Parameter, parameter);
         var enabled = parameter?.IsControlEnabled == true;
         var foreground = enabled ? text : muted;
         var valueBrush = !enabled ? muted :
@@ -715,9 +752,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawLine(new Pen(muted, 2.2),
             new Point(center + 13.0, baseY),
             new Point(center + 29.0, baseY));
-        if (frameless && hover)
-            dc.DrawEllipse(CloneWithOpacity(accent, 0.20), null,
-                new Point(center, currentY), 18.0, 18.0);
+
         dc.DrawEllipse(panel,
             new Pen(accent, selected ? 2.4 : 1.7),
             new Point(center, currentY), 9.0, 9.0);
@@ -1940,14 +1975,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         // The X, Y and joint handles intentionally share one visual language.
         // Draw the halo outside the ring so the current value remains legible.
-        if (hovered || selected)
-        {
-            dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.24 : 0.13),
-                null, center, hovered ? 20.0 : 15.0, hovered ? 20.0 : 15.0);
-            dc.DrawEllipse(null,
-                new Pen(CloneWithOpacity(accent, hovered ? 0.90 : 0.55), hovered ? 2.2 : 1.4),
-                center, hovered ? 12.0 : 10.0, hovered ? 12.0 : 10.0);
-        }
+        ControlHoverGlow.Draw(dc, center,
+            Application.Current?.TryFindResource("AccentBrush") as Brush ?? accent,
+            hovered);
         dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 3.0 : 1.8),
             center, 7.0, 7.0);
         dc.DrawEllipse(accent, null, center, 2.6, 2.6);
@@ -2483,8 +2513,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawLine(new Pen(muted, 2), new Point(center + 12, baseY),
             new Point(center + 24, baseY));
         var hovered = ReferenceEquals(_hoverTarget?.Parameter, parameter);
-        if (hovered)
-            dc.DrawEllipse(CloneWithOpacity(accent, .18), null, new Point(center, y), 15, 15);
+
         dc.DrawEllipse(panel, new Pen(parameter.IsControlEnabled ? accent : muted,
             IsSelected(parameter) ? 2.6 : 1.8), new Point(center, y), 8.5, 8.5);
         dc.DrawLine(new Pen(accent, 2), new Point(center - 6, y), new Point(center + 6, y));
@@ -3902,10 +3931,9 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var active = parameter.CurrentBoolean;
         var hovered = parameter.IsControlEnabled && ReferenceEquals(_hoverTarget?.Parameter, parameter);
-        var fill = active ? CloneWithOpacity(accent, 0.18)
-            : hovered ? CloneWithOpacity(accent, 0.09) : panel;
+        var fill = active ? CloneWithOpacity(accent, 0.18) : panel;
         dc.DrawRoundedRectangle(fill,
-            new Pen(active || hovered ? accent : border, active || hovered ? 1.8 : 1.0),
+            new Pen(active ? accent : border, active ? 1.8 : 1.0),
             rect, 4.0, 4.0);
 
         // Reserve a fixed status lane before measuring the caption, so a

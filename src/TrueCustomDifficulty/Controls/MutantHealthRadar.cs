@@ -202,10 +202,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         dc.DrawLine(new Pen(muted, 1.8),
             new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
 
-        // Hover glow belongs to the actual control point only.
-        if (hovered)
-            dc.DrawEllipse(CloneWithOpacity(accent, 0.17), null,
-                new Point(currentX, y), 12.0, 12.0);
+        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
         dc.DrawEllipse(panel,
             new Pen(accent, hovered || selected ? 2.5 : 1.5),
             new Point(currentX, y), 6.0, 6.0);

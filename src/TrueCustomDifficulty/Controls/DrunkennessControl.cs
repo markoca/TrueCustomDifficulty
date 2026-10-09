@@ -33,6 +33,7 @@ public sealed class DrunkennessControl : FrameworkElement
     private Rect _beerSliderRect;
     private Rect _vodkaSliderRect;
     private bool _isDraggingSlider;
+    private ActiveSlider? _hoverSlider;
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -253,6 +254,8 @@ public sealed class DrunkennessControl : FrameworkElement
         dc.DrawLine(new Pen(track, 3.0), new Point(sliderLeft, sliderY), new Point(sliderRight, sliderY));
 
         var handleX = ValueToX(strength, minimum, maximum, sliderLeft, sliderRight);
+        ControlHoverGlow.Draw(dc, new Point(handleX, sliderY), accent,
+            _hoverSlider == slider);
         dc.DrawEllipse(accent, null, new Point(handleX, sliderY), 5.0, 5.0);
 
         var vanillaX = ValueToX(vanillaStrength, minimum, maximum, sliderLeft, sliderRight);
@@ -470,8 +473,14 @@ public sealed class DrunkennessControl : FrameworkElement
             return;
         }
 
-        var interactive = _beerSliderRect.Contains(point) || _vodkaSliderRect.Contains(point);
-        Cursor = interactive ? Cursors.Hand : Cursors.Arrow;
+        var next = _beerSliderRect.Contains(point) ? ActiveSlider.Beer
+            : _vodkaSliderRect.Contains(point) ? ActiveSlider.Vodka : (ActiveSlider?)null;
+        if (_hoverSlider != next)
+        {
+            _hoverSlider = next;
+            InvalidateVisual();
+        }
+        Cursor = next is not null ? Cursors.Hand : Cursors.Arrow;
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -489,7 +498,9 @@ public sealed class DrunkennessControl : FrameworkElement
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
+        _hoverSlider = null;
         Cursor = Cursors.Arrow;
+        InvalidateVisual();
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
