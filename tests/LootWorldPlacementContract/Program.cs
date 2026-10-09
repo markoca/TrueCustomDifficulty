@@ -83,6 +83,27 @@ internal static class Program
         Check(DetectorDirect.Count(x=>x[0]=="base")==4 &&
             DetectorDirect.Count(x=>x[0]=="dlc1")==3,
             "Detector source DLC split");
+        // Independent original ZIP audit: six weapon generator entries
+        // contain Chance/MinCount/MaxCount in nested Upgrades or Attaches,
+        // never as direct PossibleItems leaf fields. Do not let a future
+        // manifest rebuild silently flatten those nested mechanics.
+        var nestedOnly = new Dictionary<string, int[]>(StringComparer.Ordinal)
+        {
+            ["CityCenter_PolissyaHotel_StashGenerator3_07727ED446A8EB9D0F56B3ABB9542CAD"] = new[] { 7, 13, 14 },
+            ["Garbage_DigSite_StashGenerator2_C59BE52D481BCA2E1EB1CE816B67EF71"] = new[] { 13, 14 },
+            ["Garbage_Factory_StashGenerator4_B3F81A794CB50D8DD300F794E6FDAF25"] = new[] { 13, 14 },
+            ["Jupiter_Market_StashGenerator2_A3B04A9949CA27AA3E62FD9F3CD08ECD"] = new[] { 7, 13, 14 },
+            ["LesserZone_ARMS_StashGenerator2_A4D6A1EA48DDDEE35883379DFFD93F81"] = new[] { 13, 14 },
+            ["STCMalachite__StashGenerator_464E8FB14AEEC7B154602AB22BEA1EBC"] = new[] { 7, 13, 14 }
+        };
+        Check(nestedOnly.Sum(x => x.Value.Length) == 15,
+            "Expected exactly 15 originally nested source properties");
+        foreach (var (sid, fields) in nestedOnly)
+        {
+            var row = WeaponGenerator.Single(x => x[1] == sid);
+            Check(fields.All(index => string.IsNullOrWhiteSpace(row[index])),
+                "Weapon generator manifest misattributes nested upgrade/attachment values to the item: " + sid);
+        }
         var ids=new[]{"loot.worldWeaponShuffle","loot.worldWeaponDensity",
             "loot.worldAttachmentShuffle","loot.worldDetectors","loot.blueprintShuffle"};
         var vm=new MainViewModel(Catalog);
