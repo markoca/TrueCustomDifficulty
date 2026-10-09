@@ -5599,14 +5599,14 @@
       "id": "loot.npcWeaponAmmoSupply",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
-      "label": "NPC Dropped Ammo Amount",
-      "description": "Scales AmmoMinCount/AmmoMaxCount attached to the weapon row selected for an ordinary repeatable human NPC. The ammunition follows that specific weapon.",
+      "label": "NPC Ammo Amount",
+      "description": "Scales the generic NPC_Ammo_Smart bonus ammunition stacks on ordinary NPC corpses. This is not NPC weapon-attached ammo and not Breakable Box Ammo.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "NPC weapon ammo"
+        "valueLabel": "NPC corpse ammo amount"
       },
       "vanilla": {
         "All": 1
@@ -5623,24 +5623,26 @@
       "targets": [
         {
           "scope": "baseGame",
-          "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "33 audited repeatable-human loadout generators",
-          "path": "121 direct weapon rows AmmoMinCount + AmmoMaxCount/AmmoMaxcount",
-          "operation": "scaleIntegerHalfUpPreserveZero"
+          "file": "GameData/StashPrototypes.cfg",
+          "prototype": "TCD_NPC_Ammo_Smart (selected-difficulty clone)",
+          "path": "ItemGenerators[*].SmartLootParams.PrimaryWeaponParams[*].Items[*].MinCount/MaxCount; CorpseSmartLoot.GeneralNPC on selected difficulty",
+          "operation": "cloneAndScaleNpcSmartLootAmmoCounts"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Production-only audit locks this control to the same 121 direct weapon rows across 33 repeatable standard-human loadout roots.",
-          "All 121 rows expose AmmoMinCount and an ammo maximum: 118 spell it AmmoMaxCount and three use AmmoMaxcount; the writer preserves the source spelling.",
-          "81 rows have a zero vanilla minimum and 40 have a positive minimum. Zero values remain zero under scaling. Two Prologue and four named MIK/Mykluha roots are excluded.",
-          "Runtime verification will later determine the most precise player-facing interpretation of these attached-ammo counts."
+          "Exact source data: 43 NPC_Ammo_Smart item rows across 24 PrimaryWeaponParams groups and four ranks; matches GameData/StashPrototypes.cfg supplied dump row-for-row (FNV32 0x61073f67).",
+          "Only MinCount/MaxCount are scaled in a source-derived clone with integer-half-up rounding; native MinSpawnChance, MaxSpawnChance, PriorityCaliber, MainWeaponAmmoCount, Weight and item/rank eligibility remain inherited.",
+          "Only the selected difficulty GeneralNPC CorpseSmartLoot list references the clone. Medicine + Ammo activates it; Water or None leaves the player-selected multiplier saved but causes no ammo override.",
+          "Breakable ammo uses the separate ItemGeneratorPrototypes.cfg DestructibleStash_AmmoSNG/NATO generator clones and is never affected by this control.",
+          "Legacy weapon-attached AmmoMinCount/AmmoMaxCount edits on 121 NPC weapon rows are retired (242 direct edit points removed).",
+          "Actual in-game corpse drop result and source-derived clone inheritance require a Wine build and runtime test."
         ]
       },
-      "rationale": "Uses the complete isolated attached-ammo surface without touching shared loose-ammo pools or inventing ammo rows.",
-      "logic": "1x keeps vanilla dropped-ammo amounts. Lower settings make NPC weapons carry less spare ammo; higher settings make them carry more.",
-      "interaction": "This changes how much matching weapon ammo the NPC carries with the selected weapon. It does not choose the weapon or caliber, and it does not alter loose-ammo loot, corpse bonus loot, traders, zombies or named/story loadouts."
+      "rationale": "Controls generic bonus ammo counts on ordinary human NPC corpses when the Extra Corpse Loot choice enables Medicine + Ammo. No effect on weapon-attached spare ammo or breakable boxes.",
+      "logic": "At 1x, use the source stack amounts from NPC_Ammo_Smart. At 0x, source item counts are zero. Higher settings scale existing counts with integer-half-up, without altering chance or caliber eligibility. Water/None disables the package while retaining this preset value.",
+      "interaction": "Extra Corpse Loot activates the bonus package, while the NPC Ammo slider adjusts its item counts. Newbie rank source examples: 12 Gauge 2–6, 5.45 15–20, .45 ACP 8–12. These examples are independent of the Breakable Box Ammo Yield slider."
     },
     {
       "id": "loot.droppedWeaponCondition",
