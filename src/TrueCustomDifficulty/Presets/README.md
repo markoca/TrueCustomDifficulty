@@ -24,3 +24,5 @@ Medical realism rules in the hard presets:
 
 The Food Restores Health toggle only affects ordinary Bread, Fresh Bread,
 Canned Food and Sausage. Weird Kettle alternative effects are intentionally untouched.
+
+Rebuilt playstyle descriptions and verified 201-entry catalogue coverage are maintained in `docs/FACTORY-PRESETS.md`. Factory presets are curated starting points; loading one retains the usual Base difficulty and CFG writer behavior.
