@@ -226,7 +226,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             rank.Label,
             new Point(left, top + 14.0),
             9.0,
-            modified ? accent : text,
+            text,
             FontWeights.Bold);
 
         var currentCap = EffectiveCap(rank.VanillaCap, parameter.CurrentNumber);
@@ -249,7 +249,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             muted,
             FontWeights.Normal);
 
-        var track = new Rect(trackLeft, top + 24.0, trackWidth, 12.0);
+        var track = new Rect(trackLeft, top + 25.0, trackWidth, 10.0);
         var y = track.Top + track.Height / 2.0;
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
 
