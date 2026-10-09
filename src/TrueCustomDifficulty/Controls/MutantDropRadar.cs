@@ -141,7 +141,7 @@ public sealed class MutantDropRadar : FrameworkElement
 
         _targets.Clear();
 
-        DrawCenteredText(dc, "MUTANT PART DROP CHANCES", new Point(ActualWidth / 2.0, 21.0),
+        DrawCenteredText(dc, "MUTANT PART DROPS", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
 
 
