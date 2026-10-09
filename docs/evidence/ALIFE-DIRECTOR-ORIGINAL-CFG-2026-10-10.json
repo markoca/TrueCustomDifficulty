@@ -1,0 +1,371 @@
+{
+  "schemaVersion": 1,
+  "phase": 13,
+  "date": "2026-10-10",
+  "status": "PASS - original decoded CFG checks independently executed",
+  "originalArchives": [
+    {
+      "name": "STALKER2-GameData-CFG(2)(2).zip",
+      "size": 31408298,
+      "sha256": "7610b16218310c7345796ff26b1554c73e3d2ca775f6a50108a7406cb7f33da1"
+    },
+    {
+      "name": "STALKER2-DLC1-CFG(2)(2).zip",
+      "size": 6207878,
+      "sha256": "3c5cb53f1769619b510ae3780142d92639c083a4a755a8717a267710c3c849e6"
+    }
+  ],
+  "originalFile": {
+    "name": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg",
+    "sha256": "f44252ad581b0c5018c64c5148d20aa2674340a9dabc8568c9d97ffdce307b21",
+    "decodedBytes": 80160,
+    "rootPrototype": "ALifeDirectorPreset",
+    "rootSid": "Default"
+  },
+  "structure": {
+    "playerRankIds": [
+      "ERank::Newbie",
+      "ERank::Experienced",
+      "ERank::Veteran",
+      "ERank::Master"
+    ],
+    "rankIndices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "speciesSlotIndices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  "counts": {
+    "catalogIds": 19,
+    "productionViewModelIds": 18,
+    "sourceOnlyCatalogId": "alife.mutantSpawn.generic",
+    "totalDirectRows": 64,
+    "exactSourceValues": 64,
+    "exactAgentTypes": 64,
+    "exactRankTypeFields": 4,
+    "inherited": 0,
+    "mismatch": 0,
+    "originalAuthoredZeroRows": 2
+  },
+  "rows": [
+    {
+      "slot": 0,
+      "agentType": "EAgentType::Human",
+      "rankMaxCount": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "parameterIds": [
+        "alife.humanGroupSize.newbie",
+        "alife.humanGroupSize.experienced",
+        "alife.humanGroupSize.veteran",
+        "alife.humanGroupSize.master"
+      ],
+      "operation": "scaleIntegerHalfUp"
+    },
+    {
+      "slot": 1,
+      "agentType": "EAgentType::MutantGeneric",
+      "rankMaxCount": [
+        3,
+        4,
+        4,
+        4
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.generic",
+        "alife.mutantSpawn.generic",
+        "alife.mutantSpawn.generic",
+        "alife.mutantSpawn.generic"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 2,
+      "agentType": "EAgentType::Bloodsucker",
+      "rankMaxCount": [
+        0,
+        1,
+        1,
+        1
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.bloodsucker",
+        "alife.mutantSpawn.bloodsucker",
+        "alife.mutantSpawn.bloodsucker",
+        "alife.mutantSpawn.bloodsucker"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 3,
+      "agentType": "EAgentType::Blinddog",
+      "rankMaxCount": [
+        4,
+        6,
+        8,
+        12
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.blindDog",
+        "alife.mutantSpawn.blindDog",
+        "alife.mutantSpawn.blindDog",
+        "alife.mutantSpawn.blindDog"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 4,
+      "agentType": "EAgentType::Flesh",
+      "rankMaxCount": [
+        2,
+        3,
+        5,
+        6
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.flesh",
+        "alife.mutantSpawn.flesh",
+        "alife.mutantSpawn.flesh",
+        "alife.mutantSpawn.flesh"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 5,
+      "agentType": "EAgentType::Controller",
+      "rankMaxCount": [
+        0,
+        1,
+        1,
+        1
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.controller",
+        "alife.mutantSpawn.controller",
+        "alife.mutantSpawn.controller",
+        "alife.mutantSpawn.controller"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 6,
+      "agentType": "EAgentType::Poltergeist",
+      "rankMaxCount": [
+        1,
+        1,
+        2,
+        2
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.poltergeist",
+        "alife.mutantSpawn.poltergeist",
+        "alife.mutantSpawn.poltergeist",
+        "alife.mutantSpawn.poltergeist"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 7,
+      "agentType": "EAgentType::Snork",
+      "rankMaxCount": [
+        1,
+        3,
+        4,
+        6
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.snork",
+        "alife.mutantSpawn.snork",
+        "alife.mutantSpawn.snork",
+        "alife.mutantSpawn.snork"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 8,
+      "agentType": "EAgentType::Boar",
+      "rankMaxCount": [
+        2,
+        3,
+        5,
+        6
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.boar",
+        "alife.mutantSpawn.boar",
+        "alife.mutantSpawn.boar",
+        "alife.mutantSpawn.boar"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 9,
+      "agentType": "EAgentType::Chimera",
+      "rankMaxCount": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.chimera",
+        "alife.mutantSpawn.chimera",
+        "alife.mutantSpawn.chimera",
+        "alife.mutantSpawn.chimera"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 10,
+      "agentType": "EAgentType::Cat",
+      "rankMaxCount": [
+        1,
+        1,
+        1,
+        2
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.bayun",
+        "alife.mutantSpawn.bayun",
+        "alife.mutantSpawn.bayun",
+        "alife.mutantSpawn.bayun"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 11,
+      "agentType": "EAgentType::Tushkan",
+      "rankMaxCount": [
+        6,
+        8,
+        12,
+        16
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.tushkan",
+        "alife.mutantSpawn.tushkan",
+        "alife.mutantSpawn.tushkan",
+        "alife.mutantSpawn.tushkan"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 12,
+      "agentType": "EAgentType::RatSwarm",
+      "rankMaxCount": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.ratSwarm",
+        "alife.mutantSpawn.ratSwarm",
+        "alife.mutantSpawn.ratSwarm",
+        "alife.mutantSpawn.ratSwarm"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 13,
+      "agentType": "EAgentType::Burer",
+      "rankMaxCount": [
+        1,
+        1,
+        1,
+        2
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.burer",
+        "alife.mutantSpawn.burer",
+        "alife.mutantSpawn.burer",
+        "alife.mutantSpawn.burer"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 14,
+      "agentType": "EAgentType::PseudoDog",
+      "rankMaxCount": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.pseudodog",
+        "alife.mutantSpawn.pseudodog",
+        "alife.mutantSpawn.pseudodog",
+        "alife.mutantSpawn.pseudodog"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    },
+    {
+      "slot": 15,
+      "agentType": "EAgentType::Deer",
+      "rankMaxCount": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "parameterIds": [
+        "alife.mutantSpawn.deer",
+        "alife.mutantSpawn.deer",
+        "alife.mutantSpawn.deer",
+        "alife.mutantSpawn.deer"
+      ],
+      "operation": "scaleIntegerHalfUpPreserveZero"
+    }
+  ],
+  "zeroSlots": [
+    {
+      "rank": "Newbie",
+      "slot": 2,
+      "agentType": "EAgentType::Bloodsucker",
+      "originalMaxCount": 0
+    },
+    {
+      "rank": "Newbie",
+      "slot": 5,
+      "agentType": "EAgentType::Controller",
+      "originalMaxCount": 0
+    }
+  ],
+  "sourceCheck": {
+    "command": "python tools/audit_alife_director_source.py --base-zip BASE --dlc1-zip DLC1 --out audit/alife-director-structure.json",
+    "state": "source contents independently verified using supplied ZIPs"
+  },
+  "writerCheck": {
+    "scenarios": 94,
+    "ciJob": "alife-writer-windows",
+    "state": "Not yet verified at authoring"
+  },
+  "limitations": [
+    "This verifies the uploaded original decoded game source and current mapped path list; does not prove Unreal BPatch merge semantics",
+    "The extra MutantGeneric field is catalog-only, not shown to players or used as a cross-species cap",
+    "Lair populations, spawn frequency, quest-specific lairs, and gameplay remain unverified"
+  ]
+}
