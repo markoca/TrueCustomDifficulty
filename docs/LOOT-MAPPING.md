@@ -137,12 +137,32 @@ Dedicated F1 or RGD-5 pool depending on crate type; vanilla `1–2`, Weight 1.
 There is no fixed ammo pool. The control scales the `AmmoMinCount/AmmoMaxCount` payload attached to the NPC's selected weapon row. Authored zero minima remain zero.
 
 
-### Build-time physical crate reduction
+### Build-time physical world loot removal (current Phase 14B2)
 
-Physical crate presence is controlled separately from loot-generator contents. The current reduction surface is deliberately limited to the two supplied reference populations:
+Five distinct source-backed percentage sliders independently remove a random
+eligible subset of physical world actors. **0% is vanilla/no patch; 100%
+removes all audited actors in that domain.** Counts below are read from
+the actual embedded production manifests; the four crate categories do not
+overlap:
 
-- **Ammo crates:** toggle `loot.reduceAmmoCrates`; canonical population **1,042** base-game `D_WoodenAmmoCrate_01` actors from the supplied FULL pak. This includes SNG/NATO ammo pools plus the F1/RGD grenade-pool ammo crates present in that reference.
-- **Food & Drink crates:** toggle `loot.reduceFoodDrinkCrates`; canonical population **1,100** base-game `D_WoodenDSPCrate_01/02/03` actors from the supplied FULL pak.
-- **Boxes Removed:** `loot.crateRemovalPercent`, shared 0–100% slider. On each Build, the writer chooses exactly `round(N × percentage)` unique actors independently from each enabled category and emits `<ActorSID> : removenode`.
+| UI backing source | Base | DLC1 | Total |
+| --- | ---: | ---: | ---: |
+| `loot.worldAmmoCratesRemoved` (SNG/NATO/RGD, excludes F1) | 981 | 334 | **1,315** |
+| `loot.worldF1GrenadeBoxes` (dedicated F1 only) | 61 | 40 | **101** |
+| `loot.worldFoodDrinkCratesRemoved` | 1,100 | 108 | **1,208** |
+| `loot.worldMedicalCratesRemoved` | 709 | 159 | **868** |
+| `loot.looseWorldLootRemoved` (ordinary static/dynamic world pickups) | 5,996 | 1,237 | **7,233** |
 
-The random removal surface does not alter the item generators inside surviving crates. Medical, weapon, armor and DLC1 box populations remain outside the current control surface until separately supplied/audited. See `CRATE-SPAWN-AUDIT.md`.
+The old `loot.reduceAmmoCrates`, `loot.reduceFoodDrinkCrates`, and
+`loot.crateRemovalPercent` names belong to an obsolete prototype and
+are **not live controls**. The current F1 and broad ammo box physical
+actor manifests are **disjoint**; neither slider removes the other's
+population. Selection is build-time random without replacement and
+writes only `<ActorSID> : removenode` for each selected physical actor,
+preserving intact loot generators on surviving boxes.
+
+The separate World Weapon Shuffle, Density, Attachment Shuffle,
+Detector Removal and Blueprint Shuffle are limited to proven safe
+physical world locations. See [Phase 14B2](DEEP-CFG-AUDIT-PHASE14B2-WORLD-LOOT-2026-10-10.md),
+[crate audit](CRATE-SPAWN-AUDIT.md), and
+[F1 audit](generators/WORLD-F1-GRENADE-BOXES.md).

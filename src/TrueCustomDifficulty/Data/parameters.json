@@ -10446,7 +10446,7 @@
         "status": "runtime_test_required",
         "notes": [
           "0% is Vanilla and emits no removals for this category. 100% removes every audited eligible ammo/grenade crate actor.",
-          "Eligible population is 1,042 base-game actors plus 374 DLC1 actors when DLC1 is installed.",
+          "Eligible population is 981 base-game actors plus 334 DLC1 actors when DLC1 is installed. Dedicated F1 boxes are excluded and independently controlled.",
           "Selection is random without replacement at Build time."
         ]
       },
@@ -10505,7 +10505,7 @@
           "Selection is random without replacement on every Build.",
           "Each surviving box keeps its vanilla DestructibleStash_F1 generator, which yields 1-2 F1 grenades.",
           "This control affects only dedicated physical F1 boxes; NPC, trader, quest/reward and shared consumable-generator F1 entries are untouched.",
-          "World Ammo Boxes can additionally remove surviving F1 boxes because F1 boxes are part of the broader ammo/grenade box surface."
+          "World Ammo Boxes cannot remove dedicated F1 boxes: the audited F1 and ammo/RGD physical actor populations are disjoint."
         ]
       },
       "rationale": "Controls physical F1 box abundance directly using the same removed-percentage convention as the other world box controls.",
