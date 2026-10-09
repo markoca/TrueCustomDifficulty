@@ -91,3 +91,9 @@ prevents old NameError/path-regression failures from being declared fixed
 without at least executing the complete static validator. GitHub Actions
 status must be checked before claiming CI PASS. It does not perform .NET
 publishing or prove runtime effects in S.T.A.L.K.E.R. 2.
+
+The first GitHub Actions execution exposed an old stamina-audit dependency
+on `_acr_ids`, whose original definition was located in a retired Action
+Costs radar gate. The current source-backed seven-ID cohort is now declared
+explicitly for the stamina audit so the validator does not depend on
+historical geometry checks.

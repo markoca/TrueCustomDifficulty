@@ -1155,6 +1155,14 @@ else:
 
 verify_current_editor("Action Costs", "ActionCostsRadar", ("stamina.sprintCost", "stamina.jumpCost", "stamina.vaultCost", "stamina.meleeNormalCost", "stamina.meleeStrongCost", "stamina.butstockCost", "stamina.aimRegenCoef",), "actionCostParameterIds.Contains(p.Id)", ("IsActionCostAnchor", "IsActionCostMember"))
 
+# Seven Action Costs backings are all relevant to the stamina writer,
+# even though the visible card may expose only the aggregate anchor.
+_acr_ids = (
+    "stamina.sprintCost", "stamina.jumpCost", "stamina.vaultCost",
+    "stamina.meleeNormalCost", "stamina.meleeStrongCost",
+    "stamina.butstockCost", "stamina.aimRegenCoef",
+)
+
 # Stamina deep audit release gate (v0.2.46).
 _stamina_doc = DOCS / "STAMINA-CONTROL-DEEP-AUDIT.md"
 _stamina_ui = [p for p in parameters if p.get("tab") == "stamina" and p.get("exposeInUi", True)]
