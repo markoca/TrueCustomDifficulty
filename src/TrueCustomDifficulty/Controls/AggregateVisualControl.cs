@@ -432,7 +432,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         => parameter.Id switch
         {
             "economy.startingMoney" => value.ToString("N0", CultureInfo.InvariantCulture),
-            "economy.repairCostBase" => $"{value * 100.0:0.#}%",
+            "economy.repairCostBase" or "economy.traderMinBuyCondition" or "economy.itemValueFloor" => $"{value * 100.0:0.#}%",
             _ => $"{value:0.##}x"
         };
 
