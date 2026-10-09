@@ -115,7 +115,11 @@ public sealed class MainViewModel : ObservableObject
             "health.medkitHealing",
             "health.armyMedkitHealing",
             "health.ecoMedkitHealing",
-            "health.foodHealing"
+            "health.foodHealing",
+            // These are rendered by the RadiationTreatment composite.
+            // They are not top-level rows, but must have live backing VMs.
+            "health.ecoMedkitAntirad",
+            "health.antiRadRadiation"
         };
 
         var actionCostParameterIds = new HashSet<string>(StringComparer.Ordinal)
