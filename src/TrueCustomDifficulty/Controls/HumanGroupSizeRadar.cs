@@ -214,7 +214,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             selected
                 ? CloneWithOpacity(accent, 0.08)
                 : hovered
-                    ? CloneWithOpacity(accent, 0.09)
+                    ? CloneWithOpacity(panel, 0.02)
                     : CloneWithOpacity(panel, 0.01),
             new Pen(CloneWithOpacity(border, 0.45), 0.8),
             rowRect,
@@ -238,7 +238,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             currentCap.ToString("0", CultureInfo.InvariantCulture),
             new Point(capCenter, top + 17.0),
             13.0,
-            hovered ? accent : text,
+            text,
             FontWeights.Bold);
 
         DrawCenteredText(
