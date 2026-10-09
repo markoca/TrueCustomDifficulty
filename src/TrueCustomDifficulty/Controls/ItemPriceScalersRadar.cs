@@ -215,7 +215,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             info.Label,
             new Point(layout.LabelLeft, top + 7.0),
             8.7,
-            modified ? accent : text,
+            text,
             FontWeights.Bold);
 
         DrawCenteredText(
@@ -276,20 +276,12 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             3.0);
 
         DrawText(dc, "MUTANT PARTS", new Point(card.Left + 10.0, card.Top + 8.0), 8.8, text, FontWeights.Bold);
-        DrawText(
-            dc,
-            "direct base-value scale",
-            new Point(card.Left + 10.0, card.Top + 24.0),
-            9.0,
-            muted,
-            FontWeights.Normal);
-
         DrawRightAlignedText(
             dc,
             $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Right - 12.0, card.Top + 8.0),
             10.0,
-            accent,
+            parameter.IsValueModifiedFromReference() ? accent : text,
             FontWeights.Bold);
 
         var blindDogValue = 1000.0 * parameter.CurrentNumber;
