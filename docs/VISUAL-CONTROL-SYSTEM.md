@@ -823,3 +823,8 @@ The Bleeding Treatment card is now 407 DIP tall. Top: a full-width editable Band
 ### 2026-10-09 — Bandage joins the Bleeding Treatment chart
 
 Bleeding Treatment now uses one interactive four-column chart for Bandage, Medkit, Army Medkit, and Scientific Medkit. A shared 0–200 bleeding-points scale compares actual values; each column has a grey vanilla/Base tick (100, 15, 35, 25 respectively), independently editable underlying CFG value, original legal range, and 5-point snapping. Remove the standalone Bandage slider, explanatory footer and duplicate preview. Numeric values follow changed-only yellow/enlarged styling; all other text stays neutral. Board height: 376 DIP.
+
+
+### 2026-10-09 — Factory presets: role-first balancing
+
+All seven factory profiles were rebuilt across combat, mutant health/cooldowns, environment, stamina/movement, health/medicine, economy, equipment wear and loot while retaining their 201 existing catalogue entries and source baseline difficulty. Do not infer new UI components or a new in-game difficulty from profile differences. Existing yellow-modified-number rule applies when values differ from the selected baseline. Profile-specific rationales and guardrails are described in `docs/FACTORY-PRESETS.md`.
