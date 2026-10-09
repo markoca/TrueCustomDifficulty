@@ -258,6 +258,6 @@ and [original file SHA-256 and 16-slot matrix](evidence/ALIFE-DIRECTOR-ORIGINAL-
 
 `pre_release.py source` runs both B10 direct-value and B11 structural
 AgentType / rank consistency checks. `alife-writer-windows` runs **94**
-production WPF ViewModel to BPatch scenarios (C7). Source verification
+production WPF ViewModel to BPatch scenarios (C7). **Verified C7 PASS 94/94** at commit `bb2c08bffba8b9afe5827fb8d1eb282e602b6971`, GitHub Actions run `37997251466`. Source verification
 and writer verification do not prove Unreal merge semantics or the
 actual A-Life world/encounter results.
