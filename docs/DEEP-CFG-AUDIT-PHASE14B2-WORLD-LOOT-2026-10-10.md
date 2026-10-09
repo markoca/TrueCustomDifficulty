@@ -49,6 +49,85 @@ CFG files instead of archiving tens of thousands of identical tiny files;
 pruned. These results prove the manifest-to-production-writer contract
 only, not original ZIP fidelity or the game's Unreal loading behavior.
 
+## Phase 14B2 original decoded source verification — INDEPENDENT PASS (2026-10-10)
+
+An independent read of **both uploaded original GameData/DLC1 ZIP archives**
+parsed **152,378 physical actor roots** (130,057 base + 22,321 DLC1).
+Every eligible production world-loot source domain was compared against
+its original physical CFG identity; for complete physical-domain
+comparisons, the selected actor SID, level, original source scope,
+SpawnedPrototypeSID, generator family and/or item identity were normalized
+and independently sorted. Manifest-side and original-side **row counts
+and 64-bit FNV-1a signatures match exactly** (with explicit source
+eligibility filters rather than inferring eligibility from identical
+counts alone). Original ZIP and individual source file SHA-256 digests
+are retained in the [original ZIP source evidence](evidence/LOOT-WORLD-ORIGINAL-CFG-2026-10-10.json).
+
+| Original source family | Exact eligible source records | Original result |
+| --- | ---: | --- |
+| Ammo/RGD boxes (never F1) | 1,315 | PASS |
+| Food/Drink boxes | 1,208 | PASS |
+| Medical boxes | 868 | PASS |
+| Dedicated F1 boxes | 101 | PASS |
+| Loose dynamic packs | 5,395 | PASS |
+| Loose static world items | 1,838 | PASS |
+| Direct world weapon actors | 362 | PASS (10 non-safe source candidates excluded) |
+| Direct attachment actors | 7 | PASS |
+| World-only blueprint generator rows | 77 | PASS (two other original blueprint roots excluded) |
+| Direct detector actors | 7 | PASS (one other original Gilka actor excluded) |
+| Source item-generator leaf fingerprints | **131 unique** | **131/131 PASS** after correcting 15 misattributions |
+| Original actor generator redirect field fingerprints | **58 unique** | **58/58 PASS** |
+
+Explicit exclusions are source-backed: original **M_WodenMovableChair_21**
+actor `3D2445C74FAC2F8ADD61DA905FD9C965` uses
+`DestructibleStash_AmmoSNG` but is a **chair, not an ammo box**;
+the separate F1 and ordinary ammo/RGD populations have no overlapping
+physical actor IDs. Two original `Stash_Blueprint_SciSEVA_Scientific_Armor_Upgrade_1/2`
+generator rows are not part of the 77 world-only blueprint shuffle
+pool. Ordinary world-weapon manifest intentionally excludes ten
+otherwise eligible-looking physical pickups; no quest/named character
+locations were added to fill those slots.
+
+### Critical production writer defect found and fixed
+
+The original source had **15 misclassified values in six world weapon
+stash generator rows**. These `Chance`, `MinCount`, `MaxCount`
+values were physically authored under nested `Upgrades` or `Attaches`
+substructures, *not* at the weapon `PossibleItems/[0]` leaf.
+The previous writer performed `AddReplacementNode` for the entire
+indexed item and copied these values to the wrong level, unintentionally
+**dropping vanilla nested upgrade and attachment reward structures**.
+
+The production `CfgPatchWriterService` now generates a **minimal
+indexed `{bpatch}` assignment for `ItemPrototypeSID` only**.
+This preserves the original item's Chance/Weight/durability/ammo
+fields and nested upgrade/attachment subtrees through field-level
+merging rather than replacing the complete item structure.
+The six manifest rows have had exactly **15 incorrectly attributed
+direct item fields cleared**. The production World Loot placement
+contract now asserts that edited generator items contain only the
+`ItemPrototypeSID` BPatch leaf, and explicitly locks the six
+originally nested-only source records against accidental reinstatement.
+
+The updated production writer **has not obtained same-SHA Windows CI
+verification**: after the previous 47/47 green run, the current GitHub
+Actions attempts failed before any runner step (zero steps on all jobs).
+Do **not** carry the older 20/20 placement PASS forward to the repaired
+writer's new commit. Once runners execute, repeat the full Windows
+writer matrix and inspect emitted CFG fixtures.
+
+### Remaining gates
+
+The exact registered `tools/audit_loot_world_source.py` strict original
+archive CLI remains available via `python tools/pre_release.py source`
+and must be run against matching user ZIPs before release; the
+original-proof evidence above comes from an **independently executed
+decoded-source scanner**, not that exact in-repo gate. Original source
+evidence establishes physical source values and eligibility, not
+Unreal `{bpatch}` behavior or actual gameplay. Indexed patch merging,
+PAK acceptance/load order and in-game world placement must still be
+tested.
+
 ## Independent original CFG and runtime gates
 
 The 320-path Phase 14A original ZIP audit is not sufficient for world actor manifest provenance. In a later original-source pass, verify the actual actor IDs, `SpawnedPrototypeSID`, generator references, DLC scopes, rank/tier/category and physical levels against the supplied decoded GameData and DLC1 originals. Where the data is not in the original CFG, mark it unverifiable rather than inferring it. Randomized selection means tests must use invariant constraints, not fixed sample snapshots.
@@ -58,9 +137,8 @@ A new strict original decoded CFG gate,
 actual physical actor identity and selected generator assignments
 directly against both original ZIP archives, using memory-limited
 streamed original root extraction. It is registered in the pre-release
-source runner. **The original source gate still needs an actual run
-with the ZIPs before its outcome can be declared PASS.**
+source runner. **Run this exact repository gate with the original ZIPs before release; the independent original-source audit above has already passed.**
 
-Still **NOT RUN**: original archive revalidation of all world manifest rows; actual Unreal file nesting and BPatch merge behavior; mod PAK/UTOC/UCAS packaging and load order; gameplay impact on crate counts, direct weapon placement, loot respawn, developer quest references and pickups. Original-source confirmation, writer output and in-game acceptance are distinct evidence layers.
+Still **NOT RUN**: the exact in-repository original-source CLI; actual Unreal file nesting and BPatch merge behavior; mod PAK/UTOC/UCAS packaging and load order; gameplay impact on crate counts, direct weapon placement, loot respawn, developer quest references and pickups. Original-source confirmation, writer output and in-game acceptance are distinct evidence layers.
 
 See Phase 14A and 14B1 reports for other Loot families and their independently verified CI receipts.
