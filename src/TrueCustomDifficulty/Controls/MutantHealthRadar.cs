@@ -12,9 +12,9 @@ public sealed class MutantHealthRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
     private const double GlobalHpMaximum = 7500.0;
-    private const double DesiredHeight = 672.0;
+    private const double DesiredHeight = 526.0;
     private const double MaxContentWidth = 1080.0;
-    private const double ColumnGap = 8.0;
+    private const double ColumnGap = 12.0;
 
     private static readonly MutantDefinition[] Mutants =
     {
@@ -122,33 +122,28 @@ public sealed class MutantHealthRadar : FrameworkElement
         IndustrialChrome.DrawFrame(
             dc,
             new Rect(2.0, 2.0, Math.Max(0.0, ActualWidth - 4.0), Math.Max(0.0, ActualHeight - 4.0)),
-            panel,
-            border,
-            accent,
-            soft,
-            8.0,
-            accentEdge: true,
-            technicalMarks: true);
+            panel, border, accent, soft, 8.0,
+            accentEdge: true, technicalMarks: true);
 
         _targets.Clear();
-
-        var content = ContentRect();
         DrawCenteredText(dc, "MUTANT HEALTH", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
 
-        // All fourteen independently editable mutant MaxHP scalars.
-        // Two balanced rows of seven avoid squeezed names and tiny handles.
-        const int columns = 7;
-        const double RowGap = 12.0;
-        var stripWidth = (content.Width - (columns - 1) * ColumnGap) / columns;
+        // Stamina Usage-style grouped, independent horizontal controls.
+        // Seven rows, two columns, alphabetically ordered down each column.
+        var content = ContentRect();
+        const double cardHeight = 58.0;
+        const double rowPitch = 65.0;
+        var cardWidth = (content.Width - ColumnGap) / 2.0;
         for (var i = 0; i < Mutants.Length; i++)
+        {
+            var column = i / 7;
+            var row = i % 7;
             DrawRow(dc, i, new Rect(
-                content.Left + (i % columns) * (stripWidth + ColumnGap),
-                65.0 + (i / columns) * (280.0 + RowGap), stripWidth, 280.0),
+                content.Left + column * (cardWidth + ColumnGap),
+                48.0 + row * rowPitch, cardWidth, cardHeight),
                 text, muted, border, accent, panel);
-
-
-        // Silent reset: no transient gold status overlay.
+        }
     }
 
     private void DrawRow(
@@ -159,70 +154,56 @@ public sealed class MutantHealthRadar : FrameworkElement
             return;
 
         var mutant = Mutants[row];
-        var selected = row == _selectedRow;
+        var modified = parameter.IsValueModifiedFromReference();
         var hovered = row == _hoverRow;
-        var center = card.Left + card.Width / 2.0;
+        var selected = row == _selectedRow;
+
+        // Static captions and card fill never turn gold on slider hover.
+        dc.DrawRoundedRectangle(panel,
+            new Pen(border, 0.9), card, 4.0, 4.0);
+        DrawText(dc, mutant.Label.ToUpperInvariant(),
+            new Point(card.Left + 11.0, card.Top + 6.0),
+            9.8, text, FontWeights.Bold);
+
+        var multiplier = CreateText($"{parameter.CurrentNumber:0.##}x",
+            modified ? 11.4 : 10.2, modified ? accent : text, FontWeights.Bold);
+        dc.DrawText(multiplier,
+            new Point(card.Right - 11.0 - multiplier.WidthIncludingTrailingWhitespace,
+                card.Top + 5.0));
+
         var currentHp = mutant.VanillaHp * parameter.CurrentNumber;
-        // No rectangular selection frame: only the ring and golden glow.
-        // Compact names must not collide with neighboring fader headings.
-        var name = mutant.Label.ToUpperInvariant();
-        if (name is "BLOODSUCKER" or "PSEUDOGIANT" or "PSEUDODOG"
-            or "POLTERGEIST" or "BLIND DOG")
-        {
-            var split = name switch
-            {
-                "BLOODSUCKER" => 5,
-                "BLIND DOG" => 5,
-                _ => 6
-            };
-            DrawCenteredText(dc, name[..split],
-                new Point(center, card.Top + 8.0), 9.8, text, FontWeights.Bold);
-            DrawCenteredText(dc, name[split..],
-                new Point(center, card.Top + 21.0), 9.8, text, FontWeights.Bold);
-        }
-        else
-            DrawCenteredText(dc, name,
-                new Point(center, card.Top + 15.0), 9.8, text, FontWeights.Bold);
-        DrawSourceNumber(dc, $"{parameter.CurrentNumber:0.##}x",
-            new Point(center, card.Top + 39.0), 16.2,
-            text, accent, FontWeights.Bold, parameter.IsValueModifiedFromReference());
-        DrawSourceNumber(dc, $"{currentHp:0} HP",
-            new Point(center, card.Top + 63.0), 10.6,
-            muted, accent, FontWeights.SemiBold,
-            parameter.IsValueModifiedFromReference());
-        var rail = new Rect(center - 3.0, card.Top + 110.0, 6.0, 150.0);
-        var currentY = ValueToY(parameter.CurrentNumber,
-            parameter.Minimum, parameter.Maximum, rail);
-        var baseY = ValueToY(parameter.ReferenceNumber,
-            parameter.Minimum, parameter.Maximum, rail);
-        DrawCenteredText(dc, $"{parameter.Maximum:0.##}x",
-            new Point(center, rail.Top - 15.0), 13.0, muted, FontWeights.Normal);
-        dc.DrawLine(new Pen(border, 5.0),
-            new Point(center, rail.Top), new Point(center, rail.Bottom));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 5.0),
-            new Point(center, rail.Bottom), new Point(center, currentY));
-        dc.DrawLine(new Pen(muted, 2.2),
-            new Point(center + 13.0, baseY),
-            new Point(center + 29.0, baseY));
-        if (hovered || selected)
-        {
-            dc.DrawEllipse(CloneWithOpacity(accent, hovered ? 0.24 : 0.13),
-                null, new Point(center, currentY),
-                hovered ? 20.0 : 15.0, hovered ? 20.0 : 15.0);
-            dc.DrawEllipse(null,
-                new Pen(CloneWithOpacity(accent, 0.8), 1.8),
-                new Point(center, currentY), 12.0, 12.0);
-        }
-        dc.DrawEllipse(panel, new Pen(accent, hovered || selected ? 3.0 : 1.8),
-            new Point(center, currentY), 9.0, 9.0);
-        dc.DrawLine(new Pen(accent, 2.2),
-            new Point(center - 7.0, currentY),
-            new Point(center + 7.0, currentY));
-        DrawCenteredText(dc, $"{parameter.Minimum:0.##}x",
-            new Point(center, rail.Bottom + 17.0), 13.0, muted, FontWeights.Normal);
+        DrawText(dc, $"{currentHp:0} HP",
+            new Point(card.Left + 11.0, card.Top + 23.0),
+            9.0, muted, FontWeights.SemiBold);
+
+        var track = new Rect(card.Left + 12.0, card.Top + 42.0,
+            Math.Max(1.0, card.Width - 24.0), 10.0);
+        var y = track.Top + track.Height / 2.0;
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track);
+        var baseX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, track);
+
+        dc.DrawLine(new Pen(border, 3.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.7), 3.0),
+            new Point(track.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 1.8),
+            new Point(baseX, y - 8.0), new Point(baseX, y + 8.0));
+
+        // Hover glow belongs to the actual control point only.
+        if (hovered)
+            dc.DrawEllipse(CloneWithOpacity(accent, 0.17), null,
+                new Point(currentX, y), 12.0, 12.0);
+        dc.DrawEllipse(panel,
+            new Pen(accent, hovered || selected ? 2.5 : 1.5),
+            new Point(currentX, y), 6.0, 6.0);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+
         _targets[row] = new HitTarget(
-            new Rect(center - 16.0, rail.Top - 9.0, 32.0, rail.Height + 18.0),
-            rail);
+            new Rect(track.Left - 6.0, track.Top - 7.0,
+                track.Width + 12.0, track.Height + 14.0),
+            track);
     }
 
     private Rect ContentRect()
@@ -343,7 +324,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         if (!_targets.TryGetValue(row, out var target) || _parameters[row] is not { } parameter)
             return;
 
-        var ratio = 1.0 - Math.Clamp((point.Y - target.MapRect.Top) / Math.Max(1.0, target.MapRect.Height), 0.0, 1.0);
+        var ratio = Math.Clamp((point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width), 0.0, 1.0);
         var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
         var tick = Math.Max(parameter.TickFrequency, Epsilon);
         // Align discrete multiplier steps with vanilla 1.00x. The old
