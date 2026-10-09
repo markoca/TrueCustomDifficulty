@@ -843,3 +843,8 @@ The three new JSON preset files (Mercenary, Wanderer, Outcast) must be explicitl
 ### 2026-10-09 — Alphabetical profiles and two new roles
 
 Twelve factory presets are ordered alphabetically, adding full 201-value Field Medic (Stalker Base) and Smuggler (Veteran Base) roles. Both are bundled as explicit .NET embedded resources and seeded on first run only when missing. UI and CFG editing rules, including yellow-only-changed-numbers, are unchanged. See docs/FACTORY-PRESETS.md.
+
+
+### 2026-10-09 — A-Life factory preset depth
+
+All twelve shipped factory presets now include the four human Director group size values and fourteen species-specific mutant Director group size values (219 entries total). The hidden generic mutant scaler remains excluded. Profiles preserve existing visual group radar controls and yellow-number-on-change behavior; A-Life Director group sizes are not conflated with lair population, encounter cadence or respawn. See docs/FACTORY-PRESETS.md.

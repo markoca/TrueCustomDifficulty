@@ -34,6 +34,24 @@ public sealed class PresetDirectoryService
 
     // SHA-1 Git blob identities of the previously shipped, unmodified factory JSONs.
     // Upgrade only exact stock files; locally edited presets remain the user's own.
+    // Prior twelve factory files without the A-Life Director settings.
+    // Used only for exact-byte factory upgrades; modified user copies stay untouched.
+    private static readonly Dictionary<string, string> PreAlifeFactoryBlobs = new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "932ee5d991e1dc812f36f5cc9c81e6547d4d8750",
+        ["Field Medic"] = "5f25e615f7523dd45a8cf9ad5c6f5c26a83e07f1",
+        ["Hardcore"] = "8cbd3d71c8069f5460910082f1538f0d4e32c17f",
+        ["Hardcore+"] = "432885a199e0078422469a2399d6620f80f91cc5",
+        ["Immersive"] = "9574e6ea453a418d3e89d7aa137dafbf7624a76a",
+        ["Mercenary"] = "960eb5e1ab1cb114e0a6f1010c677b2469ddcbaa",
+        ["Mutant Hunter"] = "ae146ab2b6aa5954b77196baa9fddbcef3cbc6bb",
+        ["Outcast"] = "82b33ce9a513769765edd68e6d1bc7393f2660ec",
+        ["Scavenger"] = "f321e7f76bd49c871200633a5ca63ddc9c079815",
+        ["Smuggler"] = "4fcbbbea93e033e88a37cdf9e93dfddec5c91d23",
+        ["Tactical"] = "e29c8b7e940a013cfc6dc7120d4057f2ed0817e9",
+        ["Wanderer"] = "5c14b7f49f909271a7faf30780ef775380992706"
+    };
+
     private static readonly Dictionary<string, string> PreviousFactoryBlobs = new(StringComparer.Ordinal)
     {
         ["Immersive"] = "2886bc8983cec7cf893b5584cdd95b903fee62b8",
@@ -96,7 +114,8 @@ public sealed class PresetDirectoryService
 
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
-        if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash))
+        if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
+            && !PreAlifeFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -110,7 +129,9 @@ public sealed class PresetDirectoryService
             Buffer.BlockCopy(header, 0, input, 0, header.Length);
             Buffer.BlockCopy(bytes, 0, input, header.Length, bytes.Length);
             var actual = Convert.ToHexString(SHA1.HashData(input));
-            return actual.Equals(knownHash, StringComparison.OrdinalIgnoreCase);
+            return actual.Equals(knownHash, StringComparison.OrdinalIgnoreCase)
+                || (PreAlifeFactoryBlobs.TryGetValue(name, out var preAlifeHash)
+                    && actual.Equals(preAlifeHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

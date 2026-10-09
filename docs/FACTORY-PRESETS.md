@@ -115,3 +115,25 @@ All twelve factory profiles are listed alphabetically in the picker: Anomaly Run
 | **Smuggler** | Veteran | The opportunist who navigates risky routes to profit from rare finds, managing losses instead of winning every fight | Higher artifact and mutant-trophy value, speed and cargo capacity, sparse field resources and traders, steep supply and repair costs, faster equipment wear, dangerous but avoidable enemies |
 
 Both are complete 201-entry presets using existing source IDs, source ranges and Base difficulty semantics. No new UI controls or game difficulty were introduced. Both JSONs are explicitly embedded into the executable to avoid missing-resource startup failures.
+
+
+## 2026-10-09 — A-Life Director group-size tuning in all factory profiles
+
+All twelve factory profiles now include **18 new values**: four rank-specific human group-size multipliers and fourteen species-specific mutant Director group-size multipliers, total **219 entries per preset**. The hidden `alife.mutantSpawn.generic` entry is intentionally omitted. All values use existing `0.25×–3×` catalog bounds and vanilla `1×` reference; they alter *Director group size*, **not** overall world/lair population, encounter frequency, or respawn speed. Keep species and rank independent.
+
+| Profile | Human group tendency | Mutant group tendency |
+|---|---|---|
+| Anomaly Runner | Smaller, to favor traversal | Fewer elite/psy groups; lower environmental combat interruption |
+| Field Medic | Near vanilla | Mostly vanilla-sized groups with some fewer high-threat encounters |
+| Hardcore | Larger, escalating by rank | Larger packs and more elite groups |
+| Hardcore+ | Very large and rank-escalating | Extremely challenging packs |
+| Immersive | Vanilla | Slightly varied natural packs |
+| Mercenary | Increasingly large high-rank human squads | Near vanilla |
+| Mutant Hunter | Slightly smaller human groups | Larger common packs and dangerous elite groups |
+| Outcast | Larger groups by rank | Dense common packs; more serious threats |
+| Scavenger | Smaller human groups | More common packs, smaller elite groups |
+| Smuggler | Near-standard human groups | More common packs with fewer elite groups |
+| Tactical | More dangerous higher-rank human groups | Near-standard mutants |
+| Wanderer | Slightly smaller human groups | More common wildlife packs, fewer elites |
+
+Existing unmodified twelve-profile JSONs are automatically replaced when the app starts by matching their exact previous Git blob hash. Locally edited factory and user-named preset files are not overwritten. The UI remains unchanged; modified value numbers are still highlighted yellow only when different from vanilla. Gameplay runtime was not tested.

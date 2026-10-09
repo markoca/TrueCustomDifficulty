@@ -64,3 +64,5 @@ All three include the full 201-value source mapping. The factory list now has te
 **Smuggler** (Veteran baseline): black-market expeditions for valuable artifacts and trophies, fast retreats, gear wear and expensive supply chains.
 
 Both new factory files contain all 201 existing preset keys, are embedded in the executable and only seeded when absent. Existing customized presets remain untouched.
+
+The twelve role presets each include 219 CFG-backed values, now including 18 A-Life Director group-size settings (4 human rank + 14 mutant species). Previously shipped untouched factory JSONs are upgraded on launch; custom files are preserved.

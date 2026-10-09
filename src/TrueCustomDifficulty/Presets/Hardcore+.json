@@ -810,6 +810,78 @@
     "stamina.lowRecoveryDuration": {
       "kind": "slider",
       "number": 4
+    },
+    "alife.humanGroupSize.newbie": {
+      "kind": "slider",
+      "number": 1.4
+    },
+    "alife.humanGroupSize.experienced": {
+      "kind": "slider",
+      "number": 1.5
+    },
+    "alife.humanGroupSize.veteran": {
+      "kind": "slider",
+      "number": 1.65
+    },
+    "alife.humanGroupSize.master": {
+      "kind": "slider",
+      "number": 1.75
+    },
+    "alife.mutantSpawn.bloodsucker": {
+      "kind": "slider",
+      "number": 1.4
+    },
+    "alife.mutantSpawn.blindDog": {
+      "kind": "slider",
+      "number": 1.65
+    },
+    "alife.mutantSpawn.flesh": {
+      "kind": "slider",
+      "number": 1.65
+    },
+    "alife.mutantSpawn.controller": {
+      "kind": "slider",
+      "number": 1.45
+    },
+    "alife.mutantSpawn.poltergeist": {
+      "kind": "slider",
+      "number": 1.45
+    },
+    "alife.mutantSpawn.snork": {
+      "kind": "slider",
+      "number": 1.65
+    },
+    "alife.mutantSpawn.boar": {
+      "kind": "slider",
+      "number": 1.65
+    },
+    "alife.mutantSpawn.chimera": {
+      "kind": "slider",
+      "number": 1.4
+    },
+    "alife.mutantSpawn.bayun": {
+      "kind": "slider",
+      "number": 1.45
+    },
+    "alife.mutantSpawn.tushkan": {
+      "kind": "slider",
+      "number": 1.65
+    },
+    "alife.mutantSpawn.ratSwarm": {
+      "kind": "slider",
+      "number": 1.65
+    },
+    "alife.mutantSpawn.burer": {
+      "kind": "slider",
+      "number": 1.4
+    },
+    "alife.mutantSpawn.pseudodog": {
+      "kind": "slider",
+      "number": 1.65
+    },
+    "alife.mutantSpawn.deer": {
+      "kind": "slider",
+      "number": 1.65
     }
   }
 }
