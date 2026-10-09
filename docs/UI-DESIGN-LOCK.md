@@ -537,3 +537,8 @@ Unified Stamina & Movement is a 259-DIP two-column/two-row board: Stamina Capaci
 ### 2026-10-09 — Vault landmark alignment correction
 
 Within the two-column Stamina & Movement card, WAIST / EYES / ABOVE EYES captions must be positioned by measuring actual glyph width and centering on their respective track marker X positions. Clamp labels inside the card only at its edges (especially ABOVE EYES); hit targets follow the visible caption bounds. Never left-align caption glyphs inside a fixed-width box, as this visually misaligns labels and ticks. Preserve body-part-only captions, slider values and no redundant explanatory text.
+
+
+### 2026-10-09 — Radiation Treatment binding fix
+
+Scientific Medkit (`health.ecoMedkitAntirad`) and Anti-Rad (`health.antiRadRadiation`) are not individually exposed catalog rows. Both must be included in `MainViewModel`'s always-instantiated composite parameter ID set; otherwise `AllParameters` omits them and Radiation Treatment renders `CFG PARAMETER UNAVAILABLE`. Maintain both live backing VMs even when only one aggregate anchor is visible. The existing side-by-side 149-DIP layout, raw CFG semantics, vanilla ticks, independent interaction and modified-number highlighting remain unchanged.
