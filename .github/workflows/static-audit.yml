@@ -31,6 +31,11 @@ jobs:
       - name: Regression - vanilla refkey source inheritance
         run: python tools/test_cfg_source_inheritance.py
 
+      - name: A-Life original Director source gate entrypoint smoke
+        run: |
+          python -m py_compile tools/audit_alife_director_source.py
+          python tools/audit_alife_director_source.py --help
+
       - name: Pre-release runner and documented inventory smoke
         run: |
           python tools/pre_release.py list
