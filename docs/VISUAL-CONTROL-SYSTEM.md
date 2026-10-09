@@ -898,3 +898,8 @@ Retain original interactive ranges, native CFG backing IDs, vanilla/base ticks a
 ### 2026-10-09 — Mutant cooldown fader numeric emphasis
 
 Mutant special-ability cooldown faders retain their original vertical slider geometry and Base ticks. Current cooldown multiplier text stays neutral at Base, becoming gold and +1.2 DIP larger only after modification. Names remain neutral. Preserve the distinct cooldown and derived attack-frequency meaning.
+
+
+### 2026-10-09 — Shared hover feedback alignment
+
+Interactive hover styling is standardized across the Stamina Usage slider rail/handle controls, shared aggregate horizontal-track cards, aggregate toggle pills and specialized horizontal-row radar panels (anomaly damage, mutant drops, mutant group sizes, world loot, human squad caps, stash ammo and item prices). Hover uses subtle gold/Accent tinted card surface and/or name accent, with consistent stronger interactive handle outline; current numeric value stays gold **only** when modified from the selected Base Preset. Keep hovered styles transient and independent of value changes; keep clickable target geometry, keyboard and right-click reset behavior unchanged. Non-interactive explanations remain neutral. The existing specialized curved plots and vertical faders retain their interaction-specific hover and must not gain rectangular fake buttons. Local Windows/Wine visual testing remains required.
