@@ -114,3 +114,5 @@ No v1.0 release, UI changes or gameplay balance changes are included.
 | Native Stamina Action Costs and indexed regeneration coefs work | NOT RUN |
 | Water drain and Food Healing switch affect intended gameplay only | NOT RUN |
 | Master-dependent modifier behavior with parent enabled / disabled | NOT RUN |
+
+The first Windows harness execution caught a **test path-normalization bug**: root-level effect values were represented with a duplicated `/` delimiter in the expected string, despite their correct generated CFG paths. The test was corrected to omit the empty intermediate path; production writer and its CFG values are unchanged.

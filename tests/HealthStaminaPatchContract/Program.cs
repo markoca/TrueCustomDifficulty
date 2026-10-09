@@ -132,7 +132,8 @@ internal static class Program
                 var document = Parse(File.ReadAllText(file));
                 var editPoints = points.Where(p => ExpectedFile(output, p.File) == file).ToArray();
                 var expectedPaths = editPoints.Select(p =>
-                    p.Prototype + "/" + string.Join("/", p.NodePath) + "/" + p.Key)
+                    p.Prototype + "/" + (p.NodePath.Count > 0
+                        ? string.Join("/", p.NodePath) + "/" : "") + p.Key)
                     .ToHashSet(StringComparer.Ordinal);
                 var observedPaths = new HashSet<string>(StringComparer.Ordinal);
                 foreach (var root in document.Children.Values)
