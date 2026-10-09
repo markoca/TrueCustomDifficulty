@@ -130,6 +130,21 @@ internal static class Program
                     FullPsy(root, bleed: true);
                 });
 
+            // Phase 5: prove live UI VM values reach all 52 difficulty-specific
+            // direct edit routes, including inverse cooldowns, toggles and
+            // value-ordered repeated-hit sliders.
+            foreach (var difficulty in new[] { "Novice", "Stalker", "Veteran", "Master" })
+            {
+                foreach (var spec in DirectCombatSpecs)
+                    DirectCombatCase(difficulty, spec);
+            }
+
+            // Phase 5: all 14 live mutant HP cards, including both dual-variant
+            // families, must emit nested VitalParams.MaxHP patches.
+            foreach (var parameter in Catalog.Parameters.Where(p =>
+                         p.Id.StartsWith("combat.mutantHealth.", StringComparison.Ordinal)))
+                MutantHealthCase(parameter.Id);
+
             Console.WriteLine($"PASS: {_passed} executed production CFG writer scenarios.");
             Console.WriteLine("NOT VERIFIED: game runtime, vanilla decoded source arrays, UE BPatch loader semantics.");
             return 0;
@@ -140,6 +155,193 @@ internal static class Program
             return 1;
         }
     }
+
+    // Deliberately pin the expected vanilla field identities independently
+    // of the live writer baseline. The baseline supplies only original numeric
+    // source values for the per-difficulty transformation expectation.
+    private sealed record DirectSpec(
+        string Id, string Node, string Key, string Operation, double Value);
+
+    private static readonly DirectSpec[] DirectCombatSpecs =
+    [
+        new("combat.npcHealth", "NPCCombatDifficulty", "NPC_HP", "set", 1.7),
+        new("combat.npcWeaponDamage", "NPCCombatDifficulty", "NPC_Weapon_BaseDamage", "set", 1.7),
+        new("combat.npcAttackCooldown", "NPCCombatDifficulty", "NPC_AttackCooldown", "inverseScale", 1.5),
+        new("combat.npcHipAccuracy", "NPCCombatDifficulty", "HipAccuracyMultiplier", "set", 0.5),
+        new("combat.explosionDamage", "EnvironmentDifficulty", "Explosion_BaseDamage", "set", 1.5),
+        new("combat.playerWeaponDamage", "EnvironmentDifficulty", "Weapon_BaseDamage", "set", 1.25),
+        new("combat.playerHeadshotMultiplier", "NPCCombatDifficulty", "PlayerWeapon_HeadshotMultiplier", "set", 1.5),
+        new("combat.weaponJamming", "EnvironmentDifficulty", "Weapon_JammingMultiplier", "set", 0.5),
+        new("combat.mutantDamage", "MutantCombatDifficulty", "Mutant_BaseDamage", "set", 0.8),
+        new("combat.mutantAttackCooldown", "MutantCombatDifficulty", "Mutant_AttackCooldown", "inverseScale", 1.5),
+        new("combat.accumulatedDamageWeightMax", "NPCCombatDifficulty", "AccumulatedDamageReductionCurveWeightMax", "set", 0.9),
+        new("combat.accumulatedDamageWeightMin", "NPCCombatDifficulty", "AccumulatedDamageReductionCurveWeightMin", "set", 0.1),
+        new("combat.accumulatedDamageIncludesHealedHealth", "NPCCombatDifficulty", "AccumulatedDamageReductionIncludesHealedHealth", "set", double.NaN),
+    ];
+
+    private static void DirectCombatCase(string difficulty, DirectSpec spec)
+    {
+        var name = difficulty + "-direct-" + spec.Id.Replace("combat.", "", StringComparison.Ordinal);
+        var output = FixturePath(name);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = difficulty };
+            var parameter = Get(vm, spec.Id);
+            if (parameter.IsToggle)
+            {
+                Check(double.IsNaN(spec.Value), name + ": unexpected boolean test declaration");
+                parameter.CurrentBoolean = !parameter.ReferenceBoolean;
+            }
+            else
+            {
+                Set(vm, spec.Id, spec.Value);
+                Approx(parameter.CurrentNumber.ToString(CultureInfo.InvariantCulture), spec.Value);
+            }
+            Check(parameter.IsValueModifiedFromReference(), name + ": requested edit was not applied");
+
+            // Vanilla Novice Min/Max are both 1: pulling Max down to 0.9
+            // must also pull Min down to 0.9. The other 51 cases have one
+            // independent concrete edit, not an implicit extra assignment.
+            var isLinkedNoviceMax = difficulty == "Novice"
+                && spec.Id == "combat.accumulatedDamageWeightMax";
+            var expectedIds = isLinkedNoviceMax
+                ? new[] { spec.Id, "combat.accumulatedDamageWeightMin" }
+                : new[] { spec.Id };
+            var changed = vm.AllParameters.Where(p =>
+                p.Id.StartsWith("combat.", StringComparison.Ordinal)
+                && p.IsValueModifiedFromReference()).Select(p => p.Id)
+                .OrderBy(id => id, StringComparer.Ordinal).ToArray();
+            Check(changed.SequenceEqual(expectedIds.OrderBy(id => id, StringComparer.Ordinal)),
+                name + ": changed more/other UI parameter values than intended: "
+                + string.Join(", ", changed));
+            if (isLinkedNoviceMax)
+                Approx(Get(vm, "combat.accumulatedDamageWeightMin").CurrentNumber
+                    .ToString(CultureInfo.InvariantCulture), 0.9);
+
+            var result = new CfgPatchWriterService().Write(vm, Catalog, null, output);
+            Check(result.FileCount == 1 && result.ParameterCount == expectedIds.Length
+                && result.EditCount == expectedIds.Length,
+                name + ": unexpected written parameter/field count: "
+                + result.FileCount + "/" + result.ParameterCount + "/" + result.EditCount);
+
+            var file = Path.Combine(output, "Stalker2", "Content", "GameLite",
+                "GameData", "DifficultyPrototypes",
+                "DifficultyPrototypes_patch_TrueCustomDifficulty.cfg");
+            Check(File.Exists(file), name + ": difficulty BPatch not generated");
+            var document = Parse(File.ReadAllText(file));
+            var sid = Catalog.DifficultyProfiles[difficulty].Sid;
+            Check(document.Children.Count == 1 && document.Children.ContainsKey(sid),
+                name + ": writer targeted wrong Base Preset prototype");
+            var root = document.Get(sid);
+            Check(root.Bpatch && root.Assignments.Count == 0
+                && root.Children.Count == 1 && root.Children.ContainsKey(spec.Node),
+                name + ": wrong root or unexpected extra difficulty section");
+            var target = root.Get(spec.Node);
+            Check(target.Bpatch && target.Children.Count == 0
+                && target.Assignments.Count == expectedIds.Length,
+                name + ": nested target should be a sparse BPatch with no collateral fields");
+
+            foreach (var id in expectedIds)
+            {
+                var expected = id == spec.Id
+                    ? spec
+                    : DirectCombatSpecs.Single(p => p.Id == id);
+                var baselinePoint = Source.EditPoints.Single(p =>
+                    p.ParameterId == id && p.DifficultySid == sid);
+                Check(baselinePoint.File == "GameData/DifficultyPrototypes.cfg"
+                    && baselinePoint.Prototype == sid
+                    && baselinePoint.NodePath.SequenceEqual(new[] { expected.Node })
+                    && baselinePoint.Key == expected.Key
+                    && baselinePoint.Operation == expected.Operation,
+                    name + ": catalog baseline no longer matches pinned CFG source route " + id);
+                var actualVm = Get(vm, id);
+                var observed = target.Value(expected.Key);
+                if (actualVm.IsToggle)
+                {
+                    Check(observed == (actualVm.CurrentBoolean ? "true" : "false"),
+                        name + ": boolean serialization differs from UI state");
+                }
+                else
+                {
+                    var source = double.Parse(baselinePoint.SourceRaw, CultureInfo.InvariantCulture);
+                    var expectedNumber = expected.Operation == "inverseScale"
+                        ? source / actualVm.CurrentNumber
+                        : actualVm.CurrentNumber;
+                    Approx(observed, expectedNumber);
+                }
+            }
+
+            _passed++;
+            Console.WriteLine("PASS " + name);
+        }
+        finally
+        {
+            if (_keepRoot is null && Directory.Exists(output))
+                Directory.Delete(output, recursive: true);
+        }
+    }
+
+    private static void MutantHealthCase(string parameterId)
+    {
+        var name = "mutant-health-" + parameterId["combat.mutantHealth.".Length..];
+        var output = FixturePath(name);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            var parameter = Get(vm, parameterId);
+            Check(!parameter.IsValueModifiedFromReference(),
+                name + ": original UI baseline should be 1x");
+            Set(vm, parameterId, 1.5);
+            Approx(parameter.CurrentNumber.ToString(CultureInfo.InvariantCulture), 1.5);
+            Check(parameter.IsValueModifiedFromReference(), name + ": UI state did not change");
+
+            var records = Source.EditPoints.Where(p => p.ParameterId == parameterId).ToArray();
+            var expectedVariantCount = parameterId is "combat.mutantHealth.bloodsucker"
+                or "combat.mutantHealth.burer" ? 2 : 1;
+            Check(records.Length == expectedVariantCount
+                && records.All(p =>
+                    p.File == "GameData/ObjPrototypes.cfg"
+                    && p.Key == "MaxHP" && p.Operation == "scale"
+                    && p.NodePath.SequenceEqual(new[] { "VitalParams" })),
+                name + ": concrete MaxHP source path/variant inventory drifted");
+
+            var result = new CfgPatchWriterService().Write(vm, Catalog, null, output);
+            Check(result.FileCount == 1 && result.ParameterCount == 1
+                  && result.EditCount == expectedVariantCount,
+                name + ": health writer emitted unexpected number of prototype edits");
+            var file = Path.Combine(output, "Stalker2", "Content", "GameLite",
+                "GameData", "ObjPrototypes",
+                "ObjPrototypes_patch_TrueCustomDifficulty.cfg");
+            Check(File.Exists(file), name + ": ObjPrototypes BPatch not written");
+            var document = Parse(File.ReadAllText(file));
+            Check(document.Children.Count == expectedVariantCount,
+                name + ": unexpected extra mutant prototype written");
+            foreach (var record in records)
+            {
+                var root = document.Get(record.Prototype);
+                Check(root.Bpatch && root.Assignments.Count == 0
+                      && root.Children.Count == 1,
+                    name + ": unexpected node structure at " + record.Prototype);
+                var vital = root.Get("VitalParams");
+                Check(vital.Bpatch && vital.Assignments.Count == 1
+                      && vital.Children.Count == 0,
+                    name + ": MaxHP must be the only nested value");
+                var baselineHp = double.Parse(record.SourceRaw, CultureInfo.InvariantCulture);
+                Approx(vital.Value("MaxHP"), baselineHp * 1.5);
+            }
+            _passed++;
+            Console.WriteLine("PASS " + name);
+        }
+        finally
+        {
+            if (_keepRoot is null && Directory.Exists(output))
+                Directory.Delete(output, recursive: true);
+        }
+    }
+
+    private static string FixturePath(string name) =>
+        Path.Combine(_keepRoot ?? Path.GetTempPath(),
+            "TCD_Combat_Patch_Contract", name);
 
     private static void Case(string name, string difficulty, Action<MainViewModel> modify,
         Action<Node, CfgWriteResult> verify)

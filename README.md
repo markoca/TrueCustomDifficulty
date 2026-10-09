@@ -1,5 +1,18 @@
 # True Custom Difficulty
 
+## Deep CFG audit Phase 5 — Combat direct writer execution
+
+Extended the real Windows/.NET 10 writer harness to cover every
+**13 direct difficulty-control × 4 Base Presets (52)** plus
+**14 mutant-health family** paths, on top of 11 special-array checks
+(**77 cases total**). Unlike static mapping checks, tests change each
+live bound ViewModel and parse the actual generated BPatch output;
+they check target SID, field, source-backed numeric transformation,
+nested `VitalParams.MaxHP`, count and unrelated changes. Original
+decoded-source ZIPs and actual in-game effects are separate
+pre-release acceptance gates; see [Phase 3–5 Combat audit](docs/DEEP-CFG-AUDIT-PHASE3-COMBAT-2026-10-09.md)
+and [release testing](docs/RELEASE-TESTING.md).
+
 ## Before each release candidate: repeatable test suite
 
 Run `python tools/pre_release.py list` to view **all registered automated

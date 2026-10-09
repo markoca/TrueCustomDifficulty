@@ -193,6 +193,37 @@ dotnet run --project tests/CombatPatchContract/CombatPatchContract.csproj -c Rel
 On Linux, the static audits still run normally; the Windows CI job
 exercises the .NET/WPF production code and saves its generated patches.
 
+
+## Phase 5: live UI → direct Combat BPatch route coverage (2026-10-09)
+
+The Windows contract harness now additionally traverses all **13 direct
+difficulty-controlled Combat settings × 4 base difficulties = 52 cases**,
+plus all **14 Mutant Health controls**, for **77 executable writer scenarios**
+when combined with the previous 11 special cooldown/PSY scenarios.
+
+Unlike static catalog/manifest equivalence, these cases instantiate the
+actual `MainViewModel`, mutate the live `ParameterViewModel`, execute the
+production `CfgPatchWriterService.Write()` and parse the generated CFGs.
+They assert selected Base Preset SID, expected logical output filename,
+correct `{bpatch}` nodes, actual field names/values, no unintended
+prototype or field changes, and accurate EditCount/ParameterCount. The
+expected direct field identities are pinned independently of the live
+baseline; its authored original values are used for numeric transformations.
+
+Particular edge cases: both `NPC_AttackCooldown` and
+`Mutant_AttackCooldown` use reciprocal scaling; boolean repeated-hit
+source records serialize actual toggle state; moving Novice's maximum
+repeated-hit weight from 1.0 to 0.9 correctly cascades the linked minimum
+to 0.9, adding the **second intended field**; all other direct cases
+remain single-field writes. Mutant Health must use nested
+`VitalParams.MaxHP` for every source-backed species and preserve both
+Bloodsucker and Burer variant SIDs (16 concrete fields across 14 cases).
+
+**Evidence boundary:** all 77 cases exercise live WPF ViewModels and
+output text, not S.T.A.L.K.E.R. 2 itself. The exact authored vanilla
+`sourceRaw` values still require independent original GameData/DLC1 ZIP
+verification. Do not promote special-array/gameplay runtime support.
+
 ## Runtime acceptance scenarios before promotion
 
 1. Veteran: change only `Human Attack Frequency` (e.g. 1.5×),
