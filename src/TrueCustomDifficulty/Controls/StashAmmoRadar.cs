@@ -135,8 +135,7 @@ public sealed class StashAmmoRadar : FrameworkElement
 
         DrawCenteredText(dc, "STASH AMMO AMOUNTS", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "stack amounts only; ammo types and progression stay vanilla", new Point(ActualWidth / 2.0, 39.0),
-            9.5, muted, FontWeights.Normal);
+
 
         for (var tier = 0; tier < Tiers.Length; tier++)
             DrawTier(dc, tier, 58.0 + tier * TierHeight, text, muted, border, accent, panel);
