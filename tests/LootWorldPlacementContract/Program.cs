@@ -225,7 +225,7 @@ internal static class Program
         var results=new List<string>();
         foreach(var row in direct)
         {
-            var source=row[1],root=row[3],orig=row[4];
+            var source=row[1]; var root=row[3]; var orig=row[4];
             var a=docs.GetValueOrDefault(source)?.Field(root+"/SpawnedPrototypeSID");
             var b=docs.GetValueOrDefault(source)?.Field(root+"/ItemSID");
             Check(a==b,"Direct attachment identity fields must be replaced together "+root);
@@ -323,7 +323,7 @@ internal static class Program
         var gen=docs.GetValueOrDefault(generatorFile);
         foreach(var row in generator)
         {
-            var path=row[1]+"/"+row[6],file=generatorFile;
+            var path=row[1]+"/"+row[6]; var file=generatorFile;
             if(gen?.Removed.Contains(path)==true)
             {
                 removals.Add(file+"|"+path);
