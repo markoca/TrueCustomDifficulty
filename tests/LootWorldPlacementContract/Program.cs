@@ -396,6 +396,7 @@ internal static class Program
     {
         var result=new Dictionary<string,Parsed>(StringComparer.Ordinal);
         var basePath=Path.Combine(outputRoot,"Stalker2","Content","GameLite");
+        if(!Directory.Exists(basePath))return result;
         foreach(var file in Directory.GetFiles(basePath,"*.cfg",SearchOption.AllDirectories))
         {
             var physical=Path.GetRelativePath(basePath,file).Replace('\\','/');
