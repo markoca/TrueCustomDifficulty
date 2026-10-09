@@ -139,6 +139,48 @@ weakening the default whole-catalog check. Run with *actual* supplied ZIPs
 to local filenames). The full scoped 68-point archive comparison was **not
 run in this GitHub-only audit environment**. Do not assert an unrun PASS.
 
+## Phase 4: real writer-generated BPatch structure contracts (2026-10-09)
+
+The production `WriteMutantCooldowns` previously used the *aggregate UI*
+`IsModified` flag for the Bloodsucker anchor. Editing any of the other
+seven cooldown families would make the unchanged Bloodsucker anchor appear
+modified and emit its Master indices unnecessarily. The missing-parameter
+gate could then reject that non-value change. Now the special-family
+selection and final modified-support check use each parameter's
+`IsValueModifiedFromReference()`. Aggregate UI coloring remains untouched.
+
+A standalone **Windows/.NET 10** console contract test project at
+`tests/CombatPatchContract` runs the **real**
+`CfgPatchWriterService.Write`, generates `DifficultyPrototypes.cfg`
+patches, parses their nodes and assignments, and asserts:
+
+- Unchanged Master/Veteran emit no patch.
+- Master Chimera updates *only* agent index [1], not the Bloodsucker
+  anchor indices [0]/[13]; Master Burer retains both variant indices
+  and the duplicate WeaponDrag tag at its two distinct indices.
+- Novice/Stalker/Veteran emit a complete indexed 14-agent array,
+  preserving all vanilla canonical tags and neutral untouched families.
+- Master PSY modifies exactly one scalar per each of the two existing
+  effect indices; Veteran creates the complete two-entry/four-field
+  replacement subtree.
+- Combined mutant+PSY changes coexist under the same selected
+  difficulty root with no unrelated writer records.
+- The patch is rooted under the correct named prototype, with the
+  expected `{bpatch}` versus full-subtree replacement flags and
+  accurate `EditCount`/`ParameterCount`.
+
+These tests verify **generated CFG text and writer behavior**, not
+whether Unreal successfully merges BPatch arrays or the game uses every
+override as expected. Those remain runtime-test-required; no gameplay
+status is promoted by this phase.
+
+Local Windows command:
+```powershell
+dotnet run --project tests/CombatPatchContract/CombatPatchContract.csproj -c Release -- --out audit/combat-patch-fixtures
+```
+On Linux, the static audits still run normally; the Windows CI job
+exercises the .NET/WPF production code and saves its generated patches.
+
 ## Runtime acceptance scenarios before promotion
 
 1. Veteran: change only `Human Attack Frequency` (e.g. 1.5×),

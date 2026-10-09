@@ -235,7 +235,12 @@ public sealed class CfgPatchWriterService
         var looseRemoval = WriteLooseWorldLootRemovals(modifiedById, hasDlc1, outputRoot, writtenParameters);
         editCount += looseRemoval.EditCount;
 
-        var modifiedSupported = modified.Where(p => !deferred.Contains(p.Id)).Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
+        // The writer must not demand concrete output for an unchanged aggregate
+        // anchor flagged IsModified only because one of its child controls moved.
+        var modifiedSupported = modified
+            .Where(p => p.IsValueModifiedFromReference() && !deferred.Contains(p.Id))
+            .Select(p => p.Id)
+            .ToHashSet(StringComparer.Ordinal);
         var missing = modifiedSupported.Where(id => !writtenParameters.Contains(id)).OrderBy(id => id).ToList();
         if (missing.Count > 0)
         {
@@ -1795,7 +1800,13 @@ public sealed class CfgPatchWriterService
         ISet<string> writtenParameters)
     {
         var parameterMap = baseline.Special.MutantCooldownParameters;
-        var changed = parameterMap.Keys.Where(modifiedById.ContainsKey).ToHashSet(StringComparer.Ordinal);
+        // A radar anchor's IsModified is an aggregate UI status: e.g. changing
+        // Chimera also lights up the Bloodsucker anchor even at its own vanilla
+        // value. Emit only families with a concrete reference-value difference.
+        var changed = parameterMap.Keys
+            .Where(id => modifiedById.TryGetValue(id, out var parameter)
+                && parameter.IsValueModifiedFromReference())
+            .ToHashSet(StringComparer.Ordinal);
         if (changed.Count == 0)
             return 0;
 
