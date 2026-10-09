@@ -17,6 +17,8 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | C1 | `dotnet run --project tests/CombatPatchContract/CombatPatchContract.csproj -c Release -- --out audit/combat-patch-fixtures` | Windows / .NET 10 | 82 **real production writer** Master/Novice/Stalker/Veteran/PSY BPatch scenarios |
 | B5 | `python tools/audit_health_stamina_source.py --base-zip BASE --dlc1-zip DLC1` | Linux / Windows | 69 Health/Stamina original source fields, including Player→[0] inheritance |
 | C2 | `dotnet run --project tests/HealthStaminaPatchContract/HealthStaminaPatchContract.csproj -c Release -- --out audit/health-stamina-patch-fixtures` | Windows / .NET 10 | 46 writer Health/Stamina BPatch writer cases |
+| B6 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix survival. --out REPORT.json --strict` | Linux / Windows | All 139 Survival original CFG source points (requires matching original ZIPs) |
+| C3 | `dotnet run --project tests/SurvivalPatchContract/SurvivalPatchContract.csproj -c Release -- --out audit/survival-patch-fixtures` | Windows / .NET 10 | 59 actual app-to-Survival-BPatch writer scenarios |
 | D1 | `chmod +x publish.sh && ./publish.sh` | Linux / .NET 10 | Published executable and matching `BUILD-INFO.txt` source receipt |
 | D2 | Wine UI + in-game manual test | Linux / game | Visual design lock, preset round-trip, PAK/UTOC/UCAS build, actual game effects |
 
@@ -178,3 +180,7 @@ See [Phase 8 detailed audit](DEEP-CFG-AUDIT-PHASE8-HEALTH-STAMINA-2026-10-09.md)
 The five catalog-only Stamina internal speed-state parameters are intentionally absent from the actual application ViewModel and are **not** counted among C2 active writer scenarios. See Phase 8 for their precise IDs.
 
 C2 now includes five Master original-mechanics full-list replacement cases in addition to its 41 live Health/Stamina scalar/toggle tests. The five internal-only stamina CFG definitions remain non-VM and are not counted as writer inputs.
+
+### Phase 9: Survival real-writer validation
+
+The `survival-writer-windows` CI job executes the real WPF ViewModel and production CFG writer for **53 live Survival parameters + 6 difficulty variants (59 tests)**. All **139 direct source fields** are covered separately by strict original ZIP value comparison (B6) during `pre_release.py source`. One source-mapped alcohol threshold remains catalog-only, not an app control. Game loading/effects stay NOT RUN. See [Phase 9](DEEP-CFG-AUDIT-PHASE9-SURVIVAL-2026-10-09.md).

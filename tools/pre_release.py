@@ -28,10 +28,12 @@ SOURCE = (
     ("combat-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("combat-original-special-arrays-and-inheritance", "tools/audit_combat_source_structures.py"),
     ("health-stamina-original-source", "tools/audit_health_stamina_source.py"),
+    ("survival-direct-source-values", "tools/audit_cfg_source_values.py"),
 )
 WRITERS = (
     ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 82),
     ("health-stamina-bpatch-writer", "HealthStaminaPatchContract", "health-stamina-patch-fixtures", 46),
+    ("survival-bpatch-writer", "SurvivalPatchContract", "survival-patch-fixtures", 59),
 )
 MANUAL = (
     "S.T.A.L.K.E.R. 2 Combat BPatch loading and gameplay effects",
@@ -135,6 +137,9 @@ def main():
                 command.extend(["--out", str(out / "combat-original-special-arrays.json")])
             if label == "health-stamina-original-source":
                 command.extend(["--out", str(out / "health-stamina-original-source.json")])
+            if label == "survival-direct-source-values":
+                command.extend(["--out", str(out / "survival-source-values.json"),
+                                "--parameter-prefix", "survival.", "--strict"])
             steps.append(execute(label, command, out))
     else:
         steps.extend(not_run(label, "matching source ZIPs not selected")

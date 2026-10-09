@@ -61,3 +61,7 @@ not game-engine BPatch runtime tests.
 `audit_health_stamina_source.py` compares 69 source edit points against the original decoded GameData/DLC1 CFG archives, including one `Player→[0]` inherited VaultingParams value. `tests/HealthStaminaPatchContract` executes 46 real WPF model-to-CFG writer scenarios on Windows CI and stores generated patch evidence. Both are registered in `pre_release.py`; neither runs the game.
 
 C2 writer scenario breakdown: 41 live Health/Stamina parameter/difficulty cases plus five Master mechanics toggle full-list replacement cases = 46; five original Stamina speed-state CFG definitions are source-only and are not loaded into the app.
+
+### Phase 9 Survival coverage
+
+`tests/SurvivalPatchContract` checks 59 production C# ViewModel-to-BPatch outputs on Windows. `pre_release.py source` now includes the original-source check for all 139 `survival.*` edit points. Neither source static parity nor generated CFG data proves in-game behavior. Details: [Survival Phase 9](../docs/DEEP-CFG-AUDIT-PHASE9-SURVIVAL-2026-10-09.md).

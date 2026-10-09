@@ -1,5 +1,16 @@
 # True Custom Difficulty
 
+## Survival CFG/BPatch audit — Phase 9
+
+The Survival source catalog has **54 parameters / 139 direct CFG edit
+points**, with **53 currently instantiated live controls** and one
+catalog-only alcohol threshold parameter. Added a **59-scenario**
+Windows/.NET production writer contract, validating actual view-model
+edits, precise BPatch fields and absence of unrelated updates.
+Original decoded source ZIP parity and gameplay runtime behavior remain
+separate pre-release gates. See [Phase 9 Survival audit](docs/DEEP-CFG-AUDIT-PHASE9-SURVIVAL-2026-10-09.md).
+
+
 ## Health + Stamina original CFG audit — Phase 8
 
 Verified **69 original source CFG fields** from the supplied
