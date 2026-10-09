@@ -58,5 +58,13 @@
   "constraints": [
     "No Environment DLC1 manifest points; DLC1 archive availability is not game feature exhaustiveness",
     "In-game effect and UE BPatch merging NOT VERIFIED"
-  ]
+  ],
+  "productionWriterCI": {
+    "job": "environment-writer-windows",
+    "workflowRun": 37993946447,
+    "commit": "589cbdeee8e2a265a6afbe994f06d1fba98fb1ea",
+    "result": "PASS",
+    "scenarios": 90,
+    "limits": "not actual Unreal load / gameplay"
+  }
 }
