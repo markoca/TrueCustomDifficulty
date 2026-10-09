@@ -79,6 +79,25 @@ production CFG or UI behavior changes. The complete validator still needs
 local execution and any reported assertion failures must be assessed
 independently.
 
+### Retired AmmoDistributionRadar audit migration (2026-10-09)
+
+The old whole-project validator attempted to read the deleted
+`src/TrueCustomDifficulty/Controls/AmmoDistributionRadar.cs` directly,
+raising `FileNotFoundError` before it could report normal assertions. The
+active UI is now `AggregateVisualControl / AmmoDistribution`, with six source
+parameters (Ammo Yield, Grenade Yield, four family weights), eight source-backed
+conditional ammo count ranges, and separate SNG/NATO composition previews.
+
+The retired `AmmoDistributionRadar` contract and its repeated historical
+polar-legend/font/right-pane gates were replaced with guards against the
+**current** aggregate, its CFG/source count model and all nine remaining
+specialized class registrations. The old ten-radar text hitbox assumptions
+are not silently treated as passes. Existing UI-DESIGN-LOCK and
+VISUAL-CONTROL-SYSTEM remain authoritative; gameplay/UI sources were not
+modified by this validator repair. The full project validator must still be
+run locally and any reported `[FAIL]` is not considered resolved by this
+migration.
+
 ## Automated reproductions
 
 From the project root:

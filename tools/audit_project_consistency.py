@@ -1161,16 +1161,22 @@ else:
     else:
         note("Stash Ammo Amounts locked: 3 existing quantity controls -> 1 visible radar; Basic/Standard/Rare writer semantics unchanged")
 
-# Ammo Box Distribution radar production gate (v0.9.26.44).
-_abd_ids = [
-    "loot.ammoBoxWeight918",
-    "loot.ammoBoxWeight545",
-    "loot.ammoBoxWeight045",
-    "loot.ammoBoxWeight012",
-]
+# Current Breakable Boxes aggregate production gate (UI-06, 2026-10-09).
+# The retired AmmoDistributionRadar.cs is NOT a valid renderer or test target.
+# The live six-source editor is AggregateVisualControl / AmmoDistribution.
+_abd_weight_ids = (
+    "loot.ammoBoxWeight918", "loot.ammoBoxWeight045",
+    "loot.ammoBoxWeight545", "loot.ammoBoxWeight012",
+)
+_abd_yield_ids = ("loot.destructibleAmmoQuantity", "loot.destructibleGrenadeQuantity")
+_abd_all_ids = _abd_yield_ids + _abd_weight_ids
 _abd_rows_by_id = {row.get("id"): row for row in parameters}
-_abd_rows = [_abd_rows_by_id.get(pid) for pid in _abd_ids]
-_abd_anchor = _abd_rows_by_id.get("loot.ammoBoxWeight918")
+_abd_rows = [_abd_rows_by_id.get(pid) for pid in _abd_all_ids]
+_abd_expected_ranges = {
+    "loot.destructibleAmmoQuantity": (0.5, 2.0, 0.25),
+    "loot.destructibleGrenadeQuantity": (0.5, 2.0, 0.5),
+    **{pid: (0.0, 3.0, 0.25) for pid in _abd_weight_ids},
+}
 _abd_baseline_map = (baseline.get("special", {}).get("destructibleAmmoProduction", {}) or {}).get("weightParameterIds", {})
 _abd_expected_map = {
     "A918D": "loot.ammoBoxWeight918",
@@ -1180,59 +1186,99 @@ _abd_expected_map = {
     "A556D": "loot.ammoBoxWeight545",
     "A012D": "loot.ammoBoxWeight012",
 }
-_abd_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AmmoDistributionRadar.cs"
+_abd_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs"
+_abd_retired_control = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AmmoDistributionRadar.cs"
 _abd_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
 _abd_main_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
 _abd_param_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
 _abd_writer = (ROOT / "src" / "TrueCustomDifficulty" / "Services" / "CfgPatchWriterService.cs").read_text(encoding="utf-8")
-
+_abd_errors = []
 if any(row is None for row in _abd_rows):
-    fail("Ammo Box Distribution backing family parameter set is incomplete")
-elif any(pid in _abd_rows_by_id for pid in {"loot.ammoBoxWeight919", "loot.ammoBoxWeight556"}):
-    fail("obsolete per-caliber Ammo Box Distribution backing parameters still exist")
-elif sum(1 for row in _abd_rows if row.get("exposeInUi", True)) != 1 or not _abd_anchor.get("exposeInUi", True):
-    fail("Breakable Box Ammo Distribution must expose exactly one aggregate radar card")
-elif _abd_anchor.get("label") != "Breakable Box Ammo Distribution":
-    fail(f"Breakable Box Ammo Distribution label drifted: {_abd_anchor.get('label')}")
-elif any(
-    row.get("control") != "slider"
-    or (row.get("vanilla") or {}).get("All") != 1.0
-    or (row.get("slider") or {}).get("min") != 0.0
-    or (row.get("slider") or {}).get("max") != 3.0
-    or (row.get("slider") or {}).get("step") != 0.25
-    for row in _abd_rows
+    _abd_errors.append("one or more of the six Breakable Boxes source parameters are missing")
+if any(pid in _abd_rows_by_id for pid in {"loot.ammoBoxWeight919", "loot.ammoBoxWeight556"}):
+    _abd_errors.append("obsolete per-caliber family parameters returned")
+for _pid in _abd_all_ids:
+    _row = _abd_rows_by_id.get(_pid)
+    if _row is None:
+        continue
+    _slider = _row.get("slider") or {}
+    if _row.get("control") != "slider" or (
+        _slider.get("min"), _slider.get("max"), _slider.get("step")
+    ) != _abd_expected_ranges[_pid] or (_row.get("vanilla") or {}).get("All") != 1.0:
+        _abd_errors.append(f"{_pid}: native range/step/vanilla contract drifted")
+_abd_anchor = _abd_rows_by_id.get("loot.ammoBoxWeight918")
+if _abd_anchor and (
+    not _abd_anchor.get("exposeInUi", True)
+    or _abd_anchor.get("label") != "Breakable Box Ammo Distribution"
+    or any(_abd_rows_by_id[pid].get("exposeInUi", True)
+           for pid in _abd_weight_ids[1:] if pid in _abd_rows_by_id)
 ):
-    fail("Ammo Box Distribution family slider contract drifted from 0x-3x / 0.25x / vanilla 1x")
-elif _abd_baseline_map != _abd_expected_map:
-    fail(f"Ammo Box Distribution grouped SID mapping drifted: {_abd_baseline_map}")
-elif not _abd_control.exists():
-    fail("AmmoDistributionRadar.cs is missing")
+    _abd_errors.append("four-family aggregate anchor/visibility contract drifted")
+if _abd_baseline_map != _abd_expected_map:
+    _abd_errors.append(f"shared six-caliber weight mapping drifted: {_abd_baseline_map}")
+if _abd_retired_control.exists() or "AmmoDistributionRadar" in _abd_xaml:
+    _abd_errors.append("retired standalone AmmoDistributionRadar returned")
+if not _abd_control.exists():
+    _abd_errors.append("AggregateVisualControl.cs is missing")
 else:
     _abd_control_text = _abd_control.read_text(encoding="utf-8")
-    if "Four-axis editor" not in _abd_control_text or "CalculateVariantDetails" not in _abd_control_text:
-        fail("four-axis AmmoDistributionRadar implementation is incomplete")
-    elif 'new("loot.ammoBoxWeight918", "9×18 / 9×19 mm", -90)' not in _abd_control_text:
-        fail("9 mm grouped radar axis missing")
-    elif 'new("loot.ammoBoxWeight545", "5.45 / 5.56 mm", 0)' not in _abd_control_text:
-        fail("5.45 / 5.56 mm grouped radar axis missing")
-    elif "E / W" in _abd_control_text:
-        fail("Ammo Box Distribution leaked internal E/W pool abbreviations into player-facing UI")
-    elif '9×18 · Spawn {P(nine18)}' not in _abd_control_text or '9×19 · Spawn {Range(nine19A, nine19B)}' not in _abd_control_text:
-        fail("Breakable Box Ammo Distribution no longer shows consistent per-ammo spawn metrics")
-    elif "At least one vanilla ammo family in each box pool must remain above 0x." not in _abd_control_text:
-        fail("AmmoDistributionRadar lost its all-zero pool guard")
-    elif '<controls:AmmoDistributionRadar x:Name="AmmoDistributionRadarControl"' not in _abd_xaml:
-        fail("MainWindow does not render the Ammo Box Distribution radar")
-    elif "ammoDistributionParameterIds.Contains(p.Id)" not in _abd_main_vm:
-        fail("hidden radar backing family parameters are not loaded into the live VM graph")
-    elif "IsAmmoDistributionAnchor" not in _abd_param_vm or "IsAmmoDistributionMember" not in _abd_param_vm:
-        fail("radar aggregate/backing visibility contract is missing")
-    elif "WeightParameterIds" not in _abd_writer or "effectiveWeight" not in _abd_writer:
-        fail("destructible ammo writer no longer consumes grouped radar Weight mappings")
-    elif "GetOrAddChild(itemDefinition.Node" not in _abd_writer:
-        fail("destructible ammo writer structure changed unexpectedly")
+    _abd_required_source = (
+        'case "AmmoDistribution":',
+        "private void DrawAmmoDistribution(",
+        'DrawHorizontalTrackCard(dc, ammoYield,',
+        'DrawHorizontalTrackCard(dc, P("loot.destructibleGrenadeQuantity"),',
+        '"AMMO YIELD PREVIEW"',
+        '"ROUNDS IF ROLLED"',
+        'var countsModified = ammoYield.IsValueModifiedFromReference();',
+        'item.MinCount * ammoYield.CurrentNumber + 0.5',
+        'item.MaxCount * ammoYield.CurrentNumber + 0.5',
+        'YieldRow("SNG", 173.0, new[]',
+        'YieldRow("NATO", 219.0, new[]',
+        'Pool("SNG POOL",',
+        'Pool("NATO POOL",',
+        'EnforceAmmoPoolValidity(',
+        '"AmmoDistribution" => 680.0,',
+        '"AmmoDistribution" => new[]',
+        '"BreakableBoxYields" => Array.Empty<string>()',
+        'protected override void OnMouseLeftButtonDown(',
+        'protected override void OnMouseRightButtonDown(',
+        'protected override void OnKeyDown(',
+    )
+    for _token in _abd_required_source:
+        if _token not in _abd_control_text:
+            _abd_errors.append(f"live aggregate source missing {_token!r}")
+    # The eight literal Min/Max/Weight items must be traceable to the source
+    # generator pools; do not validate deprecated polar-axis text instead.
+    _source_pools = (baseline.get("special", {}).get("destructibleAmmoProduction", {}) or {}).get("pools", [])
+    _source_items = [item for pool in _source_pools for item in pool.get("items", [])]
+    if len(_source_pools) != 2 or len(_source_items) != 8:
+        _abd_errors.append("SNG/NATO CFG provenance must contain exactly 2 pools / 8 item rows")
     else:
-        note("Ammo Box Distribution locked: 4 family axes / 6 existing vanilla ammo entries; PossibleItems membership immutable; shared writer composes Weight with Amount")
+        for _caliber, _low, _high, _weight in (
+            ("9×18", 3, 6, "weight918"), ("9×19", 5, 10, "weight918"),
+            ("5.45", 5, 10, "weight545"), ("12 GA", 2, 4, "weight012"),
+            (".45 ACP", 5, 10, "weight045"), ("9×19", 5, 10, "weight918"),
+            ("5.56", 5, 10, "weight545"), ("12 GA", 5, 10, "weight012"),
+        ):
+            _token = f'(Caliber: "{_caliber}", MinCount: {_low}, MaxCount: {_high}, Weight: {_weight})'
+            if _token not in _abd_control_text:
+                _abd_errors.append(f"source-backed count preview missing {_token!r}")
+if '<controls:AggregateVisualControl x:Name="AggregateVisualControl"' not in _abd_xaml or 'Family="{Binding VisualAggregateFamily}"' not in _abd_xaml:
+    _abd_errors.append("MainWindow is not bound to the active aggregate visual family")
+if "ammoDistributionParameterIds.Contains(p.Id)" not in _abd_main_vm:
+    _abd_errors.append("backing family weights are absent from live VM graph")
+for _pid in _abd_all_ids:
+    if f'["{_pid}"] = "AmmoDistribution"' not in _abd_param_vm:
+        _abd_errors.append(f"{_pid}: not mapped to active AmmoDistribution family")
+if '["AmmoDistribution"] = "loot.ammoBoxWeight918"' not in _abd_param_vm:
+    _abd_errors.append("AmmoDistribution family no longer has the approved anchor")
+if "WeightParameterIds" not in _abd_writer or "effectiveWeight" not in _abd_writer or "GetOrAddChild(itemDefinition.Node" not in _abd_writer:
+    _abd_errors.append("destructible ammo CFG writer weight/count route missing")
+if _abd_errors:
+    fail("Breakable Boxes current UI/CFG contract drifted: " + "; ".join(_abd_errors))
+else:
+    note("Breakable Boxes UI-06 locked: six live aggregate sources; 8 conditional ammo ranges; 2 distinct SNG/NATO weight pools; no obsolete radar")
+
 
 # Destructible ammo weight audit gate (v0.9.26.44).
 _aw_doc = DOCS / "generators" / "DESTRUCTIBLE-AMMO-WEIGHT-AUDIT.md"
@@ -2149,225 +2195,44 @@ if _control_help_errors:
 else:
     note("rationale controls locked: every rationale ends with type-aware mouse + keyboard help; radar/slider/range/choice/toggle covered")
 
-# Radar legend text hitbox + right-click reset gate (v0.9.26.51).
-_radar_legend_reset_files = [
-    "AmmoDistributionRadar.cs",
-    "StashAmmoRadar.cs",
-    "MutantDropRadar.cs",
-    "AnomalyDamageRadar.cs",
-    "WorldLootRemovalRadar.cs",
-    "MedicalHealingRadar.cs",
-    "ActionCostsRadar.cs",
-    "ItemPriceScalersRadar.cs",
-    "MutantHealthRadar.cs",
-    "SpecialAbilityCooldownRadar.cs",
-]
-_radar_legend_reset_errors = []
-for _radar_name in _radar_legend_reset_files:
-    _radar_path = ROOT / "src" / "TrueCustomDifficulty" / "Controls" / _radar_name
-    _radar_text = _radar_path.read_text(encoding="utf-8")
-    for _required in [
-        "private readonly Dictionary<int, Rect> _legendHitRects",
-        "BeginLegendHitArea(",
-        "EndLegendHitArea(",
-        "IncludeLegendTextHit(bounds, formatted);",
-        "formatted.WidthIncludingTrailingWhitespace",
-        "var textLeft = bounds.Left + Math.Max(0.0, bounds.Width - textWidth);",
-        "var axis = FindLegendAxis(point);",
-        "if (axis < 0)\n            axis = FindHandleAxis(point,",
-    ]:
-        if _required not in _radar_text:
-            _radar_legend_reset_errors.append(f"{_radar_name}: missing {_required!r}")
-
-    _find_start = _radar_text.find("private int FindLegendAxis(Point point)")
-    _find_end = _radar_text.find("protected override void OnKeyDown", _find_start)
-    _find_body = _radar_text[_find_start:_find_end]
-    if "_legendHitRects" not in _find_body or ".Contains(point)" not in _find_body:
-        _radar_legend_reset_errors.append(f"{_radar_name}: FindLegendAxis is not text-extent based")
-    if "GetInfoRect()" in _find_body or "rowHeight" in _find_body or "sectionHeight" in _find_body:
-        _radar_legend_reset_errors.append(f"{_radar_name}: legacy full-row legend hitbox still active")
-
-if _radar_legend_reset_errors:
-    fail("radar legend reset/hitbox drifted: " + "; ".join(_radar_legend_reset_errors))
-else:
-    note("radar legend reset locked: 10/10 text-only hitboxes support hover + wheel + right-click branch reset")
-
-# Radar legend hover + wheel interaction gate (v0.9.26.44).
-_radar_legend_interaction_controls = [
-    "AmmoDistributionRadar.cs",
-    "MutantDropRadar.cs",
-    "AnomalyDamageRadar.cs",
-    "WorldLootRemovalRadar.cs",
-    "MedicalHealingRadar.cs",
-    "ActionCostsRadar.cs",
-    "ItemPriceScalersRadar.cs",
-    "MutantHealthRadar.cs",
-    "SpecialAbilityCooldownRadar.cs",
-    "StashAmmoRadar.cs",
-]
-_radar_legend_interaction_errors = []
-for _radar_name in _radar_legend_interaction_controls:
-    _radar_text = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / _radar_name).read_text(encoding="utf-8")
-    if "private int _hoverAxis = -1;" not in _radar_text:
-        _radar_legend_interaction_errors.append(f"{_radar_name}: hover branch state missing")
-    if "private int FindLegendAxis(Point point)" not in _radar_text:
-        _radar_legend_interaction_errors.append(f"{_radar_name}: legend hit-test missing")
-    if "protected override void OnMouseWheel(MouseWheelEventArgs e)" not in _radar_text:
-        _radar_legend_interaction_errors.append(f"{_radar_name}: legend wheel interaction missing")
-    if "protected override void OnMouseLeave(MouseEventArgs e)" not in _radar_text:
-        _radar_legend_interaction_errors.append(f"{_radar_name}: hover cleanup missing")
-    if "hovered ? textBrush : mutedBrush" not in _radar_text:
-        _radar_legend_interaction_errors.append(f"{_radar_name}: muted legend text does not brighten on hover")
-if _radar_legend_interaction_errors:
-    fail("radar legend hover/wheel interaction drifted: " + "; ".join(_radar_legend_interaction_errors))
-else:
-    note("radar legend interaction locked: 10/10 radars brighten muted branch text on hover and wheel-adjust that branch")
-
-# Radar legend background cleanup gate (v0.9.26.44).
-_radar_no_legend_background_controls = [
-    "AmmoDistributionRadar.cs",
-    "MutantDropRadar.cs",
-    "AnomalyDamageRadar.cs",
-    "WorldLootRemovalRadar.cs",
-    "MedicalHealingRadar.cs",
-    "ActionCostsRadar.cs",
-    "ItemPriceScalersRadar.cs",
-    "MutantHealthRadar.cs",
-    "SpecialAbilityCooldownRadar.cs",
-    "StashAmmoRadar.cs",
-]
-_radar_legend_background_errors = []
-for _radar_name in _radar_no_legend_background_controls:
-    _radar_text = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / _radar_name).read_text(encoding="utf-8")
-    if "DrawRoundedRectangle(highlight" in _radar_text:
-        _radar_legend_background_errors.append(f"{_radar_name}: legend selection/modification background returned")
-if _radar_legend_background_errors:
-    fail("radar legend background cleanup drifted: " + "; ".join(_radar_legend_background_errors))
-else:
-    note("radar legend backgrounds locked: selected/modified text rows use font/color only, no gray/yellow fill")
-
-# Aggregate radar duplicate-title cleanup gate (v0.9.26.44).
-_radar_title_cleanup_triggers = [
-    "IsMutantHealthAnchor",
-    "IsSpecialAbilityCooldownAnchor",
-    "IsMedicalHealingAnchor",
-    "IsActionCostAnchor",
-    "IsMutantDropAnchor",
-    "IsItemPriceScalerAnchor",
-]
-_radar_title_cleanup_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
-_radar_title_cleanup_errors = []
-for _trigger in _radar_title_cleanup_triggers:
-    _marker = f'<DataTrigger Binding="{{Binding {_trigger}}}" Value="True">'
-    _start = _radar_title_cleanup_xaml.find(_marker)
-    _end = _radar_title_cleanup_xaml.find("</DataTrigger>", _start)
-    _block = _radar_title_cleanup_xaml[_start:_end]
-    if '<Setter TargetName="ParameterLabel" Property="Visibility" Value="Collapsed" />' not in _block:
-        _radar_title_cleanup_errors.append(f"{_trigger}: duplicate inner title visible")
-if _radar_title_cleanup_errors:
-    fail("aggregate radar duplicate-title cleanup drifted: " + "; ".join(_radar_title_cleanup_errors))
-else:
-    note("aggregate radar title cleanup locked: requested 6 radar cards hide duplicate inner titles")
-
-# Radar font readability gate (v0.9.26.44).
-_radar_font_controls = [
-    "AmmoDistributionRadar.cs",
-    "MutantDropRadar.cs",
-    "AnomalyDamageRadar.cs",
-    "WorldLootRemovalRadar.cs",
-    "MedicalHealingRadar.cs",
-    "ActionCostsRadar.cs",
-    "ItemPriceScalersRadar.cs",
-    "MutantHealthRadar.cs",
-    "SpecialAbilityCooldownRadar.cs",
-    "StashAmmoRadar.cs",
-]
-_radar_font_errors = []
-for _radar_name in _radar_font_controls:
-    _radar_text = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / _radar_name).read_text(encoding="utf-8")
-    if not any(_font_token in _radar_text for _font_token in [", 9.8,", ", 10.0,", ", 10.2,", ", 10.3,"]):
-        _radar_font_errors.append(f"{_radar_name}: expected enlarged radar text sizes missing")
-if _radar_font_errors:
-    fail("radar font readability layout drifted: " + "; ".join(_radar_font_errors))
-else:
-    note("radar font readability locked: all 10 aggregate radars use enlarged Wine-friendly text")
-
-# Right-aligned radar information text gate (v0.9.26.44).
-_radar_right_align_controls = [
-    "AmmoDistributionRadar.cs",
-    "MutantDropRadar.cs",
-    "AnomalyDamageRadar.cs",
-    "WorldLootRemovalRadar.cs",
-    "MedicalHealingRadar.cs",
-    "ActionCostsRadar.cs",
-    "ItemPriceScalersRadar.cs",
-    "MutantHealthRadar.cs",
-    "SpecialAbilityCooldownRadar.cs",
-    "StashAmmoRadar.cs",
-]
-_radar_right_align_errors = []
-for _radar_name in _radar_right_align_controls:
-    _radar_text = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / _radar_name).read_text(encoding="utf-8")
-    if "formatted.TextAlignment = TextAlignment.Right;" not in _radar_text:
-        _radar_right_align_errors.append(f"{_radar_name}: clipped info text is not right-aligned")
-if _radar_right_align_errors:
-    fail("right-aligned radar information layout drifted: " + "; ".join(_radar_right_align_errors))
-else:
-    note("radar info text alignment locked: 10/10 right-side information panes use clean right alignment")
-
-# Compact single-column radar information layout gate (v0.9.26.44).
-_radar_single_column_controls = [
-    "AmmoDistributionRadar.cs",
-    "MutantDropRadar.cs",
-    "AnomalyDamageRadar.cs",
-    "WorldLootRemovalRadar.cs",
-    "MedicalHealingRadar.cs",
-    "ActionCostsRadar.cs",
-    "ItemPriceScalersRadar.cs",
-    "MutantHealthRadar.cs",
-    "SpecialAbilityCooldownRadar.cs",
-    "StashAmmoRadar.cs",
-]
-_radar_single_column_errors = []
-for _radar_name in _radar_single_column_controls:
-    _radar_text = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / _radar_name).read_text(encoding="utf-8")
-    if "GetInfoRect()" not in _radar_text:
-        _radar_single_column_errors.append(f"{_radar_name}: no right-side info pane")
-for _two_col_name in ["ActionCostsRadar.cs", "MutantHealthRadar.cs", "SpecialAbilityCooldownRadar.cs", "AnomalyDamageRadar.cs", "MutantDropRadar.cs"]:
-    _two_col_text = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / _two_col_name).read_text(encoding="utf-8")
-    if "var right = new Rect(" in _two_col_text or "var rightRect = new Rect(" in _two_col_text:
-        _radar_single_column_errors.append(f"{_two_col_name}: two-column legend layout returned")
-_stash_text = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "StashAmmoRadar.cs").read_text(encoding="utf-8")
-if "info.Top + sectionHeight" not in _stash_text or "info.Top + (sectionHeight * 2.0)" not in _stash_text:
-    _radar_single_column_errors.append("StashAmmoRadar: Basic/Standard/Rare previews are not vertically stacked")
-if _radar_single_column_errors:
-    fail("compact single-column radar layout drifted: " + "; ".join(_radar_single_column_errors))
-else:
-    note("compact radar info layout locked: 10/10 radars use dense right-side text; long legends are single-column and Wine-safe")
-
-# AmmoDistributionRadar helper compile gate (v0.9.26.44).
-_ammo_radar_compile_text = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AmmoDistributionRadar.cs").read_text(encoding="utf-8")
-if "DrawClippedText(" in _ammo_radar_compile_text and "private void DrawClippedText(" not in _ammo_radar_compile_text:
-    fail("AmmoDistributionRadar uses DrawClippedText without defining the helper")
-else:
-    note("AmmoDistributionRadar compile helper locked: DrawClippedText definition present")
-
-# Current semantic controls are not all old left-quarter polar radars.
-# Their source classes must be present; exact geometry is covered by the
-# user-approved current UI-DESIGN-LOCK.md, not legacy 2026-09 layout tests.
+# Current specialized editor source registration gate (2026-10-09).
+# Previous 10/10 polar-radar legend geometry, wheel, font, and right-pane
+# assertions are historical: current semantic editors are not all polar
+# radars and Breakable Boxes is hosted by AggregateVisualControl.
+# The approved interaction/shape rules now live in UI-DESIGN-LOCK.md and
+# VISUAL-CONTROL-SYSTEM.md; the real CFG and UI checks run separately.
 _semantic_radar_controls = [
-    "AmmoDistributionRadar.cs", "MutantDropRadar.cs",
-    "AnomalyDamageRadar.cs", "WorldLootRemovalRadar.cs",
-    "MedicalHealingRadar.cs", "ActionCostsRadar.cs",
-    "ItemPriceScalersRadar.cs", "MutantHealthRadar.cs",
-    "SpecialAbilityCooldownRadar.cs", "StashAmmoRadar.cs",
+    "MutantDropRadar.cs", "AnomalyDamageRadar.cs",
+    "WorldLootRemovalRadar.cs", "MedicalHealingRadar.cs",
+    "ActionCostsRadar.cs", "ItemPriceScalersRadar.cs",
+    "MutantHealthRadar.cs", "SpecialAbilityCooldownRadar.cs",
+    "StashAmmoRadar.cs",
 ]
-_missing_radar_sources = [name for name in _semantic_radar_controls
-                         if not (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / name).exists()]
-if _missing_radar_sources:
-    fail(f"specialized semantic renderer source missing: {_missing_radar_sources}")
+_semantic_editor_errors = []
+_semantic_source_dir = ROOT / "src" / "TrueCustomDifficulty" / "Controls"
+_semantic_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
+for _name in _semantic_radar_controls:
+    _path = _semantic_source_dir / _name
+    _control_name = _path.stem
+    if not _path.exists():
+        _semantic_editor_errors.append(f"missing source {_name}")
+        continue
+    _control_text = _path.read_text(encoding="utf-8")
+    if f"class {_control_name}" not in _control_text:
+        _semantic_editor_errors.append(f"{_name}: class declaration missing")
+    if f'<controls:{_control_name} x:Name=' not in _semantic_xaml:
+        _semantic_editor_errors.append(f"{_name}: MainWindow registration missing")
+if not (_semantic_source_dir / "AggregateVisualControl.cs").exists():
+    _semantic_editor_errors.append("AggregateVisualControl.cs missing")
+if not (DOCS / "UI-DESIGN-LOCK.md").exists() or not (DOCS / "VISUAL-CONTROL-SYSTEM.md").exists():
+    _semantic_editor_errors.append("binding current UI lock documentation missing")
+if (_semantic_source_dir / "AmmoDistributionRadar.cs").exists():
+    _semantic_editor_errors.append("retired standalone AmmoDistributionRadar source reintroduced")
+if _semantic_editor_errors:
+    fail("semantic renderer registration drifted: " + "; ".join(_semantic_editor_errors))
 else:
-    note("semantic renderers present: 10 classes; their current layout is governed by UI-DESIGN-LOCK.md")
+    note("semantic editor registration: 9 retained specialized classes + current AggregateVisualControl; no obsolete polar-only assumptions")
+
 
 # UI -> real CFG deep-audit artifact gate (v0.9.26.44).
 _ui_cfg_doc = DOCS / "UI-CFG-DEEP-AUDIT.md"

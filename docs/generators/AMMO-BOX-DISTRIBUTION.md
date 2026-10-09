@@ -112,3 +112,15 @@ The audited physical redirect surface remains:
 - 1,235 total
 
 Status: `runtime_test_required`.
+
+## Static consistency validator scope (2026-10-09)
+
+The production Loot editor for Breakable Boxes is
+`AggregateVisualControl / AmmoDistribution`, not the deleted
+`AmmoDistributionRadar.cs`. The whole-project consistency script now checks
+six underlying editable parameters, the two real four-entry ammo generator
+pools, an eight-caliber conditional rounds preview, SNG/NATO composition
+views and the current aggregate's registered UI/CFG routes. The old
+polar-only legend geometry and 10/10 radar checklist are historical and
+must not be used to reject the redesigned UI. No CFG writer, bound or
+interactive hit geometry was changed as part of the validation correction.
