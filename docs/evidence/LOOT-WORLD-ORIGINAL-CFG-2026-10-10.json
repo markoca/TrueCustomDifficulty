@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-10",
+  "phase": "14B2 original CFG and World Weapon nested source audit",
+  "originalSourceAudit": "PASS — independent scan of two decoded user ZIPs, original-to-production-manifest normalized physical-source signatures and targeted source leaf comparisons",
+  "buildStatus": "NOT VERIFIED after nested world weapon writer fix: GitHub Actions jobs failing before any steps run",
+  "archives": {
+    "baseSha256": "7610b16218310c7345796ff26b1554c73e3d2ca775f6a50108a7406cb7f33da1",
+    "dlc1Sha256": "3c5cb53f1769619b510ae3780142d92639c083a4a755a8717a267710c3c849e6"
+  },
+  "originalFiles": [
+    {
+      "file": "GameData/SpawnActorPrototypes.cfg",
+      "sha256": "f397f84c551f16b18501d6899bf33c6d0a48ed318d2a5d6b565ccdd42bd61e6c"
+    },
+    {
+      "file": "GameData/ItemGeneratorPrototypes.cfg",
+      "sha256": "4a06bc946eb9eaa7ff736421df7fd1bb6fe38fb91038bf5fffa005f680d64ac3"
+    },
+    {
+      "file": "DLCGameData/DLC1/SpawnActorPrototypes.cfg",
+      "sha256": "cac0fde53d59fcfeff3a12c3a498add578907cae7aa897fc7496988e73141b1f"
+    }
+  ],
+  "originalPhysicalRootCensus": {
+    "base": 130057,
+    "dlc1": 22321,
+    "total": 152378
+  },
+  "exactMappedActorAndSource": {
+    "ammoBoxes": {
+      "base": 981,
+      "dlc1": 334,
+      "count": 1315,
+      "sortedFnv1a64": "426284ec7f0e36af"
+    },
+    "foodDrinkBoxes": {
+      "base": 1100,
+      "dlc1": 108,
+      "count": 1208,
+      "sortedFnv1a64": "450b84a432e853b9"
+    },
+    "medicalBoxes": {
+      "base": 709,
+      "dlc1": 159,
+      "count": 868,
+      "sortedFnv1a64": "9f63d3337ae9fefa"
+    },
+    "dedicatedF1Boxes": {
+      "base": 61,
+      "dlc1": 40,
+      "count": 101,
+      "sortedFnv1a64": "05682b404c0c8d63"
+    },
+    "looseDynamicPack": {
+      "base": 4588,
+      "dlc1": 807,
+      "count": 5395,
+      "sortedFnv1a64": "a94b8cdf2fea9bcd"
+    },
+    "looseStaticItem": {
+      "base": 1408,
+      "dlc1": 430,
+      "count": 1838,
+      "sortedFnv1a64": "c818d80133b9274b"
+    },
+    "directWeaponActors": {
+      "base": 282,
+      "dlc1": 80,
+      "count": 362,
+      "derivedPotentialOriginal": 372,
+      "deliberatelyNotEligible": 10,
+      "checkedBy16IndependentSidPrefixCountAnd64BitXor": true
+    },
+    "directAttachmentActors": {
+      "base": 5,
+      "dlc1": 2,
+      "count": 7,
+      "sortedFnv1a64": "5de7072f80b5883d"
+    },
+    "worldOnlyBlueprintSlots": {
+      "count": 77,
+      "originalStashBlueprintEntries": 79,
+      "sortedFnv1a64": "3570afa4eaa8a4ab"
+    },
+    "detectorDirectActors": {
+      "base": 4,
+      "dlc1": 3,
+      "count": 7,
+      "additionalExcludedBaseGilkaActor": "19FB54914B80A8E293E6F2AA84A56AAB"
+    },
+    "detectorDlcStashEntry": {
+      "count": 1,
+      "sourceFieldChecked": true
+    }
+  },
+  "explicitOriginalEligibilityExclusions": {
+    "nonBoxAmmoGeneratorActor": {
+      "sid": "3D2445C74FAC2F8ADD61DA905FD9C965",
+      "spawnedPrototypeSid": "M_WodenMovableChair_21",
+      "generator": "DestructibleStash_AmmoSNG"
+    },
+    "nonWorldBlueprintGenerators": [
+      "Stash_Blueprint_SciSEVA_Scientific_Armor_Upgrade_1",
+      "Stash_Blueprint_SciSEVA_Scientific_Armor_Upgrade_2"
+    ],
+    "physicalRegularWeaponCandidatesExcluded": 10
+  },
+  "verifiedOriginalGeneratorValues": {
+    "weaponGeneratorManifestRows": 14,
+    "attachmentGeneratorUsages": 60,
+    "detectorDlcStash": 1,
+    "uniqueDirectGeneratorFieldSignatures": 131,
+    "originalFoundExact": 131,
+    "uniquePhysicalGeneratorRedirectSignatures": 58,
+    "originalFoundExactRedirects": 58
+  },
+  "correction": {
+    "finding": "15 source values misclassified: six weapon stash PossibleItems source nodes contain Chance/MinCount/MaxCount inside nested Upgrades/Attaches, not directly at item level",
+    "count": 15,
+    "affectedGeneratorRoots": 6,
+    "writerBefore": "Full replacement of the indexed item stripped nested upgrade and attachment structures and copied nested fields to the wrong level",
+    "writerNow": "Indexed {bpatch} writes only changed ItemPrototypeSID, preserving all vanilla direct and nested fields",
+    "catalog": "Removed 15 misclassified direct item fields from six rows of world-weapon-shuffle-manifest.csv",
+    "regression": "tests/LootWorldPlacementContract now checks minimal indexed bpatch and rejects 15 misclassified fields"
+  },
+  "limitations": [
+    "Counts and FNV64 on sorted normalized physical rows are reproducible, not cryptographic signatures; original file/ZIP SHA256 fingerprints included",
+    "The registered tools/audit_loot_world_source.py strict release gate was not run as that exact repo script against the ZIPs in this environment; independent original source scanner and value comparisons WERE executed",
+    "No game runtime, Unreal indexed {bpatch} merge, quest eligibility in gameplay, PAK acceptance, or player-facing visual test performed",
+    "The 20 earlier World Loot placement writer scenarios passed at SHA fb59fb3 before this source-driven production writer change; same-SHA 20/20 PASS for the new code must be obtained before release"
+  ]
+}
