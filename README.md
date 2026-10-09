@@ -1,5 +1,17 @@
 # True Custom Difficulty
 
+## Before each release candidate: repeatable test suite
+
+Run `python tools/pre_release.py list` to view **all registered automated
+tests**. Use `python tools/pre_release.py static` locally and the
+[pre-release test runbook](docs/RELEASE-TESTING.md) for original
+GameData/DLC1 archive parity, 11 real Windows Combat BPatch writer
+scenarios, SHA-matched CI evidence, Linux publish, Wine UI checking and
+the mandatory manual game acceptance. The evidence runner records
+PASS / FAIL / NOT RUN under `audit/pre-release/`; a static green result
+alone never authorizes a release.
+
+
 A [GitHub Actions static contract workflow](.github/workflows/static-audit.yml) runs all three validators on main and pull requests.
 This does not replace .NET publish or in-game runtime validation.
 

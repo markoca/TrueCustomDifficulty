@@ -28,6 +28,11 @@ jobs:
       - name: Whole-project active source consistency
         run: python tools/audit_project_consistency.py
 
+      - name: Pre-release runner and documented inventory smoke
+        run: |
+          python tools/pre_release.py list
+          python tools/pre_release.py static --output audit/pre-release/ci-static
+
   combat-writer-windows:
     runs-on: windows-latest
     timeout-minutes: 15

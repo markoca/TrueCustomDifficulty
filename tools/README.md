@@ -1,6 +1,6 @@
 # External tools
 
-This directory is intentionally empty in the source/release.
+This source directory contains first-party audit/test scripts. The published tools/ folder is for optional manually supplied external packer binaries.
 
 True Custom Difficulty does **not** bundle or download third-party executables. Users supply them manually.
 
@@ -39,3 +39,7 @@ The mixer contract is described in the UI design documentation; publishing does 
 ## CFG placement audit
 
 `python tools/audit_cfg_placement.py --output docs/cfg-placement/v0.2.53` verifies all catalog parameters against their concrete CFG writer routes. It is intentionally static and does not launch the application.
+
+## Pre-release test runner
+
+Run `python tools/pre_release.py list` in the repository root to view the registered tests. The `static`, `source`, `writer` and `all` modes, their platform requirements, evidence reports and mandatory manual game checks are described in [Pre-release testing](../docs/RELEASE-TESTING.md). Test logs and fixtures are written to ignored `audit/pre-release/` and do not form part of the runtime release.

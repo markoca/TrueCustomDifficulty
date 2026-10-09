@@ -10,3 +10,7 @@ publish/
 **/CFG/import-report.json
 
 # Portable publish output is isolated under publish/.
+
+# Local pre-release audit logs/receipts and generated writer fixtures.
+audit/pre-release/
+audit/combat-patch-fixtures/

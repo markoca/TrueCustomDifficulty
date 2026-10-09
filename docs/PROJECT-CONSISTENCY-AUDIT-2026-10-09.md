@@ -102,3 +102,7 @@ The CI runner also exposed a local-only root-file assumption: `prompt.md`
 is not present in the workflow checkout. The validator now requires the seven
 operational root files, allows the optional prompt when present, and still
 fails on unexpected root files; it does not require local notes to build.
+
+## Canonical pre-release tests
+
+[Pre-release test runbook](RELEASE-TESTING.md) now tracks all three static validators, three checks against matching original GameData/DLC1 CFG archives, all 11 Windows production writer scenarios, CI evidence tied to the exact commit and manual Wine/gameplay acceptance. Run `python tools/pre_release.py list` and then select `static`, `source`, `writer` or `all`. The runner reports missing prerequisites as NOT RUN or a failure, never a synthetic PASS.

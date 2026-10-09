@@ -216,3 +216,7 @@ exercises the .NET/WPF production code and saves its generated patches.
 Keep catalog runtime flags unchanged until those in-game tests pass. No
 new Combat UI control, designer lock change, gameplay range change or
 v1.0 release is authorized by this mapping pass.
+
+## Before releasing a build
+
+The C# writer contract suite and Combat source checks are registered in [the pre-release test runbook](RELEASE-TESTING.md). Run `python tools/pre_release.py list` and follow its static/source/Windows writer procedure. The generated CFG test checks do not promote mutant cooldown or PSY runtime support states without in-game evidence.
