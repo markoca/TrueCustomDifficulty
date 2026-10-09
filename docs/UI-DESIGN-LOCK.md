@@ -587,3 +587,8 @@ For **all sliders**, hovering must not turn the whole card, track label, helper 
 ### 2026-10-09 — Anomaly hover syntax correction
 
 The Anomaly Damage row fill must use a syntactically valid two-branch conditional (`selected ? accent-tinted : neutral panel`). A prior hover-only cleanup accidentally left a third `:` branch and broke compilation (CS1003, lines 182–183); this has been corrected without changing slider targets, source CFG parameters, reset behavior or the handle-only hover policy.
+
+
+### 2026-10-09 — Mutant Health grouped horizontal redesign
+
+Mutant Health now uses the approved Stamina Usage presentation: fourteen independent, alphabetically ordered species multipliers in **two columns of seven compact horizontal cards** (58 DIP each, 65 DIP row pitch, 12 DIP column gap) within a 526-DIP board. Each card shows one neutral species label, current multiplier in a compact top-right value, small calculated HP readout and one editable horizontal rail. The source/base tick stays grey; only a modified multiplier turns gold (+1.2 DIP), and hover glow belongs **only to the handle**, not the entire card or its text. Mouse drag mapping is now horizontal, and original source IDs, exact 0.05x lower limits, slider tick snapping anchored at 1.00x, keyboard input, per-species right-click reset, group R reset and source CFG mappings remain intact. No large vertical faders or redundant explanatory text.
