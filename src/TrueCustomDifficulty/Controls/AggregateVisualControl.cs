@@ -331,8 +331,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             9.0, muted, FontWeights.Normal);
         DrawRightAlignedText(dc, "2x", new Point(band.Right, 218.0),
             9.0, muted, FontWeights.Normal);
-        DrawText(dc, "GOLD = CURRENT  |  GREY = BASE  |  NO BLAST-RADIUS CHANGE",
-            new Point(18.0, 254.0), 9.0, text, FontWeights.SemiBold);
     }
 
     // Mixer channels are a visual projection of the existing six catalog IDs,
@@ -489,13 +487,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 text, muted, border, accent, panel);
         }
         var rows = (count + columns - 1) / columns;
-        var footerY = MixerStripTop + rows * MixerStripHeight
-            + (rows - 1) * MixerRowGap + 8.0;
-        dc.DrawText(CreateText(
-            "GOLD = CURRENT  |  GREY = BASE PRESET  |  RIGHT-CLICK ONE / R ALL",
-            9.5, muted, FontWeights.SemiBold,
-            Math.Max(1.0, ActualWidth - 2.0 * MixerSidePadding)),
-            new Point(MixerSidePadding, footerY));
     }
 
     private void DrawAnomalyEffectsBoard(
@@ -805,9 +796,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc,
             "MIN CANNOT EXCEED MAX  |  MOVED BOUNDARY HAS PRIORITY",
             new Point(18.0, 659.0), 9.1, text, FontWeights.SemiBold);
-        DrawText(dc,
-            "GREY = BASE  |  RIGHT-CLICK = RESET ONE SETTING  |  R = RESET ALL",
-            new Point(18.0, 681.0), 9.0, muted, FontWeights.Normal);
     }
 
     // Two native 0-100%, 1%-step editor tracks for one range-valued parameter.
@@ -935,8 +923,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             9.5, weapons.CurrentBoolean ? accent : text, FontWeights.Bold);
         DrawText(dc, "0% STILL GUARANTEES ONE OF EACH OF THE 36 REGULAR WEAPON MODELS",
             new Point(18.0, noteTop + 19.0), 9.0, muted, FontWeights.Normal);
-        DrawText(dc, "RIGHT-CLICK = RESET ONE  |  R = RESET ALL",
-            new Point(18.0, noteTop + 38.0), 9.0, muted, FontWeights.Normal);
     }
 
     // Chance, successful-roll amount and a different stash tier's coupon roll
@@ -1375,9 +1361,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             lowHealth ? "LOW-HEALTH BUNDLE" : "RADIATION BUNDLE",
             new Rect(17.0, 55.0, 251.0, 38.0),
             text, muted, border, accent, panel);
-        DrawRightAlignedText(dc,
-            $"BASE PRESET: {(toggle.ReferenceBoolean ? "ON" : "OFF")}",
-            new Point(ActualWidth - 18.0, 66.0), 10.0, muted, FontWeights.SemiBold);
 
         var card = new Rect(17.0, 106.0, Math.Max(480.0, ActualWidth - 34.0), 86.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
@@ -1422,8 +1405,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         DrawCenteredText(dc,
             enabled
-                ? "GREY TICK = BASE PRESET  |  THRESHOLD UNCHANGED"
-                : "BUNDLE OFF  |  VALUE PRESERVED  |  ENABLE TO EDIT",
+                ? ""
+                : "BUNDLE OFF  |  VALUE PRESERVED",
             new Point(ActualWidth / 2.0, card.Bottom + 5.0),
             9.1, enabled ? text : muted, FontWeights.SemiBold);
     }
@@ -1479,8 +1462,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         DrawCenteredText(dc,
             toggle.CurrentBoolean
-                ? "GREY = BASE PRESET   |   100% = UNMODIFIED ITEM HEALING"
-                : "OFF: SLIDERS LOCKED; VALUES KEPT   |   OTHER CONSUMABLE EFFECTS ALSO IN BUNDLE",
+                ? ""
+                : "OFF: VALUES PRESERVED",
             new Point(ActualWidth / 2.0, 355.0),
             9.2, toggle.CurrentBoolean ? text : muted, FontWeights.SemiBold);
     }
@@ -1594,8 +1577,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         DrawCenteredText(dc,
             toggle.CurrentBoolean
-                ? "GOLD = CURRENT  |  GREY TICK = BASE  |  ACTIVATION THRESHOLD UNCHANGED"
-                : "BUNDLE OFF  |  VALUES KEPT  |  ENABLE TO EDIT",
+                ? ""
+                : "BUNDLE OFF  |  VALUES PRESERVED",
             new Point(ActualWidth / 2.0, 347.0),
             9.7, toggle.CurrentBoolean ? text : muted, FontWeights.SemiBold);
     }
@@ -3009,8 +2992,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         var active = toggle.CurrentBoolean;
         DrawTogglePill(dc, toggle, "STARVATION BUNDLE", new Rect(17, 55, 252, 38),
             text, muted, border, accent, panel);
-        DrawRightAlignedText(dc, $"BASE PRESET: {(toggle.ReferenceBoolean ? "ON" : "OFF")}",
-            new Point(ActualWidth - 18, 67), 10, muted, FontWeights.SemiBold);
 
         var fullWidth = Math.Max(480, ActualWidth - 34);
         var timingWidth = (fullWidth - 12) / 2;
@@ -3051,7 +3032,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             10.2, text, FontWeights.Bold);
         var duration = Math.Max(30,
             Math.Ceiling((delay.CurrentNumber + 2 * interval.CurrentNumber) / 10) * 10);
-        DrawRightAlignedText(dc, $"0-{duration:0}s  |  GOLD = HP LOSS",
+        DrawRightAlignedText(dc, $"0–{duration:0}s",
             new Point(preview.Right - 12, 208), 9.2, muted, FontWeights.SemiBold);
         var axis = new Rect(preview.Left + 24, 233, preview.Width - 48, 22);
         var ay = axis.Top + axis.Height / 2;
@@ -3271,8 +3252,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ? "ON: restored HP does not erase earlier hits from the protection tracker."
                 : "OFF: healed damage is excluded from the protection tracker.",
             new Point(20.0, 393.0), 9.3, text, FontWeights.Normal);
-        DrawRightAlignedText(dc, $"BASE PRESET: {(healedMemory.ReferenceBoolean ? "ON" : "OFF")}",
-            new Point(ActualWidth - 19.0, 409.0), 9.1, muted, FontWeights.SemiBold);
         DrawText(dc, "CURVE WEIGHTS, NOT DAMAGE-REDUCTION %",
             new Point(20.0, 409.0), 8.8, muted, FontWeights.Normal);
     }
