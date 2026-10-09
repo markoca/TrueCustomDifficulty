@@ -108,6 +108,14 @@ public sealed class CfgPatchWriterService
             documents,
             writtenParameters);
 
+        editCount += WriteNpcCorpseAmmoProduction(
+            baseline,
+            modifiedById,
+            allById,
+            difficulty.Sid,
+            documents,
+            writtenParameters);
+
         editCount += WriteNpcMedicalLootProduction(
             baseline,
             modifiedById,
@@ -298,6 +306,8 @@ public sealed class CfgPatchWriterService
             supported.Add(baseline.Special.ExpensiveStashProduction.CouponChanceParameterId);
         if (!string.IsNullOrWhiteSpace(baseline.Special.NpcMedicalLootProduction.ParameterId))
             supported.Add(baseline.Special.NpcMedicalLootProduction.ParameterId);
+        if (!string.IsNullOrWhiteSpace(baseline.Special.NpcCorpseAmmoProduction.ParameterId))
+            supported.Add(baseline.Special.NpcCorpseAmmoProduction.ParameterId);
         if (!string.IsNullOrWhiteSpace(baseline.Special.DestructibleAmmoProduction.ParameterId))
             supported.Add(baseline.Special.DestructibleAmmoProduction.ParameterId);
         supported.UnionWith(
@@ -618,6 +628,81 @@ public sealed class CfgPatchWriterService
             writtenParameters.Add(item.ParameterId);
         }
         return edits;
+    }
+
+    private static int WriteNpcCorpseAmmoProduction(
+        CfgWriterBaseline baseline,
+        IReadOnlyDictionary<string, ParameterViewModel> modifiedById,
+        IReadOnlyDictionary<string, ParameterViewModel> allById,
+        string difficultySid,
+        IDictionary<string, PatchDocument> documents,
+        ISet<string> writtenParameters)
+    {
+        var config = baseline.Special.NpcCorpseAmmoProduction;
+        if (string.IsNullOrWhiteSpace(config.ParameterId)
+            || !modifiedById.ContainsKey(config.ParameterId))
+            return 0;
+
+        if (!allById.TryGetValue(config.ParameterId, out var ammo)
+            || !allById.TryGetValue(config.CorpseChoiceParameterId, out var corpse))
+            throw new InvalidDataException("NPC corpse ammo or corpse choice source is missing.");
+
+        // The parameter remains editable/saved even when the extra package
+        // is currently Water or None. No unused clone or global CFG override.
+        var packages = corpse.CurrentText.Split(',',
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (!packages.Contains(config.SourceSid, StringComparer.Ordinal))
+        {
+            writtenParameters.Add(config.ParameterId);
+            return 0;
+        }
+
+        if (config.Entries.Count != 43
+            || config.Entries.Select(e => (e.RankIndex, e.GroupIndex)).Distinct().Count() != 24
+            || config.Entries.Select(e => (e.RankIndex, e.GroupIndex, e.ItemIndex)).Distinct().Count() != 43
+            || config.Entries.Any(e => e.RankIndex < 0 || e.RankIndex > 3
+                || e.MinCount < 0 || e.MaxCount < e.MinCount || string.IsNullOrWhiteSpace(e.SourceSid)))
+            throw new InvalidDataException("NPC_Ammo_Smart count catalog drift: expected 43 source items in 24 groups/4 ranks.");
+
+        if (string.IsNullOrWhiteSpace(config.TargetSid)
+            || config.TargetSid.Equals(config.SourceSid, StringComparison.Ordinal)
+            || config.BaseTemplateRefKey != config.SourceSid)
+            throw new InvalidDataException("NPC corpse ammo clone cannot reference itself or replace vanilla source.");
+
+        var document = GetDocument(documents, config.File);
+        var root = document.GetOrAddReferencedRoot(
+            config.TargetSid, config.BaseTemplateRefUrl, config.BaseTemplateRefKey);
+        root.SetAssignment("SID", config.TargetSid);
+        var rankList = root.GetOrAddChild("ItemGenerators", useBpatch: true);
+        var edits = 1;
+        foreach (var source in config.Entries)
+        {
+            var entry = rankList.GetOrAddChild($"[{source.RankIndex}]", useBpatch: true)
+                .GetOrAddChild("SmartLootParams", useBpatch: true)
+                .GetOrAddChild("PrimaryWeaponParams", useBpatch: true)
+                .GetOrAddChild($"[{source.GroupIndex}]", useBpatch: true)
+                .GetOrAddChild("Items", useBpatch: true)
+                .GetOrAddChild($"[{source.ItemIndex}]", useBpatch: true);
+            // Retain source selection and all group mechanics by reference.
+            // Change only MinCount / MaxCount with true integer-half-up.
+            entry.SetAssignment("MinCount", FormatNumber(
+                Math.Max(0.0, Math.Floor(source.MinCount * ammo.CurrentNumber + 0.5))));
+            entry.SetAssignment("MaxCount", FormatNumber(
+                Math.Max(0.0, Math.Floor(source.MaxCount * ammo.CurrentNumber + 0.5))));
+            edits += 2;
+        }
+
+        var difficultyDocument = GetDocument(documents, "GameData/DifficultyPrototypes.cfg");
+        var economy = difficultyDocument.GetOrAddNode(difficultySid, new[] { "EconomyDifficulty" });
+        economy.RemoveChild("CorpseSmartLoot");
+        economy.RemoveAssignment("CorpseSmartLoot");
+        var package = economy.GetOrAddChild("CorpseSmartLoot", useBpatch: false);
+        package.Clear();
+        package.SetAssignment("GeneralNPC",
+            string.Join(", ", packages.Select(sid =>
+                sid == config.SourceSid ? config.TargetSid : sid)));
+        writtenParameters.Add(config.ParameterId);
+        return edits + 2;
     }
 
     private static int WriteNpcMedicalLootProduction(
