@@ -1759,35 +1759,51 @@ public sealed class MainViewModel : ObservableObject
 
         if (parameter.Definition.Tab == "loot")
         {
-            if (parameter.Group == "Mutant Drops")
-                return 300;
+            // Exactly six visible Loot anchors, ordered to match the approved
+            // gamer-centric workflow. Hidden backing sources remain in the same
+            // parameter graph and are ordered within their real source family.
             return parameter.Id switch
             {
-                "loot.npcCorpseBonus" => 0,
-                "loot.npcMedicalChance" => 10,
-                "loot.npcWeaponAmmoSupply" => 20,
-                "loot.droppedWeaponCondition" => 30,
-                "loot.cheapStashAmmoQuantity" => 100,
-                "loot.cheapStashGrenadeChance" => 110,
-                "loot.cheapStashGrenadeQuantity" => 120,
-                "loot.mediumStashAmmoQuantity" => 130,
-                "loot.destructibleAmmoQuantity" => 140,
-                "loot.ammoBoxWeight918" => 145,
-                "loot.destructibleGrenadeQuantity" => 150,
-                "loot.expensiveStashAmmoQuantity" => 160,
-                "loot.expensiveStashMoneyChance" => 170,
+                // World depletion
+                "loot.worldAmmoCratesRemoved" => 0,
+                "loot.worldF1GrenadeBoxes" => 1,
+                "loot.worldFoodDrinkCratesRemoved" => 2,
+                "loot.worldMedicalCratesRemoved" => 3,
+                "loot.looseWorldLootRemoved" => 4,
 
-                "loot.worldAmmoCratesRemoved" => 200,
-                "loot.worldF1GrenadeBoxes" => 205,
-                "loot.worldFoodDrinkCratesRemoved" => 210,
-                "loot.worldMedicalCratesRemoved" => 220,
-                "loot.looseWorldLootRemoved" => 230,
-                "loot.worldWeaponShuffle" => 240,
-                "loot.worldAttachmentShuffle" => 245,
-                "loot.worldDetectors" => 250,
-                "loot.blueprintShuffle" => 255,
-                "loot.worldWeaponDensity" => 260,
-                _ => 260
+                // World placement
+                "loot.worldWeaponShuffle" => 100,
+                "loot.worldWeaponDensity" => 101,
+                "loot.worldAttachmentShuffle" => 102,
+                "loot.worldDetectors" => 103,
+                "loot.blueprintShuffle" => 104,
+
+                // NPC loot and equipment
+                "loot.npcCorpseBonus" => 200,
+                "loot.npcMedicalChance" => 201,
+                "loot.npcWeaponAmmoSupply" => 202,
+                "loot.droppedWeaponCondition" => 203,
+
+                // Three stash tiers and three independent bonus rolls
+                "loot.cheapStashAmmoQuantity" => 300,
+                "loot.mediumStashAmmoQuantity" => 301,
+                "loot.expensiveStashAmmoQuantity" => 302,
+                "loot.cheapStashGrenadeChance" => 303,
+                "loot.cheapStashGrenadeQuantity" => 304,
+                "loot.expensiveStashMoneyChance" => 305,
+
+                // Two box yields and four ammo family weight sources
+                "loot.ammoBoxWeight918" => 400,
+                "loot.destructibleAmmoQuantity" => 401,
+                "loot.destructibleGrenadeQuantity" => 402,
+                "loot.ammoBoxWeight045" => 403,
+                "loot.ammoBoxWeight545" => 404,
+                "loot.ammoBoxWeight012" => 405,
+
+                // The 14 species remain an independently edited sixth card
+                _ when parameter.Id.StartsWith("loot.mutant.", StringComparison.Ordinal)
+                    => 500,
+                _ => 600
             };
         }
 
