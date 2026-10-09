@@ -80,3 +80,8 @@ All seven shipped profiles were redesigned as **playstyles**, not difficulty lab
 - Keep vanilla Base marker semantics, UI source mappings, writer contracts, reference difficulty and source-specific bounds.
 - Numeric files were checked for legal catalog slider ranges (7 × 201 entries, zero numerical range violations). **Local .NET build and game runtime behavior have not been tested.**
 - These are authored thematic recommendations rather than claims of measured in-game balance. Further gameplay testing may justify fine tuning.
+
+
+## Factory profile upgrade (2026-10-09)
+
+When the executable starts, it replaces a previously shipped factory preset **only if its complete local file still exactly matches the prior official factory JSON**. User-edited factory files, even those still using a factory filename, are preserved; custom preset filenames are never overwritten. Missing factory files are seeded normally. This is an intentional one-generation upgrade for the seven role-first profiles, not a universal forced reset. To adopt the new official balancing if an existing factory file was customized, save the customization under a separate name and remove the old factory-named file before restarting the application.
