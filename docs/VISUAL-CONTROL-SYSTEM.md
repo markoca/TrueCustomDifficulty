@@ -868,3 +868,8 @@ Within the two-column Stamina & Movement card, WAIST / EYES / ABOVE EYES caption
 ### 2026-10-09 — Radiation Treatment binding fix
 
 Scientific Medkit (`health.ecoMedkitAntirad`) and Anti-Rad (`health.antiRadRadiation`) are not individually exposed catalog rows. Both must be included in `MainViewModel`'s always-instantiated composite parameter ID set; otherwise `AllParameters` omits them and Radiation Treatment renders `CFG PARAMETER UNAVAILABLE`. Maintain both live backing VMs even when only one aggregate anchor is visible. The existing side-by-side 149-DIP layout, raw CFG semantics, vanilla ticks, independent interaction and modified-number highlighting remain unchanged.
+
+
+### 2026-10-09 — Radiation Treatment delayed binding recovery
+
+The compact Radiation Treatment board requires live `health.ecoMedkitAntirad` and `health.antiRadRadiation` VMs. AggregateVisualControl now rebinds on WPF Loaded and resolves a missing family member from the bound `Parameters` collection on demand; it caches and subscribes to the actual source VM only if that ID belongs to the active family. This addresses template/Window-relative binding timing without inventing CFG values or substituting fallback placeholders. Verify Scientific Medkit and Anti-Rad render editable values after fresh publish. If unavailable persists, inspect runtime binding diagnostics; do not claim gameplay verified.
