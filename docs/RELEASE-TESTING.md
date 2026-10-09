@@ -302,3 +302,21 @@ changing rare-stash coupon chance does **not** fan out into unrelated
 stash ammo writer output. This is a real writer regression fix, not
 a change in the UI. Source 320-point result is independent of this
 C# validation; special Loot writers are still a separate Phase 14B.
+
+### Phase 14B1: Loot special generator production BPatch gate
+
+`dotnet run --project tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release -- --out audit/loot-special-generators-fixtures`
+runs **63 Windows production writer cases**: real source-backed values, NPC
+medical/corpse smart loot and ammo, three stash tier clones, RGD reward,
+breakable ammo/grenades, ammo family weight distribution, inherited
+template category item fields, complete audited redirect CSV fanouts,
+DLC1 routing, and cross-control isolation. Every actual generated leaf is
+compared against independently computed manifest and input transforms.
+The source manifest is a contract, not proof that the original game
+accepts generated prototypes.
+
+This suite does **not** claim coverage of the remaining world-actor
+removal, weapon/attachment/blueprint shuffle, detectors or loose loot.
+Those require Phase 14B2. The generator templates and embedded redirect
+manifests also require original-source provenance and gameplay checks.
+Do not treat registered tests as PASS before CI execution.

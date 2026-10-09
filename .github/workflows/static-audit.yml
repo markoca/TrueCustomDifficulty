@@ -228,3 +228,25 @@ jobs:
           path: audit/loot-direct-patch-fixtures
           if-no-files-found: ignore
           retention-days: 7
+
+  loot-special-generators-windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+      - name: Install .NET 10 for WPF production writer
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Validate NPC corpse and medical stash and breakable generation BPatch
+        shell: pwsh
+        run: dotnet run --project tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release -- --out audit/loot-special-generators-fixtures
+      - name: Preserve generated special Loot CFG fixtures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: loot-special-generators-contract
+          path: audit/loot-special-generators-fixtures
+          if-no-files-found: ignore
+          retention-days: 7
