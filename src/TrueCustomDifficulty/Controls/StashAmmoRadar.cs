@@ -179,26 +179,18 @@ public sealed class StashAmmoRadar : FrameworkElement
             $"{info.Label} STASH",
             new Point(card.Left + 12.0, card.Top + 9.0),
             9.2,
-            modified ? accent : text,
+            text,
             FontWeights.Bold);
 
-        DrawText(
+        DrawRightAlignedText(
             dc,
-            info.Subtitle,
-            new Point(card.Left + 12.0, card.Top + 25.0),
-            9.0,
-            muted,
-            FontWeights.Normal);
-
-        DrawText(
-            dc,
-            $"{parameter.CurrentNumber:0.##}x AMMO",
-            new Point(card.Right - 86.0, card.Top + 8.0),
+            $"{parameter.CurrentNumber:0.##}x",
+            new Point(card.Left + 12.0 + Math.Max(180.0, card.Width * 0.41), card.Top + 8.0),
             10.0,
             modified ? accent : text,
             FontWeights.Bold);
 
-        var track = new Rect(card.Left + 12.0, card.Top + 48.0, Math.Max(180.0, card.Width * 0.38), 16.0);
+        var track = new Rect(card.Left + 12.0, card.Top + 41.0, Math.Max(180.0, card.Width * 0.41), 12.0);
         var trackY = track.Top + track.Height / 2.0;
 
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, trackY), new Point(track.Right, trackY));
@@ -241,7 +233,7 @@ public sealed class StashAmmoRadar : FrameworkElement
     {
         var hint = parameter.Definition.LootHint;
 
-        DrawText(dc, "LIVE SAMPLE STACKS", new Point(bounds.Left, bounds.Top), 7.8, muted, FontWeights.Bold);
+        DrawText(dc, "SAMPLE AMMO STACKS", new Point(bounds.Left, bounds.Top), 7.8, muted, FontWeights.Bold);
 
         if (hint is null || hint.Kind != "scaledCountEntries" || hint.Entries.Count == 0)
         {
