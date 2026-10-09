@@ -359,3 +359,40 @@ Ammo Box population is 981 base + 334 DLC1, not the older numbers.
 separate strict original-ZIP source gate but **must actually run
 against the original decoded archives** before B14 source provenance
 can be marked PASS. Gameplay and Unreal mod loading remain NOT RUN.
+
+### World Loot Phase 14B2 — original GameData/DLC1 source proof and post-fix gate (2026-10-10)
+
+**Original decoded source verification is independently PASS** against the two
+uploaded physical CFG ZIP archives: 1,315 Ammo/RGD Boxes, 1,208 Food/Drink
+Boxes, 868 Medical Boxes, 101 dedicated F1 Boxes, 5,395 loose dynamic
+packs and 1,838 loose static items; 362 direct safe world weapon actors,
+seven direct attachments, 77 world-only blueprint generators and seven
+direct detectors. Verified **131 unique ItemGenerator direct leaf
+identities/values** and **58 distinct original SpawnActor generator
+redirect fields**. Normalized source manifest identities, physical
+original field values, cardinalities and original archive SHA-256 provenance:
+[World Loot source evidence](evidence/LOOT-WORLD-ORIGINAL-CFG-2026-10-10.json).
+This source proof was computed by an **independent decoded-archive
+scanner**; keep the in-repository `B14`
+`tools/audit_loot_world_source.py` CLI as a required exact release gate
+and run it with locally supplied original ZIPs.
+
+**Critical defect fixed, post-fix CI PENDING:** original decoded
+`ItemGeneratorPrototypes.cfg` proves that six world weapon stash
+generators carry 15 Chance/MinCount/MaxCount entries only under nested
+`Upgrades` or `Attaches`, not as immediate weapon item fields. The
+old `AddReplacementNode` writer stripped those nested rewards and
+copied unrelated nested values to the wrong node. Production now
+writes only a minimal indexed `ItemPrototypeSID` `{bpatch}` and
+leaves original item mechanics/upgrade subtrees intact. Those 15
+misclassified source columns were removed and the Windows C11 suite
+now rejects their reintroduction and validates the minimal patch.
+
+**The earlier 20/20 World Loot placement PASS was on the OLD writer**,
+not the source-corrected writer. GitHub Actions subsequent attempts
+were failing at the runner provision stage with **zero executed steps
+on every job**, so they cannot be described as code or contract PASS/FAIL.
+Re-run C11, plus all regression jobs, on the final release SHA as soon
+as GitHub Actions can execute jobs normally. The original archive source
+PASS is separate from the production code validation and Unreal runtime
+merge/gameplay acceptance.
