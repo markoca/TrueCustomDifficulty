@@ -1,5 +1,13 @@
 # Anomalies Mapping
 
+## Current visual layout (2026-10-09)
+
+The active `environment` tab is presented as **four independent source-bound sections**, ordered Global Anomaly Damage (1), Individual Anomaly Damage (11), Flycatcher Slowdown (2), Special Anomaly Effects (3). The former six-vertical-fader Anomaly Effects mixer is retired. All 17 existing source parameters and their stored IDs remain intact. Group metadata, renderer presentation and family-scoped resets change only the UI; target CFG files, transformations and saved preset keys are unchanged.
+
+Global Anomaly Damage uses one compact horizontal 0–2.5x native scaler. Individual damage uses eleven compact cards in two columns; row live values show raw source numbers (except the Razor health-damage multiplier), while row rails move between 0–200% of each source's fixed vanilla, snapping back to its original raw CFG step. The global difficulty multiplier remains a separate layer and player protection is not simulated. Clicking a damage row selects that source's rationale.
+
+Flycatcher uses a **Combat-style interactive two-axis graph** with matching bottom movement ring, left turning ring, and interactive center ring controlling both. X/Y readouts show **retained speed** in 0–100%, vanilla movement 50%, turn 30%; the native source-to-negative-CFG conversion shown below is unchanged. The three special-effect rails are Razor Bleeding 0–2x, Diamond Bleeding **0–20 actual points** in 0.5-point increments, Psy Drain 0–2x. The special rails use grey reference ticks and direct source right-click/R resets. No additional anomaly damage mechanisms, weather or emissions settings are introduced.
+
 ## Current UI scope
 
 The player-facing tab is named **Anomalies**. Its internal tab ID remains `environment` for saved-preset compatibility.

@@ -7719,7 +7719,7 @@
     {
       "id": "environment.anomalyDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Global Anomaly Damage",
       "label": "Global Anomaly Damage",
       "description": "This is the broad anomaly difficulty setting. It scales damaging anomaly output as a group while each anomaly keeps its own base damage value.",
       "control": "slider",
@@ -8952,7 +8952,7 @@
     {
       "id": "environment.electroAnomalyDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Individual Anomaly Damage",
       "label": "Individual Anomaly Damage",
       "description": "Changes damage separately for each supported anomaly.",
       "control": "slider",
@@ -8996,7 +8996,7 @@
     {
       "id": "environment.chemicalAnomalyDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Individual Anomaly Damage",
       "label": "Chemical Base Damage",
       "description": "Fine-tunes Chemical damage without changing the other anomalies. Vanilla base damage is 30. Global Anomaly Damage still affects it too.",
       "control": "slider",
@@ -9040,7 +9040,7 @@
     {
       "id": "environment.fireAnomalyDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Individual Anomaly Damage",
       "label": "Fire Base Damage",
       "description": "Fine-tunes Fire damage without changing the other anomalies. Vanilla base damage is 60. Global Anomaly Damage still affects it too.",
       "control": "slider",
@@ -9084,7 +9084,7 @@
     {
       "id": "environment.carouselAnomalyDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Individual Anomaly Damage",
       "label": "Carousel Base Damage",
       "description": "Fine-tunes Carousel damage without changing the other anomalies. Vanilla base damage is 105. Global Anomaly Damage still affects it too.",
       "control": "slider",
@@ -9128,7 +9128,7 @@
     {
       "id": "environment.toxicCloudDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Individual Anomaly Damage",
       "label": "Toxic Cloud Base Damage",
       "description": "Fine-tunes Toxic Cloud damage without changing the other anomalies. Vanilla base damage is 25. Global Anomaly Damage still affects it too.",
       "control": "slider",
@@ -9172,7 +9172,7 @@
     {
       "id": "environment.steamAnomalyDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Individual Anomaly Damage",
       "label": "Steam Base Damage",
       "description": "Fine-tunes Steam damage without changing the other anomalies. Vanilla base damage is 60. Global Anomaly Damage still affects it too.",
       "control": "slider",
@@ -9216,7 +9216,7 @@
     {
       "id": "environment.flycatcherMovementSpeed",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Flycatcher Slowdown",
       "label": "Flycatcher Movement Speed",
       "description": "Controls how much of your normal movement speed remains while the Flycatcher slowdown is active.",
       "control": "slider",
@@ -9259,7 +9259,7 @@
     {
       "id": "environment.flycatcherTurnSpeed",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Flycatcher Slowdown",
       "label": "Flycatcher Turn Speed",
       "description": "Controls how much of your normal look/turn speed remains while the Flycatcher slowdown is active.",
       "control": "slider",
@@ -9309,7 +9309,7 @@
     {
       "id": "environment.clickerHealthDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Individual Anomaly Damage",
       "label": "Clicker Health Damage",
       "description": "Controls the direct health damage dealt by a Clicker hit without changing the anomaly's equipment corrosion or behavior.",
       "control": "slider",
@@ -9353,7 +9353,7 @@
     {
       "id": "environment.razorHealthDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Individual Anomaly Damage",
       "label": "Razor Health Damage",
       "description": "Scales Razor health damage at both movement-speed tiers while preserving the stronger high-speed hit.",
       "control": "slider",
@@ -9404,7 +9404,7 @@
     {
       "id": "environment.razorBleeding",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Special Anomaly Effects",
       "label": "Razor Bleeding",
       "description": "Scales Razor bleeding at both movement-speed tiers while preserving the stronger high-speed bleeding effect.",
       "control": "slider",
@@ -9454,7 +9454,7 @@
     {
       "id": "environment.soapBubbleHealthDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Individual Anomaly Damage",
       "label": "Soap Bubble Health Damage",
       "description": "Controls the direct Chemical Burn health damage of the Soap Bubble anomaly.",
       "control": "slider",
@@ -9500,7 +9500,7 @@
     {
       "id": "environment.fireballHealthDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Individual Anomaly Damage",
       "label": "Fireball Health Damage",
       "description": "Controls the direct Burn health damage of the Fireball anomaly.",
       "control": "slider",
@@ -9546,7 +9546,7 @@
     {
       "id": "environment.diamondHealthDamage",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Individual Anomaly Damage",
       "label": "Diamond Health Damage",
       "description": "Controls the direct Strike health damage applied by the Diamond anomaly.",
       "control": "slider",
@@ -9592,7 +9592,7 @@
     {
       "id": "environment.diamondBleeding",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Special Anomaly Effects",
       "label": "Diamond Bleeding",
       "description": "Controls the bleeding effect applied by the Diamond anomaly.",
       "control": "slider",
@@ -9637,7 +9637,7 @@
     {
       "id": "environment.psyAnomalyIntensity",
       "tab": "environment",
-      "group": "Anomalies",
+      "group": "Special Anomaly Effects",
       "label": "Psy Anomaly Intensity",
       "description": "Scales the Psy anomaly's continuous negative Psy-point effect without changing its other behavior.",
       "control": "slider",

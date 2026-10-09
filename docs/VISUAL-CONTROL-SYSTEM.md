@@ -26,6 +26,16 @@ Semantic controls follow one density/readability baseline:
 - Grey ticks/markers carry Base Preset reference information so repeated micro-labels such as `VANILLA`, `0%` and `200%` do not need to be printed on every row.
 - Compactness must never change backing parameter values, constraints, preset serialization or CFG-writer behavior.
 
+## Anomalies — four distinct source-bound boards (2026-10-09, latest)
+
+**This explicitly supersedes the earlier six-column `AnomalyEffectsBoard` mixer and older one-section Anomalies presentation.** The `environment` tab's four top-level sections contain 1+11+2+3 = **17** existing gameplay settings. Group names are exact: `Global Anomaly Damage`, `Individual Anomaly Damage`, `Flycatcher Slowdown`, `Special Anomaly Effects`, in that order; each occupies a full-width section.
+
+- **Global**: `AnomalyGlobalDamage` is one centered 80-DIP `DrawEconomyCard` slider, native 0–2.5x, 0.01x, 154-DIP measured board. The live number and its `x` suffix turn gold only on source modification against selected difficulty; rail and reference tick remain source-bound.
+- **Individual damage**: `AnomalyDamageRadar` retains all eleven independent 0–200%-of-own-vanilla source rows in 2×6 grid (756-DIP content cap, 52-DIP row pitch, 420-DIP board), enlarged readable labels, native raw source values and steps. The edited row now raises `ParameterSelected` for exact right rationale selection; its track position is a *relative editing aid*, NOT effective post-protection damage. There is no synthetic merged health-damage control. Razor Health Damage is independently backed by its real 0–2x multiplier.
+- **Flycatcher**: `FlycatcherSlowdown` reuses Combat/Equipment three matching circular rings and `HitKind.HumanJoint`. Bottom horizontal ring edits only `flycatcherMovementSpeed` retained speed; left vertical ring only `flycatcherTurnSpeed`; center edits **both** from X/Y position. Source range 0–1, tick 0.01; UI axis/live unit percent 0–100%. Higher means less slowdown. Current 50%/30% vanilla ghost, neutral grid/ticks and gold guides. Above-X and rotated-Y labels carry only modified-current gold numerics. Hover-only circle glow, right-click single vs dual reset, keyboard step and R group reset precisely follow Combat.
+- **Special effects**: `AnomalySpecialEffects` is three `DrawEconomyCard` rails (Razor Bleeding 0–2x/0.01; Diamond Bleeding 0–20 points/0.5; Psy Drain Intensity 0–2x/0.01), native suffixes, no unrelated damage or duration simulation. 2-column cap 370 DIP and centered final card (248-DIP board) or 1-column 440 DIP (342-DIP board).
+- No changes to authored CFG transforms (Flycatcher retained speed converts via UI−1, yaw and pitch together; Razor two bleeding tiers; Psy native negative drain) or preset/writer routes. Bonus cap work in Equipment and finished Loot layout are unaffected.
+
 ## Equipment UI — authoritative compact two-panel contract (2026-10-09)
 
 This latest approved Equipment contract **supersedes the historical Equipment Wear Balance graph layout and Item Weight vertical-fader descriptions below**. Equipment currently has *four* player-facing sources and two full-width section rows, not the eight controls counted in the older v0.2.49 audit.

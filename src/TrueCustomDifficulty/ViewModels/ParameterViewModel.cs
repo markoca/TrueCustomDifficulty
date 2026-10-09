@@ -93,7 +93,9 @@ public sealed class ParameterViewModel : ObservableObject
                     "TraderStockBoard" => "TRADER AMMO and MEDIC SUPPLIES are independent horizontal quantity-multiplier controls, each 0.25x–3x in 0.25x steps. Ammo and medical source stock populations remain separate; rank, availability, chance and restock rules stay unchanged.",
                     "ServiceCostsBoard" => "Three independent horizontal controls tune guide fast-travel route prices, the difficulty-specific upgrade scalar, and the global BaseRepairCostModifier. The latter is shown as source percentage (70% vanilla); it remains separate from reputation-specific repair modifiers. The original 0.01 source steps and reference values are preserved.",
                     "ItemWeightBoard" => "Two compact, independent horizontal sliders scale existing Ammo Weight and Food & Medicine Weight. Each uses the real 0–2x source range with 0.01x increments, preserving item-to-item mass differences. Neither slider changes Maximum Carry Weight, consumable effects or weapon durability. Drag or click the track, right-click a track to reset that value, and press R to reset both. The grey tick is the reference setting; it is not a separate editable parameter.",
-                    "AnomalyEffectsBoard" => "Six vertical faders edit six independent anomaly CFG values: global damage; Flycatcher movement and turn speed retained during slowdown; Razor bleeding; Diamond bleeding in raw points; and Psy drain intensity. Higher Flycatcher speed means less slowdown. Diamond bleeding is 0-20 raw points in 0.5-point steps, not a multiplier. Gold means current; grey means the selected Base Preset. Drag one fader vertically or use the native keyboard steps, click its grey Base tick to restore that source, right-click a fader to reset one, or press R to reset all six. Selecting a fader shows that parameter in the right rationale panel. The mouse wheel still scrolls the page.",
+                    "AnomalyGlobalDamage" => "One source-bound horizontal control sets the selected difficulty's broad EnvironmentDifficulty.Anomaly_Damage multiplier (0–2.5x). Individual anomaly damage values remain separate and contribute before player protection is applied. Grey reference tick is the selected vanilla baseline; right-click resets this control.",
+                    "FlycatcherSlowdown" => "Three Combat-style circular handles edit two real retained-speed values. BOTTOM adjusts movement remaining (0–100%); LEFT adjusts turning remaining (0–100%, applied to both yaw and pitch); CENTER moves both independently with its horizontal and vertical directions. More remaining speed means less slowdown. Vanilla is 50% movement and 30% turn. The writer preserves original negative CFG offsets using UI minus 1. Right-click the center resets both; right-click one outer ring resets only its axis; R resets this Flycatcher family.",
+                    "AnomalySpecialEffects" => "Three independent source-bound horizontal controls: Razor Bleeding (0–2x) scales low- and high-speed bleeding tiers; Diamond Bleeding (0–20 native bleeding points, 0.5-point ticks) changes the authored bleeding magnitude; Psy Drain Intensity (0–2x) scales the existing negative Psy-point regeneration effect. None is a synthetic total-damage preview. Each right-click resets its source; R resets all three.",
                     "NpcLootLoadout" => "EXTRA CORPSE LOOT is a genuine three-choice package selector: Medicine + Ammo, Water or None. MEDICAL DROPS edits normal NPC medical frequency. NPC AMMO edits only 43 counts inside a source-derived TCD_NPC_Ammo_Smart clone (24 groups/4 rank blocks), linked exclusively to the selected Base difficulty when Medicine + Ammo is enabled; otherwise its value is retained but inactive. NPC AMMO has no effect on weapon-attached ammo or Breakable Boxes. The Newbie sample counts below the rail are 12 GA 2-6, 5.45 15-20 and .45 ACP 8-12, scaled with integer-half-up. WEAPON CONDITION uses two independently selectable nearest-handle MIN and MAX controls over 0-100%, with native 1% steps. Equal handles remain independently accessible. The 25-50% vanilla band preserves the one 35-45% outlier until changed. Right-click resets the source under the pointer; R resets this four-source family.",
                     "WorldLootLayout" => "WORLD WEAPON SHUFFLE reshuffles only audited compatible regular weapon locations and retains every one of the 36 regular weapon models. WEAPON DENSITY changes how many compatible locations stay occupied; even at 0% the authored allocator keeps one of every regular weapon model. Density is editable only when World Weapon Shuffle is ON; switching shuffle OFF preserves its stored value without applying it. ATTACHMENT SHUFFLE independently changes compatible loose attachment placements, REMOVE WORLD DETECTORS removes supported non-quest detectors, and BLUEPRINT SHUFFLE independently redistributes supported blueprint locations. The four toggles neither trigger nor change each other. Right-click one toggle or the density track to restore only its Base Preset value; R resets all five settings.",
                     "StashRewardProfile" => "Three independent vertical faders: Basic Stash RGD-5 drop chance (0-100%, 5-percentage-point source steps), Basic RGD-5 quantity if the roll succeeds (0-4 grenades, one-count steps), and eligible Rare Stash coupon chance (0-100%, 1-percentage-point steps). The coupon Base Preset varies by selected difficulty. Chance never changes stored quantity, and quantity never changes chance or stash eligibility. Select any channel to inspect its rationale, drag the fader to edit, click its grey Base tick or right-click to reset just that source, or press R to reset all three.",
@@ -152,7 +154,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsIndividualAnomalyDamageAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Each anomaly row shows its raw BASE damage setting, percent of its own vanilla value, EFFECTIVE live output where the model exposes it, and a shared 0–200% individual-strength track. Global Anomaly Damage remains a separate multiplier layer and player protection resolves separately. Razor is the exception in storage: its row is a 0x–2x multiplier that scales both low- and high-speed Razor health damage together while leaving speed thresholds, bleeding and equipment corrosion alone. Right-click one track to reset only that anomaly; press R to reset the whole individual-anomaly table.";
+                       "Eleven compact damage rows edit eleven existing per-anomaly CFG sources. A row displays its source value: most use raw damage units and Razor Health Damage uses a 0–2x multiplier. The rail position is relative to that row's own fixed vanilla reference (0–200% of source vanilla); it is never a final post-protection HP loss calculation. Global Anomaly Damage is a separate upstream difficulty multiplier and player protections resolve later. Drag or click a row's rail to set that one source at its native step; click the row to show its specific rationale at right. Right-click resets one row and R resets all eleven.";
             }
 
             if (IsItemPriceScalerAnchor)
@@ -541,12 +543,12 @@ public sealed class ParameterViewModel : ObservableObject
         ["economy.repairCostBase"] = "ServiceCostsBoard",
         ["equipment.ammoWeight"] = "ItemWeightBoard",
         ["equipment.consumableWeight"] = "ItemWeightBoard",
-        ["environment.anomalyDamage"] = "AnomalyEffectsBoard",
-        ["environment.flycatcherMovementSpeed"] = "AnomalyEffectsBoard",
-        ["environment.flycatcherTurnSpeed"] = "AnomalyEffectsBoard",
-        ["environment.razorBleeding"] = "AnomalyEffectsBoard",
-        ["environment.diamondBleeding"] = "AnomalyEffectsBoard",
-        ["environment.psyAnomalyIntensity"] = "AnomalyEffectsBoard",
+        ["environment.anomalyDamage"] = "AnomalyGlobalDamage",
+        ["environment.flycatcherMovementSpeed"] = "FlycatcherSlowdown",
+        ["environment.flycatcherTurnSpeed"] = "FlycatcherSlowdown",
+        ["environment.razorBleeding"] = "AnomalySpecialEffects",
+        ["environment.diamondBleeding"] = "AnomalySpecialEffects",
+        ["environment.psyAnomalyIntensity"] = "AnomalySpecialEffects",
 
         ["loot.npcCorpseBonus"] = "NpcLootLoadout",
         ["loot.npcMedicalChance"] = "NpcLootLoadout",
@@ -605,7 +607,9 @@ public sealed class ParameterViewModel : ObservableObject
         ["TraderStockBoard"] = "economy.traderAmmoStock",
         ["ServiceCostsBoard"] = "economy.fastTravelCost",
         ["ItemWeightBoard"] = "equipment.ammoWeight",
-        ["AnomalyEffectsBoard"] = "environment.anomalyDamage",
+        ["AnomalyGlobalDamage"] = "environment.anomalyDamage",
+        ["FlycatcherSlowdown"] = "environment.flycatcherMovementSpeed",
+        ["AnomalySpecialEffects"] = "environment.razorBleeding",
         ["NpcLootLoadout"] = "loot.npcCorpseBonus",
         ["WorldLootLayout"] = "loot.worldWeaponShuffle",
         ["StashRewardProfile"] = "loot.cheapStashAmmoQuantity",

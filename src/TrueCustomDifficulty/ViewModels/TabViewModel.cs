@@ -40,6 +40,7 @@ public sealed class TabViewModel : ObservableObject
         "health" => "Health covers your HP pool, recovery and direct medical treatment. Master-only low-health and medical penalties live in the Master tab. Bleeding and radiation buildup remain in Survival; this tab controls how treatment removes them. Click any vanilla marker under a slider to snap directly to that value.",
         "stamina" => "Stamina covers the size of your stamina bar, base recovery, clear player action costs, water penalties, vault height and carry limits. Internal movement-state coefficients and emergency-recovery helper fields are documented but intentionally kept out of the normal UI. Click a vanilla marker to snap to it; right-click restores the selected baseline.",
         "master" => "These are extra punishment bundles that vanilla Master adds on top of the normal difficulty settings. Switch a bundle ON to reveal and tune its settings. Switch it OFF to disable the bundle and hide its settings.",
+        "environment" => "Anomalies are divided into Global Damage, Individual Damage, Flycatcher Slowdown and Special Effects. Global Damage and individual sources remain independent. Flycatcher handles edit retained movement and turning speed (higher means less slowdown). The center ring edits both axes. Native ranges, reference ticks and per-source resets stay intact.",
         "economy" => "Economy controls starting coupons, trader pricing behavior, item/service costs, repair-by-reputation effects and quest coupon payouts. Some trader pricing rules are only partly exposed by the game files. Vanilla markers remain exact source reference points and can be clicked to snap a slider directly to them.",
         "equipment" => "Equipment Wear has two independent axis handles: armor toughness below the graph, weapon wear per shot on the left. Item Weight has separate compact ammo and food/medicine sliders. Source values retain their native scales; bonus caps are not exposed pending a proven gameplay effect.",
         "environment" => "Global Anomaly Damage is the broad damage layer. Individual damage sliders fine-tune specific hazards. Flycatcher Movement/Turn Speed show how much normal speed remains inside the slowdown: higher means less slowdown. Click a vanilla marker to snap to it; right-click restores the selected baseline.",
@@ -92,7 +93,7 @@ public sealed class TabViewModel : ObservableObject
         "loot" => "Corpse, stash, ammo, weapon-condition and mutant drop amounts while preserving Difficulty and Progression Rank differences.",
         "economy" => "Starting coupons, trader pricing, item and service costs, repair by reputation and quest coupon income.",
         "equipment" => "Armor and weapon wear plus item-weight tuning.",
-        "environment" => "Hazard effect strength only; weather/emission frequency and scheduling remain untouched.",
+        "environment" => "Global anomaly damage, 11 individual damage sources, Flycatcher slowdown and three special effects; no weather/emission timing.",
         "master" => "Optional Master-only punishment bundles for starvation, severe fatigue, radiation, low health and medical effectiveness.",
         _ => "Independent controls built from the vanilla configuration."
     };

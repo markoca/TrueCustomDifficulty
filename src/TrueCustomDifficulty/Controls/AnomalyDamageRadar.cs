@@ -12,9 +12,9 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
     private const double DesiredHeight = 420.0;
-    private const double MaxContentWidth = 900.0;
+    private const double MaxContentWidth = 756.0;
     private const double ColumnGap = 16.0;
-    private const double RowHeight = 49.0;
+    private const double RowHeight = 52.0;
 
     private static readonly AnomalyDefinition[] Anomalies =
     {
@@ -30,6 +30,10 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         new("environment.fireballHealthDamage", "FIREBALL", false),
         new("environment.diamondHealthDamage", "DIAMOND", false),
     };
+
+    // Each radar row edits its own parameter and selects that parameter's
+    // precise rationale, not the first Electro aggregate anchor.
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Anomalies.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
@@ -138,12 +142,15 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         var columnWidth = (content.Width - ColumnGap) / 2.0;
         for (var i = 0; i < 6; i++)
         {
-            if (i < 6)
-                DrawRow(dc, i, new Rect(content.Left, 68.0 + i * RowHeight, columnWidth, RowHeight - 5.0), text, muted, border, accent, panel);
+            DrawRow(dc, i, new Rect(content.Left, 60.0 + i * RowHeight,
+                columnWidth, RowHeight - 5.0), text, muted, border, accent, panel);
 
             var right = i + 6;
             if (right < Anomalies.Length)
-                DrawRow(dc, right, new Rect(content.Left + columnWidth + ColumnGap, 68.0 + i * RowHeight, columnWidth, RowHeight - 5.0), text, muted, border, accent, panel);
+                DrawRow(dc, right, new Rect(
+                    content.Left + columnWidth + ColumnGap,
+                    60.0 + i * RowHeight, columnWidth, RowHeight - 5.0),
+                    text, muted, border, accent, panel);
         }
 
         // No transient yellow reset notifications.
@@ -181,16 +188,17 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             ? $"{parameter.CurrentNumber:0.##}x"
             : $"{parameter.CurrentNumber:0.##}";
 
-        DrawText(dc, info.Label, new Point(card.Left + 8.0, card.Top + 5.0), 9.3, text, FontWeights.Bold);
+        DrawText(dc, info.Label, new Point(card.Left + 8.0, card.Top + 5.0),
+            10.2, text, FontWeights.Bold);
         DrawRightAlignedText(
             dc,
             baseText,
             new Point(card.Right - 8.0, card.Top + 5.0),
-            parameter.IsValueModifiedFromReference() ? 10.5 : 9.3,
+            parameter.IsValueModifiedFromReference() ? 11.5 : 10.3,
             parameter.IsValueModifiedFromReference() ? accent : text,
             FontWeights.Bold);
 
-        var track = new Rect(card.Left + 10.0, card.Top + 27.0, card.Width - 20.0, 10.0);
+        var track = new Rect(card.Left + 10.0, card.Top + 30.0, card.Width - 20.0, 10.0);
         var y = track.Top + track.Height / 2.0;
         dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
 
@@ -210,7 +218,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
     private Rect ContentRect()
     {
-        var width = Math.Min(MaxContentWidth, Math.Max(540.0, ActualWidth - 32.0));
+        var width = Math.Min(MaxContentWidth, Math.Max(1.0, ActualWidth - 32.0));
         return new Rect((ActualWidth - width) / 2.0, 0.0, width, ActualHeight);
     }
 
@@ -224,6 +232,8 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             return;
 
         _selectedRow = row;
+        if (_parameters[row] is { } selected)
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(selected));
         _dragRow = row;
         CaptureMouse();
         UpdateFromPoint(row, e.GetPosition(this));
@@ -277,6 +287,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             return;
 
         _selectedRow = row;
+        ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
         parameter.ResetToReference();
         _status.ShowTransient($"{Anomalies[row].Label} damage reset to Base Preset.");
         InvalidateVisual();

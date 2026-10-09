@@ -35,7 +35,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
-        if (Family is "AnomalyEffectsBoard" or "ServiceCostsBoard"
+        if (Family is "AnomalyGlobalDamage" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
             or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "EquipmentWearBalance" or "BreakableBoxYields"
             or "StashRewardProfile" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
@@ -173,8 +173,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "ItemWeightBoard":
                 DrawEquipmentWeightBoard(dc, text, muted, border, accent, panel);
                 break;
-            case "AnomalyEffectsBoard":
-                DrawAnomalyEffectsBoard(dc, text, muted, border, accent, panel);
+            case "AnomalyGlobalDamage":
+                DrawAnomalyGlobalDamage(dc, text, muted, border, accent, panel);
+                break;
+            case "FlycatcherSlowdown":
+                DrawFlycatcherSlowdown(dc, text, muted, border, soft, accent, panel);
+                break;
+            case "AnomalySpecialEffects":
+                DrawAnomalySpecialEffects(dc, text, muted, border, accent, panel);
                 break;
             case "NpcLootLoadout":
                 DrawNpcLootLoadout(dc, text, muted, border, accent, panel);
@@ -283,7 +289,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var source = target.Parameter;
         // All three Equipment rings draw their own matching Combat-style halo.
         // The generic map-center glow would be in the wrong position here.
-        if (Family == "EquipmentWearBalance")
+        if (Family is "EquipmentWearBalance" or "FlycatcherSlowdown"
+            or "AnomalyGlobalDamage" or "AnomalySpecialEffects")
             return;
         // Crosshair X/Y handles already draw the exact shared glow at their
         // own axes. Avoid a second overlay from their broad plot map rect.
@@ -389,18 +396,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             9.0, muted, FontWeights.Normal);
     }
 
-    // Mixer channels are a visual projection of the existing six catalog IDs,
-    // never independent values or a new aggregated gameplay multiplier.
-    private static readonly (string Id, string Top, string Bottom)[] AnomalyMixerChannels =
-    {
-        ("environment.anomalyDamage", "ANOMALY", "DAMAGE"),
-        ("environment.flycatcherMovementSpeed", "FLYCATCHER", "MOVE"),
-        ("environment.flycatcherTurnSpeed", "FLYCATCHER", "TURN"),
-        ("environment.razorBleeding", "RAZOR", "BLEED"),
-        ("environment.diamondBleeding", "DIAMOND", "BLEED"),
-        ("environment.psyAnomalyIntensity", "PSY", "DRAIN")
-    };
-
+    // Anomalies are four independent source-exact panels: global strength,
+    // eleven individual damage scalers (the dedicated radar), a 2D Flycatcher,
+    // and three special-effect sources. No six-strip mixer remains.
 
     // Economy panels reuse the same compact Stamina-style horizontal controls.
     // These are projections of real source VMs, never synthetic coupon or price totals.
@@ -445,7 +443,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         => parameter.Id switch
         {
             "economy.startingMoney" => value.ToString("N0", CultureInfo.InvariantCulture),
-            "economy.repairCostBase" or "economy.traderMinBuyCondition" or "economy.itemValueFloor" => $"{value * 100.0:0.#}%",
+            "economy.repairCostBase" or "economy.traderMinBuyCondition" or "economy.itemValueFloor"
+                or "environment.flycatcherMovementSpeed" or "environment.flycatcherTurnSpeed" => $"{value * 100.0:0.#}%",
+            "environment.diamondBleeding" => $"{value:0.#} pts",
             _ => $"{value:0.##}x"
         };
 
@@ -605,7 +605,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             "BreakableBoxYields" => BoxYieldMixerChannels,
             "StashRewardProfile" => StashRewardMixerChannels,
-            _ => AnomalyMixerChannels
+            _ => Array.Empty<(string Id, string Top, string Bottom)>()
         };
 
     private const double MixerSidePadding = 16.0;
@@ -703,50 +703,179 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
-    private void DrawAnomalyEffectsBoard(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+    private void DrawAnomalyGlobalDamage(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
     {
-        DrawHeader(dc, "ANOMALY EFFECTS / MIXER",
-            "",
-            text, muted, accent);
+        DrawCenteredText(dc, "GLOBAL ANOMALY DAMAGE",
+            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
+        var parameter = P("environment.anomalyDamage");
+        var width = Math.Min(440.0, Math.Max(1.0, ActualWidth - 32.0));
+        DrawEconomyCard(dc, parameter, "OVERALL DAMAGE MULTIPLIER",
+            new Rect((ActualWidth - width) / 2.0, 48.0, width, 80.0),
+            text, muted, border, accent, panel);
+    }
 
-        var count = AnomalyMixerChannels.Length;
-        var inner = Math.Max(1.0, ActualWidth - 2.0 * MixerSidePadding);
-        var columns = GetMixerColumns(ActualWidth, count);
-        // Keep the six-channel bank readable at every responsive width:
-        // never widen its faders beyond the same 148-DIP cap used by compact
-        // mixer boards. Incomplete rows remain source-ordered and left aligned.
-        var width = Math.Min(148.0, Math.Max(128.0,
-            (inner - (columns - 1) * MixerStripGap) / columns));
+    // This native-axis graph uses exactly the same triple-circle grammar as
+    // Human Combat and Equipment Wear: X movement, Y turn, center both.
+    // Source values are retained movement/turn speed (0–1), not negative CFG
+    // deltas. The existing writer converts each to UI−1 for the two effects.
+    private static double FlycatcherPlotSide(double width)
+        => Math.Min(230.0, Math.Max(185.0, width - 335.0));
 
-        for (var index = 0; index < count; index++)
+    private static double FlycatcherBoardHeight(double width)
+        => 86.0 + FlycatcherPlotSide(width) + 61.0;
+
+    private void DrawFlycatcherSlowdown(
+        DrawingContext dc, Brush text, Brush muted, Brush border, Brush soft,
+        Brush accent, Brush panel)
+    {
+        DrawCenteredText(dc, "FLYCATCHER SLOWDOWN",
+            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
+
+        var movement = P("environment.flycatcherMovementSpeed");
+        var turning = P("environment.flycatcherTurnSpeed");
+        if (movement is null || turning is null)
         {
-            var source = AnomalyMixerChannels[index];
-            var row = index / columns;
-            var column = index % columns;
-            var rect = new Rect(
-                MixerSidePadding + column * (width + MixerStripGap),
-                MixerStripTop + row * (MixerStripHeight + MixerRowGap),
-                width,
-                MixerStripHeight);
-
-            DrawMixerStrip(dc, P(source.Id), source.Top, source.Bottom,
-                rect, text, muted, border, accent, panel);
+            DrawCenteredText(dc, "Flycatcher parameters unavailable.",
+                new Point(ActualWidth / 2.0, 160.0), 10.0, muted,
+                FontWeights.SemiBold);
+            return;
         }
 
-        var rowCount = (count + columns - 1) / columns;
-        var footerY = MixerStripTop + rowCount * MixerStripHeight
-            + (rowCount - 1) * MixerRowGap + 8.0;
-        dc.DrawText(CreateText(
-                "HIGHER SOURCE VALUE = HIGHER FADER  |  FLYCATCHER = SPEED REMAINING",
-                9.5, muted, FontWeights.SemiBold,
-                Math.Max(1.0, ActualWidth - 2.0 * MixerSidePadding)),
-            new Point(MixerSidePadding, footerY));
+        var side = FlycatcherPlotSide(ActualWidth);
+        var plot = new Rect((ActualWidth - side) / 2.0, 86.0, side, side);
+        const double axisGap = 9.0;
+
+        // Axis-aligned label/live-value pair, matching Combat. Only modified
+        // numbers and their percentage units turn gold.
+        var xCaption = CreateText("MOVEMENT REMAINING", 10.5, text, FontWeights.Bold);
+        var xChanged = movement.IsValueModifiedFromReference();
+        var xValue = CreateText($"{movement.CurrentNumber * 100.0:0.#}%",
+            xChanged ? 14.2 : 13.0, xChanged ? accent : text, FontWeights.Bold);
+        var xStart = plot.Left + plot.Width / 2.0 -
+            (xCaption.WidthIncludingTrailingWhitespace + axisGap +
+             xValue.WidthIncludingTrailingWhitespace) / 2.0;
+        dc.DrawText(xCaption, new Point(xStart, plot.Top - 32.0));
+        dc.DrawText(xValue, new Point(
+            xStart + xCaption.WidthIncludingTrailingWhitespace + axisGap,
+            plot.Top - 34.0));
+
+        var yCenter = plot.Top + plot.Height / 2.0;
+        var yCaption = CreateText("TURN SPEED REMAINING", 10.5, text, FontWeights.Bold);
+        var yChanged = turning.IsValueModifiedFromReference();
+        var yValue = CreateText($"{turning.CurrentNumber * 100.0:0.#}%",
+            yChanged ? 14.2 : 13.0, yChanged ? accent : text, FontWeights.Bold);
+        var yAnchor = plot.Left - 46.0;
+        var yStart = yAnchor -
+            (yCaption.WidthIncludingTrailingWhitespace + axisGap +
+             yValue.WidthIncludingTrailingWhitespace) / 2.0;
+        dc.PushTransform(new RotateTransform(-90.0, yAnchor, yCenter));
+        dc.DrawText(yCaption, new Point(yStart, yCenter - 7.0));
+        dc.DrawText(yValue, new Point(
+            yStart + yCaption.WidthIncludingTrailingWhitespace + axisGap,
+            yCenter - 9.0));
+        dc.Pop();
+
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
+        for (var i = 0; i <= 4; i++)
+        {
+            var xTick = movement.Minimum + (movement.Maximum - movement.Minimum) * i / 4.0;
+            var yTick = turning.Minimum + (turning.Maximum - turning.Minimum) * i / 4.0;
+            var gridX = ValueToX(xTick, movement.Minimum, movement.Maximum, plot, false);
+            var gridY = ValueToY(yTick, turning.Minimum, turning.Maximum, plot);
+            var line = new Pen(CloneWithOpacity(soft, 0.5), 1.0)
+                { DashStyle = DashStyles.Dot };
+            dc.DrawLine(line, new Point(gridX, plot.Top), new Point(gridX, plot.Bottom));
+            dc.DrawLine(line, new Point(plot.Left, gridY), new Point(plot.Right, gridY));
+            if (i is 0 or 2 or 4)
+            {
+                DrawCenteredText(dc, $"{xTick * 100.0:0.#}%",
+                    new Point(gridX, plot.Bottom + 32.0), 9.3, text,
+                    FontWeights.Normal);
+                DrawRightAlignedText(dc, $"{yTick * 100.0:0.#}%",
+                    new Point(plot.Left - 12.0, gridY - 7.0), 9.3, text,
+                    FontWeights.Normal);
+            }
+        }
+
+        var baseX = ValueToX(movement.ReferenceNumber,
+            movement.Minimum, movement.Maximum, plot, false);
+        var baseY = ValueToY(turning.ReferenceNumber,
+            turning.Minimum, turning.Maximum, plot);
+        var currentX = ValueToX(movement.CurrentNumber,
+            movement.Minimum, movement.Maximum, plot, false);
+        var currentY = ValueToY(turning.CurrentNumber,
+            turning.Minimum, turning.Maximum, plot);
+
+        var basePen = new Pen(CloneWithOpacity(muted, 0.65), 1.2)
+            { DashStyle = DashStyles.Dash };
+        dc.DrawLine(basePen, new Point(baseX, plot.Top), new Point(baseX, plot.Bottom));
+        dc.DrawLine(basePen, new Point(plot.Left, baseY), new Point(plot.Right, baseY));
+        dc.DrawEllipse(panel, new Pen(muted, 1.7),
+            new Point(baseX, baseY), 6.0, 6.0);
+
+        var currentPen = new Pen(CloneWithOpacity(accent, 0.65), 1.2)
+            { DashStyle = DashStyles.Dot };
+        dc.DrawLine(currentPen, new Point(currentX, plot.Top),
+            new Point(currentX, plot.Bottom));
+        dc.DrawLine(currentPen, new Point(plot.Left, currentY),
+            new Point(plot.Right, currentY));
+
+        DrawHumanAxisHandle(dc, new Point(currentX, currentY), accent, panel,
+            _hoverTarget?.Kind == HitKind.HumanJoint,
+            _selectedHitKind == HitKind.HumanJoint);
+
+        var xHandle = new Point(currentX, plot.Bottom + 10.0);
+        DrawHumanAxisHandle(dc, xHandle, accent, panel,
+            _hoverTarget?.Kind == HitKind.Horizontal &&
+                ReferenceEquals(_hoverTarget.Parameter, movement),
+            IsSelected(movement) && _selectedHitKind == HitKind.Horizontal);
+        AddHorizontalTarget(movement,
+            new Rect(currentX - 17.0, plot.Bottom + 1.0, 34.0, 22.0),
+            plot, movement.Minimum, movement.Maximum);
+
+        var yHandle = new Point(plot.Left - 11.0, currentY);
+        DrawHumanAxisHandle(dc, yHandle, accent, panel,
+            _hoverTarget?.Kind == HitKind.Vertical &&
+                ReferenceEquals(_hoverTarget.Parameter, turning),
+            IsSelected(turning) && _selectedHitKind == HitKind.Vertical);
+        AddVerticalTarget(turning,
+            new Rect(plot.Left - 28.0, currentY - 14.0, 27.0, 28.0),
+            plot, turning.Minimum, turning.Maximum);
+
+        if (movement.IsControlEnabled && turning.IsControlEnabled)
+            _hitTargets.Add(new HitTarget(movement,
+                new Rect(currentX - 18.0, currentY - 18.0, 36.0, 36.0),
+                plot, HitKind.HumanJoint, movement.Minimum, movement.Maximum, false));
+    }
+
+    private void DrawAnomalySpecialEffects(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawCenteredText(dc, "SPECIAL ANOMALY EFFECTS",
+            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
+
+        var sources = new (string Id, string Label)[]
+        {
+            ("environment.razorBleeding", "RAZOR BLEEDING"),
+            ("environment.diamondBleeding", "DIAMOND BLEEDING"),
+            ("environment.psyAnomalyIntensity", "PSY DRAIN INTENSITY")
+        };
+        var columns = EconomyColumns(ActualWidth);
+        var width = EconomyCardWidth(ActualWidth, columns);
+        const double gap = 12.0;
+        for (var i = 0; i < sources.Length; i++)
+        {
+            var count = Math.Min(columns, sources.Length - (i / columns) * columns);
+            var rowWidth = count * width + (count - 1) * gap;
+            var rowLeft = (ActualWidth - rowWidth) / 2.0;
+            var card = new Rect(rowLeft + (i % columns) * (width + gap),
+                48.0 + (i / columns) * 94.0, width, 80.0);
+            DrawEconomyCard(dc, P(sources[i].Id), sources[i].Label,
+                card, text, muted, border, accent, panel);
+        }
     }
 
     private void DrawMixerStrip(
@@ -4525,6 +4654,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 HitKind.RangeMax => "NPC weapon condition MAX\nDrag or use arrow keys · Right-click = reset full range",
                 HitKind.HumanJoint when Family == "EquipmentWearBalance" =>
                     "Armor Toughness + Weapon Wear / Shot\nDrag in both directions · Right-click resets both",
+                HitKind.HumanJoint when Family == "FlycatcherSlowdown" =>
+                    "Flycatcher Move + Turn Remaining\nDrag in both directions · Right-click resets both",
                 _ => $"{target.Parameter.Label}\nDrag or use arrow keys to adjust · Right-click = Base Preset"
             };
         InvalidateVisual();
@@ -4562,6 +4693,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             {
                 "PsyPhantomPressure" => "combat.psyPhantomCount",
                 "EquipmentWearBalance" => "equipment.weaponWearPerShot",
+                "FlycatcherSlowdown" => "environment.flycatcherTurnSpeed",
                 _ => "combat.npcWeaponDamage"
             })?.ResetToReference();
         EnforceFamilyConstraints(target.Parameter);
@@ -4570,6 +4702,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             {
                 "PsyPhantomPressure" => "Psy Cycle Wait + Phantom Count reset to Base Preset.",
                 "EquipmentWearBalance" => "Armor Toughness + Weapon Wear reset to Base Preset.",
+                "FlycatcherSlowdown" => "Flycatcher Movement + Turn reset to Base Preset.",
                 _ => "Enemy Health + Gun Damage reset to Base Preset."
             })
             : $"{ShortLabel(target.Parameter)} reset to Base Preset.");
@@ -4717,12 +4850,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             {
                 "PsyPhantomPressure" => "combat.psySpawnCycleDelay",
                 "EquipmentWearBalance" => "equipment.armorDurability",
+                "FlycatcherSlowdown" => "environment.flycatcherMovementSpeed",
                 _ => "combat.npcHealth"
             });
             var d = P(Family switch
             {
                 "PsyPhantomPressure" => "combat.psyPhantomCount",
                 "EquipmentWearBalance" => "equipment.weaponWearPerShot",
+                "FlycatcherSlowdown" => "environment.flycatcherTurnSpeed",
                 _ => "combat.npcWeaponDamage"
             });
             if (h is null || d is null || !h.IsControlEnabled || !d.IsControlEnabled)
@@ -5193,7 +5328,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             "TraderStockBoard" => EconomyBoardHeight(width, StockEconomyChannels.Length),
             "ItemWeightBoard" => EconomyBoardHeight(width, 2),
             "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
-            "AnomalyEffectsBoard" => GetMixerHeight(width, AnomalyMixerChannels.Length),
+            "AnomalyGlobalDamage" => EconomyBoardHeight(width, 1),
+            "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
+            "AnomalySpecialEffects" => EconomyBoardHeight(width, 3),
             "NpcLootLoadout" => 496.0,
             "WorldLootLayout" => 238.0,
             "StashRewardProfile" => width >= 750.0 ? 263.0 : 418.0,
@@ -5289,11 +5426,14 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "equipment.ammoWeight",
                 "equipment.consumableWeight"
             },
-            "AnomalyEffectsBoard" => new[]
+            "AnomalyGlobalDamage" => new[] { "environment.anomalyDamage" },
+            "FlycatcherSlowdown" => new[]
             {
-                "environment.anomalyDamage",
                 "environment.flycatcherMovementSpeed",
-                "environment.flycatcherTurnSpeed",
+                "environment.flycatcherTurnSpeed"
+            },
+            "AnomalySpecialEffects" => new[]
+            {
                 "environment.razorBleeding",
                 "environment.diamondBleeding",
                 "environment.psyAnomalyIntensity"

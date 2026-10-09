@@ -1,7 +1,7 @@
 # Mixer & Responsive Grid UI — Source of Truth
 
 **Project:** True Custom Difficulty  
-**Status:** Anomaly Effects remains mixer-style. Item Weight, Loot Breakable Boxes, Stash Rewards, Economy Service Prices and Trader Stock use compact native horizontal editors (2026-10-09). Earlier mixer examples for those families are historical only. Runtime/Wine QA pending.  
+**Status:** Anomalies now uses four semantic source-bound panels; its six-fader mixer is retired. Item Weight, Loot Breakable Boxes, Stash Rewards, Economy Service Prices and Trader Stock use compact native horizontal editors (2026-10-09). Earlier mixer examples for those families are historical only. Runtime/Wine QA pending.  
 **Scope:** Visual layout and interaction only.  
 **Canonical document:** This file is the source of truth for the mixer-style parameter controls and the accompanying responsive grid layout.
 
@@ -9,6 +9,10 @@ This specification exists because the current full-width horizontal-track boards
 
 > **Precedence:** For mixer/grid appearance, behavior, breakpoints, and acceptance criteria, follow this file. For individual parameter IDs, current range/step, vanilla difficulty reference, constraints and CFG effects, the live parameter catalog, ParameterViewModel, central constraint coordinator and CFG writer remain authoritative. The existing [Visual Control System](VISUAL-CONTROL-SYSTEM.md) governs non-mixer visual families. Do not silently change this specification while implementing a panel: update the source-of-truth document first.
 
+
+## Latest Anomalies override — replaces six vertical mixer strips (2026-10-09)
+
+The user approved the **four-section Anomalies layout**: Global Anomaly Damage (one compact native horizontal track), Individual Anomaly Damage (all eleven actual sources in a 2×6 bounded radar), Flycatcher Slowdown (Combat-style square with three identical interactive circular handles, bottom X / left Y / center both), and Special Anomaly Effects (three compact horizontal tracks). The historical Anomaly Effects `DrawMixerStrip` family and its 6-fader 6/4/3/2 wrapping acceptance requirements **no longer apply to Anomalies**. The mixer remains a reusable component elsewhere where still authorized. Existing base damage + selected-difficulty global multiplier remains the mathematical layering model before player protection; the radar's normalized rail is not a synthetic effective-output preview. Do not change source CFG/preset bindings or convert Diamond's raw bleeding points into x. Full geometry, native limits, selected-reference and hover/reset semantics are locked in `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md`.
 
 ## Latest Loot override — six compact semantic panels (2026-10-09)
 

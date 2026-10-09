@@ -455,11 +455,15 @@ public sealed class MainViewModel : ObservableObject
             "equipment.ammoWeight",
             "equipment.consumableWeight");
 
+        // Four separate Anomalies panels preserve all 17 original source
+        // parameters and independent R/right-click reset scopes.
+        WireVisualAggregate("environment.anomalyDamage", "environment.anomalyDamage");
         WireVisualAggregate(
-            "environment.anomalyDamage",
-            "environment.anomalyDamage",
             "environment.flycatcherMovementSpeed",
-            "environment.flycatcherTurnSpeed",
+            "environment.flycatcherMovementSpeed",
+            "environment.flycatcherTurnSpeed");
+        WireVisualAggregate(
+            "environment.razorBleeding",
             "environment.razorBleeding",
             "environment.diamondBleeding",
             "environment.psyAnomalyIntensity");
@@ -1434,13 +1438,15 @@ public sealed class MainViewModel : ObservableObject
     {
         if (parameter.Definition.Tab == "environment")
         {
-            return parameter.Id switch
+            // Explicit four-section Anomalies order: global, individual
+            // damage, Flycatcher slowdown, then special effects.
+            return parameter.Group switch
             {
-                // Keep the aggregate anomaly controls together at the very bottom:
-                // Global immediately above Individual.
-                "environment.anomalyDamage" => 900,
-                "environment.electroAnomalyDamage" => 910,
-                _ => 100
+                "Global Anomaly Damage" => 0,
+                "Individual Anomaly Damage" => 100,
+                "Flycatcher Slowdown" => 200,
+                "Special Anomaly Effects" => 300,
+                _ => 400
             };
         }
 
