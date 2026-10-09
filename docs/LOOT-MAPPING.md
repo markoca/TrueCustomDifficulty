@@ -1,3 +1,5 @@
+> **Phase 14A direct-source audit (2026-10-10):** The current Loot catalog has 40 parameter IDs. Exactly **16 IDs / 320 direct CFG points** have been independently checked against the original decoded ZIPs: 14 mutant-part chances, 242 NPC weapon durability bounds, and 64 Rare Stash coupon routes. The 64 coupon mappings are **physically inherited** from `GamePass_Stash_ItemGenerator_Rare` through explicit refurl/refkey wrappers; they are not directly authored under the four child roots. **24 other Loot IDs are implemented via specialized writers** and require separate Phase 14B coverage. See [Phase 14A source and writer report](DEEP-CFG-AUDIT-PHASE14A-LOOT-DIRECT-2026-10-10.md). No in-game or UE merge acceptance is implied.
+
 # Loot mapping — strict source model
 
 ## Scope
