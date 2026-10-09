@@ -227,7 +227,7 @@ public sealed class MutantDropRadar : FrameworkElement
             selected
                 ? CloneWithOpacity(accent, 0.08)
                 : hovered
-                    ? CloneWithOpacity(border, 0.10)
+                    ? CloneWithOpacity(accent, 0.09)
                     : CloneWithOpacity(panel, 0.02),
             new Pen(CloneWithOpacity(border, 0.45), 0.8),
             card,
@@ -247,7 +247,7 @@ public sealed class MutantDropRadar : FrameworkElement
             $"{chance * 100:0}%",
             new Point(card.Right - 9.0, card.Top + 6.0),
             9.2,
-            modified ? accent : text,
+            hovered ? accent : text,
             FontWeights.Bold);
 
         var track = new Rect(card.Left + 10.0, card.Top + 27.0, card.Width - 20.0, 12.0);
