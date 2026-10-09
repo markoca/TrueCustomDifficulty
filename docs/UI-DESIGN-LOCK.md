@@ -532,3 +532,8 @@ All twelve shipped factory presets now include the four human Director group siz
 ### 2026-10-09 — Compact Stamina & Movement
 
 Unified Stamina & Movement is a 259-DIP two-column/two-row board: Stamina Capacity and Base Recovery on top, Maximum Vault Height and Maximum Carry Weight below. No repeated Base values in text: native horizontal sliders retain a grey vanilla/Base reference tick and modified numeric tokens alone turn gold and slightly larger. Vault retains compact, clickable body-height landmarks (WAIST / EYES / ABOVE EYES); no numeric UU landmark captions. All four authored catalog vanilla values are identical across difficulty presets (100 stamina, 5 regeneration, 130 vault height, 80 carry capacity), so do not invent or display per-difficulty differences. This is layout-only; native CFG values and sliders' independent reset/edit behavior do not change.
+
+
+### 2026-10-09 — Vault landmark alignment correction
+
+Within the two-column Stamina & Movement card, WAIST / EYES / ABOVE EYES captions must be positioned by measuring actual glyph width and centering on their respective track marker X positions. Clamp labels inside the card only at its edges (especially ABOVE EYES); hit targets follow the visible caption bounds. Never left-align caption glyphs inside a fixed-width box, as this visually misaligns labels and ticks. Preserve body-part-only captions, slider values and no redundant explanatory text.
