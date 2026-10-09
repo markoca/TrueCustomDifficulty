@@ -1,0 +1,83 @@
+{
+  "phase": "14A Loot Direct",
+  "date": "2026-10-10",
+  "sourceStatus": "PASS independent physical original decoded CFG comparison",
+  "mappedLootCatalogIds": 40,
+  "directParamIds": 16,
+  "directEditPoints": 320,
+  "originalStatusCounts": {
+    "exact": 256,
+    "inherited_exact": 64
+  },
+  "originalScope": {
+    "baseGame": 320,
+    "dlc1": 0
+  },
+  "domains": {
+    "Mutant loot chance": {
+      "ids": 14,
+      "sourcePoints": 14,
+      "exact": 14,
+      "notes": "14 physically authored MutantLoot Chance fields, each min/max count 1"
+    },
+    "NPC weapon condition": {
+      "ids": 1,
+      "sourcePoints": 242,
+      "exact": 242,
+      "generatorRoots": 33,
+      "weaponRows": 121,
+      "outlier": {
+        "generator": "GuardNPC_Corpus_Stormtrooper_ItemGenerator",
+        "nodePath": "ItemGenerator/[0]/PossibleItems/[1]",
+        "min": "0.35",
+        "max": "0.45"
+      }
+    },
+    "Rare stash coupons": {
+      "ids": 1,
+      "sourcePoints": 64,
+      "inherited_exact": 64,
+      "sourceParent": "GamePass_Stash_ItemGenerator_Rare",
+      "sourceAliasRefurl": "ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg",
+      "aliases": [
+        "Stash_Expensive_Newbie",
+        "Stash_Expensive_Experienced",
+        "Stash_Expensive_Veteran",
+        "Stash_Expensive_Master"
+      ],
+      "originalParentChance": {
+        "Easy": "0.2f",
+        "Medium": "0.2f",
+        "Hard": "0.1f",
+        "Stalker": "0.1f"
+      },
+      "moneyTiers": [
+        "MoneyCommon",
+        "MoneyRare",
+        "MoneyEpic",
+        "MoneyLegendary"
+      ]
+    }
+  },
+  "originalZipSha256": {
+    "base": "7610b16218310c7345796ff26b1554c73e3d2ca775f6a50108a7406cb7f33da1",
+    "dlc1": "3c5cb53f1769619b510ae3780142d92639c083a4a755a8717a267710c3c849e6"
+  },
+  "originalCfg": {
+    "path": "GameData/ItemGeneratorPrototypes.cfg",
+    "bytes": 9101641,
+    "sha256": "4a06bc946eb9eaa7ff736421df7fd1bb6fe38fb91038bf5fffa005f680d64ac3"
+  },
+  "sourceAuditMethod": "Independent manual 320-field original ZIP parser matching current production manifest targets; maintain reproducible strict repo gates audit_cfg_source_values.py loot. and audit_loot_direct_source.py.",
+  "directWriterContract": {
+    "tests": 117,
+    "verified": "NOT YET VERIFIED at authoring",
+    "job": "loot-direct-writer-windows"
+  },
+  "specialWriterAudits": "NOT INCLUDED - 24 catalog IDs handled via specialized production writers require next phase",
+  "inGame": "NOT RUN",
+  "notes": [
+    "A parent root is physically present in a consolidated original ItemGeneratorPrototypes.cfg although the thin Rare Stash wrappers reference a separately named Gamepass_ItemGenerators.cfg not separately listed as a ZIP member.",
+    "Inherited source provenance does not prove Unreal BPatch semantics, nor is a PASS for any of the production-special Loot writers."
+  ]
+}
