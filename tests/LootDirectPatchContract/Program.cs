@@ -200,6 +200,17 @@ internal static class Program
                 && p.IsValueModifiedFromReference()).Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             Check(current.SetEquals(selected.Keys), type + ": accidentally changed unrelated Loot backing");
 
+            // A modified coupon backing highlights the Stash Reward Profile's
+            // ammo visual anchor, but that anchor's own 1x source is untouched.
+            // The writer must not interpret aggregate highlight as an ammo
+            // source change and activate its expensive special fanout.
+            if (selected.ContainsKey(Money))
+            {
+                var visual = vm.AllParameters.Single(p => p.Id == "loot.cheapStashAmmoQuantity");
+                Check(visual.IsModified && !visual.IsValueModifiedFromReference(),
+                    "Expected highlighted but SOURCE-vanilla stash aggregate anchor");
+            }
+
             var sid = Catalog.DifficultyProfiles[difficulty].Sid;
             var live = vm.AllParameters.ToDictionary(x => x.Id, StringComparer.Ordinal);
             var points = Baseline.EditPoints
