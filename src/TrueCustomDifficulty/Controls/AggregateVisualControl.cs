@@ -1090,13 +1090,21 @@ public sealed class AggregateVisualControl : FrameworkElement
                     new Point(x, track.Bottom + 3.0),
                     new Point(x, track.Bottom + 9.0));
                 var caption = marker.Label.Replace("VANILLA / ", "", StringComparison.Ordinal);
-                const double captionWidth = 77.0;
-                var left = Math.Clamp(x - captionWidth / 2.0,
-                    vaultRect.Left + 2.0, vaultRect.Right - captionWidth - 2.0);
-                dc.DrawText(CreateText(caption, 8.2, muted, FontWeights.SemiBold,
-                    captionWidth), new Point(left, vaultRect.Top + 77.0));
+                // Measure the actual caption, then center its glyphs on the
+                // source marker instead of left-aligning inside a fixed box.
+                // Clamp only at the card edges; the clickable label uses the
+                // same visible bounds as the drawn text.
+                var captionText = CreateText(caption, 8.2, muted,
+                    FontWeights.SemiBold, Math.Max(1.0, vaultRect.Width - 12.0));
+                var labelWidth = captionText.WidthIncludingTrailingWhitespace;
+                var left = Math.Clamp(x - labelWidth / 2.0,
+                    vaultRect.Left + 6.0,
+                    Math.Max(vaultRect.Left + 6.0,
+                        vaultRect.Right - 6.0 - labelWidth));
+                dc.DrawText(captionText, new Point(left, vaultRect.Top + 77.0));
                 AddHorizontalTarget(vault,
-                    new Rect(left, vaultRect.Top + 74.0, captionWidth, 22.0),
+                    new Rect(left - 4.0, vaultRect.Top + 74.0,
+                        labelWidth + 8.0, 22.0),
                     new Rect(x, vaultRect.Top + 74.0, 1.0, 22.0),
                     marker.Value, marker.Value);
             }
