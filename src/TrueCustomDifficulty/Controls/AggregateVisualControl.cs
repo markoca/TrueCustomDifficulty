@@ -193,6 +193,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrawStaminaMovementBoard(dc, text, muted, border, accent, panel);
                 break;
             case "WaterStaminaPressure":
+                DrawWaterStaminaBoard(dc, text, muted, border, accent, panel);
+                break;
             case "RadiationTreatment":
                 DrawRadiationTreatmentCompact(dc, text, muted, border, accent, panel);
                 break;
@@ -1179,6 +1181,26 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawText(CreateText(board.Note, 9.4, text, FontWeights.SemiBold,
                 Math.Max(1.0, ActualWidth - 36.0)),
             new Point(18.0, Family == "PhysicalLimits" ? 265.0 : 228.0));
+    }
+
+    // Approved Stamina wireframe: two independent native 0..2x/0..3x water
+    // drain sources in the same compact two-card anatomy as Stamina & Movement.
+    private void DrawWaterStaminaBoard(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawHeader(dc, "WATER STAMINA DRAIN", "", text, muted, accent);
+        var width = Math.Max(1.0, ActualWidth - 32.0);
+        const double gap = 10.0;
+        var cell = (width - gap) / 2.0;
+        DrawHorizontalTrackCard(dc, P("stamina.waterMediumDrain"), "MEDIUM WATER",
+            new Rect(16.0, 53.0, cell, 72.0),
+            text, muted, border, accent, panel,
+            pairedValueFormatting: true, hideBaseText: true);
+        DrawHorizontalTrackCard(dc, P("stamina.waterStrongDrain"), "DEEP WATER",
+            new Rect(16.0 + cell + gap, 53.0, cell, 72.0),
+            text, muted, border, accent, panel,
+            pairedValueFormatting: true, hideBaseText: true);
     }
 
     // Unified first Stamina card: four native CFG tracks, no redundant subtitle/footer.
