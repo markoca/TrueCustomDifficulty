@@ -1,3 +1,5 @@
+> **Phase 12 (2026-10-09):** The current 17 Environment backing source parameters map to 42 physical vanilla CFG fields. An independent audit of the original GameData ZIP matched all 42 values exactly. CI tests run 90 real ViewModel→BPatch cases. Runtime Unreal effects remain unverified. See [Phase 12](DEEP-CFG-AUDIT-PHASE12-ENVIRONMENT-2026-10-09.md).
+
 # Anomalies Mapping
 
 ## Current visual layout (2026-10-09)
