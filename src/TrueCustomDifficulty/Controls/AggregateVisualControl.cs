@@ -4339,7 +4339,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
-        var target = FindTarget(point);
+        // Keep BOTH the edited value and the visible hover indicator on
+        // the captured endpoint until mouse-up. A nearby opposite handle
+        // must never appear to steal the current drag.
+        HitTarget? target;
+        if (Family == "NpcLootLoadout" && _dragTarget is not null
+            && (_dragTarget.Kind == HitKind.RangeMin || _dragTarget.Kind == HitKind.RangeMax)
+            && e.LeftButton == MouseButtonState.Pressed)
+            target = _dragTarget;
+        else
+            target = FindTarget(point);
         SetHoverTarget(target);
         Cursor = target?.Kind switch
         {
