@@ -1,5 +1,18 @@
 # True Custom Difficulty
 
+## Phase 6: original Combat CFG sources
+
+Original GameData/DLC1 CFG archives confirm 66 directly authored
+Combat source fields plus 2 explicitly inherited original values via
+`Medium : struct.begin {refkey=Empty}`. The original Master
+special arrays contain 14 indexed mutant agent SIDs, 66 exact
+ability cooldown tags and 2 PSY effect records that agree with the
+writer manifest. Added `tools/audit_combat_source_structures.py` and
+a dedicated inheritance regression; these do NOT prove engine
+BPatch merging or gameplay. Full evidence:
+[Combat Phase 6](docs/DEEP-CFG-AUDIT-PHASE3-COMBAT-2026-10-09.md).
+
+
 ## Deep CFG audit Phase 5 — Combat direct writer execution
 
 Extended the real Windows/.NET 10 writer harness to cover every

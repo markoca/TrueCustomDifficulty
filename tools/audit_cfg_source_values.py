@@ -115,6 +115,56 @@ def check_point(point: dict, roots: list[CfgNode]) -> dict:
                 actualRaw=actual, leafNodeLine=node.line)
 
 
+
+def resolve_refkey_inheritance(point: dict, roots: list[CfgNode],
+                               source_lines: list[str], direct_result: dict) -> dict:
+    """Classify a missing direct field by checking explicit vanilla {refkey=...}.
+
+    Never infer inherited values without an actual reference chain and a
+    physically authored ancestor field. Preserve direct-result diagnostics
+    when there is no qualifying ancestor. Inheritance matching is SOURCE
+    provenance, not proof of runtime Unreal BPatch merge behavior.
+    """
+    if direct_result["status"] not in {"missing_node", "missing_key"}:
+        return direct_result
+    matches = [r for r in roots if r.name == point["prototype"]]
+    if not matches:
+        matches = [r for r in roots if r.values.get("SID") == point["prototype"]]
+    if len(matches) != 1:
+        return direct_result
+    current = matches[0]
+    seen = {point["prototype"]}
+    chain: list[str] = []
+    while True:
+        match = re.search(r"\{refkey=([^}\s]+)\}", source_lines[current.line - 1])
+        if not match:
+            return dict(direct_result, refkeyChain=chain,
+                        inheritanceStatus="no_explicit_refkey_ancestor")
+        parent = match.group(1)
+        chain.append(parent)
+        if parent in seen:
+            return dict(direct_result, refkeyChain=chain,
+                        inheritanceStatus="cycle")
+        seen.add(parent)
+        parents = [r for r in roots if r.name == parent]
+        if not parents:
+            parents = [r for r in roots if r.values.get("SID") == parent]
+        if len(parents) != 1:
+            return dict(direct_result, refkeyChain=chain,
+                        inheritanceStatus="missing_or_ambiguous_ancestor")
+        current = parents[0]
+        ancestor = check_point(dict(point, prototype=parent), roots)
+        if ancestor["status"] in {"exact", "equivalent_format", "raw_mismatch"}:
+            return dict(direct_result,
+                        status=("inherited_exact" if ancestor["status"] == "exact"
+                                else "inherited_equivalent_format"
+                                if ancestor["status"] == "equivalent_format"
+                                else "inherited_raw_mismatch"),
+                        inheritedFrom=parent,
+                        inheritedRaw=ancestor.get("actualRaw"),
+                        inheritedLeafLine=ancestor.get("leafNodeLine"),
+                        refkeyChain=chain)
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--base-zip", required=True, type=Path)
@@ -145,8 +195,11 @@ def main() -> int:
                                     file=file_name, prototype=p["prototype"],
                                     status="missing_file") for p in file_points)
             else:
-                roots = read_tree(archive.read(file_name).decode("utf-8-sig"))
-                results.extend(check_point(p, roots) for p in file_points)
+                source_lines = archive.read(file_name).decode("utf-8-sig").splitlines()
+                roots = read_tree("\n".join(source_lines))
+                for p in file_points:
+                    direct = check_point(p, roots)
+                    results.append(resolve_refkey_inheritance(p, roots, source_lines, direct))
             subtotal = results[-len(file_points):]
             file_summaries.append({
                 "scope": scope, "file": file_name, "total": len(file_points),
@@ -154,7 +207,10 @@ def main() -> int:
             })
 
     statuses = dict(sorted(collections.Counter(r["status"] for r in results).items()))
-    findings = [r for r in results if r["status"] != "exact"]
+    # Explicit source refkey values are verified original-source inheritance,
+    # not a runtime-engine assertion. Keep them visible in statusCounts/JSON.
+    inherited = [r for r in results if r["status"] == "inherited_exact"]
+    findings = [r for r in results if r["status"] not in {"exact", "inherited_exact"}]
     report = {
         "parameterPrefix": args.parameter_prefix or None,
         "totalDirectEditPoints": len(points), "statusCounts": statuses,
@@ -162,7 +218,9 @@ def main() -> int:
         "interpretation": (
             "Exact source fields only. A missing source field can be inherited or "
             "optional; investigate before changing a writer. This audit does not "
-            "validate special writers, mod order or runtime gameplay."
+            "validate special writers, mod order or runtime gameplay. "
+            "An inherited_exact source field is traced through an actual "
+            "vanilla {refkey=...} chain, but its BPatch runtime effect remains unverified."
         ),
     }
     if args.out:
@@ -172,6 +230,10 @@ def main() -> int:
     print("Direct CFG source value and structure audit")
     print(f"Scope: {args.parameter_prefix or 'all parameters'}")
     print(f"Targets checked: {len(points)} | Status: {statuses}")
+    for item in inherited:
+        print("  SOURCE INHERITED VIA REFKEY (NOT IN-GAME VERIFIED)",
+              item["parameterId"], item["prototype"], "->",
+              "/".join(item["refkeyChain"]), item["inheritedRaw"])
     for f in file_summaries:
         print(f"  {f['scope']}/{f['file']}: {f['counts']}")
     for finding in findings[:60]:

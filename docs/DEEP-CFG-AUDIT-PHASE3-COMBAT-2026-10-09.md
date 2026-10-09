@@ -253,6 +253,48 @@ Keep catalog runtime flags unchanged until those in-game tests pass. No
 new Combat UI control, designer lock change, gameplay range change or
 v1.0 release is authorized by this mapping pass.
 
+
+## Phase 6 — original Combat source CFG archive verification (2026-10-09)
+
+Two user-supplied decoded source ZIPs were inspected:
+- Base `STALKER2-GameData-CFG(2).zip`, SHA-256
+  `7610b16218310c7345796ff26b1554c73e3d2ca775f6a50108a7406cb7f33da1`.
+- DLC1 `STALKER2-DLC1-CFG(2).zip`, SHA-256
+  `3c5cb53f1769619b510ae3780142d92639c083a4a755a8717a267710c3c849e6`.
+
+All 68 Combat direct writer source paths were independently compared by
+prototype, nested CFG path, leaf key and raw value. 66 are directly
+authored exact matches. Two others are original-source inherited values:
+Stalker player difficulty (CFG `Medium`) has no local
+`MutantCombatDifficulty` node. The declaration
+`Medium : struct.begin {refkey=Empty}` points to `Empty`, which
+physically defines `Mutant_BaseDamage = 1.0` and
+`Mutant_AttackCooldown = 1.0`. These correspond to the live
+`combat.mutantDamage` and `combat.mutantAttackCooldown` routes.
+They are therefore `inherited_exact`, not directly present.
+
+Original Master (CFG `Stalker`) has 14 indexed
+`AgentCooldownMultipliers` agents and 66 individual indexed
+`CooldownTag` records. All original indexes, SIDs, tags, and their
+0.5 multipliers match the writer special manifest, including both
+Burer WeaponDrag tags at their separate indices. Two original PSY
+effects match the writer manifest: SpawnPSYPhantoms and SpawnPSYNPC,
+each with delay 0.5, count 2.0, bleeding true, durability 2.0.
+
+New reproducible audit: `tools/audit_combat_source_structures.py`
+checks original direct data, explicit refkey inheritance and Master
+specials against the live manifest. The generic direct-source checker
+now separates inherited_exact from exact, demands actual parent
+declarations and values, rejects missing/invalid/cyclic parent chains,
+and is regression-tested on CI. Source ZIPs are not committed.
+
+IMPORTANT: original-source inheritance does NOT verify the Unreal
+runtime application of a nested bpatch into the Medium prototype
+(which has no direct MutantCombatDifficulty block). Master sparse
+and non-Master inserted arrays likewise need in-game testing.
+No existing CFG writer implementation, UI design, gameplay balance or
+saved preset value was changed in this source audit.
+
 ## Before releasing a build
 
 The C# writer contract suite and Combat source checks are registered in [the pre-release test runbook](RELEASE-TESTING.md). Run `python tools/pre_release.py list` and follow its static/source/Windows writer procedure. The generated CFG test checks do not promote mutant cooldown or PSY runtime support states without in-game evidence.

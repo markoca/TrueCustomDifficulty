@@ -28,6 +28,9 @@ jobs:
       - name: Whole-project active source consistency
         run: python tools/audit_project_consistency.py
 
+      - name: Regression - vanilla refkey source inheritance
+        run: python tools/test_cfg_source_inheritance.py
+
       - name: Pre-release runner and documented inventory smoke
         run: |
           python tools/pre_release.py list

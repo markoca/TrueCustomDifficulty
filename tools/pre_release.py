@@ -26,6 +26,7 @@ SOURCE = (
     ("original-files-and-hp", "tools/audit_cfg_dump_provenance.py"),
     ("all-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("combat-direct-source-values", "tools/audit_cfg_source_values.py"),
+    ("combat-original-special-arrays-and-inheritance", "tools/audit_combat_source_structures.py"),
 )
 WRITER = "combat-bpatch-writer"
 MANUAL = (
@@ -125,6 +126,8 @@ def main():
             if label == "combat-direct-source-values":
                 command.extend(["--out", str(out / "combat-source-values.json"),
                                 "--parameter-prefix", "combat.", "--strict"])
+            if label == "combat-original-special-arrays-and-inheritance":
+                command.extend(["--out", str(out / "combat-original-special-arrays.json")])
             steps.append(execute(label, command, out))
     else:
         steps.extend(not_run(label, "matching source ZIPs not selected")

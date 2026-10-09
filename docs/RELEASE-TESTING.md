@@ -18,6 +18,15 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | D1 | `chmod +x publish.sh && ./publish.sh` | Linux / .NET 10 | Published executable and matching `BUILD-INFO.txt` source receipt |
 | D2 | Wine UI + in-game manual test | Linux / game | Visual design lock, preset round-trip, PAK/UTOC/UCAS build, actual game effects |
 
+
+**B4 — original Combat reference inheritance and special arrays:**
+`python tools/audit_combat_source_structures.py --base-zip BASE --dlc1-zip DLC1 --out REPORT.json`.
+Checks 68 Combat direct source routes, separately identifying two
+verified Medium-to-Empty inherited source fields, all 14 Master
+agents / 66 tags, and both PSY effects. Game BPatch integration
+remains a manual acceptance gate. The source runner now executes
+B1 through B4 with genuine base/DLC1 ZIPs.
+
 ## Single repeatable runner
 
 `tools/pre_release.py` invokes the registered subprocesses, preserves raw
@@ -45,7 +54,7 @@ On **Windows + .NET 10**:
 # C1 — all 77 real writer cases.
 python tools/pre_release.py writer
 
-# A1/A2/A3 + B1/B2/B3 + C1.
+# A1/A2/A3 + B1/B2/B3/B4 + C1.
 python tools/pre_release.py all --base-zip "C:\path\to\GameData-CFG.zip" --dlc1-zip "C:\path\to\DLC1-CFG.zip"
 ```
 
@@ -119,7 +128,7 @@ merge semantics** or quest-specific side effects. Preserve
 | --- | --- |
 | Candidate SHA, 0.x version and `git status --short` | NOT RECORDED |
 | A1–A3 `summary.json` static PASS at that SHA | NOT RUN |
-| B1–B3 original matching decoded archive evidence | NOT RUN |
+| B1–B4 original matching decoded archive evidence | NOT RUN |
 | C1 Windows CI 77/77 writer at that SHA | NOT RUN |
 | D1 publish and `BUILD-INFO.txt` SHA match | NOT RUN |
 | D2 Wine UI and preset smoke | NOT RUN |
@@ -139,4 +148,4 @@ control cases and 14 Mutant Health family cases (16 nested MaxHP fields).
 The current bound ViewModels and real `CfgPatchWriterService` are used.
 These scenarios prove output structure/value and no collateral edits,
 not independent correctness of every vanilla source value or in-game load.
-The original GameData/DLC1 ZIP checks remain an independent B1–B3 gate.
+The original GameData/DLC1 ZIP checks remain an independent B1–B4 gate.

@@ -43,3 +43,15 @@ The mixer contract is described in the UI design documentation; publishing does 
 ## Pre-release test runner
 
 Run `python tools/pre_release.py list` in the repository root to view the registered tests. The `static`, `source`, `writer` and `all` modes, their platform requirements, evidence reports and mandatory manual game checks are described in [Pre-release testing](../docs/RELEASE-TESTING.md). Test logs and fixtures are written to ignored `audit/pre-release/` and do not form part of the runtime release.
+
+### Original CFG ancestry and special arrays
+
+`audit_cfg_source_values.py` now checks physically declared source
+`{refkey=...}` ancestor values, reporting `inherited_exact`
+separately from directly authored fields. Wrong, missing or cyclical
+ancestry is not silently accepted. The CI-backed
+`test_cfg_source_inheritance.py` validates this behavior.
+`audit_combat_source_structures.py` checks the exact 68 Combat
+source routes plus 14 Master agents / 66 cooldown tags / 2 PSY
+effects using actual supplied CFG ZIPs. These are source facts,
+not game-engine BPatch runtime tests.
