@@ -1090,3 +1090,29 @@ Exhaustion threshold tracks have a *common visual domain* of 0–60 actual SP wi
 
 Visual contract: compact dark panels, one centered gold section title, neutral source labels and units, value above rail, only genuinely modified numeric tokens highlighted +1.2 DIP, understated grey reference marks, handle-only gold hover. No redundant explanatory text, current-vs-Base tables or made-up simulation. Wide mode height 240 DIP for Exhaustion with threshold and 2×2 cards side-by-side; narrow mode 419 DIP with thresholds stacked above the 2×2 bank. Confirm the WPF live result in Wine; source checks alone do not establish visual acceptance.
 
+
+### 2026-10-09 — Loot tab six-section gamer-centric redesign (approved)
+
+| Display order | Family renderer | Normal editable sources | Display rule |
+| --- | --- | ---: | --- |
+| 1. World Loot Depletion | `WorldLootRemovalRadar` | 5 | 2-column/3-row compact percentage cards; dedicated F1 boxes independent |
+| 2. World Placement | `AggregateVisualControl / WorldLootLayout` | 5 | 4 universal small checkboxes, one dependent weapon-density rail |
+| 3. NPC Loot & Equipment | `AggregateVisualControl / NpcLootLoadout` | 4 | discrete 3-option selector, 2 scalar sliders, 1 two-endpoint MIN/MAX source range |
+| 4. Stash Rewards | `AggregateVisualControl / StashRewardProfile` | 6 | three tier ammo quantities and three independent bonus-roll chances/counts |
+| 5. Breakable Boxes | `AggregateVisualControl / AmmoDistribution` | 6 | 2 yield sliders, 4 ammo family weight sliders, two linked *read-only* pool composition bars |
+| 6. Mutant Part Drops | `MutantDropRadar` | 14 | 2 × 7 alphabetized independent 0–100% sliders |
+| **Total** | | **40** | No additional source, generic difficulty, invented loot event or hidden duplicate editor |
+
+### Breakable Boxes — caliber identity is a first-class chart requirement
+
+`AmmoDistribution` contains the four existing independent **relative weight** sources:
+- `loot.ammoBoxWeight918` — label **9×18 / 9×19**. SNG has two underlying entries using this weight, so SNG numerator is `2 × weight918`; NATO has just one 9×19 entry, numerator `weight918`.
+- `loot.ammoBoxWeight045` — **.45 ACP**, NATO only.
+- `loot.ammoBoxWeight545` — **5.45 / 5.56**, SNG shows **5.45**, NATO shows **5.56**.
+- `loot.ammoBoxWeight012` — **12 Gauge**, both pools.
+
+For the **SNG POOL** stacked bar the normalized current segments are `(2*w918, w545, w012)/sum` in that order. The **NATO POOL** segments are `(w045, w918, w545, w012)/sum`. Each bar displays a permanent **swatch + caliber name + exact share percentage** for *every* segment immediately below the drawn bar **inside the same bordered chart card**, regardless of whether a 0% segment becomes invisible. Swatch and bar segment draw from identical source-color family indices `918=0, 045=1, 545=2, 012=3`, opacities `[.95,.72,.50,.30]`. **Do not assign palette by segment index** (because SNG and NATO orders differ); this would falsely imply different meanings for the same source weight. `Source weight=0` retains the grey/zero numerical current value as required while the read-only legend remains visible. Changes to relative weights do not affect which ammo membership entries exist or how many rounds each box grants.
+
+All six Breakable Boxes native editors retain their source range/step and right-click/R semantics. The two additional `loot.destructibleAmmoQuantity` and `loot.destructibleGrenadeQuantity` sources are now members of `AmmoDistribution`; the former standalone `BreakableBoxYields` has no visible anchor. The previous vertically extended read-only per-pool Base percentages and long prose are intentionally removed. The parameter catalog/CFG writer remains authority for raw input.
+
+Other Loot panels follow the approved `UI-DESIGN-LOCK.md` mapping. `StashAmmoRadar` is retired from the visible tab without deleting its existing source values; `StashRewardProfile` contains all six related sources and owns the `loot.cheapStashAmmoQuantity` anchor. Minor source and font changes in `WorldLootRemovalRadar` and `MutantDropRadar` only affect the Loot tab. No other tab UI is reauthorized. Wine acceptance pending.
