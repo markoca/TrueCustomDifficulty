@@ -143,8 +143,7 @@ public sealed class MutantDropRadar : FrameworkElement
 
         DrawCenteredText(dc, "MUTANT PART DROP CHANCES", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
-        DrawCenteredText(dc, "absolute chance per eligible kill; every successful roll gives exactly 1 part", new Point(ActualWidth / 2.0, 39.0),
-            9.5, muted, FontWeights.Normal);
+
 
         DrawRightAlignedText(
             dc,
