@@ -4,7 +4,7 @@
   "toolVersion": "0.9.26.52",
   "gameVersion": "2.0.5",
   "referenceDifficulty": "Master",
-  "savedAtUtc": null,
+  "savedAtUtc": "2026-10-09T00:12:00Z",
   "values": {
     "combat.npcHealth": {
       "kind": "slider",
@@ -12,7 +12,7 @@
     },
     "combat.npcWeaponDamage": {
       "kind": "slider",
-      "number": 1.75
+      "number": 1.9
     },
     "combat.mutantDamage": {
       "kind": "slider",
@@ -20,15 +20,15 @@
     },
     "combat.playerWeaponDamage": {
       "kind": "slider",
-      "number": 1
+      "number": 1.08
     },
     "combat.playerHeadshotMultiplier": {
       "kind": "slider",
-      "number": 2.75
+      "number": 2.65
     },
     "combat.weaponJamming": {
       "kind": "slider",
-      "number": 2
+      "number": 1.85
     },
     "combat.explosionDamage": {
       "kind": "slider",
@@ -36,11 +36,11 @@
     },
     "combat.npcAttackCooldown": {
       "kind": "slider",
-      "number": 1.6
+      "number": 1.9
     },
     "combat.npcHipAccuracy": {
       "kind": "slider",
-      "number": 1.5
+      "number": 1
     },
     "combat.accumulatedDamageWeightMax": {
       "kind": "slider",
@@ -56,79 +56,79 @@
     },
     "combat.mutantAttackCooldown": {
       "kind": "slider",
-      "number": 1.4
+      "number": 1.9
     },
     "combat.mutantHealth.bloodsucker": {
       "kind": "slider",
-      "number": 1.2
+      "number": 1.55
     },
     "combat.mutantCooldown.bloodsucker": {
       "kind": "slider",
-      "number": 0.35
+      "number": 0.65
     },
     "combat.mutantHealth.chimera": {
       "kind": "slider",
-      "number": 1.3
+      "number": 1.55
     },
     "combat.mutantCooldown.chimera": {
       "kind": "slider",
-      "number": 0.4
+      "number": 0.65
     },
     "combat.mutantHealth.deer": {
       "kind": "slider",
-      "number": 1.15
+      "number": 1.55
     },
     "combat.mutantCooldown.deer": {
       "kind": "slider",
-      "number": 0.35
+      "number": 0.65
     },
     "combat.mutantHealth.pseudogiant": {
       "kind": "slider",
-      "number": 1.5
+      "number": 1.55
     },
     "combat.mutantCooldown.pseudogiant": {
       "kind": "slider",
-      "number": 0.45
+      "number": 0.65
     },
     "combat.mutantHealth.pseudodog": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1.55
     },
     "combat.mutantCooldown.pseudodog": {
       "kind": "slider",
-      "number": 0.35
+      "number": 0.65
     },
     "combat.mutantHealth.burer": {
       "kind": "slider",
-      "number": 1.25
+      "number": 1.55
     },
     "combat.mutantCooldown.burer": {
       "kind": "slider",
-      "number": 0.35
+      "number": 0.65
     },
     "combat.mutantHealth.bayun": {
       "kind": "slider",
-      "number": 1.15
+      "number": 1.55
     },
     "combat.mutantCooldown.bayun": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.65
     },
     "combat.mutantHealth.controller": {
       "kind": "slider",
-      "number": 1.25
+      "number": 1.55
     },
     "combat.mutantCooldown.controller": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.65
     },
     "combat.psySpawnCycleDelay": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.55
     },
     "combat.psyPhantomCount": {
       "kind": "slider",
-      "number": 3
+      "number": 1.9
     },
     "combat.psyBleeding": {
       "kind": "toggle",
@@ -136,7 +136,7 @@
     },
     "combat.psyDurabilityDamage": {
       "kind": "slider",
-      "number": 3
+      "number": 1.9
     },
     "survival.hungerRate": {
       "kind": "slider",
@@ -168,7 +168,7 @@
     },
     "survival.radiationAccumulation": {
       "kind": "slider",
-      "number": 2.5
+      "number": 1.87
     },
     "survival.radiationRecovery": {
       "kind": "slider",
@@ -176,11 +176,11 @@
     },
     "survival.radiationDamage": {
       "kind": "slider",
-      "number": 2
+      "number": 1.87
     },
     "survival.bleedingSeverity": {
       "kind": "slider",
-      "number": 2
+      "number": 1.86
     },
     "survival.bleedingRecovery": {
       "kind": "slider",
@@ -188,7 +188,7 @@
     },
     "health.maxHP": {
       "kind": "slider",
-      "number": 50
+      "number": 55
     },
     "health.baseRegen": {
       "kind": "slider",
@@ -200,7 +200,7 @@
     },
     "health.regenerationScalar": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0.39
     },
     "health.lowHealthRegen": {
       "kind": "slider",
@@ -228,7 +228,7 @@
     },
     "health.ecoMedkitHealing": {
       "kind": "slider",
-      "number": 50
+      "number": 40
     },
     "health.foodHealing": {
       "kind": "toggle",
@@ -272,11 +272,11 @@
     },
     "stamina.maxSP": {
       "kind": "slider",
-      "number": 70
+      "number": 60
     },
     "stamina.vaultMaxHeight": {
       "kind": "slider",
-      "number": 110
+      "number": 95
     },
     "stamina.waterMediumDrain": {
       "kind": "slider",
@@ -288,27 +288,27 @@
     },
     "stamina.regeneration": {
       "kind": "slider",
-      "number": 3
+      "number": 4
     },
     "stamina.sprintCost": {
       "kind": "slider",
-      "number": 7.5
+      "number": 10.5
     },
     "stamina.jumpCost": {
       "kind": "slider",
-      "number": 23
+      "number": 32
     },
     "stamina.vaultCost": {
       "kind": "slider",
-      "number": 18
+      "number": 24
     },
     "stamina.meleeNormalCost": {
       "kind": "slider",
-      "number": 23
+      "number": 32
     },
     "stamina.meleeStrongCost": {
       "kind": "slider",
-      "number": 38
+      "number": 50
     },
     "stamina.butstockCost": {
       "kind": "slider",
@@ -320,7 +320,7 @@
     },
     "stamina.maxCarryWeight": {
       "kind": "slider",
-      "number": 40
+      "number": 45
     },
     "loot.npcCorpseBonus": {
       "kind": "choiceSlider",
@@ -328,7 +328,7 @@
     },
     "loot.npcMedicalChance": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0.15
     },
     "loot.npcWeaponAmmoSupply": {
       "kind": "slider",
@@ -413,39 +413,39 @@
     },
     "economy.consumableCost": {
       "kind": "slider",
-      "number": 2
+      "number": 1.87
     },
     "economy.ammoCost": {
       "kind": "slider",
-      "number": 2
+      "number": 1.87
     },
     "economy.armorCost": {
       "kind": "slider",
-      "number": 1.75
+      "number": 1.87
     },
     "economy.weaponCost": {
       "kind": "slider",
-      "number": 1.75
+      "number": 1.87
     },
     "economy.artifactCost": {
       "kind": "slider",
-      "number": 1.25
+      "number": 1.5
     },
     "economy.mutantPartValue": {
       "kind": "slider",
-      "number": 1.75
+      "number": 1.7
     },
     "economy.fastTravelCost": {
       "kind": "slider",
-      "number": 2
+      "number": 1.87
     },
     "economy.upgradeCost": {
       "kind": "slider",
-      "number": 1.75
+      "number": 1.87
     },
     "economy.repairCostBase": {
       "kind": "slider",
-      "number": 1.75
+      "number": 1.87
     },
     "economy.repairEnemy": {
       "kind": "slider",
@@ -465,27 +465,27 @@
     },
     "economy.mainQuestReward": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0.15
     },
     "economy.sideQuestReward": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.15
     },
     "equipment.armorDurability": {
       "kind": "slider",
-      "number": 0.35
+      "number": 0.540541
     },
     "equipment.ammoWeight": {
       "kind": "slider",
-      "number": 1.75
+      "number": 1.85
     },
     "equipment.consumableWeight": {
       "kind": "slider",
-      "number": 1.75
+      "number": 1.85
     },
     "environment.anomalyDamage": {
       "kind": "slider",
-      "number": 2
+      "number": 1.87
     },
     "advanced.starvationMechanics": {
       "kind": "toggle",
@@ -501,11 +501,11 @@
     },
     "survival.wellFedStaminaRegen": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.4
     },
     "survival.starvationStaminaDrain": {
       "kind": "slider",
-      "number": 3.5
+      "number": 1.87
     },
     "survival.starvationDamage": {
       "kind": "slider",
@@ -521,7 +521,7 @@
     },
     "survival.starvationHealthRegenPenalty": {
       "kind": "slider",
-      "number": 1
+      "number": 0.964
     },
     "survival.fatigueLowAimPenalty": {
       "kind": "slider",
@@ -657,67 +657,67 @@
     },
     "loot.mutant.blindDogChance": {
       "kind": "slider",
-      "number": 0.03
+      "number": 0.0117
     },
     "loot.mutant.bloodsuckerChance": {
       "kind": "slider",
-      "number": 0.15
+      "number": 0.0585
     },
     "loot.mutant.boarChance": {
       "kind": "slider",
-      "number": 0.05
+      "number": 0.0195
     },
     "loot.mutant.burerChance": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0.0975
     },
     "loot.mutant.catChance": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.078
     },
     "loot.mutant.chimeraChance": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0.0975
     },
     "loot.mutant.controllerChance": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.078
     },
     "loot.mutant.deerChance": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0.0975
     },
     "loot.mutant.fleshChance": {
       "kind": "slider",
-      "number": 0.05
+      "number": 0.0195
     },
     "loot.mutant.poltergeistChance": {
       "kind": "slider",
-      "number": 0.15
+      "number": 0.0585
     },
     "loot.mutant.pseudodogChance": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.078
     },
     "loot.mutant.pseudogiantChance": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0.0975
     },
     "loot.mutant.tushkanChance": {
       "kind": "slider",
-      "number": 0.05
+      "number": 0.0195
     },
     "loot.mutant.snorkChance": {
       "kind": "slider",
-      "number": 0.02
+      "number": 0.0078
     },
     "equipment.weaponWearPerShot": {
       "kind": "slider",
-      "number": 1.8
+      "number": 1.85
     },
     "loot.worldAmmoCratesRemoved": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.92
     },
     "loot.worldF1GrenadeBoxes": {
       "kind": "slider",
@@ -725,15 +725,15 @@
     },
     "loot.worldFoodDrinkCratesRemoved": {
       "kind": "slider",
-      "number": 0.85
+      "number": 0.92
     },
     "loot.worldMedicalCratesRemoved": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.92
     },
     "loot.looseWorldLootRemoved": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.92
     },
     "loot.worldWeaponShuffle": {
       "kind": "toggle",
@@ -741,7 +741,7 @@
     },
     "loot.worldWeaponDensity": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.15
     },
     "loot.worldAttachmentShuffle": {
       "kind": "toggle",
@@ -757,7 +757,7 @@
     },
     "economy.traderMinBuyCondition": {
       "kind": "slider",
-      "number": 0.65
+      "number": 0.62
     },
     "survival.hungerLowThreshold": {
       "kind": "slider",
