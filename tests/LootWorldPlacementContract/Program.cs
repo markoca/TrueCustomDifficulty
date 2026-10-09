@@ -30,6 +30,7 @@ internal static class Program
         public HashSet<string> Removed {get;} = new(StringComparer.Ordinal);
         public Dictionary<string,string> References {get;} = new(StringComparer.Ordinal);
         public HashSet<string> Nodes {get;} = new(StringComparer.Ordinal);
+        public HashSet<string> MergedNodes {get;} = new(StringComparer.Ordinal);
         public string? Field(string path) => Fields.GetValueOrDefault(path);
     }
 
@@ -334,19 +335,16 @@ internal static class Program
             {
                 Check(assigned!=row[3],"Redundant generator item replacement "+path);
                 fields.Add(file+"|"+path+"/ItemPrototypeSID");
-                // If the original row has other mechanics, production must
-                // preserve the authored source fields under replacement node.
-                var names=new[]{"Chance","Weight","MinDurability","MaxDurability",
-                    "AmmoMinCount","AmmoMaxCount","MinCount","MaxCount"};
-                for(var i=0;i<names.Length;i++)
-                {
-                    var raw=row[7+i];
-                    if(raw.Length==0)continue;
-                    Check(gen!.Field(path+"/"+names[i])==raw,
-                        "World weapon shuffle lost authored generator mechanic "+
-                        path+"/"+names[i]);
-                    fields.Add(file+"|"+path+"/"+names[i]);
-                }
+                // Minimal patch: all original source mechanics, including
+                // nested Upgrades/Attaches Chance and MinCount/MaxCount, must
+                // be inherited from the untouched vanilla source. Never
+                // rewrite a complete indexed PossibleItems entry.
+                Check(gen!.MergedNodes.Contains(path),
+                    "World weapon item SID must use indexed {bpatch}: "+path);
+                Check(!new[]{"Chance","Weight","MinDurability","MaxDurability",
+                    "AmmoMinCount","AmmoMaxCount","MinCount","MaxCount"}
+                    .Any(name=>gen.Field(path+"/"+name)!=null),
+                    "Weapon SID override must not duplicate original mechanic fields "+path);
             }
             Accept(assigned??row[3],row[4],row[5],path);
         }
@@ -439,6 +437,8 @@ internal static class Program
                         "Unrecognized struct directive "+s);
                     var path=string.Join("/",stack.Append(name));
                     Check(parsed.Nodes.Add(path),"Duplicate CFG patch node "+physical+"|"+path);
+                    if(flags.Contains("{bpatch}",StringComparison.Ordinal))
+                        Check(parsed.MergedNodes.Add(path),"Duplicate merged CFG path "+physical+"|"+path);
                     if(flags.StartsWith("{refurl=",StringComparison.Ordinal))
                     {
                         Check(stack.Count==0,"Only a referenced clone root may contain refurl");
