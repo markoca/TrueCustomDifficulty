@@ -1022,3 +1022,7 @@ All 25 visible Combat controls were traced through UI semantics, vanilla values,
 ## v0.4.8 World Loot UI
 
 World-loot reduction/shuffle controls are standalone sliders with an explicit `Vanilla` zero position. Ammo crates, Food & Drink crates, Medical crates, and World Weapon Shuffle no longer use enable checkboxes or a shared removal percentage. Pre-v0.4.8 presets are migrated by folding their old toggle state and percentage into the corresponding slider.
+
+## Economy Trading compact redesign (2026-10-09)
+
+The four independent trading controls now share a compact 2×2 horizontal-slider board (one column at narrow widths), using the same Base-reference ticks, handle styling and modified-value highlighting as the existing Stamina-style controls. Trader payout/shop scalers remain independent of the minimum accepted condition and broken-item value floor, and the design does not claim to calculate final trader prices. Native CFG mappings, ranges, preset values and reset behavior remain unchanged. This is the Trading-family portion of the Economy redesign; remaining Economy panels are not yet converted.
