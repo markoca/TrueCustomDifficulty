@@ -552,3 +552,8 @@ The compact Radiation Treatment board requires live `health.ecoMedkitAntirad` an
 ### 2026-10-09 — Stamina Usage wording and clean presentation
 
 Rename the Action Costs radar panel title from **STAMINA PRESSURE** to **STAMINA USAGE**. Keep the six independent movement/melee costs, aiming recovery control, sprint lock, low-SP recovery threshold, restart delay, recovery boost and boost duration. Omit the explanatory panel subtitle, repeated gold/Base legend, 'continuous stamina-regeneration slowdown', 'absolute stamina values' and duplicated percentages beside direct SP costs. Static action labels remain neutral; modified numeric values alone use the gold highlight; vanilla reference ticks stay visible on tracks. Bring rows closer together and size the board at 393 DIP, without changing backing source values, reference baselines or interaction mappings.
+
+
+### 2026-10-09 — Aim stamina terminology
+
+In Stamina Usage, display **AIM REGEN SLOWDOWN** instead of `AIMING RECOVERY PENALTY`. This names the gameplay effect precisely: aiming slows stamina regeneration, rather than directly spending stamina. Keep the original CFG setting, percent readout, reference tick, and modified-value coloring.
