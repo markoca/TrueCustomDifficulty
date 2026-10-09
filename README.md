@@ -1,5 +1,18 @@
 # True Custom Difficulty
 
+## Health + Stamina original CFG audit — Phase 8
+
+Verified **69 original source CFG fields** from the supplied
+GameData/DLC1 archives: **68 directly authored exact** plus one
+original-source inherited `Player.VaultingParams.MaxObstacleHeight`
+through `{refkey=[0]}`. New Windows/.NET writer contract covers all
+**43 Health/Stamina backing settings + 3 additional difficulty cases
+(46 total scenarios)** with actual production WPF ViewModels and
+BPatch output. See [Phase 8 evidence and runtime gaps](docs/DEEP-CFG-AUDIT-PHASE8-HEALTH-STAMINA-2026-10-09.md).
+Actual in-game effects and the inherited nested BPatch merge remain
+`NOT RUN` until manually confirmed.
+
+
 ## Phase 7 — inherited Medium BPatch and game-test presets
 
 Five JSON presets under [Combat Runtime Acceptance](tests/CombatRuntimeAcceptance/README.md) isolate the in-game Stalker / CFG Medium inherited mutant section, with a Veteran / CFG Hard control. The real Windows contract harness imports these files through PresetService, applies live ViewModel values and checks their exact CFG output; total **82 production writer scenarios**. The game/Unreal runtime behavior remains explicitly **NOT RUN** until manually verified. No UI or gameplay/writer code was changed.

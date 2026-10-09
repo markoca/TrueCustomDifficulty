@@ -15,6 +15,8 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | B2 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --out REPORT.json --strict` | Linux / Windows | Every 1,224 direct source/CFG field check (strict) |
 | B3 | Same as B2 plus `--parameter-prefix combat.` | Linux / Windows | 68 direct Combat source checks (strict) |
 | C1 | `dotnet run --project tests/CombatPatchContract/CombatPatchContract.csproj -c Release -- --out audit/combat-patch-fixtures` | Windows / .NET 10 | 82 **real production writer** Master/Novice/Stalker/Veteran/PSY BPatch scenarios |
+| B5 | `python tools/audit_health_stamina_source.py --base-zip BASE --dlc1-zip DLC1` | Linux / Windows | 69 Health/Stamina original source fields, including Player→[0] inheritance |
+| C2 | `dotnet run --project tests/HealthStaminaPatchContract/HealthStaminaPatchContract.csproj -c Release -- --out audit/health-stamina-patch-fixtures` | Windows / .NET 10 | 46 source-backed Health/Stamina BPatch writer cases |
 | D1 | `chmod +x publish.sh && ./publish.sh` | Linux / .NET 10 | Published executable and matching `BUILD-INFO.txt` source receipt |
 | D2 | Wine UI + in-game manual test | Linux / game | Visual design lock, preset round-trip, PAK/UTOC/UCAS build, actual game effects |
 
@@ -51,15 +53,15 @@ python tools/pre_release.py source \
 On **Windows + .NET 10**:
 
 ```powershell
-# C1 — all 77 real writer cases.
+# C1 (82 Combat cases) + C2 (46 Health/Stamina cases).
 python tools/pre_release.py writer
 
-# A1/A2/A3 + B1/B2/B3/B4 + C1.
+# A1/A2/A3 + B1/B2/B3/B4/B5 + C1.
 python tools/pre_release.py all --base-zip "C:\path\to\GameData-CFG.zip" --dlc1-zip "C:\path\to\DLC1-CFG.zip"
 ```
 
 On **Linux**, `all` runs static + source but reports **INCOMPLETE**
-(exit code **2**) because C1 requires Windows WPF. Verify C1 using the
+(exit code **2**) because C1 and C2 require Windows WPF. Verify C1 using the
 matching GitHub CI run. Exit codes: `0` requested automated tests passed;
 `1` a test failed; `2` Windows-required coverage skipped.
 **A zero exit code never indicates S.T.A.L.K.E.R. 2 gameplay acceptance.**
@@ -128,8 +130,8 @@ merge semantics** or quest-specific side effects. Preserve
 | --- | --- |
 | Candidate SHA, 0.x version and `git status --short` | NOT RECORDED |
 | A1–A3 `summary.json` static PASS at that SHA | NOT RUN |
-| B1–B4 original matching decoded archive evidence | NOT RUN |
-| C1 Windows CI 82/82 writer at that SHA | NOT RUN |
+| B1–B5 original matching decoded archive evidence | NOT RUN |
+| C1 Windows CI 82/82 + C2 46/46 writer at that SHA | NOT RUN |
 | D1 publish and `BUILD-INFO.txt` SHA match | NOT RUN |
 | D2 Wine UI and preset smoke | NOT RUN |
 | D2 PAK/UTOC/UCAS build, mod load and in-game test | NOT RUN |
@@ -148,7 +150,7 @@ control cases and 14 Mutant Health family cases (16 nested MaxHP fields).
 The current bound ViewModels and real `CfgPatchWriterService` are used.
 These scenarios prove output structure/value and no collateral edits,
 not independent correctness of every vanilla source value or in-game load.
-The original GameData/DLC1 ZIP checks remain an independent B1–B4 gate.
+The original GameData/DLC1 ZIP checks remain an independent B1–B5 gate.
 
 ### Phase 7 runtime acceptance: inherited mutant section
 
@@ -159,3 +161,16 @@ JSON presets for Stalker/Medium (inherited from Empty) and Veteran/Hard
 for isolated in-game tests. Even a green 82/82 C# result is **not**
 gameplay evidence: game loading, Unreal inheritance/merge behavior and
 mod packaging remain manual gates.
+
+### Phase 8 source and writer tests
+
+The fifth archive source gate, `B5`, confirms all **69 original
+Health/Stamina direct writer field paths** and explicitly reports
+`stamina.vaultMaxHeight` as inherited from
+`Player : struct.begin {refkey=[0]}`. The Windows `C2` writer job
+runs **46 independent production ViewModel→BPatch scenarios**,
+with separate generated CFG evidence. Both CI jobs must be green
+on the **same release commit**. Never confuse original source
+ancestry with in-game BPatch merging.
+
+See [Phase 8 detailed audit](DEEP-CFG-AUDIT-PHASE8-HEALTH-STAMINA-2026-10-09.md).

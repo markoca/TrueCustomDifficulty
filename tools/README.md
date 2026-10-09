@@ -55,3 +55,7 @@ ancestry is not silently accepted. The CI-backed
 source routes plus 14 Master agents / 66 cooldown tags / 2 PSY
 effects using actual supplied CFG ZIPs. These are source facts,
 not game-engine BPatch runtime tests.
+
+### Health/Stamina direct CFG source and real writer
+
+`audit_health_stamina_source.py` compares 69 source edit points against the original decoded GameData/DLC1 CFG archives, including one `Player→[0]` inherited VaultingParams value. `tests/HealthStaminaPatchContract` executes 46 real WPF model-to-CFG writer scenarios on Windows CI and stores generated patch evidence. Both are registered in `pre_release.py`; neither runs the game.

@@ -27,8 +27,12 @@ SOURCE = (
     ("all-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("combat-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("combat-original-special-arrays-and-inheritance", "tools/audit_combat_source_structures.py"),
+    ("health-stamina-original-source", "tools/audit_health_stamina_source.py"),
 )
-WRITER = "combat-bpatch-writer"
+WRITERS = (
+    ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 82),
+    ("health-stamina-bpatch-writer", "HealthStaminaPatchContract", "health-stamina-patch-fixtures", 46),
+)
 MANUAL = (
     "S.T.A.L.K.E.R. 2 Combat BPatch loading and gameplay effects",
     "Wine UI acceptance against both design lock documents",
@@ -87,7 +91,8 @@ def main():
         print("SOURCE (requires matching original base and DLC1 CFG ZIPs):")
         for label, path in SOURCE:
             print(f"  {label}: python {path}")
-        print("WINDOWS + .NET 10: tests/CombatPatchContract (82 real writer cases)")
+        for label, project, _, cases in WRITERS:
+            print(f"WINDOWS + .NET 10: {project} ({cases} writer scenarios) -> {label}")
         print("MANUAL (never automatically PASS):")
         for name in MANUAL:
             print(f"  [NOT RUN] {name}")
@@ -128,6 +133,8 @@ def main():
                                 "--parameter-prefix", "combat.", "--strict"])
             if label == "combat-original-special-arrays-and-inheritance":
                 command.extend(["--out", str(out / "combat-original-special-arrays.json")])
+            if label == "health-stamina-original-source":
+                command.extend(["--out", str(out / "health-stamina-original-source.json")])
             steps.append(execute(label, command, out))
     else:
         steps.extend(not_run(label, "matching source ZIPs not selected")
@@ -135,20 +142,25 @@ def main():
 
     if args.mode in ("writer", "all"):
         if os.name != "nt":
-            steps.append(not_run(WRITER, "Windows WPF required; verify the "
-                                 "combat-writer-windows CI job for this SHA"))
+            for label, _, _, _ in WRITERS:
+                steps.append(not_run(label, "Windows WPF required; verify the "
+                                     "corresponding Windows GitHub Actions job at this SHA"))
         elif not shutil.which("dotnet"):
-            steps.append({"name": WRITER, "status": "FAIL",
-                          "reason": "Requires .NET 10 SDK"})
-            print("[FAIL] writer: dotnet not found")
+            for label, _, _, _ in WRITERS:
+                steps.append({"name": label, "status": "FAIL",
+                              "reason": "Requires .NET 10 SDK"})
+                print(f"[FAIL] {label}: dotnet not found")
         else:
-            command = ["dotnet", "run", "--project",
-                       str(ROOT / "tests/CombatPatchContract/CombatPatchContract.csproj"),
-                       "-c", "Release", "--", "--out",
-                       str(out / "combat-patch-fixtures")]
-            steps.append(execute(WRITER, command, out))
+            for label, project, folder, _ in WRITERS:
+                command = [
+                    "dotnet", "run", "--project",
+                    str(ROOT / "tests" / project / (project + ".csproj")),
+                    "-c", "Release", "--", "--out", str(out / folder)
+                ]
+                steps.append(execute(label, command, out))
     else:
-        steps.append(not_run(WRITER, "not selected; check Windows CI separately"))
+        steps.extend(not_run(label, "not selected; check Windows CI separately")
+                     for label, _, _, _ in WRITERS)
 
     failed = sum(s["status"] == "FAIL" for s in steps)
     skipped = sum(s["status"] == "NOT RUN" for s in steps)
