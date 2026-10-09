@@ -130,3 +130,25 @@ jobs:
           path: audit/economy-patch-fixtures
           if-no-files-found: ignore
           retention-days: 7
+
+  equipment-writer-windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+      - name: Install .NET 10 for WPF writer execution
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Generate and verify real Equipment BPatch output
+        shell: pwsh
+        run: dotnet run --project tests/EquipmentPatchContract/EquipmentPatchContract.csproj -c Release -- --out audit/equipment-patch-fixtures
+      - name: Keep generated Equipment BPatch evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: equipment-patch-contract
+          path: audit/equipment-patch-fixtures
+          if-no-files-found: ignore
+          retention-days: 7

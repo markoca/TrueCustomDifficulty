@@ -19,6 +19,8 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | C2 | `dotnet run --project tests/HealthStaminaPatchContract/HealthStaminaPatchContract.csproj -c Release -- --out audit/health-stamina-patch-fixtures` | Windows / .NET 10 | 46 writer Health/Stamina BPatch writer cases |
 | B6 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix survival. --out REPORT.json --strict` | Linux / Windows | All 139 Survival original CFG source points (requires matching original ZIPs) |
 | C3 | `dotnet run --project tests/SurvivalPatchContract/SurvivalPatchContract.csproj -c Release -- --out audit/survival-patch-fixtures` | Windows / .NET 10 | 59 actual app-to-Survival-BPatch writer scenarios |
+| B8 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix equipment. --out REPORT.json --strict` | Linux / Windows | 113 active Equipment source points (101 base, 12 DLC1; inherited source reported explicitly) |
+| C5 | `dotnet run --project tests/EquipmentPatchContract/EquipmentPatchContract.csproj -c Release -- --out audit/equipment-patch-fixtures` | Windows / .NET 10 | 32 real ViewModel-to-BPatch scenarios: four difficulties, edge cases, combined axes and DLC1 conditional routes |
 | D1 | `chmod +x publish.sh && ./publish.sh` | Linux / .NET 10 | Published executable and matching `BUILD-INFO.txt` source receipt |
 | D2 | Wine UI + in-game manual test | Linux / game | Visual design lock, preset round-trip, PAK/UTOC/UCAS build, actual game effects |
 
@@ -192,3 +194,21 @@ Using the matching uploaded original CFG ZIPs, all **139/139 Survival direct sou
 ### Phase 10 Economy (2026-10-09)
 
 A strict original-source Economy prefix gate audits **409 direct CFG fields**, while Windows `economy-writer-windows` runs **34 real application-to-BPatch scenarios** including 68 base trader profile minimum-condition cases. Source ZIPs are required for the independent source gate, and installed-DLC plus game-load evidence remain NOT RUN. See [Phase 10](DEEP-CFG-AUDIT-PHASE10-ECONOMY-2026-10-09.md).
+
+### Phase 11: Equipment (2026-10-09)
+
+The four current Equipment controls map to **113 direct writer fields**:
+4 difficulty-based armor toughness values, 52 player-weapon wear entries (41 base /
+11 DLC1), 34 base ammo weights and 23 consumable weights (22 base / 1 DLC1).
+The 41 base player weapons include one authored zero,
+`UA_GLaunch_Player.DurabilityDamagePerShot=0.0`; the
+`scaleNonZero` writer must preserve this value without emitting an unrelated leaf.
+
+Windows `equipment-writer-windows` runs **32 real production scenarios**, including
+vanilla no-op across all four difficulties, each control separately, 0x and 2x,
+conditional DLC1 output and combined-axis/shared-file cases. This suite checks
+exact paths, {bpatch} flags, values and no collateral leaf writes.
+The independent **B8** source gate checks exact original ZIP content and
+reports inherited {refkey} resolution separately. Both gates are required for
+source confidence; neither is in-game acceptance. See
+[Phase 11](DEEP-CFG-AUDIT-PHASE11-EQUIPMENT-2026-10-09.md).
