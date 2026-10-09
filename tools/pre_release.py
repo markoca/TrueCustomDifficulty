@@ -31,6 +31,7 @@ SOURCE = (
     ("survival-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("economy-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("equipment-direct-source-values", "tools/audit_cfg_source_values.py"),
+    ("environment-direct-source-values", "tools/audit_cfg_source_values.py"),
 )
 WRITERS = (
     ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 82),
@@ -38,6 +39,7 @@ WRITERS = (
     ("survival-bpatch-writer", "SurvivalPatchContract", "survival-patch-fixtures", 59),
     ("economy-bpatch-writer", "EconomyPatchContract", "economy-patch-fixtures", 34),
     ("equipment-bpatch-writer", "EquipmentPatchContract", "equipment-patch-fixtures", 32),
+    ("environment-bpatch-writer", "EnvironmentPatchContract", "environment-patch-fixtures", 90),
 )
 MANUAL = (
     "S.T.A.L.K.E.R. 2 Combat BPatch loading and gameplay effects",
@@ -147,6 +149,9 @@ def main():
             if label == "equipment-direct-source-values":
                 command.extend(["--out", str(out / "equipment-source-values.json"),
                                 "--parameter-prefix", "equipment.", "--strict"])
+            if label == "environment-direct-source-values":
+                command.extend(["--out", str(out / "environment-source-values.json"),
+                                "--parameter-prefix", "environment.", "--strict"])
             if label == "survival-direct-source-values":
                 command.extend(["--out", str(out / "survival-source-values.json"),
                                 "--parameter-prefix", "survival.", "--strict"])
