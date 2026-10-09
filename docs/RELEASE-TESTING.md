@@ -23,6 +23,9 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | C5 | `dotnet run --project tests/EquipmentPatchContract/EquipmentPatchContract.csproj -c Release -- --out audit/equipment-patch-fixtures` | Windows / .NET 10 | 32 real ViewModel-to-BPatch scenarios: four difficulties, edge cases, combined axes and DLC1 conditional routes |
 | B9 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix environment. --out REPORT.json --strict` | Linux / Windows | 42 Environment raw-value source paths, 4 difficulty and 38 effects |
 | C6 | `dotnet run --project tests/EnvironmentPatchContract/EnvironmentPatchContract.csproj -c Release -- --out audit/environment-patch-fixtures` | Windows / .NET 10 | 90 live Environment ViewModel-to-BPatch writer scenarios |
+| B10 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix alife. --out REPORT.json --strict` | Linux / Windows | 64 original A-Life Director MaxCount raw-value targets |
+| B11 | `python tools/audit_alife_director_source.py --base-zip BASE --dlc1-zip DLC1 --out REPORT.json` | Linux / Windows | Four exact Rank identities, 64 AgentType/MaxCount slots, index-to-species identity, two original zero ceilings |
+| C7 | `dotnet run --project tests/ALifePatchContract/ALifePatchContract.csproj -c Release -- --out audit/alife-patch-fixtures` | Windows / .NET 10 | 94 real WPF ViewModel-to-Director BPatch scenarios |
 | D1 | `chmod +x publish.sh && ./publish.sh` | Linux / .NET 10 | Published executable and matching `BUILD-INFO.txt` source receipt |
 | D2 | Wine UI + in-game manual test | Linux / game | Visual design lock, preset round-trip, PAK/UTOC/UCAS build, actual game effects |
 
@@ -240,3 +243,21 @@ See [Phase 12](DEEP-CFG-AUDIT-PHASE12-ENVIRONMENT-2026-10-09.md) and
 The Windows `environment-writer-windows` job independently executes **90**
 production ViewModel-to-BPatch scenarios. Both checks are pre-release gates;
 they are NOT evidence of Unreal runtime merge or gameplay effectiveness.
+
+### Phase 13: A-Life Director rank/agent original source and writer (2026-10-10)
+
+The current A-Life catalog maps **19 source IDs / 64 direct MaxCount
+fields** into one base-game Director prototype. **18 inputs** are loaded in
+the normal ViewModel; `alife.mutantSpawn.generic` is catalogued for
+source auditing only, and must not become an in-game general mutant cap.
+The original decoded ZIP source was independently checked: **64/64 exact
+MaxCount values, 64/64 physical AgentType identities, 4/4 rank
+identities**, two intentionally zero Newbie predator counts. No differences
+or inheritance were required. See [Phase 13 detail](DEEP-CFG-AUDIT-PHASE13-ALIFE-2026-10-10.md)
+and [original file SHA-256 and 16-slot matrix](evidence/ALIFE-DIRECTOR-ORIGINAL-CFG-2026-10-10.json).
+
+`pre_release.py source` runs both B10 direct-value and B11 structural
+AgentType / rank consistency checks. `alife-writer-windows` runs **94**
+production WPF ViewModel to BPatch scenarios (C7). Source verification
+and writer verification do not prove Unreal merge semantics or the
+actual A-Life world/encounter results.
