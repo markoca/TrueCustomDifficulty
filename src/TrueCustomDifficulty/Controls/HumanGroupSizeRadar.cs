@@ -20,6 +20,11 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
     private const double Epsilon = 0.000001;
     private const double MinimumMultiplier = 0.25;
     private const double MaximumMultiplier = 3.0;
+    private const double DesiredHeight = 350.0;
+    private const double MaxCardWidth = 760.0;
+    private const double RowTop = 50.0;
+    private const double RowPitch = 72.0;
+    private const double CardHeight = 66.0;
 
     private static readonly RankDefinition[] Ranks =
     {
@@ -28,6 +33,10 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
         new("alife.humanGroupSize.veteran", "VETERAN", 5.0),
         new("alife.humanGroupSize.master", "MASTER", 6.0),
     };
+
+    // The composited row is one native source; selecting it must show the
+    // correct player-rank rationale instead of always the Newbie anchor.
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Ranks.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
@@ -53,7 +62,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
     {
         _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
-        MinHeight = 320;
+        MinHeight = DesiredHeight;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -61,7 +70,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 700.0 : Math.Max(520.0, availableSize.Width);
-        return new Size(width, 320.0);
+        return new Size(width, DesiredHeight);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -118,147 +127,98 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
         var accent = FindBrush("AccentBrush", Brushes.Goldenrod);
         var panel = FindBrush("PanelAltBrush", Brushes.Black);
 
-        IndustrialChrome.DrawFrame(
-            dc,
-            new Rect(2.0, 2.0, Math.Max(0.0, ActualWidth - 4.0), Math.Max(0.0, ActualHeight - 4.0)),
-            panel,
-            border,
-            accent,
-            soft,
-            8.0,
-            accentEdge: true,
-            technicalMarks: true);
+        IndustrialChrome.DrawFrame(dc,
+            new Rect(2.0, 2.0, Math.Max(0.0, ActualWidth - 4.0),
+                Math.Max(0.0, ActualHeight - 4.0)),
+            panel, border, accent, soft, 8.0,
+            accentEdge: true, technicalMarks: true);
 
         _targets.Clear();
-
-        DrawCenteredText(dc, "HUMAN SQUAD CAPS", new Point(ActualWidth / 2.0, 21.0),
+        DrawCenteredText(dc, "HUMAN SQUAD SIZE",
+            new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
 
-
-        var left = 24.0;
-        var labelWidth = 108.0;
-        var capWidth = 118.0;
-        var trackLeft = left + labelWidth + capWidth + 24.0;
-        var trackWidth = Math.Max(180.0, ActualWidth - trackLeft - 28.0);
-
-        DrawText(dc, "PLAYER RANK", new Point(left, 66.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "MAX SQUAD", new Point(left + labelWidth + capWidth / 2.0, 73.0), 8.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "RANK MULTIPLIER", new Point(trackLeft + trackWidth / 2.0, 73.0), 8.0, muted, FontWeights.Bold);
-
-        dc.DrawLine(new Pen(border, 1.0), new Point(14.0, 87.0), new Point(Math.Max(14.0, ActualWidth - 14.0), 87.0));
-
+        // Same compact label/current/rail hierarchy as Stamina Usage.
+        // Full-width top-level section, but source cards stay bounded.
+        var width = Math.Min(MaxCardWidth, Math.Max(1.0, ActualWidth - 32.0));
+        var left = (ActualWidth - width) / 2.0;
         for (var row = 0; row < Ranks.Length; row++)
         {
-            var top = 88.0 + row * 50.0;
-            DrawRankRow(
-                dc,
-                row,
-                top,
-                left,
-                labelWidth,
-                capWidth,
-                trackLeft,
-                trackWidth,
-                text,
-                muted,
-                border,
-                accent,
-                panel);
+            var card = new Rect(left, RowTop + row * RowPitch,
+                width, CardHeight);
+            DrawRankCard(dc, row, card, text, muted, border, accent, panel);
         }
-
-        // No transient yellow reset notifications.
     }
 
-    private void DrawRankRow(
-        DrawingContext dc,
-        int row,
-        double top,
-        double left,
-        double labelWidth,
-        double capWidth,
-        double trackLeft,
-        double trackWidth,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+    private void DrawRankCard(
+        DrawingContext dc, int row, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        var parameter = _parameters[row];
-        if (parameter is null)
+        if (_parameters[row] is not { } parameter)
             return;
 
         var rank = Ranks[row];
         var selected = row == _selectedRow;
         var hovered = row == _hoverRow;
-        var modified = Math.Abs(parameter.CurrentNumber - parameter.ReferenceNumber) > Epsilon;
-
-        var rowRect = new Rect(14.0, top, Math.Max(1.0, ActualWidth - 28.0), 49.0);
-        dc.DrawRoundedRectangle(
-            selected
-                ? CloneWithOpacity(accent, 0.08)
-                : CloneWithOpacity(panel, 0.01),
-            new Pen(CloneWithOpacity(border, 0.45), 0.8),
-            rowRect,
-            3.0,
-            3.0);
-
-        DrawText(
-            dc,
-            rank.Label,
-            new Point(left, top + 14.0),
-            9.0,
-            text,
-            FontWeights.Bold);
-
+        var modified = parameter.IsValueModifiedFromReference();
         var currentCap = EffectiveCap(rank.VanillaCap, parameter.CurrentNumber);
-        var vanillaCap = EffectiveCap(rank.VanillaCap, parameter.ReferenceNumber);
-        var capCenter = left + labelWidth + capWidth / 2.0;
+        var referenceCap = EffectiveCap(rank.VanillaCap, parameter.ReferenceNumber);
+        var capModified = Math.Abs(currentCap - referenceCap) > Epsilon;
 
-        DrawCenteredText(
-            dc,
+        dc.DrawRoundedRectangle(panel,
+            new Pen(CloneWithOpacity(border, 0.65), 0.9),
+            card, 4.0, 4.0);
+
+        DrawText(dc, rank.Label, new Point(card.Left + 12.0, card.Top + 10.0),
+            10.5, text, FontWeights.Bold);
+        DrawText(dc, "MAX SQUAD",
+            new Point(card.Right - 205.0, card.Top + 12.0),
+            9.2, muted, FontWeights.SemiBold);
+
+        DrawRightAlignedText(dc,
             currentCap.ToString("0", CultureInfo.InvariantCulture),
-            new Point(capCenter, top + 17.0),
-            13.0,
-            text,
-            FontWeights.Bold);
+            new Point(card.Right - 86.0, card.Top + 5.0),
+            capModified ? 17.2 : 16.0,
+            capModified ? accent : text, FontWeights.Bold);
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
+            new Point(card.Right - 12.0, card.Top + 10.0),
+            modified ? 12.2 : 11.0,
+            modified ? accent : text, FontWeights.Bold);
 
-        DrawCenteredText(
-            dc,
-            $"v{vanillaCap:0} NPCs",
-            new Point(capCenter, top + 35.0),
-            7.2,
-            muted,
-            FontWeights.Normal);
-
-        var track = new Rect(trackLeft, top + 25.0, trackWidth, 10.0);
+        var track = new Rect(card.Left + 14.0, card.Top + 38.0,
+            Math.Max(1.0, card.Width - 28.0), 10.0);
         var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
+        var referenceX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, track);
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track);
 
-        var vanillaX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
-        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track);
-
-        dc.DrawLine(new Pen(muted, 1.1), new Point(vanillaX, y - 8.0), new Point(vanillaX, y + 8.0));
-        dc.DrawLine(new Pen(accent, 3.5), new Point(track.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(border, 3.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 3.0),
+            new Point(track.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 1.6),
+            new Point(referenceX, y - 7.0), new Point(referenceX, y + 7.0));
 
         ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
-        dc.DrawEllipse(
-            panel,
-            new Pen(accent, selected ? 2.5 : 1.5),
-            new Point(currentX, y),
-            6.5,
-            6.5);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.8, 2.8);
+        dc.DrawEllipse(panel,
+            new Pen(accent, selected ? 2.3 : 1.5),
+            new Point(currentX, y), 6.1, 6.1);
+        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
 
-        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
-            new Point(track.Right, top + 5.0),
-            modified ? 10.2 : 9.0, modified ? accent : text, FontWeights.Bold);
+        DrawText(dc, $"{parameter.Minimum:0.##}x",
+            new Point(track.Left, card.Top + 52.0),
+            9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
+            new Point(track.Right, card.Top + 52.0),
+            9.0, muted, FontWeights.Normal);
 
         _targets[row] = new HitTarget(
-            new Rect(track.Left - 7.0, track.Top - 6.0, track.Width + 14.0, track.Height + 12.0),
-            track);
+            new Rect(track.Left - 6.0, track.Top - 6.0,
+                track.Width + 12.0, track.Height + 12.0), track);
     }
 
+    // Identical half-up integer policy to the original panel/CFG writer.
     private static double EffectiveCap(double authoredCap, double multiplier)
         => Math.Max(1.0, Math.Floor(authoredCap * multiplier + 0.5));
 
@@ -272,6 +232,9 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             return;
 
         _selectedRow = row;
+        if (_parameters[row] is { } selected)
+            ParameterSelected?.Invoke(this,
+                new AggregateParameterSelectedEventArgs(selected));
         _dragRow = row;
         CaptureMouse();
         UpdateFromPoint(row, e.GetPosition(this));
@@ -330,6 +293,8 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             return;
 
         _selectedRow = row;
+        ParameterSelected?.Invoke(this,
+            new AggregateParameterSelectedEventArgs(parameter));
         parameter.ResetToReference();
         _status.ShowTransient($"{Ranks[row].Label} human cap reset to Base Preset.");
         InvalidateVisual();

@@ -14,10 +14,12 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class MutantGroupSizeRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double DesiredHeight = 440.0;
-    private const double MaxContentWidth = 900.0;
-    private const double ColumnGap = 16.0;
-    private const double RowHeight = 46.0;
+    private const double DesiredHeight = 546.0;
+    private const double MaxContentWidth = 784.0;
+    private const double ColumnGap = 12.0;
+    private const double RowPitch = 68.0;
+    private const double RowTop = 64.0;
+    private const double CardHeight = 61.0;
 
     private static readonly AxisDefinition[] Axes =
     {
@@ -36,6 +38,8 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         new("alife.mutantSpawn.snork", "Snork", new[] { 1.0, 3.0, 4.0, 6.0 }),
         new("alife.mutantSpawn.tushkan", "Tushkan", new[] { 6.0, 8.0, 12.0, 16.0 }),
     };
+
+    public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Axes.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
@@ -126,57 +130,40 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         var accent = FindBrush("AccentBrush", Brushes.Goldenrod);
         var panel = FindBrush("PanelAltBrush", Brushes.Black);
 
-        IndustrialChrome.DrawFrame(
-            dc,
-            new Rect(2.0, 2.0, Math.Max(0.0, ActualWidth - 4.0), Math.Max(0.0, ActualHeight - 4.0)),
-            panel,
-            border,
-            accent,
-            soft,
-            8.0,
-            accentEdge: true,
-            technicalMarks: true);
+        IndustrialChrome.DrawFrame(dc,
+            new Rect(2.0, 2.0, Math.Max(0.0, ActualWidth - 4.0),
+                Math.Max(0.0, ActualHeight - 4.0)),
+            panel, border, accent, soft, 8.0,
+            accentEdge: true, technicalMarks: true);
 
         _targets.Clear();
-
-        var content = ContentRect();
-        DrawCenteredText(dc, "MUTANT ENCOUNTER CAPS", new Point(ActualWidth / 2.0, 21.0),
+        DrawCenteredText(dc, "MUTANT GROUP SIZE",
+            new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "14 SPECIES  |  N / E / V / M = PLAYER RANK",
+            new Point(ActualWidth / 2.0, 43.0),
+            9.2, muted, FontWeights.SemiBold);
 
-
+        // The actual 14 species remain alphabetically ordered, split
+        // seven to the left and seven to the right, with bounded tracks.
+        var content = ContentRect();
         var columnWidth = (content.Width - ColumnGap) / 2.0;
-        var leftColumn = new Rect(content.Left, 66.0, columnWidth, 326.0);
-        var rightColumn = new Rect(content.Left + columnWidth + ColumnGap, 66.0, columnWidth, 326.0);
-
-        DrawColumnHeader(dc, leftColumn, muted, border);
-        DrawColumnHeader(dc, rightColumn, muted, border);
-
         for (var i = 0; i < 7; i++)
         {
-            DrawRow(dc, i, new Rect(leftColumn.Left, 88.0 + i * RowHeight, leftColumn.Width, RowHeight - 4.0), text, muted, border, accent, panel);
-            DrawRow(dc, i + 7, new Rect(rightColumn.Left, 88.0 + i * RowHeight, rightColumn.Width, RowHeight - 4.0), text, muted, border, accent, panel);
+            DrawSpeciesCard(dc, i,
+                new Rect(content.Left, RowTop + i * RowPitch,
+                    columnWidth, CardHeight),
+                text, muted, border, accent, panel);
+            DrawSpeciesCard(dc, i + 7,
+                new Rect(content.Left + columnWidth + ColumnGap,
+                    RowTop + i * RowPitch, columnWidth, CardHeight),
+                text, muted, border, accent, panel);
         }
-
-        // No transient yellow reset notifications.
     }
 
-    private void DrawColumnHeader(DrawingContext dc, Rect column, Brush muted, Brush border)
-    {
-        DrawText(dc, "MUTANT", new Point(column.Left + 6.0, column.Top), 9.0, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "N / E / V / M", new Point(column.Left + column.Width * 0.57, column.Top + 7.0), 9.0, muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, "MULT", new Point(column.Right - 6.0, column.Top), 9.0, muted, FontWeights.Bold);
-        dc.DrawLine(new Pen(border, 1.0), new Point(column.Left, column.Top + 18.0), new Point(column.Right, column.Top + 18.0));
-    }
-
-    private void DrawRow(
-        DrawingContext dc,
-        int row,
-        Rect card,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
+    private void DrawSpeciesCard(
+        DrawingContext dc, int row, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         if (_parameters[row] is not { } parameter)
             return;
@@ -184,65 +171,76 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         var info = Axes[row];
         var selected = row == _selectedRow;
         var hovered = row == _hoverRow;
-        var modified = Math.Abs(parameter.CurrentNumber - parameter.ReferenceNumber) > Epsilon;
-
-        dc.DrawRoundedRectangle(
-            selected
-                ? CloneWithOpacity(accent, 0.08)
-                : CloneWithOpacity(panel, 0.015),
-            new Pen(CloneWithOpacity(border, 0.42), 0.8),
-            card,
-            3.0,
-            3.0);
-
+        var modified = parameter.IsValueModifiedFromReference();
         var currentCaps = EffectiveCaps(info.AuthoredCaps, parameter.CurrentNumber);
-        var capText = string.Join(" / ", currentCaps.Select(x => x.ToString("0", CultureInfo.InvariantCulture)));
+        var referenceCaps = EffectiveCaps(info.AuthoredCaps, parameter.ReferenceNumber);
 
-        DrawText(
-            dc,
-            info.Label,
-            new Point(card.Left + 7.0, card.Top + 5.0),
-            9.5,
-            text,
-            FontWeights.Bold);
+        dc.DrawRoundedRectangle(panel,
+            new Pen(CloneWithOpacity(border, 0.65), 0.9),
+            card, 4.0, 4.0);
 
-        DrawCenteredText(
-            dc,
-            capText,
-            new Point(card.Left + card.Width * 0.57, card.Top + 12.0),
-            10.0,
-            text,
-            FontWeights.Bold);
+        DrawText(dc, info.Label.ToUpperInvariant(),
+            new Point(card.Left + 10.0, card.Top + 6.0),
+            10.0, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
+            new Point(card.Right - 10.0, card.Top + 5.0),
+            modified ? 12.2 : 11.0,
+            modified ? accent : text, FontWeights.Bold);
 
-        DrawRightAlignedText(
-            dc,
-            $"{parameter.CurrentNumber:0.##}x",
-            new Point(card.Right - 7.0, card.Top + 5.0),
-            modified ? 10.7 : 9.5,
-            modified ? accent : text,
-            FontWeights.Bold);
+        DrawText(dc, "N / E / V / M",
+            new Point(card.Left + 10.0, card.Top + 25.0),
+            9.2, muted, FontWeights.Medium);
 
-        var track = new Rect(card.Left + 10.0, card.Top + 26.0, card.Width - 20.0, 12.0);
+        // Color and enlarge only those resulting cap numbers which actually
+        // differ from their own source reference. In particular, authored
+        // zero caps stay 0 and NEVER falsely turn gold when scaling a rank
+        // where a species does not normally spawn.
+        var countTexts = currentCaps
+            .Select(cap => cap.ToString("0", CultureInfo.InvariantCulture))
+            .ToArray();
+        var joinedCaps = string.Join(" / ", countTexts);
+        var formatted = CreateText(joinedCaps, 10.8, text, FontWeights.Bold);
+        var offset = 0;
+        for (var index = 0; index < countTexts.Length; index++)
+        {
+            if (Math.Abs(currentCaps[index] - referenceCaps[index]) > Epsilon)
+            {
+                formatted.SetForegroundBrush(accent, offset, countTexts[index].Length);
+                formatted.SetFontSize(12.0, offset, countTexts[index].Length);
+            }
+            offset += countTexts[index].Length + (index < countTexts.Length - 1 ? 3 : 0);
+        }
+        dc.DrawText(formatted, new Point(
+            card.Right - 10.0 - formatted.WidthIncludingTrailingWhitespace,
+            card.Top + 23.0));
+
+        var track = new Rect(card.Left + 10.0, card.Top + 42.0,
+            Math.Max(1.0, card.Width - 20.0), 10.0);
         var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
+        var referenceX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, track);
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track);
 
-        var baseX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track);
-        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track);
-
-        dc.DrawLine(new Pen(muted, 1.1), new Point(baseX, y - 6.0), new Point(baseX, y + 6.0));
-        dc.DrawLine(new Pen(accent, 3.0), new Point(track.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(border, 3.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 3.0),
+            new Point(track.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 1.5),
+            new Point(referenceX, y - 7.0), new Point(referenceX, y + 7.0));
         ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
-        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.4 : 1.4), new Point(currentX, y), 5.5, 5.5);
+        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.3 : 1.5),
+            new Point(currentX, y), 5.7, 5.7);
         dc.DrawEllipse(accent, null, new Point(currentX, y), 2.4, 2.4);
 
         _targets[row] = new HitTarget(
-            new Rect(track.Left - 6.0, track.Top - 6.0, track.Width + 12.0, track.Height + 12.0),
-            track);
+            new Rect(track.Left - 6.0, track.Top - 6.0,
+                track.Width + 12.0, track.Height + 12.0), track);
     }
 
     private Rect ContentRect()
     {
-        var width = Math.Min(MaxContentWidth, Math.Max(540.0, ActualWidth - 32.0));
+        var width = Math.Min(MaxContentWidth, Math.Max(1.0, ActualWidth - 32.0));
         return new Rect((ActualWidth - width) / 2.0, 0.0, width, ActualHeight);
     }
 
@@ -263,6 +261,9 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             return;
 
         _selectedRow = row;
+        if (_parameters[row] is { } selected)
+            ParameterSelected?.Invoke(this,
+                new AggregateParameterSelectedEventArgs(selected));
         _dragRow = row;
         CaptureMouse();
         UpdateFromPoint(row, e.GetPosition(this));
@@ -320,6 +321,8 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             return;
 
         _selectedRow = row;
+        ParameterSelected?.Invoke(this,
+            new AggregateParameterSelectedEventArgs(parameter));
         parameter.ResetToReference();
         _status.ShowTransient($"{Axes[row].Label} reset to Base Preset.");
         InvalidateVisual();

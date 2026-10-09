@@ -43,6 +43,7 @@ public sealed class TabViewModel : ObservableObject
         "environment" => "Anomalies are divided into Global Damage, Individual Damage, Flycatcher Slowdown and Special Effects. Global Damage and individual sources remain independent. Flycatcher handles edit retained movement and turning speed (higher means less slowdown). The center ring edits both axes. Native ranges, reference ticks and per-source resets stay intact.",
         "economy" => "Economy controls starting coupons, trader pricing behavior, item/service costs, repair-by-reputation effects and quest coupon payouts. Some trader pricing rules are only partly exposed by the game files. Vanilla markers remain exact source reference points and can be clicked to snap a slider directly to them.",
         "equipment" => "Equipment Wear uses three Combat-style rings: bottom adjusts armor toughness, left adjusts weapon wear per shot and center adjusts both independently. Item Weight has separate compact ammo and food/medicine sliders. Source values retain their native scales; bonus caps remain audit-only.",
+        "alife" => "Four player-rank Human Squad Size cards and fourteen species-specific Mutant Group Size cards edit real A-Life Director encounter caps. N / E / V / M denote player rank. Adjusting group limits does not increase encounter frequency, lair population, or respawn speed. Native 0.25–3x multipliers advance in 0.05x steps; right-click resets one row and R resets the focused family.",
         _ => "Yellow shows your current setting. Vanilla markers show the original Novice, Stalker, Veteran and Master values; click a marker to snap directly to it. Right-click a slider to restore the selected vanilla baseline."
     };
 
@@ -93,6 +94,7 @@ public sealed class TabViewModel : ObservableObject
         "economy" => "Starting coupons, trader pricing, item and service costs, repair by reputation and quest coupon income.",
         "equipment" => "Armor and weapon wear plus item-weight tuning.",
         "environment" => "Global anomaly damage, 11 individual damage sources, Flycatcher slowdown and three special effects; no weather/emission timing.",
+        "alife" => "Human and mutant encounter group-size caps by player rank; world population and spawn timing are unchanged.",
         "master" => "Optional Master-only punishment bundles for starvation, severe fatigue, radiation, low health and medical effectiveness.",
         _ => "Independent controls built from the vanilla configuration."
     };

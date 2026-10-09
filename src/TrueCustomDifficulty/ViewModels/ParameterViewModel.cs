@@ -172,13 +172,13 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsMutantGroupSizeAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Each mutant row has one species multiplier and four live encounter-cap results for NEWBIE / EXPERIENCED / VETERAN / MASTER. Drag the row track to scale that species while preserving its authored rank progression; authored 0 caps stay 0. Gold numbers are current caps and small grey vN numbers are vanilla caps. Right-click a row track to reset only that species; press R to reset the whole mutant-cap matrix.";
+                       "Fourteen alphabetically ordered species cards form a compact two-column bank. Each row has its own 0.25–3x multiplier (0.05x native steps) and the four current squad caps for player ranks N / E / V / M. Gold is reserved for a multiplier or an individual resulting cap that differs from that source's reference, while authored 0 caps remain 0. Drag the track to edit that species and select its rationale. Right-click its track to reset one species; press R to reset all fourteen. These are Director encounter caps, not spawn frequency, lair size or respawn speed.";
             }
 
             if (IsHumanGroupSizeAnchor)
             {
                 return "CONTROLS" + Environment.NewLine +
-                       "Each player-rank row shows the resulting maximum human squad size and its independent multiplier. Drag a row track to tune that rank directly. Gold is the current resulting NPC cap, vN is the vanilla cap and the 1x tick is the Base Preset reference. Right-click a row track to reset only that rank; press R to reset all four human squad caps.";
+                       "Four source-backed cards edit the maximum human squad size separately at NEWBIE, EXPERIENCED, VETERAN and MASTER player rank. Each displays the current integer MAX SQUAD cap prominently and its live 0.25–3x multiplier, with the selected reference tick on the compact 0.05x-step track. Only caps or multipliers actually differing from reference turn gold; unchanged references remain neutral. Drag or click a track to edit that rank and select its rationale. Right-click resets that rank; press R to reset all four. This does not alter overall NPC population, lairs or encounter frequency.";
             }
 
             if (IsRange)

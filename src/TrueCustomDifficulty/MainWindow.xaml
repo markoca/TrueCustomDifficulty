@@ -214,22 +214,24 @@
                                                                                        Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:HumanGroupSizeRadar x:Name="HumanGroupSizeRadarControl"
+                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                 MaxWidth="920"
                                                                                                 HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                               Grid.Row="0"
                                                                                               Grid.RowSpan="2"
-                                                                                              MinHeight="320"
+                                                                                              MinHeight="350"
                                                                                               Visibility="Collapsed"
                                                                                               Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
                                                                 <controls:MutantGroupSizeRadar x:Name="MutantGroupSizeRadarControl"
+                                                                                                ParameterSelected="AggregateVisualControl_ParameterSelected"
                                                                                                 MaxWidth="920"
                                                                                                 HorizontalAlignment="Center"
                                                                                                 PreviewMouseLeftButtonDown="VisualControl_PreviewMouseLeftButtonDown"
                                                                                                Grid.Row="0"
                                                                                                Grid.RowSpan="2"
-                                                                                               MinHeight="440"
+                                                                                               MinHeight="546"
                                                                                                Visibility="Collapsed"
                                                                                                Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
         
