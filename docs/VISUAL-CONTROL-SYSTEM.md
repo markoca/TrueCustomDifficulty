@@ -1,5 +1,12 @@
 # Visual Control System
 
+### 2026-10-10 — Human Squad Size and Individual Anomaly Damage vertical editors
+
+**HUMAN SQUAD SIZE** is now four independent one-row Medical Items-style vertical bars (NEWBIE, EXPERIENCED, VETERAN, MASTER) on a shared **0–3x SQUAD SIZE** ruler. The native source domain remains **0.25–3x**, step **0.05x**, with each bar showing its *effective integer NPC cap* using the existing round-half-up rule and its multiplier in a muted secondary line. The actual CFG multiplier, rank-specific selection callback, muted reference marker, individual right-click reset, keyboard adjustment and R reset are preserved. No new domain or control is created.
+
+**INDIVIDUAL ANOMALY DAMAGE** is now eleven independent vertical bars in one compact row (Electro, Chemical, Fire, Carousel, Toxic Cloud, Steam, Clicker, Razor, Soap Bubble, Fireball, Diamond). Their individual source values are shown above the handles; a common **0–200% DAMAGE** ruler measures each source relative to its own audited 1x reference, not absolute HP across unlike anomalies. All eleven native sources have a 0–2x reference-relative limit and preserve their different real CFG numbers and native steps (Razor is itself an x multiplier). Only changed current values turn gold; baseline ticks are muted. Exact source writer mapping, individual selection/help callback, right-click source reset, keyboard input and R reset remain unchanged. The anomaly panel and XAML host now measure **360 DIP**, human panel **350 DIP**, with compact one-row controls and no redundant text. Local build/Wine visual and in-game checks remain pending.
+
+
 ### 2026-10-10 — World Item Spawns heading
 
 The former **WORLD PLACEMENT** panel heading is now **WORLD ITEM SPAWNS**. This is a display-title change only: existing placement sources, native controls, internal identifiers, presets and CFG/BPatch writers remain unchanged.
