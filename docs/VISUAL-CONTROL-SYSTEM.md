@@ -1249,3 +1249,15 @@ The `SHUFFLE UNIQUE WEAPONS` setting remains **aggregate-only** (`exposeInUi=fal
 
 `MainViewModel` now explicitly includes all six IDs in its materialization filter, includes Unique Weapon Shuffle in the aggregate modified-state wiring, and keeps it in World Placement sort order. `tests/LootWorldPlacementContract` checks the actual `MainViewModel.AllParameters`, anchor/visibility mapping, and `AggregateVisualControl`'s six bound sources; this guards the exact user-observed failure. Existing World Placement compact height and checkbox design, all real CFG mappings, writer logic and original-world eligibility remain unchanged. Windows/.NET publish and Wine screenshot acceptance still require execution.
 
+### 2026-10-10 — Global right-hand rationale and CONTROLS pass (authoritative)
+
+**Source of truth:** `MainWindow.xaml`, `ParameterViewModel.RationaleDisplay` and `ParameterViewModel.ControlHelp`. This updates the presentation of every gameplay tab without changing any CFG/preset parameter, values, calculations, writer route, sliders, hit targets, or actual reset behavior.
+
+**Required reading order from top to bottom:** selected control name; WHAT IT DOES (**gameplay explanation only**); conditionally WHAT THIS VALUE MEANS; HIGHER / LOWER; WORKS WITH; CURRENT RESULT; one **CONTROLS** section; then the existing muted `TabSummary` context at the very bottom. All conditional sections retain their previous behavior. The interaction instructions **must not** be appended inside `RationaleDisplay`, and the title `CONTROLS` is authored **exactly once** in XAML, never emitted by a view-model string.
+
+**Player-friendly controls grammar:** keep CONTROLS compact and plainly actionable (what to click/drag, what the control changes, how to reset); avoid CFG identifiers, explanation repetition, two full help paragraphs, generic repeated Vanilla/Base blurbs, duplicated headings and fake UI interactions. Use concise specialized guidance for **all 33** current `VisualAggregateFamily` types, including when the selected item is a child inside its group; use equivalent semantic guidance for specialized editors (mutant health/drop/group, stamina costs/recovery, medical healing, anomalies, world loot, etc.). Generic slider/range/choice/toggle fallbacks apply to ordinary controls. The guide is normal foreground text, not a bright callout, with a small single accent heading and no extra large card. Reuse existing right-column scrolling and responsive layout.
+
+**Muted bottom text:** keep the short `TabSummary` only. Remove the old `SliderGuide` from the visible footer; it repeated instructions already covered by CONTROLS and conflicted with individual semantic controls. Do not put it back as a redundant long paragraph.
+
+**Regression:** `python3 tools/audit_rationale_ui.py` asserts one heading, ordering ahead of the grey footer, all 33 family guides, generic fallbacks, preserved conditional meaning/results, and absence of duplicated old control text. It is static source verification only; local .NET publish, Wine visual layout and interaction remain unverified until run.
+
