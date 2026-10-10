@@ -1,5 +1,10 @@
 # True Custom Difficulty
 
+### 2026-10-10 — World Item Spawns heading
+
+The former **WORLD PLACEMENT** panel heading is now **WORLD ITEM SPAWNS**. This is a display-title change only: existing placement sources, native controls, internal identifiers, presets and CFG/BPatch writers remain unchanged.
+
+
 ### 2026-10-10 — World Loot Depletion vertical bank (authoritative)
 
 The **WORLD LOOT DEPLETION** editor uses five independent, directly editable vertical removal bars in one compact row: AMMO BOXES, F1 GRENADE BOXES, FOOD & DRINK BOXES, MEDICAL BOXES, and LOOSE WORLD LOOT. A single truthful **0–100% REMOVED** Y ruler, current percent above each bar, discreet native reference ticks, and category names below follow the Medical Items / Item Value Layers source-bar grammar. Each control retains its real 0–1 CFG range, 0.01 increment, distinct source writer, reset-on-right-click, keyboard arrow editing and panel-wide R reset. Only modified values are gold. The frame and XAML host both measure 330 DIP, minimum renderer width 600 DIP, with no second row or redundant legend. No loot-domain merge, unique-weapon override, preset or BPatch mapping change. Base/DLC1 population evidence remains in the source audit and parameter definitions rather than adding a noisy legend to the direct editor. Local build/Wine visual verification remains pending.
