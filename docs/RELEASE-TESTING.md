@@ -1,5 +1,9 @@
 # Pre-release test and evidence runbook
 
+### Medical Healing / Bleeding Treatment vertical bar hover acceptance
+
+Test three **MEDKIT HEALING** columns and all four **BLEEDING TREATMENT** columns under Wine: default current values show a short gold horizontal cap aligned to each bar's actual top at current HP/PTS; moving over a column turns **only that cap white with a restrained horizontal glow**, never an unrelated round ring. Drag and verify the highlighted cap tracks the correct source-value height, stays inside the genuine native range and returns to gold when pointer leaves. Gray original-value and native-max lines remain muted; changed numeric values still use the usual yellow highlight. Check Bandage's separate horizontal healing slider still has its standard round hover marker. A3 static audit also checks the shared bar cap, both production renderer calls and the narrow suppression of Bleeding Treatment generic circular overlay. Manual Wine visual acceptance remains pending.
+
 ### Hunger Survival Profile LOW hover acceptance
 
 Move the mouse over the LOW handle in the Hunger Survival Profile: **only the actual LOW handle at 0%** may show a golden hover halo; no ghost halo may appear at the plot center around −50%. Move away to confirm the halo disappears. Drag and arrow-edit LOW, then verify MEDIUM/SEVERE and the other compact tracks still work normally. The static consistency audit now guards both the legitimate native LOW halo call and suppression of the duplicate generic map-center overlay. Local Wine visual acceptance is still required.

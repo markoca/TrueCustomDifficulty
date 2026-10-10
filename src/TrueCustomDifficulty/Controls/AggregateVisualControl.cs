@@ -310,6 +310,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             && target.Kind == HitKind.Horizontal
             && source.Id == "survival.hungerLowThreshold")
             return;
+        // Bleeding Treatment columns render their own horizontal top caps.
+        // The generic circular overlay does not belong on vertical bars.
+        if (Family == "BleedingTreatmentMixer" && target.Kind == HitKind.Vertical)
+            return;
         var range = Math.Max(0.000001, target.VisualMaximum - target.VisualMinimum);
         // The two NPC condition handles share one rail except when they
         // nearly overlap, where both real centers are separated by 7 DIP.
@@ -2792,6 +2796,13 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.65), 1.0),
                 new Point(centerX - barWidth / 2.0, nativeTop),
                 new Point(centerX + barWidth / 2.0, nativeTop));
+
+            // The interactive value marker follows the exact current PTS
+            // height; the cap glows across the top edge on hover only.
+            var hovered = _hoverTarget?.Kind == HitKind.Vertical
+                && ReferenceEquals(_hoverTarget.Parameter, parameter);
+            VerticalBarHandleChrome.Draw(dc, new Point(centerX, currentY),
+                barWidth, accent, hovered);
 
             DrawCenteredNumericChanges(dc,
                 $"{parameter.CurrentNumber:0.#} PTS",

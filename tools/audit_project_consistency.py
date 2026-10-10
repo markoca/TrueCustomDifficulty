@@ -1657,6 +1657,36 @@ else:
     note("semantic editor registration: 9 retained specialized classes + current AggregateVisualControl; no obsolete polar-only assumptions")
 
 
+# Vertical medical/bleeding columns must use the real bar-top horizontal cap,
+# never the ordinary circular hover ring intended for point/XY handles.
+_bar_cap = (ROOT / "src/TrueCustomDifficulty/Controls/VerticalBarHandleChrome.cs")
+_medical_bar = (ROOT / "src/TrueCustomDifficulty/Controls/MedicalHealingRadar.cs").read_text(encoding="utf-8")
+_aggregate_hover_section = _abd_control_text.split("private void DrawHoveredHandle(", 1)[-1].split(
+    "private void DrawBlastDamageBoard(", 1)[0]
+_bleeding_bar_section = _abd_control_text.split("private void DrawBleedingTreatmentMixer(", 1)[-1].split(
+    "private void DrawConsumableMixer(", 1)[0]
+_medical_bar_section = _medical_bar.split("var columnWidth = chartWidth / 3.0;", 1)[-1].split(
+    "private void DrawMedicalCard(", 1)[0]
+if not _bar_cap.exists():
+    fail("vertical-bar hover chrome missing: matching medical/bleeding cap renderer required")
+else:
+    _bar_cap_source = _bar_cap.read_text(encoding="utf-8")
+    if ("internal static class VerticalBarHandleChrome" not in _bar_cap_source
+            or "barTopCenter.Y" not in _bar_cap_source
+            or "hovered ? Brushes.White : accent" not in _bar_cap_source):
+        fail("vertical-bar hover chrome must align a white-on-hover horizontal cap to the bar top")
+    elif ("VerticalBarHandleChrome.Draw(dc, new Point(centerX, barTop)" not in _medical_bar_section
+            or "ControlHoverGlow.Draw(dc, new Point(centerX, barTop)" in _medical_bar_section
+            or "dc.DrawEllipse(panel, new Pen(accent" in _medical_bar_section):
+        fail("Medkit Healing bar must render a cap, not a circular hover/thumb")
+    elif ("VerticalBarHandleChrome.Draw(dc, new Point(centerX, currentY)" not in _bleeding_bar_section
+            or 'Family == "BleedingTreatmentMixer" && target.Kind == HitKind.Vertical'
+            not in _aggregate_hover_section):
+        fail("Bleeding Treatment bar must render its own cap and suppress generic circle")
+    else:
+        note("Medical healing and bleeding treatment: matching live-value bar-top caps, no circular hover rings")
+
+
 # Hunger Survival Profile LOW handle: avoid a second hover circle at the
 # midpoint of the 2D plot. The real LOW handle owns its glow at Y(0).
 _hunger_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")

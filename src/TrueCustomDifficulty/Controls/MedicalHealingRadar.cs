@@ -181,21 +181,16 @@ public sealed class MedicalHealingRadar : FrameworkElement
             dc.DrawRectangle(CloneWithOpacity(accent, .65), null,
                 new Rect(centerX - barWidth / 2, barTop,
                     barWidth, Math.Max(0.5, barBottom - barTop)));
-            // The chart column edits the same source as its slider, so only
-            // the top of the active bar gets the shared handle halo.
-            ControlHoverGlow.Draw(dc, new Point(centerX, barTop), accent,
-                _hoverRow == i && _hoverAction == HitAction.Chart);
-            dc.DrawEllipse(panel, new Pen(accent,
-                _selected == i ? 2.5 : 1.7),
-                new Point(centerX, barTop), 6.3, 6.3);
-            dc.DrawEllipse(accent, null,
-                new Point(centerX, barTop), 2.4, 2.4);
+            // A vertical dosage column uses a horizontal active-value cap,
+            // not a floating circular handle/hover ring.
             dc.DrawLine(new Pen(CloneWithOpacity(muted, .6), 1.0),
                 new Point(centerX - barWidth / 2.0, nativeTop),
                 new Point(centerX + barWidth / 2.0, nativeTop));
             dc.DrawLine(new Pen(muted, 2.4),
                 new Point(centerX - barWidth / 2 - 11, vanillaY),
                 new Point(centerX + barWidth / 2 + 11, vanillaY));
+            VerticalBarHandleChrome.Draw(dc, new Point(centerX, barTop),
+                barWidth, accent, _hoverRow == i && _hoverAction == HitAction.Chart);
             var numeric = $"{p.CurrentNumber:0.#}";
             var label = CreateText(numeric + " HP", HealthTypography.Value,
                 text, FontWeights.Bold);
