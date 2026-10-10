@@ -47,3 +47,7 @@ Each axis controls only the existing stash-ammo amount multiplier. Writer routes
 The aggregate radar now owns the practical quantity display. The former single `PracticalQuantityDisplay` attached to the visible Basic backing parameter is hidden for this radar card.
 
 Below the graph, three fixed columns show the current concrete ammo count ranges for **Basic**, **Standard**, and **Rare**. Values are recalculated from each tier's audited `lootHint.scaledCountEntries` using the same positive round-half-up rule as the production writer.
+
+## 2026-10-10 — Unique weapons shuffle correction
+
+`SHUFFLE UNIQUE WEAPONS` is the sixth compact `WorldLootLayout` input (toggle), not a sixth world-depletion slider. The normal five removal controls remain untouched. The nine verified standalone unique weapon identities move between their nine original world pickup locations with no removals; the existing regular weapon shuffle remains independent. See [source and production contract](generators/LOOSE-UNIQUE-WEAPON-SHUFFLE-AUDIT.md).
