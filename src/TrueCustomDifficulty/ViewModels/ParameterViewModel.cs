@@ -1848,10 +1848,10 @@ public sealed class ParameterViewModel : ObservableObject
         {
             var labels = new Dictionary<string, (string Long, string Short)>(StringComparer.Ordinal)
             {
-                ["Novice"] = ("N", "N"),
-                ["Stalker"] = ("S", "S"),
-                ["Veteran"] = ("V", "V"),
-                ["Master"] = ("M", "M")
+                ["Novice"] = (definition.Id == "combat.mutantDamage" ? "Novice" : "N", "N"),
+                ["Stalker"] = (definition.Id == "combat.mutantDamage" ? "Stalker" : "S", "S"),
+                ["Veteran"] = (definition.Id == "combat.mutantDamage" ? "Veteran" : "V", "V"),
+                ["Master"] = (definition.Id == "combat.mutantDamage" ? "Master" : "M", "M")
             };
 
             var raw = new List<(string Difficulty, string Long, string Short, double Value)>();

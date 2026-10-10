@@ -21,6 +21,7 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["combat.npcWeaponDamage"] = new("combat-human-1", 1),
             ["combat.npcAttackCooldown"] = new("combat-human-2", 0),
             ["combat.npcHipAccuracy"] = new("combat-human-2", 1),
+            // The mutant hit-damage editor occupies the full first row above the health radar.
             ["combat.mutantDamage"] = new("combat-mutant-1", 0),
             ["combat.mutantAttackCooldown"] = new("combat-mutant-1", 1),
             ["combat.playerWeaponDamage"] = new("combat-player-weapons", 0),
@@ -372,7 +373,8 @@ public sealed class ResponsiveParameterGridPanel : Panel
         if (child is not FrameworkElement { DataContext: ParameterViewModel parameter })
             return false;
 
-        return parameter.IsVisualControlAnchor;
+        return parameter.IsVisualControlAnchor
+            || parameter.Id == "combat.mutantDamage";
     }
 
     private sealed record SemanticSlot(string RowKey, int Column);

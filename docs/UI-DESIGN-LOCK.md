@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-10 — Mutant Hit Damage top full-width layout (current)
+
+Within **Mutant Health**, `combat.mutantDamage` is the first full-width row, above the Mutant Health radar. Only this one slider receives the full section width to clearly display complete reference difficulty names **Novice, Stalker, Veteran, Master** instead of N/S/V/M. Its ordinary compact card/sliding behavior, marker hit targets, source ID, values and writer remain unchanged. The full-width exception is specific to this section; other independent sliders keep the compact responsive grid. Do not restore the earlier below-radar or orphaned placement.
+
 ### 2026-10-10 — Mutant Hit Damage section placement
 
 The existing **Mutant Hit Damage** slider is a member of the **Mutant Health** Combat section, immediately after the Mutant Health radar, not an orphaned standalone **Mutant Combat** section between framed panels. It remains a compact independent slider with unchanged ID, value, preset, vanilla markers, and original CFG writer. Parameter catalog grouping and explicit Combat sort order must match the rendered layout; no duplicate text or new control is introduced.

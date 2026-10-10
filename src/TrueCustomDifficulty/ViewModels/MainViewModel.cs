@@ -1553,7 +1553,7 @@ public sealed class MainViewModel : ObservableObject
 
                 // Mutant Hit Damage sits inside the Mutant Health section,
                 // directly after its primary radar instead of an orphan group.
-                "combat.mutantDamage" => 131,
+                "combat.mutantDamage" => 129,
                 // Your Weapons
                 "combat.playerWeaponDamage" => 60,
                 "combat.playerHeadshotMultiplier" => 70,
