@@ -4358,7 +4358,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var point = e.GetPosition(this);
         var target = FindTarget(point);
-        if (target is null)
+        if (target is null || !target.Parameter.IsControlEnabled)
             return;
 
         _selectedParameter = target.Kind == HitKind.FatigueReloadJoint
@@ -4564,7 +4564,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        if (_selectedParameter is null)
+        // A previously selected slider can become dependency-disabled when its
+        // Master bundle is switched OFF. Keyboard input must respect that
+        // transition just like mouse hit targets and the writer.
+        if (_selectedParameter is null || !_selectedParameter.IsControlEnabled)
             return;
 
         if (_selectedParameter.IsToggle && e.Key == Key.Space)
@@ -4631,7 +4634,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private void UpdateTarget(HitTarget target, Point point)
     {
-        if (target.Kind == HitKind.Toggle)
+        // Also guard an already-captured drag if its parent switch becomes OFF.
+        if (!target.Parameter.IsControlEnabled || target.Kind == HitKind.Toggle)
             return;
 
         if (target.Kind is HitKind.FatigueJoint or HitKind.FatigueReloadJoint)
