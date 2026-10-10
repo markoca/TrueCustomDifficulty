@@ -40,9 +40,9 @@ SOURCE = (
     ("loot-world-original-source-structures", "tools/audit_loot_world_source.py"),
 )
 WRITERS = (
-    ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 82),
+    ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 84),
     ("health-stamina-bpatch-writer", "HealthStaminaPatchContract", "health-stamina-patch-fixtures", 46),
-    ("survival-bpatch-writer", "SurvivalPatchContract", "survival-patch-fixtures", 85),
+    ("survival-bpatch-writer", "SurvivalPatchContract", "survival-patch-fixtures", 87),
     ("economy-bpatch-writer", "EconomyPatchContract", "economy-patch-fixtures", 34),
     ("equipment-bpatch-writer", "EquipmentPatchContract", "equipment-patch-fixtures", 32),
     ("environment-bpatch-writer", "EnvironmentPatchContract", "environment-patch-fixtures", 90),
@@ -50,7 +50,7 @@ WRITERS = (
     ("loot-direct-bpatch-writer", "LootDirectPatchContract", "loot-direct-patch-fixtures", 117),
     ("loot-special-generators-writer", "LootSpecialGeneratorsContract", "loot-special-generators-fixtures", 63),
     ("loot-world-removals-writer", "LootWorldRemovalsContract", "loot-world-removals-fixtures", 27),
-    ("loot-world-placement-writer", "LootWorldPlacementContract", "loot-world-placement-fixtures", 20),
+    ("loot-world-placement-writer", "LootWorldPlacementContract", "loot-world-placement-fixtures", 24),
 )
 MANUAL = (
     "S.T.A.L.K.E.R. 2 Combat BPatch loading and gameplay effects",
