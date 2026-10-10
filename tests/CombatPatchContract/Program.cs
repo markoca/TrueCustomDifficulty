@@ -67,6 +67,14 @@ internal static class Program
                     Check(result.EditCount == 6 && result.ParameterCount == 1,
                         "3x recharge must affect exactly Chimera's authored ability tags");
                     MasterCooldown(root, new[] { "Chimera" }, 1.0 / 3.0);
+                    var chimera = Family("Chimera");
+                    var first = chimera.Cooldowns[0];
+                    var exactWait = root.Get("MutantCombatDifficulty")
+                        .Get("AgentCooldownMultipliers").Get(chimera.Index)
+                        .Get("CooldownMultipliers").Get(first.Index)
+                        .Value("CooldownMultiplier");
+                    Check(exactWait == "0.3333333333333333",
+                        "3x boundary was truncated, making recharge faster than 3x");
                 });
 
             Case("Master-Chimera-only", "Master",
