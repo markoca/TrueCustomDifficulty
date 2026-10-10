@@ -35,7 +35,7 @@
     <EmbeddedResource Include="Data\npc-medical-production-redirect-manifest.csv" LogicalName="TrueCustomDifficulty.Data.npc-medical-production-redirect-manifest.csv" />
     <EmbeddedResource Include="Data\crate-spawn-production-manifest.csv" LogicalName="TrueCustomDifficulty.Data.crate-spawn-production-manifest.csv" />
     <EmbeddedResource Include="Data\loose-world-loot-manifest.csv" LogicalName="TrueCustomDifficulty.Data.loose-world-loot-manifest.csv" />
-    <EmbeddedResource Include="Data\loose-unique-weapons-manifest.csv" LogicalName="TrueCustomDifficulty.Data.loose-unique-weapons-manifest.csv" />
+    <EmbeddedResource Include="Data\loose-unique-weapon-shuffle-manifest.csv" LogicalName="TrueCustomDifficulty.Data.loose-unique-weapon-shuffle-manifest.csv" />
     <EmbeddedResource Include="Data\world-weapon-shuffle-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-weapon-shuffle-manifest.csv" />
     <EmbeddedResource Include="Data\world-weapon-shuffle-pool.csv" LogicalName="TrueCustomDifficulty.Data.world-weapon-shuffle-pool.csv" />
     <EmbeddedResource Include="Data\world-weapon-direct-manifest.csv" LogicalName="TrueCustomDifficulty.Data.world-weapon-direct-manifest.csv" />
