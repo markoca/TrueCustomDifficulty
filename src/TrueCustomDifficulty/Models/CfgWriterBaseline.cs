@@ -58,6 +58,11 @@ public sealed class CfgWriterEditPoint
 
 public sealed class CfgWriterSpecialBaseline
 {
+    // Explicit source-backed route for the dedicated nine-actor shuffle writer.
+    // Keeps Python audit coverage and real C# validation on one baseline.
+    [JsonPropertyName("looseUniqueWeaponShuffle")]
+    public CfgWriterLooseUniqueWeaponShuffle LooseUniqueWeaponShuffle { get; set; } = new();
+
     [JsonPropertyName("listMembership")]
     public List<CfgWriterListMember> ListMembership { get; set; } = new();
 
@@ -99,6 +104,18 @@ public sealed class CfgWriterSpecialBaseline
 
     [JsonPropertyName("crateSpawnProduction")]
     public CfgWriterCrateSpawnProduction CrateSpawnProduction { get; set; } = new();
+}
+
+public sealed class CfgWriterLooseUniqueWeaponShuffle
+{
+    [JsonPropertyName("parameterId")]
+    public string ParameterId { get; set; } = string.Empty;
+
+    [JsonPropertyName("manifestResource")]
+    public string ManifestResource { get; set; } = string.Empty;
+
+    [JsonPropertyName("expectedActorCount")]
+    public int ExpectedActorCount { get; set; }
 }
 
 // Audited 2.0.5 NPC_Ammo_Smart: 43 individually authored item/count rows
