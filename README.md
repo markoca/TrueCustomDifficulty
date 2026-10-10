@@ -161,7 +161,7 @@ The four-source `NPC LOOT & EQUIPMENT` panel now uses three compact full-click E
 
 ## Loot editor redesign (2026-10-09)
 
-The approved Loot tab now shows **six** compact source-bound sections: World Loot Depletion (5), World Placement (5), NPC Loot & Equipment (4), Stash Rewards (6), Breakable Boxes (6) and Mutant Part Drops (14). All **40 original Loot source definitions**, native min/max/steps, selected vanilla-difficulty references, preset persistence, CFG mappings and reset behavior are retained.
+The approved Loot tab now shows **six** compact source-bound sections: World Loot Depletion (5), World Placement (6, including Shuffle Unique Weapons), NPC Loot & Equipment (4), Stash Rewards (6), Breakable Boxes (6) and Mutant Part Drops (14). All **40 original Loot source definitions**, native min/max/steps, selected vanilla-difficulty references, preset persistence, CFG mappings and reset behavior are retained.
 
 **Breakable Boxes weights are caliber-identifiable inside both graphs:** SNG segments identify `9×18/9×19`, `5.45`, `12 Gauge`; NATO identifies `.45 ACP`, `9×19`, `5.56`, `12 Gauge`. Each segment has a permanent exact same-color swatch, caliber name and live normalized percentage. Color follows the actual weight source across both pools, even when segment order differs or share is zero. The two physical box-yield scalers remain separate from four relative ammo family weights. Stash tier amounts and three reward-roll sources are consolidated into one six-control board; dropped NPC weapon condition is one genuine MIN/MAX two-handle editor. No simulated global loot probabilities or writer behavior changes.
 
