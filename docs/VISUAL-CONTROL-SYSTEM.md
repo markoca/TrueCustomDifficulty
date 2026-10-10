@@ -3,6 +3,8 @@
 ### 2026-10-10 — Item Value Layers vertical controls (authoritative)
 
 The **ITEM VALUE LAYERS** editor is now a compact, one-row six-column vertical source bank, following the Medical Items direct-edit grammar. CONSUMABLES, AMMO, ARMOR, WEAPONS, ARTIFACTS and MUTANT PARTS each have an independent native vertical drag handle, a current `x` multiplier above the bar, a muted reference tick, and a short item caption below. All six audited CFG values range from **0.00x to 2.00x**, with **0.01x** steps, so the editor uses one truthful **0–2x VALUE** ruler at left rather than unrelated per-card scales. Only modified current numbers turn gold; no Base/Vanilla legend or duplicate bounds are shown. The frame measures 330 DIP high at a minimum 560-DIP width; the original six real parameters, distinct mutant-parts ItemPrototypes Cost writer, keyboard arrows, right-click individual reset and R all-reset remain intact. This visual change does not modify CFG targets, preset format or writer rules. Local publish/Wine and game validation remain pending.
+Build fix (2026-10-10): `ItemPriceScalersRadar.OnKeyDown` uses a distinct loop-local name for the six-source R reset to avoid C# CS0136 shadowing of the selected key-control pattern variable. UI behavior and CFG mappings are unchanged; local build verification pending.
+
 
 
 ### 2026-10-10 — Medical Items shared Override Limits (current contract)
