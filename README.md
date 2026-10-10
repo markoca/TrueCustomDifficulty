@@ -1,5 +1,12 @@
 # True Custom Difficulty
 
+### 2026-10-10 — Loose Unique Weapons source-backed depletion control
+
+The World Loot Depletion board now includes a sixth compact native 0–100% slider, **LOOSE UNIQUE WEAPONS**, in the previously unused sixth 2-column cell. The parameter `loot.looseUniqueWeaponsRemoved` is independent of `loot.looseWorldLootRemoved` and World Weapon Shuffle. It removes a build-time rounded random subset of **nine exact SpawnActor IDs** (not every occurrence of the ItemSID). At 0%, no files are emitted; at 100%, all nine listed actors are removed. Original source: GameData SpawnActorPrototypes, WorldMap_WP, true start, Item spawn, matching ItemSID/SpawnedPrototypeSID. Both base and DLC1 QuestNodePrototypes contain zero literal references to all nine Actor SIDs or Item SIDs. **This is a direct-reference safety check, not proof of complete quest independence.** Excluded from this control: all unlisted weapons, quest-scripted/deferred actors, NPC inventories, trader/generator rewards, DLC1 unique variants, and regular world weapon placements. In-game runtime and local .NET build remain NOT RUN.
+
+The exact allowlist is `src/TrueCustomDifficulty/Data/loose-unique-weapons-manifest.csv`; the authored item list is: `Gun_Tank_MG`, `Gun_S15_AR`, `GunArevPrecise_AR`, `Gun_SOFMOD_AR`, `Gun_GStreet_HG`, `Gun_Texas_SG`, `GunNightStalker_HG`, `Gun_Cavalier_SR`, `Gun_RatKiller_SMG`. The existing gold-only-modified-number and compact rail interaction rules apply. No standalone large-width card or redundant hint is added.
+
+
 ## NPC Ammo preview — all nine source caliber groups (2026-10-10)
 
 NPC Ammo preview now shows nine actual `NPC_Ammo_Smart` caliber groups in a compact 3×3 grid, each with its earliest source rank and a live source-backed round range. This supersedes the former three-example Newbie-only preview. Only `Medicine + Ammo` activates the corpse bonus. The same 0–3x multiplier, positive half-up integer rounding, individual gold numeric highlighting and existing CFG/BPatch writer remain unchanged. Panel is 564 DIP high; local WPF/Wine compile and actual gameplay confirmation remain pending.
