@@ -64,7 +64,9 @@ public sealed class MedicalHealingRadar : FrameworkElement
     private HitAction _hoverAction = HitAction.Select;
     private int _hoverRow = -2;
     private Rect _foodCheckboxRect;
+    private Rect _overrideCheckboxRect;
     private bool _foodCheckboxHovered;
+    private bool _overrideCheckboxHovered;
 
     public static readonly DependencyProperty ParametersProperty =
         DependencyProperty.Register(nameof(Parameters), typeof(IEnumerable),
@@ -132,7 +134,9 @@ public sealed class MedicalHealingRadar : FrameworkElement
         if (e.PropertyName is nameof(ParameterViewModel.CurrentNumber)
             or nameof(ParameterViewModel.CurrentBoolean)
             or nameof(ParameterViewModel.ReferenceNumber)
-            or nameof(ParameterViewModel.IsModified))
+            or nameof(ParameterViewModel.IsModified)
+            or nameof(ParameterViewModel.Maximum)
+            or nameof(ParameterViewModel.MedicalOverrideEnabled))
             InvalidateVisual();
     }
 
@@ -161,9 +165,9 @@ public sealed class MedicalHealingRadar : FrameworkElement
         // column or a duplicate medical section.
         var foodLabel = CreateText("FOOD HEALING", HealthTypography.Label,
             text, FontWeights.Bold);
-        _foodCheckboxRect = new Rect(ActualWidth - BooleanCheckboxChrome.Size - 19.0,
-            48.0, BooleanCheckboxChrome.Size, BooleanCheckboxChrome.Size);
-        dc.DrawText(foodLabel, new Point(_foodCheckboxRect.Left - foodLabel.Width - 8.0, 49.0));
+        _foodCheckboxRect = new Rect(19.0, 48.0,
+            BooleanCheckboxChrome.Size, BooleanCheckboxChrome.Size);
+        dc.DrawText(foodLabel, new Point(_foodCheckboxRect.Right + 8.0, 49.0));
         // Use the canonical checkbox shape/hover behavior, but raise its
         // muted OFF-state edge contrast against this unusually dark chart.
         // No extra checkbox frame or redundant caption is introduced.
@@ -172,9 +176,24 @@ public sealed class MedicalHealingRadar : FrameworkElement
             _foodHealing?.CurrentBoolean == true,
             _foodHealing?.IsControlEnabled == true,
             _foodCheckboxHovered, panel, checkboxEdge, accent);
-        _hits.Add(new HitArea(new Rect(_foodCheckboxRect.Left - foodLabel.Width - 12.0,
+        _hits.Add(new HitArea(new Rect(_foodCheckboxRect.Left - 3.0,
             45.0, foodLabel.Width + BooleanCheckboxChrome.Size + 17.0, 26.0),
             -1, HitAction.Food));
+
+        var overrideLabel = CreateText("OVERRIDE LIMITS", HealthTypography.Label,
+            text, FontWeights.Bold);
+        _overrideCheckboxRect = new Rect(ActualWidth - BooleanCheckboxChrome.Size - 19.0,
+            48.0, BooleanCheckboxChrome.Size, BooleanCheckboxChrome.Size);
+        dc.DrawText(overrideLabel, new Point(
+            _overrideCheckboxRect.Left - overrideLabel.Width - 8.0, 49.0));
+        BooleanCheckboxChrome.Draw(dc, _overrideCheckboxRect,
+            _medical[0]?.MedicalOverrideEnabled == true,
+            _medical[0]?.IsControlEnabled == true,
+            _overrideCheckboxHovered, panel, checkboxEdge, accent);
+        _hits.Add(new HitArea(new Rect(
+            _overrideCheckboxRect.Left - overrideLabel.Width - 12.0, 45.0,
+            overrideLabel.Width + BooleanCheckboxChrome.Size + 17.0, 26.0),
+            -1, HitAction.Override));
 
         // Compress the four HEAL/BLEED clusters to reserve the right-hand
         // radiation bank without adding another row or a second card.
@@ -392,7 +411,11 @@ public sealed class MedicalHealingRadar : FrameworkElement
         base.OnMouseRightButtonDown(e);
         var hit = FindHit(e.GetPosition(this));
         if (hit is null) return;
-        if (hit.Row == -1) _foodHealing?.ResetToReference();
+        if (hit.Action == HitAction.Override)
+        {
+            if (_medical[0] is not null) _medical[0]!.MedicalOverrideEnabled = false;
+        }
+        else if (hit.Row == -1) _foodHealing?.ResetToReference();
         else
         {
             _selected = hit.Row;
@@ -416,18 +439,22 @@ public sealed class MedicalHealingRadar : FrameworkElement
         var action = hit?.Action ?? HitAction.Select;
         var foodCheckHover = _foodHealing?.IsControlEnabled == true
             && _foodCheckboxRect.Contains(point);
+        var overrideCheckHover = _medical[0]?.IsControlEnabled == true
+            && _overrideCheckboxRect.Contains(point);
         if (_hoverRow != row || _hoverAction != action ||
-            _foodCheckboxHovered != foodCheckHover)
+            _foodCheckboxHovered != foodCheckHover ||
+            _overrideCheckboxHovered != overrideCheckHover)
         {
             _hoverRow = row;
             _hoverAction = action;
             _foodCheckboxHovered = foodCheckHover;
+            _overrideCheckboxHovered = overrideCheckHover;
             InvalidateVisual();
         }
         Cursor = hit is not null ? action switch
         {
             HitAction.Healing or HitAction.Bleeding or HitAction.Radiation => Cursors.SizeNS,
-            HitAction.Food => Cursors.Hand,
+            HitAction.Food or HitAction.Override => Cursors.Hand,
             _ => Cursors.Arrow
         } : Cursors.Arrow;
         if (_dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed)
@@ -452,6 +479,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
         _hoverRow = -2;
         _hoverAction = HitAction.Select;
         _foodCheckboxHovered = false;
+        _overrideCheckboxHovered = false;
         Cursor = Cursors.Arrow;
         InvalidateVisual();
     }
@@ -464,6 +492,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
             foreach (var medicalItem in _medical.Concat(_bleeding).Concat(_radiation))
                 medicalItem?.ResetToReference();
             _foodHealing?.ResetToReference();
+            if (_medical[0] is not null) _medical[0]!.MedicalOverrideEnabled = false;
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -500,6 +529,9 @@ public sealed class MedicalHealingRadar : FrameworkElement
         if (hit.Action == HitAction.Food
             && _foodHealing is { IsControlEnabled: true } food)
             food.CurrentBoolean = !food.CurrentBoolean;
+        else if (hit.Action == HitAction.Override
+            && _medical[0] is { IsControlEnabled: true } medical)
+            medical.MedicalOverrideEnabled = !medical.MedicalOverrideEnabled;
         InvalidateVisual();
     }
 
@@ -578,5 +610,5 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
     private sealed record HitArea(Rect Bounds, int Row, HitAction Action);
 
-    private enum HitAction { Select, Food, Healing, Bleeding, Radiation }
+    private enum HitAction { Select, Food, Override, Healing, Bleeding, Radiation }
 }
