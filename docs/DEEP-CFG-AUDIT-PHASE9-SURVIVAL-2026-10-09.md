@@ -29,9 +29,9 @@ verify the source prototype, nesting, `{bpatch}` flags, correct
 `set` / `negateSet` / `scale` values, file location, counts and
 absence of unrelated CFG fields. Six additional cases cover the
 four game difficulties for radiation accumulation and bleeding
-severity. Total **66 executable C# writer scenarios** (59 active
+severity. Total **69 executable C# writer scenarios** (59 active
 parameter/difficulty routes + 4 no-op vanilla baselines + 3 gated child
-scenarios).
+scenarios + 3 combined-parameter scenarios).
 
 The scenarios include hunger, bleeding, radiation, fatigue, sleep,
 starvation (with its actual Master parent enablement), consumable
@@ -121,10 +121,37 @@ does **not** write any patches:
 
 The existing 59 isolated cases retain full source-prototype,
 nested `{bpatch}`, `set`/`negateSet`/`scale` and no-unrelated-fields
-checks. The new 66-scenario suite uses the shipping app and writer;
+checks. The new 69-scenario suite uses the shipping app and writer;
 it does not simulate Unreal or promote in-game status to PASS.
 
 The physical original archive inputs matching the permanent 139/139
 source evidence were reidentified by SHA-256 on 2026-10-10. This
 addition does not alter game values, UI controls, preset defaults or
 production writer logic.
+
+## Phase 9C — non-collateral combined CFG writes
+
+Three additional Windows regression cases exercise multiple **simultaneous
+live Survival editor changes**, including values converging on one
+prototype with different source keys. The concrete merged BPatch is
+parsed and compared against the precise union of original writer
+field paths; all nested `{bpatch}` flags, parameter/edit counts and
+individual transformed values must match, with **no extra fields**.
+
+1. Veteran energy drink/water instant stamina, energetic stamina
+   strength, energy-drink duration and fatigue relief (shared
+   `EnergeticStamina` prototype receives distinct `ValueMin/Max`
+   and `Duration` without losing either).
+2. Veteran paired medium/strong hunger penalties and low/medium/strong
+   fatigue aim penalties; verifies no accidental constraint cascade
+   or additional UI anchor output.
+3. Master combined starvation damage + damage interval (same
+   `HungerNegativeDamage` source prototype), severe fatigue recoil and
+   radiation stamina penalty, with all three mechanics parents
+   unchanged and enabled.
+
+Current executable Survival coverage: **53 direct active parameters,
+six other difficulty variants, four vanilla no-change controls, three
+inactive-parent exclusions, three combined multi-control writes
+= 69 scenarios**. The source archive gate remains independent:
+139 physically authored original routes, already verified exactly.
