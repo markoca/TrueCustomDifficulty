@@ -230,6 +230,16 @@ internal static class Program
                           .All(p => !p.IsControlEnabled),
                     name + ": all five Starvation penalty tracks must be inactive while OFF");
             }
+
+            // The parent OFF change legitimately patches DifficultyPrototypes,
+            // but the custom retained child must NOT leak EffectPrototypes while
+            // inactive. Test the real production writer before switching ON.
+            var offFolder = Path.Combine(folder, "bundle-off");
+            var offResult = new CfgPatchWriterService().Write(vm, Catalog, null, offFolder);
+            Check(offResult.FileCount > 0, name + ": parent OFF did not write its bundle change");
+            Check(!Directory.EnumerateFiles(offFolder, "*.cfg", SearchOption.AllDirectories)
+                    .Any(f => f.Contains("EffectPrototypes", StringComparison.OrdinalIgnoreCase)),
+                name + ": inactive staged child leaked its EffectPrototypes BPatch");
             parent.CurrentBoolean = true;
             Check(child.IsControlEnabled && child.IsValueModifiedFromReference()
                 && !parent.IsValueModifiedFromReference(),
