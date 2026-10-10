@@ -280,7 +280,8 @@ public sealed class ParameterViewModel : ObservableObject
         "loot.worldF1GrenadeBoxes",
         "loot.worldFoodDrinkCratesRemoved",
         "loot.worldMedicalCratesRemoved",
-        "loot.looseWorldLootRemoved"
+        "loot.looseWorldLootRemoved",
+        "loot.looseUniqueWeaponsRemoved"
     };
 
     public bool IsWorldLootRemovalMember => WorldLootRemovalParameterIds.Contains(Id);
