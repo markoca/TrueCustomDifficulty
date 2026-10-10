@@ -41,15 +41,15 @@ def verify() -> None:
         | {"combat.psySpawnCycleDelay", "combat.psyPhantomCount",
            "combat.psyBleeding", "combat.psyDurabilityDamage"}
     )
-    # UI rate is 1/native cooldown wait. All eight cards must allow an exact
-    # 3x top endpoint, never the former 4x from 0.25 wait. Do not change
+    # UI rate is 1/native cooldown wait. All eight cards must use 0.25x
+    # RECHARGE increments (0.5x..3x), NOT raw-wait increments. Do not change
     # normal mutant attack frequency (an unrelated source).
     for pid in sorted(pid for pid in special_ids if pid.startswith("combat.mutantCooldown.")):
         slider = combat[pid]["slider"]
         assert abs(float(slider["min"]) - 1.0 / 3.0) < 1e-12, (
             f"{pid}: recharge cap must be exactly 3x (native wait floor 1/3)"
         )
-        assert slider["max"] == 2 and slider["step"] == 0.1
+        assert slider["max"] == 2 and slider["step"] == 0.25
         assert slider["stepMode"] == "absolute"
     assert combat["combat.mutantAttackCooldown"]["slider"]["max"] == 2
 
