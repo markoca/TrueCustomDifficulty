@@ -935,3 +935,7 @@ The `SHUFFLE UNIQUE WEAPONS` setting remains **aggregate-only** (`exposeInUi=fal
 
 **Regression:** `python3 tools/audit_rationale_ui.py` asserts one heading, ordering ahead of the grey footer, all 33 family guides, generic fallbacks, preserved conditional meaning/results, and absence of duplicated old control text. It is static source verification only; local .NET publish, Wine visual layout and interaction remain unverified until run.
 
+### 2026-10-10 — Rationale CONTROLS compile syntax correction
+
+Fixed a C# switch-expression punctuation typo in `ParameterViewModel.ControlHelp`: the `RadiationTreatment` arm ended in a semicolon rather than the required comma, causing `CS1003` at `ParameterViewModel.cs(66,134)`. The player-facing wording, right-panel layout and writer mappings are unchanged. `tools/audit_rationale_ui.py` now verifies that every named switch-expression instruction arm ends with a comma so this error cannot pass the source audit again. **Static arm review passes; an actual .NET 10 Windows publish and Wine UI acceptance remain to be run locally.**
+
