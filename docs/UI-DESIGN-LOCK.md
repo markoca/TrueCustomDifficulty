@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-10 — Bleeding Damage Profile vertical Y-axis caption
+
+The **HP / TICK** Y-axis title in BleedingCurveControl is rotated 90 degrees counterclockwise and centered next to the chart vertically, matching other profile graph axis labels. The plot geometry, tick numbers, hit targets and compact overall dimensions remain unchanged; do not display the title horizontally at the upper-left.
+
 ### 2026-10-10 — Secondary effects never exceed their drink; exact seconds stepping
 
 The three independently editable secondary Effect Duration controls (Water Regen, Energy −100% Cost, Energy −30% Cost) have a **live maximum equal to their matching main drink duration, in both Override Limits modes**. Override Limits changes only the main source's allowable maximum (native OFF / 270s ON); it never decouples the secondary source from its parent. Lowering the main duration immediately caps any longer secondary duration. Each of the eight duration controls enforces a whole-second source-aligned grid in the ViewModel itself: OFF = 1 second; ON = 5 seconds. All main multiplier-backed durations convert this seconds step to their native units; short effects use native seconds. GUI mouse and keyboard edits share the same normalization. This supersedes earlier documentation permitting 270s independent secondary caps in Override ON or saying 0.5s steps remain.

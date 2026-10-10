@@ -196,8 +196,13 @@ public sealed class BleedingCurveControl : FrameworkElement
             11.4, accent, FontWeights.Bold);
         DrawCenteredText(dc, "BLEEDING POINTS  /  0-100",
             new Point(ActualWidth / 2.0 + 14, 160), 10.2, text, FontWeights.Bold);
-        DrawText(dc, "HP / TICK", new Point(12, 182),
-            10.2, text, FontWeights.Bold);
+        // Rotate the Y-axis caption like the other profile charts; keep
+        // the vertical tick numerals and plot bounds where they are.
+        var hpTickLabel = CreateText("HP / TICK", 10.2, text, FontWeights.Bold);
+        dc.PushTransform(new RotateTransform(-90.0, 16.0, 277.5));
+        dc.DrawText(hpTickLabel,
+            new Point(16.0 - hpTickLabel.WidthIncludingTrailingWhitespace / 2.0, 272.4));
+        dc.Pop();
 
         _plotRect = new Rect(64.0, 185.0, Math.Max(360.0, ActualWidth - 89.0), 185.0);
         DrawCurve(dc, text, muted, border, softBorder, accent, panel);
