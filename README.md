@@ -1,5 +1,12 @@
 # True Custom Difficulty
 
+### 2026-10-10 — World Placement blank-panel regression fix
+
+The `SHUFFLE UNIQUE WEAPONS` setting remains **aggregate-only** (`exposeInUi=false`), so `MainViewModel` MUST materialize it as a live `ParameterViewModel` before passing `AllParameters` to `AggregateVisualControl`. The World Placement family has exactly six live IDs: `loot.worldWeaponShuffle`, `loot.worldWeaponDensity`, `loot.looseUniqueWeaponShuffle`, `loot.worldAttachmentShuffle`, `loot.worldDetectors`, `loot.blueprintShuffle`. All six must be present even though only `loot.worldWeaponShuffle` is the **visible aggregate anchor**. Otherwise the entire panel incorrectly renders `World placement data unavailable`.
+
+`MainViewModel` now explicitly includes all six IDs in its materialization filter, includes Unique Weapon Shuffle in the aggregate modified-state wiring, and keeps it in World Placement sort order. `tests/LootWorldPlacementContract` checks the actual `MainViewModel.AllParameters`, anchor/visibility mapping, and `AggregateVisualControl`'s six bound sources; this guards the exact user-observed failure. Existing World Placement compact height and checkbox design, all real CFG mappings, writer logic and original-world eligibility remain unchanged. Windows/.NET publish and Wine screenshot acceptance still require execution.
+
+
 ### 2026-10-10 — Source-backed loose unique weapon shuffle (replaces removal control)
 
 **Final approved behavior:** `SHUFFLE UNIQUE WEAPONS` is a **boolean toggle in WORLD PLACEMENT**, not a depletion slider. Parameter `loot.looseUniqueWeaponShuffle` (default OFF) is separate from ordinary `loot.worldWeaponShuffle`, weapon density, and `loot.looseWorldLootRemoved`. The World Loot Depletion panel remains the original **five** sliders; no unique-weapon percentage, removal path, or obsolete preset parameter is active.
