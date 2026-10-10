@@ -1,5 +1,16 @@
 # True Custom Difficulty
 
+### 2026-10-10 — Unique Weapon Shuffle CFG writer baseline / audit reconciliation
+
+The dedicated `loot.looseUniqueWeaponShuffle` control was already implemented in the World Placement UI and in `CfgPatchWriterService.WriteLooseUniqueWeaponShuffle`, but the central `cfg-writer-baseline.json` still declared **244** supported parameters and lacked its manifest-backed production route. This made the actual C# `ValidateBaseline` fail before export, and the Python audits report the parameter as unsupported. **Do not remove, defer or fake a single-field CFG edit for this control.**
+
+**Correct current inventory:** **245** catalog entries, **152 visible aggregate anchors/standalone controls**, **93 hidden backing IDs**, **232 effective editable source dimensions**, **13 intentionally non-UI source IDs**, **80 hidden-but-editable backings**. The source-backed direct/special writer route union covers **245/245**, including the new nine-actor shuffle.
+
+**Canonical production route:** `cfg-writer-baseline.json.special.looseUniqueWeaponShuffle` contains the real `parameterId`, embedded `manifestResource` and `expectedActorCount=9`. `CfgWriterBaseline` deserializes this exact route and `CfgPatchWriterService` validates it, includes it in supported count and uses its embedded manifest in the actual writer. The writer remains a real per-actor `{bpatch}` derangement of nine physical world pickups (five item/presentation fields per actor, no `removenode`), separate from regular World Weapon Shuffle.
+
+**Regression gates:** `tools/audit_ui_cfg_contract.py` and `tools/audit_project_consistency.py` now agree on the new totals and discover the new special route. The project audit additionally verifies route identity, manifest resource, exactly nine distinct actor/item pairs and linkage to the real C# writer. `tests/LootWorldPlacementContract` checks that the loaded production baseline contains the precise route and matches the live catalog count; its existing **24 writer scenarios** already cover unique-only, DLC, mixed weapon and other placements. Run the two Python audits, then the Windows `.NET` writer tests and Wine application. Source/structure verification alone does not prove local publish or UE runtime acceptance.
+
+
 ### 2026-10-10 — Mutant Special Ability Recharge: native 0.25× displayed steps (latest contract)
 
 **Overrides earlier 0.10× source-step descriptions for these eight controls only.** In Combat → Mutant Combat → SPECIAL ABILITY RECHARGE, all eight compact species sliders now snap to **visible recharge-speed increments of 0.25×** over **0.50×–3.00× inclusive**: `0.50, 0.75, 1.00, 1.25, 1.50, 1.75, 2.00, 2.25, 2.50, 2.75, 3.00×`. The yellow current readout and both rail endpoints use the existing reciprocal rate (`rate = 1 / nativeWait`). The catalog `slider.step` is `0.25` for each `combat.mutantCooldown.*` parameter; here it denotes the *displayed recharge rate increment*, **not a fixed native wait delta**.
