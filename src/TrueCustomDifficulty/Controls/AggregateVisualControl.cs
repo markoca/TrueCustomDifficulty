@@ -1255,7 +1255,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var attachments = P("loot.worldAttachmentShuffle");
         var detectors = P("loot.worldDetectors");
         var blueprints = P("loot.blueprintShuffle");
-        DrawHeader(dc, "WORLD PLACEMENT", "", text, muted, accent);
+        DrawHeader(dc, "WORLD ITEM SPAWNS", "", text, muted, accent);
         if (uniqueWeapons is null || weapons is null || density is null || attachments is null
             || detectors is null || blueprints is null)
         {
