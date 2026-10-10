@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-10 — Mutant Hit Damage section placement
+
+The existing **Mutant Hit Damage** slider is a member of the **Mutant Health** Combat section, immediately after the Mutant Health radar, not an orphaned standalone **Mutant Combat** section between framed panels. It remains a compact independent slider with unchanged ID, value, preset, vanilla markers, and original CFG writer. Parameter catalog grouping and explicit Combat sort order must match the rendered layout; no duplicate text or new control is introduced.
+
 ### 2026-10-10 — Bleeding Damage Profile vertical Y-axis caption
 
 The **HP / TICK** Y-axis title in BleedingCurveControl is rotated 90 degrees counterclockwise and centered next to the chart vertically, matching other profile graph axis labels. The plot geometry, tick numbers, hit targets and compact overall dimensions remain unchanged; do not display the title horizontally at the upper-left.

@@ -1551,8 +1551,9 @@ public sealed class MainViewModel : ObservableObject
                 "combat.npcAttackCooldown" => 20,
                 "combat.npcHipAccuracy" => 30,
 
-                // Mutants
-                "combat.mutantDamage" => 40,
+                // Mutant Hit Damage sits inside the Mutant Health section,
+                // directly after its primary radar instead of an orphan group.
+                "combat.mutantDamage" => 131,
                 // Your Weapons
                 "combat.playerWeaponDamage" => 60,
                 "combat.playerHeadshotMultiplier" => 70,

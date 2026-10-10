@@ -558,7 +558,7 @@
     {
       "id": "combat.mutantDamage",
       "tab": "combat",
-      "group": "Mutant Combat",
+      "group": "Mutant Health",
       "label": "Mutant Hit Damage",
       "description": "Changes how much damage mutant attacks deal when they connect.",
       "control": "slider",
