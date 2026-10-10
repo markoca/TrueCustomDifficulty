@@ -1,5 +1,10 @@
 # True Custom Difficulty
 
+### 2026-10-10 — Rationale CONTROLS compile syntax correction
+
+Fixed a C# switch-expression punctuation typo in `ParameterViewModel.ControlHelp`: the `RadiationTreatment` arm ended in a semicolon rather than the required comma, causing `CS1003` at `ParameterViewModel.cs(66,134)`. The player-facing wording, right-panel layout and writer mappings are unchanged. `tools/audit_rationale_ui.py` now verifies that every named switch-expression instruction arm ends with a comma so this error cannot pass the source audit again. **Static arm review passes; an actual .NET 10 Windows publish and Wine UI acceptance remain to be run locally.**
+
+
 ### 2026-10-10 — Global right-hand rationale and CONTROLS pass (authoritative)
 
 **Source of truth:** `MainWindow.xaml`, `ParameterViewModel.RationaleDisplay` and `ParameterViewModel.ControlHelp`. This updates the presentation of every gameplay tab without changing any CFG/preset parameter, values, calculations, writer route, sliders, hit targets, or actual reset behavior.
