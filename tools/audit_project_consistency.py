@@ -782,8 +782,8 @@ for _pid in _sac_ids:
     _slider, _vanilla = _row.get("slider") or {}, _row.get("vanilla") or {}
     if _row.get("group") != "Mutant Combat" or _row.get("control") != "slider":
         _sac_errors.append(f"{_pid}: group/control changed")
-    if (_slider.get("min"), _slider.get("max"), _slider.get("step")) != (0.25, 2, 0.1):
-        _sac_errors.append(f"{_pid}: native 0.25-2x / 0.10x step changed")
+    if (_slider.get("min"), _slider.get("max"), _slider.get("step")) != (1.0 / 3.0, 2, 0.25):
+        _sac_errors.append(f"{_pid}: native wait limits must map 0.5-3x recharge / visible 0.25x rate ticks")
     if any(_vanilla.get(mode) != value for mode, value in
            (("Novice", 1), ("Stalker", 1), ("Veteran", 1), ("Master", 0.5))):
         _sac_errors.append(f"{_pid}: Base Preset reference changed")
@@ -796,15 +796,17 @@ else:
             _sac_errors.append(f"{_pid}: absent from current renderer")
     if 'new("combat.mutantAttackCooldown",' not in _sac_src or 'new("combat.mutantDamage",' not in _sac_src:
         _sac_errors.append("current Mutant Combat frequency/damage axes missing")
-    if "selected.TickFrequency" not in _sac_src and "parameter.TickFrequency" not in _sac_src:
-        _sac_errors.append("native 0.10x step propagation missing")
+    if ("selected.TickFrequency" not in _sac_src
+            or "var rate = RechargeRate(selected.CurrentNumber)" not in _sac_src
+            or "parameter.CurrentNumber = raw;" not in _sac_src):
+        _sac_errors.append("0.25x recharge stepping must use inverse-rate keyboard and mouse controls")
 _sac_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
 if "specialAbilityCooldownParameterIds.Contains(p.Id)" not in _sac_vm:
     _sac_errors.append("Mutant Combat backing IDs missing from live VM")
 if _sac_errors:
     fail("Mutant Combat cooldown contract: " + "; ".join(_sac_errors))
 else:
-    note("Mutant Combat cooldown: 8 real families, 0.10x source step, N/S/V=1x Master=0.5x; in-game runtime still unverified")
+    note("Mutant Combat cooldown: 8 real families, 0.25x displayed recharge steps (0.5-3x), N/S/V=1x Master=2x recharge; in-game runtime still unverified")
 
 # Mutant health audit gate (v0.9.26.44).
 _mh_path = DOCS / "combat" / "mutant-health-audit.csv"
