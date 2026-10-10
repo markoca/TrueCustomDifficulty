@@ -633,7 +633,12 @@ public sealed class ParameterViewModel : ObservableObject
         && (!IsVisualAggregateMember || IsVisualAggregateAnchor)
         && (IsVisualAggregateAnchor || (_dependencyEnabledProvider?.Invoke() ?? true));
     public string ToggleStateLabel => CurrentBoolean ? "ON" : "OFF";
-    public double Minimum => Definition.Slider?.Min ?? 0;
+    // Mutant special ability cards display RECHARGE = 1 / wait multiplier.
+    // At least 1/3x wait is required for an exact maximum of 3x recharge.
+    // Keep the same bound when loading older presets or a stale override catalog.
+    public double Minimum => Id.StartsWith("combat.mutantCooldown.", StringComparison.Ordinal)
+        ? Math.Max(1.0 / 3.0, Definition.Slider?.Min ?? 1.0 / 3.0)
+        : Definition.Slider?.Min ?? 0;
     // Combat UI hard limits: preserve these gameplay-safe maximums even if an old
     // preset or a future catalog update reintroduces the former 4x / >1x ranges.
     public double Maximum => Id switch
