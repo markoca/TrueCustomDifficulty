@@ -11,6 +11,7 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | A1 | `python tools/audit_combat_contract.py` | Linux / Windows | 39 Combat settings, 68 direct routes, special-family mappings |
 | A2 | `python tools/audit_ui_cfg_contract.py` | Linux / Windows | 244 catalog settings, 231 effective controls, writer ownership |
 | A3 | `python tools/audit_project_consistency.py` | Linux / Windows | Live catalog, manifest and UI source consistency; historical `[NOT RUN]` is not PASS |
+| A4 | `python3 tools/audit_rationale_ui.py` | Linux / Windows | Global right-side WHAT IT DOES vs CONTROLS separation, 33 family guides and muted-footer ordering (static, not Wine proof) |
 | B1 | `python tools/audit_cfg_dump_provenance.py --base-zip BASE --dlc1-zip DLC1` | Linux / Windows | Actual source CFG filenames and 16 Mutant Health MaxHP fields |
 | B2 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --out REPORT.json --strict` | Linux / Windows | Every 1,224 direct source/CFG field check (strict) |
 | B3 | Same as B2 plus `--parameter-prefix combat.` | Linux / Windows | 68 direct Combat source checks (strict) |
