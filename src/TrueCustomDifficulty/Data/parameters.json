@@ -10677,51 +10677,45 @@
       "exposeInUi": false
     },
     {
-      "id": "loot.looseUniqueWeaponsRemoved",
+      "id": "loot.looseUniqueWeaponShuffle",
       "tab": "loot",
       "group": "World Loot",
-      "label": "Loose Unique Weapons",
-      "description": "Remove a chosen percentage of nine verified standalone unique weapon pickups in the open world; ordinary weapons and quest-scripted spawn nodes remain untouched.",
-      "control": "slider",
-      "valueKind": "ratio",
+      "label": "Shuffle Unique Weapons",
+      "description": "Shuffle nine verified non-quest-referenced loose unique weapons among their nine existing world pickup locations. All weapons remain in the world once each.",
+      "control": "toggle",
+      "valueKind": "boolean",
       "display": {
-        "primary": "percent",
-        "rawFormat": "0.00",
-        "valueLabel": "Unique Weapons Removed"
+        "valueLabel": "Unique Weapon Shuffle"
       },
       "vanilla": {
-        "All": 0
+        "All": false
       },
       "default": {
         "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0,
-        "max": 1,
-        "step": 0.01,
-        "stepMode": "absolute"
       },
       "targets": [
         {
           "scope": "baseGame",
           "file": "GameData/SpawnActorPrototypes/WorldMap_WP/<ActorSID>.cfg",
-          "prototype": "exact non-deferred world actor allowlist from source-verified manifest",
+          "prototype": "nine exact audited non-deferred unique weapon pickups",
           "path": "<ActorSID>",
-          "operation": "randomRemoveNodePercent"
+          "operation": "shuffleActorIdentityAndPresentation"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Nine exact Item actor SIDs from source-verified original world placement and the supplied removal PAK; no global ItemSID overrides.",
-          "No exact actor or item SID reference was found in base or DLC1 QuestNodePrototypes.cfg. Other scripted dependencies and actual game behavior remain unverified.",
-          "0% emits no removal; 100% removes the nine allowlisted actors; intermediate values select without replacement using round-away-from-zero.",
-          "This remains separate from ordinary World Weapon Shuffle and Loose World Loot removal."
+          "OFF produces zero overrides; ON deranges all nine item identities across the original nine physical world pickup locations.",
+          "Exactly one copy of each of nine unique weapons remains; no actor removenode is emitted.",
+          "Swaps SpawnedPrototypeSID, ItemSID, MeshPath, Durability and DisablePhysicsAndCollision as an original weapon tuple; location coordinates and Actor SID stay unchanged.",
+          "These nine have no literal Actor SID or ItemSID references in base/DLC1 QuestNodePrototypes.cfg. Broader script dependence and gameplay behavior are not yet proven.",
+          "Never touches quest/scripted/deferred actor populations, ordinary weapon locations, trader stock, stashes, NPC items or DLC1 weapon variants.",
+          "This toggle is independent from regular World Weapon Shuffle and Weapon Density."
         ]
       },
-      "rationale": "Offer narrow source-backed world pickup depletion without modifying unique weapon definitions, regular world weapon distribution or quest generators.",
-      "logic": "0% retains all nine loose unique weapon pickups; higher values remove a corresponding fraction at build time.",
-      "interaction": "Standalone sixth World Loot Depletion slider; no separate checkbox.",
+      "rationale": "Move source-verified loose unique weapons between known pickup locations without removing them.",
+      "logic": "OFF retains original pickups; ON always moves all nine weapons, exactly once each, to other audited loose unique weapon locations.",
+      "interaction": "Compact independent toggle in World Placement, with native right-click reset and group R reset.",
       "exposeInUi": false
     },
     {
