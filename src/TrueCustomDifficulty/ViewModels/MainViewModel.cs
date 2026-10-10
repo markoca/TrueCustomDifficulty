@@ -807,6 +807,48 @@ public sealed class MainViewModel : ObservableObject
                 };
         }
 
+        // Medical Items: editor-only common physical ruler ceilings. Every
+        // source retains its own value and CFG writer; no synthetic CFG field.
+        // OFF restores native catalog maxima, clamping only excess values.
+        var medicalMode = parametersById["health.bandageHealing"];
+        var medicalHealingIds = new[]
+        {
+            "health.bandageHealing", "health.medkitHealing",
+            "health.armyMedkitHealing", "health.ecoMedkitHealing"
+        };
+        var medicalBleedingIds = new[]
+        {
+            "health.bandageBleeding", "health.medkitBleeding",
+            "health.armyMedkitBleeding", "health.ecoMedkitBleeding"
+        };
+        var medicalRadiationIds = new[]
+        {
+            "health.ecoMedkitAntirad", "health.antiRadRadiation",
+            "health.beerRadiationRemoval", "health.vodkaRadiationRemoval"
+        };
+        var medicalSources = new List<ParameterViewModel>();
+        foreach (var (ids, expandedMaximum) in new[]
+        {
+            (medicalHealingIds, 200.0),
+            (medicalBleedingIds, 100.0),
+            (medicalRadiationIds, 200.0)
+        })
+        {
+            foreach (var id in ids)
+            {
+                var source = parametersById[id];
+                medicalSources.Add(source);
+                source.SetDynamicMaximumProvider(() => medicalMode.MedicalOverrideEnabled
+                    ? expandedMaximum : source.Definition.Slider!.Max);
+            }
+        }
+        medicalMode.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ParameterViewModel.MedicalOverrideEnabled))
+                foreach (var source in medicalSources)
+                    source.RefreshDynamicMaximum();
+        };
+
         // Exactly one editor-only override for every drink's duration
         // ceiling. OFF preserves the current source-specific native maxima;
         // ON makes the full existing 0..270-second timeline available to all
@@ -1029,8 +1071,12 @@ public sealed class MainViewModel : ObservableObject
         }
 
         if (resetAll)
+        {
             AllParameters.First(p => p.Id == "survival.instantStaminaRestore")
                 .DrinkDurationOverrideEnabled = false;
+            AllParameters.First(p => p.Id == "health.bandageHealing")
+                .MedicalOverrideEnabled = false;
+        }
         _sliderConstraintCoordinator.NormalizeAll();
         RefreshState();
     }
@@ -1043,6 +1089,9 @@ public sealed class MainViewModel : ObservableObject
         _suspendSliderConstraints = true;
         try
         {
+            if (SelectedTab.Id == "health")
+                AllParameters.First(p => p.Id == "health.bandageHealing")
+                    .MedicalOverrideEnabled = false;
             if (SelectedTab.Id == "survival")
                 AllParameters.First(p => p.Id == "survival.instantStaminaRestore")
                     .DrinkDurationOverrideEnabled = false;
@@ -1192,6 +1241,8 @@ public sealed class MainViewModel : ObservableObject
             ReferenceDifficulty = SelectedReferenceDifficulty,
             DrinkDurationOverride = AllParameters.First(p =>
                 p.Id == "survival.instantStaminaRestore").DrinkDurationOverrideEnabled,
+            MedicalOverride = AllParameters.First(p =>
+                p.Id == "health.bandageHealing").MedicalOverrideEnabled,
             SavedAtUtc = DateTimeOffset.UtcNow,
             // Save the complete control state, not only modified values.
             // This makes a preset deterministic when loaded into a fresh session.
@@ -1264,6 +1315,8 @@ public sealed class MainViewModel : ObservableObject
                 // so values up to 270s are not truncated at old per-drink caps.
                 parametersById["survival.instantStaminaRestore"]
                     .DrinkDurationOverrideEnabled = preset.DrinkDurationOverride;
+                parametersById["health.bandageHealing"]
+                    .MedicalOverrideEnabled = preset.MedicalOverride;
                 var migrateAttackFrequency = RequiresAttackFrequencyPresetMigration(preset.ToolVersion);
                 var migratePositiveTreatmentMagnitude = RequiresPositiveTreatmentMagnitudePresetMigration(preset.ToolVersion);
                 var migratePositiveAimingPenaltyMagnitude = RequiresPositiveAimingPenaltyMagnitudePresetMigration(preset.ToolVersion);
