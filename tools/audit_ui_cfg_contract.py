@@ -102,8 +102,8 @@ def main():
     # These are the CURRENT catalog invariants, not v0.9.26.51's 199/188
     # obsolete snapshot. The core must route every parameter, even hidden
     # aggregate backings; 13 independent source IDs are audit-only.
-    if len(parameters) != 244:
-        fail(f"catalog count drifted: {len(parameters)} != 244")
+    if len(parameters) != 245:
+        fail(f"catalog count drifted: {len(parameters)} != 245")
     if len(all_ids) != len(parameters):
         fail("duplicate catalog parameter IDs")
 
@@ -114,11 +114,11 @@ def main():
     hidden_non_ui = all_ids - effective_ui_ids
     backing_ids = hidden_ids - EXPECTED_HIDDEN_NON_UI
 
-    if len(visible_ids) != 152 or len(hidden_ids) != 92:
-        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 152/92")
+    if len(visible_ids) != 152 or len(hidden_ids) != 93:
+        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 152/93")
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
-    if len(effective_ui_ids) != 231 or len(backing_ids) != 79:
+    if len(effective_ui_ids) != 232 or len(backing_ids) != 80:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor
