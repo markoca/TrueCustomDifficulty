@@ -163,10 +163,21 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
         var chart = new Rect(52.0, PlotTop, Math.Max(440.0, ActualWidth - 111.0), PlotHeight);
         var laneWidth = chart.Width / Items.Length;
-        DrawText(dc, "HP", new Point(19.0, 108.0), HealthTypography.Axis, muted,
-            FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "PTS", new Point(ActualWidth - 14.0, 108.0),
-            HealthTypography.Axis, BleedingAccent, FontWeights.SemiBold);
+        // Vertical Y-axis captions belong to their corresponding physical
+        // rulers, not to the per-item bars. Gold = HP / HEAL on the left;
+        // copper = PTS / BLEED on the right. Tick numerals stay horizontal.
+        var axisMidY = chart.Top + chart.Height / 2.0;
+        var hpAxisCenter = new Point(chart.Left - 38.0, axisMidY);
+        dc.PushTransform(new RotateTransform(-90.0, hpAxisCenter.X, hpAxisCenter.Y));
+        DrawCenteredText(dc, "HP", hpAxisCenter, HealthTypography.Axis,
+            accent, FontWeights.Bold);
+        dc.Pop();
+
+        var ptsAxisCenter = new Point(chart.Right + 44.0, axisMidY);
+        dc.PushTransform(new RotateTransform(90.0, ptsAxisCenter.X, ptsAxisCenter.Y));
+        DrawCenteredText(dc, "PTS", ptsAxisCenter, HealthTypography.Axis,
+            BleedingAccent, FontWeights.Bold);
+        dc.Pop();
 
         // Aligned grid lines are two labeled rulers, NOT a conversion:
         // left = 0..200 healing HP, right = 0..100 bleeding PTS.

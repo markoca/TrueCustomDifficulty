@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-10 — Medical Items colored vertical Y-axis titles (current binding refinement)
+
+In the existing **MEDICAL ITEMS** paired vertical-bar graph, the **left HP axis title** is **vertical (−90°)**, centered beside its 0–200 HP ruler and drawn in the **same gold AccentBrush as the HEAL columns**. The **right PTS axis title** is **vertical (+90°)**, centered beside its 0–100 PTS ruler and drawn in the **same copper BleedingAccent as the BLEED columns**. The titles use the reserved side gutters (left `chart.Left − 38 DIP`, right `chart.Right + 44 DIP`) and do not interfere with horizontal muted axis tick values or the chart/column hit areas. Both must match the respective column colors, not swap sides or inherit neutral gray. No extra legend, axis scaling change, increased chart size, preset or CFG changes are introduced.
+
 ### 2026-10-10 — Medical Items final spacing and contrast refinement (latest binding design)
 
 Keep the **four HEAL/BLEED vertical pairs in one MEDICAL ITEMS row**, but tighten each pair with `spread = Min(27 DIP, laneWidth × 0.235)` rather than the former 35-DIP spread. The gold HEAL bar stays wider and on the left; the copper BLEED sub-bar stays narrower and on the right. This must not merge the independently editable hit areas or overlap the HP/PTS readouts at the existing 560-DIP minimum board width. Tone down the *native maximum* gray cap to muted opacity **0.38**, stroke **0.8 DIP**, and the separate muted reference tick to opacity **0.68**, stroke **1.35 DIP**, retaining the brighter current-value top caps. The **Food Healing OFF checkbox** retains `BooleanCheckboxChrome` universal 20-DIP shape, checkmark and hover behavior, but receives a clearer muted border (opacity **0.75**) in the Medical Items board. No extra UI framing, text, enlarged board, CFG/preset changes or modifications to other checkboxes.

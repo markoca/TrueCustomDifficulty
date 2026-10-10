@@ -1,5 +1,9 @@
 # Pre-release test and evidence runbook
 
+### Medical Items colored vertical HP/PTS axes
+
+In Health > MEDICAL ITEMS, verify **HP** is written vertically in healing gold on the **left**, and **PTS** vertically in bleeding copper on the **right**. Both captions should be centered along the height of their respective scales, with 0–200 HP and 0–100 PTS tick numbers still horizontal, muted and legible. At narrow and normal window widths, ensure no collision with numeric ticks, vertical bars, food checkbox or outer frame. All four HEAL/BLEED pairs, independent editing, native maximums, hover caps and CFG output must remain unchanged. The static audit enforces the code geometry, colors and rotation; local Wine screenshot acceptance remains pending.
+
 ### Medical Items final polish acceptance — spacing, reference contrast, Food Healing
 
 At both the normal 920-DIP-wide board and the narrow 560-DIP minimum, verify that HEAL and BLEED bars now sit closer together **within each item pair**, without touching, without merging click/drag zones, and without colliding HP/PTS captions. Ensure distinct pair groups remain separated. The native maximum guide must be visibly quieter than the live gold/copper cap; the muted reference tick remains visible but unobtrusive. Verify Food Healing's OFF-state 20-DIP checkbox outline is clearly visible against the dark board, brightens on hover, toggles on click/Space when appropriate, and shows the original checkmark when ON. All four pairs' mouse drag, white hover cap, native 5-PTS step, keyboard adjustment, right-click reset, `R` group reset and independent CFG writes remain unchanged. Static A3 source test locks the new appearance; final Wine screenshot review is still required.

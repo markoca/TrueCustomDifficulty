@@ -1714,6 +1714,26 @@ else:
     note("Medical Items: four HEAL/BLEED native bars in one row, independent scales, food toggle")
 
 
+# Medical Items Y-axis labels must follow the matching slider colors
+# and be rotated vertically inside the existing dedicated side gutters.
+_medical_axis_contract = (
+    'var hpAxisCenter = new Point(chart.Left - 38.0, axisMidY);',
+    'new RotateTransform(-90.0, hpAxisCenter.X, hpAxisCenter.Y)',
+    'DrawCenteredText(dc, "HP", hpAxisCenter, HealthTypography.Axis,',
+    'accent, FontWeights.Bold);',
+    'var ptsAxisCenter = new Point(chart.Right + 44.0, axisMidY);',
+    'new RotateTransform(90.0, ptsAxisCenter.X, ptsAxisCenter.Y)',
+    'DrawCenteredText(dc, "PTS", ptsAxisCenter, HealthTypography.Axis,',
+    'BleedingAccent, FontWeights.Bold);',
+)
+if any(token not in _medical_source for token in _medical_axis_contract):
+    fail("Medical Items left gold HP and right copper PTS Y-axis captions must stay vertical")
+elif 'DrawText(dc, "HP", new Point(19.0, 108.0)' in _medical_source:
+    fail("Medical Items obsolete horizontal HP axis caption returned")
+else:
+    note("Medical Items vertical Y-axis titles: gold HP left and copper PTS right")
+
+
 # Medical Items final polish: compact pair spacing, subdued ceiling/reference
 # ticks and stronger OFF checkbox edge, without changing canonical checkbox chrome.
 _medical_polish_required = (
