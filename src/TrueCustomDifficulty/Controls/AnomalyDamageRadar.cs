@@ -104,6 +104,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             or nameof(ParameterViewModel.IsModified)
             or nameof(ParameterViewModel.CurrentDisplay)
             or nameof(ParameterViewModel.EffectiveDisplay)
+            or nameof(ParameterViewModel.EffectiveDamageValue)
             or nameof(ParameterViewModel.ReferenceNumber))
         {
             InvalidateVisual();
@@ -178,10 +179,18 @@ public sealed class AnomalyDamageRadar : FrameworkElement
                 new Point(barLeft - 3, referenceY), new Point(barLeft + width + 3, referenceY));
             VerticalBarHandleChrome.Draw(dc, new Point(center, currentY),
                 width, accent, _hoverRow == i);
-            var value = Anomalies[i].IsMultiplier
-                ? $"{parameter.CurrentNumber:0.##}x" : $"{parameter.CurrentNumber:0.#}";
-            DrawCenteredText(dc, value, new Point(center, 88), 9.3,
+            // Live combined effect: individual CFG strength times the global
+            // Anomaly Damage difficulty multiplier. Keep the native value
+            // visible in muted text because dragging still edits that source.
+            var inherited = parameter.EffectiveDamageValue;
+            var effectiveText = Anomalies[i].IsMultiplier
+                ? $"{inherited:0.##}x" : $"{inherited:0.#}";
+            DrawCenteredText(dc, effectiveText, new Point(center, 83), 9.3,
                 parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
+            var nativeText = Anomalies[i].IsMultiplier
+                ? $"{parameter.CurrentNumber:0.##}x" : $"{parameter.CurrentNumber:0.#}";
+            DrawCenteredText(dc, nativeText, new Point(center, 99), 9.0,
+                muted, FontWeights.SemiBold);
             var words = Anomalies[i].Label.Split(' ');
             if (words.Length == 1)
                 DrawCenteredText(dc, words[0], new Point(center, 318), 8.5,
