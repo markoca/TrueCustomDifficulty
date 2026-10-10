@@ -1317,6 +1317,9 @@ public sealed class ParameterViewModel : ObservableObject
         "health.beerRadiationRemoval" or
         "health.vodkaRadiationRemoval";
 
+    public double EffectiveDamageMultiplier => _effectiveDamageMultiplierProvider?.Invoke() ?? 1.0;
+    public double EffectiveDamageValue => CurrentNumber * EffectiveDamageMultiplier;
+
     public string EffectiveDisplay
     {
         get
@@ -1537,6 +1540,8 @@ public sealed class ParameterViewModel : ObservableObject
     {
         OnPropertyChanged(nameof(TechnicalDisplay));
         OnPropertyChanged(nameof(EffectiveDisplay));
+        OnPropertyChanged(nameof(EffectiveDamageMultiplier));
+        OnPropertyChanged(nameof(EffectiveDamageValue));
         OnPropertyChanged(nameof(EffectiveDetails));
         OnPropertyChanged(nameof(ValueMeaning));
         OnPropertyChanged(nameof(PracticalQuantityDisplay));
