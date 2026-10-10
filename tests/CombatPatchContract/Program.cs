@@ -49,8 +49,23 @@ internal static class Program
                 var parameter = Get(rechargeVM, id);
                 Check(parameter.IsSlider && Math.Abs(parameter.Minimum - 1.0 / 3.0) < 0.0000001
                     && Math.Abs(parameter.Maximum - 2.0) < 0.0000001
-                    && Math.Abs(parameter.TickFrequency - 0.1) < 0.0000001,
-                    id + ": incorrect source range/step for 0.5x to 3x recharge");
+                    && Math.Abs(parameter.TickFrequency - 0.25) < 0.0000001
+                    && Math.Abs(parameter.Definition.Slider!.Step - 0.25) < 0.0000001,
+                    id + ": incorrect source range/0.25x visible recharge step");
+
+                // Every actual visible 0.25x tick must be editable via the
+                // production ViewModel CurrentNumber setter. Intermediate
+                // source waits are deliberately non-uniform (1 / rate).
+                for (var tick = 2; tick <= 12; tick++)
+                {
+                    var desiredRate = tick * 0.25;
+                    parameter.CurrentNumber = 1.0 / desiredRate;
+                    Check(Math.Abs(1.0 / parameter.CurrentNumber - desiredRate) < 0.0000001,
+                        id + ": missing 0.25x recharge tick " + desiredRate);
+                }
+                parameter.CurrentNumber = 1.0 / 1.62; // between visible steps 1.50x and 1.75x
+                Check(Math.Abs(1.0 / parameter.CurrentNumber - 1.5) < 0.0000001,
+                    id + ": mouse/loaded rate failed to snap to the nearest 0.25x tick");
                 parameter.CurrentNumber = 0.25; // old 4x user preset
                 Check(Math.Abs(1.0 / parameter.CurrentNumber - 3.0) < 0.0000001,
                     id + ": older 4x wait bypassed the 3x recharge limit");
@@ -75,6 +90,23 @@ internal static class Program
                         .Value("CooldownMultiplier");
                     Check(exactWait == "0.3333333333333333",
                         "3x boundary was truncated, making recharge faster than 3x");
+                });
+
+            // A quarter-step in displayed recharge is a fractional wait,
+            // not +0.25 to the raw multiplier. Check the production CFG route.
+            Case("Master-Chimera-1_75x-recharge", "Master",
+                vm =>
+                {
+                    var chimera = Get(vm, "combat.mutantCooldown.chimera");
+                    chimera.CurrentNumber = 1.0 / 1.75;
+                    Check(Math.Abs(1.0 / chimera.CurrentNumber - 1.75) < 0.0000001,
+                        "1.75x recharge was not accepted on the live quarter-rate grid");
+                },
+                (root, result) =>
+                {
+                    Check(result.EditCount == 6 && result.ParameterCount == 1,
+                        "1.75x recharge must edit only Chimera's six native wait values");
+                    MasterCooldown(root, new[] { "Chimera" }, 1.0 / 1.75);
                 });
 
             Case("Master-Chimera-only", "Master",
