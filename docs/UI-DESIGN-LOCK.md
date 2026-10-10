@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-10 — Drink duration slider increments (authoritative)
+
+All eight independent drink duration sliders snap in real seconds: **Override Limits OFF = 1-second steps; ON = 5-second steps**. Mouse dragging/clicking and keyboard arrows use the same increment; Page Up/Down use ten increments. Five multiplier-backed main controls convert seconds to the correct source multiplier (30/45/20/20/90 seconds per 1x); three secondary tracks use seconds directly. Existing original and 270s override caps and parent constraints continue to apply. Mode changes alone do not alter the current values, and no new CFG or preset fields, UI text or controls are added. The generated BPatch retains the source duration fields.
+
 ### 2026-10-10 — OVERRIDE LIMITS: all eight drink duration editors (current authoritative contract)
 
 **One compact global checkbox labeled `OVERRIDE LIMITS`** appears inside the `EFFECT DURATION / SECONDS` frame's top-right header, using the *same* 20-DIP `BooleanCheckboxChrome` as all other booleans. It is stored as preset metadata `drinkDurationOverride` (default false; absent in older presets means OFF), NOT a fictitious CFG source. A hit target `DrinkDurationOverride` supports mouse click, Space on focus, right-click OFF/reset and R on the Consumable group; hover provides the short explanation. The timeline axis labels are shifted down to leave the checkbox/header row clear; the three source-backed short duration cards also move down by 40 DIP from the previous layout. Renderer and measurement both use `ConsumableTimelineHeight(width) = 200 + 82*rows + 8*(rows-1) + 12` with the existing responsive three/two/one-column behavior.

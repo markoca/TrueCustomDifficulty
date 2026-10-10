@@ -1,5 +1,9 @@
 # Pre-release test and evidence runbook
 
+### Drink Duration step manual acceptance (C3 extension)
+
+With Override OFF, drag/click and arrow-step all five main and three secondary durations in 1s increments. With Override ON, repeat in 5s increments. Page Up/Down must move ten steps; verify independent native and extended caps, live child bounds in OFF, no value changes solely from switching ON, and no additional CFG targets. Local Wine UI and runtime verification pending.
+
 **Canonical checklist for True Custom Difficulty before each release candidate.**
 Run on the **exact Git commit** to be published. A static PASS is not
 gameplay verification. Do not issue v1.0 without explicit approval.

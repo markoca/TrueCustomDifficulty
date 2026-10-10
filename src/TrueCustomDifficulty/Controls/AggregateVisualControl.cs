@@ -4716,7 +4716,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             : isRangeMin ? _selectedParameter.CurrentMinNumber
             : isRangeMax ? _selectedParameter.CurrentMaxNumber
             : _selectedParameter.CurrentNumber;
-        var step = isChoice ? _selectedParameter.ChoiceTickFrequency : _selectedParameter.TickFrequency;
+        var step = isChoice ? _selectedParameter.ChoiceTickFrequency :
+            ConsumableDurationStep(_selectedParameter);
 
         double next;
         if (e.Key == Key.Home)
@@ -5067,9 +5068,31 @@ public sealed class AggregateVisualControl : FrameworkElement
     private bool IsSelected(ParameterViewModel? parameter)
         => parameter is not null && ReferenceEquals(parameter, _selectedParameter);
 
-    private static double Snap(ParameterViewModel parameter, double raw)
+    // All eight drink durations step in real seconds: OFF = 1s, ON = 5s.
+    private static double ConsumableDurationSecondsPerUnit(string id) => id switch
     {
-        var step = Math.Max(0.0000001, parameter.TickFrequency);
+        "survival.waterEffectDuration" => 30.0,
+        "survival.energyDrinkEffectDuration" => 45.0,
+        "survival.vodkaEffectDuration" or "survival.beerEffectDuration" => 20.0,
+        "survival.magicVodkaEffectDuration" => 90.0,
+        "survival.waterRegenDuration" or "survival.energyFullCostDuration" or
+        "survival.energyPartialCostDuration" => 1.0,
+        _ => 0.0
+    };
+
+    private double ConsumableDurationStep(ParameterViewModel parameter)
+    {
+        var secondsPerUnit = Family == "ConsumableMixer"
+            ? ConsumableDurationSecondsPerUnit(parameter.Id) : 0.0;
+        if (secondsPerUnit <= 0.0)
+            return parameter.TickFrequency;
+        var anchor = P("survival.instantStaminaRestore");
+        return (anchor?.DrinkDurationOverrideEnabled == true ? 5.0 : 1.0) / secondsPerUnit;
+    }
+
+    private double Snap(ParameterViewModel parameter, double raw)
+    {
+        var step = Math.Max(0.0000001, ConsumableDurationStep(parameter));
         var snapped = parameter.Minimum +
                       Math.Round((raw - parameter.Minimum) / step, MidpointRounding.AwayFromZero) * step;
 
