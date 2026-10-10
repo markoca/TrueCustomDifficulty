@@ -1,5 +1,9 @@
 # Pre-release test and evidence runbook
 
+### Bleeding Treatment 100-PTS axis and Bandage 1x ceiling (Health/Stamina acceptance)
+
+Verify that Bleeding Treatment Y ticks show **0, 25, 50, 75, 100 PTS**; an unchanged Bandage at **100 PTS** reaches the chart top. Bandage cannot exceed **100 PTS / 1x**, including mouse dragging, keyboard, reference snapping and import of an older 200-PTS preset. Medkit / Army / Scientific native maxima remain **30 / 70 / 50 PTS**, with all sources retaining **5-PTS** steps. Check that white-on-hover horizontal cap stays aligned to each active bar top, and muted native max/reference ticks remain visible. The positive source magnitude still maps to the original `BandageBleeding4.ValueMin|ValueMax` **negative** CFG operation and must not generate extra fields. The HealthStaminaPatchContract includes old-preset clamping and true one-times upper bound; A3 source audit checks the axis and caps. Local Wine and UE runtime acceptance remain required.
+
 ### Medical Healing / Bleeding Treatment vertical bar hover acceptance
 
 Test three **MEDKIT HEALING** columns and all four **BLEEDING TREATMENT** columns under Wine: default current values show a short gold horizontal cap aligned to each bar's actual top at current HP/PTS; moving over a column turns **only that cap white with a restrained horizontal glow**, never an unrelated round ring. Drag and verify the highlighted cap tracks the correct source-value height, stays inside the genuine native range and returns to gold when pointer leaves. Gray original-value and native-max lines remain muted; changed numeric values still use the usual yellow highlight. Check Bandage's separate horizontal healing slider still has its standard round hover marker. A3 static audit also checks the shared bar cap, both production renderer calls and the narrow suppression of Bleeding Treatment generic circular overlay. Manual Wine visual acceptance remains pending.

@@ -3864,7 +3864,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 200,
+        "max": 100,
         "step": 5,
         "stepMode": "absolute"
       },

@@ -1687,6 +1687,28 @@ else:
         note("Medical healing and bleeding treatment: matching live-value bar-top caps, no circular hover rings")
 
 
+# Bleeding Treatment uses a common 0..100 PTS Y ruler and four
+# independent source caps. Bandage's 100 PTS / 1x is a real source cap.
+_bleeding_caps_expected = {
+    "health.bandageBleeding": 100,
+    "health.medkitBleeding": 30,
+    "health.armyMedkitBleeding": 70,
+    "health.ecoMedkitBleeding": 50,
+}
+_bleeding_caps_by_id = {p.get("id"): p for p in parameters
+                        if p.get("id") in _bleeding_caps_expected}
+if any(_bleeding_caps_by_id.get(pid, {}).get("slider", {}).get("max") != maximum
+       for pid, maximum in _bleeding_caps_expected.items()):
+    fail("Bleeding Treatment native maxima must be 100/30/70/50 PTS")
+elif ('const double commonMaximum = 100.0;' not in _bleeding_bar_section
+      or 'for (var tick = 0; tick <= 100; tick += 25)' not in _bleeding_bar_section
+      or 'AddVerticalTarget(parameter, hit, map, 0.0, parameter.Maximum);'
+      not in _bleeding_bar_section):
+    fail("Bleeding Treatment shared Y axis/hit map must respect 0..100 PTS")
+else:
+    note("Bleeding Treatment chart 0..100 PTS; Bandage 1x; native maxima locked")
+
+
 # Hunger Survival Profile LOW handle: avoid a second hover circle at the
 # midpoint of the 2D plot. The real LOW handle owns its glow at Y(0).
 _hunger_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")

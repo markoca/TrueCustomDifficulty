@@ -2723,7 +2723,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
     // BLEEDING TREATMENT — four native point quantities on a comparable
-    // common 0–200 ruler. Every lane remains a separate CFG source.
+    // common 0–100 PTS ruler; Bandage is capped at its original 1x (100 PTS).
+    // Every lane retains its independent source-native editable maximum.
     private void DrawBleedingTreatmentMixer(
         DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush accent, Brush panel)
@@ -2743,11 +2744,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(18.0, 58.0),
             11.0, muted, FontWeights.SemiBold);
 
-        const double commonMaximum = 200.0;
+        const double commonMaximum = 100.0;
         var chart = new Rect(51.0, 119.0,
             Math.Max(1.0, ActualWidth - 76.0), 197.0);
 
-        for (var tick = 0; tick <= 200; tick += 50)
+        for (var tick = 0; tick <= 100; tick += 25)
         {
             var y = ValueToY(tick, 0.0, commonMaximum, chart);
             dc.DrawLine(new Pen(CloneWithOpacity(border, 0.47), 1.0),
@@ -2780,8 +2781,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 0.0, commonMaximum, chart);
             var label = titles[i];
 
-            // Pale vertical band denotes the allowed native domain,
-            // not a fictitious ability to edit this channel to 200 PTS.
+            // Pale band marks the native ceiling for this source:
+            // Bandage 100 (1x), Medkit 30, Army 70, Scientific 50 PTS.
             dc.DrawRectangle(CloneWithOpacity(border, 0.11), null,
                 new Rect(centerX - barWidth / 2.0, nativeTop, barWidth,
                     Math.Max(1.0, chart.Bottom - nativeTop)));
@@ -2817,9 +2818,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                     new Point(centerX, 353.0),
                     10.4, text, FontWeights.SemiBold);
 
-            // Hit map includes only this channel's real 0..source.Maximum.
-            // Mapping a shorter vertical rectangle to the native range
-            // keeps the existing 5-point snapping and precise hover halo.
+            // Native maxima govern the hit map independently of the ruler;
+            // preserve 5-PTS snapping and source-exact bar-top hover.
             var map = new Rect(centerX - barWidth / 2.0,
                 nativeTop, barWidth, Math.Max(1.0, chart.Bottom - nativeTop));
             var hit = new Rect(centerX - width / 2.0 + 5.0,

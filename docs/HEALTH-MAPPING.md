@@ -1,5 +1,9 @@
 # Health CFG Mapping — v0.1.21
 
+### 2026-10-10 — Current Bleeding Treatment UI scale correction (supersedes prior UI range)
+
+**Bandage** now has a gameplay editor range of **0–100 PTS** in **5-point steps**, with its original **100 PTS = 1x** as the highest setting. The single shared Bleeding Treatment chart uses **0–100 PTS** vertically (0/25/50/75/100 axis ticks). Other source editors remain **Medkit 0–30**, **Army Medkit 0–70**, and **Scientific Medkit 0–50 PTS**. Each native hit map keeps its own max. Older Bandage presets above 100 are clamped by the existing ViewModel. The original game source, selected difficulty and source-exact negative `negateSet` CFG writer remain unchanged. Prior notes claiming 0–200 for this UI chart or Bandage slider describe the previous implementation and are superseded.
+
 Runtime source of truth: **STALKER 2 CFG dump 2.0.5**.
 
 ## Scope
@@ -96,4 +100,4 @@ Bleeding/radiation treatment rows above document the **raw CFG values**. The nor
 
 Sixteen player-facing source parameters are still present: Core Health five (`maxHP`, `regenDelay`, `baseRegen`, `regenerationScalar`, `lowHealthRegen`), Medical Healing five (`bandageHealing`, `medkitHealing`, `armyMedkitHealing`, `ecoMedkitHealing`, `foodHealing`), Bleeding Treatment four (`bandageBleeding`, `medkitBleeding`, `armyMedkitBleeding`, `ecoMedkitBleeding`) and Radiation Treatment two (`ecoMedkitAntirad`, `antiRadRadiation`), all with prefix `health.`.
 
-The 25–200 HP ruler and all three treatment charts are **direct editors of these existing sources**. Comparison axes use common units but do not overwrite per-source limits: Medkit HP 140, Army HP 170, Scientific HP 200; bleeding removal 200/30/70/50; Scientific radiation removal 120 and Anti-Rad removal 200. Vertical treatment bars have individually bounded hit regions; Radiation Scientific's excess 120–200 area is read-only grey. Five-point native amount steps remain. Current positive recovery/removal magnitudes stay normal Health UI numbers; the underlying sign inversion for CFG deltas remains handled by the existing writer. This is visual-only and does not add effects, durations, change other runtime fields, or touch the existing audited NO-UI boundaries.
+The 25–200 HP ruler and all three treatment charts are **direct editors of these existing sources**. Comparison axes use common units but do not overwrite per-source limits: Medkit HP 140, Army HP 170, Scientific HP 200; bleeding removal 100/30/70/50; Scientific radiation removal 120 and Anti-Rad removal 200. Vertical treatment bars have individually bounded hit regions; Radiation Scientific's excess 120–200 area is read-only grey. Five-point native amount steps remain. Current positive recovery/removal magnitudes stay normal Health UI numbers; the underlying sign inversion for CFG deltas remains handled by the existing writer. This is visual-only and does not add effects, durations, change other runtime fields, or touch the existing audited NO-UI boundaries.

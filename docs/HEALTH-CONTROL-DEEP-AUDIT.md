@@ -1,5 +1,9 @@
 # Health Control Deep Audit — v0.2.45
 
+### 2026-10-10 — Current Bleeding Treatment UI scale correction (supersedes prior UI range)
+
+**Bandage** now has a gameplay editor range of **0–100 PTS** in **5-point steps**, with its original **100 PTS = 1x** as the highest setting. The single shared Bleeding Treatment chart uses **0–100 PTS** vertically (0/25/50/75/100 axis ticks). Other source editors remain **Medkit 0–30**, **Army Medkit 0–70**, and **Scientific Medkit 0–50 PTS**. Each native hit map keeps its own max. Older Bandage presets above 100 are clamped by the existing ViewModel. The original game source, selected difficulty and source-exact negative `negateSet` CFG writer remain unchanged. Prior notes claiming 0–200 for this UI chart or Bandage slider describe the previous implementation and are superseded.
+
 Runtime source of truth: **STALKER 2 CFG dump 2.0.5**.
 
 ## Result
@@ -19,7 +23,7 @@ The UI now exposes a positive gameplay magnitude while the writer performs the s
 
 | Control | UI vanilla | UI range | CFG vanilla | Writer |
 |---|---:|---:|---:|---|
-| Bandage Bleeding Removal | 100 | 0–200 | -100 | `negateSet` |
+| Bandage Bleeding Removal | 100 | 0–100 (max 1x) | -100 | `negateSet` |
 | Medkit Bleeding Removal | 15 | 0–30 | -15 | `negateSet` |
 | Army Medkit Bleeding Removal | 35 | 0–70 | -35 | `negateSet` |
 | Scientific Medkit Bleeding Removal | 25 | 0–50 | -25 | `negateSet` |
@@ -58,6 +62,6 @@ A confirmed boolean control now owns exactly eight concrete assignments: `ValueM
 
 ## 2026-10-09 — Display-vs-source reconciliation for Health redesign
 
-The approved Health redesign maps to all 16 previously accepted source controls. Source-by-source native steps, bounds, difficulty references, sign normalization and producer/writer domains are **unchanged**. The large Max Health editor stays bounded 25–200 HP, step 5. The per-medkit source maxima (140/170/200 healing HP), bleeding-treatment maxima (200/30/70/50 removed points) and radiation-treatment maxima (120/200 removed points) are now visible as *real physical chart boundaries*: unlike an unbounded shared graph, clicking outside one item's native range no longer modifies that item. Each source retains native 5-point snapping and individual reference reset.
+The approved Health redesign maps to all 16 previously accepted source controls. Source-by-source native steps, bounds, difficulty references, sign normalization and producer/writer domains are **unchanged**. The large Max Health editor stays bounded 25–200 HP, step 5. The per-medkit source maxima (140/170/200 healing HP), bleeding-treatment maxima (100/30/70/50 removed points) and radiation-treatment maxima (120/200 removed points) are now visible as *real physical chart boundaries*: unlike an unbounded shared graph, clicking outside one item's native range no longer modifies that item. Each source retains native 5-point snapping and individual reference reset.
 
-The fixed 0–200 shared chart is purely a comparison coordinate system, never a new 200-point maximum for every source. Signed treatment CFG deltas remain a separate writer concern. Food Healing remains a boolean checkbox and the two low-health/rate channels remain independent. No synthetic total effective healing, time simulation or runtime-derived regeneration claim is introduced. UI heights in order: Core Health 348, Medical Healing 400, Bleeding Treatment 376, Radiation Treatment 250 DIP. Native geometry and CFG mappings must be checked with the local Wine build.
+The current fixed 0–100 shared Bleeding Treatment chart is purely a comparison coordinate system, never a new 200-point maximum for every source. Signed treatment CFG deltas remain a separate writer concern. Food Healing remains a boolean checkbox and the two low-health/rate channels remain independent. No synthetic total effective healing, time simulation or runtime-derived regeneration claim is introduced. UI heights in order: Core Health 348, Medical Healing 400, Bleeding Treatment 376, Radiation Treatment 250 DIP. Native geometry and CFG mappings must be checked with the local Wine build.

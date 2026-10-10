@@ -30,6 +30,9 @@ internal static class Program
                 Directory.CreateDirectory(_keepRoot);
             }
 
+            // Verify 1x Bandage cap and legacy preset bounds with the live VM.
+            BandageBleedingUpperBoundCase();
+
             // A unique concrete edit for every live Health/Stamina catalog
             // parameter. Master-only modifiers use Master because their
             // parent AdditionalMechanics switch is naturally enabled there.
@@ -98,6 +101,39 @@ internal static class Program
             Console.Error.WriteLine("FAIL: " + exc);
             return 1;
         }
+    }
+
+    private static void BandageBleedingUpperBoundCase()
+    {
+        var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+        var bandage = vm.AllParameters.Single(p => p.Id == "health.bandageBleeding");
+        Check(bandage.IsSlider && bandage.Minimum == 0.0
+              && bandage.Maximum == 100.0 && bandage.ReferenceNumber == 100.0
+              && bandage.TickFrequency == 5.0,
+            "Bandage Bleeding maximum must equal vanilla 1x / 100 PTS");
+        foreach (var (id, maximum) in new[]
+        {
+            ("health.medkitBleeding", 30.0),
+            ("health.armyMedkitBleeding", 70.0),
+            ("health.ecoMedkitBleeding", 50.0)
+        })
+            Check(vm.AllParameters.Single(p => p.Id == id).Maximum == maximum,
+                id + ": the common 100-PTS ruler must not enlarge native maxima");
+
+        bandage.ApplyPresetValue(new PresetValue { Kind = "slider", Number = 200.0 });
+        Check(bandage.CurrentNumber == 100.0,
+            "Old Bandage 200-PTS presets must clamp to 1x");
+        bandage.SnapCurrentNumberToMarker(200.0);
+        Check(bandage.CurrentNumber == 100.0,
+            "Marker setter must not bypass Bandage ceiling");
+        bandage.CurrentNumber = 95.0;
+        Check(bandage.CurrentNumber == 95.0 && bandage.IsValueModifiedFromReference(),
+            "Bandage must keep native 5-PTS editing below 1x");
+        bandage.ResetToReference();
+        Check(bandage.CurrentNumber == 100.0,
+            "Bandage reset must restore original 1x");
+        _passed++;
+        Console.WriteLine("PASS bandage-bleeding-1x-cap");
     }
 
     private static void MasterParentToggleCase(string toggleId, string removedMember)
