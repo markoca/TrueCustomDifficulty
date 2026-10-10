@@ -1071,29 +1071,33 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(margin + half + gap, 155.0, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
 
-        // Audited NPC_Ammo_Smart Newbie counts: read-only actual generator
-        // ranges, using the same half-up integer rounding as the CFG writer.
-        // Only the count range is a modified numeric token: caliber names
-        // (including their embedded digits) remain neutral.
-        var examples = new (string Label, int Min, int Max)[]
+        // One source-backed example per NPC_Ammo_Smart caliber group, with
+        // the first rank containing that caliber shown explicitly. This is
+        // a sample count, not a guaranteed corpse drop or a combined rank pool.
+        var examples = new (string Label, string Rank, int Min, int Max)[]
         {
-            ("12 GA", 2, 6), ("5.45", 15, 20), (".45 ACP", 8, 12)
+            ("12 GA", "NEWBIE", 2, 6),
+            ("5.45", "NEWBIE", 15, 20),
+            ("9×19", "NEWBIE", 15, 20),
+            (".45 ACP", "NEWBIE", 8, 12),
+            ("5.56", "EXPERIENCED", 15, 20),
+            ("9×18", "VETERAN", 15, 20),
+            ("7.62 SNIPER", "VETERAN", 25, 30),
+            ("7.62", "VETERAN", 25, 30),
+            ("9×39", "MASTER", 15, 20)
         };
         var ammoPackageActive = corpse.CurrentText.Split(',',
             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Contains("NPC_Ammo_Smart", StringComparer.Ordinal);
         var countsModified = ammo.IsValueModifiedFromReference();
-        var sampleCard = new Rect(margin, 238.0, width, 104.0);
+        var sampleCard = new Rect(margin, 238.0, width, 172.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
             sampleCard, 4.0, 4.0);
         DrawText(dc, "NPC AMMO PREVIEW",
             new Point(sampleCard.Left + 11.0, sampleCard.Top + 7.0),
             10.3, ammoPackageActive ? text : muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, "NEWBIE SOURCE",
-            new Point(sampleCard.Right - 11.0, sampleCard.Top + 7.0),
-            9.4, muted, FontWeights.SemiBold);
 
-        const double previewGap = 8.0;
+        const double previewGap = 6.0;
         const double previewInset = 11.0;
         var previewWidth = (sampleCard.Width - 2.0 * previewInset
             - 2.0 * previewGap) / 3.0;
@@ -1101,8 +1105,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             var sample = examples[i];
             var tile = new Rect(sampleCard.Left + previewInset
-                    + i * (previewWidth + previewGap),
-                sampleCard.Top + 29.0, previewWidth, 52.0);
+                    + (i % 3) * (previewWidth + previewGap),
+                sampleCard.Top + 25.0 + (i / 3) * 45.0, previewWidth, 40.0);
             dc.DrawRoundedRectangle(
                 ammoPackageActive ? CloneWithOpacity(panel, 0.95)
                     : CloneWithOpacity(panel, 0.55),
@@ -1110,13 +1114,11 @@ public sealed class AggregateVisualControl : FrameworkElement
                 tile, 4.0, 4.0);
             var low = Math.Max(0, (int)Math.Floor(sample.Min * ammo.CurrentNumber + 0.5));
             var high = Math.Max(0, (int)Math.Floor(sample.Max * ammo.CurrentNumber + 0.5));
-            DrawCenteredText(dc, sample.Label,
-                new Point(tile.Left + tile.Width / 2.0, tile.Top + 5.0),
-                10.0, muted, FontWeights.SemiBold);
-            // Include the en dash in the numeric highlight and apply the
-            // approved +1.2 DIP only when this source differs from Base.
+            DrawCenteredText(dc, sample.Label + " · " + sample.Rank,
+                new Point(tile.Left + tile.Width / 2.0, tile.Top + 3.0),
+                9.0, muted, FontWeights.SemiBold);
             DrawCenteredText(dc, $"{low}–{high}",
-                new Point(tile.Left + tile.Width / 2.0, tile.Top + 22.0),
+                new Point(tile.Left + tile.Width / 2.0, tile.Top + 18.0),
                 countsModified ? 14.2 : 13.0,
                 countsModified ? accent : ammoPackageActive ? text : muted,
                 FontWeights.SemiBold);
@@ -1125,14 +1127,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (!ammoPackageActive)
         {
             DrawText(dc, "Inactive until Medicine + Ammo is selected",
-                new Point(sampleCard.Left + 12.0, sampleCard.Top + 86.0),
+                new Point(sampleCard.Left + 12.0, sampleCard.Bottom - 11.0),
                 9.5, muted, FontWeights.Normal);
         }
 
         // This is a dual-ended native RANGE, not two normal slider
         // headers. Show the two editable figures together in the middle
         // of the card, immediately above their shared physical rail.
-        var rangeCard = new Rect(margin, 352.0, width, 130.0);
+        var rangeCard = new Rect(margin, 420.0, width, 130.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             rangeCard, 4.0, 4.0);
         DrawText(dc, "DROPPED WEAPON CONDITION",
@@ -5163,7 +5165,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "AnomalyGlobalDamage" => EconomyBoardHeight(width, 1),
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => EconomyBoardHeight(width, 3),
-            "NpcLootLoadout" => 496.0,
+            "NpcLootLoadout" => 564.0,
             "WorldLootLayout" => 238.0,
             "StashRewardProfile" => width >= 750.0 ? 263.0 : 418.0,
             "PhysicalLimits" => 335.0,
