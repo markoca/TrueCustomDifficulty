@@ -3639,7 +3639,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Track(buildup, "RADIATION BUILD-UP",
             $"{buildup.CurrentNumber:0.##}x",
             $"{buildup.Minimum:0.##}x", $"{buildup.Maximum:0.##}x", 0);
-        Track(recovery, "NATURAL RAD CLEARANCE",
+        Track(recovery, "RADIATION RECOVERY",
             $"{recovery.CurrentNumber:0.00} PTS/S",
             $"{recovery.Minimum:0.00}", $"{recovery.Maximum:0.00}", 1);
         Track(damage, "RADIATION HP DAMAGE",
@@ -3955,11 +3955,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
         var contentWidth = Math.Max(1.0, card.Width - 24.0);
 
-        // Every compact card gets its own text boundary. Clipping against the
-        // whole control would allow a left-column caption to overlap its neighbor.
-        dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold,
-                Math.Max(1.0, card.Width - 155.0)),
-            new Point(card.Left + 12.0, card.Top + 7.0));
+        // Determine the actual value width before reserving space for the title.
+        // The old fixed 155-DIP reserve truncated labels despite unused room.
         var valueText = CreateText(value, 10.7,
             parameter.IsControlEnabled ? text : muted, FontWeights.Bold, contentWidth);
         if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())
@@ -3969,6 +3966,12 @@ public sealed class AggregateVisualControl : FrameworkElement
                 valueText.SetForegroundBrush(accent, token.Index, token.Length);
                 valueText.SetFontSize(11.9, token.Index, token.Length);
             }
+        // Measure after number highlights enlarge edited values; reserve a
+        // genuine 10-DIP gap without making the compact card any wider.
+        var labelWidth = Math.Max(1.0,
+            contentWidth - valueText.WidthIncludingTrailingWhitespace - 10.0);
+        dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold, labelWidth),
+            new Point(card.Left + 12.0, card.Top + 7.0));
         dc.DrawText(valueText,
             new Point(card.Right - 12.0 - valueText.WidthIncludingTrailingWhitespace,
                 card.Top + 6.0));

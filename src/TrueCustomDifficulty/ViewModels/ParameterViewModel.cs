@@ -62,7 +62,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "FlycatcherSlowdown" => "Drag the bottom ring to change movement speed, the left ring for turning speed, or the center to adjust both.",
                     "HungerLadder" => "Move a hunger stage left or right to change when it starts. Move MEDIUM or SEVERE up or down to adjust its stamina penalty; WELL-FED has its own control.",
                     "FatigueCurve" => "Choose the sleepiness threshold or combat penalty you want to change, then drag its own track. The stage preview shows the effect of those settings.",
-                    "RadiationBalance" => "Use the separate tracks for radiation build-up, natural clearance and health damage. The balance preview is read-only.",
+                    "RadiationBalance" => "Use the separate tracks for radiation build-up, natural recovery and health damage. The balance preview is read-only.",
                     "RadiationTreatment" => "Drag SCIENTIFIC MEDKIT or ANTI-RAD to change how much radiation each treatment removes.",
                     "BleedingTreatmentMixer" => "Drag the Bandage or Medkit track to change its bleeding removal. The comparison graphic is a preview, not another slider.",
                     "StarvationTimeline" => "Adjust when penalties begin, how often damage ticks occur and the three penalty strengths using their individual controls. The timeline is a preview.",

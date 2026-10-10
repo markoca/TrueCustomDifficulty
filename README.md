@@ -1,5 +1,9 @@
 # True Custom Difficulty
 
+### 2026-10-10 — Radiation Recovery label and compact sizing
+
+The middle Radiation System slider is now **RADIATION RECOVERY** instead of a truncated technical clearance label. It continues to edit `survival.radiationRecovery` (`VitalParams.DegenRadiation`) in **PTS/S**. The shared compact-track renderer measures the actual right-hand value width, including modified-numeric typography, before allocating title space; no card widening or gameplay/CFG changes. Both UI catalogs and the project static regression gate reflect this. Local Wine visual acceptance remains pending.
+
 ### 2026-10-10 — Combat controls simplified
 
 Combat retains **Mutant Hit Damage** and the **14-species Mutant Health** editor. The previous mutant attack-pacing adjustments and species ability-pacing dashboard are retired from the shipped parameter catalog, factory presets, writer and active tests. **Human Attack Frequency remains unchanged.** Older user presets may contain unsupported fields; those fields are ignored when loading and omitted on a subsequent save. The compact native slider follows the Stamina Usage value/rail hierarchy, and the two UI catalogs define the active design.

@@ -2824,14 +2824,14 @@
       "tab": "survival",
       "group": "Radiation",
       "label": "Radiation Recovery",
-      "description": "Controls the player's base radiation degeneration/recovery rate.",
+      "description": "Controls how quickly accumulated radiation decreases naturally, in points per second.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
         "primary": "raw",
         "rawFormat": "0.00",
         "unit": "points/s",
-        "valueLabel": "Natural radiation recovery"
+        "valueLabel": "Radiation recovery"
       },
       "vanilla": {
         "All": 0.05
@@ -2858,7 +2858,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls the player's base radiation degeneration/recovery rate.",
+      "rationale": "Controls how quickly accumulated radiation decreases naturally, in points per second.",
       "logic": "",
       "interaction": "This acts on recovery, not exposure strength. Radiation Accumulation determines how quickly new radiation is gained."
     },

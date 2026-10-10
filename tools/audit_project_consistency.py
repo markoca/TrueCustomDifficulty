@@ -1646,6 +1646,21 @@ else:
     note("semantic editor registration: 9 retained specialized classes + current AggregateVisualControl; no obsolete polar-only assumptions")
 
 
+# Radiation System source-to-renderer regression: short recovery terminology,
+# and measured label width rather than the old fixed 155-DIP reservation.
+_radiation_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_radiation_help = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+if 'Track(recovery, "RADIATION RECOVERY",' not in _radiation_source:
+    fail("Radiation System middle source label changed unexpectedly")
+elif "card.Width - 155.0" in _radiation_source or (
+    "contentWidth - valueText.WidthIncludingTrailingWhitespace - 10.0" not in _radiation_source
+):
+    fail("compact header must calculate title width from the actual styled current value")
+elif "radiation build-up, natural recovery and health damage" not in _radiation_help:
+    fail("Radiation System help drifted from current UI semantics")
+else:
+    note("Radiation Recovery name and source-measured compact header spacing locked")
+
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("old UI-CFG CSV snapshot (current tools/audit_ui_cfg_contract.py is authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
 
