@@ -65,14 +65,6 @@ def special_route_map(baseline: dict) -> dict[str, dict]:
             "resource": "",
         }
 
-    for pid, agents in (special.get("mutantCooldownParameters") or {}).items():
-        out[pid] = {
-            "route": "mutantCooldownArray",
-            "primaryFile": "GameData/DifficultyPrototypes.cfg",
-            "detail": "AgentCooldownMultipliers: " + ", ".join(agents),
-            "resource": "",
-        }
-
     def add_single(key: str, route: str):
         cfg = special.get(key) or {}
         pid = cfg.get("parameterId")
@@ -291,7 +283,6 @@ def run(output: Path) -> int:
         "listMembership": "WriteAdditionalMechanics(",
         "setList": "WriteCorpseSmartLoot(",
         "psyArray": "WritePsy",
-        "mutantCooldownArray": "MutantCooldown",
         "npcMedicalCloneRedirect": "WriteNpcMedicalLootProduction(",
         "cheapStashAmmoCloneRedirect": "WriteCheapStashProduction(",
         "cheapStashGrenadeCloneRedirect": "WriteCheapStashProduction(",

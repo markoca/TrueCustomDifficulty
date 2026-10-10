@@ -56,7 +56,7 @@ Preset format version `1` is the current format. Older pre-versioned presets rem
 
 Preset files keep their original `toolVersion` so player-facing semantic migrations can preserve the same gameplay result when a control stops exposing an engine-internal representation.
 
-- **pre-v0.1.96**: Human/Mutant Attack Frequency raw cooldown multipliers are converted to intuitive frequency multipliers.
+- **pre-v0.1.96**: Human Attack Frequency raw wait multiplier are converted to intuitive frequency multipliers.
 - **pre-v0.2.45**: negative bleeding/radiation treatment deltas are converted to positive removal magnitudes; the writer emits the negative CFG delta.
 - **pre-v0.2.46**: negative `stamina.aimRegenCoef` values are converted to a positive **Aiming Stamina Recovery Penalty** magnitude; the writer emits the signed negative Aim-state coefficient.
 - **pre-v0.2.47**: negative medium/severe hunger stamina-regeneration modifiers are converted to positive **Hunger Stamina Recovery Penalty** magnitudes; the writer emits the original signed negative CFG modifiers.

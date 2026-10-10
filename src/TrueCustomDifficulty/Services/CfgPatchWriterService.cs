@@ -179,14 +179,6 @@ public sealed class CfgPatchWriterService
             documents,
             writtenParameters);
 
-        editCount += WriteMutantCooldowns(
-            baseline,
-            modifiedById,
-            allById,
-            difficulty.Sid,
-            documents,
-            writtenParameters);
-
         var worldWeaponDistribution = WriteWorldWeaponDistribution(
             modifiedById,
             allById,
@@ -317,7 +309,6 @@ public sealed class CfgPatchWriterService
         supported.UnionWith(baseline.Special.ListMembership.Select(p => p.ParameterId));
         supported.UnionWith(baseline.Special.SetList.Select(p => p.ParameterId));
         supported.UnionWith(baseline.Special.PsyParameterKeys.Keys);
-        supported.UnionWith(baseline.Special.MutantCooldownParameters.Keys);
         if (!string.IsNullOrWhiteSpace(baseline.Special.CheapStashProduction.AmmoQuantityParameterId))
             supported.Add(baseline.Special.CheapStashProduction.AmmoQuantityParameterId);
         if (!string.IsNullOrWhiteSpace(baseline.Special.CheapStashProduction.GrenadeChanceParameterId))
@@ -1824,101 +1815,6 @@ public sealed class CfgPatchWriterService
 
         return edits;
     }
-
-    // A six-decimal CFG value (0.333333) is slightly below one third and
-    // would produce a recharge rate ABOVE the approved 3x ceiling. Serialize
-    // this exact endpoint without truncation; retain ordinary formatting for
-    // all other native wait multipliers and unrelated game parameters.
-    private static string FormatMutantCooldownWait(double value)
-        => Math.Abs(value - 1.0 / 3.0) < 0.000000000001
-            ? "0.3333333333333333"
-            : FormatNumber(value);
-
-    private static int WriteMutantCooldowns(
-        CfgWriterBaseline baseline,
-        IReadOnlyDictionary<string, ParameterViewModel> modifiedById,
-        IReadOnlyDictionary<string, ParameterViewModel> allById,
-        string difficultySid,
-        IDictionary<string, PatchDocument> documents,
-        ISet<string> writtenParameters)
-    {
-        var parameterMap = baseline.Special.MutantCooldownParameters;
-        // A radar anchor's IsModified is an aggregate UI status: e.g. changing
-        // Chimera also lights up the Bloodsucker anchor even at its own vanilla
-        // value. Emit only families with a concrete reference-value difference.
-        var changed = parameterMap.Keys
-            .Where(id => modifiedById.TryGetValue(id, out var parameter)
-                && parameter.IsValueModifiedFromReference())
-            .ToHashSet(StringComparer.Ordinal);
-        if (changed.Count == 0)
-            return 0;
-
-        var agentToParameter = new Dictionary<string, string>(StringComparer.Ordinal);
-        foreach (var pair in parameterMap)
-        {
-            foreach (var agent in pair.Value)
-                agentToParameter[agent] = pair.Key;
-        }
-
-        var document = GetDocument(documents, "GameData/DifficultyPrototypes.cfg");
-        var mutant = document.GetOrAddNode(difficultySid, new[] { "MutantCombatDifficulty" });
-        var edits = 0;
-
-        if (difficultySid.Equals("Stalker", StringComparison.OrdinalIgnoreCase))
-        {
-            // Master already contains the canonical array, so preserve compatibility by
-            // touching only the families whose sliders changed.
-            var container = mutant.GetOrAddChild("AgentCooldownMultipliers", useBpatch: true);
-            foreach (var family in baseline.Special.MutantCooldownFamilies.Values.OrderBy(x => CfgNaturalComparer.IndexValue(x.Index)))
-            {
-                if (!agentToParameter.TryGetValue(family.AgentPrototypeSid, out var parameterId) || !changed.Contains(parameterId))
-                    continue;
-
-                var entry = container.GetOrAddChild(family.Index, useBpatch: true);
-                entry.SetAssignment("AgentPrototypeSID", family.AgentPrototypeSid);
-                var cooldowns = entry.GetOrAddChild("CooldownMultipliers", useBpatch: true);
-                foreach (var cooldown in family.Cooldowns.OrderBy(x => CfgNaturalComparer.IndexValue(x.Index)))
-                {
-                    var cooldownNode = cooldowns.GetOrAddChild(cooldown.Index, useBpatch: true);
-                    cooldownNode.SetAssignment("CooldownTag", cooldown.Tag);
-                    cooldownNode.SetAssignment("CooldownMultiplier", FormatMutantCooldownWait(allById[parameterId].CurrentNumber));
-                    edits++;
-                }
-            }
-        }
-        else
-        {
-            // Easy/Medium/Hard do not carry the complete canonical array. Create the
-            // localized array as a whole so sparse-index behavior is never assumed.
-            mutant.RemoveChild("AgentCooldownMultipliers");
-            mutant.RemoveAssignment("AgentCooldownMultipliers");
-            var container = mutant.GetOrAddChild("AgentCooldownMultipliers", useBpatch: false);
-            container.Clear();
-
-            foreach (var family in baseline.Special.MutantCooldownFamilies.Values.OrderBy(x => CfgNaturalComparer.IndexValue(x.Index)))
-            {
-                if (!agentToParameter.TryGetValue(family.AgentPrototypeSid, out var parameterId))
-                    throw new InvalidDataException($"No player control maps mutant cooldown family '{family.AgentPrototypeSid}'.");
-
-                var entry = container.GetOrAddChild(family.Index, useBpatch: false);
-                entry.SetAssignment("AgentPrototypeSID", family.AgentPrototypeSid);
-                var cooldowns = entry.GetOrAddChild("CooldownMultipliers", useBpatch: false);
-                foreach (var cooldown in family.Cooldowns.OrderBy(x => CfgNaturalComparer.IndexValue(x.Index)))
-                {
-                    var cooldownNode = cooldowns.GetOrAddChild(cooldown.Index, useBpatch: false);
-                    cooldownNode.SetAssignment("CooldownTag", cooldown.Tag);
-                    cooldownNode.SetAssignment("CooldownMultiplier", FormatMutantCooldownWait(allById[parameterId].CurrentNumber));
-                    edits++;
-                }
-            }
-        }
-
-        foreach (var id in changed)
-            writtenParameters.Add(id);
-
-        return edits;
-    }
-
 
     private static (int EditCount, int FileCount) WriteWorldWeaponDistribution(
         IReadOnlyDictionary<string, ParameterViewModel> modifiedById,

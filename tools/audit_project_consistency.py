@@ -26,7 +26,7 @@ def walk_parameter_ids(value, path="special"):
             child_path = f"{path}.{key}"
             if key in {"parameterId", "ammoQuantityParameterId", "grenadeChanceParameterId", "grenadeQuantityParameterId", "couponChanceParameterId", "removalPercentParameterId"}:
                 yield child_path, child
-            elif key in {"psyParameterKeys", "mutantCooldownParameters"} and isinstance(child, dict):
+            elif key in {"psyParameterKeys"} and isinstance(child, dict):
                 for parameter_id in child:
                     yield f"{child_path}[key]", parameter_id
             elif key == "weightParameterIds" and isinstance(child, dict):
@@ -457,7 +457,7 @@ else:
 
 # Non-generator normal-UI coverage gate (v0.2.43).
 _non_gen_expected = {
-    "combat": (19, 14, 5),
+    "combat": (17, 13, 4),
     "health": (13, 10, 3),
     "stamina": (7, 6, 1),
     "survival": (32, 30, 2),
@@ -490,23 +490,22 @@ elif _hidden_bad:
 elif not _non_gen_doc.exists():
     fail("non-generator verification document missing from docs/")
 else:
-    note("non-generator UI coverage: 92 visible anchors across Combat/Health/Stamina/Survival/Economy/Equipment; current grouped editors and 32 Survival controls accounted")
+    note("non-generator UI coverage: 90 visible anchors across Combat/Health/Stamina/Survival/Economy/Equipment; current grouped editors and 32 Survival controls accounted")
 
 # Combat deep-audit release gate (v0.2.44).
 _combat_doc = DOCS / "COMBAT-CONTROL-DEEP-AUDIT.md"
 _combat_rows = {p.get("id"): p for p in parameters if p.get("tab") == "combat" and p.get("exposeInUi", True)}
 _combat_runtime_expected = {
-    "combat.mutantCooldown.bloodsucker",
     "combat.psySpawnCycleDelay", "combat.psyPhantomCount", "combat.psyBleeding", "combat.psyDurabilityDamage",
 }
 _combat_runtime_actual = {pid for pid, row in _combat_rows.items() if row.get("support", {}).get("status") == "runtime_test_required"}
 _combat_inverse = {
     pid: [t.get("operation") for t in row.get("targets", [])]
-    for pid, row in _combat_rows.items() if pid in {"combat.npcAttackCooldown", "combat.mutantAttackCooldown"}
+    for pid, row in _combat_rows.items() if pid in {"combat.npcAttackCooldown"}
 }
 _headshot = _combat_rows.get("combat.playerHeadshotMultiplier", {})
 _repeated = next((c for c in parameters_doc.get("sliderConstraints", []) if c.get("id") == "repeatedHitProtectionRange"), {})
-if len(_combat_rows) != 19 or _combat_runtime_actual != _combat_runtime_expected:
+if len(_combat_rows) != 17 or _combat_runtime_actual != _combat_runtime_expected:
     fail(f"combat deep-audit visible surface drifted: controls={len(_combat_rows)}, runtime={sorted(_combat_runtime_actual)}")
 elif any(ops != ["inverseScale"] for ops in _combat_inverse.values()):
     fail(f"combat attack-frequency inverseScale contract drifted: {_combat_inverse}")
@@ -517,7 +516,7 @@ elif "extra damage" in str(_headshot.get("description", "")).lower() or "1.0x" n
 elif not _combat_doc.exists():
     fail("combat deep-audit document missing from docs/")
 else:
-    note("combat deep audit locked: 19 visible controls / 14 confirmed direct + 5 runtime-gated; Mutant Health and Mutant Special Attack Cooldown aggregated separately")
+    note("combat deep audit locked: 17 visible controls / 13 confirmed direct + 4 runtime-gated; Mutant Health remains a standalone aggregate")
 
 # Generator-backed UI end-to-end release gate (v0.2.42).
 _e2e_doc = DOCS / "GENERATOR-CONTROL-END-TO-END-VERIFICATION.md"
@@ -708,7 +707,7 @@ else:
 
 # Deep CFG audit 2026-10-09: 14 real mutant health scalers, including
 # the six missing baseline rows now verified against the base ObjPrototypes
-# decoded CFG. Only eight of these mutant families have cooldown editors.
+# decoded CFG. The fourteen health routes are independent.
 _mhp_expected = {
     "combat.mutantHealth.bayun": {"Bayun":"400"},
     "combat.mutantHealth.blinddog": {"Blinddog":"63"},
@@ -759,16 +758,7 @@ if any(p.get("scope") != "baseGame" or p.get("file") != "GameData/ObjPrototypes.
     fail("mutant health writer route must remain direct base-game ObjPrototypes MaxHP scale")
 if _mhp_rows_by_id["combat.mutantHealth.bloodsucker"].get("label") != "Mutant Health":
     fail("mutant health aggregate anchor label drifted")
-_mhp_cooldown_species = ("bloodsucker", "chimera", "deer", "pseudogiant",
-                         "pseudodog", "burer", "bayun", "controller")
-for _species in _mhp_cooldown_species:
-    _cid = f"combat.mutantCooldown.{_species}"
-    _crow = _mhp_rows_by_id.get(_cid)
-    if not _crow or _crow.get("group") != "Mutant Combat":
-        fail(f"missing or moved cooldown source: {_cid}")
-    if _species == "bloodsucker" and _crow.get("label") != "Mutant Special Attack Cooldown":
-        fail("mutant cooldown anchor label drifted")
-note("deep CFG mutant HP route gate: 14 health multipliers / 16 MaxHP edit points; 8 separate cooldown families")
+note("deep CFG mutant HP route gate: 14 health multipliers / 16 MaxHP edit points")
 
 # The MutantHealthRadar is a TWO-COLUMN, 14-species current-health editor,
 # not the historical eight-axis polar control. All 14 source ID + HP pairs
@@ -799,46 +789,6 @@ else:
     if "IsMutantHealthAnchor" not in _mhr_param_vm or "IsMutantHealthMember" not in _mhr_param_vm:
         fail("mutant health aggregate/backing visibility contract missing")
     note("Mutant Health compact roster: 14 confirmed, source backed 0.05–2x at 0.05x steps; authored MaxHP references validated")
-
-_sac_ids = ["combat.mutantCooldown." + family for family in (
-    "bloodsucker", "chimera", "deer", "pseudogiant", "pseudodog", "burer", "bayun", "controller"
-)]
-_sac_rows_by_id = {p.get("id"): p for p in parameters}
-_sac_src_path = ROOT / "src/TrueCustomDifficulty/Controls/SpecialAbilityCooldownRadar.cs"
-_sac_errors = []
-for _pid in _sac_ids:
-    _row = _sac_rows_by_id.get(_pid)
-    if not _row:
-        _sac_errors.append(f"missing {_pid}")
-        continue
-    _slider, _vanilla = _row.get("slider") or {}, _row.get("vanilla") or {}
-    if _row.get("group") != "Mutant Combat" or _row.get("control") != "slider":
-        _sac_errors.append(f"{_pid}: group/control changed")
-    if (_slider.get("min"), _slider.get("max"), _slider.get("step")) != (1.0 / 3.0, 2, 0.25):
-        _sac_errors.append(f"{_pid}: native wait limits must map 0.5-3x recharge / visible 0.25x rate ticks")
-    if any(_vanilla.get(mode) != value for mode, value in
-           (("Novice", 1), ("Stalker", 1), ("Veteran", 1), ("Master", 0.5))):
-        _sac_errors.append(f"{_pid}: Base Preset reference changed")
-if not _sac_src_path.exists():
-    _sac_errors.append("SpecialAbilityCooldownRadar.cs missing")
-else:
-    _sac_src = _sac_src_path.read_text(encoding="utf-8")
-    for _pid in _sac_ids:
-        if f'new("{_pid}",' not in _sac_src:
-            _sac_errors.append(f"{_pid}: absent from current renderer")
-    if 'new("combat.mutantAttackCooldown",' not in _sac_src or 'new("combat.mutantDamage",' not in _sac_src:
-        _sac_errors.append("current Mutant Combat frequency/damage axes missing")
-    if ("selected.TickFrequency" not in _sac_src
-            or "var rate = RechargeRate(selected.CurrentNumber)" not in _sac_src
-            or "parameter.CurrentNumber = raw;" not in _sac_src):
-        _sac_errors.append("0.25x recharge stepping must use inverse-rate keyboard and mouse controls")
-_sac_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
-if "specialAbilityCooldownParameterIds.Contains(p.Id)" not in _sac_vm:
-    _sac_errors.append("Mutant Combat backing IDs missing from live VM")
-if _sac_errors:
-    fail("Mutant Combat cooldown contract: " + "; ".join(_sac_errors))
-else:
-    note("Mutant Combat cooldown: 8 real families, 0.25x displayed recharge steps (0.5-3x), N/S/V=1x Master=2x recharge; in-game runtime still unverified")
 
 # Mutant health audit gate (v0.9.26.44).
 _mh_path = DOCS / "combat" / "mutant-health-audit.csv"
@@ -1588,8 +1538,8 @@ for _name in _factory_preset_names:
         continue
     _preset = json.loads(_preset_path.read_text(encoding="utf-8"))
     _values = _preset.get("values", {})
-    if len(_values) != 219:
-        _factory_errors.append(f"{_name}: {len(_values)} values, expected 219")
+    if len(_values) != 210:
+        _factory_errors.append(f"{_name}: {len(_values)} values, expected 210")
     if _preset.get("referenceDifficulty") not in {"Novice", "Stalker", "Veteran", "Master"}:
         _factory_errors.append(f"{_name}: invalid referenceDifficulty={_preset.get('referenceDifficulty')}")
     if f'Presets\\{_name}.json' not in _factory_csproj_text:
@@ -1647,11 +1597,11 @@ if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legac
 if _factory_errors:
     fail("current 12 factory presets drifted: " + "; ".join(_factory_errors))
 else:
-    note("factory presets locked: 12 custom profiles / 219 values each; retired 4 files removed; hard-profile medical rules preserved")
+    note("factory presets locked: 12 custom profiles / 210 values each; retired 4 files removed; hard-profile medical rules preserved")
 
 # Current user-help contract no longer describes retired polar-radar gestures.
 _control_help_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
-for _required_help in ("public string ControlHelp", "IsVisualAggregateAnchor", "IsSpecialAbilityCooldownAnchor", "IsMutantHealthAnchor", "IsStashAmmoAnchor"):
+for _required_help in ("public string ControlHelp", "IsVisualAggregateAnchor", "IsMutantHealthAnchor", "IsStashAmmoAnchor"):
     if _required_help not in _control_help_vm:
         fail(f"current type-aware control-help/aggregate classifier missing {_required_help!r}")
 else:
@@ -1667,7 +1617,7 @@ _semantic_radar_controls = [
     "MutantDropRadar.cs", "AnomalyDamageRadar.cs",
     "WorldLootRemovalRadar.cs", "MedicalHealingRadar.cs",
     "ActionCostsRadar.cs", "ItemPriceScalersRadar.cs",
-    "MutantHealthRadar.cs", "SpecialAbilityCooldownRadar.cs",
+    "MutantHealthRadar.cs",
     "StashAmmoRadar.cs",
 ]
 _semantic_editor_errors = []
@@ -1721,7 +1671,7 @@ for _row in _global_visible:
     _tab = _row.get("tab")
     _global_tab_counts[_tab] = _global_tab_counts.get(_tab, 0) + 1
 _global_expected_tabs = {
-    "combat": 19,
+    "combat": 17,
     "health": 13,
     "stamina": 7,
     "survival": 32,
@@ -1859,14 +1809,14 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 245 or len(_global_visible) != 152 or len(_global_hidden) != 93:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 245/152/93")
+if len(parameters) != 236 or len(_global_visible) != 150 or len(_global_hidden) != 86:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 236/150/86")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 120 or _global_runtime != 32:
+elif _global_confirmed != 119 or _global_runtime != 31:
     fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 120/32")
-elif _global_control_counts != {"slider": 138, "toggle": 12, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 138 sliders / 12 toggles / 1 choiceSlider / 1 range")
+elif _global_control_counts != {"slider": 136, "toggle": 12, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 136 sliders / 12 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -1891,7 +1841,7 @@ elif _global_anomaly_missing or "SetEffectiveDamageMultiplierProvider" not in _g
 elif not _global_doc.exists():
     fail("global cross-domain audit document missing from docs/")
 else:
-    note("current cross-domain structural audit: 245 catalog / 152 visible / 93 hidden; 120 visible confirmed + 32 runtime-test-required; zero direct collisions")
+    note("current cross-domain structural audit: 236 catalog / 150 visible / 86 hidden; 119 visible confirmed + 31 runtime-test-required; zero direct collisions")
 
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("v0.2.51-v0.3.0 override/CFG-placement/provenance/production snapshots (current UI/Combat tools + active source checks are authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")

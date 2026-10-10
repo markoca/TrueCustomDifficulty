@@ -37,120 +37,6 @@ internal static class Program
                 Check(result.FileCount == 0 && result.EditCount == 0,
                     "unchanged Veteran must not emit any CFG"));
 
-            // The visible RECHARGE rate is the reciprocal of the native wait.
-            // All eight must cap at 3x, including old 0.25x-wait presets.
-            var rechargeVM = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Master" };
-            var rechargeIds = Catalog.Parameters.Where(p =>
-                    p.Id.StartsWith("combat.mutantCooldown.", StringComparison.Ordinal))
-                .Select(p => p.Id).ToArray();
-            Check(rechargeIds.Length == 8, "Expected eight mutant special ability recharge controls");
-            foreach (var id in rechargeIds)
-            {
-                var parameter = Get(rechargeVM, id);
-                Check(parameter.IsSlider && Math.Abs(parameter.Minimum - 1.0 / 3.0) < 0.0000001
-                    && Math.Abs(parameter.Maximum - 2.0) < 0.0000001
-                    && Math.Abs(parameter.TickFrequency - 0.25) < 0.0000001
-                    && Math.Abs(parameter.Definition.Slider!.Step - 0.25) < 0.0000001,
-                    id + ": incorrect source range/0.25x visible recharge step");
-
-                // Every actual visible 0.25x tick must be editable via the
-                // production ViewModel CurrentNumber setter. Intermediate
-                // source waits are deliberately non-uniform (1 / rate).
-                for (var tick = 2; tick <= 12; tick++)
-                {
-                    var desiredRate = tick * 0.25;
-                    parameter.CurrentNumber = 1.0 / desiredRate;
-                    Check(Math.Abs(1.0 / parameter.CurrentNumber - desiredRate) < 0.0000001,
-                        id + ": missing 0.25x recharge tick " + desiredRate);
-                }
-                parameter.CurrentNumber = 1.0 / 1.62; // between visible steps 1.50x and 1.75x
-                Check(Math.Abs(1.0 / parameter.CurrentNumber - 1.5) < 0.0000001,
-                    id + ": mouse/loaded rate failed to snap to the nearest 0.25x tick");
-                parameter.CurrentNumber = 0.25; // old 4x user preset
-                Check(Math.Abs(1.0 / parameter.CurrentNumber - 3.0) < 0.0000001,
-                    id + ": older 4x wait bypassed the 3x recharge limit");
-                parameter.CurrentNumber = parameter.Maximum;
-                Check(Math.Abs(1.0 / parameter.CurrentNumber - 0.5) < 0.0000001,
-                    id + ": original slow-recharge minimum changed");
-            }
-
-            // Actual production BPatch should write the exact 1/3 wait endpoint.
-            Case("Master-Chimera-max-3x-recharge", "Master",
-                vm => Set(vm, "combat.mutantCooldown.chimera", 1.0 / 3.0),
-                (root, result) =>
-                {
-                    Check(result.EditCount == 6 && result.ParameterCount == 1,
-                        "3x recharge must affect exactly Chimera's authored ability tags");
-                    MasterCooldown(root, new[] { "Chimera" }, 1.0 / 3.0);
-                    var chimera = Family("Chimera");
-                    var first = chimera.Cooldowns[0];
-                    var exactWait = root.Get("MutantCombatDifficulty")
-                        .Get("AgentCooldownMultipliers").Get(chimera.Index)
-                        .Get("CooldownMultipliers").Get(first.Index)
-                        .Value("CooldownMultiplier");
-                    Check(exactWait == "0.3333333333333333",
-                        "3x boundary was truncated, making recharge faster than 3x");
-                });
-
-            // A quarter-step in displayed recharge is a fractional wait,
-            // not +0.25 to the raw multiplier. Check the production CFG route.
-            Case("Master-Chimera-1_75x-recharge", "Master",
-                vm =>
-                {
-                    var chimera = Get(vm, "combat.mutantCooldown.chimera");
-                    chimera.CurrentNumber = 1.0 / 1.75;
-                    Check(Math.Abs(1.0 / chimera.CurrentNumber - 1.75) < 0.0000001,
-                        "1.75x recharge was not accepted on the live quarter-rate grid");
-                },
-                (root, result) =>
-                {
-                    Check(result.EditCount == 6 && result.ParameterCount == 1,
-                        "1.75x recharge must edit only Chimera's six native wait values");
-                    MasterCooldown(root, new[] { "Chimera" }, 1.0 / 1.75);
-                });
-
-            Case("Master-Chimera-only", "Master",
-                vm => Set(vm, "combat.mutantCooldown.chimera", 1.4),
-                (root, result) =>
-                {
-                    Check(result.EditCount == 6 && result.ParameterCount == 1,
-                        "Master Chimera must emit precisely six edits / one parameter");
-                    MasterCooldown(root, new[] { "Chimera" }, 1.4);
-                    Check(!root.Children.ContainsKey("NPCCombatDifficulty"),
-                        "mutant-only edit unexpectedly added PSY branch");
-                });
-
-            Case("Master-Burer-only", "Master",
-                vm => Set(vm, "combat.mutantCooldown.burer", 1.2),
-                (root, result) =>
-                {
-                    Check(result.EditCount == 12 && result.ParameterCount == 1,
-                        "Master Burer (two agent variants) must emit 12 edits");
-                    MasterCooldown(root, new[] { "Burer", "Burer_ShootingSpecial" }, 1.2);
-                    foreach (var sid in new[] { "Burer", "Burer_ShootingSpecial" })
-                    {
-                        var family = Family(sid);
-                        Check(family.Cooldowns.Count(x => x.Tag == "Ability.Cooldown.WeaponDrag") == 2,
-                            $"must preserve distinct duplicate WeaponDrag indices: {sid}");
-                    }
-                });
-
-            foreach (var difficulty in new[] { "Novice", "Stalker", "Veteran" })
-            {
-                Case(difficulty + "-Chimera-only", difficulty,
-                    vm => Set(vm, "combat.mutantCooldown.chimera", 1.4),
-                    (root, result) =>
-                    {
-                        var authoredCount = Source.Special.MutantCooldownFamilies.Values
-                            .Sum(x => x.Cooldowns.Count);
-                        Check(result.EditCount == authoredCount && result.ParameterCount == 1,
-                            "non-Master inserted cooldown array must contain all authored tags, one edited parameter");
-                        FullCooldown(root, "Chimera", 1.4);
-                        Check(!root.Children.ContainsKey("NPCCombatDifficulty"),
-                            "cooldown-only patch unexpectedly added PSY branch");
-                    });
-            }
-
             Case("Master-PSY-count-only", "Master",
                 vm => Set(vm, "combat.psyPhantomCount", 2.5),
                 (root, result) =>
@@ -173,37 +59,8 @@ internal static class Program
                         "PSY-only patch unexpectedly added mutant branch");
                 });
 
-            Case("Master-combined", "Master",
-                vm =>
-                {
-                    Set(vm, "combat.mutantCooldown.chimera", 1.4);
-                    Set(vm, "combat.psyPhantomCount", 2.5);
-                },
-                (root, result) =>
-                {
-                    Check(result.EditCount == 8 && result.ParameterCount == 2,
-                        "Master combined writer must emit only 6 cooldown + 2 PSY edits");
-                    MasterCooldown(root, new[] { "Chimera" }, 1.4);
-                    MasterPsy(root, "PsyPhantomNPCCountMultiplier", "2.5");
-                });
-
-            Case("Veteran-combined", "Veteran",
-                vm =>
-                {
-                    Set(vm, "combat.mutantCooldown.chimera", 1.4);
-                    Get(vm, "combat.psyBleeding").CurrentBoolean = true;
-                },
-                (root, result) =>
-                {
-                    var count = Source.Special.MutantCooldownFamilies.Values.Sum(x => x.Cooldowns.Count);
-                    Check(result.EditCount == count + 8 && result.ParameterCount == 2,
-                        "Veteran combined writer must emit full cooldown and PSY arrays");
-                    FullCooldown(root, "Chimera", 1.4);
-                    FullPsy(root, bleed: true);
-                });
-
             // Phase 5: prove live UI VM values reach all 52 difficulty-specific
-            // direct edit routes, including inverse cooldowns, toggles and
+            // direct edit routes, including human attack pacing, toggles and
             // value-ordered repeated-hit sliders.
             foreach (var difficulty in new[] { "Novice", "Stalker", "Veteran", "Master" })
             {
@@ -217,13 +74,11 @@ internal static class Program
                          p.Id.StartsWith("combat.mutantHealth.", StringComparison.Ordinal)))
                 MutantHealthCase(parameter.Id);
 
-            // Phase 7 uses five real, loadable user preset JSON fixtures.
+            // Phase 7 uses three real, loadable user preset JSON fixtures.
             // The engine's handling of nested inherited BPatch is NOT simulated.
-            InheritedSourcePresetCase("Stalker Vanilla.json", "Stalker", null, null);
-            InheritedSourcePresetCase("Stalker Mutant Damage.json", "Stalker", 0.5, null);
-            InheritedSourcePresetCase("Stalker Mutant Frequency.json", "Stalker", null, 1.5);
-            InheritedSourcePresetCase("Stalker Combined.json", "Stalker", 0.5, 1.5);
-            InheritedSourcePresetCase("Veteran Control.json", "Veteran", 0.5, 1.5);
+            InheritedSourcePresetCase("Stalker Vanilla.json", "Stalker", null);
+            InheritedSourcePresetCase("Stalker Mutant Damage.json", "Stalker", 0.5);
+            InheritedSourcePresetCase("Veteran Control.json", "Veteran", 0.5);
 
             Console.WriteLine($"PASS: {_passed} executed production CFG writer scenarios.");
             Console.WriteLine("NOT VERIFIED: game runtime, vanilla decoded source arrays, UE BPatch loader semantics.");
@@ -241,7 +96,7 @@ internal static class Program
     // the section from Empty. Here we verify the real UI→writer output,
     // not the Unreal engine's resolution of inherited BPatch sections.
     private static void InheritedSourcePresetCase(
-        string fileName, string difficulty, double? damage, double? frequency)
+        string fileName, string difficulty, double? damage)
     {
         var path = Path.Combine(Directory.GetCurrentDirectory(),
             "tests", "CombatRuntimeAcceptance", "Presets", fileName);
@@ -251,7 +106,6 @@ internal static class Program
 
         var expectedIds = new HashSet<string>(StringComparer.Ordinal);
         if (damage.HasValue) expectedIds.Add("combat.mutantDamage");
-        if (frequency.HasValue) expectedIds.Add("combat.mutantAttackCooldown");
         Check(preset.Values.Keys.ToHashSet(StringComparer.Ordinal).SetEquals(expectedIds),
               fileName + ": unexpected extra/missing control IDs");
 
@@ -296,17 +150,10 @@ internal static class Program
                 else
                     Check(!mutant.Assignments.ContainsKey("Mutant_BaseDamage"),
                         fileName + ": unmodified damage leaked into patch");
-                if (frequency.HasValue)
-                    Approx(mutant.Value("Mutant_AttackCooldown"), 1 / frequency.Value);
-                else
-                    Check(!mutant.Assignments.ContainsKey("Mutant_AttackCooldown"),
-                        fileName + ": unmodified frequency leaked into patch");
 
                 var expectedSid = difficulty == "Stalker" ? "Medium" : "Hard";
                 Check(Catalog.DifficultyProfiles[difficulty].Sid == expectedSid,
                     fileName + ": game difficulty-to-CFG SID mismatch");
-                Check(!mutant.Children.ContainsKey("AgentCooldownMultipliers"),
-                    fileName + ": special ability cooldown array leaked into direct test");
             });
     }
 
@@ -327,7 +174,6 @@ internal static class Program
         new("combat.playerHeadshotMultiplier", "NPCCombatDifficulty", "PlayerWeapon_HeadshotMultiplier", "set", 1.5),
         new("combat.weaponJamming", "NPCCombatDifficulty", "Weapon_JammingMultiplier", "set", 0.5),
         new("combat.mutantDamage", "MutantCombatDifficulty", "Mutant_BaseDamage", "set", 0.8),
-        new("combat.mutantAttackCooldown", "MutantCombatDifficulty", "Mutant_AttackCooldown", "inverseScale", 1.5),
         new("combat.accumulatedDamageWeightMax", "NPCCombatDifficulty", "AccumulatedDamageReductionCurveWeightMax", "set", 0.9),
         new("combat.accumulatedDamageWeightMin", "NPCCombatDifficulty", "AccumulatedDamageReductionCurveWeightMin", "set", 0.1),
         new("combat.accumulatedDamageIncludesHealedHealth", "NPCCombatDifficulty", "AccumulatedDamageReductionIncludesHealedHealth", "set", double.NaN),
@@ -536,64 +382,6 @@ internal static class Program
         }
     }
 
-    private static void MasterCooldown(Node root, IReadOnlyList<string> onlySids, double multiplier)
-    {
-        var parent = root.Get("MutantCombatDifficulty");
-        var container = parent.Get("AgentCooldownMultipliers");
-        Check(parent.Bpatch && container.Bpatch,
-            "Master cooldown parent and array must be bpatch updates");
-        Check(container.Children.Count == onlySids.Count,
-            "Master patch contains an unrelated mutant family (aggregate anchor leak)");
-        foreach (var sid in onlySids)
-        {
-            var family = Family(sid);
-            Check(container.Children.Keys.Contains(family.Index),
-                $"missing Master cooldown agent {sid}");
-            var entry = container.Get(family.Index);
-            Check(entry.Bpatch && entry.Value("AgentPrototypeSID") == sid,
-                $"wrong Master agent at {family.Index}");
-            var list = entry.Get("CooldownMultipliers");
-            Check(list.Bpatch && list.Children.Count == family.Cooldowns.Count,
-                $"{sid}: Master cooldown list must be sparse BPatch");
-            foreach (var item in family.Cooldowns)
-            {
-                var field = list.Get(item.Index);
-                Check(field.Bpatch, $"{sid}: Master cooldown item must bpatch");
-                Check(field.Value("CooldownTag") == item.Tag,
-                    $"{sid} {item.Index}: cooldown tag drift");
-                Approx(field.Value("CooldownMultiplier"), multiplier);
-            }
-        }
-    }
-
-    private static void FullCooldown(Node root, string modifiedAgent, double modifiedValue)
-    {
-        var parent = root.Get("MutantCombatDifficulty");
-        var container = parent.Get("AgentCooldownMultipliers");
-        Check(parent.Bpatch && !container.Bpatch,
-            "non-Master cooldown must replace absent array, not sparse-bpatch indices");
-        Check(container.Children.Count == 14,
-            "non-Master cooldown insertion must contain all 14 original agent SIDs");
-        foreach (var family in Source.Special.MutantCooldownFamilies.Values)
-        {
-            var entry = container.Get(family.Index);
-            Check(!entry.Bpatch && entry.Value("AgentPrototypeSID") == family.AgentPrototypeSid,
-                "wrong non-Master agent SID / index");
-            var list = entry.Get("CooldownMultipliers");
-            Check(!list.Bpatch && list.Children.Count == family.Cooldowns.Count,
-                $"{family.AgentPrototypeSid}: cooldown tag inventory drift");
-            var isModified = family.AgentPrototypeSid == modifiedAgent;
-            var expected = isModified ? modifiedValue : 1.0;
-            foreach (var item in family.Cooldowns)
-            {
-                var tag = list.Get(item.Index);
-                Check(!tag.Bpatch && tag.Value("CooldownTag") == item.Tag,
-                    $"{family.AgentPrototypeSid} {item.Index}: cooldown tag/index drift");
-                Approx(tag.Value("CooldownMultiplier"), expected);
-            }
-        }
-    }
-
     private static void MasterPsy(Node root, string onlyChangedKey, string expectedValue)
     {
         var npc = root.Get("NPCCombatDifficulty");
@@ -630,9 +418,6 @@ internal static class Program
             Approx(actual.Value("PsyNPCDurabilityDamageMultiplier"), 1);
         }
     }
-
-    private static CfgWriterCooldownFamily Family(string sid) =>
-        Source.Special.MutantCooldownFamilies.Values.Single(x => x.AgentPrototypeSid == sid);
 
     private static ParameterViewModel Get(MainViewModel vm, string id) =>
         vm.AllParameters.Single(x => x.Id == id);

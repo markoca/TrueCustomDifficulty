@@ -1,6 +1,6 @@
 # Combat Mapping
 
-> **Current inventory:** This document describes the original difficulty-layer Combat map. The 2026-10-09 deep audit covers **39 active Combat parameters**, including 14 mutant-health dimensions / 16 nested `MaxHP` edit points. See [Phase 3 Combat audit](DEEP-CFG-AUDIT-PHASE3-COMBAT-2026-10-09.md) for current catalog/writer checks, special-writer boundaries and open runtime tests; the historical sections below remain as source semantics, not current UI counts.
+> **Current inventory:** This document describes the original difficulty-layer Combat map. The 2026-10-09 deep audit covers **30 active Combat parameters**, including 14 mutant-health dimensions / 16 nested `MaxHP` edit points. See [Phase 3 Combat audit](DEEP-CFG-AUDIT-PHASE3-COMBAT-2026-10-09.md) for current catalog/writer checks, special-writer boundaries and open runtime tests; the historical sections below remain as source semantics, not current UI counts.
 
 
 Source of truth: runtime `Stalker2/Content/GameLite/GameData/DifficultyPrototypes.cfg` from the supplied STALKER 2 2.0.5 CFG dump.
@@ -65,30 +65,8 @@ These remain independent controls because vanilla itself treats base player weap
 | Field | Novice | Stalker | Veteran | Master |
 |---|---:|---:|---:|---:|
 | `Mutant_BaseDamage` | 0.35 | 1.00 | 1.35 | 1.50 |
-| `Mutant_AttackCooldown` | 1.00 | 1.00 | 1.00 | 1.00 |
 
-The global attack-cooldown field is neutral on all vanilla profiles. The UI presents it as **Mutant Attack Frequency** and writes the reciprocal multiplier so higher UI values mean more frequent general attacks. Master separately adds species/agent-specific ability cooldown overrides.
-
-## Master mutant ability cooldown overrides
-
-Only Master contains a populated `MutantCombatDifficulty.AgentCooldownMultipliers` block. All mapped entries use `CooldownMultiplier = 0.5` for their listed abilities.
-
-The tool groups related agent variants under one player-facing control while retaining the actual target SIDs:
-
-| UI control | Master agent SIDs | Mapped ability tags |
-|---|---|---|
-| Bloodsucker / Mist Bloodsucker | `Bloodsucker`, `MistBloodsucker` | RunAttack, JumpAttack, ClawAttack, Roar; Mist variant also BiteAttack |
-| Chimera | `Chimera` | RunAttack, Growl, ClawAttack, ShortJumpAttack, LongJumpAttack, FlyThrough |
-| Deer | `Deer` | RunAttack, JumpAttack, Charge |
-| Pseudogiant | `Pseudogiant` | ShockwaveAttack, RunAttack, Charge |
-| Pseudodog | `PseudoDog` | ShockwaveAttack, RunAttack, BiteAttack |
-| Burer | `Burer`, `Burer_ShootingSpecial` | WeaponDrag, WeaponRiseAndShoot, Shield, Throw, ClawAttack |
-| Bayun | `Bayun`, `Bayun_Collar`, `Bayun_Collar_Clone`, `Bayun_E10_MQ01` | ClawAttack, JumpAttack, Growl, JumpToEnemy, BlinkTeleport |
-| Controller | `Controller`, `Controller_Collar` | ClawAttack, PSYAttack, Roar, RaiseDeadBody, ZombifyNPC |
-
-Novice/Stalker/Veteran do not contain matching `AgentCooldownMultipliers` entries. The UI represents absence as neutral `100%`, while Master is `50%`.
-
-**Runtime-test requirement:** final CFG generation must verify that creating these override entries for a non-Master base preset behaves exactly like the vanilla Master block. The existence and Master values are confirmed; non-Master insertion behavior is not.
+Mutant Hit Damage is the only active global mutant-combat scalar. Mutant Health is a separate source-backed 14-species editor; both write existing gameplay fields without affecting human-enemy attack pacing.
 
 ## PSY combat overrides
 

@@ -145,7 +145,7 @@ merge semantics** or quest-specific side effects. Preserve
 | Candidate SHA, 0.x version and `git status --short` | NOT RECORDED |
 | A1–A3 `summary.json` static PASS at that SHA | NOT RUN |
 | B1–B5 original matching decoded archive evidence | NOT RUN |
-| C1 Windows CI 82/82 + C2 46/46 writer at that SHA | NOT RUN |
+| C1 Windows CI 69/69 + C2 46/46 writer at that SHA | NOT RUN |
 | D1 publish and `BUILD-INFO.txt` SHA match | NOT RUN |
 | D2 Wine UI and preset smoke | NOT RUN |
 | D2 PAK/UTOC/UCAS build, mod load and in-game test | NOT RUN |

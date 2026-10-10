@@ -8,10 +8,6 @@
     "combat.mutantDamage": {
       "kind": "slider",
       "number": 0.5
-    },
-    "combat.mutantAttackCooldown": {
-      "kind": "slider",
-      "number": 1.5
     }
   }
 }

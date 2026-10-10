@@ -64,6 +64,25 @@ public sealed class PresetDirectoryService
     };
 
 
+
+    // Exact identities of the twelve stock files before retiring mutant pacing controls.
+    // Upgrade untouched installed copies; never overwrite custom player changes.
+    private static readonly Dictionary<string, string> PreCooldownFactoryBlobs = new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "a9c0ce094946cf17693c330640b6782bb1e38279",
+        ["Field Medic"] = "cae10e7151cc5f341a140ff8a4e729aead549cb5",
+        ["Hardcore"] = "c2d7f350e6dc885b94485eaa23c7b315e64ad0a9",
+        ["Hardcore+"] = "3eb6d3985a35891413ba97ab3165fda7cb48027b",
+        ["Immersive"] = "7d9cfefdae3d01779e82d36686ad262d8cac3ff4",
+        ["Mercenary"] = "90c92757c52b084a0b4b5e10b49759206758bb65",
+        ["Mutant Hunter"] = "2fa7b55667f99eb6b7ccbc03c74878aaaa7f634d",
+        ["Outcast"] = "365aec3e6446d5630364140ca20496421be19391",
+        ["Scavenger"] = "51fc63275f8d695c4693b2db0603823b231b66fa",
+        ["Smuggler"] = "e96a212b63144c2efeb76aab4fb9ec88abd22f15",
+        ["Tactical"] = "d1386e5ad082d09e003aef998cca0a1d21a0803f",
+        ["Wanderer"] = "eaedd7b9f14a274386f6dfbae3dcbd55f7a4ef23"
+    };
+
     public string Ensure()
     {
         var directory = Path.Combine(AppContext.BaseDirectory, "Presets");
@@ -115,7 +134,8 @@ public sealed class PresetDirectoryService
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
-            && !PreAlifeFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreAlifeFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreCooldownFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -131,7 +151,9 @@ public sealed class PresetDirectoryService
             var actual = Convert.ToHexString(SHA1.HashData(input));
             return actual.Equals(knownHash, StringComparison.OrdinalIgnoreCase)
                 || (PreAlifeFactoryBlobs.TryGetValue(name, out var preAlifeHash)
-                    && actual.Equals(preAlifeHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preAlifeHash, StringComparison.OrdinalIgnoreCase))
+                || (PreCooldownFactoryBlobs.TryGetValue(name, out var preCooldownHash)
+                    && actual.Equals(preCooldownHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

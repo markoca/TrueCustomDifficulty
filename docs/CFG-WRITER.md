@@ -120,7 +120,6 @@ For v0.1.63 the writer baseline was checked directly against the fingerprinted r
 
 - **699/699** ordinary edit points matched the exact source file, physical root, nested node path, key and `sourceRaw`;
 - Fast Travel now patches the physical indexed roots `[0]..[14]` from `FastTravelPrototypes.cfg`; the guide SID is metadata, not the emitted root name;
-- Additional Mechanics, Corpse Smart Loot, PSY override arrays and mutant cooldown-family source structures were separately cross-checked.
 
 This is a structural/source audit. It does not turn every mapped control into an in-game runtime confirmation.
 
@@ -139,7 +138,6 @@ Supported now:
 - Advanced Mechanics list membership
 - NPC corpse smart-loot selection
 - Psy override arrays
-- Mutant cooldown-family arrays
 - aggregate item-weight families (Ammo + Consumables)
 - energy-drink sleepiness-relief effect family
 - production-only Cheap stash ammo quantity and grenade chance through embedded redirect manifests

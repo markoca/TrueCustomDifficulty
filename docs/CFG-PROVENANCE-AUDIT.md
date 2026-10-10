@@ -20,7 +20,7 @@ Two provenance classes are kept separate:
 
    `739ecb4a60e2d98181cc6b326894d184b76a09c29b94a66c18d7b0da2c37a83a`
 
-   That audit recorded **699/699 exact** ordinary edit points and separately checked Additional Mechanics, Corpse Smart Loot, PSY overrides and mutant cooldown structures.
+   That audit recorded **699/699 exact** ordinary edit points and separately checked Additional Mechanics, Corpse Smart Loot, PSY overrides.
 
 2. **Fresh embedded-source proof** — writer surfaces added after that audit are rechecked in v0.2.54 against the source inventories/manifests retained under `docs/generators/` and `Data/`.
 
@@ -66,8 +66,6 @@ Historical structural proof covers:
 - 5 `AdditionalMechanicsEffects` list-membership controls;
 - 1 `CorpseSmartLoot.GeneralNPC` set-list control;
 - 4 PSY array controls;
-- 8 mutant cooldown-family controls.
-
 The 7 later clone/redirect routes are freshly checked against their vanilla source templates and audited production redirect manifests. Because Cheap Stash shares one production template between two controls, the 7 routes are backed by 6 source-template groups.
 
 Fresh template result:

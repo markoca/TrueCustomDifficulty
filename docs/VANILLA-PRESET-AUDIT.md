@@ -25,7 +25,6 @@ Only three shared-`All` controls directly patch the selected `DifficultyPrototyp
 |---|---|---:|---:|---:|---:|
 | Human Attack Frequency | `NPCCombatDifficulty.NPC_AttackCooldown` | 1.0 | 1.0 | 1.0 | 1.0 |
 | Human Enemy Fire Accuracy | `NPCCombatDifficulty.HipAccuracyMultiplier` | 1.0 | 1.0 | 1.0 | 1.0 |
-| Mutant Attack Frequency | `MutantCombatDifficulty.Mutant_AttackCooldown` | 1.0 | 1.0* | 1.0 | 1.0 |
 
 `*` Medium does not write its own `MutantCombatDifficulty` block and inherits the neutral value `1.0` from its source chain.
 

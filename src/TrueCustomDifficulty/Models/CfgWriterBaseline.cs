@@ -72,14 +72,8 @@ public sealed class CfgWriterSpecialBaseline
     [JsonPropertyName("psyOverrides")]
     public Dictionary<string, CfgWriterPsyOverride> PsyOverrides { get; set; } = new(StringComparer.Ordinal);
 
-    [JsonPropertyName("mutantCooldownFamilies")]
-    public Dictionary<string, CfgWriterCooldownFamily> MutantCooldownFamilies { get; set; } = new(StringComparer.Ordinal);
-
     [JsonPropertyName("psyParameterKeys")]
     public Dictionary<string, string> PsyParameterKeys { get; set; } = new(StringComparer.Ordinal);
-
-    [JsonPropertyName("mutantCooldownParameters")]
-    public Dictionary<string, List<string>> MutantCooldownParameters { get; set; } = new(StringComparer.Ordinal);
 
     [JsonPropertyName("cheapStashProduction")]
     public CfgWriterCheapStashProduction CheapStashProduction { get; set; } = new();
@@ -522,26 +516,6 @@ public sealed class CfgWriterPsyOverride
     public string EffectSid { get; set; } = string.Empty;
 }
 
-public sealed class CfgWriterCooldownFamily
-{
-    [JsonPropertyName("index")]
-    public string Index { get; set; } = string.Empty;
-
-    [JsonPropertyName("agentPrototypeSid")]
-    public string AgentPrototypeSid { get; set; } = string.Empty;
-
-    [JsonPropertyName("cooldowns")]
-    public List<CfgWriterCooldownEntry> Cooldowns { get; set; } = new();
-}
-
-public sealed class CfgWriterCooldownEntry
-{
-    [JsonPropertyName("index")]
-    public string Index { get; set; } = string.Empty;
-
-    [JsonPropertyName("tag")]
-    public string Tag { get; set; } = string.Empty;
-}
 
 public sealed class CfgWriteResult
 {

@@ -6,7 +6,6 @@ SOURCE = """Empty : struct.begin
    SID = Empty
    MutantCombatDifficulty : struct.begin
       Mutant_BaseDamage = 1.0
-      Mutant_AttackCooldown = 1.0
    struct.end
 struct.end
 Medium : struct.begin {refkey=Empty}
@@ -27,7 +26,7 @@ def probe(key: str, expected: str, text: str = SOURCE,
     return resolve_refkey_inheritance(point, roots, text.splitlines(), direct)
 
 def main():
-    for key in ("Mutant_BaseDamage", "Mutant_AttackCooldown"):
+    for key in ("Mutant_BaseDamage",):
         result = probe(key, "1.0")
         assert result["status"] == "inherited_exact" and result["inheritedFrom"] == "Empty", result
         assert result["refkeyChain"] == ["Empty"], result

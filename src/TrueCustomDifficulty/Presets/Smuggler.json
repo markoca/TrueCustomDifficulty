@@ -54,73 +54,37 @@
       "kind": "toggle",
       "boolean": true
     },
-    "combat.mutantAttackCooldown": {
-      "kind": "slider",
-      "number": 1.1
-    },
     "combat.mutantHealth.bloodsucker": {
       "kind": "slider",
       "number": 1.2
-    },
-    "combat.mutantCooldown.bloodsucker": {
-      "kind": "slider",
-      "number": 0.75
     },
     "combat.mutantHealth.chimera": {
       "kind": "slider",
       "number": 1.2
     },
-    "combat.mutantCooldown.chimera": {
-      "kind": "slider",
-      "number": 0.75
-    },
     "combat.mutantHealth.deer": {
       "kind": "slider",
       "number": 1.2
-    },
-    "combat.mutantCooldown.deer": {
-      "kind": "slider",
-      "number": 0.75
     },
     "combat.mutantHealth.pseudogiant": {
       "kind": "slider",
       "number": 1.2
     },
-    "combat.mutantCooldown.pseudogiant": {
-      "kind": "slider",
-      "number": 0.75
-    },
     "combat.mutantHealth.pseudodog": {
       "kind": "slider",
       "number": 1.2
-    },
-    "combat.mutantCooldown.pseudodog": {
-      "kind": "slider",
-      "number": 0.75
     },
     "combat.mutantHealth.burer": {
       "kind": "slider",
       "number": 1.2
     },
-    "combat.mutantCooldown.burer": {
-      "kind": "slider",
-      "number": 0.75
-    },
     "combat.mutantHealth.bayun": {
       "kind": "slider",
       "number": 1.2
     },
-    "combat.mutantCooldown.bayun": {
-      "kind": "slider",
-      "number": 0.75
-    },
     "combat.mutantHealth.controller": {
       "kind": "slider",
       "number": 1.2
-    },
-    "combat.mutantCooldown.controller": {
-      "kind": "slider",
-      "number": 0.75
     },
     "combat.psySpawnCycleDelay": {
       "kind": "slider",

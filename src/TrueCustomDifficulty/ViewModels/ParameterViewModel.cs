@@ -9,7 +9,6 @@ public sealed class ParameterViewModel : ObservableObject
 {
     private const double Epsilon = 0.000001;
     private const double PercentageStep = 0.05; // 5 percentage-point UI steps.
-    private const double MutantAbilityRechargeStep = 0.25; // Displayed recharge-rate ticks, not native wait ticks.
     private const double NpcWeaponConditionVanillaMin = 0.25;
     private const double NpcWeaponConditionVanillaMax = 0.50;
 
@@ -106,9 +105,7 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsBleedingCurveMember)
                 return "Drag the bleeding and recovery tracks, or move the threshold/damage handles on the curve."
                     + Environment.NewLine + "Right-click a handle to reset it; R resets the bleeding group.";
-            if (IsSpecialAbilityCooldownMember)
-                return "Drag a mutant's ability-recharge fader. Moving toward faster recharge reduces the wait between uses."
-                    + Environment.NewLine + "Right-click one fader to reset it; R resets the recharge group.";
+
             if (IsActionCostMember)
                 return "Drag an action's track to change how much stamina that move costs."
                     + Environment.NewLine + "Right-click one track to reset it; R resets all Stamina Usage actions.";
@@ -299,23 +296,6 @@ public sealed class ParameterViewModel : ObservableObject
 
     public bool IsMutantHealthMember => MutantHealthParameterIds.Contains(Id);
     public bool IsMutantHealthAnchor => Id == "combat.mutantHealth.bloodsucker";
-
-    private static readonly HashSet<string> SpecialAbilityCooldownParameterIds = new(StringComparer.Ordinal)
-    {
-        "combat.mutantDamage",
-        "combat.mutantAttackCooldown",
-        "combat.mutantCooldown.bloodsucker",
-        "combat.mutantCooldown.chimera",
-        "combat.mutantCooldown.deer",
-        "combat.mutantCooldown.pseudogiant",
-        "combat.mutantCooldown.pseudodog",
-        "combat.mutantCooldown.burer",
-        "combat.mutantCooldown.bayun",
-        "combat.mutantCooldown.controller"
-    };
-
-    public bool IsSpecialAbilityCooldownMember => SpecialAbilityCooldownParameterIds.Contains(Id);
-    public bool IsSpecialAbilityCooldownAnchor => Id == "combat.mutantCooldown.bloodsucker";
 
     private static readonly HashSet<string> HumanGroupSizeParameterIds = new(StringComparer.Ordinal)
     {
@@ -595,7 +575,6 @@ public sealed class ParameterViewModel : ObservableObject
         IsExhaustionRecoveryAnchor ||
         IsItemPriceScalerAnchor ||
         IsMutantHealthAnchor ||
-        IsSpecialAbilityCooldownAnchor ||
         IsHumanGroupSizeAnchor ||
         IsMutantGroupSizeAnchor ||
         IsBleedingCurveAnchor ||
@@ -626,7 +605,6 @@ public sealed class ParameterViewModel : ObservableObject
         && (!IsExhaustionRecoveryMember || IsExhaustionRecoveryAnchor)
         && (!IsItemPriceScalerMember || IsItemPriceScalerAnchor)
         && (!IsMutantHealthMember || IsMutantHealthAnchor)
-        && (!IsSpecialAbilityCooldownMember || IsSpecialAbilityCooldownAnchor)
         && (!IsHumanGroupSizeMember || IsHumanGroupSizeAnchor)
         && (!IsMutantGroupSizeMember || IsMutantGroupSizeAnchor)
         && (!IsBleedingCurveMember || IsBleedingCurveAnchor)
@@ -634,12 +612,7 @@ public sealed class ParameterViewModel : ObservableObject
         && (!IsVisualAggregateMember || IsVisualAggregateAnchor)
         && (IsVisualAggregateAnchor || (_dependencyEnabledProvider?.Invoke() ?? true));
     public string ToggleStateLabel => CurrentBoolean ? "ON" : "OFF";
-    // Mutant special ability cards display RECHARGE = 1 / wait multiplier.
-    // At least 1/3x wait is required for an exact maximum of 3x recharge.
-    // Keep the same bound when loading older presets or a stale override catalog.
-    public double Minimum => Id.StartsWith("combat.mutantCooldown.", StringComparison.Ordinal)
-        ? Math.Max(1.0 / 3.0, Definition.Slider?.Min ?? 1.0 / 3.0)
-        : Definition.Slider?.Min ?? 0;
+    public double Minimum => Definition.Slider?.Min ?? 0;
     // Combat UI hard limits: preserve these gameplay-safe maximums even if an old
     // preset or a future catalog update reintroduces the former 4x / >1x ranges.
     public double Maximum => Id switch
@@ -689,11 +662,6 @@ public sealed class ParameterViewModel : ObservableObject
     {
         get
         {
-            // Native cooldown waits are reciprocal to the visible recharge rate.
-            // A 0.25x rate step is non-uniform in underlying wait seconds.
-            if (Id.StartsWith("combat.mutantCooldown.", StringComparison.Ordinal))
-                return MutantAbilityRechargeStep;
-
             if (UsesAbsoluteCatalogStep())
                 return Definition.Slider?.Step ?? 0.01;
 
@@ -953,7 +921,6 @@ public sealed class ParameterViewModel : ObservableObject
             "combat.npcAttackCooldown" => Times(CurrentNumber, "attack rate"),
             "combat.npcHipAccuracy" => Times(CurrentNumber, "accuracy"),
             "combat.mutantDamage" => Times(CurrentNumber, "hit dmg"),
-            "combat.mutantAttackCooldown" => Times(CurrentNumber, "attack rate"),
             "combat.playerWeaponDamage" => Times(CurrentNumber, "weapon dmg"),
             "combat.playerHeadshotMultiplier" => Times(CurrentNumber, "headshot dmg"),
             "combat.weaponJamming" => Times(CurrentNumber, "jam rate"),
@@ -1661,20 +1628,6 @@ public sealed class ParameterViewModel : ObservableObject
         var clamped = Math.Clamp(value, Minimum, Maximum);
         if (!IsSlider)
             return clamped;
-
-        if (Id.StartsWith("combat.mutantCooldown.", StringComparison.Ordinal))
-        {
-            // Snap what the player sees: RECHARGE = 1 / native wait.
-            // This yields 0.50x, 0.75x, 1.00x ... 3.00x exactly, while
-            // retaining the original source-wait mapping in presets/BPatch.
-            var minRecharge = 1.0 / Maximum;
-            var maxRecharge = 1.0 / Minimum;
-            var recharge = 1.0 / Math.Max(Epsilon, clamped);
-            var snappedRecharge = Math.Round(recharge / MutantAbilityRechargeStep,
-                MidpointRounding.AwayFromZero) * MutantAbilityRechargeStep;
-            return 1.0 / Math.Clamp(snappedRecharge, minRecharge, maxRecharge);
-        }
-
         if (UsesAbsoluteCatalogStep())
             return SnapToCatalogStep(clamped);
 

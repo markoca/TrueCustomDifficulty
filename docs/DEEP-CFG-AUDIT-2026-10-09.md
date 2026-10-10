@@ -39,7 +39,6 @@ The live `parameters.json` already contained six valid hidden, player-editable *
 | `snork` | `Snork` | 150 |
 | `tushkan` | `Tushkan` | 19 |
 
-Each of these six prototypes has **one** exact authored `MaxHP` entry under `VitalParams`. The baseline now contains six corresponding `scale` edit points, with `scope=baseGame`, `file=GameData/ObjPrototypes.cfg`, original proto SID, empty `nodePath`, `key=MaxHP`, and exact numeric `sourceRaw`. This follows the existing ten `MaxHP` writer entries, and preserves 0.05–2x source controls with their 0.05x UI steps, difficulty-independent HP interpretation and preset keys. The separate eight-family mutant **Special Ability Cooldown** system remains unchanged. No new UI controls were introduced.
 
 The result is **14 mutant HP settings, 16 actual source `MaxHP` edit points**, compared with the former eight settings and ten edit points. All 16 were individually checked in the supplied base CFG (including Bloodsucker/MistBloodsucker and both Burer variants). `tools/audit_cfg_dump_provenance.py` reproduces this verification.
 
@@ -97,7 +96,6 @@ The ZIP check was independently applied to the materialized user source archives
 
 1. **SourceRaw/field-path audit (1,208 other direct edit points):** validate the exact prototype `SID`, nested node path and raw source value against both ZIPs. Split real mismatches from intentional inherited values, optional DLC1 overrides and version-specific differences.
 2. **Special writer source manifests, especially Loot (24 runtime-test-required dimensions):** verify generator cloning, redirects, context eligibility, quest/story exclusion, independence of amount vs chance, and actual consumption paths. Do not mark file-existence as runtime-safe.
-3. **Combat (12 runtime-test-required dimensions):** the eight mutant cooldown families, Psy interactions and special ability meaning including cooldown inversion; confirm with in-game tests.
 4. **Economy (5) / Health (3) / Survival (2) / Equipment (1) / Stamina (1):** audit exact scalar meaning, activation thresholds, stacked effects and cross-system interactions. In particular **Armor Durability** and **Equipment Bonus Caps** remain unresolved; bonus caps stay audit-only, not player-facing.
 5. **Master and A-Life:** prove effective trigger/composition behavior, non-Master bundle insertion, and A-Life Director encounter caps versus lair population. Do not infer runtime spawn frequency from `MaxCount` fields.
 6. **DLC1 and vanilla coverage:** confirm every targeted authored prototype for both scopes and negative-space safety (untouched quest/inherited/other DLC-only records), then execute UI + patch roundtrip + actual gameplay scenarios.

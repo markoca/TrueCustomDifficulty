@@ -349,17 +349,11 @@ Human Combat has three vertical tracks next to its graph: Attack Frequency 0.5â€
 
 Inside the fixed 1x1 full-width section layout, Mutant Health has eight source-native vertical faders in a single row with equal spacing. Your Weapons has three vertical faders in a single centered row. The old Mutant Health 4x2 and Your Weapons 2x2 layout descriptions are superseded. Do not auto-wrap either bank; preserve their native source semantics and grey reference ticks.
 
-### Special Ability Cooldowns fader bank (2026-10-08)
-
-Eight compact, equally spaced vertical cooldown controls remain on one horizontal row, aligned with the single-row Mutant Health pattern. Preserve each CFG cooldown wait multiplier, grey Base tick, gold glowing handle, native source step, individual reset and inverse return-rate annotation. This layout does not auto-wrap.
-
 ### Mutant Combat: two-tier fixed composition (2026-10-08)
 
-One Mutant Combat section replaces separate global pressure and special cooldown sections. The upper tier has two centered global faders (Hit Damage and Attack Frequency). The lower tier has eight evenly spaced vertical ability wait faders in one row. All ten retain source-native bounds, independent hit regions, Base markers, glow-only handles and individual resets. The layout must keep the two mechanics visually distinct and never suggest that regular attack frequency is a mutant ability cooldown.
 
 ### Mutant Combat horizontal/vertical split (2026-10-08)
 
-Global Hit Damage and Attack Frequency are two stacked horizontal rail controls with circular gold handles, Base ticks, labels, live multipliers and native bounds. Each uses pointer X to determine value. The eight one-row mutant-specific cooldowns remain vertical and use pointer Y. This visually distinguishes generic mutant attacks from individual special-ability timers.
 
 ### Locked Mutant Combat horizontal pair â€” 2026-10-08
 
@@ -423,7 +417,6 @@ This is a visual presentation change, not a global rescale: preserve sliders' na
 
 **User-approved global visual change; supersedes all earlier per-family hover halo sizes, opacities, double-rings, whole-card hover backgrounds and selection-only glow.** All hand-drawn editor handles use the single helper `Controls/ControlHoverGlow.cs` with **halo radius 15 DIP / opacity 0.17** and **outline ring radius 11 DIP / opacity 0.67 / 1.6-DIP stroke**, drawn using the existing gold AccentBrush. Hover state alone enables it. Selected/focused/modified-but-not-hovered controls do not manufacture this glow.
 
-- Native horizontal / vertical / range / choice sliders, interactive X/Y/joint plot handles, mutant-health and cooldown controls, Action/Stamina Usage, Bleeding, Drunkenness, Medical Healing, Item Value, group size, anomaly damage, mutant drops, world loot and stash ammo all share this helper.
 - Shared aggregate renderers determine the current editable handle position from the actual source mapping and show the halo **only on the hovered active hit target**. Combined graph rings reuse the same helper at their actual drawn point. Toggles receive the same indicator-sized halo, not a glowing entire panel. Hovering a Base/Vanilla reference tick, selection-only area, static preview or noninteractive legend does not glow or edit values.
 - Ordinary WPF controls use `UniversalHoverGlowEffect` in `App.xaml`, matching gold, radius 15 and opacity 0.67 with zero shadow depth. The same resource drives Button/PrimaryButton/window buttons, preset ComboBoxes and their options, TabItem, TextBox, CheckBox switch **thumb**, native Slider **thumb** and wheel-editable value box. On slider mouseover the track, label and current numeric text stay neutral; only the thumb gets hover effect. The ordinary parameter-card background must not change because a mouse is merely over the card.
 - Disabled controls remain non-editable and do not receive active handle halos. Preserve focus styling, keyboard/touch/mouse behavior, native snapping, preset reset, CFG and value-reference calculations. Handle-only hover is strictly visual; no new gameplay parameter or hit surface.

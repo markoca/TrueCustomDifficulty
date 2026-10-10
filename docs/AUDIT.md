@@ -51,7 +51,6 @@ Separately checked special structures:
 - Additional Mechanics membership;
 - `CorpseSmartLoot.GeneralNPC`;
 - Master PSY override entries;
-- mutant cooldown-family entries/tags.
 
 These structures match the runtime source shape used by their special writers.
 

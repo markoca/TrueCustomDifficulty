@@ -598,49 +598,7 @@
       },
       "rationale": "Changes how much damage mutant attacks deal when they connect.",
       "logic": "",
-      "interaction": "Mutant Attack Frequency changes general attack frequency. Master-only special-ability cooldowns are tuned separately in the Master tab."
-    },
-    {
-      "id": "combat.mutantAttackCooldown",
-      "tab": "combat",
-      "group": "Mutant Combat",
-      "label": "Mutant Attack Frequency",
-      "description": "Controls how frequently mutants can make another general attack.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Mutant attack frequency"
-      },
-      "vanilla": {
-        "All": 1
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.5,
-        "max": 4,
-        "step": 0.1,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.Mutant_AttackCooldown",
-          "operation": "inverseScale"
-        }
-      ],
-      "support": {
-        "status": "confirmed",
-        "notes": []
-      },
-      "rationale": "Controls how frequently mutants can make another general attack.",
-      "logic": "100% is vanilla. Above 100% shortens the underlying mutant attack cooldown and makes attacks more frequent; below 100% lengthens the cooldown and creates longer gaps. Vanilla uses 100% on all four standard difficulties.",
-      "interaction": "Mutant Hit Damage controls how hard attacks land. Master-only species special-ability cooldowns are separate controls."
+      "interaction": "Mutant Health controls how much damage they can absorb; this control changes only damage dealt to the player."
     },
     {
       "id": "combat.accumulatedDamageWeightMax",
@@ -813,68 +771,12 @@
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
           "1x is vanilla.",
           "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty.",
-          "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat.",
           "The Bloodsucker family control applies the same multiplier to Bloodsucker (500 MaxHP) and MistBloodsucker (1000 MaxHP); the radar displays the standard Bloodsucker value only."
         ]
       },
       "rationale": "Set Bloodsucker-family HP with one multiplier. Standard Bloodsucker is the displayed reference; Mist Bloodsucker scales by the same factor.",
       "logic": "",
-      "interaction": "Both audited Bloodsucker MaxHP targets scale together. Mutant damage and special-attack frequency remain separate.",
-      "exposeInUi": true
-    },
-    {
-      "id": "combat.mutantCooldown.bloodsucker",
-      "tab": "combat",
-      "group": "Mutant Combat",
-      "label": "Mutant Special Attack Cooldown",
-      "description": "Changes how often eight mutant families can reuse special attacks.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Wait time between special attacks"
-      },
-      "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 0.5
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.3333333333333333,
-        "max": 2,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Bloodsucker].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=MistBloodsucker].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Master explicitly defines 0.5 overrides; Novice/Stalker/Veteran contain no agent override block and are represented as neutral 1.0 in the UI. Generated override insertion into Novice/Stalker/Veteran requires runtime validation."
-        ]
-      },
-      "rationale": "Set the wait between special attacks for each mutant family. Lower wait times mean more frequent special attacks; damage is unchanged.",
-      "logic": "",
-      "interaction": "",
+      "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": true
     },
     {
@@ -916,61 +818,12 @@
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
           "1x is vanilla.",
-          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty.",
-          "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
+          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "Tune Chimera durability without changing its damage or special-attack frequency.",
+      "rationale": "",
       "logic": "",
-      "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantCooldown.chimera",
-      "tab": "combat",
-      "group": "Mutant Combat",
-      "label": "Chimera Special Ability Cooldown",
-      "description": "Controls how long Chimera must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Wait time between special attacks"
-      },
-      "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 0.5
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.3333333333333333,
-        "max": 2,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Chimera].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Master explicitly defines 0.5 overrides; Novice/Stalker/Veteran contain no agent override block and are represented as neutral 1.0 in the UI. Generated override insertion into Novice/Stalker/Veteran requires runtime validation."
-        ]
-      },
-      "rationale": "Controls how long Chimera must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 50% of normal.",
-      "logic": "Lower percentages mean special abilities can come back sooner and fights feel more aggressive. Higher percentages give you more breathing room. This changes frequency, not the damage of the attack itself.",
-      "interaction": "Mutant Damage controls how hard the hit hurts. This setting controls how often the affected special abilities can return.",
+      "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
     },
     {
@@ -1012,61 +865,12 @@
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
           "1x is vanilla.",
-          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty.",
-          "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
+          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "Tune Deer durability without changing its damage or special-attack frequency.",
+      "rationale": "",
       "logic": "",
-      "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantCooldown.deer",
-      "tab": "combat",
-      "group": "Mutant Combat",
-      "label": "Deer Special Ability Cooldown",
-      "description": "Controls how long Deer must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Wait time between special attacks"
-      },
-      "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 0.5
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.3333333333333333,
-        "max": 2,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Deer].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Master explicitly defines 0.5 overrides; Novice/Stalker/Veteran contain no agent override block and are represented as neutral 1.0 in the UI. Generated override insertion into Novice/Stalker/Veteran requires runtime validation."
-        ]
-      },
-      "rationale": "Controls how long Deer must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 50% of normal.",
-      "logic": "Lower percentages mean special abilities can come back sooner and fights feel more aggressive. Higher percentages give you more breathing room. This changes frequency, not the damage of the attack itself.",
-      "interaction": "Mutant Damage controls how hard the hit hurts. This setting controls how often the affected special abilities can return.",
+      "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
     },
     {
@@ -1108,61 +912,12 @@
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
           "1x is vanilla.",
-          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty.",
-          "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
+          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "Tune Pseudogiant durability without changing its damage or special-attack frequency.",
+      "rationale": "",
       "logic": "",
-      "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantCooldown.pseudogiant",
-      "tab": "combat",
-      "group": "Mutant Combat",
-      "label": "Pseudogiant Special Ability Cooldown",
-      "description": "Controls how long Pseudogiant must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Wait time between special attacks"
-      },
-      "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 0.5
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.3333333333333333,
-        "max": 2,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Pseudogiant].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Master explicitly defines 0.5 overrides; Novice/Stalker/Veteran contain no agent override block and are represented as neutral 1.0 in the UI. Generated override insertion into Novice/Stalker/Veteran requires runtime validation."
-        ]
-      },
-      "rationale": "Controls how long Pseudogiant must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 50% of normal.",
-      "logic": "Lower percentages mean special abilities can come back sooner and fights feel more aggressive. Higher percentages give you more breathing room. This changes frequency, not the damage of the attack itself.",
-      "interaction": "Mutant Damage controls how hard the hit hurts. This setting controls how often the affected special abilities can return.",
+      "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
     },
     {
@@ -1204,61 +959,12 @@
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
           "1x is vanilla.",
-          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty.",
-          "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
+          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "Tune Pseudodog durability without changing its damage or special-attack frequency.",
+      "rationale": "",
       "logic": "",
-      "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantCooldown.pseudodog",
-      "tab": "combat",
-      "group": "Mutant Combat",
-      "label": "Pseudodog Special Ability Cooldown",
-      "description": "Controls how long Pseudodog must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Wait time between special attacks"
-      },
-      "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 0.5
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.3333333333333333,
-        "max": 2,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=PseudoDog].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Master explicitly defines 0.5 overrides; Novice/Stalker/Veteran contain no agent override block and are represented as neutral 1.0 in the UI. Generated override insertion into Novice/Stalker/Veteran requires runtime validation."
-        ]
-      },
-      "rationale": "Controls how long Pseudodog must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 50% of normal.",
-      "logic": "Lower percentages mean special abilities can come back sooner and fights feel more aggressive. Higher percentages give you more breathing room. This changes frequency, not the damage of the attack itself.",
-      "interaction": "Mutant Damage controls how hard the hit hurts. This setting controls how often the affected special abilities can return.",
+      "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
     },
     {
@@ -1307,68 +1013,12 @@
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
           "1x is vanilla.",
-          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty.",
-          "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
+          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "Tune Burer durability without changing its damage or special-attack frequency.",
+      "rationale": "",
       "logic": "",
-      "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantCooldown.burer",
-      "tab": "combat",
-      "group": "Mutant Combat",
-      "label": "Burer Special Ability Cooldown",
-      "description": "Controls how long Burer must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Wait time between special attacks"
-      },
-      "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 0.5
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.3333333333333333,
-        "max": 2,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Burer].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Burer_ShootingSpecial].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Master explicitly defines 0.5 overrides; Novice/Stalker/Veteran contain no agent override block and are represented as neutral 1.0 in the UI. Generated override insertion into Novice/Stalker/Veteran requires runtime validation."
-        ]
-      },
-      "rationale": "Controls how long Burer must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 50% of normal.",
-      "logic": "Lower percentages mean special abilities can come back sooner and fights feel more aggressive. Higher percentages give you more breathing room. This changes frequency, not the damage of the attack itself.",
-      "interaction": "Mutant Damage controls how hard the hit hurts. This setting controls how often the affected special abilities can return.",
+      "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
     },
     {
@@ -1410,82 +1060,12 @@
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
           "1x is vanilla.",
-          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty.",
-          "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
+          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "Tune Bayun durability without changing its damage or special-attack frequency.",
+      "rationale": "",
       "logic": "",
-      "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantCooldown.bayun",
-      "tab": "combat",
-      "group": "Mutant Combat",
-      "label": "Bayun Special Ability Cooldown",
-      "description": "Controls how long Bayun must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Wait time between special attacks"
-      },
-      "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 0.5
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.3333333333333333,
-        "max": 2,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Bayun].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Bayun_Collar].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Bayun_Collar_Clone].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Bayun_E10_MQ01].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Master explicitly defines 0.5 overrides; Novice/Stalker/Veteran contain no agent override block and are represented as neutral 1.0 in the UI. Generated override insertion into Novice/Stalker/Veteran requires runtime validation."
-        ]
-      },
-      "rationale": "Controls how long Bayun must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 50% of normal.",
-      "logic": "Lower percentages mean special abilities can come back sooner and fights feel more aggressive. Higher percentages give you more breathing room. This changes frequency, not the damage of the attack itself.",
-      "interaction": "Mutant Damage controls how hard the hit hurts. This setting controls how often the affected special abilities can return.",
+      "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
     },
     {
@@ -1525,8 +1105,7 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
-          "Vanilla 63 HP; no Ability Cooldown prerequisite."
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
       "exposeInUi": false
@@ -1568,8 +1147,7 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
-          "Vanilla 300 HP; no Ability Cooldown prerequisite."
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
       "exposeInUi": false
@@ -1611,8 +1189,7 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
-          "Vanilla 280 HP; no Ability Cooldown prerequisite."
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
       "exposeInUi": false
@@ -1654,8 +1231,7 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
-          "Vanilla 400 HP; no Ability Cooldown prerequisite."
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
       "exposeInUi": false
@@ -1697,8 +1273,7 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
-          "Vanilla 150 HP; no Ability Cooldown prerequisite."
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
       "exposeInUi": false
@@ -1740,8 +1315,7 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty.",
-          "Vanilla 19 HP; no Ability Cooldown prerequisite."
+          "Direct MaxHP scalar in ObjPrototypes.cfg, independent of selected difficulty."
         ]
       },
       "exposeInUi": false
@@ -1785,68 +1359,12 @@
         "notes": [
           "Directly scales the authored MaxHP field in GameData/ObjPrototypes.cfg.",
           "1x is vanilla.",
-          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty.",
-          "Placed immediately next to the corresponding mutant Special Ability Cooldown control in Combat."
+          "This is not selected through DifficultyPrototypes.cfg; the same generated MaxHP applies regardless of the in-game difficulty."
         ]
       },
-      "rationale": "Tune Controller durability without changing its damage or special-attack frequency.",
+      "rationale": "",
       "logic": "",
-      "interaction": "Health changes how much damage the mutant can absorb. The paired Special Ability Cooldown changes how often its special abilities can return.",
-      "exposeInUi": false
-    },
-    {
-      "id": "combat.mutantCooldown.controller",
-      "tab": "combat",
-      "group": "Mutant Combat",
-      "label": "Controller Special Ability Cooldown",
-      "description": "Controls how long Controller must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 0.5x of normal.",
-      "control": "slider",
-      "valueKind": "multiplier",
-      "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Wait time between special attacks"
-      },
-      "vanilla": {
-        "Novice": 1,
-        "Stalker": 1,
-        "Veteran": 1,
-        "Master": 0.5
-      },
-      "default": {
-        "mode": "referenceDifficulty"
-      },
-      "slider": {
-        "min": 0.3333333333333333,
-        "max": 2,
-        "step": 0.25,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Controller].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/DifficultyPrototypes.cfg",
-          "prototype": "$selectedDifficultySID",
-          "path": "MutantCombatDifficulty.AgentCooldownMultipliers[AgentPrototypeSID=Controller_Collar].CooldownMultipliers[*].CooldownMultiplier",
-          "operation": "setAgentAbilityCooldownFamily"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "Master explicitly defines 0.5 overrides; Novice/Stalker/Veteran contain no agent override block and are represented as neutral 1.0 in the UI. Generated override insertion into Novice/Stalker/Veteran requires runtime validation."
-        ]
-      },
-      "rationale": "Controls how long Controller must wait before its special attacks can be used again. Vanilla Master adds an override that cuts these waits to 50% of normal.",
-      "logic": "Lower percentages mean special abilities can come back sooner and fights feel more aggressive. Higher percentages give you more breathing room. This changes frequency, not the damage of the attack itself.",
-      "interaction": "Mutant Damage controls how hard the hit hurts. This setting controls how often the affected special abilities can return.",
+      "interaction": "Changes only this mutant family's health. Other combat settings remain independent.",
       "exposeInUi": false
     },
     {

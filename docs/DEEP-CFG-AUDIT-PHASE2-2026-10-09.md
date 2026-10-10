@@ -50,7 +50,6 @@ The script reports structural findings without silently treating inheritance as 
 
 1. Triage the exhaustive direct source report by file and impact. Validate source writer syntax and BPatch roundtrip for representative modified HP values (including variant Bloodsucker and Burer), then test in game.
 2. Check the **special writer** manifests and original producer/consumer chains separately. Loot generators, world placements, trader pools and clone redirects are not covered by this direct-field script.
-3. Verify native gameplay interaction semantics of the 48 catalog-declared runtime-test-required active dimensions, especially mutant ability cooldowns, trader economics and generator-backed Loot.
 4. Keep `docs/UI-DESIGN-LOCK.md` unchanged until user approves a UI change; these are direct source mapping corrections only.
 
 No release to v1.0 is authorized by this partial audit.

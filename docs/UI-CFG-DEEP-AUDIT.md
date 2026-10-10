@@ -1,6 +1,6 @@
 # UI → Real CFG Deep Audit
 
-> **HISTORICAL SNAPSHOT ONLY — v0.9.26.51.** The counts below (199 catalog / 188 editable) and its PASS apply **only to that earlier snapshot**. They do NOT describe the current 2026-10-09 source tree. The active catalog is 244 parameters / 232 editable dimensions, and this earlier audit missed six subsequently introduced mutant MaxHP writer routes. See [Deep CFG audit phase 1 (2026-10-09)](DEEP-CFG-AUDIT-2026-10-09.md) for the source-verified correction and current counts. Retained as an archived comparison, not as the current release approval.
+> **HISTORICAL SNAPSHOT ONLY — v0.9.26.51.** The counts below (199 catalog / 188 editable) and its PASS apply **only to that earlier snapshot**. They do NOT describe the current source tree. The active catalog is 236 parameters / 223 editable dimensions, and this earlier audit missed six subsequently introduced mutant MaxHP writer routes. See [Deep CFG audit phase 1 (2026-10-09)](DEEP-CFG-AUDIT-2026-10-09.md) for the source-verified correction and current counts. Retained as an archived comparison, not as the current release approval.
 
 
 **Project:** True Custom Difficulty  
@@ -28,7 +28,6 @@ Support status is also explicit: **142** editable dimensions are `confirmed`; **
 | UI card / radar | Backing dimensions | Route split | Real CFG surface | Direct points |
 |---|---:|---|---|---:|
 | Mutant Health | 8 | 8 direct / 0 special | `GameData/ObjPrototypes.cfg` | 10 |
-| Mutant Special Attack Cooldown | 8 | 0 direct / 8 special | `GameData/DifficultyPrototypes.cfg` | 0 |
 | Healing Amount | 4 | 4 direct / 0 special | `GameData/EffectPrototypes.cfg` | 8 |
 | Action Costs | 7 | 7 direct / 0 special | `GameData/CoreVariables.cfg, GameData/ObjPrototypes.cfg` | 7 |
 | Item Price Scalers | 6 | 6 direct / 0 special | `DLCGameData/DLC1/ItemPrototypes.cfg, GameData/DifficultyPrototypes.cfg, GameData/ItemPrototypes.cfg` | 35 |
@@ -40,9 +39,6 @@ Support status is also explicit: **142** editable dimensions are `confirmed`; **
 
 ### Mutant Health
 All eight axes are direct `scale` operations against `GameData/ObjPrototypes.cfg -> MaxHP`. There are **10 concrete MaxHP edits** because Bloodsucker also controls `MistBloodsucker`, while Burer also controls `Burer_ShootingSpecial`. Bloodsucker and MistBloodsucker receive the same family multiplier; the radar deliberately displays only the standard Bloodsucker reference HP (500 at 1x) instead of exposing the internal 500/1000 pair. Other displayed references remain Chimera 1400, Deer 600, Pseudogiant 2500, Pseudodog 300, Burer 400, Bayun 400, Controller 500.
-
-### Mutant Special Attack Cooldown
-All eight axes go through the structural writer in `GameData/DifficultyPrototypes.cfg`, under `MutantCombatDifficulty -> AgentCooldownMultipliers -> CooldownMultipliers -> CooldownMultiplier`. The writer does not fake a generic slider field: it writes each audited ability tag belonging to that mutant family. Current family coverage is **66 cooldown slots** in total: Bloodsucker 9, Chimera 6, Deer 3, Pseudogiant 3, Pseudodog 3, Burer 12, Bayun 20, Controller 10. The difficulty profile is preserved: Novice/Stalker/Veteran reference 1x, Master reference 0.5x.
 
 ### Healing Amount
 The four axes directly write `GameData/EffectPrototypes.cfg` healing `ValueMin/ValueMax` pairs: **8 concrete edits**. The HP shown by the radar is therefore the actual value written to those healing effects, not a cosmetic normalized number.
@@ -73,8 +69,6 @@ Basic, Standard and Rare use three separate special generator writers in `ItemGe
 All 14 axes are direct `ItemGeneratorPrototypes.cfg` routes, one concrete generator chance edit per mutant family. The radar changes the existing per-mutant drop chance only; it does not change spawn counts or successful-drop quantity.
 
 ## Runtime-test-required dimensions
-The audit deliberately keeps runtime status separate from route correctness. The largest remaining runtime-unverified areas are generator-backed Loot surfaces and mutant special-ability cooldowns. These parameters have active writer routes and pass structural/manifest audits, but should remain labeled `runtime_test_required` until the corresponding in-game behavior has been exercised and recorded.
-- **Mutant Special Attack Cooldown**: 8
 - **World Loot Removal**: 5
 - **Ammo Box Distribution**: 4
 - **Stash Ammo Amounts**: 3

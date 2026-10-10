@@ -25,34 +25,17 @@ def verify() -> None:
     for point in points:
         grouped[point["parameterId"]].append(point)
 
-    assert len(combat) == 39, f"Combat catalog changed: {len(combat)}"
-    assert len(grouped) == 27, f"Direct Combat parameter count changed: {len(grouped)}"
-    assert len(points) == 68, f"Concrete direct Combat route count changed: {len(points)}"
-    assert sum(e["file"] == "GameData/DifficultyPrototypes.cfg" for e in points) == 52
+    assert len(combat) == 30, f"Combat catalog changed: {len(combat)}"
+    assert len(grouped) == 26, f"Direct Combat parameter count changed: {len(grouped)}"
+    assert len(points) == 64, f"Concrete direct Combat route count changed: {len(points)}"
+    assert sum(e["file"] == "GameData/DifficultyPrototypes.cfg" for e in points) == 48
     assert sum(e["file"] == "GameData/ObjPrototypes.cfg" for e in points) == 16
 
     direct_ids = set(grouped)
     special_ids = set(combat) - direct_ids
-    assert len(special_ids) == 12
-    assert special_ids == (
-        {f"combat.mutantCooldown.{name}" for name in
-         ("bloodsucker", "chimera", "deer", "pseudogiant", "pseudodog",
-          "burer", "bayun", "controller")}
-        | {"combat.psySpawnCycleDelay", "combat.psyPhantomCount",
-           "combat.psyBleeding", "combat.psyDurabilityDamage"}
-    )
-    # UI rate is 1/native cooldown wait. All eight cards must use 0.25x
-    # RECHARGE increments (0.5x..3x), NOT raw-wait increments. Do not change
-    # normal mutant attack frequency (an unrelated source).
-    for pid in sorted(pid for pid in special_ids if pid.startswith("combat.mutantCooldown.")):
-        slider = combat[pid]["slider"]
-        assert abs(float(slider["min"]) - 1.0 / 3.0) < 1e-12, (
-            f"{pid}: recharge cap must be exactly 3x (native wait floor 1/3)"
-        )
-        assert slider["max"] == 2 and slider["step"] == 0.25
-        assert slider["stepMode"] == "absolute"
-    assert combat["combat.mutantAttackCooldown"]["slider"]["max"] == 2
-
+    assert len(special_ids) == 4
+    assert special_ids == {"combat.psySpawnCycleDelay", "combat.psyPhantomCount",
+                           "combat.psyBleeding", "combat.psyDurabilityDamage"}
     assert all(combat[pid]["support"]["status"] == "confirmed" for pid in direct_ids)
     assert all(combat[pid]["support"]["status"] == "runtime_test_required"
                for pid in special_ids)
@@ -109,24 +92,6 @@ def verify() -> None:
             assert {p["difficultySid"] for p in route_points} == set(names_by_sid)
 
     special = writer["special"]
-    families = special["mutantCooldownFamilies"]
-    owners = special["mutantCooldownParameters"]
-    assert len(families) == 14 and len(owners) == 8
-    assert {agent for members in owners.values() for agent in members} == set(families)
-    assert len({f["index"] for f in families.values()}) == 14
-    for sid, family in families.items():
-        assert family["agentPrototypeSid"] == sid
-        assert len({p["index"] for p in family["cooldowns"]}) == len(family["cooldowns"])
-        assert all(p["tag"] for p in family["cooldowns"])
-
-    for parameter_id, agent_sids in owners.items():
-        assert parameter_id in special_ids
-        targets = combat[parameter_id]["targets"]
-        assert len(targets) == len(agent_sids)
-        assert all(t["operation"] == "setAgentAbilityCooldownFamily" for t in targets)
-        for sid in agent_sids:
-            assert any(f"[AgentPrototypeSID={sid}]" in t["path"] for t in targets)
-
     psy = special["psyParameterKeys"]
     assert len(psy) == 4
     assert set(psy) == {pid for pid in special_ids if pid.startswith("combat.psy")}
@@ -141,13 +106,11 @@ def verify() -> None:
         assert all(any(f"[OverrideEffectPrototypeSID={effect}]" in t["path"]
                        for t in targets) for effect in effects)
 
-    print("Combat static contract PASS: 39 controls (27 direct + 12 special),")
-    print("  68 direct routes (52 difficulty fields + 16 nested mutant MaxHP).")
-    print("  14 cooldown agent SIDs / 8 control families, 2 PSY effects / 4 controls.")
+    print("Combat static contract PASS: 30 controls (26 direct + 4 PSY special),")
+    print("  64 direct routes (48 difficulty fields + 16 nested mutant MaxHP).")
+    print("  2 PSY effects / 4 controls; no retired mutant pacing routes.")
     print("  No direct ownership collision, target-path drift or vanilla marker drift.")
-    print("NOT VERIFIED: original decoded CFG beyond prior HP evidence, BPatch runtime,")
-    print("  non-Master override insertion, gameplay effects and hidden legacy presets.")
-
+    print("NOT VERIFIED: original decoded CFG, BPatch runtime and gameplay effects.")
 
 if __name__ == "__main__":
     try:

@@ -18,7 +18,6 @@ displayed controls.
 ### Combat
 
 - Mutant Health: 14 catalog scalers writing 16 `VitalParams.MaxHP` targets.
-- Special Attack Cooldown: eight families in `Mutant Combat`, currently
   **0.25–2.0x at 0.10x steps**, not the archived 0.01x radar contract.
   Novice/Stalker/Veteran reference **1x**; Master references **0.5x**.
 - The special ability family remains **runtime-test-required**. Static

@@ -182,18 +182,6 @@ public sealed class MainViewModel : ObservableObject
         "combat.mutantHealth.tushkan"
         };
 
-        var specialAbilityCooldownParameterIds = new HashSet<string>(StringComparer.Ordinal)
-        {
-            "combat.mutantCooldown.bloodsucker",
-            "combat.mutantCooldown.chimera",
-            "combat.mutantCooldown.deer",
-            "combat.mutantCooldown.pseudogiant",
-            "combat.mutantCooldown.pseudodog",
-            "combat.mutantCooldown.burer",
-            "combat.mutantCooldown.bayun",
-            "combat.mutantCooldown.controller"
-        };
-
         var humanGroupSizeParameterIds = new HashSet<string>(StringComparer.Ordinal)
         {
             "alife.humanGroupSize.newbie",
@@ -242,7 +230,6 @@ public sealed class MainViewModel : ObservableObject
                 || consumableAggregateParameterIds.Contains(p.Id)
                 || itemPriceScalerParameterIds.Contains(p.Id)
                 || mutantHealthParameterIds.Contains(p.Id)
-                || specialAbilityCooldownParameterIds.Contains(p.Id)
                 || humanGroupSizeParameterIds.Contains(p.Id)
                 || mutantGroupSizeParameterIds.Contains(p.Id))
             .Select(p => new ParameterViewModel(p, _selectedReferenceDifficulty))
@@ -776,31 +763,6 @@ public sealed class MainViewModel : ObservableObject
             }
         }
 
-        if (parametersById.TryGetValue("combat.mutantCooldown.bloodsucker", out var specialAbilityCooldownAnchor))
-        {
-            var specialAbilityCooldownMembers = specialAbilityCooldownParameterIds
-                .Select(id => parametersById.TryGetValue(id, out var parameter) ? parameter : null)
-                .Where(parameter => parameter is not null)
-                .Cast<ParameterViewModel>()
-                .ToArray();
-
-            specialAbilityCooldownAnchor.SetAggregateModifiedProvider(
-                () => specialAbilityCooldownMembers.Any(parameter =>
-                    Math.Abs(parameter.CurrentNumber - parameter.ReferenceNumber) > 0.0000001));
-
-            foreach (var member in specialAbilityCooldownMembers)
-            {
-                member.PropertyChanged += (_, args) =>
-                {
-                    if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber)
-                        || args.PropertyName == nameof(ParameterViewModel.ReferenceLabel))
-                    {
-                        specialAbilityCooldownAnchor.RefreshAggregateModifiedState();
-                    }
-                };
-            }
-        }
-
 
         if (parametersById.TryGetValue("alife.humanGroupSize.newbie", out var humanGroupSizeAnchor))
         {
@@ -1291,7 +1253,7 @@ public sealed class MainViewModel : ObservableObject
                         continue;
 
                     if (migrateAttackFrequency
-                        && (pair.Key is "combat.npcAttackCooldown" or "combat.mutantAttackCooldown")
+                        && pair.Key == "combat.npcAttackCooldown"
                         && pair.Value.Number is > 0.0000001)
                     {
                         // Before v0.1.96 these controls stored the raw cooldown multiplier.
@@ -1477,8 +1439,6 @@ public sealed class MainViewModel : ObservableObject
 
                 // Mutants
                 "combat.mutantDamage" => 40,
-                "combat.mutantAttackCooldown" => 50,
-
                 // Your Weapons
                 "combat.playerWeaponDamage" => 60,
                 "combat.playerHeadshotMultiplier" => 70,
@@ -1491,8 +1451,7 @@ public sealed class MainViewModel : ObservableObject
                 "combat.accumulatedDamageWeightMax" => 100,
                 "combat.accumulatedDamageWeightMin" => 110,
                 "combat.accumulatedDamageIncludesHealedHealth" => 120,
-
-                // Mutant Health radar, followed by a separate Special Ability Cooldowns list.
+                // Mutant Health radar.
                 "combat.mutantHealth.bloodsucker" => 130,
                 "combat.mutantHealth.chimera" => 130,
                 "combat.mutantHealth.deer" => 130,
@@ -1501,16 +1460,6 @@ public sealed class MainViewModel : ObservableObject
                 "combat.mutantHealth.burer" => 130,
                 "combat.mutantHealth.bayun" => 130,
                 "combat.mutantHealth.controller" => 130,
-
-                "combat.mutantCooldown.bloodsucker" => 140,
-                "combat.mutantCooldown.chimera" => 141,
-                "combat.mutantCooldown.deer" => 142,
-                "combat.mutantCooldown.pseudogiant" => 143,
-                "combat.mutantCooldown.pseudodog" => 144,
-                "combat.mutantCooldown.burer" => 145,
-                "combat.mutantCooldown.bayun" => 146,
-                "combat.mutantCooldown.controller" => 147,
-
                 // Psy Combat
                 "combat.psySpawnCycleDelay" => 160,
                 "combat.psyPhantomCount" => 170,

@@ -61,7 +61,7 @@ All seven shipped profiles were redesigned as **playstyles**, not difficulty lab
 
 ### Mutant Hunter — the professional tracker
 **Mindset:** Accept uniquely dangerous mutant fights in exchange for trophy value; prepare, move and spend on specialist gear.
-**Complementary systems:** mutant-specific HP/cooldowns/damage, recoverable stamina, headshot damage, wear from expeditions and substantially enhanced mutant-part values. Unlike Hardcore, ordinary human firefights and trader access must not overshadow the hunting loop. Bandages stop bleeding but do not heal HP; food healing stays disabled.
+**Complementary systems:** mutant-specific health and damage, recoverable stamina, headshot damage, wear from expeditions and substantially enhanced mutant-part values. Unlike Hardcore, ordinary human firefights and trader access must not overshadow the hunting loop. Bandages stop bleeding but do not heal HP; food healing stays disabled.
 
 ### Anomaly Runner — the mobile explorer
 **Mindset:** Plan routes, carry detectors, cross dangerous anomaly fields and trade artifacts; flee unnecessary firefights.

@@ -1,5 +1,10 @@
 # Visual Control System
 
+### 2026-10-10 — Active Mutant Combat contract
+
+The Combat tab retains one **Mutant Hit Damage** scalar (`combat.mutantDamage`) as a compact normal horizontal slider; Mutant Health remains its existing fourteen-species grouped control. No additional mutant attack-pacing controls or species ability editor exist. Use Stamina Usage alignment: label left, current numeric value adjacent and clear, rail directly beneath; no full-width padded dashboard, no redundant instruction or Base/Vanilla emphasis. **Human Attack Frequency** is unaffected. This active specification supersedes all earlier Combat bank/board proposals.
+
+
 True Custom Difficulty keeps every gameplay setting as its original parameter in the preset and CFG-writer graph, while related parameters may be edited through one aggregate visual surface.
 
 **Mixer and responsive grid implementation must follow [UI-MIXER-GRID-SPEC.md](UI-MIXER-GRID-SPEC.md).** This document continues to describe existing non-mixer visual families and their established interaction contracts.
@@ -579,21 +584,11 @@ HUMAN COMBAT PROFILE combines the health/damage X/Y graph and three frameless ri
 
 Mutant Health renders all eight equal-width vertical controls in **one row**, with 8-DIP gaps and compact long labels broken into two lines. Its minimum measured width is 760 DIP; it maintains vertical source ranges and ring-only hover feedback. Your Weapons renders its three independent source faders in one centered row (no second row), with the common mixer geometry. Each stays within its full-width top-level section, and the shorter content determines section height.
 
-### Special Ability Cooldowns — single-row faders (2026-10-08)
-
-Eight cooldown multipliers occupy one fixed horizontal row, matching Mutant Health's 8-DIP channel gaps, value typography and glowing circular handles. Each current number represents the cooldown **wait multiplier**; the smaller grey `x RETURN` value is the inverse rate (1 / wait). Drag vertically to edit the original source wait factor, not the displayed inverse rate. Grey reference markers and native bounds remain. No rectangular highlight or secondary horizontal slider.
-
-### Special Ability Cooldowns layout (2026-10-08)
-
-All eight cooldown multipliers now occupy one fixed horizontal row of compact vertical faders, matching Mutant Health. Each gold value and handle controls the original cooldown wait multiplier; the smaller grey `x RETURN` value is its inverse, not a second editable parameter. The grey Base reference tick, native ranges and steps, circular hover glow, individual right-click reset and R reset-all are preserved. Long mutant names wrap onto two lines without rectangular selection boxes.
-
 ### Combined Mutant Combat board (2026-10-08)
 
-**GLOBAL COMBAT** is the first tier of the Mutant Combat section, consisting of two larger vertical faders for mutant hit damage and ordinary attack frequency. **SPECIAL ABILITY COOLDOWNS** is the second tier, consisting of eight compact, identical, one-row mutant-specific faders that edit cooldown *wait* values and show inverse `x RETURN`. These are separate CFG paths, not an overall combat pressure formula. Grey reference markers, native slider steps, circular gold hover-only indicators and per-setting reset are maintained. The combined section is one full-width top-level 1x1 block.
 
 ### Mutant Combat orthogonal slider directions (2026-10-08)
 
-The top **GLOBAL COMBAT** zone uses two long **horizontal** sliders in separate rows: Damage Per Hit and Attack Frequency. Their values increase left to right; the gold ring glows on hover, a grey Base tick remains visible, and right-click restores the individual native CFG value. The lower SPECIAL ABILITY COOLDOWNS zone remains one horizontal bank of eight **vertical** faders, with wait multipliers increasing upward. Do not mix axis mapping between these zones.
 
 ### Corrected Global Combat positioning — 2026-10-08
 
@@ -601,7 +596,6 @@ The two horizontal sliders are **side by side**, not stacked: Damage Per Hit on 
 
 ### Combat UI density and Psy graph — 2026-10-08
 
-Mutant Combat's two horizontal global tracks share one row directly below the header, with the eight vertical ability cooldowns below after only the section label/subtitle. Keep vertical dead space minimal and preserve independent controls. Repeated Hit Protection is not a normal UI control (parameter state/mappings remain available internally). Psy Phantom Pressure follows Human Combat's square graph geometry, dotted crosshair and three circular handles: X=Cycle Wait, Y=Phantom Count, center=both. Gear Damage is a frameless vertical side fader, while Bleed retains its original boolean toggle. The Base marker represents the selected vanilla preset; this display does not derive spawns/minute.
 
 ### Locked Combat section order — 2026-10-08
 
@@ -609,7 +603,6 @@ The four visible Combat groups are ordered **Your Weapons → Human Enemies → 
 
 ### Centered card title system (2026-10-08)
 
-Remove duplicated section titles and decorative line separators above cards. Draw the title inside the actual control frame, centered in 12.5-DIP bold accent typography (and optional 9.5-DIP centered muted subtitle), for aggregate families and both dedicated mutant control families. The secondary Special Ability Cooldowns heading is centered and accent colored. Group templates reserve zero vertical height for unused section headers.
 
 ### Unified heading system across all tabs (2026-10-08)
 
@@ -773,11 +766,6 @@ Per explicit user request, Medical Healing's selected/hovered slider **does not 
 
 ### Mutant Health — audited complete roster (2026-10-09)
 
-MutantHealthRadar now renders fourteen individual MaxHP multiplier source tracks in **2 rows × 7 columns**, rather than eight in one row. New channels: Blinddog 63, Boar 300, Flesh 280, Poltergeist 400, Snork 150 and Tushkan 19 vanilla HP; prior Bloodsucker/Mist Bloodsucker, Chimera, Deer, Pseudogiant, Pseudodog, Burer and Bayun and Controller remain. All new family IDs follow `combat.mutantHealth.<name>` and map `scale` onto their audited `GameData/ObjPrototypes.cfg` `MaxHP` fields. Defaults are 1x, catalog min/max 0.25x–3x, tick 0.05x. Reference ticks, selected/draggable rails and original reset stay. Register all fourteen in ViewModel grouping and aggregate-modified tracking, with only the Bloodsucker ID acting as the visible anchor; do not introduce unsupported ability cooldowns or difficulty-specific MaxHP flags. Medical Healing and other existing user-locked boards stay unchanged. Build/Wine validation pending.
-
-### Mutant health alphabetical 2× cap and ability cooldown limits (2026-10-09)
-
-The fourteen Mutant Health faders are alphabetically ordered, seven per row. All catalog slider maxima and the runtime view-model limit are capped to 2× (minimum 0.25×; native 0.05× step). The existing eight specific Ability Cooldown families are already implemented, using real `AgentCooldownMultipliers` targets: Bayun, Bloodsucker, Burer, Chimera, Controller, Deer, Pseudodog, Pseudogiant. The six additional HP-only families have no proven special-ability cooldown entries and remain HP-only; no fabricated cooldown UI/source code. No changes to unrelated control families.
 
 ### 2026-10-09 — Source-aware numeric-only highlighting in compound captions
 
@@ -797,7 +785,6 @@ The three existing Your Weapons source sliders — Base Hit Damage (`combat.play
 
 ### 2026-10-09 — Combat numeric multiplier steps: 0.10x except Your Weapons
 
-User-approved Combat-wide editing precision: all **34 other Combat multiplier sliders/faders** now have 0.10x steps, including NPC and mutant combat, all fourteen mutant-health faders, the eight special ability cooldowns, explosion damage and psy-related multiplier controls. The three **Your Weapons** controls (`combat.playerWeaponDamage`, `combat.playerHeadshotMultiplier`, `combat.weaponJamming`) retain the previously approved 0.25x steps. Booleans/non-numeric controls are not altered. No native source CFG target, authored minimum/maximum, layout, gameplay effect or preset format is changed. Set `stepMode: absolute` so actual editing honors the catalog's 0.10x step rather than a display-specific ratio fallback. Importantly, Combat's 0.10x grid is centered on **1.00x vanilla**, not 0.25x minimum, so it supports precisely 1.00x, 0.90x, 1.10x, etc. Dedicated Mutant Health and Ability Cooldown drag handlers use the same baseline-centered snapping. Out-of-step catalog boundary positions may still be used as bounds; current source values are clamped. Build/Wine QA pending.
 
 ### 2026-10-09 — Mutant Health 0.05× step restored
 
@@ -805,15 +792,8 @@ User explicitly reverted the recent Combat-wide 0.10× step **only for all 14 Mu
 
 ### 2026-10-09 — Footer removal and numeric emphasis refinement
 
-User-authorized UI polish: remove the **bottom instructional legend/text** from Your Weapons (`AggregateVisualControl`'s player-weapon family), Mutant Combat (`SpecialAbilityCooldownRadar`) and Mutant Health (`MutantHealthRadar`). Do not remove controls, active value readouts or legends that are not those three panels. For source-aware modified-value highlighting, **accented numeric tokens (including attached + / - / % / x) are also rendered 1.2 DIP larger than the surrounding neutral label**, preserving per-source modified comparison, same label alignment and formatted-text layout. Applied in shared aggregate number-only helpers/track value labels and the Bleeding Curve and Mutant Health source-number renderers. Unmodified numbers and static scale/axis labels keep their original size. No native CFG steps, parameter values, visual control geometry or drag hit boxes change. Local build and Wine visual checks pending.
 
 ### 2026-10-09 — Mutant Combat wording cleanup
-
-Remove the descriptive `GLOBAL COMBAT | damage per hit and normal attack frequency` subtitle beneath `MUTANT COMBAT`. Rename the first global source control display label from `Damage Per Hit` to **`Damage From Mutants`**. This changes only presentation text: keep `combat.mutantDamage`, the existing CFG mapping, value, control limits, position and interaction unchanged. The second global `Attack Frequency` control and all special-ability cooldown faders stay as before.
-
-### 2026-10-09 — Your Weapons bottom legend removed; mutant cooldown rate clarified
-
-The live Your Weapons board is `DrawYourWeaponsFaders`, not the older `DrawPlayerWeaponProfile`. Remove its **remaining bottom legend** (`GOLD = CURRENT | GREY TICK = BASE | RIGHT-CLICK TO RESET`) while leaving three horizontal weapon controls and the board heading intact. In `SpecialAbilityCooldownRadar`, replace the ambiguous secondary readout `N× RETURN` with **`N× ATTACK RATE`**, computed with the existing inverse of the authored ability cooldown multiplier (`1 / CurrentNumber`), and describe it as *more frequent special attacks, not regular attacks*. The underlying parameter remains a **cooldown multiplier**, not an independent attack speed or damage value. This changes UI text only; no cooldown inversion, CFG mapping, limits, editor steps, or reset semantics have changed. Keep these exact layouts as the current lock. Compile/Wine visual check pending.
 
 
 ### 2026-10-09 — Mutant Combat label implementation verified
@@ -878,7 +858,6 @@ Bleeding Treatment now uses one interactive four-column chart for Bandage, Medki
 
 ### 2026-10-09 — Factory presets: role-first balancing
 
-All seven factory profiles were rebuilt across combat, mutant health/cooldowns, environment, stamina/movement, health/medicine, economy, equipment wear and loot while retaining their 201 existing catalogue entries and source baseline difficulty. Do not infer new UI components or a new in-game difficulty from profile differences. Existing yellow-modified-number rule applies when values differ from the selected baseline. Profile-specific rationales and guardrails are described in `docs/FACTORY-PRESETS.md`.
 
 
 ### 2026-10-09 — Three additional factory role profiles
@@ -946,11 +925,6 @@ Adopt Stamina Usage text economy for specialized slider dashboards without repla
 Retain original interactive ranges, native CFG backing IDs, vanilla/base ticks and panel-specific charts. Across Anomaly Damage, Mutant Part Drops, Stash Ammo, Human Group Size, Mutant Group Size, Item Value Layers and World Loot Depletion, use compact horizontal tracks with consistent approximately 10–12 DIP rails, 10 DIP side padding where applicable, neutral static names, and right-aligned current values that turn gold only when modified from Base. Remove duplicated conversion percentages on Anomaly Damage where the source value already labels the rail; show one chance percentage rather than repeating expected rolls in Mutant Drops. Stash Ammo keeps distinct sample-stack values alongside its shortened native slider, with no redundant tier subtitle. Human and Mutant Group Size preserve authored effective-cap references and species/rank breakdowns. World Loot preserves base/DLC1 population estimates and removal semantics. Do not flatten specialized radar/fader interactions into ordinary sliders; further per-panel geometry changes require local Wine visual verification. No source CFG values, preset values, or mappings changed.
 
 
-### 2026-10-09 — Mutant cooldown fader numeric emphasis
-
-Mutant special-ability cooldown faders retain their original vertical slider geometry and Base ticks. Current cooldown multiplier text stays neutral at Base, becoming gold and +1.2 DIP larger only after modification. Names remain neutral. Preserve the distinct cooldown and derived attack-frequency meaning.
-
-
 ### 2026-10-09 — Shared hover feedback alignment
 
 Interactive hover styling is standardized across the Stamina Usage slider rail/handle controls, shared aggregate horizontal-track cards, aggregate toggle pills and specialized horizontal-row radar panels (anomaly damage, mutant drops, mutant group sizes, world loot, human squad caps, stash ammo and item prices). Hover uses subtle gold/Accent tinted card surface and/or name accent, with consistent stronger interactive handle outline; current numeric value stays gold **only** when modified from the selected Base Preset. Keep hovered styles transient and independent of value changes; keep clickable target geometry, keyboard and right-click reset behavior unchanged. Non-interactive explanations remain neutral. The existing specialized curved plots and vertical faders retain their interaction-specific hover and must not gain rectangular fake buttons. Local Windows/Wine visual testing remains required.
@@ -988,7 +962,6 @@ Apply across all tabs and all reusable visual-control families: remove redundant
 
 ### 2026-10-09 — Global compact-text cleanup: dedicated visual families
 
-Approved continuation of the global no-redundant-text rule. Audited all thirteen dedicated editor controls in `src/TrueCustomDifficulty/Controls` (excluding the reusable `AggregateVisualControl` and non-editor chrome). Removed redundant visible explanations from **eight**: `HumanGroupSizeRadar` (scope disclaimer and gold/Base legend), `MutantGroupSizeRadar` (grey tick/zero-cap footnote), `ItemPriceScalersRadar` (0x/1x/2x explanation already conveyed by the native axis), `BleedingCurveControl` (dashed/vanilla legend), `MutantDropRadar` (scope disclaimer and repeated explanation of EXPECTED / 100), `WorldLootRemovalRadar` (RNG caption and bottom count/scope footnotes), `DrunkennessControl` (overdrunkness stage-preview disclaimer), and `AnomalyDamageRadar` (global-vs-individual footer). No named editor, unit, native numeric value, meaningful graph axis, draggable handle, current/Base reference marker, read-only numeric output or hit target was removed. **Gameplay semantics remain unchanged:** world-loot selection occurs at build and excludes protected story/trader/scripted domains; Drunkenness stages do not include overdrunkness; authored zero group caps remain zero; EXPECTED/100 drops are statistical expectations, not guaranteed sequences. The other five dedicated editors (`ActionCostsRadar`, `MedicalHealingRadar`, `MutantHealthRadar`, `SpecialAbilityCooldownRadar`, `StashAmmoRadar`) retain their nonredundant labels. A now-unused local calculation in `AggregateVisualControl.DrawMixerBoard` was also removed. No CFG mapping, gameplay value, preset, source bound, mouse/keyboard reset behavior, hit geometry or sizing changes. Wine visual acceptance pending.
 
 ### 2026-10-09 — Trading source-card anatomy (current)
 
@@ -1040,7 +1013,6 @@ This is a visual presentation change, not a global rescale: preserve sliders' na
 
 **User-approved global visual change; supersedes all earlier per-family hover halo sizes, opacities, double-rings, whole-card hover backgrounds and selection-only glow.** All hand-drawn editor handles use the single helper `Controls/ControlHoverGlow.cs` with **halo radius 15 DIP / opacity 0.17** and **outline ring radius 11 DIP / opacity 0.67 / 1.6-DIP stroke**, drawn using the existing gold AccentBrush. Hover state alone enables it. Selected/focused/modified-but-not-hovered controls do not manufacture this glow.
 
-- Native horizontal / vertical / range / choice sliders, interactive X/Y/joint plot handles, mutant-health and cooldown controls, Action/Stamina Usage, Bleeding, Drunkenness, Medical Healing, Item Value, group size, anomaly damage, mutant drops, world loot and stash ammo all share this helper.
 - Shared aggregate renderers determine the current editable handle position from the actual source mapping and show the halo **only on the hovered active hit target**. Combined graph rings reuse the same helper at their actual drawn point. Toggles receive the same indicator-sized halo, not a glowing entire panel. Hovering a Base/Vanilla reference tick, selection-only area, static preview or noninteractive legend does not glow or edit values.
 - Ordinary WPF controls use `UniversalHoverGlowEffect` in `App.xaml`, matching gold, radius 15 and opacity 0.67 with zero shadow depth. The same resource drives Button/PrimaryButton/window buttons, preset ComboBoxes and their options, TabItem, TextBox, CheckBox switch **thumb**, native Slider **thumb** and wheel-editable value box. On slider mouseover the track, label and current numeric text stay neutral; only the thumb gets hover effect. The ordinary parameter-card background must not change because a mouse is merely over the card.
 - Disabled controls remain non-editable and do not receive active handle halos. Preserve focus styling, keyboard/touch/mouse behavior, native snapping, preset reset, CFG and value-reference calculations. Handle-only hover is strictly visual; no new gameplay parameter or hit surface.
@@ -1081,12 +1053,12 @@ The user approved the four-part Combat wireframe and specifically requested sour
 
 1. **YOUR WEAPONS** (`PlayerWeaponProfile`): the same three independent horizontal cards in a single row — WEAPON DAMAGE, HEADSHOT DAMAGE, JAM FREQUENCY. Reuse Stamina-style label-left / current-right / rail-below. Slightly increase only these labels to **11.2 DIP**, current numerals to **12.0 DIP** (13.2 when source-modified), and native endpoints to 10.0 DIP. Preserve all three genuine source parameters, **0.25x catalog increments** and 169-DIP board. No DPS simulation or new damage readout.
 2. **HUMAN ENEMIES** (`HumanCombatProfile`): keep the square **180–280 DIP 2D graph** with X=enemy health and Y=enemy gun damage, independent gold exterior drag handles and an interactive central joint. **Replace the three right-hand vertical faders** with three **90-DIP horizontal cards stacked vertically**, ATTACK FREQUENCY, FIRE ACCURACY, EXPLOSION DAMAGE, with current values right-aligned and native min/max below. Fixed graph start (64,91), cards start X=plot.Right+16, Y=91/192/293, equal measured right-lane width; unchanged 465-DIP frame. The frame no longer renders the redundant bottom drag/axis legend: the axes and joint tooltip already explain interaction. Graph axis current values are neutral at source reference and gold/+1.2 only if modified. Attack Frequency has the verified 2x maximum and Fire Accuracy 1x maximum; native CFG steps and the explosion source remain unchanged.
-3. **MUTANT COMBAT** (`SpecialAbilityCooldownRadar`): the two global independent native horizontal sliders occupy one row: DAMAGE FROM MUTANTS, ATTACK FREQUENCY. Below a compact `SPECIAL ABILITY RECHARGE` heading, display all **eight** full-name species cards in a **4 columns × 2 rows horizontal-card bank**, each with name-left, current-rate-right and rail-below; native selected-reference ticks are neutral. Species: Bloodsucker, Chimera, Deer, Pseudogiant, Pseudodog, Burer, Bayun, Controller. Full board measured and XAML minimum height **402 DIP**; start Y=198, second row Y=290, 79-DIP card height / 12-DIP horizontal gap. **Semantic direction is rightward = ability recharges sooner.** The visual current and endpoints are **reciprocal rate multipliers**: `displayedRate = 1.0 / waitMultiplier`. The card position is **linear in displayed reciprocal rate**, mapping the source maximum wait to the left endpoint and the source minimum wait to the right endpoint. Dragging in rate space converts back using `sourceWait=1.0/displayedRate` and snaps to the **original 1x-anchored native cooldown tick grid**, then clamps to source min/max. On these eight cards only, Right/Up decreases the wait source by exactly one original source tick; Left/Down increases it. The two global sliders retain their previous source and keyboard direction. Right click resets one real source; R resets all ten. The UI **must not** claim a measured attack-per-second rate or an invented effective ability cooldown time; the displayed reciprocal is strictly relative pacing. The selected vanilla reference remains the actual source value, including Master-specific authored values where mapped. Remove the old eight vertical strips, cramped split names, misleading WAIT=up axis and instruction footers. Keep the universal gold handle halo only when hovered.
+3. **MUTANT COMBAT**: a compact standalone `combat.mutantDamage` slider using the standard Stamina-style label / current value / rail layout. Keep source-accurate endpoints and subdued reference ticks; no aggregate board or duplicate instructions.
 4. **MUTANT HEALTH** (`MutantHealthRadar`): preserve the approved two-column seven-row Stamina-style card layout, alphabetical order of **14** independently editable mutants, native **0.05x–2x** source range and **0.05x source step**. Keep species name on the left, editable multiplier **centered**, derived actual `HP` **right-aligned**, single rail below, grey reference tick and handle-only glow. Improve tiny numbers without moving handles: species name **10.8 DIP**, multiplier **11.2 DIP**, actual HP **10.5 DIP**, and numeric change highlighting still +1.2 DIP. WPF minimum is brought into alignment with the unchanged renderer's **526 DIP** measured height (instead of the stale 672-DIP blank-space minimum). The target values `VanillaHp × sourceMultiplier` remain unchanged; no fake boss/Amok control.
 
-**Global rules:** all displayed current numerics are neutral if equal to the selected difficulty reference; on change, only the numeric token (and attached ×/x) turns gold and grows 1.2 DIP; static labels and native endpoints remain neutral. No full-card hover, no hover on Base reference, no repeated section title, no instruction footer, no checkbox changes. Preserve existing same-source hit targets, source range/bounds, catalog steps, reference reset, keyboard drag semantics except for the explicitly approved rightward inverted **recharge-speed UI axis**, and preset/CFG writer. Psy/Repeated-Hit family mappings remain available in the catalog but are not added as new top-level Combat cards. Do not change the gameplay parameters, source ranges or writer from this UI redesign.
+**Global rules:** all displayed current numerics are neutral if equal to the selected difficulty reference; on change, only the numeric token (and attached ×/x) turns gold and grows 1.2 DIP; static labels and native endpoints remain neutral. No full-card hover, no hover on Base reference, no repeated section title, no instruction footer, no checkbox changes. Preserve existing same-source hit targets, source range/bounds, catalog steps, reference reset, keyboard drag semantics and preset/CFG writer. Psy/Repeated-Hit family mappings remain available in the catalog but are not added as new top-level Combat cards. Do not change the gameplay parameters, source ranges or writer from this UI redesign.
 
-**Acceptance after publish:** verify that all visible Combat families render once and their full labels/values remain readable at normal and minimum WPF sizes; hover is identical; all 8 recharge cards have increasing speed values left→right, including non-1x Base reference, and edits round-trip in their native source wait multipliers; keyboard Right increases displayed speed while right-click/R return to selected-difficulty reference. A local Wine build and visual test is still required.
+**Acceptance after publish:** verify that all visible Combat families render once and their full labels/values remain readable at normal and minimum WPF sizes; hover is identical. A local Wine build and visual test is still required.
 
 ### Global CFG-to-visual selection grammar (approved 2026-10-09)
 
@@ -1274,24 +1246,6 @@ Fixed a C# switch-expression punctuation typo in `ParameterViewModel.ControlHelp
 **Implementation:** `ParameterViewModel.IsControlEnabled` no longer ORs `IsVisualAggregateAnchor`. Existing `DrawMasterNativeCard` already uses `IsControlEnabled` to draw the active accent and handles, and `AddHorizontalTarget` rejects disabled hit areas. Added safety guards for stale keyboard selection, mouse hit targets and captured drags that could survive a parent toggle transition. No gameplay number, difficulty baseline, source CFG target, writer algorithm, control geometry or formatting has changed.
 
 **Regression:** `tests/SurvivalPatchContract` now includes the Starvation anchor in its Veteran-disabled and Master-OFF/re-enable checks; the entire five-child dependency set must disable/re-enable together, keep its anchor row visible, preserve modified values and produce no child writer edit while OFF. The production suite adds two scenarios (from 85 to 87 based on the prior inventory). Static audit: `python3 tools/audit_master_dependency_ui.py`; both this source gate and actual Windows .NET suite should be run before release. The source inspection alone is **not** a successful WPF build or Wine/in-game visual acceptance.
-
-### 2026-10-10 — Mutant Special Ability Recharge hard cap: 3×
-
-**Approved player-facing limit:** each of the **eight** mutant species/family cards in Combat → MUTANT COMBAT → SPECIAL ABILITY RECHARGE has a maximum of **3.00×** and unchanged minimum of **0.50×**. The cards display rate = `1 / underlying wait multiplier`; this is a limit on *recharge speed*, not ordinary Mutant Attack Frequency or Mutant Damage. All eight original source `combat.mutantCooldown.*` sliders retain wait maximum `2.0` and source step `0.10` around `1.0`, but their source minimum is now exactly `1/3` (catalog literal `0.3333333333333333`), corresponding to **3.00×** recharge. The final endpoint is deliberately allowed off the 0.10 grid so **3× is actually reachable** through drag and arrows; interior steps still use the existing 0.10 source cadence. The previously reachable 0.25 native wait / 4× recharge is no longer accepted. Native `ParameterViewModel.Minimum` additionally clamps these eight IDs to `1/3`, so an older preset or external catalog cannot bypass the new hard cap. Existing Master 0.5 wait / 2× recharge reference remains unchanged.
-
-**UI and writer scope:** the existing compact 4×2 species cards, colored-number/hover grammar, tooltips, reset actions, original agent/tag mappings and generated CFG behavior are unchanged except for the maximum permitted edited wait. No changes to other Combat controls.
-
-**Regression gates:** `python3 tools/audit_combat_contract.py` checks all eight catalog bounds and original step. `tests/CombatPatchContract` checks all eight live view models against 3×/0.5×, old 4× input clamping and a real Master Chimera BPatch containing exactly the 1/3 wait endpoint. Writer suite increases **82 → 83 cases**. Static source inspection is not a verified .NET/Wine/game run; publish and local visual acceptance remain pending.
-
-**Exact CFG ceiling correction (same change):** the specialized cooldown writer now writes `0.3333333333333333` for the `1/3` endpoint, instead of the generic six-decimal `0.333333` representation. Truncating to six decimals would mathematically yield slightly more than 3× recharge; this special formatter avoids that overshoot without changing any other cooldown/CFG value. The production Chimera writer regression asserts the full serialized literal. Native values elsewhere still use the previous writer formatting.
-
-### 2026-10-10 — Mutant Special Ability Recharge: native 0.25× displayed steps (latest contract)
-
-**Overrides earlier 0.10× source-step descriptions for these eight controls only.** In Combat → Mutant Combat → SPECIAL ABILITY RECHARGE, all eight compact species sliders now snap to **visible recharge-speed increments of 0.25×** over **0.50×–3.00× inclusive**: `0.50, 0.75, 1.00, 1.25, 1.50, 1.75, 2.00, 2.25, 2.50, 2.75, 3.00×`. The yellow current readout and both rail endpoints use the existing reciprocal rate (`rate = 1 / nativeWait`). The catalog `slider.step` is `0.25` for each `combat.mutantCooldown.*` parameter; here it denotes the *displayed recharge rate increment*, **not a fixed native wait delta**.
-
-**Interaction and persistence:** drag on the rate-linear rail, Right/Left/Up/Down one rate tick per keypress, reset to per-difficulty reference (Novice/Stalker/Veteran 1×; Master 2×). `ParameterViewModel.CurrentNumber` transforms raw wait inputs by snapping `1 / wait` to the nearest 0.25× rate and then storing `1 / snappedRate`; this applies to old presets too. It honors the previously approved exact 3× cap (1/3 native wait) and the minimum 0.5× rate (2 native wait). A mid-range source input `1/1.62` visibly snaps to 1.5×. Production CFG writer still writes the raw inverse wait, not a recharge-rate value; the exact 1/3 endpoint continues to serialize without six-digit truncation. No change to regular Mutant Attack Frequency, mutant damage or the eight agent-family/variant mappings.
-
-**Regression:** `python3 tools/audit_combat_contract.py` checks the eight catalog steps/bounds. `tests/CombatPatchContract` verifies all eleven rate ticks for all eight real WPF view models, a between-ticks snap, old 4× cap, and real Master Chimera 1.75× and 3× BPatch routes. The production test count is now **84** (was 83). Successful build/Wine/game acceptance remains **NOT VERIFIED** until locally executed.
 
 ### 2026-10-10 — Unique Weapon Shuffle CFG writer baseline / audit reconciliation
 

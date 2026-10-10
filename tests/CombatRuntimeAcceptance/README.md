@@ -11,8 +11,6 @@ mutant section is physically authored.
 | --- | --- | --- | --- |
 | Stalker Vanilla.json | Stalker | unchanged | **no patch** |
 | Stalker Mutant Damage.json | Stalker | Mutant Hit Damage = 0.5x | `Medium.MutantCombatDifficulty.Mutant_BaseDamage = 0.5` |
-| Stalker Mutant Frequency.json | Stalker | Mutant Attack Frequency = 1.5x | `Medium.MutantCombatDifficulty.Mutant_AttackCooldown = 0.666667` |
-| Stalker Combined.json | Stalker | both edits | one nested Medium BPatch, both fields |
 | Veteran Control.json | Veteran | both edits | same fields under `Hard` (local vanilla section) |
 
 ## Safe test protocol
@@ -59,7 +57,6 @@ inheritance/merge semantics.**
 | --- | --- | --- |
 | Stalker vanilla reference, no mod | | NOT RUN |
 | Stalker Mutant Damage 0.5x | | NOT RUN |
-| Stalker Mutant Attack Frequency 1.5x | | NOT RUN |
 | Stalker combined | | NOT RUN |
 | Veteran combined control | | NOT RUN |
 
@@ -73,4 +70,4 @@ whether the engine merges nested `{bpatch}` into a field inherited from
 section in production: this may affect other fields and mods.
 If both fail, first investigate packaging, active selected game
 difficulty and mod conflicts. If both work, that does not automatically
-validate Master PSY or special-ability cooldown arrays.
+validate Master PSY arrays.

@@ -314,8 +314,6 @@ def main():
         special_rows.append({"parameterId": entry["parameterId"], "provenanceClass": "HISTORICAL_RUNTIME_2_0_5_STRUCTURE_EXACT", "specialGroup": "setList", "templateFieldMatches": "", "redirectManifest": "", "redirectRows": "", "sourceEvidence": "docs/AUDIT.md: CorpseSmartLoot.GeneralNPC", "status": "HISTORICAL_PASS"})
     for pid in special["psyParameterKeys"]:
         special_rows.append({"parameterId": pid, "provenanceClass": "HISTORICAL_RUNTIME_2_0_5_STRUCTURE_EXACT", "specialGroup": "psyArray", "templateFieldMatches": "", "redirectManifest": "", "redirectRows": "", "sourceEvidence": "docs/AUDIT.md: Master PSY override entries", "status": "HISTORICAL_PASS"})
-    for pid in special["mutantCooldownParameters"]:
-        special_rows.append({"parameterId": pid, "provenanceClass": "HISTORICAL_RUNTIME_2_0_5_STRUCTURE_EXACT", "specialGroup": "mutantCooldownArray", "templateFieldMatches": "", "redirectManifest": "", "redirectRows": "", "sourceEvidence": "docs/AUDIT.md: mutant cooldown-family entries/tags", "status": "HISTORICAL_PASS"})
 
     if len(special_rows) != 18:
         errors.append(f"historical special route count {len(special_rows)}, expected 18")

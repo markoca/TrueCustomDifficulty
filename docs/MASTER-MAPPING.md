@@ -14,7 +14,7 @@ Master bundle activation thresholds are intentionally not exposed. Starvation, s
 
 ## Purpose
 
-The **Master** tab contains dedicated Master-only survival/health mechanics bundles from `AdditionalMechanicsEffects`. Combat-facing Master overrides (mutant ability cooldowns and PSY combat) remain in Combat so players find them with the systems they affect. Ordinary difficulty scalars that simply have a Master value remain in their normal gameplay tabs.
+The **Master** tab contains dedicated Master-only survival/health mechanics bundles from `AdditionalMechanicsEffects`. Combat-facing PSY overrides remain in Combat so players find them with the systems they affect. Ordinary difficulty scalars that simply have a Master value remain in their normal gameplay tabs.
 
 Internal parameter IDs are retained for preset compatibility; therefore several IDs still begin with `advanced.`, `combat.`, `survival.` or `health.` even though their UI tab is now `master`.
 

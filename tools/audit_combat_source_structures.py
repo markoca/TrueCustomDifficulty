@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 """Compare actual Combat CFG source values and special arrays against live writer inventory.
 
-Requires decoded matching base/DLC1 ZIPs. All 68 Combat source routes must
-exist directly or through an EXPLICIT {refkey=...} ancestor. The Master
-14-agent/66-tag cooldown and two-effect PSY arrays must match the writer
-manifest. This is source evidence, NOT a UE runtime/BPatch merge test.
+Requires decoded matching base/DLC1 ZIPs. All 64 Combat source routes must
+exist directly or through an EXPLICIT {refkey=...} ancestor. The Master PSY override effects must match the writer manifest. This is source evidence, NOT a UE runtime/BPatch merge test.
 """
 from __future__ import annotations
 
@@ -33,8 +31,8 @@ def child(node, name):
 def inspect(base_zip, dlc_zip):
     baseline = json.loads(BASELINE.read_text(encoding="utf-8"))
     points = [p for p in baseline["editPoints"] if p["parameterId"].startswith("combat.")]
-    if len(points) != 68:
-        raise ValueError(f"expected 68 Combat source edit points, got {len(points)}")
+    if len(points) != 64:
+        raise ValueError(f"expected 64 Combat source edit points, got {len(points)}")
     if any(p["scope"] != "baseGame" for p in points):
         raise ValueError("Combat source unexpectedly moved into DLC1; recheck original provenance")
     with zipfile.ZipFile(base_zip) as base, zipfile.ZipFile(dlc_zip) as dlc:
@@ -60,28 +58,6 @@ def inspect(base_zip, dlc_zip):
     if len(master) != 1:
         raise ValueError("Master original CFG must have exactly one Stalker prototype")
     master = master[0]
-    cooldown = child(child(master, "MutantCombatDifficulty"), "AgentCooldownMultipliers")
-    authored = baseline["special"]["mutantCooldownFamilies"]
-    agents = []
-    if len(cooldown.children) != len(authored):
-        raise ValueError("Master cooldown array has a different number of agent rows")
-    for sid, family in sorted(authored.items(),
-                              key=lambda pair: int(pair[1]["index"].strip("[]"))):
-        index = family["index"]
-        row = child(cooldown, index)
-        if row.values.get("AgentPrototypeSID") != sid:
-            raise ValueError(f"Master agent {index}: expected {sid}, got {row.values}")
-        tags = child(row, "CooldownMultipliers")
-        if len(tags.children) != len(family["cooldowns"]):
-            raise ValueError(f"Master {sid}: authored ability count differs")
-        for spec in family["cooldowns"]:
-            item = child(tags, spec["index"])
-            expected = {"CooldownTag": spec["tag"], "CooldownMultiplier": "0.5"}
-            if item.values != expected:
-                raise ValueError(f"Master {sid} {spec['index']}: original ability record differs: {item.values}")
-        agents.append({"index": index, "agentPrototypeSid": sid,
-                       "cooldownTags": len(family["cooldowns"]), "status": "exact"})
-
     psy = child(child(master, "NPCCombatDifficulty"), "PsyPhantomNPCOverrides")
     psy_records = []
     if len(psy.children) != 2:
@@ -103,14 +79,11 @@ def inspect(base_zip, dlc_zip):
               for p in (base_zip, dlc_zip)}
     return {
         "sourceArchivesSha256": hashes,
-        "sourceScope": "all 68 Combat routes are baseGame; DLC1 archive identity only",
+        "sourceScope": "all 64 Combat routes are baseGame; DLC1 archive identity only",
         "directPointCount": len(results),
         "directStatuses": dict(sorted(Counter(p["status"] for p in results).items())),
         "directFailures": failed,
         "directRoutes": results,
-        "masterCooldownAgents": agents,
-        "masterCooldownAgentCount": len(agents),
-        "masterCooldownTagCount": sum(x["cooldownTags"] for x in agents),
         "masterPsyEffects": psy_records,
         "masterPsyEffectCount": len(psy_records),
         "runtimeCaveat": (
@@ -137,9 +110,7 @@ def main():
         a.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n",
                          encoding="utf-8")
     print(f"Combat source: {report['directPointCount']} direct routes {report['directStatuses']}")
-    print(f"Master specials: {report['masterCooldownAgentCount']} agents, "
-          f"{report['masterCooldownTagCount']} cooldown tags, "
-          f"{report['masterPsyEffectCount']} PSY override effects")
+    print(f"Master specials: {report['masterPsyEffectCount']} PSY override effects")
     for result in report["directRoutes"]:
         if result["status"] != "exact":
             print("  SOURCE INHERITANCE/FINDING", result["parameterId"],

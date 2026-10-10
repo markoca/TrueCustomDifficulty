@@ -108,9 +108,7 @@ These are the exact PC difficulty values found in `DifficultyPrototypes.cfg`.
 | CFG field | Novice | Stalker | Veteran | Master |
 |---|---:|---:|---:|---:|
 | `Mutant_BaseDamage` | 0.35 | 1.00 | 1.35 | 1.50 |
-| `Mutant_AttackCooldown` | 1.00 | 1.00 | 1.00 | 1.00 |
 
-Master additionally defines per-mutant cooldown multipliers for multiple abilities. These are not equivalent to a single global damage slider.
 
 ## 5.3 Environment / survival difficulty
 
@@ -1014,7 +1012,6 @@ Some supported controls are not scalar fields but still have a deterministic, en
 - Additional Mechanics list membership;
 - Extra NPC Corpse Loot list selection;
 - Master PSY override arrays;
-- mutant cooldown-family arrays;
 - explicitly enumerated item/effect families already present in the writer baseline.
 
 These are writer-mapped because the affected source nodes are known. Runtime-test status is tracked separately where behavior still needs confirmation.
@@ -1188,7 +1185,6 @@ Thirst and aggregate generator systems remain outside the supported visible scop
 
 The v0.1.63 audit revalidated the baseline against the exact runtime 2.0.5 dump fingerprint recorded below. File counts remain **631 total CFGs** (`485 GameData`, `118 DLC1`, `11 PreOrder`, `10 Deluxe`, `7 Ultimate`).
 
-The concrete writer baseline contains **699 ordinary edit points** for the 167 visible controls. Every edit point was checked against the runtime source for exact file, physical root, nested node path, key and `sourceRaw` value: **699/699 matched**. The four vanilla difficulty/economy reference tables were independently checked across **34 listed CFG fields**, and **346 direct `set` vanilla-marker comparisons** matched the writer source after the Low Bleeding correction. Special writer structures (Additional Mechanics, Corpse Smart Loot, PSY overrides and mutant cooldown families) were also cross-checked against their source structures.
 
 Two baseline defects were corrected during this pass:
 

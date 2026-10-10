@@ -22,14 +22,14 @@ SRC = ROOT / "src" / "TrueCustomDifficulty"
 CATALOG = SRC / "Data" / "parameters.json"
 BASELINE = SRC / "Data" / "cfg-writer-baseline.json"
 
-# Locked to the current 244-parameter source catalog. Update only after a
+# Locked to the current source catalog. Update only after a
 # provenance-backed change to the catalog and writer baseline in the SAME commit.
-EXPECTED_VISIBLE = 152
-EXPECTED_HIDDEN = 92
-EXPECTED_TOTAL = 244
-EXPECTED_CONTROLS = {"slider": 138, "toggle": 12, "choiceSlider": 1, "range": 1}
+EXPECTED_VISIBLE = 150
+EXPECTED_HIDDEN = 86
+EXPECTED_TOTAL = 236
+EXPECTED_CONTROLS = {"slider": 136, "toggle": 12, "choiceSlider": 1, "range": 1}
 EXPECTED_TAB_COUNTS = {
-    "combat": 19,
+    "combat": 17,
     "health": 13,
     "stamina": 7,
     "survival": 32,
@@ -57,7 +57,6 @@ def supported_ids(baseline: dict) -> set[str]:
     result.update(x["parameterId"] for x in special.get("listMembership", []))
     result.update(x["parameterId"] for x in special.get("setList", []))
     result.update(special.get("psyParameterKeys", {}).keys())
-    result.update(special.get("mutantCooldownParameters", {}).keys())
 
     for section, keys in {
         "cheapStashProduction": ("ammoQuantityParameterId", "grenadeChanceParameterId", "grenadeQuantityParameterId"),
