@@ -1,5 +1,9 @@
 # Pre-release test and evidence runbook
 
+### Mutant Properties clickable reference markers (Combat / Wine manual acceptance)
+
+With the embedded `MUTANT HIT DAMAGE` slider visible, verify all four labels are **NOVICE / STALKER / VETERAN / MASTER** (no one-letter abbreviations). Hover each caption and corresponding dot: only that marker turns white and the pointer becomes a hand; moving away restores muted colors. Click each caption and each dot: the live slider must jump to the exact authored value **0.35x / 1.00x / 1.35x / 1.50x**, including the values outside the regular 0.10x drag grid. Verify no mouse drag starts on a marker click, normal rail dragging still works, right-clicking the markers and rail resets to the current Base Preset, and a modified value propagates through Save Preset and the existing Combat BPatch writer. The CombatPatchContract suite now verifies the exact four marker values and the production ViewModel snap method; WPF hit targeting and hover rendering still require the local Wine check.
+
 ### C3 duration stepping and parent-cap regression extension
 
 In BOTH Override OFF and ON, verify Water Regen <= Water main and both Energy Cost effect durations <= Energy main, including after reducing the parent and after toggling override. With ON, parents may reach 270s but secondary effects must stop at their *current* parent seconds, not 270s. Test dragging and keyboard on all eight duration sources: OFF requires 1s increments, ON 5s increments (never 0.5s). Test that ViewModel CurrentNumber assignments obey these steps too, not just mouse snapping, and generated CFG retains source-exact targets. Local WPF/Wine and game-runtime acceptance remains pending.

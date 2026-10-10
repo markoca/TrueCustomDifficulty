@@ -29,6 +29,8 @@ internal static class Program
                 Directory.CreateDirectory(_keepRoot);
             }
 
+            TestMutantHitDamageReferenceMarkers();
+
             Case("Master-no-changes", "Master", _ => { }, (_, result) =>
                 Check(result.FileCount == 0 && result.EditCount == 0,
                     "unchanged Master must not emit any CFG"));
@@ -342,6 +344,34 @@ internal static class Program
     private static string FixturePath(string name) =>
         Path.Combine(_keepRoot ?? Path.GetTempPath(),
             "TCD_Combat_Patch_Contract", name);
+
+    // The UI marker click deliberately uses SnapCurrentNumberToMarker, not the
+    // normal 0.1x drag grid. Verify all four real reference values round-trip.
+    private static void TestMutantHitDamageReferenceMarkers()
+    {
+        var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Stalker" };
+        var damage = Get(vm, "combat.mutantDamage");
+        var references = new (string Name, double Value)[]
+        {
+            ("Novice", 0.35),
+            ("Stalker", 1.0),
+            ("Veteran", 1.35),
+            ("Master", 1.5)
+        };
+        Check(damage.VanillaMarkers.Count == references.Length,
+            "Mutant Hit Damage must expose exactly four difficulty markers");
+        foreach (var (name, expected) in references)
+        {
+            var marker = damage.VanillaMarkers.Single(m =>
+                string.Equals(m.Label, name, StringComparison.Ordinal));
+            Check(Math.Abs(marker.Value - expected) < 0.000001,
+                "Mutant Hit Damage reference marker value drifted for " + name);
+            damage.SnapCurrentNumberToMarker(marker.Value);
+            Check(Math.Abs(damage.CurrentNumber - expected) < 0.000001,
+                "Mutant Hit Damage marker must snap exactly to " + name);
+        }
+        _passed++;
+    }
 
     private static void Case(string name, string difficulty, Action<MainViewModel> modify,
         Action<Node, CfgWriteResult> verify)

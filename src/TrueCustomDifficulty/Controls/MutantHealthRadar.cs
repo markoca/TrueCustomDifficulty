@@ -37,7 +37,10 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Mutants.Length];
     private readonly Dictionary<int, HitTarget> _targets = new();
+    // Marker labels are separate clickable hit regions, not part of the fader.
+    private readonly List<DamageMarkerHitTarget> _damageMarkerTargets = new();
     private ParameterViewModel? _damage;
+    private int _hoverDamageMarker = -1;
     private readonly VisualStatusMessage _status;
     private int _selectedRow;
     private int _hoverRow = -1;
@@ -84,6 +87,8 @@ public sealed class MutantHealthRadar : FrameworkElement
         if (_damage is not null)
             _damage.PropertyChanged -= Parameter_PropertyChanged;
         _damage = null;
+        _hoverDamageMarker = -1;
+        _damageMarkerTargets.Clear();
         Array.Clear(_parameters, 0, _parameters.Length);
 
         if (Parameters is not null)
@@ -133,6 +138,7 @@ public sealed class MutantHealthRadar : FrameworkElement
             accentEdge: true, technicalMarks: true);
 
         _targets.Clear();
+        _damageMarkerTargets.Clear();
         DrawCenteredText(dc, "MUTANT PROPERTIES", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
 
@@ -169,14 +175,26 @@ public sealed class MutantHealthRadar : FrameworkElement
         var currentX = ValueToX(damage.CurrentNumber, damage.Minimum, damage.Maximum, rail);
         dc.DrawLine(new Pen(border, 3), new Point(rail.Left, y), new Point(rail.Right, y));
         dc.DrawLine(new Pen(accent, 3), new Point(rail.Left, y), new Point(currentX, y));
-        foreach (var marker in damage.VanillaMarkers)
+        for (var i = 0; i < damage.VanillaMarkers.Count; i++)
         {
+            var marker = damage.VanillaMarkers[i];
             var markerX = ValueToX(marker.Value, damage.Minimum, damage.Maximum, rail);
-            dc.DrawEllipse(muted, null, new Point(markerX, y + 10.0), 2, 2);
-            var label = CreateText(marker.Label, 9.5, muted, FontWeights.SemiBold);
+            var hovered = i == _hoverDamageMarker;
+            var markerBrush = hovered ? Brushes.White : muted;
+            dc.DrawEllipse(markerBrush, null, new Point(markerX, y + 10.0), 2, 2);
+            var label = CreateText(marker.Label.ToUpperInvariant(), 9.5,
+                markerBrush, FontWeights.SemiBold);
             var labelX = Math.Clamp(markerX - label.Width / 2.0,
                 card.Left + 8.0, Math.Max(card.Left + 8.0, card.Right - 8.0 - label.Width));
-            dc.DrawText(label, new Point(labelX, y + 12.0));
+            var labelY = y + 12.0;
+            dc.DrawText(label, new Point(labelX, labelY));
+
+            // Include both dot and complete caption; clicking either snaps to
+            // the exact authored vanilla value (even e.g. 0.35x off the 0.1x grid).
+            var hit = new Rect(markerX - 8.0, y + 5.0, 16.0, 14.0);
+            hit.Union(new Rect(labelX - 5.0, labelY - 2.0,
+                label.Width + 10.0, label.Height + 4.0));
+            _damageMarkerTargets.Add(new DamageMarkerHitTarget(marker.Value, hit));
         }
         ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, _hoverRow == DamageRow);
         dc.DrawEllipse(panel, new Pen(accent, _selectedRow == DamageRow ? 2.5 : 1.5),
@@ -271,7 +289,21 @@ public sealed class MutantHealthRadar : FrameworkElement
         base.OnMouseLeftButtonDown(e);
         Focus();
 
-        var row = FindTarget(e.GetPosition(this));
+        // Hit-test markers before the rail: their dots partially overlap it.
+        // A marker click must never start a drag or go through normal tick snapping.
+        var point = e.GetPosition(this);
+        var markerIndex = FindDamageMarker(point);
+        if (markerIndex >= 0 && _damage is { } damage)
+        {
+            _selectedRow = DamageRow;
+            damage.SnapCurrentNumberToMarker(_damageMarkerTargets[markerIndex].Value);
+            _status.Clear();
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+
+        var row = FindTarget(point);
         if (row < 0)
             return;
 
@@ -286,15 +318,17 @@ public sealed class MutantHealthRadar : FrameworkElement
     {
         base.OnMouseMove(e);
         var point = e.GetPosition(this);
-        var hover = FindTarget(point);
+        var markerHover = _dragRow < 0 ? FindDamageMarker(point) : -1;
+        var hover = markerHover >= 0 ? -1 : FindTarget(point);
 
-        if (hover != _hoverRow)
+        if (hover != _hoverRow || markerHover != _hoverDamageMarker)
         {
             _hoverRow = hover;
+            _hoverDamageMarker = markerHover;
             InvalidateVisual();
         }
 
-        Cursor = hover >= 0 ? Cursors.Hand : Cursors.Arrow;
+        Cursor = markerHover >= 0 || hover >= 0 ? Cursors.Hand : Cursors.Arrow;
 
         if (_dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed)
         {
@@ -307,6 +341,8 @@ public sealed class MutantHealthRadar : FrameworkElement
     {
         base.OnMouseLeave(e);
         _hoverRow = -1;
+        _hoverDamageMarker = -1;
+        Cursor = Cursors.Arrow;
         InvalidateVisual();
     }
 
@@ -324,7 +360,8 @@ public sealed class MutantHealthRadar : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
-        var row = FindTarget(e.GetPosition(this));
+        var point = e.GetPosition(this);
+        var row = FindDamageMarker(point) >= 0 ? DamageRow : FindTarget(point);
         if (row < 0 || ParameterAt(row) is not { } parameter)
             return;
 
@@ -386,6 +423,16 @@ public sealed class MutantHealthRadar : FrameworkElement
         parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
         _status.Clear();
         InvalidateVisual();
+    }
+
+    private int FindDamageMarker(Point point)
+    {
+        for (var i = 0; i < _damageMarkerTargets.Count; i++)
+        {
+            if (_damageMarkerTargets[i].HitRect.Contains(point))
+                return i;
+        }
+        return -1;
     }
 
     private int FindTarget(Point point)
@@ -480,4 +527,5 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     private sealed record MutantDefinition(string ParameterId, string Label, double VanillaHp, bool ShowMist);
     private sealed record HitTarget(Rect HitRect, Rect MapRect);
+    private sealed record DamageMarkerHitTarget(double Value, Rect HitRect);
 }
