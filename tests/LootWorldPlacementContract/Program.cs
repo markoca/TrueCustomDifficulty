@@ -119,6 +119,32 @@ internal static class Program
             "loot.worldAttachmentShuffle","loot.worldDetectors","loot.blueprintShuffle"};
         var vm=new MainViewModel(Catalog);
         Check(ids.All(id=>vm.AllParameters.Any(p=>p.Id==id)),"World placement control missing from actual ViewModel");
+        // UI regression: the original screenshot showed "World placement data unavailable"
+        // because the hidden aggregate-only Unique Weapon Shuffle catalog entry
+        // was never materialized into MainViewModel.AllParameters.
+        var placementIds = new[] {
+            "loot.worldWeaponShuffle", "loot.worldWeaponDensity",
+            "loot.looseUniqueWeaponShuffle", "loot.worldAttachmentShuffle",
+            "loot.worldDetectors", "loot.blueprintShuffle"
+        };
+        var placement = vm.AllParameters.Where(p=>p.VisualAggregateFamily=="WorldLootLayout").ToList();
+        Check(placement.Count==6 &&
+            placementIds.All(id=>placement.Count(p=>p.Id==id)==1),
+            "World Placement must materialize exactly six live aggregate-backed controls");
+        Check(placement.Count(p=>p.IsVisualAggregateAnchor && p.IsControlVisible)==1 &&
+            placement.Single(p=>p.IsVisualAggregateAnchor).Id=="loot.worldWeaponShuffle" &&
+            placement.Single(p=>p.Id=="loot.looseUniqueWeaponShuffle").IsToggle,
+            "World Placement UI must have one visible aggregate anchor and a live unique-weapon toggle");
+        // Test the actual AggregateVisualControl binding, not only catalog membership.
+        var board = new TrueCustomDifficulty.Controls.AggregateVisualControl {
+            Family="WorldLootLayout", Parameters=vm.AllParameters
+        };
+        var field=typeof(TrueCustomDifficulty.Controls.AggregateVisualControl).GetField(
+            "_parameters",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
+        var bound=field?.GetValue(board) as Dictionary<string,ParameterViewModel>;
+        Check(bound is not null && bound.Count==6 &&
+            placementIds.All(id=>bound.ContainsKey(id)),
+            "World Placement visual must bind all six settings and never show data unavailable");
         Check(ids.Where(id=>id!="loot.worldWeaponDensity").All(id=>
             vm.AllParameters.Single(p=>p.Id==id).IsToggle),
             "All five world placement toggles must remain booleans");
