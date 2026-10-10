@@ -1245,13 +1245,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
+        var uniqueWeapons = P("loot.looseUniqueWeaponShuffle");
         var weapons = P("loot.worldWeaponShuffle");
         var density = P("loot.worldWeaponDensity");
         var attachments = P("loot.worldAttachmentShuffle");
         var detectors = P("loot.worldDetectors");
         var blueprints = P("loot.blueprintShuffle");
         DrawHeader(dc, "WORLD PLACEMENT", "", text, muted, accent);
-        if (weapons is null || density is null || attachments is null
+        if (uniqueWeapons is null || weapons is null || density is null || attachments is null
             || detectors is null || blueprints is null)
         {
             DrawCenteredText(dc, "World placement data unavailable.",
@@ -1263,7 +1264,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         const double gap = 10.0;
         var width = Math.Max(1.0, ActualWidth - 2.0 * margin);
         var cell = (width - gap) / 2.0;
-        var left = new Rect(margin, 55.0, cell, 171.0);
+        var left = new Rect(margin, 55.0, cell, 207.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
             left, 4.0, 4.0);
         DrawTogglePill(dc, weapons, "SHUFFLE WEAPONS",
@@ -1273,6 +1274,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawHorizontalTrackCard(dc, density, "WEAPON DENSITY",
             new Rect(left.Left + 8.0, left.Top + 67.0,
                 left.Width - 16.0, 72.0),
+            text, muted, border, accent, panel);
+        DrawTogglePill(dc, uniqueWeapons, "SHUFFLE UNIQUE WEAPONS",
+            new Rect(left.Left + 8.0, left.Top + 153.0,
+                left.Width - 16.0, 44.0),
             text, muted, border, accent, panel);
 
         var otherToggles = new (ParameterViewModel Parameter, string Label)[]
@@ -5166,7 +5171,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => EconomyBoardHeight(width, 3),
             "NpcLootLoadout" => 564.0,
-            "WorldLootLayout" => 238.0,
+            "WorldLootLayout" => 275.0,
             "StashRewardProfile" => width >= 750.0 ? 263.0 : 418.0,
             "PhysicalLimits" => 335.0,
             "StaminaCore" => 259.0,
@@ -5281,6 +5286,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             },
             "WorldLootLayout" => new[]
             {
+                "loot.looseUniqueWeaponShuffle",
                 "loot.worldWeaponShuffle",
                 "loot.worldWeaponDensity",
                 "loot.worldAttachmentShuffle",
