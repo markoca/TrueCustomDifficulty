@@ -75,6 +75,38 @@ if uncovered_ids:
 else:
     note(f"writer route coverage: {len(covered_ids)}/{len(id_set)} parameter ids")
 
+# A runtime-implemented, manifest-backed world-weapon shuffle is a special
+# writer route, not an ordinary single-field editPoint. Check its exact
+# declaration, embedded source and implementation; a name-only entry must
+# never satisfy CFG route coverage.
+_unique_id = "loot.looseUniqueWeaponShuffle"
+_unique_manifest = "TrueCustomDifficulty.Data.loose-unique-weapon-shuffle-manifest.csv"
+_unique_route = baseline.get("special", {}).get("looseUniqueWeaponShuffle") or {}
+if (_unique_route.get("parameterId") != _unique_id
+        or _unique_route.get("manifestResource") != _unique_manifest
+        or _unique_route.get("expectedActorCount") != 9):
+    fail("unique world weapon shuffle production route/manifest registration drifted")
+else:
+    _unique_rows_file = DATA / "loose-unique-weapon-shuffle-manifest.csv"
+    if not _unique_rows_file.exists():
+        fail("unique weapon shuffle production manifest is missing")
+    else:
+        with _unique_rows_file.open(encoding="utf-8", newline="") as _unique_fh:
+            _unique_rows = list(_csv.DictReader(_unique_fh))
+        if (len(_unique_rows) != 9
+                or len({r["actorSid"] for r in _unique_rows}) != 9
+                or len({r["itemSid"] for r in _unique_rows}) != 9):
+            fail("unique weapon shuffle must reference exactly nine distinct actor/item pairs")
+    _unique_writer = (ROOT / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
+    _unique_model = (ROOT / "src/TrueCustomDifficulty/Models/CfgWriterBaseline.cs").read_text(encoding="utf-8")
+    if ('WriteLooseUniqueWeaponShuffle(baseline.Special.LooseUniqueWeaponShuffle' not in _unique_writer
+            or 'GetManifestResourceStream(route.ManifestResource)' not in _unique_writer
+            or 'supported.Add(uniqueShuffleRoute.ParameterId)' not in _unique_writer
+            or 'CfgWriterLooseUniqueWeaponShuffle LooseUniqueWeaponShuffle' not in _unique_model):
+        fail("unique-weapon baseline route is not wired to actual production writer and model")
+    else:
+        note("unique world weapon shuffle: declared special writer / nine-actor manifest / live production route")
+
 for parameter_id in baseline.get("deferredParameterIds", []):
     if parameter_id not in id_set:
         fail(f"deferredParameterIds references unknown parameter id {parameter_id!r}")
