@@ -37,6 +37,38 @@ internal static class Program
                 Check(result.FileCount == 0 && result.EditCount == 0,
                     "unchanged Veteran must not emit any CFG"));
 
+            // The visible RECHARGE rate is the reciprocal of the native wait.
+            // All eight must cap at 3x, including old 0.25x-wait presets.
+            var rechargeVM = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Master" };
+            var rechargeIds = Catalog.Parameters.Where(p =>
+                    p.Id.StartsWith("combat.mutantCooldown.", StringComparison.Ordinal))
+                .Select(p => p.Id).ToArray();
+            Check(rechargeIds.Length == 8, "Expected eight mutant special ability recharge controls");
+            foreach (var id in rechargeIds)
+            {
+                var parameter = Get(rechargeVM, id);
+                Check(parameter.IsSlider && Math.Abs(parameter.Minimum - 1.0 / 3.0) < 0.0000001
+                    && Math.Abs(parameter.Maximum - 2.0) < 0.0000001
+                    && Math.Abs(parameter.TickFrequency - 0.1) < 0.0000001,
+                    id + ": incorrect source range/step for 0.5x to 3x recharge");
+                parameter.CurrentNumber = 0.25; // old 4x user preset
+                Check(Math.Abs(1.0 / parameter.CurrentNumber - 3.0) < 0.0000001,
+                    id + ": older 4x wait bypassed the 3x recharge limit");
+                parameter.CurrentNumber = parameter.Maximum;
+                Check(Math.Abs(1.0 / parameter.CurrentNumber - 0.5) < 0.0000001,
+                    id + ": original slow-recharge minimum changed");
+            }
+
+            // Actual production BPatch should write the exact 1/3 wait endpoint.
+            Case("Master-Chimera-max-3x-recharge", "Master",
+                vm => Set(vm, "combat.mutantCooldown.chimera", 1.0 / 3.0),
+                (root, result) =>
+                {
+                    Check(result.EditCount == 6 && result.ParameterCount == 1,
+                        "3x recharge must affect exactly Chimera's authored ability tags");
+                    MasterCooldown(root, new[] { "Chimera" }, 1.0 / 3.0);
+                });
+
             Case("Master-Chimera-only", "Master",
                 vm => Set(vm, "combat.mutantCooldown.chimera", 1.4),
                 (root, result) =>
