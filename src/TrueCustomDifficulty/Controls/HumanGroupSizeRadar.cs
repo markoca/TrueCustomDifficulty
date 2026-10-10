@@ -139,7 +139,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             12.5, accent, FontWeights.Bold);
 
         const double top = 111.0, bottom = 281.0;
-        const double minAxis = 0.0, maxAxis = 3.0;
+        const double maxAxis = 3.0;
         var left = 62.0;
         var lane = (ActualWidth - left - 20.0) / Ranks.Length;
         for (var tick = 0; tick <= 6; tick++)
