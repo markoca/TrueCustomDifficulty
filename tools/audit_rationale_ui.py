@@ -44,7 +44,17 @@ def main() -> None:
     families = set(re.findall(r'=\s*"([A-Za-z][A-Za-z0-9]+)"', family_map))
     guide_begin = guidance.index('var instruction = VisualAggregateFamily switch')
     guide_end = guidance.index('return instruction + Environment.NewLine', guide_begin)
-    guide_families = set(re.findall(r'"([A-Za-z][A-Za-z0-9]+)"\s*=>', guidance[guide_begin:guide_end]))
+    switch_source = guidance[guide_begin:guide_end]
+    guide_families = set(re.findall(r'"([A-Za-z][A-Za-z0-9]+)"\s*=>', switch_source))
+    # Every non-final C# switch-expression arm MUST end with a comma.
+    # This catches the CS1003 introduced by a semicolon on RadiationTreatment.
+    arms = [line.strip() for line in switch_source.splitlines()
+            if re.match(r'^"[A-Za-z][A-Za-z0-9]+"\s*=>', line.strip())]
+    assert_that(len(arms) == len(guide_families),
+                'Unexpected duplicate or malformed rationale switch arms')
+    assert_that(all(line.endswith('",') for line in arms),
+                'C# rationale switch arm missing its trailing comma: '
+                + '; '.join(line[:65] for line in arms if not line.endswith('",')))
     assert_that(bool(families) and families <= guide_families,
                 'Missing specific guide for visual families: ' + ', '.join(sorted(families-guide_families)))
 
