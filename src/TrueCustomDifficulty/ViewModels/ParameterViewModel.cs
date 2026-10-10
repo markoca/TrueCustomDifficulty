@@ -9,6 +9,7 @@ public sealed class ParameterViewModel : ObservableObject
 {
     private const double Epsilon = 0.000001;
     private const double PercentageStep = 0.05; // 5 percentage-point UI steps.
+    private const double MutantAbilityRechargeStep = 0.25; // Displayed recharge-rate ticks, not native wait ticks.
     private const double NpcWeaponConditionVanillaMin = 0.25;
     private const double NpcWeaponConditionVanillaMax = 0.50;
 
@@ -688,6 +689,11 @@ public sealed class ParameterViewModel : ObservableObject
     {
         get
         {
+            // Native cooldown waits are reciprocal to the visible recharge rate.
+            // A 0.25x rate step is non-uniform in underlying wait seconds.
+            if (Id.StartsWith("combat.mutantCooldown.", StringComparison.Ordinal))
+                return MutantAbilityRechargeStep;
+
             if (UsesAbsoluteCatalogStep())
                 return Definition.Slider?.Step ?? 0.01;
 
@@ -1655,6 +1661,19 @@ public sealed class ParameterViewModel : ObservableObject
         var clamped = Math.Clamp(value, Minimum, Maximum);
         if (!IsSlider)
             return clamped;
+
+        if (Id.StartsWith("combat.mutantCooldown.", StringComparison.Ordinal))
+        {
+            // Snap what the player sees: RECHARGE = 1 / native wait.
+            // This yields 0.50x, 0.75x, 1.00x ... 3.00x exactly, while
+            // retaining the original source-wait mapping in presets/BPatch.
+            var minRecharge = 1.0 / Maximum;
+            var maxRecharge = 1.0 / Minimum;
+            var recharge = 1.0 / Math.Max(Epsilon, clamped);
+            var snappedRecharge = Math.Round(recharge / MutantAbilityRechargeStep,
+                MidpointRounding.AwayFromZero) * MutantAbilityRechargeStep;
+            return 1.0 / Math.Clamp(snappedRecharge, minRecharge, maxRecharge);
+        }
 
         if (UsesAbsoluteCatalogStep())
             return SnapToCatalogStep(clamped);
