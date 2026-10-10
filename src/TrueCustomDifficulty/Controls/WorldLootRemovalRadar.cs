@@ -27,6 +27,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         new("loot.worldFoodDrinkCratesRemoved", "FOOD & DRINK BOXES", 1100, 1208, "physical food / drink boxes"),
         new("loot.worldMedicalCratesRemoved", "MEDICAL BOXES", 709, 868, "physical medical boxes"),
         new("loot.looseWorldLootRemoved", "LOOSE WORLD LOOT", 5996, 7233, "eligible loose ammo / consumables / grenades"),
+        new("loot.looseUniqueWeaponsRemoved", "LOOSE UNIQUE WEAPONS", 9, 9, "nine source-verified standalone weapon pickups"),
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Populations.Length];
