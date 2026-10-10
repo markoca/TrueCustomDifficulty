@@ -109,6 +109,19 @@ public sealed class MainViewModel : ObservableObject
             "loot.looseWorldLootRemoved"
         };
 
+        // Hidden aggregate-backed controls still require a live ParameterViewModel.
+        // Without this membership the World Placement visual has an absent source
+        // and drops the entire board into "data unavailable".
+        var worldPlacementParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "loot.worldWeaponShuffle",
+            "loot.worldWeaponDensity",
+            "loot.looseUniqueWeaponShuffle",
+            "loot.worldAttachmentShuffle",
+            "loot.worldDetectors",
+            "loot.blueprintShuffle"
+        };
+
         var medicalHealingParameterIds = new HashSet<string>(StringComparer.Ordinal)
         {
             "health.bandageHealing",
@@ -222,6 +235,7 @@ public sealed class MainViewModel : ObservableObject
                 || mutantDropParameterIds.Contains(p.Id)
                 || individualAnomalyDamageParameterIds.Contains(p.Id)
                 || worldLootRemovalParameterIds.Contains(p.Id)
+                || worldPlacementParameterIds.Contains(p.Id)
                 || medicalHealingParameterIds.Contains(p.Id)
                 || actionCostParameterIds.Contains(p.Id)
                 || exhaustionRecoveryParameterIds.Contains(p.Id)
@@ -483,6 +497,7 @@ public sealed class MainViewModel : ObservableObject
             "loot.worldWeaponShuffle",
             "loot.worldWeaponShuffle",
             "loot.worldWeaponDensity",
+            "loot.looseUniqueWeaponShuffle",
             "loot.worldAttachmentShuffle",
             "loot.worldDetectors",
             "loot.blueprintShuffle");
@@ -1770,6 +1785,7 @@ public sealed class MainViewModel : ObservableObject
                 // World placement
                 "loot.worldWeaponShuffle" => 100,
                 "loot.worldWeaponDensity" => 101,
+                "loot.looseUniqueWeaponShuffle" => 102,
                 "loot.worldAttachmentShuffle" => 102,
                 "loot.worldDetectors" => 103,
                 "loot.blueprintShuffle" => 104,
