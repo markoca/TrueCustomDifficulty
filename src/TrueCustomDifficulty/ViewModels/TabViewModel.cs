@@ -32,21 +32,6 @@ public sealed class TabViewModel : ObservableObject
         }
     }
 
-    public string SliderGuide => Id switch
-    {
-        "loot" => "Difficulty chooses the loot rules; Progression Rank chooses the tier inside those rules. Drop Chance controls affect how often something appears, while MIN/MAX controls affect how much can appear at once. Yellow shows your current setting; vanilla markers show the original game values. Click a marker to snap directly to it; right-click a slider to restore the selected vanilla baseline.",
-        "combat" => "Use these controls to shape how dangerous fights feel: enemy toughness, damage, attack frequency, accuracy and explosions. Master-only special rules live in the Master tab. Yellow shows your current setting; click a vanilla marker to snap to it, or right-click any slider to restore vanilla.",
-        "survival" => "These controls shape hunger, fatigue, sleep, radiation and bleeding. Rate controls decide how quickly survival states build up, while effect controls decide what those states do to you. Vanilla keeps the status-onset thresholds fixed; Master-only punishment bundles live in the Master tab. Click any vanilla marker under a slider to snap directly to that value.",
-        "health" => "Health covers your HP pool, recovery and direct medical treatment. Master-only low-health and medical penalties live in the Master tab. Bleeding and radiation buildup remain in Survival; this tab controls how treatment removes them. Click any vanilla marker under a slider to snap directly to that value.",
-        "stamina" => "Stamina covers the size of your stamina bar, base recovery, clear player action costs, water penalties, vault height and carry limits. Internal movement-state coefficients and emergency-recovery helper fields are documented but intentionally kept out of the normal UI. Click a vanilla marker to snap to it; right-click restores the selected baseline.",
-        "master" => "Five Master punishment bundles: Starvation, Severe Fatigue, Radiation, Low Health and Consumable Effects. Every bundle has its own ON/OFF switch and source-exact penalty sliders. OFF keeps the child values visible but dimmed and non-editable; their staged preset values are preserved. The starvation timeline illustrates only authored delay and damage ticks, not final HP loss. Right-click resets one source, R resets the focused bundle.",
-        "environment" => "Anomalies are divided into Global Damage, Individual Damage, Flycatcher Slowdown and Special Effects. Global Damage and individual sources remain independent. Flycatcher handles edit retained movement and turning speed (higher means less slowdown). The center ring edits both axes. Native ranges, reference ticks and per-source resets stay intact.",
-        "economy" => "Economy controls starting coupons, trader pricing behavior, item/service costs, repair-by-reputation effects and quest coupon payouts. Some trader pricing rules are only partly exposed by the game files. Vanilla markers remain exact source reference points and can be clicked to snap a slider directly to them.",
-        "equipment" => "Equipment Wear uses three Combat-style rings: bottom adjusts armor toughness, left adjusts weapon wear per shot and center adjusts both independently. Item Weight has separate compact ammo and food/medicine sliders. Source values retain their native scales; bonus caps remain audit-only.",
-        "alife" => "Four player-rank Human Squad Size cards and fourteen species-specific Mutant Group Size cards edit real A-Life Director encounter caps. N / E / V / M denote player rank. Adjusting group limits does not increase encounter frequency, lair population, or respawn speed. Native 0.25–3x multipliers advance in 0.05x steps; right-click resets one row and R resets the focused family.",
-        _ => "Yellow shows your current setting. Vanilla markers show the original Novice, Stalker, Veteran and Master values; click a marker to snap directly to it. Right-click a slider to restore the selected vanilla baseline."
-    };
-
     public TabViewModel(string id, string label, IEnumerable<ParameterViewModel> parameters)
     {
         Id = id;
