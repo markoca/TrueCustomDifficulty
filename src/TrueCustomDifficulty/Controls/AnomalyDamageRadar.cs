@@ -11,7 +11,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class AnomalyDamageRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double DesiredHeight = 420.0;
+    private const double DesiredHeight = 360.0;
     private const double MaxContentWidth = 756.0;
     private const double ColumnGap = 16.0;
     private const double RowHeight = 52.0;
@@ -134,86 +134,70 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
         _targets.Clear();
 
-        var content = ContentRect();
-        DrawCenteredText(dc, "INDIVIDUAL ANOMALY DAMAGE", new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "INDIVIDUAL ANOMALY DAMAGE",
+            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
 
-
-        var columnWidth = (content.Width - ColumnGap) / 2.0;
-        for (var i = 0; i < 6; i++)
+        // Eleven independent sources, each with its own native range but the
+        // same audited 0..200% baseline-relative maximum. One shared ruler.
+        const double top = 108.0, bottom = 279.0;
+        const int columns = 11;
+        var left = 53.0;
+        var lane = (ActualWidth - left - 14.0) / columns;
+        for (var tick = 0; tick <= 4; tick++)
         {
-            DrawRow(dc, i, new Rect(content.Left, 60.0 + i * RowHeight,
-                columnWidth, RowHeight - 5.0), text, muted, border, accent, panel);
-
-            var right = i + 6;
-            if (right < Anomalies.Length)
-                DrawRow(dc, right, new Rect(
-                    content.Left + columnWidth + ColumnGap,
-                    60.0 + i * RowHeight, columnWidth, RowHeight - 5.0),
-                    text, muted, border, accent, panel);
+            var yTick = bottom - (bottom - top) * tick / 4.0;
+            dc.DrawLine(new Pen(CloneWithOpacity(border, .40), .8),
+                new Point(left, yTick), new Point(ActualWidth - 14.0, yTick));
+            DrawRightAlignedText(dc, $"{tick * 50}%",
+                new Point(left - 7.0, yTick - 6.0), 9.0, muted, FontWeights.SemiBold);
         }
+        var axis = new Point(11.0, (top + bottom) / 2);
+        dc.PushTransform(new RotateTransform(-90, axis.X, axis.Y));
+        DrawCenteredText(dc, "DAMAGE", axis, 9.0, accent, FontWeights.Bold);
+        dc.Pop();
 
-        // No transient yellow reset notifications.
-    }
-
-    private void DrawRow(
-        DrawingContext dc,
-        int row,
-        Rect card,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
-    {
-        if (_parameters[row] is not { } parameter)
-            return;
-
-        var info = Anomalies[row];
-        var reference = parameter.ReferenceNumber;
-        var relative = Math.Abs(reference) > Epsilon ? parameter.CurrentNumber / reference : 1.0;
-        var modified = Math.Abs(parameter.CurrentNumber - reference) > Epsilon;
-        var selected = row == _selectedRow;
-        var hovered = row == _hoverRow;
-
-        dc.DrawRoundedRectangle(
-            selected ? CloneWithOpacity(accent, 0.08)
-            : CloneWithOpacity(panel, 0.02),
-            new Pen(CloneWithOpacity(border, 0.45), 0.8),
-            card,
-            3.0,
-            3.0);
-
-        var baseText = info.IsMultiplier
-            ? $"{parameter.CurrentNumber:0.##}x"
-            : $"{parameter.CurrentNumber:0.##}";
-
-        DrawText(dc, info.Label, new Point(card.Left + 8.0, card.Top + 5.0),
-            10.2, text, FontWeights.Bold);
-        DrawRightAlignedText(
-            dc,
-            baseText,
-            new Point(card.Right - 8.0, card.Top + 5.0),
-            parameter.IsValueModifiedFromReference() ? 11.5 : 10.3,
-            parameter.IsValueModifiedFromReference() ? accent : text,
-            FontWeights.Bold);
-
-        var track = new Rect(card.Left + 10.0, card.Top + 30.0, card.Width - 20.0, 10.0);
-        var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
-
-        var currentX = track.Left + track.Width * Math.Clamp(relative / 2.0, 0.0, 1.0);
-        var vanillaX = track.Left + track.Width * 0.5;
-
-        dc.DrawLine(new Pen(muted, 1.0), new Point(vanillaX, y - 5.0), new Point(vanillaX, y + 5.0));
-        dc.DrawLine(new Pen(accent, 3.0), new Point(track.Left, y), new Point(currentX, y));
-        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
-        dc.DrawEllipse(panel, new Pen(accent, selected ? 2.4 : 1.4), new Point(currentX, y), 5.1, 5.1);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.2, 2.2);
-
-        _targets[row] = new HitTarget(
-            new Rect(track.Left - 6.0, track.Top - 6.0, track.Width + 12.0, track.Height + 12.0),
-            track);
+        for (var i = 0; i < Anomalies.Length; i++)
+        {
+            if (_parameters[i] is not { } parameter) continue;
+            var center = left + (i + .5) * lane;
+            var reference = parameter.ReferenceNumber;
+            var fraction = reference > Epsilon
+                ? parameter.CurrentNumber / (2.0 * reference) : 0.0;
+            var currentY = bottom - (bottom - top) * Math.Clamp(fraction, 0, 1);
+            var referenceY = bottom - (bottom - top) * .5;
+            var width = Math.Min(23.0, lane * .42);
+            var barLeft = center - width / 2.0;
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .32),
+                new Pen(CloneWithOpacity(border, .55), .8),
+                new Rect(left + i * lane + 2, 67, lane - 4, 281), 4, 4);
+            dc.DrawRectangle(CloneWithOpacity(border, .12), null,
+                new Rect(barLeft, top, width, bottom - top));
+            dc.DrawRectangle(CloneWithOpacity(accent, .72), null,
+                new Rect(barLeft, currentY, width, Math.Max(.5, bottom - currentY)));
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .68), 1.3),
+                new Point(barLeft - 3, referenceY), new Point(barLeft + width + 3, referenceY));
+            VerticalBarHandleChrome.Draw(dc, new Point(center, currentY),
+                width, accent, _hoverRow == i);
+            var value = Anomalies[i].IsMultiplier
+                ? $"{parameter.CurrentNumber:0.##}x" : $"{parameter.CurrentNumber:0.#}";
+            DrawCenteredText(dc, value, new Point(center, 88), 9.3,
+                parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
+            var words = Anomalies[i].Label.Split(' ');
+            if (words.Length == 1)
+                DrawCenteredText(dc, words[0], new Point(center, 318), 8.5,
+                    text, FontWeights.Bold);
+            else
+            {
+                DrawCenteredText(dc, words[0], new Point(center, 310), 8.5,
+                    text, FontWeights.Bold);
+                DrawCenteredText(dc, string.Join(" ", words.Skip(1)),
+                    new Point(center, 324), 8.5, text, FontWeights.Bold);
+            }
+            _targets[i] = new HitTarget(
+                new Rect(center - Math.Max(15, width / 2 + 5), top,
+                    Math.Max(30, width + 10), bottom - top),
+                new Rect(barLeft, top, width, bottom - top));
+        }
     }
 
     private Rect ContentRect()
@@ -252,7 +236,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             InvalidateVisual();
         }
 
-        Cursor = hover >= 0 ? Cursors.Hand : Cursors.Arrow;
+        Cursor = hover >= 0 ? Cursors.SizeNS : Cursors.Arrow;
 
         if (_dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed)
         {
@@ -334,8 +318,8 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         if (!_targets.TryGetValue(row, out var target) || _parameters[row] is not { } parameter)
             return;
 
-        var ratio = Math.Clamp((point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width), 0.0, 1.0);
-        var raw = parameter.ReferenceNumber * (ratio * 2.0);
+        var ratio = Math.Clamp((target.MapRect.Bottom - point.Y) / Math.Max(1.0, target.MapRect.Height), 0.0, 1.0);
+        var raw = parameter.Minimum + ratio * (parameter.Maximum - parameter.Minimum);
         var tick = Math.Max(parameter.TickFrequency, Epsilon);
         var snapped = parameter.Minimum + Math.Round((raw - parameter.Minimum) / tick, MidpointRounding.AwayFromZero) * tick;
 
