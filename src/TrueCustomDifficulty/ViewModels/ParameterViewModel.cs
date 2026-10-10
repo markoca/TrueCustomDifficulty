@@ -20,6 +20,7 @@ public sealed class ParameterViewModel : ObservableObject
     private string _referenceDifficulty;
     private bool _isSelected;
     private bool _drinkDurationOverrideEnabled;
+    private bool _medicalOverrideEnabled;
     private Func<double>? _drinkDurationStepProvider;
     private Func<double>? _effectiveDamageMultiplierProvider;
     private Func<bool>? _dependencyEnabledProvider;
@@ -41,6 +42,13 @@ public sealed class ParameterViewModel : ObservableObject
     {
         get => _drinkDurationOverrideEnabled;
         set => SetProperty(ref _drinkDurationOverrideEnabled, value);
+    }
+
+    // UI-only Medical Items ceiling mode, owned by the bandage visual anchor.
+    public bool MedicalOverrideEnabled
+    {
+        get => _medicalOverrideEnabled;
+        set => SetProperty(ref _medicalOverrideEnabled, value);
     }
 
     public string Description => Definition.Description;
