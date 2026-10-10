@@ -1,5 +1,10 @@
 # True Custom Difficulty
 
+### 2026-10-10 — Individual anomalies inherit Global Anomaly Damage
+
+All eleven **INDIVIDUAL ANOMALY DAMAGE** vertical editors now show their **effective strength** above the native authored source value, derived live as `individual source × environment.anomalyDamage`. The selected vanilla difficulty supplies the global default (Novice 0.30x, Stalker 1x, Veteran 1.45x, Master 1.75x) and moving the global slider changes the combined effect without overwriting individual settings. The upper readout is the combined value, the muted secondary readout is the editable native CFG value; the vertical handle, baseline-relative 0–200% Y ruler and original source range continue to edit only the native per-anomaly field. Razor displays its combined coefficient as x; its existing low/high effect breakdown remains in the parameter detail. The actual writer retains one global DifficultyPrototypes `EnvironmentDifficulty.Anomaly_Damage` source plus eleven individual anomaly sources, with no additional baked-in multiplier and no double scaling. Preset formats and existing mappings are unchanged. Local publish/Wine and runtime validation pending.
+
+
 ### 2026-10-10 — Human Squad Size and Individual Anomaly Damage vertical editors
 
 **HUMAN SQUAD SIZE** is now four independent one-row Medical Items-style vertical bars (NEWBIE, EXPERIENCED, VETERAN, MASTER) on a shared **0–3x SQUAD SIZE** ruler. The native source domain remains **0.25–3x**, step **0.05x**, with each bar showing its *effective integer NPC cap* using the existing round-half-up rule and its multiplier in a muted secondary line. The actual CFG multiplier, rank-specific selection callback, muted reference marker, individual right-click reset, keyboard adjustment and R reset are preserved. No new domain or control is created.
