@@ -1,5 +1,8 @@
 # True Custom Difficulty
 
+**2026-10-10 — Human Squad Size warning cleanup:** removed the unused `minAxis` constant from the vertical-bar renderer (`CS0219`). The 0–3x ruler, 0.25–3x source range, slider behavior, CFG/ BPATCH mapping and preset semantics are unchanged. Local warning-free publish is not yet verified.
+
+
 ### 2026-10-10 — Individual anomalies inherit Global Anomaly Damage
 
 All eleven **INDIVIDUAL ANOMALY DAMAGE** vertical editors now show their **effective strength** above the native authored source value, derived live as `individual source × environment.anomalyDamage`. The selected vanilla difficulty supplies the global default (Novice 0.30x, Stalker 1x, Veteran 1.45x, Master 1.75x) and moving the global slider changes the combined effect without overwriting individual settings. The upper readout is the combined value, the muted secondary readout is the editable native CFG value; the vertical handle, baseline-relative 0–200% Y ruler and original source range continue to edit only the native per-anomaly field. Razor displays its combined coefficient as x; its existing low/high effect breakdown remains in the parameter detail. The actual writer retains one global DifficultyPrototypes `EnvironmentDifficulty.Anomaly_Damage` source plus eleven individual anomaly sources, with no additional baked-in multiplier and no double scaling. Preset formats and existing mappings are unchanged. Local publish/Wine and runtime validation pending.
