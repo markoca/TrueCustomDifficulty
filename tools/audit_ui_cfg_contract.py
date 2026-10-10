@@ -99,6 +99,13 @@ def main():
     by_id = {p["id"]: p for p in parameters}
     all_ids = set(by_id)
 
+    # Override is editor-only state, not a ninth Duration CFG source.
+    if "survival.drinkDurationOverride" in all_ids:
+        fail("UI-only Drink Duration Override must not masquerade as a gameplay catalog parameter")
+    if sum(p["id"].endswith("EffectDuration") for p in parameters
+           if p["id"].startswith("survival.")) != 5:
+        fail("unexpected main drink-duration source inventory")
+
     # These are the CURRENT catalog invariants, not v0.9.26.51's 199/188
     # obsolete snapshot. The core must route every parameter, even hidden
     # aggregate backings; 13 independent source IDs are audit-only.

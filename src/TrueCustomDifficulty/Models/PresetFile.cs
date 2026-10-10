@@ -19,6 +19,10 @@ public sealed class PresetFile
     [JsonPropertyName("referenceDifficulty")]
     public string ReferenceDifficulty { get; set; } = "Stalker";
 
+    // UI mode only; it changes allowed editor ranges, never creates a CFG field.
+    [JsonPropertyName("drinkDurationOverride")]
+    public bool DrinkDurationOverride { get; set; }
+
     [JsonPropertyName("savedAtUtc")]
     public DateTimeOffset? SavedAtUtc { get; set; }
 

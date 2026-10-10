@@ -43,7 +43,7 @@ SOURCE = (
 WRITERS = (
     ("combat-bpatch-writer", "CombatPatchContract", "combat-patch-fixtures", 84),
     ("health-stamina-bpatch-writer", "HealthStaminaPatchContract", "health-stamina-patch-fixtures", 46),
-    ("survival-bpatch-writer", "SurvivalPatchContract", "survival-patch-fixtures", 93),
+    ("survival-bpatch-writer", "SurvivalPatchContract", "survival-patch-fixtures", 94),
     ("economy-bpatch-writer", "EconomyPatchContract", "economy-patch-fixtures", 34),
     ("equipment-bpatch-writer", "EquipmentPatchContract", "equipment-patch-fixtures", 32),
     ("environment-bpatch-writer", "EnvironmentPatchContract", "environment-patch-fixtures", 90),

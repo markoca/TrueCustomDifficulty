@@ -43,6 +43,23 @@ agents / 66 tags, and both PSY effects. Game BPatch integration
 remains a manual acceptance gate. The source runner now executes
 B1 through B4 with genuine base/DLC1 ZIPs.
 
+### Global Drink Duration Override test (C3, required)
+
+The 94-case Survival writer contract now includes one real **global range
+override** end-to-end case. Test both modes on all eight independently writable
+Duration sources: OFF 90/135/60/60/270s per-drink limits, ON identical 270s
+maxima on all sources, **all eight set to 180 seconds simultaneously** with
+actual production WPF ViewModel → CFG writer BPatch equality, and OFF restoration
+with minimal clamping. The checkbox is metadata and must never become a new
+CFG edit. Preset JSON round-trips the `drinkDurationOverride` key.
+
+Wine manual follow-up: at narrow and wide windows, verify the compact universal
+checkbox and ruler axis labels do not overlap, Space toggles a focused checkbox,
+right-click resets it, R resets the entire group, each independent native
+duration has full 270s reach only with Override ON, and loading a saved
+high-duration preset sets the mode before its values. Runtime UE acceptance is
+still separate.
+
 ## Single repeatable runner
 
 `tools/pre_release.py` invokes the registered subprocesses, preserves raw

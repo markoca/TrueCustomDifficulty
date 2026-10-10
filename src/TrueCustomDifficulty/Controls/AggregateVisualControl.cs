@@ -126,6 +126,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         if (e.PropertyName is nameof(ParameterViewModel.CurrentNumber)
             or nameof(ParameterViewModel.CurrentBoolean)
+            or nameof(ParameterViewModel.DrinkDurationOverrideEnabled)
+            or nameof(ParameterViewModel.Maximum)
             or nameof(ParameterViewModel.CurrentText)
             or nameof(ParameterViewModel.CurrentMinNumber)
             or nameof(ParameterViewModel.CurrentMaxNumber)
@@ -2944,7 +2946,26 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, "EFFECT DURATION  /  SECONDS",
             new Point(preview.Left + 12.0, previewTop + 8.0),
             11.0, text, FontWeights.Bold);
-        var timeline = new Rect(preview.Left + 112.0, previewTop + 40.0,
+        // This is a single UI range override, not a gameplay CFG toggle.
+        // Keep the existing universal 20-DIP checkbox in a compact header cell.
+        var overrideRect = new Rect(preview.Right - 190.0, previewTop + 6.0, 178.0, 28.0);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), overrideRect, 4.0, 4.0);
+        var checkboxRect = new Rect(
+            overrideRect.Right - BooleanCheckboxChrome.Size - 8.0,
+            overrideRect.Top + (overrideRect.Height - BooleanCheckboxChrome.Size) / 2.0,
+            BooleanCheckboxChrome.Size, BooleanCheckboxChrome.Size);
+        var overrideHovered = _hoverTarget?.Kind == HitKind.DrinkDurationOverride;
+        BooleanCheckboxChrome.Draw(dc, checkboxRect, burst.DrinkDurationOverrideEnabled,
+            true, overrideHovered, panel, border, accent);
+        dc.DrawText(CreateText("OVERRIDE LIMITS", 9.7, text, FontWeights.Bold,
+            Math.Max(1.0, checkboxRect.Left - overrideRect.Left - 16.0)),
+            new Point(overrideRect.Left + 9.0, overrideRect.Top + 7.0));
+        _hitTargets.Add(new HitTarget(burst, overrideRect, overrideRect,
+            HitKind.DrinkDurationOverride, 0.0, 1.0, false));
+
+        // The checkbox takes its own header row; axis labels sit underneath it
+        // instead of crossing the checkbox and the effect title.
+        var timeline = new Rect(preview.Left + 112.0, previewTop + 67.0,
             Math.Max(160.0, preview.Width - 207.0), 120.0);
         const double maxSeconds = 270.0;
         double SecondsX(double seconds) => timeline.Left + timeline.Width *
@@ -3045,7 +3066,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             var (shortEffect, caption) = shortEffects[index];
             var x = preview.Left + 12.0 +
                 (index % shortColumns) * (secondaryWidth + CompactColumnGap);
-            var y = preview.Top + 160.0 +
+            var y = preview.Top + 200.0 +
                 (index / shortColumns) * (CompactTrackHeight + CompactRowGap);
             DrawCompactTrack(dc, shortEffect, caption,
                 $"{shortEffect.CurrentNumber:0.#}s",
@@ -3958,7 +3979,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var previewWidth = Math.Max(460.0, width - 34.0);
         var rows = (3 + ConsumableSecondaryColumns(previewWidth) - 1) /
             ConsumableSecondaryColumns(previewWidth);
-        return 160.0 + rows * CompactTrackHeight +
+        return 200.0 + rows * CompactTrackHeight +
             (rows - 1) * CompactRowGap + 12.0;
     }
     // Reserved space for plot ticks plus three independently readable stage lines.
@@ -4439,6 +4460,16 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
+        if (target.Kind == HitKind.DrinkDurationOverride)
+        {
+            target.Parameter.DrinkDurationOverrideEnabled =
+                !target.Parameter.DrinkDurationOverrideEnabled;
+            _status.ClearTransient();
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+
         if (target.Kind == HitKind.Toggle)
         {
             target.Parameter.CurrentBoolean = !target.Parameter.CurrentBoolean;
@@ -4475,7 +4506,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
             HitKind.HumanJoint or HitKind.HungerJoint or HitKind.FatigueJoint or HitKind.FatigueReloadJoint => Cursors.SizeAll,
-            HitKind.Toggle or HitKind.Choice or HitKind.MixerBaseMarker or HitKind.MixerSelect => Cursors.Hand,
+            HitKind.Toggle or HitKind.DrinkDurationOverride or HitKind.Choice or HitKind.MixerBaseMarker or HitKind.MixerSelect => Cursors.Hand,
             _ => Cursors.Arrow
         };
 
@@ -4541,6 +4572,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             : target.Kind switch
             {
                 HitKind.Toggle => $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset",
+                HitKind.DrinkDurationOverride =>
+                    "Override Drink Duration Limits\nOFF: each effect has its normal maximum. ON: all eight durations may reach 270 seconds independently.\nRight-click resets this checkbox.",
                 HitKind.Choice => $"{target.Parameter.Label}\nChoose a corpse-loot package · Right-click = Base Preset",
                 HitKind.MixerBaseMarker => $"{target.Parameter.Label}\nClick to snap to selected Base Preset",
                 HitKind.MixerSelect => $"{target.Parameter.Label}\nClick for detailed rationale · Use the fader rail to edit",
@@ -4571,6 +4604,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         _selectedHitKind = target.Kind == HitKind.MixerBaseMarker ? HitKind.Vertical : target.Kind;
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
+        if (target.Kind == HitKind.DrinkDurationOverride)
+        {
+            target.Parameter.DrinkDurationOverrideEnabled = false;
+            _status.ClearTransient();
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
         if (target.Kind != HitKind.FatigueReloadJoint)
             target.Parameter.ResetToReference();
         if (target.Kind is HitKind.FatigueJoint or HitKind.FatigueReloadJoint)
@@ -4610,6 +4651,12 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         if (e.Key == Key.R)
         {
+            if (Family == "ConsumableMixer")
+            {
+                var durationAnchor = P("survival.instantStaminaRestore");
+                if (durationAnchor is not null)
+                    durationAnchor.DrinkDurationOverrideEnabled = false;
+            }
             foreach (var resetParameter in GetFamilyParameters())
                 resetParameter.ResetToReference();
 
@@ -4624,6 +4671,15 @@ public sealed class AggregateVisualControl : FrameworkElement
         // transition just like mouse hit targets and the writer.
         if (_selectedParameter is null || !_selectedParameter.IsControlEnabled)
             return;
+
+        if (_selectedHitKind == HitKind.DrinkDurationOverride && e.Key == Key.Space)
+        {
+            _selectedParameter.DrinkDurationOverrideEnabled =
+                !_selectedParameter.DrinkDurationOverrideEnabled;
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
 
         if (_selectedParameter.IsToggle && e.Key == Key.Space)
         {
@@ -5537,6 +5593,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         FatigueReloadJoint,
         MixerBaseMarker,
         MixerSelect,
+        DrinkDurationOverride,
         Toggle,
         Choice,
         RangeMin,

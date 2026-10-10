@@ -2,6 +2,19 @@
 
 True Custom Difficulty presets are ordinary JSON files. They store **tool UI state**, not generated STALKER 2 CFG files. The internal JSON property `referenceDifficulty` is retained for backward compatibility; in the UI this is called **Base Preset**.
 
+## UI-only duration range override (2026-10-10)
+
+The optional preset-root boolean `"drinkDurationOverride": true/false` stores
+whether **all eight independent drink-effect durations** can use the common
+270-second maximum. It is **NOT** a `values` entry and it has no fake CFG writer
+target. Missing metadata in older presets resolves to `false` (original
+per-drink maxima). The loader restores the mode **before** numeric values,
+allowing formerly constrained Water/Beer/Vodka values above their old cap to
+round-trip. Changing the checkbox alone never creates a gameplay patch; it
+only controls slider ranges and the short-effect parent limits. Turning it OFF
+clamps values that exceed the restored native limits; to preserve a high-duration
+preset, save it with Override ON before disabling.
+
 ## What is saved
 
 Every preset stores the complete current state:
@@ -24,6 +37,7 @@ All controls are saved, including controls that are currently at their vanilla v
   "toolVersion": "0.1.55",
   "gameVersion": "2.0.5",
   "referenceDifficulty": "Stalker",
+  "drinkDurationOverride": false,
   "savedAtUtc": "2026-10-02T00:00:00+00:00",
   "values": {
     "combat.npcHealth": {

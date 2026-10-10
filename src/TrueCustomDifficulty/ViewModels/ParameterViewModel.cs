@@ -19,6 +19,7 @@ public sealed class ParameterViewModel : ObservableObject
     private string _currentText = string.Empty;
     private string _referenceDifficulty;
     private bool _isSelected;
+    private bool _drinkDurationOverrideEnabled;
     private Func<double>? _effectiveDamageMultiplierProvider;
     private Func<bool>? _dependencyEnabledProvider;
     private Func<bool>? _aggregateModifiedProvider;
@@ -31,6 +32,14 @@ public sealed class ParameterViewModel : ObservableObject
     {
         get => _isSelected;
         set => SetProperty(ref _isSelected, value);
+    }
+
+    // Global UI-only mode owned by the visible ConsumableMixer anchor.
+    // The flag is saved separately in PresetFile: it has no fake CFG target.
+    public bool DrinkDurationOverrideEnabled
+    {
+        get => _drinkDurationOverrideEnabled;
+        set => SetProperty(ref _drinkDurationOverrideEnabled, value);
     }
 
     public string Description => Definition.Description;
@@ -634,7 +643,7 @@ public sealed class ParameterViewModel : ObservableObject
     // or a guessed global timeline coordinate.
     public double Maximum => _dynamicMaximumProvider is null
         ? StaticMaximum
-        : Math.Clamp(_dynamicMaximumProvider(), Minimum, StaticMaximum);
+        : Math.Max(Minimum, _dynamicMaximumProvider());
 
     public void SetDynamicMaximumProvider(Func<double> provider)
     {

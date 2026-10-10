@@ -95,6 +95,8 @@ internal static class Program
             TestShortDurationBounds("survival.energyDrinkEffectDuration",
                 new[] { "survival.energyFullCostDuration", "survival.energyPartialCostDuration" },
                 45.0, 0.75, 33.75);
+            TestDrinkDurationOverride();
+
             TestCombined("Veteran-Hunger-Fatigue", "Veteran", new[]
             {
                 ("survival.hungerMediumStaminaRegen", 0.43),
@@ -169,6 +171,109 @@ internal static class Program
         {
             Console.Error.WriteLine("FAIL: " + ex);
             return 1;
+        }
+    }
+
+    // One editor-only flag grants every real effect the same 270-second
+    // ceiling without synchronizing source values or inventing a CFG boolean.
+    private static void TestDrinkDurationOverride()
+    {
+        const string name = "All-Drink-Duration-Override";
+        var folder = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Survival_Patch", name);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            ParameterViewModel Source(string id) => vm.AllParameters.Single(p => p.Id == id);
+            var flag = Source("survival.instantStaminaRestore");
+            var primary = new (string Id, double VanillaSeconds)[]
+            {
+                ("survival.waterEffectDuration", 30.0),
+                ("survival.energyDrinkEffectDuration", 45.0),
+                ("survival.vodkaEffectDuration", 20.0),
+                ("survival.beerEffectDuration", 20.0),
+                ("survival.magicVodkaEffectDuration", 90.0)
+            };
+            var children = new[]
+            {
+                "survival.waterRegenDuration",
+                "survival.energyFullCostDuration",
+                "survival.energyPartialCostDuration"
+            };
+
+            Check(!flag.DrinkDurationOverrideEnabled, name + ": default mode must be OFF");
+            foreach (var (id, _) in primary)
+                Check(Math.Abs(Source(id).Maximum - 3.0) < 0.000001,
+                    name + ": OFF failed to preserve per-drink native 3x maximum");
+
+            var before = primary.Select(p => Source(p.Id).CurrentNumber)
+                .Concat(children.Select(id => Source(id).CurrentNumber)).ToArray();
+            flag.DrinkDurationOverrideEnabled = true;
+            foreach (var (id, vanilla) in primary)
+                Check(Math.Abs(Source(id).Maximum * vanilla - 270.0) < 0.000001,
+                    name + ": ON missing common 270-second maximum for " + id);
+            foreach (var childId in children)
+                Check(Math.Abs(Source(childId).Maximum - 270.0) < 0.000001,
+                    name + ": ON still caps secondary effect to its parent");
+
+            var after = primary.Select(p => Source(p.Id).CurrentNumber)
+                .Concat(children.Select(id => Source(id).CurrentNumber)).ToArray();
+            Check(before.SequenceEqual(after),
+                name + ": enabling the checkbox must not alter any duration");
+
+            // Every independent CFG source reaches exactly 180 seconds even
+            // though Water/Beer/Vodka have unequal original native maxima.
+            foreach (var (id, vanilla) in primary)
+                Source(id).SnapCurrentNumberToMarker(180.0 / vanilla);
+            foreach (var childId in children)
+                Source(childId).SnapCurrentNumberToMarker(180.0);
+            foreach (var (id, vanilla) in primary)
+                Check(Math.Abs(Source(id).CurrentNumber * vanilla - 180.0) < 0.000001,
+                    name + ": equality to 180s failed for " + id);
+            foreach (var childId in children)
+                Check(Math.Abs(Source(childId).CurrentNumber - 180.0) < 0.000001,
+                    name + ": equality to 180s failed for " + childId);
+            var allIds = primary.Select(p => p.Id).Concat(children)
+                .ToHashSet(StringComparer.Ordinal);
+            CheckWriter(vm, allIds, Path.Combine(folder, "override-on"), name + "-ON");
+
+            var preset = new PresetFile
+            {
+                Name = "Drink Override Test",
+                ToolVersion = "0.9.26.82",
+                GameVersion = Catalog.Source.GameVersion,
+                ReferenceDifficulty = "Veteran",
+                DrinkDurationOverride = flag.DrinkDurationOverrideEnabled,
+                Values = vm.AllParameters.ToDictionary(
+                    p => p.Id, p => p.ToPresetValue(), StringComparer.Ordinal)
+            };
+            var presetPath = Path.Combine(folder, "saved-drink-override.json");
+            var service = new PresetService();
+            service.Save(preset, presetPath);
+            var reloaded = service.Load(presetPath);
+            Check(reloaded.DrinkDurationOverride &&
+                Math.Abs(reloaded.Values["survival.beerEffectDuration"].Number!.Value - 9.0) < 0.000001,
+                name + ": preset did not round-trip override and formerly restricted duration");
+
+            flag.DrinkDurationOverrideEnabled = false;
+            foreach (var (id, vanilla) in primary)
+                Check(Math.Abs(Source(id).Maximum - 3.0) < 0.000001
+                    && Source(id).CurrentNumber <= 3.0 + 0.000001,
+                    name + ": OFF did not restore native maximum for " + id);
+            Check(Math.Abs(Source("survival.waterRegenDuration").CurrentNumber -
+                Source("survival.waterEffectDuration").CurrentNumber * 30.0) < 0.000001,
+                name + ": child Water duration not minimally capped to parent");
+            foreach (var childId in children.Where(x => x.StartsWith("survival.energy", StringComparison.Ordinal)))
+                Check(Math.Abs(Source(childId).CurrentNumber -
+                    Source("survival.energyDrinkEffectDuration").CurrentNumber * 45.0) < 0.000001,
+                    name + ": child Energy duration not minimally capped to parent");
+            CheckWriter(vm, allIds, Path.Combine(folder, "override-off"), name + "-OFF");
+            _passed++;
+            Console.WriteLine("PASS " + name + " (shared ceiling, independent values, both writer modes, preset)");
+        }
+        finally
+        {
+            if (_keep is null && Directory.Exists(folder))
+                Directory.Delete(folder, recursive: true);
         }
     }
 

@@ -75,3 +75,7 @@ This compares Energy Drink's 5/15/45-second effects (native -100%/-30% SPDrain a
 ## Water and Energy short-duration controls
 
 `tools/audit_consumable_effect_source.py --base-zip <original GameData ZIP>` verifies Water 30/5s and Energy 45/15/5s source identity and variant membership. `tools/audit_project_consistency.py` and `tools/audit_ui_cfg_contract.py` verify the three independent source-backed hidden aggregate controls and unique direct CFG route ownership. `tests/SurvivalPatchContract` executes the real WPF model and writer on Windows, including live maximum/cascades for the three short durations. Structural source tests do not prove UE runtime effect stacking.
+
+## Global Drink Duration Override — 2026-10-10
+
+The single universal-minimal `OVERRIDE LIMITS` checkbox in the native ConsumableMixer duration header is saved as preset-root `drinkDurationOverride` (default OFF), not a fake CFG source. OFF preserves per-drink native maxima and source-specific child caps; ON uses the existing common 270s timeline as a ceiling for all five primary and three secondary duration editors, independently. See both UI catalogs. The real Windows `tests/SurvivalPatchContract` exercises all eight values at 180s, the production writer and preset serialization. `tools/audit_project_consistency.py` guards the live binding/render/input code.

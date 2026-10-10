@@ -49,6 +49,16 @@ assume that the two percentages are additive, that one overrides the
 other or that the rendered stamina cost equals exactly zero without an
 in-game acceptance test.
 
+## Global Override Limits (2026-10-10)
+
+The eight existing drink duration fields remain independent, but the new single
+`OVERRIDE LIMITS` UI-only checkbox can widen their **maximum** to 270 seconds
+(the existing Magic Vodka 3× common ruler). This includes both Energy `SPDrain`
+children, so neither is parent-capped in Override ON mode. In OFF mode their
+separate source-exact maxima and their prior parent caps remain unchanged.
+The checkbox has no CFG SID or `Duration` writer target, and it never changes
+effect magnitudes, prototype membership or stacking semantics.
+
 ## Update 2026-10-10 — independent short-effect duration tuning
 
 The earlier one-multiplier/four-target duration mapping below is now **historical**. The current `survival.energyDrinkEffectDuration` controls only `EnergeticStamina` and `EnergeticLimitedStamina` (both 45s base), while `survival.energyFullCostDuration` writes the original 5s `EnergeticStaminaPerAction2` `Duration` and `survival.energyPartialCostDuration` writes the original 15s `EnergeticStaminaPerAction1` `Duration`. Water's 30s action-cost duration remains on `survival.waterEffectDuration` and its 5s regeneration duration is controlled separately by `survival.waterRegenDuration`. There are **no duplicated targets**. The first three child controls may extend their seconds only as far as the live current main duration; authored vanilla remains the floor. The same PerAction2 prototype is used by normal Energy and Limited Energy, and PerAction1 remains available in Limited's alternate Weird Kettle path.

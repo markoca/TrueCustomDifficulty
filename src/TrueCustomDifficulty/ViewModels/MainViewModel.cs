@@ -804,6 +804,31 @@ public sealed class MainViewModel : ObservableObject
                 };
         }
 
+        // Exactly one editor-only override for every drink's duration
+        // ceiling. OFF preserves the current source-specific native maxima;
+        // ON makes the full existing 0..270-second timeline available to all
+        // five primary duration tracks and all three secondary effect tracks.
+        // All eight CFG values remain independent. No fictitious CFG boolean.
+        var drinkDurationMode = parametersById["survival.instantStaminaRestore"];
+        const double sharedDrinkDurationMaximumSeconds = 270.0;
+        var drinkMainSeconds = new (string Id, double VanillaSeconds)[]
+        {
+            ("survival.waterEffectDuration", 30.0),
+            ("survival.energyDrinkEffectDuration", 45.0),
+            ("survival.vodkaEffectDuration", 20.0),
+            ("survival.beerEffectDuration", 20.0),
+            ("survival.magicVodkaEffectDuration", 90.0)
+        };
+        var drinkMainParameters = drinkMainSeconds
+            .Select(source => parametersById[source.Id]).ToArray();
+        foreach (var (id, vanillaSeconds) in drinkMainSeconds)
+        {
+            parametersById[id].SetDynamicMaximumProvider(() =>
+                drinkDurationMode.DrinkDurationOverrideEnabled
+                    ? sharedDrinkDurationMaximumSeconds / vanillaSeconds
+                    : parametersById[id].Definition.Slider!.Max);
+        }
+
         // Real-seconds source caps for the three independently mapped short
         // effects. If the main duration shrinks, children are clamped to its
         // new duration; native minima are always reachable because both main
@@ -812,7 +837,10 @@ public sealed class MainViewModel : ObservableObject
         {
             var parent = parametersById[parentId];
             var child = parametersById[childId];
-            child.SetDynamicMaximumProvider(() => parent.CurrentNumber * mainVanillaSeconds);
+            child.SetDynamicMaximumProvider(() =>
+                drinkDurationMode.DrinkDurationOverrideEnabled
+                    ? sharedDrinkDurationMaximumSeconds
+                    : parent.CurrentNumber * mainVanillaSeconds);
             parent.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
@@ -822,6 +850,24 @@ public sealed class MainViewModel : ObservableObject
         LinkShortDrinkDuration("survival.waterRegenDuration", "survival.waterEffectDuration", 30.0);
         LinkShortDrinkDuration("survival.energyFullCostDuration", "survival.energyDrinkEffectDuration", 45.0);
         LinkShortDrinkDuration("survival.energyPartialCostDuration", "survival.energyDrinkEffectDuration", 45.0);
+        var shortDrinkParameters = new[]
+        {
+            parametersById["survival.waterRegenDuration"],
+            parametersById["survival.energyFullCostDuration"],
+            parametersById["survival.energyPartialCostDuration"]
+        };
+        drinkDurationMode.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName != nameof(ParameterViewModel.DrinkDurationOverrideEnabled))
+                return;
+            // Restrict primary maxima before child maxima when turning OFF.
+            // A child whose value now exceeds its parent is clamped minimally;
+            // unaffected values are never rewritten.
+            foreach (var main in drinkMainParameters)
+                main.RefreshDynamicMaximum();
+            foreach (var child in shortDrinkParameters)
+                child.RefreshDynamicMaximum();
+        };
 
         var dependencyChildren = new Dictionary<string, List<ParameterViewModel>>(StringComparer.Ordinal);
         foreach (var child in parameterVMs.Where(p => !string.IsNullOrWhiteSpace(p.Definition.RequiresToggle)))
@@ -970,6 +1016,9 @@ public sealed class MainViewModel : ObservableObject
             _isApplyingReference = false;
         }
 
+        if (resetAll)
+            AllParameters.First(p => p.Id == "survival.instantStaminaRestore")
+                .DrinkDurationOverrideEnabled = false;
         _sliderConstraintCoordinator.NormalizeAll();
         RefreshState();
     }
@@ -982,6 +1031,9 @@ public sealed class MainViewModel : ObservableObject
         _suspendSliderConstraints = true;
         try
         {
+            if (SelectedTab.Id == "survival")
+                AllParameters.First(p => p.Id == "survival.instantStaminaRestore")
+                    .DrinkDurationOverrideEnabled = false;
             foreach (var p in SelectedTab.Parameters)
                 p.ResetToReference(false);
         }
@@ -1124,6 +1176,8 @@ public sealed class MainViewModel : ObservableObject
             ToolVersion = AppVersion,
             GameVersion = GameVersion,
             ReferenceDifficulty = SelectedReferenceDifficulty,
+            DrinkDurationOverride = AllParameters.First(p =>
+                p.Id == "survival.instantStaminaRestore").DrinkDurationOverrideEnabled,
             SavedAtUtc = DateTimeOffset.UtcNow,
             // Save the complete control state, not only modified values.
             // This makes a preset deterministic when loaded into a fresh session.
@@ -1192,6 +1246,10 @@ public sealed class MainViewModel : ObservableObject
                     parameter.ChangeReferenceDifficulty(_selectedReferenceDifficulty, true);
 
                 var parametersById = AllParameters.ToDictionary(p => p.Id, StringComparer.Ordinal);
+                // Restore the editor-range mode BEFORE importing seconds/multipliers
+                // so values up to 270s are not truncated at old per-drink caps.
+                parametersById["survival.instantStaminaRestore"]
+                    .DrinkDurationOverrideEnabled = preset.DrinkDurationOverride;
                 var migrateAttackFrequency = RequiresAttackFrequencyPresetMigration(preset.ToolVersion);
                 var migratePositiveTreatmentMagnitude = RequiresPositiveTreatmentMagnitudePresetMigration(preset.ToolVersion);
                 var migratePositiveAimingPenaltyMagnitude = RequiresPositiveAimingPenaltyMagnitudePresetMigration(preset.ToolVersion);

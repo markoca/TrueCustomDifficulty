@@ -1742,10 +1742,55 @@ for _token in ('LinkShortDrinkDuration("survival.waterRegenDuration"',
     if _token not in _main_source:
         fail(f"consumable runtime cap/migration handler missing: {_token}")
 for _token in ("SetDynamicMaximumProvider(Func<double> provider)",
-               "Math.Clamp(_dynamicMaximumProvider(), Minimum, StaticMaximum)",
+               "Math.Max(Minimum, _dynamicMaximumProvider())",
                'Id is "survival.waterEffectDuration" or "survival.energyDrinkEffectDuration"'):
     if _token not in _vm_source:
         fail(f"consumable maximum/rounding VM contract missing: {_token}")
+# UI-only universal ceiling: no extra CFG source or catalog parameter.
+_override_main = ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs"
+_override_vm = ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs"
+_override_preset = ROOT / "src/TrueCustomDifficulty/Models/PresetFile.cs"
+_override_main_text = _override_main.read_text(encoding="utf-8")
+_override_vm_text = _override_vm.read_text(encoding="utf-8")
+_override_preset_text = _override_preset.read_text(encoding="utf-8")
+if "survival.drinkDurationOverride" in _short_by_id:
+    fail("drink-duration UI-only override must not become a fictitious CFG parameter")
+for _token in (
+    'var drinkDurationMode = parametersById["survival.instantStaminaRestore"];',
+    "const double sharedDrinkDurationMaximumSeconds = 270.0;",
+    "drinkDurationMode.DrinkDurationOverrideEnabled",
+    "sharedDrinkDurationMaximumSeconds / vanillaSeconds",
+    "? sharedDrinkDurationMaximumSeconds",
+    "main.RefreshDynamicMaximum();",
+    "child.RefreshDynamicMaximum();",
+    "DrinkDurationOverride = AllParameters.First(",
+    "DrinkDurationOverrideEnabled = preset.DrinkDurationOverride;",
+):
+    if _token not in _override_main_text:
+        fail(f"global Drink Duration Override VM/wiring/preset missing: {_token}")
+for _token in (
+    "public bool DrinkDurationOverrideEnabled",
+    "Math.Max(Minimum, _dynamicMaximumProvider())",
+):
+    if _token not in _override_vm_text:
+        fail(f"Drink Duration Override ParameterViewModel property/limits missing: {_token}")
+if ('[JsonPropertyName("drinkDurationOverride")]' not in _override_preset_text
+    or "public bool DrinkDurationOverride" not in _override_preset_text):
+    fail("preset root missing UI-only drinkDurationOverride boolean")
+for _token in (
+    "OVERRIDE LIMITS",
+    "BooleanCheckboxChrome.Draw(dc, checkboxRect, burst.DrinkDurationOverrideEnabled",
+    "HitKind.DrinkDurationOverride",
+    "previewTop + 67.0",
+    "preview.Top + 200.0",
+    "return 200.0 + rows * CompactTrackHeight",
+    "target.Parameter.DrinkDurationOverrideEnabled =",
+    "_selectedParameter.DrinkDurationOverrideEnabled =",
+):
+    if _token not in _duration_renderer:
+        fail(f"Drink Duration Override compact renderer/input contract missing: {_token}")
+note("Drink Duration Override: UI-only preset boolean; OFF native caps, ON eight separate 270s maxima; no CFG boolean or ninth duration")
+
 note("consumable duration source routes: five primary drink effects + three independently editable short effects; original CFG prototype ownership stays unique")
 
 # The individual SPDrain magnitudes and variant memberships are locked
