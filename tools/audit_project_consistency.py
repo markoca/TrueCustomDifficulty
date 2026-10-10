@@ -1123,8 +1123,8 @@ _treatment_catalog = [p for p in _health_ui if p.get("id") in _treatment_ids]
 _vm_source = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
 if len(_health_ui) != 13 or len(_health_confirmed) != 10 or len(_health_runtime) != 3:
     fail(f"health deep audit status split drifted: total={len(_health_ui)} confirmed={len(_health_confirmed)} runtime={len(_health_runtime)}; expected 13/10/3")
-elif len(_health_points) != 42:
-    fail(f"health writer surface drifted: {len(_health_points)} edit points; expected 42")
+elif len(_health_points) != 47:
+    fail(f"health writer surface drifted: {len(_health_points)} edit points; expected 47")
 elif len(_treatment_points) != 12 or any(e.get("operation") != "negateSet" for e in _treatment_points):
     fail("health treatment signed-delta boundary drifted: expected 12 negateSet edit points")
 elif len(_treatment_catalog) != 6 or any((p.get("slider") or {}).get("min") != 0.0 for p in _treatment_catalog) or any(next(iter((p.get("vanilla") or {}).values())) <= 0 for p in _treatment_catalog):
