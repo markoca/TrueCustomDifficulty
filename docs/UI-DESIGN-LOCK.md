@@ -1,5 +1,10 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-10 — Item Value Layers vertical controls (authoritative)
+
+The **ITEM VALUE LAYERS** editor is now a compact, one-row six-column vertical source bank, following the Medical Items direct-edit grammar. CONSUMABLES, AMMO, ARMOR, WEAPONS, ARTIFACTS and MUTANT PARTS each have an independent native vertical drag handle, a current `x` multiplier above the bar, a muted reference tick, and a short item caption below. All six audited CFG values range from **0.00x to 2.00x**, with **0.01x** steps, so the editor uses one truthful **0–2x VALUE** ruler at left rather than unrelated per-card scales. Only modified current numbers turn gold; no Base/Vanilla legend or duplicate bounds are shown. The frame measures 330 DIP high at a minimum 560-DIP width; the original six real parameters, distinct mutant-parts ItemPrototypes Cost writer, keyboard arrows, right-click individual reset and R all-reset remain intact. This visual change does not modify CFG targets, preset format or writer rules. Local publish/Wine and game validation remain pending.
+
+
 ### 2026-10-10 — Medical Items shared Override Limits (current contract)
 
 The 370-DIP Medical Items frame places **FOOD HEALING at top-left** and one canonical **OVERRIDE LIMITS checkbox at top-right**. This is a UI-only `medicalOverride` preset flag owned by `health.bandageHealing`; no synthetic CFG boolean or new writer route. OFF (default, including legacy presets) keeps all twelve sources' independent catalog maxima. ON expands their independent caps to the existing physical axes: **HEAL 200 HP, BLEED 100 PTS, RAD 200 RAD**. Individual sliders are never linked or synchronized. Disabling Override clamps only values beyond their respective original source caps; source edits persist via their existing CFG/BPatch writers. Checkbox retains canonical 20-DIP appearance, click/hover, right-click reset, whole-panel R reset, tab reset, and baseline reset. Numeric labels, compact row, reference ticks, and independent source writers remain unchanged. Local Wine visual and in-game confirmation pending.
