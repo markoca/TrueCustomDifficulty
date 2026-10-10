@@ -8,6 +8,8 @@
 
 **Regression gates:** `python3 tools/audit_combat_contract.py` checks all eight catalog bounds and original step. `tests/CombatPatchContract` checks all eight live view models against 3×/0.5×, old 4× input clamping and a real Master Chimera BPatch containing exactly the 1/3 wait endpoint. Writer suite increases **82 → 83 cases**. Static source inspection is not a verified .NET/Wine/game run; publish and local visual acceptance remain pending.
 
+**Exact CFG ceiling correction (same change):** the specialized cooldown writer now writes `0.3333333333333333` for the `1/3` endpoint, instead of the generic six-decimal `0.333333` representation. Truncating to six decimals would mathematically yield slightly more than 3× recharge; this special formatter avoids that overshoot without changing any other cooldown/CFG value. The production Chimera writer regression asserts the full serialized literal. Native values elsewhere still use the previous writer formatting.
+
 
 ### 2026-10-10 — Starvation OFF must disable its visual-anchor slider
 
