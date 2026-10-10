@@ -155,3 +155,37 @@ six other difficulty variants, four vanilla no-change controls, three
 inactive-parent exclusions, three combined multi-control writes
 = 69 scenarios**. The source archive gate remains independent:
 139 physically authored original routes, already verified exactly.
+
+
+## Phase 9D — linked-slider CFG cascade and Master toggle round-trip (2026-10-10)
+
+The existing 69 cases individually verified production BPatch routes
+and three mixed-family edits, but did not assert the actual **minimal
+value-based cascade** of the WPF slider coordinator. The Windows
+contract now runs **13 additional paired/triad cascade cases**
+covering all **seven** registered Survival constraint families, in
+both feasible directions (except Hunger recovery's naturally ordered
+forward range). These assert:
+
+- The user's actively moved slider remains at the chosen CFG value.
+- Only neighbors required to restore ascending order are moved,
+  by the smallest amount.
+- The **generated BPatch leaf paths** exactly equal the union of
+  those changed parameters; unrelated UI aggregate anchors emit nothing.
+- All values use the production writer's set, negateSet and scale
+  transformations, not an isolated simulator.
+
+Three further Master parent-toggle round-trip cases change an enabled
+child, turn its advanced parent OFF (preserving the child's current
+edit in memory), then turn the parent ON again. The output must contain
+**only that child**, without an unrelated AdditionalMechanicsEffects
+replacement. The previously present three Veteran parent-OFF cases
+separately verify inactive child suppression.
+
+Total executable Survival writer cases: **85** = 53 single-parameter
++ 6 difficulty variants + 4 vanilla + 3 inactive-child + 3 combined
++ 13 linked-cascade + 3 Master reenabled cases.
+
+Original vanilla CFG source comparison remains **139/139 exact**.
+The game-engine behavior of the generated BPatch and actual survival
+effects remain **NOT RUN**. No UI or gameplay values were changed.

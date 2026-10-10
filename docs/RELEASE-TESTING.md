@@ -18,7 +18,7 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | B5 | `python tools/audit_health_stamina_source.py --base-zip BASE --dlc1-zip DLC1` | Linux / Windows | 69 Health/Stamina original source fields, including Player→[0] inheritance |
 | C2 | `dotnet run --project tests/HealthStaminaPatchContract/HealthStaminaPatchContract.csproj -c Release -- --out audit/health-stamina-patch-fixtures` | Windows / .NET 10 | 46 writer Health/Stamina BPatch writer cases |
 | B6 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix survival. --out REPORT.json --strict` | Linux / Windows | All 139 Survival original CFG source points (requires matching original ZIPs) |
-| C3 | `dotnet run --project tests/SurvivalPatchContract/SurvivalPatchContract.csproj -c Release -- --out audit/survival-patch-fixtures` | Windows / .NET 10 | 59 actual app-to-Survival-BPatch writer scenarios |
+| C3 | `dotnet run --project tests/SurvivalPatchContract/SurvivalPatchContract.csproj -c Release -- --out audit/survival-patch-fixtures` | Windows / .NET 10 | 85 Survival writer scenarios including linked cascades and parent toggle round-trips |
 | B8 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix equipment. --out REPORT.json --strict` | Linux / Windows | 113 active Equipment source points (101 base, 12 DLC1; inherited source reported explicitly) |
 | C5 | `dotnet run --project tests/EquipmentPatchContract/EquipmentPatchContract.csproj -c Release -- --out audit/equipment-patch-fixtures` | Windows / .NET 10 | 32 real ViewModel-to-BPatch scenarios: four difficulties, edge cases, combined axes and DLC1 conditional routes |
 | B9 | `python tools/audit_cfg_source_values.py --base-zip BASE --dlc1-zip DLC1 --parameter-prefix environment. --out REPORT.json --strict` | Linux / Windows | 42 Environment raw-value source paths, 4 difficulty and 38 effects |
@@ -404,3 +404,14 @@ Seven more Windows real writer regression cases cover the four untouched base di
 ### Survival Phase 9C — 3 combined-family writer regressions
 
 Three additional **real** Windows BPatch tests check simultaneous hunger/fatigue controls, overlapping energy-drink source prototypes and three distinct Master negative-mechanics families. C3 now comprises **69 scenarios**, maintaining the independently established 139/139 original-source status. Source correctness and in-game behavior are still separate gates.
+
+
+### Phase 9D — Survival constraint cascade release gate
+
+The Windows SurvivalPatchContract now runs **85 production writer
+scenarios**: 69 earlier cases plus 13 linked slider cascade tests
+(all seven actual Survival constraint families) and 3 Master parent
+OFF/ON round-trips. It parses the real generated CFG to verify
+exact path sets, accurate transformed values and no unrelated edits.
+Original-source parity is independently verified by B6 against
+the real decoded ZIP pair; Unreal runtime remains untested.

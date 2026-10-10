@@ -1,10 +1,14 @@
 # True Custom Difficulty
 
+## Survival linked slider BPatch audit — Phase 9D
+
+Added 13 constrained native-slider cascades plus three Master parent OFF/ON round-trip cases to the real Windows CFG writer harness. The suite now checks **85 Survival scenarios**, including absence of unrelated CFG changes. Independent original-source parity remains **139/139**. Actual in-game behavior is **NOT RUN**. Details: [Survival Phase 9](docs/DEEP-CFG-AUDIT-PHASE9-SURVIVAL-2026-10-09.md).
+
 ## Survival CFG/BPatch audit — Phase 9
 
 The Survival source catalog has **54 parameters / 139 direct CFG edit
 points**, with **53 currently instantiated live controls** and one
-catalog-only alcohol threshold parameter. Added a **69-scenario**
+catalog-only alcohol threshold parameter. Extended to an **85-scenario**
 Windows/.NET production writer contract, validating actual view-model
 edits, precise BPatch fields and absence of unrelated updates.
 All **139/139 original source CFG values** have now been independently compared against the supplied GameData/DLC1 archives and match exactly. New game versions must rerun the archive gate; gameplay runtime behavior remains **NOT RUN**. See [Phase 9 Survival audit](docs/DEEP-CFG-AUDIT-PHASE9-SURVIVAL-2026-10-09.md).

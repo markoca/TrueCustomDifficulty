@@ -97,6 +97,54 @@ internal static class Program
                 ("survival.radiationStaminaDrainPenalty", 0.6)
             });
 
+
+            // Paired/triad native-slider constraints must emit only actually
+            // cascaded CFG leaves. The actively moved slider takes priority.
+            var linked = new[]
+            {
+                new LinkedCase("bleeding-up", "survival.bleedingLowDamage", 1.8,
+                    new[] { E("survival.bleedingLowDamage",1.8), E("survival.bleedingMediumDamage",1.8) }),
+                new LinkedCase("bleeding-down", "survival.bleedingStrongDamage", 0.5,
+                    new[] { E("survival.bleedingLowDamage",0.5), E("survival.bleedingMediumDamage",0.5), E("survival.bleedingStrongDamage",0.5) }),
+                new LinkedCase("fatigue-aim-up", "survival.fatigueLowAimPenalty", 0.3,
+                    new[] { E("survival.fatigueLowAimPenalty",0.3), E("survival.fatigueMediumAimPenalty",0.3) }),
+                new LinkedCase("fatigue-aim-down", "survival.fatigueStrongAimPenalty", 0.1,
+                    new[] { E("survival.fatigueLowAimPenalty",0.1), E("survival.fatigueMediumAimPenalty",0.1), E("survival.fatigueStrongAimPenalty",0.1) }),
+                new LinkedCase("fatigue-reload-up", "survival.fatigueMediumReloadPenalty", 0.3,
+                    new[] { E("survival.fatigueMediumReloadPenalty",0.3), E("survival.fatigueStrongReloadPenalty",0.3) }),
+                new LinkedCase("fatigue-reload-down", "survival.fatigueStrongReloadPenalty", 0.1,
+                    new[] { E("survival.fatigueMediumReloadPenalty",0.1), E("survival.fatigueStrongReloadPenalty",0.1) }),
+                new LinkedCase("sleep-stages-up", "survival.sleepLowThreshold", 90,
+                    new[] { E("survival.sleepLowThreshold",90), E("survival.sleepMediumThreshold",90), E("survival.sleepStrongThreshold",90) }),
+                new LinkedCase("sleep-stages-down", "survival.sleepStrongThreshold", 10,
+                    new[] { E("survival.sleepLowThreshold",10), E("survival.sleepMediumThreshold",10), E("survival.sleepStrongThreshold",10) }),
+                new LinkedCase("hunger-stages-up", "survival.hungerLowThreshold", 90,
+                    new[] { E("survival.hungerLowThreshold",90), E("survival.hungerMediumThreshold",90), E("survival.hungerStrongThreshold",90) }),
+                new LinkedCase("hunger-stages-down", "survival.hungerStrongThreshold", 5,
+                    new[] { E("survival.hungerLowThreshold",5), E("survival.hungerMediumThreshold",5), E("survival.hungerStrongThreshold",5) }),
+                new LinkedCase("bleeding-stages-up", "survival.bleedingMediumThreshold", 80,
+                    new[] { E("survival.bleedingMediumThreshold",80), E("survival.bleedingStrongThreshold",80) }),
+                new LinkedCase("bleeding-stages-down", "survival.bleedingStrongThreshold", 20,
+                    new[] { E("survival.bleedingMediumThreshold",20), E("survival.bleedingStrongThreshold",20) }),
+                new LinkedCase("hunger-recovery-down", "survival.hungerStrongStaminaRegen", 0.2,
+                    new[] { E("survival.hungerMediumStaminaRegen",0.2), E("survival.hungerStrongStaminaRegen",0.2) })
+            };
+            Check(Catalog.SliderConstraints.Count(c =>
+                c.ParameterIds.Any(id => id.StartsWith("survival.", StringComparison.Ordinal))) == 7,
+                "Unexpected Survival linked-slider catalog count");
+            foreach (var scenario in linked)
+                TestLinked(scenario);
+
+            // A disabled Master child retains its edited value in memory but
+            // emits nothing until the parent is re-enabled. Existing 3
+            // Veteran-disabled cases cover the inverse transition.
+            foreach (var (parent, child) in new[]
+            {
+                ("advanced.starvationMechanics", "survival.starvationDamage"),
+                ("advanced.radiationMechanics", "survival.radiationStaminaDrainPenalty"),
+                ("advanced.fatigueMechanics", "survival.severeFatigueRecoil")
+            })
+                TestReenabled(parent, child);
             Console.WriteLine("SOURCE ONLY (no production VM): survival.drunknessThresholdScale");
             Console.WriteLine($"PASS: {_passed} Survival production BPatch writer scenarios.");
             Console.WriteLine("NOT VERIFIED: original archived CFG values, UE runtime, effects in game.");
@@ -106,6 +154,131 @@ internal static class Program
         {
             Console.Error.WriteLine("FAIL: " + ex);
             return 1;
+        }
+    }
+
+    private sealed record LinkedCase(string Name, string ActiveId, double MovedTo,
+        (string Id, double Value)[] Expected);
+
+    private static (string Id, double Value) E(string id, double value) => (id, value);
+
+    private static void TestLinked(LinkedCase test)
+    {
+        var name = "Linked-" + test.Name;
+        var folder = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Survival_Patch", name);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            var active = vm.AllParameters.Single(p => p.Id == test.ActiveId);
+            active.SnapCurrentNumberToMarker(test.MovedTo);
+            Check(Math.Abs(active.CurrentNumber - test.MovedTo) < 0.000001,
+                name + ": dragged slider lost priority");
+            var expected = test.Expected.ToDictionary(p => p.Id, p => p.Value,
+                StringComparer.Ordinal);
+            foreach (var pair in expected)
+            {
+                var p = vm.AllParameters.Single(x => x.Id == pair.Key);
+                Check(Math.Abs(p.CurrentNumber - pair.Value) < 0.000001,
+                    name + ": linked value " + pair.Key + " expected " + pair.Value
+                    + ", got " + p.CurrentNumber);
+            }
+            var actual = vm.AllParameters.Where(p =>
+                p.Id.StartsWith("survival.", StringComparison.Ordinal)
+                && p.IsValueModifiedFromReference())
+                .Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
+            Check(actual.SetEquals(expected.Keys), name + ": unexpected modified sliders: "
+                + string.Join(", ", actual));
+            CheckWriter(vm, actual, folder, name);
+            _passed++;
+            Console.WriteLine("PASS " + name + " (only " + actual.Count + " cascaded CFG controls)");
+        }
+        finally
+        {
+            if (_keep is null && Directory.Exists(folder))
+                Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    private static void TestReenabled(string parentId, string childId)
+    {
+        var name = "Master-Reenabled-" + childId;
+        var folder = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Survival_Patch",
+            name.Replace(".", "-", StringComparison.Ordinal));
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Master" };
+            var parent = vm.AllParameters.Single(p => p.Id == parentId);
+            var child = vm.AllParameters.Single(p => p.Id == childId);
+            Check(parent.IsToggle && parent.ReferenceBoolean && child.IsControlEnabled,
+                name + ": Master dependency should begin enabled");
+            child.SnapCurrentNumberToMarker(child.ReferenceNumber
+                + (child.Definition.Slider?.Step ?? 0.1));
+            Check(child.IsValueModifiedFromReference(), name + ": child never changed");
+            parent.CurrentBoolean = false;
+            Check(!child.IsControlEnabled && child.IsValueModifiedFromReference(),
+                name + ": parent OFF did not retain an inactive edited child");
+            parent.CurrentBoolean = true;
+            Check(child.IsControlEnabled && child.IsValueModifiedFromReference()
+                && !parent.IsValueModifiedFromReference(),
+                name + ": re-enabling parent failed to retain child-only change");
+            CheckWriter(vm, new HashSet<string>(StringComparer.Ordinal) {childId},
+                folder, name);
+            _passed++;
+            Console.WriteLine("PASS " + name + " (parent restored, child-only CFG)");
+        }
+        finally
+        {
+            if (_keep is null && Directory.Exists(folder))
+                Directory.Delete(folder, recursive: true);
+        }
+    }
+
+    private static void CheckWriter(MainViewModel vm, HashSet<string> changed, string folder,
+        string name)
+    {
+        var sid = Catalog.DifficultyProfiles[vm.SelectedReferenceDifficulty].Sid;
+        var mapped = Baseline.EditPoints.Where(p => changed.Contains(p.ParameterId)
+            && (string.IsNullOrEmpty(p.DifficultySid) || p.DifficultySid == sid)).ToArray();
+        Check(mapped.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal)
+              .SetEquals(changed), name + ": missing concrete direct source mappings");
+        var result = new CfgPatchWriterService().Write(vm, Catalog, null, folder);
+        var expectedFiles = mapped.Select(p => ExpectedFile(folder,p.File))
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        Check(result.FileCount == expectedFiles.Length && result.ParameterCount == changed.Count
+              && result.EditCount == mapped.Length,
+              name + ": writer totals include unrelated/missing parameters");
+        var observedFiles = Directory.GetFiles(folder, "*TrueCustomDifficulty*",
+            SearchOption.AllDirectories);
+        Check(observedFiles.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(expectedFiles),
+            name + ": extra or missing CFG output files");
+        foreach (var file in expectedFiles)
+        {
+            var sameFilePoints = mapped.Where(p =>
+                string.Equals(ExpectedFile(folder,p.File),file,
+                    StringComparison.OrdinalIgnoreCase)).ToArray();
+            var patch = Parse(File.ReadAllText(file));
+            var expectedPaths = sameFilePoints.Select(p => p.Prototype + "/" +
+                (p.NodePath.Count == 0 ? "" : string.Join("/",p.NodePath) + "/") + p.Key)
+                .ToHashSet(StringComparer.Ordinal);
+            var observedPaths = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var root in patch.Children.Values)
+                Collect(root,root.Name,observedPaths);
+            Check(observedPaths.SetEquals(expectedPaths),
+                name + ": exact BPatch leaf set mismatch: expected "
+                + string.Join(",",expectedPaths) + " observed " + string.Join(",",observedPaths));
+            foreach (var point in sameFilePoints)
+            {
+                var node = patch.Get(point.Prototype);
+                Check(node.Bpatch, name + ": root not bpatch");
+                foreach (var part in point.NodePath)
+                {
+                    node = node.Get(part);
+                    Check(node.Bpatch, name + ": nested path not bpatch: " + part);
+                }
+                var vmParameter = vm.AllParameters.Single(p => p.Id == point.ParameterId);
+                Approx(node.Value(point.Key),Expected(vmParameter,point),
+                    name + ": writer value drift " + point.ParameterId);
+            }
         }
     }
 
