@@ -1,0 +1,10 @@
+scope,sourceFile,levelName,actorSid,itemSid,meshPath,durability,disablePhysicsAndCollision
+baseGame,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,09EEF8794F23BF1D373B6CA1CCC6F8DF,Gun_Tank_MG,SkeletalMesh'/Game/_STALKER2/SkeletalMeshes/weapons/mg/pkp00000/SK_pkp00000.SK_pkp00000',1.0,false
+baseGame,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,13DF06544F7D4401F5B042A01A6BD1E4,Gun_S15_AR,SkeletalMesh'/Game/_STALKER2/SkeletalMeshes/weapons/sr/m701/SK_m701.SK_m701',0.4,false
+baseGame,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,61AF1E49404F5E1620F6EE86F5C5F644,GunArevPrecise_AR,StaticMesh'/Game/_Stalker_2/weapons/sturm_riffle/st_arev/SM_Wpn_Arev_StaticMesh.SM_Wpn_Arev_StaticMesh',0.928,true
+baseGame,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,665FA23B4FC7DE9B6C61BF9497B1C9A5,Gun_SOFMOD_AR,SkeletalMesh'/Game/_STALKER2/SkeletalMeshes/weapons/ar/m160/SK_m160.SK_m160',1.0,false
+baseGame,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,7ADA44EA4C856FDA87DE298DBF5C7656,Gun_GStreet_HG,SkeletalMesh'/Game/_STALKER2/SkeletalMeshes/weapons/gl/rpg7/SK_rpg7.SK_rpg7',0.4,false
+baseGame,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,90A7F3344C766CF84BE73F83A98F7026,Gun_Texas_SG,StaticMesh'/Game/_Stalker_2/weapons/shotgun/shg_ram2/SM_ram2.SM_ram2',1.0,false
+baseGame,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,BEFFC269430B8A7C7CFE8EB2BDC5574A,GunNightStalker_HG,StaticMesh'/Game/_Stalker_2/weapons/pistol/pt_kora/SM_nightstalker.SM_nightstalker',1.0,true
+baseGame,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,CB061545481621331D8258B730D562E1,Gun_Cavalier_SR,SkeletalMesh'/Game/_STALKER2/SkeletalMeshes/weapons/sr/m701/SK_m701.SK_m701',1.0,false
+baseGame,GameData/SpawnActorPrototypes.cfg,WorldMap_WP,CBE52EF14A9E37B1699E58A51F766F76,Gun_RatKiller_SMG,SkeletalMesh'/Game/_STALKER2/SkeletalMeshes/weapons/smg/zubr0/SK_zubr0.SK_zubr0',1.0,false
