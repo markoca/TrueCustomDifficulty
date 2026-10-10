@@ -1657,6 +1657,22 @@ else:
     note("semantic editor registration: 9 retained specialized classes + current AggregateVisualControl; no obsolete polar-only assumptions")
 
 
+# Hunger Survival Profile LOW handle: avoid a second hover circle at the
+# midpoint of the 2D plot. The real LOW handle owns its glow at Y(0).
+_hunger_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_hunger_overlay = _hunger_source.split("private void DrawHoveredHandle(", 1)[-1].split(
+    "private void DrawBlastDamageBoard(", 1)[0]
+if (
+    'DrawHumanAxisHandle(dc, lowHandle, accent, panel,' not in _hunger_source
+    or 'Family == "HungerLadder"' not in _hunger_overlay
+    or 'target.Kind == HitKind.Horizontal' not in _hunger_overlay
+    or 'source.Id == "survival.hungerLowThreshold"' not in _hunger_overlay
+):
+    fail("Hunger LOW hover regression: local handle glow and duplicate-overlay suppression must coexist")
+else:
+    note("Hunger LOW single-hover contract: actual Y(0) handle glow, no generic plot-midpoint overlay")
+
+
 # Radiation System source-to-renderer regression: short recovery terminology,
 # and measured label width rather than the old fixed 155-DIP reservation.
 _radiation_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")

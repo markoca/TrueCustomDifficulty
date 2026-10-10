@@ -1,5 +1,9 @@
 # Pre-release test and evidence runbook
 
+### Hunger Survival Profile LOW hover acceptance
+
+Move the mouse over the LOW handle in the Hunger Survival Profile: **only the actual LOW handle at 0%** may show a golden hover halo; no ghost halo may appear at the plot center around −50%. Move away to confirm the halo disappears. Drag and arrow-edit LOW, then verify MEDIUM/SEVERE and the other compact tracks still work normally. The static consistency audit now guards both the legitimate native LOW halo call and suppression of the duplicate generic map-center overlay. Local Wine visual acceptance is still required.
+
 ### Mutant Properties clickable reference markers (Combat / Wine manual acceptance)
 
 With the embedded `MUTANT HIT DAMAGE` slider visible, verify all four labels are **NOVICE / STALKER / VETERAN / MASTER** (no one-letter abbreviations). Hover each caption and corresponding dot: only that marker turns white and the pointer becomes a hand; moving away restores muted colors. Click each caption and each dot: the live slider must jump to the exact authored value **0.35x / 1.00x / 1.35x / 1.50x**, including the values outside the regular 0.10x drag grid. Verify no mouse drag starts on a marker click, normal rail dragging still works, right-clicking the markers and rail resets to the current Base Preset, and a modified value propagates through Save Preset and the existing Combat BPatch writer. The CombatPatchContract suite now verifies the exact four marker values and the production ViewModel snap method; WPF hit targeting and hover rendering still require the local Wine check.

@@ -302,6 +302,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             && target.Kind is HitKind.Horizontal or HitKind.Vertical
             && target.MapRect.Width > 100.0 && target.MapRect.Height > 100.0)
             return;
+        // The Hunger LOW control already draws its own glow at (lowX, Y(0)).
+        // Its horizontal hit target maps X across the tall 2D graph: the
+        // generic overlay would place a second ring at the plot's mid-height.
+        // Keep only the real LOW handle glow, as with the other Hunger joints.
+        if (Family == "HungerLadder"
+            && target.Kind == HitKind.Horizontal
+            && source.Id == "survival.hungerLowThreshold")
+            return;
         var range = Math.Max(0.000001, target.VisualMaximum - target.VisualMinimum);
         // The two NPC condition handles share one rail except when they
         // nearly overlap, where both real centers are separated by 7 DIP.
