@@ -5093,8 +5093,10 @@ public sealed class AggregateVisualControl : FrameworkElement
     private double Snap(ParameterViewModel parameter, double raw)
     {
         var step = Math.Max(0.0000001, ConsumableDurationStep(parameter));
-        var snapped = parameter.Minimum +
-                      Math.Round((raw - parameter.Minimum) / step, MidpointRounding.AwayFromZero) * step;
+        var origin = Family == "ConsumableMixer" &&
+            ConsumableDurationSecondsPerUnit(parameter.Id) > 0.0 ? 0.0 : parameter.Minimum;
+        var snapped = origin +
+                      Math.Round((raw - origin) / step, MidpointRounding.AwayFromZero) * step;
 
         return Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
     }

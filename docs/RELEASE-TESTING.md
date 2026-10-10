@@ -1,5 +1,9 @@
 # Pre-release test and evidence runbook
 
+### C3 duration stepping and parent-cap regression extension
+
+In BOTH Override OFF and ON, verify Water Regen <= Water main and both Energy Cost effect durations <= Energy main, including after reducing the parent and after toggling override. With ON, parents may reach 270s but secondary effects must stop at their *current* parent seconds, not 270s. Test dragging and keyboard on all eight duration sources: OFF requires 1s increments, ON 5s increments (never 0.5s). Test that ViewModel CurrentNumber assignments obey these steps too, not just mouse snapping, and generated CFG retains source-exact targets. Local WPF/Wine and game-runtime acceptance remains pending.
+
 ### Drink Duration step manual acceptance (C3 extension)
 
 With Override OFF, drag/click and arrow-step all five main and three secondary durations in 1s increments. With Override ON, repeat in 5s increments. Page Up/Down must move ten steps; verify independent native and extended caps, live child bounds in OFF, no value changes solely from switching ON, and no additional CFG targets. Local Wine UI and runtime verification pending.

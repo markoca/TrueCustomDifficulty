@@ -20,6 +20,7 @@ public sealed class ParameterViewModel : ObservableObject
     private string _referenceDifficulty;
     private bool _isSelected;
     private bool _drinkDurationOverrideEnabled;
+    private Func<double>? _drinkDurationStepProvider;
     private Func<double>? _effectiveDamageMultiplierProvider;
     private Func<bool>? _dependencyEnabledProvider;
     private Func<bool>? _aggregateModifiedProvider;
@@ -697,6 +698,8 @@ public sealed class ParameterViewModel : ObservableObject
     {
         get
         {
+            if (_drinkDurationStepProvider is not null)
+                return _drinkDurationStepProvider();
             if (UsesAbsoluteCatalogStep())
                 return Definition.Slider?.Step ?? 0.01;
 
@@ -719,6 +722,14 @@ public sealed class ParameterViewModel : ObservableObject
         }
     }
 
+
+    // All drink Duration editors use the same source-aware step for UI and
+    // ViewModel writes; callers cannot bypass it via CurrentNumber.
+    public void SetDrinkDurationStepProvider(Func<double> provider)
+    {
+        _drinkDurationStepProvider = provider;
+        OnPropertyChanged(nameof(TickFrequency));
+    }
 
     public event EventHandler? StateChanged;
 
@@ -1665,6 +1676,17 @@ public sealed class ParameterViewModel : ObservableObject
         var clamped = Math.Clamp(value, Minimum, Maximum);
         if (!IsSlider)
             return clamped;
+        if (_drinkDurationStepProvider is not null)
+        {
+            var step = _drinkDurationStepProvider();
+            if (step > Epsilon)
+            {
+                // Source-aligned whole-second grid, regardless of the CFG
+                // multiplier base or authored minimum.
+                var snapped = Math.Round(clamped / step, MidpointRounding.AwayFromZero) * step;
+                return Math.Clamp(snapped, Minimum, Maximum);
+            }
+        }
         if (UsesAbsoluteCatalogStep())
             return SnapToCatalogStep(clamped);
 

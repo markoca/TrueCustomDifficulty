@@ -821,6 +821,16 @@ public sealed class MainViewModel : ObservableObject
         };
         var drinkMainParameters = drinkMainSeconds
             .Select(source => parametersById[source.Id]).ToArray();
+        // Source-native values are multipliers for the five parents but real
+        // seconds for their children. Normalize at the ViewModel boundary,
+        // not only at the mouse control, so no 0.5s values leak through.
+        foreach (var (id, baseSeconds) in drinkMainSeconds)
+            parametersById[id].SetDrinkDurationStepProvider(
+                () => (drinkDurationMode.DrinkDurationOverrideEnabled ? 5.0 : 1.0) / baseSeconds);
+        foreach (var id in new[] { "survival.waterRegenDuration",
+                     "survival.energyFullCostDuration", "survival.energyPartialCostDuration" })
+            parametersById[id].SetDrinkDurationStepProvider(
+                () => drinkDurationMode.DrinkDurationOverrideEnabled ? 5.0 : 1.0);
         foreach (var (id, vanillaSeconds) in drinkMainSeconds)
         {
             parametersById[id].SetDynamicMaximumProvider(() =>
@@ -837,10 +847,9 @@ public sealed class MainViewModel : ObservableObject
         {
             var parent = parametersById[parentId];
             var child = parametersById[childId];
-            child.SetDynamicMaximumProvider(() =>
-                drinkDurationMode.DrinkDurationOverrideEnabled
-                    ? sharedDrinkDurationMaximumSeconds
-                    : parent.CurrentNumber * mainVanillaSeconds);
+            // The secondary effect may never outlast its own drink, even
+            // when Override Limits expands the main drink's available range.
+            child.SetDynamicMaximumProvider(() => parent.CurrentNumber * mainVanillaSeconds);
             parent.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))

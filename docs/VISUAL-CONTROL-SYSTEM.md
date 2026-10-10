@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-10 — Secondary effects never exceed their drink; exact seconds stepping
+
+The three independently editable secondary Effect Duration controls (Water Regen, Energy −100% Cost, Energy −30% Cost) have a **live maximum equal to their matching main drink duration, in both Override Limits modes**. Override Limits changes only the main source's allowable maximum (native OFF / 270s ON); it never decouples the secondary source from its parent. Lowering the main duration immediately caps any longer secondary duration. Each of the eight duration controls enforces a whole-second source-aligned grid in the ViewModel itself: OFF = 1 second; ON = 5 seconds. All main multiplier-backed durations convert this seconds step to their native units; short effects use native seconds. GUI mouse and keyboard edits share the same normalization. This supersedes earlier documentation permitting 270s independent secondary caps in Override ON or saying 0.5s steps remain.
+
 ### 2026-10-10 — Drink duration slider increments (authoritative)
 
 All eight independent drink duration sliders snap in real seconds: **Override Limits OFF = 1-second steps; ON = 5-second steps**. Mouse dragging/clicking and keyboard arrows use the same increment; Page Up/Down use ten increments. Five multiplier-backed main controls convert seconds to the correct source multiplier (30/45/20/20/90 seconds per 1x); three secondary tracks use seconds directly. Existing original and 270s override caps and parent constraints continue to apply. Mode changes alone do not alter the current values, and no new CFG or preset fields, UI text or controls are added. The generated BPatch retains the source duration fields.
