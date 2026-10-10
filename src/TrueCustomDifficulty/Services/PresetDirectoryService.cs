@@ -83,6 +83,25 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "eaedd7b9f14a274386f6dfbae3dcbd55f7a4ef23"
     };
 
+    // Git blob SHA-1 identities of the unmodified stock presets shipped just
+    // before the three independently editable Water/Energy short durations.
+    // Preserves user edits; only exact original factory files are upgraded.
+    private static readonly Dictionary<string, string> PreShortDurationFactoryBlobs = new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "7c38b41302187ded7c67339e53d43272b90991a0",
+        ["Field Medic"] = "deb68004efcca7f4b01169c6d6144f3fe9a60c37",
+        ["Hardcore"] = "64252be28859660919a991908d8447a221dc222b",
+        ["Hardcore+"] = "73f77a7554a7bdda86d4f0b7296eac3319db56cf",
+        ["Immersive"] = "ca60b566f4c2789fe3556844b6f008bf610ef48c",
+        ["Mercenary"] = "88562b8b313f80bea384e3bca21a5d6343e7d9b2",
+        ["Mutant Hunter"] = "c3ec7bca085e2990b0606f3ea221836562139282",
+        ["Outcast"] = "0c92c045d3a53af7fd765f0b86a541d277201071",
+        ["Scavenger"] = "5394ebe40a42c89bf7f393a0487b50064df7491c",
+        ["Smuggler"] = "4bb34763340782ecf7b580074a8145af41bdf271",
+        ["Tactical"] = "5a27b549d7db01e3fc279c2d01e9ab54202cec4b",
+        ["Wanderer"] = "8626f6371f1a5bc793d3e50165876720a46b82d5"
+    };
+
     public string Ensure()
     {
         var directory = Path.Combine(AppContext.BaseDirectory, "Presets");
@@ -135,7 +154,8 @@ public sealed class PresetDirectoryService
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
             && !PreAlifeFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreCooldownFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreCooldownFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreShortDurationFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -153,7 +173,9 @@ public sealed class PresetDirectoryService
                 || (PreAlifeFactoryBlobs.TryGetValue(name, out var preAlifeHash)
                     && actual.Equals(preAlifeHash, StringComparison.OrdinalIgnoreCase))
                 || (PreCooldownFactoryBlobs.TryGetValue(name, out var preCooldownHash)
-                    && actual.Equals(preCooldownHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preCooldownHash, StringComparison.OrdinalIgnoreCase))
+                || (PreShortDurationFactoryBlobs.TryGetValue(name, out var preDurationHash)
+                    && actual.Equals(preDurationHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

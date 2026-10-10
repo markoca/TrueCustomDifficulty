@@ -2250,7 +2250,7 @@
       "tab": "survival",
       "group": "Consumable Effects",
       "label": "Water Effect Duration",
-      "description": "Scales the duration of Water's timed stamina effects.",
+      "description": "Scales Water's main stamina-cost reduction duration; the shorter regeneration duration is independently adjustable.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2265,18 +2265,11 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0,
+        "min": 0.16666666666666666,
         "max": 3,
         "step": 0.05
       },
       "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "WaterStamina2",
-          "path": "Duration",
-          "operation": "scale"
-        },
         {
           "scope": "baseGame",
           "file": "GameData/EffectPrototypes.cfg",
@@ -2288,13 +2281,12 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "Vanilla Water stamina-regeneration duration is 5 s.",
-          "Vanilla Water stamina-cost-reduction duration is 30 s.",
-          "Instant stamina and sobering are intentionally not changed by this duration control."
+          "Main Water stamina-cost reduction starts at 30s; separate Water regen remains 5s at its native minimum.",
+          "Minimum main Water multiplier is exactly 5/30 so its optional regeneration cannot exceed the main duration."
         ]
       },
-      "rationale": "Controls how long Water's stamina buffs last.",
-      "logic": "1x keeps the authored 5 s stamina-recovery effect and 30 s stamina-cost effect. Relative durations stay intact at every multiplier.",
+      "rationale": "Controls the main Water stamina-cost reduction duration, which also caps the shorter regeneration effect.",
+      "logic": "1x restores the authored 30-second stamina-cost effect; the separate regeneration control starts at its authored 5 seconds and cannot outlast the main effect.",
       "interaction": "Water Instant Stamina Restore controls the immediate refill separately."
     },
     {
@@ -2348,7 +2340,7 @@
       "tab": "survival",
       "group": "Consumable Effects",
       "label": "Energy Drink Effect Duration",
-      "description": "Scales the duration of normal and Limited Energy Drink stamina effects.",
+      "description": "Scales both normal and Limited Energy's 45-second stamina regeneration; the two action-cost effect durations are independent.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -2363,7 +2355,7 @@
         "mode": "fixedVanilla"
       },
       "slider": {
-        "min": 0,
+        "min": 0.3333333333333333,
         "max": 3,
         "step": 0.05
       },
@@ -2381,35 +2373,160 @@
           "prototype": "EnergeticLimitedStamina",
           "path": "Duration",
           "operation": "scale"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "EnergeticStaminaPerAction1",
-          "path": "Duration",
-          "operation": "scale"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "EnergeticStaminaPerAction2",
-          "path": "Duration",
-          "operation": "scale"
         }
       ],
       "support": {
         "status": "confirmed",
         "notes": [
-          "Normal and Limited Energy Drink stamina-regeneration effects are 45 s vanilla.",
-          "Original SPDrain prototypes: -30% for 15 s (EnergeticStaminaPerAction1) and -100% for 5 s (EnergeticStaminaPerAction2 inheriting SPDrain/action types from the first).",
-          "Regular Energetic directly lists both short effects. Energetic_Limited directly lists only the 5 s -100% effect and uses the 15 s -30% effect in its Weird Kettle alternative list.",
-          "Both short effects target Walk, Run, Sprint, Jump, Vault, MeleeNormal, MeleeStrong, MeleeButstock. Engine stacking of the two active SPDrain effects is not proven by the CFG.",
-          "Fatigue relief, tolerance, overdose and instant stamina are not changed by this duration control."
+          "Normal and Limited stamina regeneration use 45-second main duration prototypes.",
+          "Original -100%/5s and -30%/15s action-cost effects are separate independent duration controls, with regular/Limited/Weird Kettle memberships verified in the source audit.",
+          "Minimum main Energy multiplier is exactly 15/45 to allow the 15s native short effect."
         ]
       },
       "rationale": "Controls how long Energy Drink stamina buffs last.",
-      "logic": "1x keeps 45 s stamina regeneration in both drinks, 15 s at -30% action stamina drain and 5 s at -100% action stamina drain. Regular Energy lists both short effects; Limited lists the 5 s effect by default. The same duration multiplier applies to all four prototypes.",
+      "logic": "1x preserves 45 seconds of normal/Limited stamina regeneration. Separate 5s/-100% and 15s/-30% action-cost effect durations cannot exceed the main regeneration period.",
       "interaction": "Instant Stamina Restore and Energy Drink Fatigue Relief remain separate controls."
+    },
+    {
+      "id": "survival.waterRegenDuration",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Water Regen Duration",
+      "description": "How long Water's short stamina regeneration lasts.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0.#",
+        "unit": "seconds",
+        "valueLabel": "Water Regen Duration"
+      },
+      "vanilla": {
+        "All": 5
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 5,
+        "max": 90,
+        "step": 0.5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "WaterStamina2",
+          "path": "Duration",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Original WaterStamina2.Duration is 5.0 s in the 2.0.5 source CFG.",
+          "Uses EEffectType::Stamina; Water's 30s stamina-cost effect is a distinct source."
+        ]
+      },
+      "rationale": "How long Water's short stamina regeneration lasts.",
+      "logic": "Adjust between the original 5s and the current main drink-effect duration; no effect magnitude or action type is changed.",
+      "interaction": "The main drink timeline controls the upper limit. These are independent native CFG durations.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.energyFullCostDuration",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Energy Full Cost Duration",
+      "description": "How long the Energy -100% SPDrain modifier lasts (including regular Limited Energy).",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0.#",
+        "unit": "seconds",
+        "valueLabel": "Energy Full Cost Duration"
+      },
+      "vanilla": {
+        "All": 5
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 5,
+        "max": 135,
+        "step": 0.5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnergeticStaminaPerAction2",
+          "path": "Duration",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Original EnergeticStaminaPerAction2.Duration is 5.0 s in the 2.0.5 source CFG.",
+          "Inherited eight stamina-action types; the effect is shared by regular and Limited Energy."
+        ]
+      },
+      "rationale": "How long the Energy -100% SPDrain modifier lasts (including regular Limited Energy).",
+      "logic": "Adjust between the original 5s and the current main drink-effect duration; no effect magnitude or action type is changed.",
+      "interaction": "The main drink timeline controls the upper limit. These are independent native CFG durations.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.energyPartialCostDuration",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Energy Partial Cost Duration",
+      "description": "How long the Energy -30% SPDrain modifier lasts (normal Energy and Limited's alternative effect).",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0.#",
+        "unit": "seconds",
+        "valueLabel": "Energy Partial Cost Duration"
+      },
+      "vanilla": {
+        "All": 15
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 15,
+        "max": 135,
+        "step": 0.5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnergeticStaminaPerAction1",
+          "path": "Duration",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Original EnergeticStaminaPerAction1.Duration is 15.0 s in the 2.0.5 source CFG.",
+          "Ordinary Energy has both -30% and -100% effects; stacking is not runtime-proven."
+        ]
+      },
+      "rationale": "How long the Energy -30% SPDrain modifier lasts (normal Energy and Limited's alternative effect).",
+      "logic": "Adjust between the original 15s and the current main drink-effect duration; no effect magnitude or action type is changed.",
+      "interaction": "The main drink timeline controls the upper limit. These are independent native CFG durations.",
+      "exposeInUi": false
     },
     {
       "id": "survival.vodkaEffectDuration",

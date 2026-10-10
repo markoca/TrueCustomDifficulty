@@ -71,3 +71,7 @@ C2 writer scenario breakdown: 41 live Health/Stamina parameter/difficulty cases 
 
 This compares Energy Drink's 5/15/45-second effects (native -100%/-30% SPDrain and regeneration), the regular/Limited/Weird Kettle lists, inherited eight-action scope, and Water duration sources with the original decoded CFG and the production writer baseline. The tool is a source-and-structure check, **not** gameplay stacking proof. It also runs in the source phase of `tools/pre_release.py`.
 
+
+## Water and Energy short-duration controls
+
+`tools/audit_consumable_effect_source.py --base-zip <original GameData ZIP>` verifies Water 30/5s and Energy 45/15/5s source identity and variant membership. `tools/audit_project_consistency.py` and `tools/audit_ui_cfg_contract.py` verify the three independent source-backed hidden aggregate controls and unique direct CFG route ownership. `tests/SurvivalPatchContract` executes the real WPF model and writer on Windows, including live maximum/cascades for the three short durations. Structural source tests do not prove UE runtime effect stacking.

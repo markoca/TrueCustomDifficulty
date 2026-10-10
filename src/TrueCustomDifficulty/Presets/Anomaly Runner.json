@@ -846,6 +846,18 @@
     "alife.mutantSpawn.deer": {
       "kind": "slider",
       "number": 0.9
+    },
+    "survival.waterRegenDuration": {
+      "kind": "slider",
+      "number": 5
+    },
+    "survival.energyFullCostDuration": {
+      "kind": "slider",
+      "number": 5
+    },
+    "survival.energyPartialCostDuration": {
+      "kind": "slider",
+      "number": 15
     }
   }
 }

@@ -49,18 +49,19 @@ assume that the two percentages are additive, that one overrides the
 other or that the rendered stamina cost equals exactly zero without an
 in-game acceptance test.
 
+## Update 2026-10-10 — independent short-effect duration tuning
+
+The earlier one-multiplier/four-target duration mapping below is now **historical**. The current `survival.energyDrinkEffectDuration` controls only `EnergeticStamina` and `EnergeticLimitedStamina` (both 45s base), while `survival.energyFullCostDuration` writes the original 5s `EnergeticStaminaPerAction2` `Duration` and `survival.energyPartialCostDuration` writes the original 15s `EnergeticStaminaPerAction1` `Duration`. Water's 30s action-cost duration remains on `survival.waterEffectDuration` and its 5s regeneration duration is controlled separately by `survival.waterRegenDuration`. There are **no duplicated targets**. The first three child controls may extend their seconds only as far as the live current main duration; authored vanilla remains the floor. The same PerAction2 prototype is used by normal Energy and Limited Energy, and PerAction1 remains available in Limited's alternate Weird Kettle path.
+
 ## Application, writer and UI contract
 
-The `survival.energyDrinkEffectDuration` multiplier changes the
-`Duration` of four existing prototypes (45/45/15/5 s). It **does not**
+The original Energy duration control formerly changed the durations of four prototypes (45/45/15/5 s). The **current** main multiplier changes only the two 45s prototypes; the new 5s/15s child controls edit their own real second values. This arrangement **does not**
 change their -30%/-100% SPDrain strength, their affected action list or
 which item receives which effect. `survival.waterEffectDuration` similarly
 scales the two Water duration prototypes (5/30 s).
 
 `ConsumableMixer` retains **five real editable drink-duration sources**.
-The Water and Energy tiny timeline ticks are passive readings of the same
-source; four compact caption rows distinguish Water, ordinary Energy's
-5/15/45 s effects and Limited Energy's 5/45 s effects. No new controls or
+The Water and Energy tiny timeline ticks are passive readings of the three independently editable child durations; three compact sliders directly beneath the timeline give each its own source-backed editing track. No new controls or
 synthetic sums are permitted. Duration numerals change with the existing
 native 0–3x / 0.05x duration multipliers. Read-only percentage labels
 remain neutral even when their duration changes.

@@ -113,16 +113,20 @@ def main() -> None:
 
     baseline = json.loads((DATA / 'cfg-writer-baseline.json').read_text(encoding='utf-8'))
     for pid, names in {
-        'survival.waterEffectDuration': ('WaterStamina2', 'WaterStaminaPerAction1'),
-        'survival.energyDrinkEffectDuration': ('EnergeticStamina', 'EnergeticLimitedStamina',
-                                               'EnergeticStaminaPerAction1', 'EnergeticStaminaPerAction2'),
+        'survival.waterEffectDuration': ('WaterStaminaPerAction1',),
+        'survival.waterRegenDuration': ('WaterStamina2',),
+        'survival.energyDrinkEffectDuration': ('EnergeticStamina', 'EnergeticLimitedStamina'),
+        'survival.energyFullCostDuration': ('EnergeticStaminaPerAction2',),
+        'survival.energyPartialCostDuration': ('EnergeticStaminaPerAction1',),
     }.items():
         points = {e['prototype']: e for e in baseline['editPoints'] if e['parameterId'] == pid}
         check(set(points) == set(names), f'{pid}: unexpected/missing writer targets')
         for sid in names:
             p = points[sid]
             check(p['sourceRaw'] == results[sid]['duration'] and
-                  p['key'] == 'Duration' and p['operation'] == 'scale' and
+                  p['key'] == 'Duration' and p['operation'] == (
+                      'scale' if pid in ('survival.waterEffectDuration',
+                                       'survival.energyDrinkEffectDuration') else 'set') and
                   p['file'] == 'GameData/EffectPrototypes.cfg',
                   f'{pid}/{sid}: writer has changed independently of original source')
 

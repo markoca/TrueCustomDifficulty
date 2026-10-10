@@ -1497,6 +1497,8 @@ if 'return OutputPrefix + safe;' not in _build_service_text:
     _build_name_errors.append("sanitized preset name not appended to output prefix")
 if 'public string BuildPresetName' not in _build_vm_text or '"Custom"' not in _build_vm_text:
     _build_name_errors.append("loaded-preset build name/fallback missing")
+if "PreShortDurationFactoryBlobs" not in (ROOT / "src/TrueCustomDifficulty/Services/PresetDirectoryService.cs").read_text(encoding="utf-8"):
+    fail("exact-stock factory preset migration hashes for new consumable durations missing")
 if "_loadedPresetName = string.IsNullOrWhiteSpace(preset.Name)" not in _build_vm_text:
     _build_name_errors.append("successful preset load does not capture preset name")
 if "TrueCustomDifficulty_P.pak" in _build_vm_text or "TrueCustomDifficulty_P.utoc" in _build_vm_text or "TrueCustomDifficulty_P.ucas" in _build_vm_text:
@@ -1538,8 +1540,17 @@ for _name in _factory_preset_names:
         continue
     _preset = json.loads(_preset_path.read_text(encoding="utf-8"))
     _values = _preset.get("values", {})
-    if len(_values) != 210:
-        _factory_errors.append(f"{_name}: {len(_values)} values, expected 210")
+    if len(_values) != 213:
+        _factory_errors.append(f"{_name}: {len(_values)} values, expected 213")
+    for _short_id, _source_seconds in (
+        ("survival.waterRegenDuration", 5.0),
+        ("survival.energyFullCostDuration", 5.0),
+        ("survival.energyPartialCostDuration", 15.0),
+    ):
+        _preset_entry = _values.get(_short_id, {})
+        if _preset_entry.get("kind") != "slider" or _preset_entry.get("number") != _source_seconds:
+            _factory_errors.append(f"{_name}: missing / nonvanilla new short-duration {_short_id}")
+
     if _preset.get("referenceDifficulty") not in {"Novice", "Stalker", "Veteran", "Master"}:
         _factory_errors.append(f"{_name}: invalid referenceDifficulty={_preset.get('referenceDifficulty')}")
     if f'Presets\\{_name}.json' not in _factory_csproj_text:
@@ -1597,7 +1608,7 @@ if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legac
 if _factory_errors:
     fail("current 12 factory presets drifted: " + "; ".join(_factory_errors))
 else:
-    note("factory presets locked: 12 custom profiles / 210 values each; retired 4 files removed; hard-profile medical rules preserved")
+    note("factory presets locked: 12 custom profiles / 213 values each; retired 4 files removed; hard-profile medical rules preserved")
 
 # Current user-help contract no longer describes retired polar-radar gestures.
 _control_help_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
@@ -1665,41 +1676,77 @@ else:
 # timed effect families. Guard both the authored durations and the live visual
 # label/measurement contract, rather than inventing additional editable sources.
 _duration_sources = {
-    "survival.waterEffectDuration": {"WaterStamina2": "5.0", "WaterStaminaPerAction1": "30.0"},
+    "survival.waterEffectDuration": {"WaterStaminaPerAction1": "30.0"},
+    "survival.waterRegenDuration": {"WaterStamina2": "5.0"},
     "survival.energyDrinkEffectDuration": {
-        "EnergeticStamina": "45.0",
-        "EnergeticLimitedStamina": "45.0",
-        "EnergeticStaminaPerAction1": "15.0",
-        "EnergeticStaminaPerAction2": "5.0",
-    },
+        "EnergeticStamina": "45.0", "EnergeticLimitedStamina": "45.0"},
+    "survival.energyFullCostDuration": {"EnergeticStaminaPerAction2": "5.0"},
+    "survival.energyPartialCostDuration": {"EnergeticStaminaPerAction1": "15.0"},
 }
 for _pid, _expected in _duration_sources.items():
     _actual = {
         point["prototype"]: point["sourceRaw"]
         for point in baseline.get("editPoints", [])
         if point.get("parameterId") == _pid
-        and point.get("key") == "Duration" and point.get("operation") == "scale"
+        and point.get("key") == "Duration"
     }
     if _actual != _expected:
         fail(f"consumable duration source/legend mapping drifted: {_pid}: {_actual} != {_expected}")
 _duration_renderer = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
 for _token in (
-    "private const double ConsumableTimelineHeight = 240.0;",
-    "new Rect(17.0, previewTop, width, ConsumableTimelineHeight)",
-    "return previewTop + ConsumableTimelineHeight + 14.0;",
-    "DurationDetail(waterTime,", "DurationDetail(energyTime,",
-    "LOWER STAMINA COST", "-100% COST", "-30% COST", "LIMITED:", "STAMINA REGEN",
-    "subDurations[0][0] * waterTime.CurrentNumber",
-    "subDurations[1][0] * energyTime.CurrentNumber",
-    "subDurations[1][1] * energyTime.CurrentNumber",
+    "private static double ConsumableTimelineHeight(double width)",
+    "new Rect(17.0, previewTop, width, ConsumableTimelineHeight(ActualWidth))",
+    "return previewTop + ConsumableTimelineHeight(width) + 14.0;",
+    "var secondary = new ParameterViewModel[][]",
+    "shortEffect.CurrentNumber",
+    "DrawCompactTrack(dc, shortEffect, caption,",
+    "(waterRegenTime, \"WATER REGEN\")",
+    "(energyFullCostTime, \"ENERGY -100% COST\")",
+    "(energyPartialCostTime, \"ENERGY -30% COST\")",
 ):
     if _token not in _duration_renderer:
-        fail(f"consumable timeline effect caption/measurement source missing: {_token}")
-if _duration_renderer.count("DurationDetail(energyTime,") != 3:
-    fail("Energy timeline must distinguish regular 5/15/45s and Limited 5/45s in three caption rows")
-if not (ROOT / "tools/audit_consumable_effect_source.py").is_file():
-    fail("original Water/Energy source-verification command missing")
-note("consumable duration preview source mapping: Water 5/30s, Energy -100% 5s / -30% 15s / 45s regen; four source-bound compact captions, no new controls")
+        fail(f"consumable short-duration native control/measurement missing: {_token}")
+if _duration_renderer.count("DrawCompactTrack(dc, shortEffect, caption,") != 1:
+    fail("consumable child duration track registration drifted")
+# Source-exact seconds constraints: no fixed fake cap or duplicate writer ownership.
+_short_duration_bases = {
+    "survival.waterRegenDuration": ("survival.waterEffectDuration", 5.0, 30.0),
+    "survival.energyFullCostDuration": ("survival.energyDrinkEffectDuration", 5.0, 45.0),
+    "survival.energyPartialCostDuration": ("survival.energyDrinkEffectDuration", 15.0, 45.0),
+}
+_short_by_id = {p["id"]: p for p in parameters}
+for _pid, (_main_id, _min_seconds, _main_seconds) in _short_duration_bases.items():
+    _p = _short_by_id[_pid]
+    _slider = _p["slider"]
+    _main = _short_by_id[_main_id]
+    _source = [e for e in baseline["editPoints"] if e.get("parameterId") == _pid]
+    if (_p.get("exposeInUi", True) or
+        _slider.get("min") != _min_seconds or
+        _slider.get("max") != _main_seconds * 3.0 or
+        _slider.get("step") != 0.5 or
+        _slider.get("stepMode") != "absolute" or
+        _p["vanilla"]["All"] != _min_seconds or
+        len(_source) != 1 or _source[0]["operation"] != "set"):
+        fail(f"consumable independent short-duration catalog/CFG contract drifted: {_pid}")
+    if abs(_main["slider"]["min"] -
+           max(p["slider"]["min"] for p in (
+               _short_by_id[x] for x, z in _short_duration_bases.items()
+               if z[0] == _main_id)) / _main_seconds) > 1e-9:
+        fail(f"main duration lower bound no longer respects authored child minima: {_main_id}")
+_main_source = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+_vm_source = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+for _token in ('LinkShortDrinkDuration("survival.waterRegenDuration"',
+               'LinkShortDrinkDuration("survival.energyFullCostDuration"',
+               'LinkShortDrinkDuration("survival.energyPartialCostDuration"',
+               'child.RefreshDynamicMaximum()', "MigrateLegacyShortDuration("):
+    if _token not in _main_source:
+        fail(f"consumable runtime cap/migration handler missing: {_token}")
+for _token in ("SetDynamicMaximumProvider(Func<double> provider)",
+               "Math.Clamp(_dynamicMaximumProvider(), Minimum, StaticMaximum)",
+               'Id is "survival.waterEffectDuration" or "survival.energyDrinkEffectDuration"'):
+    if _token not in _vm_source:
+        fail(f"consumable maximum/rounding VM contract missing: {_token}")
+note("consumable duration source routes: five primary drink effects + three independently editable short effects; original CFG prototype ownership stays unique")
 
 # The individual SPDrain magnitudes and variant memberships are locked
 # to the supplied original EffectPrototypes/ItemPrototypes source audit.
@@ -1876,8 +1923,8 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 236 or len(_global_visible) != 150 or len(_global_hidden) != 86:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 236/150/86")
+if len(parameters) != 239 or len(_global_visible) != 150 or len(_global_hidden) != 89:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 239/150/89")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
 elif _global_confirmed != 119 or _global_runtime != 31:
@@ -1908,7 +1955,7 @@ elif _global_anomaly_missing or "SetEffectiveDamageMultiplierProvider" not in _g
 elif not _global_doc.exists():
     fail("global cross-domain audit document missing from docs/")
 else:
-    note("current cross-domain structural audit: 236 catalog / 150 visible / 86 hidden; 119 visible confirmed + 31 runtime-test-required; zero direct collisions")
+    note("current cross-domain structural audit: 239 catalog / 150 visible / 89 hidden; 119 visible confirmed + 31 runtime-test-required; zero direct collisions")
 
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("v0.2.51-v0.3.0 override/CFG-placement/provenance/production snapshots (current UI/Combat tools + active source checks are authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")

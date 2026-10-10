@@ -151,7 +151,10 @@ public sealed class MainViewModel : ObservableObject
         var consumableAggregateParameterIds = new HashSet<string>(StringComparer.Ordinal)
         {
             "survival.waterStaminaEffectStrength",
-            "survival.energyDrinkStaminaRecoveryStrength"
+            "survival.energyDrinkStaminaRecoveryStrength",
+            "survival.waterRegenDuration",
+            "survival.energyFullCostDuration",
+            "survival.energyPartialCostDuration"
         };
 
         var itemPriceScalerParameterIds = new HashSet<string>(StringComparer.Ordinal)
@@ -358,7 +361,10 @@ public sealed class MainViewModel : ObservableObject
             "survival.energyDrinkStaminaRecoveryStrength",
             "survival.alcoholRadiationRemoval",
             "survival.waterEffectDuration",
+            "survival.waterRegenDuration",
             "survival.energyDrinkEffectDuration",
+            "survival.energyFullCostDuration",
+            "survival.energyPartialCostDuration",
             "survival.vodkaEffectDuration",
             "survival.beerEffectDuration",
             "survival.magicVodkaEffectDuration");
@@ -797,6 +803,25 @@ public sealed class MainViewModel : ObservableObject
                         mutantGroupSizeAnchor.RefreshAggregateModifiedState();
                 };
         }
+
+        // Real-seconds source caps for the three independently mapped short
+        // effects. If the main duration shrinks, children are clamped to its
+        // new duration; native minima are always reachable because both main
+        // sliders have a catalog floor matching their longest vanilla child.
+        void LinkShortDrinkDuration(string childId, string parentId, double mainVanillaSeconds)
+        {
+            var parent = parametersById[parentId];
+            var child = parametersById[childId];
+            child.SetDynamicMaximumProvider(() => parent.CurrentNumber * mainVanillaSeconds);
+            parent.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                    child.RefreshDynamicMaximum();
+            };
+        }
+        LinkShortDrinkDuration("survival.waterRegenDuration", "survival.waterEffectDuration", 30.0);
+        LinkShortDrinkDuration("survival.energyFullCostDuration", "survival.energyDrinkEffectDuration", 45.0);
+        LinkShortDrinkDuration("survival.energyPartialCostDuration", "survival.energyDrinkEffectDuration", 45.0);
 
         var dependencyChildren = new Dictionary<string, List<ParameterViewModel>>(StringComparer.Ordinal);
         foreach (var child in parameterVMs.Where(p => !string.IsNullOrWhiteSpace(p.Definition.RequiresToggle)))
@@ -1347,6 +1372,28 @@ public sealed class MainViewModel : ObservableObject
                         parameter.ApplyPresetValue(pair.Value);
                     }
                 }
+
+                // Old presets used the parent multiplier for EVERY Water/Energy
+                // timed effect. Preserve the old resulting duration on import
+                // when the new independent duration field is absent.
+                void MigrateLegacyShortDuration(string parentId, string shortId, double vanillaSeconds)
+                {
+                    if (preset.Values.ContainsKey(shortId)
+                        || !preset.Values.ContainsKey(parentId)
+                        || !parametersById.TryGetValue(parentId, out var mainDuration)
+                        || !parametersById.TryGetValue(shortId, out var shortDuration))
+                        return;
+                    shortDuration.SnapCurrentNumberToMarker(Math.Clamp(
+                        vanillaSeconds * mainDuration.CurrentNumber,
+                        shortDuration.Minimum, shortDuration.Maximum));
+                }
+
+                MigrateLegacyShortDuration("survival.waterEffectDuration",
+                    "survival.waterRegenDuration", 5.0);
+                MigrateLegacyShortDuration("survival.energyDrinkEffectDuration",
+                    "survival.energyFullCostDuration", 5.0);
+                MigrateLegacyShortDuration("survival.energyDrinkEffectDuration",
+                    "survival.energyPartialCostDuration", 15.0);
             }
             finally
             {
@@ -1501,7 +1548,10 @@ public sealed class MainViewModel : ObservableObject
                 "survival.instantStaminaRestore" => 290,
                 "survival.alcoholRadiationRemoval" => 291,
                 "survival.waterEffectDuration" => 292,
+                "survival.waterRegenDuration" => 292,
                 "survival.energyDrinkEffectDuration" => 293,
+                "survival.energyFullCostDuration" => 293,
+                "survival.energyPartialCostDuration" => 293,
                 "survival.vodkaEffectDuration" => 294,
                 "survival.beerEffectDuration" => 295,
                 "survival.magicVodkaEffectDuration" => 296,

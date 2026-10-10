@@ -123,6 +123,10 @@ mod and check actual `.pak/.utoc/.ucas` output, installation and load order.
 Run S.T.A.L.K.E.R. 2; neither the Python tests nor a successful publish
 does this.
 
+### Water / Energy live short-duration regression (required)
+
+The current Survival writer suite checks three new independent CFG parameter IDs, ensures the main Water/Energy duration routes never own the same source prototype as their children, checks dynamic child maxima and cascade when the parent duration shrinks, and validates a real combined BPatch for all five edits. Required manual UI checks: Water 5s → up to current 30s main, Energy −100% 5s and −30% 15s → up to current 45s main, increasing parent does not automatically expand the child, shrinking parent clamps it, reference resets and old preset migration work. At minimum main, children still show their authored vanilla minimum, and no non-editable tail responds to input. Source archive checks must verify unchanged physical CFG targets; engine stacking of SPDrain modifiers is not yet in-game verified.
+
 ### Consumables: original Water / Energy Drink source audit (automatable)
 
 Use the exact game CFG ZIP supplied for the target game version. Run

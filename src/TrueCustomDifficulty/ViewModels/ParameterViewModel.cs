@@ -22,6 +22,7 @@ public sealed class ParameterViewModel : ObservableObject
     private Func<double>? _effectiveDamageMultiplierProvider;
     private Func<bool>? _dependencyEnabledProvider;
     private Func<bool>? _aggregateModifiedProvider;
+    private Func<double>? _dynamicMaximumProvider;
 
     public ParameterDefinition Definition { get; }
     public string Id => Definition.Id;
@@ -136,6 +137,8 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsHumanGroupSizeMember)
                 return "Drag NEWBIE, EXPERIENCED, VETERAN or MASTER to set that rank's maximum human squad size."
                     + Environment.NewLine + "Right-click one rank to reset it; R resets all four.";
+            if (Id is "survival.waterRegenDuration" or "survival.energyFullCostDuration" or "survival.energyPartialCostDuration")
+                return "Drag the short effect to change its real duration. Its main drink effect sets the upper limit.";
             if (IsMutantGroupSizeMember)
                 return "Drag the track for a mutant species; its four player-rank squad caps update together."
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
@@ -415,6 +418,9 @@ public sealed class ParameterViewModel : ObservableObject
         ["survival.energyDrinkStaminaRecoveryStrength"] = "ConsumableMixer",
         ["survival.alcoholRadiationRemoval"] = "ConsumableMixer",
         ["survival.waterEffectDuration"] = "ConsumableMixer",
+        ["survival.waterRegenDuration"] = "ConsumableMixer",
+        ["survival.energyFullCostDuration"] = "ConsumableMixer",
+        ["survival.energyPartialCostDuration"] = "ConsumableMixer",
         ["survival.energyDrinkEffectDuration"] = "ConsumableMixer",
         ["survival.vodkaEffectDuration"] = "ConsumableMixer",
         ["survival.beerEffectDuration"] = "ConsumableMixer",
@@ -615,7 +621,7 @@ public sealed class ParameterViewModel : ObservableObject
     public double Minimum => Definition.Slider?.Min ?? 0;
     // Combat UI hard limits: preserve these gameplay-safe maximums even if an old
     // preset or a future catalog update reintroduces the former 4x / >1x ranges.
-    public double Maximum => Id switch
+    private double StaticMaximum => Id switch
     {
         "combat.npcAttackCooldown" => Math.Min(2.0, Definition.Slider?.Max ?? 2.0),
         "combat.npcHipAccuracy" => Math.Min(1.0, Definition.Slider?.Max ?? 1.0),
@@ -623,6 +629,26 @@ public sealed class ParameterViewModel : ObservableObject
             Math.Min(2.0, Definition.Slider?.Max ?? 2.0),
         _ => Definition.Slider?.Max ?? 1.0
     };
+    // Optional source-exact cap for secondary drink effects: always use the
+    // actual duration in seconds of the linked main effect, not a vanilla %
+    // or a guessed global timeline coordinate.
+    public double Maximum => _dynamicMaximumProvider is null
+        ? StaticMaximum
+        : Math.Clamp(_dynamicMaximumProvider(), Minimum, StaticMaximum);
+
+    public void SetDynamicMaximumProvider(Func<double> provider)
+    {
+        _dynamicMaximumProvider = provider;
+        RefreshDynamicMaximum();
+    }
+
+    public void RefreshDynamicMaximum()
+    {
+        OnPropertyChanged(nameof(Maximum));
+        if (CurrentNumber > Maximum + Epsilon)
+            SnapCurrentNumberToMarker(Maximum);
+    }
+
     public double ReferenceNumber => GetReferenceNumber();
     public bool ReferenceBoolean
     {
@@ -937,6 +963,8 @@ public sealed class ParameterViewModel : ObservableObject
                 => $"{CurrentNumber * 100:0.#}% regen loss",
             "survival.sleepinessRate" => $"{CurrentNumber:0.000} pts/s",
             "survival.energyDrinkFatigueRelief" => Times(CurrentNumber, "relief"),
+            "survival.waterRegenDuration" or "survival.energyFullCostDuration" or
+            "survival.energyPartialCostDuration" => $"{CurrentNumber:0.#} s",
             "survival.sleepEligibilityThreshold" => $"{CurrentNumber:0} pts",
             "survival.minimumSleepHours" => $"{CurrentNumber:0} h",
             "survival.radiationAccumulation" => Times(CurrentNumber, "buildup"),
@@ -1668,7 +1696,8 @@ public sealed class ParameterViewModel : ObservableObject
         // Combat multipliers are tuned in 0.10x increments around 1.00x,
         // not around their sometimes-offset minimum (e.g. 0.25x).
         // Keep vanilla 1.00x reachable without changing native min/max.
-        var origin = Id.StartsWith("combat.", StringComparison.Ordinal)
+        var origin = (Id is "survival.waterEffectDuration" or "survival.energyDrinkEffectDuration")
+            ? 1.0 : Id.StartsWith("combat.", StringComparison.Ordinal)
             && !Id.StartsWith("combat.playerWeaponDamage", StringComparison.Ordinal)
             && !Id.StartsWith("combat.playerHeadshotMultiplier", StringComparison.Ordinal)
             && !Id.StartsWith("combat.weaponJamming", StringComparison.Ordinal)

@@ -25,8 +25,8 @@ BASELINE = SRC / "Data" / "cfg-writer-baseline.json"
 # Locked to the current source catalog. Update only after a
 # provenance-backed change to the catalog and writer baseline in the SAME commit.
 EXPECTED_VISIBLE = 150
-EXPECTED_HIDDEN = 86
-EXPECTED_TOTAL = 236
+EXPECTED_HIDDEN = 89
+EXPECTED_TOTAL = 239
 EXPECTED_CONTROLS = {"slider": 136, "toggle": 12, "choiceSlider": 1, "range": 1}
 EXPECTED_TAB_COUNTS = {
     "combat": 17,

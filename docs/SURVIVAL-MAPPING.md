@@ -141,6 +141,18 @@ Child effects:
 
 The exact player-facing conversion of raw sway/dispersion values is engine-side, so the UI presents those raw values and does not invent degree/accuracy percentages.
 
+## Independent short consumable-effect durations (2026-10-10)
+
+Verified source targets in `GameData/EffectPrototypes.cfg` remain the same physical `Duration` fields:
+
+| New source control | Original Duration | Absolute editable limit |
+|---|---:|---|
+| `survival.waterRegenDuration` → `WaterStamina2` | 5 s | 5 s to `30 × waterEffectDuration` |
+| `survival.energyFullCostDuration` → `EnergeticStaminaPerAction2` | 5 s | 5 s to `45 × energyDrinkEffectDuration` |
+| `survival.energyPartialCostDuration` → `EnergeticStaminaPerAction1` | 15 s | 15 s to `45 × energyDrinkEffectDuration` |
+
+The parent duration sliders own only the longest native effects now; all short durations have separate `set` writer routes with no overlap. Main Water cannot go below 5/30× and Energy cannot go below 15/45× without contradicting the newly required short-effect vanilla minima. No new effects are added, and magnitude/stacking are not changed. See [Energy source audit](ENERGY-DRINK-EFFECT-SOURCE-AUDIT-2026-10-10.md).
+
 ## Radiation
 
 Difficulty accumulation scalar:

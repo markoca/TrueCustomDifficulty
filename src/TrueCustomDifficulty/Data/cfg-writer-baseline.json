@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 236,
+  "supportedParameterCount": 239,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -16805,14 +16805,14 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.waterEffectDuration",
+      "parameterId": "survival.waterRegenDuration",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
       "prototype": "WaterStamina2",
       "nodePath": [],
       "key": "Duration",
       "sourceRaw": "5.0",
-      "operation": "scale",
+      "operation": "set",
       "role": "",
       "difficultySid": ""
     },
@@ -16853,26 +16853,26 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.energyDrinkEffectDuration",
+      "parameterId": "survival.energyPartialCostDuration",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
       "prototype": "EnergeticStaminaPerAction1",
       "nodePath": [],
       "key": "Duration",
       "sourceRaw": "15.0",
-      "operation": "scale",
+      "operation": "set",
       "role": "",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.energyDrinkEffectDuration",
+      "parameterId": "survival.energyFullCostDuration",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
       "prototype": "EnergeticStaminaPerAction2",
       "nodePath": [],
       "key": "Duration",
       "sourceRaw": "5.0",
-      "operation": "scale",
+      "operation": "set",
       "role": "",
       "difficultySid": ""
     },

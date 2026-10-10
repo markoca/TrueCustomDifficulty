@@ -66,3 +66,7 @@ All three include the full 201-value source mapping. The factory list now has te
 Both new factory files contain all 201 existing preset keys, are embedded in the executable and only seeded when absent. Existing customized presets remain untouched.
 
 The twelve role presets each include 219 CFG-backed values, now including 18 A-Life Director group-size settings (4 human rank + 14 mutant species). Previously shipped untouched factory JSONs are upgraded on launch; custom files are preserved.
+
+## 2026-10-10 — independent Water / Energy short-duration keys
+
+Every stock preset now includes `survival.waterRegenDuration = 5s`, `survival.energyFullCostDuration = 5s`, and `survival.energyPartialCostDuration = 15s`. Main drink-duration multipliers and these three real-seconds sliders are independent but constrained to actual source duration. The factory migration upgrades only byte-for-byte stock JSONs; user modifications are not overwritten. Loading a pre-change custom preset without the three fields derives the former short durations from its old main multiplier, clamped to the new vanilla floor and live main ceiling. New saves write the three values explicitly.

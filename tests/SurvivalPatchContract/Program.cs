@@ -32,7 +32,7 @@ internal static class Program
             var cohort = Catalog.Parameters
                 .Where(p => p.Id.StartsWith("survival.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal).ToArray();
-            Check(cohort.Length == 54, "Survival catalog no longer contains exactly 54 parameters");
+            Check(cohort.Length == 57, "Survival catalog no longer contains exactly 57 parameters");
 
             var vm = new MainViewModel(Catalog);
             var loaded = vm.AllParameters.Select(p => p.Id)
@@ -43,14 +43,14 @@ internal static class Program
                 "Survival catalog-to-live-VM exclusions changed: "
                 + string.Join(", ", unmounted));
             var live = cohort.Where(p => loaded.Contains(p.Id)).ToArray();
-            Check(live.Length == 53, "Expected 53 live Survival source-backed parameters");
+            Check(live.Length == 56, "Expected 56 live Survival source-backed parameters");
 
             var points = Baseline.EditPoints
                 .Where(p => p.ParameterId.StartsWith("survival.", StringComparison.Ordinal))
                 .ToArray();
             Check(points.Length == 139, "Survival manifest no longer contains 139 source edit points");
             Check(points.All(p => p.Scope == "baseGame"), "Survival source unexpectedly targets DLC");
-            Check(points.Select(p => p.ParameterId).Distinct().Count() == 54,
+            Check(points.Select(p => p.ParameterId).Distinct().Count() == 57,
                 "Survival manifest-to-catalog parameter inventory differs");
             Check(points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal)
                       .SetEquals(cohort.Select(p => p.Id)),
@@ -82,6 +82,19 @@ internal static class Program
                 ("survival.energyDrinkStaminaRecoveryStrength", 1.25),
                 ("survival.energyDrinkFatigueRelief", 1.4)
             });
+            TestCombined("Veteran-Drink-Independent-Durations", "Veteran", new[]
+            {
+                ("survival.waterEffectDuration", 1.5),
+                ("survival.waterRegenDuration", 20.0),
+                ("survival.energyDrinkEffectDuration", 1.5),
+                ("survival.energyFullCostDuration", 30.0),
+                ("survival.energyPartialCostDuration", 40.0)
+            });
+            TestShortDurationBounds("survival.waterEffectDuration",
+                new[] { "survival.waterRegenDuration" }, 30.0, 0.8, 24.0);
+            TestShortDurationBounds("survival.energyDrinkEffectDuration",
+                new[] { "survival.energyFullCostDuration", "survival.energyPartialCostDuration" },
+                45.0, 0.75, 33.75);
             TestCombined("Veteran-Hunger-Fatigue", "Veteran", new[]
             {
                 ("survival.hungerMediumStaminaRegen", 0.43),
@@ -156,6 +169,66 @@ internal static class Program
         {
             Console.Error.WriteLine("FAIL: " + ex);
             return 1;
+        }
+    }
+
+    private static void TestShortDurationBounds(
+        string mainId, string[] shortIds, double mainVanillaSeconds,
+        double newMainMultiplier, double expectedCapSeconds)
+    {
+        var name = "Short-Duration-Bounds-" + mainId;
+        var output = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Survival_Patch", name);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            var main = vm.AllParameters.Single(p => p.Id == mainId);
+            var children = shortIds.Select(id => vm.AllParameters.Single(p => p.Id == id)).ToArray();
+            Check(main.IsSlider && children.All(p => p.IsSlider),
+                name + ": missing live native slider");
+            foreach (var child in children)
+            {
+                Check(Math.Abs(child.Minimum - child.ReferenceNumber) < 0.000001,
+                    name + ": child minimum must be authored vanilla");
+                Check(Math.Abs(child.Maximum - mainVanillaSeconds) < 0.000001,
+                    name + ": child's dynamic maximum must match current main seconds");
+                child.SnapCurrentNumberToMarker(mainVanillaSeconds);
+                Check(Math.Abs(child.CurrentNumber - mainVanillaSeconds) < 0.000001,
+                    name + ": cannot reach main effect's actual duration");
+            }
+
+            main.SnapCurrentNumberToMarker(newMainMultiplier);
+            Check(Math.Abs(main.CurrentNumber * mainVanillaSeconds -
+                expectedCapSeconds) < 0.000001,
+                name + ": main duration not respected");
+            foreach (var child in children)
+            {
+                Check(Math.Abs(child.Maximum - expectedCapSeconds) < 0.000001,
+                    name + ": dynamic maximum did not move with main");
+                Check(Math.Abs(child.CurrentNumber - expectedCapSeconds) < 0.000001,
+                    name + ": child did not minimally clamp when main shortened");
+                child.SnapCurrentNumberToMarker(child.Maximum + 20);
+                Check(Math.Abs(child.CurrentNumber - expectedCapSeconds) < 0.000001,
+                    name + ": out-of-range edited duration bypassed dynamic cap");
+            }
+
+            // Parent expansion is not a command to change the independently
+            // adjusted children; only shrinking their actual upper bound cascades.
+            main.SnapCurrentNumberToMarker(1.0);
+            foreach (var child in children)
+                Check(Math.Abs(child.CurrentNumber - expectedCapSeconds) < 0.000001
+                      && Math.Abs(child.Maximum - mainVanillaSeconds) < 0.000001,
+                    name + ": expanding main illegally moved a shorter duration");
+            main.SnapCurrentNumberToMarker(newMainMultiplier);
+
+            var expectedIds = new HashSet<string>(shortIds, StringComparer.Ordinal) { mainId };
+            CheckWriter(vm, expectedIds, output, name);
+            _passed++;
+            Console.WriteLine("PASS " + name + " (real-second caps, native BPatch)");
+        }
+        finally
+        {
+            if (_keep is null && Directory.Exists(output))
+                Directory.Delete(output, recursive: true);
         }
     }
 

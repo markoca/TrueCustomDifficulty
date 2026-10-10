@@ -43,6 +43,11 @@ AGGREGATES = {
         "economy.consumableCost","economy.ammoCost","economy.armorCost",
         "economy.weaponCost","economy.artifactCost","economy.mutantPartValue",
     ],
+    "Short Consumable Durations": [
+        "survival.instantStaminaRestore",  # Visible ConsumableMixer anchor.
+        "survival.waterRegenDuration","survival.energyFullCostDuration",
+        "survival.energyPartialCostDuration",
+    ],
     "Mutant Health": [
         "combat.mutantHealth.bloodsucker","combat.mutantHealth.chimera","combat.mutantHealth.deer",
         "combat.mutantHealth.pseudogiant","combat.mutantHealth.pseudodog","combat.mutantHealth.burer",
@@ -97,8 +102,8 @@ def main():
     # These are the CURRENT catalog invariants, not v0.9.26.51's 199/188
     # obsolete snapshot. The core must route every parameter, even hidden
     # aggregate backings; 13 independent source IDs are audit-only.
-    if len(parameters) != 236:
-        fail(f"catalog count drifted: {len(parameters)} != 236")
+    if len(parameters) != 239:
+        fail(f"catalog count drifted: {len(parameters)} != 239")
     if len(all_ids) != len(parameters):
         fail("duplicate catalog parameter IDs")
 
@@ -109,11 +114,11 @@ def main():
     hidden_non_ui = all_ids - effective_ui_ids
     backing_ids = hidden_ids - EXPECTED_HIDDEN_NON_UI
 
-    if len(visible_ids) != 150 or len(hidden_ids) != 86:
-        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 150/86")
+    if len(visible_ids) != 150 or len(hidden_ids) != 89:
+        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 150/89")
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
-    if len(effective_ui_ids) != 223 or len(backing_ids) != 73:
+    if len(effective_ui_ids) != 226 or len(backing_ids) != 76:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor
