@@ -10677,6 +10677,54 @@
       "exposeInUi": false
     },
     {
+      "id": "loot.looseUniqueWeaponsRemoved",
+      "tab": "loot",
+      "group": "World Loot",
+      "label": "Loose Unique Weapons",
+      "description": "Remove a chosen percentage of nine verified standalone unique weapon pickups in the open world; ordinary weapons and quest-scripted spawn nodes remain untouched.",
+      "control": "slider",
+      "valueKind": "ratio",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Unique Weapons Removed"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/SpawnActorPrototypes/WorldMap_WP/<ActorSID>.cfg",
+          "prototype": "exact non-deferred world actor allowlist from source-verified manifest",
+          "path": "<ActorSID>",
+          "operation": "randomRemoveNodePercent"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Nine exact Item actor SIDs from source-verified original world placement and the supplied removal PAK; no global ItemSID overrides.",
+          "No exact actor or item SID reference was found in base or DLC1 QuestNodePrototypes.cfg. Other scripted dependencies and actual game behavior remain unverified.",
+          "0% emits no removal; 100% removes the nine allowlisted actors; intermediate values select without replacement using round-away-from-zero.",
+          "This remains separate from ordinary World Weapon Shuffle and Loose World Loot removal."
+        ]
+      },
+      "rationale": "Offer narrow source-backed world pickup depletion without modifying unique weapon definitions, regular world weapon distribution or quest generators.",
+      "logic": "0% retains all nine loose unique weapon pickups; higher values remove a corresponding fraction at build time.",
+      "interaction": "Standalone sixth World Loot Depletion slider; no separate checkbox.",
+      "exposeInUi": false
+    },
+    {
       "id": "loot.worldWeaponShuffle",
       "tab": "loot",
       "group": "World Loot",
