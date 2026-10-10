@@ -1,5 +1,10 @@
 # True Custom Difficulty
 
+## NPC Ammo preview — all nine source caliber groups (2026-10-10)
+
+NPC Ammo preview now shows nine actual `NPC_Ammo_Smart` caliber groups in a compact 3×3 grid, each with its earliest source rank and a live source-backed round range. This supersedes the former three-example Newbie-only preview. Only `Medicine + Ammo` activates the corpse bonus. The same 0–3x multiplier, positive half-up integer rounding, individual gold numeric highlighting and existing CFG/BPatch writer remain unchanged. Panel is 564 DIP high; local WPF/Wine compile and actual gameplay confirmation remain pending.
+
+
 ## Survival linked slider BPatch audit — Phase 9D
 
 Added 13 constrained native-slider cascades plus three Master parent OFF/ON round-trip cases to the real Windows CFG writer harness. The suite now checks **85 Survival scenarios**, including absence of unrelated CFG changes. Independent original-source parity remains **139/139**. Actual in-game behavior is **NOT RUN**. Details: [Survival Phase 9](docs/DEEP-CFG-AUDIT-PHASE9-SURVIVAL-2026-10-09.md).
