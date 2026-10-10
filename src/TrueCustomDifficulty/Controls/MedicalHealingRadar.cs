@@ -149,10 +149,14 @@ public sealed class MedicalHealingRadar : FrameworkElement
         _foodCheckboxRect = new Rect(ActualWidth - BooleanCheckboxChrome.Size - 19.0,
             48.0, BooleanCheckboxChrome.Size, BooleanCheckboxChrome.Size);
         dc.DrawText(foodLabel, new Point(_foodCheckboxRect.Left - foodLabel.Width - 8.0, 49.0));
+        // Use the canonical checkbox shape/hover behavior, but raise its
+        // muted OFF-state edge contrast against this unusually dark chart.
+        // No extra checkbox frame or redundant caption is introduced.
+        var checkboxEdge = CloneWithOpacity(muted, .75);
         BooleanCheckboxChrome.Draw(dc, _foodCheckboxRect,
             _foodHealing?.CurrentBoolean == true,
             _foodHealing?.IsControlEnabled == true,
-            _foodCheckboxHovered, panel, border, accent);
+            _foodCheckboxHovered, panel, checkboxEdge, accent);
         _hits.Add(new HitArea(new Rect(_foodCheckboxRect.Left - foodLabel.Width - 12.0,
             45.0, foodLabel.Width + BooleanCheckboxChrome.Size + 17.0, 26.0),
             -1, HitAction.Food));
@@ -189,7 +193,9 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
             // HEAL owns the wider gold bar; BLEED is a narrower copper
             // sub-control immediately to its right, both on this same row.
-            var spread = Math.Min(35.0, laneWidth * .27);
+            // Tighter HEAL/BLEED pair: preserve space between the item
+            // clusters and readable independent numeric headers.
+            var spread = Math.Min(27.0, laneWidth * .235);
             DrawColumn(dc, row, HitAction.Healing, _medical[row],
                 center - spread, Math.Min(50.0, laneWidth * .34),
                 HealingRulerHp, chart, text, muted, border, accent);
@@ -236,10 +242,12 @@ public sealed class MedicalHealingRadar : FrameworkElement
             new Rect(barLeft, currentY, barWidth,
                 Math.Max(.5, chart.Bottom - currentY)));
         // Gray authored reference and maximum marks remain low contrast.
-        dc.DrawLine(new Pen(CloneWithOpacity(muted, .65), 1.0),
+        // The current-value bar/top cap must dominate; the native ceiling
+        // and baseline stay useful but visibly subdued reference landmarks.
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, .38), .8),
             new Point(barLeft, nativeTop),
             new Point(barLeft + barWidth, nativeTop));
-        dc.DrawLine(new Pen(muted, 1.7),
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, .68), 1.35),
             new Point(barLeft - 5.0, referenceY),
             new Point(barLeft + barWidth + 5.0, referenceY));
 

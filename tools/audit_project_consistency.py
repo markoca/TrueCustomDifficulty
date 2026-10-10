@@ -1714,6 +1714,21 @@ else:
     note("Medical Items: four HEAL/BLEED native bars in one row, independent scales, food toggle")
 
 
+# Medical Items final polish: compact pair spacing, subdued ceiling/reference
+# ticks and stronger OFF checkbox edge, without changing canonical checkbox chrome.
+_medical_polish_required = (
+    'var spread = Math.Min(27.0, laneWidth * .235);',
+    'CloneWithOpacity(muted, .38), .8',
+    'CloneWithOpacity(muted, .68), 1.35',
+    'var checkboxEdge = CloneWithOpacity(muted, .75);',
+    '_foodCheckboxHovered, panel, checkboxEdge, accent);',
+)
+if any(token not in _medical_source for token in _medical_polish_required):
+    fail("Medical Items compact pair/quiet guides/clear checkbox polish drifted")
+else:
+    note("Medical Items polish: tighter paired bars, muted reference lines, visible Food Healing border")
+
+
 # Hunger Survival Profile LOW handle: avoid a second hover circle at the
 # midpoint of the 2D plot. The real LOW handle owns its glow at Y(0).
 _hunger_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")

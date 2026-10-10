@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-10 — Medical Items final spacing and contrast refinement (latest binding design)
+
+Keep the **four HEAL/BLEED vertical pairs in one MEDICAL ITEMS row**, but tighten each pair with `spread = Min(27 DIP, laneWidth × 0.235)` rather than the former 35-DIP spread. The gold HEAL bar stays wider and on the left; the copper BLEED sub-bar stays narrower and on the right. This must not merge the independently editable hit areas or overlap the HP/PTS readouts at the existing 560-DIP minimum board width. Tone down the *native maximum* gray cap to muted opacity **0.38**, stroke **0.8 DIP**, and the separate muted reference tick to opacity **0.68**, stroke **1.35 DIP**, retaining the brighter current-value top caps. The **Food Healing OFF checkbox** retains `BooleanCheckboxChrome` universal 20-DIP shape, checkmark and hover behavior, but receives a clearer muted border (opacity **0.75**) in the Medical Items board. No extra UI framing, text, enlarged board, CFG/preset changes or modifications to other checkboxes.
+
 ### 2026-10-10 — MEDICAL ITEMS: four HEAL/BLEED paired vertical controls (authoritative UI)
 
 The Health tab shows **one full-width MEDICAL ITEMS frame**, replacing separate MEDICAL HEALING and BLEEDING TREATMENT cards. **Exactly four item clusters in one horizontal row**: BANDAGE, MEDKIT, ARMY MEDKIT, SCIENTIFIC MEDKIT. Every cluster contains **two independently editable vertical columns**: a **wider, gold HEAL** bar on the left (HP restored) and a **narrower, copper-colored BLEED** bar immediately to its right (bleeding points removed). Their **separate actual HP and PTS readouts** sit directly above the bars; small HEAL/BLEED captions distinguish the controls, and the item name sits underneath its pair. The two effects are visually grouped only; there is **no value linking or dependency**.
