@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-10 — Mutant Properties unified card (current authoritative layout)
+
+The existing Mutant Health radar frame is now a **single MUTANT PROPERTIES card**. Directly below the header, the full-content-width **Mutant Hit Damage** rail is rendered *inside the same frame*, showing complete Novice / Stalker / Veteran / Master markers; below it stays the two-column, fourteen-mutant health grid. The old separate `combat.mutantDamage` parameter card is hidden only in UI; its actual ViewModel, presets and CFG writer remain intact and independent. Mouse drag and arrow editing, right-click reset and group R reset operate on the embedded damage slider as well. Layout height is measured at 605 DIP and its member cards are shifted down; no disconnected standalone row or duplicate control. The explicit full-width exception for the former standalone row is removed.
+
 ### 2026-10-10 — Mutant Hit Damage top full-width layout (current)
 
 Within **Mutant Health**, `combat.mutantDamage` is the first full-width row, above the Mutant Health radar. Only this one slider receives the full section width to clearly display complete reference difficulty names **Novice, Stalker, Veteran, Master** instead of N/S/V/M. Its ordinary compact card/sliding behavior, marker hit targets, source ID, values and writer remain unchanged. The full-width exception is specific to this section; other independent sliders keep the compact responsive grid. Do not restore the earlier below-radar or orphaned placement.

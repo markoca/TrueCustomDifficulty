@@ -621,6 +621,7 @@ public sealed class ParameterViewModel : ObservableObject
         && (!IsExhaustionRecoveryMember || IsExhaustionRecoveryAnchor)
         && (!IsItemPriceScalerMember || IsItemPriceScalerAnchor)
         && (!IsMutantHealthMember || IsMutantHealthAnchor)
+        && Id != "combat.mutantDamage"
         && (!IsHumanGroupSizeMember || IsHumanGroupSizeAnchor)
         && (!IsMutantGroupSizeMember || IsMutantGroupSizeAnchor)
         && (!IsBleedingCurveMember || IsBleedingCurveAnchor)
