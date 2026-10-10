@@ -29,7 +29,9 @@ verify the source prototype, nesting, `{bpatch}` flags, correct
 `set` / `negateSet` / `scale` values, file location, counts and
 absence of unrelated CFG fields. Six additional cases cover the
 four game difficulties for radiation accumulation and bleeding
-severity. Total **59 executable C# writer scenarios**.
+severity. Total **66 executable C# writer scenarios** (59 active
+parameter/difficulty routes + 4 no-op vanilla baselines + 3 gated child
+scenarios).
 
 The scenarios include hunger, bleeding, radiation, fatigue, sleep,
 starvation (with its actual Master parent enablement), consumable
@@ -103,3 +105,26 @@ WINEPREFIX="$HOME/.wine-s2" WINEDEBUG=-all \
 Windows / .NET 10: `python tools/pre_release.py writer`, which runs
 all three production writer contract suites. On Linux this check
 remains `NOT RUN` and is supplied by the SHA-matched Windows CI jobs.
+
+## Phase 9B — baseline and inactive-Master regression gates (2026-10-10)
+
+The real Windows writer harness additionally executes **seven**
+regressions. Four confirm an untouched Novice, Stalker, Veteran or
+Master preset does not emit any CFG file, edit or parameter. Three
+confirm that editing a disabled `requiresToggle` Survival child while
+the corresponding Master mechanics parent remains OFF on Veteran
+does **not** write any patches:
+
+- `survival.starvationDamage` with `advanced.starvationMechanics=OFF`
+- `survival.severeFatigueRecoil` with `advanced.fatigueMechanics=OFF`
+- `survival.radiationStaminaDrainPenalty` with `advanced.radiationMechanics=OFF`
+
+The existing 59 isolated cases retain full source-prototype,
+nested `{bpatch}`, `set`/`negateSet`/`scale` and no-unrelated-fields
+checks. The new 66-scenario suite uses the shipping app and writer;
+it does not simulate Unreal or promote in-game status to PASS.
+
+The physical original archive inputs matching the permanent 139/139
+source evidence were reidentified by SHA-256 on 2026-10-10. This
+addition does not alter game values, UI controls, preset defaults or
+production writer logic.

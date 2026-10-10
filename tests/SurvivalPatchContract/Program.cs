@@ -67,6 +67,13 @@ internal static class Program
                 Test("survival.radiationAccumulation", difficulty);
                 Test("survival.bleedingSeverity", difficulty);
             }
+            foreach (var difficulty in new[] { "Novice", "Stalker", "Veteran", "Master" })
+                TestVanilla(difficulty);
+
+            foreach (var id in new[] { "survival.starvationDamage",
+                "survival.severeFatigueRecoil", "survival.radiationStaminaDrainPenalty" })
+                TestDisabled(id);
+
             Console.WriteLine("SOURCE ONLY (no production VM): survival.drunknessThresholdScale");
             Console.WriteLine($"PASS: {_passed} Survival production BPatch writer scenarios.");
             Console.WriteLine("NOT VERIFIED: original archived CFG values, UE runtime, effects in game.");
@@ -76,6 +83,55 @@ internal static class Program
         {
             Console.Error.WriteLine("FAIL: " + ex);
             return 1;
+        }
+    }
+
+    private static void TestVanilla(string difficulty)
+    {
+        var name = "Vanilla-" + difficulty;
+        var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Survival_Patch", name);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = difficulty };
+            var result = new CfgPatchWriterService().Write(vm, Catalog, null, path);
+            Check(result.FileCount == 0 && result.EditCount == 0 && result.ParameterCount == 0,
+                name + ": vanilla preset emitted unexpected CFG");
+            Check(!Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories).Any(),
+                name + ": vanilla output directory contains generated files");
+            _passed++;
+            Console.WriteLine("PASS " + name + " (no CFG)");
+        }
+        finally
+        {
+            if (_keep is null && Directory.Exists(path))
+                Directory.Delete(path, recursive: true);
+        }
+    }
+
+    private static void TestDisabled(string id)
+    {
+        var name = "Veteran-Gated-" + id.Replace(".", "-", StringComparison.Ordinal);
+        var path = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Survival_Patch", name);
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+            var child = vm.AllParameters.Single(p => p.Id == id);
+            Check(!child.IsControlEnabled, name + ": Master parent unexpectedly ON");
+            child.SnapCurrentNumberToMarker(child.ReferenceNumber + 0.1);
+            Check(child.IsValueModifiedFromReference() && !child.IsControlEnabled,
+                name + ": edited child should remain inactive");
+            var result = new CfgPatchWriterService().Write(vm, Catalog, null, path);
+            Check(result.FileCount == 0 && result.EditCount == 0 && result.ParameterCount == 0,
+                name + ": inactive child leaked into CFG writer output");
+            Check(!Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories).Any(),
+                name + ": inactive child unexpectedly wrote a CFG file");
+            _passed++;
+            Console.WriteLine("PASS " + name + " (gated value not emitted)");
+        }
+        finally
+        {
+            if (_keep is null && Directory.Exists(path))
+                Directory.Delete(path, recursive: true);
         }
     }
 

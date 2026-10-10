@@ -193,7 +193,7 @@ C2 now includes five Master original-mechanics full-list replacement cases in ad
 
 ### Phase 9: Survival real-writer validation
 
-The `survival-writer-windows` CI job executes the real WPF ViewModel and production CFG writer for **53 live Survival parameters + 6 difficulty variants (59 tests)**. All **139 direct source fields** are covered separately by strict original ZIP value comparison (B6) during `pre_release.py source`. One source-mapped alcohol threshold remains catalog-only, not an app control. Game loading/effects stay NOT RUN. See [Phase 9](DEEP-CFG-AUDIT-PHASE9-SURVIVAL-2026-10-09.md).
+The `survival-writer-windows` CI job executes the real WPF ViewModel and production CFG writer for **53 live Survival parameters + 6 difficulty variants (66 cases (59 direct + 7 baseline/gating))**. All **139 direct source fields** are covered separately by strict original ZIP value comparison (B6) during `pre_release.py source`. One source-mapped alcohol threshold remains catalog-only, not an app control. Game loading/effects stay NOT RUN. See [Phase 9](DEEP-CFG-AUDIT-PHASE9-SURVIVAL-2026-10-09.md).
 
 ### Phase 9 original decoded Survival evidence (2026-10-09)
 
@@ -396,3 +396,7 @@ Re-run C11, plus all regression jobs, on the final release SHA as soon
 as GitHub Actions can execute jobs normally. The original archive source
 PASS is separate from the production code validation and Unreal runtime
 merge/gameplay acceptance.
+
+### Survival Phase 9B — baseline and parent-gating cases
+
+Seven more Windows real writer regression cases cover the four untouched base difficulties and three modified-but-disabled Master Survival children on Veteran. C3 now comprises **66 cases**, with no change to original 139/139 source-value evidence. All engine/gameplay acceptance remains manual.
