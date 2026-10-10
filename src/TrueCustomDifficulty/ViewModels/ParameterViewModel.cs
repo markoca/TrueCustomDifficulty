@@ -34,177 +34,124 @@ public sealed class ParameterViewModel : ObservableObject
 
     public string Description => Definition.Description;
     public string Rationale => string.IsNullOrWhiteSpace(Definition.Rationale) ? Definition.Description : Definition.Rationale;
-    public string RationaleDisplay
-    {
-        get
-        {
-            // Keep the side panel concise: prefer the authored player-facing rationale
-            // and fall back to Description only when no rationale exists.
-            var body = string.IsNullOrWhiteSpace(Definition.Rationale)
-                ? Description.Trim()
-                : Definition.Rationale.Trim();
+    // The WHAT IT DOES paragraph contains gameplay rationale only.
+    // Editor instructions are a separate, compact section at the bottom of the
+    // right-hand pane, immediately ahead of the muted contextual footer.
+    public string RationaleDisplay => string.IsNullOrWhiteSpace(Definition.Rationale)
+        ? Description.Trim()
+        : Definition.Rationale.Trim();
 
-            return $"{body}{Environment.NewLine}{Environment.NewLine}{ControlHelp}";
-        }
-    }
-
+    /// <summary>
+    /// Player-facing interaction guide. These entries describe the ACTUAL
+    /// visible control grammar, not the internal CFG implementation. Resolve
+    /// visual families for both anchors and clicked child parameters so
+    /// choosing one handle does not fall back to an unrelated generic hint.
+    /// Never include the heading here: XAML owns the single CONTROLS heading.
+    /// </summary>
     public string ControlHelp
     {
         get
         {
-            if (IsDrunkennessAnchor)
+            if (IsVisualAggregateMember)
             {
-                return "CONTROLS" + Environment.NewLine +
-                       "BEER and VODKA are independent drink-strength sliders. The current CFG DrunknessMechanics stages are LOW 0.001, MEDIUM 30 and STRONG 80; the drink progression shows which of those stages repeated drinks reach. OverDrunkness is a separate mechanics chain with its own 89-point reference and is intentionally not treated as a fourth stage here. Right-click one drink to reset it; press R to reset both drinks to the Base Preset.";
-            }
-
-            if (IsBleedingCurveAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "Bleeding Strength and Natural Recovery use compact tracks. The damage curve uses the real bleeding-state X axis: LOW stays at the authored 0.1 boundary, while MEDIUM and SEVERE threshold handles move their stage boundaries from 1-100 Bleeding points (vanilla 50 / 75). Drag curve points vertically to tune HP damage per tick. Damage preserves LOW ≤ MEDIUM ≤ SEVERE; thresholds preserve MEDIUM ≤ SEVERE. Right-click one handle to reset it; press R to reset the whole Bleeding system.";
-            }
-
-            if (IsVisualAggregateAnchor)
-            {
-                var help = VisualAggregateFamily switch
+                var instruction = VisualAggregateFamily switch
                 {
-                    "FatigueCurve" => "The horizontal position of LOW / MEDIUM / SEVERE is now the real 0-100 SleepinessPoints threshold (vanilla 50 / 60 / 80). Drag the stage marker horizontally to change when that stage begins, and drag AIM / RELOAD vertically to change its combat penalty. Thresholds preserve LOW <= MEDIUM <= SEVERE with the actively moved stage taking priority. LOW fatigue has no separate reload parameter.",
-                    "MasterLowHealth" => "MASTER LOW HEALTH switches the additional RegenHealthNegativeMechanics effect for the selected Base Preset. Vanilla Master enables it; Novice, Stalker and Veteran leave it disabled. The linked HEALTH RECOVERY LOSS control changes the negative regeneration effect's ValueMin and ValueMax at the existing 30-HP Master low-health boundary. 70% is the authored vanilla penalty, 0% removes this additional penalty. This does not move the activation threshold or disable the ordinary low-health system, and is separate from Health Recovery Multiplier. Switch OFF retains the child value but locks editing. Grey tick marks the 70% fixed vanilla child reference. Right-click one control to reset it; press R to reset the bundle and its penalty.",
-                    "MasterRadiationPenalty" => "MASTER RADIATION switches the additional RadiationNegativeMechanics effect for the selected Base Preset. Vanilla Master enables it; Novice, Stalker and Veteran leave it disabled. EXTRA ACTION STAMINA COST changes RadiationNegativeStaminaPenalty.ValueMin/ValueMax during the authored heavy-radiation state. Vanilla +50% means stamina-consuming actions cost 50% more while the additional penalty applies, not that passive stamina regeneration or radiation damage is altered. Exposure accumulation, recovery and harmful-state activation thresholds stay unchanged. OFF retains the child value but locks editing. The grey tick marks the child setting's 50% fixed vanilla reference. Right-click a control to reset it; R resets both.",
-                    "MasterMedicalHealing" => "The bundle switch adds or removes MasterEffectModifierNegativeMechanics from the selected Base Preset. This Master-only effect includes other food, energy-drink and artifact modifiers as well as the three healing multipliers shown here. BANDAGE, MEDKIT and ARMY MEDKIT each write their own EffectModifiers.ValueMultiplier in MasterEffectModifier, from 0% to 200% of that item's ordinary heal. 100% preserves normal healing; vanilla Master references are respectively 25%, 71% and 82%. The preview does not calculate actual restored HP because base-item healing amounts can be changed separately. Yellow rails are the current values, grey ticks the true vanilla/selected Base Preset references and the dashed center marker is the 100% normal-healing point. When the bundle is off the sliders are disabled without discarding their values. Right-click a handle to reset its multiplier, right-click the switch to reset the bundle state; R resets all four.",
-                    "SevereFatiguePenaltyBoard" => "SEVERE-FATIGUE BUNDLE toggles the additional SleepinessNegativeMechanics effect on the selected Base Preset; vanilla Master has it on, while Novice/Stalker/Veteran have it off. When OFF the five values are preserved but editing is disabled. MAX STAMINA LOSS and CARRY CAPACITY LOSS reduce their respective capacities; the carry setting adjusts both authored carry effects together. RECOIL INCREASE adds a weapon recoil penalty. AIM SWAY adjusts both native horizontal and vertical sway modifiers, while SHOT SPREAD changes the separate dispersion effect. Every control edits the mapped source CFG value independently, with grey Base Preset markers. Low/medium sleepiness and the authored severe-fatigue activation threshold remain unchanged. Right-click a handle to reset its value, right-click the toggle to reset its state, and R resets the full group.",
-                    "CoreHealthDashboard" => "The top MAX HEALTH rail changes Player.VitalParams.MaxHP and the linked FullHP boundary, in actual HP (vanilla 100). Large health-pool changes may affect game systems still assuming a 100-HP scale and need in-game testing. CONFIGURED RECOVERY DELAY edits Player.VitalParams.RegenHPDelayTimeSeconds in seconds; the exact recovery sources honoring this delay remain unverified. PASSIVE REGEN edits Player.VitalParams.RegenHP (vanilla 0, so raising it may enable passive healing, but its tick cadence is not proven). RECOVERY EFFECT SCALE edits the selected difficulty's EnvironmentDifficulty.Regen_HP and scales compatible existing regeneration effects; it does not create passive regeneration by itself. LOW-HEALTH RECOVERY RATE changes the normal positive recovery effect while low health is active; it is separate from passive RegenHP, the generic difficulty effect scaler and Master low-health penalties. Gold controls edit their own native values; grey ticks represent the selected Base Preset. No effective HP-per-second or HP-over-time simulation is asserted.",
-                    "PlayerWeaponProfile" => "YOUR WEAPONS: three independent compact horizontal controls tune your weapon damage, headshot damage and weapon jamming frequency. Each uses its original native source range and 0.25x step. A grey tick indicates the selected Base preset. Explosion damage belongs to Human Combat; it is separate from player weapon damage. Right-click one control to reset it, or R to reset all three.",
-                    "HumanCombatProfile" => "Square graph: ENEMY HEALTH on the horizontal axis, ENEMY GUN DAMAGE on the vertical axis. Drag either outer ring for one source or the center ring for both. ATTACK FREQUENCY (0.5x–2x), FIRE ACCURACY (0x–1x) and EXPLOSION DAMAGE (0x–2x) are three independent horizontal source sliders to the right, with native 0.10x steps. Explosion Damage scales the difficulty blast-damage parameter, not blast radius or player weapon damage. Grey ticks and ghost rings show the selected Base preset. Right-click resets the affected source.",
-                    "PsyPhantomPressure" => "Square Psy graph: PHANTOM CYCLE WAIT runs along the bottom; PHANTOM COUNT runs up the left. Both are independent CFG values. The bottom and left rings change one axis at a time, while the center ring changes both. PSY GEAR DAMAGE is the vertical fader to the right; BLEED is an independent toggle. A lower wait can bring abilities back sooner; it does not guarantee a precise number of phantoms per minute. Grey lines mark the Base Preset. Some Psy overrides are authored only for Master, and inserting missing difficulty entries still requires runtime validation.",
-                    "EquipmentWearBalance" => "Equipment Wear follows the same three-ring control as Human Combat: drag the bottom ring left/right to change only Armor Toughness (real 0.10–2.00x CFG scale), the left ring up/down to change only Player Weapon Wear Per Shot (0–2.00x), or the center ring in both directions to change both sources together. All three rings use the same hover and drag affordances. The gold X/Y guidelines show current values; grey dashed lines show the selected Base Preset. Hovering does not recolor labels or values. Each axis displays its current multiplier alongside its title; only changed numbers turn gold. Higher armor scalar means generally tougher armor, but an exact armor condition-loss formula has not been proven. Weapon Wear scales per-weapon authored DurabilityDamagePerShot. Right-click an outer ring to reset its source, right-click the center to reset both, or press R to reset both.",
-                    "BleedingTreatmentMixer" => "Drag the four faders on the shared 0–200% of vanilla scale. The 100% line is each item's own vanilla bleeding removal; the raw bleeding value stays visible under the relative value.",
-                    "ConsumableMixer" => "INSTANT STAMINA BURST previews the authored Water 38%, Energy 50% and Limited Energy 100% refills under one multiplier. SUSTAINED STAMINA separately scales Water's authored +25% regeneration / 10% action-cost reduction and Energy Drink's +200% regeneration without changing their durations. ALCOHOL RADIATION CLEANUP previews Beer 10 and Vodka 50 radiation points removed. TIMED EFFECTS share one real seconds axis: Water keeps its 5 s / 30 s timing pair, Energy keeps 45 s / 15 s / 5 s, Vodka and Beer use 20 s stamina penalties, and Magic Vodka uses 90 s psi protection. Drag any gold handle to tune that family. Drunkenness is separate.",
-                    "SleepingDashboard" => "Tune the sleep threshold, minimum sleep duration, health restore and stamina restore directly in the Sleeping dashboard.",
-                    "HungerLadder" => "HUNGER BUILD-UP is the independent hunger-speed control. The Hunger Points preview remains a read-only summary. In HUNGER SURVIVAL PROFILE, the yellow STEPS represent discrete hunger-state effects, not a continuous interpolated curve. LOW moves left/right to set the first hunger threshold and has no separate stamina-recovery penalty. MEDIUM and SEVERE have two-axis gold rings: left/right determines WHEN the stage starts; up/down determines HOW MUCH stamina recovery that stage removes. The WELL-FED vertical bonus control is visually separated on the left. Values are always labeled in dedicated lanes. Grey dashed steps and ghost rings show the Base Preset. Native CFG values, snapping, threshold ordering and right-click reset remain unchanged.",
-                    "StarvationTimeline" => "The 50-second preview starts when severe hunger activates. Drag PENALTIES START to set the grace period and 1ST DAMAGE to change the repeating damage interval; later tick marks move with it. The three lower meters tune extra action stamina cost, HP per tick and health-recovery loss. DAMAGE PRESSURE shows the resulting average HP loss per second.",
-                    "RepeatedHitBand" => "The gold CURRENT envelope shows the weaker MIN and stronger MAX ends of repeated-hit protection; the dashed VANILLA envelope is the Base Preset reference. These 0.00–1.00 values are curve weights, not literal damage-reduction percentages. Drag MIN or MAX directly; the endpoint you move has priority and the other follows only if needed to keep MIN ≤ MAX. The toggle controls whether healed damage remains in the protection tracker.",
-                    "RadiationBalance" => "Tune NATURAL CLEARANCE and EXPOSURE GAIN independently on their real parameter scales. RELATIVE TUNING BIAS compares each value only against its own Base Preset reference, so it shows whether your tuning leans toward faster build-up or stronger clearance without pretending to be a literal net radiation rate. HEALTH DAMAGE below scales all radiation-damage stages while their vanilla thresholds stay unchanged.",
-                    "CouponFlow" => "STARTING COUPONS sets PlayerStartingMoney only when a new game initializes; it is not an existing-save wallet editor. MAIN QUEST REWARDS and SIDE QUEST REWARDS are independent difficulty-profile coupon reward multipliers. Each horizontal card preserves its own native source limits, reference and steps.",
-                    "TradingDashboard" => "YOU SELL uses EconomyDifficulty.BuyCondition when traders buy from the player; YOU BUY uses EconomyDifficulty.SellCondition when traders sell to the player. These are independent difficulty settings, not exact final shop prices. The acceptance gate sets minimum weapon and armor condition. Broken Item Value is the share of source base price retained at zero durability.",
-                    "RepairCurve" => "Four horizontal source controls set reputation-specific repair modifiers. Values above 1x add a surcharge; below 1x give a discount. The original linked rule is FRIENDLY <= NEUTRAL <= DISLIKED <= HOSTILE. Moving one slider has priority and nearby linked values move only when necessary. These are modifiers, not final repair bills.",
-                    "BlastDamageBoard" => "EXPLOSION DAMAGE is the selected vanilla difficulty's explosion-damage multiplier for grenades and other blast effects. The slider edits the real 0-2x source value, with a grey marker at the selected Base Preset. The impact band visualizes only the difference between current and Base Preset settings, not actual HP damage or blast radius. This setting is separate from player gun damage and NPC gun damage.",
-                    "PhysicalLimits" => "MAXIMUM VAULT HEIGHT changes the source's absolute traversal limit in Unreal units (uu), with the catalog's player-height markers retained in the rationale/technical reference. MAXIMUM CARRY WEIGHT sets the default inventory mass limit in kilograms. They are independent engine settings grouped as movement limits, not converted into a movement-speed or stamina formula. Right-click a track to reset one; R resets both.",
-                    "TraderStockBoard" => "TRADER AMMO and MEDIC SUPPLIES are independent horizontal quantity-multiplier controls, each 0.25x–3x in 0.25x steps. Ammo and medical source stock populations remain separate; rank, availability, chance and restock rules stay unchanged.",
-                    "ServiceCostsBoard" => "Three independent horizontal controls tune guide fast-travel route prices, the difficulty-specific upgrade scalar, and the global BaseRepairCostModifier. The latter is shown as source percentage (70% vanilla); it remains separate from reputation-specific repair modifiers. The original 0.01 source steps and reference values are preserved.",
-                    "ItemWeightBoard" => "Two compact, independent horizontal sliders scale existing Ammo Weight and Food & Medicine Weight. Each uses the real 0–2x source range with 0.01x increments, preserving item-to-item mass differences. Neither slider changes Maximum Carry Weight, consumable effects or weapon durability. Drag or click the track, right-click a track to reset that value, and press R to reset both. The grey tick is the reference setting; it is not a separate editable parameter.",
-                    "AnomalyGlobalDamage" => "One source-bound horizontal control sets the selected difficulty's broad EnvironmentDifficulty.Anomaly_Damage multiplier (0–2.5x). Individual anomaly damage values remain separate and contribute before player protection is applied. Grey reference tick is the selected vanilla baseline; right-click resets this control.",
-                    "FlycatcherSlowdown" => "Three Combat-style circular handles edit two real retained-speed values. BOTTOM adjusts movement remaining (0–100%); LEFT adjusts turning remaining (0–100%, applied to both yaw and pitch); CENTER moves both independently with its horizontal and vertical directions. More remaining speed means less slowdown. Vanilla is 50% movement and 30% turn. The writer preserves original negative CFG offsets using UI minus 1. Right-click the center resets both; right-click one outer ring resets only its axis; R resets this Flycatcher family.",
-                    "AnomalySpecialEffects" => "Three independent source-bound horizontal controls: Razor Bleeding (0–2x) scales low- and high-speed bleeding tiers; Diamond Bleeding (0–20 native bleeding points, 0.5-point ticks) changes the authored bleeding magnitude; Psy Drain Intensity (0–2x) scales the existing negative Psy-point regeneration effect. None is a synthetic total-damage preview. Each right-click resets its source; R resets all three.",
-                    "NpcLootLoadout" => "EXTRA CORPSE LOOT is a genuine three-choice package selector: Medicine + Ammo, Water or None. MEDICAL DROPS edits normal NPC medical frequency. NPC AMMO edits only 43 counts inside a source-derived TCD_NPC_Ammo_Smart clone (24 groups/4 rank blocks), linked exclusively to the selected Base difficulty when Medicine + Ammo is enabled; otherwise its value is retained but inactive. NPC AMMO has no effect on weapon-attached ammo or Breakable Boxes. The Newbie sample counts below the rail are 12 GA 2-6, 5.45 15-20 and .45 ACP 8-12, scaled with integer-half-up. WEAPON CONDITION uses two independently selectable nearest-handle MIN and MAX controls over 0-100%, with native 1% steps. Equal handles remain independently accessible. The 25-50% vanilla band preserves the one 35-45% outlier until changed. Right-click resets the source under the pointer; R resets this four-source family.",
-                    "WorldLootLayout" => "WORLD WEAPON SHUFFLE reshuffles only audited compatible regular weapon locations and retains every one of the 36 regular weapon models. WEAPON DENSITY changes how many compatible locations stay occupied; even at 0% the authored allocator keeps one of every regular weapon model. Density is editable only when World Weapon Shuffle is ON; switching shuffle OFF preserves its stored value without applying it. ATTACHMENT SHUFFLE independently changes compatible loose attachment placements, REMOVE WORLD DETECTORS removes supported non-quest detectors, and BLUEPRINT SHUFFLE independently redistributes supported blueprint locations. UNIQUE WEAPON SHUFFLE independently redistributes all nine audited loose unique pickups across their nine original positions, without removing any of them. The five toggles neither trigger nor change each other. Right-click one toggle or the density track to restore only its Base Preset value; R resets all six settings.",
-                    "StashRewardProfile" => "Three independent vertical faders: Basic Stash RGD-5 drop chance (0-100%, 5-percentage-point source steps), Basic RGD-5 quantity if the roll succeeds (0-4 grenades, one-count steps), and eligible Rare Stash coupon chance (0-100%, 1-percentage-point steps). The coupon Base Preset varies by selected difficulty. Chance never changes stored quantity, and quantity never changes chance or stash eligibility. Select any channel to inspect its rationale, drag the fader to edit, click its grey Base tick or right-click to reset just that source, or press R to reset all three.",
-                    "BreakableBoxYields" => "Two independent vertical faders adjust ammunition and grenade contents in existing breakable boxes, not the number of boxes or the types of loot. AMMO YIELD uses its native 0.25x absolute steps (0.5x to 2x); GRENADE YIELD uses 0.5x absolute steps (0.5x to 2x). Each retains its separate writer route and selected Base Preset marker. Drag to adjust, click grey marker to snap to Base, right-click to reset one, or press R to reset both. Click a channel for its own rationale.",
-                    "AmmoDistribution" => "The SNG and NATO bars show normalized weight share inside each authored breakable-ammo pool, not global box drop chance. SNG contains A918D + A919D under the shared 9x18/9x19 control plus A545D and A012D, so vanilla weight share is 50/25/25. NATO contains one .45, 9x19, 5.56 and 12 Gauge entry, so vanilla is 25/25/25/25. The four tracks scale existing Weight=2 entries from 0x to 3x; no new ammo candidates are created. SNG must always keep at least one of 9x18/9x19, 5.45/5.56 or 12 Gauge above 0x.",
-                    _ => "Click or drag the visual controls to tune the linked gameplay values."
+                    "HumanCombatProfile" => "Drag the bottom ring for enemy health, the left ring for gun damage, or the center ring for both. Adjust attack frequency, accuracy and blast damage on their own tracks.",
+                    "EquipmentWearBalance" => "Drag the bottom ring for armor toughness, the left ring for weapon wear, or the center ring to change both.",
+                    "PsyPhantomPressure" => "Drag the bottom or left ring to change one Psy axis; drag the center to move both. The gear-damage fader and bleeding switch work separately.",
+                    "FlycatcherSlowdown" => "Drag the bottom ring to change movement speed, the left ring for turning speed, or the center to adjust both.",
+                    "HungerLadder" => "Move a hunger stage left or right to change when it starts. Move MEDIUM or SEVERE up or down to adjust its stamina penalty; WELL-FED has its own control.",
+                    "FatigueCurve" => "Choose the sleepiness threshold or combat penalty you want to change, then drag its own track. The stage preview shows the effect of those settings.",
+                    "RadiationBalance" => "Use the separate tracks for radiation build-up, natural clearance and health damage. The balance preview is read-only.",
+                    "BleedingTreatmentMixer" => "Drag the Bandage or Medkit track to change its bleeding removal. The comparison graphic is a preview, not another slider.",
+                    "StarvationTimeline" => "Adjust when penalties begin, how often damage ticks occur and the three penalty strengths using their individual controls. The timeline is a preview.",
+                    "RepeatedHitBand" => "Drag MIN or MAX to shape repeated-hit protection. Use the switch to decide whether healed damage stays in the tracker.",
+                    "ConsumableMixer" => "Drag the four strength tracks or one of the drink-duration faders. The resulting drink statistics update automatically.",
+                    "SleepingDashboard" => "Drag each track to set when sleeping is allowed, minimum sleep time and how much health or stamina sleep restores.",
+                    "CoreHealthDashboard" => "Drag the relevant health or recovery track. Each track changes its own setting; the other values stay independent.",
+                    "StaminaCore" => "Drag the stamina, recovery, vaulting or carry-weight track you want to change.",
+                    "WaterStaminaPressure" => "Drag the MEDIUM WATER or DEEP WATER track separately.",
+                    "PhysicalLimits" => "Drag one track for vault height and the other for carrying capacity.",
+                    "SevereFatiguePenaltyBoard" => "Switch the severe-fatigue bundle on or off, then adjust each of its five penalty tracks independently.",
+                    "MasterLowHealth" => "Switch the extra low-health rule on or off; adjust HEALTH RECOVERY LOSS while the bundle is enabled.",
+                    "MasterRadiationPenalty" => "Switch the extra radiation rule on or off; adjust its action-stamina penalty while enabled.",
+                    "MasterMedicalHealing" => "Switch the Master effect bundle on or off; adjust the Bandage, Medkit or Army Medkit healing tracks independently.",
+                    "CouponFlow" => "Drag the starting-coupons track or either quest-reward track. Each uses its own scale.",
+                    "TradingDashboard" => "Adjust YOU SELL, YOU BUY, minimum accepted item condition and broken-item value independently.",
+                    "RepairCurve" => "Drag the repair-price track for each reputation level. Linked values follow only when needed to keep their order.",
+                    "BlastDamageBoard" => "Drag the explosion-damage track. The impact band shows the relative change; it is not another input.",
+                    "TraderStockBoard" => "Drag the trader-ammo or medic-stock track. They change different supplies.",
+                    "ServiceCostsBoard" => "Use the separate tracks for guides, upgrades and base repair cost.",
+                    "ItemWeightBoard" => "Drag AMMUNITION WEIGHT or FOOD & MEDICINE WEIGHT independently.",
+                    "AnomalyGlobalDamage" => "Drag the global anomaly-damage track. Individual anomaly strengths are edited in their separate panel.",
+                    "AnomalySpecialEffects" => "Drag the Razor, Diamond or Psy track you want to change; each is independent.",
+                    "NpcLootLoadout" => "Choose an Extra Corpse Loot option, drag the medical or ammo track, or move the weapon-condition MIN/MAX handles. The ammo numbers update as you change the setting.",
+                    "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
+                    "StashRewardProfile" => "Drag the BASIC, STANDARD or RARE ammo-amount track, or adjust the grenade and coupon reward controls separately.",
+                    "AmmoDistribution" => "Drag AMMO YIELD or GRENADE YIELD for quantities; use the four ammo-family tracks to change the mix. The colored SNG/NATO bars are read-only previews.",
+                    "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
+                    "PlayerWeaponProfile" => "Drag WEAPON DAMAGE, HEADSHOT DAMAGE or JAM FREQUENCY independently.",
+                    "HumanGroupSizeRadar" => "Drag a rank track to set its human squad cap.",
+                    _ => "Select a setting and click or drag its control. Each active handle edits its own value."
                 };
-
-                return "CONTROLS" + Environment.NewLine +
-                       help + Environment.NewLine +
-                       "Right-click an individual handle/track to restore that value to the Base Preset. Press R while the control is focused to restore the whole visual group.";
+                return instruction + Environment.NewLine
+                    + "Right-click a control to reset that setting. Press R with the panel focused to reset the group.";
             }
 
-            if (IsSpecialAbilityCooldownAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "DAMAGE FROM MUTANTS and ATTACK FREQUENCY are independent global source sliders. The eight SPECIAL ABILITY RECHARGE cards show the reciprocal of each native cooldown wait multiplier: displayed recharge speed = 1 / source wait multiplier. Moving right or pressing Right/Up makes an ability ready sooner by reducing its underlying wait-time source; for example 0.5x wait means 2x recharge speed. This is relative recharge pacing, not guaranteed special attacks per second. Source CFG values, original native 0.10x steps, endpoints, selected-difficulty reference ticks and preset data remain unchanged. Vanilla Master explicitly uses a 0.5x cooldown reference; adding absent overrides for other difficulties still requires in-game validation. Right-click resets a single source; R resets all ten Mutant Combat sources.";
-            }
-
-            if (IsActionCostAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "STAMINA USAGE edits six independent actual one-time movement/melee stamina costs. Source values are mapped onto a relative 0–2x rail while each live number remains raw SP. NORMAL MELEE cannot exceed STRONG MELEE. Right-click resets one action, R resets all six.";
-            }
-
-            if (IsExhaustionRecoveryAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "SPRINT LOCK and RECOVERY BELOW share a 0–60 SP ruler but edit independent native thresholds (0–32.2 SP and 1–60 SP). Aiming slows regeneration continuously; RESTART DELAY, RECOVERY BOOST and BOOST DURATION edit their individual native sources. Muted ruler tails beyond actual source bounds are not interactive. Right-click resets one source, R resets these six only.";
-            }
-
-            if (IsMedicalHealingAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "MEDICAL HEALING edits the actual HP restored by Bandage, Medkit, Army Medkit and Scientific Medkit. Each item has fine-tuning buttons (- / +) and quick HALF, NORMAL (selected vanilla difficulty) and MAX settings; keyboard arrows adjust the selected item by its original CFG step. A yellow HP number marks a modified healing value. Food Restores Health controls ordinary Bread, Fresh Bread, Canned Food and Sausage HP restoration; it does not change satiety or Weird Kettle effects. Bandage, Medkit and Army Medkit can be affected separately by Master-only consumable modifiers; Scientific Medkit is not in that subset. Right-click an item or the food switch to reset it, or press R to reset this entire board. No separate preview is shown.";
-            }
-
-            if (IsStashAmmoAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "BASIC, STANDARD and RARE each have an independent 0.25x–2x ammo-quantity multiplier. The live sample rows show resulting MinCount–MaxCount round stacks using the same positive round-half-up rule as the writer. These controls change stack amounts only: ammo membership, selection weights, rank gates and progression stay vanilla. Right-click one tier track to reset only that stash tier; press R to reset all three ammo-amount tiers.";
-            }
-
-            if (IsWorldLootRemovalAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "Each row removes an audited physical world-loot population from 0% VANILLA to 100% REMOVED. BASE and +DLC1 show the audited eligible actor populations; ≈ REMOVED / REMAIN are percentage-derived estimates, while the actual actor set is chosen randomly without replacement when you build. Dedicated F1 boxes are their own population, but the broader Ammo Boxes removal can further reduce F1 boxes that survive that row. Right-click one track to reset only that category; press R to reset the whole world-loot depletion board.";
-            }
-
-            if (IsMutantDropAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "All fourteen mutant-part rows use one real 0–100% probability scale. The gold value is the current absolute drop chance per eligible kill, the grey tick is that mutant's vanilla chance, and ≈N/100 shows the large-sample expected number of successful one-part drops per 100 eligible kills. These controls do not change mutant spawns, health, part value or progression. Right-click one track to reset only that mutant; press R to reset the whole drop-probability board.";
-            }
-
-            if (IsIndividualAnomalyDamageAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "Eleven compact damage rows edit eleven existing per-anomaly CFG sources. A row displays its source value: most use raw damage units and Razor Health Damage uses a 0–2x multiplier. The rail position is relative to that row's own fixed vanilla reference (0–200% of source vanilla); it is never a final post-protection HP loss calculation. Global Anomaly Damage is a separate upstream difficulty multiplier and player protections resolve later. Drag or click a row's rail to set that one source at its native step; click the row to show its specific rationale at right. Right-click resets one row and R resets all eleven.";
-            }
-
-            if (IsItemPriceScalerAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "CONSUMABLES, AMMO, ARMOR, WEAPONS and ARTIFACTS are separate 0x–2x difficulty category-cost multipliers. MUTANT PARTS is a sixth horizontal control that scales authored ItemPrototypes Cost values (not a trader payout calculation). Each value uses its original native 0.01x step, own source reference and reset behavior.";
-            }
-
-            if (IsMutantHealthAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "Each mutant row shows its live MaxHP, the vanilla HP marker on a shared absolute 0–7500 HP bar, and a direct 0.05x–2x multiplier track. Gold HP is the current result; vN is the vanilla reference. Bloodsucker also shows the Mist Bloodsucker result because both MaxHP targets share the same multiplier. Right-click a multiplier track to reset only that mutant family; press R to reset the whole health roster.";
-            }
-
-            if (IsMutantGroupSizeAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "Fourteen alphabetically ordered species cards form a compact two-column bank. Each row has its own 0.25–3x multiplier (0.05x native steps) and the four current squad caps for player ranks N / E / V / M. Gold is reserved for a multiplier or an individual resulting cap that differs from that source's reference, while authored 0 caps remain 0. Drag the track to edit that species and select its rationale. Right-click its track to reset one species; press R to reset all fourteen. These are Director encounter caps, not spawn frequency, lair size or respawn speed.";
-            }
-
-            if (IsHumanGroupSizeAnchor)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "Four source-backed cards edit the maximum human squad size separately at NEWBIE, EXPERIENCED, VETERAN and MASTER player rank. Each displays the current integer MAX SQUAD cap prominently and its live 0.25–3x multiplier, with the selected reference tick on the compact 0.05x-step track. Only caps or multipliers actually differing from reference turn gold; unchanged references remain neutral. Drag or click a track to edit that rank and select its rationale. Right-click resets that rank; press R to reset all four. This does not alter overall NPC population, lairs or encounter frequency.";
-            }
+            if (IsDrunkennessMember)
+                return "Drag BEER or VODKA to change that drink's intoxication strength. The stages update in the preview."
+                    + Environment.NewLine + "Right-click one drink to reset it; R resets both.";
+            if (IsBleedingCurveMember)
+                return "Drag the bleeding and recovery tracks, or move the threshold/damage handles on the curve."
+                    + Environment.NewLine + "Right-click a handle to reset it; R resets the bleeding group.";
+            if (IsSpecialAbilityCooldownMember)
+                return "Drag a mutant's ability-recharge fader. Moving toward faster recharge reduces the wait between uses."
+                    + Environment.NewLine + "Right-click one fader to reset it; R resets the recharge group.";
+            if (IsActionCostMember)
+                return "Drag an action's track to change how much stamina that move costs."
+                    + Environment.NewLine + "Right-click one track to reset it; R resets all Stamina Usage actions.";
+            if (IsExhaustionRecoveryMember)
+                return "Drag SPRINT LOCK, RECOVERY BELOW or one of the recovery tracks to tune that setting."
+                    + Environment.NewLine + "Right-click a track to reset it; R resets the recovery group.";
+            if (IsMedicalHealingMember)
+                return "Use − / + for fine tuning, or HALF, NORMAL and MAX for quick healing values. The food switch is separate."
+                    + Environment.NewLine + "Right-click an item to reset it; R resets the whole healing group.";
+            if (IsStashAmmoMember)
+                return "Drag BASIC, STANDARD or RARE to change the ammo stacks shown in the preview."
+                    + Environment.NewLine + "Right-click one tier to reset it; R resets all three.";
+            if (IsWorldLootRemovalMember)
+                return "Drag one box or loose-loot track: left keeps more pickups, right removes more."
+                    + Environment.NewLine + "Right-click one category to reset it; R resets all five.";
+            if (IsMutantDropMember)
+                return "Drag a mutant's track to change its part-drop chance."
+                    + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
+            if (IsIndividualAnomalyDamageMember)
+                return "Drag an anomaly's track to adjust that anomaly's damage."
+                    + Environment.NewLine + "Right-click one row to reset it; R resets all eleven.";
+            if (IsItemPriceScalerMember)
+                return "Drag a category's price track to tune its multiplier."
+                    + Environment.NewLine + "Right-click one category to reset it; R resets the price group.";
+            if (IsMutantHealthMember)
+                return "Drag a mutant's multiplier track; its resulting HP updates beside it."
+                    + Environment.NewLine + "Right-click one mutant to reset it; R resets the health roster.";
+            if (IsHumanGroupSizeMember)
+                return "Drag NEWBIE, EXPERIENCED, VETERAN or MASTER to set that rank's maximum human squad size."
+                    + Environment.NewLine + "Right-click one rank to reset it; R resets all four.";
+            if (IsMutantGroupSizeMember)
+                return "Drag the track for a mutant species; its four player-rank squad caps update together."
+                    + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
 
             if (IsRange)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "Mouse: drag MIN and MAX to choose the range. Click a vanilla marker to copy that vanilla setting. Right-click either slider to return the whole range to your Base Preset." + Environment.NewLine +
-                       "Keyboard: choose MIN or MAX, use Arrow keys for small changes, Page Up/Down for larger changes, and Home/End for the lowest/highest allowed setting.";
-            }
-
+                return "Drag MIN or MAX to choose the range. Use Arrow keys for small changes and Home/End for the limits."
+                    + Environment.NewLine + "Right-click the range to reset it.";
             if (IsChoiceSlider)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "Mouse: drag or click the slider to choose an option. Click a vanilla marker to copy that vanilla choice. Right-click the slider to return to your Base Preset." + Environment.NewLine +
-                       "Keyboard: use Arrow keys to move one choice at a time, Page Up/Down to move faster, and Home/End to jump to the first/last choice.";
-            }
-
+                return "Click or drag to pick an option. Use Arrow keys to cycle through the choices."
+                    + Environment.NewLine + "Right-click to reset the selection.";
             if (IsToggle)
-            {
-                return "CONTROLS" + Environment.NewLine +
-                       "Mouse: click the switch to turn this gameplay rule on or off." + Environment.NewLine +
-                       "Keyboard: focus the switch and press Space to toggle it.";
-            }
-
-            return "CONTROLS" + Environment.NewLine +
-                   "Mouse: drag or click the slider to change the setting. Click a vanilla marker to copy that vanilla setting, scroll over the number on the right to fine-tune it, and right-click the slider or number to return to your Base Preset." + Environment.NewLine +
-                   "Keyboard: use Arrow keys for small changes, Page Up/Down for larger changes, and Home/End for the lowest/highest allowed setting.";
+                return "Click to turn the rule ON or OFF. Press Space when the switch is focused."
+                    + Environment.NewLine + "Right-click to restore its starting setting.";
+            return "Click or drag the track to tune the value. Arrow keys adjust it in small steps; Home/End jump to its limits."
+                + Environment.NewLine + "Right-click the track to reset it.";
         }
     }
     public string Logic => Definition.Logic;
