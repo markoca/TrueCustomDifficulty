@@ -234,7 +234,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
         base.OnKeyDown(e);
         if (e.Key == Key.R)
         {
-            foreach (var p in _items) p?.ResetToReference();
+            foreach (var item in _items) item?.ResetToReference();
             InvalidateVisual();
             e.Handled = true;
             return;
