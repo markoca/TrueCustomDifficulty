@@ -371,14 +371,13 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
         }
         else
         {
-            // On recharge cards the right/up arrow means a shorter wait.
-            // Snap the *source* wait to its unchanged 1x-anchored tick grid.
-            var native = selected.CurrentNumber - direction * selected.TickFrequency;
-            selected.CurrentNumber = Math.Clamp(
-                1.0 + Math.Round((native - 1.0) /
-                    Math.Max(Epsilon, selected.TickFrequency),
-                    MidpointRounding.AwayFromZero) * selected.TickFrequency,
-                selected.Minimum, selected.Maximum);
+            // 0.25x is a step in the PLAYER'S RECHARGE RATE, not in the
+            // native reciprocal cooldown wait. Arrows move one visible tick.
+            var rate = RechargeRate(selected.CurrentNumber)
+                + direction * selected.TickFrequency;
+            var boundedRate = Math.Clamp(rate,
+                RechargeRate(selected.Maximum), RechargeRate(selected.Minimum));
+            selected.CurrentNumber = 1.0 / boundedRate;
         }
 
         _status.Clear();
@@ -397,12 +396,20 @@ public sealed class SpecialAbilityCooldownRadar : FrameworkElement
                     Math.Max(1.0, target.MapRect.Width), 0.0, 1.0) *
                 (parameter.Maximum - parameter.Minimum)
             : XToSourceWait(point.X, parameter, target.MapRect);
-        var tick = Math.Max(parameter.TickFrequency, Epsilon);
-        // Align discrete multiplier steps with vanilla 1.00x. The old
-        // minimum-anchored grid at 0.25x excluded 1.00x for 0.10x steps.
-        var snapped = 1.0 + Math.Round((raw - 1.0) / tick, MidpointRounding.AwayFromZero) * tick;
-
-        parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
+        if (row < 2)
+        {
+            // Ordinary mutant damage/attack tracks still snap in source space.
+            var tick = Math.Max(parameter.TickFrequency, Epsilon);
+            var snapped = 1.0 + Math.Round((raw - 1.0) / tick,
+                MidpointRounding.AwayFromZero) * tick;
+            parameter.CurrentNumber = Math.Clamp(snapped, parameter.Minimum, parameter.Maximum);
+        }
+        else
+        {
+            // ParameterViewModel snaps the reciprocal RECHARGE display to the
+            // 0.25x rate grid, so mouse input matches arrow keys and presets.
+            parameter.CurrentNumber = raw;
+        }
         _status.Clear();
         InvalidateVisual();
     }
