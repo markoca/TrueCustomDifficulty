@@ -14,6 +14,7 @@ internal static class Program
     private static readonly ParameterCatalog Catalog = new ParameterCatalogService().Load();
     private static readonly List<string[]> WeaponPool = Csv("world-weapon-shuffle-pool.csv", 3);
     private static readonly List<string[]> WeaponDirect = Csv("world-weapon-direct-manifest.csv", 7);
+    private static readonly List<string[]> UniqueWeapons = Csv("loose-unique-weapon-shuffle-manifest.csv", 8);
     private static readonly List<string[]> WeaponGenerator = Csv("world-weapon-shuffle-manifest.csv", 15);
     private static readonly List<string[]> AttachmentPool = Csv("world-attachment-shuffle-pool.csv", 3);
     private static readonly List<string[]> AttachmentDirect = Csv("world-attachment-direct-manifest.csv", 7);
@@ -59,7 +60,11 @@ internal static class Program
             Case("Veteran",true,false,null,false,true,true,"detectors-and-blueprints");
             Case("Veteran",true,false,null,true,true,false,"detectors-and-attachments");
             Case("Veteran",true,true,0.5,false,true,false,"weapons-and-detectors");
-            Check(Passed==20,"Expected 20 world-weapon, attachment, blueprint and detector production writer scenarios");
+            Case("Veteran",false,false,null,false,false,false,"unique-only",unique:true);
+            Case("Veteran",true,false,null,false,false,false,"unique-with-dlc",unique:true);
+            Case("Veteran",false,true,0.5,false,false,false,"unique-and-regular",unique:true);
+            Case("Veteran",true,false,null,true,true,true,"unique-and-other-placement",unique:true);
+            Check(Passed==24,"Expected 24 world-placement production writer scenarios including unique weapon shuffle");
             Console.WriteLine($"PASS: {Passed} World Loot placement production BPatch scenarios");
             Console.WriteLine("NOT VERIFIED: original physical manifest ZIP provenance, Unreal loading, gameplay");
             return 0;
@@ -75,6 +80,12 @@ internal static class Program
             "Attachment inventory drift");
         Check(Blueprint.Count==77 && DetectorDirect.Count==7 && DetectorStash.Count==1,
             "World blueprint or detector inventory drift");
+        Check(UniqueWeapons.Count==9 &&
+            UniqueWeapons.Select(x=>x[3]).Distinct(StringComparer.Ordinal).Count()==9 &&
+            UniqueWeapons.Select(x=>x[4]).Distinct(StringComparer.Ordinal).Count()==9,
+            "Exact nine-weapon original source shuffle set changed");
+        Check(!UniqueWeapons.Any(x=>WeaponDirect.Any(w=>w[3]==x[3])),
+            "Unique weapons must never overlap regular weapon shuffle actor surface");
         Check(WeaponDirect.Count(x=>x[0]=="baseGame")==282 &&
             WeaponDirect.Count(x=>x[0]=="dlc1")==80,"Weapon source DLC split");
         Check(AttachmentDirect.Count(x=>x[0]=="base")==5 &&
@@ -104,13 +115,13 @@ internal static class Program
             Check(fields.All(index => string.IsNullOrWhiteSpace(row[index])),
                 "Weapon generator manifest misattributes nested upgrade/attachment values to the item: " + sid);
         }
-        var ids=new[]{"loot.worldWeaponShuffle","loot.worldWeaponDensity",
+        var ids=new[]{"loot.worldWeaponShuffle","loot.looseUniqueWeaponShuffle","loot.worldWeaponDensity",
             "loot.worldAttachmentShuffle","loot.worldDetectors","loot.blueprintShuffle"};
         var vm=new MainViewModel(Catalog);
         Check(ids.All(id=>vm.AllParameters.Any(p=>p.Id==id)),"World placement control missing from actual ViewModel");
         Check(ids.Where(id=>id!="loot.worldWeaponDensity").All(id=>
             vm.AllParameters.Single(p=>p.Id==id).IsToggle),
-            "Original four world toggles must remain booleans");
+            "All five world placement toggles must remain booleans");
         Check(vm.AllParameters.Single(p=>p.Id=="loot.worldWeaponDensity").IsSlider,
             "World weapon density must stay dependent slider");
         Check(WeaponPool.Select(p=>p[0]).Distinct(StringComparer.Ordinal).Count()==36 &&
@@ -119,7 +130,7 @@ internal static class Program
     }
 
     private static void Case(string difficulty,bool dlc,bool weapons,double? density,
-                             bool attachments,bool detectors,bool blueprints,string label)
+                             bool attachments,bool detectors,bool blueprints,string label,bool unique=false)
     {
         var root=Path.Combine(Keep??Path.GetTempPath(),"TCD_World_Placement",Passed+"-"+label+(dlc?"-dlc":"-base"));
         try
@@ -136,6 +147,7 @@ internal static class Program
                 Check(p.IsValueModifiedFromReference(),label+": unable to toggle "+id);
                 active.Add(id);
             }
+            Toggle("loot.looseUniqueWeaponShuffle",unique);
             Toggle("loot.worldWeaponShuffle",weapons);
             Toggle("loot.worldAttachmentShuffle",attachments);
             Toggle("loot.worldDetectors",detectors);
@@ -162,6 +174,7 @@ internal static class Program
             var allowedRemovals=new HashSet<string>(StringComparer.Ordinal);
             var allowedRefs=new HashSet<string>(StringComparer.Ordinal);
             if(weapons)CheckWeapons(dlc,density??1.0,documents,allowedFields,allowedRemovals);
+            if(unique)CheckUniqueWeapons(documents,allowedFields);
             if(attachments)CheckAttachments(dlc,documents,allowedFields,allowedRefs);
             if(detectors)CheckDetectors(dlc,documents,allowedRemovals);
             if(blueprints)CheckBlueprints(documents,allowedFields);
@@ -188,6 +201,40 @@ internal static class Program
             Passed++;
         }
         finally{if(Keep is null && Directory.Exists(root))Directory.Delete(root,true);}
+    }
+
+    private static void CheckUniqueWeapons(Dictionary<string,Parsed> docs, HashSet<string> fields)
+    {
+        Check(UniqueWeapons.Count == 9, "Unique weapons manifest must contain exactly nine slots");
+        var original = UniqueWeapons.ToDictionary(x => x[4], x => x, StringComparer.Ordinal);
+        var observed = new List<string>();
+        foreach (var row in UniqueWeapons)
+        {
+            var file = ActorFile(row[1], row[2], row[3]);
+            var root = row[3];
+            Check(docs.TryGetValue(file, out var doc), "Missing unique weapon actor patch " + file);
+            Check(doc!.Removed.Count == 0, "Unique shuffle must never emit removenode " + file);
+            Check(doc.MergedNodes.SetEquals(new[] { root }), "Unique actor must use bpatch " + file);
+
+            var assigned = doc.Field(root + "/SpawnedPrototypeSID");
+            var item = doc.Field(root + "/ItemSID");
+            Check(assigned is not null && assigned == item && assigned != row[4],
+                "Unique shuffle must change both identity fields without keeping vanilla " + file);
+            Check(original.TryGetValue(assigned!, out var originalWeapon),
+                "Unknown unique weapon model assigned " + file);
+            Check(doc.Field(root + "/MeshPath") == originalWeapon![5] &&
+                  doc.Field(root + "/Durability") == originalWeapon[6] &&
+                  doc.Field(root + "/DisablePhysicsAndCollision") == originalWeapon[7],
+                "Unique weapon identity and authored presentation must move as one tuple " + file);
+            foreach (var name in new[] {
+                "SpawnedPrototypeSID", "ItemSID", "MeshPath", "Durability", "DisablePhysicsAndCollision"
+            })
+                fields.Add(file + "|" + root + "/" + name);
+            observed.Add(assigned);
+        }
+        Check(observed.OrderBy(x=>x,StringComparer.Ordinal)
+                .SequenceEqual(original.Keys.OrderBy(x=>x,StringComparer.Ordinal)),
+            "Unique weapon shuffle lost or duplicated an authored weapon");
     }
 
     private static void CheckDetectors(bool dlc,Dictionary<string,Parsed> docs,
