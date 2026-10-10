@@ -47,3 +47,9 @@ Selected actors are emitted as per-actor SpawnActor override files containing:
 ```
 
 This is the same removal mechanism used by the audited World Ammo/Food/Medical Box controls. The control remains `runtime_test_required` until an in-game build confirms the expected behavior. Existing/explored save state may already contain instantiated actors, so a new game or unexplored area is the correct validation target.
+
+### 2026-10-10 — Loose Unique Weapons source-backed depletion control
+
+The World Loot Depletion board now includes a sixth compact native 0–100% slider, **LOOSE UNIQUE WEAPONS**, in the previously unused sixth 2-column cell. The parameter `loot.looseUniqueWeaponsRemoved` is independent of `loot.looseWorldLootRemoved` and World Weapon Shuffle. It removes a build-time rounded random subset of **nine exact SpawnActor IDs** (not every occurrence of the ItemSID). At 0%, no files are emitted; at 100%, all nine listed actors are removed. Original source: GameData SpawnActorPrototypes, WorldMap_WP, true start, Item spawn, matching ItemSID/SpawnedPrototypeSID. Both base and DLC1 QuestNodePrototypes contain zero literal references to all nine Actor SIDs or Item SIDs. **This is a direct-reference safety check, not proof of complete quest independence.** Excluded from this control: all unlisted weapons, quest-scripted/deferred actors, NPC inventories, trader/generator rewards, DLC1 unique variants, and regular world weapon placements. In-game runtime and local .NET build remain NOT RUN.
+
+The exact allowlist is `src/TrueCustomDifficulty/Data/loose-unique-weapons-manifest.csv`; the authored item list is: `Gun_Tank_MG`, `Gun_S15_AR`, `GunArevPrecise_AR`, `Gun_SOFMOD_AR`, `Gun_GStreet_HG`, `Gun_Texas_SG`, `GunNightStalker_HG`, `Gun_Cavalier_SR`, `Gun_RatKiller_SMG`. The existing gold-only-modified-number and compact rail interaction rules apply. No standalone large-width card or redundant hint is added.
