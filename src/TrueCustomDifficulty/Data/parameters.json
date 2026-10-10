@@ -845,7 +845,7 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.3333333333333333,
         "max": 2,
         "step": 0.1,
         "stepMode": "absolute"
@@ -948,7 +948,7 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.3333333333333333,
         "max": 2,
         "step": 0.1,
         "stepMode": "absolute"
@@ -1044,7 +1044,7 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.3333333333333333,
         "max": 2,
         "step": 0.1,
         "stepMode": "absolute"
@@ -1140,7 +1140,7 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.3333333333333333,
         "max": 2,
         "step": 0.1,
         "stepMode": "absolute"
@@ -1236,7 +1236,7 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.3333333333333333,
         "max": 2,
         "step": 0.1,
         "stepMode": "absolute"
@@ -1339,7 +1339,7 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.3333333333333333,
         "max": 2,
         "step": 0.1,
         "stepMode": "absolute"
@@ -1442,7 +1442,7 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.3333333333333333,
         "max": 2,
         "step": 0.1,
         "stepMode": "absolute"
@@ -1817,7 +1817,7 @@
         "mode": "referenceDifficulty"
       },
       "slider": {
-        "min": 0.25,
+        "min": 0.3333333333333333,
         "max": 2,
         "step": 0.1,
         "stepMode": "absolute"
