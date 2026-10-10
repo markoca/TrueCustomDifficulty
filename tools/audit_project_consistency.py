@@ -1684,18 +1684,34 @@ for _pid, _expected in _duration_sources.items():
         fail(f"consumable duration source/legend mapping drifted: {_pid}: {_actual} != {_expected}")
 _duration_renderer = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
 for _token in (
-    "private const double ConsumableTimelineHeight = 208.0;",
+    "private const double ConsumableTimelineHeight = 240.0;",
     "new Rect(17.0, previewTop, width, ConsumableTimelineHeight)",
     "return previewTop + ConsumableTimelineHeight + 14.0;",
     "DurationDetail(waterTime,", "DurationDetail(energyTime,",
-    "LESS STAMINA COST", "ACTION STAMINA", "REGEN",
+    "LOWER STAMINA COST", "-100% COST", "-30% COST", "LIMITED:", "STAMINA REGEN",
     "subDurations[0][0] * waterTime.CurrentNumber",
     "subDurations[1][0] * energyTime.CurrentNumber",
     "subDurations[1][1] * energyTime.CurrentNumber",
 ):
     if _token not in _duration_renderer:
         fail(f"consumable timeline effect caption/measurement source missing: {_token}")
-note("consumable duration preview source mapping: Water 5/30s, Energy 5/15/45s; two source-bound compact captions, no new controls")
+if _duration_renderer.count("DurationDetail(energyTime,") != 3:
+    fail("Energy timeline must distinguish regular 5/15/45s and Limited 5/45s in three caption rows")
+if not (ROOT / "tools/audit_consumable_effect_source.py").is_file():
+    fail("original Water/Energy source-verification command missing")
+note("consumable duration preview source mapping: Water 5/30s, Energy -100% 5s / -30% 15s / 45s regen; four source-bound compact captions, no new controls")
+
+# The individual SPDrain magnitudes and variant memberships are locked
+# to the supplied original EffectPrototypes/ItemPrototypes source audit.
+_energy_duration = next(p for p in parameters if p.get("id") == "survival.energyDrinkEffectDuration")
+_energy_notes = " ".join(_energy_duration.get("support", {}).get("notes", []))
+for _expected_effect_fact in (
+    "EnergeticStaminaPerAction1", "EnergeticStaminaPerAction2",
+    "-30%", "15 s", "-100%", "5 s", "Energetic_Limited",
+    "MeleeButstock", "Engine stacking",
+):
+    if _expected_effect_fact not in _energy_notes:
+        fail(f"source-confirmed Energy drink effect fact missing from catalog: {_expected_effect_fact}")
 
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("old UI-CFG CSV snapshot (current tools/audit_ui_cfg_contract.py is authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")

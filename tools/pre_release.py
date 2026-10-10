@@ -29,6 +29,7 @@ SOURCE = (
     ("combat-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("combat-original-special-arrays-and-inheritance", "tools/audit_combat_source_structures.py"),
     ("health-stamina-original-source", "tools/audit_health_stamina_source.py"),
+    ("consumable-original-effect-identities", "tools/audit_consumable_effect_source.py"),
     ("survival-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("economy-direct-source-values", "tools/audit_cfg_source_values.py"),
     ("equipment-direct-source-values", "tools/audit_cfg_source_values.py"),
@@ -152,6 +153,8 @@ def main():
                                 "--parameter-prefix", "combat.", "--strict"])
             if label == "combat-original-special-arrays-and-inheritance":
                 command.extend(["--out", str(out / "combat-original-special-arrays.json")])
+            if label == "consumable-original-effect-identities":
+                command.extend(["--out", str(out / "consumable-original-effects.json")])
             if label == "health-stamina-original-source":
                 command.extend(["--out", str(out / "health-stamina-original-source.json")])
             if label == "economy-direct-source-values":

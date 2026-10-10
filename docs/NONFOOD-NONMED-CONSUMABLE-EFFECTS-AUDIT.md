@@ -1,5 +1,7 @@
 # Non-Food / Non-Medicine Consumable Effects Audit
 
+> **2026-10-10 source refinement:** exact ordinary/Limited Energy SPDrain strengths, duration, inherited action types and item effect membership are now verified from original CFG rather than older discovery notes. See [source-exact audit](ENERGY-DRINK-EFFECT-SOURCE-AUDIT-2026-10-10.md). Earlier DISCOVERY labels below reflect their historical evidence status, not the final current contract.
+
 ## Scope
 
 This audit covers the **utility consumables** requested for True Custom Difficulty while deliberately excluding normal food and medicine.

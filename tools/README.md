@@ -65,3 +65,9 @@ C2 writer scenario breakdown: 41 live Health/Stamina parameter/difficulty cases 
 ### Phase 9 Survival coverage
 
 `tests/SurvivalPatchContract` checks 59 production C# ViewModel-to-BPatch outputs on Windows. `pre_release.py source` now includes the original-source check for all 139 `survival.*` edit points. Neither source static parity nor generated CFG data proves in-game behavior. Details: [Survival Phase 9](../docs/DEEP-CFG-AUDIT-PHASE9-SURVIVAL-2026-10-09.md).
+## Original consumable effect source verification
+
+`python3 tools/audit_consumable_effect_source.py --base-zip "/path/to/STALKER2-GameData-CFG.zip"`
+
+This compares Energy Drink's 5/15/45-second effects (native -100%/-30% SPDrain and regeneration), the regular/Limited/Weird Kettle lists, inherited eight-action scope, and Water duration sources with the original decoded CFG and the production writer baseline. The tool is a source-and-structure check, **not** gameplay stacking proof. It also runs in the source phase of `tools/pre_release.py`.
+

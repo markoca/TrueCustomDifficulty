@@ -2401,12 +2401,14 @@
         "status": "confirmed",
         "notes": [
           "Normal and Limited Energy Drink stamina-regeneration effects are 45 s vanilla.",
-          "Stamina-per-action effects use 15 s and 5 s authored durations.",
+          "Original SPDrain prototypes: -30% for 15 s (EnergeticStaminaPerAction1) and -100% for 5 s (EnergeticStaminaPerAction2 inheriting SPDrain/action types from the first).",
+          "Regular Energetic directly lists both short effects. Energetic_Limited directly lists only the 5 s -100% effect and uses the 15 s -30% effect in its Weird Kettle alternative list.",
+          "Both short effects target Walk, Run, Sprint, Jump, Vault, MeleeNormal, MeleeStrong, MeleeButstock. Engine stacking of the two active SPDrain effects is not proven by the CFG.",
           "Fatigue relief, tolerance, overdose and instant stamina are not changed by this duration control."
         ]
       },
       "rationale": "Controls how long Energy Drink stamina buffs last.",
-      "logic": "1x preserves the authored 45 s, 15 s and 5 s timing relationships. The same multiplier is applied to normal and Limited Energy Drink timed stamina effects.",
+      "logic": "1x keeps 45 s stamina regeneration in both drinks, 15 s at -30% action stamina drain and 5 s at -100% action stamina drain. Regular Energy lists both short effects; Limited lists the 5 s effect by default. The same duration multiplier applies to all four prototypes.",
       "interaction": "Instant Stamina Restore and Energy Drink Fatigue Relief remain separate controls."
     },
     {

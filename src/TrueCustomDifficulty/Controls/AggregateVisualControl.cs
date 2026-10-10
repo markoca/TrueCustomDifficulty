@@ -3015,11 +3015,12 @@ public sealed class AggregateVisualControl : FrameworkElement
                 track, parameter.Minimum, parameter.Maximum);
         }
 
-        // The unobtrusive secondary ticks above are real authored effects,
-        // not controls. Name them explicitly with their current durations.
-        // WATER: regen 5 s and stamina-cost reduction 30 s.
-        // ENERGY: two action-stamina effects 5/15 s, regen 45 s (also Limited).
-        // Keep one editable duration source per drink; no extra input handles.
+        // The short ticks are real native timed effects. The two Energy
+        // SPDrain effects are -100% for 5 s and -30% for 15 s, both applied
+        // to the regular Energy Drink. Limited Energy uses only the 5-s
+        // SPDrain in its regular effect list. The two 45-s regeneration
+        // prototypes have different strengths but share this duration source.
+        // Text is read-only: five real duration sources, never extra sliders.
         void DurationDetail(ParameterViewModel source, string caption, double offset)
         {
             var formatted = CreateText(caption, 9.6, text, FontWeights.SemiBold,
@@ -3038,11 +3039,15 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         DurationDetail(waterTime,
             $"WATER: REGEN {subDurations[0][0] * waterTime.CurrentNumber:0.#}s  /  " +
-            $"LESS STAMINA COST {durations[0] * waterTime.CurrentNumber:0.#}s", 165.0);
+            $"LOWER STAMINA COST {durations[0] * waterTime.CurrentNumber:0.#}s", 161.0);
         DurationDetail(energyTime,
-            $"ENERGY: ACTION STAMINA {subDurations[1][0] * energyTime.CurrentNumber:0.#}s + " +
-            $"{subDurations[1][1] * energyTime.CurrentNumber:0.#}s  /  " +
-            $"REGEN {durations[1] * energyTime.CurrentNumber:0.#}s", 184.0);
+            $"ENERGY: -100% COST {subDurations[1][0] * energyTime.CurrentNumber:0.#}s  /  " +
+            $"-30% COST {subDurations[1][1] * energyTime.CurrentNumber:0.#}s", 178.0);
+        DurationDetail(energyTime,
+            $"ENERGY: STAMINA REGEN {durations[1] * energyTime.CurrentNumber:0.#}s", 195.0);
+        DurationDetail(energyTime,
+            $"LIMITED: -100% COST {subDurations[1][0] * energyTime.CurrentNumber:0.#}s  /  " +
+            $"REGEN {durations[1] * energyTime.CurrentNumber:0.#}s", 212.0);
     }
 
     private void DrawSleepingDashboard(
@@ -3937,9 +3942,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Shared density for the large Survival/Health aggregate panels. Rows are
     // column-aware; no independent sliders are stacked inside the same hit area.
     private const double CompactTrackHeight = 82.0;
-    // Five native duration lanes plus two concise labels for the shorter effects.
+    // Five native duration lanes plus four short labels for verified variant effects.
     // The renderer and its layout measurement must share this exact height.
-    private const double ConsumableTimelineHeight = 208.0;
+    private const double ConsumableTimelineHeight = 240.0;
     // Reserved space for plot ticks plus three independently readable stage lines.
     private const double HungerProfileHeight = 344.0;
     private const double CompactRowGap = 8.0;

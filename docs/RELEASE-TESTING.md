@@ -123,6 +123,18 @@ mod and check actual `.pak/.utoc/.ucas` output, installation and load order.
 Run S.T.A.L.K.E.R. 2; neither the Python tests nor a successful publish
 does this.
 
+### Consumables: original Water / Energy Drink source audit (automatable)
+
+Use the exact game CFG ZIP supplied for the target game version. Run
+`python3 tools/audit_consumable_effect_source.py --base-zip "/path/to/STALKER2-GameData-CFG.zip" --out /tmp/tcd-consumable-effects.json`
+to validate both `EffectPrototypes.cfg` and `ItemPrototypes.cfg`,
+the native -30% / 15s and -100% / 5s SPDrain structures, inheritance,
+the eight action types, Regular/Limited/Weird Kettle item membership and
+the production duration-writer baseline. The same check is included in
+`python3 tools/pre_release.py source --base-zip BASE.zip --dlc1-zip DLC1.zip`.
+Source PASS does not establish how concurrent effects combine in-game.
+See [source audit](ENERGY-DRINK-EFFECT-SOURCE-AUDIT-2026-10-10.md).
+
 ### Combat in-game matrix (manual, never automatically PASS)
 
 Refer to [Combat Phase 3/4](DEEP-CFG-AUDIT-PHASE3-COMBAT-2026-10-09.md):

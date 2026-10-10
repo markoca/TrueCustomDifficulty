@@ -1,8 +1,8 @@
 # True Custom Difficulty
 
-### 2026-10-10 — Consumable effect duration secondary markers explained
+### 2026-10-10 — Energy Drink native effect verification
 
-The Water/Energy **EFFECT DURATION** timeline keeps its real 5s and 5s/15s secondary markers, but now names their effects in two short source-bound lines below the five tracks. Water: stamina regeneration and reduced action stamina cost; Energy: two action-stamina modifiers and stamina regeneration (including Limited Energy). Each displayed duration updates from the live 0–3x source multiplier, with gold/+1.2-DIP numerals only when modified. The shared frame and measurement are 208 DIP (previously 181); five existing time sliders, native CFG writer, other consumables and reference ticks remain unchanged. The UI catalogs and static writer/source mapping gate are updated. Local Wine visual acceptance remains pending.
+Original decoded GameData proves that regular Energy contains **-100% SPDrain / 5s** and **-30% SPDrain / 15s**, plus **+200% RegenStamina / 45s**. Limited Energy uses **-100% SPDrain / 5s** and **+500% RegenStamina / 45s** in its normal list; -30% / 15s appears on its alternate Weird Kettle effect path. SPDrain affects eight authored movement/melee action types. Do not invent a guaranteed combined effect: engine stacking is not confirmed. The Consumable duration preview now identifies the distinct regular/Limited effects in four compact source-driven lines; the native controls, actual CFG values, read-only tick semantics, source ranges and 0.05x steps remain unchanged. Renderer and parent measurement both use **240 DIP**. Full source mapping and a reproducible base ZIP audit: [Energy effect audit](docs/ENERGY-DRINK-EFFECT-SOURCE-AUDIT-2026-10-10.md). Local Wine/game verification remains pending.
 
 ### 2026-10-10 — Radiation Recovery label and compact sizing
 

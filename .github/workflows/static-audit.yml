@@ -36,6 +36,11 @@ jobs:
           python -m py_compile tools/audit_alife_director_source.py
           python tools/audit_alife_director_source.py --help
 
+      - name: Original consumable effects source auditor syntax and CLI
+        run: |
+          python -m py_compile tools/audit_consumable_effect_source.py
+          python tools/audit_consumable_effect_source.py --help
+
       - name: Loot direct original source structure gate smoke
         run: |
           python -m py_compile tools/audit_loot_direct_source.py
