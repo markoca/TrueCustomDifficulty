@@ -1,5 +1,10 @@
 # True Custom Difficulty
 
+### 2026-10-10 — Medical Items shared Override Limits (current contract)
+
+The 370-DIP Medical Items frame places **FOOD HEALING at top-left** and one canonical **OVERRIDE LIMITS checkbox at top-right**. This is a UI-only `medicalOverride` preset flag owned by `health.bandageHealing`; no synthetic CFG boolean or new writer route. OFF (default, including legacy presets) keeps all twelve sources' independent catalog maxima. ON expands their independent caps to the existing physical axes: **HEAL 200 HP, BLEED 100 PTS, RAD 200 RAD**. Individual sliders are never linked or synchronized. Disabling Override clamps only values beyond their respective original source caps; source edits persist via their existing CFG/BPatch writers. Checkbox retains canonical 20-DIP appearance, click/hover, right-click reset, whole-panel R reset, tab reset, and baseline reset. Numeric labels, compact row, reference ticks, and independent source writers remain unchanged. Local Wine visual and in-game confirmation pending.
+
+
 ### 2026-10-10 — One Override Limits checkbox, shared 270s ceiling
 
 The `Consumable Effects → Effect Duration` board has one **OVERRIDE LIMITS** checkbox, OFF by default. **OFF** retains every drink's individual original maximum (Water 90s, Energy 135s, Vodka/Beer 60s, Magic Vodka 270s); three independently editable Water/Energy additional-effect durations retain their live parent cap. **ON** raises the independent maximum of *all eight drink durations* to the same **270 seconds** on the existing common ruler. This permits all drinks to have the same chosen duration, but does NOT synchronize any values: every source slider remains independent. Vanilla minimums, per-source rounding, original CFG field targets, preset values and modified-numeric highlighting remain.
