@@ -9,9 +9,9 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// Four paired HEAL/BLEED source controls and a right-hand pair of RAD
-/// removal controls, all vertical and independently editable on one row.
-/// Food Healing remains its own switch; all eleven CFG source controls
+/// Four paired HEAL/BLEED source controls and four RAD-removal columns,
+/// including Beer and Vodka, in one compact horizontal row.
+/// Food Healing remains its own switch; all thirteen CFG source controls
 /// share one medical card and the existing WPF visual anchor.
 /// </summary>
 public sealed class MedicalHealingRadar : FrameworkElement
@@ -47,12 +47,14 @@ public sealed class MedicalHealingRadar : FrameworkElement
     private static readonly (string Id, string Label)[] RadiationItems =
     {
         ("health.ecoMedkitAntirad", "SCIENTIFIC MEDKIT"),
-        ("health.antiRadRadiation", "ANTI-RAD")
+        ("health.antiRadRadiation", "ANTI-RAD"),
+        ("health.beerRadiationRemoval", "BEER"),
+        ("health.vodkaRadiationRemoval", "VODKA")
     };
 
     private readonly ParameterViewModel?[] _medical = new ParameterViewModel?[4];
     private readonly ParameterViewModel?[] _bleeding = new ParameterViewModel?[4];
-    private readonly ParameterViewModel?[] _radiation = new ParameterViewModel?[2];
+    private readonly ParameterViewModel?[] _radiation = new ParameterViewModel?[4];
     private ParameterViewModel? _foodHealing;
     private readonly List<HitArea> _hits = new();
     private int _selected = 0;
@@ -86,7 +88,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
 
     protected override Size MeasureOverride(Size availableSize)
         => new(double.IsInfinity(availableSize.Width)
-            ? 720.0 : Math.Max(560.0, availableSize.Width), BoardHeight);
+            ? 820.0 : Math.Max(820.0, availableSize.Width), BoardHeight);
 
     private static void OnParametersChanged(DependencyObject d,
         DependencyPropertyChangedEventArgs e)
@@ -177,11 +179,11 @@ public sealed class MedicalHealingRadar : FrameworkElement
         // Compress the four HEAL/BLEED clusters to reserve the right-hand
         // radiation bank without adding another row or a second card.
         var chart = new Rect(52.0, PlotTop,
-            Math.Max(270.0, ActualWidth - 334.0), PlotHeight);
+            Math.Max(325.0, ActualWidth - 430.0), PlotHeight);
         var laneWidth = chart.Width / Items.Length;
         var radLeft = chart.Right + 55.0;
         var radArea = new Rect(radLeft, 88.0,
-            Math.Max(150.0, ActualWidth - radLeft - 12.0), 265.0);
+            Math.Max(258.0, ActualWidth - radLeft - 12.0), 265.0);
         // Vertical Y-axis captions belong to their corresponding physical
         // rulers, not to the per-item bars. Gold = HP / HEAL on the left;
         // copper = PTS / BLEED on the right. Tick numerals stay horizontal.
@@ -278,12 +280,12 @@ public sealed class MedicalHealingRadar : FrameworkElement
                 new Point(radScaleX, y - 6.0),
                 HealthTypography.Axis, muted, FontWeights.SemiBold);
         }
-        var usable = Math.Max(82.0, area.Width - 48.0);
+        var usable = Math.Max(190.0, area.Width - 48.0);
         for (var i = 0; i < RadiationItems.Length; i++)
         {
-            var centerX = area.Left + 10.0 + (i + .5) * usable / 2.0;
+            var centerX = area.Left + 10.0 + (i + .5) * usable / RadiationItems.Length;
             DrawColumn(dc, i, HitAction.Radiation, _radiation[i],
-                centerX, Math.Min(30.0, usable * .25),
+                centerX, Math.Min(27.0, usable / RadiationItems.Length * .45),
                 RadiationRulerPts, chart, text, muted, border, RadiationAccent);
             var words = RadiationItems[i].Label.Split(' ');
             if (words.Length == 1)

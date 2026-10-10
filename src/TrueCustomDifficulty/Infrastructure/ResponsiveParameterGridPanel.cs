@@ -80,6 +80,9 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["health.armyMedkitBleeding"] = new("health-bleed-treatment-2", 0),
             ["health.ecoMedkitBleeding"] = new("health-bleed-treatment-2", 1),
 
+            // All four RAD sources are drawn inside MedicalHealingRadar; no
+            // independent responsive-grid rows or duplicate standalone card.
+
             // Stamina
             ["stamina.maxSP"] = new("stamina-core-1", 0),
             ["stamina.regeneration"] = new("stamina-core-1", 1),

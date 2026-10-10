@@ -43,7 +43,7 @@ internal static class Program
                          || p.Id.StartsWith("stamina.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal)
                 .ToArray();
-            Check(cohort.Length == 43, "Health/Stamina catalog cohort is no longer 43 controls");
+            Check(cohort.Length == 45, "Health/Stamina catalog cohort is no longer 45 controls");
 
             // These five source-backed speed-state definitions are intentionally
             // excluded from MainViewModel. They are documented internal CFG
@@ -66,8 +66,8 @@ internal static class Program
                 "Unexpected Health/Stamina app VM exclusions: "
                 + string.Join(", ", notLoaded.OrderBy(s => s)));
             var liveCohort = cohort.Where(p => liveIds.Contains(p.Id)).ToArray();
-            Check(liveCohort.Length == 38,
-                "Health/Stamina live VM count is not 38");
+            Check(liveCohort.Length == 40,
+                "Health/Stamina live VM count is not 40");
             foreach (var def in liveCohort)
             {
                 var diff = def.Id.StartsWith("health.master", StringComparison.Ordinal)
@@ -149,6 +149,19 @@ internal static class Program
                   && rad.TickFrequency == 5.0,
                 "Radiation Removal native range, step or original CFG baseline drifted: " + id);
         }
+        // Alcohol is a real source effect, not decorative RAD columns.
+        // The original signed -10/-50 must round-trip as two separate
+        // positive RAD controls with source-true native upper limits.
+        var beer = vm.AllParameters.Single(p => p.Id == "health.beerRadiationRemoval");
+        var vodka = vm.AllParameters.Single(p => p.Id == "health.vodkaRadiationRemoval");
+        Check(beer.IsMedicalHealingMember && vodka.IsMedicalHealingMember
+              && !beer.IsControlVisible && !vodka.IsControlVisible,
+            "Beer and Vodka must be editable only through the Medical Items RAD bank");
+        Check(beer.ReferenceNumber == 10.0 && beer.Maximum == 20.0
+              && beer.TickFrequency == 5.0
+              && vodka.ReferenceNumber == 50.0 && vodka.Maximum == 100.0
+              && vodka.TickFrequency == 5.0,
+            "Beer/Vodka source maxima, step or CFG-original radiation values drifted");
         var food = vm.AllParameters.Single(p => p.Id == "health.foodHealing");
         Check(food.IsMedicalHealingMember && !food.IsControlVisible && food.IsToggle,
             "Food Healing must remain a checkbox in the same medical card");
@@ -176,8 +189,19 @@ internal static class Program
             "Editing Anti-Rad must modify only its own CFG source and shared card");
         antiRad.ResetToReference();
         Check(!anchor.IsModified, "Anti-Rad reset should clear modified medical card");
+        beer.CurrentNumber = 15.0;
+        Check(anchor.IsModified && beer.IsValueModifiedFromReference()
+              && !vodka.IsValueModifiedFromReference(),
+            "Beer RAD removal must independently edit the Medical Items group");
+        beer.ResetToReference();
+        vodka.CurrentNumber = 55.0;
+        Check(anchor.IsModified && vodka.IsValueModifiedFromReference()
+              && !beer.IsValueModifiedFromReference(),
+            "Vodka RAD removal must independently edit the Medical Items group");
+        vodka.ResetToReference();
+        Check(!anchor.IsModified, "Resetting Beer/Vodka must clear group modification");
         _passed++;
-        Console.WriteLine("PASS medical-items-4x2-plus-radiation-2-vertical-membership");
+        Console.WriteLine("PASS medical-items-4x2-plus-radiation-4-vertical-membership");
     }
 
     private static void BandageBleedingUpperBoundCase()

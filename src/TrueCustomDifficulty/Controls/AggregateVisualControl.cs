@@ -2655,7 +2655,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         var burst = P("survival.instantStaminaRestore");
         var waterStamina = P("survival.waterStaminaEffectStrength");
         var energyStamina = P("survival.energyDrinkStaminaRecoveryStrength");
-        var antiRad = P("survival.alcoholRadiationRemoval");
         var waterTime = P("survival.waterEffectDuration");
         var energyTime = P("survival.energyDrinkEffectDuration");
         var vodkaTime = P("survival.vodkaEffectDuration");
@@ -2669,7 +2668,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             string.Empty, text, muted, accent);
 
         if (burst is null || waterStamina is null || energyStamina is null ||
-            antiRad is null || waterTime is null || energyTime is null ||
+            waterTime is null || energyTime is null ||
             vodkaTime is null || beerTime is null || magicTime is null ||
             waterRegenTime is null || energyFullCostTime is null ||
             energyPartialCostTime is null)
@@ -2711,17 +2710,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         const double strengthTop = 55.0;
-        // Four independent strength tracks above; time editors now use their
+        // Three independent strength tracks above; time editors use their
         // own shared real-seconds ruler below instead of vertical faders.
         void Strength(ParameterViewModel p, string label, int index)
             => DrawCompactTrack(dc, p, label, $"{p.CurrentNumber:0.##}x",
                 "0x", "2x", CompactSlot(strengthTop, width, columns, index),
                 text, muted, border, accent, panel);
         Strength(burst, "INSTANT STAMINA / ALL THREE DRINKS", 0);
-        Strength(antiRad, "BEER + VODKA / RADIATION REMOVED", 1);
-        Strength(waterStamina, "WATER / STAMINA BUFF STRENGTH", 2);
-        Strength(energyStamina, "ENERGY / STAMINA REGEN STRENGTH", 3);
-        var readoutTop = CompactGridEnd(strengthTop, 4, columns) + 15.0;
+        Strength(waterStamina, "WATER / STAMINA BUFF STRENGTH", 1);
+        Strength(energyStamina, "ENERGY / STAMINA REGEN STRENGTH", 2);
+        var readoutTop = CompactGridEnd(strengthTop, 3, columns) + 15.0;
         var readoutCardsTop = readoutTop;
         // The three effects are previews only; source controls stay independent.
         Readout(CompactSlot(readoutCardsTop, width, durationColumns, 0),
@@ -2752,19 +2750,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 waterStamina.IsValueModifiedFromReference(),
                 energyStamina.IsValueModifiedFromReference()
             });
-        Readout(CompactSlot(readoutCardsTop, width, durationColumns, 2),
-            "RADIATION REMOVED",
-            new[]
-            {
-                $"BEER {10 * antiRad.CurrentNumber:0.#} RAD",
-                $"VODKA {50 * antiRad.CurrentNumber:0.#} RAD"
-            },
-            new[]
-            {
-                antiRad.IsValueModifiedFromReference(),
-                antiRad.IsValueModifiedFromReference()
-            });
-        var previewTop = CompactGridEnd(readoutCardsTop, 3, durationColumns) + 18.0;
+        var previewTop = CompactGridEnd(readoutCardsTop, 2, durationColumns) + 18.0;
 
 
         // A true seconds-space editor, where each row converts the pointer
@@ -5109,7 +5095,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "survival.instantStaminaRestore" or
             "survival.waterStaminaEffectStrength" or
             "survival.energyDrinkStaminaRecoveryStrength" or
-            "survival.alcoholRadiationRemoval" or
             "survival.waterEffectDuration" or
             "survival.energyDrinkEffectDuration" or
             "survival.vodkaEffectDuration" or
@@ -5183,9 +5168,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double CompactConsumableHeight(double width)
     {
         var columns = CompactColumns(width);
-        var readoutTop = CompactGridEnd(55.0, 4, columns) + 15.0;
+        var readoutTop = CompactGridEnd(55.0, 3, columns) + 15.0;
         var cardsTop = readoutTop;
-        var previewTop = CompactGridEnd(cardsTop, 3, CompactStageColumns(width))
+        var previewTop = CompactGridEnd(cardsTop, 2, CompactStageColumns(width))
             + 18.0;
         return previewTop + ConsumableTimelineHeight(width) + 14.0;
     }
@@ -5352,7 +5337,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "survival.instantStaminaRestore",
                 "survival.waterStaminaEffectStrength",
                 "survival.energyDrinkStaminaRecoveryStrength",
-                "survival.alcoholRadiationRemoval",
                 "survival.waterEffectDuration",
                 "survival.waterRegenDuration",
                 "survival.energyDrinkEffectDuration",

@@ -2195,28 +2195,30 @@
       "exposeInUi": false
     },
     {
-      "id": "survival.alcoholRadiationRemoval",
-      "tab": "survival",
-      "group": "Consumable Effects",
-      "label": "Alcohol Radiation Removal",
-      "description": "Scales radiation removed by Beer and Vodka while preserving their vanilla strength difference.",
+      "id": "health.beerRadiationRemoval",
+      "tab": "health",
+      "group": "Radiation Treatment",
+      "label": "Beer Radiation Removal",
+      "description": "Sets radiation removed per Beer use, directly in positive game points.",
       "control": "slider",
-      "valueKind": "multiplier",
+      "valueKind": "raw",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Alcohol Radiation Removal"
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "RAD",
+        "valueLabel": "Radiation removed"
       },
       "vanilla": {
-        "All": 1
+        "All": 10
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0,
-        "max": 2,
-        "step": 0.05
+        "max": 20,
+        "step": 5,
+        "stepMode": "absolute"
       },
       "targets": [
         {
@@ -2224,26 +2226,67 @@
           "file": "GameData/EffectPrototypes.cfg",
           "prototype": "BeerAntirad1",
           "path": "ValueMin|ValueMax",
-          "operation": "scale"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "VodkaAntirad3",
-          "path": "ValueMin|ValueMax",
-          "operation": "scale"
+          "operation": "negateSet"
         }
       ],
       "support": {
         "status": "confirmed",
         "notes": [
-          "Vanilla radiation effects are Beer -10 and Vodka -50.",
-          "Magic/Dvupalov Vodka is not part of this control because it uses a different psi-focused effect chain."
+          "Original BeerAntirad1 ValueMin/ValueMax = -10.",
+          "Original signed CFG delta is inverted when writing positive RAD points."
         ]
       },
-      "rationale": "Controls how much radiation ordinary alcohol removes.",
-      "logic": "1x keeps Beer at 10 radiation removed and Vodka at 50. The same multiplier preserves Vodka as the stronger antiradiation drink.",
-      "interaction": "Alcohol stamina penalties and drunkenness are unchanged."
+      "rationale": "Independent Beer radiation-removal strength; keeps the vanilla alcohol cure mechanic.",
+      "logic": "Original Beer removes 10 radiation points.",
+      "interaction": "Does not alter intoxication, drink duration or the other alcohol.",
+      "exposeInUi": false
+    },
+    {
+      "id": "health.vodkaRadiationRemoval",
+      "tab": "health",
+      "group": "Radiation Treatment",
+      "label": "Vodka Radiation Removal",
+      "description": "Sets radiation removed per Vodka use, directly in positive game points.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "RAD",
+        "valueLabel": "Radiation removed"
+      },
+      "vanilla": {
+        "All": 50
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "VodkaAntirad3",
+          "path": "ValueMin|ValueMax",
+          "operation": "negateSet"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "Original VodkaAntirad3 ValueMin/ValueMax = -50.",
+          "Original signed CFG delta is inverted when writing positive RAD points."
+        ]
+      },
+      "rationale": "Independent Vodka radiation-removal strength; keeps the vanilla alcohol cure mechanic.",
+      "logic": "Original Vodka removes 50 radiation points.",
+      "interaction": "Does not alter intoxication, drink duration or the other alcohol.",
+      "exposeInUi": false
     },
     {
       "id": "survival.waterEffectDuration",

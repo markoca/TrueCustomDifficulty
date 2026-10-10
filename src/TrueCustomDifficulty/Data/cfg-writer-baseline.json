@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 239,
+  "supportedParameterCount": 240,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -16757,50 +16757,50 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.alcoholRadiationRemoval",
+      "parameterId": "health.beerRadiationRemoval",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
       "prototype": "BeerAntirad1",
       "nodePath": [],
       "key": "ValueMin",
       "sourceRaw": "-10",
-      "operation": "scale",
+      "operation": "negateSet",
       "role": "",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.alcoholRadiationRemoval",
+      "parameterId": "health.beerRadiationRemoval",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
       "prototype": "BeerAntirad1",
       "nodePath": [],
       "key": "ValueMax",
       "sourceRaw": "-10",
-      "operation": "scale",
+      "operation": "negateSet",
       "role": "",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.alcoholRadiationRemoval",
+      "parameterId": "health.vodkaRadiationRemoval",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
       "prototype": "VodkaAntirad3",
       "nodePath": [],
       "key": "ValueMin",
       "sourceRaw": "-50",
-      "operation": "scale",
+      "operation": "negateSet",
       "role": "",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.alcoholRadiationRemoval",
+      "parameterId": "health.vodkaRadiationRemoval",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
       "prototype": "VodkaAntirad3",
       "nodePath": [],
       "key": "ValueMax",
       "sourceRaw": "-50",
-      "operation": "scale",
+      "operation": "negateSet",
       "role": "",
       "difficultySid": ""
     },

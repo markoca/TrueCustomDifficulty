@@ -460,7 +460,7 @@ _non_gen_expected = {
     "combat": (17, 13, 4),
     "health": (13, 10, 3),
     "stamina": (7, 6, 1),
-    "survival": (32, 30, 2),
+    "survival": (31, 29, 2),
     "economy": (17, 12, 5),
     "equipment": (4, 3, 1),
 }
@@ -490,7 +490,7 @@ elif _hidden_bad:
 elif not _non_gen_doc.exists():
     fail("non-generator verification document missing from docs/")
 else:
-    note("non-generator UI coverage: 90 visible anchors across Combat/Health/Stamina/Survival/Economy/Equipment; current grouped editors and 32 Survival controls accounted")
+    note("non-generator UI coverage: 89 visible anchors across Combat/Health/Stamina/Survival/Economy/Equipment; current grouped editors and 31 Survival controls accounted")
 
 # Combat deep-audit release gate (v0.2.44).
 _combat_doc = DOCS / "COMBAT-CONTROL-DEEP-AUDIT.md"
@@ -1123,8 +1123,8 @@ _treatment_catalog = [p for p in _health_ui if p.get("id") in _treatment_ids]
 _vm_source = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
 if len(_health_ui) != 13 or len(_health_confirmed) != 10 or len(_health_runtime) != 3:
     fail(f"health deep audit status split drifted: total={len(_health_ui)} confirmed={len(_health_confirmed)} runtime={len(_health_runtime)}; expected 13/10/3")
-elif len(_health_points) != 38:
-    fail(f"health writer surface drifted: {len(_health_points)} edit points; expected 38")
+elif len(_health_points) != 42:
+    fail(f"health writer surface drifted: {len(_health_points)} edit points; expected 42")
 elif len(_treatment_points) != 12 or any(e.get("operation") != "negateSet" for e in _treatment_points):
     fail("health treatment signed-delta boundary drifted: expected 12 negateSet edit points")
 elif len(_treatment_catalog) != 6 or any((p.get("slider") or {}).get("min") != 0.0 for p in _treatment_catalog) or any(next(iter((p.get("vanilla") or {}).values())) <= 0 for p in _treatment_catalog):
@@ -1210,10 +1210,10 @@ _low_bleeding_points = [e for e in _survival_points if e.get("parameterId") == "
 _vm_source_survival = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
 _survival_mapping_text = _survival_mapping.read_text(encoding="utf-8") if _survival_mapping.exists() else ""
 
-if len(_survival_ui) != 32 or len(_survival_confirmed) != 30 or len(_survival_runtime) != 2:
-    fail(f"survival deep audit status split drifted: total={len(_survival_ui)} confirmed={len(_survival_confirmed)} runtime={len(_survival_runtime)}; expected 32/30/2")
-elif len(_survival_points) != 93:
-    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 93")
+if len(_survival_ui) != 31 or len(_survival_confirmed) != 29 or len(_survival_runtime) != 2:
+    fail(f"survival deep audit status split drifted: total={len(_survival_ui)} confirmed={len(_survival_confirmed)} runtime={len(_survival_runtime)}; expected 31/29/2")
+elif len(_survival_points) != 89:
+    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 89")
 elif _hunger_medium.get("label") != "Hunger Stamina Recovery Penalty" or (_hunger_medium.get("vanilla") or {}).get("All") != 0.33:
     fail("medium hunger stamina recovery player-facing penalty contract drifted")
 elif _hunger_strong.get("label") != "Severe Hunger Stamina Recovery Penalty" or (_hunger_strong.get("vanilla") or {}).get("All") != 0.7:
@@ -1245,7 +1245,7 @@ elif not _survival_mapping.exists():
 elif not _survival_doc.exists():
     fail("Survival deep audit document missing from docs/")
 else:
-    note("survival current deep audit: 32 visible / 30 confirmed + 2 runtime-pending; 93 direct edit points; hunger sign/order preserved")
+    note("survival current deep audit: 31 visible / 29 confirmed + 2 runtime-pending; 89 direct edit points; hunger sign/order preserved")
 
 verify_current_editor("Item Price Scalers", "ItemPriceScalersRadar", ("economy.consumableCost", "economy.ammoCost", "economy.armorCost", "economy.weaponCost", "economy.artifactCost", "economy.mutantPartValue",), "itemPriceScalerParameterIds.Contains(p.Id)", ("IsItemPriceScalerAnchor", "IsItemPriceScalerMember"))
 
@@ -1715,20 +1715,24 @@ else:
 
 
 # Radiation Removal is no longer a separate AggregateVisualControl family.
-# Two native-source vertical RAD columns must sit in one compact right bank,
+# Four native-source vertical RAD columns must sit in one compact right bank,
 # with a physically distinct 0..200 RAD axis, cap hover, and source-true hit map.
-_radiation_sources = ("health.ecoMedkitAntirad", "health.antiRadRadiation")
-_radiation_caps = {"health.ecoMedkitAntirad": 120, "health.antiRadRadiation": 200}
+_radiation_sources = ("health.ecoMedkitAntirad", "health.antiRadRadiation",
+                      "health.beerRadiationRemoval", "health.vodkaRadiationRemoval")
+_radiation_caps = {"health.ecoMedkitAntirad": 120, "health.antiRadRadiation": 200,
+                   "health.beerRadiationRemoval": 20, "health.vodkaRadiationRemoval": 100}
 _radiation_catalog = {p.get("id"): p for p in parameters if p.get("id") in _radiation_sources}
 if any(_radiation_catalog.get(pid, {}).get("slider", {}).get("max") != limit
        for pid, limit in _radiation_caps.items()):
-    fail("Medical Items radiation-removal native ceilings must be 120/200 RAD")
+    fail("Medical Items radiation-removal native ceilings must be 120/200/20/100 RAD")
 _rad_medical_tokens = (
     "private static readonly Brush RadiationAccent",
     "private const double RadiationRulerPts = 200.0;",
     '("health.ecoMedkitAntirad", "SCIENTIFIC MEDKIT")',
     '("health.antiRadRadiation", "ANTI-RAD")',
-    "private readonly ParameterViewModel?[] _radiation = new ParameterViewModel?[2];",
+    "private readonly ParameterViewModel?[] _radiation = new ParameterViewModel?[4];",
+    '("health.beerRadiationRemoval", "BEER")',
+    '("health.vodkaRadiationRemoval", "VODKA")',
     "byId.TryGetValue(RadiationItems[i].Id, out _radiation[i]);",
     "DrawRadiationGroup(dc, radArea, chart, text, muted, border, panel);",
     'DrawCenteredText(dc, "RADIATION REMOVAL",',
@@ -1752,7 +1756,44 @@ if any(f'"{pid}"' not in _medical_vm or f'"{pid}"' not in _medical_main_vm
 if '&& (!IsMedicalHealingMember || IsMedicalHealingAnchor)' not in _medical_vm:
     fail("Medical Items RAD controls must not become standalone rows")
 else:
-    note("Medical Items: right-hand two-column RAD bank, teal vertical 0..200 axis, gold HEAL captions")
+    note("Medical Items: right-hand four-column RAD bank, teal vertical 0..200 axis, gold HEAL captions")
+
+
+# Beer / Vodka were once controlled by a single shared multiplier.
+# Their original negative source deltas are now independently owned.
+_alcohol_edits = [e for e in baseline.get("editPoints", [])
+                  if e.get("parameterId") in {
+                      "health.beerRadiationRemoval",
+                      "health.vodkaRadiationRemoval"}]
+if len(_alcohol_edits) != 4 or any(e.get("operation") != "negateSet"
+                                   for e in _alcohol_edits):
+    fail("Beer/Vodka RAD need four source-exact negative signed writer edits")
+elif any(e.get("parameterId") == "survival.alcoholRadiationRemoval"
+         for e in baseline.get("editPoints", [])):
+    fail("Retired shared alcohol multiplier must not still write either source")
+elif any(e.get("sourceRaw") !=
+         ("-10" if e.get("parameterId") == "health.beerRadiationRemoval" else "-50")
+         for e in _alcohol_edits):
+    fail("Beer/Vodka RAD source values changed from -10/-50")
+else:
+    note("Beer/Vodka independent native radiation sources and sign-preserving writer")
+
+
+# Shared Beer+Vodka RAD multiplier was replaced by independent HEAL-tab
+# editors, and historical presets must continue to produce their old results.
+_alcohol_preset_tokens = (
+    'preset.Values.TryGetValue("survival.alcoholRadiationRemoval"',
+    '("health.beerRadiationRemoval", 10.0)',
+    '("health.vodkaRadiationRemoval", 50.0)',
+    'source.SnapCurrentNumberToMarker(',
+)
+_consumable_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+if any(token not in _medical_main_vm for token in _alcohol_preset_tokens):
+    fail("Legacy Beer/Vodka shared multiplier preset migration has drifted")
+elif '"survival.alcoholRadiationRemoval"' in _consumable_source:
+    fail("Consumable Effects must not revive duplicate old shared alcohol RAD control")
+else:
+    note("Legacy 1x alcohol presets migrate to independent Beer 10/Vodka 50 RAD")
 
 
 # Medical Items Y-axis labels must follow the matching slider colors
@@ -1982,7 +2023,7 @@ _global_expected_tabs = {
     "combat": 17,
     "health": 13,
     "stamina": 7,
-    "survival": 32,
+    "survival": 31,
     "economy": 17,
     "equipment": 4,
     "master": 20,
@@ -2117,14 +2158,14 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 239 or len(_global_visible) != 150 or len(_global_hidden) != 89:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 239/150/89")
+if len(parameters) != 240 or len(_global_visible) != 149 or len(_global_hidden) != 91:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 240/149/91")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 119 or _global_runtime != 31:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 120/32")
-elif _global_control_counts != {"slider": 136, "toggle": 12, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 136 sliders / 12 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 118 or _global_runtime != 31:
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 118/31")
+elif _global_control_counts != {"slider": 135, "toggle": 12, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 135 sliders / 12 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -2149,7 +2190,7 @@ elif _global_anomaly_missing or "SetEffectiveDamageMultiplierProvider" not in _g
 elif not _global_doc.exists():
     fail("global cross-domain audit document missing from docs/")
 else:
-    note("current cross-domain structural audit: 239 catalog / 150 visible / 89 hidden; 119 visible confirmed + 31 runtime-test-required; zero direct collisions")
+    note("current cross-domain structural audit: 240 catalog / 149 visible / 91 hidden; 118 visible confirmed + 31 runtime-test-required; zero direct collisions")
 
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("v0.2.51-v0.3.0 override/CFG-placement/provenance/production snapshots (current UI/Combat tools + active source checks are authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")

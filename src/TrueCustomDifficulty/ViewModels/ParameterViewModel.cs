@@ -122,7 +122,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag SPRINT LOCK, RECOVERY BELOW or one of the recovery tracks to tune that setting."
                     + Environment.NewLine + "Right-click a track to reset it; R resets the recovery group.";
             if (IsMedicalHealingMember)
-                return "Four medical pairs edit HEAL and BLEED separately; the compact right-hand RAD columns edit Scientific Medkit and Anti-Rad radiation removal."
+                return "Four HEAL/BLEED pairs and four RAD columns (Scientific, Anti-Rad, Beer, Vodka) edit independent effects."
                     + Environment.NewLine + "Drag a column to adjust it, right-click to reset one source, or press R to reset this card. Food Healing is independent.";
             if (IsStashAmmoMember)
                 return "Drag BASIC, STANDARD or RARE to change the ammo stacks shown in the preview."
@@ -259,7 +259,9 @@ public sealed class ParameterViewModel : ObservableObject
         // Scientific Medkit and Anti-Rad radiation removal now live in the
         // compact right-hand group inside the same MEDICAL ITEMS board.
         "health.ecoMedkitAntirad",
-        "health.antiRadRadiation"
+        "health.antiRadRadiation",
+        "health.beerRadiationRemoval",
+        "health.vodkaRadiationRemoval"
     };
 
     public bool IsMedicalHealingMember => MedicalHealingParameterIds.Contains(Id);
@@ -426,7 +428,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["survival.instantStaminaRestore"] = "ConsumableMixer",
         ["survival.waterStaminaEffectStrength"] = "ConsumableMixer",
         ["survival.energyDrinkStaminaRecoveryStrength"] = "ConsumableMixer",
-        ["survival.alcoholRadiationRemoval"] = "ConsumableMixer",
         ["survival.waterEffectDuration"] = "ConsumableMixer",
         ["survival.waterRegenDuration"] = "ConsumableMixer",
         ["survival.energyFullCostDuration"] = "ConsumableMixer",
@@ -1304,7 +1305,9 @@ public sealed class ParameterViewModel : ObservableObject
 
     private bool IsRadiationRemovalControl() => Id is
         "health.ecoMedkitAntirad" or
-        "health.antiRadRadiation";
+        "health.antiRadRadiation" or
+        "health.beerRadiationRemoval" or
+        "health.vodkaRadiationRemoval";
 
     public string EffectiveDisplay
     {

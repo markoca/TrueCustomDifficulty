@@ -134,7 +134,9 @@ public sealed class MainViewModel : ObservableObject
             "health.armyMedkitBleeding",
             "health.ecoMedkitBleeding",
             "health.ecoMedkitAntirad",
-            "health.antiRadRadiation"
+            "health.antiRadRadiation",
+            "health.beerRadiationRemoval",
+            "health.vodkaRadiationRemoval"
         };
 
         var actionCostParameterIds = new HashSet<string>(StringComparer.Ordinal)
@@ -361,7 +363,6 @@ public sealed class MainViewModel : ObservableObject
             "survival.instantStaminaRestore",
             "survival.waterStaminaEffectStrength",
             "survival.energyDrinkStaminaRecoveryStrength",
-            "survival.alcoholRadiationRemoval",
             "survival.waterEffectDuration",
             "survival.waterRegenDuration",
             "survival.energyDrinkEffectDuration",
@@ -1109,7 +1110,9 @@ public sealed class MainViewModel : ObservableObject
         "health.armyMedkitBleeding" or
         "health.ecoMedkitBleeding" or
         "health.ecoMedkitAntirad" or
-        "health.antiRadRadiation";
+        "health.antiRadRadiation" or
+        "health.beerRadiationRemoval" or
+        "health.vodkaRadiationRemoval";
 
     private static bool RequiresPositiveAimingPenaltyMagnitudePresetMigration(string? toolVersion)
     {
@@ -1442,6 +1445,30 @@ public sealed class MainViewModel : ObservableObject
                     }
                 }
 
+                // Earlier releases persisted one 1x multiplier for BOTH
+                // BeerAntirad1 (-10) and VodkaAntirad3 (-50). Convert that
+                // historical setting into the two new independent positive
+                // RAD quantities only when a new per-drink key is absent.
+                // SnapCurrentNumberToMarker preserves exact historical amounts
+                // such as 12.5 RAD even when modern mouse edits use 5-PTS steps.
+                if (preset.Values.TryGetValue("survival.alcoholRadiationRemoval",
+                        out var legacyAlcohol)
+                    && legacyAlcohol.Number is double legacyScale)
+                {
+                    foreach (var (id, vanilla) in new[]
+                    {
+                        ("health.beerRadiationRemoval", 10.0),
+                        ("health.vodkaRadiationRemoval", 50.0)
+                    })
+                    {
+                        if (!preset.Values.ContainsKey(id)
+                            && parametersById.TryGetValue(id, out var source))
+                            source.SnapCurrentNumberToMarker(
+                                Math.Clamp(legacyScale * vanilla,
+                                    source.Minimum, source.Maximum));
+                    }
+                }
+
                 // Old presets used the parent multiplier for EVERY Water/Energy
                 // timed effect. Preserve the old resulting duration on import
                 // when the new independent duration field is absent.
@@ -1616,7 +1643,6 @@ public sealed class MainViewModel : ObservableObject
 
                 // Consumable Effects
                 "survival.instantStaminaRestore" => 290,
-                "survival.alcoholRadiationRemoval" => 291,
                 "survival.waterEffectDuration" => 292,
                 "survival.waterRegenDuration" => 292,
                 "survival.energyDrinkEffectDuration" => 293,
@@ -1697,6 +1723,8 @@ public sealed class MainViewModel : ObservableObject
                 // Radiation treatment
                 "health.ecoMedkitAntirad" => 500,
                 "health.antiRadRadiation" => 510,
+                "health.beerRadiationRemoval" => 520,
+                "health.vodkaRadiationRemoval" => 530,
 
                 _ => 699
             };

@@ -32,7 +32,7 @@ internal static class Program
             var cohort = Catalog.Parameters
                 .Where(p => p.Id.StartsWith("survival.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal).ToArray();
-            Check(cohort.Length == 57, "Survival catalog no longer contains exactly 57 parameters");
+            Check(cohort.Length == 56, "Survival catalog no longer contains exactly 56 parameters");
 
             var vm = new MainViewModel(Catalog);
             var loaded = vm.AllParameters.Select(p => p.Id)
@@ -43,14 +43,14 @@ internal static class Program
                 "Survival catalog-to-live-VM exclusions changed: "
                 + string.Join(", ", unmounted));
             var live = cohort.Where(p => loaded.Contains(p.Id)).ToArray();
-            Check(live.Length == 56, "Expected 56 live Survival source-backed parameters");
+            Check(live.Length == 55, "Expected 55 live Survival source-backed parameters");
 
             var points = Baseline.EditPoints
                 .Where(p => p.ParameterId.StartsWith("survival.", StringComparison.Ordinal))
                 .ToArray();
-            Check(points.Length == 139, "Survival manifest no longer contains 139 source edit points");
+            Check(points.Length == 135, "Survival manifest no longer contains 135 source edit points");
             Check(points.All(p => p.Scope == "baseGame"), "Survival source unexpectedly targets DLC");
-            Check(points.Select(p => p.ParameterId).Distinct().Count() == 57,
+            Check(points.Select(p => p.ParameterId).Distinct().Count() == 56,
                 "Survival manifest-to-catalog parameter inventory differs");
             Check(points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal)
                       .SetEquals(cohort.Select(p => p.Id)),
