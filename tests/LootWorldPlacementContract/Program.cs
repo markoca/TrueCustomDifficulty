@@ -12,6 +12,7 @@ namespace LootWorldPlacementContract;
 internal static class Program
 {
     private static readonly ParameterCatalog Catalog = new ParameterCatalogService().Load();
+    private static readonly CfgWriterBaseline WriterBaseline = new CfgWriterBaselineService().Load();
     private static readonly List<string[]> WeaponPool = Csv("world-weapon-shuffle-pool.csv", 3);
     private static readonly List<string[]> WeaponDirect = Csv("world-weapon-direct-manifest.csv", 7);
     private static readonly List<string[]> UniqueWeapons = Csv("loose-unique-weapon-shuffle-manifest.csv", 8);
@@ -74,6 +75,18 @@ internal static class Program
 
     private static void Inventory()
     {
+        // This route must be present in the SAME baseline loaded by the real
+        // C# writer and counted by both Python audits. Do not register a fake
+        // generic editPoint for a manifest-based per-actor BPatch operation.
+        var uniqueRoute = WriterBaseline.Special.LooseUniqueWeaponShuffle;
+        Check(WriterBaseline.SupportedParameterCount==Catalog.Parameters.Count &&
+            WriterBaseline.SupportedParameterCount==245,
+            "Writer baseline/catalog count must include unique world weapon shuffle");
+        Check(uniqueRoute.ParameterId=="loot.looseUniqueWeaponShuffle" &&
+            uniqueRoute.ManifestResource==
+                "TrueCustomDifficulty.Data.loose-unique-weapon-shuffle-manifest.csv" &&
+            uniqueRoute.ExpectedActorCount==UniqueWeapons.Count && UniqueWeapons.Count==9,
+            "Unique weapon writer's registered manifest route drifted");
         Check(WeaponPool.Count==36 && WeaponDirect.Count==362 && WeaponGenerator.Count==14,
             "Weapon pool and eligible direct/generator inventory drift");
         Check(AttachmentPool.Count==39 && AttachmentDirect.Count==7 && AttachmentGenerator.Count==60,
