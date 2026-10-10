@@ -70,8 +70,9 @@ internal static class Program
             foreach (var difficulty in new[] { "Novice", "Stalker", "Veteran", "Master" })
                 TestVanilla(difficulty);
 
-            foreach (var id in new[] { "survival.starvationDamage",
-                "survival.severeFatigueRecoil", "survival.radiationStaminaDrainPenalty" })
+            foreach (var id in new[] { "survival.starvationStaminaDrain",
+                "survival.starvationDamage", "survival.severeFatigueRecoil",
+                "survival.radiationStaminaDrainPenalty" })
                 TestDisabled(id);
 
             TestCombined("Veteran-Consumable-Overlap", "Veteran", new[]
@@ -140,6 +141,7 @@ internal static class Program
             // Veteran-disabled cases cover the inverse transition.
             foreach (var (parent, child) in new[]
             {
+                ("advanced.starvationMechanics", "survival.starvationStaminaDrain"),
                 ("advanced.starvationMechanics", "survival.starvationDamage"),
                 ("advanced.radiationMechanics", "survival.radiationStaminaDrainPenalty"),
                 ("advanced.fatigueMechanics", "survival.severeFatigueRecoil")
@@ -211,16 +213,31 @@ internal static class Program
             var child = vm.AllParameters.Single(p => p.Id == childId);
             Check(parent.IsToggle && parent.ReferenceBoolean && child.IsControlEnabled,
                 name + ": Master dependency should begin enabled");
+            if (childId == "survival.starvationStaminaDrain")
+                Check(child.IsVisualAggregateAnchor && child.IsControlVisible,
+                    name + ": visual aggregate anchor must remain visible when toggled OFF");
             child.SnapCurrentNumberToMarker(child.ReferenceNumber
                 + (child.Definition.Slider?.Step ?? 0.1));
             Check(child.IsValueModifiedFromReference(), name + ": child never changed");
             parent.CurrentBoolean = false;
             Check(!child.IsControlEnabled && child.IsValueModifiedFromReference(),
                 name + ": parent OFF did not retain an inactive edited child");
+            if (childId == "survival.starvationStaminaDrain")
+            {
+                Check(child.IsVisualAggregateAnchor && child.IsControlVisible,
+                    name + ": parent OFF must not hide the whole Starvation panel");
+                Check(vm.AllParameters.Where(p => p.Definition.RequiresToggle == parentId)
+                          .All(p => !p.IsControlEnabled),
+                    name + ": all five Starvation penalty tracks must be inactive while OFF");
+            }
             parent.CurrentBoolean = true;
             Check(child.IsControlEnabled && child.IsValueModifiedFromReference()
                 && !parent.IsValueModifiedFromReference(),
                 name + ": re-enabling parent failed to retain child-only change");
+            if (childId == "survival.starvationStaminaDrain")
+                Check(vm.AllParameters.Where(p => p.Definition.RequiresToggle == parentId)
+                          .All(p => p.IsControlEnabled),
+                    name + ": all five Starvation controls must re-enable with their parent");
             CheckWriter(vm, new HashSet<string>(StringComparer.Ordinal) {childId},
                 folder, name);
             _passed++;
