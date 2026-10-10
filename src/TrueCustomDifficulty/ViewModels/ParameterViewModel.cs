@@ -602,7 +602,12 @@ public sealed class ParameterViewModel : ObservableObject
         IsVisualAggregateAnchor;
 
     public bool HasEffectiveDamage => _effectiveDamageMultiplierProvider is not null;
-    public bool IsControlEnabled => IsVisualAggregateAnchor || (_dependencyEnabledProvider?.Invoke() ?? true);
+    // The visual anchor keeps the composite row visible, but must NOT bypass
+    // its own requiresToggle dependency. In particular, StarvationTimeline's
+    // stamina-cost slider is both the anchor and a Master-only child.
+    // Disabled children remain visible for inspection, but their handles,
+    // accent paint and CFG writer edits must all be gated by the parent.
+    public bool IsControlEnabled => _dependencyEnabledProvider?.Invoke() ?? true;
     // Backing parameters for semantic visual families remain in the live VM/preset/writer graph
     // but are collapsed as individual rows. Each family exposes one visible anchor control.
     public bool IsControlVisible =>
