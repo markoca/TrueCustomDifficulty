@@ -9,7 +9,7 @@ gameplay verification. Do not issue v1.0 without explicit approval.
 | ID | Command / suite | Host | Verified scope |
 | --- | --- | --- | --- |
 | A1 | `python tools/audit_combat_contract.py` | Linux / Windows | 39 Combat settings, 68 direct routes, special-family mappings |
-| A2 | `python tools/audit_ui_cfg_contract.py` | Linux / Windows | 244 catalog settings, 231 effective controls, writer ownership |
+| A2 | `python tools/audit_ui_cfg_contract.py` | Linux / Windows | 245 catalog settings, 232 effective controls, 152 visible + 93 hidden, including registered nine-actor unique weapon shuffle writer |
 | A3 | `python tools/audit_project_consistency.py` | Linux / Windows | Live catalog, manifest and UI source consistency; historical `[NOT RUN]` is not PASS |
 | A4 | `python3 tools/audit_rationale_ui.py` | Linux / Windows | Global right-side WHAT IT DOES vs CONTROLS separation, 33 family guides and muted-footer ordering (static, not Wine proof) |
 | A5 | `python3 tools/audit_master_dependency_ui.py` | Linux / Windows | Master starvation anchor respects OFF; five child controls inactive but still visible; mouse/keyboard safety and regression presence (source-level) |
