@@ -79,8 +79,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["health.medkitBleeding"] = new("health-bleed-treatment-1", 1),
             ["health.armyMedkitBleeding"] = new("health-bleed-treatment-2", 0),
             ["health.ecoMedkitBleeding"] = new("health-bleed-treatment-2", 1),
-            ["health.ecoMedkitAntirad"] = new("health-rad-treatment-1", 0),
-            ["health.antiRadRadiation"] = new("health-rad-treatment-1", 1),
 
             // Stamina
             ["stamina.maxSP"] = new("stamina-core-1", 0),

@@ -132,12 +132,7 @@ public sealed class MainViewModel : ObservableObject
             "health.bandageBleeding",
             "health.medkitBleeding",
             "health.armyMedkitBleeding",
-            "health.ecoMedkitBleeding"
-        };
-        // Keep these independent Radiation Treatment sources in the VM even
-        // though they do not participate in the Medical Items modified state.
-        var radiationTreatmentParameterIds = new HashSet<string>(StringComparer.Ordinal)
-        {
+            "health.ecoMedkitBleeding",
             "health.ecoMedkitAntirad",
             "health.antiRadRadiation"
         };
@@ -235,7 +230,6 @@ public sealed class MainViewModel : ObservableObject
                 || worldLootRemovalParameterIds.Contains(p.Id)
                 || worldPlacementParameterIds.Contains(p.Id)
                 || medicalHealingParameterIds.Contains(p.Id)
-                || radiationTreatmentParameterIds.Contains(p.Id)
                 || actionCostParameterIds.Contains(p.Id)
                 || exhaustionRecoveryParameterIds.Contains(p.Id)
                 || consumableAggregateParameterIds.Contains(p.Id)

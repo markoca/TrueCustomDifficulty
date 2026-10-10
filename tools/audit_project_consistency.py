@@ -1714,6 +1714,47 @@ else:
     note("Medical Items: four HEAL/BLEED native bars in one row, independent scales, food toggle")
 
 
+# Radiation Removal is no longer a separate AggregateVisualControl family.
+# Two native-source vertical RAD columns must sit in one compact right bank,
+# with a physically distinct 0..200 RAD axis, cap hover, and source-true hit map.
+_radiation_sources = ("health.ecoMedkitAntirad", "health.antiRadRadiation")
+_radiation_caps = {"health.ecoMedkitAntirad": 120, "health.antiRadRadiation": 200}
+_radiation_catalog = {p.get("id"): p for p in parameters if p.get("id") in _radiation_sources}
+if any(_radiation_catalog.get(pid, {}).get("slider", {}).get("max") != limit
+       for pid, limit in _radiation_caps.items()):
+    fail("Medical Items radiation-removal native ceilings must be 120/200 RAD")
+_rad_medical_tokens = (
+    "private static readonly Brush RadiationAccent",
+    "private const double RadiationRulerPts = 200.0;",
+    '("health.ecoMedkitAntirad", "SCIENTIFIC MEDKIT")',
+    '("health.antiRadRadiation", "ANTI-RAD")',
+    "private readonly ParameterViewModel?[] _radiation = new ParameterViewModel?[2];",
+    "byId.TryGetValue(RadiationItems[i].Id, out _radiation[i]);",
+    "DrawRadiationGroup(dc, radArea, chart, text, muted, border, panel);",
+    'DrawCenteredText(dc, "RADIATION REMOVAL",',
+    'DrawCenteredText(dc, "RAD", radAxisCenter,',
+    "new RotateTransform(90.0,",
+    'HitAction.Radiation => $"{parameter.CurrentNumber:0.#} RAD",',
+    "DrawColumn(dc, i, HitAction.Radiation, _radiation[i],",
+    "VerticalBarHandleChrome.Draw(dc, new Point(centerX, currentY)",
+    "if (action == HitAction.Radiation)",
+    "row < _radiation.Length ? _radiation[row] : null",
+    "_medical.Concat(_bleeding).Concat(_radiation)",
+    "action == HitAction.Healing ? barAccent : BleedingAccent",
+)
+if any(token not in _medical_source for token in _rad_medical_tokens):
+    fail("Medical Items RAD bank or gold HEAL caption implementation drifted")
+if "RadiationTreatment" in _abd_control_text or "RadiationTreatment" in _medical_vm:
+    fail("Old separate Radiation Treatment aggregate family returned")
+if any(f'"{pid}"' not in _medical_vm or f'"{pid}"' not in _medical_main_vm
+       for pid in _radiation_sources):
+    fail("Radiation Removal sources must remain in active Medical Items VM graph")
+if '&& (!IsMedicalHealingMember || IsMedicalHealingAnchor)' not in _medical_vm:
+    fail("Medical Items RAD controls must not become standalone rows")
+else:
+    note("Medical Items: right-hand two-column RAD bank, teal vertical 0..200 axis, gold HEAL captions")
+
+
 # Medical Items Y-axis labels must follow the matching slider colors
 # and be rotated vertically inside the existing dedicated side gutters.
 _medical_axis_contract = (
@@ -1737,7 +1778,7 @@ else:
 # Medical Items final polish: compact pair spacing, subdued ceiling/reference
 # ticks and stronger OFF checkbox edge, without changing canonical checkbox chrome.
 _medical_polish_required = (
-    'var spread = Math.Min(27.0, laneWidth * .235);',
+    'var spread = Math.Min(23.0, laneWidth * .22);',
     'CloneWithOpacity(muted, .38), .8',
     'CloneWithOpacity(muted, .68), 1.35',
     'var checkboxEdge = CloneWithOpacity(muted, .75);',

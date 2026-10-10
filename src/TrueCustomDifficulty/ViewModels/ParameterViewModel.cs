@@ -74,7 +74,6 @@ public sealed class ParameterViewModel : ObservableObject
                     "HungerLadder" => "Move a hunger stage left or right to change when it starts. Move MEDIUM or SEVERE up or down to adjust its stamina penalty; WELL-FED has its own control.",
                     "FatigueCurve" => "Choose the sleepiness threshold or combat penalty you want to change, then drag its own track. The stage preview shows the effect of those settings.",
                     "RadiationBalance" => "Use the separate tracks for radiation build-up, natural recovery and health damage. The balance preview is read-only.",
-                    "RadiationTreatment" => "Drag SCIENTIFIC MEDKIT or ANTI-RAD to change how much radiation each treatment removes.",
                     "StarvationTimeline" => "Adjust when penalties begin, how often damage ticks occur and the three penalty strengths using their individual controls. The timeline is a preview.",
                     "RepeatedHitBand" => "Drag MIN or MAX to shape repeated-hit protection. Use the switch to decide whether healed damage stays in the tracker.",
                     "ConsumableMixer" => "Drag the four strength tracks or one of the drink-duration faders. The resulting drink statistics update automatically.",
@@ -123,8 +122,8 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag SPRINT LOCK, RECOVERY BELOW or one of the recovery tracks to tune that setting."
                     + Environment.NewLine + "Right-click a track to reset it; R resets the recovery group.";
             if (IsMedicalHealingMember)
-                return "Each item has independent vertical HEAL and BLEED controls: HP restored and bleeding points removed."
-                    + Environment.NewLine + "Drag a bar; right-click resets that source, and R resets all medical items. Food Healing is a separate checkbox.";
+                return "Four medical pairs edit HEAL and BLEED separately; the compact right-hand RAD columns edit Scientific Medkit and Anti-Rad radiation removal."
+                    + Environment.NewLine + "Drag a column to adjust it, right-click to reset one source, or press R to reset this card. Food Healing is independent.";
             if (IsStashAmmoMember)
                 return "Drag BASIC, STANDARD or RARE to change the ammo stacks shown in the preview."
                     + Environment.NewLine + "Right-click one tier to reset it; R resets all three.";
@@ -256,7 +255,11 @@ public sealed class ParameterViewModel : ObservableObject
         "health.bandageBleeding",
         "health.medkitBleeding",
         "health.armyMedkitBleeding",
-        "health.ecoMedkitBleeding"
+        "health.ecoMedkitBleeding",
+        // Scientific Medkit and Anti-Rad radiation removal now live in the
+        // compact right-hand group inside the same MEDICAL ITEMS board.
+        "health.ecoMedkitAntirad",
+        "health.antiRadRadiation"
     };
 
     public bool IsMedicalHealingMember => MedicalHealingParameterIds.Contains(Id);
@@ -368,9 +371,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["stamina.regeneration"] = "StaminaCore",
         ["stamina.waterMediumDrain"] = "WaterStaminaPressure",
         ["stamina.waterStrongDrain"] = "WaterStaminaPressure",
-        ["health.ecoMedkitAntirad"] = "RadiationTreatment",
-        ["health.antiRadRadiation"] = "RadiationTreatment",
-
         ["survival.sleepinessRate"] = "FatigueCurve",
         ["survival.sleepLowThreshold"] = "FatigueCurve",
         ["survival.sleepMediumThreshold"] = "FatigueCurve",
@@ -527,7 +527,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["MutantCombatPressure"] = "combat.mutantDamage",
         ["StaminaCore"] = "stamina.maxSP",
         ["WaterStaminaPressure"] = "stamina.waterMediumDrain",
-        ["RadiationTreatment"] = "health.ecoMedkitAntirad",
         ["FatigueCurve"] = "survival.sleepinessRate",
         ["EquipmentWearBalance"] = "equipment.armorDurability",
         ["PsyPhantomPressure"] = "combat.psySpawnCycleDelay",

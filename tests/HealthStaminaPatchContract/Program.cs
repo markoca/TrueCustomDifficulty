@@ -134,6 +134,21 @@ internal static class Program
             Check(healing.IsSlider && bleeding.IsSlider,
                 "Paired healing and bleeding must remain independent numeric sliders");
         }
+        var radiationIds = new[]
+        {
+            ("health.ecoMedkitAntirad", 60.0, 120.0),
+            ("health.antiRadRadiation", 100.0, 200.0)
+        };
+        foreach (var (id, baseline, maximum) in radiationIds)
+        {
+            var rad = vm.AllParameters.Single(p => p.Id == id);
+            Check(rad.IsMedicalHealingMember && !rad.IsControlVisible
+                  && !rad.IsVisualAggregateAnchor && rad.IsSlider,
+                "Radiation Removal source must be an independent hidden member of Medical Items: " + id);
+            Check(rad.ReferenceNumber == baseline && rad.Maximum == maximum
+                  && rad.TickFrequency == 5.0,
+                "Radiation Removal native range, step or original CFG baseline drifted: " + id);
+        }
         var food = vm.AllParameters.Single(p => p.Id == "health.foodHealing");
         Check(food.IsMedicalHealingMember && !food.IsControlVisible && food.IsToggle,
             "Food Healing must remain a checkbox in the same medical card");
@@ -146,8 +161,23 @@ internal static class Program
         bleed.ResetToReference();
         Check(!anchor.IsModified,
             "Resetting a bleeding child must clear the medical group modified state");
+
+        var scientificRad = vm.AllParameters.Single(p => p.Id == "health.ecoMedkitAntirad");
+        var antiRad = vm.AllParameters.Single(p => p.Id == "health.antiRadRadiation");
+        scientificRad.CurrentNumber = 65.0;
+        Check(anchor.IsModified && scientificRad.IsValueModifiedFromReference()
+              && !antiRad.IsValueModifiedFromReference(),
+            "Editing Scientific radiation must modify only its own source and shared card");
+        scientificRad.ResetToReference();
+        Check(!anchor.IsModified, "Radiation reset should clear composite modified state");
+        antiRad.CurrentNumber = 105.0;
+        Check(anchor.IsModified && antiRad.IsValueModifiedFromReference()
+              && !scientificRad.IsValueModifiedFromReference(),
+            "Editing Anti-Rad must modify only its own CFG source and shared card");
+        antiRad.ResetToReference();
+        Check(!anchor.IsModified, "Anti-Rad reset should clear modified medical card");
         _passed++;
-        Console.WriteLine("PASS medical-items-paired-4x2-visual-membership");
+        Console.WriteLine("PASS medical-items-4x2-plus-radiation-2-vertical-membership");
     }
 
     private static void BandageBleedingUpperBoundCase()

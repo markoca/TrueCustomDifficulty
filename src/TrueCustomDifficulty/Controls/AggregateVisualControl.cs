@@ -205,9 +205,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "WaterStaminaPressure":
                 DrawWaterStaminaBoard(dc, text, muted, border, accent, panel);
                 break;
-            case "RadiationTreatment":
-                DrawRadiationTreatmentCompact(dc, text, muted, border, accent, panel);
-                break;
             case "PhysicalLimits":
                 DrawPairedSystemBoard(dc, text, muted, border, accent, panel);
                 break;
@@ -2026,80 +2023,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawRightAlignedText(dc, $"{hp.Maximum:0} HP",
             new Point(track.Right, card.Bottom - 20.0),
             10.4, muted, FontWeights.Normal);
-    }
-
-    // Common 0..200 radiation-point ruler, with per-source native maximums.
-    // The grey tail on the shorter Scientific Medkit lane is never editable.
-    private void DrawRadiationTreatmentCompact(
-        DrawingContext dc, Brush text, Brush muted,
-        Brush border, Brush accent, Brush panel)
-    {
-        DrawHeader(dc, "RADIATION TREATMENT", "", text, muted, accent);
-        var sources = new[]
-        {
-            (Id: "health.ecoMedkitAntirad", Label: "SCIENTIFIC MEDKIT"),
-            (Id: "health.antiRadRadiation", Label: "ANTI-RAD")
-        };
-
-        const double commonMax = 200.0;
-        var axis = new Rect(164.0, 79.0,
-            Math.Max(1.0, ActualWidth - 192.0), 135.0);
-        DrawText(dc, "RADIATION POINTS REMOVED",
-            new Point(18.0, 55.0), 10.6, muted, FontWeights.SemiBold);
-        foreach (var mark in new[] { 0.0, 50.0, 100.0, 150.0, 200.0 })
-        {
-            var x = axis.Left + axis.Width * mark / commonMax;
-            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.42), 1.0)
-                { DashStyle = DashStyles.Dot },
-                new Point(x, 84.0), new Point(x, 212.0));
-            DrawCenteredText(dc, $"{mark:0}",
-                new Point(x, 76.0), 10.0, muted, FontWeights.Normal);
-        }
-
-        for (var i = 0; i < sources.Length; i++)
-        {
-            var parameter = P(sources[i].Id);
-            if (parameter is null) continue;
-
-            var rowTop = 102.0 + i * 84.0;
-            var modified = parameter.IsValueModifiedFromReference();
-            DrawText(dc, sources[i].Label,
-                new Point(18.0, rowTop - 2.0),
-                11.4, text, FontWeights.Bold);
-            DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.#} PTS",
-                new Point(ActualWidth - 29.0, rowTop - 4.0),
-                modified ? 13.8 : 12.6, modified ? accent : text,
-                FontWeights.Bold);
-
-            var y = rowTop + 31.0;
-            var nativeWidth = Math.Max(1.0,
-                axis.Width * parameter.Maximum / commonMax);
-            var track = new Rect(axis.Left, y - 6.0, nativeWidth, 12.0);
-            var nativeEndX = track.Right;
-            var currentX = ValueToX(parameter.CurrentNumber,
-                parameter.Minimum, parameter.Maximum, track, false);
-            var referenceX = ValueToX(parameter.ReferenceNumber,
-                parameter.Minimum, parameter.Maximum, track, false);
-
-            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.32), 2.0),
-                new Point(nativeEndX, y), new Point(axis.Right, y));
-            dc.DrawLine(new Pen(border, 4.0),
-                new Point(track.Left, y), new Point(track.Right, y));
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.0),
-                new Point(track.Left, y), new Point(currentX, y));
-            dc.DrawLine(new Pen(muted, 1.8),
-                new Point(referenceX, y - 9.0),
-                new Point(referenceX, y + 9.0));
-            dc.DrawEllipse(panel, new Pen(accent,
-                IsSelected(parameter) ? 2.6 : 1.7),
-                new Point(currentX, y), 6.5, 6.5);
-            dc.DrawEllipse(accent, null,
-                new Point(currentX, y), 2.5, 2.5);
-            AddHorizontalTarget(parameter,
-                new Rect(track.Left - 5.0, track.Top - 10.0,
-                    track.Width + 5.0, track.Height + 20.0),
-                track, parameter.Minimum, parameter.Maximum);
-        }
     }
 
     // Three source-exact tuning lanes: no invented headshot damage formula,
@@ -5221,7 +5144,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "PhysicalLimits" => 335.0,
             "StaminaCore" => 259.0,
             "MutantCombatPressure" or "WaterStaminaPressure" => 149.0,
-            "RadiationTreatment" => 250.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => EquipmentWearBoardHeight(width),
             "PsyPhantomPressure" => 465.0,
@@ -5352,7 +5274,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "stamina.maxSP", "stamina.regeneration",
                 "stamina.vaultMaxHeight", "stamina.maxCarryWeight" },
             "WaterStaminaPressure" => new[] { "stamina.waterMediumDrain", "stamina.waterStrongDrain" },
-            "RadiationTreatment" => new[] { "health.ecoMedkitAntirad", "health.antiRadRadiation" },
             "FatigueCurve" => new[]
             {
                 "survival.sleepinessRate",

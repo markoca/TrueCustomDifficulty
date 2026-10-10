@@ -1,5 +1,11 @@
 # Pre-release test and evidence runbook
 
+### Medical Items unified HEAL / BLEED / RAD horizontal layout acceptance
+
+At a standard 920-DIP board, verify **exactly one MEDICAL ITEMS frame**: four left item pairs, gold HEAL bar + matching gold HEAL caption; copper BLEED bar + copper caption; two narrower teal radiation-removal vertical controls grouped **to their right** without wrapping. Scientific Medkit appears both as one HEAL/BLEED item cluster and as its **independent radiation-removal source** on the right. Verify three distinguishable vertical Y-axes and horizontal tick values: left **HP 0–200**, between groups **PTS 0–100**, far right **RAD 0–200**. No duplicate horizontal Radiation Treatment card should appear. Food Healing checkbox stays at top right.
+
+Check initial RAD values: **Scientific Medkit 60 RAD** with editable ceiling **120 RAD**, **Anti-Rad 100 RAD** with ceiling **200 RAD**; both have 5-RAD increments. At narrow board widths, inspect captions and values for legibility and overlaps. Verify direct bar dragging, subtle white hover cap tracking its actual height, right-click individual reset, keyboard edits, and R reset for all ten numeric and one toggle controls. Changing Sci RAD or Anti-Rad should mark Medical Items modified without altering HEAL/BLEED or the other RAD source. Validate that Save/Load Preset and BPatch retain all original CFG targets and `negateSet` signed semantics. A3 audit and HealthStaminaPatchContract check source aggregation, source maxima and UI wiring; final Wine/actual-game behavior remains to be verified.
+
 ### Medical Items colored vertical HP/PTS axes
 
 In Health > MEDICAL ITEMS, verify **HP** is written vertically in healing gold on the **left**, and **PTS** vertically in bleeding copper on the **right**. Both captions should be centered along the height of their respective scales, with 0–200 HP and 0–100 PTS tick numbers still horizontal, muted and legible. At narrow and normal window widths, ensure no collision with numeric ticks, vertical bars, food checkbox or outer frame. All four HEAL/BLEED pairs, independent editing, native maximums, hover caps and CFG output must remain unchanged. The static audit enforces the code geometry, colors and rotation; local Wine screenshot acceptance remains pending.
