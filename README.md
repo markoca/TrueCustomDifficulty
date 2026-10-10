@@ -1,5 +1,9 @@
 # True Custom Difficulty
 
+### 2026-10-10 — Consumable effect duration secondary markers explained
+
+The Water/Energy **EFFECT DURATION** timeline keeps its real 5s and 5s/15s secondary markers, but now names their effects in two short source-bound lines below the five tracks. Water: stamina regeneration and reduced action stamina cost; Energy: two action-stamina modifiers and stamina regeneration (including Limited Energy). Each displayed duration updates from the live 0–3x source multiplier, with gold/+1.2-DIP numerals only when modified. The shared frame and measurement are 208 DIP (previously 181); five existing time sliders, native CFG writer, other consumables and reference ticks remain unchanged. The UI catalogs and static writer/source mapping gate are updated. Local Wine visual acceptance remains pending.
+
 ### 2026-10-10 — Radiation Recovery label and compact sizing
 
 The middle Radiation System slider is now **RADIATION RECOVERY** instead of a truncated technical clearance label. It continues to edit `survival.radiationRecovery` (`VitalParams.DegenRadiation`) in **PTS/S**. The shared compact-track renderer measures the actual right-hand value width, including modified-numeric typography, before allocating title space; no card widening or gameplay/CFG changes. Both UI catalogs and the project static regression gate reflect this. Local Wine visual acceptance remains pending.

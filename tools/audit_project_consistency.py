@@ -1661,6 +1661,42 @@ elif "radiation build-up, natural recovery and health damage" not in _radiation_
 else:
     note("Radiation Recovery name and source-measured compact header spacing locked")
 
+# Consumable timeline tiny ticks are two independently source-backed
+# timed effect families. Guard both the authored durations and the live visual
+# label/measurement contract, rather than inventing additional editable sources.
+_duration_sources = {
+    "survival.waterEffectDuration": {"WaterStamina2": "5.0", "WaterStaminaPerAction1": "30.0"},
+    "survival.energyDrinkEffectDuration": {
+        "EnergeticStamina": "45.0",
+        "EnergeticLimitedStamina": "45.0",
+        "EnergeticStaminaPerAction1": "15.0",
+        "EnergeticStaminaPerAction2": "5.0",
+    },
+}
+for _pid, _expected in _duration_sources.items():
+    _actual = {
+        point["prototype"]: point["sourceRaw"]
+        for point in baseline.get("editPoints", [])
+        if point.get("parameterId") == _pid
+        and point.get("key") == "Duration" and point.get("operation") == "scale"
+    }
+    if _actual != _expected:
+        fail(f"consumable duration source/legend mapping drifted: {_pid}: {_actual} != {_expected}")
+_duration_renderer = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+for _token in (
+    "private const double ConsumableTimelineHeight = 208.0;",
+    "new Rect(17.0, previewTop, width, ConsumableTimelineHeight)",
+    "return previewTop + ConsumableTimelineHeight + 14.0;",
+    "DurationDetail(waterTime,", "DurationDetail(energyTime,",
+    "LESS STAMINA COST", "ACTION STAMINA", "REGEN",
+    "subDurations[0][0] * waterTime.CurrentNumber",
+    "subDurations[1][0] * energyTime.CurrentNumber",
+    "subDurations[1][1] * energyTime.CurrentNumber",
+):
+    if _token not in _duration_renderer:
+        fail(f"consumable timeline effect caption/measurement source missing: {_token}")
+note("consumable duration preview source mapping: Water 5/30s, Energy 5/15/45s; two source-bound compact captions, no new controls")
+
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("old UI-CFG CSV snapshot (current tools/audit_ui_cfg_contract.py is authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
 

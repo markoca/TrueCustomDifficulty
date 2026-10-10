@@ -2934,7 +2934,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // A true seconds-space editor, where each row converts the pointer
         // back to its own untouched native source multiplier (0..3, 0.05x).
-        var preview = new Rect(17.0, previewTop, width, 181.0);
+        var preview = new Rect(17.0, previewTop, width, ConsumableTimelineHeight);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
         DrawText(dc, "EFFECT DURATION  /  SECONDS",
             new Point(preview.Left + 12.0, previewTop + 8.0),
@@ -3015,6 +3015,34 @@ public sealed class AggregateVisualControl : FrameworkElement
                 track, parameter.Minimum, parameter.Maximum);
         }
 
+        // The unobtrusive secondary ticks above are real authored effects,
+        // not controls. Name them explicitly with their current durations.
+        // WATER: regen 5 s and stamina-cost reduction 30 s.
+        // ENERGY: two action-stamina effects 5/15 s, regen 45 s (also Limited).
+        // Keep one editable duration source per drink; no extra input handles.
+        void DurationDetail(ParameterViewModel source, string caption, double offset)
+        {
+            var formatted = CreateText(caption, 9.6, text, FontWeights.SemiBold,
+                Math.Max(1.0, preview.Width - 24.0));
+            if (source.IsControlEnabled && source.IsValueModifiedFromReference())
+            {
+                foreach (System.Text.RegularExpressions.Match token in
+                    System.Text.RegularExpressions.Regex.Matches(caption, @"\d+(?:\.\d+)?s"))
+                {
+                    formatted.SetForegroundBrush(accent, token.Index, token.Length);
+                    formatted.SetFontSize(10.8, token.Index, token.Length);
+                }
+            }
+            dc.DrawText(formatted, new Point(preview.Left + 12.0, previewTop + offset));
+        }
+
+        DurationDetail(waterTime,
+            $"WATER: REGEN {subDurations[0][0] * waterTime.CurrentNumber:0.#}s  /  " +
+            $"LESS STAMINA COST {durations[0] * waterTime.CurrentNumber:0.#}s", 165.0);
+        DurationDetail(energyTime,
+            $"ENERGY: ACTION STAMINA {subDurations[1][0] * energyTime.CurrentNumber:0.#}s + " +
+            $"{subDurations[1][1] * energyTime.CurrentNumber:0.#}s  /  " +
+            $"REGEN {durations[1] * energyTime.CurrentNumber:0.#}s", 184.0);
     }
 
     private void DrawSleepingDashboard(
@@ -3909,6 +3937,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Shared density for the large Survival/Health aggregate panels. Rows are
     // column-aware; no independent sliders are stacked inside the same hit area.
     private const double CompactTrackHeight = 82.0;
+    // Five native duration lanes plus two concise labels for the shorter effects.
+    // The renderer and its layout measurement must share this exact height.
+    private const double ConsumableTimelineHeight = 208.0;
     // Reserved space for plot ticks plus three independently readable stage lines.
     private const double HungerProfileHeight = 344.0;
     private const double CompactRowGap = 8.0;
@@ -5228,7 +5259,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var cardsTop = readoutTop;
         var previewTop = CompactGridEnd(cardsTop, 3, CompactStageColumns(width))
             + 18.0;
-        return previewTop + 181.0 + 14.0;
+        return previewTop + ConsumableTimelineHeight + 14.0;
     }
 
     private static double CompactHungerHeight(double width)
