@@ -97,7 +97,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "FlycatcherSlowdown" => "Three Combat-style circular handles edit two real retained-speed values. BOTTOM adjusts movement remaining (0–100%); LEFT adjusts turning remaining (0–100%, applied to both yaw and pitch); CENTER moves both independently with its horizontal and vertical directions. More remaining speed means less slowdown. Vanilla is 50% movement and 30% turn. The writer preserves original negative CFG offsets using UI minus 1. Right-click the center resets both; right-click one outer ring resets only its axis; R resets this Flycatcher family.",
                     "AnomalySpecialEffects" => "Three independent source-bound horizontal controls: Razor Bleeding (0–2x) scales low- and high-speed bleeding tiers; Diamond Bleeding (0–20 native bleeding points, 0.5-point ticks) changes the authored bleeding magnitude; Psy Drain Intensity (0–2x) scales the existing negative Psy-point regeneration effect. None is a synthetic total-damage preview. Each right-click resets its source; R resets all three.",
                     "NpcLootLoadout" => "EXTRA CORPSE LOOT is a genuine three-choice package selector: Medicine + Ammo, Water or None. MEDICAL DROPS edits normal NPC medical frequency. NPC AMMO edits only 43 counts inside a source-derived TCD_NPC_Ammo_Smart clone (24 groups/4 rank blocks), linked exclusively to the selected Base difficulty when Medicine + Ammo is enabled; otherwise its value is retained but inactive. NPC AMMO has no effect on weapon-attached ammo or Breakable Boxes. The Newbie sample counts below the rail are 12 GA 2-6, 5.45 15-20 and .45 ACP 8-12, scaled with integer-half-up. WEAPON CONDITION uses two independently selectable nearest-handle MIN and MAX controls over 0-100%, with native 1% steps. Equal handles remain independently accessible. The 25-50% vanilla band preserves the one 35-45% outlier until changed. Right-click resets the source under the pointer; R resets this four-source family.",
-                    "WorldLootLayout" => "WORLD WEAPON SHUFFLE reshuffles only audited compatible regular weapon locations and retains every one of the 36 regular weapon models. WEAPON DENSITY changes how many compatible locations stay occupied; even at 0% the authored allocator keeps one of every regular weapon model. Density is editable only when World Weapon Shuffle is ON; switching shuffle OFF preserves its stored value without applying it. ATTACHMENT SHUFFLE independently changes compatible loose attachment placements, REMOVE WORLD DETECTORS removes supported non-quest detectors, and BLUEPRINT SHUFFLE independently redistributes supported blueprint locations. The four toggles neither trigger nor change each other. Right-click one toggle or the density track to restore only its Base Preset value; R resets all five settings.",
+                    "WorldLootLayout" => "WORLD WEAPON SHUFFLE reshuffles only audited compatible regular weapon locations and retains every one of the 36 regular weapon models. WEAPON DENSITY changes how many compatible locations stay occupied; even at 0% the authored allocator keeps one of every regular weapon model. Density is editable only when World Weapon Shuffle is ON; switching shuffle OFF preserves its stored value without applying it. ATTACHMENT SHUFFLE independently changes compatible loose attachment placements, REMOVE WORLD DETECTORS removes supported non-quest detectors, and BLUEPRINT SHUFFLE independently redistributes supported blueprint locations. UNIQUE WEAPON SHUFFLE independently redistributes all nine audited loose unique pickups across their nine original positions, without removing any of them. The five toggles neither trigger nor change each other. Right-click one toggle or the density track to restore only its Base Preset value; R resets all six settings.",
                     "StashRewardProfile" => "Three independent vertical faders: Basic Stash RGD-5 drop chance (0-100%, 5-percentage-point source steps), Basic RGD-5 quantity if the roll succeeds (0-4 grenades, one-count steps), and eligible Rare Stash coupon chance (0-100%, 1-percentage-point steps). The coupon Base Preset varies by selected difficulty. Chance never changes stored quantity, and quantity never changes chance or stash eligibility. Select any channel to inspect its rationale, drag the fader to edit, click its grey Base tick or right-click to reset just that source, or press R to reset all three.",
                     "BreakableBoxYields" => "Two independent vertical faders adjust ammunition and grenade contents in existing breakable boxes, not the number of boxes or the types of loot. AMMO YIELD uses its native 0.25x absolute steps (0.5x to 2x); GRENADE YIELD uses 0.5x absolute steps (0.5x to 2x). Each retains its separate writer route and selected Base Preset marker. Drag to adjust, click grey marker to snap to Base, right-click to reset one, or press R to reset both. Click a channel for its own rationale.",
                     "AmmoDistribution" => "The SNG and NATO bars show normalized weight share inside each authored breakable-ammo pool, not global box drop chance. SNG contains A918D + A919D under the shared 9x18/9x19 control plus A545D and A012D, so vanilla weight share is 50/25/25. NATO contains one .45, 9x19, 5.56 and 12 Gauge entry, so vanilla is 25/25/25/25. The four tracks scale existing Weight=2 entries from 0x to 3x; no new ammo candidates are created. SNG must always keep at least one of 9x18/9x19, 5.45/5.56 or 12 Gauge above 0x.",
@@ -280,8 +280,7 @@ public sealed class ParameterViewModel : ObservableObject
         "loot.worldF1GrenadeBoxes",
         "loot.worldFoodDrinkCratesRemoved",
         "loot.worldMedicalCratesRemoved",
-        "loot.looseWorldLootRemoved",
-        "loot.looseUniqueWeaponsRemoved"
+        "loot.looseWorldLootRemoved"
     };
 
     public bool IsWorldLootRemovalMember => WorldLootRemovalParameterIds.Contains(Id);
@@ -556,6 +555,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.npcWeaponAmmoSupply"] = "NpcLootLoadout",
         ["loot.droppedWeaponCondition"] = "NpcLootLoadout",
 
+        ["loot.looseUniqueWeaponShuffle"] = "WorldLootLayout",
         ["loot.worldWeaponShuffle"] = "WorldLootLayout",
         ["loot.worldWeaponDensity"] = "WorldLootLayout",
         ["loot.worldAttachmentShuffle"] = "WorldLootLayout",
@@ -1181,6 +1181,8 @@ public sealed class ParameterViewModel : ObservableObject
     {
         get
         {
+            if (Id == "loot.looseUniqueWeaponShuffle")
+                return "Shuffle all nine source-verified standalone unique weapons among their original world pickup locations. None are removed.";
             if (Id == "loot.worldWeaponShuffle")
                 return "Redistribute regular world weapons across compatible locations while preserving progression.";
             if (Id == "loot.worldWeaponDensity")
