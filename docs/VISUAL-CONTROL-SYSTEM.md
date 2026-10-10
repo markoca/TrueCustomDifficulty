@@ -1,5 +1,10 @@
 # Visual Control System
 
+### 2026-10-10 — World Loot Depletion vertical bank (authoritative)
+
+The **WORLD LOOT DEPLETION** editor uses five independent, directly editable vertical removal bars in one compact row: AMMO BOXES, F1 GRENADE BOXES, FOOD & DRINK BOXES, MEDICAL BOXES, and LOOSE WORLD LOOT. A single truthful **0–100% REMOVED** Y ruler, current percent above each bar, discreet native reference ticks, and category names below follow the Medical Items / Item Value Layers source-bar grammar. Each control retains its real 0–1 CFG range, 0.01 increment, distinct source writer, reset-on-right-click, keyboard arrow editing and panel-wide R reset. Only modified values are gold. The frame and XAML host both measure 330 DIP, minimum renderer width 600 DIP, with no second row or redundant legend. No loot-domain merge, unique-weapon override, preset or BPatch mapping change. Base/DLC1 population evidence remains in the source audit and parameter definitions rather than adding a noisy legend to the direct editor. Local build/Wine visual verification remains pending.
+
+
 ### 2026-10-10 — Item Value Layers vertical controls (authoritative)
 
 The **ITEM VALUE LAYERS** editor is now a compact, one-row six-column vertical source bank, following the Medical Items direct-edit grammar. CONSUMABLES, AMMO, ARMOR, WEAPONS, ARTIFACTS and MUTANT PARTS each have an independent native vertical drag handle, a current `x` multiplier above the bar, a muted reference tick, and a short item caption below. All six audited CFG values range from **0.00x to 2.00x**, with **0.01x** steps, so the editor uses one truthful **0–2x VALUE** ruler at left rather than unrelated per-card scales. Only modified current numbers turn gold; no Base/Vanilla legend or duplicate bounds are shown. The frame measures 330 DIP high at a minimum 560-DIP width; the original six real parameters, distinct mutant-parts ItemPrototypes Cost writer, keyboard arrows, right-click individual reset and R all-reset remain intact. This visual change does not modify CFG targets, preset format or writer rules. Local publish/Wine and game validation remain pending.
