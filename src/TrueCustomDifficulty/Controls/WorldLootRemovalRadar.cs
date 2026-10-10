@@ -18,7 +18,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class WorldLootRemovalRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double RowHeight = 75.0;
+    // Shared vertical 0–100% physical ruler.
 
     private static readonly PopulationDefinition[] Populations =
     {
@@ -135,63 +135,68 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             12.5, accent, FontWeights.Bold);
 
 
-        // Five genuinely independent depletion sources in a compact 2-column
-        // bank, not long tracks whose labels/count estimates are hard to read.
-        const double margin = 17.0;
-        const double gap = 10.0;
-        var cardWidth = (Math.Max(600.0, ActualWidth) - 2.0 * margin - gap) / 2.0;
-        for (var row = 0; row < Populations.Length; row++)
+        // Five independent 0–100% depletion controls, on one physical ruler.
+        const double plotTop = 111.0;
+        const double plotBottom = 274.0;
+        var left = 62.0;
+        var lane = (ActualWidth - left - 19.0) / Populations.Length;
+        for (var step = 0; step <= 4; step++)
         {
-            var card = new Rect(margin + (row % 2) * (cardWidth + gap),
-                54.0 + (row / 2) * RowHeight, cardWidth, RowHeight - 7.0);
-            DrawRow(dc, row, card, text, muted, border, accent, panel);
+            var y = plotBottom - (plotBottom - plotTop) * step / 4.0;
+            dc.DrawLine(new Pen(CloneWithOpacity(border, .43), .8),
+                new Point(left, y), new Point(ActualWidth - 19, y));
+            DrawRightAlignedText(dc, $"{step * 25}%",
+                new Point(left - 9, y - 6), 9, muted, FontWeights.SemiBold);
         }
+        var axis = new Point(12, (plotTop + plotBottom) / 2);
+        dc.PushTransform(new RotateTransform(-90, axis.X, axis.Y));
+        DrawCenteredText(dc, "REMOVED", axis, 9.3, accent, FontWeights.Bold);
+        dc.Pop();
 
-        // Reset notifications intentionally silent.
-    }
-
-    private void DrawRow(
-        DrawingContext dc, int row, Rect card,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
-    {
-        var parameter = _parameters[row];
-        if (parameter is null) return;
-        var info = Populations[row];
-        var removal = Math.Clamp(parameter.CurrentNumber, 0.0, 1.0);
-        var modified = parameter.IsValueModifiedFromReference();
-        var hovered = _hoverRow == row;
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.8),
-            new Pen(CloneWithOpacity(border, 0.68), 0.9),
-            card, 4.0, 4.0);
-
-        DrawText(dc, info.Label,
-            new Point(card.Left + 10.0, card.Top + 9.0),
-            10.9, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, $"{removal * 100.0:0}%",
-            new Point(card.Right - 12.0, card.Top + 7.0),
-            modified ? 13.0 : 11.8,
-            modified ? accent : text, FontWeights.Bold);
-
-        var track = new Rect(card.Left + 12.0, card.Top + 40.0,
-            Math.Max(1.0, card.Width - 24.0), 10.0);
-        var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y),
-            new Point(track.Right, y));
-        var currentX = track.Left + track.Width * removal;
-        var vanillaX = track.Left + track.Width * Math.Clamp(
-            parameter.ReferenceNumber, 0.0, 1.0);
-        dc.DrawLine(new Pen(muted, 1.3), new Point(vanillaX, y - 8.0),
-            new Point(vanillaX, y + 8.0));
-        dc.DrawLine(new Pen(accent, 3.0), new Point(track.Left, y),
-            new Point(currentX, y));
-        ControlHoverGlow.Draw(dc, new Point(currentX, y), accent, hovered);
-        dc.DrawEllipse(panel,
-            new Pen(accent, _selectedRow == row ? 2.3 : 1.5),
-            new Point(currentX, y), 6.0, 6.0);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-        _targets[row] = new HitTarget(
-            new Rect(track.Left - 7.0, track.Top - 8.0,
-                track.Width + 14.0, track.Height + 16.0), track);
+        for (var i = 0; i < Populations.Length; i++)
+        {
+            var parameter = _parameters[i];
+            if (parameter is null) continue;
+            var center = left + (i + .5) * lane;
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .33),
+                new Pen(CloneWithOpacity(border, .64), .8),
+                new Rect(left + i * lane + 3, 69, lane - 6, 251), 4, 4);
+            var current = Math.Clamp(parameter.CurrentNumber, 0, 1);
+            var y = plotBottom - (plotBottom - plotTop) * current;
+            var referenceY = plotBottom - (plotBottom - plotTop) *
+                Math.Clamp(parameter.ReferenceNumber, 0, 1);
+            var barWidth = Math.Min(39, lane * .37);
+            var barLeft = center - barWidth / 2;
+            dc.DrawRectangle(CloneWithOpacity(border, .12), null,
+                new Rect(barLeft, plotTop, barWidth, plotBottom - plotTop));
+            dc.DrawRectangle(CloneWithOpacity(accent, parameter.IsControlEnabled ? .72 : .22),
+                null, new Rect(barLeft, y, barWidth, Math.Max(.5, plotBottom - y)));
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .68), 1.35),
+                new Point(barLeft - 5, referenceY),
+                new Point(barLeft + barWidth + 5, referenceY));
+            VerticalBarHandleChrome.Draw(dc, new Point(center, y), barWidth,
+                parameter.IsControlEnabled ? accent : muted,
+                _hoverRow == i && parameter.IsControlEnabled);
+            DrawCenteredText(dc, $"{current * 100:0}%",
+                new Point(center, 88), 10.5,
+                parameter.IsValueModifiedFromReference() ? accent : text,
+                FontWeights.Bold);
+            var words = Populations[i].Label.Split(' ');
+            if (words.Length <= 2)
+                DrawCenteredText(dc, Populations[i].Label,
+                    new Point(center, 299), 9, text, FontWeights.Bold);
+            else
+            {
+                DrawCenteredText(dc, string.Join(" ", words.Take(2)),
+                    new Point(center, 291), 9, text, FontWeights.Bold);
+                DrawCenteredText(dc, string.Join(" ", words.Skip(2)),
+                    new Point(center, 305), 9, text, FontWeights.Bold);
+            }
+            _targets[i] = new HitTarget(
+                new Rect(center - Math.Max(16, barWidth / 2 + 6), plotTop,
+                    Math.Max(32, barWidth + 12), plotBottom - plotTop),
+                new Rect(center - barWidth / 2, plotTop, barWidth, plotBottom - plotTop));
+        }
     }
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -223,7 +228,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             InvalidateVisual();
         }
 
-        Cursor = hover >= 0 ? Cursors.Hand : Cursors.Arrow;
+        Cursor = hover >= 0 ? Cursors.SizeNS : Cursors.Arrow;
 
         if (_dragRow < 0 || e.LeftButton != MouseButtonState.Pressed)
             return;
@@ -311,7 +316,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             return;
 
         var ratio = Math.Clamp(
-            (point.X - target.MapRect.Left) / Math.Max(1.0, target.MapRect.Width),
+            (target.MapRect.Bottom - point.Y) / Math.Max(1.0, target.MapRect.Height),
             0.0,
             1.0);
 
