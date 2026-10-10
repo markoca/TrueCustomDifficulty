@@ -23,6 +23,9 @@ public sealed class PresetFile
     [JsonPropertyName("drinkDurationOverride")]
     public bool DrinkDurationOverride { get; set; }
 
+    [JsonPropertyName("medicalOverride")]
+    public bool MedicalOverride { get; set; }
+
     [JsonPropertyName("savedAtUtc")]
     public DateTimeOffset? SavedAtUtc { get; set; }
 
