@@ -129,8 +129,15 @@ public sealed class MainViewModel : ObservableObject
             "health.armyMedkitHealing",
             "health.ecoMedkitHealing",
             "health.foodHealing",
-            // These are rendered by the RadiationTreatment composite.
-            // They are not top-level rows, but must have live backing VMs.
+            "health.bandageBleeding",
+            "health.medkitBleeding",
+            "health.armyMedkitBleeding",
+            "health.ecoMedkitBleeding"
+        };
+        // Keep these independent Radiation Treatment sources in the VM even
+        // though they do not participate in the Medical Items modified state.
+        var radiationTreatmentParameterIds = new HashSet<string>(StringComparer.Ordinal)
+        {
             "health.ecoMedkitAntirad",
             "health.antiRadRadiation"
         };
@@ -228,6 +235,7 @@ public sealed class MainViewModel : ObservableObject
                 || worldLootRemovalParameterIds.Contains(p.Id)
                 || worldPlacementParameterIds.Contains(p.Id)
                 || medicalHealingParameterIds.Contains(p.Id)
+                || radiationTreatmentParameterIds.Contains(p.Id)
                 || actionCostParameterIds.Contains(p.Id)
                 || exhaustionRecoveryParameterIds.Contains(p.Id)
                 || consumableAggregateParameterIds.Contains(p.Id)

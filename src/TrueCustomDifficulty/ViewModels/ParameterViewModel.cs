@@ -75,7 +75,6 @@ public sealed class ParameterViewModel : ObservableObject
                     "FatigueCurve" => "Choose the sleepiness threshold or combat penalty you want to change, then drag its own track. The stage preview shows the effect of those settings.",
                     "RadiationBalance" => "Use the separate tracks for radiation build-up, natural recovery and health damage. The balance preview is read-only.",
                     "RadiationTreatment" => "Drag SCIENTIFIC MEDKIT or ANTI-RAD to change how much radiation each treatment removes.",
-                    "BleedingTreatmentMixer" => "Drag the Bandage or Medkit track to change its bleeding removal. The comparison graphic is a preview, not another slider.",
                     "StarvationTimeline" => "Adjust when penalties begin, how often damage ticks occur and the three penalty strengths using their individual controls. The timeline is a preview.",
                     "RepeatedHitBand" => "Drag MIN or MAX to shape repeated-hit protection. Use the switch to decide whether healed damage stays in the tracker.",
                     "ConsumableMixer" => "Drag the four strength tracks or one of the drink-duration faders. The resulting drink statistics update automatically.",
@@ -124,8 +123,8 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag SPRINT LOCK, RECOVERY BELOW or one of the recovery tracks to tune that setting."
                     + Environment.NewLine + "Right-click a track to reset it; R resets the recovery group.";
             if (IsMedicalHealingMember)
-                return "Use − / + for fine tuning, or HALF, NORMAL and MAX for quick healing values. The food switch is separate."
-                    + Environment.NewLine + "Right-click an item to reset it; R resets the whole healing group.";
+                return "Each item has independent vertical HEAL and BLEED controls: HP restored and bleeding points removed."
+                    + Environment.NewLine + "Drag a bar; right-click resets that source, and R resets all medical items. Food Healing is a separate checkbox.";
             if (IsStashAmmoMember)
                 return "Drag BASIC, STANDARD or RARE to change the ammo stacks shown in the preview."
                     + Environment.NewLine + "Right-click one tier to reset it; R resets all three.";
@@ -251,7 +250,13 @@ public sealed class ParameterViewModel : ObservableObject
         "health.medkitHealing",
         "health.armyMedkitHealing",
         "health.ecoMedkitHealing",
-        "health.foodHealing"
+        "health.foodHealing",
+        // Each bleeding source is a directly editable right-hand sub-bar
+        // within the same Medical Items visual, not a second top-level card.
+        "health.bandageBleeding",
+        "health.medkitBleeding",
+        "health.armyMedkitBleeding",
+        "health.ecoMedkitBleeding"
     };
 
     public bool IsMedicalHealingMember => MedicalHealingParameterIds.Contains(Id);
@@ -418,11 +423,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["advanced.radiationMechanics"] = "MasterRadiationPenalty",
         ["survival.radiationStaminaDrainPenalty"] = "MasterRadiationPenalty",
 
-        ["health.bandageBleeding"] = "BleedingTreatmentMixer",
-        ["health.medkitBleeding"] = "BleedingTreatmentMixer",
-        ["health.armyMedkitBleeding"] = "BleedingTreatmentMixer",
-        ["health.ecoMedkitBleeding"] = "BleedingTreatmentMixer",
-
         ["survival.instantStaminaRestore"] = "ConsumableMixer",
         ["survival.waterStaminaEffectStrength"] = "ConsumableMixer",
         ["survival.energyDrinkStaminaRecoveryStrength"] = "ConsumableMixer",
@@ -538,7 +538,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["MasterMedicalHealing"] = "advanced.masterEffectModifierMechanics",
         ["MasterLowHealth"] = "advanced.lowHealthMechanics",
         ["MasterRadiationPenalty"] = "advanced.radiationMechanics",
-        ["BleedingTreatmentMixer"] = "health.bandageBleeding",
         ["ConsumableMixer"] = "survival.instantStaminaRestore",
         ["SleepingDashboard"] = "survival.sleepEligibilityThreshold",
         ["HungerLadder"] = "survival.hungerRate",

@@ -1657,38 +1657,13 @@ else:
     note("semantic editor registration: 9 retained specialized classes + current AggregateVisualControl; no obsolete polar-only assumptions")
 
 
-# Vertical medical/bleeding columns must use the real bar-top horizontal cap,
-# never the ordinary circular hover ring intended for point/XY handles.
-_bar_cap = (ROOT / "src/TrueCustomDifficulty/Controls/VerticalBarHandleChrome.cs")
-_medical_bar = (ROOT / "src/TrueCustomDifficulty/Controls/MedicalHealingRadar.cs").read_text(encoding="utf-8")
-_aggregate_hover_section = _abd_control_text.split("private void DrawHoveredHandle(", 1)[-1].split(
-    "private void DrawBlastDamageBoard(", 1)[0]
-_bleeding_bar_section = _abd_control_text.split("private void DrawBleedingTreatmentMixer(", 1)[-1].split(
-    "private void DrawConsumableMixer(", 1)[0]
-_medical_bar_section = _medical_bar.split("var columnWidth = chartWidth / 3.0;", 1)[-1].split(
-    "private void DrawMedicalCard(", 1)[0]
-if not _bar_cap.exists():
-    fail("vertical-bar hover chrome missing: matching medical/bleeding cap renderer required")
-else:
-    _bar_cap_source = _bar_cap.read_text(encoding="utf-8")
-    if ("internal static class VerticalBarHandleChrome" not in _bar_cap_source
-            or "barTopCenter.Y" not in _bar_cap_source
-            or "hovered ? Brushes.White : accent" not in _bar_cap_source):
-        fail("vertical-bar hover chrome must align a white-on-hover horizontal cap to the bar top")
-    elif ("VerticalBarHandleChrome.Draw(dc, new Point(centerX, barTop)" not in _medical_bar_section
-            or "ControlHoverGlow.Draw(dc, new Point(centerX, barTop)" in _medical_bar_section
-            or "dc.DrawEllipse(panel, new Pen(accent" in _medical_bar_section):
-        fail("Medkit Healing bar must render a cap, not a circular hover/thumb")
-    elif ("VerticalBarHandleChrome.Draw(dc, new Point(centerX, currentY)" not in _bleeding_bar_section
-            or 'Family == "BleedingTreatmentMixer" && target.Kind == HitKind.Vertical'
-            not in _aggregate_hover_section):
-        fail("Bleeding Treatment bar must render its own cap and suppress generic circle")
-    else:
-        note("Medical healing and bleeding treatment: matching live-value bar-top caps, no circular hover rings")
-
-
-# Bleeding Treatment uses a common 0..100 PTS Y ruler and four
-# independent source caps. Bandage's 100 PTS / 1x is a real source cap.
+# Medical Items: four true source-backed HEAL/BLEED pairs share one
+# compact native-vertical card; the old separate bleeding visual is retired.
+_bar_cap = ROOT / "src/TrueCustomDifficulty/Controls/VerticalBarHandleChrome.cs"
+_medical_path = ROOT / "src/TrueCustomDifficulty/Controls/MedicalHealingRadar.cs"
+_medical_source = _medical_path.read_text(encoding="utf-8")
+_medical_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+_medical_main_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
 _bleeding_caps_expected = {
     "health.bandageBleeding": 100,
     "health.medkitBleeding": 30,
@@ -1699,14 +1674,44 @@ _bleeding_caps_by_id = {p.get("id"): p for p in parameters
                         if p.get("id") in _bleeding_caps_expected}
 if any(_bleeding_caps_by_id.get(pid, {}).get("slider", {}).get("max") != maximum
        for pid, maximum in _bleeding_caps_expected.items()):
-    fail("Bleeding Treatment native maxima must be 100/30/70/50 PTS")
-elif ('const double commonMaximum = 100.0;' not in _bleeding_bar_section
-      or 'for (var tick = 0; tick <= 100; tick += 25)' not in _bleeding_bar_section
-      or 'AddVerticalTarget(parameter, hit, map, 0.0, parameter.Maximum);'
-      not in _bleeding_bar_section):
-    fail("Bleeding Treatment shared Y axis/hit map must respect 0..100 PTS")
+    fail("Medical Items BLEED native limits must be 100/30/70/50 PTS")
+if not _bar_cap.exists():
+    fail("Medical Items paired vertical cap chrome is missing")
 else:
-    note("Bleeding Treatment chart 0..100 PTS; Bandage 1x; native maxima locked")
+    _cap_source = _bar_cap.read_text(encoding="utf-8")
+    if 'internal static class VerticalBarHandleChrome' not in _cap_source:
+        fail("Medical Items must reuse canonical VerticalBarHandleChrome")
+_required_pairs = (
+    'private readonly ParameterViewModel?[] _medical',
+    'private readonly ParameterViewModel?[] _bleeding',
+    'byId.TryGetValue(BleedingIds[i], out _bleeding[i]);',
+    'DrawCenteredText(dc, "MEDICAL ITEMS"',
+    'PlotHeight = 151.0',
+    'HealingRulerHp = 200.0',
+    'BleedingRulerPts = 100.0',
+    'DrawColumn(dc, row, HitAction.Healing, _medical[row]',
+    'DrawColumn(dc, row, HitAction.Bleeding, _bleeding[row]',
+    'VerticalBarHandleChrome.Draw(dc, new Point(centerX, currentY)',
+    'new Rect(centerX - Math.Max(16.0, barWidth / 2.0 + 6.0)',
+    'HitAction.Healing or HitAction.Bleeding',
+    'ParameterAt(hit.Row, hit.Action)?.ResetToReference();',
+    'foreach (var medicalItem in _medical.Concat(_bleeding))',
+    'ParameterAt(_selected, _selectedAction)',
+    'BooleanCheckboxChrome.Draw(dc, _foodCheckboxRect,',
+)
+if any(token not in _medical_source for token in _required_pairs):
+    fail("Medical Items paired 4x2 vertical editor/interaction contract drifted")
+if 'BleedingTreatmentMixer' in _abd_control_text or 'BleedingTreatmentMixer' in _medical_vm:
+    fail("Retired standalone Bleeding Treatment visual family is still reachable")
+if '&& (!IsMedicalHealingMember || IsMedicalHealingAnchor)' not in _medical_vm:
+    fail("Medical Items must keep child rows hidden, preserving only medical anchor")
+if not all(f'"{pid}"' in _medical_vm and f'"{pid}"' in _medical_main_vm
+           for pid in _bleeding_caps_expected):
+    fail("Paired BLEED sources must participate in the live medical VM and modified-state graph")
+if 'MinHeight="370"' not in _abd_xaml or 'MedicalHealingRadarControl' not in _abd_xaml:
+    fail("Medical Items XAML height/renderer registration drifted")
+else:
+    note("Medical Items: four HEAL/BLEED native bars in one row, independent scales, food toggle")
 
 
 # Hunger Survival Profile LOW handle: avoid a second hover circle at the

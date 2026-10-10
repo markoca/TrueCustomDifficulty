@@ -214,9 +214,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "FatigueCurve":
                 DrawFatigueCurve(dc, text, muted, border, soft, accent, panel);
                 break;
-            case "BleedingTreatmentMixer":
-                DrawBleedingTreatmentMixer(dc, text, muted, border, accent, panel);
-                break;
             case "EquipmentWearBalance":
                 DrawEquipmentWearBalance(dc, text, muted, border, soft, accent, panel);
                 break;
@@ -309,10 +306,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (Family == "HungerLadder"
             && target.Kind == HitKind.Horizontal
             && source.Id == "survival.hungerLowThreshold")
-            return;
-        // Bleeding Treatment columns render their own horizontal top caps.
-        // The generic circular overlay does not belong on vertical bars.
-        if (Family == "BleedingTreatmentMixer" && target.Kind == HitKind.Vertical)
             return;
         var range = Math.Max(0.000001, target.VisualMaximum - target.VisualMinimum);
         // The two NPC condition handles share one rail except when they
@@ -2719,113 +2712,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 48.0 + (i / columns) * 94.0, cardWidth, 80.0);
             DrawEconomyCard(dc, P(channels[i].Id), channels[i].Label,
                 card, text, muted, border, accent, panel);
-        }
-    }
-
-    // BLEEDING TREATMENT — four native point quantities on a comparable
-    // common 0–100 PTS ruler; Bandage is capped at its original 1x (100 PTS).
-    // Every lane retains its independent source-native editable maximum.
-    private void DrawBleedingTreatmentMixer(
-        DrawingContext dc, Brush text, Brush muted,
-        Brush border, Brush accent, Brush panel)
-    {
-        var parameters = new[]
-        {
-            P("health.bandageBleeding"),
-            P("health.medkitBleeding"),
-            P("health.armyMedkitBleeding"),
-            P("health.ecoMedkitBleeding")
-        };
-        if (parameters.Any(p => p is null))
-            return;
-
-        DrawHeader(dc, "BLEEDING TREATMENT", "", text, muted, accent);
-        DrawText(dc, "BLEEDING POINTS REMOVED",
-            new Point(18.0, 58.0),
-            11.0, muted, FontWeights.SemiBold);
-
-        const double commonMaximum = 100.0;
-        var chart = new Rect(51.0, 119.0,
-            Math.Max(1.0, ActualWidth - 76.0), 197.0);
-
-        for (var tick = 0; tick <= 100; tick += 25)
-        {
-            var y = ValueToY(tick, 0.0, commonMaximum, chart);
-            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.47), 1.0),
-                new Point(chart.Left, y),
-                new Point(chart.Right, y));
-            DrawRightAlignedText(dc, $"{tick}",
-                new Point(chart.Left - 9.0, y - 7.0),
-                10.4, muted, FontWeights.SemiBold);
-        }
-
-        var width = chart.Width / parameters.Length;
-        var titles = new[]
-        {
-            ("BANDAGE", ""),
-            ("MEDKIT", ""),
-            ("ARMY", "MEDKIT"),
-            ("SCIENTIFIC", "MEDKIT")
-        };
-
-        for (var i = 0; i < parameters.Length; i++)
-        {
-            var parameter = parameters[i]!;
-            var centerX = chart.Left + (i + .5) * width;
-            var barWidth = Math.Min(75.0, width * .45);
-            var currentY = ValueToY(parameter.CurrentNumber,
-                0.0, commonMaximum, chart);
-            var referenceY = ValueToY(parameter.ReferenceNumber,
-                0.0, commonMaximum, chart);
-            var nativeTop = ValueToY(parameter.Maximum,
-                0.0, commonMaximum, chart);
-            var label = titles[i];
-
-            // Pale band marks the native ceiling for this source:
-            // Bandage 100 (1x), Medkit 30, Army 70, Scientific 50 PTS.
-            dc.DrawRectangle(CloneWithOpacity(border, 0.11), null,
-                new Rect(centerX - barWidth / 2.0, nativeTop, barWidth,
-                    Math.Max(1.0, chart.Bottom - nativeTop)));
-            dc.DrawRectangle(CloneWithOpacity(accent, 0.65), null,
-                new Rect(centerX - barWidth / 2.0, currentY, barWidth,
-                    Math.Max(0.5, chart.Bottom - currentY)));
-            dc.DrawLine(new Pen(muted, 2.0),
-                new Point(centerX - barWidth / 2.0 - 7.0, referenceY),
-                new Point(centerX + barWidth / 2.0 + 7.0, referenceY));
-            // Real channel maximum remains readable without duplicating
-            // a Base / Vanilla label or brightening a reference value.
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.65), 1.0),
-                new Point(centerX - barWidth / 2.0, nativeTop),
-                new Point(centerX + barWidth / 2.0, nativeTop));
-
-            // The interactive value marker follows the exact current PTS
-            // height; the cap glows across the top edge on hover only.
-            var hovered = _hoverTarget?.Kind == HitKind.Vertical
-                && ReferenceEquals(_hoverTarget.Parameter, parameter);
-            VerticalBarHandleChrome.Draw(dc, new Point(centerX, currentY),
-                barWidth, accent, hovered);
-
-            DrawCenteredNumericChanges(dc,
-                $"{parameter.CurrentNumber:0.#} PTS",
-                new Point(centerX, 98.0),
-                12.4, text, accent, FontWeights.Bold,
-                parameter.IsValueModifiedFromReference());
-            DrawCenteredText(dc, label.Item1,
-                new Point(centerX, 337.0),
-                11.2, text, FontWeights.Bold);
-            if (!string.IsNullOrEmpty(label.Item2))
-                DrawCenteredText(dc, label.Item2,
-                    new Point(centerX, 353.0),
-                    10.4, text, FontWeights.SemiBold);
-
-            // Native maxima govern the hit map independently of the ruler;
-            // preserve 5-PTS snapping and source-exact bar-top hover.
-            var map = new Rect(centerX - barWidth / 2.0,
-                nativeTop, barWidth, Math.Max(1.0, chart.Bottom - nativeTop));
-            var hit = new Rect(centerX - width / 2.0 + 5.0,
-                nativeTop, Math.Max(1.0, width - 10.0),
-                Math.Max(1.0, chart.Bottom - nativeTop));
-            AddVerticalTarget(parameter, hit, map, 0.0, parameter.Maximum);
         }
     }
 
@@ -5337,7 +5223,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "MutantCombatPressure" or "WaterStaminaPressure" => 149.0,
             "RadiationTreatment" => 250.0,
             "FatigueCurve" => CompactFatigueHeight(width),
-            "BleedingTreatmentMixer" => 376.0,
             "EquipmentWearBalance" => EquipmentWearBoardHeight(width),
             "PsyPhantomPressure" => 465.0,
             "HumanCombatProfile" => 465.0,
@@ -5480,13 +5365,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "survival.fatigueStrongAimPenalty",
                 "survival.fatigueMediumReloadPenalty",
                 "survival.fatigueStrongReloadPenalty"
-            },
-            "BleedingTreatmentMixer" => new[]
-            {
-                "health.bandageBleeding",
-                "health.medkitBleeding",
-                "health.armyMedkitBleeding",
-                "health.ecoMedkitBleeding"
             },
             "EquipmentWearBalance" => new[]
             {

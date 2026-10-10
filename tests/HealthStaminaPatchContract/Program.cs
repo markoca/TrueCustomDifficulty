@@ -33,6 +33,8 @@ internal static class Program
             // Verify 1x Bandage cap and legacy preset bounds with the live VM.
             BandageBleedingUpperBoundCase();
 
+            MedicalItemsPairingCase();
+
             // A unique concrete edit for every live Health/Stamina catalog
             // parameter. Master-only modifiers use Master because their
             // parent AdditionalMechanics switch is naturally enabled there.
@@ -101,6 +103,51 @@ internal static class Program
             Console.Error.WriteLine("FAIL: " + exc);
             return 1;
         }
+    }
+
+    private static void MedicalItemsPairingCase()
+    {
+        // All eight actual healing/bleeding source values remain independent
+        // while their UI routes through exactly one visible medical card.
+        var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+        var idPairs = new[]
+        {
+            ("health.bandageHealing", "health.bandageBleeding"),
+            ("health.medkitHealing", "health.medkitBleeding"),
+            ("health.armyMedkitHealing", "health.armyMedkitBleeding"),
+            ("health.ecoMedkitHealing", "health.ecoMedkitBleeding")
+        };
+        var anchor = vm.AllParameters.Single(p => p.Id == "health.bandageHealing");
+        Check(anchor.IsMedicalHealingAnchor && anchor.IsControlVisible,
+            "Unified Medical Items editor must retain its bandage-healing anchor");
+        foreach (var (healId, bleedId) in idPairs)
+        {
+            var healing = vm.AllParameters.Single(p => p.Id == healId);
+            var bleeding = vm.AllParameters.Single(p => p.Id == bleedId);
+            Check(healing.IsMedicalHealingMember && bleeding.IsMedicalHealingMember,
+                "Paired medical treatment must use one source-backed visual family");
+            Check(!bleeding.IsControlVisible && !bleeding.IsVisualAggregateAnchor,
+                "Bleeding source must not create a separate top-level card");
+            if (healing != anchor)
+                Check(!healing.IsControlVisible,
+                    "All paired healing values must be rendered only in the medical card");
+            Check(healing.IsSlider && bleeding.IsSlider,
+                "Paired healing and bleeding must remain independent numeric sliders");
+        }
+        var food = vm.AllParameters.Single(p => p.Id == "health.foodHealing");
+        Check(food.IsMedicalHealingMember && !food.IsControlVisible && food.IsToggle,
+            "Food Healing must remain a checkbox in the same medical card");
+
+        var bleed = vm.AllParameters.Single(p => p.Id == "health.medkitBleeding");
+        Check(!anchor.IsModified, "Unedited medical group should not be marked modified");
+        bleed.CurrentNumber = 20.0;
+        Check(anchor.IsModified && bleed.IsValueModifiedFromReference(),
+            "Changing a hidden bleeding child must mark its visible medical group modified");
+        bleed.ResetToReference();
+        Check(!anchor.IsModified,
+            "Resetting a bleeding child must clear the medical group modified state");
+        _passed++;
+        Console.WriteLine("PASS medical-items-paired-4x2-visual-membership");
     }
 
     private static void BandageBleedingUpperBoundCase()
