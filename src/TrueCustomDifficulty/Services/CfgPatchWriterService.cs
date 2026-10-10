@@ -1814,6 +1814,15 @@ public sealed class CfgPatchWriterService
         return edits;
     }
 
+    // A six-decimal CFG value (0.333333) is slightly below one third and
+    // would produce a recharge rate ABOVE the approved 3x ceiling. Serialize
+    // this exact endpoint without truncation; retain ordinary formatting for
+    // all other native wait multipliers and unrelated game parameters.
+    private static string FormatMutantCooldownWait(double value)
+        => Math.Abs(value - 1.0 / 3.0) < 0.000000000001
+            ? "0.3333333333333333"
+            : FormatNumber(value);
+
     private static int WriteMutantCooldowns(
         CfgWriterBaseline baseline,
         IReadOnlyDictionary<string, ParameterViewModel> modifiedById,
@@ -1861,7 +1870,7 @@ public sealed class CfgPatchWriterService
                 {
                     var cooldownNode = cooldowns.GetOrAddChild(cooldown.Index, useBpatch: true);
                     cooldownNode.SetAssignment("CooldownTag", cooldown.Tag);
-                    cooldownNode.SetAssignment("CooldownMultiplier", FormatNumber(allById[parameterId].CurrentNumber));
+                    cooldownNode.SetAssignment("CooldownMultiplier", FormatMutantCooldownWait(allById[parameterId].CurrentNumber));
                     edits++;
                 }
             }
@@ -1887,7 +1896,7 @@ public sealed class CfgPatchWriterService
                 {
                     var cooldownNode = cooldowns.GetOrAddChild(cooldown.Index, useBpatch: false);
                     cooldownNode.SetAssignment("CooldownTag", cooldown.Tag);
-                    cooldownNode.SetAssignment("CooldownMultiplier", FormatNumber(allById[parameterId].CurrentNumber));
+                    cooldownNode.SetAssignment("CooldownMultiplier", FormatMutantCooldownWait(allById[parameterId].CurrentNumber));
                     edits++;
                 }
             }
