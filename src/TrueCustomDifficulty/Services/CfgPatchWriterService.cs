@@ -241,7 +241,8 @@ public sealed class CfgPatchWriterService
         var looseRemoval = WriteLooseWorldLootRemovals(modifiedById, hasDlc1, outputRoot, writtenParameters);
         editCount += looseRemoval.EditCount;
 
-        var uniqueWeaponShuffle = WriteLooseUniqueWeaponShuffle(modifiedById, outputRoot, writtenParameters);
+        var uniqueWeaponShuffle = WriteLooseUniqueWeaponShuffle(baseline.Special.LooseUniqueWeaponShuffle,
+            modifiedById, outputRoot, writtenParameters);
         editCount += uniqueWeaponShuffle.EditCount;
 
         // The writer must not demand concrete output for an unchanged aggregate
@@ -301,7 +302,17 @@ public sealed class CfgPatchWriterService
         supported.Add("loot.worldF1GrenadeBoxes");
         supported.Add("loot.blueprintShuffle");
         supported.Add("loot.looseWorldLootRemoved");
-        supported.Add("loot.looseUniqueWeaponShuffle");
+        // An exact manifest-backed special route, not a fictional direct CFG leaf.
+        var uniqueShuffleRoute = baseline.Special.LooseUniqueWeaponShuffle;
+        if (uniqueShuffleRoute.ParameterId != "loot.looseUniqueWeaponShuffle"
+            || uniqueShuffleRoute.ManifestResource !=
+                "TrueCustomDifficulty.Data.loose-unique-weapon-shuffle-manifest.csv"
+            || uniqueShuffleRoute.ExpectedActorCount != 9)
+        {
+            throw new InvalidDataException(
+                "Unique world weapon shuffle baseline route / manifest contract drifted.");
+        }
+        supported.Add(uniqueShuffleRoute.ParameterId);
         supported.Add("economy.traderMinBuyCondition");
         supported.UnionWith(baseline.Special.ListMembership.Select(p => p.ParameterId));
         supported.UnionWith(baseline.Special.SetList.Select(p => p.ParameterId));
@@ -2956,16 +2967,17 @@ public sealed class CfgPatchWriterService
     // Mesh and authored item condition travel with the weapon, while physical
     // actor identity, coordinates and rotation stay attached to the location.
     private static (int EditCount, int FileCount) WriteLooseUniqueWeaponShuffle(
+        CfgWriterLooseUniqueWeaponShuffle route,
         IReadOnlyDictionary<string, ParameterViewModel> modifiedById,
         string outputRoot, ISet<string> writtenParameters)
     {
-        const string parameterId = "loot.looseUniqueWeaponShuffle";
+        var parameterId = route.ParameterId;
         if (!modifiedById.TryGetValue(parameterId, out var parameter) || !parameter.IsToggle)
             return (0, 0);
         writtenParameters.Add(parameterId);
         if (!parameter.CurrentBoolean) return (0, 0);
 
-        var slots = LoadLooseUniqueWeaponSlots()
+        var slots = LoadLooseUniqueWeaponSlots(route)
             .OrderBy(x => x.ActorSid, StringComparer.Ordinal).ToList();
         // Sattolo shuffle produces one random cycle, hence every slot changes
         // to a DIFFERENT weapon with exactly one of each weapon remaining.
@@ -3000,10 +3012,11 @@ public sealed class CfgPatchWriterService
         return (slots.Count * 5, slots.Count);
     }
 
-    private static IReadOnlyList<LooseUniqueWeaponSlot> LoadLooseUniqueWeaponSlots()
+    private static IReadOnlyList<LooseUniqueWeaponSlot> LoadLooseUniqueWeaponSlots(
+        CfgWriterLooseUniqueWeaponShuffle route)
     {
         using var stream = Assembly.GetExecutingAssembly()
-            .GetManifestResourceStream("TrueCustomDifficulty.Data.loose-unique-weapon-shuffle-manifest.csv")
+            .GetManifestResourceStream(route.ManifestResource)
             ?? throw new InvalidDataException("Embedded unique-weapon shuffle manifest missing.");
         using var reader = new StreamReader(stream);
         var header = reader.ReadLine();
@@ -3027,7 +3040,7 @@ public sealed class CfgPatchWriterService
                 throw new InvalidDataException("Invalid unique-weapon shuffle manifest row.");
             rows.Add(new LooseUniqueWeaponSlot(c[1], c[2], c[3], c[4], c[5], c[6], c[7]));
         }
-        if (rows.Count != 9 ||
+        if (rows.Count != route.ExpectedActorCount ||
             rows.Select(x => x.ActorSid).Distinct(StringComparer.Ordinal).Count() != 9 ||
             rows.Select(x => x.ItemSid).Distinct(StringComparer.Ordinal).Count() != 9)
             throw new InvalidDataException("Unique-weapon shuffle requires nine distinct actor/item pairs.");
