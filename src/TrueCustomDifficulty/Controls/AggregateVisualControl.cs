@@ -2465,7 +2465,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel,
         bool percentageReadout = false, bool rateReadout = false,
         int percentageSign = 0, bool rawReadout = false,
-        string? nativeUnit = null)
+        string? nativeUnit = null, double readoutYOffset = 3.0)
     {
         // Frameless shared knob: preserve dial, title, steps, values and hit area.
         DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, card.Top + 19),
@@ -2558,11 +2558,12 @@ public sealed class AggregateVisualControl : FrameworkElement
             : rawReadout
                 ? $"{(nativeUnit is not null && parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber:0.#}"
                 : $"{parameter.CurrentNumber:0.##}x";
-        // WPF DrawText positions the text TOP edge. Keep the medicine amount
-        // and unit as one vertically centered two-line block, rather than
-        // placing both lines below the dial center. Other knob types stay put.
+        // WPF DrawText positions text by its top edge. Center the paired
+        // medicine amount/unit, and lift only the three drink-strength values
+        // through their explicit call-site offset. Other knob families retain
+        // their original readout positions.
         var currentTop = center.Y + (nativeUnit is not null ? -15.0
-            : rateReadout ? -4.0 : 3.0);
+            : rateReadout ? -4.0 : readoutYOffset);
         if (percentageSign != 0)
         {
             // In the two Master signed-percentage dials, only the editable
@@ -3083,17 +3084,23 @@ public sealed class AggregateVisualControl : FrameworkElement
         const double knobGap = 12.0;
         var knobWidth = (knobBankWidth - 2.0 * knobGap) / 3.0;
         var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
+        // Match the medicine dial's corrected vertical centering without
+        // moving the rails, labels, min/max marks or other knob families.
+        const double drinkStrengthReadoutYOffset = -8.0;
         DrawSourceKnob(dc, burst, "WATER + ENERGY REFILL",
             new Rect(knobLeft, ConsumableStrengthKnobTop, knobWidth, 181.0),
-            text, muted, border, accent, panel);
+            text, muted, border, accent, panel,
+            readoutYOffset: drinkStrengthReadoutYOffset);
         DrawSourceKnob(dc, waterStamina, "WATER REGEN + COST CUT",
             new Rect(knobLeft + knobWidth + knobGap, ConsumableStrengthKnobTop,
                 knobWidth, 181.0),
-            text, muted, border, accent, panel);
+            text, muted, border, accent, panel,
+            readoutYOffset: drinkStrengthReadoutYOffset);
         DrawSourceKnob(dc, energyStamina, "ENERGY STAMINA REGEN",
             new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
                 ConsumableStrengthKnobTop, knobWidth, 181.0),
-            text, muted, border, accent, panel);
+            text, muted, border, accent, panel,
+            readoutYOffset: drinkStrengthReadoutYOffset);
 
         var previewTop = ConsumableDurationTop;
 
