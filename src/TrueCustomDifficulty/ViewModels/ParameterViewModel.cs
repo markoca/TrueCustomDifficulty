@@ -106,7 +106,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "NpcLootLoadout" => "Choose an Extra Corpse Loot option, drag the medical or ammo track, or move the weapon-condition MIN/MAX handles. The ammo numbers update as you change the setting.",
                     "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
                     "StashRewardProfile" => "Drag the BASIC, STANDARD or RARE ammo-amount track, or adjust the grenade and coupon reward controls separately.",
-                    "AmmoDistribution" => "Drag AMMO YIELD or GRENADE YIELD for quantities; use the four ammo-family tracks to change the mix. The colored SNG/NATO bars are read-only previews.",
+                    "AmmoDistribution" => "Use AMMO YIELD or GRENADE YIELD for quantities. Turn the four AMMO FAMILY WEIGHTS knobs to change which calibers are favored; SNG/NATO pool bars are read-only.",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
                     "PlayerWeaponProfile" => "Turn WEAPON DAMAGE, HEADSHOT DAMAGE or JAM FREQUENCY using its knob. Scroll over a knob or use arrow keys for precise adjustment.",
                     "HumanGroupSizeRadar" => "Drag a rank track to set its human squad cap.",
