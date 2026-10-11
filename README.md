@@ -7,7 +7,7 @@ In the Survival tab, **Hunger** and **Fatigue** now present their first two cont
 
 ### 2026-10-11 — Consumable duration override now includes medicine
 
-The existing `OVERRIDE LIMITS` control in Survival → Consumable Effects expands all three medicine durations as well as drink effects: OFF keeps Vinca/Hercules/Psi Block maximums at **540/900/300s**, ON expands each to **1800s** (30 min). The medicine ruler adjusts between 0–900s and 0–1800s without changing the drink 0–270s scale. The decorative gray `MEDICINE` heading is removed. Top knobs are now self-descriptive: **WATER + ENERGY REFILL**, **WATER REGEN + COST CUT**, **ENERGY STAMINA REGEN**, retaining real 0–2x `scale` semantics and original CFG targets. One old preset flag still controls both groups; no extra checkbox or duplicated duration editor.
+The existing `OVERRIDE LIMITS` control in Survival → Consumable Effects expands all three medicine durations as well as drink effects: OFF keeps Vinca/Hercules/Psi Block maximums at **540/900/300s**, ON allows each to reach **900s** (15 min). The medicine ruler stays at 0–900s in both modes without changing the drink 0–270s scale. The decorative gray `MEDICINE` heading is removed. Top knobs are now self-descriptive: **WATER + ENERGY REFILL**, **WATER REGEN + COST CUT**, **ENERGY STAMINA REGEN**, retaining real 0–2x `scale` semantics and original CFG targets. One old preset flag still controls both groups; no extra checkbox or duplicated duration editor.
 
 
 ### 2026-10-11 — Medicine strength units

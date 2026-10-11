@@ -2,7 +2,7 @@
 
 ## Expanded duration editor limits (2026-10-11)
 
-The existing `OVERRIDE LIMITS` editor-only preset switch is no longer drink-only. The three medicine durations join the existing five main drink and three Water/Energy short-effect editors. OFF keeps the actual native medicine slider caps: Vinca **540 seconds**, Hercules **900 seconds**, Psi Block **300 seconds**. ON expands all three medicine editors to **1800 seconds**, independent of each other and drink values. The medicine 0–900s ruler expands to 0–1800s (0/600/1200/1800 ticks), while the distinct drink ruler remains at 0–270s. Disabling the override restores each native cap and clamps oversized values; the same saved `drinkDurationOverride` boolean is reused. There is no new source prototype or fake CFG toggle. Both Hercules effect-duration leaves remain bound to one current value. The gray `MEDICINE` caption is removed without deleting the medicine rows.
+The existing `OVERRIDE LIMITS` editor-only preset switch is no longer drink-only. The three medicine durations join the existing five main drink and three Water/Energy short-effect editors. OFF keeps the actual native medicine slider caps: Vinca **540 seconds**, Hercules **900 seconds**, Psi Block **300 seconds**. ON allows all three medicine editors to reach **900 seconds**, independently of each other and drink values (Hercules already has a native maximum of 900s). The medicine ruler remains 0–900s (0/300/600/900 ticks) in both modes, while the distinct drink ruler remains at 0–270s. Disabling the override restores each native cap and clamps oversized values; the same saved `drinkDurationOverride` boolean is reused. There is no new source prototype or fake CFG toggle. Both Hercules effect-duration leaves remain bound to one current value. The gray `MEDICINE` caption is removed without deleting the medicine rows.
 
 
 ## Inputs and methodology
@@ -74,4 +74,4 @@ Additional source details: drink `Water` has `WaterStamina2` `Stamina` 25% / 5s,
 - `survival.herculesCarryBonus`, `survival.herculesDuration`
 - `survival.psiBlockRecovery`, `survival.psiBlockDuration`
 
-All six appear in **Survival → Consumable Effects**, within the existing `ConsumableMixer` family. Magnitudes are direct `set` writes to raw effect `ValueMin` and `ValueMax`; durations are direct seconds `set` writes, preserving original `KeepNew`. The drink-only duration-limit override does not apply to these medicine effects. In-game acceptance is still pending.
+All six appear in **Survival → Consumable Effects**, within the existing `ConsumableMixer` family. Magnitudes are direct `set` writes to raw effect `ValueMin` and `ValueMax`; durations are direct seconds `set` writes, preserving original `KeepNew`. The shared `OVERRIDE LIMITS` preset flag sets the medicine editor ceiling to 900s when ON and preserves their individual native caps when OFF; it does not add a CFG boolean. In-game acceptance is still pending.

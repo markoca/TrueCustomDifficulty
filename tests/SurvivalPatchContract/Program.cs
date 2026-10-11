@@ -339,8 +339,8 @@ internal static class Program
                 Check(Math.Abs(Source(childId).Maximum - 270.0) < 0.000001,
                     name + ": ON still caps secondary effect to its parent");
             foreach (var (id, _) in medicines)
-                Check(Math.Abs(Source(id).Maximum - 1800.0) < 0.000001,
-                    name + ": ON does not expand " + id + " to 1800s");
+                Check(Math.Abs(Source(id).Maximum - 900.0) < 0.000001,
+                    name + ": ON does not set " + id + " to a 900s maximum");
 
             var after = primary.Select(p => Source(p.Id).CurrentNumber)
                 .Concat(children.Select(id => Source(id).CurrentNumber))
@@ -356,9 +356,9 @@ internal static class Program
                 Source(childId).SnapCurrentNumberToMarker(180.0);
             foreach (var (id, _) in medicines)
             {
-                Source(id).SnapCurrentNumberToMarker(1200.0);
-                Check(Math.Abs(Source(id).CurrentNumber - 1200.0) < 0.000001,
-                    name + ": medicine failed to reach 1200s: " + id);
+                Source(id).SnapCurrentNumberToMarker(900.0);
+                Check(Math.Abs(Source(id).CurrentNumber - 900.0) < 0.000001,
+                    name + ": medicine failed to reach 900s: " + id);
             }
             foreach (var (id, vanilla) in primary)
                 Check(Math.Abs(Source(id).CurrentNumber * vanilla - 180.0) < 0.000001,
@@ -388,7 +388,7 @@ internal static class Program
             Check(reloaded.DrinkDurationOverride &&
                 Math.Abs(reloaded.Values["survival.beerEffectDuration"].Number!.Value - 9.0) < 0.000001 &&
                 medicines.All(p =>
-                    Math.Abs(reloaded.Values[p.Id].Number!.Value - 1200.0) < 0.000001),
+                    Math.Abs(reloaded.Values[p.Id].Number!.Value - 900.0) < 0.000001),
                 name + ": preset did not round-trip extended drink and medicine durations");
 
             flag.DrinkDurationOverrideEnabled = false;
@@ -409,7 +409,7 @@ internal static class Program
                     name + ": child Energy duration not minimally capped to parent");
             CheckWriter(vm, allIds, Path.Combine(folder, "override-off"), name + "-OFF");
             _passed++;
-            Console.WriteLine("PASS " + name + " (drinks 270s, medicines 1800s, native caps, CFG writer, preset)");
+            Console.WriteLine("PASS " + name + " (drinks 270s, medicines 900s, native caps, CFG writer, preset)");
         }
         finally
         {

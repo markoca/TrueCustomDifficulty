@@ -867,8 +867,8 @@ public sealed class MainViewModel : ObservableObject
         };
 
         // One UI-only, preset-backed duration override covers all consumables.
-        // Drinks and their children retain the 270s ruler; medicines expand
-        // independently to 1800s on a separately calibrated ruler.
+        // Drinks and their children retain the 270s ruler; medicines share
+        // a separate 900s ruler, with native limits restored when OFF.
         // OFF restores source-native caps, with no fictional CFG boolean.
         var drinkDurationMode = parametersById["survival.instantStaminaRestore"];
         const double sharedDrinkDurationMaximumSeconds = 270.0;
@@ -902,7 +902,7 @@ public sealed class MainViewModel : ObservableObject
 
         // Three independent direct-seconds medicine sources share the existing
         // override toggle, retaining their different native caps when OFF.
-        const double expandedMedicineDurationMaximumSeconds = 1800.0;
+        const double sharedMedicineDurationMaximumSeconds = 900.0;
         var medicineDurationParameters = new[]
         {
             parametersById["survival.vincaDuration"],
@@ -912,7 +912,7 @@ public sealed class MainViewModel : ObservableObject
         foreach (var medicineDuration in medicineDurationParameters)
             medicineDuration.SetDynamicMaximumProvider(() =>
                 drinkDurationMode.DrinkDurationOverrideEnabled
-                    ? expandedMedicineDurationMaximumSeconds
+                    ? sharedMedicineDurationMaximumSeconds
                     : medicineDuration.Definition.Slider!.Max);
 
         // Real-seconds source caps for the three independently mapped short

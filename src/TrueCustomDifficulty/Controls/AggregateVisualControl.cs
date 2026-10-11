@@ -3203,9 +3203,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                 track, parameter.Minimum, parameter.Maximum);
         }
 
-        // Medicine uses an independent 0..900s clock with native limits OFF.
-        // ON expands each medicine to 1800s, preserving the drink clock.
-        var medicineMaximumSeconds = burst.DrinkDurationOverrideEnabled ? 1800.0 : 900.0;
+        // Medicine always uses its own 0..900s clock; Override Limits changes
+        // each source's editable ceiling, not this axis or the drink clock.
+        const double medicineMaximumSeconds = 900.0;
         double MedicineX(double seconds) => timeline.Left + timeline.Width *
             Math.Clamp(seconds / medicineMaximumSeconds, 0.0, 1.0);
         var medicineAxisY = timeline.Top + 131.0;
@@ -4939,7 +4939,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 HitKind.Knob => $"{target.Parameter.Label}\nTurn around the dial or scroll to adjust · Right-click = Base Preset",
                 HitKind.Toggle => $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset",
                 HitKind.DrinkDurationOverride =>
-                    "Override Consumable Duration Limits\nOFF: native limits. ON: drinks up to 270 s and Vinca, Hercules, Psi Block up to 1800 s.\nRight-click resets.",
+                    "Override Consumable Duration Limits\nOFF: native limits. ON: drinks up to 270 s and Vinca, Hercules, Psi Block up to 900 s.\nRight-click resets.",
                 HitKind.Choice => $"{target.Parameter.Label}\nChoose a corpse-loot package · Right-click = Base Preset",
                 HitKind.MixerBaseMarker => $"{target.Parameter.Label}\nClick to snap to selected Base Preset",
                 HitKind.MixerSelect => $"{target.Parameter.Label}\nClick for detailed rationale · Use the fader rail to edit",
