@@ -11,6 +11,37 @@ namespace SurvivalPatchContract;
 // This DOES NOT load UE, prove original source ZIPs or test gameplay.
 internal static class Program
 {
+    // Verify both independent Master conditional knobs remain real source-
+    // backed parameters and retain their pre-redesign writer/dependency data.
+    private static void MasterPenaltyKnobSourceContract()
+    {
+        foreach (var (id, group, toggle, family, reference) in new[]
+        {
+            ("survival.radiationStaminaDrainPenalty", "Radiation",
+                "advanced.radiationMechanics", "MasterRadiationPenalty", 0.5),
+            ("health.masterLowHealthPenalty", "Low Health",
+                "advanced.lowHealthMechanics", "MasterLowHealth", 0.7)
+        })
+        {
+            var definition = Catalog.Parameters.Single(p => p.Id == id);
+            Check(definition.Group == group && definition.Tab == "master",
+                $"Master knob source moved to wrong section: {id}");
+            Check(definition.RequiresToggle == toggle,
+                $"Master knob source lost its own mechanics gate: {id}");
+            Check(definition.Slider is { Min: 0.0, Max: 1.0, Step: 0.01 },
+                $"Master knob's native 0..1 / 0.01 stepping changed: {id}");
+            Check(definition.Targets.Count > 0,
+                $"Master knob source has no BPatch mapping: {id}");
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Master" };
+            var source = vm.AllParameters.Single(p => p.Id == id);
+            Check(source.VisualAggregateFamily == family
+                  && !source.IsControlVisible,
+                $"Master knob must remain a child of its original visual family: {id}");
+            Check(Math.Abs(source.ReferenceNumber - reference) < 0.000001,
+                $"Master knob baseline changed: {id}");
+        }
+    }
+
     private static readonly ParameterCatalog Catalog = new ParameterCatalogService().Load();
     private static readonly CfgWriterBaseline Baseline = new CfgWriterBaselineService().Load();
     private static string? _keep;
@@ -33,6 +64,8 @@ internal static class Program
                 .Where(p => p.Id.StartsWith("survival.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal).ToArray();
             Check(cohort.Length == 56, "Survival catalog no longer contains exactly 56 parameters");
+
+            MasterPenaltyKnobSourceContract();
 
             var vm = new MainViewModel(Catalog);
             var loaded = vm.AllParameters.Select(p => p.Id)

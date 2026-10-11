@@ -1,5 +1,9 @@
 # True Custom Difficulty
 
+### 2026-10-11 — Paired Master penalty knobs
+
+The Master **Radiation Penalty** and **Low Health Penalty** sections are paired in a compact two-column row at editor widths ≥740 DIP, or stacked below that width. Their two separate mechanics toggles are unchanged; the former horizontal penalty sliders now use frameless native 270° rotary controls, signed **+0–100% action stamina cost** and **−0–100% health recovery loss** respectively. Original `0..1` / `0.01` CFG sources, Master reference values, dependency gates and preset/writer semantics remain intact. The implementation and breakpoint are locked in `docs/UI-DESIGN-LOCK.md` and `docs/VISUAL-CONTROL-SYSTEM.md`.
+
 ### 2026-10-11 — Current UI placement, knobs, and alcohol ranges
 
 - The separate **Equipment** tab is retired. Four original equipment source IDs are now presented inside **Survival**, preserving **Equipment Wear** (armor and weapon wear crosshair) and **Item Weight** (ammo and consumables source-native tracks) as independent groups, after the Bleeding controls. Original `equipment.armorDurability`, `equipment.weaponWearPerShot`, `equipment.ammoWeight`, `equipment.consumableWeight` remain unchanged in values, ranges, steps, CFG writer mappings and preset fields. Their `tab` metadata alone switches to `survival`.

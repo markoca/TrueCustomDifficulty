@@ -1,5 +1,16 @@
 # MASTER-MAPPING.md
 
+### 2026-10-11 — Paired Master Radiation / Low Health penalty knobs (latest authoritative layout)
+
+The **RADIATION PENALTY** (`MasterRadiationPenalty`, group `Radiation`) and **LOW HEALTH PENALTY** (`MasterLowHealth`, group `Low Health`) sections retain their **separate** original parent mechanics toggles, two independent source parameters and normal Master-section heading style. Their former horizontal penalty sliders are replaced by the **same frameless 270° `DrawSourceKnob` family** used throughout the application (native-step-aligned graduated arc, yellow current arc, muted source/reference tick, interactive angular dragging, wheel/keyboard and right-click per-source reset). Both knobs use a centered **204 × 181 DIP** maximum local footprint and source-native **0.01 steps over 0–1**; their visual endpoints and center readout use explicit **signed percentages**:
+
+- **ACTION STAMINA COST** (`survival.radiationStaminaDrainPenalty`) displays **+0…+100%** while editing the exact native 0…1 modifier (original Master reference 0.5 = +50%).
+- **HEALTH RECOVERY LOSS** (`health.masterLowHealthPenalty`) displays **−0…−100%** while editing the exact native 0…1 modifier (original Master reference 0.7 = −70%). The original 30-HP activation threshold is not altered.
+
+These **two independent Master group sections sit beside each other in one responsive row** (Radiation left, Low Health right) when the section host is at least **740 DIP** wide, with **12 DIP** separation. Below 740 DIP they remain full-width **stacked in the same order** to prevent clipping. This pairing is restricted to those two adjacent group identities in `ResponsiveSectionGridPanel`; all unrelated top-level sections still occupy their own rows. Each conditional group's native height is **298 DIP**, including the centered section heading, unchanged **39-DIP** mechanics toggle at Y=52, and centered dial starting at Y=102. The pair is not one new CFG field or combined switch, and it must never occupy the entire row per knob when there is enough room.
+
+**Behavior invariant:** Both existing toggles still gate their own knob's enabled styling and interaction (`IsControlEnabled`); their Source ID / `AdditionalMechanicsEffects` membership, selected difficulty default, native min/max/step, current/reference values, preset serialization and BPatch writer operations are unchanged. Only source-value **numbers** turn yellow on modification; static `+`/`−` and % units and subdued Base tick do not need separate emphasis. No redundant explanation/Vanilla value below the controls. This specification supersedes older 204-DIP standalone horizontal penalty sections and 440-DIP slider-bank directions.
+
 ## Master UI presentation — final tab redesign (2026-10-09)
 
 **Current five-section order:** STARVATION PENALTIES, SEVERE FATIGUE, RADIATION PENALTY, LOW HEALTH PENALTY, CONSUMABLE EFFECT PENALTIES, using existing groups `Starvation`, `Severe Fatigue`, `Radiation`, `Low Health`, `Medical Effect Modifier`. This is UI-only; no group or parameter ID has changed in the catalog and all **5 mechanics toggles + 15 child values** remain connected to the audited CFG targets and 15 dependency edges below.

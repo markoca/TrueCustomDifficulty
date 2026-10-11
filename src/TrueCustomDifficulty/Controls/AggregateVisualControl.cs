@@ -87,10 +87,11 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         // The paired Economy dashboard cards must measure at their actual host
         // width rather than demanding the unrelated 520-DIP plot minimum.
-        var compactEconomy = Family is "CouponFlow" or "TradingDashboard"
-            or "ServiceCostsBoard" or "RepairCurve";
+        var compactBoard = Family is "CouponFlow" or "TradingDashboard"
+            or "ServiceCostsBoard" or "RepairCurve"
+            or "MasterLowHealth" or "MasterRadiationPenalty";
         var width = double.IsInfinity(availableSize.Width) ? 760.0
-            : Math.Max(compactEconomy ? 280.0 : 520.0, availableSize.Width);
+            : Math.Max(compactBoard ? 280.0 : 520.0, availableSize.Width);
         return new Size(width, GetDesiredHeight(Family, width));
     }
 
@@ -1983,7 +1984,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static int MasterRows(double width, int count)
         => (count + EconomyColumns(width) - 1) / EconomyColumns(width);
 
-    private static double MasterConditionalHeight(double width) => 204.0;
+    private static double MasterConditionalHeight(double width) => 298.0;
     private static double MasterCardBankHeight(double width, int count)
         => 107.0 + MasterRows(width, count) * 94.0 + 12.0;
     private static double MasterStarvationHeight(double width)
@@ -2134,12 +2135,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         var source = P(isLowHealth
             ? "health.masterLowHealthPenalty"
             : "survival.radiationStaminaDrainPenalty");
-        var width = Math.Min(440.0, Math.Max(1.0, ActualWidth - 32.0));
-        DrawMasterNativeCard(dc, source,
-            isLowHealth ? "HEALTH RECOVERY LOSS" : "EXTRA ACTION STAMINA COST",
-            isLowHealth ? MasterNegativePercent : MasterPositivePercent,
-            new Rect((ActualWidth - width) / 2.0, 108.0, width, 80.0),
-            text, muted, border, soft, accent, panel);
+        // Share the approved frameless, source-step-accurate rotary grammar
+        // with all other knobs. The sign belongs to the player-facing
+        // penalty display only; the stored native effect stays 0..1.
+        const double knobHeight = 181.0;
+        var knobWidth = Math.Min(204.0, Math.Max(170.0, ActualWidth - 34.0));
+        DrawSourceKnob(dc, source,
+            isLowHealth ? "HEALTH RECOVERY LOSS" : "ACTION STAMINA COST",
+            new Rect((ActualWidth - knobWidth) / 2.0, 102.0, knobWidth, knobHeight),
+            text, muted, border, accent, panel,
+            percentageReadout: true, percentageSign: isLowHealth ? -1 : 1);
     }
 
     // The modifier controls are independent source ValueMultipliers,
@@ -2420,7 +2425,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void DrawSourceKnob(
         DrawingContext dc, ParameterViewModel? parameter, string label, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel,
-        bool percentageReadout = false, bool rateReadout = false)
+        bool percentageReadout = false, bool rateReadout = false,
+        int percentageSign = 0)
     {
         // Frameless shared knob: preserve dial, title, steps, values and hit area.
         DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, card.Top + 19),
@@ -2503,12 +2509,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             KnobPoint(center, radius + 3, angleNow));
 
         var modified = active && parameter.IsValueModifiedFromReference();
+        string Percent(double value) =>
+            $"{(percentageSign > 0 ? "+" : percentageSign < 0 ? "−" : "")}{value * 100.0:0.#}%";
         // RECOVERY has a rate unit and a much smaller magnitude than the
         // multipliers. Keep the numeric readout inside the dial and put PTS/S
         // on its own small line so both remain readable at compact widths.
         DrawCenteredText(dc,
             rateReadout ? $"{parameter.CurrentNumber:0.00}"
-                : percentageReadout ? $"{parameter.CurrentNumber * 100.0:0.#}%"
+                : percentageReadout ? Percent(parameter.CurrentNumber)
                 : $"{parameter.CurrentNumber:0.##}x",
             new Point(center.X, center.Y + (rateReadout ? -4.0 : 3.0)),
             modified ? 16.2 : 15.0,
@@ -2519,13 +2527,13 @@ public sealed class AggregateVisualControl : FrameworkElement
                 9.0, muted, FontWeights.SemiBold);
         DrawCenteredText(dc,
             rateReadout ? $"{parameter.Minimum:0.00}"
-                : percentageReadout ? $"{parameter.Minimum * 100.0:0.#}%"
+                : percentageReadout ? Percent(parameter.Minimum)
                 : $"{parameter.Minimum:0.##}x",
             new Point(center.X - radius * .80, card.Bottom - 19.0),
             9.0, muted, FontWeights.SemiBold);
         DrawCenteredText(dc,
             rateReadout ? $"{parameter.Maximum:0.00}"
-                : percentageReadout ? $"{parameter.Maximum * 100.0:0.#}%"
+                : percentageReadout ? Percent(parameter.Maximum)
                 : $"{parameter.Maximum:0.##}x",
             new Point(center.X + radius * .80, card.Bottom - 19.0),
             9.0, muted, FontWeights.SemiBold);
