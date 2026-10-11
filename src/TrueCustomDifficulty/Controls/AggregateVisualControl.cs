@@ -715,11 +715,14 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         DrawCenteredText(dc, "GLOBAL ANOMALY DAMAGE",
             new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
-        var parameter = P("environment.anomalyDamage");
-        var width = Math.Min(440.0, Math.Max(1.0, ActualWidth - 32.0));
-        DrawEconomyCard(dc, parameter, "OVERALL DAMAGE MULTIPLIER",
-            new Rect((ActualWidth - width) / 2.0, 48.0, width, 80.0),
-            text, muted, border, accent, panel);
+        // Reuse the native-source rotary control from Your Weapons, without
+        // changing EnvironmentDifficulty.Anomaly_Damage or the selected baseline.
+        // This single knob stays centered and bounded within its full-width group.
+        const double knobCardWidth = 194.0;
+        DrawSourceKnob(dc, P("environment.anomalyDamage"),
+            "OVERALL DAMAGE MULTIPLIER",
+            new Rect((ActualWidth - knobCardWidth) / 2.0, 49.0,
+                knobCardWidth, 181.0), text, muted, border, accent, panel);
     }
 
     // This native-axis graph uses exactly the same triple-circle grammar as
@@ -2055,12 +2058,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             var card = new Rect(groupLeft + margin + i * (cellWidth + gap),
                 cardTop, cellWidth, cardHeight);
-            DrawWeaponKnob(dc, P(channels[i].Id), channels[i].Label, card,
+            DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label, card,
                 text, muted, border, accent, panel);
         }
     }
 
-    private void DrawWeaponKnob(
+    private void DrawSourceKnob(
         DrawingContext dc, ParameterViewModel? parameter, string label, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
@@ -4351,7 +4354,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-        if (Family != "PlayerWeaponProfile")
+        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -5190,7 +5193,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "TraderStockBoard" => EconomyBoardHeight(width, StockEconomyChannels.Length),
             "ItemWeightBoard" => EconomyBoardHeight(width, 2),
             "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
-            "AnomalyGlobalDamage" => EconomyBoardHeight(width, 1),
+            "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => EconomyBoardHeight(width, 3),
             "NpcLootLoadout" => 564.0,
