@@ -2248,14 +2248,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         const double gap = 12.0;
         var half = (width - gap) / 2.0;
 
+        // The two primary health parameters share one card layout.
+        // Only their native units and number precision differ.
         if (P("health.maxHP") is { } hp)
-            DrawMaxHealthRuler(dc, hp,
+            DrawCoreHealthPrimaryRuler(dc, hp, "MAX HEALTH", "HP",
                 new Rect(16.0, 51.0, half, 105.0),
                 text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, P("health.baseRegen"), "PASSIVE RECOVERY",
-            new Rect(16.0 + half + gap, 51.0, half, 105.0),
-            text, muted, border, accent, panel, hideBaseText: true,
-            healthTypography: true);
+        if (P("health.baseRegen") is { } passiveRecovery)
+            DrawCoreHealthPrimaryRuler(dc, passiveRecovery, "PASSIVE RECOVERY", "HP/s",
+                new Rect(16.0 + half + gap, 51.0, half, 105.0),
+                text, muted, border, accent, panel);
 
         DrawText(dc, "RECOVERY RESPONSE", new Point(19.0, 173.0),
             10.2, muted, FontWeights.Bold);
@@ -2282,54 +2284,80 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
-    private void DrawMaxHealthRuler(
-        DrawingContext dc, ParameterViewModel hp, Rect card,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    // Shared geometry for the two top-row Core Health rulers. Keeping their
+    // titles, live readouts, rail/knob and native endpoints in the same places
+    // avoids mixing a hero HP card with an undersized generic recovery track.
+    // Only the source's unit/precision differs; hit mapping and reference ticks
+    // continue to use its original native min/max and CFG value.
+    private void DrawCoreHealthPrimaryRuler(
+        DrawingContext dc, ParameterViewModel parameter, string label, string unit,
+        Rect card, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
             card, 4.0, 4.0);
 
-        DrawText(dc, "MAX HEALTH",
-            new Point(card.Left + 15.0, card.Top + 12.0),
-            12.0, text, FontWeights.Bold);
-        var modified = hp.IsValueModifiedFromReference();
-        DrawRightAlignedText(dc, $"{hp.CurrentNumber:0} HP",
-            new Point(card.Right - 15.0, card.Top + 6.0),
-            modified ? 20.2 : 19.0, modified ? accent : text,
-            FontWeights.Bold);
+        var active = parameter.IsControlEnabled;
+        var modified = active && parameter.IsValueModifiedFromReference();
+        var value = unit == "HP" ? $"{parameter.CurrentNumber:0} HP" : FriendlyValue(parameter);
+        var valueText = CreateText(value, 19.0, active ? text : muted,
+            FontWeights.Bold, Math.Max(1.0, card.Width - 30.0));
+        if (modified)
+        {
+            // Like Stamina Usage, only the edited numeric token turns gold;
+            // HP and HP/s remain neutral and Base is not emphasized.
+            foreach (System.Text.RegularExpressions.Match token in
+                System.Text.RegularExpressions.Regex.Matches(
+                    value, @"\d+(?:\.\d+)?"))
+            {
+                valueText.SetForegroundBrush(accent, token.Index, token.Length);
+                valueText.SetFontSize(20.2, token.Index, token.Length);
+            }
+        }
 
-        // The gold rail shows the selected maximum HP setting, never
-        // current in-game damage or a simulated regeneration trajectory.
+        // Measure the live number first; reserve a real gap for the title
+        // instead of letting two independent text draws collide when narrow.
+        var titleWidth = Math.Max(1.0,
+            card.Width - 30.0 - valueText.WidthIncludingTrailingWhitespace - 10.0);
+        dc.DrawText(CreateText(label, 12.0, text, FontWeights.Bold, titleWidth),
+            new Point(card.Left + 15.0, card.Top + 12.0));
+        dc.DrawText(valueText,
+            new Point(card.Right - 15.0 - valueText.WidthIncludingTrailingWhitespace,
+                card.Top + 6.0));
+
         var track = new Rect(card.Left + 18.0, card.Top + 58.0,
             Math.Max(1.0, card.Width - 36.0), 14.0);
         var y = track.Top + track.Height / 2.0;
-        var currentX = ValueToX(hp.CurrentNumber, hp.Minimum,
-            hp.Maximum, track, reverse: false);
-        var referenceX = ValueToX(hp.ReferenceNumber, hp.Minimum,
-            hp.Maximum, track, reverse: false);
+        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
+            parameter.Maximum, track, reverse: false);
+        var referenceX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
+            parameter.Maximum, track, reverse: false);
+        var hovered = active && ReferenceEquals(_hoverTarget?.Parameter, parameter);
 
         dc.DrawLine(new Pen(border, 5.0),
             new Point(track.Left, y), new Point(track.Right, y));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 5.0),
-            new Point(track.Left, y), new Point(currentX, y));
+        if (active)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 5.0),
+                new Point(track.Left, y), new Point(currentX, y));
         dc.DrawLine(new Pen(muted, 1.8),
             new Point(referenceX, y - 10.0),
             new Point(referenceX, y + 10.0));
-        dc.DrawEllipse(panel, new Pen(accent,
-            IsSelected(hp) ? 2.6 : 1.8),
+        dc.DrawEllipse(panel, new Pen(active ? accent : muted,
+                hovered || IsSelected(parameter) ? 2.6 : 1.8),
             new Point(currentX, y), 7.0, 7.0);
-        dc.DrawEllipse(accent, null,
-            new Point(currentX, y), 2.5, 2.5);
+        if (active)
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
 
-        AddHorizontalTarget(hp,
+        AddHorizontalTarget(parameter,
             new Rect(track.Left - 7.0, track.Top - 9.0,
                 track.Width + 14.0, track.Height + 18.0),
-            track, hp.Minimum, hp.Maximum);
+            track, parameter.Minimum, parameter.Maximum);
 
-        DrawText(dc, $"{hp.Minimum:0} HP",
+        var minValue = unit == "HP" ? $"{parameter.Minimum:0}" : FormatCompact(parameter.Minimum);
+        var maxValue = unit == "HP" ? $"{parameter.Maximum:0}" : FormatCompact(parameter.Maximum);
+        DrawText(dc, $"{minValue} {unit}",
             new Point(track.Left, card.Bottom - 20.0),
             10.4, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, $"{hp.Maximum:0} HP",
+        DrawRightAlignedText(dc, $"{maxValue} {unit}",
             new Point(track.Right, card.Bottom - 20.0),
             10.4, muted, FontWeights.Normal);
     }
