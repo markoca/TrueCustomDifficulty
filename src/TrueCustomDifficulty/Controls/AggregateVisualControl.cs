@@ -2048,10 +2048,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         const double margin = 18.0;
         const double cardTop = 49.0;
         const double cardHeight = 181.0;
-        var cellWidth = (ActualWidth - 2.0 * margin - 2.0 * gap) / 3.0;
+        var groupWidth = Math.Min(620.0, ActualWidth);
+        var groupLeft = (ActualWidth - groupWidth) / 2.0;
+        var cellWidth = (groupWidth - 2.0 * margin - 2.0 * gap) / 3.0;
         for (var i = 0; i < channels.Length; i++)
         {
-            var card = new Rect(margin + i * (cellWidth + gap),
+            var card = new Rect(groupLeft + margin + i * (cellWidth + gap),
                 cardTop, cellWidth, cardHeight);
             DrawWeaponKnob(dc, P(channels[i].Id), channels[i].Label, card,
                 text, muted, border, accent, panel);
@@ -2094,16 +2096,16 @@ public sealed class AggregateVisualControl : FrameworkElement
                 KnobPoint(center, radius + (tick % 5 == 0 ? 14 : 11), angle));
         }
 
-        // Base Preset marker is a small muted notch, never another highlighted
-        // number. Current arc/needle is the only manipulated visual value.
-        var baselineAngle = WeaponKnobStartAngle + WeaponKnobSweepAngle * reference;
-        dc.DrawLine(new Pen(muted, 2.4),
-            KnobPoint(center, radius - 6, baselineAngle),
-            KnobPoint(center, radius + 4, baselineAngle));
+        // Paint the source arc before the muted Base tick so the reference
+        // remains visible even where the gold current arc passes across it.
         if (position > Epsilon)
             DrawKnobArc(dc, center, radius, WeaponKnobStartAngle,
                 position * WeaponKnobSweepAngle,
                 new Pen(CloneWithOpacity(active ? accent : muted, active ? .94 : .35), 6.0));
+        var baselineAngle = WeaponKnobStartAngle + WeaponKnobSweepAngle * reference;
+        dc.DrawLine(new Pen(muted, 2.4),
+            KnobPoint(center, radius - 7, baselineAngle),
+            KnobPoint(center, radius + 6, baselineAngle));
 
         var angleNow = WeaponKnobStartAngle + position * WeaponKnobSweepAngle;
         if (hovered)
@@ -2114,10 +2116,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             KnobPoint(center, radius - 8, angleNow),
             KnobPoint(center, radius + 3, angleNow));
 
+        var modified = active && parameter.IsValueModifiedFromReference();
         DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
-            new Point(center.X, center.Y + 3), 15.0,
-            active && parameter.IsValueModifiedFromReference() ? accent : text,
-            FontWeights.Bold);
+            new Point(center.X, center.Y + 3), modified ? 16.2 : 15.0,
+            modified ? accent : text, FontWeights.Bold);
         DrawCenteredText(dc, $"{parameter.Minimum:0.##}x",
             new Point(center.X - radius * .80, card.Bottom - 19.0),
             9.0, muted, FontWeights.SemiBold);
