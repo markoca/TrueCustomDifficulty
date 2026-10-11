@@ -42,6 +42,32 @@ internal static class Program
         }
     }
 
+    // UI source-value regression for the shared Core Health/Core Stamina
+    // primary ruler look. Styling must not change gameplay source semantics.
+    private static void NativeHungerFatiguePrimarySourceContract()
+    {
+        var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+        foreach (var (id, family, original, min, max, step) in new[]
+        {
+            ("survival.hungerRate", "HungerLadder", 0.015, 0.0, 0.030, 0.001),
+            ("survival.wellFedStaminaRegen", "HungerLadder", 0.20, 0.0, 0.40, 0.01),
+            ("survival.sleepinessRate", "FatigueCurve", 0.010, 0.0, 0.020, 0.001),
+            ("survival.energyDrinkFatigueRelief", "FatigueCurve", 1.0, 0.0, 2.0, 0.01)
+        })
+        {
+            var definition = Catalog.Parameters.Single(p => p.Id == id);
+            var source = vm.AllParameters.Single(p => p.Id == id);
+            Check(source.VisualAggregateFamily == family
+                && Math.Abs(source.ReferenceNumber - original) < 0.000001
+                && Math.Abs(source.Minimum - min) < 0.000001
+                && Math.Abs(source.Maximum - max) < 0.000001
+                && Math.Abs(source.TickFrequency - step) < 0.000001
+                && definition.Targets.Count > 0,
+                "Hunger/Fatigue primary CFG source or native ruler range drifted: " + id);
+        }
+        _passed++;
+    }
+
     private static readonly ParameterCatalog Catalog = new ParameterCatalogService().Load();
     private static readonly CfgWriterBaseline Baseline = new CfgWriterBaselineService().Load();
     private static string? _keep;
@@ -66,6 +92,7 @@ internal static class Program
             Check(cohort.Length == 62, "Survival catalog no longer contains exactly 62 parameters");
 
             MasterPenaltyKnobSourceContract();
+            NativeHungerFatiguePrimarySourceContract();
 
             var vm = new MainViewModel(Catalog);
             var loaded = vm.AllParameters.Select(p => p.Id)

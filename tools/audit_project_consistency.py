@@ -2004,6 +2004,56 @@ else:
     note("Hunger LOW single-hover contract: actual Y(0) handle glow, no generic plot-midpoint overlay")
 
 
+# Hunger and Fatigue now share the SAME primary resource ruler as Core
+# Health/Core Stamina. Protect geometry/units/source routing, not screenshots.
+_primary_src = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_primary_ruler_start = _primary_src.find("private void DrawCoreResourceRuler(")
+_primary_ruler_end = _primary_src.find("private void DrawYourWeaponsKnobs(", _primary_ruler_start)
+_primary_ruler = (_primary_src[_primary_ruler_start:_primary_ruler_end]
+                  if 0 <= _primary_ruler_start < _primary_ruler_end else "")
+_hunger_start = _primary_src.find("private void DrawHungerLadder(")
+_hunger_preview = _primary_src.find("const double previewTop = SurvivalPrimaryPreviewTop;", _hunger_start)
+_hunger_first_row = (_primary_src[_hunger_start:_hunger_preview]
+                     if 0 <= _hunger_start < _hunger_preview else "")
+_fatigue_start = _primary_src.find("private void DrawFatigueCurve(")
+_fatigue_preview = _primary_src.find("var previewTop = SurvivalPrimaryPreviewTop;", _fatigue_start)
+_fatigue_first_row = (_primary_src[_fatigue_start:_fatigue_preview]
+                      if 0 <= _fatigue_start < _fatigue_preview else "")
+_primary_expected = {
+    "Hunger": (_hunger_first_row, (
+        'DrawCoreResourceRuler(dc, rate, "HUNGER RATE", "pts/s"',
+        'DrawCoreResourceRuler(dc, wellFed, "WELL-FED RECOVERY", "%"',
+    )),
+    "Fatigue": (_fatigue_first_row, (
+        'DrawCoreResourceRuler(dc, rate, "FATIGUE RATE", "pts/s"',
+        'DrawCoreResourceRuler(dc, relief, "ENERGY FATIGUE RELIEF", "x"',
+    )),
+}
+for _title, (_renderer, _required) in _primary_expected.items():
+    if (not all(token in _renderer for token in _required)
+        or "DrawCompactTrack(dc," in _renderer
+        or "CompactSlot(" in _renderer):
+        fail(f"{_title} primary card renderer no longer matches Core Health/Core Stamina native rulers")
+if not all(token in _primary_ruler for token in (
+        '"pts/s" => $"{parameter.CurrentNumber:0.000} pts/s"',
+        '"%" => $"{(parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber * 100.0:0.#}%"',
+        '"pts/s" => $"{parameter.Maximum:0.000} pts/s"',
+        '"%" => $"{parameter.Maximum * 100.0:0.#}%"',
+        'DrawLine(new Pen(muted, 1.8)',
+        'AddHorizontalTarget(parameter,')):
+    fail("Hunger/Fatigue native pts/s and percent readouts, references or interactions drifted")
+if not all(token in _primary_src for token in (
+        'private const double SurvivalPrimaryRulerTop = 51.0;',
+        'private const double SurvivalPrimaryRulerHeight = 105.0;',
+        'SurvivalPrimaryRulerTop + SurvivalPrimaryRulerHeight + 12.0;',
+        'return SurvivalPrimaryPreviewTop + 80.0 + 51.0 + 365.0 + 12.0;',
+        'var previewBottom = SurvivalPrimaryPreviewTop + 80.0;')):
+    fail("Hunger/Fatigue live source height and responsive stage layout diverged")
+for _file in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "2026-10-11 — Matched Hunger/Fatigue primary resource rulers" not in (DOCS / _file).read_text(encoding="utf-8"):
+        fail(f"Shared Hunger/Fatigue primary ruler specification not synchronized: {_file}")
+note("Hunger/Fatigue starting sliders: identical Core Health/Stamina ruler layout, native rate/bonus units, stage/chart height aligned")
+
 # Radiation System source-to-renderer regression: short recovery terminology,
 # and measured label width rather than the old fixed 155-DIP reservation.
 _radiation_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")

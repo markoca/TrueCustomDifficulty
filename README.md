@@ -1,5 +1,10 @@
 # True Custom Difficulty
 
+### 2026-10-11 — Hunger and Fatigue consistent primary sliders
+
+In the Survival tab, **Hunger** and **Fatigue** now present their first two controls with the same twin 105-DIP native ruler design as **Core Health** and **Core Stamina**. Hunger shows `HUNGER RATE` (pts/s) and `WELL-FED RECOVERY` (+%), while Fatigue shows `FATIGUE RATE` (pts/s) and `ENERGY FATIGUE RELIEF` (x). The original sources, snapping, current/neutral reference values, presets and CFG writer stay unchanged; both stage charts move down only enough to fit the larger, consistent primary row. The two UI design catalogs and audit contract specify the same layout.
+
+
 ### 2026-10-11 — Consumable duration override now includes medicine
 
 The existing `OVERRIDE LIMITS` control in Survival → Consumable Effects expands all three medicine durations as well as drink effects: OFF keeps Vinca/Hercules/Psi Block maximums at **540/900/300s**, ON expands each to **1800s** (30 min). The medicine ruler adjusts between 0–900s and 0–1800s without changing the drink 0–270s scale. The decorative gray `MEDICINE` heading is removed. Top knobs are now self-descriptive: **WATER + ENERGY REFILL**, **WATER REGEN + COST CUT**, **ENERGY STAMINA REGEN**, retaining real 0–2x `scale` semantics and original CFG targets. One old preset flag still controls both groups; no extra checkbox or duplicated duration editor.

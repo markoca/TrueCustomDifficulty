@@ -1,5 +1,10 @@
 # Survival CFG Mapping — v0.2.47
 
+## Core-style Hunger and Fatigue starting controls (2026-10-11)
+
+The two top sliders in **Hunger** and **Fatigue / Sleepiness** now reuse exactly the native two-card `DrawCoreResourceRuler` renderer from Core Health/Core Stamina. Hunger has **HUNGER RATE** (`survival.hungerRate`, 0.015 pts/s original, 0–0.030, 0.001 step) and **WELL-FED RECOVERY** (`survival.wellFedStaminaRegen`, original +20%, 0–40%, 1%-point steps). Fatigue has **FATIGUE RATE** (`survival.sleepinessRate`, 0.010 pts/s original, 0–0.020, 0.001 step) and **ENERGY FATIGUE RELIEF** (`survival.energyDrinkFatigueRelief`, original 1x, 0–2x, 0.01 step). The percentage display for Well-Fed Recovery multiplies the raw 0.20 by 100 for display only; its CFG source remains untouched. The controls use core-style neutral reference ticks, native endpoints, numeric-only changed highlighting and identical 105-DIP row geometry. Stage previews/graphs remain independent and are shifted by the exact same 19-DIP delta as the measured aggregate height. No new CFG, preset, stacking or gameplay calculations.
+
+
 ## Consumable duration override and strength controls (2026-10-11)
 
 **WATER + ENERGY REFILL** scales immediate stamina refill from water, energy drink and limited energy drink; **WATER REGEN + COST CUT** controls WaterStamina2 regeneration and WaterStaminaPerAction1 lower stamina usage together; **ENERGY STAMINA REGEN** edits only EnergeticStamina sustained regeneration. These three are genuine source-backed 0–2x strength multipliers. The muted `MEDICINE` chart heading is removed, leaving individual medicine lane names and seconds-scale ticks.

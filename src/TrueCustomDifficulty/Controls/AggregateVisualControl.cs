@@ -1735,6 +1735,13 @@ public sealed class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel, vaultHeight: false);
     }
 
+    // Hunger and Fatigue share exactly the same two native-resource rulers as
+    // Core Health and Core Stamina. One measured row precedes each stage graph.
+    private const double SurvivalPrimaryRulerTop = 51.0;
+    private const double SurvivalPrimaryRulerHeight = 105.0;
+    private const double SurvivalPrimaryPreviewTop =
+        SurvivalPrimaryRulerTop + SurvivalPrimaryRulerHeight + 12.0;
+
     // Fatigue stages affect when penalties begin, while their strengths remain
     // separate authored effects. The overview is read-only: thresholds and
     // different combat effects can coincide, so interactive graph points overlap.
@@ -1787,15 +1794,18 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var width = Math.Max(460.0, ActualWidth - 34.0);
-        const double buildTop = 55.0;
-        DrawCompactTrack(dc, rate, "FATIGUE BUILD-UP",
-            $"{rate.CurrentNumber:0.000} pts/s", "0 pts/s", "0.020 pts/s",
-            CompactSlot(buildTop, width, 2, 0), text, muted, border, accent, panel);
-        DrawCompactTrack(dc, relief, "ENERGY DRINK FATIGUE RELIEF",
-            $"{relief.CurrentNumber:0.##}x", "0x", "2x",
-            CompactSlot(buildTop, width, 2, 1), text, muted, border, accent, panel);
+        var resourceWidth = Math.Max(1.0, ActualWidth - 32.0);
+        const double resourceGap = 12.0;
+        var half = (resourceWidth - resourceGap) / 2.0;
+        DrawCoreResourceRuler(dc, rate, "FATIGUE RATE", "pts/s",
+            new Rect(16.0, SurvivalPrimaryRulerTop, half, SurvivalPrimaryRulerHeight),
+            text, muted, border, accent, panel);
+        DrawCoreResourceRuler(dc, relief, "ENERGY FATIGUE RELIEF", "x",
+            new Rect(16.0 + half + resourceGap, SurvivalPrimaryRulerTop,
+                half, SurvivalPrimaryRulerHeight),
+            text, muted, border, accent, panel);
 
-        var previewTop = buildTop + CompactTrackHeight + 12.0;
+        var previewTop = SurvivalPrimaryPreviewTop;
         var preview = new Rect(17, previewTop, width, 80);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1), preview, 4, 4);
         DrawText(dc, "FATIGUE POINTS / STAGE PREVIEW",
@@ -2327,9 +2337,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             "HP" or "SP" => $"{parameter.CurrentNumber:0} {unit}",
             "x" => $"{parameter.CurrentNumber:0.##}x",
+            "pts/s" => $"{parameter.CurrentNumber:0.000} pts/s",
+            "%" => $"{(parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber * 100.0:0.#}%",
             _ => FriendlyValue(parameter)
         };
-        var valueText = CreateText(value, 19.0, active ? text : muted,
+        // Native 0.001-rate precision takes more room than HP/SP, but uses
+        // the same card, title/value positions, rail and modified-only gold.
+        var valueSize = unit == "pts/s" ? 16.5 : 19.0;
+        var valueText = CreateText(value, valueSize, active ? text : muted,
             FontWeights.Bold, Math.Max(1.0, card.Width - 30.0));
         if (modified)
         {
@@ -2340,7 +2355,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                     value, @"\d+(?:\.\d+)?"))
             {
                 valueText.SetForegroundBrush(accent, token.Index, token.Length);
-                valueText.SetFontSize(20.2, token.Index, token.Length);
+                valueText.SetFontSize(valueSize + 1.2, token.Index, token.Length);
             }
         }
 
@@ -2382,10 +2397,26 @@ public sealed class AggregateVisualControl : FrameworkElement
                 track.Width + 14.0, track.Height + 18.0),
             track, parameter.Minimum, parameter.Maximum);
 
-        var minValue = unit is "HP" or "SP" ? $"{parameter.Minimum:0}" : FormatCompact(parameter.Minimum);
-        var maxValue = unit is "HP" or "SP" ? $"{parameter.Maximum:0}" : FormatCompact(parameter.Maximum);
-        var leftBound = unit == "x" ? $"{minValue}x" : $"{minValue} {unit}";
-        var rightBound = unit == "x" ? $"{maxValue}x" : $"{maxValue} {unit}";
+        // The shared ruler must render endpoints in the same player-facing
+        // units as its current readout, never the underlying 0.2 fraction.
+        var minValue = unit is "HP" or "SP"
+            ? $"{parameter.Minimum:0}" : FormatCompact(parameter.Minimum);
+        var maxValue = unit is "HP" or "SP"
+            ? $"{parameter.Maximum:0}" : FormatCompact(parameter.Maximum);
+        var leftBound = unit switch
+        {
+            "x" => $"{minValue}x",
+            "pts/s" => $"{parameter.Minimum:0.000} pts/s",
+            "%" => $"{parameter.Minimum * 100.0:0.#}%",
+            _ => $"{minValue} {unit}"
+        };
+        var rightBound = unit switch
+        {
+            "x" => $"{maxValue}x",
+            "pts/s" => $"{parameter.Maximum:0.000} pts/s",
+            "%" => $"{parameter.Maximum * 100.0:0.#}%",
+            _ => $"{maxValue} {unit}"
+        };
         DrawText(dc, leftBound,
             new Point(track.Left, card.Bottom - 20.0),
             10.4, muted, FontWeights.Normal);
@@ -3526,21 +3557,18 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var width = Math.Max(460.0, ActualWidth - 34.0);
-        void Card(ParameterViewModel parameter, string label, string value,
-            string minimum, string maximum, double top, int columns, int index)
-            => DrawCompactTrack(dc, parameter, label, value, minimum, maximum,
-                CompactSlot(top, width, columns, index),
-                text, muted, border, accent, panel);
+        var resourceWidth = Math.Max(1.0, ActualWidth - 32.0);
+        const double resourceGap = 12.0;
+        var half = (resourceWidth - resourceGap) / 2.0;
+        DrawCoreResourceRuler(dc, rate, "HUNGER RATE", "pts/s",
+            new Rect(16.0, SurvivalPrimaryRulerTop, half, SurvivalPrimaryRulerHeight),
+            text, muted, border, accent, panel);
+        DrawCoreResourceRuler(dc, wellFed, "WELL-FED RECOVERY", "%",
+            new Rect(16.0 + half + resourceGap, SurvivalPrimaryRulerTop,
+                half, SurvivalPrimaryRulerHeight),
+            text, muted, border, accent, panel);
 
-        const double buildTop = 55.0;
-        Card(rate, "HUNGER BUILD-UP",
-            $"{rate.CurrentNumber:0.000} pts/s",
-            "0 pts/s", "0.030 pts/s", buildTop, 2, 0);
-        Card(wellFed, "WELL-FED STAMINA RECOVERY",
-            $"+{wellFed.CurrentNumber * 100:0}% STAMINA RECOVERY",
-            "0%", "+40%", buildTop, 2, 1);
-
-        const double previewTop = buildTop + CompactTrackHeight + 12.0;
+        const double previewTop = SurvivalPrimaryPreviewTop;
         var preview = new Rect(17.0, previewTop, width, 80.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
         DrawText(dc, "HUNGER POINTS  /  STAGE PREVIEW",
@@ -5706,7 +5734,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     // their renderers. Measure and OnRender must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
     {
-        return 55.0 + CompactTrackHeight + 12.0 + 80.0 + 51.0 + 365.0 + 12.0;
+        return SurvivalPrimaryPreviewTop + 80.0 + 51.0 + 365.0 + 12.0;
     }
 
     private static double CompactSleepHeight(double width)
@@ -5724,7 +5752,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private static double CompactHungerHeight(double width)
     {
-        var previewBottom = 55.0 + CompactTrackHeight + 12.0 + 80.0;
+        var previewBottom = SurvivalPrimaryPreviewTop + 80.0;
         var frameBottom = previewBottom + 55.0 + HungerProfileHeight;
         return frameBottom + 12.0;
     }
