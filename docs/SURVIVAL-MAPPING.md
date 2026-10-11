@@ -1,5 +1,9 @@
 # Survival CFG Mapping — v0.2.47
 
+### 2026-10-11 — Sleep wake-up percent and HP interpretation (current)
+
+`SleepingDashboard`'s **HEALTH RESTORED** edits the original `SleepHealthRestore` **300 HP** amount per sleep completion; it is not 300 HP/s, and the player's maximum-HP cap remains in effect. **STAMINA RESTORE STRENGTH** edits the original `SleepStaminaRestore` strength (vanilla **+100%**, raw `1.0`), which describes the magnitude of the native wake-up stamina effect, **not** extra +100 stamina points, a maximum-SP boost or SP/s. Source CFG and these mappings do not alone establish the runtime combination/refill formula. Both remain independent preset and CFG fields.
+
 ### 2026-10-10 — Beer and Vodka independent RAD removal (latest binding contract)
 
 Within the **single MEDICAL ITEMS card** the right-hand RADIATION REMOVAL bank now has **four compact vertical sliders on one row**: **SCIENTIFIC MEDKIT**, **ANTI-RAD**, **BEER** and **VODKA**. There is no second-row, duplicate standalone Radiation Treatment card, or separate consumable alcohol antirad slider. The RAD bank is given additional horizontal space by tightening the four gold HEAL / copper BLEED pairs on the left; at least 820 DIP board width is reserved so all 12 numeric columns remain one row without clipping. Each column uses the shared horizontal cap/white-on-hover and independent source-native drag/keyboard/right-click/R reset; the RAD bank keeps a separate teal 0–200 vertical scale, with numbers not conflated with HP or bleeding points.

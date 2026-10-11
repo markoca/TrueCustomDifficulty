@@ -1,5 +1,11 @@
 # Water and Energy Drink — source-exact effect audit (2026-10-10)
 
+## 2026-10-11 — Active live-preview and duration naming
+
+`WaterStaminaPerAction1` remains the real −10% SPDrain modifier for action stamina cost (native 30-second duration). **WATER STAMINA COST CUT** now previews the **10% stamina cost reduction** (rather than a negative amount) with its magnitude bar and grey reference tick filling **left to right**, consistently with positive effects; this preview is not a reverse-oriented control. The original negative gameplay source, numeric scale, knob, writer and item-membership remain untouched.
+
+The three native-seconds child editors are **WATER +25% STAMINA EFFECT DURATION** (`WaterStamina2`, 5 s), **ENERGY -100% STAMINA COST DURATION** (`EnergeticStaminaPerAction2`, 5 s) and **ENERGY -30% STAMINA COST DURATION** (`EnergeticStaminaPerAction1`, 15 s). `WaterStamina2` is type `Stamina` rather than verified `RegenStamina`; no regenerated-SP-per-second inference is added. Changing UI language has no effect on saved/published CFG values.
+
 ## Evidence and scope
 
 Verified directly against the user-provided decoded base-game CFG archive

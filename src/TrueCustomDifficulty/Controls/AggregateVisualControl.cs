@@ -2978,7 +2978,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
             for (var i = 0; i < effects.Length; i++)
             {
-                var (label, factor, scale, source, negative) = effects[i];
+                var (label, factor, scale, source, reduction) = effects[i];
                 var current = source.CurrentNumber * factor;
                 var reference = source.ReferenceNumber * factor;
                 var rowTop = rect.Top + 30.0 + i * 43.0;
@@ -2990,33 +2990,38 @@ public sealed class AggregateVisualControl : FrameworkElement
                         new Rect(rect.Left + 5, rowTop - 4,
                             rect.Width - 10, 39), 3, 3);
 
-                DrawText(dc, label,
-                    new Point(rect.Left + 10.0, rowTop),
-                    9.7, text, FontWeights.SemiBold);
-                DrawRightAlignedText(dc,
-                    $"{(negative ? "-" : "+")}{Math.Abs(current):0.#}%",
-                    new Point(rect.Right - 10.0, rowTop - 1.0),
-                    modified ? 11.5 : 10.3,
+                // The SPDrain reduction is a benefit: its preview shows
+                // stamina cost saved, without changing the negative CFG value.
+                var previewValue = $"{(reduction ? "" : "+")}{Math.Abs(current):0.#}%";
+                var previewSize = modified ? 11.5 : 10.3;
+                var previewText = CreateText(previewValue, previewSize,
                     modified ? accent : text, FontWeights.Bold);
+                // Measure the value first so the caption cannot overlap it.
+                var labelWidth = Math.Max(1.0, rect.Width - 20.0
+                    - previewText.WidthIncludingTrailingWhitespace - 8.0);
+                dc.DrawText(CreateText(label, 9.7, text, FontWeights.SemiBold,
+                        labelWidth),
+                    new Point(rect.Left + 10.0, rowTop));
+                dc.DrawText(previewText,
+                    new Point(rect.Right - 10.0 - previewText.WidthIncludingTrailingWhitespace,
+                        rowTop - 1.0));
 
-                // Negative values grow left from zero on the right. Positive
-                // values grow right from zero on the left. Each row has its
-                // own physically meaningful 0–maximum preview scale.
+                // Every effect-magnitude preview grows from left to right.
+                // Negative SPDrain corresponds to positive cost saved;
+                // mirroring only that preview was visually misleading.
                 var rail = new Rect(rect.Left + 10.0, rowTop + 21.0,
                     rect.Width - 20.0, 5.0);
                 dc.DrawRoundedRectangle(CloneWithOpacity(border, .42),
                     null, rail, 2.0, 2.0);
                 var ratio = Math.Clamp(Math.Abs(current) / scale, 0.0, 1.0);
                 var activeWidth = rail.Width * ratio;
-                var barLeft = negative ? rail.Right - activeWidth : rail.Left;
                 if (activeWidth > 0.0)
                     dc.DrawRoundedRectangle(
                         CloneWithOpacity(accent, highlighted ? .95 : dimmed ? .24 : .70),
-                        null, new Rect(barLeft, rail.Top, activeWidth, rail.Height),
+                        null, new Rect(rail.Left, rail.Top, activeWidth, rail.Height),
                         2.0, 2.0);
                 var referenceRatio = Math.Clamp(Math.Abs(reference) / scale, 0.0, 1.0);
-                var referenceX = negative ? rail.Right - referenceRatio * rail.Width
-                    : rail.Left + referenceRatio * rail.Width;
+                var referenceX = rail.Left + referenceRatio * rail.Width;
                 dc.DrawLine(new Pen(muted, 1.7),
                     new Point(referenceX, rail.Top - 3.0),
                     new Point(referenceX, rail.Bottom + 3.0));
@@ -3039,7 +3044,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new (string, double, double, ParameterViewModel, bool)[]
             {
                 ("WATER REGEN", 25.0, 50.0, waterStamina, false),
-                ("WATER COST", 10.0, 20.0, waterStamina, true),
+                ("WATER STAMINA COST CUT", 10.0, 20.0, waterStamina, true),
                 ("ENERGY REGEN", 200.0, 400.0, energyStamina, false)
             });
     }
@@ -3221,9 +3226,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         // No duplicate main sliders or fixed pseudo-timeline hit regions.
         var shortEffects = new (ParameterViewModel Parameter, string Caption)[]
         {
-            (waterRegenTime, "WATER REGEN"),
-            (energyFullCostTime, "ENERGY -100% COST"),
-            (energyPartialCostTime, "ENERGY -30% COST")
+            (waterRegenTime, "WATER +25% STAMINA EFFECT DURATION"),
+            (energyFullCostTime, "ENERGY -100% STAMINA COST DURATION"),
+            (energyPartialCostTime, "ENERGY -30% STAMINA COST DURATION")
         };
         var shortColumns = ConsumableSecondaryColumns(preview.Width);
         var secondaryWidth = (preview.Width - 24.0 -
@@ -3326,7 +3331,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             $"{healthRestore.Minimum:0.#} HP", $"{healthRestore.Maximum:0.#} HP",
             new Rect(left, 274.0, column, 82.0),
             text, muted, border, accent, panel);
-        DrawCompactTrack(dc, staminaRestore, "STAMINA RESTORED",
+        DrawCompactTrack(dc, staminaRestore, "STAMINA RESTORE STRENGTH",
             $"+{staminaRestore.CurrentNumber * 100:0.#}%",
             $"{staminaRestore.Minimum * 100:0.#}%",
             $"{staminaRestore.Maximum * 100:0.#}%",

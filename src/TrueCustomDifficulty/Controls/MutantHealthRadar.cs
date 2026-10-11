@@ -139,7 +139,7 @@ public sealed class MutantHealthRadar : FrameworkElement
 
         _targets.Clear();
         _damageMarkerTargets.Clear();
-        DrawCenteredText(dc, "MUTANT PROPERTIES", new Point(ActualWidth / 2.0, 21.0),
+        DrawCenteredText(dc, "MUTANT DAMAGE AND HEALTH", new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
 
         // Stamina Usage-style grouped, independent horizontal controls.
