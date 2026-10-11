@@ -1,5 +1,10 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-11 — Seven-controller source audit after Stash Tier knobs
+
+The historical seven-source-visual audit must **not** require `DrawNativeGauge(dc, P(tier.Id), ...)` for Stash Rewards: BASIC / STANDARD / RARE Ammo by Stash Tier were intentionally converted to three native `DrawSourceKnob` WPF controls. The audit now checks all three literal CFG parameter IDs inside `DrawCompactStashRewards`, native knob dispatch and bounded 606-DIP bank, plus the three separate BONUS REWARDS horizontal source controls. Radiation Balance **still** uses `DrawNativeGauge` for its three independent native sources; Repair per Reputation **still** uses its four source-point graph and editable vertical hit regions. Guard the correct family in the shared rotary input gate. The CFG writers, ranges and the UI's existing geometry are not modified by this audit correction.
+
+
 ### 2026-10-11 — Shared rotary wheel-gate audit invariant
 
 The shared `AggregateVisualControl` wheel handler supports multiple independently approved rotary families (Your Weapons, Global Anomaly Damage, Ammo Distribution, Consumable Effects, Stash Rewards, Trader Stock, Psy Combat, Equipment Wear). `tools/audit_project_consistency.py` must check membership of each required family in the wheel gate, not compare the whole C# condition as an immutable string. Adding a new family must not invalidate earlier catalogued UI controls. The 2026-10-11 Psy/Equipment audit's extra closing parenthesis was corrected without changing UI behavior.
