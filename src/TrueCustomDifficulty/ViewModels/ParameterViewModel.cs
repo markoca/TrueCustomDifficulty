@@ -101,7 +101,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "TraderStockBoard" => "Drag the trader-ammo or medic-stock track. They change different supplies.",
                     "ServiceCostsBoard" => "Use the separate tracks for guides, upgrades and base repair cost.",
                     "ItemWeightBoard" => "Drag AMMUNITION WEIGHT or FOOD & MEDICINE WEIGHT independently.",
-                    "AnomalyGlobalDamage" => "Drag the global anomaly-damage track. Individual anomaly strengths are edited in their separate panel.",
+                    "AnomalyGlobalDamage" => "Turn the overall anomaly damage knob; scroll over it or use arrow keys for precise changes. Individual anomaly strengths remain separate.",
                     "AnomalySpecialEffects" => "Drag the Razor, Diamond or Psy track you want to change; each is independent.",
                     "NpcLootLoadout" => "Choose an Extra Corpse Loot option, drag the medical or ammo track, or move the weapon-condition MIN/MAX handles. The ammo numbers update as you change the setting.",
                     "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
