@@ -125,6 +125,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void Parameter_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName is nameof(ParameterViewModel.CurrentNumber)
+            or nameof(ParameterViewModel.TickFrequency)
             or nameof(ParameterViewModel.CurrentBoolean)
             or nameof(ParameterViewModel.DrinkDurationOverrideEnabled)
             or nameof(ParameterViewModel.Maximum)
