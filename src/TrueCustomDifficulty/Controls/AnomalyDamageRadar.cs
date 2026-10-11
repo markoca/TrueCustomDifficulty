@@ -392,10 +392,23 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         base.OnMouseLeftButtonDown(e);
         Focus();
 
-        var row = FindTarget(e.GetPosition(this));
+        var point = e.GetPosition(this);
+        if (_globalKnobHit.Contains(point) && _globalDamage is { IsControlEnabled: true } global)
+        {
+            _selectedGlobalKnob = true;
+            _dragGlobalKnob = true;
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(global));
+            CaptureMouse();
+            UpdateGlobalFromPoint(point);
+            e.Handled = true;
+            return;
+        }
+
+        var row = FindTarget(point);
         if (row < 0)
             return;
 
+        _selectedGlobalKnob = false;
         _selectedRow = row;
         if (_parameters[row] is { } selected)
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(selected));
@@ -409,15 +422,34 @@ public sealed class AnomalyDamageRadar : FrameworkElement
     {
         base.OnMouseMove(e);
         var point = e.GetPosition(this);
-        var hover = FindTarget(point);
+        var globalHover = _globalKnobHit.Contains(point);
+        if (globalHover != _hoverGlobalKnob)
+        {
+            _hoverGlobalKnob = globalHover;
+            InvalidateVisual();
+        }
 
+        if (_dragGlobalKnob && e.LeftButton == MouseButtonState.Pressed)
+        {
+            Cursor = Cursors.Hand;
+            UpdateGlobalFromPoint(point);
+            e.Handled = true;
+            return;
+        }
+
+        var hover = globalHover ? -1 : FindTarget(point);
         if (hover != _hoverRow)
         {
             _hoverRow = hover;
             InvalidateVisual();
         }
-
-        Cursor = hover >= 0 ? Cursors.SizeNS : Cursors.Arrow;
+        Cursor = globalHover ? Cursors.Hand
+            : hover >= 0 ? Cursors.SizeNS : Cursors.Arrow;
+        ToolTip = globalHover
+            ? "GLOBAL multiplies all eleven source damage settings. Turn or scroll in 0.01x steps. Right-click resets only global."
+            : hover >= 0
+                ? "Bar = percentage of this anomaly's own vanilla value. Top result includes GLOBAL; lower number is the edited CFG source. Right-click resets this anomaly."
+                : null;
 
         if (_dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed)
         {
@@ -430,12 +462,21 @@ public sealed class AnomalyDamageRadar : FrameworkElement
     {
         base.OnMouseLeave(e);
         _hoverRow = -1;
+        _hoverGlobalKnob = false;
+        ToolTip = null;
         InvalidateVisual();
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonUp(e);
+        if (_dragGlobalKnob)
+        {
+            _dragGlobalKnob = false;
+            ReleaseMouseCapture();
+            e.Handled = true;
+            return;
+        }
         if (_dragRow < 0)
             return;
 
@@ -447,10 +488,22 @@ public sealed class AnomalyDamageRadar : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
-        var row = FindTarget(e.GetPosition(this));
+        var point = e.GetPosition(this);
+        if (_globalKnobHit.Contains(point) && _globalDamage is { IsControlEnabled: true } global)
+        {
+            _selectedGlobalKnob = true;
+            ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(global));
+            global.ResetToReference();
+            _status.ShowTransient("Global anomaly multiplier reset to Base Preset.");
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+        var row = FindTarget(point);
         if (row < 0 || _parameters[row] is not { } parameter)
             return;
 
+        _selectedGlobalKnob = false;
         _selectedRow = row;
         ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
         parameter.ResetToReference();
@@ -465,11 +518,34 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
         if (e.Key == Key.R)
         {
+            _globalDamage?.ResetToReference();
             foreach (var parameter in _parameters)
                 parameter?.ResetToReference();
 
-            _status.ShowTransient("Anomaly damage reset to Base Preset.");
+            _status.ShowTransient("Global and individual anomaly damage reset to Base Preset.");
             InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+
+        if (_selectedGlobalKnob && _globalDamage is { IsControlEnabled: true } global)
+        {
+            var globalStepCount = e.Key switch
+            {
+                Key.Up or Key.Right or Key.Add or Key.OemPlus => 1,
+                Key.Down or Key.Left or Key.Subtract or Key.OemMinus => -1,
+                Key.PageUp => 10,
+                Key.PageDown => -10,
+                _ => 0
+            };
+            if (e.Key == Key.Home)
+                SetGlobalDamage(global.Minimum);
+            else if (e.Key == Key.End)
+                SetGlobalDamage(global.Maximum);
+            else if (globalStepCount != 0)
+                SetGlobalDamage(global.CurrentNumber + globalStepCount * global.TickFrequency);
+            else
+                return;
             e.Handled = true;
             return;
         }
@@ -492,6 +568,30 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         _status.Clear();
         InvalidateVisual();
         e.Handled = true;
+    }
+
+    protected override void OnMouseWheel(MouseWheelEventArgs e)
+    {
+        base.OnMouseWheel(e);
+        if (!_globalKnobHit.Contains(e.GetPosition(this))
+            || _globalDamage is not { IsControlEnabled: true } global)
+            return;
+        var direction = Math.Sign(e.Delta);
+        if (direction == 0)
+            return;
+        Focus();
+        _selectedGlobalKnob = true;
+        ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(global));
+        SetGlobalDamage(global.CurrentNumber + direction * global.TickFrequency);
+        e.Handled = true;
+    }
+
+    protected override void OnLostMouseCapture(MouseEventArgs e)
+    {
+        base.OnLostMouseCapture(e);
+        _dragGlobalKnob = false;
+        _dragRow = -1;
+        InvalidateVisual();
     }
 
     private void UpdateFromPoint(int row, Point point)
