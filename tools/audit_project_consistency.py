@@ -1391,6 +1391,16 @@ _economy_layout_contract = (
 for _name, _token, _source in _economy_layout_contract:
     if _token not in _source:
         fail(f"Economy dashboard responsive groups drifted: {_name}")
+if any(f'Value="{old}"' in _economy_xaml
+       for old in ('01 / MONEY FLOW', '02 / MARKET', '03 / EXPENSES')):
+    fail("Economy section headings still show obsolete 01/02/03 numbering")
+if not all(token in _economy_aggregate for token in (
+    '=> width >= 390.0 ? 274.0 : 367.0;',
+    '=> width >= 390.0 ? 242.0 : 438.0;',
+    'Math.Max(49.0, (ActualHeight - 181.0) / 2.0)',
+    'Math.Max(52.0, (ActualHeight - 259.0) / 2.0)',
+)):
+    fail("Economy responsive alignment/compact breakpoints drifted")
 # The grouped semantic slot registry is a C# Dictionary, so duplicate keys
 # throw during static initialization rather than merely showing a bad layout.
 _economy_slot_keys = re.findall(r'\["([^"]+)"\]\s*=\s*new\(', _economy_responsive)
@@ -2468,6 +2478,10 @@ _anomaly_combined_required = (
     'private void DrawGlobalDamageKnob(',
     'private void UpdateGlobalFromPoint(',
     'private void SetGlobalDamage(',
+    'private static int NativeTickStride(double pixelsPerStep)',
+    'var step = Math.Max(Epsilon, p.TickFrequency);',
+    'var stride = NativeTickStride(spacing);',
+    'var snapped = p.Minimum + Math.Round(',
     'protected override void OnMouseWheel(MouseWheelEventArgs e)',
     'global.CurrentNumber + direction * global.TickFrequency',
     '_globalKnobHit.Contains(point)',
@@ -2476,6 +2490,8 @@ _anomaly_combined_required = (
     'BAR SCALE = % OF EACH INDIVIDUAL VANILLA VALUE',
     'TOP NUMBER: RESULT',
     'EffectiveDamageValue',
+    'parameter.IsValueModifiedFromReference()',
+    '_globalDamage?.IsValueModifiedFromReference() == true',
     'parameter.CurrentNumber',
     'ReferenceNumber',
     'const double top = 365.0, bottom = 526.0;',
