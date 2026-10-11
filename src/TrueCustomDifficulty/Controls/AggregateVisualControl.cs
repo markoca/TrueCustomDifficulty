@@ -2430,7 +2430,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         // Frameless shared knob: preserve dial, title, steps, values and hit area.
         DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, card.Top + 19),
-            10.0, text, FontWeights.Bold);
+            10.0, parameter?.IsControlEnabled == true ? text : muted, FontWeights.Bold);
         if (parameter is null)
             return;
 
@@ -2514,13 +2514,33 @@ public sealed class AggregateVisualControl : FrameworkElement
         // RECOVERY has a rate unit and a much smaller magnitude than the
         // multipliers. Keep the numeric readout inside the dial and put PTS/S
         // on its own small line so both remain readable at compact widths.
-        DrawCenteredText(dc,
-            rateReadout ? $"{parameter.CurrentNumber:0.00}"
-                : percentageReadout ? Percent(parameter.CurrentNumber)
-                : $"{parameter.CurrentNumber:0.##}x",
-            new Point(center.X, center.Y + (rateReadout ? -4.0 : 3.0)),
-            modified ? 16.2 : 15.0,
-            modified ? accent : text, FontWeights.Bold);
+        var currentLabel = rateReadout ? $"{parameter.CurrentNumber:0.00}"
+            : percentageReadout ? Percent(parameter.CurrentNumber)
+            : $"{parameter.CurrentNumber:0.##}x";
+        var currentTop = center.Y + (rateReadout ? -4.0 : 3.0);
+        if (percentageSign != 0)
+        {
+            // In the two Master signed-percentage dials, only the editable
+            // numeric token becomes gold; +/- and % remain neutral.
+            var formatted = CreateText(currentLabel, modified ? 16.2 : 15.0,
+                active ? text : muted, FontWeights.Bold, card.Width - 12.0);
+            if (modified)
+            {
+                foreach (System.Text.RegularExpressions.Match token in
+                    System.Text.RegularExpressions.Regex.Matches(
+                        currentLabel, @"\d+(?:\.\d+)?"))
+                    formatted.SetForegroundBrush(accent, token.Index, token.Length);
+            }
+            dc.DrawText(formatted, new Point(
+                center.X - formatted.WidthIncludingTrailingWhitespace / 2.0,
+                currentTop));
+        }
+        else
+        {
+            DrawCenteredText(dc, currentLabel, new Point(center.X, currentTop),
+                modified ? 16.2 : 15.0,
+                active ? modified ? accent : text : muted, FontWeights.Bold);
+        }
         if (rateReadout)
             DrawCenteredText(dc, "PTS/S",
                 new Point(center.X, center.Y + 16.0),
