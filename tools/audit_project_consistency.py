@@ -2387,6 +2387,29 @@ else:
     note('Global Anomaly Damage: one source-backed WPF knob with native 0–2.5x/0.01x, shared mouse/keyboard behavior and two design catalogs')
 
 
+# Stash-tier ammo uses three independent native rotary controls; bonus rewards
+# remain horizontal because they represent different chance/count mechanics.
+_stash_knob_start = _knob_source.find('private void DrawCompactStashRewards(')
+_stash_knob_end = _knob_source.find('DrawText(dc, "BONUS REWARDS"', _stash_knob_start)
+_stash_knob_body = _knob_source[_stash_knob_start:_stash_knob_end]
+_stash_knob_tokens = (
+    '("loot.cheapStashAmmoQuantity", "BASIC")',
+    '("loot.mediumStashAmmoQuantity", "STANDARD")',
+    '("loot.expensiveStashAmmoQuantity", "RARE")',
+    'DrawSourceKnob(dc, P(tier.Id), tier.Label,',
+    'const double knobWidth = 194.0;',
+    'const double knobHeight = 181.0;',
+)
+if (not all(token in _stash_knob_body for token in _stash_knob_tokens)
+    or 'DrawNativeGauge(dc, P(tier.Id)' in _stash_knob_body
+    or 'or "StashRewardProfile")' not in _knob_source
+    or any('2026-10-11 — Ammo by Stash Tier rotary' not in doc
+           for doc in _knob_catalog_texts)):
+    fail("Ammo by Stash Tier: three native rotary controls / interaction / catalogs drifted")
+else:
+    note("Ammo by Stash Tier: BASIC/STANDARD/RARE native source knobs; bonus reward rails unchanged")
+
+
 # WPF dial graduation integrity, 2026-10-11. The old fixed "0..10"
 # decoration did not match native 0.25x or 0.01x parameter steps. All eight
 # knobs must share one source-derived native grid and real source endpoints.
