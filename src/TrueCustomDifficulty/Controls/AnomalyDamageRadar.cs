@@ -213,11 +213,14 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             var effectiveText = Anomalies[i].IsMultiplier
                 ? $"{inherited:0.##}x" : $"{inherited:0.#}";
             DrawCenteredText(dc, effectiveText, new Point(center, 322), 9.3,
-                parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
+                parameter.IsValueModifiedFromReference()
+                    || _globalDamage?.IsValueModifiedFromReference() == true ? accent : text,
+                FontWeights.Bold);
             var nativeText = Anomalies[i].IsMultiplier
                 ? $"{parameter.CurrentNumber:0.##}x" : $"{parameter.CurrentNumber:0.#}";
             DrawCenteredText(dc, nativeText, new Point(center, 340), 9.0,
-                muted, FontWeights.SemiBold);
+                parameter.IsValueModifiedFromReference() ? accent : muted,
+                FontWeights.SemiBold);
             var words = Anomalies[i].Label.Split(' ');
             if (words.Length == 1)
                 DrawCenteredText(dc, words[0], new Point(center, 550), 8.5,
