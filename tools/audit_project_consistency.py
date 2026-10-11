@@ -1398,7 +1398,6 @@ _economy_coupon_contract = (
     'HitKind.CouponDecrease',
     'HitKind.CouponIncrease',
     'HitKind.CouponValue',
-    'coupons.TickFrequency',
     'new Rect(left, 175.0, cardWidth, 84.0)',
     'DrawTradingMeter(dc, P("economy.mainQuestReward")',
     'DrawTradingMeter(dc, P("economy.sideQuestReward")',
