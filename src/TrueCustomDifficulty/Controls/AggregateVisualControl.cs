@@ -1922,24 +1922,90 @@ public sealed class AggregateVisualControl : FrameworkElement
             text, muted, border, soft, accent, panel);
     }
 
+    // Shared source-native vertical scale. A meter's own min/max/step,
+    // reference marker, selected parameter and edit hit area are preserved.
+    // This is an editable gauge, not an inferred rate/probability.
+    private void DrawNativeGauge(
+        DrawingContext dc, ParameterViewModel? parameter, string label,
+        Func<double, string> format, Rect card, Brush text, Brush muted,
+        Brush border, Brush accent, Brush panel)
+    {
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.60),
+            new Pen(CloneWithOpacity(border, 0.85), 0.9), card, 4, 4);
+        if (parameter is null)
+            return;
+
+        var enabled = parameter.IsControlEnabled;
+        var modified = enabled && parameter.IsValueModifiedFromReference();
+        var center = card.Left + card.Width / 2.0;
+        DrawMixerCentered(dc, label, new Point(center, card.Top + 9.0),
+            Math.Max(30.0, card.Width - 10.0), 10.0,
+            enabled ? text : muted, FontWeights.Bold);
+        DrawMixerCentered(dc, format(parameter.CurrentNumber),
+            new Point(center, card.Top + 30.0),
+            Math.Max(30.0, card.Width - 10.0), modified ? 13.3 : 12.1,
+            !enabled ? muted : modified ? accent : text, FontWeights.Bold);
+        DrawMixerCentered(dc, format(parameter.Maximum),
+            new Point(center, card.Top + 53.0),
+            Math.Max(30.0, card.Width - 10.0), 8.7, muted, FontWeights.Normal);
+
+        var plot = new Rect(center - 8.0, card.Top + 77.0, 16.0,
+            Math.Max(18.0, card.Height - 112.0));
+        var yNow = ValueToY(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, plot);
+        var yBase = ValueToY(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, plot);
+        dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.26),
+            new Pen(border, 0.8), plot, 3, 3);
+        dc.DrawRoundedRectangle(CloneWithOpacity(enabled ? accent : muted, 0.70),
+            null, new Rect(plot.Left + 2, yNow, plot.Width - 4,
+                Math.Max(0.0, plot.Bottom - yNow)), 2, 2);
+        dc.DrawLine(new Pen(muted, 2.1),
+            new Point(plot.Left - 9, yBase), new Point(plot.Right + 9, yBase));
+        var hovered = _hoverTarget?.Kind == HitKind.Vertical
+            && ReferenceEquals(_hoverTarget.Parameter, parameter);
+        dc.DrawLine(new Pen(hovered ? Brushes.White : enabled ? accent : muted,
+                hovered ? 3.2 : 2.4),
+            new Point(plot.Left - 6, yNow), new Point(plot.Right + 6, yNow));
+        DrawMixerCentered(dc, format(parameter.Minimum),
+            new Point(center, card.Bottom - 24.0),
+            Math.Max(30.0, card.Width - 10.0), 8.7, muted, FontWeights.Normal);
+        AddVerticalTarget(parameter,
+            new Rect(plot.Left - 18.0, plot.Top - 7.0,
+                plot.Width + 36.0, plot.Height + 14.0),
+            plot, parameter.Minimum, parameter.Maximum);
+    }
+
     private void DrawSevereFatiguePenaltyBoard(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
     {
         DrawMasterSectionTitle(dc, "SEVERE FATIGUE", accent);
         DrawMasterBundleToggle(dc, P("advanced.fatigueMechanics"),
-            "SEVERE FATIGUE MECHANICS",
-            text, muted, border, accent, panel);
+            "SEVERE FATIGUE MECHANICS", text, muted, border, accent, panel);
+        DrawText(dc, "PENALTY EQUALIZER", new Point(18, 102),
+            10.6, muted, FontWeights.Bold);
+
         var sources = new (string Id, string Label, Func<double, string> Format)[]
         {
-            ("survival.severeFatigueMaxStamina", "MAX STAMINA LOST", MasterNegativePercent),
-            ("survival.severeFatigueCarryWeight", "CARRY CAPACITY LOST", MasterNegativePercent),
-            ("survival.severeFatigueRecoil", "EXTRA RECOIL", MasterPositivePercent),
+            ("survival.severeFatigueMaxStamina", "STAMINA LOST", MasterNegativePercent),
+            ("survival.severeFatigueCarryWeight", "CARRY LOST", MasterNegativePercent),
+            ("survival.severeFatigueRecoil", "RECOIL", MasterPositivePercent),
             ("survival.severeFatigueAimSway", "AIM SWAY", MasterScalar),
             ("survival.severeFatigueDispersion", "SHOT SPREAD", MasterScalar)
         };
-        DrawMasterCardBank(dc, sources, 107.0,
-            text, muted, border, soft, accent, panel);
+        const double gap = 9.0;
+        var width = Math.Min(780.0, ActualWidth - 34.0);
+        var cellWidth = (width - 4.0 * gap) / 5.0;
+        var x0 = (ActualWidth - width) / 2.0;
+        for (var i = 0; i < sources.Length; i++)
+        {
+            var source = sources[i];
+            DrawNativeGauge(dc, P(source.Id), source.Label, source.Format,
+                new Rect(x0 + i * (cellWidth + gap), 125.0,
+                    cellWidth, 236.0),
+                text, muted, border, accent, panel);
+        }
     }
 
     // CORE HEALTH — one large, source-bound HP-capacity ruler followed by
@@ -3558,83 +3624,86 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
     {
-        var buildup = P("survival.radiationAccumulation");
-        var recovery = P("survival.radiationRecovery");
-        var damage = P("survival.radiationDamage");
         DrawHeader(dc, "RADIATION SYSTEM", string.Empty, text, muted, accent);
-        if (buildup is null || recovery is null || damage is null)
+        var sources = new (string Id, string Label, Func<double, string> Format)[]
         {
-            DrawCenteredText(dc, "Radiation settings unavailable.",
-                new Point(ActualWidth / 2.0, 140), 10, muted, FontWeights.Bold);
-            return;
-        }
-
-        var width = Math.Max(460.0, ActualWidth - 34.0);
-        var columns = CompactStageColumns(ActualWidth);
-        // All three are independent native CFG values; this is not a fake
-        // composite dose model or an adjustment to radiation state thresholds.
-        void Track(ParameterViewModel parameter, string label, string value,
-            string minimum, string maximum, int index)
-            => DrawCompactTrack(dc, parameter, label, value, minimum, maximum,
-                CompactSlot(55.0, width, columns, index),
+            ("survival.radiationAccumulation", "BUILD-UP",
+                value => $"{value:0.##}x"),
+            ("survival.radiationRecovery", "RECOVERY",
+                value => $"{value:0.00} PTS/S"),
+            ("survival.radiationDamage", "HP DAMAGE",
+                value => $"{value:0.##}x")
+        };
+        // Unlike a 'net dose' simulation, the three gauges use their own
+        // native domains and units (0–2.5x / 0–0.10 pts/s / 0–2x).
+        const double gap = 12.0;
+        var width = Math.Min(630.0, ActualWidth - 34.0);
+        var cell = (width - 2.0 * gap) / 3.0;
+        var left = (ActualWidth - width) / 2.0;
+        for (var i = 0; i < sources.Length; i++)
+        {
+            var source = sources[i];
+            DrawNativeGauge(dc, P(source.Id), source.Label, source.Format,
+                new Rect(left + i * (cell + gap), 55.0, cell, 240.0),
                 text, muted, border, accent, panel);
-
-        Track(buildup, "RADIATION BUILD-UP",
-            $"{buildup.CurrentNumber:0.##}x",
-            $"{buildup.Minimum:0.##}x", $"{buildup.Maximum:0.##}x", 0);
-        Track(recovery, "RADIATION RECOVERY",
-            $"{recovery.CurrentNumber:0.00} PTS/S",
-            $"{recovery.Minimum:0.00}", $"{recovery.Maximum:0.00}", 1);
-        Track(damage, "RADIATION HP DAMAGE",
-            $"{damage.CurrentNumber:0.##}x",
-            $"{damage.Minimum:0.##}x", $"{damage.Maximum:0.##}x", 2);
+        }
     }
 
     // Three native stash ammo quantities + three independent bonus rewards.
     // Current/source label/rail obey the Stamina Usage anatomy; no simulated
     // certainty is suggested for independent chance/count rolls.
+    // Ammo tiers form one bounded three-column rack; bonus rolls retain
+    // their own independent real-source horizontal cards underneath.
     private void DrawCompactStashRewards(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "STASH REWARDS", "", text, muted, accent);
-        var columns = ActualWidth >= 750.0 ? 3 : 2;
-        const double margin = 17.0;
-        const double gap = 10.0;
-        const double pitch = 80.0;
-        var cardWidth = Math.Max(1.0, (ActualWidth - 2.0 * margin -
-            (columns - 1) * gap) / columns);
-        var ammo = new (string Id, string Label)[]
+        DrawText(dc, "AMMO BY STASH TIER",
+            new Point(18, 47), 10.4, muted, FontWeights.Bold);
+        var tiers = new (string Id, string Label)[]
         {
-            ("loot.cheapStashAmmoQuantity", "BASIC AMMO"),
-            ("loot.mediumStashAmmoQuantity", "STANDARD AMMO"),
-            ("loot.expensiveStashAmmoQuantity", "RARE AMMO")
+            ("loot.cheapStashAmmoQuantity", "BASIC"),
+            ("loot.mediumStashAmmoQuantity", "STANDARD"),
+            ("loot.expensiveStashAmmoQuantity", "RARE")
         };
+        const double gap = 11.0;
+        var bankWidth = Math.Min(690.0, ActualWidth - 34.0);
+        var columnWidth = (bankWidth - 2.0 * gap) / 3.0;
+        var left = (ActualWidth - bankWidth) / 2.0;
+        for (var i = 0; i < tiers.Length; i++)
+        {
+            var tier = tiers[i];
+            DrawNativeGauge(dc, P(tier.Id), tier.Label,
+                value => $"{value:0.##}x",
+                new Rect(left + i * (columnWidth + gap),
+                    69.0, columnWidth, 189.0),
+                text, muted, border, accent, panel);
+        }
+
+        DrawText(dc, "BONUS REWARDS",
+            new Point(18, 270), 10.4, muted, FontWeights.Bold);
         var rewards = new (string Id, string Label)[]
         {
             ("loot.cheapStashGrenadeChance", "RGD-5 CHANCE"),
             ("loot.cheapStashGrenadeQuantity", "RGD-5 AMOUNT"),
             ("loot.expensiveStashMoneyChance", "COUPON CHANCE")
         };
-        void Row((string Id, string Label)[] sources, double top)
+        var columns = ActualWidth >= 740.0 ? 3 : 2;
+        var cardWidth = Math.Min(280.0,
+            (ActualWidth - 34.0 - (columns - 1) * gap) / columns);
+        for (var i = 0; i < rewards.Length; i++)
         {
-            for (var i = 0; i < sources.Length; i++)
-            {
-                var x = margin + (i % columns) * (cardWidth + gap);
-                var y = top + (i / columns) * pitch;
-                DrawHorizontalTrackCard(dc, P(sources[i].Id), sources[i].Label,
-                    new Rect(x, y, cardWidth, 72.0), text, muted, border, accent,
-                    panel, pairedValueFormatting: true, hideBaseText: true);
-            }
+            var row = i / columns;
+            var rowCount = Math.Min(columns, rewards.Length - row * columns);
+            var rowWidth = rowCount * cardWidth + (rowCount - 1) * gap;
+            var x0 = (ActualWidth - rowWidth) / 2.0;
+            DrawHorizontalTrackCard(dc, P(rewards[i].Id), rewards[i].Label,
+                new Rect(x0 + (i % columns) * (cardWidth + gap),
+                    290.0 + row * 83.0, cardWidth, 72.0),
+                text, muted, border, accent, panel,
+                pairedValueFormatting: true, hideBaseText: true);
         }
-
-        DrawText(dc, "AMMO BY STASH TIER", new Point(margin + 1.0, 46.0),
-            10.0, muted, FontWeights.Bold);
-        Row(ammo, 68.0);
-        var bonusTitle = 68.0 + Math.Ceiling(3.0 / columns) * pitch + 6.0;
-        DrawText(dc, "BONUS REWARDS", new Point(margin + 1.0, bonusTitle),
-            10.0, muted, FontWeights.Bold);
-        Row(rewards, bonusTitle + 20.0);
     }
 
     // The real SNG/NATO generator pools are distinct. Their previews show the
@@ -5260,7 +5329,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "AnomalySpecialEffects" => EconomyBoardHeight(width, 3),
             "NpcLootLoadout" => 564.0,
             "WorldLootLayout" => 275.0,
-            "StashRewardProfile" => width >= 750.0 ? 263.0 : 418.0,
+            "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
             "PhysicalLimits" => 335.0,
             "StaminaCore" => 259.0,
             "MutantCombatPressure" or "WaterStaminaPressure" => 149.0,
@@ -5270,7 +5339,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "HumanCombatProfile" => 465.0,
             "PlayerWeaponProfile" => 242.0,
             "CoreHealthDashboard" => 348.0,
-            "SevereFatiguePenaltyBoard" => MasterCardBankHeight(width, 5),
+            "SevereFatiguePenaltyBoard" => 376.0,
             "MasterMedicalHealing" => MasterCardBankHeight(width, 3),
             "MasterLowHealth" => MasterConditionalHeight(width),
             "MasterRadiationPenalty" => MasterConditionalHeight(width),
@@ -5279,7 +5348,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "HungerLadder" => CompactHungerHeight(width),
             "StarvationTimeline" => MasterStarvationHeight(width),
             "RepeatedHitBand" => 455.0,
-            "RadiationBalance" => CompactGridEnd(55.0, 3, CompactStageColumns(width)) + 14.0,
+            "RadiationBalance" => 308.0,
             "TradingDashboard" => EconomyBoardHeight(width, 4),
             "RepairCurve" => EconomyBoardHeight(width, 4),
             "AmmoDistribution" => 715.0,
