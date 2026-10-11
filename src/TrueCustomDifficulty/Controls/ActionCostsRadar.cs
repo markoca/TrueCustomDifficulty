@@ -18,7 +18,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class ActionCostsRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double UsageHeight = 207.0;
+    private const double UsageHeight = 187.0;
     private const double ExhaustionWideHeight = 240.0;
     private const double ExhaustionNarrowHeight = 419.0;
     private bool IsExhaustion => string.Equals(Mode, "Exhaustion", StringComparison.Ordinal);
@@ -217,10 +217,10 @@ public sealed class ActionCostsRadar : FrameworkElement
         else
         {
             DrawActionGroup(dc, ActionGroup.Movement, "MOVEMENT",
-                new Rect(left, 48.0, half, 137.0),
+                new Rect(left, 48.0, half, 124.0),
                 text, muted, border, accent, panel);
             DrawActionGroup(dc, ActionGroup.Melee, "MELEE",
-                new Rect(left + half + gap, 48.0, half, 137.0),
+                new Rect(left + half + gap, 48.0, half, 124.0),
                 text, muted, border, accent, panel);
         }
 
@@ -252,7 +252,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             if (parameter is null)
                 continue;
 
-            var top = card.Top + 27.0 + local * 34.0;
+            var top = card.Top + 25.0 + local * 31.0;
             var reference = parameter.ReferenceNumber;
             var relative = Math.Abs(reference) > Epsilon ? parameter.CurrentNumber / reference : 0.0;
             DrawText(dc, Actions[index].Label, new Point(card.Left + 9.0, top), 9.2,
