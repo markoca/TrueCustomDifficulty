@@ -94,12 +94,12 @@ public sealed class ParameterViewModel : ObservableObject
                     "MasterLowHealth" => "Switch the extra low-health rule on or off; adjust HEALTH RECOVERY LOSS while the bundle is enabled.",
                     "MasterRadiationPenalty" => "Switch the extra radiation rule on or off; adjust its action-stamina penalty while enabled.",
                     "MasterMedicalHealing" => "Switch the Master effect bundle on or off; adjust the Bandage, Medkit or Army Medkit healing tracks independently.",
-                    "CouponFlow" => "Drag the starting-coupons track or either quest-reward track. Each uses its own scale.",
+                    "CouponFlow" => "Use +/- or scroll over the Starting Coupons counter in native 10-coupon steps; adjust Main and Side Quest reward meters independently.",
                     "TradingDashboard" => "Use the mirrored YOU SELL / YOU BUY price meters; condition acceptance and broken-value remain separate controls.",
                     "RepairCurve" => "Drag one reputation point vertically to set its repair-price multiplier. Linked values follow the existing source-value ordering.",
                     "BlastDamageBoard" => "Drag the explosion-damage track. The impact band shows the relative change; it is not another input.",
-                    "TraderStockBoard" => "Drag the trader-ammo or medic-stock track. They change different supplies.",
-                    "ServiceCostsBoard" => "Use the separate tracks for guides, upgrades and base repair cost.",
+                    "TraderStockBoard" => "Turn the independent AMMO STOCK and MEDIC STOCK knobs; each edits its own native supply quantities.",
+                    "ServiceCostsBoard" => "Turn the separate Fast Travel, Upgrade and Base Repair knobs. Base Repair shows a percentage of the source multiplier, not a final repair bill.",
                     "ItemWeightBoard" => "Drag AMMUNITION WEIGHT or FOOD & MEDICINE WEIGHT independently.",
                     "AnomalyGlobalDamage" => "Turn the overall anomaly damage knob; scroll over it or use arrow keys for precise changes. Individual anomaly strengths remain separate.",
                     "AnomalySpecialEffects" => "Drag the Razor, Diamond or Psy track you want to change; each is independent.",
@@ -176,7 +176,20 @@ public sealed class ParameterViewModel : ObservableObject
     public bool HasLogic => !string.IsNullOrWhiteSpace(Logic);
     public string Interaction => Definition.Interaction;
     public bool HasInteraction => !string.IsNullOrWhiteSpace(Interaction);
-    public string Group => Definition.Group;
+    // Economy is a three-section dashboard in the UI. Its original catalog
+    // groups remain untouched for native CFG provenance and preset round-trips.
+    public string Group => Definition.Tab != "economy" ? Definition.Group : Id switch
+    {
+        "economy.startingMoney" or "economy.mainQuestReward"
+            or "economy.sideQuestReward" or "economy.buyCondition"
+            or "economy.sellCondition" or "economy.traderMinBuyCondition"
+            or "economy.itemValueFloor" => "01 / MONEY FLOW",
+        "economy.consumableCost" or "economy.ammoCost" or "economy.armorCost"
+            or "economy.weaponCost" or "economy.artifactCost"
+            or "economy.mutantPartValue" or "economy.traderAmmoStock"
+            or "economy.medicStock" => "02 / MARKET",
+        _ => "03 / EXPENSES"
+    };
     public string Control => Definition.Control;
     public string SupportStatus => Definition.Support.Status;
     public IReadOnlyList<ChoiceOptionViewModel> ChoiceOptions { get; }
