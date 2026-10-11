@@ -2584,8 +2584,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("combat.psyPhantomCount", "PHANTOM COUNT"),
             ("combat.psyDurabilityDamage", "GEAR DAMAGE")
         };
-        const double knobWidth = 194.0;
         const double gap = 12.0;
+        var knobWidth = Math.Min(194.0, (ActualWidth - 34.0 - 2 * gap) / 3.0);
         var width = 3 * knobWidth + 2 * gap;
         var left = (ActualWidth - width) / 2.0;
         for (var i = 0; i < channels.Length; i++)
