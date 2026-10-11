@@ -3714,6 +3714,10 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         DrawText(dc, "AMMO FAMILY WEIGHTS", new Point(margin, 279.0),
             10.2, muted, FontWeights.Bold);
+        // One compact row of four native 0..3x source knobs. The 620-DIP
+        // Combat knob bank would be too narrow here, so this bank may use
+        // up to 780 DIP, while still centering in a full-width Loot card.
+        // Their original 0.25x snap and existing SNG/NATO coupling stay intact.
         var weights = new (ParameterViewModel Parameter, string Label)[]
         {
             (weight918, "9×18 / 9×19"),
@@ -3721,15 +3725,21 @@ public sealed class AggregateVisualControl : FrameworkElement
             (weight545, "5.45 / 5.56"),
             (weight012, "12 GAUGE")
         };
+        const double knobGap = 10.0;
+        const double knobCardTop = 298.0;
+        const double knobCardHeight = 181.0;
+        var knobBankWidth = Math.Min(780.0, ActualWidth - margin * 2.0);
+        var knobWidth = (knobBankWidth - 3.0 * knobGap) / weights.Length;
+        var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
         for (var i = 0; i < weights.Length; i++)
         {
-            DrawHorizontalTrackCard(dc, weights[i].Parameter, weights[i].Label,
-                new Rect(margin + (i % 2) * (cell + gap),
-                    297.0 + (i / 2) * 80.0, cell, 72.0),
-                text, muted, border, accent, panel, pairedValueFormatting: true);
+            DrawSourceKnob(dc, weights[i].Parameter, weights[i].Label,
+                new Rect(knobLeft + i * (knobWidth + knobGap),
+                    knobCardTop, knobWidth, knobCardHeight),
+                text, muted, border, accent, panel);
         }
 
-        DrawText(dc, "AMMO POOL COMPOSITION", new Point(margin, 459.0),
+        DrawText(dc, "AMMO POOL COMPOSITION", new Point(margin, 490.0),
             10.2, muted, FontWeights.Bold);
 
         var w918 = Math.Max(0.0, weight918.CurrentNumber);
@@ -3793,10 +3803,10 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         Pool("SNG POOL",
             new[] { "9×18 / 9×19", "5.45", "12 GAUGE" }, sng,
-            new[] { 0, 2, 3 }, 481.0);
+            new[] { 0, 2, 3 }, 515.0);
         Pool("NATO POOL",
             new[] { ".45 ACP", "9×19", "5.56", "12 GAUGE" }, nato,
-            new[] { 1, 0, 2, 3 }, 575.0);
+            new[] { 1, 0, 2, 3 }, 609.0);
     }
 
     // Shared density for the large Survival/Health aggregate panels. Rows are
@@ -4354,7 +4364,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage"))
+        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -4373,6 +4383,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         target.Parameter.CurrentNumber = Snap(target.Parameter,
             target.Parameter.CurrentNumber + direction * target.Parameter.TickFrequency);
+        EnforceFamilyConstraints(target.Parameter);
         _status.ClearTransient();
         InvalidateVisual();
         e.Handled = true;
@@ -4710,6 +4721,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             var value = target.VisualMinimum + normalized *
                 (target.VisualMaximum - target.VisualMinimum);
             target.Parameter.CurrentNumber = Snap(target.Parameter, value);
+            EnforceFamilyConstraints(target.Parameter);
             _status.ClearTransient();
             InvalidateVisual();
             return;
@@ -5220,7 +5232,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "RadiationBalance" => CompactGridEnd(55.0, 3, CompactStageColumns(width)) + 14.0,
             "TradingDashboard" => EconomyBoardHeight(width, 4),
             "RepairCurve" => EconomyBoardHeight(width, 4),
-            "AmmoDistribution" => 680.0,
+            "AmmoDistribution" => 715.0,
             _ => 340.0
         };
 
