@@ -2364,7 +2364,7 @@ _anomaly_knob_requirements = (
 _anomaly_knob_shared = (
     'private void DrawSourceKnob(',
     'DrawSourceKnob(dc, P(channels[i].Id)',
-    'if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage"))',
+    'if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution"))',
     'if (target.Kind == HitKind.Knob)',
     '"AnomalyGlobalDamage" => 242.0',
     '"AnomalyGlobalDamage" => new[] { "environment.anomalyDamage" }',
@@ -2385,6 +2385,78 @@ if (_anomaly_knob_slider.get('min') != 0
     fail('Global Anomaly Damage single-knob contract drifted (native 0–2.5x/0.01x, shared WPF input, 242-DIP frame, catalogs)')
 else:
     note('Global Anomaly Damage: one source-backed WPF knob with native 0–2.5x/0.01x, shared mouse/keyboard behavior and two design catalogs')
+
+
+# WPF dial graduation integrity, 2026-10-11. The old fixed "0..10"
+# decoration did not match native 0.25x or 0.01x parameter steps. All eight
+# knobs must share one source-derived native grid and real source endpoints.
+_knob_tick_contract = (
+    'var nativeStep = Math.Max(Epsilon, parameter.TickFrequency);',
+    'var nativeIntervals = (int)Math.Floor(range / nativeStep + 0.000001);',
+    'var pixelsPerStep = radius * WeaponKnobSweepAngle * Math.PI / 180.0',
+    'var tickStride = KnobVisibleStepStride(pixelsPerStep);',
+    'var value = parameter.Minimum + tickIndex * nativeStep;',
+    'var ratio = Math.Clamp((value - parameter.Minimum) / range, 0.0, 1.0);',
+    'DrawStepTick(parameter.Minimum + nativeIntervals * nativeStep, true);',
+    'DrawStepTick(parameter.Maximum, true);',
+    'const double minimumTickSpacing = 6.5;',
+    'OnPropertyChanged(nameof(TickFrequency))',
+)
+_knob_tick_missing = [t for t in _knob_tick_contract[:-1] if t not in _knob_source]
+_knob_dynamic_vm = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
+_knob_tick_vm_ok = ('public double TickFrequency' in _knob_dynamic_vm
+                    and 'or nameof(ParameterViewModel.TickFrequency)' in _knob_source)
+if 'for (var tick = 0; tick <= 10; tick++)' in _knob_source or _knob_tick_missing or not _knob_tick_vm_ok:
+    fail(f"rotary tick grid drifted: fixed 10-way scale returned, required source geometry missing={_knob_tick_missing}, dynamic VM={_knob_tick_vm_ok}")
+else:
+    note("all eight rotary graduations share the native min+N*step grid, source-aligned angle and change notifications")
+
+# Independent numeric check of the 270-degree native grid, including the
+# zoomed-out Global Anomaly Damage scale. A 47-DIP radius cannot resolve all
+# 251 marks at 0.01x; visual marks represent every tenth *real* native step
+# (0.10x) while the editing snap still moves by 0.01x.
+_knob_native_cases = {
+    "combat.playerWeaponDamage": (0.25, 2.0, 0.25, 1, 8),
+    "combat.playerHeadshotMultiplier": (0.5, 3.0, 0.25, 1, 11),
+    "combat.weaponJamming": (0.0, 2.0, 0.25, 1, 9),
+    "environment.anomalyDamage": (0.0, 2.5, 0.01, 10, 26),
+    "loot.ammoBoxWeight918": (0.0, 3.0, 0.25, 1, 13),
+    "loot.ammoBoxWeight045": (0.0, 3.0, 0.25, 1, 13),
+    "loot.ammoBoxWeight545": (0.0, 3.0, 0.25, 1, 13),
+    "loot.ammoBoxWeight012": (0.0, 3.0, 0.25, 1, 13),
+}
+_knob_tick_failures = []
+for _id, (_min, _max, _step, _stride, _expected_markers) in _knob_native_cases.items():
+    _param = _knob_catalog.get(_id, {})
+    _slider = _param.get('slider') or {}
+    if any(abs(_slider.get(k, float('nan')) - target) > 1e-7
+           for k, target in (('min', _min), ('max', _max), ('step', _step))):
+        _knob_tick_failures.append(f"{_id}: catalog range/step changed")
+        continue
+    _radius = 47.0 if _id != "environment.anomalyDamage" else 47.0
+    _native_intervals = round((_max - _min) / _step)
+    _distance = _radius * 270.0 * __import__('math').pi / 180.0 / _native_intervals
+    _minimum_gap = 6.5 / _distance
+    _magnitude = 1
+    while _magnitude < 100000 and _minimum_gap > 10 * _magnitude:
+        _magnitude *= 10
+    _visible_stride = next(k * _magnitude for k in (1, 2, 5, 10)
+                           if _minimum_gap <= k * _magnitude)
+    _ticks = list(range(0, _native_intervals + 1, _visible_stride))
+    if _ticks[-1] != _native_intervals:
+        _ticks.append(_native_intervals)
+    _values = [_min + i * _step for i in _ticks]
+    _angles = [135.0 + (v - _min) / (_max - _min) * 270.0 for v in _values]
+    if (_visible_stride != _stride or len(_ticks) != _expected_markers
+        or abs(_angles[0] - 135.0) > 1e-7
+        or abs(_angles[-1] - 405.0) > 1e-7
+        or any(abs((v - _min) / _step - round((v - _min) / _step)) > 1e-7
+               for v in _values)):
+        _knob_tick_failures.append(f"{_id}: marks/grid/stride mismatch")
+if _knob_tick_failures:
+    fail("eight rotary source grids misaligned: " + "; ".join(_knob_tick_failures))
+else:
+    note("eight source-native knob grids: weapon 8/11/9 marks; anomaly 26 marks at 0.10x; four ammo knobs 13 marks each")
 
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
