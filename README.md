@@ -1,5 +1,11 @@
 # True Custom Difficulty
 
+### 2026-10-11 — Starvation inactive-state readability; medicine candidates (current)
+
+**Master → Starvation Penalties:** when the authored **Starvation Mechanics** parent is OFF, all five child source values **remain disabled/non-editable** and receive no editable gold track/handle or hover hit targets. Their **card captions and current numerical readouts** must nevertheless use neutral high-legibility text (`CloneWithOpacity(text, 0.75)`), not the much dimmer common `muted` brush that made the entire Starvation section appear blacked out compared with the other Master panels. Source rails, grey native references, parent toggle behavior, preset and CFG writes remain unchanged. Enabled and modified states continue to use the existing normal/changed-only accent convention. This is a presentation-only correction to `DrawMasterNativeCard` scoped to `StarvationTimeline`, not a forced activation of Master-only gameplay mechanics.
+
+**Next consumables audit:** `docs/CONSUMABLE-MEDICINE-CFG-AUDIT-2026-10-11.md` records source-backed candidates from the provided GameData CFG: bleed-recovery medicine `Cinnamon` (possibly known as Vinca; localization name unverified), `PSYBlocker`, and the *two linked* Hercules carry-weight effects. Six compact editor concepts are **audit suggestions only**, not approved/rendered controls. No new sliders, knobs or writer definitions were introduced. Do not conflate new medicine effects with existing medical healing/radiation removal or drink editors.
+
 ### 2026-10-11 — Paired Master penalty knobs
 
 The Master **Radiation Penalty** and **Low Health Penalty** sections are paired in a compact two-column row at editor widths ≥740 DIP, or stacked below that width. Their two separate mechanics toggles are unchanged; the former horizontal penalty sliders now use frameless native 270° rotary controls, signed **+0–100% action stamina cost** and **−0–100% health recovery loss** respectively. Original `0..1` / `0.01` CFG sources, Master reference values, dependency gates and preset/writer semantics remain intact. The implementation and breakpoint are locked in `docs/UI-DESIGN-LOCK.md` and `docs/VISUAL-CONTROL-SYSTEM.md`.

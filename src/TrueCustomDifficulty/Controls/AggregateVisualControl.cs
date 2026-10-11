@@ -2027,12 +2027,19 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var enabled = parameter.IsControlEnabled;
         var changed = enabled && parameter.IsValueModifiedFromReference();
+        // The Starvation bundle used the same muted ink for every line when
+        // the parent toggle was OFF, making all three readouts nearly vanish.
+        // Preserve the genuinely disabled hit/paint state, but show its
+        // inspectable source values at the same readable neutral contrast
+        // as the other Master panels. This never enables an edit or an accent.
+        var disabledInk = Family == "StarvationTimeline"
+            ? CloneWithOpacity(text, 0.75) : muted;
         var display = CreateText(valueText(parameter.CurrentNumber),
             changed ? 12.2 : 11.0,
-            enabled ? changed ? accent : text : muted, FontWeights.Bold);
+            enabled ? changed ? accent : text : disabledInk, FontWeights.Bold);
         var labelWidth = Math.Max(1.0, card.Width - 36.0 -
             display.WidthIncludingTrailingWhitespace - 9.0);
-        dc.DrawText(CreateText(title, 10.1, enabled ? text : muted,
+        dc.DrawText(CreateText(title, 10.1, enabled ? text : disabledInk,
                 FontWeights.Bold, labelWidth),
             new Point(card.Left + 12.0, card.Top + 8.0));
         dc.DrawText(display, new Point(
