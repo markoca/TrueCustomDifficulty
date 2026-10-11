@@ -1,5 +1,10 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-11 — Psy Combat and Equipment Wear rotary banks
+
+Psy Combat replaces the former two-axis square plot and side fader with three independent 194×181 DIP native WPF knobs: spawn-cycle delay, phantom count and gear durability damage. Its bleeding toggle remains independently interactive. The small bar preview is **relative only**, not a calculated spawn timeline or deterministic spawn frequency; no inferred AI scheduling rules. Height 378 DIP. Equipment Wear replaces the combined 2D chart with two independent 194×181 DIP native knobs, armor durability and weapon wear per shot, height 242 DIP. Shared native ticks, snapping, drag, wheel and keyboard handling apply to both families. Original source IDs and writers are unchanged.
+
+
 ### 2026-10-11 — Trader Stock native knobs
 
 Trader Stock is a compact two-column 194×181 DIP pair of WPF 270° source rotary knobs, AMMO STOCK (`economy.traderAmmoStock`) and MEDIC STOCK (`economy.medicStock`). The existing `DrawSourceKnob` native grid, snapping, drag, wheel, keyboard and reference reset apply unchanged. Board height is 242 DIP. These are quantity multipliers, not claims about slot count or restocking. Other economy surfaces are unchanged.
