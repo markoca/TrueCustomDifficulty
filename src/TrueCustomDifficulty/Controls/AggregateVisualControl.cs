@@ -39,6 +39,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "EquipmentWearBalance" or "BreakableBoxYields"
             or "StashRewardProfile" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
+            or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"
+            or "RadiationBalance" or "StaminaCore"
             or "MasterLowHealth" or "MasterRadiationPenalty" or "MasterMedicalHealing")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
     }
@@ -312,6 +314,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (Family == "StaminaCore"
             && target.Kind == HitKind.Vertical
             && source.Id == "stamina.vaultMaxHeight")
+            return;
+        if (target.Kind == HitKind.Vertical
+            && Family is ("SevereFatiguePenaltyBoard" or "RadiationBalance"
+                or "StashRewardProfile" or "RepairCurve"))
+            return;
+        if (Family == "TradingDashboard"
+            && target.Kind == HitKind.Horizontal
+            && target.Parameter.Id is ("economy.buyCondition" or "economy.sellCondition"))
             return;
         var range = Math.Max(0.000001, target.VisualMaximum - target.VisualMinimum);
         // The two NPC condition handles share one rail except when they
