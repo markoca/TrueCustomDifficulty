@@ -117,7 +117,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
             // Full-width visual anchors are selectively paired below; the six
             // item-value columns and Trader Stock keep their existing widths.
             ["economy.startingMoney"] = new("economy-moneyflow", 0),
-            ["economy.consumableCost"] = new("economy-market", 0),
             ["economy.fastTravelCost"] = new("economy-expenses", 0),
             ["economy.repairEnemy"] = new("economy-expenses", 1),
             ["economy.buyCondition"] = new("economy-moneyflow", 1),
@@ -128,11 +127,9 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["economy.itemValueFloor"] = new("economy-trading-2", 1),
             ["economy.traderAmmoStock"] = new("economy-stock-1", 0),
             ["economy.medicStock"] = new("economy-stock-1", 1),
-            ["economy.fastTravelCost"] = new("economy-services", 0),
             ["economy.upgradeCost"] = new("economy-services", 1),
             ["economy.repairCostBase"] = new("economy-services", 2),
             ["economy.repairDifficultyCost"] = new("economy-services-hidden", 0),
-            ["economy.repairEnemy"] = new("economy-reputation-1", 0),
             ["economy.repairDisaffection"] = new("economy-reputation-1", 1),
             ["economy.repairNeutral"] = new("economy-reputation-2", 0),
             ["economy.repairFriend"] = new("economy-reputation-2", 1),
