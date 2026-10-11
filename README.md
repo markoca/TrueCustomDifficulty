@@ -1,5 +1,10 @@
 # True Custom Difficulty
 
+### 2026-10-11 — Seven-controller source audit after Stash Tier knobs
+
+The historical seven-source-visual audit must **not** require `DrawNativeGauge(dc, P(tier.Id), ...)` for Stash Rewards: BASIC / STANDARD / RARE Ammo by Stash Tier were intentionally converted to three native `DrawSourceKnob` WPF controls. The audit now checks all three literal CFG parameter IDs inside `DrawCompactStashRewards`, native knob dispatch and bounded 606-DIP bank, plus the three separate BONUS REWARDS horizontal source controls. Radiation Balance **still** uses `DrawNativeGauge` for its three independent native sources; Repair per Reputation **still** uses its four source-point graph and editable vertical hit regions. Guard the correct family in the shared rotary input gate. The CFG writers, ranges and the UI's existing geometry are not modified by this audit correction.
+
+
 ### 2026-10-11 — Audit syntax and knob-family checks
 
 Run `python -m py_compile tools/audit_project_consistency.py` before `python tools/audit_project_consistency.py`. The static audit checks individual allowed rotary families instead of comparing an obsolete exact wheel-gate string, and the Psy Combat / Equipment Wear assertion has valid parentheses. This is an audit-only repair; no CFG writer or runtime UI behavior is changed.
