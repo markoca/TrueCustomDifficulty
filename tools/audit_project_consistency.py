@@ -2422,6 +2422,21 @@ if (not all(v in _stock_knob_source for v in (
           for d in _knob_catalog_texts)):
     fail("Trader Stock dual source knob contract drifted")
 
+# Two converted native rotary families must retain their original source mapping.
+if not all(token in _knob_source for token in (
+    '("combat.psySpawnCycleDelay", "SPAWN DELAY")',
+    '("combat.psyPhantomCount", "PHANTOM COUNT")',
+    '("combat.psyDurabilityDamage", "GEAR DAMAGE")',
+    'DrawTogglePill(dc, bleed, "PHANTOM BLEEDING"',
+    '("equipment.armorDurability", "ARMOR DURABILITY")',
+    '("equipment.weaponWearPerShot", "WEAR PER SHOT")',
+    '"PsyPhantomPressure" => 378.0',
+    '"EquipmentWearBalance" => 242.0',
+    'or "PsyPhantomPressure" or "EquipmentWearBalance")',
+)) or any('2026-10-11 — Psy Combat and Equipment Wear rotary banks' not in d
+          for d in _knob_catalog_texts)):
+    fail("Psy Combat / Equipment Wear knob UI and interaction contract drifted")
+
 # WPF dial graduation integrity, 2026-10-11. The old fixed "0..10"
 # decoration did not match native 0.25x or 0.01x parameter steps. All eight
 # knobs must share one source-derived native grid and real source endpoints.
