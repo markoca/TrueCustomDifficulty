@@ -778,7 +778,7 @@ else:
             fail(f"Mutant Health source not loaded in MainViewModel: {_id}")
     if _mhr_text.count('new("combat.mutantHealth.') != 14:
         fail("MutantHealthRadar must show exactly 14 real mutant groups")
-    if "GlobalHpMaximum = 7500.0" not in _mhr_text or "DesiredHeight = 526.0" not in _mhr_text:
+    if "GlobalHpMaximum = 7500.0" not in _mhr_text or "DesiredHeight = 605.0" not in _mhr_text:
         fail("MutantHealthRadar compact 2-column geometry drifted")
     if "parameter.CurrentNumber" not in _mhr_text or "parameter.ReferenceNumber" not in _mhr_text:
         fail("MutantHealthRadar lost native live/reference source comparisons")
@@ -974,7 +974,7 @@ else:
     if "DrawHorizontalTrackCard" in _abd_knob_code:
         _abd_errors.append("ammo-family horizontal sliders returned")
     _abd_knob_input = (
-        'Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution")',
+        'Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer")',
         'if (target.Kind == HitKind.Knob)',
         'protected override void OnMouseWheel(MouseWheelEventArgs e)',
         'EnforceFamilyConstraints(target.Parameter);',
@@ -1162,8 +1162,8 @@ _treatment_catalog = [p for p in _health_ui if p.get("id") in _treatment_ids]
 _vm_source = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
 if len(_health_ui) != 13 or len(_health_confirmed) != 10 or len(_health_runtime) != 3:
     fail(f"health deep audit status split drifted: total={len(_health_ui)} confirmed={len(_health_confirmed)} runtime={len(_health_runtime)}; expected 13/10/3")
-elif len(_health_points) != 47:
-    fail(f"health writer surface drifted: {len(_health_points)} edit points; expected 47")
+elif len(_health_points) != 42:
+    fail(f"health writer surface drifted: {len(_health_points)} edit points; expected 42")
 elif len(_treatment_points) != 12 or any(e.get("operation") != "negateSet" for e in _treatment_points):
     fail("health treatment signed-delta boundary drifted: expected 12 negateSet edit points")
 elif len(_treatment_catalog) != 6 or any((p.get("slider") or {}).get("min") != 0.0 for p in _treatment_catalog) or any(next(iter((p.get("vanilla") or {}).values())) <= 0 for p in _treatment_catalog):
@@ -1251,8 +1251,8 @@ _survival_mapping_text = _survival_mapping.read_text(encoding="utf-8") if _survi
 
 if len(_survival_ui) != 31 or len(_survival_confirmed) != 29 or len(_survival_runtime) != 2:
     fail(f"survival deep audit status split drifted: total={len(_survival_ui)} confirmed={len(_survival_confirmed)} runtime={len(_survival_runtime)}; expected 31/29/2")
-elif len(_survival_points) != 89:
-    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 89")
+elif len(_survival_points) != 86:
+    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 86")
 elif _hunger_medium.get("label") != "Hunger Stamina Recovery Penalty" or (_hunger_medium.get("vanilla") or {}).get("All") != 0.33:
     fail("medium hunger stamina recovery player-facing penalty contract drifted")
 elif _hunger_strong.get("label") != "Severe Hunger Stamina Recovery Penalty" or (_hunger_strong.get("vanilla") or {}).get("All") != 0.7:
@@ -1734,7 +1734,7 @@ _required_pairs = (
     'new Rect(centerX - Math.Max(16.0, barWidth / 2.0 + 6.0)',
     'HitAction.Healing or HitAction.Bleeding',
     'ParameterAt(hit.Row, hit.Action)?.ResetToReference();',
-    'foreach (var medicalItem in _medical.Concat(_bleeding))',
+    'foreach (var medicalItem in _medical.Concat(_bleeding).Concat(_radiation))',
     'ParameterAt(_selected, _selectedAction)',
     'BooleanCheckboxChrome.Draw(dc, _foodCheckboxRect,',
 )
