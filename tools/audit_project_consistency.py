@@ -1361,6 +1361,87 @@ elif not _economy_doc.exists():
 else:
     note("economy deep audit locked: 17 visible controls / 12 confirmed + 5 runtime-gated; Item Price Scalers aggregated; 405 direct edit points + trader minimum buy-condition special writer; repair ordering and aggregate surfaces verified")
 
+# Economy dashboard approval contract, 2026-10-11. The seven-control
+# baseline, native CFG writer surface and pre-existing responsive layouts
+# must remain intact while the Economy-only grouping is compacted.
+_economy_aggregate = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+_economy_parameter_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+_economy_responsive = (ROOT / "src/TrueCustomDifficulty/Infrastructure/ResponsiveParameterGridPanel.cs").read_text(encoding="utf-8")
+_economy_xaml = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml").read_text(encoding="utf-8")
+_economy_layout_contract = (
+    ('Money Flow group', '"01 / MONEY FLOW"', _economy_parameter_vm),
+    ('Market group', '"02 / MARKET"', _economy_parameter_vm),
+    ('Expenses group', '"03 / EXPENSES"', _economy_parameter_vm),
+    ('two-column money', 'new("economy-moneyflow", 0)', _economy_responsive),
+    ('two-column money/Trade', 'new("economy-moneyflow", 1)', _economy_responsive),
+    ('two-column expenses', 'new("economy-expenses", 0)', _economy_responsive),
+    ('two-column expenses/Repair', 'new("economy-expenses", 1)', _economy_responsive),
+    ('money header', 'Value="01 / MONEY FLOW"', _economy_xaml),
+    ('market header', 'Value="02 / MARKET"', _economy_xaml),
+    ('expenses header', 'Value="03 / EXPENSES"', _economy_xaml),
+)
+for _name, _token, _source in _economy_layout_contract:
+    if _token not in _source:
+        fail(f"Economy dashboard responsive groups drifted: {_name}")
+_economy_coupon_start = _economy_aggregate.find('private void DrawCouponFlow(')
+_economy_coupon_end = _economy_aggregate.find('private void DrawTraderStockKnobs(', _economy_coupon_start)
+_economy_coupon = (_economy_aggregate[_economy_coupon_start:_economy_coupon_end]
+                   if 0 <= _economy_coupon_start < _economy_coupon_end else "")
+_economy_service_start = _economy_aggregate.find('private void DrawServicePriceKnobs(')
+_economy_service_end = _economy_aggregate.find('private void DrawTraderStockKnobs(', _economy_service_start)
+_economy_service = (_economy_aggregate[_economy_service_start:_economy_service_end]
+                    if 0 <= _economy_service_start < _economy_service_end else "")
+_economy_coupon_contract = (
+    'P("economy.startingMoney")',
+    'P("economy.mainQuestReward")',
+    'P("economy.sideQuestReward")',
+    'HitKind.CouponDecrease',
+    'HitKind.CouponIncrease',
+    'HitKind.CouponValue',
+    'coupons.TickFrequency',
+    'new Rect(left, 175.0, cardWidth, 84.0)',
+    'DrawTradingMeter(dc, P("economy.mainQuestReward")',
+    'DrawTradingMeter(dc, P("economy.sideQuestReward")',
+)
+_economy_service_contract = (
+    'P(channels[i].Id)',
+    '("economy.fastTravelCost", "FAST TRAVEL")',
+    '("economy.upgradeCost", "UPGRADES")',
+    '("economy.repairCostBase", "BASE REPAIR")',
+    'DrawSourceKnob(dc, P(channels[i].Id)',
+    'percentageReadout: channels[i].Id == "economy.repairCostBase"',
+)
+if not all(token in _economy_coupon for token in _economy_coupon_contract):
+    fail("Economy Coupons & Rewards source-native counter / reward meters drifted")
+if not all(token in _economy_service for token in _economy_service_contract):
+    fail("Economy Service Prices native three-knob sources drifted")
+if not all(token in _economy_aggregate for token in (
+    '"CouponFlow" => CouponBoardHeight(width)',
+    '"ServiceCostsBoard" => ServicePriceBoardHeight(width)',
+    'return new Size(width, GetDesiredHeight(Family, width));',
+    'HitKind.CouponDecrease or HitKind.CouponIncrease',
+    'target.Parameter.CurrentNumber + direction * target.Parameter.TickFrequency',
+    'percentageReadout ?',
+    'if (Family == "CouponFlow")',
+)) or not knob_wheel_gate_contains(_economy_aggregate, "ServiceCostsBoard"):
+    fail("Economy native coupon/knob interaction and size contract drifted")
+for _pid, _native in {
+    "economy.startingMoney": (0, 100000, 10),
+    "economy.mainQuestReward": (0, 2, .01),
+    "economy.sideQuestReward": (0, 2, .01),
+    "economy.fastTravelCost": (0, 2, .01),
+    "economy.upgradeCost": (0, 2, .01),
+    "economy.repairCostBase": (0, 2, .01),
+}.items():
+    _slider = (_economy_rows.get(_pid, {}).get("slider") or {})
+    if tuple(_slider.get(k) for k in ("min", "max", "step")) != _native:
+        fail(f"Economy redesign changed native CFG parameter range/step: {_pid}")
+if any("2026-10-11 — Economy three-section dashboard" not in
+       (ROOT / "docs" / _doc).read_text(encoding="utf-8")
+       for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
+    fail("Economy three-section dashboard catalog contract missing")
+
+
 # Equipment deep audit release gate (v0.2.49).
 _equipment_doc = DOCS / "EQUIPMENT-CONTROL-DEEP-AUDIT.md"
 _equipment_mapping = DOCS / "EQUIPMENT-MAPPING.md"
