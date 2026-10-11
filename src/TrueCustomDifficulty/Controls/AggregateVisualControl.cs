@@ -2744,13 +2744,14 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     // Compact native reputation editors keep the real source-value ordering
     // constraint in the shared coordinator; no invented final repair bill.
+    // Four independent native reputation modifiers plotted on one editable
+    // curve. Each category owns a vertical hit lane and original CFG bounds;
+    // the connecting line only visualizes those four authored points.
     private void DrawRepairCurve(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        DrawCenteredText(dc, "REPAIR PRICE BY REPUTATION",
-            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
-
+        DrawHeader(dc, "REPAIR PRICE BY REPUTATION", "", text, muted, accent);
         var channels = new (string Id, string Label)[]
         {
             ("economy.repairFriend", "FRIENDLY"),
@@ -2758,18 +2759,73 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("economy.repairDisaffection", "DISLIKED"),
             ("economy.repairEnemy", "HOSTILE")
         };
+        var bank = new Rect((ActualWidth - Math.Min(720.0, ActualWidth - 34.0)) / 2.0,
+            52.0, Math.Min(720.0, ActualWidth - 34.0), 259.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.65),
+            new Pen(border, 0.9), bank, 4, 4);
+        var plot = new Rect(bank.Left + 56, bank.Top + 20,
+            bank.Width - 84, 157.0);
+        const double sharedTop = 3.0;
+        for (var tick = 0; tick <= 3; tick++)
+        {
+            var y = ValueToY(tick, 0.0, sharedTop, plot);
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, tick == 0 ? .5 : .23), 0.9)
+                { DashStyle = DashStyles.Dot },
+                new Point(plot.Left, y), new Point(plot.Right, y));
+            DrawRightAlignedText(dc, $"{tick}x",
+                new Point(plot.Left - 11, y - 7.0),
+                9.3, muted, FontWeights.SemiBold);
+        }
 
-        var columns = EconomyColumns(ActualWidth);
-        var cardWidth = EconomyCardWidth(ActualWidth, columns);
-        const double gap = 12.0;
-        var groupWidth = columns * cardWidth + (columns - 1) * gap;
-        var left = (ActualWidth - groupWidth) / 2.0;
+        var currentPoints = new List<Point>();
+        var basePoints = new List<Point>();
         for (var i = 0; i < channels.Length; i++)
         {
-            var card = new Rect(left + (i % columns) * (cardWidth + gap),
-                48.0 + (i / columns) * 94.0, cardWidth, 80.0);
-            DrawEconomyCard(dc, P(channels[i].Id), channels[i].Label,
-                card, text, muted, border, accent, panel);
+            var parameter = P(channels[i].Id);
+            if (parameter is null)
+                return;
+            var x = plot.Left + (i + 0.5) * plot.Width / channels.Length;
+            var y = ValueToY(parameter.CurrentNumber, 0, sharedTop, plot);
+            var referenceY = ValueToY(parameter.ReferenceNumber, 0, sharedTop, plot);
+            currentPoints.Add(new Point(x, y));
+            basePoints.Add(new Point(x, referenceY));
+            // Shared 0–3x ruler describes *display position*, not the
+            // per-source upper edit limit (Friendly/Neutral/Disliked cap at 2).
+            var sourceCeiling = ValueToY(parameter.Maximum, 0, sharedTop, plot);
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .65), 2.0),
+                new Point(x - 7, sourceCeiling), new Point(x + 7, sourceCeiling));
+            DrawMixerCentered(dc, channels[i].Label,
+                new Point(x, plot.Bottom + 13.0),
+                plot.Width / 4.0 - 10.0, 9.7, text, FontWeights.Bold);
+            DrawMixerCentered(dc, $"{parameter.CurrentNumber:0.##}x",
+                new Point(x, plot.Bottom + 37.0),
+                plot.Width / 4.0 - 10.0,
+                parameter.IsValueModifiedFromReference() ? 12.3 : 11.1,
+                parameter.IsValueModifiedFromReference() ? accent : text,
+                FontWeights.Bold);
+        }
+
+        var basePen = new Pen(CloneWithOpacity(muted, .70), 1.3)
+            { DashStyle = DashStyles.Dash };
+        var currentPen = new Pen(CloneWithOpacity(accent, .90), 2.7);
+        for (var i = 1; i < currentPoints.Count; i++)
+        {
+            dc.DrawLine(basePen, basePoints[i - 1], basePoints[i]);
+            dc.DrawLine(currentPen, currentPoints[i - 1], currentPoints[i]);
+        }
+        for (var i = 0; i < currentPoints.Count; i++)
+        {
+            var parameter = P(channels[i].Id)!;
+            var pt = currentPoints[i];
+            dc.DrawEllipse(panel, new Pen(muted, 1.4), basePoints[i], 4.0, 4.0);
+            var hover = _hoverTarget?.Kind == HitKind.Vertical
+                && ReferenceEquals(_hoverTarget.Parameter, parameter);
+            dc.DrawEllipse(panel, new Pen(hover ? Brushes.White : accent,
+                hover ? 2.9 : 2.1), pt, hover ? 7.5 : 6.5, hover ? 7.5 : 6.5);
+            dc.DrawEllipse(accent, null, pt, 2.5, 2.5);
+            AddVerticalTarget(parameter,
+                new Rect(pt.X - 25.0, plot.Top - 4.0, 50.0, plot.Height + 8.0),
+                new Rect(pt.X - 1.0, plot.Top, 2.0, plot.Height), 0.0, sharedTop);
         }
     }
 
@@ -3118,33 +3174,81 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     // Trading directions and durability rules are independent authored CFG sources.
     // Reuse the compact Economy card grammar: label/current on one line, rail, bounds.
+    // Mirrored source meters: merchant buys from you on the left and sells
+    // to you on the right. Directions are mirrored, but actual CFG multipliers
+    // are never inverted and each slider retains native range and 0.01x step.
+    private void DrawTradingMeter(
+        DrawingContext dc, ParameterViewModel? parameter, string label,
+        Rect card, bool reverse, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.66),
+            new Pen(border, 0.9), card, 4.0, 4.0);
+        if (parameter is null)
+            return;
+        DrawText(dc, label, new Point(card.Left + 12, card.Top + 10),
+            10.5, text, FontWeights.Bold);
+        var changed = parameter.IsValueModifiedFromReference();
+        DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
+            new Point(card.Right - 12, card.Top + 8),
+            changed ? 13.3 : 12.1, changed ? accent : text, FontWeights.Bold);
+        var track = new Rect(card.Left + 18, card.Top + 49,
+            card.Width - 36, 12.0);
+        var now = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track, reverse);
+        var reference = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, track, reverse);
+        var center = reverse ? track.Right : track.Left;
+        dc.DrawRoundedRectangle(CloneWithOpacity(border, .32),
+            null, track, 3, 3);
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, .78), 5.0),
+            new Point(center, track.Top + 6.0),
+            new Point(now, track.Top + 6.0));
+        dc.DrawLine(new Pen(muted, 2),
+            new Point(reference, track.Top - 3),
+            new Point(reference, track.Bottom + 3));
+        var hover = _hoverTarget?.Kind == HitKind.Horizontal
+            && ReferenceEquals(_hoverTarget.Parameter, parameter);
+        dc.DrawEllipse(panel, new Pen(hover ? Brushes.White : accent,
+            hover ? 3.0 : 2.0),
+            new Point(now, track.Top + 6), 6.5, 6.5);
+        var low = $"{parameter.Minimum:0.##}x";
+        var high = $"{parameter.Maximum:0.##}x";
+        DrawText(dc, reverse ? high : low,
+            new Point(track.Left, card.Bottom - 19), 9.1, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, reverse ? low : high,
+            new Point(track.Right, card.Bottom - 19), 9.1, muted, FontWeights.Normal);
+        AddHorizontalTarget(parameter,
+            new Rect(track.Left - 8, track.Top - 8, track.Width + 16, track.Height + 16),
+            track, parameter.Minimum, parameter.Maximum, reverse);
+    }
+
     private void DrawTradingDashboard(
         DrawingContext dc, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        DrawCenteredText(dc, "TRADING", new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
-
-        var controls = new (string Id, string Label)[]
-        {
-            ("economy.buyCondition", "YOU SELL TO TRADERS"),
-            ("economy.sellCondition", "YOU BUY FROM TRADERS"),
-            ("economy.traderMinBuyCondition", "MINIMUM ACCEPTED CONDITION"),
-            ("economy.itemValueFloor", "BROKEN ITEM VALUE")
-        };
-
-        var columns = EconomyColumns(ActualWidth);
+        DrawHeader(dc, "TRADING", "", text, muted, accent);
+        var width = Math.Min(750.0, ActualWidth - 34.0);
         const double gap = 12.0;
-        var cardWidth = EconomyCardWidth(ActualWidth, columns);
-        var groupWidth = columns * cardWidth + (columns - 1) * gap;
-        var left = (ActualWidth - groupWidth) / 2.0;
-        for (var i = 0; i < controls.Length; i++)
-        {
-            var card = new Rect(left + (i % columns) * (cardWidth + gap),
-                48.0 + (i / columns) * 94.0, cardWidth, 80.0);
-            var item = controls[i];
-            DrawEconomyCard(dc, P(item.Id), item.Label, card,
-                text, muted, border, accent, panel);
-        }
+        var cell = (width - gap) / 2.0;
+        var left = (ActualWidth - width) / 2.0;
+        DrawTradingMeter(dc, P("economy.buyCondition"),
+            "YOU SELL TO TRADERS",
+            new Rect(left, 52.0, cell, 92.0), false,
+            text, muted, border, accent, panel);
+        DrawTradingMeter(dc, P("economy.sellCondition"),
+            "YOU BUY FROM TRADERS",
+            new Rect(left + cell + gap, 52.0, cell, 92.0), true,
+            text, muted, border, accent, panel);
+        DrawText(dc, "TRADE ACCEPTANCE", new Point(left, 158),
+            10.2, muted, FontWeights.Bold);
+        DrawEconomyCard(dc, P("economy.traderMinBuyCondition"),
+            "MINIMUM ACCEPTED CONDITION",
+            new Rect(left, 180.0, cell, 80.0),
+            text, muted, border, accent, panel);
+        DrawEconomyCard(dc, P("economy.itemValueFloor"),
+            "BROKEN ITEM VALUE",
+            new Rect(left + cell + gap, 180.0, cell, 80.0),
+            text, muted, border, accent, panel);
     }
 
     // Hunger progress and stamina regeneration changes are distinct systems.
@@ -5349,8 +5453,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             "StarvationTimeline" => MasterStarvationHeight(width),
             "RepeatedHitBand" => 455.0,
             "RadiationBalance" => 308.0,
-            "TradingDashboard" => EconomyBoardHeight(width, 4),
-            "RepairCurve" => EconomyBoardHeight(width, 4),
+            "TradingDashboard" => 273.0,
+            "RepairCurve" => 324.0,
             "AmmoDistribution" => 715.0,
             _ => 340.0
         };
