@@ -1,5 +1,10 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-11 — Ammo by Stash Tier rotary
+
+Stash Rewards uses **three independent, compact native-source 270° WPF knobs** for Ammo by Stash Tier: BASIC (`loot.cheapStashAmmoQuantity`), STANDARD (`loot.mediumStashAmmoQuantity`) and RARE (`loot.expensiveStashAmmoQuantity`). Reuse `DrawSourceKnob` and its native parameter range/step, mouse drag, wheel, keyboard and reference-reset behavior, in a centered bank capped at 606 DIP with 194 × 181 DIP cards. No duplicated informational labels. The separate BONUS REWARDS chance/count horizontal rails and their CFG bindings stay unchanged. The family `StashRewardProfile` must be enabled in the shared knob wheel gate.
+
+
 ### 2026-10-11 — Consumable Effects: three source knobs and six live preview bars (latest authoritative UI)
 
 **User-approved replacement applies ONLY above `EFFECT DURATION / SECONDS` in `ConsumableMixer`.** Remove the three horizontal strength sliders and two passive instant/sustained text-readout cards. Their replacement is **three compact, independently editable 270° WPF rotary knobs in one centered row** (max bank width 620 DIP, shared `DrawSourceKnob`/`HitKind.Knob`) above **one source-bound LIVE EFFECT PREVIEW graph containing six read-only bars**. The knob names and real `GameData/EffectPrototypes.cfg` sources are **INSTANT STAMINA** = `survival.instantStaminaRestore`, **WATER BUFF** = `survival.waterStaminaEffectStrength`, **ENERGY REGEN** = `survival.energyDrinkStaminaRecoveryStrength`. All retain their exact **0–2x / 0.05x native range and steps, Vanilla/Base 1x**, reference tick, centered value, gold-only-when-modified number, correct tick graduation, mouse angular drag/wheel, keyboard, one-source right-click reset and family `R` reset. No new source, writer field or second slider exists.
