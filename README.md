@@ -1,5 +1,20 @@
 # True Custom Difficulty
 
+### 2026-10-11 — Economy alignment and native Starting Coupons rail (latest)
+
+The previous 2026-10-11 **plus/minus Starting Coupons stepper is retired**. A direct, source-native **0–100,000** horizontal amount rail replaces it, with live coupon amount, 0K/25K/50K/75K/100K milestones, selected-difficulty reference tick, pointer drag-to-value and exact **10-coupon snapping** using the generic WPF `HitKind.Horizontal` path. Existing Home/End, arrows, PageUp/PageDown and right-click reset remain available; there are no thousands of required +/- clicks and no special coupon mouse-wheel branch. Main/Side Quest reward meters remain independent.
+
+Economy section captions are now **MONEY FLOW**, **MARKET**, **EXPENSES** — no 01/02/03 numbering. Pairable Money Flow panels and Expenses panels use the existing responsive grid with centered, bounded native controls. Compact CouponFlow two-meter layout begins at 390 DIP, allowing its 274-DIP board to align with the 273-DIP Trading board. Service Costs switches to a single 3-knob row at 390 DIP (242 DIP board), with 2+1 only on smaller widths. The compact Service and Repair content is vertically centered when its section row is taller than its native frame; headers remain aligned at the top. Original source, preset and CFG contracts are unchanged.
+
+### 2026-10-11 — Combined global and individual anomaly damage (latest)
+
+**One visible Anomaly Damage card**, not separate Global and Individual sections: `AnomalyDamageRadar` renders the existing eleven independent source sliders plus a native 270° GLOBAL damage knob (`environment.anomalyDamage`, exact 0–2.5× with 0.01× increments). The global source joins the Individual Anomaly Damage UI grouping but its old stand-alone aggregate anchor is hidden; no CFG ID, writer or modifier is removed.
+
+A **direct explanation in the panel** separates the three values: (1) GLOBAL multiplies all eleven individual CFG sources, (2) upper number `RESULT = SOURCE × GLOBAL` is the computed pre-protection effect (not another writable CFG value), and (3) lower number is the individual editable native SOURCE. The shared chart axis `% VANILLA` represents only each individual source relative to its selected Base value: **100% = original individual source; 200% = twice that source; it does NOT include the GLOBAL knob**. The same chart is intentionally not labeled as raw damage points. Razor's source is a multiplier, all other columns use their actual authored units. Direct individual vertical dragging edits native steps; the knob preserves native ticks, angular drag, mouse wheel, selected keyboard arrows/Home/End/Page keys, independent right-click reset, and grey per-difficulty Base marker. Clicking a control selects its source rationale; `R` resets all twelve sources in the unified card. The combined card is 606 DIP high. Existing effective-value provider drives live upper readouts; runtime engine protection and other effects are not simulated.
+
+This is the current approval contract. Any older catalog instructions demanding two independent Anomaly Damage cards, an Economy numbered heading, or CouponFlow +/- buttons are superseded.
+
+
 ### 2026-10-11 — Economy audit initialization-order fix
 
 The CouponFlow mouse-wheel regression check executes during the Economy audit, **before** the generic rotary audit initializes `_knob_source`. It therefore reads the already-initialized `_economy_aggregate` source text. Do not reference late-initialized audit globals from an earlier check: Python `py_compile` detects syntax errors but not `NameError` caused by execution order. Run the full `python tools/audit_project_consistency.py` after the syntax check. Runtime UI, source mappings, and CFG writers are unchanged.
