@@ -2579,10 +2579,60 @@ for _id, _native in _seven_expected_sliders.items():
 for _marker in _seven_required_code:
     if _marker not in _seven_src:
         _seven_errors.append(f'missing seven-controller interaction/geometry marker {_marker}')
-if not all(t in _seven_src for t in ('"StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,',
-                                   'DrawNativeGauge(dc, P(tier.Id), tier.Label,',
-                                   'DrawNativeGauge(dc, P(source.Id), source.Label, source.Format,')):
-    _seven_errors.append('tier rack or equalizer/radiation native gauges not wired to real sources')
+# Check each *active renderer* rather than assuming the old stash-tier
+# vertical gauges still exist after the approved three-knob redesign.
+# Preserve actual source IDs, native control dispatch and independent bonus
+# rewards; RepairCurve/RadiationBalance are deliberately not rotary.
+_seven_stash_start = _seven_src.find('private void DrawCompactStashRewards(')
+_seven_stash_end = _seven_src.find('DrawText(dc, "BONUS REWARDS"', _seven_stash_start)
+_seven_stash_body = (_seven_src[_seven_stash_start:_seven_stash_end]
+                     if 0 <= _seven_stash_start < _seven_stash_end else '')
+_seven_stash_native = (
+    '("loot.cheapStashAmmoQuantity", "BASIC")',
+    '("loot.mediumStashAmmoQuantity", "STANDARD")',
+    '("loot.expensiveStashAmmoQuantity", "RARE")',
+    'DrawSourceKnob(dc, P(tier.Id), tier.Label,',
+    'Math.Min(606.0, ActualWidth - 34.0)',
+)
+_seven_bonus_start = _seven_src.find('DrawText(dc, "BONUS REWARDS"', _seven_stash_end)
+_seven_stash_method_end = _seven_src.find('\n    private ', _seven_stash_end)
+_seven_bonus_body = (_seven_src[_seven_bonus_start:_seven_stash_method_end]
+                     if 0 <= _seven_bonus_start < _seven_stash_method_end else '')
+_seven_bonus_native = (
+    '("loot.cheapStashGrenadeChance", "RGD-5 CHANCE")',
+    '("loot.cheapStashGrenadeQuantity", "RGD-5 AMOUNT")',
+    '("loot.expensiveStashMoneyChance", "COUPON CHANCE")',
+    'DrawHorizontalTrackCard(dc, P(rewards[i].Id), rewards[i].Label,',
+)
+_seven_radiation_start = _seven_src.find('private void DrawRadiationBalance(')
+_seven_radiation_end = _seven_src.find('\n    private ', _seven_radiation_start)
+_seven_radiation_body = (_seven_src[_seven_radiation_start:_seven_radiation_end]
+                         if 0 <= _seven_radiation_start < _seven_radiation_end else '')
+_seven_radiation_native = (
+    '("survival.radiationAccumulation", "BUILD-UP",',
+    '("survival.radiationRecovery", "RECOVERY",',
+    '("survival.radiationDamage", "HP DAMAGE",',
+    'DrawNativeGauge(dc, P(source.Id), source.Label, source.Format,',
+)
+_seven_repair_start = _seven_src.find('private void DrawRepairCurve(')
+_seven_repair_end = _seven_src.find('\n    private ', _seven_repair_start)
+_seven_repair_body = (_seven_src[_seven_repair_start:_seven_repair_end]
+                      if 0 <= _seven_repair_start < _seven_repair_end else '')
+_seven_repair_native = (
+    '("economy.repairFriend", "FRIENDLY")',
+    '("economy.repairNeutral", "NEUTRAL")',
+    '("economy.repairDisaffection", "DISLIKED")',
+    '("economy.repairEnemy", "HOSTILE")',
+    'AddVerticalTarget(parameter,',
+)
+if (not all(t in _seven_stash_body for t in _seven_stash_native)
+    or 'DrawNativeGauge(dc, P(tier.Id)' in _seven_stash_body
+    or not all(t in _seven_bonus_body for t in _seven_bonus_native)
+    or not all(t in _seven_radiation_body for t in _seven_radiation_native)
+    or not all(t in _seven_repair_body for t in _seven_repair_native)
+    or '"StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,' not in _seven_src
+    or not knob_wheel_gate_contains(_seven_src, 'StashRewardProfile')):
+    _seven_errors.append('stash-tier native knobs / bonus rails, repair curve or radiation gauges lost their source wiring')
 if not all(t in _seven_vm for t in ('"RadiationBalance" => "Move each radiation gauge',
                                   '"RepairCurve" => "Drag one reputation point',
                                   '"SleepingDashboard" => "Select 1–14 minimum sleep hours')):
@@ -2594,7 +2644,7 @@ if any('2026-10-11 — Seven gamer-centric native visual controllers' not in
 if _seven_errors:
     fail('Seven source-native visual controls: ' + '; '.join(_seven_errors))
 else:
-    note('Seven source-backed visual editors: 7 renderers / 31 unchanged CFG members, interactive gauges, curve, meters, stepped sleep and vault ruler; native frame heights match')
+    note('Seven source-backed visual editors: 7 renderers / 31 unchanged CFG members; stash-tier native knobs and bonus rails, repair curve, radiation gauges, stepped sleep and vault ruler; native frame heights match')
 
 
 # Consumable Mixer is now exactly three CFG-backed knobs plus one six-bar
