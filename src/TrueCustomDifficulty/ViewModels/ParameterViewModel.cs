@@ -84,7 +84,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "RadiationBalance" => "Move each radiation gauge independently: build-up multiplier, recovery points per second, and HP damage multiplier.",
                     "StarvationTimeline" => "Adjust when penalties begin, how often damage ticks occur and the three penalty strengths using their individual controls. The timeline is a preview.",
                     "RepeatedHitBand" => "Drag MIN or MAX to shape repeated-hit protection. Use the switch to decide whether healed damage stays in the tracker.",
-                    "ConsumableMixer" => "Drag the four strength tracks or one of the drink-duration faders. The resulting drink statistics update automatically.",
+                    "ConsumableMixer" => "Turn one of three strength knobs to update its linked instant or sustained effect bars. Duration timelines and short-effect editors stay independent.",
                     "SleepingDashboard" => "Select 1–14 minimum sleep hours directly in the step row; other tracks set sleep eligibility and wake-up recovery.",
                     "CoreHealthDashboard" => "Drag the relevant health or recovery track. Each track changes its own setting; the other values stay independent.",
                     "StaminaCore" => "Drag the stamina, recovery, vaulting or carry-weight track you want to change.",
