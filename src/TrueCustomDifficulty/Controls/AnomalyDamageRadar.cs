@@ -11,7 +11,10 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class AnomalyDamageRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double DesiredHeight = 360.0;
+    private const double DesiredHeight = 606.0;
+    private const double KnobStartAngle = 135.0;
+    private const double KnobSweepAngle = 270.0;
+    private const double KnobRadius = 47.0;
     private const double MaxContentWidth = 756.0;
     private const double ColumnGap = 16.0;
     private const double RowHeight = 52.0;
@@ -36,6 +39,11 @@ public sealed class AnomalyDamageRadar : FrameworkElement
     public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Anomalies.Length];
+    private ParameterViewModel? _globalDamage;
+    private Rect _globalKnobHit = Rect.Empty;
+    private bool _hoverGlobalKnob;
+    private bool _dragGlobalKnob;
+    private bool _selectedGlobalKnob;
     private readonly Dictionary<int, HitTarget> _targets = new();
     private readonly VisualStatusMessage _status;
     private int _selectedRow;
@@ -79,12 +87,20 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             if (parameter is not null)
                 parameter.PropertyChanged -= Parameter_PropertyChanged;
         }
+        if (_globalDamage is not null)
+            _globalDamage.PropertyChanged -= Parameter_PropertyChanged;
+        _globalDamage = null;
 
         Array.Clear(_parameters, 0, _parameters.Length);
 
         if (Parameters is not null)
         {
             var byId = Parameters.OfType<ParameterViewModel>().ToDictionary(x => x.Id, StringComparer.Ordinal);
+            if (byId.TryGetValue("environment.anomalyDamage", out var global))
+            {
+                _globalDamage = global;
+                global.PropertyChanged += Parameter_PropertyChanged;
+            }
             for (var i = 0; i < Anomalies.Length; i++)
             {
                 if (!byId.TryGetValue(Anomalies[i].ParameterId, out var parameter))
@@ -135,12 +151,23 @@ public sealed class AnomalyDamageRadar : FrameworkElement
 
         _targets.Clear();
 
-        DrawCenteredText(dc, "INDIVIDUAL ANOMALY DAMAGE",
+        DrawCenteredText(dc, "ANOMALY DAMAGE",
             new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
 
-        // Eleven independent sources, each with its own native range but the
-        // same audited 0..200% baseline-relative maximum. One shared ruler.
-        const double top = 108.0, bottom = 279.0;
+        // One shared frame for GLOBAL and all eleven native source sliders.
+        // Global remains an independent 0..2.5x/0.01x difficulty source.
+        DrawGlobalDamageKnob(dc, text, muted, border, accent, panel);
+        DrawCenteredText(dc, "RESULT = SOURCE × GLOBAL  |  BEFORE PROTECTION",
+            new Point(ActualWidth / 2.0, 253.0), 10.0, text, FontWeights.SemiBold);
+        DrawCenteredText(dc, "BAR SCALE = % OF EACH INDIVIDUAL VANILLA VALUE (100% UNCHANGED)",
+            new Point(ActualWidth / 2.0, 275.0), 9.5, muted, FontWeights.SemiBold);
+        DrawCenteredText(dc, "TOP NUMBER: RESULT  |  LOWER NUMBER: SOURCE",
+            new Point(ActualWidth / 2.0, 294.0), 9.3, muted, FontWeights.SemiBold);
+
+        // Individual handles edit source CFG values, not global difficulty
+        // or the computed RESULT readout. Their 0..200% axis is *relative to
+        // each source's vanilla*, never 0..200 hit points or global damage.
+        const double top = 365.0, bottom = 526.0;
         const int columns = 11;
         var left = 53.0;
         var lane = (ActualWidth - left - 14.0) / columns;
@@ -154,7 +181,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         }
         var axis = new Point(11.0, (top + bottom) / 2);
         dc.PushTransform(new RotateTransform(-90, axis.X, axis.Y));
-        DrawCenteredText(dc, "DAMAGE", axis, 9.0, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "% VANILLA", axis, 9.0, accent, FontWeights.Bold);
         dc.Pop();
 
         for (var i = 0; i < Anomalies.Length; i++)
@@ -170,7 +197,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             var barLeft = center - width / 2.0;
             dc.DrawRoundedRectangle(CloneWithOpacity(panel, .32),
                 new Pen(CloneWithOpacity(border, .55), .8),
-                new Rect(left + i * lane + 2, 67, lane - 4, 281), 4, 4);
+                new Rect(left + i * lane + 2, 306, lane - 4, 279), 4, 4);
             dc.DrawRectangle(CloneWithOpacity(border, .12), null,
                 new Rect(barLeft, top, width, bottom - top));
             dc.DrawRectangle(CloneWithOpacity(accent, .72), null,
@@ -185,28 +212,173 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             var inherited = parameter.EffectiveDamageValue;
             var effectiveText = Anomalies[i].IsMultiplier
                 ? $"{inherited:0.##}x" : $"{inherited:0.#}";
-            DrawCenteredText(dc, effectiveText, new Point(center, 83), 9.3,
+            DrawCenteredText(dc, effectiveText, new Point(center, 322), 9.3,
                 parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
             var nativeText = Anomalies[i].IsMultiplier
                 ? $"{parameter.CurrentNumber:0.##}x" : $"{parameter.CurrentNumber:0.#}";
-            DrawCenteredText(dc, nativeText, new Point(center, 99), 9.0,
+            DrawCenteredText(dc, nativeText, new Point(center, 340), 9.0,
                 muted, FontWeights.SemiBold);
             var words = Anomalies[i].Label.Split(' ');
             if (words.Length == 1)
-                DrawCenteredText(dc, words[0], new Point(center, 318), 8.5,
+                DrawCenteredText(dc, words[0], new Point(center, 550), 8.5,
                     text, FontWeights.Bold);
             else
             {
-                DrawCenteredText(dc, words[0], new Point(center, 310), 8.5,
+                DrawCenteredText(dc, words[0], new Point(center, 543), 8.5,
                     text, FontWeights.Bold);
                 DrawCenteredText(dc, string.Join(" ", words.Skip(1)),
-                    new Point(center, 324), 8.5, text, FontWeights.Bold);
+                    new Point(center, 559), 8.5, text, FontWeights.Bold);
             }
             _targets[i] = new HitTarget(
                 new Rect(center - Math.Max(15, width / 2 + 5), top,
                     Math.Max(30, width + 10), bottom - top),
                 new Rect(barLeft, top, width, bottom - top));
         }
+    }
+
+    private static Point KnobPoint(Point center, double radius, double degrees)
+    {
+        var radians = degrees * Math.PI / 180.0;
+        return new Point(center.X + radius * Math.Cos(radians),
+            center.Y + radius * Math.Sin(radians));
+    }
+
+    private static void DrawKnobArc(DrawingContext dc, Point center,
+        double radius, double sweep, Pen pen)
+    {
+        if (sweep <= Epsilon)
+            return;
+        var figure = new PathFigure
+        {
+            StartPoint = KnobPoint(center, radius, KnobStartAngle),
+            IsClosed = false,
+            IsFilled = false
+        };
+        figure.Segments.Add(new ArcSegment(
+            KnobPoint(center, radius, KnobStartAngle + sweep),
+            new Size(radius, radius), 0.0, sweep > 180.0,
+            SweepDirection.Clockwise, true));
+        dc.DrawGeometry(null, pen, new PathGeometry(new[] { figure }));
+    }
+
+    // Native rotary marks, selected-difficulty Base marker and hit region.
+    // Dense 0.01x inputs retain all steps; visible marks use a readable
+    // subset of *real* source increments, not arbitrary graduations.
+    private void DrawGlobalDamageKnob(DrawingContext dc, Brush text, Brush muted,
+        Brush border, Brush accent, Brush panel)
+    {
+        _globalKnobHit = Rect.Empty;
+        var p = _globalDamage;
+        if (p is null)
+            return;
+        const double top = 47.0;
+        var card = new Rect((ActualWidth - 194.0) / 2.0, top, 194.0, 181.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .40),
+            new Pen(CloneWithOpacity(border, .7), 1.0), card, 4.0, 4.0);
+        DrawCenteredText(dc, "GLOBAL MULTIPLIER", new Point(card.Left + 97.0, 65.0),
+            10.0, text, FontWeights.Bold);
+
+        var center = new Point(card.Left + 97.0, card.Top + 97.0);
+        var range = Math.Max(Epsilon, p.Maximum - p.Minimum);
+        var ratio = Math.Clamp((p.CurrentNumber - p.Minimum) / range, 0.0, 1.0);
+        var reference = Math.Clamp((p.ReferenceNumber - p.Minimum) / range, 0.0, 1.0);
+        var active = p.IsControlEnabled;
+        var face = CloneWithOpacity(panel, .96);
+        dc.DrawEllipse(face, new Pen(CloneWithOpacity(border, .75), 1.0),
+            center, KnobRadius - 10.0, KnobRadius - 10.0);
+        DrawKnobArc(dc, center, KnobRadius, KnobSweepAngle,
+            new Pen(CloneWithOpacity(border, .9), 6.0));
+        var step = Math.Max(Epsilon, p.TickFrequency);
+        var intervals = (int)Math.Floor(range / step + .000001);
+        var spacing = KnobRadius * KnobSweepAngle * Math.PI / 180.0
+            / Math.Max(1.0, range / step);
+        var stride = NativeTickStride(spacing);
+        for (var idx = 0; idx <= intervals; idx += stride)
+        {
+            var value = p.Minimum + idx * step;
+            var fraction = Math.Clamp((value - p.Minimum) / range, 0.0, 1.0);
+            var major = idx == 0 || idx % (stride * 5) == 0;
+            var degrees = KnobStartAngle + fraction * KnobSweepAngle;
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, major ? .75 : .42),
+                    major ? 1.6 : 1.0),
+                KnobPoint(center, KnobRadius + 5.0, degrees),
+                KnobPoint(center, KnobRadius + (major ? 11.0 : 9.0), degrees));
+        }
+        if (intervals % stride != 0)
+        {
+            var degrees = KnobStartAngle +
+                (p.Minimum + intervals * step - p.Minimum) / range * KnobSweepAngle;
+            dc.DrawLine(new Pen(muted, 1.6),
+                KnobPoint(center, KnobRadius + 5.0, degrees),
+                KnobPoint(center, KnobRadius + 11.0, degrees));
+        }
+        if (ratio > Epsilon)
+            DrawKnobArc(dc, center, KnobRadius, ratio * KnobSweepAngle,
+                new Pen(CloneWithOpacity(active ? accent : muted, .95), 6.0));
+        var baseAngle = KnobStartAngle + reference * KnobSweepAngle;
+        dc.DrawLine(new Pen(muted, 2.4),
+            KnobPoint(center, KnobRadius - 7.0, baseAngle),
+            KnobPoint(center, KnobRadius + 6.0, baseAngle));
+        var currentAngle = KnobStartAngle + ratio * KnobSweepAngle;
+        dc.DrawLine(new Pen(_hoverGlobalKnob ? Brushes.White : active ? accent : muted, 2.5),
+            KnobPoint(center, KnobRadius - 8.0, currentAngle),
+            KnobPoint(center, KnobRadius + 3.0, currentAngle));
+        DrawCenteredText(dc, $"{p.CurrentNumber:0.##}x", new Point(center.X, center.Y + 3),
+            p.IsValueModifiedFromReference() ? 16.2 : 15.0,
+            active && p.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
+        DrawCenteredText(dc, $"{p.Minimum:0.##}x",
+            new Point(center.X - KnobRadius * .8, card.Bottom - 19.0),
+            9.0, muted, FontWeights.SemiBold);
+        DrawCenteredText(dc, $"{p.Maximum:0.##}x",
+            new Point(center.X + KnobRadius * .8, card.Bottom - 19.0),
+            9.0, muted, FontWeights.SemiBold);
+        if (active)
+            _globalKnobHit = new Rect(center.X - KnobRadius - 5.0,
+                center.Y - KnobRadius - 5.0, 2 * (KnobRadius + 5.0),
+                2 * (KnobRadius + 5.0));
+    }
+
+    private static int NativeTickStride(double pixelsPerStep)
+    {
+        const double minimumSpacing = 6.5;
+        var required = minimumSpacing / Math.Max(Epsilon, pixelsPerStep);
+        var scale = 1;
+        while (scale < 100000 && required > 10.0 * scale)
+            scale *= 10;
+        if (required <= scale) return scale;
+        if (required <= scale * 2) return scale * 2;
+        if (required <= scale * 5) return scale * 5;
+        return scale * 10;
+    }
+
+    private void UpdateGlobalFromPoint(Point point)
+    {
+        if (_globalDamage is not { } p || !p.IsControlEnabled)
+            return;
+        var center = new Point(ActualWidth / 2.0, 47.0 + 97.0);
+        var dx = point.X - center.X;
+        var dy = point.Y - center.Y;
+        if (dx * dx + dy * dy < 400.0)
+            return;
+        var degrees = Math.Atan2(dy, dx) * 180.0 / Math.PI;
+        var clockwise = (degrees - KnobStartAngle + 360.0) % 360.0;
+        var fraction = clockwise > KnobSweepAngle
+            ? (clockwise < 315.0 ? 1.0 : 0.0)
+            : clockwise / KnobSweepAngle;
+        var raw = p.Minimum + fraction * (p.Maximum - p.Minimum);
+        SetGlobalDamage(raw);
+    }
+
+    private void SetGlobalDamage(double raw)
+    {
+        if (_globalDamage is not { } p || !p.IsControlEnabled)
+            return;
+        var step = Math.Max(Epsilon, p.TickFrequency);
+        var snapped = p.Minimum + Math.Round(
+            (raw - p.Minimum) / step, MidpointRounding.AwayFromZero) * step;
+        p.CurrentNumber = Math.Clamp(snapped, p.Minimum, p.Maximum);
+        _status.Clear();
+        InvalidateVisual();
     }
 
     private Rect ContentRect()
