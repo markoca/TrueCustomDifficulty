@@ -2,7 +2,7 @@
 
 ## Inputs and methodology
 
-User-supplied `STALKER2-GameData-CFG(8).zip`, specifically `GameData/ItemPrototypes.cfg` and `GameData/EffectPrototypes.cfg`. This is a **source mapping / UI candidate audit**, not a gameplay runtime test or permission to add controls. Affects **no** configuration, save or mod output in this audit. The archive has **17** top-level `{refkey=TemplateConsumable}` item definitions, including GuitarUsable (no authored effects).
+User-supplied `STALKER2-GameData-CFG(8).zip`, specifically `GameData/ItemPrototypes.cfg` and `GameData/EffectPrototypes.cfg`. This began as a **source mapping / UI candidate audit**. The six verified source controls have since been implemented in the catalog, production CFG writer and Survival UI. It is **not** an in-game runtime acceptance report. The archive has **17** top-level `{refkey=TemplateConsumable}` item definitions, including GuitarUsable (no authored effects).
 
 Keep distinctions between (1) an item binding to one or more named effect prototype SIDs, (2) the prototype's **raw source type/value/duration**, and (3) the in-game resulting quantity. Do not present source 10 as “10 HP/s”, “10 psi protection points per second” or “10%” without runtime proof. For a shared item, do not count paired effects as additive stacks.
 
@@ -20,9 +20,9 @@ Source item bindings: `ItemPrototypes.cfg` has `Cinnamon`, `PSYBlocker` and `Her
 
 The [Gamer Guides medicine item database](https://earth.gamerguides.com/stalker-2-heart-of-chornobyl/database/consumables/medicine) lists Vinca with creation/console ID `Cinnamon`, +10 bleeding regeneration and a 180-second duration. This independently corroborates the naming, while the supplied CFG remains the source for exact writer paths and values.
 
-### Proposed player controls, **not yet implemented**
+### Implemented player controls (2026-10-11)
 
-| Intended destination | Compact control label | Exact native source field(s) to write in a future implementation | Vanilla | Coupling / safeguards |
+| Intended destination | Compact control label | Exact native source field(s) written | Vanilla | Coupling / safeguards |
 |---|---|---|---:|---|
 | Health → medical effects | **BLEED RECOVERY STRENGTH** | `CinnamonDegenBleeding.ValueMin` and `ValueMax` | 10 | Both bounds change as a single value; never adjust bandage's instant bleed treatment. Native output unit not yet calibrated by runtime. |
 | Health → medical effects | **BLEED RECOVERY DURATION** | `CinnamonDegenBleeding.Duration` | 180 s | Independent duration; maintain `KeepNew` / item SID. |
@@ -31,7 +31,7 @@ The [Gamer Guides medicine item database](https://earth.gamerguides.com/stalker-
 | Survival / carrying | **HERCULES CARRY BONUS** | `HerculesWeight.ValueMin/ValueMax` **and** `HerculesWeight_Penalty.ValueMin/ValueMax` | 20 per effect | **Atomic coupled writer** on all four scalar leaves; display **one** player knob, not two independent effect strengths; avoid misrepresenting +40 carry weight. |
 | Same section | **HERCULES DURATION** | `HerculesWeight.Duration` **and** `HerculesWeight_Penalty.Duration` | 300 s each | Write both durations together. Never modify base maximum carry weight. |
 
-Recommended visual grammar **if approved later**: three concise cards (Vinca/bleed, Psi Block, Hercules), each with one source-native knob for strength and one compact native-seconds duration slider; no extra explanation inside each control. This is a proposal only. Before implementation, choose validated editing ranges / step granularities, test value and duration mapping in the real production writer and confirm runtime effect scaling. Do not invent “number of pills” / resistance multipliers. No new UI catalog entry or serializer mapping has been added during this audit.
+**Implemented:** three centered compact medicine columns, each with a frameless raw-magnitude knob and independent native-seconds duration track; six new `survival.*` CFG-backed preset values. Vinca: 0–30 strength (step 1), 0–540s duration (step 5); Hercules: 0–60 / 0–900s; Psi Block: 0–30 / 0–300s. Hercules always updates both effect prototypes and their two deterministic `ValueMin/ValueMax` bounds together, while duration edits update both `Duration` fields. Do not invent number of pills, percent resistance or additive 40-point carry benefit. Static CFG/preset checks are covered by SurvivalPatchContract; runtime behavior still requires game testing.
 
 ### Other consumables and duplicate-control screening
 
@@ -47,7 +47,7 @@ Full top-level item inventory from the supplied `TemplateConsumable` declaration
 
 Additional source details: drink `Water` has `WaterStamina2` `Stamina` 25% / 5s, `WaterStaminaInstant` 38%, `WaterStaminaPerAction1` SPDrain -10% / 30s. `Energetic` has a 200% regen source / 45s and independent -30% / 15s, -100% / 5s action-cost effects; its other tolerance/overuse mechanics should be audited as a separate subsystem. `Vodka` and `Beer` both have individual `Drunkness`, antirad, hunger, stamina-cost and psi-point effects; current UI coverage must be compared by **prototype SID**, not simply by item display name.
 
-### Safety and acceptance criteria for subsequent implementation
+### Runtime safety and acceptance criteria
 
 1. **Preserve the player/internal naming distinction:** display **Vinca**; write the source item SID `Cinnamon` and effect SID `CinnamonDegenBleeding`. The name is externally cross-checked because the CFG by itself does not store the localized item label.
 2. Preserve `ValueMin == ValueMax` for these deterministic strengths, and link Hercules' two independent effect prototypes when editing magnitude or duration.
@@ -55,3 +55,11 @@ Additional source details: drink `Water` has `WaterStamina2` `Stamina` 25% / 5s,
 4. Do not infer regenerated HP/s, bleed units/s, effective psi armor or base carry-weight points solely from raw prototype fields.
 5. Check true CFG writer patch routes, source value normalization, reset/preview behavior and mod compatibility before exposing sliders.
 6. Update `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md` with any subsequently approved controls, retaining compact/framed-free styles.
+
+## Production editor IDs
+
+- `survival.vincaBleedRecovery`, `survival.vincaDuration`
+- `survival.herculesCarryBonus`, `survival.herculesDuration`
+- `survival.psiBlockRecovery`, `survival.psiBlockDuration`
+
+All six appear in **Survival → Consumable Effects**, within the existing `ConsumableMixer` family. Magnitudes are direct `set` writes to raw effect `ValueMin` and `ValueMax`; durations are direct seconds `set` writes, preserving original `KeepNew`. The drink-only duration-limit override does not apply to these medicine effects. In-game acceptance is still pending.

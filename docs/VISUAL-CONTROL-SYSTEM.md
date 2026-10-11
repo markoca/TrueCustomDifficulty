@@ -1,10 +1,17 @@
 # Visual Control System
 
+### 2026-10-11 — Vinca, Hercules and Psi Block native medicine effects (current)
+
+**Survival → Consumable Effects:** Add **MEDICINE EFFECTS** immediately below the existing five main drink duration lanes and three short effect duration sliders. Display three compact, centered medicine columns, each **204 DIP** wide (3 columns from 665 DIP, 2 from 440 DIP, 1 below), with a frameless **270° raw-strength knob** followed by one **82-DIP native seconds slider**. Keep exact native source ticks and reference marker, 1-point magnitude steps, 5-second duration steps, drag, wheel/keyboard, individual right-click reset, family R reset, and gold only when numbers differ from the reference. Do not stretch the controls full-width, highlight Vanilla/Base, or add explanatory filler.
+
+Each medicine has independent magnitude and duration: **VINCA** edits `CinnamonDegenBleeding.ValueMin/ValueMax` (10 original, 0–30 range) and `Duration` (180s original, 0–540s); **HERCULES** edits both `HerculesWeight` and `HerculesWeight_Penalty` `ValueMin/ValueMax` (20 original on **both**, single 0–60 editor) and **both** `Duration` fields (300s, single 0–900s editor); **PSI BLOCK** edits `PSYBlockerIncreaseRegen.ValueMin/ValueMax` (10 original, 0–30) and `Duration` (60s, 0–300s). Keep `ValueMin == ValueMax` for deterministic effects and paired Hercules prototypes identical, never infer an additive 40-point carry bonus. Show strength as **raw effect magnitude** without “%”, “HP/s” or “psi resistance”; source runtime unit scaling remains unverified. The previous `OVERRIDE LIMITS` applies to drink durations only; do not cap these medicines to 270s. Original `KeepNew` behavior, drink settings, medical healing and base carry weight must remain unchanged. The six parameters are real CFG/preset/writer-backed values; game-runtime validation remains pending.
+
+
 ### 2026-10-11 — Starvation inactive-state readability; medicine candidates (current)
 
 **Master → Starvation Penalties:** when the authored **Starvation Mechanics** parent is OFF, all five child source values **remain disabled/non-editable** and receive no editable gold track/handle or hover hit targets. Their **card captions and current numerical readouts** must nevertheless use neutral high-legibility text (`CloneWithOpacity(text, 0.75)`), not the much dimmer common `muted` brush that made the entire Starvation section appear blacked out compared with the other Master panels. Source rails, grey native references, parent toggle behavior, preset and CFG writes remain unchanged. Enabled and modified states continue to use the existing normal/changed-only accent convention. This is a presentation-only correction to `DrawMasterNativeCard` scoped to `StarvationTimeline`, not a forced activation of Master-only gameplay mechanics.
 
-**Next consumables audit:** `docs/CONSUMABLE-MEDICINE-CFG-AUDIT-2026-10-11.md` records source-backed candidates from the provided GameData CFG: bleed-recovery medicine `Cinnamon` (in-game **Vinca**, independently verified item ID), `PSYBlocker`, and the *two linked* Hercules carry-weight effects. Six compact editor concepts are **audit suggestions only**, not approved/rendered controls. No new sliders, knobs or writer definitions were introduced. Do not conflate new medicine effects with existing medical healing/radiation removal or drink editors.
+**Medicine effects are now implemented:** the six source-backed Vinca, Hercules and Psi Block magnitude/duration controls live inside Consumable Effects. See the current medicine UI contract at the top of this catalog and the CFG mapping audit.
 
 ### 2026-10-11 — Paired Master Radiation / Low Health penalty knobs (latest authoritative layout)
 

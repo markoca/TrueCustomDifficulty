@@ -1,5 +1,10 @@
 # Survival CFG Mapping — v0.2.47
 
+## Source-backed medicine effects (2026-10-11)
+
+**Survival → Consumable Effects** now includes Vinca (`survival.vincaBleedRecovery` 10, `survival.vincaDuration` 180s; `CinnamonDegenBleeding`), Hercules (`survival.herculesCarryBonus` 20, `survival.herculesDuration` 300s; both `HerculesWeight` and `HerculesWeight_Penalty`), and Psi Block (`survival.psiBlockRecovery` 10, `survival.psiBlockDuration` 60s; `PSYBlockerIncreaseRegen`). Each is a paired compact native raw-strength knob and independent seconds track. Every magnitude writes deterministic `ValueMin/ValueMax` together; Hercules edits synchronize **both** effect prototypes rather than summing them. No duplicate medicine heals, drink durations, or base carry-weight controls are introduced. Source/CFG mappings verified; game-runtime scaling remains to be accepted.
+
+
 ### 2026-10-11 — Sleep wake-up percent and HP interpretation (current)
 
 `SleepingDashboard`'s **HEALTH RESTORED** edits the original `SleepHealthRestore` **300 HP** amount per sleep completion; it is not 300 HP/s, and the player's maximum-HP cap remains in effect. **STAMINA RESTORE STRENGTH** edits the original `SleepStaminaRestore` strength (vanilla **+100%**, raw `1.0`), which describes the magnitude of the native wake-up stamina effect, **not** extra +100 stamina points, a maximum-SP boost or SP/s. Source CFG and these mappings do not alone establish the runtime combination/refill formula. Both remain independent preset and CFG fields.

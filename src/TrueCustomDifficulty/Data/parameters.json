@@ -2700,6 +2700,295 @@
       "interaction": "This is a quest/special consumable and does not participate in ordinary Alcohol Radiation Removal."
     },
     {
+      "id": "survival.vincaBleedRecovery",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Vinca Bleed Recovery",
+      "description": "Vinca/Cinnamon ongoing bleeding-recovery magnitude",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "valueLabel": "Effect magnitude"
+      },
+      "vanilla": {
+        "All": 10
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "CinnamonDegenBleeding",
+          "path": "ValueMin|ValueMax",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Verified authored CFG default 10; gameplay scaling still requires runtime validation."
+        ]
+      },
+      "rationale": "Vinca/Cinnamon ongoing bleeding-recovery magnitude",
+      "logic": "Original source strength 10; edits source magnitude directly without inventing percentages.",
+      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.vincaDuration",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Vinca Duration",
+      "description": "Duration of Vinca's ongoing bleeding recovery",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "seconds",
+        "valueLabel": "Effect duration"
+      },
+      "vanilla": {
+        "All": 180
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 540,
+        "step": 5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "CinnamonDegenBleeding",
+          "path": "Duration",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Verified authored CFG default 180; gameplay scaling still requires runtime validation."
+        ]
+      },
+      "rationale": "Duration of Vinca's ongoing bleeding recovery",
+      "logic": "Original effect duration 180s; edits real seconds.",
+      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.herculesCarryBonus",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Hercules Carry Bonus",
+      "description": "Linked inventory-weight and weight-penalty magnitude",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "valueLabel": "Effect magnitude"
+      },
+      "vanilla": {
+        "All": 20
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 60,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "HerculesWeight",
+          "path": "ValueMin|ValueMax",
+          "operation": "set"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "HerculesWeight_Penalty",
+          "path": "ValueMin|ValueMax",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Verified authored CFG default 20; gameplay scaling still requires runtime validation.",
+          "Two separate effect prototypes share the same direct value; they are not additive."
+        ]
+      },
+      "rationale": "Linked inventory-weight and weight-penalty magnitude",
+      "logic": "Original source strength 20; edits source magnitude directly without inventing percentages.",
+      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.herculesDuration",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Hercules Duration",
+      "description": "Duration of both linked Hercules effects",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "seconds",
+        "valueLabel": "Effect duration"
+      },
+      "vanilla": {
+        "All": 300
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 900,
+        "step": 5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "HerculesWeight",
+          "path": "Duration",
+          "operation": "set"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "HerculesWeight_Penalty",
+          "path": "Duration",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Verified authored CFG default 300; gameplay scaling still requires runtime validation.",
+          "Two separate effect prototypes share the same direct value; they are not additive."
+        ]
+      },
+      "rationale": "Duration of both linked Hercules effects",
+      "logic": "Original effect duration 300s; edits real seconds.",
+      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.psiBlockRecovery",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Psi Block Recovery",
+      "description": "Psi-point recovery magnitude, not psi armor",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "valueLabel": "Effect magnitude"
+      },
+      "vanilla": {
+        "All": 10
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "PSYBlockerIncreaseRegen",
+          "path": "ValueMin|ValueMax",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Verified authored CFG default 10; gameplay scaling still requires runtime validation."
+        ]
+      },
+      "rationale": "Psi-point recovery magnitude, not psi armor",
+      "logic": "Original source strength 10; edits source magnitude directly without inventing percentages.",
+      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.psiBlockDuration",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Psi Block Duration",
+      "description": "Duration of Psi Block psi-point recovery",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "seconds",
+        "valueLabel": "Effect duration"
+      },
+      "vanilla": {
+        "All": 60
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 300,
+        "step": 5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "PSYBlockerIncreaseRegen",
+          "path": "Duration",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Verified authored CFG default 60; gameplay scaling still requires runtime validation."
+        ]
+      },
+      "rationale": "Duration of Psi Block psi-point recovery",
+      "logic": "Original effect duration 60s; edits real seconds.",
+      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "exposeInUi": false
+    },
+    {
       "id": "survival.drunknessThresholdScale",
       "tab": "survival",
       "group": "Alcohol Tolerance",

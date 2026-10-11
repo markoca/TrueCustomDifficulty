@@ -2433,7 +2433,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawingContext dc, ParameterViewModel? parameter, string label, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel,
         bool percentageReadout = false, bool rateReadout = false,
-        int percentageSign = 0)
+        int percentageSign = 0, bool rawReadout = false)
     {
         // Frameless shared knob: preserve dial, title, steps, values and hit area.
         DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, card.Top + 19),
@@ -2523,6 +2523,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // on its own small line so both remain readable at compact widths.
         var currentLabel = rateReadout ? $"{parameter.CurrentNumber:0.00}"
             : percentageReadout ? Percent(parameter.CurrentNumber)
+            : rawReadout ? $"{parameter.CurrentNumber:0.#}"
             : $"{parameter.CurrentNumber:0.##}x";
         var currentTop = center.Y + (rateReadout ? -4.0 : 3.0);
         if (percentageSign != 0)
@@ -2555,12 +2556,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCenteredText(dc,
             rateReadout ? $"{parameter.Minimum:0.00}"
                 : percentageReadout ? Percent(parameter.Minimum)
+                : rawReadout ? $"{parameter.Minimum:0.#}"
                 : $"{parameter.Minimum:0.##}x",
             new Point(center.X - radius * .80, card.Bottom - 19.0),
             9.0, muted, FontWeights.SemiBold);
         DrawCenteredText(dc,
             rateReadout ? $"{parameter.Maximum:0.00}"
                 : percentageReadout ? Percent(parameter.Maximum)
+                : rawReadout ? $"{parameter.Maximum:0.#}"
                 : $"{parameter.Maximum:0.##}x",
             new Point(center.X + radius * .80, card.Bottom - 19.0),
             9.0, muted, FontWeights.SemiBold);
@@ -3299,6 +3302,57 @@ public sealed class AggregateVisualControl : FrameworkElement
                 $"{shortEffect.Minimum:0.#}s",
                 $"{shortEffect.Maximum:0.#}s",
                 new Rect(x, y, secondaryWidth, CompactTrackHeight),
+                text, muted, border, accent, panel);
+        }
+
+        // Extend Consumable Effects below the original drink duration controls.
+        DrawConsumableMedicineEffects(dc, text, muted, border, accent, panel);
+    }
+
+    // Each medicine exposes a raw-strength source knob and an independent
+    // seconds track. Hercules edits both coupled CFG prototypes per control.
+    private void DrawConsumableMedicineEffects(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        var top = ConsumableMedicineTop(ActualWidth);
+        DrawCenteredText(dc, "MEDICINE EFFECTS",
+            new Point(ActualWidth / 2.0, top + 14.0),
+            11.5, text, FontWeights.Bold);
+
+        var entries = new (string Name, string Effect, string Strength, string Duration)[]
+        {
+            ("VINCA", "BLEED RECOVERY", "survival.vincaBleedRecovery", "survival.vincaDuration"),
+            ("HERCULES", "CARRY BONUS", "survival.herculesCarryBonus", "survival.herculesDuration"),
+            ("PSI BLOCK", "PSY RECOVERY", "survival.psiBlockRecovery", "survival.psiBlockDuration")
+        };
+        var columns = ConsumableMedicineColumns(ActualWidth);
+        const double cellWidth = 204.0;
+        const double gap = 12.0;
+        for (var i = 0; i < entries.Length; i++)
+        {
+            var strength = P(entries[i].Strength);
+            var duration = P(entries[i].Duration);
+            if (strength is null || duration is null)
+                continue;
+
+            var row = i / columns;
+            var countInRow = Math.Min(columns, entries.Length - row * columns);
+            var rowWidth = countInRow * cellWidth + (countInRow - 1) * gap;
+            var left = (ActualWidth - rowWidth) / 2.0
+                + (i % columns) * (cellWidth + gap);
+            var rowTop = top + 34.0 + row * (ConsumableMedicineRowHeight + gap);
+
+            DrawCenteredText(dc, entries[i].Name,
+                new Point(left + cellWidth / 2.0, rowTop + 9.0),
+                11.0, text, FontWeights.Bold);
+            DrawSourceKnob(dc, strength, entries[i].Effect,
+                new Rect(left, rowTop + 18.0, cellWidth, 181.0),
+                text, muted, border, accent, panel, rawReadout: true);
+            DrawCompactTrack(dc, duration, "DURATION",
+                $"{duration.CurrentNumber:0}s",
+                $"{duration.Minimum:0}s", $"{duration.Maximum:0}s",
+                new Rect(left, rowTop + 208.0, cellWidth, CompactTrackHeight),
                 text, muted, border, accent, panel);
         }
     }
@@ -5732,8 +5786,21 @@ public sealed class AggregateVisualControl : FrameworkElement
         return CompactGridEnd(benefitsTitle + 25.0, 2, columns) + 14.0;
     }
 
+    private const double ConsumableMedicineRowHeight = 290.0;
+
+    private static int ConsumableMedicineColumns(double width)
+        => width >= 665.0 ? 3 : width >= 440.0 ? 2 : 1;
+
+    private static double ConsumableMedicineTop(double width)
+        => ConsumableDurationTop + ConsumableTimelineHeight(width) + 15.0;
+
     private static double CompactConsumableHeight(double width)
-        => ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;
+    {
+        var columns = ConsumableMedicineColumns(width);
+        var rows = (3 + columns - 1) / columns;
+        return ConsumableMedicineTop(width) + 34.0 +
+            rows * ConsumableMedicineRowHeight + (rows - 1) * 12.0 + 12.0;
+    }
 
     private static double CompactHungerHeight(double width)
     {
@@ -5904,7 +5971,13 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "survival.energyPartialCostDuration",
                 "survival.vodkaEffectDuration",
                 "survival.beerEffectDuration",
-                "survival.magicVodkaEffectDuration"
+                "survival.magicVodkaEffectDuration",
+                "survival.vincaBleedRecovery",
+                "survival.vincaDuration",
+                "survival.herculesCarryBonus",
+                "survival.herculesDuration",
+                "survival.psiBlockRecovery",
+                "survival.psiBlockDuration"
             },
             "SleepingDashboard" => new[]
             {

@@ -370,7 +370,13 @@ public sealed class MainViewModel : ObservableObject
             "survival.energyPartialCostDuration",
             "survival.vodkaEffectDuration",
             "survival.beerEffectDuration",
-            "survival.magicVodkaEffectDuration");
+            "survival.magicVodkaEffectDuration",
+            "survival.vincaBleedRecovery",
+            "survival.vincaDuration",
+            "survival.herculesCarryBonus",
+            "survival.herculesDuration",
+            "survival.psiBlockRecovery",
+            "survival.psiBlockDuration");
 
         WireVisualAggregate(
             "survival.sleepEligibilityThreshold",

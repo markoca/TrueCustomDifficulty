@@ -2057,18 +2057,40 @@ _duration_renderer = (_semantic_source_dir / "AggregateVisualControl.cs").read_t
 for _token in (
     "private static double ConsumableTimelineHeight(double width)",
     "new Rect(17.0, previewTop, width, ConsumableTimelineHeight(ActualWidth))",
-    "=> ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;",
+    "return ConsumableMedicineTop(width) + 34.0 +",
     "var secondary = new ParameterViewModel[][]",
     "shortEffect.CurrentNumber",
     "DrawCompactTrack(dc, shortEffect, caption,",
-    "(waterRegenTime, \"WATER REGEN\")",
-    "(energyFullCostTime, \"ENERGY -100% COST\")",
-    "(energyPartialCostTime, \"ENERGY -30% COST\")",
+    "(waterRegenTime, \"WATER +25% STAMINA EFFECT DURATION\")",
+    "(energyFullCostTime, \"ENERGY -100% STAMINA COST DURATION\")",
+    "(energyPartialCostTime, \"ENERGY -30% STAMINA COST DURATION\")",
 ):
     if _token not in _duration_renderer:
         fail(f"consumable short-duration native control/measurement missing: {_token}")
 if _duration_renderer.count("DrawCompactTrack(dc, shortEffect, caption,") != 1:
     fail("consumable child duration track registration drifted")
+
+# Source-native medicine magnitude/duration contracts; Hercules is coupled.
+_medicine_contract = {
+    "survival.vincaBleedRecovery": (("CinnamonDegenBleeding",), ("ValueMin", "ValueMax"), "10.0"),
+    "survival.vincaDuration": (("CinnamonDegenBleeding",), ("Duration",), "180.0"),
+    "survival.herculesCarryBonus": (("HerculesWeight", "HerculesWeight_Penalty"), ("ValueMin", "ValueMax"), "20.0"),
+    "survival.herculesDuration": (("HerculesWeight", "HerculesWeight_Penalty"), ("Duration",), "300.0"),
+    "survival.psiBlockRecovery": (("PSYBlockerIncreaseRegen",), ("ValueMin", "ValueMax"), "10.0"),
+    "survival.psiBlockDuration": (("PSYBlockerIncreaseRegen",), ("Duration",), "60.0"),
+}
+for _medicine_id, (_protos, _keys, _raw) in _medicine_contract.items():
+    _expected = {(proto, key, _raw) for proto in _protos for key in _keys}
+    _observed = {(p["prototype"], p["key"], p["sourceRaw"])
+                 for p in baseline["editPoints"] if p["parameterId"] == _medicine_id
+                 and p["operation"] == "set"}
+    if _observed != _expected:
+        fail(f"medicine source/coupling drift for {_medicine_id}")
+    if f'"{_medicine_id}"' not in _duration_renderer:
+        fail(f"medicine editor absent from Consumable Mixer: {_medicine_id}")
+if "private static double ConsumableMedicineTop(double width)" not in _duration_renderer or \
+        "rawReadout: true" not in _duration_renderer:
+    fail("medicine native-seconds/strength editor renderer missing")
 # Source-exact seconds constraints: no fixed fake cap or duplicate writer ownership.
 _short_duration_bases = {
     "survival.waterRegenDuration": ("survival.waterEffectDuration", 5.0, 30.0),

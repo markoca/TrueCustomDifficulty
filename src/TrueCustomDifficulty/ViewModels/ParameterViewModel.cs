@@ -459,6 +459,12 @@ public sealed class ParameterViewModel : ObservableObject
         ["survival.vodkaEffectDuration"] = "ConsumableMixer",
         ["survival.beerEffectDuration"] = "ConsumableMixer",
         ["survival.magicVodkaEffectDuration"] = "ConsumableMixer",
+        ["survival.vincaBleedRecovery"] = "ConsumableMixer",
+        ["survival.vincaDuration"] = "ConsumableMixer",
+        ["survival.herculesCarryBonus"] = "ConsumableMixer",
+        ["survival.herculesDuration"] = "ConsumableMixer",
+        ["survival.psiBlockRecovery"] = "ConsumableMixer",
+        ["survival.psiBlockDuration"] = "ConsumableMixer",
 
         ["survival.sleepEligibilityThreshold"] = "SleepingDashboard",
         ["survival.minimumSleepHours"] = "SleepingDashboard",

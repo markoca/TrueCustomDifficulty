@@ -63,7 +63,7 @@ internal static class Program
             var cohort = Catalog.Parameters
                 .Where(p => p.Id.StartsWith("survival.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal).ToArray();
-            Check(cohort.Length == 56, "Survival catalog no longer contains exactly 56 parameters");
+            Check(cohort.Length == 62, "Survival catalog no longer contains exactly 62 parameters");
 
             MasterPenaltyKnobSourceContract();
 
@@ -76,14 +76,14 @@ internal static class Program
                 "Survival catalog-to-live-VM exclusions changed: "
                 + string.Join(", ", unmounted));
             var live = cohort.Where(p => loaded.Contains(p.Id)).ToArray();
-            Check(live.Length == 55, "Expected 55 live Survival source-backed parameters");
+            Check(live.Length == 61, "Expected 61 live Survival source-backed parameters");
 
             var points = Baseline.EditPoints
                 .Where(p => p.ParameterId.StartsWith("survival.", StringComparison.Ordinal))
                 .ToArray();
-            Check(points.Length == 135, "Survival manifest no longer contains 135 source edit points");
+            Check(points.Length == 147, "Survival manifest no longer contains 147 source edit points");
             Check(points.All(p => p.Scope == "baseGame"), "Survival source unexpectedly targets DLC");
-            Check(points.Select(p => p.ParameterId).Distinct().Count() == 56,
+            Check(points.Select(p => p.ParameterId).Distinct().Count() == 62,
                 "Survival manifest-to-catalog parameter inventory differs");
             Check(points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal)
                       .SetEquals(cohort.Select(p => p.Id)),
@@ -129,6 +129,16 @@ internal static class Program
                 new[] { "survival.energyFullCostDuration", "survival.energyPartialCostDuration" },
                 45.0, 0.75, 33.75);
             TestDrinkDurationOverride();
+            TestMedicineTargets();
+            TestCombined("Veteran-Medicine-Independent-Effects", "Veteran", new[]
+            {
+                ("survival.vincaBleedRecovery", 18.0),
+                ("survival.vincaDuration", 265.0),
+                ("survival.herculesCarryBonus", 35.0),
+                ("survival.herculesDuration", 470.0),
+                ("survival.psiBlockRecovery", 16.0),
+                ("survival.psiBlockDuration", 135.0)
+            });
 
             TestCombined("Veteran-Hunger-Fatigue", "Veteran", new[]
             {
@@ -209,6 +219,37 @@ internal static class Program
 
     // One editor-only flag grants every real effect the same 270-second
     // ceiling without synchronizing source values or inventing a CFG boolean.
+    // Every medicine magnitude edits both deterministic Value bounds, and
+    // Hercules keeps its two separate effect SIDs synchronized.
+    private static void TestMedicineTargets()
+    {
+        foreach (var (id, count, vanilla) in new[]
+        {
+            ("survival.vincaBleedRecovery", 2, 10.0),
+            ("survival.vincaDuration", 1, 180.0),
+            ("survival.herculesCarryBonus", 4, 20.0),
+            ("survival.herculesDuration", 2, 300.0),
+            ("survival.psiBlockRecovery", 2, 10.0),
+            ("survival.psiBlockDuration", 1, 60.0)
+        })
+        {
+            var source = Catalog.Parameters.Single(p => p.Id == id);
+            var points = Baseline.EditPoints.Where(p => p.ParameterId == id).ToArray();
+            Check(source.Tab == "survival" && source.Group == "Consumable Effects"
+                && !source.ExposeInUi && points.Length == count
+                && points.All(p => p.Operation == "set"
+                    && p.File == "GameData/EffectPrototypes.cfg"
+                    && Math.Abs(ParseNumber(p.SourceRaw) - vanilla) < 0.000001),
+                "Medicine source mapping drifted: " + id);
+            Check(points.Select(p => p.Prototype + "." + p.Key).Distinct().Count() == count,
+                "Duplicate medicine CFG target for " + id);
+            Check(source.Targets.Select(t => t.Prototype).Distinct().Count()
+                == (id.StartsWith("survival.hercules", StringComparison.Ordinal) ? 2 : 1),
+                "Medicine effect pairing drifted: " + id);
+        }
+        _passed++;
+    }
+
     private static void TestDrinkDurationOverride()
     {
         const string name = "All-Drink-Duration-Override";
