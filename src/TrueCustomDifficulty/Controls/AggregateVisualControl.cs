@@ -305,6 +305,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             && target.Kind == HitKind.Horizontal
             && source.Id == "survival.hungerLowThreshold")
             return;
+        if (Family == "SleepingDashboard"
+            && target.Kind == HitKind.Horizontal
+            && source.Id == "survival.minimumSleepHours")
+            return;
         var range = Math.Max(0.000001, target.VisualMaximum - target.VisualMinimum);
         // The two NPC condition handles share one rail except when they
         // nearly overlap, where both real centers are separated by 7 DIP.
@@ -3082,6 +3086,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
+    // One true integer-hours selector, not an arbitrary 14-way percentage
+    // slider. The other three Sleep System inputs stay native-source tracks.
     private void DrawSleepingDashboard(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -3090,50 +3096,84 @@ public sealed class AggregateVisualControl : FrameworkElement
         var minimumHours = P("survival.minimumSleepHours");
         var healthRestore = P("survival.sleepHealthRestore");
         var staminaRestore = P("survival.sleepStaminaRestore");
-
         DrawHeader(dc, "SLEEP SYSTEM", string.Empty, text, muted, accent);
-        if (threshold is null || minimumHours is null ||
-            healthRestore is null || staminaRestore is null)
+        if (threshold is null || minimumHours is null
+            || healthRestore is null || staminaRestore is null)
         {
             DrawCenteredText(dc, "Sleep settings unavailable.",
                 new Point(ActualWidth / 2.0, 140), 10, muted, FontWeights.Bold);
             return;
         }
 
-        var width = Math.Max(460.0, ActualWidth - 34.0);
-        // The two access rules and the two wake-up benefits are separate CFG
-        // parameters. Keep their native ranges, snapping and Base reference
-        // ticks while presenting only gameplay-relevant information.
-        void SleepSlider(ParameterViewModel parameter, string label, string value,
-            string minimum, string maximum, double top, int index)
-            => DrawCompactTrack(dc, parameter, label, value, minimum, maximum,
-                CompactSlot(top, width, CompactColumns(ActualWidth), index),
-                text, muted, border, accent, panel);
-
-        const double rulesTop = 55.0;
-        SleepSlider(threshold, "SLEEP UNLOCKS AT",
+        var width = Math.Min(740.0, ActualWidth - 34.0);
+        var left = (ActualWidth - width) / 2.0;
+        DrawCompactTrack(dc, threshold, "SLEEP UNLOCKS AT",
             $"{threshold.CurrentNumber:0} FATIGUE PTS",
             $"{threshold.Minimum:0} PTS", $"{threshold.Maximum:0} PTS",
-            rulesTop, 0);
-        SleepSlider(minimumHours, "MINIMUM TIME ASLEEP",
-            $"{minimumHours.CurrentNumber:0.#} HOURS",
-            $"{minimumHours.Minimum:0.#} H", $"{minimumHours.Maximum:0.#} H",
-            rulesTop, 1);
+            new Rect(left, 54.0, width, 82.0),
+            text, muted, border, accent, panel);
 
-        var benefitsTitle = CompactGridEnd(rulesTop, 2,
-            CompactColumns(ActualWidth)) + 21.0;
+        var selector = new Rect(left, 146.0, width, 84.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .72),
+            new Pen(border, .9), selector, 4, 4);
+        DrawText(dc, "MINIMUM HOURS ASLEEP",
+            new Point(left + 11, 154.0), 10.6, text, FontWeights.Bold);
+        var modified = minimumHours.IsValueModifiedFromReference();
+        DrawRightAlignedText(dc, $"{minimumHours.CurrentNumber:0} HOURS",
+            new Point(selector.Right - 11, 152.0),
+            modified ? 13.0 : 11.8, modified ? accent : text,
+            FontWeights.Bold);
+
+        const int hoursCount = 14;
+        const double chipGap = 3.0;
+        var chipWidth = (width - 22.0 - 13.0 * chipGap) / hoursCount;
+        var chipStart = left + 11.0;
+        const double chipY = 185.0;
+        const double chipHeight = 34.0;
+        var firstCenter = chipStart + chipWidth / 2.0;
+        var lastCenter = chipStart + 13.0 * (chipWidth + chipGap) + chipWidth / 2.0;
+        var stepMap = new Rect(firstCenter, chipY, lastCenter - firstCenter, chipHeight);
+        for (var i = 0; i < hoursCount; i++)
+        {
+            var hour = i + 1;
+            var cell = new Rect(chipStart + i * (chipWidth + chipGap),
+                chipY, chipWidth, chipHeight);
+            var selected = Math.Abs(minimumHours.CurrentNumber - hour) < .5;
+            var vanilla = Math.Abs(minimumHours.ReferenceNumber - hour) < .5;
+            var hot = _hoverTarget?.Kind == HitKind.Horizontal
+                && ReferenceEquals(_hoverTarget.Parameter, minimumHours)
+                && _hoverTarget.HitRect.Equals(cell);
+            dc.DrawRoundedRectangle(
+                selected ? CloneWithOpacity(accent, .16) : panel,
+                new Pen(selected ? accent : hot ? CloneWithOpacity(accent, .72) : border,
+                    selected ? 1.9 : 1.0), cell, 3, 3);
+            DrawMixerCentered(dc, hour.ToString(CultureInfo.InvariantCulture),
+                new Point(cell.Left + cell.Width / 2, cell.Top + 9.0),
+                chipWidth - 4.0, 10.7,
+                selected && modified ? accent : text, FontWeights.Bold);
+            if (vanilla)
+                dc.DrawLine(new Pen(muted, 2.0),
+                    new Point(cell.Left + 5.0, cell.Bottom - 3.0),
+                    new Point(cell.Right - 5.0, cell.Bottom - 3.0));
+            AddHorizontalTarget(minimumHours, cell, stepMap,
+                minimumHours.Minimum, minimumHours.Maximum);
+        }
+
         DrawText(dc, "RECOVERY WHEN YOU WAKE UP",
-            new Point(19, benefitsTitle), 11.4, accent, FontWeights.Bold);
-        var benefitsTop = benefitsTitle + 25.0;
-        SleepSlider(healthRestore, "HEALTH RESTORED",
+            new Point(left + 1.0, 247.0), 10.7, accent, FontWeights.Bold);
+        const double gap = 12.0;
+        var column = (width - gap) / 2.0;
+        DrawCompactTrack(dc, healthRestore, "HEALTH RESTORED",
             $"+{healthRestore.CurrentNumber:0.#} HP",
             $"{healthRestore.Minimum:0.#} HP", $"{healthRestore.Maximum:0.#} HP",
-            benefitsTop, 0);
-        SleepSlider(staminaRestore, "STAMINA RESTORED",
+            new Rect(left, 274.0, column, 82.0),
+            text, muted, border, accent, panel);
+        DrawCompactTrack(dc, staminaRestore, "STAMINA RESTORED",
             $"+{staminaRestore.CurrentNumber * 100:0.#}%",
             $"{staminaRestore.Minimum * 100:0.#}%",
             $"{staminaRestore.Maximum * 100:0.#}%",
-            benefitsTop, 1);
+            new Rect(left + column + gap, 274.0, column, 82.0),
+            text, muted, border, accent, panel);
     }
 
     private void DrawRecoveryMeter(
@@ -5448,7 +5488,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "MasterLowHealth" => MasterConditionalHeight(width),
             "MasterRadiationPenalty" => MasterConditionalHeight(width),
             "ConsumableMixer" => CompactConsumableHeight(width),
-            "SleepingDashboard" => CompactSleepHeight(width),
+            "SleepingDashboard" => 370.0,
             "HungerLadder" => CompactHungerHeight(width),
             "StarvationTimeline" => MasterStarvationHeight(width),
             "RepeatedHitBand" => 455.0,
