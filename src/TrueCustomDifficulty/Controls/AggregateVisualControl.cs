@@ -172,8 +172,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "BlastDamageBoard":
                 DrawBlastDamageBoard(dc, text, muted, border, accent, panel);
                 break;
-            case "ServiceCostsBoard":
             case "TraderStockBoard":
+                DrawTraderStockKnobs(dc, text, muted, border, accent, panel);
+                break;
+            case "ServiceCostsBoard":
             case "CouponFlow":
                 DrawEconomyBoard(dc, text, muted, border, accent, panel);
                 break;
@@ -503,6 +505,27 @@ public sealed class AggregateVisualControl : FrameworkElement
                     cardWidth, 80.0),
                 text, muted, border, accent, panel);
         }
+    }
+
+    // Independent native stock multipliers: no suggestion of actual item slots.
+    private void DrawTraderStockKnobs(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawHeader(dc, "TRADER STOCK", "", text, muted, accent);
+        var channels = new (string Id, string Label)[]
+        {
+            ("economy.traderAmmoStock", "AMMO STOCK"),
+            ("economy.medicStock", "MEDIC STOCK")
+        };
+        const double cellWidth = 194.0;
+        const double gap = 12.0;
+        const double top = 49.0;
+        var left = (ActualWidth - (2 * cellWidth + gap)) / 2.0;
+        for (var i = 0; i < channels.Length; i++)
+            DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
+                new Rect(left + i * (cellWidth + gap), top, cellWidth, 181.0),
+                text, muted, border, accent, panel);
     }
 
     private void DrawEconomyCard(
@@ -4754,7 +4777,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile"))
+        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -5592,7 +5615,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "BlastDamageBoard" => 305.0,
             "CouponFlow" => EconomyBoardHeight(width, CouponEconomyChannels.Length),
             "ServiceCostsBoard" => EconomyBoardHeight(width, ServiceEconomyChannels.Length),
-            "TraderStockBoard" => EconomyBoardHeight(width, StockEconomyChannels.Length),
+            "TraderStockBoard" => 242.0,
             "ItemWeightBoard" => EconomyBoardHeight(width, 2),
             "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
             "AnomalyGlobalDamage" => 242.0,
