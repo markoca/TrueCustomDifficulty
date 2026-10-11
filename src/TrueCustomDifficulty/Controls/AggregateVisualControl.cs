@@ -221,7 +221,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrawHumanCombatProfile(dc, text, muted, border, soft, accent, panel);
                 break;
             case "PlayerWeaponProfile":
-                DrawYourWeaponsFaders(dc, text, muted, border, accent, panel);
+                DrawYourWeaponsKnobs(dc, text, muted, border, accent, panel);
                 break;
             case "CoreHealthDashboard":
                 DrawCoreHealthDashboard(dc, text, muted, border, soft, accent, panel);
@@ -288,7 +288,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // All three Equipment rings draw their own matching Combat-style halo.
         // The generic map-center glow would be in the wrong position here.
         if (Family is "EquipmentWearBalance" or "FlycatcherSlowdown"
-            or "AnomalyGlobalDamage" or "AnomalySpecialEffects")
+            or "AnomalyGlobalDamage" or "AnomalySpecialEffects" or "PlayerWeaponProfile")
             return;
         // Crosshair X/Y handles already draw the exact shared glow at their
         // own axes. Avoid a second overlay from their broad plot map rect.
@@ -2025,126 +2025,140 @@ public sealed class AggregateVisualControl : FrameworkElement
             10.4, muted, FontWeights.Normal);
     }
 
-    // Three source-exact tuning lanes: no invented headshot damage formula,
-    // simulated hit chance, or hard-coded weapon-jam probability.
-    // Four independent player-weapon CFG values, including explosions, in a
-    // responsive two-column vertical fader bank beside Human Combat.
-    // Locked Combat layout: exactly two columns and two rows inside the
-    // right-hand Your Weapons section. Never let the generic mixer grid
-    // produce three columns that clip the fourth control.
-    private void DrawYourWeaponsFaders(
+    // Native-source knob trio. Each dial owns one real CFG parameter, with
+    // original range/step and selected-difficulty reference marker. The arc
+    // represents its source value, never simulated damage or jam probability.
+    private const double WeaponKnobStartAngle = 135.0;
+    private const double WeaponKnobSweepAngle = 270.0;
+    private const double WeaponKnobRadius = 47.0;
+
+    private void DrawYourWeaponsKnobs(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "YOUR WEAPONS", "", text, muted, accent);
-        var channels = new[]
+
+        var channels = new (string Id, string Label)[]
         {
             ("combat.playerWeaponDamage", "WEAPON DAMAGE"),
             ("combat.playerHeadshotMultiplier", "HEADSHOT DAMAGE"),
-            ("combat.weaponJamming", "WEAPON JAMMING")
+            ("combat.weaponJamming", "JAM FREQUENCY")
         };
         const double gap = 12.0;
         const double margin = 18.0;
-        var cellWidth = (Math.Max(520.0, ActualWidth) - 2.0 * margin - 2.0 * gap) / 3.0;
-        for (var index = 0; index < channels.Length; index++)
+        const double cardTop = 49.0;
+        const double cardHeight = 181.0;
+        var cellWidth = (ActualWidth - 2.0 * margin - 2.0 * gap) / 3.0;
+        for (var i = 0; i < channels.Length; i++)
         {
-            var channel = channels[index];
-            var rect = new Rect(margin + index * (cellWidth + gap),
-                60.0, cellWidth, 76.0);
-            DrawHorizontalTrackCard(dc, P(channel.Item1), channel.Item2,
-                rect, text, muted, border, accent, panel,
-                hideBaseText: true, combatTypography: true);
+            var card = new Rect(margin + i * (cellWidth + gap),
+                cardTop, cellWidth, cardHeight);
+            DrawWeaponKnob(dc, P(channels[i].Id), channels[i].Label, card,
+                text, muted, border, accent, panel);
         }
-
     }
 
-    private void DrawPlayerWeaponProfile(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
+    private void DrawWeaponKnob(
+        DrawingContext dc, ParameterViewModel? parameter, string label, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        DrawHeader(dc, "YOUR WEAPONS",
-            "",
-            text, muted, accent);
-
-        DrawPlayerWeaponLane(dc, P("combat.playerWeaponDamage"), "BASE HIT DAMAGE",
-            new Rect(16.0, 57.0, Math.Max(480.0, ActualWidth - 32.0), 68.0),
-            text, muted, border, soft, accent, panel);
-        DrawPlayerWeaponLane(dc, P("combat.playerHeadshotMultiplier"), "HEADSHOT MULTIPLIER",
-            new Rect(16.0, 134.0, Math.Max(480.0, ActualWidth - 32.0), 68.0),
-            text, muted, border, soft, accent, panel);
-        DrawPlayerWeaponLane(dc, P("combat.weaponJamming"), "JAM FREQUENCY",
-            new Rect(16.0, 211.0, Math.Max(480.0, ActualWidth - 32.0), 68.0),
-            text, muted, border, soft, accent, panel);
-
-
-    }
-
-    private void DrawPlayerWeaponLane(
-        DrawingContext dc,
-        ParameterViewModel? parameter,
-        string label,
-        Rect card,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
-    {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 3.0, 3.0);
-        DrawText(dc, label, new Point(card.Left + 11.0, card.Top + 7.0),
-            9.5, text, FontWeights.SemiBold);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .32),
+            new Pen(CloneWithOpacity(border, .62), .8), card, 4, 4);
+        DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, card.Top + 19),
+            10.0, text, FontWeights.Bold);
         if (parameter is null)
-        {
-            DrawRightAlignedText(dc, "MISSING CFG PARAMETER",
-                new Point(card.Right - 11.0, card.Top + 7.0),
-                9.5, muted, FontWeights.Normal);
             return;
-        }
 
-        DrawChangedNumbers(dc,
-            $"{parameter.CurrentNumber:0.##}x",
-            new Point(card.Right - 11.0, card.Top + 7.0),
-            10.0, text, accent, FontWeights.Bold,
-            parameter.IsValueModifiedFromReference(), rightAligned: true);
+        var center = new Point(card.Left + card.Width / 2, card.Top + 97.0);
+        var radius = Math.Min(WeaponKnobRadius, (card.Width - 24.0) / 2.0);
+        var range = Math.Max(Epsilon, parameter.Maximum - parameter.Minimum);
+        var position = Math.Clamp((parameter.CurrentNumber - parameter.Minimum) / range, 0.0, 1.0);
+        var reference = Math.Clamp((parameter.ReferenceNumber - parameter.Minimum) / range, 0.0, 1.0);
+        var hovered = _hoverTarget?.Kind == HitKind.Knob
+            && ReferenceEquals(_hoverTarget.Parameter, parameter);
+        var active = parameter.IsControlEnabled;
+        var face = CloneWithOpacity(panel, .96);
 
-        var track = new Rect(card.Left + 15.0, card.Top + 27.0,
-            Math.Max(80.0, card.Width - 30.0), 20.0);
-        var y = track.Top + track.Height / 2.0;
-        var baselineX = ValueToX(parameter.ReferenceNumber,
-            parameter.Minimum, parameter.Maximum, track, reverse: false);
-        var currentX = ValueToX(parameter.CurrentNumber,
-            parameter.Minimum, parameter.Maximum, track, reverse: false);
-
-        dc.DrawLine(new Pen(soft, 3.5),
-            new Point(track.Left, y), new Point(track.Right, y));
-        if (Math.Abs(currentX - baselineX) > 0.5)
+        // Industrial dial face and a 270-degree graduated rail, leaving the
+        // bottom quadrant open so the limits never fight the center readout.
+        dc.DrawEllipse(face, new Pen(CloneWithOpacity(border, .72), 1.2),
+            center, radius - 10, radius - 10);
+        DrawKnobArc(dc, center, radius, WeaponKnobStartAngle, WeaponKnobSweepAngle,
+            new Pen(CloneWithOpacity(border, .95), 6.0));
+        for (var tick = 0; tick <= 10; tick++)
         {
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.7), 4.5),
-                new Point(Math.Min(currentX, baselineX), y),
-                new Point(Math.Max(currentX, baselineX), y));
+            var angle = WeaponKnobStartAngle + tick * WeaponKnobSweepAngle / 10.0;
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, tick % 5 == 0 ? .72 : .36),
+                    tick % 5 == 0 ? 1.6 : 1.0),
+                KnobPoint(center, radius + 7, angle),
+                KnobPoint(center, radius + (tick % 5 == 0 ? 14 : 11), angle));
         }
 
-        dc.DrawLine(new Pen(muted, 1.8),
-            new Point(baselineX, y - 9.0), new Point(baselineX, y + 9.0));
-        dc.DrawEllipse(panel,
-            new Pen(accent, IsSelected(parameter) ? 2.6 : 1.7),
-            new Point(currentX, y), 6.4, 6.4);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+        // Base Preset marker is a small muted notch, never another highlighted
+        // number. Current arc/needle is the only manipulated visual value.
+        var baselineAngle = WeaponKnobStartAngle + WeaponKnobSweepAngle * reference;
+        dc.DrawLine(new Pen(muted, 2.4),
+            KnobPoint(center, radius - 6, baselineAngle),
+            KnobPoint(center, radius + 4, baselineAngle));
+        if (position > Epsilon)
+            DrawKnobArc(dc, center, radius, WeaponKnobStartAngle,
+                position * WeaponKnobSweepAngle,
+                new Pen(CloneWithOpacity(active ? accent : muted, active ? .94 : .35), 6.0));
 
-        // Native range and step are used for hit testing / dragging.
-        AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
-        DrawText(dc, $"{parameter.Minimum:0.##}x",
-            new Point(track.Left, card.Bottom - 16.0),
-            9.0, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
-            new Point(track.Right, card.Bottom - 16.0),
-            9.0, muted, FontWeights.Normal);
+        var angleNow = WeaponKnobStartAngle + position * WeaponKnobSweepAngle;
+        if (hovered)
+            dc.DrawEllipse(CloneWithOpacity(accent, .13), null,
+                center, radius - 11, radius - 11);
+        dc.DrawLine(new Pen(hovered ? Brushes.White : active ? accent : muted,
+                hovered ? 3.0 : 2.4),
+            KnobPoint(center, radius - 8, angleNow),
+            KnobPoint(center, radius + 3, angleNow));
+
+        DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
+            new Point(center.X, center.Y + 3), 15.0,
+            active && parameter.IsValueModifiedFromReference() ? accent : text,
+            FontWeights.Bold);
+        DrawCenteredText(dc, $"{parameter.Minimum:0.##}x",
+            new Point(center.X - radius * .80, card.Bottom - 19.0),
+            9.0, muted, FontWeights.SemiBold);
+        DrawCenteredText(dc, $"{parameter.Maximum:0.##}x",
+            new Point(center.X + radius * .80, card.Bottom - 19.0),
+            9.0, muted, FontWeights.SemiBold);
+
+        if (!active)
+            return;
+
+        var hit = new Rect(center.X - radius - 5, center.Y - radius - 5,
+            2.0 * (radius + 5), 2.0 * (radius + 5));
+        _hitTargets.Add(new HitTarget(parameter, hit, hit, HitKind.Knob,
+            parameter.Minimum, parameter.Maximum, false));
+    }
+
+    private static Point KnobPoint(Point center, double radius, double degrees)
+    {
+        var radians = degrees * Math.PI / 180.0;
+        return new Point(center.X + radius * Math.Cos(radians),
+            center.Y + radius * Math.Sin(radians));
+    }
+
+    private static void DrawKnobArc(
+        DrawingContext dc, Point center, double radius, double startAngle,
+        double sweep, Pen pen)
+    {
+        if (sweep <= Epsilon)
+            return;
+
+        var figure = new PathFigure
+        {
+            StartPoint = KnobPoint(center, radius, startAngle),
+            IsClosed = false,
+            IsFilled = false
+        };
+        figure.Segments.Add(new ArcSegment(
+            KnobPoint(center, radius, startAngle + sweep),
+            new Size(radius, radius), 0.0,
+            sweep > 180.0, SweepDirection.Clockwise, true));
+        dc.DrawGeometry(null, pen, new PathGeometry(new[] { figure }));
     }
 
     // Two independently editable native CFG axes plus two more distinct controls.
@@ -4319,6 +4333,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
+            HitKind.Knob => Cursors.Hand,
             HitKind.HumanJoint or HitKind.HungerJoint or HitKind.FatigueJoint or HitKind.FatigueReloadJoint => Cursors.SizeAll,
             HitKind.Toggle or HitKind.DrinkDurationOverride or HitKind.Choice or HitKind.MixerBaseMarker or HitKind.MixerSelect => Cursors.Hand,
             _ => Cursors.Arrow
@@ -4328,6 +4343,33 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         UpdateTarget(_dragTarget, point);
+        e.Handled = true;
+    }
+
+    protected override void OnMouseWheel(MouseWheelEventArgs e)
+    {
+        base.OnMouseWheel(e);
+        if (Family != "PlayerWeaponProfile")
+            return;
+
+        var target = FindTarget(e.GetPosition(this));
+        if (target is null || target.Kind != HitKind.Knob
+            || !target.Parameter.IsControlEnabled)
+            return;
+
+        Focus();
+        _selectedParameter = target.Parameter;
+        _selectedHitKind = HitKind.Knob;
+        SetHoverTarget(target);
+        RaiseParameterSelected(target.Parameter);
+        var direction = Math.Sign(e.Delta);
+        if (direction == 0)
+            return;
+
+        target.Parameter.CurrentNumber = Snap(target.Parameter,
+            target.Parameter.CurrentNumber + direction * target.Parameter.TickFrequency);
+        _status.ClearTransient();
+        InvalidateVisual();
         e.Handled = true;
     }
 
@@ -4385,6 +4427,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             ? null
             : target.Kind switch
             {
+                HitKind.Knob => $"{target.Parameter.Label}\nTurn around the dial or scroll to adjust · Right-click = Base Preset",
                 HitKind.Toggle => $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset",
                 HitKind.DrinkDurationOverride =>
                     "Override Drink Duration Limits\nOFF: each effect has its normal maximum. ON: all eight durations may reach 270 seconds independently.\nRight-click resets this checkbox.",
@@ -4637,6 +4680,31 @@ public sealed class AggregateVisualControl : FrameworkElement
             d.CurrentNumber = Snap(d, d.Minimum + y * (d.Maximum - d.Minimum));
             EnforceFamilyConstraints(h);
             EnforceFamilyConstraints(d);
+            _status.ClearTransient();
+            InvalidateVisual();
+            return;
+        }
+
+        // Dial edits directly by pointer angle, unlike rectangular X/Y bars.
+        // The lower 90-degree gap snaps to its nearest end stop. Clicking
+        // the center selects a knob without changing its configured value.
+        if (target.Kind == HitKind.Knob)
+        {
+            var center = new Point(target.MapRect.Left + target.MapRect.Width / 2,
+                target.MapRect.Top + target.MapRect.Height / 2);
+            var dx = point.X - center.X;
+            var dy = point.Y - center.Y;
+            if (dx * dx + dy * dy < 20.0 * 20.0)
+                return;
+
+            var angle = Math.Atan2(dy, dx) * 180.0 / Math.PI;
+            var clockwise = (angle - WeaponKnobStartAngle + 360.0) % 360.0;
+            var normalized = clockwise > WeaponKnobSweepAngle
+                ? (clockwise < 315.0 ? 1.0 : 0.0)
+                : clockwise / WeaponKnobSweepAngle;
+            var value = target.VisualMinimum + normalized *
+                (target.VisualMaximum - target.VisualMinimum);
+            target.Parameter.CurrentNumber = Snap(target.Parameter, value);
             _status.ClearTransient();
             InvalidateVisual();
             return;
@@ -5133,7 +5201,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "EquipmentWearBalance" => EquipmentWearBoardHeight(width),
             "PsyPhantomPressure" => 465.0,
             "HumanCombatProfile" => 465.0,
-            "PlayerWeaponProfile" => 169.0,
+            "PlayerWeaponProfile" => 242.0,
             "CoreHealthDashboard" => 348.0,
             "SevereFatiguePenaltyBoard" => MasterCardBankHeight(width, 5),
             "MasterMedicalHealing" => MasterCardBankHeight(width, 3),
@@ -5414,6 +5482,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         Horizontal,
         Vertical,
+        Knob,
         HumanJoint,
         HungerJoint,
         FatigueJoint,
