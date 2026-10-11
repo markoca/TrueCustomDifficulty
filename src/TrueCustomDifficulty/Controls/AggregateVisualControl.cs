@@ -2990,7 +2990,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         EffectSection(
-            new Rect(frame.Left + 7.0, sectionTop, sectionWidth, sectionHeight),
+            new Rect(frame.Left + 12.0, sectionTop, sectionWidth, sectionHeight),
             "INSTANT STAMINA",
             new (string, double, double, ParameterViewModel, bool)[]
             {
@@ -2999,7 +2999,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ("LIMITED ENERGY", 100.0, 200.0, burst, false)
             });
         EffectSection(
-            new Rect(frame.Left + 17.0 + sectionWidth, sectionTop,
+            new Rect(frame.Left + 22.0 + sectionWidth, sectionTop,
                 sectionWidth, sectionHeight),
             "SUSTAINED EFFECTS",
             new (string, double, double, ParameterViewModel, bool)[]
