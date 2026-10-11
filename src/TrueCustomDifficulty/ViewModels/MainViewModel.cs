@@ -465,8 +465,11 @@ public sealed class MainViewModel : ObservableObject
             "equipment.ammoWeight",
             "equipment.consumableWeight");
 
-        // Four separate Anomalies panels preserve all 17 original source
-        // parameters and independent R/right-click reset scopes.
+        // Global damage is edited inside the Individual Anomaly Damage radar
+        // alongside eleven independent source controls. Keep this legacy
+        // aggregate source registered for state/provenance, but its standalone
+        // visual anchor is hidden in ParameterViewModel.IsControlVisible.
+        // Flycatcher and Anomaly Special Effects remain separate.
         WireVisualAggregate("environment.anomalyDamage", "environment.anomalyDamage");
         WireVisualAggregate(
             "environment.flycatcherMovementSpeed",
