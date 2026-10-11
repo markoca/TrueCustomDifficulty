@@ -1414,7 +1414,7 @@ _economy_coupon_contract = (
     'P("economy.startingMoney")',
     'P("economy.mainQuestReward")',
     'P("economy.sideQuestReward")',
-    'DrawCouponCounter(dc, P("economy.startingMoney")',
+    'DrawStartingCouponsRail(dc, P("economy.startingMoney")',
     'AddHorizontalTarget(coupons,',
     'coupons.CurrentNumber.ToString("N0", CultureInfo.InvariantCulture)',
     'new Rect(left, 175.0, cardWidth, 84.0)',
