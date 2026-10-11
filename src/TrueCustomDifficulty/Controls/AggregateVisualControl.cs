@@ -4688,15 +4688,15 @@ public sealed class AggregateVisualControl : FrameworkElement
                     or HitKind.CouponIncrease or HitKind.CouponValue)
                 && couponTarget.Parameter.IsControlEnabled)
             {
-                var direction = Math.Sign(e.Delta);
-                if (direction == 0) return;
+                var couponDirection = Math.Sign(e.Delta);
+                if (couponDirection == 0) return;
                 Focus();
                 _selectedParameter = couponTarget.Parameter;
                 _selectedHitKind = HitKind.CouponValue;
                 RaiseParameterSelected(couponTarget.Parameter);
                 couponTarget.Parameter.CurrentNumber = Snap(couponTarget.Parameter,
                     couponTarget.Parameter.CurrentNumber
-                    + direction * couponTarget.Parameter.TickFrequency);
+                    + couponDirection * couponTarget.Parameter.TickFrequency);
                 _status.ClearTransient();
                 InvalidateVisual();
                 e.Handled = true;
