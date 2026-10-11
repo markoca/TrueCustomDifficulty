@@ -1110,6 +1110,12 @@ public sealed class ParameterViewModel : ObservableObject
             "environment.diamondBleeding" => $"{CurrentNumber:0.#} bleed pts",
             "environment.psyAnomalyIntensity" => Times(CurrentNumber, "intensity"),
 
+            // Medicine strengths are concrete bonuses shown in the game,
+            // not x-vanilla multipliers and not speculative rates per second.
+            "survival.vincaBleedRecovery" => $"+{CurrentNumber:0} bleed pts",
+            "survival.herculesCarryBonus" => $"+{CurrentNumber:0} kg carry",
+            "survival.psiBlockRecovery" => $"+{CurrentNumber:0} psi pts",
+
             // Master-only survival penalties.
             "survival.starvationStaminaDrain" => ExtraPercent(CurrentNumber, "stamina cost"),
             "survival.starvationDamage" => $"{CurrentNumber:0.#} HP/tick",

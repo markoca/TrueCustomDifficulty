@@ -2433,7 +2433,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawingContext dc, ParameterViewModel? parameter, string label, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel,
         bool percentageReadout = false, bool rateReadout = false,
-        int percentageSign = 0, bool rawReadout = false)
+        int percentageSign = 0, bool rawReadout = false,
+        string? nativeUnit = null)
     {
         // Frameless shared knob: preserve dial, title, steps, values and hit area.
         DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, card.Top + 19),
@@ -2518,14 +2519,15 @@ public sealed class AggregateVisualControl : FrameworkElement
         var modified = active && parameter.IsValueModifiedFromReference();
         string Percent(double value) =>
             $"{(percentageSign > 0 ? "+" : percentageSign < 0 ? "−" : "")}{value * 100.0:0.#}%";
-        // RECOVERY has a rate unit and a much smaller magnitude than the
-        // multipliers. Keep the numeric readout inside the dial and put PTS/S
-        // on its own small line so both remain readable at compact widths.
+        // Source-native rates and medicine amounts display the actual stat
+        // value plus its physical/gameplay unit, never a fictitious 1x scalar.
+        // A two-line center keeps both readable inside the compact dial.
         var currentLabel = rateReadout ? $"{parameter.CurrentNumber:0.00}"
             : percentageReadout ? Percent(parameter.CurrentNumber)
-            : rawReadout ? $"{parameter.CurrentNumber:0.#}"
-            : $"{parameter.CurrentNumber:0.##}x";
-        var currentTop = center.Y + (rateReadout ? -4.0 : 3.0);
+            : rawReadout
+                ? $"{(nativeUnit is not null && parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber:0.#}"
+                : $"{parameter.CurrentNumber:0.##}x";
+        var currentTop = center.Y + (rateReadout || nativeUnit is not null ? -4.0 : 3.0);
         if (percentageSign != 0)
         {
             // In the two Master signed-percentage dials, only the editable
@@ -2553,6 +2555,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             DrawCenteredText(dc, "PTS/S",
                 new Point(center.X, center.Y + 16.0),
                 9.0, muted, FontWeights.SemiBold);
+        else if (nativeUnit is not null)
+            DrawCenteredText(dc, nativeUnit,
+                new Point(center.X, center.Y + 16.0),
+                8.3, muted, FontWeights.SemiBold);
         DrawCenteredText(dc,
             rateReadout ? $"{parameter.Minimum:0.00}"
                 : percentageReadout ? Percent(parameter.Minimum)
@@ -3263,19 +3269,23 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Position below the whole duration chart, including short effects.
         // MeasureOverride and OnRender share the same responsive geometry.
         var medicineKnobTop = ConsumableMedicineKnobTop(ActualWidth);
-        // Three independently editable raw medicine strength knobs; durations
-        // remain editable only inside the combined chart directly above.
-        DrawSourceKnob(dc, vincaStrength, "VINCA BLEED",
+        // Native benefits, not relative sliders: +bleed-recovery points,
+        // +kilograms and +psi-protection points. Keep the amount and its
+        // unit centered, with a changed-only gold number and neutral unit.
+        DrawSourceKnob(dc, vincaStrength, "VINCA BLEED REGEN",
             new Rect(knobLeft, medicineKnobTop, knobWidth, 181.0),
-            text, muted, border, accent, panel, rawReadout: true);
+            text, muted, border, accent, panel,
+            rawReadout: true, nativeUnit: "BLEED PTS");
         DrawSourceKnob(dc, herculesStrength, "HERCULES CARRY",
             new Rect(knobLeft + knobWidth + knobGap, medicineKnobTop,
                 knobWidth, 181.0),
-            text, muted, border, accent, panel, rawReadout: true);
-        DrawSourceKnob(dc, psiStrength, "PSI BLOCK",
+            text, muted, border, accent, panel,
+            rawReadout: true, nativeUnit: "KG");
+        DrawSourceKnob(dc, psiStrength, "PSI BLOCK PROTECTION",
             new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
                 medicineKnobTop, knobWidth, 181.0),
-            text, muted, border, accent, panel, rawReadout: true);
+            text, muted, border, accent, panel,
+            rawReadout: true, nativeUnit: "PSI PTS");
 
     }
 

@@ -1,5 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-11 — Medicine knobs show actual game-effect units (current)
+
+In **Survival → Consumable Effects**, the three bottom medicine strength knobs must display concrete **source-native bonuses**, never `x`, vanilla percentages or implied regeneration per-second rates. `VINCA BLEED REGEN` displays **+10 BLEED PTS** by default (native source 10, range 0–30, step 1); `HERCULES CARRY` displays **+20 KG** (native 20, range 0–60, step 1); `PSI BLOCK PROTECTION` displays **+10 PSI PTS** (native 10, range 0–30, step 1). Center the signed numeric amount inside each existing 270-degree dial and its muted, smaller unit on one line below the number. Only modified **numbers** become yellow; units and reference ticks remain neutral. The existing min/max scale endpoints stay compact. Do not add text cards, second controls or alter the graph placement.
+
+These are the effect **amounts** exposed by the game's consumable descriptions: Vinca's bleeding regeneration, Hercules' additional carry kilograms and Psi Block's psi protection. Source IDs remain `CinnamonDegenBleeding`, both paired `HerculesWeight` effects and `PSYBlockerIncreaseRegen`. Setting +20 KG writes 20 to **both** Hercules effects, not 40 or a percentage. For the bleeding and psi effect, game-facing +10 points does **not** assert a particular damage/healing tick frequency or rate per second; that runtime detail remains unverified. Preserve all original `ValueMin/ValueMax`, duration, `KeepNew`, preset and right-click reset semantics. `CurrentDisplay`, catalog rationale, visual controls and production regression contracts must agree on the units.
+
+
 ### 2026-10-11 — Consumable Effects: compact knobs below duration graph (current)
 
 **Survival → Consumable Effects:** Delete the entire passive `LIVE EFFECT PREVIEW` stamina graph and its obsolete renderer. Keep the existing three native drink-strength knobs (Instant Stamina, Water Buff, Energy Regen) together at Y=53 DIP, preserving their CFG/preset mappings and interactions. Put the **single shared `EFFECT DURATION / SECONDS` frame immediately below** at Y=250 DIP, with the five existing drink duration lanes on their 0–270 s clock, three real medicine lanes (Vinca, Hercules, Psi Block) on an independent, labeled 0–900 s clock **within the same frame**, and all three original short Water/Energy duration tracks at the foot of that frame. Existing duration step/limit rules and draggable targets remain unchanged; the drink-only `OVERRIDE LIMITS` checkbox never caps medicine effects.

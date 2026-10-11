@@ -2704,13 +2704,14 @@
       "tab": "survival",
       "group": "Consumable Effects",
       "label": "Vinca Bleed Recovery",
-      "description": "Vinca/Cinnamon ongoing bleeding-recovery magnitude",
+      "description": "Vinca increases bleeding recovery by the shown number of bleed points while its effect lasts.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
         "primary": "raw",
         "rawFormat": "0",
-        "valueLabel": "Effect magnitude"
+        "valueLabel": "Bleed regeneration bonus",
+        "unit": "bleed pts"
       },
       "vanilla": {
         "All": 10
@@ -2739,8 +2740,8 @@
           "Verified authored CFG default 10; gameplay scaling still requires runtime validation."
         ]
       },
-      "rationale": "Vinca/Cinnamon ongoing bleeding-recovery magnitude",
-      "logic": "Original source strength 10; edits source magnitude directly without inventing percentages.",
+      "rationale": "Vinca's game-facing bleeding regeneration bonus, +10 bleed points by default. The exact effect tick/rate is not inferred from this source field.",
+      "logic": "Edits CinnamonDegenBleeding ValueMin and ValueMax directly in bleed-recovery points; the original +10 is not a multiplier.",
       "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
       "exposeInUi": false
     },
@@ -2795,13 +2796,14 @@
       "tab": "survival",
       "group": "Consumable Effects",
       "label": "Hercules Carry Bonus",
-      "description": "Linked inventory-weight and weight-penalty magnitude",
+      "description": "Hercules temporarily grants the shown additional kilograms of carry capacity and adjusts the linked weight-penalty effect.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
         "primary": "raw",
         "rawFormat": "0",
-        "valueLabel": "Effect magnitude"
+        "valueLabel": "Extra carry capacity",
+        "unit": "kg"
       },
       "vanilla": {
         "All": 20
@@ -2838,8 +2840,8 @@
           "Two separate effect prototypes share the same direct value; they are not additive."
         ]
       },
-      "rationale": "Linked inventory-weight and weight-penalty magnitude",
-      "logic": "Original source strength 20; edits source magnitude directly without inventing percentages.",
+      "rationale": "Hercules grants +20 kg of carry capacity by default. Its two linked game effects share one +kg setting; they are not added to make +40 kg.",
+      "logic": "Edits HerculesWeight and HerculesWeight_Penalty ValueMin and ValueMax directly as the same extra kilogram amount.",
       "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
       "exposeInUi": false
     },
@@ -2902,13 +2904,14 @@
       "tab": "survival",
       "group": "Consumable Effects",
       "label": "Psi Block Recovery",
-      "description": "Psi-point recovery magnitude, not psi armor",
+      "description": "Psi Block increases the displayed psi protection by the shown number of psi points for the effect duration.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
         "primary": "raw",
         "rawFormat": "0",
-        "valueLabel": "Effect magnitude"
+        "valueLabel": "Psi protection points",
+        "unit": "psi pts"
       },
       "vanilla": {
         "All": 10
@@ -2937,8 +2940,8 @@
           "Verified authored CFG default 10; gameplay scaling still requires runtime validation."
         ]
       },
-      "rationale": "Psi-point recovery magnitude, not psi armor",
-      "logic": "Original source strength 10; edits source magnitude directly without inventing percentages.",
+      "rationale": "Psi Block has a +10 psi-protection point game-facing bonus by default (CFG DegenPsyPoints). This is not a percentage or an inferred per-second rate.",
+      "logic": "Edits PSYBlockerIncreaseRegen ValueMin and ValueMax directly in the game's displayed psi-protection points, not a multiplier.",
       "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
       "exposeInUi": false
     },

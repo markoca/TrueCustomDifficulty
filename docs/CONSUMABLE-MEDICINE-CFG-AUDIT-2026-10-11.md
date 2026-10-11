@@ -4,7 +4,7 @@
 
 User-supplied `STALKER2-GameData-CFG(8).zip`, specifically `GameData/ItemPrototypes.cfg` and `GameData/EffectPrototypes.cfg`. This began as a **source mapping / UI candidate audit**. The six verified source controls have since been implemented in the catalog, production CFG writer and Survival UI. It is **not** an in-game runtime acceptance report. The archive has **17** top-level `{refkey=TemplateConsumable}` item definitions, including GuitarUsable (no authored effects).
 
-Keep distinctions between (1) an item binding to one or more named effect prototype SIDs, (2) the prototype's **raw source type/value/duration**, and (3) the in-game resulting quantity. Do not present source 10 as “10 HP/s”, “10 psi protection points per second” or “10%” without runtime proof. For a shared item, do not count paired effects as additive stacks.
+Keep distinctions between (1) an item binding to one or more named effect prototype SIDs, (2) the prototype's **raw source type/value/duration**, and (3) the in-game resulting quantity. The game's consumable item descriptions corroborate Vinca **+10 bleeding regeneration**, Psi Block **+10 psi protection**, and Hercules **+20 kg** extra carry capacity. The UI displays these as source-native point/kg **amounts**, not abstract multipliers. Do not infer “10 HP/s”, “10 psi points per second”, effect-tick frequencies or percentages from this. For a shared item, do not count paired effects as additive stacks.
 
 ### Focused item-to-effect ownership
 
@@ -24,11 +24,11 @@ The [Gamer Guides medicine item database](https://earth.gamerguides.com/stalker-
 
 | Intended destination | Compact control label | Exact native source field(s) written | Vanilla | Coupling / safeguards |
 |---|---|---|---:|---|
-| Health → medical effects | **BLEED RECOVERY STRENGTH** | `CinnamonDegenBleeding.ValueMin` and `ValueMax` | 10 | Both bounds change as a single value; never adjust bandage's instant bleed treatment. Native output unit not yet calibrated by runtime. |
+| Survival → Consumable Effects | **VINCA BLEED REGEN (+10 BLEED PTS)** | `CinnamonDegenBleeding.ValueMin` and `ValueMax` | 10 | Both bounds change as a single value; never adjust bandage's instant bleed treatment. The in-game display specifies +10 bleeding regeneration; actual tick cadence remains unverified. |
 | Health → medical effects | **BLEED RECOVERY DURATION** | `CinnamonDegenBleeding.Duration` | 180 s | Independent duration; maintain `KeepNew` / item SID. |
-| Survival or Health → medical effects | **PSY RECOVERY STRENGTH** | `PSYBlockerIncreaseRegen.ValueMin` and `ValueMax` | 10 | Both bounds in lockstep. Avoid labeling as “PSY PROTECTION %”. |
+| Survival → Consumable Effects | **PSI BLOCK PROTECTION (+10 PSI PTS)** | `PSYBlockerIncreaseRegen.ValueMin` and `ValueMax` | 10 | Both bounds in lockstep. The game's visible effect is +10 psi protection; no % or per-second claim. |
 | Same section | **PSY BLOCK DURATION** | `PSYBlockerIncreaseRegen.Duration` | 60 s | Native seconds, no new protection/resistance field. |
-| Survival / carrying | **HERCULES CARRY BONUS** | `HerculesWeight.ValueMin/ValueMax` **and** `HerculesWeight_Penalty.ValueMin/ValueMax` | 20 per effect | **Atomic coupled writer** on all four scalar leaves; display **one** player knob, not two independent effect strengths; avoid misrepresenting +40 carry weight. |
+| Survival → Consumable Effects | **HERCULES CARRY (+20 KG)** | `HerculesWeight.ValueMin/ValueMax` **and** `HerculesWeight_Penalty.ValueMin/ValueMax` | 20 per effect | **Atomic coupled writer** on all four scalar leaves; display **one** player knob, not two independent effect strengths; avoid misrepresenting +40 carry weight. |
 | Same section | **HERCULES DURATION** | `HerculesWeight.Duration` **and** `HerculesWeight_Penalty.Duration` | 300 s each | Write both durations together. Never modify base maximum carry weight. |
 
 **Current implementation:** three frameless raw-strength knobs **below the shared Effect Duration graph** in the existing Consumable Mixer, replacing the redundant drink-stamina Live Effect Preview area. Vinca, Hercules and Psi Block each occupy an independent additional lane inside the **same** duration frame below its five existing drink lanes. Original drink lanes use 0–270s; medicine lanes share their own labeled 0–900s ruler so values remain physically honest and useful to edit. There are **no standalone medicine duration cards**. Vinca: 0–30 raw strength (step 1), 0–540s duration (step 5); Hercules: 0–60 / 0–900s; Psi Block: 0–30 / 0–300s. `MainViewModel` explicitly instantiates all six hidden aggregate members, fixing the previous empty-controls bug. Hercules updates both effect prototypes and deterministic `ValueMin/ValueMax` together; duration edits update both `Duration` fields. Do not invent pill counts, percent resistance or additive 40-point carry benefit. CFG/preset mappings have static tests; game runtime remains unverified.
@@ -46,6 +46,13 @@ Full top-level item inventory from the supplied `TemplateConsumable` declaration
 | Other | `GuitarUsable` | no `EffectPrototypeSIDs` in its item block | No difficulty-value slider warranted from this item record. |
 
 Additional source details: drink `Water` has `WaterStamina2` `Stamina` 25% / 5s, `WaterStaminaInstant` 38%, `WaterStaminaPerAction1` SPDrain -10% / 30s. `Energetic` has a 200% regen source / 45s and independent -30% / 15s, -100% / 5s action-cost effects; its other tolerance/overuse mechanics should be audited as a separate subsystem. `Vodka` and `Beer` both have individual `Drunkness`, antirad, hunger, stamina-cost and psi-point effects; current UI coverage must be compared by **prototype SID**, not simply by item display name.
+
+### Game-facing effect amounts and evidence
+
+- [Vinca item effect](https://earth.gamerguides.com/stalker-2-heart-of-chornobyl/database/consumables/medicine): game-facing +10 bleeding regeneration, 180-second duration.
+- [Psi Block item effect](https://game8.co/games/STALKER-2-Heart-of-Chornobyl/archives/485928): game-facing +10 psi protection, 60-second duration.
+- [Hercules carrying benefit](https://www.gamespot.com/gallery/stalker-2-increase-carry-weight-encumbrance-guide/2900-5967/): +20 kg carrying capacity, 300-second duration.
+- These sources support the **amount/unit shown to players**. They do not establish internal regeneration/tick cadence. The exact CFG writer still uses the audited `ValueMin/ValueMax` fields.
 
 ### Runtime safety and acceptance criteria
 

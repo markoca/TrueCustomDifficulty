@@ -2097,11 +2097,27 @@ if ("private static double ConsumableMedicineKnobTop(double width)" not in _dura
     or "private const double ConsumableDurationTop = 250.0;" not in _duration_renderer
     or "medicineLanes = new (ParameterViewModel Source, string Label)[]" not in _duration_renderer
     or "medicineMaximumSeconds = 900.0" not in _duration_renderer
-    or "DrawSourceKnob(dc, vincaStrength, \"VINCA BLEED\"" not in _duration_renderer
+    or "DrawSourceKnob(dc, vincaStrength, \"VINCA BLEED REGEN\"" not in _duration_renderer
     or "DrawSourceKnob(dc, herculesStrength, \"HERCULES CARRY\"" not in _duration_renderer
-    or "DrawSourceKnob(dc, psiStrength, \"PSI BLOCK\"" not in _duration_renderer
+    or "DrawSourceKnob(dc, psiStrength, \"PSI BLOCK PROTECTION\"" not in _duration_renderer
     or "DrawConsumableMedicineEffects(" in _duration_renderer):
     fail("medicine strength knob and integrated 8-lane duration chart contract missing")
+# The source-native amount is displayed as real gamer-facing units,
+# not relative multiplier / percent or an unverified per-second rate.
+_native_medicine_units = {
+    "survival.vincaBleedRecovery": ("bleed pts", "BLEED PTS", "VINCA BLEED REGEN"),
+    "survival.herculesCarryBonus": ("kg", "KG", "HERCULES CARRY"),
+    "survival.psiBlockRecovery": ("psi pts", "PSI PTS", "PSI BLOCK PROTECTION"),
+}
+for _pid, (_unit, _face, _title) in _native_medicine_units.items():
+    if (next(p for p in parameters if p["id"] == _pid)["display"].get("unit") != _unit
+        or f'nativeUnit: "{_face}"' not in _duration_renderer
+        or f'DrawSourceKnob(dc, ' not in _duration_renderer
+        or f'"{_title}"' not in _duration_renderer):
+        fail(f"medicine native points/kg UI unit contract drifted: {_pid}")
+if ("else if (nativeUnit is not null)" not in _duration_renderer
+    or "parameter.CurrentNumber > Epsilon" not in _duration_renderer):
+    fail("medicine compact dial no longer displays signed values with their own source-native units")
 # Source-exact seconds constraints: no fixed fake cap or duplicate writer ownership.
 _short_duration_bases = {
     "survival.waterRegenDuration": ("survival.waterEffectDuration", 5.0, 30.0),
@@ -2917,10 +2933,13 @@ for _required in (
     if _required not in _consumer_durations:
         _consumer_errors.append(f"duration lane missing: {_required}")
 for _required in (
-    'DrawSourceKnob(dc, vincaStrength, "VINCA BLEED",',
+    'DrawSourceKnob(dc, vincaStrength, "VINCA BLEED REGEN",',
     'DrawSourceKnob(dc, herculesStrength, "HERCULES CARRY",',
-    'DrawSourceKnob(dc, psiStrength, "PSI BLOCK",',
+    'DrawSourceKnob(dc, psiStrength, "PSI BLOCK PROTECTION",',
     'rawReadout: true',
+    'nativeUnit: "BLEED PTS"',
+    'nativeUnit: "KG"',
+    'nativeUnit: "PSI PTS"',
 ):
     if _required not in _consumer_medicines:
         _consumer_errors.append(f"medicine knob missing below effects: {_required}")

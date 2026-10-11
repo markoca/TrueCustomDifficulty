@@ -225,14 +225,14 @@ internal static class Program
     {
         var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
         var loaded = vm.AllParameters.ToDictionary(p => p.Id, StringComparer.Ordinal);
-        foreach (var (id, count, vanilla) in new[]
+        foreach (var (id, count, vanilla, playerValue) in new[]
         {
-            ("survival.vincaBleedRecovery", 2, 10.0),
-            ("survival.vincaDuration", 1, 180.0),
-            ("survival.herculesCarryBonus", 4, 20.0),
-            ("survival.herculesDuration", 2, 300.0),
-            ("survival.psiBlockRecovery", 2, 10.0),
-            ("survival.psiBlockDuration", 1, 60.0)
+            ("survival.vincaBleedRecovery", 2, 10.0, "+10 bleed pts"),
+            ("survival.vincaDuration", 1, 180.0, "180 seconds"),
+            ("survival.herculesCarryBonus", 4, 20.0, "+20 kg carry"),
+            ("survival.herculesDuration", 2, 300.0, "300 seconds"),
+            ("survival.psiBlockRecovery", 2, 10.0, "+10 psi pts"),
+            ("survival.psiBlockDuration", 1, 60.0, "60 seconds")
         })
         {
             var source = Catalog.Parameters.Single(p => p.Id == id);
@@ -244,6 +244,10 @@ internal static class Program
                 && !live.IsControlVisible
                 && Math.Abs(live.ReferenceNumber - vanilla) < 0.000001,
                 "Medicine source not mounted in live ConsumableMixer: " + id);
+            if (id.EndsWith("Recovery", StringComparison.Ordinal)
+                || id.EndsWith("CarryBonus", StringComparison.Ordinal))
+                Check(live.CurrentDisplay == playerValue,
+                    "Medicine player-facing units are not source-native: " + id);
             Check(source.Tab == "survival" && source.Group == "Consumable Effects"
                 && !source.ExposeInUi && points.Length == count
                 && points.All(p => p.Operation == "set"
