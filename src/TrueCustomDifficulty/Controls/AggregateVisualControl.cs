@@ -1535,24 +1535,25 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(18.0, Family == "PhysicalLimits" ? 265.0 : 228.0));
     }
 
-    // Approved Stamina wireframe: two independent native 0..2x/0..3x water
-    // drain sources in the same compact two-card anatomy as Stamina & Movement.
+    // Matched twin native multipliers: exact Core Health/Core Stamina
+    // primary ruler chrome, not two smaller generic horizontal-track cards.
+    // The linked Medium <= Deep constraint lives in ParameterViewModel.
     private void DrawWaterStaminaBoard(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "WATER STAMINA DRAIN", "", text, muted, accent);
         var width = Math.Max(1.0, ActualWidth - 32.0);
-        const double gap = 10.0;
+        const double gap = 12.0;
         var cell = (width - gap) / 2.0;
-        DrawHorizontalTrackCard(dc, P("stamina.waterMediumDrain"), "MEDIUM WATER",
-            new Rect(16.0, 53.0, cell, 72.0),
-            text, muted, border, accent, panel,
-            pairedValueFormatting: true, hideBaseText: true);
-        DrawHorizontalTrackCard(dc, P("stamina.waterStrongDrain"), "DEEP WATER",
-            new Rect(16.0 + cell + gap, 53.0, cell, 72.0),
-            text, muted, border, accent, panel,
-            pairedValueFormatting: true, hideBaseText: true);
+        if (P("stamina.waterMediumDrain") is { } medium)
+            DrawCoreResourceRuler(dc, medium, "MEDIUM WATER", "x",
+                new Rect(16.0, 51.0, cell, 105.0),
+                text, muted, border, accent, panel);
+        if (P("stamina.waterStrongDrain") is { } deep)
+            DrawCoreResourceRuler(dc, deep, "DEEP WATER", "x",
+                new Rect(16.0 + cell + gap, 51.0, cell, 105.0),
+                text, muted, border, accent, panel);
     }
 
     // Unified first Stamina card: four native CFG tracks, no redundant subtitle/footer.
@@ -2298,8 +2299,12 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var active = parameter.IsControlEnabled;
         var modified = active && parameter.IsValueModifiedFromReference();
-        var value = unit is "HP" or "SP"
-            ? $"{parameter.CurrentNumber:0} {unit}" : FriendlyValue(parameter);
+        var value = unit switch
+        {
+            "HP" or "SP" => $"{parameter.CurrentNumber:0} {unit}",
+            "x" => $"{parameter.CurrentNumber:0.##}x",
+            _ => FriendlyValue(parameter)
+        };
         var valueText = CreateText(value, 19.0, active ? text : muted,
             FontWeights.Bold, Math.Max(1.0, card.Width - 30.0));
         if (modified)
@@ -2355,10 +2360,12 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var minValue = unit is "HP" or "SP" ? $"{parameter.Minimum:0}" : FormatCompact(parameter.Minimum);
         var maxValue = unit is "HP" or "SP" ? $"{parameter.Maximum:0}" : FormatCompact(parameter.Maximum);
-        DrawText(dc, $"{minValue} {unit}",
+        var leftBound = unit == "x" ? $"{minValue}x" : $"{minValue} {unit}";
+        var rightBound = unit == "x" ? $"{maxValue}x" : $"{maxValue} {unit}";
+        DrawText(dc, leftBound,
             new Point(track.Left, card.Bottom - 20.0),
             10.4, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, $"{maxValue} {unit}",
+        DrawRightAlignedText(dc, rightBound,
             new Point(track.Right, card.Bottom - 20.0),
             10.4, muted, FontWeights.Normal);
     }
@@ -5641,7 +5648,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
             "PhysicalLimits" => 335.0,
             "StaminaCore" => 382.0,
-            "MutantCombatPressure" or "WaterStaminaPressure" => 149.0,
+            "MutantCombatPressure" => 149.0,
+            "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => 242.0,
             "PsyPhantomPressure" => 378.0,
