@@ -1361,12 +1361,19 @@ elif not _economy_doc.exists():
 else:
     note("economy deep audit locked: 17 visible controls / 12 confirmed + 5 runtime-gated; Item Price Scalers aggregated; 405 direct edit points + trader minimum buy-condition special writer; repair ordering and aggregate surfaces verified")
 
+# Economy dashboard approval contract, 2026-10-11. The seven-control
+# baseline, native CFG writer surface and pre-existing responsive layouts
+# must remain intact while the Economy-only grouping is compacted.
+_economy_aggregate = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+_economy_parameter_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+_economy_responsive = (ROOT / "src/TrueCustomDifficulty/Infrastructure/ResponsiveParameterGridPanel.cs").read_text(encoding="utf-8")
+_economy_xaml = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml").read_text(encoding="utf-8")
 # Prevent CS0136: CouponFlow has an inner wheel sign and the shared knob
 # handler has another local sign later in the same method. Distinct identifiers
 # are required by C# even though both blocks use early return.
-_wheel_handler_start = _knob_source.find('protected override void OnMouseWheel(')
-_wheel_handler_end = _knob_source.find('protected override void OnMouseLeftButtonUp(', _wheel_handler_start)
-_wheel_handler = (_knob_source[_wheel_handler_start:_wheel_handler_end]
+_wheel_handler_start = _economy_aggregate.find('protected override void OnMouseWheel(')
+_wheel_handler_end = _economy_aggregate.find('protected override void OnMouseLeftButtonUp(', _wheel_handler_start)
+_wheel_handler = (_economy_aggregate[_wheel_handler_start:_wheel_handler_end]
                   if 0 <= _wheel_handler_start < _wheel_handler_end else '')
 _coupon_wheel = _wheel_handler.split('if (Family is not (', 1)[0]
 if (not all(marker in _coupon_wheel for marker in (
@@ -1376,14 +1383,6 @@ if (not all(marker in _coupon_wheel for marker in (
     or 'var direction = Math.Sign(e.Delta);' in _coupon_wheel
     or 'var direction = Math.Sign(e.Delta);' not in _wheel_handler):
     fail('CouponFlow mouse-wheel C# local shadowing or source-native step wiring drifted')
-
-# Economy dashboard approval contract, 2026-10-11. The seven-control
-# baseline, native CFG writer surface and pre-existing responsive layouts
-# must remain intact while the Economy-only grouping is compacted.
-_economy_aggregate = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
-_economy_parameter_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
-_economy_responsive = (ROOT / "src/TrueCustomDifficulty/Infrastructure/ResponsiveParameterGridPanel.cs").read_text(encoding="utf-8")
-_economy_xaml = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml").read_text(encoding="utf-8")
 _economy_layout_contract = (
     ('Money Flow group', '"01 / MONEY FLOW"', _economy_parameter_vm),
     ('Market group', '"02 / MARKET"', _economy_parameter_vm),
