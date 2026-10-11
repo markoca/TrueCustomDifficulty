@@ -1,5 +1,10 @@
 # Visual Control System
 
+### 2026-10-11 — Shared rotary input audit validation
+
+A single WPF mouse-wheel gate dispatches the shared `HitKind.Knob` renderer across approved source families: PlayerWeaponProfile, AnomalyGlobalDamage, AmmoDistribution, ConsumableMixer, StashRewardProfile, TraderStockBoard, PsyPhantomPressure, EquipmentWearBalance. The static audit validates each required family by independent membership, so extension does not break existing controller contracts. Check Python syntax (`python -m py_compile tools/audit_project_consistency.py`) before running the consistency audit. A syntax fix to the Psy Combat / Equipment Wear audit does not modify WPF control geometry or native CFG mappings.
+
+
 ### 2026-10-11 — Psy Combat and Equipment Wear rotary banks
 
 Psy Combat replaces the former two-axis square plot and side fader with three independent 194×181 DIP native WPF knobs: spawn-cycle delay, phantom count and gear durability damage. Its bleeding toggle remains independently interactive. The small bar preview is **relative only**, not a calculated spawn timeline or deterministic spawn frequency; no inferred AI scheduling rules. Height 378 DIP. Equipment Wear replaces the combined 2D chart with two independent 194×181 DIP native knobs, armor durability and weapon wear per shot, height 242 DIP. Shared native ticks, snapping, drag, wheel and keyboard handling apply to both families. Original source IDs and writers are unchanged.
