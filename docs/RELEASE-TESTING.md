@@ -1,5 +1,14 @@
 # Pre-release test and evidence runbook
 
+### All rotary controls — native tick / snap alignment (2026-10-11)
+
+Open Combat > Your Weapons, Anomalies > Global Anomaly Damage, and Loot > Breakable Boxes > Ammo Family Weights at minimum and normal window widths. Inspect every knob: each muted graduation line must be at a **real native step value**, derived from that source's own Minimum/Maximum/TickFrequency (no generic ten-way division). Click each line's direction and confirm the live indicator snaps to that angle and readout. First and last marks must align with the native slider's min and max. The selected-difficulty grey Base notch is a separate reference: Novice Weapon Damage **1.30x** deliberately falls between the 1.25x and 1.50x native edit marks; right-click reset must restore 1.30x exactly.
+
+Expect **8 marks** for Weapon Damage (0.25–2x, 0.25x), **11 marks** for Headshot Damage (0.5–3x, 0.25x), **9 marks** for Jam Frequency (0–2x, 0.25x), and **13 marks each** for the four Ammo Family Weights (0–3x, 0.25x). Mark count includes both endpoints. For Global Anomaly Damage (0–2.5x, 0.01x) the 47-DIP-radius ring cannot show all 251 reachable values without illegible overlap, so expect **26 legible marks exactly 0.10x apart** (major every 0.5x); the knob must nonetheless still change in **0.01x** increments by drag, mouse wheel and keyboard. Validate on an intermediate source value such as 1.47x: it must stay at 1.47x, with its handle between the 1.40x and 1.50x graduation lines. Do not round its displayed current value to a visible tick.
+
+On the Loot row, verify tick marks stay within narrow cards and SNG last-positive-weight protection still applies to pointer drag, mouse wheel and keyboard. Verify source-specific reset (right-click) and family reset (R); changing any knob leaves unrelated family/native CFG values untouched. Check screenshots at normal and narrow widths for distinct endpoint/major/minor ticks, legible center readouts, no overlap. Run the source consistency audit and environment/combat/loot BPatch contract tests, then publish and test under Wine. Visual/runtime results require local confirmation.
+
+
 ### Loot / Breakable Boxes — four Ammo Family Weights rotary knobs (2026-10-11)
 
 After `./publish.sh`, navigate to Loot > **BREAKABLE BOXES**. Check the **AMMO FAMILY WEIGHTS** row shows **exactly four rotary knobs**, centered and equal-sized, labeled **9×18 / 9×19**, **.45 ACP**, **5.45 / 5.56**, **12 GAUGE**, rather than four horizontal rails. At normal 920-DIP and narrow minimum WPF width, verify captions, centered numeric x values, muted 0–3x limits, 270° gold arc, grey selected reference tick, no clipping, and no redundant Base badges. The parent board is **715 DIP** high; verify SNG/NATO charts remain below the knobs and are fully visible when scrolling.
