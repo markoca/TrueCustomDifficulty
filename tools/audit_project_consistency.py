@@ -2800,14 +2800,19 @@ _compact_stamina_ids = (
     'stamina.maxSP', 'stamina.regeneration',
     'stamina.vaultMaxHeight', 'stamina.maxCarryWeight'
 )
-if (not all(f'P("{pid}")' in _compact_health for pid in _compact_health_ids)
+if (not all(f'P("{pid}")' in _compact_health
+            for pid in ('health.maxHP', 'health.baseRegen'))
+    or not all(f'("{pid}",' in _compact_health
+               for pid in ('health.regenDelay', 'health.regenerationScalar',
+                           'health.lowHealthRegen'))
+    or not all(pid in _seven_src for pid in _compact_health_ids)
     or 'DrawMaxHealthRuler(dc, hp,' not in _compact_health
     or 'DrawHorizontalTrackCard(dc, P("health.baseRegen")' not in _compact_health
     or 'DrawHorizontalTrackCard(dc, P(sources[i].Id)' not in _compact_health
     or 'var columns = ActualWidth >= 700.0 ? 3 : 2;' not in _compact_health
     or '"CoreHealthDashboard" => width >= 700.0 ? 282.0 : 365.0' not in _seven_src
-    or 'medkit' in _compact_health.lower()
-    and 'no item-healing, medkit' not in _compact_health.lower()):
+    or '"health.medkitHealing"' in _compact_health
+    or '"health.ecoMedkitHealing"' in _compact_health):
     fail('Core Health source-specific HP, passive and responsive recovery controls drifted')
 if (not all(f'P("{pid}")' in _compact_stamina for pid in _compact_stamina_ids)
     or 'DrawVaultHeightRuler(dc, P("stamina.vaultMaxHeight")' not in _compact_stamina
