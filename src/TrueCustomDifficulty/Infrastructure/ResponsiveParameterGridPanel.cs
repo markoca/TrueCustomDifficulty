@@ -113,8 +113,16 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["loot.blueprintShuffle"] = new("loot-world-switches-2", 1),
             ["loot.worldWeaponDensity"] = new("loot-world-density-1", 0),
 
-            // Economy
-            ["economy.buyCondition"] = new("economy-trading-1", 0),
+            // Economy dashboard: two source-native editors per logical section.
+            // Full-width visual anchors are selectively paired below; the six
+            // item-value columns and Trader Stock keep their existing widths.
+            ["economy.startingMoney"] = new("economy-moneyflow", 0),
+            ["economy.consumableCost"] = new("economy-market", 0),
+            ["economy.fastTravelCost"] = new("economy-expenses", 0),
+            ["economy.repairEnemy"] = new("economy-expenses", 1),
+            ["economy.buyCondition"] = new("economy-moneyflow", 1),
+
+            // Economy original per-source semantic slots (backing children).
             ["economy.sellCondition"] = new("economy-trading-1", 1),
             ["economy.traderMinBuyCondition"] = new("economy-trading-2", 0),
             ["economy.itemValueFloor"] = new("economy-trading-2", 1),
@@ -373,7 +381,12 @@ public sealed class ResponsiveParameterGridPanel : Panel
         if (child is not FrameworkElement { DataContext: ParameterViewModel parameter })
             return false;
 
-        return parameter.IsVisualControlAnchor;
+        // Pair only these compact approved Economy panels. The item-value
+        // six-column editor and stock knobs retain full-width source geometry.
+        return parameter.IsVisualControlAnchor
+            && parameter.Id is not ("economy.startingMoney"
+                or "economy.buyCondition" or "economy.fastTravelCost"
+                or "economy.repairEnemy");
     }
 
     private sealed record SemanticSlot(string RowKey, int Column);
