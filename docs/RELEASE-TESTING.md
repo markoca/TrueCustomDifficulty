@@ -1,5 +1,14 @@
 # Pre-release test and evidence runbook
 
+### Global Anomaly Damage single rotary knob — acceptance (2026-10-11)
+
+In Anomalies, verify **GLOBAL ANOMALY DAMAGE** shows exactly one centered 270° **OVERALL DAMAGE MULTIPLIER** knob, not the previous long horizontal slider. It must use the existing Your Weapons dark face, yellow arc/notch, muted source reference tick, center current multiplier, and neutral 0x/2.5x endpoints. The inner card is 194×181 DIP, frame 242 DIP. Check standard-width and minimum-width WPF/Wine layouts for centering and absence of clipping.
+
+The only backing parameter is `environment.anomalyDamage`, 0–2.5x at 0.01x steps. For each vanilla difficulty confirm the grey reference marker matches **Novice 0.30x, Stalker 1x, Veteran 1.45x, Master 1.75x**. Test clockwise and counterclockwise knob clicks/drags across minimum, mid and maximum, the 90° bottom gap clamping, scroll wheel at 0.01x, arrows, Page Up/Down, Home/End, right-click single reset, and panel R reset. Clicking the center selects the source without changing it. Only changed current values get accent gold; baseline tick remains grey. The right rationale should still describe the global setting.
+
+Confirm a Global Anomaly Damage change updates derived effective damage in the eleven separate Individual Anomaly Damage readouts, while **none** of their individual native source values is rewritten. Save/reload a nondefault global multiplier in a preset, export BPatch, and inspect only the existing `GameData/DifficultyPrototypes.cfg` `EnvironmentDifficulty.Anomaly_Damage` route for this knob; there must be no new synthetic CFG or extra applied multiplier. Run `python tools/audit_project_consistency.py` and the environment writer contract, then do the local publish/Wine and game check. This is a required follow-up; success is not yet claimed.
+
+
 ### Your Weapons 3-knob WPF acceptance (2026-10-11)
 
 After a clean `./publish.sh`, open Combat > **YOUR WEAPONS** on Wine and confirm exactly three independent **rotary controls** in one compact centered row: WEAPON DAMAGE, HEADSHOT DAMAGE, JAM FREQUENCY; there must be no horizontal weapon sliders or stale inactive lanes. Confirm the dark face, muted 270° rail, gold current arc/notch, small grey actual Base tick, current multiplier in the center, and original neutral native bounds beneath. The whole group must stay within 620 DIP even in a wide panel and fit at the 520-DIP measured minimum. Expect a 242-DIP frame; check no clipping/overlap at both window widths.
