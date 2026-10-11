@@ -2410,6 +2410,18 @@ else:
     note("Ammo by Stash Tier: BASIC/STANDARD/RARE native source knobs; bonus reward rails unchanged")
 
 
+# Trader Stock native rotary bank uses the existing input/grid infrastructure.
+_stock_knob_source = _knob_source
+if (not all(v in _stock_knob_source for v in (
+    'private void DrawTraderStockKnobs(',
+    '("economy.traderAmmoStock", "AMMO STOCK")',
+    '("economy.medicStock", "MEDIC STOCK")',
+    '"TraderStockBoard" => 242.0',
+    'or "TraderStockBoard")',
+)) or any('2026-10-11 — Trader Stock native knobs' not in d
+          for d in _knob_catalog_texts)):
+    fail("Trader Stock dual source knob contract drifted")
+
 # WPF dial graduation integrity, 2026-10-11. The old fixed "0..10"
 # decoration did not match native 0.25x or 0.01x parameter steps. All eight
 # knobs must share one source-derived native grid and real source endpoints.
