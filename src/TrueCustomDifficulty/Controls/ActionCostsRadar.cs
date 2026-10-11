@@ -306,28 +306,28 @@ public sealed class ActionCostsRadar : FrameworkElement
         var rightWidth = (gridWidth - internalGap) / 2.0;
 
         DrawExhaustionTrackCard(dc, _sprintDisableThreshold, "SPRINT LOCK",
-            value => `${value:0.#} SP`,
+            value => $"{value:0.#} SP",
             new Rect(left, top, thresholdWidth, cardHeight),
             text, muted, border, accent, panel, commonThresholdAxis: true);
         DrawExhaustionTrackCard(dc, _lowRecoveryThreshold, "RECOVERY BELOW",
-            value => `${value:0} SP`,
+            value => $"{value:0} SP",
             new Rect(left, top + cardHeight + internalGap, thresholdWidth, cardHeight),
             text, muted, border, accent, panel, commonThresholdAxis: true);
 
         DrawExhaustionTrackCard(dc, _aimParameter, "AIM RECOVERY PENALTY",
-            value => `${value * 100.0:0.#}%`,
+            value => $"{value * 100.0:0.#}%",
             new Rect(gridLeft, gridTop, rightWidth, cardHeight),
             text, muted, border, accent, panel);
         DrawExhaustionTrackCard(dc, _sprintRecoveryDelay, "RECOVERY RESTART DELAY",
-            value => `${value:0.0} s`,
+            value => $"{value:0.0} s",
             new Rect(gridLeft + rightWidth + internalGap, gridTop, rightWidth, cardHeight),
             text, muted, border, accent, panel);
         DrawExhaustionTrackCard(dc, _lowRecoveryStrength, "LOW-SP RECOVERY BOOST",
-            value => `+${value:0.##} SP/s`,
+            value => $"+{value:0.##} SP/s",
             new Rect(gridLeft, gridTop + cardHeight + internalGap, rightWidth, cardHeight),
             text, muted, border, accent, panel);
         DrawExhaustionTrackCard(dc, _lowRecoveryDuration, "LOW-SP RECOVERY DURATION",
-            value => `${value:0.0} s`,
+            value => $"{value:0.0} s",
             new Rect(gridLeft + rightWidth + internalGap, gridTop + cardHeight + internalGap,
                 rightWidth, cardHeight),
             text, muted, border, accent, panel);
