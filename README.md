@@ -1,5 +1,10 @@
 # True Custom Difficulty
 
+### 2026-10-11 — Consumable duration override now includes medicine
+
+The existing `OVERRIDE LIMITS` control in Survival → Consumable Effects expands all three medicine durations as well as drink effects: OFF keeps Vinca/Hercules/Psi Block maximums at **540/900/300s**, ON expands each to **1800s** (30 min). The medicine ruler adjusts between 0–900s and 0–1800s without changing the drink 0–270s scale. The decorative gray `MEDICINE` heading is removed. Top knobs are now self-descriptive: **WATER + ENERGY REFILL**, **WATER REGEN + COST CUT**, **ENERGY STAMINA REGEN**, retaining real 0–2x `scale` semantics and original CFG targets. One old preset flag still controls both groups; no extra checkbox or duplicated duration editor.
+
+
 ### 2026-10-11 — Medicine strength units
 
 Three compact native knobs below Consumable Effect Durations now show **Vinca +10 BLEED PTS**, **Hercules +20 KG** and **Psi Block +10 PSI PTS**, with a centered amount and muted unit beneath it. These are the game-facing effect amounts, not 1x-based scalers; Hercules' two effect prototypes stay synchronized without adding to +40 kg. The point amounts do not imply a verified regeneration speed per second. New unit labels and `CurrentDisplay` semantics are bound in both UI catalogs and tests; duration, preset and writer CFG values remain untouched.

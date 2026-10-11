@@ -1,5 +1,10 @@
 # Consumable medicine and item-effect CFG audit — 2026-10-11
 
+## Expanded duration editor limits (2026-10-11)
+
+The existing `OVERRIDE LIMITS` editor-only preset switch is no longer drink-only. The three medicine durations join the existing five main drink and three Water/Energy short-effect editors. OFF keeps the actual native medicine slider caps: Vinca **540 seconds**, Hercules **900 seconds**, Psi Block **300 seconds**. ON expands all three medicine editors to **1800 seconds**, independent of each other and drink values. The medicine 0–900s ruler expands to 0–1800s (0/600/1200/1800 ticks), while the distinct drink ruler remains at 0–270s. Disabling the override restores each native cap and clamps oversized values; the same saved `drinkDurationOverride` boolean is reused. There is no new source prototype or fake CFG toggle. Both Hercules effect-duration leaves remain bound to one current value. The gray `MEDICINE` caption is removed without deleting the medicine rows.
+
+
 ## Inputs and methodology
 
 User-supplied `STALKER2-GameData-CFG(8).zip`, specifically `GameData/ItemPrototypes.cfg` and `GameData/EffectPrototypes.cfg`. This began as a **source mapping / UI candidate audit**. The six verified source controls have since been implemented in the catalog, production CFG writer and Survival UI. It is **not** an in-game runtime acceptance report. The archive has **17** top-level `{refkey=TemplateConsumable}` item definitions, including GuitarUsable (no authored effects).

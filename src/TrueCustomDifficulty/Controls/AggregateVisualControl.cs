@@ -3048,14 +3048,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         const double knobGap = 12.0;
         var knobWidth = (knobBankWidth - 2.0 * knobGap) / 3.0;
         var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
-        DrawSourceKnob(dc, burst, "INSTANT STAMINA",
+        DrawSourceKnob(dc, burst, "WATER + ENERGY REFILL",
             new Rect(knobLeft, ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel);
-        DrawSourceKnob(dc, waterStamina, "WATER BUFF",
+        DrawSourceKnob(dc, waterStamina, "WATER REGEN + COST CUT",
             new Rect(knobLeft + knobWidth + knobGap, ConsumableStrengthKnobTop,
                 knobWidth, 181.0),
             text, muted, border, accent, panel);
-        DrawSourceKnob(dc, energyStamina, "ENERGY REGEN",
+        DrawSourceKnob(dc, energyStamina, "ENERGY STAMINA REGEN",
             new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
                 ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel);
@@ -3172,18 +3172,15 @@ public sealed class AggregateVisualControl : FrameworkElement
                 track, parameter.Minimum, parameter.Maximum);
         }
 
-        // Medicine lanes use the SAME chart frame and native seconds, with a
-        // dedicated 0..900s ruler to keep existing 0..270s drink tracks legible.
-        // The game owns three completely independent effect prototype durations.
-        const double medicineMaximumSeconds = 900.0;
+        // Medicine uses an independent 0..900s clock with native limits OFF.
+        // ON expands each medicine to 1800s, preserving the drink clock.
+        var medicineMaximumSeconds = burst.DrinkDurationOverrideEnabled ? 1800.0 : 900.0;
         double MedicineX(double seconds) => timeline.Left + timeline.Width *
             Math.Clamp(seconds / medicineMaximumSeconds, 0.0, 1.0);
         var medicineAxisY = timeline.Top + 131.0;
         var medicineFirstY = timeline.Top + 158.0;
-        DrawRightAlignedText(dc, "MEDICINE",
-            new Point(timeline.Left - 13.0, timeline.Top + 120.0),
-            9.8, muted, FontWeights.Bold);
-        foreach (var seconds in new[] { 0.0, 300.0, 600.0, 900.0 })
+        foreach (var seconds in new[] { 0.0, medicineMaximumSeconds / 3.0,
+            medicineMaximumSeconds * 2.0 / 3.0, medicineMaximumSeconds })
         {
             var x = MedicineX(seconds);
             dc.DrawLine(new Pen(border, 1.0) { DashStyle = DashStyles.Dot },
@@ -4914,7 +4911,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 HitKind.Knob => $"{target.Parameter.Label}\nTurn around the dial or scroll to adjust · Right-click = Base Preset",
                 HitKind.Toggle => $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset",
                 HitKind.DrinkDurationOverride =>
-                    "Override Drink Duration Limits\nOFF: each effect has its normal maximum. ON: all eight durations may reach 270 seconds independently.\nRight-click resets this checkbox.",
+                    "Override Consumable Duration Limits\nOFF: native limits. ON: drinks up to 270 s and Vinca, Hercules, Psi Block up to 1800 s.\nRight-click resets.",
                 HitKind.Choice => $"{target.Parameter.Label}\nChoose a corpse-loot package · Right-click = Base Preset",
                 HitKind.MixerBaseMarker => $"{target.Parameter.Label}\nClick to snap to selected Base Preset",
                 HitKind.MixerSelect => $"{target.Parameter.Label}\nClick for detailed rationale · Use the fader rail to edit",

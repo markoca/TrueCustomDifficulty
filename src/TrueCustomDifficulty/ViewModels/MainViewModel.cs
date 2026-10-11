@@ -866,11 +866,10 @@ public sealed class MainViewModel : ObservableObject
                     source.RefreshDynamicMaximum();
         };
 
-        // Exactly one editor-only override for every drink's duration
-        // ceiling. OFF preserves the current source-specific native maxima;
-        // ON makes the full existing 0..270-second timeline available to all
-        // five primary duration tracks and all three secondary effect tracks.
-        // All eight CFG values remain independent. No fictitious CFG boolean.
+        // One UI-only, preset-backed duration override covers all consumables.
+        // Drinks and their children retain the 270s ruler; medicines expand
+        // independently to 1800s on a separately calibrated ruler.
+        // OFF restores source-native caps, with no fictional CFG boolean.
         var drinkDurationMode = parametersById["survival.instantStaminaRestore"];
         const double sharedDrinkDurationMaximumSeconds = 270.0;
         var drinkMainSeconds = new (string Id, double VanillaSeconds)[]
@@ -900,6 +899,21 @@ public sealed class MainViewModel : ObservableObject
                     ? sharedDrinkDurationMaximumSeconds / vanillaSeconds
                     : parametersById[id].Definition.Slider!.Max);
         }
+
+        // Three independent direct-seconds medicine sources share the existing
+        // override toggle, retaining their different native caps when OFF.
+        const double expandedMedicineDurationMaximumSeconds = 1800.0;
+        var medicineDurationParameters = new[]
+        {
+            parametersById["survival.vincaDuration"],
+            parametersById["survival.herculesDuration"],
+            parametersById["survival.psiBlockDuration"]
+        };
+        foreach (var medicineDuration in medicineDurationParameters)
+            medicineDuration.SetDynamicMaximumProvider(() =>
+                drinkDurationMode.DrinkDurationOverrideEnabled
+                    ? expandedMedicineDurationMaximumSeconds
+                    : medicineDuration.Definition.Slider!.Max);
 
         // Real-seconds source caps for the three independently mapped short
         // effects. If the main duration shrinks, children are clamped to its
@@ -938,6 +952,8 @@ public sealed class MainViewModel : ObservableObject
                 main.RefreshDynamicMaximum();
             foreach (var child in shortDrinkParameters)
                 child.RefreshDynamicMaximum();
+            foreach (var medicineDuration in medicineDurationParameters)
+                medicineDuration.RefreshDynamicMaximum();
         };
 
         var dependencyChildren = new Dictionary<string, List<ParameterViewModel>>(StringComparer.Ordinal);

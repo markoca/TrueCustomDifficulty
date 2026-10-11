@@ -1,5 +1,12 @@
 # Survival CFG Mapping — v0.2.47
 
+## Consumable duration override and strength controls (2026-10-11)
+
+**WATER + ENERGY REFILL** scales immediate stamina refill from water, energy drink and limited energy drink; **WATER REGEN + COST CUT** controls WaterStamina2 regeneration and WaterStaminaPerAction1 lower stamina usage together; **ENERGY STAMINA REGEN** edits only EnergeticStamina sustained regeneration. These three are genuine source-backed 0–2x strength multipliers. The muted `MEDICINE` chart heading is removed, leaving individual medicine lane names and seconds-scale ticks.
+
+The existing preset-only `drinkDurationOverride` now applies to five drink duration lanes, three short Water/Energy duration tracks, **and Vinca/Hercules/Psi Block**. OFF retains medicine caps **540/900/300s**; ON increases all three independently to **1800s (30 min)**. The medicine chart ruler dynamically changes from 0–900s to 0–1800s while the drink ruler remains 0–270s. ON preserves current values; OFF clamps only those outside native caps. The original medicine CFG `Duration` edits, dual Hercules coupling, preset serialization, source units and all strength magnitudes remain unchanged.
+
+
 ## Source-backed medicine effects (2026-10-11)
 
 **Player-visible native amounts:** Vinca **+10 BLEED PTS** (bleeding regeneration), Hercules **+20 KG** (additional carry capacity; both coupled CFG effects have raw 20, never added), and Psi Block **+10 PSI PTS** (in-game psi protection). Three compact knobs show a centered positive point/kg amount and smaller neutral unit beneath, not percentages/multipliers/per-second rates. These native amount units are reflected by `CurrentDisplay` and the parameter catalog; the actual regeneration/tick cadence of Vinca and Psi Block still requires game-runtime confirmation.

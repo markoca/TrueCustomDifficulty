@@ -2173,6 +2173,11 @@ for _token in (
     "? sharedDrinkDurationMaximumSeconds",
     "main.RefreshDynamicMaximum();",
     "child.RefreshDynamicMaximum();",
+    "const double expandedMedicineDurationMaximumSeconds = 1800.0;",
+    'parametersById["survival.vincaDuration"]',
+    'parametersById["survival.herculesDuration"]',
+    'parametersById["survival.psiBlockDuration"]',
+    "medicineDuration.RefreshDynamicMaximum();",
     "DrinkDurationOverride = AllParameters.First(",
     "DrinkDurationOverrideEnabled = preset.DrinkDurationOverride;",
 ):
@@ -2192,14 +2197,15 @@ for _token in (
     "BooleanCheckboxChrome.Draw(dc, checkboxRect, burst.DrinkDurationOverrideEnabled",
     "HitKind.DrinkDurationOverride",
     "previewTop + 67.0",
-    "preview.Top + 200.0",
-    "return 200.0 + rows * CompactTrackHeight",
+    "preview.Top + 300.0",
+    "return 300.0 + rows * CompactTrackHeight",
+    "burst.DrinkDurationOverrideEnabled ? 1800.0 : 900.0",
     "target.Parameter.DrinkDurationOverrideEnabled =",
     "_selectedParameter.DrinkDurationOverrideEnabled =",
 ):
     if _token not in _duration_renderer:
         fail(f"Drink Duration Override compact renderer/input contract missing: {_token}")
-note("Drink Duration Override: UI-only preset boolean; OFF native caps, ON eight separate 270s maxima; no CFG boolean or ninth duration")
+note("Consumable Duration Override: OFF native caps; ON drinks 270s, Vinca/Hercules/Psi Block 1800s; single preset flag, no CFG boolean")
 
 note("consumable duration source routes: five primary drink effects + three independently editable short effects; original CFG prototype ownership stays unique")
 
@@ -2915,15 +2921,16 @@ for _cid in _consumer_ids:
     if tuple(_range.get(k) for k in ("min", "max", "step")) != (0, 2, 0.05):
         _consumer_errors.append(f"{_cid}: strength min/max/native step drift")
 for _required in (
-    'DrawSourceKnob(dc, burst, "INSTANT STAMINA",',
-    'DrawSourceKnob(dc, waterStamina, "WATER BUFF",',
-    'DrawSourceKnob(dc, energyStamina, "ENERGY REGEN",',
+    'DrawSourceKnob(dc, burst, "WATER + ENERGY REFILL",',
+    'DrawSourceKnob(dc, waterStamina, "WATER REGEN + COST CUT",',
+    'DrawSourceKnob(dc, energyStamina, "ENERGY STAMINA REGEN",',
     'var knobBankWidth = Math.Min(620.0, ActualWidth - 34.0);',
 ):
     if _required not in _consumer_drinks:
         _consumer_errors.append(f"drink knob missing: {_required}")
 for _required in (
     '"EFFECT DURATION  /  SECONDS"',
+    'burst.DrinkDurationOverrideEnabled ? 1800.0 : 900.0',
     'var medicineLanes = new (ParameterViewModel Source, string Label)[]',
     '(vincaTime, "VINCA")',
     '(herculesTime, "HERCULES")',
@@ -2947,7 +2954,8 @@ if (_consumer_drinks.count("DrawSourceKnob(") != 3
     or _consumer_durations.count("DrawSourceKnob(") != 0
     or _consumer_medicines.count("DrawSourceKnob(") != 3):
     _consumer_errors.append("knob counts/positions have drifted")
-if ("DrawConsumableEffectPreview(" in _consumer_source
+if ('DrawRightAlignedText(dc, "MEDICINE"' in _consumer_source
+    or "DrawConsumableEffectPreview(" in _consumer_source
     or "LIVE EFFECT PREVIEW" in _consumer_source
     or "ConsumableEffectPreviewTop" in _consumer_source
     or "ConsumableEffectPreviewHeight" in _consumer_source):

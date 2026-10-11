@@ -2083,14 +2083,14 @@
       "id": "survival.instantStaminaRestore",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Instant Stamina Restore",
+      "label": "Water + Energy Instant Stamina Refill",
       "description": "Scales the immediate stamina restored by Water, Energy Drink and Limited Energy Drink while preserving their vanilla strength differences.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Instant Stamina Restore"
+        "valueLabel": "Instant stamina refill from water and energy drinks"
       },
       "vanilla": {
         "All": 1
@@ -2133,7 +2133,7 @@
           "One multiplier preserves those authored differences instead of flattening all drinks to the same refill."
         ]
       },
-      "rationale": "Controls the instant stamina burst from stamina-restoring drinks.",
+      "rationale": "Multiplies the immediate stamina restored by Water, Energy Drink and Limited Energy Drink. Their original strengths remain distinct.",
       "logic": "1x keeps Water 38%, Energy Drink 50% and Limited Energy Drink 100%. 0.5x halves each; 2x doubles each before the player's normal stamina cap is applied.",
       "interaction": "Timed stamina regeneration, fatigue relief, hunger, tolerance and overdose effects are separate."
     },
@@ -2141,14 +2141,14 @@
       "id": "survival.waterStaminaEffectStrength",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Water Stamina Effect Strength",
+      "label": "Water Stamina Regeneration + Cost Cut",
       "description": "Scales Water's sustained stamina-regeneration bonus and per-action stamina-cost reduction together while preserving their authored relationship.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Water sustained stamina effect"
+        "valueLabel": "Water sustained stamina regeneration and reduced action cost"
       },
       "vanilla": {
         "All": 1
@@ -2184,7 +2184,7 @@
           "One multiplier preserves the authored relationship between those two Water effects."
         ]
       },
-      "rationale": "Controls how strongly Water helps sustained stamina use without changing its instant refill or effect duration.",
+      "rationale": "Scales Water's sustained stamina regeneration and per-action stamina-cost reduction together; instant refill and duration are separate.",
       "logic": "1x keeps both authored Water stamina effects. 0 removes both sustained Water stamina effects; 2x doubles both while preserving their relative strength.",
       "interaction": "Water Instant Stamina Restore and Water Effect Duration remain separate controls.",
       "exposeInUi": false
@@ -2331,14 +2331,14 @@
       "id": "survival.energyDrinkStaminaRecoveryStrength",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Energy Drink Stamina Recovery Strength",
+      "label": "Energy Drink Stamina Regeneration",
       "description": "Scales the sustained stamina-regeneration bonus from the normal Energy Drink without changing its instant refill, fatigue relief or duration.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Energy Drink stamina recovery"
+        "valueLabel": "Energy Drink sustained stamina regeneration"
       },
       "vanilla": {
         "All": 1
@@ -2368,7 +2368,7 @@
           "Per-action stamina-cost effects are intentionally excluded here until their raw magnitude is locked source-exact."
         ]
       },
-      "rationale": "Controls how strongly the normal Energy Drink boosts sustained stamina recovery.",
+      "rationale": "Scales sustained stamina regeneration from normal Energy Drink, not its instant refill or duration.",
       "logic": "1x keeps the authored Energy Drink stamina-regeneration effect; 0 removes that sustained regeneration bonus; 2x doubles it.",
       "interaction": "Instant Stamina Restore, Energy Drink Fatigue Relief and Energy Drink Effect Duration remain separate controls.",
       "exposeInUi": false
@@ -2783,12 +2783,13 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Verified authored CFG default 180; gameplay scaling still requires runtime validation."
+          "Verified authored CFG default 180; gameplay scaling still requires runtime validation.",
+          "Existing UI-only duration override expands this source's editor cap to 1800 seconds; CFG field remains unchanged."
         ]
       },
       "rationale": "Duration of Vinca's ongoing bleeding recovery",
       "logic": "Original effect duration 180s; edits real seconds.",
-      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "interaction": "OVERRIDE LIMITS OFF preserves this medicine's native maximum; ON expands it to 1800s (30 minutes). Effect strength and other medicine durations remain independent.",
       "exposeInUi": false
     },
     {
@@ -2891,12 +2892,13 @@
         "status": "runtime_test_required",
         "notes": [
           "Verified authored CFG default 300; gameplay scaling still requires runtime validation.",
-          "Two separate effect prototypes share the same direct value; they are not additive."
+          "Two separate effect prototypes share the same direct value; they are not additive.",
+          "Existing UI-only duration override expands this source's editor cap to 1800 seconds; CFG field remains unchanged."
         ]
       },
       "rationale": "Duration of both linked Hercules effects",
       "logic": "Original effect duration 300s; edits real seconds.",
-      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "interaction": "OVERRIDE LIMITS OFF preserves this medicine's native maximum; ON expands it to 1800s (30 minutes). Effect strength and other medicine durations remain independent.",
       "exposeInUi": false
     },
     {
@@ -2983,12 +2985,13 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Verified authored CFG default 60; gameplay scaling still requires runtime validation."
+          "Verified authored CFG default 60; gameplay scaling still requires runtime validation.",
+          "Existing UI-only duration override expands this source's editor cap to 1800 seconds; CFG field remains unchanged."
         ]
       },
       "rationale": "Duration of Psi Block psi-point recovery",
       "logic": "Original effect duration 60s; edits real seconds.",
-      "interaction": "Independent from the drinks, the other medicine sources and original KeepNew stacking.",
+      "interaction": "OVERRIDE LIMITS OFF preserves this medicine's native maximum; ON expands it to 1800s (30 minutes). Effect strength and other medicine durations remain independent.",
       "exposeInUi": false
     },
     {

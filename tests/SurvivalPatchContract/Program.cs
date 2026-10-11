@@ -265,7 +265,7 @@ internal static class Program
 
     private static void TestDrinkDurationOverride()
     {
-        const string name = "All-Drink-Duration-Override";
+        const string name = "All-Consumable-Duration-Override";
         var folder = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Survival_Patch", name);
         try
         {
@@ -287,13 +287,23 @@ internal static class Program
                 "survival.energyPartialCostDuration"
             };
 
+            var medicines = new (string Id, double NativeMax)[]
+            {
+                ("survival.vincaDuration", 540.0),
+                ("survival.herculesDuration", 900.0),
+                ("survival.psiBlockDuration", 300.0)
+            };
             Check(!flag.DrinkDurationOverrideEnabled, name + ": default mode must be OFF");
+            foreach (var (id, nativeMax) in medicines)
+                Check(Math.Abs(Source(id).Maximum - nativeMax) < 0.000001,
+                    name + ": OFF medicine maximum drifted: " + id);
             foreach (var (id, _) in primary)
                 Check(Math.Abs(Source(id).Maximum - 3.0) < 0.000001,
                     name + ": OFF failed to preserve per-drink native 3x maximum");
 
             var before = primary.Select(p => Source(p.Id).CurrentNumber)
-                .Concat(children.Select(id => Source(id).CurrentNumber)).ToArray();
+                .Concat(children.Select(id => Source(id).CurrentNumber))
+                .Concat(medicines.Select(p => Source(p.Id).CurrentNumber)).ToArray();
             flag.DrinkDurationOverrideEnabled = true;
             foreach (var (id, vanilla) in primary)
                 Check(Math.Abs(Source(id).Maximum * vanilla - 270.0) < 0.000001,
@@ -301,9 +311,13 @@ internal static class Program
             foreach (var childId in children)
                 Check(Math.Abs(Source(childId).Maximum - 270.0) < 0.000001,
                     name + ": ON still caps secondary effect to its parent");
+            foreach (var (id, _) in medicines)
+                Check(Math.Abs(Source(id).Maximum - 1800.0) < 0.000001,
+                    name + ": ON does not expand " + id + " to 1800s");
 
             var after = primary.Select(p => Source(p.Id).CurrentNumber)
-                .Concat(children.Select(id => Source(id).CurrentNumber)).ToArray();
+                .Concat(children.Select(id => Source(id).CurrentNumber))
+                .Concat(medicines.Select(p => Source(p.Id).CurrentNumber)).ToArray();
             Check(before.SequenceEqual(after),
                 name + ": enabling the checkbox must not alter any duration");
 
@@ -313,6 +327,12 @@ internal static class Program
                 Source(id).SnapCurrentNumberToMarker(180.0 / vanilla);
             foreach (var childId in children)
                 Source(childId).SnapCurrentNumberToMarker(180.0);
+            foreach (var (id, _) in medicines)
+            {
+                Source(id).SnapCurrentNumberToMarker(1200.0);
+                Check(Math.Abs(Source(id).CurrentNumber - 1200.0) < 0.000001,
+                    name + ": medicine failed to reach 1200s: " + id);
+            }
             foreach (var (id, vanilla) in primary)
                 Check(Math.Abs(Source(id).CurrentNumber * vanilla - 180.0) < 0.000001,
                     name + ": equality to 180s failed for " + id);
@@ -320,6 +340,7 @@ internal static class Program
                 Check(Math.Abs(Source(childId).CurrentNumber - 180.0) < 0.000001,
                     name + ": equality to 180s failed for " + childId);
             var allIds = primary.Select(p => p.Id).Concat(children)
+                .Concat(medicines.Select(p => p.Id))
                 .ToHashSet(StringComparer.Ordinal);
             CheckWriter(vm, allIds, Path.Combine(folder, "override-on"), name + "-ON");
 
@@ -338,14 +359,20 @@ internal static class Program
             service.Save(preset, presetPath);
             var reloaded = service.Load(presetPath);
             Check(reloaded.DrinkDurationOverride &&
-                Math.Abs(reloaded.Values["survival.beerEffectDuration"].Number!.Value - 9.0) < 0.000001,
-                name + ": preset did not round-trip override and formerly restricted duration");
+                Math.Abs(reloaded.Values["survival.beerEffectDuration"].Number!.Value - 9.0) < 0.000001 &&
+                medicines.All(p =>
+                    Math.Abs(reloaded.Values[p.Id].Number!.Value - 1200.0) < 0.000001),
+                name + ": preset did not round-trip extended drink and medicine durations");
 
             flag.DrinkDurationOverrideEnabled = false;
             foreach (var (id, vanilla) in primary)
                 Check(Math.Abs(Source(id).Maximum - 3.0) < 0.000001
                     && Source(id).CurrentNumber <= 3.0 + 0.000001,
                     name + ": OFF did not restore native maximum for " + id);
+            foreach (var (id, nativeMax) in medicines)
+                Check(Math.Abs(Source(id).Maximum - nativeMax) < 0.000001
+                    && Math.Abs(Source(id).CurrentNumber - nativeMax) < 0.000001,
+                    name + ": OFF did not clamp medicine to its native limit: " + id);
             Check(Math.Abs(Source("survival.waterRegenDuration").CurrentNumber -
                 Source("survival.waterEffectDuration").CurrentNumber * 30.0) < 0.000001,
                 name + ": child Water duration not minimally capped to parent");
@@ -355,7 +382,7 @@ internal static class Program
                     name + ": child Energy duration not minimally capped to parent");
             CheckWriter(vm, allIds, Path.Combine(folder, "override-off"), name + "-OFF");
             _passed++;
-            Console.WriteLine("PASS " + name + " (shared ceiling, independent values, both writer modes, preset)");
+            Console.WriteLine("PASS " + name + " (drinks 270s, medicines 1800s, native caps, CFG writer, preset)");
         }
         finally
         {
