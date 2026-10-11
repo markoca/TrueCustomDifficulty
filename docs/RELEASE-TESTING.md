@@ -1,5 +1,16 @@
 # Pre-release test and evidence runbook
 
+### Loot / Breakable Boxes — four Ammo Family Weights rotary knobs (2026-10-11)
+
+After `./publish.sh`, navigate to Loot > **BREAKABLE BOXES**. Check the **AMMO FAMILY WEIGHTS** row shows **exactly four rotary knobs**, centered and equal-sized, labeled **9×18 / 9×19**, **.45 ACP**, **5.45 / 5.56**, **12 GAUGE**, rather than four horizontal rails. At normal 920-DIP and narrow minimum WPF width, verify captions, centered numeric x values, muted 0–3x limits, 270° gold arc, grey selected reference tick, no clipping, and no redundant Base badges. The parent board is **715 DIP** high; verify SNG/NATO charts remain below the knobs and are fully visible when scrolling.
+
+Edit each knob by clicking/dragging its arc clockwise and counterclockwise, then by wheel and arrow keys. All four edit native `loot.ammoBoxWeight918/045/545/012` independently at **0–3x in 0.25x increments**. Right-click resets only that weight to 1x; `R` resets the six actual editor members. The two original horizontal **AMMO YIELD / GRENADE YIELD** editors and the read-only **AMMO YIELD PREVIEW** (eight exact caliber ranges) must not be converted, and modifying a weight must not change those round counts.
+
+Confirm the **SNG/NATO POOL** bars and permanent caliber-color/percent legends update live from native weight sources, and that their charts are not draggable. Set the three SNG-affecting families (`918`, `545`, `012`) to zero one by one while `.45 ACP` remains nonzero. The last SNG weight MUST remain at least **0.25x**: test both pointer-drag and mouse-wheel decrement on the last surviving knob; the guard must not rewrite a different family. Confirm the same guard under keyboard input. Zeroing only `.45 ACP` remains valid; no synthetic ammo families appear.
+
+Finally save/reload all four different weights, export BPatch, confirm only the original `TCD_DestructibleStash_AmmoSNG`/`TCD_DestructibleStash_AmmoNATO` ItemGenerator PossibleItems Weight entries are changed; the original eight yield MinCount/MaxCount fields are untouched unless Ammo Yield was also edited. Run `python tools/audit_project_consistency.py` and the relevant Loot writer tests before release. Build, Wine UI and actual-game acceptance are pending.
+
+
 ### Global Anomaly Damage single rotary knob — acceptance (2026-10-11)
 
 In Anomalies, verify **GLOBAL ANOMALY DAMAGE** shows exactly one centered 270° **OVERALL DAMAGE MULTIPLIER** knob, not the previous long horizontal slider. It must use the existing Your Weapons dark face, yellow arc/notch, muted source reference tick, center current multiplier, and neutral 0x/2.5x endpoints. The inner card is 194×181 DIP, frame 242 DIP. Check standard-width and minimum-width WPF/Wine layouts for centering and absence of clipping.
