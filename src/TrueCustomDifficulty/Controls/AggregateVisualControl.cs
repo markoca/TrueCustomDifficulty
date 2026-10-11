@@ -1638,26 +1638,85 @@ public sealed class AggregateVisualControl : FrameworkElement
             plot, vault.Minimum, vault.Maximum);
     }
 
+    // Distinct resource and traversal domains share one tightly packed board.
+    // Vault keeps its real height ruler and landmarks; carry capacity is a
+    // native kg limit, not a fabricated in-game encumbrance trigger.
     private void DrawStaminaMovementBoard(DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush accent, Brush panel)
     {
         DrawHeader(dc, "STAMINA & MOVEMENT", "", text, muted, accent);
         var width = Math.Max(1.0, ActualWidth - 32.0);
-        const double gap = 10.0;
+        const double gap = 12.0;
         var cell = (width - gap) / 2.0;
+        DrawText(dc, "STAMINA CORE", new Point(19.0, 43.0),
+            10.2, muted, FontWeights.Bold);
         DrawHorizontalTrackCard(dc, P("stamina.maxSP"), "STAMINA CAPACITY",
-            new Rect(16.0, 53.0, cell, 72.0),
+            new Rect(16.0, 56.0, cell, 72.0),
             text, muted, border, accent, panel, hideBaseText: true);
         DrawHorizontalTrackCard(dc, P("stamina.regeneration"), "BASE RECOVERY",
-            new Rect(16.0 + cell + gap, 53.0, cell, 72.0),
+            new Rect(16.0 + cell + gap, 56.0, cell, 72.0),
             text, muted, border, accent, panel, hideBaseText: true);
+        DrawText(dc, "MOVEMENT LIMITS", new Point(19.0, 143.0),
+            10.2, muted, FontWeights.Bold);
         DrawVaultHeightRuler(dc, P("stamina.vaultMaxHeight"),
-            new Rect(16.0, 135.0, cell, 185.0),
+            new Rect(16.0, 161.0, cell, 175.0),
             text, muted, border, accent, panel);
-        DrawHorizontalTrackCard(dc, P("stamina.maxCarryWeight"),
-            "MAXIMUM CARRY WEIGHT",
-            new Rect(16.0 + cell + gap, 191.0, cell, 72.0),
-            text, muted, border, accent, panel, hideBaseText: true);
+        DrawCarryCapacityRail(dc, P("stamina.maxCarryWeight"),
+            new Rect(16.0 + cell + gap, 161.0, cell, 175.0),
+            text, muted, border, accent, panel);
+    }
+
+    private void DrawCarryCapacityRail(
+        DrawingContext dc, ParameterViewModel? carry, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .70),
+            new Pen(border, .9), card, 4, 4);
+        if (carry is null)
+            return;
+        DrawText(dc, "MAXIMUM CARRY WEIGHT",
+            new Point(card.Left + 12.0, card.Top + 10.0),
+            10.5, text, FontWeights.Bold);
+        var modified = carry.IsValueModifiedFromReference();
+        DrawRightAlignedText(dc, $"{carry.CurrentNumber:0} KG",
+            new Point(card.Right - 12.0, card.Top + 8.0),
+            modified ? 13.5 : 12.0, modified ? accent : text,
+            FontWeights.Bold);
+
+        // Calibration ticks refer to authored kilogram limits only:
+        // they are NOT claims about sprint/fatigue game thresholds.
+        var track = new Rect(card.Left + 22.0, card.Top + 86.0,
+            Math.Max(1.0, card.Width - 44.0), 12.0);
+        var y = track.Top + track.Height / 2.0;
+        var now = ValueToX(carry.CurrentNumber, carry.Minimum,
+            carry.Maximum, track, false);
+        dc.DrawLine(new Pen(border, 4.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, .75), 4.0),
+            new Point(track.Left, y), new Point(now, y));
+        for (var index = 0; index <= 4; index++)
+        {
+            var value = carry.Minimum + index * (carry.Maximum - carry.Minimum) / 4.0;
+            var x = ValueToX(value, carry.Minimum, carry.Maximum, track, false);
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .55), 1.0),
+                new Point(x, y - 9.0), new Point(x, y + 9.0));
+            DrawCenteredText(dc, $"{value:0}",
+                new Point(x, track.Bottom + 17.0),
+                9.0, muted, FontWeights.SemiBold);
+        }
+        DrawReferenceTick(dc, carry, track, y, muted);
+        var hover = _hoverTarget?.Kind == HitKind.Horizontal
+            && ReferenceEquals(_hoverTarget.Parameter, carry);
+        dc.DrawEllipse(panel,
+            new Pen(carry.IsControlEnabled ? accent : muted,
+                hover ? 2.7 : 1.7), new Point(now, y), 7.0, 7.0);
+        DrawCenteredText(dc, "LOAD CAPACITY  /  KG",
+            new Point(card.Left + card.Width / 2.0, card.Bottom - 17.0),
+            9.0, muted, FontWeights.SemiBold);
+        AddHorizontalTarget(carry,
+            new Rect(track.Left - 8.0, track.Top - 12.0,
+                track.Width + 16.0, track.Height + 24.0),
+            track, carry.Minimum, carry.Maximum);
     }
 
     // Fatigue stages affect when penalties begin, while their strengths remain
@@ -2177,36 +2236,49 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     // CORE HEALTH — one large, source-bound HP-capacity ruler followed by
     // four independent recovery controls. No invented HP-per-second preview.
+    // Max HP is a pool. Other sources control passive recovery, its wait,
+    // and separate engine scalars; no item-healing, medkit or invented
+    // low-health threshold is duplicated in this core module.
     private void DrawCoreHealthDashboard(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
     {
         DrawHeader(dc, "CORE HEALTH", "", text, muted, accent);
+        var width = Math.Max(1.0, ActualWidth - 32.0);
+        const double gap = 12.0;
+        var half = (width - gap) / 2.0;
 
         if (P("health.maxHP") is { } hp)
             DrawMaxHealthRuler(dc, hp,
-                new Rect(16.0, 53.0, Math.Max(1.0, ActualWidth - 32.0), 105.0),
+                new Rect(16.0, 51.0, half, 105.0),
                 text, muted, border, accent, panel);
+        DrawHorizontalTrackCard(dc, P("health.baseRegen"), "PASSIVE RECOVERY",
+            new Rect(16.0 + half + gap, 51.0, half, 105.0),
+            text, muted, border, accent, panel, hideBaseText: true,
+            healthTypography: true);
 
-        var width = Math.Max(1.0, ActualWidth - 32.0);
-        const double gap = 12.0;
-        var cellWidth = (width - gap) / 2.0;
-        var controls = new[]
+        DrawText(dc, "RECOVERY RESPONSE", new Point(19.0, 173.0),
+            10.2, muted, FontWeights.Bold);
+        var sources = new (string Id, string Label)[]
         {
             ("health.regenDelay", "RECOVERY DELAY"),
-            ("health.baseRegen", "PASSIVE HEALING"),
-            ("health.regenerationScalar", "HEALING EFFECTS"),
-            ("health.lowHealthRegen", "LOW-HP RECOVERY")
+            ("health.regenerationScalar", "RECOVERY MULTIPLIER"),
+            ("health.lowHealthRegen", "LOW-HP RECOVERY RATE")
         };
-        for (var i = 0; i < controls.Length; i++)
+        var columns = ActualWidth >= 700.0 ? 3 : 2;
+        var cardWidth = (width - (columns - 1) * gap) / columns;
+        for (var i = 0; i < sources.Length; i++)
         {
-            var column = i % 2;
-            var row = i / 2;
-            DrawHorizontalTrackCard(dc, P(controls[i].Item1), controls[i].Item2,
-                new Rect(16.0 + column * (cellWidth + gap),
-                    172.0 + row * 79.0, cellWidth, 71.0),
-                text, muted, border, accent, panel,
-                hideBaseText: true, healthTypography: true);
+            var row = i / columns;
+            var column = i % columns;
+            var onRow = Math.Min(columns, sources.Length - row * columns);
+            var rowWidth = cardWidth * onRow + gap * (onRow - 1);
+            var left = (ActualWidth - rowWidth) / 2.0;
+            DrawHorizontalTrackCard(dc, P(sources[i].Id), sources[i].Label,
+                new Rect(left + column * (cardWidth + gap),
+                    193.0 + row * 83.0, cardWidth, 72.0),
+                text, muted, border, accent, panel, hideBaseText: true,
+                healthTypography: true);
         }
     }
 
@@ -2300,7 +2372,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void DrawSourceKnob(
         DrawingContext dc, ParameterViewModel? parameter, string label, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel,
-        bool percentageReadout = false)
+        bool percentageReadout = false, bool rateReadout = false)
     {
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .32),
             new Pen(CloneWithOpacity(border, .62), .8), card, 4, 4);
@@ -2385,17 +2457,20 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var modified = active && parameter.IsValueModifiedFromReference();
         DrawCenteredText(dc,
-            percentageReadout ? $"{parameter.CurrentNumber * 100.0:0.#}%"
+            rateReadout ? $"{parameter.CurrentNumber:0.00} PTS/S"
+                : percentageReadout ? $"{parameter.CurrentNumber * 100.0:0.#}%"
                 : $"{parameter.CurrentNumber:0.##}x",
             new Point(center.X, center.Y + 3), modified ? 16.2 : 15.0,
             modified ? accent : text, FontWeights.Bold);
         DrawCenteredText(dc,
-            percentageReadout ? $"{parameter.Minimum * 100.0:0.#}%"
+            rateReadout ? $"{parameter.Minimum:0.00}"
+                : percentageReadout ? $"{parameter.Minimum * 100.0:0.#}%"
                 : $"{parameter.Minimum:0.##}x",
             new Point(center.X - radius * .80, card.Bottom - 19.0),
             9.0, muted, FontWeights.SemiBold);
         DrawCenteredText(dc,
-            percentageReadout ? $"{parameter.Maximum * 100.0:0.#}%"
+            rateReadout ? $"{parameter.Maximum:0.00}"
+                : percentageReadout ? $"{parameter.Maximum * 100.0:0.#}%"
                 : $"{parameter.Maximum:0.##}x",
             new Point(center.X + radius * .80, card.Bottom - 19.0),
             9.0, muted, FontWeights.SemiBold);
@@ -3811,32 +3886,30 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Radiation has three independent source units. Do not infer a net radiation
     // rate by subtracting a difficulty gain multiplier from a points/second removal.
     // The summary is read-only; each native-range track is edited independently.
+    // Three independent source-native 270° controls. Recovery is a rate in
+    // PTS/S (not an x multiplier), while build-up and damage are multipliers.
     private void DrawRadiationBalance(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
     {
         DrawHeader(dc, "RADIATION SYSTEM", string.Empty, text, muted, accent);
-        var sources = new (string Id, string Label, Func<double, string> Format)[]
+        var sources = new (string Id, string Label)[]
         {
-            ("survival.radiationAccumulation", "BUILD-UP",
-                value => $"{value:0.##}x"),
-            ("survival.radiationRecovery", "RECOVERY",
-                value => $"{value:0.00} PTS/S"),
-            ("survival.radiationDamage", "HP DAMAGE",
-                value => $"{value:0.##}x")
+            ("survival.radiationAccumulation", "BUILD-UP"),
+            ("survival.radiationRecovery", "RECOVERY"),
+            ("survival.radiationDamage", "HP DAMAGE")
         };
-        // Unlike a 'net dose' simulation, the three gauges use their own
-        // native domains and units (0–2.5x / 0–0.10 pts/s / 0–2x).
         const double gap = 12.0;
-        var width = Math.Min(630.0, ActualWidth - 34.0);
-        var cell = (width - 2.0 * gap) / 3.0;
-        var left = (ActualWidth - width) / 2.0;
+        var bankWidth = Math.Min(606.0, ActualWidth - 34.0);
+        var cell = (bankWidth - gap * 2.0) / 3.0;
+        var left = (ActualWidth - bankWidth) / 2.0;
         for (var i = 0; i < sources.Length; i++)
         {
             var source = sources[i];
-            DrawNativeGauge(dc, P(source.Id), source.Label, source.Format,
-                new Rect(left + i * (cell + gap), 55.0, cell, 240.0),
-                text, muted, border, accent, panel);
+            DrawSourceKnob(dc, P(source.Id), source.Label,
+                new Rect(left + i * (cell + gap), 49.0, cell, 181.0),
+                text, muted, border, accent, panel,
+                rateReadout: source.Id == "survival.radiationRecovery");
         }
     }
 
@@ -4677,7 +4750,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard"))
+        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -5525,14 +5598,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             "WorldLootLayout" => 275.0,
             "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
             "PhysicalLimits" => 335.0,
-            "StaminaCore" => 336.0,
+            "StaminaCore" => 351.0,
             "MutantCombatPressure" or "WaterStaminaPressure" => 149.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => 242.0,
             "PsyPhantomPressure" => 378.0,
             "HumanCombatProfile" => 465.0,
             "PlayerWeaponProfile" => 242.0,
-            "CoreHealthDashboard" => 348.0,
+            "CoreHealthDashboard" => width >= 700.0 ? 282.0 : 365.0,
             "SevereFatiguePenaltyBoard" => 376.0,
             "MasterMedicalHealing" => MasterCardBankHeight(width, 3),
             "MasterLowHealth" => MasterConditionalHeight(width),
@@ -5542,7 +5615,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "HungerLadder" => CompactHungerHeight(width),
             "StarvationTimeline" => MasterStarvationHeight(width),
             "RepeatedHitBand" => 455.0,
-            "RadiationBalance" => 308.0,
+            "RadiationBalance" => 242.0,
             "TradingDashboard" => 273.0,
             "RepairCurve" => 324.0,
             "AmmoDistribution" => 715.0,
