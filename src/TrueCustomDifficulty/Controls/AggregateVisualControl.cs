@@ -3935,17 +3935,20 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("loot.mediumStashAmmoQuantity", "STANDARD"),
             ("loot.expensiveStashAmmoQuantity", "RARE")
         };
+        // The three independent stash-tier ammo multipliers share the same native
+        // rotary renderer, snap grid and pointer/keyboard behavior as Your Weapons.
         const double gap = 11.0;
-        var bankWidth = Math.Min(690.0, ActualWidth - 34.0);
-        var columnWidth = (bankWidth - 2.0 * gap) / 3.0;
+        const double knobWidth = 194.0;
+        const double knobHeight = 181.0;
+        var bankWidth = Math.Min(606.0, ActualWidth - 34.0);
         var left = (ActualWidth - bankWidth) / 2.0;
         for (var i = 0; i < tiers.Length; i++)
         {
             var tier = tiers[i];
-            DrawNativeGauge(dc, P(tier.Id), tier.Label,
-                value => $"{value:0.##}x",
-                new Rect(left + i * (columnWidth + gap),
-                    69.0, columnWidth, 189.0),
+            var cellLeft = left + i * (bankWidth / 3.0);
+            DrawSourceKnob(dc, P(tier.Id), tier.Label,
+                new Rect(cellLeft + (bankWidth / 3.0 - knobWidth) / 2.0,
+                    69.0, knobWidth, knobHeight),
                 text, muted, border, accent, panel);
         }
 
@@ -4751,7 +4754,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer"))
+        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
