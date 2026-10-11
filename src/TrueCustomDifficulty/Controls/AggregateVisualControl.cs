@@ -4723,7 +4723,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 return;
             }
         }
-        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance"))
+        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
