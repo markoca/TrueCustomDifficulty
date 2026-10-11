@@ -480,7 +480,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawHeader(dc, "COUPONS & REWARDS", "", text, muted, accent);
         var width = Math.Min(620.0, ActualWidth - 28.0);
         var left = (ActualWidth - width) / 2.0;
-        DrawCouponCounter(dc, P("economy.startingMoney"),
+        DrawStartingCouponsRail(dc, P("economy.startingMoney"),
             new Rect(left, 49.0, width, 96.0), text, muted, border, accent, panel);
         DrawText(dc, "QUEST REWARDS", new Point(left + 8.0, 158.0),
             10.0, muted, FontWeights.Bold);
@@ -499,7 +499,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     // A direct-position 0..100,000-coupon rail replaces tedious +/- clicks.
     // Value changes use the *native* 10-coupon step on drag and keyboard.
-    private void DrawCouponCounter(
+    private void DrawStartingCouponsRail(
         DrawingContext dc, ParameterViewModel? coupons, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
