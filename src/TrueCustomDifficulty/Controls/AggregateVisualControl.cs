@@ -455,10 +455,10 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
     private static double CouponBoardHeight(double width)
-        => width >= 470.0 ? 274.0 : 367.0;
+        => width >= 390.0 ? 274.0 : 367.0;
 
     private static double ServicePriceBoardHeight(double width)
-        => width >= 418.0 ? 242.0 : 438.0;
+        => width >= 390.0 ? 242.0 : 438.0;
 
     private static string EconomyValue(ParameterViewModel parameter, double value)
         => parameter.Id switch
@@ -485,7 +485,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, "QUEST REWARDS", new Point(left + 8.0, 158.0),
             10.0, muted, FontWeights.Bold);
 
-        var twoColumns = ActualWidth >= 470.0;
+        var twoColumns = ActualWidth >= 390.0;
         const double gap = 10.0;
         var cardWidth = twoColumns ? (width - gap) / 2.0 : width;
         DrawTradingMeter(dc, P("economy.mainQuestReward"), "MAIN QUEST",
@@ -566,7 +566,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("economy.upgradeCost", "UPGRADES"),
             ("economy.repairCostBase", "BASE REPAIR")
         };
-        var columns = ActualWidth >= 418.0 ? 3 : 2;
+        var columns = ActualWidth >= 390.0 ? 3 : 2;
         const double gap = 10.0;
         var bankWidth = Math.Min(606.0, ActualWidth - 30.0);
         var cellWidth = Math.Min(194.0, (bankWidth - (columns - 1) * gap) / columns);
@@ -579,7 +579,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             var rowLeft = (ActualWidth - rowWidth) / 2.0;
             DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
                 new Rect(rowLeft + column * (cellWidth + gap),
-                    49.0 + row * 191.0, cellWidth, 181.0),
+                    (columns == 3 ? Math.Max(49.0, (ActualHeight - 181.0) / 2.0) : 49.0)
+                        + row * 191.0, cellWidth, 181.0),
                 text, muted, border, accent, panel,
                 percentageReadout: channels[i].Id == "economy.repairCostBase");
         }
@@ -2746,7 +2747,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("economy.repairEnemy", "HOSTILE")
         };
         var bank = new Rect((ActualWidth - Math.Min(720.0, ActualWidth - 34.0)) / 2.0,
-            52.0, Math.Min(720.0, ActualWidth - 34.0), 259.0);
+            Math.Max(52.0, (ActualHeight - 259.0) / 2.0),
+            Math.Min(720.0, ActualWidth - 34.0), 259.0);
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.65),
             new Pen(border, 0.9), bank, 4, 4);
         var plot = new Rect(bank.Left + 56, bank.Top + 20,
