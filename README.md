@@ -1,5 +1,10 @@
 # True Custom Difficulty
 
+### 2026-10-11 — Economy audit initialization-order fix
+
+The CouponFlow mouse-wheel regression check executes during the Economy audit, **before** the generic rotary audit initializes `_knob_source`. It therefore reads the already-initialized `_economy_aggregate` source text. Do not reference late-initialized audit globals from an earlier check: Python `py_compile` detects syntax errors but not `NameError` caused by execution order. Run the full `python tools/audit_project_consistency.py` after the syntax check. Runtime UI, source mappings, and CFG writers are unchanged.
+
+
 ### 2026-10-11 — CouponFlow wheel-handler compile invariant (CS0136)
 
 `AggregateVisualControl.OnMouseWheel` retains separate input paths for the native 10-coupon counter and the shared WPF rotary knobs. The CouponFlow nested branch uses `couponDirection`; the later generic rotary branch retains `direction`. C# disallows reusing the later enclosing-scope local name inside that preceding nested block (CS0136). Keep the variables distinct. `tools/audit_project_consistency.py` asserts both wheel paths and their native step multiplication, so this compile regression cannot recur unnoticed. No visual geometry, CFG bindings, preset behavior or writer contract is changed.
