@@ -108,7 +108,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "StashRewardProfile" => "Drag the BASIC, STANDARD or RARE ammo-amount track, or adjust the grenade and coupon reward controls separately.",
                     "AmmoDistribution" => "Drag AMMO YIELD or GRENADE YIELD for quantities; use the four ammo-family tracks to change the mix. The colored SNG/NATO bars are read-only previews.",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
-                    "PlayerWeaponProfile" => "Drag WEAPON DAMAGE, HEADSHOT DAMAGE or JAM FREQUENCY independently.",
+                    "PlayerWeaponProfile" => "Turn WEAPON DAMAGE, HEADSHOT DAMAGE or JAM FREQUENCY using its knob. Scroll over a knob or use arrow keys for precise adjustment.",
                     "HumanGroupSizeRadar" => "Drag a rank track to set its human squad cap.",
                     _ => "Select a setting and click or drag its control. Each active handle edits its own value."
                 };
