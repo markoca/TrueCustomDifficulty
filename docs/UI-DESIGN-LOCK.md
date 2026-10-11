@@ -1,5 +1,10 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-11 — Trader Stock native knobs
+
+Trader Stock is a compact two-column 194×181 DIP pair of WPF 270° source rotary knobs, AMMO STOCK (`economy.traderAmmoStock`) and MEDIC STOCK (`economy.medicStock`). The existing `DrawSourceKnob` native grid, snapping, drag, wheel, keyboard and reference reset apply unchanged. Board height is 242 DIP. These are quantity multipliers, not claims about slot count or restocking. Other economy surfaces are unchanged.
+
+
 ### 2026-10-11 — Ammo by Stash Tier rotary
 
 Stash Rewards uses **three independent, compact native-source 270° WPF knobs** for Ammo by Stash Tier: BASIC (`loot.cheapStashAmmoQuantity`), STANDARD (`loot.mediumStashAmmoQuantity`) and RARE (`loot.expensiveStashAmmoQuantity`). Reuse `DrawSourceKnob` and its native parameter range/step, mouse drag, wheel, keyboard and reference-reset behavior, in a centered bank capped at 606 DIP with 194 × 181 DIP cards. No duplicated informational labels. The separate BONUS REWARDS chance/count horizontal rails and their CFG bindings stay unchanged. The family `StashRewardProfile` must be enabled in the shared knob wheel gate.
