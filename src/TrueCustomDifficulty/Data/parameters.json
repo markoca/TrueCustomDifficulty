@@ -87,11 +87,6 @@
       "order": 60
     },
     {
-      "id": "equipment",
-      "label": "Equipment",
-      "order": 70
-    },
-    {
       "id": "environment",
       "label": "Anomalies",
       "order": 80
@@ -2780,7 +2775,7 @@
       },
       "slider": {
         "min": 8,
-        "max": 30,
+        "max": 40,
         "step": 1,
         "stepMode": "absolute"
       },
@@ -2827,7 +2822,7 @@
       },
       "slider": {
         "min": 15,
-        "max": 60,
+        "max": 80,
         "step": 5,
         "stepMode": "absolute"
       },
@@ -7260,7 +7255,7 @@
     },
     {
       "id": "equipment.armorDurability",
-      "tab": "equipment",
+      "tab": "survival",
       "group": "Equipment Wear",
       "label": "Armor Durability",
       "description": "Changes how quickly armor loses condition. Higher settings make armor last longer; lower settings make it wear out faster.",
@@ -7304,7 +7299,7 @@
     },
     {
       "id": "equipment.ammoWeight",
-      "tab": "equipment",
+      "tab": "survival",
       "group": "Item Weight",
       "label": "Ammo Weight",
       "description": "Scales ammunition weight while preserving the vanilla weight differences between ammo types.",
@@ -7348,7 +7343,7 @@
     },
     {
       "id": "equipment.consumableWeight",
-      "tab": "equipment",
+      "tab": "survival",
       "group": "Item Weight",
       "label": "Consumable Weight",
       "description": "Scales food and medicine item weight while preserving the vanilla differences between consumables.",
@@ -10032,7 +10027,7 @@
     },
     {
       "id": "equipment.weaponWearPerShot",
-      "tab": "equipment",
+      "tab": "survival",
       "group": "Equipment Wear",
       "label": "Player Weapon Wear Per Shot",
       "description": "Changes how quickly player weapons lose condition when fired, while keeping each weapon's own vanilla wear rate relative to the others.",

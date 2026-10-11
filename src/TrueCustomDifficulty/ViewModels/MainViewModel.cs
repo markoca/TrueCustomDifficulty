@@ -1739,7 +1739,14 @@ public sealed class MainViewModel : ObservableObject
                 "survival.bleedingLowDamage" => 650,
                 "survival.bleedingMediumDamage" => 660,
                 "survival.bleedingStrongDamage" => 670,
-                _ => 699
+
+                // Equipment parameters now follow Bleeding in Survival.
+                // Their stable equipment.* IDs and CFG targets are unchanged.
+                "equipment.armorDurability" => 700,
+                "equipment.weaponWearPerShot" => 710,
+                "equipment.ammoWeight" => 720,
+                "equipment.consumableWeight" => 730,
+                _ => 799
             };
         }
 
@@ -1868,19 +1875,6 @@ public sealed class MainViewModel : ObservableObject
                 "economy.repairFriend" => 430,
 
                 _ => 599
-            };
-        }
-
-        if (parameter.Definition.Tab == "equipment")
-        {
-            return parameter.Id switch
-            {
-                // Armor Wear
-                "equipment.armorDurability" => 0,
-
-                // Weapon Wear
-                "equipment.weaponWearPerShot" => 100,
-                _ => 299
             };
         }
 

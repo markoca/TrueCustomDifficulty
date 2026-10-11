@@ -1,5 +1,13 @@
 # Survival Control Deep Audit — v0.2.47
 
+### 2026-10-11 — Current UI placement, knobs, and alcohol ranges
+
+- The separate **Equipment** tab is retired. Four original equipment source IDs are now presented inside **Survival**, preserving **Equipment Wear** (armor and weapon wear crosshair) and **Item Weight** (ammo and consumables source-native tracks) as independent groups, after the Bleeding controls. Original `equipment.armorDurability`, `equipment.weaponWearPerShot`, `equipment.ammoWeight`, `equipment.consumableWeight` remain unchanged in values, ranges, steps, CFG writer mappings and preset fields. Their `tab` metadata alone switches to `survival`.
+- The shared 270° `DrawSourceKnob` renderer no longer draws rectangular background cards around rotary knobs anywhere. Existing dial arc, tick positions, units, hover/drag/wheel/keyboard and source-specific reset remain intact.
+- Beer drink strength now has a native UI range **8–40** (1-point steps, vanilla 15); Vodka strength **15–80** (5-point steps, vanilla 30). Both are editable real `BeerDrunkness` / `VodkaDrunkness` effect values via the existing writer, not synthetic stage thresholds. The Drunkenness view takes slider bounds from the catalog.
+
+This 2026-10-11 UI contract supersedes historical references to a separate Equipment tab and the prior Beer 30/Vodka 60 ceiling. The original mechanical/source audit remains valid.
+
 ### 2026-10-10 — Beer and Vodka independent RAD removal (latest binding contract)
 
 Within the **single MEDICAL ITEMS card** the right-hand RADIATION REMOVAL bank now has **four compact vertical sliders on one row**: **SCIENTIFIC MEDKIT**, **ANTI-RAD**, **BEER** and **VODKA**. There is no second-row, duplicate standalone Radiation Treatment card, or separate consumable alcohol antirad slider. The RAD bank is given additional horizontal space by tightening the four gold HEAL / copper BLEED pairs on the left; at least 820 DIP board width is reserved so all 12 numeric columns remain one row without clipping. Each column uses the shared horizontal cap/white-on-hover and independent source-native drag/keyboard/right-click/R reset; the RAD bank keeps a separate teal 0–200 vertical scale, with numbers not conflated with HP or bleeding points.

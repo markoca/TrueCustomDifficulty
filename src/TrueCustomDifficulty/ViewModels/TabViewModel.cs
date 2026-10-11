@@ -55,7 +55,7 @@ public sealed class TabViewModel : ObservableObject
                 && !p.Id.StartsWith("combat.accumulatedDamage", StringComparison.Ordinal);
 
         // Tabs with multiple distinct CFG domains are grouped visibly so unrelated mechanics are not presented as one undifferentiated list.
-        if (Id is "loot" or "combat" or "survival" or "health" or "stamina" or "economy" or "equipment" or "environment" or "alife" or "master")
+        if (Id is "loot" or "combat" or "survival" or "health" or "stamina" or "economy" or "environment" or "alife" or "master")
             ParametersView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ParameterViewModel.Group)));
 
         SelectedParameter = Parameters.FirstOrDefault(p => p.IsControlVisible);
@@ -72,12 +72,11 @@ public sealed class TabViewModel : ObservableObject
     private static string GetTabSummary(string id) => id switch
     {
         "combat" => "Enemy toughness and damage, attack pressure, player lethality, mutant danger and explosions.",
-        "survival" => "Hunger, fatigue, sleeping, radiation and bleeding behavior.",
+        "survival" => "Hunger, fatigue, sleeping, radiation, bleeding, equipment wear and carried item weight.",
         "health" => "Player health, recovery and direct medical treatment.",
         "stamina" => "Stamina pool and recovery, action costs, movement penalties, vaulting and carry capacity.",
         "loot" => "Corpse, stash, ammo, weapon-condition and mutant drop amounts while preserving Difficulty and Progression Rank differences.",
         "economy" => "Starting coupons, trader pricing, item and service costs, repair by reputation and quest coupon income.",
-        "equipment" => "Armor and weapon wear plus item-weight tuning.",
         "environment" => "Global anomaly damage, 11 individual damage sources, Flycatcher slowdown and three special effects; no weather/emission timing.",
         "alife" => "Human and mutant encounter group-size caps by player rank; world population and spawn timing are unchanged.",
         "master" => "Optional Master-only punishment bundles for starvation, severe fatigue, radiation, low health and medical effectiveness.",

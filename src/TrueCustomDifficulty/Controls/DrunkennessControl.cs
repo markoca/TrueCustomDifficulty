@@ -200,8 +200,9 @@ public sealed class DrunkennessControl : FrameworkElement
         dc.DrawRoundedRectangle(background, new Pen(border, 1.0), rect, 3.0, 3.0);
 
         var strength = parameter?.CurrentNumber ?? vanillaStrength;
-        var minimum = parameter?.Minimum ?? 1.0;
-        var maximum = parameter?.Maximum ?? 60.0;
+        // Fallback readouts align with the source catalog's editable bounds.
+        var minimum = parameter?.Minimum ?? (slider == ActiveSlider.Beer ? 8.0 : 15.0);
+        var maximum = parameter?.Maximum ?? (slider == ActiveSlider.Beer ? 40.0 : 80.0);
         var drinks = RequiredWholeDrinks(strength);
         var drinkLabel = drinks == 1 ? singular : plural;
 

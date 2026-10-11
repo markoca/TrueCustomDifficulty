@@ -1,12 +1,22 @@
 # Equipment Mapping
 
-**Current Equipment UI (2026-10-09):** Two source-accurate sections, **Equipment Wear** (`equipment.armorDurability` and `equipment.weaponWearPerShot`) and **Item Weight** (`equipment.ammoWeight` and `equipment.consumableWeight`). The former is a compact, two-axis plot exactly matching Combat's three circular handles: bottom X controls armor toughness, left Y controls per-shot weapon wear, and the now-interactive center ring edits both real source values by X/Y drag; the latter consists of two compact horizontal Stamina Usage-style tracks, not mixer faders. All four real ranges/steps, CFG routes and native sources below are unchanged. Full UI anatomy is locked in `UI-DESIGN-LOCK.md` / `VISUAL-CONTROL-SYSTEM.md`.
+### 2026-10-11 — Frameless knobs, Equipment in Survival, expanded drink strengths (current)
+
+**All rotary knobs:** The common `AggregateVisualControl.DrawSourceKnob` renders every native 270° knob without a rectangular card fill or border. Preserve dial face, selected/hover highlighting, native source-grid ticks, left/right limits, current value, neutral reference marker, pointer/wheel/keyboard interaction and right-click reset. Applies to Your Weapons, Radiation System, Consumable Effects, Ammo Family Weights, Economy, Trader Stock and all other consumers of this renderer. Do not add extra frames, filler text or full-width control backgrounds.
+
+**Equipment now lives in Survival:** Remove the separate Equipment navigation tab. Under Survival place the two original groups after Bleeding: **Equipment Wear** keeps its compact two-axis original armor durability (`equipment.armorDurability`) and player weapon wear per shot (`equipment.weaponWearPerShot`) editor; **Item Weight** keeps the two original source-native weight controls (`equipment.ammoWeight`, `equipment.consumableWeight`). Only the catalog UI tab assignment for those four changes from `equipment` to `survival`. Preserve source IDs, values, order within each group, steps, reference handling, CFG targets, writer operations and preset compatibility. No duplicate equipment tab and no duplicate controls.
+
+**Alcohol Tolerance:** Beer Strength (`survival.beerDrunknessStrength`) now spans **8–40** in **1** point increments (vanilla **15**); Vodka Strength (`survival.vodkaDrunknessStrength`) spans **15–80** in **5** point increments (vanilla **30**). The native catalog controls both real editing bounds and the DrunkennessControl preview/labels. These maxima are user tuning limits only; original DrunknessMechanics stage thresholds and the beer/vodka CFG effect targets remain unchanged.
+
+This active design supersedes historical rectangular knob banks, Equipment tab navigation and 30/60 drink strength ceilings.
+
+**Original Equipment UI (2026-10-09; now hosted in Survival):** Two source-accurate sections, **Equipment Wear** (`equipment.armorDurability` and `equipment.weaponWearPerShot`) and **Item Weight** (`equipment.ammoWeight` and `equipment.consumableWeight`). The former is a compact, two-axis plot exactly matching Combat's three circular handles: bottom X controls armor toughness, left Y controls per-shot weapon wear, and the now-interactive center ring edits both real source values by X/Y drag; the latter consists of two compact horizontal Stamina Usage-style tracks, not mixer faders. All four real ranges/steps, CFG routes and native sources below are unchanged. Full UI anatomy is locked in `UI-DESIGN-LOCK.md` / `VISUAL-CONTROL-SYSTEM.md`.
 
 **Equipment bonus cap decision:** historical `RegenStamina.MaxValue` (stamina recovery), `DegenBleeding.MaxValue` (bleeding recovery), `AdditionalInventoryWeight.MaxValue` (carry bonus) and `PenaltyLessWeight.MaxValue` (encumbrance relief) are **audit-only / no Equipment UI**. They set upper bounds, but their actual stacking, gameplay effects and interpretation are not proven. They were already absent from the current four-source `Data/parameters.json`; do not add mock sliders, calculate derived effects, or modify unrelated CFG outputs.
 
 Source of truth for this pass: runtime STALKER 2 CFG dump 2.0.5.
 
-The Equipment tab deliberately avoids protection-cap tuning. The protection caps previously removed from the UI remain excluded. This pass focuses on the confirmed difficulty armor-wear control, player-weapon wear, and confirmed item-weight controls.
+The relocated Equipment controls in Survival deliberately avoid protection-cap tuning. The protection caps previously removed from the UI remain excluded. This pass focuses on the confirmed difficulty armor-wear control, player-weapon wear, and confirmed item-weight controls.
 
 ## 1. Armor Wear
 

@@ -2410,8 +2410,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel,
         bool percentageReadout = false, bool rateReadout = false)
     {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .32),
-            new Pen(CloneWithOpacity(border, .62), .8), card, 4, 4);
+        // Frameless shared knob: preserve dial, title, steps, values and hit area.
         DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, card.Top + 19),
             10.0, text, FontWeights.Bold);
         if (parameter is null)
