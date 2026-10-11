@@ -10,11 +10,15 @@ Keep distinctions between (1) an item binding to one or more named effect protot
 
 | UI / recognizable item | Actual item SID | Exact owned effect SID(s) | Raw effect kind | Vanilla raw strength(s) | Duration | Behavior / source caution |
 |---|---|---|---|---|---|---|
-| Vinca candidate — bleed medicine | `Cinnamon` | `CinnamonDegenBleeding` | `EEffectType::DegenBleeding` | `ValueMin = ValueMax = 10.0` | **180 s** | Positive ongoing bleed-recovery source; `DuplicationType = KeepNew`. The literal string `Vinca` **does not occur** in this supplied CFG: this is an item-name identification candidate, not a verified localization mapping. Confirm the rendered/localized name separately. |
+| Vinca — bleed medicine | `Cinnamon` | `CinnamonDegenBleeding` | `EEffectType::DegenBleeding` | `ValueMin = ValueMax = 10.0` | **180 s** | Positive ongoing bleed-recovery source; `DuplicationType = KeepNew`. The literal string `Vinca` does not appear in this CFG; an independent item-ID source confirms that the displayed **Vinca** item uses the internal SID `Cinnamon` (see name cross-check). |
 | Psi Block | `PSYBlocker` | `PSYBlockerIncreaseRegen` | `EEffectType::DegenPsyPoints` | `10` | **60 s** | Positive psi-point degeneration/recovery source; `KeepNew`. Not guaranteed to be equivalent to general psi-damage resistance or a percentage-based armor stat. |
 | Hercules | `Hercules` | `HerculesWeight` **and** `HerculesWeight_Penalty` | `AdditionalInventoryWeight` **and** `PenaltyLessWeight` | `20` **on both**, not summed | **300 s on both** | Paired related carrying-capacity / weight-penalty effects; both `KeepNew`, `ShouldPauseByDialog=false`. Exposing only one leaves mismatched rules. Does not rewrite the base `Player.VitalParams` carry limit. |
 
 Source item bindings: `ItemPrototypes.cfg` has `Cinnamon`, `PSYBlocker` and `Hercules` in the Medicine category with corresponding `EffectPrototypeSIDs` entries. Source parameter definitions: `EffectPrototypes.cfg` has all four exact prototype entries. `Cinnamon` is sorted as a buff (priority 1), `Hercules` priority 2, `PSYBlocker` priority 3. The `ShouldShowEffects` list marks the paired Hercules secondary effect hidden from the vanilla inventory effect display, **not** absent from gameplay.
+
+### Name cross-check: Vinca = Cinnamon
+
+The [Gamer Guides medicine item database](https://earth.gamerguides.com/stalker-2-heart-of-chornobyl/database/consumables/medicine) lists Vinca with creation/console ID `Cinnamon`, +10 bleeding regeneration and a 180-second duration. This independently corroborates the naming, while the supplied CFG remains the source for exact writer paths and values.
 
 ### Proposed player controls, **not yet implemented**
 
@@ -45,7 +49,7 @@ Additional source details: drink `Water` has `WaterStamina2` `Stamina` 25% / 5s,
 
 ### Safety and acceptance criteria for subsequent implementation
 
-1. **Confirm the name** `Vinca` ↔ `Cinnamon` from the game's localized strings or actual UI. This CFG by itself proves `Cinnamon`, not `Vinca`.
+1. **Preserve the player/internal naming distinction:** display **Vinca**; write the source item SID `Cinnamon` and effect SID `CinnamonDegenBleeding`. The name is externally cross-checked because the CFG by itself does not store the localized item label.
 2. Preserve `ValueMin == ValueMax` for these deterministic strengths, and link Hercules' two independent effect prototypes when editing magnitude or duration.
 3. All three sources use `KeepNew`; do **not** claim that consuming a second item stacks effects additively.
 4. Do not infer regenerated HP/s, bleed units/s, effective psi armor or base carry-weight points solely from raw prototype fields.
