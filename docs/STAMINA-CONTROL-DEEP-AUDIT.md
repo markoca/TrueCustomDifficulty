@@ -1,5 +1,13 @@
 # Stamina Control Deep Audit — v0.2.46
 
+### 2026-10-11 — Core Stamina matches Core Health (current authoritative layout)
+
+The existing `StaminaCore` family is rendered under **CORE STAMINA** (replacing the former **STAMINA & MOVEMENT** outer title and redundant **STAMINA CORE** subheading). The top two 105-DIP primary resource cards are **MAX STAMINA** (`stamina.maxSP`, native **SP**) and **BASE RECOVERY** (`stamina.regeneration`, native **SP/s**). They share the **exact** `DrawCoreResourceRuler` renderer also used by the Core Health MAX HEALTH / PASSIVE RECOVERY cards: the same 12-DIP heading at +15/+12, 19-DIP right-aligned current value at -15/+6, 5-DIP horizontal rail and 7-DIP handle at card top +65, muted reference marker, and 10.4-DIP native min/max labels at bottom -20. Only edited **numeric tokens** become gold; neutral units, scale ticks and baseline markers remain subdued. Native SP-capacity and regeneration values/ranges/steps are not interchanged.
+
+The new layout uses the Core Health header position (Y=21) and identical two-card geometry (Y=51, H=105, gap=12). The next line is **MOVEMENT LIMITS** (Y=173), followed by the **unchanged native vault-height vertical ruler** and **calibrated maximum carry-weight rail** (Y=191, H=175, gap=12). These lower controls retain their exact clickable landmarks, underlying `stamina.vaultMaxHeight` / `stamina.maxCarryWeight` values, drag/keyboard/reset and reference semantics. Board height is **382 DIP** (366-DIP bottom plus 16-DIP padding). There is **no duplicate heading**, no new gameplay control, no full-width slider and no change to the separate Stamina Usage panel.
+
+All four parameters keep their original per-source mappings, preset serialization, validation, selection, reset, and CFG writer operations. This overrides older 351/336-DIP and 72-DIP StaminaCore visual descriptions without changing their gameplay audits.
+
 Runtime reference: **STALKER 2 CFG dump 2.0.5**.
 
 ## Result

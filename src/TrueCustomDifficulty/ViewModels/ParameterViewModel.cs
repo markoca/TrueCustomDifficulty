@@ -87,7 +87,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ConsumableMixer" => "Turn one of three strength knobs to update its linked instant or sustained effect bars. Duration timelines and short-effect editors stay independent.",
                     "SleepingDashboard" => "Select 1–14 minimum sleep hours directly in the step row; other tracks set sleep eligibility and wake-up recovery.",
                     "CoreHealthDashboard" => "Set MAX HP and PASSIVE RECOVERY directly; below, Recovery Delay, Recovery Multiplier and Low-HP Recovery Rate are independent CFG sources. Medical items stay in their own section; no synthetic health threshold.",
-                    "StaminaCore" => "STAMINA CORE sets Capacity and Base Recovery. MOVEMENT LIMITS keeps the native vault-height ruler and a calibrated Carry Weight limit in KG; these four sources remain independent.",
+                    "StaminaCore" => "CORE STAMINA sets Maximum SP and Base Recovery with matching native resource rulers. MOVEMENT LIMITS keeps the vault-height ruler and calibrated Carry Weight in KG; all four sources remain independent.",
                     "WaterStaminaPressure" => "Drag the MEDIUM WATER or DEEP WATER track separately.",
                     "PhysicalLimits" => "Drag one track for vault height and the other for carrying capacity.",
                     "SevereFatiguePenaltyBoard" => "Enable severe-fatigue mechanics, then drag each of the five vertical penalty equalizer bars independently.",

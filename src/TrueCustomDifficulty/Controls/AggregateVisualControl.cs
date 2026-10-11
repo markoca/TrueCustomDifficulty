@@ -1638,31 +1638,33 @@ public sealed class AggregateVisualControl : FrameworkElement
             plot, vault.Minimum, vault.Maximum);
     }
 
-    // Distinct resource and traversal domains share one tightly packed board.
-    // Vault keeps its real height ruler and landmarks; carry capacity is a
-    // native kg limit, not a fabricated in-game encumbrance trigger.
+    // Core Stamina mirrors Core Health's two primary 105-DIP native rulers:
+    // shared typography, rail/handle, limits and reference ticks. Movement
+    // keeps its independent source-native vault and carry editors below.
     private void DrawStaminaMovementBoard(DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush accent, Brush panel)
     {
-        DrawHeader(dc, "STAMINA & MOVEMENT", "", text, muted, accent);
+        DrawHeader(dc, "CORE STAMINA", "", text, muted, accent);
         var width = Math.Max(1.0, ActualWidth - 32.0);
         const double gap = 12.0;
         var cell = (width - gap) / 2.0;
-        DrawText(dc, "STAMINA CORE", new Point(19.0, 43.0),
-            10.2, muted, FontWeights.Bold);
-        DrawHorizontalTrackCard(dc, P("stamina.maxSP"), "STAMINA CAPACITY",
-            new Rect(16.0, 56.0, cell, 72.0),
-            text, muted, border, accent, panel, hideBaseText: true);
-        DrawHorizontalTrackCard(dc, P("stamina.regeneration"), "BASE RECOVERY",
-            new Rect(16.0 + cell + gap, 56.0, cell, 72.0),
-            text, muted, border, accent, panel, hideBaseText: true);
-        DrawText(dc, "MOVEMENT LIMITS", new Point(19.0, 143.0),
+
+        if (P("stamina.maxSP") is { } stamina)
+            DrawCoreResourceRuler(dc, stamina, "MAX STAMINA", "SP",
+                new Rect(16.0, 51.0, cell, 105.0),
+                text, muted, border, accent, panel);
+        if (P("stamina.regeneration") is { } recovery)
+            DrawCoreResourceRuler(dc, recovery, "BASE RECOVERY", "SP/s",
+                new Rect(16.0 + cell + gap, 51.0, cell, 105.0),
+                text, muted, border, accent, panel);
+
+        DrawText(dc, "MOVEMENT LIMITS", new Point(19.0, 173.0),
             10.2, muted, FontWeights.Bold);
         DrawVaultHeightRuler(dc, P("stamina.vaultMaxHeight"),
-            new Rect(16.0, 161.0, cell, 175.0),
+            new Rect(16.0, 191.0, cell, 175.0),
             text, muted, border, accent, panel);
         DrawCarryCapacityRail(dc, P("stamina.maxCarryWeight"),
-            new Rect(16.0 + cell + gap, 161.0, cell, 175.0),
+            new Rect(16.0 + cell + gap, 191.0, cell, 175.0),
             text, muted, border, accent, panel);
     }
 
@@ -2251,11 +2253,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         // The two primary health parameters share one card layout.
         // Only their native units and number precision differ.
         if (P("health.maxHP") is { } hp)
-            DrawCoreHealthPrimaryRuler(dc, hp, "MAX HEALTH", "HP",
+            DrawCoreResourceRuler(dc, hp, "MAX HEALTH", "HP",
                 new Rect(16.0, 51.0, half, 105.0),
                 text, muted, border, accent, panel);
         if (P("health.baseRegen") is { } passiveRecovery)
-            DrawCoreHealthPrimaryRuler(dc, passiveRecovery, "PASSIVE RECOVERY", "HP/s",
+            DrawCoreResourceRuler(dc, passiveRecovery, "PASSIVE RECOVERY", "HP/s",
                 new Rect(16.0 + half + gap, 51.0, half, 105.0),
                 text, muted, border, accent, panel);
 
@@ -2284,12 +2286,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // Shared geometry for the two top-row Core Health rulers. Keeping their
-    // titles, live readouts, rail/knob and native endpoints in the same places
-    // avoids mixing a hero HP card with an undersized generic recovery track.
-    // Only the source's unit/precision differs; hit mapping and reference ticks
-    // continue to use its original native min/max and CFG value.
-    private void DrawCoreHealthPrimaryRuler(
+    // Shared primary resource-ruler grammar for CORE HEALTH and CORE STAMINA.
+    // Both use identical card geometry, typography, handles, native endpoints
+    // and hit/ref mapping; only the source values and units differ.
+    private void DrawCoreResourceRuler(
         DrawingContext dc, ParameterViewModel parameter, string label, string unit,
         Rect card, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
@@ -2298,13 +2298,14 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var active = parameter.IsControlEnabled;
         var modified = active && parameter.IsValueModifiedFromReference();
-        var value = unit == "HP" ? $"{parameter.CurrentNumber:0} HP" : FriendlyValue(parameter);
+        var value = unit is "HP" or "SP"
+            ? $"{parameter.CurrentNumber:0} {unit}" : FriendlyValue(parameter);
         var valueText = CreateText(value, 19.0, active ? text : muted,
             FontWeights.Bold, Math.Max(1.0, card.Width - 30.0));
         if (modified)
         {
             // Like Stamina Usage, only the edited numeric token turns gold;
-            // HP and HP/s remain neutral and Base is not emphasized.
+            // HP, HP/s, SP and SP/s remain neutral; Base is not emphasized.
             foreach (System.Text.RegularExpressions.Match token in
                 System.Text.RegularExpressions.Regex.Matches(
                     value, @"\d+(?:\.\d+)?"))
@@ -2352,8 +2353,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 track.Width + 14.0, track.Height + 18.0),
             track, parameter.Minimum, parameter.Maximum);
 
-        var minValue = unit == "HP" ? $"{parameter.Minimum:0}" : FormatCompact(parameter.Minimum);
-        var maxValue = unit == "HP" ? $"{parameter.Maximum:0}" : FormatCompact(parameter.Maximum);
+        var minValue = unit is "HP" or "SP" ? $"{parameter.Minimum:0}" : FormatCompact(parameter.Minimum);
+        var maxValue = unit is "HP" or "SP" ? $"{parameter.Maximum:0}" : FormatCompact(parameter.Maximum);
         DrawText(dc, $"{minValue} {unit}",
             new Point(track.Left, card.Bottom - 20.0),
             10.4, muted, FontWeights.Normal);
@@ -5639,7 +5640,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "WorldLootLayout" => 275.0,
             "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
             "PhysicalLimits" => 335.0,
-            "StaminaCore" => 351.0,
+            "StaminaCore" => 382.0,
             "MutantCombatPressure" or "WaterStaminaPressure" => 149.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => 242.0,
