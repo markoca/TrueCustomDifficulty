@@ -34,6 +34,7 @@ internal static class Program
             BandageBleedingUpperBoundCase();
 
             MedicalItemsPairingCase();
+            MovementLimitsAndExhaustionNamingCase();
 
             // A unique concrete edit for every live Health/Stamina catalog
             // parameter. Master-only modifiers use Master because their
@@ -103,6 +104,49 @@ internal static class Program
             Console.Error.WriteLine("FAIL: " + exc);
             return 1;
         }
+    }
+
+    private static void MovementLimitsAndExhaustionNamingCase()
+    {
+        // Pin the UI-only design changes without changing the writer contract:
+        // the six exhaustion inputs retain their stable CFG source identities.
+        var labels = new (string Id, string Label)[]
+        {
+            ("stamina.sprintDisableThreshold", "Sprint Stops Below"),
+            ("stamina.lowRecoveryThreshold", "Bonus Regen Below"),
+            ("stamina.aimRegenCoef", "Aim Slows Regen"),
+            ("stamina.sprintRecoveryDelay", "Sprint Recovery Delay"),
+            ("stamina.lowRecoveryStrength", "Bonus Regen Power"),
+            ("stamina.lowRecoveryDuration", "Bonus Regen Duration")
+        };
+        foreach (var (id, label) in labels)
+        {
+            var source = Catalog.Parameters.Single(p => p.Id == id);
+            Check(source.Label == label,
+                $"Stamina gamer-facing label mismatch: {id}");
+            Check(source.Targets.Count > 0,
+                $"Stamina source lost its CFG writer route: {id}");
+        }
+
+        var vault = Catalog.Parameters.Single(p => p.Id == "stamina.vaultMaxHeight");
+        var carry = Catalog.Parameters.Single(p => p.Id == "stamina.maxCarryWeight");
+        Check(vault.Slider is { Min: 70.0, Max: 300.0, Step: 1.0 },
+            "Horizontal vault control must keep the native 70..300 uu / 1-uu steps");
+        Check(carry.Slider is { Min: 20.0, Max: 160.0, Step: 5.0 },
+            "Horizontal carry control must keep the native 20..160 kg / 5-kg steps");
+        foreach (var (label, value) in new[]
+        {
+            ("WAIST", 130.0), ("EYES", 225.0), ("ABOVE EYES", 300.0)
+        })
+            Check(vault.Markers.Any(m => m.Label == label && m.Value == value),
+                $"The horizontal vault ruler is missing its exact marker: {label}");
+
+        var vm = new MainViewModel(Catalog);
+        var stamina = vm.Tabs.Single(t => t.Id == "stamina");
+        Check(stamina.Parameters.Any(p => p.Id == vault.Id && p.VisualAggregateFamily == "StaminaCore")
+            && stamina.Parameters.Any(p => p.Id == carry.Id && p.VisualAggregateFamily == "StaminaCore"),
+            "Vault height and carry weight must remain in the Core Stamina visual family");
+        Console.WriteLine("MOVEMENT/EXHAUSTION: native IDs, slider ranges, landmarks and gamer captions preserved.");
     }
 
     private static void MedicalItemsPairingCase()

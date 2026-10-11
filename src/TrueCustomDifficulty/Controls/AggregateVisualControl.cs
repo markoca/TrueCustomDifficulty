@@ -320,9 +320,13 @@ public sealed class AggregateVisualControl : FrameworkElement
             && target.Kind == HitKind.Horizontal
             && source.Id == "survival.minimumSleepHours")
             return;
+        // Landmark captions snap to exact authored values. Their tiny fixed
+        // mapping rectangles are not actual handles, so suppress the
+        // generic selection glow on the caption.
         if (Family == "StaminaCore"
-            && target.Kind == HitKind.Vertical
-            && source.Id == "stamina.vaultMaxHeight")
+            && target.Kind == HitKind.Horizontal
+            && source.Id == "stamina.vaultMaxHeight"
+            && Math.Abs(target.VisualMaximum - target.VisualMinimum) < Epsilon)
             return;
         if (target.Kind == HitKind.Vertical
             && Family is ("SevereFatiguePenaltyBoard" or "RadiationBalance"
@@ -1563,80 +1567,139 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Dedicated native-height ruler, not a fictitious metres or jump-height
     // simulation: Unreal units are the exact CFG unit (uu), and the source's
     // authored WAIST / EYES / ABOVE EYES landmarks stay at 130 / 225 / 300.
-    private void DrawVaultHeightRuler(
-        DrawingContext dc, ParameterViewModel? vault, Rect card,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    // Vault height and carry capacity share compact horizontal card anatomy.
+    // The markers are source-specific; none of these values is a simulated
+    // collision or load threshold. Preserve the real native CFG hit mapping.
+    private void DrawMovementLimitRuler(
+        DrawingContext dc, ParameterViewModel? parameter, string label, string unit,
+        Rect card, Brush text, Brush muted, Brush border, Brush accent, Brush panel,
+        bool vaultHeight)
     {
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.70),
-            new Pen(border, 0.9), card, 4, 4);
-        if (vault is null)
+            new Pen(border, 0.9), card, 4.0, 4.0);
+        if (parameter is null)
             return;
-        DrawText(dc, "MAXIMUM VAULT HEIGHT",
-            new Point(card.Left + 11, card.Top + 10),
-            10.7, text, FontWeights.Bold);
-        var changed = vault.IsValueModifiedFromReference();
-        DrawRightAlignedText(dc, $"{vault.CurrentNumber:0} uu",
-            new Point(card.Right - 11, card.Top + 8),
-            changed ? 12.8 : 11.6, changed ? accent : text, FontWeights.Bold);
 
-        var plot = new Rect(card.Left + 52, card.Top + 58,
-            15.0, card.Height - 80.0);
-        var now = ValueToY(vault.CurrentNumber, vault.Minimum, vault.Maximum, plot);
-        var baseline = ValueToY(vault.ReferenceNumber,
-            vault.Minimum, vault.Maximum, plot);
-        dc.DrawRoundedRectangle(CloneWithOpacity(border, .25),
-            new Pen(border, 0.8), plot, 3, 3);
-        dc.DrawRoundedRectangle(CloneWithOpacity(accent, .72), null,
-            new Rect(plot.Left + 2, now, plot.Width - 4,
-                Math.Max(0.0, plot.Bottom - now)), 2, 2);
-        dc.DrawLine(new Pen(muted, 2.1),
-            new Point(plot.Left - 10, baseline),
-            new Point(plot.Right + 9, baseline));
-        for (var height = 100; height <= 300; height += 50)
+        var enabled = parameter.IsControlEnabled;
+        var value = $"{parameter.CurrentNumber:0} {unit}";
+        var readout = CreateText(value, 12.4, enabled ? text : muted,
+            FontWeights.Bold, Math.Max(1.0, card.Width - 26.0));
+        if (enabled && parameter.IsValueModifiedFromReference())
         {
-            var tickY = ValueToY(height, vault.Minimum, vault.Maximum, plot);
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, .65), 1.0),
-                new Point(plot.Left - 9, tickY),
-                new Point(plot.Left - 2, tickY));
-            DrawRightAlignedText(dc, height.ToString(CultureInfo.InvariantCulture),
-                new Point(plot.Left - 12, tickY - 6),
-                8.4, muted, FontWeights.SemiBold);
+            // Changed number only; the real uu/KG unit stays neutral.
+            var digits = value.IndexOf(' ');
+            if (digits > 0)
+            {
+                readout.SetForegroundBrush(accent, 0, digits);
+                readout.SetFontSize(13.6, 0, digits);
+            }
         }
-        DrawRightAlignedText(dc, "70",
-            new Point(plot.Left - 12, plot.Bottom - 5),
-            8.4, muted, FontWeights.SemiBold);
 
-        // Explicit source markers are independent from the base difficulty
-        // marker. The labels are clickable at their exact existing values.
-        foreach (var landmark in vault.VanillaMarkers)
+        var availableTitle = Math.Max(1.0,
+            card.Width - 26.0 - readout.WidthIncludingTrailingWhitespace - 8.0);
+        dc.DrawText(CreateText(label, 10.7, text, FontWeights.Bold, availableTitle),
+            new Point(card.Left + 12.0, card.Top + 11.0));
+        dc.DrawText(readout,
+            new Point(card.Right - 12.0 - readout.WidthIncludingTrailingWhitespace,
+                card.Top + 7.0));
+
+        // Both sliders use one shared rail location, scale and hit geometry.
+        var rail = new Rect(card.Left + 18.0, card.Top + 45.0,
+            Math.Max(1.0, card.Width - 36.0), 12.0);
+        var y = rail.Top + rail.Height / 2.0;
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, rail, false);
+
+        dc.DrawLine(new Pen(border, 4.0),
+            new Point(rail.Left, y), new Point(rail.Right, y));
+        if (enabled)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, .78), 4.0),
+                new Point(rail.Left, y), new Point(currentX, y));
+
+        if (vaultHeight)
         {
-            var y = ValueToY(landmark.Value, vault.Minimum, vault.Maximum, plot);
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, .85), 1.5),
-                new Point(plot.Right + 6, y),
-                new Point(plot.Right + 15, y));
-            var name = landmark.Label.Replace("VANILLA / ", "", StringComparison.Ordinal);
-            var captionWidth = Math.Max(12.0, card.Right - (plot.Right + 22) - 7);
-            var label = CreateText(name, 9.1, muted,
-                FontWeights.SemiBold, captionWidth);
-            var lx = plot.Right + 22;
-            var ly = Math.Clamp(y - 7.0, plot.Top - 7,
-                plot.Bottom - label.Height + 8);
-            dc.DrawText(label, new Point(lx, ly));
-            AddVerticalTarget(vault,
-                new Rect(lx - 3, ly - 3,
-                    Math.Max(20.0, label.WidthIncludingTrailingWhitespace + 6),
-                    label.Height + 6),
-                new Rect(plot.Left, y, plot.Width, 1.0),
-                landmark.Value, landmark.Value);
+            // These are authored editor landmarks, not meters or promised
+            // traversable obstacle heights. Their captions remain clickable.
+            foreach (var marker in parameter.VanillaMarkers)
+            {
+                var x = ValueToX(marker.Value, parameter.Minimum,
+                    parameter.Maximum, rail, false);
+                dc.DrawLine(new Pen(CloneWithOpacity(muted, .76), 1.2),
+                    new Point(x, y - 8.0), new Point(x, y + 9.0));
+            }
         }
-        var hot = _hoverTarget?.Kind == HitKind.Vertical
-            && ReferenceEquals(_hoverTarget.Parameter, vault);
-        dc.DrawLine(new Pen(hot ? Brushes.White : accent, hot ? 3.5 : 2.6),
-            new Point(plot.Left - 6, now), new Point(plot.Right + 6, now));
-        AddVerticalTarget(vault,
-            new Rect(plot.Left - 12, plot.Top - 6,
-                plot.Width + 24, plot.Height + 12),
-            plot, vault.Minimum, vault.Maximum);
+        else
+        {
+            // Native kg calibration only; avoid implying invented
+            // encumbrance, sprint, or fatigue thresholds.
+            for (var tick = 1; tick <= 3; tick++)
+            {
+                var kg = parameter.Minimum +
+                    tick * (parameter.Maximum - parameter.Minimum) / 4.0;
+                var x = ValueToX(kg, parameter.Minimum, parameter.Maximum, rail, false);
+                dc.DrawLine(new Pen(CloneWithOpacity(muted, .58), 1.0),
+                    new Point(x, y - 8.0), new Point(x, y + 9.0));
+                var markerText = CreateText($"{kg:0}", 9.0, muted, FontWeights.SemiBold);
+                dc.DrawText(markerText,
+                    new Point(x - markerText.WidthIncludingTrailingWhitespace / 2.0,
+                        card.Top + 70.0));
+            }
+        }
+
+        DrawReferenceTick(dc, parameter, rail, y, muted);
+        var hovered = enabled && _hoverTarget?.Kind == HitKind.Horizontal
+            && ReferenceEquals(_hoverTarget.Parameter, parameter);
+        dc.DrawEllipse(panel, new Pen(enabled ? accent : muted,
+                hovered || IsSelected(parameter) ? 2.6 : 1.7),
+            new Point(currentX, y), 7.0, 7.0);
+        if (enabled)
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.4, 2.4);
+        AddHorizontalTarget(parameter,
+            new Rect(rail.Left - 7.0, rail.Top - 8.0,
+                rail.Width + 14.0, rail.Height + 16.0),
+            rail, parameter.Minimum, parameter.Maximum);
+
+        if (vaultHeight)
+        {
+            foreach (var marker in parameter.VanillaMarkers)
+            {
+                var x = ValueToX(marker.Value, parameter.Minimum,
+                    parameter.Maximum, rail, false);
+                var caption = marker.Label.Replace("VANILLA / ", "",
+                    StringComparison.Ordinal);
+                var fixedHover = _hoverTarget?.Kind == HitKind.Horizontal
+                    && ReferenceEquals(_hoverTarget.Parameter, parameter)
+                    && Math.Abs(_hoverTarget.VisualMinimum - marker.Value) < Epsilon
+                    && Math.Abs(_hoverTarget.VisualMaximum - marker.Value) < Epsilon;
+                var captionText = CreateText(caption, 9.0,
+                    fixedHover ? Brushes.White : muted, FontWeights.SemiBold,
+                    Math.Max(1.0, card.Width - 18.0));
+                var captionLeft = Math.Clamp(
+                    x - captionText.WidthIncludingTrailingWhitespace / 2.0,
+                    card.Left + 9.0,
+                    Math.Max(card.Left + 9.0,
+                        card.Right - 9.0 - captionText.WidthIncludingTrailingWhitespace));
+                // At narrow widths the final ABOVE EYES label drops one
+                // short line, rather than overlapping the EYES caption.
+                var captionTop = card.Top +
+                    (card.Width < 270.0 && marker.Value >= parameter.Maximum - Epsilon
+                        ? 82.0 : 69.0);
+                dc.DrawText(captionText, new Point(captionLeft, captionTop));
+                AddHorizontalTarget(parameter,
+                    new Rect(captionLeft - 4.0, captionTop - 3.0,
+                        captionText.WidthIncludingTrailingWhitespace + 8.0,
+                        captionText.Height + 6.0),
+                    new Rect(x, captionTop, 1.0, Math.Max(1.0, captionText.Height)),
+                    marker.Value, marker.Value);
+            }
+        }
+
+        DrawText(dc, $"{parameter.Minimum:0} {unit}",
+            new Point(rail.Left, card.Bottom - 19.0),
+            9.6, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, $"{parameter.Maximum:0} {unit}",
+            new Point(rail.Right, card.Bottom - 19.0),
+            9.6, muted, FontWeights.Normal);
     }
 
     // Core Stamina mirrors Core Health's two primary 105-DIP native rulers:
@@ -1661,65 +1724,14 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         DrawText(dc, "MOVEMENT LIMITS", new Point(19.0, 173.0),
             10.2, muted, FontWeights.Bold);
-        DrawVaultHeightRuler(dc, P("stamina.vaultMaxHeight"),
-            new Rect(16.0, 191.0, cell, 175.0),
-            text, muted, border, accent, panel);
-        DrawCarryCapacityRail(dc, P("stamina.maxCarryWeight"),
-            new Rect(16.0 + cell + gap, 191.0, cell, 175.0),
-            text, muted, border, accent, panel);
-    }
-
-    private void DrawCarryCapacityRail(
-        DrawingContext dc, ParameterViewModel? carry, Rect card,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
-    {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .70),
-            new Pen(border, .9), card, 4, 4);
-        if (carry is null)
-            return;
-        DrawText(dc, "MAXIMUM CARRY WEIGHT",
-            new Point(card.Left + 12.0, card.Top + 10.0),
-            10.5, text, FontWeights.Bold);
-        var modified = carry.IsValueModifiedFromReference();
-        DrawRightAlignedText(dc, $"{carry.CurrentNumber:0} KG",
-            new Point(card.Right - 12.0, card.Top + 8.0),
-            modified ? 13.5 : 12.0, modified ? accent : text,
-            FontWeights.Bold);
-
-        // Calibration ticks refer to authored kilogram limits only:
-        // they are NOT claims about sprint/fatigue game thresholds.
-        var track = new Rect(card.Left + 22.0, card.Top + 86.0,
-            Math.Max(1.0, card.Width - 44.0), 12.0);
-        var y = track.Top + track.Height / 2.0;
-        var now = ValueToX(carry.CurrentNumber, carry.Minimum,
-            carry.Maximum, track, false);
-        dc.DrawLine(new Pen(border, 4.0),
-            new Point(track.Left, y), new Point(track.Right, y));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, .75), 4.0),
-            new Point(track.Left, y), new Point(now, y));
-        for (var index = 0; index <= 4; index++)
-        {
-            var value = carry.Minimum + index * (carry.Maximum - carry.Minimum) / 4.0;
-            var x = ValueToX(value, carry.Minimum, carry.Maximum, track, false);
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, .55), 1.0),
-                new Point(x, y - 9.0), new Point(x, y + 9.0));
-            DrawCenteredText(dc, $"{value:0}",
-                new Point(x, track.Bottom + 17.0),
-                9.0, muted, FontWeights.SemiBold);
-        }
-        DrawReferenceTick(dc, carry, track, y, muted);
-        var hover = _hoverTarget?.Kind == HitKind.Horizontal
-            && ReferenceEquals(_hoverTarget.Parameter, carry);
-        dc.DrawEllipse(panel,
-            new Pen(carry.IsControlEnabled ? accent : muted,
-                hover ? 2.7 : 1.7), new Point(now, y), 7.0, 7.0);
-        DrawCenteredText(dc, "LOAD CAPACITY  /  KG",
-            new Point(card.Left + card.Width / 2.0, card.Bottom - 17.0),
-            9.0, muted, FontWeights.SemiBold);
-        AddHorizontalTarget(carry,
-            new Rect(track.Left - 8.0, track.Top - 12.0,
-                track.Width + 16.0, track.Height + 24.0),
-            track, carry.Minimum, carry.Maximum);
+        DrawMovementLimitRuler(dc, P("stamina.vaultMaxHeight"),
+            "MAXIMUM VAULT HEIGHT", "uu",
+            new Rect(16.0, 191.0, cell, 116.0),
+            text, muted, border, accent, panel, vaultHeight: true);
+        DrawMovementLimitRuler(dc, P("stamina.maxCarryWeight"),
+            "MAXIMUM CARRY WEIGHT", "KG",
+            new Rect(16.0 + cell + gap, 191.0, cell, 116.0),
+            text, muted, border, accent, panel, vaultHeight: false);
     }
 
     // Fatigue stages affect when penalties begin, while their strengths remain
@@ -5646,7 +5658,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "WorldLootLayout" => 275.0,
             "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
             "PhysicalLimits" => 335.0,
-            "StaminaCore" => 382.0,
+            "StaminaCore" => 323.0,
             "MutantCombatPressure" => 149.0,
             "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),

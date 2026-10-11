@@ -1,5 +1,19 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-11 — Compact Movement Limits and gamer-facing Exhaustion labels (latest authoritative contract)
+
+**MOVEMENT LIMITS** in `StaminaCore` is now **two matching compact horizontal 116-DIP cards**, not a tall vertical vault bar paired with an oversized carry chart. **MAXIMUM VAULT HEIGHT** (`stamina.vaultMaxHeight`, native **70–300 uu**, 1-uu steps, vanilla **130 uu**) and **MAXIMUM CARRY WEIGHT** (`stamina.maxCarryWeight`, native **20–160 KG**, 5-KG steps, vanilla **80 KG**) share the **same title-left/value-right, rail, source-reference, handle and endpoint geometry**. Each card starts at **Y=191**, with its rail centered at card top +51, a 12-DIP sibling gap, and native min/max units in the bottom footer. The vault rail retains three **source-authored, clickable exact-value landmark captions**: **WAIST=130**, **EYES=225**, **ABOVE EYES=300**. At narrow widths ABOVE EYES drops one short label line to prevent overlap; clicking captions snaps the unchanged underlying source value exactly, not an approximation. The carry rail has only three intermediate kg calibration ticks (native quarter increments); it **does not** duplicate a separate “LOAD CAPACITY / KG” caption or suggest fabricated fatigue thresholds. Only a modified numeric token is highlighted, never its `uu`/`KG` unit or Vanilla/Base tick. Board height is **323 DIP** rather than 382, retaining the two top CORE STAMINA 105-DIP cards unchanged. Existing pointer, keyboard, right-click per-source reset, `R` family reset and original four CFG/preset mappings are preserved.
+
+**EXHAUSTION & RECOVERY** retains its six independent source-native sliders and the 2+4 arrangement, 94-DIP card grammar, shared 0–60 SP *visual ruler* for the thresholds, real Sprint Lock **0–32.2 SP** interactive range, and compact responsive wrapping. The six current visible names, and corresponding catalog `label` metadata, are:
+- **SPRINT STOPS BELOW** — `stamina.sprintDisableThreshold`: sprint lock threshold in SP
+- **BONUS REGEN BELOW** — `stamina.lowRecoveryThreshold`: low-stamina emergency recovery trigger in SP
+- **AIM SLOWS REGEN** — `stamina.aimRegenCoef`: percent penalty to regeneration *while aiming*, not a low-SP aim penalty
+- **SPRINT RECOVERY DELAY** — `stamina.sprintRecoveryDelay`: time before recovery following sprint exhaustion, seconds
+- **BONUS REGEN POWER** — `stamina.lowRecoveryStrength`: additional low-SP recovery strength in SP/s
+- **BONUS REGEN DURATION** — `stamina.lowRecoveryDuration`: duration of that bonus, seconds
+
+The names are user-facing wording only: no source range, step, transformation, unit, writer, constraint or save format is modified. Supersede the older vertically oriented Vault Height design, 175-DIP Movement card, 382-DIP StaminaCore height, and technical Exhaustion captions in dated catalog sections below.
+
 ### 2026-10-11 — Frameless knobs, Equipment in Survival, expanded drink strengths (current)
 
 **All rotary knobs:** The common `AggregateVisualControl.DrawSourceKnob` renders every native 270° knob without a rectangular card fill or border. Preserve dial face, selected/hover highlighting, native source-grid ticks, left/right limits, current value, neutral reference marker, pointer/wheel/keyboard interaction and right-click reset. Applies to Your Weapons, Radiation System, Consumable Effects, Ammo Family Weights, Economy, Trader Stock and all other consumers of this renderer. Do not add extra frames, filler text or full-width control backgrounds.
