@@ -856,7 +856,7 @@ _env_parameters = {p.get("id"): p for p in parameters}
 if "environment.anomalyDamage" not in _env_parameters or "environment.electroAnomalyDamage" not in _env_parameters:
     fail("global vs individual anomaly parameter separation is missing")
 elif not _env_parameters["environment.anomalyDamage"].get("exposeInUi", True):
-    fail("global anomaly damage slider unexpectedly hidden")
+    fail("global anomaly damage editor unexpectedly hidden")
 else:
     note("Global vs Individual anomaly scopes are separate; historic numeric sort indices retired")
 
@@ -2306,6 +2306,46 @@ if _knob_missing or _knob_values or not _knob_section or any(
 else:
     note("Your Weapons WPF rotary control: three real 0.25x source knobs, 270° geometry, "
          "angular/scroll/keyboard interaction, bounded layout and matching design catalogs")
+
+# Global Anomaly Damage must reuse the existing real WPF knob/HitKind
+# infrastructure. Guard the physical source contract and separate per-anomaly
+# source mapping against cosmetic render-only changes.
+_anomaly_knob_param = _knob_catalog.get('environment.anomalyDamage', {})
+_anomaly_knob_slider = _anomaly_knob_param.get('slider') or {}
+_anomaly_knob_start = _knob_source.find('private void DrawAnomalyGlobalDamage(')
+_anomaly_knob_end = _knob_source.find('private static double FlycatcherPlotSide(', _anomaly_knob_start)
+_anomaly_knob_body = (_knob_source[_anomaly_knob_start:_anomaly_knob_end]
+                      if _anomaly_knob_start >= 0 and _anomaly_knob_end > _anomaly_knob_start else '')
+_anomaly_knob_requirements = (
+    'DrawSourceKnob(dc, P("environment.anomalyDamage")',
+    '"OVERALL DAMAGE MULTIPLIER"',
+    'knobCardWidth = 194.0',
+    'knobCardWidth, 181.0',
+)
+_anomaly_knob_shared = (
+    'private void DrawSourceKnob(',
+    'DrawSourceKnob(dc, P(channels[i].Id)',
+    'if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage"))',
+    'if (target.Kind == HitKind.Knob)',
+    '"AnomalyGlobalDamage" => 242.0',
+    '"AnomalyGlobalDamage" => new[] { "environment.anomalyDamage" }',
+    'HitKind.Knob',
+)
+_anomaly_knob_docs = [
+    (ROOT / 'docs' / doc).read_text(encoding='utf-8')
+    for doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md')
+]
+if (_anomaly_knob_slider.get('min') != 0
+    or _anomaly_knob_slider.get('max') != 2.5
+    or _anomaly_knob_slider.get('step') != 0.01
+    or not all(part in _anomaly_knob_body for part in _anomaly_knob_requirements)
+    or 'DrawEconomyCard' in _anomaly_knob_body
+    or not all(part in _knob_source for part in _anomaly_knob_shared)
+    or any('2026-10-11 — Global Anomaly Damage single knob' not in doc
+           for doc in _anomaly_knob_docs)):
+    fail('Global Anomaly Damage single-knob contract drifted (native 0–2.5x/0.01x, shared WPF input, 242-DIP frame, catalogs)')
+else:
+    note('Global Anomaly Damage: one source-backed WPF knob with native 0–2.5x/0.01x, shared mouse/keyboard behavior and two design catalogs')
 
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
