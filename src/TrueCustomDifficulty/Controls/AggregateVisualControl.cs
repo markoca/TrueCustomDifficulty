@@ -2985,122 +2985,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // Drink effects remain in the original three-knob/six-preview layout.
-    // Three raw medicine-strength knobs now share this same mixer, while
-    // all eight primary durations share the one duration graph below.
+    // Drink strength knobs sit above the combined eight-lane duration graph;
+    // three independent medicine strength knobs sit beneath it.
     private const double ConsumableStrengthKnobTop = 53.0;
-    private const double ConsumableEffectPreviewTop = 250.0;
-    private const double ConsumableEffectPreviewHeight = 211.0;
-    private const double ConsumableMedicineKnobTop = 474.0;
-    private const double ConsumableDurationTop = 670.0;
-
-    // All six preview bars are derived from the SAME authored source values
-    // as the retired instant/sustained text readouts. No synthetic gameplay
-    // control, new writer field, extra effect or cross-unit summation.
-    private void DrawConsumableEffectPreview(
-        DrawingContext dc, Rect frame, ParameterViewModel burst,
-        ParameterViewModel waterStamina, ParameterViewModel energyStamina,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
-    {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .65),
-            new Pen(border, 0.9), frame, 4.0, 4.0);
-        DrawText(dc, "LIVE EFFECT PREVIEW",
-            new Point(frame.Left + 12.0, frame.Top + 9.0),
-            11.0, text, FontWeights.Bold);
-
-        // Hover takes priority over selection; selecting a knob retains its
-        // graph relationship when the pointer moves off the knob.
-        var focused = _hoverTarget?.Kind == HitKind.Knob
-            ? _hoverTarget.Parameter
-            : _selectedHitKind == HitKind.Knob ? _selectedParameter : null;
-        const double sectionGap = 10.0;
-        var sectionWidth = (frame.Width - 24.0 - sectionGap) / 2.0;
-        var sectionTop = frame.Top + 34.0;
-        var sectionHeight = frame.Height - 45.0;
-
-        void EffectSection(Rect rect, string heading,
-            (string Label, double PercentPerX, double Scale,
-                ParameterViewModel Source, bool Negative)[] effects)
-        {
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .75),
-                new Pen(CloneWithOpacity(border, .70), 0.8),
-                rect, 3.0, 3.0);
-            DrawText(dc, heading,
-                new Point(rect.Left + 10.0, rect.Top + 8.0),
-                10.1, muted, FontWeights.Bold);
-
-            for (var i = 0; i < effects.Length; i++)
-            {
-                var (label, factor, scale, source, reduction) = effects[i];
-                var current = source.CurrentNumber * factor;
-                var reference = source.ReferenceNumber * factor;
-                var rowTop = rect.Top + 30.0 + i * 43.0;
-                var highlighted = ReferenceEquals(source, focused);
-                var dimmed = focused is not null && !highlighted;
-                var modified = source.IsValueModifiedFromReference();
-                if (highlighted)
-                    dc.DrawRoundedRectangle(CloneWithOpacity(accent, .07), null,
-                        new Rect(rect.Left + 5, rowTop - 4,
-                            rect.Width - 10, 39), 3, 3);
-
-                // The SPDrain reduction is a benefit: its preview shows
-                // stamina cost saved, without changing the negative CFG value.
-                var previewValue = $"{(reduction ? "" : "+")}{Math.Abs(current):0.#}%";
-                var previewSize = modified ? 11.5 : 10.3;
-                var previewText = CreateText(previewValue, previewSize,
-                    modified ? accent : text, FontWeights.Bold);
-                // Measure the value first so the caption cannot overlap it.
-                var labelWidth = Math.Max(1.0, rect.Width - 20.0
-                    - previewText.WidthIncludingTrailingWhitespace - 8.0);
-                dc.DrawText(CreateText(label, 9.7, text, FontWeights.SemiBold,
-                        labelWidth),
-                    new Point(rect.Left + 10.0, rowTop));
-                dc.DrawText(previewText,
-                    new Point(rect.Right - 10.0 - previewText.WidthIncludingTrailingWhitespace,
-                        rowTop - 1.0));
-
-                // Every effect-magnitude preview grows from left to right.
-                // Negative SPDrain corresponds to positive cost saved;
-                // mirroring only that preview was visually misleading.
-                var rail = new Rect(rect.Left + 10.0, rowTop + 21.0,
-                    rect.Width - 20.0, 5.0);
-                dc.DrawRoundedRectangle(CloneWithOpacity(border, .42),
-                    null, rail, 2.0, 2.0);
-                var ratio = Math.Clamp(Math.Abs(current) / scale, 0.0, 1.0);
-                var activeWidth = rail.Width * ratio;
-                if (activeWidth > 0.0)
-                    dc.DrawRoundedRectangle(
-                        CloneWithOpacity(accent, highlighted ? .95 : dimmed ? .24 : .70),
-                        null, new Rect(rail.Left, rail.Top, activeWidth, rail.Height),
-                        2.0, 2.0);
-                var referenceRatio = Math.Clamp(Math.Abs(reference) / scale, 0.0, 1.0);
-                var referenceX = rail.Left + referenceRatio * rail.Width;
-                dc.DrawLine(new Pen(muted, 1.7),
-                    new Point(referenceX, rail.Top - 3.0),
-                    new Point(referenceX, rail.Bottom + 3.0));
-            }
-        }
-
-        EffectSection(
-            new Rect(frame.Left + 12.0, sectionTop, sectionWidth, sectionHeight),
-            "INSTANT STAMINA",
-            new (string, double, double, ParameterViewModel, bool)[]
-            {
-                ("WATER", 38.0, 76.0, burst, false),
-                ("ENERGY", 50.0, 100.0, burst, false),
-                ("LIMITED ENERGY", 100.0, 200.0, burst, false)
-            });
-        EffectSection(
-            new Rect(frame.Left + 22.0 + sectionWidth, sectionTop,
-                sectionWidth, sectionHeight),
-            "SUSTAINED EFFECTS",
-            new (string, double, double, ParameterViewModel, bool)[]
-            {
-                ("WATER REGEN", 25.0, 50.0, waterStamina, false),
-                ("WATER STAMINA COST CUT", 10.0, 20.0, waterStamina, true),
-                ("ENERGY REGEN", 200.0, 400.0, energyStamina, false)
-            });
-    }
+    private const double ConsumableDurationTop = 250.0;
 
     private void DrawConsumableMixer(
         DrawingContext dc,
@@ -3165,27 +3053,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
                 ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel);
-
-        DrawConsumableEffectPreview(dc,
-            new Rect(17.0, ConsumableEffectPreviewTop,
-                width, ConsumableEffectPreviewHeight),
-            burst, waterStamina, energyStamina,
-            text, muted, border, accent, panel);
-
-        // The three real medicine effects are strength-only raw numbers:
-        // Vinca bleed recovery, Hercules' coupled carry pair, Psi recovery.
-        // Durations are edited in the SAME seconds graph as the drinks below.
-        DrawSourceKnob(dc, vincaStrength, "VINCA BLEED",
-            new Rect(knobLeft, ConsumableMedicineKnobTop, knobWidth, 181.0),
-            text, muted, border, accent, panel, rawReadout: true);
-        DrawSourceKnob(dc, herculesStrength, "HERCULES CARRY",
-            new Rect(knobLeft + knobWidth + knobGap, ConsumableMedicineKnobTop,
-                knobWidth, 181.0),
-            text, muted, border, accent, panel, rawReadout: true);
-        DrawSourceKnob(dc, psiStrength, "PSI BLOCK",
-            new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
-                ConsumableMedicineKnobTop, knobWidth, 181.0),
-            text, muted, border, accent, panel, rawReadout: true);
 
         var previewTop = ConsumableDurationTop;
 
@@ -3392,6 +3259,24 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Rect(x, y, secondaryWidth, CompactTrackHeight),
                 text, muted, border, accent, panel);
         }
+
+        // Position below the whole duration chart, including short effects.
+        // MeasureOverride and OnRender share the same responsive geometry.
+        var medicineKnobTop = ConsumableMedicineKnobTop(ActualWidth);
+        // Three independently editable raw medicine strength knobs; durations
+        // remain editable only inside the combined chart directly above.
+        DrawSourceKnob(dc, vincaStrength, "VINCA BLEED",
+            new Rect(knobLeft, medicineKnobTop, knobWidth, 181.0),
+            text, muted, border, accent, panel, rawReadout: true);
+        DrawSourceKnob(dc, herculesStrength, "HERCULES CARRY",
+            new Rect(knobLeft + knobWidth + knobGap, medicineKnobTop,
+                knobWidth, 181.0),
+            text, muted, border, accent, panel, rawReadout: true);
+        DrawSourceKnob(dc, psiStrength, "PSI BLOCK",
+            new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
+                medicineKnobTop, knobWidth, 181.0),
+            text, muted, border, accent, panel, rawReadout: true);
+
     }
 
     // One true integer-hours selector, not an arbitrary 14-way percentage
@@ -5824,8 +5709,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         return CompactGridEnd(benefitsTitle + 25.0, 2, columns) + 14.0;
     }
 
-    private static double CompactConsumableHeight(double width)
+    private static double ConsumableMedicineKnobTop(double width)
         => ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;
+
+    private static double CompactConsumableHeight(double width)
+        => ConsumableMedicineKnobTop(width) + 181.0 + 14.0;
 
     private static double CompactHungerHeight(double width)
     {

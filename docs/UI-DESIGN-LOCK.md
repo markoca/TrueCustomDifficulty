@@ -1,6 +1,15 @@
 # UI Design Lock — Approval-Only Contract
 
-### 2026-10-11 — Consumable Effects: medicine controls integrated into original chart (current)
+### 2026-10-11 — Consumable Effects: compact knobs below duration graph (current)
+
+**Survival → Consumable Effects:** Delete the entire passive `LIVE EFFECT PREVIEW` stamina graph and its obsolete renderer. Keep the existing three native drink-strength knobs (Instant Stamina, Water Buff, Energy Regen) together at Y=53 DIP, preserving their CFG/preset mappings and interactions. Put the **single shared `EFFECT DURATION / SECONDS` frame immediately below** at Y=250 DIP, with the five existing drink duration lanes on their 0–270 s clock, three real medicine lanes (Vinca, Hercules, Psi Block) on an independent, labeled 0–900 s clock **within the same frame**, and all three original short Water/Energy duration tracks at the foot of that frame. Existing duration step/limit rules and draggable targets remain unchanged; the drink-only `OVERRIDE LIMITS` checkbox never caps medicine effects.
+
+**Medicine effect strengths below durations:** render exactly three source-backed frameless 270° knobs in one compact centered row, **below the full duration frame**, not between the drinks and the frame. Labels are `VINCA BLEED`, `HERCULES CARRY` and `PSI BLOCK`; their real 1-point native steps, max-620-DIP knob bank, 181-DIP knob card height, neutral vanilla tick, gold-only-when-changed current values and per-knob resets are unchanged. The medicine row's position is computed from the responsive duration chart's bottom: `ConsumableDurationTop + ConsumableTimelineHeight(width) + 14 DIP`. MeasureOverride must return that top + 181 + 14 DIP; never clip the controls or reserve the now-removed preview's empty vertical space. Vinca/Hercules/Psi Block magnitudes, Hercules dual-CFG coupling, six preset IDs and eight source-backed duration lanes remain intact. No duplicate medicine sliders, separate duration cards, redundant text, or full-width controls.
+
+**Supersedes:** previous live stamina preview and medicine-knobs-above-duration layout. This is a UI-only rearrangement; no CFG gameplay parameter, effect duration, or output mapping is altered.
+
+
+### Superseded: medicine knobs above chart with passive stamina preview
 
 **Resolved missing controls:** the six medicine IDs must be instantiated by `MainViewModel.consumableAggregateParameterIds`, not merely listed in the catalog, visual family dictionary, or CFG writer. The visible `ConsumableMixer` anchor binds all six hidden-but-editable source VMs. Missing one is a failed runtime UI contract, not permission to show an empty board.
 

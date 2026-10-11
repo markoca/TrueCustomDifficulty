@@ -2057,7 +2057,7 @@ _duration_renderer = (_semantic_source_dir / "AggregateVisualControl.cs").read_t
 for _token in (
     "private static double ConsumableTimelineHeight(double width)",
     "new Rect(17.0, previewTop, width, ConsumableTimelineHeight(ActualWidth))",
-    "=> ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;",
+    "=> ConsumableMedicineKnobTop(width) + 181.0 + 14.0;",
     "var secondary = new ParameterViewModel[][]",
     "shortEffect.CurrentNumber",
     "DrawCompactTrack(dc, shortEffect, caption,",
@@ -2093,8 +2093,8 @@ _vm_medicine_mount = _medicine_vm_source.split("var consumableAggregateParameter
 for _medicine_id in _medicine_contract:
     if f'"{_medicine_id}"' not in _vm_medicine_mount:
         fail(f"medicine hidden aggregate source missing from live VM: {_medicine_id}")
-if ("private const double ConsumableMedicineKnobTop = 474.0;" not in _duration_renderer
-    or "private const double ConsumableDurationTop = 670.0;" not in _duration_renderer
+if ("private static double ConsumableMedicineKnobTop(double width)" not in _duration_renderer
+    or "private const double ConsumableDurationTop = 250.0;" not in _duration_renderer
     or "medicineLanes = new (ParameterViewModel Source, string Label)[]" not in _duration_renderer
     or "medicineMaximumSeconds = 900.0" not in _duration_renderer
     or "DrawSourceKnob(dc, vincaStrength, \"VINCA BLEED\"" not in _duration_renderer
@@ -2874,8 +2874,8 @@ for _doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md'):
             ROOT / 'docs' / _doc).read_text(encoding='utf-8'):
         fail(f'Compact Radiation/Health/Stamina binding catalog missing: {_doc}')
 
-# Consumable Mixer retains three drink strength knobs and a six-bar preview;
-# medicine adds three raw strength knobs and three lanes in the common timeline.
+# Consumable Mixer: no passive stamina preview; 3 drink strength knobs
+# above the single 8-lane duration graph, 3 medicine strength knobs below.
 _consumer_ids = (
     "survival.instantStaminaRestore",
     "survival.waterStaminaEffectStrength",
@@ -2884,12 +2884,15 @@ _consumer_ids = (
 _consumer_catalog = {p["id"]: p for p in parameters_doc["parameters"]}
 _consumer_source = _knob_source
 _consumer_from = _consumer_source.find("private void DrawConsumableMixer(")
-_consumer_end = _consumer_source.find("// A true seconds-space editor", _consumer_from)
-_consumer_head = _consumer_source[_consumer_from:_consumer_end] if _consumer_from >= 0 and _consumer_end >= 0 else ""
-_consumer_preview_start = _consumer_source.find("private void DrawConsumableEffectPreview(")
-_consumer_preview_end = _consumer_source.find("private void DrawConsumableMixer(", _consumer_preview_start)
-_consumer_preview = (_consumer_source[_consumer_preview_start:_consumer_preview_end]
-                    if _consumer_preview_start >= 0 and _consumer_preview_end > _consumer_preview_start else "")
+_duration_from = _consumer_source.find("var previewTop = ConsumableDurationTop;", _consumer_from)
+_medicine_from = _consumer_source.find("var medicineKnobTop = ConsumableMedicineKnobTop(ActualWidth);", _duration_from)
+_consumer_until = _consumer_source.find("// One true integer-hours selector", _medicine_from)
+_consumer_drinks = (_consumer_source[_consumer_from:_duration_from]
+                    if 0 <= _consumer_from < _duration_from else "")
+_consumer_durations = (_consumer_source[_duration_from:_medicine_from]
+                       if 0 <= _duration_from < _medicine_from else "")
+_consumer_medicines = (_consumer_source[_medicine_from:_consumer_until]
+                       if 0 <= _medicine_from < _consumer_until else "")
 _consumer_errors = []
 for _cid in _consumer_ids:
     _range = (_consumer_catalog.get(_cid, {}).get("slider") or {})
@@ -2900,48 +2903,50 @@ for _required in (
     'DrawSourceKnob(dc, waterStamina, "WATER BUFF",',
     'DrawSourceKnob(dc, energyStamina, "ENERGY REGEN",',
     'var knobBankWidth = Math.Min(620.0, ActualWidth - 34.0);',
-    'new Rect(17.0, ConsumableEffectPreviewTop,',
-    'burst, waterStamina, energyStamina,',
-    'var previewTop = ConsumableDurationTop;',
 ):
-    if _required not in _consumer_head:
-        _consumer_errors.append(f"strength knob/chart wiring missing: {_required}")
-if (_consumer_head.count("DrawSourceKnob(") != 6
-    or "Strength(burst" in _consumer_head
-    or "Readout(" in _consumer_head
-    or "DrawCompactTrack(dc, p, label" in _consumer_head):
-    _consumer_errors.append("strength knob/readout renderer drifted or wrong six-knob count")
+    if _required not in _consumer_drinks:
+        _consumer_errors.append(f"drink knob missing: {_required}")
 for _required in (
-    '"LIVE EFFECT PREVIEW"',
-    '"INSTANT STAMINA"',
-    '"SUSTAINED EFFECTS"',
-    '("WATER", 38.0, 76.0, burst, false)',
-    '("ENERGY", 50.0, 100.0, burst, false)',
-    '("LIMITED ENERGY", 100.0, 200.0, burst, false)',
-    '("WATER REGEN", 25.0, 50.0, waterStamina, false)',
-    '("WATER STAMINA COST CUT", 10.0, 20.0, waterStamina, true)',
-    '("ENERGY REGEN", 200.0, 400.0, energyStamina, false)',
-    'var current = source.CurrentNumber * factor;',
-    'var reference = source.ReferenceNumber * factor;',
-    'new Rect(rail.Left, rail.Top, activeWidth, rail.Height)',
-    '_hoverTarget?.Kind == HitKind.Knob',
-    'modified ? accent : text',
+    '"EFFECT DURATION  /  SECONDS"',
+    'var medicineLanes = new (ParameterViewModel Source, string Label)[]',
+    '(vincaTime, "VINCA")',
+    '(herculesTime, "HERCULES")',
+    '(psiTime, "PSI BLOCK")',
+    'DrawCompactTrack(dc, shortEffect, caption,',
 ):
-    if _required not in _consumer_preview:
-        _consumer_errors.append(f"live source/graph/hover formula missing: {_required}")
+    if _required not in _consumer_durations:
+        _consumer_errors.append(f"duration lane missing: {_required}")
+for _required in (
+    'DrawSourceKnob(dc, vincaStrength, "VINCA BLEED",',
+    'DrawSourceKnob(dc, herculesStrength, "HERCULES CARRY",',
+    'DrawSourceKnob(dc, psiStrength, "PSI BLOCK",',
+    'rawReadout: true',
+):
+    if _required not in _consumer_medicines:
+        _consumer_errors.append(f"medicine knob missing below effects: {_required}")
+if (_consumer_drinks.count("DrawSourceKnob(") != 3
+    or _consumer_durations.count("DrawSourceKnob(") != 0
+    or _consumer_medicines.count("DrawSourceKnob(") != 3):
+    _consumer_errors.append("knob counts/positions have drifted")
+if ("DrawConsumableEffectPreview(" in _consumer_source
+    or "LIVE EFFECT PREVIEW" in _consumer_source
+    or "ConsumableEffectPreviewTop" in _consumer_source
+    or "ConsumableEffectPreviewHeight" in _consumer_source):
+    _consumer_errors.append("removed stamina preview reintroduced")
 if (not knob_wheel_gate_contains(_consumer_source, "ConsumableMixer")
     or 'or "RadiationBalance" or "StaminaCore" or "ConsumableMixer"' not in _consumer_source
-    or 'private const double ConsumableDurationTop = 670.0;' not in _consumer_source
-    or '=> ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;' not in _consumer_source):
-    _consumer_errors.append("knob wheel/selection or shared duration frame geometry missing")
-if any("2026-10-11 — Consumable Effects: three source knobs"
+    or 'private const double ConsumableDurationTop = 250.0;' not in _consumer_source
+    or '=> ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;' not in _consumer_source
+    or '=> ConsumableMedicineKnobTop(width) + 181.0 + 14.0;' not in _consumer_source):
+    _consumer_errors.append("interaction or compact height contract missing")
+if any("2026-10-11 — Consumable Effects: compact knobs below duration graph"
        not in (ROOT / 'docs' / doc).read_text(encoding='utf-8')
        for doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md')):
-    _consumer_errors.append("authoritative Consumable Effects design contract absent")
+    _consumer_errors.append("binding UI design catalog not updated")
 if _consumer_errors:
-    fail("Consumable Effects source knobs and graph: " + "; ".join(_consumer_errors))
+    fail("Consumable Effects no-preview layout: " + "; ".join(_consumer_errors))
 else:
-    note("Consumable Effects: 3 drink and 3 raw medicine knobs, 6 derived live drink bars, 8 duration lanes in one frame, 3 independent short durations")
+    note("Consumable Effects: drink knobs, 8 duration lanes, medicine knobs below, no passive preview")
 
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
