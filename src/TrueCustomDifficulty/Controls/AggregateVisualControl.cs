@@ -40,7 +40,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             or "StashRewardProfile" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
             or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"
-            or "RadiationBalance" or "StaminaCore"
+            or "RadiationBalance" or "StaminaCore" or "ConsumableMixer"
             or "MasterLowHealth" or "MasterRadiationPenalty" or "MasterMedicalHealing")
             ParameterSelected?.Invoke(this, new AggregateParameterSelectedEventArgs(parameter));
     }
@@ -2900,6 +2900,116 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Authored instant/sustained strengths and durations remain nine independent
     // parameters. On wide surfaces, their cards form two columns without any
     // shortened or overlapping native-range slider tracks.
+    // Layout contract for the strength-only redesign. The duration section
+    // uses its untouched own seconds-space renderer and is only moved down.
+    private const double ConsumableStrengthKnobTop = 53.0;
+    private const double ConsumableEffectPreviewTop = 250.0;
+    private const double ConsumableEffectPreviewHeight = 211.0;
+    private const double ConsumableDurationTop = 475.0;
+
+    // All six preview bars are derived from the SAME authored source values
+    // as the retired instant/sustained text readouts. No synthetic gameplay
+    // control, new writer field, extra effect or cross-unit summation.
+    private void DrawConsumableEffectPreview(
+        DrawingContext dc, Rect frame, ParameterViewModel burst,
+        ParameterViewModel waterStamina, ParameterViewModel energyStamina,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .65),
+            new Pen(border, 0.9), frame, 4.0, 4.0);
+        DrawText(dc, "LIVE EFFECT PREVIEW",
+            new Point(frame.Left + 12.0, frame.Top + 9.0),
+            11.0, text, FontWeights.Bold);
+
+        // Hover takes priority over selection; selecting a knob retains its
+        // graph relationship when the pointer moves off the knob.
+        var focused = _hoverTarget?.Kind == HitKind.Knob
+            ? _hoverTarget.Parameter
+            : _selectedHitKind == HitKind.Knob ? _selectedParameter : null;
+        const double sectionGap = 10.0;
+        var sectionWidth = (frame.Width - 24.0 - sectionGap) / 2.0;
+        var sectionTop = frame.Top + 34.0;
+        var sectionHeight = frame.Height - 45.0;
+
+        void EffectSection(Rect rect, string heading,
+            (string Label, double PercentPerX, double Scale,
+                ParameterViewModel Source, bool Negative)[] effects)
+        {
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .75),
+                new Pen(CloneWithOpacity(border, .70), 0.8),
+                rect, 3.0, 3.0);
+            DrawText(dc, heading,
+                new Point(rect.Left + 10.0, rect.Top + 8.0),
+                10.1, muted, FontWeights.Bold);
+
+            for (var i = 0; i < effects.Length; i++)
+            {
+                var (label, factor, scale, source, negative) = effects[i];
+                var current = source.CurrentNumber * factor;
+                var reference = source.ReferenceNumber * factor;
+                var rowTop = rect.Top + 30.0 + i * 43.0;
+                var highlighted = ReferenceEquals(source, focused);
+                var dimmed = focused is not null && !highlighted;
+                var modified = source.IsValueModifiedFromReference();
+                if (highlighted)
+                    dc.DrawRoundedRectangle(CloneWithOpacity(accent, .07), null,
+                        new Rect(rect.Left + 5, rowTop - 4,
+                            rect.Width - 10, 39), 3, 3);
+
+                DrawText(dc, label,
+                    new Point(rect.Left + 10.0, rowTop),
+                    9.7, text, FontWeights.SemiBold);
+                DrawRightAlignedText(dc,
+                    $"{(negative ? "-" : "+")}{Math.Abs(current):0.#}%",
+                    new Point(rect.Right - 10.0, rowTop - 1.0),
+                    modified ? 11.5 : 10.3,
+                    modified ? accent : text, FontWeights.Bold);
+
+                // Negative values grow left from zero on the right. Positive
+                // values grow right from zero on the left. Each row has its
+                // own physically meaningful 0–maximum preview scale.
+                var rail = new Rect(rect.Left + 10.0, rowTop + 21.0,
+                    rect.Width - 20.0, 5.0);
+                dc.DrawRoundedRectangle(CloneWithOpacity(border, .42),
+                    null, rail, 2.0, 2.0);
+                var ratio = Math.Clamp(Math.Abs(current) / scale, 0.0, 1.0);
+                var activeWidth = rail.Width * ratio;
+                var barLeft = negative ? rail.Right - activeWidth : rail.Left;
+                if (activeWidth > 0.0)
+                    dc.DrawRoundedRectangle(
+                        CloneWithOpacity(accent, highlighted ? .95 : dimmed ? .24 : .70),
+                        null, new Rect(barLeft, rail.Top, activeWidth, rail.Height),
+                        2.0, 2.0);
+                var referenceRatio = Math.Clamp(Math.Abs(reference) / scale, 0.0, 1.0);
+                var referenceX = negative ? rail.Right - referenceRatio * rail.Width
+                    : rail.Left + referenceRatio * rail.Width;
+                dc.DrawLine(new Pen(muted, 1.7),
+                    new Point(referenceX, rail.Top - 3.0),
+                    new Point(referenceX, rail.Bottom + 3.0));
+            }
+        }
+
+        EffectSection(
+            new Rect(frame.Left + 7.0, sectionTop, sectionWidth, sectionHeight),
+            "INSTANT STAMINA",
+            new (string, double, double, ParameterViewModel, bool)[]
+            {
+                ("WATER", 38.0, 76.0, burst, false),
+                ("ENERGY", 50.0, 100.0, burst, false),
+                ("LIMITED ENERGY", 100.0, 200.0, burst, false)
+            });
+        EffectSection(
+            new Rect(frame.Left + 17.0 + sectionWidth, sectionTop,
+                sectionWidth, sectionHeight),
+            "SUSTAINED EFFECTS",
+            new (string, double, double, ParameterViewModel, bool)[]
+            {
+                ("WATER REGEN", 25.0, 50.0, waterStamina, false),
+                ("WATER COST", 10.0, 20.0, waterStamina, true),
+                ("ENERGY REGEN", 200.0, 400.0, energyStamina, false)
+            });
+    }
+
     private void DrawConsumableMixer(
         DrawingContext dc,
         Brush text,
@@ -2935,79 +3045,32 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var width = Math.Max(460.0, ActualWidth - 34.0);
-        var columns = CompactColumns(ActualWidth);
-        var durationColumns = CompactStageColumns(ActualWidth);
-        // Read-only derived effect values each occupy a dedicated line,
-        // including at the smallest three-column breakpoint. Gold emphasis
-        // belongs only to changed numerics, never entire effect captions.
-        void Readout(Rect card, string heading, string[] effects, bool[] modified)
-        {
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 4, 4);
-            var usable = Math.Max(1.0, card.Width - 22.0);
-            dc.DrawText(CreateText(heading, 10.4, text,
-                    FontWeights.Bold, usable),
-                new Point(card.Left + 11, card.Top + 6));
-            for (var i = 0; i < effects.Length; i++)
-            {
-                var line = effects[i];
-                var ft = CreateText(line, 9.8, text, FontWeights.SemiBold, usable);
-                if (i < modified.Length && modified[i])
-                {
-                    foreach (System.Text.RegularExpressions.Match token in
-                        System.Text.RegularExpressions.Regex.Matches(line,
-                            @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
-                    {
-                        ft.SetForegroundBrush(accent, token.Index, token.Length);
-                        ft.SetFontSize(11.0, token.Index, token.Length);
-                    }
-                }
-                dc.DrawText(ft, new Point(card.Left + 11, card.Top + 26 + i * 17));
-            }
-        }
 
-        const double strengthTop = 55.0;
-        // Three independent strength tracks above; time editors use their
-        // own shared real-seconds ruler below instead of vertical faders.
-        void Strength(ParameterViewModel p, string label, int index)
-            => DrawCompactTrack(dc, p, label, $"{p.CurrentNumber:0.##}x",
-                "0x", "2x", CompactSlot(strengthTop, width, columns, index),
-                text, muted, border, accent, panel);
-        Strength(burst, "INSTANT STAMINA / ALL THREE DRINKS", 0);
-        Strength(waterStamina, "WATER / STAMINA BUFF STRENGTH", 1);
-        Strength(energyStamina, "ENERGY / STAMINA REGEN STRENGTH", 2);
-        var readoutTop = CompactGridEnd(strengthTop, 3, columns) + 15.0;
-        var readoutCardsTop = readoutTop;
-        // The three effects are previews only; source controls stay independent.
-        Readout(CompactSlot(readoutCardsTop, width, durationColumns, 0),
-            "INSTANT STAMINA",
-            new[]
-            {
-                $"WATER +{38 * burst.CurrentNumber:0.#}%",
-                $"ENERGY +{50 * burst.CurrentNumber:0.#}%",
-                $"LIMITED ENERGY +{100 * burst.CurrentNumber:0.#}%"
-            },
-            new[]
-            {
-                burst.IsValueModifiedFromReference(),
-                burst.IsValueModifiedFromReference(),
-                burst.IsValueModifiedFromReference()
-            });
-        Readout(CompactSlot(readoutCardsTop, width, durationColumns, 1),
-            "SUSTAINED STAMINA",
-            new[]
-            {
-                $"WATER REGEN +{25 * waterStamina.CurrentNumber:0.#}%",
-                $"WATER COST -{10 * waterStamina.CurrentNumber:0.#}%",
-                $"ENERGY REGEN +{200 * energyStamina.CurrentNumber:0.#}%"
-            },
-            new[]
-            {
-                waterStamina.IsValueModifiedFromReference(),
-                waterStamina.IsValueModifiedFromReference(),
-                energyStamina.IsValueModifiedFromReference()
-            });
-        var previewTop = CompactGridEnd(readoutCardsTop, 2, durationColumns) + 18.0;
+        // Three real CFG-backed 0–2x / 0.05x rotary sources, no duplicate
+        // horizontal strength sliders. Their positions and all snap logic are
+        // identical to the existing Your Weapons/Anomaly knob contract.
+        var knobBankWidth = Math.Min(620.0, ActualWidth - 34.0);
+        const double knobGap = 12.0;
+        var knobWidth = (knobBankWidth - 2.0 * knobGap) / 3.0;
+        var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
+        DrawSourceKnob(dc, burst, "INSTANT STAMINA",
+            new Rect(knobLeft, ConsumableStrengthKnobTop, knobWidth, 181.0),
+            text, muted, border, accent, panel);
+        DrawSourceKnob(dc, waterStamina, "WATER BUFF",
+            new Rect(knobLeft + knobWidth + knobGap, ConsumableStrengthKnobTop,
+                knobWidth, 181.0),
+            text, muted, border, accent, panel);
+        DrawSourceKnob(dc, energyStamina, "ENERGY REGEN",
+            new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
+                ConsumableStrengthKnobTop, knobWidth, 181.0),
+            text, muted, border, accent, panel);
 
+        DrawConsumableEffectPreview(dc,
+            new Rect(17.0, ConsumableEffectPreviewTop,
+                width, ConsumableEffectPreviewHeight),
+            burst, waterStamina, energyStamina,
+            text, muted, border, accent, panel);
+        var previewTop = ConsumableDurationTop;
 
         // A true seconds-space editor, where each row converts the pointer
         // back to its own untouched native source multiplier (0..3, 0.05x).
@@ -4688,7 +4751,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution"))
+        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -5575,14 +5638,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
     private static double CompactConsumableHeight(double width)
-    {
-        var columns = CompactColumns(width);
-        var readoutTop = CompactGridEnd(55.0, 3, columns) + 15.0;
-        var cardsTop = readoutTop;
-        var previewTop = CompactGridEnd(cardsTop, 2, CompactStageColumns(width))
-            + 18.0;
-        return previewTop + ConsumableTimelineHeight(width) + 14.0;
-    }
+        => ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;
 
     private static double CompactHungerHeight(double width)
     {
