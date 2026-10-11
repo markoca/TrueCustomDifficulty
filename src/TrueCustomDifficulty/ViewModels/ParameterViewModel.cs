@@ -101,7 +101,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "TraderStockBoard" => "Turn the independent AMMO STOCK and MEDIC STOCK knobs; each edits its own native supply quantities.",
                     "ServiceCostsBoard" => "Turn the separate Fast Travel, Upgrade and Base Repair knobs. Base Repair shows a percentage of the source multiplier, not a final repair bill.",
                     "ItemWeightBoard" => "Drag AMMUNITION WEIGHT or FOOD & MEDICINE WEIGHT independently.",
-                    "AnomalyGlobalDamage" => "Turn the overall anomaly damage knob; scroll over it or use arrow keys for precise changes. Individual anomaly strengths remain separate.",
+                    "AnomalyGlobalDamage" => "Turn GLOBAL inside the combined Anomaly Damage card. It multiplies every individual source; top numbers show results before protection, lower numbers are the source CFG values.",
                     "AnomalySpecialEffects" => "Drag the Razor, Diamond or Psy track you want to change; each is independent.",
                     "NpcLootLoadout" => "Choose an Extra Corpse Loot option, drag the medical or ammo track, or move the weapon-condition MIN/MAX handles. The ammo numbers update as you change the setting.",
                     "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
@@ -142,8 +142,8 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag a mutant's track to change its part-drop chance."
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
             if (IsIndividualAnomalyDamageMember)
-                return "Drag an anomaly's track to adjust that anomaly's damage."
-                    + Environment.NewLine + "Right-click one row to reset it; R resets all eleven.";
+                return "Bar height shows percent of this anomaly's own vanilla damage (100% unchanged). TOP = source × global; LOWER = editable source value."
+                    + Environment.NewLine + "Turn GLOBAL in the same card. Right-click a control to reset it; R resets the whole damage group.";
             if (IsItemPriceScalerMember)
                 return "Drag a category's price track to tune its multiplier."
                     + Environment.NewLine + "Right-click one category to reset it; R resets the price group.";
@@ -178,7 +178,9 @@ public sealed class ParameterViewModel : ObservableObject
     public bool HasInteraction => !string.IsNullOrWhiteSpace(Interaction);
     // Economy is a three-section dashboard in the UI. Its original catalog
     // groups remain untouched for native CFG provenance and preset round-trips.
-    public string Group => Definition.Tab != "economy" ? Definition.Group : Id switch
+    public string Group => Id == "environment.anomalyDamage"
+        ? "Individual Anomaly Damage"
+        : Definition.Tab != "economy" ? Definition.Group : Id switch
     {
         "economy.startingMoney" or "economy.mainQuestReward"
             or "economy.sideQuestReward" or "economy.buyCondition"
@@ -629,6 +631,7 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsControlVisible =>
         // Catalog-hidden constraint members must not leak into standalone UI rows.
         (Definition.ExposeInUi || IsVisualControlAnchor)
+        && !Id.Equals("environment.anomalyDamage", StringComparison.Ordinal) // Combined AnomalyDamageRadar.
         && !Id.Equals("alife.mutantSpawn.generic", StringComparison.Ordinal)
         // Repeated-hit envelope remains mapped for preset/CFG round-trip but has no regular UI.
         && !Id.StartsWith("combat.accumulatedDamage", StringComparison.Ordinal)
