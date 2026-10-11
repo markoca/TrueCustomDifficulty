@@ -309,6 +309,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             && target.Kind == HitKind.Horizontal
             && source.Id == "survival.minimumSleepHours")
             return;
+        if (Family == "StaminaCore"
+            && target.Kind == HitKind.Vertical
+            && source.Id == "stamina.vaultMaxHeight")
+            return;
         var range = Math.Max(0.000001, target.VisualMaximum - target.VisualMinimum);
         // The two NPC condition handles share one rail except when they
         // nearly overlap, where both real centers are separated by 7 DIP.
@@ -1443,6 +1447,85 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Two compact rows; the third control retains body-height landmarks.
     // All four authored vanilla values are identical across difficulties,
     // so no misleading per-difficulty reference labels are displayed.
+    // Dedicated native-height ruler, not a fictitious metres or jump-height
+    // simulation: Unreal units are the exact CFG unit (uu), and the source's
+    // authored WAIST / EYES / ABOVE EYES landmarks stay at 130 / 225 / 300.
+    private void DrawVaultHeightRuler(
+        DrawingContext dc, ParameterViewModel? vault, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.70),
+            new Pen(border, 0.9), card, 4, 4);
+        if (vault is null)
+            return;
+        DrawText(dc, "MAXIMUM VAULT HEIGHT",
+            new Point(card.Left + 11, card.Top + 10),
+            10.7, text, FontWeights.Bold);
+        var changed = vault.IsValueModifiedFromReference();
+        DrawRightAlignedText(dc, $"{vault.CurrentNumber:0} uu",
+            new Point(card.Right - 11, card.Top + 8),
+            changed ? 12.8 : 11.6, changed ? accent : text, FontWeights.Bold);
+
+        var plot = new Rect(card.Left + 52, card.Top + 58,
+            15.0, card.Height - 80.0);
+        var now = ValueToY(vault.CurrentNumber, vault.Minimum, vault.Maximum, plot);
+        var baseline = ValueToY(vault.ReferenceNumber,
+            vault.Minimum, vault.Maximum, plot);
+        dc.DrawRoundedRectangle(CloneWithOpacity(border, .25),
+            new Pen(border, 0.8), plot, 3, 3);
+        dc.DrawRoundedRectangle(CloneWithOpacity(accent, .72), null,
+            new Rect(plot.Left + 2, now, plot.Width - 4,
+                Math.Max(0.0, plot.Bottom - now)), 2, 2);
+        dc.DrawLine(new Pen(muted, 2.1),
+            new Point(plot.Left - 10, baseline),
+            new Point(plot.Right + 9, baseline));
+        for (var height = 100; height <= 300; height += 50)
+        {
+            var tickY = ValueToY(height, vault.Minimum, vault.Maximum, plot);
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .65), 1.0),
+                new Point(plot.Left - 9, tickY),
+                new Point(plot.Left - 2, tickY));
+            DrawRightAlignedText(dc, height.ToString(CultureInfo.InvariantCulture),
+                new Point(plot.Left - 12, tickY - 6),
+                8.4, muted, FontWeights.SemiBold);
+        }
+        DrawRightAlignedText(dc, "70",
+            new Point(plot.Left - 12, plot.Bottom - 5),
+            8.4, muted, FontWeights.SemiBold);
+
+        // Explicit source markers are independent from the base difficulty
+        // marker. The labels are clickable at their exact existing values.
+        foreach (var landmark in vault.VanillaMarkers)
+        {
+            var y = ValueToY(landmark.Value, vault.Minimum, vault.Maximum, plot);
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .85), 1.5),
+                new Point(plot.Right + 6, y),
+                new Point(plot.Right + 15, y));
+            var name = landmark.Label.Replace("VANILLA / ", "", StringComparison.Ordinal);
+            var captionWidth = Math.Max(12.0, card.Right - (plot.Right + 22) - 7);
+            var label = CreateText(name, 9.1, muted,
+                FontWeights.SemiBold, captionWidth);
+            var lx = plot.Right + 22;
+            var ly = Math.Clamp(y - 7.0, plot.Top - 7,
+                plot.Bottom - label.Height + 8);
+            dc.DrawText(label, new Point(lx, ly));
+            AddVerticalTarget(vault,
+                new Rect(lx - 3, ly - 3,
+                    Math.Max(20.0, label.WidthIncludingTrailingWhitespace + 6),
+                    label.Height + 6),
+                new Rect(plot.Left, y, plot.Width, 1.0),
+                landmark.Value, landmark.Value);
+        }
+        var hot = _hoverTarget?.Kind == HitKind.Vertical
+            && ReferenceEquals(_hoverTarget.Parameter, vault);
+        dc.DrawLine(new Pen(hot ? Brushes.White : accent, hot ? 3.5 : 2.6),
+            new Point(plot.Left - 6, now), new Point(plot.Right + 6, now));
+        AddVerticalTarget(vault,
+            new Rect(plot.Left - 12, plot.Top - 6,
+                plot.Width + 24, plot.Height + 12),
+            plot, vault.Minimum, vault.Maximum);
+    }
+
     private void DrawStaminaMovementBoard(DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush accent, Brush panel)
     {
@@ -1456,45 +1539,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawHorizontalTrackCard(dc, P("stamina.regeneration"), "BASE RECOVERY",
             new Rect(16.0 + cell + gap, 53.0, cell, 72.0),
             text, muted, border, accent, panel, hideBaseText: true);
-        var vaultRect = new Rect(16.0, 135.0, cell, 105.0);
-        DrawHorizontalTrackCard(dc, P("stamina.vaultMaxHeight"), "MAXIMUM VAULT HEIGHT",
-            vaultRect, text, muted, border, accent, panel, hideBaseText: true);
-        DrawHorizontalTrackCard(dc, P("stamina.maxCarryWeight"), "MAXIMUM CARRY WEIGHT",
-            new Rect(16.0 + cell + gap, 135.0, cell, 72.0),
+        DrawVaultHeightRuler(dc, P("stamina.vaultMaxHeight"),
+            new Rect(16.0, 135.0, cell, 185.0),
+            text, muted, border, accent, panel);
+        DrawHorizontalTrackCard(dc, P("stamina.maxCarryWeight"),
+            "MAXIMUM CARRY WEIGHT",
+            new Rect(16.0 + cell + gap, 191.0, cell, 72.0),
             text, muted, border, accent, panel, hideBaseText: true);
-
-        // Clickable WAIST / EYES / ABOVE EYES body landmarks stay within
-        // the vault card; short titles avoid crowding on half-width cards.
-        if (P("stamina.vaultMaxHeight") is { } vault)
-        {
-            var track = new Rect(vaultRect.Left + 14.0, vaultRect.Top + 39.0,
-                Math.Max(1.0, vaultRect.Width - 28.0), 12.0);
-            foreach (var marker in vault.VanillaMarkers)
-            {
-                var x = ValueToX(marker.Value, vault.Minimum, vault.Maximum, track, false);
-                dc.DrawLine(new Pen(muted, 1.6),
-                    new Point(x, track.Bottom + 3.0),
-                    new Point(x, track.Bottom + 9.0));
-                var caption = marker.Label.Replace("VANILLA / ", "", StringComparison.Ordinal);
-                // Measure the actual caption, then center its glyphs on the
-                // source marker instead of left-aligning inside a fixed box.
-                // Clamp only at the card edges; the clickable label uses the
-                // same visible bounds as the drawn text.
-                var captionText = CreateText(caption, 8.2, muted,
-                    FontWeights.SemiBold, Math.Max(1.0, vaultRect.Width - 12.0));
-                var labelWidth = captionText.WidthIncludingTrailingWhitespace;
-                var left = Math.Clamp(x - labelWidth / 2.0,
-                    vaultRect.Left + 6.0,
-                    Math.Max(vaultRect.Left + 6.0,
-                        vaultRect.Right - 6.0 - labelWidth));
-                dc.DrawText(captionText, new Point(left, vaultRect.Top + 77.0));
-                AddHorizontalTarget(vault,
-                    new Rect(left - 4.0, vaultRect.Top + 74.0,
-                        labelWidth + 8.0, 22.0),
-                    new Rect(x, vaultRect.Top + 74.0, 1.0, 22.0),
-                    marker.Value, marker.Value);
-            }
-        }
     }
 
     // Fatigue stages affect when penalties begin, while their strengths remain
@@ -5475,7 +5526,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "WorldLootLayout" => 275.0,
             "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
             "PhysicalLimits" => 335.0,
-            "StaminaCore" => 259.0,
+            "StaminaCore" => 336.0,
             "MutantCombatPressure" or "WaterStaminaPressure" => 149.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => EquipmentWearBoardHeight(width),
