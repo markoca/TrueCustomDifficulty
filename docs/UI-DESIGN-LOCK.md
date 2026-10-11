@@ -1123,3 +1123,11 @@ The dedicated `loot.looseUniqueWeaponShuffle` control was already implemented in
 
 **Regression gates:** `tools/audit_ui_cfg_contract.py` and `tools/audit_project_consistency.py` now agree on the new totals and discover the new special route. The project audit additionally verifies route identity, manifest resource, exactly nine distinct actor/item pairs and linkage to the real C# writer. `tests/LootWorldPlacementContract` checks that the loaded production baseline contains the precise route and matches the live catalog count; its existing **24 writer scenarios** already cover unique-only, DLC, mixed weapon and other placements. Run the two Python audits, then the Windows `.NET` writer tests and Wine application. Source/structure verification alone does not prove local publish or UE runtime acceptance.
 
+
+### 2026-10-11 — Audit reconciliation: native UI geometry and consumable sources
+
+- Mutant Health remains a 14-mutant, two-column, seven-row layout at 605 DIP; the seventh row ends at 573 DIP, so a 526-DIP assertion would clip live controls. Preserve the shared 0–7500 HP scale and current/reference sources.
+- The shared WPF rotary mouse-wheel path supports `PlayerWeaponProfile`, `AnomalyGlobalDamage`, `AmmoDistribution` and the newly introduced `ConsumableMixer`; do not remove a family while updating another.
+- Medical Items binds four HEAL, four BLEED and four RAD bars (`_medical`, `_bleeding`, `_radiation`) plus Food Healing. Keyboard reset must traverse all three groups.
+- Writer baseline currently contains 42 Health and 86 *exposed Survival* edit points in `cfg-writer-baseline.json` (the audit's exposed-parameter filter, not all Survival points). Future CFG additions must update the baseline and audit expectations together after verifying native prototype/path ownership; do not invent edit points to satisfy historical counts.
+- Energy Drink source facts: `EnergeticStaminaPerAction1` −30% for 15 s; `EnergeticStaminaPerAction2` −100% for 5 s; `Energetic_Limited`, `MeleeButstock`, and **Engine stacking** remain explicit source audit facts. These short effects stay independently editable from the main Energy regeneration duration.
