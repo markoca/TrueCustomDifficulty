@@ -2558,7 +2558,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             : rawReadout
                 ? $"{(nativeUnit is not null && parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber:0.#}"
                 : $"{parameter.CurrentNumber:0.##}x";
-        var currentTop = center.Y + (rateReadout || nativeUnit is not null ? -4.0 : 3.0);
+        // WPF DrawText positions the text TOP edge. Keep the medicine amount
+        // and unit as one vertically centered two-line block, rather than
+        // placing both lines below the dial center. Other knob types stay put.
+        var currentTop = center.Y + (nativeUnit is not null ? -15.0
+            : rateReadout ? -4.0 : 3.0);
         if (percentageSign != 0)
         {
             // In the two Master signed-percentage dials, only the editable
@@ -2588,7 +2592,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 9.0, muted, FontWeights.SemiBold);
         else if (nativeUnit is not null)
             DrawCenteredText(dc, nativeUnit,
-                new Point(center.X, center.Y + 16.0),
+                new Point(center.X, center.Y + 5.0),
                 8.3, muted, FontWeights.SemiBold);
         DrawCenteredText(dc,
             rateReadout ? $"{parameter.Minimum:0.00}"

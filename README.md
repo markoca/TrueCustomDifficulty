@@ -12,7 +12,7 @@ The existing `OVERRIDE LIMITS` control in Survival → Consumable Effects expand
 
 ### 2026-10-11 — Medicine strength units
 
-Three compact native knobs below Consumable Effect Durations now show **Vinca +10 BLEED PTS**, **Hercules +20 KG** and **Psi Block +10 PSI PTS**, with a centered amount and muted unit beneath it. These are the game-facing effect amounts, not 1x-based scalers; Hercules' two effect prototypes stay synchronized without adding to +40 kg. The point amounts do not imply a verified regeneration speed per second. New unit labels and `CurrentDisplay` semantics are bound in both UI catalogs and tests; duration, preset and writer CFG values remain untouched.
+Three compact native knobs below Consumable Effect Durations now show **Vinca +10 BLEED PTS**, **Hercules +20 KG** and **Psi Block +10 PSI PTS**, with the amount and muted unit vertically centered together inside the dial (both lines lifted 11 DIP). These are the game-facing effect amounts, not 1x-based scalers; Hercules' two effect prototypes stay synchronized without adding to +40 kg. The point amounts do not imply a verified regeneration speed per second. New unit labels and `CurrentDisplay` semantics are bound in both UI catalogs and tests; duration, preset and writer CFG values remain untouched.
 
 
 ### 2026-10-11 — Starvation inactive-state readability; medicine candidates (current)
