@@ -435,27 +435,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     // and three special-effect sources. No six-strip mixer remains.
 
     // Economy panels reuse the same compact Stamina-style horizontal controls.
-    // These are projections of real source VMs, never synthetic coupon or price totals.
-    private static readonly (string Id, string Label)[] CouponEconomyChannels =
-    {
-        ("economy.startingMoney", "STARTING COUPONS"),
-        ("economy.mainQuestReward", "MAIN QUEST REWARDS"),
-        ("economy.sideQuestReward", "SIDE QUEST REWARDS")
-    };
-
-    private static readonly (string Id, string Label)[] ServiceEconomyChannels =
-    {
-        ("economy.fastTravelCost", "FAST TRAVEL"),
-        ("economy.upgradeCost", "UPGRADES"),
-        ("economy.repairCostBase", "BASE REPAIR PRICE")
-    };
-
-    private static readonly (string Id, string Label)[] StockEconomyChannels =
-    {
-        ("economy.traderAmmoStock", "TRADER AMMO"),
-        ("economy.medicStock", "MEDIC SUPPLIES")
-    };
-
+    // Shared compact Economy card dimensions remain in use by the original
+    // item-weight panels and their Stamina Usage-style source editors.
     private static int EconomyColumns(double width) => width >= 672.0 ? 2 : 1;
 
     // Full-width top-level sections may be wide; their editable cards stay compact.
@@ -578,7 +559,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         const double gap = 10.0;
         var bankWidth = Math.Min(606.0, ActualWidth - 30.0);
         var cellWidth = Math.Min(194.0, (bankWidth - (columns - 1) * gap) / columns);
-        var left = (ActualWidth - (columns * cellWidth + (columns - 1) * gap)) / 2.0;
         for (var i = 0; i < channels.Length; i++)
         {
             var column = i % columns;
