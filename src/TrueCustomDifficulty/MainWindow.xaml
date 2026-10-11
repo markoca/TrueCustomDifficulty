@@ -800,7 +800,28 @@
                                              with separator lines or reserve space for an empty header. -->
                                         <GroupStyle.HeaderTemplate>
                                             <DataTemplate>
-                                                <Grid Height="0" />
+                                                <Border x:Name="EconomySectionHeader"
+                                                        Visibility="Collapsed"
+                                                        Margin="9,9,9,3"
+                                                        Padding="9,4"
+                                                        BorderThickness="0,0,0,1"
+                                                        BorderBrush="{StaticResource BorderSoftBrush}">
+                                                    <TextBlock Text="{Binding Name}"
+                                                               Foreground="{StaticResource AccentBrush}"
+                                                               FontWeight="SemiBold"
+                                                               FontSize="11" />
+                                                </Border>
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding Name}" Value="01 / MONEY FLOW">
+                                                        <Setter TargetName="EconomySectionHeader" Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Name}" Value="02 / MARKET">
+                                                        <Setter TargetName="EconomySectionHeader" Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Name}" Value="03 / EXPENSES">
+                                                        <Setter TargetName="EconomySectionHeader" Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
                                             </DataTemplate>
                                         </GroupStyle.HeaderTemplate>
                                     </GroupStyle>
