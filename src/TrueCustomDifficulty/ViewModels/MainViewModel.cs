@@ -158,7 +158,15 @@ public sealed class MainViewModel : ObservableObject
             "survival.energyDrinkStaminaRecoveryStrength",
             "survival.waterRegenDuration",
             "survival.energyFullCostDuration",
-            "survival.energyPartialCostDuration"
+            "survival.energyPartialCostDuration",
+            // Source-backed medical buffs are hidden aggregate members; all six
+            // must be instantiated or the medicine knob/timeline lanes vanish.
+            "survival.vincaBleedRecovery",
+            "survival.vincaDuration",
+            "survival.herculesCarryBonus",
+            "survival.herculesDuration",
+            "survival.psiBlockRecovery",
+            "survival.psiBlockDuration"
         };
 
         var itemPriceScalerParameterIds = new HashSet<string>(StringComparer.Ordinal)

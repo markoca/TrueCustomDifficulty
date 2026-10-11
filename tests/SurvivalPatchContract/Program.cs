@@ -223,6 +223,8 @@ internal static class Program
     // Hercules keeps its two separate effect SIDs synchronized.
     private static void TestMedicineTargets()
     {
+        var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+        var loaded = vm.AllParameters.ToDictionary(p => p.Id, StringComparer.Ordinal);
         foreach (var (id, count, vanilla) in new[]
         {
             ("survival.vincaBleedRecovery", 2, 10.0),
@@ -235,6 +237,13 @@ internal static class Program
         {
             var source = Catalog.Parameters.Single(p => p.Id == id);
             var points = Baseline.EditPoints.Where(p => p.ParameterId == id).ToArray();
+            // Regression for the empty Medicine Effects screenshot: hidden
+            // aggregate parameters MUST exist in the live VM, not only JSON.
+            Check(loaded.TryGetValue(id, out var live)
+                && live.VisualAggregateFamily == "ConsumableMixer"
+                && !live.IsControlVisible
+                && Math.Abs(live.ReferenceNumber - vanilla) < 0.000001,
+                "Medicine source not mounted in live ConsumableMixer: " + id);
             Check(source.Tab == "survival" && source.Group == "Consumable Effects"
                 && !source.ExposeInUi && points.Length == count
                 && points.All(p => p.Operation == "set"

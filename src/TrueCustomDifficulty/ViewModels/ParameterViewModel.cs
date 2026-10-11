@@ -84,7 +84,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "RadiationBalance" => "Turn BUILD-UP and HP DAMAGE as multipliers; RECOVERY is real radiation points per second (0–0.10 PTS/S). Mouse wheel and arrow keys use native source steps.",
                     "StarvationTimeline" => "Adjust when penalties begin, how often damage ticks occur and the three penalty strengths using their individual controls. The timeline is a preview.",
                     "RepeatedHitBand" => "Drag MIN or MAX to shape repeated-hit protection. Use the switch to decide whether healed damage stays in the tracker.",
-                    "ConsumableMixer" => "Turn one of three strength knobs to update its linked instant or sustained effect bars. Duration timelines and short-effect editors stay independent.",
+                    "ConsumableMixer" => "Turn the drink or medicine strength knobs; drag the matching duration in the common seconds graph. Drink and medicine scales are independent.",
                     "SleepingDashboard" => "Select 1–14 minimum sleep hours directly in the step row; other tracks set sleep eligibility and wake-up recovery.",
                     "CoreHealthDashboard" => "Set MAX HP and PASSIVE RECOVERY directly; below, Recovery Delay, Recovery Multiplier and Low-HP Recovery Rate are independent CFG sources. Medical items stay in their own section; no synthetic health threshold.",
                     "StaminaCore" => "CORE STAMINA sets Maximum SP and Base Recovery with matching native resource rulers. MOVEMENT LIMITS keeps the vault-height ruler and calibrated Carry Weight in KG; all four sources remain independent.",

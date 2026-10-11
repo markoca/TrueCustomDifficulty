@@ -2985,18 +2985,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // The game authors separate immediate strength, sustained strength and timed
-    // effects. The previews below are read-only; exactly nine original source
-    // controls retain their independent 0-x native multiplier sliders.
-    // Authored instant/sustained strengths and durations remain nine independent
-    // parameters. On wide surfaces, their cards form two columns without any
-    // shortened or overlapping native-range slider tracks.
-    // Layout contract for the strength-only redesign. The duration section
-    // uses its untouched own seconds-space renderer and is only moved down.
+    // Drink effects remain in the original three-knob/six-preview layout.
+    // Three raw medicine-strength knobs now share this same mixer, while
+    // all eight primary durations share the one duration graph below.
     private const double ConsumableStrengthKnobTop = 53.0;
     private const double ConsumableEffectPreviewTop = 250.0;
     private const double ConsumableEffectPreviewHeight = 211.0;
-    private const double ConsumableDurationTop = 475.0;
+    private const double ConsumableMedicineKnobTop = 474.0;
+    private const double ConsumableDurationTop = 670.0;
 
     // All six preview bars are derived from the SAME authored source values
     // as the retired instant/sustained text readouts. No synthetic gameplay
@@ -3125,6 +3121,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         var waterRegenTime = P("survival.waterRegenDuration");
         var energyFullCostTime = P("survival.energyFullCostDuration");
         var energyPartialCostTime = P("survival.energyPartialCostDuration");
+        var vincaStrength = P("survival.vincaBleedRecovery");
+        var herculesStrength = P("survival.herculesCarryBonus");
+        var psiStrength = P("survival.psiBlockRecovery");
+        var vincaTime = P("survival.vincaDuration");
+        var herculesTime = P("survival.herculesDuration");
+        var psiTime = P("survival.psiBlockDuration");
 
         DrawHeader(dc, "CONSUMABLE EFFECTS",
             string.Empty, text, muted, accent);
@@ -3133,7 +3135,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             waterTime is null || energyTime is null ||
             vodkaTime is null || beerTime is null || magicTime is null ||
             waterRegenTime is null || energyFullCostTime is null ||
-            energyPartialCostTime is null)
+            energyPartialCostTime is null ||
+            vincaStrength is null || herculesStrength is null ||
+            psiStrength is null || vincaTime is null ||
+            herculesTime is null || psiTime is null)
         {
             DrawCenteredText(dc, "Consumable effect data unavailable.",
                 new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
@@ -3166,10 +3171,26 @@ public sealed class AggregateVisualControl : FrameworkElement
                 width, ConsumableEffectPreviewHeight),
             burst, waterStamina, energyStamina,
             text, muted, border, accent, panel);
+
+        // The three real medicine effects are strength-only raw numbers:
+        // Vinca bleed recovery, Hercules' coupled carry pair, Psi recovery.
+        // Durations are edited in the SAME seconds graph as the drinks below.
+        DrawSourceKnob(dc, vincaStrength, "VINCA BLEED",
+            new Rect(knobLeft, ConsumableMedicineKnobTop, knobWidth, 181.0),
+            text, muted, border, accent, panel, rawReadout: true);
+        DrawSourceKnob(dc, herculesStrength, "HERCULES CARRY",
+            new Rect(knobLeft + knobWidth + knobGap, ConsumableMedicineKnobTop,
+                knobWidth, 181.0),
+            text, muted, border, accent, panel, rawReadout: true);
+        DrawSourceKnob(dc, psiStrength, "PSI BLOCK",
+            new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
+                ConsumableMedicineKnobTop, knobWidth, 181.0),
+            text, muted, border, accent, panel, rawReadout: true);
+
         var previewTop = ConsumableDurationTop;
 
-        // A true seconds-space editor, where each row converts the pointer
-        // back to its own untouched native source multiplier (0..3, 0.05x).
+        // One seconds-space editor: five drink multipliers and three direct
+        // medicine durations, each with its correct native seconds mapping.
         var preview = new Rect(17.0, previewTop, width, ConsumableTimelineHeight(ActualWidth));
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
         DrawText(dc, "EFFECT DURATION  /  SECONDS",
@@ -3195,7 +3216,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // The checkbox takes its own header row; axis labels sit underneath it
         // instead of crossing the checkbox and the effect title.
         var timeline = new Rect(preview.Left + 112.0, previewTop + 67.0,
-            Math.Max(160.0, preview.Width - 207.0), 120.0);
+            Math.Max(160.0, preview.Width - 207.0), 226.0);
         const double maxSeconds = 270.0;
         double SecondsX(double seconds) => timeline.Left + timeline.Width *
             Math.Clamp(seconds / maxSeconds, 0.0, 1.0);
@@ -3205,7 +3226,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             var x = SecondsX(seconds);
             dc.DrawLine(new Pen(border, 1.0) { DashStyle = DashStyles.Dot },
                 new Point(x, timeline.Top - 11.0),
-                new Point(x, timeline.Bottom + 1.0));
+                new Point(x, timeline.Top + 111.0));
             DrawCenteredText(dc, $"{seconds:0}s",
                 new Point(x, timeline.Top - 20.0),
                 9.6, muted, FontWeights.SemiBold);
@@ -3278,6 +3299,73 @@ public sealed class AggregateVisualControl : FrameworkElement
                 track, parameter.Minimum, parameter.Maximum);
         }
 
+        // Medicine lanes use the SAME chart frame and native seconds, with a
+        // dedicated 0..900s ruler to keep existing 0..270s drink tracks legible.
+        // The game owns three completely independent effect prototype durations.
+        const double medicineMaximumSeconds = 900.0;
+        double MedicineX(double seconds) => timeline.Left + timeline.Width *
+            Math.Clamp(seconds / medicineMaximumSeconds, 0.0, 1.0);
+        var medicineAxisY = timeline.Top + 131.0;
+        var medicineFirstY = timeline.Top + 158.0;
+        DrawRightAlignedText(dc, "MEDICINE",
+            new Point(timeline.Left - 13.0, timeline.Top + 120.0),
+            9.8, muted, FontWeights.Bold);
+        foreach (var seconds in new[] { 0.0, 300.0, 600.0, 900.0 })
+        {
+            var x = MedicineX(seconds);
+            dc.DrawLine(new Pen(border, 1.0) { DashStyle = DashStyles.Dot },
+                new Point(x, medicineFirstY - 10.0),
+                new Point(x, medicineFirstY + 2.0 * 23.0 + 9.0));
+            DrawCenteredText(dc, $"{seconds:0}s",
+                new Point(x, medicineAxisY),
+                9.6, muted, FontWeights.SemiBold);
+        }
+
+        var medicineLanes = new (ParameterViewModel Source, string Label)[]
+        {
+            (vincaTime, "VINCA"),
+            (herculesTime, "HERCULES"),
+            (psiTime, "PSI BLOCK")
+        };
+        for (var i = 0; i < medicineLanes.Length; i++)
+        {
+            var (source, label) = medicineLanes[i];
+            var y = medicineFirstY + i * 23.0;
+            var currentX = MedicineX(source.CurrentNumber);
+            var referenceX = MedicineX(source.ReferenceNumber);
+            var minimumX = MedicineX(source.Minimum);
+            var maximumX = MedicineX(source.Maximum);
+            var track = new Rect(minimumX, y - 6.0,
+                Math.Max(1.0, maximumX - minimumX), 12.0);
+
+            DrawRightAlignedText(dc, label,
+                new Point(timeline.Left - 13.0, y - 8.0),
+                10.4, text, FontWeights.Bold);
+            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.4), 2.0),
+                new Point(timeline.Left, y), new Point(timeline.Right, y));
+            dc.DrawLine(new Pen(border, 3.0),
+                new Point(timeline.Left, y), new Point(maximumX, y));
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 4.0),
+                new Point(timeline.Left, y), new Point(currentX, y));
+            dc.DrawLine(new Pen(muted, 1.7),
+                new Point(referenceX, y - 8.0),
+                new Point(referenceX, y + 8.0));
+            dc.DrawEllipse(panel, new Pen(accent,
+                IsSelected(source) ? 2.5 : 1.6),
+                new Point(currentX, y), 6.0, 6.0);
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+
+            var modified = source.IsValueModifiedFromReference();
+            DrawRightAlignedText(dc, $"{source.CurrentNumber:0}s",
+                new Point(preview.Right - 12.0, y - 9.0),
+                modified ? 12.2 : 11.0,
+                modified ? accent : text, FontWeights.Bold);
+            AddHorizontalTarget(source,
+                new Rect(track.Left - 6.0, y - 10.0,
+                    track.Width + 12.0, 20.0),
+                track, source.Minimum, source.Maximum);
+        }
+
         // Independent, compact, source-exact thresholds. Each child ranges
         // from the original native duration to its live main effect duration.
         // No duplicate main sliders or fixed pseudo-timeline hit regions.
@@ -3295,64 +3383,13 @@ public sealed class AggregateVisualControl : FrameworkElement
             var (shortEffect, caption) = shortEffects[index];
             var x = preview.Left + 12.0 +
                 (index % shortColumns) * (secondaryWidth + CompactColumnGap);
-            var y = preview.Top + 200.0 +
+            var y = preview.Top + 300.0 +
                 (index / shortColumns) * (CompactTrackHeight + CompactRowGap);
             DrawCompactTrack(dc, shortEffect, caption,
                 $"{shortEffect.CurrentNumber:0.#}s",
                 $"{shortEffect.Minimum:0.#}s",
                 $"{shortEffect.Maximum:0.#}s",
                 new Rect(x, y, secondaryWidth, CompactTrackHeight),
-                text, muted, border, accent, panel);
-        }
-
-        // Extend Consumable Effects below the original drink duration controls.
-        DrawConsumableMedicineEffects(dc, text, muted, border, accent, panel);
-    }
-
-    // Each medicine exposes a raw-strength source knob and an independent
-    // seconds track. Hercules edits both coupled CFG prototypes per control.
-    private void DrawConsumableMedicineEffects(
-        DrawingContext dc, Brush text, Brush muted, Brush border,
-        Brush accent, Brush panel)
-    {
-        var top = ConsumableMedicineTop(ActualWidth);
-        DrawCenteredText(dc, "MEDICINE EFFECTS",
-            new Point(ActualWidth / 2.0, top + 14.0),
-            11.5, text, FontWeights.Bold);
-
-        var entries = new (string Name, string Effect, string Strength, string Duration)[]
-        {
-            ("VINCA", "BLEED RECOVERY", "survival.vincaBleedRecovery", "survival.vincaDuration"),
-            ("HERCULES", "CARRY BONUS", "survival.herculesCarryBonus", "survival.herculesDuration"),
-            ("PSI BLOCK", "PSY RECOVERY", "survival.psiBlockRecovery", "survival.psiBlockDuration")
-        };
-        var columns = ConsumableMedicineColumns(ActualWidth);
-        const double cellWidth = 204.0;
-        const double gap = 12.0;
-        for (var i = 0; i < entries.Length; i++)
-        {
-            var strength = P(entries[i].Strength);
-            var duration = P(entries[i].Duration);
-            if (strength is null || duration is null)
-                continue;
-
-            var row = i / columns;
-            var countInRow = Math.Min(columns, entries.Length - row * columns);
-            var rowWidth = countInRow * cellWidth + (countInRow - 1) * gap;
-            var left = (ActualWidth - rowWidth) / 2.0
-                + (i % columns) * (cellWidth + gap);
-            var rowTop = top + 34.0 + row * (ConsumableMedicineRowHeight + gap);
-
-            DrawCenteredText(dc, entries[i].Name,
-                new Point(left + cellWidth / 2.0, rowTop + 9.0),
-                11.0, text, FontWeights.Bold);
-            DrawSourceKnob(dc, strength, entries[i].Effect,
-                new Rect(left, rowTop + 18.0, cellWidth, 181.0),
-                text, muted, border, accent, panel, rawReadout: true);
-            DrawCompactTrack(dc, duration, "DURATION",
-                $"{duration.CurrentNumber:0}s",
-                $"{duration.Minimum:0}s", $"{duration.Maximum:0}s",
-                new Rect(left, rowTop + 208.0, cellWidth, CompactTrackHeight),
                 text, muted, border, accent, panel);
         }
     }
@@ -4347,8 +4384,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Shared density for the large Survival/Health aggregate panels. Rows are
     // column-aware; no independent sliders are stacked inside the same hit area.
     private const double CompactTrackHeight = 82.0;
-    // Main five-lane ruler plus three extra source-backed compact cards.
-    // Renderer and MeasureOverride use the same responsive height calculation.
+    // Five drink and three medicine duration lanes in a single chart,
+    // followed by the existing three native short-effect controls.
+    // Renderer and MeasureOverride share this responsive height.
     private static int ConsumableSecondaryColumns(double availableWidth)
         => availableWidth >= 750.0 ? 3 : availableWidth >= 480.0 ? 2 : 1;
 
@@ -4357,7 +4395,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var previewWidth = Math.Max(460.0, width - 34.0);
         var rows = (3 + ConsumableSecondaryColumns(previewWidth) - 1) /
             ConsumableSecondaryColumns(previewWidth);
-        return 200.0 + rows * CompactTrackHeight +
+        return 300.0 + rows * CompactTrackHeight +
             (rows - 1) * CompactRowGap + 12.0;
     }
     // Reserved space for plot ticks plus three independently readable stage lines.
@@ -5786,21 +5824,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         return CompactGridEnd(benefitsTitle + 25.0, 2, columns) + 14.0;
     }
 
-    private const double ConsumableMedicineRowHeight = 290.0;
-
-    private static int ConsumableMedicineColumns(double width)
-        => width >= 665.0 ? 3 : width >= 440.0 ? 2 : 1;
-
-    private static double ConsumableMedicineTop(double width)
-        => ConsumableDurationTop + ConsumableTimelineHeight(width) + 15.0;
-
     private static double CompactConsumableHeight(double width)
-    {
-        var columns = ConsumableMedicineColumns(width);
-        var rows = (3 + columns - 1) / columns;
-        return ConsumableMedicineTop(width) + 34.0 +
-            rows * ConsumableMedicineRowHeight + (rows - 1) * 12.0 + 12.0;
-    }
+        => ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;
 
     private static double CompactHungerHeight(double width)
     {
