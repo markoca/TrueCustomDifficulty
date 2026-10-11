@@ -2458,6 +2458,86 @@ if _knob_tick_failures:
 else:
     note("eight source-native knob grids: weapon 8/11/9 marks; anomaly 26 marks at 0.10x; four ammo knobs 13 marks each")
 
+# Seven 2026-10-11 real-source graphical editors: lock the current visible
+# WPF geometry/interaction and the unchanged source graph, not historical UI.
+_seven_src = (ROOT / 'src' / 'TrueCustomDifficulty' / 'Controls' / 'AggregateVisualControl.cs').read_text(encoding='utf-8')
+_seven_vm = (ROOT / 'src' / 'TrueCustomDifficulty' / 'ViewModels' / 'ParameterViewModel.cs').read_text(encoding='utf-8')
+_seven_catalog = {p['id']: p for p in parameters_doc['parameters']}
+_seven_methods = {
+    'RepairCurve': ('DrawRepairCurve', 324.0, ('economy.repairFriend', 'economy.repairNeutral', 'economy.repairDisaffection', 'economy.repairEnemy')),
+    'TradingDashboard': ('DrawTradingDashboard', 273.0, ('economy.buyCondition', 'economy.sellCondition', 'economy.traderMinBuyCondition', 'economy.itemValueFloor')),
+    'StashRewardProfile': ('DrawCompactStashRewards', None, ('loot.cheapStashAmmoQuantity', 'loot.mediumStashAmmoQuantity', 'loot.expensiveStashAmmoQuantity', 'loot.cheapStashGrenadeChance', 'loot.cheapStashGrenadeQuantity', 'loot.expensiveStashMoneyChance')),
+    'SleepingDashboard': ('DrawSleepingDashboard', 370.0, ('survival.sleepEligibilityThreshold', 'survival.minimumSleepHours', 'survival.sleepHealthRestore', 'survival.sleepStaminaRestore')),
+    'SevereFatiguePenaltyBoard': ('DrawSevereFatiguePenaltyBoard', 376.0, ('advanced.fatigueMechanics', 'survival.severeFatigueMaxStamina', 'survival.severeFatigueCarryWeight', 'survival.severeFatigueRecoil', 'survival.severeFatigueAimSway', 'survival.severeFatigueDispersion')),
+    'RadiationBalance': ('DrawRadiationBalance', 308.0, ('survival.radiationAccumulation', 'survival.radiationRecovery', 'survival.radiationDamage')),
+    'StaminaCore': ('DrawStaminaMovementBoard', 336.0, ('stamina.maxSP', 'stamina.regeneration', 'stamina.vaultMaxHeight', 'stamina.maxCarryWeight')),
+}
+_seven_required_code = (
+    'private void DrawNativeGauge(',
+    'private void DrawVaultHeightRuler(',
+    'private void DrawTradingMeter(',
+    'AddVerticalTarget(parameter,',
+    'AddVerticalTarget(vault,',
+    'AddHorizontalTarget(minimumHours, cell, stepMap,',
+    'const int hoursCount = 14;',
+    'const double sharedTop = 3.0;',
+    'Math.Min(780.0, ActualWidth - 34.0)',
+    'Math.Min(630.0, ActualWidth - 34.0)',
+    'if (Family == "SleepingDashboard"',
+    'or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"',
+    'or "RadiationBalance" or "StaminaCore"',
+)
+_seven_expected_sliders = {
+    'survival.minimumSleepHours': (1, 14, 1),
+    'stamina.vaultMaxHeight': (70, 300, 1),
+    'economy.repairFriend': (0, 2, 0.01),
+    'economy.repairNeutral': (0, 2, 0.01),
+    'economy.repairDisaffection': (0, 2, 0.01),
+    'economy.repairEnemy': (0, 3, 0.01),
+    'economy.buyCondition': (0, 2, 0.01),
+    'economy.sellCondition': (0, 2, 0.01),
+    'loot.cheapStashAmmoQuantity': (0.25, 2, 0.25),
+    'loot.mediumStashAmmoQuantity': (0.25, 2, 0.25),
+    'loot.expensiveStashAmmoQuantity': (0.25, 2, 0.25),
+    'survival.radiationAccumulation': (0, 2.5, 0.01),
+    'survival.radiationRecovery': (0, 0.1, 0.01),
+    'survival.radiationDamage': (0, 2, 0.01),
+}
+_seven_errors = []
+for _family, (_method, _height, _ids) in _seven_methods.items():
+    if f'private void {_method}(' not in _seven_src:
+        _seven_errors.append(f'{_family}: missing active renderer {_method}')
+    if _height is not None and f'"{_family}" => {_height:.1f}' not in _seven_src:
+        _seven_errors.append(f'{_family}: obsolete measured frame height')
+    for _id in _ids:
+        if _id not in _seven_catalog:
+            _seven_errors.append(f'{_family}: source {_id} missing from catalog')
+        if f'"{_id}"' not in _seven_src:
+            _seven_errors.append(f'{_family}: renderer no longer references {_id}')
+for _id, _native in _seven_expected_sliders.items():
+    _s = (_seven_catalog.get(_id, {}).get('slider') or {})
+    if tuple(_s.get(k) for k in ('min', 'max', 'step')) != _native:
+        _seven_errors.append(f'{_id}: native min/max/step drift')
+for _marker in _seven_required_code:
+    if _marker not in _seven_src:
+        _seven_errors.append(f'missing seven-controller interaction/geometry marker {_marker}')
+if not all(t in _seven_src for t in ('"StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,',
+                                   'DrawNativeGauge(dc, P(tier.Id), tier.Label,',
+                                   'DrawNativeGauge(dc, P(source.Id), source.Label, source.Format,')):
+    _seven_errors.append('tier rack or equalizer/radiation native gauges not wired to real sources')
+if not all(t in _seven_vm for t in ('"RadiationBalance" => "Move each radiation gauge',
+                                  '"RepairCurve" => "Drag one reputation point',
+                                  '"SleepingDashboard" => "Select 1–14 minimum sleep hours')):
+    _seven_errors.append('new seven-control source help/provenance not updated')
+if any('2026-10-11 — Seven gamer-centric native visual controllers' not in
+       (ROOT / 'docs' / doc).read_text(encoding='utf-8')
+       for doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md')):
+    _seven_errors.append('latest seven-controller design catalogs missing')
+if _seven_errors:
+    fail('Seven source-native visual controls: ' + '; '.join(_seven_errors))
+else:
+    note('Seven source-backed visual editors: 7 renderers / 31 unchanged CFG members, interactive gauges, curve, meters, stepped sleep and vault ruler; native frame heights match')
+
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
     print(f"[OK] {msg}")
