@@ -497,6 +497,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel);
     }
 
+    // A direct-position 0..100,000-coupon rail replaces tedious +/- clicks.
+    // Value changes use the *native* 10-coupon step on drag and keyboard.
     private void DrawCouponCounter(
         DrawingContext dc, ParameterViewModel? coupons, Rect card,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
@@ -508,38 +510,47 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (coupons is null)
             return;
 
-        var minus = new Rect(card.Left + 12.0, card.Top + 39.0, 42.0, 42.0);
-        var plus = new Rect(card.Right - 54.0, card.Top + 39.0, 42.0, 42.0);
-        var valueRect = new Rect(minus.Right + 6.0, card.Top + 35.0,
-            Math.Max(35.0, plus.Left - minus.Right - 12.0), 50.0);
-        var active = coupons.IsControlEnabled;
-        var modified = active && coupons.IsValueModifiedFromReference();
-
-        void Button(Rect rect, string glyph, HitKind kind)
-        {
-            var hover = _hoverTarget?.Kind == kind
-                && ReferenceEquals(_hoverTarget.Parameter, coupons);
-            dc.DrawRoundedRectangle(CloneWithOpacity(hover ? accent : border,
-                    hover ? .23 : .13), new Pen(hover ? accent : border, 1.0),
-                rect, 3.0, 3.0);
-            DrawCenteredText(dc, glyph,
-                new Point(rect.Left + rect.Width / 2.0, rect.Top + 7.0),
-                21.0, active ? text : muted, FontWeights.Bold);
-            if (active)
-                _hitTargets.Add(new HitTarget(coupons, rect, rect,
-                    kind, coupons.Minimum, coupons.Maximum, false));
-        }
-
-        Button(minus, "-", HitKind.CouponDecrease);
-        Button(plus, "+", HitKind.CouponIncrease);
-        DrawCenteredText(dc,
+        var changed = coupons.IsControlEnabled && coupons.IsValueModifiedFromReference();
+        DrawRightAlignedText(dc,
             coupons.CurrentNumber.ToString("N0", CultureInfo.InvariantCulture),
-            new Point(valueRect.Left + valueRect.Width / 2.0,
-                valueRect.Top + 7.0),
-            19.0, modified ? accent : active ? text : muted, FontWeights.Bold);
-        if (active)
-            _hitTargets.Add(new HitTarget(coupons, valueRect, valueRect,
-                HitKind.CouponValue, coupons.Minimum, coupons.Maximum, false));
+            new Point(card.Right - 13.0, card.Top + 5.0),
+            changed ? 16.2 : 15.0,
+            changed ? accent : coupons.IsControlEnabled ? text : muted,
+            FontWeights.Bold);
+
+        var track = new Rect(card.Left + 18.0, card.Top + 45.0,
+            Math.Max(1.0, card.Width - 36.0), 12.0);
+        var y = track.Top + track.Height / 2.0;
+        var x = ValueToX(coupons.CurrentNumber, coupons.Minimum,
+            coupons.Maximum, track, reverse: false);
+        var referenceX = ValueToX(coupons.ReferenceNumber, coupons.Minimum,
+            coupons.Maximum, track, reverse: false);
+        dc.DrawRoundedRectangle(CloneWithOpacity(border, .32), null, track, 3, 3);
+        dc.DrawLine(new Pen(CloneWithOpacity(coupons.IsControlEnabled ? accent : muted, .8), 4.0),
+            new Point(track.Left, y), new Point(x, y));
+        for (var index = 0; index <= 4; index++)
+        {
+            var tickValue = coupons.Minimum
+                + index * (coupons.Maximum - coupons.Minimum) / 4.0;
+            var tickX = ValueToX(tickValue, coupons.Minimum,
+                coupons.Maximum, track, reverse: false);
+            dc.DrawLine(new Pen(muted, .9),
+                new Point(tickX, y - 5.0), new Point(tickX, y + 5.0));
+            DrawCenteredText(dc, (tickValue / 1000.0).ToString("0", CultureInfo.InvariantCulture) + "K",
+                new Point(tickX, card.Bottom - 16.0), 9.0, muted, FontWeights.SemiBold);
+        }
+        dc.DrawLine(new Pen(muted, 2.0), new Point(referenceX, y - 10.0),
+            new Point(referenceX, y + 10.0));
+        var hovered = _hoverTarget?.Kind == HitKind.Horizontal
+            && ReferenceEquals(_hoverTarget.Parameter, coupons);
+        ControlHoverGlow.Draw(dc, new Point(x, y), accent, hovered);
+        dc.DrawEllipse(panel, new Pen(coupons.IsControlEnabled ? accent : muted,
+            hovered ? 2.8 : 1.7), new Point(x, y), 6.5, 6.5);
+
+        AddHorizontalTarget(coupons,
+            new Rect(track.Left - 8.0, track.Top - 12.0,
+                track.Width + 16.0, track.Height + 24.0),
+            track, coupons.Minimum, coupons.Maximum);
     }
 
     // Three independent source knobs. In narrow columns their two-row
@@ -4613,21 +4624,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        if (target.Kind is HitKind.CouponDecrease or HitKind.CouponIncrease
-            or HitKind.CouponValue)
-        {
-            if (target.Kind != HitKind.CouponValue)
-            {
-                var direction = target.Kind == HitKind.CouponIncrease ? 1.0 : -1.0;
-                target.Parameter.CurrentNumber = Snap(target.Parameter,
-                    target.Parameter.CurrentNumber + direction * target.Parameter.TickFrequency);
-            }
-            _status.ClearTransient();
-            InvalidateVisual();
-            e.Handled = true;
-            return;
-        }
-
         if (target.Kind == HitKind.Toggle)
         {
             target.Parameter.CurrentBoolean = !target.Parameter.CurrentBoolean;
@@ -4663,8 +4659,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
-            HitKind.Knob or HitKind.CouponDecrease
-                or HitKind.CouponIncrease or HitKind.CouponValue => Cursors.Hand,
+            HitKind.Knob => Cursors.Hand,
             HitKind.HumanJoint or HitKind.HungerJoint or HitKind.FatigueJoint or HitKind.FatigueReloadJoint => Cursors.SizeAll,
             HitKind.Toggle or HitKind.DrinkDurationOverride or HitKind.Choice or HitKind.MixerBaseMarker or HitKind.MixerSelect => Cursors.Hand,
             _ => Cursors.Arrow
@@ -4680,29 +4675,6 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-        if (Family == "CouponFlow")
-        {
-            var couponTarget = FindTarget(e.GetPosition(this));
-            if (couponTarget is not null
-                && couponTarget.Kind is (HitKind.CouponDecrease
-                    or HitKind.CouponIncrease or HitKind.CouponValue)
-                && couponTarget.Parameter.IsControlEnabled)
-            {
-                var couponDirection = Math.Sign(e.Delta);
-                if (couponDirection == 0) return;
-                Focus();
-                _selectedParameter = couponTarget.Parameter;
-                _selectedHitKind = HitKind.CouponValue;
-                RaiseParameterSelected(couponTarget.Parameter);
-                couponTarget.Parameter.CurrentNumber = Snap(couponTarget.Parameter,
-                    couponTarget.Parameter.CurrentNumber
-                    + couponDirection * couponTarget.Parameter.TickFrequency);
-                _status.ClearTransient();
-                InvalidateVisual();
-                e.Handled = true;
-                return;
-            }
-        }
         if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard"))
             return;
 
@@ -4783,8 +4755,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             : target.Kind switch
             {
                 HitKind.Knob => $"{target.Parameter.Label}\nTurn around the dial or scroll to adjust · Right-click = Base Preset",
-                HitKind.CouponDecrease or HitKind.CouponIncrease or HitKind.CouponValue =>
-                    "Starting Coupons\n+/- changes 10 coupons; scroll or arrow keys for precise changes; right-click resets.",
                 HitKind.Toggle => $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset",
                 HitKind.DrinkDurationOverride =>
                     "Override Drink Duration Limits\nOFF: each effect has its normal maximum. ON: all eight durations may reach 270 seconds independently.\nRight-click resets this checkbox.",
@@ -5834,9 +5804,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         Horizontal,
         Vertical,
         Knob,
-        CouponDecrease,
-        CouponIncrease,
-        CouponValue,
         HumanJoint,
         HungerJoint,
         FatigueJoint,
