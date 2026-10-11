@@ -1890,16 +1890,16 @@ else:
 # and measured label width rather than the old fixed 155-DIP reservation.
 _radiation_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
 _radiation_help = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
-if 'Track(recovery, "RADIATION RECOVERY",' not in _radiation_source:
-    fail("Radiation System middle source label changed unexpectedly")
-elif "card.Width - 155.0" in _radiation_source or (
-    "contentWidth - valueText.WidthIncludingTrailingWhitespace - 10.0" not in _radiation_source
-):
-    fail("compact header must calculate title width from the actual styled current value")
-elif "radiation build-up, natural recovery and health damage" not in _radiation_help:
-    fail("Radiation System help drifted from current UI semantics")
+# The live RadiationBalance family now uses three independent vertical
+# gauges, not the retired DrawCompactTrack header implementation.
+if ('("survival.radiationRecovery", "RECOVERY",' not in _radiation_source
+    or 'DrawNativeGauge(dc, P(source.Id), source.Label, source.Format,' not in _radiation_source
+    or '"survival.radiationRecovery"' not in _radiation_source):
+    fail("Radiation System recovery native gauge/short label drifted")
+elif "Move each radiation gauge independently" not in _radiation_help:
+    fail("Radiation System contextual guidance no longer matches vertical gauges")
 else:
-    note("Radiation Recovery name and source-measured compact header spacing locked")
+    note("Radiation Recovery: true 0–0.10 PTS/S native source on middle vertical gauge")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -1925,7 +1925,7 @@ _duration_renderer = (_semantic_source_dir / "AggregateVisualControl.cs").read_t
 for _token in (
     "private static double ConsumableTimelineHeight(double width)",
     "new Rect(17.0, previewTop, width, ConsumableTimelineHeight(ActualWidth))",
-    "return previewTop + ConsumableTimelineHeight(width) + 14.0;",
+    "=> ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;",
     "var secondary = new ParameterViewModel[][]",
     "shortEffect.CurrentNumber",
     "DrawCompactTrack(dc, shortEffect, caption,",
@@ -2537,6 +2537,77 @@ if _seven_errors:
     fail('Seven source-native visual controls: ' + '; '.join(_seven_errors))
 else:
     note('Seven source-backed visual editors: 7 renderers / 31 unchanged CFG members, interactive gauges, curve, meters, stepped sleep and vault ruler; native frame heights match')
+
+
+# Consumable Mixer is now exactly three CFG-backed knobs plus one six-bar
+# preview, with *no modifications* to the self-contained duration timeline.
+_consumer_ids = (
+    "survival.instantStaminaRestore",
+    "survival.waterStaminaEffectStrength",
+    "survival.energyDrinkStaminaRecoveryStrength",
+)
+_consumer_catalog = {p["id"]: p for p in parameters_doc["parameters"]}
+_consumer_source = _knob_source
+_consumer_from = _consumer_source.find("private void DrawConsumableMixer(")
+_consumer_end = _consumer_source.find("// A true seconds-space editor", _consumer_from)
+_consumer_head = _consumer_source[_consumer_from:_consumer_end] if _consumer_from >= 0 and _consumer_end >= 0 else ""
+_consumer_preview_start = _consumer_source.find("private void DrawConsumableEffectPreview(")
+_consumer_preview_end = _consumer_source.find("private void DrawConsumableMixer(", _consumer_preview_start)
+_consumer_preview = (_consumer_source[_consumer_preview_start:_consumer_preview_end]
+                    if _consumer_preview_start >= 0 and _consumer_preview_end > _consumer_preview_start else "")
+_consumer_errors = []
+for _cid in _consumer_ids:
+    _range = (_consumer_catalog.get(_cid, {}).get("slider") or {})
+    if tuple(_range.get(k) for k in ("min", "max", "step")) != (0, 2, 0.05):
+        _consumer_errors.append(f"{_cid}: strength min/max/native step drift")
+for _required in (
+    'DrawSourceKnob(dc, burst, "INSTANT STAMINA",',
+    'DrawSourceKnob(dc, waterStamina, "WATER BUFF",',
+    'DrawSourceKnob(dc, energyStamina, "ENERGY REGEN",',
+    'var knobBankWidth = Math.Min(620.0, ActualWidth - 34.0);',
+    'new Rect(17.0, ConsumableEffectPreviewTop,',
+    'burst, waterStamina, energyStamina,',
+    'var previewTop = ConsumableDurationTop;',
+):
+    if _required not in _consumer_head:
+        _consumer_errors.append(f"strength knob/chart wiring missing: {_required}")
+if (_consumer_head.count("DrawSourceKnob(") != 3
+    or "Strength(burst" in _consumer_head
+    or "Readout(" in _consumer_head
+    or "DrawCompactTrack(dc, p, label" in _consumer_head):
+    _consumer_errors.append("old strength slider/readout renderer returned or wrong knob count")
+for _required in (
+    '"LIVE EFFECT PREVIEW"',
+    '"INSTANT STAMINA"',
+    '"SUSTAINED EFFECTS"',
+    '("WATER", 38.0, 76.0, burst, false)',
+    '("ENERGY", 50.0, 100.0, burst, false)',
+    '("LIMITED ENERGY", 100.0, 200.0, burst, false)',
+    '("WATER REGEN", 25.0, 50.0, waterStamina, false)',
+    '("WATER COST", 10.0, 20.0, waterStamina, true)',
+    '("ENERGY REGEN", 200.0, 400.0, energyStamina, false)',
+    'var current = source.CurrentNumber * factor;',
+    'var reference = source.ReferenceNumber * factor;',
+    'negative ? rail.Right - activeWidth : rail.Left',
+    '_hoverTarget?.Kind == HitKind.Knob',
+    'modified ? accent : text',
+):
+    if _required not in _consumer_preview:
+        _consumer_errors.append(f"live source/graph/hover formula missing: {_required}")
+if ('Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer")'
+    not in _consumer_source
+    or 'or "RadiationBalance" or "StaminaCore" or "ConsumableMixer"' not in _consumer_source
+    or 'private const double ConsumableDurationTop = 475.0;' not in _consumer_source
+    or '=> ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;' not in _consumer_source):
+    _consumer_errors.append("knob wheel/selection or shared duration frame geometry missing")
+if any("2026-10-11 — Consumable Effects: three source knobs"
+       not in (ROOT / 'docs' / doc).read_text(encoding='utf-8')
+       for doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md')):
+    _consumer_errors.append("authoritative Consumable Effects design contract absent")
+if _consumer_errors:
+    fail("Consumable Effects source knobs and graph: " + "; ".join(_consumer_errors))
+else:
+    note("Consumable Effects: 3 native 0–2x/0.05x knobs, 6 exact source-derived live bars, hover linkage, 8 intact duration sources")
 
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
