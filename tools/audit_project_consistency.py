@@ -18,6 +18,13 @@ not_run_items: list[str] = []
 
 def fail(msg: str) -> None: errors.append(msg)
 def note(msg: str) -> None: notes.append(msg)
+# Check each required knob family independently of the order of the shared
+# wheel gate; adding a new approved rotary family must not regress old audits.
+def knob_wheel_gate_contains(source: str, *families: str) -> bool:
+    gate = next((line.strip() for line in source.splitlines()
+                 if line.strip().startswith('if (Family is not (')), '')
+    return all(f'"{family}"' in gate for family in families)
+
 def not_run(msg: str) -> None: not_run_items.append(msg)
 
 def walk_parameter_ids(value, path="special"):
@@ -974,7 +981,7 @@ else:
     if "DrawHorizontalTrackCard" in _abd_knob_code:
         _abd_errors.append("ammo-family horizontal sliders returned")
     _abd_knob_input = (
-        'Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer")',
+        'if (Family is not (',
         'if (target.Kind == HitKind.Knob)',
         'protected override void OnMouseWheel(MouseWheelEventArgs e)',
         'EnforceFamilyConstraints(target.Parameter);',
@@ -983,6 +990,8 @@ else:
     for _token in _abd_knob_input:
         if _token not in _abd_control_text:
             _abd_errors.append(f"ammo-family rotary interaction missing {_token!r}")
+    if not knob_wheel_gate_contains(_abd_control_text, "AmmoDistribution"):
+        _abd_errors.append("AmmoDistribution missing from shared knob wheel gate")
     if _abd_control_text.count('EnforceFamilyConstraints(target.Parameter);') < 2:
         _abd_errors.append("knob pointer and wheel edits must both enforce SNG pool validity")
     if any("2026-10-11 — Ammo Family Weights: four native rotary knobs"
@@ -2364,7 +2373,7 @@ _anomaly_knob_requirements = (
 _anomaly_knob_shared = (
     'private void DrawSourceKnob(',
     'DrawSourceKnob(dc, P(channels[i].Id)',
-    'if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution"))',
+    'if (Family is not (',
     'if (target.Kind == HitKind.Knob)',
     '"AnomalyGlobalDamage" => 242.0',
     '"AnomalyGlobalDamage" => new[] { "environment.anomalyDamage" }',
@@ -2380,6 +2389,7 @@ if (_anomaly_knob_slider.get('min') != 0
     or not all(part in _anomaly_knob_body for part in _anomaly_knob_requirements)
     or 'DrawEconomyCard' in _anomaly_knob_body
     or not all(part in _knob_source for part in _anomaly_knob_shared)
+    or not knob_wheel_gate_contains(_knob_source, "AnomalyGlobalDamage")
     or any('2026-10-11 — Global Anomaly Damage single knob' not in doc
            for doc in _anomaly_knob_docs)):
     fail('Global Anomaly Damage single-knob contract drifted (native 0–2.5x/0.01x, shared WPF input, 242-DIP frame, catalogs)')
@@ -2402,7 +2412,7 @@ _stash_knob_tokens = (
 )
 if (not all(token in _stash_knob_body for token in _stash_knob_tokens)
     or 'DrawNativeGauge(dc, P(tier.Id)' in _stash_knob_body
-    or 'or "StashRewardProfile")' not in _knob_source
+    or not knob_wheel_gate_contains(_knob_source, "StashRewardProfile")
     or any('2026-10-11 — Ammo by Stash Tier rotary' not in doc
            for doc in _knob_catalog_texts)):
     fail("Ammo by Stash Tier: three native rotary controls / interaction / catalogs drifted")
@@ -2417,8 +2427,7 @@ if (not all(v in _stock_knob_source for v in (
     '("economy.traderAmmoStock", "AMMO STOCK")',
     '("economy.medicStock", "MEDIC STOCK")',
     '"TraderStockBoard" => 242.0',
-    'or "TraderStockBoard")',
-)) or any('2026-10-11 — Trader Stock native knobs' not in d
+)) or not knob_wheel_gate_contains(_stock_knob_source, "TraderStockBoard") or any('2026-10-11 — Trader Stock native knobs' not in d
           for d in _knob_catalog_texts)):
     fail("Trader Stock dual source knob contract drifted")
 
@@ -2432,9 +2441,8 @@ if not all(token in _knob_source for token in (
     '("equipment.weaponWearPerShot", "WEAR PER SHOT")',
     '"PsyPhantomPressure" => 378.0',
     '"EquipmentWearBalance" => 242.0',
-    'or "PsyPhantomPressure" or "EquipmentWearBalance")',
-)) or any('2026-10-11 — Psy Combat and Equipment Wear rotary banks' not in d
-          for d in _knob_catalog_texts)):
+)) or not knob_wheel_gate_contains(_knob_source, "PsyPhantomPressure", "EquipmentWearBalance") or any('2026-10-11 — Psy Combat and Equipment Wear rotary banks' not in d
+          for d in _knob_catalog_texts):
     fail("Psy Combat / Equipment Wear knob UI and interaction contract drifted")
 
 # WPF dial graduation integrity, 2026-10-11. The old fixed "0..10"
@@ -2644,8 +2652,7 @@ for _required in (
 ):
     if _required not in _consumer_preview:
         _consumer_errors.append(f"live source/graph/hover formula missing: {_required}")
-if ('Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer")'
-    not in _consumer_source
+if (not knob_wheel_gate_contains(_consumer_source, "ConsumableMixer")
     or 'or "RadiationBalance" or "StaminaCore" or "ConsumableMixer"' not in _consumer_source
     or 'private const double ConsumableDurationTop = 475.0;' not in _consumer_source
     or '=> ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;' not in _consumer_source):
