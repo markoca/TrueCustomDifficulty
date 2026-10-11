@@ -2,7 +2,7 @@
 
 ### 2026-10-11 — YOUR WEAPONS rotary knobs (current authoritative contract)
 
-The **YOUR WEAPONS** section uses exactly **three compact, independent WPF rotary knobs in one row**, ordered **WEAPON DAMAGE**, **HEADSHOT DAMAGE**, **JAM FREQUENCY**. This replaces and supersedes all earlier Your Weapons horizontal/vertical slider specifications. The board is a single full-width Combat section with **242-DIP** measured content height and three equal inner cells (18-DIP margins, 12-DIP gaps), not a full-width control per source. Old inactive horizontal weapon-lane methods are removed.
+The **YOUR WEAPONS** section uses exactly **three compact, independent WPF rotary knobs in one row**, ordered **WEAPON DAMAGE**, **HEADSHOT DAMAGE**, **JAM FREQUENCY**. This replaces and supersedes all earlier Your Weapons horizontal/vertical slider specifications. The board is a single full-width Combat section with **242-DIP** measured content height and **three equal inner cells centered inside a maximum-620-DIP group** (18-DIP margins, 12-DIP gaps), not a full-width control per source. Old inactive horizontal weapon-lane methods are removed.
 
 Each knob has a dark circular face, 270° muted track, a gold live arc/indicator, a small grey **selected Base Preset reference tick**, an in-center current multiplier (neutral until modified, then gold), and neutral native min/max under the arc; labels sit above. No duplicate BASE text, fake DPS/TTK, invented jam chance, or explanatory footer. Use shared theme brushes, industrial frame, centered heading and hover-only white indicator. **Only current modified values turn gold**, including their x unit.
 
