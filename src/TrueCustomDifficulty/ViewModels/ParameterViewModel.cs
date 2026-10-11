@@ -94,7 +94,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "MasterLowHealth" => "Switch the extra low-health rule on or off; adjust HEALTH RECOVERY LOSS while the bundle is enabled.",
                     "MasterRadiationPenalty" => "Switch the extra radiation rule on or off; adjust its action-stamina penalty while enabled.",
                     "MasterMedicalHealing" => "Switch the Master effect bundle on or off; adjust the Bandage, Medkit or Army Medkit healing tracks independently.",
-                    "CouponFlow" => "Use +/- or scroll over the Starting Coupons counter in native 10-coupon steps; adjust Main and Side Quest reward meters independently.",
+                    "CouponFlow" => "Drag the Starting Coupons rail directly from 0 to 100,000 (10-coupon native steps), or use arrow/Home/End keys for precision. Main and Side Quest reward meters are independent.",
                     "TradingDashboard" => "Use the mirrored YOU SELL / YOU BUY price meters; condition acceptance and broken-value remain separate controls.",
                     "RepairCurve" => "Drag one reputation point vertically to set its repair-price multiplier. Linked values follow the existing source-value ordering.",
                     "BlastDamageBoard" => "Drag the explosion-damage track. The impact band shows the relative change; it is not another input.",
@@ -183,12 +183,12 @@ public sealed class ParameterViewModel : ObservableObject
         "economy.startingMoney" or "economy.mainQuestReward"
             or "economy.sideQuestReward" or "economy.buyCondition"
             or "economy.sellCondition" or "economy.traderMinBuyCondition"
-            or "economy.itemValueFloor" => "01 / MONEY FLOW",
+            or "economy.itemValueFloor" => "MONEY FLOW",
         "economy.consumableCost" or "economy.ammoCost" or "economy.armorCost"
             or "economy.weaponCost" or "economy.artifactCost"
             or "economy.mutantPartValue" or "economy.traderAmmoStock"
-            or "economy.medicStock" => "02 / MARKET",
-        _ => "03 / EXPENSES"
+            or "economy.medicStock" => "MARKET",
+        _ => "EXPENSES"
     };
     public string Control => Definition.Control;
     public string SupportStatus => Definition.Support.Status;
