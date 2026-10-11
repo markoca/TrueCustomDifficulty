@@ -1,5 +1,14 @@
 # Visual Control System
 
+### 2026-10-11 — YOUR WEAPONS rotary knobs (current authoritative contract)
+
+The **YOUR WEAPONS** section uses exactly **three compact, independent WPF rotary knobs in one row**, ordered **WEAPON DAMAGE**, **HEADSHOT DAMAGE**, **JAM FREQUENCY**. This replaces and supersedes all earlier Your Weapons horizontal/vertical slider specifications. The board is a single full-width Combat section with **242-DIP** measured content height and three equal inner cells (18-DIP margins, 12-DIP gaps), not a full-width control per source. Old inactive horizontal weapon-lane methods are removed.
+
+Each knob has a dark circular face, 270° muted track, a gold live arc/indicator, a small grey **selected Base Preset reference tick**, an in-center current multiplier (neutral until modified, then gold), and neutral native min/max under the arc; labels sit above. No duplicate BASE text, fake DPS/TTK, invented jam chance, or explanatory footer. Use shared theme brushes, industrial frame, centered heading and hover-only white indicator. **Only current modified values turn gold**, including their x unit.
+
+All three knobs edit the same independent real CFG properties as before: `combat.playerWeaponDamage` **0.25–2x**, `combat.playerHeadshotMultiplier` **0.5–3x**, `combat.weaponJamming` **0–2x**, each with **0.25x snapping** and independent preset persistence. Clockwise angular dragging/clicking chooses a source value; the bottom gap clamps to the closest end, clicking the center selects without editing. Mouse wheel, arrow keys and Page Up/Down adjust by native steps; Home/End snap to limits; right-click resets one source, R resets all three. The source selection/rationale, CFG/BPatch writer and preset round-trip are unchanged. This is **WPF-native**, not a WinForms dependency. Local publish/Wine visual and actual-game confirmation remain pending.
+
+
 **2026-10-10 — Human Squad Size warning cleanup:** removed the unused `minAxis` constant from the vertical-bar renderer (`CS0219`). The 0–3x ruler, 0.25–3x source range, slider behavior, CFG/ BPATCH mapping and preset semantics are unchanged. Local warning-free publish is not yet verified.
 
 
@@ -263,7 +272,7 @@ Ammo-box pool validity is a separate family invariant rather than an ordering co
 | Equipment Wear | Two independent native CFG axes: armor toughness and player-weapon wear per shot, with current/base comparison | Semantic |
 | Psy Phantom Pressure | Two independent phantom-cycle timing/count axes, plus gear damage and bleeding toggle | Semantic |
 | Human Combat Profile | Native human health and gun-damage axes, plus independent attack-frequency and accuracy tracks | Semantic |
-| Your Weapons | Three compact native-value lanes for base hit damage, headshot multiplier and weapon jamming | Semantic |
+| Your Weapons | Three native 270° rotary knobs for weapon damage, headshot multiplier and weapon jamming | Semantic |
 | Core Health | Max-HP rail, recovery-delay ruler, passive regen, difficulty effect scaling and a separate low-health recovery track | Semantic |
 | Master Severe Fatigue | On/off bundle plus five independently editable severe-fatigue penalties; inactive tracks preserve stored values | Semantic |
 | Master Medical Healing | Master consumable effect bundle toggle plus three source-exact healing-retention multipliers, on a common 0–200% axis | Semantic |
@@ -351,13 +360,13 @@ The centralized value-based `LOW <= MEDIUM <= SEVERE` threshold constraint remai
 
 `AggregateVisualControl / PlayerWeaponProfile`
 
-Three directly adjustable and independent rows:
+Three directly adjustable and independent rotary knobs in one compact row:
 
 - `combat.playerWeaponDamage` tunes the selected difficulty's `EnvironmentDifficulty.Weapon_BaseDamage` (0.25x–2x). Its Base Preset reference can be 1.30x, 1x or 0.75x depending on the selected difficulty.
 - `combat.playerHeadshotMultiplier` tunes `NPCCombatDifficulty.PlayerWeapon_HeadshotMultiplier` (0.5x–3x). The selected baseline is 1x for Novice/Stalker/Veteran and 2x for Master.
 - `combat.weaponJamming` tunes `NPCCombatDifficulty.Weapon_JammingMultiplier` (0x–2x). The selected baseline is 1x for Novice/Stalker/Veteran and 1.5x for Master.
 
-Each lane uses its own native absolute multiplier range and 0.01 step. The grey reference tick is the actual selected Base Preset, not a universal 1x. Gold handles edit only the specified CFG setting; the gold segment between base/current communicates a tuning delta, not computed effective damage or jam probability. Right-click resets a single lane, R resets the family. No damage-per-second, hit probability or headshot final-damage calculation is invented.
+Each knob uses its own native absolute multiplier range and **0.25x step**. A grey arc tick denotes the selected Base Preset, not a universal 1x. Gold arc and notch adjust only that CFG setting. Mouse angular drag, wheel, keyboard, right-click and group R reset remain source-specific. No damage-per-second, hit probability or headshot final-damage calculation is invented. The older horizontal-lane section is historical and superseded by the 2026-10-11 contract.
 
 ### Core Health
 
@@ -745,7 +754,7 @@ The four visible Combat groups are ordered **Your Weapons → Human Enemies → 
 
 Full-width 1x1 section cards and removal of duplicate section separators apply globally. Dedicated visual control titles are centered, bold, gold and 12.5 DIP, with centered 9.5-DIP grey explanatory subtitles, matching the Combat aggregate family. Gameplay ranges, interactions, visuals inside each specialized chart and CFG mapping stay unchanged. The beer/vodka drunkenness editor has no standalone top heading and retains its custom compact internal arrangement until its tab's individual redesign.
 
-### Your Weapons horizontal layout (2026-10-08)
+### Your Weapons historical horizontal layout (2026-10-08; superseded by 2026-10-11 knobs)
 
 Three compact horizontal tracks occupy one row, left to right: Weapon Damage, Headshot Damage, Weapon Jamming. Each track controls the native parameter by dragging horizontally, with its own Base tick and right-click reset. Equal-width cells separated by 12 DIP, centered card heading, and 169-DIP overall height. Vertical faders are no longer used in Your Weapons.
 
@@ -1188,7 +1197,7 @@ The reusable `AggregateVisualControl.DrawHorizontalTrackCard` receives `healthTy
 
 The user approved the four-part Combat wireframe and specifically requested source+docs deployment on `main`. **This is the latest authoritative Combat UI design and supersedes conflicting 2026-10-08/09 vertical cooldown-fader, Human Combat side-fader, and oversize Mutant Health min-height notes.** Keep four separate **full-width (1×1)** sections in existing order, with only one in-card centered gold heading per section:
 
-1. **YOUR WEAPONS** (`PlayerWeaponProfile`): the same three independent horizontal cards in a single row — WEAPON DAMAGE, HEADSHOT DAMAGE, JAM FREQUENCY. Reuse Stamina-style label-left / current-right / rail-below. Slightly increase only these labels to **11.2 DIP**, current numerals to **12.0 DIP** (13.2 when source-modified), and native endpoints to 10.0 DIP. Preserve all three genuine source parameters, **0.25x catalog increments** and 169-DIP board. No DPS simulation or new damage readout.
+1. **YOUR WEAPONS** (`PlayerWeaponProfile`): three independent compact **270° rotary knobs** in one row — WEAPON DAMAGE, HEADSHOT DAMAGE, JAM FREQUENCY — with centered current multiplier, gold arc, muted Base tick, native endpoints and **0.25x** steps. The active measured board is **242 DIP**, not the superseded 169-DIP horizontal layout. Preserve the three actual CFG fields and per-source resets; no DPS/jam-probability simulation. The 2026-10-11 knob contract is authoritative.
 2. **HUMAN ENEMIES** (`HumanCombatProfile`): keep the square **180–280 DIP 2D graph** with X=enemy health and Y=enemy gun damage, independent gold exterior drag handles and an interactive central joint. **Replace the three right-hand vertical faders** with three **90-DIP horizontal cards stacked vertically**, ATTACK FREQUENCY, FIRE ACCURACY, EXPLOSION DAMAGE, with current values right-aligned and native min/max below. Fixed graph start (64,91), cards start X=plot.Right+16, Y=91/192/293, equal measured right-lane width; unchanged 465-DIP frame. The frame no longer renders the redundant bottom drag/axis legend: the axes and joint tooltip already explain interaction. Graph axis current values are neutral at source reference and gold/+1.2 only if modified. Attack Frequency has the verified 2x maximum and Fire Accuracy 1x maximum; native CFG steps and the explosion source remain unchanged.
 3. **MUTANT COMBAT**: a compact standalone `combat.mutantDamage` slider using the standard Stamina-style label / current value / rail layout. Keep source-accurate endpoints and subdued reference ticks; no aggregate board or duplicate instructions.
 4. **MUTANT HEALTH** (`MutantHealthRadar`): preserve the approved two-column seven-row Stamina-style card layout, alphabetical order of **14** independently editable mutants, native **0.05x–2x** source range and **0.05x source step**. Keep species name on the left, editable multiplier **centered**, derived actual `HP` **right-aligned**, single rail below, grey reference tick and handle-only glow. Improve tiny numbers without moving handles: species name **10.8 DIP**, multiplier **11.2 DIP**, actual HP **10.5 DIP**, and numeric change highlighting still +1.2 DIP. WPF minimum is brought into alignment with the unchanged renderer's **526 DIP** measured height (instead of the stale 672-DIP blank-space minimum). The target values `VanillaHp × sourceMultiplier` remain unchanged; no fake boss/Amok control.
