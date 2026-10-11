@@ -1383,6 +1383,17 @@ _economy_layout_contract = (
 for _name, _token, _source in _economy_layout_contract:
     if _token not in _source:
         fail(f"Economy dashboard responsive groups drifted: {_name}")
+# The grouped semantic slot registry is a C# Dictionary, so duplicate keys
+# throw during static initialization rather than merely showing a bad layout.
+_economy_slot_keys = re.findall(r'\["([^"]+)"\]\s*=\s*new\(', _economy_responsive)
+if len(_economy_slot_keys) != len(set(_economy_slot_keys)):
+    fail("Economy responsive panel: duplicate semantic slots would crash at startup")
+if not all(v in _economy_responsive for v in (
+    'parameter.Id is not ("economy.startingMoney"',
+    'or "economy.buyCondition" or "economy.fastTravelCost"',
+    'or "economy.repairEnemy")',
+)):
+    fail("Economy pairable visual anchors reverted to full-width rows")
 _economy_coupon_start = _economy_aggregate.find('private void DrawCouponFlow(')
 _economy_coupon_end = _economy_aggregate.find('private void DrawTraderStockKnobs(', _economy_coupon_start)
 _economy_coupon = (_economy_aggregate[_economy_coupon_start:_economy_coupon_end]
