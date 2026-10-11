@@ -2090,14 +2090,43 @@ public sealed class AggregateVisualControl : FrameworkElement
             center, radius - 10, radius - 10);
         DrawKnobArc(dc, center, radius, WeaponKnobStartAngle, WeaponKnobSweepAngle,
             new Pen(CloneWithOpacity(border, .95), 6.0));
-        for (var tick = 0; tick <= 10; tick++)
+        // The ticks must follow the SAME native min + N * TickFrequency
+        // grid used by Snap(), not an arbitrary 10-way visual division.
+        // A dense 0.01x source has 251 reachable values on a ~220-DIP arc:
+        // draw only a legible 1/2/5/10/... subset of real steps, never
+        // implied intermediate positions. Wheel, drag and keyboard retain
+        // the complete native editing precision independently of tick density.
+        var nativeStep = Math.Max(Epsilon, parameter.TickFrequency);
+        var nativeIntervals = (int)Math.Floor(range / nativeStep + 0.000001);
+        var pixelsPerStep = radius * WeaponKnobSweepAngle * Math.PI / 180.0
+            / Math.Max(1.0, range / nativeStep);
+        var tickStride = KnobVisibleStepStride(pixelsPerStep);
+        var majorStride = tickStride * (tickStride == 1 ? 4 : 5);
+
+        void DrawStepTick(double value, bool major)
         {
-            var angle = WeaponKnobStartAngle + tick * WeaponKnobSweepAngle / 10.0;
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, tick % 5 == 0 ? .72 : .36),
-                    tick % 5 == 0 ? 1.6 : 1.0),
-                KnobPoint(center, radius + 7, angle),
-                KnobPoint(center, radius + (tick % 5 == 0 ? 14 : 11), angle));
+            var ratio = Math.Clamp((value - parameter.Minimum) / range, 0.0, 1.0);
+            var angle = WeaponKnobStartAngle + ratio * WeaponKnobSweepAngle;
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, major ? .75 : .40),
+                    major ? 1.6 : 1.0),
+                KnobPoint(center, radius + 5.0, angle),
+                KnobPoint(center, radius + (major ? 11.0 : 9.0), angle));
         }
+
+        for (var tickIndex = 0; tickIndex <= nativeIntervals; tickIndex += tickStride)
+        {
+            var value = parameter.Minimum + tickIndex * nativeStep;
+            DrawStepTick(value, tickIndex == 0
+                || tickIndex % majorStride == 0
+                || Math.Abs(value - parameter.Maximum) <= Epsilon);
+        }
+
+        // Last native step and the hard upper bound remain visible even if
+        // they don't land on a decimated tick. Never invent an off-grid step.
+        if (nativeIntervals % tickStride != 0)
+            DrawStepTick(parameter.Minimum + nativeIntervals * nativeStep, true);
+        if (parameter.Maximum - (parameter.Minimum + nativeIntervals * nativeStep) > Epsilon)
+            DrawStepTick(parameter.Maximum, true);
 
         // Paint the source arc before the muted Base tick so the reference
         // remains visible even where the gold current arc passes across it.
@@ -2137,6 +2166,26 @@ public sealed class AggregateVisualControl : FrameworkElement
             2.0 * (radius + 5), 2.0 * (radius + 5));
         _hitTargets.Add(new HitTarget(parameter, hit, hit, HitKind.Knob,
             parameter.Minimum, parameter.Maximum, false));
+    }
+
+    // Readability-only decimation of the physical marks: all rendered ticks
+    // still correspond to an integer number of source-native steps.
+    // For example: 0..3 in 0.25x -> stride 1 (13 marks);
+    // 0..2.5 in 0.01x -> stride 10 (0.10x marks, 0.01x input).
+    private static int KnobVisibleStepStride(double pixelsPerStep)
+    {
+        const double minimumTickSpacing = 6.5;
+        var required = minimumTickSpacing / Math.Max(Epsilon, pixelsPerStep);
+        var scale = 1;
+        while (scale < 100000 && required > 10.0 * scale)
+            scale *= 10;
+        if (required <= scale)
+            return scale;
+        if (required <= scale * 2)
+            return scale * 2;
+        if (required <= scale * 5)
+            return scale * 5;
+        return scale * 10;
     }
 
     private static Point KnobPoint(Point center, double radius, double degrees)
