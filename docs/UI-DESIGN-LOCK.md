@@ -1,5 +1,10 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-11 — Shared rotary wheel-gate audit invariant
+
+The shared `AggregateVisualControl` wheel handler supports multiple independently approved rotary families (Your Weapons, Global Anomaly Damage, Ammo Distribution, Consumable Effects, Stash Rewards, Trader Stock, Psy Combat, Equipment Wear). `tools/audit_project_consistency.py` must check membership of each required family in the wheel gate, not compare the whole C# condition as an immutable string. Adding a new family must not invalidate earlier catalogued UI controls. The 2026-10-11 Psy/Equipment audit's extra closing parenthesis was corrected without changing UI behavior.
+
+
 ### 2026-10-11 — Psy Combat and Equipment Wear rotary banks
 
 Psy Combat replaces the former two-axis square plot and side fader with three independent 194×181 DIP native WPF knobs: spawn-cycle delay, phantom count and gear durability damage. Its bleeding toggle remains independently interactive. The small bar preview is **relative only**, not a calculated spawn timeline or deterministic spawn frequency; no inferred AI scheduling rules. Height 378 DIP. Equipment Wear replaces the combined 2D chart with two independent 194×181 DIP native knobs, armor durability and weapon wear per shot, height 242 DIP. Shared native ticks, snapping, drag, wheel and keyboard handling apply to both families. Original source IDs and writers are unchanged.
