@@ -2008,16 +2008,30 @@ else:
 # and measured label width rather than the old fixed 155-DIP reservation.
 _radiation_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
 _radiation_help = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
-# The live RadiationBalance family now uses three independent vertical
-# gauges, not the retired DrawCompactTrack header implementation.
-if ('("survival.radiationRecovery", "RECOVERY",' not in _radiation_source
-    or 'DrawNativeGauge(dc, P(source.Id), source.Label, source.Format,' not in _radiation_source
-    or '"survival.radiationRecovery"' not in _radiation_source):
-    fail("Radiation System recovery native gauge/short label drifted")
-elif "Move each radiation gauge independently" not in _radiation_help:
-    fail("Radiation System contextual guidance no longer matches vertical gauges")
+# Three native WPF rotary sources, with the middle recovery source in PTS/S
+# rather than a fictitious x multiplier. Verify actual source dispatch.
+_radiation_begin = _radiation_source.find('private void DrawRadiationBalance(')
+_radiation_finish = _radiation_source.find('\n    private ', _radiation_begin + 15)
+_radiation_renderer = (_radiation_source[_radiation_begin:_radiation_finish]
+                       if 0 <= _radiation_begin < _radiation_finish else '')
+_radiation_required = (
+    '("survival.radiationAccumulation", "BUILD-UP")',
+    '("survival.radiationRecovery", "RECOVERY")',
+    '("survival.radiationDamage", "HP DAMAGE")',
+    'DrawSourceKnob(dc, P(source.Id), source.Label,',
+    'rateReadout: source.Id == "survival.radiationRecovery"',
+    'new Rect(left + i * (cell + gap), 49.0, cell, 181.0)',
+)
+if (not all(item in _radiation_renderer for item in _radiation_required)
+    or 'DrawNativeGauge(dc, P(source.Id)' in _radiation_renderer
+    or not knob_wheel_gate_contains(_radiation_source, 'RadiationBalance')
+    or 'rateReadout ?' not in _radiation_source
+    or '"RadiationBalance" => 242.0' not in _radiation_source):
+    fail("Radiation System three native source knobs, PTS/S unit or wheel mapping drifted")
+elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
+    fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation Recovery: true 0–0.10 PTS/S native source on middle vertical gauge")
+    note("Radiation: three source-native 270-degree knobs; recovery remains 0–0.10 PTS/S, no invented multiplier")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -2645,8 +2659,8 @@ _seven_methods = {
     'StashRewardProfile': ('DrawCompactStashRewards', None, ('loot.cheapStashAmmoQuantity', 'loot.mediumStashAmmoQuantity', 'loot.expensiveStashAmmoQuantity', 'loot.cheapStashGrenadeChance', 'loot.cheapStashGrenadeQuantity', 'loot.expensiveStashMoneyChance')),
     'SleepingDashboard': ('DrawSleepingDashboard', 370.0, ('survival.sleepEligibilityThreshold', 'survival.minimumSleepHours', 'survival.sleepHealthRestore', 'survival.sleepStaminaRestore')),
     'SevereFatiguePenaltyBoard': ('DrawSevereFatiguePenaltyBoard', 376.0, ('advanced.fatigueMechanics', 'survival.severeFatigueMaxStamina', 'survival.severeFatigueCarryWeight', 'survival.severeFatigueRecoil', 'survival.severeFatigueAimSway', 'survival.severeFatigueDispersion')),
-    'RadiationBalance': ('DrawRadiationBalance', 308.0, ('survival.radiationAccumulation', 'survival.radiationRecovery', 'survival.radiationDamage')),
-    'StaminaCore': ('DrawStaminaMovementBoard', 336.0, ('stamina.maxSP', 'stamina.regeneration', 'stamina.vaultMaxHeight', 'stamina.maxCarryWeight')),
+    'RadiationBalance': ('DrawRadiationBalance', 242.0, ('survival.radiationAccumulation', 'survival.radiationRecovery', 'survival.radiationDamage')),
+    'StaminaCore': ('DrawStaminaMovementBoard', 351.0, ('stamina.maxSP', 'stamina.regeneration', 'stamina.vaultMaxHeight', 'stamina.maxCarryWeight')),
 }
 _seven_required_code = (
     'private void DrawNativeGauge(',
@@ -2658,7 +2672,7 @@ _seven_required_code = (
     'const int hoursCount = 14;',
     'const double sharedTop = 3.0;',
     'Math.Min(780.0, ActualWidth - 34.0)',
-    'Math.Min(630.0, ActualWidth - 34.0)',
+    'Math.Min(606.0, ActualWidth - 34.0)',
     'if (Family == "SleepingDashboard"',
     'or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"',
     'or "RadiationBalance" or "StaminaCore"',
@@ -2698,9 +2712,9 @@ for _marker in _seven_required_code:
     if _marker not in _seven_src:
         _seven_errors.append(f'missing seven-controller interaction/geometry marker {_marker}')
 # Check each *active renderer* rather than assuming the old stash-tier
-# vertical gauges still exist after the approved three-knob redesign.
-# Preserve actual source IDs, native control dispatch and independent bonus
-# rewards; RepairCurve/RadiationBalance are deliberately not rotary.
+# Preserve source IDs and native interaction after approved rotary redesigns.
+# Stash tiers AND RadiationBalance are now knobs, while RepairCurve retains
+# its interactive four-point source graph; bonus rewards stay separate.
 _seven_stash_start = _seven_src.find('private void DrawCompactStashRewards(')
 _seven_stash_end = _seven_src.find('DrawText(dc, "BONUS REWARDS"', _seven_stash_start)
 _seven_stash_body = (_seven_src[_seven_stash_start:_seven_stash_end]
@@ -2727,10 +2741,11 @@ _seven_radiation_end = _seven_src.find('\n    private ', _seven_radiation_start)
 _seven_radiation_body = (_seven_src[_seven_radiation_start:_seven_radiation_end]
                          if 0 <= _seven_radiation_start < _seven_radiation_end else '')
 _seven_radiation_native = (
-    '("survival.radiationAccumulation", "BUILD-UP",',
-    '("survival.radiationRecovery", "RECOVERY",',
-    '("survival.radiationDamage", "HP DAMAGE",',
-    'DrawNativeGauge(dc, P(source.Id), source.Label, source.Format,',
+    '("survival.radiationAccumulation", "BUILD-UP")',
+    '("survival.radiationRecovery", "RECOVERY")',
+    '("survival.radiationDamage", "HP DAMAGE")',
+    'DrawSourceKnob(dc, P(source.Id), source.Label,',
+    'rateReadout: source.Id == "survival.radiationRecovery"',
 )
 _seven_repair_start = _seven_src.find('private void DrawRepairCurve(')
 _seven_repair_end = _seven_src.find('\n    private ', _seven_repair_start)
@@ -2747,11 +2762,13 @@ if (not all(t in _seven_stash_body for t in _seven_stash_native)
     or 'DrawNativeGauge(dc, P(tier.Id)' in _seven_stash_body
     or not all(t in _seven_bonus_body for t in _seven_bonus_native)
     or not all(t in _seven_radiation_body for t in _seven_radiation_native)
+    or 'DrawNativeGauge(dc, P(source.Id)' in _seven_radiation_body
+    or not knob_wheel_gate_contains(_seven_src, 'RadiationBalance')
     or not all(t in _seven_repair_body for t in _seven_repair_native)
     or '"StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,' not in _seven_src
     or not knob_wheel_gate_contains(_seven_src, 'StashRewardProfile')):
-    _seven_errors.append('stash-tier native knobs / bonus rails, repair curve or radiation gauges lost their source wiring')
-if not all(t in _seven_vm for t in ('"RadiationBalance" => "Move each radiation gauge',
+    _seven_errors.append('stash-tier/radiation native knobs, bonus rails or repair graph lost source wiring')
+if not all(t in _seven_vm for t in ('"RadiationBalance" => "Turn BUILD-UP',
                                   '"RepairCurve" => "Drag one reputation point',
                                   '"SleepingDashboard" => "Select 1–14 minimum sleep hours')):
     _seven_errors.append('new seven-control source help/provenance not updated')
@@ -2762,8 +2779,62 @@ if any('2026-10-11 — Seven gamer-centric native visual controllers' not in
 if _seven_errors:
     fail('Seven source-native visual controls: ' + '; '.join(_seven_errors))
 else:
-    note('Seven source-backed visual editors: 7 renderers / 31 unchanged CFG members; stash-tier native knobs and bonus rails, repair curve, radiation gauges, stepped sleep and vault ruler; native frame heights match')
+    note('Seven source-backed visual editors: 7 renderers / 31 unchanged CFG members; stash-tier/radiation native knobs, separate bonus rewards, repair curve, stepped sleep and vault ruler; native frame heights match')
 
+
+# Source-native compact Health/Stamina revision. Protect real parameter
+# identity, renderer geometry, unit semantics and the original Usage editors.
+_compact_health_start = _seven_src.find('private void DrawCoreHealthDashboard(')
+_compact_health_end = _seven_src.find('\n    private ', _compact_health_start + 20)
+_compact_health = (_seven_src[_compact_health_start:_compact_health_end]
+                   if 0 <= _compact_health_start < _compact_health_end else '')
+_compact_stamina_start = _seven_src.find('private void DrawStaminaMovementBoard(')
+_compact_stamina_end = _seven_src.find('\n    // Fatigue stages', _compact_stamina_start)
+_compact_stamina = (_seven_src[_compact_stamina_start:_compact_stamina_end]
+                    if 0 <= _compact_stamina_start < _compact_stamina_end else '')
+_compact_health_ids = (
+    'health.maxHP', 'health.baseRegen', 'health.regenDelay',
+    'health.regenerationScalar', 'health.lowHealthRegen'
+)
+_compact_stamina_ids = (
+    'stamina.maxSP', 'stamina.regeneration',
+    'stamina.vaultMaxHeight', 'stamina.maxCarryWeight'
+)
+if (not all(f'P("{pid}")' in _compact_health for pid in _compact_health_ids)
+    or 'DrawMaxHealthRuler(dc, hp,' not in _compact_health
+    or 'DrawHorizontalTrackCard(dc, P("health.baseRegen")' not in _compact_health
+    or 'DrawHorizontalTrackCard(dc, P(sources[i].Id)' not in _compact_health
+    or 'var columns = ActualWidth >= 700.0 ? 3 : 2;' not in _compact_health
+    or '"CoreHealthDashboard" => width >= 700.0 ? 282.0 : 365.0' not in _seven_src
+    or 'medkit' in _compact_health.lower()
+    and 'no item-healing, medkit' not in _compact_health.lower()):
+    fail('Core Health source-specific HP, passive and responsive recovery controls drifted')
+if (not all(f'P("{pid}")' in _compact_stamina for pid in _compact_stamina_ids)
+    or 'DrawVaultHeightRuler(dc, P("stamina.vaultMaxHeight")' not in _compact_stamina
+    or 'DrawCarryCapacityRail(dc, P("stamina.maxCarryWeight")' not in _compact_stamina
+    or 'AddHorizontalTarget(carry,' not in _compact_stamina
+    or 'carry.CurrentNumber' not in _compact_stamina
+    or 'MOVEMENT LIMITS' not in _compact_stamina
+    or '"StaminaCore" => 351.0' not in _seven_src):
+    fail('Stamina Core/Movement Limits: native vault and calibrated kg limit drifted')
+_action_usage_source = (ROOT / 'src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs').read_text(encoding='utf-8')
+_action_usage_xaml = (ROOT / 'src/TrueCustomDifficulty/MainWindow.xaml').read_text(encoding='utf-8')
+if (not all(token in _action_usage_source for token in (
+        'private const double UsageHeight = 187.0;',
+        'new Rect(left, 48.0, half, 124.0)',
+        'new Rect(left + half + gap, 48.0, half, 124.0)',
+        'var top = card.Top + 25.0 + local * 31.0;',
+        'MappingKind.RelativeToReference2X',
+        'stamina.sprintCost', 'stamina.jumpCost', 'stamina.vaultCost',
+        'stamina.meleeNormalCost', 'stamina.meleeStrongCost',
+        'stamina.butstockCost',
+    ))
+    or 'MinHeight="187"' not in _action_usage_xaml):
+    fail('Stamina Usage: six editable movement/melee channels or compact frame drifted')
+for _doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md'):
+    if '2026-10-11 — Radiation, Core Health, Stamina & Movement compact pass' not in (
+            ROOT / 'docs' / _doc).read_text(encoding='utf-8'):
+        fail(f'Compact Radiation/Health/Stamina binding catalog missing: {_doc}')
 
 # Consumable Mixer is now exactly three CFG-backed knobs plus one six-bar
 # preview, with *no modifications* to the self-contained duration timeline.
