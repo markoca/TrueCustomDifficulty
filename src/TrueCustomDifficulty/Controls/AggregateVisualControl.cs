@@ -85,7 +85,12 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        var width = double.IsInfinity(availableSize.Width) ? 760.0 : Math.Max(520.0, availableSize.Width);
+        // The paired Economy dashboard cards must measure at their actual host
+        // width rather than demanding the unrelated 520-DIP plot minimum.
+        var compactEconomy = Family is "CouponFlow" or "TradingDashboard"
+            or "ServiceCostsBoard" or "RepairCurve";
+        var width = double.IsInfinity(availableSize.Width) ? 760.0
+            : Math.Max(compactEconomy ? 280.0 : 520.0, availableSize.Width);
         return new Size(width, GetDesiredHeight(Family, width));
     }
 
@@ -176,8 +181,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrawTraderStockKnobs(dc, text, muted, border, accent, panel);
                 break;
             case "ServiceCostsBoard":
+                DrawServicePriceKnobs(dc, text, muted, border, accent, panel);
+                break;
             case "CouponFlow":
-                DrawEconomyBoard(dc, text, muted, border, accent, panel);
+                DrawCouponFlow(dc, text, muted, border, accent, panel);
                 break;
             case "ItemWeightBoard":
                 DrawEquipmentWeightBoard(dc, text, muted, border, accent, panel);
@@ -466,6 +473,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         return 48.0 + rows * 94.0 + 12.0;
     }
 
+    private static double CouponBoardHeight(double width)
+        => width >= 470.0 ? 274.0 : 367.0;
+
+    private static double ServicePriceBoardHeight(double width)
+        => width >= 418.0 ? 242.0 : 438.0;
+
     private static string EconomyValue(ParameterViewModel parameter, double value)
         => parameter.Id switch
         {
@@ -476,34 +489,108 @@ public sealed class AggregateVisualControl : FrameworkElement
             _ => $"{value:0.##}x"
         };
 
-    private void DrawEconomyBoard(
-        DrawingContext dc, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    // Money Flow / compact native coupons counter + two independent reward meters.
+    // This is a number editor, not a fake 0..100000 progress bar. The exact
+    // source-native step remains 10 coupons (keyboard and wheel share it).
+    private void DrawCouponFlow(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
     {
-        var (title, channels) = Family switch
+        DrawHeader(dc, "COUPONS & REWARDS", "", text, muted, accent);
+        var width = Math.Min(620.0, ActualWidth - 28.0);
+        var left = (ActualWidth - width) / 2.0;
+        DrawCouponCounter(dc, P("economy.startingMoney"),
+            new Rect(left, 49.0, width, 96.0), text, muted, border, accent, panel);
+        DrawText(dc, "QUEST REWARDS", new Point(left + 8.0, 158.0),
+            10.0, muted, FontWeights.Bold);
+
+        var twoColumns = ActualWidth >= 470.0;
+        const double gap = 10.0;
+        var cardWidth = twoColumns ? (width - gap) / 2.0 : width;
+        DrawTradingMeter(dc, P("economy.mainQuestReward"), "MAIN QUEST",
+            new Rect(left, 175.0, cardWidth, 84.0), false,
+            text, muted, border, accent, panel);
+        DrawTradingMeter(dc, P("economy.sideQuestReward"), "SIDE QUEST",
+            new Rect(twoColumns ? left + cardWidth + gap : left,
+                twoColumns ? 175.0 : 268.0, cardWidth, 84.0), false,
+            text, muted, border, accent, panel);
+    }
+
+    private void DrawCouponCounter(
+        DrawingContext dc, ParameterViewModel? coupons, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .62),
+            new Pen(border, .9), card, 4.0, 4.0);
+        DrawText(dc, "STARTING COUPONS", new Point(card.Left + 12.0, card.Top + 8.0),
+            10.2, text, FontWeights.Bold);
+        if (coupons is null)
+            return;
+
+        var minus = new Rect(card.Left + 12.0, card.Top + 39.0, 42.0, 42.0);
+        var plus = new Rect(card.Right - 54.0, card.Top + 39.0, 42.0, 42.0);
+        var valueRect = new Rect(minus.Right + 6.0, card.Top + 35.0,
+            Math.Max(35.0, plus.Left - minus.Right - 12.0), 50.0);
+        var active = coupons.IsControlEnabled;
+        var modified = active && coupons.IsValueModifiedFromReference();
+
+        void Button(Rect rect, string glyph, HitKind kind)
         {
-            "CouponFlow" => ("COUPONS & REWARDS", CouponEconomyChannels),
-            "TraderStockBoard" => ("TRADER STOCK", StockEconomyChannels),
-            _ => ("SERVICE PRICES", ServiceEconomyChannels)
+            var hover = _hoverTarget?.Kind == kind
+                && ReferenceEquals(_hoverTarget.Parameter, coupons);
+            dc.DrawRoundedRectangle(CloneWithOpacity(hover ? accent : border,
+                    hover ? .23 : .13), new Pen(hover ? accent : border, 1.0),
+                rect, 3.0, 3.0);
+            DrawCenteredText(dc, glyph,
+                new Point(rect.Left + rect.Width / 2.0, rect.Top + 7.0),
+                21.0, active ? text : muted, FontWeights.Bold);
+            if (active)
+                _hitTargets.Add(new HitTarget(coupons, rect, rect,
+                    kind, coupons.Minimum, coupons.Maximum, false));
+        }
+
+        Button(minus, "-", HitKind.CouponDecrease);
+        Button(plus, "+", HitKind.CouponIncrease);
+        DrawCenteredText(dc,
+            coupons.CurrentNumber.ToString("N0", CultureInfo.InvariantCulture),
+            new Point(valueRect.Left + valueRect.Width / 2.0,
+                valueRect.Top + 7.0),
+            19.0, modified ? accent : active ? text : muted, FontWeights.Bold);
+        if (active)
+            _hitTargets.Add(new HitTarget(coupons, valueRect, valueRect,
+                HitKind.CouponValue, coupons.Minimum, coupons.Maximum, false));
+    }
+
+    // Three independent source knobs. In narrow columns their two-row
+    // arrangement follows the same measured break point as GetDesiredHeight.
+    private void DrawServicePriceKnobs(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawHeader(dc, "SERVICE PRICES", "", text, muted, accent);
+        var channels = new (string Id, string Label)[]
+        {
+            ("economy.fastTravelCost", "FAST TRAVEL"),
+            ("economy.upgradeCost", "UPGRADES"),
+            ("economy.repairCostBase", "BASE REPAIR")
         };
-
-        DrawCenteredText(dc, title, new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
-
-        var columns = EconomyColumns(ActualWidth);
-        const double gap = 12.0;
-        var cardWidth = EconomyCardWidth(ActualWidth, columns);
+        var columns = ActualWidth >= 418.0 ? 3 : 2;
+        const double gap = 10.0;
+        var bankWidth = Math.Min(606.0, ActualWidth - 30.0);
+        var cellWidth = Math.Min(194.0, (bankWidth - (columns - 1) * gap) / columns);
+        var left = (ActualWidth - (columns * cellWidth + (columns - 1) * gap)) / 2.0;
         for (var i = 0; i < channels.Length; i++)
         {
-            var row = i / columns;
             var column = i % columns;
-            // A short final row remains centered, rather than stretching a single track.
-            var rowCount = Math.Min(columns, channels.Length - row * columns);
-            var rowWidth = rowCount * cardWidth + (rowCount - 1) * gap;
-            var left = (ActualWidth - rowWidth) / 2.0;
-            DrawEconomyCard(dc, P(channels[i].Id), channels[i].Label,
-                new Rect(left + column * (cardWidth + gap), 48.0 + row * 94.0,
-                    cardWidth, 80.0),
-                text, muted, border, accent, panel);
+            var row = i / columns;
+            var lastRowCount = Math.Min(columns, channels.Length - row * columns);
+            var rowWidth = lastRowCount * cellWidth + (lastRowCount - 1) * gap;
+            var rowLeft = (ActualWidth - rowWidth) / 2.0;
+            DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
+                new Rect(rowLeft + column * (cellWidth + gap),
+                    49.0 + row * 191.0, cellWidth, 181.0),
+                text, muted, border, accent, panel,
+                percentageReadout: channels[i].Id == "economy.repairCostBase");
         }
     }
 
@@ -2220,7 +2307,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private void DrawSourceKnob(
         DrawingContext dc, ParameterViewModel? parameter, string label, Rect card,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel,
+        bool percentageReadout = false)
     {
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .32),
             new Pen(CloneWithOpacity(border, .62), .8), card, 4, 4);
@@ -2304,13 +2392,19 @@ public sealed class AggregateVisualControl : FrameworkElement
             KnobPoint(center, radius + 3, angleNow));
 
         var modified = active && parameter.IsValueModifiedFromReference();
-        DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
+        DrawCenteredText(dc,
+            percentageReadout ? $"{parameter.CurrentNumber * 100.0:0.#}%"
+                : $"{parameter.CurrentNumber:0.##}x",
             new Point(center.X, center.Y + 3), modified ? 16.2 : 15.0,
             modified ? accent : text, FontWeights.Bold);
-        DrawCenteredText(dc, $"{parameter.Minimum:0.##}x",
+        DrawCenteredText(dc,
+            percentageReadout ? $"{parameter.Minimum * 100.0:0.#}%"
+                : $"{parameter.Minimum:0.##}x",
             new Point(center.X - radius * .80, card.Bottom - 19.0),
             9.0, muted, FontWeights.SemiBold);
-        DrawCenteredText(dc, $"{parameter.Maximum:0.##}x",
+        DrawCenteredText(dc,
+            percentageReadout ? $"{parameter.Maximum * 100.0:0.#}%"
+                : $"{parameter.Maximum:0.##}x",
             new Point(center.X + radius * .80, card.Bottom - 19.0),
             9.0, muted, FontWeights.SemiBold);
 
@@ -4539,6 +4633,21 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
+        if (target.Kind is HitKind.CouponDecrease or HitKind.CouponIncrease
+            or HitKind.CouponValue)
+        {
+            if (target.Kind != HitKind.CouponValue)
+            {
+                var direction = target.Kind == HitKind.CouponIncrease ? 1.0 : -1.0;
+                target.Parameter.CurrentNumber = Snap(target.Parameter,
+                    target.Parameter.CurrentNumber + direction * target.Parameter.TickFrequency);
+            }
+            _status.ClearTransient();
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
+
         if (target.Kind == HitKind.Toggle)
         {
             target.Parameter.CurrentBoolean = !target.Parameter.CurrentBoolean;
@@ -4574,7 +4683,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             HitKind.Horizontal or HitKind.RangeMin or HitKind.RangeMax => Cursors.SizeWE,
             HitKind.Vertical => Cursors.SizeNS,
-            HitKind.Knob => Cursors.Hand,
+            HitKind.Knob or HitKind.CouponDecrease
+                or HitKind.CouponIncrease or HitKind.CouponValue => Cursors.Hand,
             HitKind.HumanJoint or HitKind.HungerJoint or HitKind.FatigueJoint or HitKind.FatigueReloadJoint => Cursors.SizeAll,
             HitKind.Toggle or HitKind.DrinkDurationOverride or HitKind.Choice or HitKind.MixerBaseMarker or HitKind.MixerSelect => Cursors.Hand,
             _ => Cursors.Arrow
@@ -4590,6 +4700,29 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
+        if (Family == "CouponFlow")
+        {
+            var couponTarget = FindTarget(e.GetPosition(this));
+            if (couponTarget is not null
+                && couponTarget.Kind is (HitKind.CouponDecrease
+                    or HitKind.CouponIncrease or HitKind.CouponValue)
+                && couponTarget.Parameter.IsControlEnabled)
+            {
+                var direction = Math.Sign(e.Delta);
+                if (direction == 0) return;
+                Focus();
+                _selectedParameter = couponTarget.Parameter;
+                _selectedHitKind = HitKind.CouponValue;
+                RaiseParameterSelected(couponTarget.Parameter);
+                couponTarget.Parameter.CurrentNumber = Snap(couponTarget.Parameter,
+                    couponTarget.Parameter.CurrentNumber
+                    + direction * couponTarget.Parameter.TickFrequency);
+                _status.ClearTransient();
+                InvalidateVisual();
+                e.Handled = true;
+                return;
+            }
+        }
         if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance"))
             return;
 
@@ -4670,6 +4803,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             : target.Kind switch
             {
                 HitKind.Knob => $"{target.Parameter.Label}\nTurn around the dial or scroll to adjust · Right-click = Base Preset",
+                HitKind.CouponDecrease or HitKind.CouponIncrease or HitKind.CouponValue =>
+                    "Starting Coupons\n+/- changes 10 coupons; scroll or arrow keys for precise changes; right-click resets.",
                 HitKind.Toggle => $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset",
                 HitKind.DrinkDurationOverride =>
                     "Override Drink Duration Limits\nOFF: each effect has its normal maximum. ON: all eight durations may reach 270 seconds independently.\nRight-click resets this checkbox.",
@@ -5426,8 +5561,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         => family switch
         {
             "BlastDamageBoard" => 305.0,
-            "CouponFlow" => EconomyBoardHeight(width, CouponEconomyChannels.Length),
-            "ServiceCostsBoard" => EconomyBoardHeight(width, ServiceEconomyChannels.Length),
+            "CouponFlow" => CouponBoardHeight(width),
+            "ServiceCostsBoard" => ServicePriceBoardHeight(width),
             "TraderStockBoard" => 242.0,
             "ItemWeightBoard" => EconomyBoardHeight(width, 2),
             "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
@@ -5719,6 +5854,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         Horizontal,
         Vertical,
         Knob,
+        CouponDecrease,
+        CouponIncrease,
+        CouponValue,
         HumanJoint,
         HungerJoint,
         FatigueJoint,
