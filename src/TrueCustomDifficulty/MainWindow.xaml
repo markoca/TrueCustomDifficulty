@@ -812,13 +812,13 @@
                                                                FontSize="11" />
                                                 </Border>
                                                 <DataTemplate.Triggers>
-                                                    <DataTrigger Binding="{Binding Name}" Value="01 / MONEY FLOW">
+                                                    <DataTrigger Binding="{Binding Name}" Value="MONEY FLOW">
                                                         <Setter TargetName="EconomySectionHeader" Property="Visibility" Value="Visible" />
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Name}" Value="02 / MARKET">
+                                                    <DataTrigger Binding="{Binding Name}" Value="MARKET">
                                                         <Setter TargetName="EconomySectionHeader" Property="Visibility" Value="Visible" />
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Name}" Value="03 / EXPENSES">
+                                                    <DataTrigger Binding="{Binding Name}" Value="EXPENSES">
                                                         <Setter TargetName="EconomySectionHeader" Property="Visibility" Value="Visible" />
                                                     </DataTrigger>
                                                 </DataTemplate.Triggers>
