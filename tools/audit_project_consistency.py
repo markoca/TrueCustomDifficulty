@@ -2256,6 +2256,57 @@ elif 'PUBLISH_DIR="$ROOT/publish/win-x64"' not in (ROOT / "publish.sh").read_tex
 else:
     note(f"current root/publish layout: required {len(_required_root_files)} files present; optional prompt.md not required; no unexpected root files")
 
+
+# Your Weapons knob grammar: prevent a cosmetic sketch from replacing actual
+# WPF input, source-backed limits, or the current design-catalog contract.
+_knob_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_knob_catalog = {p["id"]: p for p in parameters_doc["parameters"]}
+_knob_expected = {
+    "combat.playerWeaponDamage": (0.25, 2.0),
+    "combat.playerHeadshotMultiplier": (0.5, 3.0),
+    "combat.weaponJamming": (0.0, 2.0),
+}
+_knob_required_markers = (
+    'case "PlayerWeaponProfile":',
+    'DrawYourWeaponsKnobs(dc, text, muted, border, accent, panel);',
+    '"PlayerWeaponProfile" => 242.0',
+    'private const double WeaponKnobSweepAngle = 270.0;',
+    'groupWidth = Math.Min(620.0, ActualWidth)',
+    'HitKind.Knob',
+    'if (target.Kind == HitKind.Knob)',
+    'protected override void OnMouseWheel(MouseWheelEventArgs e)',
+    'KnobPoint(center, radius + 6, baselineAngle)',
+    'target.Parameter.CurrentNumber = Snap(target.Parameter, value)',
+)
+_knob_section_start = _knob_source.find("private void DrawYourWeaponsKnobs(")
+_knob_section_end = _knob_source.find("private static Point KnobPoint(", _knob_section_start)
+_knob_section = (_knob_source[_knob_section_start:_knob_section_end]
+                 if _knob_section_start >= 0 and _knob_section_end > _knob_section_start else "")
+_knob_missing = [item for item in _knob_required_markers if item not in _knob_source]
+_knob_values = [
+    f"{key} range/step drift"
+    for key, (min_value, max_value) in _knob_expected.items()
+    if key not in _knob_catalog
+    or (_knob_catalog[key].get("slider") or {}).get("min") != min_value
+    or (_knob_catalog[key].get("slider") or {}).get("max") != max_value
+    or (_knob_catalog[key].get("slider") or {}).get("step") != 0.25
+]
+_knob_catalog_texts = [
+    (ROOT / "docs" / doc).read_text(encoding="utf-8")
+    for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")
+]
+if _knob_missing or _knob_values or not _knob_section or any(
+    _knob_section.count(f'("{key}",') != 1 for key in _knob_expected
+) or "DrawHorizontalTrackCard(dc, P(channel.Item1)" in _knob_source or any(
+    "2026-10-11 — YOUR WEAPONS rotary knobs" not in doc
+    for doc in _knob_catalog_texts
+):
+    fail(f"Your Weapons rotary contract drift: missing={_knob_missing}, values={_knob_values}, "
+         f"active three-source section={bool(_knob_section)}")
+else:
+    note("Your Weapons WPF rotary control: three real 0.25x source knobs, 270° geometry, "
+         "angular/scroll/keyboard interaction, bounded layout and matching design catalogs")
+
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
     print(f"[OK] {msg}")
