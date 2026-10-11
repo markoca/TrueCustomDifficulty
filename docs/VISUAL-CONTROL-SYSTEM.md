@@ -1,5 +1,10 @@
 # Visual Control System
 
+### 2026-10-11 — CouponFlow wheel-handler compile invariant (CS0136)
+
+`AggregateVisualControl.OnMouseWheel` retains separate input paths for the native 10-coupon counter and the shared WPF rotary knobs. The CouponFlow nested branch uses `couponDirection`; the later generic rotary branch retains `direction`. C# disallows reusing the later enclosing-scope local name inside that preceding nested block (CS0136). Keep the variables distinct. `tools/audit_project_consistency.py` asserts both wheel paths and their native step multiplication, so this compile regression cannot recur unnoticed. No visual geometry, CFG bindings, preset behavior or writer contract is changed.
+
+
 ### 2026-10-11 — Economy three-section dashboard (authoritative layout)
 
 **Approved game-centric Economy layout supersedes older six-full-width section instructions, historical horizontal CouponFlow/ServiceCostsBoard descriptions, and older trader-stock descriptions.** The *UI grouping* is implemented in `ParameterViewModel.Group`, not by altering the source `parameters.json` catalog: all original CFG IDs, difficulty baselines, constraints, native min/max/step and BPatch writers remain unchanged. Only these three Economy group headers are visible:
