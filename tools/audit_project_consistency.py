@@ -1368,32 +1368,25 @@ _economy_aggregate = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualC
 _economy_parameter_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 _economy_responsive = (ROOT / "src/TrueCustomDifficulty/Infrastructure/ResponsiveParameterGridPanel.cs").read_text(encoding="utf-8")
 _economy_xaml = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml").read_text(encoding="utf-8")
-# Prevent CS0136: CouponFlow has an inner wheel sign and the shared knob
-# handler has another local sign later in the same method. Distinct identifiers
-# are required by C# even though both blocks use early return.
-_wheel_handler_start = _economy_aggregate.find('protected override void OnMouseWheel(')
-_wheel_handler_end = _economy_aggregate.find('protected override void OnMouseLeftButtonUp(', _wheel_handler_start)
-_wheel_handler = (_economy_aggregate[_wheel_handler_start:_wheel_handler_end]
-                  if 0 <= _wheel_handler_start < _wheel_handler_end else '')
-_coupon_wheel = _wheel_handler.split('if (Family is not (', 1)[0]
-if (not all(marker in _coupon_wheel for marker in (
-    'var couponDirection = Math.Sign(e.Delta);',
-    'if (couponDirection == 0) return;',
-    '+ couponDirection * couponTarget.Parameter.TickFrequency);'))
-    or 'var direction = Math.Sign(e.Delta);' in _coupon_wheel
-    or 'var direction = Math.Sign(e.Delta);' not in _wheel_handler):
-    fail('CouponFlow mouse-wheel C# local shadowing or source-native step wiring drifted')
+# Starting Coupons is now a directly editable slider, not a +/- stepper.
+if (any(token in _economy_aggregate for token in
+        ('HitKind.CouponDecrease', 'HitKind.CouponIncrease', 'HitKind.CouponValue'))
+    or 'AddHorizontalTarget(coupons,' not in _economy_aggregate
+    or 'coupons.CurrentNumber, coupons.Minimum' not in _economy_aggregate
+    or 'new Rect(track.Left - 8.0, track.Top - 12.0,' not in _economy_aggregate
+    or 'var raw = target.VisualMinimum + ratio *' not in _economy_aggregate):
+    fail('Starting Coupons native direct-position rail / mouse snapping drifted')
 _economy_layout_contract = (
-    ('Money Flow group', '"01 / MONEY FLOW"', _economy_parameter_vm),
-    ('Market group', '"02 / MARKET"', _economy_parameter_vm),
-    ('Expenses group', '"03 / EXPENSES"', _economy_parameter_vm),
+    ('Money Flow group', '"MONEY FLOW"', _economy_parameter_vm),
+    ('Market group', '"MARKET"', _economy_parameter_vm),
+    ('Expenses group', '"EXPENSES"', _economy_parameter_vm),
     ('two-column money', 'new("economy-moneyflow", 0)', _economy_responsive),
     ('two-column money/Trade', 'new("economy-moneyflow", 1)', _economy_responsive),
     ('two-column expenses', 'new("economy-expenses", 0)', _economy_responsive),
     ('two-column expenses/Repair', 'new("economy-expenses", 1)', _economy_responsive),
-    ('money header', 'Value="01 / MONEY FLOW"', _economy_xaml),
-    ('market header', 'Value="02 / MARKET"', _economy_xaml),
-    ('expenses header', 'Value="03 / EXPENSES"', _economy_xaml),
+    ('money header', 'Value="MONEY FLOW"', _economy_xaml),
+    ('market header', 'Value="MARKET"', _economy_xaml),
+    ('expenses header', 'Value="EXPENSES"', _economy_xaml),
 )
 for _name, _token, _source in _economy_layout_contract:
     if _token not in _source:
@@ -1421,9 +1414,9 @@ _economy_coupon_contract = (
     'P("economy.startingMoney")',
     'P("economy.mainQuestReward")',
     'P("economy.sideQuestReward")',
-    'HitKind.CouponDecrease',
-    'HitKind.CouponIncrease',
-    'HitKind.CouponValue',
+    'DrawCouponCounter(dc, P("economy.startingMoney")',
+    'AddHorizontalTarget(coupons,',
+    'coupons.CurrentNumber.ToString("N0", CultureInfo.InvariantCulture)',
     'new Rect(left, 175.0, cardWidth, 84.0)',
     'DrawTradingMeter(dc, P("economy.mainQuestReward")',
     'DrawTradingMeter(dc, P("economy.sideQuestReward")',
@@ -1437,19 +1430,19 @@ _economy_service_contract = (
     'percentageReadout: channels[i].Id == "economy.repairCostBase"',
 )
 if not all(token in _economy_coupon for token in _economy_coupon_contract):
-    fail("Economy Coupons & Rewards source-native counter / reward meters drifted")
+    fail("Economy Coupons & Rewards direct coupon rail / reward meters drifted")
 if not all(token in _economy_service for token in _economy_service_contract):
     fail("Economy Service Prices native three-knob sources drifted")
 if not all(token in _economy_aggregate for token in (
     '"CouponFlow" => CouponBoardHeight(width)',
     '"ServiceCostsBoard" => ServicePriceBoardHeight(width)',
     'return new Size(width, GetDesiredHeight(Family, width));',
-    'HitKind.CouponDecrease or HitKind.CouponIncrease',
-    'target.Parameter.CurrentNumber + direction * target.Parameter.TickFrequency',
+    'AddHorizontalTarget(coupons,',
+    'var raw = target.VisualMinimum + ratio *',
     'percentageReadout ?',
-    'if (Family == "CouponFlow")',
+    'var twoColumns = ActualWidth >= 390.0;',
 )) or not knob_wheel_gate_contains(_economy_aggregate, "ServiceCostsBoard"):
-    fail("Economy native coupon/knob interaction and size contract drifted")
+    fail("Economy native coupon rail / service knob interaction and size contract drifted")
 for _pid, _native in {
     "economy.startingMoney": (0, 100000, 10),
     "economy.mainQuestReward": (0, 2, .01),
@@ -2461,47 +2454,50 @@ else:
     note("Your Weapons WPF rotary control: three real 0.25x source knobs, 270° geometry, "
          "angular/scroll/keyboard interaction, bounded layout and matching design catalogs")
 
-# Global Anomaly Damage must reuse the existing real WPF knob/HitKind
-# infrastructure. Guard the physical source contract and separate per-anomaly
-# source mapping against cosmetic render-only changes.
+# Global and Individual Anomaly Damage now share one AnomalyDamageRadar
+# card. Do not accept the legacy stand-alone global renderer as sufficient:
+# the combined editor must be writable and the duplicate anchor invisible.
 _anomaly_knob_param = _knob_catalog.get('environment.anomalyDamage', {})
 _anomaly_knob_slider = _anomaly_knob_param.get('slider') or {}
-_anomaly_knob_start = _knob_source.find('private void DrawAnomalyGlobalDamage(')
-_anomaly_knob_end = _knob_source.find('private static double FlycatcherPlotSide(', _anomaly_knob_start)
-_anomaly_knob_body = (_knob_source[_anomaly_knob_start:_anomaly_knob_end]
-                      if _anomaly_knob_start >= 0 and _anomaly_knob_end > _anomaly_knob_start else '')
-_anomaly_knob_requirements = (
-    'DrawSourceKnob(dc, P("environment.anomalyDamage")',
-    '"OVERALL DAMAGE MULTIPLIER"',
-    'knobCardWidth = 194.0',
-    'knobCardWidth, 181.0',
+_anomaly_radar_source = (ROOT / 'src/TrueCustomDifficulty/Controls/AnomalyDamageRadar.cs').read_text(encoding='utf-8')
+_anomaly_vm_source = (ROOT / 'src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs').read_text(encoding='utf-8')
+_anomaly_xaml_source = (ROOT / 'src/TrueCustomDifficulty/MainWindow.xaml').read_text(encoding='utf-8')
+_anomaly_combined_required = (
+    'byId.TryGetValue("environment.anomalyDamage", out var global)',
+    'DrawGlobalDamageKnob(dc, text, muted, border, accent, panel);',
+    'private void DrawGlobalDamageKnob(',
+    'private void UpdateGlobalFromPoint(',
+    'private void SetGlobalDamage(',
+    'protected override void OnMouseWheel(MouseWheelEventArgs e)',
+    'global.CurrentNumber + direction * global.TickFrequency',
+    '_globalKnobHit.Contains(point)',
+    '_globalDamage?.ResetToReference();',
+    'RESULT = SOURCE × GLOBAL',
+    'BAR SCALE = % OF EACH INDIVIDUAL VANILLA VALUE',
+    'TOP NUMBER: RESULT',
+    'EffectiveDamageValue',
+    'parameter.CurrentNumber',
+    'ReferenceNumber',
+    'const double top = 365.0, bottom = 526.0;',
 )
-_anomaly_knob_shared = (
-    'private void DrawSourceKnob(',
-    'DrawSourceKnob(dc, P(channels[i].Id)',
-    'if (Family is not (',
-    'if (target.Kind == HitKind.Knob)',
-    '"AnomalyGlobalDamage" => 242.0',
-    '"AnomalyGlobalDamage" => new[] { "environment.anomalyDamage" }',
-    'HitKind.Knob',
+_anomaly_combined_vm_required = (
+    'Id == "environment.anomalyDamage"',
+    '? "Individual Anomaly Damage"',
+    '&& !Id.Equals("environment.anomalyDamage", StringComparison.Ordinal)',
 )
-_anomaly_knob_docs = [
-    (ROOT / 'docs' / doc).read_text(encoding='utf-8')
-    for doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md')
-]
 if (_anomaly_knob_slider.get('min') != 0
     or _anomaly_knob_slider.get('max') != 2.5
     or _anomaly_knob_slider.get('step') != 0.01
-    or not all(part in _anomaly_knob_body for part in _anomaly_knob_requirements)
-    or 'DrawEconomyCard' in _anomaly_knob_body
-    or not all(part in _knob_source for part in _anomaly_knob_shared)
-    or not knob_wheel_gate_contains(_knob_source, "AnomalyGlobalDamage")
-    or any('2026-10-11 — Global Anomaly Damage single knob' not in doc
-           for doc in _anomaly_knob_docs)):
-    fail('Global Anomaly Damage single-knob contract drifted (native 0–2.5x/0.01x, shared WPF input, 242-DIP frame, catalogs)')
+    or not all(token in _anomaly_radar_source for token in _anomaly_combined_required)
+    or not all(token in _anomaly_vm_source for token in _anomaly_combined_vm_required)
+    or 'x:Name="AnomalyDamageRadarControl"' not in _anomaly_xaml_source
+    or 'MinHeight="606"' not in _anomaly_xaml_source
+    or any('2026-10-11 — Combined global and individual anomaly damage'
+           not in (ROOT / 'docs' / doc).read_text(encoding='utf-8')
+           for doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md'))):
+    fail("Combined Anomaly Damage card drifted: Global 0–2.5x knob, 11 independent relative-to-vanilla sources, one visible anchor and explained effective/source readouts")
 else:
-    note('Global Anomaly Damage: one source-backed WPF knob with native 0–2.5x/0.01x, shared mouse/keyboard behavior and two design catalogs')
-
+    note("Combined Anomaly Damage: native 0–2.5x/0.01x global knob, 11 independent source bars, 100% vanilla-relative axis and effective/source readouts")
 
 # Stash-tier ammo uses three independent native rotary controls; bonus rewards
 # remain horizontal because they represent different chance/count mechanics.
