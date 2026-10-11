@@ -2456,12 +2456,20 @@ public sealed class AggregateVisualControl : FrameworkElement
             KnobPoint(center, radius + 3, angleNow));
 
         var modified = active && parameter.IsValueModifiedFromReference();
+        // RECOVERY has a rate unit and a much smaller magnitude than the
+        // multipliers. Keep the numeric readout inside the dial and put PTS/S
+        // on its own small line so both remain readable at compact widths.
         DrawCenteredText(dc,
-            rateReadout ? $"{parameter.CurrentNumber:0.00} PTS/S"
+            rateReadout ? $"{parameter.CurrentNumber:0.00}"
                 : percentageReadout ? $"{parameter.CurrentNumber * 100.0:0.#}%"
                 : $"{parameter.CurrentNumber:0.##}x",
-            new Point(center.X, center.Y + 3), modified ? 16.2 : 15.0,
+            new Point(center.X, center.Y + (rateReadout ? -4.0 : 3.0)),
+            modified ? 16.2 : 15.0,
             modified ? accent : text, FontWeights.Bold);
+        if (rateReadout)
+            DrawCenteredText(dc, "PTS/S",
+                new Point(center.X, center.Y + 16.0),
+                9.0, muted, FontWeights.SemiBold);
         DrawCenteredText(dc,
             rateReadout ? $"{parameter.Minimum:0.00}"
                 : percentageReadout ? $"{parameter.Minimum * 100.0:0.#}%"
