@@ -940,7 +940,7 @@ else:
         'Pool("SNG POOL",',
         'Pool("NATO POOL",',
         'EnforceAmmoPoolValidity(',
-        '"AmmoDistribution" => 680.0,',
+        '"AmmoDistribution" => 715.0,',
         '"AmmoDistribution" => new[]',
         '"BreakableBoxYields" => Array.Empty<string>()',
         'protected override void OnMouseLeftButtonDown(',
@@ -950,6 +950,45 @@ else:
     for _token in _abd_required_source:
         if _token not in _abd_control_text:
             _abd_errors.append(f"live aggregate source missing {_token!r}")
+    # The only Loot knob bank must be the existing four independently mapped
+    # ammo-family weights. Yield controls and the two pool previews are not knobs.
+    _abd_knob_start = _abd_control_text.find('DrawText(dc, "AMMO FAMILY WEIGHTS"')
+    _abd_knob_end = _abd_control_text.find('DrawText(dc, "AMMO POOL COMPOSITION"', _abd_knob_start)
+    _abd_knob_code = (
+        _abd_control_text[_abd_knob_start:_abd_knob_end]
+        if _abd_knob_start >= 0 and _abd_knob_end > _abd_knob_start else ""
+    )
+    _abd_knob_expected = (
+        '(weight918, "9×18 / 9×19")',
+        '(weight045, ".45 ACP")',
+        '(weight545, "5.45 / 5.56")',
+        '(weight012, "12 GAUGE")',
+        'DrawSourceKnob(dc, weights[i].Parameter, weights[i].Label,',
+        'knobBankWidth = Math.Min(780.0, ActualWidth - margin * 2.0)',
+        'const double knobCardTop = 298.0',
+        'const double knobCardHeight = 181.0',
+    )
+    for _token in _abd_knob_expected:
+        if _token not in _abd_knob_code:
+            _abd_errors.append(f"ammo-family rotary UI missing {_token!r}")
+    if "DrawHorizontalTrackCard" in _abd_knob_code:
+        _abd_errors.append("ammo-family horizontal sliders returned")
+    _abd_knob_input = (
+        'Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution")',
+        'if (target.Kind == HitKind.Knob)',
+        'protected override void OnMouseWheel(MouseWheelEventArgs e)',
+        'EnforceFamilyConstraints(target.Parameter);',
+        'private void EnforceAmmoPoolValidity(ParameterViewModel movedParameter)',
+    )
+    for _token in _abd_knob_input:
+        if _token not in _abd_control_text:
+            _abd_errors.append(f"ammo-family rotary interaction missing {_token!r}")
+    if _abd_control_text.count('EnforceFamilyConstraints(target.Parameter);') < 2:
+        _abd_errors.append("knob pointer and wheel edits must both enforce SNG pool validity")
+    if any("2026-10-11 — Ammo Family Weights: four native rotary knobs"
+           not in (ROOT / "docs" / doc).read_text(encoding="utf-8")
+           for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
+        _abd_errors.append("required Loot rotary knob catalog contract missing")
     # The eight literal Min/Max/Weight items must be traceable to the source
     # generator pools; do not validate deprecated polar-axis text instead.
     _source_pools = (baseline.get("special", {}).get("destructibleAmmoProduction", {}) or {}).get("pools", [])
@@ -980,7 +1019,7 @@ if "WeightParameterIds" not in _abd_writer or "effectiveWeight" not in _abd_writ
 if _abd_errors:
     fail("Breakable Boxes current UI/CFG contract drifted: " + "; ".join(_abd_errors))
 else:
-    note("Breakable Boxes UI-06 locked: six live aggregate sources; 8 conditional ammo ranges; 2 distinct SNG/NATO weight pools; no obsolete radar")
+    note("Breakable Boxes: 2 yield rails + 4 native rotary weights; 8 source-backed ammo quantity previews; 2 read-only SNG/NATO pools, with active-knob validity checks")
 
 
 # Historical evidence (not shipped in current repo) - never report as verified.
