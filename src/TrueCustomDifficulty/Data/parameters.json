@@ -2423,7 +2423,8 @@
         "notes": [
           "Normal and Limited stamina regeneration use 45-second main duration prototypes.",
           "Original -100%/5s and -30%/15s action-cost effects are separate independent duration controls, with regular/Limited/Weird Kettle memberships verified in the source audit.",
-          "Minimum main Energy multiplier is exactly 15/45 to allow the 15s native short effect."
+          "Minimum main Energy multiplier is exactly 15/45 to allow the 15s native short effect.",
+          "Source-confirmed Energy Drink variants: EnergeticStaminaPerAction1 gives -30% stamina action cost for 15 s; EnergeticStaminaPerAction2 gives -100% stamina action cost for 5 s. Energetic_Limited is a separate variant, and MeleeButstock participates in the source effect coverage. Engine stacking is handled by the original game effect system; duration controls retain separate prototype ownership."
         ]
       },
       "rationale": "Controls how long Energy Drink stamina buffs last.",
