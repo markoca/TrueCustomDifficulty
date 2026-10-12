@@ -2223,7 +2223,7 @@ for _token in (
     "? sharedDrinkDurationMaximumSeconds",
     "main.RefreshDynamicMaximum();",
     "child.RefreshDynamicMaximum();",
-    "const double expandedMedicineDurationMaximumSeconds = 1800.0;",
+    "const double sharedMedicineDurationMaximumSeconds = 900.0;",
     'parametersById["survival.vincaDuration"]',
     'parametersById["survival.herculesDuration"]',
     'parametersById["survival.psiBlockDuration"]',
@@ -2249,13 +2249,13 @@ for _token in (
     "previewTop + 67.0",
     "preview.Top + 300.0",
     "return 300.0 + rows * CompactTrackHeight",
-    "burst.DrinkDurationOverrideEnabled ? 1800.0 : 900.0",
+    "const double medicineMaximumSeconds = 900.0;",
     "target.Parameter.DrinkDurationOverrideEnabled =",
     "_selectedParameter.DrinkDurationOverrideEnabled =",
 ):
     if _token not in _duration_renderer:
         fail(f"Drink Duration Override compact renderer/input contract missing: {_token}")
-note("Consumable Duration Override: OFF native caps; ON drinks 270s, Vinca/Hercules/Psi Block 1800s; single preset flag, no CFG boolean")
+note("Consumable Duration Override: OFF native caps; ON drinks 270s, Vinca/Hercules/Psi Block 900s; single preset flag, no CFG boolean")
 
 note("consumable duration source routes: five primary drink effects + three independently editable short effects; original CFG prototype ownership stays unique")
 
