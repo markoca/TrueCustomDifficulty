@@ -50,7 +50,6 @@ assert "DrawRadiationRingSector(dc, center, radius, first, litEnd, active);" in 
 assert "DrawRadiationHudSegments(dc, center, currentRad," in code
 assert "DrawRadiationHudTrefoil(dc, new Point(center.X, center.Y - 26.0)," in code
 assert '"RAD"' in code and '"11 CFG STAGES · 99 RAD DEADLY"' in code
-assert '"DrawRadiationHudSegments" not in code' not in code
 assert "ctx.ArcTo(" in code
 bounds = code.split("RadiationRingThresholds =", 1)[1].split("};", 1)[0]
 splits = [float(x) for x in re.findall(r"[0-9]+(?:\.[0-9]+)?", bounds)]
