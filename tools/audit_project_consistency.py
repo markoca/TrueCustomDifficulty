@@ -2137,8 +2137,9 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'foreach (var threshold in RadiationRingThresholds)' not in _radiation_renderer
     or 'DrawRadiationHudSegments(dc, center, currentRad,' not in _radiation_renderer
     or 'DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));' not in _radiation_renderer
-    or 'private const int RadiationHudSegments = 48;' not in _radiation_source
+    or 'private const int RadiationHudSegments = 32;' not in _radiation_source
     or 'private const double RadiationHudSegmentGap = 0.36;' not in _radiation_source
+    or 'private const int RadiationHudTickStep = 10;' not in _radiation_source
     or 'DrawRadiationRingSector(dc, center, radius, first, litEnd, active);' not in _radiation_source
     or 'if (litEnd > first + Epsilon)' not in _radiation_source
     or '1–100 RAD' not in _radiation_renderer
@@ -2152,8 +2153,11 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);' in _radiation_renderer
     or 'DrawRightAlignedText(dc, stageRange,' not in _radiation_source
     or 'const double outer = 89.0;' not in _radiation_source
-    or 'dc.DrawEllipse(symbol, null, center, 18.0, 18.0);' not in _radiation_source
-    or 'RadiationRingPoint(center, 128.0, threshold)' not in _radiation_renderer
+    or 'const double inner = 25.0;' not in _radiation_source
+    or 'dc.DrawEllipse(symbol, null, center, 21.0, 21.0);' not in _radiation_source
+    or 'RadiationRingPoint(center, 128.0, tick)' not in _radiation_renderer
+    or 'for (var tick = 10; tick <= 100; tick += RadiationHudTickStep)' not in _radiation_renderer
+    or 'foreach (var threshold in RadiationRingThresholds)' in _radiation_renderer
     or 'threshold.ToString(' in _radiation_renderer
     or 'currentRad.ToString(' in _radiation_renderer
     or 'DrawCenteredText(dc, "RAD",' in _radiation_renderer
@@ -2170,7 +2174,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: three native CFG knobs, 48 HUD teeth, centered solid trefoil, simplified ring, and discrete conditional HP-zero ticks")
+    note("Radiation: three native CFG knobs, 32 HUD teeth, 10-RAD ticks, separated trefoil, and discrete HP-zero ticks")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -2952,7 +2956,10 @@ if ('"RadiationBalance" => RadiationBoardHeight' not in _seven_src
     or 'private const double RadiationProfileHeight = 388.0;' not in _seven_src
     or 'private const double RadiationControlsNarrowHeight = 272.0;' not in _seven_src
     or 'private void DrawRadiationControls(' not in _seven_src
-    or 'private const int RadiationHudSegments = 48;' not in _seven_src
+    or 'private const int RadiationHudSegments = 32;' not in _seven_src
+    or 'private const int RadiationHudTickStep = 10;' not in _seven_src
+    or 'const double inner = 25.0;' not in _seven_src
+    or 'dc.DrawEllipse(symbol, null, center, 21.0, 21.0);' not in _seven_src
     or 'private static void DrawRadiationHudTrefoil(' not in _seven_src
     or 'private const double RadiationDialCenterY = 194.0;' not in _seven_src
     or 'RadiationStepHit(' in _seven_src

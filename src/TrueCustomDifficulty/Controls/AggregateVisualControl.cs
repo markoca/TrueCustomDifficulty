@@ -4473,9 +4473,10 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
     // The game's lower-left HUD radiation dial inspires this in-tool inspector.
-    // Forty-eight short teeth follow one exact 0..100 circular scale, while
+    // Thirty-two short teeth follow one exact 0..100 circular scale, while
     // the underlying pointer mapping and CFG stage thresholds stay continuous.
-    private const int RadiationHudSegments = 48;
+    private const int RadiationHudSegments = 32;
+    private const int RadiationHudTickStep = 10; // even HUD ticks, independent of CFG stages
     private const double RadiationHudSegmentGap = 0.36; // RAD units per tooth gap
 
     private static void DrawRadiationHudSegments(
@@ -4503,17 +4504,17 @@ public sealed class AggregateVisualControl : FrameworkElement
             center.Y + radius * Math.Sin(radians));
     }
 
-    // Full-scale, solid trefoil: three uninterrupted blades and a filled hub.
-    // Fill the inner HUD dial, leaving only the essential gaps between blades.
+    // Three solid vanes and a slightly larger central hub.
+    // Leave a narrow, visible radial gap between the hub and each vane.
     // No perforations, holes, pin dots, numbers or imported game asset.
     private static void DrawRadiationHudTrefoil(
         DrawingContext dc, Point center, Brush symbol)
     {
-        const double inner = 17.0;
+        const double inner = 25.0;
         const double outer = 89.0;
         for (var blade = 0; blade < 3; blade++)
         {
-            // Upper-left, upper-right and bottom; the hub joins every vane.
+            // Upper-left, upper-right and bottom; each vane stops before the hub.
             var angle = -150.0 + blade * 120.0;
             var from = angle - 33.0;
             var to = angle + 33.0;
@@ -4535,8 +4536,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawGeometry(symbol,
                 new Pen(CloneWithOpacity(Brushes.Black, 0.28), 0.75), geometry);
         }
-        // Solid overlapping center: no hollow bore or dark puncture.
-        dc.DrawEllipse(symbol, null, center, 18.0, 18.0);
+        // Solid 21-DIP hub; vane roots at 25 DIP leave a 4-DIP clear gap.
+        dc.DrawEllipse(symbol, null, center, 21.0, 21.0);
     }
 
     // Native BUILD-UP, RECOVERY, HP DAMAGE remain the only CFG-editable knobs.
@@ -4606,18 +4607,18 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawEllipse(accent, new Pen(panel, 1.5),
             RadiationRingPoint(center, radius, currentRad), 4.1, 4.1);
 
-        // Keep real source threshold markers, but omit every perimeter
-        // number. 99 RAD still has a distinct accent tick.
-        foreach (var threshold in RadiationRingThresholds)
+        // Unnumbered HUD ticks every 10 RAD, evenly spaced from 10 to 100.
+        // CFG thresholds remain original, including DEADLY at 99 RAD.
+        for (var tick = 10; tick <= 100; tick += RadiationHudTickStep)
         {
-            dc.DrawLine(new Pen(threshold == 99.0 ? accent : muted,
-                    threshold == 99.0 ? 2.0 : 1.2),
-                RadiationRingPoint(center, 128.0, threshold),
-                RadiationRingPoint(center, threshold == 99.0 ? 138.0 : 135.0,
-                    threshold));
+            dc.DrawLine(new Pen(tick == 100 ? accent : muted,
+                    tick == 100 ? 2.0 : 1.2),
+                RadiationRingPoint(center, 128.0, tick),
+                RadiationRingPoint(center, tick == 100 ? 138.0 : 135.0,
+                    tick));
         }
 
-        // Solid game-HUD-inspired trefoil covers the dial face. The selected
+        // Separated game-HUD-inspired trefoil fills the dial face. The selected
         // numeric RAD remains visible only in the adjacent RAD CONTROLS panel.
         DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));
         DrawRadiationControls(dc, text, muted, border, soft, accent, panel);
