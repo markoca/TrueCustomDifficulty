@@ -4596,7 +4596,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var actualDamage = sourceDamage * multiplier;
         var nextThreshold = !active ? 1.0
             : stageIndex == 10 ? double.NaN : RadiationRingThresholds[stageIndex];
-        DrawCenteredText(dc, "SIMULATED RAD",
+        DrawCenteredText(dc, "SELECTED RAD",
             new Point(center.X, center.Y - 42.0), 9.1, muted, FontWeights.Bold);
         DrawCenteredText(dc, currentRad.ToString("0", CultureInfo.InvariantCulture) + " / 100",
             new Point(center.X, center.Y - 14.0), 20.0, text, FontWeights.Bold);
@@ -5565,7 +5565,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             SetHoverTarget(null);
             Cursor = Cursors.Hand;
-            ToolTip = "Drag clockwise along the ring: 1–100 RAD. Center shows the active CFG damage stage. Right-click restores START RAD.";
+            ToolTip = "Drag clockwise along the ring: 1–100 RAD. Center shows active CFG damage. Right-click = 1 RAD.";
             return;
         }
         if (_dragTarget is null &&
@@ -5576,7 +5576,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             ToolTip = "Choose 1–100 RAD · Fixed-stage HP estimate updates instantly.";
             return;
         }
-        // A scenario tooltip is independent from native parameter hover.
+        // Preview RAD controls do not take ownership of native parameter hover.
         if (Family == "RadiationBalance" && _dragTarget is null)
             ToolTip = null;
         // Keep BOTH the edited value and the visible hover indicator on
