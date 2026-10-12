@@ -41,14 +41,14 @@ assert "private const double RadiationSimNarrowHeight = 184.0;" in code
 assert "private const double RadiationTimelineHeight = 202.0;" in code
 assert "RadiationBoardHeight(double width)" in code
 assert '"RadiationBalance" => RadiationBoardHeight' in code
-assert "CFG EFFECT VALUES · NOT A DEATH TIMER" in code
+assert "CFG EFFECT VALUE · NOT VERIFIED HP/s" in code
 assert "RADIATION KILLS IN" not in code, "No proven death countdown is available"
 assert "RADIATION LEVELS" in code and "RADIATION DAMAGE STAGES" not in code
 assert "private const double RadiationProfileHeight = 388.0;" in code
 assert "foreach (var threshold in RadiationRingThresholds)" in code
 assert "DrawRadiationRingSector(dc, center, radius, fromRad, toRad," in code
 assert "ctx.ArcTo(" in code
-assert '"SIMULATED"' in code and '"99 RAD · DEADLY"' in code
+assert '"SIMULATED RAD"' in code and '"99 RAD · DEADLY' in code
 bounds = code.split("RadiationRingThresholds =", 1)[1].split("};", 1)[0]
 splits = [float(x) for x in re.findall(r"[0-9]+(?:\.[0-9]+)?", bounds)]
 assert splits == [10, 20, 30, 40, 50, 60, 70, 80, 90, 99], splits
@@ -94,7 +94,19 @@ for token in (
     'private void ToggleRadiationPlayback()',
     'private void TickRadiationPlayback()',
     'private Rect RadiationPlaybackButton(int index)',
-    'new Pen(accent, 4.5)',
+    'new Pen(accent, 13.0)',
+    'DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);',
+    'private static int RadiationStageIndex(double rad)',
+    'RadiationDamageStages[stageIndex].SourceDamage',
+    'sourceDamage * multiplier',
+    '" CFG DAMAGE"',
+    'stageIndex == 0 ? 1.0 : RadiationRingThresholds[stageIndex - 1]',
+    'stageIndex == 10 ? 100.0 : RadiationRingThresholds[stageIndex] - 1.0',
+    'double.IsNaN(nextThreshold) ? "FINAL STAGE"',
+    'Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0)',
+    '_radRingCompleted = true;',
+    'if (RadiationRingHit(point))',
+    'if (currentRad >= 100.0)',
     'StopRadiationPlayback();',
     'ResetRadiationPreview(clearCustomStart: true);',
     '"PLAY ×10"',
@@ -156,10 +168,39 @@ assert abs(model_loss(90, 1, 0, 1) - 38.67) < 1e-8
 assert model_loss(0, 999, 0, 1) == 0
 assert model_loss(100, 999, 100, 0) == 0
 assert stage_dps[-1] < stage_dps[-2]  # No invented monotonic Deadly damage curve.
+
+# Main ring scrubbing: 12 o'clock = 1 RAD on first click, clockwise
+# advances to 100 just BEFORE the same seam and closes the entire circle.
+def point_rad(degrees_clockwise_from_top):
+    angle = degrees_clockwise_from_top % 360
+    return min(100, max(1, int(angle * 100 / 360 + 0.5)))
+assert point_rad(0) == 1
+assert point_rad(3.6) == 1
+assert point_rad(36) == 10
+assert point_rad(90) == 25
+assert point_rad(180) == 50
+assert point_rad(270) == 75
+assert point_rad(356.4) == 99
+assert point_rad(359) == 100
+assert point_rad(360) == 1  # Captured drag seam logic retains 100.
+
+# Original stage-to-effect mappings, including 1-RAD onset and non-monotonic
+# Deadly values. Edited HP DAMAGE scales effects but never shifts thresholds.
+for level, expected in [
+    (0, 0.0), (1, .2), (9, .2), (10, .3),
+    (19, .3), (20, .48), (30, .816),
+    (40, 1.468), (90, 38.67), (98, 38.67),
+    (99, 20.0), (100, 20.0),
+]:
+    assert abs(model_damage_rate(level, 1.0) - expected) < 1e-9, level
+    assert abs(model_damage_rate(level, 1.5) - 1.5 * expected) < 1e-9, level
+    assert model_damage_rate(level, 0.0) == 0
+
 assert '"RadiationBalance" => RadiationBoardHeight(width)' in code
 assert '"survival.radiationDamage"' in code and '"survival.radiationRecovery"' in code
 
 print("PASS: 11 original radiation damage stages, 22 exact writer leaves,")
 print("      source-multiplier projection and distinct DEADLY source validated.")
-print("      Interactive 0–100 RAD ring, scenario playback, conditional HP-zero model and timeline.")
+print("      Native 13-DIP ring scrub 1–100 RAD clockwise, active CFG stage statistics,")
+print("      live HP DAMAGE scaling, scenario playback and conditional HP-zero timeline.")
 print("NOT VERIFIED: engine cadence/falloff, direct-field hazards, protection or in-game death time; Wine visual acceptance.")
