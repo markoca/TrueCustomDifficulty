@@ -6,6 +6,7 @@ Usage: python3 tools/audit_radiation_damage_profile.py
 """
 import json
 import re
+from math import ceil
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
@@ -40,7 +41,7 @@ assert "private const double RadiationProfileHeight = 388.0;" in code
 assert "private const double RadiationControlsNarrowHeight = 272.0;" in code
 assert "RadiationBoardHeight(double width)" in code
 assert '"RadiationBalance" => RadiationBoardHeight' in code
-assert "HUD-STYLE PREVIEW · NOT GAME HUD" in code
+assert '"1–100 RAD"' in code
 assert "RADIATION KILLS IN" not in code, "No proven death countdown is available"
 assert "RADIATION LEVELS" in code and "RADIATION DAMAGE STAGES" not in code
 assert "private const double RadiationProfileHeight = 388.0;" in code
@@ -48,8 +49,8 @@ assert "foreach (var threshold in RadiationRingThresholds)" in code
 assert "DrawRadiationRingSector(dc, center, radius, first, last, inactive);" in code
 assert "DrawRadiationRingSector(dc, center, radius, first, litEnd, active);" in code
 assert "DrawRadiationHudSegments(dc, center, currentRad," in code
-assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.9));" in code
-assert '"11 CFG STAGES · 99 RAD DEADLY"' in code
+assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));" in code
+assert '"EST. HP ZERO · 1 TICK/S"' in code
 assert "ctx.ArcTo(" in code
 bounds = code.split("RadiationRingThresholds =", 1)[1].split("};", 1)[0]
 splits = [float(x) for x in re.findall(r"[0-9]+(?:\.[0-9]+)?", bounds)]
@@ -91,7 +92,7 @@ for token in (
     'private const int RadiationHudSegments = 48;',
     'private const double RadiationHudSegmentGap = 0.36;',
     'DrawRadiationHudSegments(dc, center, currentRad,',
-    'DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.9));',
+    'DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));',
     'DrawRadiationRingSector(dc, center, radius, first, last, inactive);',
     'DrawRadiationRingSector(dc, center, radius, first, litEnd, active);',
     'var litEnd = Math.Min(last, rad);',
@@ -108,12 +109,15 @@ for token in (
     'private void DrawRadiationControls(',
     '"RAD CONTROLS"', '"RADIATION LEVEL"',
     '"ACTIVE STAGE"', '"CFG DAMAGE / CHARGE"', '"EST. HP ZERO"',
-    '"ASSUME 1 CHARGE/s · NO HEALING"', '"FIXED RAD"',
+    '"FIXED RAD · NO HEALING OR PROTECTION"', '"FIXED RAD"',
     'var currentRad = _radLevel;',
     'var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];',
     'var stageTo = index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;',
     'DrawRightAlignedText(dc, stageRange,',
-    '"HUD-STYLE PREVIEW · NOT GAME HUD"',
+    'private const double RadiationDialCenterY = 194.0;',
+    'ring.Top + RadiationDialCenterY',
+    'profile.Top + RadiationDialCenterY',
+    '"EST. HP ZERO · 1 TICK/S"',
     'Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0)',
     '"RadiationBalance" => RadiationBoardHeight(width)',
     'health.maxHP'
@@ -186,7 +190,7 @@ assert "DrawCenteredText(dc," not in ring_renderer.split("foreach (var threshold
     "DrawRadiationHudTrefoil(dc", 1)[0], "Numerical threshold overlay returned"
 assert "currentRad.ToString(" not in ring_renderer, "RAD number returned to trefoil"
 assert 'DrawCenteredText(dc, "RAD",' not in ring_renderer, "RAD label returned to glyph"
-assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.9));" in ring_renderer
+assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));" in ring_renderer
 assert "DrawText(dc, _radLevel.ToString(" in control_renderer
 assert "RadiationStepButton(" not in control_renderer
 assert "foreach (var step in" not in control_renderer
@@ -197,7 +201,7 @@ assert "RadiationRailHit(point)" in code
 
 # Fixed-radiation calculation has no build-up and no passive recovery input.
 fixed_math = code.split('private double RadiationTimeToZeroHp()', 1)[1].split('private static string RadiationTime(', 1)[0]
-assert 'RadiationModelMaxHp / damagePerAssumedCharge' in fixed_math
+assert 'Math.Ceiling(RadiationModelMaxHp / damagePerAssumedCharge)' in fixed_math
 assert 'survival.radiationAccumulation' not in fixed_math
 assert 'survival.radiationRecovery' not in fixed_math
 assert 'survival.radiationDamage' in code
@@ -211,7 +215,7 @@ def damage_at(level, multiplier):
 
 def hp_zero(level, hp, multiplier):
     damage = damage_at(level, multiplier)
-    return None if damage <= 0 else hp / damage
+    return None if damage <= 0 else ceil(hp / damage)
 
 for level, expected in (
     (0, 0.0), (1, .2), (9, .2), (10, .3), (19, .3),
@@ -224,10 +228,10 @@ for level, expected in (
     assert damage_at(level, 0) == 0, level
 
 assert abs(hp_zero(1, 100, 1) - 500.0) < 1e-9
-assert abs(hp_zero(50, 100, 1) - 100.0 / 2.2) < 1e-9
-assert abs(hp_zero(90, 100, 1) - 100.0 / 38.67) < 1e-9
+assert hp_zero(50, 100, 1) == 46
+assert hp_zero(90, 100, 1) == 3
 assert abs(hp_zero(99, 100, 1) - 5.0) < 1e-9
-assert abs(hp_zero(99, 100, 2) - 2.5) < 1e-9
+assert hp_zero(99, 100, 2) == 3
 assert hp_zero(0, 100, 1) is None
 assert hp_zero(50, 100, 0) is None
 
