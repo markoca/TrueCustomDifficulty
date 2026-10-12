@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-12 — Radiation keyboard compile fix (CURRENT)
+
+The Radiation Simulation keyboard handler uses a distinct local `simulationDirection` instead of shadowing the native slider's `step` variable in `OnKeyDown`. This resolves C# compiler error CS0136 without changing simulation selection, key direction/step size, CFG-backed knob keyboard editing, hit testing, tooltip semantics, writer mappings, or compact visual layout. Keep these two distinct concepts separately named when modifying this method.
+
 ### 2026-10-12 — Radiation preview focus and tooltip cleanup (CURRENT)
 
 The scenario-only FIELD / START / RECOVERY buttons keep their own selected preview control but release keyboard selection when the user wheel-edits or right-clicks a real CFG-backed knob; subsequent keyboard arrows affect the native knob, not the previous preview. The model-only tooltip clears when the pointer leaves the scenario buttons, with normal parameter tooltips restored by their existing native hit logic. This is a presentation/input-consistency correction; source CFG mappings, model equations, emitted presets and responsive dimensions are unchanged.
