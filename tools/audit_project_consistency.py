@@ -2124,20 +2124,24 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or '"RadiationBalance" => RadiationBoardHeight' not in _radiation_source
     or 'RadiationBoardHeight(double width)' not in _radiation_source
     or '"RadiationBalance" => RadiationBoardHeight(width)' not in _radiation_source
-    or 'DrawRadiationSimulation(dc, text, muted, border, soft, accent, panel);' not in _radiation_renderer
-    or 'private void DrawRadiationSimulation(' not in _radiation_source
+    or 'DrawRadiationControls(dc, text, muted, border, soft, accent, panel);' not in _radiation_renderer
+    or 'private void DrawRadiationControls(' not in _radiation_source
     or 'RADIATION LEVELS' not in _radiation_renderer
     or 'RADIATION DAMAGE STAGES' in _radiation_renderer
     or 'foreach (var threshold in RadiationRingThresholds)' not in _radiation_renderer
     or 'DrawRadiationRingSector(dc, center, radius, fromRad, toRad,' not in _radiation_renderer
     or 'CFG EFFECT VALUE · NOT VERIFIED HP/s' not in _radiation_renderer
     or 'DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);' not in _radiation_renderer
-    or 'var stageIndex = RadiationStageIndex(currentRad);' not in _radiation_renderer):
+    or 'var stageIndex = RadiationStageIndex(currentRad);' not in _radiation_renderer
+    or 'RAD CONTROLS' not in _radiation_source
+    or 'private double RadiationTimeToZeroHp()' not in _radiation_source
+    or 'RADIATION SIMULATION' in _radiation_source
+    or 'RADIATION TIMELINE' in _radiation_source):
     fail("Radiation System three native source knobs, PTS/S unit or wheel mapping drifted")
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: three native knobs, clockwise 1–100 filled ring, active source damage, 10x model playback and HP-zero timeline")
+    note("Radiation: three native knobs, clockwise 1–100 ring and static full-HP zero estimate at fixed RAD")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -2918,9 +2922,9 @@ for _family, (_method, _height, _ids) in _seven_methods.items():
 if ('"RadiationBalance" => RadiationBoardHeight' not in _seven_src
     or 'private const double RadiationProfileTop = 241.0;' not in _seven_src
     or 'private const double RadiationProfileHeight = 388.0;' not in _seven_src
-    or 'private const double RadiationSimNarrowHeight = 184.0;' not in _seven_src
-    or 'private const double RadiationTimelineHeight = 202.0;' not in _seven_src):
-    _seven_errors.append('RadiationBalance renderer and measured stage-strip board height disagree')
+    or 'private const double RadiationControlsNarrowHeight = 272.0;' not in _seven_src
+    or 'private void DrawRadiationControls(' not in _seven_src):
+    _seven_errors.append('RadiationBalance fixed RAD controls and measured board height disagree')
 for _id, _native in _seven_expected_sliders.items():
     _s = (_seven_catalog.get(_id, {}).get('slider') or {})
     if tuple(_s.get(k) for k in ('min', 'max', 'step')) != _native:
