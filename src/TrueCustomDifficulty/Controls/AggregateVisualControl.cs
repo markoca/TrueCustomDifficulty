@@ -181,6 +181,15 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private void Parameter_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+        // Changing any source that drives exposure or HP damage starts a fresh
+        // hypothetical run, rather than silently retconning elapsed playback.
+        if (Family == "RadiationBalance"
+            && sender is ParameterViewModel source
+            && e.PropertyName == nameof(ParameterViewModel.CurrentNumber)
+            && source.Id is ("survival.radiationAccumulation"
+                or "survival.radiationRecovery" or "survival.radiationDamage"))
+            ResetRadiationPreview();
+
         if (e.PropertyName is nameof(ParameterViewModel.CurrentNumber)
             or nameof(ParameterViewModel.TickFrequency)
             or nameof(ParameterViewModel.CurrentBoolean)
@@ -4449,6 +4458,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         else
         {
             var death = RadiationDeathEta();
+            // A stationary, non-damaging model has nothing to animate.
+            if (!double.IsFinite(death) && RadiationNetGain() <= Epsilon)
+            {
+                StopRadiationPlayback();
+                InvalidateVisual();
+                return;
+            }
             if (double.IsFinite(death) && _radElapsed >= death)
                 _radElapsed = 0.0;
             _radLastTickUtc = DateTime.UtcNow;
