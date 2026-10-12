@@ -42,6 +42,50 @@ internal static class Program
         }
     }
 
+    // Source-native Master knob limits, including old presets beyond the
+    // newly approved upper bounds. A real HP source must step in 0.5 HP,
+    // not 0.01x relative-to-vanilla increments.
+    private static void StarvationKnobRangeContract()
+    {
+        var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Master" };
+        foreach (var (id, minimum, maximum, step, vanilla) in new[]
+        {
+            ("survival.starvationDamage", 0.0, 10.0, 0.5, 4.0),
+            ("survival.starvationDamageInterval", 1.0, 10.0, 1.0, 10.0)
+        })
+        {
+            var definition = Catalog.Parameters.Single(p => p.Id == id);
+            var source = vm.AllParameters.Single(p => p.Id == id);
+            Check(definition.Slider is not null
+                  && definition.Slider.StepMode == "absolute"
+                  && Math.Abs(source.Minimum - minimum) < 0.000001
+                  && Math.Abs(source.Maximum - maximum) < 0.000001
+                  && Math.Abs(source.TickFrequency - step) < 0.000001
+                  && Math.Abs(source.ReferenceNumber - vanilla) < 0.000001
+                  && source.VisualAggregateFamily == "StarvationTimeline"
+                  && source.IsControlEnabled,
+                "Starvation source-native knob limits, steps or ownership drifted: " + id);
+
+            source.CurrentNumber = maximum + 100.0;
+            Check(Math.Abs(source.CurrentNumber - maximum) < 0.000001,
+                "Starvation knob cannot clamp above the upper bound: " + id);
+            source.ApplyPresetValue(new PresetValue
+                { Kind = "slider", Number = maximum + 100.0 });
+            Check(Math.Abs(source.CurrentNumber - maximum) < 0.000001,
+                "Old starvation preset did not clamp to the new maximum: " + id);
+            source.CurrentNumber = minimum - 100.0;
+            Check(Math.Abs(source.CurrentNumber - minimum) < 0.000001,
+                "Starvation knob cannot reach the lower bound: " + id);
+            source.CurrentNumber = minimum + step * 0.6;
+            Check(Math.Abs(source.CurrentNumber - (minimum + step)) < 0.000001,
+                "Starvation knob did not snap to the real HP/second step: " + id);
+            source.ResetToReference();
+            Check(Math.Abs(source.CurrentNumber - vanilla) < 0.000001,
+                "Starvation knob reset lost its vanilla baseline: " + id);
+        }
+        _passed++;
+    }
+
     // UI source-value regression for the shared Core Health/Core Stamina
     // primary ruler look. Styling must not change gameplay source semantics.
     private static void NativeHungerFatiguePrimarySourceContract()
@@ -126,6 +170,7 @@ internal static class Program
             Check(cohort.Length == 63, "Survival catalog no longer contains exactly 63 parameters");
 
             MasterPenaltyKnobSourceContract();
+            StarvationKnobRangeContract();
             NativeHungerFatiguePrimarySourceContract();
             SleepHealthDefaultContract();
 
@@ -220,9 +265,21 @@ internal static class Program
             TestCombined("Master-Mechanics-Shared-Prototypes", "Master", new[]
             {
                 ("survival.starvationDamage", 4.5),
-                ("survival.starvationDamageInterval", 11.0),
+                ("survival.starvationDamageInterval", 9.0),
                 ("survival.severeFatigueRecoil", 0.65),
                 ("survival.radiationStaminaDrainPenalty", 0.6)
+            });
+            // Writer uses the exact 0 HP / 10 HP and 1 s / 9 s CFG bounds
+            // without leaking changes into unrelated Master effect prototypes.
+            TestCombined("Master-Starvation-Minimums", "Master", new[]
+            {
+                ("survival.starvationDamage", 0.0),
+                ("survival.starvationDamageInterval", 1.0)
+            });
+            TestCombined("Master-Starvation-Max-Damage", "Master", new[]
+            {
+                ("survival.starvationDamage", 10.0),
+                ("survival.starvationDamageInterval", 9.0)
             });
 
 

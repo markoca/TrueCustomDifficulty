@@ -7977,8 +7977,9 @@
       },
       "slider": {
         "min": 0,
-        "max": 8,
-        "step": 0.5
+        "max": 10,
+        "step": 0.5,
+        "stepMode": "absolute"
       },
       "targets": [
         {
@@ -8020,7 +8021,7 @@
       },
       "slider": {
         "min": 1,
-        "max": 20,
+        "max": 10,
         "step": 1,
         "stepMode": "absolute"
       },

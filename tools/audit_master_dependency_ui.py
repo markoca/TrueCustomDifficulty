@@ -30,6 +30,19 @@ def main() -> None:
     children = [p["id"] for p in controls.values() if p.get("requiresToggle") == parent]
     check(len(children) == 5 and anchor in children, "Starvation must have five dependency-gated child sliders")
     check(controls[parent]["control"] == "toggle", "Starvation parent is no longer a toggle")
+    # The native knob renderer reads these exact min/max/steps from the
+    # parameter catalog, rather than hardcoding display-only endpoints.
+    for param_id, low, high, step, baseline in (
+        ("survival.starvationDamage", 0, 10, 0.5, 4),
+        ("survival.starvationDamageInterval", 1, 10, 1, 10),
+    ):
+        definition = controls[param_id]
+        setting = definition["slider"]
+        check((setting["min"], setting["max"], setting["step"],
+               setting.get("stepMode")) == (low, high, step, "absolute"),
+              f"Invalid live starvation knob bounds or steps: {param_id}")
+        check(definition["vanilla"]["All"] == baseline,
+              f"Starvation vanilla source baseline changed: {param_id}")
     check('"StarvationTimeline"] = "survival.starvationStaminaDrain"' in VM,
           "The dependent stamina slider is no longer the visual anchor")
 

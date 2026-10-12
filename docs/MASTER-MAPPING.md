@@ -1,5 +1,9 @@
 # MASTER-MAPPING.md
 
+### 2026-10-12 — Starvation tick-damage and timing knob bounds (CURRENT)
+
+The actual Master Starvation source editors now allow **0–10 HP per tick (0.5 HP step)** and **1–10 seconds per damage tick (1s step)**. Vanilla remains **4 HP** and **10 seconds**. `survival.starvationDamage` writes `HungerNegativeDamage.ValueMin|ValueMax`, and `survival.starvationDamageInterval` writes `HungerNegativeDamage.TimePerChargeMin|TimePerChargeMax`, without any change in CFG paths or toggle dependencies. Both use exact catalog/VM native stepping (`stepMode=absolute`); preset inputs outside range clamp to the new bounds. The independent PENALTIES START 0–6s source is untouched. The bigger central knob and existing computed Starvation Kills In full-HP/no-healing time stay responsive to these new limits without imposing a second fixed countdown range. Regression scenarios cover UI Model clamp/reset/step and real writer min/max-bound outputs. Previous 0–8 HP / 1–20s descriptions are historical.
+
 ### 2026-10-12 — Starvation HP-damage knob emphasis (presentation-only)
 
 **HP DAMAGE PER TICK** (`survival.starvationDamage`) is the sole emphasized central dial in Master → Starvation's compact three-knob row. The existing `DrawSourceKnob` hero flag makes its circular arc and live HP value mildly larger, while **PENALTIES START** and **DAMAGE EVERY** remain standard. Both 181-DIP-high side knobs and their independent seconds sources remain exactly as before; no new effect, time range, calculation, writer target or preset field is introduced. The existing `STARVATION KILLS IN` derived duration is accepted and unchanged. See the two UI catalogs for the locked 1.18× central presentation.
