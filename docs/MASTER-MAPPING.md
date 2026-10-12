@@ -1,8 +1,8 @@
 # MASTER-MAPPING.md
 
-### 2026-10-12 — Starvation TTK HUD (UI-only)
+### 2026-10-12 — Starvation Kills In HUD (UI-only)
 
-Replaced the old small `FULL HP → 0 IN...` sentence with a compact 2-row **STARVATION TTK** HUD: large centered derived `~T` (raw time to zero), right `K TICKS` / `FULL X HP`, left `RAW · NO HEALING`. The readout is hypothetical, not a guaranteed in-game kill time, and becomes muted/conditional if the parent mechanics toggle is OFF. Missing health data, zero direct tick damage or invalid timing suppress the countdown. No changes to `ceil(MaxHP / HP-per-tick)` or `delay + tickCount × interval`, five native CFG sources, independent health maximum, or preset/writer behavior. Preview height **176 DIP**, footer y+127 to +168. This supersedes the previous 152-DIP textual footer.
+Replaced the old small `FULL HP → 0 IN...` sentence with a compact 2-row **STARVATION KILLS IN** HUD: large centered derived `~T` (raw time to zero), right `K TICKS` / `FULL X HP`, left `ESTIMATE · NO HEALING`. The readout is hypothetical, not a guaranteed in-game kill time, and becomes muted/conditional if the parent mechanics toggle is OFF. Missing health data, zero direct tick damage or invalid timing suppress the countdown. No changes to `ceil(MaxHP / HP-per-tick)` or `delay + tickCount × interval`, five native CFG sources, independent health maximum, or preset/writer behavior. Preview height **176 DIP**, footer y+127 to +168. This supersedes the previous 152-DIP textual footer.
 
 ### 2026-10-12 — Starvation full-health raw damage estimate (UI-only)
 

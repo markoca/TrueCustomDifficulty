@@ -4019,10 +4019,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Point(hud.Left + 1.0, hud.Top + 7.0),
                 new Point(hud.Left + 1.0, hud.Bottom - 7.0));
 
-            DrawText(dc, "STARVATION TTK",
+            DrawText(dc, "STARVATION KILLS IN",
                 new Point(hud.Left + 12.0, hud.Top + 5.0),
                 9.5, active ? text : muted, FontWeights.Bold);
-            DrawText(dc, active ? "RAW · NO HEALING" : "IF ENABLED · RAW",
+            DrawText(dc, active ? "ESTIMATE · NO HEALING" : "IF ENABLED · ESTIMATE",
                 new Point(hud.Left + 12.0, hud.Top + 24.0),
                 9.0, muted, FontWeights.SemiBold);
 
