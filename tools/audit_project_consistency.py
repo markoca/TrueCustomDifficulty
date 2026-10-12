@@ -2117,12 +2117,15 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'DrawNativeGauge(dc, P(source.Id)' in _radiation_renderer
     or not knob_wheel_gate_contains(_radiation_source, 'RadiationBalance')
     or 'rateReadout || nativeUnit is not null' not in _radiation_source
-    or '"RadiationBalance" => 242.0' not in _radiation_source):
+    or '"RadiationBalance" => RadiationBoardHeight' not in _radiation_source
+    or 'RadiationProfileTop + RadiationProfileHeight + 12.0' not in _radiation_source
+    or 'RADIATION DAMAGE STAGES' not in _radiation_renderer
+    or 'CFG EFFECT VALUES · NOT A DEATH TIMER' not in _radiation_renderer):
     fail("Radiation System three native source knobs, PTS/S unit or wheel mapping drifted")
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: three source-native 270-degree knobs; recovery remains 0–0.10 PTS/S, no invented multiplier")
+    note("Radiation: three source-native 270-degree knobs and bounded audited damage-stage profile; recovery in PTS/S, no invented death timer")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -2855,7 +2858,7 @@ _seven_methods = {
     'StashRewardProfile': ('DrawCompactStashRewards', None, ('loot.cheapStashAmmoQuantity', 'loot.mediumStashAmmoQuantity', 'loot.expensiveStashAmmoQuantity', 'loot.cheapStashGrenadeChance', 'loot.cheapStashGrenadeQuantity', 'loot.expensiveStashMoneyChance')),
     'SleepingDashboard': ('DrawSleepingDashboard', 370.0, ('survival.sleepEligibilityThreshold', 'survival.minimumSleepHours', 'survival.sleepHealthRestore', 'survival.sleepStaminaRestore')),
     'SevereFatiguePenaltyBoard': ('DrawSevereFatiguePenaltyBoard', 376.0, ('advanced.fatigueMechanics', 'survival.severeFatigueMaxStamina', 'survival.severeFatigueCarryWeight', 'survival.severeFatigueRecoil', 'survival.severeFatigueAimSway', 'survival.severeFatigueDispersion')),
-    'RadiationBalance': ('DrawRadiationBalance', 242.0, ('survival.radiationAccumulation', 'survival.radiationRecovery', 'survival.radiationDamage')),
+    'RadiationBalance': ('DrawRadiationBalance', None, ('survival.radiationAccumulation', 'survival.radiationRecovery', 'survival.radiationDamage')),
     'StaminaCore': ('DrawStaminaMovementBoard', 351.0, ('stamina.maxSP', 'stamina.regeneration', 'stamina.vaultMaxHeight', 'stamina.maxCarryWeight')),
 }
 _seven_required_code = (
@@ -2900,6 +2903,10 @@ for _family, (_method, _height, _ids) in _seven_methods.items():
             _seven_errors.append(f'{_family}: source {_id} missing from catalog')
         if f'"{_id}"' not in _seven_src:
             _seven_errors.append(f'{_family}: renderer no longer references {_id}')
+if ('"RadiationBalance" => RadiationBoardHeight' not in _seven_src
+    or 'private const double RadiationProfileTop = 241.0;' not in _seven_src
+    or 'private const double RadiationProfileHeight = 142.0;' not in _seven_src):
+    _seven_errors.append('RadiationBalance renderer and measured stage-strip board height disagree')
 for _id, _native in _seven_expected_sliders.items():
     _s = (_seven_catalog.get(_id, {}).get('slider') or {})
     if tuple(_s.get(k) for k in ('min', 'max', 'step')) != _native:
