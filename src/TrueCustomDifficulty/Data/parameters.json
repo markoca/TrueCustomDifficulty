@@ -2478,7 +2478,7 @@
       "tab": "survival",
       "group": "Consumable Effects",
       "label": "Energy Drink Full Cost Duration",
-      "description": "How long the Energy Drink Drink -100% SPDrain modifier lasts (including regular Limited Energy).",
+      "description": "How long the Energy Drink -100% SPDrain modifier lasts (including regular Limited Energy Drink).",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2515,7 +2515,7 @@
           "Inherited eight stamina-action types; the effect is shared by regular and Limited Energy Drink."
         ]
       },
-      "rationale": "How long the Energy Drink Drink -100% SPDrain modifier lasts (including regular Limited Energy).",
+      "rationale": "How long the Energy Drink -100% SPDrain modifier lasts (including regular Limited Energy Drink).",
       "logic": "Adjust between the original 5s and the current main drink-effect duration; no effect magnitude or action type is changed.",
       "interaction": "The main drink timeline controls the upper limit. These are independent native CFG durations.",
       "exposeInUi": false
@@ -2525,7 +2525,7 @@
       "tab": "survival",
       "group": "Consumable Effects",
       "label": "Energy Drink Partial Cost Duration",
-      "description": "How long the Energy Drink Drink -30% SPDrain modifier lasts (normal Energy Drink and Limited Energy Drink's alternative effect).",
+      "description": "How long the Energy Drink -30% SPDrain modifier lasts (normal Energy Drink and Limited Energy Drink's alternative effect).",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2562,7 +2562,7 @@
           "Ordinary Energy Drink has both -30% and -100% effects; stacking is not runtime-proven."
         ]
       },
-      "rationale": "How long the Energy Drink Drink -30% SPDrain modifier lasts (normal Energy Drink and Limited Energy Drink's alternative effect).",
+      "rationale": "How long the Energy Drink -30% SPDrain modifier lasts (normal Energy Drink and Limited Energy Drink's alternative effect).",
       "logic": "Adjust between the original 15s and the current main drink-effect duration; no effect magnitude or action type is changed.",
       "interaction": "The main drink timeline controls the upper limit. These are independent native CFG durations.",
       "exposeInUi": false
