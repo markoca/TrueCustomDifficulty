@@ -3401,7 +3401,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var column = (width - gap) / 2.0;
         DrawCompactTrack(dc, healthRestore, "HEALTH RESTORED",
             $"+{healthRestore.CurrentNumber:0.#} HP",
-            $"{healthRestore.Minimum:0.#} HP", $"{healthRestore.Maximum:0.#} HP",
+            $"{healthRestore.Minimum / 100.0:0.##}x", $"{healthRestore.Maximum / 100.0:0.##}x",
             new Rect(left, 274.0, column, 82.0),
             text, muted, border, accent, panel);
         DrawCompactTrack(dc, staminaRestore, "STAMINA RESTORE STRENGTH",
@@ -3441,8 +3441,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
         dc.DrawLine(new Pen(accent, 5.0), new Point(track.Left, y), new Point(currentX, y));
 
-        var vanillaX = ValueToX(parameter.ReferenceNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
-        dc.DrawLine(new Pen(muted, 1.2), new Point(vanillaX, y - 8.0), new Point(vanillaX, y + 8.0));
+        // Do not draw a fake vanilla marker at the edge when the verified
+        // 300 HP source is outside this tool's 25-200 HP editor interval.
+        if (parameter.ReferenceNumber >= parameter.Minimum
+            && parameter.ReferenceNumber <= parameter.Maximum)
+        {
+            var vanillaX = ValueToX(parameter.ReferenceNumber,
+                parameter.Minimum, parameter.Maximum, track, reverse: false);
+            dc.DrawLine(new Pen(muted, 1.2),
+                new Point(vanillaX, y - 8.0), new Point(vanillaX, y + 8.0));
+        }
 
         dc.DrawEllipse(panel, new Pen(accent, IsSelected(parameter) ? 2.4 : 1.6), new Point(currentX, y), 6.0, 6.0);
         AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);

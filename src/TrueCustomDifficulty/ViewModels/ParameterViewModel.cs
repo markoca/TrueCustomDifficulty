@@ -1605,7 +1605,15 @@ public sealed class ParameterViewModel : ObservableObject
     {
         var element = GetReferenceElement();
         if (IsSlider && element.ValueKind == JsonValueKind.Number)
-            _currentNumber = element.GetDouble();
+        {
+            // Tool defaults and vanilla CFG references are separate concepts.
+            // Preserve the real source for writer diffing and preset metadata.
+            var fixedDefault = Definition.Default.Mode == "fixedValue"
+                ? Definition.Default.Value : null;
+            _currentNumber = fixedDefault.HasValue
+                ? NormalizeSliderValue(fixedDefault.Value)
+                : element.GetDouble();
+        }
         else if (IsRange && element.ValueKind == JsonValueKind.Number)
         {
             if (Id == "loot.droppedWeaponCondition")

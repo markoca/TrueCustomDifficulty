@@ -2325,7 +2325,12 @@ for _row in _global_visible:
     if isinstance(_lo, (int, float)) and isinstance(_hi, (int, float)):
         for _name, _value in (_row.get("vanilla") or {}).items():
             if isinstance(_value, (int, float)) and not isinstance(_value, bool) and not (_lo - 1e-9 <= _value <= _hi + 1e-9):
-                _global_out_of_range.append((_row.get("id"), _name, _value, _lo, _hi))
+                _default = _row.get("default") or {}
+                _start = _default.get("value")
+                if not (_default.get("mode") == "fixedValue"
+                    and isinstance(_start, (int, float))
+                    and _lo <= _start <= _hi):
+                    _global_out_of_range.append((_row.get("id"), _name, _value, _lo, _hi))
 _global_generator_visible = _global_visible_ids & _e2e_all
 _global_non_generator_visible = _global_visible_ids - _e2e_all
 _global_non_generator_confirmed = sum(

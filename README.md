@@ -1,5 +1,9 @@
 # True Custom Difficulty
 
+### 2026-10-12 — Sleep Health Restored: 100 HP default, 0.25x–2x range
+
+Sleep now starts and resets HEALTH RESTORED at **100 HP** (editor 1x). The editable range is **25–200 actual HP** (0.25x–2x) with 5-HP steps. The game source's original **300 HP** is preserved as immutable vanilla metadata; a fresh tool preset instead writes **100 HP** to both SleepHealthRestore CFG fields. Saved values above 200 HP clamp on load. Stamina restore remains unchanged.
+
 ### 2026-10-12 — Centered readouts for all 270° knobs
 
 All source-backed rotary controls now vertically center the numeric value inside the dial, not just the three consumable drink knobs. The shared WPF renderer raises single-line readouts by 11 DIP and aligns the two-line Radiation Recovery / medicine amount-and-unit labels as one block; the separate combined Anomaly Damage dial removes its extra 3-DIP vertical shift because its text renderer is already height-centered. No dial sizes, source mappings, ranges, snapping, reference markers, highlights, presets or CFG writer output change. Both binding UI catalogs and the production static audit cover the new contract.

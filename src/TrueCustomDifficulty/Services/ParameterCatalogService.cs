@@ -164,13 +164,23 @@ public sealed class ParameterCatalogService
                 if (parameter.Slider.Step <= 0)
                     throw new InvalidDataException($"Slider parameter {parameter.Id} has a non-positive step.");
 
+                // A fixed-value editor default can intentionally have a
+                // narrower player-facing range than its real vanilla source.
+                var hasFixedDefault = parameter.Default.Mode == "fixedValue";
+                if (hasFixedDefault && (parameter.Default.Value is not double start
+                    || !double.IsFinite(start)
+                    || start < parameter.Slider.Min - 0.000001
+                    || start > parameter.Slider.Max + 0.000001))
+                    throw new InvalidDataException(
+                        $"Slider parameter {parameter.Id} has invalid fixedValue default.");
                 foreach (var pair in parameter.Vanilla)
                 {
                     if (pair.Value.ValueKind != JsonValueKind.Number)
                         throw new InvalidDataException($"Slider parameter {parameter.Id} has non-numeric vanilla value for {pair.Key}.");
 
                     var value = pair.Value.GetDouble();
-                    if (value < parameter.Slider.Min - 0.000001 || value > parameter.Slider.Max + 0.000001)
+                    if (!hasFixedDefault &&
+                        (value < parameter.Slider.Min - 0.000001 || value > parameter.Slider.Max + 0.000001))
                     {
                         throw new InvalidDataException(
                             $"Slider parameter {parameter.Id} vanilla {pair.Key}={value} lies outside " +

@@ -190,6 +190,10 @@ public sealed class DefaultDefinition
 {
     [JsonPropertyName("mode")]
     public string Mode { get; set; } = string.Empty;
+
+    // Editor start/reset, distinct from the verified original game CFG source.
+    [JsonPropertyName("value")]
+    public double? Value { get; set; }
 }
 
 public sealed class SliderDefinition

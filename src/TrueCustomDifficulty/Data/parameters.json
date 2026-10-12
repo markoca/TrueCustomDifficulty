@@ -8317,24 +8317,25 @@
       "tab": "survival",
       "group": "Sleeping",
       "label": "Post-Sleep Health Restore",
-      "description": "Controls the direct health restore you receive after normal sleep. Vanilla uses a very generous value that is effectively enough to refill normal player health.",
+      "description": "Controls the direct health restore you receive after normal sleep. The tool starts at 100 HP (1x), adjustable from 25 to 200 HP; the vanilla CFG remains 300 HP.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "unit": "health",
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "HP",
         "valueLabel": "Health restored after sleep"
       },
       "vanilla": {
         "All": 300
       },
       "default": {
-        "mode": "fixedVanilla"
+        "mode": "fixedValue",
+        "value": 100
       },
       "slider": {
-        "min": 0,
-        "max": 600,
+        "min": 25,
+        "max": 200,
         "step": 5,
         "stepMode": "absolute"
       },
@@ -8351,9 +8352,9 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls the direct health restore you receive after normal sleep. Vanilla uses a very generous value that is effectively enough to refill normal player health.",
-      "logic": "",
-      "interaction": "This is separate from passive health recovery and medical healing."
+      "rationale": "Controls the direct health restore you receive after normal sleep. The tool starts at 100 HP (1x), adjustable from 25 to 200 HP; the vanilla CFG remains 300 HP.",
+      "logic": "The 0.25x to 2x editor scale uses 100 HP as 1x (25 to 200 HP). Vanilla source stays 300 HP; 100 HP is an intentional CFG patch default.",
+      "interaction": "Reset returns to 100 HP, not the out-of-range vanilla 300 HP. Legacy preset values above 200 HP clamp to 200 HP. This is separate from passive regeneration and medkits."
     },
     {
       "id": "survival.sleepStaminaRestore",

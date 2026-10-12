@@ -66,6 +66,10 @@ The real file contains one entry for every current catalog parameter. Null field
 8. Invalid JSON, unsupported preset-format versions and unsupported reference difficulties are reported as load errors instead of crashing the application.
 
 Preset format version `1` is the current format. Older pre-versioned presets remain loadable because a missing `profileVersion` defaults to `1`.
+## Sleep HP range compatibility (2026-10-12)
+
+`survival.sleepHealthRestore` now defaults to 100 HP with a 25–200 HP editor range (0.25x–2x relative to the *tool* baseline). Presets store actual HP; old saved values above 200 are clamped to 200 during import and missing values start at 100. Original vanilla 300 HP is retained only as source provenance and writer comparison. No preset-format revision.
+
 ## Compatibility migrations
 
 Preset files keep their original `toolVersion` so player-facing semantic migrations can preserve the same gameplay result when a control stops exposing an engine-internal representation.
