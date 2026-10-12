@@ -38,6 +38,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     private bool _radPlaying;
     private bool _radRingDragging;
     private bool _radRingFocus;
+    // Preserve 100 RAD at the clockwise 360° seam during a captured drag.
+    private bool _radRingHadScrub;
+    private bool _radRingCompleted;
     private DateTime _radLastTickUtc;
     private readonly DispatcherTimer _radTimer = new() { Interval = TimeSpan.FromMilliseconds(40) };
 
@@ -168,6 +171,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         StopRadiationPlayback();
         _radRingDragging = false;
         _radRingFocus = false;
+        _radRingHadScrub = false;
+        _radRingCompleted = false;
         _radElapsed = 0.0;
         _dragTarget = null;
         _hoverTarget = null;
@@ -4349,16 +4354,24 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private double RadiationModelMaxHp => Math.Max(1.0, _radiationMaxHp?.CurrentNumber ?? 100.0);
 
-    // An explicitly hypothetical average of one damage charge per second.
-    // CFG inherits TimePerCharge=1s but runtime permanent-effect repeats,
-    // protection and the first charge's timing are not established.
-    private static double RadiationStageDps(double rad, double multiplier)
+    // Original threshold-to-prototype mapping. RAD=0 has no HP damage;
+    // LIGHT starts at 1, and the special DEADLY prototype starts at 99.
+    private static int RadiationStageIndex(double rad)
     {
-        if (rad < 1.0 || multiplier <= Epsilon) return 0.0;
+        if (rad < 1.0) return -1;
         var index = 0;
         foreach (var threshold in RadiationRingThresholds)
             if (rad >= threshold) index++;
-        return RadiationDamageStages[Math.Min(index, 10)].SourceDamage * multiplier;
+        return Math.Min(index, RadiationDamageStages.Length - 1);
+    }
+
+    // One charge per second is a *preview assumption*, not a verified
+    // in-game cadence for permanent radiation effects.
+    private static double RadiationStageDps(double rad, double multiplier)
+    {
+        var index = RadiationStageIndex(rad);
+        return index < 0 || multiplier <= Epsilon
+            ? 0.0 : RadiationDamageStages[index].SourceDamage * multiplier;
     }
 
     private static double RadiationNextBoundary(double rad)
@@ -4488,7 +4501,23 @@ public sealed class AggregateVisualControl : FrameworkElement
         var center = new Point(ring.Left + ring.Width / 2.0, ring.Top + 181.0);
         var angle = Math.Atan2(point.Y - center.Y, point.X - center.X) + Math.PI / 2.0;
         if (angle < 0.0) angle += Math.PI * 2.0;
-        _radCustomStartRad = Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 0.0, 100.0);
+        // Twelve o'clock is the beginning of the clockwise 1–100 scale;
+        // the same physical point is also 100 at the end of a full turn.
+        var level = Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0);
+        if (_radRingHadScrub)
+        {
+            var previous = RadiationInitialRad;
+            if (previous >= 95.0 && level <= 5.0)
+                _radRingCompleted = true;
+            else if (!_radRingCompleted && previous <= 5.0 && level >= 95.0)
+                level = 1.0;
+        }
+        if (_radRingCompleted && level < 95.0)
+            level = 100.0;
+        else if (_radRingCompleted && level < 100.0)
+            _radRingCompleted = false;
+        _radCustomStartRad = level;
+        _radRingHadScrub = true;
         ResetRadiationPreview();
         _radRingFocus = true;
     }
@@ -4500,7 +4529,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         var dx = point.X - ring.Left - ring.Width / 2.0;
         var dy = point.Y - ring.Top - 181.0;
         var distance = Math.Sqrt(dx * dx + dy * dy);
-        return distance >= 101.0 && distance <= 130.0;
+        // This is the visible 13-DIP main track, not a disconnected
+        // second outer ring. Give the player a modest drag tolerance.
+        return distance >= 100.0 && distance <= 127.0;
     }
 
     private Rect RadiationRingRect()
@@ -4689,10 +4720,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             var fromRad = i == 0 ? 0.0 : RadiationRingThresholds[i - 1];
             var toRad = i == 10 ? 100.0 : RadiationRingThresholds[i];
             var intensity = Math.Sqrt(stage.SourceDamage / highest);
-            var opacity = multiplier <= Epsilon ? 0.13
-                : Math.Clamp(0.24 + intensity * 0.66, 0.24, 0.90);
+            var opacity = Math.Clamp(0.21 + intensity * 0.24, 0.21, 0.45);
             DrawRadiationRingSector(dc, center, radius, fromRad, toRad,
-                CloneWithOpacity(modified ? accent : text, opacity));
+                CloneWithOpacity(muted, opacity));
             // The final 99..100-degree-scale slice is only 3.6° wide;
             // show its DEADLY source value in the footer rather than overprint.
             if (i < 10)
@@ -4702,24 +4732,15 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var currentRad = RadiationCurrentRad;
-        var progressRadius = radius + 13.0;
+        // Fill the *actual* 13-DIP ring clockwise, not a thin second
+        // track outside the ring. 100 RAD must close the full 360° circle.
         if (currentRad >= 100.0)
-            dc.DrawEllipse(null, new Pen(accent, 4.5), center, progressRadius, progressRadius);
-        else if (currentRad > 0.0)
-        {
-            var progressArc = new StreamGeometry();
-            using (var ctx = progressArc.Open())
-            {
-                ctx.BeginFigure(RadiationRingPoint(center, progressRadius, 0.0), false, false);
-                ctx.ArcTo(RadiationRingPoint(center, progressRadius, currentRad),
-                    new Size(progressRadius, progressRadius), 0.0,
-                    currentRad > 50.0, SweepDirection.Clockwise, true, false);
-            }
-            progressArc.Freeze();
-            dc.DrawGeometry(null, new Pen(accent, 4.5), progressArc);
-        }
-        dc.DrawEllipse(accent, new Pen(panel, 1.8),
-            RadiationRingPoint(center, progressRadius, currentRad), 5.5, 5.5);
+            dc.DrawEllipse(null, new Pen(accent, 13.0), center, radius, radius);
+        else if (currentRad >= 1.0)
+            DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);
+        if (currentRad >= 1.0)
+            dc.DrawEllipse(accent, new Pen(panel, 1.8),
+                RadiationRingPoint(center, radius, currentRad), 6.0, 6.0);
 
         foreach (var threshold in RadiationRingThresholds)
         {
@@ -4733,24 +4754,41 @@ public sealed class AggregateVisualControl : FrameworkElement
                 threshold == 99.0 ? FontWeights.Bold : FontWeights.SemiBold);
         }
 
-        var hp = Math.Max(0.0, RadiationModelMaxHp -
-            RadiationHpLoss(RadiationInitialRad, _radElapsed, RadiationNetGain(), multiplier));
-        DrawCenteredText(dc, "SIMULATED",
-            new Point(center.X, center.Y - 23.0), 10.3, muted, FontWeights.Bold);
-        DrawCenteredText(dc, currentRad.ToString("0", CultureInfo.InvariantCulture) + " RAD",
-            new Point(center.X, center.Y + 1.0), 19.5, text, FontWeights.Bold);
-        DrawCenteredText(dc, "0–100 · DRAG RING",
-            new Point(center.X, center.Y + 26.0), 9.4, muted, FontWeights.Bold);
-        DrawCenteredText(dc, hp.ToString("0.#", CultureInfo.InvariantCulture)
-                + " / " + RadiationModelMaxHp.ToString("0.#", CultureInfo.InvariantCulture) + " HP",
-            new Point(center.X, center.Y + 42.0), 9.7, hp <= Epsilon ? accent : text, FontWeights.SemiBold);
+        // Show the *currently selected* original CFG effect, not the
+        // 99-RAD stage or an invented generic HP/s damage coefficient.
+        var stageIndex = RadiationStageIndex(currentRad);
+        var active = stageIndex >= 0;
+        var stageLabel = !active ? "NO DAMAGE"
+            : stageIndex <= 2 || stageIndex == 10
+                ? RadiationDamageStages[stageIndex].Label
+                : "LEVEL " + RadiationDamageStages[stageIndex].Label;
+        var stageMinimum = !active ? 0.0
+            : stageIndex == 0 ? 1.0 : RadiationRingThresholds[stageIndex - 1];
+        var stageMaximum = !active ? 0.0
+            : stageIndex == 10 ? 100.0 : RadiationRingThresholds[stageIndex] - 1.0;
+        var sourceDamage = active ? RadiationDamageStages[stageIndex].SourceDamage : 0.0;
+        var actualDamage = sourceDamage * multiplier;
+        var nextThreshold = !active ? 1.0
+            : stageIndex == 10 ? double.NaN : RadiationRingThresholds[stageIndex];
+        DrawCenteredText(dc, "SIMULATED RAD",
+            new Point(center.X, center.Y - 42.0), 9.1, muted, FontWeights.Bold);
+        DrawCenteredText(dc, currentRad.ToString("0", CultureInfo.InvariantCulture) + " / 100",
+            new Point(center.X, center.Y - 14.0), 20.0, text, FontWeights.Bold);
+        DrawCenteredText(dc, stageLabel + " · " + stageMinimum.ToString("0", CultureInfo.InvariantCulture)
+                + "–" + stageMaximum.ToString("0", CultureInfo.InvariantCulture) + " RAD",
+            new Point(center.X, center.Y + 9.0), 9.3, text, FontWeights.SemiBold);
+        DrawCenteredText(dc, actualDamage.ToString("0.###", CultureInfo.InvariantCulture) + " CFG DAMAGE",
+            new Point(center.X, center.Y + 32.0), 12.5, valueInk, FontWeights.Bold);
+        DrawCenteredText(dc, double.IsNaN(nextThreshold) ? "FINAL STAGE"
+                : "NEXT " + nextThreshold.ToString("0", CultureInfo.InvariantCulture) + " RAD",
+            new Point(center.X, center.Y + 51.0), 9.0, muted, FontWeights.SemiBold);
 
         var deadly = RadiationDamageStages[10];
         DrawCenteredText(dc, "99 RAD · DEADLY  /  CFG DAMAGE "
                 + (deadly.SourceDamage * multiplier).ToString("0.###", CultureInfo.InvariantCulture),
             new Point(center.X, profile.Top + 348.0),
             9.5, modified ? accent : text, FontWeights.SemiBold);
-        DrawCenteredText(dc, "CFG EFFECT VALUES · NOT A DEATH TIMER",
+        DrawCenteredText(dc, "CFG EFFECT VALUE · NOT VERIFIED HP/s",
             new Point(center.X, profile.Top + 370.0),
             9.0, muted, FontWeights.SemiBold);
         DrawRadiationSimulation(dc, text, muted, border, soft, accent, panel);
@@ -5685,6 +5723,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             _selectedParameter = null;
             _selectedHitKind = null;
             _radRingDragging = true;
+            _radRingHadScrub = false;
+            _radRingCompleted = false;
             CaptureMouse();
             ScrubRadiationRing(point);
             e.Handled = true;
@@ -5762,7 +5802,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var point = e.GetPosition(this);
         if (_radRingDragging && e.LeftButton == MouseButtonState.Pressed)
         {
-            ScrubRadiationRing(point);
+            if (RadiationRingHit(point))
+                ScrubRadiationRing(point);
             e.Handled = true;
             return;
         }
@@ -5770,7 +5811,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             SetHoverTarget(null);
             Cursor = Cursors.Hand;
-            ToolTip = "Preview RAD: drag or scroll the ring · Right-click restores the starting value.";
+            ToolTip = "Drag clockwise along the ring: 1–100 RAD. Center shows the active CFG damage stage. Right-click restores START RAD.";
             return;
         }
         if (_dragTarget is null && RadiationPlaybackHit(point) >= 0)
@@ -5826,7 +5867,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             var direction = Math.Sign(e.Delta);
             if (direction == 0) return;
-            _radCustomStartRad = Math.Clamp(Math.Round(RadiationCurrentRad) + direction, 0.0, 100.0);
+            _radCustomStartRad = Math.Clamp(Math.Round(RadiationCurrentRad) + direction, 1.0, 100.0);
             _radRingFocus = true;
             _radSimFocus = -1;
             _selectedParameter = null;
@@ -5881,6 +5922,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (_radRingDragging)
         {
             _radRingDragging = false;
+            _radRingHadScrub = false;
+            _radRingCompleted = false;
             ReleaseMouseCapture();
             e.Handled = true;
             return;
@@ -5911,6 +5954,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (_radRingDragging)
         {
             _radRingDragging = false;
+            _radRingHadScrub = false;
+            _radRingCompleted = false;
             Cursor = Cursors.Arrow;
         }
         if (_dragTarget is null)
@@ -6080,9 +6125,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             };
             if (delta != 0 || e.Key is Key.Home or Key.End)
             {
-                _radCustomStartRad = e.Key == Key.Home ? 0.0
+                _radCustomStartRad = e.Key == Key.Home ? 1.0
                     : e.Key == Key.End ? 100.0
-                    : Math.Clamp(Math.Round(RadiationCurrentRad) + delta, 0.0, 100.0);
+                    : Math.Clamp(Math.Round(RadiationCurrentRad) + delta, 1.0, 100.0);
                 ResetRadiationPreview();
                 e.Handled = true;
                 return;
