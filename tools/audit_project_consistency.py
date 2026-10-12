@@ -1881,6 +1881,13 @@ _exhaustion_names = {
     "stamina.lowRecoveryStrength": "Boost Strength",
     "stamina.lowRecoveryDuration": "Boost Duration",
 }
+# Guard the tooltip C# string concatenation contract. A stale '+ Environment.NewLine'
+# statement after a completed return triggers CS0023 and CS0201 at build time.
+if re.search(r';[ \t]*\n[ \t]*\+[ \t]*Environment\.NewLine\b', _medical_vm):
+    fail("Tooltip concatenation after a terminated C# statement (CS0023/CS0201)")
+else:
+    note("Tooltip string concatenations have no orphaned Environment.NewLine expression")
+
 _exhaustion_renderer = (ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs").read_text(encoding="utf-8")
 _exhaustion_catalog = {p["id"]: p for p in parameters if p["id"] in _exhaustion_names}
 _exhaustion_render_markers = (

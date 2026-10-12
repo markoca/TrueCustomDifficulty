@@ -129,7 +129,6 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsExhaustionRecoveryMember)
                 return "Drag the upper marker to set when sprint locks; drag the lower marker to set when recovery kicks in."
                     + Environment.NewLine + "Aiming, exhaustion delay and low-stamina boost stay independent. Right-click one source or press R for all.";
-                    + Environment.NewLine + "Right-click a track to reset it; R resets the recovery group.";
             if (IsMedicalHealingMember)
                 return "Four HEAL/BLEED pairs and four RAD columns (Scientific, Anti-Rad, Beer, Vodka) edit independent effects."
                     + Environment.NewLine + "Drag a column to adjust it, right-click to reset one source, or press R to reset this card. Food Healing is independent.";
