@@ -1,5 +1,9 @@
 # Survival CFG Mapping — v0.2.47
 
+### 2026-10-12 — Radiation Damage Stages CFG-faithful display (current)
+
+Original `GameData/EffectPrototypes.cfg` baseline independently verifies **11 radiation-damage effect prototypes** with **22 ValueMin/ValueMax scale targets**. Their original values in catalog target order are `Light=0.2`, `Medium=0.3`, `Strong=0.48`, `L4=0.816`, `L5=1.468`, `L6=2.2`, `L7=4.18`, `L8=8.37`, `L9=17.58`, `L10=38.67`, and separate `Deadly=20`. `survival.radiationDamage` has a writer-proven aggregate **scale** operation on all pairs; its new read-only chart applies the same multiplier for truthful source-effect values, with no extra CFG write. `survival.radiationAccumulation` edits difficulty `Radiation_AccumulationSpeed` scalar only; `survival.radiationRecovery` edits `Player.VitalParams.DegenRadiation` in points/second. Their interaction **cannot establish an exposure-to-death duration** without validated level thresholds, encounter exposure input/cadence and all active HP mitigation/recovery effects. Consequently **no RADIATION KILLS IN countdown** is implemented. The source-backed display is a compact horizontal level profile (10 staged effects plus distinct DEADLY effect), explicitly not a time axis, positioned under the original three editable knobs. Validation: `python3 tools/audit_radiation_damage_profile.py`, local WPF publish/Wine visual review pending.
+
 ### 2026-10-12 — Beer 3x radiation removal (current)
 
 `health.beerRadiationRemoval` extends from **0–20** to **0–30 RAD** (0x–3x the source's 10-RAD value). With 5-RAD steps, the existing negative-sign `negateSet` writer emits **-30** for BeerAntirad1's both source bounds at maximum. Other RAD columns and their ruler are unchanged.

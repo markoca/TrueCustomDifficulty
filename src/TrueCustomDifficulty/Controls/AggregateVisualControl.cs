@@ -4246,11 +4246,37 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(20.0, 409.0), 8.8, muted, FontWeights.Normal);
     }
 
-    // Radiation has three independent source units. Do not infer a net radiation
-    // rate by subtracting a difficulty gain multiplier from a points/second removal.
-    // The summary is read-only; each native-range track is edited independently.
-    // Three independent source-native 270° controls. Recovery is a rate in
-    // PTS/S (not an x multiplier), while build-up and damage are multipliers.
+    // Original GameData/EffectPrototypes.cfg ValueMin/ValueMax pairs,
+    // verified 1:1 against the shipping CFG writer baseline. These are
+    // damage-effect source values, NOT damage-per-second or exposure thresholds.
+    // The 11th DEADLY prototype has its own value (20), lower than L10
+    // (38.67); show it separately rather than claiming monotonic progression.
+    private static readonly (string Label, string Prototype, double SourceDamage)[]
+        RadiationDamageStages =
+    {
+        ("LIGHT", "LightRadiationDamage", 0.2),
+        ("MED", "MediumRadiationDamage", 0.3),
+        ("STRONG", "StrongRadiationDamage", 0.48),
+        ("4", "RadiationLevel4Damage", 0.816),
+        ("5", "RadiationLevel5Damage", 1.468),
+        ("6", "RadiationLevel6Damage", 2.2),
+        ("7", "RadiationLevel7Damage", 4.18),
+        ("8", "RadiationLevel8Damage", 8.37),
+        ("9", "RadiationLevel9Damage", 17.58),
+        ("10", "RadiationLevel10Damage", 38.67),
+        ("DEADLY", "DeadlyRadiationDamage", 20),
+    };
+
+    private const double RadiationProfileTop = 241.0;
+    private const double RadiationProfileHeight = 142.0;
+    private const double RadiationBoardHeight =
+        RadiationProfileTop + RadiationProfileHeight + 12.0;
+
+    // Three source-native knobs continue to edit the real accumulation scalar,
+    // recovery in PTS/S and global HP damage scalar independently.
+    // The bottom graph is a source-exact DAMAGE-STAGE profile, not a time axis.
+    // No truthful radiation death ETA is derivable without confirmed exposure,
+    // state thresholds, effect cadence, mitigation and healing behavior.
     private void DrawRadiationBalance(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
@@ -4274,6 +4300,81 @@ public sealed class AggregateVisualControl : FrameworkElement
                 text, muted, border, accent, panel,
                 rateReadout: source.Id == "survival.radiationRecovery");
         }
+
+        var profile = new Rect(16.0, RadiationProfileTop,
+            Math.Max(1.0, ActualWidth - 32.0), RadiationProfileHeight);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+            profile, 4.0, 4.0);
+        DrawText(dc, "RADIATION DAMAGE STAGES",
+            new Point(profile.Left + 12.0, profile.Top + 9.0),
+            10.2, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "11 CFG EFFECTS",
+            new Point(profile.Right - 12.0, profile.Top + 9.0),
+            9.0, muted, FontWeights.SemiBold);
+
+        var damage = P("survival.radiationDamage");
+        if (damage is null)
+            return;
+
+        // The same multiplier that the CFG scale writer applies to ALL 22
+        // min/max leaves. Do not combine it with the unrelated accumulation
+        // multiplier or native recovery rate to fabricate a lethal countdown.
+        var multiplier = Math.Max(0.0, damage.CurrentNumber);
+        var modified = damage.IsValueModifiedFromReference();
+        var valueBrush = modified ? accent : text;
+        var stroke = CloneWithOpacity(modified ? accent : muted, modified ? .86 : .65);
+        var firstX = profile.Left + 14.0;
+        const double deadlyWidth = 84.0;
+        const double splitGap = 12.0;
+        var stagesWidth = Math.Max(1.0, profile.Width - 28.0 - deadlyWidth - splitGap);
+        var stepWidth = stagesWidth / 10.0;
+        var baselineY = profile.Top + 97.0;
+        const double maxBarHeight = 42.0;
+        var highest = RadiationDamageStages.Max(s => s.SourceDamage);
+        for (var i = 0; i < 10; i++)
+        {
+            var stage = RadiationDamageStages[i];
+            var centerX = firstX + (i + .5) * stepWidth;
+            var rawValue = stage.SourceDamage * multiplier;
+            var ratio = stage.SourceDamage / highest;
+            var barHeight = multiplier > Epsilon ? Math.Max(2.0, ratio * maxBarHeight) : 0.0;
+            DrawCenteredText(dc, stage.Label,
+                new Point(centerX, profile.Top + 31.0),
+                9.0, muted, FontWeights.SemiBold);
+            dc.DrawLine(new Pen(soft, 1.0),
+                new Point(centerX, baselineY), new Point(centerX, baselineY - maxBarHeight));
+            if (barHeight > 0.0)
+                dc.DrawRoundedRectangle(stroke, null,
+                    new Rect(centerX - 5.0, baselineY - barHeight, 10.0, barHeight),
+                    2.0, 2.0);
+            DrawCenteredText(dc, $"{rawValue:0.###}",
+                new Point(centerX, profile.Top + 101.0),
+                9.0, valueBrush, FontWeights.SemiBold);
+        }
+
+        // Authored DEADLY effect is independent, not a fake L11 or a
+        // guarantee that all preceding stages lead to this one in X seconds.
+        var deadlyLeft = firstX + stagesWidth + splitGap;
+        dc.DrawLine(new Pen(border, 1.0),
+            new Point(deadlyLeft - splitGap / 2.0, profile.Top + 31.0),
+            new Point(deadlyLeft - splitGap / 2.0, profile.Top + 122.0));
+        var deadlyCenter = deadlyLeft + deadlyWidth / 2.0;
+        var deadly = RadiationDamageStages[10];
+        var deadlyHeight = multiplier > Epsilon
+            ? Math.Max(2.0, deadly.SourceDamage / highest * maxBarHeight) : 0.0;
+        DrawCenteredText(dc, "DEADLY",
+            new Point(deadlyCenter, profile.Top + 31.0),
+            9.0, muted, FontWeights.Bold);
+        if (deadlyHeight > 0.0)
+            dc.DrawRoundedRectangle(stroke, null,
+                new Rect(deadlyCenter - 5.0, baselineY - deadlyHeight,
+                    10.0, deadlyHeight), 2.0, 2.0);
+        DrawCenteredText(dc, $"{deadly.SourceDamage * multiplier:0.###}",
+            new Point(deadlyCenter, profile.Top + 101.0),
+            9.0, valueBrush, FontWeights.SemiBold);
+        DrawCenteredText(dc, "CFG EFFECT VALUES · NOT A DEATH TIMER",
+            new Point(profile.Left + profile.Width / 2.0, profile.Top + 124.0),
+            9.0, muted, FontWeights.SemiBold);
     }
 
     // Three native stash ammo quantities + three independent bonus rewards.
@@ -5985,7 +6086,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "HungerLadder" => CompactHungerHeight(width),
             "StarvationTimeline" => MasterStarvationHeight(width),
             "RepeatedHitBand" => 455.0,
-            "RadiationBalance" => 242.0,
+            "RadiationBalance" => RadiationBoardHeight,
             "TradingDashboard" => 273.0,
             "RepairCurve" => 324.0,
             "AmmoDistribution" => 715.0,
