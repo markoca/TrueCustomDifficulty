@@ -2163,7 +2163,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'DrawRoundedRectangle(panel, new Pen(border, .9)' in _radiation_source
     or '"DAMAGE PER TICK"' not in _radiation_source
     or '"DEAD AFTER"' not in _radiation_source
-    or '" TICKS"' not in _radiation_source
+    or 'DrawStat("~" + RadiationTime(eta),' not in _radiation_source
     or '"DEATH ESTIMATE"' not in _radiation_source
     or 'var hasDeathEstimate = double.IsFinite(eta);' not in _radiation_source
     or 'if (hasDeathEstimate)' not in _radiation_source
@@ -2174,7 +2174,8 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'DrawStat(stageRange, wide ? 117.0 : 81.0,' not in _radiation_source
     or 'wide ? 192.0 : 140.0, 29.0,' not in _radiation_source
     or 'wide ? 273.0 : 199.0, 29.0, accent, FontWeights.Bold);' not in _radiation_source
-    or 'wide ? 315.0 : 237.0, 27.0, text, FontWeights.Bold);' not in _radiation_source
+    or 'wide ? 315.0 : 237.0, 27.0, text, FontWeights.Bold);' in _radiation_source
+    or 'DrawStat(eta.ToString("0", CultureInfo.InvariantCulture) + " TICKS",' in _radiation_source
     or 'DrawStat("NO RAD DAMAGE", wide ? 286.0 : 215.0,' not in _radiation_source
     or 'private const double RadiationDialCenterY = 183.0;' not in _radiation_source
     or 'profile.Top + RadiationDialCenterY' not in _radiation_renderer
@@ -2213,7 +2214,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: 0–100 ring, 6x central damage knob, 29-DIP stage/damage/ticks and separate time")
+    note("Radiation: 0–100 ring, central 6x damage knob, 29-DIP stage/damage and one yellow death-time value")
 for _catalog, _heading in (
     ("UI-DESIGN-LOCK.md", "2026-10-13 — Radiation: unified large stats and centered HP DAMAGE hero knob"),
     ("VISUAL-CONTROL-SYSTEM.md", "2026-10-13 — Radiation information hierarchy and HP DAMAGE center hero"),

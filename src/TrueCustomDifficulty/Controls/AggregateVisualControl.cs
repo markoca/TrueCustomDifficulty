@@ -4649,18 +4649,17 @@ public sealed class AggregateVisualControl : FrameworkElement
             wide ? 192.0 : 140.0, 29.0,
             modified ? accent : text, FontWeights.Bold);
 
-        // Tick count is a primary gameplay readout, separate from the
-        // assumed elapsed time. Engine cadence remains unverified.
-        // At zero effective damage, never fabricate a lethal tick count.
+        // Only show estimated elapsed time under DEAD AFTER.
+        // One charge/second is a preview assumption, not verified gameplay.
+        // At zero effective damage, never claim a lethal countdown.
         var hasDeathEstimate = double.IsFinite(eta);
         DrawStat(hasDeathEstimate ? "DEAD AFTER" : "DEATH ESTIMATE",
             wide ? 244.0 : 180.0, 11.5, muted, FontWeights.SemiBold);
         if (hasDeathEstimate)
         {
-            DrawStat(eta.ToString("0", CultureInfo.InvariantCulture) + " TICKS",
-                wide ? 273.0 : 199.0, 29.0, accent, FontWeights.Bold);
+            // One prominent time readout, not a duplicated tick count.
             DrawStat("~" + RadiationTime(eta),
-                wide ? 315.0 : 237.0, 27.0, text, FontWeights.Bold);
+                wide ? 273.0 : 199.0, 29.0, accent, FontWeights.Bold);
         }
         else
         {

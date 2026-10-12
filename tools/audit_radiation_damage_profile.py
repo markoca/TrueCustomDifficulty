@@ -53,7 +53,7 @@ assert "DrawRadiationRingSector(dc, center, radius, first, last, inactive);" in 
 assert "DrawRadiationRingSector(dc, center, radius, first, litEnd, active);" in code
 assert "DrawRadiationHudSegments(dc, center, currentRad," in code
 assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));" in code
-assert '"DEAD AFTER"' in code and '" TICKS"' in code
+assert '"DEAD AFTER"' in code and 'DrawStat("~" + RadiationTime(eta),' in code
 assert '"DEATH ESTIMATE"' in code
 assert '"MAX " + RadiationModelMaxHp.ToString(' not in code
 assert rad["slider"] == {"min": 0, "max": 6, "step": 0.01}
@@ -133,7 +133,7 @@ for token in (
     'dc.DrawEllipse(symbol, null, center, 23.0, 23.0);',
     'DrawRadiationControls(dc, text, muted, soft, accent, panel);',
     'private void DrawRadiationControls(',
-    '"ACTIVE STAGE"', '"DAMAGE PER TICK"', '"DEAD AFTER"', '" TICKS"',
+    '"ACTIVE STAGE"', '"DAMAGE PER TICK"', '"DEAD AFTER"',
     'var currentRad = _radLevel;',
     'var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];',
     'var stageTo = index < 0 ? 0.0',
@@ -244,7 +244,7 @@ assert '"FIXED RAD"' not in control_renderer
 assert '"DAMAGE PER TICK"' in control_renderer
 assert 'var stageRange = index < 0 ? "0 RAD"' in control_renderer
 assert 'var stageTo = index < 0 ? 0.0' in control_renderer, "0 RAD must not read thresholds[-1]"
-assert '"DEAD AFTER"' in control_renderer and '" TICKS"' in control_renderer
+assert '"DEAD AFTER"' in control_renderer and 'DrawStat("~" + RadiationTime(eta),' in control_renderer
 assert '"DEATH ESTIMATE"' in control_renderer
 assert '"MAX " + RadiationModelMaxHp.ToString(' not in control_renderer
 # All three main figures match the bold 29-DIP RAD readout in hierarchy.
@@ -261,10 +261,8 @@ for token in (
     "wide ? 192.0 : 140.0, 29.0,",
     'DrawStat(hasDeathEstimate ? "DEAD AFTER" : "DEATH ESTIMATE",',
     'wide ? 244.0 : 180.0, 11.5, muted, FontWeights.SemiBold);',
-    'DrawStat(eta.ToString("0", CultureInfo.InvariantCulture) + " TICKS",',
-    "wide ? 273.0 : 199.0, 29.0, accent, FontWeights.Bold);",
     'DrawStat("~" + RadiationTime(eta),',
-    "wide ? 315.0 : 237.0, 27.0, text, FontWeights.Bold);",
+    "wide ? 273.0 : 199.0, 29.0, accent, FontWeights.Bold);",
     'DrawStat("NO RAD DAMAGE", wide ? 286.0 : 215.0,',
     "25.0, text, FontWeights.Bold);",
 ):
@@ -273,7 +271,9 @@ assert "DrawRightAlignedText(dc, stageRange," not in control_renderer
 assert control_renderer.count("11.5, muted, FontWeights.SemiBold);") == 3
 assert 'if (hasDeathEstimate)' in control_renderer
 assert 'var hasDeathEstimate = double.IsFinite(eta);' in control_renderer
-assert '" TICKS"' not in control_renderer.split("else", 1)[-1].split("// Three native stash ammo quantities", 1)[0]
+assert '" TICKS"' not in control_renderer, "Do not show tick counts next to the elapsed time"
+assert 'wide ? 315.0 : 237.0' not in control_renderer, "Duplicate white estimate returned"
+assert control_renderer.count('DrawStat("~" + RadiationTime(eta),') == 1
 assert '"DEAD AFTER " + eta.ToString' not in control_renderer
 assert "foreach (var threshold in RadiationRingThresholds)" not in ring_renderer
 assert "tick == 100 ? accent : muted" in ring_renderer
@@ -342,7 +342,7 @@ assert angle_to_rad(359) == 100
 
 print("PASS: 11 original radiation stages and 22 unchanged writer leaves;")
 print("      enlarged 32-tooth ring-only 0–100 RAD and large under-ring value;")
-print("      hero-centered HP DAMAGE knob, 6x damage limit and highlighted death ticks;")
+print("      hero-centered 6x HP DAMAGE and one highlighted estimated death time;")
 print("      no obsolete slider, titles or footer; source damage stages unchanged;")
 print("      original stage thresholds, 1:1 damage scaling and conditional fixed-RAD HP estimate.")
 print("NOT VERIFIED: actual permanent-effect damage cadence, healing, armor or gameplay time to death.")
