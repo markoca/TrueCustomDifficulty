@@ -2738,26 +2738,48 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        // Squad Pressure Dashboard: two readable stats above a compact native 2D editor.
-        // Keep the left/bottom/joint handle grammar and all original CFG sources.
-        var leftWidth = Math.Min(335.0, Math.Max(266.0, ActualWidth * .41));
-        var left = 18.0;
-        var statGap = 9.0;
+        // Compact and symmetric Squad Pressure Dashboard. The stat cards explain
+        // the current sources; the axes keep their own readable labels and
+        // original numeric ticks. The three graph handles remain native inputs.
+        const double left = 20.0;
+        const double sectionY = 51.0;
+        const double statTop = 72.0;
+        const double statHeight = 58.0;
+        const double statGap = 10.0;
+        var leftWidth = Math.Min(364.0, Math.Max(260.0, ActualWidth * .40));
         var statWidth = (leftWidth - statGap) / 2.0;
         DrawCenteredText(dc, "DEFENSE & DAMAGE",
-            new Point(left + leftWidth / 2.0, 57.0), 10.0, muted, FontWeights.Bold);
+            new Point(left + leftWidth / 2.0, sectionY),
+            10.0, muted, FontWeights.Bold);
         DrawHumanCombatStat(dc, health, "ENEMY HEALTH",
-            new Rect(left, 75.0, statWidth, 60.0), text, muted, border, accent, panel);
+            new Rect(left, statTop, statWidth, statHeight),
+            text, muted, border, accent, panel);
         DrawHumanCombatStat(dc, damage, "GUN DAMAGE",
-            new Rect(left + statWidth + statGap, 75.0, statWidth, 60.0),
+            new Rect(left + statWidth + statGap, statTop, statWidth, statHeight),
             text, muted, border, accent, panel);
 
-        var plotSide = Math.Min(202.0, Math.Max(161.0, leftWidth - 93.0));
-        var plot = new Rect(left + (leftWidth - plotSide) / 2.0 + 9.0,
-            166.0, plotSide, plotSide);
+        var plotSide = Math.Min(212.0, Math.Max(166.0, leftWidth - 112.0));
+        var plot = new Rect(left + (leftWidth - plotSide) / 2.0 + 15.0,
+            162.0, plotSide, plotSide);
         DrawCenteredText(dc, "BALANCE EDITOR",
-            new Point(left + leftWidth / 2.0, 152.0), 10.0, muted, FontWeights.Bold);
+            new Point(left + leftWidth / 2.0, 142.0),
+            10.0, muted, FontWeights.Bold);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
+
+        // Keep both gameplay axis names ON the chart, not in a detached
+        // instruction footer or vertical value readout duplicated in the tiles.
+        DrawCenteredText(dc, "ENEMY HEALTH",
+            new Point(plot.Left + plot.Width / 2.0, plot.Bottom + 49.0),
+            10.0, text, FontWeights.SemiBold);
+        var axisX = plot.Left - 67.0;
+        var axisY = plot.Top + plot.Height / 2.0;
+        var yAxisLabel = CreateText("ENEMY GUN DAMAGE",
+            10.0, text, FontWeights.SemiBold);
+        dc.PushTransform(new RotateTransform(-90.0, axisX, axisY));
+        dc.DrawText(yAxisLabel, new Point(
+            axisX - yAxisLabel.WidthIncludingTrailingWhitespace / 2.0,
+            axisY - yAxisLabel.Height / 2.0));
+        dc.Pop();
 
         for (var tick = 0; tick <= 4; tick++)
         {
@@ -2772,9 +2794,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             if (tick is 0 or 2 or 4)
             {
                 DrawCenteredText(dc, $"{healthTick:0.##}x",
-                    new Point(gridX, plot.Bottom + 32.0), 9.3, text, FontWeights.Normal);
+                    new Point(gridX, plot.Bottom + 27.0), 9.3, muted, FontWeights.Normal);
                 DrawRightAlignedText(dc, $"{damageTick:0.##}x",
-                    new Point(plot.Left - 12.0, gridY - 7.0), 9.3, text, FontWeights.Normal);
+                    new Point(plot.Left - 13.0, gridY - 7.0), 9.3, muted, FontWeights.Normal);
             }
         }
 
@@ -2818,10 +2840,10 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // The square graph owns the two linked axes. Independent source
         // editors at right follow the same Stamina-style horizontal grammar.
-        var cardLeft = left + leftWidth + 17.0;
-        var cardWidth = Math.Max(1.0, ActualWidth - cardLeft - 18.0);
+        var cardLeft = left + leftWidth + 16.0;
+        var cardWidth = Math.Max(1.0, ActualWidth - cardLeft - 20.0);
         DrawCenteredText(dc, "OFFENSIVE PRESSURE",
-            new Point(cardLeft + cardWidth / 2.0, 57.0),
+            new Point(cardLeft + cardWidth / 2.0, sectionY),
             10.0, muted, FontWeights.Bold);
         var extra = new (ParameterViewModel Source, string Label)[]
         {
@@ -2831,7 +2853,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         };
         for (var i = 0; i < extra.Length; i++)
             DrawHumanCombatSideCard(dc, extra[i].Source, extra[i].Label,
-                new Rect(cardLeft, 78.0 + 99.0 * i, cardWidth, 88.0),
+                new Rect(cardLeft, 72.0 + 116.0 * i, cardWidth, 105.0),
                 text, muted, border, accent, panel);
     }
 
@@ -5757,7 +5779,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => 242.0,
             "PsyPhantomPressure" => 378.0,
-            "HumanCombatProfile" => 414.0,
+            "HumanCombatProfile" => 449.0,
             "PlayerWeaponProfile" => 242.0,
             "CoreHealthDashboard" => width >= 700.0 ? 282.0 : 365.0,
             "SevereFatiguePenaltyBoard" => 376.0,
