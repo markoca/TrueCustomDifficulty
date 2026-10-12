@@ -4295,6 +4295,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private const double RadiationProfileTop = 241.0;
     private const double RadiationProfileHeight = 388.0;
+    // Vertically center the full 132-DIP bezel inside the ring card.
+    private const double RadiationDialCenterY = 194.0;
     private const double RadiationControlsNarrowHeight = 272.0;
     private const double RadiationGap = 12.0;
     private static bool RadiationWide(double width) => width >= 800.0;
@@ -4331,7 +4333,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var damagePerAssumedCharge = RadiationDamageAtLevel(_radLevel);
         return damagePerAssumedCharge <= Epsilon
             ? double.PositiveInfinity
-            : RadiationModelMaxHp / damagePerAssumedCharge;
+            : Math.Ceiling(RadiationModelMaxHp / damagePerAssumedCharge);
     }
 
     private static string RadiationTime(double seconds)
@@ -4357,7 +4359,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void ScrubRadiationRing(Point point)
     {
         var ring = RadiationRingRect();
-        var center = new Point(ring.Left + ring.Width / 2.0, ring.Top + 181.0);
+        var center = new Point(ring.Left + ring.Width / 2.0, ring.Top + RadiationDialCenterY);
         var angle = Math.Atan2(point.Y - center.Y, point.X - center.X) + Math.PI / 2.0;
         if (angle < 0.0) angle += Math.PI * 2.0;
         // Twelve o'clock is the beginning of the clockwise 1–100 scale;
@@ -4386,7 +4388,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (Family != "RadiationBalance") return false;
         var ring = RadiationRingRect();
         var dx = point.X - ring.Left - ring.Width / 2.0;
-        var dy = point.Y - ring.Top - 181.0;
+        var dy = point.Y - ring.Top - RadiationDialCenterY;
         var distance = Math.Sqrt(dx * dx + dy * dy);
         // This is the visible 13-DIP main track, not a disconnected
         // second outer ring. Give the player a modest drag tolerance.
@@ -4530,7 +4532,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                     SweepDirection.Counterclockwise, true, false);
             }
             geometry.Freeze();
-            dc.DrawGeometry(symbol, null, geometry);
+            dc.DrawGeometry(symbol,
+                new Pen(CloneWithOpacity(Brushes.Black, 0.28), 0.75), geometry);
         }
         // Solid overlapping center: no hollow bore or dark puncture.
         dc.DrawEllipse(symbol, null, center, 18.0, 18.0);
@@ -4568,7 +4571,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, "RADIATION LEVELS",
             new Point(profile.Left + 12.0, profile.Top + 9.0),
             10.2, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "DRAG RING · 1–100",
+        DrawRightAlignedText(dc, "1–100 RAD",
             new Point(profile.Right - 12.0, profile.Top + 9.0),
             9.0, muted, FontWeights.SemiBold);
         var damage = P("survival.radiationDamage");
@@ -4576,11 +4579,12 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         var center = new Point(profile.Left + profile.Width / 2.0,
-            profile.Top + 181.0);
+            profile.Top + RadiationDialCenterY);
         const double radius = 113.0;
         var currentRad = _radLevel;
 
-        // Recessed metal bezel / instrument face, not a second value track.
+        // Recessed matte bezel with restrained instrumentation. The dial
+        // reads like the game's HUD symbol rather than a technical chart.
         // The only selectable rail is still radius=113 (hit radius 100..127).
         dc.DrawEllipse(CloneWithOpacity(soft, 0.12),
             new Pen(CloneWithOpacity(border, 0.9), 1.3),
@@ -4615,13 +4619,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // Solid game-HUD-inspired trefoil covers the dial face. The selected
         // numeric RAD remains visible only in the adjacent RAD CONTROLS panel.
-        DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.9));
-        DrawCenteredText(dc, "11 CFG STAGES · 99 RAD DEADLY",
-            new Point(center.X, profile.Top + 349.0),
-            9.3, muted, FontWeights.SemiBold);
-        DrawCenteredText(dc, "HUD-STYLE PREVIEW · NOT GAME HUD",
-            new Point(center.X, profile.Top + 370.0),
-            8.6, muted, FontWeights.SemiBold);
+        DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));
         DrawRadiationControls(dc, text, muted, border, soft, accent, panel);
     }
 
@@ -4686,7 +4684,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(area.Left + 16.0, area.Top + (wide ? 261.0 : 203.0)),
             15.0, modified ? accent : text, FontWeights.Bold);
 
-        DrawText(dc, "EST. HP ZERO",
+        DrawText(dc, "EST. HP ZERO · 1 TICK/S",
             new Point(area.Left + 16.0, area.Top + (wide ? 298.0 : 225.0)),
             9.0, muted, FontWeights.Bold);
         DrawRightAlignedText(dc, "FULL " + RadiationModelMaxHp.ToString("0.#",
@@ -4696,7 +4694,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, double.IsFinite(eta) ? "~" + RadiationTime(eta) : "NO RAD DAMAGE",
             new Point(area.Left + 16.0, area.Top + (wide ? 315.0 : 239.0)),
             18.0, text, FontWeights.Bold);
-        DrawCenteredText(dc, "ASSUME 1 CHARGE/s · NO HEALING",
+        DrawCenteredText(dc, "FIXED RAD · NO HEALING OR PROTECTION",
             new Point(area.Left + area.Width / 2.0, area.Top + (wide ? 360.0 : 258.0)),
             8.6, muted, FontWeights.SemiBold);
     }
