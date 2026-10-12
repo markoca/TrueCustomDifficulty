@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using TrueCustomDifficulty.ViewModels;
 
 namespace TrueCustomDifficulty.Controls;
@@ -30,6 +31,15 @@ public sealed class AggregateVisualControl : FrameworkElement
     private int _radStart;
     private bool _radRecovery = true;
     private int _radSimFocus = -1;
+    // Preview-only exposure playback: never a saved preset or CFG writer parameter.
+    private ParameterViewModel? _radiationMaxHp;
+    private double _radCustomStartRad = double.NaN;
+    private double _radElapsed;
+    private bool _radPlaying;
+    private bool _radRingDragging;
+    private bool _radRingFocus;
+    private DateTime _radLastTickUtc;
+    private readonly DispatcherTimer _radTimer = new() { Interval = TimeSpan.FromMilliseconds(40) };
 
     private HitTarget? _dragTarget;
     private HitTarget? _hoverTarget;
@@ -89,6 +99,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         ToolTipService.SetInitialShowDelay(this, 550);
         ToolTipService.SetShowDuration(this, 10000);
         Loaded += (_, _) => RebindParameters();
+        Unloaded += (_, _) => StopRadiationPlayback();
+        _radTimer.Tick += (_, _) => TickRadiationPlayback();
     }
 
     protected override Size MeasureOverride(Size availableSize)
@@ -113,6 +125,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (_starvationMaxHp is not null)
             _starvationMaxHp.PropertyChanged -= Parameter_PropertyChanged;
         _starvationMaxHp = null;
+        if (_radiationMaxHp is not null)
+            _radiationMaxHp.PropertyChanged -= Parameter_PropertyChanged;
+        _radiationMaxHp = null;
 
         _parameters.Clear();
 
@@ -124,6 +139,15 @@ public sealed class AggregateVisualControl : FrameworkElement
                 .FirstOrDefault(p => p.Id == "health.maxHP");
             if (_starvationMaxHp is not null)
                 _starvationMaxHp.PropertyChanged += Parameter_PropertyChanged;
+        }
+
+        // Read-only full-HP reference. Never part of Radiation family reset/writes.
+        if (Family == "RadiationBalance" && Parameters is not null)
+        {
+            _radiationMaxHp = Parameters.OfType<ParameterViewModel>()
+                .FirstOrDefault(p => p.Id == "health.maxHP");
+            if (_radiationMaxHp is not null)
+                _radiationMaxHp.PropertyChanged += Parameter_PropertyChanged;
         }
 
         var familyIds = GetFamilyIds(Family);
@@ -141,6 +165,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             }
         }
 
+        StopRadiationPlayback();
+        _radRingDragging = false;
+        _radRingFocus = false;
+        _radElapsed = 0.0;
         _dragTarget = null;
         _hoverTarget = null;
         ToolTip = null;
@@ -4274,8 +4302,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private const double RadiationProfileTop = 241.0;
     private const double RadiationProfileHeight = 388.0;
-    private const double RadiationSimNarrowHeight = 122.0;
-    private const double RadiationTimelineHeight = 172.0;
+    private const double RadiationSimNarrowHeight = 184.0;
+    private const double RadiationTimelineHeight = 202.0;
     private const double RadiationGap = 12.0;
     private static bool RadiationWide(double width) => width >= 800.0;
     private static double RadiationBoardHeight(double width)
@@ -4294,6 +4322,170 @@ public sealed class AggregateVisualControl : FrameworkElement
         ("TOPAZ", 1.0, false)
     };
     private static readonly double[] RadiationStarts = { 0.0, 25.0, 50.0, 75.0 };
+    private const double RadiationPlaybackSpeed = 10.0;
+
+    private double RadiationInitialRad => double.IsNaN(_radCustomStartRad)
+        ? RadiationStarts[_radStart] : _radCustomStartRad;
+    private double RadiationNetGain()
+    {
+        var field = RadiationFields[_radField];
+        var buildUp = Math.Max(0.0, P("survival.radiationAccumulation")?.CurrentNumber ?? 0.0);
+        var recovery = _radRecovery
+            ? Math.Max(0.0, P("survival.radiationRecovery")?.CurrentNumber ?? 0.0) : 0.0;
+        return Math.Max(0.0, field.PerSecond * buildUp - recovery);
+    }
+
+    private double RadiationCurrentRad => Math.Min(100.0,
+        RadiationInitialRad + RadiationNetGain() * _radElapsed);
+
+    private double RadiationModelMaxHp => Math.Max(1.0, _radiationMaxHp?.CurrentNumber ?? 100.0);
+
+    // An explicitly hypothetical average of one damage charge per second.
+    // CFG inherits TimePerCharge=1s but runtime permanent-effect repeats,
+    // protection and the first charge's timing are not established.
+    private static double RadiationStageDps(double rad, double multiplier)
+    {
+        if (rad < 1.0 || multiplier <= Epsilon) return 0.0;
+        var index = 0;
+        foreach (var threshold in RadiationRingThresholds)
+            if (rad >= threshold) index++;
+        return RadiationDamageStages[Math.Min(index, 10)].SourceDamage * multiplier;
+    }
+
+    private static double RadiationNextBoundary(double rad)
+    {
+        if (rad < 1.0) return 1.0;
+        foreach (var threshold in RadiationRingThresholds)
+            if (rad < threshold) return threshold;
+        return 100.0;
+    }
+
+    private static double RadiationHpLoss(double initial, double seconds, double gain, double multiplier)
+    {
+        if (seconds <= 0.0 || multiplier <= Epsilon) return 0.0;
+        var rad = Math.Clamp(initial, 0.0, 100.0);
+        if (gain <= Epsilon) return seconds * RadiationStageDps(rad, multiplier);
+        var remaining = seconds;
+        var loss = 0.0;
+        for (var i = 0; i < 12 && remaining > Epsilon && rad < 100.0; i++)
+        {
+            var boundary = RadiationNextBoundary(rad);
+            var period = Math.Min(remaining, (boundary - rad) / gain);
+            loss += period * RadiationStageDps(rad, multiplier);
+            remaining -= period;
+            rad = boundary;
+        }
+        return loss + remaining * RadiationStageDps(rad, multiplier);
+    }
+
+    private static double RadiationHpZeroSeconds(double initial, double gain,
+        double multiplier, double fullHp)
+    {
+        if (fullHp <= 0.0) return 0.0;
+        if (multiplier <= Epsilon) return double.PositiveInfinity;
+        var rad = Math.Clamp(initial, 0.0, 100.0);
+        if (gain <= Epsilon)
+        {
+            var dps = RadiationStageDps(rad, multiplier);
+            return dps <= Epsilon ? double.PositiveInfinity : fullHp / dps;
+        }
+        var seconds = 0.0;
+        var hp = fullHp;
+        for (var i = 0; i < 12 && rad < 100.0; i++)
+        {
+            var boundary = RadiationNextBoundary(rad);
+            var period = (boundary - rad) / gain;
+            var dps = RadiationStageDps(rad, multiplier);
+            if (dps > Epsilon && hp <= period * dps)
+                return seconds + hp / dps;
+            hp -= period * dps;
+            seconds += period;
+            rad = boundary;
+        }
+        var finalDps = RadiationStageDps(100.0, multiplier);
+        return finalDps <= Epsilon ? double.PositiveInfinity : seconds + hp / finalDps;
+    }
+
+    private double RadiationDeathEta()
+        => RadiationHpZeroSeconds(RadiationInitialRad, RadiationNetGain(),
+            Math.Max(0.0, P("survival.radiationDamage")?.CurrentNumber ?? 0.0),
+            RadiationModelMaxHp);
+
+    private void StopRadiationPlayback()
+    {
+        _radPlaying = false;
+        _radTimer.Stop();
+    }
+
+    private void TickRadiationPlayback()
+    {
+        if (!_radPlaying || Family != "RadiationBalance")
+        {
+            StopRadiationPlayback();
+            return;
+        }
+        var now = DateTime.UtcNow;
+        var delta = Math.Clamp((now - _radLastTickUtc).TotalSeconds, 0.0, 0.25);
+        _radLastTickUtc = now;
+        _radElapsed += delta * RadiationPlaybackSpeed;
+        var death = RadiationDeathEta();
+        if (double.IsFinite(death) && _radElapsed >= death)
+        {
+            _radElapsed = death;
+            StopRadiationPlayback();
+        }
+        else if (RadiationCurrentRad >= 100.0 && !double.IsFinite(death))
+        {
+            // Full bar but no modelled HP damage: avoid an endless idle timer.
+            StopRadiationPlayback();
+        }
+        InvalidateVisual();
+    }
+
+    private void ToggleRadiationPlayback()
+    {
+        if (_radPlaying)
+            StopRadiationPlayback();
+        else
+        {
+            var death = RadiationDeathEta();
+            if (double.IsFinite(death) && _radElapsed >= death)
+                _radElapsed = 0.0;
+            _radLastTickUtc = DateTime.UtcNow;
+            _radPlaying = true;
+            _radTimer.Start();
+        }
+        InvalidateVisual();
+    }
+
+    private void ResetRadiationPreview(bool clearCustomStart = false)
+    {
+        StopRadiationPlayback();
+        _radElapsed = 0.0;
+        if (clearCustomStart) _radCustomStartRad = double.NaN;
+        InvalidateVisual();
+    }
+
+    private void ScrubRadiationRing(Point point)
+    {
+        var ring = RadiationRingRect();
+        var center = new Point(ring.Left + ring.Width / 2.0, ring.Top + 181.0);
+        var angle = Math.Atan2(point.Y - center.Y, point.X - center.X) + Math.PI / 2.0;
+        if (angle < 0.0) angle += Math.PI * 2.0;
+        _radCustomStartRad = Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 0.0, 100.0);
+        ResetRadiationPreview();
+        _radRingFocus = true;
+    }
+
+    private bool RadiationRingHit(Point point)
+    {
+        if (Family != "RadiationBalance") return false;
+        var ring = RadiationRingRect();
+        var dx = point.X - ring.Left - ring.Width / 2.0;
+        var dy = point.Y - ring.Top - 181.0;
+        var distance = Math.Sqrt(dx * dx + dy * dy);
+        return distance >= 101.0 && distance <= 130.0;
+    }
 
     private Rect RadiationRingRect()
     {
@@ -4331,6 +4523,25 @@ public sealed class AggregateVisualControl : FrameworkElement
             area.Top + 34.0, col, 65.0);
     }
 
+    private Rect RadiationPlaybackButton(int index)
+    {
+        var area = RadiationSimRect();
+        var wide = RadiationWide(ActualWidth);
+        var inset = wide ? 16.0 : 12.0;
+        var gap = 10.0;
+        var width = (area.Width - inset * 2.0 - gap) / 2.0;
+        return new Rect(area.Left + inset + index * (width + gap),
+            area.Top + (wide ? 270.0 : 109.0), width, wide ? 35.0 : 29.0);
+    }
+
+    private int RadiationPlaybackHit(Point point)
+    {
+        if (Family != "RadiationBalance") return -1;
+        for (var i = 0; i < 2; i++)
+            if (RadiationPlaybackButton(i).Contains(point)) return i;
+        return -1;
+    }
+
     private int RadiationSimHit(Point point)
     {
         if (Family != "RadiationBalance") return -1;
@@ -4345,10 +4556,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (index == 0)
             _radField = (_radField + RadiationFields.Length + direction) % RadiationFields.Length;
         else if (index == 1)
+        {
             _radStart = (_radStart + RadiationStarts.Length + direction) % RadiationStarts.Length;
+            _radCustomStartRad = double.NaN;
+        }
         else if (index == 2)
             _radRecovery = !_radRecovery;
-        InvalidateVisual();
+        ResetRadiationPreview();
     }
 
     private static string RadiationTime(double seconds)
@@ -4398,9 +4612,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawGeometry(null, new Pen(ink, 13.0), geometry);
     }
 
-    // Native BUILD-UP, RECOVERY, HP DAMAGE remain the only editable knobs.
-    // The fourth circular figure is a read-only source-state visualization,
-    // never an invented live RAD reading, clock or new CFG editor.
+    // Native BUILD-UP, RECOVERY, HP DAMAGE remain the only CFG-editable knobs.
+    // The full-circle preview is independently scrubbable, never a game reading.
     private void DrawRadiationBalance(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
@@ -4472,6 +4685,26 @@ public sealed class AggregateVisualControl : FrameworkElement
                     9.2, valueInk, FontWeights.SemiBold);
         }
 
+        var currentRad = RadiationCurrentRad;
+        var progressRadius = radius + 13.0;
+        if (currentRad >= 100.0)
+            dc.DrawEllipse(null, new Pen(accent, 4.5), center, progressRadius, progressRadius);
+        else if (currentRad > 0.0)
+        {
+            var progressArc = new StreamGeometry();
+            using (var ctx = progressArc.Open())
+            {
+                ctx.BeginFigure(RadiationRingPoint(center, progressRadius, 0.0), false, false);
+                ctx.ArcTo(RadiationRingPoint(center, progressRadius, currentRad),
+                    new Size(progressRadius, progressRadius), 0.0,
+                    currentRad > 50.0, SweepDirection.Clockwise, true, false);
+            }
+            progressArc.Freeze();
+            dc.DrawGeometry(null, new Pen(accent, 4.5), progressArc);
+        }
+        dc.DrawEllipse(accent, new Pen(panel, 1.8),
+            RadiationRingPoint(center, progressRadius, currentRad), 5.5, 5.5);
+
         foreach (var threshold in RadiationRingThresholds)
         {
             dc.DrawLine(new Pen(panel, threshold == 99.0 ? 3.6 : 3.1),
@@ -4484,14 +4717,17 @@ public sealed class AggregateVisualControl : FrameworkElement
                 threshold == 99.0 ? FontWeights.Bold : FontWeights.SemiBold);
         }
 
-        DrawCenteredText(dc, "RADIATION",
+        var hp = Math.Max(0.0, RadiationModelMaxHp -
+            RadiationHpLoss(RadiationInitialRad, _radElapsed, RadiationNetGain(), multiplier));
+        DrawCenteredText(dc, "SIMULATED",
             new Point(center.X, center.Y - 23.0), 10.3, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "0–100",
+        DrawCenteredText(dc, currentRad.ToString("0", CultureInfo.InvariantCulture) + " RAD",
             new Point(center.X, center.Y + 1.0), 19.5, text, FontWeights.Bold);
-        DrawCenteredText(dc, "RAD",
-            new Point(center.X, center.Y + 26.0), 10.2, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "HP LOSS AT 1 RAD",
-            new Point(center.X, center.Y + 42.0), 9.0, muted, FontWeights.SemiBold);
+        DrawCenteredText(dc, "0–100 · DRAG RING",
+            new Point(center.X, center.Y + 26.0), 9.4, muted, FontWeights.Bold);
+        DrawCenteredText(dc, hp.ToString("0.#", CultureInfo.InvariantCulture)
+                + " / " + RadiationModelMaxHp.ToString("0.#", CultureInfo.InvariantCulture) + " HP",
+            new Point(center.X, center.Y + 42.0), 9.7, hp <= Epsilon ? accent : text, FontWeights.SemiBold);
 
         var deadly = RadiationDamageStages[10];
         DrawCenteredText(dc, "99 RAD · DEADLY  /  CFG DAMAGE "
@@ -4504,8 +4740,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawRadiationSimulation(dc, text, muted, border, soft, accent, panel);
     }
 
-    // Scenario-only settings are clickable but never become writer parameters.
-    // The model deliberately predicts RAD thresholds, NOT time-to-death.
+    // Scenario-only settings never become CFG or preset parameters.
+    // Death ETA is an expressly hypothetical one-charge-per-second/no-healing model.
     private void DrawRadiationSimulation(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
@@ -4520,8 +4756,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawRightAlignedText(dc, "MODEL ONLY",
             new Point(scenario.Right - 12.0, scenario.Top + 10.0),
             9.0, muted, FontWeights.Bold);
+
         var field = RadiationFields[_radField];
-        var initial = RadiationStarts[_radStart];
+        var initial = RadiationInitialRad;
+        var current = RadiationCurrentRad;
         var titles = new[] { "FIELD PRESET", "START RAD", "PASSIVE RECOVERY" };
         var values = new[]
         {
@@ -4548,89 +4786,115 @@ public sealed class AggregateVisualControl : FrameworkElement
                 17.0, focused ? accent : muted, FontWeights.Bold);
         }
 
-        var gain = Math.Max(0.0, P("survival.radiationAccumulation")?.CurrentNumber ?? 0.0);
-        var recovery = _radRecovery
-            ? Math.Max(0.0, P("survival.radiationRecovery")?.CurrentNumber ?? 0.0) : 0.0;
-        // Assumption only: engine field falloff, gear and protections unknown.
-        var net = Math.Max(0.0, field.PerSecond * gain - recovery);
-        var progressing = net > Epsilon;
-        var time99 = progressing ? (99.0 - initial) / net : double.NaN;
+        for (var i = 0; i < 2; i++)
+        {
+            var button = RadiationPlaybackButton(i);
+            dc.DrawRoundedRectangle(CloneWithOpacity(soft, .18),
+                new Pen(i == 0 && _radPlaying ? accent : border, 1.0),
+                button, 4.0, 4.0);
+            DrawCenteredText(dc, i == 0 ? (_radPlaying ? "PAUSE" : "PLAY ×10") : "RESET",
+                new Point(button.Left + button.Width / 2.0, button.Top + button.Height / 2.0),
+                10.3, i == 0 && _radPlaying ? accent : text, FontWeights.Bold);
+        }
+        var net = RadiationNetGain();
         if (RadiationWide(ActualWidth))
         {
             DrawText(dc, "ASSUMED NET GAIN",
-                new Point(scenario.Left + 16.0, scenario.Top + 290.0),
+                new Point(scenario.Left + 16.0, scenario.Top + 316.0),
                 9.0, muted, FontWeights.Bold);
             DrawText(dc, net.ToString("0.###", CultureInfo.InvariantCulture) + " RAD/s",
-                new Point(scenario.Left + 16.0, scenario.Top + 309.0),
-                18.0, text, FontWeights.Bold);
-            DrawText(dc, "FIELD × BUILD-UP − RECOVERY",
-                new Point(scenario.Left + 16.0, scenario.Top + 341.0),
-                9.0, muted, FontWeights.SemiBold);
+                new Point(scenario.Left + 16.0, scenario.Top + 332.0),
+                17.0, text, FontWeights.Bold);
             DrawText(dc, field.DirectHazard
-                    ? "DIRECT FIELD DAMAGE EXCLUDED"
-                    : "NO ARMOR / ARTIFACT / HP MODEL",
-                new Point(scenario.Left + 16.0, scenario.Top + 365.0),
+                    ? "DIRECT FIELD HAZARD EXCLUDED"
+                    : "FIELD × BUILD-UP − RECOVERY",
+                new Point(scenario.Left + 16.0, scenario.Top + 361.0),
                 9.0, field.DirectHazard ? accent : muted, FontWeights.SemiBold);
         }
         else
+        {
             DrawText(dc, "ASSUMED " + net.ToString("0.###",
-                    CultureInfo.InvariantCulture) + " RAD/s · FIELD × BUILD-UP − RECOVERY",
-                new Point(scenario.Left + 12.0, scenario.Top + 103.0),
+                    CultureInfo.InvariantCulture) + " RAD/s",
+                new Point(scenario.Left + 12.0, scenario.Top + 149.0),
                 9.0, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, field.DirectHazard ? "DIRECT HAZARD EXCLUDED" : "×10 PLAYBACK",
+                new Point(scenario.Right - 12.0, scenario.Top + 149.0),
+                8.8, field.DirectHazard ? accent : muted, FontWeights.SemiBold);
+        }
+
+        var multiplier = Math.Max(0.0, P("survival.radiationDamage")?.CurrentNumber ?? 0.0);
+        var hp = Math.Max(0.0, RadiationModelMaxHp -
+            RadiationHpLoss(initial, _radElapsed, net, multiplier));
+        var death = RadiationDeathEta();
+        var remaining = double.IsFinite(death) ? Math.Max(0.0, death - _radElapsed) : double.NaN;
+        var to99 = net > Epsilon && current < 99.0 ? (99.0 - current) / net : double.NaN;
 
         DrawText(dc, "RADIATION TIMELINE",
             new Point(timeline.Left + 12.0, timeline.Top + 10.0),
             10.3, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "CONSTANT FIELD · MODEL ONLY",
+        DrawRightAlignedText(dc, "HYPOTHETICAL · NO HEALING",
             new Point(timeline.Right - 12.0, timeline.Top + 10.0),
             9.0, muted, FontWeights.SemiBold);
-        DrawText(dc, "TO 99 RAD",
+        DrawText(dc, "MODEL HP ZERO",
             new Point(timeline.Left + 15.0, timeline.Top + 34.0),
-            9.1, muted, FontWeights.Bold);
-        DrawText(dc, progressing ? "~" + RadiationTime(time99) : "NO NET BUILD-UP",
-            new Point(timeline.Left + 94.0, timeline.Top + 28.0),
-            17.0, text, FontWeights.Bold);
-        DrawRightAlignedText(dc,
-            "FROM " + initial.ToString("0", CultureInfo.InvariantCulture) + " RAD",
-            new Point(timeline.Right - 13.0, timeline.Top + 34.0),
             9.0, muted, FontWeights.Bold);
-        var rail = new Rect(timeline.Left + 24.0, timeline.Top + 82.0,
+        DrawText(dc, hp <= Epsilon ? "HP 0" :
+                double.IsFinite(remaining) ? "~" + RadiationTime(remaining) : "NO HP LOSS",
+            new Point(timeline.Left + 137.0, timeline.Top + 28.0),
+            16.0, hp <= Epsilon ? accent : text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "HP " + hp.ToString("0.#", CultureInfo.InvariantCulture)
+                + " / " + RadiationModelMaxHp.ToString("0.#", CultureInfo.InvariantCulture),
+            new Point(timeline.Right - 13.0, timeline.Top + 34.0),
+            9.2, hp <= Epsilon ? accent : muted, FontWeights.Bold);
+        DrawText(dc, "TO 99 RAD",
+            new Point(timeline.Left + 15.0, timeline.Top + 59.0),
+            9.0, muted, FontWeights.Bold);
+        DrawText(dc, current >= 99.0 ? "REACHED" :
+                net > Epsilon ? "~" + RadiationTime(to99) : "NO NET GAIN",
+            new Point(timeline.Left + 137.0, timeline.Top + 55.0),
+            11.3, text, FontWeights.SemiBold);
+        DrawRightAlignedText(dc,
+            "NOW " + current.ToString("0", CultureInfo.InvariantCulture) + " RAD",
+            new Point(timeline.Right - 13.0, timeline.Top + 60.0),
+            9.2, muted, FontWeights.Bold);
+
+        var rail = new Rect(timeline.Left + 24.0, timeline.Top + 111.0,
             Math.Max(1.0, timeline.Width - 48.0), 4.0);
         var y = rail.Top + rail.Height / 2.0;
         dc.DrawLine(new Pen(border, 4.0),
             new Point(rail.Left, y), new Point(rail.Right, y));
         var initialX = rail.Left + initial / 100.0 * rail.Width;
-        if (progressing)
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, .65), 4.0),
-                new Point(initialX, y),
-                new Point(rail.Left + .99 * rail.Width, y));
-        dc.DrawEllipse(panel, new Pen(accent, 1.7), new Point(initialX, y), 6.0, 6.0);
+        var currentX = rail.Left + current / 100.0 * rail.Width;
+        if (current > initial)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, .8), 4.0),
+                new Point(initialX, y), new Point(currentX, y));
+        dc.DrawEllipse(panel, new Pen(muted, 1.5), new Point(initialX, y), 4.5, 4.5);
+        dc.DrawEllipse(accent, new Pen(panel, 1.7), new Point(currentX, y), 6.0, 6.0);
         foreach (var threshold in RadiationRingThresholds)
         {
             var x = rail.Left + threshold / 100.0 * rail.Width;
-            var future = progressing && threshold > initial;
+            var future = net > Epsilon && threshold > current;
             dc.DrawLine(new Pen(future ? text : muted, 1.6),
                 new Point(x, y - 9.0), new Point(x, y + 9.0));
             DrawCenteredText(dc, threshold.ToString("0", CultureInfo.InvariantCulture),
-                new Point(x, timeline.Top + 57.0), 9.0,
+                new Point(x, timeline.Top + 87.0), 9.0,
                 threshold >= 99.0 ? accent : muted, FontWeights.SemiBold);
-            // Limited clock labels avoid collisions on a 520-DIP window.
             if (threshold < 99.0 && ((int)threshold / 10) % 2 == 1)
                 DrawCenteredText(dc,
-                    threshold <= initial ? "PASSED"
-                    : future ? RadiationTime((threshold - initial) / net) : "—",
-                    new Point(x, timeline.Top + 105.0),
+                    threshold <= current ? "PASSED"
+                    : future ? RadiationTime((threshold - current) / net) : "—",
+                    new Point(x, timeline.Top + 137.0),
                     8.8, future ? text : muted, FontWeights.SemiBold);
         }
         DrawText(dc, "START",
             new Point(Math.Clamp(initialX - 16.0, rail.Left,
-                    Math.Max(rail.Left, rail.Right - 40.0)), timeline.Top + 121.0),
-            9.0, accent, FontWeights.Bold);
+                    Math.Max(rail.Left, rail.Right - 40.0)), timeline.Top + 151.0),
+            9.0, muted, FontWeights.Bold);
         DrawCenteredText(dc, field.DirectHazard
-                ? "DIRECT FIELD HAZARD EXCLUDED · NO HP/DEATH ETA"
-                : "ASSUMED LINEAR RAD GAIN · NO HP/DEATH ETA",
-            new Point(timeline.Left + timeline.Width / 2.0, timeline.Top + 151.0),
-            9.0, muted, FontWeights.SemiBold);
+                ? "EST. 1 HP CHARGE/s · DIRECT HAZARD EXCLUDED"
+                : "EST. 1 HP CHARGE/s · ENGINE CADENCE UNVERIFIED",
+            new Point(timeline.Left + timeline.Width / 2.0, timeline.Top + 182.0),
+            8.9, field.DirectHazard ? accent : muted, FontWeights.SemiBold);
     }
 
     // Three native stash ammo quantities + three independent bonus rewards.
@@ -5388,9 +5652,32 @@ public sealed class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        var playback = RadiationPlaybackHit(point);
+        if (playback >= 0)
+        {
+            _radRingFocus = false;
+            _radSimFocus = -1;
+            _selectedParameter = null;
+            if (playback == 0) ToggleRadiationPlayback();
+            else ResetRadiationPreview(clearCustomStart: true);
+            e.Handled = true;
+            return;
+        }
+        if (RadiationRingHit(point))
+        {
+            _radSimFocus = -1;
+            _selectedParameter = null;
+            _selectedHitKind = null;
+            _radRingDragging = true;
+            CaptureMouse();
+            ScrubRadiationRing(point);
+            e.Handled = true;
+            return;
+        }
         var preview = RadiationSimHit(point);
         if (preview >= 0)
         {
+            _radRingFocus = false;
             _radSimFocus = preview;
             _selectedParameter = null;
             _selectedHitKind = null;
@@ -5399,6 +5686,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
         _radSimFocus = -1;
+        _radRingFocus = false;
         var target = FindTarget(point);
         if (target is null || !target.Parameter.IsControlEnabled)
             return;
@@ -5456,6 +5744,26 @@ public sealed class AggregateVisualControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
+        if (_radRingDragging && e.LeftButton == MouseButtonState.Pressed)
+        {
+            ScrubRadiationRing(point);
+            e.Handled = true;
+            return;
+        }
+        if (_dragTarget is null && RadiationRingHit(point))
+        {
+            SetHoverTarget(null);
+            Cursor = Cursors.Hand;
+            ToolTip = "Preview RAD: drag or scroll the ring · Right-click restores the starting value.";
+            return;
+        }
+        if (_dragTarget is null && RadiationPlaybackHit(point) >= 0)
+        {
+            SetHoverTarget(null);
+            Cursor = Cursors.Hand;
+            ToolTip = "Playback runs at 10× model time. RESET rewinds to the chosen start.";
+            return;
+        }
         if (_dragTarget is null && RadiationSimHit(point) >= 0)
         {
             SetHoverTarget(null);
@@ -5497,9 +5805,24 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-        var preview = RadiationSimHit(e.GetPosition(this));
+        var pointer = e.GetPosition(this);
+        if (RadiationRingHit(pointer))
+        {
+            var direction = Math.Sign(e.Delta);
+            if (direction == 0) return;
+            _radCustomStartRad = Math.Clamp(Math.Round(RadiationCurrentRad) + direction, 0.0, 100.0);
+            _radRingFocus = true;
+            _radSimFocus = -1;
+            _selectedParameter = null;
+            ResetRadiationPreview();
+            Focus();
+            e.Handled = true;
+            return;
+        }
+        var preview = RadiationSimHit(pointer);
         if (preview >= 0)
         {
+            _radRingFocus = false;
             _radSimFocus = preview;
             _selectedParameter = null;
             _selectedHitKind = null;
@@ -5538,6 +5861,13 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         base.OnMouseLeftButtonUp(e);
 
+        if (_radRingDragging)
+        {
+            _radRingDragging = false;
+            ReleaseMouseCapture();
+            e.Handled = true;
+            return;
+        }
         if (_dragTarget is null)
             return;
 
@@ -5550,7 +5880,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
-        if (_dragTarget is null)
+        if (_dragTarget is null && !_radRingDragging)
         {
             SetHoverTarget(null);
             ToolTip = null;
@@ -5561,6 +5891,11 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnLostMouseCapture(MouseEventArgs e)
     {
         base.OnLostMouseCapture(e);
+        if (_radRingDragging)
+        {
+            _radRingDragging = false;
+            Cursor = Cursors.Arrow;
+        }
         if (_dragTarget is null)
             return;
 
@@ -5610,14 +5945,27 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
+        if (RadiationRingHit(e.GetPosition(this)))
+        {
+            ResetRadiationPreview(clearCustomStart: true);
+            _radRingFocus = true;
+            _radSimFocus = -1;
+            e.Handled = true;
+            return;
+        }
         var preview = RadiationSimHit(e.GetPosition(this));
         if (preview >= 0)
         {
             if (preview == 0) _radField = 1;
-            else if (preview == 1) _radStart = 0;
+            else if (preview == 1)
+            {
+                _radStart = 0;
+                _radCustomStartRad = double.NaN;
+            }
             else _radRecovery = true;
+            _radRingFocus = false;
             _radSimFocus = preview;
-            InvalidateVisual();
+            ResetRadiationPreview();
             e.Handled = true;
             return;
         }
@@ -5681,6 +6029,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         if (e.Key == Key.R)
         {
+            if (Family == "RadiationBalance")
+                ResetRadiationPreview(clearCustomStart: true);
             if (Family == "ConsumableMixer")
             {
                 var durationAnchor = P("survival.waterInstantStaminaRestore");
@@ -5694,6 +6044,31 @@ public sealed class AggregateVisualControl : FrameworkElement
             InvalidateVisual();
             e.Handled = true;
             return;
+        }
+
+        if (Family == "RadiationBalance" && _radRingFocus)
+        {
+            if (e.Key == Key.Space)
+            {
+                ToggleRadiationPlayback();
+                e.Handled = true;
+                return;
+            }
+            var delta = e.Key switch
+            {
+                Key.Right or Key.Up => 1,
+                Key.Left or Key.Down => -1,
+                _ => 0
+            };
+            if (delta != 0 || e.Key is Key.Home or Key.End)
+            {
+                _radCustomStartRad = e.Key == Key.Home ? 0.0
+                    : e.Key == Key.End ? 100.0
+                    : Math.Clamp(Math.Round(RadiationCurrentRad) + delta, 0.0, 100.0);
+                ResetRadiationPreview();
+                e.Handled = true;
+                return;
+            }
         }
 
         if (Family == "RadiationBalance" && _radSimFocus >= 0)
