@@ -2738,45 +2738,25 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        // Reserve the right-hand lane for two vertically oriented source faders.
-        var plotSide = Math.Min(280.0, Math.Max(180.0, ActualWidth - 360.0));
-        var plot = new Rect(64.0, 91.0, plotSide, plotSide);
+        // Squad Pressure Dashboard: two readable stats above a compact native 2D editor.
+        // Keep the left/bottom/joint handle grammar and all original CFG sources.
+        var leftWidth = Math.Min(335.0, Math.Max(266.0, ActualWidth * .41));
+        var left = 18.0;
+        var statGap = 9.0;
+        var statWidth = (leftWidth - statGap) / 2.0;
+        DrawCenteredText(dc, "DEFENSE & DAMAGE",
+            new Point(left + leftWidth / 2.0, 57.0), 10.0, muted, FontWeights.Bold);
+        DrawHumanCombatStat(dc, health, "ENEMY HEALTH",
+            new Rect(left, 75.0, statWidth, 60.0), text, muted, border, accent, panel);
+        DrawHumanCombatStat(dc, damage, "GUN DAMAGE",
+            new Rect(left + statWidth + statGap, 75.0, statWidth, 60.0),
+            text, muted, border, accent, panel);
 
-        // Labels are attached to their axes without overlapping the scale.
-        // Avoid Unicode arrows, which may render as squares in Wine.
-        var axisCenterX = plot.Left + plot.Width / 2.0;
-        var healthLabel = CreateText("ENEMY HEALTH", 10.5, text, FontWeights.Bold);
-        var healthModified = health.IsValueModifiedFromReference();
-        var healthValue = CreateText($"{health.CurrentNumber:0.##}x",
-            healthModified ? 14.2 : 13.0,
-            healthModified ? accent : text, FontWeights.Bold);
-        const double axisLabelGap = 9.0;
-        var healthStart = axisCenterX -
-            (healthLabel.WidthIncludingTrailingWhitespace + axisLabelGap +
-             healthValue.WidthIncludingTrailingWhitespace) / 2.0;
-        var axisHeadingY = plot.Top - 32.0;
-        dc.DrawText(healthLabel, new Point(healthStart, axisHeadingY));
-        dc.DrawText(healthValue, new Point(
-            healthStart + healthLabel.WidthIncludingTrailingWhitespace + axisLabelGap,
-            axisHeadingY - 2.0));
-
-        // Rotate the complete Y-axis label/value pair as one line. Keeping
-        // them in the same local coordinate space guarantees visual alignment.
-        var axisCenterY = plot.Top + plot.Height / 2.0;
-        var damageLabel = CreateText("ENEMY GUN DAMAGE", 10.5, text, FontWeights.Bold);
-        var damageModified = damage.IsValueModifiedFromReference();
-        var damageValue = CreateText($"{damage.CurrentNumber:0.##}x",
-            damageModified ? 14.2 : 13.0,
-            damageModified ? accent : text, FontWeights.Bold);
-        var damageStart = 18.0 -
-            (damageLabel.WidthIncludingTrailingWhitespace + axisLabelGap +
-             damageValue.WidthIncludingTrailingWhitespace) / 2.0;
-        dc.PushTransform(new RotateTransform(-90.0, 18.0, axisCenterY));
-        dc.DrawText(damageLabel, new Point(damageStart, axisCenterY - 7.0));
-        dc.DrawText(damageValue, new Point(
-            damageStart + damageLabel.WidthIncludingTrailingWhitespace + axisLabelGap,
-            axisCenterY - 9.0));
-        dc.Pop();
+        var plotSide = Math.Min(202.0, Math.Max(161.0, leftWidth - 93.0));
+        var plot = new Rect(left + (leftWidth - plotSide) / 2.0 + 9.0,
+            166.0, plotSide, plotSide);
+        DrawCenteredText(dc, "BALANCE EDITOR",
+            new Point(left + leftWidth / 2.0, 152.0), 10.0, muted, FontWeights.Bold);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
 
         for (var tick = 0; tick <= 4; tick++)
@@ -2838,8 +2818,11 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // The square graph owns the two linked axes. Independent source
         // editors at right follow the same Stamina-style horizontal grammar.
-        var cardLeft = plot.Right + 16.0;
+        var cardLeft = left + leftWidth + 17.0;
         var cardWidth = Math.Max(1.0, ActualWidth - cardLeft - 18.0);
+        DrawCenteredText(dc, "OFFENSIVE PRESSURE",
+            new Point(cardLeft + cardWidth / 2.0, 57.0),
+            10.0, muted, FontWeights.Bold);
         var extra = new (ParameterViewModel Source, string Label)[]
         {
             (frequency, "ATTACK FREQUENCY"),
@@ -2848,8 +2831,22 @@ public sealed class AggregateVisualControl : FrameworkElement
         };
         for (var i = 0; i < extra.Length; i++)
             DrawHumanCombatSideCard(dc, extra[i].Source, extra[i].Label,
-                new Rect(cardLeft, 91.0 + 101.0 * i, cardWidth, 90.0),
+                new Rect(cardLeft, 78.0 + 99.0 * i, cardWidth, 88.0),
                 text, muted, border, accent, panel);
+    }
+
+    private void DrawHumanCombatStat(
+        DrawingContext dc, ParameterViewModel parameter, string label, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .6),
+            new Pen(CloneWithOpacity(border, .8), .9), card, 4.0, 4.0);
+        DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2.0,
+            card.Top + 17.0), 9.6, muted, FontWeights.Bold);
+        DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
+            new Point(card.Left + card.Width / 2.0, card.Top + 41.0),
+            16.0, parameter.IsValueModifiedFromReference() ? accent : text,
+            FontWeights.Bold);
     }
 
     private void DrawHumanCombatSideCard(
@@ -5760,7 +5757,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => 242.0,
             "PsyPhantomPressure" => 378.0,
-            "HumanCombatProfile" => 465.0,
+            "HumanCombatProfile" => 414.0,
             "PlayerWeaponProfile" => 242.0,
             "CoreHealthDashboard" => width >= 700.0 ? 282.0 : 365.0,
             "SevereFatiguePenaltyBoard" => 376.0,
