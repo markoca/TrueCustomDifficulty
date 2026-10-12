@@ -101,7 +101,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "TraderStockBoard" => "Turn the independent AMMO STOCK and MEDIC STOCK knobs; each edits its own native supply quantities.",
                     "ServiceCostsBoard" => "Turn the separate Fast Travel, Upgrade and Base Repair knobs. Base Repair shows a percentage of the source multiplier, not a final repair bill.",
                     "ItemWeightBoard" => "Drag AMMUNITION WEIGHT or FOOD & MEDICINE WEIGHT independently.",
-                    "AnomalyGlobalDamage" => "Turn GLOBAL inside the combined Anomaly Damage card. It multiplies every individual source; top numbers show results before protection, lower numbers are the source CFG values.",
+                    "AnomalyGlobalDamage" => "Turn GLOBAL to scale damage for all anomalies. Each column shows FINAL (combined, before protection) and BASE (editable individual damage); bars compare BASE with vanilla.",
                     "AnomalySpecialEffects" => "Drag the Razor, Diamond or Psy track you want to change; each is independent.",
                     "NpcLootLoadout" => "Choose an Extra Corpse Loot option, drag the medical or ammo track, or move the weapon-condition MIN/MAX handles. The ammo numbers update as you change the setting.",
                     "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
@@ -142,7 +142,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag a mutant's track to change its part-drop chance."
                     + Environment.NewLine + "Right-click one species to reset it; R resets all fourteen.";
             if (IsIndividualAnomalyDamageMember)
-                return "Bar height shows percent of this anomaly's own vanilla damage (100% unchanged). TOP = source × global; LOWER = editable source value."
+                return "Each bar compares editable BASE damage with vanilla (100% unchanged). FINAL includes the global multiplier before protection."
                     + Environment.NewLine + "Turn GLOBAL in the same card. Right-click a control to reset it; R resets the whole damage group.";
             if (IsItemPriceScalerMember)
                 return "Drag a category's price track to tune its multiplier."
