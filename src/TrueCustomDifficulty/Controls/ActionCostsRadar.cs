@@ -35,7 +35,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         new("stamina.sprintCost", "SPRINT", ActionGroup.Movement),
         new("stamina.jumpCost", "JUMP", ActionGroup.Movement),
         new("stamina.vaultCost", "VAULT", ActionGroup.Movement),
-        new("stamina.meleeNormalCost", "NORMAL MELEE", ActionGroup.Melee),
+        new("stamina.meleeNormalCost", "QUICK MELEE", ActionGroup.Melee),
         new("stamina.meleeStrongCost", "STRONG MELEE", ActionGroup.Melee),
         new("stamina.butstockCost", "BUTTSTOCK", ActionGroup.Melee),
     };
