@@ -4891,8 +4891,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                     Math.Max(rail.Left, rail.Right - 40.0)), timeline.Top + 151.0),
             9.0, muted, FontWeights.Bold);
         DrawCenteredText(dc, field.DirectHazard
-                ? "EST. 1 HP CHARGE/s · DIRECT HAZARD EXCLUDED"
-                : "EST. 1 HP CHARGE/s · ENGINE CADENCE UNVERIFIED",
+                ? "ASSUME 1 CHARGE/s · DIRECT HAZARD EXCLUDED"
+                : "ASSUME 1 CHARGE/s · ENGINE CADENCE UNVERIFIED",
             new Point(timeline.Left + timeline.Width / 2.0, timeline.Top + 182.0),
             8.9, field.DirectHazard ? accent : muted, FontWeights.SemiBold);
     }
@@ -5840,6 +5840,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         Focus();
+        _radRingFocus = false;
         _radSimFocus = -1;
         _selectedParameter = target.Parameter;
         _selectedHitKind = HitKind.Knob;
@@ -5975,6 +5976,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (target is null || !target.Parameter.IsControlEnabled)
             return;
 
+        _radRingFocus = false;
         _radSimFocus = -1;
         _selectedParameter = target.Kind == HitKind.FatigueReloadJoint
             ? ReloadEffectFor(target.Parameter) ?? target.Parameter
