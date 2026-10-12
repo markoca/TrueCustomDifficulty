@@ -1,5 +1,14 @@
 # Visual Control System
 
+### 2026-10-12 — Water / Energy Drink effect-marker stripes: green and blue (CURRENT)
+
+This supersedes the earlier **blue Water / orange Energy Drink** colored-line rule. **Water = subdued green** (RGB **91,173,98**); **Energy Drink = subdued blue** (RGB **76,149,215**). Do not change the shared gold main slider track, numeric highlighting, inactive rail or native handles. Colored underlines remain purely visual, thin (**2.4 DIP**) and exclusive to Water and Energy Drink effects; no new CFG source, interactivity or tutorial legend.
+
+**Critical timeline semantics:** in `ConsumableMixer` main WATER / ENERGY DRINK rows, the colored line(s) terminate at the *independent child-effect marker*, **never at the main drink duration handle**. WATER draws **one green stripe** from the 0-second baseline to `survival.waterRegenDuration` (+25% stamina effect marker). ENERGY DRINK draws **two blue stripes** from the baseline to `survival.energyFullCostDuration` (−100% stamina cost) and `survival.energyPartialCostDuration` (−30% stamina cost), respectively. Position Energy Drink's two stripes at **+7 DIP / +11 DIP** below its main rail so they remain distinguishable; Water uses **+9 DIP**. All X coordinates come from the same source-native `SecondsX` mapping already used to render the short-effect markers. The muted marker ticks, editable parent gold duration bars, min/max, baseline references and shared seconds axes remain unchanged.
+
+The three compact short-effect cards keep their colored underlines ending at **their own editable handles**, and the Energy Drink Fatigue Relief ruler keeps its own blue line ending at its current handle. Alcohol, medicine, generic stamina and mixed Water+Energy refill knobs remain standard gold/neutral. Preserve native clamps/linked duration constraints, range override, pointer/keyboard edit, right-click/R reset, presets, and CFG writer. This is presentation-only; local publish/Wine acceptance is pending.
+
+
 ### 2026-10-12 — Water / Energy Drink slider underlines (CURRENT)
 
 Only **Water** and **Energy Drink** source-backed horizontal effect sliders receive a **second thin, colored line just below their existing gold slider rail**. Water uses subdued **blue** (RGB 72,159,190); Energy Drink uses subdued **orange** (RGB 215,139,62). The line is **2.4 DIP thick**, follows the real current slider value from the track's left position to its current handle, and is non-interactive. When a value is at the left endpoint or the source is disabled, no colored fill is drawn. The main track, gold handle, reference tick, actual scale, number highlighting, snapping, keyboard/mouse behavior and reset remain unchanged.

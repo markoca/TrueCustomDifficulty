@@ -3054,9 +3054,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     // actual WATER / ENERGY DRINK slider values. Mixed-item refill knobs,
     // alcohol, medicine, and ordinary stamina controls keep their gold rails.
     private static readonly Brush WaterEffectLineBrush =
-        new SolidColorBrush(Color.FromRgb(72, 159, 190));
+        new SolidColorBrush(Color.FromRgb(91, 173, 98));
     private static readonly Brush EnergyDrinkEffectLineBrush =
-        new SolidColorBrush(Color.FromRgb(215, 139, 62));
+        new SolidColorBrush(Color.FromRgb(76, 149, 215));
 
     private static Brush? DrinkEffectLineBrush(string sourceId) => sourceId switch
     {
@@ -3073,15 +3073,14 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Do not add a second hit target or interpret this as another CFG value.
     private static void DrawDrinkEffectLine(
         DrawingContext dc, ParameterViewModel parameter, double startX,
-        double currentX, double mainY)
+        double effectMarkerX, double mainY, double offset = 9.0)
     {
         var brush = DrinkEffectLineBrush(parameter.Id);
-        if (brush is null || !parameter.IsControlEnabled || currentX <= startX)
+        if (brush is null || !parameter.IsControlEnabled || effectMarkerX <= startX)
             return;
-        const double offset = 9.0;
         dc.DrawLine(new Pen(brush, 2.4),
             new Point(startX, mainY + offset),
-            new Point(currentX, mainY + offset));
+            new Point(effectMarkerX, mainY + offset));
     }
 
     // Drink strength knobs sit above the combined eight-lane duration graph;
@@ -3237,10 +3236,19 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Point(timeline.Left, y), new Point(maximumX, y));
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 4.0),
                 new Point(timeline.Left, y), new Point(currentX, y));
-            DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y);
-            foreach (var shortEffect in secondary[i])
+            // The colored underlines show the actual child-effect windows,
+            // not the drink's longer parent duration. Water has one effect
+            // marker; Energy Drink has two independent cost-cut markers.
+            for (var j = 0; j < secondary[i].Length; j++)
             {
+                var shortEffect = secondary[i][j];
                 var secondaryX = SecondsX(shortEffect.CurrentNumber);
+                // Two separate, slim tracks keep Energy Drink's two effects
+                // distinct without adding another slider or legend.
+                var effectOffset = secondary[i].Length == 2
+                    ? 7.0 + j * 4.0 : 9.0;
+                DrawDrinkEffectLine(dc, shortEffect, timeline.Left,
+                    secondaryX, y, effectOffset);
                 dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.8), 1.7),
                     new Point(secondaryX, y - 6.0),
                     new Point(secondaryX, y + 6.0));
