@@ -2118,7 +2118,10 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or not knob_wheel_gate_contains(_radiation_source, 'RadiationBalance')
     or 'rateReadout || nativeUnit is not null' not in _radiation_source
     or '"RadiationBalance" => RadiationBoardHeight' not in _radiation_source
-    or 'RadiationProfileTop + RadiationProfileHeight + 12.0' not in _radiation_source
+    or 'RadiationBoardHeight(double width)' not in _radiation_source
+    or '"RadiationBalance" => RadiationBoardHeight(width)' not in _radiation_source
+    or 'DrawRadiationSimulation(dc, text, muted, border, soft, accent, panel);' not in _radiation_renderer
+    or 'private void DrawRadiationSimulation(' not in _radiation_source
     or 'RADIATION LEVELS' not in _radiation_renderer
     or 'RADIATION DAMAGE STAGES' in _radiation_renderer
     or 'foreach (var threshold in RadiationRingThresholds)' not in _radiation_renderer
@@ -2128,7 +2131,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: three native editable knobs and source-true read-only 360-degree threshold ring")
+    note("Radiation: three native editable knobs, compact 360-degree ring, scenario controls and conditional RAD timeline")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -2908,7 +2911,9 @@ for _family, (_method, _height, _ids) in _seven_methods.items():
             _seven_errors.append(f'{_family}: renderer no longer references {_id}')
 if ('"RadiationBalance" => RadiationBoardHeight' not in _seven_src
     or 'private const double RadiationProfileTop = 241.0;' not in _seven_src
-    or 'private const double RadiationProfileHeight = 360.0;' not in _seven_src):
+    or 'private const double RadiationProfileHeight = 388.0;' not in _seven_src
+    or 'private const double RadiationSimNarrowHeight = 122.0;' not in _seven_src
+    or 'private const double RadiationTimelineHeight = 172.0;' not in _seven_src):
     _seven_errors.append('RadiationBalance renderer and measured stage-strip board height disagree')
 for _id, _native in _seven_expected_sliders.items():
     _s = (_seven_catalog.get(_id, {}).get('slider') or {})

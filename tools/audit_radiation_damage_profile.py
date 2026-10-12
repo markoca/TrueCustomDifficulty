@@ -35,12 +35,16 @@ assert "RadiationDamageStages.Max(s => s.SourceDamage)" in code
 assert "stage.SourceDamage * multiplier" in code
 assert "deadly.SourceDamage * multiplier" in code
 assert 'damage.IsValueModifiedFromReference()' in code
-assert "RadiationProfileTop + RadiationProfileHeight + 12.0" in code
+assert "RadiationProfileTop + RadiationProfileHeight" in code
+assert "private const double RadiationProfileHeight = 388.0;" in code
+assert "private const double RadiationSimNarrowHeight = 122.0;" in code
+assert "private const double RadiationTimelineHeight = 172.0;" in code
+assert "RadiationBoardHeight(double width)" in code
 assert '"RadiationBalance" => RadiationBoardHeight' in code
 assert "CFG EFFECT VALUES · NOT A DEATH TIMER" in code
 assert "RADIATION KILLS IN" not in code, "No proven death countdown is available"
 assert "RADIATION LEVELS" in code and "RADIATION DAMAGE STAGES" not in code
-assert "private const double RadiationProfileHeight = 360.0;" in code
+assert "private const double RadiationProfileHeight = 388.0;" in code
 assert "foreach (var threshold in RadiationRingThresholds)" in code
 assert "DrawRadiationRingSector(dc, center, radius, fromRad, toRad," in code
 assert "ctx.ArcTo(" in code
@@ -60,7 +64,46 @@ for factor in (0.0, 0.5, 1.0, 1.5, 2.0):
         assert all(abs(float(p["sourceRaw"].rstrip("f")) * factor - expected) < 1e-9
                    for p in points)
 
+
+# Preview-only choices cannot introduce CFG sources, nor promise HP death ETA.
+for token in (
+    'private int _radField = 1;',
+    'private int _radStart;',
+    'private bool _radRecovery = true;',
+    'private int RadiationSimHit(Point point)',
+    'AdvanceRadiationSim(preview, 1);',
+    'AdvanceRadiationSim(preview, Math.Sign(e.Delta));',
+    'AdvanceRadiationSim(_radSimFocus, step);',
+    'DrawRadiationSimulation(dc, text, muted, border, soft, accent, panel);',
+    '"RADIATION SIMULATION"', '"RADIATION TIMELINE"',
+    '"MODEL ONLY"', '"TO 99 RAD"', '"NO NET BUILD-UP"',
+    '"ASSUMED LINEAR RAD GAIN · NO HP/DEATH ETA"',
+    '"DIRECT FIELD HAZARD EXCLUDED · NO HP/DEATH ETA"',
+    'field.PerSecond * gain - recovery',
+    '"RadiationBalance" => RadiationBoardHeight(width)'
+):
+    assert token in code, "Simulation renderer/interaction drift: " + token
+
+field_block = code.split("RadiationFields =", 1)[1].split("};", 1)[0]
+field_defs = re.findall(r'\("([^"]+)",\s*([0-9]+(?:\.[0-9]+)?),\s*(true|false)\)', field_block)
+expected_fields = [
+    ("LIGHT", 1, False), ("MEDIUM", 3, False), ("STRONG", 6, False),
+    ("DEADLY", 33, True), ("RADBLOCK", 50, True),
+    ("CUSTOM", 1, False), ("TOPAZ", 1, False)
+]
+assert [(name, float(rate), hazard == "true") for name, rate, hazard in field_defs] == expected_fields
+start_block = code.split("RadiationStarts =", 1)[1].split("};", 1)[0]
+assert [float(v) for v in re.findall(r"[0-9]+(?:\.[0-9]+)?", start_block)] == [0,25,50,75]
+
+# Mathematical regression for the explicitly ASSUMED constant-field model.
+def hypothetical_to_99(rate, buildup, passive, initial):
+    net = max(0, rate * max(0, buildup) - max(0, passive))
+    return None if net == 0 else (99 - initial) / net
+assert abs(hypothetical_to_99(3, 1, .05, 0) - 99/2.95) < 1e-9
+assert abs(hypothetical_to_99(6, 1.5, .05, 50) - 49/8.95) < 1e-9
+assert hypothetical_to_99(1, 0, .05, 0) is None
+
 print("PASS: 11 original radiation damage stages, 22 exact writer leaves,")
 print("      source-multiplier projection and distinct DEADLY source validated.")
-print("      360-degree ring with exact audited 10–99 RAD thresholds.")
+print("      360-degree ring, 7 source field presets, 3 preview inputs and timeline.")
 print("NOT VERIFIED: damage-event frequency, stage transitions, exposure or death ETA; Wine visual acceptance.")
