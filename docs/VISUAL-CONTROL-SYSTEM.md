@@ -1,10 +1,14 @@
 # Visual Control System
 
+### 2026-10-13 — Radiation central HP DAMAGE upper limit 10× (CURRENT)
+
+The source-backed middle HP DAMAGE hero knob must use the native `survival.radiationDamage` range **0.00×–10.00×** with step **0.01×** and vanilla **1.00×**. Its maximum endpoint reads **10x**; WPF knob size, placement, font and gesture are unchanged because the control reads its range from the parameter catalog. Keep the 11 native damage stages and 22 CFG edits and the existing zero-default 32-tooth RAD ring and bold yellow estimated death time. This supersedes all previous 6× references; the two source audits must verify 10× scaling and the same UI structure.
+
 ### 2026-10-13 — Radiation single highlighted estimated death time (CURRENT)
 
 In the RadiationBalance right readout, keep ACTIVE STAGE and DAMAGE PER TICK as previously specified. The third tier shows **DEAD AFTER** at **11.5 DIP muted semi-bold** and exactly one time estimate **`~21s`**, **`~Xm Ys`**, etc., as **29-DIP bold yellow/accent** text. Position it at **wide Y=273 DIP, narrow Y=199 DIP** and constrain to `area.Width - 32` through the shared `DrawStat` helper. Remove the obsolete **N TICKS** numeric text and its second, white 27-DIP time row completely. Do not add other legends, boxes, or a footer. The zero-damage state remains **DEATH ESTIMATE** / **NO RAD DAMAGE**, without any fictitious countdown.
 
-The current source-backed 6× HP DAMAGE knob, knob bank geometry, 0–100 RAD default/rotary ring, 32-segment trefoil, 11 stage sources, stage-onset CFG behavior and 22 write leaves remain untouched. This is a presentation correction only: elapsed time uses the existing `RadiationTime(eta)` formatter with `eta = ceil(fullHP / currentSourceScaledDamage)` and assumes one hypothetical charge per second (runtime cadence unverified). Supersedes all prior separate yellow tick and white time designs for this panel. Keep both catalogs and both audits synchronized.
+The current source-backed 10× HP DAMAGE knob, knob bank geometry, 0–100 RAD default/rotary ring, 32-segment trefoil, 11 stage sources, stage-onset CFG behavior and 22 write leaves remain untouched. This is a presentation correction only: elapsed time uses the existing `RadiationTime(eta)` formatter with `eta = ceil(fullHP / currentSourceScaledDamage)` and assumes one hypothetical charge per second (runtime cadence unverified). Supersedes all prior separate yellow tick and white time designs for this panel. Keep both catalogs and both audits synchronized.
 
 ### 2026-10-13 — Radiation information hierarchy and HP DAMAGE center hero (CURRENT)
 
@@ -12,7 +16,7 @@ RadiationBalance presents two coordinated visual anchors: the established **29-D
 
 Above the ring/status row, the three independent source-native 270° dials are strictly left-to-right **BUILD-UP · HP DAMAGE · RECOVERY**. HP DAMAGE is the central hero, using `DrawSourceKnob(..., prominent: hero)` with `hero = i == 1`; the shared helper scales hero radius by 1.18 and its own labels/value without changing other controls. A bank of at most **606 DIP** uses 12 DIP gaps, side width = `(bankWidth - gap*2 - 18)/3`, middle 18 DIP wider, and mirrored left/right widths. The side rectangles are y=49/height181; the centered hero y=49/height188, remaining clear of the ring panel beginning y=241. Keep all knob hit rectangles tied to the actual visual radii and original source min/max/step. This supersedes any earlier equal-size knob bank or RECOVERY-center descriptions.
 
-All earlier functional rules remain: 0 RAD default, ring-only interaction and proper 100-RAD seam, actual 99-RAD DEADLY source onset, 11 radiation stages, fixed-HP conditional preview, existing 6× HP DAMAGE upper bound and exactly 22 writer leaves. No additional legends, card frames or explanatory UI text.
+All earlier functional rules remain: 0 RAD default, ring-only interaction and proper 100-RAD seam, actual 99-RAD DEADLY source onset, 11 radiation stages, fixed-HP conditional preview, existing 10× HP DAMAGE upper bound and exactly 22 writer leaves. No additional legends, card frames or explanatory UI text.
 
 ### 2026-10-13 — Radiation enlarged HUD-only ring, 0 RAD idle and no rail (CURRENT)
 
