@@ -467,9 +467,10 @@ _non_gen_expected = {
     "combat": (17, 13, 4),
     "health": (13, 10, 3),
     "stamina": (7, 6, 1),
-    "survival": (31, 29, 2),
+    # Four source-native equipment editors are presented on Survival.
+    "survival": (35, 32, 3),
     "economy": (17, 12, 5),
-    "equipment": (4, 3, 1),
+    "equipment": (0, 0, 0),
 }
 _non_gen_doc = DOCS / "NON-GENERATOR-CONTROL-VERIFICATION.md"
 _non_gen_actual = {}
@@ -1218,7 +1219,7 @@ if len(_stamina_ui) != 7 or len(_stamina_confirmed) != 6 or len(_stamina_runtime
     fail(f"stamina deep audit status split drifted: total={len(_stamina_ui)} confirmed={len(_stamina_confirmed)} runtime={len(_stamina_runtime)}; expected 7/6/1")
 elif len(_stamina_points) != 15:
     fail(f"stamina writer surface drifted: {len(_stamina_points)} edit points; expected 15")
-elif _aim.get("label") != "Aiming Stamina Recovery Penalty" or (_aim.get("vanilla") or {}).get("All") != 0.25:
+elif _aim.get("label") != "Aiming Regen Penalty" or (_aim.get("vanilla") or {}).get("All") != 0.25:
     fail("aiming stamina player-facing magnitude contract drifted")
 elif (_aim.get("slider") or {}).get("min") != 0.0 or (_aim.get("slider") or {}).get("max") != 0.5 or (_aim.get("display") or {}).get("primary") != "percent":
     fail("aiming stamina UI range/display drifted: expected positive 0..50% magnitude")
@@ -1258,10 +1259,15 @@ _low_bleeding_points = [e for e in _survival_points if e.get("parameterId") == "
 _vm_source_survival = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
 _survival_mapping_text = _survival_mapping.read_text(encoding="utf-8") if _survival_mapping.exists() else ""
 
-if len(_survival_ui) != 31 or len(_survival_confirmed) != 29 or len(_survival_runtime) != 2:
-    fail(f"survival deep audit status split drifted: total={len(_survival_ui)} confirmed={len(_survival_confirmed)} runtime={len(_survival_runtime)}; expected 31/29/2")
-elif len(_survival_points) != 86:
-    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 86")
+if len(_survival_ui) != 35 or len(_survival_confirmed) != 32 or len(_survival_runtime) != 3:
+    fail(f"survival deep audit status split drifted: total={len(_survival_ui)} confirmed={len(_survival_confirmed)} runtime={len(_survival_runtime)}; expected 35/32/3")
+elif len(_survival_points) != 195:
+    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 195 (82 native + 113 moved equipment)")
+elif (sum(not p["id"].startswith("equipment.") for p in _survival_ui) != 31
+      or sum(p["id"].startswith("equipment.") for p in _survival_ui) != 4
+      or sum(not e["parameterId"].startswith("equipment.") for e in _survival_points) != 82
+      or sum(e["parameterId"].startswith("equipment.") for e in _survival_points) != 113):
+    fail("survival/equipment source IDs or writer partition drifted after moving equipment controls")
 elif _hunger_medium.get("label") != "Hunger Stamina Recovery Penalty" or (_hunger_medium.get("vanilla") or {}).get("All") != 0.33:
     fail("medium hunger stamina recovery player-facing penalty contract drifted")
 elif _hunger_strong.get("label") != "Severe Hunger Stamina Recovery Penalty" or (_hunger_strong.get("vanilla") or {}).get("All") != 0.7:
@@ -2067,11 +2073,11 @@ _fatigue_first_row = (_primary_src[_fatigue_start:_fatigue_preview]
 _primary_expected = {
     "Hunger": (_hunger_first_row, (
         'DrawCoreResourceRuler(dc, rate, "HUNGER RATE", "pts/s"',
-        'DrawCoreResourceRuler(dc, wellFed, "WELL-FED RECOVERY", "%"',
+        'DrawCoreResourceRuler(dc, wellFed, "WELL-FED STAMINA RECOVERY", "%"',
     )),
     "Fatigue": (_fatigue_first_row, (
         'DrawCoreResourceRuler(dc, rate, "FATIGUE RATE", "pts/s"',
-        'DrawCoreResourceRuler(dc, relief, "ENERGY FATIGUE RELIEF", "x"',
+        'DrawCoreResourceRuler(dc, relief, "ENERGY DRINK FATIGUE RELIEF", "x"',
     )),
 }
 for _title, (_renderer, _required) in _primary_expected.items():
@@ -2189,8 +2195,8 @@ for _token in (
     "shortEffect.CurrentNumber",
     "DrawCompactTrack(dc, shortEffect, caption,",
     "(waterRegenTime, \"WATER +25% STAMINA EFFECT DURATION\")",
-    "(energyFullCostTime, \"ENERGY -100% STAMINA COST DURATION\")",
-    "(energyPartialCostTime, \"ENERGY -30% STAMINA COST DURATION\")",
+    "(energyFullCostTime, \"ENERGY DRINK -100% STAMINA COST DURATION\")",
+    "(energyPartialCostTime, \"ENERGY DRINK -30% STAMINA COST DURATION\")",
 ):
     if _token not in _duration_renderer:
         fail(f"consumable short-duration native control/measurement missing: {_token}")
@@ -2376,9 +2382,8 @@ _global_expected_tabs = {
     "combat": 17,
     "health": 13,
     "stamina": 7,
-    "survival": 31,
+    "survival": 35,
     "economy": 17,
-    "equipment": 4,
     "master": 20,
     "environment": 7,
     "loot": 31,
@@ -2690,7 +2695,7 @@ else:
 _rotary_body = _knob_source.split('private void DrawSourceKnob(', 1)[-1].split(
     'private static int KnobVisibleStepStride(', 1)[0]
 _rotary_expected = (
-    'string? nativeUnit = null)',
+    'string? nativeUnit = null, bool prominent = false,',
     'var currentTop = center.Y - (rateReadout || nativeUnit is not null ? 15.0 : 8.0);',
     'else if (nativeUnit is not null)',
 )
@@ -2732,9 +2737,9 @@ _anomaly_combined_required = (
     'global.CurrentNumber + direction * global.TickFrequency',
     '_globalKnobHit.Contains(point)',
     '_globalDamage?.ResetToReference();',
-    'RESULT = SOURCE × GLOBAL',
-    'BAR SCALE = % OF EACH INDIVIDUAL VANILLA VALUE',
-    'TOP NUMBER: RESULT',
+    'INDIVIDUAL DAMAGE  ·  BARS VS VANILLA',
+    'DrawCenteredText(dc, "FINAL", new Point(center, 314)',
+    'DrawCenteredText(dc, "BASE", new Point(center, 341)',
     'EffectiveDamageValue',
     'parameter.IsValueModifiedFromReference()',
     '_globalDamage?.IsValueModifiedFromReference() == true',
@@ -2892,14 +2897,14 @@ _seven_methods = {
     'SleepingDashboard': ('DrawSleepingDashboard', 370.0, ('survival.sleepEligibilityThreshold', 'survival.minimumSleepHours', 'survival.sleepHealthRestore', 'survival.sleepStaminaRestore')),
     'SevereFatiguePenaltyBoard': ('DrawSevereFatiguePenaltyBoard', 376.0, ('advanced.fatigueMechanics', 'survival.severeFatigueMaxStamina', 'survival.severeFatigueCarryWeight', 'survival.severeFatigueRecoil', 'survival.severeFatigueAimSway', 'survival.severeFatigueDispersion')),
     'RadiationBalance': ('DrawRadiationBalance', None, ('survival.radiationAccumulation', 'survival.radiationRecovery', 'survival.radiationDamage')),
-    'StaminaCore': ('DrawStaminaMovementBoard', 351.0, ('stamina.maxSP', 'stamina.regeneration', 'stamina.vaultMaxHeight', 'stamina.maxCarryWeight')),
+    'StaminaCore': ('DrawStaminaMovementBoard', 323.0, ('stamina.maxSP', 'stamina.regeneration', 'stamina.vaultMaxHeight', 'stamina.maxCarryWeight')),
 }
 _seven_required_code = (
     'private void DrawNativeGauge(',
-    'private void DrawVaultHeightRuler(',
+    'private void DrawMovementLimitRuler(',
     'private void DrawTradingMeter(',
     'AddVerticalTarget(parameter,',
-    'AddVerticalTarget(vault,',
+    'AddHorizontalTarget(parameter,',
     'AddHorizontalTarget(minimumHours, cell, stepMap,',
     'const int hoursCount = 14;',
     'const double sharedTop = 3.0;',
@@ -3048,8 +3053,8 @@ if (not all(f'P("{pid}")' in _compact_health
                for pid in ('health.regenDelay', 'health.regenerationScalar',
                            'health.lowHealthRegen'))
     or not all(pid in _seven_src for pid in _compact_health_ids)
-    or 'DrawMaxHealthRuler(dc, hp,' not in _compact_health
-    or 'DrawHorizontalTrackCard(dc, P("health.baseRegen")' not in _compact_health
+    or 'DrawCoreResourceRuler(dc, hp, "MAX HEALTH", "HP",' not in _compact_health
+    or 'DrawCoreResourceRuler(dc, passiveRecovery, "PASSIVE RECOVERY", "HP/s",' not in _compact_health
     or 'DrawHorizontalTrackCard(dc, P(sources[i].Id)' not in _compact_health
     or 'var columns = ActualWidth >= 700.0 ? 3 : 2;' not in _compact_health
     or '"CoreHealthDashboard" => width >= 700.0 ? 282.0 : 365.0' not in _seven_src
@@ -3057,12 +3062,12 @@ if (not all(f'P("{pid}")' in _compact_health
     or '"health.ecoMedkitHealing"' in _compact_health):
     fail('Core Health source-specific HP, passive and responsive recovery controls drifted')
 if (not all(f'P("{pid}")' in _compact_stamina for pid in _compact_stamina_ids)
-    or 'DrawVaultHeightRuler(dc, P("stamina.vaultMaxHeight")' not in _compact_stamina
-    or 'DrawCarryCapacityRail(dc, P("stamina.maxCarryWeight")' not in _compact_stamina
-    or 'AddHorizontalTarget(carry,' not in _compact_stamina
-    or 'carry.CurrentNumber' not in _compact_stamina
+    or 'DrawMovementLimitRuler(dc, P("stamina.vaultMaxHeight")' not in _compact_stamina
+    or 'DrawMovementLimitRuler(dc, P("stamina.maxCarryWeight")' not in _compact_stamina
+    or 'AddHorizontalTarget(parameter,' not in _seven_src
+    or 'parameter.CurrentNumber' not in _seven_src
     or 'MOVEMENT LIMITS' not in _compact_stamina
-    or '"StaminaCore" => 351.0' not in _seven_src):
+    or '"StaminaCore" => 323.0' not in _seven_src):
     fail('Stamina Core/Movement Limits: native vault and calibrated kg limit drifted')
 _action_usage_source = (ROOT / 'src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs').read_text(encoding='utf-8')
 _action_usage_xaml = (ROOT / 'src/TrueCustomDifficulty/MainWindow.xaml').read_text(encoding='utf-8')
@@ -3117,8 +3122,8 @@ for _cid in _consumer_ids:
             or _def["targets"][0].get("operation") != "set"):
         _consumer_errors.append(f"{_cid}: absolute-percent writer/UI contract drift")
 for _required in (
-    'DrawSourceKnob(dc, burst, "WATER REFILL",',
-    'DrawSourceKnob(dc, energyBurst, "ENERGY DRINK REFILL",',
+    'DrawSourceKnob(dc, burst, "WATER STAMINA GAIN",',
+    'DrawSourceKnob(dc, energyBurst, "ENERGY DRINK STAMINA GAIN",',
     'DrawSourceKnob(dc, waterStamina, "WATER STAMINA BUFF",',
     'DrawSourceKnob(dc, energyStamina, "ENERGY DRINK REGEN",',
     'var knobBankWidth = Math.Min(720.0, ActualWidth - 34.0);',
