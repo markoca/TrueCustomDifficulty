@@ -1,5 +1,12 @@
 # Visual Control System
 
+### 2026-10-12 — Combined Flycatcher / Special Anomaly Effects (CURRENT)
+
+The approved Flycatcher **Movement Profile (option C)** and **Special Anomaly Effects group layout (option C)** now share **one visible compact editor** under the original Flycatcher anchor. The 2D Flycatcher movement/turn-speed plot is positioned on the LEFT, preserving the native independently draggable X/Y axis handles and the joint center handle; the RIGHT area groups **BLEEDING** (Razor and Diamond source sliders in two small side-by-side cards) above a full-width **PSY DRAIN / INTENSITY** source slider. This eliminates the formerly independent Special Anomaly Effects full-width panel and its uneven 2+1 layout. Each of the five CFG sources remains independent, writable and selectable for its own help, with native source ranges, steps, reset, keyboard and preset semantics. The combined control measures dynamically to a compact minimum 348 DIP; controls are bounded, never stretched into another full-width section. The effect sliders retain their existing native `DrawEconomyCard` interaction renderer. Changes are presentation/grouping only, not new game mechanics.
+
+In Survival > Hunger, the upper Well-Fed ruler's visible label is now **WELL-FED STAMINA RECOVERY**, explicitly identifying the stamina effect. Source ID, percentage, reference, native step and gameplay behavior are unchanged.
+
+
 ### 2026-10-12 — Anomaly Damage: gamer-first FINAL / BASE presentation (CURRENT)
 
 The one-card `AnomalyDamageRadar` keeps its centered native GLOBAL 270° knob and eleven independent native vertical anomaly sliders. Supersede the old three-line technical footer (`RESULT = SOURCE × GLOBAL`, bar-scale explanation, top/lower-number instructions) with three compact in-context headings: **ALL ANOMALIES**, **Scales damage across every anomaly**, and **INDIVIDUAL DAMAGE · BARS VS VANILLA**. No redundant help paragraphs or additional controls are added.
