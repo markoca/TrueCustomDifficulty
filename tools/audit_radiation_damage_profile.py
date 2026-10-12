@@ -31,28 +31,34 @@ for label, prototype, number in stages:
                for p in matched), prototype
     assert abs(float(number) - float(matched[0]["sourceRaw"].rstrip("f"))) < 1e-9, prototype
 assert float(stages[9][2]) > float(stages[10][2]), "DEADLY must remain visually distinct from L10"
-assert "RadiationDamageStages.Max(s => s.SourceDamage)" in code
-assert "stage.SourceDamage * multiplier" in code
-assert "deadly.SourceDamage * multiplier" in code
+assert "RadiationDamageStages[index].SourceDamage * damageScale" in code
+assert "private const int RadiationHudSegments = 48;" in code
+assert "private const double RadiationHudSegmentGap = 0.36;" in code
 assert 'damage.IsValueModifiedFromReference()' in code
 assert "RadiationProfileTop + RadiationProfileHeight" in code
 assert "private const double RadiationProfileHeight = 388.0;" in code
 assert "private const double RadiationControlsNarrowHeight = 272.0;" in code
 assert "RadiationBoardHeight(double width)" in code
 assert '"RadiationBalance" => RadiationBoardHeight' in code
-assert "CFG EFFECT VALUE · NOT VERIFIED HP/s" in code
+assert "HUD-STYLE PREVIEW · NOT GAME HUD" in code
 assert "RADIATION KILLS IN" not in code, "No proven death countdown is available"
 assert "RADIATION LEVELS" in code and "RADIATION DAMAGE STAGES" not in code
 assert "private const double RadiationProfileHeight = 388.0;" in code
 assert "foreach (var threshold in RadiationRingThresholds)" in code
-assert "DrawRadiationRingSector(dc, center, radius, fromRad, toRad," in code
+assert "DrawRadiationRingSector(dc, center, radius, first, last, inactive);" in code
+assert "DrawRadiationRingSector(dc, center, radius, first, litEnd, active);" in code
+assert "DrawRadiationHudSegments(dc, center, currentRad," in code
+assert "DrawRadiationHudTrefoil(dc, new Point(center.X, center.Y - 26.0)," in code
+assert '"RAD"' in code and '"11 CFG STAGES · 99 RAD DEADLY"' in code
+assert '"DrawRadiationHudSegments" not in code' not in code
 assert "ctx.ArcTo(" in code
-assert '"SELECTED RAD"' in code and '"99 RAD · DEADLY' in code
 bounds = code.split("RadiationRingThresholds =", 1)[1].split("};", 1)[0]
 splits = [float(x) for x in re.findall(r"[0-9]+(?:\.[0-9]+)?", bounds)]
 assert splits == [10, 20, 30, 40, 50, 60, 70, 80, 90, 99], splits
 assert abs(360 * splits[-1] / 100 - 356.4) < 1e-9
-assert "var toRad = i == 10 ? 100.0 : RadiationRingThresholds[i];" in code
+assert "foreach (var threshold in RadiationRingThresholds)" in code
+assert "RadiationRingPoint(center, tickLabelRadius, threshold)" in code
+assert "Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0)" in code
 
 assert "DrawSourceKnob(dc, P(source.Id), source.Label" in code
 assert "rateReadout: source.Id == \"survival.radiationRecovery\"" in code
@@ -84,19 +90,29 @@ for token in (
     'Math.Clamp(Math.Round(1.0 + fraction * 99.0), 1.0, 100.0)',
     '_radRingCompleted = true;',
     'return distance >= 100.0 && distance <= 127.0;',
-    'new Pen(accent, 13.0)',
-    'DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);',
+    'private const int RadiationHudSegments = 48;',
+    'private const double RadiationHudSegmentGap = 0.36;',
+    'DrawRadiationHudSegments(dc, center, currentRad,',
+    'DrawRadiationHudTrefoil(dc, new Point(center.X, center.Y - 26.0),',
+    'DrawRadiationRingSector(dc, center, radius, first, last, inactive);',
+    'DrawRadiationRingSector(dc, center, radius, first, litEnd, active);',
+    'var litEnd = Math.Min(last, rad);',
+    'if (litEnd > first + Epsilon)',
+    'private static Point RadiationHudPolar(',
+    'private static void DrawRadiationHudTrefoil(',
+    'new Pen(CloneWithOpacity(border, 0.9), 1.3)',
+    'new Point(center.X, center.Y + 43.0)',
+    'new Point(center.X, center.Y + 68.0)',
     'DrawRadiationControls(dc, text, muted, border, soft, accent, panel);',
     'private void DrawRadiationControls(',
     '"RAD CONTROLS"', '"RADIATION LEVEL"',
     '"ACTIVE STAGE"', '"CFG DAMAGE / CHARGE"', '"EST. HP ZERO"',
     '"ASSUME 1 CHARGE/s · NO HEALING"', '"FIXED RAD"',
     'var currentRad = _radLevel;',
-    'var actualDamage = sourceDamage * multiplier;',
-    '" CFG DAMAGE"',
-    'stageIndex == 0 ? 1.0 : RadiationRingThresholds[stageIndex - 1]',
-    'stageIndex == 10 ? 100.0 : RadiationRingThresholds[stageIndex] - 1.0',
-    'double.IsNaN(nextThreshold) ? "FINAL STAGE"',
+    'var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];',
+    'var stageTo = index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;',
+    'DrawRightAlignedText(dc, stageRange,',
+    '"HUD-STYLE PREVIEW · NOT GAME HUD"',
     'Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0)',
     '"RadiationBalance" => RadiationBoardHeight(width)',
     'health.maxHP'
@@ -114,6 +130,38 @@ for token in (
     '_radElapsed', '_radSimFocus', 'PLAY ×10', 'TO 99 RAD', 'NO NET GAIN'
 ):
     assert token not in code, "Retired simulation returned: " + token
+
+# Decorative HUD segmentation is a render only; the 10 exact game thresholds
+# and integer 1..100 level selection do not snap to the 48 tooth boundaries.
+segment_count = 48
+gap = .36
+pitch = 100.0 / segment_count
+assert 0 < gap < pitch
+def active_segment_lengths(rad_value):
+    return [max(0.0, min((i + 1) * pitch - gap / 2, rad_value)
+                - (i * pitch + gap / 2))
+            for i in range(segment_count)]
+assert len(active_segment_lengths(100)) == 48
+assert sum(x > 0 for x in active_segment_lengths(100)) == 48
+assert 0 < active_segment_lengths(1)[0] < pitch - gap
+assert sum(x > 0 for x in active_segment_lengths(1)) == 1
+assert sum(x > 0 for x in active_segment_lengths(50)) == 24
+assert sum(x > 0 for x in active_segment_lengths(99)) == 48
+assert sum(active_segment_lengths(99)) < sum(active_segment_lengths(100))
+assert all(sum(active_segment_lengths(a)) < sum(active_segment_lengths(b))
+           for a, b in ((1, 10), (10, 25), (25, 50), (50, 75), (75, 90), (90, 99), (99, 100)))
+assert splits == [10,20,30,40,50,60,70,80,90,99]
+
+# The HUD glyph is built as three vector blades and a hub (no external image),
+# keeping actual pointer ring radius and panel hit rectangles unchanged.
+glyph = code.split("private static void DrawRadiationHudTrefoil(", 1)[1].split(
+    "// Native BUILD-UP", 1)[0]
+assert "for (var blade = 0; blade < 3; blade++)" in glyph
+assert "var angle = -150.0 + blade * 120.0;" in glyph
+assert "ctx.ArcTo(" in glyph
+assert "dc.DrawEllipse(symbol, null, center, 7.5, 7.5);" in glyph
+assert "new Pen(accent, 13.0)" not in code
+assert "DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);" not in code
 
 # Fixed-radiation calculation has no build-up and no passive recovery input.
 fixed_math = code.split('private double RadiationTimeToZeroHp()', 1)[1].split('private static string RadiationTime(', 1)[0]
@@ -164,6 +212,6 @@ assert angle_to_rad(356.4) == 99
 assert angle_to_rad(359) == 100
 
 print("PASS: 11 original radiation stages and 22 unchanged writer leaves;")
-print("      clockwise 1–100 RAD ring + compact rail/buttons, exact CFG damage and")
-print("      fixed-RAD full-HP estimate (conditional one charge per second).")
+print("      48 segmented HUD teeth, vector trefoil and continuous 1–100 clockwise RAD selection;")
+print("      original stage thresholds, 1:1 damage scaling and conditional fixed-RAD HP estimate.")
 print("NOT VERIFIED: actual permanent-effect damage cadence, healing, armor or gameplay time to death.")
