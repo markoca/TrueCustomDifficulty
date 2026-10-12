@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-12 — Radiation wheel C# scope regression fix (CURRENT)
+
+In `AggregateVisualControl.OnMouseWheel`, the preview-only ring branch uses `radWheelDirection` (±1 per notch), while the existing source-native knob branch retains its own `direction`. These local variables must not reuse one identifier within nested and enclosing blocks (CS0136). Neither gesture mapping nor the 1–100 clockwise ring, preview stage inspector, knob editing, tooltip, model, responsive geometry, or CFG output changes. The source build must succeed before declaring the visual interaction verified.
+
 ### 2026-10-12 — Radiation clockwise native-ring scrubbing with active CFG damage (CURRENT)
 
 The 13-DIP RADIATION LEVELS circle is now a **single shared input/feedback surface**. All 11 genuine stage arcs remain low-contrast beneath the live gold fill; clockwise selection paints that SAME circular rail proportionally from 12 o'clock to the chosen RAD, with a small aligned knob/handle. The old 4.5-DIP auxiliary outer ring is retired. At 100 RAD draw the entire circle explicitly so the start/end seam is never omitted. Keep original ring radius 113 and original 360-degree 0–100 radial mapping: 10 RAD is 36°, 50 RAD 180°, 99 RAD 356.4°. The 1-RAD click begins the nearly empty fill; clockwise arrival at 100 closes it.
