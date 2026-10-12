@@ -3055,15 +3055,20 @@ public sealed class AggregateVisualControl : FrameworkElement
     // alcohol, medicine, and ordinary stamina controls keep their gold rails.
     private static readonly Brush WaterEffectLineBrush =
         new SolidColorBrush(Color.FromRgb(91, 173, 98));
+    // Two game-inspired blues distinguish Energy Drink's independently
+    // editable stamina-cost effects in both timeline and compact sliders.
+    // Full (100%) cost cut is brighter; partial (30%) is deeper blue.
     private static readonly Brush EnergyDrinkEffectLineBrush =
-        new SolidColorBrush(Color.FromRgb(76, 149, 215));
+        new SolidColorBrush(Color.FromRgb(92, 186, 243));
+    private static readonly Brush EnergyDrinkPartialCostLineBrush =
+        new SolidColorBrush(Color.FromRgb(58, 111, 180));
 
     private static Brush? DrinkEffectLineBrush(string sourceId) => sourceId switch
     {
         "survival.waterEffectDuration" or "survival.waterRegenDuration"
             => WaterEffectLineBrush,
+        "survival.energyPartialCostDuration" => EnergyDrinkPartialCostLineBrush,
         "survival.energyDrinkEffectDuration" or "survival.energyFullCostDuration"
-            or "survival.energyPartialCostDuration"
             or "survival.energyDrinkFatigueRelief"
             => EnergyDrinkEffectLineBrush,
         _ => null

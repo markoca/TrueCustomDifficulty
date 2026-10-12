@@ -1,5 +1,10 @@
 # Visual Control System
 
+### 2026-10-12 — Two blue shades for Energy Drink effect markers (CURRENT)
+
+The previously approved Water / Energy Drink underlines remain strictly visual and are still bounded by **each real child-effect marker** rather than the parent drink duration handle. **Water stays green (RGB 91,173,98)**. For Energy Drink, the independently editable **−100% stamina cost** effect (`survival.energyFullCostDuration`) uses **light blue (RGB 92,186,243)**, while the **−30% stamina cost** effect (`survival.energyPartialCostDuration`) uses **deeper blue (RGB 58,111,180)**. The two separate colored lines on the main Energy Drink timeline therefore communicate which cost-cut duration belongs to which marker, and the two matching small effect-duration tracks below use the exact same source-specific colors. The general Energy Drink duration identity and Energy Drink fatigue-relief underline continue to use the light blue, with no third Energy Drink color. Keep both child marker positions, their +7/+11 DIP line separation, actual seconds coordinates, handles, neutral/gold base rails, source values and interaction regions unchanged. This is presentation-only: no CFG change, source additions, altered snap/ranges, preset change, or color for alcohol/medicine/mixed refill controls. This subsection supersedes the earlier single-blue Energy Drink visual rule. Local build/Wine visual acceptance is pending.
+
+
 ### 2026-10-12 — Water / Energy Drink effect-marker stripes: green and blue (CURRENT)
 
 This supersedes the earlier **blue Water / orange Energy Drink** colored-line rule. **Water = subdued green** (RGB **91,173,98**); **Energy Drink = subdued blue** (RGB **76,149,215**). Do not change the shared gold main slider track, numeric highlighting, inactive rail or native handles. Colored underlines remain purely visual, thin (**2.4 DIP**) and exclusive to Water and Energy Drink effects; no new CFG source, interactivity or tutorial legend.
