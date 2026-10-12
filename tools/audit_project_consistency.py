@@ -2132,12 +2132,21 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or '"RadiationBalance" => RadiationBoardHeight(width)' not in _radiation_source
     or 'DrawRadiationControls(dc, text, muted, soft, accent, panel);' not in _radiation_renderer
     or 'private void DrawRadiationControls(' not in _radiation_source
-    or 'RADIATION LEVELS' not in _radiation_renderer
+    or '"RADIATION LEVELS"' in _radiation_renderer
+    or '"RAD CONTROLS"' in _radiation_source
+    or '"RADIATION LEVEL"' in _radiation_source
     or 'RADIATION DAMAGE STAGES' in _radiation_renderer
     or 'foreach (var threshold in RadiationRingThresholds)' not in _radiation_source
     or 'DrawRadiationHudSegments(dc, center, currentRad,' not in _radiation_renderer
     or 'DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));' not in _radiation_renderer
     or 'private const int RadiationHudSegments = 32;' not in _radiation_source
+    or 'private double _radLevel = 0.0;' not in _radiation_source
+    or 'private const double RadiationDialTrackRadius = 122.0;' not in _radiation_source
+    or 'return distance >= 108.0 && distance <= 136.0;' not in _radiation_source
+    or 'Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 0.0, 100.0)' not in _radiation_source
+    or 'DrawCenteredText(dc, currentRad.ToString(' not in _radiation_renderer
+    or '29.0, accent, FontWeights.Bold);' not in _radiation_renderer
+    or 'if (currentRad > 0.0)' not in _radiation_renderer
     or 'private const double RadiationHudSegmentGap = 0.36;' not in _radiation_source
     or 'private const int RadiationHudTickStep = 10;' not in _radiation_source
     or 'DrawRadiationRingSector(dc, center, radius, first, litEnd, active);' not in _radiation_source
@@ -2156,31 +2165,33 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or '"MAX " + RadiationModelMaxHp.ToString(' in _radiation_source
     or '18.0, accent, FontWeights.Bold);' not in _radiation_source
     or '10.5, text, FontWeights.Bold);' not in _radiation_source
-    or 'private const double RadiationDialCenterY = 194.0;' not in _radiation_source
+    or 'private const double RadiationDialCenterY = 183.0;' not in _radiation_source
     or 'profile.Top + RadiationDialCenterY' not in _radiation_renderer
     or 'Math.Ceiling(RadiationModelMaxHp / damagePerAssumedCharge)' not in _radiation_source
-    or '"1 TICK/S ASSUMED · NO HEALING/PROTECTION"' not in _radiation_source
+    or '"1 TICK/S ASSUMED · NO HEALING/PROTECTION"' in _radiation_source
     or '"CFG DAMAGE / CHARGE"' in _radiation_source
     or '"EST. HP ZERO · 1 TICK/S"' in _radiation_source
     or 'HUD-STYLE PREVIEW · NOT GAME HUD' in _radiation_renderer
     or '11 CFG STAGES · 99 RAD DEADLY' in _radiation_renderer
     or 'DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);' in _radiation_renderer
     or 'DrawRightAlignedText(dc, stageRange,' not in _radiation_source
-    or 'const double outer = 89.0;' not in _radiation_source
-    or 'const double inner = 25.0;' not in _radiation_source
-    or 'dc.DrawEllipse(symbol, null, center, 21.0, 21.0);' not in _radiation_source
-    or 'RadiationRingPoint(center, 128.0, tick)' not in _radiation_renderer
+    or 'const double outer = 96.0;' not in _radiation_source
+    or 'const double inner = 27.0;' not in _radiation_source
+    or 'dc.DrawEllipse(symbol, null, center, 23.0, 23.0);' not in _radiation_source
+    or 'RadiationRingPoint(center, 137.0, tick)' not in _radiation_renderer
     or 'for (var tick = 10; tick <= 100; tick += RadiationHudTickStep)' not in _radiation_renderer
     or 'foreach (var threshold in RadiationRingThresholds)' in _radiation_renderer
     or 'threshold.ToString(' in _radiation_renderer
-    or 'currentRad.ToString(' in _radiation_renderer
     or 'DrawCenteredText(dc, "RAD",' in _radiation_renderer
     or 'RadiationStepButton(' in _radiation_source
     or 'RadiationStepHit(' in _radiation_source
     or 'RadiationHudPolar(center, 28.0, angle)' in _radiation_source
-    or 'area.Left + 22.0' not in _radiation_source
-    or 'area.Width - 44.0' not in _radiation_source
-    or 'RAD CONTROLS' not in _radiation_source
+    or 'RadiationLevelRail(' in _radiation_source
+    or 'RadiationRailHit(' in _radiation_source
+    or 'SetRadiationFromRail(' in _radiation_source
+    or '_radLevelDragging' in _radiation_source
+    or 'var stageRange = index < 0 ? "0 RAD"' not in _radiation_source
+    or 'var stageTo = index < 0 ? 0.0' not in _radiation_source
     or 'private double RadiationTimeToZeroHp()' not in _radiation_source
     or 'RADIATION SIMULATION' in _radiation_source
     or 'RADIATION TIMELINE' in _radiation_source):
@@ -2188,7 +2199,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: 4x HP DAMAGE, prominent active stage, dynamic death ticks and 32 HUD teeth")
+    note("Radiation: default 0 RAD, enlarged single ring, centered yellow readout and no rail")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -2972,13 +2983,17 @@ if ('"RadiationBalance" => RadiationBoardHeight' not in _seven_src
     or 'private void DrawRadiationControls(' not in _seven_src
     or 'private const int RadiationHudSegments = 32;' not in _seven_src
     or 'private const int RadiationHudTickStep = 10;' not in _seven_src
-    or 'const double inner = 25.0;' not in _seven_src
-    or 'dc.DrawEllipse(symbol, null, center, 21.0, 21.0);' not in _seven_src
+    or 'const double inner = 27.0;' not in _seven_src
+    or 'dc.DrawEllipse(symbol, null, center, 23.0, 23.0);' not in _seven_src
     or 'private static void DrawRadiationHudTrefoil(' not in _seven_src
-    or 'private const double RadiationDialCenterY = 194.0;' not in _seven_src
+    or 'private const double RadiationDialCenterY = 183.0;' not in _seven_src
+    or 'private const double RadiationDialTrackRadius = 122.0;' not in _seven_src
+    or 'private double _radLevel = 0.0;' not in _seven_src
+    or 'RadiationRailHit(' in _seven_src
+    or 'RadiationLevelRail(' in _seven_src
     or 'RadiationStepHit(' in _seven_src
     or 'RadiationStepButton(' in _seven_src):
-    _seven_errors.append('RadiationBalance solid HUD dial and rail-only controls/measurement contract drifted')
+    _seven_errors.append('RadiationBalance ring-only preview, enlarged HUD or zero default drifted')
 for _id, _native in _seven_expected_sliders.items():
     _s = (_seven_catalog.get(_id, {}).get('slider') or {})
     if tuple(_s.get(k) for k in ('min', 'max', 'step')) != _native:

@@ -1,5 +1,11 @@
 # Visual Control System
 
+### 2026-10-13 — Radiation enlarged HUD-only ring, 0 RAD idle and no rail (CURRENT)
+
+The outer ring is **122 DIP** radius with a common pointer/paint center at panel Y+183, click/drag annulus 108–136, bezels 142/136, inner face 109/102 DIP. Render 32 original separately filling teeth and ten evenly placed 10-RAD ticks (start radius 137, end 144; 100 end 147), with exact preview RAD 0–100 independent of game CFG 99-RAD Deadly onset. Trefoil: three 66° matte solid vanes at −150°/−30°/+90°, radial span **27–96 DIP**, centered **23-DIP-radius** hub, clear 4-DIP radial gap. The icon and tooth ring are centered inside the original 388-DIP tall panel; the only numeric **N RAD** is bold yellow 29 DIP at Y+347 immediately under it. At 0 RAD no tooth and no yellow cursor is active.
+
+The circular ring is the *sole* local preview selector: clockwise 0–100 RAD with full-turn 100 seam retention, ±1 wheel/keyboard, Home/right-click/group R=0 and End=100. It does not change saved settings or emitted CFG data. Physically remove the horizontal rail, its input and mouse-capture paths and methods, along with the former right-side RAD value. Eliminate `RADIATION LEVELS`, `RAD CONTROLS`, `RADIATION LEVEL` and the long `1 TICK/S ASSUMED · NO HEALING/PROTECTION` text. Reflow the adjacent compact stats upward, keeping source stage (NONE/0 RAD at idle), damage per assumed tick and conditional full-HP death estimate. Original side-by-side and stacked heights, three source knobs, 11 stage values and 22 CFG writer targets are unchanged. The estimation assumption remains documented (one unverified damage charge/s at fixed RAD with no healing/mitigation) despite removal of the distracting footer. Older two-input/1-RAD minimum layouts are superseded.
+
 ### 2026-10-13 — Radiation prominent stage, dynamic death ticks, HP DAMAGE 4× (CURRENT)
 
 In the native Radiation System 270° knob bank, HP DAMAGE ranges **0.00×–4.00×** with step 0.01 and 1× reference. It continues to scale each of 11 original effects; no CFG source/writer changes. In RAD CONTROLS, **ACTIVE STAGE** is drawn as 10.5 DIP bold primary text and the stage itself as 18 DIP bold accent. The original RAD stage interval remains right-aligned; no extra card or space is allocated.

@@ -45,7 +45,8 @@ assert '"RadiationBalance" => RadiationBoardHeight' in code
 assert '"1–100 RAD"' not in code
 assert '"FIXED RAD"' not in code
 assert "RADIATION KILLS IN" not in code, "No proven death countdown is available"
-assert "RADIATION LEVELS" in code and "RADIATION DAMAGE STAGES" not in code
+assert '"RADIATION LEVELS"' not in code and '"RAD CONTROLS"' not in code
+assert '"RADIATION LEVEL"' not in code and '"RADIATION DAMAGE STAGES"' not in code
 assert "private const double RadiationProfileHeight = 388.0;" in code
 assert "foreach (var threshold in RadiationRingThresholds)" in code
 assert "DrawRadiationRingSector(dc, center, radius, first, last, inactive);" in code
@@ -57,16 +58,16 @@ assert '"DEATH ESTIMATE"' in code
 assert '"MAX " + RadiationModelMaxHp.ToString(' not in code
 assert rad["slider"] == {"min": 0, "max": 4, "step": 0.01}
 assert '"DAMAGE PER TICK"' in code
-assert '"1 TICK/S ASSUMED · NO HEALING/PROTECTION"' in code
+assert '"1 TICK/S ASSUMED · NO HEALING/PROTECTION"' not in code
 assert "ctx.ArcTo(" in code
 bounds = code.split("RadiationRingThresholds =", 1)[1].split("};", 1)[0]
 splits = [float(x) for x in re.findall(r"[0-9]+(?:\.[0-9]+)?", bounds)]
 assert splits == [10, 20, 30, 40, 50, 60, 70, 80, 90, 99], splits
 assert abs(360 * splits[-1] / 100 - 356.4) < 1e-9
 assert "for (var tick = 10; tick <= 100; tick += RadiationHudTickStep)" in code
-assert "RadiationRingPoint(center, 128.0, tick)" in code
+assert "RadiationRingPoint(center, 137.0, tick)" in code
 assert "tick == 100 ? accent : muted" in code
-assert "Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0)" in code
+assert "Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 0.0, 100.0)" in code
 
 assert "DrawSourceKnob(dc, P(source.Id), source.Label" in code
 assert "rateReadout: source.Id == \"survival.radiationRecovery\"" in code
@@ -78,10 +79,10 @@ for factor in (0.0, 0.5, 1.0, 1.5, 2.0, 4.0):
                    for p in points)
 
 
-# Preview-only controls must be bound to a fixed 1–100 RAD selection.
+# Ring-only preview now defaults to 0 RAD and covers 0–100.
 # Neither the selection nor a death estimate may create a new CFG writer target.
 for token in (
-    'private double _radLevel = 1.0;',
+    'private double _radLevel = 0.0;',
     'private double RadiationModelMaxHp =>',
     'private static int RadiationStageIndex(double rad)',
     'private double RadiationDamageAtLevel(double level)',
@@ -90,13 +91,9 @@ for token in (
     'RadiationModelMaxHp / damagePerAssumedCharge',
     'double.PositiveInfinity',
     'private void ScrubRadiationRing(Point point)',
-    'private void SetRadiationFromRail(Point point)',
-    'private Rect RadiationLevelRail()',
-    'private bool RadiationRailHit(Point point)',
     'private void AdjustRadiationLevel(int step)',
-    'Math.Clamp(Math.Round(1.0 + fraction * 99.0), 1.0, 100.0)',
     '_radRingCompleted = true;',
-    'return distance >= 100.0 && distance <= 127.0;',
+    'return distance >= 108.0 && distance <= 136.0;',
     'private const int RadiationHudSegments = 32;',
     'private const int RadiationHudTickStep = 10;',
     'private const double RadiationHudSegmentGap = 0.36;',
@@ -109,25 +106,23 @@ for token in (
     'private static Point RadiationHudPolar(',
     'private static void DrawRadiationHudTrefoil(',
     'new Pen(CloneWithOpacity(border, 0.9), 1.3)',
-    'const double outer = 89.0;',
-    'const double inner = 25.0;',
-    'dc.DrawEllipse(symbol, null, center, 21.0, 21.0);',
-    'area.Left + 22.0',
-    'area.Width - 44.0',
+    'const double outer = 96.0;',
+    'const double inner = 27.0;',
+    'dc.DrawEllipse(symbol, null, center, 23.0, 23.0);',
     'DrawRadiationControls(dc, text, muted, soft, accent, panel);',
     'private void DrawRadiationControls(',
-    '"RAD CONTROLS"', '"RADIATION LEVEL"',
     '"ACTIVE STAGE"', '"DAMAGE PER TICK"', '"DEAD AFTER "', '" TICKS IN"',
-    '"1 TICK/S ASSUMED · NO HEALING/PROTECTION"',
     'var currentRad = _radLevel;',
     'var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];',
-    'var stageTo = index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;',
+    'var stageTo = index < 0 ? 0.0',
+    'index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;',
     'DrawRightAlignedText(dc, stageRange,',
-    'private const double RadiationDialCenterY = 194.0;',
+    'private const double RadiationDialCenterY = 183.0;',
+    'private const double RadiationDialTrackRadius = 122.0;',
     'ring.Top + RadiationDialCenterY',
     'profile.Top + RadiationDialCenterY',
     'var deathCaption = double.IsFinite(eta)',
-    'Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0)',
+    'Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 0.0, 100.0)',
     '"RadiationBalance" => RadiationBoardHeight(width)',
     'health.maxHP'
 ):
@@ -146,7 +141,7 @@ for token in (
     assert token not in code, "Retired simulation returned: " + token
 
 # Decorative HUD segmentation is a render only; the 10 exact game thresholds
-# and integer 1..100 level selection do not snap to the 32 tooth boundaries.
+# and integer 0..100 level selection do not snap to the 32 tooth boundaries.
 segment_count = 32
 gap = .36
 pitch = 100.0 / segment_count
@@ -157,6 +152,7 @@ def active_segment_lengths(rad_value):
             for i in range(segment_count)]
 assert len(active_segment_lengths(100)) == 32
 assert sum(x > 0 for x in active_segment_lengths(100)) == 32
+assert sum(x > 0 for x in active_segment_lengths(0)) == 0
 assert 0 < active_segment_lengths(1)[0] < pitch - gap
 assert sum(x > 0 for x in active_segment_lengths(1)) == 1
 assert sum(x > 0 for x in active_segment_lengths(50)) == 16
@@ -173,9 +169,9 @@ glyph = code.split("private static void DrawRadiationHudTrefoil(", 1)[1].split(
 assert "for (var blade = 0; blade < 3; blade++)" in glyph
 assert "var angle = -150.0 + blade * 120.0;" in glyph
 assert "ctx.ArcTo(" in glyph
-assert "dc.DrawEllipse(symbol, null, center, 21.0, 21.0);" in glyph
-assert "const double inner = 25.0;" in glyph
-assert "const double outer = 89.0;" in glyph
+assert "dc.DrawEllipse(symbol, null, center, 23.0, 23.0);" in glyph
+assert "const double inner = 27.0;" in glyph
+assert "const double outer = 96.0;" in glyph
 # Read actual drawn geometry, not historical constants from older HUD versions.
 # The 25-DIP vane root and 21-DIP hub must remain 4 DIP apart.
 vane_inner = re.search(r"const double inner = ([0-9.]+);", glyph)
@@ -183,8 +179,8 @@ hub_match = re.search(
     r"dc\.DrawEllipse\(symbol, null, center, ([0-9.]+), ([0-9.]+)\);", glyph
 )
 assert vane_inner is not None and hub_match is not None, "Trefoil geometry missing"
-assert float(vane_inner.group(1)) == 25.0, "Trefoil vane root drifted"
-assert float(hub_match.group(1)) == float(hub_match.group(2)) == 21.0, (
+assert float(vane_inner.group(1)) == 27.0, "Trefoil vane root drifted"
+assert float(hub_match.group(1)) == float(hub_match.group(2)) == 23.0, (
     "Trefoil center radius drifted"
 )
 assert float(vane_inner.group(1)) - float(hub_match.group(1)) == 4.0, (
@@ -211,7 +207,10 @@ for token in (
     assert token not in code, "Retired RAD step buttons or number overlays returned: " + token
 assert "DrawCenteredText(dc," not in ring_renderer.split("for (var tick = 10; tick <= 100; tick += RadiationHudTickStep)", 1)[1].split(
     "DrawRadiationHudTrefoil(dc", 1)[0], "Numerical threshold overlay returned"
-assert "currentRad.ToString(" not in ring_renderer, "RAD number returned to trefoil"
+assert "DrawCenteredText(dc, currentRad.ToString(" in ring_renderer
+assert "profile.Top + 347.0" in ring_renderer
+assert "29.0, accent, FontWeights.Bold);" in ring_renderer
+assert "if (currentRad > 0.0)" in ring_renderer
 assert 'DrawCenteredText(dc, "RAD",' not in ring_renderer, "RAD label returned to glyph"
 assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));" in ring_renderer
 assert "dc.DrawRoundedRectangle(panel, null, profile, 4.0, 4.0);" in ring_renderer
@@ -221,6 +220,8 @@ assert "dc.DrawRoundedRectangle(panel, new Pen(border" not in control_renderer
 assert '"1–100 RAD"' not in ring_renderer
 assert '"FIXED RAD"' not in control_renderer
 assert '"DAMAGE PER TICK"' in control_renderer
+assert 'var stageRange = index < 0 ? "0 RAD"' in control_renderer
+assert 'var stageTo = index < 0 ? 0.0' in control_renderer, "0 RAD must not read thresholds[-1]"
 assert '"DEAD AFTER "' in control_renderer and '" TICKS IN"' in control_renderer
 assert '"DEATH ESTIMATE"' in control_renderer
 assert '"MAX " + RadiationModelMaxHp.ToString(' not in control_renderer
@@ -228,13 +229,14 @@ assert '18.0, accent, FontWeights.Bold);' in control_renderer
 assert '10.5, text, FontWeights.Bold);' in control_renderer
 assert "foreach (var threshold in RadiationRingThresholds)" not in ring_renderer
 assert "tick == 100 ? accent : muted" in ring_renderer
-assert "DrawText(dc, _radLevel.ToString(" in control_renderer
+assert "DrawText(dc, _radLevel.ToString(" not in control_renderer
 assert "RadiationStepButton(" not in control_renderer
 assert "foreach (var step in" not in control_renderer
-assert "new Point(rail.Left, area.Top" not in control_renderer
-assert "new Point(rail.Right, area.Top" not in control_renderer
-assert "private Rect RadiationLevelRail()" in code
-assert "RadiationRailHit(point)" in code
+assert "var rail =" not in control_renderer
+assert "levelX" not in control_renderer
+for retired in ("RadiationLevelRail(", "RadiationRailHit(",
+                "SetRadiationFromRail(", "_radLevelDragging"):
+    assert retired not in code, "Retired RAD rail still present: " + retired
 
 # Fixed-radiation calculation has no build-up and no passive recovery input.
 fixed_math = code.split('private double RadiationTimeToZeroHp()', 1)[1].split('private static string RadiationTime(', 1)[0]
@@ -276,10 +278,10 @@ assert hp_zero(0, 100, 1) is None
 assert hp_zero(50, 100, 0) is None
 
 # Ring selection follows a clockwise 0–360° geometry, but click/rail
-# clamps the exposed chooser to 1–100, reserving 100 for completed full circle.
+# maps 0–100, with completed ring drag holding 100 at the seam.
 def angle_to_rad(clockwise_degrees):
-    return max(1, min(100, int((clockwise_degrees % 360) / 3.6 + 0.5)))
-assert angle_to_rad(0) == 1
+    return max(0, min(100, int((clockwise_degrees % 360) / 3.6 + 0.5)))
+assert angle_to_rad(0) == 0
 assert angle_to_rad(36) == 10
 assert angle_to_rad(90) == 25
 assert angle_to_rad(180) == 50
@@ -288,7 +290,7 @@ assert angle_to_rad(356.4) == 99
 assert angle_to_rad(359) == 100
 
 print("PASS: 11 original radiation stages and 22 unchanged writer leaves;")
-print("      32 HUD teeth, ticks every 10 RAD, separated trefoil and larger center;")
-print("      borderless RAD cards, 4x HP DAMAGE, emphasized stage and dynamic death ticks;")
+print("      enlarged 32-tooth ring-only 0–100 RAD and large under-ring value;")
+print("      no obsolete slider, titles or footer; source damage stages unchanged;")
 print("      original stage thresholds, 1:1 damage scaling and conditional fixed-RAD HP estimate.")
 print("NOT VERIFIED: actual permanent-effect damage cadence, healing, armor or gameplay time to death.")

@@ -27,9 +27,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     private bool _fatigueReloadInteraction;
     // RAD inspection only: no runtime clock, no persisted field simulation.
     private ParameterViewModel? _radiationMaxHp;
-    private double _radLevel = 1.0;
+    private double _radLevel = 0.0;
     private bool _radRingDragging;
-    private bool _radLevelDragging;
     private bool _radRingFocus;
     // Keep the completed 360-degree clockwise drag at 100 RAD.
     private bool _radRingHadScrub;
@@ -158,7 +157,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         _radRingDragging = false;
-        _radLevelDragging = false;
         _radRingFocus = false;
         _radRingHadScrub = false;
         _radRingCompleted = false;
@@ -4295,8 +4293,9 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private const double RadiationProfileTop = 241.0;
     private const double RadiationProfileHeight = 388.0;
-    // Vertically center the full 132-DIP bezel inside the ring card.
-    private const double RadiationDialCenterY = 194.0;
+    // Lift the enlarged 142-DIP bezel to leave room for the RAD readout.
+    private const double RadiationDialCenterY = 183.0;
+    private const double RadiationDialTrackRadius = 122.0;
     private const double RadiationControlsNarrowHeight = 272.0;
     private const double RadiationGap = 12.0;
     private static bool RadiationWide(double width) => width >= 800.0;
@@ -4351,7 +4350,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private void AdjustRadiationLevel(int step)
     {
-        _radLevel = Math.Clamp(_radLevel + step, 1.0, 100.0);
+        _radLevel = Math.Clamp(_radLevel + step, 0.0, 100.0);
         _radRingFocus = true;
         InvalidateVisual();
     }
@@ -4362,16 +4361,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         var center = new Point(ring.Left + ring.Width / 2.0, ring.Top + RadiationDialCenterY);
         var angle = Math.Atan2(point.Y - center.Y, point.X - center.X) + Math.PI / 2.0;
         if (angle < 0.0) angle += Math.PI * 2.0;
-        // Twelve o'clock is the beginning of the clockwise 1–100 scale;
-        // the same physical point is also 100 at the end of a full turn.
-        var level = Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0);
+        // Twelve o'clock means 0 on initial click, and 100 after a full
+        // clockwise turn while the ring drag is captured.
+        var level = Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 0.0, 100.0);
         if (_radRingHadScrub)
         {
             var previous = _radLevel;
             if (previous >= 95.0 && level <= 5.0)
                 _radRingCompleted = true;
             else if (!_radRingCompleted && previous <= 5.0 && level >= 95.0)
-                level = 1.0;
+                level = 0.0;
         }
         if (_radRingCompleted && level < 95.0)
             level = 100.0;
@@ -4392,7 +4391,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var distance = Math.Sqrt(dx * dx + dy * dy);
         // This is the visible 13-DIP main track, not a disconnected
         // second outer ring. Give the player a modest drag tolerance.
-        return distance >= 100.0 && distance <= 127.0;
+        return distance >= 108.0 && distance <= 136.0;
     }
 
     private Rect RadiationRingRect()
@@ -4410,32 +4409,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             ? new Rect(ring.Right + RadiationGap, ring.Top, ring.Width, ring.Height)
             : new Rect(16.0, ring.Bottom + RadiationGap,
                 Math.Max(1.0, ActualWidth - 32.0), RadiationControlsNarrowHeight);
-    }
-
-    private Rect RadiationLevelRail()
-    {
-        var area = RadiationControlsRect();
-        // With no +/- buttons, the single secondary input uses the card width.
-        return new Rect(area.Left + 22.0,
-            area.Top + (RadiationWide(ActualWidth) ? 140.0 : 110.0),
-            Math.Max(1.0, area.Width - 44.0), 6.0);
-    }
-
-    private bool RadiationRailHit(Point point)
-    {
-        if (Family != "RadiationBalance") return false;
-        var track = RadiationLevelRail();
-        return new Rect(track.Left - 8.0, track.Top - 17.0,
-            track.Width + 16.0, track.Height + 34.0).Contains(point);
-    }
-
-    private void SetRadiationFromRail(Point point)
-    {
-        var track = RadiationLevelRail();
-        var fraction = Math.Clamp((point.X - track.Left) / track.Width, 0.0, 1.0);
-        _radLevel = Math.Clamp(Math.Round(1.0 + fraction * 99.0), 1.0, 100.0);
-        _radRingFocus = true;
-        InvalidateVisual();
     }
 
     // Authentic RadiationMechanics stage thresholds (read-only CFG facts).
@@ -4482,7 +4455,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static void DrawRadiationHudSegments(
         DrawingContext dc, Point center, double rad, Brush inactive, Brush active)
     {
-        const double radius = 113.0;
+        const double radius = RadiationDialTrackRadius;
         var pitch = 100.0 / RadiationHudSegments;
         for (var i = 0; i < RadiationHudSegments; i++)
         {
@@ -4510,8 +4483,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static void DrawRadiationHudTrefoil(
         DrawingContext dc, Point center, Brush symbol)
     {
-        const double inner = 25.0;
-        const double outer = 89.0;
+        const double inner = 27.0;
+        const double outer = 96.0;
         for (var blade = 0; blade < 3; blade++)
         {
             // Upper-left, upper-right and bottom; each vane stops before the hub.
@@ -4536,8 +4509,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawGeometry(symbol,
                 new Pen(CloneWithOpacity(Brushes.Black, 0.28), 0.75), geometry);
         }
-        // Solid 21-DIP hub; vane roots at 25 DIP leave a 4-DIP clear gap.
-        dc.DrawEllipse(symbol, null, center, 21.0, 21.0);
+        // Solid 23-DIP center; 27-DIP vane roots leave a 4-DIP gap.
+        dc.DrawEllipse(symbol, null, center, 23.0, 23.0);
     }
 
     // Native BUILD-UP, RECOVERY, HP DAMAGE remain the only CFG-editable knobs.
@@ -4569,40 +4542,39 @@ public sealed class AggregateVisualControl : FrameworkElement
         var profile = RadiationRingRect();
         // Borderless grouping fill: keep the current card geometry.
         dc.DrawRoundedRectangle(panel, null, profile, 4.0, 4.0);
-        DrawText(dc, "RADIATION LEVELS",
-            new Point(profile.Left + 12.0, profile.Top + 9.0),
-            10.2, text, FontWeights.Bold);
         var damage = P("survival.radiationDamage");
         if (damage is null)
             return;
 
         var center = new Point(profile.Left + profile.Width / 2.0,
             profile.Top + RadiationDialCenterY);
-        const double radius = 113.0;
+        const double radius = RadiationDialTrackRadius;
         var currentRad = _radLevel;
 
         // Recessed matte bezel with restrained instrumentation. The dial
         // reads like the game's HUD symbol rather than a technical chart.
-        // The only selectable rail is still radius=113 (hit radius 100..127).
+        // The 122-DIP outer tooth track is the sole RAD input (hit 108..136).
         dc.DrawEllipse(CloneWithOpacity(soft, 0.12),
             new Pen(CloneWithOpacity(border, 0.9), 1.3),
-            center, 132.0, 132.0);
+            center, 142.0, 142.0);
         dc.DrawEllipse(CloneWithOpacity(panel, 0.97),
             new Pen(CloneWithOpacity(muted, 0.46), 1.8),
-            center, 126.0, 126.0);
+            center, 136.0, 136.0);
         dc.DrawEllipse(null, new Pen(CloneWithOpacity(soft, 0.42), 1.0),
-            center, 101.0, 101.0);
+            center, 109.0, 109.0);
         dc.DrawEllipse(CloneWithOpacity(soft, 0.06),
             new Pen(CloneWithOpacity(border, 0.70), 1.0),
-            center, 94.0, 94.0);
+            center, 102.0, 102.0);
 
-        // Exact level remains 1..100: only the HUD teeth are decorative.
+        // Exact level is 0..100: the 32 teeth are visual feedback, not quantization.
         // Draw the filled portion of the last tooth instead of snapping
         // radiation/thresholds to the segment count.
         DrawRadiationHudSegments(dc, center, currentRad,
             CloneWithOpacity(muted, 0.56), accent);
-        dc.DrawEllipse(accent, new Pen(panel, 1.5),
-            RadiationRingPoint(center, radius, currentRad), 4.1, 4.1);
+        // 0 RAD displays no lit segment and no highlighted cursor.
+        if (currentRad > 0.0)
+            dc.DrawEllipse(accent, new Pen(panel, 1.5),
+                RadiationRingPoint(center, radius, currentRad), 4.1, 4.1);
 
         // Unnumbered HUD ticks every 10 RAD, evenly spaced from 10 to 100.
         // CFG thresholds remain original, including DEADLY at 99 RAD.
@@ -4610,14 +4582,15 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             dc.DrawLine(new Pen(tick == 100 ? accent : muted,
                     tick == 100 ? 2.0 : 1.2),
-                RadiationRingPoint(center, 128.0, tick),
-                RadiationRingPoint(center, tick == 100 ? 138.0 : 135.0,
+                RadiationRingPoint(center, 137.0, tick),
+                RadiationRingPoint(center, tick == 100 ? 147.0 : 144.0,
                     tick));
         }
 
-        // Separated game-HUD-inspired trefoil fills the dial face. The selected
-        // numeric RAD remains visible only in the adjacent RAD CONTROLS panel.
         DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));
+        // Large yellow preview value below the enlarged dial, not to its right.
+        DrawCenteredText(dc, currentRad.ToString("0", CultureInfo.InvariantCulture) + " RAD",
+            new Point(center.X, profile.Top + 347.0), 29.0, accent, FontWeights.Bold);
         DrawRadiationControls(dc, text, muted, soft, accent, panel);
     }
 
@@ -4631,53 +4604,34 @@ public sealed class AggregateVisualControl : FrameworkElement
         var area = RadiationControlsRect();
         var wide = RadiationWide(ActualWidth);
         dc.DrawRoundedRectangle(panel, null, area, 4.0, 4.0);
-        DrawText(dc, "RAD CONTROLS",
-            new Point(area.Left + 14.0, area.Top + 11.0),
-            10.3, text, FontWeights.Bold);
-
-        DrawText(dc, "RADIATION LEVEL",
-            new Point(area.Left + 16.0, area.Top + (wide ? 49.0 : 39.0)),
-            9.0, muted, FontWeights.Bold);
-        DrawText(dc, _radLevel.ToString("0", CultureInfo.InvariantCulture) + " RAD",
-            new Point(area.Left + 16.0, area.Top + (wide ? 75.0 : 58.0)),
-            21.0, accent, FontWeights.Bold);
-
-        var rail = RadiationLevelRail();
-        var cy = rail.Top + rail.Height / 2.0;
-        dc.DrawLine(new Pen(soft, 5.0),
-            new Point(rail.Left, cy), new Point(rail.Right, cy));
-        var levelX = rail.Left + (_radLevel - 1.0) / 99.0 * rail.Width;
-        dc.DrawLine(new Pen(accent, 5.0),
-            new Point(rail.Left, cy), new Point(levelX, cy));
-        dc.DrawEllipse(accent, new Pen(panel, 1.8),
-            new Point(levelX, cy), 7.0, 7.0);
-
         var index = RadiationStageIndex(_radLevel);
         var stage = index < 0 ? "NONE" :
             index <= 2 || index == 10 ? RadiationDamageStages[index].Label
             : "LEVEL " + RadiationDamageStages[index].Label;
         var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];
-        var stageTo = index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;
-        var stageRange = stageFrom.ToString("0", CultureInfo.InvariantCulture) + "–"
-            + stageTo.ToString("0", CultureInfo.InvariantCulture) + " RAD";
+        var stageTo = index < 0 ? 0.0
+            : index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;
+        var stageRange = index < 0 ? "0 RAD"
+            : stageFrom.ToString("0", CultureInfo.InvariantCulture) + "–"
+                + stageTo.ToString("0", CultureInfo.InvariantCulture) + " RAD";
         var damage = RadiationDamageAtLevel(_radLevel);
         var modified = P("survival.radiationDamage")?.IsValueModifiedFromReference() ?? false;
         var eta = RadiationTimeToZeroHp();
         // The current source damage stage is primary player-facing status.
         DrawText(dc, "ACTIVE STAGE",
-            new Point(area.Left + 16.0, area.Top + (wide ? 189.0 : 147.0)),
+            new Point(area.Left + 16.0, area.Top + (wide ? 74.0 : 30.0)),
             10.5, text, FontWeights.Bold);
         DrawText(dc, stage,
-            new Point(area.Left + 16.0, area.Top + (wide ? 205.0 : 161.0)),
+            new Point(area.Left + 16.0, area.Top + (wide ? 96.0 : 54.0)),
             18.0, accent, FontWeights.Bold);
         DrawRightAlignedText(dc, stageRange,
-            new Point(area.Right - 16.0, area.Top + (wide ? 207.0 : 163.0)),
+            new Point(area.Right - 16.0, area.Top + (wide ? 98.0 : 56.0)),
             9.5, muted, FontWeights.SemiBold);
         DrawText(dc, "DAMAGE PER TICK",
-            new Point(area.Left + 16.0, area.Top + (wide ? 243.0 : 189.0)),
+            new Point(area.Left + 16.0, area.Top + (wide ? 164.0 : 115.0)),
             9.0, muted, FontWeights.Bold);
         DrawText(dc, damage.ToString("0.###", CultureInfo.InvariantCulture),
-            new Point(area.Left + 16.0, area.Top + (wide ? 261.0 : 203.0)),
+            new Point(area.Left + 16.0, area.Top + (wide ? 185.0 : 133.0)),
             15.0, modified ? accent : text, FontWeights.Bold);
 
         // Estimate full-HP depletion by whole hypothetical radiation ticks.
@@ -4686,14 +4640,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             ? "DEAD AFTER " + eta.ToString("0", CultureInfo.InvariantCulture) + " TICKS IN"
             : "DEATH ESTIMATE";
         DrawText(dc, deathCaption,
-            new Point(area.Left + 16.0, area.Top + (wide ? 298.0 : 225.0)),
+            new Point(area.Left + 16.0, area.Top + (wide ? 251.0 : 190.0)),
             9.0, muted, FontWeights.Bold);
         DrawText(dc, double.IsFinite(eta) ? "~" + RadiationTime(eta) : "NO RAD DAMAGE",
-            new Point(area.Left + 16.0, area.Top + (wide ? 315.0 : 239.0)),
+            new Point(area.Left + 16.0, area.Top + (wide ? 276.0 : 212.0)),
             18.0, text, FontWeights.Bold);
-        DrawCenteredText(dc, "1 TICK/S ASSUMED · NO HEALING/PROTECTION",
-            new Point(area.Left + area.Width / 2.0, area.Top + (wide ? 360.0 : 258.0)),
-            8.6, muted, FontWeights.SemiBold);
     }
 
     // Three native stash ammo quantities + three independent bonus rewards.
@@ -5451,16 +5402,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
-        if (RadiationRailHit(point))
-        {
-            _selectedParameter = null;
-            _selectedHitKind = null;
-            _radLevelDragging = true;
-            CaptureMouse();
-            SetRadiationFromRail(point);
-            e.Handled = true;
-            return;
-        }
         if (RadiationRingHit(point))
         {
             _selectedParameter = null;
@@ -5538,24 +5479,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             e.Handled = true;
             return;
         }
-        if (_radLevelDragging && e.LeftButton == MouseButtonState.Pressed)
-        {
-            SetRadiationFromRail(point);
-            e.Handled = true;
-            return;
-        }
         if (_dragTarget is null && RadiationRingHit(point))
         {
             SetHoverTarget(null);
             Cursor = Cursors.Hand;
-            ToolTip = "Drag clockwise along the HUD dial: 1–100 RAD. Stage, damage and HP estimate appear in RAD CONTROLS. Right-click = 1 RAD.";
-            return;
-        }
-        if (_dragTarget is null && RadiationRailHit(point))
-        {
-            SetHoverTarget(null);
-            Cursor = Cursors.Hand;
-            ToolTip = "Choose 1–100 RAD · Fixed-stage HP estimate updates instantly.";
+            ToolTip = "Drag ring: 0–100 RAD · Wheel / arrows ±1 · Right-click resets to 0 RAD.";
             return;
         }
         // Preview RAD controls do not take ownership of native parameter hover.
@@ -5603,18 +5531,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             e.Handled = true;
             return;
         }
-        if (RadiationRailHit(pointer))
-        {
-            var radWheelDirection = Math.Sign(e.Delta);
-            if (radWheelDirection != 0)
-            {
-                _selectedParameter = null;
-                AdjustRadiationLevel(radWheelDirection);
-                Focus();
-                e.Handled = true;
-            }
-            return;
-        }
         if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline"))
             return;
 
@@ -5645,10 +5561,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         base.OnMouseLeftButtonUp(e);
 
-        if (_radRingDragging || _radLevelDragging)
+        if (_radRingDragging)
         {
             _radRingDragging = false;
-            _radLevelDragging = false;
             _radRingHadScrub = false;
             _radRingCompleted = false;
             ReleaseMouseCapture();
@@ -5667,7 +5582,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
-        if (_dragTarget is null && !_radRingDragging && !_radLevelDragging)
+        if (_dragTarget is null && !_radRingDragging)
         {
             SetHoverTarget(null);
             ToolTip = null;
@@ -5678,10 +5593,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnLostMouseCapture(MouseEventArgs e)
     {
         base.OnLostMouseCapture(e);
-        if (_radRingDragging || _radLevelDragging)
+        if (_radRingDragging)
         {
             _radRingDragging = false;
-            _radLevelDragging = false;
             _radRingHadScrub = false;
             _radRingCompleted = false;
             Cursor = Cursors.Arrow;
@@ -5735,10 +5649,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseRightButtonDown(e);
-        if (RadiationRingHit(e.GetPosition(this))
-            || RadiationRailHit(e.GetPosition(this)))
+        if (RadiationRingHit(e.GetPosition(this)))
         {
-            _radLevel = 1.0;
+            _radLevel = 0.0;
             _radRingFocus = true;
             InvalidateVisual();
             e.Handled = true;
@@ -5805,7 +5718,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (e.Key == Key.R)
         {
             if (Family == "RadiationBalance")
-                _radLevel = 1.0;
+                _radLevel = 0.0;
             if (Family == "ConsumableMixer")
             {
                 var durationAnchor = P("survival.waterInstantStaminaRestore");
@@ -5831,7 +5744,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             };
             if (radKeyStep != 0 || e.Key is Key.Home or Key.End)
             {
-                if (e.Key == Key.Home) _radLevel = 1.0;
+                if (e.Key == Key.Home) _radLevel = 0.0;
                 else if (e.Key == Key.End) _radLevel = 100.0;
                 else AdjustRadiationLevel(radKeyStep);
                 InvalidateVisual();
