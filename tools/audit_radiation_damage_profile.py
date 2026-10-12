@@ -48,15 +48,15 @@ assert "foreach (var threshold in RadiationRingThresholds)" in code
 assert "DrawRadiationRingSector(dc, center, radius, first, last, inactive);" in code
 assert "DrawRadiationRingSector(dc, center, radius, first, litEnd, active);" in code
 assert "DrawRadiationHudSegments(dc, center, currentRad," in code
-assert "DrawRadiationHudTrefoil(dc, new Point(center.X, center.Y - 26.0)," in code
-assert '"RAD"' in code and '"11 CFG STAGES · 99 RAD DEADLY"' in code
+assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.9));" in code
+assert '"11 CFG STAGES · 99 RAD DEADLY"' in code
 assert "ctx.ArcTo(" in code
 bounds = code.split("RadiationRingThresholds =", 1)[1].split("};", 1)[0]
 splits = [float(x) for x in re.findall(r"[0-9]+(?:\.[0-9]+)?", bounds)]
 assert splits == [10, 20, 30, 40, 50, 60, 70, 80, 90, 99], splits
 assert abs(360 * splits[-1] / 100 - 356.4) < 1e-9
 assert "foreach (var threshold in RadiationRingThresholds)" in code
-assert "RadiationRingPoint(center, tickLabelRadius, threshold)" in code
+assert "RadiationRingPoint(center, 128.0, threshold)" in code
 assert "Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0)" in code
 
 assert "DrawSourceKnob(dc, P(source.Id), source.Label" in code
@@ -83,7 +83,6 @@ for token in (
     'private void ScrubRadiationRing(Point point)',
     'private void SetRadiationFromRail(Point point)',
     'private Rect RadiationLevelRail()',
-    'private int RadiationStepHit(Point point)',
     'private bool RadiationRailHit(Point point)',
     'private void AdjustRadiationLevel(int step)',
     'Math.Clamp(Math.Round(1.0 + fraction * 99.0), 1.0, 100.0)',
@@ -92,7 +91,7 @@ for token in (
     'private const int RadiationHudSegments = 48;',
     'private const double RadiationHudSegmentGap = 0.36;',
     'DrawRadiationHudSegments(dc, center, currentRad,',
-    'DrawRadiationHudTrefoil(dc, new Point(center.X, center.Y - 26.0),',
+    'DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.9));',
     'DrawRadiationRingSector(dc, center, radius, first, last, inactive);',
     'DrawRadiationRingSector(dc, center, radius, first, litEnd, active);',
     'var litEnd = Math.Min(last, rad);',
@@ -100,8 +99,11 @@ for token in (
     'private static Point RadiationHudPolar(',
     'private static void DrawRadiationHudTrefoil(',
     'new Pen(CloneWithOpacity(border, 0.9), 1.3)',
-    'new Point(center.X, center.Y + 43.0)',
-    'new Point(center.X, center.Y + 68.0)',
+    'const double outer = 89.0;',
+    'const double inner = 17.0;',
+    'dc.DrawEllipse(symbol, null, center, 18.0, 18.0);',
+    'area.Left + 22.0',
+    'area.Width - 44.0',
     'DrawRadiationControls(dc, text, muted, border, soft, accent, panel);',
     'private void DrawRadiationControls(',
     '"RAD CONTROLS"', '"RADIATION LEVEL"',
@@ -158,9 +160,40 @@ glyph = code.split("private static void DrawRadiationHudTrefoil(", 1)[1].split(
 assert "for (var blade = 0; blade < 3; blade++)" in glyph
 assert "var angle = -150.0 + blade * 120.0;" in glyph
 assert "ctx.ArcTo(" in glyph
-assert "dc.DrawEllipse(symbol, null, center, 7.5, 7.5);" in glyph
+assert "dc.DrawEllipse(symbol, null, center, 18.0, 18.0);" in glyph
+assert "const double outer = 89.0;" in glyph
+assert "const double inner = 17.0;" in glyph
+assert "dc.DrawEllipse(shadow" not in glyph
+assert "RadiationHudPolar(center, 28.0, angle)" not in glyph
 assert "new Pen(accent, 13.0)" not in code
 assert "DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);" not in code
+
+# The ring stays the only circular input. No numeric thresholds or RAD
+# number overlays its symbol; selected RAD is read in the adjacent card.
+ring_renderer = code.split("private void DrawRadiationBalance(", 1)[1].split(
+    "// Preview-only RAD selection.", 1)[0]
+control_renderer = code.split("private void DrawRadiationControls(", 1)[1].split(
+    "// Three native stash ammo quantities", 1)[0]
+for token in (
+    "RadiationStepButton(", "RadiationStepHit(",
+    "new Point(center.X, center.Y + 43.0)",
+    "new Point(center.X, center.Y + 68.0)",
+    "RadiationRingPoint(center, tickLabelRadius, threshold)",
+    "threshold.ToString(",
+):
+    assert token not in code, "Retired RAD step buttons or number overlays returned: " + token
+assert "DrawCenteredText(dc," not in ring_renderer.split("foreach (var threshold in RadiationRingThresholds)", 1)[1].split(
+    "DrawRadiationHudTrefoil(dc", 1)[0], "Numerical threshold overlay returned"
+assert "currentRad.ToString(" not in ring_renderer, "RAD number returned to trefoil"
+assert 'DrawCenteredText(dc, "RAD",' not in ring_renderer, "RAD label returned to glyph"
+assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.9));" in ring_renderer
+assert "DrawText(dc, _radLevel.ToString(" in control_renderer
+assert "RadiationStepButton(" not in control_renderer
+assert "foreach (var step in" not in control_renderer
+assert "new Point(rail.Left, area.Top" not in control_renderer
+assert "new Point(rail.Right, area.Top" not in control_renderer
+assert "private Rect RadiationLevelRail()" in code
+assert "RadiationRailHit(point)" in code
 
 # Fixed-radiation calculation has no build-up and no passive recovery input.
 fixed_math = code.split('private double RadiationTimeToZeroHp()', 1)[1].split('private static string RadiationTime(', 1)[0]
@@ -211,6 +244,6 @@ assert angle_to_rad(356.4) == 99
 assert angle_to_rad(359) == 100
 
 print("PASS: 11 original radiation stages and 22 unchanged writer leaves;")
-print("      48 segmented HUD teeth, vector trefoil and continuous 1–100 clockwise RAD selection;")
+print("      48 HUD teeth, large solid unperforated trefoil, no ring numbers or +/-;")
 print("      original stage thresholds, 1:1 damage scaling and conditional fixed-RAD HP estimate.")
 print("NOT VERIFIED: actual permanent-effect damage cadence, healing, armor or gameplay time to death.")
