@@ -2136,13 +2136,19 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'RADIATION DAMAGE STAGES' in _radiation_renderer
     or 'foreach (var threshold in RadiationRingThresholds)' not in _radiation_renderer
     or 'DrawRadiationHudSegments(dc, center, currentRad,' not in _radiation_renderer
-    or 'DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.9));' not in _radiation_renderer
+    or 'DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));' not in _radiation_renderer
     or 'private const int RadiationHudSegments = 48;' not in _radiation_source
     or 'private const double RadiationHudSegmentGap = 0.36;' not in _radiation_source
     or 'DrawRadiationRingSector(dc, center, radius, first, litEnd, active);' not in _radiation_source
     or 'if (litEnd > first + Epsilon)' not in _radiation_source
-    or 'HUD-STYLE PREVIEW · NOT GAME HUD' not in _radiation_renderer
-    or '11 CFG STAGES · 99 RAD DEADLY' not in _radiation_renderer
+    or '1–100 RAD' not in _radiation_renderer
+    or 'private const double RadiationDialCenterY = 194.0;' not in _radiation_source
+    or 'profile.Top + RadiationDialCenterY' not in _radiation_renderer
+    or 'Math.Ceiling(RadiationModelMaxHp / damagePerAssumedCharge)' not in _radiation_source
+    or 'EST. HP ZERO · 1 TICK/S' not in _radiation_source
+    or 'FIXED RAD · NO HEALING OR PROTECTION' not in _radiation_source
+    or 'HUD-STYLE PREVIEW · NOT GAME HUD' in _radiation_renderer
+    or '11 CFG STAGES · 99 RAD DEADLY' in _radiation_renderer
     or 'DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);' in _radiation_renderer
     or 'DrawRightAlignedText(dc, stageRange,' not in _radiation_source
     or 'const double outer = 89.0;' not in _radiation_source
@@ -2164,7 +2170,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: three native CFG knobs, 48 HUD teeth and full solid trefoil with no ring numbers or +/- controls; 1–100 preview and static HP estimate")
+    note("Radiation: three native CFG knobs, 48 HUD teeth, centered solid trefoil, simplified ring, and discrete conditional HP-zero ticks")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -2948,6 +2954,7 @@ if ('"RadiationBalance" => RadiationBoardHeight' not in _seven_src
     or 'private void DrawRadiationControls(' not in _seven_src
     or 'private const int RadiationHudSegments = 48;' not in _seven_src
     or 'private static void DrawRadiationHudTrefoil(' not in _seven_src
+    or 'private const double RadiationDialCenterY = 194.0;' not in _seven_src
     or 'RadiationStepHit(' in _seven_src
     or 'RadiationStepButton(' in _seven_src):
     _seven_errors.append('RadiationBalance solid HUD dial and rail-only controls/measurement contract drifted')
