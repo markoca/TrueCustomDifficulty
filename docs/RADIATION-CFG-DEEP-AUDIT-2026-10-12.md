@@ -1,5 +1,9 @@
 # Full radiation CFG source audit — 2026-10-12
 
+### 2026-10-13 — Solid in-game-style trefoil feedback (PRESENTATION ONLY)
+
+The user tested the actual WPF UI and requested removal of the redundant +/- level buttons and ring-perimeter numbers, while enlarging the central radiation sign across almost the entire ring without pinhole cutouts or an embedded RAD numeral. The same 48-tooth HUD-style perimeter is preserved, with ten **unlabeled** original stage onset ticks and an emphasized 99 RAD boundary; the symbol is three filled vanes of outer radius 89 DIP and filled overlapping hub (radius 18 DIP), centered on the dial rather than floated above the selected number. The adjacent RAD CONTROLS panel keeps the only visible numeric selected level, a stretched single horizontal 1–100 RAD rail, selected CFG damage prototype stage/range, damage magnitude and conditional HP-zero estimate. No state source, CFG edit target, RAD stage breakpoint, multiplier, game HUD asset or simulation functionality was changed. Native top knobs and source provenance remain unmodified. The one-charge-per-second model stays conditional, not confirmed by runtime measurements.
+
 ### 2026-10-12 — HUD-icon-inspired 48-segment Radiation dial (CURRENT VISUAL)
 
 **Change scope only: WPF renderer + documentation/tests.** The game's lower-left radiation status HUD glyph (user-provided reference screenshot) inspires the new dark metallic bezel, 48 uniform separated perimeter teeth and three-vane centered radiation symbol. It replaces the instrument's crowded interior stage/damage text and smooth gold circumference, not the actual game's UI. There are no imported game graphics, changed game asset files, modified field presets, new CFG sources, new writer targets or saved RAD preview values.
