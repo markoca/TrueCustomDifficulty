@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check radiation stage preview against independently audited vanilla CFG rows.
 
-Includes a conditional one-charge-per-second HP model, not a proven in-game death timer.
+Checks the fixed-level HP-zero estimate (assumed 1 damage charge/s, not a proven game death timer).
 Usage: python3 tools/audit_radiation_damage_profile.py
 """
 import json
@@ -37,8 +37,7 @@ assert "deadly.SourceDamage * multiplier" in code
 assert 'damage.IsValueModifiedFromReference()' in code
 assert "RadiationProfileTop + RadiationProfileHeight" in code
 assert "private const double RadiationProfileHeight = 388.0;" in code
-assert "private const double RadiationSimNarrowHeight = 184.0;" in code
-assert "private const double RadiationTimelineHeight = 202.0;" in code
+assert "private const double RadiationControlsNarrowHeight = 272.0;" in code
 assert "RadiationBoardHeight(double width)" in code
 assert '"RadiationBalance" => RadiationBoardHeight' in code
 assert "CFG EFFECT VALUE · NOT VERIFIED HP/s" in code
@@ -48,7 +47,7 @@ assert "private const double RadiationProfileHeight = 388.0;" in code
 assert "foreach (var threshold in RadiationRingThresholds)" in code
 assert "DrawRadiationRingSector(dc, center, radius, fromRad, toRad," in code
 assert "ctx.ArcTo(" in code
-assert '"SIMULATED RAD"' in code and '"99 RAD · DEADLY' in code
+assert '"SELECTED RAD"' in code and '"99 RAD · DEADLY' in code
 bounds = code.split("RadiationRingThresholds =", 1)[1].split("};", 1)[0]
 splits = [float(x) for x in re.findall(r"[0-9]+(?:\.[0-9]+)?", bounds)]
 assert splits == [10, 20, 30, 40, 50, 60, 70, 80, 90, 99], splits
@@ -65,142 +64,106 @@ for factor in (0.0, 0.5, 1.0, 1.5, 2.0):
                    for p in points)
 
 
-# Preview-only choices, scrub/playback and explicitly hypothetical HP-zero ETA cannot add CFG sources.
+# Preview-only controls must be bound to a fixed 1–100 RAD selection.
+# Neither the selection nor a death estimate may create a new CFG writer target.
 for token in (
-    'private int _radField = 1;',
-    'private int _radStart;',
-    'private bool _radRecovery = true;',
-    'private int RadiationSimHit(Point point)',
-    'AdvanceRadiationSim(preview, 1);',
-    'AdvanceRadiationSim(preview, Math.Sign(e.Delta));',
-    '_radSimFocus = -1;',
-    'ToolTip = "Model only: click or scroll to cycle · Right-click restores preview default.";',
-    'AdvanceRadiationSim(_radSimFocus, simulationDirection);',
-    'DrawRadiationSimulation(dc, text, muted, border, soft, accent, panel);',
-    '"RADIATION SIMULATION"', '"RADIATION TIMELINE"',
-    '"MODEL ONLY"', '"TO 99 RAD"', '"NO NET GAIN"',
-    '"MODEL HP ZERO"', '"HYPOTHETICAL · NO HEALING"',
-    '"ASSUME 1 CHARGE/s · ENGINE CADENCE UNVERIFIED"',
-    '"ASSUME 1 CHARGE/s · DIRECT HAZARD EXCLUDED"',
-    'field.PerSecond * buildUp - recovery',
-    '"RadiationBalance" => RadiationBoardHeight(width)',
-    'private double RadiationInitialRad =>',
-    'private double RadiationCurrentRad =>',
-    'private static double RadiationHpLoss(',
-    'private static double RadiationHpZeroSeconds(',
+    'private double _radLevel = 1.0;',
     'private double RadiationModelMaxHp =>',
-    'private bool RadiationRingHit(Point point)',
+    'private static int RadiationStageIndex(double rad)',
+    'private double RadiationDamageAtLevel(double level)',
+    'RadiationDamageStages[index].SourceDamage * damageScale',
+    'private double RadiationTimeToZeroHp()',
+    'RadiationModelMaxHp / damagePerAssumedCharge',
+    'double.PositiveInfinity',
     'private void ScrubRadiationRing(Point point)',
-    'private void ToggleRadiationPlayback()',
-    'private void TickRadiationPlayback()',
-    'private Rect RadiationPlaybackButton(int index)',
+    'private void SetRadiationFromRail(Point point)',
+    'private Rect RadiationLevelRail()',
+    'private int RadiationStepHit(Point point)',
+    'private bool RadiationRailHit(Point point)',
+    'private void AdjustRadiationLevel(int step)',
+    'Math.Clamp(Math.Round(1.0 + fraction * 99.0), 1.0, 100.0)',
+    '_radRingCompleted = true;',
+    'return distance >= 100.0 && distance <= 127.0;',
     'new Pen(accent, 13.0)',
     'DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);',
-    'private static int RadiationStageIndex(double rad)',
-    'RadiationDamageStages[stageIndex].SourceDamage',
-    'sourceDamage * multiplier',
+    'DrawRadiationControls(dc, text, muted, border, soft, accent, panel);',
+    'private void DrawRadiationControls(',
+    '"RAD CONTROLS"', '"RADIATION LEVEL"',
+    '"ACTIVE STAGE"', '"CFG DAMAGE / CHARGE"', '"EST. HP ZERO"',
+    '"ASSUME 1 CHARGE/s · NO HEALING"', '"FIXED RAD"',
+    'var currentRad = _radLevel;',
+    'var actualDamage = sourceDamage * multiplier;',
     '" CFG DAMAGE"',
     'stageIndex == 0 ? 1.0 : RadiationRingThresholds[stageIndex - 1]',
     'stageIndex == 10 ? 100.0 : RadiationRingThresholds[stageIndex] - 1.0',
     'double.IsNaN(nextThreshold) ? "FINAL STAGE"',
     'Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0)',
-    '_radRingCompleted = true;',
-    'if (RadiationRingHit(point))',
-    'if (currentRad >= 100.0)',
-    'StopRadiationPlayback();',
-    'ResetRadiationPreview(clearCustomStart: true);',
-    '"PLAY ×10"',
-    '"PAUSE"',
-    '"RESET"',
-    'Math.Min(100.0,',
+    '"RadiationBalance" => RadiationBoardHeight(width)',
     'health.maxHP'
 ):
-    assert token in code, "Simulation renderer/interaction drift: " + token
+    assert token in code, "Fixed-RAD control/source drift: " + token
 
-field_block = code.split("RadiationFields =", 1)[1].split("};", 1)[0]
-field_defs = re.findall(r'\("([^"]+)",\s*([0-9]+(?:\.[0-9]+)?),\s*(true|false)\)', field_block)
-expected_fields = [
-    ("LIGHT", 1, False), ("MEDIUM", 3, False), ("STRONG", 6, False),
-    ("DEADLY", 33, True), ("RADBLOCK", 50, True),
-    ("CUSTOM", 1, False), ("TOPAZ", 1, False)
-]
-assert [(name, float(rate), hazard == "true") for name, rate, hazard in field_defs] == expected_fields
-start_block = code.split("RadiationStarts =", 1)[1].split("};", 1)[0]
-assert [float(v) for v in re.findall(r"[0-9]+(?:\.[0-9]+)?", start_block)] == [0,25,50,75]
+# The old hypothetical FIELD/START/RECOVERY/TIMELINE model is removed.
+for token in (
+    'RADIATION SIMULATION', 'RADIATION TIMELINE', 'MODEL HP ZERO',
+    'DrawRadiationSimulation(', 'RadiationFields =', 'RadiationStarts =',
+    'RadiationNetGain(', 'RadiationHpLoss(', 'RadiationHpZeroSeconds(',
+    'RadiationPlaybackButton(', 'RadiationPlaybackHit(', 'RadiationSimHit(',
+    'ToggleRadiationPlayback(', 'TickRadiationPlayback(', 'StopRadiationPlayback(',
+    'DispatcherTimer', '_radField', '_radStart', '_radRecovery', '_radPlaying',
+    '_radElapsed', '_radSimFocus', 'PLAY ×10', 'TO 99 RAD', 'NO NET GAIN'
+):
+    assert token not in code, "Retired simulation returned: " + token
 
-# Mathematical regression for the explicitly ASSUMED constant-field model.
-def hypothetical_to_99(rate, buildup, passive, initial):
-    net = max(0, rate * max(0, buildup) - max(0, passive))
-    return None if net == 0 else (99 - initial) / net
-assert abs(hypothetical_to_99(3, 1, .05, 0) - 99/2.95) < 1e-9
-assert abs(hypothetical_to_99(6, 1.5, .05, 50) - 49/8.95) < 1e-9
-assert hypothetical_to_99(1, 0, .05, 0) is None
+# Fixed-radiation calculation has no build-up and no passive recovery input.
+fixed_math = code.split('private double RadiationTimeToZeroHp()', 1)[1].split('private static string RadiationTime(', 1)[0]
+assert 'RadiationModelMaxHp / damagePerAssumedCharge' in fixed_math
+assert 'survival.radiationAccumulation' not in fixed_math
+assert 'survival.radiationRecovery' not in fixed_math
+assert 'survival.radiationDamage' in code
 
-# Independent model regression: this is illustrative arithmetic, not engine validation.
-from math import inf
+# Compare actual staged source amount across both sides of every boundary.
+stage_onsets = [1.0, *splits]
+stage_damages = [float(value) for _, _, value in stages]
+def damage_at(level, multiplier):
+    idx = sum(level >= start for start in stage_onsets) - 1
+    return 0.0 if idx < 0 else stage_damages[idx] * multiplier
 
-stage_onsets = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 99]
-stage_dps = [float(value) for _, _, value in stages]
+def hp_zero(level, hp, multiplier):
+    damage = damage_at(level, multiplier)
+    return None if damage <= 0 else hp / damage
 
-def model_damage_rate(rad_value, multiplier):
-    active = [i for i, threshold in enumerate(stage_onsets) if rad_value >= threshold]
-    return 0 if not active else stage_dps[active[-1]] * multiplier
+for level, expected in (
+    (0, 0.0), (1, .2), (9, .2), (10, .3), (19, .3),
+    (20, .48), (29, .48), (30, .816), (40, 1.468),
+    (50, 2.2), (60, 4.18), (70, 8.37), (80, 17.58),
+    (90, 38.67), (98, 38.67), (99, 20.0), (100, 20.0)
+):
+    assert abs(damage_at(level, 1) - expected) < 1e-9, level
+    assert abs(damage_at(level, 1.5) - 1.5 * expected) < 1e-9, level
+    assert damage_at(level, 0) == 0, level
 
-def model_loss(start, elapsed, net, multiplier):
-    if multiplier == 0 or elapsed <= 0:
-        return 0
-    rad_value = start
-    remaining = elapsed
-    loss = 0
-    while remaining > 0:
-        if net <= 0 or rad_value >= 100:
-            return loss + model_damage_rate(rad_value, multiplier) * remaining
-        boundary = next((v for v in stage_onsets + [100] if v > rad_value), 100)
-        period = min(remaining, (boundary - rad_value) / net)
-        loss += model_damage_rate(rad_value, multiplier) * period
-        remaining -= period
-        rad_value = boundary
-    return loss
+assert abs(hp_zero(1, 100, 1) - 500.0) < 1e-9
+assert abs(hp_zero(50, 100, 1) - 100.0 / 2.2) < 1e-9
+assert abs(hp_zero(90, 100, 1) - 100.0 / 38.67) < 1e-9
+assert abs(hp_zero(99, 100, 1) - 5.0) < 1e-9
+assert abs(hp_zero(99, 100, 2) - 2.5) < 1e-9
+assert hp_zero(0, 100, 1) is None
+assert hp_zero(50, 100, 0) is None
 
-assert abs(model_loss(0, 2, 10, 1) - .48) < 1e-8  # 0–1: 0, 1–10: .18, 10–20: .30
-assert abs(model_loss(99, 5, 0, 1) - 100) < 1e-8
-assert abs(model_loss(90, 1, 0, 1) - 38.67) < 1e-8
-assert model_loss(0, 999, 0, 1) == 0
-assert model_loss(100, 999, 100, 0) == 0
-assert stage_dps[-1] < stage_dps[-2]  # No invented monotonic Deadly damage curve.
+# Ring selection follows a clockwise 0–360° geometry, but click/rail
+# clamps the exposed chooser to 1–100, reserving 100 for completed full circle.
+def angle_to_rad(clockwise_degrees):
+    return max(1, min(100, int((clockwise_degrees % 360) / 3.6 + 0.5)))
+assert angle_to_rad(0) == 1
+assert angle_to_rad(36) == 10
+assert angle_to_rad(90) == 25
+assert angle_to_rad(180) == 50
+assert angle_to_rad(270) == 75
+assert angle_to_rad(356.4) == 99
+assert angle_to_rad(359) == 100
 
-# Main ring scrubbing: 12 o'clock = 1 RAD on first click, clockwise
-# advances to 100 just BEFORE the same seam and closes the entire circle.
-def point_rad(degrees_clockwise_from_top):
-    angle = degrees_clockwise_from_top % 360
-    return min(100, max(1, int(angle * 100 / 360 + 0.5)))
-assert point_rad(0) == 1
-assert point_rad(3.6) == 1
-assert point_rad(36) == 10
-assert point_rad(90) == 25
-assert point_rad(180) == 50
-assert point_rad(270) == 75
-assert point_rad(356.4) == 99
-assert point_rad(359) == 100
-assert point_rad(360) == 1  # Captured drag seam logic retains 100.
-
-# Original stage-to-effect mappings, including 1-RAD onset and non-monotonic
-# Deadly values. Edited HP DAMAGE scales effects but never shifts thresholds.
-for level, expected in [
-    (0, 0.0), (1, .2), (9, .2), (10, .3),
-    (19, .3), (20, .48), (30, .816),
-    (40, 1.468), (90, 38.67), (98, 38.67),
-    (99, 20.0), (100, 20.0),
-]:
-    assert abs(model_damage_rate(level, 1.0) - expected) < 1e-9, level
-    assert abs(model_damage_rate(level, 1.5) - 1.5 * expected) < 1e-9, level
-    assert model_damage_rate(level, 0.0) == 0
-
-assert '"RadiationBalance" => RadiationBoardHeight(width)' in code
-assert '"survival.radiationDamage"' in code and '"survival.radiationRecovery"' in code
-
-print("PASS: 11 original radiation damage stages, 22 exact writer leaves,")
-print("      source-multiplier projection and distinct DEADLY source validated.")
-print("      Native 13-DIP ring scrub 1–100 RAD clockwise, active CFG stage statistics,")
-print("      live HP DAMAGE scaling, scenario playback and conditional HP-zero timeline.")
-print("NOT VERIFIED: engine cadence/falloff, direct-field hazards, protection or in-game death time; Wine visual acceptance.")
+print("PASS: 11 original radiation stages and 22 unchanged writer leaves;")
+print("      clockwise 1–100 RAD ring + compact rail/buttons, exact CFG damage and")
+print("      fixed-RAD full-HP estimate (conditional one charge per second).")
+print("NOT VERIFIED: actual permanent-effect damage cadence, healing, armor or gameplay time to death.")
