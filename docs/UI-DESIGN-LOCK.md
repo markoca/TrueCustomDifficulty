@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-12 — Radiation threshold ring audit decimal parser fix (CURRENT)
+
+The actual 360-degree C# ring uses the audited values `10.0 ... 99.0` and was already correct. The Python regression auditor incorrectly tokenized each decimal as two integers (`10.0` became `10, 0`), causing a false assertion failure before publish. `tools/audit_radiation_damage_profile.py` now parses complete numeric literals with `[0-9]+(?:\.[0-9]+)?` as floats, asserts precisely the same ten native radiation thresholds, and uses a tolerance when checking the 99 RAD -> 356.4-degree mapping. Do not modify source threshold coordinates, radiation UI, CFG values, controls, or writer to work around this test-only defect. Pull and rerun `python3 tools/audit_radiation_damage_profile.py` before publishing.
+
 ### 2026-10-12 — Radiation full-circle 360-degree source threshold knob (CURRENT)
 
 In Survival/Radiation System the retired horizontal 11-bar Damage Stages chart becomes ONE read-only, full 360-degree ring positioned below the existing THREE independently editable 270-degree native knobs (BUILD-UP / RECOVERY / HP DAMAGE). The circular scale is original Player.MaxRadiation = 100 RAD: 0 starts at 12 o'clock and increases clockwise. Exactly ten angular divider marks and labels: **10, 20, 30, 40, 50, 60, 70, 80, 90, 99 RAD**. Positions must be proportional (360 * threshold / 100 degrees), NOT equal-width fake stages; 99 occupies 356.4 degrees with a real final 99–100 wedge of only 3.6 degrees. True damage begins at 1 RAD and is acknowledged in the center text, without inserting an unrequested 1 split. Permanent center reads RADIATION / 0–100 / RAD, not a simulated current RAD amount.

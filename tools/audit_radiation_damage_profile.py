@@ -46,9 +46,9 @@ assert "DrawRadiationRingSector(dc, center, radius, fromRad, toRad," in code
 assert "ctx.ArcTo(" in code
 assert "HP LOSS AT 1 RAD" in code and "99 RAD · DEADLY" in code
 bounds = code.split("RadiationRingThresholds =", 1)[1].split("};", 1)[0]
-splits = [int(x) for x in re.findall(r"[0-9]+", bounds)]
+splits = [float(x) for x in re.findall(r"[0-9]+(?:\.[0-9]+)?", bounds)]
 assert splits == [10, 20, 30, 40, 50, 60, 70, 80, 90, 99], splits
-assert 360 * splits[-1] / 100 == 356.4
+assert abs(360 * splits[-1] / 100 - 356.4) < 1e-9
 assert "var toRad = i == 10 ? 100.0 : RadiationRingThresholds[i];" in code
 
 assert "DrawSourceKnob(dc, P(source.Id), source.Label" in code

@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-12 — Radiation threshold ring audit decimal parser fix (CURRENT)
+
+The actual 360-degree C# ring uses the audited values `10.0 ... 99.0` and was already correct. The Python regression auditor incorrectly tokenized each decimal as two integers (`10.0` became `10, 0`), causing a false assertion failure before publish. `tools/audit_radiation_damage_profile.py` now parses complete numeric literals with `[0-9]+(?:\.[0-9]+)?` as floats, asserts precisely the same ten native radiation thresholds, and uses a tolerance when checking the 99 RAD -> 356.4-degree mapping. Do not modify source threshold coordinates, radiation UI, CFG values, controls, or writer to work around this test-only defect. Pull and rerun `python3 tools/audit_radiation_damage_profile.py` before publishing.
+
 ### 2026-10-12 — Radiation full-circle segmented knob (CURRENT)
 
 The only new element is a NONINTERACTIVE closed annular dial under the existing three interactive 270-degree BUILD-UP, RECOVERY and HP DAMAGE knobs. The full 0–100 RAD circle uses a WPF StreamGeometry ArcTo per CFG state range, starting vertically at 12 o'clock and sweeping clockwise. Draw ten crisp split ticks at source-confirmed 10,20,30,40,50,60,70,80,90 and 99 RAD, with label positions calculated directly from RAD/100 rather than an invented evenly spaced stage count. The 99–100 RAD segment must be just 3.6 degrees; put its Deadly damage value in the footer for readability. Other ten source magnitudes are shown as small numeric labels anchored at true arc-sector centers. Native radiation damage first starts at 1 RAD: mention this explicitly at the center while keeping user-approved cut positions unchanged.
