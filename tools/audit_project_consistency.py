@@ -2121,7 +2121,11 @@ _radiation_required = (
     '("survival.radiationDamage", "HP DAMAGE")',
     'DrawSourceKnob(dc, P(source.Id), source.Label,',
     'rateReadout: source.Id == "survival.radiationRecovery"',
-    'new Rect(left + i * (cell + gap), 49.0, cell, 181.0)',
+    'const double centerExtra = 18.0;',
+    'var sideWidth = (bankWidth - gap * 2.0 - centerExtra) / 3.0;',
+    'var hero = i == 1;',
+    'new Rect(knobLeft, 49.0, knobWidth, hero ? 188.0 : 181.0)',
+    'prominent: hero);',
 )
 if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'DrawNativeGauge(dc, P(source.Id)' in _radiation_renderer
@@ -2163,8 +2167,12 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or '"DEATH ESTIMATE"' not in _radiation_source
     or 'var deathCaption = double.IsFinite(eta)' not in _radiation_source
     or '"MAX " + RadiationModelMaxHp.ToString(' in _radiation_source
-    or '18.0, accent, FontWeights.Bold);' not in _radiation_source
-    or '10.5, text, FontWeights.Bold);' not in _radiation_source
+    or 'void DrawStat(string value, double y, double fontSize, Brush ink, FontWeight weight)' not in _radiation_source
+    or 'CreateText(value, fontSize, ink, weight, contentWidth)' not in _radiation_source
+    or 'DrawStat(stage, wide ? 76.0 : 43.0,' not in _radiation_source
+    or 'DrawStat(stageRange, wide ? 117.0 : 81.0,' not in _radiation_source
+    or 'wide ? 192.0 : 140.0, 29.0,' not in _radiation_source
+    or 'wide ? 286.0 : 215.0, double.IsFinite(eta) ? 29.0 : 25.0,' not in _radiation_source
     or 'private const double RadiationDialCenterY = 183.0;' not in _radiation_source
     or 'profile.Top + RadiationDialCenterY' not in _radiation_renderer
     or 'Math.Ceiling(RadiationModelMaxHp / damagePerAssumedCharge)' not in _radiation_source
@@ -2174,7 +2182,10 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'HUD-STYLE PREVIEW · NOT GAME HUD' in _radiation_renderer
     or '11 CFG STAGES · 99 RAD DEADLY' in _radiation_renderer
     or 'DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);' in _radiation_renderer
-    or 'DrawRightAlignedText(dc, stageRange,' not in _radiation_source
+    or 'DrawRightAlignedText(dc, stageRange,' in _radiation_source
+    or 'const double centerExtra = 18.0;' not in _radiation_renderer
+    or 'prominent: hero);' not in _radiation_renderer
+    or '("survival.radiationDamage", "HP DAMAGE"),\n            ("survival.radiationRecovery", "RECOVERY")' not in _radiation_renderer
     or 'const double outer = 96.0;' not in _radiation_source
     or 'const double inner = 27.0;' not in _radiation_source
     or 'dc.DrawEllipse(symbol, null, center, 23.0, 23.0);' not in _radiation_source
@@ -2199,7 +2210,13 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: default 0 RAD, enlarged single ring, centered yellow readout and no rail")
+    note("Radiation: 0–100 ring; 29-DIP stage/damage/death stats; centered larger HP DAMAGE rotary")
+for _catalog, _heading in (
+    ("UI-DESIGN-LOCK.md", "2026-10-13 — Radiation: unified large stats and centered HP DAMAGE hero knob"),
+    ("VISUAL-CONTROL-SYSTEM.md", "2026-10-13 — Radiation information hierarchy and HP DAMAGE center hero"),
+):
+    if _heading not in (DOCS / _catalog).read_text(encoding="utf-8"):
+        fail(f"Radiation UI/catalog visual lock missing or outdated: {_catalog}")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -3036,6 +3053,7 @@ _seven_radiation_native = (
     '("survival.radiationDamage", "HP DAMAGE")',
     'DrawSourceKnob(dc, P(source.Id), source.Label,',
     'rateReadout: source.Id == "survival.radiationRecovery"',
+    'prominent: hero);',
 )
 _seven_repair_start = _seven_src.find('private void DrawRepairCurve(')
 _seven_repair_end = _seven_src.find('\n    private ', _seven_repair_start)

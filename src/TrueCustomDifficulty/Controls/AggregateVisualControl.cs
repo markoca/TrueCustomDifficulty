@@ -4520,23 +4520,31 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush soft, Brush accent, Brush panel)
     {
         DrawHeader(dc, "RADIATION SYSTEM", string.Empty, text, muted, accent);
+        // HP DAMAGE is the central hero knob. The two smaller source-native
+        // knobs remain symmetrical; all three retain their own CFG bindings.
         var sources = new (string Id, string Label)[]
         {
             ("survival.radiationAccumulation", "BUILD-UP"),
-            ("survival.radiationRecovery", "RECOVERY"),
-            ("survival.radiationDamage", "HP DAMAGE")
+            ("survival.radiationDamage", "HP DAMAGE"),
+            ("survival.radiationRecovery", "RECOVERY")
         };
         const double gap = 12.0;
+        const double centerExtra = 18.0;
         var bankWidth = Math.Min(606.0, ActualWidth - 34.0);
-        var cell = (bankWidth - gap * 2.0) / 3.0;
+        var sideWidth = (bankWidth - gap * 2.0 - centerExtra) / 3.0;
         var left = (ActualWidth - bankWidth) / 2.0;
         for (var i = 0; i < sources.Length; i++)
         {
             var source = sources[i];
+            var hero = i == 1;
+            var knobWidth = sideWidth + (hero ? centerExtra : 0.0);
+            var knobLeft = left + i * (sideWidth + gap)
+                + (i == 2 ? centerExtra : 0.0);
             DrawSourceKnob(dc, P(source.Id), source.Label,
-                new Rect(left + i * (cell + gap), 49.0, cell, 181.0),
+                new Rect(knobLeft, 49.0, knobWidth, hero ? 188.0 : 181.0),
                 text, muted, border, accent, panel,
-                rateReadout: source.Id == "survival.radiationRecovery");
+                rateReadout: source.Id == "survival.radiationRecovery",
+                prominent: hero);
         }
 
         var profile = RadiationRingRect();
@@ -4617,34 +4625,40 @@ public sealed class AggregateVisualControl : FrameworkElement
         var damage = RadiationDamageAtLevel(_radLevel);
         var modified = P("survival.radiationDamage")?.IsValueModifiedFromReference() ?? false;
         var eta = RadiationTimeToZeroHp();
-        // The current source damage stage is primary player-facing status.
-        DrawText(dc, "ACTIVE STAGE",
-            new Point(area.Left + 16.0, area.Top + (wide ? 74.0 : 30.0)),
-            10.5, text, FontWeights.Bold);
-        DrawText(dc, stage,
-            new Point(area.Left + 16.0, area.Top + (wide ? 96.0 : 54.0)),
-            18.0, accent, FontWeights.Bold);
-        DrawRightAlignedText(dc, stageRange,
-            new Point(area.Right - 16.0, area.Top + (wide ? 98.0 : 56.0)),
-            9.5, muted, FontWeights.SemiBold);
-        DrawText(dc, "DAMAGE PER TICK",
-            new Point(area.Left + 16.0, area.Top + (wide ? 164.0 : 115.0)),
-            9.0, muted, FontWeights.Bold);
-        DrawText(dc, damage.ToString("0.###", CultureInfo.InvariantCulture),
-            new Point(area.Left + 16.0, area.Top + (wide ? 185.0 : 133.0)),
-            15.0, modified ? accent : text, FontWeights.Bold);
+        // Three compact information tiers use the same 29-DIP value
+        // hierarchy as the large N RAD readout beside this panel.
+        // Constrain each line to the panel: narrow layouts must not bleed
+        // into the page or turn long death estimates into multi-line text.
+        var contentWidth = Math.Max(1.0, area.Width - 32.0);
+        void DrawStat(string value, double y, double fontSize, Brush ink, FontWeight weight)
+        {
+            dc.DrawText(CreateText(value, fontSize, ink, weight, contentWidth),
+                new Point(area.Left + 16.0, area.Top + y));
+        }
 
-        // Estimate full-HP depletion by whole hypothetical radiation ticks.
-        // At zero effective damage, avoid asserting that death will occur.
+        DrawStat("ACTIVE STAGE", wide ? 46.0 : 16.0,
+            11.5, muted, FontWeights.SemiBold);
+        DrawStat(stage, wide ? 76.0 : 43.0,
+            29.0, accent, FontWeights.Bold);
+        DrawStat(stageRange, wide ? 117.0 : 81.0,
+            13.5, muted, FontWeights.SemiBold);
+
+        DrawStat("DAMAGE PER TICK", wide ? 165.0 : 115.0,
+            11.5, muted, FontWeights.SemiBold);
+        DrawStat(damage.ToString("0.###", CultureInfo.InvariantCulture),
+            wide ? 192.0 : 140.0, 29.0,
+            modified ? accent : text, FontWeights.Bold);
+
+        // Full-HP depletion is a hypothetical charge count, not a measured
+        // in-game tick cadence. A zero-damage preview never claims death.
         var deathCaption = double.IsFinite(eta)
             ? "DEAD AFTER " + eta.ToString("0", CultureInfo.InvariantCulture) + " TICKS IN"
             : "DEATH ESTIMATE";
-        DrawText(dc, deathCaption,
-            new Point(area.Left + 16.0, area.Top + (wide ? 251.0 : 190.0)),
-            9.0, muted, FontWeights.Bold);
-        DrawText(dc, double.IsFinite(eta) ? "~" + RadiationTime(eta) : "NO RAD DAMAGE",
-            new Point(area.Left + 16.0, area.Top + (wide ? 276.0 : 212.0)),
-            18.0, text, FontWeights.Bold);
+        DrawStat(deathCaption, wide ? 257.0 : 188.0,
+            11.5, muted, FontWeights.SemiBold);
+        DrawStat(double.IsFinite(eta) ? "~" + RadiationTime(eta) : "NO RAD DAMAGE",
+            wide ? 286.0 : 215.0, double.IsFinite(eta) ? 29.0 : 25.0,
+            text, FontWeights.Bold);
     }
 
     // Three native stash ammo quantities + three independent bonus rewards.

@@ -71,6 +71,28 @@ assert "Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 0.0, 100.0)" in 
 
 assert "DrawSourceKnob(dc, P(source.Id), source.Label" in code
 assert "rateReadout: source.Id == \"survival.radiationRecovery\"" in code
+
+# Left/hero/right knob ordering is deliberate: HP DAMAGE is larger and centered
+# while three independent native parameter sources and 270-degree input remain.
+knob_bank = code.split("private void DrawRadiationBalance(", 1)[1].split(
+    "var profile = RadiationRingRect();", 1)[0]
+knob_ids = re.findall(r'\("(survival\.radiation\w+)", "[A-Z -]+"\)', knob_bank)
+assert knob_ids == [
+    "survival.radiationAccumulation",
+    "survival.radiationDamage",
+    "survival.radiationRecovery",
+], knob_ids
+for token in (
+    "const double gap = 12.0;",
+    "const double centerExtra = 18.0;",
+    "var sideWidth = (bankWidth - gap * 2.0 - centerExtra) / 3.0;",
+    "var hero = i == 1;",
+    "var knobWidth = sideWidth + (hero ? centerExtra : 0.0);",
+    "new Rect(knobLeft, 49.0, knobWidth, hero ? 188.0 : 181.0)",
+    "prominent: hero);",
+):
+    assert token in knob_bank, "Radiation central hero knob drifted: " + token
+assert abs((2 * 188.0 + 206.0 + 2 * 12.0) - 606.0) < 1e-9
 for factor in (0.0, 0.5, 1.0, 1.5, 2.0, 4.0):
     for _, prototype, source_value in stages:
         expected = float(source_value) * factor
@@ -116,7 +138,7 @@ for token in (
     'var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];',
     'var stageTo = index < 0 ? 0.0',
     'index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;',
-    'DrawRightAlignedText(dc, stageRange,',
+    'DrawStat(stageRange, wide ? 117.0 : 81.0,',
     'private const double RadiationDialCenterY = 183.0;',
     'private const double RadiationDialTrackRadius = 122.0;',
     'ring.Top + RadiationDialCenterY',
@@ -225,8 +247,24 @@ assert 'var stageTo = index < 0 ? 0.0' in control_renderer, "0 RAD must not read
 assert '"DEAD AFTER "' in control_renderer and '" TICKS IN"' in control_renderer
 assert '"DEATH ESTIMATE"' in control_renderer
 assert '"MAX " + RadiationModelMaxHp.ToString(' not in control_renderer
-assert '18.0, accent, FontWeights.Bold);' in control_renderer
-assert '10.5, text, FontWeights.Bold);' in control_renderer
+# All three main figures match the bold 29-DIP RAD readout in hierarchy.
+for token in (
+    "var contentWidth = Math.Max(1.0, area.Width - 32.0);",
+    "void DrawStat(string value, double y, double fontSize, Brush ink, FontWeight weight)",
+    "CreateText(value, fontSize, ink, weight, contentWidth)",
+    'DrawStat("ACTIVE STAGE", wide ? 46.0 : 16.0,',
+    "DrawStat(stage, wide ? 76.0 : 43.0,",
+    "29.0, accent, FontWeights.Bold);",
+    "DrawStat(stageRange, wide ? 117.0 : 81.0,",
+    "13.5, muted, FontWeights.SemiBold);",
+    'DrawStat("DAMAGE PER TICK", wide ? 165.0 : 115.0,',
+    "wide ? 192.0 : 140.0, 29.0,",
+    "DrawStat(deathCaption, wide ? 257.0 : 188.0,",
+    "wide ? 286.0 : 215.0, double.IsFinite(eta) ? 29.0 : 25.0,",
+):
+    assert token in control_renderer, "Radiation stat typography/layout drift: " + token
+assert "DrawRightAlignedText(dc, stageRange," not in control_renderer
+assert control_renderer.count("11.5, muted, FontWeights.SemiBold);") == 3
 assert "foreach (var threshold in RadiationRingThresholds)" not in ring_renderer
 assert "tick == 100 ? accent : muted" in ring_renderer
 assert "DrawText(dc, _radLevel.ToString(" not in control_renderer
@@ -291,6 +329,7 @@ assert angle_to_rad(359) == 100
 
 print("PASS: 11 original radiation stages and 22 unchanged writer leaves;")
 print("      enlarged 32-tooth ring-only 0–100 RAD and large under-ring value;")
+print("      hero-centered HP DAMAGE knob, matched 29-DIP stats and bounded typography;")
 print("      no obsolete slider, titles or footer; source damage stages unchanged;")
 print("      original stage thresholds, 1:1 damage scaling and conditional fixed-RAD HP estimate.")
 print("NOT VERIFIED: actual permanent-effect damage cadence, healing, armor or gameplay time to death.")
