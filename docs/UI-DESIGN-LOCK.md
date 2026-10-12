@@ -1,5 +1,10 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-12 — Quick Melee terminology (CURRENT)
+
+The Stamina Usage melee action with native parameter ID `stamina.meleeNormalCost` must be labeled **QUICK MELEE**, never **NORMAL MELEE**, in the visible radar. Its catalog label, description, rationale and value label use **Quick Melee** as well. The underlying source ID intentionally stays `stamina.meleeNormalCost` for preset/CFG compatibility. This is a terminology-only change: no source values, sliders, steps, interactions, or writer semantics change.
+
+
 ### 2026-10-12 — Energy Drink terminology (CURRENT)
 
 Every visible control label for the energy-drink consumable must say **ENERGY DRINK**, not bare **ENERGY**, to avoid confusing the item with stamina or energy. In Survival > Fatigue, the source ruler reads **ENERGY DRINK FATIGUE RELIEF**. In Consumables this applies to the Water + Energy Drink refill knob, Energy Drink stamina regeneration knob, Energy Drink timeline name, and the two Energy Drink stamina-cost-duration rows. Matching player-facing parameter-catalog titles and help use the same naming. Native parameter IDs, effect-prototype symbols, exact values, ranges, presets, engine references, interactions and CFG writer are unchanged. Do not rename generic player energy/stamina concepts or technical game identifiers to the consumable label.
