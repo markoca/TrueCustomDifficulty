@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-12 — Radiation preview focus and tooltip cleanup (CURRENT)
+
+The scenario-only FIELD / START / RECOVERY buttons keep their own selected preview control but release keyboard selection when the user wheel-edits or right-clicks a real CFG-backed knob; subsequent keyboard arrows affect the native knob, not the previous preview. The model-only tooltip clears when the pointer leaves the scenario buttons, with normal parameter tooltips restored by their existing native hit logic. This is a presentation/input-consistency correction; source CFG mappings, model equations, emitted presets and responsive dimensions are unchanged.
+
 ### 2026-10-12 — Radiation three-part visual and source-safe simulator (CURRENT)
 
 Current RadiationBalance composition: original three native editable 270° rotary knobs remain in one row, then a compact, complete 360° Radiation Levels dial and independent Radiation Simulation scenario card in **two columns at width >=800 DIP**. At smaller widths, dial is followed by three horizontally grouped scenario-choice buttons. A read-only horizontal Radiation Timeline appears beneath both. The ring card remains full-circle 0–100 RAD with 10 genuine proportional source-level cuts (10,20,30,40,50,60,70,80,90,99) and authored damage values including Deadly=20, NOT a current player radiation reading. The display radius expands to 113 DIP; damage values have radial offset 91 DIP, threshold labels 143 DIP. Centered 99 RAD · DEADLY / CFG DAMAGE summary replaces the previous long bottom edge-to-edge label pair. Main warning still says CFG EFFECT VALUES · NOT A DEATH TIMER.

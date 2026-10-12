@@ -5463,6 +5463,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             ToolTip = "Model only: click or scroll to cycle · Right-click restores preview default.";
             return;
         }
+        // A scenario tooltip is independent from native parameter hover.
+        if (Family == "RadiationBalance" && _dragTarget is null)
+            ToolTip = null;
         // Keep BOTH the edited value and the visible hover indicator on
         // the captured endpoint until mouse-up. A nearby opposite handle
         // must never appear to steal the current drag.
@@ -5514,6 +5517,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         Focus();
+        _radSimFocus = -1;
         _selectedParameter = target.Parameter;
         _selectedHitKind = HitKind.Knob;
         SetHoverTarget(target);
@@ -5623,6 +5627,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (target is null || !target.Parameter.IsControlEnabled)
             return;
 
+        _radSimFocus = -1;
         _selectedParameter = target.Kind == HitKind.FatigueReloadJoint
             ? ReloadEffectFor(target.Parameter) ?? target.Parameter
             : target.Parameter;

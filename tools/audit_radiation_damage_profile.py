@@ -73,6 +73,8 @@ for token in (
     'private int RadiationSimHit(Point point)',
     'AdvanceRadiationSim(preview, 1);',
     'AdvanceRadiationSim(preview, Math.Sign(e.Delta));',
+    '_radSimFocus = -1;',
+    'ToolTip = "Model only: click or scroll to cycle · Right-click restores preview default.";',
     'AdvanceRadiationSim(_radSimFocus, step);',
     'DrawRadiationSimulation(dc, text, muted, border, soft, accent, panel);',
     '"RADIATION SIMULATION"', '"RADIATION TIMELINE"',
