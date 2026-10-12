@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 246,
+  "supportedParameterCount": 247,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -16685,74 +16685,50 @@
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.instantStaminaRestore",
+      "parameterId": "survival.waterInstantStaminaRestore",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
       "prototype": "WaterStaminaInstant",
       "nodePath": [],
       "key": "ValueMin",
       "sourceRaw": "38%",
-      "operation": "scale",
+      "operation": "set",
       "role": "",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.instantStaminaRestore",
+      "parameterId": "survival.waterInstantStaminaRestore",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
       "prototype": "WaterStaminaInstant",
       "nodePath": [],
       "key": "ValueMax",
       "sourceRaw": "38%",
-      "operation": "scale",
+      "operation": "set",
       "role": "",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.instantStaminaRestore",
+      "parameterId": "survival.energyDrinkInstantStaminaRestore",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
       "prototype": "EnergeticStaminaInstant3",
       "nodePath": [],
       "key": "ValueMin",
       "sourceRaw": "50%",
-      "operation": "scale",
+      "operation": "set",
       "role": "",
       "difficultySid": ""
     },
     {
-      "parameterId": "survival.instantStaminaRestore",
+      "parameterId": "survival.energyDrinkInstantStaminaRestore",
       "scope": "baseGame",
       "file": "GameData/EffectPrototypes.cfg",
       "prototype": "EnergeticStaminaInstant3",
       "nodePath": [],
       "key": "ValueMax",
       "sourceRaw": "50%",
-      "operation": "scale",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "survival.instantStaminaRestore",
-      "scope": "baseGame",
-      "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "EnergeticLimitedStaminaInstant4",
-      "nodePath": [],
-      "key": "ValueMin",
-      "sourceRaw": "100%",
-      "operation": "scale",
-      "role": "",
-      "difficultySid": ""
-    },
-    {
-      "parameterId": "survival.instantStaminaRestore",
-      "scope": "baseGame",
-      "file": "GameData/EffectPrototypes.cfg",
-      "prototype": "EnergeticLimitedStaminaInstant4",
-      "nodePath": [],
-      "key": "ValueMax",
-      "sourceRaw": "100%",
-      "operation": "scale",
+      "operation": "set",
       "role": "",
       "difficultySid": ""
     },
