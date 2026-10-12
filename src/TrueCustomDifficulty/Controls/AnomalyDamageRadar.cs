@@ -157,12 +157,15 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         // One shared frame for GLOBAL and all eleven native source sliders.
         // Global remains an independent 0..2.5x/0.01x difficulty source.
         DrawGlobalDamageKnob(dc, text, muted, border, accent, panel);
-        DrawCenteredText(dc, "RESULT = SOURCE × GLOBAL  |  BEFORE PROTECTION",
-            new Point(ActualWidth / 2.0, 253.0), 10.0, text, FontWeights.SemiBold);
-        DrawCenteredText(dc, "BAR SCALE = % OF EACH INDIVIDUAL VANILLA VALUE (100% UNCHANGED)",
-            new Point(ActualWidth / 2.0, 275.0), 9.5, muted, FontWeights.SemiBold);
-        DrawCenteredText(dc, "TOP NUMBER: RESULT  |  LOWER NUMBER: SOURCE",
-            new Point(ActualWidth / 2.0, 294.0), 9.3, muted, FontWeights.SemiBold);
+        // Gamer-first presentation: the global dial states its scope, while the
+        // individual columns label their own final and editable base values.
+        // No footer formula or separate technical instruction block.
+        DrawCenteredText(dc, "ALL ANOMALIES", new Point(ActualWidth / 2.0, 248.0),
+            11.0, text, FontWeights.Bold);
+        DrawCenteredText(dc, "Scales damage across every anomaly",
+            new Point(ActualWidth / 2.0, 269.0), 10.0, muted, FontWeights.Medium);
+        DrawCenteredText(dc, "INDIVIDUAL DAMAGE  ·  BARS VS VANILLA",
+            new Point(ActualWidth / 2.0, 296.0), 9.8, muted, FontWeights.SemiBold);
 
         // Individual handles edit source CFG values, not global difficulty
         // or the computed RESULT readout. Their 0..200% axis is *relative to
@@ -212,13 +215,17 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             var inherited = parameter.EffectiveDamageValue;
             var effectiveText = Anomalies[i].IsMultiplier
                 ? $"{inherited:0.##}x" : $"{inherited:0.#}";
-            DrawCenteredText(dc, effectiveText, new Point(center, 322), 9.3,
+            DrawCenteredText(dc, "FINAL", new Point(center, 314), 7.4,
+                muted, FontWeights.SemiBold);
+            DrawCenteredText(dc, effectiveText, new Point(center, 326), 10.2,
                 parameter.IsValueModifiedFromReference()
                     || _globalDamage?.IsValueModifiedFromReference() == true ? accent : text,
                 FontWeights.Bold);
             var nativeText = Anomalies[i].IsMultiplier
                 ? $"{parameter.CurrentNumber:0.##}x" : $"{parameter.CurrentNumber:0.#}";
-            DrawCenteredText(dc, nativeText, new Point(center, 340), 9.0,
+            DrawCenteredText(dc, "BASE", new Point(center, 341), 7.4,
+                muted, FontWeights.SemiBold);
+            DrawCenteredText(dc, nativeText, new Point(center, 353), 9.2,
                 parameter.IsValueModifiedFromReference() ? accent : muted,
                 FontWeights.SemiBold);
             var words = Anomalies[i].Label.Split(' ');
@@ -451,9 +458,9 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         Cursor = globalHover ? Cursors.Hand
             : hover >= 0 ? Cursors.SizeNS : Cursors.Arrow;
         ToolTip = globalHover
-            ? "GLOBAL multiplies all eleven source damage settings. Turn or scroll in 0.01x steps. Right-click resets only global."
+            ? "Scales damage for all anomalies. Turn or scroll in 0.01x steps; right-click resets global."
             : hover >= 0
-                ? "Bar = percentage of this anomaly's own vanilla value. Top result includes GLOBAL; lower number is the edited CFG source. Right-click resets this anomaly."
+                ? "FINAL = BASE × global (before protection). BASE is this anomaly's editable value; the bar compares it with vanilla. Right-click resets this anomaly."
                 : null;
 
         if (_dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed)
