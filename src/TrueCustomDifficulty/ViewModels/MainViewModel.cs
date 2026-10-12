@@ -154,6 +154,7 @@ public sealed class MainViewModel : ObservableObject
 
         var consumableAggregateParameterIds = new HashSet<string>(StringComparer.Ordinal)
         {
+            "survival.energyDrinkInstantStaminaRestore",
             "survival.waterStaminaEffectStrength",
             "survival.energyDrinkStaminaRecoveryStrength",
             "survival.waterRegenDuration",
@@ -367,8 +368,9 @@ public sealed class MainViewModel : ObservableObject
             "health.ecoMedkitBleeding");
 
         WireVisualAggregate(
-            "survival.instantStaminaRestore",
-            "survival.instantStaminaRestore",
+            "survival.waterInstantStaminaRestore",
+            "survival.waterInstantStaminaRestore",
+            "survival.energyDrinkInstantStaminaRestore",
             "survival.waterStaminaEffectStrength",
             "survival.energyDrinkStaminaRecoveryStrength",
             "survival.waterEffectDuration",
@@ -870,7 +872,7 @@ public sealed class MainViewModel : ObservableObject
         // Drinks and their children retain the 270s ruler; medicines share
         // a separate 900s ruler, with native limits restored when OFF.
         // OFF restores source-native caps, with no fictional CFG boolean.
-        var drinkDurationMode = parametersById["survival.instantStaminaRestore"];
+        var drinkDurationMode = parametersById["survival.waterInstantStaminaRestore"];
         const double sharedDrinkDurationMaximumSeconds = 270.0;
         var drinkMainSeconds = new (string Id, double VanillaSeconds)[]
         {
@@ -1105,7 +1107,7 @@ public sealed class MainViewModel : ObservableObject
 
         if (resetAll)
         {
-            AllParameters.First(p => p.Id == "survival.instantStaminaRestore")
+            AllParameters.First(p => p.Id == "survival.waterInstantStaminaRestore")
                 .DrinkDurationOverrideEnabled = false;
             AllParameters.First(p => p.Id == "health.bandageHealing")
                 .MedicalOverrideEnabled = false;
@@ -1126,7 +1128,7 @@ public sealed class MainViewModel : ObservableObject
                 AllParameters.First(p => p.Id == "health.bandageHealing")
                     .MedicalOverrideEnabled = false;
             if (SelectedTab.Id == "survival")
-                AllParameters.First(p => p.Id == "survival.instantStaminaRestore")
+                AllParameters.First(p => p.Id == "survival.waterInstantStaminaRestore")
                     .DrinkDurationOverrideEnabled = false;
             foreach (var p in SelectedTab.Parameters)
                 p.ResetToReference(false);
@@ -1273,7 +1275,7 @@ public sealed class MainViewModel : ObservableObject
             GameVersion = GameVersion,
             ReferenceDifficulty = SelectedReferenceDifficulty,
             DrinkDurationOverride = AllParameters.First(p =>
-                p.Id == "survival.instantStaminaRestore").DrinkDurationOverrideEnabled,
+                p.Id == "survival.waterInstantStaminaRestore").DrinkDurationOverrideEnabled,
             MedicalOverride = AllParameters.First(p =>
                 p.Id == "health.bandageHealing").MedicalOverrideEnabled,
             SavedAtUtc = DateTimeOffset.UtcNow,
@@ -1346,7 +1348,7 @@ public sealed class MainViewModel : ObservableObject
                 var parametersById = AllParameters.ToDictionary(p => p.Id, StringComparer.Ordinal);
                 // Restore the editor-range mode BEFORE importing seconds/multipliers
                 // so values up to 270s are not truncated at old per-drink caps.
-                parametersById["survival.instantStaminaRestore"]
+                parametersById["survival.waterInstantStaminaRestore"]
                     .DrinkDurationOverrideEnabled = preset.DrinkDurationOverride;
                 parametersById["health.bandageHealing"]
                     .MedicalOverrideEnabled = preset.MedicalOverride;
@@ -1528,6 +1530,26 @@ public sealed class MainViewModel : ObservableObject
                     else
                     {
                         parameter.ApplyPresetValue(pair.Value);
+                    }
+                }
+
+                // Migrate the retired shared instant-stamina scalar (1x)
+                // into exact Water (38%) and regular Energy Drink (50%) values.
+                // Explicit new per-drink preset values always take precedence.
+                // Limited Energy Drink is no longer implicitly scaled.
+                if (preset.Values.TryGetValue("survival.instantStaminaRestore", out var oldRefill)
+                    && oldRefill.Number is double refillScale && double.IsFinite(refillScale))
+                {
+                    foreach (var (id, vanilla) in new[]
+                    {
+                        ("survival.waterInstantStaminaRestore", 0.38),
+                        ("survival.energyDrinkInstantStaminaRestore", 0.50)
+                    })
+                    {
+                        if (!preset.Values.ContainsKey(id)
+                            && parametersById.TryGetValue(id, out var source))
+                            source.SnapCurrentNumberToMarker(Math.Clamp(
+                                refillScale * vanilla, source.Minimum, source.Maximum));
                     }
                 }
 
@@ -1728,7 +1750,8 @@ public sealed class MainViewModel : ObservableObject
                 "survival.fatigueStrongReloadPenalty" => 280,
 
                 // Consumable Effects
-                "survival.instantStaminaRestore" => 290,
+                "survival.waterInstantStaminaRestore" => 290,
+                "survival.energyDrinkInstantStaminaRestore" => 291,
                 "survival.waterEffectDuration" => 292,
                 "survival.waterRegenDuration" => 292,
                 "survival.energyDrinkEffectDuration" => 293,
