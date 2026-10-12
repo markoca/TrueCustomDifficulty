@@ -5698,15 +5698,15 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         if (Family == "RadiationBalance" && _radSimFocus >= 0)
         {
-            var step = e.Key switch
+            var simulationDirection = e.Key switch
             {
                 Key.Right or Key.Up or Key.Space or Key.Enter => 1,
                 Key.Left or Key.Down => -1,
                 _ => 0
             };
-            if (step != 0)
+            if (simulationDirection != 0)
             {
-                AdvanceRadiationSim(_radSimFocus, step);
+                AdvanceRadiationSim(_radSimFocus, simulationDirection);
                 e.Handled = true;
                 return;
             }
