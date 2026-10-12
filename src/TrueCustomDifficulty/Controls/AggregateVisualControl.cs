@@ -5865,9 +5865,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         var pointer = e.GetPosition(this);
         if (RadiationRingHit(pointer))
         {
-            var direction = Math.Sign(e.Delta);
-            if (direction == 0) return;
-            _radCustomStartRad = Math.Clamp(Math.Round(RadiationCurrentRad) + direction, 1.0, 100.0);
+            var radWheelDirection = Math.Sign(e.Delta);
+            if (radWheelDirection == 0) return;
+            _radCustomStartRad = Math.Clamp(Math.Round(RadiationCurrentRad) + radWheelDirection, 1.0, 100.0);
             _radRingFocus = true;
             _radSimFocus = -1;
             _selectedParameter = null;
