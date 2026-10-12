@@ -2131,7 +2131,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: three native editable knobs, compact 360-degree ring, scenario controls and conditional RAD timeline")
+    note("Radiation: three native knobs, scrubbable 360-degree model ring, 10x playback and hypothetical HP-zero timeline")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -2912,8 +2912,8 @@ for _family, (_method, _height, _ids) in _seven_methods.items():
 if ('"RadiationBalance" => RadiationBoardHeight' not in _seven_src
     or 'private const double RadiationProfileTop = 241.0;' not in _seven_src
     or 'private const double RadiationProfileHeight = 388.0;' not in _seven_src
-    or 'private const double RadiationSimNarrowHeight = 122.0;' not in _seven_src
-    or 'private const double RadiationTimelineHeight = 172.0;' not in _seven_src):
+    or 'private const double RadiationSimNarrowHeight = 184.0;' not in _seven_src
+    or 'private const double RadiationTimelineHeight = 202.0;' not in _seven_src):
     _seven_errors.append('RadiationBalance renderer and measured stage-strip board height disagree')
 for _id, _native in _seven_expected_sliders.items():
     _s = (_seven_catalog.get(_id, {}).get('slider') or {})
