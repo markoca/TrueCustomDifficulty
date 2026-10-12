@@ -79,6 +79,12 @@ def main() -> None:
           and "rawReadout: true" in knob_block
           and "positivePrefix: false" in knob_block,
           "Starvation knobs no longer use independent source-native numeric dials")
+    check('prominent: knobs[i].Id == "survival.starvationDamage"' in knob_block,
+          "Only the central HP DAMAGE PER TICK dial may use hero prominence")
+    check('prominent: channels[i].Id == "combat.playerHeadshotMultiplier"' in RENDER,
+          "The original Headshot Damage hero knob must remain prominent")
+    check("WeaponKnobRadius * (prominent ? 1.18 : 1.0)" in RENDER,
+          "Hero knob enlargement must keep the existing radius/cell clamping")
     check("var previewTop = StarvationPreviewTop;" in RENDER
           and "StarvationPreviewTop + StarvationPreviewHeight + 12.0;" in RENDER,
           "Timeline layout no longer shares measured vertical offsets")

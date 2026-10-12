@@ -1,5 +1,9 @@
 # MASTER-MAPPING.md
 
+### 2026-10-12 — Starvation HP-damage knob emphasis (presentation-only)
+
+**HP DAMAGE PER TICK** (`survival.starvationDamage`) is the sole emphasized central dial in Master → Starvation's compact three-knob row. The existing `DrawSourceKnob` hero flag makes its circular arc and live HP value mildly larger, while **PENALTIES START** and **DAMAGE EVERY** remain standard. Both 181-DIP-high side knobs and their independent seconds sources remain exactly as before; no new effect, time range, calculation, writer target or preset field is introduced. The existing `STARVATION KILLS IN` derived duration is accepted and unchanged. See the two UI catalogs for the locked 1.18× central presentation.
+
 ### 2026-10-12 — Starvation control grouping (visual-only; CURRENT)
 
 The Master STARVATION bundle still has **five** independently writable, parent-gated native CFG controls. Below the toggle, the following **three 270° source-native knobs** occupy one centered compact row: **PENALTIES START** (`survival.starvationPenaltyDelay`, seconds), **HP DAMAGE PER TICK** (`survival.starvationDamage`, HP per charge), **DAMAGE EVERY** (`survival.starvationDamageInterval`, seconds). The knobs show numeric native units without spurious plus signs or multiplier x's. Then follows the unchanged read-only `DAMAGE TICK TIMELINE` with `STARVATION KILLS IN` full-health raw/no-healing projection. Below it, **EXTRA STAMINA COST** and **HEALTH RECOVERY BLOCKED** are two compact **side-by-side** source sliders even at the 520-DIP minimum host width. Measure/render use the same layout constants: first knobs Y=106..287, timeline Y=299..475, lower sliders Y=487..567, panel height=581 DIP. Same source IDs, toggle, steps, values, persistence and patch targets; no sixth value or duplicate HP slider. Other Master sections retain their previous controls.

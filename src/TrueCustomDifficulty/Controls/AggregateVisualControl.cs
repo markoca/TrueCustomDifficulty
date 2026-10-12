@@ -2529,8 +2529,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         string? nativeUnit = null, bool prominent = false,
         bool positivePrefix = true)
     {
-        // A hero dial (Headshot Damage) is physically larger without inventing
-        // a different range, hit grammar or duplicated source control.
+        // Selected hero dials (Headshot Damage and Starvation HP Damage
+        // Per Tick) are physically emphasized without changing source ranges,
+        // native-step input, hit grammar or editable control ownership.
         DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, card.Top + 19),
             prominent ? 10.7 : 10.0,
             parameter?.IsControlEnabled == true ? text : muted, FontWeights.Bold);
@@ -3927,7 +3928,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Rect(knobLeft + i * (knobWidth + knobGap),
                     StarvationKnobsTop, knobWidth, StarvationKnobHeight),
                 text, muted, border, accent, panel,
-                rawReadout: true, nativeUnit: knobs[i].Unit, positivePrefix: false);
+                rawReadout: true, nativeUnit: knobs[i].Unit, positivePrefix: false,
+                prominent: knobs[i].Id == "survival.starvationDamage");
         }
 
         var previewTop = StarvationPreviewTop;
