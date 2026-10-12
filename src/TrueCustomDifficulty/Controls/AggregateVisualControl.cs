@@ -4485,6 +4485,77 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawGeometry(null, new Pen(ink, 13.0), geometry);
     }
 
+    // The game's lower-left HUD radiation dial inspires this in-tool inspector.
+    // Forty-eight short teeth follow one exact 0..100 circular scale, while
+    // the underlying pointer mapping and CFG stage thresholds stay continuous.
+    private const int RadiationHudSegments = 48;
+    private const double RadiationHudSegmentGap = 0.36; // RAD units per tooth gap
+
+    private static void DrawRadiationHudSegments(
+        DrawingContext dc, Point center, double rad, Brush inactive, Brush active)
+    {
+        const double radius = 113.0;
+        var pitch = 100.0 / RadiationHudSegments;
+        for (var i = 0; i < RadiationHudSegments; i++)
+        {
+            var first = i * pitch + RadiationHudSegmentGap / 2.0;
+            var last = (i + 1) * pitch - RadiationHudSegmentGap / 2.0;
+            DrawRadiationRingSector(dc, center, radius, first, last, inactive);
+            var litEnd = Math.Min(last, rad);
+            // Partial last tooth preserves each integer RAD; never quantize
+            // the actual selection to the number of decorative HUD teeth.
+            if (litEnd > first + Epsilon)
+                DrawRadiationRingSector(dc, center, radius, first, litEnd, active);
+        }
+    }
+
+    private static Point RadiationHudPolar(Point center, double radius, double degrees)
+    {
+        var radians = degrees * Math.PI / 180.0;
+        return new Point(center.X + radius * Math.Cos(radians),
+            center.Y + radius * Math.Sin(radians));
+    }
+
+    // Three curved, separated blades plus the hub, built from vector arcs.
+    // No embedded screenshot, external asset, logo texture or scaled bitmap.
+    private static void DrawRadiationHudTrefoil(
+        DrawingContext dc, Point center, Brush symbol, Brush shadow)
+    {
+        dc.DrawEllipse(CloneWithOpacity(shadow, 0.28),
+            new Pen(CloneWithOpacity(symbol, 0.18), 1.0),
+            center, 46.0, 46.0);
+        for (var blade = 0; blade < 3; blade++)
+        {
+            // Upper-left, upper-right and bottom, like the in-game HUD glyph.
+            var angle = -150.0 + blade * 120.0;
+            var from = angle - 30.0;
+            var to = angle + 30.0;
+            const double inner = 14.0;
+            const double outer = 40.0;
+            var geometry = new StreamGeometry();
+            using (var ctx = geometry.Open())
+            {
+                ctx.BeginFigure(RadiationHudPolar(center, inner, from),
+                    isFilled: true, isClosed: true);
+                ctx.LineTo(RadiationHudPolar(center, outer, from), true, false);
+                ctx.ArcTo(RadiationHudPolar(center, outer, to),
+                    new Size(outer, outer), 0.0, false,
+                    SweepDirection.Clockwise, true, false);
+                ctx.LineTo(RadiationHudPolar(center, inner, to), true, false);
+                ctx.ArcTo(RadiationHudPolar(center, inner, from),
+                    new Size(inner, inner), 0.0, false,
+                    SweepDirection.Counterclockwise, true, false);
+            }
+            geometry.Freeze();
+            dc.DrawGeometry(symbol, null, geometry);
+            // The dark pin on each vane echoes the weathered HUD stencil.
+            dc.DrawEllipse(shadow, null,
+                RadiationHudPolar(center, 28.0, angle), 3.3, 3.3);
+        }
+        dc.DrawEllipse(symbol, null, center, 7.5, 7.5);
+        dc.DrawEllipse(shadow, null, center, 3.1, 3.1);
+    }
+
     // Native BUILD-UP, RECOVERY, HP DAMAGE remain the only CFG-editable knobs.
     // The full-circle preview is independently scrubbable, never a game reading.
     private void DrawRadiationBalance(
@@ -4517,7 +4588,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, "RADIATION LEVELS",
             new Point(profile.Left + 12.0, profile.Top + 9.0),
             10.2, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "11 CFG EFFECTS",
+        DrawRightAlignedText(dc, "DRAG RING · 1–100",
             new Point(profile.Right - 12.0, profile.Top + 9.0),
             9.0, muted, FontWeights.SemiBold);
         var damage = P("survival.radiationDamage");
@@ -4526,97 +4597,68 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var multiplier = Math.Max(0.0, damage.CurrentNumber);
         var modified = damage.IsValueModifiedFromReference();
-        var valueInk = modified ? accent : text;
-        var highest = RadiationDamageStages.Max(s => s.SourceDamage);
         var center = new Point(profile.Left + profile.Width / 2.0,
             profile.Top + 181.0);
         const double radius = 113.0;
-        const double valueRadius = 91.0;
         const double tickLabelRadius = 143.0;
-        dc.DrawEllipse(CloneWithOpacity(panel, 0.8),
-            new Pen(CloneWithOpacity(border, 0.78), 0.85),
-            center, radius - 19.0, radius - 19.0);
-        // Baseline is a complete circle; segments never shorten it to 270°.
-        dc.DrawEllipse(null, new Pen(CloneWithOpacity(soft, 0.95), 13.0),
-            center, radius, radius);
-
-        for (var i = 0; i < RadiationDamageStages.Length; i++)
-        {
-            var stage = RadiationDamageStages[i];
-            var fromRad = i == 0 ? 0.0 : RadiationRingThresholds[i - 1];
-            var toRad = i == 10 ? 100.0 : RadiationRingThresholds[i];
-            var intensity = Math.Sqrt(stage.SourceDamage / highest);
-            var opacity = Math.Clamp(0.21 + intensity * 0.24, 0.21, 0.45);
-            DrawRadiationRingSector(dc, center, radius, fromRad, toRad,
-                CloneWithOpacity(muted, opacity));
-            // The final 99..100-degree-scale slice is only 3.6° wide;
-            // show its DEADLY source value in the footer rather than overprint.
-            if (i < 10)
-                DrawCenteredText(dc, $"{stage.SourceDamage * multiplier:0.###}",
-                    RadiationRingPoint(center, valueRadius, (fromRad + toRad) / 2.0),
-                    9.2, valueInk, FontWeights.SemiBold);
-        }
-
         var currentRad = _radLevel;
-        // Fill the *actual* 13-DIP ring clockwise, not a thin second
-        // track outside the ring. 100 RAD must close the full 360° circle.
-        if (currentRad >= 100.0)
-            dc.DrawEllipse(null, new Pen(accent, 13.0), center, radius, radius);
-        else if (currentRad >= 1.0)
-            DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);
-        if (currentRad >= 1.0)
-            dc.DrawEllipse(accent, new Pen(panel, 1.8),
-                RadiationRingPoint(center, radius, currentRad), 6.0, 6.0);
 
+        // Recessed metal bezel / instrument face, not a second value track.
+        // The only selectable rail is still radius=113 (hit radius 100..127).
+        dc.DrawEllipse(CloneWithOpacity(soft, 0.12),
+            new Pen(CloneWithOpacity(border, 0.9), 1.3),
+            center, 132.0, 132.0);
+        dc.DrawEllipse(CloneWithOpacity(panel, 0.97),
+            new Pen(CloneWithOpacity(muted, 0.46), 1.8),
+            center, 126.0, 126.0);
+        dc.DrawEllipse(null, new Pen(CloneWithOpacity(soft, 0.42), 1.0),
+            center, 101.0, 101.0);
+        dc.DrawEllipse(CloneWithOpacity(soft, 0.06),
+            new Pen(CloneWithOpacity(border, 0.70), 1.0),
+            center, 94.0, 94.0);
+
+        // Exact level remains 1..100: only the HUD teeth are decorative.
+        // Draw the filled portion of the last tooth instead of snapping
+        // radiation/thresholds to the segment count.
+        DrawRadiationHudSegments(dc, center, currentRad,
+            CloneWithOpacity(muted, 0.56), accent);
+        dc.DrawEllipse(accent, new Pen(panel, 1.5),
+            RadiationRingPoint(center, radius, currentRad), 4.1, 4.1);
+
+        // Original 10/20/.../90/99 authored stage thresholds: independent
+        // of the evenly spaced 48 decorative teeth.
         foreach (var threshold in RadiationRingThresholds)
         {
-            dc.DrawLine(new Pen(panel, threshold == 99.0 ? 3.6 : 3.1),
-                RadiationRingPoint(center, radius - 9.0, threshold),
-                RadiationRingPoint(center, radius + 9.0, threshold));
-            DrawCenteredText(dc, threshold.ToString("0", CultureInfo.InvariantCulture),
+            dc.DrawLine(new Pen(threshold == 99.0 ? accent : muted,
+                    threshold == 99.0 ? 2.0 : 1.2),
+                RadiationRingPoint(center, 128.0, threshold),
+                RadiationRingPoint(center, threshold == 99.0 ? 138.0 : 135.0,
+                    threshold));
+            DrawCenteredText(dc,
+                threshold.ToString("0", CultureInfo.InvariantCulture),
                 RadiationRingPoint(center, tickLabelRadius, threshold),
-                threshold == 99.0 ? 10.4 : 9.6,
+                threshold == 99.0 ? 10.0 : 8.7,
                 threshold == 99.0 ? accent : muted,
                 threshold == 99.0 ? FontWeights.Bold : FontWeights.SemiBold);
         }
 
-        // Show the *currently selected* original CFG effect, not the
-        // 99-RAD stage or an invented generic HP/s damage coefficient.
-        var stageIndex = RadiationStageIndex(currentRad);
-        var active = stageIndex >= 0;
-        var stageLabel = !active ? "NO DAMAGE"
-            : stageIndex <= 2 || stageIndex == 10
-                ? RadiationDamageStages[stageIndex].Label
-                : "LEVEL " + RadiationDamageStages[stageIndex].Label;
-        var stageMinimum = !active ? 0.0
-            : stageIndex == 0 ? 1.0 : RadiationRingThresholds[stageIndex - 1];
-        var stageMaximum = !active ? 0.0
-            : stageIndex == 10 ? 100.0 : RadiationRingThresholds[stageIndex] - 1.0;
-        var sourceDamage = active ? RadiationDamageStages[stageIndex].SourceDamage : 0.0;
-        var actualDamage = sourceDamage * multiplier;
-        var nextThreshold = !active ? 1.0
-            : stageIndex == 10 ? double.NaN : RadiationRingThresholds[stageIndex];
-        DrawCenteredText(dc, "SELECTED RAD",
-            new Point(center.X, center.Y - 42.0), 9.1, muted, FontWeights.Bold);
-        DrawCenteredText(dc, currentRad.ToString("0", CultureInfo.InvariantCulture) + " / 100",
-            new Point(center.X, center.Y - 14.0), 20.0, text, FontWeights.Bold);
-        DrawCenteredText(dc, stageLabel + " · " + stageMinimum.ToString("0", CultureInfo.InvariantCulture)
-                + "–" + stageMaximum.ToString("0", CultureInfo.InvariantCulture) + " RAD",
-            new Point(center.X, center.Y + 9.0), 9.3, text, FontWeights.SemiBold);
-        DrawCenteredText(dc, actualDamage.ToString("0.###", CultureInfo.InvariantCulture) + " CFG DAMAGE",
-            new Point(center.X, center.Y + 32.0), 12.5, valueInk, FontWeights.Bold);
-        DrawCenteredText(dc, double.IsNaN(nextThreshold) ? "FINAL STAGE"
-                : "NEXT " + nextThreshold.ToString("0", CultureInfo.InvariantCulture) + " RAD",
-            new Point(center.X, center.Y + 51.0), 9.0, muted, FontWeights.SemiBold);
-
-        var deadly = RadiationDamageStages[10];
-        DrawCenteredText(dc, "99 RAD · DEADLY  /  CFG DAMAGE "
-                + (deadly.SourceDamage * multiplier).ToString("0.###", CultureInfo.InvariantCulture),
-            new Point(center.X, profile.Top + 348.0),
-            9.5, modified ? accent : text, FontWeights.SemiBold);
-        DrawCenteredText(dc, "CFG EFFECT VALUE · NOT VERIFIED HP/s",
+        // Retain the recognisable 3-blade hazard symbol as the dial face.
+        // Statistics live next door in RAD CONTROLS, not over the icon.
+        DrawRadiationHudTrefoil(dc, new Point(center.X, center.Y - 26.0),
+            CloneWithOpacity(text, 0.9), panel);
+        DrawCenteredText(dc,
+            currentRad.ToString("0", CultureInfo.InvariantCulture),
+            new Point(center.X, center.Y + 43.0),
+            26.0, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "RAD",
+            new Point(center.X, center.Y + 68.0),
+            10.0, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "11 CFG STAGES · 99 RAD DEADLY",
+            new Point(center.X, profile.Top + 349.0),
+            9.3, modified ? accent : text, FontWeights.SemiBold);
+        DrawCenteredText(dc, "HUD-STYLE PREVIEW · NOT GAME HUD",
             new Point(center.X, profile.Top + 370.0),
-            9.0, muted, FontWeights.SemiBold);
+            8.6, muted, FontWeights.SemiBold);
         DrawRadiationControls(dc, text, muted, border, soft, accent, panel);
     }
 
@@ -4673,6 +4715,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         var stage = index < 0 ? "NONE" :
             index <= 2 || index == 10 ? RadiationDamageStages[index].Label
             : "LEVEL " + RadiationDamageStages[index].Label;
+        var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];
+        var stageTo = index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;
+        var stageRange = stageFrom.ToString("0", CultureInfo.InvariantCulture) + "–"
+            + stageTo.ToString("0", CultureInfo.InvariantCulture) + " RAD";
         var damage = RadiationDamageAtLevel(_radLevel);
         var modified = P("survival.radiationDamage")?.IsValueModifiedFromReference() ?? false;
         var eta = RadiationTimeToZeroHp();
@@ -4682,6 +4728,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, stage,
             new Point(area.Left + 16.0, area.Top + (wide ? 207.0 : 163.0)),
             13.0, text, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, stageRange,
+            new Point(area.Right - 16.0, area.Top + (wide ? 207.0 : 163.0)),
+            9.5, muted, FontWeights.SemiBold);
         DrawText(dc, "CFG DAMAGE / CHARGE",
             new Point(area.Left + 16.0, area.Top + (wide ? 243.0 : 189.0)),
             9.0, muted, FontWeights.Bold);
@@ -5565,7 +5614,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             SetHoverTarget(null);
             Cursor = Cursors.Hand;
-            ToolTip = "Drag clockwise along the ring: 1–100 RAD. Center shows active CFG damage. Right-click = 1 RAD.";
+            ToolTip = "Drag clockwise along the HUD dial: 1–100 RAD. Stage, damage and HP estimate appear in RAD CONTROLS. Right-click = 1 RAD.";
             return;
         }
         if (_dragTarget is null &&
