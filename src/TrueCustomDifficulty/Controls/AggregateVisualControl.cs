@@ -1835,7 +1835,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCoreResourceRuler(dc, rate, "FATIGUE RATE", "pts/s",
             new Rect(16.0, SurvivalPrimaryRulerTop, half, SurvivalPrimaryRulerHeight),
             text, muted, border, accent, panel);
-        DrawCoreResourceRuler(dc, relief, "ENERGY FATIGUE RELIEF", "x",
+        DrawCoreResourceRuler(dc, relief, "ENERGY DRINK FATIGUE RELIEF", "x",
             new Rect(16.0 + half + resourceGap, SurvivalPrimaryRulerTop,
                 half, SurvivalPrimaryRulerHeight),
             text, muted, border, accent, panel);
@@ -3119,14 +3119,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         var knobWidth = (knobBankWidth - 2.0 * knobGap) / 3.0;
         var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
         // All 270-degree sources use the shared centered value readout.
-        DrawSourceKnob(dc, burst, "WATER + ENERGY REFILL",
+        DrawSourceKnob(dc, burst, "WATER + ENERGY DRINK REFILL",
             new Rect(knobLeft, ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel);
         DrawSourceKnob(dc, waterStamina, "WATER REGEN + COST CUT",
             new Rect(knobLeft + knobWidth + knobGap, ConsumableStrengthKnobTop,
                 knobWidth, 181.0),
             text, muted, border, accent, panel);
-        DrawSourceKnob(dc, energyStamina, "ENERGY STAMINA REGEN",
+        DrawSourceKnob(dc, energyStamina, "ENERGY DRINK STAMINA REGEN",
             new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
                 ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel);
@@ -3177,7 +3177,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var sources = new[] { waterTime, energyTime, vodkaTime, beerTime, magicTime };
-        var names = new[] { "WATER", "ENERGY", "VODKA", "BEER", "MAGIC VODKA" };
+        var names = new[] { "WATER", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };
         var durations = new[] { 30.0, 45.0, 20.0, 20.0, 90.0 };
         // Three native shorter effect durations now have their own explicit
         // source controls. Small timeline ticks are visual landmarks only;
@@ -3313,8 +3313,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var shortEffects = new (ParameterViewModel Parameter, string Caption)[]
         {
             (waterRegenTime, "WATER +25% STAMINA EFFECT DURATION"),
-            (energyFullCostTime, "ENERGY -100% STAMINA COST DURATION"),
-            (energyPartialCostTime, "ENERGY -30% STAMINA COST DURATION")
+            (energyFullCostTime, "ENERGY DRINK -100% STAMINA COST DURATION"),
+            (energyPartialCostTime, "ENERGY DRINK -30% STAMINA COST DURATION")
         };
         var shortColumns = ConsumableSecondaryColumns(preview.Width);
         var secondaryWidth = (preview.Width - 24.0 -
