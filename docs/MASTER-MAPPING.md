@@ -1,5 +1,9 @@
 # MASTER-MAPPING.md
 
+### 2026-10-12 — Starvation full-health raw damage estimate (UI-only)
+
+The Master starvation preview observes **Health → Player Max Health** read-only across tabs and computes how long periodic *raw* starvation tick damage would take to exhaust a **full** configured HP bar: `ceil(maxHP / damagePerTick)` charges, after `delay + charges × interval` seconds from bundle activation. Example: 100 HP, 4 HP/charge, 2s delay and 2s interval → 25 ticks and 52s. It is explicitly labeled `RAW, NO HEALING` and is not an in-game prediction of death or actual effective damage. OFF-state is conditional; zero damage means no lethal countdown. The extra read-only health observation must not join Starvation's editable family or group reset. Timeline numbers move above the smaller axis dots and the preview grows from 124 to 152 DIP without changing any CFG mapping.
+
 ### 2026-10-11 — Starvation inactive-state readability; medicine candidates (current)
 
 **Master → Starvation Penalties:** when the authored **Starvation Mechanics** parent is OFF, all five child source values **remain disabled/non-editable** and receive no editable gold track/handle or hover hit targets. Their **card captions and current numerical readouts** must nevertheless use neutral high-legibility text (`CloneWithOpacity(text, 0.75)`), not the much dimmer common `muted` brush that made the entire Starvation section appear blacked out compared with the other Master panels. Source rails, grey native references, parent toggle behavior, preset and CFG writes remain unchanged. Enabled and modified states continue to use the existing normal/changed-only accent convention. This is a presentation-only correction to `DrawMasterNativeCard` scoped to `StarvationTimeline`, not a forced activation of Master-only gameplay mechanics.

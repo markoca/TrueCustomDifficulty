@@ -19,6 +19,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     private const double Epsilon = 0.000001;
 
     private readonly Dictionary<string, ParameterViewModel> _parameters = new(StringComparer.Ordinal);
+    // Read-only cross-tab input to Starvation's hypothetical full-HP timeline.
+    // Deliberately excluded from the Starvation family's editable/reset members.
+    private ParameterViewModel? _starvationMaxHp;
     private readonly List<HitTarget> _hitTargets = new();
     private readonly VisualStatusMessage _status;
     private bool _fatigueReloadInteraction;
@@ -102,8 +105,21 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         foreach (var parameter in _parameters.Values)
             parameter.PropertyChanged -= Parameter_PropertyChanged;
+        if (_starvationMaxHp is not null)
+            _starvationMaxHp.PropertyChanged -= Parameter_PropertyChanged;
+        _starvationMaxHp = null;
 
         _parameters.Clear();
+
+        // Observe Max HP without adding it to GetFamilyIds: group reset (R)
+        // must never reset the Health tab from the Starvation panel.
+        if (Family == "StarvationTimeline" && Parameters is not null)
+        {
+            _starvationMaxHp = Parameters.OfType<ParameterViewModel>()
+                .FirstOrDefault(p => p.Id == "health.maxHP");
+            if (_starvationMaxHp is not null)
+                _starvationMaxHp.PropertyChanged += Parameter_PropertyChanged;
+        }
 
         var familyIds = GetFamilyIds(Family);
         if (Parameters is not null && familyIds.Count > 0)
@@ -2036,7 +2052,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double MasterConditionalHeight(double width) => 298.0;
     private static double MasterCardBankHeight(double width, int count)
         => 107.0 + MasterRows(width, count) * 94.0 + 12.0;
-    private const double StarvationPreviewHeight = 124.0;
+    private const double StarvationPreviewHeight = 152.0;
     private static double MasterStarvationHeight(double width)
         => 110.0 + MasterRows(width, 2) * 94.0 +
             StarvationPreviewHeight + 12.0 + MasterRows(width, 3) * 94.0 + 12.0;
@@ -3858,9 +3874,21 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     }
 
-    // A source-grounded timing visualization. The axis marks the authored
-    // delay and repeat interval; tick dots are NOT a simulation of survival
-    // state transitions, damage reduction or final player HP.
+    // A source-grounded tick schedule plus hypothetical raw full-health
+    // depletion. This does NOT model live HP, healing, mitigation or any
+    // other runtime state; all tick markers remain read-only.
+    private static string StarvationElapsed(double seconds)
+    {
+        if (seconds < 60.0)
+            return $"{seconds:0.#}s";
+        var hours = (int)(seconds / 3600.0);
+        var minutes = (int)((seconds % 3600.0) / 60.0);
+        var remaining = seconds % 60.0;
+        return hours > 0
+            ? $"{hours}h {minutes}m {remaining:00.#}s"
+            : $"{minutes}m {remaining:00.#}s";
+    }
+
     private void DrawStarvationTimeline(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
@@ -3908,7 +3936,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 9.4, active ? text : muted, FontWeights.SemiBold);
 
             var axis = new Rect(preview.Left + 24.0,
-                preview.Top + 55.0, Math.Max(1.0, preview.Width - 48.0), 16.0);
+                preview.Top + 67.0, Math.Max(1.0, preview.Width - 48.0), 16.0);
             var y = axis.Top + axis.Height / 2.0;
             double At(double seconds)
                 => axis.Left + axis.Width * Math.Clamp(seconds / span, 0.0, 1.0);
@@ -3948,25 +3976,51 @@ public sealed class AggregateVisualControl : FrameworkElement
             {
                 var seconds = startSeconds + tick * intervalSeconds;
                 var x = At(seconds);
-                var ink = active ? accent : muted;
-                dc.DrawEllipse(panel, new Pen(ink, 1.9),
-                    new Point(x, y), 7.2, 7.2);
-                DrawCenteredText(dc, tick.ToString(CultureInfo.InvariantCulture),
-                    new Point(x, y - 6.5), 9.0, active ? text : muted,
-                    FontWeights.Bold);
+                // Keep numbered tick labels OUTSIDE the actual rail markers.
+                // Compressed schedules use a single 1–3 label instead of overlaps.
+                dc.DrawEllipse(active ? accent : muted, null,
+                    new Point(x, y), 4.7, 4.7);
+                if (tickGap >= 20.0 || tick == previewTicks)
+                    DrawCenteredText(dc, tickGap < 20.0 ? "1–3" :
+                        tick.ToString(CultureInfo.InvariantCulture),
+                        new Point(x, preview.Top + 49.0),
+                        10.0, active ? text : muted, FontWeights.Bold);
                 // Suppress closely packed intermediate timestamp captions;
                 // the native controls still show the exact interval.
                 if (tick == previewTicks || tickGap >= 45.0)
                     DrawCenteredText(dc, $"{seconds:0.#}s",
-                        new Point(x, preview.Top + 81.0),
-                        9.0, muted, FontWeights.Normal);
+                        new Point(x, preview.Top + 91.0),
+                        9.2, muted, FontWeights.Normal);
             }
-            DrawText(dc, "0s", new Point(axis.Left, preview.Top + 101.0),
+            DrawText(dc, "0s", new Point(axis.Left, preview.Top + 110.0),
                 9.0, muted, FontWeights.Normal);
             DrawCenteredText(dc, $"START {startSeconds:0.#}s",
                 new Point(Math.Clamp(startX, axis.Left + 65.0, axis.Right - 55.0),
-                    preview.Top + 101.0),
+                    preview.Top + 110.0),
                 9.0, muted, FontWeights.SemiBold);
+
+            // Hypothetical raw damage from FULL configured health, measured
+            // from bundle activation: delay + ceil(MaxHP / perTick) * interval.
+            // Never present it as a guaranteed live-game kill timer.
+            var perTick = Math.Max(0.0, damage.CurrentNumber);
+            var capacity = _starvationMaxHp?.CurrentNumber;
+            string rawEstimate;
+            if (capacity is null || capacity <= 0.0)
+                rawEstimate = "FULL-HP ESTIMATE UNAVAILABLE";
+            else if (perTick <= Epsilon)
+                rawEstimate = "0 HP DAMAGE / TICK · NO LETHAL COUNTDOWN";
+            else if (intervalSeconds <= Epsilon)
+                rawEstimate = "ZERO TICK INTERVAL · NO TIMING ESTIMATE";
+            else
+            {
+                var lethalTicks = (long)Math.Ceiling(capacity.Value / perTick);
+                var elapsed = startSeconds + lethalTicks * intervalSeconds;
+                rawEstimate = $"FULL {capacity.Value:0.#} HP → 0 IN ~{StarvationElapsed(elapsed)}" +
+                    $" · {lethalTicks} TICKS (RAW, NO HEALING)";
+            }
+            DrawText(dc, active ? rawEstimate : $"IF ENABLED · {rawEstimate}",
+                new Point(preview.Left + 12.0, preview.Top + 130.0),
+                9.6, active ? text : muted, FontWeights.SemiBold);
         }
 
         var effects = new (string Id, string Label, Func<double, string> Format)[]
