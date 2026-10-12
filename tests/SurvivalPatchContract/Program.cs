@@ -123,7 +123,7 @@ internal static class Program
             var cohort = Catalog.Parameters
                 .Where(p => p.Id.StartsWith("survival.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal).ToArray();
-            Check(cohort.Length == 62, "Survival catalog no longer contains exactly 62 parameters");
+            Check(cohort.Length == 63, "Survival catalog no longer contains exactly 63 parameters");
 
             MasterPenaltyKnobSourceContract();
             NativeHungerFatiguePrimarySourceContract();
@@ -138,14 +138,14 @@ internal static class Program
                 "Survival catalog-to-live-VM exclusions changed: "
                 + string.Join(", ", unmounted));
             var live = cohort.Where(p => loaded.Contains(p.Id)).ToArray();
-            Check(live.Length == 61, "Expected 61 live Survival source-backed parameters");
+            Check(live.Length == 62, "Expected 62 live Survival source-backed parameters");
 
             var points = Baseline.EditPoints
                 .Where(p => p.ParameterId.StartsWith("survival.", StringComparison.Ordinal))
                 .ToArray();
-            Check(points.Length == 147, "Survival manifest no longer contains 147 source edit points");
+            Check(points.Length == 145, "Survival manifest no longer contains 145 source edit points");
             Check(points.All(p => p.Scope == "baseGame"), "Survival source unexpectedly targets DLC");
-            Check(points.Select(p => p.ParameterId).Distinct().Count() == 62,
+            Check(points.Select(p => p.ParameterId).Distinct().Count() == 63,
                 "Survival manifest-to-catalog parameter inventory differs");
             Check(points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal)
                       .SetEquals(cohort.Select(p => p.Id)),
@@ -172,11 +172,13 @@ internal static class Program
 
             TestCombined("Veteran-Consumable-Overlap", "Veteran", new[]
             {
-                ("survival.instantStaminaRestore", 1.2),
+                ("survival.waterInstantStaminaRestore", 0.44),
+                ("survival.energyDrinkInstantStaminaRestore", 0.61),
                 ("survival.energyDrinkEffectDuration", 1.3),
                 ("survival.energyDrinkStaminaRecoveryStrength", 1.25),
                 ("survival.energyDrinkFatigueRelief", 1.4)
             });
+            TestIndependentInstantRefill();
             TestCombined("Veteran-Drink-Independent-Durations", "Veteran", new[]
             {
                 ("survival.waterEffectDuration", 1.5),
@@ -338,7 +340,7 @@ internal static class Program
         {
             var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
             ParameterViewModel Source(string id) => vm.AllParameters.Single(p => p.Id == id);
-            var flag = Source("survival.instantStaminaRestore");
+            var flag = Source("survival.waterInstantStaminaRestore");
             var primary = new (string Id, double VanillaSeconds)[]
             {
                 ("survival.waterEffectDuration", 30.0),
@@ -737,6 +739,38 @@ internal static class Program
             if (_keep is null && Directory.Exists(path))
                 Directory.Delete(path, recursive: true);
         }
+    }
+
+    private static void TestIndependentInstantRefill()
+    {
+        const string test = "Independent-Instant-Stamina";
+        var waterId = "survival.waterInstantStaminaRestore";
+        var energyId = "survival.energyDrinkInstantStaminaRestore";
+        var relevant = Baseline.EditPoints.Where(p =>
+            p.ParameterId == waterId || p.ParameterId == energyId).ToArray();
+        Check(relevant.Length == 4, test + ": expected exactly two direct fields per drink");
+        Check(relevant.Count(p => p.ParameterId == waterId) == 2
+            && relevant.Where(p => p.ParameterId == waterId).All(p =>
+                p.Prototype == "WaterStaminaInstant" && p.Operation == "set"
+                && p.SourceRaw == "38%"),
+            test + ": Water must own only its vanilla 38% prototype");
+        Check(relevant.Count(p => p.ParameterId == energyId) == 2
+            && relevant.Where(p => p.ParameterId == energyId).All(p =>
+                p.Prototype == "EnergeticStaminaInstant3" && p.Operation == "set"
+                && p.SourceRaw == "50%"),
+            test + ": Energy Drink must own only its vanilla 50% prototype");
+        Check(!relevant.Any(p => p.Prototype == "EnergeticLimitedStaminaInstant4"),
+            test + ": Limited Energy Drink must stay untouched");
+        var vm = new MainViewModel(Catalog);
+        var water = vm.AllParameters.Single(p => p.Id == waterId);
+        var energy = vm.AllParameters.Single(p => p.Id == energyId);
+        Check(Math.Abs(water.CurrentNumber - 0.38) < 0.000001
+            && Math.Abs(energy.CurrentNumber - 0.50) < 0.000001,
+            test + ": wrong actual instant stamina percentage");
+        Check(Math.Abs(water.TickFrequency - 0.01) < 0.000001
+            && Math.Abs(energy.TickFrequency - 0.01) < 0.000001,
+            test + ": both controls need exactly 1 percentage point per step");
+        _passed++;
     }
 
     private static void TestCombined(string label, string difficulty,
