@@ -2080,28 +2080,29 @@
       "interaction": "Fatigue Build-up Rate controls how quickly tiredness returns. This setting changes how much relief energy drinks provide, including their special Poppy Field and Weird Kettle variants."
     },
     {
-      "id": "survival.instantStaminaRestore",
+      "id": "survival.waterInstantStaminaRestore",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Water + Energy Drink Instant Stamina Refill",
-      "description": "Scales the immediate stamina restored by Water, Energy Drink and Limited Energy Drink while preserving their vanilla strength differences.",
+      "label": "Water Instant Stamina Refill",
+      "description": "Sets instant stamina restored by Water as an exact percentage of maximum stamina.",
       "control": "slider",
-      "valueKind": "multiplier",
+      "valueKind": "raw",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Instant stamina refill from water and energy drinks"
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Stamina restored instantly by Water"
       },
       "vanilla": {
-        "All": 1
+        "All": 0.38
       },
       "default": {
         "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0,
-        "max": 2,
-        "step": 0.05
+        "max": 1,
+        "step": 0.01,
+        "stepMode": "absolute"
       },
       "targets": [
         {
@@ -2109,33 +2110,66 @@
           "file": "GameData/EffectPrototypes.cfg",
           "prototype": "WaterStaminaInstant",
           "path": "ValueMin|ValueMax",
-          "operation": "scale"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "EnergeticStaminaInstant3",
-          "path": "ValueMin|ValueMax",
-          "operation": "scale"
-        },
-        {
-          "scope": "baseGame",
-          "file": "GameData/EffectPrototypes.cfg",
-          "prototype": "EnergeticLimitedStaminaInstant4",
-          "path": "ValueMin|ValueMax",
-          "operation": "scale"
+          "operation": "set"
         }
       ],
       "support": {
         "status": "confirmed",
         "notes": [
-          "Vanilla instant stamina values are Water 38%, Energy Drink 50%, and Limited Energy Drink 100%.",
-          "One multiplier preserves those authored differences instead of flattening all drinks to the same refill."
+          "WaterStaminaInstant: authored instant stamina 38% in EffectPrototypes.cfg 2.0.5.",
+          "The Limited Energy Drink's separate 100% refill is unchanged."
         ]
       },
-      "rationale": "Multiplies the immediate stamina restored by Water, Energy Drink and Limited Energy Drink. Their original strengths remain distinct.",
-      "logic": "1x keeps Water 38%, Energy Drink 50% and Limited Energy Drink 100%. 0.5x halves each; 2x doubles each before the player's normal stamina cap is applied.",
-      "interaction": "Timed stamina regeneration, fatigue relief, hunger, tolerance and overdose effects are separate."
+      "rationale": "Sets the exact instant stamina refill from Water independently; sustained buffs and durations remain separate.",
+      "logic": "38% is the vanilla refill; set 0–100% of maximum stamina directly, subject to the game stamina cap.",
+      "interaction": "Independent 1-percentage-point control; no changes to stamina regeneration, cost buffs or Limited Energy Drink.",
+      "exposeInUi": true
+    },
+    {
+      "id": "survival.energyDrinkInstantStaminaRestore",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Energy Drink Instant Stamina Refill",
+      "description": "Sets instant stamina restored by normal Energy Drink as an exact percentage of maximum stamina.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0%",
+        "valueLabel": "Stamina restored instantly by Energy Drink"
+      },
+      "vanilla": {
+        "All": 0.5
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "EnergeticStaminaInstant3",
+          "path": "ValueMin|ValueMax",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "EnergeticStaminaInstant3: authored instant stamina 50% in EffectPrototypes.cfg 2.0.5.",
+          "The Limited Energy Drink's separate 100% refill is unchanged."
+        ]
+      },
+      "rationale": "Sets the exact instant stamina refill from regular Energy Drink independently; sustained buffs and durations remain separate.",
+      "logic": "50% is the vanilla refill; set 0–100% of maximum stamina directly, subject to the game stamina cap.",
+      "interaction": "Independent 1-percentage-point control; no changes to stamina regeneration, cost buffs or Limited Energy Drink.",
+      "exposeInUi": false
     },
     {
       "id": "survival.waterStaminaEffectStrength",
