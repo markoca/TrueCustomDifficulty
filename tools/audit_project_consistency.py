@@ -2257,7 +2257,7 @@ _override_preset_text = _override_preset.read_text(encoding="utf-8")
 if "survival.drinkDurationOverride" in _short_by_id:
     fail("drink-duration UI-only override must not become a fictitious CFG parameter")
 for _token in (
-    'var drinkDurationMode = parametersById["survival.instantStaminaRestore"];',
+    'var drinkDurationMode = parametersById["survival.waterInstantStaminaRestore"];',
     "const double sharedDrinkDurationMaximumSeconds = 270.0;",
     "drinkDurationMode.DrinkDurationOverrideEnabled",
     "sharedDrinkDurationMaximumSeconds / vanillaSeconds",
@@ -2499,8 +2499,8 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 246 or len(_global_visible) != 149 or len(_global_hidden) != 97:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 246/149/97")
+if len(parameters) != 247 or len(_global_visible) != 149 or len(_global_hidden) != 98:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 247/149/98")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
 elif _global_confirmed != 118 or _global_runtime != 31:
@@ -2531,7 +2531,7 @@ elif _global_anomaly_missing or "SetEffectiveDamageMultiplierProvider" not in _g
 elif not _global_doc.exists():
     fail("global cross-domain audit document missing from docs/")
 else:
-    note("current cross-domain structural audit: 246 catalog / 149 visible / 97 hidden; 118 visible confirmed + 31 runtime-test-required; zero direct collisions")
+    note("current cross-domain structural audit: 247 catalog / 149 visible / 98 hidden; 118 visible confirmed + 31 runtime-test-required; zero direct collisions")
 
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("v0.2.51-v0.3.0 override/CFG-placement/provenance/production snapshots (current UI/Combat tools + active source checks are authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
@@ -3037,10 +3037,11 @@ for _doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md'):
             ROOT / 'docs' / _doc).read_text(encoding='utf-8'):
         fail(f'Compact Radiation/Health/Stamina binding catalog missing: {_doc}')
 
-# Consumable Mixer: no passive stamina preview; 3 drink strength knobs
+# Consumable Mixer: two absolute-percent refill knobs + two multiplier knobs
 # above the single 8-lane duration graph, 3 medicine strength knobs below.
 _consumer_ids = (
-    "survival.instantStaminaRestore",
+    "survival.waterInstantStaminaRestore",
+    "survival.energyDrinkInstantStaminaRestore",
     "survival.waterStaminaEffectStrength",
     "survival.energyDrinkStaminaRecoveryStrength",
 )
@@ -3058,14 +3059,23 @@ _consumer_medicines = (_consumer_source[_medicine_from:_consumer_until]
                        if 0 <= _medicine_from < _consumer_until else "")
 _consumer_errors = []
 for _cid in _consumer_ids:
-    _range = (_consumer_catalog.get(_cid, {}).get("slider") or {})
-    if tuple(_range.get(k) for k in ("min", "max", "step")) != (0, 2, 0.05):
-        _consumer_errors.append(f"{_cid}: strength min/max/native step drift")
+    _def = _consumer_catalog.get(_cid, {})
+    _range = _def.get("slider") or {}
+    _expected = (0, 1, 0.01) if "InstantStaminaRestore" in _cid else (0, 2, 0.05)
+    if tuple(_range.get(k) for k in ("min", "max", "step")) != _expected:
+        _consumer_errors.append(f"{_cid}: refill/strength native range/step drift")
+    if "InstantStaminaRestore" in _cid and (
+            _def.get("display", {}).get("primary") != "percent"
+            or _range.get("stepMode") != "absolute"
+            or len(_def.get("targets", [])) != 1
+            or _def["targets"][0].get("operation") != "set"):
+        _consumer_errors.append(f"{_cid}: absolute-percent writer/UI contract drift")
 for _required in (
-    'DrawSourceKnob(dc, burst, "WATER + ENERGY REFILL",',
-    'DrawSourceKnob(dc, waterStamina, "WATER REGEN + COST CUT",',
-    'DrawSourceKnob(dc, energyStamina, "ENERGY STAMINA REGEN",',
-    'var knobBankWidth = Math.Min(620.0, ActualWidth - 34.0);',
+    'DrawSourceKnob(dc, burst, "WATER REFILL",',
+    'DrawSourceKnob(dc, energyBurst, "ENERGY DRINK REFILL",',
+    'DrawSourceKnob(dc, waterStamina, "WATER STAMINA BUFF",',
+    'DrawSourceKnob(dc, energyStamina, "ENERGY DRINK REGEN",',
+    'var knobBankWidth = Math.Min(720.0, ActualWidth - 34.0);',
 ):
     if _required not in _consumer_drinks:
         _consumer_errors.append(f"drink knob missing: {_required}")
@@ -3091,7 +3101,7 @@ for _required in (
 ):
     if _required not in _consumer_medicines:
         _consumer_errors.append(f"medicine knob missing below effects: {_required}")
-if (_consumer_drinks.count("DrawSourceKnob(") != 3
+if (_consumer_drinks.count("DrawSourceKnob(") != 4
     or _consumer_durations.count("DrawSourceKnob(") != 0
     or _consumer_medicines.count("DrawSourceKnob(") != 3):
     _consumer_errors.append("knob counts/positions have drifted")
