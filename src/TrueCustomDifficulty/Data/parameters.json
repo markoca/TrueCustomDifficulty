@@ -5175,15 +5175,15 @@
       "id": "stamina.meleeNormalCost",
       "tab": "stamina",
       "group": "Action Costs",
-      "label": "Normal Melee Cost",
-      "description": "Controls stamina consumed by a normal melee attack.",
+      "label": "Quick Melee Cost",
+      "description": "Controls stamina consumed by a quick melee attack.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
         "primary": "percentOfVanilla",
         "rawFormat": "0",
         "unit": "stamina",
-        "valueLabel": "Stamina spent per normal melee"
+        "valueLabel": "Stamina spent per quick melee"
       },
       "vanilla": {
         "All": 16
@@ -5210,7 +5210,7 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls stamina consumed by a normal melee attack.",
+      "rationale": "Controls stamina consumed by a quick melee attack.",
       "logic": "",
       "interaction": "Strong melee and buttstock attacks have independent costs.",
       "exposeInUi": false
