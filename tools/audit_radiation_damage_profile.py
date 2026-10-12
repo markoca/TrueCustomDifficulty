@@ -108,7 +108,7 @@ for token in (
     'DrawRadiationControls(dc, text, muted, border, soft, accent, panel);',
     'private void DrawRadiationControls(',
     '"RAD CONTROLS"', '"RADIATION LEVEL"',
-    '"ACTIVE STAGE"', '"CFG DAMAGE / CHARGE"', '"EST. HP ZERO"',
+    '"ACTIVE STAGE"', '"CFG DAMAGE / CHARGE"', '"EST. HP ZERO · 1 TICK/S"',
     '"FIXED RAD · NO HEALING OR PROTECTION"', '"FIXED RAD"',
     'var currentRad = _radLevel;',
     'var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];',
