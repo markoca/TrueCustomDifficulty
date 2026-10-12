@@ -2211,7 +2211,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 20,
+        "max": 30,
         "step": 5,
         "stepMode": "absolute"
       },
@@ -2232,7 +2232,7 @@
         ]
       },
       "rationale": "Independent Beer radiation-removal strength; keeps the vanilla alcohol cure mechanic.",
-      "logic": "Original Beer removes 10 radiation points.",
+      "logic": "Original Beer removes 10 radiation points (1x); editor permits 0–30 RAD (0x–3x) in 5-RAD steps; production writer saves the negative original CFG amount.",
       "interaction": "Does not alter intoxication, drink duration or the other alcohol.",
       "exposeInUi": false
     },
@@ -4483,11 +4483,11 @@
       "id": "stamina.sprintDisableThreshold",
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
-      "label": "Sprint Stops Below",
-      "description": "Sets how low your stamina can fall before sprinting is forced to stop. Vanilla is 16.1 SP.",
+      "label": "Sprint Lock Below",
+      "description": "Sprinting stops once stamina falls below this threshold (16.1 SP originally).",
       "rationale": "Sets how low your stamina can fall before sprinting is forced to stop. Vanilla is 16.1 SP.",
       "logic": "Higher values make sprint lock out earlier while stamina is still relatively high; lower values let the player sprint deeper into the stamina bar.",
-      "interaction": "This threshold works together with Sprint Recovery Delay, Maximum Stamina, Sprint Stamina Drain and regeneration. It does not change sprint speed.",
+      "interaction": "Pairs with Exhaustion Regen Delay; sets sprint lockout, not sprint speed or stamina drain.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4528,11 +4528,11 @@
       "id": "stamina.sprintRecoveryDelay",
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
-      "label": "Sprint Recovery Delay",
-      "description": "Changes how long you must wait after running out of sprint stamina before recovery can begin.",
+      "label": "Exhaustion Regen Delay",
+      "description": "Seconds before stamina regeneration resumes after sprint exhaustion.",
       "rationale": "Changes how long you must wait after running out of sprint stamina before recovery can begin.",
       "logic": "Higher values make exhaustion pauses last longer before recovery can resume; lower values shorten the pause.",
-      "interaction": "Works with Sprint Stops Below, Maximum Stamina, Sprint Stamina Drain, and Stamina Recovery. A longer delay keeps you exhausted for longer after sprinting.",
+      "interaction": "Applies after sprint exhausts the player; Sprint Lock Below sets the triggering stamina level.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4571,11 +4571,11 @@
       "id": "stamina.lowRecoveryThreshold",
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
-      "label": "Bonus Regen Below",
-      "description": "Vanilla AdditionalRegenStaminaMechanics switches into its low-SP branch below the 30 SP boundary and applies IncreaseStaminaPoints.",
+      "label": "Boost Activates Below",
+      "description": "Below this amount of stamina, the conditional low-SP regeneration boost can activate (30 SP originally).",
       "rationale": "Sets the stamina level that triggers emergency low-stamina recovery. Vanilla is 30 SP.",
       "logic": "Higher values allow the low-stamina recovery helper to engage across a larger portion of the bar; lower values reserve it for near-exhaustion.",
-      "interaction": "The helper uses Low-Stamina Recovery Strength and Duration. Base Stamina Regeneration still exists underneath it.",
+      "interaction": "Pairs with Low-SP Boost Rate and Low-SP Boost Duration, not the sprint lockout threshold.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4616,11 +4616,11 @@
       "id": "stamina.lowRecoveryStrength",
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
-      "label": "Bonus Regen Power",
-      "description": "Vanilla IncreaseStaminaPoints is a RegenStamina effect with ValueMin/ValueMax = 10 for 4 seconds when the low-SP branch is active.",
+      "label": "Low-SP Boost Rate",
+      "description": "Regeneration strength of the temporary low-SP recovery boost (10 SP/s originally).",
       "rationale": "Sets how strong emergency stamina recovery is while it is active. Vanilla is 10 SP/s.",
       "logic": "Higher values make the emergency recovery effect stronger; lower values make low-stamina recovery closer to the ordinary base rate.",
-      "interaction": "Emergency Stamina Recovery Duration controls how long the recovery lasts.",
+      "interaction": "Boost Activates Below sets its trigger; Low-SP Boost Duration sets how long it lasts.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4665,11 +4665,11 @@
       "id": "stamina.lowRecoveryDuration",
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
-      "label": "Bonus Regen Duration",
-      "description": "Vanilla IncreaseStaminaPoints has Duration = 4 seconds.",
+      "label": "Low-SP Boost Duration",
+      "description": "Seconds that the conditional low-SP stamina regeneration boost remains active (4 seconds originally).",
       "rationale": "Sets how long emergency stamina recovery lasts once it is triggered. Vanilla is 4 seconds.",
       "logic": "Higher values keep the low-stamina recovery effect active longer; lower values shorten the boost.",
-      "interaction": "Emergency Stamina Recovery Starts Below controls when this recovery can activate.",
+      "interaction": "Boost Activates Below sets the trigger; Low-SP Boost Rate sets the boost strength.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -5395,8 +5395,8 @@
       "id": "stamina.aimRegenCoef",
       "tab": "stamina",
       "group": "Action Costs",
-      "label": "Aim Slows Regen",
-      "description": "Controls how much aiming slows stamina recovery.",
+      "label": "Aiming Regen Penalty",
+      "description": "Percent reduction in stamina regeneration specifically while aiming; 0% removes the penalty.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -5432,7 +5432,7 @@
           "UI stores a positive penalty magnitude; production writer emits the corresponding negative CFG coefficient via negateSet."
         ]
       },
-      "rationale": "Controls how much aiming slows stamina recovery.",
+      "rationale": "Controls the aiming-only regeneration penalty independently from low-stamina recovery effects.",
       "logic": "Higher settings slow stamina recovery more while aiming. 0 removes the aiming recovery penalty.",
       "interaction": "This is a continuous recovery-state penalty, not a one-time stamina charge. Base Stamina Recovery sets the underlying recovery rate; Sprint, Jump, Vault and melee costs remain independent.",
       "exposeInUi": false

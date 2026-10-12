@@ -305,28 +305,28 @@ public sealed class ActionCostsRadar : FrameworkElement
         var gridWidth = wide ? width - thresholdWidth - gap : width;
         var rightWidth = (gridWidth - internalGap) / 2.0;
 
-        DrawExhaustionTrackCard(dc, _sprintDisableThreshold, "SPRINT STOPS BELOW",
+        DrawExhaustionTrackCard(dc, _sprintDisableThreshold, "SPRINT LOCK BELOW",
             value => $"{value:0.#} SP",
             new Rect(left, top, thresholdWidth, cardHeight),
             text, muted, border, accent, panel, commonThresholdAxis: true);
-        DrawExhaustionTrackCard(dc, _lowRecoveryThreshold, "BONUS REGEN BELOW",
+        DrawExhaustionTrackCard(dc, _lowRecoveryThreshold, "BOOST ACTIVATES BELOW",
             value => $"{value:0} SP",
             new Rect(left, top + cardHeight + internalGap, thresholdWidth, cardHeight),
             text, muted, border, accent, panel, commonThresholdAxis: true);
 
-        DrawExhaustionTrackCard(dc, _aimParameter, "AIM SLOWS REGEN",
+        DrawExhaustionTrackCard(dc, _aimParameter, "AIMING REGEN PENALTY",
             value => $"{value * 100.0:0.#}%",
             new Rect(gridLeft, gridTop, rightWidth, cardHeight),
             text, muted, border, accent, panel);
-        DrawExhaustionTrackCard(dc, _sprintRecoveryDelay, "SPRINT RECOVERY DELAY",
+        DrawExhaustionTrackCard(dc, _sprintRecoveryDelay, "EXHAUSTION REGEN DELAY",
             value => $"{value:0.0} s",
             new Rect(gridLeft + rightWidth + internalGap, gridTop, rightWidth, cardHeight),
             text, muted, border, accent, panel);
-        DrawExhaustionTrackCard(dc, _lowRecoveryStrength, "BONUS REGEN POWER",
+        DrawExhaustionTrackCard(dc, _lowRecoveryStrength, "LOW-SP BOOST RATE",
             value => $"+{value:0.##} SP/s",
             new Rect(gridLeft, gridTop + cardHeight + internalGap, rightWidth, cardHeight),
             text, muted, border, accent, panel);
-        DrawExhaustionTrackCard(dc, _lowRecoveryDuration, "BONUS REGEN DURATION",
+        DrawExhaustionTrackCard(dc, _lowRecoveryDuration, "LOW-SP BOOST DURATION",
             value => $"{value:0.0} s",
             new Rect(gridLeft + rightWidth + internalGap, gridTop + cardHeight + internalGap,
                 rightWidth, cardHeight),

@@ -1871,17 +1871,35 @@ else:
     note("Medical Items: four HEAL/BLEED native bars in one row, independent scales, food toggle")
 
 
+# The six editable Exhaustion source titles must match their catalog and WPF renderer.
+_exhaustion_names = {
+    "stamina.sprintDisableThreshold": "SPRINT LOCK BELOW",
+    "stamina.lowRecoveryThreshold": "BOOST ACTIVATES BELOW",
+    "stamina.aimRegenCoef": "AIMING REGEN PENALTY",
+    "stamina.sprintRecoveryDelay": "EXHAUSTION REGEN DELAY",
+    "stamina.lowRecoveryStrength": "LOW-SP BOOST RATE",
+    "stamina.lowRecoveryDuration": "LOW-SP BOOST DURATION",
+}
+_exhaustion_renderer = (ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs").read_text(encoding="utf-8")
+_exhaustion_catalog = {p["id"]: p for p in parameters if p["id"] in _exhaustion_names}
+for _id, _caption in _exhaustion_names.items():
+    if (_exhaustion_catalog.get(_id, {}).get("label", "").upper() != _caption
+        or f'"{_caption}"' not in _exhaustion_renderer):
+        fail(f"Exhaustion control meaning/renderer/catalog drifted: {_id}")
+else:
+    note("Exhaustion: six source-backed controls have consistent player-facing labels")
+
 # Radiation Removal is no longer a separate AggregateVisualControl family.
 # Four native-source vertical RAD columns must sit in one compact right bank,
 # with a physically distinct 0..200 RAD axis, cap hover, and source-true hit map.
 _radiation_sources = ("health.ecoMedkitAntirad", "health.antiRadRadiation",
                       "health.beerRadiationRemoval", "health.vodkaRadiationRemoval")
 _radiation_caps = {"health.ecoMedkitAntirad": 120, "health.antiRadRadiation": 200,
-                   "health.beerRadiationRemoval": 20, "health.vodkaRadiationRemoval": 100}
+                   "health.beerRadiationRemoval": 30, "health.vodkaRadiationRemoval": 100}
 _radiation_catalog = {p.get("id"): p for p in parameters if p.get("id") in _radiation_sources}
 if any(_radiation_catalog.get(pid, {}).get("slider", {}).get("max") != limit
        for pid, limit in _radiation_caps.items()):
-    fail("Medical Items radiation-removal native ceilings must be 120/200/20/100 RAD")
+    fail("Medical Items radiation-removal editable ceilings must be 120/200/30/100 RAD")
 _rad_medical_tokens = (
     "private static readonly Brush RadiationAccent",
     "private const double RadiationRulerPts = 200.0;",

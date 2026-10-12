@@ -1,5 +1,9 @@
 # True Custom Difficulty
 
+### 2026-10-12 — Beer RAD 3x and precise Exhaustion/Recovery names
+
+Beer Radiation Removal now has a 30-RAD (3x) maximum, still in 5-RAD steps with 10-RAD vanilla. The six independent Exhaustion & Recovery controls now explicitly name the sprint cutoff, low-stamina boost activation, aiming regeneration penalty, exhaustion delay, boost rate and duration. No change to the stamina CFG semantics or compact panel geometry. UI catalogs, mapping documents, contract tests and static audit match the implementation.
+
 ### 2026-10-12 — Sleep Health Restored: 100 HP default, 0x–2x range
 
 Sleep now starts and resets HEALTH RESTORED at **100 HP** (editor 1x). The editable range is **0–200 actual HP** (0x–2x; 0 HP means no sleep health restoration) with 5-HP steps. The game source's original **300 HP** is preserved as immutable vanilla metadata; a fresh tool preset instead writes **100 HP** to both SleepHealthRestore CFG fields. Saved values above 200 HP clamp on load. Stamina restore remains unchanged.

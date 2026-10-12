@@ -112,12 +112,12 @@ internal static class Program
         // the six exhaustion inputs retain their stable CFG source identities.
         var labels = new (string Id, string Label)[]
         {
-            ("stamina.sprintDisableThreshold", "Sprint Stops Below"),
-            ("stamina.lowRecoveryThreshold", "Bonus Regen Below"),
-            ("stamina.aimRegenCoef", "Aim Slows Regen"),
-            ("stamina.sprintRecoveryDelay", "Sprint Recovery Delay"),
-            ("stamina.lowRecoveryStrength", "Bonus Regen Power"),
-            ("stamina.lowRecoveryDuration", "Bonus Regen Duration")
+            ("stamina.sprintDisableThreshold", "Sprint Lock Below"),
+            ("stamina.lowRecoveryThreshold", "Boost Activates Below"),
+            ("stamina.aimRegenCoef", "Aiming Regen Penalty"),
+            ("stamina.sprintRecoveryDelay", "Exhaustion Regen Delay"),
+            ("stamina.lowRecoveryStrength", "Low-SP Boost Rate"),
+            ("stamina.lowRecoveryDuration", "Low-SP Boost Duration")
         };
         foreach (var (id, label) in labels)
         {
@@ -201,7 +201,7 @@ internal static class Program
         Check(beer.IsMedicalHealingMember && vodka.IsMedicalHealingMember
               && !beer.IsControlVisible && !vodka.IsControlVisible,
             "Beer and Vodka must be editable only through the Medical Items RAD bank");
-        Check(beer.ReferenceNumber == 10.0 && beer.Maximum == 20.0
+        Check(beer.ReferenceNumber == 10.0 && beer.Maximum == 30.0
               && beer.TickFrequency == 5.0
               && vodka.ReferenceNumber == 50.0 && vodka.Maximum == 100.0
               && vodka.TickFrequency == 5.0,
@@ -233,7 +233,9 @@ internal static class Program
             "Editing Anti-Rad must modify only its own CFG source and shared card");
         antiRad.ResetToReference();
         Check(!anchor.IsModified, "Anti-Rad reset should clear modified medical card");
-        beer.CurrentNumber = 15.0;
+        beer.CurrentNumber = 30.0;
+        Check(beer.CurrentNumber == 30.0,
+            "Beer radiation removal must reach 3x / 30 RAD");
         Check(anchor.IsModified && beer.IsValueModifiedFromReference()
               && !vodka.IsValueModifiedFromReference(),
             "Beer RAD removal must independently edit the Medical Items group");
@@ -357,7 +359,8 @@ internal static class Program
                 // Marker setter changes the real CurrentNumber and triggers
                 // any WPF-linked value constraints without rounding drift.
                 var step = Math.Max(0.01, parameter.Definition.Slider?.Step ?? 0.1);
-                var candidate = parameter.ReferenceNumber + step;
+                var candidate = id == "health.beerRadiationRemoval"
+                    ? parameter.Maximum : parameter.ReferenceNumber + step;
                 if (candidate > parameter.Maximum)
                     candidate = parameter.ReferenceNumber - step;
                 parameter.SnapCurrentNumberToMarker(candidate);

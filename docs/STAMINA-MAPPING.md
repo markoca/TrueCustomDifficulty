@@ -5,12 +5,12 @@
 **MOVEMENT LIMITS** in `StaminaCore` is now **two matching compact horizontal 116-DIP cards**, not a tall vertical vault bar paired with an oversized carry chart. **MAXIMUM VAULT HEIGHT** (`stamina.vaultMaxHeight`, native **70–300 uu**, 1-uu steps, vanilla **130 uu**) and **MAXIMUM CARRY WEIGHT** (`stamina.maxCarryWeight`, native **20–160 KG**, 5-KG steps, vanilla **80 KG**) share the **same title-left/value-right, rail, source-reference, handle and endpoint geometry**. Each card starts at **Y=191**, with its rail centered at card top +51, a 12-DIP sibling gap, and native min/max units in the bottom footer. The vault rail retains three **source-authored, clickable exact-value landmark captions**: **WAIST=130**, **EYES=225**, **ABOVE EYES=300**. At narrow widths ABOVE EYES drops one short label line to prevent overlap; clicking captions snaps the unchanged underlying source value exactly, not an approximation. The carry rail has only three intermediate kg calibration ticks (native quarter increments); it **does not** duplicate a separate “LOAD CAPACITY / KG” caption or suggest fabricated fatigue thresholds. Only a modified numeric token is highlighted, never its `uu`/`KG` unit or Vanilla/Base tick. Board height is **323 DIP** rather than 382, retaining the two top CORE STAMINA 105-DIP cards unchanged. Existing pointer, keyboard, right-click per-source reset, `R` family reset and original four CFG/preset mappings are preserved.
 
 **EXHAUSTION & RECOVERY** retains its six independent source-native sliders and the 2+4 arrangement, 94-DIP card grammar, shared 0–60 SP *visual ruler* for the thresholds, real Sprint Lock **0–32.2 SP** interactive range, and compact responsive wrapping. The six current visible names, and corresponding catalog `label` metadata, are:
-- **SPRINT STOPS BELOW** — `stamina.sprintDisableThreshold`: sprint lock threshold in SP
-- **BONUS REGEN BELOW** — `stamina.lowRecoveryThreshold`: low-stamina emergency recovery trigger in SP
-- **AIM SLOWS REGEN** — `stamina.aimRegenCoef`: percent penalty to regeneration *while aiming*, not a low-SP aim penalty
-- **SPRINT RECOVERY DELAY** — `stamina.sprintRecoveryDelay`: time before recovery following sprint exhaustion, seconds
-- **BONUS REGEN POWER** — `stamina.lowRecoveryStrength`: additional low-SP recovery strength in SP/s
-- **BONUS REGEN DURATION** — `stamina.lowRecoveryDuration`: duration of that bonus, seconds
+- **SPRINT LOCK BELOW** — `stamina.sprintDisableThreshold`: below this SP level sprint locks
+- **BOOST ACTIVATES BELOW** — `stamina.lowRecoveryThreshold`: below this SP level the separate stamina boost can start
+- **AIMING REGEN PENALTY** — `stamina.aimRegenCoef`: percent stamina regeneration penalty specifically while aiming
+- **EXHAUSTION REGEN DELAY** — `stamina.sprintRecoveryDelay`: seconds before regeneration after sprint exhaustion
+- **LOW-SP BOOST RATE** — `stamina.lowRecoveryStrength`: independent low-SP regeneration boost strength (SP/s)
+- **LOW-SP BOOST DURATION** — `stamina.lowRecoveryDuration`: time the low-SP boost lasts (seconds)
 
 The names are user-facing wording only: no source range, step, transformation, unit, writer, constraint or save format is modified. Supersede the older vertically oriented Vault Height design, 175-DIP Movement card, 382-DIP StaminaCore height, and technical Exhaustion captions in dated catalog sections below.
 
@@ -20,7 +20,7 @@ Runtime source of truth: **STALKER 2 CFG dump 2.0.5**.
 
 The normal **Stamina** tab is intentionally limited to controls that have a clear player-facing meaning: stamina pool size, ordinary recovery, direct action drain/cost, water penalties, vault height and carry capacity.
 
-Valid but over-technical/internal stamina fields remain mapped in this document and in the parameter catalog with `exposeInUi = false`. They are not deleted from the audit trail and are not written by normal presets/builds because no active UI `ParameterViewModel` is created for them.
+The six Exhaustion & Recovery members use hidden standalone catalog entries but are live editable sources in the shared `ActionCostsRadar` family. Only genuinely internal movement-speed fields remain audit-only, without UI controls.
 
 Hunger/radiation/fatigue stamina penalties remain under **Survival**. Equipment-wear and item-weight controls now appear under **Survival**; their unchanged CFG sources retain their original equipment IDs.
 
@@ -101,17 +101,17 @@ The existing **Maximum Carry Weight** control remains:
 
 The runtime also defines weight-effect thresholds at `50 / 60 / 70 / 80` and stamina-regeneration penalties of approximately `-10% / -20% / -35% / -50%`. They remain documented rather than exposed as independent sliders.
 
-## Audit-only stamina mechanics — intentionally excluded from normal UI
+## Additional stamina controls and audit-only speed states
 
 These fields are real and remain mapped. They are hidden because they are internal/over-technical, duplicate a clearer player-facing control, or form a multi-field helper subsystem that would make the normal difficulty UI harder to understand.
 
 | Parameter ID | CFG / vanilla | Why excluded |
 |---|---|---|
-| `stamina.sprintDisableThreshold` | Sprint `StaminaDisableThresholds.Threshold = 16.1` | **Sprint Stops Below** is a technical exhaustion threshold. The normal UI uses Sprint Stamina Drain instead. |
-| `stamina.sprintRecoveryDelay` | Sprint `StaminaDisableThresholds.RegenerationDelay = 1 s` | Tied to the hidden exhaustion-threshold rule; not a clear independent player-facing difficulty control. |
-| `stamina.lowRecoveryThreshold` | `AdditionalRegenStaminaMechanics` low-SP boundary = `30 SP` | Part of the emergency low-stamina helper subsystem; hidden together with its strength/duration. |
-| `stamina.lowRecoveryStrength` | `IncreaseStaminaPoints ValueMin/ValueMax = 10` | Internal emergency-recovery strength; normal UI uses Base Stamina Recovery. |
-| `stamina.lowRecoveryDuration` | `IncreaseStaminaPoints Duration = 4 s` | Internal emergency-recovery duration; normal UI uses Base Stamina Recovery. |
+| `stamina.sprintDisableThreshold` | Sprint `StaminaDisableThresholds.Threshold = 16.1` | Editable sprint lockout threshold in the Exhaustion board; Sprint Stamina Drain remains independent. |
+| `stamina.sprintRecoveryDelay` | Sprint `StaminaDisableThresholds.RegenerationDelay = 1 s` | Editable exhaustion regeneration delay after sprint cutoff. |
+| `stamina.lowRecoveryThreshold` | `AdditionalRegenStaminaMechanics` low-SP boundary = `30 SP` | Editable trigger for the conditional low-SP regeneration boost. |
+| `stamina.lowRecoveryStrength` | `IncreaseStaminaPoints ValueMin/ValueMax = 10` | Editable low-SP boost regeneration rate, distinct from Base Stamina Recovery. |
+| `stamina.lowRecoveryDuration` | `IncreaseStaminaPoints Duration = 4 s` | Editable boost duration in the same Exhaustion board. |
 | `stamina.sprintRegenCoef` | `StaminaRegenStateCoefs[Sprint] = -1.40` | Valid Sprint-state coefficient, but exposing it next to Sprint Stamina Drain creates two different sprint stamina controls with overlapping player meaning. Kept vanilla. |
 | `stamina.sprintUnderRunSpeedRegenCoef` | `SprintUnderRunSpeed = -0.65` | Internal engine speed state; exact transition semantics are not proven. |
 | `stamina.runRegenCoef` | `Run = -0.65` | Internal engine state without a one-to-one player input mapping. |
@@ -132,7 +132,7 @@ These fields are real and remain mapped. They are hidden because they are intern
 - `ValueMin = ValueMax = 10`
 - `Duration = 4.0 s`
 
-This is a vanilla low-stamina assistance mechanism layered on top of ordinary stamina regeneration. The three controls are deliberately not exposed because tuning threshold + amount + duration independently adds complexity without improving the core difficulty workflow.
+This is a vanilla low-stamina assistance mechanism layered on top of ordinary stamina regeneration. Its three real CFG parameters are currently editable in the Exhaustion board, while separate internal speed-state parameters remain hidden.
 
 ### Movement-state regeneration, for reference
 
