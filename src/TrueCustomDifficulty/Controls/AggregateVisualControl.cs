@@ -4399,7 +4399,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(center.X, center.Y + 1.0), 19.5, text, FontWeights.Bold);
         DrawCenteredText(dc, "RAD",
             new Point(center.X, center.Y + 26.0), 10.2, muted, FontWeights.Bold);
-        DrawCenteredText(dc, "HP DAMAGE FROM 1 RAD",
+        DrawCenteredText(dc, "HP LOSS AT 1 RAD",
             new Point(center.X, center.Y + 42.0), 9.0, muted, FontWeights.SemiBold);
 
         var deadly = RadiationDamageStages[10];
