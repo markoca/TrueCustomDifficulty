@@ -1,5 +1,13 @@
 # Full radiation CFG source audit — 2026-10-12
 
+### 2026-10-12 — HUD-icon-inspired 48-segment Radiation dial (CURRENT VISUAL)
+
+**Change scope only: WPF renderer + documentation/tests.** The game's lower-left radiation status HUD glyph (user-provided reference screenshot) inspires the new dark metallic bezel, 48 uniform separated perimeter teeth and three-vane centered radiation symbol. It replaces the instrument's crowded interior stage/damage text and smooth gold circumference, not the actual game's UI. There are no imported game graphics, changed game asset files, modified field presets, new CFG sources, new writer targets or saved RAD preview values.
+
+The 48 decorative segments span the single original 0–100 RAD clockwise circle and illuminate progressively to the exact selected level, with a *partial* final tooth permitted. They do **not** alter the original authoritative 10 stage transitions at RAD 10,20,30,40,50,60,70,80,90,99, or the damaging onset at RAD=1. The existing real source values (Light 0.2, Medium 0.3, Strong 0.48, L4 0.816, L5 1.468, L6 2.2, L7 4.18, L8 8.37, L9 17.58, L10 38.67, Deadly 20) continue to match the 22 original ValueMin/ValueMax CFG writer leaf baselines. The HUD face reads only 1–100 RAD and a trefoil; the adjacent RAD CONTROLS surface reads stage and exact range, scaled current damage and conditional HP estimate. There is no interaction between tooth count and stage thresholds.
+
+**Timing evidence unchanged:** default `TimePerChargeMin=TimePerChargeMax=1.f` inherited from the effect root plus `Charges=1, bIsPermanent=true, bIsSmooth=false` makes one hypothetical damage charge per second plausible but not experimentally verified as repeated damage. A fixed-level full-HP estimate remains conditional; the visual redesign does not modify formula, data or display semantics. All native BUILD-UP, RECOVERY and HP DAMAGE source knobs and their original mappings remain intact; the retired Radiation Simulation and timeline are not restored.
+
 ### 2026-10-12 — Static selected-RAD HP-zero estimate replaces field/timeline simulation (CURRENT UI)
 
 Original radiation source evidence, 11 stage prototypes, 22 ValueMin/ValueMax writer leaves and exact comparisons remain unchanged. The user retired the hypothetical FIELD/START/RECOVERY exposure simulation, its clock/playback and the To-99-RAD timeline. The new UI is a **fixed-RAD inspector**: the same 1–100 clockwise ring (or a compact rail with single-point −/+ controls) selects a state; the matching authored stage determines the CFG damage amount, scaled by the real global HP DAMAGE CFG setting. No physical radiation acquisition/removal is modeled by this result, although the native BUILD-UP/RECOVERY source knobs remain independently editable.
