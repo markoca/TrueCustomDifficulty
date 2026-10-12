@@ -75,7 +75,7 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 var instruction = VisualAggregateFamily switch
                 {
-                    "HumanCombatProfile" => "Drag the bottom ring for enemy health, the left ring for gun damage, or the center ring for both. Adjust attack frequency, accuracy and blast damage on their own tracks.",
+                    "HumanCombatProfile" => "ENEMY PROFILE shows health and gun damage. Drag the bottom ring for health, the left ring for gun damage, or the center for both. Turn the three OFFENSIVE PRESSURE knobs for attack frequency, fire accuracy and explosion damage; scroll for native-step precision.",
                     "EquipmentWearBalance" => "Drag the bottom ring for armor toughness, the left ring for weapon wear, or the center ring to change both.",
                     "PsyPhantomPressure" => "Drag the bottom or left ring to change one Psy axis; drag the center to move both. The gear-damage fader and bleeding switch work separately.",
                     "FlycatcherSlowdown" => "Drag the bottom ring to change movement speed, the left ring for turning speed, or the center to adjust both.",

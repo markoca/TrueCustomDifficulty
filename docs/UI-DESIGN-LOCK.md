@@ -1,5 +1,14 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-12 — Human Combat: Tactical Control Console (CURRENT)
+
+Approved **solution 1 / Tactical Control Console** replaces the earlier Squad Pressure Dashboard layouts. The Human Combat card remains one native five-source `HumanCombatProfile` WPF aggregate, but its width is **bounded to 802 DIP** rather than stretching across the entire available host. On wide hosts (at least **790 DIP**), a **300-DIP left enemy-profile column** and a **three-knob offensive-pressure row** are paired; total measured height is **366 DIP**. For narrower hosts, the 2D profile is centered above the same three-knob horizontal row; measured height is **589 DIP** and controls remain inside the panel. Rendering and height use the exact same breakpoint.
+
+**ENEMY PROFILE:** compact inline **HEALTH** and **GUN DAMAGE** readouts replace the two boxed stat cards. They are read-only live values; only digits change to gold when modified. Below, the **BALANCE EDITOR** is a 191-DIP source-exact X/Y graph with visible **ENEMY HEALTH** horizontal axis, **ENEMY GUN DAMAGE** vertical axis and real native tick values (including selected Base reference crosshair). The three original interactive rings remain: bottom edits health, left edits gun damage, center edits both. No duplicate editing knobs for these two parameters, no numeric invention or changes to source ranges, steps or value-based snapping.
+
+**OFFENSIVE PRESSURE:** the three long horizontal slider cards are removed. **ATTACK FREQUENCY** (`combat.npcAttackCooldown`), **FIRE ACCURACY** (`combat.npcHipAccuracy`) and **EXPLOSION DAMAGE** (`combat.explosionDamage`) are three independent 270-degree rotary knobs in a single tight row, using the existing `DrawSourceKnob` native-source renderer, subdued Base tick and modified value coloring. The `HumanCombatProfile` family is included in the shared knob mouse-wheel dispatch so drag, wheel, keyboard, right-click per-control reset and R reset-group retain their standard behavior. No additional gameplay or CFG controls are created. Preserve exact parameter IDs, writer/preset roundtrips and source selection. Old oversized offensive slider or two-value-card contracts are superseded. Local build/Wine visual approval remains pending.
+
+
 ### 2026-10-12 — Human Combat: balanced dashboard spacing with named axes (CURRENT)
 
 The approved Squad Pressure Dashboard keeps the **two current-value stat cards** above the left **BALANCE EDITOR** and the **three independent OFFENSIVE PRESSURE sliders** on the right. Adjust both column headings to the same baseline, use matching top alignment between the stat-card row and the offensive slider stack, and give the slider cards consistent height and spacing. The left graph is slightly larger where width permits and is centered within a bounded left column while reserving room for its two axis titles, ticks and the existing bottom/left handles.

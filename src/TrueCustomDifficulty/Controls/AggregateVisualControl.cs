@@ -303,6 +303,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (Family is "EquipmentWearBalance" or "FlycatcherSlowdown"
             or "AnomalyGlobalDamage" or "AnomalySpecialEffects" or "PlayerWeaponProfile")
             return;
+        if (Family == "HumanCombatProfile" && target.Kind == HitKind.Knob)
+            return;
         // Crosshair X/Y handles already draw the exact shared glow at their
         // own axes. Avoid a second overlay from their broad plot map rect.
         if (Family is "HumanCombatProfile" or "PsyPhantomPressure"
@@ -2738,43 +2740,39 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        // Compact and symmetric Squad Pressure Dashboard. The stat cards explain
-        // the current sources; the axes keep their own readable labels and
-        // original numeric ticks. The three graph handles remain native inputs.
-        const double left = 20.0;
-        const double sectionY = 51.0;
-        const double statTop = 72.0;
-        const double statHeight = 58.0;
-        const double statGap = 10.0;
-        var leftWidth = Math.Min(364.0, Math.Max(260.0, ActualWidth * .40));
-        var statWidth = (leftWidth - statGap) / 2.0;
-        DrawCenteredText(dc, "DEFENSE & DAMAGE",
-            new Point(left + leftWidth / 2.0, sectionY),
-            10.0, muted, FontWeights.Bold);
-        DrawHumanCombatStat(dc, health, "ENEMY HEALTH",
-            new Rect(left, statTop, statWidth, statHeight),
-            text, muted, border, accent, panel);
-        DrawHumanCombatStat(dc, damage, "GUN DAMAGE",
-            new Rect(left + statWidth + statGap, statTop, statWidth, statHeight),
-            text, muted, border, accent, panel);
+        // Tactical Control Console: bounded enemy profile and a compact
+        // three-knob attack bank. The 2D plot still edits the native X/Y CFGs.
+        var wide = HumanCombatWide(ActualWidth);
+        const double profileWidth = 300.0;
+        var bankWidth = Math.Min(802.0, Math.Max(1.0, ActualWidth - 26.0));
+        var bankLeft = (ActualWidth - bankWidth) / 2.0;
+        var profileLeft = wide ? bankLeft : (ActualWidth - profileWidth) / 2.0;
 
-        var plotSide = Math.Min(212.0, Math.Max(166.0, leftWidth - 112.0));
-        var plot = new Rect(left + (leftWidth - plotSide) / 2.0 + 15.0,
-            162.0, plotSide, plotSide);
-        DrawCenteredText(dc, "BALANCE EDITOR",
-            new Point(left + leftWidth / 2.0, 142.0),
+        DrawCenteredText(dc, "ENEMY PROFILE",
+            new Point(profileLeft + profileWidth / 2.0, 46.0),
             10.0, muted, FontWeights.Bold);
+        DrawHumanCombatReadout(dc, health, "HEALTH",
+            profileLeft + profileWidth * .25, text, muted, accent);
+        DrawHumanCombatReadout(dc, damage, "GUN DAMAGE",
+            profileLeft + profileWidth * .75, text, muted, accent);
+
+        const double plotSide = 191.0;
+        var plot = new Rect(profileLeft + (profileWidth - plotSide) / 2.0 + 9.0,
+            118.0, plotSide, plotSide);
+        DrawCenteredText(dc, "BALANCE EDITOR",
+            new Point(profileLeft + profileWidth / 2.0, 102.0),
+            9.7, muted, FontWeights.SemiBold);
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), plot, 4.0, 4.0);
 
-        // Keep both gameplay axis names ON the chart, not in a detached
-        // instruction footer or vertical value readout duplicated in the tiles.
+        // Keep axis names and real source ticks. The profile readouts explain
+        // the current values, not another editable setting.
         DrawCenteredText(dc, "ENEMY HEALTH",
-            new Point(plot.Left + plot.Width / 2.0, plot.Bottom + 49.0),
+            new Point(plot.Left + plot.Width / 2.0, plot.Bottom + 29.0),
             10.0, text, FontWeights.SemiBold);
-        var axisX = plot.Left - 67.0;
+        var axisX = plot.Left - 61.0;
         var axisY = plot.Top + plot.Height / 2.0;
         var yAxisLabel = CreateText("ENEMY GUN DAMAGE",
-            10.0, text, FontWeights.SemiBold);
+            9.7, text, FontWeights.SemiBold);
         dc.PushTransform(new RotateTransform(-90.0, axisX, axisY));
         dc.DrawText(yAxisLabel, new Point(
             axisX - yAxisLabel.WidthIncludingTrailingWhitespace / 2.0,
@@ -2794,7 +2792,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             if (tick is 0 or 2 or 4)
             {
                 DrawCenteredText(dc, $"{healthTick:0.##}x",
-                    new Point(gridX, plot.Bottom + 27.0), 9.3, muted, FontWeights.Normal);
+                    new Point(gridX, plot.Bottom + 13.0), 9.3, muted, FontWeights.Normal);
                 DrawRightAlignedText(dc, $"{damageTick:0.##}x",
                     new Point(plot.Left - 13.0, gridY - 7.0), 9.3, muted, FontWeights.Normal);
             }
@@ -2838,84 +2836,54 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Rect(healthX - 18.0, damageY - 18.0, 36.0, 36.0),
                 plot, HitKind.HumanJoint, health.Minimum, health.Maximum, false));
 
-        // The square graph owns the two linked axes. Independent source
-        // editors at right follow the same Stamina-style horizontal grammar.
-        var cardLeft = left + leftWidth + 16.0;
-        var cardWidth = Math.Max(1.0, ActualWidth - cardLeft - 20.0);
-        DrawCenteredText(dc, "OFFENSIVE PRESSURE",
-            new Point(cardLeft + cardWidth / 2.0, sectionY),
-            10.0, muted, FontWeights.Bold);
-        var extra = new (ParameterViewModel Source, string Label)[]
+        // Real native multipliers, not synthetic combined stats. All three
+        // controls reuse the project-wide 270-degree source-knob grammar.
+        var knobs = new (ParameterViewModel Source, string Label)[]
         {
             (frequency, "ATTACK FREQUENCY"),
             (accuracy, "FIRE ACCURACY"),
             (explosion, "EXPLOSION DAMAGE")
         };
-        for (var i = 0; i < extra.Length; i++)
-            DrawHumanCombatSideCard(dc, extra[i].Source, extra[i].Label,
-                new Rect(cardLeft, 72.0 + 116.0 * i, cardWidth, 105.0),
+        const double knobGap = 10.0;
+        var knobBankLeft = wide ? profileLeft + profileWidth + 18.0 : bankLeft;
+        var knobBankWidth = wide ? bankLeft + bankWidth - knobBankLeft : bankWidth;
+        var knobWidth = Math.Min(170.0, (knobBankWidth - 2.0 * knobGap) / 3.0);
+        var rowWidth = 3.0 * knobWidth + 2.0 * knobGap;
+        var rowLeft = knobBankLeft + (knobBankWidth - rowWidth) / 2.0;
+        var knobTop = wide ? 94.0 : 389.0;
+
+        DrawCenteredText(dc, "OFFENSIVE PRESSURE",
+            new Point(knobBankLeft + knobBankWidth / 2.0, wide ? 46.0 : 367.0),
+            10.0, muted, FontWeights.Bold);
+        for (var i = 0; i < knobs.Length; i++)
+            DrawSourceKnob(dc, knobs[i].Source, knobs[i].Label,
+                new Rect(rowLeft + i * (knobWidth + knobGap), knobTop,
+                    knobWidth, 181.0),
                 text, muted, border, accent, panel);
     }
 
-    private void DrawHumanCombatStat(
-        DrawingContext dc, ParameterViewModel parameter, string label, Rect card,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    private static bool HumanCombatWide(double width) => width >= 790.0;
+
+    // Match the responsive knob placement exactly: wide is a paired console,
+    // narrow stacks the three knobs BELOW the axis-labeled profile.
+    private static double HumanCombatBoardHeight(double width)
+        => HumanCombatWide(width) ? 366.0 : 589.0;
+
+    private void DrawHumanCombatReadout(
+        DrawingContext dc, ParameterViewModel parameter, string label,
+        double centerX, Brush text, Brush muted, Brush accent)
     {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .6),
-            new Pen(CloneWithOpacity(border, .8), .9), card, 4.0, 4.0);
-        DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2.0,
-            card.Top + 17.0), 9.6, muted, FontWeights.Bold);
-        DrawCenteredText(dc, $"{parameter.CurrentNumber:0.##}x",
-            new Point(card.Left + card.Width / 2.0, card.Top + 41.0),
-            16.0, parameter.IsValueModifiedFromReference() ? accent : text,
+        DrawCenteredText(dc, label, new Point(centerX, 68.0),
+            9.3, muted, FontWeights.Bold);
+        var value = $"{parameter.CurrentNumber:0.##}x";
+        var active = parameter.IsControlEnabled;
+        var formatted = CreateText(value, 16.0, active ? text : muted,
             FontWeights.Bold);
-    }
-
-    private void DrawHumanCombatSideCard(
-        DrawingContext dc, ParameterViewModel parameter, string label, Rect card,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
-    {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
-        var changed = parameter.IsValueModifiedFromReference();
-        var number = CreateText($"{parameter.CurrentNumber:0.##}x",
-            changed ? 13.8 : 12.6, changed ? accent : text,
-            FontWeights.Bold);
-        dc.DrawText(CreateText(label, 10.8, text, FontWeights.Bold,
-                Math.Max(1.0, card.Width - number.WidthIncludingTrailingWhitespace - 35.0)),
-            new Point(card.Left + 12.0, card.Top + 10.0));
-        dc.DrawText(number,
-            new Point(card.Right - 12.0 - number.WidthIncludingTrailingWhitespace,
-                card.Top + 8.0));
-
-        var rail = new Rect(card.Left + 16.0, card.Top + 49.0,
-            Math.Max(1.0, card.Width - 32.0), 12.0);
-        var y = rail.Top + rail.Height / 2.0;
-        var currentX = ValueToX(parameter.CurrentNumber,
-            parameter.Minimum, parameter.Maximum, rail, reverse: false);
-        var referenceX = ValueToX(parameter.ReferenceNumber,
-            parameter.Minimum, parameter.Maximum, rail, reverse: false);
-        dc.DrawLine(new Pen(border, 3.0),
-            new Point(rail.Left, y), new Point(rail.Right, y));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.7), 3.0),
-            new Point(rail.Left, y), new Point(currentX, y));
-        dc.DrawLine(new Pen(muted, 1.5),
-            new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
-        var hovered = ReferenceEquals(_hoverTarget?.Parameter, parameter);
-        dc.DrawEllipse(panel, new Pen(accent, hovered || IsSelected(parameter) ? 2.5 : 1.5),
-            new Point(currentX, y), 6.0, 6.0);
-        dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-
-        AddHorizontalTarget(parameter,
-            new Rect(rail.Left - 7.0, rail.Top - 8.0,
-                rail.Width + 14.0, rail.Height + 16.0),
-            rail, parameter.Minimum, parameter.Maximum);
-
-        DrawText(dc, $"{parameter.Minimum:0.##}x",
-            new Point(rail.Left, card.Bottom - 18.0),
-            10.0, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, $"{parameter.Maximum:0.##}x",
-            new Point(rail.Right, card.Bottom - 18.0),
-            10.0, muted, FontWeights.Normal);
+        // Per-value modification grammar: highlight only digits, not the unit.
+        if (active && parameter.IsValueModifiedFromReference())
+            formatted.SetForegroundBrush(accent, 0, value.Length - 1);
+        dc.DrawText(formatted, new Point(
+            centerX - formatted.WidthIncludingTrailingWhitespace / 2.0, 83.0));
     }
 
     // Editable axes are deliberately independent. The gold crosshair is a
@@ -4925,7 +4893,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance"))
+        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -5779,7 +5747,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => 242.0,
             "PsyPhantomPressure" => 378.0,
-            "HumanCombatProfile" => 449.0,
+            "HumanCombatProfile" => HumanCombatBoardHeight(width),
             "PlayerWeaponProfile" => 242.0,
             "CoreHealthDashboard" => width >= 700.0 ? 282.0 : 365.0,
             "SevereFatiguePenaltyBoard" => 376.0,
