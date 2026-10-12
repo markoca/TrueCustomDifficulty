@@ -8317,7 +8317,7 @@
       "tab": "survival",
       "group": "Sleeping",
       "label": "Post-Sleep Health Restore",
-      "description": "Controls the direct health restore you receive after normal sleep. The tool starts at 100 HP (1x), adjustable from 25 to 200 HP; the vanilla CFG remains 300 HP.",
+      "description": "Controls the direct health restore you receive after normal sleep. The tool starts at 100 HP (1x), adjustable from 0 to 200 HP; the vanilla CFG remains 300 HP.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -8334,7 +8334,7 @@
         "value": 100
       },
       "slider": {
-        "min": 25,
+        "min": 0,
         "max": 200,
         "step": 5,
         "stepMode": "absolute"
@@ -8352,8 +8352,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Controls the direct health restore you receive after normal sleep. The tool starts at 100 HP (1x), adjustable from 25 to 200 HP; the vanilla CFG remains 300 HP.",
-      "logic": "The 0.25x to 2x editor scale uses 100 HP as 1x (25 to 200 HP). Vanilla source stays 300 HP; 100 HP is an intentional CFG patch default.",
+      "rationale": "Controls the direct health restore you receive after normal sleep. The tool starts at 100 HP (1x), adjustable from 0 to 200 HP; the vanilla CFG remains 300 HP.",
+      "logic": "The 0x to 2x editor scale uses 100 HP as 1x (0 to 200 HP); 0x writes zero sleep healing without changing other wake-up effects. Vanilla source stays 300 HP; 100 HP is an intentional CFG patch default.",
       "interaction": "Reset returns to 100 HP, not the out-of-range vanilla 300 HP. Legacy preset values above 200 HP clamp to 200 HP. This is separate from passive regeneration and medkits."
     },
     {

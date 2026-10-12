@@ -73,8 +73,8 @@ internal static class Program
         var definition = Catalog.Parameters.Single(p => p.Id == "survival.sleepHealthRestore");
         Check(definition.Default.Mode == "fixedValue"
               && definition.Default.Value == 100.0
-              && definition.Slider is { Min: 25.0, Max: 200.0, Step: 5.0 },
-            "Sleep HP tool default and source-backed 25..200 HP range drifted");
+              && definition.Slider is { Min: 0.0, Max: 200.0, Step: 5.0 },
+            "Sleep HP tool default and source-backed 0..200 HP range drifted");
         var vanilla = definition.Vanilla["All"].GetDouble();
         Check(Math.Abs(vanilla - 300.0) < 0.000001,
             "Sleep HP vanilla source must remain 300, not the tool default");
@@ -92,9 +92,9 @@ internal static class Program
             source.ResetToReference();
             Check(Math.Abs(source.CurrentNumber - 100.0) < 0.000001,
                 "Sleep editor reset must restore the tool 100-HP default");
-            source.SnapCurrentNumberToMarker(25.0);
-            Check(Math.Abs(source.CurrentNumber - 25.0) < 0.000001,
-                "Sleep editor cannot select its 0.25x/25 HP minimum");
+            source.SnapCurrentNumberToMarker(0.0);
+            Check(Math.Abs(source.CurrentNumber) < 0.000001,
+                "Sleep editor cannot select its 0x/0 HP minimum");
             source.SnapCurrentNumberToMarker(200.0);
             Check(Math.Abs(source.CurrentNumber - 200.0) < 0.000001,
                 "Sleep editor cannot select its 2x/200 HP maximum");
@@ -192,6 +192,11 @@ internal static class Program
                 45.0, 0.75, 33.75);
             TestDrinkDurationOverride();
             TestMedicineTargets();
+            // 0x is a real gameplay setting: validate emitted ValueMin and ValueMax = 0.
+            TestCombined("Veteran-Sleep-Zero-HP", "Veteran", new[]
+            {
+                ("survival.sleepHealthRestore", 0.0)
+            });
             TestCombined("Veteran-Medicine-Independent-Effects", "Veteran", new[]
             {
                 ("survival.vincaBleedRecovery", 18.0),

@@ -1,8 +1,8 @@
 # True Custom Difficulty
 
-### 2026-10-12 — Sleep Health Restored: 100 HP default, 0.25x–2x range
+### 2026-10-12 — Sleep Health Restored: 100 HP default, 0x–2x range
 
-Sleep now starts and resets HEALTH RESTORED at **100 HP** (editor 1x). The editable range is **25–200 actual HP** (0.25x–2x) with 5-HP steps. The game source's original **300 HP** is preserved as immutable vanilla metadata; a fresh tool preset instead writes **100 HP** to both SleepHealthRestore CFG fields. Saved values above 200 HP clamp on load. Stamina restore remains unchanged.
+Sleep now starts and resets HEALTH RESTORED at **100 HP** (editor 1x). The editable range is **0–200 actual HP** (0x–2x; 0 HP means no sleep health restoration) with 5-HP steps. The game source's original **300 HP** is preserved as immutable vanilla metadata; a fresh tool preset instead writes **100 HP** to both SleepHealthRestore CFG fields. Saved values above 200 HP clamp on load. Stamina restore remains unchanged.
 
 ### 2026-10-12 — Centered readouts for all 270° knobs
 

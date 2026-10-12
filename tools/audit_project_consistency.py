@@ -2343,12 +2343,12 @@ _sleep_original = [
 if (next(iter(_sleep_hp["vanilla"].values())) != 300
     or _sleep_default != {"mode": "fixedValue", "value": 100}
     or any(_sleep_range.get(k) != v
-           for k, v in (("min", 25), ("max", 200), ("step", 5), ("stepMode", "absolute")))
+           for k, v in (("min", 0), ("max", 200), ("step", 5), ("stepMode", "absolute")))
     or sorted(e.get("sourceRaw") for e in _sleep_original) != ["300", "300"]
     or set(e.get("key") for e in _sleep_original) != {"ValueMin", "ValueMax"}):
-    fail("Sleep HP 100 editor default / 25..200 UI range / 300 vanilla CFG parity drifted")
+    fail("Sleep HP 100 editor default / 0..200 UI range / 300 vanilla CFG parity drifted")
 else:
-    note("Sleep: actual 300 HP source preserved; tool default 100 HP, editor 25..200 HP")
+    note("Sleep: actual 300 HP source preserved; tool default 100 HP, editor 0..200 HP")
 
 _global_generator_visible = _global_visible_ids & _e2e_all
 _global_non_generator_visible = _global_visible_ids - _e2e_all

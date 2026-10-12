@@ -3400,7 +3400,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         const double gap = 12.0;
         var column = (width - gap) / 2.0;
         DrawCompactTrack(dc, healthRestore, "HEALTH RESTORED",
-            $"+{healthRestore.CurrentNumber:0.#} HP",
+            healthRestore.CurrentNumber <= 0.0
+                ? "0 HP" : $"+{healthRestore.CurrentNumber:0.#} HP",
             $"{healthRestore.Minimum / 100.0:0.##}x", $"{healthRestore.Maximum / 100.0:0.##}x",
             new Rect(left, 274.0, column, 82.0),
             text, muted, border, accent, panel);
@@ -3442,7 +3443,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawLine(new Pen(accent, 5.0), new Point(track.Left, y), new Point(currentX, y));
 
         // Do not draw a fake vanilla marker at the edge when the verified
-        // 300 HP source is outside this tool's 25-200 HP editor interval.
+        // 300 HP source is outside this tool's 0-200 HP editor interval.
         if (parameter.ReferenceNumber >= parameter.Minimum
             && parameter.ReferenceNumber <= parameter.Maximum)
         {

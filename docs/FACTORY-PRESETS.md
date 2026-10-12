@@ -1,6 +1,6 @@
 # Factory Presets
 
-Since 2026-10-12, Sleep's HEALTH RESTORED editor has a 100-HP tool default and an editable range of 25–200 HP. Existing curated factory presets retain their authored healing choices if within range; values previously above 200 HP are capped at 200 HP. The real vanilla source remains 300 HP.
+Since 2026-10-12, Sleep's HEALTH RESTORED editor has a 100-HP tool default and an editable range of 0–200 HP (0x disables sleep health restoration). Existing curated factory presets retain their authored healing choices if within range; values previously above 200 HP are capped at 200 HP. The real vanilla source remains 300 HP.
 
 True Custom Difficulty ships with twelve custom factory presets. They replace the old
 factory preset files named after the four vanilla game difficulties.

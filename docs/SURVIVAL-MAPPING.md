@@ -21,7 +21,7 @@ The existing preset-only `drinkDurationOverride` now applies to five drink durat
 
 ### 2026-10-12 — Sleep HP editor default and range (current)
 
-`survival.sleepHealthRestore` still writes the real `SleepHealthRestore.ValueMin/ValueMax` CFG source (vanilla **300 HP**). The *tool* intentionally starts and resets at **100 HP**, with a **25–200 HP** range in steps of **5 HP**. The displayed **0.25x–2x** labels scale against 100 HP, not against vanilla. A fresh preset writes 100 HP to both fields; presets saved with more than 200 HP are clamped to 200 on load. The other stamina sleep effect is unchanged.
+`survival.sleepHealthRestore` still writes the real `SleepHealthRestore.ValueMin/ValueMax` CFG source (vanilla **300 HP**). The *tool* intentionally starts and resets at **100 HP**, with a **0–200 HP** range in steps of **5 HP**. Selecting 0 HP means no health restored by this sleep effect. The displayed **0x–2x** labels scale against 100 HP, not against vanilla. A fresh preset writes 100 HP to both fields; presets saved with more than 200 HP are clamped to 200 on load. The other stamina sleep effect is unchanged.
 
 ### 2026-10-11 — Sleep wake-up percent and HP interpretation (current)
 
