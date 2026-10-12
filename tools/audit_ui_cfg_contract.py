@@ -44,7 +44,8 @@ AGGREGATES = {
         "economy.weaponCost","economy.artifactCost","economy.mutantPartValue",
     ],
     "Short Consumable Durations": [
-        "survival.instantStaminaRestore",  # Visible ConsumableMixer anchor.
+        "survival.waterInstantStaminaRestore",  # Visible ConsumableMixer anchor.
+        "survival.energyDrinkInstantStaminaRestore",  # Hidden native aggregate member.
         "survival.waterRegenDuration","survival.energyFullCostDuration",
         "survival.energyPartialCostDuration",
     ],
@@ -109,8 +110,8 @@ def main():
     # These are the CURRENT catalog invariants, not v0.9.26.51's 199/188
     # obsolete snapshot. The core must route every parameter, even hidden
     # aggregate backings; 13 independent source IDs are audit-only.
-    if len(parameters) != 246:
-        fail(f"catalog count drifted: {len(parameters)} != 246")
+    if len(parameters) != 247:
+        fail(f"catalog count drifted: {len(parameters)} != 247")
     if len(all_ids) != len(parameters):
         fail("duplicate catalog parameter IDs")
 
@@ -121,11 +122,11 @@ def main():
     hidden_non_ui = all_ids - effective_ui_ids
     backing_ids = hidden_ids - EXPECTED_HIDDEN_NON_UI
 
-    if len(visible_ids) != 149 or len(hidden_ids) != 97:
-        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 149/97")
+    if len(visible_ids) != 149 or len(hidden_ids) != 98:
+        fail(f"live visible/hidden catalog drift: {len(visible_ids)}/{len(hidden_ids)} != 149/98")
     if not EXPECTED_HIDDEN_NON_UI.issubset(hidden_ids):
         fail(f"declared non-UI controls became visible or vanished: {sorted(EXPECTED_HIDDEN_NON_UI-hidden_ids)}")
-    if len(effective_ui_ids) != 233 or len(backing_ids) != 84:
+    if len(effective_ui_ids) != 234 or len(backing_ids) != 85:
         fail(f"active source dimension count drifted: {len(effective_ui_ids)} / {len(backing_ids)} backing")
 
     # Named legacy aggregate cohorts are evidence, not the complete editor
