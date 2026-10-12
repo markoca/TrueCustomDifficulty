@@ -1,5 +1,9 @@
 # Full radiation CFG source audit — 2026-10-12
 
+### 2026-10-12 — Radiation source threshold ring (UI interpretation)
+
+The approved read-only Radiation System dial now splits a complete 0–100 RAD circumference at 10,20,30,40,50,60,70,80,90 and 99 RAD, proportional to original RadiationMechanics condition values. HP damage onset at 1 RAD remains a textual caveat; only the user-requested ten breaks are drawn. Normal damage-source values retain their original magnitude and CFG writer scaling, including Deadly=20 at 99 versus Level10=38.67 at 90 and completely separate RadBlock=9000. The ring does NOT provide live player RAD, exposure seconds, or death timing. CFG sources and their runtime uncertainties are unchanged.
+
 **Evidence level:** decoded original GameData / DLC1 archives; source-proven values, not an in-game HP timeline. This audit makes no UI or writer changes.
 
 ## Source provenance and scope

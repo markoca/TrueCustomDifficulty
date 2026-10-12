@@ -1,5 +1,11 @@
 # Survival CFG Mapping — v0.2.47
 
+### 2026-10-12 — Radiation 360-degree threshold dial (presentation only; CURRENT)
+
+Replaces the read-only Radiation Damage Stages horizontal strip with a full circular 0–100 RAD breakdown, split at original RadiationMechanics boundaries 10,20,30,40,50,60,70,80,90,99. The angular positions are proportional to real RAD values; the final 99–100 wedge spans 3.6 degrees. The original 1-RAD first-damage onset is stated in the dial center rather than adding a requested split. All 11 original damage prototypes remain represented: the first ten values appear inside their correct radial ranges and 99+ Deadly damage appears in a footer to avoid clipping. The stage magnitude values still scale exclusively from survival.radiationDamage (the same 22 writer targets). This is NOT a current radiation level indicator, HP-per-second calculation, or kill countdown, and is independent of RadBlockFieldDamage=9000.
+
+The original BUILD-UP, RECOVERY (PTS/S), and HP DAMAGE knobs, their CFG mappings, native editor inputs and preset output remain unchanged; the new passive dial has zero added hit targets. RadiationBalance height becomes 613 DIP. UI catalogs and radiation stage audit lock the full-circle layout.
+
 ### 2026-10-12 — Full original Radiation CFG audit (SOURCE VERIFIED; UI UNCHANGED)
 
 See [RADIATION-CFG-DEEP-AUDIT-2026-10-12.md](RADIATION-CFG-DEEP-AUDIT-2026-10-12.md) for source-exact GameData/DLC1 audit: **11 normal damage levels / 22 writer leaves**, thresholds **1–99 RAD** with 0.001 visual onset, field presets **1, 3, 6, 33, 50 RAD/s** plus Custom and Topaz, inherited default effect **TimePerCharge=1s** (runtime repeat cadence NOT proven), and separate **RadBlockFieldDamage 9000 with explicit 2.7s charge interval**. Full radiation treatment / armor / quest source domains are cataloged. UI remains **three source-native knobs and the read-only damage-value stage strip**; no extra knobs, CFG writer changes or invented death ETA.

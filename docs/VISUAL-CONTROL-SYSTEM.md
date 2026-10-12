@@ -1,5 +1,13 @@
 # Visual Control System
 
+### 2026-10-12 — Radiation full-circle segmented knob (CURRENT)
+
+The only new element is a NONINTERACTIVE closed annular dial under the existing three interactive 270-degree BUILD-UP, RECOVERY and HP DAMAGE knobs. The full 0–100 RAD circle uses a WPF StreamGeometry ArcTo per CFG state range, starting vertically at 12 o'clock and sweeping clockwise. Draw ten crisp split ticks at source-confirmed 10,20,30,40,50,60,70,80,90 and 99 RAD, with label positions calculated directly from RAD/100 rather than an invented evenly spaced stage count. The 99–100 RAD segment must be just 3.6 degrees; put its Deadly damage value in the footer for readability. Other ten source magnitudes are shown as small numeric labels anchored at true arc-sector centers. Native radiation damage first starts at 1 RAD: mention this explicitly at the center while keeping user-approved cut positions unchanged.
+
+The ring is not a live in-game meter, death countdown, or new editing affordance. Its source stage values use the unchanged live HP DAMAGE multiplier, and source amounts turn gold only when that input is modified. For explicit meaning: the center says RADIATION / 0–100 / RAD / HP DAMAGE FROM 1 RAD; bottom retains CFG EFFECT VALUES · NOT A DEATH TIMER. No new knobs, clock labels, tooltips pretending to know runtime RAD, or alternate values for the independent RadBlock 9000 hazard.
+
+Geometry: RadiationProfileTop=241, RadiationProfileHeight=360, total RadiationBoardHeight=613; radius 95, threshold caption radius 121, source value radius 73, dial centerY=profile.Top+165. The three real 270-degree knobs at Y=49..230 retain their native input, reference and source ownership. Supersedes the previous 142-DIP horizontal damage bar chart and 395-DIP panel height.
+
 ### 2026-10-12 — Radiation mechanics audit does not authorize a death ETA (CURRENT SOURCE INTERPRETATION)
 
 See [RADIATION-CFG-DEEP-AUDIT-2026-10-12.md](RADIATION-CFG-DEEP-AUDIT-2026-10-12.md). The radiation damage-stage strip has verified **RAD thresholds 1 through 99**, 11 CFG damage magnitudes, and an independent field hazard RadBlockFieldDamage=9000 (2.7s source charge). Inherited TimePerCharge=1 in EffectPrototypes is NOT the same as a proven runtime damage-per-second rate. Keep the previously approved RadiationBalance **395-DIP native three-knob + read-only profile** architecture. This source audit modifies no rendering layout, controls, source mappings or writer.

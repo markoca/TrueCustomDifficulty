@@ -4268,15 +4268,47 @@ public sealed class AggregateVisualControl : FrameworkElement
     };
 
     private const double RadiationProfileTop = 241.0;
-    private const double RadiationProfileHeight = 142.0;
+    private const double RadiationProfileHeight = 360.0;
     private const double RadiationBoardHeight =
         RadiationProfileTop + RadiationProfileHeight + 12.0;
 
-    // Three source-native knobs continue to edit the real accumulation scalar,
-    // recovery in PTS/S and global HP damage scalar independently.
-    // The bottom graph is a source-exact DAMAGE-STAGE profile, not a time axis.
-    // No truthful radiation death ETA is derivable without confirmed exposure,
-    // state thresholds, effect cadence, mitigation and healing behavior.
+    // Authentic RadiationMechanics stage thresholds (read-only CFG facts).
+    // 0..100 RAD maps to exactly one complete clockwise revolution.
+    private static readonly double[] RadiationRingThresholds =
+    {
+        10.0, 20.0, 30.0, 40.0, 50.0,
+        60.0, 70.0, 80.0, 90.0, 99.0
+    };
+
+    private static Point RadiationRingPoint(Point center, double radius, double rad)
+    {
+        var angle = rad / 100.0 * Math.PI * 2.0 - Math.PI / 2.0;
+        return new Point(center.X + radius * Math.Cos(angle),
+            center.Y + radius * Math.Sin(angle));
+    }
+
+    private static void DrawRadiationRingSector(
+        DrawingContext dc, Point center, double radius,
+        double startRad, double endRad, Brush ink)
+    {
+        var geometry = new StreamGeometry();
+        using (var ctx = geometry.Open())
+        {
+            ctx.BeginFigure(RadiationRingPoint(center, radius, startRad),
+                isFilled: false, isClosed: false);
+            ctx.ArcTo(RadiationRingPoint(center, radius, endRad),
+                new Size(radius, radius), 0.0,
+                isLargeArc: endRad - startRad > 50.0,
+                SweepDirection.Clockwise, isStroked: true,
+                isSmoothJoin: false);
+        }
+        geometry.Freeze();
+        dc.DrawGeometry(null, new Pen(ink, 13.0), geometry);
+    }
+
+    // Native BUILD-UP, RECOVERY, HP DAMAGE remain the only editable knobs.
+    // The fourth circular figure is a read-only source-state visualization,
+    // never an invented live RAD reading, clock or new CFG editor.
     private void DrawRadiationBalance(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
@@ -4305,75 +4337,81 @@ public sealed class AggregateVisualControl : FrameworkElement
             Math.Max(1.0, ActualWidth - 32.0), RadiationProfileHeight);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
             profile, 4.0, 4.0);
-        DrawText(dc, "RADIATION DAMAGE STAGES",
+        DrawText(dc, "RADIATION LEVELS",
             new Point(profile.Left + 12.0, profile.Top + 9.0),
             10.2, text, FontWeights.Bold);
         DrawRightAlignedText(dc, "11 CFG EFFECTS",
             new Point(profile.Right - 12.0, profile.Top + 9.0),
             9.0, muted, FontWeights.SemiBold);
-
         var damage = P("survival.radiationDamage");
         if (damage is null)
             return;
 
-        // The same multiplier that the CFG scale writer applies to ALL 22
-        // min/max leaves. Do not combine it with the unrelated accumulation
-        // multiplier or native recovery rate to fabricate a lethal countdown.
         var multiplier = Math.Max(0.0, damage.CurrentNumber);
         var modified = damage.IsValueModifiedFromReference();
-        var valueBrush = modified ? accent : text;
-        var stroke = CloneWithOpacity(modified ? accent : muted, modified ? .86 : .65);
-        var firstX = profile.Left + 14.0;
-        const double deadlyWidth = 84.0;
-        const double splitGap = 12.0;
-        var stagesWidth = Math.Max(1.0, profile.Width - 28.0 - deadlyWidth - splitGap);
-        var stepWidth = stagesWidth / 10.0;
-        var baselineY = profile.Top + 97.0;
-        const double maxBarHeight = 42.0;
+        var valueInk = modified ? accent : text;
         var highest = RadiationDamageStages.Max(s => s.SourceDamage);
-        for (var i = 0; i < 10; i++)
+        var center = new Point(profile.Left + profile.Width / 2.0,
+            profile.Top + 165.0);
+        const double radius = 95.0;
+        const double valueRadius = 73.0;
+        const double tickLabelRadius = 121.0;
+        dc.DrawEllipse(CloneWithOpacity(panel, 0.8),
+            new Pen(CloneWithOpacity(border, 0.78), 0.85),
+            center, radius - 19.0, radius - 19.0);
+        // Baseline is a complete circle; segments never shorten it to 270°.
+        dc.DrawEllipse(null, new Pen(CloneWithOpacity(soft, 0.95), 13.0),
+            center, radius, radius);
+
+        for (var i = 0; i < RadiationDamageStages.Length; i++)
         {
             var stage = RadiationDamageStages[i];
-            var centerX = firstX + (i + .5) * stepWidth;
-            var rawValue = stage.SourceDamage * multiplier;
-            var ratio = stage.SourceDamage / highest;
-            var barHeight = multiplier > Epsilon ? Math.Max(2.0, ratio * maxBarHeight) : 0.0;
-            DrawCenteredText(dc, stage.Label,
-                new Point(centerX, profile.Top + 31.0),
-                9.0, muted, FontWeights.SemiBold);
-            dc.DrawLine(new Pen(soft, 1.0),
-                new Point(centerX, baselineY), new Point(centerX, baselineY - maxBarHeight));
-            if (barHeight > 0.0)
-                dc.DrawRoundedRectangle(stroke, null,
-                    new Rect(centerX - 5.0, baselineY - barHeight, 10.0, barHeight),
-                    2.0, 2.0);
-            DrawCenteredText(dc, $"{rawValue:0.###}",
-                new Point(centerX, profile.Top + 101.0),
-                9.0, valueBrush, FontWeights.SemiBold);
+            var fromRad = i == 0 ? 0.0 : RadiationRingThresholds[i - 1];
+            var toRad = i == 10 ? 100.0 : RadiationRingThresholds[i];
+            var intensity = Math.Sqrt(stage.SourceDamage / highest);
+            var opacity = multiplier <= Epsilon ? 0.13
+                : Math.Clamp(0.24 + intensity * 0.66, 0.24, 0.90);
+            DrawRadiationRingSector(dc, center, radius, fromRad, toRad,
+                CloneWithOpacity(modified ? accent : text, opacity));
+            // The final 99..100-degree-scale slice is only 3.6° wide;
+            // show its DEADLY source value in the footer rather than overprint.
+            if (i < 10)
+                DrawCenteredText(dc, $"{stage.SourceDamage * multiplier:0.###}",
+                    RadiationRingPoint(center, valueRadius, (fromRad + toRad) / 2.0),
+                    9.2, valueInk, FontWeights.SemiBold);
         }
 
-        // Authored DEADLY effect is independent, not a fake L11 or a
-        // guarantee that all preceding stages lead to this one in X seconds.
-        var deadlyLeft = firstX + stagesWidth + splitGap;
-        dc.DrawLine(new Pen(border, 1.0),
-            new Point(deadlyLeft - splitGap / 2.0, profile.Top + 31.0),
-            new Point(deadlyLeft - splitGap / 2.0, profile.Top + 122.0));
-        var deadlyCenter = deadlyLeft + deadlyWidth / 2.0;
+        foreach (var threshold in RadiationRingThresholds)
+        {
+            dc.DrawLine(new Pen(panel, threshold == 99.0 ? 3.6 : 3.1),
+                RadiationRingPoint(center, radius - 9.0, threshold),
+                RadiationRingPoint(center, radius + 9.0, threshold));
+            DrawCenteredText(dc, threshold.ToString("0", CultureInfo.InvariantCulture),
+                RadiationRingPoint(center, tickLabelRadius, threshold),
+                threshold == 99.0 ? 10.4 : 9.6,
+                threshold == 99.0 ? accent : muted,
+                threshold == 99.0 ? FontWeights.Bold : FontWeights.SemiBold);
+        }
+
+        DrawCenteredText(dc, "RADIATION",
+            new Point(center.X, center.Y - 23.0), 10.3, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "0–100",
+            new Point(center.X, center.Y + 1.0), 19.5, text, FontWeights.Bold);
+        DrawCenteredText(dc, "RAD",
+            new Point(center.X, center.Y + 26.0), 10.2, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "HP DAMAGE FROM 1 RAD",
+            new Point(center.X, center.Y + 42.0), 9.0, muted, FontWeights.SemiBold);
+
         var deadly = RadiationDamageStages[10];
-        var deadlyHeight = multiplier > Epsilon
-            ? Math.Max(2.0, deadly.SourceDamage / highest * maxBarHeight) : 0.0;
-        DrawCenteredText(dc, "DEADLY",
-            new Point(deadlyCenter, profile.Top + 31.0),
-            9.0, muted, FontWeights.Bold);
-        if (deadlyHeight > 0.0)
-            dc.DrawRoundedRectangle(stroke, null,
-                new Rect(deadlyCenter - 5.0, baselineY - deadlyHeight,
-                    10.0, deadlyHeight), 2.0, 2.0);
-        DrawCenteredText(dc, $"{deadly.SourceDamage * multiplier:0.###}",
-            new Point(deadlyCenter, profile.Top + 101.0),
-            9.0, valueBrush, FontWeights.SemiBold);
+        DrawText(dc, "99 RAD · DEADLY",
+            new Point(profile.Left + 14.0, profile.Top + 312.0),
+            9.6, muted, FontWeights.Bold);
+        DrawChangedNumbers(dc, $"CFG DAMAGE {deadly.SourceDamage * multiplier:0.###}",
+            new Point(profile.Right - 14.0, profile.Top + 312.0),
+            9.6, text, accent, FontWeights.SemiBold,
+            modified, rightAligned: true);
         DrawCenteredText(dc, "CFG EFFECT VALUES · NOT A DEATH TIMER",
-            new Point(profile.Left + profile.Width / 2.0, profile.Top + 124.0),
+            new Point(center.X, profile.Top + 341.0),
             9.0, muted, FontWeights.SemiBold);
     }
 

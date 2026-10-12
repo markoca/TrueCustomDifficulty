@@ -2119,13 +2119,16 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'rateReadout || nativeUnit is not null' not in _radiation_source
     or '"RadiationBalance" => RadiationBoardHeight' not in _radiation_source
     or 'RadiationProfileTop + RadiationProfileHeight + 12.0' not in _radiation_source
-    or 'RADIATION DAMAGE STAGES' not in _radiation_renderer
+    or 'RADIATION LEVELS' not in _radiation_renderer
+    or 'RADIATION DAMAGE STAGES' in _radiation_renderer
+    or 'foreach (var threshold in RadiationRingThresholds)' not in _radiation_renderer
+    or 'DrawRadiationRingSector(dc, center, radius, fromRad, toRad,' not in _radiation_renderer
     or 'CFG EFFECT VALUES · NOT A DEATH TIMER' not in _radiation_renderer):
     fail("Radiation System three native source knobs, PTS/S unit or wheel mapping drifted")
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: three source-native 270-degree knobs and bounded audited damage-stage profile; recovery in PTS/S, no invented death timer")
+    note("Radiation: three native editable knobs and source-true read-only 360-degree threshold ring")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -2905,7 +2908,7 @@ for _family, (_method, _height, _ids) in _seven_methods.items():
             _seven_errors.append(f'{_family}: renderer no longer references {_id}')
 if ('"RadiationBalance" => RadiationBoardHeight' not in _seven_src
     or 'private const double RadiationProfileTop = 241.0;' not in _seven_src
-    or 'private const double RadiationProfileHeight = 142.0;' not in _seven_src):
+    or 'private const double RadiationProfileHeight = 360.0;' not in _seven_src):
     _seven_errors.append('RadiationBalance renderer and measured stage-strip board height disagree')
 for _id, _native in _seven_expected_sliders.items():
     _s = (_seven_catalog.get(_id, {}).get('slider') or {})
