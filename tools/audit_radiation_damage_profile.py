@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check radiation stage preview against independently audited vanilla CFG rows.
 
-The source-value preview is NOT a runtime exposure/death-time simulation.
+Includes a conditional one-charge-per-second HP model, not a proven in-game death timer.
 Usage: python3 tools/audit_radiation_damage_profile.py
 """
 import json
@@ -37,8 +37,8 @@ assert "deadly.SourceDamage * multiplier" in code
 assert 'damage.IsValueModifiedFromReference()' in code
 assert "RadiationProfileTop + RadiationProfileHeight" in code
 assert "private const double RadiationProfileHeight = 388.0;" in code
-assert "private const double RadiationSimNarrowHeight = 122.0;" in code
-assert "private const double RadiationTimelineHeight = 172.0;" in code
+assert "private const double RadiationSimNarrowHeight = 184.0;" in code
+assert "private const double RadiationTimelineHeight = 202.0;" in code
 assert "RadiationBoardHeight(double width)" in code
 assert '"RadiationBalance" => RadiationBoardHeight' in code
 assert "CFG EFFECT VALUES · NOT A DEATH TIMER" in code
@@ -48,7 +48,7 @@ assert "private const double RadiationProfileHeight = 388.0;" in code
 assert "foreach (var threshold in RadiationRingThresholds)" in code
 assert "DrawRadiationRingSector(dc, center, radius, fromRad, toRad," in code
 assert "ctx.ArcTo(" in code
-assert "HP LOSS AT 1 RAD" in code and "99 RAD · DEADLY" in code
+assert '"SIMULATED"' in code and '"99 RAD · DEADLY"' in code
 bounds = code.split("RadiationRingThresholds =", 1)[1].split("};", 1)[0]
 splits = [float(x) for x in re.findall(r"[0-9]+(?:\.[0-9]+)?", bounds)]
 assert splits == [10, 20, 30, 40, 50, 60, 70, 80, 90, 99], splits
@@ -65,7 +65,7 @@ for factor in (0.0, 0.5, 1.0, 1.5, 2.0):
                    for p in points)
 
 
-# Preview-only choices cannot introduce CFG sources, nor promise HP death ETA.
+# Preview-only choices, scrub/playback and explicitly hypothetical HP-zero ETA cannot add CFG sources.
 for token in (
     'private int _radField = 1;',
     'private int _radStart;',
@@ -75,14 +75,33 @@ for token in (
     'AdvanceRadiationSim(preview, Math.Sign(e.Delta));',
     '_radSimFocus = -1;',
     'ToolTip = "Model only: click or scroll to cycle · Right-click restores preview default.";',
-    'AdvanceRadiationSim(_radSimFocus, step);',
+    'AdvanceRadiationSim(_radSimFocus, simulationDirection);',
     'DrawRadiationSimulation(dc, text, muted, border, soft, accent, panel);',
     '"RADIATION SIMULATION"', '"RADIATION TIMELINE"',
-    '"MODEL ONLY"', '"TO 99 RAD"', '"NO NET BUILD-UP"',
-    '"ASSUMED LINEAR RAD GAIN · NO HP/DEATH ETA"',
-    '"DIRECT FIELD HAZARD EXCLUDED · NO HP/DEATH ETA"',
-    'field.PerSecond * gain - recovery',
-    '"RadiationBalance" => RadiationBoardHeight(width)'
+    '"MODEL ONLY"', '"TO 99 RAD"', '"NO NET GAIN"',
+    '"MODEL HP ZERO"', '"HYPOTHETICAL · NO HEALING"',
+    '"EST. 1 HP CHARGE/s · ENGINE CADENCE UNVERIFIED"',
+    '"EST. 1 HP CHARGE/s · DIRECT HAZARD EXCLUDED"',
+    'field.PerSecond * buildUp - recovery',
+    '"RadiationBalance" => RadiationBoardHeight(width)',
+    'private double RadiationInitialRad =>',
+    'private double RadiationCurrentRad =>',
+    'private static double RadiationHpLoss(',
+    'private static double RadiationHpZeroSeconds(',
+    'private double RadiationModelMaxHp =>',
+    'private bool RadiationRingHit(Point point)',
+    'private void ScrubRadiationRing(Point point)',
+    'private void ToggleRadiationPlayback()',
+    'private void TickRadiationPlayback()',
+    'private Rect RadiationPlaybackButton(int index)',
+    'new Pen(accent, 4.5)',
+    'StopRadiationPlayback();',
+    'ResetRadiationPreview(clearCustomStart: true);',
+    '"PLAY ×10"',
+    '"PAUSE"',
+    '"RESET"',
+    'Math.Min(100.0,',
+    'health.maxHP'
 ):
     assert token in code, "Simulation renderer/interaction drift: " + token
 
@@ -105,7 +124,42 @@ assert abs(hypothetical_to_99(3, 1, .05, 0) - 99/2.95) < 1e-9
 assert abs(hypothetical_to_99(6, 1.5, .05, 50) - 49/8.95) < 1e-9
 assert hypothetical_to_99(1, 0, .05, 0) is None
 
+# Independent model regression: this is illustrative arithmetic, not engine validation.
+from math import inf
+
+stage_onsets = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 99]
+stage_dps = [float(value) for _, _, value in stages]
+
+def model_damage_rate(rad_value, multiplier):
+    active = [i for i, threshold in enumerate(stage_onsets) if rad_value >= threshold]
+    return 0 if not active else stage_dps[active[-1]] * multiplier
+
+def model_loss(start, elapsed, net, multiplier):
+    if multiplier == 0 or elapsed <= 0:
+        return 0
+    rad_value = start
+    remaining = elapsed
+    loss = 0
+    while remaining > 0:
+        if net <= 0 or rad_value >= 100:
+            return loss + model_damage_rate(rad_value, multiplier) * remaining
+        boundary = next((v for v in stage_onsets + [100] if v > rad_value), 100)
+        period = min(remaining, (boundary - rad_value) / net)
+        loss += model_damage_rate(rad_value, multiplier) * period
+        remaining -= period
+        rad_value = boundary
+    return loss
+
+assert abs(model_loss(0, 2, 10, 1) - .48) < 1e-8  # 0–1: 0, 1–10: .18, 10–20: .30
+assert abs(model_loss(99, 5, 0, 1) - 100) < 1e-8
+assert abs(model_loss(90, 1, 0, 1) - 38.67) < 1e-8
+assert model_loss(0, 999, 0, 1) == 0
+assert model_loss(100, 999, 100, 0) == 0
+assert stage_dps[-1] < stage_dps[-2]  # No invented monotonic Deadly damage curve.
+assert '"RadiationBalance" => RadiationBoardHeight(width)' in code
+assert '"survival.radiationDamage"' in code and '"survival.radiationRecovery"' in code
+
 print("PASS: 11 original radiation damage stages, 22 exact writer leaves,")
 print("      source-multiplier projection and distinct DEADLY source validated.")
-print("      360-degree ring, 7 source field presets, 3 preview inputs and timeline.")
-print("NOT VERIFIED: damage-event frequency, stage transitions, exposure or death ETA; Wine visual acceptance.")
+print("      Interactive 0–100 RAD ring, scenario playback, conditional HP-zero model and timeline.")
+print("NOT VERIFIED: engine cadence/falloff, direct-field hazards, protection or in-game death time; Wine visual acceptance.")
