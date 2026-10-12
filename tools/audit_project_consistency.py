@@ -1473,7 +1473,11 @@ if any("2026-10-11 — Economy three-section dashboard" not in
 # Equipment deep audit release gate (v0.2.49).
 _equipment_doc = DOCS / "EQUIPMENT-CONTROL-DEEP-AUDIT.md"
 _equipment_mapping = DOCS / "EQUIPMENT-MAPPING.md"
-_equipment_ui = [p for p in parameters if p.get("tab") == "equipment" and p.get("exposeInUi", True)]
+# Equipment parameters are grouped under Survival in the current catalog.
+# Audit stable source IDs, never the (presentation-only) tab assignment.
+_equipment_ui = [p for p in parameters
+                 if (p.get("id") or "").startswith("equipment.")
+                 and p.get("exposeInUi", True)]
 _equipment_rows = {p.get("id"): p for p in _equipment_ui}
 _equipment_confirmed = [p for p in _equipment_ui if p.get("support", {}).get("status") == "confirmed"]
 _equipment_runtime = [p for p in _equipment_ui if p.get("support", {}).get("status") == "runtime_test_required"]
@@ -1502,7 +1506,7 @@ for _pid, _expected_value in _equipment_caps.items():
 if len(_equipment_ui) != 4 or len(_equipment_confirmed) != 3 or len(_equipment_runtime) != 1 or _equipment_runtime_actual != {"equipment.armorDurability"}:
     fail(f"equipment deep audit status split drifted: total={len(_equipment_ui)} confirmed={len(_equipment_confirmed)} runtime={sorted(_equipment_runtime_actual)}; expected 4/3/1")
 elif len(_equipment_points) != 113:
-    fail(f"equipment writer surface drifted: {len(_equipment_points)} edit points; expected 117")
+    fail(f"equipment writer surface drifted: {len(_equipment_points)} edit points; expected 113")
 elif len(_equipment_armor) != 4 or any(e.get("operation") != "set" or e.get("key") != "Armor_Durability" for e in _equipment_armor) or _equipment_armor_actual != _equipment_armor_expected:
     fail(f"armor durability difficulty surface drifted: actual={_equipment_armor_actual}, expected={_equipment_armor_expected}")
 elif len(_equipment_ammo) != 34 or any(e.get("operation") != "scale" or e.get("key") != "Weight" or e.get("scope") != "baseGame" for e in _equipment_ammo):
