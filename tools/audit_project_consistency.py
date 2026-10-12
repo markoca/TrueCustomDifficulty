@@ -2171,6 +2171,8 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'void DrawStat(string value, double y, double fontSize, Brush ink, FontWeight weight)' not in _radiation_source
     or 'CreateText(value, fontSize, ink, weight, contentWidth)' not in _radiation_source
     or 'DrawStat(stage, wide ? 76.0 : 43.0,' not in _radiation_source
+    or 'DrawStat(_radLevel.ToString("0", CultureInfo.InvariantCulture) + " RAD",' not in _radiation_source
+    or 'var stage = index < 0 ? "NONE" : RadiationDamageStages[index].Label;' not in _radiation_source
     or 'DrawStat(stageRange, wide ? 117.0 : 81.0,' not in _radiation_source
     or 'wide ? 192.0 : 140.0, 29.0,' not in _radiation_source
     or 'wide ? 273.0 : 199.0, 29.0, accent, FontWeights.Bold);' not in _radiation_source

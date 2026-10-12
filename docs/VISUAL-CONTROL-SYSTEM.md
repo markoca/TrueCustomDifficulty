@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-13 — Radiation: RAD count as level heading (CURRENT)
+
+In the right Radiation System stats, replace the static ACTIVE STAGE heading with the live selected **N RAD** count in the same compact 11.5-DIP muted caption slot. The 29-DIP bold yellow value immediately beneath it shows the **stage identity**, without the redundant LEVEL word: LIGHT, MED, STRONG, 4–10, DEADLY, or NONE at 0 RAD. The genuine interval remains in 13.5-DIP muted type on the following line. Keep the existing large yellow N RAD preview under the ring, all coordinates, damage/death tiers and CFG/source behavior unchanged. The dynamic heading names the current RAD selection and the yellow stage number conveys level state. Both project and radiation audits must enforce the updated renderer. No new card, legend or control.
+
 ### 2026-10-13 — Radiation central HP DAMAGE upper limit 10× (CURRENT)
 
 The source-backed middle HP DAMAGE hero knob must use the native `survival.radiationDamage` range **0.00×–10.00×** with step **0.01×** and vanilla **1.00×**. Its maximum endpoint reads **10x**; WPF knob size, placement, font and gesture are unchanged because the control reads its range from the parameter catalog. Keep the 11 native damage stages and 22 CFG edits and the existing zero-default 32-tooth RAD ring and bold yellow estimated death time. This supersedes all previous 6× references; the two source audits must verify 10× scaling and the same UI structure.

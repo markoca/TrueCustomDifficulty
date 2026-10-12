@@ -4613,9 +4613,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         var wide = RadiationWide(ActualWidth);
         dc.DrawRoundedRectangle(panel, null, area, 4.0, 4.0);
         var index = RadiationStageIndex(_radLevel);
-        var stage = index < 0 ? "NONE" :
-            index <= 2 || index == 10 ? RadiationDamageStages[index].Label
-            : "LEVEL " + RadiationDamageStages[index].Label;
+        // The selected RAD count is the stage heading. The level itself is
+        // the large yellow value, without a redundant "LEVEL" prefix.
+        var stage = index < 0 ? "NONE" : RadiationDamageStages[index].Label;
         var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];
         var stageTo = index < 0 ? 0.0
             : index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;
@@ -4636,8 +4636,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Point(area.Left + 16.0, area.Top + y));
         }
 
-        DrawStat("ACTIVE STAGE", wide ? 46.0 : 16.0,
-            11.5, muted, FontWeights.SemiBold);
+        DrawStat(_radLevel.ToString("0", CultureInfo.InvariantCulture) + " RAD",
+            wide ? 46.0 : 16.0, 11.5, muted, FontWeights.SemiBold);
         DrawStat(stage, wide ? 76.0 : 43.0,
             29.0, accent, FontWeights.Bold);
         DrawStat(stageRange, wide ? 117.0 : 81.0,

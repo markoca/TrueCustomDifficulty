@@ -133,7 +133,7 @@ for token in (
     'dc.DrawEllipse(symbol, null, center, 23.0, 23.0);',
     'DrawRadiationControls(dc, text, muted, soft, accent, panel);',
     'private void DrawRadiationControls(',
-    '"ACTIVE STAGE"', '"DAMAGE PER TICK"', '"DEAD AFTER"',
+    'DrawStat(_radLevel.ToString("0", CultureInfo.InvariantCulture) + " RAD",', '"DAMAGE PER TICK"', '"DEAD AFTER"',
     'var currentRad = _radLevel;',
     'var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];',
     'var stageTo = index < 0 ? 0.0',

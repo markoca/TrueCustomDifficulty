@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Radiation: RAD count as level heading (CURRENT)
+
+In the right Radiation System stats, replace the static ACTIVE STAGE heading with the live selected **N RAD** count in the same compact 11.5-DIP muted caption slot. The 29-DIP bold yellow value immediately beneath it shows the **stage identity**, without the redundant LEVEL word: LIGHT, MED, STRONG, 4–10, DEADLY, or NONE at 0 RAD. The genuine interval remains in 13.5-DIP muted type on the following line. Keep the existing large yellow N RAD preview under the ring, all coordinates, damage/death tiers and CFG/source behavior unchanged. The dynamic heading names the current RAD selection and the yellow stage number conveys level state. Both project and radiation audits must enforce the updated renderer. No new card, legend or control.
+
 ### 2026-10-13 — Radiation HP DAMAGE max 10× (CURRENT)
 
 The centered HP DAMAGE native knob is configured by `survival.radiationDamage` at **0.00×–10.00×**, step **0.01×** and vanilla **1.00×**. Its existing prominent rotary remains unchanged, but its upper endpoint must display **10x**. This replaces the former 6× ceiling and preserves all 11 source radiation stages and 22 CFG edits, the 0 RAD default and ring-only preview, and the single highlighted estimated death time. No new labels, controls, geometry or runtime timing claims. The radiation and project audits must guard the 10× ceiling.
