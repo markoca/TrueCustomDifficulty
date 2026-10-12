@@ -2126,12 +2126,14 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'RADIATION DAMAGE STAGES' in _radiation_renderer
     or 'foreach (var threshold in RadiationRingThresholds)' not in _radiation_renderer
     or 'DrawRadiationRingSector(dc, center, radius, fromRad, toRad,' not in _radiation_renderer
-    or 'CFG EFFECT VALUES · NOT A DEATH TIMER' not in _radiation_renderer):
+    or 'CFG EFFECT VALUE · NOT VERIFIED HP/s' not in _radiation_renderer
+    or 'DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);' not in _radiation_renderer
+    or 'var stageIndex = RadiationStageIndex(currentRad);' not in _radiation_renderer):
     fail("Radiation System three native source knobs, PTS/S unit or wheel mapping drifted")
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: three native knobs, scrubbable 360-degree model ring, 10x playback and hypothetical HP-zero timeline")
+    note("Radiation: three native knobs, clockwise 1–100 filled ring, active source damage, 10x model playback and HP-zero timeline")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
