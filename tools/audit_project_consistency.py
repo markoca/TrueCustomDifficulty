@@ -2134,7 +2134,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'private void DrawRadiationControls(' not in _radiation_source
     or 'RADIATION LEVELS' not in _radiation_renderer
     or 'RADIATION DAMAGE STAGES' in _radiation_renderer
-    or 'foreach (var threshold in RadiationRingThresholds)' not in _radiation_renderer
+    or 'foreach (var threshold in RadiationRingThresholds)' not in _radiation_source
     or 'DrawRadiationHudSegments(dc, center, currentRad,' not in _radiation_renderer
     or 'DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));' not in _radiation_renderer
     or 'private const int RadiationHudSegments = 32;' not in _radiation_source
