@@ -2130,7 +2130,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or '"RadiationBalance" => RadiationBoardHeight' not in _radiation_source
     or 'RadiationBoardHeight(double width)' not in _radiation_source
     or '"RadiationBalance" => RadiationBoardHeight(width)' not in _radiation_source
-    or 'DrawRadiationControls(dc, text, muted, border, soft, accent, panel);' not in _radiation_renderer
+    or 'DrawRadiationControls(dc, text, muted, soft, accent, panel);' not in _radiation_renderer
     or 'private void DrawRadiationControls(' not in _radiation_source
     or 'RADIATION LEVELS' not in _radiation_renderer
     or 'RADIATION DAMAGE STAGES' in _radiation_renderer
@@ -2142,12 +2142,20 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'private const int RadiationHudTickStep = 10;' not in _radiation_source
     or 'DrawRadiationRingSector(dc, center, radius, first, litEnd, active);' not in _radiation_source
     or 'if (litEnd > first + Epsilon)' not in _radiation_source
-    or '1–100 RAD' not in _radiation_renderer
+    or '"1–100 RAD"' in _radiation_renderer
+    or '"FIXED RAD"' in _radiation_source
+    or 'dc.DrawRoundedRectangle(panel, null, profile, 4.0, 4.0);' not in _radiation_renderer
+    or 'dc.DrawRoundedRectangle(panel, null, area, 4.0, 4.0);' not in _radiation_source
+    or 'DrawRoundedRectangle(panel, new Pen(border, 0.9)' in _radiation_renderer
+    or 'DrawRoundedRectangle(panel, new Pen(border, .9)' in _radiation_source
+    or '"DAMAGE PER TICK"' not in _radiation_source
+    or '"FULL HP → 0 · EST. TIME"' not in _radiation_source
     or 'private const double RadiationDialCenterY = 194.0;' not in _radiation_source
     or 'profile.Top + RadiationDialCenterY' not in _radiation_renderer
     or 'Math.Ceiling(RadiationModelMaxHp / damagePerAssumedCharge)' not in _radiation_source
-    or 'EST. HP ZERO · 1 TICK/S' not in _radiation_source
-    or 'FIXED RAD · NO HEALING OR PROTECTION' not in _radiation_source
+    or '"1 TICK/S ASSUMED · NO HEALING/PROTECTION"' not in _radiation_source
+    or '"CFG DAMAGE / CHARGE"' in _radiation_source
+    or '"EST. HP ZERO · 1 TICK/S"' in _radiation_source
     or 'HUD-STYLE PREVIEW · NOT GAME HUD' in _radiation_renderer
     or '11 CFG STAGES · 99 RAD DEADLY' in _radiation_renderer
     or 'DrawRadiationRingSector(dc, center, radius, 0.0, currentRad, accent);' in _radiation_renderer
@@ -2174,7 +2182,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: three native CFG knobs, 32 HUD teeth, 10-RAD ticks, separated trefoil, and discrete HP-zero ticks")
+    note("Radiation: native knobs, frameless RAD panels, clear per-tick damage/full-HP estimate, 32 HUD teeth")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual

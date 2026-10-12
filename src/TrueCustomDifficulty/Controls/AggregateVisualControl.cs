@@ -4567,14 +4567,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var profile = RadiationRingRect();
-        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
-            profile, 4.0, 4.0);
+        // Borderless grouping fill: keep the current card geometry.
+        dc.DrawRoundedRectangle(panel, null, profile, 4.0, 4.0);
         DrawText(dc, "RADIATION LEVELS",
             new Point(profile.Left + 12.0, profile.Top + 9.0),
             10.2, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "1–100 RAD",
-            new Point(profile.Right - 12.0, profile.Top + 9.0),
-            9.0, muted, FontWeights.SemiBold);
         var damage = P("survival.radiationDamage");
         if (damage is null)
             return;
@@ -4621,25 +4618,22 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Separated game-HUD-inspired trefoil fills the dial face. The selected
         // numeric RAD remains visible only in the adjacent RAD CONTROLS panel.
         DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));
-        DrawRadiationControls(dc, text, muted, border, soft, accent, panel);
+        DrawRadiationControls(dc, text, muted, soft, accent, panel);
     }
 
     // Preview-only RAD selection. No field accumulation model or playback.
     // The time estimate assumes constant RAD, full HP, no healing or mitigation,
     // and one radiation damage charge each second (unverified in engine).
     private void DrawRadiationControls(
-        DrawingContext dc, Brush text, Brush muted, Brush border,
+        DrawingContext dc, Brush text, Brush muted,
         Brush soft, Brush accent, Brush panel)
     {
         var area = RadiationControlsRect();
         var wide = RadiationWide(ActualWidth);
-        dc.DrawRoundedRectangle(panel, new Pen(border, .9), area, 4.0, 4.0);
+        dc.DrawRoundedRectangle(panel, null, area, 4.0, 4.0);
         DrawText(dc, "RAD CONTROLS",
             new Point(area.Left + 14.0, area.Top + 11.0),
             10.3, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "FIXED RAD",
-            new Point(area.Right - 14.0, area.Top + 11.0),
-            9.0, muted, FontWeights.SemiBold);
 
         DrawText(dc, "RADIATION LEVEL",
             new Point(area.Left + 16.0, area.Top + (wide ? 49.0 : 39.0)),
@@ -4678,24 +4672,24 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawRightAlignedText(dc, stageRange,
             new Point(area.Right - 16.0, area.Top + (wide ? 207.0 : 163.0)),
             9.5, muted, FontWeights.SemiBold);
-        DrawText(dc, "CFG DAMAGE / CHARGE",
+        DrawText(dc, "DAMAGE PER TICK",
             new Point(area.Left + 16.0, area.Top + (wide ? 243.0 : 189.0)),
             9.0, muted, FontWeights.Bold);
         DrawText(dc, damage.ToString("0.###", CultureInfo.InvariantCulture),
             new Point(area.Left + 16.0, area.Top + (wide ? 261.0 : 203.0)),
             15.0, modified ? accent : text, FontWeights.Bold);
 
-        DrawText(dc, "EST. HP ZERO · 1 TICK/S",
+        DrawText(dc, "FULL HP → 0 · EST. TIME",
             new Point(area.Left + 16.0, area.Top + (wide ? 298.0 : 225.0)),
             9.0, muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, "FULL " + RadiationModelMaxHp.ToString("0.#",
+        DrawRightAlignedText(dc, "MAX " + RadiationModelMaxHp.ToString("0.#",
                 CultureInfo.InvariantCulture) + " HP",
             new Point(area.Right - 14.0, area.Top + (wide ? 298.0 : 225.0)),
             9.0, muted, FontWeights.SemiBold);
         DrawText(dc, double.IsFinite(eta) ? "~" + RadiationTime(eta) : "NO RAD DAMAGE",
             new Point(area.Left + 16.0, area.Top + (wide ? 315.0 : 239.0)),
             18.0, text, FontWeights.Bold);
-        DrawCenteredText(dc, "FIXED RAD · NO HEALING OR PROTECTION",
+        DrawCenteredText(dc, "1 TICK/S ASSUMED · NO HEALING/PROTECTION",
             new Point(area.Left + area.Width / 2.0, area.Top + (wide ? 360.0 : 258.0)),
             8.6, muted, FontWeights.SemiBold);
     }

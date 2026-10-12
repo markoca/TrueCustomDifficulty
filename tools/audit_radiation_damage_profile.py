@@ -42,7 +42,8 @@ assert "private const double RadiationProfileHeight = 388.0;" in code
 assert "private const double RadiationControlsNarrowHeight = 272.0;" in code
 assert "RadiationBoardHeight(double width)" in code
 assert '"RadiationBalance" => RadiationBoardHeight' in code
-assert '"1–100 RAD"' in code
+assert '"1–100 RAD"' not in code
+assert '"FIXED RAD"' not in code
 assert "RADIATION KILLS IN" not in code, "No proven death countdown is available"
 assert "RADIATION LEVELS" in code and "RADIATION DAMAGE STAGES" not in code
 assert "private const double RadiationProfileHeight = 388.0;" in code
@@ -51,7 +52,9 @@ assert "DrawRadiationRingSector(dc, center, radius, first, last, inactive);" in 
 assert "DrawRadiationRingSector(dc, center, radius, first, litEnd, active);" in code
 assert "DrawRadiationHudSegments(dc, center, currentRad," in code
 assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));" in code
-assert '"EST. HP ZERO · 1 TICK/S"' in code
+assert '"FULL HP → 0 · EST. TIME"' in code
+assert '"DAMAGE PER TICK"' in code
+assert '"1 TICK/S ASSUMED · NO HEALING/PROTECTION"' in code
 assert "ctx.ArcTo(" in code
 bounds = code.split("RadiationRingThresholds =", 1)[1].split("};", 1)[0]
 splits = [float(x) for x in re.findall(r"[0-9]+(?:\.[0-9]+)?", bounds)]
@@ -108,11 +111,11 @@ for token in (
     'dc.DrawEllipse(symbol, null, center, 21.0, 21.0);',
     'area.Left + 22.0',
     'area.Width - 44.0',
-    'DrawRadiationControls(dc, text, muted, border, soft, accent, panel);',
+    'DrawRadiationControls(dc, text, muted, soft, accent, panel);',
     'private void DrawRadiationControls(',
     '"RAD CONTROLS"', '"RADIATION LEVEL"',
-    '"ACTIVE STAGE"', '"CFG DAMAGE / CHARGE"', '"EST. HP ZERO · 1 TICK/S"',
-    '"FIXED RAD · NO HEALING OR PROTECTION"', '"FIXED RAD"',
+    '"ACTIVE STAGE"', '"DAMAGE PER TICK"', '"FULL HP → 0 · EST. TIME"',
+    '"1 TICK/S ASSUMED · NO HEALING/PROTECTION"',
     'var currentRad = _radLevel;',
     'var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];',
     'var stageTo = index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;',
@@ -120,7 +123,7 @@ for token in (
     'private const double RadiationDialCenterY = 194.0;',
     'ring.Top + RadiationDialCenterY',
     'profile.Top + RadiationDialCenterY',
-    '"EST. HP ZERO · 1 TICK/S"',
+    '"FULL HP → 0 · EST. TIME"',
     'Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0)',
     '"RadiationBalance" => RadiationBoardHeight(width)',
     'health.maxHP'
@@ -196,6 +199,15 @@ assert "DrawCenteredText(dc," not in ring_renderer.split("for (var tick = 10; ti
 assert "currentRad.ToString(" not in ring_renderer, "RAD number returned to trefoil"
 assert 'DrawCenteredText(dc, "RAD",' not in ring_renderer, "RAD label returned to glyph"
 assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));" in ring_renderer
+assert "dc.DrawRoundedRectangle(panel, null, profile, 4.0, 4.0);" in ring_renderer
+assert "dc.DrawRoundedRectangle(panel, null, area, 4.0, 4.0);" in control_renderer
+assert "dc.DrawRoundedRectangle(panel, new Pen(border" not in ring_renderer
+assert "dc.DrawRoundedRectangle(panel, new Pen(border" not in control_renderer
+assert '"1–100 RAD"' not in ring_renderer
+assert '"FIXED RAD"' not in control_renderer
+assert '"DAMAGE PER TICK"' in control_renderer
+assert '"FULL HP → 0 · EST. TIME"' in control_renderer
+assert '"MAX " + RadiationModelMaxHp.ToString(' in control_renderer
 assert "foreach (var threshold in RadiationRingThresholds)" not in ring_renderer
 assert "tick == 100 ? accent : muted" in ring_renderer
 assert "DrawText(dc, _radLevel.ToString(" in control_renderer
@@ -256,5 +268,6 @@ assert angle_to_rad(359) == 100
 
 print("PASS: 11 original radiation stages and 22 unchanged writer leaves;")
 print("      32 HUD teeth, ticks every 10 RAD, separated trefoil and larger center;")
+print("      borderless RAD cards, explicit damage/tick and full-HP estimate;")
 print("      original stage thresholds, 1:1 damage scaling and conditional fixed-RAD HP estimate.")
 print("NOT VERIFIED: actual permanent-effect damage cadence, healing, armor or gameplay time to death.")

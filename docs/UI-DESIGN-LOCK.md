@@ -1,5 +1,13 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Radiation panels without frames; explicit tick damage and full-HP timing (CURRENT)
+
+In Survival → Radiation System, both RADIATION LEVELS and RAD CONTROLS retain their bounded, subdued panel background fills but must have NO outer border strokes. Their card size, responsive positioning and input geometry are unchanged; the actual radiation ring's multiple bezel/rim strokes remain. Remove the redundant top-right labels 1–100 RAD and FIXED RAD only (not the currently selected numeric RAD). Keep the two left-aligned section headers.
+
+Rename the source-scaled CFG DAMAGE / CHARGE display to **DAMAGE PER TICK**, which denotes the source effect's damage charge magnitude multiplied by HP DAMAGE, interpreted as a single assumed preview tick rather than a proven runtime tick. Rename EST. HP ZERO · 1 TICK/S to **FULL HP → 0 · EST. TIME** to clearly express the modelled time for currently full Health Max HP to drop to zero at the selected fixed RAD level. Right-aligned MAX N HP gives the actual starting HP. The footer must be **1 TICK/S ASSUMED · NO HEALING/PROTECTION** to retain uncertainty and assumptions without repeating FIXED RAD. The model remains ceil(MaxHP / damagePerAssumedCharge) integer seconds, and shows NO RAD DAMAGE for zero damage; actual in-game repeat cadence/permanence is not established.
+
+No new controls, copy, extra borders, labels, CFG writer edits or changes to the 32-segment trefoil and 10-RAD ticks. Preserve original 11 source stages, all 22 min/max CFG edits, real knobs, selection rail, scrubbing, keyboard and mouse actions. Keep the documented compact wide/narrow geometry. Both audits and both design catalogs must enforce this new frameless, caption-clean layout; this section supersedes the previously approved Radiation card-frame and readout wording.
+
 ### 2026-10-13 — Radiation dial: 32 teeth, decadal ticks, separated trefoil (CURRENT; overrides earlier dial geometry)
 
 In **Survival → Radiation System**, the compact RADIATION LEVELS control keeps its existing 388-DIP card, centered 194-DIP dial, 113-DIP pointer/track radius, bezel, 1–100 continuous RAD scrubbing, source knobs and adjacent RAD CONTROLS readout. Paint **exactly 32 independent perimeter teeth**, with the existing 0.36-RAD angular-unit gap and fractional final-tooth fill. Draw **ten evenly spaced, unlabeled exterior calibration ticks at 10,20,…,100 RAD**, emphasizing the top 100 tick instead of a closely spaced extra 99 tick. These are *visual calibration marks*, not source stages: **authentic damage thresholds remain 10/20/30/40/50/60/70/80/90/99 RAD**, with DEADLY beginning at 99; their source mapping and all 22 CFG edits are unchanged.

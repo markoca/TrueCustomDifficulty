@@ -1,5 +1,11 @@
 # Visual Control System
 
+### 2026-10-13 — Borderless RAD cards with gamer-facing tick damage / full-HP timing (CURRENT)
+
+RadiationBalance: draw both existing outer rounded rectangles as grouping fills only (panel, null, profile / area); keep their original dimensions and the complete internal ring bezel. No outer card strokes. The title RADIATION LEVELS and RAD CONTROLS remains. Omit top-right 1–100 RAD and FIXED RAD, but do not hide the actual selected RAD on the rail.
+
+Readouts in RAD CONTROLS: **DAMAGE PER TICK** (current source radiation effect amount × live HP DAMAGE multiplier); **FULL HP → 0 · EST. TIME** (time required to exhaust full HP under fixed radiation, one hypothetical damage tick each second); right-side **MAX N HP**; footer **1 TICK/S ASSUMED · NO HEALING/PROTECTION**. These labels must not imply verified permanent-effect repetition: maintain the existing discrete ceiling of HP / effective damage and NO RAD DAMAGE for zero. Keep unchanged native knob mappings, 32 HUD segments, source-staged thresholds, input hit rectangles, responsive layout and narrow typography. Tests must reject the old frames and obsolete caption strings.
+
 ### 2026-10-13 — 32-tooth Radiation HUD face with detached center (CURRENT; overrides previous 48-tooth geometry)
 
 **RadiationBalance visual primitive (AggregateVisualControl.cs):** 32 separately stroked annular segments on the same radius-113 track. Preserve partial tooth activation at exact integer RAD without snapping or changing hit tests. Exterior marks are rendered at every **10 RAD through 100**, equally spaced and without numeral captions; 100 has the gold accent. Do **not** render an additional 99 mark: 99 is an underlying source stage boundary, not a calibration tick, and must stay intact in the stage/damage calculation. Decorative perimeter pitch is 100/32 RAD with the existing 0.36 RAD gap.
