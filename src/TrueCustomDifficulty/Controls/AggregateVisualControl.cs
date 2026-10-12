@@ -4595,8 +4595,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (damage is null)
             return;
 
-        var multiplier = Math.Max(0.0, damage.CurrentNumber);
-        var modified = damage.IsValueModifiedFromReference();
         var center = new Point(profile.Left + profile.Width / 2.0,
             profile.Top + 181.0);
         const double radius = 113.0;
@@ -4655,7 +4653,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             10.0, muted, FontWeights.Bold);
         DrawCenteredText(dc, "11 CFG STAGES · 99 RAD DEADLY",
             new Point(center.X, profile.Top + 349.0),
-            9.3, modified ? accent : text, FontWeights.SemiBold);
+            9.3, muted, FontWeights.SemiBold);
         DrawCenteredText(dc, "HUD-STYLE PREVIEW · NOT GAME HUD",
             new Point(center.X, profile.Top + 370.0),
             8.6, muted, FontWeights.SemiBold);
