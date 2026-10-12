@@ -580,9 +580,16 @@
                                                             <Setter TargetName="WheelHintMinus" Property="Visibility" Value="Visible" />
                                                             <Setter TargetName="WheelHintPlus" Property="Visibility" Value="Visible" />
                                                         </Trigger>
-                                                        <DataTrigger Binding="{Binding IsControlEnabled}" Value="False">
+                                                        <!-- Aggregate visuals draw disabled child sources themselves.
+                                                             Dimming the whole anchor as well made Starvation twice as dark
+                                                             as the other OFF Master bundles and hid its mechanics toggle. -->
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsControlEnabled}" Value="False" />
+                                                                <Condition Binding="{Binding IsVisualControlAnchor}" Value="False" />
+                                                            </MultiDataTrigger.Conditions>
                                                             <Setter TargetName="ParameterCard" Property="Opacity" Value="0.48" />
-                                                        </DataTrigger>
+                                                        </MultiDataTrigger>
                                                     </DataTemplate.Triggers>
                                                 </DataTemplate>
     </Window.Resources>

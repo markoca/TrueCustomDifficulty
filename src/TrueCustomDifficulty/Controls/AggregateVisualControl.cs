@@ -2022,6 +2022,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Master panels share Stamina Usage's compact source-first grammar.
     // Only ACTUAL native parameters are drawn; switch-disabled children retain
     // their staged values and remain non-interactive until enabled.
+    private static Brush MasterDisabledInk(Brush text) => CloneWithOpacity(text, 0.70);
+
     private static (int Columns, double CardWidth) MasterCardGrid(double width)
     {
         var columns = EconomyColumns(width);
@@ -2074,13 +2076,9 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var enabled = parameter.IsControlEnabled;
         var changed = enabled && parameter.IsValueModifiedFromReference();
-        // The Starvation bundle used the same muted ink for every line when
-        // the parent toggle was OFF, making all three readouts nearly vanish.
-        // Preserve the genuinely disabled hit/paint state, but show its
-        // inspectable source values at the same readable neutral contrast
-        // as the other Master panels. This never enables an edit or an accent.
-        var disabledInk = Family == "StarvationTimeline"
-            ? CloneWithOpacity(text, 0.75) : muted;
+        // Disabled Master child cards have one readable neutral ink regardless
+        // of which bundle owns them. Never apply a second whole-card fade.
+        var disabledInk = MasterDisabledInk(text);
         var display = CreateText(valueText(parameter.CurrentNumber),
             changed ? 12.2 : 11.0,
             enabled ? changed ? accent : text : disabledInk, FontWeights.Bold);
@@ -2237,14 +2235,15 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var enabled = parameter.IsControlEnabled;
         var modified = enabled && parameter.IsValueModifiedFromReference();
+        var disabledInk = MasterDisabledInk(text);
         var center = card.Left + card.Width / 2.0;
         DrawMixerCentered(dc, label, new Point(center, card.Top + 9.0),
             Math.Max(30.0, card.Width - 10.0), 10.0,
-            enabled ? text : muted, FontWeights.Bold);
+            enabled ? text : disabledInk, FontWeights.Bold);
         DrawMixerCentered(dc, format(parameter.CurrentNumber),
             new Point(center, card.Top + 30.0),
             Math.Max(30.0, card.Width - 10.0), modified ? 13.3 : 12.1,
-            !enabled ? muted : modified ? accent : text, FontWeights.Bold);
+            !enabled ? disabledInk : modified ? accent : text, FontWeights.Bold);
         DrawMixerCentered(dc, format(parameter.Maximum),
             new Point(center, card.Top + 53.0),
             Math.Max(30.0, card.Width - 10.0), 8.7, muted, FontWeights.Normal);
@@ -2420,8 +2419,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (active)
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 5.0),
                 new Point(track.Left, y), new Point(currentX, y));
-        // Fatigue relief is an Energy Drink effect, not generic player energy.
-        DrawDrinkEffectLine(dc, parameter, track.Left, currentX, y);
+        // Fatigue Relief keeps the universal gold/neutral ruler; colored
+        // underlines are reserved for the drink duration effect markers.
         dc.DrawLine(new Pen(muted, 1.8),
             new Point(referenceX, y - 10.0),
             new Point(referenceX, y + 10.0));
@@ -3050,9 +3049,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // Consumable-source identity is deliberately restricted to these six
-    // actual WATER / ENERGY DRINK slider values. Mixed-item refill knobs,
-    // alcohol, medicine, and ordinary stamina controls keep their gold rails.
+    // Colored underlines are reserved for native WATER / ENERGY DRINK
+    // timed stamina effects. Fatigue relief, alcohol, medicine, instant
+    // stamina gain and generic stamina controls keep standard gold rails.
     private static readonly Brush WaterEffectLineBrush =
         new SolidColorBrush(Color.FromRgb(91, 173, 98));
     // Two game-inspired blues distinguish Energy Drink's independently
@@ -3069,7 +3068,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             => WaterEffectLineBrush,
         "survival.energyPartialCostDuration" => EnergyDrinkPartialCostLineBrush,
         "survival.energyDrinkEffectDuration" or "survival.energyFullCostDuration"
-            or "survival.energyDrinkFatigueRelief"
             => EnergyDrinkEffectLineBrush,
         _ => null
     };
@@ -3378,21 +3376,26 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Position below the whole duration chart, including short effects.
         // MeasureOverride and OnRender share the same responsive geometry.
         var medicineKnobTop = ConsumableMedicineKnobTop(ActualWidth);
+        // The three medicine knobs form their own centered row. Reusing the
+        // first three cells of the four-drink bank left them visibly off-center.
+        var medicineKnobWidth = Math.Min(184.0, knobWidth);
+        var medicineRowWidth = 3.0 * medicineKnobWidth + 2.0 * knobGap;
+        var medicineLeft = (ActualWidth - medicineRowWidth) / 2.0;
         // Native benefits, not relative sliders: +bleed-recovery points,
         // +kilograms and +psi-protection points. Keep the amount and its
         // unit centered, with a changed-only gold number and neutral unit.
         DrawSourceKnob(dc, vincaStrength, "VINCA BLEED REGEN",
-            new Rect(knobLeft, medicineKnobTop, knobWidth, 181.0),
+            new Rect(medicineLeft, medicineKnobTop, medicineKnobWidth, 181.0),
             text, muted, border, accent, panel,
             rawReadout: true, nativeUnit: "BLEED PTS");
         DrawSourceKnob(dc, herculesStrength, "HERCULES CARRY",
-            new Rect(knobLeft + knobWidth + knobGap, medicineKnobTop,
-                knobWidth, 181.0),
+            new Rect(medicineLeft + medicineKnobWidth + knobGap,
+                medicineKnobTop, medicineKnobWidth, 181.0),
             text, muted, border, accent, panel,
             rawReadout: true, nativeUnit: "KG");
         DrawSourceKnob(dc, psiStrength, "PSI BLOCK PROTECTION",
-            new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
-                medicineKnobTop, knobWidth, 181.0),
+            new Rect(medicineLeft + 2.0 * (medicineKnobWidth + knobGap),
+                medicineKnobTop, medicineKnobWidth, 181.0),
             text, muted, border, accent, panel,
             rawReadout: true, nativeUnit: "PSI PTS");
 
