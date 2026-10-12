@@ -509,7 +509,7 @@
     },
     "survival.sleepHealthRestore": {
       "kind": "slider",
-      "number": 260
+      "number": 200
     },
     "survival.sleepStaminaRestore": {
       "kind": "slider",
