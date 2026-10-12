@@ -1,5 +1,9 @@
 # Equipment Control Deep Audit — v0.2.49
 
+### 2026-10-12 — Current Equipment audit discovery after Survival tab migration
+
+The four current `equipment.*` catalog parameter IDs remain `equipment.armorDurability`, `equipment.ammoWeight`, `equipment.consumableWeight`, and `equipment.weaponWearPerShot`, but their presentation `tab` is now `survival`. Project consistency audits must select the stable **parameter ID prefix**, not a retired `tab="equipment"` predicate: the old predicate returned no rows and crashed converting a missing vanilla difficulty value with `float(None)`. The corrected gate still requires 4 exposed controls, 3 confirmed + 1 runtime-test-required, exactly **113 edit points** (4 armor-durability + 34 ammo weight + 23 consumable weight + 52 weapon wear), and the source-matching armor difficulty values Novice 1.35 / Stalker 1 / Veteran 0.9 / Master 0.6. No source metadata, actual tab grouping, control, writer target, preset or vanilla values are altered. The old "expected 117" error text was obsolete and is corrected to 113.
+
 ### 2026-10-11 — Current UI placement, knobs, and alcohol ranges
 
 - The separate **Equipment** tab is retired. Four original equipment source IDs are now presented inside **Survival**, preserving **Equipment Wear** (armor and weapon wear crosshair) and **Item Weight** (ammo and consumables source-native tracks) as independent groups, after the Bleeding controls. Original `equipment.armorDurability`, `equipment.weaponWearPerShot`, `equipment.ammoWeight`, `equipment.consumableWeight` remain unchanged in values, ranges, steps, CFG writer mappings and preset fields. Their `tab` metadata alone switches to `survival`.
