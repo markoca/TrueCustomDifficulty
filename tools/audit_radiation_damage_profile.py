@@ -34,7 +34,7 @@ assert float(stages[9][2]) > float(stages[10][2]), "DEADLY must remain visually 
 assert "RadiationDamageStages[index].SourceDamage * damageScale" in code
 assert "private const int RadiationHudSegments = 48;" in code
 assert "private const double RadiationHudSegmentGap = 0.36;" in code
-assert 'damage.IsValueModifiedFromReference()' in code
+assert 'P("survival.radiationDamage")?.IsValueModifiedFromReference() ?? false' in code
 assert "RadiationProfileTop + RadiationProfileHeight" in code
 assert "private const double RadiationProfileHeight = 388.0;" in code
 assert "private const double RadiationControlsNarrowHeight = 272.0;" in code
