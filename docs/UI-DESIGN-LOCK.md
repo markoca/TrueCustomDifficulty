@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-12 — Radiation original-CFG audit: stage thresholds confirmed, no UI change (CURRENT SOURCE INTERPRETATION)
+
+See [RADIATION-CFG-DEEP-AUDIT-2026-10-12.md](RADIATION-CFG-DEEP-AUDIT-2026-10-12.md). We now have source-confirmed radiation stage onset thresholds, seven field presets and **RadBlock 9000/2.7s** separate hazard. The ordinary damage effects have a 1s TimePerCharge inherited from root schema; permanent-effect runtime repetition is still unverified. This is a **source knowledge update only**. The approved three-knob plus 11-stage read-only damage graph keeps all existing source IDs, dimensions, edit gestures, source-derived values, presets and CFG patches; no false universal kill timeline or user-editable threshold is authorized.
+
 ### 2026-10-12 — Radiation CFG damage-stage strip, not a fabricated death countdown (CURRENT)
 
 **SURVIVAL → RADIATION SYSTEM:** retain the same three source-native 270-degree knobs **BUILD-UP** (`survival.radiationAccumulation`), **RECOVERY** (`survival.radiationRecovery`, native **PTS/S**), and **HP DAMAGE** (`survival.radiationDamage`, true 0–2× source multiplier), in their original compact centered **606-DIP** bank with 12-DIP gaps at Y=49..230. Directly beneath them add a **read-only RADIATION DAMAGE STAGES** visualization at Y=241..383, inside the same section. Show the **ten distinct original radiation-damage effect values** in authored level order **LIGHT / MED / STRONG / 4 / 5 / 6 / 7 / 8 / 9 / 10**, each with a small calibrated proportional height marker and the actual CFG source effect amount, multiplied live by **HP DAMAGE**. Place **DEADLY** separately to the right: its original ValueMin/Max is **20**, deliberately **lower than level 10's 38.67**, so it is not a made-up L11 escalation. Chart is bounded to host width −32 DIP; 10 slots + narrow detached deadly cell, no hover/edit hit targets or extra switches.

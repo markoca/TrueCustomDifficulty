@@ -1,5 +1,9 @@
 # MASTER-MAPPING.md
 
+### 2026-10-12 — Radiation core / Master boundaries (source audit only)
+
+See [RADIATION-CFG-DEEP-AUDIT-2026-10-12.md](RADIATION-CFG-DEEP-AUDIT-2026-10-12.md). The generic always-applied Player RadiationMechanics has thresholds 1..99 RAD; **RadiationNegativeMechanics** is the *additional* Master-only bundle at **50 RAD**, applying a separate **+50% SPDrain** modifier. Ordinary radiation stage DegenStamina1/2/3 values and the field-specific 9000 damage effect are neither the Master toggle nor substitutes for the normal global damage scalar. No new parameter or UI control is introduced.
+
 ### 2026-10-12 — Starvation tick-damage and timing knob bounds (CURRENT)
 
 The actual Master Starvation source editors now allow **0–10 HP per tick (0.5 HP step)** and **1–10 seconds per damage tick (1s step)**. Vanilla remains **4 HP** and **10 seconds**. `survival.starvationDamage` writes `HungerNegativeDamage.ValueMin|ValueMax`, and `survival.starvationDamageInterval` writes `HungerNegativeDamage.TimePerChargeMin|TimePerChargeMax`, without any change in CFG paths or toggle dependencies. Both use exact catalog/VM native stepping (`stepMode=absolute`); preset inputs outside range clamp to the new bounds. The independent PENALTIES START 0–6s source is untouched. The bigger central knob and existing computed Starvation Kills In full-HP/no-healing time stay responsive to these new limits without imposing a second fixed countdown range. Regression scenarios cover UI Model clamp/reset/step and real writer min/max-bound outputs. Previous 0–8 HP / 1–20s descriptions are historical.

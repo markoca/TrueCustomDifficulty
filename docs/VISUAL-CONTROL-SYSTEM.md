@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-12 — Radiation mechanics audit does not authorize a death ETA (CURRENT SOURCE INTERPRETATION)
+
+See [RADIATION-CFG-DEEP-AUDIT-2026-10-12.md](RADIATION-CFG-DEEP-AUDIT-2026-10-12.md). The radiation damage-stage strip has verified **RAD thresholds 1 through 99**, 11 CFG damage magnitudes, and an independent field hazard RadBlockFieldDamage=9000 (2.7s source charge). Inherited TimePerCharge=1 in EffectPrototypes is NOT the same as a proven runtime damage-per-second rate. Keep the previously approved RadiationBalance **395-DIP native three-knob + read-only profile** architecture. This source audit modifies no rendering layout, controls, source mappings or writer.
+
 ### 2026-10-12 — Radiation Damage Stages: audited stage-by-stage source profile (CURRENT)
 
 `RadiationBalance` stays a single independent source-native three-knob row at Y=49..230 (`BUILD-UP | RECOVERY | HP DAMAGE`), where RECOVERY remains absolute `PTS/S`. Add one bounded, **read-only** 142-DIP panel at Y=241 called **RADIATION DAMAGE STAGES**. Ten evenly spaced small level markers **LIGHT, MED, STRONG, 4–10** appear with their actual dynamically scaled source values beneath, followed by a **separated DEADLY effect** marker to avoid implying that its authored 20.0 damage exceeds level 10's 38.67. Use actual untouched source coefficients from the 22 audited paired min/max entries: **0.2, 0.3, 0.48, 0.816, 1.468, 2.2, 4.18, 8.37, 17.58, 38.67 | DEADLY 20.0**. Bars are proportional to a common source magnitude (not elapsed time); current source value = original prototype amount × the live `survival.radiationDamage` scalar. Changed numbers can be gold only when that CFG scalar differs from reference. These authored damage quantities are **not proven as HP/s, radiation points per second or a periodic tick value**.
