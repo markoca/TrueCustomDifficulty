@@ -2036,9 +2036,10 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double MasterConditionalHeight(double width) => 298.0;
     private static double MasterCardBankHeight(double width, int count)
         => 107.0 + MasterRows(width, count) * 94.0 + 12.0;
+    private const double StarvationPreviewHeight = 124.0;
     private static double MasterStarvationHeight(double width)
         => 110.0 + MasterRows(width, 2) * 94.0 +
-            92.0 + MasterRows(width, 3) * 94.0 + 12.0;
+            StarvationPreviewHeight + 12.0 + MasterRows(width, 3) * 94.0 + 12.0;
 
     private void DrawMasterSectionTitle(DrawingContext dc, string title, Brush accent)
         => DrawCenteredText(dc, title, new Point(ActualWidth / 2.0, 21.0),
@@ -2494,7 +2495,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             var card = new Rect(groupLeft + margin + i * (cellWidth + gap),
                 cardTop, cellWidth, cardHeight);
             DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label, card,
-                text, muted, border, accent, panel);
+                text, muted, border, accent, panel,
+                prominent: channels[i].Id == "combat.playerHeadshotMultiplier");
         }
     }
 
@@ -2503,16 +2505,19 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel,
         bool percentageReadout = false, bool rateReadout = false,
         int percentageSign = 0, bool rawReadout = false,
-        string? nativeUnit = null)
+        string? nativeUnit = null, bool prominent = false)
     {
-        // Frameless shared knob: preserve dial, title, steps, values and hit area.
+        // A hero dial (Headshot Damage) is physically larger without inventing
+        // a different range, hit grammar or duplicated source control.
         DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, card.Top + 19),
-            10.0, parameter?.IsControlEnabled == true ? text : muted, FontWeights.Bold);
+            prominent ? 10.7 : 10.0,
+            parameter?.IsControlEnabled == true ? text : muted, FontWeights.Bold);
         if (parameter is null)
             return;
 
         var center = new Point(card.Left + card.Width / 2, card.Top + 97.0);
-        var radius = Math.Min(WeaponKnobRadius, (card.Width - 24.0) / 2.0);
+        var radius = Math.Min(WeaponKnobRadius * (prominent ? 1.18 : 1.0),
+            (card.Width - 24.0) / 2.0);
         var range = Math.Max(Epsilon, parameter.Maximum - parameter.Minimum);
         var position = Math.Clamp((parameter.CurrentNumber - parameter.Minimum) / range, 0.0, 1.0);
         var reference = Math.Clamp((parameter.ReferenceNumber - parameter.Minimum) / range, 0.0, 1.0);
@@ -2526,7 +2531,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawEllipse(face, new Pen(CloneWithOpacity(border, .72), 1.2),
             center, radius - 10, radius - 10);
         DrawKnobArc(dc, center, radius, WeaponKnobStartAngle, WeaponKnobSweepAngle,
-            new Pen(CloneWithOpacity(border, .95), 6.0));
+            new Pen(CloneWithOpacity(border, .95), prominent ? 7.0 : 6.0));
         // The ticks must follow the SAME native min + N * TickFrequency
         // grid used by Snap(), not an arbitrary 10-way visual division.
         // A dense 0.01x source has 251 reachable values on a ~220-DIP arc:
@@ -2570,7 +2575,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (position > Epsilon)
             DrawKnobArc(dc, center, radius, WeaponKnobStartAngle,
                 position * WeaponKnobSweepAngle,
-                new Pen(CloneWithOpacity(active ? accent : muted, active ? .94 : .35), 6.0));
+                new Pen(CloneWithOpacity(active ? accent : muted, active ? .94 : .35),
+                    prominent ? 7.0 : 6.0));
         var baselineAngle = WeaponKnobStartAngle + WeaponKnobSweepAngle * reference;
         dc.DrawLine(new Pen(muted, 2.4),
             KnobPoint(center, radius - 7, baselineAngle),
@@ -2621,7 +2627,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         else
         {
             DrawCenteredText(dc, currentLabel, new Point(center.X, currentTop),
-                modified ? 16.2 : 15.0,
+                prominent ? (modified ? 18.2 : 17.0) : (modified ? 16.2 : 15.0),
                 active ? modified ? accent : text : muted, FontWeights.Bold);
         }
         if (rateReadout)
@@ -3879,7 +3885,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var previewTop = 110.0 + MasterRows(ActualWidth, 2) * 94.0;
         var bankWidth = Math.Min(760.0, Math.Max(1.0, ActualWidth - 32.0));
         var preview = new Rect((ActualWidth - bankWidth) / 2.0,
-            previewTop, bankWidth, 80.0);
+            previewTop, bankWidth, StarvationPreviewHeight);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
             preview, 4.0, 4.0);
         DrawText(dc, "DAMAGE TICK TIMELINE",
@@ -3889,38 +3895,78 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (delay is not null && interval is not null && damage is not null)
         {
             var active = toggle?.CurrentBoolean == true;
-            // The preview advances exactly to the third scheduled damage
-            // point after the configured delay, with no derived HP/s claim.
-            var total = Math.Max(1.0,
-                delay.CurrentNumber + 3.0 * interval.CurrentNumber);
-            DrawRightAlignedText(dc, $"{total:0.#}s",
+            const int previewTicks = 3;
+            // This is a three-tick SOURCE SCHEDULE, not a prediction of
+            // damage after game protections, healing or other effects.
+            var startSeconds = Math.Max(0.0, delay.CurrentNumber);
+            var intervalSeconds = Math.Max(0.0, interval.CurrentNumber);
+            var endSeconds = startSeconds + previewTicks * intervalSeconds;
+            var span = Math.Max(1.0, endSeconds);
+            var rawHp = previewTicks * Math.Max(0.0, damage.CurrentNumber);
+            DrawRightAlignedText(dc, $"3 TICKS  /  {rawHp:0.#} RAW HP",
                 new Point(preview.Right - 12.0, preview.Top + 9.0),
-                9.5, muted, FontWeights.SemiBold);
+                9.4, active ? text : muted, FontWeights.SemiBold);
 
-            var axis = new Rect(preview.Left + 22.0,
-                preview.Top + 39.0, Math.Max(1.0, preview.Width - 44.0), 10.0);
+            var axis = new Rect(preview.Left + 24.0,
+                preview.Top + 55.0, Math.Max(1.0, preview.Width - 48.0), 16.0);
             var y = axis.Top + axis.Height / 2.0;
             double At(double seconds)
-                => axis.Left + axis.Width * Math.Clamp(seconds / total, 0.0, 1.0);
+                => axis.Left + axis.Width * Math.Clamp(seconds / span, 0.0, 1.0);
+            var startX = At(startSeconds);
+            var tickGap = Math.Max(0.0, At(startSeconds + intervalSeconds) - startX);
 
+            // Phase captions are spatially grounded in their actual durations.
+            // Never call the pre-tick segment SAFE: unrelated penalties can
+            // still apply even before this damage-tick schedule begins.
+            if (startX - axis.Left > 58.0)
+                DrawCenteredText(dc, "DELAY",
+                    new Point((axis.Left + startX) / 2.0, preview.Top + 33.0),
+                    9.1, muted, FontWeights.SemiBold);
+            if (axis.Right - startX > 118.0)
+                DrawCenteredText(dc, "DAMAGE WINDOW",
+                    new Point((startX + axis.Right) / 2.0, preview.Top + 33.0),
+                    9.1, active ? text : muted, FontWeights.SemiBold);
+
+            // A subdued active region and its three numbered ticks show the
+            // timing rhythm without creating any draggable/CFG-backed marker.
             dc.DrawLine(new Pen(soft, 3.0),
                 new Point(axis.Left, y), new Point(axis.Right, y));
-            var firstX = At(delay.CurrentNumber);
-            dc.DrawLine(new Pen(muted, 1.7),
-                new Point(firstX, y - 9.0), new Point(firstX, y + 9.0));
-            for (var tick = 1; tick <= 3; tick++)
+            if (axis.Right > startX + Epsilon)
             {
-                var x = At(delay.CurrentNumber + tick * interval.CurrentNumber);
-                var tickBrush = active ? accent : muted;
-                dc.DrawEllipse(panel, new Pen(tickBrush, 1.7),
-                    new Point(x, y), 5.0, 5.0);
-                dc.DrawEllipse(tickBrush, null, new Point(x, y), 2.0, 2.0);
+                dc.DrawRoundedRectangle(
+                    CloneWithOpacity(active ? accent : muted, active ? 0.10 : 0.07),
+                    null,
+                    new Rect(startX, y - 7.0, axis.Right - startX, 14.0),
+                    3.0, 3.0);
+                dc.DrawLine(new Pen(
+                        CloneWithOpacity(active ? accent : muted, active ? .75 : .42), 2.6),
+                    new Point(startX, y), new Point(axis.Right, y));
             }
-            DrawText(dc, "0s", new Point(axis.Left, preview.Top + 56.0),
-                9.1, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, "3 DAMAGE TICKS",
-                new Point(axis.Right, preview.Top + 56.0),
-                9.1, muted, FontWeights.Normal);
+            dc.DrawLine(new Pen(muted, 2.1),
+                new Point(startX, y - 12.0), new Point(startX, y + 12.0));
+            for (var tick = 1; tick <= previewTicks; tick++)
+            {
+                var seconds = startSeconds + tick * intervalSeconds;
+                var x = At(seconds);
+                var ink = active ? accent : muted;
+                dc.DrawEllipse(panel, new Pen(ink, 1.9),
+                    new Point(x, y), 7.2, 7.2);
+                DrawCenteredText(dc, tick.ToString(CultureInfo.InvariantCulture),
+                    new Point(x, y - 6.5), 9.0, active ? text : muted,
+                    FontWeights.Bold);
+                // Suppress closely packed intermediate timestamp captions;
+                // the native controls still show the exact interval.
+                if (tick == previewTicks || tickGap >= 45.0)
+                    DrawCenteredText(dc, $"{seconds:0.#}s",
+                        new Point(x, preview.Top + 81.0),
+                        9.0, muted, FontWeights.Normal);
+            }
+            DrawText(dc, "0s", new Point(axis.Left, preview.Top + 101.0),
+                9.0, muted, FontWeights.Normal);
+            DrawCenteredText(dc, $"START {startSeconds:0.#}s",
+                new Point(Math.Clamp(startX, axis.Left + 65.0, axis.Right - 55.0),
+                    preview.Top + 101.0),
+                9.0, muted, FontWeights.SemiBold);
         }
 
         var effects = new (string Id, string Label, Func<double, string> Format)[]
@@ -3929,7 +3975,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("survival.starvationDamage", "HP LOST PER TICK", MasterHp),
             ("survival.starvationHealthRegenPenalty", "HEALTH RECOVERY BLOCKED", MasterPercent)
         };
-        DrawMasterCardBank(dc, effects, previewTop + 92.0,
+        DrawMasterCardBank(dc, effects, previewTop + StarvationPreviewHeight + 12.0,
             text, muted, border, soft, accent, panel);
     }
 
