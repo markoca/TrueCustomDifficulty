@@ -1884,7 +1884,7 @@ _exhaustion_names = {
 _exhaustion_renderer = (ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs").read_text(encoding="utf-8")
 _exhaustion_catalog = {p["id"]: p for p in parameters if p["id"] in _exhaustion_names}
 _exhaustion_render_markers = (
-    'private const double ExhaustionWideHeight = 310.0;',
+    'private const double ExhaustionWideHeight = 330.0;',
     'private const double ExhaustionNarrowHeight = 450.0;',
     'DrawStaminaZonesCard(dc,',
     'DrawRecoveryStateCard(dc, _aimParameter, "AIMING", "REGEN PENALTY"',

@@ -158,7 +158,7 @@ internal static class Program
         // native source IDs remain bound to the independently editable family.
         var board = new ActionCostsRadar { Mode = "Exhaustion" };
         board.Measure(new System.Windows.Size(920.0, 1000.0));
-        Check(Math.Abs(board.DesiredSize.Height - 310.0) < 0.000001,
+        Check(Math.Abs(board.DesiredSize.Height - 330.0) < 0.000001,
             "Stamina States wide panel measurement drifted");
         board.Measure(new System.Windows.Size(720.0, 1000.0));
         Check(Math.Abs(board.DesiredSize.Height - 450.0) < 0.000001,

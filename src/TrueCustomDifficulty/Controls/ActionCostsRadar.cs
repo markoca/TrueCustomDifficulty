@@ -19,7 +19,7 @@ public sealed class ActionCostsRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
     private const double UsageHeight = 187.0;
-    private const double ExhaustionWideHeight = 310.0;
+    private const double ExhaustionWideHeight = 330.0;
     private const double ExhaustionNarrowHeight = 450.0;
     private bool IsExhaustion => string.Equals(Mode, "Exhaustion", StringComparison.Ordinal);
 
@@ -295,7 +295,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         const double top = 48.0;
         var wide = ActualWidth >= 780.0;
         var zonesWidth = wide ? Math.Min(340.0, (width - gap) * 0.40) : width;
-        var zonesHeight = wide ? 248.0 : 192.0;
+        var zonesHeight = wide ? 268.0 : 192.0;
         DrawStaminaZonesCard(dc,
             new Rect(left, top, zonesWidth, zonesHeight),
             text, muted, border, accent, panel);

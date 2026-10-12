@@ -2,7 +2,7 @@
 
 ### 2026-10-12 — One shared stamina ruler and three gameplay groups (current)
 
-Exhaustion & Recovery has one **STAMINA ZONES** chart with separate upper **SPRINT LOCKS** (0–32.2 SP) and lower **RECOVERY KICKS IN** (1–60 SP) source handles on a real 0–60 SP line. The two thresholds remain independent and can overlap horizontally without interfering. On the right the **AIMING** group's `REGEN PENALTY` edits the real aiming percentage; **AFTER EXHAUSTION** edits the `REGEN DELAY` seconds; **LOW-STAMINA BOOST** groups `STRENGTH` (SP/s) and `DURATION` (seconds) together as two compact native tracks. Wide panels use a 310-DIP measured height, and narrow panels use 450 DIP. All six sources, native editing limits, preset keys, reset semantics and CFG writer targets remain intact. Historical descriptions of six identical 94-DIP cards are superseded.
+Exhaustion & Recovery has one **STAMINA ZONES** chart with separate upper **SPRINT LOCKS** (0–32.2 SP) and lower **RECOVERY KICKS IN** (1–60 SP) source handles on a real 0–60 SP line. The two thresholds remain independent and can overlap horizontally without interfering. On the right the **AIMING** group's `REGEN PENALTY` edits the real aiming percentage; **AFTER EXHAUSTION** edits the `REGEN DELAY` seconds; **LOW-STAMINA BOOST** groups `STRENGTH` (SP/s) and `DURATION` (seconds) together as two compact native tracks. Wide panels use a 330-DIP measured height, and narrow panels use 450 DIP. All six sources, native editing limits, preset keys, reset semantics and CFG writer targets remain intact. Historical descriptions of six identical 94-DIP cards are superseded.
 
 ### 2026-10-11 — Compact Movement Limits and gamer-facing Exhaustion labels (latest authoritative contract)
 

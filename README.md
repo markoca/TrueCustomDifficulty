@@ -2,7 +2,7 @@
 
 ### 2026-10-12 — Stamina States: gamer-first Exhaustion & Recovery layout
 
-Redesigned **Exhaustion & Recovery** from six identical sliders into one shared **STAMINA ZONES** 0–60 SP ruler with separately draggable **SPRINT LOCKS** and **RECOVERY KICKS IN** handles. The other four actual CFG sources are grouped by gameplay context: **AIMING → REGEN PENALTY**, **AFTER EXHAUSTION → REGEN DELAY**, and **LOW-STAMINA BOOST → STRENGTH / DURATION**. Compact responsive layouts preserve native ranges, independent editing, exact source-reference ticks, keyboard input, individual reset, R reset-all, CFG writer and presets. UI contracts, audit and tests document the new board.
+Redesigned **Exhaustion & Recovery** from six identical sliders into one shared **STAMINA ZONES** 0–60 SP ruler with separately draggable **SPRINT LOCKS** and **RECOVERY KICKS IN** handles. The other four actual CFG sources are grouped by gameplay context: **AIMING → REGEN PENALTY**, **AFTER EXHAUSTION → REGEN DELAY**, and **LOW-STAMINA BOOST → STRENGTH / DURATION**. Compact responsive layouts (330-DIP wide / 450-DIP narrow measured height) preserve native ranges, independent editing, exact source-reference ticks, keyboard input, individual reset, R reset-all, CFG writer and presets. UI contracts, audit and tests document the new board.
 
 ### 2026-10-12 — Beer RAD 3x and precise Exhaustion/Recovery names
 
