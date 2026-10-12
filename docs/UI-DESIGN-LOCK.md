@@ -1,5 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-12 — Human Combat: Squad Pressure Dashboard (CURRENT)
+
+The approved **solution 2 / Squad Pressure Dashboard** supersedes the previous oversized Human Combat Profile graph-first layout. `HumanCombatProfile` remains one bounded **414-DIP** editor with all five native independent CFG sources. On the LEFT, two compact, read-only live stat cards show **ENEMY HEALTH** (`combat.npcHealth`) and **GUN DAMAGE** (`combat.npcWeaponDamage`) above a smaller **BALANCE EDITOR** 2D graph; values use selected-reference-aware gold only when modified. The graph retains the original source X/Y ranges, exact ticks/steps, grey selected-difficulty reference crosshair, and three actual edit handles: bottom = health only, left = gun damage only, joint center = both. The two stat cards do not introduce duplicate editable controls. The obsolete lengthy vertical gun-damage caption and redundant graph-top health caption are removed.
+
+On the RIGHT, **OFFENSIVE PRESSURE** groups three compact real-source slider cards: **ATTACK FREQUENCY** (`combat.npcAttackCooldown`), **FIRE ACCURACY** (`combat.npcHipAccuracy`) and **EXPLOSION DAMAGE** (`combat.explosionDamage`). Existing native slider hit regions, right-click/R resets, mouse and keyboard interactions, reference ticks, selection/help routing, and preset/CFG writer mappings must stay intact. Preserve the common Stamina Usage value/label alignment and subdued reference marks; do not display redundant base labels or explanatory paragraphs. This is a layout-only change. Local compile and Wine visual acceptance remain pending.
+
+
 ### 2026-10-12 — Quick Melee terminology (CURRENT)
 
 The Stamina Usage melee action with native parameter ID `stamina.meleeNormalCost` must be labeled **QUICK MELEE**, never **NORMAL MELEE**, in the visible radar. Its catalog label, description, rationale and value label use **Quick Melee** as well. The underlying source ID intentionally stays `stamina.meleeNormalCost` for preset/CFG compatibility. This is a terminology-only change: no source values, sliders, steps, interactions, or writer semantics change.
