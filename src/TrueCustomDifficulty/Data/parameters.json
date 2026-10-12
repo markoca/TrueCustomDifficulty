@@ -3370,7 +3370,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 4,
+        "max": 6,
         "step": 0.01
       },
       "targets": [
@@ -3460,7 +3460,7 @@
         ]
       },
       "rationale": "Controls the health damage caused by radiation after the game has already decided that your current radiation level should hurt you.",
-      "logic": "100% keeps vanilla radiation damage. 50% halves damage, 200% doubles it, and 400% quadruples it at every radiation stage. The stage thresholds stay vanilla.",
+      "logic": "100% keeps vanilla radiation damage. 50% halves damage; 200% doubles it; 400% quadruples it; 600% increases damage sixfold at every stage. Stage thresholds stay vanilla.",
       "interaction": "Radiation Accumulation controls how quickly radiation builds up. Radiation Recovery and Anti-Rad control how quickly it is removed. The Master radiation bundle adds a separate stamina penalty."
     },
     {

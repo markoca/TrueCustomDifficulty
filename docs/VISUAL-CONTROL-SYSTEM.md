@@ -1,12 +1,18 @@
 # Visual Control System
 
+### 2026-10-13 — Radiation 6× HP DAMAGE and highlighted death tick metric (CURRENT)
+
+The centered hero HP DAMAGE knob remains the largest of BUILD-UP / HP DAMAGE / RECOVERY, but its native `survival.radiationDamage` parameter extends to **6.00×** (0.00× minimum, 0.01× step, vanilla reference 1.00×). Retain the same knob radius, hit targets, visual sizes, underlying stage prototypes and scaled min/max writer leaves.
+
+The right-hand three-tier typography retains large 29-DIP current ACTIVE STAGE and DAMAGE PER TICK figures. The third tier shows **DEAD AFTER** at 11.5 DIP muted semi-bold, a separate **`N TICKS`** at **29 DIP yellow bold**, and an elapsed **`~Xm Ys`** at **27 DIP neutral bold**. Render them at **wide Y=244/273/315 DIP** or **narrow Y=180/199/237 DIP**, always left-aligned and constrained with the existing panel-bounded `DrawStat` function. The zero-damage branch displays only DEATH ESTIMATE and NO RAD DAMAGE (25 DIP) without a fabricated tick number. The count derives from ceiling full HP over current stage damage multiplied by HP DAMAGE; the time uses an assumed 1 tick/s, not measured engine behavior. No additional cards, legends or footer. This section overrides the obsolete small `DEAD AFTER N TICKS IN` label/readout coupling and 4× max. Preserve 32-teeth, 0 RAD default, original stages, 22 CFG edits and the compact current knob bank.
+
 ### 2026-10-13 — Radiation information hierarchy and HP DAMAGE center hero (CURRENT)
 
 RadiationBalance presents two coordinated visual anchors: the established **29-DIP yellow N RAD** beneath the enlarged 32-segment ring on the left; and three equally prominent, **29-DIP bold** source-derived status values on the right, grouped as stage/damage/death-time. The headings for those values are **11.5-DIP muted semi-bold**, not microscopic 9-DIP debug captions. The actual stage interval is **13.5 DIP muted**, placed immediately under the large yellow stage value on the same left alignment. On no-damage state the longer NO RAD DAMAGE value is **25 DIP bold** to fit. Format with bounded `CreateText` at `Math.Max(1, area.Width - 32)` so long tick counts truncate locally rather than drawing into adjacent controls. Use the same three vertical tiers in wide/narrow presentations: stage label 46/16, value 76/43, range 117/81; damage label 165/115, value 192/140; death label 257/188 and time 286/215. The right panel remains compact and without its former outer stroke.
 
 Above the ring/status row, the three independent source-native 270° dials are strictly left-to-right **BUILD-UP · HP DAMAGE · RECOVERY**. HP DAMAGE is the central hero, using `DrawSourceKnob(..., prominent: hero)` with `hero = i == 1`; the shared helper scales hero radius by 1.18 and its own labels/value without changing other controls. A bank of at most **606 DIP** uses 12 DIP gaps, side width = `(bankWidth - gap*2 - 18)/3`, middle 18 DIP wider, and mirrored left/right widths. The side rectangles are y=49/height181; the centered hero y=49/height188, remaining clear of the ring panel beginning y=241. Keep all knob hit rectangles tied to the actual visual radii and original source min/max/step. This supersedes any earlier equal-size knob bank or RECOVERY-center descriptions.
 
-All earlier functional rules remain: 0 RAD default, ring-only interaction and proper 100-RAD seam, actual 99-RAD DEADLY source onset, 11 radiation stages, fixed-HP conditional preview, existing 4× HP DAMAGE upper bound and exactly 22 writer leaves. No additional legends, card frames or explanatory UI text.
+All earlier functional rules remain: 0 RAD default, ring-only interaction and proper 100-RAD seam, actual 99-RAD DEADLY source onset, 11 radiation stages, fixed-HP conditional preview, existing 6× HP DAMAGE upper bound and exactly 22 writer leaves. No additional legends, card frames or explanatory UI text.
 
 ### 2026-10-13 — Radiation enlarged HUD-only ring, 0 RAD idle and no rail (CURRENT)
 

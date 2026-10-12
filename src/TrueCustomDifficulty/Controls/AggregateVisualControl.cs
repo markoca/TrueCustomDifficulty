@@ -4649,16 +4649,24 @@ public sealed class AggregateVisualControl : FrameworkElement
             wide ? 192.0 : 140.0, 29.0,
             modified ? accent : text, FontWeights.Bold);
 
-        // Full-HP depletion is a hypothetical charge count, not a measured
-        // in-game tick cadence. A zero-damage preview never claims death.
-        var deathCaption = double.IsFinite(eta)
-            ? "DEAD AFTER " + eta.ToString("0", CultureInfo.InvariantCulture) + " TICKS IN"
-            : "DEATH ESTIMATE";
-        DrawStat(deathCaption, wide ? 257.0 : 188.0,
-            11.5, muted, FontWeights.SemiBold);
-        DrawStat(double.IsFinite(eta) ? "~" + RadiationTime(eta) : "NO RAD DAMAGE",
-            wide ? 286.0 : 215.0, double.IsFinite(eta) ? 29.0 : 25.0,
-            text, FontWeights.Bold);
+        // Tick count is a primary gameplay readout, separate from the
+        // assumed elapsed time. Engine cadence remains unverified.
+        // At zero effective damage, never fabricate a lethal tick count.
+        var hasDeathEstimate = double.IsFinite(eta);
+        DrawStat(hasDeathEstimate ? "DEAD AFTER" : "DEATH ESTIMATE",
+            wide ? 244.0 : 180.0, 11.5, muted, FontWeights.SemiBold);
+        if (hasDeathEstimate)
+        {
+            DrawStat(eta.ToString("0", CultureInfo.InvariantCulture) + " TICKS",
+                wide ? 273.0 : 199.0, 29.0, accent, FontWeights.Bold);
+            DrawStat("~" + RadiationTime(eta),
+                wide ? 315.0 : 237.0, 27.0, text, FontWeights.Bold);
+        }
+        else
+        {
+            DrawStat("NO RAD DAMAGE", wide ? 286.0 : 215.0,
+                25.0, text, FontWeights.Bold);
+        }
     }
 
     // Three native stash ammo quantities + three independent bonus rewards.

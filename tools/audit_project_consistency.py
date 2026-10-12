@@ -2162,17 +2162,20 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'DrawRoundedRectangle(panel, new Pen(border, 0.9)' in _radiation_renderer
     or 'DrawRoundedRectangle(panel, new Pen(border, .9)' in _radiation_source
     or '"DAMAGE PER TICK"' not in _radiation_source
-    or '"DEAD AFTER "' not in _radiation_source
-    or '" TICKS IN"' not in _radiation_source
+    or '"DEAD AFTER"' not in _radiation_source
+    or '" TICKS"' not in _radiation_source
     or '"DEATH ESTIMATE"' not in _radiation_source
-    or 'var deathCaption = double.IsFinite(eta)' not in _radiation_source
+    or 'var hasDeathEstimate = double.IsFinite(eta);' not in _radiation_source
+    or 'if (hasDeathEstimate)' not in _radiation_source
     or '"MAX " + RadiationModelMaxHp.ToString(' in _radiation_source
     or 'void DrawStat(string value, double y, double fontSize, Brush ink, FontWeight weight)' not in _radiation_source
     or 'CreateText(value, fontSize, ink, weight, contentWidth)' not in _radiation_source
     or 'DrawStat(stage, wide ? 76.0 : 43.0,' not in _radiation_source
     or 'DrawStat(stageRange, wide ? 117.0 : 81.0,' not in _radiation_source
     or 'wide ? 192.0 : 140.0, 29.0,' not in _radiation_source
-    or 'wide ? 286.0 : 215.0, double.IsFinite(eta) ? 29.0 : 25.0,' not in _radiation_source
+    or 'wide ? 273.0 : 199.0, 29.0, accent, FontWeights.Bold);' not in _radiation_source
+    or 'wide ? 315.0 : 237.0, 27.0, text, FontWeights.Bold);' not in _radiation_source
+    or 'DrawStat("NO RAD DAMAGE", wide ? 286.0 : 215.0,' not in _radiation_source
     or 'private const double RadiationDialCenterY = 183.0;' not in _radiation_source
     or 'profile.Top + RadiationDialCenterY' not in _radiation_renderer
     or 'Math.Ceiling(RadiationModelMaxHp / damagePerAssumedCharge)' not in _radiation_source
@@ -2210,7 +2213,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: 0–100 ring; 29-DIP stage/damage/death stats; centered larger HP DAMAGE rotary")
+    note("Radiation: 0–100 ring, 6x central damage knob, 29-DIP stage/damage/ticks and separate time")
 for _catalog, _heading in (
     ("UI-DESIGN-LOCK.md", "2026-10-13 — Radiation: unified large stats and centered HP DAMAGE hero knob"),
     ("VISUAL-CONTROL-SYSTEM.md", "2026-10-13 — Radiation information hierarchy and HP DAMAGE center hero"),
@@ -2980,7 +2983,7 @@ _seven_expected_sliders = {
     'loot.expensiveStashAmmoQuantity': (0.25, 2, 0.25),
     'survival.radiationAccumulation': (0, 2.5, 0.01),
     'survival.radiationRecovery': (0, 0.1, 0.01),
-    'survival.radiationDamage': (0, 4, 0.01),
+    'survival.radiationDamage': (0, 6, 0.01),
 }
 _seven_errors = []
 for _family, (_method, _height, _ids) in _seven_methods.items():
