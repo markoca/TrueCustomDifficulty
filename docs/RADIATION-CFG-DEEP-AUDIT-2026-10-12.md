@@ -1,5 +1,9 @@
 # Full radiation CFG source audit — 2026-10-12
 
+### 2026-10-12 — Radiation UI scenario model after original-source audit
+
+With the audited 7 original field preset rates (1/3/6/33/50/1/1 RAD/s), 100-RAD player bar and 10 ordinary status thresholds available, the Radiation System UI now includes local-only FIELD PRESET / START RAD / PASSIVE RECOVERY selectors and a conditional RAD-threshold timeline, alongside the audited read-only full-circle ring. The timeline approximates net radiation gain as field rate times current difficulty Build-up scalar minus the selected passive recovery source, for constant-source exposure. This relationship is a clearly labeled **assumption**, not confirmed Unreal runtime behavior. TO 99 RAD never means time to HP death; actual falloff, protection, permanent effect charge cadence, healing, field movement and RadBlock's separate 9000 direct damage remain excluded. Those uncertainties from the original CFG audit still apply. No game CFG or writer targets have been changed.
+
 ### 2026-10-12 — Radiation source threshold ring (UI interpretation)
 
 The approved read-only Radiation System dial now splits a complete 0–100 RAD circumference at 10,20,30,40,50,60,70,80,90 and 99 RAD, proportional to original RadiationMechanics condition values. HP damage onset at 1 RAD remains a textual caveat; only the user-requested ten breaks are drawn. Normal damage-source values retain their original magnitude and CFG writer scaling, including Deadly=20 at 99 versus Level10=38.67 at 90 and completely separate RadBlock=9000. The ring does NOT provide live player RAD, exposure seconds, or death timing. CFG sources and their runtime uncertainties are unchanged.
