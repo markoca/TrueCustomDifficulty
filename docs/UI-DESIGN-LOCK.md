@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Radiation glyph regression audit follows live 32-tooth geometry (CURRENT)
+
+The executable Radiation HUD trefoil contract remains three vanes starting at radius **25 DIP**, extending to **89 DIP**, and a distinct **21-DIP** hub with a **4-DIP** radial gap. In `tools/audit_radiation_damage_profile.py`, never retain assertions for the superseded 17-DIP vane root or duplicate outer-radius assertions. Parse and check the actual drawn inner/hub geometry, not outdated literals; preserve the 32-tooth segmented dial, 10-RAD visual marks, separate 99-RAD CFG threshold and unchanged writer/HP-preview arithmetic. This is an **audit-only correction**, not a new UI change.
+
 ### 2026-10-13 — Radiation panels without frames; explicit tick damage and full-HP timing (CURRENT)
 
 In Survival → Radiation System, both RADIATION LEVELS and RAD CONTROLS retain their bounded, subdued panel background fills but must have NO outer border strokes. Their card size, responsive positioning and input geometry are unchanged; the actual radiation ring's multiple bezel/rim strokes remain. Remove the redundant top-right labels 1–100 RAD and FIXED RAD only (not the currently selected numeric RAD). Keep the two left-aligned section headers.

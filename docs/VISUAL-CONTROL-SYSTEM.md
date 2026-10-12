@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-13 — Trefoil audit geometry correction (CURRENT)
+
+`tools/audit_radiation_damage_profile.py` must validate the currently implemented HUD radii (inner vane **25**, outer vane **89**, center hub **21**, separation **4** DIP), not the retired 17-DIP inner root. Keep one authoritative set of geometry checks and no duplicate outer assertion. Other rendered controls and cardinality (**32** perimeter segments) do not change. The stale assertion was a false-positive audit failure, not evidence of incorrect WPF rendering. This section only updates the visual-control acceptance criteria.
+
 ### 2026-10-13 — Borderless RAD cards with gamer-facing tick damage / full-HP timing (CURRENT)
 
 RadiationBalance: draw both existing outer rounded rectangles as grouping fills only (panel, null, profile / area); keep their original dimensions and the complete internal ring bezel. No outer card strokes. The title RADIATION LEVELS and RAD CONTROLS remains. Omit top-right 1–100 RAD and FIXED RAD, but do not hide the actual selected RAD on the rail.

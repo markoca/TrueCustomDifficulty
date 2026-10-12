@@ -143,7 +143,7 @@ for token in (
     assert token not in code, "Retired simulation returned: " + token
 
 # Decorative HUD segmentation is a render only; the 10 exact game thresholds
-# and integer 1..100 level selection do not snap to the 48 tooth boundaries.
+# and integer 1..100 level selection do not snap to the 32 tooth boundaries.
 segment_count = 32
 gap = .36
 pitch = 100.0 / segment_count
@@ -173,8 +173,20 @@ assert "ctx.ArcTo(" in glyph
 assert "dc.DrawEllipse(symbol, null, center, 21.0, 21.0);" in glyph
 assert "const double inner = 25.0;" in glyph
 assert "const double outer = 89.0;" in glyph
-assert "const double outer = 89.0;" in glyph
-assert "const double inner = 17.0;" in glyph
+# Read actual drawn geometry, not historical constants from older HUD versions.
+# The 25-DIP vane root and 21-DIP hub must remain 4 DIP apart.
+vane_inner = re.search(r"const double inner = ([0-9.]+);", glyph)
+hub_match = re.search(
+    r"dc\.DrawEllipse\(symbol, null, center, ([0-9.]+), ([0-9.]+)\);", glyph
+)
+assert vane_inner is not None and hub_match is not None, "Trefoil geometry missing"
+assert float(vane_inner.group(1)) == 25.0, "Trefoil vane root drifted"
+assert float(hub_match.group(1)) == float(hub_match.group(2)) == 21.0, (
+    "Trefoil center radius drifted"
+)
+assert float(vane_inner.group(1)) - float(hub_match.group(1)) == 4.0, (
+    "Trefoil vane-to-hub gap must be 4 DIP"
+)
 assert "dc.DrawEllipse(shadow" not in glyph
 assert "RadiationHudPolar(center, 28.0, angle)" not in glyph
 assert "new Pen(accent, 13.0)" not in code
