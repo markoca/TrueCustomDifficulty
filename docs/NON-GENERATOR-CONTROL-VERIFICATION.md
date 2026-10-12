@@ -1,5 +1,9 @@
 # Non-Generator Control Verification — v0.2.43
 
+### 2026-10-13 — Current non-generator UI ownership (CURRENT; supersedes historical Equipment-tab inventory)
+
+The current normal UI inventory is **Combat 17 (13 confirmed / 4 runtime), Health 13 (10/3), Stamina 7 (6/1), Survival 35 (32/3), Economy 17 (12/5)**, with **no separate Equipment tab**. The four stable Equipment source IDs `equipment.armorDurability`, `equipment.weaponWearPerShot`, `equipment.ammoWeight` and `equipment.consumableWeight` are **presented in Survival** without changing ownership of their original CFG targets. The total remains **89 visible non-generator controls** across these groups, unchanged by moving four records between display categories. The 195 current Survival-associated writer points consist of 82 originally under Survival and 113 moved Equipment points; this is a display/inventory reassignment, not a new writer or runtime effect. `tools/audit_project_consistency.py` now asserts this explicit breakdown and preserves the audit-only hide contracts. Older tables in this document are historical, not current UI tab counts.
+
 ### 2026-10-10 — Beer and Vodka independent RAD removal (latest binding contract)
 
 Within the **single MEDICAL ITEMS card** the right-hand RADIATION REMOVAL bank now has **four compact vertical sliders on one row**: **SCIENTIFIC MEDKIT**, **ANTI-RAD**, **BEER** and **VODKA**. There is no second-row, duplicate standalone Radiation Treatment card, or separate consumable alcohol antirad slider. The RAD bank is given additional horizontal space by tightening the four gold HEAL / copper BLEED pairs on the left; at least 820 DIP board width is reserved so all 12 numeric columns remain one row without clipping. Each column uses the shared horizontal cap/white-on-hover and independent source-native drag/keyboard/right-click/R reset; the RAD bank keeps a separate teal 0–200 vertical scale, with numbers not conflated with HP or bleeding points.
