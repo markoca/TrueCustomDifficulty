@@ -4596,9 +4596,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));
-        // Large yellow preview value below the enlarged dial, not to its right.
-        DrawCenteredText(dc, currentRad.ToString("0", CultureInfo.InvariantCulture) + " RAD",
-            new Point(center.X, profile.Top + 347.0), 29.0, accent, FontWeights.Bold);
         DrawRadiationControls(dc, text, muted, soft, accent, panel);
     }
 
@@ -4613,20 +4610,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         var wide = RadiationWide(ActualWidth);
         dc.DrawRoundedRectangle(panel, null, area, 4.0, 4.0);
         var index = RadiationStageIndex(_radLevel);
-        // The selected RAD count is the stage heading. The level itself is
-        // the large yellow value, without a redundant "LEVEL" prefix.
-        var stage = index < 0 ? "NONE" : RadiationDamageStages[index].Label;
-        var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];
-        var stageTo = index < 0 ? 0.0
-            : index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;
-        var stageRange = index < 0 ? "0 RAD"
-            : stageFrom.ToString("0", CultureInfo.InvariantCulture) + "–"
-                + stageTo.ToString("0", CultureInfo.InvariantCulture) + " RAD";
+        // 0 RAD = level 0; 1–9 = level 1; ... 90–98 = level 10;
+        // DEADLY at 99–100 RAD = level 11. Read-only preview stage.
+        var level = index + 1;
         var damage = RadiationDamageAtLevel(_radLevel);
         var modified = P("survival.radiationDamage")?.IsValueModifiedFromReference() ?? false;
         var eta = RadiationTimeToZeroHp();
-        // Three compact information tiers use the same 29-DIP value
-        // hierarchy as the large N RAD readout beside this panel.
+        // One numeric RAD readout, as the large yellow right-side headline.
         // Constrain each line to the panel: narrow layouts must not bleed
         // into the page or turn long death estimates into multi-line text.
         var contentWidth = Math.Max(1.0, area.Width - 32.0);
@@ -4636,12 +4626,20 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Point(area.Left + 16.0, area.Top + y));
         }
 
+        DrawStat("RADS ACCUMULATED", wide ? 46.0 : 16.0,
+            11.5, muted, FontWeights.SemiBold);
         DrawStat(_radLevel.ToString("0", CultureInfo.InvariantCulture) + " RAD",
-            wide ? 46.0 : 16.0, 11.5, muted, FontWeights.SemiBold);
-        DrawStat(stage, wide ? 76.0 : 43.0,
-            29.0, accent, FontWeights.Bold);
-        DrawStat(stageRange, wide ? 117.0 : 81.0,
-            13.5, muted, FontWeights.SemiBold);
+            wide ? 76.0 : 43.0, 29.0, accent, FontWeights.Bold);
+        // Keep LEVEL muted and its number yellow on the same compact line.
+        var levelPrefix = CreateText("LEVEL ", 13.5, muted,
+            FontWeights.SemiBold, contentWidth);
+        var levelNumber = CreateText(level.ToString(CultureInfo.InvariantCulture),
+            13.5, accent, FontWeights.Bold, contentWidth);
+        var levelPosition = new Point(area.Left + 16.0,
+            area.Top + (wide ? 117.0 : 81.0));
+        dc.DrawText(levelPrefix, levelPosition);
+        dc.DrawText(levelNumber, new Point(levelPosition.X + levelPrefix.Width,
+            levelPosition.Y));
 
         DrawStat("DAMAGE PER TICK", wide ? 165.0 : 115.0,
             11.5, muted, FontWeights.SemiBold);

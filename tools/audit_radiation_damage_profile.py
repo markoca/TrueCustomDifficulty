@@ -133,12 +133,12 @@ for token in (
     'dc.DrawEllipse(symbol, null, center, 23.0, 23.0);',
     'DrawRadiationControls(dc, text, muted, soft, accent, panel);',
     'private void DrawRadiationControls(',
-    'DrawStat(_radLevel.ToString("0", CultureInfo.InvariantCulture) + " RAD",', '"DAMAGE PER TICK"', '"DEAD AFTER"',
+    '"RADS ACCUMULATED"', '"DAMAGE PER TICK"', '"DEAD AFTER"',
     'var currentRad = _radLevel;',
     'var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];',
     'var stageTo = index < 0 ? 0.0',
     'index == 10 ? 100.0 : RadiationRingThresholds[index] - 1.0;',
-    'DrawStat(stageRange, wide ? 117.0 : 81.0,',
+    'var level = index + 1;',
     'private const double RadiationDialCenterY = 183.0;',
     'private const double RadiationDialTrackRadius = 122.0;',
     'ring.Top + RadiationDialCenterY',
@@ -229,8 +229,8 @@ for token in (
     assert token not in code, "Retired RAD step buttons or number overlays returned: " + token
 assert "DrawCenteredText(dc," not in ring_renderer.split("for (var tick = 10; tick <= 100; tick += RadiationHudTickStep)", 1)[1].split(
     "DrawRadiationHudTrefoil(dc", 1)[0], "Numerical threshold overlay returned"
-assert "DrawCenteredText(dc, currentRad.ToString(" in ring_renderer
-assert "profile.Top + 347.0" in ring_renderer
+assert "DrawCenteredText(dc, currentRad.ToString(" not in ring_renderer
+assert "profile.Top + 347.0" not in ring_renderer
 assert "29.0, accent, FontWeights.Bold);" in ring_renderer
 assert "if (currentRad > 0.0)" in ring_renderer
 assert 'DrawCenteredText(dc, "RAD",' not in ring_renderer, "RAD label returned to glyph"
@@ -252,11 +252,13 @@ for token in (
     "var contentWidth = Math.Max(1.0, area.Width - 32.0);",
     "void DrawStat(string value, double y, double fontSize, Brush ink, FontWeight weight)",
     "CreateText(value, fontSize, ink, weight, contentWidth)",
-    'DrawStat("ACTIVE STAGE", wide ? 46.0 : 16.0,',
-    "DrawStat(stage, wide ? 76.0 : 43.0,",
-    "29.0, accent, FontWeights.Bold);",
-    "DrawStat(stageRange, wide ? 117.0 : 81.0,",
-    "13.5, muted, FontWeights.SemiBold);",
+    'DrawStat("RADS ACCUMULATED", wide ? 46.0 : 16.0,',
+    'DrawStat(_radLevel.ToString("0", CultureInfo.InvariantCulture) + " RAD",',
+    'wide ? 76.0 : 43.0, 29.0, accent, FontWeights.Bold);',
+    'var level = index + 1;',
+    'var levelPrefix = CreateText("LEVEL ", 13.5, muted,',
+    'var levelNumber = CreateText(level.ToString(CultureInfo.InvariantCulture),',
+    'dc.DrawText(levelNumber, new Point(levelPosition.X + levelPrefix.Width,',
     'DrawStat("DAMAGE PER TICK", wide ? 165.0 : 115.0,',
     "wide ? 192.0 : 140.0, 29.0,",
     'DrawStat(hasDeathEstimate ? "DEAD AFTER" : "DEATH ESTIMATE",',

@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-13 — Radiation right-side RADS ACCUMULATED / LEVEL hierarchy (CURRENT; overrides prior radiation readout prescriptions)
+
+The ring carries **no numeric readout below it**; remove the former yellow N RAD text at dial Y+347. In the right borderless status area, the small 11.5-DIP muted caption is **RADS ACCUMULATED**, followed by **N RAD** in the existing 29-DIP bold yellow stage-value slot (wide Y+76 / narrow Y+43). The third line (wide Y+117 / narrow Y+81) reads **LEVEL N**, with LEVEL in 13.5-DIP muted semi-bold and only its stage number yellow 13.5-DIP bold. Level derives from the original zero-based radiation stage index plus one, so 0 RAD = LEVEL 0, 22 RAD = LEVEL 3, and 99–100 RAD = LEVEL 11; do not infer level from a rounded RAD division. Remove the old textual stage name and 20–29 RAD interval from this block. The lower DAMAGE PER TICK and DEAD AFTER tiers, genuine source thresholds/damage and CFG mapping, ring input geometry and 0 RAD preview default are unchanged. Keep both UI catalogs and audit contracts in step.
+
 ### 2026-10-13 — Radiation: RAD count as level heading (CURRENT)
 
 In the right Radiation System stats, replace the static ACTIVE STAGE heading with the live selected **N RAD** count in the same compact 11.5-DIP muted caption slot. The 29-DIP bold yellow value immediately beneath it shows the **stage identity**, without the redundant LEVEL word: LIGHT, MED, STRONG, 4–10, DEADLY, or NONE at 0 RAD. The genuine interval remains in 13.5-DIP muted type on the following line. Keep the existing large yellow N RAD preview under the ring, all coordinates, damage/death tiers and CFG/source behavior unchanged. The dynamic heading names the current RAD selection and the yellow stage number conveys level state. Both project and radiation audits must enforce the updated renderer. No new card, legend or control.

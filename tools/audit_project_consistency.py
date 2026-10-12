@@ -2148,7 +2148,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'private const double RadiationDialTrackRadius = 122.0;' not in _radiation_source
     or 'return distance >= 108.0 && distance <= 136.0;' not in _radiation_source
     or 'Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 0.0, 100.0)' not in _radiation_source
-    or 'DrawCenteredText(dc, currentRad.ToString(' not in _radiation_renderer
+    or 'DrawCenteredText(dc, currentRad.ToString(' in _radiation_renderer
     or '29.0, accent, FontWeights.Bold);' not in _radiation_renderer
     or 'if (currentRad > 0.0)' not in _radiation_renderer
     or 'private const double RadiationHudSegmentGap = 0.36;' not in _radiation_source
@@ -2170,10 +2170,11 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or '"MAX " + RadiationModelMaxHp.ToString(' in _radiation_source
     or 'void DrawStat(string value, double y, double fontSize, Brush ink, FontWeight weight)' not in _radiation_source
     or 'CreateText(value, fontSize, ink, weight, contentWidth)' not in _radiation_source
-    or 'DrawStat(stage, wide ? 76.0 : 43.0,' not in _radiation_source
+    or 'DrawStat("RADS ACCUMULATED", wide ? 46.0 : 16.0,' not in _radiation_source
     or 'DrawStat(_radLevel.ToString("0", CultureInfo.InvariantCulture) + " RAD",' not in _radiation_source
-    or 'var stage = index < 0 ? "NONE" : RadiationDamageStages[index].Label;' not in _radiation_source
-    or 'DrawStat(stageRange, wide ? 117.0 : 81.0,' not in _radiation_source
+    or 'var level = index + 1;' not in _radiation_source
+    or 'var levelPrefix = CreateText("LEVEL ", 13.5, muted,' not in _radiation_source
+    or 'var levelNumber = CreateText(level.ToString(CultureInfo.InvariantCulture),' not in _radiation_source
     or 'wide ? 192.0 : 140.0, 29.0,' not in _radiation_source
     or 'wide ? 273.0 : 199.0, 29.0, accent, FontWeights.Bold);' not in _radiation_source
     or 'wide ? 315.0 : 237.0, 27.0, text, FontWeights.Bold);' in _radiation_source
