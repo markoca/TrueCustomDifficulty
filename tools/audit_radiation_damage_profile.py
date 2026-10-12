@@ -52,7 +52,10 @@ assert "DrawRadiationRingSector(dc, center, radius, first, last, inactive);" in 
 assert "DrawRadiationRingSector(dc, center, radius, first, litEnd, active);" in code
 assert "DrawRadiationHudSegments(dc, center, currentRad," in code
 assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));" in code
-assert '"FULL HP → 0 · EST. TIME"' in code
+assert '"DEAD AFTER "' in code and '" TICKS IN"' in code
+assert '"DEATH ESTIMATE"' in code
+assert '"MAX " + RadiationModelMaxHp.ToString(' not in code
+assert rad["slider"] == {"min": 0, "max": 4, "step": 0.01}
 assert '"DAMAGE PER TICK"' in code
 assert '"1 TICK/S ASSUMED · NO HEALING/PROTECTION"' in code
 assert "ctx.ArcTo(" in code
@@ -67,7 +70,7 @@ assert "Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0)" in 
 
 assert "DrawSourceKnob(dc, P(source.Id), source.Label" in code
 assert "rateReadout: source.Id == \"survival.radiationRecovery\"" in code
-for factor in (0.0, 0.5, 1.0, 1.5, 2.0):
+for factor in (0.0, 0.5, 1.0, 1.5, 2.0, 4.0):
     for _, prototype, source_value in stages:
         expected = float(source_value) * factor
         points = [p for p in source if p["prototype"] == prototype]
@@ -114,7 +117,7 @@ for token in (
     'DrawRadiationControls(dc, text, muted, soft, accent, panel);',
     'private void DrawRadiationControls(',
     '"RAD CONTROLS"', '"RADIATION LEVEL"',
-    '"ACTIVE STAGE"', '"DAMAGE PER TICK"', '"FULL HP → 0 · EST. TIME"',
+    '"ACTIVE STAGE"', '"DAMAGE PER TICK"', '"DEAD AFTER "', '" TICKS IN"',
     '"1 TICK/S ASSUMED · NO HEALING/PROTECTION"',
     'var currentRad = _radLevel;',
     'var stageFrom = index <= 0 ? 1.0 : RadiationRingThresholds[index - 1];',
@@ -123,7 +126,7 @@ for token in (
     'private const double RadiationDialCenterY = 194.0;',
     'ring.Top + RadiationDialCenterY',
     'profile.Top + RadiationDialCenterY',
-    '"FULL HP → 0 · EST. TIME"',
+    'var deathCaption = double.IsFinite(eta)',
     'Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 1.0, 100.0)',
     '"RadiationBalance" => RadiationBoardHeight(width)',
     'health.maxHP'
@@ -218,8 +221,11 @@ assert "dc.DrawRoundedRectangle(panel, new Pen(border" not in control_renderer
 assert '"1–100 RAD"' not in ring_renderer
 assert '"FIXED RAD"' not in control_renderer
 assert '"DAMAGE PER TICK"' in control_renderer
-assert '"FULL HP → 0 · EST. TIME"' in control_renderer
-assert '"MAX " + RadiationModelMaxHp.ToString(' in control_renderer
+assert '"DEAD AFTER "' in control_renderer and '" TICKS IN"' in control_renderer
+assert '"DEATH ESTIMATE"' in control_renderer
+assert '"MAX " + RadiationModelMaxHp.ToString(' not in control_renderer
+assert '18.0, accent, FontWeights.Bold);' in control_renderer
+assert '10.5, text, FontWeights.Bold);' in control_renderer
 assert "foreach (var threshold in RadiationRingThresholds)" not in ring_renderer
 assert "tick == 100 ? accent : muted" in ring_renderer
 assert "DrawText(dc, _radLevel.ToString(" in control_renderer
@@ -263,6 +269,9 @@ assert hp_zero(50, 100, 1) == 46
 assert hp_zero(90, 100, 1) == 3
 assert abs(hp_zero(99, 100, 1) - 5.0) < 1e-9
 assert hp_zero(99, 100, 2) == 3
+assert hp_zero(99, 100, 4) == 2
+assert hp_zero(90, 100, 4) == 1
+assert hp_zero(50, 100, 4) == 12
 assert hp_zero(0, 100, 1) is None
 assert hp_zero(50, 100, 0) is None
 
@@ -280,6 +289,6 @@ assert angle_to_rad(359) == 100
 
 print("PASS: 11 original radiation stages and 22 unchanged writer leaves;")
 print("      32 HUD teeth, ticks every 10 RAD, separated trefoil and larger center;")
-print("      borderless RAD cards, explicit damage/tick and full-HP estimate;")
+print("      borderless RAD cards, 4x HP DAMAGE, emphasized stage and dynamic death ticks;")
 print("      original stage thresholds, 1:1 damage scaling and conditional fixed-RAD HP estimate.")
 print("NOT VERIFIED: actual permanent-effect damage cadence, healing, armor or gameplay time to death.")

@@ -4663,12 +4663,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         var damage = RadiationDamageAtLevel(_radLevel);
         var modified = P("survival.radiationDamage")?.IsValueModifiedFromReference() ?? false;
         var eta = RadiationTimeToZeroHp();
+        // The current source damage stage is primary player-facing status.
         DrawText(dc, "ACTIVE STAGE",
-            new Point(area.Left + 16.0, area.Top + (wide ? 190.0 : 149.0)),
-            9.0, muted, FontWeights.Bold);
+            new Point(area.Left + 16.0, area.Top + (wide ? 189.0 : 147.0)),
+            10.5, text, FontWeights.Bold);
         DrawText(dc, stage,
-            new Point(area.Left + 16.0, area.Top + (wide ? 207.0 : 163.0)),
-            13.0, text, FontWeights.SemiBold);
+            new Point(area.Left + 16.0, area.Top + (wide ? 205.0 : 161.0)),
+            18.0, accent, FontWeights.Bold);
         DrawRightAlignedText(dc, stageRange,
             new Point(area.Right - 16.0, area.Top + (wide ? 207.0 : 163.0)),
             9.5, muted, FontWeights.SemiBold);
@@ -4679,13 +4680,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(area.Left + 16.0, area.Top + (wide ? 261.0 : 203.0)),
             15.0, modified ? accent : text, FontWeights.Bold);
 
-        DrawText(dc, "FULL HP → 0 · EST. TIME",
+        // Estimate full-HP depletion by whole hypothetical radiation ticks.
+        // At zero effective damage, avoid asserting that death will occur.
+        var deathCaption = double.IsFinite(eta)
+            ? "DEAD AFTER " + eta.ToString("0", CultureInfo.InvariantCulture) + " TICKS IN"
+            : "DEATH ESTIMATE";
+        DrawText(dc, deathCaption,
             new Point(area.Left + 16.0, area.Top + (wide ? 298.0 : 225.0)),
             9.0, muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, "MAX " + RadiationModelMaxHp.ToString("0.#",
-                CultureInfo.InvariantCulture) + " HP",
-            new Point(area.Right - 14.0, area.Top + (wide ? 298.0 : 225.0)),
-            9.0, muted, FontWeights.SemiBold);
         DrawText(dc, double.IsFinite(eta) ? "~" + RadiationTime(eta) : "NO RAD DAMAGE",
             new Point(area.Left + 16.0, area.Top + (wide ? 315.0 : 239.0)),
             18.0, text, FontWeights.Bold);

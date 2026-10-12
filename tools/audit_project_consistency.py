@@ -2149,7 +2149,13 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'DrawRoundedRectangle(panel, new Pen(border, 0.9)' in _radiation_renderer
     or 'DrawRoundedRectangle(panel, new Pen(border, .9)' in _radiation_source
     or '"DAMAGE PER TICK"' not in _radiation_source
-    or '"FULL HP → 0 · EST. TIME"' not in _radiation_source
+    or '"DEAD AFTER "' not in _radiation_source
+    or '" TICKS IN"' not in _radiation_source
+    or '"DEATH ESTIMATE"' not in _radiation_source
+    or 'var deathCaption = double.IsFinite(eta)' not in _radiation_source
+    or '"MAX " + RadiationModelMaxHp.ToString(' in _radiation_source
+    or '18.0, accent, FontWeights.Bold);' not in _radiation_source
+    or '10.5, text, FontWeights.Bold);' not in _radiation_source
     or 'private const double RadiationDialCenterY = 194.0;' not in _radiation_source
     or 'profile.Top + RadiationDialCenterY' not in _radiation_renderer
     or 'Math.Ceiling(RadiationModelMaxHp / damagePerAssumedCharge)' not in _radiation_source
@@ -2182,7 +2188,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: native knobs, frameless RAD panels, clear per-tick damage/full-HP estimate, 32 HUD teeth")
+    note("Radiation: 4x HP DAMAGE, prominent active stage, dynamic death ticks and 32 HUD teeth")
 
 # Consumable timeline tiny ticks are two independently source-backed
 # timed effect families. Guard both the authored durations and the live visual
@@ -2946,7 +2952,7 @@ _seven_expected_sliders = {
     'loot.expensiveStashAmmoQuantity': (0.25, 2, 0.25),
     'survival.radiationAccumulation': (0, 2.5, 0.01),
     'survival.radiationRecovery': (0, 0.1, 0.01),
-    'survival.radiationDamage': (0, 2, 0.01),
+    'survival.radiationDamage': (0, 4, 0.01),
 }
 _seven_errors = []
 for _family, (_method, _height, _ids) in _seven_methods.items():

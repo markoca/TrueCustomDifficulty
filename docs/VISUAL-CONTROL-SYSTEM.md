@@ -1,5 +1,11 @@
 # Visual Control System
 
+### 2026-10-13 — Radiation prominent stage, dynamic death ticks, HP DAMAGE 4× (CURRENT)
+
+In the native Radiation System 270° knob bank, HP DAMAGE ranges **0.00×–4.00×** with step 0.01 and 1× reference. It continues to scale each of 11 original effects; no CFG source/writer changes. In RAD CONTROLS, **ACTIVE STAGE** is drawn as 10.5 DIP bold primary text and the stage itself as 18 DIP bold accent. The original RAD stage interval remains right-aligned; no extra card or space is allocated.
+
+Omit the former right-side **MAX N HP** label entirely. For positive damage, the conditional time readout header reads **DEAD AFTER N TICKS IN**, with the existing ~time below (N = `ceil(HealthMaxHP / effectiveStageDamage)`). For zero damage use **DEATH ESTIMATE** and **NO RAD DAMAGE**. Keep **1 TICK/S ASSUMED · NO HEALING/PROTECTION** at the foot to identify the approximation, not measured gameplay cadence. Preserve 32 segmented dial, no card outlines, native controls, fixed-level RAD selection, panel geometry and UI audit parity.
+
 ### 2026-10-13 — Trefoil audit geometry correction (CURRENT)
 
 `tools/audit_radiation_damage_profile.py` must validate the currently implemented HUD radii (inner vane **25**, outer vane **89**, center hub **21**, separation **4** DIP), not the retired 17-DIP inner root. Keep one authoritative set of geometry checks and no duplicate outer assertion. Other rendered controls and cardinality (**32** perimeter segments) do not change. The stale assertion was a false-positive audit failure, not evidence of incorrect WPF rendering. This section only updates the visual-control acceptance criteria.

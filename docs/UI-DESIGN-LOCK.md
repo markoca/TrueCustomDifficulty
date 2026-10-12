@@ -1,5 +1,13 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Radiation 4× HP DAMAGE and clearer stage/ticks (CURRENT; overrides preceding radiation labels)
+
+Expand the source-backed `survival.radiationDamage` HP DAMAGE knob from 0–2× to **0–4×**, step **0.01**, vanilla **1×**. Do not alter the original 11 damage-stage prototypes, 22 min/max CFG write leaves, stage thresholds (DEADLY still 99 RAD), or ring/rail interactions and dimensions.
+
+The borderless RAD CONTROLS panel must make **ACTIVE STAGE** more prominent: 10.5 DIP bold primary label and 18 DIP bold accent-colored stage name; keep the exact RAD range aligned on its right. Remove **MAX N HP** text; full Health Max HP remains a read-only input used by the estimate. Replace the old static **FULL HP → 0 · EST. TIME** with the dynamic caption **DEAD AFTER N TICKS IN** directly above the existing estimated duration. N is the integer ceiling of full Max HP divided by the scaled original damage per tick (one hypothetical tick per second). At zero effective damage, instead show **DEATH ESTIMATE** above **NO RAD DAMAGE**; no fictional death countdown. The footer **1 TICK/S ASSUMED · NO HEALING/PROTECTION** remains. Real in-game permanence/timing is not confirmed. Keep UI compact and do not introduce redundant boxes or explanatory text.
+
+Both UI catalogs and both static radiation/project audits must enforce 4×, dynamic tick caption, correct zero branch, and stage emphasis. Earlier 2× and old caption requirements are superseded. Wine screenshot acceptance is still necessary.
+
 ### 2026-10-13 — Radiation glyph regression audit follows live 32-tooth geometry (CURRENT)
 
 The executable Radiation HUD trefoil contract remains three vanes starting at radius **25 DIP**, extending to **89 DIP**, and a distinct **21-DIP** hub with a **4-DIP** radial gap. In `tools/audit_radiation_damage_profile.py`, never retain assertions for the superseded 17-DIP vane root or duplicate outer-radius assertions. Parse and check the actual drawn inner/hub geometry, not outdated literals; preserve the 32-tooth segmented dial, 10-RAD visual marks, separate 99-RAD CFG threshold and unchanged writer/HP-preview arithmetic. This is an **audit-only correction**, not a new UI change.
