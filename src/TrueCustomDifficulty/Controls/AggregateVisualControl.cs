@@ -3101,7 +3101,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent,
         Brush panel)
     {
-        var burst = P("survival.instantStaminaRestore");
+        var burst = P("survival.waterInstantStaminaRestore");
+        var energyBurst = P("survival.energyDrinkInstantStaminaRestore");
         var waterStamina = P("survival.waterStaminaEffectStrength");
         var energyStamina = P("survival.energyDrinkStaminaRecoveryStrength");
         var waterTime = P("survival.waterEffectDuration");
@@ -3122,7 +3123,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawHeader(dc, "CONSUMABLE EFFECTS",
             string.Empty, text, muted, accent);
 
-        if (burst is null || waterStamina is null || energyStamina is null ||
+        if (burst is null || energyBurst is null || waterStamina is null ||
+            energyStamina is null ||
             waterTime is null || energyTime is null ||
             vodkaTime is null || beerTime is null || magicTime is null ||
             waterRegenTime is null || energyFullCostTime is null ||
@@ -3138,23 +3140,25 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var width = Math.Max(460.0, ActualWidth - 34.0);
 
-        // Three real CFG-backed 0–2x / 0.05x rotary sources, no duplicate
-        // horizontal strength sliders. Their positions and all snap logic are
-        // identical to the existing Your Weapons/Anomaly knob contract.
-        var knobBankWidth = Math.Min(620.0, ActualWidth - 34.0);
-        const double knobGap = 12.0;
-        var knobWidth = (knobBankWidth - 2.0 * knobGap) / 3.0;
+        // Two independent absolute-percent instant refills beside the two
+        // existing buff multipliers. Compact, native 270-degree rotary grammar.
+        const double knobGap = 10.0;
+        var knobBankWidth = Math.Min(720.0, ActualWidth - 34.0);
+        var knobWidth = (knobBankWidth - 3.0 * knobGap) / 4.0;
         var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
-        // All 270-degree sources use the shared centered value readout.
-        DrawSourceKnob(dc, burst, "WATER + ENERGY DRINK REFILL",
+        DrawSourceKnob(dc, burst, "WATER REFILL",
             new Rect(knobLeft, ConsumableStrengthKnobTop, knobWidth, 181.0),
-            text, muted, border, accent, panel);
-        DrawSourceKnob(dc, waterStamina, "WATER REGEN + COST CUT",
+            text, muted, border, accent, panel, percentageReadout: true);
+        DrawSourceKnob(dc, energyBurst, "ENERGY DRINK REFILL",
             new Rect(knobLeft + knobWidth + knobGap, ConsumableStrengthKnobTop,
                 knobWidth, 181.0),
-            text, muted, border, accent, panel);
-        DrawSourceKnob(dc, energyStamina, "ENERGY DRINK STAMINA REGEN",
+            text, muted, border, accent, panel, percentageReadout: true);
+        DrawSourceKnob(dc, waterStamina, "WATER STAMINA BUFF",
             new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
+                ConsumableStrengthKnobTop, knobWidth, 181.0),
+            text, muted, border, accent, panel);
+        DrawSourceKnob(dc, energyStamina, "ENERGY DRINK REGEN",
+            new Rect(knobLeft + 3.0 * (knobWidth + knobGap),
                 ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel);
 
@@ -5110,7 +5114,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             if (Family == "ConsumableMixer")
             {
-                var durationAnchor = P("survival.instantStaminaRestore");
+                var durationAnchor = P("survival.waterInstantStaminaRestore");
                 if (durationAnchor is not null)
                     durationAnchor.DrinkDurationOverrideEnabled = false;
             }
@@ -5569,7 +5573,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             ? ConsumableDurationSecondsPerUnit(parameter.Id) : 0.0;
         if (secondsPerUnit <= 0.0)
             return parameter.TickFrequency;
-        var anchor = P("survival.instantStaminaRestore");
+        var anchor = P("survival.waterInstantStaminaRestore");
         return (anchor?.DrinkDurationOverrideEnabled == true ? 5.0 : 1.0) / secondsPerUnit;
     }
 
@@ -5761,7 +5765,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "survival.sleepStrongThreshold" => $"{parameter.CurrentNumber:0} pts",
             "survival.energyDrinkFatigueRelief" => $"{parameter.CurrentNumber:0.##}x",
 
-            "survival.instantStaminaRestore" or
+            "survival.waterInstantStaminaRestore" or
             "survival.waterStaminaEffectStrength" or
             "survival.energyDrinkStaminaRecoveryStrength" or
             "survival.waterEffectDuration" or
@@ -6000,7 +6004,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             },
             "ConsumableMixer" => new[]
             {
-                "survival.instantStaminaRestore",
+                "survival.waterInstantStaminaRestore",
+                "survival.energyDrinkInstantStaminaRestore",
                 "survival.waterStaminaEffectStrength",
                 "survival.energyDrinkStaminaRecoveryStrength",
                 "survival.waterEffectDuration",
