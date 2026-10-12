@@ -1,5 +1,12 @@
 # Visual Control System
 
+### 2026-10-12 — Anomaly Damage: gamer-first FINAL / BASE presentation (CURRENT)
+
+The one-card `AnomalyDamageRadar` keeps its centered native GLOBAL 270° knob and eleven independent native vertical anomaly sliders. Supersede the old three-line technical footer (`RESULT = SOURCE × GLOBAL`, bar-scale explanation, top/lower-number instructions) with three compact in-context headings: **ALL ANOMALIES**, **Scales damage across every anomaly**, and **INDIVIDUAL DAMAGE · BARS VS VANILLA**. No redundant help paragraphs or additional controls are added.
+
+Every individual column explicitly labels its top computed number **FINAL** and lower editable source number **BASE**, directly adjacent to the respective numbers. Here BASE means the *current, editable individual source strength*, **not** the unchanged selected-difficulty vanilla/reference value. FINAL is the existing individual source × global multiplier *before protection*, not a second writable source and not a guaranteed in-game damage number after protection. The vertical bar and grey reference marker still express the individual source as % of its own selected-difficulty vanilla value, excluding global. Razor keeps its genuine multiplier unit. Keep the previous 606-DIP board, native bounds/steps, value-based accent rules, selection, drag, keyboard, wheel, right-click and R resets, exact parameter IDs, preset round trips, and CFG writing unchanged. The richer formula explanation is available on hover and in context help rather than as constant on-screen prose. This is UI-only.
+
+
 ### 2026-10-12 — Exhaustion & Recovery: gamer-first Stamina States panel (CURRENT)
 
 **Build regression guard (2026-10-12):** The Stamina States help tooltip in `ParameterViewModel.cs` is one C# `return` expression with its optional `Environment.NewLine` continuation before the final semicolon. Do not leave the retired recovery-group tooltip as a standalone `+ Environment.NewLine` statement after that semicolon: it causes `CS0023` and `CS0201`. The static consistency audit checks this exact invalid pattern. This is a compile-only fix; no on-screen placement, input, preset, CFG or gameplay behavior changes.
