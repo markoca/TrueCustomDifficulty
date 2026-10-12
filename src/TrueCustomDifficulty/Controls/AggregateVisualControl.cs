@@ -856,17 +856,21 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Source values are retained movement/turn speed (0–1), not negative CFG
     // deltas. The existing writer converts each to UI−1 for the two effects.
     private static double FlycatcherPlotSide(double width)
-        => Math.Min(230.0, Math.Max(185.0, width - 335.0));
+        => Math.Min(210.0, Math.Max(170.0, width * .31));
+
+    private static double FlycatcherEffectsWidth(double width)
+        => Math.Min(440.0, Math.Max(248.0, width * .46));
 
     private static double FlycatcherBoardHeight(double width)
-        => 86.0 + FlycatcherPlotSide(width) + 61.0;
+        => Math.Max(348.0, 86.0 + FlycatcherPlotSide(width) + 54.0);
 
     private void DrawFlycatcherSlowdown(
         DrawingContext dc, Brush text, Brush muted, Brush border, Brush soft,
         Brush accent, Brush panel)
     {
         DrawCenteredText(dc, "FLYCATCHER SLOWDOWN",
-            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
+            new Point((ActualWidth - FlycatcherEffectsWidth(ActualWidth) - 24.0) / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
 
         var movement = P("environment.flycatcherMovementSpeed");
         var turning = P("environment.flycatcherTurnSpeed");
@@ -879,7 +883,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var side = FlycatcherPlotSide(ActualWidth);
-        var plot = new Rect((ActualWidth - side) / 2.0, 86.0, side, side);
+        var effectsWidth = FlycatcherEffectsWidth(ActualWidth);
+        var leftAreaWidth = ActualWidth - effectsWidth - 24.0;
+        var plot = new Rect((leftAreaWidth - side) / 2.0 + 15.0, 86.0, side, side);
         const double axisGap = 9.0;
 
         // Axis-aligned label/live-value pair, matching Combat. Only modified
@@ -983,6 +989,35 @@ public sealed class AggregateVisualControl : FrameworkElement
             _hitTargets.Add(new HitTarget(movement,
                 new Rect(currentX - 18.0, currentY - 18.0, 36.0, 36.0),
                 plot, HitKind.HumanJoint, movement.Minimum, movement.Maximum, false));
+
+        // One unified native-source panel: grouped special effects to the right.
+        DrawFlycatcherEffects(dc, text, muted, border, accent, panel,
+            new Rect(ActualWidth - effectsWidth - 12.0, 42.0, effectsWidth, 277.0));
+    }
+
+    private void DrawFlycatcherEffects(DrawingContext dc, Brush text, Brush muted,
+        Brush border, Brush accent, Brush panel, Rect area)
+    {
+        DrawCenteredText(dc, "SPECIAL ANOMALY EFFECTS",
+            new Point(area.Left + area.Width / 2.0, 21.0),
+            12.5, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "BLEEDING",
+            new Point(area.Left + area.Width / 2.0, area.Top + 16.0),
+            10.0, muted, FontWeights.Bold);
+        const double gap = 9.0;
+        var half = (area.Width - gap) / 2.0;
+        DrawEconomyCard(dc, P("environment.razorBleeding"), "RAZOR",
+            new Rect(area.Left, area.Top + 34.0, half, 86.0),
+            text, muted, border, accent, panel);
+        DrawEconomyCard(dc, P("environment.diamondBleeding"), "DIAMOND",
+            new Rect(area.Left + half + gap, area.Top + 34.0, half, 86.0),
+            text, muted, border, accent, panel);
+        DrawCenteredText(dc, "PSY DRAIN",
+            new Point(area.Left + area.Width / 2.0, area.Top + 150.0),
+            10.0, muted, FontWeights.Bold);
+        DrawEconomyCard(dc, P("environment.psyAnomalyIntensity"), "INTENSITY",
+            new Rect(area.Left, area.Top + 168.0, area.Width, 86.0),
+            text, muted, border, accent, panel);
     }
 
     private void DrawAnomalySpecialEffects(
@@ -3577,7 +3612,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCoreResourceRuler(dc, rate, "HUNGER RATE", "pts/s",
             new Rect(16.0, SurvivalPrimaryRulerTop, half, SurvivalPrimaryRulerHeight),
             text, muted, border, accent, panel);
-        DrawCoreResourceRuler(dc, wellFed, "WELL-FED RECOVERY", "%",
+        DrawCoreResourceRuler(dc, wellFed, "WELL-FED STAMINA RECOVERY", "%",
             new Rect(16.0 + half + resourceGap, SurvivalPrimaryRulerTop,
                 half, SurvivalPrimaryRulerHeight),
             text, muted, border, accent, panel);
