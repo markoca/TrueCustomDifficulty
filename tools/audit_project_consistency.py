@@ -1871,23 +1871,39 @@ else:
     note("Medical Items: four HEAL/BLEED native bars in one row, independent scales, food toggle")
 
 
-# The six editable Exhaustion source titles must match their catalog and WPF renderer.
+# The independently edited original Exhaustion sources must remain in the
+# gamer-first shared-zone / three-group renderer, not six generic cards.
 _exhaustion_names = {
-    "stamina.sprintDisableThreshold": "SPRINT LOCK BELOW",
-    "stamina.lowRecoveryThreshold": "BOOST ACTIVATES BELOW",
-    "stamina.aimRegenCoef": "AIMING REGEN PENALTY",
-    "stamina.sprintRecoveryDelay": "EXHAUSTION REGEN DELAY",
-    "stamina.lowRecoveryStrength": "LOW-SP BOOST RATE",
-    "stamina.lowRecoveryDuration": "LOW-SP BOOST DURATION",
+    "stamina.sprintDisableThreshold": "Sprint Locks",
+    "stamina.lowRecoveryThreshold": "Recovery Kicks In",
+    "stamina.aimRegenCoef": "Aiming Regen Penalty",
+    "stamina.sprintRecoveryDelay": "Exhaustion Regen Delay",
+    "stamina.lowRecoveryStrength": "Boost Strength",
+    "stamina.lowRecoveryDuration": "Boost Duration",
 }
 _exhaustion_renderer = (ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs").read_text(encoding="utf-8")
 _exhaustion_catalog = {p["id"]: p for p in parameters if p["id"] in _exhaustion_names}
-for _id, _caption in _exhaustion_names.items():
-    if (_exhaustion_catalog.get(_id, {}).get("label", "").upper() != _caption
-        or f'"{_caption}"' not in _exhaustion_renderer):
-        fail(f"Exhaustion control meaning/renderer/catalog drifted: {_id}")
+_exhaustion_render_markers = (
+    'private const double ExhaustionWideHeight = 310.0;',
+    'private const double ExhaustionNarrowHeight = 450.0;',
+    'DrawStaminaZonesCard(dc,',
+    'DrawRecoveryStateCard(dc, _aimParameter, "AIMING", "REGEN PENALTY"',
+    'DrawRecoveryStateCard(dc, _sprintRecoveryDelay, "AFTER EXHAUSTION", "REGEN DELAY"',
+    'DrawLowStaminaBoostCard(dc,',
+    'DrawRecoverySourceTrack(dc, _lowRecoveryStrength, "STRENGTH"',
+    'DrawRecoverySourceTrack(dc, _lowRecoveryDuration, "DURATION"',
+    '"SPRINT LOCKS"', '"RECOVERY KICKS IN"',
+    'const double staminaMin = 0.0;',
+    'const double staminaMax = 60.0;',
+    'y - 34.0', 'y + 2.0',
+)
+if (any(_exhaustion_catalog.get(pid, {}).get("label") != name
+        for pid, name in _exhaustion_names.items())
+    or any(marker not in _exhaustion_renderer for marker in _exhaustion_render_markers)
+    or 'DrawExhaustionTrackCard(' in _exhaustion_renderer):
+    fail("Stamina States: Exhaustion layout or six source-backed handles drifted")
 else:
-    note("Exhaustion: six source-backed controls have consistent player-facing labels")
+    note("Stamina States: two independently draggable 0..60 SP markers and three source-backed groups")
 
 # Radiation Removal is no longer a separate AggregateVisualControl family.
 # Four native-source vertical RAD columns must sit in one compact right bank,

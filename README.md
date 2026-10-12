@@ -1,5 +1,9 @@
 # True Custom Difficulty
 
+### 2026-10-12 — Stamina States: gamer-first Exhaustion & Recovery layout
+
+Redesigned **Exhaustion & Recovery** from six identical sliders into one shared **STAMINA ZONES** 0–60 SP ruler with separately draggable **SPRINT LOCKS** and **RECOVERY KICKS IN** handles. The other four actual CFG sources are grouped by gameplay context: **AIMING → REGEN PENALTY**, **AFTER EXHAUSTION → REGEN DELAY**, and **LOW-STAMINA BOOST → STRENGTH / DURATION**. Compact responsive layouts preserve native ranges, independent editing, exact source-reference ticks, keyboard input, individual reset, R reset-all, CFG writer and presets. UI contracts, audit and tests document the new board.
+
 ### 2026-10-12 — Beer RAD 3x and precise Exhaustion/Recovery names
 
 Beer Radiation Removal now has a 30-RAD (3x) maximum, still in 5-RAD steps with 10-RAD vanilla. The six independent Exhaustion & Recovery controls now explicitly name the sprint cutoff, low-stamina boost activation, aiming regeneration penalty, exhaustion delay, boost rate and duration. No change to the stamina CFG semantics or compact panel geometry. UI catalogs, mapping documents, contract tests and static audit match the implementation.

@@ -19,8 +19,8 @@ public sealed class ActionCostsRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
     private const double UsageHeight = 187.0;
-    private const double ExhaustionWideHeight = 265.0;
-    private const double ExhaustionNarrowHeight = 475.0;
+    private const double ExhaustionWideHeight = 310.0;
+    private const double ExhaustionNarrowHeight = 450.0;
     private bool IsExhaustion => string.Equals(Mode, "Exhaustion", StringComparison.Ordinal);
 
     private const string AimParameterId = "stamina.aimRegenCoef";
@@ -282,122 +282,244 @@ public sealed class ActionCostsRadar : FrameworkElement
         }
     }
 
-    // Six independently editable original CFG sources. All cards share one
-    // Stamina Usage-style title/value/rail/endpoints layout. The threshold
-    // pair retains the physically comparable 0..60 SP ruler; only each
-    // source's real native span accepts pointer input.
+
+    // STAMINA STATES: the two source thresholds share one honest 0..60 SP
+    // visual ruler. Their hit lanes are separate above/below that ruler so
+    // both remain independently draggable even when their values coincide.
+    // The other four CFG sources occupy three distinct gameplay groups.
     private void DrawExhaustionBoard(
         DrawingContext dc, double left, double width,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        const double gap = 12.0;
-        const double internalGap = 10.0;
-        const double cardHeight = 94.0;
+        const double gap = 10.0;
         const double top = 48.0;
         var wide = ActualWidth >= 780.0;
-        // The threshold pair needs less horizontal space than the 2x2 grid.
-        // Give the right-hand cards room for their full gamer-facing labels.
-        var thresholdWidth = wide
-            ? Math.Max(248.0, Math.Min(340.0, (width - gap) * 0.38))
-            : width;
-        var gridLeft = wide ? left + thresholdWidth + gap : left;
-        var gridTop = wide ? top : top + 2.0 * cardHeight + internalGap + gap;
-        var gridWidth = wide ? width - thresholdWidth - gap : width;
-        var rightWidth = (gridWidth - internalGap) / 2.0;
+        var zonesWidth = wide ? Math.Min(340.0, (width - gap) * 0.40) : width;
+        var zonesHeight = wide ? 248.0 : 192.0;
+        DrawStaminaZonesCard(dc,
+            new Rect(left, top, zonesWidth, zonesHeight),
+            text, muted, border, accent, panel);
 
-        DrawExhaustionTrackCard(dc, _sprintDisableThreshold, "SPRINT LOCK BELOW",
-            value => $"{value:0.#} SP",
-            new Rect(left, top, thresholdWidth, cardHeight),
-            text, muted, border, accent, panel, commonThresholdAxis: true);
-        DrawExhaustionTrackCard(dc, _lowRecoveryThreshold, "BOOST ACTIVATES BELOW",
-            value => $"{value:0} SP",
-            new Rect(left, top + cardHeight + internalGap, thresholdWidth, cardHeight),
-            text, muted, border, accent, panel, commonThresholdAxis: true);
+        var rightX = wide ? left + zonesWidth + gap : left;
+        var rightWidth = wide ? width - zonesWidth - gap : width;
+        if (wide)
+        {
+            DrawRecoveryStateCard(dc, _aimParameter, "AIMING", "REGEN PENALTY",
+                value => $"{value * 100.0:0.#}%",
+                new Rect(rightX, top, rightWidth, 70.0),
+                text, muted, border, accent, panel);
+            DrawRecoveryStateCard(dc, _sprintRecoveryDelay, "AFTER EXHAUSTION", "REGEN DELAY",
+                value => $"{value:0.0} s",
+                new Rect(rightX, top + 80.0, rightWidth, 70.0),
+                text, muted, border, accent, panel);
+            DrawLowStaminaBoostCard(dc,
+                new Rect(rightX, top + 160.0, rightWidth, 108.0),
+                text, muted, border, accent, panel);
+        }
+        else
+        {
+            var half = (rightWidth - gap) / 2.0;
+            var groupsTop = top + zonesHeight + gap;
+            DrawRecoveryStateCard(dc, _aimParameter, "AIMING", "REGEN PENALTY",
+                value => $"{value * 100.0:0.#}%",
+                new Rect(rightX, groupsTop, half, 82.0),
+                text, muted, border, accent, panel);
+            DrawRecoveryStateCard(dc, _sprintRecoveryDelay, "AFTER EXHAUSTION", "REGEN DELAY",
+                value => $"{value:0.0} s",
+                new Rect(rightX + half + gap, groupsTop, half, 82.0),
+                text, muted, border, accent, panel);
+            DrawLowStaminaBoostCard(dc,
+                new Rect(rightX, groupsTop + 92.0, rightWidth, 94.0),
+                text, muted, border, accent, panel);
+        }
+    }
 
-        DrawExhaustionTrackCard(dc, _aimParameter, "AIMING REGEN PENALTY",
-            value => $"{value * 100.0:0.#}%",
-            new Rect(gridLeft, gridTop, rightWidth, cardHeight),
-            text, muted, border, accent, panel);
-        DrawExhaustionTrackCard(dc, _sprintRecoveryDelay, "EXHAUSTION REGEN DELAY",
-            value => $"{value:0.0} s",
-            new Rect(gridLeft + rightWidth + internalGap, gridTop, rightWidth, cardHeight),
-            text, muted, border, accent, panel);
-        DrawExhaustionTrackCard(dc, _lowRecoveryStrength, "LOW-SP BOOST RATE",
-            value => $"+{value:0.##} SP/s",
-            new Rect(gridLeft, gridTop + cardHeight + internalGap, rightWidth, cardHeight),
-            text, muted, border, accent, panel);
-        DrawExhaustionTrackCard(dc, _lowRecoveryDuration, "LOW-SP BOOST DURATION",
-            value => $"{value:0.0} s",
-            new Rect(gridLeft + rightWidth + internalGap, gridTop + cardHeight + internalGap,
-                rightWidth, cardHeight),
+    private void DrawStaminaZonesCard(
+        DrawingContext dc, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        DrawRecoveryFrame(dc, card, panel, border);
+        DrawCenteredText(dc, "STAMINA ZONES",
+            new Point(card.Left + card.Width / 2.0, card.Top + 16.0),
+            10.2, text, FontWeights.Bold);
+
+        if (_sprintDisableThreshold is null || _lowRecoveryThreshold is null)
+            return;
+
+        var compact = card.Height < 220.0;
+        var firstLabelY = card.Top + (compact ? 34.0 : 46.0);
+        var secondLabelY = card.Top + (compact ? 134.0 : 183.0);
+        DrawZoneValue(dc, _sprintDisableThreshold, "SPRINT LOCKS", firstLabelY,
+            card, text, accent);
+        DrawZoneValue(dc, _lowRecoveryThreshold, "RECOVERY KICKS IN", secondLabelY,
+            card, text, accent);
+
+        // One common SP space with two skinny independent color traces. The
+        // darker upper trace denotes sprint lock; the lower trace denotes
+        // low-SP recovery eligibility, NOT a required ordering constraint.
+        var rail = new Rect(card.Left + 21.0,
+            card.Top + (compact ? 88.0 : 119.0),
+            Math.Max(1.0, card.Width - 42.0), 8.0);
+        var y = rail.Top + rail.Height / 2.0;
+        const double staminaMin = 0.0;
+        const double staminaMax = 60.0;
+        var sprintX = ValueToX(_sprintDisableThreshold.CurrentNumber, staminaMin, staminaMax, rail);
+        var boostX = ValueToX(_lowRecoveryThreshold.CurrentNumber, staminaMin, staminaMax, rail);
+        var sprintReferenceX = ValueToX(_sprintDisableThreshold.ReferenceNumber, staminaMin, staminaMax, rail);
+        var boostReferenceX = ValueToX(_lowRecoveryThreshold.ReferenceNumber, staminaMin, staminaMax, rail);
+
+        dc.DrawLine(new Pen(border, 7.0),
+            new Point(rail.Left, y), new Point(rail.Right, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.67), 2.5),
+            new Point(rail.Left, y - 2.2), new Point(sprintX, y - 2.2));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.38), 2.5),
+            new Point(rail.Left, y + 2.2), new Point(boostX, y + 2.2));
+
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.85), 1.0),
+            new Point(sprintReferenceX, y - 8.0), new Point(sprintReferenceX, y - 3.0));
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, 0.85), 1.0),
+            new Point(boostReferenceX, y + 3.0), new Point(boostReferenceX, y + 8.0));
+
+        // Two physical handles offset vertically around ONE ruler. Each lane
+        // owns the exact native source range: sprint 0..32.2 and boost 1..60.
+        var sprintHandle = new Point(sprintX, y - 13.0);
+        var boostHandle = new Point(boostX, y + 13.0);
+        dc.DrawLine(new Pen(accent, 1.2),
+            new Point(sprintX, y - 10.0), new Point(sprintX, y));
+        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 1.2),
+            new Point(boostX, y), new Point(boostX, y + 10.0));
+        DrawHandle(dc, _sprintDisableThreshold, sprintHandle, panel, accent);
+        DrawHandle(dc, _lowRecoveryThreshold, boostHandle, panel, accent);
+
+        DrawText(dc, "0 SP", new Point(rail.Left, card.Bottom - 22.0),
+            9.2, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "60 SP",
+            new Point(rail.Right, card.Bottom - 22.0),
+            9.2, muted, FontWeights.Normal);
+
+        // Avoid the dead 32.2..60 SP sprint tail or the dead 0..1 SP
+        // recovery segment becoming clickable input; both use the common
+        // 0..60 coordinate in UpdateTarget only within their native spans.
+        var sprintMaxX = ValueToX(_sprintDisableThreshold.Maximum, staminaMin, staminaMax, rail);
+        var boostMinX = ValueToX(_lowRecoveryThreshold.Minimum, staminaMin, staminaMax, rail);
+        AddTarget(_sprintDisableThreshold,
+            new Rect(rail.Left - 5.0, y - 34.0,
+                Math.Max(1.0, sprintMaxX - rail.Left) + 10.0, 32.0),
+            rail, MappingKind.Absolute, staminaMin, staminaMax);
+        AddTarget(_lowRecoveryThreshold,
+            new Rect(boostMinX - 5.0, y + 2.0,
+                Math.Max(1.0, rail.Right - boostMinX) + 10.0, 32.0),
+            rail, MappingKind.Absolute, staminaMin, staminaMax);
+    }
+
+    private void DrawZoneValue(
+        DrawingContext dc, ParameterViewModel parameter, string title,
+        double top, Rect card, Brush text, Brush accent)
+    {
+        var heading = CreateText(title, 9.8, text, FontWeights.Bold);
+        var value = CreateSourceValueText(parameter,
+            $"{FormatRaw(parameter.CurrentNumber)} SP", 11.5, text, accent);
+        heading.MaxTextWidth = Math.Max(1.0,
+            card.Width - 24.0 - value.WidthIncludingTrailingWhitespace - 10.0);
+        heading.MaxLineCount = 1;
+        heading.Trimming = TextTrimming.CharacterEllipsis;
+        dc.DrawText(heading, new Point(card.Left + 12.0, top));
+        dc.DrawText(value, new Point(card.Right - 12.0
+            - value.WidthIncludingTrailingWhitespace, top - 2.0));
+    }
+
+    private static void DrawRecoveryFrame(
+        DrawingContext dc, Rect card, Brush panel, Brush border)
+        => dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
+            card, 4.0, 4.0);
+
+    private void DrawRecoveryStateCard(
+        DrawingContext dc, ParameterViewModel? parameter,
+        string state, string controlLabel, Func<double, string> formatter, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        DrawRecoveryFrame(dc, card, panel, border);
+        DrawText(dc, state, new Point(card.Left + 12.0, card.Top + 8.0),
+            9.5, muted, FontWeights.Bold);
+        DrawRecoverySourceTrack(dc, parameter, controlLabel, formatter,
+            new Rect(card.Left + 12.0, card.Top + 26.0,
+                Math.Max(1.0, card.Width - 24.0), 41.0),
             text, muted, border, accent, panel);
     }
 
-    private void DrawExhaustionTrackCard(
-        DrawingContext dc, ParameterViewModel? parameter, string label,
-        Func<double, string> formatter, Rect card,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel,
-        bool commonThresholdAxis = false)
+    private void DrawLowStaminaBoostCard(
+        DrawingContext dc, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
+        DrawRecoveryFrame(dc, card, panel, border);
+        DrawText(dc, "LOW-STAMINA BOOST",
+            new Point(card.Left + 12.0, card.Top + 9.0),
+            10.0, text, FontWeights.Bold);
+        const double gap = 14.0;
+        var half = Math.Max(1.0, (card.Width - 24.0 - gap) / 2.0);
+        DrawRecoverySourceTrack(dc, _lowRecoveryStrength, "STRENGTH",
+            value => $"+{value:0.##} SP/s",
+            new Rect(card.Left + 12.0, card.Top + 33.0, half, 41.0),
+            text, muted, border, accent, panel);
+        DrawRecoverySourceTrack(dc, _lowRecoveryDuration, "DURATION",
+            value => $"{value:0.0} s",
+            new Rect(card.Left + 12.0 + half + gap, card.Top + 33.0, half, 41.0),
+            text, muted, border, accent, panel);
+    }
+
+    // A source-native rail without redundant per-control frames. Every
+    // numerical step, muted reference tick and editor hit target remains
+    // directly backed by one unmodified ParameterViewModel and CFG mapping.
+    private void DrawRecoverySourceTrack(
+        DrawingContext dc, ParameterViewModel? parameter,
+        string label, Func<double, string> formatter, Rect area,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
         if (parameter is null)
             return;
 
-        const double horizontalInset = 14.0;
         var current = CreateSourceValueText(parameter,
-            formatter(parameter.CurrentNumber), 11.5, text, accent);
-        var valueLeft = card.Right - horizontalInset
-            - current.WidthIncludingTrailingWhitespace;
-        var title = CreateText(label, 9.8, text, FontWeights.Bold);
+            formatter(parameter.CurrentNumber), 11.2, text, accent);
+        var title = CreateText(label, 9.6, text, FontWeights.Bold);
         title.MaxTextWidth = Math.Max(1.0,
-            valueLeft - (card.Left + horizontalInset) - 9.0);
+            area.Width - current.WidthIncludingTrailingWhitespace - 9.0);
         title.MaxLineCount = 1;
         title.Trimming = TextTrimming.CharacterEllipsis;
-        dc.DrawText(title, new Point(card.Left + horizontalInset, card.Top + 10.0));
-        dc.DrawText(current, new Point(valueLeft, card.Top + 7.0));
+        dc.DrawText(title, new Point(area.Left, area.Top));
+        dc.DrawText(current,
+            new Point(area.Right - current.WidthIncludingTrailingWhitespace, area.Top - 2.0));
 
-        var track = new Rect(card.Left + horizontalInset, card.Top + 53.0,
-            Math.Max(1.0, card.Width - horizontalInset * 2.0), 12.0);
+        var track = new Rect(area.Left, area.Top + 21.0,
+            Math.Max(1.0, area.Width), 8.0);
         var y = track.Top + track.Height / 2.0;
-        var visualMin = commonThresholdAxis ? 0.0 : parameter.Minimum;
-        var visualMax = commonThresholdAxis ? 60.0 : parameter.Maximum;
-        var nativeLeft = ValueToX(parameter.Minimum, visualMin, visualMax, track);
-        var nativeRight = ValueToX(parameter.Maximum, visualMin, visualMax, track);
-        var currentX = ValueToX(parameter.CurrentNumber, visualMin, visualMax, track);
-        var referenceX = ValueToX(parameter.ReferenceNumber, visualMin, visualMax, track);
-
+        var nativeMin = parameter.Minimum;
+        var nativeMax = parameter.Maximum;
+        var currentX = ValueToX(parameter.CurrentNumber, nativeMin, nativeMax, track);
+        var refX = ValueToX(parameter.ReferenceNumber, nativeMin, nativeMax, track);
         dc.DrawLine(new Pen(border, 3.5),
             new Point(track.Left, y), new Point(track.Right, y));
-        // On the Sprint Lock track 32.2..60 SP remains deliberately passive.
-        // Recovery Below keeps its own native 1..60 SP hit interval.
-        dc.DrawLine(new Pen(muted, 3.0),
-            new Point(nativeLeft, y), new Point(nativeRight, y));
-        if (parameter.IsControlEnabled)
-            dc.DrawLine(new Pen(accent, 3.5),
-                new Point(nativeLeft, y), new Point(currentX, y));
-        dc.DrawLine(new Pen(muted, 1.8),
-            new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
+        dc.DrawLine(new Pen(accent, 3.3),
+            new Point(track.Left, y), new Point(currentX, y));
+        dc.DrawLine(new Pen(muted, 1.6),
+            new Point(refX, y - 7.0), new Point(refX, y + 7.0));
         DrawHandle(dc, parameter, new Point(currentX, y), panel, accent);
 
-        var nativeTrack = new Rect(nativeLeft, track.Top,
-            Math.Max(1.0, nativeRight - nativeLeft), track.Height);
-        AddTarget(parameter,
-            new Rect(nativeTrack.Left - 5.0, nativeTrack.Top - 6.0,
-                nativeTrack.Width + 10.0, nativeTrack.Height + 12.0),
-            nativeTrack, MappingKind.Absolute, parameter.Minimum, parameter.Maximum);
+        var minText = CreateText(formatter(nativeMin), 9.0, muted, FontWeights.Normal);
+        var maxText = CreateText(formatter(nativeMax), 9.0, muted, FontWeights.Normal);
+        var half = Math.Max(1.0, (track.Width - 10.0) / 2.0);
+        minText.MaxTextWidth = half;
+        maxText.MaxTextWidth = half;
+        minText.MaxLineCount = 1;
+        maxText.MaxLineCount = 1;
+        dc.DrawText(minText, new Point(track.Left, area.Top + 30.0));
+        dc.DrawText(maxText,
+            new Point(track.Right - maxText.WidthIncludingTrailingWhitespace,
+                area.Top + 30.0));
 
-        var minimumText = CreateText(formatter(visualMin), 9.2, muted, FontWeights.Normal);
-        var maximumText = CreateText(formatter(visualMax), 9.2, muted, FontWeights.Normal);
-        var availableAxisWidth = Math.Max(1.0, (track.Width - 8.0) / 2.0);
-        minimumText.MaxTextWidth = availableAxisWidth;
-        maximumText.MaxTextWidth = availableAxisWidth;
-        minimumText.MaxLineCount = 1;
-        maximumText.MaxLineCount = 1;
-        dc.DrawText(minimumText,
-            new Point(track.Left, card.Top + 75.0));
-        dc.DrawText(maximumText,
-            new Point(track.Right - maximumText.WidthIncludingTrailingWhitespace,
-                card.Top + 75.0));
+        AddTarget(parameter,
+            new Rect(track.Left - 5.0, track.Top - 6.0,
+                track.Width + 10.0, track.Height + 12.0),
+            track, MappingKind.Absolute, nativeMin, nativeMax);
     }
 
     // Only the numeric token (including its +/-/%/x) becomes gold when changed.

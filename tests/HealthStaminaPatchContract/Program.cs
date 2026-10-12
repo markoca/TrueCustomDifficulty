@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using TrueCustomDifficulty.Models;
 using TrueCustomDifficulty.Services;
+using TrueCustomDifficulty.Controls;
 using TrueCustomDifficulty.ViewModels;
 
 namespace HealthStaminaPatchContract;
@@ -35,6 +36,7 @@ internal static class Program
 
             MedicalItemsPairingCase();
             MovementLimitsAndExhaustionNamingCase();
+            StaminaStatesLayoutContractCase();
 
             // A unique concrete edit for every live Health/Stamina catalog
             // parameter. Master-only modifiers use Master because their
@@ -112,12 +114,12 @@ internal static class Program
         // the six exhaustion inputs retain their stable CFG source identities.
         var labels = new (string Id, string Label)[]
         {
-            ("stamina.sprintDisableThreshold", "Sprint Lock Below"),
-            ("stamina.lowRecoveryThreshold", "Boost Activates Below"),
+            ("stamina.sprintDisableThreshold", "Sprint Locks"),
+            ("stamina.lowRecoveryThreshold", "Recovery Kicks In"),
             ("stamina.aimRegenCoef", "Aiming Regen Penalty"),
             ("stamina.sprintRecoveryDelay", "Exhaustion Regen Delay"),
-            ("stamina.lowRecoveryStrength", "Low-SP Boost Rate"),
-            ("stamina.lowRecoveryDuration", "Low-SP Boost Duration")
+            ("stamina.lowRecoveryStrength", "Boost Strength"),
+            ("stamina.lowRecoveryDuration", "Boost Duration")
         };
         foreach (var (id, label) in labels)
         {
@@ -147,6 +149,50 @@ internal static class Program
             && stamina.Parameters.Any(p => p.Id == carry.Id && p.VisualAggregateFamily == "StaminaCore"),
             "Vault height and carry weight must remain in the Core Stamina visual family");
         Console.WriteLine("MOVEMENT/EXHAUSTION: native IDs, slider ranges, landmarks and gamer captions preserved.");
+    }
+
+
+    private static void StaminaStatesLayoutContractCase()
+    {
+        // Real WPF control contract: responsive board height and all six
+        // native source IDs remain bound to the independently editable family.
+        var board = new ActionCostsRadar { Mode = "Exhaustion" };
+        board.Measure(new System.Windows.Size(920.0, 1000.0));
+        Check(Math.Abs(board.DesiredSize.Height - 310.0) < 0.000001,
+            "Stamina States wide panel measurement drifted");
+        board.Measure(new System.Windows.Size(720.0, 1000.0));
+        Check(Math.Abs(board.DesiredSize.Height - 450.0) < 0.000001,
+            "Stamina States narrow panel measurement drifted");
+
+        var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+        foreach (var (id, min, max) in new[]
+        {
+            ("stamina.sprintDisableThreshold", 0.0, 32.2),
+            ("stamina.lowRecoveryThreshold", 1.0, 60.0),
+            ("stamina.aimRegenCoef", 0.0, 0.5),
+            ("stamina.sprintRecoveryDelay", 0.0, 2.0),
+            ("stamina.lowRecoveryStrength", 0.0, 20.0),
+            ("stamina.lowRecoveryDuration", 0.5, 8.0)
+        })
+        {
+            var p = vm.AllParameters.Single(p => p.Id == id);
+            Check(p.IsSlider && p.IsControlEnabled &&
+                  Math.Abs(p.Minimum - min) < 0.000001 &&
+                  Math.Abs(p.Maximum - max) < 0.000001,
+                "Stamina States changed original CFG-backed native limits: " + id);
+        }
+        var sprint = vm.AllParameters.Single(p => p.Id == "stamina.sprintDisableThreshold");
+        var boost = vm.AllParameters.Single(p => p.Id == "stamina.lowRecoveryThreshold");
+        sprint.SnapCurrentNumberToMarker(20.0);
+        boost.SnapCurrentNumberToMarker(20.0);
+        Check(Math.Abs(sprint.CurrentNumber - 20.0) < 0.000001
+              && Math.Abs(boost.CurrentNumber - 20.0) < 0.000001,
+            "Coincident Stamina Zones must remain two independent source values");
+        sprint.SnapCurrentNumberToMarker(16.1);
+        Check(Math.Abs(boost.CurrentNumber - 20.0) < 0.000001,
+            "Editing sprint lock illegally moved low-SP boost threshold");
+        _passed++;
+        Console.WriteLine("PASS stamina-states-shared-zone-layout-and-source-independence");
     }
 
     private static void MedicalItemsPairingCase()
