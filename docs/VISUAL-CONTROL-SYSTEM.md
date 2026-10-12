@@ -1,5 +1,10 @@
 # Visual Control System
 
+### 2026-10-12 — Energy Drink terminology (CURRENT)
+
+Every visible control label for the energy-drink consumable must say **ENERGY DRINK**, not bare **ENERGY**, to avoid confusing the item with stamina or energy. In Survival > Fatigue, the source ruler reads **ENERGY DRINK FATIGUE RELIEF**. In Consumables this applies to the Water + Energy Drink refill knob, Energy Drink stamina regeneration knob, Energy Drink timeline name, and the two Energy Drink stamina-cost-duration rows. Matching player-facing parameter-catalog titles and help use the same naming. Native parameter IDs, effect-prototype symbols, exact values, ranges, presets, engine references, interactions and CFG writer are unchanged. Do not rename generic player energy/stamina concepts or technical game identifiers to the consumable label.
+
+
 ### 2026-10-12 — Combined Flycatcher / Special Anomaly Effects (CURRENT)
 
 The approved Flycatcher **Movement Profile (option C)** and **Special Anomaly Effects group layout (option C)** now share **one visible compact editor** under the original Flycatcher anchor. The 2D Flycatcher movement/turn-speed plot is positioned on the LEFT, preserving the native independently draggable X/Y axis handles and the joint center handle; the RIGHT area groups **BLEEDING** (Razor and Diamond source sliders in two small side-by-side cards) above a full-width **PSY DRAIN / INTENSITY** source slider. This eliminates the formerly independent Special Anomaly Effects full-width panel and its uneven 2+1 layout. Each of the five CFG sources remains independent, writable and selectable for its own help, with native source ranges, steps, reset, keyboard and preset semantics. The combined control measures dynamically to a compact minimum 348 DIP; controls are bounded, never stretched into another full-width section. The effect sliders retain their existing native `DrawEconomyCard` interaction renderer. Changes are presentation/grouping only, not new game mechanics.
