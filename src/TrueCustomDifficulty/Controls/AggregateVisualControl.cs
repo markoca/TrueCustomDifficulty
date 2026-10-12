@@ -2420,6 +2420,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (active)
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 5.0),
                 new Point(track.Left, y), new Point(currentX, y));
+        // Fatigue relief is an Energy Drink effect, not generic player energy.
+        DrawDrinkEffectLine(dc, parameter, track.Left, currentX, y);
         dc.DrawLine(new Pen(muted, 1.8),
             new Point(referenceX, y - 10.0),
             new Point(referenceX, y + 10.0));
@@ -3048,6 +3050,40 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
+    // Consumable-source identity is deliberately restricted to these six
+    // actual WATER / ENERGY DRINK slider values. Mixed-item refill knobs,
+    // alcohol, medicine, and ordinary stamina controls keep their gold rails.
+    private static readonly Brush WaterEffectLineBrush =
+        new SolidColorBrush(Color.FromRgb(72, 159, 190));
+    private static readonly Brush EnergyDrinkEffectLineBrush =
+        new SolidColorBrush(Color.FromRgb(215, 139, 62));
+
+    private static Brush? DrinkEffectLineBrush(string sourceId) => sourceId switch
+    {
+        "survival.waterEffectDuration" or "survival.waterRegenDuration"
+            => WaterEffectLineBrush,
+        "survival.energyDrinkEffectDuration" or "survival.energyFullCostDuration"
+            or "survival.energyPartialCostDuration"
+            or "survival.energyDrinkFatigueRelief"
+            => EnergyDrinkEffectLineBrush,
+        _ => null
+    };
+
+    // Purely visual active-value fill beneath the existing source slider.
+    // Do not add a second hit target or interpret this as another CFG value.
+    private static void DrawDrinkEffectLine(
+        DrawingContext dc, ParameterViewModel parameter, double startX,
+        double currentX, double mainY)
+    {
+        var brush = DrinkEffectLineBrush(parameter.Id);
+        if (brush is null || !parameter.IsControlEnabled || currentX <= startX)
+            return;
+        const double offset = 9.0;
+        dc.DrawLine(new Pen(brush, 2.4),
+            new Point(startX, mainY + offset),
+            new Point(currentX, mainY + offset));
+    }
+
     // Drink strength knobs sit above the combined eight-lane duration graph;
     // three independent medicine strength knobs sit beneath it.
     private const double ConsumableStrengthKnobTop = 53.0;
@@ -3201,6 +3237,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Point(timeline.Left, y), new Point(maximumX, y));
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 4.0),
                 new Point(timeline.Left, y), new Point(currentX, y));
+            DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y);
             foreach (var shortEffect in secondary[i])
             {
                 var secondaryX = SecondsX(shortEffect.CurrentNumber);
@@ -4421,7 +4458,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(card.Right - 12.0 - valueText.WidthIncludingTrailingWhitespace,
                 card.Top + 6.0));
 
-        var track = new Rect(card.Left + 20.0, card.Top + 45.0,
+        // Move only the three colored short-effect rails up by four DIP:
+        // their separate underline then fits above the existing min/max text.
+        var effectLine = DrinkEffectLineBrush(parameter.Id) is not null;
+        var track = new Rect(card.Left + 20.0,
+            card.Top + (effectLine ? 41.0 : 45.0),
             Math.Max(1.0, card.Width - 40.0), 16.0);
         var y = track.Top + track.Height / 2.0;
         var currentX = ValueToX(parameter.CurrentNumber,
@@ -4434,6 +4475,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (parameter.IsControlEnabled)
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
                 new Point(track.Left, y), new Point(currentX, y));
+        DrawDrinkEffectLine(dc, parameter, track.Left, currentX, y);
 
         dc.DrawLine(new Pen(muted, 2.0),
             new Point(baseX, y - 10.0), new Point(baseX, y + 10.0));

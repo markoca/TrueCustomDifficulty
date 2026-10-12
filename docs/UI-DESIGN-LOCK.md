@@ -1,5 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-12 — Water / Energy Drink slider underlines (CURRENT)
+
+Only **Water** and **Energy Drink** source-backed horizontal effect sliders receive a **second thin, colored line just below their existing gold slider rail**. Water uses subdued **blue** (RGB 72,159,190); Energy Drink uses subdued **orange** (RGB 215,139,62). The line is **2.4 DIP thick**, follows the real current slider value from the track's left position to its current handle, and is non-interactive. When a value is at the left endpoint or the source is disabled, no colored fill is drawn. The main track, gold handle, reference tick, actual scale, number highlighting, snapping, keyboard/mouse behavior and reset remain unchanged.
+
+The rule applies **only** to `survival.waterEffectDuration` and `survival.waterRegenDuration` (blue), plus `survival.energyDrinkEffectDuration`, `survival.energyFullCostDuration`, `survival.energyPartialCostDuration` and `survival.energyDrinkFatigueRelief` (orange). The five-drink duration timeline colors its first two lanes; the three compact short-effect cards use the same underline and move their existing rails up 4 DIP solely to avoid collisions with min/max captions. The Energy Drink Fatigue Relief native ruler in Survival uses the same orange underline. **Other drink sliders (Vodka, Beer, Magic Vodka), medical duration sliders, generic stamina controls and mixed Water + Energy Drink refill knobs remain standard gold/neutral.** No colored ring is added to the separate strength knobs, no new indicator/legend or redundant descriptive text, no second source/control, and no CFG or preset change. The original slider interaction rectangle follows any shifted compact rail exactly. This rule supersedes any suggestion to color every consumable category.
+
+
 ### 2026-10-12 — Human Combat: Tactical Control Console (CURRENT)
 
 Approved **solution 1 / Tactical Control Console** replaces the earlier Squad Pressure Dashboard layouts. The Human Combat card remains one native five-source `HumanCombatProfile` WPF aggregate, but its width is **bounded to 802 DIP** rather than stretching across the entire available host. On wide hosts (at least **790 DIP**), a **300-DIP left enemy-profile column** and a **three-knob offensive-pressure row** are paired; total measured height is **366 DIP**. For narrower hosts, the 2D profile is centered above the same three-knob horizontal row; measured height is **589 DIP** and controls remain inside the panel. Rendering and height use the exact same breakpoint.
