@@ -1299,7 +1299,7 @@ elif not _survival_mapping.exists():
 elif not _survival_doc.exists():
     fail("Survival deep audit document missing from docs/")
 else:
-    note("survival current deep audit: 31 visible / 29 confirmed + 2 runtime-pending; 89 direct edit points; hunger sign/order preserved")
+    note("survival current deep audit: 35 visible / 32 confirmed + 3 runtime-pending; 195 writer leaves (82 native + 113 equipment); hunger sign/order preserved")
 
 verify_current_editor("Item Price Scalers", "ItemPriceScalersRadar", ("economy.consumableCost", "economy.ammoCost", "economy.armorCost", "economy.weaponCost", "economy.artifactCost", "economy.mutantPartValue",), "itemPriceScalerParameterIds.Contains(p.Id)", ("IsItemPriceScalerAnchor", "IsItemPriceScalerMember"))
 
