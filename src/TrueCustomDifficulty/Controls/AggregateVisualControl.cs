@@ -3146,10 +3146,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         var knobBankWidth = Math.Min(720.0, ActualWidth - 34.0);
         var knobWidth = (knobBankWidth - 3.0 * knobGap) / 4.0;
         var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
-        DrawSourceKnob(dc, burst, "WATER REFILL",
+        DrawSourceKnob(dc, burst, "WATER STAMINA GAIN",
             new Rect(knobLeft, ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel, percentageReadout: true);
-        DrawSourceKnob(dc, energyBurst, "ENERGY DRINK REFILL",
+        DrawSourceKnob(dc, energyBurst, "ENERGY DRINK STAMINA GAIN",
             new Rect(knobLeft + knobWidth + knobGap, ConsumableStrengthKnobTop,
                 knobWidth, 181.0),
             text, muted, border, accent, panel, percentageReadout: true);
