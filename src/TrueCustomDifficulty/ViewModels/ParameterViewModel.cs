@@ -521,9 +521,9 @@ public sealed class ParameterViewModel : ObservableObject
         ["environment.anomalyDamage"] = "AnomalyGlobalDamage",
         ["environment.flycatcherMovementSpeed"] = "FlycatcherSlowdown",
         ["environment.flycatcherTurnSpeed"] = "FlycatcherSlowdown",
-        ["environment.razorBleeding"] = "AnomalySpecialEffects",
-        ["environment.diamondBleeding"] = "AnomalySpecialEffects",
-        ["environment.psyAnomalyIntensity"] = "AnomalySpecialEffects",
+        ["environment.razorBleeding"] = "FlycatcherSlowdown",
+        ["environment.diamondBleeding"] = "FlycatcherSlowdown",
+        ["environment.psyAnomalyIntensity"] = "FlycatcherSlowdown",
 
         ["loot.npcCorpseBonus"] = "NpcLootLoadout",
         ["loot.npcMedicalChance"] = "NpcLootLoadout",
