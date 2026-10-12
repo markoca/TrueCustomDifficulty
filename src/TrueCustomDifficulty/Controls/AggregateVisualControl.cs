@@ -2052,10 +2052,15 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double MasterConditionalHeight(double width) => 298.0;
     private static double MasterCardBankHeight(double width, int count)
         => 107.0 + MasterRows(width, count) * 94.0 + 12.0;
+    private const double StarvationKnobsTop = 106.0;
+    private const double StarvationKnobHeight = 181.0;
     private const double StarvationPreviewHeight = 176.0;
+    private const double StarvationPreviewTop =
+        StarvationKnobsTop + StarvationKnobHeight + 12.0;
+    private const double StarvationEffectsTop =
+        StarvationPreviewTop + StarvationPreviewHeight + 12.0;
     private static double MasterStarvationHeight(double width)
-        => 110.0 + MasterRows(width, 2) * 94.0 +
-            StarvationPreviewHeight + 12.0 + MasterRows(width, 3) * 94.0 + 12.0;
+        => StarvationEffectsTop + 80.0 + 14.0;
 
     private void DrawMasterSectionTitle(DrawingContext dc, string title, Brush accent)
         => DrawCenteredText(dc, title, new Point(ActualWidth / 2.0, 21.0),
@@ -2521,7 +2526,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel,
         bool percentageReadout = false, bool rateReadout = false,
         int percentageSign = 0, bool rawReadout = false,
-        string? nativeUnit = null, bool prominent = false)
+        string? nativeUnit = null, bool prominent = false,
+        bool positivePrefix = true)
     {
         // A hero dial (Headshot Damage) is physically larger without inventing
         // a different range, hit grammar or duplicated source control.
@@ -2616,7 +2622,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var currentLabel = rateReadout ? $"{parameter.CurrentNumber:0.00}"
             : percentageReadout ? Percent(parameter.CurrentNumber)
             : rawReadout
-                ? $"{(nativeUnit is not null && parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber:0.#}"
+                ? $"{(positivePrefix && nativeUnit is not null && parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber:0.#}"
                 : $"{parameter.CurrentNumber:0.##}x";
         // WPF draws at the text's top edge: center every source-backed dial
         // readout, including single-line multiplier/percentage and signed
@@ -3902,15 +3908,29 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawMasterBundleToggle(dc, toggle, "STARVATION MECHANICS",
             text, muted, border, accent, panel);
 
-        var timing = new (string Id, string Label, Func<double, string> Format)[]
+        // Three real source-native knobs in one bounded row immediately
+        // beneath the mechanics toggle; all share the existing 270° input.
+        // Source values remain seconds / HP, not fictitious multipliers.
+        var knobs = new (string Id, string Label, string Unit)[]
         {
-            ("survival.starvationPenaltyDelay", "PENALTIES START", MasterSeconds),
-            ("survival.starvationDamageInterval", "DAMAGE EVERY", MasterSeconds)
+            ("survival.starvationPenaltyDelay", "PENALTIES START", "SECONDS"),
+            ("survival.starvationDamage", "HP DAMAGE PER TICK", "HP"),
+            ("survival.starvationDamageInterval", "DAMAGE EVERY", "SECONDS")
         };
-        DrawMasterCardBank(dc, timing, 110.0,
-            text, muted, border, soft, accent, panel);
+        const double knobGap = 12.0;
+        var knobBankWidth = Math.Min(606.0, Math.Max(1.0, ActualWidth - 34.0));
+        var knobWidth = (knobBankWidth - 2.0 * knobGap) / 3.0;
+        var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
+        for (var i = 0; i < knobs.Length; i++)
+        {
+            DrawSourceKnob(dc, P(knobs[i].Id), knobs[i].Label,
+                new Rect(knobLeft + i * (knobWidth + knobGap),
+                    StarvationKnobsTop, knobWidth, StarvationKnobHeight),
+                text, muted, border, accent, panel,
+                rawReadout: true, nativeUnit: knobs[i].Unit, positivePrefix: false);
+        }
 
-        var previewTop = 110.0 + MasterRows(ActualWidth, 2) * 94.0;
+        var previewTop = StarvationPreviewTop;
         var bankWidth = Math.Min(760.0, Math.Max(1.0, ActualWidth - 32.0));
         var preview = new Rect((ActualWidth - bankWidth) / 2.0,
             previewTop, bankWidth, StarvationPreviewHeight);
@@ -4056,14 +4076,23 @@ public sealed class AggregateVisualControl : FrameworkElement
                 9.0, muted, FontWeights.SemiBold);
         }
 
+        // The remaining two independent native sliders occupy one compact
+        // row even below MasterCardBank's unrelated 672-DIP breakpoint.
         var effects = new (string Id, string Label, Func<double, string> Format)[]
         {
             ("survival.starvationStaminaDrain", "EXTRA STAMINA COST", MasterPositivePercent),
-            ("survival.starvationDamage", "HP LOST PER TICK", MasterHp),
             ("survival.starvationHealthRegenPenalty", "HEALTH RECOVERY BLOCKED", MasterPercent)
         };
-        DrawMasterCardBank(dc, effects, previewTop + StarvationPreviewHeight + 12.0,
-            text, muted, border, soft, accent, panel);
+        const double effectGap = 12.0;
+        var effectWidth = Math.Min(370.0,
+            Math.Max(1.0, (ActualWidth - 32.0 - effectGap) / 2.0));
+        var effectsLeft = (ActualWidth - 2.0 * effectWidth - effectGap) / 2.0;
+        for (var i = 0; i < effects.Length; i++)
+            DrawMasterNativeCard(dc, P(effects[i].Id),
+                effects[i].Label, effects[i].Format,
+                new Rect(effectsLeft + i * (effectWidth + effectGap),
+                    StarvationEffectsTop, effectWidth, 80.0),
+                text, muted, border, soft, accent, panel);
     }
 
     // The summary band is deliberately read-only. MIN/MAX use separate full-width
@@ -5088,7 +5117,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
-        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile"))
+        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline"))
             return;
 
         var target = FindTarget(e.GetPosition(this));

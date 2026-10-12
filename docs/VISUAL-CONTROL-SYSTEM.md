@@ -1,6 +1,12 @@
 # Visual Control System
 
-### 2026-10-12 — Starvation Kills In read-only HUD (CURRENT)
+### 2026-10-12 — Starvation source-native knob trio and dual lower faders (CURRENT)
+
+`StarvationTimeline` keeps its single toggle, five source-backed values and unchanged read-only tick/HUD preview. Under the checkbox (Y=52..91), **three independent native 270° knobs** at Y=106..287 display `PENALTIES START` (seconds), `HP DAMAGE PER TICK` (actual HP) and `DAMAGE EVERY` (seconds). Source IDs respectively `survival.starvationPenaltyDelay`, `survival.starvationDamage`, `survival.starvationDamageInterval`; 12-DIP gaps and bounded **606-DIP** total group. Use `DrawSourceKnob` in raw-unit mode **without the positive-prefix normally applied to consumable medicine**. Its original native step/range, subdued Base reference tick, changed-only gold current digits, angular drag/wheel/keyboard/right-click and Master-disabled behavior must all apply. No ghost slider for HP damage remains below.
+
+At Y=299 starts the unchanged **176-DIP** source-derived 3-tick timeline + `STARVATION KILLS IN` display. At Y=487 are the two remaining real independent Master sliders, **EXTRA STAMINA COST** and **HEALTH RECOVERY BLOCKED**, each in its own 80-DIP compact horizontal card, centered, capped at 370 DIP, separated by 12 DIP. They always sit side by side at the minimum actual host width 520 (ignore general MasterCardBank's 672-DIP breakpoint). Shared render/measurement constants yield total height 581 DIP, leaving sufficient bottom space. No CFG manipulation, new sources, dependency bypass or changes to source step/presets. This is the CURRENT Starvation composition and supersedes the obsolete timing-card/effect-card arrangement.
+
+### 2026-10-12 — Starvation Kills In read-only HUD (CURRENT HUD semantics; historical control placement)
 
 `StarvationTimeline` retains three passive dot markers (numbers ABOVE the rail), phase names, timestamps, source-accurate `3 TICKS / N RAW HP` heading and its five native Starvation controls. The previous footer sentence becomes a **41-DIP bounded two-row read-only HUD** inside a **176-DIP** preview. Left label `STARVATION KILLS IN` above `ESTIMATE · NO HEALING`; bold middle `~48s` at 16 DIP; right `15 TICKS` over `FULL 100 HP` (dynamic values). Bounded timer text avoids collision with the right values on the minimum-width host. A thin accent edge and neutral divider organize the row without adding redundant prose or clickable elements. Time is neutral at reference, gold only when a contributing CFG/Health Max HP value is modified, and muted when OFF with `IF ENABLED · ESTIMATE` sublabel. Zero-damage and unavailable inputs show short appropriate non-countdown status strings.
 

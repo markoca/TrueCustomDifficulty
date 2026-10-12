@@ -1,5 +1,9 @@
 # MASTER-MAPPING.md
 
+### 2026-10-12 — Starvation control grouping (visual-only; CURRENT)
+
+The Master STARVATION bundle still has **five** independently writable, parent-gated native CFG controls. Below the toggle, the following **three 270° source-native knobs** occupy one centered compact row: **PENALTIES START** (`survival.starvationPenaltyDelay`, seconds), **HP DAMAGE PER TICK** (`survival.starvationDamage`, HP per charge), **DAMAGE EVERY** (`survival.starvationDamageInterval`, seconds). The knobs show numeric native units without spurious plus signs or multiplier x's. Then follows the unchanged read-only `DAMAGE TICK TIMELINE` with `STARVATION KILLS IN` full-health raw/no-healing projection. Below it, **EXTRA STAMINA COST** and **HEALTH RECOVERY BLOCKED** are two compact **side-by-side** source sliders even at the 520-DIP minimum host width. Measure/render use the same layout constants: first knobs Y=106..287, timeline Y=299..475, lower sliders Y=487..567, panel height=581 DIP. Same source IDs, toggle, steps, values, persistence and patch targets; no sixth value or duplicate HP slider. Other Master sections retain their previous controls.
+
 ### 2026-10-12 — Starvation Kills In HUD (UI-only)
 
 Replaced the old small `FULL HP → 0 IN...` sentence with a compact 2-row **STARVATION KILLS IN** HUD: large centered derived `~T` (raw time to zero), right `K TICKS` / `FULL X HP`, left `ESTIMATE · NO HEALING`. The readout is hypothetical, not a guaranteed in-game kill time, and becomes muted/conditional if the parent mechanics toggle is OFF. Missing health data, zero direct tick damage or invalid timing suppress the countdown. No changes to `ceil(MaxHP / HP-per-tick)` or `delay + tickCount × interval`, five native CFG sources, independent health maximum, or preset/writer behavior. Preview height **176 DIP**, footer y+127 to +168. This supersedes the previous 152-DIP textual footer.

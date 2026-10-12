@@ -64,6 +64,39 @@ def main() -> None:
     check('"survival.starvationStaminaDrain",\n' in HARNESS,
           "Missing Veteran OFF starvation-anchor output regression")
 
+    # UI-design lock: 3 actual seconds/HP knobs over the passive timeline,
+    # and the remaining 2 editable native tracks together below it.
+    knob_block = RENDER[RENDER.index("var knobs = new (string Id, string Label, string Unit)[]",
+                                   RENDER.index("private void DrawStarvationTimeline")):
+                        RENDER.index("var previewTop = StarvationPreviewTop;")]
+    for parameter_id in (
+        "survival.starvationPenaltyDelay",
+        "survival.starvationDamage",
+        "survival.starvationDamageInterval",
+    ):
+        check(parameter_id in knob_block, f"Missing top starvation knob: {parameter_id}")
+    check("DrawSourceKnob(dc, P(knobs[i].Id)" in knob_block
+          and "rawReadout: true" in knob_block
+          and "positivePrefix: false" in knob_block,
+          "Starvation knobs no longer use independent source-native numeric dials")
+    check("var previewTop = StarvationPreviewTop;" in RENDER
+          and "StarvationPreviewTop + StarvationPreviewHeight + 12.0;" in RENDER,
+          "Timeline layout no longer shares measured vertical offsets")
+    effect_block = RENDER[RENDER.index("var effects = new (string Id, string Label, Func<double, string> Format)[]",
+                                     RENDER.index("private void DrawStarvationTimeline")):
+                          RENDER.index("private void DrawRepeatedHitBand")]
+    check(effect_block.count('("survival.starvation') == 2
+          and '"survival.starvationStaminaDrain"' in effect_block
+          and '"survival.starvationHealthRegenPenalty"' in effect_block
+          and '"survival.starvationDamage"' not in effect_block,
+          "Two distinct lower Starvation sliders must not duplicate HP tick damage")
+    check("StarvationEffectsTop, effectWidth, 80.0" in effect_block
+          and "for (var i = 0; i < effects.Length; i++)" in effect_block,
+          "The lower two slider cards must share one compact horizontal row")
+    check('or "StarvationTimeline"))' in RENDER[RENDER.index("protected override void OnMouseWheel"):
+                                                 RENDER.index("protected override void OnMouseLeftButtonUp")],
+          "Starvation source knobs must respond to native-step mouse wheel input")
+
     print("PASS: Starvation Master toggle disables all 5 sliders, preserves visible panel,")
     print("      gates accent and mouse/keyboard input; .NET writer regression cases present")
     print("NOT VERIFIED: Windows .NET build, Wine visual acceptance, Unreal runtime")
