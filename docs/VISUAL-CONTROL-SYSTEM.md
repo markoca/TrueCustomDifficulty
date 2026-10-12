@@ -1,6 +1,12 @@
 # Visual Control System
 
-### 2026-10-12 — Starvation full-HP preview and uncluttered tick markers (CURRENT)
+### 2026-10-12 — Starvation TTK read-only HUD (CURRENT)
+
+`StarvationTimeline` retains three passive dot markers (numbers ABOVE the rail), phase names, timestamps, source-accurate `3 TICKS / N RAW HP` heading and its five native Starvation controls. The previous footer sentence becomes a **41-DIP bounded two-row read-only HUD** inside a **176-DIP** preview. Left label `STARVATION TTK` above `RAW · NO HEALING`; bold middle `~48s` at 16 DIP; right `15 TICKS` over `FULL 100 HP` (dynamic values). Bounded timer text avoids collision with the right values on the minimum-width host. A thin accent edge and neutral divider organize the row without adding redundant prose or clickable elements. Time is neutral at reference, gold only when a contributing CFG/Health Max HP value is modified, and muted when OFF with `IF ENABLED · RAW` sublabel. Zero-damage and unavailable inputs show short appropriate non-countdown status strings.
+
+The same **raw, full-health, no-healing** formula remains: `K=ceil(health.maxHP/starvationDamage)`, `T=starvationPenaltyDelay + K*starvationDamageInterval` measured from underlying starvation-bundle activation. This is not a simulation or guarantee of actual death; other active mechanics, HP protections and regeneration are excluded. Observe health.maxHP read-only and never reset it with Starvation. The effect cards shift down by the same `StarvationPreviewHeight=176` measurement used for rendering. All five source parameters and toggle dependency/CFG/preset inputs remain identical. Supersedes the prior 152-DIP one-line readout, not the original three-tick source timeline.
+
+### 2026-10-12 — Starvation full-HP preview and uncluttered tick markers (HISTORICAL; footer superseded)
 
 `StarvationTimeline` keeps the same parent switch, **2 native timing sliders**, **3 native effect sliders**, fixed three-tick read-only visualization and the `3 TICKS / N RAW HP` header. Timeline frame is **152 DIP** with its native markers at +75 DIP. Tick numbers are **above** the rail (+49 DIP), never inside the dots; tight spacing merges ordinal text to `1–3` without changing the source times. Times sit below the rail; 0s and START occupy their own lower band. The final +130 DIP line states **FULL X HP → 0 IN ~T · K TICKS (RAW, NO HEALING)**, or its zero-damage/unavailable fallback. No slider state or tick labels overlap this line; the effect bank follows the common `StarvationPreviewHeight` layout value.
 

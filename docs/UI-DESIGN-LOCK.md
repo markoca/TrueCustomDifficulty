@@ -1,6 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
-### 2026-10-12 — Starvation Timeline: external tick ordinals and raw full-HP estimate (CURRENT)
+### 2026-10-12 — Starvation TTK HUD: gamer-first raw HP exhaustion preview (CURRENT)
+
+**Master / Starvation Penalties:** replace the old one-line `FULL X HP → 0 IN ~T · K TICKS (RAW, NO HEALING)` footer with an integrated, compact **41-DIP read-only TTK HUD** inside the existing three-tick timeline. The left block reads `STARVATION TTK` / `RAW · NO HEALING`, the large **~48s**-style time-to-zero is the main middle value, and the right block shows actual `15 TICKS` over `FULL 100 HP`. A narrow accent edge and subtle divider organize these groups; no long explanatory sentence or decorative full-width slider. TTK is *hypothetical raw time to zero HP from full configured health*, **not guaranteed runtime death**. Hero digits are gold only if the delay, interval, damage-per-tick or maximum-HP source differs from the reference. With Master OFF all output is muted and the sublabel reads `IF ENABLED · RAW`. Zero damage, missing Max HP or invalid interval yield short non-countdown statuses.
+
+Use **StarvationPreviewHeight=176 DIP** for both measurement and drawing; the HUD begins at Y+127 and is 41 DIP tall, below START/tick timestamps. Preserve the separate source-correct three-tick preview, passive numbered dot markers, header `3 TICKS / N RAW HP`, original toggle and **all five independent Master sliders**. Continue reading `health.maxHP` only for arithmetic without joining the editable Starvation family or its reset. `ticks=ceil(maxHP/damagePerTick)`; `elapsed=penaltyDelay+ticks*damageInterval` is unchanged. All underlying presets, CFG writers, permissions, and native gestures are unchanged. This **supersedes** the preceding 152-DIP single-line footer. Local .NET publish / Wine approval pending.
+
+### 2026-10-12 — Starvation Timeline: external tick ordinals and raw full-HP estimate (HISTORICAL; footer superseded)
 
 **Master / Starvation Penalties:** the read-only DAMAGE TICK TIMELINE preview is now **152 DIP** tall (formerly 124 DIP), with the same measured height in layout and rendering and the effect-card bank shifted down accordingly. Render the three numbered tick ordinals **above, outside** the gold tick markers rather than squeezing numerals inside 14-DIP circles. The markers are smaller filled dots, still passive/non-editable. When the three times would crowd together, show one `1–3` caption; preserve native delay/interval timing, phase headings, elapsed tick captions and START marker. This visual correction changes no CFG sources, slider hit regions, keyboard/reset handling or parent OFF styling.
 

@@ -1,5 +1,9 @@
 # MASTER-MAPPING.md
 
+### 2026-10-12 — Starvation TTK HUD (UI-only)
+
+Replaced the old small `FULL HP → 0 IN...` sentence with a compact 2-row **STARVATION TTK** HUD: large centered derived `~T` (raw time to zero), right `K TICKS` / `FULL X HP`, left `RAW · NO HEALING`. The readout is hypothetical, not a guaranteed in-game kill time, and becomes muted/conditional if the parent mechanics toggle is OFF. Missing health data, zero direct tick damage or invalid timing suppress the countdown. No changes to `ceil(MaxHP / HP-per-tick)` or `delay + tickCount × interval`, five native CFG sources, independent health maximum, or preset/writer behavior. Preview height **176 DIP**, footer y+127 to +168. This supersedes the previous 152-DIP textual footer.
+
 ### 2026-10-12 — Starvation full-health raw damage estimate (UI-only)
 
 The Master starvation preview observes **Health → Player Max Health** read-only across tabs and computes how long periodic *raw* starvation tick damage would take to exhaust a **full** configured HP bar: `ceil(maxHP / damagePerTick)` charges, after `delay + charges × interval` seconds from bundle activation. Example: 100 HP, 4 HP/charge, 2s delay and 2s interval → 25 ticks and 52s. It is explicitly labeled `RAW, NO HEALING` and is not an in-game prediction of death or actual effective damage. OFF-state is conditional; zero damage means no lethal countdown. The extra read-only health observation must not join Starvation's editable family or group reset. Timeline numbers move above the smaller axis dots and the preview grows from 124 to 152 DIP without changing any CFG mapping.

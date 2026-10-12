@@ -2052,7 +2052,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double MasterConditionalHeight(double width) => 298.0;
     private static double MasterCardBankHeight(double width, int count)
         => 107.0 + MasterRows(width, count) * 94.0 + 12.0;
-    private const double StarvationPreviewHeight = 152.0;
+    private const double StarvationPreviewHeight = 176.0;
     private static double MasterStarvationHeight(double width)
         => 110.0 + MasterRows(width, 2) * 94.0 +
             StarvationPreviewHeight + 12.0 + MasterRows(width, 3) * 94.0 + 12.0;
@@ -3999,28 +3999,61 @@ public sealed class AggregateVisualControl : FrameworkElement
                     preview.Top + 110.0),
                 9.0, muted, FontWeights.SemiBold);
 
-            // Hypothetical raw damage from FULL configured health, measured
-            // from bundle activation: delay + ceil(MaxHP / perTick) * interval.
-            // Never present it as a guaranteed live-game kill timer.
+            // RAW time-to-zero from configured FULL HP; never a live death timer.
             var perTick = Math.Max(0.0, damage.CurrentNumber);
             var capacity = _starvationMaxHp?.CurrentNumber;
-            string rawEstimate;
-            if (capacity is null || capacity <= 0.0)
-                rawEstimate = "FULL-HP ESTIMATE UNAVAILABLE";
-            else if (perTick <= Epsilon)
-                rawEstimate = "0 HP DAMAGE / TICK · NO LETHAL COUNTDOWN";
-            else if (intervalSeconds <= Epsilon)
-                rawEstimate = "ZERO TICK INTERVAL · NO TIMING ESTIMATE";
-            else
-            {
-                var lethalTicks = (long)Math.Ceiling(capacity.Value / perTick);
-                var elapsed = startSeconds + lethalTicks * intervalSeconds;
-                rawEstimate = $"FULL {capacity.Value:0.#} HP → 0 IN ~{StarvationElapsed(elapsed)}" +
-                    $" · {lethalTicks} TICKS (RAW, NO HEALING)";
-            }
-            DrawText(dc, active ? rawEstimate : $"IF ENABLED · {rawEstimate}",
-                new Point(preview.Left + 12.0, preview.Top + 130.0),
-                9.6, active ? text : muted, FontWeights.SemiBold);
+            var hasCapacity = capacity is > 0.0;
+            var hasCountdown = hasCapacity && perTick > Epsilon && intervalSeconds > Epsilon;
+            var lethalTicks = hasCountdown
+                ? (long)Math.Ceiling(capacity!.Value / perTick) : 0L;
+            var elapsed = startSeconds + lethalTicks * intervalSeconds;
+
+            // Read-only two-row TTK HUD. No extra input or source ownership.
+            var hud = new Rect(preview.Left + 12.0, preview.Top + 127.0,
+                Math.Max(1.0, preview.Width - 24.0), 41.0);
+            dc.DrawRoundedRectangle(
+                CloneWithOpacity(active ? accent : muted, active ? 0.045 : 0.025),
+                new Pen(CloneWithOpacity(border, 0.7), 0.8),
+                hud, 3.0, 3.0);
+            dc.DrawLine(new Pen(active ? accent : muted, 2.0),
+                new Point(hud.Left + 1.0, hud.Top + 7.0),
+                new Point(hud.Left + 1.0, hud.Bottom - 7.0));
+
+            DrawText(dc, "STARVATION TTK",
+                new Point(hud.Left + 12.0, hud.Top + 5.0),
+                9.5, active ? text : muted, FontWeights.Bold);
+            DrawText(dc, active ? "RAW · NO HEALING" : "IF ENABLED · RAW",
+                new Point(hud.Left + 12.0, hud.Top + 24.0),
+                9.0, muted, FontWeights.SemiBold);
+
+            var changedEstimate = active && (
+                delay.IsValueModifiedFromReference() ||
+                interval.IsValueModifiedFromReference() ||
+                damage.IsValueModifiedFromReference() ||
+                (_starvationMaxHp?.IsValueModifiedFromReference() ?? false));
+            var timerInk = active ? changedEstimate ? accent : text : muted;
+            var hero = hasCountdown ? $"~{StarvationElapsed(elapsed)}"
+                : !hasCapacity ? "HP N/A"
+                : perTick <= Epsilon ? "NO HP DAMAGE" : "NO TIMER";
+            var detailLeft = hud.Right - Math.Min(160.0, hud.Width * 0.35);
+            var timerLeft = hud.Left + 151.0;
+            var timerWidth = Math.Max(1.0, detailLeft - timerLeft - 12.0);
+            dc.DrawText(CreateText(hero, hasCountdown ? 16.0 : 11.0,
+                    timerInk, FontWeights.Bold, timerWidth),
+                new Point(timerLeft, hud.Top + (hasCountdown ? 8.0 : 12.0)));
+            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.55), 0.8),
+                new Point(detailLeft - 8.0, hud.Top + 8.0),
+                new Point(detailLeft - 8.0, hud.Bottom - 8.0));
+
+            var tickSummary = hasCountdown ? $"{lethalTicks} TICKS"
+                : perTick <= Epsilon ? "0 HP / TICK" : "TIME N/A";
+            DrawRightAlignedText(dc, tickSummary,
+                new Point(hud.Right - 11.0, hud.Top + 5.0),
+                10.5, active ? text : muted, FontWeights.Bold);
+            DrawRightAlignedText(dc,
+                hasCapacity ? $"FULL {capacity!.Value:0.#} HP" : "MAX HP UNAVAILABLE",
+                new Point(hud.Right - 11.0, hud.Top + 24.0),
+                9.0, muted, FontWeights.SemiBold);
         }
 
         var effects = new (string Id, string Label, Func<double, string> Format)[]
