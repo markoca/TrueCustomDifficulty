@@ -2075,7 +2075,7 @@ _radiation_required = (
 if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'DrawNativeGauge(dc, P(source.Id)' in _radiation_renderer
     or not knob_wheel_gate_contains(_radiation_source, 'RadiationBalance')
-    or 'rateReadout ?' not in _radiation_source
+    or 'rateReadout || nativeUnit is not null' not in _radiation_source
     or '"RadiationBalance" => 242.0' not in _radiation_source):
     fail("Radiation System three native source knobs, PTS/S unit or wheel mapping drifted")
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
@@ -2583,12 +2583,38 @@ else:
     note("Your Weapons WPF rotary control: three real 0.25x source knobs, 270° geometry, "
          "angular/scroll/keyboard interaction, bounded layout and matching design catalogs")
 
+# One consistent center-readout contract applies to every shared 270-degree
+# source knob: single-line readouts use a top-edge -8 DIP adjustment, and
+# two-line rate / medicine readouts use -15 / +5 DIP. No per-family override.
+_rotary_body = _knob_source.split('private void DrawSourceKnob(', 1)[-1].split(
+    'private static int KnobVisibleStepStride(', 1)[0]
+_rotary_expected = (
+    'string? nativeUnit = null)',
+    'var currentTop = center.Y - (rateReadout || nativeUnit is not null ? 15.0 : 8.0);',
+    'else if (nativeUnit is not null)',
+)
+if (not all(marker in _rotary_body for marker in _rotary_expected)
+    or _rotary_body.count('new Point(center.X, center.Y + 5.0),') != 2
+    or 'readoutYOffset' in _knob_source
+    or 'drinkStrengthReadoutYOffset' in _knob_source):
+    fail('shared rotary knob value readouts no longer have uniform vertical centering')
+else:
+    note('shared rotary knobs: single-line and two-line readouts vertically centered globally')
+for _ui_catalog in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md'):
+    if '2026-10-12 — All rotary knob readouts vertically centered' not in (
+        DOCS / _ui_catalog).read_text(encoding='utf-8'):
+        fail(f'global knob readout placement missing from {_ui_catalog}')
+
 # Global and Individual Anomaly Damage now share one AnomalyDamageRadar
 # card. Do not accept the legacy stand-alone global renderer as sufficient:
 # the combined editor must be writable and the duplicate anchor invisible.
 _anomaly_knob_param = _knob_catalog.get('environment.anomalyDamage', {})
 _anomaly_knob_slider = _anomaly_knob_param.get('slider') or {}
 _anomaly_radar_source = (ROOT / 'src/TrueCustomDifficulty/Controls/AnomalyDamageRadar.cs').read_text(encoding='utf-8')
+if ('DrawCenteredText(dc, $"{p.CurrentNumber:0.##}x", new Point(center.X, center.Y),'
+    not in _anomaly_radar_source
+    or 'new Point(center.X, center.Y + 3)' in _anomaly_radar_source):
+    fail('Anomaly Damage independent dial readout does not use vertical-center coordinates')
 _anomaly_vm_source = (ROOT / 'src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs').read_text(encoding='utf-8')
 _anomaly_xaml_source = (ROOT / 'src/TrueCustomDifficulty/MainWindow.xaml').read_text(encoding='utf-8')
 _anomaly_combined_required = (
@@ -2980,7 +3006,7 @@ for _required in (
         _consumer_errors.append(f"drink knob missing: {_required}")
 for _required in (
     '"EFFECT DURATION  /  SECONDS"',
-    'burst.DrinkDurationOverrideEnabled ? 1800.0 : 900.0',
+    'const double medicineMaximumSeconds = 900.0;',
     'var medicineLanes = new (ParameterViewModel Source, string Label)[]',
     '(vincaTime, "VINCA")',
     '(herculesTime, "HERCULES")',

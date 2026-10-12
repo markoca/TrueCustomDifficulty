@@ -326,7 +326,9 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         dc.DrawLine(new Pen(_hoverGlobalKnob ? Brushes.White : active ? accent : muted, 2.5),
             KnobPoint(center, KnobRadius - 8.0, currentAngle),
             KnobPoint(center, KnobRadius + 3.0, currentAngle));
-        DrawCenteredText(dc, $"{p.CurrentNumber:0.##}x", new Point(center.X, center.Y + 3),
+        // This helper already centers vertically by text height: use the dial
+        // center directly rather than applying the generic top-edge offset.
+        DrawCenteredText(dc, $"{p.CurrentNumber:0.##}x", new Point(center.X, center.Y),
             p.IsValueModifiedFromReference() ? 16.2 : 15.0,
             active && p.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
         DrawCenteredText(dc, $"{p.Minimum:0.##}x",

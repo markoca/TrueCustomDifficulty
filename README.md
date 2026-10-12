@@ -1,5 +1,9 @@
 # True Custom Difficulty
 
+### 2026-10-12 — Centered readouts for all 270° knobs
+
+All source-backed rotary controls now vertically center the numeric value inside the dial, not just the three consumable drink knobs. The shared WPF renderer raises single-line readouts by 11 DIP and aligns the two-line Radiation Recovery / medicine amount-and-unit labels as one block; the separate combined Anomaly Damage dial removes its extra 3-DIP vertical shift because its text renderer is already height-centered. No dial sizes, source mappings, ranges, snapping, reference markers, highlights, presets or CFG writer output change. Both binding UI catalogs and the production static audit cover the new contract.
+
 ### 2026-10-11 — Hunger and Fatigue consistent primary sliders
 
 In the Survival tab, **Hunger** and **Fatigue** now present their first two controls with the same twin 105-DIP native ruler design as **Core Health** and **Core Stamina**. Hunger shows `HUNGER RATE` (pts/s) and `WELL-FED RECOVERY` (+%), while Fatigue shows `FATIGUE RATE` (pts/s) and `ENERGY FATIGUE RELIEF` (x). The original sources, snapping, current/neutral reference values, presets and CFG writer stay unchanged; both stage charts move down only enough to fit the larger, consistent primary row. The two UI design catalogs and audit contract specify the same layout.
