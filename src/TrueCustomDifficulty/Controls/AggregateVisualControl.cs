@@ -4106,52 +4106,31 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ? (long)Math.Ceiling(capacity!.Value / perTick) : 0L;
             var elapsed = startSeconds + lethalTicks * intervalSeconds;
 
-            // Read-only two-row TTK HUD. No extra input or source ownership.
+            // One centered read-only sentence in the original 41-DIP slot.
+            // It is a hypothetical raw full-HP estimate, not a live death timer.
             var hud = new Rect(preview.Left + 12.0, preview.Top + 127.0,
                 Math.Max(1.0, preview.Width - 24.0), 41.0);
-            dc.DrawRoundedRectangle(
-                CloneWithOpacity(active ? accent : muted, active ? 0.045 : 0.025),
-                new Pen(CloneWithOpacity(border, 0.7), 0.8),
-                hud, 3.0, 3.0);
-            dc.DrawLine(new Pen(active ? accent : muted, 2.0),
-                new Point(hud.Left + 1.0, hud.Top + 7.0),
-                new Point(hud.Left + 1.0, hud.Bottom - 7.0));
-
-            DrawText(dc, "STARVATION KILLS IN",
-                new Point(hud.Left + 12.0, hud.Top + 5.0),
-                9.5, active ? text : muted, FontWeights.Bold);
-            DrawText(dc, active ? "ESTIMATE · NO HEALING" : "IF ENABLED · ESTIMATE",
-                new Point(hud.Left + 12.0, hud.Top + 24.0),
-                9.0, muted, FontWeights.SemiBold);
-
-            var changedEstimate = active && (
-                delay.IsValueModifiedFromReference() ||
-                interval.IsValueModifiedFromReference() ||
-                damage.IsValueModifiedFromReference() ||
-                (_starvationMaxHp?.IsValueModifiedFromReference() ?? false));
-            var timerInk = active ? changedEstimate ? accent : text : muted;
-            var hero = hasCountdown ? $"~{StarvationElapsed(elapsed)}"
+            const string prefix = "STARVATION KILLS IN ";
+            const string connector = " TICKS AFTER ";
+            var tickCountText = hasCountdown
+                ? lethalTicks.ToString(CultureInfo.InvariantCulture) : "—";
+            var timeText = hasCountdown ? $"~{StarvationElapsed(elapsed)}"
                 : !hasCapacity ? "HP N/A"
                 : perTick <= Epsilon ? "NO HP DAMAGE" : "NO TIMER";
-            var detailLeft = hud.Right - Math.Min(160.0, hud.Width * 0.35);
-            var timerLeft = hud.Left + 151.0;
-            var timerWidth = Math.Max(1.0, detailLeft - timerLeft - 12.0);
-            dc.DrawText(CreateText(hero, hasCountdown ? 16.0 : 11.0,
-                    timerInk, FontWeights.Bold, timerWidth),
-                new Point(timerLeft, hud.Top + (hasCountdown ? 8.0 : 12.0)));
-            dc.DrawLine(new Pen(CloneWithOpacity(border, 0.55), 0.8),
-                new Point(detailLeft - 8.0, hud.Top + 8.0),
-                new Point(detailLeft - 8.0, hud.Bottom - 8.0));
-
-            var tickSummary = hasCountdown ? $"{lethalTicks} TICKS"
-                : perTick <= Epsilon ? "0 HP / TICK" : "TIME N/A";
-            DrawRightAlignedText(dc, tickSummary,
-                new Point(hud.Right - 11.0, hud.Top + 5.0),
-                10.5, active ? text : muted, FontWeights.Bold);
-            DrawRightAlignedText(dc,
-                hasCapacity ? $"FULL {capacity!.Value:0.#} HP" : "MAX HP UNAVAILABLE",
-                new Point(hud.Right - 11.0, hud.Top + 24.0),
-                9.0, muted, FontWeights.SemiBold);
+            var summary = prefix + tickCountText + connector + timeText;
+            var summaryText = CreateText(summary, 10.8, active ? text : muted,
+                FontWeights.Bold, Math.Max(1.0, hud.Width - 16.0));
+            if (active && hasCountdown)
+            {
+                summaryText.SetForegroundBrush(accent, prefix.Length, tickCountText.Length);
+                summaryText.SetFontSize(14.5, prefix.Length, tickCountText.Length);
+                var timeOffset = prefix.Length + tickCountText.Length + connector.Length;
+                summaryText.SetForegroundBrush(accent, timeOffset, timeText.Length);
+                summaryText.SetFontSize(19.0, timeOffset, timeText.Length);
+            }
+            dc.DrawText(summaryText,
+                new Point(hud.Left + (hud.Width - summaryText.WidthIncludingTrailingWhitespace) / 2.0,
+                    hud.Top + (hud.Height - summaryText.Height) / 2.0));
         }
 
         // The remaining two independent native sliders occupy one compact

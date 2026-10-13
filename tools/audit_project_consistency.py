@@ -3250,6 +3250,35 @@ else:
     note("Consumable Effects: drink knobs, 8 duration lanes, medicine knobs below, no passive preview")
 
 
+# Starvation's read-only estimate occupies one centered line, not 3 columns.
+_starvation_ui = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_starvation_section = _starvation_ui.split("private void DrawStarvationTimeline(", 1)[-1].split(
+    "// The remaining two independent native sliders", 1)[0]
+for _token in (
+    'const string prefix = "STARVATION KILLS IN ";',
+    'const string connector = " TICKS AFTER ";',
+    'var summary = prefix + tickCountText + connector + timeText;',
+    'summaryText.SetForegroundBrush(accent, prefix.Length, tickCountText.Length);',
+    'summaryText.SetFontSize(14.5, prefix.Length, tickCountText.Length);',
+    'summaryText.SetForegroundBrush(accent, timeOffset, timeText.Length);',
+    'summaryText.SetFontSize(19.0, timeOffset, timeText.Length);',
+    'var elapsed = startSeconds + lethalTicks * intervalSeconds;',
+    'if (active && hasCountdown)',
+    'hud.Top + (hud.Height - summaryText.Height) / 2.0',
+):
+    if _token not in _starvation_section:
+        fail("Starvation compact ticks-after-time HUD regression: " + _token)
+for _retired in (
+    'ESTIMATE · NO HEALING', 'IF ENABLED · ESTIMATE',
+    'FULL {capacity!.Value:0.#} HP', 'tickSummary',
+    'var detailLeft = hud.Right', 'var timerLeft = hud.Left',
+    'DrawRightAlignedText(dc, tickSummary',
+):
+    if _retired in _starvation_section:
+        fail("Obsolete multi-column starvation HUD returned: " + _retired)
+if _starvation_section.count("var hud = new Rect(") != 1:
+    fail("Starvation summary must keep its unique, original-sized HUD slot")
+
 # Native 270-degree knobs retain face fill, native arcs and source pointers,
 # but no circular outlines inside the outer track (including the anomaly dial).
 _inner_knob_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
