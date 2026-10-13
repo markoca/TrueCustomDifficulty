@@ -3250,6 +3250,60 @@ else:
     note("Consumable Effects: drink knobs, 8 duration lanes, medicine knobs below, no passive preview")
 
 
+# Master medical healing: one responsive instrument bank, not a 2+1 card grid.
+_master_medical_renderer = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_master_medical_lane = _master_medical_renderer.split("private void DrawMasterHealingLane(", 1)[-1].split(
+    "private void DrawMasterMedicalHealing(", 1)[0]
+_master_medical_bank = _master_medical_renderer.split("private void DrawMasterMedicalHealing(", 1)[-1].split(
+    "// Shared source-native vertical scale.", 1)[0]
+for _token in (
+    "private const double MasterMedicalBankTop = 103.0;",
+    "private const double MasterMedicalBankHeight = 181.0;",
+    "private const double MasterMedicalHealingHeight =",
+    "MasterMedicalBankTop + MasterMedicalBankHeight + 12.0;",
+    '"MasterMedicalHealing" => MasterMedicalHealingHeight,',
+):
+    if _token not in _master_medical_renderer:
+        fail("Master healing aligned bank measurement drifted: " + _token)
+for _token in (
+    'DrawMasterSectionTitle(dc, "CONSUMABLE EFFECT PENALTIES", accent);',
+    'P("advanced.masterEffectModifierMechanics")',
+    '"CONSUMABLE EFFECT BUNDLE"',
+    'Math.Min(680.0, Math.Max(1.0, ActualWidth - 34.0))',
+    "bank, i, text, muted, border, soft, accent, panel",
+    'DrawCenteredText(dc, "100%"',
+    'MasterPercent(scaleMin)', 'MasterPercent(scaleMax)',
+):
+    if _token not in _master_medical_bank:
+        fail("Master healing grouped UI layout or toggle drifted: " + _token)
+for _id in (
+    '"health.masterBandageModifier"',
+    '"health.masterMedkitModifier"',
+    '"health.masterArmyMedkitModifier"',
+):
+    if _master_medical_bank.count(_id) != 1:
+        fail("Master healing grouped bank has missing/duplicate source: " + _id)
+if ('DrawMasterCardBank(' in _master_medical_bank
+        or _master_medical_bank.count('DrawMasterHealingLane(dc,') != 1):
+    fail("Master healing must use one dedicated three-lane panel, not old staggered cards")
+for _token in (
+    'index * 49.0', 'bank.Top + 11.0',
+    'var track = new Rect(bank.Left + 18.0, rowTop + 26.0,',
+    'ValueToX(parameter.CurrentNumber,',
+    'ValueToX(parameter.ReferenceNumber,',
+    'var fullHealingX = ValueToX(1.0, parameter.Minimum,',
+    'Math.Abs(fullHealingX - referenceX) >= 2.0',
+    'valueText.SetForegroundBrush(accent, token.Index, token.Length);',
+    'IndustrialRulerChrome.DrawActiveRailGlint(',
+    'AddHorizontalTarget(parameter,',
+    'track, parameter.Minimum, parameter.Maximum);',
+    'if (enabled)',
+):
+    if _token not in _master_medical_lane:
+        fail("Master healing native source/reference/disabled contract drifted: " + _token)
+if _master_medical_bank.count('new Rect((ActualWidth - bankWidth) / 2.0,') != 1:
+    fail("Master healing bank must be centered at its actual measured width")
+
 # Starvation's read-only estimate occupies one centered line, not 3 columns.
 _starvation_ui = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
 _starvation_section = _starvation_ui.split("private void DrawStarvationTimeline(", 1)[-1].split(

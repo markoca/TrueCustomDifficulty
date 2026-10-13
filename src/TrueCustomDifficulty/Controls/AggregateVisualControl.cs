@@ -2103,6 +2103,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         => (count + EconomyColumns(width) - 1) / EconomyColumns(width);
 
     private static double MasterConditionalHeight(double width) => 298.0;
+    // The three healing modifiers share one aligned 0–200% bank at every width.
+    private const double MasterMedicalBankTop = 103.0;
+    private const double MasterMedicalBankHeight = 181.0;
+    private const double MasterMedicalHealingHeight =
+        MasterMedicalBankTop + MasterMedicalBankHeight + 12.0;
     private static double MasterCardBankHeight(double width, int count)
         => 107.0 + MasterRows(width, count) * 94.0 + 12.0;
     private const double StarvationKnobsTop = 106.0;
@@ -2276,9 +2281,98 @@ public sealed class AggregateVisualControl : FrameworkElement
             percentageReadout: true, percentageSign: isLowHealth ? -1 : 1);
     }
 
-    // The modifier controls are independent source ValueMultipliers,
-    // not effective HP previews. The toggle also governs other non-medical
-    // MasterEffectModifier effects which are not exposed as separate sliders.
+    // Three independently writable source multipliers use one aligned,
+    // compact instrument bank. Only actual native source tracks can be edited.
+    // The 100% full-healing guide is separate from each difficulty reference.
+    private void DrawMasterHealingLane(
+        DrawingContext dc, ParameterViewModel? parameter, string label,
+        Rect bank, int index, Brush text, Brush muted, Brush border,
+        Brush soft, Brush accent, Brush panel)
+    {
+        var rowTop = bank.Top + 11.0 + index * 49.0;
+        if (parameter is null)
+        {
+            DrawText(dc, label + "  ·  SOURCE UNAVAILABLE",
+                new Point(bank.Left + 16.0, rowTop + 1.0),
+                10.1, muted, FontWeights.SemiBold);
+            return;
+        }
+
+        var enabled = parameter.IsControlEnabled;
+        var changed = enabled && parameter.IsValueModifiedFromReference();
+        var disabledInk = MasterDisabledInk(text);
+        var value = MasterPercent(parameter.CurrentNumber);
+        var valueText = CreateText(value, 11.8,
+            enabled ? text : disabledInk, FontWeights.Bold);
+        if (changed)
+        {
+            foreach (System.Text.RegularExpressions.Match token in
+                System.Text.RegularExpressions.Regex.Matches(value, @"\d+(?:\.\d+)?"))
+            {
+                valueText.SetForegroundBrush(accent, token.Index, token.Length);
+                valueText.SetFontSize(13.0, token.Index, token.Length);
+            }
+        }
+        var labelWidth = Math.Max(1.0,
+            bank.Width - 46.0 - valueText.WidthIncludingTrailingWhitespace - 10.0);
+        dc.DrawText(CreateText(label, 10.3, enabled ? text : disabledInk,
+                FontWeights.Bold, labelWidth),
+            new Point(bank.Left + 16.0, rowTop));
+        dc.DrawText(valueText, new Point(
+            bank.Right - 16.0 - valueText.WidthIncludingTrailingWhitespace,
+            rowTop - 2.0));
+
+        var track = new Rect(bank.Left + 18.0, rowTop + 26.0,
+            Math.Max(1.0, bank.Width - 36.0), 10.0);
+        var y = track.Top + track.Height / 2.0;
+        var currentX = ValueToX(parameter.CurrentNumber,
+            parameter.Minimum, parameter.Maximum, track, false);
+        var referenceX = ValueToX(parameter.ReferenceNumber,
+            parameter.Minimum, parameter.Maximum, track, false);
+
+        dc.DrawLine(new Pen(soft, 3.2),
+            new Point(track.Left, y), new Point(track.Right, y));
+        if (enabled)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, .72), 3.2),
+                new Point(track.Left, y), new Point(currentX, y));
+        IndustrialRulerChrome.DrawActiveRailGlint(dc, track.Left, currentX, y,
+            accent, enabled);
+
+        // 100% is unmodified original healing, NOT the difficulty's Base tick.
+        if (parameter.Minimum <= 1.0 && parameter.Maximum >= 1.0)
+        {
+            var fullHealingX = ValueToX(1.0, parameter.Minimum,
+                parameter.Maximum, track, false);
+            if (Math.Abs(fullHealingX - referenceX) >= 2.0)
+                dc.DrawLine(new Pen(CloneWithOpacity(muted, .55), 1.0)
+                    { DashStyle = DashStyles.Dash },
+                    new Point(fullHealingX, y - 7.0),
+                    new Point(fullHealingX, y + 7.0));
+        }
+        dc.DrawLine(new Pen(muted, 1.8),
+            new Point(referenceX, y - 8.0),
+            new Point(referenceX, y + 8.0));
+        dc.DrawEllipse(panel,
+            new Pen(enabled ? accent : muted,
+                enabled && IsSelected(parameter) ? 2.4 : 1.5),
+            new Point(currentX, y), 6.0, 6.0);
+        if (enabled)
+            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+
+        AddHorizontalTarget(parameter,
+            new Rect(track.Left - 6.0, track.Top - 6.0,
+                track.Width + 12.0, track.Height + 12.0),
+            track, parameter.Minimum, parameter.Maximum);
+
+        if (index < 2)
+            IndustrialChrome.DrawEngravedSeparator(dc,
+                bank.Left + 14.0, bank.Right - 14.0,
+                rowTop + 43.0, muted);
+    }
+
+    // These modifiers are independent source ValueMultipliers, not HP previews.
+    // Keep the universal parent toggle; avoid a dangling third card and
+    // compare all three on one continuous native 0–200% horizontal axis.
     private void DrawMasterMedicalHealing(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
@@ -2287,14 +2381,41 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawMasterBundleToggle(dc, P("advanced.masterEffectModifierMechanics"),
             "CONSUMABLE EFFECT BUNDLE",
             text, muted, border, accent, panel);
-        var sources = new (string Id, string Label, Func<double, string> Format)[]
+
+        var bankWidth = Math.Min(680.0, Math.Max(1.0, ActualWidth - 34.0));
+        var bank = new Rect((ActualWidth - bankWidth) / 2.0,
+            MasterMedicalBankTop, bankWidth, MasterMedicalBankHeight);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .78),
+            new Pen(border, .9), bank, 4.0, 4.0);
+
+        var channels = new (string Id, string Label)[]
         {
-            ("health.masterBandageModifier", "BANDAGE HEALING", MasterPercent),
-            ("health.masterMedkitModifier", "MEDKIT HEALING", MasterPercent),
-            ("health.masterArmyMedkitModifier", "ARMY MEDKIT HEALING", MasterPercent)
+            ("health.masterBandageModifier", "BANDAGE HEALING"),
+            ("health.masterMedkitModifier", "MEDKIT HEALING"),
+            ("health.masterArmyMedkitModifier", "ARMY MEDKIT HEALING")
         };
-        DrawMasterCardBank(dc, sources, 107.0,
-            text, muted, border, soft, accent, panel);
+        for (var i = 0; i < channels.Length; i++)
+            DrawMasterHealingLane(dc, P(channels[i].Id), channels[i].Label,
+                bank, i, text, muted, border, soft, accent, panel);
+
+        // The shared axis is a neutral guide, not a fourth editable control.
+        var first = P(channels[0].Id);
+        var scaleMin = first?.Minimum ?? 0.0;
+        var scaleMax = first?.Maximum ?? 2.0;
+        var left = bank.Left + 18.0;
+        var right = bank.Right - 18.0;
+        var scaleTop = bank.Bottom - 19.0;
+        DrawText(dc, MasterPercent(scaleMin),
+            new Point(left, scaleTop), 9.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, MasterPercent(scaleMax),
+            new Point(right, scaleTop), 9.0, muted, FontWeights.Normal);
+        if (scaleMin <= 1.0 && scaleMax >= 1.0 && scaleMax > scaleMin)
+        {
+            var centerX = left + (1.0 - scaleMin) / (scaleMax - scaleMin) *
+                (right - left);
+            DrawCenteredText(dc, "100%", new Point(centerX, scaleTop),
+                9.0, muted, FontWeights.Normal);
+        }
     }
 
     // Shared source-native vertical scale. A meter's own min/max/step,
@@ -6526,7 +6647,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "PlayerWeaponProfile" => 242.0,
             "CoreHealthDashboard" => width >= 700.0 ? 282.0 : 365.0,
             "SevereFatiguePenaltyBoard" => 376.0,
-            "MasterMedicalHealing" => MasterCardBankHeight(width, 3),
+            "MasterMedicalHealing" => MasterMedicalHealingHeight,
             "MasterLowHealth" => MasterConditionalHeight(width),
             "MasterRadiationPenalty" => MasterConditionalHeight(width),
             "ConsumableMixer" => CompactConsumableHeight(width),
