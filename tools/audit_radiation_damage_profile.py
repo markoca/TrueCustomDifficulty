@@ -66,7 +66,7 @@ assert splits == [10, 20, 30, 40, 50, 60, 70, 80, 90, 99], splits
 assert abs(360 * splits[-1] / 100 - 356.4) < 1e-9
 assert "for (var tick = 10; tick <= 100; tick += RadiationHudTickStep)" in code
 assert "RadiationRingPoint(center, 137.0, tick)" in code
-assert "tick == 100 ? accent : muted" in code
+assert "currentRad >= tick ? accent : muted" in code
 assert "Math.Clamp(Math.Round(angle * 100.0 / (Math.PI * 2.0)), 0.0, 100.0)" in code
 
 assert "DrawSourceKnob(dc, P(source.Id), source.Label" in code
