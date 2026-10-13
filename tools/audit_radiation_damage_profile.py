@@ -56,7 +56,7 @@ assert "DrawRadiationHudTrefoil(dc, center, CloneWithOpacity(text, 0.82));" in c
 assert '"DEAD AFTER"' in code and 'DrawStat("~" + RadiationTime(eta),' in code
 assert '"DEATH ESTIMATE"' in code
 assert '"MAX " + RadiationModelMaxHp.ToString(' not in code
-assert rad["slider"] == {"min": 0, "max": 10, "step": 0.01}
+assert rad["slider"] == {"min": 0, "max": 20, "step": 0.01}
 assert '"DAMAGE PER TICK"' in code
 assert '"1 TICK/S ASSUMED · NO HEALING/PROTECTION"' not in code
 assert "ctx.ArcTo(" in code
@@ -93,7 +93,7 @@ for token in (
 ):
     assert token in knob_bank, "Radiation central hero knob drifted: " + token
 assert abs((2 * 188.0 + 206.0 + 2 * 12.0) - 606.0) < 1e-9
-for factor in (0.0, 0.5, 1.0, 1.5, 2.0, 4.0, 6.0, 10.0):
+for factor in (0.0, 0.5, 1.0, 1.5, 2.0, 4.0, 6.0, 10.0, 20.0):
     for _, prototype, source_value in stages:
         expected = float(source_value) * factor
         points = [p for p in source if p["prototype"] == prototype]
@@ -349,7 +349,7 @@ assert angle_to_rad(359) == 100
 
 print("PASS: 11 original radiation stages and 22 unchanged writer leaves;")
 print("      enlarged 32-tooth ring-only 0–100 RAD and right-side RAD value;")
-print("      hero-centered 10x HP DAMAGE and one highlighted estimated death time;")
+print("      hero-centered 20x HP DAMAGE and one highlighted estimated death time;")
 print("      no obsolete slider, titles or footer; source damage stages unchanged;")
 print("      original stage thresholds, 1:1 damage scaling and conditional fixed-RAD HP estimate.")
 print("NOT VERIFIED: actual permanent-effect damage cadence, healing, armor or gameplay time to death.")

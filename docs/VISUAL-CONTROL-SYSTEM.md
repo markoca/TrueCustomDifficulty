@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-13 — Radiation HP DAMAGE maximum 20× (CURRENT)
+
+Increase the source-backed central HP DAMAGE rotary range to **0.00×–20.00×**, native step **0.01×**, vanilla **1.00×**. Keep its existing position, hero diameter, all 11 original radiation stages, 22 CFG writer leaves, 0–100 RAD preview and all remaining UI unchanged. This supersedes earlier 10× and 15× ceilings; both audits must verify the 20× limit.
+
 ### 2026-10-13 — Radiation: accumulated decade marks (CURRENT)
 
 On the HUD ring, each unlabeled outer calibration mark at 10, 20, …, 100 RAD uses the yellow accent when the current preview RAD is **greater than or equal to that mark**, and muted ink otherwise. This includes 100 RAD only after reaching 100; retain its slightly longer/thicker geometry. The 99-RAD DEADLY CFG stage is separate from the 100-RAD visual mark. Preserve the existing 32 teeth, ring hit testing, 0-RAD default, stage calculation and no extra numbers or labels.
