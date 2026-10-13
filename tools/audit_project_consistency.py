@@ -3250,6 +3250,48 @@ else:
     note("Consumable Effects: drink knobs, 8 duration lanes, medicine knobs below, no passive preview")
 
 
+# Source-only HUD eye candy: all four shared decorative treatments.
+_telemetry_chrome = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "IndustrialFrame.cs").read_text(encoding="utf-8")
+_telemetry_aggregate = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_telemetry_alcohol = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "DrunkennessControl.cs").read_text(encoding="utf-8")
+_telemetry_app = (ROOT / "src" / "TrueCustomDifficulty" / "App.xaml").read_text(encoding="utf-8")
+for _token in (
+    "public static void DrawActiveRailGlint(",
+    "Math.Abs(toX - fromX) < 2.0",
+    "glow.Opacity *= 0.27;",
+    "public static void DrawEngravedSeparator(",
+    "public static void DrawStatusLed(",
+    "if (enabled)",
+):
+    if _token not in _telemetry_chrome:
+        fail("Telemetry chrome missing: " + _token)
+if _telemetry_aggregate.count("IndustrialRulerChrome.DrawActiveRailGlint(") != 7:
+    fail("Native aggregate rail illumination must use seven source-bound call sites")
+if _telemetry_alcohol.count("IndustrialRulerChrome.DrawActiveRailGlint(") != 1:
+    fail("Alcohol strengths require source-native rail glint")
+if ('<Grid Height="2" Background="Transparent">' not in _telemetry_app
+        or 'Height="0.6"' not in _telemetry_app
+        or 'Opacity="0.2"' not in _telemetry_app):
+    fail("WPF standard active slider rail glint missing")
+for _token in (
+    "CloneWithOpacity(muted, .22), 0.8",
+    "KnobPoint(center, radius + 2.0, angleNow), 1.7, 1.7",
+    "DrawEngravedSeparator(dc, left + 8.0, left + width - 8.0,",
+    "141.0, muted);", "237.0, muted);", "149.0, muted);",
+):
+    if _token not in _telemetry_aggregate:
+        fail("Mechanical knob or engraved existing-gap separator missing: " + _token)
+if ('ActualWidth - 21.0, 116.0, muted);' not in _telemetry_alcohol
+        or _telemetry_alcohol.count("IndustrialChrome.DrawEngravedSeparator(") != 1):
+    fail("Alcohol strength/progression separator drifted")
+if (_telemetry_aggregate.count("IndustrialChrome.DrawStatusLed(") != 1
+        or "burst.DrinkDurationOverrideEnabled, accent, muted);" not in _telemetry_aggregate
+        or "new Point(overrideRect.Left + 18.0, overrideRect.Top + 7.0)" not in _telemetry_aggregate
+        or "Math.Max(1.0, checkboxRect.Left - overrideRect.Left - 25.0)" not in _telemetry_aggregate):
+    fail("Override-only LED must be state-bound and inside the original compact header")
+if "BooleanCheckboxChrome.Draw(dc, checkboxRect, burst.DrinkDurationOverrideEnabled" not in _telemetry_aggregate:
+    fail("Override must retain its canonical 20-DIP checkbox")
+
 # Approved recessed-card/precision-thumb pass (UI-only, native ranges unchanged).
 _eye_chrome = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "IndustrialFrame.cs").read_text(encoding="utf-8")
 _eye_aggregate = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")

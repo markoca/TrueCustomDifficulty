@@ -173,6 +173,41 @@ internal static class IndustrialChrome
             new Point(rect.Right - 5.0, rect.Bottom - 1.5));
     }
 
+    // Tiny neutral two-edge engraving between genuinely separate controls.
+    // Draw only inside an existing gap: no new rows or hit targets.
+    public static void DrawEngravedSeparator(
+        DrawingContext dc, double left, double right, double y, Brush muted)
+    {
+        if (right - left < 40.0)
+            return;
+
+        var dark = new Pen(new SolidColorBrush(Color.FromArgb(100, 0, 0, 0)), 1.0);
+        var lightBrush = muted.CloneCurrentValue();
+        lightBrush.Opacity *= 0.20;
+        lightBrush.Freeze();
+        var light = new Pen(lightBrush, 0.8);
+        dc.DrawLine(dark, new Point(left, y), new Point(right, y));
+        dc.DrawLine(light, new Point(left, y + 1.3), new Point(right, y + 1.3));
+    }
+
+    // Passive status lamp: reserved for the real Consumables range-override
+    // state, never applied to the universal checkbox chrome.
+    public static void DrawStatusLed(
+        DrawingContext dc, Point center, bool enabled, Brush accent, Brush muted)
+    {
+        var rim = muted.CloneCurrentValue();
+        rim.Opacity *= 0.5;
+        rim.Freeze();
+        dc.DrawEllipse(null, new Pen(rim, 0.8), center, 3.0, 3.0);
+        if (enabled)
+        {
+            var lit = accent.CloneCurrentValue();
+            lit.Opacity *= 0.82;
+            lit.Freeze();
+            dc.DrawEllipse(lit, null, center, 1.75, 1.75);
+        }
+    }
+
     public static void DrawFrame(
         DrawingContext dc,
         Rect rect,
@@ -235,6 +270,21 @@ internal static class IndustrialChrome
 /// </summary>
 internal static class IndustrialRulerChrome
 {
+    // The rail sheen follows the real current fill only, never the reference.
+    // It is painted inside the existing track before handles and source ticks.
+    public static void DrawActiveRailGlint(
+        DrawingContext dc, double fromX, double toX, double y,
+        Brush accent, bool enabled)
+    {
+        if (!enabled || Math.Abs(toX - fromX) < 2.0)
+            return;
+        var glow = accent.CloneCurrentValue();
+        glow.Opacity *= 0.27;
+        glow.Freeze();
+        dc.DrawLine(new Pen(glow, 0.9),
+            new Point(fromX, y - 1.15), new Point(toX, y - 1.15));
+    }
+
     public static void DrawNativeTicks(
         DrawingContext dc, Rect track, double minimum, double maximum,
         double nativeStep, Brush muted)

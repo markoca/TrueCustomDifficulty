@@ -706,6 +706,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(track.Left, y), new Point(track.Right, y));
         dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 3.0),
             new Point(track.Left, y), new Point(x, y));
+        IndustrialRulerChrome.DrawActiveRailGlint(dc, track.Left, x, y,
+            accent, parameter.IsControlEnabled);
         // Repair reputation has a meaningful separate 1x "no modifier"
         // reference; it is NOT the selected-difficulty Base marker.
         if (parameter.Id is "economy.repairFriend" or "economy.repairNeutral"
@@ -2176,6 +2178,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (enabled)
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 3.0),
                 new Point(track.Left, y), new Point(currentX, y));
+        IndustrialRulerChrome.DrawActiveRailGlint(dc, track.Left, currentX, y,
+            accent, enabled);
 
         // In Master consumable effects 100% means original healing strength,
         // whereas the source Base tick can be Bandage 25%, Medkit 71% or
@@ -2491,6 +2495,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (active)
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 5.0),
                 new Point(track.Left, y), new Point(currentX, y));
+        IndustrialRulerChrome.DrawActiveRailGlint(dc, track.Left, currentX, y, accent, active);
         IndustrialRulerChrome.DrawNativeTicks(dc, track,
             parameter.Minimum, parameter.Maximum, parameter.TickFrequency, muted);
         // Fatigue Relief keeps the universal gold/neutral ruler; colored
@@ -2605,6 +2610,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         // bottom quadrant open so the limits never fight the center readout.
         dc.DrawEllipse(face, new Pen(CloneWithOpacity(border, .72), 1.2),
             center, radius - 10, radius - 10);
+        // Machined face: a dark inner seam, without a frame around the dial.
+        if (radius > 28.0)
+            dc.DrawEllipse(null, new Pen(CloneWithOpacity(muted, .22), 0.8),
+                center, radius - 22.0, radius - 22.0);
         // Recessed rotary bezel, highlighted only during actual dial hover.
         if (radius > 21.0)
             dc.DrawEllipse(null, new Pen(
@@ -2671,6 +2680,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 hovered ? 3.0 : 2.4),
             KnobPoint(center, radius - 8, angleNow),
             KnobPoint(center, radius + 3, angleNow));
+        // A tiny mechanical pointer rivet follows the current source position.
+        // Base stays represented solely by its original muted tick.
+        dc.DrawEllipse(active ? CloneWithOpacity(accent, .82) : CloneWithOpacity(muted, .35),
+            null, KnobPoint(center, radius + 2.0, angleNow), 1.7, 1.7);
 
         var modified = active && parameter.IsValueModifiedFromReference();
         string Percent(double value) =>
@@ -3267,9 +3280,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         var overrideHovered = _hoverTarget?.Kind == HitKind.DrinkDurationOverride;
         BooleanCheckboxChrome.Draw(dc, checkboxRect, burst.DrinkDurationOverrideEnabled,
             true, overrideHovered, panel, border, accent);
+        IndustrialChrome.DrawStatusLed(dc,
+            new Point(overrideRect.Left + 9.0, overrideRect.Top + overrideRect.Height / 2.0),
+            burst.DrinkDurationOverrideEnabled, accent, muted);
         dc.DrawText(CreateText("OVERRIDE LIMITS", 9.7, text, FontWeights.Bold,
-            Math.Max(1.0, checkboxRect.Left - overrideRect.Left - 16.0)),
-            new Point(overrideRect.Left + 9.0, overrideRect.Top + 7.0));
+            Math.Max(1.0, checkboxRect.Left - overrideRect.Left - 25.0)),
+            new Point(overrideRect.Left + 18.0, overrideRect.Top + 7.0));
         _hitTargets.Add(new HitTarget(burst, overrideRect, overrideRect,
             HitKind.DrinkDurationOverride, 0.0, 1.0, false));
 
@@ -3515,6 +3531,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(left, 54.0, width, 82.0),
             text, muted, border, accent, panel);
 
+        // Engraved neutral split between sleep eligibility and hour selection.
+        IndustrialChrome.DrawEngravedSeparator(dc, left + 8.0, left + width - 8.0,
+            141.0, muted);
         var selector = new Rect(left, 146.0, width, 84.0);
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .72),
             new Pen(border, .9), selector, 4, 4);
@@ -3561,6 +3580,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 minimumHours.Minimum, minimumHours.Maximum);
         }
 
+        IndustrialChrome.DrawEngravedSeparator(dc, left + 8.0, left + width - 8.0,
+            237.0, muted);
         DrawText(dc, "RECOVERY WHEN YOU WAKE UP",
             new Point(left + 1.0, 247.0), 10.7, accent, FontWeights.Bold);
         const double gap = 12.0;
@@ -3607,6 +3628,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
         dc.DrawLine(new Pen(accent, 5.0), new Point(track.Left, y), new Point(currentX, y));
+        IndustrialRulerChrome.DrawActiveRailGlint(dc, track.Left, currentX, y,
+            accent, parameter.IsControlEnabled);
 
         // Do not draw a fake vanilla marker at the edge when the verified
         // 300 HP source is outside this tool's 0-200 HP editor interval.
@@ -3655,6 +3678,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawLine(new Pen(CloneWithOpacity(accent, .78), 5.0),
             new Point(center, track.Top + 6.0),
             new Point(now, track.Top + 6.0));
+        IndustrialRulerChrome.DrawActiveRailGlint(dc, center, now, track.Top + 6.0,
+            accent, parameter.IsControlEnabled);
         dc.DrawLine(new Pen(muted, 2),
             new Point(reference, track.Top - 3),
             new Point(reference, track.Bottom + 3));
@@ -3690,6 +3715,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             "YOU BUY FROM TRADERS",
             new Rect(left + cell + gap, 52.0, cell, 92.0), true,
             text, muted, border, accent, panel);
+        IndustrialChrome.DrawEngravedSeparator(dc, left + 8.0, left + width - 8.0,
+            149.0, muted);
         DrawText(dc, "TRADE ACCEPTANCE", new Point(left, 158),
             10.2, muted, FontWeights.Bold);
         DrawEconomyCard(dc, P("economy.traderMinBuyCondition"),
@@ -5084,6 +5111,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (parameter.IsControlEnabled)
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
                 new Point(track.Left, y), new Point(currentX, y));
+        // Effect-specific underlines are separate; the glow follows only the
+        // real primary value and never extends to an unrelated duration marker.
+        IndustrialRulerChrome.DrawActiveRailGlint(dc, track.Left, currentX, y,
+            accent, parameter.IsControlEnabled);
         DrawDrinkEffectLine(dc, parameter, track.Left, currentX, y);
 
         dc.DrawLine(new Pen(muted, 2.0),
@@ -5254,6 +5285,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (parameter.IsControlEnabled)
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.65), 3.5),
                 new Point(track.Left, y), new Point(x, y));
+        IndustrialRulerChrome.DrawActiveRailGlint(dc, track.Left, x, y,
+            accent, parameter.IsControlEnabled);
 
         IndustrialRulerChrome.DrawNativeTicks(dc, track,
             parameter.Minimum, parameter.Maximum, parameter.TickFrequency, muted);

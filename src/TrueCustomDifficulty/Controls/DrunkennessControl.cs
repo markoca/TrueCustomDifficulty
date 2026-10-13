@@ -174,6 +174,9 @@ public sealed class DrunkennessControl : FrameworkElement
             muted,
             accent);
 
+        IndustrialChrome.DrawEngravedSeparator(dc, 21.0,
+            ActualWidth - 21.0, 116.0, muted);
+
         DrawProgressionRow(
             dc,
             "BEER PROGRESSION",
@@ -282,6 +285,8 @@ public sealed class DrunkennessControl : FrameworkElement
             minimum, maximum, parameter?.TickFrequency ?? 1.0, muted);
 
         var handleX = ValueToX(strength, minimum, maximum, sliderLeft, sliderRight);
+        IndustrialRulerChrome.DrawActiveRailGlint(dc, sliderLeft, handleX, sliderY,
+            accent, parameter?.IsControlEnabled == true);
         ControlHoverGlow.Draw(dc, new Point(handleX, sliderY), accent,
             _hoverSlider == slider);
         dc.DrawEllipse(accent, null, new Point(handleX, sliderY), 5.0, 5.0);

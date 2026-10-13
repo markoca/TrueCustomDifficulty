@@ -448,9 +448,18 @@
                                                   Background="{TemplateBinding Foreground}">
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
-                                                <Border Height="1.5"
-                                                        Background="{TemplateBinding Background}"
-                                                        CornerRadius="1" />
+                                                <Grid Height="2" Background="Transparent">
+                                                    <Border Height="1.5"
+                                                            Background="{TemplateBinding Background}"
+                                                            CornerRadius="1"
+                                                            VerticalAlignment="Center" />
+                                                    <!-- Dim glint within the already-active WPF fill. -->
+                                                    <Border Height="0.6"
+                                                            Background="{StaticResource AccentBrush}"
+                                                            Opacity="0.2"
+                                                            VerticalAlignment="Top"
+                                                            IsHitTestVisible="False" />
+                                                </Grid>
                                             </ControlTemplate>
                                         </RepeatButton.Template>
                                     </RepeatButton>
