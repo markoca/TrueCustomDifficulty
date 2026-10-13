@@ -4588,7 +4588,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         // CFG thresholds remain original, including DEADLY at 99 RAD.
         for (var tick = 10; tick <= 100; tick += RadiationHudTickStep)
         {
-            dc.DrawLine(new Pen(tick == 100 ? accent : muted,
+            // Each decade marker lights once the preview reaches it.
+            dc.DrawLine(new Pen(currentRad >= tick ? accent : muted,
                     tick == 100 ? 2.0 : 1.2),
                 RadiationRingPoint(center, 137.0, tick),
                 RadiationRingPoint(center, tick == 100 ? 147.0 : 144.0,
