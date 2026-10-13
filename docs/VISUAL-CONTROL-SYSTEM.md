@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-13 — LEVEL number spacing and HP DAMAGE 15× (CURRENT)
+
+In the Radiation System status, add **6 DIP** of horizontal separation between the muted LEVEL caption and its 22-DIP bold yellow stage number without moving either row or introducing another label. The source-backed central HP DAMAGE hero knob now spans **0.00×–15.00×**, native step **0.01×**, vanilla **1.00×**. Preserve its existing footprint, 11 authentic radiation stages, 22 CFG writer leaves, the 0–100 RAD preview and the rest of the compact status hierarchy. This supersedes earlier 10× limits; keep both regression audits aligned.
+
 ### 2026-10-13 — Radiation LEVEL number emphasis (CURRENT)
 
 Retain the compact right-side RADS ACCUMULATED / 29-DIP yellow N RAD / LEVEL N hierarchy. Keep the muted **LEVEL** caption at 13.5 DIP and increase only the yellow numeric level from 13.5 to **22 DIP bold**, offset vertically by **−6 DIP** so it visually aligns with the caption and fits before DAMAGE PER TICK. Preserve the same horizontal anchor and the genuine stage index (0–11); no new labels, extra row, card growth or other stat changes. Both static audits must guard the 22-DIP level typography and −6-DIP baseline alignment.

@@ -93,7 +93,7 @@ for token in (
 ):
     assert token in knob_bank, "Radiation central hero knob drifted: " + token
 assert abs((2 * 188.0 + 206.0 + 2 * 12.0) - 606.0) < 1e-9
-for factor in (0.0, 0.5, 1.0, 1.5, 2.0, 4.0, 6.0, 10.0):
+for factor in (0.0, 0.5, 1.0, 1.5, 2.0, 4.0, 6.0, 10.0, 15.0):
     for _, prototype, source_value in stages:
         expected = float(source_value) * factor
         points = [p for p in source if p["prototype"] == prototype]
@@ -260,7 +260,7 @@ for token in (
     'var levelNumber = CreateText(level.ToString(CultureInfo.InvariantCulture),',
     '22.0, accent, FontWeights.Bold, contentWidth);',
     'levelPosition.Y - 6.0));',
-    'dc.DrawText(levelNumber, new Point(levelPosition.X + levelPrefix.Width,',
+    'dc.DrawText(levelNumber, new Point(levelPosition.X + levelPrefix.Width + 6.0,',
     'DrawStat("DAMAGE PER TICK", wide ? 165.0 : 115.0,',
     "wide ? 192.0 : 140.0, 29.0,",
     'DrawStat(hasDeathEstimate ? "DEAD AFTER" : "DEATH ESTIMATE",',
@@ -348,8 +348,8 @@ assert angle_to_rad(356.4) == 99
 assert angle_to_rad(359) == 100
 
 print("PASS: 11 original radiation stages and 22 unchanged writer leaves;")
-print("      enlarged 32-tooth ring-only 0–100 RAD and large under-ring value;")
-print("      hero-centered 10x HP DAMAGE and one highlighted estimated death time;")
+print("      enlarged 32-tooth ring-only 0–100 RAD and right-side RAD value;")
+print("      hero-centered 15x HP DAMAGE and one highlighted estimated death time;")
 print("      no obsolete slider, titles or footer; source damage stages unchanged;")
 print("      original stage thresholds, 1:1 damage scaling and conditional fixed-RAD HP estimate.")
 print("NOT VERIFIED: actual permanent-effect damage cadence, healing, armor or gameplay time to death.")
