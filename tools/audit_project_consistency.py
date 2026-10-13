@@ -2153,6 +2153,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'if (currentRad > 0.0)' not in _radiation_renderer
     or 'private const double RadiationHudSegmentGap = 0.36;' not in _radiation_source
     or 'private const int RadiationHudTickStep = 10;' not in _radiation_source
+    or 'currentRad >= tick ? accent : muted' not in _radiation_renderer
     or 'DrawRadiationRingSector(dc, center, radius, first, litEnd, active);' not in _radiation_source
     or 'if (litEnd > first + Epsilon)' not in _radiation_source
     or '"1–100 RAD"' in _radiation_renderer
