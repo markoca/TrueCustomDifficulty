@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Radiation: accumulated decade marks (CURRENT)
+
+On the HUD ring, each unlabeled outer calibration mark at 10, 20, …, 100 RAD uses the yellow accent when the current preview RAD is **greater than or equal to that mark**, and muted ink otherwise. This includes 100 RAD only after reaching 100; retain its slightly longer/thicker geometry. The 99-RAD DEADLY CFG stage is separate from the 100-RAD visual mark. Preserve the existing 32 teeth, ring hit testing, 0-RAD default, stage calculation and no extra numbers or labels.
+
 ### 2026-10-13 — Radiation LEVEL 12 DIP gap / HP DAMAGE 10× (CURRENT)
 
 The muted LEVEL caption and bold yellow level number have **12 DIP horizontal separation**, double the previous gap; positions and fonts remain unchanged. Restore the source-backed HP DAMAGE maximum to **10×** (range 0–10×, step 0.01×, vanilla 1×). This overrides the preceding 15×/6 DIP requirement without modifying radiation stage thresholds, 22 CFG writer leaves or other UI.
