@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Radiation LEVEL 12 DIP gap / HP DAMAGE 10× (CURRENT)
+
+The muted LEVEL caption and bold yellow level number have **12 DIP horizontal separation**, double the previous gap; positions and fonts remain unchanged. Restore the source-backed HP DAMAGE maximum to **10×** (range 0–10×, step 0.01×, vanilla 1×). This overrides the preceding 15×/6 DIP requirement without modifying radiation stage thresholds, 22 CFG writer leaves or other UI.
+
 ### 2026-10-13 — LEVEL number spacing and HP DAMAGE 15× (CURRENT)
 
 In the Radiation System status, add **6 DIP** of horizontal separation between the muted LEVEL caption and its 22-DIP bold yellow stage number without moving either row or introducing another label. The source-backed central HP DAMAGE hero knob now spans **0.00×–15.00×**, native step **0.01×**, vanilla **1.00×**. Preserve its existing footprint, 11 authentic radiation stages, 22 CFG writer leaves, the 0–100 RAD preview and the rest of the compact status hierarchy. This supersedes earlier 10× limits; keep both regression audits aligned.
