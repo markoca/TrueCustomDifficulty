@@ -3260,9 +3260,14 @@ for _token in ('x:Key="WorkbenchGridBrush"', 'Background="{StaticResource Workbe
         fail("Workbench decoration regressed: " + _token)
 for _token in ('internal static class IndustrialRulerChrome', 'public static void DrawNativeTicks(',
                'var stepIndex = Math.Round(intervals * marker / 4.0);',
-               'headerSheen.Opacity *= 0.035;', 'softAccent.Opacity *= 0.52;'):
+               'dc.DrawGeometry(background, new Pen(borderBrush, 1.0), geometry);',
+               'if (accentEdge)', 'if (!technicalMarks)'):
     if _token not in _decor_frame:
         fail("Shared industrial frame/ruler decoration regressed: " + _token)
+for _retired_decoration in ('headerSheen', 'softAccent',
+                            'Short industrial bezel trace'):
+    if _retired_decoration in _decor_frame:
+        fail("Retired yellow header decoration returned: " + _retired_decoration)
 if _decor_aggregate.count('IndustrialRulerChrome.DrawNativeTicks(dc, track,') != 2:
     fail("Shared compact and resource ruler calibrations missing")
 if 'CloneWithOpacity(active ? accent : muted, hovered ? .44 : .15)' not in _decor_aggregate:

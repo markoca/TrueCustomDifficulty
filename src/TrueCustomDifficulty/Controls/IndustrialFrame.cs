@@ -182,18 +182,6 @@ internal static class IndustrialChrome
         geometry.Freeze();
         dc.DrawGeometry(background, new Pen(borderBrush, 1.0), geometry);
 
-        // A barely visible inset sheen enriches major frame heading bands.
-        // No hit areas, labels or measurements are added.
-        if (technicalMarks && rect.Width >= 140.0 && rect.Height >= 90.0)
-        {
-            var headerSheen = accentBrush.CloneCurrentValue();
-            headerSheen.Opacity *= 0.035;
-            headerSheen.Freeze();
-            dc.DrawRectangle(headerSheen, null,
-                new Rect(rect.Left + 4.0, rect.Top + 4.0,
-                    rect.Width - cut - 8.0, 29.0));
-        }
-
         if (accentEdge)
         {
             dc.DrawLine(
@@ -207,17 +195,6 @@ internal static class IndustrialChrome
 
         var markLength = Math.Min(18.0, Math.Max(8.0, rect.Width / 12.0));
         var technicalPen = new Pen(technicalMarkBrush, 1.0);
-
-        // Short industrial bezel trace, away from the centered heading.
-        if (accentEdge && rect.Width >= 260.0)
-        {
-            var softAccent = accentBrush.CloneCurrentValue();
-            softAccent.Opacity *= 0.52;
-            softAccent.Freeze();
-            dc.DrawLine(new Pen(softAccent, 1.4),
-                new Point(rect.Right - cut - 77.0, rect.Top + 1.5),
-                new Point(rect.Right - cut - 28.0, rect.Top + 1.5));
-        }
 
         dc.DrawLine(
             technicalPen,
