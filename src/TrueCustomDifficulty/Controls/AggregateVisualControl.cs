@@ -2608,18 +2608,9 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // Industrial dial face and a 270-degree graduated rail, leaving the
         // bottom quadrant open so the limits never fight the center readout.
-        dc.DrawEllipse(face, new Pen(CloneWithOpacity(border, .72), 1.2),
-            center, radius - 10, radius - 10);
-        // Machined face: a dark inner seam, without a frame around the dial.
-        if (radius > 28.0)
-            dc.DrawEllipse(null, new Pen(CloneWithOpacity(muted, .22), 0.8),
-                center, radius - 22.0, radius - 22.0);
-        // Recessed rotary bezel, highlighted only during actual dial hover.
-        if (radius > 21.0)
-            dc.DrawEllipse(null, new Pen(
-                    CloneWithOpacity(active ? accent : muted, hovered ? .44 : .15),
-                    hovered ? 1.2 : .9),
-                center, radius - 17.0, radius - 17.0);
+        // Keep the quiet face fill but no concentric interior rings:
+        // the outer 270-degree source arc, pointer and native ticks carry the shape.
+        dc.DrawEllipse(face, null, center, radius - 10, radius - 10);
         DrawKnobArc(dc, center, radius, WeaponKnobStartAngle, WeaponKnobSweepAngle,
             new Pen(CloneWithOpacity(border, .95), prominent ? 7.0 : 6.0));
         // The ticks must follow the SAME native min + N * TickFrequency

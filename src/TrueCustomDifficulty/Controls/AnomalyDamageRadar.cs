@@ -295,7 +295,8 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         var reference = Math.Clamp((p.ReferenceNumber - p.Minimum) / range, 0.0, 1.0);
         var active = p.IsControlEnabled;
         var face = CloneWithOpacity(panel, .96);
-        dc.DrawEllipse(face, new Pen(CloneWithOpacity(border, .75), 1.0),
+        // Match all native rotary controls: no interior face outline.
+        dc.DrawEllipse(face, null,
             center, KnobRadius - 10.0, KnobRadius - 10.0);
         DrawKnobArc(dc, center, KnobRadius, KnobSweepAngle,
             new Pen(CloneWithOpacity(border, .9), 6.0));

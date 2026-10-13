@@ -3250,6 +3250,27 @@ else:
     note("Consumable Effects: drink knobs, 8 duration lanes, medicine knobs below, no passive preview")
 
 
+# Native 270-degree knobs retain face fill, native arcs and source pointers,
+# but no circular outlines inside the outer track (including the anomaly dial).
+_inner_knob_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_inner_anomaly_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AnomalyDamageRadar.cs").read_text(encoding="utf-8")
+_inner_knob = _inner_knob_source.split("private void DrawSourceKnob(", 1)[-1].split(
+    "DrawKnobArc(dc, center, radius, WeaponKnobStartAngle", 1)[0]
+_inner_anomaly = _inner_anomaly_source.split("private void DrawGlobalDamageKnob(", 1)[-1].split(
+    "DrawKnobArc(dc, center, KnobRadius", 1)[0]
+if ('dc.DrawEllipse(face, null, center, radius - 10, radius - 10);' not in _inner_knob
+        or _inner_knob.count("dc.DrawEllipse(") != 1
+        or 'dc.DrawEllipse(face, null,' not in _inner_anomaly
+        or _inner_anomaly.count("dc.DrawEllipse(") != 1):
+    fail("Knob centers must have one unoutlined face fill and no innermost rings")
+for _arc in ('DrawKnobArc(dc, center, radius, WeaponKnobStartAngle,',
+             'KnobPoint(center, radius + 2.0, angleNow), 1.7, 1.7'):
+    if _arc not in _inner_knob_source:
+        fail("Native source knob arc or current-value pointer changed")
+if ('DrawKnobArc(dc, center, KnobRadius, KnobSweepAngle,' not in _inner_anomaly_source
+        or 'var baseAngle = KnobStartAngle + reference * KnobSweepAngle;' not in _inner_anomaly_source):
+    fail("Anomaly knob arc or muted reference mapping changed")
+
 # Source-only HUD eye candy: all four shared decorative treatments.
 _telemetry_chrome = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "IndustrialFrame.cs").read_text(encoding="utf-8")
 _telemetry_aggregate = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
@@ -3274,7 +3295,6 @@ if ('<Grid Height="2" Background="Transparent">' not in _telemetry_app
         or 'Opacity="0.2"' not in _telemetry_app):
     fail("WPF standard active slider rail glint missing")
 for _token in (
-    "CloneWithOpacity(muted, .22), 0.8",
     "KnobPoint(center, radius + 2.0, angleNow), 1.7, 1.7",
     "DrawEngravedSeparator(dc, left + 8.0, left + width - 8.0,",
     "141.0, muted);", "237.0, muted);", "149.0, muted);",
@@ -3378,8 +3398,11 @@ for _retired_decoration in ('headerSheen', 'softAccent',
         fail("Retired yellow header decoration returned: " + _retired_decoration)
 if _decor_aggregate.count('IndustrialRulerChrome.DrawNativeTicks(dc, track,') != 2:
     fail("Shared compact and resource ruler calibrations missing")
-if 'CloneWithOpacity(active ? accent : muted, hovered ? .44 : .15)' not in _decor_aggregate:
-    fail("Source-native rotary bezel decoration missing")
+# The two extra concentric decoration rings are intentionally retired.
+if ('center, radius - 17.0, radius - 17.0' in _decor_aggregate
+        or 'center, radius - 22.0, radius - 22.0' in _decor_aggregate
+        or 'CloneWithOpacity(active ? accent : muted, hovered ? .44 : .15)' in _decor_aggregate):
+    fail("Removed inner knob rings were reintroduced")
 _decor_drunk = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "DrunkennessControl.cs").read_text(encoding="utf-8")
 if ('IndustrialRulerChrome.DrawNativeTicks(dc,' not in _decor_drunk
         or '// Outline only the already-selectable DRUNK/WASTED hit cell.' not in _decor_drunk):
