@@ -36,6 +36,8 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private HitTarget? _dragTarget;
     private HitTarget? _hoverTarget;
+    private int _hoverCouponMarker = -1;
+    private readonly List<(Rect Hit, double Value, ParameterViewModel Parameter, int Index)> _couponMarkers = new();
     private ParameterViewModel? _selectedParameter;
     // Distinguish the two handles that edit one range-valued source parameter.
     private HitKind? _selectedHitKind;
@@ -557,6 +559,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (coupons is null)
             return;
 
+        _couponMarkers.Clear();
         var changed = coupons.IsControlEnabled && coupons.IsValueModifiedFromReference();
         DrawRightAlignedText(dc,
             coupons.CurrentNumber.ToString("N0", CultureInfo.InvariantCulture),
@@ -583,8 +586,15 @@ public sealed class AggregateVisualControl : FrameworkElement
                 coupons.Maximum, track, reverse: false);
             dc.DrawLine(new Pen(muted, .9),
                 new Point(tickX, y - 5.0), new Point(tickX, y + 5.0));
-            DrawCenteredText(dc, (tickValue / 1000.0).ToString("0", CultureInfo.InvariantCulture) + "K",
-                new Point(tickX, card.Bottom - 16.0), 9.0, muted, FontWeights.SemiBold);
+            var label = (tickValue / 1000.0).ToString("0", CultureInfo.InvariantCulture) + "K";
+            DrawCenteredText(dc, label,
+                new Point(tickX, card.Bottom - 16.0), 9.0,
+                coupons.IsControlEnabled && _hoverCouponMarker == index ? Brushes.White : muted,
+                FontWeights.SemiBold);
+            if (coupons.IsControlEnabled)
+                _couponMarkers.Add((
+                    new Rect(tickX - 18.0, card.Bottom - 24.0, 36.0, 25.0),
+                    tickValue, coupons, index));
         }
         dc.DrawLine(new Pen(muted, 2.0), new Point(referenceX, y - 10.0),
             new Point(referenceX, y + 10.0));
@@ -5424,6 +5434,18 @@ public sealed class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        var couponMarker = Family == "CouponFlow"
+            ? _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point)) : default;
+        if (couponMarker.Parameter is { IsControlEnabled: true })
+        {
+            _selectedParameter = couponMarker.Parameter;
+            _selectedHitKind = HitKind.Horizontal;
+            couponMarker.Parameter.CurrentNumber = Snap(couponMarker.Parameter, couponMarker.Value);
+            RaiseParameterSelected(couponMarker.Parameter);
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
         if (RadiationRingHit(point))
         {
             _selectedParameter = null;
@@ -5494,6 +5516,23 @@ public sealed class AggregateVisualControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
+        if (Family == "CouponFlow" && _dragTarget is null)
+        {
+            var marker = _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point));
+            var next = marker.Parameter?.IsControlEnabled == true ? marker.Index : -1;
+            if (_hoverCouponMarker != next)
+            {
+                _hoverCouponMarker = next;
+                InvalidateVisual();
+            }
+            if (next >= 0)
+            {
+                Cursor = Cursors.Hand;
+                ToolTip = "Click to set Starting Coupons to " +
+                    marker.Value.ToString("N0", CultureInfo.InvariantCulture);
+                return;
+            }
+        }
         if (_radRingDragging && e.LeftButton == MouseButtonState.Pressed)
         {
             if (RadiationRingHit(point))
@@ -5604,6 +5643,11 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
+        if (_hoverCouponMarker >= 0)
+        {
+            _hoverCouponMarker = -1;
+            InvalidateVisual();
+        }
         if (_dragTarget is null && !_radRingDragging)
         {
             SetHoverTarget(null);

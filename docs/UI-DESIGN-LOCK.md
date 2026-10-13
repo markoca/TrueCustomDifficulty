@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Clickable slider reference indicators (CURRENT)
+
+All actual selectable reference labels must respond to pointer hover with **white text**, a hand cursor and click-to-snap to their indicated native value. The shared VanillaMarkerBar retains existing click and snapping logic and now makes only the hovered label white. Starting Coupons 0K/25K/50K/75K/100K labels are individual hit targets; selecting one applies the corresponding currency value using the existing native step and preserves the compact rail. Distinguish genuine selectable preset/value marks from informative outcome previews or stage descriptions, which cannot be assumed to map one-to-one to editable source values. Do not change source constraints, saved schema or unrelated preview labels.
+
 ### 2026-10-13 — Radiation HP DAMAGE maximum 25× (CURRENT)
 
 The central HP DAMAGE hero knob uses its existing native multiplier source with **0.00×–25.00×** range, **0.01×** step and vanilla **1.00×**. Do not change the rotary geometry, radiation stage thresholds, source prototypes, 22 writer leaves or the rest of the UI. This supersedes the former 20× ceiling; keep static audits aligned.

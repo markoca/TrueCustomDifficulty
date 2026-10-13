@@ -3285,3 +3285,12 @@ if any(_tok not in _npc_preview_source for _tok in ("Math.Min(630.0, sampleCard.
 _anomaly_dial_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AnomalyDamageRadar.cs").read_text(encoding="utf-8")
 if "null, card, 4.0, 4.0);" not in _anomaly_dial_source or "new Pen(CloneWithOpacity(border, .7), 1.0), card" in _anomaly_dial_source:
     fail("Global anomaly multiplier card outline returned")
+
+# Shared slider reference labels and coupon tick selection.
+_marker_bar_src = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "VanillaMarkerBar.cs").read_text(encoding="utf-8")
+_coupon_marker_src = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+if 'Equals(_hoveredMarker, marker) ? Brushes.White : textBrush' not in _marker_bar_src:
+    fail("Shared slider markers must turn white on hover")
+for _marker_token in ("_couponMarkers.Add((", "_hoverCouponMarker == index ? Brushes.White : muted", 'couponMarker.Parameter.CurrentNumber = Snap(couponMarker.Parameter, couponMarker.Value)', 'Cursor = Cursors.Hand;'):
+    if _marker_token not in _coupon_marker_src:
+        fail("Starting Coupons tick hover/click regression: " + _marker_token)

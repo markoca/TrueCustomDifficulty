@@ -95,7 +95,7 @@ public sealed class VanillaMarkerBar : FrameworkElement
             // Keep the connection to the slider subtle; the thumb/value should remain the primary focus.
             dc.DrawLine(new Pen(dotBrush, 0.7d), new Point(x, 0d), new Point(x, 1.5d));
 
-            var markerTextBrush = textBrush;
+            var markerTextBrush = IsEnabled && Equals(_hoveredMarker, marker) ? Brushes.White : textBrush;
 
             var text = new FormattedText(
                 marker.Label,
