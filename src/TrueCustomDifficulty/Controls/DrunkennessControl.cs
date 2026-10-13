@@ -16,6 +16,9 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class DrunkennessControl : FrameworkElement
 {
+    private const double HeaderOffset = 26.0;
+    private const double BoardHeight = 360.0 + HeaderOffset;
+
     private const string BeerStrengthParameterId = "survival.beerDrunknessStrength";
     private const string VodkaStrengthParameterId = "survival.vodkaDrunknessStrength";
 
@@ -50,7 +53,7 @@ public sealed class DrunkennessControl : FrameworkElement
     public DrunkennessControl()
     {
         Focusable = true;
-        MinHeight = 360;
+        MinHeight = BoardHeight;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
     }
@@ -58,7 +61,7 @@ public sealed class DrunkennessControl : FrameworkElement
     protected override Size MeasureOverride(Size availableSize)
     {
         var width = double.IsInfinity(availableSize.Width) ? 720.0 : Math.Max(520.0, availableSize.Width);
-        return new Size(width, 360.0);
+        return new Size(width, BoardHeight);
     }
 
     private static void OnParametersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -116,6 +119,10 @@ public sealed class DrunkennessControl : FrameworkElement
 
         var bounds = new Rect(0.5, 0.5, Math.Max(0.0, ActualWidth - 1.0), Math.Max(0.0, ActualHeight - 1.0));
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), bounds, 4.0, 4.0);
+
+        DrawCenteredText(dc, "ALCOHOL TOLERANCE",
+            new Point(ActualWidth / 2.0, 11.0), 12.0, text, FontWeights.Bold);
+        dc.PushTransform(new TranslateTransform(0.0, HeaderOffset));
 
         var gap = 8.0;
         var totalWidth = Math.Max(480.0, ActualWidth - 24.0);
@@ -180,6 +187,7 @@ public sealed class DrunkennessControl : FrameworkElement
         DrawText(dc, "DRUNKNESS STAGES", new Point(16, 234),
             11.2, text, FontWeights.Bold);
         DrawTierCards(dc, panelAlt, border, radarMuted);
+        dc.Pop();
     }
 
     private void DrawDrinkCard(
@@ -246,9 +254,9 @@ public sealed class DrunkennessControl : FrameworkElement
         var sliderRect = new Rect(sliderLeft, sliderY - 15.0, sliderRight - sliderLeft, 32.0);
 
         if (slider == ActiveSlider.Beer)
-            _beerSliderRect = sliderRect;
+            _beerSliderRect = new Rect(sliderRect.X, sliderRect.Y + HeaderOffset, sliderRect.Width, sliderRect.Height);
         else
-            _vodkaSliderRect = sliderRect;
+            _vodkaSliderRect = new Rect(sliderRect.X, sliderRect.Y + HeaderOffset, sliderRect.Width, sliderRect.Height);
 
         dc.DrawLine(new Pen(track, 3.0), new Point(sliderLeft, sliderY), new Point(sliderRight, sliderY));
 

@@ -3259,3 +3259,18 @@ if errors:
         print(f"[FAIL] {msg}")
     sys.exit(1)
 print(f"PASS — active static checks only; {len(not_run_items)} archived/runtime evidence checks NOT RUN")
+
+# Alcohol Tolerance compact header and translated mouse targets.
+_drunkenness_header_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "DrunkennessControl.cs").read_text(encoding="utf-8")
+for _drunkenness_header_token in (
+    'private const double HeaderOffset = 26.0;',
+    'private const double BoardHeight = 360.0 + HeaderOffset;',
+    'DrawCenteredText(dc, "ALCOHOL TOLERANCE",',
+    'new Point(ActualWidth / 2.0, 11.0), 12.0, text, FontWeights.Bold);',
+    'dc.PushTransform(new TranslateTransform(0.0, HeaderOffset));',
+    'dc.Pop();',
+    '_beerSliderRect = new Rect(sliderRect.X, sliderRect.Y + HeaderOffset, sliderRect.Width, sliderRect.Height);',
+    '_vodkaSliderRect = new Rect(sliderRect.X, sliderRect.Y + HeaderOffset, sliderRect.Width, sliderRect.Height);',
+):
+    if _drunkenness_header_token not in _drunkenness_header_source:
+        fail("Alcohol Tolerance title or interaction layout drifted: " + _drunkenness_header_token)

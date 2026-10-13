@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Centered Alcohol Tolerance heading (CURRENT)
+
+The Survival alcohol editor has a single centered **ALCOHOL TOLERANCE** heading in 12-DIP bold primary text above the BEER/VODKA paired controls. Reserve just **26 DIP** of header height and translate the original drink cards, progression strips and drunkenness-stage cards together by that amount, preserving their internal compact spacing. Increase the editor's measured/minimum height from 360 to **386 DIP** so the final row is not clipped. Mouse hit rectangles must use the translated coordinates; strength/CFG stage behavior remains unchanged. No duplicate headings or secondary explanatory text.
+
 ### 2026-10-13 — Radiation HP DAMAGE maximum 20× (CURRENT)
 
 Increase the source-backed central HP DAMAGE rotary range to **0.00×–20.00×**, native step **0.01×**, vanilla **1.00×**. Keep its existing position, hero diameter, all 11 original radiation stages, 22 CFG writer leaves, 0–100 RAD preview and all remaining UI unchanged. This supersedes earlier 10× and 15× ceilings; both audits must verify the 20× limit.
