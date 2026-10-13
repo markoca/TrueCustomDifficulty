@@ -1307,16 +1307,18 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(sampleCard.Left + 11.0, sampleCard.Top + 7.0),
             10.3, ammoPackageActive ? text : muted, FontWeights.Bold);
 
+        // Cap the sample grid width: three compact columns instead of
+        // stretching all nine NPC-ammo samples across the entire panel.
         const double previewGap = 6.0;
-        const double previewInset = 11.0;
-        var previewWidth = (sampleCard.Width - 2.0 * previewInset
-            - 2.0 * previewGap) / 3.0;
+        var previewTotalWidth = Math.Min(630.0, sampleCard.Width - 22.0);
+        var previewLeft = sampleCard.Left + (sampleCard.Width - previewTotalWidth) / 2.0;
+        var previewWidth = (previewTotalWidth - 2.0 * previewGap) / 3.0;
         for (var i = 0; i < examples.Length; i++)
         {
             var sample = examples[i];
-            var tile = new Rect(sampleCard.Left + previewInset
+            var tile = new Rect(previewLeft
                     + (i % 3) * (previewWidth + previewGap),
-                sampleCard.Top + 25.0 + (i / 3) * 45.0, previewWidth, 40.0);
+                sampleCard.Top + 25.0 + (i / 3) * 41.0, previewWidth, 36.0);
             dc.DrawRoundedRectangle(
                 ammoPackageActive ? CloneWithOpacity(panel, 0.95)
                     : CloneWithOpacity(panel, 0.55),

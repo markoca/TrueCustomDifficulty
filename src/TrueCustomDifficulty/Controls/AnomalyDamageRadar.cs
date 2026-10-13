@@ -283,8 +283,9 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             return;
         const double top = 47.0;
         var card = new Rect((ActualWidth - 194.0) / 2.0, top, 194.0, 181.0);
+        // Keep the global multiplier dial, but remove its enclosing card outline.
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .40),
-            new Pen(CloneWithOpacity(border, .7), 1.0), card, 4.0, 4.0);
+            null, card, 4.0, 4.0);
         DrawCenteredText(dc, "GLOBAL MULTIPLIER", new Point(card.Left + 97.0, 65.0),
             10.0, text, FontWeights.Bold);
 

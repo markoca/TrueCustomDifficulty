@@ -10412,7 +10412,7 @@
       "id": "loot.worldAmmoCratesRemoved",
       "tab": "loot",
       "group": "World Loot",
-      "label": "World Loot Removal",
+      "label": "Ammo Boxes Removed",
       "description": "Changes how much supported world loot is removed by category.",
       "control": "slider",
       "valueKind": "ratio",

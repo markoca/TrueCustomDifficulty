@@ -3274,3 +3274,14 @@ for _drunkenness_header_token in (
 ):
     if _drunkenness_header_token not in _drunkenness_header_source:
         fail("Alcohol Tolerance title or interaction layout drifted: " + _drunkenness_header_token)
+
+# Loot presentation: source label, capped NPC ammunition grid and unframed global dial.
+_loot_param = next((p for p in parameters if p.get("id") == "loot.worldAmmoCratesRemoved"), None)
+if _loot_param is None or _loot_param.get("label") != "Ammo Boxes Removed":
+    fail("Loot world-ammo parameter must not display redundant World Loot Removal label")
+_npc_preview_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+if any(_tok not in _npc_preview_source for _tok in ("Math.Min(630.0, sampleCard.Width - 22.0)", "var previewLeft = sampleCard.Left +", "(i / 3) * 41.0, previewWidth, 36.0")):
+    fail("NPC ammo compact preview grid changed")
+_anomaly_dial_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AnomalyDamageRadar.cs").read_text(encoding="utf-8")
+if "null, card, 4.0, 4.0);" not in _anomaly_dial_source or "new Pen(CloneWithOpacity(border, .7), 1.0), card" in _anomaly_dial_source:
+    fail("Global anomaly multiplier card outline returned")

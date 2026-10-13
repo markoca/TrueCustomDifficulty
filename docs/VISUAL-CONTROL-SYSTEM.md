@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-13 — Loot label, compact NPC ammo preview, frameless global anomaly knob (CURRENT)
+
+In Loot, remove the redundant generic **World Loot Removal** parameter label: the original `loot.worldAmmoCratesRemoved` entry now reads **Ammo Boxes Removed**, matching its actual domain, without changing its stable ID, writer or percentage control. The NPC AMMO PREVIEW retains three columns and nine sample counts, but the nine tiles share a **maximum 630-DIP wide centered grid** (6-DIP gaps) rather than expanding with the whole card; each sample tile is 36 DIP tall with 41-DIP row pitch, inside the same outer panel and without moving later controls. In Anomaly Damage, the central GLOBAL MULTIPLIER knob retains its rotary chrome/hit target but the *outer surrounding knob card* has **no border pen**; the background fill, layout and native scaling remain intact. Keep the UI compact, with no extra captions. The project audit guards the three changes.
+
 ### 2026-10-13 — Centered Alcohol Tolerance heading (CURRENT)
 
 The Survival alcohol editor has a single centered **ALCOHOL TOLERANCE** heading in 12-DIP bold primary text above the BEER/VODKA paired controls. Reserve just **26 DIP** of header height and translate the original drink cards, progression strips and drunkenness-stage cards together by that amount, preserving their internal compact spacing. Increase the editor's measured/minimum height from 360 to **386 DIP** so the final row is not clipped. Mouse hit rectangles must use the translated coordinates; strength/CFG stage behavior remains unchanged. No duplicate headings or secondary explanatory text.
