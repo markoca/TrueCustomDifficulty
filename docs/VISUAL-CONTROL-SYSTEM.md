@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-13 — Physical Limits editable landmark captions (CURRENT)
+
+The authored WAIST / EYES / ABOVE EYES vault-height marker labels retain click-to-snap but now turn white when their exact marker is hovered, including the additional external landmark row. The native kilogram calibration numerals on the neighboring carry-weight slider gain the same white-hover, hand-cursor and exact-value click target. Use existing source-native snapping and constraints; do not invent new gameplay thresholds or rearrange the layout.
+
 ### 2026-10-13 — Bleeding Strength difficulty markers (CURRENT)
 
 Bleeding Strength's genuine difficulty labels under the horizontal slider are selectable marker targets: hover makes their text **white**, displays the hand cursor and clicking snaps the source `survival.bleedingSeverity` to the marker's exact value via the existing native step. The markers stay compact and their visible positions do not change. Do not treat the nearby graph axis numerals as independent edit controls.

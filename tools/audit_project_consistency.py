@@ -3306,3 +3306,9 @@ _bleeding_marker_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / 
 for _token in ("_difficultyMarkerHits.Add((", "_hoverDifficultyValue == marker.Value", "Brushes.White : muted", "marker.Parameter.CurrentNumber = Snap(marker.Parameter, marker.Value)"):
     if _token not in _bleeding_marker_source:
         fail("Bleeding difficulty marker interaction drift: " + _token)
+
+# Physical Limits' selectable height/weight landmarks.
+_physical_markers_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+for _token in ("landmarkHover ? Brushes.White : muted", "kgHover ? Brushes.White : muted", "kg, kg);"):
+    if _token not in _physical_markers_source:
+        fail("Physical Limits landmark marker interaction drift: " + _token)

@@ -1604,8 +1604,12 @@ public sealed class AggregateVisualControl : FrameworkElement
                 dc.DrawLine(new Pen(muted, 1.8),
                     new Point(x, 89.0), new Point(x, 95.0));
                 var caption = marker.Label.Replace("VANILLA / ", "", StringComparison.Ordinal);
+                var landmarkHover = _hoverTarget?.Kind == HitKind.Horizontal
+                    && ReferenceEquals(_hoverTarget.Parameter, vault)
+                    && Math.Abs(_hoverTarget.VisualMinimum - marker.Value) < Epsilon
+                    && Math.Abs(_hoverTarget.VisualMaximum - marker.Value) < Epsilon;
                 DrawCenteredText(dc, caption, new Point(x, 136.0),
-                    9.0, muted, FontWeights.SemiBold);
+                    9.0, landmarkHover ? Brushes.White : muted, FontWeights.SemiBold);
                 // Clicking the printed landmark (not just the 12px track)
                 // chooses the exact authored height. Keep the hit rect inside
                 // the card even for the rightmost ABOVE EYES marker.
@@ -1729,10 +1733,21 @@ public sealed class AggregateVisualControl : FrameworkElement
                 var x = ValueToX(kg, parameter.Minimum, parameter.Maximum, rail, false);
                 dc.DrawLine(new Pen(CloneWithOpacity(muted, .58), 1.0),
                     new Point(x, y - 8.0), new Point(x, y + 9.0));
-                var markerText = CreateText($"{kg:0}", 9.0, muted, FontWeights.SemiBold);
-                dc.DrawText(markerText,
-                    new Point(x - markerText.WidthIncludingTrailingWhitespace / 2.0,
-                        card.Top + 70.0));
+                var kgHover = enabled && _hoverTarget?.Kind == HitKind.Horizontal
+                    && ReferenceEquals(_hoverTarget.Parameter, parameter)
+                    && Math.Abs(_hoverTarget.VisualMinimum - kg) < Epsilon
+                    && Math.Abs(_hoverTarget.VisualMaximum - kg) < Epsilon;
+                var markerText = CreateText($"{kg:0}", 9.0,
+                    kgHover ? Brushes.White : muted, FontWeights.SemiBold);
+                var labelX = x - markerText.WidthIncludingTrailingWhitespace / 2.0;
+                var labelY = card.Top + 70.0;
+                dc.DrawText(markerText, new Point(labelX, labelY));
+                AddHorizontalTarget(parameter,
+                    new Rect(labelX - 4.0, labelY - 3.0,
+                        markerText.WidthIncludingTrailingWhitespace + 8.0,
+                        markerText.Height + 6.0),
+                    new Rect(x, labelY, 1.0, Math.Max(1.0, markerText.Height)),
+                    kg, kg);
             }
         }
 
