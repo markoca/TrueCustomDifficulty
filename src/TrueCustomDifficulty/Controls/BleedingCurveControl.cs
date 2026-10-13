@@ -39,6 +39,8 @@ public sealed class BleedingCurveControl : FrameworkElement
     private Rect _mediumThresholdHitRect;
     private Rect _severeThresholdHitRect;
 
+    private readonly List<(Rect Hit, double Value, ParameterViewModel Parameter)> _difficultyMarkerHits = new();
+    private double? _hoverDifficultyValue;
     private DragTarget _hoverTarget = DragTarget.None;
     private DragTarget _dragTarget = DragTarget.None;
     private DragTarget _selectedTarget = DragTarget.LowDamage;
@@ -168,6 +170,7 @@ public sealed class BleedingCurveControl : FrameworkElement
         var totalCardWidth = Math.Max(420.0, ActualWidth - 32.0);
         var cardWidth = (totalCardWidth - gap) / 2.0;
 
+        _difficultyMarkerHits.Clear();
         DrawCompactSlider(
             dc,
             new Rect(cardLeft, cardTop, cardWidth, 72.0),
@@ -257,8 +260,16 @@ public sealed class BleedingCurveControl : FrameworkElement
             var markerX = ValueToX(marker.Value, parameter.Minimum, parameter.Maximum, trackLeft, trackRight);
             dc.DrawLine(new Pen(muted, 1.0), new Point(markerX, trackY - 5), new Point(markerX, trackY + 5));
             if (difficultyMarkers.Count > 1)
+            {
                 DrawCenteredText(dc, marker.Label, new Point(markerX, trackY + 10.0),
-                    8.3, muted, FontWeights.SemiBold);
+                    8.3,
+                    parameter.IsControlEnabled && _hoverDifficultyValue == marker.Value
+                        ? Brushes.White : muted, FontWeights.SemiBold);
+                if (parameter.IsControlEnabled)
+                    _difficultyMarkerHits.Add((
+                        new Rect(markerX - 21.0, trackY + 8.0, 42.0, 16.0),
+                        marker.Value, parameter));
+            }
         }
 
         var handleX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, trackLeft, trackRight);
@@ -482,6 +493,15 @@ public sealed class BleedingCurveControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        var marker = _difficultyMarkerHits.FirstOrDefault(m => m.Hit.Contains(point));
+        if (marker.Parameter?.IsControlEnabled == true)
+        {
+            _selectedTarget = DragTarget.Severity;
+            marker.Parameter.CurrentNumber = Snap(marker.Parameter, marker.Value);
+            InvalidateVisual();
+            e.Handled = true;
+            return;
+        }
 
         if (_severityTrackRect.Contains(point))
         {
@@ -539,6 +559,19 @@ public sealed class BleedingCurveControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
+        var marker = _difficultyMarkerHits.FirstOrDefault(m => m.Hit.Contains(point));
+        var nextMarker = marker.Parameter?.IsControlEnabled == true
+            ? (double?)marker.Value : null;
+        if (_hoverDifficultyValue != nextMarker)
+        {
+            _hoverDifficultyValue = nextMarker;
+            InvalidateVisual();
+        }
+        if (nextMarker is not null && _dragTarget == DragTarget.None)
+        {
+            Cursor = Cursors.Hand;
+            return;
+        }
         var interactive =
             _severityTrackRect.Contains(point) ||
             _recoveryTrackRect.Contains(point) ||
@@ -590,6 +623,7 @@ public sealed class BleedingCurveControl : FrameworkElement
     {
         base.OnMouseLeave(e);
         _hoverTarget = DragTarget.None;
+        _hoverDifficultyValue = null;
         Cursor = Cursors.Arrow;
         InvalidateVisual();
     }

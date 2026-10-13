@@ -3300,3 +3300,9 @@ _drink_marker_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "Dr
 for _token in ("_progressMarkers.Add(new ProgressMarker(", "new Rect(segmentLeft + 2.0, top + HeaderOffset,", "hovering ? Brushes.White", "progress.Strength - parameter.Minimum", "tier is \"WASTED\" or \"DRUNK\""):
     if _token not in _drink_marker_source:
         fail("Alcohol stage marker hover/click behavior drifted: " + _token)
+
+# Bleeding difficulty markers share the interactive slider-marker language.
+_bleeding_marker_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "BleedingCurveControl.cs").read_text(encoding="utf-8")
+for _token in ("_difficultyMarkerHits.Add((", "_hoverDifficultyValue == marker.Value", "Brushes.White : muted", "marker.Parameter.CurrentNumber = Snap(marker.Parameter, marker.Value)"):
+    if _token not in _bleeding_marker_source:
+        fail("Bleeding difficulty marker interaction drift: " + _token)

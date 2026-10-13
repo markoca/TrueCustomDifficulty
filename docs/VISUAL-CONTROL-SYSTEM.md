@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-13 — Bleeding Strength difficulty markers (CURRENT)
+
+Bleeding Strength's genuine difficulty labels under the horizontal slider are selectable marker targets: hover makes their text **white**, displays the hand cursor and clicking snaps the source `survival.bleedingSeverity` to the marker's exact value via the existing native step. The markers stay compact and their visible positions do not change. Do not treat the nearby graph axis numerals as independent edit controls.
+
 ### 2026-10-13 — Alcohol progression stage markers as slider presets (CURRENT)
 
 The beer and vodka progression strips now support hover/click on DRUNK or WASTED stage cells **only where their exact stage threshold is representable within that drink slider's native strength range**. Hovered state text turns white and the cursor becomes a hand. Clicking maps the indicated drink number to the source stage boundary (30/drink or 80/drink), snaps to the source step and adjusts the associated beer/vodka slider. Preserve the read-only global stage reference cards and avoid pretending that unreachable TIPSY/SOBER thresholds are editable. The previously added 26-DIP heading translation is respected by hit targets. No changes to source stage thresholds, character intoxication semantics, or layout dimensions.
