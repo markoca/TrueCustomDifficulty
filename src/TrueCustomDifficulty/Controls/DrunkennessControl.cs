@@ -277,6 +277,9 @@ public sealed class DrunkennessControl : FrameworkElement
             _vodkaSliderRect = new Rect(sliderRect.X, sliderRect.Y + HeaderOffset, sliderRect.Width, sliderRect.Height);
 
         dc.DrawLine(new Pen(track, 3.0), new Point(sliderLeft, sliderY), new Point(sliderRight, sliderY));
+        IndustrialRulerChrome.DrawNativeTicks(dc,
+            new Rect(sliderLeft, sliderY - 6.0, sliderRight - sliderLeft, 12.0),
+            minimum, maximum, parameter?.TickFrequency ?? 1.0, muted);
 
         var handleX = ValueToX(strength, minimum, maximum, sliderLeft, sliderRight);
         ControlHoverGlow.Draw(dc, new Point(handleX, sliderY), accent,
@@ -365,6 +368,14 @@ public sealed class DrunkennessControl : FrameworkElement
                     new Pen(accent, 2.0),
                     new Point(segmentLeft + 5.0, top + 1.0),
                     new Point(segmentLeft + segmentWidth - 5.0, top + 1.0));
+            }
+
+            if (hovering)
+            {
+                // Outline only the already-selectable DRUNK/WASTED hit cell.
+                dc.DrawRoundedRectangle(null, new Pen(accent, 1.0),
+                    new Rect(segmentLeft + 2.0, top + 2.0,
+                        segmentWidth - 4.0, stripHeight - 4.0), 3.0, 3.0);
             }
 
             DrawCenteredText(

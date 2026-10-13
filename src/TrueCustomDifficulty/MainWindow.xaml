@@ -19,6 +19,25 @@
     <Window.Resources>
         <infra:ResponsiveCardWidthConverter x:Key="ResponsiveCardWidthConverter" />
 
+        <!-- Subtle fixed 32-DIP instrument grid in the gutters around the cards. -->
+        <DrawingBrush x:Key="WorkbenchGridBrush"
+                      TileMode="Tile"
+                      Viewport="0,0,32,32" ViewportUnits="Absolute"
+                      Viewbox="0,0,32,32" ViewboxUnits="Absolute"
+                      Stretch="Fill">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Brush="{StaticResource WindowBackgroundBrush}"
+                                     Geometry="M0,0 L32,0 32,32 0,32 Z" />
+                    <GeometryDrawing Geometry="M0,0 L32,0 M0,0 L0,32">
+                        <GeometryDrawing.Pen>
+                            <Pen Brush="#264A5348" Thickness="0.6" />
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
         <DataTemplate x:Key="ParameterCardTemplate" DataType="{x:Type vm:ParameterViewModel}">
                                                     <Border x:Name="ParameterCard"
                                                             PreviewMouseLeftButtonDown="ParameterCard_PreviewMouseLeftButtonDown"
@@ -732,7 +751,7 @@
                                      ItemsSource="{Binding ParametersView}"
                                      SelectedItem="{Binding SelectedParameter, Mode=TwoWay}"
                                      ItemTemplate="{StaticResource ParameterCardTemplate}"
-                                     Background="{StaticResource WindowBackgroundBrush}"
+                                     Background="{StaticResource WorkbenchGridBrush}"
                                      BorderThickness="0"
                                      Margin="5,6,5,9"
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"

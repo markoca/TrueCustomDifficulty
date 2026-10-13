@@ -2492,6 +2492,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (active)
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 5.0),
                 new Point(track.Left, y), new Point(currentX, y));
+        IndustrialRulerChrome.DrawNativeTicks(dc, track,
+            parameter.Minimum, parameter.Maximum, parameter.TickFrequency, muted);
         // Fatigue Relief keeps the universal gold/neutral ruler; colored
         // underlines are reserved for the drink duration effect markers.
         dc.DrawLine(new Pen(muted, 1.8),
@@ -2604,6 +2606,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         // bottom quadrant open so the limits never fight the center readout.
         dc.DrawEllipse(face, new Pen(CloneWithOpacity(border, .72), 1.2),
             center, radius - 10, radius - 10);
+        // Recessed rotary bezel, highlighted only during actual dial hover.
+        if (radius > 21.0)
+            dc.DrawEllipse(null, new Pen(
+                    CloneWithOpacity(active ? accent : muted, hovered ? .44 : .15),
+                    hovered ? 1.2 : .9),
+                center, radius - 17.0, radius - 17.0);
         DrawKnobArc(dc, center, radius, WeaponKnobStartAngle, WeaponKnobSweepAngle,
             new Pen(CloneWithOpacity(border, .95), prominent ? 7.0 : 6.0));
         // The ticks must follow the SAME native min + N * TickFrequency
@@ -5250,6 +5258,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.65), 3.5),
                 new Point(track.Left, y), new Point(x, y));
 
+        IndustrialRulerChrome.DrawNativeTicks(dc, track,
+            parameter.Minimum, parameter.Maximum, parameter.TickFrequency, muted);
         DrawReferenceTick(dc, parameter, track, y, muted);
         dc.DrawEllipse(panel,
             new Pen(parameter.IsControlEnabled ? accent : muted,

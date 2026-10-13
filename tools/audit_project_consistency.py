@@ -3260,6 +3260,28 @@ if errors:
     sys.exit(1)
 print(f"PASS — active static checks only; {len(not_run_items)} archived/runtime evidence checks NOT RUN")
 
+# Passive workbench decoration uses the shared chrome; never new CFG controls.
+_decor_frame = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "IndustrialFrame.cs").read_text(encoding="utf-8")
+_decor_aggregate = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_decor_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
+for _token in ('x:Key="WorkbenchGridBrush"', 'Background="{StaticResource WorkbenchGridBrush}"',
+               'Viewport="0,0,32,32" ViewportUnits="Absolute"'):
+    if _token not in _decor_xaml:
+        fail("Workbench decoration regressed: " + _token)
+for _token in ('internal static class IndustrialRulerChrome', 'public static void DrawNativeTicks(',
+               'var stepIndex = Math.Round(intervals * marker / 4.0);',
+               'headerSheen.Opacity *= 0.035;', 'softAccent.Opacity *= 0.52;'):
+    if _token not in _decor_frame:
+        fail("Shared industrial frame/ruler decoration regressed: " + _token)
+if _decor_aggregate.count('IndustrialRulerChrome.DrawNativeTicks(dc, track,') != 2:
+    fail("Shared compact and resource ruler calibrations missing")
+if 'CloneWithOpacity(active ? accent : muted, hovered ? .44 : .15)' not in _decor_aggregate:
+    fail("Source-native rotary bezel decoration missing")
+_decor_drunk = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "DrunkennessControl.cs").read_text(encoding="utf-8")
+if ('IndustrialRulerChrome.DrawNativeTicks(dc,' not in _decor_drunk
+        or '// Outline only the already-selectable DRUNK/WASTED hit cell.' not in _decor_drunk):
+    fail("Alcohol strength ruler/progression decoration missing")
+
 # Alcohol Tolerance compact header and translated mouse targets.
 _drunkenness_header_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "DrunkennessControl.cs").read_text(encoding="utf-8")
 for _drunkenness_header_token in (

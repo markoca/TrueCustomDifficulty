@@ -182,6 +182,18 @@ internal static class IndustrialChrome
         geometry.Freeze();
         dc.DrawGeometry(background, new Pen(borderBrush, 1.0), geometry);
 
+        // A barely visible inset sheen enriches major frame heading bands.
+        // No hit areas, labels or measurements are added.
+        if (technicalMarks && rect.Width >= 140.0 && rect.Height >= 90.0)
+        {
+            var headerSheen = accentBrush.CloneCurrentValue();
+            headerSheen.Opacity *= 0.035;
+            headerSheen.Freeze();
+            dc.DrawRectangle(headerSheen, null,
+                new Rect(rect.Left + 4.0, rect.Top + 4.0,
+                    rect.Width - cut - 8.0, 29.0));
+        }
+
         if (accentEdge)
         {
             dc.DrawLine(
@@ -196,6 +208,17 @@ internal static class IndustrialChrome
         var markLength = Math.Min(18.0, Math.Max(8.0, rect.Width / 12.0));
         var technicalPen = new Pen(technicalMarkBrush, 1.0);
 
+        // Short industrial bezel trace, away from the centered heading.
+        if (accentEdge && rect.Width >= 260.0)
+        {
+            var softAccent = accentBrush.CloneCurrentValue();
+            softAccent.Opacity *= 0.52;
+            softAccent.Freeze();
+            dc.DrawLine(new Pen(softAccent, 1.4),
+                new Point(rect.Right - cut - 77.0, rect.Top + 1.5),
+                new Point(rect.Right - cut - 28.0, rect.Top + 1.5));
+        }
+
         dc.DrawLine(
             technicalPen,
             new Point(Math.Max(rect.Left, rect.Right - cut - markLength), rect.Top + 3.0),
@@ -205,5 +228,45 @@ internal static class IndustrialChrome
             technicalPen,
             new Point(rect.Left + cut + 3.0, rect.Bottom - 3.0),
             new Point(Math.Min(rect.Right, rect.Left + cut + markLength), rect.Bottom - 3.0));
+    }
+}
+
+/// <summary>
+/// Passive source-native ruler graduations for compact, hand-drawn controls.
+/// No new thresholds, Base highlights or hit targets.
+/// </summary>
+internal static class IndustrialRulerChrome
+{
+    public static void DrawNativeTicks(
+        DrawingContext dc, Rect track, double minimum, double maximum,
+        double nativeStep, Brush muted)
+    {
+        if (track.Width < 64.0 || nativeStep <= 0.0 || maximum <= minimum)
+            return;
+
+        var intervals = (maximum - minimum) / nativeStep;
+        if (!double.IsFinite(intervals) || intervals < 4.0)
+            return;
+
+        var tickBrush = muted.CloneCurrentValue();
+        tickBrush.Opacity *= 0.38;
+        tickBrush.Freeze();
+        var pen = new Pen(tickBrush, 0.9);
+        pen.Freeze();
+        var y = track.Top + track.Height / 2.0;
+        var lastX = track.Left;
+
+        for (var marker = 1; marker < 4; marker++)
+        {
+            // Pick a real native step near each quarter, not a new CFG tier.
+            var stepIndex = Math.Round(intervals * marker / 4.0);
+            var sourceValue = Math.Min(maximum, minimum + stepIndex * nativeStep);
+            var x = track.Left + (sourceValue - minimum) / (maximum - minimum) * track.Width;
+            if (x - lastX < 5.0 || track.Right - x < 5.0)
+                continue;
+
+            dc.DrawLine(pen, new Point(x, y + 4.5), new Point(x, y + 7.5));
+            lastX = x;
+        }
     }
 }
