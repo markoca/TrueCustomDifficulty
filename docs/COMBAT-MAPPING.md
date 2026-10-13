@@ -56,6 +56,8 @@ The player-facing combat fields used by vanilla difficulty are split across the 
 | `NPCCombatDifficulty.PlayerWeapon_HeadshotMultiplier` | 1.00 | 1.00 | 1.00 | 2.00 |
 | `NPCCombatDifficulty.Weapon_JammingMultiplier` | 1.00 | 1.00 | 1.00 | 1.50 |
 
+The editable **Your Headshot Damage** control covers **0.5×–4×**, in **0.25×** increments (15 knob ticks), independently of the vanilla values listed above. The maximum 4× is a UI editing limit and writes the existing `NPCCombatDifficulty.PlayerWeapon_HeadshotMultiplier` field without introducing an additional damage layer.
+
 These remain independent controls because vanilla itself treats base player weapon damage, headshot scaling and jamming as separate layers. The UI names `Weapon_JammingMultiplier` **Weapon Jamming Frequency**: higher values mean more frequent jams; weapon condition and per-weapon jam thresholds remain separate mechanics.
 
 ## Mutant global combat

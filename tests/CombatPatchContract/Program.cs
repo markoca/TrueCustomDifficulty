@@ -173,7 +173,7 @@ internal static class Program
         new("combat.npcHipAccuracy", "NPCCombatDifficulty", "HipAccuracyMultiplier", "set", 0.5),
         new("combat.explosionDamage", "EnvironmentDifficulty", "Explosion_BaseDamage", "set", 1.5),
         new("combat.playerWeaponDamage", "EnvironmentDifficulty", "Weapon_BaseDamage", "set", 1.25),
-        new("combat.playerHeadshotMultiplier", "NPCCombatDifficulty", "PlayerWeapon_HeadshotMultiplier", "set", 1.5),
+        new("combat.playerHeadshotMultiplier", "NPCCombatDifficulty", "PlayerWeapon_HeadshotMultiplier", "set", 4.0),
         new("combat.weaponJamming", "NPCCombatDifficulty", "Weapon_JammingMultiplier", "set", 0.5),
         new("combat.mutantDamage", "MutantCombatDifficulty", "Mutant_BaseDamage", "set", 0.8),
         new("combat.accumulatedDamageWeightMax", "NPCCombatDifficulty", "AccumulatedDamageReductionCurveWeightMax", "set", 0.9),
@@ -189,6 +189,11 @@ internal static class Program
         {
             var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = difficulty };
             var parameter = Get(vm, spec.Id);
+            if (spec.Id == "combat.playerHeadshotMultiplier")
+                Check(Math.Abs(parameter.Minimum - 0.5) < 1e-9
+                      && Math.Abs(parameter.Maximum - 4.0) < 1e-9
+                      && Math.Abs(parameter.TickFrequency - 0.25) < 1e-9,
+                    name + ": headshot native 0.5x–4x / 0.25x range drifted");
             if (parameter.IsToggle)
             {
                 Check(double.IsNaN(spec.Value), name + ": unexpected boolean test declaration");

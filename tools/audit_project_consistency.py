@@ -2708,7 +2708,7 @@ _knob_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateV
 _knob_catalog = {p["id"]: p for p in parameters_doc["parameters"]}
 _knob_expected = {
     "combat.playerWeaponDamage": (0.25, 2.0),
-    "combat.playerHeadshotMultiplier": (0.5, 3.0),
+    "combat.playerHeadshotMultiplier": (0.5, 4.0),
     "combat.weaponJamming": (0.0, 2.0),
 }
 _knob_required_markers = (
@@ -2907,7 +2907,7 @@ else:
 # (0.10x) while the editing snap still moves by 0.01x.
 _knob_native_cases = {
     "combat.playerWeaponDamage": (0.25, 2.0, 0.25, 1, 8),
-    "combat.playerHeadshotMultiplier": (0.5, 3.0, 0.25, 1, 11),
+    "combat.playerHeadshotMultiplier": (0.5, 4.0, 0.25, 1, 15),
     "combat.weaponJamming": (0.0, 2.0, 0.25, 1, 9),
     "environment.anomalyDamage": (0.0, 2.5, 0.01, 10, 26),
     "loot.ammoBoxWeight918": (0.0, 3.0, 0.25, 1, 13),
@@ -2946,7 +2946,7 @@ for _id, (_min, _max, _step, _stride, _expected_markers) in _knob_native_cases.i
 if _knob_tick_failures:
     fail("eight rotary source grids misaligned: " + "; ".join(_knob_tick_failures))
 else:
-    note("eight source-native knob grids: weapon 8/11/9 marks; anomaly 26 marks at 0.10x; four ammo knobs 13 marks each")
+    note("eight source-native knob grids: weapon 8/15/9 marks; anomaly 26 marks at 0.10x; four ammo knobs 13 marks each")
 
 # Seven 2026-10-11 real-source graphical editors: lock the current visible
 # WPF geometry/interaction and the unchanged source graph, not historical UI.
