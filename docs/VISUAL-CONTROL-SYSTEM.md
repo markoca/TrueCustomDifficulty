@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-13 — Radiation HP DAMAGE maximum 25× (CURRENT)
+
+The central HP DAMAGE hero knob uses its existing native multiplier source with **0.00×–25.00×** range, **0.01×** step and vanilla **1.00×**. Do not change the rotary geometry, radiation stage thresholds, source prototypes, 22 writer leaves or the rest of the UI. This supersedes the former 20× ceiling; keep static audits aligned.
+
 ### 2026-10-13 — Loot label, compact NPC ammo preview, frameless global anomaly knob (CURRENT)
 
 In Loot, remove the redundant generic **World Loot Removal** parameter label: the original `loot.worldAmmoCratesRemoved` entry now reads **Ammo Boxes Removed**, matching its actual domain, without changing its stable ID, writer or percentage control. The NPC AMMO PREVIEW retains three columns and nine sample counts, but the nine tiles share a **maximum 630-DIP wide centered grid** (6-DIP gaps) rather than expanding with the whole card; each sample tile is 36 DIP tall with 41-DIP row pitch, inside the same outer panel and without moving later controls. In Anomaly Damage, the central GLOBAL MULTIPLIER knob retains its rotary chrome/hit target but the *outer surrounding knob card* has **no border pen**; the background fill, layout and native scaling remain intact. Keep the UI compact, with no extra captions. The project audit guards the three changes.

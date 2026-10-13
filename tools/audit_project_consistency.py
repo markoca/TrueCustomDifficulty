@@ -2221,7 +2221,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
 elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
-    note("Radiation: 0–100 ring, central 20x damage knob, 29-DIP stage/damage and one yellow death-time value")
+    note("Radiation: 0–100 ring, central 25x damage knob, 29-DIP stage/damage and one yellow death-time value")
 for _catalog, _heading in (
     ("UI-DESIGN-LOCK.md", "2026-10-13 — Radiation: unified large stats and centered HP DAMAGE hero knob"),
     ("VISUAL-CONTROL-SYSTEM.md", "2026-10-13 — Radiation information hierarchy and HP DAMAGE center hero"),
@@ -2991,7 +2991,7 @@ _seven_expected_sliders = {
     'loot.expensiveStashAmmoQuantity': (0.25, 2, 0.25),
     'survival.radiationAccumulation': (0, 2.5, 0.01),
     'survival.radiationRecovery': (0, 0.1, 0.01),
-    'survival.radiationDamage': (0, 20, 0.01),
+    'survival.radiationDamage': (0, 25, 0.01),
 }
 _seven_errors = []
 for _family, (_method, _height, _ids) in _seven_methods.items():
