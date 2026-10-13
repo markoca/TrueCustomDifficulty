@@ -1,5 +1,10 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Lift labels above every prominent 270° knob (CURRENT)
+
+The shared `AggregateVisualControl.DrawSourceKnob` renderer now positions a source knob title at **card Y+10 DIP when `prominent: true`**, versus the unchanged **Y+19 DIP for ordinary knobs**. The **9-DIP upward adjustment** restores the visual gap between the title and the taller hero dial's upper native ticks, without raising the dial itself or shifting any of its center text, baseline indicators, endpoints or input hit targets. It applies identically to every enlarged knob, currently **Your Weapons → HEADSHOT DAMAGE** (`combat.playerHeadshotMultiplier`), **Master → HP DAMAGE PER TICK** (`survival.starvationDamage`) and **Survival → Radiation System → HP DAMAGE** (`survival.radiationDamage`). Never create per-call-site label offsets, vary the smaller neighboring knob titles or change the shared radius/270° interaction/source step. Card sizes, group positioning, disabled styling, glyph colors, hover and writer operations are unchanged. Keep the source audit enforcing prominent-versus-standard title placement and all three call sites.
+
+
 ### 2026-10-13 — Master healing toggle caption (CURRENT)
 
 In **Master → CONSUMABLE EFFECT PENALTIES**, the centered 39-DIP toggle now reads **HEALING ITEM EFFICIENCY REDUCTION** (uppercase), replacing the former **CONSUMABLE EFFECT BUNDLE** caption. This is only a visible caption change on the existing `advanced.masterEffectModifierMechanics` checkbox; keep its 320-DIP maximum pill width, standard 20-DIP checkbox, centered position, 39-DIP height and original editable-state behavior. Its authored effect scope **still includes other consumable modifiers beyond the three displayed medical healing sliders**; the new wording is a user-requested UI label and must not be used to narrow the CFG, toggle dependencies or writer logic. The three aligned native healing lanes, their ranges and the 296-DIP board stay unchanged.

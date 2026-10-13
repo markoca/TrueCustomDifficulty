@@ -3306,6 +3306,29 @@ for _token in (
 if _master_medical_bank.count('new Rect((ActualWidth - bankWidth) / 2.0,') != 1:
     fail("Master healing bank must be centered at its actual measured width")
 
+# Shared enlarged rotary dials lift only their captions, never native geometry.
+_hero_title_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_hero_knob_method = _hero_title_source.split("private void DrawSourceKnob(", 1)[-1].split(
+    "private static int KnobVisibleStepStride(", 1)[0]
+for _token in (
+    'var titleY = card.Top + (prominent ? 10.0 : 19.0);',
+    'DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, titleY)',
+    'prominent ? 10.7 : 10.0',
+    'WeaponKnobRadius * (prominent ? 1.18 : 1.0)',
+    'new Point(card.Left + card.Width / 2, card.Top + 97.0)',
+):
+    if _token not in _hero_knob_method:
+        fail("Source-native hero knob caption/geometry contract drifted: " + _token)
+if 'new Point(card.Left + card.Width / 2, card.Top + 19)' in _hero_knob_method:
+    fail("Prominent knobs inherited the old cramped caption Y position")
+for _source in (
+    'prominent: channels[i].Id == "combat.playerHeadshotMultiplier"',
+    'prominent: knobs[i].Id == "survival.starvationDamage"',
+    'prominent: hero);',
+):
+    if _source not in _hero_title_source:
+        fail("A prominent rotary knob caller no longer uses the shared caption lift: " + _source)
+
 # Starvation's read-only estimate occupies one centered line, not 3 columns.
 _starvation_ui = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
 _starvation_section = _starvation_ui.split("private void DrawStarvationTimeline(", 1)[-1].split(

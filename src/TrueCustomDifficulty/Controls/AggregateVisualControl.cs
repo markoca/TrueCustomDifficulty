@@ -2707,10 +2707,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         string? nativeUnit = null, bool prominent = false,
         bool positivePrefix = true)
     {
-        // Selected hero dials (Headshot Damage and Starvation HP Damage
-        // Per Tick) are physically emphasized without changing source ranges,
-        // native-step input, hit grammar or editable control ownership.
-        DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, card.Top + 19),
+        // All larger hero dials (Headshot, Starvation HP and Radiation HP)
+        // raise ONLY the caption by 9 DIP to restore the ordinary knob's
+        // title-to-top-tick clearance. Keep the dial/gesture geometry intact.
+        var titleY = card.Top + (prominent ? 10.0 : 19.0);
+        DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, titleY),
             prominent ? 10.7 : 10.0,
             parameter?.IsControlEnabled == true ? text : muted, FontWeights.Bold);
         if (parameter is null)
