@@ -4638,7 +4638,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var levelPosition = new Point(area.Left + 16.0,
             area.Top + (wide ? 117.0 : 81.0));
         dc.DrawText(levelPrefix, levelPosition);
-        dc.DrawText(levelNumber, new Point(levelPosition.X + levelPrefix.Width + 6.0,
+        dc.DrawText(levelNumber, new Point(levelPosition.X + levelPrefix.Width + 12.0,
             levelPosition.Y - 6.0));
 
         DrawStat("DAMAGE PER TICK", wide ? 165.0 : 115.0,
