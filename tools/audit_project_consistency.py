@@ -3250,6 +3250,34 @@ else:
     note("Consumable Effects: drink knobs, 8 duration lanes, medicine knobs below, no passive preview")
 
 
+# Approved recessed-card/precision-thumb pass (UI-only, native ranges unchanged).
+_eye_chrome = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "IndustrialFrame.cs").read_text(encoding="utf-8")
+_eye_aggregate = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_eye_drink = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "DrunkennessControl.cs").read_text(encoding="utf-8")
+_eye_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
+_eye_app = (ROOT / "src" / "TrueCustomDifficulty" / "App.xaml").read_text(encoding="utf-8")
+for _token in ('public static void DrawRecessedCard(', 'rect.Top + 1.5',
+               'rect.Bottom - 1.5'):
+    if _token not in _eye_chrome:
+        fail("Neutral recessed surface chrome missing: " + _token)
+if _eye_aggregate.count('IndustrialChrome.DrawRecessedCard(dc, card, panel, border);') != 2:
+    fail("Both shared native slider-card renderers must use the recessed surface")
+if 'IndustrialChrome.DrawRecessedCard(dc, rect, background, border, 3.0);' not in _eye_drink:
+    fail("Alcohol strength cards missing recessed visual treatment")
+for _token in ('x:Key="RecessedParameterRowBrush"', '<Rectangle Width="1" Height="4"',
+               'Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)"',
+               'To="0.67" Duration="0:0:0.12"', 'To="0" Duration="0:0:0.12"'):
+    if _token not in _eye_app:
+        fail("Precision native thumb or timed hover animation regressed: " + _token)
+for _token in ('Background="{StaticResource RecessedParameterRowBrush}"',
+               'BorderThickness="1"', 'Padding="8,5"',
+               'Storyboard.TargetName="ModifiedIndicator"',
+               'From="0" To="1" Duration="0:0:0.12"'):
+    if _token not in _eye_xaml:
+        fail("Ordinary parameter-card inset or one-shot edit feedback regressed: " + _token)
+if 'Width="8"' not in _eye_app or 'Height="8"' not in _eye_app:
+    fail("Native WPF slider thumb must retain its compact 8-DIP footprint")
+
 # Passive workbench decoration uses the shared chrome; never new CFG controls.
 _decor_frame = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "IndustrialFrame.cs").read_text(encoding="utf-8")
 _decor_aggregate = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")

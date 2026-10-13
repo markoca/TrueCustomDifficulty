@@ -152,6 +152,27 @@ public sealed class IndustrialFrame : Decorator
 
 internal static class IndustrialChrome
 {
+    // Recessed neutral surface: bounded entirely inside the existing card.
+    public static void DrawRecessedCard(
+        DrawingContext dc, Rect rect, Brush fill, Brush border, double radius = 4.0)
+    {
+        dc.DrawRoundedRectangle(fill, new Pen(border, 1.0), rect, radius, radius);
+        if (rect.Width < 40.0 || rect.Height < 30.0)
+            return;
+
+        var shadow = new Pen(new SolidColorBrush(Color.FromArgb(62, 0, 0, 0)), 1.0);
+        var rimBrush = border.CloneCurrentValue();
+        rimBrush.Opacity *= .55;
+        rimBrush.Freeze();
+        var rim = new Pen(rimBrush, 1.0);
+        dc.DrawLine(shadow,
+            new Point(rect.Left + 5.0, rect.Top + 1.5),
+            new Point(rect.Right - 5.0, rect.Top + 1.5));
+        dc.DrawLine(rim,
+            new Point(rect.Left + 5.0, rect.Bottom - 1.5),
+            new Point(rect.Right - 5.0, rect.Bottom - 1.5));
+    }
+
     public static void DrawFrame(
         DrawingContext dc,
         Rect rect,

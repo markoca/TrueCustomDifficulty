@@ -41,11 +41,12 @@
         <DataTemplate x:Key="ParameterCardTemplate" DataType="{x:Type vm:ParameterViewModel}">
                                                     <Border x:Name="ParameterCard"
                                                             PreviewMouseLeftButtonDown="ParameterCard_PreviewMouseLeftButtonDown"
-                                                            Background="{StaticResource ParameterRowBrush}"
-                                                            BorderThickness="0"
+                                                            Background="{StaticResource RecessedParameterRowBrush}"
+                                                            BorderBrush="{StaticResource BorderSoftBrush}"
+                                                            BorderThickness="1"
                                                             CornerRadius="3"
                                                             Margin="1,1"
-                                                            Padding="9,6">
+                                                            Padding="8,5">
                                                         <Grid>
                                                             <Grid.RowDefinitions>
                                                                 <RowDefinition Height="Auto" />
@@ -572,6 +573,17 @@
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsModified}" Value="True">
                                                             <Setter TargetName="ModifiedIndicator" Property="Visibility" Value="Visible" />
+                                                            <!-- One short fade on entry into the modified state, never card-wide. -->
+                                                            <DataTrigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation Storyboard.TargetName="ModifiedIndicator"
+                                                                                         Storyboard.TargetProperty="Opacity"
+                                                                                         From="0" To="1" Duration="0:0:0.12"
+                                                                                         FillBehavior="Stop" />
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.EnterActions>
                                                             <Setter TargetName="CurrentValueText" Property="FontWeight" Value="Bold" />
                                                             <Setter TargetName="CurrentValueText" Property="FontSize" Value="13.7" />
                                                             <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentHoverBrush}" />

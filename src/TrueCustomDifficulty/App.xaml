@@ -11,6 +11,12 @@
         <SolidColorBrush x:Key="PanelAltBrush" Color="#20231F" />
         <SolidColorBrush x:Key="PanelHoverBrush" Color="#292D27" />
         <SolidColorBrush x:Key="ParameterRowBrush" Color="#131512" />
+        <!-- Neutral recessed material, never gold or hover-driven. -->
+        <LinearGradientBrush x:Key="RecessedParameterRowBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#10120F" Offset="0" />
+            <GradientStop Color="#171A16" Offset="0.38" />
+            <GradientStop Color="#141713" Offset="1" />
+        </LinearGradientBrush>
         <SolidColorBrush x:Key="ParameterHoverBrush" Color="#1B1E1A" />
         <SolidColorBrush x:Key="ValuePillBrush" Color="#141613" />
         <SolidColorBrush x:Key="ModifiedValueBrush" Color="#2A2717" />
@@ -459,11 +465,37 @@
                                                         Background="{TemplateBinding Background}"
                                                         BorderBrush="{StaticResource AccentDarkBrush}"
                                                         BorderThickness="1"
-                                                        CornerRadius="5" />
+                                                        CornerRadius="5">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect Color="#F0C419" BlurRadius="15"
+                                                                          ShadowDepth="0" Opacity="0" />
+                                                    </Border.Effect>
+                                                    <!-- Fixed 1-DIP precision notch. Original thumb stays 8x8. -->
+                                                    <Rectangle Width="1" Height="4" Fill="#10130F"
+                                                               IsHitTestVisible="False"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter TargetName="SliderThumb" Property="BorderBrush" Value="{StaticResource AccentHoverBrush}" />
-                                                        <Setter TargetName="SliderThumb" Property="Effect" Value="{StaticResource UniversalHoverGlowEffect}" />
+                                                        <Trigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="SliderThumb"
+                                                                                     Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)"
+                                                                                     To="0.67" Duration="0:0:0.12" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </Trigger.EnterActions>
+                                                        <Trigger.ExitActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="SliderThumb"
+                                                                                     Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)"
+                                                                                     To="0" Duration="0:0:0.12" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </Trigger.ExitActions>
                                                     </Trigger>
                                                     <Trigger Property="IsDragging" Value="True">
                                                         <Setter TargetName="SliderThumb" Property="Background" Value="{StaticResource AccentHoverBrush}" />

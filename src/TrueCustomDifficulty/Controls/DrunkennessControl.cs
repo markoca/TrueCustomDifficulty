@@ -223,7 +223,7 @@ public sealed class DrunkennessControl : FrameworkElement
         Brush muted,
         Brush accent)
     {
-        dc.DrawRoundedRectangle(background, new Pen(border, 1.0), rect, 3.0, 3.0);
+        IndustrialChrome.DrawRecessedCard(dc, rect, background, border, 3.0);
 
         var strength = parameter?.CurrentNumber ?? vanillaStrength;
         // Fallback readouts align with the source catalog's editable bounds.

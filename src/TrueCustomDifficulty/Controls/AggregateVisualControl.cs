@@ -2437,8 +2437,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawingContext dc, ParameterViewModel parameter, string label, string unit,
         Rect card, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),
-            card, 4.0, 4.0);
+        IndustrialChrome.DrawRecessedCard(dc, card, panel, border);
 
         var active = parameter.IsControlEnabled;
         var modified = active && parameter.IsValueModifiedFromReference();
@@ -5196,9 +5195,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         var hovered = parameter is not null && parameter.IsControlEnabled &&
             ReferenceEquals(_hoverTarget?.Parameter, parameter);
-        dc.DrawRoundedRectangle(panel,
-            new Pen(border, 1.0),
-            card, 4.0, 4.0);
+        IndustrialChrome.DrawRecessedCard(dc, card, panel, border);
         var textWidth = Math.Max(1.0, card.Width - 24.0);
         var labelSize = healthTypography ? HealthTypography.Label
             : combatTypography ? 11.2 : 9.8;
