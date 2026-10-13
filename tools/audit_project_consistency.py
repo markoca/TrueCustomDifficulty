@@ -3249,16 +3249,6 @@ if _consumer_errors:
 else:
     note("Consumable Effects: drink knobs, 8 duration lanes, medicine knobs below, no passive preview")
 
-print("True Custom Difficulty — current-source consistency audit")
-for msg in notes:
-    print(f"[OK] {msg}")
-for msg in not_run_items:
-    print(f"[NOT RUN] {msg}")
-if errors:
-    for msg in errors:
-        print(f"[FAIL] {msg}")
-    sys.exit(1)
-print(f"PASS — active static checks only; {len(not_run_items)} archived/runtime evidence checks NOT RUN")
 
 # Passive workbench decoration uses the shared chrome; never new CFG controls.
 _decor_frame = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "IndustrialFrame.cs").read_text(encoding="utf-8")
@@ -3345,3 +3335,15 @@ _physical_markers_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" /
 for _token in ("landmarkHover ? Brushes.White : muted", "kgHover ? Brushes.White : muted", "kg, kg);"):
     if _token not in _physical_markers_source:
         fail("Physical Limits landmark marker interaction drift: " + _token)
+
+# Report only after every current and regression contract was checked.
+print("True Custom Difficulty — current-source consistency audit")
+for msg in notes:
+    print(f"[OK] {msg}")
+for msg in not_run_items:
+    print(f"[NOT RUN] {msg}")
+if errors:
+    for msg in errors:
+        print(f"[FAIL] {msg}")
+    sys.exit(1)
+print(f"PASS — active static checks only; {len(not_run_items)} archived/runtime evidence checks NOT RUN")
