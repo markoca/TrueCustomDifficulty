@@ -3294,3 +3294,9 @@ if 'Equals(_hoveredMarker, marker) ? Brushes.White : textBrush' not in _marker_b
 for _marker_token in ("_couponMarkers.Add((", "_hoverCouponMarker == index ? Brushes.White : muted", 'couponMarker.Parameter.CurrentNumber = Snap(couponMarker.Parameter, couponMarker.Value)', 'Cursor = Cursors.Hand;'):
     if _marker_token not in _coupon_marker_src:
         fail("Starting Coupons tick hover/click regression: " + _marker_token)
+
+# Clickable source-representable alcohol progression presets.
+_drink_marker_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "DrunkennessControl.cs").read_text(encoding="utf-8")
+for _token in ("_progressMarkers.Add(new ProgressMarker(", "new Rect(segmentLeft + 2.0, top + HeaderOffset,", "hovering ? Brushes.White", "progress.Strength - parameter.Minimum", "tier is \"WASTED\" or \"DRUNK\""):
+    if _token not in _drink_marker_source:
+        fail("Alcohol stage marker hover/click behavior drifted: " + _token)

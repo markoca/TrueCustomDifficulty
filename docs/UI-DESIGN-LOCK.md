@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Alcohol progression stage markers as slider presets (CURRENT)
+
+The beer and vodka progression strips now support hover/click on DRUNK or WASTED stage cells **only where their exact stage threshold is representable within that drink slider's native strength range**. Hovered state text turns white and the cursor becomes a hand. Clicking maps the indicated drink number to the source stage boundary (30/drink or 80/drink), snaps to the source step and adjusts the associated beer/vodka slider. Preserve the read-only global stage reference cards and avoid pretending that unreachable TIPSY/SOBER thresholds are editable. The previously added 26-DIP heading translation is respected by hit targets. No changes to source stage thresholds, character intoxication semantics, or layout dimensions.
+
 ### 2026-10-13 — Clickable slider reference indicators (CURRENT)
 
 All actual selectable reference labels must respond to pointer hover with **white text**, a hand cursor and click-to-snap to their indicated native value. The shared VanillaMarkerBar retains existing click and snapping logic and now makes only the hovered label white. Starting Coupons 0K/25K/50K/75K/100K labels are individual hit targets; selecting one applies the corresponding currency value using the existing native step and preserves the compact rail. Distinguish genuine selectable preset/value marks from informative outcome previews or stage descriptions, which cannot be assumed to map one-to-one to editable source values. Do not change source constraints, saved schema or unrelated preview labels.

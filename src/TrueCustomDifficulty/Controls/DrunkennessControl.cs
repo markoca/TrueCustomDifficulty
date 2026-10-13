@@ -37,6 +37,10 @@ public sealed class DrunkennessControl : FrameworkElement
     private Rect _vodkaSliderRect;
     private bool _isDraggingSlider;
     private ActiveSlider? _hoverSlider;
+    private readonly List<ProgressMarker> _progressMarkers = new();
+    private ProgressMarker? _hoverProgressMarker;
+    private sealed record ProgressMarker(Rect HitRect, ActiveSlider Slider, double Strength, int Drink);
+
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -130,6 +134,7 @@ public sealed class DrunkennessControl : FrameworkElement
         var beerCard = new Rect(12.0, 10.0, cardWidth, 100.0);
         var vodkaCard = new Rect(beerCard.Right + gap, 10.0, cardWidth, 100.0);
 
+        _progressMarkers.Clear();
         DrawDrinkCard(
             dc,
             beerCard,
@@ -166,6 +171,8 @@ public sealed class DrunkennessControl : FrameworkElement
             _beerStrengthParameter?.CurrentNumber ?? VanillaBeerDrunkness,
             8,
             122.0,
+            ActiveSlider.Beer,
+            _beerStrengthParameter,
             panelAlt,
             border,
             text,
@@ -178,6 +185,8 @@ public sealed class DrunkennessControl : FrameworkElement
             _vodkaStrengthParameter?.CurrentNumber ?? VanillaVodkaDrunkness,
             4,
             178.0,
+            ActiveSlider.Vodka,
+            _vodkaStrengthParameter,
             panelAlt,
             border,
             text,
@@ -294,6 +303,8 @@ public sealed class DrunkennessControl : FrameworkElement
         double strength,
         int count,
         double titleY,
+        ActiveSlider slider,
+        ParameterViewModel? parameter,
         Brush panelAlt,
         Brush border,
         Brush text,
@@ -315,6 +326,20 @@ public sealed class DrunkennessControl : FrameworkElement
         {
             var tier = GetTierAfterDrink(drink, strength);
             var isStrong = tier == "WASTED";
+            // A stage is selectable only when the corresponding source strength
+            // is within its native range. The selected drink reaches that stage.
+            var boundary = tier == "WASTED" ? VanillaStrong
+                : tier == "DRUNK" ? VanillaMedium : VanillaLow;
+            var value = boundary / drink;
+            var canSelect = parameter?.IsControlEnabled == true
+                && value >= parameter.Minimum && value <= parameter.Maximum
+                && tier is "WASTED" or "DRUNK";
+            if (canSelect)
+                _progressMarkers.Add(new ProgressMarker(
+                    new Rect(segmentLeft + 2.0, top + HeaderOffset,
+                        segmentWidth - 4.0, stripHeight), slider, value, drink));
+            var hovering = canSelect && _hoverProgressMarker?.Slider == slider
+                && _hoverProgressMarker.Drink == drink;
             var segmentLeft = left + (drink - 1) * segmentWidth;
             var segmentCenter = segmentLeft + segmentWidth / 2.0;
 
@@ -347,7 +372,7 @@ public sealed class DrunkennessControl : FrameworkElement
                 tier,
                 new Point(segmentCenter, top + 18.0),
                 10.0,
-                isStrong ? accent : muted,
+                hovering ? Brushes.White : isStrong ? accent : muted,
                 FontWeights.Bold);
         }
     }
@@ -408,6 +433,24 @@ public sealed class DrunkennessControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        var progress = _progressMarkers.FirstOrDefault(m => m.HitRect.Contains(point));
+        if (progress is not null)
+        {
+            var parameter = progress.Slider == ActiveSlider.Beer
+                ? _beerStrengthParameter : _vodkaStrengthParameter;
+            if (parameter?.IsControlEnabled == true)
+            {
+                _activeSlider = progress.Slider;
+                var step = Math.Max(0.0000001, parameter.TickFrequency);
+                var target = parameter.Minimum + Math.Round(
+                    (progress.Strength - parameter.Minimum) / step,
+                    MidpointRounding.AwayFromZero) * step;
+                parameter.CurrentNumber = Math.Clamp(target, parameter.Minimum, parameter.Maximum);
+                InvalidateVisual();
+                e.Handled = true;
+                return;
+            }
+        }
 
         if (_beerSliderRect.Contains(point))
         {
@@ -467,6 +510,17 @@ public sealed class DrunkennessControl : FrameworkElement
             return;
         }
 
+        var progress = _progressMarkers.FirstOrDefault(m => m.HitRect.Contains(point));
+        if (_hoverProgressMarker != progress)
+        {
+            _hoverProgressMarker = progress;
+            InvalidateVisual();
+        }
+        if (progress is not null)
+        {
+            Cursor = Cursors.Hand;
+            return;
+        }
         var next = _beerSliderRect.Contains(point) ? ActiveSlider.Beer
             : _vodkaSliderRect.Contains(point) ? ActiveSlider.Vodka : (ActiveSlider?)null;
         if (_hoverSlider != next)
@@ -493,6 +547,7 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         base.OnMouseLeave(e);
         _hoverSlider = null;
+        _hoverProgressMarker = null;
         Cursor = Cursors.Arrow;
         InvalidateVisual();
     }
