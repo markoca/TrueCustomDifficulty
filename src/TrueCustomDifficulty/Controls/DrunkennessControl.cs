@@ -16,7 +16,7 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 public sealed class DrunkennessControl : FrameworkElement
 {
-    private const double HeaderOffset = 26.0;
+    private const double HeaderOffset = 42.0;
     private const double BoardHeight = 360.0 + HeaderOffset;
 
     private const string BeerStrengthParameterId = "survival.beerDrunknessStrength";
@@ -112,20 +112,29 @@ public sealed class DrunkennessControl : FrameworkElement
     {
         base.OnRender(dc);
 
-        var panel = BrushResource("PanelBrush", new SolidColorBrush(Color.FromRgb(23, 25, 22)));
         var panelAlt = BrushResource("PanelAltBrush", new SolidColorBrush(Color.FromRgb(32, 35, 31)));
         var border = BrushResource("BorderSoftBrush", new SolidColorBrush(Color.FromRgb(44, 48, 42)));
+        var frameBorder = BrushResource("BorderBrush", border);
         var text = BrushResource("TextBrush", Brushes.WhiteSmoke);
         var muted = BrushResource("MutedTextBrush", Brushes.Gray);
         var radarMuted = BrushResource("RadarMutedTextBrush", Brushes.LightGray);
         var accent = BrushResource("AccentBrush", Brushes.Gold);
         var track = BrushResource("SliderTrackBrush", new SolidColorBrush(Color.FromRgb(34, 37, 31)));
 
-        var bounds = new Rect(0.5, 0.5, Math.Max(0.0, ActualWidth - 1.0), Math.Max(0.0, ActualHeight - 1.0));
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), bounds, 4.0, 4.0);
+        // Match the shared system-card chrome used by SleepingDashboard and other aggregates.
+        IndustrialChrome.DrawFrame(
+            dc,
+            new Rect(2.0, 2.0, Math.Max(0.0, ActualWidth - 4.0), Math.Max(0.0, ActualHeight - 4.0)),
+            panelAlt,
+            frameBorder,
+            accent,
+            border,
+            8.0,
+            accentEdge: true,
+            technicalMarks: true);
 
         DrawCenteredText(dc, "ALCOHOL TOLERANCE",
-            new Point(ActualWidth / 2.0, 11.0), 12.0, text, FontWeights.Bold);
+            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
         dc.PushTransform(new TranslateTransform(0.0, HeaderOffset));
 
         var gap = 8.0;
@@ -324,6 +333,8 @@ public sealed class DrunkennessControl : FrameworkElement
 
         for (var drink = 1; drink <= count; drink++)
         {
+            var segmentLeft = left + (drink - 1) * segmentWidth;
+            var segmentCenter = segmentLeft + segmentWidth / 2.0;
             var tier = GetTierAfterDrink(drink, strength);
             var isStrong = tier == "WASTED";
             // A stage is selectable only when the corresponding source strength
@@ -340,9 +351,6 @@ public sealed class DrunkennessControl : FrameworkElement
                         segmentWidth - 4.0, stripHeight), slider, value, drink));
             var hovering = canSelect && _hoverProgressMarker?.Slider == slider
                 && _hoverProgressMarker.Drink == drink;
-            var segmentLeft = left + (drink - 1) * segmentWidth;
-            var segmentCenter = segmentLeft + segmentWidth / 2.0;
-
             if (drink > 1)
             {
                 dc.DrawLine(

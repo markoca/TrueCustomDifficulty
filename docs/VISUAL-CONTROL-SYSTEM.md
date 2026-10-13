@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-13 — Alcohol Tolerance uses standard system-card chrome (CURRENT)
+
+**Survival → ALCOHOL TOLERANCE** uses the same `IndustrialChrome.DrawFrame` geometry as SLEEP SYSTEM and the other aggregate system cards: inset 2-DIP frame, 8-DIP corner cut, accent left edge, and restrained technical corner marks. Its single centered heading is **12.5-DIP bold yellow** (`AccentBrush`) at **Y=21 DIP**; there is no extra caption or duplicate label. The BEER/VODKA pair, progression rows, and stage cards retain their own internal sizes and native bindings but are translated downward by **42 DIP** to clear the standard heading. The editor's measured height and XAML minimum are both **402 DIP**. All pointer hit rectangles, including clickable DRUNK/WASTED progression stages, must use the same translation; stage selection, source values and CFG writes do not change. The stage-marker declaration must precede its first hit-rectangle use to compile (CS0841 regression guard). This replaces the former 26-DIP, 386-DIP, white-title, plain-bordered alcohol panel.
+
 ### 2026-10-13 — Physical Limits editable landmark captions (CURRENT)
 
 The authored WAIST / EYES / ABOVE EYES vault-height marker labels retain click-to-snap but now turn white when their exact marker is hovered, including the additional external landmark row. The native kilogram calibration numerals on the neighboring carry-weight slider gain the same white-hover, hand-cursor and exact-value click target. Use existing source-native snapping and constraints; do not invent new gameplay thresholds or rearrange the layout.
@@ -10,7 +14,7 @@ Bleeding Strength's genuine difficulty labels under the horizontal slider are se
 
 ### 2026-10-13 — Alcohol progression stage markers as slider presets (CURRENT)
 
-The beer and vodka progression strips now support hover/click on DRUNK or WASTED stage cells **only where their exact stage threshold is representable within that drink slider's native strength range**. Hovered state text turns white and the cursor becomes a hand. Clicking maps the indicated drink number to the source stage boundary (30/drink or 80/drink), snaps to the source step and adjusts the associated beer/vodka slider. Preserve the read-only global stage reference cards and avoid pretending that unreachable TIPSY/SOBER thresholds are editable. The previously added 26-DIP heading translation is respected by hit targets. No changes to source stage thresholds, character intoxication semantics, or layout dimensions.
+The beer and vodka progression strips now support hover/click on DRUNK or WASTED stage cells **only where their exact stage threshold is representable within that drink slider's native strength range**. Hovered state text turns white and the cursor becomes a hand. Clicking maps the indicated drink number to the source stage boundary (30/drink or 80/drink), snaps to the source step and adjusts the associated beer/vodka slider. Preserve the read-only global stage reference cards and avoid pretending that unreachable TIPSY/SOBER thresholds are editable. The currently configured heading translation is respected by hit targets. No changes to source stage thresholds, character intoxication semantics, or layout dimensions.
 
 ### 2026-10-13 — Clickable slider reference indicators (CURRENT)
 
@@ -24,7 +28,7 @@ The central HP DAMAGE hero knob uses its existing native multiplier source with 
 
 In Loot, remove the redundant generic **World Loot Removal** parameter label: the original `loot.worldAmmoCratesRemoved` entry now reads **Ammo Boxes Removed**, matching its actual domain, without changing its stable ID, writer or percentage control. The NPC AMMO PREVIEW retains three columns and nine sample counts, but the nine tiles share a **maximum 630-DIP wide centered grid** (6-DIP gaps) rather than expanding with the whole card; each sample tile is 36 DIP tall with 41-DIP row pitch, inside the same outer panel and without moving later controls. In Anomaly Damage, the central GLOBAL MULTIPLIER knob retains its rotary chrome/hit target but the *outer surrounding knob card* has **no border pen**; the background fill, layout and native scaling remain intact. Keep the UI compact, with no extra captions. The project audit guards the three changes.
 
-### 2026-10-13 — Centered Alcohol Tolerance heading (CURRENT)
+### 2026-10-13 — Centered Alcohol Tolerance heading (historical; superseded by standard system-card chrome)
 
 The Survival alcohol editor has a single centered **ALCOHOL TOLERANCE** heading in 12-DIP bold primary text above the BEER/VODKA paired controls. Reserve just **26 DIP** of header height and translate the original drink cards, progression strips and drunkenness-stage cards together by that amount, preserving their internal compact spacing. Increase the editor's measured/minimum height from 360 to **386 DIP** so the final row is not clipped. Mouse hit rectangles must use the translated coordinates; strength/CFG stage behavior remains unchanged. No duplicate headings or secondary explanatory text.
 

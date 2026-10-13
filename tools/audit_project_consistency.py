@@ -3263,10 +3263,13 @@ print(f"PASS — active static checks only; {len(not_run_items)} archived/runtim
 # Alcohol Tolerance compact header and translated mouse targets.
 _drunkenness_header_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "DrunkennessControl.cs").read_text(encoding="utf-8")
 for _drunkenness_header_token in (
-    'private const double HeaderOffset = 26.0;',
+    'private const double HeaderOffset = 42.0;',
     'private const double BoardHeight = 360.0 + HeaderOffset;',
     'DrawCenteredText(dc, "ALCOHOL TOLERANCE",',
-    'new Point(ActualWidth / 2.0, 11.0), 12.0, text, FontWeights.Bold);',
+    'new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);',
+    'IndustrialChrome.DrawFrame(',
+    'accentEdge: true,',
+    'technicalMarks: true,',
     'dc.PushTransform(new TranslateTransform(0.0, HeaderOffset));',
     'dc.Pop();',
     '_beerSliderRect = new Rect(sliderRect.X, sliderRect.Y + HeaderOffset, sliderRect.Width, sliderRect.Height);',
@@ -3274,6 +3277,14 @@ for _drunkenness_header_token in (
 ):
     if _drunkenness_header_token not in _drunkenness_header_source:
         fail("Alcohol Tolerance title or interaction layout drifted: " + _drunkenness_header_token)
+_drunkenness_xaml_source = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
+if 'MinHeight="402"' not in _drunkenness_xaml_source:
+    fail("Alcohol Tolerance host minimum height must match its 402-DIP board")
+_segment_declaration = 'var segmentLeft = left + (drink - 1) * segmentWidth;'
+_segment_marker = 'new Rect(segmentLeft + 2.0, top + HeaderOffset,'
+if (_drunkenness_header_source.count(_segment_declaration) != 1
+        or _drunkenness_header_source.index(_segment_declaration) > _drunkenness_header_source.index(_segment_marker)):
+    fail("Alcohol progression segmentLeft must be declared before the selectable marker (CS0841)")
 
 # Loot presentation: source label, capped NPC ammunition grid and unframed global dial.
 _loot_param = next((p for p in parameters if p.get("id") == "loot.worldAmmoCratesRemoved"), None)
