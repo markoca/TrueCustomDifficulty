@@ -2175,6 +2175,8 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'var level = index + 1;' not in _radiation_source
     or 'var levelPrefix = CreateText("LEVEL ", 13.5, muted,' not in _radiation_source
     or 'var levelNumber = CreateText(level.ToString(CultureInfo.InvariantCulture),' not in _radiation_source
+    or '22.0, accent, FontWeights.Bold, contentWidth);' not in _radiation_source
+    or 'levelPosition.Y - 6.0));' not in _radiation_source
     or 'wide ? 192.0 : 140.0, 29.0,' not in _radiation_source
     or 'wide ? 273.0 : 199.0, 29.0, accent, FontWeights.Bold);' not in _radiation_source
     or 'wide ? 315.0 : 237.0, 27.0, text, FontWeights.Bold);' in _radiation_source

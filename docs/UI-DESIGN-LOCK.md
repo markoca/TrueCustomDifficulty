@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Radiation LEVEL number emphasis (CURRENT)
+
+Retain the compact right-side RADS ACCUMULATED / 29-DIP yellow N RAD / LEVEL N hierarchy. Keep the muted **LEVEL** caption at 13.5 DIP and increase only the yellow numeric level from 13.5 to **22 DIP bold**, offset vertically by **−6 DIP** so it visually aligns with the caption and fits before DAMAGE PER TICK. Preserve the same horizontal anchor and the genuine stage index (0–11); no new labels, extra row, card growth or other stat changes. Both static audits must guard the 22-DIP level typography and −6-DIP baseline alignment.
+
 ### 2026-10-13 — Radiation right-side RADS ACCUMULATED / LEVEL hierarchy (CURRENT; overrides prior radiation readout prescriptions)
 
 The ring carries **no numeric readout below it**; remove the former yellow N RAD text at dial Y+347. In the right borderless status area, the small 11.5-DIP muted caption is **RADS ACCUMULATED**, followed by **N RAD** in the existing 29-DIP bold yellow stage-value slot (wide Y+76 / narrow Y+43). The third line (wide Y+117 / narrow Y+81) reads **LEVEL N**, with LEVEL in 13.5-DIP muted semi-bold and only its stage number yellow 13.5-DIP bold. Level derives from the original zero-based radiation stage index plus one, so 0 RAD = LEVEL 0, 22 RAD = LEVEL 3, and 99–100 RAD = LEVEL 11; do not infer level from a rounded RAD division. Remove the old textual stage name and 20–29 RAD interval from this block. The lower DAMAGE PER TICK and DEAD AFTER tiers, genuine source thresholds/damage and CFG mapping, ring input geometry and 0 RAD preview default are unchanged. Keep both UI catalogs and audit contracts in step.

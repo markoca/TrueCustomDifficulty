@@ -4630,16 +4630,16 @@ public sealed class AggregateVisualControl : FrameworkElement
             11.5, muted, FontWeights.SemiBold);
         DrawStat(_radLevel.ToString("0", CultureInfo.InvariantCulture) + " RAD",
             wide ? 76.0 : 43.0, 29.0, accent, FontWeights.Bold);
-        // Keep LEVEL muted and its number yellow on the same compact line.
+        // Keep LEVEL muted, with a larger yellow number aligned on its baseline.
         var levelPrefix = CreateText("LEVEL ", 13.5, muted,
             FontWeights.SemiBold, contentWidth);
         var levelNumber = CreateText(level.ToString(CultureInfo.InvariantCulture),
-            13.5, accent, FontWeights.Bold, contentWidth);
+            22.0, accent, FontWeights.Bold, contentWidth);
         var levelPosition = new Point(area.Left + 16.0,
             area.Top + (wide ? 117.0 : 81.0));
         dc.DrawText(levelPrefix, levelPosition);
         dc.DrawText(levelNumber, new Point(levelPosition.X + levelPrefix.Width,
-            levelPosition.Y));
+            levelPosition.Y - 6.0));
 
         DrawStat("DAMAGE PER TICK", wide ? 165.0 : 115.0,
             11.5, muted, FontWeights.SemiBold);

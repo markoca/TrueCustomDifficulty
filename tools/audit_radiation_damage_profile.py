@@ -258,6 +258,8 @@ for token in (
     'var level = index + 1;',
     'var levelPrefix = CreateText("LEVEL ", 13.5, muted,',
     'var levelNumber = CreateText(level.ToString(CultureInfo.InvariantCulture),',
+    '22.0, accent, FontWeights.Bold, contentWidth);',
+    'levelPosition.Y - 6.0));',
     'dc.DrawText(levelNumber, new Point(levelPosition.X + levelPrefix.Width,',
     'DrawStat("DAMAGE PER TICK", wide ? 165.0 : 115.0,',
     "wide ? 192.0 : 140.0, 29.0,",
