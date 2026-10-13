@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-13 — Fix MC3088 in modified-indicator animation (CURRENT)
+
+In `MainWindow.xaml`, the ordinary parameter-card `IsModified` `DataTrigger` must place its `<DataTrigger.EnterActions>` **after all sibling `<Setter>` elements** (or before them, never between setters). WPF rejects a property element interleaved with setter content with `MC3088` (reported at former line 587). Preserve the existing 120-ms one-shot `ModifiedIndicator` opacity transition, all gold-on-modification typography and numeric styling, 2-DIP indicator, slider grip, compact card geometry, native source interactions and writer semantics. `tools/audit_project_consistency.py` now parses the relevant WPF XAML triggers structurally and rejects reintroduction of this ordering defect; XML well-formedness alone is insufficient. Windows publish + Wine still require local confirmation.
+
 ### 2026-10-13 — Alcohol Tolerance uses standard system-card chrome (CURRENT)
 
 **Survival → ALCOHOL TOLERANCE** uses the same `IndustrialChrome.DrawFrame` geometry as SLEEP SYSTEM and the other aggregate system cards: inset 2-DIP frame, 8-DIP corner cut, accent left edge, and restrained technical corner marks. Its single centered heading is **12.5-DIP bold yellow** (`AccentBrush`) at **Y=21 DIP**; there is no extra caption or duplicate label. The BEER/VODKA pair, progression rows, and stage cards retain their own internal sizes and native bindings but are translated downward by **42 DIP** to clear the standard heading. The editor's measured height and XAML minimum are both **402 DIP**. All pointer hit rectangles, including clickable DRUNK/WASTED progression stages, must use the same translation; stage selection, source values and CFG writes do not change. The stage-marker declaration must precede its first hit-rectangle use to compile (CS0841 regression guard). This replaces the former 26-DIP, 386-DIP, white-title, plain-bordered alcohol panel.

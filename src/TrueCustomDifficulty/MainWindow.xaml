@@ -573,6 +573,13 @@
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsModified}" Value="True">
                                                             <Setter TargetName="ModifiedIndicator" Property="Visibility" Value="Visible" />
+                                                            <Setter TargetName="CurrentValueText" Property="FontWeight" Value="Bold" />
+                                                            <Setter TargetName="CurrentValueText" Property="FontSize" Value="13.7" />
+                                                            <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
+                                                            <Setter TargetName="EffectiveValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                            <Setter TargetName="RangeMinValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                            <Setter TargetName="RangeMaxValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                            <Setter TargetName="PracticalQuantityText" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                             <!-- One short fade on entry into the modified state, never card-wide. -->
                                                             <DataTrigger.EnterActions>
                                                                 <BeginStoryboard>
@@ -584,13 +591,6 @@
                                                                     </Storyboard>
                                                                 </BeginStoryboard>
                                                             </DataTrigger.EnterActions>
-                                                            <Setter TargetName="CurrentValueText" Property="FontWeight" Value="Bold" />
-                                                            <Setter TargetName="CurrentValueText" Property="FontSize" Value="13.7" />
-                                                            <Setter TargetName="CurrentValueText" Property="Foreground" Value="{StaticResource AccentHoverBrush}" />
-                                                            <Setter TargetName="EffectiveValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                                            <Setter TargetName="RangeMinValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                                            <Setter TargetName="RangeMaxValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                                            <Setter TargetName="PracticalQuantityText" Property="Foreground" Value="{StaticResource AccentBrush}" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding IsVisualControlAnchor}" Value="True">
                                                             <Setter TargetName="ParameterCard" Property="Background" Value="Transparent" />

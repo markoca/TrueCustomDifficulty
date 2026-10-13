@@ -3278,6 +3278,44 @@ for _token in ('Background="{StaticResource RecessedParameterRowBrush}"',
 if 'Width="8"' not in _eye_app or 'Height="8"' not in _eye_app:
     fail("Native WPF slider thumb must retain its compact 8-DIP footprint")
 
+# WPF markup parser MC3088: property elements must not split Setter children.
+# XML well-formedness alone does not catch this WPF-specific content ordering.
+import xml.etree.ElementTree as ET
+_wpf_ns = "{http://schemas.microsoft.com/winfx/2006/xaml/presentation}"
+_root_main = ET.fromstring(_eye_xaml)
+_root_app = ET.fromstring(_eye_app)
+_modified_triggers = [
+    element for element in _root_main.iter(_wpf_ns + "DataTrigger")
+    if element.attrib.get("Binding") == "{Binding IsModified}"
+       and element.attrib.get("Value") == "True"
+       and any(child.attrib.get("TargetName") == "ModifiedIndicator"
+               for child in element if child.tag == _wpf_ns + "Setter")
+]
+if len(_modified_triggers) != 1:
+    fail("Expected one ordinary parameter IsModified marker trigger")
+else:
+    _modified_children = list(_modified_triggers[0])
+    _setter_indices = [i for i, child in enumerate(_modified_children)
+                       if child.tag == _wpf_ns + "Setter"]
+    _actions_indices = [i for i, child in enumerate(_modified_children)
+                        if child.tag == _wpf_ns + "DataTrigger.EnterActions"]
+    if (not _setter_indices or len(_actions_indices) != 1
+            or _setter_indices[-1] >= _actions_indices[0]):
+        fail("WPF MC3088: DataTrigger.EnterActions must follow all Setter children")
+
+# Native Thumb hover trigger has the same XAML ordering constraint.
+_hover_actions = [el for el in _root_app.iter(_wpf_ns + "Trigger")
+                  if el.attrib.get("Property") == "IsMouseOver"
+                  and any(child.tag == _wpf_ns + "Trigger.EnterActions" for child in el)]
+for _hover in _hover_actions:
+    _children = list(_hover)
+    _setters = [i for i, child in enumerate(_children) if child.tag == _wpf_ns + "Setter"]
+    _actions = [i for i, child in enumerate(_children)
+                if child.tag in (_wpf_ns + "Trigger.EnterActions",
+                                 _wpf_ns + "Trigger.ExitActions")]
+    if _setters and _actions and max(_setters) > min(_actions):
+        fail("WPF MC3088: Slider hover animation actions must follow all setters")
+
 # Passive workbench decoration uses the shared chrome; never new CFG controls.
 _decor_frame = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "IndustrialFrame.cs").read_text(encoding="utf-8")
 _decor_aggregate = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
