@@ -2379,7 +2379,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         DrawMasterSectionTitle(dc, "CONSUMABLE EFFECT PENALTIES", accent);
         DrawMasterBundleToggle(dc, P("advanced.masterEffectModifierMechanics"),
-            "CONSUMABLE EFFECT BUNDLE",
+            "HEALING ITEM EFFICIENCY REDUCTION",
             text, muted, border, accent, panel);
 
         var bankWidth = Math.Min(680.0, Math.Max(1.0, ActualWidth - 34.0));

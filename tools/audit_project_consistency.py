@@ -3268,7 +3268,7 @@ for _token in (
 for _token in (
     'DrawMasterSectionTitle(dc, "CONSUMABLE EFFECT PENALTIES", accent);',
     'P("advanced.masterEffectModifierMechanics")',
-    '"CONSUMABLE EFFECT BUNDLE"',
+    '"HEALING ITEM EFFICIENCY REDUCTION"',
     'Math.Min(680.0, Math.Max(1.0, ActualWidth - 34.0))',
     "bank, i, text, muted, border, soft, accent, panel",
     'DrawCenteredText(dc, "100%"',
@@ -3283,6 +3283,8 @@ for _id in (
 ):
     if _master_medical_bank.count(_id) != 1:
         fail("Master healing grouped bank has missing/duplicate source: " + _id)
+if '"CONSUMABLE EFFECT BUNDLE"' in _master_medical_bank:
+    fail("Obsolete Master medical toggle caption was restored")
 if ('DrawMasterCardBank(' in _master_medical_bank
         or _master_medical_bank.count('DrawMasterHealingLane(dc,') != 1):
     fail("Master healing must use one dedicated three-lane panel, not old staggered cards")
