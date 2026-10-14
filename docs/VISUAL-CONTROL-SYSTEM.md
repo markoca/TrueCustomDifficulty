@@ -2,7 +2,7 @@
 
 ### 2026-10-14 — Hercules compact in-dial buff readout (CURRENT)
 
-The existing **HERCULES CARRY** native +kg knob displays its editable source number and neutral `KG` together on the **same centered line** (`+16 KG`); only the changed source number may turn gold. Directly beneath it **inside the dial**, show a legible neutral `+96 WITH BUFF`-style read-only projection, calculated as current Max Carry Weight plus the current Hercules bonus (not the bonus alone and never twice the bonus). Remove the detached `N KG WITH HERCULES` footer. Maintain the 181-DIP compact knob geometry, native range and source mappings; do not add any editable handle, CFG writer, reset group member or redundant caption. The leading `+` in the contextual total is a display convention, not an additional weight increment.
+The existing **HERCULES CARRY** native +kg knob displays its editable source number and neutral `KG` together on the **same centered line** (`+16 KG`); only the changed source number may turn gold. Directly beneath it **inside the dial**, show a legible neutral `96 WITH BUFF`-style read-only projection, calculated as current Max Carry Weight plus the current Hercules bonus (not the bonus alone and never twice the bonus). Remove the detached `N KG WITH HERCULES` footer. Maintain the 181-DIP compact knob geometry, native range and source mappings; do not add any editable handle, CFG writer, reset group member or redundant caption. The contextual total has no leading `+`: it is the full carrying capacity with Hercules active, not another increment to add to the bonus.
 
 
 ### 2026-10-14 — Clearer stamina / bleeding contextual readouts (CURRENT)
