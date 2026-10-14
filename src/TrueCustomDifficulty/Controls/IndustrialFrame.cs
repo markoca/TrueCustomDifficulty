@@ -190,24 +190,6 @@ internal static class IndustrialChrome
         dc.DrawLine(light, new Point(left, y + 1.3), new Point(right, y + 1.3));
     }
 
-    // Passive status lamp: reserved for the real Consumables range-override
-    // state, never applied to the universal checkbox chrome.
-    public static void DrawStatusLed(
-        DrawingContext dc, Point center, bool enabled, Brush accent, Brush muted)
-    {
-        var rim = muted.CloneCurrentValue();
-        rim.Opacity *= 0.5;
-        rim.Freeze();
-        dc.DrawEllipse(null, new Pen(rim, 0.8), center, 3.0, 3.0);
-        if (enabled)
-        {
-            var lit = accent.CloneCurrentValue();
-            lit.Opacity *= 0.82;
-            lit.Freeze();
-            dc.DrawEllipse(lit, null, center, 1.75, 1.75);
-        }
-    }
-
     public static void DrawFrame(
         DrawingContext dc,
         Rect rect,

@@ -3468,12 +3468,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         var overrideHovered = _hoverTarget?.Kind == HitKind.DrinkDurationOverride;
         BooleanCheckboxChrome.Draw(dc, checkboxRect, burst.DrinkDurationOverrideEnabled,
             true, overrideHovered, panel, border, accent);
-        IndustrialChrome.DrawStatusLed(dc,
-            new Point(overrideRect.Left + 9.0, overrideRect.Top + overrideRect.Height / 2.0),
-            burst.DrinkDurationOverrideEnabled, accent, muted);
         dc.DrawText(CreateText("OVERRIDE LIMITS", 9.7, text, FontWeights.Bold,
-            Math.Max(1.0, checkboxRect.Left - overrideRect.Left - 25.0)),
-            new Point(overrideRect.Left + 18.0, overrideRect.Top + 7.0));
+            Math.Max(1.0, checkboxRect.Left - overrideRect.Left - 19.0)),
+            new Point(overrideRect.Left + 12.0, overrideRect.Top + 7.0));
         _hitTargets.Add(new HitTarget(burst, overrideRect, overrideRect,
             HitKind.DrinkDurationOverride, 0.0, 1.0, false));
 

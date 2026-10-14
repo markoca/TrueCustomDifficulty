@@ -3518,8 +3518,6 @@ for _token in (
     "Math.Abs(toX - fromX) < 2.0",
     "glow.Opacity *= 0.27;",
     "public static void DrawEngravedSeparator(",
-    "public static void DrawStatusLed(",
-    "if (enabled)",
 ):
     if _token not in _telemetry_chrome:
         fail("Telemetry chrome missing: " + _token)
@@ -3541,11 +3539,11 @@ for _token in (
 if ('ActualWidth - 21.0, 116.0, muted);' not in _telemetry_alcohol
         or _telemetry_alcohol.count("IndustrialChrome.DrawEngravedSeparator(") != 1):
     fail("Alcohol strength/progression separator drifted")
-if (_telemetry_aggregate.count("IndustrialChrome.DrawStatusLed(") != 1
-        or "burst.DrinkDurationOverrideEnabled, accent, muted);" not in _telemetry_aggregate
-        or "new Point(overrideRect.Left + 18.0, overrideRect.Top + 7.0)" not in _telemetry_aggregate
-        or "Math.Max(1.0, checkboxRect.Left - overrideRect.Left - 25.0)" not in _telemetry_aggregate):
-    fail("Override-only LED must be state-bound and inside the original compact header")
+if ("IndustrialChrome.DrawStatusLed(" in _telemetry_aggregate
+        or "public static void DrawStatusLed(" in _telemetry_chrome
+        or "new Point(overrideRect.Left + 12.0, overrideRect.Top + 7.0)" not in _telemetry_aggregate
+        or "Math.Max(1.0, checkboxRect.Left - overrideRect.Left - 19.0)" not in _telemetry_aggregate):
+    fail("Override Limits must be a compact checkbox-only header without status lamp")
 if "BooleanCheckboxChrome.Draw(dc, checkboxRect, burst.DrinkDurationOverrideEnabled" not in _telemetry_aggregate:
     fail("Override must retain its canonical 20-DIP checkbox")
 

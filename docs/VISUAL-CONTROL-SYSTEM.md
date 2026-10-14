@@ -1,5 +1,12 @@
 # Visual Control System
 
+### 2026-10-14 — Override Limits checkbox without status lamp (CURRENT)
+
+In Survival → Consumable Effects → EFFECT DURATION / SECONDS, the compact 178×28-DIP OVERRIDE LIMITS cell now contains only the text label and the original right-aligned 20-DIP BooleanCheckboxChrome. Remove the small yellow status lamp on the left: the checkmark already communicates whether DrinkDurationOverrideEnabled is on. The label moves from a left inset of 18 to 12 DIP, retaining a clear gap from the checkbox. Remove the now-unused IndustrialChrome.DrawStatusLed helper. No other checkbox should gain a redundant status light.
+
+This is a draw-only change: preserve the original clickable region, hover/reset/key handling, values, native/override ceilings, parent-child duration constraints, preset persistence, source CFG mappings and all surrounding controls. The audit checks that the LED helper and call are absent and that the existing canonical checkbox and label positions remain correct. This supersedes the former 2026-10-13 micro-LED exception.
+
+
 ### 2026-10-14 — Clear Water and Energy Drink buff captions (CURRENT)
 
 **Supersedes the earlier 2026-10-14 short-duration captions and beverage headings.** Inside **Survival → Consumable Effects → EFFECT DURATION / SECONDS**, the same three adjacent 82-DIP child duration controls sit below two compact section headings: **WATER BUFF** (one slider) and **ENERGY DRINK BUFFS** (two sliders). Left-to-right slider captions must read **+25% MAX STAMINA**, **NO STAMINA COST DURATION**, and **-30% STAMINA COST DURATION**, respectively. To prevent cutoff at narrow widths, each title is deliberately drawn in two lines (+25% MAX / STAMINA; NO STAMINA / COST DURATION; -30% STAMINA / COST DURATION), with the current seconds readout sharing only the first line and the second line allowed the whole card width. Do not widen the board, duplicate section labels in the tracks, or repeat the labels in extra help text.
@@ -174,9 +181,9 @@ All **270-degree source-native knobs** have a clean, single unoutlined face fill
 
 **Engraved Separators:** `IndustrialChrome.DrawEngravedSeparator` paints two **neutral, hairline-only** recessed strokes inside *pre-existing empty gaps* at Alcohol Tolerance (between strength cards and progression, local Y=116), Sleep System (eligibility → hour selector Y=141 and selector → wake-up recovery Y=237), and Trading (buy/sell meters → acceptance Y=149). These have no labels, hit targets, padding or independent cards; they must not become bright gold header ornaments.
 
-**Micro LED Indicators:** `IndustrialChrome.DrawStatusLed` is reserved for exactly one **real UI status**: the `DrinkDurationOverrideEnabled` flag in **Consumable Effects → OVERRIDE LIMITS**. A neutral 3-DIP rim has an accent-filled 1.75-DIP center **only while override is true**, without glow/pulse or click handling. It sits inside the existing 178×28-DIP override header cell; the caption shifts 9 DIP to keep the original checkbox and text clear. This is the explicit, restricted exception to the general checkbox-only checkmark presentation: the global `BooleanCheckboxChrome` design and all ordinary toggles remain exactly as locked, with no new LEDs. Never substitute modification status, reference difficulty, simulated game state or decorative fake activity for this boolean.
+**Override checkbox indicator:** The former micro-LED exception is retired. The compact OVERRIDE LIMITS cell has only its caption and canonical right-aligned BooleanCheckboxChrome, with no second lamp or status dot.
 
-These four treatments are **draw-only** except the caption's internal 9-DIP offset; card/board bounds, section placements, Stamina Usage value ordering, current-and-Base formatting, snap/drag/wheel/reset/preset state, and all CFG edit points remain unchanged. The shared static audit checks placement and the no-duplicate-LED contract; local Windows compilation and Wine inspection remain acceptance gates.
+The remaining rail, knob and recessed-divider treatments are draw-only. After removing the duplicate override lamp, its caption uses a 12-DIP left inset; existing controls, saved settings and CFG writers retain their behavior. The shared audit enforces this checkbox-only design.
 
 ### 2026-10-13 — Fix MC3088 in modified-indicator animation (CURRENT)
 
