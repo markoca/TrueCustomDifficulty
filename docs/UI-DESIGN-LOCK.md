@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-14 — Bleeding removes redundant full-HP tick caption (CURRENT)
+
+Under Survival → BLEEDING SYSTEM → DAMAGE TICK TIMELINE, remove the entire permanent centered line showing `FULL HP N · N HP/TICK · 1 S/TICK EST.` at local preview Y+110. Do not replace it with another status label. Existing unified selectable LOW/MEDIUM/SEVERE cards already show exact HP/TICK, numbered tick markers show timing, and the bottom `DEAD IN m:ss` or `NO HP DAMAGE` HUD is sufficient. Preserve stage selection, read-only timeline, damage calculations, card geometry, host height (665 DIP), original CFG writers and preset behavior. The conditional-stage and unverified one-second-per-tick assumptions remain in the existing hover tooltip; remove the permanent duplicate from the visual only. This entry supersedes the previous same-day instruction requiring a visible `1 S/TICK EST.` caption.
+
 ### 2026-10-14 — Bleeding unified stage row and concise death HUD (CURRENT)
 
 Survival → BLEEDING SYSTEM: replace two duplicated LOW/MEDIUM/SEVERE rows with one compact, selectable row. The original threshold and HP/TICK readout cards at Y=405 are now the only stage choices; display LOW/MEDIUM/SEVERE AT live PTS threshold and source HP/TICK. Center all 3 in a max-618-DIP bank, 8-DIP gaps, 44-DIP height. Gold outline indicates selected; white outline/text on hover. Only modified native numbers turn gold. Entire card clickable, keyboard navigation preserved and right-click sets preview back to LOW. Remove the later 480-DIP stage choice row entirely; no duplicate controls or repeated text. The source graph's threshold/HP-tick handles and all CFG/preset behavior are unchanged.

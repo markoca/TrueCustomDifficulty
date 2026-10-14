@@ -606,11 +606,6 @@ public sealed class BleedingCurveControl : FrameworkElement
         }
         DrawText(dc, "0:00", new Point(axis.Left, preview.Top + 91.0),
             9.0, muted, FontWeights.Normal);
-        DrawCenteredText(dc,
-            $"FULL HP {result.StartingHp:0.#}  ·  {result.HpPerTick:0.##} HP/TICK  ·  1 S/TICK EST.",
-            new Point(preview.Left + preview.Width / 2.0, preview.Top + 110.0),
-            9.7, muted, FontWeights.SemiBold);
-
         var hud = new Rect(preview.Left + 12.0, preview.Top + 127.0,
             Math.Max(1.0, preview.Width - 24.0), 41.0);
         const string prefix = "DEAD IN ";

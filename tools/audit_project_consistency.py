@@ -3673,7 +3673,6 @@ for _token in (
     "private ScenarioInput ScenarioTarget(Point p)",
     "return ScenarioInput.None;",
     "if (_scenarioSelected != ScenarioInput.None && e.Key != Key.R)",
-    "1 S/TICK EST.",
 ):
     if _token not in _bleed_control:
         fail("Bleeding read-only timeline and stage controls drifted: " + _token)
@@ -3703,6 +3702,10 @@ for _filename in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "2026-10-14 — Bleeding unified stage row and concise death HUD (CURRENT)" not in (
         ROOT / "docs" / _filename).read_text(encoding="utf-8"):
         fail("Read-only Bleeding timeline UI/catalog contract missing: " + _filename)
+if ('FULL HP {result.StartingHp' in _bleed_control
+        or 'HP/TICK  ·  1 S/TICK EST.' in _bleed_control
+        or 'The full-HP estimate assumes the chosen stage persists' not in _bleed_control):
+    fail("Bleeding removed status line returned or cadence explanation was lost")
 if ("DrawStageChoices(" in _bleed_control
         or _bleed_control.count("_stageChoiceHits[i] = card;") != 1
         or 'const string prefix = "DEAD IN ";' not in _bleed_control
