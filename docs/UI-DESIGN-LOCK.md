@@ -1,5 +1,13 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-14 — Single-line buff titles and concise combat/radiation/bleeding labels (CURRENT)
+
+**Supersedes earlier visible-caption requirements only; source contracts and control geometry are unchanged.** Human Combat's `HumanCombatProfile` no longer draws the redundant **ENEMY PROFILE** and **OFFENSIVE PRESSURE** section titles. The existing HEALTH/GUN DAMAGE readouts, BALANCE EDITOR with both labeled native axes, and the three independent ATTACK FREQUENCY / FIRE ACCURACY / EXPLOSION DAMAGE knobs remain visible and editable at their existing positions. Context help no longer refers to removed titles.
+
+Under **Survival → Consumable Effects → EFFECT DURATION / SECONDS**, the three source-native child duration sliders display their captions on **one line**, not two, while their seconds values remain right-aligned on the same header baseline. At normal widths the captions are **+25% MAX STAMINA**, **NO STAMINA COST DURATION**, and **-30% STAMINA COST DURATION**; for cards narrower than 235 DIP, compact variants **+25% STAMINA**, **NO STAMINA COST**, and **-30% STAMINA COST** avoid overlap without wrapping or increasing the card widths. Keep WATER BUFF / ENERGY DRINK BUFFS headings, native ranges, colors, tracks, parent-duration coupling and global override unchanged. The narrower water caption is presentation-only; no reinterpretation of `WaterStamina2` is implied.
+
+In **RADIATION SYSTEM**, rename the `survival.radiationAccumulation` native knob from **BUILD-UP** to **ACCUMULATION RATE**. In **BLEEDING SYSTEM**, rename the `survival.bleedingSeverity` top slider from **BLEEDING INFLICTED** to **BLEEDING SEVERITY**, including its catalog label. Synchronize hover/help text and regression audit expectations. Neither operation changes CFG keys, numerical values, preset IDs, slider ranges, hit targets, or build output semantics.
+
 ### 2026-10-14 — Remove Bleeding tick timeline and stage selection (CURRENT)
 
 **Survival → BLEEDING SYSTEM:** remove the entire lower **DAMAGE TICK TIMELINE** panel, its fixed 1/2/3 estimated tick rail, **DEAD IN** HUD, hypothetical one-second tick/death calculations and all LOW/MEDIUM/SEVERE stage-selection interaction. This decision supersedes every earlier Bleeding timeline, simulation, death-clock and clickable-stage requirement in this document. The separate `BleedingTimelineProjection` model and its projection-only tests are retired, with no cross-tab dependency on Max HP.

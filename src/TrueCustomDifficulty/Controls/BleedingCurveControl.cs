@@ -174,7 +174,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             dc,
             new Rect(cardLeft, cardTop, cardWidth, 72.0),
             _severity,
-            "BLEEDING INFLICTED",
+            "BLEEDING SEVERITY",
             text,
             muted,
             border,

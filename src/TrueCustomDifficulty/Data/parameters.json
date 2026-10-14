@@ -3472,7 +3472,7 @@
       "id": "survival.bleedingSeverity",
       "tab": "survival",
       "group": "Bleeding",
-      "label": "Bleeding Inflicted",
+      "label": "Bleeding Severity",
       "description": "Scales the difficulty-wide bleeding effect applied by sources that cause bleeding.",
       "control": "slider",
       "valueKind": "multiplier",

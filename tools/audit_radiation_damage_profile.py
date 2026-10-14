@@ -187,7 +187,7 @@ assert splits == [10,20,30,40,50,60,70,80,90,99]
 # The HUD glyph is built as three vector blades and a hub (no external image),
 # keeping actual pointer ring radius and panel hit rectangles unchanged.
 glyph = code.split("private static void DrawRadiationHudTrefoil(", 1)[1].split(
-    "// Native BUILD-UP", 1)[0]
+    "// Native ACCUMULATION RATE", 1)[0]
 assert "for (var blade = 0; blade < 3; blade++)" in glyph
 assert "var angle = -150.0 + blade * 120.0;" in glyph
 assert "ctx.ArcTo(" in glyph

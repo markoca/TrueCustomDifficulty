@@ -3029,7 +3029,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        // Tactical Control Console: bounded enemy profile and a compact
+        // Tactical Control Console: bounded dual-axis source editor and a compact
         // three-knob attack bank. The 2D plot still edits the native X/Y CFGs.
         var wide = HumanCombatWide(ActualWidth);
         const double profileWidth = 300.0;
@@ -3037,9 +3037,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         var bankLeft = (ActualWidth - bankWidth) / 2.0;
         var profileLeft = wide ? bankLeft : (ActualWidth - profileWidth) / 2.0;
 
-        DrawCenteredText(dc, "ENEMY PROFILE",
-            new Point(profileLeft + profileWidth / 2.0, 46.0),
-            10.0, muted, FontWeights.Bold);
         DrawHumanCombatReadout(dc, health, "HEALTH",
             profileLeft + profileWidth * .25, text, muted, accent);
         DrawHumanCombatReadout(dc, damage, "GUN DAMAGE",
@@ -3141,9 +3138,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         var rowLeft = knobBankLeft + (knobBankWidth - rowWidth) / 2.0;
         var knobTop = wide ? 94.0 : 389.0;
 
-        DrawCenteredText(dc, "OFFENSIVE PRESSURE",
-            new Point(knobBankLeft + knobBankWidth / 2.0, wide ? 46.0 : 367.0),
-            10.0, muted, FontWeights.Bold);
         for (var i = 0; i < knobs.Length; i++)
             DrawSourceKnob(dc, knobs[i].Source, knobs[i].Label,
                 new Rect(rowLeft + i * (knobWidth + knobGap), knobTop,
@@ -3641,9 +3635,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         // The three source-backed duration tracks stay on one compact row.
         var shortEffects = new (ParameterViewModel Parameter, string Caption)[]
         {
-            (waterRegenTime, "+25% MAX\nSTAMINA"),
-            (energyFullCostTime, "NO STAMINA\nCOST DURATION"),
-            (energyPartialCostTime, "-30% STAMINA\nCOST DURATION")
+            (waterRegenTime, "+25% MAX STAMINA"),
+            (energyFullCostTime, "NO STAMINA COST DURATION"),
+            (energyPartialCostTime, "-30% STAMINA COST DURATION")
         };
         var secondaryWidth = (preview.Width - 24.0 -
             ConsumableDrinkSectionGap - CompactColumnGap) / 3.0;
@@ -4750,7 +4744,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawEllipse(symbol, null, center, 23.0, 23.0);
     }
 
-    // Native BUILD-UP, RECOVERY, HP DAMAGE remain the only CFG-editable knobs.
+    // Native ACCUMULATION RATE, RECOVERY, HP DAMAGE remain the only CFG-editable knobs.
     // The full-circle preview is independently scrubbable, never a game reading.
     private void DrawRadiationBalance(
         DrawingContext dc, Brush text, Brush muted, Brush border,
@@ -4761,7 +4755,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // knobs remain symmetrical; all three retain their own CFG bindings.
         var sources = new (string Id, string Label)[]
         {
-            ("survival.radiationAccumulation", "BUILD-UP"),
+            ("survival.radiationAccumulation", "ACCUMULATION RATE"),
             ("survival.radiationDamage", "HP DAMAGE"),
             ("survival.radiationRecovery", "RECOVERY")
         };
@@ -5259,22 +5253,19 @@ public sealed class AggregateVisualControl : FrameworkElement
         // genuine 10-DIP gap without making the compact card any wider.
         var labelWidth = Math.Max(1.0,
             contentWidth - valueText.WidthIncludingTrailingWhitespace - 10.0);
-        // Child drink-effect captions have two intentional compact lines.
-        // Line one shares space with the seconds value; line two uses the
-        // entire title width. Do not ellipsize full gameplay descriptions.
-        var headingLines = label.Split('\n');
-        if (headingLines.Length == 2)
+        // Single-line captions share the header with seconds. Shorten only
+        // the three drink-effect captions on narrow cards instead of wrapping
+        // or allowing their text to collide with the value.
+        var visibleLabel = card.Width < 235.0 ? parameter.Id switch
         {
-            dc.DrawText(CreateText(headingLines[0], 9.5, text, FontWeights.Bold, labelWidth),
-                new Point(card.Left + 12.0, card.Top + 5.0));
-            dc.DrawText(CreateText(headingLines[1], 9.5, text, FontWeights.Bold, contentWidth),
-                new Point(card.Left + 12.0, card.Top + 19.0));
-        }
-        else
-        {
-            dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold, labelWidth),
-                new Point(card.Left + 12.0, card.Top + 7.0));
-        }
+            "survival.waterRegenDuration" => "+25% STAMINA",
+            "survival.energyFullCostDuration" => "NO STAMINA COST",
+            "survival.energyPartialCostDuration" => "-30% STAMINA COST",
+            _ => label
+        } : label;
+        dc.DrawText(CreateText(visibleLabel, card.Width < 235.0 ? 9.0 : 10.2,
+                text, FontWeights.Bold, labelWidth),
+            new Point(card.Left + 12.0, card.Top + 7.0));
         dc.DrawText(valueText,
             new Point(card.Right - 12.0 - valueText.WidthIncludingTrailingWhitespace,
                 card.Top + 6.0));

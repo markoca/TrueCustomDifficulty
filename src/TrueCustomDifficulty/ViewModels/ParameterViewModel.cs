@@ -75,13 +75,13 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 var instruction = VisualAggregateFamily switch
                 {
-                    "HumanCombatProfile" => "ENEMY PROFILE shows health and gun damage. Drag the bottom ring for health, the left ring for gun damage, or the center for both. Turn the three OFFENSIVE PRESSURE knobs for attack frequency, fire accuracy and explosion damage; scroll for native-step precision.",
+                    "HumanCombatProfile" => "The health and gun damage readouts reflect the live sources. Drag the bottom ring for health, the left ring for gun damage, or the center for both. Turn the attack frequency, fire accuracy and explosion damage knobs independently; scroll for native-step precision.",
                     "EquipmentWearBalance" => "Drag the bottom ring for armor toughness, the left ring for weapon wear, or the center ring to change both.",
                     "PsyPhantomPressure" => "Drag the bottom or left ring to change one Psy axis; drag the center to move both. The gear-damage fader and bleeding switch work separately.",
                     "FlycatcherSlowdown" => "Drag the bottom ring to change movement speed, the left ring for turning speed, or the center to adjust both.",
                     "HungerLadder" => "The two upper native rulers set hunger points gained each second and the Well-Fed stamina recovery bonus. Move LOW/MEDIUM/SEVERE thresholds on the graph; stamina penalties remain separate.",
                     "FatigueCurve" => "The upper native rulers set fatigue points gained per second and energy drink fatigue relief. Below, adjust stage thresholds and combat penalties independently.",
-                    "RadiationBalance" => "Turn BUILD-UP and HP DAMAGE as multipliers; RECOVERY is real radiation points per second (0–0.10 PTS/S). Select 1–100 RAD on the ring or RAD CONTROLS bar to inspect its source damage and a fixed-RAD full-HP death estimate (one assumed charge/sec, no healing). BUILD-UP and RECOVERY do not affect this fixed-level estimate.",
+                    "RadiationBalance" => "Turn ACCUMULATION RATE and HP DAMAGE as multipliers; RECOVERY is real radiation points per second (0–0.10 PTS/S). Select 1–100 RAD on the ring or RAD CONTROLS bar to inspect its source damage and a fixed-RAD full-HP death estimate (one assumed charge/sec, no healing). ACCUMULATION RATE and RECOVERY do not affect this fixed-level estimate.",
                     "StarvationTimeline" => "Adjust when penalties begin, how often damage ticks occur and the three penalty strengths using their individual controls. The timeline is a preview.",
                     "RepeatedHitBand" => "Drag MIN or MAX to shape repeated-hit protection. Use the switch to decide whether healed damage stays in the tracker.",
                     "ConsumableMixer" => "WATER STAMINA GAIN and ENERGY DRINK STAMINA GAIN independently set immediate stamina restored in percent (vanilla 38% and 50%). WATER STAMINA BUFF changes Water regeneration and action-cost reduction; ENERGY DRINK REGEN adjusts sustained stamina recovery. Drag duration markers below; OVERRIDE LIMITS expands duration ranges. Limited Energy Drink keeps its vanilla 100% instant refill.",
@@ -120,7 +120,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag BEER or VODKA to change that drink's intoxication strength. The stages update in the preview."
                     + Environment.NewLine + "Right-click one drink to reset it; R resets both.";
             if (IsBleedingCurveMember)
-                return "BLEEDING INFLICTED and NATURAL RECOVERY edit their native CFG values. On the BLEEDING DAMAGE PROFILE, drag the LOW/MEDIUM/SEVERE damage handles or the Medium/Severe threshold markers."
+                return "BLEEDING SEVERITY and NATURAL RECOVERY edit their native CFG values. On the BLEEDING DAMAGE PROFILE, drag the LOW/MEDIUM/SEVERE damage handles or the Medium/Severe threshold markers."
                     + Environment.NewLine + "The three stage cards below show current bleeding-point thresholds and HP per tick only. They are not clickable and no death-time simulation is shown."
                     + Environment.NewLine + "Right-click a real graph control to reset it; R resets all seven bleeding CFG sources.";
 
@@ -1018,7 +1018,7 @@ public sealed class ParameterViewModel : ObservableObject
             "survival.energyPartialCostDuration" => $"{CurrentNumber:0.#} s",
             "survival.sleepEligibilityThreshold" => $"{CurrentNumber:0} pts",
             "survival.minimumSleepHours" => $"{CurrentNumber:0} h",
-            "survival.radiationAccumulation" => Times(CurrentNumber, "buildup"),
+            "survival.radiationAccumulation" => Times(CurrentNumber, "accumulation rate"),
             "survival.radiationRecovery" => $"{CurrentNumber:0.##} pts/s",
             "survival.radiationDamage" => Times(CurrentNumber, "rad dmg"),
             "survival.bleedingSeverity" => Times(CurrentNumber, "bleed"),

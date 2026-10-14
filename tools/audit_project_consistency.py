@@ -2210,6 +2210,15 @@ for _file in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
         fail(f"Shared Hunger/Fatigue primary ruler specification not synchronized: {_file}")
 note("Hunger/Fatigue starting sliders: identical Core Health/Stamina ruler layout, native rate/bonus units, stage/chart height aligned")
 
+# Human Combat headings were removed without changing the five native controls.
+_human_render_start = _semantic_source_dir.joinpath("AggregateVisualControl.cs").read_text(encoding="utf-8").split("private void DrawHumanCombatProfile(", 1)
+if len(_human_render_start) != 2:
+    fail("Human Combat renderer missing")
+else:
+    _human_render = _human_render_start[1].split("\n    private ", 1)[0]
+    if 'DrawCenteredText(dc, "ENEMY PROFILE"' in _human_render or 'DrawCenteredText(dc, "OFFENSIVE PRESSURE"' in _human_render:
+        fail("Human Combat redundant group headings returned")
+
 # Radiation System source-to-renderer regression: short recovery terminology,
 # and measured label width rather than the old fixed 155-DIP reservation.
 _radiation_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
@@ -2221,7 +2230,7 @@ _radiation_finish = _radiation_source.find('\n    private ', _radiation_begin + 
 _radiation_renderer = (_radiation_source[_radiation_begin:_radiation_finish]
                        if 0 <= _radiation_begin < _radiation_finish else '')
 _radiation_required = (
-    '("survival.radiationAccumulation", "BUILD-UP")',
+    '("survival.radiationAccumulation", "ACCUMULATION RATE")',
     '("survival.radiationRecovery", "RECOVERY")',
     '("survival.radiationDamage", "HP DAMAGE")',
     'DrawSourceKnob(dc, P(source.Id), source.Label,',
@@ -2323,7 +2332,7 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'RADIATION SIMULATION' in _radiation_source
     or 'RADIATION TIMELINE' in _radiation_source):
     fail("Radiation System three native source knobs, PTS/S unit or wheel mapping drifted")
-elif '"RadiationBalance" => "Turn BUILD-UP' not in _radiation_help:
+elif '"RadiationBalance" => "Turn ACCUMULATION RATE' not in _radiation_help:
     fail("Radiation System context still describes retired vertical gauges")
 else:
     note("Radiation: 0–100 ring, central 25x damage knob, 29-DIP stage/damage and one yellow death-time value")
@@ -2369,12 +2378,11 @@ for _token in (
     "private const double ConsumableDrinkSectionGap = 16.0;",
     "=> ConsumableShortEffectsTrackTop + CompactTrackHeight + 12.0;",
     "energySectionLeft + (index - 1) *",
-    "var headingLines = label.Split('\\n');",
-    "headingLines.Length == 2",
-    "new Point(card.Left + 12.0, card.Top + 19.0)",
-    "(waterRegenTime, \"+25% MAX\\nSTAMINA\")",
-    "(energyFullCostTime, \"NO STAMINA\\nCOST DURATION\")",
-    "(energyPartialCostTime, \"-30% STAMINA\\nCOST DURATION\")",
+    "var visibleLabel = card.Width < 235.0 ? parameter.Id switch",
+    "new Point(card.Left + 12.0, card.Top + 7.0)",
+    "(waterRegenTime, \"+25% MAX STAMINA\")",
+    "(energyFullCostTime, \"NO STAMINA COST DURATION\")",
+    "(energyPartialCostTime, \"-30% STAMINA COST DURATION\")",
 ):
     if _token not in _duration_renderer:
         fail(f"consumable short-duration native control/measurement missing: {_token}")
@@ -2382,7 +2390,9 @@ if _duration_renderer.count("DrawCompactTrack(dc, shortEffect, caption,") != 1:
     fail("consumable child duration track registration drifted")
 if ("ConsumableSecondaryColumns(" in _duration_renderer
     or "STAMINA EFFECT DURATION" in _duration_renderer
-    or "STAMINA COST DURATION" in _duration_renderer):
+    or '"STAMINA COST DURATION"' in _duration_renderer
+    or '(waterRegenTime, "+25% MAX\\nSTAMINA")' in _duration_renderer
+    or "var headingLines = label.Split(" in _duration_renderer):
     fail("consumable short-duration captions or responsive row splitting regressed")
 
 
@@ -3188,7 +3198,7 @@ _seven_radiation_end = _seven_src.find('\n    private ', _seven_radiation_start)
 _seven_radiation_body = (_seven_src[_seven_radiation_start:_seven_radiation_end]
                          if 0 <= _seven_radiation_start < _seven_radiation_end else '')
 _seven_radiation_native = (
-    '("survival.radiationAccumulation", "BUILD-UP")',
+    '("survival.radiationAccumulation", "ACCUMULATION RATE")',
     '("survival.radiationRecovery", "RECOVERY")',
     '("survival.radiationDamage", "HP DAMAGE")',
     'DrawSourceKnob(dc, P(source.Id), source.Label,',
@@ -3216,7 +3226,7 @@ if (not all(t in _seven_stash_body for t in _seven_stash_native)
     or '"StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,' not in _seven_src
     or not knob_wheel_gate_contains(_seven_src, 'StashRewardProfile')):
     _seven_errors.append('stash-tier/radiation native knobs, bonus rails or repair graph lost source wiring')
-if not all(t in _seven_vm for t in ('"RadiationBalance" => "Turn BUILD-UP',
+if not all(t in _seven_vm for t in ('"RadiationBalance" => "Turn ACCUMULATION RATE',
                                   '"RepairCurve" => "Drag one reputation point',
                                   '"SleepingDashboard" => "Select 1–14 minimum sleep hours')):
     _seven_errors.append('new seven-control source help/provenance not updated')
@@ -3765,7 +3775,7 @@ _bleed_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_t
 _bleed_element = _bleed_xaml.split('<controls:BleedingCurveControl x:Name="BleedingCurveControl"', 1)
 _bleed_required = (
     "private const double DesiredHeight = 466.0;",
-    '"BLEEDING INFLICTED"',
+    '"BLEEDING SEVERITY"',
     '"NATURAL RECOVERY"',
     '"BLEEDING DAMAGE PROFILE"',
     '"LOW", "MEDIUM", "SEVERE"',
