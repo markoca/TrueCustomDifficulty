@@ -2039,21 +2039,12 @@ _linked_projection_contract = {
     ),
     "MedicalHealingRadar.cs": (
         'byId.TryGetValue("health.maxHP", out _maxHealth);',
-        'byId.TryGetValue("survival.bleedingMediumThreshold", out _bleedingMediumThreshold);',
-        'byId.TryGetValue("survival.bleedingStrongThreshold", out _bleedingSevereThreshold);',
         'item.CurrentNumber / currentPool',
-        'threshold.CurrentNumber / BleedingRulerPts',
     ),
     "BleedingCurveControl.cs": (
         'byId.TryGetValue("health.maxHP", out _maxHealth);',
         'currentValues[i] / pool',
         '_maxHealth.PropertyChanged += Parameter_PropertyChanged;',
-    ),
-    "MutantDropRadar.cs": (
-        'byId.TryGetValue("economy.mutantPartValue", out _partValue)',
-        'chance * priceScale',
-        'RETURN INDEX',
-        'species base prices remain independent',
     ),
 }
 _linked_controls = ROOT / "src" / "TrueCustomDifficulty" / "Controls"
@@ -2064,6 +2055,21 @@ for _file, _tokens in _linked_projection_contract.items():
     if _missing:
         _projection_errors.append(f"{_file}: missing {', '.join(_missing)}")
 
+# Retired cross-panel displays must stay absent, including their read-only
+# subscriptions. The native HEAL/BLEED and mutant chance editors remain.
+_medical_projection_text = (_linked_controls / "MedicalHealingRadar.cs").read_text(encoding="utf-8")
+for _retired in (
+    "BLEED STAGES", "_bleedingMediumThreshold", "_bleedingSevereThreshold",
+    'byId.TryGetValue("survival.bleedingMediumThreshold"',
+    'byId.TryGetValue("survival.bleedingStrongThreshold"',
+    "DashStyles.Dash",
+):
+    if _retired in _medical_projection_text:
+        _projection_errors.append(f"Medical Items still displays/observes obsolete bleed stages: {_retired}")
+_mutant_projection_text = (_linked_controls / "MutantDropRadar.cs").read_text(encoding="utf-8")
+for _retired in ("RETURN INDEX", "_partValue", "chance * priceScale"):
+    if _retired in _mutant_projection_text:
+        _projection_errors.append(f"Mutant Parts still displays/observes obsolete return index: {_retired}")
 _aggregate_dependency_text = (_linked_controls / "AggregateVisualControl.cs").read_text(encoding="utf-8")
 for _linked_id in (
     "stamina.maxSP", "stamina.maxCarryWeight", "health.maxHP",
@@ -2087,8 +2093,9 @@ if ("yield return _maximumStamina;" in _action_members
 
 for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     _body = (ROOT / "docs" / _doc).read_text(encoding="utf-8")
-    if "Twelve cross-control live projections (CURRENT)" not in _body:
-        _projection_errors.append(f"{_doc}: current 12-preview specification missing")
+    if ("Remove bleeding-stage overlays from Medical Items (CURRENT)" not in _body
+            or "Twelve cross-control live projections (HISTORICAL; ten remain)" not in _body):
+        _projection_errors.append(f"{_doc}: active 10-preview specification missing")
 for _example, _answer in (
     ((100, 16), (16.0, 6)),
     ((150, 16), (16 / 150 * 100, 9)),
@@ -2103,9 +2110,9 @@ if abs((70 / 140 * 100) - 50) > 1e-8 or abs((80 + 20) - 100) > 1e-8:
     _projection_errors.append("Medical/Hercules reference examples failed")
 
 if _projection_errors:
-    fail("12 live linked-control preview contracts drifted: " + "; ".join(_projection_errors))
+    fail("10 live linked-control preview contracts drifted: " + "; ".join(_projection_errors))
 else:
-    note("12 cross-control projections: live observers, accurate derived values, source-native edits and no reset bleed-through")
+    note("10 cross-control projections: live observers, accurate derived values, source-native edits and no reset bleed-through")
 
 # Current user-help contract no longer describes retired polar-radar gestures.
 _control_help_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")

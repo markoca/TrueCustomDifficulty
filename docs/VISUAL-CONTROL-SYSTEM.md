@@ -1,5 +1,12 @@
 # Visual Control System
 
+### 2026-10-14 — Remove bleeding-stage overlays from Medical Items (CURRENT)
+
+**Medical Items** HEAL/BLEED pairs must show only the four items' original HEAL HP and BLEED removal PTS values with their independent native rulers, muted per-source reference ticks and existing live `% MAX HP` healing readouts. **Remove** the entire `BLEED STAGES | MEDIUM ... | SEVERE ...` heading and both dashed stage-threshold lines from **all four BLEED columns**. Do not replace them with another explanatory label or reserve extra space. Stage thresholds belong only to **Survival → Bleeding System**, and Medical Items must no longer subscribe to those two threshold sources for rendering. Keep its read-only Max HP relation for HEAL percentages, the four bar hit areas, labels, colored source bars, native reference ticks, individual reset, group reset, CFG mappings, checkbox controls and measured panel size unchanged.
+
+This retires cross-control projection **#7** from the earlier twelve-preview introduction; the Mutant Parts RETURN INDEX (#12) was already retired. There are therefore **ten active cross-panel projections**. Any former Medical Items stage-heading or bleed-threshold marker specification below is superseded.
+
+
 ### 2026-10-14 — Remove mutant-part return index (CURRENT)
 
 **Mutant Parts / MutantDropRadar** displays only each species' independently editable native DROP CHANCE percentage and compact chance rail. Remove every `RETURN INDEX` readout, its chance × mutant-price calculation, its economy.mutantPartValue repaint subscription, and its explanatory tooltip. Shift the chance rail slightly upward into the freed space without enlarging the cards or changing hit semantics, source ranges, reset behavior, preset IDs or CFG writers. The economic mutant-part price multiplier remains separately editable in Economy; it is no longer a visual dependency of Mutant Parts. This supersedes item 12 in the historical 12-projection introduction below; **11 cross-control projections remain active**.
@@ -10,16 +17,16 @@
 The existing **HERCULES CARRY** native +kg knob displays its editable source number and neutral `KG` together on the **same centered line** (`+16 KG`); only the changed source number may turn gold. Directly beneath it **inside the dial**, show a legible neutral `96 WITH BUFF`-style read-only projection, calculated as current Max Carry Weight plus the current Hercules bonus (not the bonus alone and never twice the bonus). Remove the detached `N KG WITH HERCULES` footer. Maintain the 181-DIP compact knob geometry, native range and source mappings; do not add any editable handle, CFG writer, reset group member or redundant caption. The contextual total has no leading `+`: it is the full carrying capacity with Hercules active, not another increment to add to the bonus.
 
 
-### 2026-10-14 — Clearer stamina / bleeding contextual readouts (CURRENT)
+### 2026-10-14 — Clearer stamina / bleeding contextual readouts (PARTIALLY SUPERSEDED)
 
 Stamina Usage action rows append `SPENT PER ACTION` to the existing derived current-Max-Stamina percentage alongside absolute STAMINA cost. Sprint remains a nondiscrete native coefficient: this caption describes the relative displayed cost, not a newly inferred sprint duration or activation count.
 
 Survival's Water / Energy Drink STAMINA GAIN knobs now show their Max-Stamina-dependent read-only `+N STAMINA` projection centered **inside** the dial immediately below the editable percent, at a stronger neutral 11-DIP weight rather than as detached tiny text underneath. The shared source knob renderer takes an optional secondary readout for these two existing sources; it does not add a CFG parameter, editor hit area, or independent reset. Only modified real source values can turn gold.
 
-Medical Items' treatment reference heading now reads `BLEED STAGES | MEDIUM N PTS | SEVERE N PTS` in a bold, more legible one-line style. These remain live read-only Bleeding System severity-stage threshold landmarks, not guaranteed stage-clearing claims, bleeding amount edits, or new UI controls. Retain compact dimensions and unchanged native sources/writers/presets.
+The Medical Items BLEED STAGES readout described here was subsequently removed; see the current Medical Items overlay-removal rule above. Stamina readouts from this entry remain current.
 
 
-### 2026-10-14 — Twelve cross-control live projections (CURRENT)
+### 2026-10-14 — Twelve cross-control live projections (HISTORICAL; ten remain)
 
 **Approved all 12 as visualization-only dependencies.** Six-groups-or-fewer existing compact boards, native CFG sliders, numeric steps, default/reference values, preset serialization, writer operations, hit targets, hover, right-click resets and group R resets are unchanged. The linked source from another group/tab is *subscribed to for repaint only*; it is never added to the receiving editor's writable member list or reset group. Suppress decorative subtitles; derived values are neutral (not false modified-yellow CFG values). No new real gameplay parameter, speculative mechanic, live game simulation, global multiplier, or auto-propagated slider adjustment.
 
@@ -29,14 +36,14 @@ Medical Items' treatment reference heading now reads `BLEED STAGES | MEDIUM N PT
 4. **Max HP → Medical HEAL bars:** below each HEAL/BLEED item pair show `healed HP / maxHP × 100%` in subdued type, while the independent editable bar continues to show raw `HP` on the exact 0..200 HP ruler. No implicit global healing modifier is applied.
 5. **Max HP → Sleep Recovery:** Sleep Health Restore keeps its native 0..200 HP slider; the compact readout adds `100 × HP restored / maxHP` as a read-only relative capacity measure, with source-accurate endpoints in HP. It is not a guarantee of exceeding the actual HP cap.
 6. **Max Carry Weight → Hercules:** directly beneath the Hercules native `+KG` dial, show `maxCarryWeight + herculesCarryBonus` kilograms *while the buff is active*. The two Hercules effect prototypes remain a shared +kg setting, **not +2× that amount**.
-7. **Bleeding stage thresholds → Medical BLEED treatments:** the four native BLEED bars carry two *passive* reference tick strokes at the current medium/severe bleeding-point thresholds; small `BLEED STAGES MED / SEV PTS` text anchors their meaning. Removal remains its own independent CFG source. Never claim treatment changes bleeding severity or guarantees clearing a stage from an unknown initial point count.
+7. **Retired:** BLEED STAGES captions and threshold overlays were removed from Medical Items on 2026-10-14; the treatment controls remain independent.
 8. **Max HP → Bleeding damage step graph:** its existing three **read-only** LOW/MEDIUM/SEVERE stage cards keep their original threshold `PTS` and `HP/TICK` values, now adding `100 × HP/tick / maxHP` on the same second line. No timeline, death estimate, hoverable stage card, or interactive projection.
 9. **Sleep eligibility → Fatigue preview:** an independent dashed/neutral `SLEEP AVAILABLE {threshold} PTS` landmark appears on the read-only 0–100 Fatigue stage preview. It does not reorder LOW/MEDIUM/SEVERE stages, create a fourth stage or alter the separate Sleep System slider.
 10. **Base Repair Cost → Repair reputation curve:** preserve all four native reputation multipliers and chart's 0..3x scale. Beneath each native readout show `baseRepairCost × reputationModifier` as `BASE×REP` (projection of two existing CoreVariables layers). **Do not call it the final coupon bill**: difficulty repair layer, item condition and other game rules are separate.
 11. **Trader minimum accepted condition → NPC Weapon Condition range:** add a neutral dashed vertical marker on the existing 0–100% condition rail at the current `economy.traderMinBuyCondition` with a compact `TRADER ACCEPTS ≥ N%` caption. It marks a *condition-eligibility cutoff*, not a promise that the dropped item is guaranteed to sell. The MIN/MAX NPC range still owns the only hit targets.
 12. **Retired:** The mutant-part RETURN INDEX projection was removed on 2026-10-14; Mutant Parts shows native drop chances only.
 
-**Cross-panel repaint and contract tests:** `ActionCostsRadar` subscribes to read-only `stamina.maxSP` in both modes; `AggregateVisualControl` subscribes as needed to `maxSP`, `maxCarryWeight`, `maxHP`, `sleepEligibilityThreshold`, `repairCostBase`, `traderMinBuyCondition`; `MedicalHealingRadar` observes `maxHP` and the two bleeding thresholds; `BleedingCurveControl` observes `maxHP`. Unsubscribe and rebind safely when the data context changes. Every derived label is read-only, so the editable controls and the two original UI catalogs must stay synchronized with these exact projections.
+**Cross-panel repaint and contract tests:** `ActionCostsRadar` subscribes to read-only `stamina.maxSP` in both modes; `AggregateVisualControl` subscribes as needed to `maxSP`, `maxCarryWeight`, `maxHP`, `sleepEligibilityThreshold`, `repairCostBase`, `traderMinBuyCondition`; `MedicalHealingRadar` observes `maxHP` only; `BleedingCurveControl` observes `maxHP`. Unsubscribe and rebind safely when the data context changes. Every derived label is read-only, so the editable controls and the two original UI catalogs must stay synchronized with these exact projections.
 
 ### 2026-10-14 — Stamina thresholds: source-truthful player scale (CURRENT)
 
