@@ -421,13 +421,14 @@ public sealed class ActionCostsRadar : FrameworkElement
         // Sprint 0..32.2 and Boost 1..60, regardless of the displayed pool.
         var sprintMaxX = ValueToX(_sprintDisableThreshold.Maximum, staminaMin, staminaMax, rail);
         var boostMinX = ValueToX(_lowRecoveryThreshold.Minimum, staminaMin, staminaMax, rail);
+        var boostMaxX = ValueToX(_lowRecoveryThreshold.Maximum, staminaMin, staminaMax, rail);
         AddTarget(_sprintDisableThreshold,
             new Rect(rail.Left - 5.0, y - 34.0,
                 Math.Max(1.0, sprintMaxX - rail.Left) + 10.0, 32.0),
             rail, MappingKind.Absolute, staminaMin, staminaMax);
         AddTarget(_lowRecoveryThreshold,
             new Rect(boostMinX - 5.0, y + 2.0,
-                Math.Max(1.0, rail.Right - boostMinX) + 10.0, 32.0),
+                Math.Max(1.0, boostMaxX - boostMinX) + 10.0, 32.0),
             rail, MappingKind.Absolute, staminaMin, staminaMax);
     }
 

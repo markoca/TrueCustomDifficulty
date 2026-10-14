@@ -2151,6 +2151,9 @@ _exhaustion_render_markers = (
     'var axisLabelY = rail.Bottom + 11.0;',
     'new Point(rail.Left, axisLabelY)',
     'new Point(rail.Right, axisLabelY)',
+    'var boostMaxX = ValueToX(_lowRecoveryThreshold.Maximum, staminaMin, staminaMax, rail);',
+    'Math.Max(1.0, boostMaxX - boostMinX) + 10.0',
+    'Math.Max(1.0, sprintMaxX - rail.Left) + 10.0',
     'y - 34.0', 'y + 2.0',
 )
 if (any(_exhaustion_catalog.get(pid, {}).get("label") != name
