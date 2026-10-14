@@ -208,7 +208,7 @@ public sealed class SliderDefinition
     public double Step { get; set; }
 
     // By default percentage-based controls snap in display space (5 percentage points).
-    // Set this to "absolute" for point-based controls such as stamina SP and
+    // Set this to "absolute" for point-based controls such as stamina and
     // bleeding points, where a clean gameplay-unit increment is more useful.
     [JsonPropertyName("stepMode")]
     public string StepMode { get; set; } = string.Empty;

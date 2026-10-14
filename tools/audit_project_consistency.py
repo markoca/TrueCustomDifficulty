@@ -462,6 +462,26 @@ elif "loot.npcWeaponAmmoSupply" not in json.dumps(_npc_ammo_special) or "NPC_Amm
 else:
     note("current NPC Ammo route: zero weapon-attached direct edits, source-cloned SmartLoot ammo; condition 242 and medic 96 direct edits preserved")
 
+# Visible stamina terminology contract: the UI writes out the full resource name.
+# Internal CFG keys such as stamina.maxSP and RegenSP must remain unchanged.
+_stamina_ui_sources = (
+    ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs",
+    ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs",
+    ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs",
+    ROOT / "src/TrueCustomDifficulty/Data/parameters.json",
+    DOCS / "UI-DESIGN-LOCK.md",
+    DOCS / "VISUAL-CONTROL-SYSTEM.md",
+)
+_stamina_abbreviation = re.compile(r"(?<![A-Za-z])" + "S" + "P" + r"(?![A-Za-z])")
+_stamina_abbreviation_leaks = [
+    str(path.relative_to(ROOT)) for path in _stamina_ui_sources
+    if _stamina_abbreviation.search(path.read_text(encoding="utf-8"))
+]
+if _stamina_abbreviation_leaks:
+    fail(f"stamina unit abbreviation leaked into UI source/catalog: {_stamina_abbreviation_leaks}")
+else:
+    note("player-facing stamina units spelled out across resource rulers, usage, recovery, and catalog")
+
 # Non-generator normal-UI coverage gate (v0.2.43).
 _non_gen_expected = {
     "combat": (17, 13, 4),
@@ -2005,7 +2025,7 @@ if (any(_exhaustion_catalog.get(pid, {}).get("label") != name
     or 'DrawExhaustionTrackCard(' in _exhaustion_renderer):
     fail("Stamina States: Exhaustion layout or six source-backed handles drifted")
 else:
-    note("Stamina States: two independently draggable 0..60 SP markers and three source-backed groups")
+    note("Stamina States: two independently draggable 0..60 STAMINA markers and three source-backed groups")
 
 # Radiation Removal is no longer a separate AggregateVisualControl family.
 # Four native-source vertical RAD columns must sit in one compact right bank,

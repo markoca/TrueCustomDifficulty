@@ -258,7 +258,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             DrawText(dc, Actions[index].Label, new Point(card.Left + 9.0, top), 9.2,
                 text, FontWeights.Bold);
             DrawSourceValue(dc, parameter,
-                $"{FormatRaw(parameter.CurrentNumber)} SP",
+                $"{FormatRaw(parameter.CurrentNumber)} STAMINA",
                 new Point(card.Right - 9.0, top), 10.4, text, accent);
 
             var track = new Rect(card.Left + 9.0, top + 20.0, card.Width - 18.0, 8.0);
@@ -283,7 +283,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     }
 
 
-    // STAMINA STATES: the two source thresholds share one honest 0..60 SP
+    // STAMINA STATES: the two source thresholds share one honest 0..60 STAMINA
     // visual ruler. Their hit lanes are separate above/below that ruler so
     // both remain independently draggable even when their values coincide.
     // The other four CFG sources occupy three distinct gameplay groups.
@@ -354,9 +354,9 @@ public sealed class ActionCostsRadar : FrameworkElement
         DrawZoneValue(dc, _lowRecoveryThreshold, "RECOVERY KICKS IN", secondLabelY,
             card, text, accent);
 
-        // One common SP space with two skinny independent color traces. The
+        // One common STAMINA space with two skinny independent color traces. The
         // darker upper trace denotes sprint lock; the lower trace denotes
-        // low-SP recovery eligibility, NOT a required ordering constraint.
+        // low-stamina recovery eligibility, NOT a required ordering constraint.
         var rail = new Rect(card.Left + 21.0,
             card.Top + (compact ? 88.0 : 119.0),
             Math.Max(1.0, card.Width - 42.0), 8.0);
@@ -391,13 +391,13 @@ public sealed class ActionCostsRadar : FrameworkElement
         DrawHandle(dc, _sprintDisableThreshold, sprintHandle, panel, accent);
         DrawHandle(dc, _lowRecoveryThreshold, boostHandle, panel, accent);
 
-        DrawText(dc, "0 SP", new Point(rail.Left, card.Bottom - 22.0),
+        DrawText(dc, "0 STAMINA", new Point(rail.Left, card.Bottom - 22.0),
             9.2, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, "60 SP",
+        DrawRightAlignedText(dc, "60 STAMINA",
             new Point(rail.Right, card.Bottom - 22.0),
             9.2, muted, FontWeights.Normal);
 
-        // Avoid the dead 32.2..60 SP sprint tail or the dead 0..1 SP
+        // Avoid the dead 32.2..60 STAMINA sprint tail or the dead 0..1 STAMINA
         // recovery segment becoming clickable input; both use the common
         // 0..60 coordinate in UpdateTarget only within their native spans.
         var sprintMaxX = ValueToX(_sprintDisableThreshold.Maximum, staminaMin, staminaMax, rail);
@@ -418,7 +418,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     {
         var heading = CreateText(title, 9.8, text, FontWeights.Bold);
         var value = CreateSourceValueText(parameter,
-            $"{FormatRaw(parameter.CurrentNumber)} SP", 11.5, text, accent);
+            $"{FormatRaw(parameter.CurrentNumber)} STAMINA", 11.5, text, accent);
         heading.MaxTextWidth = Math.Max(1.0,
             card.Width - 24.0 - value.WidthIncludingTrailingWhitespace - 10.0);
         heading.MaxLineCount = 1;
@@ -458,7 +458,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         const double gap = 14.0;
         var half = Math.Max(1.0, (card.Width - 24.0 - gap) / 2.0);
         DrawRecoverySourceTrack(dc, _lowRecoveryStrength, "STRENGTH",
-            value => $"+{value:0.##} SP/s",
+            value => $"+{value:0.##} STAMINA/s",
             new Rect(card.Left + 12.0, card.Top + 33.0, half, 41.0),
             text, muted, border, accent, panel);
         DrawRecoverySourceTrack(dc, _lowRecoveryDuration, "DURATION",
@@ -523,7 +523,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     }
 
     // Only the numeric token (including its +/-/%/x) becomes gold when changed.
-    // SP, SP/s, s and other static units remain neutral.
+    // STAMINA, STAMINA/s, s and other static units remain neutral.
     private void DrawSourceValue(
         DrawingContext dc, ParameterViewModel parameter, string value,
         Point right, double size, Brush text, Brush accent)

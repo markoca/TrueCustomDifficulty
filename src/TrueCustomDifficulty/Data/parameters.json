@@ -4481,7 +4481,7 @@
       "description": "Vanilla maximum stamina is 100. This changes the size of your stamina pool, not how fast it recovers or how much actions cost.",
       "rationale": "Changes your maximum stamina pool. Vanilla is 100.",
       "logic": "",
-      "interaction": "Action costs are direct SP values, so changing Maximum Stamina changes how many actions fit into a full bar even when their individual costs are untouched.",
+      "interaction": "Action costs are direct STAMINA values, so changing Maximum Stamina changes how many actions fit into a full bar even when their individual costs are untouched.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4523,8 +4523,8 @@
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
       "label": "Sprint Locks",
-      "description": "Sprinting stops once stamina falls below this threshold (16.1 SP originally).",
-      "rationale": "Sets how low your stamina can fall before sprinting is forced to stop. Vanilla is 16.1 SP.",
+      "description": "Sprinting stops once stamina falls below this threshold (16.1 STAMINA originally).",
+      "rationale": "Sets how low your stamina can fall before sprinting is forced to stop. Vanilla is 16.1 STAMINA.",
       "logic": "Higher values make sprint lock out earlier while stamina is still relatively high; lower values let the player sprint deeper into the stamina bar.",
       "interaction": "Pairs with Exhaustion Regen Delay; sets sprint lockout, not sprint speed or stamina drain.",
       "control": "slider",
@@ -4532,7 +4532,7 @@
       "display": {
         "primary": "raw",
         "rawFormat": "0.0",
-        "unit": "SP",
+        "unit": "STAMINA",
         "valueLabel": "Sprint stops below"
       },
       "vanilla": {
@@ -4611,16 +4611,16 @@
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
       "label": "Recovery Kicks In",
-      "description": "Below this amount of stamina, the conditional low-SP regeneration boost can activate (30 SP originally).",
-      "rationale": "Sets the stamina level that triggers emergency low-stamina recovery. Vanilla is 30 SP.",
+      "description": "Below this amount of stamina, the conditional low-stamina regeneration boost can activate (30 STAMINA originally).",
+      "rationale": "Sets the stamina level that triggers emergency low-stamina recovery. Vanilla is 30 STAMINA.",
       "logic": "Higher values allow the low-stamina recovery helper to engage across a larger portion of the bar; lower values reserve it for near-exhaustion.",
-      "interaction": "Pairs with Low-SP Boost Rate and Low-SP Boost Duration, not the sprint lockout threshold.",
+      "interaction": "Pairs with low-stamina Boost Rate and low-stamina Boost Duration, not the sprint lockout threshold.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
         "primary": "raw",
         "rawFormat": "0",
-        "unit": "SP",
+        "unit": "STAMINA",
         "valueLabel": "Emergency recovery starts below"
       },
       "vanilla": {
@@ -4656,10 +4656,10 @@
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
       "label": "Boost Strength",
-      "description": "Regeneration strength of the temporary low-SP recovery boost (10 SP/s originally).",
-      "rationale": "Sets how strong emergency stamina recovery is while it is active. Vanilla is 10 SP/s.",
+      "description": "Regeneration strength of the temporary low-stamina recovery boost (10 STAMINA/s originally).",
+      "rationale": "Sets how strong emergency stamina recovery is while it is active. Vanilla is 10 STAMINA/s.",
       "logic": "Higher values make the emergency recovery effect stronger; lower values make low-stamina recovery closer to the ordinary base rate.",
-      "interaction": "Boost Activates Below sets its trigger; Low-SP Boost Duration sets how long it lasts.",
+      "interaction": "Boost Activates Below sets its trigger; low-stamina Boost Duration sets how long it lasts.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4705,10 +4705,10 @@
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
       "label": "Boost Duration",
-      "description": "Seconds that the conditional low-SP stamina regeneration boost remains active (4 seconds originally).",
+      "description": "Seconds that the conditional low-stamina stamina regeneration boost remains active (4 seconds originally).",
       "rationale": "Sets how long emergency stamina recovery lasts once it is triggered. Vanilla is 4 seconds.",
       "logic": "Higher values keep the low-stamina recovery effect active longer; lower values shorten the boost.",
-      "interaction": "Boost Activates Below sets the trigger; Low-SP Boost Rate sets the boost strength.",
+      "interaction": "Boost Activates Below sets the trigger; low-stamina Boost Rate sets the boost strength.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4883,7 +4883,7 @@
       "description": "Changes the tallest obstacle you can vault over. The WAIST / EYES / ABOVE EYES markers are simple player-friendly height references.",
       "rationale": "Changes the tallest obstacle you can vault over. The WAIST / EYES / ABOVE EYES markers are simple player-friendly height references.",
       "logic": "Higher values let the vault search accept taller obstacles; lower values restrict vaulting to lower obstacles. The slider is capped at 300 to keep the requested range around vanilla through slightly-above-eye/head traversal rather than turning this into extreme parkour.",
-      "interaction": "Vault Stamina Cost still controls the SP cost of a successful vault. MinObstacleHeight, landing checks, search radius and other vault geometry remain vanilla.",
+      "interaction": "Vault Stamina Cost still controls the STAMINA cost of a successful vault. MinObstacleHeight, landing checks, search radius and other vault geometry remain vanilla.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -12268,12 +12268,12 @@
     },
     {
       "id": "stamina.lowRecoveryStrength",
-      "reason": "Emergency stamina recovery strength belongs to the vanilla low-SP helper subsystem and is intentionally kept audit-only; normal UI uses Base Stamina Recovery instead.",
+      "reason": "Emergency stamina recovery strength belongs to the vanilla low-stamina helper subsystem and is intentionally kept audit-only; normal UI uses Base Stamina Recovery instead.",
       "status": "ui_excluded_internal_helper"
     },
     {
       "id": "stamina.lowRecoveryDuration",
-      "reason": "Emergency stamina recovery duration belongs to the vanilla low-SP helper subsystem and is intentionally kept audit-only; normal UI uses Base Stamina Recovery instead.",
+      "reason": "Emergency stamina recovery duration belongs to the vanilla low-stamina helper subsystem and is intentionally kept audit-only; normal UI uses Base Stamina Recovery instead.",
       "status": "ui_excluded_internal_helper"
     },
     {

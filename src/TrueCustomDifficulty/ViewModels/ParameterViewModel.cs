@@ -87,7 +87,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ConsumableMixer" => "WATER STAMINA GAIN and ENERGY DRINK STAMINA GAIN independently set immediate stamina restored in percent (vanilla 38% and 50%). WATER STAMINA BUFF changes Water regeneration and action-cost reduction; ENERGY DRINK REGEN adjusts sustained stamina recovery. Drag duration markers below; OVERRIDE LIMITS expands duration ranges. Limited Energy Drink keeps its vanilla 100% instant refill.",
                     "SleepingDashboard" => "Select 1–14 minimum sleep hours directly in the step row; other tracks set sleep eligibility and wake-up recovery.",
                     "CoreHealthDashboard" => "Set MAX HP and PASSIVE RECOVERY directly; below, Recovery Delay, Recovery Multiplier and Low-HP Recovery Rate are independent CFG sources. Medical items stay in their own section; no synthetic health threshold.",
-                    "StaminaCore" => "CORE STAMINA sets Maximum SP and Base Recovery with matching native resource rulers. MOVEMENT LIMITS keeps the vault-height ruler and calibrated Carry Weight in KG; all four sources remain independent.",
+                    "StaminaCore" => "CORE STAMINA sets Maximum STAMINA and Base Recovery with matching native resource rulers. MOVEMENT LIMITS keeps the vault-height ruler and calibrated Carry Weight in KG; all four sources remain independent.",
                     "WaterStaminaPressure" => "Drag the MEDIUM WATER or DEEP WATER track separately.",
                     "PhysicalLimits" => "Drag one track for vault height and the other for carrying capacity.",
                     "SevereFatiguePenaltyBoard" => "Enable severe-fatigue mechanics, then drag each of the five vertical penalty equalizer bars independently.",
@@ -723,7 +723,7 @@ public sealed class ParameterViewModel : ObservableObject
     }
 
     // Percentage controls move in 5 percentage-point increments. Point-based
-    // controls can opt into an absolute catalog step (for example 0.25 SP or
+    // controls can opt into an absolute catalog step (for example 0.25 STAMINA or
     // 5 bleeding points) so the slider never produces awkward tiny decimals.
     public double TickFrequency
     {
@@ -1052,12 +1052,12 @@ public sealed class ParameterViewModel : ObservableObject
             "health.ecoMedkitAntirad" or
             "health.antiRadRadiation" => $"{CurrentNumber:0} rad pts",
 
-            // Stamina: expose actual SP/time/weight, and translate opaque state coefficients.
-            "stamina.maxSP" => $"{CurrentNumber:0} SP",
-            "stamina.sprintDisableThreshold" => $"{CurrentNumber:0.#} SP",
+            // Stamina: expose actual STAMINA/time/weight, and translate opaque state coefficients.
+            "stamina.maxSP" => $"{CurrentNumber:0} STAMINA",
+            "stamina.sprintDisableThreshold" => $"{CurrentNumber:0.#} STAMINA",
             "stamina.sprintRecoveryDelay" => $"{CurrentNumber:0.#} s",
-            "stamina.lowRecoveryThreshold" => $"{CurrentNumber:0} SP",
-            "stamina.lowRecoveryStrength" => $"{CurrentNumber:0.##} SP/s",
+            "stamina.lowRecoveryThreshold" => $"{CurrentNumber:0} STAMINA",
+            "stamina.lowRecoveryStrength" => $"{CurrentNumber:0.##} STAMINA/s",
             "stamina.lowRecoveryDuration" => $"{CurrentNumber:0.#} s",
             "stamina.sprintUnderRunSpeedRegenCoef" or
             "stamina.joggingRegenCoef" or
@@ -1067,7 +1067,7 @@ public sealed class ParameterViewModel : ObservableObject
             "stamina.vaultMaxHeight" => VaultHeight(CurrentNumber),
             "stamina.waterMediumDrain" or
             "stamina.waterStrongDrain" => Times(CurrentNumber, "drain"),
-            "stamina.regeneration" => $"{CurrentNumber:0.#} SP/s",
+            "stamina.regeneration" => $"{CurrentNumber:0.#} STAMINA/s",
             "stamina.maxCarryWeight" => $"{CurrentNumber:0} kg",
 
             // Loot: distinguish literal chance from "times vanilla" amount scalers.
@@ -1123,7 +1123,7 @@ public sealed class ParameterViewModel : ObservableObject
             "survival.starvationDamageInterval" => $"{CurrentNumber:0.#} s",
             "survival.starvationPenaltyDelay" => $"{CurrentNumber:0.#} s",
             "survival.starvationHealthRegenPenalty" => $"{CurrentNumber * 100:0.#}% regen loss",
-            "survival.severeFatigueMaxStamina" => NegativePercent(CurrentNumber, "max SP"),
+            "survival.severeFatigueMaxStamina" => NegativePercent(CurrentNumber, "max STAMINA"),
             "survival.severeFatigueCarryWeight" => NegativePercent(CurrentNumber, "carry"),
             "survival.severeFatigueRecoil" => SignedPercent(CurrentNumber, "recoil"),
             "survival.severeFatigueAimSway" => SignedPercent(CurrentNumber, "sway"),

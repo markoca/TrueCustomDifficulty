@@ -1895,11 +1895,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         var cell = (width - gap) / 2.0;
 
         if (P("stamina.maxSP") is { } stamina)
-            DrawCoreResourceRuler(dc, stamina, "MAX STAMINA", "SP",
+            DrawCoreResourceRuler(dc, stamina, "MAX STAMINA", "STAMINA",
                 new Rect(16.0, 51.0, cell, 105.0),
                 text, muted, border, accent, panel);
         if (P("stamina.regeneration") is { } recovery)
-            DrawCoreResourceRuler(dc, recovery, "BASE RECOVERY", "SP/s",
+            DrawCoreResourceRuler(dc, recovery, "BASE RECOVERY", "STAMINA/s",
                 new Rect(16.0 + cell + gap, 51.0, cell, 105.0),
                 text, muted, border, accent, panel);
 
@@ -2642,21 +2642,22 @@ public sealed class AggregateVisualControl : FrameworkElement
         var modified = active && parameter.IsValueModifiedFromReference();
         var value = unit switch
         {
-            "HP" or "SP" => $"{parameter.CurrentNumber:0} {unit}",
+            "HP" or "STAMINA" => $"{parameter.CurrentNumber:0} {unit}",
             "x" => $"{parameter.CurrentNumber:0.##}x",
             "pts/s" => $"{parameter.CurrentNumber:0.000} pts/s",
             "%" => $"{(parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber * 100.0:0.#}%",
             _ => FriendlyValue(parameter)
         };
-        // Native 0.001-rate precision takes more room than HP/SP, but uses
+        // Native 0.001-rate precision takes more room than HP/STAMINA, but uses
         // the same card, title/value positions, rail and modified-only gold.
-        var valueSize = unit == "pts/s" ? 16.5 : 19.0;
+        var valueSize = unit == "pts/s" ? 16.5
+            : unit is "STAMINA" or "STAMINA/s" ? 16.0 : 19.0;
         var valueText = CreateText(value, valueSize, active ? text : muted,
             FontWeights.Bold, Math.Max(1.0, card.Width - 30.0));
         if (modified)
         {
             // Like Stamina Usage, only the edited numeric token turns gold;
-            // HP, HP/s, SP and SP/s remain neutral; Base is not emphasized.
+            // HP, HP/s, STAMINA and STAMINA/s remain neutral; Base is not emphasized.
             foreach (System.Text.RegularExpressions.Match token in
                 System.Text.RegularExpressions.Regex.Matches(
                     value, @"\d+(?:\.\d+)?"))
@@ -2711,9 +2712,9 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // The shared ruler must render endpoints in the same player-facing
         // units as its current readout, never the underlying 0.2 fraction.
-        var minValue = unit is "HP" or "SP"
+        var minValue = unit is "HP" or "STAMINA"
             ? $"{parameter.Minimum:0}" : FormatCompact(parameter.Minimum);
-        var maxValue = unit is "HP" or "SP"
+        var maxValue = unit is "HP" or "STAMINA"
             ? $"{parameter.Maximum:0}" : FormatCompact(parameter.Maximum);
         var leftBound = unit switch
         {
@@ -5347,8 +5348,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             "combat.mutantDamage" or "combat.mutantAttackCooldown" or
             "stamina.waterMediumDrain" or "stamina.waterStrongDrain" => $"{rawValue:0.##}x",
-            "stamina.maxSP" => $"{rawValue:0} SP",
-            "stamina.regeneration" => $"{rawValue:0.##} SP/s",
+            "stamina.maxSP" => $"{rawValue:0} STAMINA",
+            "stamina.regeneration" => $"{rawValue:0.##} STAMINA/s",
             "health.ecoMedkitAntirad" or "health.antiRadRadiation" => $"{rawValue:0} radiation",
             "health.lowHealthRegen" => $"{rawValue:0.0} rate",
             "combat.explosionDamage" or

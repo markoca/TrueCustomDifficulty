@@ -1,22 +1,26 @@
 # Stamina Control Deep Audit — v0.2.46
 
+### 2026-10-14 — Explicit stamina resource units (CURRENT)
+
+Player-facing stamina amounts always use the full **STAMINA** unit, and recovery rates use **STAMINA/s** in Core Stamina, Stamina Usage, Exhaustion & Recovery, comparison/reference readouts and descriptions. Historical abbreviated units below are superseded. Keep exact native resource values, gameplay thresholds, source keys (`stamina.maxSP`, `RegenSP`), CFG edits and compact hit targets unchanged.
+
 ### 2026-10-11 — Compact Movement Limits and gamer-facing Exhaustion labels (latest authoritative contract)
 
 **MOVEMENT LIMITS** in `StaminaCore` is now **two matching compact horizontal 116-DIP cards**, not a tall vertical vault bar paired with an oversized carry chart. **MAXIMUM VAULT HEIGHT** (`stamina.vaultMaxHeight`, native **70–300 uu**, 1-uu steps, vanilla **130 uu**) and **MAXIMUM CARRY WEIGHT** (`stamina.maxCarryWeight`, native **20–160 KG**, 5-KG steps, vanilla **80 KG**) share the **same title-left/value-right, rail, source-reference, handle and endpoint geometry**. Each card starts at **Y=191**, with its rail centered at card top +51, a 12-DIP sibling gap, and native min/max units in the bottom footer. The vault rail retains three **source-authored, clickable exact-value landmark captions**: **WAIST=130**, **EYES=225**, **ABOVE EYES=300**. At narrow widths ABOVE EYES drops one short label line to prevent overlap; clicking captions snaps the unchanged underlying source value exactly, not an approximation. The carry rail has only three intermediate kg calibration ticks (native quarter increments); it **does not** duplicate a separate “LOAD CAPACITY / KG” caption or suggest fabricated fatigue thresholds. Only a modified numeric token is highlighted, never its `uu`/`KG` unit or Vanilla/Base tick. Board height is **323 DIP** rather than 382, retaining the two top CORE STAMINA 105-DIP cards unchanged. Existing pointer, keyboard, right-click per-source reset, `R` family reset and original four CFG/preset mappings are preserved.
 
-**EXHAUSTION & RECOVERY** retains its six independent source-native sliders and the 2+4 arrangement, 94-DIP card grammar, shared 0–60 SP *visual ruler* for the thresholds, real Sprint Lock **0–32.2 SP** interactive range, and compact responsive wrapping. The six current visible names, and corresponding catalog `label` metadata, are:
-- **SPRINT STOPS BELOW** — `stamina.sprintDisableThreshold`: sprint lock threshold in SP
-- **BONUS REGEN BELOW** — `stamina.lowRecoveryThreshold`: low-stamina emergency recovery trigger in SP
-- **AIM SLOWS REGEN** — `stamina.aimRegenCoef`: percent penalty to regeneration *while aiming*, not a low-SP aim penalty
+**EXHAUSTION & RECOVERY** retains its six independent source-native sliders and the 2+4 arrangement, 94-DIP card grammar, shared 0–60 STAMINA *visual ruler* for the thresholds, real Sprint Lock **0–32.2 STAMINA** interactive range, and compact responsive wrapping. The six current visible names, and corresponding catalog `label` metadata, are:
+- **SPRINT STOPS BELOW** — `stamina.sprintDisableThreshold`: sprint lock threshold in STAMINA
+- **BONUS REGEN BELOW** — `stamina.lowRecoveryThreshold`: low-stamina emergency recovery trigger in STAMINA
+- **AIM SLOWS REGEN** — `stamina.aimRegenCoef`: percent penalty to regeneration *while aiming*, not a low-stamina aim penalty
 - **SPRINT RECOVERY DELAY** — `stamina.sprintRecoveryDelay`: time before recovery following sprint exhaustion, seconds
-- **BONUS REGEN POWER** — `stamina.lowRecoveryStrength`: additional low-SP recovery strength in SP/s
+- **BONUS REGEN POWER** — `stamina.lowRecoveryStrength`: additional low-stamina recovery strength in STAMINA/s
 - **BONUS REGEN DURATION** — `stamina.lowRecoveryDuration`: duration of that bonus, seconds
 
 The names are user-facing wording only: no source range, step, transformation, unit, writer, constraint or save format is modified. Supersede the older vertically oriented Vault Height design, 175-DIP Movement card, 382-DIP StaminaCore height, and technical Exhaustion captions in dated catalog sections below.
 
 ### 2026-10-11 — Exhaustion and water native-card redesign (current)
 
-**EXHAUSTION & RECOVERY:** The six current, independently writable `ActionCostsRadar` / `Mode=Exhaustion` sources are shown in **six uniformly formatted 94-DIP native-track cards**. The two left-hand stacked cards are **SPRINT LOCK** (`stamina.sprintDisableThreshold`) and **RECOVERY BELOW** (`stamina.lowRecoveryThreshold`), each with its current value aligned to the right, its own 0–60 SP physical ruler, subdued source-reference tick, and explicit 0 SP / 60 SP footer. The Sprint Lock portion beyond its native **32.2 SP** maximum is passive/non-editable, and Recovery Below retains its native **1–60 SP** active span. The right-hand 2×2 cards are **AIM RECOVERY PENALTY** (`stamina.aimRegenCoef`, %), **RECOVERY RESTART DELAY** (`stamina.sprintRecoveryDelay`, s), **LOW-SP RECOVERY BOOST** (`stamina.lowRecoveryStrength`, SP/s), and **LOW-SP RECOVERY DURATION** (`stamina.lowRecoveryDuration`, s). Each uses the same header/readout, horizontal source-native rail/handle and own min/max footers. Numeric highlights remain limited to values modified from their reference, titles and units stay neutral, and long titles are locally ellipsized without crossing the value column. The redundant STAMINA THRESHOLDS section subtitle is removed. At viewport width >=780 DIP, thresholds occupy a bounded left column (38% up to 340 DIP) and the four right cards share the wider remaining area; height **265 DIP**. Below 780 DIP, the threshold pair stacks above a two-column recovery grid; height **475 DIP**. The six original source ranges, steps, click/drag, keyboard and per-source reset semantics are unchanged. The separate STAMINA USAGE board is untouched.
+**EXHAUSTION & RECOVERY:** The six current, independently writable `ActionCostsRadar` / `Mode=Exhaustion` sources are shown in **six uniformly formatted 94-DIP native-track cards**. The two left-hand stacked cards are **SPRINT LOCK** (`stamina.sprintDisableThreshold`) and **RECOVERY BELOW** (`stamina.lowRecoveryThreshold`), each with its current value aligned to the right, its own 0–60 STAMINA physical ruler, subdued source-reference tick, and explicit 0 STAMINA / 60 STAMINA footer. The Sprint Lock portion beyond its native **32.2 STAMINA** maximum is passive/non-editable, and Recovery Below retains its native **1–60 STAMINA** active span. The right-hand 2×2 cards are **AIM RECOVERY PENALTY** (`stamina.aimRegenCoef`, %), **RECOVERY RESTART DELAY** (`stamina.sprintRecoveryDelay`, s), **low-stamina RECOVERY BOOST** (`stamina.lowRecoveryStrength`, STAMINA/s), and **low-stamina RECOVERY DURATION** (`stamina.lowRecoveryDuration`, s). Each uses the same header/readout, horizontal source-native rail/handle and own min/max footers. Numeric highlights remain limited to values modified from their reference, titles and units stay neutral, and long titles are locally ellipsized without crossing the value column. The redundant STAMINA THRESHOLDS section subtitle is removed. At viewport width >=780 DIP, thresholds occupy a bounded left column (38% up to 340 DIP) and the four right cards share the wider remaining area; height **265 DIP**. Below 780 DIP, the threshold pair stacks above a two-column recovery grid; height **475 DIP**. The six original source ranges, steps, click/drag, keyboard and per-source reset semantics are unchanged. The separate STAMINA USAGE board is untouched.
 
 **WATER STAMINA DRAIN:** Preserve the two independent source editors `stamina.waterMediumDrain` (native **0–2×**) and `stamina.waterStrongDrain` (native **0–3×**) with the existing **Medium <= Deep** value-based cascade. Both are now compact **105-DIP primary resource rulers** rendered through the exact `DrawCoreResourceRuler` grammar used by CORE HEALTH and CORE STAMINA: same title/value row, 19-DIP current numeric, 5-DIP filled track, 7-DIP handles, muted reference tick and 10.4-DIP native min/max labels. Readouts and endpoint units are **1x / 2x** (not “x drain” or “x x”), and only modified numeric tokens turn gold. Two equal cards start at Y=51 with a 12-DIP gap in a **171-DIP** board. No extra instruction labels, full-width controls or synthetic percentages. All native edit/reset and linked-source mapping behavior remains unchanged.
 
@@ -24,7 +28,7 @@ This specification supersedes historical 240/419-DIP Exhaustion and 149-DIP Wate
 
 ### 2026-10-11 — Core Stamina matches Core Health (current authoritative layout)
 
-The existing `StaminaCore` family is rendered under **CORE STAMINA** (replacing the former **STAMINA & MOVEMENT** outer title and redundant **STAMINA CORE** subheading). The top two 105-DIP primary resource cards are **MAX STAMINA** (`stamina.maxSP`, native **SP**) and **BASE RECOVERY** (`stamina.regeneration`, native **SP/s**). They share the **exact** `DrawCoreResourceRuler` renderer also used by the Core Health MAX HEALTH / PASSIVE RECOVERY cards: the same 12-DIP heading at +15/+12, 19-DIP right-aligned current value at -15/+6, 5-DIP horizontal rail and 7-DIP handle at card top +65, muted reference marker, and 10.4-DIP native min/max labels at bottom -20. Only edited **numeric tokens** become gold; neutral units, scale ticks and baseline markers remain subdued. Native SP-capacity and regeneration values/ranges/steps are not interchanged.
+The existing `StaminaCore` family is rendered under **CORE STAMINA** (replacing the former **STAMINA & MOVEMENT** outer title and redundant **STAMINA CORE** subheading). The top two 105-DIP primary resource cards are **MAX STAMINA** (`stamina.maxSP`, native **STAMINA**) and **BASE RECOVERY** (`stamina.regeneration`, native **STAMINA/s**). They share the **exact** `DrawCoreResourceRuler` renderer also used by the Core Health MAX HEALTH / PASSIVE RECOVERY cards: the same 12-DIP heading at +15/+12, 19-DIP right-aligned current value at -15/+6, 5-DIP horizontal rail and 7-DIP handle at card top +65, muted reference marker, and 10.4-DIP native min/max labels at bottom -20. Only edited **numeric tokens** become gold; neutral units, scale ticks and baseline markers remain subdued. Native STAMINA-capacity and regeneration values/ranges/steps are not interchanged.
 
 The new layout uses the Core Health header position (Y=21) and identical two-card geometry (Y=51, H=105, gap=12). The next line is **MOVEMENT LIMITS** (Y=173), followed by the **unchanged native vault-height vertical ruler** and **calibrated maximum carry-weight rail** (Y=191, H=175, gap=12). These lower controls retain their exact clickable landmarks, underlying `stamina.vaultMaxHeight` / `stamina.maxCarryWeight` values, drag/keyboard/reset and reference semantics. Board height is **382 DIP** (366-DIP bottom plus 16-DIP padding). There is **no duplicate heading**, no new gameplay control, no full-width slider and no change to the separate Stamina Usage panel.
 
@@ -41,7 +45,7 @@ The current Stamina UI exposes **18 editable dimensions through 7 visible cards*
 - **0 invalid or partial controls**.
 - **21 concrete writer edit points** across the 18 editable dimensions.
 
-The newly promoted backing axes are not separate engine-style cards. They are presented as one semantic **EXHAUSTION & LOW-SP RECOVERY** block inside Stamina Pressure.
+The newly promoted backing axes are not separate engine-style cards. They are presented as one semantic **EXHAUSTION & low-stamina RECOVERY** block inside Stamina Pressure.
 
 ## v0.2.46 corrections
 
@@ -69,20 +73,20 @@ v0.2.46 fixes `slider.max` to **300**. The runtime status remains `runtime_test_
 
 | Control | Parameter ID | Vanilla UI value | CFG target | Writer | Status |
 |---|---|---:|---|---|---|
-| Maximum Stamina | `stamina.maxSP` | 100 SP | `Player.VitalParams.MaxSP` | `set` | confirmed |
-| Base Stamina Recovery | `stamina.regeneration` | 5 SP/s | `Player.VitalParams.RegenSP` | `set` | confirmed |
-| Sprint Stamina Drain | `stamina.sprintCost` | 5.25 SP | `Player.StaminaPerAction.Sprint` | `set` | confirmed |
+| Maximum Stamina | `stamina.maxSP` | 100 STAMINA | `Player.VitalParams.MaxSP` | `set` | confirmed |
+| Base Stamina Recovery | `stamina.regeneration` | 5 STAMINA/s | `Player.VitalParams.RegenSP` | `set` | confirmed |
+| Sprint Stamina Drain | `stamina.sprintCost` | 5.25 STAMINA | `Player.StaminaPerAction.Sprint` | `set` | confirmed |
 | Aiming Stamina Recovery Penalty | `stamina.aimRegenCoef` | 25% | `StaminaRegenStateCoefs[Aim].Value` | `negateSet` -> `-0.25` | confirmed |
-| Sprint Stops Below | `stamina.sprintDisableThreshold` | 16.1 SP | `Player.VitalParams.StaminaDisableThresholds[0].Threshold` | `set` | confirmed |
+| Sprint Stops Below | `stamina.sprintDisableThreshold` | 16.1 STAMINA | `Player.VitalParams.StaminaDisableThresholds[0].Threshold` | `set` | confirmed |
 | Sprint Restart Delay | `stamina.sprintRecoveryDelay` | 1 s | `Player.VitalParams.StaminaDisableThresholds[0].RegenerationDelay` | `set` | confirmed |
-| Emergency Recovery Starts Below | `stamina.lowRecoveryThreshold` | 30 SP | `AdditionalRegenStaminaMechanics...NormalSP.ConditionValue` | `set` | confirmed |
-| Emergency Recovery Amount | `stamina.lowRecoveryStrength` | 10 SP/s | `IncreaseStaminaPoints.ValueMin/ValueMax` | `set` x2 | confirmed |
+| Emergency Recovery Starts Below | `stamina.lowRecoveryThreshold` | 30 STAMINA | `AdditionalRegenStaminaMechanics...NormalSP.ConditionValue` | `set` | confirmed |
+| Emergency Recovery Amount | `stamina.lowRecoveryStrength` | 10 STAMINA/s | `IncreaseStaminaPoints.ValueMin/ValueMax` | `set` x2 | confirmed |
 | Emergency Recovery Duration | `stamina.lowRecoveryDuration` | 4 s | `IncreaseStaminaPoints.Duration` | `set` | confirmed |
-| Jump Stamina Cost | `stamina.jumpCost` | 16 SP | `Player.StaminaPerAction.Jump` | `set` | confirmed |
-| Vault Stamina Cost | `stamina.vaultCost` | 12 SP | `Player.StaminaPerAction.Vault` | `set` | confirmed |
-| Normal Melee Cost | `stamina.meleeNormalCost` | 16 SP | `Player.StaminaPerAction.MeleeNormal` | `set` | confirmed |
-| Strong Melee Cost | `stamina.meleeStrongCost` | 25 SP | `Player.StaminaPerAction.MeleeStrong` | `set` | confirmed |
-| Buttstock Melee Cost | `stamina.butstockCost` | 12 SP | `Player.StaminaPerAction.MeleeButstock` | `set` | confirmed |
+| Jump Stamina Cost | `stamina.jumpCost` | 16 STAMINA | `Player.StaminaPerAction.Jump` | `set` | confirmed |
+| Vault Stamina Cost | `stamina.vaultCost` | 12 STAMINA | `Player.StaminaPerAction.Vault` | `set` | confirmed |
+| Normal Melee Cost | `stamina.meleeNormalCost` | 16 STAMINA | `Player.StaminaPerAction.MeleeNormal` | `set` | confirmed |
+| Strong Melee Cost | `stamina.meleeStrongCost` | 25 STAMINA | `Player.StaminaPerAction.MeleeStrong` | `set` | confirmed |
+| Buttstock Melee Cost | `stamina.butstockCost` | 12 STAMINA | `Player.StaminaPerAction.MeleeButstock` | `set` | confirmed |
 | Maximum Vault Height | `stamina.vaultMaxHeight` | 130 uu | `Player.VaultingParams.MaxObstacleHeight` | `set` | runtime test required |
 | Medium-Water Stamina Drain | `stamina.waterMediumDrain` | +100% | `WaterMediumStaminaPenalty.ValueMin/ValueMax` | `set` x2 | confirmed |
 | Deep-Water Stamina Drain | `stamina.waterStrongDrain` | +200% | `WaterStrongStaminaPenalty.ValueMin/ValueMax` | `set` x2 | confirmed |
