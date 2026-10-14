@@ -516,7 +516,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "economy.startingMoney" => value.ToString("N0", CultureInfo.InvariantCulture),
             "economy.repairCostBase" or "economy.traderMinBuyCondition" or "economy.itemValueFloor"
                 or "environment.flycatcherMovementSpeed" or "environment.flycatcherTurnSpeed" => $"{value * 100.0:0.#}%",
-            "environment.diamondBleeding" => $"{value:0.#} pts",
             _ => $"{value:0.##}x"
         };
 
@@ -1059,13 +1058,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCenteredText(dc, "BLEEDING",
             new Point(area.Left + area.Width / 2.0, area.Top + 16.0),
             10.0, muted, FontWeights.Bold);
-        const double gap = 9.0;
-        var half = (area.Width - gap) / 2.0;
-        DrawEconomyCard(dc, P("environment.razorBleeding"), "RAZOR",
-            new Rect(area.Left, area.Top + 34.0, half, 86.0),
-            text, muted, border, accent, panel);
-        DrawEconomyCard(dc, P("environment.diamondBleeding"), "DIAMOND",
-            new Rect(area.Left + half + gap, area.Top + 34.0, half, 86.0),
+        // One verified glass-shards bleeding source; the Diamond CFG prototype
+        // has no confirmed in-game encounter, so no Diamond preview card.
+        var bleedingWidth = Math.Min(280.0, area.Width);
+        DrawEconomyCard(dc, P("environment.razorBleeding"), "GLASS SHARDS",
+            new Rect(area.Left + (area.Width - bleedingWidth) / 2.0,
+                area.Top + 34.0, bleedingWidth, 86.0),
             text, muted, border, accent, panel);
         DrawCenteredText(dc, "PSY DRAIN",
             new Point(area.Left + area.Width / 2.0, area.Top + 150.0),
@@ -1084,8 +1082,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var sources = new (string Id, string Label)[]
         {
-            ("environment.razorBleeding", "RAZOR BLEEDING"),
-            ("environment.diamondBleeding", "DIAMOND BLEEDING"),
+            ("environment.razorBleeding", "GLASS SHARDS BLEEDING"),
             ("environment.psyAnomalyIntensity", "PSY DRAIN INTENSITY")
         };
         var columns = EconomyColumns(ActualWidth);
@@ -1209,7 +1206,6 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static string MixerValue(ParameterViewModel parameter, double raw)
         => parameter.Id switch
         {
-            "environment.diamondBleeding" => $"{raw:0.#} pts",
             "economy.repairCostBase" => $"{raw * 100.0:0.#}%",
             "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance" => $"{raw * 100.0:0.#}%",
             "loot.cheapStashGrenadeQuantity" => $"{raw:0} pcs",
@@ -5372,7 +5368,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "economy.repairCostBase" or
             "environment.flycatcherMovementSpeed" or
             "environment.flycatcherTurnSpeed" => $"{rawValue * 100.0:0.#}%",
-            "environment.diamondBleeding" => $"{rawValue:0.#} bleed pts",
             "stamina.vaultMaxHeight" => $"{rawValue:0} uu",
             "stamina.maxCarryWeight" => $"{rawValue:0} kg",
             "loot.npcMedicalChance" or "loot.npcWeaponAmmoSupply" => $"{rawValue:0.##}x",
@@ -6841,7 +6836,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "AnomalySpecialEffects" => new[]
             {
                 "environment.razorBleeding",
-                "environment.diamondBleeding",
                 "environment.psyAnomalyIntensity"
             },
             "NpcLootLoadout" => new[]

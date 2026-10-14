@@ -34,6 +34,28 @@ internal static class Program
             Check(ids.Length == 17 && active.Length == 17 &&
                 active.All(p => p.IsSlider && p.IsControlEnabled) &&
                 active.Select(p => p.Id).ToHashSet(StringComparer.Ordinal).SetEquals(ids), "17 app source controls");
+            // RazorAnomaly is the in-game Glass Shards hazard. Keep actual
+            // CFG prototype IDs stable but expose player-facing wording.
+            Check(definitions.Single(p => p.Id == "environment.razorHealthDamage").Label ==
+                "Glass Shards Health Damage", "Glass Shards damage title");
+            Check(definitions.Single(p => p.Id == "environment.razorBleeding").Label ==
+                "Glass Shards Bleeding", "Glass Shards bleeding title");
+
+            // Diamond has a real CFG prototype but no verified encounter.
+            // Its legacy parameter/writer remains for old presets, not for UI.
+            foreach (var diamondId in new[] {
+                "environment.diamondHealthDamage", "environment.diamondBleeding"
+            })
+            {
+                var parameter = active.Single(p => p.Id == diamondId);
+                Check(!parameter.Definition.ExposeInUi && !parameter.IsControlVisible &&
+                    !parameter.IsIndividualAnomalyDamageMember &&
+                    !parameter.IsVisualAggregateMember, "Diamond must be hidden: " + diamondId);
+            }
+            Check(active.Single(p => p.Id == "environment.razorHealthDamage")
+                .IsIndividualAnomalyDamageMember, "Glass Shards remains in anomaly damage editor");
+            Check(active.Single(p => p.Id == "environment.razorBleeding")
+                .IsVisualAggregateMember, "Glass Shards bleeding retains its visual family");
             Check(points.Length == 42 && points.All(p => p.Scope == "baseGame") &&
                 points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal).SetEquals(ids), "42 base source fields");
             Check(points.All(p => p.Operation is "set" or "scale" or "setDeltaFromRetainedFraction"),

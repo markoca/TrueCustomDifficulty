@@ -9361,14 +9361,14 @@
       "id": "environment.razorHealthDamage",
       "tab": "environment",
       "group": "Individual Anomaly Damage",
-      "label": "Razor Health Damage",
-      "description": "Scales Razor health damage at both movement-speed tiers while preserving the stronger high-speed hit.",
+      "label": "Glass Shards Health Damage",
+      "description": "Scales Glass Shards health damage at both movement-speed tiers while preserving the stronger high-speed hit.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Razor health damage"
+        "valueLabel": "Glass Shards health damage"
       },
       "vanilla": {
         "All": 1
@@ -9400,26 +9400,26 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "Runtime CFG stores low-speed Razor damage as 20-25 and high-speed damage as 100. The slider scales both tiers together and leaves MinSpeed/MaxSpeed thresholds unchanged."
+          "Runtime CFG stores low-speed Glass Shards damage as 20-25 and high-speed damage as 100. The slider scales both tiers together and leaves MinSpeed/MaxSpeed thresholds unchanged."
         ]
       },
-      "rationale": "Changes Razor health damage while preserving its different low-speed and high-speed hit strengths.",
-      "logic": "100% keeps vanilla Razor damage. 0% removes its health damage; 200% doubles both low-speed and high-speed damage.",
-      "interaction": "Razor Bleeding and Razor equipment corrosion remain separate effects. This control does not change the anomaly speed thresholds.",
+      "rationale": "Changes Glass Shards health damage while preserving its different low-speed and high-speed hit strengths.",
+      "logic": "100% keeps vanilla Glass Shards damage. 0% removes its health damage; 200% doubles both low-speed and high-speed damage.",
+      "interaction": "Glass Shards Bleeding and Glass Shards equipment corrosion remain separate effects. This control does not change the anomaly speed thresholds.",
       "exposeInUi": false
     },
     {
       "id": "environment.razorBleeding",
       "tab": "environment",
       "group": "Special Anomaly Effects",
-      "label": "Razor Bleeding",
-      "description": "Scales Razor bleeding at both movement-speed tiers while preserving the stronger high-speed bleeding effect.",
+      "label": "Glass Shards Bleeding",
+      "description": "Scales Glass Shards bleeding at both movement-speed tiers while preserving the stronger high-speed bleeding effect.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Razor bleeding"
+        "valueLabel": "Glass Shards bleeding"
       },
       "vanilla": {
         "All": 1
@@ -9451,12 +9451,12 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "Runtime CFG stores Razor bleeding as 20 at the low-speed tier and 60 at the high-speed tier. The slider scales both values together."
+          "Runtime CFG stores Glass Shards bleeding as 20 at the low-speed tier and 60 at the high-speed tier. The slider scales both values together."
         ]
       },
-      "rationale": "Keeps Razor bleeding independent from direct health damage and equipment corrosion.",
-      "logic": "100% keeps vanilla Razor bleeding. 0% removes it; 200% doubles it.",
-      "interaction": "Razor Health Damage is independent. Movement-speed thresholds and corrosion values remain vanilla."
+      "rationale": "Keeps Glass Shards bleeding independent from direct health damage and equipment corrosion.",
+      "logic": "100% keeps vanilla Glass Shards bleeding. 0% removes it; 200% doubles it.",
+      "interaction": "Glass Shards Health Damage is independent. Movement-speed thresholds and corrosion values remain vanilla."
     },
     {
       "id": "environment.soapBubbleHealthDamage",
@@ -9588,6 +9588,7 @@
       "support": {
         "status": "confirmed",
         "notes": [
+          "CFG prototype confirmed, but DiamondAnomaly has no independently confirmed in-game encounter or spawn; not shown in the TCD UI, preserved for legacy preset compatibility.",
           "Runtime CFG stores DiamondDPS ValueMin/ValueMax as 15/15."
         ]
       },
@@ -9634,12 +9635,14 @@
       "support": {
         "status": "confirmed",
         "notes": [
+          "CFG prototype confirmed, but DiamondAnomaly has no independently confirmed in-game encounter or spawn; not shown in the TCD UI, preserved for legacy preset compatibility.",
           "Runtime CFG stores DiamondBleeding ValueMin/ValueMax as 10/10."
         ]
       },
       "rationale": "Exposes the confirmed bleeding layer independently from direct Diamond damage.",
       "logic": "100% corresponds to vanilla bleeding value 10. The slider ranges from 0 to 20.",
-      "interaction": "Diamond Health Damage is controlled separately."
+      "interaction": "Diamond Health Damage is a separate legacy CFG target.",
+      "exposeInUi": false
     },
     {
       "id": "environment.psyAnomalyIntensity",

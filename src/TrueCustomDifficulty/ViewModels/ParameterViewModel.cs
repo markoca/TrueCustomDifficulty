@@ -248,8 +248,7 @@ public sealed class ParameterViewModel : ObservableObject
         "environment.clickerHealthDamage",
         "environment.razorHealthDamage",
         "environment.soapBubbleHealthDamage",
-        "environment.fireballHealthDamage",
-        "environment.diamondHealthDamage"
+        "environment.fireballHealthDamage"
     };
 
     public bool IsIndividualAnomalyDamageMember => IndividualAnomalyDamageParameterIds.Contains(Id);

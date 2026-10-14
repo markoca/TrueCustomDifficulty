@@ -868,9 +868,51 @@ elif not _env_parameters["environment.anomalyDamage"].get("exposeInUi", True):
 else:
     note("Global vs Individual anomaly scopes are separate; historic numeric sort indices retired")
 
-verify_current_editor("Individual Anomaly Damage", "AnomalyDamageRadar", ("environment.electroAnomalyDamage", "environment.chemicalAnomalyDamage", "environment.fireAnomalyDamage", "environment.carouselAnomalyDamage", "environment.toxicCloudDamage", "environment.steamAnomalyDamage", "environment.clickerHealthDamage", "environment.razorHealthDamage", "environment.soapBubbleHealthDamage", "environment.fireballHealthDamage", "environment.diamondHealthDamage",), "individualAnomalyDamageParameterIds.Contains(p.Id)", ("IsIndividualAnomalyDamageAnchor", "IsIndividualAnomalyDamageMember"))
+verify_current_editor("Individual Anomaly Damage", "AnomalyDamageRadar", ("environment.electroAnomalyDamage", "environment.chemicalAnomalyDamage", "environment.fireAnomalyDamage", "environment.carouselAnomalyDamage", "environment.toxicCloudDamage", "environment.steamAnomalyDamage", "environment.clickerHealthDamage", "environment.razorHealthDamage", "environment.soapBubbleHealthDamage", "environment.fireballHealthDamage",), "individualAnomalyDamageParameterIds.Contains(p.Id)", ("IsIndividualAnomalyDamageAnchor", "IsIndividualAnomalyDamageMember"))
 
 verify_current_editor("Stash Ammo", "StashAmmoRadar", ("loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity", "loot.expensiveStashAmmoQuantity",), "stashAmmoParameterIds", ("IsStashAmmoAnchor", "IsStashAmmoMember"))
+
+# Anomaly identity release gate (2026-10-14):
+# Glass Shards is the RazorAnomaly SID. Diamond CFG prototypes exist, but the
+# in-game spawn/encounter is unconfirmed, so exclude their UI controls only.
+_anomaly_ui_radar = (ROOT / "src/TrueCustomDifficulty/Controls/AnomalyDamageRadar.cs").read_text(encoding="utf-8")
+_anomaly_ui_aggregate = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+_anomaly_ui_pvm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+_anomaly_ui_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+_anomaly_ui_params = {p.get("id"): p for p in parameters}
+for _pid, _expected in (
+    ("environment.razorHealthDamage", "Glass Shards Health Damage"),
+    ("environment.razorBleeding", "Glass Shards Bleeding"),
+):
+    _row = _anomaly_ui_params.get(_pid, {})
+    if _row.get("label") != _expected or not _row.get("targets"):
+        fail("Glass Shards player-facing identity or source mapping drifted: " + _pid)
+for _pid in ("environment.diamondHealthDamage", "environment.diamondBleeding"):
+    _row = _anomaly_ui_params.get(_pid, {})
+    if (_row.get("exposeInUi", True)
+        or not _row.get("targets")
+        or _row.get("support", {}).get("status") != "confirmed"):
+        fail("Diamond unverified-gameplay/legacy-CFG boundary drifted: " + _pid)
+if ('new("environment.razorHealthDamage", "GLASS SHARDS", true)' not in _anomaly_ui_radar
+    or '"environment.diamondHealthDamage"' in _anomaly_ui_radar
+    or 'var columns = Anomalies.Length;' not in _anomaly_ui_radar):
+    fail("Anomaly Damage radar must show ten items and GLASS SHARDS, never Diamond")
+if ('P("environment.razorBleeding"), "GLASS SHARDS"' not in _anomaly_ui_aggregate
+    or 'P("environment.diamondBleeding")' in _anomaly_ui_aggregate
+    or '("environment.razorBleeding", "GLASS SHARDS BLEEDING")' not in _anomaly_ui_aggregate
+    or '("environment.diamondBleeding", "DIAMOND BLEEDING")' in _anomaly_ui_aggregate):
+    fail("Flycatcher and legacy anomaly special effects should not display Diamond")
+for _source, _pid in (
+    (_anomaly_ui_pvm, "environment.diamondHealthDamage"),
+    (_anomaly_ui_vm, "environment.diamondHealthDamage"),
+):
+    if f'"{_pid}"' in _source:
+        fail("Diamond still belongs to the visible Individual Anomaly Damage editor")
+if '"environment.diamondBleeding",' in _anomaly_ui_vm:
+    fail("Diamond still belongs to the visible Anomaly Special Effects aggregate")
+if not (DOCS / "ANOMALY-IDENTITY-AUDIT-2026-10-14.md").exists():
+    fail("Anomaly source/provenance identity audit missing")
+note("Anomaly identity: Razor = Glass Shards; Diamond CFG retained but UI excluded")
 
 # Current Breakable Boxes aggregate production gate (UI-06, 2026-10-09).
 # The retired AmmoDistributionRadar.cs is NOT a valid renderer or test target.
@@ -2448,7 +2490,7 @@ _global_expected_tabs = {
     "survival": 35,
     "economy": 17,
     "master": 20,
-    "environment": 7,
+    "environment": 6,
     "loot": 31,
     "alife": 2,
 }
@@ -2599,18 +2641,17 @@ _global_anomaly_ids = {
     "environment.razorHealthDamage",
     "environment.soapBubbleHealthDamage",
     "environment.fireballHealthDamage",
-    "environment.diamondHealthDamage",
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 247 or len(_global_visible) != 149 or len(_global_hidden) != 98:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 247/149/98")
+if len(parameters) != 247 or len(_global_visible) != 148 or len(_global_hidden) != 99:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 247/148/99")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 118 or _global_runtime != 31:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 118/31")
-elif _global_control_counts != {"slider": 135, "toggle": 12, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 135 sliders / 12 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 31:
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/31")
+elif _global_control_counts != {"slider": 134, "toggle": 12, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 134 sliders / 12 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -2635,7 +2676,7 @@ elif _global_anomaly_missing or "SetEffectiveDamageMultiplierProvider" not in _g
 elif not _global_doc.exists():
     fail("global cross-domain audit document missing from docs/")
 else:
-    note("current cross-domain structural audit: 247 catalog / 149 visible / 98 hidden; 118 visible confirmed + 31 runtime-test-required; zero direct collisions")
+    note("current cross-domain structural audit: 247 catalog / 148 visible / 99 hidden; 117 visible confirmed + 31 runtime-test-required; zero direct collisions")
 
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("v0.2.51-v0.3.0 override/CFG-placement/provenance/production snapshots (current UI/Combat tools + active source checks are authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")

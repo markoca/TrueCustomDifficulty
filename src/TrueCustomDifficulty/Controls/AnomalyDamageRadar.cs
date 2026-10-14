@@ -28,10 +28,9 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         new("environment.toxicCloudDamage", "TOXIC CLOUD", false),
         new("environment.steamAnomalyDamage", "STEAM", false),
         new("environment.clickerHealthDamage", "CLICKER", false),
-        new("environment.razorHealthDamage", "RAZOR", true),
+        new("environment.razorHealthDamage", "GLASS SHARDS", true),
         new("environment.soapBubbleHealthDamage", "SOAP BUBBLE", false),
         new("environment.fireballHealthDamage", "FIREBALL", false),
-        new("environment.diamondHealthDamage", "DIAMOND", false),
     };
 
     // Each radar row edits its own parameter and selects that parameter's
@@ -171,7 +170,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         // or the computed RESULT readout. Their 0..200% axis is *relative to
         // each source's vanilla*, never 0..200 hit points or global damage.
         const double top = 365.0, bottom = 526.0;
-        const int columns = 11;
+        var columns = Anomalies.Length;
         var left = 53.0;
         var lane = (ActualWidth - left - 14.0) / columns;
         for (var tick = 0; tick <= 4; tick++)

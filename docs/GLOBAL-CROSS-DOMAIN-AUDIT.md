@@ -1,5 +1,10 @@
 # Global Cross-Domain Control Audit — v0.2.50
 
+## 2026-10-14 — Environment anomaly identity UI correction (current)
+
+The 247 original catalogued parameters and their CFG writer mappings remain. `environment.diamondBleeding` is now explicitly `exposeInUi=false` and `environment.diamondHealthDamage` remains catalog-hidden because their `DiamondAnomaly` prototype exists, but an in-game encounter is not confirmed. Player-facing Environment visible anchor/source accounting falls from **7 to 6** (global visible total **149→148**, hidden **98→99**, confirmed-visible **118→117**, native slider-visible **135→134**). The actual player-facing Anomalies aggregate shows 15 real controls: one global damage knob, 10 anomaly damage lanes, two Flycatcher axis sources, Glass Shards Bleeding and Psy Drain. Both Diamond original CFG targets remain available for legacy preset writer compatibility. `RazorAnomaly` is the **Glass Shards** anomaly; labels change but source IDs and CFG operations do not. See [Anomaly identity audit](ANOMALY-IDENTITY-AUDIT-2026-10-14.md).
+
+
 ### 2026-10-10 — Beer and Vodka independent RAD removal (latest binding contract)
 
 Within the **single MEDICAL ITEMS card** the right-hand RADIATION REMOVAL bank now has **four compact vertical sliders on one row**: **SCIENTIFIC MEDKIT**, **ANTI-RAD**, **BEER** and **VODKA**. There is no second-row, duplicate standalone Radiation Treatment card, or separate consumable alcohol antirad slider. The RAD bank is given additional horizontal space by tightening the four gold HEAL / copper BLEED pairs on the left; at least 820 DIP board width is reserved so all 12 numeric columns remain one row without clipping. Each column uses the shared horizontal cap/white-on-hover and independent source-native drag/keyboard/right-click/R reset; the RAD bank keeps a separate teal 0–200 vertical scale, with numbers not conflated with HP or bleeding points.

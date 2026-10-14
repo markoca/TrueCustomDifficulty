@@ -96,8 +96,7 @@ public sealed class MainViewModel : ObservableObject
             "environment.clickerHealthDamage",
             "environment.razorHealthDamage",
             "environment.soapBubbleHealthDamage",
-            "environment.fireballHealthDamage",
-            "environment.diamondHealthDamage"
+            "environment.fireballHealthDamage"
         };
 
         var worldLootRemovalParameterIds = new HashSet<string>(StringComparer.Ordinal)
@@ -482,7 +481,7 @@ public sealed class MainViewModel : ObservableObject
             "equipment.consumableWeight");
 
         // Global damage is edited inside the Individual Anomaly Damage radar
-        // alongside eleven independent source controls. Keep this legacy
+        // alongside ten confirmed, player-facing source controls. Keep this legacy
         // aggregate source registered for state/provenance, but its standalone
         // visual anchor is hidden in ParameterViewModel.IsControlVisible.
         // Flycatcher and Anomaly Special Effects remain separate.
@@ -494,7 +493,6 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             "environment.razorBleeding",
             "environment.razorBleeding",
-            "environment.diamondBleeding",
             "environment.psyAnomalyIntensity");
 
         // The NPC card combines distinct native shapes: discrete smart-loot

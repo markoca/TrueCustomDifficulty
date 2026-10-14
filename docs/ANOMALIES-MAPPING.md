@@ -2,13 +2,13 @@
 
 # Anomalies Mapping
 
-## Current visual layout (2026-10-09)
+## Current visual layout (2026-10-14)
 
-The active `environment` tab is presented as **four independent source-bound sections**, ordered Global Anomaly Damage (1), Individual Anomaly Damage (11), Flycatcher Slowdown (2), Special Anomaly Effects (3). The former six-vertical-fader Anomaly Effects mixer is retired. All 17 existing source parameters and their stored IDs remain intact. Group metadata, renderer presentation and family-scoped resets change only the UI; target CFG files, transformations and saved preset keys are unchanged.
+The current `environment` tab exposes **15 source-backed controls** from a preserved catalog of **17 CFG parameters**: Global Anomaly Damage (1), 10 individual anomaly damage sources, two Flycatcher movement/turning axes, Glass Shards Bleeding (1), and Psy Drain (1). The two Diamond source parameters remain catalogued for legacy preset/CFG compatibility but have **no player-facing controls**: no independently confirmed in-game encounter or spawn has been identified. This is *not* evidence the Diamond CFG prototype is absent. See [Anomaly identity audit](ANOMALY-IDENTITY-AUDIT-2026-10-14.md).
 
-Global Anomaly Damage uses one compact horizontal 0–2.5x native scaler. Individual damage uses eleven compact cards in two columns; row live values show raw source numbers (except the Razor health-damage multiplier), while row rails move between 0–200% of each source's fixed vanilla, snapping back to its original raw CFG step. The global difficulty multiplier remains a separate layer and player protection is not simulated. Clicking a damage row selects that source's rationale.
+The global damage knob and ten native individual-damage vertical rails remain in the same unified `AnomalyDamageRadar` card. Each rail continues to show actual source damage relative to its own reference (except Glass Shards' dedicated 0–2x coefficient). Flycatcher keeps its two-axis interactive graph; the same right-side board now shows just **GLASS SHARDS** bleeding, centered at a maximum of 280 DIP, and **PSY DRAIN** beneath it. Diamond leaves no empty slot. The separate generic Special Effects family, if rendered, offers only Glass Shards Bleeding and Psy Drain. No new CFG source, source scaling or gameplay mechanic is introduced.
 
-Flycatcher uses a **Combat-style interactive two-axis graph** with matching bottom movement ring, left turning ring, and interactive center ring controlling both. X/Y readouts show **retained speed** in 0–100%, vanilla movement 50%, turn 30%; the native source-to-negative-CFG conversion shown below is unchanged. The three special-effect rails are Razor Bleeding 0–2x, Diamond Bleeding **0–20 actual points** in 0.5-point increments, Psy Drain 0–2x. The special rails use grey reference ticks and direct source right-click/R resets. No additional anomaly damage mechanisms, weather or emissions settings are introduced.
+The `RazorAnomaly` CFG SID is the in-game **Glass Shards** (floating broken glass) anomaly. Rename only visible UI/tooltip/catalog labels; retain original `environment.razorHealthDamage`, `environment.razorBleeding` preset IDs and `RazorAnomaly*` source prototypes. Global multiplier/protection and Razor's original speed thresholds remain independent of the two editable sources.
 
 ## Current UI scope
 
@@ -26,12 +26,10 @@ Currently exposed controls are:
 - Clicker health damage (`ClickerAnomalyHit`)
 - Flycatcher movement speed (`FlycatcherVelocityChange`)
 - Flycatcher turn speed, using one UI value for both `FlycatcherTurnRateChangeYaw` and `FlycatcherTurnRateChangePitch`
-- Razor health damage, scaling both `RazorAnomalyDamageDPSLow` and `RazorAnomalyDamageDPSHigh`
-- Razor bleeding, scaling both `RazorAnomalyLowBleed` and `RazorAnomalyHighBleed`
+- Glass Shards health damage (`RazorAnomaly`), scaling both `RazorAnomalyDamageDPSLow` and `RazorAnomalyDamageDPSHigh`
+- Glass Shards bleeding (`RazorAnomaly`), scaling both `RazorAnomalyLowBleed` and `RazorAnomalyHighBleed`
 - Soap Bubble health damage (`SoapBubbleDamage`)
 - Fireball health damage (`FireBallAnomaly`)
-- Diamond health damage (`DiamondDPS`)
-- Diamond bleeding (`DiamondBleeding`)
 - Psy anomaly intensity (`PsyAnomalyIncreaseRegen`)
 
 ## Flycatcher UI semantics
@@ -65,14 +63,14 @@ Projectile slowdown and HP/stamina regeneration penalties remain vanilla and are
 
 The tuner exposes **only Clicker Health Damage**. In runtime CFG 2.0.5, `ClickerAnomalyHit` uses `ValueMin = 70`, `ValueMax = 70`, Burn damage. Radius, charge time, cooldown, equipment corrosion and flash behavior remain vanilla.
 
-## Razor semantics
+## Glass Shards (Razor CFG) semantics
 
-Razor is intentionally split into two player-facing controls rather than one generic strength slider:
+Glass Shards, internally `RazorAnomaly`, is intentionally split into two player-facing controls rather than one generic strength slider:
 
-- **Razor Health Damage** scales `RazorAnomalyDamageDPSLow` (20-25 vanilla) and `RazorAnomalyDamageDPSHigh` (100 vanilla) together.
-- **Razor Bleeding** scales `RazorAnomalyLowBleed` (20 vanilla) and `RazorAnomalyHighBleed` (60 vanilla) together.
+- **Glass Shards Health Damage** scales `RazorAnomalyDamageDPSLow` (20-25 vanilla) and `RazorAnomalyDamageDPSHigh` (100 vanilla) together.
+- **Glass Shards Bleeding** scales `RazorAnomalyLowBleed` (20 vanilla) and `RazorAnomalyHighBleed` (60 vanilla) together.
 
-The low/high movement thresholds stay vanilla, so the original velocity-dependent design is preserved. Razor corrosion/equipment damage remains untouched.
+The low/high movement thresholds stay vanilla, so the original velocity-dependent design is preserved. Glass Shards equipment corrosion remains untouched.
 
 ## Other newly exposed anomaly effects
 
@@ -80,11 +78,13 @@ The low/high movement thresholds stay vanilla, so the original velocity-dependen
 | --- | --- | ---: |
 | Soap Bubble Health Damage | `SoapBubbleDamage` | 100 |
 | Fireball Health Damage | `FireBallAnomaly` | 100 |
-| Diamond Health Damage | `DiamondDPS` | 15 |
-| Diamond Bleeding | `DiamondBleeding` | 10 |
 | Psy Anomaly Intensity | `PsyAnomalyIncreaseRegen` | -1.7 raw (`DegenPsyPoints`) |
 
 The Psy control is shown as a positive 0-200% intensity multiplier even though the raw runtime value is negative. 100% preserves -1.7, 0% removes the mapped effect, and 200% scales it to -3.4.
+
+## CFG retained but excluded from the player-facing interface
+
+The standalone `DiamondAnomaly` prototype is present in `AnomalyPrototypes.cfg` and refers to `DiamondDPS` and `DiamondBleeding` effects. Unlike Glass Shards, its game-world identity/placement has not been confirmed. Their two existing parameter IDs, baseline sources and writer tests are retained for round-tripping legacy presets, but neither editor is rendered. This can be reconsidered after explicit spawn/gameplay evidence.
 
 ## Still intentionally excluded
 
