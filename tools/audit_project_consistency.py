@@ -467,10 +467,10 @@ _non_gen_expected = {
     "combat": (17, 13, 4),
     "health": (13, 10, 3),
     "stamina": (7, 6, 1),
-    # Four source-native equipment editors are presented on Survival.
-    "survival": (35, 32, 3),
+    # Equipment is a separate tab again; CFG sources and total visibility are unchanged.
+    "survival": (31, 29, 2),
     "economy": (17, 12, 5),
-    "equipment": (0, 0, 0),
+    "equipment": (4, 3, 1),
 }
 _non_gen_doc = DOCS / "NON-GENERATOR-CONTROL-VERIFICATION.md"
 _non_gen_actual = {}
@@ -1339,15 +1339,13 @@ _low_bleeding_points = [e for e in _survival_points if e.get("parameterId") == "
 _vm_source_survival = (ROOT / "src" / "TrueCustomDifficulty" / "ViewModels" / "MainViewModel.cs").read_text(encoding="utf-8")
 _survival_mapping_text = _survival_mapping.read_text(encoding="utf-8") if _survival_mapping.exists() else ""
 
-if len(_survival_ui) != 35 or len(_survival_confirmed) != 32 or len(_survival_runtime) != 3:
-    fail(f"survival deep audit status split drifted: total={len(_survival_ui)} confirmed={len(_survival_confirmed)} runtime={len(_survival_runtime)}; expected 35/32/3")
-elif len(_survival_points) != 195:
-    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 195 (82 native + 113 moved equipment)")
-elif (sum(not p["id"].startswith("equipment.") for p in _survival_ui) != 31
-      or sum(p["id"].startswith("equipment.") for p in _survival_ui) != 4
-      or sum(not e["parameterId"].startswith("equipment.") for e in _survival_points) != 82
-      or sum(e["parameterId"].startswith("equipment.") for e in _survival_points) != 113):
-    fail("survival/equipment source IDs or writer partition drifted after moving equipment controls")
+if len(_survival_ui) != 31 or len(_survival_confirmed) != 29 or len(_survival_runtime) != 2:
+    fail(f"survival deep audit status split drifted: total={len(_survival_ui)} confirmed={len(_survival_confirmed)} runtime={len(_survival_runtime)}; expected 31/29/2")
+elif len(_survival_points) != 82:
+    fail(f"survival writer surface drifted: {len(_survival_points)} edit points; expected 82 native Survival targets")
+elif (any(p["id"].startswith("equipment.") for p in _survival_ui)
+      or any(e["parameterId"].startswith("equipment.") for e in _survival_points)):
+    fail("equipment sources leaked into Survival tab or Survival writer inventory")
 elif _hunger_medium.get("label") != "Hunger Stamina Recovery Penalty" or (_hunger_medium.get("vanilla") or {}).get("All") != 0.33:
     fail("medium hunger stamina recovery player-facing penalty contract drifted")
 elif _hunger_strong.get("label") != "Severe Hunger Stamina Recovery Penalty" or (_hunger_strong.get("vanilla") or {}).get("All") != 0.7:
@@ -1379,7 +1377,7 @@ elif not _survival_mapping.exists():
 elif not _survival_doc.exists():
     fail("Survival deep audit document missing from docs/")
 else:
-    note("survival current deep audit: 35 visible / 32 confirmed + 3 runtime-pending; 195 writer leaves (82 native + 113 equipment); hunger sign/order preserved")
+    note("survival current deep audit: 31 visible / 29 confirmed + 2 runtime-pending; 82 native writer leaves; hunger sign/order preserved")
 
 verify_current_editor("Item Price Scalers", "ItemPriceScalersRadar", ("economy.consumableCost", "economy.ammoCost", "economy.armorCost", "economy.weaponCost", "economy.artifactCost", "economy.mutantPartValue",), "itemPriceScalerParameterIds.Contains(p.Id)", ("IsItemPriceScalerAnchor", "IsItemPriceScalerMember"))
 
@@ -1559,12 +1557,19 @@ if any("2026-10-11 — Economy three-section dashboard" not in
 # Equipment deep audit release gate (v0.2.49).
 _equipment_doc = DOCS / "EQUIPMENT-CONTROL-DEEP-AUDIT.md"
 _equipment_mapping = DOCS / "EQUIPMENT-MAPPING.md"
-# Equipment parameters are grouped under Survival in the current catalog.
-# Audit stable source IDs, never the (presentation-only) tab assignment.
+# Equipment owns a standalone tab. Preserve stable source IDs and writer provenance.
 _equipment_ui = [p for p in parameters
                  if (p.get("id") or "").startswith("equipment.")
                  and p.get("exposeInUi", True)]
 _equipment_rows = {p.get("id"): p for p in _equipment_ui}
+_equipment_tab = next((t for t in parameters_doc.get("tabs", []) if t.get("id") == "equipment"), None)
+if (_equipment_tab != {"id": "equipment", "label": "Equipment", "order": 70}
+    or sum(t.get("id") == "equipment" for t in parameters_doc.get("tabs", [])) != 1
+    or any(p.get("tab") != "equipment" for p in _equipment_ui)
+    or any(p.get("tab") == "equipment" and not (p.get("id") or "").startswith("equipment.")
+           for p in parameters)
+    or {p.get("group") for p in _equipment_ui} != {"Equipment Wear", "Item Weight"}):
+    fail("Equipment tab navigation/group membership drifted from source catalog")
 _equipment_confirmed = [p for p in _equipment_ui if p.get("support", {}).get("status") == "confirmed"]
 _equipment_runtime = [p for p in _equipment_ui if p.get("support", {}).get("status") == "runtime_test_required"]
 _equipment_ids = set(_equipment_rows)
@@ -2525,8 +2530,9 @@ _global_expected_tabs = {
     "combat": 17,
     "health": 13,
     "stamina": 7,
-    "survival": 35,
+    "survival": 31,
     "economy": 17,
+    "equipment": 4,
     "master": 20,
     "environment": 6,
     "loot": 31,
