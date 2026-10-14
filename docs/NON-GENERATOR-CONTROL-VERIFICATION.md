@@ -1,5 +1,9 @@
 # Non-Generator Control Verification — v0.2.43
 
+### 2026-10-14 — Equipment has its own tab again (CURRENT)
+
+The non-generator normal UI inventory is **Combat 17 (13 confirmed / 4 runtime), Health 13 (10/3), Stamina 7 (6/1), Survival 31 (29/2), Economy 17 (12/5), Equipment 4 (3/1)**: **89 visible non-generator sources** total. The Equipment tab contains exactly the existing two groups Equipment Wear and Item Weight (four preserved `equipment.*` IDs); their 113 source-backed writer leaves are counted under Equipment rather than Survival. Survival retains 82 independent leaves. Prior 2026-10-13 Equipment-in-Survival numbers below are historical and superseded.
+
 ### 2026-10-13 — Current non-generator UI ownership (CURRENT; supersedes historical Equipment-tab inventory)
 
 The current normal UI inventory is **Combat 17 (13 confirmed / 4 runtime), Health 13 (10/3), Stamina 7 (6/1), Survival 35 (32/3), Economy 17 (12/5)**, with **no separate Equipment tab**. The four stable Equipment source IDs `equipment.armorDurability`, `equipment.weaponWearPerShot`, `equipment.ammoWeight` and `equipment.consumableWeight` are **presented in Survival** without changing ownership of their original CFG targets. The total remains **89 visible non-generator controls** across these groups, unchanged by moving four records between display categories. The 195 current Survival-associated writer points consist of 82 originally under Survival and 113 moved Equipment points; this is a display/inventory reassignment, not a new writer or runtime effect. `tools/audit_project_consistency.py` now asserts this explicit breakdown and preserves the audit-only hide contracts. Older tables in this document are historical, not current UI tab counts.
