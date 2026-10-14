@@ -73,6 +73,10 @@ The twelve role presets each include 219 CFG-backed values, now including 18 A-L
 
 Every stock preset now includes `survival.waterRegenDuration = 5s`, `survival.energyFullCostDuration = 5s`, and `survival.energyPartialCostDuration = 15s`. Main drink-duration multipliers and these three real-seconds sliders are independent but constrained to actual source duration. The factory migration upgrades only byte-for-byte stock JSONs; user modifications are not overwritten. Loading a pre-change custom preset without the three fields derives the former short durations from its old main multiplier, clamped to the new vanilla floor and live main ceiling. New saves write the three values explicitly.
 
+## Balance direction — immersion over vanilla abundance
+
+Vanilla S.T.A.L.K.E.R. 2 provides plentiful loot and supplies. All factory presets, including Immersive, should be evaluated against the full acquisition/spending loop rather than preserving this generous baseline as the goal. Progression and scarcity must be role-specific, meaningful and playable, without artificial bullet sponges or unverified CFG interpretations. This is a design rule for future numerical rebalance, not a claim that all existing values have been re-audited. See `docs/FACTORY-PRESETS.md`, “Abundance-aware, immersion-first balance policy”.
+
 ## 2026-10-14 — Fully tuned current catalog
 
 All 12 shipped profile files now include **247 parameter IDs** (34 more than the previous 213) with playstyle-specific tuning of the new controls and three existing child drink durations. Full tuning and validation contract: `docs/FACTORY-PRESETS.md` and `tools/factory_preset_expansion.json`. Previously installed, byte-for-byte official factory files upgrade automatically; edited or custom JSONs are never overwritten. All three short drink effects remain bound by their Water / Energy parent duration. Hidden, unverified source multipliers remain neutral.
