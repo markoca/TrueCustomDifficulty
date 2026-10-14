@@ -46,9 +46,9 @@ public sealed class BleedingCurveControl : FrameworkElement
     private DragTarget _hoverTarget = DragTarget.None;
     private DragTarget _dragTarget = DragTarget.None;
     private DragTarget _selectedTarget = DragTarget.LowDamage;
-    private double _scenarioBleed = 80.0; // Local-only; never a CFG source.
-    private double _scenarioHpPercent = 100.0;
-    private int _scenarioSecond;
+    private double _scenarioBleed = 80.0; // Hypothetical unscaled incoming wound, in bleeding points.
+    private double _scenarioHpPercent = 100.0; // Share of live Health-tab Max HP at wound onset.
+    private int _scenarioSecond = 1; // Inspect the first actual tick, not the pre-wound NONE state.
     private Rect _scenarioBleedHit;
     private Rect _scenarioHpHit;
     private Rect _scenarioPlot;
@@ -512,6 +512,7 @@ public sealed class BleedingCurveControl : FrameworkElement
     private BleedTimelineResult ProjectBleed()
         => BleedingTimelineProjection.Calculate(
             _maxHp?.CurrentNumber ?? 100.0, _scenarioHpPercent, _scenarioBleed,
+            _severity?.CurrentNumber ?? 1.0,
             _recovery?.CurrentNumber ?? 0.3,
             _damage[0]?.CurrentNumber ?? 1.0,
             _damage[1]?.CurrentNumber ?? 1.5,
@@ -555,13 +556,19 @@ public sealed class BleedingCurveControl : FrameworkElement
         var bankWidth = Math.Min(760.0, Math.Max(1.0, ActualWidth - 32.0));
         var left = (ActualWidth - bankWidth) / 2.0;
         var half = (bankWidth - 12.0) / 2.0;
+        var result = ProjectBleed();
+        var maxHp = _maxHp?.CurrentNumber ?? 100.0;
+        // Two independent scenario inputs: wound BLEEDING POINTS (before the
+        // selected-difficulty Effect_Bleeding scalar) and current HEALTH HP.
+        // Changing either one recomputes all actual stage HP charges.
         DrawScenarioRail(dc, new Rect(left, 470.0, half, 50.0),
-            "START BLEED", $"{_scenarioBleed:0} PTS", _scenarioBleed,
-            0.0, 100.0, ScenarioInput.Bleed,
+            "WOUND BLEED (PTS)",
+            $"{result.WoundBleedingPoints:0} → {result.InitialBleedingPoints:0.#} PTS",
+            _scenarioBleed, 0.0, 100.0, ScenarioInput.Bleed,
             text, muted, border, accent, panel, out _scenarioBleedHit);
         DrawScenarioRail(dc, new Rect(left + half + 12.0, 470.0, half, 50.0),
-            "START HP",
-            $"{(_maxHp?.CurrentNumber ?? 100.0) * _scenarioHpPercent / 100.0:0.#} HP",
+            "HP AT ONSET",
+            $"{_scenarioHpPercent:0}% = {maxHp * _scenarioHpPercent / 100.0:0.#} HP",
             _scenarioHpPercent, 5.0, 100.0, ScenarioInput.Hp,
             text, muted, border, accent, panel, out _scenarioHpHit);
 
@@ -571,13 +578,12 @@ public sealed class BleedingCurveControl : FrameworkElement
             new Point(preview.Left + 12.0, preview.Top + 9.0),
             10.2, text, FontWeights.Bold);
 
-        var result = ProjectBleed();
         var last = result.Samples[^1];
         var rawHp = Math.Max(0.0, result.Samples[0].Hp - last.Hp);
         _scenarioSecond = Math.Clamp(_scenarioSecond, 0, last.Second);
         var sample = result.Samples[_scenarioSecond];
         var markers = BleedingTimelineProjection.TimelineMarkers(result);
-        DrawRightAlignedText(dc, $"{result.Hits} TICKS  /  {rawHp:0.#} RAW HP",
+        DrawRightAlignedText(dc, $"{result.Hits} TICKS  /  {rawHp:0.#} HP LOST",
             new Point(preview.Right - 12.0, preview.Top + 9.0),
             9.4, text, FontWeights.SemiBold);
 
@@ -634,9 +640,9 @@ public sealed class BleedingCurveControl : FrameworkElement
                     new Point(startX, axisY + 13.0));
         }
 
-        // Unlike Starvation's read-only rail, the full Bleeding rail can be
-        // scrubbed to inspect each second; the three labeled dots are genuine
-        // first/middle/last HP hits, not three fabricated adjacent charges.
+        // Unlike Starvation's read-only rail, this one is draggable. Markers
+        // are actual first HP hits in the reached Low/Medium/Severe states
+        // plus the final hit, not fixed fake one-HP-per-tick milestones.
         var cursorX = At(_scenarioSecond);
         dc.DrawLine(new Pen(CloneWithOpacity(text, 0.65), 1.0)
             { DashStyle = DashStyles.Dot },
@@ -739,13 +745,13 @@ public sealed class BleedingCurveControl : FrameworkElement
         {
             case ScenarioInput.Bleed:
                 _scenarioBleed = Math.Round(fraction * 100, MidpointRounding.AwayFromZero);
-                _scenarioSecond = 0;
+                _scenarioSecond = 1;
                 break;
             case ScenarioInput.Hp:
                 _scenarioHpPercent = Math.Clamp(
                     Math.Round((5 + fraction * 95) / 5, MidpointRounding.AwayFromZero) * 5,
                     5, 100);
-                _scenarioSecond = 0;
+                _scenarioSecond = 1;
                 break;
             case ScenarioInput.Scrub:
                 _scenarioSecond = (int)Math.Round(fraction * ProjectBleed().Duration,
@@ -756,10 +762,13 @@ public sealed class BleedingCurveControl : FrameworkElement
     }
 
     private const string ScenarioTip =
-        "Hypothetical one-second damage ticks with bleeding recovery applied after each hit. " +
-        "No HP regen, protection, medicine or new wounds. Starting values are preview-only. " +
-        "BLEEDING INFLICTED changes the strength of newly inflicted wounds via " +
-        "the difficulty CFG. It is not another HP/tick multiplier at fixed starting bleed.";
+        "WOUND BLEED: incoming bleeding points (NOT health HP) before Bleeding Inflicted. " +
+        "Preview assumes initial bleed = wound PTS x difficulty Effect_Bleeding, capped at 100 PTS; " +
+        "the exact game's wound-to-bleed formula is not confirmed. " +
+        "HP AT ONSET: player's current health as % of Health-tab Max HP. " +
+        "Each estimated 1-second tick subtracts current LOW/MEDIUM/SEVERE HP/TICK from the damage profile, " +
+        "then applies Natural Recovery to bleeding points. " +
+        "No HP regeneration, medicine, armor or new wounds; scenario values are preview-only.";
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
@@ -964,8 +973,8 @@ public sealed class BleedingCurveControl : FrameworkElement
             _scenarioSelected = input;
             switch (input)
             {
-                case ScenarioInput.Bleed: _scenarioBleed = 80; break;
-                case ScenarioInput.Hp: _scenarioHpPercent = 100; break;
+                case ScenarioInput.Bleed: _scenarioBleed = 80; _scenarioSecond = 1; break;
+                case ScenarioInput.Hp: _scenarioHpPercent = 100; _scenarioSecond = 1; break;
                 case ScenarioInput.Scrub: _scenarioSecond = 0; break;
             }
             InvalidateVisual();
@@ -1061,12 +1070,12 @@ public sealed class BleedingCurveControl : FrameworkElement
                 if (_scenarioSelected == ScenarioInput.Bleed)
                 {
                     _scenarioBleed = next;
-                    _scenarioSecond = 0;
+                    _scenarioSecond = 1;
                 }
                 else if (_scenarioSelected == ScenarioInput.Hp)
                 {
                     _scenarioHpPercent = next;
-                    _scenarioSecond = 0;
+                    _scenarioSecond = 1;
                 }
                 else
                     _scenarioSecond = (int)next;

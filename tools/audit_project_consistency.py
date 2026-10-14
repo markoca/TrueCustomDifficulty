@@ -3637,6 +3637,10 @@ for _token in (
     "bleed = Math.Max(0, bleed - regen)",
     "death = sec;",
     "ends = sec;",
+    "double woundBleeding,",
+    "double bleedingInflicted, double recovery,",
+    "wound * Math.Max(0.0, bleedingInflicted)",
+    "new BleedTimelineResult(points, hits, death, ends, wound, points[0].Bleed)",
 ):
     if _token not in _bleed_timeline_source:
         fail("Bleeding timeline discrete 1-second projection contract drifted: " + _token)
@@ -3654,9 +3658,13 @@ for _token in (
     "var opacity = segment.Stage switch",
     "if (width >= 114.0)",
     "if (n > 0)",
-    '"START BLEED"',
-    '"START HP"',
-    '" TICKS  /  "',
+    '"WOUND BLEED (PTS)"',
+    '"HP AT ONSET"',
+    "result.WoundBleedingPoints",
+    "result.InitialBleedingPoints",
+    "_severity?.CurrentNumber ?? 1.0",
+    "_scenarioHpPercent:0}% =",
+    '"{result.Hits} TICKS  /  {rawHp:0.#} HP LOST"',
     'const string prefix = "BLEEDING KILLS IN ";',
     'const string connector = " TICKS AFTER ";',
     "BleedingTimelineProjection.TimelineMarkers(result)",
@@ -3677,8 +3685,23 @@ if ("BleedingTimelineProjectionCase();" not in _bleed_contract
         or "Check(severeOnly.DeathSecond == 50" not in _bleed_contract
         or "BleedingTimelineProjection.TimelineMarkers(severeOnly)" not in _bleed_contract
         or 'phase[0].Stage == "SEVERE"' not in _bleed_contract
-        or "shifted[0].LastSecond == 11" not in _bleed_contract):
-    fail("Bleeding timeline regression scenarios missing from HealthStaminaPatchContract")
+        or "shifted[0].LastSecond == 11" not in _bleed_contract
+        or "boostedSevere.Samples[1].Hp - 96.5" not in _bleed_contract
+        or "boostedMedium.Samples[1].Hp - 97.5" not in _bleed_contract
+        or "boostedLow.Samples[1].Hp - 98.3" not in _bleed_contract
+        or "master.InitialBleedingPoints == 90" not in _bleed_contract):
+    fail("Bleeding timeline wound-scaling and 1.7/2.5/3.5/4 HP charge regressions missing")
+if any(token in _bleed_control for token in ('"START BLEED"', '"START HP"')):
+    fail("Ambiguous bleeding scenario labels have returned")
+if any(token not in _bleed_control for token in (
+        "WOUND BLEED: incoming bleeding points (NOT health HP)",
+        "HP AT ONSET: player's current health as % of Health-tab Max HP.",
+        "private int _scenarioSecond = 1;")):
+    fail("Bleeding scenario must distinguish wound PTS from initial HP")
+if any("2026-10-14 — Bleeding wound-vs-HP scenario and damage math" not in
+       (ROOT / "docs" / n).read_text(encoding="utf-8")
+       for n in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
+    fail("Both UI catalogs must reflect active Bleeding wound-scaling model")
 if any("2026-10-14 — Bleeding uses the Starvation tick graph" not in
        (ROOT / "docs" / n).read_text(encoding="utf-8")
        for n in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):

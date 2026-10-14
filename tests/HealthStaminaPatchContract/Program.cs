@@ -302,9 +302,9 @@ internal static class Program
         static BleedTimelineResult Run(double hp = 100, double hpPct = 100,
             double bleed = 80, double regen = 0,
             double low = 1, double medium = 1.5, double severe = 2,
-            double midAt = 50, double severeAt = 75)
+            double midAt = 50, double severeAt = 75, double inflicted = 1)
             => BleedingTimelineProjection.Calculate(
-                hp, hpPct, bleed, regen, low, medium, severe, midAt, severeAt);
+                hp, hpPct, bleed, inflicted, regen, low, medium, severe, midAt, severeAt);
 
         var severeOnly = Run();
         Check(severeOnly.DeathSecond == 50 && severeOnly.Hits == 50
@@ -385,7 +385,55 @@ internal static class Program
               && noLowHp[2].DamageTicks == 0 && noLowHp[2].HpLost == 0,
             "Zero damage Low phase remains visibly represented");
 
-        Console.WriteLine("PASS BleedingTimelineProjection 15 scenarios");
+        // Incoming wound bleeding PTS and HP at onset are independent inputs.
+        // Effect_Bleeding scales only the hypothetical initial wound.
+        var novice = Run(bleed: 80, inflicted: 0.25);
+        Check(novice.WoundBleedingPoints == 80 && novice.InitialBleedingPoints == 20
+              && novice.Samples[1].Stage == "LOW" && novice.Samples[1].Hp == 99
+              && novice.DeathSecond == 100,
+            "Novice Effect_Bleeding must reduce wound intensity, not HP/tick");
+        var master = Run(bleed: 60, inflicted: 1.5, severe: 4);
+        Check(master.InitialBleedingPoints == 90 && master.Samples[1].Stage == "SEVERE"
+              && master.Samples[1].Hp == 96 && master.DeathSecond == 25
+              && master.Hits == 25,
+            "Master Effect_Bleeding must promote a wound into severe 4 HP/tick");
+        var capped = Run(bleed: 80, inflicted: 2);
+        Check(capped.InitialBleedingPoints == 100,
+            "Hypothetical inflicted bleeding must not leave the 0-100 profile");
+        var noWound = Run(bleed: 80, inflicted: 0);
+        Check(noWound.Duration == 0 && noWound.Hits == 0
+              && noWound.InitialBleedingPoints == 0,
+            "Zero inflicted bleeding must disable the hypothetical wound");
+
+        // Regression: no silent 1 HP/tick fallback after editing graph handles.
+        // Individual stages must subtract their exact configured HP magnitudes.
+        var boostedSevere = Run(severe: 3.5);
+        Check(Math.Abs(boostedSevere.Samples[1].Hp - 96.5) < 0.0001
+              && boostedSevere.Samples[1].Stage == "SEVERE"
+              && boostedSevere.DeathSecond == 29,
+            "Severe 3.5 HP/tick must be used for every severe damage tick");
+        var boostedMedium = Run(bleed: 60, medium: 2.5);
+        Check(Math.Abs(boostedMedium.Samples[1].Hp - 97.5) < 0.0001
+              && boostedMedium.Samples[1].Stage == "MEDIUM"
+              && boostedMedium.DeathSecond == 40,
+            "Medium 2.5 HP/tick must not fall back to Low 1 HP/tick");
+        var boostedLow = Run(bleed: 20, low: 1.7);
+        Check(Math.Abs(boostedLow.Samples[1].Hp - 98.3) < 0.0001
+              && boostedLow.Samples[1].Stage == "LOW"
+              && boostedLow.DeathSecond == 59,
+            "Low 1.7 HP/tick must be used, including fractional damage");
+
+        var movingStages = Run(regen: 1, low: 1.7, medium: 2.5, severe: 4);
+        Check(movingStages.Samples[1].Stage == "SEVERE"
+              && Math.Abs(movingStages.Samples[1].Hp - 96) < 0.0001
+              && movingStages.Samples[7].Stage == "MEDIUM"
+              && Math.Abs(movingStages.Samples[7].Hp - 73.5) < 0.0001
+              && movingStages.Samples[32].Stage == "LOW"
+              && Math.Abs(movingStages.Samples[32].Hp - 11.8) < 0.0001
+              && movingStages.DeathSecond == 39,
+            "Transitioning stage damage must use 4/2.5/1.7 HP rather than default 1 HP");
+
+        Console.WriteLine("PASS BleedingTimelineProjection 23 scenarios");
     }
 
     private static void BandageBleedingUpperBoundCase()

@@ -8,7 +8,8 @@ public sealed record BleedStageSpan(
 
 public sealed record BleedTimelineResult(
     IReadOnlyList<BleedTimelinePoint> Samples,
-    int Hits, int? DeathSecond, int? BleedEndsSecond)
+    int Hits, int? DeathSecond, int? BleedEndsSecond,
+    double WoundBleedingPoints, double InitialBleedingPoints)
 {
     public int Duration => Samples[^1].Second;
 }
@@ -73,12 +74,18 @@ public static class BleedingTimelineProjection
     // Damage first, natural bleed-point recovery after each hypothetical tick.
     // Does not simulate healing, HP regen, armor, or future bleeding infliction.
     public static BleedTimelineResult Calculate(
-        double maxHp, double startHpPercent, double startBleed,
-        double recovery, double low, double medium, double severe,
+        double maxHp, double startHpPercent, double woundBleeding,
+        double bleedingInflicted, double recovery,
+        double low, double medium, double severe,
         double mediumThreshold, double severeThreshold)
     {
         var hp = Math.Max(1, maxHp) * Math.Clamp(startHpPercent, 0, 100) / 100;
-        var bleed = Math.Clamp(startBleed, 0, 100);
+        // Effect_Bleeding controls incoming bleeding, not stage HP damage.
+        // A hypothetical incoming wound is linearly scaled in this PREVIEW.
+        // The real engine's wound-to-bleeding accumulation formula is not
+        // verified; do not label the scaled wound as observed runtime damage.
+        var wound = Math.Clamp(woundBleeding, 0.0, 100.0);
+        var bleed = Math.Clamp(wound * Math.Max(0.0, bleedingInflicted), 0.0, 100.0);
         var regen = Math.Max(0, recovery);
         var midAt = Math.Clamp(mediumThreshold, 0.1, 100);
         var highAt = Math.Clamp(severeThreshold, midAt, 100);
@@ -115,6 +122,6 @@ public static class BleedingTimelineProjection
             if (regen == 0 && amount == 0)
                 break; // No damage or decay at the unchanged stage.
         }
-        return new BleedTimelineResult(points, hits, death, ends);
+        return new BleedTimelineResult(points, hits, death, ends, wound, points[0].Bleed);
     }
 }

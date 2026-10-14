@@ -1,5 +1,8 @@
 # Survival Control Deep Audit — v0.2.47
 
+**2026-10-14 clarification:** `survival.bleedingSeverity` retains its confirmed per-difficulty `EnvironmentDifficulty.Effect_Bleeding` writer (Novice 0.25×, Stalker/Veteran 1.0×, Master 1.5×). The Bleeding timeline now *illustratively* scales the selected base incoming wound PTS by this source value, capped at 100 PTS. The exact runtime relationship between infliction and bleeding points remains unverified; the real writer, per-stage HP/tick effects and passive PTS recovery are not changed. The two simulation inputs are `WOUND BLEED (PTS)` and `HP AT ONSET` (% of selected Max HP).
+
+
 ### 2026-10-11 — Current UI placement, knobs, and alcohol ranges
 
 - The separate **Equipment** tab is retired. Four original equipment source IDs are now presented inside **Survival**, preserving **Equipment Wear** (armor and weapon wear crosshair) and **Item Weight** (ammo and consumables source-native tracks) as independent groups, after the Bleeding controls. Original `equipment.armorDurability`, `equipment.weaponWearPerShot`, `equipment.ammoWeight`, `equipment.consumableWeight` remain unchanged in values, ranges, steps, CFG writer mappings and preset fields. Their `tab` metadata alone switches to `survival`.
@@ -43,7 +46,7 @@ This release revalidates every normal Survival-tab control against the locked ru
 | `survival.radiationAccumulation` | Radiation Accumulation | `0.60 / 1.00 / 1.50 / 1.85` | `set` | 4 | Confirmed |
 | `survival.radiationRecovery` | Radiation Recovery | `0.05` | `set` | 1 | Confirmed |
 | `survival.radiationDamage` | Radiation Damage | `100%` scale | `scale` | 22 | Confirmed |
-| `survival.bleedingSeverity` | Bleeding Effect Strength | `0.25 / 1.00 / 1.00 / 1.50` | `set` | 4 | Confirmed |
+| `survival.bleedingSeverity` | Bleeding Inflicted | `0.25 / 1.00 / 1.00 / 1.50` | `set` | 4 | Confirmed |
 | `survival.bleedingRecovery` | Natural Bleeding Recovery | `0.3` | `set` | 1 | Confirmed |
 | `survival.wellFedStaminaRegen` | Well-Fed Stamina Recovery Bonus | `20%` | `set` | 2 | Confirmed |
 | `survival.fatigueLowAimPenalty` | Low Fatigue Aim-Time Penalty | `15%` | `set` | 2 | Confirmed |
