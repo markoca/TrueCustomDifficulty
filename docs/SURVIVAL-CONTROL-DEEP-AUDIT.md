@@ -1,5 +1,10 @@
 # Survival Control Deep Audit — v0.2.47
 
+### 2026-10-14 — Bleeding profile without stage-choice simulation (CURRENT)
+
+Retire the entire Damage Tick Timeline, tick markers and Dead In estimated death time; also retire the LOW/MEDIUM/SEVERE preview stage selector including its hover/click/right-click/keyboard handling. Bleeding now has one compact **466-DIP** source-native board: the two original upper source sliders, the editable step graph (three HP/TICK drag handles and two editable stage thresholds), and a **single passive** centered three-card stage summary beneath it, still showing each authored PTS threshold and HP/TICK. The original seven source writer operations, source baseline, parameter catalog, native steps, reset behavior and preset keys stay unchanged. The separate bleeding projection model and old simulation-only test method were removed. Historical earlier same-day timeline and selectable-card layouts below are superseded.
+
+
 ### 2026-10-14 — Explicit Water/Energy buff-duration naming (CURRENT)
 
 The compact child duration row now uses **WATER BUFF** / **ENERGY DRINK BUFFS** for its two section headings. The original three source controls are labeled **+25% MAX STAMINA**, **NO STAMINA COST DURATION**, and **-30% STAMINA COST DURATION**, rendered as two lines per card to avoid ellipsis. Native CFG and 5s/5s/15s values, links and override constraints are unchanged. The preceding same-day short captions and headings are superseded.

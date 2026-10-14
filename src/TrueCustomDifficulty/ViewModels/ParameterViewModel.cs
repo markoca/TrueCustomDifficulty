@@ -120,9 +120,9 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag BEER or VODKA to change that drink's intoxication strength. The stages update in the preview."
                     + Environment.NewLine + "Right-click one drink to reset it; R resets both.";
             if (IsBleedingCurveMember)
-                return "WOUND BLEED (PTS) is hypothetical bleeding caused by a wound, NOT health damage; BLEEDING INFLICTED scales it in the preview. HP AT ONSET selects health when bleeding begins, as a percentage of Health-tab Max HP."
-                    + Environment.NewLine + "The rail follows the live Low/Medium/Severe damage profile. Its readout shows the configured HP damage per charge; drag to inspect stages. The assumed wound scaling and 1-second tick cadence are estimates, not verified game timing."
-                    + Environment.NewLine + "Right-click to reset a control. R resets bleeding CFG sources, not the two preview-only scenario inputs.";
+                return "BLEEDING INFLICTED and NATURAL RECOVERY edit their native CFG values. On the BLEEDING DAMAGE PROFILE, drag the LOW/MEDIUM/SEVERE damage handles or the Medium/Severe threshold markers."
+                    + Environment.NewLine + "The three stage cards below show current bleeding-point thresholds and HP per tick only. They are not clickable and no death-time simulation is shown."
+                    + Environment.NewLine + "Right-click a real graph control to reset it; R resets all seven bleeding CFG sources.";
 
             if (IsActionCostMember)
                 return "Drag an action's track to change how much stamina that move costs."

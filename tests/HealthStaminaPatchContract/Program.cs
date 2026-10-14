@@ -33,7 +33,6 @@ internal static class Program
 
             // Verify 1x Bandage cap and legacy preset bounds with the live VM.
             BandageBleedingUpperBoundCase();
-            BleedingTimelineProjectionCase();
 
             MedicalItemsPairingCase();
             MovementLimitsAndExhaustionNamingCase();
@@ -295,75 +294,6 @@ internal static class Program
         Check(!anchor.IsModified, "Resetting Beer/Vodka must clear group modification");
         _passed++;
         Console.WriteLine("PASS medical-items-4x2-plus-radiation-4-vertical-membership");
-    }
-
-    private static void BleedingTimelineProjectionCase()
-    {
-        static BleedTimelineResult Run(double hp = 100, string stage = "LOW",
-            double low = 1, double medium = 1.5, double severe = 2)
-            => BleedingTimelineProjection.Calculate(hp, stage, low, medium, severe);
-
-        var lowStage = Run();
-        Check(lowStage.Stage == "LOW" && lowStage.HpPerTick == 1
-              && lowStage.TicksToZero == 100
-              && lowStage.DisplayTicks.Count == 3
-              && lowStage.PreviewHpLost == 3,
-            "LOW stage uses the native graph damage and three read-only sample ticks");
-        var mediumStage = Run(stage: "MEDIUM", medium: 2.5);
-        Check(mediumStage.Stage == "MEDIUM" && mediumStage.HpPerTick == 2.5
-              && mediumStage.TicksToZero == 40
-              && mediumStage.PreviewHpLost == 7.5,
-            "MEDIUM graph edits must update the stage preview without a scrub cursor");
-        var severeStage = Run(stage: "SEVERE", severe: 3.5);
-        Check(severeStage.HpPerTick == 3.5 && severeStage.TicksToZero == 29
-              && severeStage.DisplayTicks[0].HpLost == 3.5,
-            "SEVERE edited HP/tick is not silently normalized to 1 HP");
-        Check(Run(stage: "SEVERE", severe: 4).TicksToZero == 25,
-            "Highest source damage must use 4 HP/tick for a 100 HP character");
-        Check(Run(hp: 200, stage: "SEVERE").TicksToZero == 100,
-            "Changing Health Max HP must recalculate the read-only estimate");
-        Check(Run(hp: 0, stage: "LOW").StartingHp == 1,
-            "Invalid health bounds must be guarded without inventing death ticks");
-        var lethalFirst = Run(hp: 1, stage: "SEVERE");
-        Check(lethalFirst.TicksToZero == 1
-              && lethalFirst.DisplayTicks.Count == 1
-              && lethalFirst.PreviewHpLost == 1
-              && lethalFirst.DisplayTicks[0].HpLost == 1,
-            "The last lethal tick is clipped and later decorative hits are omitted");
-        var lethalSecond = Run(hp: 3, stage: "SEVERE");
-        Check(lethalSecond.TicksToZero == 2
-              && lethalSecond.DisplayTicks.Count == 2
-              && lethalSecond.DisplayTicks[1].HpLost == 1,
-            "A two-tick death must show only two damage markers");
-        var zero = Run(stage: "MEDIUM", medium: 0);
-        Check(zero.TicksToZero is null && zero.DisplayTicks.Count == 0
-              && zero.PreviewHpLost == 0 && !zero.HasHpDamage,
-            "No damage must not create imaginary ticks or death countdowns");
-        var fractional = Run(hp: 100, stage: "LOW", low: 1.7);
-        Check(fractional.TicksToZero == 59
-              && Math.Abs(fractional.PreviewHpLost - 5.1) < 0.0001,
-            "Fractional live graph values must remain exact in tick math");
-        var selectedOther = Run(stage: "MEDIUM");
-        Check(selectedOther.HpPerTick == 1.5 && selectedOther.TicksToZero == 67,
-            "Changing the selected stage globally selects its actual source damage");
-        Check(lowStage.DisplayTicks[0].Seconds == 1
-              && lowStage.DisplayTicks[1].Seconds == 2
-              && lowStage.DisplayTicks[2].Seconds == 3,
-            "The passive preview depicts the first three estimated 1-second ticks");
-        Check(typeof(BleedTimelineProjection)
-                  .GetMethod("SetStage") is null,
-            "Manual per-second stage editing must never return to the read-only timeline");
-        try
-        {
-            Run(stage: "UNKNOWN");
-            throw new Exception("Unrecognized stage accepted");
-        }
-        catch (ArgumentOutOfRangeException)
-        {
-            // Expected: only source-backed LOW/MEDIUM/SEVERE stages are valid.
-        }
-
-        Console.WriteLine("PASS BleedingTimelineProjection read-only source-stage ticks");
     }
 
     private static void BandageBleedingUpperBoundCase()

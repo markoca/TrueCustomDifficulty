@@ -1,5 +1,10 @@
 # Survival CFG Mapping — v0.2.47
 
+### 2026-10-14 — Bleeding UI only: remove timeline and scenario controls (CURRENT)
+
+Bleeding's seven CFG-backed controls still cover severity/inflicted, natural recovery, LOW/MEDIUM/SEVERE HP damage per tick, Medium threshold and Severe threshold. The interactive **BLEEDING DAMAGE PROFILE** remains the sole way to adjust HP/TICK and thresholds, while its three LOW/MEDIUM/SEVERE readout cards are now passive. Remove the separate hypothetical death/tick timeline and scenario selection; the retired preview had no CFG writer and is no longer projected from Health-tab Max HP. Compact the board and host to 466 DIP. No CFG, edit-point, value, preset or scenario-dependent gameplay logic was changed. Older descriptions of time estimates below are historical.
+
+
 ### 2026-10-14 — Separate Equipment navigation (CURRENT)
 
 The four `equipment.*` UI parameters moved back to a dedicated Equipment tab (Equipment Wear; Item Weight). Survival continues to own **31 visible native controls with 82 CFG writer leaves**; no effect prototype, difficulty setting or CFG writer moved or changed. Earlier descriptions of equipment sources inside Survival are superseded.

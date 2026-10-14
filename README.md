@@ -1,5 +1,8 @@
 # True Custom Difficulty
 
+**Bleeding UI simplification (2026-10-14):** The hypothetical Damage Tick Timeline / Dead In countdown and clickable LOW/MEDIUM/SEVERE preview selector have been removed. All seven original Bleeding CFG parameters remain editable on the actual damage-profile graph and two top sliders. The compact centered three-card stage row is now read-only, reflecting PTS thresholds and HP/TICK values without additional controls or death-clock assumptions. The board/host is now 466 DIP high (previously 665). Native source values, presets and CFG writers are unchanged; local Wine acceptance is pending.
+
+
 **Consumable buff duration labels (2026-10-14):** The two sections are **WATER BUFF** and **ENERGY DRINK BUFFS**. Their three compact, side-by-side source-backed sliders now read **+25% MAX STAMINA**, **NO STAMINA COST DURATION** and **-30% STAMINA COST DURATION** on two lines to prevent clipping. Existing CFG mappings, durations and presets are unaffected.
 
 

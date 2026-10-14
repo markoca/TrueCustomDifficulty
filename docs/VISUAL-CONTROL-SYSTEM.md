@@ -1,5 +1,14 @@
 # Visual Control System
 
+### 2026-10-14 — Remove Bleeding tick timeline and stage selection (CURRENT)
+
+**Survival → BLEEDING SYSTEM:** remove the entire lower **DAMAGE TICK TIMELINE** panel, its fixed 1/2/3 estimated tick rail, **DEAD IN** HUD, hypothetical one-second tick/death calculations and all LOW/MEDIUM/SEVERE stage-selection interaction. This decision supersedes every earlier Bleeding timeline, simulation, death-clock and clickable-stage requirement in this document. The separate `BleedingTimelineProjection` model and its projection-only tests are retired, with no cross-tab dependency on Max HP.
+
+Keep the actual **BLEEDING DAMAGE PROFILE** step graph with **all seven original editable source parameters**: Bleeding Inflicted, Natural Recovery, three independent LOW/MEDIUM/SEVERE HP/TICK values, Medium threshold and Severe threshold. The existing **single 3-card row** directly below the graph remains visible at Y=405, each 44 DIP tall, as **passive readouts** of LOW/MEDIUM/SEVERE threshold PTS and live HP/TICK. Cards are not buttons: no hover highlighting, hand cursor, selection border, left/right click, keyboard focus or reset target; the original graph handles and two top sliders retain all their existing mouse/keyboard edit, selected-reference marker, individual reset, group R reset, native ranges/steps and source edits. Cards reflect values edited on the graph without accepting input themselves.
+
+Compact the Bleeding visual/host height from **665 to 466 DIP**, leaving only sufficient space beneath the stage cards (ending at 449 DIP). No blank reserved timeline area and no extra explanatory UI copy. Keep the existing max-width 618-DIP centered stage row and no full-width stretching. The Bleeding tooltip describes the actual graph-only editing, not fictional death timing. CFG mappings, writer leaves, catalog group membership, presets and difficulty-baseline semantics are unchanged. The regression audit must enforce absent timeline/selector code, absent projection file/tests, read-only stage cards, retained native graph hit regions, and host-height parity.
+
+
 ### 2026-10-14 — Override Limits checkbox without status lamp (CURRENT)
 
 In Survival → Consumable Effects → EFFECT DURATION / SECONDS, the compact 178×28-DIP OVERRIDE LIMITS cell now contains only the text label and the original right-aligned 20-DIP BooleanCheckboxChrome. Remove the small yellow status lamp on the left: the checkmark already communicates whether DrinkDurationOverrideEnabled is on. The label moves from a left inset of 18 to 12 DIP, retaining a clear gap from the checkbox. Remove the now-unused IndustrialChrome.DrawStatusLed helper. No other checkbox should gain a redundant status light.
