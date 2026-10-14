@@ -2831,7 +2831,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         bool percentageReadout = false, bool rateReadout = false,
         int percentageSign = 0, bool rawReadout = false,
         string? nativeUnit = null, bool prominent = false,
-        bool positivePrefix = true)
+        bool positivePrefix = true, string? secondaryReadout = null)
     {
         // All larger hero dials (Headshot, Starvation HP and Radiation HP)
         // raise ONLY the caption by 9 DIP to restore the ordinary knob's
@@ -2939,7 +2939,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // readout, including single-line multiplier/percentage and signed
         // percentage values. Two-line amount/unit or rate/unit pairs share
         // the same centered positions without per-family call-site offsets.
-        var currentTop = center.Y - (rateReadout || nativeUnit is not null ? 15.0 : 8.0);
+        var currentTop = center.Y - (rateReadout || nativeUnit is not null || secondaryReadout is not null ? 15.0 : 8.0);
         if (percentageSign != 0)
         {
             // In the two Master signed-percentage dials, only the editable
@@ -2963,6 +2963,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 prominent ? (modified ? 18.2 : 17.0) : (modified ? 16.2 : 15.0),
                 active ? modified ? accent : text : muted, FontWeights.Bold);
         }
+        if (secondaryReadout is not null)
+            DrawCenteredText(dc, secondaryReadout,
+                new Point(center.X, center.Y + 7.0),
+                11.0, active ? text : muted, FontWeights.Bold);
         if (rateReadout)
             DrawCenteredText(dc, "PTS/S",
                 new Point(center.X, center.Y + 5.0),
@@ -3485,23 +3489,17 @@ public sealed class AggregateVisualControl : FrameworkElement
         var knobBankWidth = Math.Min(720.0, ActualWidth - 34.0);
         var knobWidth = (knobBankWidth - 3.0 * knobGap) / 4.0;
         var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
+        // Read-only refill points are centered with the editable native percentage.
+        var staminaPool = Math.Max(1.0, Linked("stamina.maxSP")?.CurrentNumber ?? 100.0);
         DrawSourceKnob(dc, burst, "WATER STAMINA GAIN",
             new Rect(knobLeft, ConsumableStrengthKnobTop, knobWidth, 181.0),
-            text, muted, border, accent, panel, percentageReadout: true);
-        // Percent sources restore a fraction of the live Max Stamina, not
-        // fixed stamina points. The caption is a read-only cross-tab projection.
-        var staminaPool = Math.Max(1.0, Linked("stamina.maxSP")?.CurrentNumber ?? 100.0);
-        DrawCenteredText(dc, $"+{burst.CurrentNumber * staminaPool:0.#} STAMINA",
-            new Point(knobLeft + knobWidth / 2.0, ConsumableStrengthKnobTop + 185.0),
-            9.0, muted, FontWeights.SemiBold);
+            text, muted, border, accent, panel, percentageReadout: true,
+            secondaryReadout: $"+{burst.CurrentNumber * staminaPool:0.#} STAMINA");
         DrawSourceKnob(dc, energyBurst, "ENERGY DRINK STAMINA GAIN",
             new Rect(knobLeft + knobWidth + knobGap, ConsumableStrengthKnobTop,
                 knobWidth, 181.0),
-            text, muted, border, accent, panel, percentageReadout: true);
-        DrawCenteredText(dc, $"+{energyBurst.CurrentNumber * staminaPool:0.#} STAMINA",
-            new Point(knobLeft + 1.5 * knobWidth + knobGap,
-                ConsumableStrengthKnobTop + 185.0),
-            9.0, muted, FontWeights.SemiBold);
+            text, muted, border, accent, panel, percentageReadout: true,
+            secondaryReadout: $"+{energyBurst.CurrentNumber * staminaPool:0.#} STAMINA");
         DrawSourceKnob(dc, waterStamina, "WATER STAMINA BUFF",
             new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
                 ConsumableStrengthKnobTop, knobWidth, 181.0),
