@@ -3772,7 +3772,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 medicineKnobTop, medicineKnobWidth, 181.0),
             text, muted, border, accent, panel,
             rawReadout: true, nativeUnit: "KG", inlineNativeUnit: true,
-            secondaryReadout: $"+{baseCarry + herculesStrength.CurrentNumber:0.#} WITH BUFF");
+            secondaryReadout: $"{baseCarry + herculesStrength.CurrentNumber:0.#} WITH BUFF");
         DrawSourceKnob(dc, psiStrength, "PSI BLOCK PROTECTION",
             new Rect(medicineLeft + 2.0 * (medicineKnobWidth + knobGap),
                 medicineKnobTop, medicineKnobWidth, 181.0),
