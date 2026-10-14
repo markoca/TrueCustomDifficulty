@@ -1,5 +1,9 @@
 # Survival CFG Mapping — v0.2.47
 
+### 2026-10-14 — Separate Equipment navigation (CURRENT)
+
+The four `equipment.*` UI parameters moved back to a dedicated Equipment tab (Equipment Wear; Item Weight). Survival continues to own **31 visible native controls with 82 CFG writer leaves**; no effect prototype, difficulty setting or CFG writer moved or changed. Earlier descriptions of equipment sources inside Survival are superseded.
+
 ### 2026-10-12 — Radiation scenario controls and threshold-only timeline (UI-only)
 
 Current radiation CFG sources remain unchanged: survival.radiationAccumulation (difficulty build-up scalar), survival.radiationRecovery (passive RAD points/s) and survival.radiationDamage (11 effect magnitudes scaled across 22 CFG leaves). A bounded UI-only simulator beneath the existing three knobs introduces FIELD PRESET from source-authorized CoreVariables values Light 1, Medium 3, Strong 6, Deadly 33, RadBlock 50, Custom 1, Topaz 1 RAD/s, plus preview-only START RAD 0/25/50/75 and RECOVERY ON/OFF. None is a CFG edit, and the current player RAD is not observable in this tool. Constant field simulation assumes max(0, field source rate × selected difficulty build-up scalar − chosen passive recovery) RAD/s. From selected initial RAD it illustrates hypothetical elapsed times to the original threshold levels, with a prominent TO 99 RAD estimate, no HP/death ETA and a NO NET BUILD-UP state for insufficient gain. Native RadBlock direct 9000 damage, gear/protection, geometry/falloff and HP effect timing are out of model; this is a conditional preview only.
