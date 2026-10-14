@@ -353,7 +353,39 @@ internal static class Program
         var single = BleedingTimelineProjection.TimelineMarkers(Run(hp: 1));
         Check(single.Count == 1 && single[0].Hits == 1 && single[0].Second == 1,
             "Single lethal HP hit must not be presented as three events");
-        Console.WriteLine("PASS BleedingTimelineProjection 10 scenarios");
+        var phaseCase = Run(hp: 200, bleed: 80, regen: 1);
+        var phase = BleedingTimelineProjection.StageSegments(phaseCase);
+        Check(phase.Count == 3
+              && phase[0].Stage == "SEVERE" && phase[0].FirstSecond == 1
+              && phase[0].LastSecond == 6 && phase[0].DamageTicks == 6
+              && phase[1].Stage == "MEDIUM" && phase[1].FirstSecond == 7
+              && phase[1].LastSecond == 31 && phase[1].DamageTicks == 25
+              && phase[2].Stage == "LOW" && phase[2].FirstSecond == 32
+              && phase[2].LastSecond == 80 && phase[2].DamageTicks == 49,
+            "Bleeding time bands must follow all live Low/Medium/Severe phases");
+        var marks = BleedingTimelineProjection.TimelineMarkers(phaseCase);
+        Check(marks.Count == 4 && marks[0].Second == 1
+              && marks[1].Second == 7 && marks[2].Second == 32
+              && marks[3].Second == 80,
+            "Stage start hit markers and the final hit must be real, not invented");
+
+        var shifted = BleedingTimelineProjection.StageSegments(
+            Run(hp: 200, bleed: 80, regen: 1, severeAt: 70));
+        Check(shifted[0].LastSecond == 11 && shifted[1].FirstSecond == 12,
+            "Moving severe onset immediately moves timeline boundaries");
+
+        var faster = BleedingTimelineProjection.StageSegments(
+            Run(hp: 200, bleed: 80, regen: 2));
+        Check(faster[0].LastSecond == 3 && faster[1].FirstSecond == 4,
+            "Changing bleeding recovery resizes timeline stage durations");
+
+        var noLowHp = BleedingTimelineProjection.StageSegments(
+            Run(hp: 200, bleed: 80, regen: 1, low: 0));
+        Check(noLowHp.Count == 3 && noLowHp[2].Stage == "LOW"
+              && noLowHp[2].DamageTicks == 0 && noLowHp[2].HpLost == 0,
+            "Zero damage Low phase remains visibly represented");
+
+        Console.WriteLine("PASS BleedingTimelineProjection 15 scenarios");
     }
 
     private static void BandageBleedingUpperBoundCase()

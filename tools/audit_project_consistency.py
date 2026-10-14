@@ -3648,7 +3648,12 @@ for _token in (
     "_maxHp.PropertyChanged -= Parameter_PropertyChanged;",
     "DrawBleedTimeline(dc, text, muted, border, softBorder, accent, panel);",
     '"DAMAGE TICK TIMELINE"',
-    '"DAMAGE WINDOW"',
+    "BleedingTimelineProjection.StageSegments(result)",
+    '"BLEEDING INFLICTED"',
+    "var hpPerTick = segment.Stage switch",
+    "var opacity = segment.Stage switch",
+    "if (width >= 114.0)",
+    "if (n > 0)",
     '"START BLEED"',
     '"START HP"',
     '" TICKS  /  "',
@@ -3670,14 +3675,30 @@ if len(_bleed_element) != 2 or 'MinHeight="726"' not in _bleed_element[1].split(
     fail("Bleeding timeline host XAML must measure its 726 DIP board")
 if ("BleedingTimelineProjectionCase();" not in _bleed_contract
         or "Check(severeOnly.DeathSecond == 50" not in _bleed_contract
-        or "BleedingTimelineProjection.TimelineMarkers(severeOnly)" not in _bleed_contract):
+        or "BleedingTimelineProjection.TimelineMarkers(severeOnly)" not in _bleed_contract
+        or 'phase[0].Stage == "SEVERE"' not in _bleed_contract
+        or "shifted[0].LastSecond == 11" not in _bleed_contract):
     fail("Bleeding timeline regression scenarios missing from HealthStaminaPatchContract")
 if any("2026-10-14 — Bleeding uses the Starvation tick graph" not in
        (ROOT / "docs" / n).read_text(encoding="utf-8")
        for n in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
     fail("Bleeding Starvation-graph design missing in UI catalogs")
-if "public static IReadOnlyList<BleedTimelinePoint> TimelineMarkers(" not in _bleed_timeline_source:
-    fail("Bleeding timeline requires actual rather than invented 3 milestone ticks")
+for _token in (
+    "public sealed record BleedStageSpan(",
+    "public static IReadOnlyList<BleedStageSpan> StageSegments(",
+    "var stage = result.Samples[1].Stage;",
+    "if (now.Stage != stage)",
+    "before.Hp - now.Hp",
+    "public static IReadOnlyList<BleedTimelinePoint> TimelineMarkers(",
+):
+    if _token not in _bleed_timeline_source:
+        fail("Bleeding timeline must follow live profile stages: " + _token)
+if '"label": "Bleeding Inflicted"' not in (ROOT / "src" / "TrueCustomDifficulty" / "Data" / "parameters.json").read_text(encoding="utf-8"):
+    fail("Keep the confirmed source-backed Bleeding Inflicted control")
+if any("2026-10-14 — Bleeding timeline follows the authored damage profile" not in
+       (ROOT / "docs" / n).read_text(encoding="utf-8")
+       for n in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
+    fail("Bleeding profile-to-timeline catalog drifted")
 if "var path = new StreamGeometry();" in _bleed_control.split("private void DrawBleedTimeline(", 1)[1].split("private ScenarioInput ScenarioTarget(", 1)[0]:
     fail("Old HP-versus-time graph returned instead of the Starvation schedule rail")
 if any("2026-10-14 — Interactive Bleeding Timeline" not in

@@ -194,7 +194,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             dc,
             new Rect(cardLeft, cardTop, cardWidth, 72.0),
             _severity,
-            "BLEEDING STRENGTH",
+            "BLEEDING INFLICTED",
             text,
             muted,
             border,
@@ -590,25 +590,48 @@ public sealed class BleedingCurveControl : FrameworkElement
         var span = Math.Max(1, last.Second);
         double At(int seconds) =>
             axis.Left + axis.Width * Math.Clamp((double)seconds / span, 0.0, 1.0);
-        if (markers.Count > 0)
-            DrawCenteredText(dc, "DAMAGE WINDOW",
-                new Point((At(markers[0].Second) + At(markers[^1].Second)) / 2.0,
-                    preview.Top + 33.0),
-                9.1, muted, FontWeights.SemiBold);
-
+        var segments = BleedingTimelineProjection.StageSegments(result);
         dc.DrawLine(new Pen(soft, 3.0),
             new Point(axis.Left, axisY), new Point(axis.Right, axisY));
-        if (markers.Count > 0)
+        // Draw each real time-in-stage band using the live damage profile.
+        // Even zero-damage stages have visible transitions when reached.
+        for (var n = 0; n < segments.Count; n++)
         {
-            var firstX = At(markers[0].Second);
-            var lastX = At(markers[^1].Second);
-            if (lastX - firstX > 1.0)
+            var segment = segments[n];
+            var startX = At(segment.FirstSecond - 1);
+            var endX = At(segment.LastSecond);
+            var width = Math.Max(0.0, endX - startX);
+            var opacity = segment.Stage switch
             {
-                dc.DrawRoundedRectangle(CloneWithOpacity(accent, 0.10), null,
-                    new Rect(firstX, axisY - 7.0, lastX - firstX, 14.0), 3.0, 3.0);
-                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 2.6),
-                    new Point(firstX, axisY), new Point(lastX, axisY));
+                "SEVERE" => 0.23,
+                "MEDIUM" => 0.14,
+                _ => 0.075
+            };
+            if (width > 1.0)
+            {
+                dc.DrawRoundedRectangle(CloneWithOpacity(accent, opacity), null,
+                    new Rect(startX, axisY - 7.0, width, 14.0), 2.5, 2.5);
+                dc.DrawLine(new Pen(CloneWithOpacity(accent, opacity + 0.47), 2.6),
+                    new Point(startX, axisY), new Point(endX, axisY));
             }
+            var hpPerTick = segment.Stage switch
+            {
+                "SEVERE" => _damage[2]?.CurrentNumber ?? 2.0,
+                "MEDIUM" => _damage[1]?.CurrentNumber ?? 1.5,
+                _ => _damage[0]?.CurrentNumber ?? 1.0
+            };
+            if (width >= 114.0)
+                DrawCenteredText(dc, $"{segment.Stage}  {hpPerTick:0.#} HP/TICK",
+                    new Point((startX + endX) / 2.0, preview.Top + 33.0),
+                    9.1, text, FontWeights.SemiBold);
+            else if (width >= 60.0)
+                DrawCenteredText(dc, segment.Stage,
+                    new Point((startX + endX) / 2.0, preview.Top + 33.0),
+                    9.1, muted, FontWeights.SemiBold);
+            if (n > 0)
+                dc.DrawLine(new Pen(CloneWithOpacity(text, 0.7), 1.2),
+                    new Point(startX, axisY - 13.0),
+                    new Point(startX, axisY + 13.0));
         }
 
         // Unlike Starvation's read-only rail, the full Bleeding rail can be
@@ -651,8 +674,16 @@ public sealed class BleedingCurveControl : FrameworkElement
                 new Point(axis.Right, preview.Top + 91.0),
                 9.0, muted, FontWeights.Normal);
 
+        var inspectedStage = sample.Second == 0 ? "NONE" : sample.Stage;
+        var inspectedDamage = inspectedStage switch
+        {
+            "SEVERE" => _damage[2]?.CurrentNumber ?? 2.0,
+            "MEDIUM" => _damage[1]?.CurrentNumber ?? 1.5,
+            "LOW" => _damage[0]?.CurrentNumber ?? 1.0,
+            _ => 0.0
+        };
         DrawCenteredText(dc,
-            $"AT {Clock(sample.Second)}  ·  {sample.Hp:0.#} HP  ·  {sample.Bleed:0.#} BLEED",
+            $"AT {Clock(sample.Second)}  ·  {inspectedStage} {inspectedDamage:0.#} HP/TICK  ·  {sample.Hp:0.#} HP  ·  {sample.Bleed:0.#} PTS",
             new Point(preview.Left + preview.Width / 2.0, preview.Top + 110.0),
             9.7, muted, FontWeights.SemiBold);
 
@@ -727,7 +758,8 @@ public sealed class BleedingCurveControl : FrameworkElement
     private const string ScenarioTip =
         "Hypothetical one-second damage ticks with bleeding recovery applied after each hit. " +
         "No HP regen, protection, medicine or new wounds. Starting values are preview-only. " +
-        "Bleeding Strength controls infliction, not damage at fixed bleeding points.";
+        "BLEEDING INFLICTED changes the strength of newly inflicted wounds via " +
+        "the difficulty CFG. It is not another HP/tick multiplier at fixed starting bleed.";
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
