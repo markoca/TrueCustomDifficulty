@@ -218,9 +218,9 @@ public sealed class MedicalHealingRadar : FrameworkElement
         var laneWidth = chart.Width / Items.Length;
         if (_bleedingMediumThreshold is not null && _bleedingSevereThreshold is not null)
             DrawCenteredText(dc,
-                $"BLEED MED {_bleedingMediumThreshold.CurrentNumber:0} · SEV {_bleedingSevereThreshold.CurrentNumber:0} PTS",
+                $"BLEED STAGES  |  MEDIUM {_bleedingMediumThreshold.CurrentNumber:0} PTS  |  SEVERE {_bleedingSevereThreshold.CurrentNumber:0} PTS",
                 new Point(chart.Left + chart.Width / 2.0, 82.0),
-                9.0, muted, FontWeights.SemiBold);
+                10.0, text, FontWeights.Bold);
         var radLeft = chart.Right + 55.0;
         var radArea = new Rect(radLeft, 88.0,
             Math.Max(258.0, ActualWidth - radLeft - 12.0), 265.0);
