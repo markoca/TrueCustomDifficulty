@@ -341,7 +341,19 @@ internal static class Program
               && empty.Hits == 0 && empty.Duration == 0,
             "No starting bleed should show no damage and zero elapsed time");
 
-        Console.WriteLine("PASS BleedingTimelineProjection 7 scenarios");
+        var milestones = BleedingTimelineProjection.TimelineMarkers(severeOnly);
+        Check(milestones.Count == 3
+              && milestones[0].Hits == 1 && milestones[0].Second == 1
+              && milestones[1].Hits == 25 && milestones[1].Second == 25
+              && milestones[2].Hits == 50 && milestones[2].Second == 50,
+            "Starvation-style Bleeding rail must use real first/middle/last ticks");
+        Check(BleedingTimelineProjection.TimelineMarkers(empty).Count == 0
+              && BleedingTimelineProjection.TimelineMarkers(harmless).Count == 0,
+            "No-damage cases must not invent tick landmarks");
+        var single = BleedingTimelineProjection.TimelineMarkers(Run(hp: 1));
+        Check(single.Count == 1 && single[0].Hits == 1 && single[0].Second == 1,
+            "Single lethal HP hit must not be presented as three events");
+        Console.WriteLine("PASS BleedingTimelineProjection 10 scenarios");
     }
 
     private static void BandageBleedingUpperBoundCase()

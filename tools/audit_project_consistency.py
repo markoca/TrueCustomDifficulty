@@ -3641,18 +3641,22 @@ for _token in (
     if _token not in _bleed_timeline_source:
         fail("Bleeding timeline discrete 1-second projection contract drifted: " + _token)
 for _token in (
-    "private const double DesiredHeight = 744.0;",
+    "private const double DesiredHeight = 726.0;",
     'private const string MaxHpId = "health.maxHP";',
     "byId.TryGetValue(MaxHpId, out _maxHp);",
     "_maxHp.PropertyChanged += Parameter_PropertyChanged;",
     "_maxHp.PropertyChanged -= Parameter_PropertyChanged;",
     "DrawBleedTimeline(dc, text, muted, border, softBorder, accent, panel);",
-    '"BLEEDING TIMELINE"',
+    '"DAMAGE TICK TIMELINE"',
+    '"DAMAGE WINDOW"',
     '"START BLEED"',
     '"START HP"',
-    '"TICKS TO 0 HP"',
-    '"TIME TO 0 HP"',
-    '"ESTIMATE · 1 S / TICK"',
+    '" TICKS  /  "',
+    'const string prefix = "BLEEDING KILLS IN ";',
+    'const string connector = " TICKS AFTER ";',
+    "BleedingTimelineProjection.TimelineMarkers(result)",
+    "ControlHoverGlow.Draw(dc, new Point(cursorX, axisY)",
+    "new Rect(preview.Left + 12.0, preview.Top + 127.0",
     "BleedingTimelineProjection.Calculate(",
     "MoveScenario(_scenarioDrag, point.X);",
     "case ScenarioInput.Scrub:",
@@ -3662,10 +3666,20 @@ for _token in (
         fail("Bleeding timeline scenario, live HP or pointer contract drifted: " + _token)
 _bleed_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
 _bleed_element = _bleed_xaml.split('<controls:BleedingCurveControl x:Name="BleedingCurveControl"', 1)
-if len(_bleed_element) != 2 or 'MinHeight="744"' not in _bleed_element[1].split('/>', 1)[0]:
-    fail("Bleeding timeline host XAML must measure its 744 DIP board")
-if "BleedingTimelineProjectionCase();" not in _bleed_contract or "Check(severeOnly.DeathSecond == 50" not in _bleed_contract:
+if len(_bleed_element) != 2 or 'MinHeight="726"' not in _bleed_element[1].split('/>', 1)[0]:
+    fail("Bleeding timeline host XAML must measure its 726 DIP board")
+if ("BleedingTimelineProjectionCase();" not in _bleed_contract
+        or "Check(severeOnly.DeathSecond == 50" not in _bleed_contract
+        or "BleedingTimelineProjection.TimelineMarkers(severeOnly)" not in _bleed_contract):
     fail("Bleeding timeline regression scenarios missing from HealthStaminaPatchContract")
+if any("2026-10-14 — Bleeding uses the Starvation tick graph" not in
+       (ROOT / "docs" / n).read_text(encoding="utf-8")
+       for n in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
+    fail("Bleeding Starvation-graph design missing in UI catalogs")
+if "public static IReadOnlyList<BleedTimelinePoint> TimelineMarkers(" not in _bleed_timeline_source:
+    fail("Bleeding timeline requires actual rather than invented 3 milestone ticks")
+if "var path = new StreamGeometry();" in _bleed_control.split("private void DrawBleedTimeline(", 1)[1].split("private ScenarioInput ScenarioTarget(", 1)[0]:
+    fail("Old HP-versus-time graph returned instead of the Starvation schedule rail")
 if any("2026-10-14 — Interactive Bleeding Timeline" not in
        (ROOT / "docs" / n).read_text(encoding="utf-8")
        for n in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):

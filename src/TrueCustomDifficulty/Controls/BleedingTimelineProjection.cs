@@ -11,6 +11,21 @@ public sealed record BleedTimelineResult(
 
 public static class BleedingTimelineProjection
 {
+    // Three representative real HP-damage charges, never fake 1/2/3 hits.
+    // Calculations still iterate the complete per-second sample sequence.
+    public static IReadOnlyList<BleedTimelinePoint> TimelineMarkers(BleedTimelineResult result)
+    {
+        var hits = new List<BleedTimelinePoint>();
+        for (var i = 1; i < result.Samples.Count; i++)
+        {
+            if (result.Samples[i].Hits > result.Samples[i - 1].Hits)
+                hits.Add(result.Samples[i]);
+        }
+        if (hits.Count <= 3)
+            return hits;
+        return new[] { hits[0], hits[(hits.Count - 1) / 2], hits[^1] };
+    }
+
     // Damage first, natural bleed-point recovery after each hypothetical tick.
     // Does not simulate healing, HP regen, armor, or future bleeding infliction.
     public static BleedTimelineResult Calculate(

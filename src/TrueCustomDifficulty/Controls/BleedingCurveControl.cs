@@ -24,7 +24,7 @@ public sealed class BleedingCurveControl : FrameworkElement
 
     private const double CurveMaximumDamage = 4.0;
     private const double LowThreshold = 0.1;
-    private const double DesiredHeight = 744.0;
+    private const double DesiredHeight = 726.0;
     private const string MaxHpId = "health.maxHP";
 
     private ParameterViewModel? _severity;
@@ -545,123 +545,143 @@ public sealed class BleedingCurveControl : FrameworkElement
         hit = new Rect(left - 8, y - 13, right - left + 16, 27);
     }
 
+    // Starvation-style 176-DIP numbered source-charge rail. The three
+    // milestones are genuine projected hits; every tick participates in math.
     private void DrawBleedTimeline(DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush soft, Brush accent, Brush panel)
     {
-        var width = Math.Max(420.0, ActualWidth - 32.0);
-        var area = new Rect(16, 466, width, 261);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), area, 4, 4);
-        DrawText(dc, "BLEEDING TIMELINE", new Point(area.Left + 11, area.Top + 7),
-            11.0, accent, FontWeights.Bold);
-        DrawRightAlignedText(dc, "ESTIMATE · 1 S / TICK",
-            new Point(area.Right - 11, area.Top + 7),
-            9.0, muted, FontWeights.SemiBold);
-
-        var half = (area.Width - 34) / 2;
-        DrawScenarioRail(dc, new Rect(area.Left + 10, 494, half, 50),
-            "START BLEED", $"{_scenarioBleed:0} PTS", _scenarioBleed, 0, 100,
-            ScenarioInput.Bleed, text, muted, border, accent, panel, out _scenarioBleedHit);
-        DrawScenarioRail(dc, new Rect(area.Left + half + 24, 494, half, 50),
-            "START HP", $"{(_maxHp?.CurrentNumber ?? 100) * _scenarioHpPercent / 100:0.#} HP",
-            _scenarioHpPercent, 5, 100, ScenarioInput.Hp,
+        const double previewTop = 531.0;
+        const double previewHeight = 176.0;
+        var bankWidth = Math.Min(760.0, Math.Max(1.0, ActualWidth - 32.0));
+        var left = (ActualWidth - bankWidth) / 2.0;
+        var half = (bankWidth - 12.0) / 2.0;
+        DrawScenarioRail(dc, new Rect(left, 470.0, half, 50.0),
+            "START BLEED", $"{_scenarioBleed:0} PTS", _scenarioBleed,
+            0.0, 100.0, ScenarioInput.Bleed,
+            text, muted, border, accent, panel, out _scenarioBleedHit);
+        DrawScenarioRail(dc, new Rect(left + half + 12.0, 470.0, half, 50.0),
+            "START HP",
+            $"{(_maxHp?.CurrentNumber ?? 100.0) * _scenarioHpPercent / 100.0:0.#} HP",
+            _scenarioHpPercent, 5.0, 100.0, ScenarioInput.Hp,
             text, muted, border, accent, panel, out _scenarioHpHit);
+
+        var preview = new Rect(left, previewTop, bankWidth, previewHeight);
+        dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), preview, 4.0, 4.0);
+        DrawText(dc, "DAMAGE TICK TIMELINE",
+            new Point(preview.Left + 12.0, preview.Top + 9.0),
+            10.2, text, FontWeights.Bold);
 
         var result = ProjectBleed();
         var last = result.Samples[^1];
+        var rawHp = Math.Max(0.0, result.Samples[0].Hp - last.Hp);
         _scenarioSecond = Math.Clamp(_scenarioSecond, 0, last.Second);
         var sample = result.Samples[_scenarioSecond];
+        var markers = BleedingTimelineProjection.TimelineMarkers(result);
+        DrawRightAlignedText(dc, $"{result.Hits} TICKS  /  {rawHp:0.#} RAW HP",
+            new Point(preview.Right - 12.0, preview.Top + 9.0),
+            9.4, text, FontWeights.SemiBold);
 
-        var first = new Rect(area.Left + 10, 553, half, 52);
-        var second = new Rect(area.Left + half + 24, 553, half, 52);
-        foreach (var box in new[] { first, second })
-            dc.DrawRoundedRectangle(panel, new Pen(soft, 0.8), box, 4, 4);
-        DrawText(dc, "TICKS TO 0 HP", new Point(first.Left + 10, first.Top + 5),
-            9.2, muted, FontWeights.Bold);
-        DrawText(dc, "TIME TO 0 HP", new Point(second.Left + 10, second.Top + 5),
-            9.2, muted, FontWeights.Bold);
-        DrawText(dc, result.DeathSecond is null ? "—" : $"{result.Hits} TICKS",
-            new Point(first.Left + 10, first.Top + 21),
-            15.0, text, FontWeights.Bold);
-        DrawText(dc, result.DeathSecond is int death ? Clock(death) : "SURVIVES",
-            new Point(second.Left + 10, second.Top + 21),
-            15.0, result.DeathSecond is null ? text : accent, FontWeights.Bold);
-        if (result.DeathSecond is null && result.BleedEndsSecond is int end)
-            DrawRightAlignedText(dc, "BLEED ENDS " + Clock(end),
-                new Point(second.Right - 10, second.Top + 6),
-                9.0, muted, FontWeights.Normal);
+        var axis = new Rect(preview.Left + 24.0, preview.Top + 67.0,
+            Math.Max(1.0, preview.Width - 48.0), 16.0);
+        _scenarioPlot = axis;
+        _scenarioScrubHit = new Rect(axis.Left, axis.Top - 27.0,
+            axis.Width, axis.Height + 51.0);
+        var axisY = axis.Top + axis.Height / 2.0;
+        var span = Math.Max(1, last.Second);
+        double At(int seconds) =>
+            axis.Left + axis.Width * Math.Clamp((double)seconds / span, 0.0, 1.0);
+        if (markers.Count > 0)
+            DrawCenteredText(dc, "DAMAGE WINDOW",
+                new Point((At(markers[0].Second) + At(markers[^1].Second)) / 2.0,
+                    preview.Top + 33.0),
+                9.1, muted, FontWeights.SemiBold);
 
-        _scenarioPlot = new Rect(area.Left + 53, 639,
-            Math.Max(220.0, area.Width - 72), 60);
-        DrawText(dc,
-            $"AT {Clock(sample.Second)}  ·  {sample.Hp:0.#} HP  ·  {sample.Bleed:0.#} BLEED",
-            new Point(_scenarioPlot.Left, 615),
-            10.2, text, FontWeights.SemiBold);
-        for (var i = 0; i <= 4; i++)
+        dc.DrawLine(new Pen(soft, 3.0),
+            new Point(axis.Left, axisY), new Point(axis.Right, axisY));
+        if (markers.Count > 0)
         {
-            var x = _scenarioPlot.Left + _scenarioPlot.Width * i / 4;
-            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.6), 0.8)
-                { DashStyle = DashStyles.Dot },
-                new Point(x, _scenarioPlot.Top), new Point(x, _scenarioPlot.Bottom));
-        }
-        for (var i = 0; i <= 2; i++)
-        {
-            var y = _scenarioPlot.Top + _scenarioPlot.Height * i / 2;
-            dc.DrawLine(new Pen(CloneWithOpacity(soft, 0.55), 0.8)
-                { DashStyle = DashStyles.Dot },
-                new Point(_scenarioPlot.Left, y), new Point(_scenarioPlot.Right, y));
-        }
-
-        var hpMax = Math.Max(1.0, _maxHp?.CurrentNumber ?? 100.0);
-        var duration = Math.Max(1, last.Second);
-        double X(int t) => _scenarioPlot.Left + _scenarioPlot.Width * t / duration;
-        double Y(double hp) => _scenarioPlot.Bottom -
-            _scenarioPlot.Height * Math.Clamp(hp / hpMax, 0, 1);
-        DrawRightAlignedText(dc, $"{hpMax:0} HP",
-            new Point(_scenarioPlot.Left - 8, _scenarioPlot.Top - 6),
-            9, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, "0", new Point(_scenarioPlot.Left - 8, _scenarioPlot.Bottom - 7),
-            9, muted, FontWeights.Normal);
-
-        // Render a stepped HP loss curve. Sample thinning never changes tick math.
-        var path = new StreamGeometry();
-        using (var g = path.Open())
-        {
-            g.BeginFigure(new Point(X(0), Y(result.Samples[0].Hp)), false, false);
-            var stride = Math.Max(1, (int)Math.Ceiling(last.Second / 260.0));
-            var old = 0;
-            for (var t = stride; t <= last.Second; t += stride)
+            var firstX = At(markers[0].Second);
+            var lastX = At(markers[^1].Second);
+            if (lastX - firstX > 1.0)
             {
-                var next = Math.Min(t, last.Second);
-                g.LineTo(new Point(X(next), Y(result.Samples[old].Hp)), true, false);
-                g.LineTo(new Point(X(next), Y(result.Samples[next].Hp)), true, false);
-                old = next;
+                dc.DrawRoundedRectangle(CloneWithOpacity(accent, 0.10), null,
+                    new Rect(firstX, axisY - 7.0, lastX - firstX, 14.0), 3.0, 3.0);
+                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 2.6),
+                    new Point(firstX, axisY), new Point(lastX, axisY));
             }
-            if (old != last.Second)
-            {
-                g.LineTo(new Point(X(last.Second), Y(result.Samples[old].Hp)), true, false);
-                g.LineTo(new Point(X(last.Second), Y(last.Hp)), true, false);
-            }
-            if (last.Second == 0)
-                g.LineTo(new Point(_scenarioPlot.Right, Y(last.Hp)), true, false);
         }
-        path.Freeze();
-        dc.DrawGeometry(null, new Pen(accent, 2.4), path);
-        var sx = X(_scenarioSecond);
-        var sy = Y(sample.Hp);
+
+        // Unlike Starvation's read-only rail, the full Bleeding rail can be
+        // scrubbed to inspect each second; the three labeled dots are genuine
+        // first/middle/last HP hits, not three fabricated adjacent charges.
+        var cursorX = At(_scenarioSecond);
         dc.DrawLine(new Pen(CloneWithOpacity(text, 0.65), 1.0)
             { DashStyle = DashStyles.Dot },
-            new Point(sx, _scenarioPlot.Top), new Point(sx, _scenarioPlot.Bottom));
-        ControlHoverGlow.Draw(dc, new Point(sx, sy), accent,
+            new Point(cursorX, axisY - 17.0), new Point(cursorX, axisY + 17.0));
+        ControlHoverGlow.Draw(dc, new Point(cursorX, axisY), accent,
             _scenarioHover == ScenarioInput.Scrub);
-        dc.DrawEllipse(panel, new Pen(accent, 2.0), new Point(sx, sy), 5.4, 5.4);
+        dc.DrawEllipse(panel, new Pen(Brushes.White, 1.7),
+            new Point(cursorX, axisY), 3.6, 3.6);
 
-        _scenarioScrubHit = new Rect(_scenarioPlot.Left,
-            _scenarioPlot.Top - 12, _scenarioPlot.Width, _scenarioPlot.Height + 24);
-        DrawText(dc, "0:00", new Point(_scenarioPlot.Left, 705),
+        for (var n = 0; n < markers.Count; n++)
+        {
+            var tick = markers[n];
+            var x = At(tick.Second);
+            dc.DrawEllipse(accent, null, new Point(x, axisY), 4.7, 4.7);
+            var previous = n == 0 ? double.NegativeInfinity : At(markers[n - 1].Second);
+            var next = n == markers.Count - 1 ? double.PositiveInfinity : At(markers[n + 1].Second);
+            var compressed = x - previous < 26.0 || next - x < 26.0;
+            if (!compressed || n == markers.Count - 1)
+                DrawCenteredText(dc, tick.Hits.ToString(CultureInfo.InvariantCulture),
+                    new Point(Math.Clamp(x, axis.Left + 13.0, axis.Right - 13.0),
+                        preview.Top + 49.0),
+                    10.0, text, FontWeights.Bold);
+            // Do not collide the first tick's timestamp with the 0:00 axis label.
+            if (x - axis.Left >= 54.0
+                && (n == markers.Count - 1 || (!compressed && x - previous >= 45.0)))
+                DrawCenteredText(dc, Clock(tick.Second),
+                    new Point(Math.Clamp(x, axis.Left + 20.0, axis.Right - 20.0),
+                        preview.Top + 91.0),
+                    9.2, muted, FontWeights.Normal);
+        }
+        DrawText(dc, "0:00", new Point(axis.Left, preview.Top + 91.0),
             9.0, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, Clock(last.Second),
-            new Point(_scenarioPlot.Right, 705),
-            9.0, muted, FontWeights.Normal);
+        if (markers.Count == 0 || markers[^1].Second != last.Second)
+            DrawRightAlignedText(dc, Clock(last.Second),
+                new Point(axis.Right, preview.Top + 91.0),
+                9.0, muted, FontWeights.Normal);
+
+        DrawCenteredText(dc,
+            $"AT {Clock(sample.Second)}  ·  {sample.Hp:0.#} HP  ·  {sample.Bleed:0.#} BLEED",
+            new Point(preview.Left + preview.Width / 2.0, preview.Top + 110.0),
+            9.7, muted, FontWeights.SemiBold);
+
+        // The same single centered 41-DIP conclusion as Starvation,
+        // emphasizing estimated lethal ticks and time, not Vanilla/Base.
+        var hud = new Rect(preview.Left + 12.0, preview.Top + 127.0,
+            Math.Max(1.0, preview.Width - 24.0), 41.0);
+        const string prefix = "BLEEDING KILLS IN ";
+        const string connector = " TICKS AFTER ";
+        var lethal = result.DeathSecond is not null;
+        var countText = result.Hits.ToString(CultureInfo.InvariantCulture);
+        var timeText = $"~{Clock(result.DeathSecond ?? last.Second)}";
+        var summary = lethal ? prefix + countText + connector + timeText
+            : result.BleedEndsSecond is int end
+                ? $"SURVIVES  /  BLEED ENDS {Clock(end)}"
+                : result.Hits == 0 ? "SURVIVES  /  NO HP DAMAGE"
+                : "SURVIVES  /  NO LETHAL BLEEDING";
+        var formatted = CreateText(summary, 10.8, text, FontWeights.Bold);
+        if (lethal)
+        {
+            formatted.SetForegroundBrush(accent, prefix.Length, countText.Length);
+            formatted.SetFontSize(14.5, prefix.Length, countText.Length);
+            var offset = prefix.Length + countText.Length + connector.Length;
+            formatted.SetForegroundBrush(accent, offset, timeText.Length);
+            formatted.SetFontSize(19.0, offset, timeText.Length);
+        }
+        dc.DrawText(formatted,
+            new Point(hud.Left + (hud.Width - formatted.WidthIncludingTrailingWhitespace) / 2.0,
+                hud.Top + (hud.Height - formatted.Height) / 2.0));
     }
 
     private ScenarioInput ScenarioTarget(Point p)
