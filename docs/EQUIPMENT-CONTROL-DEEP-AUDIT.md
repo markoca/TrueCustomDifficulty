@@ -1,5 +1,9 @@
 # Equipment Control Deep Audit — v0.2.49
 
+### 2026-10-14 — Equipment tab restored (CURRENT)
+
+The separate **Equipment** tab is restored in JSON metadata and WPF grouping, after Economy / before Anomalies. Exactly four original `equipment.*` visible parameters now have `tab="equipment"`: two in Equipment Wear, two in Item Weight. Keep **3 confirmed + 1 runtime-test-required**, **113 unchanged writer points** (4 armor durability, 52 player weapon wear, 34 ammunition weight, 23 consumables weight) and all existing source provenance, difficulty values, native steps and presets. The stable-prefix audit additionally asserts tab ownership and group identity. Historical 2026-10-12 and 2026-10-11 Survival migration descriptions below no longer state current placement.
+
 ### 2026-10-12 — Current Equipment audit discovery after Survival tab migration
 
 The four current `equipment.*` catalog parameter IDs remain `equipment.armorDurability`, `equipment.ammoWeight`, `equipment.consumableWeight`, and `equipment.weaponWearPerShot`, but their presentation `tab` is now `survival`. Project consistency audits must select the stable **parameter ID prefix**, not a retired `tab="equipment"` predicate: the old predicate returned no rows and crashed converting a missing vanilla difficulty value with `float(None)`. The corrected gate still requires 4 exposed controls, 3 confirmed + 1 runtime-test-required, exactly **113 edit points** (4 armor-durability + 34 ammo weight + 23 consumable weight + 52 weapon wear), and the source-matching armor difficulty values Novice 1.35 / Stalker 1 / Veteran 0.9 / Master 0.6. No source metadata, actual tab grouping, control, writer target, preset or vanilla values are altered. The old "expected 117" error text was obsolete and is corrected to 113.
