@@ -10,7 +10,7 @@ namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
 /// Aggregate Bleeding System editor: source-native stage curve and a
-/// live, locally editable, source-driven damage-tick stage timeline.
+/// live, read-only source-tick timeline for the selected bleeding stage.
 /// </summary>
 public sealed class BleedingCurveControl : FrameworkElement
 {
@@ -46,15 +46,12 @@ public sealed class BleedingCurveControl : FrameworkElement
     private DragTarget _hoverTarget = DragTarget.None;
     private DragTarget _dragTarget = DragTarget.None;
     private DragTarget _selectedTarget = DragTarget.LowDamage;
-    private readonly List<BleedStageChange> _stageChanges = new() { new(1, "LOW") };
-    private int _scenarioSecond = 1; // Inspect the first damage tick.
+    // Stage is selected only through these three chips; the time rail is noninteractive.
+    private int _previewStageIndex;
     private readonly Rect[] _stageChoiceHits = new Rect[3];
-    private Rect _scenarioPlot;
-    private Rect _scenarioScrubHit;
-    private ScenarioInput _scenarioDrag;
     private ScenarioInput _scenarioHover;
     private ScenarioInput _scenarioSelected;
-    private enum ScenarioInput { None, StageLow, StageMedium, StageSevere, Scrub }
+    private enum ScenarioInput { None, StageLow, StageMedium, StageSevere }
 
     public static readonly DependencyProperty ParametersProperty = DependencyProperty.Register(
         nameof(Parameters),
@@ -506,16 +503,18 @@ public sealed class BleedingCurveControl : FrameworkElement
     }
 
 
-    // Exact source HP/TICK values from the authored graph and explicitly chosen stages.
-    // No invented incoming wound amount or automatic bleed decay enters this timeline.
+    // Preview always consumes the selected stage's real HP/TICK from the graph.
+    // Stage duration/bleed recovery are not inferred from undocumented engine math.
     private BleedTimelineResult ProjectBleed()
         => BleedingTimelineProjection.Calculate(
-            _maxHp?.CurrentNumber ?? 100.0, _stageChanges,
+            _maxHp?.CurrentNumber ?? 100.0,
+            new[] { "LOW", "MEDIUM", "SEVERE" }[_previewStageIndex],
             _damage[0]?.CurrentNumber ?? 1.0,
             _damage[1]?.CurrentNumber ?? 1.5,
             _damage[2]?.CurrentNumber ?? 2.0);
 
-    private static string Clock(int seconds) => $"{seconds / 60}:{seconds % 60:00}";
+    private static string Clock(long seconds)
+        => $"{seconds / 60}:{seconds % 60:00}";
 
     private static ScenarioInput StageInput(int index) => index switch
     {
@@ -537,23 +536,18 @@ public sealed class BleedingCurveControl : FrameworkElement
         var index = StageIndex(input);
         if (index < 0)
             return;
-        var stage = new[] { "LOW", "MEDIUM", "SEVERE" }[index];
-        var changes = BleedingTimelineProjection.SetStage(
-            _stageChanges, Math.Max(1, _scenarioSecond), stage);
-        _stageChanges.Clear();
-        _stageChanges.AddRange(changes);
+        _previewStageIndex = index;
         InvalidateVisual();
     }
 
-    private void DrawStageChoices(DrawingContext dc, BleedTimelineResult result,
+    private void DrawStageChoices(DrawingContext dc,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         const double gap = 8.0;
         var width = Math.Min(480.0, Math.Max(1.0, ActualWidth - 32.0));
         var left = (ActualWidth - width) / 2.0;
         var cardWidth = (width - gap * 2.0) / 3.0;
-        var inspectedSecond = Math.Clamp(Math.Max(1, _scenarioSecond), 1, result.Duration);
-        var activeStage = result.Samples[inspectedSecond].Stage;
+        var activeStage = new[] { "LOW", "MEDIUM", "SEVERE" }[_previewStageIndex];
         var labels = new[] { "LOW", "MEDIUM", "SEVERE" };
         for (var i = 0; i < 3; i++)
         {
@@ -575,8 +569,8 @@ public sealed class BleedingCurveControl : FrameworkElement
         }
     }
 
-    // Starvation-style 176-DIP numbered source-charge rail. The three
-    // milestones are genuine projected hits; every tick participates in math.
+    // Same communication-only three-tick rail as Hunger/Starvation.
+    // No seek cursor, no drag capture, no per-second stage editing.
     private void DrawBleedTimeline(DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush soft, Brush accent, Brush panel)
     {
@@ -585,142 +579,69 @@ public sealed class BleedingCurveControl : FrameworkElement
         var bankWidth = Math.Min(760.0, Math.Max(1.0, ActualWidth - 32.0));
         var left = (ActualWidth - bankWidth) / 2.0;
         var result = ProjectBleed();
-        _scenarioSecond = Math.Clamp(_scenarioSecond, 0, result.Duration);
-        DrawStageChoices(dc, result, text, muted, border, accent, panel);
+        DrawStageChoices(dc, text, muted, border, accent, panel);
 
         var preview = new Rect(left, previewTop, bankWidth, previewHeight);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), preview, 4.0, 4.0);
         DrawText(dc, "DAMAGE TICK TIMELINE",
             new Point(preview.Left + 12.0, preview.Top + 9.0),
             10.2, text, FontWeights.Bold);
-
-        var last = result.Samples[^1];
-        var rawHp = Math.Max(0.0, result.Samples[0].Hp - last.Hp);
-        _scenarioSecond = Math.Clamp(_scenarioSecond, 0, last.Second);
-        var sample = result.Samples[_scenarioSecond];
-        var markers = BleedingTimelineProjection.TimelineMarkers(result);
-        DrawRightAlignedText(dc, $"{result.Hits} TICKS  /  {rawHp:0.#} HP LOST",
+        DrawRightAlignedText(dc,
+            $"{result.DisplayTicks.Count} TICKS  /  {result.PreviewHpLost:0.##} HP LOST",
             new Point(preview.Right - 12.0, preview.Top + 9.0),
             9.4, text, FontWeights.SemiBold);
 
         var axis = new Rect(preview.Left + 24.0, preview.Top + 67.0,
             Math.Max(1.0, preview.Width - 48.0), 16.0);
-        _scenarioPlot = axis;
-        _scenarioScrubHit = new Rect(axis.Left, axis.Top - 27.0,
-            axis.Width, axis.Height + 51.0);
         var axisY = axis.Top + axis.Height / 2.0;
-        var span = Math.Max(1, last.Second);
-        double At(int seconds) =>
-            axis.Left + axis.Width * Math.Clamp((double)seconds / span, 0.0, 1.0);
-        var segments = BleedingTimelineProjection.StageSegments(result);
+        double At(int tick) => axis.Left + axis.Width * tick / 3.0;
+
+        DrawCenteredText(dc, result.HasHpDamage ? "DAMAGE WINDOW" : "NO HP DAMAGE",
+            new Point(preview.Left + preview.Width / 2.0, preview.Top + 33.0),
+            9.1, result.HasHpDamage ? text : muted, FontWeights.SemiBold);
         dc.DrawLine(new Pen(soft, 3.0),
             new Point(axis.Left, axisY), new Point(axis.Right, axisY));
-        // Bands show only player-selected stage transitions; their HP/TICK
-        // magnitudes always come from the live native graph.
-        for (var n = 0; n < segments.Count; n++)
+        if (result.HasHpDamage)
         {
-            var segment = segments[n];
-            var startX = At(segment.FirstSecond - 1);
-            var endX = At(segment.LastSecond);
-            var width = Math.Max(0.0, endX - startX);
-            var opacity = segment.Stage switch
+            // Fixed-width source-tick schedule. Markers denote estimated
+            // charges 1/2/3, NOT independently selectable timeline positions.
+            var endX = At(result.DisplayTicks.Count);
+            dc.DrawRoundedRectangle(CloneWithOpacity(accent, 0.12), null,
+                new Rect(axis.Left, axisY - 7.0,
+                    Math.Max(1.0, endX - axis.Left), 14.0), 3.0, 3.0);
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.78), 2.6),
+                new Point(axis.Left, axisY), new Point(endX, axisY));
+            foreach (var mark in result.DisplayTicks)
             {
-                "SEVERE" => 0.23,
-                "MEDIUM" => 0.14,
-                _ => 0.075
-            };
-            if (width > 1.0)
-            {
-                dc.DrawRoundedRectangle(CloneWithOpacity(accent, opacity), null,
-                    new Rect(startX, axisY - 7.0, width, 14.0), 2.5, 2.5);
-                dc.DrawLine(new Pen(CloneWithOpacity(accent, opacity + 0.47), 2.6),
-                    new Point(startX, axisY), new Point(endX, axisY));
-            }
-            var hpPerTick = segment.Stage switch
-            {
-                "SEVERE" => _damage[2]?.CurrentNumber ?? 2.0,
-                "MEDIUM" => _damage[1]?.CurrentNumber ?? 1.5,
-                _ => _damage[0]?.CurrentNumber ?? 1.0
-            };
-            if (width >= 114.0)
-                DrawCenteredText(dc, $"{segment.Stage}  {hpPerTick:0.#} HP/TICK",
-                    new Point((startX + endX) / 2.0, preview.Top + 33.0),
-                    9.1, text, FontWeights.SemiBold);
-            else if (width >= 60.0)
-                DrawCenteredText(dc, segment.Stage,
-                    new Point((startX + endX) / 2.0, preview.Top + 33.0),
-                    9.1, muted, FontWeights.SemiBold);
-            if (n > 0)
-                dc.DrawLine(new Pen(CloneWithOpacity(text, 0.7), 1.2),
-                    new Point(startX, axisY - 13.0),
-                    new Point(startX, axisY + 13.0));
-        }
-
-        // Unlike Starvation's read-only rail, this one is draggable. Markers
-        // are actual modeled first HP hits at each user-selected stage change
-        // plus the final hit, never arbitrary landmarks.
-        var cursorX = At(_scenarioSecond);
-        dc.DrawLine(new Pen(CloneWithOpacity(text, 0.65), 1.0)
-            { DashStyle = DashStyles.Dot },
-            new Point(cursorX, axisY - 17.0), new Point(cursorX, axisY + 17.0));
-        ControlHoverGlow.Draw(dc, new Point(cursorX, axisY), accent,
-            _scenarioHover == ScenarioInput.Scrub);
-        dc.DrawEllipse(panel, new Pen(Brushes.White, 1.7),
-            new Point(cursorX, axisY), 3.6, 3.6);
-
-        for (var n = 0; n < markers.Count; n++)
-        {
-            var tick = markers[n];
-            var x = At(tick.Second);
-            dc.DrawEllipse(accent, null, new Point(x, axisY), 4.7, 4.7);
-            var previous = n == 0 ? double.NegativeInfinity : At(markers[n - 1].Second);
-            var next = n == markers.Count - 1 ? double.PositiveInfinity : At(markers[n + 1].Second);
-            var compressed = x - previous < 26.0 || next - x < 26.0;
-            if (!compressed || n == markers.Count - 1)
-                DrawCenteredText(dc, tick.Hits.ToString(CultureInfo.InvariantCulture),
-                    new Point(Math.Clamp(x, axis.Left + 13.0, axis.Right - 13.0),
-                        preview.Top + 49.0),
+                var x = At(mark.Number);
+                dc.DrawEllipse(accent, null, new Point(x, axisY), 4.7, 4.7);
+                DrawCenteredText(dc,
+                    mark.Number.ToString(CultureInfo.InvariantCulture),
+                    new Point(x, preview.Top + 49.0),
                     10.0, text, FontWeights.Bold);
-            // Do not collide the first tick's timestamp with the 0:00 axis label.
-            if (x - axis.Left >= 54.0
-                && (n == markers.Count - 1 || (!compressed && x - previous >= 45.0)))
-                DrawCenteredText(dc, Clock(tick.Second),
-                    new Point(Math.Clamp(x, axis.Left + 20.0, axis.Right - 20.0),
-                        preview.Top + 91.0),
+                DrawCenteredText(dc, Clock(mark.Number),
+                    new Point(x, preview.Top + 91.0),
                     9.2, muted, FontWeights.Normal);
+            }
         }
         DrawText(dc, "0:00", new Point(axis.Left, preview.Top + 91.0),
             9.0, muted, FontWeights.Normal);
-        if (markers.Count == 0 || markers[^1].Second != last.Second)
-            DrawRightAlignedText(dc, Clock(last.Second),
-                new Point(axis.Right, preview.Top + 91.0),
-                9.0, muted, FontWeights.Normal);
-
-        var inspectedStage = sample.Second == 0 ? "NONE" : sample.Stage;
-        var inspectedDamage = inspectedStage switch
-        {
-            "SEVERE" => _damage[2]?.CurrentNumber ?? 2.0,
-            "MEDIUM" => _damage[1]?.CurrentNumber ?? 1.5,
-            "LOW" => _damage[0]?.CurrentNumber ?? 1.0,
-            _ => 0.0
-        };
         DrawCenteredText(dc,
-            $"AT {Clock(sample.Second)}  ·  {inspectedStage} {inspectedDamage:0.#} HP/TICK  ·  {sample.Hp:0.#} HP LEFT",
+            $"FULL HP {result.StartingHp:0.#}  ·  {result.HpPerTick:0.##} HP/TICK  ·  1 S/TICK EST.",
             new Point(preview.Left + preview.Width / 2.0, preview.Top + 110.0),
             9.7, muted, FontWeights.SemiBold);
 
-        // The same single centered 41-DIP conclusion as Starvation,
-        // emphasizing estimated lethal ticks and time, not Vanilla/Base.
         var hud = new Rect(preview.Left + 12.0, preview.Top + 127.0,
             Math.Max(1.0, preview.Width - 24.0), 41.0);
-        const string prefix = "BLEEDING KILLS IN ";
-        const string connector = " TICKS AFTER ";
-        var lethal = result.DeathSecond is not null;
-        var countText = result.Hits.ToString(CultureInfo.InvariantCulture);
-        var timeText = $"~{Clock(result.DeathSecond ?? last.Second)}";
-        var summary = lethal ? prefix + countText + connector + timeText
-            : result.Hits == 0 ? "NO HP DAMAGE  /  SELECT A STAGE"
-            : "NO DEATH WITHIN 1 H OF TICKS";
+        var prefix = $"IF {result.Stage} HOLDS: ";
+        const string connector = " TICKS  /  ";
+        const string suffix = " TO 0 HP";
+        var lethal = result.TicksToZero is long;
+        var countText = result.TicksToZero?.ToString(CultureInfo.InvariantCulture) ?? "—";
+        var timeText = result.TicksToZero is long ticks ? $"~{Clock(ticks)}" : "NO HP DAMAGE";
+        var summary = lethal
+            ? prefix + countText + connector + timeText + suffix
+            : "NO HP DAMAGE";
         var formatted = CreateText(summary, 10.8, text, FontWeights.Bold);
         if (lethal)
         {
@@ -735,32 +656,22 @@ public sealed class BleedingCurveControl : FrameworkElement
                 hud.Top + (hud.Height - formatted.Height) / 2.0));
     }
 
+    // Only the stage choice cards can be clicked. The timeline has no hit target.
     private ScenarioInput ScenarioTarget(Point p)
     {
         for (var i = 0; i < _stageChoiceHits.Length; i++)
             if (_stageChoiceHits[i].Contains(p))
                 return StageInput(i);
-        return _scenarioScrubHit.Contains(p) ? ScenarioInput.Scrub : ScenarioInput.None;
-    }
-
-    private void MoveScenario(ScenarioInput kind, double x)
-    {
-        if (kind != ScenarioInput.Scrub || _scenarioPlot.IsEmpty)
-            return;
-        var ratio = Math.Clamp((x - _scenarioPlot.Left) /
-            Math.Max(1.0, _scenarioPlot.Width), 0.0, 1.0);
-        _scenarioSecond = (int)Math.Round(ratio * ProjectBleed().Duration,
-            MidpointRounding.AwayFromZero);
-        InvalidateVisual();
+        return ScenarioInput.None;
     }
 
     private const string ScenarioTip =
-        "Select a time on the tick rail, then click LOW / MEDIUM / SEVERE to set " +
-        "the active bleeding stage from that tick until the next manually set stage. " +
-        "HP/TICK comes directly from the editable bleeding graph; HP from Health Max HP. " +
-        "Right-click a stage choice to clear the local schedule. These stage choices are " +
-        "not CFG settings. One tick per second is an estimate, not verified engine timing. " +
-        "No assumed wound PTS, automatic stage decay, armor or healing is included.";
+        "Choose LOW, MEDIUM or SEVERE to display that source stage's HP/TICK. " +
+        "The tick timeline is a read-only illustration like Starvation, not a slider. " +
+        "The full-HP estimate assumes the chosen stage persists without transitions " +
+        "and one tick per second; actual game cadence is unverified. " +
+        "Natural Recovery, medicine, armor and new injuries are not modeled. " +
+        "Right-click any stage choice to return to LOW. These choices never write CFG.";
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
@@ -772,14 +683,7 @@ public sealed class BleedingCurveControl : FrameworkElement
         if (input != ScenarioInput.None)
         {
             _scenarioSelected = input;
-            if (input == ScenarioInput.Scrub)
-            {
-                _scenarioDrag = input;
-                CaptureMouse();
-                MoveScenario(input, point.X);
-            }
-            else
-                ApplyStageChoice(input);
+            ApplyStageChoice(input);
             e.Handled = true;
             return;
         }
@@ -850,12 +754,6 @@ public sealed class BleedingCurveControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
-        if (_scenarioDrag != ScenarioInput.None && e.LeftButton == MouseButtonState.Pressed)
-        {
-            MoveScenario(_scenarioDrag, point.X);
-            e.Handled = true;
-            return;
-        }
         var input = ScenarioTarget(point);
         if (_scenarioHover != input)
         {
@@ -944,13 +842,6 @@ public sealed class BleedingCurveControl : FrameworkElement
     {
         base.OnMouseLeftButtonUp(e);
 
-        if (_scenarioDrag != ScenarioInput.None)
-        {
-            _scenarioDrag = ScenarioInput.None;
-            ReleaseMouseCapture();
-            e.Handled = true;
-            return;
-        }
         if (_dragTarget == DragTarget.None)
             return;
 
@@ -967,15 +858,8 @@ public sealed class BleedingCurveControl : FrameworkElement
         var input = ScenarioTarget(point);
         if (input != ScenarioInput.None)
         {
-            _scenarioSelected = input;
-            if (input == ScenarioInput.Scrub)
-                _scenarioSecond = 1;
-            else
-            {
-                _stageChanges.Clear();
-                _stageChanges.Add(new BleedStageChange(1, "LOW"));
-                _scenarioSecond = 1;
-            }
+            _scenarioSelected = StageInput(0);
+            _previewStageIndex = 0;
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -1040,47 +924,21 @@ public sealed class BleedingCurveControl : FrameworkElement
 
         if (_scenarioSelected != ScenarioInput.None && e.Key != Key.R)
         {
-            if (_scenarioSelected == ScenarioInput.Scrub)
+            var index = StageIndex(_scenarioSelected);
+            var next = e.Key switch
             {
-                var delta = e.Key switch
-                {
-                    Key.Right or Key.Up => 1,
-                    Key.Left or Key.Down => -1,
-                    Key.PageUp => 10,
-                    Key.PageDown => -10,
-                    Key.Home => int.MinValue,
-                    Key.End => int.MaxValue,
-                    _ => 0
-                };
-                if (delta != 0)
-                {
-                    var duration = ProjectBleed().Duration;
-                    _scenarioSecond = delta == int.MinValue ? 0
-                        : delta == int.MaxValue ? duration
-                        : Math.Clamp(_scenarioSecond + delta, 0, duration);
-                    InvalidateVisual();
-                    e.Handled = true;
-                    return;
-                }
-            }
-            else
+                Key.Left or Key.Down => Math.Max(0, index - 1),
+                Key.Right or Key.Up => Math.Min(2, index + 1),
+                Key.Home => 0,
+                Key.End => 2,
+                _ => -1
+            };
+            if (next >= 0)
             {
-                var index = StageIndex(_scenarioSelected);
-                var next = e.Key switch
-                {
-                    Key.Left or Key.Down => Math.Max(0, index - 1),
-                    Key.Right or Key.Up => Math.Min(2, index + 1),
-                    Key.Home => 0,
-                    Key.End => 2,
-                    _ => -1
-                };
-                if (next >= 0)
-                {
-                    _scenarioSelected = StageInput(next);
-                    ApplyStageChoice(_scenarioSelected);
-                    e.Handled = true;
-                    return;
-                }
+                _scenarioSelected = StageInput(next);
+                ApplyStageChoice(_scenarioSelected);
+                e.Handled = true;
+                return;
             }
         }
         if (_selectedTarget is DragTarget.LowDamage or DragTarget.MediumDamage or DragTarget.SevereDamage)
