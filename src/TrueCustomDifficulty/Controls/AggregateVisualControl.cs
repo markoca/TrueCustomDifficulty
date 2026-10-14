@@ -2831,7 +2831,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         bool percentageReadout = false, bool rateReadout = false,
         int percentageSign = 0, bool rawReadout = false,
         string? nativeUnit = null, bool prominent = false,
-        bool positivePrefix = true, string? secondaryReadout = null)
+        bool positivePrefix = true, string? secondaryReadout = null,
+        bool inlineNativeUnit = false)
     {
         // All larger hero dials (Headshot, Starvation HP and Radiation HP)
         // raise ONLY the caption by 9 DIP to restore the ordinary knob's
@@ -2957,6 +2958,17 @@ public sealed class AggregateVisualControl : FrameworkElement
                 center.X - formatted.WidthIncludingTrailingWhitespace / 2.0,
                 currentTop));
         }
+        else if (inlineNativeUnit && nativeUnit is not null)
+        {
+            // Hercules: one centered value line; only the editable number turns gold.
+            var combined = CreateText($"{currentLabel} {nativeUnit}",
+                prominent ? (modified ? 18.2 : 17.0) : (modified ? 16.2 : 15.0),
+                active ? text : muted, FontWeights.Bold, card.Width - 12.0);
+            if (modified)
+                combined.SetForegroundBrush(accent, 0, currentLabel.Length);
+            dc.DrawText(combined, new Point(
+                center.X - combined.WidthIncludingTrailingWhitespace / 2.0, currentTop));
+        }
         else
         {
             DrawCenteredText(dc, currentLabel, new Point(center.X, currentTop),
@@ -2971,7 +2983,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             DrawCenteredText(dc, "PTS/S",
                 new Point(center.X, center.Y + 5.0),
                 9.0, muted, FontWeights.SemiBold);
-        else if (nativeUnit is not null)
+        else if (nativeUnit is not null && !inlineNativeUnit)
             DrawCenteredText(dc, nativeUnit,
                 new Point(center.X, center.Y + 5.0),
                 8.3, muted, FontWeights.SemiBold);
@@ -3754,15 +3766,13 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(medicineLeft, medicineKnobTop, medicineKnobWidth, 181.0),
             text, muted, border, accent, panel,
             rawReadout: true, nativeUnit: "BLEED PTS");
+        var baseCarry = Linked("stamina.maxCarryWeight")?.CurrentNumber ?? 80.0;
         DrawSourceKnob(dc, herculesStrength, "HERCULES CARRY",
             new Rect(medicineLeft + medicineKnobWidth + knobGap,
                 medicineKnobTop, medicineKnobWidth, 181.0),
             text, muted, border, accent, panel,
-            rawReadout: true, nativeUnit: "KG");
-        var baseCarry = Linked("stamina.maxCarryWeight")?.CurrentNumber ?? 80.0;
-        DrawCenteredText(dc, $"{baseCarry + herculesStrength.CurrentNumber:0.#} KG WITH HERCULES",
-            new Point(medicineLeft + medicineKnobWidth * 1.5 + knobGap,
-                medicineKnobTop + 186.0), 9.0, muted, FontWeights.SemiBold);
+            rawReadout: true, nativeUnit: "KG", inlineNativeUnit: true,
+            secondaryReadout: $"+{baseCarry + herculesStrength.CurrentNumber:0.#} WITH BUFF");
         DrawSourceKnob(dc, psiStrength, "PSI BLOCK PROTECTION",
             new Rect(medicineLeft + 2.0 * (medicineKnobWidth + knobGap),
                 medicineKnobTop, medicineKnobWidth, 181.0),
