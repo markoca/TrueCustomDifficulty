@@ -1316,7 +1316,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, "EXTRA CORPSE LOOT", new Point(margin + 11.0, 61.0),
             10.6, text, FontWeights.Bold);
         var count = corpse.ChoiceOptions.Count;
-        var cell = Math.Min(180.0, (width - 22.0 - (count - 1) * gap) / count);
+        var cell = Math.Min(112.0, (width - 22.0 - (count - 1) * gap) / count);
         var groupWidth = count * cell + (count - 1) * gap;
         var start = margin + (width - groupWidth) / 2.0;
         for (var i = 0; i < count; i++)

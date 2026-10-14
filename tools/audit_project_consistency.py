@@ -3554,6 +3554,7 @@ if any(_tok not in _npc_preview_source for _tok in (
     'DrawHorizontalTrackCard(dc, ammo, "NPC AMMO DROPS",',
     'DrawText(dc, "BONUS AMMO PREVIEW",',
     "Math.Min(516.0, sampleCard.Width - 22.0)",
+    "var cell = Math.Min(112.0, (width - 22.0 - (count - 1) * gap) / count);",
     "var previewLeft = sampleCard.Left +",
     "(i / 3) * 41.0, previewWidth, 36.0",
     "DrawNpcCorpsePackageIcon(dc, corpse.ChoiceOptions[i].Value,",
