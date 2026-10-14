@@ -1,5 +1,14 @@
 # Visual Control System
 
+### 2026-10-14 — Clearer stamina / bleeding contextual readouts (CURRENT)
+
+Stamina Usage action rows append `SPENT PER ACTION` to the existing derived current-Max-Stamina percentage alongside absolute STAMINA cost. Sprint remains a nondiscrete native coefficient: this caption describes the relative displayed cost, not a newly inferred sprint duration or activation count.
+
+Survival's Water / Energy Drink STAMINA GAIN knobs now show their Max-Stamina-dependent read-only `+N STAMINA` projection centered **inside** the dial immediately below the editable percent, at a stronger neutral 11-DIP weight rather than as detached tiny text underneath. The shared source knob renderer takes an optional secondary readout for these two existing sources; it does not add a CFG parameter, editor hit area, or independent reset. Only modified real source values can turn gold.
+
+Medical Items' treatment reference heading now reads `BLEED STAGES | MEDIUM N PTS | SEVERE N PTS` in a bold, more legible one-line style. These remain live read-only Bleeding System severity-stage threshold landmarks, not guaranteed stage-clearing claims, bleeding amount edits, or new UI controls. Retain compact dimensions and unchanged native sources/writers/presets.
+
+
 ### 2026-10-14 — Twelve cross-control live projections (CURRENT)
 
 **Approved all 12 as visualization-only dependencies.** Six-groups-or-fewer existing compact boards, native CFG sliders, numeric steps, default/reference values, preset serialization, writer operations, hit targets, hover, right-click resets and group R resets are unchanged. The linked source from another group/tab is *subscribed to for repaint only*; it is never added to the receiving editor's writable member list or reset group. Suppress decorative subtitles; derived values are neutral (not false modified-yellow CFG values). No new real gameplay parameter, speculative mechanic, live game simulation, global multiplier, or auto-propagated slider adjustment.
