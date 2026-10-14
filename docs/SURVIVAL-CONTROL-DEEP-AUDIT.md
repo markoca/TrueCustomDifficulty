@@ -1,5 +1,9 @@
 # Survival Control Deep Audit — v0.2.47
 
+### 2026-10-14 — Equipment groups returned to Equipment (CURRENT)
+
+Survival no longer hosts Equipment Wear or Item Weight. Its native **31 visible controls** (29 confirmed / 2 runtime-test-required) and **82 writer leaves** remain intact; the four equipment source controls and their separate 113 writer leaves now appear on the restored Equipment tab. Bleeding, radiation, hunger, sleep, fatigue and consumable layout and CFG routing are unaffected. The 2026-10-11 Equipment-in-Survival placement below is historical.
+
 ### 2026-10-14 — Bleeding removes redundant full-HP tick caption (CURRENT)
 
 Under Survival → BLEEDING SYSTEM → DAMAGE TICK TIMELINE, remove the entire permanent centered line showing `FULL HP N · N HP/TICK · 1 S/TICK EST.` at local preview Y+110. Do not replace it with another status label. Existing unified selectable LOW/MEDIUM/SEVERE cards already show exact HP/TICK, numbered tick markers show timing, and the bottom `DEAD IN m:ss` or `NO HP DAMAGE` HUD is sufficient. Preserve stage selection, read-only timeline, damage calculations, card geometry, host height (665 DIP), original CFG writers and preset behavior. The conditional-stage and unverified one-second-per-tick assumptions remain in the existing hover tooltip; remove the permanent duplicate from the visual only. This entry supersedes the previous same-day instruction requiring a visible `1 S/TICK EST.` caption.
