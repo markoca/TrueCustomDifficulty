@@ -3567,6 +3567,27 @@ if any(_tok not in _npc_preview_source for _tok in (
     fail("NPC bonus ammo preview, icon-only selector or active-package UI drifted")
 if 'var caption = CreateText(corpse.ChoiceOptions[i].Label,' in _npc_preview_source:
     fail("NPC corpse package icons must not have permanent text captions")
+# The selection must use sourced icon shapes, not bespoke medkits or bottle rectangles.
+for _icon_marker in (
+    "private static readonly Geometry[] NpcMedkitIcon =",
+    "private static readonly Geometry[] NpcWaterBottleIcon =",
+    "private static readonly Geometry[] NpcNoBonusIcon =",
+    "private static readonly Geometry NpcAmmunitionIcon = Geometry.Parse(",
+    "private static void DrawNpcOutlineIcon(",
+    "private static void DrawNpcFilledIcon(",
+    "DrawNpcOutlineIcon(dc, NpcMedkitIcon,",
+    "DrawNpcFilledIcon(dc, NpcAmmunitionIcon,",
+    "DrawNpcOutlineIcon(dc, NpcWaterBottleIcon, center, 34.0, ink);",
+    "DrawNpcOutlineIcon(dc, NpcNoBonusIcon, center, 30.0, ink);",
+    "M5.7 5.7l12.6 12.6",
+    "docs/ICON-ASSET-CREDITS.md",
+):
+    if _icon_marker not in _npc_preview_source:
+        fail("NPC choice glyph must use licensed library vector paths: " + _icon_marker)
+if "dc.DrawRoundedRectangle(null, pen," in _npc_preview_source.split("private static void DrawNpcCorpsePackageIcon(", 1)[-1].split("private void DrawNpcLootLoadout(", 1)[0]:
+    fail("Bespoke NPC icon outlines have returned")
+if not (ROOT / "docs" / "ICON-ASSET-CREDITS.md").exists():
+    fail("Missing source icon credits and licenses")
 if any("2026-10-14 — NPC bonus ammo presentation" not in
        (ROOT / "docs" / f).read_text(encoding="utf-8")
        for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):

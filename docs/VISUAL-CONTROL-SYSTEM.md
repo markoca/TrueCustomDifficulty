@@ -1,5 +1,10 @@
 # Visual Control System
 
+### 2026-10-14 — Standard-library NPC corpse package icons (CURRENT)
+
+**Loot → NPC LOOT & EQUIPMENT → EXTRA CORPSE LOOT** replaces the previously improvised icon geometry with recognizable **original open-source vector glyphs** rendered using cached WPF `Geometry.Parse` (no icon font, emoji, downloaded runtime asset or fallback glyph). **Medicine + Ammo:** Tabler **first-aid-kit** at 30 DIP beside the native filled Pictogrammers Material Design Icons **ammunition** (three recognizable bullets, 29 DIP). **Water:** Tabler **bottle** at 34 DIP with its native internal waterline. **None:** Tabler **ban** at 30 DIP. Sources/licensing are documented in `docs/ICON-ASSET-CREDITS.md`. The icon forms are centered inside the same 112-DIP selection chips, preserving the 43-DIP chip height, 10-DIP gaps, 90-DIP selector panel, existing gold selected/white hovered states, tooltip labels, original hit areas and keyboard/preset/CFG behaviors. No labels, extra frame, user-facing legal text or new settings were added. This standard glyph replacement supersedes the earlier custom medkit/cartridges/jar drawings; the existing NPC ammo scope and layout specification immediately below remain in force.
+
+
 ### 2026-10-14 — NPC bonus ammo presentation (CURRENT)
 
 **Loot → NPC LOOT & EQUIPMENT** retains four independent sources and the unchanged **564-DIP** measured board and weapon-condition rail. The second scalar is now labeled **NPC AMMO DROPS** in the UI and catalog (source ID loot.npcWeaponAmmoSupply stays stable for existing presets); it scales only BONUS ammunition from the NPC_Ammo_Smart corpse package, NOT normal weapon-attached NPC ammo. The additional package applies only with **Medicine + Ammo**; choosing Water or None does not remove normal weapon ammo. The source range 0–3× / step 0.25×, generator clones, selected difficulty, save/reset, and output are unchanged. The preview heading is now **BONUS AMMO PREVIEW**. Its short disabled-state text is **“Bonus ammo off · weapon ammo unaffected”**, replacing ambiguous previous wording.

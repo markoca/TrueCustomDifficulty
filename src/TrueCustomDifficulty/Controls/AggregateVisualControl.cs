@@ -1237,56 +1237,82 @@ public sealed class AggregateVisualControl : FrameworkElement
     // MIN/MAX condition range. The two vertically separated endpoint handles
     // are independently hit-testable even when both numbers coincide.
 
-    // WPF vector glyphs avoid icon fonts or emoji dependency under Wine.
-    private static void DrawNpcCorpsePackageIcon(
-        DrawingContext dc, string optionValue, Point center, Brush ink)
+    // Sourced 24x24 icon geometry rather than improvised hand-drawn glyphs.
+    // Tabler Icons (MIT): first-aid-kit, bottle, ban; Pictogrammers MDI
+    // (Apache-2.0): ammunition. Attribution: docs/ICON-ASSET-CREDITS.md.
+    // Cached vector geometry renders natively on WPF/Wine without icon fonts.
+    private static readonly Geometry[] NpcMedkitIcon =
+    [
+        Geometry.Parse("M8 8v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2"),
+        Geometry.Parse("M4 10a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -8"),
+        Geometry.Parse("M10 14h4"),
+        Geometry.Parse("M12 12v4")
+    ];
+
+    private static readonly Geometry[] NpcWaterBottleIcon =
+    [
+        Geometry.Parse("M10 5h4v-2a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1v2"),
+        Geometry.Parse("M14 3.5c0 1.626 .507 3.212 1.45 4.537l.05 .07a8.093 8.093 0 0 1 1.5 4.694v6.199a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2v-6.2c0 -1.682 .524 -3.322 1.5 -4.693l.05 -.07a7.823 7.823 0 0 0 1.45 -4.537"),
+        Geometry.Parse("M7 14.803a2.4 2.4 0 0 0 1 -.803a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 1 -.805")
+    ];
+
+    private static readonly Geometry[] NpcNoBonusIcon =
+    [
+        Geometry.Parse("M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"),
+        Geometry.Parse("M5.7 5.7l12.6 12.6")
+    ];
+
+    // MDI "ammunition" SVG path, native fill (not a stroked approximation).
+    private static readonly Geometry NpcAmmunitionIcon = Geometry.Parse(
+        "M14,22H10V21H14V22M13,10V7H11V10L10,11.5V20H14V11.5L13,10M12,2C12,2 11,3 11,5V6H13V5C13,5 13,3 12,2" +
+        "M8,22H4V21H8V22M7,10V7H5V10L4,11.5V20H8V11.5L7,10M6,2C6,2 5,3 5,5V6H7V5C7,5 7,3 6,2" +
+        "M20,22H16V21H20V22M19,10V7H17V10L16,11.5V20H20V11.5L19,10M18,2C18,2 17,3 17,5V6H19V5C19,5 19,3 18,2Z");
+
+    private static void DrawNpcOutlineIcon(
+        DrawingContext dc, Geometry[] paths, Point center, double size, Brush ink)
     {
-        var pen = new Pen(ink, 1.9)
+        var scale = size / 24.0;
+        dc.PushTransform(new MatrixTransform(scale, 0.0, 0.0, scale,
+            center.X - 12.0 * scale, center.Y - 12.0 * scale));
+        var pen = new Pen(ink, 2.0)
         {
             StartLineCap = PenLineCap.Round,
             EndLineCap = PenLineCap.Round,
             LineJoin = PenLineJoin.Round
         };
+        foreach (var geometry in paths)
+            dc.DrawGeometry(null, pen, geometry);
+        dc.Pop();
+    }
+
+    private static void DrawNpcFilledIcon(
+        DrawingContext dc, Geometry geometry, Point center, double size, Brush ink)
+    {
+        var scale = size / 24.0;
+        dc.PushTransform(new MatrixTransform(scale, 0.0, 0.0, scale,
+            center.X - 12.0 * scale, center.Y - 12.0 * scale));
+        dc.DrawGeometry(ink, null, geometry);
+        dc.Pop();
+    }
+
+    private static void DrawNpcCorpsePackageIcon(
+        DrawingContext dc, string optionValue, Point center, Brush ink)
+    {
         if (optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal))
         {
-            // Compact medical case (cross) and two cartridges.
-            dc.DrawRoundedRectangle(null, pen,
-                new Rect(center.X - 27.0, center.Y - 10.0, 27.0, 22.0), 3.0, 3.0);
-            dc.DrawLine(pen, new Point(center.X - 20.0, center.Y - 10.0),
-                new Point(center.X - 20.0, center.Y - 14.0));
-            dc.DrawLine(pen, new Point(center.X - 20.0, center.Y - 14.0),
-                new Point(center.X - 7.0, center.Y - 14.0));
-            dc.DrawLine(pen, new Point(center.X - 7.0, center.Y - 14.0),
-                new Point(center.X - 7.0, center.Y - 10.0));
-            dc.DrawLine(pen, new Point(center.X - 13.5, center.Y - 5.0),
-                new Point(center.X - 13.5, center.Y + 7.0));
-            dc.DrawLine(pen, new Point(center.X - 19.5, center.Y + 1.0),
-                new Point(center.X - 7.5, center.Y + 1.0));
-            dc.DrawRoundedRectangle(null, pen,
-                new Rect(center.X + 8.0, center.Y - 11.0, 6.0, 23.0), 2.8, 2.8);
-            dc.DrawRoundedRectangle(null, pen,
-                new Rect(center.X + 19.0, center.Y - 7.0, 6.0, 19.0), 2.8, 2.8);
+            // Clearly separated first-aid kit + real ammunition pictograms.
+            DrawNpcOutlineIcon(dc, NpcMedkitIcon,
+                new Point(center.X - 17.5, center.Y), 30.0, ink);
+            DrawNpcFilledIcon(dc, NpcAmmunitionIcon,
+                new Point(center.X + 17.5, center.Y), 29.0, ink);
         }
         else if (optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal))
         {
-            // Bottle cap, shoulder and waterline.
-            dc.DrawRoundedRectangle(null, pen,
-                new Rect(center.X - 10.0, center.Y - 6.0, 20.0, 20.0), 4.0, 4.0);
-            dc.DrawLine(pen, new Point(center.X - 6.0, center.Y - 6.0),
-                new Point(center.X - 6.0, center.Y - 10.0));
-            dc.DrawLine(pen, new Point(center.X + 6.0, center.Y - 6.0),
-                new Point(center.X + 6.0, center.Y - 10.0));
-            dc.DrawRoundedRectangle(null, pen,
-                new Rect(center.X - 7.0, center.Y - 15.0, 14.0, 5.0), 1.5, 1.5);
-            dc.DrawLine(pen, new Point(center.X - 5.0, center.Y + 4.0),
-                new Point(center.X + 5.0, center.Y + 4.0));
+            DrawNpcOutlineIcon(dc, NpcWaterBottleIcon, center, 34.0, ink);
         }
         else
         {
-            // No EXTRA corpse loot, not an empty normal NPC inventory.
-            dc.DrawEllipse(null, pen, center, 11.0, 11.0);
-            dc.DrawLine(pen, new Point(center.X - 7.6, center.Y + 7.6),
-                new Point(center.X + 7.6, center.Y - 7.6));
+            DrawNpcOutlineIcon(dc, NpcNoBonusIcon, center, 30.0, ink);
         }
     }
 
