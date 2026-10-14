@@ -3626,24 +3626,29 @@ for _token in ("_progressMarkers.Add(new ProgressMarker(", "new Rect(segmentLeft
     if _token not in _drink_marker_source:
         fail("Alcohol stage marker hover/click behavior drifted: " + _token)
 
-# Bleeding timeline: no invented CFG source; actual live controls, one-second
-# discrete projection, cross-tab Max HP, UI input and zero-damage tests.
+# Bleeding timeline: manually selected stages use exact native graph HP/tick.
+# No fabricated incoming wound, inferred bleed-point decay, or extra CFG writer.
 _bleed_timeline_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "BleedingTimelineProjection.cs").read_text(encoding="utf-8")
 _bleed_control = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "BleedingCurveControl.cs").read_text(encoding="utf-8")
 _bleed_contract = (ROOT / "tests" / "HealthStaminaPatchContract" / "Program.cs").read_text(encoding="utf-8")
 for _token in (
-    "public static class BleedingTimelineProjection",
-    "for (var sec = 1; sec <= 3600 && hp > 0 && bleed >= 0.1; sec++)",
-    "bleed = Math.Max(0, bleed - regen)",
-    "death = sec;",
-    "ends = sec;",
-    "double woundBleeding,",
-    "double bleedingInflicted, double recovery,",
-    "wound * Math.Max(0.0, bleedingInflicted)",
-    "new BleedTimelineResult(points, hits, death, ends, wound, points[0].Bleed)",
+    "public sealed record BleedStageChange(",
+    "public static IReadOnlyList<BleedStageChange> SetStage(",
+    "var entries = new SortedDictionary<int, string>",
+    "public static IReadOnlyList<BleedStageSpan> StageSegments(",
+    "public static IReadOnlyList<BleedTimelinePoint> TimelineMarkers(",
+    "for (var sec = 1; sec <= 3600 && hp > 0; sec++)",
+    "hp = Math.Max(0.0, hp - amount)",
+    '"SEVERE" => severe,',
+    '"MEDIUM" => medium,',
+    "if (idleTicks >= 120 && stageIndex == schedule.Count - 1)",
 ):
     if _token not in _bleed_timeline_source:
-        fail("Bleeding timeline discrete 1-second projection contract drifted: " + _token)
+        fail("Bleeding manual stage source tick contract drifted: " + _token)
+for _token in ("woundBleeding", "bleedingInflicted", "bleed - regen",
+               "InitialBleedingPoints", "BleedEndsSecond"):
+    if _token in _bleed_timeline_source:
+        fail("Removed hypothetical wound model returned: " + _token)
 for _token in (
     "private const double DesiredHeight = 726.0;",
     'private const string MaxHpId = "health.maxHP";',
@@ -3653,81 +3658,49 @@ for _token in (
     "DrawBleedTimeline(dc, text, muted, border, softBorder, accent, panel);",
     '"DAMAGE TICK TIMELINE"',
     "BleedingTimelineProjection.StageSegments(result)",
+    "BleedingTimelineProjection.TimelineMarkers(result)",
     '"BLEEDING INFLICTED"',
     "var hpPerTick = segment.Stage switch",
     "var opacity = segment.Stage switch",
-    "if (width >= 114.0)",
-    "if (n > 0)",
-    '"WOUND BLEED (PTS)"',
-    '"HP AT ONSET"',
-    "result.WoundBleedingPoints",
-    "result.InitialBleedingPoints",
-    "_severity?.CurrentNumber ?? 1.0",
-    "_scenarioHpPercent:0}% =",
+    'private readonly List<BleedStageChange> _stageChanges = new()',
+    "BleedingTimelineProjection.SetStage(",
+    "DrawStageChoices(dc, result, text, muted, border, accent, panel);",
+    'new Rect(left + i * (cardWidth + gap), 470.0, cardWidth, 50.0)',
+    "ApplyStageChoice(input);",
+    "MoveScenario(_scenarioDrag, point.X);",
+    "if (_scenarioSelected != ScenarioInput.None && e.Key != Key.R)",
     '"{result.Hits} TICKS  /  {rawHp:0.#} HP LOST"',
     'const string prefix = "BLEEDING KILLS IN ";',
-    'const string connector = " TICKS AFTER ";',
-    "BleedingTimelineProjection.TimelineMarkers(result)",
-    "ControlHoverGlow.Draw(dc, new Point(cursorX, axisY)",
-    "new Rect(preview.Left + 12.0, preview.Top + 127.0",
-    "BleedingTimelineProjection.Calculate(",
-    "MoveScenario(_scenarioDrag, point.X);",
-    "case ScenarioInput.Scrub:",
-    "if (_scenarioSelected != ScenarioInput.None && e.Key != Key.R)",
 ):
     if _token not in _bleed_control:
-        fail("Bleeding timeline scenario, live HP or pointer contract drifted: " + _token)
+        fail("Bleeding source-graph stage editor or pointer contract drifted: " + _token)
+for _token in ('"WOUND BLEED (PTS)"', '"HP AT ONSET"', "result.InitialBleedingPoints",
+               "sample.Bleed", "ScenarioInput.Bleed", "ScenarioInput.Hp"):
+    if _token in _bleed_control:
+        fail("Retired hypothetical Bleeding UI returned: " + _token)
 _bleed_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
 _bleed_element = _bleed_xaml.split('<controls:BleedingCurveControl x:Name="BleedingCurveControl"', 1)
 if len(_bleed_element) != 2 or 'MinHeight="726"' not in _bleed_element[1].split('/>', 1)[0]:
-    fail("Bleeding timeline host XAML must measure its 726 DIP board")
-if ("BleedingTimelineProjectionCase();" not in _bleed_contract
-        or "Check(severeOnly.DeathSecond == 50" not in _bleed_contract
-        or "BleedingTimelineProjection.TimelineMarkers(severeOnly)" not in _bleed_contract
-        or 'phase[0].Stage == "SEVERE"' not in _bleed_contract
-        or "shifted[0].LastSecond == 11" not in _bleed_contract
-        or "boostedSevere.Samples[1].Hp - 96.5" not in _bleed_contract
-        or "boostedMedium.Samples[1].Hp - 97.5" not in _bleed_contract
-        or "boostedLow.Samples[1].Hp - 98.3" not in _bleed_contract
-        or "master.InitialBleedingPoints == 90" not in _bleed_contract):
-    fail("Bleeding timeline wound-scaling and 1.7/2.5/3.5/4 HP charge regressions missing")
-if any(token in _bleed_control for token in ('"START BLEED"', '"START HP"')):
-    fail("Ambiguous bleeding scenario labels have returned")
-if any(token not in _bleed_control for token in (
-        "WOUND BLEED: incoming bleeding points (NOT health HP)",
-        "HP AT ONSET: player's current health as % of Health-tab Max HP.",
-        "private int _scenarioSecond = 1;")):
-    fail("Bleeding scenario must distinguish wound PTS from initial HP")
-if any("2026-10-14 — Bleeding wound-vs-HP scenario and damage math" not in
-       (ROOT / "docs" / n).read_text(encoding="utf-8")
-       for n in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
-    fail("Both UI catalogs must reflect active Bleeding wound-scaling model")
-if any("2026-10-14 — Bleeding uses the Starvation tick graph" not in
-       (ROOT / "docs" / n).read_text(encoding="utf-8")
-       for n in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
-    fail("Bleeding Starvation-graph design missing in UI catalogs")
+    fail("Bleeding timeline host XAML must retain its 726 DIP board")
 for _token in (
-    "public sealed record BleedStageSpan(",
-    "public static IReadOnlyList<BleedStageSpan> StageSegments(",
-    "var stage = result.Samples[1].Stage;",
-    "if (now.Stage != stage)",
-    "before.Hp - now.Hp",
-    "public static IReadOnlyList<BleedTimelinePoint> TimelineMarkers(",
+    "BleedingTimelineProjectionCase();",
+    "Check(severeOnly.DeathSecond == 50",
+    "BleedingTimelineProjection.TimelineMarkers(changing)",
+    "BleedingTimelineProjection.SetStage(schedule, 15,",
+    "Check(Run(hp: 200).DeathSecond == 100",
+    "var dormant = Run(low: 0, severe: 4",
 ):
-    if _token not in _bleed_timeline_source:
-        fail("Bleeding timeline must follow live profile stages: " + _token)
-if '"label": "Bleeding Inflicted"' not in (ROOT / "src" / "TrueCustomDifficulty" / "Data" / "parameters.json").read_text(encoding="utf-8"):
-    fail("Keep the confirmed source-backed Bleeding Inflicted control")
-if any("2026-10-14 — Bleeding timeline follows the authored damage profile" not in
-       (ROOT / "docs" / n).read_text(encoding="utf-8")
-       for n in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
-    fail("Bleeding profile-to-timeline catalog drifted")
-if "var path = new StreamGeometry();" in _bleed_control.split("private void DrawBleedTimeline(", 1)[1].split("private ScenarioInput ScenarioTarget(", 1)[0]:
-    fail("Old HP-versus-time graph returned instead of the Starvation schedule rail")
-if any("2026-10-14 — Interactive Bleeding Timeline" not in
-       (ROOT / "docs" / n).read_text(encoding="utf-8")
-       for n in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
-    fail("Both UI catalogs must describe the current bleeding timeline")
+    if _token not in _bleed_contract:
+        fail("Manual stage source-tick regression missing: " + _token)
+for _filename in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "2026-10-14 — Bleeding timeline uses manual source stage schedule (CURRENT)" not in (
+        ROOT / "docs" / _filename).read_text(encoding="utf-8"):
+        fail("Manual-source Bleeding timeline UI/catalog contract missing: " + _filename)
+if "var path = new StreamGeometry();" in _bleed_control.split(
+        "private void DrawBleedTimeline(", 1)[1].split(
+        "private ScenarioInput ScenarioTarget(", 1)[0]:
+    fail("Old HP-versus-time line graph returned instead of source tick rail")
+note("Bleeding source-stage timeline: manual tick transitions and actual HP/tick, no wound-Pts fiction")
 
 # Bleeding difficulty markers share the interactive slider-marker language.
 _bleeding_marker_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "BleedingCurveControl.cs").read_text(encoding="utf-8")

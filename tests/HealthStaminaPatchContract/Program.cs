@@ -299,141 +299,88 @@ internal static class Program
 
     private static void BleedingTimelineProjectionCase()
     {
-        static BleedTimelineResult Run(double hp = 100, double hpPct = 100,
-            double bleed = 80, double regen = 0,
-            double low = 1, double medium = 1.5, double severe = 2,
-            double midAt = 50, double severeAt = 75, double inflicted = 1)
-            => BleedingTimelineProjection.Calculate(
-                hp, hpPct, bleed, inflicted, regen, low, medium, severe, midAt, severeAt);
+        static BleedTimelineResult Run(double hp = 100, double low = 1,
+            double medium = 1.5, double severe = 2,
+            params BleedStageChange[] stages)
+            => BleedingTimelineProjection.Calculate(hp,
+                stages.Length == 0 ? new[] { new BleedStageChange(1, "SEVERE") } : stages,
+                low, medium, severe);
 
         var severeOnly = Run();
         Check(severeOnly.DeathSecond == 50 && severeOnly.Hits == 50
               && severeOnly.Samples[^1].Hp == 0,
-            "Severe 2 HP per 1s hypothetical tick must kill 100 HP in 50 ticks");
+            "Source Severe 2 HP/tick must take 50 modeled ticks to exhaust 100 HP");
+        Check(Run(hp: 200).DeathSecond == 100,
+            "Health-tab Max HP must feed the timeline directly");
 
-        var halfHp = Run(hpPct: 50);
-        Check(halfHp.DeathSecond == 25 && halfHp.Hits == 25,
-            "Start-HP preview percentage must modify tick/death projections");
-
-        var doubleHp = Run(hp: 200);
-        Check(doubleHp.DeathSecond == 100 && doubleHp.Hits == 100,
-            "Changing live health.maxHP must update hypothetical death time");
-
-        var recovery = Run(bleed: 10, regen: 0.6);
-        Check(recovery.DeathSecond is null
-              && recovery.BleedEndsSecond == 17 && recovery.Hits == 17
-              && recovery.Samples[^1].Hp == 83,
-            "Recovery should end low bleeding without inventing a death");
-
-        var transitions = Run(regen: 0.3);
-        Check(transitions.Samples.Any(t => t.Stage == "SEVERE")
-              && transitions.Samples.Any(t => t.Stage == "MEDIUM")
-              && transitions.DeathSecond is not null,
-            "Natural recovery must cross live bleeding threshold stages");
+        var medium = Run(medium: 2.5, stages: new[] { new BleedStageChange(1, "MEDIUM") });
+        Check(medium.DeathSecond == 40 && Math.Abs(medium.Samples[1].Hp - 97.5) < 0.0001,
+            "The actual Medium graph value must drive every selected-stage tick");
+        var low = Run(low: 1.7, stages: new[] { new BleedStageChange(1, "LOW") });
+        Check(low.DeathSecond == 59 && Math.Abs(low.Samples[1].Hp - 98.3) < 0.0001,
+            "The actual fractional Low graph value must drive the selected stage");
+        var severe = Run(severe: 3.5);
+        Check(severe.DeathSecond == 29 && Math.Abs(severe.Samples[1].Hp - 96.5) < 0.0001,
+            "Edited Severe source HP/tick must be reflected without infliction scaling");
+        Check(Run(severe: 4).DeathSecond == 25,
+            "4 HP/tick must cause 25 hits for 100 HP");
 
         var harmless = Run(low: 0, medium: 0, severe: 0);
         Check(harmless.DeathSecond is null && harmless.Hits == 0
-              && harmless.Samples[^1].Hp == 100,
-            "Zero HP damage must never invent death or HP charges");
-
-        var empty = Run(bleed: 0);
-        Check(empty.DeathSecond is null && empty.BleedEndsSecond == 0
-              && empty.Hits == 0 && empty.Duration == 0,
-            "No starting bleed should show no damage and zero elapsed time");
-
-        var milestones = BleedingTimelineProjection.TimelineMarkers(severeOnly);
-        Check(milestones.Count == 3
-              && milestones[0].Hits == 1 && milestones[0].Second == 1
-              && milestones[1].Hits == 25 && milestones[1].Second == 25
-              && milestones[2].Hits == 50 && milestones[2].Second == 50,
-            "Starvation-style Bleeding rail must use real first/middle/last ticks");
-        Check(BleedingTimelineProjection.TimelineMarkers(empty).Count == 0
+              && harmless.Duration == 120 && harmless.Samples[^1].Hp == 100
               && BleedingTimelineProjection.TimelineMarkers(harmless).Count == 0,
-            "No-damage cases must not invent tick landmarks");
-        var single = BleedingTimelineProjection.TimelineMarkers(Run(hp: 1));
-        Check(single.Count == 1 && single[0].Hits == 1 && single[0].Second == 1,
-            "Single lethal HP hit must not be presented as three events");
-        var phaseCase = Run(hp: 200, bleed: 80, regen: 1);
-        var phase = BleedingTimelineProjection.StageSegments(phaseCase);
-        Check(phase.Count == 3
-              && phase[0].Stage == "SEVERE" && phase[0].FirstSecond == 1
-              && phase[0].LastSecond == 6 && phase[0].DamageTicks == 6
-              && phase[1].Stage == "MEDIUM" && phase[1].FirstSecond == 7
-              && phase[1].LastSecond == 31 && phase[1].DamageTicks == 25
-              && phase[2].Stage == "LOW" && phase[2].FirstSecond == 32
-              && phase[2].LastSecond == 80 && phase[2].DamageTicks == 49,
-            "Bleeding time bands must follow all live Low/Medium/Severe phases");
-        var marks = BleedingTimelineProjection.TimelineMarkers(phaseCase);
+            "Zero-damage stage retains a selectable timeline without invented hits");
+        Check(BleedingTimelineProjection.TimelineMarkers(Run(hp: 1)).Count == 1,
+            "Single-hit death only renders one actual marker");
+
+        var schedule = new[]
+        {
+            new BleedStageChange(1, "SEVERE"),
+            new BleedStageChange(7, "MEDIUM"),
+            new BleedStageChange(32, "LOW")
+        };
+        var changing = Run(hp: 200, stages: schedule);
+        var spans = BleedingTimelineProjection.StageSegments(changing);
+        Check(spans.Count == 3
+              && spans[0].Stage == "SEVERE" && spans[0].FirstSecond == 1
+              && spans[0].LastSecond == 6 && spans[0].DamageTicks == 6
+              && spans[1].Stage == "MEDIUM" && spans[1].FirstSecond == 7
+              && spans[1].LastSecond == 31 && spans[1].DamageTicks == 25
+              && spans[2].Stage == "LOW" && spans[2].FirstSecond == 32
+              && spans[2].LastSecond == 182 && spans[2].DamageTicks == 151
+              && changing.DeathSecond == 182,
+            "Only player-entered stage transitions determine phase widths and death");
+        Check(Math.Abs(changing.Samples[7].Hp - 186.5) < 0.0001
+              && Math.Abs(changing.Samples[32].Hp - 149.5) < 0.0001,
+            "Each transition switches to its source HP/tick, not an interpolated tick");
+        var marks = BleedingTimelineProjection.TimelineMarkers(changing);
         Check(marks.Count == 4 && marks[0].Second == 1
               && marks[1].Second == 7 && marks[2].Second == 32
-              && marks[3].Second == 80,
-            "Stage start hit markers and the final hit must be real, not invented");
+              && marks[3].Second == 182,
+            "Timeline markers must follow actual selected-stage hit boundaries");
 
-        var shifted = BleedingTimelineProjection.StageSegments(
-            Run(hp: 200, bleed: 80, regen: 1, severeAt: 70));
-        Check(shifted[0].LastSecond == 11 && shifted[1].FirstSecond == 12,
-            "Moving severe onset immediately moves timeline boundaries");
+        var edited = BleedingTimelineProjection.SetStage(schedule, 15, "SEVERE");
+        Check(edited.Count == 4
+              && edited[0].Second == 1 && edited[1].Second == 7
+              && edited[2].Second == 15 && edited[2].Stage == "SEVERE"
+              && edited[3].Second == 32 && edited[3].Stage == "LOW",
+            "Editing a stage at the cursor must preserve later different stages");
+        var collapsed = BleedingTimelineProjection.SetStage(edited, 15, "MEDIUM");
+        Check(collapsed.Count == 3 && collapsed[1].Stage == "MEDIUM"
+              && collapsed[2].Second == 32,
+            "Repeated adjacent selected stages must collapse into one span");
+        var editResult = Run(hp: 200, stages: edited.ToArray());
+        Check(editResult.DeathSecond < changing.DeathSecond,
+            "Changing the stage at an intermediate tick must recalculate death");
+        var dormant = Run(low: 0, severe: 4, stages: new[]
+        {
+            new BleedStageChange(1, "LOW"), new BleedStageChange(9, "SEVERE")
+        });
+        Check(dormant.DeathSecond == 33 && dormant.Hits == 25
+              && dormant.Samples[8].Hp == 100 && dormant.Samples[9].Hp == 96,
+            "A stage switch must start source damage at exactly its selected tick");
 
-        var faster = BleedingTimelineProjection.StageSegments(
-            Run(hp: 200, bleed: 80, regen: 2));
-        Check(faster[0].LastSecond == 3 && faster[1].FirstSecond == 4,
-            "Changing bleeding recovery resizes timeline stage durations");
-
-        var noLowHp = BleedingTimelineProjection.StageSegments(
-            Run(hp: 200, bleed: 80, regen: 1, low: 0));
-        Check(noLowHp.Count == 3 && noLowHp[2].Stage == "LOW"
-              && noLowHp[2].DamageTicks == 0 && noLowHp[2].HpLost == 0,
-            "Zero damage Low phase remains visibly represented");
-
-        // Incoming wound bleeding PTS and HP at onset are independent inputs.
-        // Effect_Bleeding scales only the hypothetical initial wound.
-        var novice = Run(bleed: 80, inflicted: 0.25);
-        Check(novice.WoundBleedingPoints == 80 && novice.InitialBleedingPoints == 20
-              && novice.Samples[1].Stage == "LOW" && novice.Samples[1].Hp == 99
-              && novice.DeathSecond == 100,
-            "Novice Effect_Bleeding must reduce wound intensity, not HP/tick");
-        var master = Run(bleed: 60, inflicted: 1.5, severe: 4);
-        Check(master.InitialBleedingPoints == 90 && master.Samples[1].Stage == "SEVERE"
-              && master.Samples[1].Hp == 96 && master.DeathSecond == 25
-              && master.Hits == 25,
-            "Master Effect_Bleeding must promote a wound into severe 4 HP/tick");
-        var capped = Run(bleed: 80, inflicted: 2);
-        Check(capped.InitialBleedingPoints == 100,
-            "Hypothetical inflicted bleeding must not leave the 0-100 profile");
-        var noWound = Run(bleed: 80, inflicted: 0);
-        Check(noWound.Duration == 0 && noWound.Hits == 0
-              && noWound.InitialBleedingPoints == 0,
-            "Zero inflicted bleeding must disable the hypothetical wound");
-
-        // Regression: no silent 1 HP/tick fallback after editing graph handles.
-        // Individual stages must subtract their exact configured HP magnitudes.
-        var boostedSevere = Run(severe: 3.5);
-        Check(Math.Abs(boostedSevere.Samples[1].Hp - 96.5) < 0.0001
-              && boostedSevere.Samples[1].Stage == "SEVERE"
-              && boostedSevere.DeathSecond == 29,
-            "Severe 3.5 HP/tick must be used for every severe damage tick");
-        var boostedMedium = Run(bleed: 60, medium: 2.5);
-        Check(Math.Abs(boostedMedium.Samples[1].Hp - 97.5) < 0.0001
-              && boostedMedium.Samples[1].Stage == "MEDIUM"
-              && boostedMedium.DeathSecond == 40,
-            "Medium 2.5 HP/tick must not fall back to Low 1 HP/tick");
-        var boostedLow = Run(bleed: 20, low: 1.7);
-        Check(Math.Abs(boostedLow.Samples[1].Hp - 98.3) < 0.0001
-              && boostedLow.Samples[1].Stage == "LOW"
-              && boostedLow.DeathSecond == 59,
-            "Low 1.7 HP/tick must be used, including fractional damage");
-
-        var movingStages = Run(regen: 1, low: 1.7, medium: 2.5, severe: 4);
-        Check(movingStages.Samples[1].Stage == "SEVERE"
-              && Math.Abs(movingStages.Samples[1].Hp - 96) < 0.0001
-              && movingStages.Samples[7].Stage == "MEDIUM"
-              && Math.Abs(movingStages.Samples[7].Hp - 73.5) < 0.0001
-              && movingStages.Samples[32].Stage == "LOW"
-              && Math.Abs(movingStages.Samples[32].Hp - 11.8) < 0.0001
-              && movingStages.DeathSecond == 39,
-            "Transitioning stage damage must use 4/2.5/1.7 HP rather than default 1 HP");
-
-        Console.WriteLine("PASS BleedingTimelineProjection 23 scenarios");
+        Console.WriteLine("PASS BleedingTimelineProjection manual stage source-tick scenarios");
     }
 
     private static void BandageBleedingUpperBoundCase()
