@@ -1,5 +1,11 @@
 # Visual Control System
 
+### 2026-10-14 — Dedicated Equipment tab (CURRENT)
+
+**Supersedes the 2026-10-11 Equipment-in-Survival layout only.** Reinstate a single **Equipment** navigation tab after Economy and before Anomalies. The four existing source-native controls are moved from Survival into exactly two compact, independent groups: **Equipment Wear** first (ARMOR DURABILITY `equipment.armorDurability`, WEAR PER SHOT `equipment.weaponWearPerShot`), then **Item Weight** (AMMUNITION WEIGHT `equipment.ammoWeight`, FOOD & MEDICINE WEIGHT `equipment.consumableWeight`). Preserve the currently implemented 242-DIP two-rotary wear bank and bounded two-source item-weight tracks, original labels, hover/keyboard/wheel/right-click reset, gold-only-on-change values and reference markers; no duplicate editors, no stretched new cards, no redundant explanatory UI text.
+
+This is **presentation-only**: unchanged four CFG source IDs, native ranges/steps, per-difficulty vanilla baselines, writer operations (113 total: 4 armor + 52 weapon wear + 34 ammo + 23 consumables), saved preset fields, source rationales and group-reset semantics. **Carry Weight remains exclusively in Stamina**; no additional per-item weight sliders are invented. Survival returns to **31 visible sources, 82 writer leaves**; Equipment has **4 visible sources, 113 writer leaves**. Overall visible count is unchanged at **149**. `TabViewModel`, `ParameterSortOrder`, the JSON tab catalog and the static coverage/deep audit must agree.
+
 ### 2026-10-14 — Alphabetical anomaly damage and special-effect knobs (CURRENT)
 
 **Supersedes the earlier Anomalies layout notes on ordering and special-effect horizontal sliders.** The ten independent Anomaly Damage lanes are presented **alphabetically by their player-facing names**, left to right: **CAROUSEL, CHEMICAL, CLICKER, ELECTRO, FIRE, FIREBALL, GLASS SHARDS, SOAP BUBBLE, STEAM, TOXIC CLOUD**. Sorting changes only the `AnomalyDamageRadar` presentation order; the existing source IDs, global damage knob, original per-source native/Final readouts, selected rationale, hit targets, reset behaviors and CFG writer mappings remain unchanged. Do not sort by internal `environment.*` ID.
