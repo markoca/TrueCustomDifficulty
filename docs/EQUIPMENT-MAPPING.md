@@ -1,5 +1,9 @@
 # Equipment Mapping
 
+### 2026-10-14 — Equipment UI placement (CURRENT)
+
+A dedicated **Equipment** tab is restored after Economy. Its compact **Equipment Wear** (armor durability / weapon wear per shot) and **Item Weight** (ammunition / food & medicine) groups retain all four existing `equipment.*` source IDs and the same 113 CFG edits, native values, per-difficulty reference baselines and slider/knob behavior. These no longer appear under Survival. No new gameplay mapping and no change to Carry Weight in Stamina. The earlier 2026-10-11 Equipment-in-Survival directions below are superseded.
+
 ### 2026-10-11 — Frameless knobs, Equipment in Survival, expanded drink strengths (current)
 
 **All rotary knobs:** The common `AggregateVisualControl.DrawSourceKnob` renders every native 270° knob without a rectangular card fill or border. Preserve dial face, selected/hover highlighting, native source-grid ticks, left/right limits, current value, neutral reference marker, pointer/wheel/keyboard interaction and right-click reset. Applies to Your Weapons, Radiation System, Consumable Effects, Ammo Family Weights, Economy, Trader Stock and all other consumers of this renderer. Do not add extra frames, filler text or full-width control backgrounds.
