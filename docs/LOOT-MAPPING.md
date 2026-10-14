@@ -20,6 +20,9 @@ The tool does not expose a Loot control merely because related fields exist. A v
 
 ### Extra NPC Corpse Loot
 
+**Current UI interlock (2026-10-14):** Selecting Water or None greys out and blocks editing of both **MEDICAL DROPS** and **NPC AMMO DROPS** without clearing their stored settings. Switching back to Medicine + Ammo restores their current selections. The read-only bonus ammo preview has no inactive text footer. This UI-only behavior does not change the separately sourced medical generator or the existing corpse-bonus CFG writer.
+
+
 **Current UI (2026-10-14):** Three source-choice icons represent Medicine + Ammo, Water and None, with hover tooltips. **NPC AMMO DROPS** and its compact, nine-card **BONUS AMMO PREVIEW** tune only the extra NPC_Ammo_Smart corpse package; selecting Water or None does not prevent ordinary NPC weapon-attached ammo from appearing. These are distinct data domains. The existing writer target, source selection and saved preset key remain unchanged.
 
 

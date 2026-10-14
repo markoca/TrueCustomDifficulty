@@ -336,7 +336,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void DrawHoveredHandle(DrawingContext dc, Brush accent)
     {
         var target = _hoverTarget;
-        if (target is null || !target.Parameter.IsControlEnabled)
+        if (target is null || !target.Parameter.IsControlEnabled
+            || IsNpcBonusSliderLocked(target.Parameter))
             return;
 
         var source = target.Parameter;
@@ -1316,6 +1317,22 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
+    // UI-only gate. The regular medical generator and both preset values
+    // keep their original CFG behavior while these editors are greyed out.
+    private bool NpcBonusPackageSelected()
+    {
+        var corpse = P("loot.npcCorpseBonus");
+        return corpse is not null && corpse.CurrentText.Split(',',
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Contains("NPC_Ammo_Smart", StringComparer.Ordinal);
+    }
+
+    private bool IsNpcBonusSliderLocked(ParameterViewModel? parameter)
+        => Family == "NpcLootLoadout"
+            && parameter is not null
+            && (parameter.Id is "loot.npcMedicalChance" or "loot.npcWeaponAmmoSupply")
+            && !NpcBonusPackageSelected();
+
     private void DrawNpcLootLoadout(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -1386,9 +1403,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("7.62", "VETERAN", 25, 30),
             ("9×39", "MASTER", 15, 20)
         };
-        var ammoPackageActive = corpse.CurrentText.Split(',',
-            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Contains("NPC_Ammo_Smart", StringComparer.Ordinal);
+        var ammoPackageActive = NpcBonusPackageSelected();
         var countsModified = ammo.IsValueModifiedFromReference();
         var sampleCard = new Rect(margin, 238.0, width, 172.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
@@ -1424,13 +1439,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 countsModified ? 14.2 : 13.0,
                 countsModified ? accent : ammoPackageActive ? text : muted,
                 FontWeights.SemiBold);
-        }
-
-        if (!ammoPackageActive)
-        {
-            DrawText(dc, "Bonus ammo off · weapon ammo unaffected",
-                new Point(sampleCard.Left + 12.0, sampleCard.Bottom - 11.0),
-                9.5, muted, FontWeights.Normal);
         }
 
         // This is a dual-ended native RANGE, not two normal slider
@@ -5394,9 +5402,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         bool healthTypography = false,
         bool combatTypography = false)
     {
-        var hovered = parameter is not null && parameter.IsControlEnabled &&
-            ReferenceEquals(_hoverTarget?.Parameter, parameter);
-        IndustrialChrome.DrawRecessedCard(dc, card, panel, border);
+        var enabled = parameter?.IsControlEnabled == true && !IsNpcBonusSliderLocked(parameter);
+        var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, parameter);
+        IndustrialChrome.DrawRecessedCard(dc, card, panel,
+            enabled ? border : CloneWithOpacity(border, 0.55));
         var textWidth = Math.Max(1.0, card.Width - 24.0);
         var labelSize = healthTypography ? HealthTypography.Label
             : combatTypography ? 11.2 : 9.8;
@@ -5409,7 +5418,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 (healthTypography ? HealthTypography.Value : 12.0) + 1.2,
                 text, FontWeights.SemiBold).WidthIncludingTrailingWhitespace + 12.0
             : 126.0;
-        dc.DrawText(CreateText(label, labelSize, text, FontWeights.Bold,
+        dc.DrawText(CreateText(label, labelSize, enabled ? text : muted, FontWeights.Bold,
                 Math.Max(1.0, card.Width - 24.0 - valueReserve)),
             new Point(card.Left + 12.0, card.Top + 5.0));
 
@@ -5429,8 +5438,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var baseSize = healthTypography ? HealthTypography.Value
             : combatTypography ? 12.0 : pairedValueFormatting ? 11.1 : 10.1;
         var valueText = CreateText(value, baseSize,
-            parameter.IsControlEnabled ? text : muted, FontWeights.SemiBold, textWidth);
-        if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())
+            enabled ? text : muted, FontWeights.SemiBold, textWidth);
+        if (enabled && parameter.IsValueModifiedFromReference())
         {
             foreach (System.Text.RegularExpressions.Match token in
                 System.Text.RegularExpressions.Regex.Matches(
@@ -5452,26 +5461,27 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(track.Left, y), new Point(track.Right, y));
         var x = ValueToX(parameter.CurrentNumber,
             parameter.Minimum, parameter.Maximum, track, reverse: false);
-        if (parameter.IsControlEnabled)
+        if (enabled)
             dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.65), 3.5),
                 new Point(track.Left, y), new Point(x, y));
         IndustrialRulerChrome.DrawActiveRailGlint(dc, track.Left, x, y,
-            accent, parameter.IsControlEnabled);
+            accent, enabled);
 
         IndustrialRulerChrome.DrawNativeTicks(dc, track,
             parameter.Minimum, parameter.Maximum, parameter.TickFrequency, muted);
         DrawReferenceTick(dc, parameter, track, y, muted);
         dc.DrawEllipse(panel,
-            new Pen(parameter.IsControlEnabled ? accent : muted,
+            new Pen(enabled ? accent : muted,
                 hovered || IsSelected(parameter) ? 2.5 : 1.5),
             new Point(x, y), 6.0, 6.0);
-        if (parameter.IsControlEnabled)
+        if (enabled)
             dc.DrawEllipse(accent, null, new Point(x, y), 2.5, 2.5);
 
-        AddHorizontalTarget(parameter,
-            new Rect(track.Left - 7.0, track.Top - 4.0,
-                track.Width + 14.0, track.Height + 8.0),
-            track, parameter.Minimum, parameter.Maximum);
+        if (enabled)
+            AddHorizontalTarget(parameter,
+                new Rect(track.Left - 7.0, track.Top - 4.0,
+                    track.Width + 14.0, track.Height + 8.0),
+                track, parameter.Minimum, parameter.Maximum);
 
         var halfWidth = Math.Max(1.0, track.Width / 2.0 - 4.0);
         dc.DrawText(CreateText(FormatCompact(parameter.Minimum), axisSize,
@@ -5685,7 +5695,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
         _radRingFocus = false;
         var target = FindTarget(point);
-        if (target is null || !target.Parameter.IsControlEnabled)
+        if (target is null || !target.Parameter.IsControlEnabled
+            || IsNpcBonusSliderLocked(target.Parameter))
             return;
 
         _selectedParameter = target.Kind == HitKind.FatigueReloadJoint
@@ -5785,6 +5796,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             target = _dragTarget;
         else
             target = FindTarget(point);
+        if (target is not null && IsNpcBonusSliderLocked(target.Parameter))
+            target = null;
         SetHoverTarget(target);
         Cursor = target?.Kind switch
         {
@@ -5965,7 +5978,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var target = FindTarget(e.GetPosition(this));
         // A disabled mixer strip remains selectable for its rationale but
         // right-click must not mutate a dependency-disabled source value.
-        if (target is null || !target.Parameter.IsControlEnabled)
+        if (target is null || !target.Parameter.IsControlEnabled
+            || IsNpcBonusSliderLocked(target.Parameter))
             return;
 
         _radRingFocus = false;
@@ -6060,7 +6074,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         // A previously selected slider can become dependency-disabled when its
         // Master bundle is switched OFF. Keyboard input must respect that
         // transition just like mouse hit targets and the writer.
-        if (_selectedParameter is null || !_selectedParameter.IsControlEnabled)
+        if (_selectedParameter is null || !_selectedParameter.IsControlEnabled
+            || IsNpcBonusSliderLocked(_selectedParameter))
             return;
 
         if (_selectedHitKind == HitKind.DrinkDurationOverride && e.Key == Key.Space)
@@ -6138,7 +6153,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void UpdateTarget(HitTarget target, Point point)
     {
         // Also guard an already-captured drag if its parent switch becomes OFF.
-        if (!target.Parameter.IsControlEnabled || target.Kind == HitKind.Toggle)
+        if (!target.Parameter.IsControlEnabled || IsNpcBonusSliderLocked(target.Parameter)
+            || target.Kind == HitKind.Toggle)
             return;
 
         if (target.Kind is HitKind.FatigueJoint or HitKind.FatigueReloadJoint)

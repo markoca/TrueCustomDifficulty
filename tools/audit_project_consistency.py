@@ -3561,10 +3561,21 @@ if any(_tok not in _npc_preview_source for _tok in (
     'optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)',
     'optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal)',
     'HitKind.Choice when Family == "NpcLootLoadout" => NpcCorpseChoiceTooltip(target)',
-    '"Bonus ammo off · weapon ammo unaffected"',
-    'var ammoPackageActive = corpse.CurrentText.Split(',
+    'var ammoPackageActive = NpcBonusPackageSelected();',
+    'private bool NpcBonusPackageSelected()',
+    'private bool IsNpcBonusSliderLocked(ParameterViewModel? parameter)',
+    'parameter.Id is "loot.npcMedicalChance" or "loot.npcWeaponAmmoSupply"',
+    'var enabled = parameter?.IsControlEnabled == true && !IsNpcBonusSliderLocked(parameter);',
+    'IndustrialChrome.DrawRecessedCard(dc, card, panel,',
+    'enabled ? border : CloneWithOpacity(border, 0.55)',
+    'if (enabled && parameter.IsValueModifiedFromReference())',
+    'if (enabled)\n            AddHorizontalTarget(parameter,',
+    'IsNpcBonusSliderLocked(_selectedParameter)',
+    'IsNpcBonusSliderLocked(target.Parameter)',
 )):
     fail("NPC bonus ammo preview, icon-only selector or active-package UI drifted")
+if '"Bonus ammo off · weapon ammo unaffected"' in _npc_preview_source or 'Inactive until Medicine + Ammo is selected' in _npc_preview_source:
+    fail("NPC bonus preview must not display an inactive explanatory sentence")
 if 'var caption = CreateText(corpse.ChoiceOptions[i].Label,' in _npc_preview_source:
     fail("NPC corpse package icons must not have permanent text captions")
 # The selection must use sourced icon shapes, not bespoke medkits or bottle rectangles.
@@ -3588,6 +3599,10 @@ if "dc.DrawRoundedRectangle(null, pen," in _npc_preview_source.split("private st
     fail("Bespoke NPC icon outlines have returned")
 if not (ROOT / "docs" / "ICON-ASSET-CREDITS.md").exists():
     fail("Missing source icon credits and licenses")
+if any("2026-10-14 — NPC sliders gated by Medicine + Ammo" not in
+       (ROOT / "docs" / f).read_text(encoding="utf-8")
+       for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
+    fail("NPC bonus slider disabled-state design missing from UI catalogs")
 if any("2026-10-14 — NPC bonus ammo presentation" not in
        (ROOT / "docs" / f).read_text(encoding="utf-8")
        for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
