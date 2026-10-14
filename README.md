@@ -1,5 +1,8 @@
 # True Custom Difficulty
 
+**Consumable buff duration labels (2026-10-14):** The two sections are **WATER BUFF** and **ENERGY DRINK BUFFS**. Their three compact, side-by-side source-backed sliders now read **+25% MAX STAMINA**, **NO STAMINA COST DURATION** and **-30% STAMINA COST DURATION** on two lines to prevent clipping. Existing CFG mappings, durations and presets are unaffected.
+
+
 **Consumable child duration layout (2026-10-14):** Water and Energy Drink are now separate labeled sections above three side-by-side short-duration tracks. Track captions are **STAMINA +25%**, **COST -100%**, **COST -30%**, without redundant drink/duration wording. Parent controls, source values, CFG writers and presets remain unchanged. See the current UI catalogs.
 
 

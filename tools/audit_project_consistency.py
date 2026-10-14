@@ -2362,16 +2362,19 @@ for _token in (
     "var secondary = new ParameterViewModel[][]",
     "shortEffect.CurrentNumber",
     "DrawCompactTrack(dc, shortEffect, caption,",
-    'DrawText(dc, "WATER",',
-    'DrawText(dc, "ENERGY DRINK",',
+    'DrawText(dc, "WATER BUFF",',
+    'DrawText(dc, "ENERGY DRINK BUFFS",',
     "private const double ConsumableShortEffectsHeaderTop = 300.0;",
     "private const double ConsumableShortEffectsTrackTop = 322.0;",
     "private const double ConsumableDrinkSectionGap = 16.0;",
     "=> ConsumableShortEffectsTrackTop + CompactTrackHeight + 12.0;",
     "energySectionLeft + (index - 1) *",
-    "(waterRegenTime, \"STAMINA +25%\")",
-    "(energyFullCostTime, \"COST -100%\")",
-    "(energyPartialCostTime, \"COST -30%\")",
+    "var headingLines = label.Split('\\n');",
+    "headingLines.Length == 2",
+    "new Point(card.Left + 12.0, card.Top + 19.0)",
+    "(waterRegenTime, \"+25% MAX\\nSTAMINA\")",
+    "(energyFullCostTime, \"NO STAMINA\\nCOST DURATION\")",
+    "(energyPartialCostTime, \"-30% STAMINA\\nCOST DURATION\")",
 ):
     if _token not in _duration_renderer:
         fail(f"consumable short-duration native control/measurement missing: {_token}")
@@ -2381,6 +2384,16 @@ if ("ConsumableSecondaryColumns(" in _duration_renderer
     or "STAMINA EFFECT DURATION" in _duration_renderer
     or "STAMINA COST DURATION" in _duration_renderer):
     fail("consumable short-duration captions or responsive row splitting regressed")
+
+
+_short_drink_ui_names = {
+    "survival.waterRegenDuration": "Water +25% Max Stamina Duration",
+    "survival.energyFullCostDuration": "Energy Drink No Stamina Cost Duration",
+    "survival.energyPartialCostDuration": "Energy Drink -30% Stamina Cost Duration",
+}
+for _child_id, _expected_label in _short_drink_ui_names.items():
+    if next((p for p in parameters if p.get("id") == _child_id), {}).get("label") != _expected_label:
+        fail(f"consumable child drink-duration catalog caption drifted: {_child_id}")
 
 # Source-native medicine magnitude/duration contracts; Hercules is coupled.
 _medicine_contract = {

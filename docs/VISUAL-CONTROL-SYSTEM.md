@@ -1,5 +1,12 @@
 # Visual Control System
 
+### 2026-10-14 — Clear Water and Energy Drink buff captions (CURRENT)
+
+**Supersedes the earlier 2026-10-14 short-duration captions and beverage headings.** Inside **Survival → Consumable Effects → EFFECT DURATION / SECONDS**, the same three adjacent 82-DIP child duration controls sit below two compact section headings: **WATER BUFF** (one slider) and **ENERGY DRINK BUFFS** (two sliders). Left-to-right slider captions must read **+25% MAX STAMINA**, **NO STAMINA COST DURATION**, and **-30% STAMINA COST DURATION**, respectively. To prevent cutoff at narrow widths, each title is deliberately drawn in two lines (+25% MAX / STAMINA; NO STAMINA / COST DURATION; -30% STAMINA / COST DURATION), with the current seconds readout sharing only the first line and the second line allowed the whole card width. Do not widen the board, duplicate section labels in the tracks, or repeat the labels in extra help text.
+
+Only player-facing naming and its label layout change; the backing source IDs are still `survival.waterRegenDuration` (`WaterStamina2`), `survival.energyFullCostDuration` (`EnergeticStaminaPerAction2`) and `survival.energyPartialCostDuration` (`EnergeticStaminaPerAction1`). Native baselines are still 5s/5s/15s. Preserve all CFG writer targets, source rates, slider steps, parent duration caps, global limits override, seconds axis, reference markers, interactions and presets. The **+25% MAX STAMINA** caption is requested UI terminology; `WaterStamina2` is classified by the CFG as `EEffectType::Stamina`; this copy-only update is not new verification of runtime max-stamina semantics.
+
+
 ### 2026-10-14 — Water / Energy Drink duration sections (CURRENT)
 
 **Supersedes the earlier three long, truncated child-duration captions and wrapped multirow layout only.** Under **Survival → Consumable Effects → EFFECT DURATION / SECONDS**, the three source-native child-duration sliders form a single horizontal row at every supported panel width, visually grouped as **WATER** (first track) and **ENERGY DRINK** (the following two tracks). The individual track captions are now only **STAMINA +25%**, **COST -100%**, and **COST -30%**; no repeated beverage names or DURATION, because the shared frame already identifies duration in seconds. Section headings sit at Y=300 DIP, tracks at Y=322 DIP. Keep a 16-DIP separation between Water and Energy Drink and the standard 10-DIP spacing within Energy Drink; the full measured frame is 416 DIP high, with the medicine controls translated below it.

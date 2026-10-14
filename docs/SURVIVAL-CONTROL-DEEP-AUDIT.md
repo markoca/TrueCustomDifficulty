@@ -1,5 +1,10 @@
 # Survival Control Deep Audit — v0.2.47
 
+### 2026-10-14 — Explicit Water/Energy buff-duration naming (CURRENT)
+
+The compact child duration row now uses **WATER BUFF** / **ENERGY DRINK BUFFS** for its two section headings. The original three source controls are labeled **+25% MAX STAMINA**, **NO STAMINA COST DURATION**, and **-30% STAMINA COST DURATION**, rendered as two lines per card to avoid ellipsis. Native CFG and 5s/5s/15s values, links and override constraints are unchanged. The preceding same-day short captions and headings are superseded.
+
+
 ### 2026-10-14 — Short drink duration controls grouped by beverage (CURRENT)
 
 One EFFECT DURATION / SECONDS frame now groups three native child-duration sliders into **WATER** (STAMINA +25%) and **ENERGY DRINK** (COST -100% and COST -30%). They remain horizontally adjacent, using one 416-DIP duration frame: section headings at local Y300 and native tracks at Y322, then the existing medicine knobs. This supersedes earlier multirow and long truncated labels. Preserve all 5s/5s/15s baselines, native steps, original parent constraints, limits override, hit targets, CFG paths and presets.

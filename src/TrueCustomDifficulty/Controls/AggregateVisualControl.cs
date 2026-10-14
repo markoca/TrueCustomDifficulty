@@ -3644,20 +3644,20 @@ public sealed class AggregateVisualControl : FrameworkElement
         // The three source-backed duration tracks stay on one compact row.
         var shortEffects = new (ParameterViewModel Parameter, string Caption)[]
         {
-            (waterRegenTime, "STAMINA +25%"),
-            (energyFullCostTime, "COST -100%"),
-            (energyPartialCostTime, "COST -30%")
+            (waterRegenTime, "+25% MAX\nSTAMINA"),
+            (energyFullCostTime, "NO STAMINA\nCOST DURATION"),
+            (energyPartialCostTime, "-30% STAMINA\nCOST DURATION")
         };
         var secondaryWidth = (preview.Width - 24.0 -
             ConsumableDrinkSectionGap - CompactColumnGap) / 3.0;
         var waterSectionLeft = preview.Left + 12.0;
         var energySectionLeft = waterSectionLeft + secondaryWidth +
             ConsumableDrinkSectionGap;
-        DrawText(dc, "WATER",
+        DrawText(dc, "WATER BUFF",
             new Point(waterSectionLeft + 4.0,
                 preview.Top + ConsumableShortEffectsHeaderTop),
             10.2, text, FontWeights.Bold);
-        DrawText(dc, "ENERGY DRINK",
+        DrawText(dc, "ENERGY DRINK BUFFS",
             new Point(energySectionLeft + 4.0,
                 preview.Top + ConsumableShortEffectsHeaderTop),
             10.2, text, FontWeights.Bold);
@@ -5262,8 +5262,22 @@ public sealed class AggregateVisualControl : FrameworkElement
         // genuine 10-DIP gap without making the compact card any wider.
         var labelWidth = Math.Max(1.0,
             contentWidth - valueText.WidthIncludingTrailingWhitespace - 10.0);
-        dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold, labelWidth),
-            new Point(card.Left + 12.0, card.Top + 7.0));
+        // Child drink-effect captions have two intentional compact lines.
+        // Line one shares space with the seconds value; line two uses the
+        // entire title width. Do not ellipsize full gameplay descriptions.
+        var headingLines = label.Split('\n');
+        if (headingLines.Length == 2)
+        {
+            dc.DrawText(CreateText(headingLines[0], 9.5, text, FontWeights.Bold, labelWidth),
+                new Point(card.Left + 12.0, card.Top + 5.0));
+            dc.DrawText(CreateText(headingLines[1], 9.5, text, FontWeights.Bold, contentWidth),
+                new Point(card.Left + 12.0, card.Top + 19.0));
+        }
+        else
+        {
+            dc.DrawText(CreateText(label, 10.2, text, FontWeights.Bold, labelWidth),
+                new Point(card.Left + 12.0, card.Top + 7.0));
+        }
         dc.DrawText(valueText,
             new Point(card.Right - 12.0 - valueText.WidthIncludingTrailingWhitespace,
                 card.Top + 6.0));

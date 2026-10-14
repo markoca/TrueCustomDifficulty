@@ -2469,8 +2469,8 @@
       "id": "survival.waterRegenDuration",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Water Regen Duration",
-      "description": "How long Water's short stamina regeneration lasts.",
+      "label": "Water +25% Max Stamina Duration",
+      "description": "Duration of Water's +25% Max Stamina buff.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2507,7 +2507,7 @@
           "Uses EEffectType::Stamina; Water's 30s stamina-cost effect is a distinct source."
         ]
       },
-      "rationale": "How long Water's short stamina regeneration lasts.",
+      "rationale": "Controls how long Water's +25% Max Stamina buff lasts.",
       "logic": "Adjust between the original 5s and the current main drink-effect duration; no effect magnitude or action type is changed.",
       "interaction": "The main drink timeline controls the upper limit. These are independent native CFG durations.",
       "exposeInUi": false
@@ -2516,8 +2516,8 @@
       "id": "survival.energyFullCostDuration",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Energy Drink Full Cost Duration",
-      "description": "How long the Energy Drink -100% SPDrain modifier lasts (including regular Limited Energy Drink).",
+      "label": "Energy Drink No Stamina Cost Duration",
+      "description": "Duration of Energy Drink's no-stamina-cost effect (100% SPDrain reduction).",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2554,7 +2554,7 @@
           "Inherited eight stamina-action types; the effect is shared by regular and Limited Energy Drink."
         ]
       },
-      "rationale": "How long the Energy Drink -100% SPDrain modifier lasts (including regular Limited Energy Drink).",
+      "rationale": "Controls how long Energy Drink removes stamina costs for affected actions.",
       "logic": "Adjust between the original 5s and the current main drink-effect duration; no effect magnitude or action type is changed.",
       "interaction": "The main drink timeline controls the upper limit. These are independent native CFG durations.",
       "exposeInUi": false
@@ -2563,8 +2563,8 @@
       "id": "survival.energyPartialCostDuration",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Energy Drink Partial Cost Duration",
-      "description": "How long the Energy Drink -30% SPDrain modifier lasts (normal Energy Drink and Limited Energy Drink's alternative effect).",
+      "label": "Energy Drink -30% Stamina Cost Duration",
+      "description": "Duration of Energy Drink's -30% stamina cost effect.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -2601,7 +2601,7 @@
           "Ordinary Energy Drink has both -30% and -100% effects; stacking is not runtime-proven."
         ]
       },
-      "rationale": "How long the Energy Drink -30% SPDrain modifier lasts (normal Energy Drink and Limited Energy Drink's alternative effect).",
+      "rationale": "Controls how long Energy Drink reduces stamina costs for affected actions by 30%.",
       "logic": "Adjust between the original 15s and the current main drink-effect duration; no effect magnitude or action type is changed.",
       "interaction": "The main drink timeline controls the upper limit. These are independent native CFG durations.",
       "exposeInUi": false
