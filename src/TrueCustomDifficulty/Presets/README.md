@@ -2,16 +2,18 @@
 
 The application ships with twelve custom factory presets:
 
-1. Immersive
-2. Tactical
-3. Scavenger
-4. Mutant Hunter
-5. Anomaly Runner
-6. Hardcore
-7. Hardcore+
-8. Mercenary
-9. Wanderer
-10. Outcast
+1. Anomaly Runner
+2. Field Medic
+3. Hardcore
+4. Hardcore+
+5. Immersive
+6. Mercenary
+7. Mutant Hunter
+8. Outcast
+9. Scavenger
+10. Smuggler
+11. Tactical
+12. Wanderer
 
 These presets replace the old Novice / Stalker / Veteran / Master preset files.
 
@@ -28,7 +30,7 @@ Medical realism rules in the hard presets:
 The Food Restores Health toggle only affects ordinary Bread, Fresh Bread,
 Canned Food and Sausage. Weird Kettle alternative effects are intentionally untouched.
 
-Rebuilt playstyle descriptions and verified 201-entry catalogue coverage are maintained in `docs/FACTORY-PRESETS.md`. Factory presets are curated starting points; loading one retains the usual Base difficulty and CFG writer behavior.
+Rebuilt playstyle descriptions and verified 247-entry current catalogue coverage are maintained in `docs/FACTORY-PRESETS.md`. Factory presets are curated starting points; loading one retains the usual Base difficulty and CFG writer behavior.
 
 
 ## Factory profile upgrade (2026-10-09)
@@ -70,3 +72,8 @@ The twelve role presets each include 219 CFG-backed values, now including 18 A-L
 ## 2026-10-10 — independent Water / Energy short-duration keys
 
 Every stock preset now includes `survival.waterRegenDuration = 5s`, `survival.energyFullCostDuration = 5s`, and `survival.energyPartialCostDuration = 15s`. Main drink-duration multipliers and these three real-seconds sliders are independent but constrained to actual source duration. The factory migration upgrades only byte-for-byte stock JSONs; user modifications are not overwritten. Loading a pre-change custom preset without the three fields derives the former short durations from its old main multiplier, clamped to the new vanilla floor and live main ceiling. New saves write the three values explicitly.
+
+## 2026-10-14 — Fully tuned current catalog
+
+All 12 shipped profile files now include **247 parameter IDs** (34 more than the previous 213) with playstyle-specific tuning of the new controls and three existing child drink durations. Full tuning and validation contract: `docs/FACTORY-PRESETS.md` and `tools/factory_preset_expansion.json`. Previously installed, byte-for-byte official factory files upgrade automatically; edited or custom JSONs are never overwritten. All three short drink effects remain bound by their Water / Energy parent duration. Hidden, unverified source multipliers remain neutral.
+

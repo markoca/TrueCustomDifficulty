@@ -1,10 +1,10 @@
 {
   "profileVersion": 1,
   "name": "Hardcore+",
-  "toolVersion": "0.9.26.52",
+  "toolVersion": "0.9.26.82",
   "gameVersion": "2.0.5",
   "referenceDifficulty": "Master",
-  "savedAtUtc": "2026-10-09T00:12:00Z",
+  "savedAtUtc": "2026-10-14T14:30:00Z",
   "values": {
     "combat.npcHealth": {
       "kind": "slider",
@@ -858,6 +858,142 @@
     "survival.energyPartialCostDuration": {
       "kind": "slider",
       "number": 15
+    },
+    "combat.mutantHealth.blinddog": {
+      "kind": "slider",
+      "number": 1.6
+    },
+    "combat.mutantHealth.boar": {
+      "kind": "slider",
+      "number": 1.7
+    },
+    "combat.mutantHealth.flesh": {
+      "kind": "slider",
+      "number": 1.55
+    },
+    "combat.mutantHealth.poltergeist": {
+      "kind": "slider",
+      "number": 1.75
+    },
+    "combat.mutantHealth.snork": {
+      "kind": "slider",
+      "number": 1.65
+    },
+    "combat.mutantHealth.tushkan": {
+      "kind": "slider",
+      "number": 1.55
+    },
+    "survival.waterInstantStaminaRestore": {
+      "kind": "slider",
+      "number": 0.25
+    },
+    "survival.energyDrinkInstantStaminaRestore": {
+      "kind": "slider",
+      "number": 0.35
+    },
+    "survival.waterStaminaEffectStrength": {
+      "kind": "slider",
+      "number": 0.7
+    },
+    "survival.waterEffectDuration": {
+      "kind": "slider",
+      "number": 0.7
+    },
+    "survival.energyDrinkStaminaRecoveryStrength": {
+      "kind": "slider",
+      "number": 0.65
+    },
+    "survival.energyDrinkEffectDuration": {
+      "kind": "slider",
+      "number": 0.8
+    },
+    "health.beerRadiationRemoval": {
+      "kind": "slider",
+      "number": 5
+    },
+    "health.vodkaRadiationRemoval": {
+      "kind": "slider",
+      "number": 25
+    },
+    "survival.vodkaEffectDuration": {
+      "kind": "slider",
+      "number": 1.5
+    },
+    "survival.beerEffectDuration": {
+      "kind": "slider",
+      "number": 1.35
+    },
+    "survival.magicVodkaEffectDuration": {
+      "kind": "slider",
+      "number": 0.8
+    },
+    "survival.vincaBleedRecovery": {
+      "kind": "slider",
+      "number": 5
+    },
+    "survival.vincaDuration": {
+      "kind": "slider",
+      "number": 110
+    },
+    "survival.herculesCarryBonus": {
+      "kind": "slider",
+      "number": 12
+    },
+    "survival.herculesDuration": {
+      "kind": "slider",
+      "number": 200
+    },
+    "survival.psiBlockRecovery": {
+      "kind": "slider",
+      "number": 6
+    },
+    "survival.psiBlockDuration": {
+      "kind": "slider",
+      "number": 40
+    },
+    "survival.drunknessThresholdScale": {
+      "kind": "slider",
+      "number": 0.75
+    },
+    "survival.beerDrunknessStrength": {
+      "kind": "slider",
+      "number": 22
+    },
+    "survival.vodkaDrunknessStrength": {
+      "kind": "slider",
+      "number": 45
+    },
+    "stamina.sprintUnderRunSpeedRegenCoef": {
+      "kind": "slider",
+      "number": -1.05
+    },
+    "stamina.joggingRegenCoef": {
+      "kind": "slider",
+      "number": -0.3
+    },
+    "stamina.slowRunRegenCoef": {
+      "kind": "slider",
+      "number": -0.3
+    },
+    "stamina.sprintRegenCoef": {
+      "kind": "slider",
+      "number": -2.3
+    },
+    "stamina.runRegenCoef": {
+      "kind": "slider",
+      "number": -1.05
+    },
+    "economy.repairDifficultyCost": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.looseUniqueWeaponShuffle": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "alife.mutantSpawn.generic": {
+      "kind": "slider",
+      "number": 1
     }
   }
 }

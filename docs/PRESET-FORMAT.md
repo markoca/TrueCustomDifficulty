@@ -1,5 +1,11 @@
 # Preset JSON format
 
+## 2026-10-14 — Complete factory-state snapshots
+
+All twelve embedded factory profiles now include every one of the **247 current catalog parameters**, including previously absent 34 source controls. The existing three Water/Energy short-effect duration entries may be non-vanilla, subject to the source-native main-duration ceiling. The factory matrix is `tools/factory_preset_expansion.json`, checked against every embedded JSON.
+
+Unmodified **213-key** factory files from the preceding release are automatically upgraded by exact Git-blob hash comparison at startup. A factory-named file with any user edit is **not overwritten**. Loading an older custom preset with missing IDs is still supported: missing fields resolve to their respective baseline/editor defaults; saving records the current complete state. The optional `drinkDurationOverride` remains a root UI-only field, not an invented gameplay parameter, and the format remains version `1`.
+
 True Custom Difficulty presets are ordinary JSON files. They store **tool UI state**, not generated STALKER 2 CFG files. The internal JSON property `referenceDifficulty` is retained for backward compatibility; in the UI this is called **Base Preset**.
 
 ## UI-only duration range override (2026-10-10)

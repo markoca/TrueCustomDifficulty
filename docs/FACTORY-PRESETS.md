@@ -1,5 +1,28 @@
 # Factory Presets
 
+## 2026-10-14 — Full current-control coverage and thematic rebalance (CURRENT)
+
+All **12 factory profiles** now save exactly **247 catalog parameter values** instead of 213; the **34 missing source IDs** have been added. These cover six previously missing mutant-health species, Water/Energy instant stamina and buff magnitude/duration, Beer/Vodka radiation removal, Vinca/Hercules/Psi Block magnitudes and durations, alcohol effects, five movement-stamina states, repair-price source, loose unique-weapon shuffle and generic Director cap. The three already-present short drink durations are now tuned per role rather than always 5/5/15 seconds. **No new gameplay CFG IDs or UI control types were created.** Player-facing control positions, labels and Stamina Usage layout stay as catalogued.
+
+The reproducible authored matrix is `tools/factory_preset_expansion.json` (group IDs and role-specific numeric/boolean vectors); the shipped JSON files contain full expanded values, not formulas. The consistency audit enforces exact **247/247** ID coverage, matrix parity, source bounds, hidden neutral values, beverage parent/child duration ceilings and existing hard-profile scarcity/medical guarantees. Every profile retains its original referenceDifficulty, preset identity, existing 213 values except for the three intentional short drink-duration adjustments, and native CFG writer behavior. The source-only hidden repair difficulty, generic mutant group size and unverified Drunkness stage thresholds remain **1×** in all profiles rather than inventing balance effects.
+
+| Profile | Focus of newly completed controls |
+|---|---|
+| Immersive | Vanilla-like drinks, alcohol, medicine and movement-state effects; modest low-tier mutant variation |
+| Tactical | More immediate energy restoration, slightly easier running stamina, efficient short energy-cost buffs |
+| Scavenger | Tighter consumables, weaker medicine and movement recovery, variable low-tier mutants; unique loose weapon placements shuffled |
+| Mutant Hunter | Stronger wildlife and psi mutants, longer energy benefits, dedicated anti-bleeding and expedition medicine |
+| Anomaly Runner | Fast travel stamina, stronger Water/Energy effects, improved radiation removal, Hercules/Psi Block support and shuffled uniques |
+| Hardcore | Scarcer, weaker consumables and treatment; harsher active-movement recovery and stronger mutant threats |
+| Hardcore+ | Further restricted instant/sustained benefits, weaker treatment, harsher recovery penalties and more dangerous wildlife |
+| Mercenary | Combat-mobility drinks, efficient energy buffs, moderate medical backup and mobile weapon-focused missions |
+| Wanderer | Most sustained traversal benefit, longer Water/Energy windows, stronger load-carry and anti-radiation support; shuffled uniques |
+| Outcast | Lower-quality medicine, depleted stamina recovery and a hazardous mutant environment |
+| Smuggler | Long-haul cargo and radiation-removal benefits, moderate energy restoration and shuffled loose unique weapons |
+| Field Medic | Strongest Vinca/Psi Block protection and prolonged treatment, with practical medical and radiation relief |
+
+**Portable-install upgrade:** `PresetDirectoryService` now recognizes the twelve exact **213-entry factory-file Git blob hashes** from the immediately previous release. On startup it replaces only those byte-identical, unedited stock files with the latest embedded factory variants. User-modified factory files and custom-named JSONs are preserved. Users who customized a factory name can copy it under another name and delete the untouched factory filename to reseed the new official profile. No format revision; old custom presets remain loadable with missing values resolved by the loader.
+
 Since 2026-10-12, Sleep's HEALTH RESTORED editor has a 100-HP tool default and an editable range of 0–200 HP (0x disables sleep health restoration). Existing curated factory presets retain their authored healing choices if within range; values previously above 200 HP are capped at 200 HP. The real vanilla source remains 300 HP.
 
 True Custom Difficulty ships with twelve custom factory presets. They replace the old
@@ -7,17 +30,22 @@ factory preset files named after the four vanilla game difficulties.
 
 The vanilla difficulties still remain the **reference/baseline model** used internally
 by the tool. A factory preset therefore has its own `referenceDifficulty`, but the
-preset displayed to the user is one of the seven custom profiles below.
+preset displayed to the user is one of the twelve custom profiles below.
 
 | Factory preset | Reference difficulty | Intended player |
 |---|---|---|
-| Immersive | Stalker | Wants the Zone to feel believable and systemic without becoming punitive |
-| Tactical | Veteran | Wants fast, lethal, skill-driven firefights |
-| Scavenger | Veteran | Wants scarcity, carrying, maintenance and economy to drive play |
-| Mutant Hunter | Veteran | Wants mutant encounters and trophy hunting to dominate the risk/reward loop |
 | Anomaly Runner | Stalker | Wants traversal, anomalies, radiation and artifact exploration to dominate |
+| Field Medic | Stalker | Wants treatment, bleeding management and stable recovery to sustain expeditions |
 | Hardcore | Master | A resource-aware survivalist: avoid fights, preserve supplies, and plan every expedition |
 | Hardcore+ | Master | A last-resort survivor in an almost stripped Zone, with little margin for mistakes |
+| Immersive | Stalker | Wants the Zone to feel believable and systemic without becoming punitive |
+| Mercenary | Veteran | Wants contract-driven gunfights with reliable mobility and equipment |
+| Mutant Hunter | Veteran | Wants mutant encounters and trophy hunting to dominate the risk/reward loop |
+| Outcast | Veteran | Wants to scrounge for survival with very limited access to safe supplies |
+| Scavenger | Veteran | Wants scarcity, carrying, maintenance and economy to drive play |
+| Smuggler | Veteran | Wants risky cargo runs, artifacts and black-market rewards |
+| Tactical | Veteran | Wants fast, lethal, skill-driven firefights |
+| Wanderer | Stalker | Wants long-range exploration with stamina, carry and hazard survival |
 
 ## Medical rules
 

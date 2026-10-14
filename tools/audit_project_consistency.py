@@ -1783,7 +1783,7 @@ if _build_name_errors:
 else:
     note("preset-aware triplet naming locked: zzzzz_TrueCustomDifficulty_<loaded preset>; safe underscores; Custom fallback")
 
-# Current 12-source-backed factory presets, 219 stored values (2026-10-09).
+# Current 12 source-backed factory presets, complete 247 controls (2026-10-14).
 _factory_preset_names = [
     "Anomaly Runner", "Field Medic", "Hardcore+", "Hardcore",
     "Immersive", "Mercenary", "Mutant Hunter", "Outcast",
@@ -1812,23 +1812,89 @@ for _name in _factory_preset_names:
         continue
     _preset = json.loads(_preset_path.read_text(encoding="utf-8"))
     _values = _preset.get("values", {})
-    if len(_values) != 213:
-        _factory_errors.append(f"{_name}: {len(_values)} values, expected 213")
-    for _short_id, _source_seconds in (
-        ("survival.waterRegenDuration", 5.0),
-        ("survival.energyFullCostDuration", 5.0),
-        ("survival.energyPartialCostDuration", 15.0),
-    ):
-        _preset_entry = _values.get(_short_id, {})
-        if _preset_entry.get("kind") != "slider" or _preset_entry.get("number") != _source_seconds:
-            _factory_errors.append(f"{_name}: missing / nonvanilla new short-duration {_short_id}")
-
+    if len(_values) != 247:
+        _factory_errors.append(f"{_name}: {len(_values)} values, expected 247")
     if _preset.get("referenceDifficulty") not in {"Novice", "Stalker", "Veteran", "Master"}:
         _factory_errors.append(f"{_name}: invalid referenceDifficulty={_preset.get('referenceDifficulty')}")
     if f'Presets\\{_name}.json' not in _factory_csproj_text:
         _factory_errors.append(f"{_name}: not embedded in csproj")
     if f'"{_name}"' not in _factory_service_text:
         _factory_errors.append(f"{_name}: not registered in FactoryPresetNames")
+
+# The tuning matrix declares ONLY the 34 previously absent real sources plus
+# three already-present child drink durations (which are now playstyle-specific).
+# Compare each shipped preset against the entire current catalog and that
+# matrix; no hidden source may be invented, silently dropped, or made synthetic.
+_factory_catalog = {p["id"]: p for p in parameters}
+_factory_tuning = json.loads((ROOT / "tools/factory_preset_expansion.json").read_text(encoding="utf-8"))
+_factory_groups = _factory_tuning["groups"]
+_factory_tuning_profiles = _factory_tuning["profiles"]
+_factory_tuned_ids = [pid for members in _factory_groups.values() for pid in members]
+if len(_factory_catalog) != 247 or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
+    _factory_errors.append("expected 247 unique source IDs and 34 new + 3 drink duration matrix slots")
+if set(_factory_tuning_profiles) != set(_factory_preset_names):
+    _factory_errors.append("tuning matrix has missing/unknown factory names")
+
+for _name in _factory_preset_names:
+    _preset_path = _factory_preset_dir / f"{_name}.json"
+    if not _preset_path.exists() or _name not in _factory_tuning_profiles:
+        continue
+    _preset = json.loads(_preset_path.read_text(encoding="utf-8"))
+    _entries = _preset["values"]
+    if set(_entries) != set(_factory_catalog):
+        _factory_errors.append(f"{_name}: missing/unknown current catalog IDs: "
+                               f"{sorted(set(_factory_catalog) ^ set(_entries))}")
+    _vectors = _factory_tuning_profiles[_name]
+    if len(_vectors) != len(_factory_groups):
+        _factory_errors.append(f"{_name}: invalid tuning vector group count")
+        continue
+    for _group_index, (_group_name, _ids) in enumerate(_factory_groups.items()):
+        _tuned_values = _vectors[_group_index]
+        if len(_tuned_values) != len(_ids):
+            _factory_errors.append(f"{_name}: tuning group length {_group_name}")
+            continue
+        for _pid, _target in zip(_ids, _tuned_values):
+            _definition = _factory_catalog.get(_pid)
+            _stored = _entries.get(_pid)
+            if _definition is None or _stored is None:
+                _factory_errors.append(f"{_name}: missing tuned source {_pid}")
+                continue
+            _expected_kind = "toggle" if _definition["control"] == "toggle" else "slider"
+            _value_key = "boolean" if _expected_kind == "toggle" else "number"
+            if _stored.get("kind") != _expected_kind or _stored.get(_value_key) != _target:
+                _factory_errors.append(f"{_name}: authored value drifted {_pid}: {_stored} != {_target}")
+            if _expected_kind == "slider":
+                _range = _definition["slider"]
+                if not _range["min"] - 1e-8 <= _target <= _range["max"] + 1e-8:
+                    _factory_errors.append(f"{_name}: out-of-range {_pid}: {_target}")
+    # All five parent drink effects use a *whole-second* internal snap grid.
+    # Reject attractive-looking multipliers that would silently round on load.
+    for _duration_id, _base_seconds in (
+        ("survival.waterEffectDuration", 30),
+        ("survival.energyDrinkEffectDuration", 45),
+        ("survival.vodkaEffectDuration", 20),
+        ("survival.beerEffectDuration", 20),
+        ("survival.magicVodkaEffectDuration", 90),
+    ):
+        _effect_seconds = _entries[_duration_id]["number"] * _base_seconds
+        if abs(_effect_seconds - round(_effect_seconds)) > 1e-8:
+            _factory_errors.append(f"{_name}: parent duration {_duration_id} is not an integer number of seconds")
+    for _short, _parent, _seconds in (
+        ("survival.waterRegenDuration", "survival.waterEffectDuration", 30),
+        ("survival.energyFullCostDuration", "survival.energyDrinkEffectDuration", 45),
+        ("survival.energyPartialCostDuration", "survival.energyDrinkEffectDuration", 45),
+    ):
+        if _entries[_short]["number"] > _entries[_parent]["number"] * _seconds + 1e-8:
+            _factory_errors.append(f"{_name}: drink effect {_short} exceeds {_parent}")
+    for _hidden_neutral in ("economy.repairDifficultyCost", "alife.mutantSpawn.generic", "survival.drunknessThresholdScale"):
+        if _entries[_hidden_neutral]["number"] != 1:
+            _factory_errors.append(f"{_name}: hidden/unaudited source not neutral: {_hidden_neutral}")
+
+if ('PreFullCoverageFactoryBlobs' not in _factory_service_text
+        or '&& !PreFullCoverageFactoryBlobs.TryGetValue(name, out knownHash)' not in _factory_service_text
+        or 'PreFullCoverageFactoryBlobs.TryGetValue(name, out var preFullCoverageHash)' not in _factory_service_text
+        or 'if (!File.Exists(destination) || IsUnmodifiedPreviousFactory(name, destination))' not in _factory_service_text):
+    _factory_errors.append("byte-identical old stock factory migration or user-edits safety missing")
 
 _factory_scarcity_expectations = {
     "Hardcore": {
@@ -1880,7 +1946,7 @@ if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legac
 if _factory_errors:
     fail("current 12 factory presets drifted: " + "; ".join(_factory_errors))
 else:
-    note("factory presets locked: 12 custom profiles / 213 values each; retired 4 files removed; hard-profile medical rules preserved")
+    note("factory presets locked: 12 thematic profiles / all 247 current catalog sources; safe old-stock upgrade; hard medical rules preserved")
 
 # Current user-help contract no longer describes retired polar-radar gestures.
 _control_help_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")

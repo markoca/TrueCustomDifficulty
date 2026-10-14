@@ -102,6 +102,25 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "8626f6371f1a5bc793d3e50165876720a46b82d5"
     };
 
+    // Exact stock identities of the 213-key, pre-complete-coverage factory
+    // presets. Upgrade only untouched copies to all 247 source-backed controls.
+    // Factory-named user edits must not be overwritten.
+    private static readonly Dictionary<string, string> PreFullCoverageFactoryBlobs = new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "9ee7c1b681021f29059ef8f77f0921251f64ac3c",
+        ["Field Medic"] = "ac6937227bd4a6b693c504a2e4e9eb2b8b57d8e7",
+        ["Hardcore"] = "0b772daf862db333d6534cfb99082c870ef1b2e9",
+        ["Hardcore+"] = "316c358603a8372b8b622ec56da747f7d598afff",
+        ["Immersive"] = "67024e7275640be1c52eef992974cee8195cf9da",
+        ["Mercenary"] = "6ddcc30a4ee2c9e660249a095fb33a252efd29ba",
+        ["Mutant Hunter"] = "d00d40dbc52b2dc4a72a0c64a702e6a68b2a1971",
+        ["Outcast"] = "7adf57f7a4abb84800874c725a418cf5c12e9652",
+        ["Scavenger"] = "fda1f0268cafa1afe41991c666aa94bbb61f44ab",
+        ["Smuggler"] = "5573751a2aea8b58365255ff7ce183027d28258f",
+        ["Tactical"] = "ad690289c77c92bdd97b0ea5f3cbe4ac6b7bcee8",
+        ["Wanderer"] = "4a166781ebe98967454d83521c7f07bc6e09edd5",
+    };
+
     public string Ensure()
     {
         var directory = Path.Combine(AppContext.BaseDirectory, "Presets");
@@ -155,7 +174,8 @@ public sealed class PresetDirectoryService
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
             && !PreAlifeFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreCooldownFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreShortDurationFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreShortDurationFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreFullCoverageFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -175,7 +195,9 @@ public sealed class PresetDirectoryService
                 || (PreCooldownFactoryBlobs.TryGetValue(name, out var preCooldownHash)
                     && actual.Equals(preCooldownHash, StringComparison.OrdinalIgnoreCase))
                 || (PreShortDurationFactoryBlobs.TryGetValue(name, out var preDurationHash)
-                    && actual.Equals(preDurationHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preDurationHash, StringComparison.OrdinalIgnoreCase))
+                || (PreFullCoverageFactoryBlobs.TryGetValue(name, out var preFullCoverageHash)
+                    && actual.Equals(preFullCoverageHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {
