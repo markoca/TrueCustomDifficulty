@@ -286,7 +286,7 @@ public sealed class ActionCostsRadar : FrameworkElement
                 text, FontWeights.Bold);
             var costPercent = 100.0 * parameter.CurrentNumber / staminaPool;
             DrawSourceValue(dc, parameter,
-                $"{FormatRaw(parameter.CurrentNumber)} STAMINA · {costPercent:0.#}%",
+                $"{FormatRaw(parameter.CurrentNumber)} STAMINA · {costPercent:0.#}% SPENT PER ACTION",
                 new Point(card.Right - 9.0, top), card.Width >= 300.0 ? 10.0 : 9.0, text, accent,
                 nativeOnly: true);
 
