@@ -2362,14 +2362,25 @@ for _token in (
     "var secondary = new ParameterViewModel[][]",
     "shortEffect.CurrentNumber",
     "DrawCompactTrack(dc, shortEffect, caption,",
-    "(waterRegenTime, \"WATER +25% STAMINA EFFECT DURATION\")",
-    "(energyFullCostTime, \"ENERGY DRINK -100% STAMINA COST DURATION\")",
-    "(energyPartialCostTime, \"ENERGY DRINK -30% STAMINA COST DURATION\")",
+    'DrawText(dc, "WATER",',
+    'DrawText(dc, "ENERGY DRINK",',
+    "private const double ConsumableShortEffectsHeaderTop = 300.0;",
+    "private const double ConsumableShortEffectsTrackTop = 322.0;",
+    "private const double ConsumableDrinkSectionGap = 16.0;",
+    "=> ConsumableShortEffectsTrackTop + CompactTrackHeight + 12.0;",
+    "energySectionLeft + (index - 1) *",
+    "(waterRegenTime, \"STAMINA +25%\")",
+    "(energyFullCostTime, \"COST -100%\")",
+    "(energyPartialCostTime, \"COST -30%\")",
 ):
     if _token not in _duration_renderer:
         fail(f"consumable short-duration native control/measurement missing: {_token}")
 if _duration_renderer.count("DrawCompactTrack(dc, shortEffect, caption,") != 1:
     fail("consumable child duration track registration drifted")
+if ("ConsumableSecondaryColumns(" in _duration_renderer
+    or "STAMINA EFFECT DURATION" in _duration_renderer
+    or "STAMINA COST DURATION" in _duration_renderer):
+    fail("consumable short-duration captions or responsive row splitting regressed")
 
 # Source-native medicine magnitude/duration contracts; Hercules is coupled.
 _medicine_contract = {

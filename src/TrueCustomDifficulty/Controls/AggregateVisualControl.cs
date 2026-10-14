@@ -3640,22 +3640,34 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Independent, compact, source-exact thresholds. Each child ranges
         // from the original native duration to its live main effect duration.
         // No duplicate main sliders or fixed pseudo-timeline hit regions.
+        // Beverage headings replace three duplicated long captions.
+        // The three source-backed duration tracks stay on one compact row.
         var shortEffects = new (ParameterViewModel Parameter, string Caption)[]
         {
-            (waterRegenTime, "WATER +25% STAMINA EFFECT DURATION"),
-            (energyFullCostTime, "ENERGY DRINK -100% STAMINA COST DURATION"),
-            (energyPartialCostTime, "ENERGY DRINK -30% STAMINA COST DURATION")
+            (waterRegenTime, "STAMINA +25%"),
+            (energyFullCostTime, "COST -100%"),
+            (energyPartialCostTime, "COST -30%")
         };
-        var shortColumns = ConsumableSecondaryColumns(preview.Width);
         var secondaryWidth = (preview.Width - 24.0 -
-            (shortColumns - 1) * CompactColumnGap) / shortColumns;
+            ConsumableDrinkSectionGap - CompactColumnGap) / 3.0;
+        var waterSectionLeft = preview.Left + 12.0;
+        var energySectionLeft = waterSectionLeft + secondaryWidth +
+            ConsumableDrinkSectionGap;
+        DrawText(dc, "WATER",
+            new Point(waterSectionLeft + 4.0,
+                preview.Top + ConsumableShortEffectsHeaderTop),
+            10.2, text, FontWeights.Bold);
+        DrawText(dc, "ENERGY DRINK",
+            new Point(energySectionLeft + 4.0,
+                preview.Top + ConsumableShortEffectsHeaderTop),
+            10.2, text, FontWeights.Bold);
         for (var index = 0; index < shortEffects.Length; index++)
         {
             var (shortEffect, caption) = shortEffects[index];
-            var x = preview.Left + 12.0 +
-                (index % shortColumns) * (secondaryWidth + CompactColumnGap);
-            var y = preview.Top + 300.0 +
-                (index / shortColumns) * (CompactTrackHeight + CompactRowGap);
+            var x = index == 0 ? waterSectionLeft :
+                energySectionLeft + (index - 1) *
+                    (secondaryWidth + CompactColumnGap);
+            var y = preview.Top + ConsumableShortEffectsTrackTop;
             DrawCompactTrack(dc, shortEffect, caption,
                 $"{shortEffect.CurrentNumber:0.#}s",
                 $"{shortEffect.Minimum:0.#}s",
@@ -5180,20 +5192,15 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Shared density for the large Survival/Health aggregate panels. Rows are
     // column-aware; no independent sliders are stacked inside the same hit area.
     private const double CompactTrackHeight = 82.0;
-    // Five drink and three medicine duration lanes in a single chart,
-    // followed by the existing three native short-effect controls.
-    // Renderer and MeasureOverride share this responsive height.
-    private static int ConsumableSecondaryColumns(double availableWidth)
-        => availableWidth >= 750.0 ? 3 : availableWidth >= 480.0 ? 2 : 1;
+    // A single 3-track row belongs to two beverage sections:
+    // Water (one track) and Energy Drink (two adjacent tracks).
+    // Paint and MeasureOverride share the track offset for correct height.
+    private const double ConsumableShortEffectsHeaderTop = 300.0;
+    private const double ConsumableShortEffectsTrackTop = 322.0;
+    private const double ConsumableDrinkSectionGap = 16.0;
 
     private static double ConsumableTimelineHeight(double width)
-    {
-        var previewWidth = Math.Max(460.0, width - 34.0);
-        var rows = (3 + ConsumableSecondaryColumns(previewWidth) - 1) /
-            ConsumableSecondaryColumns(previewWidth);
-        return 300.0 + rows * CompactTrackHeight +
-            (rows - 1) * CompactRowGap + 12.0;
-    }
+        => ConsumableShortEffectsTrackTop + CompactTrackHeight + 12.0;
     // Reserved space for plot ticks plus three independently readable stage lines.
     private const double HungerProfileHeight = 344.0;
     private const double CompactRowGap = 8.0;

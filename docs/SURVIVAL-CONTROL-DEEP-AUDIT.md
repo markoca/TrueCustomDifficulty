@@ -1,5 +1,10 @@
 # Survival Control Deep Audit — v0.2.47
 
+### 2026-10-14 — Short drink duration controls grouped by beverage (CURRENT)
+
+One EFFECT DURATION / SECONDS frame now groups three native child-duration sliders into **WATER** (STAMINA +25%) and **ENERGY DRINK** (COST -100% and COST -30%). They remain horizontally adjacent, using one 416-DIP duration frame: section headings at local Y300 and native tracks at Y322, then the existing medicine knobs. This supersedes earlier multirow and long truncated labels. Preserve all 5s/5s/15s baselines, native steps, original parent constraints, limits override, hit targets, CFG paths and presets.
+
+
 ### 2026-10-14 — Equipment groups returned to Equipment (CURRENT)
 
 Survival no longer hosts Equipment Wear or Item Weight. Its native **31 visible controls** (29 confirmed / 2 runtime-test-required) and **82 writer leaves** remain intact; the four equipment source controls and their separate 113 writer leaves now appear on the restored Equipment tab. Bleeding, radiation, hunger, sleep, fatigue and consumable layout and CFG routing are unaffected. The 2026-10-11 Equipment-in-Survival placement below is historical.

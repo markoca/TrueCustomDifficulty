@@ -1,5 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-14 — Water / Energy Drink duration sections (CURRENT)
+
+**Supersedes the earlier three long, truncated child-duration captions and wrapped multirow layout only.** Under **Survival → Consumable Effects → EFFECT DURATION / SECONDS**, the three source-native child-duration sliders form a single horizontal row at every supported panel width, visually grouped as **WATER** (first track) and **ENERGY DRINK** (the following two tracks). The individual track captions are now only **STAMINA +25%**, **COST -100%**, and **COST -30%**; no repeated beverage names or DURATION, because the shared frame already identifies duration in seconds. Section headings sit at Y=300 DIP, tracks at Y=322 DIP. Keep a 16-DIP separation between Water and Energy Drink and the standard 10-DIP spacing within Energy Drink; the full measured frame is 416 DIP high, with the medicine controls translated below it.
+
+The Water track still edits survival.waterRegenDuration (WaterStamina2, 5s baseline; native Stamina effect, not verified regen rate). Energy Drink tracks still edit survival.energyFullCostDuration (EnergeticStaminaPerAction2, 5s) and survival.energyPartialCostDuration (EnergeticStaminaPerAction1, 15s). No changes to ranges, native steps, dependent parent limits, Override Limits, second readouts, reference ticks, hover/drag/wheel/keyboard editing, reset, presets or CFG writer. No extra full-width controls or explanatory text.
+
+
 ### 2026-10-14 — Spell out STAMINA everywhere (CURRENT)
 
 All player-facing Stamina source values now say **STAMINA** or **STAMINA/s**, never the short resource abbreviation. This applies to CORE STAMINA's MAX STAMINA/BASE RECOVERY rulers (current value and native endpoints), STAMINA USAGE action costs, EXHAUSTION & RECOVERY's shared 0–60 STAMINA threshold axis and current values, emergency recovery strength, source hover/rationale summaries, difficulty/reference comparisons and Master severe-fatigue maximum-stamina penalty. Preserve native CFG identifiers such as `stamina.maxSP`, `RegenSP` and `NormalSP` and all existing numbers, reset behaviors, preset keys, rulers and writer mappings. Stamina rulers use a smaller number font where needed to fit the longer unit without widening cards. This contract supersedes abbreviated resource units in any earlier historical text.
