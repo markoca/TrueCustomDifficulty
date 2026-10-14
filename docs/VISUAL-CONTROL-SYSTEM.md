@@ -1,10 +1,17 @@
 # Visual Control System
 
-### 2026-10-14 — Remove bleeding-stage overlays from Medical Items (CURRENT)
+### 2026-10-14 — Remove Medical Items Max HP percentages (CURRENT)
 
-**Medical Items** HEAL/BLEED pairs must show only the four items' original HEAL HP and BLEED removal PTS values with their independent native rulers, muted per-source reference ticks and existing live `% MAX HP` healing readouts. **Remove** the entire `BLEED STAGES | MEDIUM ... | SEVERE ...` heading and both dashed stage-threshold lines from **all four BLEED columns**. Do not replace them with another explanatory label or reserve extra space. Stage thresholds belong only to **Survival → Bleeding System**, and Medical Items must no longer subscribe to those two threshold sources for rendering. Keep its read-only Max HP relation for HEAL percentages, the four bar hit areas, labels, colored source bars, native reference ticks, individual reset, group reset, CFG mappings, checkbox controls and measured panel size unchanged.
+**Health → Medical Items** no longer displays the four `N% MAX HP` readouts below **BANDAGE**, **MEDKIT**, **ARMY MEDKIT**, and **SCIENTIFIC MEDKIT**. Do not add replacement text or extra empty layout padding. The four native **HEAL** vertical bars still display their exact editable HP amounts above the bars, while their separately editable **BLEED** bars retain exact bleeding-removal PTS values. Their native HP/PTS axes, colored handles, reference marks, item labels, mouse/keyboard/right-click/reset interactions, Food Healing / Override Limits checkboxes and CFG writer/preset mapping remain intact.
 
-This retires cross-control projection **#7** from the earlier twelve-preview introduction; the Mutant Parts RETURN INDEX (#12) was already retired. There are therefore **ten active cross-panel projections**. Any former Medical Items stage-heading or bleed-threshold marker specification below is superseded.
+Since the relative healing percentages were the **only** reason this Medical Items renderer observed `health.maxHP`, remove that read-only subscription and derived calculation as well. This retires projection **#4** from the earlier twelve projections; together with retired bleeding-stage markers (#7) and mutant RETURN INDEX (#12), **nine cross-control projections remain**. This section supersedes historical instructions to keep `% MAX HP` below the medical item names.
+
+
+### 2026-10-14 — Remove bleeding-stage overlays from Medical Items (SUPERSEDED BY LATEST MEDICAL CONTRACT)
+
+**Medical Items** HEAL/BLEED pairs retain only the four items' native HEAL HP and BLEED removal PTS controls with independent rulers and muted source reference ticks. **Remove** the entire `BLEED STAGES | MEDIUM ... | SEVERE ...` heading and both dashed stage-threshold lines from **all four BLEED columns**. Stage thresholds belong only to **Survival → Bleeding System**. Keep all original bar hit areas, labels, colored source bars, reference ticks, resets, CFG mappings, checkboxes and measured panel size unchanged. The later current section above also removes the unrelated `% MAX HP` readouts and Max HP observation.
+
+This retires cross-control projection **#7** from the earlier twelve-preview introduction; the Mutant Parts RETURN INDEX (#12) was already retired. Following the more recent removal of the Medical Items Max HP percentages, **nine active cross-panel projections remain**. Any former Medical Items stage-heading or bleed-threshold marker specification below is superseded.
 
 
 ### 2026-10-14 — Remove mutant-part return index (CURRENT)
@@ -26,14 +33,14 @@ Survival's Water / Energy Drink STAMINA GAIN knobs now show their Max-Stamina-de
 The Medical Items BLEED STAGES readout described here was subsequently removed; see the current Medical Items overlay-removal rule above. Stamina readouts from this entry remain current.
 
 
-### 2026-10-14 — Twelve cross-control live projections (HISTORICAL; ten remain)
+### 2026-10-14 — Twelve cross-control live projections (HISTORICAL; nine remain)
 
 **Approved all 12 as visualization-only dependencies.** Six-groups-or-fewer existing compact boards, native CFG sliders, numeric steps, default/reference values, preset serialization, writer operations, hit targets, hover, right-click resets and group R resets are unchanged. The linked source from another group/tab is *subscribed to for repaint only*; it is never added to the receiving editor's writable member list or reset group. Suppress decorative subtitles; derived values are neutral (not false modified-yellow CFG values). No new real gameplay parameter, speculative mechanic, live game simulation, global multiplier, or auto-propagated slider adjustment.
 
 1. **Max Stamina → Stamina Usage:** each action row retains raw `STAMINA` cost, with a derived `cost / current stamina.maxSP × 100%`. Hovering a discrete JUMP / VAULT / MELEE handle shows `floor(maxSP / actionCost)` consecutive actions from a completely full pool *assuming no recovery and no other expenditure*. The continuous/unspecified Sprint cost shows only `maxSP / sprintCost` as a **POOL/COST ratio**, never a fabricated sprint duration or count. Zero cost shows `NO COST`. Original actions remain independent; the linked maxSP is read-only and cannot be reset by this panel.
 2. **Max Stamina → Water/Energy instant refills:** immediately below the two native percentage knobs, display actual `percent × maxSP` stamina points. Relative percentage remains the editable native effect. The game's pool cap still applies.
 3. **Max Stamina → Water +25% maximum-stamina buff:** the compact `WATER BUFF` group header includes `1.25 × maxSP` as a read-only cap during its temporary effect; duration retains its native CFG source and original 5..source-parent ceiling. Use shortened caption on narrow cards, without a second line.
-4. **Max HP → Medical HEAL bars:** below each HEAL/BLEED item pair show `healed HP / maxHP × 100%` in subdued type, while the independent editable bar continues to show raw `HP` on the exact 0..200 HP ruler. No implicit global healing modifier is applied.
+4. **Retired:** Medical Items no longer displays relative `% MAX HP` below its HEAL/BLEED pairs or subscribes to Max HP; the raw native HP healing values remain editable.
 5. **Max HP → Sleep Recovery:** Sleep Health Restore keeps its native 0..200 HP slider; the compact readout adds `100 × HP restored / maxHP` as a read-only relative capacity measure, with source-accurate endpoints in HP. It is not a guarantee of exceeding the actual HP cap.
 6. **Max Carry Weight → Hercules:** directly beneath the Hercules native `+KG` dial, show `maxCarryWeight + herculesCarryBonus` kilograms *while the buff is active*. The two Hercules effect prototypes remain a shared +kg setting, **not +2× that amount**.
 7. **Retired:** BLEED STAGES captions and threshold overlays were removed from Medical Items on 2026-10-14; the treatment controls remain independent.
@@ -43,7 +50,7 @@ The Medical Items BLEED STAGES readout described here was subsequently removed; 
 11. **Trader minimum accepted condition → NPC Weapon Condition range:** add a neutral dashed vertical marker on the existing 0–100% condition rail at the current `economy.traderMinBuyCondition` with a compact `TRADER ACCEPTS ≥ N%` caption. It marks a *condition-eligibility cutoff*, not a promise that the dropped item is guaranteed to sell. The MIN/MAX NPC range still owns the only hit targets.
 12. **Retired:** The mutant-part RETURN INDEX projection was removed on 2026-10-14; Mutant Parts shows native drop chances only.
 
-**Cross-panel repaint and contract tests:** `ActionCostsRadar` subscribes to read-only `stamina.maxSP` in both modes; `AggregateVisualControl` subscribes as needed to `maxSP`, `maxCarryWeight`, `maxHP`, `sleepEligibilityThreshold`, `repairCostBase`, `traderMinBuyCondition`; `MedicalHealingRadar` observes `maxHP` only; `BleedingCurveControl` observes `maxHP`. Unsubscribe and rebind safely when the data context changes. Every derived label is read-only, so the editable controls and the two original UI catalogs must stay synchronized with these exact projections.
+**Cross-panel repaint and contract tests:** `ActionCostsRadar` subscribes to read-only `stamina.maxSP` in both modes; `AggregateVisualControl` subscribes as needed to `maxSP`, `maxCarryWeight`, `maxHP`, `sleepEligibilityThreshold`, `repairCostBase`, `traderMinBuyCondition`; `MedicalHealingRadar` has no unrelated cross-panel subscriptions; `BleedingCurveControl` observes `maxHP`. Unsubscribe and rebind safely when the data context changes. Every derived label is read-only, so the editable controls and the two original UI catalogs must stay synchronized with these exact projections.
 
 ### 2026-10-14 — Stamina thresholds: source-truthful player scale (CURRENT)
 

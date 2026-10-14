@@ -2011,7 +2011,9 @@ if _factory_errors:
 else:
     note("factory presets: twelve 247-source scarcity-first profiles, 46 source-backed balance settings each, exact-stock upgrade preserves local user edits")
 
-# Twelve visual-only live projections approved 2026-10-14.
+# Originally twelve visual-only live projections approved 2026-10-14;
+# nine remain after retiring the Medical Items percentage / bleed stage
+# overlays and mutant return index.
 # These may read sources from other tabs but must never merge their reset,
 # serialized parameter identity, native input ranges or gameplay CFG write path.
 # Screen-space presentation is asserted alongside its actual live source link.
@@ -2037,10 +2039,6 @@ _linked_projection_contract = {
         'accepted.CurrentNumber',
         'TRADER ACCEPTS ≥',
     ),
-    "MedicalHealingRadar.cs": (
-        'byId.TryGetValue("health.maxHP", out _maxHealth);',
-        'item.CurrentNumber / currentPool',
-    ),
     "BleedingCurveControl.cs": (
         'byId.TryGetValue("health.maxHP", out _maxHealth);',
         'currentValues[i] / pool',
@@ -2062,10 +2060,10 @@ for _retired in (
     "BLEED STAGES", "_bleedingMediumThreshold", "_bleedingSevereThreshold",
     'byId.TryGetValue("survival.bleedingMediumThreshold"',
     'byId.TryGetValue("survival.bleedingStrongThreshold"',
-    "DashStyles.Dash",
+    "DashStyles.Dash", "_maxHealth", "% MAX HP", "currentPool",
 ):
     if _retired in _medical_projection_text:
-        _projection_errors.append(f"Medical Items still displays/observes obsolete bleed stages: {_retired}")
+        _projection_errors.append(f"Medical Items still displays/observes retired cross-panel readouts: {_retired}")
 _mutant_projection_text = (_linked_controls / "MutantDropRadar.cs").read_text(encoding="utf-8")
 for _retired in ("RETURN INDEX", "_partValue", "chance * priceScale"):
     if _retired in _mutant_projection_text:
@@ -2093,9 +2091,9 @@ if ("yield return _maximumStamina;" in _action_members
 
 for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     _body = (ROOT / "docs" / _doc).read_text(encoding="utf-8")
-    if ("Remove bleeding-stage overlays from Medical Items (CURRENT)" not in _body
-            or "Twelve cross-control live projections (HISTORICAL; ten remain)" not in _body):
-        _projection_errors.append(f"{_doc}: active 10-preview specification missing")
+    if ("Remove Medical Items Max HP percentages (CURRENT)" not in _body
+            or "Twelve cross-control live projections (HISTORICAL; nine remain)" not in _body):
+        _projection_errors.append(f"{_doc}: active 9-preview specification missing")
 for _example, _answer in (
     ((100, 16), (16.0, 6)),
     ((150, 16), (16 / 150 * 100, 9)),
@@ -2107,12 +2105,12 @@ for _example, _answer in (
 if abs((150 * .38) - 57) > 1e-8 or abs((100 * 1.25) - 125) > 1e-8:
     _projection_errors.append("Drink/Water capacity reference examples failed")
 if abs((70 / 140 * 100) - 50) > 1e-8 or abs((80 + 20) - 100) > 1e-8:
-    _projection_errors.append("Medical/Hercules reference examples failed")
+    _projection_errors.append("HP-capacity/Hercules reference examples failed")
 
 if _projection_errors:
-    fail("10 live linked-control preview contracts drifted: " + "; ".join(_projection_errors))
+    fail("9 live linked-control preview contracts drifted: " + "; ".join(_projection_errors))
 else:
-    note("10 cross-control projections: live observers, accurate derived values, source-native edits and no reset bleed-through")
+    note("9 cross-control projections: live observers, accurate derived values, source-native edits and no reset bleed-through")
 
 # Current user-help contract no longer describes retired polar-radar gestures.
 _control_help_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")

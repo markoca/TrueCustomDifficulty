@@ -56,7 +56,6 @@ public sealed class MedicalHealingRadar : FrameworkElement
     private readonly ParameterViewModel?[] _bleeding = new ParameterViewModel?[4];
     private readonly ParameterViewModel?[] _radiation = new ParameterViewModel?[4];
     private ParameterViewModel? _foodHealing;
-    private ParameterViewModel? _maxHealth;
     private readonly List<HitArea> _hits = new();
     private int _selected = 0;
     private int _dragRow = -1;
@@ -103,13 +102,11 @@ public sealed class MedicalHealingRadar : FrameworkElement
             if (p is not null) p.PropertyChanged -= ParameterChanged;
         if (_foodHealing is not null)
             _foodHealing.PropertyChanged -= ParameterChanged;
-        if (_maxHealth is not null) _maxHealth.PropertyChanged -= ParameterChanged;
 
         Array.Clear(_medical, 0, _medical.Length);
         Array.Clear(_bleeding, 0, _bleeding.Length);
         Array.Clear(_radiation, 0, _radiation.Length);
         _foodHealing = null;
-        _maxHealth = null;
 
         var byId = Parameters?.OfType<ParameterViewModel>()
             .ToDictionary(p => p.Id, StringComparer.Ordinal);
@@ -123,14 +120,12 @@ public sealed class MedicalHealingRadar : FrameworkElement
             for (var i = 0; i < RadiationItems.Length; i++)
                 byId.TryGetValue(RadiationItems[i].Id, out _radiation[i]);
             byId.TryGetValue(FoodHealingId, out _foodHealing);
-            byId.TryGetValue("health.maxHP", out _maxHealth);
         }
 
         foreach (var p in _medical.Concat(_bleeding).Concat(_radiation))
             if (p is not null) p.PropertyChanged += ParameterChanged;
         if (_foodHealing is not null)
             _foodHealing.PropertyChanged += ParameterChanged;
-        if (_maxHealth is not null) _maxHealth.PropertyChanged += ParameterChanged;
         InvalidateVisual();
     }
 
@@ -200,8 +195,8 @@ public sealed class MedicalHealingRadar : FrameworkElement
             overrideLabel.Width + BooleanCheckboxChrome.Size + 17.0, 26.0),
             -1, HitAction.Override));
 
-        // Keep native treatments editable: only HEAL capacity percentages
-        // depend on live Max HP. Bleeding stages are unrelated to item doses.
+        // Native HEAL / BLEED doses are independently editable and display
+        // their actual HP / PTS amounts without unrelated derived readouts.
         // Compress the four HEAL/BLEED clusters to reserve the right-hand
         // radiation bank without adding another row or a second card.
         var chart = new Rect(52.0, PlotTop,
@@ -271,13 +266,6 @@ public sealed class MedicalHealingRadar : FrameworkElement
                 DrawCenteredText(dc, string.Join(" ", name.Skip(1)),
                     new Point(center, 345.0), HealthTypography.Label,
                     text, FontWeights.Bold);
-            }
-            if (_medical[row] is { } item)
-            {
-                var currentPool = Math.Max(1.0, _maxHealth?.CurrentNumber ?? 100.0);
-                DrawCenteredText(dc,
-                    $"{100.0 * item.CurrentNumber / currentPool:0.#}% MAX HP",
-                    new Point(center, 360.0), 8.4, muted, FontWeights.SemiBold);
             }
         }
         DrawRadiationGroup(dc, radArea, chart, text, muted, border, panel);
