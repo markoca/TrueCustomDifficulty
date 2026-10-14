@@ -56,6 +56,18 @@ internal static class Program
                 .IsIndividualAnomalyDamageMember, "Glass Shards remains in anomaly damage editor");
             Check(active.Single(p => p.Id == "environment.razorBleeding")
                 .IsVisualAggregateMember, "Glass Shards bleeding retains its visual family");
+            // Two same 0..2x/0.01x source-native knobs: UI changes
+            // must not change their existing parameter precision or writers.
+            foreach (var id in new[] {
+                "environment.razorBleeding", "environment.psyAnomalyIntensity"
+            })
+            {
+                var knob = active.Single(p => p.Id == id);
+                Check(knob.IsSlider && knob.IsControlEnabled &&
+                    knob.Minimum == 0.0 && knob.Maximum == 2.0 &&
+                    Math.Abs(knob.TickFrequency - 0.01) < 0.0000001,
+                    "Source-native special-effect knob range/step: " + id);
+            }
             Check(points.Length == 42 && points.All(p => p.Scope == "baseGame") &&
                 points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal).SetEquals(ids), "42 base source fields");
             Check(points.All(p => p.Operation is "set" or "scale" or "setDeltaFromRetainedFraction"),

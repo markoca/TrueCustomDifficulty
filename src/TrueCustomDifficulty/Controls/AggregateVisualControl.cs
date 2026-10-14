@@ -1049,55 +1049,47 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(ActualWidth - effectsWidth - 12.0, 42.0, effectsWidth, 277.0));
     }
 
+    // Two independent source-native knobs share the Flycatcher board;
+    // these do not alter the Flycatcher X/Y axes, difficulty, or damage math.
     private void DrawFlycatcherEffects(DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush accent, Brush panel, Rect area)
     {
         DrawCenteredText(dc, "SPECIAL ANOMALY EFFECTS",
             new Point(area.Left + area.Width / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
+
+        // Match the standard 181-DIP mechanical source knob grammar exactly.
+        // Keep both editors side by side, even in the 248-DIP narrow panel.
+        const double gap = 10.0;
+        var knobWidth = Math.Min(194.0, (area.Width - gap) / 2.0);
+        var rowWidth = knobWidth * 2.0 + gap;
+        var left = area.Left + (area.Width - rowWidth) / 2.0;
+        var top = area.Top + 34.0;
+
         DrawCenteredText(dc, "BLEEDING",
-            new Point(area.Left + area.Width / 2.0, area.Top + 16.0),
+            new Point(left + knobWidth / 2.0, area.Top + 9.0),
             10.0, muted, FontWeights.Bold);
-        // One verified glass-shards bleeding source; the Diamond CFG prototype
-        // has no confirmed in-game encounter, so no Diamond preview card.
-        var bleedingWidth = Math.Min(280.0, area.Width);
-        DrawEconomyCard(dc, P("environment.razorBleeding"), "GLASS SHARDS",
-            new Rect(area.Left + (area.Width - bleedingWidth) / 2.0,
-                area.Top + 34.0, bleedingWidth, 86.0),
-            text, muted, border, accent, panel);
         DrawCenteredText(dc, "PSY DRAIN",
-            new Point(area.Left + area.Width / 2.0, area.Top + 150.0),
+            new Point(left + knobWidth + gap + knobWidth / 2.0, area.Top + 9.0),
             10.0, muted, FontWeights.Bold);
-        DrawEconomyCard(dc, P("environment.psyAnomalyIntensity"), "INTENSITY",
-            new Rect(area.Left, area.Top + 168.0, area.Width, 86.0),
+
+        DrawSourceKnob(dc, P("environment.razorBleeding"), "GLASS SHARDS",
+            new Rect(left, top, knobWidth, 181.0),
+            text, muted, border, accent, panel);
+        DrawSourceKnob(dc, P("environment.psyAnomalyIntensity"), "INTENSITY",
+            new Rect(left + knobWidth + gap, top, knobWidth, 181.0),
             text, muted, border, accent, panel);
     }
 
+    // Kept for existing family/preset compatibility. Use the SAME two-knob
+    // implementation if this retired independent visual host is ever shown.
     private void DrawAnomalySpecialEffects(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        DrawCenteredText(dc, "SPECIAL ANOMALY EFFECTS",
-            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
-
-        var sources = new (string Id, string Label)[]
-        {
-            ("environment.razorBleeding", "GLASS SHARDS BLEEDING"),
-            ("environment.psyAnomalyIntensity", "PSY DRAIN INTENSITY")
-        };
-        var columns = EconomyColumns(ActualWidth);
-        var width = EconomyCardWidth(ActualWidth, columns);
-        const double gap = 12.0;
-        for (var i = 0; i < sources.Length; i++)
-        {
-            var count = Math.Min(columns, sources.Length - (i / columns) * columns);
-            var rowWidth = count * width + (count - 1) * gap;
-            var rowLeft = (ActualWidth - rowWidth) / 2.0;
-            var card = new Rect(rowLeft + (i % columns) * (width + gap),
-                48.0 + (i / columns) * 94.0, width, 80.0);
-            DrawEconomyCard(dc, P(sources[i].Id), sources[i].Label,
-                card, text, muted, border, accent, panel);
-        }
+        var width = Math.Min(440.0, Math.Max(248.0, ActualWidth - 30.0));
+        DrawFlycatcherEffects(dc, text, muted, border, accent, panel,
+            new Rect((ActualWidth - width) / 2.0, 42.0, width, 277.0));
     }
 
     private void DrawMixerStrip(
@@ -5825,7 +5817,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             e.Handled = true;
             return;
         }
-        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline"))
+        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -6736,7 +6728,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
-            "AnomalySpecialEffects" => EconomyBoardHeight(width, 3),
+            "AnomalySpecialEffects" => 270.0,
             "NpcLootLoadout" => 564.0,
             "WorldLootLayout" => 275.0,
             "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
@@ -6831,7 +6823,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             "FlycatcherSlowdown" => new[]
             {
                 "environment.flycatcherMovementSpeed",
-                "environment.flycatcherTurnSpeed"
+                "environment.flycatcherTurnSpeed",
+                // The two native source knobs now live beside the crosshair.
+                // Include them for live binding/refresh and shared R reset.
+                "environment.razorBleeding",
+                "environment.psyAnomalyIntensity"
             },
             "AnomalySpecialEffects" => new[]
             {

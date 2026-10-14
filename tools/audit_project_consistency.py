@@ -912,6 +912,44 @@ if '"environment.diamondBleeding",' in _anomaly_ui_vm:
     fail("Diamond still belongs to the visible Anomaly Special Effects aggregate")
 if not (DOCS / "ANOMALY-IDENTITY-AUDIT-2026-10-14.md").exists():
     fail("Anomaly source/provenance identity audit missing")
+# The player-facing ten-lane damage editor is alphabetized by its
+# actual labels, not by CFG IDs, and both special effects use the same
+# source-native mechanical knobs as the rest of the app.
+_order_block = _anomaly_ui_radar.split(
+    "private static readonly AnomalyDefinition[] Anomalies =", 1)[1].split(
+    "// Each radar row edits", 1)[0]
+_ordered_labels = re.findall(r'new\("environment\.[^"]+", "([^"]+)", (?:true|false)\)', _order_block)
+_expected_order = (
+    "CAROUSEL", "CHEMICAL", "CLICKER", "ELECTRO", "FIRE",
+    "FIREBALL", "GLASS SHARDS", "SOAP BUBBLE", "STEAM", "TOXIC CLOUD"
+)
+if tuple(_ordered_labels) != _expected_order or _ordered_labels != sorted(_ordered_labels):
+    fail(f"Anomaly Damage visible labels lost alphabetical order: {_ordered_labels}")
+_special_knobs = _anomaly_ui_aggregate.split(
+    "private void DrawFlycatcherEffects(", 1)[1].split(
+    "private void DrawMixerStrip(", 1)[0]
+if ('DrawSourceKnob(dc, P("environment.razorBleeding"), "GLASS SHARDS"' not in _special_knobs
+    or 'DrawSourceKnob(dc, P("environment.psyAnomalyIntensity"), "INTENSITY"' not in _special_knobs
+    or 'const double gap = 10.0;' not in _special_knobs
+    or 'var knobWidth = Math.Min(194.0, (area.Width - gap) / 2.0);' not in _special_knobs
+    or 'new Rect(left, top, knobWidth, 181.0)' not in _special_knobs
+    or 'new Rect(left + knobWidth + gap, top, knobWidth, 181.0)' not in _special_knobs
+    or 'DrawFlycatcherEffects(dc, text, muted, border, accent, panel,' not in _special_knobs
+    or 'DrawEconomyCard(' in _special_knobs
+    or '"AnomalySpecialEffects" => 270.0,' not in _anomaly_ui_aggregate):
+    fail("Glass Shards/Psy Drain regress to sliders, wrong knob geometry or stale standalone host")
+if ('"StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects"))'
+    not in _anomaly_ui_aggregate):
+    fail("Special-effect knobs lost source-step accurate mouse-wheel interaction")
+_fly_family = _anomaly_ui_aggregate.split('"FlycatcherSlowdown" => new[]', 1)[1].split('},', 1)[0]
+if ('"environment.razorBleeding"' not in _fly_family
+    or '"environment.psyAnomalyIntensity"' not in _fly_family):
+    fail("Combined Flycatcher board stopped binding/resetting its two source-native knobs")
+for _filename in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "2026-10-14 — Alphabetical anomaly damage and special-effect knobs (CURRENT)" not in (
+        DOCS / _filename).read_text(encoding="utf-8"):
+        fail("Anomaly Damage alphabetical/knob UI catalog missing: " + _filename)
+note("Anomaly Damage alphabetical; Glass Shards/Psy Drain reuse native compact knobs")
 note("Anomaly identity: Razor = Glass Shards; Diamond CFG retained but UI excluded")
 
 # Current Breakable Boxes aggregate production gate (UI-06, 2026-10-09).

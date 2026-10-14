@@ -19,18 +19,19 @@ public sealed class AnomalyDamageRadar : FrameworkElement
     private const double ColumnGap = 16.0;
     private const double RowHeight = 52.0;
 
+    // Player-facing alphabetical order. IDs keep the original CFG and preset mappings.
     private static readonly AnomalyDefinition[] Anomalies =
     {
-        new("environment.electroAnomalyDamage", "ELECTRO", false),
-        new("environment.chemicalAnomalyDamage", "CHEMICAL", false),
-        new("environment.fireAnomalyDamage", "FIRE", false),
         new("environment.carouselAnomalyDamage", "CAROUSEL", false),
-        new("environment.toxicCloudDamage", "TOXIC CLOUD", false),
-        new("environment.steamAnomalyDamage", "STEAM", false),
+        new("environment.chemicalAnomalyDamage", "CHEMICAL", false),
         new("environment.clickerHealthDamage", "CLICKER", false),
+        new("environment.electroAnomalyDamage", "ELECTRO", false),
+        new("environment.fireAnomalyDamage", "FIRE", false),
+        new("environment.fireballHealthDamage", "FIREBALL", false),
         new("environment.razorHealthDamage", "GLASS SHARDS", true),
         new("environment.soapBubbleHealthDamage", "SOAP BUBBLE", false),
-        new("environment.fireballHealthDamage", "FIREBALL", false),
+        new("environment.steamAnomalyDamage", "STEAM", false),
+        new("environment.toxicCloudDamage", "TOXIC CLOUD", false),
     };
 
     // Each radar row edits its own parameter and selects that parameter's
