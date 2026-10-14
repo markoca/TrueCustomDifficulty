@@ -56,6 +56,9 @@ public sealed class MedicalHealingRadar : FrameworkElement
     private readonly ParameterViewModel?[] _bleeding = new ParameterViewModel?[4];
     private readonly ParameterViewModel?[] _radiation = new ParameterViewModel?[4];
     private ParameterViewModel? _foodHealing;
+    private ParameterViewModel? _maxHealth;
+    private ParameterViewModel? _bleedingMediumThreshold;
+    private ParameterViewModel? _bleedingSevereThreshold;
     private readonly List<HitArea> _hits = new();
     private int _selected = 0;
     private int _dragRow = -1;
@@ -102,11 +105,16 @@ public sealed class MedicalHealingRadar : FrameworkElement
             if (p is not null) p.PropertyChanged -= ParameterChanged;
         if (_foodHealing is not null)
             _foodHealing.PropertyChanged -= ParameterChanged;
+        foreach (var related in new[] { _maxHealth, _bleedingMediumThreshold, _bleedingSevereThreshold })
+            if (related is not null) related.PropertyChanged -= ParameterChanged;
 
         Array.Clear(_medical, 0, _medical.Length);
         Array.Clear(_bleeding, 0, _bleeding.Length);
         Array.Clear(_radiation, 0, _radiation.Length);
         _foodHealing = null;
+        _maxHealth = null;
+        _bleedingMediumThreshold = null;
+        _bleedingSevereThreshold = null;
 
         var byId = Parameters?.OfType<ParameterViewModel>()
             .ToDictionary(p => p.Id, StringComparer.Ordinal);
@@ -120,12 +128,17 @@ public sealed class MedicalHealingRadar : FrameworkElement
             for (var i = 0; i < RadiationItems.Length; i++)
                 byId.TryGetValue(RadiationItems[i].Id, out _radiation[i]);
             byId.TryGetValue(FoodHealingId, out _foodHealing);
+            byId.TryGetValue("health.maxHP", out _maxHealth);
+            byId.TryGetValue("survival.bleedingMediumThreshold", out _bleedingMediumThreshold);
+            byId.TryGetValue("survival.bleedingStrongThreshold", out _bleedingSevereThreshold);
         }
 
         foreach (var p in _medical.Concat(_bleeding).Concat(_radiation))
             if (p is not null) p.PropertyChanged += ParameterChanged;
         if (_foodHealing is not null)
             _foodHealing.PropertyChanged += ParameterChanged;
+        foreach (var related in new[] { _maxHealth, _bleedingMediumThreshold, _bleedingSevereThreshold })
+            if (related is not null) related.PropertyChanged += ParameterChanged;
         InvalidateVisual();
     }
 
@@ -195,11 +208,19 @@ public sealed class MedicalHealingRadar : FrameworkElement
             overrideLabel.Width + BooleanCheckboxChrome.Size + 17.0, 26.0),
             -1, HitAction.Override));
 
+        // Native treatment amounts stay editable; only these comparison
+        // landmarks depend on Max HP and the current Bleeding stage thresholds.
+        // They do NOT add health, alter severity or change item amounts.
         // Compress the four HEAL/BLEED clusters to reserve the right-hand
         // radiation bank without adding another row or a second card.
         var chart = new Rect(52.0, PlotTop,
             Math.Max(325.0, ActualWidth - 430.0), PlotHeight);
         var laneWidth = chart.Width / Items.Length;
+        if (_bleedingMediumThreshold is not null && _bleedingSevereThreshold is not null)
+            DrawCenteredText(dc,
+                $"BLEED MED {_bleedingMediumThreshold.CurrentNumber:0} · SEV {_bleedingSevereThreshold.CurrentNumber:0} PTS",
+                new Point(chart.Left + chart.Width / 2.0, 82.0),
+                9.0, muted, FontWeights.SemiBold);
         var radLeft = chart.Right + 55.0;
         var radArea = new Rect(radLeft, 88.0,
             Math.Max(258.0, ActualWidth - radLeft - 12.0), 265.0);
@@ -253,6 +274,19 @@ public sealed class MedicalHealingRadar : FrameworkElement
             DrawColumn(dc, row, HitAction.Bleeding, _bleeding[row],
                 center + spread, Math.Min(27.0, laneWidth * .21),
                 BleedingRulerPts, chart, text, muted, border, BleedingAccent);
+            // MEDIUM/SEVERE stage landmarks on the BLEED bar ONLY. The
+            // independently editable treatment removal is read on this same
+            // native 0..100 PTS axis. These strokes have no hit regions.
+            foreach (var threshold in new[] { _bleedingMediumThreshold, _bleedingSevereThreshold })
+            {
+                if (threshold is null) continue;
+                var markerY = chart.Bottom - PlotHeight *
+                    Math.Clamp(threshold.CurrentNumber / BleedingRulerPts, 0.0, 1.0);
+                dc.DrawLine(new Pen(CloneWithOpacity(muted, .80), 1.3)
+                    { DashStyle = DashStyles.Dash },
+                    new Point(center + spread - 17.0, markerY),
+                    new Point(center + spread + 17.0, markerY));
+            }
 
             var name = Items[row].Label.Split(' ');
             if (name.Length == 1)
@@ -265,6 +299,13 @@ public sealed class MedicalHealingRadar : FrameworkElement
                 DrawCenteredText(dc, string.Join(" ", name.Skip(1)),
                     new Point(center, 345.0), HealthTypography.Label,
                     text, FontWeights.Bold);
+            }
+            if (_medical[row] is { } item)
+            {
+                var currentPool = Math.Max(1.0, _maxHealth?.CurrentNumber ?? 100.0);
+                DrawCenteredText(dc,
+                    $"{100.0 * item.CurrentNumber / currentPool:0.#}% MAX HP",
+                    new Point(center, 360.0), 8.4, muted, FontWeights.SemiBold);
             }
         }
         DrawRadiationGroup(dc, radArea, chart, text, muted, border, panel);

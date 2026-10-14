@@ -19,6 +19,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     private const double Epsilon = 0.000001;
 
     private readonly Dictionary<string, ParameterViewModel> _parameters = new(StringComparer.Ordinal);
+    // Read-only cross-panel inputs: visual calculations only, never reset/written here.
+    private readonly Dictionary<string, ParameterViewModel> _linkedSources = new(StringComparer.Ordinal);
     // Read-only cross-tab input to Starvation's hypothetical full-HP timeline.
     // Deliberately excluded from the Starvation family's editable/reset members.
     private ParameterViewModel? _starvationMaxHp;
@@ -115,6 +117,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         foreach (var parameter in _parameters.Values)
             parameter.PropertyChanged -= Parameter_PropertyChanged;
+        foreach (var parameter in _linkedSources.Values)
+            parameter.PropertyChanged -= Parameter_PropertyChanged;
+        _linkedSources.Clear();
         if (_starvationMaxHp is not null)
             _starvationMaxHp.PropertyChanged -= Parameter_PropertyChanged;
         _starvationMaxHp = null;
@@ -142,6 +147,23 @@ public sealed class AggregateVisualControl : FrameworkElement
             if (_radiationMaxHp is not null)
                 _radiationMaxHp.PropertyChanged += Parameter_PropertyChanged;
         }
+
+        var linkedIds = Family switch
+        {
+            "ConsumableMixer" => new[] { "stamina.maxSP", "stamina.maxCarryWeight" },
+            "SleepingDashboard" => new[] { "health.maxHP" },
+            "FatigueCurve" => new[] { "survival.sleepEligibilityThreshold" },
+            "RepairCurve" => new[] { "economy.repairCostBase" },
+            "NpcLootLoadout" => new[] { "economy.traderMinBuyCondition" },
+            _ => Array.Empty<string>()
+        };
+        if (Parameters is not null)
+            foreach (var source in Parameters.OfType<ParameterViewModel>())
+                if (linkedIds.Contains(source.Id, StringComparer.Ordinal))
+                {
+                    _linkedSources[source.Id] = source;
+                    source.PropertyChanged += Parameter_PropertyChanged;
+                }
 
         var familyIds = GetFamilyIds(Family);
         if (Parameters is not null && familyIds.Count > 0)
@@ -1438,6 +1460,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, "DROPPED WEAPON CONDITION",
             new Point(rangeCard.Left + 11.0, rangeCard.Top + 8.0),
             10.8, text, FontWeights.Bold);
+        var accepted = Linked("economy.traderMinBuyCondition");
+        if (accepted is not null)
+            DrawRightAlignedText(dc, $"TRADER ACCEPTS ≥ {accepted.CurrentNumber * 100.0:0}%",
+                new Point(rangeCard.Right - 11.0, rangeCard.Top + 8.0),
+                8.8, muted, FontWeights.SemiBold);
 
         var minModified = Math.Abs(condition.CurrentMinNumber - 0.25) > Epsilon;
         var maxModified = Math.Abs(condition.CurrentMaxNumber - 0.50) > Epsilon;
@@ -1470,6 +1497,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         var y = rail.Top + rail.Height / 2.0;
         var xMin = ValueToX(condition.CurrentMinNumber, 0.0, 1.0, rail, false);
         var xMax = ValueToX(condition.CurrentMaxNumber, 0.0, 1.0, rail, false);
+        if (accepted is not null)
+        {
+            // Trader floor is a filter, NOT a claim that every dropped weapon
+            // in the surviving range is sold at a given price.
+            var acceptedX = ValueToX(accepted.CurrentNumber, 0.0, 1.0, rail, false);
+            dc.DrawLine(new Pen(muted, 1.6) { DashStyle = DashStyles.Dash },
+                new Point(acceptedX, y - 16.0), new Point(acceptedX, y + 16.0));
+        }
 
         var backPen = new Pen(CloneWithOpacity(border, 0.85), 3.5)
         {
@@ -1991,9 +2026,25 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, "FATIGUE POINTS / STAGE PREVIEW",
             new Point(preview.Left + 12, preview.Top + 7),
             11.0, text, FontWeights.Bold);
+        // Sleep availability is an independent CFG threshold, drawn as a
+        // passive source-linked landmark, not a fourth fatigue stage editor.
+        var sleepGate = Linked("survival.sleepEligibilityThreshold");
+        if (sleepGate is not null)
+            DrawRightAlignedText(dc, $"SLEEP AVAILABLE {sleepGate.CurrentNumber:0} PTS",
+                new Point(preview.Right - 12.0, preview.Top + 8.0),
+                9.0, muted, FontWeights.SemiBold);
         var axis = new Rect(preview.Left + 81, preview.Top + 32, preview.Width - 111, 12);
         double X(double value) => ValueToX(value, 0, 100, axis, false);
         var y = axis.Top + axis.Height / 2;
+        if (sleepGate is not null)
+        {
+            var sleepX = X(sleepGate.CurrentNumber);
+            dc.DrawLine(new Pen(CloneWithOpacity(text, .85), 1.6)
+                { DashStyle = DashStyles.Dash },
+                new Point(sleepX, y - 14.0), new Point(sleepX, y + 14.0));
+            dc.DrawEllipse(panel, new Pen(text, 1.2),
+                new Point(sleepX, y - 13.0), 3.0, 3.0);
+        }
         var thresholds = new[] { low, medium, severe };
         var stops = new[] { 0.0, low.CurrentNumber, medium.CurrentNumber, severe.CurrentNumber, 100.0 };
         for (var i = 0; i < 4; i++)
@@ -3305,6 +3356,14 @@ public sealed class AggregateVisualControl : FrameworkElement
                 parameter.IsValueModifiedFromReference() ? 12.3 : 11.1,
                 parameter.IsValueModifiedFromReference() ? accent : text,
                 FontWeights.Bold);
+            // Actual repair-price layers multiply: Base Repair times this
+            // reputation factor; show the combined factor but edit only the
+            // plotted reputation source. Difficulty layer remains independent;
+            // this is not a final coupon bill.
+            var baseRepair = Linked("economy.repairCostBase")?.CurrentNumber ?? 0.7;
+            DrawMixerCentered(dc, $"{baseRepair * parameter.CurrentNumber:0.##}x BASE×REP",
+                new Point(x, plot.Bottom + 57.0),
+                plot.Width / 4.0 - 10.0, 9.4, muted, FontWeights.SemiBold);
         }
 
         var basePen = new Pen(CloneWithOpacity(muted, .70), 1.3)
@@ -3429,10 +3488,20 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawSourceKnob(dc, burst, "WATER STAMINA GAIN",
             new Rect(knobLeft, ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel, percentageReadout: true);
+        // Percent sources restore a fraction of the live Max Stamina, not
+        // fixed stamina points. The caption is a read-only cross-tab projection.
+        var staminaPool = Math.Max(1.0, Linked("stamina.maxSP")?.CurrentNumber ?? 100.0);
+        DrawCenteredText(dc, $"+{burst.CurrentNumber * staminaPool:0.#} STAMINA",
+            new Point(knobLeft + knobWidth / 2.0, ConsumableStrengthKnobTop + 185.0),
+            9.0, muted, FontWeights.SemiBold);
         DrawSourceKnob(dc, energyBurst, "ENERGY DRINK STAMINA GAIN",
             new Rect(knobLeft + knobWidth + knobGap, ConsumableStrengthKnobTop,
                 knobWidth, 181.0),
             text, muted, border, accent, panel, percentageReadout: true);
+        DrawCenteredText(dc, $"+{energyBurst.CurrentNumber * staminaPool:0.#} STAMINA",
+            new Point(knobLeft + 1.5 * knobWidth + knobGap,
+                ConsumableStrengthKnobTop + 185.0),
+            9.0, muted, FontWeights.SemiBold);
         DrawSourceKnob(dc, waterStamina, "WATER STAMINA BUFF",
             new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
                 ConsumableStrengthKnobTop, knobWidth, 181.0),
@@ -3644,10 +3713,15 @@ public sealed class AggregateVisualControl : FrameworkElement
         var waterSectionLeft = preview.Left + 12.0;
         var energySectionLeft = waterSectionLeft + secondaryWidth +
             ConsumableDrinkSectionGap;
-        DrawText(dc, "WATER BUFF",
+        // Temporary +25% maximum-stamina effect: the duration remains its
+        // own source; its result uses the current Core Stamina capacity.
+        var waterCapCaption = secondaryWidth >= 224.0
+            ? $"WATER BUFF · {staminaPool * 1.25:0.#} STAMINA CAP"
+            : $"WATER · {staminaPool * 1.25:0.#} CAP";
+        DrawText(dc, waterCapCaption,
             new Point(waterSectionLeft + 4.0,
                 preview.Top + ConsumableShortEffectsHeaderTop),
-            10.2, text, FontWeights.Bold);
+            9.2, text, FontWeights.Bold);
         DrawText(dc, "ENERGY DRINK BUFFS",
             new Point(energySectionLeft + 4.0,
                 preview.Top + ConsumableShortEffectsHeaderTop),
@@ -3687,6 +3761,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 medicineKnobTop, medicineKnobWidth, 181.0),
             text, muted, border, accent, panel,
             rawReadout: true, nativeUnit: "KG");
+        var baseCarry = Linked("stamina.maxCarryWeight")?.CurrentNumber ?? 80.0;
+        DrawCenteredText(dc, $"{baseCarry + herculesStrength.CurrentNumber:0.#} KG WITH HERCULES",
+            new Point(medicineLeft + medicineKnobWidth * 1.5 + knobGap,
+                medicineKnobTop + 186.0), 9.0, muted, FontWeights.SemiBold);
         DrawSourceKnob(dc, psiStrength, "PSI BLOCK PROTECTION",
             new Rect(medicineLeft + 2.0 * (medicineKnobWidth + knobGap),
                 medicineKnobTop, medicineKnobWidth, 181.0),
@@ -3777,10 +3855,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(left + 1.0, 247.0), 10.7, accent, FontWeights.Bold);
         const double gap = 12.0;
         var column = (width - gap) / 2.0;
+        var maxHealth = Math.Max(1.0, Linked("health.maxHP")?.CurrentNumber ?? 100.0);
         DrawCompactTrack(dc, healthRestore, "HEALTH RESTORED",
-            healthRestore.CurrentNumber <= 0.0
-                ? "0 HP" : $"+{healthRestore.CurrentNumber:0.#} HP",
-            $"{healthRestore.Minimum / 100.0:0.##}x", $"{healthRestore.Maximum / 100.0:0.##}x",
+            $"+{healthRestore.CurrentNumber:0.#} HP · {100.0 * healthRestore.CurrentNumber / maxHealth:0.#}%",
+            $"{healthRestore.Minimum:0} HP", $"{healthRestore.Maximum:0} HP",
             new Rect(left, 274.0, column, 82.0),
             text, muted, border, accent, panel);
         DrawCompactTrack(dc, staminaRestore, "STAMINA RESTORE STRENGTH",
@@ -6494,6 +6572,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
         return parameter;
     }
+
+    private ParameterViewModel? Linked(string id)
+        => _linkedSources.TryGetValue(id, out var value) ? value : null;
 
     private bool IsSelected(ParameterViewModel? parameter)
         => parameter is not null && ReferenceEquals(parameter, _selectedParameter);

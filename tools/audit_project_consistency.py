@@ -2011,6 +2011,102 @@ if _factory_errors:
 else:
     note("factory presets: twelve 247-source scarcity-first profiles, 46 source-backed balance settings each, exact-stock upgrade preserves local user edits")
 
+# Twelve visual-only live projections approved 2026-10-14.
+# These may read sources from other tabs but must never merge their reset,
+# serialized parameter identity, native input ranges or gameplay CFG write path.
+# Screen-space presentation is asserted alongside its actual live source link.
+_linked_projection_contract = {
+    "ActionCostsRadar.cs": (
+        'byId.TryGetValue(MaxStaminaParameterId, out _maximumStamina);',
+        'parameter.CurrentNumber / staminaPool',
+        'Math.Floor(staminaPool / hovered.CurrentNumber)',
+        'Math.Max(100.0, _maximumStamina?.CurrentNumber ?? 100.0)',
+    ),
+    "AggregateVisualControl.cs": (
+        'private readonly Dictionary<string, ParameterViewModel> _linkedSources',
+        'source.PropertyChanged += Parameter_PropertyChanged;',
+        'foreach (var parameter in _linkedSources.Values)',
+        'parameter.PropertyChanged -= Parameter_PropertyChanged;',
+        'burst.CurrentNumber * staminaPool',
+        'energyBurst.CurrentNumber * staminaPool',
+        'staminaPool * 1.25',
+        'baseCarry + herculesStrength.CurrentNumber',
+        'healthRestore.CurrentNumber / maxHealth',
+        'sleepGate.CurrentNumber',
+        'baseRepair * parameter.CurrentNumber',
+        'accepted.CurrentNumber',
+        'TRADER ACCEPTS ≥',
+    ),
+    "MedicalHealingRadar.cs": (
+        'byId.TryGetValue("health.maxHP", out _maxHealth);',
+        'byId.TryGetValue("survival.bleedingMediumThreshold", out _bleedingMediumThreshold);',
+        'byId.TryGetValue("survival.bleedingStrongThreshold", out _bleedingSevereThreshold);',
+        'item.CurrentNumber / currentPool',
+        'threshold.CurrentNumber / BleedingRulerPts',
+    ),
+    "BleedingCurveControl.cs": (
+        'byId.TryGetValue("health.maxHP", out _maxHealth);',
+        'currentValues[i] / pool',
+        '_maxHealth.PropertyChanged += Parameter_PropertyChanged;',
+    ),
+    "MutantDropRadar.cs": (
+        'byId.TryGetValue("economy.mutantPartValue", out _partValue)',
+        'chance * priceScale',
+        'RETURN INDEX',
+        'species base prices remain independent',
+    ),
+}
+_linked_controls = ROOT / "src" / "TrueCustomDifficulty" / "Controls"
+_projection_errors = []
+for _file, _tokens in _linked_projection_contract.items():
+    _body = (_linked_controls / _file).read_text(encoding="utf-8")
+    _missing = [token for token in _tokens if token not in _body]
+    if _missing:
+        _projection_errors.append(f"{_file}: missing {', '.join(_missing)}")
+
+_aggregate_dependency_text = (_linked_controls / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+for _linked_id in (
+    "stamina.maxSP", "stamina.maxCarryWeight", "health.maxHP",
+    "survival.sleepEligibilityThreshold", "economy.repairCostBase",
+    "economy.traderMinBuyCondition",
+):
+    if _linked_id not in _aggregate_dependency_text:
+        _projection_errors.append(f"Aggregate read-only dependency absent: {_linked_id}")
+
+# Visual-only: live donor variables may not be enumerated as another editor's
+# independent editable CFG sources. Other panel reset groups stay untouched.
+_action_text = (_linked_controls / "ActionCostsRadar.cs").read_text(encoding="utf-8")
+_action_members = _action_text.split("private IEnumerable<ParameterViewModel?> EnumerateBoundParameters()", 1)[-1].split("private void Parameter_PropertyChanged", 1)[0]
+_bleeding_text = (_linked_controls / "BleedingCurveControl.cs").read_text(encoding="utf-8")
+_bleeding_members = _bleeding_text.split("private IEnumerable<ParameterViewModel?> EnumerateBoundParameters()", 1)[-1].split("private void Parameter_PropertyChanged", 1)[0]
+if ("yield return _maximumStamina;" in _action_members
+        or "yield return _maxHealth;" in _bleeding_members
+        or "AddTarget(_partValue" in (_linked_controls / "MutantDropRadar.cs").read_text(encoding="utf-8")
+        or "AddVerticalTarget(accepted" in _aggregate_dependency_text):
+    _projection_errors.append("cross-tab passive sources accidentally became editable/resettable")
+
+for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    _body = (ROOT / "docs" / _doc).read_text(encoding="utf-8")
+    if "Twelve cross-control live projections (CURRENT)" not in _body:
+        _projection_errors.append(f"{_doc}: current 12-preview specification missing")
+for _example, _answer in (
+    ((100, 16), (16.0, 6)),
+    ((150, 16), (16 / 150 * 100, 9)),
+):
+    _max_sp, _cost = _example
+    _percent, _moves = _answer
+    if abs(100 * _cost / _max_sp - _percent) > 1e-8 or _max_sp // _cost != _moves:
+        _projection_errors.append("Stamina Usage reference derived-value examples failed")
+if abs((150 * .38) - 57) > 1e-8 or abs((100 * 1.25) - 125) > 1e-8:
+    _projection_errors.append("Drink/Water capacity reference examples failed")
+if abs((70 / 140 * 100) - 50) > 1e-8 or abs((80 + 20) - 100) > 1e-8:
+    _projection_errors.append("Medical/Hercules reference examples failed")
+
+if _projection_errors:
+    fail("12 live linked-control preview contracts drifted: " + "; ".join(_projection_errors))
+else:
+    note("12 cross-control projections: live observers, accurate derived values, source-native edits and no reset bleed-through")
+
 # Current user-help contract no longer describes retired polar-radar gestures.
 _control_help_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 for _required_help in ("public string ControlHelp", "IsVisualAggregateAnchor", "IsMutantHealthAnchor", "IsStashAmmoAnchor"):
@@ -2519,7 +2615,7 @@ for _token in (
     "var secondary = new ParameterViewModel[][]",
     "shortEffect.CurrentNumber",
     "DrawCompactTrack(dc, shortEffect, caption,",
-    'DrawText(dc, "WATER BUFF",',
+    'var waterCapCaption = secondaryWidth >= 224.0',
     'DrawText(dc, "ENERGY DRINK BUFFS",',
     "private const double ConsumableShortEffectsHeaderTop = 300.0;",
     "private const double ConsumableShortEffectsTrackTop = 322.0;",
@@ -3930,7 +4026,7 @@ _bleed_required = (
     "var stageBankWidth = Math.Min(618.0",
     "405.0, stageCardWidth, 44.0)",
     "dc.DrawRoundedRectangle(panel, new Pen(border, 1.0),",
-    '"{currentValues[i]:0.##} HP / TICK"',
+    '"{currentValues[i]:0.##} HP/TICK · {100.0 * currentValues[i] / pool:0.#}% MAX HP"',
     '"{labels[i]} AT {currentThresholds[i]:0.#} PTS"',
     "_damageHitRects[i] = new Rect(",
     "_mediumThresholdHitRect = new Rect(",

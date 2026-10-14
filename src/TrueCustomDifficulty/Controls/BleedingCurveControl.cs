@@ -31,6 +31,8 @@ public sealed class BleedingCurveControl : FrameworkElement
     private readonly ParameterViewModel?[] _damage = new ParameterViewModel?[3];
     private ParameterViewModel? _mediumThreshold;
     private ParameterViewModel? _severeThreshold;
+    // Health from another tab is a passive comparison, not part of bleeding reset.
+    private ParameterViewModel? _maxHealth;
 
     private Rect _severityTrackRect;
     private Rect _recoveryTrackRect;
@@ -80,6 +82,9 @@ public sealed class BleedingCurveControl : FrameworkElement
             if (parameter is not null)
                 parameter.PropertyChanged -= Parameter_PropertyChanged;
         }
+        if (_maxHealth is not null)
+            _maxHealth.PropertyChanged -= Parameter_PropertyChanged;
+        _maxHealth = null;
 
         _severity = null;
         _recovery = null;
@@ -105,12 +110,15 @@ public sealed class BleedingCurveControl : FrameworkElement
 
             byId.TryGetValue(MediumThresholdId, out _mediumThreshold);
             byId.TryGetValue(SevereThresholdId, out _severeThreshold);
+            byId.TryGetValue("health.maxHP", out _maxHealth);
 
             foreach (var parameter in EnumerateBoundParameters())
             {
                 if (parameter is not null)
                     parameter.PropertyChanged += Parameter_PropertyChanged;
             }
+            if (_maxHealth is not null)
+                _maxHealth.PropertyChanged += Parameter_PropertyChanged;
         }
 
         InvalidateVisual();
@@ -479,10 +487,11 @@ public sealed class BleedingCurveControl : FrameworkElement
                 10.1, text, accent, FontWeights.Bold,
                 (i == 1 ? _mediumThreshold : i == 2 ? _severeThreshold : null)
                     ?.IsValueModifiedFromReference() == true);
+            var pool = Math.Max(1.0, _maxHealth?.CurrentNumber ?? 100.0);
             DrawSourceNumber(dc,
-                $"{currentValues[i]:0.##} HP / TICK",
+                $"{currentValues[i]:0.##} HP/TICK · {100.0 * currentValues[i] / pool:0.#}% MAX HP",
                 new Point(card.Left + card.Width / 2, card.Top + 25),
-                10.4, text, accent, FontWeights.Bold,
+                9.0, text, accent, FontWeights.Bold,
                 _damage[i]?.IsValueModifiedFromReference() == true);
         }
 

@@ -138,8 +138,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             }
 
             byId.TryGetValue(AimParameterId, out _aimParameter);
-            if (IsExhaustion)
-                byId.TryGetValue(MaxStaminaParameterId, out _maximumStamina);
+            byId.TryGetValue(MaxStaminaParameterId, out _maximumStamina);
             byId.TryGetValue(SprintDisableThresholdId, out _sprintDisableThreshold);
             byId.TryGetValue(SprintRecoveryDelayId, out _sprintRecoveryDelay);
             byId.TryGetValue(LowRecoveryThresholdId, out _lowRecoveryThreshold);
@@ -251,10 +250,27 @@ public sealed class ActionCostsRadar : FrameworkElement
     {
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.95), new Pen(border, 0.9), card, 4.0, 4.0);
         DrawText(dc, title, new Point(card.Left + 9.0, card.Top + 7.0), 9.3, muted, FontWeights.Bold);
+        // Read-only capacity relation; no edits or R-reset ownership over Max Stamina.
+        var staminaPool = Math.Max(1.0, _maximumStamina?.CurrentNumber ?? 100.0);
 
         var indices = Enumerable.Range(0, Actions.Length)
             .Where(i => Actions[i].Group == group)
             .ToArray();
+
+        var hovered = indices.Select(i => _actionParameters[i])
+            .FirstOrDefault(p => p is not null && ReferenceEquals(p, _hoverParameter));
+        if (hovered is not null)
+        {
+            // The native Sprint coefficient is not a verified discrete
+            // single-press action; do not infer a number of sprint activations.
+            var count = hovered.CurrentNumber <= Epsilon
+                ? "NO COST"
+                : hovered.Id == "stamina.sprintCost"
+                    ? $"{staminaPool / hovered.CurrentNumber:0.#}x POOL/COST"
+                    : $"{Math.Floor(staminaPool / hovered.CurrentNumber):0} FROM FULL";
+            DrawRightAlignedText(dc, count, new Point(card.Right - 9.0, card.Top + 7.0),
+                9.0, muted, FontWeights.SemiBold);
+        }
 
         for (var local = 0; local < indices.Length; local++)
         {
@@ -268,9 +284,11 @@ public sealed class ActionCostsRadar : FrameworkElement
             var relative = Math.Abs(reference) > Epsilon ? parameter.CurrentNumber / reference : 0.0;
             DrawText(dc, Actions[index].Label, new Point(card.Left + 9.0, top), 9.2,
                 text, FontWeights.Bold);
+            var costPercent = 100.0 * parameter.CurrentNumber / staminaPool;
             DrawSourceValue(dc, parameter,
-                $"{FormatRaw(parameter.CurrentNumber)} STAMINA",
-                new Point(card.Right - 9.0, top), 10.4, text, accent);
+                $"{FormatRaw(parameter.CurrentNumber)} STAMINA · {costPercent:0.#}%",
+                new Point(card.Right - 9.0, top), card.Width >= 300.0 ? 10.0 : 9.0, text, accent,
+                nativeOnly: true);
 
             var track = new Rect(card.Left + 9.0, top + 20.0, card.Width - 18.0, 8.0);
             var y = track.Top + track.Height / 2.0;
@@ -546,15 +564,16 @@ public sealed class ActionCostsRadar : FrameworkElement
     // STAMINA, STAMINA/s, s and other static units remain neutral.
     private void DrawSourceValue(
         DrawingContext dc, ParameterViewModel parameter, string value,
-        Point right, double size, Brush text, Brush accent)
+        Point right, double size, Brush text, Brush accent, bool nativeOnly = false)
     {
-        var formatted = CreateSourceValueText(parameter, value, size, text, accent);
+        var formatted = CreateSourceValueText(parameter, value, size, text, accent, nativeOnly);
         dc.DrawText(formatted,
             new Point(right.X - formatted.WidthIncludingTrailingWhitespace, right.Y));
     }
 
     private FormattedText CreateSourceValueText(
-        ParameterViewModel parameter, string value, double size, Brush text, Brush accent)
+        ParameterViewModel parameter, string value, double size, Brush text, Brush accent,
+        bool nativeOnly = false)
     {
         var formatted = CreateText(value, size, text, FontWeights.Bold);
         if (parameter.IsValueModifiedFromReference())
@@ -565,6 +584,9 @@ public sealed class ActionCostsRadar : FrameworkElement
             {
                 formatted.SetForegroundBrush(accent, token.Index, token.Length);
                 formatted.SetFontSize(size + 1.2, token.Index, token.Length);
+                // The capacity percentage is a read-only derived value.
+                // Only the first (real CFG) amount gets edited-number gold.
+                if (nativeOnly) break;
             }
         }
         return formatted;

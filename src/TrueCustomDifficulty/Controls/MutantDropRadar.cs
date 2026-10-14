@@ -40,6 +40,8 @@ public sealed class MutantDropRadar : FrameworkElement
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Mutants.Length];
+    // Economic source changes the passive trophy return index, never loot rolls.
+    private ParameterViewModel? _partValue;
     private readonly Dictionary<int, HitTarget> _targets = new();
     private readonly VisualStatusMessage _status;
 
@@ -66,6 +68,8 @@ public sealed class MutantDropRadar : FrameworkElement
         MinHeight = 0;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
+        ToolTip = "Return index = drop chance × mutant-part price multiplier. "
+            + "It is NOT a coupon payout: species base prices remain independent.";
     }
 
     protected override Size MeasureOverride(Size availableSize)
@@ -85,6 +89,9 @@ public sealed class MutantDropRadar : FrameworkElement
                 parameter.PropertyChanged -= Parameter_PropertyChanged;
         }
 
+        if (_partValue is not null)
+            _partValue.PropertyChanged -= Parameter_PropertyChanged;
+        _partValue = null;
         Array.Clear(_parameters, 0, _parameters.Length);
 
         if (Parameters is not null)
@@ -101,6 +108,8 @@ public sealed class MutantDropRadar : FrameworkElement
                 _parameters[i] = parameter;
                 parameter.PropertyChanged += Parameter_PropertyChanged;
             }
+            if (byId.TryGetValue("economy.mutantPartValue", out _partValue))
+                _partValue.PropertyChanged += Parameter_PropertyChanged;
         }
 
         InvalidateVisual();
@@ -229,6 +238,12 @@ public sealed class MutantDropRadar : FrameworkElement
             modified ? 13.0 : 11.8,
             modified ? accent : text,
             FontWeights.Bold);
+        // Source-truthful per-eligible-kill index in units of *this species'
+        // unscaled part value*. There is no invented per-species coupon price.
+        var priceScale = _partValue?.CurrentNumber ?? 1.0;
+        DrawText(dc, $"RETURN INDEX {chance * priceScale:0.##}x",
+            new Point(card.Left + 7.0, card.Top + 22.0),
+            8.8, muted, FontWeights.SemiBold);
 
         var track = new Rect(card.Left + 11.0, card.Top + 36.0, card.Width - 22.0, 12.0);
         var y = track.Top + track.Height / 2.0;
