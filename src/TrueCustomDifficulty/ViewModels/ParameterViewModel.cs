@@ -120,8 +120,9 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag BEER or VODKA to change that drink's intoxication strength. The stages update in the preview."
                     + Environment.NewLine + "Right-click one drink to reset it; R resets both.";
             if (IsBleedingCurveMember)
-                return "Drag the bleeding and recovery tracks, or move the threshold/damage handles on the curve."
-                    + Environment.NewLine + "Right-click a handle to reset it; R resets the bleeding group.";
+                return "Edit the bleeding/recovery tracks and each damage stage, then choose START BLEED and START HP in the live timeline. Drag the timeline to inspect health and bleeding at any second."
+                    + Environment.NewLine + "The estimated 1-second tick model includes natural bleeding recovery, not healing or armor. Bleeding Strength affects new wounds, not the chosen starting bleeding points."
+                    + Environment.NewLine + "Right-click a handle to reset it; R resets only the bleeding game settings.";
 
             if (IsActionCostMember)
                 return "Drag an action's track to change how much stamina that move costs."

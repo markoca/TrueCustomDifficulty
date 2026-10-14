@@ -33,6 +33,7 @@ internal static class Program
 
             // Verify 1x Bandage cap and legacy preset bounds with the live VM.
             BandageBleedingUpperBoundCase();
+            BleedingTimelineProjectionCase();
 
             MedicalItemsPairingCase();
             MovementLimitsAndExhaustionNamingCase();
@@ -294,6 +295,53 @@ internal static class Program
         Check(!anchor.IsModified, "Resetting Beer/Vodka must clear group modification");
         _passed++;
         Console.WriteLine("PASS medical-items-4x2-plus-radiation-4-vertical-membership");
+    }
+
+    private static void BleedingTimelineProjectionCase()
+    {
+        static BleedTimelineResult Run(double hp = 100, double hpPct = 100,
+            double bleed = 80, double regen = 0,
+            double low = 1, double medium = 1.5, double severe = 2,
+            double midAt = 50, double severeAt = 75)
+            => BleedingTimelineProjection.Calculate(
+                hp, hpPct, bleed, regen, low, medium, severe, midAt, severeAt);
+
+        var severeOnly = Run();
+        Check(severeOnly.DeathSecond == 50 && severeOnly.Hits == 50
+              && severeOnly.Samples[^1].Hp == 0,
+            "Severe 2 HP per 1s hypothetical tick must kill 100 HP in 50 ticks");
+
+        var halfHp = Run(hpPct: 50);
+        Check(halfHp.DeathSecond == 25 && halfHp.Hits == 25,
+            "Start-HP preview percentage must modify tick/death projections");
+
+        var doubleHp = Run(hp: 200);
+        Check(doubleHp.DeathSecond == 100 && doubleHp.Hits == 100,
+            "Changing live health.maxHP must update hypothetical death time");
+
+        var recovery = Run(bleed: 10, regen: 0.6);
+        Check(recovery.DeathSecond is null
+              && recovery.BleedEndsSecond == 17 && recovery.Hits == 17
+              && recovery.Samples[^1].Hp == 83,
+            "Recovery should end low bleeding without inventing a death");
+
+        var transitions = Run(regen: 0.3);
+        Check(transitions.Samples.Any(t => t.Stage == "SEVERE")
+              && transitions.Samples.Any(t => t.Stage == "MEDIUM")
+              && transitions.DeathSecond is not null,
+            "Natural recovery must cross live bleeding threshold stages");
+
+        var harmless = Run(low: 0, medium: 0, severe: 0);
+        Check(harmless.DeathSecond is null && harmless.Hits == 0
+              && harmless.Samples[^1].Hp == 100,
+            "Zero HP damage must never invent death or HP charges");
+
+        var empty = Run(bleed: 0);
+        Check(empty.DeathSecond is null && empty.BleedEndsSecond == 0
+              && empty.Hits == 0 && empty.Duration == 0,
+            "No starting bleed should show no damage and zero elapsed time");
+
+        Console.WriteLine("PASS BleedingTimelineProjection 7 scenarios");
     }
 
     private static void BandageBleedingUpperBoundCase()

@@ -3626,6 +3626,51 @@ for _token in ("_progressMarkers.Add(new ProgressMarker(", "new Rect(segmentLeft
     if _token not in _drink_marker_source:
         fail("Alcohol stage marker hover/click behavior drifted: " + _token)
 
+# Bleeding timeline: no invented CFG source; actual live controls, one-second
+# discrete projection, cross-tab Max HP, UI input and zero-damage tests.
+_bleed_timeline_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "BleedingTimelineProjection.cs").read_text(encoding="utf-8")
+_bleed_control = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "BleedingCurveControl.cs").read_text(encoding="utf-8")
+_bleed_contract = (ROOT / "tests" / "HealthStaminaPatchContract" / "Program.cs").read_text(encoding="utf-8")
+for _token in (
+    "public static class BleedingTimelineProjection",
+    "for (var sec = 1; sec <= 3600 && hp > 0 && bleed >= 0.1; sec++)",
+    "bleed = Math.Max(0, bleed - regen)",
+    "death = sec;",
+    "ends = sec;",
+):
+    if _token not in _bleed_timeline_source:
+        fail("Bleeding timeline discrete 1-second projection contract drifted: " + _token)
+for _token in (
+    "private const double DesiredHeight = 744.0;",
+    'private const string MaxHpId = "health.maxHP";',
+    "byId.TryGetValue(MaxHpId, out _maxHp);",
+    "_maxHp.PropertyChanged += Parameter_PropertyChanged;",
+    "_maxHp.PropertyChanged -= Parameter_PropertyChanged;",
+    "DrawBleedTimeline(dc, text, muted, border, softBorder, accent, panel);",
+    '"BLEEDING TIMELINE"',
+    '"START BLEED"',
+    '"START HP"',
+    '"TICKS TO 0 HP"',
+    '"TIME TO 0 HP"',
+    '"ESTIMATE · 1 S / TICK"',
+    "BleedingTimelineProjection.Calculate(",
+    "MoveScenario(_scenarioDrag, point.X);",
+    "case ScenarioInput.Scrub:",
+    "if (_scenarioSelected != ScenarioInput.None && e.Key != Key.R)",
+):
+    if _token not in _bleed_control:
+        fail("Bleeding timeline scenario, live HP or pointer contract drifted: " + _token)
+_bleed_xaml = (ROOT / "src" / "TrueCustomDifficulty" / "MainWindow.xaml").read_text(encoding="utf-8")
+_bleed_element = _bleed_xaml.split('<controls:BleedingCurveControl x:Name="BleedingCurveControl"', 1)
+if len(_bleed_element) != 2 or 'MinHeight="744"' not in _bleed_element[1].split('/>', 1)[0]:
+    fail("Bleeding timeline host XAML must measure its 744 DIP board")
+if "BleedingTimelineProjectionCase();" not in _bleed_contract or "Check(severeOnly.DeathSecond == 50" not in _bleed_contract:
+    fail("Bleeding timeline regression scenarios missing from HealthStaminaPatchContract")
+if any("2026-10-14 — Interactive Bleeding Timeline" not in
+       (ROOT / "docs" / n).read_text(encoding="utf-8")
+       for n in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
+    fail("Both UI catalogs must describe the current bleeding timeline")
+
 # Bleeding difficulty markers share the interactive slider-marker language.
 _bleeding_marker_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "BleedingCurveControl.cs").read_text(encoding="utf-8")
 for _token in ("_difficultyMarkerHits.Add((", "_hoverDifficultyValue == marker.Value", "Brushes.White : muted", "marker.Parameter.CurrentNumber = Snap(marker.Parameter, marker.Value)"):
