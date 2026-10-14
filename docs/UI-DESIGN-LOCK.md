@@ -1,5 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-14 — Bleeding unified stage row and concise death HUD (CURRENT)
+
+Survival → BLEEDING SYSTEM: replace two duplicated LOW/MEDIUM/SEVERE rows with one compact, selectable row. The original threshold and HP/TICK readout cards at Y=405 are now the only stage choices; display LOW/MEDIUM/SEVERE AT live PTS threshold and source HP/TICK. Center all 3 in a max-618-DIP bank, 8-DIP gaps, 44-DIP height. Gold outline indicates selected; white outline/text on hover. Only modified native numbers turn gold. Entire card clickable, keyboard navigation preserved and right-click sets preview back to LOW. Remove the later 480-DIP stage choice row entirely; no duplicate controls or repeated text. The source graph's threshold/HP-tick handles and all CFG/preset behavior are unchanged.
+
+Move the strictly read-only 176-DIP-high DAMAGE TICK TIMELINE from Y=531 to Y=470. The entire board and XAML MinHeight become 665 DIP (previous 726). Preserve its max 760-DIP centered width, up to three source-derived tick markers, and the existing 1 S/TICK EST. caveat. Replace the bottom message with only DEAD IN m:ss, with gold time, or NO HP DAMAGE if selected stage cannot damage HP. The stage-constant assumption stays in the card tooltip, not the permanent HUD. No timeline scrubbing or additional scenario sliders. This is the latest binding Bleeding UI specification and supersedes earlier same-day layouts below.
+
+
 ### 2026-10-14 — Bleeding read-only timeline like Hunger (CURRENT)
 
 **Supersedes the 2026-10-14 manual-stage-timeline, WOUND BLEED, HP AT ONSET and draggable tick rail contracts below.** Survival → BLEEDING SYSTEM keeps its original CFG-backed, editable step graph: LOW/MEDIUM/SEVERE damage HP/TICK, Medium/Severe thresholds, Bleeding Inflicted and Natural Recovery. The stage editor still uses three **compact 50-DIP choice chips** at Y=470, centered in a maximum-480-DIP bank, directly above the existing 176-DIP DAMAGE TICK TIMELINE card at Y=531. Click a chip to switch the **single stage being previewed**. Hover is white, selected outline is gold, and only genuinely modified source HP/TICK numerals become gold. Right-click any chip to return to LOW; Left/Right/Up/Down/Home/End work on a selected chip. These choices are local-only preview controls and write no CFG. Source stage graph remains the only editor for actual HP/TICK and threshold values.

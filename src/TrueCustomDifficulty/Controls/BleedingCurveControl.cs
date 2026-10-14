@@ -24,7 +24,7 @@ public sealed class BleedingCurveControl : FrameworkElement
 
     private const double CurveMaximumDamage = 4.0;
     private const double LowThreshold = 0.1;
-    private const double DesiredHeight = 726.0;
+    private const double DesiredHeight = 665.0;
     private const string MaxHpId = "health.maxHP";
 
     private ParameterViewModel? _severity;
@@ -46,7 +46,8 @@ public sealed class BleedingCurveControl : FrameworkElement
     private DragTarget _hoverTarget = DragTarget.None;
     private DragTarget _dragTarget = DragTarget.None;
     private DragTarget _selectedTarget = DragTarget.LowDamage;
-    // Stage is selected only through these three chips; the time rail is noninteractive.
+    // The only three stage cards show thresholds and live HP/tick, and select the preview stage.
+    // The time rail stays purely informational.
     private int _previewStageIndex;
     private readonly Rect[] _stageChoiceHits = new Rect[3];
     private ScenarioInput _scenarioHover;
@@ -451,6 +452,10 @@ public sealed class BleedingCurveControl : FrameworkElement
         DrawStageCurve(points, new Pen(accent, 2.8));
 
         var labels = new[] { "LOW", "MEDIUM", "SEVERE" };
+        const double stageGap = 8.0;
+        var stageBankWidth = Math.Min(618.0, Math.Max(1.0, ActualWidth - 32.0));
+        var stageCardWidth = (stageBankWidth - 2.0 * stageGap) / 3.0;
+        var stageBankLeft = (ActualWidth - stageBankWidth) / 2.0;
         for (var i = 0; i < 3; i++)
         {
             var selected = DamageTargetForIndex(i) == _selectedTarget;
@@ -479,21 +484,26 @@ public sealed class BleedingCurveControl : FrameworkElement
                 dc.DrawEllipse(panel, new Pen(accent, IsSelectedThreshold(i) ? 2.4 : 1.5), new Point(x[i], _plotRect.Bottom + 3.0), 5.5, 5.5);
             }
 
-            // Each stage owns a separate caption column; threshold points
-            // may be dragged close together without text collisions.
-            var cardWidth = (ActualWidth - 44.0) / 3.0;
-            var card = new Rect(16 + i * cardWidth, 405, cardWidth - 4, 44);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1), card, 3, 3);
+            // One compact unified bank: each card is both the stage threshold/
+            // damage readout and the stage selector for the read-only timeline.
+            var card = new Rect(stageBankLeft + i * (stageCardWidth + stageGap),
+                405.0, stageCardWidth, 44.0);
+            _stageChoiceHits[i] = card;
+            var active = _previewStageIndex == i;
+            var hovering = _scenarioHover == StageInput(i);
+            dc.DrawRoundedRectangle(panel,
+                new Pen(active ? accent : hovering ? Brushes.White : border,
+                    active ? 1.7 : 1.0), card, 3, 3);
             DrawSourceNumber(dc,
                 $"{labels[i]} AT {currentThresholds[i]:0.#} PTS",
                 new Point(card.Left + card.Width / 2, card.Top + 5),
-                10.1, text, accent, FontWeights.Bold,
+                10.1, active || hovering ? Brushes.White : text, accent, FontWeights.Bold,
                 (i == 1 ? _mediumThreshold : i == 2 ? _severeThreshold : null)
                     ?.IsValueModifiedFromReference() == true);
             DrawSourceNumber(dc,
                 $"{currentValues[i]:0.##} HP / TICK",
                 new Point(card.Left + card.Width / 2, card.Top + 25),
-                10.4, text, accent, FontWeights.Bold,
+                10.4, active || hovering ? Brushes.White : text, accent, FontWeights.Bold,
                 _damage[i]?.IsValueModifiedFromReference() == true);
         }
 
@@ -540,46 +550,16 @@ public sealed class BleedingCurveControl : FrameworkElement
         InvalidateVisual();
     }
 
-    private void DrawStageChoices(DrawingContext dc,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
-    {
-        const double gap = 8.0;
-        var width = Math.Min(480.0, Math.Max(1.0, ActualWidth - 32.0));
-        var left = (ActualWidth - width) / 2.0;
-        var cardWidth = (width - gap * 2.0) / 3.0;
-        var activeStage = new[] { "LOW", "MEDIUM", "SEVERE" }[_previewStageIndex];
-        var labels = new[] { "LOW", "MEDIUM", "SEVERE" };
-        for (var i = 0; i < 3; i++)
-        {
-            var chip = new Rect(left + i * (cardWidth + gap), 470.0, cardWidth, 50.0);
-            _stageChoiceHits[i] = chip;
-            var active = activeStage == labels[i];
-            var hovering = _scenarioHover == StageInput(i);
-            dc.DrawRoundedRectangle(panel,
-                new Pen(active ? accent : hovering ? Brushes.White : border, active ? 1.7 : 1.0),
-                chip, 4, 4);
-            DrawCenteredText(dc, labels[i],
-                new Point(chip.Left + chip.Width / 2.0, chip.Top + 6.0),
-                10.2, active || hovering ? Brushes.White : muted, FontWeights.Bold);
-            var damage = _damage[i]?.CurrentNumber ?? (i == 0 ? 1.0 : i == 1 ? 1.5 : 2.0);
-            DrawSourceNumber(dc, $"{damage:0.##} HP/TICK",
-                new Point(chip.Left + chip.Width / 2.0, chip.Top + 25.0),
-                10.7, text, accent, FontWeights.Bold,
-                _damage[i]?.IsValueModifiedFromReference() == true);
-        }
-    }
-
     // Same communication-only three-tick rail as Hunger/Starvation.
     // No seek cursor, no drag capture, no per-second stage editing.
     private void DrawBleedTimeline(DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush soft, Brush accent, Brush panel)
     {
-        const double previewTop = 531.0;
+        const double previewTop = 470.0;
         const double previewHeight = 176.0;
         var bankWidth = Math.Min(760.0, Math.Max(1.0, ActualWidth - 32.0));
         var left = (ActualWidth - bankWidth) / 2.0;
         var result = ProjectBleed();
-        DrawStageChoices(dc, text, muted, border, accent, panel);
 
         var preview = new Rect(left, previewTop, bankWidth, previewHeight);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), preview, 4.0, 4.0);
@@ -633,23 +613,15 @@ public sealed class BleedingCurveControl : FrameworkElement
 
         var hud = new Rect(preview.Left + 12.0, preview.Top + 127.0,
             Math.Max(1.0, preview.Width - 24.0), 41.0);
-        var prefix = $"IF {result.Stage} HOLDS: ";
-        const string connector = " TICKS  /  ";
-        const string suffix = " TO 0 HP";
+        const string prefix = "DEAD IN ";
         var lethal = result.TicksToZero is long;
-        var countText = result.TicksToZero?.ToString(CultureInfo.InvariantCulture) ?? "—";
-        var timeText = result.TicksToZero is long ticks ? $"~{Clock(ticks)}" : "NO HP DAMAGE";
-        var summary = lethal
-            ? prefix + countText + connector + timeText + suffix
-            : "NO HP DAMAGE";
+        var timeText = lethal ? Clock(result.TicksToZero!.Value) : "NO HP DAMAGE";
+        var summary = lethal ? prefix + timeText : timeText;
         var formatted = CreateText(summary, 10.8, text, FontWeights.Bold);
         if (lethal)
         {
-            formatted.SetForegroundBrush(accent, prefix.Length, countText.Length);
-            formatted.SetFontSize(14.5, prefix.Length, countText.Length);
-            var offset = prefix.Length + countText.Length + connector.Length;
-            formatted.SetForegroundBrush(accent, offset, timeText.Length);
-            formatted.SetFontSize(19.0, offset, timeText.Length);
+            formatted.SetForegroundBrush(accent, prefix.Length, timeText.Length);
+            formatted.SetFontSize(19.0, prefix.Length, timeText.Length);
         }
         dc.DrawText(formatted,
             new Point(hud.Left + (hud.Width - formatted.WidthIncludingTrailingWhitespace) / 2.0,
@@ -666,12 +638,12 @@ public sealed class BleedingCurveControl : FrameworkElement
     }
 
     private const string ScenarioTip =
-        "Choose LOW, MEDIUM or SEVERE to display that source stage's HP/TICK. " +
+        "Select LOW, MEDIUM or SEVERE using the threshold/damage cards above the timeline. " +
         "The tick timeline is a read-only illustration like Starvation, not a slider. " +
         "The full-HP estimate assumes the chosen stage persists without transitions " +
         "and one tick per second; actual game cadence is unverified. " +
         "Natural Recovery, medicine, armor and new injuries are not modeled. " +
-        "Right-click any stage choice to return to LOW. These choices never write CFG.";
+        "Right-click any stage card to return to LOW. These choices never write CFG.";
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {

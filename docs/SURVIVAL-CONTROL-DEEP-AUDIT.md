@@ -1,5 +1,12 @@
 # Survival Control Deep Audit — v0.2.47
 
+### 2026-10-14 — Bleeding unified stage row and concise death HUD (CURRENT)
+
+Bleeding UI presentation only: three existing PTS-threshold plus HP/TICK cards at Y=405 now also serve as LOW/MEDIUM/SEVERE preview selectors; the redundant separate stage-choice row is removed. The unified centered 618-DIP max row retains live Medium/Severe threshold, Low/Medium/Severe HP/TICK, 44-DIP cards, gold selection outline, white hover, keyboard and right-click LOW reset. Selected stage only changes the read-only damage preview, never the CFG. All seven real Bleeding CFG parameter writers, group R reset, preset IDs, clickable difficulty markers and graph edit handles are unchanged.
+
+Damage tick timeline moves to Y=470; Bleeding host and MainWindow.xaml MinHeight are 665 DIP. Its estimate uses live Max HP and currently selected stage HP/TICK, up to three visual tick markers, with 1 S/TICK EST. Visible bottom HUD is solely DEAD IN m:ss (gold time) or NO HP DAMAGE. The stage-held assumption is shown in the hover explanation; engine cadence is unverified. This replaces earlier same-day duplicate selector/HUD descriptions.
+
+
 ### 2026-10-14 — Bleeding read-only timeline like Hunger (CURRENT)
 
 **Supersedes the 2026-10-14 manual-stage-timeline, WOUND BLEED, HP AT ONSET and draggable tick rail contracts below.** Survival → BLEEDING SYSTEM keeps its original CFG-backed, editable step graph: LOW/MEDIUM/SEVERE damage HP/TICK, Medium/Severe thresholds, Bleeding Inflicted and Natural Recovery. The stage editor still uses three **compact 50-DIP choice chips** at Y=470, centered in a maximum-480-DIP bank, directly above the existing 176-DIP DAMAGE TICK TIMELINE card at Y=531. Click a chip to switch the **single stage being previewed**. Hover is white, selected outline is gold, and only genuinely modified source HP/TICK numerals become gold. Right-click any chip to return to LOW; Left/Right/Up/Down/Home/End work on a selected chip. These choices are local-only preview controls and write no CFG. Source stage graph remains the only editor for actual HP/TICK and threshold values.
