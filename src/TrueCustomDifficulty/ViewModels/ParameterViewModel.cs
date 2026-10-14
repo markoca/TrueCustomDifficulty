@@ -103,7 +103,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "ItemWeightBoard" => "Drag AMMUNITION WEIGHT or FOOD & MEDICINE WEIGHT independently.",
                     "AnomalyGlobalDamage" => "Turn GLOBAL to scale damage for all anomalies. Each column shows FINAL (combined, before protection) and BASE (editable individual damage); bars compare BASE with vanilla.",
                     "AnomalySpecialEffects" => "Drag the Razor, Diamond or Psy track you want to change; each is independent.",
-                    "NpcLootLoadout" => "Choose an Extra Corpse Loot option, drag the medical or ammo track, or move the weapon-condition MIN/MAX handles. The ammo numbers update as you change the setting.",
+                    "NpcLootLoadout" => "Choose a corpse bonus icon, tune medical or bonus ammo drops, or adjust weapon condition MIN/MAX. Bonus ammo only applies with Medicine + Ammo; regular weapon ammo stays unchanged.",
                     "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
                     "StashRewardProfile" => "Drag the BASIC, STANDARD or RARE ammo-tier bars; bonus grenade and coupon rolls have independent controls below.",
                     "AmmoDistribution" => "Use AMMO YIELD or GRENADE YIELD for quantities. Turn the four AMMO FAMILY WEIGHTS knobs to change which calibers are favored; SNG/NATO pool bars are read-only.",

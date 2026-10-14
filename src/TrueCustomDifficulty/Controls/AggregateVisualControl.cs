@@ -1236,6 +1236,60 @@ public sealed class AggregateVisualControl : FrameworkElement
     // One categorical corpse bonus, two native quantities, and one real
     // MIN/MAX condition range. The two vertically separated endpoint handles
     // are independently hit-testable even when both numbers coincide.
+
+    // WPF vector glyphs avoid icon fonts or emoji dependency under Wine.
+    private static void DrawNpcCorpsePackageIcon(
+        DrawingContext dc, string optionValue, Point center, Brush ink)
+    {
+        var pen = new Pen(ink, 1.9)
+        {
+            StartLineCap = PenLineCap.Round,
+            EndLineCap = PenLineCap.Round,
+            LineJoin = PenLineJoin.Round
+        };
+        if (optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal))
+        {
+            // Compact medical case (cross) and two cartridges.
+            dc.DrawRoundedRectangle(null, pen,
+                new Rect(center.X - 27.0, center.Y - 10.0, 27.0, 22.0), 3.0, 3.0);
+            dc.DrawLine(pen, new Point(center.X - 20.0, center.Y - 10.0),
+                new Point(center.X - 20.0, center.Y - 14.0));
+            dc.DrawLine(pen, new Point(center.X - 20.0, center.Y - 14.0),
+                new Point(center.X - 7.0, center.Y - 14.0));
+            dc.DrawLine(pen, new Point(center.X - 7.0, center.Y - 14.0),
+                new Point(center.X - 7.0, center.Y - 10.0));
+            dc.DrawLine(pen, new Point(center.X - 13.5, center.Y - 5.0),
+                new Point(center.X - 13.5, center.Y + 7.0));
+            dc.DrawLine(pen, new Point(center.X - 19.5, center.Y + 1.0),
+                new Point(center.X - 7.5, center.Y + 1.0));
+            dc.DrawRoundedRectangle(null, pen,
+                new Rect(center.X + 8.0, center.Y - 11.0, 6.0, 23.0), 2.8, 2.8);
+            dc.DrawRoundedRectangle(null, pen,
+                new Rect(center.X + 19.0, center.Y - 7.0, 6.0, 19.0), 2.8, 2.8);
+        }
+        else if (optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal))
+        {
+            // Bottle cap, shoulder and waterline.
+            dc.DrawRoundedRectangle(null, pen,
+                new Rect(center.X - 10.0, center.Y - 6.0, 20.0, 20.0), 4.0, 4.0);
+            dc.DrawLine(pen, new Point(center.X - 6.0, center.Y - 6.0),
+                new Point(center.X - 6.0, center.Y - 10.0));
+            dc.DrawLine(pen, new Point(center.X + 6.0, center.Y - 6.0),
+                new Point(center.X + 6.0, center.Y - 10.0));
+            dc.DrawRoundedRectangle(null, pen,
+                new Rect(center.X - 7.0, center.Y - 15.0, 14.0, 5.0), 1.5, 1.5);
+            dc.DrawLine(pen, new Point(center.X - 5.0, center.Y + 4.0),
+                new Point(center.X + 5.0, center.Y + 4.0));
+        }
+        else
+        {
+            // No EXTRA corpse loot, not an empty normal NPC inventory.
+            dc.DrawEllipse(null, pen, center, 11.0, 11.0);
+            dc.DrawLine(pen, new Point(center.X - 7.6, center.Y + 7.6),
+                new Point(center.X + 7.6, center.Y - 7.6));
+        }
+    }
+
     private void DrawNpcLootLoadout(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -1275,12 +1329,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 selected ? CloneWithOpacity(accent, 0.10) : panel,
                 new Pen(selected ? accent : hover ? CloneWithOpacity(accent, 0.7) : border,
                     selected ? 1.6 : 0.9), rect, 4.0, 4.0);
-            var caption = CreateText(corpse.ChoiceOptions[i].Label, 10.6,
-                selected ? accent : text, FontWeights.SemiBold,
-                Math.Max(1.0, cell - 12.0));
-            dc.DrawText(caption, new Point(
-                rect.Left + (rect.Width - caption.WidthIncludingTrailingWhitespace) / 2.0,
-                rect.Top + (rect.Height - caption.Height) / 2.0));
+            // Icon-only option; exact package name is available on hover.
+            DrawNpcCorpsePackageIcon(dc, corpse.ChoiceOptions[i].Value,
+                new Point(rect.Left + rect.Width / 2.0, rect.Top + rect.Height / 2.0),
+                hover ? Brushes.White : selected ? accent : text);
             if (corpse.IsControlEnabled)
                 _hitTargets.Add(new HitTarget(corpse, rect, rect, HitKind.Choice, i, i, false));
         }
@@ -1289,7 +1341,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawHorizontalTrackCard(dc, medical, "MEDICAL DROPS",
             new Rect(margin, 155.0, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
-        DrawHorizontalTrackCard(dc, ammo, "NPC AMMO",
+        DrawHorizontalTrackCard(dc, ammo, "NPC AMMO DROPS",
             new Rect(margin + half + gap, 155.0, half, 72.0),
             text, muted, border, accent, panel, pairedValueFormatting: true);
 
@@ -1315,14 +1367,14 @@ public sealed class AggregateVisualControl : FrameworkElement
         var sampleCard = new Rect(margin, 238.0, width, 172.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9),
             sampleCard, 4.0, 4.0);
-        DrawText(dc, "NPC AMMO PREVIEW",
+        DrawText(dc, "BONUS AMMO PREVIEW",
             new Point(sampleCard.Left + 11.0, sampleCard.Top + 7.0),
             10.3, ammoPackageActive ? text : muted, FontWeights.Bold);
 
-        // Cap the sample grid width: three compact columns instead of
-        // stretching all nine NPC-ammo samples across the entire panel.
+        // Nine read-only bonus-ammo samples form a tight central three-column
+        // group; normal weapon-attached ammunition remains independent.
         const double previewGap = 6.0;
-        var previewTotalWidth = Math.Min(630.0, sampleCard.Width - 22.0);
+        var previewTotalWidth = Math.Min(516.0, sampleCard.Width - 22.0);
         var previewLeft = sampleCard.Left + (sampleCard.Width - previewTotalWidth) / 2.0;
         var previewWidth = (previewTotalWidth - 2.0 * previewGap) / 3.0;
         for (var i = 0; i < examples.Length; i++)
@@ -1350,7 +1402,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         if (!ammoPackageActive)
         {
-            DrawText(dc, "Inactive until Medicine + Ammo is selected",
+            DrawText(dc, "Bonus ammo off · weapon ammo unaffected",
                 new Point(sampleCard.Left + 12.0, sampleCard.Bottom - 11.0),
                 9.5, muted, FontWeights.Normal);
         }
@@ -5822,6 +5874,17 @@ public sealed class AggregateVisualControl : FrameworkElement
         InvalidateVisual();
     }
 
+    private static string NpcCorpseChoiceTooltip(HitTarget target)
+    {
+        var option = target.Parameter.ChoiceOptions[(int)target.VisualMinimum];
+        var detail = option.Value.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)
+            ? "Adds medicine and bonus ammo to normal NPC inventory."
+            : option.Value.Contains("NPC_Water_Smart", StringComparison.Ordinal)
+                ? "Adds bonus water; normal NPC inventory remains."
+                : "No extra package; normal NPC inventory remains.";
+        return option.Label + "\n" + detail + "\nRight-click = Base Preset";
+    }
+
     private void SetHoverTarget(HitTarget? target)
     {
         // HitTarget records are rebuilt on every render. Compare their source
@@ -5845,7 +5908,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 HitKind.Toggle => $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset",
                 HitKind.DrinkDurationOverride =>
                     "Override Consumable Duration Limits\nOFF: native limits. ON: drinks up to 270 s and Vinca, Hercules, Psi Block up to 900 s.\nRight-click resets.",
+                HitKind.Choice when Family == "NpcLootLoadout" => NpcCorpseChoiceTooltip(target),
                 HitKind.Choice => $"{target.Parameter.Label}\nChoose a corpse-loot package · Right-click = Base Preset",
+                HitKind.Horizontal when target.Parameter.Id == "loot.npcWeaponAmmoSupply" =>
+                    "NPC Ammo Drops\nScales bonus ammo with Medicine + Ammo; normal weapon ammo is unchanged.",
                 HitKind.MixerBaseMarker => $"{target.Parameter.Label}\nClick to snap to selected Base Preset",
                 HitKind.MixerSelect => $"{target.Parameter.Label}\nClick for detailed rationale · Use the fader rail to edit",
                 HitKind.RangeMin => "NPC weapon condition MIN\nDrag or use arrow keys · Right-click = reset full range",

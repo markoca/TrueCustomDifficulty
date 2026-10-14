@@ -20,6 +20,9 @@ The tool does not expose a Loot control merely because related fields exist. A v
 
 ### Extra NPC Corpse Loot
 
+**Current UI (2026-10-14):** Three source-choice icons represent Medicine + Ammo, Water and None, with hover tooltips. **NPC AMMO DROPS** and its compact, nine-card **BONUS AMMO PREVIEW** tune only the extra NPC_Ammo_Smart corpse package; selecting Water or None does not prevent ordinary NPC weapon-attached ammo from appearing. These are distinct data domains. The existing writer target, source selection and saved preset key remain unchanged.
+
+
 This is backed by the explicit difficulty smart-loot list under `DifficultyPrototypes.cfg`. The writer edits the selected vanilla difficulty's `EconomyDifficulty.CorpseSmartLoot.GeneralNPC` list. The v0.1.78 deep audit confirms this is an **exact 1:1 set-list control** with only three source-aligned states: Novice = Medicine + Ammo, Stalker = Water, Veteran/Master = None. The three referenced SmartLoot packages have no mapped non-difficulty consumers, and their internal rank/group/item rows are not modified. See `docs/generators/SMARTLOOT-CORPSE-BONUS-AUDIT.md`.
 
 ### Rare Stash Coupon Chance

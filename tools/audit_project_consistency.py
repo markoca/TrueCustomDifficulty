@@ -3542,13 +3542,34 @@ if (_drunkenness_header_source.count(_segment_declaration) != 1
         or _drunkenness_header_source.index(_segment_declaration) > _drunkenness_header_source.index(_segment_marker)):
     fail("Alcohol progression segmentLeft must be declared before the selectable marker (CS0841)")
 
-# Loot presentation: source label, capped NPC ammunition grid and unframed global dial.
+# Loot presentation: bonus-ammo source label, icon selector, compact preview and unframed global dial.
 _loot_param = next((p for p in parameters if p.get("id") == "loot.worldAmmoCratesRemoved"), None)
 if _loot_param is None or _loot_param.get("label") != "Ammo Boxes Removed":
     fail("Loot world-ammo parameter must not display redundant World Loot Removal label")
 _npc_preview_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
-if any(_tok not in _npc_preview_source for _tok in ("Math.Min(630.0, sampleCard.Width - 22.0)", "var previewLeft = sampleCard.Left +", "(i / 3) * 41.0, previewWidth, 36.0")):
-    fail("NPC ammo compact preview grid changed")
+_npc_ammo_def = next((p for p in parameters if p.get("id") == "loot.npcWeaponAmmoSupply"), None)
+if _npc_ammo_def is None or _npc_ammo_def.get("label") != "NPC Ammo Drops":
+    fail("NPC ammo drops source label changed")
+if any(_tok not in _npc_preview_source for _tok in (
+    'DrawHorizontalTrackCard(dc, ammo, "NPC AMMO DROPS",',
+    'DrawText(dc, "BONUS AMMO PREVIEW",',
+    "Math.Min(516.0, sampleCard.Width - 22.0)",
+    "var previewLeft = sampleCard.Left +",
+    "(i / 3) * 41.0, previewWidth, 36.0",
+    "DrawNpcCorpsePackageIcon(dc, corpse.ChoiceOptions[i].Value,",
+    'optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)',
+    'optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal)',
+    'HitKind.Choice when Family == "NpcLootLoadout" => NpcCorpseChoiceTooltip(target)',
+    '"Bonus ammo off · weapon ammo unaffected"',
+    'var ammoPackageActive = corpse.CurrentText.Split(',
+)):
+    fail("NPC bonus ammo preview, icon-only selector or active-package UI drifted")
+if 'var caption = CreateText(corpse.ChoiceOptions[i].Label,' in _npc_preview_source:
+    fail("NPC corpse package icons must not have permanent text captions")
+if any("2026-10-14 — NPC bonus ammo presentation" not in
+       (ROOT / "docs" / f).read_text(encoding="utf-8")
+       for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
+    fail("NPC bonus ammo UI catalog entries missing")
 _anomaly_dial_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AnomalyDamageRadar.cs").read_text(encoding="utf-8")
 if "null, card, 4.0, 4.0);" not in _anomaly_dial_source or "new Pen(CloneWithOpacity(border, .7), 1.0), card" in _anomaly_dial_source:
     fail("Global anomaly multiplier card outline returned")

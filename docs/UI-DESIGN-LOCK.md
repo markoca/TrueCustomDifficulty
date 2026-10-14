@@ -1,5 +1,14 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-14 — NPC bonus ammo presentation (CURRENT)
+
+**Loot → NPC LOOT & EQUIPMENT** retains four independent sources and the unchanged **564-DIP** measured board and weapon-condition rail. The second scalar is now labeled **NPC AMMO DROPS** in the UI and catalog (source ID loot.npcWeaponAmmoSupply stays stable for existing presets); it scales only BONUS ammunition from the NPC_Ammo_Smart corpse package, NOT normal weapon-attached NPC ammo. The additional package applies only with **Medicine + Ammo**; choosing Water or None does not remove normal weapon ammo. The source range 0–3× / step 0.25×, generator clones, selected difficulty, save/reset, and output are unchanged. The preview heading is now **BONUS AMMO PREVIEW**. Its short disabled-state text is **“Bonus ammo off · weapon ammo unaffected”**, replacing ambiguous previous wording.
+
+The three 43-DIP-high centered **EXTRA CORPSE LOOT** selection chips now show font-independent WPF vector icons only: medical case plus cartridges (Medicine + Ammo), capped water bottle (Water), or circle with slash (None). Each icon maps directly to the original ordered ChoiceOptions value; no hidden fourth option. Unchanged full-chip choice hit rectangles, gold selected state, white hovered icon, mouse/keyboard selection and source right-click reset. Names and succinct package explanations, including independent regular NPC inventory, appear in per-chip tooltips; no redundant permanent labels or explanatory footer.
+
+The nine source-derived, read-only rank/caliber tiles now form a **maximum 516-DIP-wide** centered **3×3** grid (previously 630 DIP), retaining the 6-DIP gaps, 36-DIP tile height, 41-DIP row pitch, original order, integer-half-up preview, disabled styling and modified-value-only highlights. Host widths below 516 DIP shrink this group naturally. No extra UI controls, height increase or CFG/vanilla changes. This specification supersedes earlier 630-DIP, text-chip and generic NPC AMMO preview contracts. The consistency audit guards layout, icons, label and both catalogs. Local Wine visual and in-game verification remain pending.
+
+
 ### 2026-10-13 — Headshot Damage maximum increased to 4× (CURRENT)
 
 **Combat → YOUR WEAPONS → HEADSHOT DAMAGE** (`combat.playerHeadshotMultiplier`) retains its existing compact, prominent 270° rotary control and selected-difficulty baseline marker. The editable native range is now **0.5×–4×** (formerly 0.5×–3×), with the unchanged **0.25× step**, giving **15 genuine native tick positions**, including 4×. Keep the established radius, group spacing, label and number alignment, white hover indicator, changed-value-only yellow, source-only reset and preset handling. The CFG writer still targets `NPCCombatDifficulty.PlayerWeapon_HeadshotMultiplier`; only the allowed editor upper bound changes. This current specification supersedes historical 3×-maximum notes.

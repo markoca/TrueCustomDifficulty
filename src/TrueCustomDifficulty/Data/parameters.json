@@ -5604,7 +5604,7 @@
       "id": "loot.npcWeaponAmmoSupply",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
-      "label": "NPC Ammo Amount",
+      "label": "NPC Ammo Drops",
       "description": "Scales the generic NPC_Ammo_Smart bonus ammunition stacks on ordinary NPC corpses. This is not NPC weapon-attached ammo and not Breakable Box Ammo.",
       "control": "slider",
       "valueKind": "multiplier",
