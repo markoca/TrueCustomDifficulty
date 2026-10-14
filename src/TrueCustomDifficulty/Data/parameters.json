@@ -4522,8 +4522,8 @@
       "id": "stamina.sprintDisableThreshold",
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
-      "label": "Sprint Locks",
-      "description": "Sprinting stops once stamina falls below this threshold (16.1 STAMINA originally).",
+      "label": "Sprint Stops Below",
+      "description": "Below this STAMINA value, sprinting is disabled. Default: 16.1 of the vanilla 100 STAMINA pool.",
       "rationale": "Sets how low your stamina can fall before sprinting is forced to stop. Vanilla is 16.1 STAMINA.",
       "logic": "Higher values make sprint lock out earlier while stamina is still relatively high; lower values let the player sprint deeper into the stamina bar.",
       "interaction": "Pairs with Exhaustion Regen Delay; sets sprint lockout, not sprint speed or stamina drain.",
@@ -4571,7 +4571,7 @@
       "description": "Seconds before stamina regeneration resumes after sprint exhaustion.",
       "rationale": "Changes how long you must wait after running out of sprint stamina before recovery can begin.",
       "logic": "Higher values make exhaustion pauses last longer before recovery can resume; lower values shorten the pause.",
-      "interaction": "Applies after sprint exhausts the player; Sprint Lock Below sets the triggering stamina level.",
+      "interaction": "Applies after sprint exhaustion; Sprint Stops Below determines the separate lockout threshold.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4610,8 +4610,8 @@
       "id": "stamina.lowRecoveryThreshold",
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
-      "label": "Recovery Kicks In",
-      "description": "Below this amount of stamina, the conditional low-stamina regeneration boost can activate (30 STAMINA originally).",
+      "label": "Boost Starts Below",
+      "description": "Below this STAMINA value, the separate low-stamina recovery boost becomes eligible. Default: 30 STAMINA.",
       "rationale": "Sets the stamina level that triggers emergency low-stamina recovery. Vanilla is 30 STAMINA.",
       "logic": "Higher values allow the low-stamina recovery helper to engage across a larger portion of the bar; lower values reserve it for near-exhaustion.",
       "interaction": "Pairs with low-stamina Boost Rate and low-stamina Boost Duration, not the sprint lockout threshold.",
@@ -4621,7 +4621,7 @@
         "primary": "raw",
         "rawFormat": "0",
         "unit": "STAMINA",
-        "valueLabel": "Emergency recovery starts below"
+        "valueLabel": "Boost starts below"
       },
       "vanilla": {
         "All": 30
@@ -4659,7 +4659,7 @@
       "description": "Regeneration strength of the temporary low-stamina recovery boost (10 STAMINA/s originally).",
       "rationale": "Sets how strong emergency stamina recovery is while it is active. Vanilla is 10 STAMINA/s.",
       "logic": "Higher values make the emergency recovery effect stronger; lower values make low-stamina recovery closer to the ordinary base rate.",
-      "interaction": "Boost Activates Below sets its trigger; low-stamina Boost Duration sets how long it lasts.",
+      "interaction": "Boost Starts Below sets its trigger; low-stamina Boost Duration sets how long it lasts.",
       "control": "slider",
       "valueKind": "raw",
       "display": {

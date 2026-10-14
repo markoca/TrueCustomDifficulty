@@ -2118,8 +2118,8 @@ else:
 # The independently edited original Exhaustion sources must remain in the
 # gamer-first shared-zone / three-group renderer, not six generic cards.
 _exhaustion_names = {
-    "stamina.sprintDisableThreshold": "Sprint Locks",
-    "stamina.lowRecoveryThreshold": "Recovery Kicks In",
+    "stamina.sprintDisableThreshold": "Sprint Stops Below",
+    "stamina.lowRecoveryThreshold": "Boost Starts Below",
     "stamina.aimRegenCoef": "Aiming Regen Penalty",
     "stamina.sprintRecoveryDelay": "Exhaustion Regen Delay",
     "stamina.lowRecoveryStrength": "Boost Strength",
@@ -2143,18 +2143,34 @@ _exhaustion_render_markers = (
     'DrawLowStaminaBoostCard(dc,',
     'DrawRecoverySourceTrack(dc, _lowRecoveryStrength, "STRENGTH"',
     'DrawRecoverySourceTrack(dc, _lowRecoveryDuration, "DURATION"',
-    '"SPRINT LOCKS"', '"RECOVERY KICKS IN"',
-    'const double staminaMin = 0.0;',
-    'const double staminaMax = 60.0;',
+    '"SPRINT STOPS BELOW"', '"BOOST STARTS BELOW"',
+    '"STAMINA THRESHOLDS"',
+    'private const string MaxStaminaParameterId = "stamina.maxSP";',
+    'byId.TryGetValue(MaxStaminaParameterId, out _maximumStamina);',
+    'var staminaMax = Math.Max(100.0, _maximumStamina?.CurrentNumber ?? 100.0);',
+    'var axisLabelY = rail.Bottom + 11.0;',
+    'new Point(rail.Left, axisLabelY)',
+    'new Point(rail.Right, axisLabelY)',
     'y - 34.0', 'y + 2.0',
 )
 if (any(_exhaustion_catalog.get(pid, {}).get("label") != name
         for pid, name in _exhaustion_names.items())
     or any(marker not in _exhaustion_renderer for marker in _exhaustion_render_markers)
-    or 'DrawExhaustionTrackCard(' in _exhaustion_renderer):
-    fail("Stamina States: Exhaustion layout or six source-backed handles drifted")
+    or 'DrawExhaustionTrackCard(' in _exhaustion_renderer
+    or 'const double staminaMax = 60.0;' in _exhaustion_renderer
+    or 'new Point(rail.Left, card.Bottom - 22.0)' in _exhaustion_renderer
+    or 'new Point(rail.Right, card.Bottom - 22.0)' in _exhaustion_renderer):
+    fail("Stamina thresholds: gamer semantics, axis and six source-backed handles drifted")
+elif any(_exhaustion_catalog[pid]["slider"]["max"] != maximum
+         for pid, maximum in {
+             "stamina.sprintDisableThreshold": 32.2,
+             "stamina.lowRecoveryThreshold": 60,
+         }.items()):
+    fail("Stamina thresholds: native 32.2/60 edit maxima drifted")
+elif '_maximumStamina?.CurrentNumber' not in _exhaustion_renderer or 'if (_maximumStamina is not null)' not in _exhaustion_renderer:
+    fail("Stamina thresholds: Max Stamina change subscription missing")
 else:
-    note("Stamina States: two independently draggable 0..60 STAMINA markers and three source-backed groups")
+    note("Stamina thresholds: dynamic default 0..100 STAMINA ruler, independent native ranges, three source-backed recovery groups")
 
 # Radiation Removal is no longer a separate AggregateVisualControl family.
 # Four native-source vertical RAD columns must sit in one compact right bank,

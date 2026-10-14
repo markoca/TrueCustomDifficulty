@@ -24,6 +24,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     private bool IsExhaustion => string.Equals(Mode, "Exhaustion", StringComparison.Ordinal);
 
     private const string AimParameterId = "stamina.aimRegenCoef";
+    private const string MaxStaminaParameterId = "stamina.maxSP";
     private const string SprintDisableThresholdId = "stamina.sprintDisableThreshold";
     private const string SprintRecoveryDelayId = "stamina.sprintRecoveryDelay";
     private const string LowRecoveryThresholdId = "stamina.lowRecoveryThreshold";
@@ -45,6 +46,8 @@ public sealed class ActionCostsRadar : FrameworkElement
     private readonly VisualStatusMessage _status;
 
     private ParameterViewModel? _aimParameter;
+    // Read-only visual ruler dependency. Never include in this board's R-reset group.
+    private ParameterViewModel? _maximumStamina;
     private ParameterViewModel? _sprintDisableThreshold;
     private ParameterViewModel? _sprintRecoveryDelay;
     private ParameterViewModel? _lowRecoveryThreshold;
@@ -107,8 +110,12 @@ public sealed class ActionCostsRadar : FrameworkElement
                 parameter.PropertyChanged -= Parameter_PropertyChanged;
         }
 
+        if (_maximumStamina is not null)
+            _maximumStamina.PropertyChanged -= Parameter_PropertyChanged;
+
         Array.Clear(_actionParameters, 0, _actionParameters.Length);
         _aimParameter = null;
+        _maximumStamina = null;
         _sprintDisableThreshold = null;
         _sprintRecoveryDelay = null;
         _lowRecoveryThreshold = null;
@@ -131,6 +138,8 @@ public sealed class ActionCostsRadar : FrameworkElement
             }
 
             byId.TryGetValue(AimParameterId, out _aimParameter);
+            if (IsExhaustion)
+                byId.TryGetValue(MaxStaminaParameterId, out _maximumStamina);
             byId.TryGetValue(SprintDisableThresholdId, out _sprintDisableThreshold);
             byId.TryGetValue(SprintRecoveryDelayId, out _sprintRecoveryDelay);
             byId.TryGetValue(LowRecoveryThresholdId, out _lowRecoveryThreshold);
@@ -142,6 +151,8 @@ public sealed class ActionCostsRadar : FrameworkElement
                 if (parameter is not null)
                     parameter.PropertyChanged += Parameter_PropertyChanged;
             }
+            if (_maximumStamina is not null)
+                _maximumStamina.PropertyChanged += Parameter_PropertyChanged;
         }
 
         InvalidateVisual();
@@ -283,8 +294,10 @@ public sealed class ActionCostsRadar : FrameworkElement
     }
 
 
-    // STAMINA STATES: the two source thresholds share one honest 0..60 STAMINA
-    // visual ruler. Their hit lanes are separate above/below that ruler so
+    // STAMINA THRESHOLDS: player-facing ruler starts at vanilla's 100 STAMINA,
+    // grows with edited Max Stamina, and is never confused with the 60-point
+    // native ceiling of the separate recovery-boost threshold.
+    // Their hit lanes are separate above/below the ruler so
     // both remain independently draggable even when their values coincide.
     // The other four CFG sources occupy three distinct gameplay groups.
     private void DrawExhaustionBoard(
@@ -339,7 +352,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         DrawRecoveryFrame(dc, card, panel, border);
-        DrawCenteredText(dc, "STAMINA ZONES",
+        DrawCenteredText(dc, "STAMINA THRESHOLDS",
             new Point(card.Left + card.Width / 2.0, card.Top + 16.0),
             10.2, text, FontWeights.Bold);
 
@@ -349,9 +362,9 @@ public sealed class ActionCostsRadar : FrameworkElement
         var compact = card.Height < 220.0;
         var firstLabelY = card.Top + (compact ? 34.0 : 46.0);
         var secondLabelY = card.Top + (compact ? 134.0 : 183.0);
-        DrawZoneValue(dc, _sprintDisableThreshold, "SPRINT LOCKS", firstLabelY,
+        DrawZoneValue(dc, _sprintDisableThreshold, "SPRINT STOPS BELOW", firstLabelY,
             card, text, accent);
-        DrawZoneValue(dc, _lowRecoveryThreshold, "RECOVERY KICKS IN", secondLabelY,
+        DrawZoneValue(dc, _lowRecoveryThreshold, "BOOST STARTS BELOW", secondLabelY,
             card, text, accent);
 
         // One common STAMINA space with two skinny independent color traces. The
@@ -362,7 +375,11 @@ public sealed class ActionCostsRadar : FrameworkElement
             Math.Max(1.0, card.Width - 42.0), 8.0);
         var y = rail.Top + rail.Height / 2.0;
         const double staminaMin = 0.0;
-        const double staminaMax = 60.0;
+        // The original game uses 100 STAMINA, not 60. If Max Stamina is
+        // raised past 100, extend this same absolute-unit ruler to that pool.
+        // Below 100 retain a comparable reference scale; the editable native
+        // limits remain Sprint 0..32.2 and Boost 1..60 independently.
+        var staminaMax = Math.Max(100.0, _maximumStamina?.CurrentNumber ?? 100.0);
         var sprintX = ValueToX(_sprintDisableThreshold.CurrentNumber, staminaMin, staminaMax, rail);
         var boostX = ValueToX(_lowRecoveryThreshold.CurrentNumber, staminaMin, staminaMax, rail);
         var sprintReferenceX = ValueToX(_sprintDisableThreshold.ReferenceNumber, staminaMin, staminaMax, rail);
@@ -391,15 +408,17 @@ public sealed class ActionCostsRadar : FrameworkElement
         DrawHandle(dc, _sprintDisableThreshold, sprintHandle, panel, accent);
         DrawHandle(dc, _lowRecoveryThreshold, boostHandle, panel, accent);
 
-        DrawText(dc, "0 STAMINA", new Point(rail.Left, card.Bottom - 22.0),
+        // Endpoints belong to the rail, not the distant bottom of the card.
+        // Keep them symmetric and clear of both value labels at all widths.
+        var axisLabelY = rail.Bottom + 11.0;
+        DrawText(dc, "0 STAMINA", new Point(rail.Left, axisLabelY),
             9.2, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, "60 STAMINA",
-            new Point(rail.Right, card.Bottom - 22.0),
+        DrawRightAlignedText(dc, $"{staminaMax:0} STAMINA",
+            new Point(rail.Right, axisLabelY),
             9.2, muted, FontWeights.Normal);
 
-        // Avoid the dead 32.2..60 STAMINA sprint tail or the dead 0..1 STAMINA
-        // recovery segment becoming clickable input; both use the common
-        // 0..60 coordinate in UpdateTarget only within their native spans.
+        // Outside each source's native edit range the shared ruler is passive:
+        // Sprint 0..32.2 and Boost 1..60, regardless of the displayed pool.
         var sprintMaxX = ValueToX(_sprintDisableThreshold.Maximum, staminaMin, staminaMax, rail);
         var boostMinX = ValueToX(_lowRecoveryThreshold.Minimum, staminaMin, staminaMax, rail);
         AddTarget(_sprintDisableThreshold,

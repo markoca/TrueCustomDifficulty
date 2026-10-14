@@ -128,7 +128,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag an action's track to change how much stamina that move costs."
                     + Environment.NewLine + "Right-click one track to reset it; R resets all Stamina Usage actions.";
             if (IsExhaustionRecoveryMember)
-                return "Drag the upper marker to set when sprint locks; drag the lower marker to set when recovery kicks in."
+                return "On the STAMINA THRESHOLDS ruler, drag the top marker to choose when sprint stops, or the bottom marker to choose when the low-stamina boost starts. The ruler uses 100 STAMINA by default and expands with Maximum Stamina above 100; each marker keeps its own native limit."
                     + Environment.NewLine + "Aiming, exhaustion delay and low-stamina boost stay independent. Right-click one source or press R for all.";
             if (IsMedicalHealingMember)
                 return "Four HEAL/BLEED pairs and four RAD columns (Scientific, Anti-Rad, Beer, Vodka) edit independent effects."
