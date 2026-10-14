@@ -1,5 +1,38 @@
 # Factory Presets
 
+## 2026-10-14 — Abundance correction: all twelve profiles rebalanced (CURRENT)
+
+**This numerical pass implements the governing abundance-aware policy below.** Each of the twelve embedded profiles has been rebuilt across **46 existing CFG-backed balance controls** (world sources, NPC/container loot, trader stock, healing, money, repairs, carry/wear and selected hazards). Independent tuning is authored in `tools/factory_preset_scarcity_balance.json`; there is no fake universal scarcity setting. All original 247 parameter IDs remain; the earlier 37-entry source-completion matrix and all UI-control contracts remain unchanged.
+
+The following numbers are **configured source-specific controls**, not observed all-world percentages, live spawn statistics or demonstrated in-game drop rates. `Weapon density` applies only to compatible regular world-weapon locations; the removal sliders affect their own proven eligible categories.
+
+| Factory profile | Loose world removed | Ammo boxes removed | Food boxes removed | Medical boxes removed | World weapon density kept | Sleep HP |
+|---|---:|---:|---:|---:|---:|---:|
+| Immersive | 48% | 45% | 38% | 50% | 70% | 60 HP |
+| Tactical | 47% | 44% | 37% | 48% | 70% | 45 HP |
+| Field Medic | 43% | 52% | 38% | 32% | 70% | 90 HP |
+| Mutant Hunter | 52% | 50% | 40% | 48% | 70% | 50 HP |
+| Anomaly Runner | 50% | 55% | 40% | 52% | 70% | 60 HP |
+| Wanderer | 46% | 55% | 37% | 52% | 70% | 70 HP |
+| Mercenary | 48% | 42% | 55% | 50% | 65% | 50 HP |
+| Smuggler | 60% | 63% | 50% | 62% | 55% | 40 HP |
+| Scavenger | 66% | 60% | 54% | 66% | 45% | 35 HP |
+| Outcast | 75% | 78% | 65% | 78% | 30% | 25 HP |
+| Hardcore | 72% | 76% | 64% | 76% | 35% | 25 HP |
+| Hardcore+ | 84% | 86% | 78% | 86% | 20% | 15 HP |
+
+**System decisions (all 12):**
+- Ordinary food no longer restores HP. It remains a hunger resource. All optional NPC smart-loot corpse bonus packages are set to NONE, removing the extra water/medical-ammo source while leaving native NPC equipment and independently modeled corpse drops unchanged.
+- Bandages prioritize bleeding control instead of easy health restoration: only **Field Medic** and **Scavenger** retain a small **10 HP** healing bonus; every other factory profile uses **0 HP**. Bleeding removal remains an independent source with real CFG semantics. Field Medic's earlier invalid 130-point bandage bleeding removal is corrected to the true 100-point cap.
+- Sleep recovery is limited to **15–90 HP**, no longer an automatic 200-HP refill. Medkit potency, medical inventories and accessible treatment differ by role; Field Medic remains a relative medical specialist without unlimited medicine.
+- Ammo acquisition is reduced through separate NPC, stash, crate and trader routes; weapon density is controlled independently of shuffling. The existing nine non-quest unique weapons remain subject to their existing shuffle contract, not arbitrary removal.
+- Trader stock, mission income, resale values, consumable/ammo prices, weapon/armor costs, artifact/trophy prices, travel, wear and repairs are coordinated by profile. High-earning roles retain financial advantages, but cannot offset scarcity for free.
+- Extreme modes reduce their earlier combined **92% crate/loose removal**, near-zero quest earnings and punishing damage/wear stack. Hardcore+ remains the most resource-limited, but avoids deliberately unreachable recovery. Enemy maximum-health multipliers and preset difficulty references are not inflated to fake challenge.
+- Six previously out-of-range starvation tick intervals (12s beyond catalog 10s) are clamped to their actual editor ceiling. Current preset values must honor native source limits.
+- Previous untouched factory files are upgraded by a new **exact-byte Git blob SHA** migration table in `PresetDirectoryService`. This includes the immediately preceding 247-value factory release. Modified factory files, custom filenames, and users' personal profiles are never silently overwritten.
+
+**Acceptance:** regression checks validate exact 247 IDs/profile, authored 46-value role matrices, all source ranges and absolute-step grids in the new balance, food/NPC bonus/sleep invariants, parent drink durations, the existing 37-control expansion and Hardcore/Hardcore+ scarcity plus medical rules. These settings are *authored starting balance*, not a claim of measured game simulation; local compilation and gameplay verification are still required.
+
 ## 2026-10-14 — Abundance-aware, immersion-first balance policy (CURRENT)
 
 **Binding balance direction for every future factory-profile pass:** vanilla S.T.A.L.K.E.R. 2 is already generous with available items and resources. **A vanilla-level supply of consumables, ammunition, weapons, money or healing must not automatically be considered balanced merely because it is the game's baseline.** Factory presets aim to make the Zone credible and consequential, not simply increase enemy hit points or multiply damage.

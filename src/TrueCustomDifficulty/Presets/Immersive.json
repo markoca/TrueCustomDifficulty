@@ -180,23 +180,23 @@
     },
     "health.bandageHealing": {
       "kind": "slider",
-      "number": 20
+      "number": 0
     },
     "health.medkitHealing": {
       "kind": "slider",
-      "number": 65
+      "number": 60
     },
     "health.armyMedkitHealing": {
       "kind": "slider",
-      "number": 80
+      "number": 75
     },
     "health.ecoMedkitHealing": {
       "kind": "slider",
-      "number": 95
+      "number": 90
     },
     "health.foodHealing": {
       "kind": "toggle",
-      "boolean": true
+      "boolean": false
     },
     "health.masterBandageModifier": {
       "kind": "slider",
@@ -288,15 +288,15 @@
     },
     "loot.npcCorpseBonus": {
       "kind": "choiceSlider",
-      "text": "NPC_Water_Smart"
+      "text": ""
     },
     "loot.npcMedicalChance": {
       "kind": "slider",
-      "number": 0.95
+      "number": 0.65
     },
     "loot.npcWeaponAmmoSupply": {
       "kind": "slider",
-      "number": 1
+      "number": 0.5
     },
     "loot.droppedWeaponCondition": {
       "kind": "range",
@@ -305,7 +305,7 @@
     },
     "loot.cheapStashAmmoQuantity": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.cheapStashGrenadeChance": {
       "kind": "slider",
@@ -317,11 +317,11 @@
     },
     "loot.mediumStashAmmoQuantity": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.destructibleAmmoQuantity": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.ammoBoxWeight918": {
       "kind": "slider",
@@ -345,7 +345,7 @@
     },
     "loot.expensiveStashAmmoQuantity": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.expensiveStashMoneyChance": {
       "kind": "slider",
@@ -357,11 +357,11 @@
     },
     "economy.buyCondition": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.68
     },
     "economy.sellCondition": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1.17
     },
     "economy.itemValueFloor": {
       "kind": "slider",
@@ -369,47 +369,47 @@
     },
     "economy.traderAmmoStock": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "economy.medicStock": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "economy.consumableCost": {
       "kind": "slider",
-      "number": 1.08
+      "number": 1.18
     },
     "economy.ammoCost": {
       "kind": "slider",
-      "number": 1.08
+      "number": 1.15
     },
     "economy.armorCost": {
       "kind": "slider",
-      "number": 1.08
+      "number": 1.14
     },
     "economy.weaponCost": {
       "kind": "slider",
-      "number": 1.08
+      "number": 1.15
     },
     "economy.artifactCost": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1
     },
     "economy.mutantPartValue": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1.05
     },
     "economy.fastTravelCost": {
       "kind": "slider",
-      "number": 1.08
+      "number": 1.05
     },
     "economy.upgradeCost": {
       "kind": "slider",
-      "number": 1.08
+      "number": 1.12
     },
     "economy.repairCostBase": {
       "kind": "slider",
-      "number": 1.08
+      "number": 1.05
     },
     "economy.repairEnemy": {
       "kind": "slider",
@@ -429,23 +429,23 @@
     },
     "economy.mainQuestReward": {
       "kind": "slider",
-      "number": 0.94
+      "number": 0.85
     },
     "economy.sideQuestReward": {
       "kind": "slider",
-      "number": 0.94
+      "number": 0.85
     },
     "equipment.armorDurability": {
       "kind": "slider",
-      "number": 0.925926
+      "number": 0.9
     },
     "equipment.ammoWeight": {
       "kind": "slider",
-      "number": 1.08
+      "number": 1.12
     },
     "equipment.consumableWeight": {
       "kind": "slider",
-      "number": 1.08
+      "number": 1.1
     },
     "environment.anomalyDamage": {
       "kind": "slider",
@@ -477,7 +477,7 @@
     },
     "survival.starvationDamageInterval": {
       "kind": "slider",
-      "number": 12
+      "number": 10
     },
     "survival.starvationPenaltyDelay": {
       "kind": "slider",
@@ -509,7 +509,7 @@
     },
     "survival.sleepHealthRestore": {
       "kind": "slider",
-      "number": 200
+      "number": 60
     },
     "survival.sleepStaminaRestore": {
       "kind": "slider",
@@ -677,27 +677,27 @@
     },
     "equipment.weaponWearPerShot": {
       "kind": "slider",
-      "number": 1.08
+      "number": 1.12
     },
     "loot.worldAmmoCratesRemoved": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.45
     },
     "loot.worldF1GrenadeBoxes": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0.35
     },
     "loot.worldFoodDrinkCratesRemoved": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.38
     },
     "loot.worldMedicalCratesRemoved": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.5
     },
     "loot.looseWorldLootRemoved": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.48
     },
     "loot.worldWeaponShuffle": {
       "kind": "toggle",
@@ -705,7 +705,7 @@
     },
     "loot.worldWeaponDensity": {
       "kind": "slider",
-      "number": 0.95
+      "number": 0.7
     },
     "loot.worldAttachmentShuffle": {
       "kind": "toggle",

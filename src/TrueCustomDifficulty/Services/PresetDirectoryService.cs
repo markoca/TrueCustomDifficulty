@@ -121,6 +121,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "4a166781ebe98967454d83521c7f07bc6e09edd5",
     };
 
+    // Immediate predecessor: fully source-complete 247-entry factory files.
+    // Match exact Git blob identities: NEVER overwrite customized factory names.
+    private static readonly Dictionary<string, string> PreScarcityBalanceFactoryBlobs = new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "b2eb8030864f3588aefcd00103dd6a620dc15007",
+        ["Field Medic"] = "827d491b84a00c05da656ca6b2da6a46fe57e219",
+        ["Hardcore"] = "a210b7247cfa7de0e534de2e81b3f4b9d84fd01f",
+        ["Hardcore+"] = "2b357713e3ad46dddd70b0a1abfc80bd396eeaeb",
+        ["Immersive"] = "a45e761d9ba40c30cd1802efe487aa8e5a6a38b6",
+        ["Mercenary"] = "b1cc2175ae464dcfc54ef35f7537aad88aba4f1f",
+        ["Mutant Hunter"] = "98e6596f7a4eb8f20ada15abbd20097363277ef2",
+        ["Outcast"] = "d9e73ed6a8123862a784eb5a3efa14066ba73353",
+        ["Scavenger"] = "03d415702d72e2fd09580d214244770efe365f82",
+        ["Smuggler"] = "0f4c402a4131987bdb227331e7b2d3ccee2cba3f",
+        ["Tactical"] = "5f5ad32a1deb8685e5c57d5ba9b5a1b77ea056db",
+        ["Wanderer"] = "0d3be7a1e48a937369c4bd04e7179a155b5e2cb5",
+    };
+
     public string Ensure()
     {
         var directory = Path.Combine(AppContext.BaseDirectory, "Presets");
@@ -175,7 +193,8 @@ public sealed class PresetDirectoryService
             && !PreAlifeFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreCooldownFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreShortDurationFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreFullCoverageFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreFullCoverageFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreScarcityBalanceFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -197,7 +216,9 @@ public sealed class PresetDirectoryService
                 || (PreShortDurationFactoryBlobs.TryGetValue(name, out var preDurationHash)
                     && actual.Equals(preDurationHash, StringComparison.OrdinalIgnoreCase))
                 || (PreFullCoverageFactoryBlobs.TryGetValue(name, out var preFullCoverageHash)
-                    && actual.Equals(preFullCoverageHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preFullCoverageHash, StringComparison.OrdinalIgnoreCase))
+                || (PreScarcityBalanceFactoryBlobs.TryGetValue(name, out var preScarcityHash)
+                    && actual.Equals(preScarcityHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

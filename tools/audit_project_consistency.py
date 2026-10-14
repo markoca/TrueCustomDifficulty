@@ -1896,25 +1896,88 @@ if ('PreFullCoverageFactoryBlobs' not in _factory_service_text
         or 'if (!File.Exists(destination) || IsUnmodifiedPreviousFactory(name, destination))' not in _factory_service_text):
     _factory_errors.append("byte-identical old stock factory migration or user-edits safety missing")
 
+# Scarcity-first playstyle tuning locks: actual CFG sources, not an invented
+# universal percentage or gameplay simulation. No fabricated "overall loot" mode.
+_balance_matrix = json.loads((ROOT / "tools/factory_preset_scarcity_balance.json").read_text(encoding="utf-8"))
+_balance_groups = _balance_matrix["groups"]
+_balance_profiles = _balance_matrix["profiles"]
+_balance_ids = [pid for members in _balance_groups.values() for pid in members]
+if (_balance_matrix.get("version") != 1 or len(_balance_ids) != 46
+        or len(set(_balance_ids)) != 46 or not set(_balance_ids) <= set(_factory_catalog)
+        or set(_balance_profiles) != set(_factory_preset_names)):
+    _factory_errors.append("scarcity balance matrix must cover 46 unique sourced controls and all 12 profiles")
+for _name in _factory_preset_names:
+    _preset_path = _factory_preset_dir / f"{_name}.json"
+    if not _preset_path.exists() or _name not in _balance_profiles:
+        continue
+    _entries = json.loads(_preset_path.read_text(encoding="utf-8"))["values"]
+    _vectors = _balance_profiles[_name]
+    if len(_vectors) != len(_balance_groups):
+        _factory_errors.append(f"{_name}: scarcity balance group count drifted")
+        continue
+    for _group_idx, (_group, _source_ids) in enumerate(_balance_groups.items()):
+        if len(_vectors[_group_idx]) != len(_source_ids):
+            _factory_errors.append(f"{_name}: {_group} balance vector length drifted")
+            continue
+        for _pid, _target in zip(_source_ids, _vectors[_group_idx]):
+            _definition = _factory_catalog[_pid]
+            _stored = _entries.get(_pid, {})
+            _kind = "toggle" if _definition["control"] == "toggle" else "slider"
+            _value_key = "boolean" if _kind == "toggle" else "number"
+            if _stored.get("kind") != _kind or _stored.get(_value_key) != _target:
+                _factory_errors.append(f"{_name}: {_pid} balance drift {_stored} != {_target}")
+            if _kind == "slider":
+                _slider = _definition["slider"]
+                if not (_slider["min"] - 1e-8 <= _target <= _slider["max"] + 1e-8):
+                    _factory_errors.append(f"{_name}: {_pid} out of catalog range")
+                if _slider.get("stepMode") == "absolute":
+                    _snap = (_target - _slider["min"]) / _slider["step"]
+                    if abs(_snap - round(_snap)) > 1e-6:
+                        _factory_errors.append(f"{_name}: {_pid} not on native absolute-step grid")
+    if _entries["loot.npcCorpseBonus"].get("text") != _balance_matrix["corpseBonus"]:
+        _factory_errors.append(f"{_name}: surplus NPC smart-loot bonus returned")
+    if _entries["health.foodHealing"].get("boolean") is not False:
+        _factory_errors.append(f"{_name}: ordinary food restores free HP again")
+    if _entries["survival.sleepHealthRestore"].get("number", 1000) > 90:
+        _factory_errors.append(f"{_name}: unbounded free sleep HP restored")
+    if _entries["loot.looseWorldLootRemoved"].get("number", 0) < 0.4:
+        _factory_errors.append(f"{_name}: unaddressed vanilla world abundance")
+    if _entries["loot.worldWeaponDensity"].get("number", 1) > .70:
+        _factory_errors.append(f"{_name}: unaddressed abundant loose weapons")
+    if _entries["survival.starvationDamageInterval"].get("number", 1000) > _factory_catalog["survival.starvationDamageInterval"]["slider"]["max"]:
+        _factory_errors.append(f"{_name}: pre-existing starvation interval out of native bounds")
+    if _entries["health.bandageBleeding"].get("number", 1000) > _factory_catalog["health.bandageBleeding"]["slider"]["max"]:
+        _factory_errors.append(f"{_name}: bleeding treatment out of native bounds")
+    if _entries["economy.buyCondition"]["number"] >= _entries["economy.sellCondition"]["number"]:
+        _factory_errors.append(f"{_name}: trader resale/purchase incentives inverted")
+
+# Installed byte-identical full-coverage factory JSONs should upgrade to the
+# new authored balance; personalized factory-name/user-created JSONs must not.
+if ('PreScarcityBalanceFactoryBlobs' not in _factory_service_text
+        or '&& !PreScarcityBalanceFactoryBlobs.TryGetValue(name, out knownHash)' not in _factory_service_text
+        or 'PreScarcityBalanceFactoryBlobs.TryGetValue(name, out var preScarcityHash)' not in _factory_service_text
+        or 'if (!File.Exists(destination) || IsUnmodifiedPreviousFactory(name, destination))' not in _factory_service_text):
+    _factory_errors.append("scarcity balance factory upgrade changed user-file safety contract")
+
 _factory_scarcity_expectations = {
     "Hardcore": {
-        "loot.looseWorldLootRemoved": 0.79,
-        "loot.worldAmmoCratesRemoved": 0.79,
-        "loot.worldFoodDrinkCratesRemoved": 0.79,
-        "loot.worldMedicalCratesRemoved": 0.79,
-        "loot.worldWeaponDensity": 0.30,
-        "loot.npcMedicalChance": 0.30,
+        "loot.looseWorldLootRemoved": 0.72,
+        "loot.worldAmmoCratesRemoved": 0.76,
+        "loot.worldFoodDrinkCratesRemoved": 0.64,
+        "loot.worldMedicalCratesRemoved": 0.76,
+        "loot.worldWeaponDensity": 0.35,
+        "loot.npcMedicalChance": 0.35,
         "loot.npcWeaponAmmoSupply": 0.25,
         "economy.traderAmmoStock": 0.25,
         "economy.medicStock": 0.25,
     },
     "Hardcore+": {
-        "loot.looseWorldLootRemoved": 0.92,
-        "loot.worldAmmoCratesRemoved": 0.92,
-        "loot.worldFoodDrinkCratesRemoved": 0.92,
-        "loot.worldMedicalCratesRemoved": 0.92,
-        "loot.worldWeaponDensity": 0.15,
-        "loot.npcMedicalChance": 0.15,
+        "loot.looseWorldLootRemoved": 0.84,
+        "loot.worldAmmoCratesRemoved": 0.86,
+        "loot.worldFoodDrinkCratesRemoved": 0.78,
+        "loot.worldMedicalCratesRemoved": 0.86,
+        "loot.worldWeaponDensity": 0.20,
+        "loot.npcMedicalChance": 0.20,
         "loot.npcWeaponAmmoSupply": 0.25,
         "economy.traderAmmoStock": 0.25,
         "economy.medicStock": 0.25,
@@ -1946,7 +2009,7 @@ if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legac
 if _factory_errors:
     fail("current 12 factory presets drifted: " + "; ".join(_factory_errors))
 else:
-    note("factory presets locked: 12 thematic profiles / all 247 current catalog sources; safe old-stock upgrade; hard medical rules preserved")
+    note("factory presets: twelve 247-source scarcity-first profiles, 46 source-backed balance settings each, exact-stock upgrade preserves local user edits")
 
 # Current user-help contract no longer describes retired polar-radar gestures.
 _control_help_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")

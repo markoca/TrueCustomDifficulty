@@ -1,5 +1,9 @@
 # True Custom Difficulty — Factory Presets
 
+## Current scarcity-first balance — 2026-10-14
+
+The twelve role presets deliberately reduce vanilla's excess supplies through real loot categories, NPC/stash/trader availability, limited medical healing, sleep recovery and coherent economy/repair costs. Food never heals HP in these factory profiles; extra corpse smart-loot bonuses are OFF. Field Medic and Scavenger retain a small 10 HP bandage heal, others use bandages for bleeding control. The full source-backed tuning matrix lives in `tools/factory_preset_scarcity_balance.json`, described in `docs/FACTORY-PRESETS.md`. Previously shipped byte-identical factory JSON files automatically upgrade; edited/user presets stay untouched. This is preset data, not a new UI/CFG setting.
+
 The application ships with twelve custom factory presets:
 
 1. Anomaly Runner

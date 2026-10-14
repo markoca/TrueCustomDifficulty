@@ -1,5 +1,11 @@
 # Preset JSON format
 
+## 2026-10-14 — Abundance-aware factory preset revision
+
+Factory preset format **remains version 1** and each stock file retains all **247** native parameter values and its original `referenceDifficulty`. The most recent rebalance changes source-backed numbers and one existing NPC bonus choice, not CFG semantics or serialization fields. The 46-control authored patch and rationale are in `tools/factory_preset_scarcity_balance.json`; regression tests compare it to each embedded JSON.
+
+The installer adds the exact Git blob SHA identities of the previous **247-key stock factories** to its migration whitelist. Only a *byte-for-byte identical* official prior factory file is replaced. Edits under stock names and unrelated user-created profiles are preserved. Older user presets missing later IDs remain loadable using the same baseline/default fallback as before.
+
 ## 2026-10-14 — Complete factory-state snapshots
 
 All twelve embedded factory profiles now include every one of the **247 current catalog parameters**, including previously absent 34 source controls. The existing three Water/Energy short-effect duration entries may be non-vanilla, subject to the source-native main-duration ceiling. The factory matrix is `tools/factory_preset_expansion.json`, checked against every embedded JSON.
