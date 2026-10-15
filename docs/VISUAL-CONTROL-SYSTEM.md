@@ -1,5 +1,10 @@
 # Visual Control System
 
+### 2026-10-15 — Remove unused game install path/provenance metadata (CURRENT)
+
+The `GameInstallInfo` model retains only `RootPath` and `HasDlc1`, the game-discovery information needed by production CFG/DLC-aware writers. Remove the unconsumed derived `BasePakDirectory`, `Dlc1Directory`, `ModsDirectory` properties and the unconsumed `DetectionSource` string. The `GameInstallLocatorService` enumeration now passes candidate path strings directly rather than carrying an otherwise unused `GameCandidate(Path, Source)` record and descriptive source labels. Preserve, in the same order, the `STALKER2_GAME_DIR` override, Steam manifest lookup, Steam library fallback, Wine Z: fallback, normalization/deduplication of candidates, original game-root validation and DLC1 triplet detection. This is a no-UI/no-CFG-change infrastructure cleanup. In particular, no inferred install path is allowed to bypass the user-selected `~mods` Settings destination; Build Difficulty continues to use `ModDestinationSettingsService` and `ModDeploymentService`. All active controls, preset data, source catalog and native compact geometry remain unchanged. Source audit covers these boundaries; local Windows/.NET/Wine acceptance is pending.
+
+
 ### 2026-10-15 — Settings CS0103 build fix (CURRENT)
 
 The new `MainWindow.Settings_Click` error handler catches `InvalidDataException` while reporting an invalid saved `~mods` path. Add the required `using System.IO;` in `MainWindow.xaml.cs` to resolve CS0103 on `net10.0-windows`; extend the static consistency audit to protect that dependency. No changes to Settings geometry, footer layout, path persistence, Build Difficulty deployment, CFG writing, presets or native controls. Local .NET publish and Wine acceptance remain pending.

@@ -1,14 +1,11 @@
-using System.IO;
-
 namespace TrueCustomDifficulty.Models;
 
+/// <summary>
+/// Detected game installation for CFG source lookup and DLC1 scope.
+/// Build Difficulty's ~mods destination is a separately configured player setting.
+/// </summary>
 public sealed class GameInstallInfo
 {
     public string RootPath { get; init; } = string.Empty;
-    public string DetectionSource { get; init; } = string.Empty;
     public bool HasDlc1 { get; init; }
-
-    public string BasePakDirectory => Path.Combine(RootPath, "Stalker2", "Content", "Paks");
-    public string Dlc1Directory => Path.Combine(RootPath, "DLC1");
-    public string ModsDirectory => Path.Combine(RootPath, "Stalker2", "Content", "Paks", "~mods");
 }

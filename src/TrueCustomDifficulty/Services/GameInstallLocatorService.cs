@@ -12,16 +12,15 @@ public sealed class GameInstallLocatorService
 
     public GameInstallInfo? Detect()
     {
-        foreach (var candidate in EnumerateGameCandidates())
+        foreach (var candidatePath in EnumerateGameCandidates())
         {
-            var root = NormalizeExistingDirectory(candidate.Path);
+            var root = NormalizeExistingDirectory(candidatePath);
             if (root is null || !LooksLikeGameRoot(root))
                 continue;
 
             return new GameInstallInfo
             {
                 RootPath = root,
-                DetectionSource = candidate.Source,
                 HasDlc1 = LooksLikeDlc1(Path.Combine(root, "DLC1"))
             };
         }
@@ -29,19 +28,19 @@ public sealed class GameInstallLocatorService
         return null;
     }
 
-    private static IEnumerable<GameCandidate> EnumerateGameCandidates()
+    private static IEnumerable<string> EnumerateGameCandidates()
     {
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var candidate in EnumerateRawCandidates())
         {
-            if (string.IsNullOrWhiteSpace(candidate.Path))
+            if (string.IsNullOrWhiteSpace(candidate))
                 continue;
 
             string normalized;
             try
             {
-                normalized = Path.GetFullPath(candidate.Path.Trim().Trim('"'));
+                normalized = Path.GetFullPath(candidate.Trim().Trim('"'));
             }
             catch
             {
@@ -49,26 +48,24 @@ public sealed class GameInstallLocatorService
             }
 
             if (seen.Add(normalized))
-                yield return new GameCandidate(normalized, candidate.Source);
+                yield return normalized;
         }
     }
 
-    private static IEnumerable<GameCandidate> EnumerateRawCandidates()
+    private static IEnumerable<string> EnumerateRawCandidates()
     {
         var explicitPath = Environment.GetEnvironmentVariable("STALKER2_GAME_DIR");
         if (!string.IsNullOrWhiteSpace(explicitPath))
-            yield return new GameCandidate(explicitPath, "STALKER2_GAME_DIR");
+            yield return explicitPath;
 
         foreach (var steamRoot in EnumerateSteamRoots())
         {
             var install = ResolveSteamAppInstall(steamRoot);
             if (!string.IsNullOrWhiteSpace(install))
-                yield return new GameCandidate(install, $"Steam manifest ({steamRoot})");
+                yield return install;
 
             // Fallback for a normal Steam library even if the manifest cannot be read.
-            yield return new GameCandidate(
-                Path.Combine(steamRoot, "steamapps", "common", ExpectedFolderName),
-                $"Steam library ({steamRoot})");
+            yield return Path.Combine(steamRoot, "steamapps", "common", ExpectedFolderName);
         }
 
         // Wine development fallback. Wine exposes the Linux filesystem through Z:.
@@ -88,9 +85,7 @@ public sealed class GameInstallLocatorService
 
             foreach (var home in homes)
             {
-                yield return new GameCandidate(
-                    Path.Combine(home, ".local", "share", "Steam", "steamapps", "common", ExpectedFolderName),
-                    "Wine Z: Steam fallback");
+                yield return Path.Combine(home, ".local", "share", "Steam", "steamapps", "common", ExpectedFolderName);
             }
         }
     }
@@ -251,5 +246,4 @@ public sealed class GameInstallLocatorService
         }
     }
 
-    private sealed record GameCandidate(string Path, string Source);
 }

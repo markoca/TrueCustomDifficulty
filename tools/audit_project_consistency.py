@@ -4707,6 +4707,42 @@ if "InvalidDataException" in _tcd_window_imports and "using System.IO;" not in _
 else:
     note("MainWindow Settings InvalidDataException resolves via System.IO")
 
+# Game-install discovery metadata cleanup: preserve source game detection,
+# but never infer the destination ~mods folder from a detected game root.
+_game_install_model = (ROOT / "src/TrueCustomDifficulty/Models/GameInstallInfo.cs").read_text(encoding="utf-8")
+_game_install_locator = (ROOT / "src/TrueCustomDifficulty/Services/GameInstallLocatorService.cs").read_text(encoding="utf-8")
+for _name in ("RootPath", "HasDlc1"):
+    if _name not in _game_install_model:
+        fail("GameInstallInfo lost required source/DLC field: " + _name)
+for _removed in ("DetectionSource", "BasePakDirectory", "Dlc1Directory", "ModsDirectory"):
+    if _removed in _game_install_model or _removed in _game_install_locator:
+        fail("Unconsumed GameInstallInfo discovery metadata returned: " + _removed)
+if "record GameCandidate(" in _game_install_locator or "new GameCandidate(" in _game_install_locator:
+    fail("Unused GameCandidate source-label wrapper returned")
+for _needed in (
+        "private static IEnumerable<string> EnumerateGameCandidates()",
+        "private static IEnumerable<string> EnumerateRawCandidates()",
+        'Environment.GetEnvironmentVariable("STALKER2_GAME_DIR")',
+        "ReadSteamRegistryRoots()",
+        "ResolveSteamAppInstall(steamRoot)",
+        "Path.Combine(steamRoot, \"steamapps\", \"common\", ExpectedFolderName)",
+        'const string wineHomeRoot = @"Z:\\home";',
+        "NormalizeExistingDirectory(candidatePath)",
+        "seen.Add(normalized)",
+        "LooksLikeGameRoot(root)",
+        'LooksLikeDlc1(Path.Combine(root, "DLC1"))',
+        'return files.Contains(".pak") && files.Contains(".utoc") && files.Contains(".ucas");',
+        ):
+    if _needed not in _game_install_locator:
+        fail("Game-install discovery fallback or DLC source detection drifted: " + _needed)
+_tcd_destination_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+if "_modDestinationSettings.RequireConfiguredPath()" not in _tcd_destination_vm or "_modDeploymentService.Install(modsFolder, result.Files)" not in _tcd_destination_vm:
+    fail("Build Difficulty lost explicit user-selected ~mods deployment")
+for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Remove unused game install path/provenance metadata" not in (DOCS / _catalog).read_text(encoding="utf-8"):
+        fail("UI catalogs missing GameInstallInfo dead metadata cleanup")
+note("Game install discovery: no dead path/source metadata; same Steam, Wine, env, DLC routes; ~mods only from Settings")
+
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
