@@ -971,6 +971,22 @@ if not all(token in _anomaly_cleanup for token in (
     fail('Anomaly radar active edits or source labels lost in cleanup')
 note('Anomalies: removed two unused radar helpers and orphaned width cap, no live UI changes')
 
+# A-Life tab: human rank rows retain all four native-source hit targets,
+# keyboard and mouse routes; obsolete horizontal projection was unreferenced.
+_alife_human_cleanup = (ROOT / 'src/TrueCustomDifficulty/Controls/HumanGroupSizeRadar.cs').read_text(encoding='utf-8')
+if 'private static double ValueToX(' in _alife_human_cleanup:
+    fail('A-Life unused human-group horizontal projector returned')
+for _token in (
+    'new("alife.humanGroupSize.newbie", "NEWBIE", 3.0)',
+    'new("alife.humanGroupSize.experienced", "EXPERIENCED", 4.0)',
+    'new("alife.humanGroupSize.veteran", "VETERAN", 5.0)',
+    'new("alife.humanGroupSize.master", "MASTER", 6.0)',
+    'private void UpdateFromPoint(', 'protected override void OnMouseRightButtonDown(',
+    'protected override void OnKeyDown('):
+    if _token not in _alife_human_cleanup:
+        fail('A-Life human-rank source or input contract missing: ' + _token)
+note('A-Life: removed unused X coordinate helper, four rank controls and resets preserved')
+
 # The player-facing ten-lane damage editor is alphabetized by its
 # actual labels, not by CFG IDs, and both special effects use the same
 # source-native mechanical knobs as the rest of the app.

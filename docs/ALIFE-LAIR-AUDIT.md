@@ -382,3 +382,7 @@ Before coding, perform one final eligibility pass over the 75 base and 19 DLC1 l
 - DLC-only prototypes.
 
 Only the generic gameplay population should be scaled.
+
+## 2026-10-15 — A-Life UI cleanup
+
+Removed the unreachable `HumanGroupSizeRadar.ValueToX` helper after source-level call-site verification. The editor's four rank-specific human group-size targets and its native pointer/keyboard reset flow are untouched; mutant group-size controls are unchanged. No CFG edits or presets changed. Both UI catalogs and the project consistency audit track this cleanup. Source inspection passes, but local WPF build/Wine test still need execution.

@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-15 — A-Life tab, unused human ladder helper cleanup (CURRENT)
+
+`HumanGroupSizeRadar` uses its own native source/value mapping for the four NEWBIE, EXPERIENCED, VETERAN and MASTER rank rows. Its private `ValueToX` projection function has no callers and is removed as dead UI code. Keep the four human rank controls, existing `MutantGroupSizeRadar` controls, original compact card geometry, rendered values, hover and drag behavior, keyboard stepping, individual resets, presets and CFG writer mappings fully unchanged. There is no new A-Life parameter, movement of controls, spawn/population inference or gameplay change. Project consistency audit asserts removed helper stays absent and rank/input handlers remain; local .NET/Wine acceptance is pending.
+
 ### 2026-10-15 — Anomalies tab, unused radar helpers cleanup (CURRENT)
 
 The live `AnomalyDamageRadar` renders ten alphabetized individually editable anomaly damage rows, with source-native controls and the separate global knob. Remove only its unreferenced `ContentRect` layout helper, its now-unused `MaxContentWidth` constant, and the uncalled `Compact` string-ellipsis helper. No active code depends on these declarations. Preserve all anomaly labels (including GLASS SHARDS), exact value ranges/steps, modified-value coloring, hover/click/drag/keyboard/right-click controls, source mappings, both global and individual damage paths, all other anomaly families, presets and CFG writer. Card geometry and user-visible text remain unchanged. The consistency audit checks source retention and dead-code absence; local build/Wine confirmation remains pending.

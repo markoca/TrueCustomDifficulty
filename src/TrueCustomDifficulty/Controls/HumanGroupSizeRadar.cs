@@ -339,15 +339,6 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
         return -1;
     }
 
-    private static double ValueToX(double value, double minimum, double maximum, Rect track)
-    {
-        if (maximum <= minimum + Epsilon)
-            return track.Left;
-
-        var ratio = Math.Clamp((value - minimum) / (maximum - minimum), 0.0, 1.0);
-        return track.Left + track.Width * ratio;
-    }
-
     private static Brush FindBrush(string key, Brush fallback)
         => Application.Current?.TryFindResource(key) as Brush ?? fallback;
 
