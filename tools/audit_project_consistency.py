@@ -3900,6 +3900,43 @@ if (_action_format_start < 0 or _action_format_end < 0
     fail('Stamina Usage edited-cost vs passive projection numeric color contract drifted')
 note('Stamina pass 5: only changed native cost turns gold; derived pool projections stay neutral')
 
+# Stamina pass 6: retired per-handle count/ratio overlays. Keep rail hover,
+# drag/reset and source-backed per-action percent of the current stamina pool.
+_stamina_six_start = _action_usage_source.find('private void DrawActionGroup(')
+_stamina_six_end = _action_usage_source.find('private void DrawExhaustionBoard(', _stamina_six_start)
+_stamina_six_body = _action_usage_source[_stamina_six_start:_stamina_six_end]
+if (_stamina_six_start < 0 or _stamina_six_end < 0
+    or any(token in _stamina_six_body for token in (
+        'FROM FULL', 'POOL/COST', 'NO COST', 'countText',
+        'var hovered = indices.Select(', 'Math.Floor(staminaPool / hovered.CurrentNumber)'))
+    or '100.0 * parameter.CurrentNumber / staminaPool' not in _stamina_six_body
+    or 'SPENT PER ACTION' not in _stamina_six_body
+    or 'ReferenceEquals(_hoverParameter, parameter)' not in _action_usage_source
+    or 'ControlHoverGlow.Draw(dc, point, accent,' not in _action_usage_source):
+    fail('Stamina Usage retired hover overlays or live source/handle control drifted')
+note('Stamina pass 6: count/ratio hover removed, cost percentage and handle glow remain')
+
+# Project-wide dead-code cleanup: fourteen never-invoked private helpers
+# deleted without affecting the active editor family dispatch paths.
+_aggregate_six = (ROOT / 'src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs').read_text(encoding='utf-8')
+_dead_six = (
+    'MasterCardGrid', 'MasterRows', 'MasterCardBankHeight',
+    'DrawMasterCardBank', 'MasterSeconds', 'MasterHp',
+    'EquipmentWearPlotSide', 'EquipmentWearBoardHeight',
+    'CompactColumns', 'CompactStageColumns', 'CompactGridEnd',
+    'CompactSlot', 'CompactSleepHeight', 'AddChoiceTarget',
+)
+for _method in _dead_six:
+    if _method + '(' in _aggregate_six:
+        fail('Dead AggregateVisualControl method reintroduced: ' + _method)
+for _active in ('DrawMasterNativeCard(', 'DrawMasterHealingLane(',
+                'HitKind.Choice', 'DrawEquipmentWearBalance(',
+                'DrawCompactTrack(', 'DrawCoreResourceRuler('):
+    if _active not in _aggregate_six:
+        fail('Active AggregateVisualControl UI handler removed: ' + _active)
+note('General cleanup: fourteen unreachable renderer helpers removed; live editors retained')
+
+
 note('ActionCostsRadar binding cleanup: stale mode handlers detached, active redraw/reset scopes preserved')
 note('ActionCostsRadar cleanup: invisible status/timer and pipe-color helper gone; live editing/reset intact')
 if (not all(token in _action_usage_source for token in (

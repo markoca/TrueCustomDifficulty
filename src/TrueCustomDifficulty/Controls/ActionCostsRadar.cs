@@ -287,28 +287,6 @@ public sealed class ActionCostsRadar : FrameworkElement
             .Where(i => Actions[i].Group == group)
             .ToArray();
 
-        var hovered = indices.Select(i => _actionParameters[i])
-            .FirstOrDefault(p => p is not null && ReferenceEquals(p, _hoverParameter));
-        if (hovered is not null)
-        {
-            // The native Sprint coefficient is not a verified discrete
-            // single-press action; do not infer a number of sprint activations.
-            var count = hovered.CurrentNumber <= Epsilon
-                ? "NO COST"
-                : hovered.Id == "stamina.sprintCost"
-                    ? $"{staminaPool / hovered.CurrentNumber:0.#}x POOL/COST"
-                    : $"{Math.Floor(staminaPool / hovered.CurrentNumber):0} FROM FULL";
-            var countText = CreateText(count, 9.0, muted, FontWeights.SemiBold);
-            var number = System.Text.RegularExpressions.Regex.Match(
-                count, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
-            // This is a read-only pool comparison, not an edited CFG value.
-            // Keep the hovered number legible without false modified-yellow.
-            if (number.Success)
-                countText.SetForegroundBrush(text, number.Index, number.Length);
-            dc.DrawText(countText, new Point(card.Right - 9.0 -
-                countText.WidthIncludingTrailingWhitespace, card.Top + 7.0));
-        }
-
         for (var local = 0; local < indices.Length; local++)
         {
             var index = indices[local];

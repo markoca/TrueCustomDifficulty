@@ -2085,14 +2085,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     // their staged values and remain non-interactive until enabled.
     private static Brush MasterDisabledInk(Brush text) => CloneWithOpacity(text, 0.70);
 
-    private static (int Columns, double CardWidth) MasterCardGrid(double width)
-    {
-        var columns = EconomyColumns(width);
-        return (columns, EconomyCardWidth(width, columns));
-    }
 
-    private static int MasterRows(double width, int count)
-        => (count + EconomyColumns(width) - 1) / EconomyColumns(width);
 
     private static double MasterConditionalHeight(double width) => 298.0;
     // The three healing modifiers share one aligned 0–200% bank at every width.
@@ -2100,8 +2093,6 @@ public sealed class AggregateVisualControl : FrameworkElement
     private const double MasterMedicalBankHeight = 181.0;
     private const double MasterMedicalHealingHeight =
         MasterMedicalBankTop + MasterMedicalBankHeight + 12.0;
-    private static double MasterCardBankHeight(double width, int count)
-        => 107.0 + MasterRows(width, count) * 94.0 + 12.0;
     private const double StarvationKnobsTop = 106.0;
     private const double StarvationKnobHeight = 181.0;
     private const double StarvationPreviewHeight = 176.0;
@@ -2215,34 +2206,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             9.1, muted, FontWeights.Normal);
     }
 
-    private void DrawMasterCardBank(
-        DrawingContext dc,
-        (string Id, string Label, Func<double, string> Format)[] sources,
-        double top,
-        Brush text, Brush muted, Brush border, Brush soft, Brush accent,
-        Brush panel)
-    {
-        var (columns, width) = MasterCardGrid(ActualWidth);
-        const double gap = 12.0;
-        for (var i = 0; i < sources.Length; i++)
-        {
-            var row = i / columns;
-            var inRow = Math.Min(columns, sources.Length - row * columns);
-            var rowWidth = inRow * width + (inRow - 1) * gap;
-            var left = (ActualWidth - rowWidth) / 2.0;
-            var card = new Rect(left + (i % columns) * (width + gap),
-                top + row * 94.0, width, 80.0);
-            DrawMasterNativeCard(dc, P(sources[i].Id),
-                sources[i].Label, sources[i].Format, card,
-                text, muted, border, soft, accent, panel);
-        }
-    }
 
     private static string MasterPercent(double value) => $"{value * 100:0.#}%";
     private static string MasterPositivePercent(double value) => $"+{value * 100:0.#}%";
     private static string MasterNegativePercent(double value) => $"-{value * 100:0.#}%";
-    private static string MasterSeconds(double value) => $"{value:0.#}s";
-    private static string MasterHp(double value) => $"{value:0.#} HP";
     private static string MasterScalar(double value) => $"{value:0.##}x";
 
     private void DrawMasterConditionalPenalty(
@@ -3104,11 +3071,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             centerX - formatted.WidthIncludingTrailingWhitespace / 2.0, 83.0));
     }
 
-    private static double EquipmentWearPlotSide(double width)
-        => Math.Min(240.0, Math.Max(200.0, width - 360.0));
 
-    private static double EquipmentWearBoardHeight(double width)
-        => 86.0 + EquipmentWearPlotSide(width) + 61.0;
 
     private void DrawEquipmentWearBalance(
         DrawingContext dc, Brush text, Brush muted, Brush border, Brush soft,
@@ -4937,29 +4900,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     private const double CompactRowGap = 8.0;
     private const double CompactColumnGap = 10.0;
 
-    private static int CompactColumns(double width)
-        => width >= 700.0 ? 2 : 1;
 
-    private static int CompactStageColumns(double width)
-        => width >= 850.0 ? 3 : CompactColumns(width);
 
-    private static double CompactGridEnd(double top, int count, int columns)
-    {
-        var rows = (count + columns - 1) / columns;
-        return top + rows * CompactTrackHeight
-            + Math.Max(0, rows - 1) * CompactRowGap;
-    }
 
-    private static Rect CompactSlot(double top, double width, int columns, int index)
-    {
-        var columnWidth = (width - (columns - 1) * CompactColumnGap) / columns;
-        var column = index % columns;
-        var row = index / columns;
-        return new Rect(
-            17.0 + column * (columnWidth + CompactColumnGap),
-            top + row * (CompactTrackHeight + CompactRowGap),
-            columnWidth, CompactTrackHeight);
-    }
 
     private void DrawCompactTrack(
         DrawingContext dc,
@@ -5299,14 +5242,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         _hitTargets.Add(new HitTarget(parameter, hitRect, hitRect, HitKind.Toggle, 0.0, 1.0, false));
     }
 
-    private void AddChoiceTarget(ParameterViewModel parameter, Rect hitRect, Rect mapRect)
-    {
-        if (!parameter.IsControlEnabled)
-            return;
-
-        _hitTargets.Add(new HitTarget(parameter, hitRect, mapRect, HitKind.Choice,
-            parameter.ChoiceMinimum, parameter.ChoiceMaximum, false));
-    }
 
     private void AddRangeTarget(ParameterViewModel parameter, Rect hitRect, Rect mapRect, HitKind kind)
     {
@@ -6358,19 +6293,12 @@ public sealed class AggregateVisualControl : FrameworkElement
             _ => 340.0
         };
 
-    // These use the same section coordinates and CompactGridEnd layout as
-    // their renderers. Measure and OnRender must agree at every breakpoint.
+    // Renderer measurements and painted card extents must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
     {
         return SurvivalPrimaryPreviewTop + 80.0 + 51.0 + 365.0 + 12.0;
     }
 
-    private static double CompactSleepHeight(double width)
-    {
-        var columns = CompactColumns(width);
-        var benefitsTitle = CompactGridEnd(55.0, 2, columns) + 21.0;
-        return CompactGridEnd(benefitsTitle + 25.0, 2, columns) + 14.0;
-    }
 
     private static double ConsumableMedicineKnobTop(double width)
         => ConsumableDurationTop + ConsumableTimelineHeight(width) + 14.0;
