@@ -93,3 +93,5 @@ The current fixed 0–100 shared Bleeding Treatment chart is purely a comparison
 ## 2026-10-15 Health dead-code pass 1
 
 Deleted the unused `AggregateVisualControl.DrawRecoveryMeter`, the unreachable `RADIATION TREATMENT` fallback in `DrawPairedSystemBoard`, and legacy Health entries in its paired-value formatter. The paired helper now fails explicitly for an unsupported family. The hidden `health.bandageBleeding` UI-only aggregate wiring has been deleted: `MedicalHealingRadar` is owned by the existing visible `health.bandageHealing` anchor, which continues observing each HEAL/BLEED/RAD source and Food Healing. Every Health catalog/CFG writer/preset source remains unchanged; no new Radiation Treatment panel or duplicate Medical Items control is introduced. Source inspection and pushed static audit additions are not a local WPF/Wine compilation; visual/runtime acceptance remains pending.
+
+The cleanup regression audit matches old hidden-bleeding aggregate wiring with a whitespace-tolerant expression; a formatting-only change cannot bypass this guard.

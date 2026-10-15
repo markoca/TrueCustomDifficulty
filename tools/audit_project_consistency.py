@@ -2184,7 +2184,7 @@ if (not _health_paired or 'Title: "RADIATION TREATMENT"' in _health_paired
 if ('"health.ecoMedkitAntirad" or "health.antiRadRadiation"' in _health_aggregate_source
         or '"health.lowHealthRegen" => $"{rawValue:0.0} rate"' in _health_aggregate_source):
     fail("Obsolete Health comparison formatting returned")
-if 'WireVisualAggregate(\\n            "health.bandageBleeding",' in _medical_main_vm:
+if re.search(r'WireVisualAggregate\(\s*"health\.bandageBleeding"', _medical_main_vm):
     fail("Hidden bleeding anchor still has duplicate UI-only aggregate wiring")
 if ('var medicalHealingMembers = medicalHealingParameterIds' not in _medical_main_vm
         or 'medicalHealingAnchor.SetAggregateModifiedProvider(' not in _medical_main_vm):

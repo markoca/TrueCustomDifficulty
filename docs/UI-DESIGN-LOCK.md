@@ -6,6 +6,7 @@ The active Health UI consists of `CoreHealthDashboard` and the consolidated `Med
 
 Remove the redundant UI-only `WireVisualAggregate("health.bandageBleeding", ...)` subscription: the bleeding anchor is not a visible editor. The active `health.bandageHealing` modified-state provider already observes the full Medical Items backing family (including all bleeding sources, Scientific/Anti-Rad, Beer/Vodka and Food Healing); preserve this provider and the CFG/preset routes. No gameplay setting, visible card, UI geometry, controls or user-facing text is added.
 
+The cleanup regression audit matches old hidden-bleeding aggregate wiring with a whitespace-tolerant expression; a formatting-only change cannot bypass this guard.
 
 ### 2026-10-15 — Combat cleanup pass 3: orphaned helpers and UI sorting (CURRENT)
 
