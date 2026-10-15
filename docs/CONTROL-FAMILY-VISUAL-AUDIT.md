@@ -1,6 +1,6 @@
 # True Custom Difficulty — Control-Family Visual Audit
 
-**Source checkpoint:** 2026-10-15, cross-family style unification. This is a source/UI-contract inventory, **not** proof of a successful local .NET publish or rendered Wine screenshots.
+**Source checkpoint:** 2026-10-15, cross-family style unification and slider numeral legibility. This is a source/UI-contract inventory, **not** proof of a successful local .NET publish or rendered Wine screenshots.
 
 ## Canonical visual families
 
@@ -47,3 +47,11 @@ The native board/section renderer title token applies to exactly these twelve so
 5. Inspect chart-axis titles and numerical graduation legibility, and ensure text is not clipped by card/axis boundaries.
 6. Recheck both On/Off toggles, source-generated CFGs, preset load/save and automatic Build Difficulty deployment.
 7. Run the active static consistency audit. **No Wine or .NET results are claimed in this source-only pass.**
+
+## 2026-10-15 numeric readability and anomaly cleanup
+
+- The WPF parameter current readout is 13.3 DIP; MIN/MAX range numerals 10.8 DIP, effective value readout 11.8 DIP. Binding and reference colors are unchanged.
+- Mutant Health retains 14×58-DIP slider cards and 65-DIP row pitch, with 13-DIP multipliers, 12.5-DIP bold white actual HP amount/unit and gold 13.7-DIP changed HP digits only.
+- Stamina, Mutant Group/Part, Human Squad, Loot, Bleeding, Drunkenness, Medical and Aggregate native sliders have selective ~0.8-DIP numeric size increases. Compact headings, axis text and rotary knob captions/limits are intentionally unchanged.
+- Anomaly Damage removes three redundant helper captions and uses EFFECTIVE instead of FINAL; the same ten native bars move 58 DIP upward in a 548-DIP frame. The independent Global knob and bar hit mapping are unchanged.
+- These are source-level checks; local .NET and Wine acceptance remains outstanding.

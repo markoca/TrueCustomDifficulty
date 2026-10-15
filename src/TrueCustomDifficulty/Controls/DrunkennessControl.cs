@@ -255,7 +255,7 @@ public sealed class DrunkennessControl : FrameworkElement
         var changed = parameter?.IsValueModifiedFromReference() == true;
         var currentText = CreateText(
             strength.ToString("0", CultureInfo.InvariantCulture),
-            changed ? 13.7 : 12.5,
+            changed ? 14.5 : 13.3,
             changed ? accent : text,
             FontWeights.Bold);
         dc.DrawText(currentText, new Point(valueX, rect.Top + 25));

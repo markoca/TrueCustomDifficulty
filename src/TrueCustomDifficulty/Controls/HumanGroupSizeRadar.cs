@@ -177,9 +177,9 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             VerticalBarHandleChrome.Draw(dc, new Point(center, currentY),
                 barWidth, accent, _hoverRow == i);
             var cap = EffectiveCap(Ranks[i].VanillaCap, value);
-            DrawCenteredText(dc, $"{cap:0} NPC", new Point(center, 82.0), 12,
+            DrawCenteredText(dc, $"{cap:0} NPC", new Point(center, 82.0), 12.8,
                 parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
-            DrawCenteredText(dc, $"{value:0.##}x", new Point(center, 100.0), 9.5,
+            DrawCenteredText(dc, $"{value:0.##}x", new Point(center, 100.0), 10.3,
                 muted, FontWeights.SemiBold);
             DrawCenteredText(dc, Ranks[i].Label, new Point(center, 307.0),
                 9.7, text, FontWeights.Bold);

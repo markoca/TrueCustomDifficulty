@@ -184,7 +184,7 @@ public sealed class StashAmmoRadar : FrameworkElement
             dc,
             $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Left + 12.0 + Math.Max(180.0, card.Width * 0.41), card.Top + 8.0),
-            10.0,
+            10.8,
             text,
             FontWeights.Bold);
 

@@ -226,7 +226,7 @@ public sealed class MutantDropRadar : FrameworkElement
             dc,
             $"{chance * 100:0}%",
             new Point(card.Right - 9.0, card.Top + 6.0),
-            modified ? 13.0 : 11.8,
+            modified ? 13.8 : 12.6,
             modified ? accent : text,
             FontWeights.Bold);
         var track = new Rect(card.Left + 11.0, card.Top + 32.0, card.Width - 22.0, 12.0);

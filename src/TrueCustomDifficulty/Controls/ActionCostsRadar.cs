@@ -304,7 +304,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             // is a live, neutral projection and must not be marked as edited.
             var sourceValue = CreateSourceValueText(parameter,
                 $"{FormatRaw(parameter.CurrentNumber)} stamina · {costPercent:0.#}% {Actions[index].SpendCaption}",
-                card.Width >= 300.0 ? 10.0 : 9.0, text, accent);
+                card.Width >= 300.0 ? 10.8 : 9.4, text, accent);
             dc.DrawText(sourceValue,
                 new Point(card.Right - 9.0 - sourceValue.WidthIncludingTrailingWhitespace, top));
 
@@ -535,7 +535,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             return;
 
         var current = CreateSourceValueText(parameter,
-            formatter(parameter.CurrentNumber), 11.2, text, accent);
+            formatter(parameter.CurrentNumber), 12.0, text, accent);
         var title = CreateText(label, 9.6, text, FontWeights.Bold);
         title.MaxTextWidth = Math.Max(1.0,
             area.Width - current.WidthIncludingTrailingWhitespace - 9.0);
@@ -560,8 +560,8 @@ public sealed class ActionCostsRadar : FrameworkElement
             new Point(refX, y - 7.0), new Point(refX, y + 7.0));
         DrawHandle(dc, parameter, new Point(currentX, y), panel, accent);
 
-        var minText = CreateText(formatter(nativeMin), 9.0, muted, FontWeights.Normal);
-        var maxText = CreateText(formatter(nativeMax), 9.0, muted, FontWeights.Normal);
+        var minText = CreateText(formatter(nativeMin), 9.5, muted, FontWeights.Normal);
+        var maxText = CreateText(formatter(nativeMax), 9.5, muted, FontWeights.Normal);
         var half = Math.Max(1.0, (track.Width - 10.0) / 2.0);
         minText.MaxTextWidth = half;
         maxText.MaxTextWidth = half;

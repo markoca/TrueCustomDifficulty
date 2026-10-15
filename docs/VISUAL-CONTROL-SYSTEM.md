@@ -1,5 +1,15 @@
 # Visual Control System
 
+### 2026-10-15 — Slider numeral readability, mutant HP, concise anomaly layout (CURRENT)
+
+**Shared slider typography:** Increase editable current-value numerals slightly (usually **+0.8 DIP**) in the ordinary WPF slider template, WPF MIN/MAX range values, and currently rendered hand-drawn horizontal/vertical slider families: Stamina Usage and Recovery, Mutant Health/Group/Part, Human Squad, Item Price, World Loot, Stash Ammo, Bleeding, Drunkenness, Medical and shared Aggregate native slider tracks. The narrow Stamina Usage rows grow only +0.4 DIP to protect one-line readouts. Keep slider cards compact, all original hit areas, native precision/ranges, modified-number-only gold and subdued Vanilla/Base reference markers. Do **not** enlarge every heading, graph legend, axis title or rotary knob as though it were a slider value.
+
+**Mutant Health:** On all 14 native two-column species rows, the center multiplier is **13 DIP**; the current computed HP and the `HP` unit are **12.5 DIP Bold white**, with changed-source HP digits alone at **13.7 DIP gold**. Labels, rail positions, 58-DIP row height and 65-DIP pitch remain unchanged; no duplicate Vanilla number is introduced.
+
+**Anomaly Damage:** Remove three redundant section strings — `ALL ANOMALIES`, `Scales damage across every anomaly`, `INDIVIDUAL DAMAGE · BARS VS VANILLA` — and replace the column header `FINAL` with **`EFFECTIVE`**, preserving `BASE` for the independently editable native CFG source. After removing the labels, raise the ten-bar bank **58 DIP** (plot **307–468** instead of 365–526; column frames start at **248**), and shrink the radar/WPF minimum height **606 → 548 DIP** with the same plot range, bars, knob, interactive targets and native calculations. Slightly increase the computed EFFECTIVE and BASE numeric values, not the global dial's independent knob fonts.
+
+All relevant code, catalog specifications and static regression checks must match. Local .NET publish and Wine narrow/wide visual acceptance remain user-run.
+
 ### 2026-10-15 — Stamina Usage contextual spend captions (CURRENT)
 
 In the six compact `ActionCostsRadar` / `Mode=Usage` rows, replace the generic `SPENT PER ACTION` caption with action-specific wording: **SPRINT** = `SPENT PER SPRINT`, **JUMP** = `SPENT PER JUMP`, **VAULT** = `SPENT PER VAULT`; **QUICK MELEE**, **STRONG MELEE** and **BUTTSTOCK** = `SPENT PER SWING`. These are contextual labels for the existing `cost/current maxSP × 100%` read-only projection; Sprint remains a source-native coefficient, **not** an inferred fixed duration or discrete activation count.

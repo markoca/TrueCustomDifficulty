@@ -11,7 +11,7 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class AnomalyDamageRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double DesiredHeight = 606.0;
+    private const double DesiredHeight = 548.0;
     private const double KnobStartAngle = 135.0;
     private const double KnobSweepAngle = 270.0;
     private const double KnobRadius = 47.0;
@@ -156,20 +156,12 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         // One shared frame for GLOBAL and all eleven native source sliders.
         // Global remains an independent 0..2.5x/0.01x difficulty source.
         DrawGlobalDamageKnob(dc, text, muted, border, accent, panel);
-        // Gamer-first presentation: the global dial states its scope, while the
-        // individual columns label their own final and editable base values.
-        // No footer formula or separate technical instruction block.
-        DrawCenteredText(dc, "ALL ANOMALIES", new Point(ActualWidth / 2.0, 248.0),
-            11.0, text, FontWeights.Bold);
-        DrawCenteredText(dc, "Scales damage across every anomaly",
-            new Point(ActualWidth / 2.0, 269.0), 10.0, muted, FontWeights.Medium);
-        DrawCenteredText(dc, "INDIVIDUAL DAMAGE  ·  BARS VS VANILLA",
-            new Point(ActualWidth / 2.0, 296.0), 9.8, muted, FontWeights.SemiBold);
+        // Keep the global dial self-explanatory and group real source bars directly below it.
 
         // Individual handles edit source CFG values, not global difficulty
-        // or the computed RESULT readout. Their 0..200% axis is *relative to
+        // or the computed EFFECTIVE readout. Their 0..200% axis is *relative to
         // each source's vanilla*, never 0..200 hit points or global damage.
-        const double top = 365.0, bottom = 526.0;
+        const double top = 307.0, bottom = 468.0;
         var columns = Anomalies.Length;
         var left = 53.0;
         var lane = (ActualWidth - left - 14.0) / columns;
@@ -199,7 +191,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             var barLeft = center - width / 2.0;
             dc.DrawRoundedRectangle(CloneWithOpacity(panel, .32),
                 new Pen(CloneWithOpacity(border, .55), .8),
-                new Rect(left + i * lane + 2, 306, lane - 4, 279), 4, 4);
+                new Rect(left + i * lane + 2, 248, lane - 4, 279), 4, 4);
             dc.DrawRectangle(CloneWithOpacity(border, .12), null,
                 new Rect(barLeft, top, width, bottom - top));
             dc.DrawRectangle(CloneWithOpacity(accent, .72), null,
@@ -214,29 +206,29 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             var inherited = parameter.EffectiveDamageValue;
             var effectiveText = Anomalies[i].IsMultiplier
                 ? $"{inherited:0.##}x" : $"{inherited:0.#}";
-            DrawCenteredText(dc, "FINAL", new Point(center, 314), 7.4,
+            DrawCenteredText(dc, "EFFECTIVE", new Point(center, 256), 8.0,
                 muted, FontWeights.SemiBold);
-            DrawCenteredText(dc, effectiveText, new Point(center, 326), 10.2,
+            DrawCenteredText(dc, effectiveText, new Point(center, 268), 11.2,
                 parameter.IsValueModifiedFromReference()
                     || _globalDamage?.IsValueModifiedFromReference() == true ? accent : text,
                 FontWeights.Bold);
             var nativeText = Anomalies[i].IsMultiplier
                 ? $"{parameter.CurrentNumber:0.##}x" : $"{parameter.CurrentNumber:0.#}";
-            DrawCenteredText(dc, "BASE", new Point(center, 341), 7.4,
+            DrawCenteredText(dc, "BASE", new Point(center, 283), 7.8,
                 muted, FontWeights.SemiBold);
-            DrawCenteredText(dc, nativeText, new Point(center, 353), 9.2,
+            DrawCenteredText(dc, nativeText, new Point(center, 295), 10.2,
                 parameter.IsValueModifiedFromReference() ? accent : muted,
                 FontWeights.SemiBold);
             var words = Anomalies[i].Label.Split(' ');
             if (words.Length == 1)
-                DrawCenteredText(dc, words[0], new Point(center, 550), 8.5,
+                DrawCenteredText(dc, words[0], new Point(center, 492), 8.5,
                     text, FontWeights.Bold);
             else
             {
-                DrawCenteredText(dc, words[0], new Point(center, 543), 8.5,
+                DrawCenteredText(dc, words[0], new Point(center, 485), 8.5,
                     text, FontWeights.Bold);
                 DrawCenteredText(dc, string.Join(" ", words.Skip(1)),
-                    new Point(center, 559), 8.5, text, FontWeights.Bold);
+                    new Point(center, 501), 8.5, text, FontWeights.Bold);
             }
             _targets[i] = new HitTarget(
                 new Rect(center - Math.Max(15, width / 2 + 5), top,

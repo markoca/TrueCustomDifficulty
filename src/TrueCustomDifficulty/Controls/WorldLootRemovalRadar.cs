@@ -178,7 +178,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
                 parameter.IsControlEnabled ? accent : muted,
                 _hoverRow == i && parameter.IsControlEnabled);
             DrawCenteredText(dc, $"{current * 100:0}%",
-                new Point(center, 88), 10.5,
+                new Point(center, 88), 11.3,
                 parameter.IsValueModifiedFromReference() ? accent : text,
                 FontWeights.Bold);
             var words = Populations[i].Label.Split(' ');

@@ -3583,15 +3583,15 @@ _anomaly_combined_required = (
     'global.CurrentNumber + direction * global.TickFrequency',
     '_globalKnobHit.Contains(point)',
     '_globalDamage?.ResetToReference();',
-    'INDIVIDUAL DAMAGE  ·  BARS VS VANILLA',
-    'DrawCenteredText(dc, "FINAL", new Point(center, 314)',
+    'DrawCenteredText(dc, "EFFECTIVE", new Point(center, 256)',
+    'DrawCenteredText(dc, effectiveText, new Point(center, 268), 11.2,',
     'DrawCenteredText(dc, "BASE", new Point(center, 341)',
     'EffectiveDamageValue',
     'parameter.IsValueModifiedFromReference()',
     '_globalDamage?.IsValueModifiedFromReference() == true',
     'parameter.CurrentNumber',
     'ReferenceNumber',
-    'const double top = 365.0, bottom = 526.0;',
+    'const double top = 307.0, bottom = 468.0;',
 )
 _anomaly_combined_vm_required = (
     'Id == "environment.anomalyDamage"',
@@ -3604,13 +3604,36 @@ if (_anomaly_knob_slider.get('min') != 0
     or not all(token in _anomaly_radar_source for token in _anomaly_combined_required)
     or not all(token in _anomaly_vm_source for token in _anomaly_combined_vm_required)
     or 'x:Name="AnomalyDamageRadarControl"' not in _anomaly_xaml_source
-    or 'MinHeight="606"' not in _anomaly_xaml_source
+    or 'MinHeight="548"' not in _anomaly_xaml_source
     or any('2026-10-11 — Combined global and individual anomaly damage'
            not in (ROOT / 'docs' / doc).read_text(encoding='utf-8')
            for doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md'))):
     fail("Combined Anomaly Damage card drifted: Global 0–2.5x knob, 11 independent relative-to-vanilla sources, one visible anchor and explained effective/source readouts")
 else:
     note("Combined Anomaly Damage: native 0–2.5x/0.01x global knob, 11 independent source bars, 100% vanilla-relative axis and effective/source readouts")
+
+
+# Native slider numeral legibility and compact anomaly caption grammar.
+_numeric_mutant = (ROOT / "src/TrueCustomDifficulty/Controls/MutantHealthRadar.cs").read_text(encoding="utf-8")
+_numeric_stamina = (ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs").read_text(encoding="utf-8")
+_numeric_window = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml").read_text(encoding="utf-8")
+if (any(old in _anomaly_radar_source for old in (
+        '"ALL ANOMALIES"', '"Scales damage across every anomaly"',
+        '"INDIVIDUAL DAMAGE  ·  BARS VS VANILLA"', 'DrawCenteredText(dc, "FINAL"'))
+    or 'private const double DesiredHeight = 548.0;' not in _anomaly_radar_source
+    or 'new Rect(left + i * lane + 2, 248, lane - 4, 279)' not in _anomaly_radar_source
+    or 'DrawCenteredText(dc, "BASE", new Point(center, 283), 7.8,' not in _anomaly_radar_source
+    or '13.0, text, accent, FontWeights.Bold, modified);' not in _numeric_mutant
+    or 'CreateText(hpLabel, 12.5, text, FontWeights.Bold);' not in _numeric_mutant
+    or 'hpText.SetFontSize(13.7, 0, hpDigits);' not in _numeric_mutant
+    or 'card.Width >= 300.0 ? 10.8 : 9.4' not in _numeric_stamina
+    or 'FontSize="13.3" FontWeight="SemiBold"' not in _numeric_window
+    or '<Setter Property="FontSize" Value="10.8" />' not in _numeric_window):
+    fail("Slider numeral legibility / compact anomaly labels drifted")
+for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Slider numeral readability, mutant HP, concise anomaly layout (CURRENT)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
+        fail("Slider numeral/anomaly catalog contract missing from " + _catalog)
+note("Slider numerals enlarged; mutant HP prominent; redundant anomaly headings absent")
 
 # Stash-tier ammo uses three independent native rotary controls; bonus rewards
 # remain horizontal because they represent different chance/count mechanics.

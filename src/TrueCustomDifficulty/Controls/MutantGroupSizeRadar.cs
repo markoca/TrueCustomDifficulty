@@ -184,7 +184,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             10.0, text, FontWeights.Bold);
         DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Right - 10.0, card.Top + 5.0),
-            modified ? 12.2 : 11.0,
+            modified ? 13.0 : 11.8,
             modified ? accent : text, FontWeights.Bold);
 
         DrawText(dc, "N / E / V / M",
@@ -199,14 +199,14 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             .Select(cap => cap.ToString("0", CultureInfo.InvariantCulture))
             .ToArray();
         var joinedCaps = string.Join(" / ", countTexts);
-        var formatted = CreateText(joinedCaps, 10.8, text, FontWeights.Bold);
+        var formatted = CreateText(joinedCaps, 11.5, text, FontWeights.Bold);
         var offset = 0;
         for (var index = 0; index < countTexts.Length; index++)
         {
             if (Math.Abs(currentCaps[index] - referenceCaps[index]) > Epsilon)
             {
                 formatted.SetForegroundBrush(accent, offset, countTexts[index].Length);
-                formatted.SetFontSize(12.0, offset, countTexts[index].Length);
+                formatted.SetFontSize(12.7, offset, countTexts[index].Length);
             }
             offset += countTexts[index].Length + (index < countTexts.Length - 1 ? 3 : 0);
         }

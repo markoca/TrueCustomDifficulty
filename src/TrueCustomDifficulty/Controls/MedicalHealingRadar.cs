@@ -363,7 +363,7 @@ public sealed class MedicalHealingRadar : FrameworkElement
             HitAction.Radiation => $"{parameter.CurrentNumber:0.#} RAD",
             _ => $"{parameter.CurrentNumber:0.#} PTS"
         };
-        var label = CreateText(numeric, 10.0,
+        var label = CreateText(numeric, 10.8,
             enabled && parameter.IsValueModifiedFromReference()
                 ? barAccent : text, FontWeights.Bold);
         var labelY = action == HitAction.Radiation ? 114.0

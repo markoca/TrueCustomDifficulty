@@ -246,7 +246,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             dc,
             parameter.CurrentDisplay,
             new Point(rect.Right - 10, rect.Top + 6),
-            parameter.IsValueModifiedFromReference() ? 12.0 : 10.8,
+            parameter.IsValueModifiedFromReference() ? 12.8 : 11.6,
             parameter.IsValueModifiedFromReference() ? accent : text,
             FontWeights.Bold);
 

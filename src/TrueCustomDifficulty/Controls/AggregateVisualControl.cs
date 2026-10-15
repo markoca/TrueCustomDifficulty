@@ -631,7 +631,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var modified = parameter.IsValueModifiedFromReference();
         var value = EconomyValue(parameter, parameter.CurrentNumber);
-        var readout = CreateText(value, modified ? 12.2 : 11.0,
+        var readout = CreateText(value, modified ? 13.0 : 11.8,
             modified ? accent : text, FontWeights.Bold);
         // Reserve the measured readout width, not an arbitrary 95-DIP lane.
         // At minimum window width titles cannot overwrite the live value.
@@ -1932,7 +1932,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // of which bundle owns them. Never apply a second whole-card fade.
         var disabledInk = MasterDisabledInk(text);
         var display = CreateText(valueText(parameter.CurrentNumber),
-            changed ? 12.2 : 11.0,
+            changed ? 13.0 : 11.8,
             enabled ? changed ? accent : text : disabledInk, FontWeights.Bold);
         var labelWidth = Math.Max(1.0, card.Width - 36.0 -
             display.WidthIncludingTrailingWhitespace - 9.0);
@@ -2050,7 +2050,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var changed = enabled && parameter.IsValueModifiedFromReference();
         var disabledInk = MasterDisabledInk(text);
         var value = MasterPercent(parameter.CurrentNumber);
-        var valueText = CreateText(value, 11.8,
+        var valueText = CreateText(value, 12.6,
             enabled ? text : disabledInk, FontWeights.Bold);
         if (changed)
         {
@@ -2058,7 +2058,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 System.Text.RegularExpressions.Regex.Matches(value, @"\d+(?:\.\d+)?"))
             {
                 valueText.SetForegroundBrush(accent, token.Index, token.Length);
-                valueText.SetFontSize(13.0, token.Index, token.Length);
+                valueText.SetFontSize(13.8, token.Index, token.Length);
             }
         }
         var labelWidth = Math.Max(1.0,
@@ -4723,14 +4723,14 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // Determine the actual value width before reserving space for the title.
         // The old fixed 155-DIP reserve truncated labels despite unused room.
-        var valueText = CreateText(value, 10.7,
+        var valueText = CreateText(value, 11.5,
             parameter.IsControlEnabled ? text : muted, FontWeights.Bold, contentWidth);
         if (parameter.IsControlEnabled && parameter.IsValueModifiedFromReference())
             foreach (System.Text.RegularExpressions.Match token in
                 System.Text.RegularExpressions.Regex.Matches(value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
             {
                 valueText.SetForegroundBrush(accent, token.Index, token.Length);
-                valueText.SetFontSize(11.9, token.Index, token.Length);
+                valueText.SetFontSize(12.7, token.Index, token.Length);
             }
         if (highlightDerivedLastNumber && parameter.IsControlEnabled)
         {
@@ -4861,7 +4861,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // hard-coded 150 DIP lane that would clip health names on small windows.
         var valueReserve = (healthTypography || combatTypography) && parameter is not null
             ? CreateText(combatTypography ? $"{parameter.CurrentNumber:0.##}x" : FriendlyValue(parameter),
-                (healthTypography ? HealthTypography.Value : 12.0) + 1.2,
+                (healthTypography ? HealthTypography.Value + 0.8 : 12.8) + 1.2,
                 text, FontWeights.SemiBold).WidthIncludingTrailingWhitespace + 12.0
             : 126.0;
         dc.DrawText(CreateText(label, labelSize, enabled ? text : muted, FontWeights.Bold,
@@ -4881,8 +4881,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var value = combatTypography ? $"{parameter.CurrentNumber:0.##}x"
             : pairedValueFormatting ? ComparablePairedValue(parameter, parameter.CurrentNumber)
             : FriendlyValue(parameter);
-        var baseSize = healthTypography ? HealthTypography.Value
-            : combatTypography ? 12.0 : pairedValueFormatting ? 11.1 : 10.1;
+        var baseSize = healthTypography ? HealthTypography.Value + 0.8
+            : combatTypography ? 12.8 : pairedValueFormatting ? 11.9 : 10.9;
         var valueText = CreateText(value, baseSize,
             enabled ? text : muted, FontWeights.SemiBold, textWidth);
         if (enabled && parameter.IsValueModifiedFromReference())

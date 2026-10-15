@@ -150,7 +150,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
                 new Point(barLeft - 5, referenceY), new Point(barLeft + barWidth + 5, referenceY));
             VerticalBarHandleChrome.Draw(dc, new Point(center, y),
                 barWidth, enabled ? accent : muted, enabled && _hoverIndex == i);
-            Center(dc, $"{p.CurrentNumber:0.##}x", center, 84, 10.5,
+            Center(dc, $"{p.CurrentNumber:0.##}x", center, 84, 11.3,
                 enabled && p.IsValueModifiedFromReference() ? accent : text,
                 FontWeights.Bold);
             var words = Items[i].Label.Split(' ');

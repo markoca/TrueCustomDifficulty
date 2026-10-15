@@ -226,21 +226,21 @@ public sealed class MutantHealthRadar : FrameworkElement
             10.8, text, FontWeights.Bold);
 
         // Top row: species left, current multiplier centered, derived real HP right.
-        // Modified values alone gain the accent and +1.2 DIP, never the HP unit.
+        // Current multiplier and actual HP stay legible; only changed digits turn gold.
         DrawSourceNumber(dc, $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Left + card.Width / 2.0, card.Top + 12.0),
-            11.2, text, accent, FontWeights.Bold, modified);
+            13.0, text, accent, FontWeights.Bold, modified);
 
         var currentHp = mutant.VanillaHp * parameter.CurrentNumber;
         var hpLabel = $"{currentHp:0} HP";
-        var hpText = CreateText(hpLabel, 10.5, muted, FontWeights.SemiBold);
+        var hpText = CreateText(hpLabel, 12.5, text, FontWeights.Bold);
         if (modified)
         {
             var hpDigits = hpLabel.IndexOf(' ');
             if (hpDigits > 0)
             {
                 hpText.SetForegroundBrush(accent, 0, hpDigits);
-                hpText.SetFontSize(11.7, 0, hpDigits);
+                hpText.SetFontSize(13.7, 0, hpDigits);
             }
         }
         dc.DrawText(hpText,
