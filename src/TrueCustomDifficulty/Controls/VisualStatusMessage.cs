@@ -3,14 +3,14 @@ using System.Windows.Threading;
 namespace TrueCustomDifficulty.Controls;
 
 /// <summary>
-/// Keeps short-lived visual-control feedback separate from persistent instruction/status text.
-/// Transient messages automatically expire after three seconds and reveal the previous text again.
+/// Preserves the short-lived redraw notifications used by the existing WPF
+/// visual controls. Their transient state expires after three seconds.
+/// The former persistent-text API had no readers and has been retired.
 /// </summary>
 internal sealed class VisualStatusMessage
 {
     private readonly DispatcherTimer _timer;
     private readonly Action _changed;
-    private string _persistentText = string.Empty;
     private string _transientText = string.Empty;
 
     public VisualStatusMessage(Action changed)
@@ -21,16 +21,6 @@ internal sealed class VisualStatusMessage
             Interval = TimeSpan.FromSeconds(3)
         };
         _timer.Tick += (_, _) => ClearTransient();
-    }
-
-    public string Text => string.IsNullOrWhiteSpace(_transientText)
-        ? _persistentText
-        : _transientText;
-
-    public void SetPersistent(string text)
-    {
-        _persistentText = text ?? string.Empty;
-        _changed();
     }
 
     public void ShowTransient(string text)
@@ -48,7 +38,6 @@ internal sealed class VisualStatusMessage
     {
         _timer.Stop();
         _transientText = string.Empty;
-        _persistentText = string.Empty;
         _changed();
     }
 

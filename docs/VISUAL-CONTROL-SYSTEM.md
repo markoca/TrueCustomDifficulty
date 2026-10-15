@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-15 — Shared transient status helper cleanup (CURRENT)
+
+The internal `VisualStatusMessage` helper has no consumer of its former persistent-text property and no caller of `SetPersistent`. Remove `_persistentText`, `Text` and `SetPersistent` only. Keep its existing `ShowTransient`, `Clear`, `ClearTransient`, three-second dispatcher timer, and redraw callback behavior used by active mouse/keyboard handlers across visual families. This is a dead API removal, **not** a redesign of feedback, handle glow, controls, status displays or timing. Maintain the compact visual system, preset and CFG source behavior; local WPF/Wine confirmation remains pending.
+
 ### 2026-10-15 — Shared responsive layout metadata cleanup (CURRENT)
 
 The central `ResponsiveParameterGridPanel.SemanticSlots` dictionary contains **visible-layout positions only**, not CFG/preset identities. Retire 19 unreachable mappings: 3 parameter IDs no longer present in `parameters.json`, 6 old Combat PSY/repeated-hit rows explicitly filtered out of normal UI, and 10 catalog-hidden backing values already owned by active visual aggregates. **Do not remove these 16 still-supported CFG parameter definitions, change writer mappings or clear saved preset values.** Preserve all remaining 104 semantic slots and current column geometry, including the visible `stamina.sprintDisableThreshold` Exhaustion anchor (catalog-hidden as a separate slider but visible as a composite control), the paired Economy dashboard anchors, and existing responsive breakpoint rules. Removing never-used dictionary entries must not change actual UI or hit behavior. Enforce current-catalog ID coverage and hidden-source/anchor distinctions in the project consistency audit; WPF/Wine runtime verification remains pending.

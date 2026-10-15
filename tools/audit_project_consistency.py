@@ -1580,6 +1580,24 @@ if ('public bool IsExhaustionRecoveryAnchor => Id == "stamina.sprintDisableThres
     fail("Responsive layout lost visible Stamina/Economy anchor or collapse guard")
 note("Responsive layout: 19 stale slot entries pruned; 104 live maps remain, Exhaustion/Economy anchors intact")
 
+# Shared visual status infrastructure: persistent text used to be stored,
+# but no editor consumed that property or invoked SetPersistent. Preserve
+# transient invalidation and expiration for currently deployed WPF handlers.
+_visual_status_source = (ROOT / 'src/TrueCustomDifficulty/Controls/VisualStatusMessage.cs').read_text(encoding='utf-8')
+for _unused in ('_persistentText', 'public string Text =>', 'SetPersistent('):
+    if _unused in _visual_status_source:
+        fail('Unconsumed persistent visual-status API has returned: ' + _unused)
+for _needed in (
+    'public void ShowTransient(string text)',
+    'public void Clear()',
+    'public void ClearTransient()',
+    '_timer.Tick += (_, _) => ClearTransient();',
+    '_changed();'
+):
+    if _needed not in _visual_status_source:
+        fail('Active WPF transient redraw contract missing: ' + _needed)
+note('VisualStatusMessage: unconsumed persistent-text state removed, transient redraw lifecycle intact')
+
 # Economy dashboard approval contract, 2026-10-11. The seven-control
 # baseline, native CFG writer surface and pre-existing responsive layouts
 # must remain intact while the Economy-only grouping is compacted.
