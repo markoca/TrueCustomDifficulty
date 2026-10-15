@@ -56,10 +56,17 @@ for tag in ("Grid", "TabControl"):
                     if p.attrib.get("{" +
                         "http://schemas.microsoft.com/winfx/2006/xaml/presentation" +
                         "}Grid.Row") in ("1", "2")]
-    assert any(p.attrib.get("IsEnabled") == "{Binding IsBuildIdle}"
+    assert any(p.attrib.get("IsHitTestVisible") == "{Binding IsBuildIdle}"
                for p in matching), f"unlocked main editor region {tag}"
-assert children[0].attrib.get("IsEnabled") == "{Binding IsBuildIdle}"
-assert children[1].attrib.get("IsEnabled") == "{Binding IsBuildIdle}"
+assert children[0].attrib.get("IsHitTestVisible") == "{Binding IsBuildIdle}"
+assert children[1].attrib.get("IsHitTestVisible") == "{Binding IsBuildIdle}"
+# Disabled WPF templates can paint white patches under Wine: never change
+# IsEnabled on an entire tab/content subtree just to lock busy input.
+assert 'IsEnabled="{Binding IsBuildIdle}"' not in xaml
+assert "PreviewKeyDown += (_, e) =>" in window
+assert "PreviewTextInput += (_, e) =>" in window
+assert window.count("DataContext is MainViewModel { IsBuilding: true }") >= 4
+assert "e.Handled = true;" in window
 for color in ("#FFD438", "#F0C419"):
     assert color in xaml, f"missing LocalizationWorkbench gradient stop {color}"
 assert 'x:Name="PART_Track"' in xaml and 'x:Name="PART_Indicator"' in xaml

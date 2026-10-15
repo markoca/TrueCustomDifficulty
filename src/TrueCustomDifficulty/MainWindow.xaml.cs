@@ -24,6 +24,20 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        // Keep editor controls visually unchanged while an external packer runs.
+        // IsHitTestVisible disables pointer edits without triggering disabled
+        // WPF/Wine templates; keyboard input must be independently blocked.
+        PreviewKeyDown += (_, e) =>
+        {
+            if (DataContext is MainViewModel { IsBuilding: true })
+                e.Handled = true;
+        };
+        PreviewTextInput += (_, e) =>
+        {
+            if (DataContext is MainViewModel { IsBuilding: true })
+                e.Handled = true;
+        };
+
         // The worker owns temporary staging and an atomic install. Do not let
         // closing the window interrupt a live external repak/retoc process.
         Closing += (_, e) =>
