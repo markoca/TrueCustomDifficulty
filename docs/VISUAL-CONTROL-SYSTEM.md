@@ -1,5 +1,12 @@
 # Visual Control System
 
+### 2026-10-15 — Health dead-code cleanup, pass 1 (CURRENT)
+
+The active Health UI consists of `CoreHealthDashboard` and the consolidated `MedicalHealingRadar`, preserving all original HP, healing, bleeding and radiation-removal sources. Remove the **unused** `DrawRecoveryMeter` (replaced by the current Core Health native resource rulers and recovery controls), the orphaned `RADIATION TREATMENT` default renderer in `DrawPairedSystemBoard`, and its unreachable Health-specific paired-value formatting cases. The paired board now rejects an unregistered family rather than silently rendering a second radiation card. Preserve the independent `MedicalHealingRadar` HEAL/BLEED/RAD columns and `CoreHealthDashboard` source mappings, ranges, native steps, keyboard/mouse/reset behavior and compact layout.
+
+Remove the redundant UI-only `WireVisualAggregate("health.bandageBleeding", ...)` subscription: the bleeding anchor is not a visible editor. The active `health.bandageHealing` modified-state provider already observes the full Medical Items backing family (including all bleeding sources, Scientific/Anti-Rad, Beer/Vodka and Food Healing); preserve this provider and the CFG/preset routes. No gameplay setting, visible card, UI geometry, controls or user-facing text is added.
+
+
 ### 2026-10-15 — Combat cleanup pass 3: orphaned helpers and UI sorting (CURRENT)
 
 Remove five never-called private methods `DrawDualParameterHeading`, `DrawInlineHorizontalTrack`, `DrawCurveLine`, `AddVerticalPointTarget`, `DrawChangedNumbers` and obsolete Combat-specific branches of the shared paired-value formatter. Existing native Human Combat/Your Weapons/Mutant Health renderers and WPF hit/reset behavior are unchanged; the old `DrawDualParameterHeading` was not an active renderer.

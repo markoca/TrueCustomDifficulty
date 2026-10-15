@@ -2167,6 +2167,36 @@ _medical_path = ROOT / "src/TrueCustomDifficulty/Controls/MedicalHealingRadar.cs
 _medical_source = _medical_path.read_text(encoding="utf-8")
 _medical_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 _medical_main_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+# Health cleanup pass 1: no dead generic radiation/removal UI may
+# reappear alongside the single source-backed Medical Items editor.
+_health_aggregate_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_health_paired_start = _health_aggregate_source.find("private void DrawPairedSystemBoard(")
+_health_paired_end = _health_aggregate_source.find("private void DrawWaterStaminaBoard(", _health_paired_start)
+_health_paired = (_health_aggregate_source[_health_paired_start:_health_paired_end]
+                  if 0 <= _health_paired_start < _health_paired_end else "")
+if "private void DrawRecoveryMeter(" in _health_aggregate_source:
+    fail("Uncalled Health recovery meter renderer returned")
+if (not _health_paired or 'Title: "RADIATION TREATMENT"' in _health_paired
+        or '"health.ecoMedkitAntirad"' in _health_paired
+        or '"health.antiRadRadiation"' in _health_paired
+        or 'Unsupported paired system family:' not in _health_paired):
+    fail("Obsolete standalone Health radiation fallback returned")
+if ('"health.ecoMedkitAntirad" or "health.antiRadRadiation"' in _health_aggregate_source
+        or '"health.lowHealthRegen" => $"{rawValue:0.0} rate"' in _health_aggregate_source):
+    fail("Obsolete Health comparison formatting returned")
+if 'WireVisualAggregate(\\n            "health.bandageBleeding",' in _medical_main_vm:
+    fail("Hidden bleeding anchor still has duplicate UI-only aggregate wiring")
+if ('var medicalHealingMembers = medicalHealingParameterIds' not in _medical_main_vm
+        or 'medicalHealingAnchor.SetAggregateModifiedProvider(' not in _medical_main_vm):
+    fail("Live Medical Items aggregate modified-state provider missing")
+for _medical_source_id in ("health.bandageBleeding", "health.medkitBleeding",
+                           "health.armyMedkitBleeding", "health.ecoMedkitBleeding",
+                           "health.ecoMedkitAntirad", "health.antiRadRadiation",
+                           "health.beerRadiationRemoval", "health.vodkaRadiationRemoval"):
+    if _medical_source_id not in _medical_main_vm or _medical_source_id not in _medical_source:
+        fail(f"Active Medical Items source disappeared: {_medical_source_id}")
+note("Health dead recovery/radiation UI removed; one Medical Items modified-state owner retained")
+
 _bleeding_caps_expected = {
     "health.bandageBleeding": 100,
     "health.medkitBleeding": 30,

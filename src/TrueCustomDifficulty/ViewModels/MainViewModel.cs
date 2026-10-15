@@ -354,13 +354,6 @@ public sealed class MainViewModel : ObservableObject
             "combat.explosionDamage");
 
         WireVisualAggregate(
-            "health.bandageBleeding",
-            "health.bandageBleeding",
-            "health.medkitBleeding",
-            "health.armyMedkitBleeding",
-            "health.ecoMedkitBleeding");
-
-        WireVisualAggregate(
             "survival.waterInstantStaminaRestore",
             "survival.waterInstantStaminaRestore",
             "survival.energyDrinkInstantStaminaRestore",

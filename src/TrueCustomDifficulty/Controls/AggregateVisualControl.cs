@@ -1642,14 +1642,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 Second: "stamina.waterStrongDrain",
                 SecondLabel: "DEEP WATER DRAIN",
                 Note: "RIGHT = MORE STAMINA DRAIN AT THAT DEPTH"),
-            _ => (
-                Title: "RADIATION TREATMENT",
-                Subtitle: "radiation removed per item use (raw CFG points)",
-                First: "health.ecoMedkitAntirad",
-                FirstLabel: "SCIENTIFIC MEDKIT",
-                Second: "health.antiRadRadiation",
-                SecondLabel: "ANTI-RAD",
-                Note: "RIGHT = MORE RADIATION REMOVED PER USE")
+            _ => throw new InvalidOperationException(
+                $"Unsupported paired system family: {Family}")
         };
 
         DrawHeader(dc, board.Title, board.Subtitle, text, muted, accent);
@@ -3805,52 +3799,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel);
     }
 
-    private void DrawRecoveryMeter(
-        DrawingContext dc,
-        ParameterViewModel? parameter,
-        string label,
-        Rect card,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
-    {
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 3.0, 3.0);
-        DrawText(dc, label, new Point(card.Left + 10.0, card.Top + 8.0), 8.8, muted, FontWeights.Bold);
-
-        if (parameter is null)
-            return;
-
-        var changed = parameter.IsValueModifiedFromReference();
-        DrawRightAlignedText(dc, FriendlyValue(parameter),
-            new Point(card.Right - 10.0, card.Top + 6.0),
-            changed ? 11.2 : 10.0, changed ? accent : text, FontWeights.Bold);
-
-        var track = new Rect(card.Left + 12.0, card.Top + 35.0, Math.Max(50.0, card.Width - 24.0), 20.0);
-        var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(border, 5.0), new Point(track.Left, y), new Point(track.Right, y));
-
-        var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
-        dc.DrawLine(new Pen(accent, 5.0), new Point(track.Left, y), new Point(currentX, y));
-        IndustrialRulerChrome.DrawActiveRailGlint(dc, track.Left, currentX, y,
-            accent, parameter.IsControlEnabled);
-
-        // Do not draw a fake vanilla marker at the edge when the verified
-        // 300 HP source is outside this tool's 0-200 HP editor interval.
-        if (parameter.ReferenceNumber >= parameter.Minimum
-            && parameter.ReferenceNumber <= parameter.Maximum)
-        {
-            var vanillaX = ValueToX(parameter.ReferenceNumber,
-                parameter.Minimum, parameter.Maximum, track, reverse: false);
-            dc.DrawLine(new Pen(muted, 1.2),
-                new Point(vanillaX, y - 8.0), new Point(vanillaX, y + 8.0));
-        }
-
-        dc.DrawEllipse(panel, new Pen(accent, IsSelected(parameter) ? 2.4 : 1.6), new Point(currentX, y), 6.0, 6.0);
-        AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
-    }
-
     // Trading directions and durability rules are independent authored CFG sources.
     // Reuse the compact Economy card grammar: label/current on one line, rail, bounds.
     // Mirrored source meters: merchant buys from you on the left and sells
@@ -5234,8 +5182,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "stamina.waterMediumDrain" or "stamina.waterStrongDrain" => $"{rawValue:0.##}x",
             "stamina.maxSP" => $"{rawValue:0} STAMINA",
             "stamina.regeneration" => $"{rawValue:0.##} STAMINA/s",
-            "health.ecoMedkitAntirad" or "health.antiRadRadiation" => $"{rawValue:0} radiation",
-            "health.lowHealthRegen" => $"{rawValue:0.0} rate",
             "economy.fastTravelCost" or "economy.upgradeCost" or
             "economy.traderAmmoStock" or "economy.medicStock" or
             "equipment.ammoWeight" or "equipment.consumableWeight" or
