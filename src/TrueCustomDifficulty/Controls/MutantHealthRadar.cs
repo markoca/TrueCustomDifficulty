@@ -11,7 +11,6 @@ namespace TrueCustomDifficulty.Controls;
 public sealed class MutantHealthRadar : FrameworkElement
 {
     private const double Epsilon = 0.000001;
-    private const double GlobalHpMaximum = 7500.0;
     private const double DesiredHeight = 605.0;
     private const int DamageRow = 14;
     private const double MaxContentWidth = 1080.0;
@@ -19,20 +18,20 @@ public sealed class MutantHealthRadar : FrameworkElement
 
     private static readonly MutantDefinition[] Mutants =
     {
-        new("combat.mutantHealth.bayun", "Bayun", 400.0, false),
-        new("combat.mutantHealth.blinddog", "Blind Dog", 63.0, false),
-        new("combat.mutantHealth.bloodsucker", "Bloodsucker", 500.0, true),
-        new("combat.mutantHealth.boar", "Boar", 300.0, false),
-        new("combat.mutantHealth.burer", "Burer", 400.0, false),
-        new("combat.mutantHealth.chimera", "Chimera", 1400.0, false),
-        new("combat.mutantHealth.controller", "Controller", 500.0, false),
-        new("combat.mutantHealth.deer", "Deer", 600.0, false),
-        new("combat.mutantHealth.flesh", "Flesh", 280.0, false),
-        new("combat.mutantHealth.poltergeist", "Poltergeist", 400.0, false),
-        new("combat.mutantHealth.pseudodog", "Pseudodog", 300.0, false),
-        new("combat.mutantHealth.pseudogiant", "Pseudogiant", 2500.0, false),
-        new("combat.mutantHealth.snork", "Snork", 150.0, false),
-        new("combat.mutantHealth.tushkan", "Tushkan", 19.0, false),
+        new("combat.mutantHealth.bayun", "Bayun", 400.0),
+        new("combat.mutantHealth.blinddog", "Blind Dog", 63.0),
+        new("combat.mutantHealth.bloodsucker", "Bloodsucker", 500.0),
+        new("combat.mutantHealth.boar", "Boar", 300.0),
+        new("combat.mutantHealth.burer", "Burer", 400.0),
+        new("combat.mutantHealth.chimera", "Chimera", 1400.0),
+        new("combat.mutantHealth.controller", "Controller", 500.0),
+        new("combat.mutantHealth.deer", "Deer", 600.0),
+        new("combat.mutantHealth.flesh", "Flesh", 280.0),
+        new("combat.mutantHealth.poltergeist", "Poltergeist", 400.0),
+        new("combat.mutantHealth.pseudodog", "Pseudodog", 300.0),
+        new("combat.mutantHealth.pseudogiant", "Pseudogiant", 2500.0),
+        new("combat.mutantHealth.snork", "Snork", 150.0),
+        new("combat.mutantHealth.tushkan", "Tushkan", 19.0),
     };
 
     private readonly ParameterViewModel?[] _parameters = new ParameterViewModel?[Mutants.Length];
@@ -281,9 +280,6 @@ public sealed class MutantHealthRadar : FrameworkElement
         return new Rect((ActualWidth - width) / 2.0, 0.0, width, ActualHeight);
     }
 
-    private static double HpToX(double hp, Rect bar)
-        => bar.Left + bar.Width * Math.Clamp(hp / GlobalHpMaximum, 0.0, 1.0);
-
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
@@ -446,10 +442,6 @@ public sealed class MutantHealthRadar : FrameworkElement
         return -1;
     }
 
-    private static double ValueToY(double value, double minimum, double maximum, Rect track)
-        => track.Bottom - track.Height * Math.Clamp(
-            (value - minimum) / Math.Max(Epsilon, maximum - minimum), 0.0, 1.0);
-
     private static double ValueToX(double value, double minimum, double maximum, Rect track)
     {
         if (maximum <= minimum + Epsilon)
@@ -498,12 +490,6 @@ public sealed class MutantHealthRadar : FrameworkElement
         dc.DrawText(formatted, new Point(center.X - formatted.Width / 2.0, center.Y - formatted.Height / 2.0));
     }
 
-    private void DrawRightAlignedText(DrawingContext dc, string value, Point right, double size, Brush brush, FontWeight weight)
-    {
-        var formatted = CreateText(value, size, brush, weight);
-        dc.DrawText(formatted, new Point(right.X - formatted.Width, right.Y));
-    }
-
     private FormattedText CreateText(string value, double size, Brush brush, FontWeight weight)
     {
         var formatted = new FormattedText(
@@ -515,17 +501,10 @@ public sealed class MutantHealthRadar : FrameworkElement
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
-        var separatorBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
-        for (var i = 0; i < value.Length; i++)
-        {
-            if (value[i] == '|')
-                formatted.SetForegroundBrush(separatorBrush, i, 1);
-        }
-
         return formatted;
     }
 
-    private sealed record MutantDefinition(string ParameterId, string Label, double VanillaHp, bool ShowMist);
+    private sealed record MutantDefinition(string ParameterId, string Label, double VanillaHp);
     private sealed record HitTarget(Rect HitRect, Rect MapRect);
     private sealed record DamageMarkerHitTarget(double Value, Rect HitRect);
 }

@@ -807,7 +807,9 @@ else:
             fail(f"Mutant Health source not loaded in MainViewModel: {_id}")
     if _mhr_text.count('new("combat.mutantHealth.') != 14:
         fail("MutantHealthRadar must show exactly 14 real mutant groups")
-    if "GlobalHpMaximum = 7500.0" not in _mhr_text or "DesiredHeight = 605.0" not in _mhr_text:
+    if ("DesiredHeight = 605.0" not in _mhr_text
+        or "MaxContentWidth = 1080.0" not in _mhr_text
+        or 'var cardWidth = (content.Width - ColumnGap) / 2.0;' not in _mhr_text):
         fail("MutantHealthRadar compact 2-column geometry drifted")
     if "parameter.CurrentNumber" not in _mhr_text or "parameter.ReferenceNumber" not in _mhr_text:
         fail("MutantHealthRadar lost native live/reference source comparisons")
@@ -818,6 +820,31 @@ else:
     if "IsMutantHealthAnchor" not in _mhr_param_vm or "IsMutantHealthMember" not in _mhr_param_vm:
         fail("mutant health aggregate/backing visibility contract missing")
     note("Mutant Health compact roster: 14 confirmed, source backed 0.05–2x at 0.05x steps; authored MaxHP references validated")
+
+# Combat post-audit cleanup: historical 7500-HP plotting and vertical-text
+# helpers are not part of the source-native 14-species two-column renderer.
+# Per-species UI definitions carry only the CFG key, label and vanilla HP.
+_mhr_dead_ui = (
+    'GlobalHpMaximum', 'HpToX(', 'ValueToY(', 'DrawRightAlignedText(',
+    'ShowMist', "value[i] == '|'",
+)
+if any(token in _mhr_text for token in _mhr_dead_ui):
+    fail('Mutant Health resurrected retired graph/text or unconsumed roster flag')
+_mhr_roster_sources = re.findall(
+    r'new\("combat\.mutantHealth\.[^"]+", "[^"]+", \d+(?:\.\d+)?\)',
+    _mhr_text,
+)
+if len(_mhr_roster_sources) != 14:
+    fail('Mutant Health 14 CFG-backed (id, label, vanilla HP) rows drifted')
+for _active in ('private Rect ContentRect()', 'private void DrawDamageTrack(',
+                'private void DrawRow(', 'private static double ValueToX(',
+                'private void DrawSourceNumber(',
+                'protected override void OnMouseRightButtonDown(',
+                'protected override void OnKeyDown('):
+    if _active not in _mhr_text:
+        fail('Mutant Health live two-column editor path missing: ' + _active)
+note('Combat: removed obsolete Mutant Health graph/text helpers and unused roster flag')
+
 
 # Mutant health audit gate (v0.9.26.44).
 _mh_path = DOCS / "combat" / "mutant-health-audit.csv"

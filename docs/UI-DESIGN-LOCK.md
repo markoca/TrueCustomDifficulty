@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Combat / Mutant Health unused renderer cleanup (CURRENT)
+
+Keep the live two-column `MutantHealthRadar` (14 independently editable source-backed species, native 0.05–2x controls, read-only derived HP values and the separate mutant hit-damage track) exactly as approved. Remove its unused `HpToX` absolute-pool mapping and its now-orphaned `GlobalHpMaximum = 7500` constant; the obsolete `ValueToY` mapping, uncalled `DrawRightAlignedText` helper, and never-used pipe-character accent loop in `CreateText`. Also remove the unconsumed `ShowMist` flag from the internal `MutantDefinition` record and its 14 constructor calls; retain all source IDs, names and original vanilla-HP numbers. The active `ContentRect`, `ValueToX`, drawing and mouse/keyboard/reset functions stay unchanged. This removes only dead renderer metadata: do not change actual mutant health values, CFG writer/presets, 605-DIP layout, typography, hit zones, color rules or active Combat tabs. Static audit is updated; local .NET/Wine build and in-game confirmation remain pending.
+
 ### 2026-10-15 — A-Life tab, unused human ladder helper cleanup (CURRENT)
 
 `HumanGroupSizeRadar` uses its own native source/value mapping for the four NEWBIE, EXPERIENCED, VETERAN and MASTER rank rows. Its private `ValueToX` projection function has no callers and is removed as dead UI code. Keep the four human rank controls, existing `MutantGroupSizeRadar` controls, original compact card geometry, rendered values, hover and drag behavior, keyboard stepping, individual resets, presets and CFG writer mappings fully unchanged. There is no new A-Life parameter, movement of controls, spawn/population inference or gameplay change. Project consistency audit asserts removed helper stays absent and rank/input handlers remain; local .NET/Wine acceptance is pending.
