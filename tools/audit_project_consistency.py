@@ -4743,6 +4743,42 @@ for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
         fail("UI catalogs missing GameInstallInfo dead metadata cleanup")
 note("Game install discovery: no dead path/source metadata; same Steam, Wine, env, DLC routes; ~mods only from Settings")
 
+# Settings: Open ~mods folder uses the currently saved, validated destination,
+# never a new Browse/text edit, parent Paks location or hard-coded path.
+_tcd_settings_view = (ROOT / "src/TrueCustomDifficulty/SettingsWindow.xaml").read_text(encoding="utf-8")
+_tcd_settings_code = (ROOT / "src/TrueCustomDifficulty/SettingsWindow.xaml.cs").read_text(encoding="utf-8")
+if any(_token not in _tcd_settings_view for _token in (
+        'x:Name="OpenModsFolderButton"',
+        'Content="Open ~mods folder"',
+        'Click="OpenModsFolder_Click"',
+        'Visibility="Collapsed"',
+        'TextChanged="ModsPathBox_TextChanged"',
+        'Grid.Column="1" Orientation="Horizontal"',
+        'Content="Save"', 'Content="Cancel"')):
+    fail("Settings Open ~mods folder compact control/layout or edited-path visibility missing")
+for _token in (
+        "using System.Diagnostics;",
+        "using System.ComponentModel;",
+        "private readonly string _savedModsPath;",
+        "UpdateOpenFolderButton();",
+        "private void ModsPathBox_TextChanged(",
+        "private void OpenModsFolder_Click(",
+        "_settings.RequireConfiguredPath()",
+        "ModDestinationSettingsService.ValidatePath(_savedModsPath)",
+        "string.Equals(ModsPathBox.Text, _savedModsPath, StringComparison.OrdinalIgnoreCase)",
+        "OpenModsFolderButton.Visibility = canOpen ? Visibility.Visible : Visibility.Collapsed;",
+        "FileName = savedFolder",
+        "UseShellExecute = true",
+        "Process.Start(new ProcessStartInfo",
+        "MessageBox.Show(this, ex.Message, \"Open ~mods folder\"",
+        ):
+    if _token not in _tcd_settings_code:
+        fail("Open ~mods folder lost saved-path validation or shell launch: " + _token)
+for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Settings: Open ~mods folder (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        fail("Missing Open ~mods folder catalog entry: " + _doc)
+note("Settings Open ~mods: compact, persisted-only validated folder, ShellExecute, no unsaved path")
+
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:

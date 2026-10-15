@@ -32,16 +32,27 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBox x:Name="ModsPathBox" Height="29"
-                             VerticalContentAlignment="Center"/>
+                             VerticalContentAlignment="Center"
+                             TextChanged="ModsPathBox_TextChanged"/>
                     <Button Grid.Column="1" Content="Browse" MinWidth="77"
                             Margin="7,0,0,0" Click="Browse_Click"/>
                 </Grid>
-                <StackPanel Grid.Row="2" Orientation="Horizontal"
-                            HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                    <Button Content="Cancel" MinWidth="73" IsCancel="True" Click="Cancel_Click"/>
-                    <Button Content="Save" MinWidth="73" IsDefault="True"
-                            Style="{StaticResource PrimaryButtonStyle}" Click="Save_Click"/>
-                </StackPanel>
+                <Grid Grid.Row="2" VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="OpenModsFolderButton"
+                            Content="Open ~mods folder"
+                            HorizontalAlignment="Left"
+                            Visibility="Collapsed"
+                            Click="OpenModsFolder_Click"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="Cancel" MinWidth="73" IsCancel="True" Click="Cancel_Click"/>
+                        <Button Content="Save" MinWidth="73" IsDefault="True"
+                                Style="{StaticResource PrimaryButtonStyle}" Click="Save_Click"/>
+                    </StackPanel>
+                </Grid>
             </Grid>
         </Grid>
     </Border>
