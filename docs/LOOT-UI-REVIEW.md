@@ -51,3 +51,7 @@ Below the graph, three fixed columns show the current concrete ammo count ranges
 ## 2026-10-10 — Unique weapons shuffle correction
 
 `SHUFFLE UNIQUE WEAPONS` is the sixth compact `WorldLootLayout` input (toggle), not a sixth world-depletion slider. The normal five removal controls remain untouched. The nine verified standalone unique weapon identities move between their nine original world pickup locations with no removals; the existing regular weapon shuffle remains independent. See [source and production contract](generators/LOOSE-UNIQUE-WEAPON-SHUFFLE-AUDIT.md).
+
+## 2026-10-15 — Loot retired mixer cleanup
+
+The actual destructible ammo/grenade yield sliders continue to be edited through `AmmoDistribution`. The inert `BreakableBoxYields` aggregate case (empty member list and obsolete height) and the entire unreachable vertical-strip mixer chain were removed, including their dedicated `MixerSelect` / `MixerBaseMarker` input dispatch and dead helper formatters. No Loot values, native CFG targets, presets, or visible controls changed. Existing `StashRewardProfile`, `NpcLootLoadout`, `WorldLootLayout`, the ammo-family weight editor and the shared live drawing helpers remain intact. `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md` record the current active UI contract; `audit_project_consistency.py` guards against restoring retired paths. Static source contract verified; local WPF build/Wine visual test remain pending.
