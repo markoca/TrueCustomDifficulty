@@ -89,6 +89,17 @@ public sealed class ActionCostsRadar : FrameworkElement
         MinHeight = 0.0;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
+        // Tab navigation can unload/reload the same WPF element. Do not keep
+        // hidden parameter-change listeners or an old mouse capture alive.
+        Loaded += (_, _) => RebindParameters();
+        Unloaded += (_, _) =>
+        {
+            DetachObservedParameters();
+            ReleaseDragCapture();
+            _targets.Clear();
+            _hoverParameter = null;
+            Cursor = Cursors.Arrow;
+        };
     }
 
     protected override Size MeasureOverride(Size availableSize)
@@ -104,11 +115,12 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     private void RebindParameters()
     {
-        // Mode may already have changed by the time this callback runs.
-        // Never enumerate the new mode when detaching handlers for the old one.
-        foreach (var parameter in _observedParameters)
-            parameter.PropertyChanged -= Parameter_PropertyChanged;
-        _observedParameters.Clear();
+        // Mode may already have changed. Detach the actual old observers and
+        // release any gesture that still points at the previous hit targets.
+        DetachObservedParameters();
+        ReleaseDragCapture();
+        _targets.Clear();
+        Cursor = Cursors.Arrow;
 
         Array.Clear(_actionParameters, 0, _actionParameters.Length);
         _aimParameter = null;
@@ -142,13 +154,32 @@ public sealed class ActionCostsRadar : FrameworkElement
             byId.TryGetValue(LowRecoveryStrengthId, out _lowRecoveryStrength);
             byId.TryGetValue(LowRecoveryDurationId, out _lowRecoveryDuration);
 
-            foreach (var parameter in EnumerateBoundParameters())
-                ObserveParameter(parameter);
-            // Read-only shared capacity: redraw on changes, never R-reset it.
-            ObserveParameter(_maximumStamina);
+            // Loaded rebinds these on return to the tab; unloaded visuals
+            // never retain subscriptions to their former parameter sources.
+            if (IsLoaded)
+            {
+                foreach (var parameter in EnumerateBoundParameters())
+                    ObserveParameter(parameter);
+                // Read-only shared capacity: redraw, never R-reset it.
+                ObserveParameter(_maximumStamina);
+            }
         }
 
         InvalidateVisual();
+    }
+
+    private void DetachObservedParameters()
+    {
+        foreach (var parameter in _observedParameters)
+            parameter.PropertyChanged -= Parameter_PropertyChanged;
+        _observedParameters.Clear();
+    }
+
+    private void ReleaseDragCapture()
+    {
+        _dragTarget = null;
+        if (IsMouseCaptured)
+            ReleaseMouseCapture();
     }
 
     private void ObserveParameter(ParameterViewModel? parameter)
@@ -630,6 +661,17 @@ public sealed class ActionCostsRadar : FrameworkElement
         _targets.Add(new InteractiveTarget(parameter, hitRect, mapRect, mapping, visualMinimum, visualMaximum));
     }
 
+    protected override void OnLostMouseCapture(MouseEventArgs e)
+    {
+        base.OnLostMouseCapture(e);
+        // Capture can also be revoked externally, without LeftButtonUp.
+        if (_dragTarget is null)
+            return;
+
+        _dragTarget = null;
+        InvalidateVisual();
+    }
+
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
@@ -671,6 +713,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
+        Cursor = Cursors.Arrow;
         if (_hoverParameter is null)
             return;
 
@@ -684,8 +727,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         if (_dragTarget is null)
             return;
 
-        _dragTarget = null;
-        ReleaseMouseCapture();
+        ReleaseDragCapture();
         e.Handled = true;
     }
 
