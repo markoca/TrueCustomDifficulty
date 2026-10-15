@@ -187,6 +187,26 @@ public sealed class PresetDirectoryService
         return index >= 0 ? index : FactoryPresetNames.Length;
     }
 
+    // Exact stock 247-source files before Water's +25% Stamina and -10%
+    // SPDrain split. A byte-identical factory preset should acquire its new
+    // second Water strength; customized user copies are never overwritten.
+    private static readonly Dictionary<string, string> PreWaterSplitFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "d137e71e95c4a87d16a00d2f6bd7e5e4ae9dea87",
+        ["Field Medic"] = "f82491c7488713854ad6e8b25afbf0462691d3ff",
+        ["Hardcore"] = "b07148e1a40f203a9ed5480eb3f071aeea5eb322",
+        ["Hardcore+"] = "e418f173fc950f3d9a6c249d60963cfce10e1a14",
+        ["Immersive"] = "07ed02cd1db7bea301482a03f720198488ce9115",
+        ["Mercenary"] = "fd8589e2540b8c908e947c50674c5a914978e300",
+        ["Mutant Hunter"] = "a41dc89559f0f9394f08ad3c9b584c698d02be06",
+        ["Outcast"] = "1c32c7ee583460dcafa0f3edbc278bb33261befa",
+        ["Scavenger"] = "567382e0921d08f22d2390038fd28aee9b210281",
+        ["Smuggler"] = "370c0b8303838fd663faf72f3f32de03bf0f2023",
+        ["Tactical"] = "0eb421d60ca3d4ebc9ee359123fa4154a246ac26",
+        ["Wanderer"] = "55677a66b97b0ef8faead62fb0da418514adf139",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -194,7 +214,8 @@ public sealed class PresetDirectoryService
             && !PreCooldownFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreShortDurationFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreFullCoverageFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreScarcityBalanceFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreScarcityBalanceFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreWaterSplitFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -218,7 +239,9 @@ public sealed class PresetDirectoryService
                 || (PreFullCoverageFactoryBlobs.TryGetValue(name, out var preFullCoverageHash)
                     && actual.Equals(preFullCoverageHash, StringComparison.OrdinalIgnoreCase))
                 || (PreScarcityBalanceFactoryBlobs.TryGetValue(name, out var preScarcityHash)
-                    && actual.Equals(preScarcityHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preScarcityHash, StringComparison.OrdinalIgnoreCase))
+                || (PreWaterSplitFactoryBlobs.TryGetValue(name, out var preWaterHash)
+                    && actual.Equals(preWaterHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

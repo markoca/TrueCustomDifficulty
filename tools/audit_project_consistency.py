@@ -1928,7 +1928,7 @@ if _build_name_errors:
 else:
     note("preset-aware triplet naming locked: zzzzz_TrueCustomDifficulty_<loaded preset>; safe underscores; Custom fallback")
 
-# Current 12 source-backed factory presets, complete 247 controls (2026-10-14).
+# Current 12 source-backed factory presets, complete 248 controls after the independent Water cost-cut split.
 _factory_preset_names = [
     "Anomaly Runner", "Field Medic", "Hardcore+", "Hardcore",
     "Immersive", "Mercenary", "Mutant Hunter", "Outcast",
@@ -1957,8 +1957,8 @@ for _name in _factory_preset_names:
         continue
     _preset = json.loads(_preset_path.read_text(encoding="utf-8"))
     _values = _preset.get("values", {})
-    if len(_values) != 247:
-        _factory_errors.append(f"{_name}: {len(_values)} values, expected 247")
+    if len(_values) != 248:
+        _factory_errors.append(f"{_name}: {len(_values)} values, expected 248")
     if _preset.get("referenceDifficulty") not in {"Novice", "Stalker", "Veteran", "Master"}:
         _factory_errors.append(f"{_name}: invalid referenceDifficulty={_preset.get('referenceDifficulty')}")
     if f'Presets\\{_name}.json' not in _factory_csproj_text:
@@ -1975,8 +1975,8 @@ _factory_tuning = json.loads((ROOT / "tools/factory_preset_expansion.json").read
 _factory_groups = _factory_tuning["groups"]
 _factory_tuning_profiles = _factory_tuning["profiles"]
 _factory_tuned_ids = [pid for members in _factory_groups.values() for pid in members]
-if len(_factory_catalog) != 247 or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
-    _factory_errors.append("expected 247 unique source IDs and 34 new + 3 drink duration matrix slots")
+if len(_factory_catalog) != 248 or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
+    _factory_errors.append("expected 248 unique source IDs and 34 new + 3 drink duration matrix slots")
 if set(_factory_tuning_profiles) != set(_factory_preset_names):
     _factory_errors.append("tuning matrix has missing/unknown factory names")
 
@@ -2035,11 +2035,27 @@ for _name in _factory_preset_names:
         if _entries[_hidden_neutral]["number"] != 1:
             _factory_errors.append(f"{_name}: hidden/unaudited source not neutral: {_hidden_neutral}")
 
-if ('PreFullCoverageFactoryBlobs' not in _factory_service_text
+if ('PreWaterSplitFactoryBlobs' not in _factory_service_text
+        or '&& !PreWaterSplitFactoryBlobs.TryGetValue(name, out knownHash)' not in _factory_service_text
+        or 'PreWaterSplitFactoryBlobs.TryGetValue(name, out var preWaterHash)' not in _factory_service_text
+        or 'PreFullCoverageFactoryBlobs' not in _factory_service_text
         or '&& !PreFullCoverageFactoryBlobs.TryGetValue(name, out knownHash)' not in _factory_service_text
         or 'PreFullCoverageFactoryBlobs.TryGetValue(name, out var preFullCoverageHash)' not in _factory_service_text
         or 'if (!File.Exists(destination) || IsUnmodifiedPreviousFactory(name, destination))' not in _factory_service_text):
     _factory_errors.append("byte-identical old stock factory migration or user-edits safety missing")
+
+# Exact pristine-stock migration: 12 old 247-source profiles update only
+# when Git-blob identity matches; every new Water cost-cut value preserves its
+# prior shared multiplier, while user-created/modified presets remain untouched.
+for _name in _factory_preset_names:
+    _preset = json.loads((_factory_preset_dir / f"{_name}.json").read_text(encoding="utf-8"))
+    _values = _preset["values"]
+    if ("survival.waterStaminaCostReduction" not in _values
+        or _values["survival.waterStaminaCostReduction"] !=
+           _values["survival.waterStaminaEffectStrength"]):
+        _factory_errors.append(_name + ": old Water shared factory strength not preserved")
+if _factory_service_text.count('PreWaterSplitFactoryBlobs.TryGetValue(name,') != 2:
+    _factory_errors.append("Water stock blob lease migration missing from factory service")
 
 # Scarcity-first playstyle tuning locks: actual CFG sources, not an invented
 # universal percentage or gameplay simulation. No fabricated "overall loot" mode.
@@ -2154,7 +2170,7 @@ if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legac
 if _factory_errors:
     fail("current 12 factory presets drifted: " + "; ".join(_factory_errors))
 else:
-    note("factory presets: twelve 247-source scarcity-first profiles, 46 source-backed balance settings each, exact-stock upgrade preserves local user edits")
+    note("factory presets: twelve 248-source scarcity-first profiles with independent Water values; exact-stock upgrade preserves edits")
 
 # Originally twelve visual-only live projections approved 2026-10-14;
 # nine remain after retiring the Medical Items percentage / bleed stage
@@ -3386,8 +3402,8 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 247 or len(_global_visible) != 148 or len(_global_hidden) != 99:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 247/148/99")
+if len(parameters) != 248 or len(_global_visible) != 148 or len(_global_hidden) != 100:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 248/148/100")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
 elif _global_confirmed != 117 or _global_runtime != 31:
@@ -3418,7 +3434,7 @@ elif _global_anomaly_missing or "SetEffectiveDamageMultiplierProvider" not in _g
 elif not _global_doc.exists():
     fail("global cross-domain audit document missing from docs/")
 else:
-    note("current cross-domain structural audit: 247 catalog / 148 visible / 99 hidden; 117 visible confirmed + 31 runtime-test-required; zero direct collisions")
+    note("current cross-domain structural audit: 248 catalog / 148 visible / 100 hidden; 117 visible confirmed + 31 runtime-test-required; zero direct collisions")
 
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("v0.2.51-v0.3.0 override/CFG-placement/provenance/production snapshots (current UI/Combat tools + active source checks are authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
@@ -4192,7 +4208,7 @@ for _required in (
     '(vincaTime, "VINCA")',
     '(herculesTime, "HERCULES")',
     '(psiTime, "PSI BLOCK")',
-    'DrawCompactTrack(dc, shortEffect, caption,',
+    'DrawMiniConsumableKnob(dc, shortEffect, caption,',
 ):
     if _required not in _consumer_durations:
         _consumer_errors.append(f"duration lane missing: {_required}")
@@ -4207,8 +4223,8 @@ for _required in (
 ):
     if _required not in _consumer_medicines:
         _consumer_errors.append(f"medicine knob missing below effects: {_required}")
-# Water's Stamina (+25%) and native negative SPDrain (-10%) are now
-# independently editable source bars, with green rails and exact writer scope.
+# Water's Stamina (+25%) and native negative SPDrain (-10%) are
+# independent compact green 270-degree knobs, with exact writer scope.
 _water_bonus_pid = "survival.waterStaminaEffectStrength"
 _water_cost_pid = "survival.waterStaminaCostReduction"
 _water_bonus_def = _consumer_catalog.get(_water_bonus_pid, {})
@@ -4231,21 +4247,26 @@ if (len(_water_pts) != 4
         [(_water_cost_pid, "WaterStaminaPerAction1", "-10%")] * 2)):
     _consumer_errors.append("Water effect baseline targets lost independent owners")
 for _token in (
-    'DrawCompactTrack(dc, waterStamina, "WATER STAMINA BONUS",',
-    'DrawCompactTrack(dc, waterCostReduction, "WATER COST CUT",',
+    'DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",',
+    'DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",',
     '"0%", "50%",', '"0%", "20%",',
-    'waterStrengthY, waterStrengthWidth, CompactTrackHeight)',
-    'waterGreen: true);',
+    'waterStrengthY, waterStrengthWidth, ConsumableMiniKnobHeight)',
+    'WaterEffectLineBrush);', 'WaterCostCutLineBrush);',
 ):
     if _token not in _consumer_durations:
         _consumer_errors.append("Water compact green percentage rails missing: " + _token)
-if (_consumer_durations.count('waterGreen: true);') != 2
+if (_consumer_durations.count('DrawMiniConsumableKnob(dc,') != 3
     or 'DrawSourceKnob(dc, waterStamina,' in _consumer_drinks
-    or 'private const double ConsumableWaterStrengthTop =' not in _consumer_source
-    or '=> ConsumableWaterStrengthTop + CompactTrackHeight + 12.0;' not in _consumer_source
-    or 'var trackAccent = waterGreen ? WaterEffectLineBrush : accent;' not in _consumer_source
-    or 'or "survival.waterStaminaCostReduction"' not in _consumer_source):
-    _consumer_errors.append("Water green bar geometry/active color/sole source wiring drifted")
+    or 'private const double ConsumableMiniKnobHeight = 128.0;' not in _consumer_source
+    or '=> ConsumableWaterStrengthTop + ConsumableMiniKnobHeight + 12.0;' not in _consumer_source
+    or 'private void DrawMiniConsumableKnob(' not in _consumer_source
+    or 'new HitTarget(parameter, hit, hit, HitKind.Knob,' not in _consumer_source
+    or 'Brush effectBrush)' not in _consumer_source
+    or 'var waterBonusPercent = 25.0 * waterStamina.CurrentNumber;' not in _consumer_durations
+    or 'DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0);' not in _consumer_durations
+    or 'or "survival.waterStaminaCostReduction"' not in _consumer_source
+    or 'WaterCostCutLineBrush' not in _consumer_source):
+    _consumer_errors.append("Water/Energy mini-knob geometry, color or timeline contract drifted")
 _vm_for_water = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
 if (_vm_for_water.count('"survival.waterStaminaCostReduction"') < 4
     or 'Backward-compatible split of Water' not in _vm_for_water):
@@ -4273,7 +4294,7 @@ if any("2026-10-11 — Consumable Effects: compact knobs below duration graph"
 if _consumer_errors:
     fail("Consumable Effects no-preview layout: " + "; ".join(_consumer_errors))
 else:
-    note("Consumable Effects: 3 drink knobs, two independent green Water source bars, 8 duration lanes and medicine knobs")
+    note("Consumable Effects: 3 main drink knobs, five color-linked mini-knobs, 8 duration lanes and medicine knobs")
 
 
 # Master medical healing: one responsive instrument bank, not a 2+1 card grid.
@@ -5167,6 +5188,27 @@ for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Independent green Water stamina bonus and cost-cut bars (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
         fail("Water green-bar current UI catalog contract missing in "+_doc)
 note("Water two green source bars: separate +25% Stamina / -10% SPDrain targets")
+
+# Current five-mini-knob UI and its explicit timeline relationships.
+_mini_ui = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+_mini_impl = _mini_ui.split('private void DrawMiniConsumableKnob(', 1)[-1].split('private void DrawCompactTrack(', 1)[0]
+_mini_body = _mini_ui.split('var shortEffects = new (ParameterViewModel Parameter, string Caption)[]', 1)[-1].split('var medicineKnobTop =', 1)[0]
+if ('DrawMiniConsumableKnob(' not in _mini_ui or
+    _mini_body.count('DrawMiniConsumableKnob(dc,') != 3 or
+    'DrawCompactTrack(dc, shortEffect' in _mini_body or
+    'DrawCompactTrack(dc, waterStamina' in _mini_body or
+    'DrawCompactTrack(dc, waterCostReduction' in _mini_body or
+    'DrawKnobArc(dc, center, radius' not in _mini_impl or
+    'new HitTarget(parameter, hit, hit, HitKind.Knob,' not in _mini_impl or
+    'WaterCostCutLineBrush' not in _mini_ui or
+    'EnergyDrinkPartialCostLineBrush' not in _mini_ui or
+    'var waterCap = staminaPool * (1.0 + waterBonusPercent / 100.0);' not in _mini_body or
+    'DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0)' not in _mini_ui):
+    fail("Five native mini-knob/color-coded Water/Energy duration contract drifted")
+for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Five color-linked mini-knobs for Water and Energy effects (CURRENT)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
+        fail("Mini-knob source design missing from " + _catalog)
+note("Five mini-knobs for Water and Energy: matching bright/dark green and blues")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

@@ -2985,13 +2985,17 @@ public sealed class AggregateVisualControl : FrameworkElement
         new SolidColorBrush(Color.FromRgb(92, 186, 243));
     private static readonly Brush EnergyDrinkPartialCostLineBrush =
         new SolidColorBrush(Color.FromRgb(58, 111, 180));
+    // The independent Water action-drain cut is darker than the timed
+    // Stamina bonus: the two strengths match their corresponding duration bars.
+    private static readonly Brush WaterCostCutLineBrush =
+        new SolidColorBrush(Color.FromRgb(51, 136, 78));
 
     private static Brush? DrinkEffectLineBrush(string sourceId) => sourceId switch
     {
-        "survival.waterEffectDuration" or "survival.waterRegenDuration"
-            or "survival.waterStaminaEffectStrength"
-            or "survival.waterStaminaCostReduction"
+        "survival.waterRegenDuration" or "survival.waterStaminaEffectStrength"
             => WaterEffectLineBrush,
+        "survival.waterEffectDuration" or "survival.waterStaminaCostReduction"
+            => WaterCostCutLineBrush,
         "survival.energyPartialCostDuration" => EnergyDrinkPartialCostLineBrush,
         "survival.energyDrinkEffectDuration" or "survival.energyFullCostDuration"
             => EnergyDrinkEffectLineBrush,
@@ -3194,6 +3198,12 @@ public sealed class AggregateVisualControl : FrameworkElement
                     new Point(secondaryX, y - 6.0),
                     new Point(secondaryX, y + 6.0));
             }
+            // Water's parent 30-second action-drain lane receives its own
+            // dark-green underline just as the two Energy effect durations
+            // have individual blue underlines. The short +25% Water effect
+            // above keeps the brighter green underline at its own 5s marker.
+            if (i == 0)
+                DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0);
             dc.DrawLine(new Pen(muted, 1.7),
                 new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
             dc.DrawEllipse(panel,
@@ -3287,9 +3297,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         // The three source-backed duration tracks stay on one compact row.
         var shortEffects = new (ParameterViewModel Parameter, string Caption)[]
         {
-            (waterRegenTime, "+25% MAX STAMINA"),
-            (energyFullCostTime, "NO STAMINA COST DURATION"),
-            (energyPartialCostTime, "-30% STAMINA COST DURATION")
+            (waterRegenTime, "WATER BONUS DURATION"),
+            (energyFullCostTime, "NO COST DURATION"),
+            (energyPartialCostTime, "-30% COST DURATION")
         };
         var secondaryWidth = (preview.Width - 24.0 -
             ConsumableDrinkSectionGap - CompactColumnGap) / 3.0;
@@ -3298,9 +3308,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             ConsumableDrinkSectionGap;
         // Temporary +25% maximum-stamina effect: the duration remains its
         // own source; its result uses the current Core Stamina capacity.
+        var waterBonusPercent = 25.0 * waterStamina.CurrentNumber;
+        var waterCap = staminaPool * (1.0 + waterBonusPercent / 100.0);
         var waterCapCaption = secondaryWidth >= 224.0
-            ? $"WATER BUFF · {staminaPool * 1.25:0.#} STAMINA CAP"
-            : $"WATER · {staminaPool * 1.25:0.#} CAP";
+            ? $"WATER +{waterBonusPercent:0.#}% · {waterCap:0.#} STAMINA CAP"
+            : $"WATER +{waterBonusPercent:0.#}% · {waterCap:0.#} CAP";
         DrawDerivedLeft(dc, waterCapCaption,
             new Point(waterSectionLeft + 4.0,
                 preview.Top + ConsumableShortEffectsHeaderTop),
@@ -3316,37 +3328,37 @@ public sealed class AggregateVisualControl : FrameworkElement
                 energySectionLeft + (index - 1) *
                     (secondaryWidth + CompactColumnGap);
             var y = preview.Top + ConsumableShortEffectsTrackTop;
-            DrawCompactTrack(dc, shortEffect, caption,
+            DrawMiniConsumableKnob(dc, shortEffect, caption,
                 $"{shortEffect.CurrentNumber:0.#}s",
                 $"{shortEffect.Minimum:0.#}s",
                 $"{shortEffect.Maximum:0.#}s",
-                new Rect(x, y, secondaryWidth, CompactTrackHeight),
-                text, muted, border, accent, panel);
+                new Rect(x, y, secondaryWidth, ConsumableMiniKnobHeight),
+                text, muted, border, accent, panel,
+                DrinkEffectLineBrush(shortEffect.Id) ?? accent);
         }
 
-        // Two independently editable green Water strength bars sit below
-        // the existing seconds-based Water/Energy short-effect duration bars.
-        // Their readouts are real percentages, not extra linked multipliers:
-        // WaterStamina2 (Stamina type, +25% at 1x) and the distinct
-        // WaterStaminaPerAction1 (SPDrain, -10% at 1x).
+        // The two independent Water strength knobs remain source-backed:
+        // WaterStamina2 (Stamina +25%) and WaterStaminaPerAction1 (SPDrain -10%).
+        // Green on each dial matches the bright/dark-green timeline duration. 
+        // Their source ranges, presets and writer targets remain independent.
         const double waterStrengthGap = CompactColumnGap;
         var waterStrengthWidth = Math.Min(280.0,
             (preview.Width - 24.0 - waterStrengthGap) / 2.0);
         var waterStrengthLeft = preview.Left +
             (preview.Width - 2.0 * waterStrengthWidth - waterStrengthGap) / 2.0;
         var waterStrengthY = preview.Top + ConsumableWaterStrengthTop;
-        DrawCompactTrack(dc, waterStamina, "WATER STAMINA BONUS",
+        DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",
             $"+{25.0 * waterStamina.CurrentNumber:0.#}%",
             "0%", "50%",
             new Rect(waterStrengthLeft, waterStrengthY,
-                waterStrengthWidth, CompactTrackHeight),
-            text, muted, border, accent, panel, waterGreen: true);
-        DrawCompactTrack(dc, waterCostReduction, "WATER COST CUT",
+                waterStrengthWidth, ConsumableMiniKnobHeight),
+            text, muted, border, accent, panel, WaterEffectLineBrush);
+        DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",
             $"{10.0 * waterCostReduction.CurrentNumber:0.#}% LESS",
             "0%", "20%",
             new Rect(waterStrengthLeft + waterStrengthWidth + waterStrengthGap,
-                waterStrengthY, waterStrengthWidth, CompactTrackHeight),
-            text, muted, border, accent, panel, waterGreen: true);
+                waterStrengthY, waterStrengthWidth, ConsumableMiniKnobHeight),
+            text, muted, border, accent, panel, WaterCostCutLineBrush);
 
         // Position below the whole duration chart, including short effects.
         // MeasureOverride and OnRender share the same responsive geometry.
@@ -4721,11 +4733,12 @@ public sealed class AggregateVisualControl : FrameworkElement
     private const double ConsumableShortEffectsHeaderTop = 300.0;
     private const double ConsumableShortEffectsTrackTop = 322.0;
     private const double ConsumableDrinkSectionGap = 16.0;
+    private const double ConsumableMiniKnobHeight = 128.0;
     private const double ConsumableWaterStrengthTop =
-        ConsumableShortEffectsTrackTop + CompactTrackHeight + 10.0;
+        ConsumableShortEffectsTrackTop + ConsumableMiniKnobHeight + 10.0;
 
     private static double ConsumableTimelineHeight(double width)
-        => ConsumableWaterStrengthTop + CompactTrackHeight + 12.0;
+        => ConsumableWaterStrengthTop + ConsumableMiniKnobHeight + 12.0;
     // Reserved space for plot ticks plus three independently readable stage lines.
     private const double HungerProfileHeight = 344.0;
     private const double CompactRowGap = 8.0;
@@ -4734,6 +4747,93 @@ public sealed class AggregateVisualControl : FrameworkElement
 
 
 
+
+    // Compact form of the shared native 270-degree knob: same editable
+    // ParameterViewModel and HitKind.Knob angle mapping, with a smaller ring.
+    // The actual CFG scalar is independent from the percentage/seconds readout.
+    private void DrawMiniConsumableKnob(
+        DrawingContext dc, ParameterViewModel parameter, string caption,
+        string value, string minimumLabel, string maximumLabel, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel,
+        Brush effectBrush)
+    {
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .76),
+            new Pen(border, .9), card, 4.0, 4.0);
+        var active = parameter.IsControlEnabled;
+        var title = CreateText(caption, card.Width < 166.0 ? 9.0 : 9.8,
+            active ? text : muted, FontWeights.Bold,
+            Math.Max(1.0, card.Width - 12.0));
+        dc.DrawText(title, new Point(card.Left + (card.Width -
+            title.WidthIncludingTrailingWhitespace) / 2.0, card.Top + 6.0));
+
+        var center = new Point(card.Left + card.Width / 2.0, card.Top + 67.0);
+        var radius = Math.Min(32.0, Math.Max(18.0, (card.Width - 48.0) / 2.0));
+        var span = Math.Max(Epsilon, parameter.Maximum - parameter.Minimum);
+        var t = Math.Clamp((parameter.CurrentNumber - parameter.Minimum) / span, 0.0, 1.0);
+        var reference = Math.Clamp((parameter.ReferenceNumber -
+            parameter.Minimum) / span, 0.0, 1.0);
+        var dialInk = active ? effectBrush : muted;
+        dc.DrawEllipse(CloneWithOpacity(panel, .96), null,
+            center, radius - 6.0, radius - 6.0);
+        DrawKnobArc(dc, center, radius, WeaponKnobStartAngle,
+            WeaponKnobSweepAngle, new Pen(border, 4.0));
+        // Graduations are only actual multiples of TickFrequency; input
+        // remains at full native precision even when most ticks are omitted.
+        var nativeStep = Math.Max(Epsilon, parameter.TickFrequency);
+        var count = (int)Math.Floor(span / nativeStep + .000001);
+        var pxPerStep = radius * WeaponKnobSweepAngle * Math.PI / 180.0 /
+            Math.Max(1.0, span / nativeStep);
+        var stride = KnobVisibleStepStride(pxPerStep);
+        for (var i = 0; i <= count; i += stride)
+        {
+            var angle = WeaponKnobStartAngle +
+                (parameter.Minimum + i * nativeStep - parameter.Minimum) /
+                span * WeaponKnobSweepAngle;
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .60), 1.0),
+                KnobPoint(center, radius + 3.0, angle),
+                KnobPoint(center, radius + 8.0, angle));
+        }
+        if (t > Epsilon)
+            DrawKnobArc(dc, center, radius, WeaponKnobStartAngle,
+                t * WeaponKnobSweepAngle,
+                new Pen(CloneWithOpacity(dialInk, .95), 4.2));
+        var baseAngle = WeaponKnobStartAngle + reference * WeaponKnobSweepAngle;
+        dc.DrawLine(new Pen(muted, 2.0),
+            KnobPoint(center, radius - 5.0, baseAngle),
+            KnobPoint(center, radius + 4.0, baseAngle));
+
+        var angleNow = WeaponKnobStartAngle + t * WeaponKnobSweepAngle;
+        var hovered = _hoverTarget?.Kind == HitKind.Knob &&
+            ReferenceEquals(_hoverTarget.Parameter, parameter);
+        if (hovered)
+            dc.DrawEllipse(CloneWithOpacity(dialInk, .13), null,
+                center, radius - 5.0, radius - 5.0);
+        dc.DrawLine(new Pen(hovered ? Brushes.White : dialInk, hovered ? 2.8 : 2.0),
+            KnobPoint(center, radius - 6.0, angleNow),
+            KnobPoint(center, radius + 2.0, angleNow));
+        dc.DrawEllipse(dialInk, null,
+            KnobPoint(center, radius + 2.0, angleNow), 1.5, 1.5);
+
+        var formatted = CreateText(value, 12.4, active ? text : muted,
+            FontWeights.Bold, Math.Max(1.0, card.Width - 8.0));
+        if (active && parameter.IsValueModifiedFromReference())
+            foreach (System.Text.RegularExpressions.Match token in
+                System.Text.RegularExpressions.Regex.Matches(value, @"\d+(?:\.\d+)?"))
+                formatted.SetForegroundBrush(accent, token.Index, token.Length);
+        dc.DrawText(formatted, new Point(center.X -
+            formatted.WidthIncludingTrailingWhitespace / 2.0, center.Y - 8.0));
+        DrawCenteredText(dc, minimumLabel,
+            new Point(center.X - radius * .80, card.Bottom - 17.0),
+            8.7, muted, FontWeights.SemiBold);
+        DrawCenteredText(dc, maximumLabel,
+            new Point(center.X + radius * .80, card.Bottom - 17.0),
+            8.7, muted, FontWeights.SemiBold);
+        if (!active) return;
+        var hit = new Rect(center.X - radius - 6.0, center.Y - radius - 6.0,
+            2.0 * (radius + 6.0), 2.0 * (radius + 6.0));
+        _hitTargets.Add(new HitTarget(parameter, hit, hit, HitKind.Knob,
+            parameter.Minimum, parameter.Maximum, false));
+    }
 
     private void DrawCompactTrack(
         DrawingContext dc,
@@ -4748,7 +4848,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush border,
         Brush accent,
         Brush panel,
-        bool highlightDerivedLastNumber = false, bool waterGreen = false)
+        bool highlightDerivedLastNumber = false)
     {
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
         var contentWidth = Math.Max(1.0, card.Width - 24.0);
@@ -4807,7 +4907,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var baseX = ValueToX(parameter.ReferenceNumber,
             parameter.Minimum, parameter.Maximum, track, reverse: false);
 
-        var trackAccent = waterGreen ? WaterEffectLineBrush : accent;
+        var trackAccent = accent;
         dc.DrawLine(new Pen(border, 4.0),
             new Point(track.Left, y), new Point(track.Right, y));
         if (parameter.IsControlEnabled)

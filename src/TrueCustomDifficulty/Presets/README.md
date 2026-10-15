@@ -1,5 +1,9 @@
 # True Custom Difficulty — Factory Presets
 
+### 2026-10-15 — 248-source factory presets and exact stock upgrade (CURRENT)
+
+The two independent Water strength sources are both present in all **twelve shipped factory presets**: `survival.waterStaminaEffectStrength` (WaterStamina2 +25% Stamina type) and `survival.waterStaminaCostReduction` (WaterStaminaPerAction1 −10% SPDrain). Each new cost-cut entry inherits that factory profile's **previous shared Water strength** so the pre-split gameplay setting stays equivalent. The source catalog has **248** independent entries per factory profile, versus the previous 247. The existing role-specific 46-source scarcity balance values, other drink settings, durations, difficulty references and raw writer routes are untouched. `PresetDirectoryService` recognizes exactly the twelve pristine previously-shipped 247-source JSON blob hashes; it upgrades only those byte-identical stock files and never overwrites user-edited presets. User presets without the new cost key continue to load via the existing in-memory Water split migration.
+
 ## Current scarcity-first balance — 2026-10-14
 
 The twelve role presets deliberately reduce vanilla's excess supplies through real loot categories, NPC/stash/trader availability, limited medical healing, sleep recovery and coherent economy/repair costs. Food never heals HP in these factory profiles; extra corpse smart-loot bonuses are OFF. Field Medic and Scavenger retain a small 10 HP bandage heal, others use bandages for bleeding control. The full source-backed tuning matrix lives in `tools/factory_preset_scarcity_balance.json`, described in `docs/FACTORY-PRESETS.md`. Previously shipped byte-identical factory JSON files automatically upgrade; edited/user presets stay untouched. This is preset data, not a new UI/CFG setting.
