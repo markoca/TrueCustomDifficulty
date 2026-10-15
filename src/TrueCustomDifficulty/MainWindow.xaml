@@ -719,7 +719,37 @@
                         <Viewbox Width="30" Height="30"
                                  HorizontalAlignment="Center"
                                  VerticalAlignment="Center">
+                            <!-- Spin the EXISTING three-blade radiation mark while the
+                                 real Build Difficulty pipeline is active.
+                                 LocalizationWorkbench advances 10 degrees per 33ms (~300deg/s).
+                                 A compositor-backed WPF animation gives the same clockwise
+                                 1.2s revolution without a UI-thread timer or busy polling.
+                                 StopStoryboard restores the idle Angle=0 immediately. -->
                             <Canvas Width="34" Height="34">
+                                <Canvas.RenderTransform>
+                                    <RotateTransform Angle="0" CenterX="17" CenterY="17" />
+                                </Canvas.RenderTransform>
+                                <Canvas.Style>
+                                    <Style TargetType="{x:Type Canvas}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsBuilding}" Value="True">
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard Name="RadiationBuildSpin">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                                             From="0" To="360"
+                                                                             Duration="0:0:1.2"
+                                                                             RepeatBehavior="Forever" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+                                                <DataTrigger.ExitActions>
+                                                    <StopStoryboard BeginStoryboardName="RadiationBuildSpin" />
+                                                </DataTrigger.ExitActions>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Canvas.Style>
                                 <Path Fill="{StaticResource AccentBrush}"
                                       Data="M 14.5,12.67 L 10,4.88 A 14,14 0 0 1 24,4.88 L 19.5,12.67 A 5,5 0 0 0 14.5,12.67 Z" />
                                 <Path Fill="{StaticResource AccentBrush}"

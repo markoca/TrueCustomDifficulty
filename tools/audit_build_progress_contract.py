@@ -100,6 +100,54 @@ assert 'BuildProgressLabel = "COMPLETE";' in vm
 assert re.search(r'BuildCommand = new RelayCommand\(.*!IsBuilding\)', vm)
 assert "Closing += (_, e) =>" in window and "e.Cancel = true;" in window
 
+# The top-left radiation symbol has exactly the original three blades and
+# center dot. Animation applies to the WHOLE Canvas; never mutate the
+# independently authored 0/120/240-degree blade geometry or layout.
+# LocalizationWorkbench/StalkerBrandMark: +10 degrees / 33 ms while busy,
+# restore 0 on idle. WPF achieves the same 300deg/s with 1.2s/revolution.
+logo_candidates = [element for element in root.iter(w + "Canvas")
+                   if element.attrib.get("Width") == "34"
+                   and element.attrib.get("Height") == "34"]
+assert len(logo_candidates) == 1, "top-left 34x34 radiation canvas missing or duplicated"
+logo = logo_candidates[0]
+blades = [element for element in list(logo) if element.tag == w + "Path"]
+centers = [element for element in list(logo) if element.tag == w + "Ellipse"]
+assert len(blades) == 3 and len(centers) == 1, (
+    "spinning mark must retain three original blades and the center dot")
+angles = []
+for blade in blades:
+    transform = blade.find(w + "Path.RenderTransform/" + w + "RotateTransform")
+    angles.append(int(transform.attrib["Angle"]) if transform is not None else 0)
+assert angles == [0, 120, 240], "radiation shape blades changed"
+assert centers[0].attrib.get("Width") == "7"
+assert centers[0].attrib.get("Height") == "7"
+
+spin = logo.find(w + "Canvas.RenderTransform/" + w + "RotateTransform")
+assert spin is not None and spin.attrib == {
+    "Angle": "0", "CenterX": "17", "CenterY": "17"
+}, "the full icon must rotate around the existing geometric center (17,17)"
+trigger = logo.find(w + "Canvas.Style/" + w + "Style/" +
+                    w + "Style.Triggers/" + w + "DataTrigger")
+assert trigger is not None
+assert trigger.attrib.get("Binding") == "{Binding IsBuilding}"
+assert trigger.attrib.get("Value") == "True"
+start = trigger.find(w + "DataTrigger.EnterActions/" + w + "BeginStoryboard")
+stop = trigger.find(w + "DataTrigger.ExitActions/" + w + "StopStoryboard")
+assert start is not None and stop is not None
+assert start.attrib.get("Name") == "RadiationBuildSpin"
+assert stop.attrib.get("BeginStoryboardName") == start.attrib["Name"]
+animation = start.find(w + "Storyboard/" + w + "DoubleAnimation")
+assert animation is not None and animation.attrib.get("Storyboard.TargetProperty") == (
+    "(UIElement.RenderTransform).(RotateTransform.Angle)")
+assert animation.attrib.get("From") == "0"
+assert animation.attrib.get("To") == "360"
+assert animation.attrib.get("Duration") == "0:0:1.2"
+assert animation.attrib.get("RepeatBehavior") == "Forever"
+assert "IsBuilding = true;" in vm and "IsBuilding = false;" in vm
+assert 'Value="{Binding BuildProgressStep, Mode=OneWay}"' in xaml
+
+print("PASS: top-left radiation mark rotates clockwise at 300deg/s only "
+      "during actual Build Difficulty and resets to its original idle angle.")
 print("PASS: build rail is in Settings/profile gap, hidden when idle, styled like "
       "LocalizationWorkbench, stage-backed, async and editor-locked.")
-print("NOT TESTED: WPF compile, Wine footer layout, actual repak/retoc execution.")
+print("NOT TESTED: WPF compile/Wine rotation, footer layout, repak/retoc execution.")
