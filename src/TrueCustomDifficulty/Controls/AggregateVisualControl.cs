@@ -291,7 +291,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrawYourWeaponsKnobs(dc, text, muted, border, accent, panel);
                 break;
             case "CoreHealthDashboard":
-                DrawCoreHealthDashboard(dc, text, muted, border, soft, accent, panel);
+                DrawCoreHealthDashboard(dc, text, muted, border, accent, panel);
                 break;
             case "SevereFatiguePenaltyBoard":
                 DrawSevereFatiguePenaltyBoard(dc, text, muted, border, soft, accent, panel);
@@ -2612,7 +2612,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     // low-health threshold is duplicated in this core module.
     private void DrawCoreHealthDashboard(
         DrawingContext dc, Brush text, Brush muted, Brush border,
-        Brush soft, Brush accent, Brush panel)
+        Brush accent, Brush panel)
     {
         DrawHeader(dc, "CORE HEALTH", "", text, muted, accent);
         var width = Math.Max(1.0, ActualWidth - 32.0);

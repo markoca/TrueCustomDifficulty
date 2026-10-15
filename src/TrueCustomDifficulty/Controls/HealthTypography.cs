@@ -10,5 +10,4 @@ internal static class HealthTypography
     public const double Label = 11.4;
     public const double Value = 12.8;
     public const double Axis = 10.4;
-    public const double Section = 11.4;
 }

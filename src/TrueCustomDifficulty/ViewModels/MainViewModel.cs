@@ -1771,10 +1771,8 @@ public sealed class MainViewModel : ObservableObject
                 "health.regenDelay" => 20,
                 "health.regenerationScalar" => 30,
 
-                // Low Health
+                // Low Health regeneration belongs to the active Core Health editor.
                 "health.lowHealthRegen" => 110,
-                "advanced.lowHealthMechanics" => 120,
-                "health.masterLowHealthPenalty" => 140,
 
                 // Direct healing
                 "health.bandageHealing" => 200,
@@ -1782,11 +1780,6 @@ public sealed class MainViewModel : ObservableObject
                 "health.armyMedkitHealing" => 220,
                 "health.ecoMedkitHealing" => 230,
                 "health.foodHealing" => 240,
-
-                // Master medical modifier subset
-                "health.masterBandageModifier" => 300,
-                "health.masterMedkitModifier" => 310,
-                "health.masterArmyMedkitModifier" => 320,
 
                 // Bleeding treatment
                 "health.bandageBleeding" => 400,

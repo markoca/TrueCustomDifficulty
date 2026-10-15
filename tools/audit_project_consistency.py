@@ -2197,6 +2197,38 @@ for _medical_source_id in ("health.bandageBleeding", "health.medkitBleeding",
         fail(f"Active Medical Items source disappeared: {_medical_source_id}")
 note("Health dead recovery/radiation UI removed; one Medical Items modified-state owner retained")
 
+# Health dead-code pass 2: the active Core Health renderer must not
+# carry an unused soft brush argument, and the shared typography catalog must
+# only define constants that are actually used by its WPF controls.
+_health_typography_source = (ROOT / "src/TrueCustomDifficulty/Controls/HealthTypography.cs").read_text(encoding="utf-8")
+if "public const double Section" in _health_typography_source:
+    fail("Unused HealthTypography.Section constant returned")
+if ('DrawCoreHealthDashboard(dc, text, muted, border, accent, panel);'
+        not in _health_aggregate_source
+        or 'DrawCoreHealthDashboard(dc, text, muted, border, soft, accent, panel);'
+        in _health_aggregate_source):
+    fail("Core Health dispatch retained obsolete soft brush argument")
+_core_health_declaration = (_health_aggregate_source.split("private void DrawCoreHealthDashboard(", 1)[1]
+                            .split(")", 1)[0]
+                            if "private void DrawCoreHealthDashboard(" in _health_aggregate_source else "")
+if ("Brush soft" in _core_health_declaration
+        or "Brush accent, Brush panel" not in _core_health_declaration):
+    fail("Core Health renderer signature diverged from its active dispatch")
+# ParameterSortOrder runs only on parameters belonging to its tab: old Master
+# entries inside the Health switch could never match in that execution path.
+_health_sort_section = (_medical_main_vm.split('if (parameter.Definition.Tab == "health")', 1)[1]
+                        .split('if (parameter.Definition.Tab == "stamina")', 1)[0]
+                        if 'if (parameter.Definition.Tab == "health")' in _medical_main_vm else "")
+_health_sort_ids = re.findall(r'"((?:health|advanced)\.[A-Za-z0-9.]+)"\s*=>', _health_sort_section)
+_health_source_tabs = {row["id"]: row.get("tab") for row in parameters}
+_health_wrong_tab_sort = [pid for pid in _health_sort_ids if _health_source_tabs.get(pid) != "health"]
+if not _health_sort_section or _health_wrong_tab_sort:
+    fail(f"Health-only sorting contains unreachable cross-tab entries: {_health_wrong_tab_sort}")
+if ('"health.maxHP" => 0' not in _health_sort_section
+        or '"health.bandageHealing" => 200' not in _health_sort_section):
+    fail("Live Core Health / Medical Items sorting anchors missing")
+note("Health cleanup: no unreachable Master sort cases or unused Core Health/typography members")
+
 _bleeding_caps_expected = {
     "health.bandageBleeding": 100,
     "health.medkitBleeding": 30,

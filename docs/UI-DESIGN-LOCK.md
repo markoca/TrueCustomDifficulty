@@ -1,5 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Health dead-code cleanup, pass 2 (CURRENT)
+
+Remove the unused `Brush soft` argument from the live `CoreHealthDashboard` dispatcher and drawing method; neither the five underlying Core Health source controls nor their renderer uses that brush. Remove the unused `HealthTypography.Section` constant, retaining the Title, Label, Value and Axis typography values used by Core Health and Medical Items. Remove five unreachable Master-only parameter ranks from the Health branch of `MainViewModel.ParameterSortOrder`: `advanced.lowHealthMechanics`, `health.masterLowHealthPenalty`, `health.masterBandageModifier`, `health.masterMedkitModifier`, and `health.masterArmyMedkitModifier`. Those parameters have `tab=master`, so they cannot match an `if (Tab == "health")` branch; their Master controls and CFG writer routes remain untouched.
+
+Audited `MedicalHealingRadar` method call sites, bindings, hit targets and HEAL/BLEED/RAD/food input paths: no further medical handlers were safe to delete. Preserve all 13 independently editable medical source values, override-limits lifecycle, snapshots/presets and selected-parameter reset/keyboard/drag handling. No card sizes, colors, slider positioning, labels, native bounds, game values or layout change in this pass. The static audit now catches cross-tab sort cases and unused Health-specific dispatch/typography regressions.
+
+
 ### 2026-10-15 — Health dead-code cleanup, pass 1 (CURRENT)
 
 The active Health UI consists of `CoreHealthDashboard` and the consolidated `MedicalHealingRadar`, preserving all original HP, healing, bleeding and radiation-removal sources. Remove the **unused** `DrawRecoveryMeter` (replaced by the current Core Health native resource rulers and recovery controls), the orphaned `RADIATION TREATMENT` default renderer in `DrawPairedSystemBoard`, and its unreachable Health-specific paired-value formatting cases. The paired board now rejects an unregistered family rather than silently rendering a second radiation card. Preserve the independent `MedicalHealingRadar` HEAL/BLEED/RAD columns and `CoreHealthDashboard` source mappings, ranges, native steps, keyboard/mouse/reset behavior and compact layout.
