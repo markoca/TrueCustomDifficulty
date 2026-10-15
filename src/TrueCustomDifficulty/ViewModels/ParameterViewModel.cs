@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using TrueCustomDifficulty.Infrastructure;
 using TrueCustomDifficulty.Models;
+using TrueCustomDifficulty.Services;
 
 namespace TrueCustomDifficulty.ViewModels;
 
@@ -782,6 +783,8 @@ public sealed class ParameterViewModel : ObservableObject
     public void SnapCurrentNumberToMarker(double value)
     {
         var clamped = Math.Clamp(value, Minimum, Maximum);
+        if (ALifeIntegerCapSteps.Handles(Id))
+            clamped = ALifeIntegerCapSteps.Snap(Id, clamped, Minimum, Maximum, TickFrequency);
         if (SetProperty(ref _currentNumber, clamped, nameof(CurrentNumber)))
             NotifyDerived();
     }
@@ -1711,6 +1714,8 @@ public sealed class ParameterViewModel : ObservableObject
         var clamped = Math.Clamp(value, Minimum, Maximum);
         if (!IsSlider)
             return clamped;
+        if (ALifeIntegerCapSteps.Handles(Id))
+            return ALifeIntegerCapSteps.Snap(Id, clamped, Minimum, Maximum, TickFrequency);
         if (_drinkDurationStepProvider is not null)
         {
             var step = _drinkDurationStepProvider();

@@ -85,6 +85,57 @@ internal static class Program
                 Check(point.ParameterId == wantedId, "A-Life rank/species array ownership drift: " + point.ParameterId);
             }
 
+            // Every user-selectable A-Life stop must write a distinct collection
+            // of real integer MaxCount values across ALL affected source ranks.
+            foreach (var parameter in live)
+            {
+                var stops = ALifeIntegerCapSteps.EffectiveSteps(
+                    parameter.Id, parameter.Minimum, parameter.Maximum, parameter.TickFrequency);
+                Check(stops.Contains(1.0), "Missing neutral 1x source step: " + parameter.Id);
+                Check(stops.SequenceEqual(stops.OrderBy(x => x)), "Unordered A-Life steps: " + parameter.Id);
+                Check(stops.Select(value => string.Join("/", ALifeIntegerCapSteps.EffectiveCaps(parameter.Id, value)))
+                    .Distinct(StringComparer.Ordinal).Count() == stops.Count,
+                    "A-Life selectable steps contain an integer no-op: " + parameter.Id);
+                foreach (var stop in stops)
+                {
+                    parameter.CurrentNumber = stop;
+                    Check(Math.Abs(parameter.CurrentNumber - stop) < 0.0000011,
+                        "A-Life selectable stop cannot round-trip through live VM: " + parameter.Id);
+                }
+                parameter.ResetToReference();
+            }
+            var oneCap = live.Single(p => p.Id == "alife.mutantSpawn.bloodsucker");
+            foreach (var inert in new[] { 0.25, 0.95, 1.05, 1.40 })
+            {
+                oneCap.CurrentNumber = inert;
+                Check(Math.Abs(oneCap.CurrentNumber - 1.0) < 0.0000011
+                    && !oneCap.IsValueModifiedFromReference(),
+                    "Source 1-cap plateau must stay neutral: " + inert);
+            }
+            oneCap.ApplyPresetValue(new PresetValue { Kind = "slider", Number = 0.95 });
+            Check(Math.Abs(oneCap.CurrentNumber - 1.0) < 0.0000011,
+                "Historical inert A-Life preset must normalize to neutral");
+            oneCap.SnapCurrentNumberToMarker(1.05);
+            Check(Math.Abs(oneCap.CurrentNumber - 1.0) < 0.0000011,
+                "Marker must not reintroduce inert A-Life settings");
+            var firstIncrease = ALifeIntegerCapSteps.Move(oneCap.Id, 1.0,
+                oneCap.Minimum, oneCap.Maximum, oneCap.TickFrequency, 1);
+            Check(firstIncrease == 1.5 && ALifeIntegerCapSteps.EffectiveCaps(oneCap.Id, firstIncrease)
+                .SequenceEqual(new[] { 0, 2, 2, 2 }),
+                "A-Life next-key step must cause actual BPatch change while preserving source zeros");
+            var humanNewbie = live.Single(p => p.Id == "alife.humanGroupSize.newbie");
+            humanNewbie.CurrentNumber = 0.95;
+            Check(humanNewbie.CurrentNumber == 1.0, "Human rank no-op plateau was not removed");
+            var blindDog = live.Single(p => p.Id == "alife.mutantSpawn.blindDog");
+            blindDog.CurrentNumber = 0.95;
+            Check(blindDog.CurrentNumber == 0.95
+                && ALifeIntegerCapSteps.EffectiveCaps(blindDog.Id, 0.95)
+                    .SequenceEqual(new[] { 4, 6, 8, 11 }),
+                "Effective 0.95x on large pack source must remain selectable");
+            oneCap.ResetToReference();
+            humanNewbie.ResetToReference();
+            blindDog.ResetToReference();
+
             foreach (var difficulty in Difficulties)
                 Case(difficulty, new Dictionary<string, double>(), "vanilla");
             foreach (var id in ids)
@@ -95,7 +146,10 @@ internal static class Program
                 "alife.mutantSpawn.bloodsucker", "alife.mutantSpawn.controller",
                 "alife.mutantSpawn.blindDog", "alife.mutantSpawn.tushkan" })
             {
-                Case("Veteran", new Dictionary<string, double> { [id] = 0.25 }, "min");
+                // Native 0.25x on the 0/1/1/1 profiles is an integer no-op
+                // and is correctly unavailable in the editor.
+                if (id is not "alife.mutantSpawn.bloodsucker" and not "alife.mutantSpawn.controller")
+                    Case("Veteran", new Dictionary<string, double> { [id] = 0.25 }, "min");
                 Case("Veteran", new Dictionary<string, double> { [id] = 3.0 }, "max");
             }
 
@@ -117,7 +171,7 @@ internal static class Program
             Case("Veteran", new() {
                 ["alife.mutantSpawn.bayun"] = 2.0,
                 ["alife.mutantSpawn.burer"] = 2.0 }, "parallel-muted-radar-members");
-            Check(_passed == 94, "Expected exactly 94 actual A-Life writer scenarios");
+            Check(_passed == 92, "Expected exactly 92 effective A-Life writer scenarios");
             Console.WriteLine($"PASS: {_passed} A-Life production BPatch writer scenarios");
             Console.WriteLine("NOT VERIFIED: original decoded ZIP values, Unreal array merge/load, in-game population");
             return 0;
@@ -138,8 +192,11 @@ internal static class Program
                 Check(parameter.IsSlider && parameter.IsControlEnabled && !parameter.IsValueModifiedFromReference(),
                     kind + ": missing vanilla live source: " + id);
                 parameter.SnapCurrentNumberToMarker(value);
-                Check(parameter.IsValueModifiedFromReference() && Math.Abs(parameter.CurrentNumber - value) < 0.0000011,
-                    kind + ": failed to set actual source control: " + id);
+                var effective = ALifeIntegerCapSteps.Snap(
+                    id, value, parameter.Minimum, parameter.Maximum, parameter.TickFrequency);
+                Check(parameter.IsValueModifiedFromReference()
+                    && Math.Abs(parameter.CurrentNumber - effective) < 0.0000011,
+                    kind + ": failed to set effective A-Life source control: " + id);
             }
             var edited = vm.AllParameters.Where(p => p.Id.StartsWith("alife.", StringComparison.Ordinal)
                 && p.IsValueModifiedFromReference()).Select(p => p.Id).ToHashSet(StringComparer.Ordinal);

@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using TrueCustomDifficulty.ViewModels;
+using TrueCustomDifficulty.Services;
 
 namespace TrueCustomDifficulty.Controls;
 
@@ -23,20 +24,20 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
 
     private static readonly AxisDefinition[] Axes =
     {
-        new("alife.mutantSpawn.bayun", "Bayun", new[] { 1.0, 1.0, 1.0, 2.0 }),
-        new("alife.mutantSpawn.blindDog", "Blind Dog", new[] { 4.0, 6.0, 8.0, 12.0 }),
-        new("alife.mutantSpawn.bloodsucker", "Bloodsucker", new[] { 0.0, 1.0, 1.0, 1.0 }),
-        new("alife.mutantSpawn.boar", "Boar", new[] { 2.0, 3.0, 5.0, 6.0 }),
-        new("alife.mutantSpawn.burer", "Burer", new[] { 1.0, 1.0, 1.0, 2.0 }),
-        new("alife.mutantSpawn.chimera", "Chimera", new[] { 1.0, 1.0, 1.0, 1.0 }),
-        new("alife.mutantSpawn.controller", "Controller", new[] { 0.0, 1.0, 1.0, 1.0 }),
-        new("alife.mutantSpawn.deer", "Deer", new[] { 1.0, 1.0, 1.0, 1.0 }),
-        new("alife.mutantSpawn.flesh", "Flesh", new[] { 2.0, 3.0, 5.0, 6.0 }),
-        new("alife.mutantSpawn.poltergeist", "Poltergeist", new[] { 1.0, 1.0, 2.0, 2.0 }),
-        new("alife.mutantSpawn.pseudodog", "Pseudodog", new[] { 1.0, 1.0, 1.0, 1.0 }),
-        new("alife.mutantSpawn.ratSwarm", "Rat Swarm", new[] { 1.0, 1.0, 1.0, 1.0 }),
-        new("alife.mutantSpawn.snork", "Snork", new[] { 1.0, 3.0, 4.0, 6.0 }),
-        new("alife.mutantSpawn.tushkan", "Tushkan", new[] { 6.0, 8.0, 12.0, 16.0 }),
+        new("alife.mutantSpawn.bayun", "Bayun"),
+        new("alife.mutantSpawn.blindDog", "Blind Dog"),
+        new("alife.mutantSpawn.bloodsucker", "Bloodsucker"),
+        new("alife.mutantSpawn.boar", "Boar"),
+        new("alife.mutantSpawn.burer", "Burer"),
+        new("alife.mutantSpawn.chimera", "Chimera"),
+        new("alife.mutantSpawn.controller", "Controller"),
+        new("alife.mutantSpawn.deer", "Deer"),
+        new("alife.mutantSpawn.flesh", "Flesh"),
+        new("alife.mutantSpawn.poltergeist", "Poltergeist"),
+        new("alife.mutantSpawn.pseudodog", "Pseudodog"),
+        new("alife.mutantSpawn.ratSwarm", "Rat Swarm"),
+        new("alife.mutantSpawn.snork", "Snork"),
+        new("alife.mutantSpawn.tushkan", "Tushkan"),
     };
 
     public event EventHandler<AggregateParameterSelectedEventArgs>? ParameterSelected;
@@ -172,8 +173,8 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         var selected = row == _selectedRow;
         var hovered = row == _hoverRow;
         var modified = parameter.IsValueModifiedFromReference();
-        var currentCaps = EffectiveCaps(info.AuthoredCaps, parameter.CurrentNumber);
-        var referenceCaps = EffectiveCaps(info.AuthoredCaps, parameter.ReferenceNumber);
+        var currentCaps = ALifeIntegerCapSteps.EffectiveCaps(info.ParameterId, parameter.CurrentNumber);
+        var referenceCaps = ALifeIntegerCapSteps.EffectiveCaps(info.ParameterId, parameter.ReferenceNumber);
 
         dc.DrawRoundedRectangle(panel,
             new Pen(CloneWithOpacity(border, 0.65), 0.9),
@@ -184,8 +185,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             10.0, text, FontWeights.Bold);
         DrawRightAlignedText(dc, $"{parameter.CurrentNumber:0.##}x",
             new Point(card.Right - 10.0, card.Top + 5.0),
-            modified ? 13.0 : 11.8,
-            modified ? accent : text, FontWeights.Bold);
+            10.3, muted, FontWeights.SemiBold);
 
         DrawText(dc, "N / E / V / M",
             new Point(card.Left + 10.0, card.Top + 25.0),
@@ -199,14 +199,14 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
             .Select(cap => cap.ToString("0", CultureInfo.InvariantCulture))
             .ToArray();
         var joinedCaps = string.Join(" / ", countTexts);
-        var formatted = CreateText(joinedCaps, 11.5, text, FontWeights.Bold);
+        var formatted = CreateText(joinedCaps, 12.7, text, FontWeights.Bold);
         var offset = 0;
         for (var index = 0; index < countTexts.Length; index++)
         {
             if (Math.Abs(currentCaps[index] - referenceCaps[index]) > Epsilon)
             {
                 formatted.SetForegroundBrush(accent, offset, countTexts[index].Length);
-                formatted.SetFontSize(12.7, offset, countTexts[index].Length);
+                formatted.SetFontSize(13.3, offset, countTexts[index].Length);
             }
             offset += countTexts[index].Length + (index < countTexts.Length - 1 ? 3 : 0);
         }
@@ -243,13 +243,6 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         var width = Math.Min(MaxContentWidth, Math.Max(1.0, ActualWidth - 32.0));
         return new Rect((ActualWidth - width) / 2.0, 0.0, width, ActualHeight);
     }
-
-    private static double[] EffectiveCaps(IReadOnlyList<double> authored, double multiplier)
-        => authored
-            .Select(value => value <= Epsilon
-                ? 0.0
-                : Math.Max(1.0, Math.Floor(value * multiplier + 0.5)))
-            .ToArray();
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
@@ -354,10 +347,9 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         if (direction == 0 || _parameters[_selectedRow] is not { } selected)
             return;
 
-        selected.CurrentNumber = Math.Clamp(
-            selected.CurrentNumber + direction * selected.TickFrequency,
-            selected.Minimum,
-            selected.Maximum);
+        selected.CurrentNumber = ALifeIntegerCapSteps.Move(selected.Id,
+            selected.CurrentNumber, selected.Minimum, selected.Maximum,
+            selected.TickFrequency, direction);
 
         _status.Clear();
         InvalidateVisual();
@@ -446,6 +438,6 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         return formatted;
     }
 
-    private sealed record AxisDefinition(string ParameterId, string Label, double[] AuthoredCaps);
+    private sealed record AxisDefinition(string ParameterId, string Label);
     private sealed record HitTarget(Rect HitRect, Rect MapRect);
 }

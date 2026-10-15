@@ -2,7 +2,11 @@
 
 # A-Life Spawn Mapping
 
-## Current A-Life UI layout (2026-10-09)
+## Current A-Life UI layout (2026-10-15)
+
+**Integer-effective input policy:** The A-Life editor uses the exact embedded CFG baseline `MaxCount` source rows to build outcome-changing steps from its underlying 0.25–3x / 0.05x grid. Ineffective plateaus collapse to one representative, with 1x preferred for the unchanged source. Mouse, keyboard, markers and imported presets use the same normalization. A 0.95x one-cap mutant is neutral 1x; a 0.95x Blind Dog changes Master 12 to 11 and remains a real choice. Human rank cards and the four-rank mutant count readouts display real integer outcomes. The old 0.05x all-steps-available description below is historical; source mapping, writer operation and physical board sizes remain unchanged.
+
+## Historical A-Life UI layout (2026-10-09)
 
 The tab retains **two independent full-width sections** backed by **18 active source values**. **Human Squad Size** has four ranked compact horizontal cards (Newbie, Experienced, Veteran, Master) showing the **calculated maximum squad members** and each rank's 0.25–3x native, 0.05-step multiplier; reference caps come from the source's 3/4/5/6 maxima. **Mutant Group Size** has all fourteen original species in a compact **2-column × 7-row** alphabetical card bank. Each species card shows its own `x` setting and four current `N / E / V / M` ranked maxima; authored zero limits stay zero and are never highlighted if unchanged. The source cap computation retains existing half-up rounding, native limits, selected-difficulty base markers and writer behavior.
 

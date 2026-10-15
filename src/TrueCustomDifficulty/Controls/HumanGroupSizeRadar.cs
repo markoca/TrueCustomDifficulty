@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using TrueCustomDifficulty.ViewModels;
+using TrueCustomDifficulty.Services;
 
 namespace TrueCustomDifficulty.Controls;
 
@@ -28,10 +29,10 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
 
     private static readonly RankDefinition[] Ranks =
     {
-        new("alife.humanGroupSize.newbie", "NEWBIE", 3.0),
-        new("alife.humanGroupSize.experienced", "EXPERIENCED", 4.0),
-        new("alife.humanGroupSize.veteran", "VETERAN", 5.0),
-        new("alife.humanGroupSize.master", "MASTER", 6.0),
+        new("alife.humanGroupSize.newbie", "NEWBIE"),
+        new("alife.humanGroupSize.experienced", "EXPERIENCED"),
+        new("alife.humanGroupSize.veteran", "VETERAN"),
+        new("alife.humanGroupSize.master", "MASTER"),
     };
 
     // The composited row is one native source; selecting it must show the
@@ -176,7 +177,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
                 new Point(barLeft - 5, referenceY), new Point(barLeft + barWidth + 5, referenceY));
             VerticalBarHandleChrome.Draw(dc, new Point(center, currentY),
                 barWidth, accent, _hoverRow == i);
-            var cap = EffectiveCap(Ranks[i].VanillaCap, value);
+            var cap = ALifeIntegerCapSteps.EffectiveCaps(parameter.Id, value)[0];
             DrawCenteredText(dc, $"{cap:0} NPC", new Point(center, 82.0), 12.8,
                 parameter.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
             DrawCenteredText(dc, $"{value:0.##}x", new Point(center, 100.0), 10.3,
@@ -189,10 +190,6 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
                 new Rect(barLeft, top, barWidth, bottom - top));
         }
     }
-
-    // Identical half-up integer policy to the original panel/CFG writer.
-    private static double EffectiveCap(double authoredCap, double multiplier)
-        => Math.Max(1.0, Math.Floor(authoredCap * multiplier + 0.5));
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
@@ -298,10 +295,9 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
         if (direction == 0 || _parameters[_selectedRow] is not { } selected)
             return;
 
-        selected.CurrentNumber = Math.Clamp(
-            selected.CurrentNumber + direction * selected.TickFrequency,
-            selected.Minimum,
-            selected.Maximum);
+        selected.CurrentNumber = ALifeIntegerCapSteps.Move(selected.Id,
+            selected.CurrentNumber, selected.Minimum, selected.Maximum,
+            selected.TickFrequency, direction);
 
         _status.Clear();
         InvalidateVisual();
@@ -385,6 +381,6 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
         return formatted;
     }
 
-    private sealed record RankDefinition(string ParameterId, string Label, double VanillaCap);
+    private sealed record RankDefinition(string ParameterId, string Label);
     private sealed record HitTarget(Rect HitRect, Rect MapRect);
 }

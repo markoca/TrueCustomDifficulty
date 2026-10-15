@@ -1,3 +1,9 @@
+### 2026-10-15 — A-Life integer-effective controls (CURRENT)
+
+Human Squad Size (four ranks) and Mutant Group Size (14 species) now select **only multiplier stops that produce a distinct actual integer `MaxCount` output**. The shared `ALifeIntegerCapSteps` policy reads the embedded writer baseline, not duplicated renderer numbers; each human rank uses its own one-count source and each species compares all four player-rank counts. It preserves the writer's half-up rounding, authored zeros, native **0.25–3x / 0.05x underlying grid**, 1x neutral anchor, effective end limits and all existing parameter IDs, preset serialization and BPatch operations. A plateau such as Bloodsucker 0.95x (still 0/1/1/1) snaps to **1x**, whereas Blind Dog 0.95x (4/6/8/11) stays selectable. Keyboard arrows skip directly between count-changing stops. Drag/click/marker/preset inputs normalize through the same policy before saving, so old ineffective preset values do not reach the writer.
+
+No extra UI text or card growth. Human bars continue displaying the effective **NPC count** above a muted multiplier; mutant cards prioritize the four effective ranked counts (larger font, gold only on changed count digits) over the now-muted small multiplier. Keep the existing 350/546 DIP boards, group/rank ordering, hit zones, right-click resets, R reset, source selection and baseline markers. The CFG writer retains its defensive rejection of any bypassed integer no-op. This source-effective interaction rule supersedes older statements that *every* 0.05x native step is selectable. In-game spawn behavior still requires separate runtime verification.
+
 # Visual Control System
 
 ### 2026-10-15 — Factory snapshots aligned to the unchanged source control system (CURRENT)
