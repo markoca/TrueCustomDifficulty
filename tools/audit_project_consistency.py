@@ -4039,7 +4039,7 @@ if (_action_format_start < 0 or _action_format_end < 0
     or 'countText.SetForegroundBrush(accent,' in _action_usage_source
     or 'countText.SetForegroundBrush(text, number.Index, number.Length);' not in _action_usage_source
     or 'parameter.CurrentNumber / staminaPool' not in _action_usage_source
-    or 'SPENT PER ACTION' not in _action_usage_source
+    or 'Actions[index].SpendCaption' not in _action_usage_source
     or 'Math.Floor(staminaPool / hovered.CurrentNumber)' not in _action_usage_source):
     fail('Stamina Usage edited-cost vs passive projection numeric color contract drifted')
 note('Stamina pass 5: only changed native cost turns gold; derived pool projections stay neutral')
@@ -4054,11 +4054,32 @@ if (_stamina_six_start < 0 or _stamina_six_end < 0
         'FROM FULL', 'POOL/COST', 'NO COST', 'countText',
         'var hovered = indices.Select(', 'Math.Floor(staminaPool / hovered.CurrentNumber)'))
     or '100.0 * parameter.CurrentNumber / staminaPool' not in _stamina_six_body
-    or 'SPENT PER ACTION' not in _stamina_six_body
+    or 'Actions[index].SpendCaption' not in _stamina_six_body
     or 'ReferenceEquals(_hoverParameter, parameter)' not in _action_usage_source
     or 'ControlHoverGlow.Draw(dc, point, accent,' not in _action_usage_source):
     fail('Stamina Usage retired hover overlays or live source/handle control drifted')
 note('Stamina pass 6: count/ratio hover removed, cost percentage and handle glow remain')
+
+
+# Source-specific Stamina Usage captions: no generic "per action" label.
+# Sprint names the native coefficient, not an assumed fixed sprint duration.
+_expected_spend_captions = (
+    ('stamina.sprintCost', 'SPRINT', 'Movement', 'SPRINT'),
+    ('stamina.jumpCost', 'JUMP', 'Movement', 'JUMP'),
+    ('stamina.vaultCost', 'VAULT', 'Movement', 'VAULT'),
+    ('stamina.meleeNormalCost', 'QUICK MELEE', 'Melee', 'SWING'),
+    ('stamina.meleeStrongCost', 'STRONG MELEE', 'Melee', 'SWING'),
+    ('stamina.butstockCost', 'BUTTSTOCK', 'Melee', 'SWING'),
+)
+if ('SPENT PER ACTION' in _action_usage_source
+    or 'string SpendCaption' not in _action_usage_source
+    or 'Actions[index].SpendCaption' not in _stamina_six_body
+    or any(
+        f'new("{{pid}}", "{{label}}", ActionGroup.{{group}}, "SPENT PER {{event}}")' not in _action_usage_source
+        for pid, label, group, event in _expected_spend_captions
+    )):
+    fail('Stamina Usage movement/melee contextual spend captions drifted')
+note('Stamina Usage: contextual sprint, jump, vault and swing captions verified')
 
 # Project-wide dead-code cleanup: fourteen never-invoked private helpers
 # deleted without affecting the active editor family dispatch paths.

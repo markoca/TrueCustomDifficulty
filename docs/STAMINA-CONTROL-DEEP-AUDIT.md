@@ -1,5 +1,9 @@
 # Stamina Control Deep Audit — v0.2.46
 
+## 2026-10-15 contextual Stamina Usage captions
+
+The `ActionCostsRadar` Movement/Melee board uses `SPENT PER SPRINT`, `SPENT PER JUMP`, `SPENT PER VAULT`, and `SPENT PER SWING` (Quick Melee, Strong Melee, Buttstock) in place of the former generic action suffix. The editable native cost and live `cost / current maxSP` percentage are unchanged; derived values stay neutral, and only a modified source number becomes gold. The Sprint caption describes the native coefficient, not a duration or sprint-activation count. No mapping, gesture, geometry, preset or CFG writer change.
+
 ### 2026-10-14 — Explicit stamina resource units (CURRENT)
 
 Player-facing stamina amounts always use the full **STAMINA** unit, and recovery rates use **STAMINA/s** in Core Stamina, Stamina Usage, Exhaustion & Recovery, comparison/reference readouts and descriptions. Historical abbreviated units below are superseded. Keep exact native resource values, gameplay thresholds, source keys (`stamina.maxSP`, `RegenSP`), CFG edits and compact hit targets unchanged.
