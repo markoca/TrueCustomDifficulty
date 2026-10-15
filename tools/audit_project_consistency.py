@@ -3848,6 +3848,36 @@ if ('foreach (var parameter in EnumerateBoundParameters())\n        {\n'
         '                parameter.PropertyChanged -= Parameter_PropertyChanged;'
         in _action_usage_source):
     fail('ActionCostsRadar once again unsubscribes using the NEW Mode instead of the old subscriptions')
+# Pass 4: an unloaded Stamina board must release observed VMs and
+# pointer capture; a rebind must not leave old hit rectangles selectable.
+_action_rebind = _action_usage_source.split('private void RebindParameters()', 1)[-1].split('private void DetachObservedParameters()', 1)[0]
+_action_release = _action_usage_source.split('private void ReleaseDragCapture()', 1)[-1].split('private void ObserveParameter(', 1)[0]
+if (not all(token in _action_usage_source for token in (
+        'Loaded += (_, _) => RebindParameters();',
+        'Unloaded += (_, _) =>',
+        'protected override void OnLostMouseCapture(MouseEventArgs e)',
+        'Cursor = Cursors.Arrow;',
+        'if (IsLoaded)',
+    ))
+    or not all(token in _action_rebind for token in (
+        'DetachObservedParameters();', 'ReleaseDragCapture();', '_targets.Clear();'))
+    or not all(token in _action_release for token in (
+        '_dragTarget = null;', 'if (IsMouseCaptured)', 'ReleaseMouseCapture();'))
+    or 'ReleaseDragCapture();\n        e.Handled = true;' not in _action_usage_source):
+    fail('ActionCostsRadar drag/rebind/unload lifecycle contract drifted')
+_stamina_vm = (ROOT / 'src/TrueCustomDifficulty/ViewModels/MainViewModel.cs').read_text(encoding='utf-8')
+_stamina_sort_begin = _stamina_vm.find('if (parameter.Definition.Tab == "stamina")')
+_stamina_sort_end = _stamina_vm.find('if (parameter.Definition.Tab == "economy")', _stamina_sort_begin)
+_stamina_sort = _stamina_vm[_stamina_sort_begin:_stamina_sort_end]
+_hidden_stamina_sort_ids = (
+    'stamina.sprintRegenCoef', 'stamina.sprintUnderRunSpeedRegenCoef',
+    'stamina.runRegenCoef', 'stamina.joggingRegenCoef',
+    'stamina.slowRunRegenCoef',
+)
+if _stamina_sort_begin < 0 or _stamina_sort_end < 0 or any(
+        f'"{pid}" =>' in _stamina_sort for pid in _hidden_stamina_sort_ids):
+    fail('Hidden stamina movement-state parameters returned to normal UI sort ranks')
+note('Stamina pass 4: unloaded observers and stale gestures released; hidden sort ranks removed')
 note('ActionCostsRadar binding cleanup: stale mode handlers detached, active redraw/reset scopes preserved')
 note('ActionCostsRadar cleanup: invisible status/timer and pipe-color helper gone; live editing/reset intact')
 if (not all(token in _action_usage_source for token in (
