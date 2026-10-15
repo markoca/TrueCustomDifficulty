@@ -795,7 +795,7 @@
     },
     "alife.mutantSpawn.bloodsucker": {
       "kind": "slider",
-      "number": 1.4
+      "number": 1
     },
     "alife.mutantSpawn.blindDog": {
       "kind": "slider",
@@ -807,7 +807,7 @@
     },
     "alife.mutantSpawn.controller": {
       "kind": "slider",
-      "number": 1.45
+      "number": 1
     },
     "alife.mutantSpawn.poltergeist": {
       "kind": "slider",
@@ -823,7 +823,7 @@
     },
     "alife.mutantSpawn.chimera": {
       "kind": "slider",
-      "number": 1.05
+      "number": 1
     },
     "alife.mutantSpawn.bayun": {
       "kind": "slider",

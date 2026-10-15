@@ -1,5 +1,9 @@
 # Pre-release test and evidence runbook
 
+### 2026-10-15 — Complete catalog-to-writer CFG acceptance gate
+
+Before declaring a release's source mapping complete, run `python tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping` and `python tools/audit_ui_cfg_contract.py`. On Windows, also run `dotnet run --project tests/AllControlsPatchContract/AllControlsPatchContract.csproj -c Release` and all existing `tests/*PatchContract` projects. The new suite probes actual production staging for all 235 player-editable CFG sources, not only the existence of mapping metadata. Revalidate STALKER 2 runtime behavior (especially the 51 runtime-pending sources) separately. Source review never substitutes for repak/retoc packing and live game testing. See `docs/FINAL-CFG-MAPPING-AUDIT-2026-10-15.md`.
+
 ### Consumable Effects upper-panel knobs and six live outcome bars (2026-10-11)
 
 Run `python tools/audit_project_consistency.py` and `./publish.sh`, then open Survival > **CONSUMABLE EFFECTS** in Wine at minimum (520 DIP) and large widths. Inspect exactly three rotary editors **INSTANT STAMINA**, **WATER BUFF**, **ENERGY REGEN** in one centered bounded row (620-DIP maximum bank), **0–2x / 0.05x** each, actual gold current indicator, source-aligned tick marks and grey Vanilla **1x** reference. There must be no remaining horizontal strength sliders or the former two text-only outcome cards. Click, drag, scroll, arrow and Page/Home/End each knob, right-click reset only that CFG parameter, and press R to reset the whole ConsumableMixer. Mouse hover or selection must only highlight the graph bars controlled by that knob, leaving unrelated bars neutral.

@@ -1,5 +1,9 @@
 # CFG BPatch Writer and Mod Build
 
+## Final 2026-10-15 source-to-production BPatch mapping review
+
+The current **2.0.5 catalog contains 248 source IDs** (235 player-editable) with **213 direct IDs, 1,230 concrete CFG leaves and 35 explicit special writer methods**. No unsupported/deferred IDs remain, and no two independent direct parameters own one concrete CFG leaf. `tools/audit_final_cfg_mapping.py` checks dispatch, file/root/key/operation and all twelve stock profile values for source-native integer no-ops. New `tests/AllControlsPatchContract` executes the actual production writer for all 235 editable IDs on Windows; it complements existing detailed domain writer tests and must pass before claiming emitted output fully verified. A-Life `scaleIntegerHalfUp*` values that quantize to vanilla never produce a patch: 108 ineffective stock edits were neutralized and custom ineffective edits now receive an explicit Build error. **None of this proves that STALKER 2 loads or applies every patch.** See [final mapping and BPatch audit](FINAL-CFG-MAPPING-AUDIT-2026-10-15.md).
+
 ## Purpose
 
 v0.1.51 closes the player build pipeline from UI state to a finished STALKER 2 IoStore mod. The writer remains a **minimal BPatch generator**, not a full-CFG rewriter.

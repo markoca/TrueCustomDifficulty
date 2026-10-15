@@ -791,11 +791,11 @@
     },
     "alife.humanGroupSize.master": {
       "kind": "slider",
-      "number": 0.95
+      "number": 1
     },
     "alife.mutantSpawn.bloodsucker": {
       "kind": "slider",
-      "number": 0.7
+      "number": 1
     },
     "alife.mutantSpawn.blindDog": {
       "kind": "slider",
@@ -807,7 +807,7 @@
     },
     "alife.mutantSpawn.controller": {
       "kind": "slider",
-      "number": 0.7
+      "number": 1
     },
     "alife.mutantSpawn.poltergeist": {
       "kind": "slider",
@@ -823,7 +823,7 @@
     },
     "alife.mutantSpawn.chimera": {
       "kind": "slider",
-      "number": 0.8
+      "number": 1
     },
     "alife.mutantSpawn.bayun": {
       "kind": "slider",
@@ -835,7 +835,7 @@
     },
     "alife.mutantSpawn.ratSwarm": {
       "kind": "slider",
-      "number": 0.9
+      "number": 1
     },
     "alife.mutantSpawn.burer": {
       "kind": "slider",
@@ -843,11 +843,11 @@
     },
     "alife.mutantSpawn.pseudodog": {
       "kind": "slider",
-      "number": 0.9
+      "number": 1
     },
     "alife.mutantSpawn.deer": {
       "kind": "slider",
-      "number": 0.9
+      "number": 1
     },
     "survival.waterRegenDuration": {
       "kind": "slider",

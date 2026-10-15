@@ -25,6 +25,9 @@ jobs:
       - name: Active UI-to-CFG contract
         run: python tools/audit_ui_cfg_contract.py
 
+      - name: Final 248-source CFG to actual BPatch writer route and factory-output audit
+        run: python tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
+
       - name: Whole-project active source consistency
         run: python tools/audit_project_consistency.py
 
@@ -307,3 +310,17 @@ jobs:
           path: audit/loot-world-placement-fixtures
           if-no-files-found: ignore
           retention-days: 7
+
+  all-controls-final-writer-windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+      - name: Install .NET 10 for actual WPF production writer
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Exercise all 235 player-editable native CFG source IDs through production writer
+        shell: pwsh
+        run: dotnet run --project tests/AllControlsPatchContract/AllControlsPatchContract.csproj -c Release

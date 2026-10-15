@@ -2456,6 +2456,36 @@ if "2026-10-15 — Full source-backed factory audit" not in (
     DOCS / "FACTORY-PRESETS.md").read_text(encoding="utf-8"):
     _factory_errors.append("factory overview missing latest deep-audit contract")
 
+# 2026-10-15 final source-to-writer proof and source-inert integer correction.
+# Source mapping coverage is independently rechecked by audit_final_cfg_mapping.py;
+# this audit pins the new contract and exact-pristine stock upgrade.
+if ('PreFinalCfgAuditFactoryBlobs' not in _factory_service_text
+    or '&& !PreFinalCfgAuditFactoryBlobs.TryGetValue(name, out knownHash)' not in _factory_service_text
+    or 'PreFinalCfgAuditFactoryBlobs.TryGetValue(name, out var preFinalCfgHash)' not in _factory_service_text):
+    _factory_errors.append("final CFG audit pristine-only migration guard is missing")
+if 'These A-Life group-size multipliers do not change any actual integer CFG limits' not in _writer_source:
+    _factory_errors.append("integer quantization no-output diagnostic missing from writer")
+if not (ROOT / "tools/final_cfg_mapping_inventory.json").is_file():
+    _factory_errors.append("full 248-source CFG mapping inventory is missing")
+else:
+    _final_cfg_index = json.loads((ROOT / "tools/final_cfg_mapping_inventory.json").read_text(encoding="utf-8"))
+    if (set(_final_cfg_index.get("parameters", {})) != set(_factory_catalog)
+        or _final_cfg_index.get("counts", {}).get("catalog") != 248
+        or _final_cfg_index.get("counts", {}).get("direct") != 213
+        or _final_cfg_index.get("counts", {}).get("special") != 35
+        or _final_cfg_index.get("counts", {}).get("editable") != 235
+        or _final_cfg_index.get("counts", {}).get("directLeafPoints") != 1230):
+        _factory_errors.append("final CFG mapping inventory differs from live catalogue/baseline")
+if "248 unique" not in (ROOT / "tools/audit_final_cfg_mapping.py").read_text(encoding="utf-8"):
+    _factory_errors.append("new static CFG mapping writer audit entrypoint is missing")
+_final_workflow = (ROOT / ".github/workflows/static-audit.yml").read_text(encoding="utf-8")
+if ("python tools/audit_final_cfg_mapping.py" not in _final_workflow
+    or "tests/AllControlsPatchContract/AllControlsPatchContract.csproj" not in _final_workflow):
+    _factory_errors.append("final CFG mapping/235-source writer CI gates are not enabled")
+if "Final CFG mapping and BPatch writer audit" not in (
+    DOCS / "FINAL-CFG-MAPPING-AUDIT-2026-10-15.md").read_text(encoding="utf-8"):
+    _factory_errors.append("final mapping report is missing")
+
 if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legacyPath)" not in _factory_service_text:
     _factory_errors.append("legacy factory preset migration cleanup missing")
 

@@ -1,5 +1,9 @@
 # External tools
 
+## Final source-to-BPatch contract (2026-10-15)
+
+Run `python tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping`. This validates the **248/248 catalog routes** (213 direct/1,230 concrete leaves, 35 special routes), exact current CFG target ownership, source evidence statuses, production dispatch methods, embedded manifest presence, difficulty/DLC guards, and **all twelve shipped factory profiles' direct changes** against source integer rounding. The `mapping.json`/`mapping.csv` output indexes each ID; the committed `tools/final_cfg_mapping_inventory.json` gives the source-by-source coverage. The independent Windows `tests/AllControlsPatchContract` project exercises the real WPF production writer for all **235** player-editable dimensions. See `docs/FINAL-CFG-MAPPING-AUDIT-2026-10-15.md` for what these checks **cannot** establish about game runtime.
+
 This source directory contains first-party audit/test scripts. The published tools/ folder is for optional manually supplied external packer binaries.
 
 True Custom Difficulty does **not** bundle or download third-party executables. Users supply them manually.

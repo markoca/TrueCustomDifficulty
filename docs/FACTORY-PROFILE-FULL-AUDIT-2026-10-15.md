@@ -1,5 +1,7 @@
 # Full factory-profile source and decision audit — 2026-10-15
 
+**Final CFG mapping addendum (2026-10-15):** Corrected **108 A-Life integer-count no-op values** in stock profiles to real neutral `1×`. The A-Life table and the per-source decision ledger now agree. All other values are unchanged. Full [production CFG mapping audit](FINAL-CFG-MAPPING-AUDIT-2026-10-15.md) documents source and BPatch confidence limits.
+
 ## Contract and scope
 
 - **12 stock roles × 248 exact source-backed catalog IDs = 2,976 recorded setting decisions.** Every decision records the configured value, its `referenceDifficulty`-dependent vanilla comparator, role intent and source-specific reason in [`tools/factory_preset_full_source_audit.json`](../tools/factory_preset_full_source_audit.json).
@@ -387,25 +389,25 @@ Abbreviations: IMM = Immersive; TAC = Tactical; MED = Field Medic; HUN = Mutant 
 
 | Source ID | Native setting intent | Evidence | IMM | TAC | MED | HUN | ANO | WAN | MER | SMU | SCA | OUT | HC | HC+ |
 |---|---|:---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| `alife.humanGroupSize.newbie` | Set the maximum human squad size separately for Newbie, Experienced, Veteran, and Master player ranks. This do | CFG | 1 | 1 | 1 | 0.85 | 0.8 | 0.8 | 1.1 | 0.85 | 0.7 | 1 | 1.2 | 1.4 |
-| `alife.humanGroupSize.experienced` | Use the radar to tune human squad size separately for each player rank. | CFG | 1 | 1.15 | 1 | 0.9 | 0.85 | 0.9 | 1.2 | 0.95 | 0.8 | 1.1 | 1.25 | 1.5 |
-| `alife.humanGroupSize.veteran` | Use the radar to tune human squad size separately for each player rank. | CFG | 1 | 1.45 | 1 | 1 | 0.85 | 0.75 | 1.45 | 1.05 | 0.85 | 1.1 | 1.35 | 1.5 |
-| `alife.humanGroupSize.master` | Use the radar to tune human squad size separately for each player rank. | CFG | 1 | 1.5 | 1.05 | 1 | 0.95 | 1 | 1.4 | 1.1 | 0.9 | 1.25 | 1.4 | 1.75 |
+| `alife.humanGroupSize.newbie` | Set the maximum human squad size separately for Newbie, Experienced, Veteran, and Master player ranks. This do | CFG | 1 | 1 | 1 | 1 | 0.8 | 0.8 | 1 | 1 | 0.7 | 1 | 1.2 | 1.4 |
+| `alife.humanGroupSize.experienced` | Use the radar to tune human squad size separately for each player rank. | CFG | 1 | 1.15 | 1 | 1 | 0.85 | 1 | 1.2 | 1 | 0.8 | 1 | 1.25 | 1.5 |
+| `alife.humanGroupSize.veteran` | Use the radar to tune human squad size separately for each player rank. | CFG | 1 | 1.45 | 1 | 1 | 0.85 | 0.75 | 1.45 | 1 | 0.85 | 1.1 | 1.35 | 1.5 |
+| `alife.humanGroupSize.master` | Use the radar to tune human squad size separately for each player rank. | CFG | 1 | 1.5 | 1 | 1 | 1 | 1 | 1.4 | 1.1 | 0.9 | 1.25 | 1.4 | 1.75 |
 | `alife.mutantSpawn.generic` | Kept hidden so the tool does not pretend there is one proven master slider for every mutant group. | CFG | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-| `alife.mutantSpawn.bloodsucker` | Set how large each mutant species group can become while keeping its vanilla rank progression. This does not c | CFG | 0.95 | 0.9 | 0.85 | 1.15 | 0.7 | 0.8 | 0.95 | 0.9 | 0.85 | 1.1 | 1.2 | 1.4 |
+| `alife.mutantSpawn.bloodsucker` | Set how large each mutant species group can become while keeping its vanilla rank progression. This does not c | CFG | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
 | `alife.mutantSpawn.blindDog` | Change how large Blind Dog groups can become while keeping the vanilla rank progression. | CFG | 1 | 0.85 | 0.85 | 1.25 | 1.15 | 1.15 | 1 | 0.95 | 1.1 | 1.2 | 1.25 | 1.3 |
-| `alife.mutantSpawn.flesh` | Change how large Flesh groups can become while keeping the vanilla rank progression. | CFG | 1.05 | 1.05 | 1.05 | 1.35 | 0.9 | 1.1 | 1 | 1.1 | 1.1 | 1.35 | 1.35 | 1.65 |
-| `alife.mutantSpawn.controller` | Change how large Controller groups can become while keeping the vanilla rank progression. | CFG | 1 | 0.95 | 0.9 | 1.15 | 0.7 | 0.9 | 1 | 0.95 | 0.85 | 1.2 | 1.2 | 1.45 |
-| `alife.mutantSpawn.poltergeist` | Change how large Poltergeist groups can become while keeping the vanilla rank progression. | CFG | 1 | 0.95 | 0.9 | 1.15 | 0.7 | 0.9 | 1 | 0.95 | 0.85 | 1.2 | 1.2 | 1.45 |
-| `alife.mutantSpawn.snork` | Change how large Snork groups can become while keeping the vanilla rank progression. | CFG | 1.05 | 1.05 | 1.05 | 1.35 | 0.9 | 1.1 | 1 | 1.1 | 1.1 | 1.35 | 1.35 | 1.65 |
-| `alife.mutantSpawn.boar` | Change how large Boar groups can become while keeping the vanilla rank progression. | CFG | 1.05 | 1.05 | 1.05 | 1.35 | 0.9 | 1.1 | 1 | 1.1 | 1.1 | 1.35 | 1.35 | 1.65 |
-| `alife.mutantSpawn.chimera` | Change how large Chimera groups can become while keeping the vanilla rank progression. | CFG | 0.95 | 0.85 | 0.85 | 1.15 | 0.8 | 0.75 | 0.9 | 0.9 | 1 | 1.1 | 1.1 | 1.05 |
-| `alife.mutantSpawn.bayun` | Change how large Bayun groups can become while keeping the vanilla rank progression. | CFG | 1 | 0.95 | 0.9 | 1.15 | 0.7 | 0.9 | 1 | 0.95 | 0.85 | 1.2 | 1.2 | 1.45 |
+| `alife.mutantSpawn.flesh` | Change how large Flesh groups can become while keeping the vanilla rank progression. | CFG | 1 | 1 | 1 | 1.35 | 0.9 | 1.1 | 1 | 1.1 | 1.1 | 1.35 | 1.35 | 1.65 |
+| `alife.mutantSpawn.controller` | Change how large Controller groups can become while keeping the vanilla rank progression. | CFG | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| `alife.mutantSpawn.poltergeist` | Change how large Poltergeist groups can become while keeping the vanilla rank progression. | CFG | 1 | 1 | 1 | 1 | 0.7 | 1 | 1 | 1 | 1 | 1 | 1 | 1.45 |
+| `alife.mutantSpawn.snork` | Change how large Snork groups can become while keeping the vanilla rank progression. | CFG | 1 | 1 | 1 | 1.35 | 0.9 | 1.1 | 1 | 1.1 | 1.1 | 1.35 | 1.35 | 1.65 |
+| `alife.mutantSpawn.boar` | Change how large Boar groups can become while keeping the vanilla rank progression. | CFG | 1 | 1 | 1 | 1.35 | 0.9 | 1.1 | 1 | 1.1 | 1.1 | 1.35 | 1.35 | 1.65 |
+| `alife.mutantSpawn.chimera` | Change how large Chimera groups can become while keeping the vanilla rank progression. | CFG | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| `alife.mutantSpawn.bayun` | Change how large Bayun groups can become while keeping the vanilla rank progression. | CFG | 1 | 1 | 1 | 1 | 0.7 | 1 | 1 | 1 | 1 | 1 | 1 | 1.45 |
 | `alife.mutantSpawn.tushkan` | Change how large Tushkan groups can become while keeping the vanilla rank progression. | CFG | 1.05 | 1.05 | 1.05 | 1.35 | 0.9 | 1.1 | 1 | 1.1 | 1.1 | 1.35 | 1.35 | 1.65 |
-| `alife.mutantSpawn.ratSwarm` | Change how large Rat Swarm groups can become while keeping the vanilla rank progression. | CFG | 1.05 | 1.05 | 1.05 | 1.35 | 0.9 | 1.1 | 1 | 1.1 | 1.1 | 1.35 | 1.35 | 1.65 |
-| `alife.mutantSpawn.burer` | Change how large Burer groups can become while keeping the vanilla rank progression. | CFG | 0.95 | 0.9 | 0.85 | 1.15 | 0.7 | 0.8 | 0.95 | 0.9 | 0.85 | 1.1 | 1.2 | 1.4 |
-| `alife.mutantSpawn.pseudodog` | Change how large Pseudodog groups can become while keeping the vanilla rank progression. | CFG | 1.05 | 1.05 | 1.05 | 1.35 | 0.9 | 1.1 | 1 | 1.1 | 1.1 | 1.35 | 1.35 | 1.65 |
-| `alife.mutantSpawn.deer` | Change how large Deer groups can become while keeping the vanilla rank progression. | CFG | 1.05 | 1.05 | 1.05 | 1.35 | 0.9 | 1.1 | 1 | 1.1 | 1.1 | 1.35 | 1.35 | 1.65 |
+| `alife.mutantSpawn.ratSwarm` | Change how large Rat Swarm groups can become while keeping the vanilla rank progression. | CFG | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1.65 |
+| `alife.mutantSpawn.burer` | Change how large Burer groups can become while keeping the vanilla rank progression. | CFG | 1 | 1 | 1 | 1 | 0.7 | 1 | 1 | 1 | 1 | 1 | 1 | 1.4 |
+| `alife.mutantSpawn.pseudodog` | Change how large Pseudodog groups can become while keeping the vanilla rank progression. | CFG | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1.65 |
+| `alife.mutantSpawn.deer` | Change how large Deer groups can become while keeping the vanilla rank progression. | CFG | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1.65 |
 
 ## Recorded reasoning for all 2,976 decisions
 

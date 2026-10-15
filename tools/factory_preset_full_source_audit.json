@@ -3,7 +3,7 @@
   "auditDate": "2026-10-15",
   "basedOnMainCommit": "dc062040acce0926b320e708144e42df1dc236ac",
   "targetGameVersion": "2.0.5",
-  "policy": "Every one of 248 catalog settings in each of 12 profiles has an explicit source rationale, exact authored value and role-aware reason. Native CFG mapping sourced from parameters.json; runtime_test_required means no gameplay claim. This records configured rules, not observed outcomes.",
+  "policy": "Every one of 248 catalog settings in each of 12 profiles has an explicit source rationale, exact authored value and role-aware reason. Native CFG mapping sourced from parameters.json; runtime_test_required means no gameplay claim. This records configured rules, not observed outcomes. The 2026-10-15 final CFG route audit neutralizes 108 source-inert A-Life count multipliers across factory profiles; all actual non-reference direct A-Life settings must alter at least one baseline integer.",
   "roles": {
     "Immersive": {
       "referenceDifficulty": "Stalker",
@@ -22261,10 +22261,10 @@
           "reason": "fewer dangerous squads protect medics from being overwhelmed; Human Group Size set to 1 (at Stalker reference 1), while keeping its distinct CFG source."
         },
         "Mutant Hunter": {
-          "value": 0.85,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Human Group Size set to 0.85 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
           "value": 0.8,
@@ -22279,16 +22279,16 @@
           "reason": "less unnecessary combat on long treks; Human Group Size set to 0.8 (below Stalker reference 1), while keeping its distinct CFG source."
         },
         "Mercenary": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more armed patrols fit contract work; Human Group Size set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Smuggler": {
-          "value": 0.85,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Human Group Size set to 0.85 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
           "value": 0.7,
@@ -22355,10 +22355,10 @@
           "reason": "fewer dangerous squads protect medics from being overwhelmed; Experienced Human Group Size set to 1 (at Stalker reference 1), while keeping its distinct CFG source."
         },
         "Mutant Hunter": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Experienced Human Group Size set to 0.9 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
           "value": 0.85,
@@ -22367,10 +22367,10 @@
           "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Experienced Human Group Size set to 0.85 (below Stalker reference 1), while keeping its distinct CFG source."
         },
         "Wanderer": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Experienced Human Group Size set to 0.9 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mercenary": {
           "value": 1.2,
@@ -22379,10 +22379,10 @@
           "reason": "more armed patrols fit contract work; Experienced Human Group Size set to 1.2 (above Veteran reference 1), while keeping its distinct CFG source."
         },
         "Smuggler": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Experienced Human Group Size set to 0.95 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
           "value": 0.8,
@@ -22391,10 +22391,10 @@
           "reason": "common wildlife makes salvage routes risky; Experienced Human Group Size set to 0.8 (below Veteran reference 1), while keeping its distinct CFG source."
         },
         "Outcast": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Experienced Human Group Size set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore": {
           "value": 1.25,
@@ -22473,10 +22473,10 @@
           "reason": "more armed patrols fit contract work; Veteran Human Group Size set to 1.45 (above Veteran reference 1), while keeping its distinct CFG source."
         },
         "Smuggler": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Veteran Human Group Size set to 1.05 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
           "value": 0.85,
@@ -22537,10 +22537,10 @@
           "reason": "dangerous human patrols are combat-focused; Master Human Group Size set to 1.5 (above Veteran reference 1), while keeping its distinct CFG source."
         },
         "Field Medic": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Master Human Group Size set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
           "value": 1,
@@ -22549,10 +22549,10 @@
           "reason": "more hunting targets and wildlife pressure; Master Human Group Size set to 1 (at Veteran reference 1), while keeping its distinct CFG source."
         },
         "Anomaly Runner": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Master Human Group Size set to 0.95 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Wanderer": {
           "value": 1,
@@ -22755,76 +22755,76 @@
       "constantAcrossRoles": false,
       "roleDecisions": {
         "Immersive": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "moderate group encounters keep journeys populated; Mutant Group Size set to 0.95 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Tactical": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Mutant Group Size set to 0.9 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 0.85,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Mutant Group Size set to 0.85 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.15,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Mutant Group Size set to 1.15 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.15× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
-          "value": 0.7,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Mutant Group Size set to 0.7 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.7× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Wanderer": {
-          "value": 0.8,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Mutant Group Size set to 0.8 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.8× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mercenary": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more armed patrols fit contract work; Mutant Group Size set to 0.95 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Smuggler": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Mutant Group Size set to 0.9 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
-          "value": 0.85,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Mutant Group Size set to 0.85 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Outcast": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Mutant Group Size set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore": {
-          "value": 1.2,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Mutant Group Size set to 1.2 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.2× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
-          "value": 1.4,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Mutant Group Size set to 1.4 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.4× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         }
       }
     },
@@ -22985,22 +22985,22 @@
       "constantAcrossRoles": false,
       "roleDecisions": {
         "Immersive": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "moderate group encounters keep journeys populated; Flesh Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Tactical": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Flesh Spawn set to 1.05 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Flesh Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
           "value": 1.35,
@@ -23106,34 +23106,34 @@
           "reason": "moderate group encounters keep journeys populated; Controller Spawn set to 1 (at Stalker reference 1), while keeping its distinct CFG source."
         },
         "Tactical": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Controller Spawn set to 0.95 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Controller Spawn set to 0.9 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.15,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Controller Spawn set to 1.15 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.15× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
-          "value": 0.7,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Controller Spawn set to 0.7 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.7× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Wanderer": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Controller Spawn set to 0.9 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mercenary": {
           "value": 1,
@@ -23142,34 +23142,34 @@
           "reason": "more armed patrols fit contract work; Controller Spawn set to 1 (at Veteran reference 1), while keeping its distinct CFG source."
         },
         "Smuggler": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Controller Spawn set to 0.95 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
-          "value": 0.85,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Controller Spawn set to 0.85 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Outcast": {
-          "value": 1.2,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Controller Spawn set to 1.2 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.2× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore": {
-          "value": 1.2,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Controller Spawn set to 1.2 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.2× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
-          "value": 1.45,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Controller Spawn set to 1.45 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.45× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         }
       }
     },
@@ -23221,22 +23221,22 @@
           "reason": "moderate group encounters keep journeys populated; Poltergeist Spawn set to 1 (at Stalker reference 1), while keeping its distinct CFG source."
         },
         "Tactical": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Poltergeist Spawn set to 0.95 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Poltergeist Spawn set to 0.9 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.15,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Poltergeist Spawn set to 1.15 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.15× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
           "value": 0.7,
@@ -23245,10 +23245,10 @@
           "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Poltergeist Spawn set to 0.7 (below Stalker reference 1), while keeping its distinct CFG source."
         },
         "Wanderer": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Poltergeist Spawn set to 0.9 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mercenary": {
           "value": 1,
@@ -23257,28 +23257,28 @@
           "reason": "more armed patrols fit contract work; Poltergeist Spawn set to 1 (at Veteran reference 1), while keeping its distinct CFG source."
         },
         "Smuggler": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Poltergeist Spawn set to 0.95 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
-          "value": 0.85,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Poltergeist Spawn set to 0.85 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Outcast": {
-          "value": 1.2,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Poltergeist Spawn set to 1.2 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.2× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore": {
-          "value": 1.2,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Poltergeist Spawn set to 1.2 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.2× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
           "value": 1.45,
@@ -23330,22 +23330,22 @@
       "constantAcrossRoles": false,
       "roleDecisions": {
         "Immersive": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "moderate group encounters keep journeys populated; Snork Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Tactical": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Snork Spawn set to 1.05 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Snork Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
           "value": 1.35,
@@ -23445,22 +23445,22 @@
       "constantAcrossRoles": false,
       "roleDecisions": {
         "Immersive": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "moderate group encounters keep journeys populated; Boar Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Tactical": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Boar Spawn set to 1.05 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Boar Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
           "value": 1.35,
@@ -23560,52 +23560,52 @@
       "constantAcrossRoles": false,
       "roleDecisions": {
         "Immersive": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "moderate group encounters keep journeys populated; Chimera Spawn set to 0.95 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Tactical": {
-          "value": 0.85,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Chimera Spawn set to 0.85 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 0.85,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Chimera Spawn set to 0.85 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.15,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Chimera Spawn set to 1.15 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.15× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
-          "value": 0.8,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Chimera Spawn set to 0.8 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.8× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Wanderer": {
-          "value": 0.75,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Chimera Spawn set to 0.75 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.75× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mercenary": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more armed patrols fit contract work; Chimera Spawn set to 0.9 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Smuggler": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Chimera Spawn set to 0.9 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
           "value": 1,
@@ -23614,22 +23614,22 @@
           "reason": "common wildlife makes salvage routes risky; Chimera Spawn set to 1 (at Veteran reference 1), while keeping its distinct CFG source."
         },
         "Outcast": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Chimera Spawn set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Chimera Spawn set to 1.1 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Chimera Spawn set to 1.05 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         }
       }
     },
@@ -23681,22 +23681,22 @@
           "reason": "moderate group encounters keep journeys populated; Bayun Spawn set to 1 (at Stalker reference 1), while keeping its distinct CFG source."
         },
         "Tactical": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Bayun Spawn set to 0.95 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Bayun Spawn set to 0.9 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.15,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Bayun Spawn set to 1.15 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.15× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
           "value": 0.7,
@@ -23705,10 +23705,10 @@
           "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Bayun Spawn set to 0.7 (below Stalker reference 1), while keeping its distinct CFG source."
         },
         "Wanderer": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Bayun Spawn set to 0.9 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mercenary": {
           "value": 1,
@@ -23717,28 +23717,28 @@
           "reason": "more armed patrols fit contract work; Bayun Spawn set to 1 (at Veteran reference 1), while keeping its distinct CFG source."
         },
         "Smuggler": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Bayun Spawn set to 0.95 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
-          "value": 0.85,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Bayun Spawn set to 0.85 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Outcast": {
-          "value": 1.2,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Bayun Spawn set to 1.2 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.2× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore": {
-          "value": 1.2,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Bayun Spawn set to 1.2 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.2× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
           "value": 1.45,
@@ -23905,40 +23905,40 @@
       "constantAcrossRoles": false,
       "roleDecisions": {
         "Immersive": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "moderate group encounters keep journeys populated; Rat Swarm Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Tactical": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Rat Swarm Spawn set to 1.05 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Rat Swarm Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.35,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Rat Swarm Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Rat Swarm Spawn set to 0.9 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Wanderer": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Rat Swarm Spawn set to 1.1 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mercenary": {
           "value": 1,
@@ -23947,28 +23947,28 @@
           "reason": "more armed patrols fit contract work; Rat Swarm Spawn set to 1 (at Veteran reference 1), while keeping its distinct CFG source."
         },
         "Smuggler": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Rat Swarm Spawn set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Rat Swarm Spawn set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Outcast": {
-          "value": 1.35,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Rat Swarm Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore": {
-          "value": 1.35,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Rat Swarm Spawn set to 1.35 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
           "value": 1.65,
@@ -24020,28 +24020,28 @@
       "constantAcrossRoles": false,
       "roleDecisions": {
         "Immersive": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "moderate group encounters keep journeys populated; Burer Spawn set to 0.95 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Tactical": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Burer Spawn set to 0.9 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 0.85,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Burer Spawn set to 0.85 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.15,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Burer Spawn set to 1.15 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.15× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
           "value": 0.7,
@@ -24050,40 +24050,40 @@
           "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Burer Spawn set to 0.7 (below Stalker reference 1), while keeping its distinct CFG source."
         },
         "Wanderer": {
-          "value": 0.8,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Burer Spawn set to 0.8 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.8× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mercenary": {
-          "value": 0.95,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more armed patrols fit contract work; Burer Spawn set to 0.95 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Smuggler": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Burer Spawn set to 0.9 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
-          "value": 0.85,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Burer Spawn set to 0.85 (below Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Outcast": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Burer Spawn set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore": {
-          "value": 1.2,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Burer Spawn set to 1.2 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.2× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
           "value": 1.4,
@@ -24135,40 +24135,40 @@
       "constantAcrossRoles": false,
       "roleDecisions": {
         "Immersive": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "moderate group encounters keep journeys populated; Pseudodog Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Tactical": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Pseudodog Spawn set to 1.05 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Pseudodog Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.35,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Pseudodog Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Pseudodog Spawn set to 0.9 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Wanderer": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Pseudodog Spawn set to 1.1 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mercenary": {
           "value": 1,
@@ -24177,28 +24177,28 @@
           "reason": "more armed patrols fit contract work; Pseudodog Spawn set to 1 (at Veteran reference 1), while keeping its distinct CFG source."
         },
         "Smuggler": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Pseudodog Spawn set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Pseudodog Spawn set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Outcast": {
-          "value": 1.35,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Pseudodog Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore": {
-          "value": 1.35,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Pseudodog Spawn set to 1.35 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
           "value": 1.65,
@@ -24250,40 +24250,40 @@
       "constantAcrossRoles": false,
       "roleDecisions": {
         "Immersive": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "moderate group encounters keep journeys populated; Deer Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Tactical": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Deer Spawn set to 1.05 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Field Medic": {
-          "value": 1.05,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer dangerous squads protect medics from being overwhelmed; Deer Spawn set to 1.05 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.35,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Deer Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
-          "value": 0.9,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Deer Spawn set to 0.9 (below Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Wanderer": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Deer Spawn set to 1.1 (above Stalker reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mercenary": {
           "value": 1,
@@ -24292,28 +24292,28 @@
           "reason": "more armed patrols fit contract work; Deer Spawn set to 1 (at Veteran reference 1), while keeping its distinct CFG source."
         },
         "Smuggler": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "mixed roaming danger around trade routes; Deer Spawn set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
-          "value": 1.1,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Deer Spawn set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Outcast": {
-          "value": 1.35,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Deer Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore": {
-          "value": 1.35,
+          "value": 1,
           "reference": 1,
-          "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Deer Spawn set to 1.35 (above Master reference 1), while keeping its distinct CFG source."
+          "decision": "reference-aligned",
+          "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
           "value": 1.65,

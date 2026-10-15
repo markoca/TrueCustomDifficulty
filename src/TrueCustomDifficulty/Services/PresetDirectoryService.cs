@@ -196,6 +196,25 @@ public sealed class PresetDirectoryService
         ["Hardcore+"] = "521b3902d1dbf9a57f3e21ed54a4d1e5ccaf0533",
     };
 
+    // Final CFG route and integer-output audit: upgrade only pristine
+    // pre-audit stock snapshots. User changes always win.
+    private static readonly Dictionary<string, string> PreFinalCfgAuditFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Immersive"] = "db16beaf5af906a69742f6ae3c94349375b6a01c",
+        ["Tactical"] = "8c3759d0823025bbf3a7d49b5a6ad823fae92927",
+        ["Field Medic"] = "6de4f20ea23c7ea24266830451f79bd6c5ae9d5b",
+        ["Mutant Hunter"] = "d74a716d89529386359ca8ee0a3be4d5038502ea",
+        ["Anomaly Runner"] = "fc63d8cf0455854d80053a29b88488827cf3cc65",
+        ["Wanderer"] = "e1a380844aec46dd4ac2e58290e45ea2f4eed1d1",
+        ["Mercenary"] = "622580572e71fee53c4b2bd3d263b0bd438457ee",
+        ["Smuggler"] = "47c8c67dd6469d8d04d56df9ef7548147aa1768b",
+        ["Scavenger"] = "4a7ab4a244d923e932b46ae4c6be3d80a7b24c3f",
+        ["Outcast"] = "7fb05b09cc86610e6c6d32754faeb5176cef1ba1",
+        ["Hardcore"] = "29233b424c92e0d12faf80cdec1fc0d893154c61",
+        ["Hardcore+"] = "f813e67c0aed365638c8e822a1bded45774b0769",
+    };
+
     public string Ensure()
     {
         var directory = Path.Combine(AppContext.BaseDirectory, "Presets");
@@ -275,7 +294,8 @@ public sealed class PresetDirectoryService
             && !PreWaterSplitFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreRoleRebalanceFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreConsumableRebalanceFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreFullDeepAuditFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreFullDeepAuditFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreFinalCfgAuditFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -307,7 +327,9 @@ public sealed class PresetDirectoryService
                 || (PreConsumableRebalanceFactoryBlobs.TryGetValue(name, out var preConsumableHash)
                     && actual.Equals(preConsumableHash, StringComparison.OrdinalIgnoreCase))
                 || (PreFullDeepAuditFactoryBlobs.TryGetValue(name, out var preDeepHash)
-                    && actual.Equals(preDeepHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preDeepHash, StringComparison.OrdinalIgnoreCase))
+                || (PreFinalCfgAuditFactoryBlobs.TryGetValue(name, out var preFinalCfgHash)
+                    && actual.Equals(preFinalCfgHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

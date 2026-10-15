@@ -246,6 +246,22 @@ public sealed class CfgPatchWriterService
         var missing = modifiedSupported.Where(id => !writtenParameters.Contains(id)).OrderBy(id => id).ToList();
         if (missing.Count > 0)
         {
+            // Integer source-backed A-Life limits are quantized per rank. A 0.95x
+            // editor value applied to a source count of 1 still writes 1, so it
+            // cannot produce a BPatch. Do not pretend the change had an effect.
+            var inertIntegerIds = missing.Where(id => baseline.EditPoints.Any(point =>
+                point.ParameterId == id && point.Operation is
+                    "scaleIntegerHalfUp" or "scaleIntegerHalfUpPreserveZero")).ToList();
+            if (inertIntegerIds.Count > 0)
+            {
+                throw new InvalidDataException(
+                    "These A-Life group-size multipliers do not change any actual integer CFG limits " +
+                    "after rounding and therefore cannot produce BPatch edits. " +
+                    "Use a stronger step that changes at least one group count, or reset to 1x:" +
+                    Environment.NewLine +
+                    string.Join(Environment.NewLine, inertIntegerIds.Select(id => $"  - {id}")));
+            }
+
             throw new InvalidDataException(
                 "CFG writer has no concrete output for these modified controls:" + Environment.NewLine +
                 string.Join(Environment.NewLine, missing.Select(id => $"  - {id}")));
