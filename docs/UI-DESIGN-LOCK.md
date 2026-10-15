@@ -1,5 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Secondary readouts inside two-value knobs (CURRENT)
+
+For every source-native rotary knob that displays **two readout lines inside the dial**, keep the upper native editable value and its existing modified-only color rule untouched. The **lower read-only derived line** must always be grey/muted; turn **only its numerical digits** gold when the displayed derived value actually differs from the selected reference difficulty. Keep leading signs, `stamina`, `WITH BUFF` and all other unit/word text grey even when the number changes. Unchanged numbers must stay grey. Apply this to WATER STAMINA GAIN, ENERGY DRINK STAMINA GAIN and HERCULES CARRY, using a shared dedicated secondary-line renderer rather than changing all unrelated contextual previews.
+
+The refill bottom number derives from refill source percent × current Max Stamina; compare against that refill source's reference percent × reference Max Stamina. The Hercules bottom total derives from current carry-weight capacity + current Hercules bonus; compare with reference carry-weight capacity + reference bonus. Thus a changed linked parameter is reflected even if the knob's own source is untouched, and a cancelled-out pair of source changes does not falsely highlight an unchanged total. This is **read-only UI styling and correct reference comparison only**: keep dial geometry, native pointer hits, selection, reset, preset data, CFG edits, current numbers, layout, typography, and Build Difficulty installation unchanged. Local .NET/Wine visual validation is still required.
+
+
 ### 2026-10-15 — Contextual STAMINA capitalization for headings and units (CURRENT)
 
 Restore uppercase **STAMINA** wherever it belongs to an otherwise ALL-CAPS visible heading, card title, control caption, stage label or descriptive phrase in the native UI: examples include `CORE STAMINA`, `STAMINA USAGE`, `MAX STAMINA`, `STAMINA THRESHOLDS`, `LOW-STAMINA BOOST`, `WATER STAMINA GAIN`, `NO STAMINA COST DURATION`. This explicitly supersedes the previous blanket lowercase instruction for all-uppercase UI labels, which had resulted in inconsistent mixed-case headings.

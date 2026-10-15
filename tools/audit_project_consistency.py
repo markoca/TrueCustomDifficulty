@@ -4822,6 +4822,33 @@ for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
         fail("Missing contextual stamina casing contract: " + _doc)
 note("Stamina casing: STAMINA headings, lowercase stamina/s and numeric units")
 
+# Two-value source knob centers: secondary derived values stay grey
+# except changed numerical digits, including linked cross-tab source changes.
+_knob_source = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+if _knob_source.count("secondaryReadout:") != 3 or _knob_source.count("secondaryModified:") != 3:
+    fail("All three two-value knobs must supply reference-aware secondary readouts")
+for _needed in (
+        "private void DrawKnobSecondaryReadout(",
+        "var formatted = CreateText(label, 11.0, muted, FontWeights.Bold, maxWidth);",
+        "if (modified)",
+        'System.Text.RegularExpressions.Regex.Matches(label, @"\\d+(?:\\.\\d+)?")',
+        "formatted.SetForegroundBrush(accent, number.Index, number.Length);",
+        "active && secondaryModified",
+        "var referenceStaminaPool = Math.Max(1.0, maxStamina?.ReferenceNumber ?? 100.0);",
+        "burst.ReferenceNumber * referenceStaminaPool",
+        "energyBurst.ReferenceNumber * referenceStaminaPool",
+        "var referenceCarry = carryWeight?.ReferenceNumber ?? 80.0;",
+        "referenceCarry - herculesStrength.ReferenceNumber",
+        ):
+    if _needed not in _knob_source:
+        fail("Two-value knob secondary colour/derived reference drift: " + _needed)
+if "DrawDerivedCentered(dc, secondaryReadout" in _knob_source:
+    fail("Two-value knob reverted to always-gold derived readout")
+for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Secondary readouts inside two-value knobs (CURRENT)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
+        fail("Missing two-value knob secondary colour lock in " + _catalog)
+note("Two-value knobs: secondary grey, numeric gold only if derived current != derived reference")
+
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:

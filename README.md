@@ -1,5 +1,7 @@
 # True Custom Difficulty
 
+**Two-value knob readouts (2026-10-15):** WATER STAMINA GAIN, ENERGY DRINK STAMINA GAIN and HERCULES CARRY keep the lower in-dial derived text grey. Only the numeric digits turn gold when the computed value differs from the selected reference difficulty, including changes to linked Max Stamina/Carry Weight. No changes to editable knob values or native CFG output.
+
 **Open ~mods folder (2026-10-15):** Settings shows **Open ~mods folder** only for a saved, existing, valid path. Click it to open that exact directory in the system's file manager. Unsaved edits, missing folders and invalid paths hide the button; no build or configuration change occurs. Test folder opening under Wine locally.
 
 **Build Difficulty installation (2026-10-15):** The bottom-left **Settings** button selects and persists the existing game `~mods` directory in portable `user-settings.json` beside the EXE. **Build Difficulty** packs the validated preset-named `.pak/.utoc/.ucas` triplet into internal `Output/` and installs it directly in the configured `~mods`. Installation replaces only older `zzzzz_TrueCustomDifficulty_` triplets; unrelated mods are not modified. A no-difference build removes previously installed True Custom Difficulty triplets, so stale changes are not left active. The destination must be configured and valid before building. Test the selected path and final installed triplet under Wine.

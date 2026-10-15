@@ -943,6 +943,26 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawText(ft, new Point(top.X - ft.WidthIncludingTrailingWhitespace / 2.0, top.Y));
     }
 
+    // Second in-dial readouts are derived from source values. Keep the
+    // entire line muted; gold applies only to numbers when the derived result
+    // differs from the selected difficulty reference. Signs and units stay grey.
+    private void DrawKnobSecondaryReadout(
+        DrawingContext dc, string label, Point centerTop, double maxWidth,
+        Brush muted, Brush accent, bool modified)
+    {
+        var formatted = CreateText(label, 11.0, muted, FontWeights.Bold, maxWidth);
+        if (modified)
+        {
+            foreach (System.Text.RegularExpressions.Match number in
+                System.Text.RegularExpressions.Regex.Matches(label, @"\d+(?:\.\d+)?"))
+                formatted.SetForegroundBrush(accent, number.Index, number.Length);
+        }
+
+        dc.DrawText(formatted, new Point(
+            centerTop.X - formatted.WidthIncludingTrailingWhitespace / 2.0,
+            centerTop.Y));
+    }
+
     private void DrawDerivedRight(DrawingContext dc, string value, Point rightTop,
         double size, Brush neutral, Brush accent, FontWeight weight)
     {
@@ -2435,7 +2455,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         int percentageSign = 0, bool rawReadout = false,
         string? nativeUnit = null, bool prominent = false,
         bool positivePrefix = true, string? secondaryReadout = null,
-        bool inlineNativeUnit = false)
+        bool inlineNativeUnit = false, bool secondaryModified = false)
     {
         // All larger hero dials (Headshot, Starvation HP and Radiation HP)
         // raise ONLY the caption by 9 DIP to restore the ordinary knob's
@@ -2579,10 +2599,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 active ? modified ? accent : text : muted, FontWeights.Bold);
         }
         if (secondaryReadout is not null)
-            DrawDerivedCentered(dc, secondaryReadout,
+            DrawKnobSecondaryReadout(dc, secondaryReadout,
                 new Point(center.X, center.Y + 7.0),
-                Math.Max(1.0, card.Width - 12.0), 11.0,
-                active ? text : muted, active ? accent : muted, FontWeights.Bold);
+                Math.Max(1.0, card.Width - 12.0),
+                muted, accent, active && secondaryModified);
         if (rateReadout)
             DrawCenteredText(dc, "PTS/S",
                 new Point(center.X, center.Y + 5.0),
@@ -3048,16 +3068,22 @@ public sealed class AggregateVisualControl : FrameworkElement
         var knobWidth = (knobBankWidth - 3.0 * knobGap) / 4.0;
         var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
         // Read-only refill points are centered with the editable native percentage.
-        var staminaPool = Math.Max(1.0, Linked("stamina.maxSP")?.CurrentNumber ?? 100.0);
+        var maxStamina = Linked("stamina.maxSP");
+        var staminaPool = Math.Max(1.0, maxStamina?.CurrentNumber ?? 100.0);
+        var referenceStaminaPool = Math.Max(1.0, maxStamina?.ReferenceNumber ?? 100.0);
         DrawSourceKnob(dc, burst, "WATER STAMINA GAIN",
             new Rect(knobLeft, ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel, percentageReadout: true,
-            secondaryReadout: $"+{burst.CurrentNumber * staminaPool:0.#} stamina");
+            secondaryReadout: $"+{burst.CurrentNumber * staminaPool:0.#} stamina",
+            secondaryModified: Math.Abs(burst.CurrentNumber * staminaPool
+                - burst.ReferenceNumber * referenceStaminaPool) > Epsilon);
         DrawSourceKnob(dc, energyBurst, "ENERGY DRINK STAMINA GAIN",
             new Rect(knobLeft + knobWidth + knobGap, ConsumableStrengthKnobTop,
                 knobWidth, 181.0),
             text, muted, border, accent, panel, percentageReadout: true,
-            secondaryReadout: $"+{energyBurst.CurrentNumber * staminaPool:0.#} stamina");
+            secondaryReadout: $"+{energyBurst.CurrentNumber * staminaPool:0.#} stamina",
+            secondaryModified: Math.Abs(energyBurst.CurrentNumber * staminaPool
+                - energyBurst.ReferenceNumber * referenceStaminaPool) > Epsilon);
         DrawSourceKnob(dc, waterStamina, "WATER STAMINA BUFF",
             new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
                 ConsumableStrengthKnobTop, knobWidth, 181.0),
@@ -3312,13 +3338,17 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Rect(medicineLeft, medicineKnobTop, medicineKnobWidth, 181.0),
             text, muted, border, accent, panel,
             rawReadout: true, nativeUnit: "BLEED PTS");
-        var baseCarry = Linked("stamina.maxCarryWeight")?.CurrentNumber ?? 80.0;
+        var carryWeight = Linked("stamina.maxCarryWeight");
+        var baseCarry = carryWeight?.CurrentNumber ?? 80.0;
+        var referenceCarry = carryWeight?.ReferenceNumber ?? 80.0;
         DrawSourceKnob(dc, herculesStrength, "HERCULES CARRY",
             new Rect(medicineLeft + medicineKnobWidth + knobGap,
                 medicineKnobTop, medicineKnobWidth, 181.0),
             text, muted, border, accent, panel,
             rawReadout: true, nativeUnit: "KG", inlineNativeUnit: true,
-            secondaryReadout: $"{baseCarry + herculesStrength.CurrentNumber:0.#} WITH BUFF");
+            secondaryReadout: $"{baseCarry + herculesStrength.CurrentNumber:0.#} WITH BUFF",
+            secondaryModified: Math.Abs(baseCarry + herculesStrength.CurrentNumber
+                - referenceCarry - herculesStrength.ReferenceNumber) > Epsilon);
         DrawSourceKnob(dc, psiStrength, "PSI BLOCK PROTECTION",
             new Rect(medicineLeft + 2.0 * (medicineKnobWidth + knobGap),
                 medicineKnobTop, medicineKnobWidth, 181.0),
