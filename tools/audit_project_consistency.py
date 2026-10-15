@@ -2324,8 +2324,8 @@ if re.search(r'WireVisualAggregate\(\s*"stamina\.vaultMaxHeight"', _stamina_main
     fail("Hidden movement-limit anchor still has obsolete UI-only aggregate subscription")
 _legacy_stamina_comparisons = (
     '"stamina.waterMediumDrain" or "stamina.waterStrongDrain" =>',
-    '"stamina.maxSP" => $"{rawValue:0} STAMINA"',
-    '"stamina.regeneration" => $"{rawValue:0.##} STAMINA/s"',
+    '"stamina.maxSP" => $"{rawValue:0} stamina"',
+    '"stamina.regeneration" => $"{rawValue:0.##} stamina/s"',
     '"stamina.vaultMaxHeight" => $"{rawValue:0} uu"',
     '"stamina.maxCarryWeight" => $"{rawValue:0} kg"',
 )
@@ -2487,7 +2487,7 @@ _exhaustion_render_markers = (
     'DrawRecoverySourceTrack(dc, _lowRecoveryStrength, "STRENGTH"',
     'DrawRecoverySourceTrack(dc, _lowRecoveryDuration, "DURATION"',
     '"SPRINT STOPS BELOW"', '"BOOST STARTS BELOW"',
-    '"STAMINA THRESHOLDS"',
+    '"stamina THRESHOLDS"',
     'private const string MaxStaminaParameterId = "stamina.maxSP";',
     'byId.TryGetValue(MaxStaminaParameterId, out _maximumStamina);',
     'var staminaMax = Math.Max(100.0, _maximumStamina?.CurrentNumber ?? 100.0);',
@@ -2516,7 +2516,7 @@ elif any(_exhaustion_catalog[pid]["slider"]["max"] != maximum
 elif '_maximumStamina?.CurrentNumber' not in _exhaustion_renderer or 'if (_maximumStamina is not null)' not in _exhaustion_renderer:
     fail("Stamina thresholds: Max Stamina change subscription missing")
 else:
-    note("Stamina thresholds: dynamic default 0..100 STAMINA ruler, independent native ranges, three source-backed recovery groups")
+    note("Stamina thresholds: dynamic default 0..100 stamina ruler, independent native ranges, three source-backed recovery groups")
 
 # Radiation Removal is no longer a separate AggregateVisualControl family.
 # Four native-source vertical RAD columns must sit in one compact right bank,
@@ -2704,7 +2704,7 @@ _hunger_required = (
     'highlight[0] = threshold.IsValueModifiedFromReference();',
     'highlight[j] = true;',
     'Enumerable.Repeat(true, timeNumbers).ToArray()',
-    '$"-{recoveryLoss.CurrentNumber * 100:0}% STAMINA RECOVERY"',
+    '$"-{recoveryLoss.CurrentNumber * 100:0}% stamina RECOVERY"',
     'StageCaption(0, "LOW", low, null);',
     'StageCaption(1, "MEDIUM", medium, mediumPenalty);',
     'StageCaption(2, "SEVERE", severe, severePenalty);',
@@ -2822,7 +2822,7 @@ _fatigue_first_row = (_primary_src[_fatigue_start:_fatigue_preview]
 _primary_expected = {
     "Hunger": (_hunger_first_row, (
         'DrawCoreResourceRuler(dc, rate, "HUNGER RATE", "pts/s"',
-        'DrawCoreResourceRuler(dc, wellFed, "WELL-FED STAMINA RECOVERY", "%"',
+        'DrawCoreResourceRuler(dc, wellFed, "WELL-FED stamina RECOVERY", "%"',
     )),
     "Fatigue": (_fatigue_first_row, (
         'DrawCoreResourceRuler(dc, rate, "FATIGUE RATE", "pts/s"',
@@ -3024,18 +3024,18 @@ for _token in (
     "energySectionLeft + (index - 1) *",
     "var visibleLabel = card.Width < 235.0 ? parameter.Id switch",
     "new Point(card.Left + 12.0, card.Top + 7.0)",
-    "(waterRegenTime, \"+25% MAX STAMINA\")",
-    "(energyFullCostTime, \"NO STAMINA COST DURATION\")",
-    "(energyPartialCostTime, \"-30% STAMINA COST DURATION\")",
+    "(waterRegenTime, \"+25% MAX stamina\")",
+    "(energyFullCostTime, \"NO stamina COST DURATION\")",
+    "(energyPartialCostTime, \"-30% stamina COST DURATION\")",
 ):
     if _token not in _duration_renderer:
         fail(f"consumable short-duration native control/measurement missing: {_token}")
 if _duration_renderer.count("DrawCompactTrack(dc, shortEffect, caption,") != 1:
     fail("consumable child duration track registration drifted")
 if ("ConsumableSecondaryColumns(" in _duration_renderer
-    or "STAMINA EFFECT DURATION" in _duration_renderer
-    or '"STAMINA COST DURATION"' in _duration_renderer
-    or '(waterRegenTime, "+25% MAX\\nSTAMINA")' in _duration_renderer
+    or "stamina EFFECT DURATION" in _duration_renderer
+    or '"stamina COST DURATION"' in _duration_renderer
+    or '(waterRegenTime, "+25% MAX\\nstamina")' in _duration_renderer
     or "var headingLines = label.Split(" in _duration_renderer):
     fail("consumable short-duration captions or responsive row splitting regressed")
 
@@ -4134,9 +4134,9 @@ for _cid in _consumer_ids:
             or _def["targets"][0].get("operation") != "set"):
         _consumer_errors.append(f"{_cid}: absolute-percent writer/UI contract drift")
 for _required in (
-    'DrawSourceKnob(dc, burst, "WATER STAMINA GAIN",',
-    'DrawSourceKnob(dc, energyBurst, "ENERGY DRINK STAMINA GAIN",',
-    'DrawSourceKnob(dc, waterStamina, "WATER STAMINA BUFF",',
+    'DrawSourceKnob(dc, burst, "WATER stamina GAIN",',
+    'DrawSourceKnob(dc, energyBurst, "ENERGY DRINK stamina GAIN",',
+    'DrawSourceKnob(dc, waterStamina, "WATER stamina BUFF",',
     'DrawSourceKnob(dc, energyStamina, "ENERGY DRINK REGEN",',
     'var knobBankWidth = Math.Min(720.0, ActualWidth - 34.0);',
 ):
@@ -4778,6 +4778,34 @@ for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Settings: Open ~mods folder (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
         fail("Missing Open ~mods folder catalog entry: " + _doc)
 note("Settings Open ~mods: compact, persisted-only validated folder, ShellExecute, no unsaved path")
+
+# Latest UI language contract: uppercase STAMINA is forbidden in user-visible
+# labels, graphic readouts, tooltips and unit definitions. Source CFG names and
+# historical engineering documents remain untouched.
+_stamina_display_paths = (
+    ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs",
+    ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs",
+    ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs",
+    ROOT / "src/TrueCustomDifficulty/Data/parameters.json",
+)
+for _source in _stamina_display_paths:
+    _display_text = _source.read_text(encoding="utf-8")
+    if "STAMINA" in _display_text:
+        fail("Uppercase STAMINA reintroduced in player-facing UI source: " + str(_source.relative_to(ROOT)))
+for _needle in (
+    '"stamina.maxSP" => $"{CurrentNumber:0} stamina"',
+    '"stamina.lowRecoveryStrength" => $"{CurrentNumber:0.##} stamina/s"',
+):
+    if _needle not in _stamina_vm:
+        fail("Stamina numeric readout must use lowercase stamina and stamina/s: " + _needle)
+if next((p for p in parameters if p.get("id") == "stamina.sprintDisableThreshold"), {}).get("display", {}).get("unit") != "stamina":
+    fail("Stamina sprint cutoff unit must display in lowercase")
+if next((p for p in parameters if p.get("id") == "stamina.lowRecoveryThreshold"), {}).get("display", {}).get("unit") != "stamina":
+    fail("Stamina recovery threshold unit must display in lowercase")
+for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Lowercase stamina labels in all player-facing UI (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        fail("Missing lowercase stamina catalog contract: " + _doc)
+note("Stamina UI: lowercase stamina / stamina/s for labels, tooltips and unit readouts")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

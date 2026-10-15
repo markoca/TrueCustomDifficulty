@@ -242,7 +242,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         _targets.Clear();
 
         DrawCenteredText(dc,
-            IsExhaustion ? "EXHAUSTION & RECOVERY" : "STAMINA USAGE",
+            IsExhaustion ? "EXHAUSTION & RECOVERY" : "stamina USAGE",
             new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
 
@@ -303,7 +303,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             // The absolute cost is the only writable source number. Pool %
             // is a live, neutral projection and must not be marked as edited.
             var sourceValue = CreateSourceValueText(parameter,
-                $"{FormatRaw(parameter.CurrentNumber)} STAMINA · {costPercent:0.#}% SPENT PER ACTION",
+                $"{FormatRaw(parameter.CurrentNumber)} stamina · {costPercent:0.#}% SPENT PER ACTION",
                 card.Width >= 300.0 ? 10.0 : 9.0, text, accent);
             dc.DrawText(sourceValue,
                 new Point(card.Right - 9.0 - sourceValue.WidthIncludingTrailingWhitespace, top));
@@ -330,7 +330,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     }
 
 
-    // STAMINA THRESHOLDS: player-facing ruler starts at vanilla's 100 STAMINA,
+    // stamina THRESHOLDS: player-facing ruler starts at vanilla's 100 stamina,
     // grows with edited Max Stamina, and is never confused with the 60-point
     // native ceiling of the separate recovery-boost threshold.
     // Their hit lanes are separate above/below the ruler so
@@ -388,7 +388,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         DrawRecoveryFrame(dc, card, panel, border);
-        DrawCenteredText(dc, "STAMINA THRESHOLDS",
+        DrawCenteredText(dc, "stamina THRESHOLDS",
             new Point(card.Left + card.Width / 2.0, card.Top + 16.0),
             10.2, text, FontWeights.Bold);
 
@@ -403,7 +403,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         DrawZoneValue(dc, _lowRecoveryThreshold, "BOOST STARTS BELOW", secondLabelY,
             card, text, accent);
 
-        // One common STAMINA space with two skinny independent color traces. The
+        // One common stamina space with two skinny independent color traces. The
         // darker upper trace denotes sprint lock; the lower trace denotes
         // low-stamina recovery eligibility, NOT a required ordering constraint.
         var rail = new Rect(card.Left + 21.0,
@@ -411,7 +411,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             Math.Max(1.0, card.Width - 42.0), 8.0);
         var y = rail.Top + rail.Height / 2.0;
         const double staminaMin = 0.0;
-        // The original game uses 100 STAMINA, not 60. If Max Stamina is
+        // The original game uses 100 stamina, not 60. If Max Stamina is
         // raised past 100, extend this same absolute-unit ruler to that pool.
         // Below 100 retain a comparable reference scale; the editable native
         // limits remain Sprint 0..32.2 and Boost 1..60 independently.
@@ -447,9 +447,9 @@ public sealed class ActionCostsRadar : FrameworkElement
         // Endpoints belong to the rail, not the distant bottom of the card.
         // Keep them symmetric and clear of both value labels at all widths.
         var axisLabelY = rail.Bottom + 11.0;
-        DrawText(dc, "0 STAMINA", new Point(rail.Left, axisLabelY),
+        DrawText(dc, "0 stamina", new Point(rail.Left, axisLabelY),
             9.2, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, $"{staminaMax:0} STAMINA",
+        DrawRightAlignedText(dc, $"{staminaMax:0} stamina",
             new Point(rail.Right, axisLabelY),
             9.2, muted, FontWeights.Normal);
 
@@ -474,7 +474,7 @@ public sealed class ActionCostsRadar : FrameworkElement
     {
         var heading = CreateText(title, 9.8, text, FontWeights.Bold);
         var value = CreateSourceValueText(parameter,
-            $"{FormatRaw(parameter.CurrentNumber)} STAMINA", 11.5, text, accent);
+            $"{FormatRaw(parameter.CurrentNumber)} stamina", 11.5, text, accent);
         heading.MaxTextWidth = Math.Max(1.0,
             card.Width - 24.0 - value.WidthIncludingTrailingWhitespace - 10.0);
         heading.MaxLineCount = 1;
@@ -508,13 +508,13 @@ public sealed class ActionCostsRadar : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         DrawRecoveryFrame(dc, card, panel, border);
-        DrawText(dc, "LOW-STAMINA BOOST",
+        DrawText(dc, "LOW-stamina BOOST",
             new Point(card.Left + 12.0, card.Top + 9.0),
             10.0, text, FontWeights.Bold);
         const double gap = 14.0;
         var half = Math.Max(1.0, (card.Width - 24.0 - gap) / 2.0);
         DrawRecoverySourceTrack(dc, _lowRecoveryStrength, "STRENGTH",
-            value => $"+{value:0.##} STAMINA/s",
+            value => $"+{value:0.##} stamina/s",
             new Rect(card.Left + 12.0, card.Top + 33.0, half, 41.0),
             text, muted, border, accent, panel);
         DrawRecoverySourceTrack(dc, _lowRecoveryDuration, "DURATION",

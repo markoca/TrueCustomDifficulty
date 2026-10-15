@@ -4481,7 +4481,7 @@
       "description": "Vanilla maximum stamina is 100. This changes the size of your stamina pool, not how fast it recovers or how much actions cost.",
       "rationale": "Changes your maximum stamina pool. Vanilla is 100.",
       "logic": "",
-      "interaction": "Action costs are direct STAMINA values, so changing Maximum Stamina changes how many actions fit into a full bar even when their individual costs are untouched.",
+      "interaction": "Action costs are direct stamina values, so changing Maximum Stamina changes how many actions fit into a full bar even when their individual costs are untouched.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -4523,8 +4523,8 @@
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
       "label": "Sprint Stops Below",
-      "description": "Below this STAMINA value, sprinting is disabled. Default: 16.1 of the vanilla 100 STAMINA pool.",
-      "rationale": "Sets how low your stamina can fall before sprinting is forced to stop. Vanilla is 16.1 STAMINA.",
+      "description": "Below this stamina value, sprinting is disabled. Default: 16.1 of the vanilla 100 stamina pool.",
+      "rationale": "Sets how low your stamina can fall before sprinting is forced to stop. Vanilla is 16.1 stamina.",
       "logic": "Higher values make sprint lock out earlier while stamina is still relatively high; lower values let the player sprint deeper into the stamina bar.",
       "interaction": "Pairs with Exhaustion Regen Delay; sets sprint lockout, not sprint speed or stamina drain.",
       "control": "slider",
@@ -4532,7 +4532,7 @@
       "display": {
         "primary": "raw",
         "rawFormat": "0.0",
-        "unit": "STAMINA",
+        "unit": "stamina",
         "valueLabel": "Sprint stops below"
       },
       "vanilla": {
@@ -4611,8 +4611,8 @@
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
       "label": "Boost Starts Below",
-      "description": "Below this STAMINA value, the separate low-stamina recovery boost becomes eligible. Default: 30 STAMINA.",
-      "rationale": "Sets the stamina level that triggers emergency low-stamina recovery. Vanilla is 30 STAMINA.",
+      "description": "Below this stamina value, the separate low-stamina recovery boost becomes eligible. Default: 30 stamina.",
+      "rationale": "Sets the stamina level that triggers emergency low-stamina recovery. Vanilla is 30 stamina.",
       "logic": "Higher values allow the low-stamina recovery helper to engage across a larger portion of the bar; lower values reserve it for near-exhaustion.",
       "interaction": "Pairs with low-stamina Boost Rate and low-stamina Boost Duration, not the sprint lockout threshold.",
       "control": "slider",
@@ -4620,7 +4620,7 @@
       "display": {
         "primary": "raw",
         "rawFormat": "0",
-        "unit": "STAMINA",
+        "unit": "stamina",
         "valueLabel": "Boost starts below"
       },
       "vanilla": {
@@ -4656,8 +4656,8 @@
       "tab": "stamina",
       "group": "Exhaustion & Recovery",
       "label": "Boost Strength",
-      "description": "Regeneration strength of the temporary low-stamina recovery boost (10 STAMINA/s originally).",
-      "rationale": "Sets how strong emergency stamina recovery is while it is active. Vanilla is 10 STAMINA/s.",
+      "description": "Regeneration strength of the temporary low-stamina recovery boost (10 stamina/s originally).",
+      "rationale": "Sets how strong emergency stamina recovery is while it is active. Vanilla is 10 stamina/s.",
       "logic": "Higher values make the emergency recovery effect stronger; lower values make low-stamina recovery closer to the ordinary base rate.",
       "interaction": "Boost Starts Below sets its trigger; low-stamina Boost Duration sets how long it lasts.",
       "control": "slider",
@@ -4883,7 +4883,7 @@
       "description": "Changes the tallest obstacle you can vault over. The WAIST / EYES / ABOVE EYES markers are simple player-friendly height references.",
       "rationale": "Changes the tallest obstacle you can vault over. The WAIST / EYES / ABOVE EYES markers are simple player-friendly height references.",
       "logic": "Higher values let the vault search accept taller obstacles; lower values restrict vaulting to lower obstacles. The slider is capped at 300 to keep the requested range around vanilla through slightly-above-eye/head traversal rather than turning this into extreme parkour.",
-      "interaction": "Vault Stamina Cost still controls the STAMINA cost of a successful vault. MinObstacleHeight, landing checks, search radius and other vault geometry remain vanilla.",
+      "interaction": "Vault Stamina Cost still controls the stamina cost of a successful vault. MinObstacleHeight, landing checks, search radius and other vault geometry remain vanilla.",
       "control": "slider",
       "valueKind": "raw",
       "display": {

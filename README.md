@@ -13,7 +13,7 @@
 **Consumable child duration layout (2026-10-14):** Water and Energy Drink are now separate labeled sections above three side-by-side short-duration tracks. Track captions are **STAMINA +25%**, **COST -100%**, **COST -30%**, without redundant drink/duration wording. Parent controls, source values, CFG writers and presets remain unchanged. See the current UI catalogs.
 
 
-**Stamina display terminology:** UI values spell out `STAMINA` (or `STAMINA/s` for recovery) everywhere, including Core Stamina, Stamina Usage, Exhaustion & Recovery, related tooltips and comparisons. The native CFG names and IDs are not renamed. See the UI design catalogs.
+**Stamina display terminology (2026-10-15):** UI values spell out lowercase `stamina` (or `stamina/s` for recovery) everywhere, including native headings, stamina rulers, readouts, tooltips and parameter descriptions. Internal `stamina.*` CFG IDs and gameplay/preset data are unchanged. This supersedes earlier uppercase display examples; see the current UI design catalogs.
 
 ### 2026-10-12 — Stamina States: gamer-first Exhaustion & Recovery layout
 

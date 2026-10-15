@@ -1362,7 +1362,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        DrawHeader(dc, "WATER STAMINA DRAIN", "", text, muted, accent);
+        DrawHeader(dc, "WATER stamina DRAIN", "", text, muted, accent);
         var width = Math.Max(1.0, ActualWidth - 32.0);
         const double gap = 12.0;
         var cell = (width - gap) / 2.0;
@@ -1535,17 +1535,17 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void DrawStaminaMovementBoard(DrawingContext dc, Brush text, Brush muted,
         Brush border, Brush accent, Brush panel)
     {
-        DrawHeader(dc, "CORE STAMINA", "", text, muted, accent);
+        DrawHeader(dc, "CORE stamina", "", text, muted, accent);
         var width = Math.Max(1.0, ActualWidth - 32.0);
         const double gap = 12.0;
         var cell = (width - gap) / 2.0;
 
         if (P("stamina.maxSP") is { } stamina)
-            DrawCoreResourceRuler(dc, stamina, "MAX STAMINA", "STAMINA",
+            DrawCoreResourceRuler(dc, stamina, "MAX stamina", "stamina",
                 new Rect(16.0, 51.0, cell, 105.0),
                 text, muted, border, accent, panel);
         if (P("stamina.regeneration") is { } recovery)
-            DrawCoreResourceRuler(dc, recovery, "BASE RECOVERY", "STAMINA/s",
+            DrawCoreResourceRuler(dc, recovery, "BASE RECOVERY", "stamina/s",
                 new Rect(16.0 + cell + gap, 51.0, cell, 105.0),
                 text, muted, border, accent, panel);
 
@@ -2003,7 +2003,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         const double knobHeight = 181.0;
         var knobWidth = Math.Min(204.0, Math.Max(170.0, ActualWidth - 34.0));
         DrawSourceKnob(dc, source,
-            isLowHealth ? "HEALTH RECOVERY LOSS" : "ACTION STAMINA COST",
+            isLowHealth ? "HEALTH RECOVERY LOSS" : "ACTION stamina COST",
             new Rect((ActualWidth - knobWidth) / 2.0, 102.0, knobWidth, knobHeight),
             text, muted, border, accent, panel,
             percentageReadout: true, percentageSign: isLowHealth ? -1 : 1);
@@ -2213,7 +2213,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var sources = new (string Id, string Label, Func<double, string> Format)[]
         {
-            ("survival.severeFatigueMaxStamina", "STAMINA LOST", MasterNegativePercent),
+            ("survival.severeFatigueMaxStamina", "stamina LOST", MasterNegativePercent),
             ("survival.severeFatigueCarryWeight", "CARRY LOST", MasterNegativePercent),
             ("survival.severeFatigueRecoil", "RECOIL", MasterPositivePercent),
             ("survival.severeFatigueAimSway", "AIM SWAY", MasterScalar),
@@ -2283,7 +2283,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // Shared primary resource-ruler grammar for CORE HEALTH and CORE STAMINA.
+    // Shared primary resource-ruler grammar for CORE HEALTH and CORE stamina.
     // Both use identical card geometry, typography, handles, native endpoints
     // and hit/ref mapping; only the source values and units differ.
     private void DrawCoreResourceRuler(
@@ -2296,22 +2296,22 @@ public sealed class AggregateVisualControl : FrameworkElement
         var modified = active && parameter.IsValueModifiedFromReference();
         var value = unit switch
         {
-            "HP" or "STAMINA" => $"{parameter.CurrentNumber:0} {unit}",
+            "HP" or "stamina" => $"{parameter.CurrentNumber:0} {unit}",
             "x" => $"{parameter.CurrentNumber:0.##}x",
             "pts/s" => $"{parameter.CurrentNumber:0.000} pts/s",
             "%" => $"{(parameter.CurrentNumber > Epsilon ? "+" : "")}{parameter.CurrentNumber * 100.0:0.#}%",
             _ => FriendlyValue(parameter)
         };
-        // Native 0.001-rate precision takes more room than HP/STAMINA, but uses
+        // Native 0.001-rate precision takes more room than HP/stamina, but uses
         // the same card, title/value positions, rail and modified-only gold.
         var valueSize = unit == "pts/s" ? 16.5
-            : unit is "STAMINA" or "STAMINA/s" ? 16.0 : 19.0;
+            : unit is "stamina" or "stamina/s" ? 16.0 : 19.0;
         var valueText = CreateText(value, valueSize, active ? text : muted,
             FontWeights.Bold, Math.Max(1.0, card.Width - 30.0));
         if (modified)
         {
             // Like Stamina Usage, only the edited numeric token turns gold;
-            // HP, HP/s, STAMINA and STAMINA/s remain neutral; Base is not emphasized.
+            // HP, HP/s, stamina and stamina/s remain neutral; Base is not emphasized.
             foreach (System.Text.RegularExpressions.Match token in
                 System.Text.RegularExpressions.Regex.Matches(
                     value, @"\d+(?:\.\d+)?"))
@@ -2366,9 +2366,9 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // The shared ruler must render endpoints in the same player-facing
         // units as its current readout, never the underlying 0.2 fraction.
-        var minValue = unit is "HP" or "STAMINA"
+        var minValue = unit is "HP" or "stamina"
             ? $"{parameter.Minimum:0}" : FormatCompact(parameter.Minimum);
-        var maxValue = unit is "HP" or "STAMINA"
+        var maxValue = unit is "HP" or "stamina"
             ? $"{parameter.Maximum:0}" : FormatCompact(parameter.Maximum);
         var leftBound = unit switch
         {
@@ -3049,16 +3049,16 @@ public sealed class AggregateVisualControl : FrameworkElement
         var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
         // Read-only refill points are centered with the editable native percentage.
         var staminaPool = Math.Max(1.0, Linked("stamina.maxSP")?.CurrentNumber ?? 100.0);
-        DrawSourceKnob(dc, burst, "WATER STAMINA GAIN",
+        DrawSourceKnob(dc, burst, "WATER stamina GAIN",
             new Rect(knobLeft, ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel, percentageReadout: true,
-            secondaryReadout: $"+{burst.CurrentNumber * staminaPool:0.#} STAMINA");
-        DrawSourceKnob(dc, energyBurst, "ENERGY DRINK STAMINA GAIN",
+            secondaryReadout: $"+{burst.CurrentNumber * staminaPool:0.#} stamina");
+        DrawSourceKnob(dc, energyBurst, "ENERGY DRINK stamina GAIN",
             new Rect(knobLeft + knobWidth + knobGap, ConsumableStrengthKnobTop,
                 knobWidth, 181.0),
             text, muted, border, accent, panel, percentageReadout: true,
-            secondaryReadout: $"+{energyBurst.CurrentNumber * staminaPool:0.#} STAMINA");
-        DrawSourceKnob(dc, waterStamina, "WATER STAMINA BUFF",
+            secondaryReadout: $"+{energyBurst.CurrentNumber * staminaPool:0.#} stamina");
+        DrawSourceKnob(dc, waterStamina, "WATER stamina BUFF",
             new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
                 ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel);
@@ -3260,9 +3260,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         // The three source-backed duration tracks stay on one compact row.
         var shortEffects = new (ParameterViewModel Parameter, string Caption)[]
         {
-            (waterRegenTime, "+25% MAX STAMINA"),
-            (energyFullCostTime, "NO STAMINA COST DURATION"),
-            (energyPartialCostTime, "-30% STAMINA COST DURATION")
+            (waterRegenTime, "+25% MAX stamina"),
+            (energyFullCostTime, "NO stamina COST DURATION"),
+            (energyPartialCostTime, "-30% stamina COST DURATION")
         };
         var secondaryWidth = (preview.Width - 24.0 -
             ConsumableDrinkSectionGap - CompactColumnGap) / 3.0;
@@ -3272,7 +3272,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Temporary +25% maximum-stamina effect: the duration remains its
         // own source; its result uses the current Core Stamina capacity.
         var waterCapCaption = secondaryWidth >= 224.0
-            ? $"WATER BUFF · {staminaPool * 1.25:0.#} STAMINA CAP"
+            ? $"WATER BUFF · {staminaPool * 1.25:0.#} stamina CAP"
             : $"WATER · {staminaPool * 1.25:0.#} CAP";
         DrawDerivedLeft(dc, waterCapCaption,
             new Point(waterSectionLeft + 4.0,
@@ -3415,7 +3415,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             $"{healthRestore.Minimum:0} HP", $"{healthRestore.Maximum:0} HP",
             new Rect(left, 274.0, column, 82.0),
             text, muted, border, accent, panel, highlightDerivedLastNumber: true);
-        DrawCompactTrack(dc, staminaRestore, "STAMINA RESTORE STRENGTH",
+        DrawCompactTrack(dc, staminaRestore, "stamina RESTORE STRENGTH",
             $"+{staminaRestore.CurrentNumber * 100:0.#}%",
             $"{staminaRestore.Minimum * 100:0.#}%",
             $"{staminaRestore.Maximum * 100:0.#}%",
@@ -3547,7 +3547,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawCoreResourceRuler(dc, rate, "HUNGER RATE", "pts/s",
             new Rect(16.0, SurvivalPrimaryRulerTop, half, SurvivalPrimaryRulerHeight),
             text, muted, border, accent, panel);
-        DrawCoreResourceRuler(dc, wellFed, "WELL-FED STAMINA RECOVERY", "%",
+        DrawCoreResourceRuler(dc, wellFed, "WELL-FED stamina RECOVERY", "%",
             new Rect(16.0 + half + resourceGap, SurvivalPrimaryRulerTop,
                 half, SurvivalPrimaryRulerHeight),
             text, muted, border, accent, panel);
@@ -3639,7 +3639,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Separate vertical axis caption from tick values; rotation is only visual.
         var yAxisCenter = new Point(plot.Left - 52.0, area.Top + area.Height / 2.0);
         dc.PushTransform(new RotateTransform(-90.0, yAxisCenter.X, yAxisCenter.Y));
-        DrawCenteredText(dc, "STAMINA RECOVERY LOSS", yAxisCenter,
+        DrawCenteredText(dc, "stamina RECOVERY LOSS", yAxisCenter,
             9.2, text, FontWeights.Bold);
         dc.Pop();
         foreach (var tick in new[] { -100.0, -75.0, -50.0, -25.0, 0.0 })
@@ -3747,7 +3747,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             }
             if (recoveryLoss is not null)
                 DrawCenteredNumericChanges(dc,
-                    $"-{recoveryLoss.CurrentNumber * 100:0}% STAMINA RECOVERY",
+                    $"-{recoveryLoss.CurrentNumber * 100:0}% stamina RECOVERY",
                     new Point(cx, footerTop + (narrow ? 50.0 : 37.0)),
                     narrow ? 9.0 : 9.6, text, accent, FontWeights.SemiBold,
                     recoveryLoss.IsValueModifiedFromReference());
@@ -3958,7 +3958,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // row even below MasterCardBank's unrelated 672-DIP breakpoint.
         var effects = new (string Id, string Label, Func<double, string> Format)[]
         {
-            ("survival.starvationStaminaDrain", "EXTRA STAMINA COST", MasterPositivePercent),
+            ("survival.starvationStaminaDrain", "EXTRA stamina COST", MasterPositivePercent),
             ("survival.starvationHealthRegenPenalty", "HEALTH RECOVERY BLOCKED", MasterPercent)
         };
         const double effectGap = 12.0;
@@ -4721,9 +4721,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         // or allowing their text to collide with the value.
         var visibleLabel = card.Width < 235.0 ? parameter.Id switch
         {
-            "survival.waterRegenDuration" => "+25% STAMINA",
-            "survival.energyFullCostDuration" => "NO STAMINA COST",
-            "survival.energyPartialCostDuration" => "-30% STAMINA COST",
+            "survival.waterRegenDuration" => "+25% stamina",
+            "survival.energyFullCostDuration" => "NO stamina COST",
+            "survival.energyPartialCostDuration" => "-30% stamina COST",
             _ => label
         } : label;
         dc.DrawText(CreateText(visibleLabel, card.Width < 235.0 ? 9.0 : 10.2,

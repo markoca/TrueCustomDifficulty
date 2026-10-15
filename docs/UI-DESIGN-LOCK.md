@@ -1,5 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Lowercase stamina labels in all player-facing UI (CURRENT)
+
+Every literal uppercase `STAMINA` appearing in the active application UI must instead be written **`stamina`**. This includes native stamina panels, titles, graph captions/axes, slider/current-value units, derived numerical readouts, consumable and exhaustion controls, tooltips and catalog-driven descriptions/rationales. `STAMINA/s` becomes `stamina/s`. Other words retain their existing casing and the existing compact typography, control dimensions, native value highlighting and non-emphasized Base/Vanilla markers. This rule supersedes earlier uppercase UI-label examples in these historical catalogs; they are preserved as historical records, not active rendering requirements.
+
+Implement in `Controls/ActionCostsRadar.cs`, `Controls/AggregateVisualControl.cs`, `ViewModels/ParameterViewModel.cs` and active display fields in `Data/parameters.json`. Do not rename any `stamina.*` parameter IDs, CFG keys, preset fields, enums, resources, filenames or game mechanic values. Adjust static audit expectations and assert that uppercase `STAMINA` cannot return in these UI sources. No gameplay, build, Settings, presentation geometry or interactive behavior change. Local .NET build and Wine visual confirmation pending.
+
+
 ### 2026-10-15 — Settings: Open ~mods folder (CURRENT)
 
 Add exactly one compact **Open ~mods folder** button in the existing Settings modal's bottom row, left-aligned opposite the existing right-aligned Cancel/Save pair. Keep the modal size, ~mods path field, Browse, Save and Cancel intact; do not introduce a large panel, extra instructions, or a permanent footer. The Open button is **visible only if a previously saved ~mods directory exists and still passes the same strict path validation used by Build Difficulty**. While the path text is edited or a new folder is browsed but not saved, hide Open to prevent opening an unsaved destination. After saving, the next Settings opening shows Open for the valid persisted folder; an unset, invalid or missing directory displays no Open button.
