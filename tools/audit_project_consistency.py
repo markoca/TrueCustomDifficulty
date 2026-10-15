@@ -2412,13 +2412,13 @@ else:
 # Source-linked Hunger footer: one stage/threshold/AFTER summary per column,
 # with the native stamina recovery loss below. No separate IN row or editor.
 _hunger_footer_start = _hunger_source.find('var footerTop = frame.Top + 269.0;')
-_hunger_footer_end = _hunger_source.find('private static string HungerOnsetEstimate(', _hunger_footer_start)
+_hunger_footer_end = _hunger_source.find('private static string StageOnsetEstimate(', _hunger_footer_start)
 _hunger_footer = (_hunger_source[_hunger_footer_start:_hunger_footer_end]
                   if 0 <= _hunger_footer_start < _hunger_footer_end else '')
 _hunger_required = (
     'void StageCaption(int index, string stageName,',
     'var narrow = stageWidth < 205.0;',
-    'var elapsed = HungerOnsetEstimate(threshold.CurrentNumber, rate.CurrentNumber);',
+    'var elapsed = StageOnsetEstimate(threshold.CurrentNumber, rate.CurrentNumber);',
     'var thresholdText = $"{stageName} AT {threshold.CurrentNumber:0} PTS";',
     'var timeText = $"AFTER {elapsed}";',
     'var headline = $"{thresholdText} {timeText}";',
@@ -2429,7 +2429,7 @@ _hunger_required = (
     'StageCaption(0, "LOW", low, null);',
     'StageCaption(1, "MEDIUM", medium, mediumPenalty);',
     'StageCaption(2, "SEVERE", severe, severePenalty);',
-    'private static string HungerOnsetEstimate(double threshold, double pointsPerSecond)',
+    'private static string StageOnsetEstimate(double threshold, double pointsPerSecond)',
     'if (threshold <= Epsilon)',
     'if (pointsPerSecond <= Epsilon)',
     'Math.Floor(Math.Max(0.0, threshold) / pointsPerSecond)',
@@ -2487,6 +2487,43 @@ for _file, _required in {
 if "EST. FROM 0 HUNGER PTS · NO FOOD" in _hunger_source:
     fail("Obsolete Hunger estimate heading returned")
 note("No WPF hover popups; gold contextual numbers and merged Hunger summaries")
+
+# Fatigue stage timing reuses the same real-seconds onset formula as Hunger.
+# Each stage footer stays source-backed/read-only, with no extra time row.
+_fatigue_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_fatigue_start = _fatigue_source.find("private void DrawFatigueCombined(")
+_fatigue_end = _fatigue_source.find("private static Brush MasterDisabledInk(", _fatigue_start)
+_fatigue_block = (_fatigue_source[_fatigue_start:_fatigue_end]
+                  if 0 <= _fatigue_start < _fatigue_end else "")
+_fatigue_required = (
+    "ParameterViewModel rate, ParameterViewModel low,",
+    'var elapsed = StageOnsetEstimate(thresholds[i].CurrentNumber, rate.CurrentNumber);',
+    'var thresholdText = $"{stage} AT {thresholds[i].CurrentNumber:0} PTS";',
+    'var timeText = $"AFTER {elapsed}";',
+    'var headline = $"{thresholdText} {timeText}";',
+    "var wrap = cellWidth < 205.0",
+    "WidthIncludingTrailingWhitespace > cellWidth - 14.0;",
+    "Enumerable.Repeat(true, count).ToArray()",
+    "highlight[0] = thresholds[i].IsValueModifiedFromReference();",
+    "highlight[token] = true;",
+    'AIM +{aims[i].CurrentNumber * 100:0.#}%',
+    'RELOAD +{reloads[i - 1].CurrentNumber * 100:0.##}%',
+    "top + (wrap ? 337.0 : 327.0)",
+    'var frame = new Rect(17, top, width, 365);',
+)
+for _token in _fatigue_required:
+    if _token not in _fatigue_block:
+        fail(f"Fatigue stage/threshold/AFTER/AIM/RELOAD contract drifted: {_token}")
+if ("DrawFatigueCombined(dc, preview.Bottom + 51.0, width,\n            rate, low,"
+        not in _fatigue_source
+        or not _fatigue_block
+        or any(x in _fatigue_block for x in ("ToolTip =", "AddHorizontalTarget(", "onsetY ="))):
+    fail("Fatigue live rate, tooltip-free or native-only hit contract drifted")
+for _threshold, _seconds in ((50, 5000), (60, 6000), (80, 8000)):
+    if int(_threshold / .010) != _seconds:
+        fail("Fatigue vanilla onset arithmetic drifted")
+if not errors:
+    note("Fatigue integrated stage PTS/AFTER/AIM/RELOAD estimates, live rate")
 
 # Hunger and Fatigue now share the SAME primary resource ruler as Core
 # Health/Core Stamina. Protect geometry/units/source routing, not screenshots.

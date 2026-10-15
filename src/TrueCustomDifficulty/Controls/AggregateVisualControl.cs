@@ -2091,14 +2091,15 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         DrawFatigueCombined(dc, preview.Bottom + 51.0, width,
-            low, medium, severe, lowAim, mediumAim, severeAim,
+            rate, low, medium, severe, lowAim, mediumAim, severeAim,
             mediumReload, severeReload, text, muted, border, soft, accent, panel);
     }
 
     // Gold aim curve and white reload curve share fatigue-point thresholds
     // but have independent native Y scales and individually draggable rings.
     private void DrawFatigueCombined(DrawingContext dc, double top, double width,
-        ParameterViewModel low, ParameterViewModel medium, ParameterViewModel severe,
+        ParameterViewModel rate, ParameterViewModel low,
+        ParameterViewModel medium, ParameterViewModel severe,
         ParameterViewModel lowAim, ParameterViewModel mediumAim,
         ParameterViewModel severeAim, ParameterViewModel mediumReload,
         ParameterViewModel severeReload, Brush text, Brush muted,
@@ -2208,8 +2209,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
         for (int i = 0; i < 3; i++) Ring(thresholds[i], aims[i], false);
         for (int i = 0; i < 2; i++) Ring(thresholds[i + 1], reloads[i], true);
-        // Separate source-accurate stage readouts. The old long, clipped
-        // one-line sentences could not fit three equal-width columns.
+        // Real-time onset is a passive projection from 0 SleepinessPoints.
+        // Keep threshold, onset, AIM and RELOAD within the original cells.
         var cellWidth = (frame.Width - 16.0) / 3.0;
         for (var i = 0; i < 3; i++)
         {
@@ -2217,23 +2218,47 @@ public sealed class AggregateVisualControl : FrameworkElement
                 top + 260.0, cellWidth, 93.0);
             dc.PushClip(new RectangleGeometry(cell));
             var cx = cell.Left + cell.Width / 2.0;
-            DrawCenteredText(dc, new[] { "LOW", "MEDIUM", "SEVERE" }[i],
-                new Point(cx, top + 262.0),
-                10.3, text, FontWeights.Bold);
-            DrawCenteredNumericChanges(dc,
-                $"AT {thresholds[i].CurrentNumber:0} PTS",
-                new Point(cx, top + 282.0),
-                10.1, text, accent, FontWeights.SemiBold,
-                thresholds[i].IsValueModifiedFromReference());
+            var stage = new[] { "LOW", "MEDIUM", "SEVERE" }[i];
+            var thresholdText = $"{stage} AT {thresholds[i].CurrentNumber:0} PTS";
+            var elapsed = StageOnsetEstimate(thresholds[i].CurrentNumber, rate.CurrentNumber);
+            var timeText = $"AFTER {elapsed}";
+            var headline = $"{thresholdText} {timeText}";
+            // Measure headline before choosing a one- or two-line treatment.
+            var wrap = cellWidth < 205.0 || CreateText(headline, 9.2,
+                text, FontWeights.SemiBold).WidthIncludingTrailingWhitespace > cellWidth - 14.0;
+            if (wrap)
+            {
+                DrawCenteredNumericChanges(dc, thresholdText,
+                    new Point(cx, top + 270.0), 9.5, text, accent,
+                    FontWeights.SemiBold, thresholds[i].IsValueModifiedFromReference());
+                var count = System.Text.RegularExpressions.Regex.Matches(
+                    timeText, @"\d+").Count;
+                DrawCenteredNumericChanges(dc, timeText,
+                    new Point(cx, top + 291.0), 9.5, text, accent,
+                    FontWeights.SemiBold, Enumerable.Repeat(true, count).ToArray());
+            }
+            else
+            {
+                var count = System.Text.RegularExpressions.Regex.Matches(
+                    headline, @"\d+").Count;
+                var highlight = new bool[count];
+                if (count > 0)
+                    highlight[0] = thresholds[i].IsValueModifiedFromReference();
+                for (var token = 1; token < count; token++)
+                    highlight[token] = true;
+                DrawCenteredNumericChanges(dc, headline,
+                    new Point(cx, top + 275.0), 9.2, text, accent,
+                    FontWeights.SemiBold, highlight);
+            }
             DrawCenteredNumericChanges(dc,
                 $"AIM +{aims[i].CurrentNumber * 100:0.#}%",
-                new Point(cx, top + 304.0),
+                new Point(cx, top + (wrap ? 314.0 : 304.0)),
                 10.1, text, accent, FontWeights.SemiBold,
                 aims[i].IsValueModifiedFromReference());
             if (i > 0)
                 DrawCenteredNumericChanges(dc,
                     $"RELOAD +{reloads[i - 1].CurrentNumber * 100:0.##}%",
-                    new Point(cx, top + 326.0),
+                    new Point(cx, top + (wrap ? 337.0 : 327.0)),
                     10.1, text, accent, FontWeights.SemiBold,
                     reloads[i - 1].IsValueModifiedFromReference());
             dc.Pop();
@@ -4245,7 +4270,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 footerTop, stageWidth, 69.0);
             dc.PushClip(new RectangleGeometry(cell));
             var cx = cell.Left + cell.Width / 2.0;
-            var elapsed = HungerOnsetEstimate(threshold.CurrentNumber, rate.CurrentNumber);
+            var elapsed = StageOnsetEstimate(threshold.CurrentNumber, rate.CurrentNumber);
             var thresholdText = $"{stageName} AT {threshold.CurrentNumber:0} PTS";
             var timeText = $"AFTER {elapsed}";
             if (narrow)
@@ -4291,7 +4316,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     // configured points/second is constant and no food/other effects apply.
     // Whole-second truncation preserves the source-rate arithmetic without
     // interpreting game-day duration or creating a fictitious live clock.
-    private static string HungerOnsetEstimate(double threshold, double pointsPerSecond)
+    private static string StageOnsetEstimate(double threshold, double pointsPerSecond)
     {
         if (threshold <= Epsilon)
             return "0s";

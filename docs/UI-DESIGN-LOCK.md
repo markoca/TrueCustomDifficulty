@@ -1,5 +1,16 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Fatigue stage onset times combined with AIM and RELOAD (CURRENT)
+
+Under **Survival → Fatigue → FATIGUE COMBAT PROFILE**, show each existing LOW/MEDIUM/SEVERE stage's **source threshold and projected onset time together** on the first line, followed by the stage's original AIM and (MEDIUM/SEVERE only) RELOAD penalty values, each on its own next line. This mirrors Hunger's consolidated stage summaries without adding controls or subtitles.
+
+At vanilla `survival.sleepinessRate = 0.010 PTS/s` and actual fatigue-stage thresholds 50 / 60 / 80 PTS, the dynamic **example** readouts are `LOW AT 50 PTS AFTER ~1h23m20s` followed by `AIM +15%`; `MEDIUM AT 60 PTS AFTER ~1h40m0s` followed by `AIM +25%` and `RELOAD +15%`; and `SEVERE AT 80 PTS AFTER ~2h13m20s` followed by `AIM +40%` and `RELOAD +18.75%`. All values use original live source parameters, not hardcoded examples.
+
+In each existing equal-width clipped stage cell, render the combined headline on one line when its actual measured width fits; below 205 DIP or when too long, wrap it as `MEDIUM AT 60 PTS` / `AFTER ~1h40m0s` and keep AIM/RELOAD on distinct lower lines. Readouts stay within the original **93-DIP** footer cells and unchanged **365-DIP** Fatigue chart and measured host. No new elapsed-time bar, stage timeline, slider, hit region or tooltip. The shared stage onset formatter used by Hunger computes `floor(threshold / sleepinessRate)` in elapsed **real seconds** from assumed zero SleepinessPoints, without recovery, energy-drink relief or other changing influences. `NEVER` applies when rate is zero but threshold positive; `0s` applies when threshold zero. This is a conditional projection, not a confirmed live gameplay timer.
+
+**Only time numeric tokens are always gold**; threshold PTS, AIM and RELOAD real CFG numeric tokens retain their existing modified-only gold rule, with all labels and units neutral. Preserve native Fatigue Rate and Energy Drink Relief rulers, read-only 0–100 stage preview, gold AIM and white independent RELOAD Y axes, all interactive stage rings, hit/cursor/hover feedback, source values, reset/preset behavior and source CFG writers without changes.
+
+
 ### 2026-10-15 — Integrated Hunger stage, onset time and stamina recovery (CURRENT)
 
 In **Survival → Hunger State Ladder → HUNGER SURVIVAL PROFILE**, the three existing stages retain their true CFG thresholds and recovery penalties, but the two previously separate stage/timing areas now form **one compact summary per stage**. Display, at normal widths, **`LOW AT 17 PTS AFTER ~18m53s`**, **`MEDIUM AT 33 PTS AFTER ~36m40s`**, **`SEVERE AT 83 PTS AFTER ~1h32m13s`** using the original 0.015 PTS/s and stage thresholds 17/33/83. Directly underneath the MEDIUM line display the actual `-33% STAMINA RECOVERY`, and underneath the SEVERE line the actual `-70% STAMINA RECOVERY` (both derived from their individually editable recovery-loss sources, so these are illustrative original-state values). LOW has no fictitious stamina penalty. All stage names, point thresholds, `AFTER`, time and recovery wording respond only to original live CFG sources; no new parameters, threshold slider, controls, or preview hit targets.
