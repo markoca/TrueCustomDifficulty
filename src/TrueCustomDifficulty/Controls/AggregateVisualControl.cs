@@ -275,9 +275,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "WaterStaminaPressure":
                 DrawWaterStaminaBoard(dc, text, muted, border, accent, panel);
                 break;
-            case "PhysicalLimits":
-                DrawPairedSystemBoard(dc, text, muted, border, accent, panel);
-                break;
             case "FatigueCurve":
                 DrawFatigueCurve(dc, text, muted, border, soft, accent, panel);
                 break;
@@ -1587,111 +1584,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             DrawTogglePill(dc, otherToggles[i].Parameter, otherToggles[i].Label,
                 new Rect(margin + cell + gap, 55.0 + i * 57.0, cell, 46.0),
                 text, muted, border, accent, panel);
-    }
-
-    // Chance, successful-roll amount and a different stash tier's coupon roll
-    // remain three independent source parameters. The preview bars are deliberately
-    // read-only and never combine them into an inferred expected-loot value.
-    private void DrawPairedSystemBoard(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
-    {
-        var board = Family switch
-        {
-            "StaminaCore" => (
-                Title: "CORE STAMINA",
-                Subtitle: "total stamina pool and base recovery per second",
-                First: "stamina.maxSP",
-                FirstLabel: "STAMINA CAPACITY",
-                Second: "stamina.regeneration",
-                SecondLabel: "BASE RECOVERY RATE",
-                Note: "CAPACITY AND RECOVERY ARE INDEPENDENT CFG VALUES"),
-            "PhysicalLimits" => (
-                Title: "MOVEMENT LIMITS",
-                Subtitle: "vaulting clearance and equipment carrying capacity",
-                First: "stamina.vaultMaxHeight",
-                FirstLabel: "MAXIMUM VAULT HEIGHT",
-                Second: "stamina.maxCarryWeight",
-                SecondLabel: "MAXIMUM CARRY WEIGHT",
-                Note: "VAULT HEIGHT USES UU  |  INVENTORY CAPACITY USES KG"),
-            "TraderStockBoard" => (
-                Title: "TRADER STOCK",
-                Subtitle: "independent quantity multipliers, not new item selections",
-                First: "economy.traderAmmoStock",
-                FirstLabel: "REGULAR TRADERS / AMMO SUPPLY",
-                Second: "economy.medicStock",
-                SecondLabel: "MEDICS / MEDICAL SUPPLY",
-                Note: "STOCK QUANTITY ONLY  |  RESTOCK RULES STAY VANILLA"),
-            "ItemWeightBoard" => (
-                Title: "ITEM WEIGHT",
-                Subtitle: "relative inventory mass per item category",
-                First: "equipment.ammoWeight",
-                FirstLabel: "AMMUNITION WEIGHT",
-                Second: "equipment.consumableWeight",
-                SecondLabel: "FOOD AND MEDICINE WEIGHT",
-                Note: "ITEM WEIGHT DOES NOT CHANGE MAXIMUM CARRY WEIGHT"),
-            "WaterStaminaPressure" => (
-                Title: "WATER STAMINA PRESSURE",
-                Subtitle: "extra stamina drain by water depth",
-                First: "stamina.waterMediumDrain",
-                FirstLabel: "MEDIUM WATER DRAIN",
-                Second: "stamina.waterStrongDrain",
-                SecondLabel: "DEEP WATER DRAIN",
-                Note: "RIGHT = MORE STAMINA DRAIN AT THAT DEPTH"),
-            _ => throw new InvalidOperationException(
-                $"Unsupported paired system family: {Family}")
-        };
-
-        DrawHeader(dc, board.Title, board.Subtitle, text, muted, accent);
-        var cardWidth = Math.Max(1.0, ActualWidth - 32.0);
-        DrawHorizontalTrackCard(dc, P(board.First), board.FirstLabel,
-            new Rect(16.0, 56.0, cardWidth, 72.0),
-            text, muted, border, accent, panel, pairedValueFormatting: true);
-
-        // The vault-height track retains the authored WAIST/EYES landmarks.
-        // The tick marks share the native track hit area: clicking a tick snaps
-        // to that exact source height (130/225/300 uu) with no extra control.
-        var isPhysicalLimits = Family == "PhysicalLimits";
-        if (isPhysicalLimits && P(board.First) is { } vault)
-        {
-            var track = new Rect(30.0, 95.0, Math.Max(1.0, cardWidth - 28.0), 12.0);
-            foreach (var marker in vault.VanillaMarkers)
-            {
-                var x = ValueToX(marker.Value, vault.Minimum, vault.Maximum, track, false);
-                dc.DrawLine(new Pen(muted, 1.8),
-                    new Point(x, 89.0), new Point(x, 95.0));
-                var caption = marker.Label.Replace("VANILLA / ", "", StringComparison.Ordinal);
-                var landmarkHover = _hoverTarget?.Kind == HitKind.Horizontal
-                    && ReferenceEquals(_hoverTarget.Parameter, vault)
-                    && Math.Abs(_hoverTarget.VisualMinimum - marker.Value) < Epsilon
-                    && Math.Abs(_hoverTarget.VisualMaximum - marker.Value) < Epsilon;
-                DrawCenteredText(dc, caption, new Point(x, 136.0),
-                    9.0, landmarkHover ? Brushes.White : muted, FontWeights.SemiBold);
-                // Clicking the printed landmark (not just the 12px track)
-                // chooses the exact authored height. Keep the hit rect inside
-                // the card even for the rightmost ABOVE EYES marker.
-                var captionWidth = 112.0;
-                var captionLeft = Math.Clamp(x - captionWidth / 2.0,
-                    13.0, Math.Max(13.0, ActualWidth - captionWidth - 13.0));
-                AddHorizontalTarget(vault,
-                    new Rect(captionLeft, 132.0, captionWidth, 23.0),
-                    new Rect(x, 132.0, 1.0, 23.0),
-                    marker.Value, marker.Value);
-            }
-        }
-
-        DrawHorizontalTrackCard(dc, P(board.Second), board.SecondLabel,
-            new Rect(16.0, isPhysicalLimits ? 178.0 : 139.0, cardWidth, 72.0),
-            text, muted, border, accent, panel, pairedValueFormatting: true);
-
-        // Bounded, one-line help avoids collision at 520px minimum width.
-        dc.DrawText(CreateText(board.Note, 9.4, text, FontWeights.SemiBold,
-                Math.Max(1.0, ActualWidth - 36.0)),
-            new Point(18.0, Family == "PhysicalLimits" ? 265.0 : 228.0));
     }
 
     // Matched twin native multipliers: exact Core Health/Core Stamina
@@ -5179,9 +5071,6 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static string ComparablePairedValue(ParameterViewModel parameter, double rawValue)
         => parameter.Id switch
         {
-            "stamina.waterMediumDrain" or "stamina.waterStrongDrain" => $"{rawValue:0.##}x",
-            "stamina.maxSP" => $"{rawValue:0} STAMINA",
-            "stamina.regeneration" => $"{rawValue:0.##} STAMINA/s",
             "economy.fastTravelCost" or "economy.upgradeCost" or
             "economy.traderAmmoStock" or "economy.medicStock" or
             "equipment.ammoWeight" or "equipment.consumableWeight" or
@@ -5190,8 +5079,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "economy.repairCostBase" or
             "environment.flycatcherMovementSpeed" or
             "environment.flycatcherTurnSpeed" => $"{rawValue * 100.0:0.#}%",
-            "stamina.vaultMaxHeight" => $"{rawValue:0} uu",
-            "stamina.maxCarryWeight" => $"{rawValue:0} kg",
             "loot.npcMedicalChance" or "loot.npcWeaponAmmoSupply" => $"{rawValue:0.##}x",
             "loot.destructibleAmmoQuantity" or "loot.destructibleGrenadeQuantity" or
             "loot.cheapStashAmmoQuantity" or "loot.mediumStashAmmoQuantity" or
@@ -6449,7 +6336,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "NpcLootLoadout" => 564.0,
             "WorldLootLayout" => 275.0,
             "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
-            "PhysicalLimits" => 335.0,
             "StaminaCore" => 323.0,
             "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),
@@ -6507,11 +6393,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "economy.startingMoney",
                 "economy.mainQuestReward",
                 "economy.sideQuestReward"
-            },
-            "PhysicalLimits" => new[]
-            {
-                "stamina.vaultMaxHeight",
-                "stamina.maxCarryWeight"
             },
             "TraderStockBoard" => new[]
             {

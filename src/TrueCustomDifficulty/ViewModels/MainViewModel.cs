@@ -429,11 +429,6 @@ public sealed class MainViewModel : ObservableObject
             "economy.repairFriend");
 
         WireVisualAggregate(
-            "stamina.vaultMaxHeight",
-            "stamina.vaultMaxHeight",
-            "stamina.maxCarryWeight");
-
-        WireVisualAggregate(
             "economy.traderAmmoStock",
             "economy.traderAmmoStock",
             "economy.medicStock");

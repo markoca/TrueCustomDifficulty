@@ -2167,20 +2167,55 @@ _medical_path = ROOT / "src/TrueCustomDifficulty/Controls/MedicalHealingRadar.cs
 _medical_source = _medical_path.read_text(encoding="utf-8")
 _medical_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 _medical_main_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+# Stamina cleanup pass 1: unreachable PhysicalLimits/pair editor removed.
+# Four source values remain owned by StaminaCore, and two independent
+# water multipliers keep their native card, range constraint and CFG routes.
+_stamina_aggregate = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_stamina_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+_stamina_main = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+if ("PhysicalLimits" in _stamina_aggregate or "PhysicalLimits" in _stamina_vm
+        or "DrawPairedSystemBoard" in _stamina_aggregate):
+    fail("Dead PhysicalLimits / paired-system renderer returned")
+if re.search(r'WireVisualAggregate\(\s*"stamina\.vaultMaxHeight"', _stamina_main):
+    fail("Hidden movement-limit anchor still has obsolete UI-only aggregate subscription")
+_legacy_stamina_comparisons = (
+    '"stamina.waterMediumDrain" or "stamina.waterStrongDrain" =>',
+    '"stamina.maxSP" => $"{rawValue:0} STAMINA"',
+    '"stamina.regeneration" => $"{rawValue:0.##} STAMINA/s"',
+    '"stamina.vaultMaxHeight" => $"{rawValue:0} uu"',
+    '"stamina.maxCarryWeight" => $"{rawValue:0} kg"',
+)
+if any(legacy in _stamina_aggregate for legacy in _legacy_stamina_comparisons):
+    fail("Stale Stamina-only pair-value formatting returned")
+_stamina_active_renderers = (
+    'case "StaminaCore":',
+    'DrawStaminaMovementBoard(dc, text, muted, border, accent, panel);',
+    'case "WaterStaminaPressure":',
+    'DrawWaterStaminaBoard(dc, text, muted, border, accent, panel);',
+    '"StaminaCore" => 323.0',
+    '"WaterStaminaPressure" => 171.0',
+    '"stamina.maxSP", "stamina.regeneration",',
+    '"stamina.vaultMaxHeight", "stamina.maxCarryWeight"',
+    '"stamina.waterMediumDrain", "stamina.waterStrongDrain"',
+)
+if any(token not in _stamina_aggregate for token in _stamina_active_renderers):
+    fail("Live Stamina/Core or water source renderer drifted during cleanup")
+if (any(f'["{pid}"] = "StaminaCore"' not in _stamina_vm
+        for pid in ("stamina.maxSP", "stamina.regeneration",
+                    "stamina.vaultMaxHeight", "stamina.maxCarryWeight"))
+        or any(f'["{pid}"] = "WaterStaminaPressure"' not in _stamina_vm
+               for pid in ("stamina.waterMediumDrain", "stamina.waterStrongDrain"))):
+    fail("Live Stamina source-to-family UI mappings drifted")
+note("Stamina pass 1: retired unreachable PhysicalLimits, old paired board and hidden-only aggregate; source paths preserved")
+
 # Health cleanup pass 1: no dead generic radiation/removal UI may
 # reappear alongside the single source-backed Medical Items editor.
 _health_aggregate_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
-_health_paired_start = _health_aggregate_source.find("private void DrawPairedSystemBoard(")
-_health_paired_end = _health_aggregate_source.find("private void DrawWaterStaminaBoard(", _health_paired_start)
-_health_paired = (_health_aggregate_source[_health_paired_start:_health_paired_end]
-                  if 0 <= _health_paired_start < _health_paired_end else "")
 if "private void DrawRecoveryMeter(" in _health_aggregate_source:
     fail("Uncalled Health recovery meter renderer returned")
-if (not _health_paired or 'Title: "RADIATION TREATMENT"' in _health_paired
-        or '"health.ecoMedkitAntirad"' in _health_paired
-        or '"health.antiRadRadiation"' in _health_paired
-        or 'Unsupported paired system family:' not in _health_paired):
-    fail("Obsolete standalone Health radiation fallback returned")
+if ('private void DrawPairedSystemBoard(' in _health_aggregate_source
+        or 'Title: "RADIATION TREATMENT"' in _health_aggregate_source):
+    fail("Retired paired-system/Radiation Treatment editor returned")
 if ('"health.ecoMedkitAntirad" or "health.antiRadRadiation"' in _health_aggregate_source
         or '"health.lowHealthRegen" => $"{rawValue:0.0} rate"' in _health_aggregate_source):
     fail("Obsolete Health comparison formatting returned")

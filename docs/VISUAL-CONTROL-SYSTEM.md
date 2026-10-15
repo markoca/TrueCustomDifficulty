@@ -1,5 +1,12 @@
 # Visual Control System
 
+### 2026-10-15 — Stamina dead UI cleanup, pass 1 (CURRENT)
+
+The `PhysicalLimits` visual family is unreachable: both `stamina.vaultMaxHeight` and `stamina.maxCarryWeight` are mapped to the active compact `StaminaCore` aggregate, and no parameter selects `PhysicalLimits`. Remove its old dispatcher, height/member registry and obsolete help/anchor entries, along with the entire now-unused `DrawPairedSystemBoard` helper. That helper contained historical StaminaCore, Water Stamina Drain, Trader Stock and Item Weight variants which the current dedicated editors supersede; its Radiation Treatment fallback was already retired. Only the obsolete helper is removed; do not delete the active standalone Trader Stock / Item Weight / Water renderer or `DrawHorizontalTrackCard` used by them and other tabs.
+
+Remove the duplicated, UI-only `WireVisualAggregate("stamina.vaultMaxHeight", ...)` subscription for the hidden movement member; source values and active `StaminaCore` member mapping remain. Delete the stale stamina/movement formatting branches from `ComparablePairedValue`, used exclusively by the retired board. Preserve the user-approved 323-DIP `StaminaCore` with Max Stamina, Recovery, Vault Height (clickable WAIST/EYES landmarks) and Carry Weight; preserve the two 171-DIP Water Drain source rulers, native ranges/steps, active hit targets, right-click/R reset, group ordering and source constraints. The CFG writer, presets, reference values, gameplay values and all other tab UI remain unchanged. Health's earlier dead Radiation Treatment audit must now assert complete absence of `DrawPairedSystemBoard`.
+
+
 ### 2026-10-15 — Health dead-code cleanup, pass 2 (CURRENT)
 
 Remove the unused `Brush soft` argument from the live `CoreHealthDashboard` dispatcher and drawing method; neither the five underlying Core Health source controls nor their renderer uses that brush. Remove the unused `HealthTypography.Section` constant, retaining the Title, Label, Value and Axis typography values used by Core Health and Medical Items. Remove five unreachable Master-only parameter ranks from the Health branch of `MainViewModel.ParameterSortOrder`: `advanced.lowHealthMechanics`, `health.masterLowHealthPenalty`, `health.masterBandageModifier`, `health.masterMedkitModifier`, and `health.masterArmyMedkitModifier`. Those parameters have `tab=master`, so they cannot match an `if (Tab == "health")` branch; their Master controls and CFG writer routes remain untouched.

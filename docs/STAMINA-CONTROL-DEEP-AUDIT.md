@@ -112,3 +112,8 @@ The audit does **not** promote any of the following:
 - Energy-drink tolerance/overuse mechanics.
 
 These fields are either internal state machinery, overlap a clearer normal control, or lack a complete player-facing 1:1 semantic contract.
+
+
+## 2026-10-15 dead-code cleanup — pass 1
+
+Confirmed by source mapping: `PhysicalLimits` had no owning parameter, as Vault Height and Carry Weight already belong to `StaminaCore`. Removed the dead PhysicalLimits draw dispatch, family height/source-ID registration and helper text, plus its sole `DrawPairedSystemBoard` renderer (which also included unreachable historical Core Stamina, Water, Trader Stock and Item Weight branches). The corresponding inactive stamina comparison formatters were removed; the inactive `stamina.vaultMaxHeight` modified-state aggregate-only subscription was deleted. Active `StaminaCore` and `WaterStaminaPressure` renderers, source IDs, preset/writer mapping and controls remain unchanged. Static audits cover removal and keep live family bindings. Runtime .NET/Wine verification is still required locally.
