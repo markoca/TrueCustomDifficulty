@@ -97,7 +97,6 @@ public sealed class ParameterViewModel : ObservableObject
                     "CouponFlow" => "Drag the Starting Coupons rail directly from 0 to 100,000 (10-coupon native steps), or use arrow/Home/End keys for precision. Main and Side Quest reward meters are independent.",
                     "TradingDashboard" => "Use the mirrored YOU SELL / YOU BUY price meters; condition acceptance and broken-value remain separate controls.",
                     "RepairCurve" => "Drag one reputation point vertically to set its repair-price multiplier. Linked values follow the existing source-value ordering.",
-                    "BlastDamageBoard" => "Drag the explosion-damage track. The impact band shows the relative change; it is not another input.",
                     "TraderStockBoard" => "Turn the independent AMMO STOCK and MEDIC STOCK knobs; each edits its own native supply quantities.",
                     "ServiceCostsBoard" => "Turn the separate Fast Travel, Upgrade and Base Repair knobs. Base Repair shows a percentage of the source multiplier, not a final repair bill.",
                     "ItemWeightBoard" => "Drag AMMUNITION WEIGHT or FOOD & MEDICINE WEIGHT independently.",
@@ -555,7 +554,6 @@ public sealed class ParameterViewModel : ObservableObject
 
     private static readonly Dictionary<string, string> VisualAggregateAnchorByFamily = new(StringComparer.Ordinal)
     {
-        ["MutantCombatPressure"] = "combat.mutantDamage",
         ["StaminaCore"] = "stamina.maxSP",
         ["WaterStaminaPressure"] = "stamina.waterMediumDrain",
         ["FatigueCurve"] = "survival.sleepinessRate",
@@ -577,7 +575,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["CouponFlow"] = "economy.startingMoney",
         ["TradingDashboard"] = "economy.buyCondition",
         ["RepairCurve"] = "economy.repairEnemy",
-        ["BlastDamageBoard"] = "combat.explosionDamage",
         ["PhysicalLimits"] = "stamina.vaultMaxHeight",
         ["TraderStockBoard"] = "economy.traderAmmoStock",
         ["ServiceCostsBoard"] = "economy.fastTravelCost",

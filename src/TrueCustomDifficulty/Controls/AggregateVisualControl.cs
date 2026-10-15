@@ -236,9 +236,6 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         switch (Family)
         {
-            case "BlastDamageBoard":
-                DrawBlastDamageBoard(dc, text, muted, border, accent, panel);
-                break;
             case "TraderStockBoard":
                 DrawTraderStockKnobs(dc, text, muted, border, accent, panel);
                 break;
@@ -272,7 +269,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "BreakableBoxYields":
                 // Retired family: its two sources are now drawn by AmmoDistribution.
                 break;
-            case "MutantCombatPressure":
             case "StaminaCore":
                 DrawStaminaMovementBoard(dc, text, muted, border, accent, panel);
                 break;
@@ -443,60 +439,6 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         if (double.IsFinite(center.X) && double.IsFinite(center.Y))
             ControlHoverGlow.Draw(dc, center, accent, hovered: true);
-    }
-
-    // The original difficulty multiplier is the only editable source value.
-    // The second band compares it to the selected Base Preset: it is not
-    // simulated explosion damage, radius or an extra clickable control.
-    private void DrawBlastDamageBoard(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
-    {
-        DrawHeader(dc, "EXPLOSION DAMAGE",
-            "",
-            text, muted, accent);
-
-        var damage = P("combat.explosionDamage");
-        if (damage is null)
-        {
-            DrawCenteredText(dc, "Explosion difficulty data unavailable.",
-                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
-            return;
-        }
-
-        var width = Math.Max(1.0, ActualWidth - 32.0);
-        DrawHorizontalTrackCard(dc, damage, "BLAST DAMAGE MULTIPLIER",
-            new Rect(16.0, 56.0, width, 72.0),
-            text, muted, border, accent, panel, pairedValueFormatting: true);
-
-        var preview = new Rect(16.0, 141.0, width, 103.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
-        DrawText(dc, "DIFFICULTY REFERENCE / READ-ONLY",
-            new Point(28.0, 150.0), 9.8, text, FontWeights.Bold);
-
-        var band = new Rect(preview.Left + 18.0, 194.0,
-            Math.Max(1.0, preview.Width - 36.0), 18.0);
-        var y = band.Top + band.Height / 2.0;
-        var selectedX = ValueToX(damage.CurrentNumber,
-            damage.Minimum, damage.Maximum, band, false);
-        var baseX = ValueToX(damage.ReferenceNumber,
-            damage.Minimum, damage.Maximum, band, false);
-        dc.DrawLine(new Pen(border, 5.0),
-            new Point(band.Left, y), new Point(band.Right, y));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.70), 5.0),
-            new Point(Math.Min(selectedX, baseX), y),
-            new Point(Math.Max(selectedX, baseX), y));
-        dc.DrawLine(new Pen(muted, 2.2),
-            new Point(baseX, y - 10.0), new Point(baseX, y + 10.0));
-        dc.DrawEllipse(accent, null, new Point(selectedX, y), 5.0, 5.0);
-        DrawText(dc, "0x", new Point(band.Left, 218.0),
-            9.0, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, "2x", new Point(band.Right, 218.0),
-            9.0, muted, FontWeights.Normal);
     }
 
     // Anomalies are four independent source-exact panels: global strength,
@@ -1666,14 +1608,6 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         var board = Family switch
         {
-            "MutantCombatPressure" => (
-                Title: "MUTANT COMBAT PRESSURE",
-                Subtitle: "hit strength and attack frequency are independent",
-                First: "combat.mutantDamage",
-                FirstLabel: "DAMAGE FROM MUTANTS",
-                Second: "combat.mutantAttackCooldown",
-                SecondLabel: "ATTACK FREQUENCY",
-                Note: "RIGHT = MORE DAMAGE / MORE FREQUENT ATTACKS"),
             "StaminaCore" => (
                 Title: "CORE STAMINA",
                 Subtitle: "total stamina pool and base recovery per second",
@@ -5541,8 +5475,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static string ComparablePairedValue(ParameterViewModel parameter, double rawValue)
         => parameter.Id switch
         {
-            "combat.mutantDamage" or "combat.mutantAttackCooldown" or
-            "stamina.waterMediumDrain" or "stamina.waterStrongDrain" => $"{rawValue:0.##}x",
+            "combat.mutantDamage" or "stamina.waterMediumDrain" or "stamina.waterStrongDrain" => $"{rawValue:0.##}x",
             "stamina.maxSP" => $"{rawValue:0} STAMINA",
             "stamina.regeneration" => $"{rawValue:0.##} STAMINA/s",
             "health.ecoMedkitAntirad" or "health.antiRadRadiation" => $"{rawValue:0} radiation",
@@ -6879,7 +6812,6 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double GetDesiredHeight(string family, double width)
         => family switch
         {
-            "BlastDamageBoard" => 305.0,
             "CouponFlow" => CouponBoardHeight(width),
             "ServiceCostsBoard" => ServicePriceBoardHeight(width),
             "TraderStockBoard" => 242.0,
@@ -6893,7 +6825,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
             "PhysicalLimits" => 335.0,
             "StaminaCore" => 323.0,
-            "MutantCombatPressure" => 149.0,
             "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => 242.0,
@@ -6947,10 +6878,6 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static IReadOnlyList<string> GetFamilyIds(string family)
         => family switch
         {
-            "BlastDamageBoard" => new[]
-            {
-                "combat.explosionDamage"
-            },
             "CouponFlow" => new[]
             {
                 "economy.startingMoney",
@@ -7019,7 +6946,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "loot.expensiveStashMoneyChance"
             },
             "BreakableBoxYields" => Array.Empty<string>(),
-            "MutantCombatPressure" => new[] { "combat.mutantDamage", "combat.mutantAttackCooldown" },
             "StaminaCore" => new[] {
                 "stamina.maxSP", "stamina.regeneration",
                 "stamina.vaultMaxHeight", "stamina.maxCarryWeight" },

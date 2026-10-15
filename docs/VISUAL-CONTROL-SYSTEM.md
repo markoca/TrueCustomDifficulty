@@ -1,5 +1,10 @@
 # Visual Control System
 
+### 2026-10-15 — Combat dead-code cleanup, pass 1 (CURRENT)
+
+Remove the two **unreachable** visual families `BlastDamageBoard` and `MutantCombatPressure` from the aggregate renderer, measurement/family-ID registry and obsolete UI-family anchors. `combat.explosionDamage` remains an independent native CFG parameter edited in the active `HumanCombatProfile`; `combat.mutantDamage` remains a catalog/preset/CFG source and is NOT removed. The retired `combat.mutantAttackCooldown` reference must not be restored through UI legacy cases. No new controls, hit targets, layout changes or altered CFG writer routes. Earlier descriptions of `BlastDamageBoard` or `MutantCombatPressure` as active UI are historical and superseded here. PSY and Repeated-Hits currently have hidden UI routes and are reserved for a separate audit; keep their preset/CFG sources intact.
+
+
 ### 2026-10-15 — Fatigue stage onset times with explicit AIM TIME / RELOAD TIME labels (CURRENT)
 
 Under **Survival → Fatigue → FATIGUE COMBAT PROFILE**, show each existing LOW/MEDIUM/SEVERE stage's **source threshold and projected onset time together** on the first line, followed by the stage's original AIM TIME and (MEDIUM/SEVERE only) RELOAD TIME penalty percentages, each on its own next line. This mirrors Hunger's consolidated stage summaries without adding controls or subtitles.

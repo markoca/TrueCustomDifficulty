@@ -2393,11 +2393,25 @@ else:
     note("Medical Items polish: tighter paired bars, muted reference lines, visible Food Healing border")
 
 
+# Retired Combat visual families cannot be revived through stale switch arms,
+# obsolete source IDs, family registrations or parameter rationale entries.
+_combat_visual_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
+_combat_vm_source = (_semantic_source_dir.parent / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
+for _retired_family in ("BlastDamageBoard", "MutantCombatPressure"):
+    if _retired_family in _combat_visual_source or _retired_family in _combat_vm_source:
+        fail(f"Retired Combat visual family reintroduced: {_retired_family}")
+if "combat.mutantAttackCooldown" in _combat_visual_source:
+    fail("Removed mutant cooldown CFG source reappeared in Combat visual code")
+if ('["combat.explosionDamage"] = "HumanCombatProfile"' not in _combat_vm_source
+        or 'DrawHumanCombatProfile(dc, text, muted, border, soft, accent, panel);' not in _combat_visual_source
+        or '["HumanCombatProfile"] = "combat.npcHealth"' not in _combat_vm_source):
+    fail("Explosion damage lost its active HumanCombatProfile UI owner")
+
 # Hunger Survival Profile LOW handle: avoid a second hover circle at the
 # midpoint of the 2D plot. The real LOW handle owns its glow at Y(0).
 _hunger_source = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
 _hunger_overlay = _hunger_source.split("private void DrawHoveredHandle(", 1)[-1].split(
-    "private void DrawBlastDamageBoard(", 1)[0]
+    "private static int EconomyColumns(", 1)[0]
 if (
     'DrawHumanAxisHandle(dc, lowHandle, accent, panel,' not in _hunger_source
     or 'Family == "HungerLadder"' not in _hunger_overlay
