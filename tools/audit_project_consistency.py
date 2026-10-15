@@ -4659,6 +4659,43 @@ for _token in ("landmarkHover ? Brushes.White : muted", "kgHover ? Brushes.White
     if _token not in _physical_markers_source:
         fail("Physical Limits landmark marker interaction drift: " + _token)
 
+
+
+# Footer Settings and direct ~mods installation contract (2026-10-15).
+_tcd_main_xaml = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml").read_text(encoding="utf-8")
+_tcd_settings_xaml = (ROOT / "src/TrueCustomDifficulty/SettingsWindow.xaml").read_text(encoding="utf-8")
+_tcd_settings_service = (ROOT / "src/TrueCustomDifficulty/Services/ModDestinationSettingsService.cs").read_text(encoding="utf-8")
+_tcd_deployment = (ROOT / "src/TrueCustomDifficulty/Services/ModDeploymentService.cs").read_text(encoding="utf-8")
+_tcd_window_code = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml.cs").read_text(encoding="utf-8")
+_tcd_build_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+if any(t not in _tcd_main_xaml for t in (
+        'Content="Settings" Click="Settings_Click"',
+        'Content="Build Difficulty" Command="{Binding BuildCommand}"')):
+    fail("Footer must expose compact Settings and Build Difficulty")
+if any(t in _tcd_main_xaml for t in ('Text="Modified "', 'Binding ModifiedCount', 'Binding UntouchedCount', 'Content="Build Mod"')):
+    fail("Retired Modified/Vanilla footer or Build Mod button returned")
+if any(t not in _tcd_settings_xaml for t in ('~mods folder', 'Click="Browse_Click"', 'Click="Save_Click"')):
+    fail("Settings path chooser or Save control missing")
+if 'new SettingsWindow(settings.LoadPath())' not in _tcd_window_code:
+    fail("Settings footer action not connected")
+if any(t not in _tcd_settings_service for t in (
+        '"user-settings.json"', 'JsonSerializer.Deserialize', 'File.Move(temp, SettingsPath, overwrite: true)',
+        'string.Equals(Path.GetFileName(full), "~mods"', 'Directory.Exists(full)')):
+    fail("Portable ~mods persistence / strict directory validation drifted")
+if any(t not in _tcd_deployment for t in (
+        'ValidateBuiltFiles(builtFiles)', 'IsOwnedFile(existing)', 'File.Copy(file, staged)',
+        'File.Move(existing, backup)', 'File.Move(backup, original)', 'files.Count == 0')):
+    fail("Owned triplet staging / rollback / no-difference uninstall drifted")
+if any(t not in _tcd_build_vm for t in (
+        '_modDestinationSettings.RequireConfiguredPath()', '_modDeploymentService.Install(modsFolder, result.Files)')):
+    fail("Build must require configured ~mods and install generated outputs")
+if any('Footer Settings and direct ~mods difficulty installation' not in (DOCS / f).read_text(encoding="utf-8")
+       for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
+    fail("UI design catalogs missing ~mods build destination contract")
+else:
+    note("Settings footer and Build Difficulty -> portable ~mods staged deployment locked")
+
+
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
@@ -4670,3 +4707,4 @@ if errors:
         print(f"[FAIL] {msg}")
     sys.exit(1)
 print(f"PASS — active static checks only; {len(not_run_items)} archived/runtime evidence checks NOT RUN")
+

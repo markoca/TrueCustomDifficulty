@@ -1,5 +1,12 @@
 # Visual Control System
 
+### 2026-10-15 — Footer Settings and direct ~mods difficulty installation (CURRENT)
+
+Replace the lower-left `Modified N · Vanilla N` statistics with exactly one compact `Settings` button. It opens a restrained graphite window with an editable `~mods folder` field and `Browse`, `Save`, `Cancel`. Avoid permanently displayed folder paths, redundant explanations, extra status counters, and full-width panels. The chosen folder must exist and be named `~mods`; Save atomically persists its normalized location to portable `user-settings.json` beside the EXE. Cancel makes no change. The existing right-hand preset/reset button layout remains intact; its primary action becomes **Build Difficulty**.
+
+Build Difficulty requires a valid saved `~mods` directory *before* packing. It retains the complete internal `Output/` triplet as a working artifact and copies a validated, preset-named `.pak/.utoc/.ucas` set directly into `~mods`. Only root-level files with prefix `zzzzz_TrueCustomDifficulty_` and those three extensions are application-owned. Stage all new files before moving older owned files into rollback backup, then move new files into place. Never modify any other mod. Building with no gameplay differences explicitly removes only old True Custom Difficulty triplets from the chosen `~mods`, preventing stale gameplay edits. Missing or inaccessible folders must fail with a clear error; never silently fall back to a different game folder. Native gameplay controls, preset contents, CFG writer mapping, native slider layouts, modified-only yellow values and muted Vanilla/Base references are unchanged. Local .NET/Wine and disposable `~mods` deployment acceptance remain pending.
+
+
 ### 2026-10-15 — Retire unused responsive card-width converter (CURRENT)
 
 `ResponsiveCardWidthConverter` was only instantiated as a resource in `MainWindow.xaml`, with no consuming Binding, other XAML reference, or C# usage across all 48 application `.cs`, `.xaml` and `.csproj` files. Delete the unused converter class and its lone resource declaration. Preserve `ResponsiveParameterGridPanel` and `ResponsiveSectionGridPanel`, their geometry, grouping and responsive breakpoints. No visible control, input behavior, source/CFG mapping, preset or writer changes. WPF/Wine visual regression confirmation is still pending.

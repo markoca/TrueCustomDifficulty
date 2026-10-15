@@ -49,6 +49,24 @@ public partial class MainWindow : Window
         }
     }
 
+    private void Settings_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var settings = new ModDestinationSettingsService();
+            var dialog = new SettingsWindow(settings.LoadPath()) { Owner = this };
+            dialog.ShowDialog();
+        }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException or InvalidDataException)
+        {
+            MessageBox.Show(
+                $"Settings could not be opened.\n\n{ex.Message}",
+                "True Custom Difficulty",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
+    }
+
     private void FitInitialWindowToWorkArea()
     {
         var work = SystemParameters.WorkArea;

@@ -1,0 +1,48 @@
+<Window x:Class="TrueCustomDifficulty.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings" Width="515" Height="208"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        WindowStyle="None" ResizeMode="NoResize"
+        Background="{StaticResource WindowBackgroundBrush}">
+    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Background="{StaticResource TitleBarBrush}"
+                  MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <TextBlock Text="SETTINGS" Margin="16,0,0,0" VerticalAlignment="Center"
+                           FontWeight="SemiBold" FontSize="13"/>
+                <Button Content="×" HorizontalAlignment="Right" Width="34" Margin="0,4,5,4"
+                        Click="Cancel_Click"/>
+            </Grid>
+            <Grid Grid.Row="1" Margin="16,13,16,14">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="~mods folder" Foreground="{StaticResource MutedTextBrush}"
+                           FontSize="11" Margin="0,0,0,7"/>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="ModsPathBox" Height="29"
+                             VerticalContentAlignment="Center"/>
+                    <Button Grid.Column="1" Content="Browse" MinWidth="77"
+                            Margin="7,0,0,0" Click="Browse_Click"/>
+                </Grid>
+                <StackPanel Grid.Row="2" Orientation="Horizontal"
+                            HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                    <Button Content="Cancel" MinWidth="73" IsCancel="True" Click="Cancel_Click"/>
+                    <Button Content="Save" MinWidth="73" IsDefault="True"
+                            Style="{StaticResource PrimaryButtonStyle}" Click="Save_Click"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

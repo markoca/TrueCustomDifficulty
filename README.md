@@ -1,5 +1,7 @@
 # True Custom Difficulty
 
+**Build Difficulty installation (2026-10-15):** The bottom-left **Settings** button selects and persists the existing game `~mods` directory in portable `user-settings.json` beside the EXE. **Build Difficulty** packs the validated preset-named `.pak/.utoc/.ucas` triplet into internal `Output/` and installs it directly in the configured `~mods`. Installation replaces only older `zzzzz_TrueCustomDifficulty_` triplets; unrelated mods are not modified. A no-difference build removes previously installed True Custom Difficulty triplets, so stale changes are not left active. The destination must be configured and valid before building. Test the selected path and final installed triplet under Wine.
+
 **Bleeding UI simplification (2026-10-14):** The hypothetical Damage Tick Timeline / Dead In countdown and clickable LOW/MEDIUM/SEVERE preview selector have been removed. All seven original Bleeding CFG parameters remain editable on the actual damage-profile graph and two top sliders. The compact centered three-card stage row is now read-only, reflecting PTS thresholds and HP/TICK values without additional controls or death-clock assumptions. The board/host is now 466 DIP high (previously 665). Native source values, presets and CFG writers are unchanged; local Wine acceptance is pending.
 
 
@@ -1301,14 +1303,14 @@ All 8 normal Equipment controls were audited end-to-end. The surface is locked a
 - Added `docs/NON-GENERATOR-CONTROL-VERIFICATION.md` and a consistency gate so hidden audit-only parameters cannot silently leak into the normal UI.
 
 
-## Required for Build Mod
+## Required for Build Difficulty
 
 A non-empty build requires both tools:
 
 - **repak** packs the generated BPatch CFG files into `TrueCustomDifficulty_P.pak` using PAK V11 and mount point `../../../`.
 - **retoc** creates the matching UE5.5 `TrueCustomDifficulty_P.utoc` and `TrueCustomDifficulty_P.ucas` companion container.
 
-The application does not download either executable. If one is missing, Build Mod stops with a clear error and does not publish a partial output.
+The application does not download either executable. If one is missing, Build Difficulty stops with a clear error and does not publish a partial output.
 
 The same tools may also be used manually for extraction/development/maintenance workflows, but those workflows are outside the normal player build path.
 

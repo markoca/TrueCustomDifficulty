@@ -14,6 +14,8 @@ public sealed class MainViewModel : ObservableObject
     private readonly PresetService _presetService = new();
     private readonly PresetDirectoryService _presetDirectoryService = new();
     private readonly ModBuildService _modBuildService = new();
+    private readonly ModDeploymentService _modDeploymentService = new();
+    private readonly ModDestinationSettingsService _modDestinationSettings = new();
     private readonly GameInstallInfo? _gameInstall;
     private string _selectedReferenceDifficulty;
     private TabViewModel? _selectedTab;
@@ -1052,12 +1054,6 @@ public sealed class MainViewModel : ObservableObject
 
 
 
-    // Footer counts reflect controls that are currently active/visible. Hidden dependent
-    // Master children keep their values for preset round-trips, but they are not part of
-    // the effective build while the parent bundle is OFF.
-    public int ModifiedCount => AllParameters.Count(p => p.IsControlEnabled && p.IsControlVisible && p.IsModified);
-    public int UntouchedCount => AllParameters.Count(p => p.IsControlEnabled && p.IsControlVisible && !p.IsModified);
-
     private void ApplyReferenceDifficulty(bool resetAll)
     {
         _isApplyingReference = true;
@@ -1594,14 +1590,16 @@ public sealed class MainViewModel : ObservableObject
     {
         try
         {
+            var modsFolder = _modDestinationSettings.RequireConfiguredPath();
             _sliderConstraintCoordinator.NormalizeAll();
             var result = _modBuildService.Build(this, _catalog, _gameInstall);
+            var installedFiles = _modDeploymentService.Install(modsFolder, result.Files);
 
             if (!result.HasMod)
             {
                 MessageBox.Show(
                     "No gameplay values differ from the selected vanilla baseline.\n\n" +
-                    "No mod was built and the Output folder was cleared so an older build cannot be mistaken for the current state.",
+                    "Previous True Custom Difficulty files were removed from:\n" + modsFolder,
                     AppName,
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -1609,13 +1607,12 @@ public sealed class MainViewModel : ObservableObject
             }
 
             MessageBox.Show(
-                $"Built True Custom Difficulty successfully.\n\n" +
+                $"Built and installed True Custom Difficulty successfully.\n\n" +
                 $"{result.PatchFileCount} BPatch CFG file(s)\n" +
                 $"{result.ParameterCount} modified control(s)\n" +
                 $"{result.EditCount} concrete CFG edit(s)\n\n" +
-                $"Output:\n{result.OutputDirectory}\n\n" +
-                "Output contains only:\n" +
-                string.Join("\n", result.Files.Select(Path.GetFileName)),
+                $"Installed to:\n{modsFolder}\n\n" +
+                string.Join("\n", installedFiles.Select(Path.GetFileName)),
                 AppName,
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -1966,7 +1963,5 @@ public sealed class MainViewModel : ObservableObject
         foreach (var p in _anomalyDerivedParameters)
             p.RefreshComputedValues();
 
-        OnPropertyChanged(nameof(ModifiedCount));
-        OnPropertyChanged(nameof(UntouchedCount));
     }
 }

@@ -1049,12 +1049,8 @@
                     BorderThickness="0,1,0,0"
                     Padding="12,9" Margin="0,8,0,0">
                 <DockPanel LastChildFill="False">
-                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="Modified " Foreground="{StaticResource MutedTextBrush}" />
-                        <TextBlock Text="{Binding ModifiedCount}" Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" />
-                        <TextBlock Text="   ·   Vanilla " Foreground="{StaticResource MutedTextBrush}" />
-                        <TextBlock Text="{Binding UntouchedCount}" FontWeight="SemiBold" />
-                    </StackPanel>
+                    <Button DockPanel.Dock="Left" Content="Settings" Click="Settings_Click"
+                            VerticalAlignment="Center" MinWidth="82" />
 
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                         <ComboBox Width="190"
@@ -1067,7 +1063,7 @@
                         <Button Content="Save Preset" Command="{Binding SavePresetCommand}" />
                         <Button Content="Reset Tab" Command="{Binding ResetCurrentTabCommand}" />
                         <Button Content="Reset All" Command="{Binding ResetAllCommand}" />
-                        <Button Content="Build Mod" Command="{Binding BuildCommand}"
+                        <Button Content="Build Difficulty" Command="{Binding BuildCommand}"
                                 Style="{StaticResource PrimaryButtonStyle}" />
                     </StackPanel>
                 </DockPanel>
