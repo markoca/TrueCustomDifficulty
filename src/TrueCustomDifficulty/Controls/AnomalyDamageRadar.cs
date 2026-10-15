@@ -340,11 +340,11 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             p.IsValueModifiedFromReference() ? 16.2 : 15.0,
             active && p.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
         DrawCenteredText(dc, $"{p.Minimum:0.##}x",
-            new Point(center.X - KnobRadius * .8, card.Bottom - 19.0),
-            KnobTypography.EndpointSize, muted, FontWeights.SemiBold);
+            new Point(center.X - KnobRadius * .8, card.Bottom - KnobTypography.EndpointInsetFromBottom),
+            KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
         DrawCenteredText(dc, $"{p.Maximum:0.##}x",
-            new Point(center.X + KnobRadius * .8, card.Bottom - 19.0),
-            KnobTypography.EndpointSize, muted, FontWeights.SemiBold);
+            new Point(center.X + KnobRadius * .8, card.Bottom - KnobTypography.EndpointInsetFromBottom),
+            KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
         if (active)
             _globalKnobHit = new Rect(center.X - KnobRadius - 5.0,
                 center.Y - KnobRadius - 5.0, 2 * (KnobRadius + 5.0),

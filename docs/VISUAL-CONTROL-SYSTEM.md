@@ -1,5 +1,12 @@
 # Visual Control System
 
+### 2026-10-15 — White, closer MIN/MAX numbers on all rotary knobs (CURRENT)
+
+All native 270-degree source knobs, including shared `AggregateVisualControl.DrawSourceKnob` and the independent `AnomalyDamageRadar.DrawGlobalDamageKnob`, must display both **lower minimum/maximum labels in white** (`Brushes.White`), at exactly the **same Segoe UI size as the upper caption**: `KnobTypography.EndpointSize = KnobTypography.CaptionSize` (currently **10.8 DIP**). The two lower endpoint anchors are **6 DIP closer to their knobs**, changing their position from `card.Bottom - 19.0` to `card.Bottom - KnobTypography.EndpointInsetFromBottom` with a shared inset of **25.0 DIP**. Keep the endpoints `SemiBold` and upper caption `Bold`; preserve the common native dial rendering, hero/ordinary title position, and both endpoint labels for every source.
+
+The endpoint numbers are neutral scale limits, **never dynamically yellow**; unchanged editable center values remain neutral and modified editable center numbers retain their yellow convention. The separate lower derived readout on two-line knob centers keeps its muted-text and modified-only numeric-color contract. No knob arc/geometry, hit test, pointer, source precision, gameplay mapping, preset, CFG writer or build/deployment change. Confirm Windows/.NET compilation and Wine rendering locally.
+
+
 ### 2026-10-15 — Unified rotary caption and endpoint typography (CURRENT)
 
 All actual **270-degree source knob** families, including the shared source knobs in `AggregateVisualControl` (Combat, Anomalies, Stamina, Survival, Economy, Consumables, etc.) and the separate **Global Anomaly Damage** knob in `AnomalyDamageRadar`, must use the same **Segoe UI** type sizes and weight rules: **10.8 DIP Bold** for the title directly above each knob and **10.2 DIP SemiBold** for the lower-left MIN and lower-right MAX readouts. These are controlled by `Controls/KnobTypography.cs` (`CaptionSize`, `EndpointSize`) and must not drift independently per family or hero dial. The previous titles were 10.0/10.7 DIP and lower endpoint numbers were 9.0 DIP.

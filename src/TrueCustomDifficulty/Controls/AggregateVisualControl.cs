@@ -2616,15 +2616,15 @@ public sealed class AggregateVisualControl : FrameworkElement
                 : percentageReadout ? Percent(parameter.Minimum)
                 : rawReadout ? $"{parameter.Minimum:0.#}"
                 : $"{parameter.Minimum:0.##}x",
-            new Point(center.X - radius * .80, card.Bottom - 19.0),
-            KnobTypography.EndpointSize, muted, FontWeights.SemiBold);
+            new Point(center.X - radius * .80, card.Bottom - KnobTypography.EndpointInsetFromBottom),
+            KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
         DrawCenteredText(dc,
             rateReadout ? $"{parameter.Maximum:0.00}"
                 : percentageReadout ? Percent(parameter.Maximum)
                 : rawReadout ? $"{parameter.Maximum:0.#}"
                 : $"{parameter.Maximum:0.##}x",
-            new Point(center.X + radius * .80, card.Bottom - 19.0),
-            KnobTypography.EndpointSize, muted, FontWeights.SemiBold);
+            new Point(center.X + radius * .80, card.Bottom - KnobTypography.EndpointInsetFromBottom),
+            KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);
 
         if (!active)
             return;

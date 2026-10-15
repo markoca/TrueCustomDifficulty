@@ -4858,7 +4858,8 @@ _native_knob_anomaly = (ROOT / "src/TrueCustomDifficulty/Controls/AnomalyDamageR
 for _declaration in (
         "internal static class KnobTypography",
         "public const double CaptionSize = 10.8;",
-        "public const double EndpointSize = 10.2;",
+        "public const double EndpointSize = CaptionSize;",
+        "public const double EndpointInsetFromBottom = 25.0;",
         ):
     if _declaration not in _native_knob_style:
         fail("Shared knob caption/endpoint typography contract drift: " + _declaration)
@@ -4871,6 +4872,12 @@ for _name, _renderer in (("Shared source knobs", _ag_rotary), ("Global anomaly k
         fail(_name + " must use exactly one shared font size for top caption")
     if _renderer.count("KnobTypography.EndpointSize") != 2:
         fail(_name + " must use shared font size for both lower min/max labels")
+    if _renderer.count("card.Bottom - KnobTypography.EndpointInsetFromBottom") != 2:
+        fail(_name + " must raise both bottom endpoints closer to the knob")
+    if _renderer.count("KnobTypography.EndpointSize, Brushes.White, FontWeights.SemiBold);") != 2:
+        fail(_name + " must paint both bottom endpoints white with shared size")
+    if "card.Bottom - 19.0" in _renderer:
+        fail(_name + " returned to old, too-low MIN/MAX anchors")
     if _renderer.count("FontWeights.SemiBold);") < 2:
         fail(_name + " lost semibold min/max label weight")
 if "var titleY = card.Top + (prominent ? 10.0 : 19.0);" not in _ag_rotary:
@@ -4880,7 +4887,9 @@ if 'DrawCenteredText(dc, "GLOBAL MULTIPLIER"' not in _an_rotary:
 for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Unified rotary caption and endpoint typography (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
         fail("Rotary typography missing from UI catalog " + _doc)
-note("All rotary knobs: shared 10.8 DIP captions, 10.2 DIP min/max labels; no geometry change")
+    if "White, closer MIN/MAX numbers on all rotary knobs (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        fail("White and raised rotary endpoints missing from UI catalog " + _doc)
+note("All rotary knobs: 10.8 DIP headings and white 10.8 DIP MIN/MAX values lifted 6 DIP; native dial geometry unchanged")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
