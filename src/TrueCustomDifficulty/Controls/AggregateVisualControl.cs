@@ -2462,7 +2462,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // title-to-top-tick clearance. Keep the dial/gesture geometry intact.
         var titleY = card.Top + (prominent ? 10.0 : 19.0);
         DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, titleY),
-            prominent ? 10.7 : 10.0,
+            KnobTypography.CaptionSize,
             parameter?.IsControlEnabled == true ? text : muted, FontWeights.Bold);
         if (parameter is null)
             return;
@@ -2617,14 +2617,14 @@ public sealed class AggregateVisualControl : FrameworkElement
                 : rawReadout ? $"{parameter.Minimum:0.#}"
                 : $"{parameter.Minimum:0.##}x",
             new Point(center.X - radius * .80, card.Bottom - 19.0),
-            9.0, muted, FontWeights.SemiBold);
+            KnobTypography.EndpointSize, muted, FontWeights.SemiBold);
         DrawCenteredText(dc,
             rateReadout ? $"{parameter.Maximum:0.00}"
                 : percentageReadout ? Percent(parameter.Maximum)
                 : rawReadout ? $"{parameter.Maximum:0.#}"
                 : $"{parameter.Maximum:0.##}x",
             new Point(center.X + radius * .80, card.Bottom - 19.0),
-            9.0, muted, FontWeights.SemiBold);
+            KnobTypography.EndpointSize, muted, FontWeights.SemiBold);
 
         if (!active)
             return;

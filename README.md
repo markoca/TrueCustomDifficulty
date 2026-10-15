@@ -1,5 +1,7 @@
 # True Custom Difficulty
 
+**Knob typography (2026-10-15):** Every 270-degree knob now uses the same slightly larger Segoe UI title (**10.8 DIP Bold**) and lower MIN/MAX numbers (**10.2 DIP SemiBold**), including the separate Global Anomaly Damage knob. No changes to the middle readouts, slider/knob geometry, source parameters, presets or CFG output.
+
 **Two-value knob readouts (2026-10-15):** WATER STAMINA GAIN, ENERGY DRINK STAMINA GAIN and HERCULES CARRY keep the lower in-dial derived text grey. Only the numeric digits turn gold when the computed value differs from the selected reference difficulty, including changes to linked Max Stamina/Carry Weight. No changes to editable knob values or native CFG output.
 
 **Open ~mods folder (2026-10-15):** Settings shows **Open ~mods folder** only for a saved, existing, valid path. Click it to open that exact directory in the system's file manager. Unsaved edits, missing folders and invalid paths hide the button; no build or configuration change occurs. Test folder opening under Wine locally.

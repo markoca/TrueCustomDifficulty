@@ -286,7 +286,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .40),
             null, card, 4.0, 4.0);
         DrawCenteredText(dc, "GLOBAL MULTIPLIER", new Point(card.Left + 97.0, 65.0),
-            10.0, text, FontWeights.Bold);
+            KnobTypography.CaptionSize, text, FontWeights.Bold);
 
         var center = new Point(card.Left + 97.0, card.Top + 97.0);
         var range = Math.Max(Epsilon, p.Maximum - p.Minimum);
@@ -341,10 +341,10 @@ public sealed class AnomalyDamageRadar : FrameworkElement
             active && p.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
         DrawCenteredText(dc, $"{p.Minimum:0.##}x",
             new Point(center.X - KnobRadius * .8, card.Bottom - 19.0),
-            9.0, muted, FontWeights.SemiBold);
+            KnobTypography.EndpointSize, muted, FontWeights.SemiBold);
         DrawCenteredText(dc, $"{p.Maximum:0.##}x",
             new Point(center.X + KnobRadius * .8, card.Bottom - 19.0),
-            9.0, muted, FontWeights.SemiBold);
+            KnobTypography.EndpointSize, muted, FontWeights.SemiBold);
         if (active)
             _globalKnobHit = new Rect(center.X - KnobRadius - 5.0,
                 center.Y - KnobRadius - 5.0, 2 * (KnobRadius + 5.0),

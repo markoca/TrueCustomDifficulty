@@ -1,5 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Unified rotary caption and endpoint typography (CURRENT)
+
+All actual **270-degree source knob** families, including the shared source knobs in `AggregateVisualControl` (Combat, Anomalies, Stamina, Survival, Economy, Consumables, etc.) and the separate **Global Anomaly Damage** knob in `AnomalyDamageRadar`, must use the same **Segoe UI** type sizes and weight rules: **10.8 DIP Bold** for the title directly above each knob and **10.2 DIP SemiBold** for the lower-left MIN and lower-right MAX readouts. These are controlled by `Controls/KnobTypography.cs` (`CaptionSize`, `EndpointSize`) and must not drift independently per family or hero dial. The previous titles were 10.0/10.7 DIP and lower endpoint numbers were 9.0 DIP.
+
+Maintain existing positions: enlarged hero knobs keep their +10 DIP caption offset, ordinary knobs keep +19 DIP, and bottom limit labels stay at `card.Bottom - 19`. Preserve title wording, full center-value/secondary-value grammar, grey neutral endpoints, modified-only yellow current numbers, native 270-degree dial arcs, ticks, pointer/reference indicator, hit targets, drag/wheel/keyboard input, response layout, CFG mappings, and presets. This is strictly a readability/typography update; confirm under local Windows/.NET and Wine visual tests.
+
+
 ### 2026-10-15 — Secondary readouts inside two-value knobs (CURRENT)
 
 For every source-native rotary knob that displays **two readout lines inside the dial**, keep the upper native editable value and its existing modified-only color rule untouched. The **lower read-only derived line** must always be grey/muted; turn **only its numerical digits** gold when the displayed derived value actually differs from the selected reference difficulty. Keep leading signs, `stamina`, `WITH BUFF` and all other unit/word text grey even when the number changes. Unchanged numbers must stay grey. Apply this to WATER STAMINA GAIN, ENERGY DRINK STAMINA GAIN and HERCULES CARRY, using a shared dedicated secondary-line renderer rather than changing all unrelated contextual previews.

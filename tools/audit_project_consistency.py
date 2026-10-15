@@ -3542,8 +3542,8 @@ _rotary_body = _knob_source.split('private void DrawSourceKnob(', 1)[-1].split(
     'private static int KnobVisibleStepStride(', 1)[0]
 _rotary_expected = (
     'string? nativeUnit = null, bool prominent = false,',
-    'var currentTop = center.Y - (rateReadout || nativeUnit is not null ? 15.0 : 8.0);',
-    'else if (nativeUnit is not null)',
+    'var currentTop = center.Y - (rateReadout || nativeUnit is not null || secondaryReadout is not null ? 15.0 : 8.0);',
+    'else if (nativeUnit is not null && !inlineNativeUnit)',
 )
 if (not all(marker in _rotary_body for marker in _rotary_expected)
     or _rotary_body.count('new Point(center.X, center.Y + 5.0),') != 2
@@ -4253,7 +4253,7 @@ _hero_knob_method = _hero_title_source.split("private void DrawSourceKnob(", 1)[
 for _token in (
     'var titleY = card.Top + (prominent ? 10.0 : 19.0);',
     'DrawCenteredText(dc, label, new Point(card.Left + card.Width / 2, titleY)',
-    'prominent ? 10.7 : 10.0',
+    'KnobTypography.CaptionSize',
     'WeaponKnobRadius * (prominent ? 1.18 : 1.0)',
     'new Point(card.Left + card.Width / 2, card.Top + 97.0)',
 ):
@@ -4848,6 +4848,39 @@ for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Secondary readouts inside two-value knobs (CURRENT)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
         fail("Missing two-value knob secondary colour lock in " + _catalog)
 note("Two-value knobs: secondary grey, numeric gold only if derived current != derived reference")
+
+# Project-wide native rotary typography: all top captions and paired
+# lower-endpoint values share one Segoe UI font-size contract. Hero title
+# position is permitted to move, but its font matches every other dial.
+_native_knob_style = (ROOT / "src/TrueCustomDifficulty/Controls/KnobTypography.cs").read_text(encoding="utf-8")
+_native_knob_ag = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+_native_knob_anomaly = (ROOT / "src/TrueCustomDifficulty/Controls/AnomalyDamageRadar.cs").read_text(encoding="utf-8")
+for _declaration in (
+        "internal static class KnobTypography",
+        "public const double CaptionSize = 10.8;",
+        "public const double EndpointSize = 10.2;",
+        ):
+    if _declaration not in _native_knob_style:
+        fail("Shared knob caption/endpoint typography contract drift: " + _declaration)
+_ag_rotary = _native_knob_ag.split("private void DrawSourceKnob(", 1)[-1].split(
+    "private static int KnobVisibleStepStride(", 1)[0]
+_an_rotary = _native_knob_anomaly.split("private void DrawGlobalDamageKnob(", 1)[-1].split(
+    "protected override void OnMouseLeftButtonDown(", 1)[0]
+for _name, _renderer in (("Shared source knobs", _ag_rotary), ("Global anomaly knob", _an_rotary)):
+    if _renderer.count("KnobTypography.CaptionSize") != 1:
+        fail(_name + " must use exactly one shared font size for top caption")
+    if _renderer.count("KnobTypography.EndpointSize") != 2:
+        fail(_name + " must use shared font size for both lower min/max labels")
+    if _renderer.count("FontWeights.SemiBold);") < 2:
+        fail(_name + " lost semibold min/max label weight")
+if "var titleY = card.Top + (prominent ? 10.0 : 19.0);" not in _ag_rotary:
+    fail("Prominent knob caption elevation drifted")
+if 'DrawCenteredText(dc, "GLOBAL MULTIPLIER"' not in _an_rotary:
+    fail("Global anomaly knob caption missing")
+for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Unified rotary caption and endpoint typography (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        fail("Rotary typography missing from UI catalog " + _doc)
+note("All rotary knobs: shared 10.8 DIP captions, 10.2 DIP min/max labels; no geometry change")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
