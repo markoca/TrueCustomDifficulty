@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-15 — Factory snapshots aligned to the unchanged source control system (CURRENT)
+
+The full 248-source × 12-profile audit updates **preset data only** (plus tests/documents), not the native UI controls, controls catalogue, bindings, zoom/font rules, slider layout, or CFG writers. Stored factory values now sit on the exact `ParameterViewModel` step and override limits, including 5pp percent chance selection and five-second expanded consumable durations. Existing compact override checkboxes and source-specific knobs stay intact; no additional redundant UI text, layout stretch, or vanilla/base value emphasis is introduced. Explicit source-specific profile decisions and runtime-validation notes are in `tools/factory_preset_full_source_audit.json` and `docs/FACTORY-PROFILE-FULL-AUDIT-2026-10-15.md`.
+
 ### 2026-10-15 — Factory consumable override snapshot, no UI redesign (CURRENT)
 
 Factory profiles explicitly persist the **existing** `drinkDurationOverride` root mode, enabling drink durations up to 270s and Vinca/Hercules/Psi Block durations up to 900s; Field Medic additionally uses the separate Medical Items override. These are saved role snapshots and independent native CFG-backed values, **not new UI controls or synthetic CFG parameters**. Preserve both compact override checkboxes, shared cap/step/parent-child logic, native interaction, existing typography, knob and slider positions, modified-number highlighting and no full-width/redundant UI labels. Match `tools/factory_preset_consumable_balance.json` without redesigning these controls.

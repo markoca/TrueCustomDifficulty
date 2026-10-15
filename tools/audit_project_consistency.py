@@ -2323,6 +2323,139 @@ for _doc in ("FACTORY-PRESETS.md", "PRESET-FORMAT.md"):
     if "2026-10-15 — Consumable cadence, override" not in (DOCS / _doc).read_text(encoding="utf-8"):
         _factory_errors.append("consumable contract documentation missing "+_doc)
 
+# Exhaustive full-source factory decision audit, 2026-10-15.
+# The ledger is data, not a new game difficulty coefficient or UI control.
+_full_ledger = json.loads((ROOT / "tools/factory_preset_full_source_audit.json").read_text(encoding="utf-8"))
+_full_rows = _full_ledger.get("settings", {})
+_full_roles = _full_ledger.get("roles", {})
+if (set(_full_rows) != set(_factory_catalog) or len(_full_rows) != 248
+    or set(_full_roles) != set(_factory_preset_names)):
+    _factory_errors.append("full decision ledger must cover every native source in all twelve roles")
+if ('PreFullDeepAuditFactoryBlobs' not in _factory_service_text
+    or '&& !PreFullDeepAuditFactoryBlobs.TryGetValue(name, out knownHash)' not in _factory_service_text
+    or 'PreFullDeepAuditFactoryBlobs.TryGetValue(name, out var preDeepHash)' not in _factory_service_text):
+    _factory_errors.append("full-audit pristine-only factory migration is not wired")
+def _audit_round_away_from_zero(x):
+    return (1 if x >= 0 else -1) * int(abs(x) + 0.5)
+def _audit_normalized_factory_value(pid, value, definition, snapshot):
+    slider = definition.get("slider") or {}
+    lo = float(slider.get("min", 0))
+    hi = float(slider.get("max", value))
+    step = slider.get("step", 0)
+    primary = (definition.get("display") or {}).get("primary")
+    ref = definition.get("vanilla", {}).get(snapshot["referenceDifficulty"],
+                                           definition.get("vanilla", {}).get("All", 0))
+    original_main = {
+        "survival.waterEffectDuration": 30,
+        "survival.energyDrinkEffectDuration": 45,
+        "survival.vodkaEffectDuration": 20,
+        "survival.beerEffectDuration": 20,
+        "survival.magicVodkaEffectDuration": 90,
+    }
+    short = {"survival.waterRegenDuration", "survival.energyFullCostDuration",
+             "survival.energyPartialCostDuration",
+             "survival.vincaDuration", "survival.herculesDuration",
+             "survival.psiBlockDuration"}
+    if snapshot.get("drinkDurationOverride") and pid in original_main:
+        base = original_main[pid]
+        hi = 270 / base
+        return max(lo, min(hi, _audit_round_away_from_zero(value * base / 5) * 5 / base))
+    if snapshot.get("drinkDurationOverride") and pid in short:
+        hi = 900 if pid in {"survival.vincaDuration", "survival.herculesDuration", "survival.psiBlockDuration"} else 270
+        return max(lo, min(hi, _audit_round_away_from_zero(value / 5) * 5))
+    if slider.get("stepMode") == "absolute" and step:
+        actual = lo + _audit_round_away_from_zero((value - lo) / step) * step
+    elif primary == "percent":
+        actual = _audit_round_away_from_zero(value / .05) * .05
+    elif primary in ("percentOfVanilla", "multiplierOfVanilla") and isinstance(ref, (float, int)) and abs(ref) > 1e-12:
+        unit = .05 if primary == "percentOfVanilla" else .01
+        actual = _audit_round_away_from_zero(value / ref / unit) * unit * ref
+    elif step:
+        origin = lo
+        if (pid.startswith("combat.") and
+            not pid.startswith(("combat.playerWeaponDamage", "combat.playerHeadshotMultiplier", "combat.weaponJamming")) and
+            abs(step - .1) < 1e-12):
+            origin = 1.0
+        actual = origin + _audit_round_away_from_zero((value - origin) / step) * step
+    else:
+        actual = value
+    if snapshot.get("medicalOverride") and pid in (
+        "health.bandageHealing", "health.medkitHealing", "health.armyMedkitHealing", "health.ecoMedkitHealing",
+        "health.bandageBleeding", "health.medkitBleeding", "health.armyMedkitBleeding", "health.ecoMedkitBleeding",
+        "health.ecoMedkitAntirad", "health.antiRadRadiation", "health.beerRadiationRemoval", "health.vodkaRadiationRemoval"):
+        hi = 200 if "Healing" in pid else 100 if "Bleeding" in pid else 200
+    return max(lo, min(hi, actual))
+for _name in _factory_preset_names:
+    _doc = json.loads((_factory_preset_dir / f"{_name}.json").read_text(encoding="utf-8"))
+    _values = _doc["values"]
+    _role_record = _full_roles.get(_name, {})
+    if (_role_record.get("referenceDifficulty") != _doc["referenceDifficulty"]
+        or _role_record.get("drinkDurationOverride") != _doc.get("drinkDurationOverride")
+        or _role_record.get("medicalOverride") != _doc.get("medicalOverride")
+        or set(_role_record.get("tabStrategies", {})) != set(p.get("tab") for p in parameters)
+        or any(len(x.strip()) < 12 for x in _role_record.get("tabStrategies", {}).values())):
+        _factory_errors.append(f"{_name}: audited role metadata/strategy drift")
+    for _pid, _source in _factory_catalog.items():
+        _row = _full_rows.get(_pid, {})
+        _cell = (_row.get("roleDecisions") or {}).get(_name, {})
+        _stored = _values[_pid]
+        if _stored["kind"] == "slider":
+            _actual = _stored.get("number")
+        elif _stored["kind"] == "range":
+            _actual = {"min": _stored.get("minNumber"), "max": _stored.get("maxNumber")}
+        elif _stored["kind"] == "toggle":
+            _actual = _stored.get("boolean")
+        else:
+            _actual = _stored.get("text")
+        if _cell.get("value") != _actual or len(_cell.get("reason", "")) < 35:
+            _factory_errors.append(f"{_name}: unaudited/incorrect source decision {_pid}")
+        if _stored["kind"] == "slider":
+            _expected = _audit_normalized_factory_value(_pid, _actual, _source, _doc)
+            if abs(_actual - _expected) > 1e-7:
+                _factory_errors.append(f"{_name}: preset silently re-snaps {_pid}: {_actual} -> {_expected}")
+            if (_pid.startswith("loot.mutant.") and _pid.endswith("Chance")
+                and not .05 - 1e-8 <= _actual <= 1):
+                _factory_errors.append(f"{_name}: trophy chance lost positive visible minimum {_pid}")
+    for _short, _main, _base in (
+        ("survival.waterRegenDuration", "survival.waterEffectDuration", 30),
+        ("survival.energyFullCostDuration", "survival.energyDrinkEffectDuration", 45),
+        ("survival.energyPartialCostDuration", "survival.energyDrinkEffectDuration", 45)):
+        if _values[_short]["number"] > _values[_main]["number"] * _base + 1e-7:
+            _factory_errors.append(f"{_name}: consumable child exceeds parent {_short}")
+    for _triplet in (
+        ("survival.hungerLowThreshold", "survival.hungerMediumThreshold", "survival.hungerStrongThreshold"),
+        ("survival.sleepLowThreshold", "survival.sleepMediumThreshold", "survival.sleepStrongThreshold")):
+        if not _values[_triplet[0]]["number"] <= _values[_triplet[1]]["number"] <= _values[_triplet[2]]["number"]:
+            _factory_errors.append(f"{_name}: survival stage threshold order broken")
+    for _low, _high in (
+        ("survival.bleedingMediumThreshold", "survival.bleedingStrongThreshold"),
+        ("combat.accumulatedDamageWeightMin", "combat.accumulatedDamageWeightMax"),
+        ("stamina.waterMediumDrain", "stamina.waterStrongDrain")):
+        if _values[_low]["number"] > _values[_high]["number"]:
+            _factory_errors.append(f"{_name}: coupled-source ordering broken {_low}")
+    if _values["economy.buyCondition"]["number"] >= _values["economy.sellCondition"]["number"]:
+        _factory_errors.append(f"{_name}: buy/sell condition inverted")
+for _pid, _source in _factory_catalog.items():
+    _row = _full_rows.get(_pid, {})
+    if (_row.get("tab") != _source.get("tab") or _row.get("group") != _source.get("group")
+        or _row.get("control") != _source.get("control")
+        or _row.get("sourceStatus") != (_source.get("support") or {}).get("status")
+        or not _row.get("catalogPurpose")
+        or set((_row.get("roleDecisions") or {})) != set(_factory_preset_names)):
+        _factory_errors.append(f"catalog/ledger drift {_pid}")
+    _expected_targets = [{k: t.get(k) for k in ("scope","file","prototype","path","operation")}
+                         for t in _source.get("targets", [])]
+    if _row.get("nativeTargets") != _expected_targets:
+        _factory_errors.append(f"CFG target provenance changed {_pid}")
+if not (len(_full_rows) == 248 and 12 * len(_full_rows) == 2976):
+    _factory_errors.append("factory deep audit 2,976-decision coverage failed")
+if "Full factory-profile source and decision audit" not in (
+    DOCS / "FACTORY-PROFILE-FULL-AUDIT-2026-10-15.md").read_text(encoding="utf-8"):
+    _factory_errors.append("full factory audit documentation missing")
+if "2026-10-15 — Full source-backed factory audit" not in (
+    DOCS / "FACTORY-PRESETS.md").read_text(encoding="utf-8"):
+    _factory_errors.append("factory overview missing latest deep-audit contract")
+
 if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legacyPath)" not in _factory_service_text:
     _factory_errors.append("legacy factory preset migration cleanup missing")
 

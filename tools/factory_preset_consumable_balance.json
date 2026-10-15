@@ -28,7 +28,7 @@
         "survival.energyDrinkFatigueRelief": 1.1,
         "survival.vodkaEffectDuration": 1,
         "survival.beerEffectDuration": 1,
-        "survival.magicVodkaEffectDuration": 1.3333333333333333
+        "survival.magicVodkaEffectDuration": 1.3333333333
       }
     },
     "Tactical": {
@@ -82,11 +82,11 @@
         "survival.psiBlockRecovery": 30,
         "survival.herculesCarryBonus": 30,
         "survival.energyDrinkFatigueRelief": 1.3,
-        "health.medkitBleeding": 55,
-        "health.ecoMedkitBleeding": 85,
+        "health.medkitBleeding": 30,
+        "health.ecoMedkitBleeding": 50,
         "survival.vodkaEffectDuration": 1,
         "survival.beerEffectDuration": 1,
-        "survival.magicVodkaEffectDuration": 1.6111111111111112
+        "survival.magicVodkaEffectDuration": 1.6111111111
       }
     },
     "Mutant Hunter": {
@@ -114,7 +114,7 @@
         "survival.energyDrinkFatigueRelief": 1.4,
         "survival.vodkaEffectDuration": 1.25,
         "survival.beerEffectDuration": 1,
-        "survival.magicVodkaEffectDuration": 1.7777777777777777
+        "survival.magicVodkaEffectDuration": 1.7777777778
       }
     },
     "Anomaly Runner": {
@@ -142,7 +142,7 @@
         "survival.energyDrinkFatigueRelief": 1.65,
         "survival.vodkaEffectDuration": 1,
         "survival.beerEffectDuration": 1,
-        "survival.magicVodkaEffectDuration": 2.3333333333333335
+        "survival.magicVodkaEffectDuration": 2.3333333333
       }
     },
     "Wanderer": {
@@ -170,7 +170,7 @@
         "survival.energyDrinkFatigueRelief": 1.8,
         "survival.vodkaEffectDuration": 0.75,
         "survival.beerEffectDuration": 0.75,
-        "survival.magicVodkaEffectDuration": 2.5555555555555554
+        "survival.magicVodkaEffectDuration": 2.5555555556
       }
     },
     "Mercenary": {
@@ -198,7 +198,7 @@
         "survival.energyDrinkFatigueRelief": 1.6,
         "survival.vodkaEffectDuration": 1,
         "survival.beerEffectDuration": 1,
-        "survival.magicVodkaEffectDuration": 1.3888888888888888
+        "survival.magicVodkaEffectDuration": 1.3888888889
       }
     },
     "Smuggler": {
@@ -208,7 +208,7 @@
       "changes": {
         "survival.hungerRate": 0.01,
         "survival.waterEffectDuration": 5,
-        "survival.energyDrinkEffectDuration": 4.333333333333333,
+        "survival.energyDrinkEffectDuration": 4.3333333333,
         "survival.waterRegenDuration": 55,
         "survival.energyFullCostDuration": 35,
         "survival.energyPartialCostDuration": 100,
@@ -236,7 +236,7 @@
       "changes": {
         "survival.hungerRate": 0.011,
         "survival.waterEffectDuration": 3,
-        "survival.energyDrinkEffectDuration": 3.3333333333333335,
+        "survival.energyDrinkEffectDuration": 3.3333333333,
         "survival.waterRegenDuration": 25,
         "survival.energyFullCostDuration": 20,
         "survival.energyPartialCostDuration": 65,
@@ -254,7 +254,7 @@
         "survival.energyDrinkFatigueRelief": 0.85,
         "survival.vodkaEffectDuration": 1.25,
         "survival.beerEffectDuration": 1,
-        "survival.magicVodkaEffectDuration": 1.1111111111111112
+        "survival.magicVodkaEffectDuration": 1.1111111111
       }
     },
     "Outcast": {
@@ -263,7 +263,7 @@
       "medicalOverride": false,
       "changes": {
         "survival.hungerRate": 0.012,
-        "survival.waterEffectDuration": 3.3333333333333335,
+        "survival.waterEffectDuration": 3.3333333333,
         "survival.energyDrinkEffectDuration": 3,
         "survival.waterRegenDuration": 20,
         "survival.energyFullCostDuration": 15,
@@ -320,7 +320,7 @@
       "changes": {
         "survival.hungerRate": 0.014,
         "survival.waterEffectDuration": 3,
-        "survival.energyDrinkEffectDuration": 3.3333333333333335,
+        "survival.energyDrinkEffectDuration": 3.3333333333,
         "survival.waterRegenDuration": 15,
         "survival.energyFullCostDuration": 10,
         "survival.energyPartialCostDuration": 40,
@@ -338,7 +338,7 @@
         "survival.energyDrinkFatigueRelief": 0.55,
         "survival.vodkaEffectDuration": 1.75,
         "survival.beerEffectDuration": 1.5,
-        "survival.magicVodkaEffectDuration": 0.8333333333333334
+        "survival.magicVodkaEffectDuration": 0.8333333333
       }
     }
   }

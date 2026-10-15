@@ -30,7 +30,7 @@
     },
     "combat.weaponJamming": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1
     },
     "combat.explosionDamage": {
       "kind": "slider",
@@ -46,11 +46,11 @@
     },
     "combat.accumulatedDamageWeightMax": {
       "kind": "slider",
-      "number": 0.25
+      "number": 0.3
     },
     "combat.accumulatedDamageWeightMin": {
       "kind": "slider",
-      "number": 0.08
+      "number": 0.1
     },
     "combat.accumulatedDamageIncludesHealedHealth": {
       "kind": "toggle",
@@ -58,23 +58,23 @@
     },
     "combat.mutantHealth.bloodsucker": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1
     },
     "combat.mutantHealth.chimera": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1.05
     },
     "combat.mutantHealth.deer": {
       "kind": "slider",
-      "number": 1.1
+      "number": 0.95
     },
     "combat.mutantHealth.pseudogiant": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1.2
     },
     "combat.mutantHealth.pseudodog": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1.05
     },
     "combat.mutantHealth.burer": {
       "kind": "slider",
@@ -82,11 +82,11 @@
     },
     "combat.mutantHealth.bayun": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1
     },
     "combat.mutantHealth.controller": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1.15
     },
     "combat.psySpawnCycleDelay": {
       "kind": "slider",
@@ -166,7 +166,7 @@
     },
     "health.regenerationScalar": {
       "kind": "slider",
-      "number": 0.88
+      "number": 0.9
     },
     "health.lowHealthRegen": {
       "kind": "slider",
@@ -311,7 +311,7 @@
     },
     "loot.cheapStashGrenadeChance": {
       "kind": "slider",
-      "number": 0.08
+      "number": 0.1
     },
     "loot.cheapStashGrenadeQuantity": {
       "kind": "slider",
@@ -327,7 +327,7 @@
     },
     "loot.ammoBoxWeight918": {
       "kind": "slider",
-      "number": 0.9
+      "number": 1
     },
     "loot.ammoBoxWeight045": {
       "kind": "slider",
@@ -335,11 +335,11 @@
     },
     "loot.ammoBoxWeight545": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1
     },
     "loot.ammoBoxWeight012": {
       "kind": "slider",
-      "number": 0.9
+      "number": 1
     },
     "loot.destructibleGrenadeQuantity": {
       "kind": "slider",
@@ -351,7 +351,7 @@
     },
     "loot.expensiveStashMoneyChance": {
       "kind": "slider",
-      "number": 0.07
+      "number": 0.05
     },
     "economy.startingMoney": {
       "kind": "slider",
@@ -367,7 +367,7 @@
     },
     "economy.itemValueFloor": {
       "kind": "slider",
-      "number": 0.08
+      "number": 0.1
     },
     "economy.traderAmmoStock": {
       "kind": "slider",
@@ -471,7 +471,7 @@
     },
     "survival.starvationStaminaDrain": {
       "kind": "slider",
-      "number": 1.17
+      "number": 1.15
     },
     "survival.starvationDamage": {
       "kind": "slider",
@@ -487,11 +487,11 @@
     },
     "survival.starvationHealthRegenPenalty": {
       "kind": "slider",
-      "number": 0.7075
+      "number": 0.7
     },
     "survival.fatigueLowAimPenalty": {
       "kind": "slider",
-      "number": 0.18
+      "number": 0.2
     },
     "survival.fatigueMediumAimPenalty": {
       "kind": "slider",
@@ -503,11 +503,11 @@
     },
     "survival.fatigueMediumReloadPenalty": {
       "kind": "slider",
-      "number": 0.17
+      "number": 0.15
     },
     "survival.fatigueStrongReloadPenalty": {
       "kind": "slider",
-      "number": 0.225
+      "number": 0.25
     },
     "survival.sleepHealthRestore": {
       "kind": "slider",
@@ -519,7 +519,7 @@
     },
     "survival.severeFatigueMaxStamina": {
       "kind": "slider",
-      "number": 0.12
+      "number": 0.1
     },
     "survival.severeFatigueCarryWeight": {
       "kind": "slider",
@@ -623,7 +623,7 @@
     },
     "loot.mutant.blindDogChance": {
       "kind": "slider",
-      "number": 0.088
+      "number": 0.1
     },
     "loot.mutant.bloodsuckerChance": {
       "kind": "slider",
@@ -631,15 +631,15 @@
     },
     "loot.mutant.boarChance": {
       "kind": "slider",
-      "number": 0.132
+      "number": 0.15
     },
     "loot.mutant.burerChance": {
       "kind": "slider",
-      "number": 0.572
+      "number": 0.55
     },
     "loot.mutant.catChance": {
       "kind": "slider",
-      "number": 0.528
+      "number": 0.55
     },
     "loot.mutant.chimeraChance": {
       "kind": "slider",
@@ -647,35 +647,35 @@
     },
     "loot.mutant.controllerChance": {
       "kind": "slider",
-      "number": 0.528
+      "number": 0.55
     },
     "loot.mutant.deerChance": {
       "kind": "slider",
-      "number": 0.528
+      "number": 0.55
     },
     "loot.mutant.fleshChance": {
       "kind": "slider",
-      "number": 0.132
+      "number": 0.15
     },
     "loot.mutant.poltergeistChance": {
       "kind": "slider",
-      "number": 0.396
+      "number": 0.4
     },
     "loot.mutant.pseudodogChance": {
       "kind": "slider",
-      "number": 0.528
+      "number": 0.55
     },
     "loot.mutant.pseudogiantChance": {
       "kind": "slider",
-      "number": 0.572
+      "number": 0.55
     },
     "loot.mutant.tushkanChance": {
       "kind": "slider",
-      "number": 0.132
+      "number": 0.15
     },
     "loot.mutant.snorkChance": {
       "kind": "slider",
-      "number": 0.0616
+      "number": 0.05
     },
     "equipment.weaponWearPerShot": {
       "kind": "slider",

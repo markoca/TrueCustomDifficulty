@@ -1,6 +1,14 @@
 # Factory Presets
 
-### 2026-10-15 — Consumable cadence, override and role differentiation (CURRENT)
+### 2026-10-15 — Full source-backed factory audit (CURRENT)
+
+All twelve factory profiles have now been audited against the **248-entry native CFG source catalogue**, with **2,976 individual profile-setting decisions** and per-source evidence/role reasoning in `tools/factory_preset_full_source_audit.json`. Existing values were reauthored to match **actual UI normalization** instead of silently changing on preset load, and eight previously identical major mutant HP classes were differentiated by role. Rare positive trophy chances no longer accidentally load as zero; the newer matrix remains synchronized with older factory matrices. **197 confirmed / 51 runtime-pending** source mappings are labeled honestly; full .NET/Wine and in-game tests are pending. Only exact pristine preceding stock JSONs migrate; edited user profiles are preserved.
+
+**Scope:** 12 factory role snapshots keep 248 native source IDs each, 5-second consumable Override Limits plus Field Medic's separate medical override, unchanged `referenceDifficulty`, and the slower hunger rate from the preceding rebalance. Every entry now has an explicit **native source purpose, CFG edit targets, evidence status, role-specific stored value, per-role tradeoff reason and reference comparator**. See [the full per-setting table](FACTORY-PROFILE-FULL-AUDIT-2026-10-15.md) and `tools/factory_preset_full_source_audit.json` for the per-role rationale. This is an authored balance hypothesis, not a claim about live spawn rates, drop frequencies or time-to-kill. The audit intentionally preserves shared stage thresholds, recovery limits and unverified neutral parameters where variation would be unjustified.
+
+**The prior “role-first deep rebalance” and “consumable cadence” passages are historical context, superseded by this full-source pass.**
+
+### 2026-10-15 — Consumable cadence, override and role differentiation (HISTORICAL; SUPERSEDED)
 
 All 12 factory profiles explicitly save the existing `drinkDurationOverride` UI-only root flag. This permits **270s maximum drink effects** and **900s maximum Vinca/Hercules/Psi Block durations** without inventing a CFG parameter. Each profile retains **248 native CFG-backed controls** (preset format v1) and the same independent Water bonus/cost-cut sources and parent/child duration limits. **Field Medic** alone additionally enables the independent `medicalOverride` to allow much stronger source-backed medkit bleeding treatment. The source of truth is `tools/factory_preset_consumable_balance.json`; earlier expansion/scarcity/role matrix expectations remain synchronized.
 
@@ -8,7 +16,7 @@ Every preset now uses a **0.007–0.014 points/s hunger gain** (vanilla **0.015*
 
 The existing preset loader restores override mode **before** source values. `PreConsumableRebalanceFactoryBlobs` authorizes reseeding only *exact-byte pristine* previous factory files; modified factory files and user-created profiles are never overwritten. No UI geometry, interaction, title, CFG writer or native parameter was added/changed; Wine and game validation remain pending.
 
-### 2026-10-15 — Role-first deep rebalance (CURRENT)
+### 2026-10-15 — Role-first deep rebalance (HISTORICAL; SUPERSEDED)
 
 All **twelve factory profiles** still store all **248 native CFG-backed catalog parameter entries**, while **78 audited control IDs** have been rebalanced across all ten tabs, resulting in **702 actual value changes**. The committed reproducible source is `tools/factory_preset_role_rebalance.json`, which is checked against every role JSON by `tools/audit_project_consistency.py`. Original 37-source expansion and 46-source scarcity matrices are synchronized wherever this pass changes their controls.
 

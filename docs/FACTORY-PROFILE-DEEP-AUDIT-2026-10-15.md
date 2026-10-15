@@ -1,5 +1,7 @@
 # Factory-profile deep audit — 2026-10-15
 
+**SUPERSEDED HISTORICAL PASS:** This earlier 78-control rationale was extended by the full 248-source × 12-role review in `docs/FACTORY-PROFILE-FULL-AUDIT-2026-10-15.md`. Consult that new document and `tools/factory_preset_full_source_audit.json` for the current snapshots, actual UI snap-aligned values and per-setting source reasoning. All numerical values below describe the earlier pass only.
+
 **Historical baseline:** The 78-source role pass documented below has been followed by a consumable cadence / override rebalance. Current values and the new source-backed per-role contract live in `tools/factory_preset_consumable_balance.json` and `docs/FACTORY-PRESETS.md`; earlier hunger/drink values here are not the current factory snapshots.
 
 ## Scope and source verification
