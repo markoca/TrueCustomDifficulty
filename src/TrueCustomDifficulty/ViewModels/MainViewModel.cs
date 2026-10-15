@@ -1817,13 +1817,6 @@ public sealed class MainViewModel : ObservableObject
                 "stamina.meleeStrongCost" => 240,
                 "stamina.butstockCost" => 250,
 
-                // Internal movement-state stamina effects (normal UI-hidden in v0.1.90+).
-                "stamina.sprintRegenCoef" => 300,
-                "stamina.sprintUnderRunSpeedRegenCoef" => 330,
-                "stamina.runRegenCoef" => 340,
-                "stamina.joggingRegenCoef" => 350,
-                "stamina.slowRunRegenCoef" => 360,
-
                 // Traversal
                 "stamina.vaultMaxHeight" => 400,
 
