@@ -2487,7 +2487,7 @@ _exhaustion_render_markers = (
     'DrawRecoverySourceTrack(dc, _lowRecoveryStrength, "STRENGTH"',
     'DrawRecoverySourceTrack(dc, _lowRecoveryDuration, "DURATION"',
     '"SPRINT STOPS BELOW"', '"BOOST STARTS BELOW"',
-    '"stamina THRESHOLDS"',
+    '"STAMINA THRESHOLDS"',
     'private const string MaxStaminaParameterId = "stamina.maxSP";',
     'byId.TryGetValue(MaxStaminaParameterId, out _maximumStamina);',
     'var staminaMax = Math.Max(100.0, _maximumStamina?.CurrentNumber ?? 100.0);',
@@ -2704,7 +2704,7 @@ _hunger_required = (
     'highlight[0] = threshold.IsValueModifiedFromReference();',
     'highlight[j] = true;',
     'Enumerable.Repeat(true, timeNumbers).ToArray()',
-    '$"-{recoveryLoss.CurrentNumber * 100:0}% stamina RECOVERY"',
+    '$"-{recoveryLoss.CurrentNumber * 100:0}% STAMINA RECOVERY"',
     'StageCaption(0, "LOW", low, null);',
     'StageCaption(1, "MEDIUM", medium, mediumPenalty);',
     'StageCaption(2, "SEVERE", severe, severePenalty);',
@@ -2822,7 +2822,7 @@ _fatigue_first_row = (_primary_src[_fatigue_start:_fatigue_preview]
 _primary_expected = {
     "Hunger": (_hunger_first_row, (
         'DrawCoreResourceRuler(dc, rate, "HUNGER RATE", "pts/s"',
-        'DrawCoreResourceRuler(dc, wellFed, "WELL-FED stamina RECOVERY", "%"',
+        'DrawCoreResourceRuler(dc, wellFed, "WELL-FED STAMINA RECOVERY", "%"',
     )),
     "Fatigue": (_fatigue_first_row, (
         'DrawCoreResourceRuler(dc, rate, "FATIGUE RATE", "pts/s"',
@@ -3024,9 +3024,9 @@ for _token in (
     "energySectionLeft + (index - 1) *",
     "var visibleLabel = card.Width < 235.0 ? parameter.Id switch",
     "new Point(card.Left + 12.0, card.Top + 7.0)",
-    "(waterRegenTime, \"+25% MAX stamina\")",
-    "(energyFullCostTime, \"NO stamina COST DURATION\")",
-    "(energyPartialCostTime, \"-30% stamina COST DURATION\")",
+    "(waterRegenTime, \"+25% MAX STAMINA\")",
+    "(energyFullCostTime, \"NO STAMINA COST DURATION\")",
+    "(energyPartialCostTime, \"-30% STAMINA COST DURATION\")",
 ):
     if _token not in _duration_renderer:
         fail(f"consumable short-duration native control/measurement missing: {_token}")
@@ -4134,9 +4134,9 @@ for _cid in _consumer_ids:
             or _def["targets"][0].get("operation") != "set"):
         _consumer_errors.append(f"{_cid}: absolute-percent writer/UI contract drift")
 for _required in (
-    'DrawSourceKnob(dc, burst, "WATER stamina GAIN",',
-    'DrawSourceKnob(dc, energyBurst, "ENERGY DRINK stamina GAIN",',
-    'DrawSourceKnob(dc, waterStamina, "WATER stamina BUFF",',
+    'DrawSourceKnob(dc, burst, "WATER STAMINA GAIN",',
+    'DrawSourceKnob(dc, energyBurst, "ENERGY DRINK STAMINA GAIN",',
+    'DrawSourceKnob(dc, waterStamina, "WATER STAMINA BUFF",',
     'DrawSourceKnob(dc, energyStamina, "ENERGY DRINK REGEN",',
     'var knobBankWidth = Math.Min(720.0, ActualWidth - 34.0);',
 ):
@@ -4779,9 +4779,8 @@ for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
         fail("Missing Open ~mods folder catalog entry: " + _doc)
 note("Settings Open ~mods: compact, persisted-only validated folder, ShellExecute, no unsaved path")
 
-# Latest UI language contract: uppercase STAMINA is forbidden in user-visible
-# labels, graphic readouts, tooltips and unit definitions. Source CFG names and
-# historical engineering documents remain untouched.
+# Stamina casing: use all-caps STAMINA inside all-caps headings and
+# captions, but lowercase stamina in numeric units and natural-language prose.
 _stamina_display_paths = (
     ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs",
     ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs",
@@ -4790,22 +4789,38 @@ _stamina_display_paths = (
 )
 for _source in _stamina_display_paths:
     _display_text = _source.read_text(encoding="utf-8")
-    if "STAMINA" in _display_text:
-        fail("Uppercase STAMINA reintroduced in player-facing UI source: " + str(_source.relative_to(ROOT)))
+    if "STAMINA/s" in _display_text or '} STAMINA"' in _display_text:
+        fail("Numeric stamina unit must be lowercase: " + str(_source.relative_to(ROOT)))
+_stamina_caps = (ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs").read_text(encoding="utf-8")
+_stamina_labels = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+for _needle in ('"STAMINA USAGE"', '"STAMINA THRESHOLDS"', '"LOW-STAMINA BOOST"'):
+    if _needle not in _stamina_caps:
+        fail("Stamina heading must retain all-caps STAMINA: " + _needle)
 for _needle in (
-    '"stamina.maxSP" => $"{CurrentNumber:0} stamina"',
-    '"stamina.lowRecoveryStrength" => $"{CurrentNumber:0.##} stamina/s"',
+        '"CORE STAMINA"', '"MAX STAMINA", "stamina"',
+        '"BASE RECOVERY", "stamina/s"',
+        '"WATER STAMINA GAIN"', '"ENERGY DRINK STAMINA GAIN"',
+        '"WATER STAMINA BUFF"', '"STAMINA RESTORE STRENGTH"',
+        '"WELL-FED STAMINA RECOVERY"', '"STAMINA RECOVERY LOSS"',
+        '"NO STAMINA COST DURATION"',
+        ):
+    if _needle not in _stamina_labels:
+        fail("All-caps stamina caption or lowercase unit drifted: " + _needle)
+for _needle in (
+        '"stamina.maxSP" => $"{CurrentNumber:0} stamina"',
+        '"stamina.lowRecoveryStrength" => $"{CurrentNumber:0.##} stamina/s"',
+        '"stamina.regeneration" => $"{CurrentNumber:0.#} stamina/s"',
 ):
     if _needle not in _stamina_vm:
-        fail("Stamina numeric readout must use lowercase stamina and stamina/s: " + _needle)
+        fail("Stamina numeric readout must use lowercase units: " + _needle)
 if next((p for p in parameters if p.get("id") == "stamina.sprintDisableThreshold"), {}).get("display", {}).get("unit") != "stamina":
-    fail("Stamina sprint cutoff unit must display in lowercase")
+    fail("Stamina sprint cutoff unit must display lowercase")
 if next((p for p in parameters if p.get("id") == "stamina.lowRecoveryThreshold"), {}).get("display", {}).get("unit") != "stamina":
-    fail("Stamina recovery threshold unit must display in lowercase")
+    fail("Stamina recovery threshold unit must display lowercase")
 for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
-    if "Lowercase stamina labels in all player-facing UI (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
-        fail("Missing lowercase stamina catalog contract: " + _doc)
-note("Stamina UI: lowercase stamina / stamina/s for labels, tooltips and unit readouts")
+    if "Contextual STAMINA capitalization for headings and units (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        fail("Missing contextual stamina casing contract: " + _doc)
+note("Stamina casing: STAMINA headings, lowercase stamina/s and numeric units")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

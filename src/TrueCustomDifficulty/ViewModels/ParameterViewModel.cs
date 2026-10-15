@@ -82,14 +82,14 @@ public sealed class ParameterViewModel : ObservableObject
                     "FatigueCurve" => "The upper native rulers set fatigue points gained per second and energy drink fatigue relief. Below, adjust stage thresholds and combat penalties independently.",
                     "RadiationBalance" => "Turn ACCUMULATION RATE and HP DAMAGE as multipliers; RECOVERY is real radiation points per second (0–0.10 PTS/S). Select 1–100 RAD on the ring or RAD CONTROLS bar to inspect its source damage and a fixed-RAD full-HP death estimate (one assumed charge/sec, no healing). ACCUMULATION RATE and RECOVERY do not affect this fixed-level estimate.",
                     "StarvationTimeline" => "Adjust when penalties begin, how often damage ticks occur and the three penalty strengths using their individual controls. The timeline is a preview.",
-                    "ConsumableMixer" => "WATER stamina GAIN and ENERGY DRINK stamina GAIN independently set immediate stamina restored in percent (vanilla 38% and 50%). WATER stamina BUFF changes Water regeneration and action-cost reduction; ENERGY DRINK REGEN adjusts sustained stamina recovery. Drag duration markers below; OVERRIDE LIMITS expands duration ranges. Limited Energy Drink keeps its vanilla 100% instant refill.",
+                    "ConsumableMixer" => "WATER STAMINA GAIN and ENERGY DRINK STAMINA GAIN independently set immediate stamina restored in percent (vanilla 38% and 50%). WATER STAMINA BUFF changes Water regeneration and action-cost reduction; ENERGY DRINK REGEN adjusts sustained stamina recovery. Drag duration markers below; OVERRIDE LIMITS expands duration ranges. Limited Energy Drink keeps its vanilla 100% instant refill.",
                     "SleepingDashboard" => "Select 1–14 minimum sleep hours directly in the step row; other tracks set sleep eligibility and wake-up recovery.",
                     "CoreHealthDashboard" => "Set MAX HP and PASSIVE RECOVERY directly; below, Recovery Delay, Recovery Multiplier and Low-HP Recovery Rate are independent CFG sources. Medical items stay in their own section; no synthetic health threshold.",
-                    "StaminaCore" => "CORE stamina sets Maximum stamina and Base Recovery with matching native resource rulers. MOVEMENT LIMITS keeps the vault-height ruler and calibrated Carry Weight in KG; all four sources remain independent.",
+                    "StaminaCore" => "CORE STAMINA sets Maximum stamina and Base Recovery with matching native resource rulers. MOVEMENT LIMITS keeps the vault-height ruler and calibrated Carry Weight in KG; all four sources remain independent.",
                     "WaterStaminaPressure" => "Drag the MEDIUM WATER or DEEP WATER track separately.",
                     "SevereFatiguePenaltyBoard" => "Enable severe-fatigue mechanics, then drag each of the five vertical penalty equalizer bars independently.",
                     "MasterLowHealth" => "Enable low-health mechanics and turn the HEALTH RECOVERY LOSS knob; the percentage controls HP regeneration loss below the authored low-health trigger.",
-                    "MasterRadiationPenalty" => "Enable radiation mechanics and turn the ACTION stamina COST knob; the percentage controls extra action stamina cost while the penalty applies.",
+                    "MasterRadiationPenalty" => "Enable radiation mechanics and turn the ACTION STAMINA COST knob; the percentage controls extra action stamina cost while the penalty applies.",
                     "MasterMedicalHealing" => "Switch the Master effect bundle on or off; adjust the Bandage, Medkit or Army Medkit healing tracks independently.",
                     "CouponFlow" => "Drag the Starting Coupons rail directly from 0 to 100,000 (10-coupon native steps), or use arrow/Home/End keys for precision. Main and Side Quest reward meters are independent.",
                     "TradingDashboard" => "Use the mirrored YOU SELL / YOU BUY price meters; condition acceptance and broken-value remain separate controls.",
@@ -124,7 +124,7 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag an action's track to change how much stamina that move costs."
                     + Environment.NewLine + "Right-click one track to reset it; R resets all Stamina Usage actions.";
             if (IsExhaustionRecoveryMember)
-                return "On the stamina THRESHOLDS ruler, drag the top marker to choose when sprint stops, or the bottom marker to choose when the low-stamina boost starts. The ruler uses 100 stamina by default and expands with Maximum Stamina above 100; each marker keeps its own native limit."
+                return "On the STAMINA THRESHOLDS ruler, drag the top marker to choose when sprint stops, or the bottom marker to choose when the low-stamina boost starts. The ruler uses 100 stamina by default and expands with Maximum Stamina above 100; each marker keeps its own native limit."
                     + Environment.NewLine + "Aiming, exhaustion delay and low-stamina boost stay independent. Right-click one source or press R for all.";
             if (IsMedicalHealingMember)
                 return "Four HEAL/BLEED pairs and four RAD columns (Scientific, Anti-Rad, Beer, Vodka) edit independent effects."

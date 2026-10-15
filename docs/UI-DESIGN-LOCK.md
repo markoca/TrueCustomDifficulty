@@ -1,5 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Contextual STAMINA capitalization for headings and units (CURRENT)
+
+Restore uppercase **STAMINA** wherever it belongs to an otherwise ALL-CAPS visible heading, card title, control caption, stage label or descriptive phrase in the native UI: examples include `CORE STAMINA`, `STAMINA USAGE`, `MAX STAMINA`, `STAMINA THRESHOLDS`, `LOW-STAMINA BOOST`, `WATER STAMINA GAIN`, `NO STAMINA COST DURATION`. This explicitly supersedes the previous blanket lowercase instruction for all-uppercase UI labels, which had resulted in inconsistent mixed-case headings.
+
+Use lowercase `stamina` for **quantity units**, especially readouts such as `100 stamina`, `+10 stamina`, `10 stamina/s`, axes annotated with quantities, interactive numeric unit strings and prose descriptions (`STAMINA/s` is forbidden). Preserve the independently editable CFG-backed controls, reference ticks, per-source precision, visual hierarchy, native units, existing reset/preset interaction and all build/deployment semantics. The underlying `stamina.*` parameter IDs and catalog numeric values are not renamed. Update static assertions for headings and lowercase numeric readouts and confirm the Windows build/Wine visual appearance locally.
+
+
 ### 2026-10-15 — Lowercase stamina labels in all player-facing UI (CURRENT)
 
 Every literal uppercase `STAMINA` appearing in the active application UI must instead be written **`stamina`**. This includes native stamina panels, titles, graph captions/axes, slider/current-value units, derived numerical readouts, consumable and exhaustion controls, tooltips and catalog-driven descriptions/rationales. `STAMINA/s` becomes `stamina/s`. Other words retain their existing casing and the existing compact typography, control dimensions, native value highlighting and non-emphasized Base/Vanilla markers. This rule supersedes earlier uppercase UI-label examples in these historical catalogs; they are preserved as historical records, not active rendering requirements.

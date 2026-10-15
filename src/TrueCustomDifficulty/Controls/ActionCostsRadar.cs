@@ -242,7 +242,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         _targets.Clear();
 
         DrawCenteredText(dc,
-            IsExhaustion ? "EXHAUSTION & RECOVERY" : "stamina USAGE",
+            IsExhaustion ? "EXHAUSTION & RECOVERY" : "STAMINA USAGE",
             new Point(ActualWidth / 2.0, 21.0),
             12.5, accent, FontWeights.Bold);
 
@@ -388,7 +388,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         DrawRecoveryFrame(dc, card, panel, border);
-        DrawCenteredText(dc, "stamina THRESHOLDS",
+        DrawCenteredText(dc, "STAMINA THRESHOLDS",
             new Point(card.Left + card.Width / 2.0, card.Top + 16.0),
             10.2, text, FontWeights.Bold);
 
@@ -508,7 +508,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         DrawRecoveryFrame(dc, card, panel, border);
-        DrawText(dc, "LOW-stamina BOOST",
+        DrawText(dc, "LOW-STAMINA BOOST",
             new Point(card.Left + 12.0, card.Top + 9.0),
             10.0, text, FontWeights.Bold);
         const double gap = 14.0;
