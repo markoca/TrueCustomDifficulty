@@ -15,7 +15,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
     private const double KnobStartAngle = 135.0;
     private const double KnobSweepAngle = 270.0;
     private const double KnobRadius = 47.0;
-    private const double MaxContentWidth = 756.0;
     private const double ColumnGap = 16.0;
     private const double RowHeight = 52.0;
 
@@ -395,12 +394,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         InvalidateVisual();
     }
 
-    private Rect ContentRect()
-    {
-        var width = Math.Min(MaxContentWidth, Math.Max(1.0, ActualWidth - 32.0));
-        return new Rect((ActualWidth - width) / 2.0, 0.0, width, ActualHeight);
-    }
-
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
         base.OnMouseLeftButtonDown(e);
@@ -626,12 +619,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         }
 
         return -1;
-    }
-
-    private static string Compact(string value, int maxLength)
-    {
-        var compact = value.Replace(Environment.NewLine, " ").Trim();
-        return compact.Length <= maxLength ? compact : compact[..Math.Max(1, maxLength - 1)] + "…";
     }
 
     private static Brush FindBrush(string key, Brush fallback)

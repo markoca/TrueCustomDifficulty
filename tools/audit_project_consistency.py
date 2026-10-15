@@ -956,6 +956,21 @@ for _required in (
         fail('Active Loot or shared hit/render path missing: ' + _required)
 note('Loot tab: retired mixer source/family and strip hit paths removed; source-native editors retained')
 
+# Anomalies tab: source-backed radar retains ten alphabetized channels,
+# global damage knob and all pointer/keyboard routes. Retired layout/label
+# helpers were never called by any visible renderer.
+_anomaly_cleanup = (ROOT / 'src/TrueCustomDifficulty/Controls/AnomalyDamageRadar.cs').read_text(encoding='utf-8')
+if any(token in _anomaly_cleanup for token in (
+        'private Rect ContentRect(', 'private static string Compact(',
+        'private const double MaxContentWidth =')):
+    fail('Anomaly radar dead geometry/abbreviation helpers returned')
+if not all(token in _anomaly_cleanup for token in (
+        'private void DrawGlobalDamageKnob(', 'private void SetGlobalDamage(',
+        'new("environment.razorHealthDamage", "GLASS SHARDS", true)',
+        'protected override void OnMouseWheel(', 'protected override void OnMouseRightButtonDown(')):
+    fail('Anomaly radar active edits or source labels lost in cleanup')
+note('Anomalies: removed two unused radar helpers and orphaned width cap, no live UI changes')
+
 # The player-facing ten-lane damage editor is alphabetized by its
 # actual labels, not by CFG IDs, and both special effects use the same
 # source-native mechanical knobs as the rest of the app.

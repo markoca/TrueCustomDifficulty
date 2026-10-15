@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Anomalies tab, unused radar helpers cleanup (CURRENT)
+
+The live `AnomalyDamageRadar` renders ten alphabetized individually editable anomaly damage rows, with source-native controls and the separate global knob. Remove only its unreferenced `ContentRect` layout helper, its now-unused `MaxContentWidth` constant, and the uncalled `Compact` string-ellipsis helper. No active code depends on these declarations. Preserve all anomaly labels (including GLASS SHARDS), exact value ranges/steps, modified-value coloring, hover/click/drag/keyboard/right-click controls, source mappings, both global and individual damage paths, all other anomaly families, presets and CFG writer. Card geometry and user-visible text remain unchanged. The consistency audit checks source retention and dead-code absence; local build/Wine confirmation remains pending.
+
 ### 2026-10-15 — Loot tab: retired mixer cleanup (CURRENT)
 
 The `BreakableBoxYields` aggregate family has no active renderer or editable members. Its two genuine sources (`loot.destructibleAmmoQuantity` and `loot.destructibleGrenadeQuantity`) are already shown by the live `AmmoDistribution` board. Remove the empty family dispatcher, member registration and height calculation, the unreachable vertical mixer renderer chain (`DrawNumericMixerBoard`, `DrawMixerBoard`, `DrawMixerStrip`) with source lists, sizing helpers and `MixerValue`, plus their exclusively obsolete `MixerSelect` / `MixerBaseMarker` event branches and hit types. Never display a second editor for those source values.
