@@ -2086,8 +2086,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         IndustrialRulerChrome.DrawActiveRailGlint(dc, track.Left, currentX, y,
             accent, enabled);
 
-        // 100% is unmodified original healing, NOT the difficulty's Base tick.
-        if (parameter.Minimum <= 1.0 && parameter.Maximum >= 1.0)
+        // Only draw a separate 100% guide when it is inside the range;
+        // at the new native endpoint, the 100% label already explains the limit.
+        if (parameter.Minimum < 1.0 && parameter.Maximum > 1.0)
         {
             var fullHealingX = ValueToX(1.0, parameter.Minimum,
                 parameter.Maximum, track, false);
@@ -2120,7 +2121,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     // These modifiers are independent source ValueMultipliers, not HP previews.
     // Keep the universal parent toggle; avoid a dangling third card and
-    // compare all three on one continuous native 0–200% horizontal axis.
+    // compare all three on one continuous native 0–100% horizontal axis.
     private void DrawMasterMedicalHealing(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush soft, Brush accent, Brush panel)
@@ -2149,7 +2150,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // The shared axis is a neutral guide, not a fourth editable control.
         var first = P(channels[0].Id);
         var scaleMin = first?.Minimum ?? 0.0;
-        var scaleMax = first?.Maximum ?? 2.0;
+        var scaleMax = first?.Maximum ?? 1.0;
         var left = bank.Left + 18.0;
         var right = bank.Right - 18.0;
         var scaleTop = bank.Bottom - 19.0;
@@ -2157,7 +2158,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(left, scaleTop), 9.0, muted, FontWeights.Normal);
         DrawRightAlignedText(dc, MasterPercent(scaleMax),
             new Point(right, scaleTop), 9.0, muted, FontWeights.Normal);
-        if (scaleMin <= 1.0 && scaleMax >= 1.0 && scaleMax > scaleMin)
+        if (scaleMin < 1.0 && scaleMax > 1.0)
         {
             var centerX = left + (1.0 - scaleMin) / (scaleMax - scaleMin) *
                 (right - left);
@@ -3846,7 +3847,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         // Source values remain seconds / HP, not fictitious multipliers.
         var knobs = new (string Id, string Label, string Unit)[]
         {
-            ("survival.starvationPenaltyDelay", "PENALTIES START", "SECONDS"),
+            ("survival.starvationPenaltyDelay", "PENALTIES START AFTER", "SECONDS"),
             ("survival.starvationDamage", "HP DAMAGE PER TICK", "HP"),
             ("survival.starvationDamageInterval", "DAMAGE EVERY", "SECONDS")
         };

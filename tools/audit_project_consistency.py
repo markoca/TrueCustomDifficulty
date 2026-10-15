@@ -5081,6 +5081,38 @@ for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
         fail('Current Stamina copy contract missing from catalog ' + _doc)
 note('Stamina: SPRINT percentage says STAMINA DRAIN, exhaustion delay says REGEN STARTS AFTER')
 
+
+# 2026-10-15: Starvation onset caption and Master healing efficiency
+# range are source-native contracts (0–100%, not a cosmetic 200% ruler).
+_starve_master_ui = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+_starve_delay = _starve_master_ui.split('private void DrawStarvationTimeline(', 1)[-1].split('var previewTop = StarvationPreviewTop;', 1)[0]
+_master_100 = _starve_master_ui.split('private void DrawMasterMedicalHealing(', 1)[-1].split('// Shared source-native vertical scale.', 1)[0]
+_master_100_lane = _starve_master_ui.split('private void DrawMasterHealingLane(', 1)[-1].split('private void DrawMasterMedicalHealing(', 1)[0]
+_master_100_contract = {
+    'health.masterBandageModifier': 0.25,
+    'health.masterMedkitModifier': 0.71,
+    'health.masterArmyMedkitModifier': 0.82,
+}
+if ('("survival.starvationPenaltyDelay", "PENALTIES START AFTER", "SECONDS")' not in _starve_delay
+    or '("survival.starvationPenaltyDelay", "PENALTIES START", "SECONDS")' in _starve_delay
+    or 'var scaleMax = first?.Maximum ?? 1.0;' not in _master_100
+    or 'if (scaleMin < 1.0 && scaleMax > 1.0)' not in _master_100
+    or 'if (parameter.Minimum < 1.0 && parameter.Maximum > 1.0)' not in _master_100_lane
+    or 'native 0–100% horizontal axis' not in _starve_master_ui):
+    fail('Master 0–100% healing ruler / Starvation onset label drifted')
+for _mid, _vanilla in _master_100_contract.items():
+    _p = next((p for p in parameters if p.get('id') == _mid), {})
+    _slider = _p.get('slider') or {}
+    if (_slider.get('min') != 0 or _slider.get('max') != 1
+        or _slider.get('step') != 0.01
+        or (_p.get('vanilla') or {}).get('All') != _vanilla
+        or _p.get('requiresToggle') != 'advanced.masterEffectModifierMechanics'):
+        fail('Master healing source limit/reference/dependency drifted: ' + _mid)
+for _doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md'):
+    if 'Starvation onset and Master healing 100% cap (CURRENT)' not in (DOCS / _doc).read_text(encoding='utf-8'):
+        fail('Master healing 100% limit missing from current UI catalog: ' + _doc)
+note('Master healing three source sliders 0–100% / original references; starvation onset label contextual')
+
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
