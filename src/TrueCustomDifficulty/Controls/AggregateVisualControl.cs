@@ -3144,7 +3144,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var sources = new[] { waterTime, energyTime, vodkaTime, beerTime, magicTime };
-        var names = new[] { "WATER COST CUT DURATION", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };
+        var names = new[] { "WATER", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };
         var durations = new[] { 30.0, 45.0, 20.0, 20.0, 90.0 };
         // Three native shorter effect durations now have their own explicit
         // source controls. Small timeline ticks are visual landmarks only;
@@ -3173,24 +3173,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             var track = new Rect(minimumX, y - 6.0,
                 Math.Max(1.0, maximumX - minimumX), 12.0);
 
-            // The Water lane edits seconds, whereas its yellow knob edits
-            // the cost-cut magnitude. Split only this long label within the
-            // fixed 112-DIP gutter; keep the 23-DIP lane spacing unchanged.
-            if (i == 0)
-            {
-                DrawRightAlignedText(dc, "WATER COST CUT",
-                    new Point(timeline.Left - 13.0, y - 13.0),
-                    10.0, text, FontWeights.Bold);
-                DrawRightAlignedText(dc, "DURATION",
-                    new Point(timeline.Left - 13.0, y - 1.0),
-                    9.0, muted, FontWeights.SemiBold);
-            }
-            else
-            {
-                DrawRightAlignedText(dc, names[i],
-                    new Point(timeline.Left - 13.0, y - 8.0),
-                    10.4, text, FontWeights.Bold);
-            }
+            // The EFFECT DURATION seconds heading already names the unit.
+            // Keep WATER one-line like the other drink rows.
+            DrawRightAlignedText(dc, names[i],
+                new Point(timeline.Left - 13.0, y - 8.0),
+                10.4, text, FontWeights.Bold);
             // Any grey tail after this source's own max is not editable.
             dc.DrawLine(new Pen(CloneWithOpacity(border, 0.4), 2.0),
                 new Point(timeline.Left, y), new Point(timeline.Right, y));
@@ -3215,11 +3202,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                     new Point(secondaryX, y - 6.0),
                     new Point(secondaryX, y + 6.0));
             }
-            // The Water 30s cost-cut underline is yellow like its knob;
-            // the separate +25% Water bonus 5s marker stays bright green.
-            // Energy's two independently timed cost cuts remain blue.
-            if (i == 0)
-                DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0);
+            // No duplicate yellow parent underline: WATER already has its
+            // editable yellow rail. Keep the short green Water child marker
+            // and both blue Energy child-effect markers in the loop above.
             dc.DrawLine(new Pen(muted, 1.7),
                 new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
             dc.DrawEllipse(panel,
@@ -3376,14 +3361,14 @@ public sealed class AggregateVisualControl : FrameworkElement
             $"{waterRegenTime.CurrentNumber:0.#}s",
             $"{waterRegenTime.Minimum:0.#}s", $"{waterRegenTime.Maximum:0.#}s",
             WaterCell(0), text, muted, border, accent, panel, WaterEffectLineBrush);
-        DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",
-            $"+{25.0 * waterStamina.CurrentNumber:0.#}%",
-            "0%", "50%", WaterCell(1),
-            text, muted, border, accent, panel, WaterEffectLineBrush);
         DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",
             $"{10.0 * waterCostReduction.CurrentNumber:0.#}% LESS",
-            "0%", "20%", WaterCell(2),
+            "0%", "20%", WaterCell(1),
             text, muted, border, accent, panel, WaterCostCutLineBrush);
+        DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",
+            $"+{25.0 * waterStamina.CurrentNumber:0.#}%",
+            "0%", "50%", WaterCell(2),
+            text, muted, border, accent, panel, WaterEffectLineBrush);
         DrawMiniConsumableKnob(dc, energyFullCostTime, "NO COST DURATION",
             $"{energyFullCostTime.CurrentNumber:0.#}s",
             $"{energyFullCostTime.Minimum:0.#}s", $"{energyFullCostTime.Maximum:0.#}s",

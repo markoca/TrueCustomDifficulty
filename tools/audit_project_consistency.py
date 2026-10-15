@@ -4248,6 +4248,8 @@ for _token in (
     'DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",',
     '"0%", "50%",', '"0%", "20%",',
     'WaterCell(1)', 'WaterCell(2)',
+    '"0%", "20%", WaterCell(1)',
+    '"0%", "50%", WaterCell(2)',
     'WaterEffectLineBrush);', 'WaterCostCutLineBrush);',
 ):
     if _token not in _consumer_durations:
@@ -4260,7 +4262,7 @@ if (_consumer_durations.count('DrawMiniConsumableKnob(dc,') != 5
     or 'new HitTarget(parameter, hit, hit, HitKind.Knob,' not in _consumer_source
     or 'Brush effectBrush)' not in _consumer_source
     or 'var waterBonusPercent = 25.0 * waterStamina.CurrentNumber;' not in _consumer_durations
-    or 'DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0);' not in _consumer_durations
+    or 'DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0);' in _consumer_durations
     or 'or "survival.waterStaminaCostReduction"' not in _consumer_source
     or 'WaterCostCutLineBrush' not in _consumer_source):
     _consumer_errors.append("Water/Energy mini-knob geometry, color or timeline contract drifted")
@@ -5204,7 +5206,7 @@ if ('DrawMiniConsumableKnob(' not in _mini_ui or
     'WaterCostCutLineBrush' not in _mini_ui or
     'EnergyDrinkPartialCostLineBrush' not in _mini_ui or
     'var waterCap = staminaPool * (1.0 + waterBonusPercent / 100.0);' not in _mini_body or
-    'DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0)' not in _mini_ui):
+    'DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0)' in _mini_ui):
     fail("Five native mini-knob/color-coded Water/Energy duration contract drifted")
 for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Five color-linked mini-knobs for Water and Energy effects (HISTORICAL; SUPERSEDED)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
@@ -5213,14 +5215,14 @@ note("Five mini-knobs for Water and Energy: green/yellow Water pairing and two E
 
 # Yellow Water duration parent / strength-knob source and palette contract.
 for _token in (
-    'var names = new[] { "WATER COST CUT DURATION", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };',
+    'var names = new[] { "WATER", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };',
     'new SolidColorBrush(Color.FromRgb(240, 196, 25));',
     '"survival.waterEffectDuration" or "survival.waterStaminaCostReduction"',
     'var laneBrush = i == 0 ? WaterCostCutLineBrush : accent;',
     'new Pen(CloneWithOpacity(laneBrush, 0.75), 4.0)',
     'new Pen(laneBrush, IsSelected(parameter) ? 2.5 : 1.6)',
     'dc.DrawEllipse(laneBrush, null, new Point(currentX, y), 2.5, 2.5);',
-    'DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0);',
+    'DrawDrinkEffectLine(dc, shortEffect, timeline.Left,',
     '(waterRegenTime, "WATER BONUS DURATION")',
     'DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",',
     'text, muted, border, accent, panel, WaterCostCutLineBrush);',
@@ -5230,7 +5232,7 @@ for _token in (
     if _token not in _mini_ui:
         fail("Yellow Water cost-cut duration/knob mapping drifted: "+_token)
 for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
-    if "Yellow Water cost-cut duration/strength pairing (CURRENT)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
+    if "Yellow Water cost-cut duration/strength pairing (HISTORICAL; SUPERSEDED)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
         fail("Yellow Water cost-cut UI catalog contract missing in "+_catalog)
 note("Yellow Water 30s cost-cut lane / strength knob; green 5s stamina bonus; separate Energy 45s/5s/15s sources")
 
@@ -5245,18 +5247,29 @@ if (_mini_body.count('DrawMiniConsumableKnob(dc,') != 5
     fail("Responsive Water/Energy single-row/stacked bank contract drifted")
 note("Water 3 / Energy Drink 2 knobs: compact common row or intact stacked groups")
 
-# Distinct Water cost-cut duration/magnitude UI names, same CFG effect.
-if ('var names = new[] { "WATER COST CUT DURATION", "ENERGY DRINK"' not in _mini_ui
-    or 'DrawRightAlignedText(dc, "WATER COST CUT",' not in _mini_ui
-    or 'DrawRightAlignedText(dc, "DURATION",' not in _mini_ui
-    or 'new Point(timeline.Left - 13.0, y - 13.0)' not in _mini_ui
-    or 'new Point(timeline.Left - 13.0, y - 1.0)' not in _mini_ui
-    or 'DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",' not in _mini_ui):
-    fail("Water cost-cut seconds lane / magnitude knob visible labels drifted")
-for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
-    if "Water cost-cut duration caption disambiguation (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
-        fail("Water duration label contract missing in "+_doc)
-note("Water cost-cut: 30s DURATION lane remains separate from 10%-less magnitude knob")
+# Current Water visual semantics: WATER seconds editor, no duplicate
+# yellow underlining, independent child markers, swapped strength knob slots.
+_water_lane = _mini_ui.split('var names = new[] { "WATER",', 1)[-1].split('// Medicine always uses', 1)[0]
+_water_knobs = _mini_body.split('DrawMiniConsumableKnob(dc, waterRegenTime,', 1)[-1].split('DrawMiniConsumableKnob(dc, energyFullCostTime,', 1)[0]
+if ('var names = new[] { "WATER", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };' not in _mini_ui
+    or 'DrawRightAlignedText(dc, names[i],' not in _water_lane
+    or 'DrawRightAlignedText(dc, "DURATION",' in _water_lane
+    or 'DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0)' in _mini_ui
+    or 'DrawDrinkEffectLine(dc, shortEffect, timeline.Left,' not in _water_lane
+    or 'new[] { waterRegenTime }' not in _mini_ui
+    or 'new[] { energyFullCostTime, energyPartialCostTime }' not in _mini_ui
+    or _water_knobs.count('DrawMiniConsumableKnob(dc,') != 2
+    or _water_knobs.index('DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",') >
+       _water_knobs.index('DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",')
+    or '"0%", "20%", WaterCell(1)' not in _water_knobs
+    or '"0%", "50%", WaterCell(2)' not in _water_knobs):
+    fail("WATER label, yellow duplicate or mini-knob positions drifted")
+for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    catalog_text = (DOCS / _catalog).read_text(encoding="utf-8")
+    if ("Water timeline cleanup and knob order (CURRENT)" not in catalog_text
+        or "Water cost-cut duration caption disambiguation (HISTORICAL; SUPERSEDED)" not in catalog_text):
+        fail("Water current UI catalog missing in "+_catalog)
+note("WATER single-line; redundant yellow trace removed; cost-cut before stamina-bonus knobs")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
