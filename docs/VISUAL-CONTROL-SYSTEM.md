@@ -1,5 +1,11 @@
 # Visual Control System
 
+### 2026-10-15 — Loot tab: retired mixer cleanup (CURRENT)
+
+The `BreakableBoxYields` aggregate family has no active renderer or editable members. Its two genuine sources (`loot.destructibleAmmoQuantity` and `loot.destructibleGrenadeQuantity`) are already shown by the live `AmmoDistribution` board. Remove the empty family dispatcher, member registration and height calculation, the unreachable vertical mixer renderer chain (`DrawNumericMixerBoard`, `DrawMixerBoard`, `DrawMixerStrip`) with source lists, sizing helpers and `MixerValue`, plus their exclusively obsolete `MixerSelect` / `MixerBaseMarker` event branches and hit types. Never display a second editor for those source values.
+
+Retain all currently visible Loot groups, including `AmmoDistribution`, `StashRewardProfile`, `NpcLootLoadout` and `WorldLootLayout`, source-native mouse and keyboard handling, right-click and family resets, the actively used shared `DrawMixerCentered` helper, original compact card geometry, data catalog, presets and CFG writer. No gameplay or visible layout changes; the project consistency audit must enforce retirement. .NET build and Wine visual test remain pending.
+
 ### 2026-10-15 — Stamina hover removal and project dead-helper cleanup, pass 6 (CURRENT)
 
 Stamina Usage **does not show hover-derived count or ratio text** above MOVEMENT or MELEE. Remove the former `FROM FULL`, `POOL/COST` and zero-cost overlay as well as its hover-only string lookup and formatter. Preserve the actual hoverable handles, pointer cursor/glow, drag, click, right-click source reset, keyboard editing and `R` group reset. The six editable action source values, read-only current-Max-Stamina `% SPENT PER ACTION` context, native-value-only gold text, 2× reference tracks, 187-DIP two-card geometry, presets and CFG writer remain unchanged.

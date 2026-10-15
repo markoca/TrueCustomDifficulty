@@ -51,7 +51,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private void RaiseParameterSelected(ParameterViewModel parameter)
     {
         if (Family is "AnomalyGlobalDamage" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
-            or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "EquipmentWearBalance" or "BreakableBoxYields"
+            or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "EquipmentWearBalance"
             or "StashRewardProfile" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
             or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"
@@ -265,9 +265,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 break;
             case "StashRewardProfile":
                 DrawCompactStashRewards(dc, text, muted, border, accent, panel);
-                break;
-            case "BreakableBoxYields":
-                // Retired family: its two sources are now drawn by AmmoDistribution.
                 break;
             case "StaminaCore":
                 DrawStaminaMovementBoard(dc, text, muted, border, accent, panel);
@@ -725,122 +722,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
-    private static readonly (string Id, string Top, string Bottom)[] BoxYieldMixerChannels =
-    {
-        ("loot.destructibleAmmoQuantity", "AMMO", "YIELD"),
-        ("loot.destructibleGrenadeQuantity", "GRENADE", "YIELD")
-    };
-
-    private static readonly (string Id, string Top, string Bottom)[] StashRewardMixerChannels =
-    {
-        ("loot.cheapStashGrenadeChance", "BASIC", "RGD-5 %"),
-        ("loot.cheapStashGrenadeQuantity", "RGD-5", "AMOUNT"),
-        ("loot.expensiveStashMoneyChance", "RARE", "COUPON %")
-    };
-
-    private static (string Id, string Top, string Bottom)[] GetMixerChannels(string family)
-        => family switch
-        {
-            "BreakableBoxYields" => BoxYieldMixerChannels,
-            "StashRewardProfile" => StashRewardMixerChannels,
-            _ => Array.Empty<(string Id, string Top, string Bottom)>()
-        };
-
-    private const double MixerSidePadding = 16.0;
-    private const double MixerStripGap = 10.0;
-    private const double MixerStripTop = 56.0;
-    private const double MixerStripHeight = 280.0;
-    private const double MixerRowGap = 12.0;
-    private const double MixerFooterHeight = 30.0;
-
-    private static int GetMixerColumns(double boardWidth, int channelCount)
-    {
-        var inner = Math.Max(0.0, boardWidth - 2.0 * MixerSidePadding);
-        var columns = inner >= 852.0 ? 6
-            : inner >= 596.0 ? 4
-            : inner >= 420.0 ? 3
-            : inner >= 272.0 ? 2 : 1;
-        columns = Math.Min(columns, channelCount);
-
-        // A threshold is only advisory; never squeeze a strip below 128 DIPs.
-        while (columns > 1
-            && (inner - (columns - 1) * MixerStripGap) / columns < 128.0)
-        {
-            columns--;
-        }
-        return Math.Max(1, columns);
-    }
-
-    private static double GetMixerHeight(double boardWidth, int channelCount)
-    {
-        var columns = GetMixerColumns(boardWidth, channelCount);
-        var rows = (channelCount + columns - 1) / columns;
-        return MixerStripTop + rows * MixerStripHeight
-            + (rows - 1) * MixerRowGap + MixerFooterHeight;
-    }
-
-    private void DrawNumericMixerBoard(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
-    {
-        var channels = GetMixerChannels(Family);
-        var title = Family switch
-        {
-            "BreakableBoxYields" => "BREAKABLE BOX YIELDS / MIXER",
-            "StashRewardProfile" => "STASH REWARD ROLLS / MIXER",
-            _ => "ITEM WEIGHT / MIXER"
-        };
-        var description = Family switch
-        {
-            "BreakableBoxYields" => "contents per destroyed box, not box spawn frequency",
-            "StashRewardProfile" => "Basic RGD-5 chance/amount and eligible Rare coupon chance are separate",
-            _ => "independent ammunition and consumable item mass"
-        };
-        DrawMixerBoard(dc, channels, title, description, text, muted, border, accent, panel);
-    }
-
-    private void DrawMixerBoard(
-        DrawingContext dc,
-        (string Id, string Top, string Bottom)[] channels,
-        string title,
-        string subtitle,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel)
-    {
-        DrawHeader(dc, title, subtitle, text, muted, accent);
-        var count = channels.Length;
-        var inner = Math.Max(1.0, ActualWidth - 2.0 * MixerSidePadding);
-        var columns = GetMixerColumns(ActualWidth, count);
-        var width = Math.Min(148.0,
-            Math.Max(128.0, (inner - (columns - 1) * MixerStripGap) / columns));
-        // Center compact fader banks inside wider boards instead of leaving a
-        // large, visually unbalanced empty area to the right. The column
-        // calculation and source order remain unchanged; the final short row
-        // is independently centered without stretching its channels.
-        for (var index = 0; index < count; index++)
-        {
-            var channel = channels[index];
-            var row = index / columns;
-            var column = index % columns;
-            var rowCount = Math.Min(columns, count - row * columns);
-            var rowWidth = rowCount * width + (rowCount - 1) * MixerStripGap;
-            var rowLeft = Math.Max(MixerSidePadding, (ActualWidth - rowWidth) / 2.0);
-            var rect = new Rect(
-                rowLeft + column * (width + MixerStripGap),
-                MixerStripTop + row * (MixerStripHeight + MixerRowGap),
-                width, MixerStripHeight);
-            DrawMixerStrip(dc, P(channel.Id), channel.Top, channel.Bottom, rect,
-                text, muted, border, accent, panel);
-        }
-    }
-
     private void DrawAnomalyGlobalDamage(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -1043,118 +924,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawFlycatcherEffects(dc, text, muted, border, accent, panel,
             new Rect((ActualWidth - width) / 2.0, 42.0, width, 277.0));
     }
-
-    private void DrawMixerStrip(
-        DrawingContext dc,
-        ParameterViewModel? parameter,
-        string topLabel,
-        string bottomLabel,
-        Rect strip,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent,
-        Brush panel,
-        bool frameless = false)
-    {
-        var selected = IsSelected(parameter);
-        var enabled = parameter?.IsControlEnabled == true;
-        var foreground = enabled ? text : muted;
-        var valueBrush = !enabled ? muted :
-            parameter?.IsValueModifiedFromReference() == true ? accent : text;
-
-        // All mixer strips use handle-only hover; never draw rectangular selection frames.
-        if (parameter?.IsValueModifiedFromReference() == true)
-        {
-            dc.DrawLine(new Pen(accent, 2.5),
-                new Point(strip.Left + 3.0, strip.Top + 9.0),
-                new Point(strip.Left + 3.0, strip.Bottom - 9.0));
-        }
-
-        DrawMixerCentered(dc, topLabel,
-            new Point(strip.Left + strip.Width / 2.0, strip.Top + 8.0),
-            strip.Width - 13.0, 10.7, foreground, FontWeights.Bold);
-        DrawMixerCentered(dc, bottomLabel,
-            new Point(strip.Left + strip.Width / 2.0, strip.Top + 22.0),
-            strip.Width - 13.0, 10.7, foreground, FontWeights.Bold);
-
-        if (parameter is null)
-        {
-            DrawMixerCentered(dc, "CFG UNAVAILABLE",
-                new Point(strip.Left + strip.Width / 2.0, strip.Top + 58.0),
-                strip.Width - 13.0, 10.0, muted, FontWeights.SemiBold);
-            return;
-        }
-
-        var center = strip.Left + strip.Width / 2.0;
-        DrawMixerCentered(dc, MixerValue(parameter, parameter.CurrentNumber),
-            new Point(center, strip.Top + 38.0),
-            strip.Width - 14.0, parameter.IsValueModifiedFromReference() ? 17.4 : 16.2,
-            valueBrush, FontWeights.Bold);
-        // The grey reference tick conveys Base without redundant "BASE 1x" text.
-        // Remove the text across all mixer families, preserving the reference marker.
-        DrawMixerCentered(dc, MixerValue(parameter, parameter.Maximum),
-            new Point(center, strip.Top + 78.0),
-            strip.Width - 14.0, frameless ? 13.0 : 11.3, muted, FontWeights.Normal);
-
-        // Vertical source scale: top is real maximum, bottom real minimum.
-        // The strip layout normalizes only screen position, never the stored CFG.
-        var rail = new Rect(center - 3.0, strip.Top + 100.0, 6.0, 150.0);
-        var currentY = ValueToY(parameter.CurrentNumber,
-            parameter.Minimum, parameter.Maximum, rail);
-        var baseY = ValueToY(parameter.ReferenceNumber,
-            parameter.Minimum, parameter.Maximum, rail);
-
-        dc.DrawLine(new Pen(border, 5.0),
-            new Point(center, rail.Top), new Point(center, rail.Bottom));
-        dc.DrawLine(new Pen(CloneWithOpacity(accent, enabled ? 0.75 : 0.3), 5.0),
-            new Point(center, rail.Bottom), new Point(center, currentY));
-
-        // Base marker lives next to the rail to avoid stealing the live
-        // handle's drag area. Its clickable rectangle is registered last.
-        dc.DrawLine(new Pen(muted, 2.2),
-            new Point(center + 13.0, baseY),
-            new Point(center + 29.0, baseY));
-
-        dc.DrawEllipse(panel,
-            new Pen(accent, selected ? 2.4 : 1.7),
-            new Point(center, currentY), 9.0, 9.0);
-        dc.DrawLine(new Pen(accent, 2.2),
-            new Point(center - 7.0, currentY),
-            new Point(center + 7.0, currentY));
-
-        DrawMixerCentered(dc, MixerValue(parameter, parameter.Minimum),
-            new Point(center, strip.Top + 260.0),
-            strip.Width - 14.0, frameless ? 13.0 : 9.5, muted, FontWeights.Normal);
-
-        // Clicking the label/value area selects this source for the rationale,
-        // but it must never edit the value; the active rail/marker is above it
-        // in reverse-order hit testing.
-        _hitTargets.Add(new HitTarget(parameter, strip, strip,
-            HitKind.MixerSelect, parameter.Minimum, parameter.Maximum, false));
-
-        if (!enabled)
-            return;
-
-        // Drag/click owns only this exact source value. Existing Snap() and
-        // centralized constraints determine the actual stored numeric step.
-        AddVerticalTarget(parameter,
-            new Rect(center - 15.0, rail.Top - 7.0, 30.0, rail.Height + 14.0),
-            rail, parameter.Minimum, parameter.Maximum);
-        _hitTargets.Add(new HitTarget(parameter,
-            new Rect(center + 16.0, baseY - 8.0, 20.0, 16.0),
-            rail, HitKind.MixerBaseMarker, parameter.Minimum,
-            parameter.Maximum, false));
-    }
-
-    private static string MixerValue(ParameterViewModel parameter, double raw)
-        => parameter.Id switch
-        {
-            "economy.repairCostBase" => $"{raw * 100.0:0.#}%",
-            "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance" => $"{raw * 100.0:0.#}%",
-            "loot.cheapStashGrenadeQuantity" => $"{raw:0} pcs",
-            _ => $"{raw:0.##}x"
-        };
 
     // Contextual readout: only dynamic numeric tokens use the gold accent.
     private FormattedText CreateDerivedText(string label, double size,
@@ -5295,22 +5064,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
 
-        if (target.Kind == HitKind.MixerSelect)
-        {
-            InvalidateVisual();
-            e.Handled = true;
-            return;
-        }
-
-        if (target.Kind == HitKind.MixerBaseMarker)
-        {
-            target.Parameter.ResetToReference();
-            _status.ClearTransient();
-            InvalidateVisual();
-            e.Handled = true;
-            return;
-        }
-
         if (target.Kind == HitKind.DrinkDurationOverride)
         {
             target.Parameter.DrinkDurationOverrideEnabled =
@@ -5388,7 +5141,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             HitKind.Vertical => Cursors.SizeNS,
             HitKind.Knob => Cursors.Hand,
             HitKind.HumanJoint or HitKind.HungerJoint or HitKind.FatigueJoint or HitKind.FatigueReloadJoint => Cursors.SizeAll,
-            HitKind.Toggle or HitKind.DrinkDurationOverride or HitKind.Choice or HitKind.MixerBaseMarker or HitKind.MixerSelect => Cursors.Hand,
+            HitKind.Toggle or HitKind.DrinkDurationOverride or HitKind.Choice => Cursors.Hand,
             _ => Cursors.Arrow
         };
 
@@ -5525,8 +5278,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         }
         var target = FindTarget(e.GetPosition(this));
-        // A disabled mixer strip remains selectable for its rationale but
-        // right-click must not mutate a dependency-disabled source value.
+        // Disabled sources must not be changed by right-click.
         if (target is null || !target.Parameter.IsControlEnabled
             || IsNpcBonusSliderLocked(target.Parameter))
             return;
@@ -5535,7 +5287,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         _selectedParameter = target.Kind == HitKind.FatigueReloadJoint
             ? ReloadEffectFor(target.Parameter) ?? target.Parameter
             : target.Parameter;
-        _selectedHitKind = target.Kind == HitKind.MixerBaseMarker ? HitKind.Vertical : target.Kind;
+        _selectedHitKind = target.Kind;
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
         if (target.Kind == HitKind.DrinkDurationOverride)
@@ -6264,7 +6016,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "ServiceCostsBoard" => ServicePriceBoardHeight(width),
             "TraderStockBoard" => 242.0,
             "ItemWeightBoard" => EconomyBoardHeight(width, 2),
-            "BreakableBoxYields" => GetMixerHeight(width, BoxYieldMixerChannels.Length),
             "AnomalyGlobalDamage" => 242.0,
             "FlycatcherSlowdown" => FlycatcherBoardHeight(width),
             "AnomalySpecialEffects" => 270.0,
@@ -6378,7 +6129,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "loot.cheapStashGrenadeQuantity",
                 "loot.expensiveStashMoneyChance"
             },
-            "BreakableBoxYields" => Array.Empty<string>(),
             "StaminaCore" => new[] {
                 "stamina.maxSP", "stamina.regeneration",
                 "stamina.vaultMaxHeight", "stamina.maxCarryWeight" },
@@ -6537,8 +6287,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         HungerJoint,
         FatigueJoint,
         FatigueReloadJoint,
-        MixerBaseMarker,
-        MixerSelect,
         DrinkDurationOverride,
         Toggle,
         Choice,

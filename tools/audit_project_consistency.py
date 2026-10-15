@@ -933,6 +933,29 @@ if '"environment.diamondBleeding",' in _anomaly_ui_vm:
     fail("Diamond still belongs to the visible Anomaly Special Effects aggregate")
 if not (DOCS / "ANOMALY-IDENTITY-AUDIT-2026-10-14.md").exists():
     fail("Anomaly source/provenance identity audit missing")
+# Loot tab: no retired BreakableBox mixer family or legacy strip targets.
+# The real destructible ammo/grenade yield channels belong to AmmoDistribution.
+_loot_clean = (ROOT / 'src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs').read_text(encoding='utf-8')
+for _obsolete in (
+    'BreakableBoxYields', 'DrawNumericMixerBoard(', 'DrawMixerBoard(',
+    'DrawMixerStrip(', 'MixerValue(', 'MixerSelect', 'MixerBaseMarker',
+    'GetMixerChannels(', 'GetMixerColumns(', 'GetMixerHeight(',
+    'BoxYieldMixerChannels', 'StashRewardMixerChannels', 'MixerStripHeight'
+):
+    if _obsolete in _loot_clean:
+        fail('Loot inactive mixer/family returned: ' + _obsolete)
+for _required in (
+    'case "StashRewardProfile":', 'DrawCompactStashRewards(dc,',
+    'case "AmmoDistribution":', 'DrawAmmoDistribution(dc,',
+    'DrawHorizontalTrackCard(dc, ammoYield,',
+    'DrawHorizontalTrackCard(dc, P("loot.destructibleGrenadeQuantity"),',
+    '"loot.destructibleAmmoQuantity"', '"loot.destructibleGrenadeQuantity"',
+    'HitKind.Choice', 'HitKind.DrinkDurationOverride', 'DrawMixerCentered(dc,'
+):
+    if _required not in _loot_clean:
+        fail('Active Loot or shared hit/render path missing: ' + _required)
+note('Loot tab: retired mixer source/family and strip hit paths removed; source-native editors retained')
+
 # The player-facing ten-lane damage editor is alphabetized by its
 # actual labels, not by CFG IDs, and both special effects use the same
 # source-native mechanical knobs as the rest of the app.
@@ -948,7 +971,7 @@ if tuple(_ordered_labels) != _expected_order or _ordered_labels != sorted(_order
     fail(f"Anomaly Damage visible labels lost alphabetical order: {_ordered_labels}")
 _special_knobs = _anomaly_ui_aggregate.split(
     "private void DrawFlycatcherEffects(", 1)[1].split(
-    "private void DrawMixerStrip(", 1)[0]
+    "private FormattedText CreateDerivedText(", 1)[0]
 if ('DrawSourceKnob(dc, P("environment.razorBleeding"), "GLASS SHARDS"' not in _special_knobs
     or 'DrawSourceKnob(dc, P("environment.psyAnomalyIntensity"), "INTENSITY"' not in _special_knobs
     or 'const double gap = 10.0;' not in _special_knobs
@@ -1051,7 +1074,6 @@ else:
         'EnforceAmmoPoolValidity(',
         '"AmmoDistribution" => 715.0,',
         '"AmmoDistribution" => new[]',
-        '"BreakableBoxYields" => Array.Empty<string>()',
         'protected override void OnMouseLeftButtonDown(',
         'protected override void OnMouseRightButtonDown(',
         'protected override void OnKeyDown(',
