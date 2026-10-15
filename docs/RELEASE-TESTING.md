@@ -1,3 +1,5 @@
+**VS Code praktična in-game checklist-a (13 testova):** [RC CFG Signal — gameplay checklist](RC-CFG-SIGNAL-GAMEPLAY-CHECKLIST.md). Checkboxovi se ručno označavaju tek posle potvrđenog efekta.
+
 ### 2026-10-15 — RC extreme-signal functional smoke (NEW; GAMEPLAY NOT YET VERIFIED)
 
 The application embeds and seeds **one** explicit opt-in `RC - CFG Signal` v1 diagnostic preset outside the twelve factory snapshots (13 exaggerated, source-backed scalar changes; no hidden/unsupported IDs). Its full manual A/B matrix, required New Game case, expected BPatch paths, player-rank A-Life count limits and acceptance/report template are in [RC CFG Signal test](RC-CFG-SIGNAL-TEST.md). The preset is created only when missing, so local modified diagnostic copies, normal factory roles and user files are not overwritten.

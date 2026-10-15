@@ -5,6 +5,8 @@
 **First use:** Friday, 2026-10-16, on an expendable test save / fresh New Game.  
 **Verdict rules:** generated BPatch != game-loaded BPatch != actual observable gameplay effect.
 
+**Praktični in-game Markdown checklist (13 checkboxova za VS Code):** [RC-CFG-SIGNAL-GAMEPLAY-CHECKLIST.md](RC-CFG-SIGNAL-GAMEPLAY-CHECKLIST.md). Označavanje je ručno; CFG/CI prolaz nije automatska potvrda gameplay efekta.
+
 ## Availability, reproducibility and safety
 
 The application seeds `Presets/RC - CFG Signal.json` from embedded `QA/RC - CFG Signal.json` on first launch **only if that filename does not exist**. It appears after the twelve factory-role presets in the picker. Changes made to the local QA preset are never silently overwritten, and the twelve shipped factory JSONs and their exact-stock migrations are unchanged. Delete **only** your own `Presets/RC - CFG Signal.json` to request a fresh embedded copy on the next launch; save any customized copy first.
