@@ -4061,7 +4061,7 @@ if (_action_format_start < 0 or _action_format_end < 0
     or 'private void DrawSourceValue(' in _action_usage_source
     or 'countText.SetForegroundBrush(accent,' in _action_usage_source
     or 'parameter.CurrentNumber / staminaPool' not in _action_usage_source
-    or 'Actions[index].SpendCaption' not in _action_usage_source
+    or 'Actions[index].PerCaption' not in _action_usage_source
     or 'Math.Floor(staminaPool / hovered.CurrentNumber)' in _action_usage_source):
     fail('Stamina Usage edited-cost vs passive projection numeric color contract drifted')
 note('Stamina pass 5: only changed native cost turns gold; derived pool projections stay neutral')
@@ -4076,14 +4076,14 @@ if (_stamina_six_start < 0 or _stamina_six_end < 0
         'FROM FULL', 'POOL/COST', 'NO COST', 'countText',
         'var hovered = indices.Select(', 'Math.Floor(staminaPool / hovered.CurrentNumber)'))
     or '100.0 * parameter.CurrentNumber / staminaPool' not in _stamina_six_body
-    or 'Actions[index].SpendCaption' not in _stamina_six_body
+    or 'Actions[index].PerCaption' not in _stamina_six_body
     or 'ReferenceEquals(_hoverParameter, parameter)' not in _action_usage_source
     or 'ControlHoverGlow.Draw(dc, point, accent,' not in _action_usage_source):
     fail('Stamina Usage retired hover overlays or live source/handle control drifted')
 note('Stamina pass 6: count/ratio hover removed, cost percentage and handle glow remain')
 
 
-# Source-specific Stamina Usage captions: no generic "per action" label.
+# Source-specific Stamina Usage captions: concise per-action labels.
 # Sprint names the native coefficient, not an assumed fixed sprint duration.
 _expected_spend_captions = (
     ('stamina.sprintCost', 'SPRINT', 'Movement', 'SPRINT'),
@@ -4093,15 +4093,15 @@ _expected_spend_captions = (
     ('stamina.meleeStrongCost', 'STRONG MELEE', 'Melee', 'SWING'),
     ('stamina.butstockCost', 'BUTTSTOCK', 'Melee', 'SWING'),
 )
-if ('SPENT PER ACTION' in _action_usage_source
-    or 'string SpendCaption' not in _action_usage_source
-    or 'Actions[index].SpendCaption' not in _stamina_six_body
+if ('SPENT PER' in _action_usage_source
+    or 'string PerCaption' not in _action_usage_source
+    or 'Actions[index].PerCaption' not in _stamina_six_body
     or any(
-        f'new("{pid}", "{label}", ActionGroup.{group}, "SPENT PER {event}")' not in _action_usage_source
+        f'new("{pid}", "{label}", ActionGroup.{group}, "PER {event}")' not in _action_usage_source
         for pid, label, group, event in _expected_spend_captions
     )):
     fail('Stamina Usage movement/melee contextual spend captions drifted')
-note('Stamina Usage: contextual sprint, jump, vault and swing captions verified')
+note('Stamina Usage: concise PER SPRINT/JUMP/VAULT/SWING captions verified')
 
 # Project-wide dead-code cleanup: fourteen never-invoked private helpers
 # deleted without affecting the active editor family dispatch paths.
@@ -5019,6 +5019,50 @@ for _microcopy_doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Repair preview and Flycatcher axis text economy (CURRENT)" not in (DOCS / _microcopy_doc).read_text(encoding="utf-8"):
         fail("Repair/Flycatcher current caption catalog missing: " + _microcopy_doc)
 note("Repair derived multiplier is numeric-only; Flycatcher axes use SPEED names")
+
+
+# 2026-10-15: retain center-hero medicine proportions, bleeding 0–6
+# visualization versus native 2/3/4 caps, and terse stamina row suffixes.
+_latest_aggregate = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+_latest_bleeding = (ROOT / "src/TrueCustomDifficulty/Controls/BleedingCurveControl.cs").read_text(encoding="utf-8")
+_latest_stamina = (ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs").read_text(encoding="utf-8")
+_knob_start = _latest_aggregate.find('var medicineKnobTop = ConsumableMedicineKnobTop(ActualWidth);')
+_knob_end = _latest_aggregate.find('private void DrawSleepingDashboard(', _knob_start)
+_medicine_hero = _latest_aggregate[_knob_start:_knob_end]
+if (_knob_start < 0 or _knob_end < 0 or any(required not in _medicine_hero for required in (
+        'const double medicineHeroExtra = 18.0;',
+        'var medicineHeroWidth = medicineSideWidth + medicineHeroExtra;',
+        'medicineKnobTop, medicineHeroWidth, 188.0)',
+        'prominent: true);',
+        'medicineKnobTop, medicineSideWidth, 181.0)',
+        'secondaryReadout: $"{baseCarry + herculesStrength.CurrentNumber:0.#} WITH BUFF"',
+        'medicineBankWidth - 2.0 * knobGap - medicineHeroExtra',
+        ))):
+    fail('Medicine centered Hercules hero knob proportions or native total drifted')
+if ('DrawText(dc, "GLOBAL EFFECTS"' in _latest_bleeding
+    or 'private const double CurveMaximumDamage = 6.0;' not in _latest_bleeding
+    or 'for (var level = 0; level <= 6; level++)' not in _latest_bleeding
+    or 'var raw = ratio * CurveMaximumDamage;' not in _latest_bleeding
+    or 'damage / CurveMaximumDamage' not in _latest_bleeding):
+    fail('Bleeding 0–6 visual graph / removed subtitle drifted')
+_original_bleed_controls = {p['id']: p['slider']['max'] for p in parameters_doc['parameters']
+    if p['id'] in ('survival.bleedingLowDamage',
+                   'survival.bleedingMediumDamage',
+                   'survival.bleedingStrongDamage')}
+if _original_bleed_controls != {
+        'survival.bleedingLowDamage': 2,
+        'survival.bleedingMediumDamage': 3,
+        'survival.bleedingStrongDamage': 4}:
+    fail('Bleeding visual range changed the game-authored native damage maxima')
+if ('SPENT PER' in _latest_stamina or 'SpendCaption' in _latest_stamina
+    or 'Actions[index].PerCaption' not in _latest_stamina
+    or any(f'new("{pid}", "{label}", ActionGroup.{group}, "PER {event}")'
+           not in _latest_stamina for pid, label, group, event in _expected_spend_captions)):
+    fail('Stamina usage concise contextual per-action labels drifted')
+for _catalog in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md'):
+    if 'Hercules hero knob, cleaner Bleeding, shorter Stamina readouts (CURRENT)' not in (DOCS / _catalog).read_text(encoding='utf-8'):
+        fail('New control design contract missing from '+_catalog)
+note('Hercules is centered medicine hero; Bleeding 0–6 chart; Stamina PER captions')
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

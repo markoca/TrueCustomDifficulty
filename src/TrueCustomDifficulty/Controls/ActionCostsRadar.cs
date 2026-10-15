@@ -33,12 +33,12 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     private static readonly ActionDefinition[] Actions =
     {
-        new("stamina.sprintCost", "SPRINT", ActionGroup.Movement, "SPENT PER SPRINT"),
-        new("stamina.jumpCost", "JUMP", ActionGroup.Movement, "SPENT PER JUMP"),
-        new("stamina.vaultCost", "VAULT", ActionGroup.Movement, "SPENT PER VAULT"),
-        new("stamina.meleeNormalCost", "QUICK MELEE", ActionGroup.Melee, "SPENT PER SWING"),
-        new("stamina.meleeStrongCost", "STRONG MELEE", ActionGroup.Melee, "SPENT PER SWING"),
-        new("stamina.butstockCost", "BUTTSTOCK", ActionGroup.Melee, "SPENT PER SWING"),
+        new("stamina.sprintCost", "SPRINT", ActionGroup.Movement, "PER SPRINT"),
+        new("stamina.jumpCost", "JUMP", ActionGroup.Movement, "PER JUMP"),
+        new("stamina.vaultCost", "VAULT", ActionGroup.Movement, "PER VAULT"),
+        new("stamina.meleeNormalCost", "QUICK MELEE", ActionGroup.Melee, "PER SWING"),
+        new("stamina.meleeStrongCost", "STRONG MELEE", ActionGroup.Melee, "PER SWING"),
+        new("stamina.butstockCost", "BUTTSTOCK", ActionGroup.Melee, "PER SWING"),
     };
 
     private readonly ParameterViewModel?[] _actionParameters = new ParameterViewModel?[Actions.Length];
@@ -303,7 +303,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             // The absolute cost is the only writable source number. Pool %
             // is a live, neutral projection and must not be marked as edited.
             var sourceValue = CreateSourceValueText(parameter,
-                $"{FormatRaw(parameter.CurrentNumber)} stamina · {costPercent:0.#}% {Actions[index].SpendCaption}",
+                $"{FormatRaw(parameter.CurrentNumber)} stamina · {costPercent:0.#}% {Actions[index].PerCaption}",
                 card.Width >= 300.0 ? 10.8 : 9.4, text, accent);
             dc.DrawText(sourceValue,
                 new Point(card.Right - 9.0 - sourceValue.WidthIncludingTrailingWhitespace, top));
@@ -846,7 +846,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         Absolute
     }
 
-    private sealed record ActionDefinition(string ParameterId, string Label, ActionGroup Group, string SpendCaption);
+    private sealed record ActionDefinition(string ParameterId, string Label, ActionGroup Group, string PerCaption);
 
     private sealed record InteractiveTarget(
         ParameterViewModel Parameter,

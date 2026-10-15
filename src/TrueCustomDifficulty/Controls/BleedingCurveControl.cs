@@ -22,7 +22,7 @@ public sealed class BleedingCurveControl : FrameworkElement
     private const string MediumThresholdId = "survival.bleedingMediumThreshold";
     private const string SevereThresholdId = "survival.bleedingStrongThreshold";
 
-    private const double CurveMaximumDamage = 4.0;
+    private const double CurveMaximumDamage = 6.0;
     private const double LowThreshold = 0.1;
     private const double DesiredHeight = 466.0;
 
@@ -169,7 +169,6 @@ public sealed class BleedingCurveControl : FrameworkElement
 
         DrawCenteredText(dc, "BLEEDING SYSTEM", new Point(ActualWidth / 2.0, 21.0),
             VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
-        DrawText(dc, "GLOBAL EFFECTS", new Point(16, 34), 8.8, muted, FontWeights.Bold);
 
         var gap = 10.0;
         var cardLeft = 16.0;
@@ -320,7 +319,7 @@ public sealed class BleedingCurveControl : FrameworkElement
         Band(mediumStart, severeStart, .055);
         Band(severeStart, _plotRect.Right - 1, .095);
 
-        for (var level = 0; level <= 4; level++)
+        for (var level = 0; level <= 6; level++)
         {
             var y = DamageToY(level);
             var pen = new Pen(level == 0 ? border : softBorder, 1.0);

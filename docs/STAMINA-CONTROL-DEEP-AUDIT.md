@@ -1,5 +1,9 @@
 # Stamina Control Deep Audit — v0.2.46
 
+## 2026-10-15 shorter contextual action-cost text
+
+The six Stamina Usage labels are now `PER SPRINT`, `PER JUMP`, `PER VAULT` and `PER SWING` for all three melee actions; the earlier `SPENT PER ...` strings are retired from the visible UI. Keep the absolute native stamina number plus the neutral live percentage, interaction and persistence unchanged. No sprint duration or activation count is inferred.
+
 ## 2026-10-15 contextual Stamina Usage captions
 
 The `ActionCostsRadar` Movement/Melee board uses `SPENT PER SPRINT`, `SPENT PER JUMP`, `SPENT PER VAULT`, and `SPENT PER SWING` (Quick Melee, Strong Melee, Buttstock) in place of the former generic action suffix. The editable native cost and live `cost / current maxSP` percentage are unchanged; derived values stay neutral, and only a modified source number becomes gold. The Sprint caption describes the native coefficient, not a duration or sprint-activation count. No mapping, gesture, geometry, preset or CFG writer change. The static audit now enforces all six contextual captions and no longer expects the deleted stamina hover-count overlay from the retired earlier pass.

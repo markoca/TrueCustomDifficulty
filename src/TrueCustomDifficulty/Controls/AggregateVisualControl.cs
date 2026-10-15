@@ -3328,30 +3328,35 @@ public sealed class AggregateVisualControl : FrameworkElement
         var medicineKnobTop = ConsumableMedicineKnobTop(ActualWidth);
         // The three medicine knobs form their own centered row. Reusing the
         // first three cells of the four-drink bank left them visibly off-center.
-        var medicineKnobWidth = Math.Min(184.0, knobWidth);
-        var medicineRowWidth = 3.0 * medicineKnobWidth + 2.0 * knobGap;
-        var medicineLeft = (ActualWidth - medicineRowWidth) / 2.0;
+        // Same compact hero-dial geometry as the Radiation center knob:
+        // redistribute 18 DIP from the side cards to Hercules, not the row width.
+        const double medicineHeroExtra = 18.0;
+        var medicineBankWidth = 3.0 * Math.Min(184.0, knobWidth) + 2.0 * knobGap;
+        var medicineSideWidth = (medicineBankWidth - 2.0 * knobGap - medicineHeroExtra) / 3.0;
+        var medicineHeroWidth = medicineSideWidth + medicineHeroExtra;
+        var medicineLeft = (ActualWidth - medicineBankWidth) / 2.0;
         // Native benefits, not relative sliders: +bleed-recovery points,
         // +kilograms and +psi-protection points. Keep the amount and its
         // unit centered, with a changed-only gold number and neutral unit.
         DrawSourceKnob(dc, vincaStrength, "VINCA BLEED REGEN",
-            new Rect(medicineLeft, medicineKnobTop, medicineKnobWidth, 181.0),
+            new Rect(medicineLeft, medicineKnobTop, medicineSideWidth, 181.0),
             text, muted, border, accent, panel,
             rawReadout: true, nativeUnit: "BLEED PTS");
         var carryWeight = Linked("stamina.maxCarryWeight");
         var baseCarry = carryWeight?.CurrentNumber ?? 80.0;
         var referenceCarry = carryWeight?.ReferenceNumber ?? 80.0;
         DrawSourceKnob(dc, herculesStrength, "HERCULES CARRY",
-            new Rect(medicineLeft + medicineKnobWidth + knobGap,
-                medicineKnobTop, medicineKnobWidth, 181.0),
+            new Rect(medicineLeft + medicineSideWidth + knobGap,
+                medicineKnobTop, medicineHeroWidth, 188.0),
             text, muted, border, accent, panel,
             rawReadout: true, nativeUnit: "KG", inlineNativeUnit: true,
             secondaryReadout: $"{baseCarry + herculesStrength.CurrentNumber:0.#} WITH BUFF",
             secondaryModified: Math.Abs(baseCarry + herculesStrength.CurrentNumber
-                - referenceCarry - herculesStrength.ReferenceNumber) > Epsilon);
+                - referenceCarry - herculesStrength.ReferenceNumber) > Epsilon,
+            prominent: true);
         DrawSourceKnob(dc, psiStrength, "PSI BLOCK PROTECTION",
-            new Rect(medicineLeft + 2.0 * (medicineKnobWidth + knobGap),
-                medicineKnobTop, medicineKnobWidth, 181.0),
+            new Rect(medicineLeft + 2.0 * (medicineSideWidth + knobGap) + medicineHeroExtra,
+                medicineKnobTop, medicineSideWidth, 181.0),
             text, muted, border, accent, panel,
             rawReadout: true, nativeUnit: "PSI PTS");
 

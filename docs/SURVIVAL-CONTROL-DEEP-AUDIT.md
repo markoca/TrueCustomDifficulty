@@ -1,5 +1,9 @@
 # Survival Control Deep Audit — v0.2.47
 
+## 2026-10-15 Bleeding visual ruler extension
+
+Remove the redundant `GLOBAL EFFECTS` caption. The same compact editable Bleeding Damage Profile graph now has a 0–6 HP/tick **visual ruler** (seven ticks). `DamageToY` and vertical drag use the shared 6-point scale, but native gameplay source domains remain Low 0–2, Medium 0–3 and Severe 0–4 HP/tick. All seven source controls, thresholds, reference marks, stage readouts, CFG/preset serialization and 466-DIP frame remain unchanged.
+
 ### 2026-10-14 — Bleeding profile without stage-choice simulation (CURRENT)
 
 Retire the entire Damage Tick Timeline, tick markers and Dead In estimated death time; also retire the LOW/MEDIUM/SEVERE preview stage selector including its hover/click/right-click/keyboard handling. Bleeding now has one compact **466-DIP** source-native board: the two original upper source sliders, the editable step graph (three HP/TICK drag handles and two editable stage thresholds), and a **single passive** centered three-card stage summary beneath it, still showing each authored PTS threshold and HP/TICK. The original seven source writer operations, source baseline, parameter catalog, native steps, reset behavior and preset keys stay unchanged. The separate bleeding projection model and old simulation-only test method were removed. Historical earlier same-day timeline and selectable-card layouts below are superseded.
