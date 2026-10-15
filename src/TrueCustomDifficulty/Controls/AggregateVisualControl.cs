@@ -4233,66 +4233,58 @@ public sealed class AggregateVisualControl : FrameworkElement
         StateNode(severe, severePenalty,
             new Point(sevX, sevY), new Point(baseSevX, baseSevY), "SEVERE");
 
-        // The X-axis labels end above this dedicated footer. Each state gets
-        // three reserved, short lines instead of a clipped paragraph.
-        // Keep the rows anchored to the plot rather than moving with handles.
+        // Source-truthful stage / threshold / onset in one compact summary;
+        // at narrow widths wrap AFTER so numbers never overlap stage cells.
         var footerTop = frame.Top + 269.0;
         var stageWidth = plot.Width / 3.0;
         void StageCaption(int index, string stageName,
             ParameterViewModel threshold, ParameterViewModel? recoveryLoss)
         {
+            var narrow = stageWidth < 205.0;
             var cell = new Rect(plot.Left + index * stageWidth,
-                footerTop, stageWidth, 63.0);
+                footerTop, stageWidth, 69.0);
             dc.PushClip(new RectangleGeometry(cell));
             var cx = cell.Left + cell.Width / 2.0;
-
-            DrawCenteredText(dc, stageName,
-                new Point(cx, footerTop + 1.0),
-                10.0, text, FontWeights.Bold);
-            DrawCenteredNumericChanges(dc,
-                $"AT {threshold.CurrentNumber:0} PTS",
-                new Point(cx, footerTop + 27.0),
-                10.0, text, accent, FontWeights.SemiBold,
-                threshold.IsValueModifiedFromReference());
-
-            if (recoveryLoss is not null)
+            var elapsed = HungerOnsetEstimate(threshold.CurrentNumber, rate.CurrentNumber);
+            var thresholdText = $"{stageName} AT {threshold.CurrentNumber:0} PTS";
+            var timeText = $"AFTER {elapsed}";
+            if (narrow)
             {
-                DrawCenteredNumericChanges(dc,
-                    $"-{recoveryLoss.CurrentNumber * 100:0}% RECOVERY",
-                    new Point(cx, footerTop + 47.0),
-                    9.6, text, accent, FontWeights.SemiBold,
-                    recoveryLoss.IsValueModifiedFromReference());
+                DrawCenteredNumericChanges(dc, thresholdText,
+                    new Point(cx, footerTop + 7.0), 9.2, text, accent,
+                    FontWeights.SemiBold, threshold.IsValueModifiedFromReference());
+                var timeNumbers = System.Text.RegularExpressions.Regex.Matches(
+                    timeText, @"\d+").Count;
+                DrawCenteredNumericChanges(dc, timeText,
+                    new Point(cx, footerTop + 28.0), 9.2, text, accent,
+                    FontWeights.SemiBold, Enumerable.Repeat(true, timeNumbers).ToArray());
             }
+            else
+            {
+                var headline = $"{thresholdText} {timeText}";
+                var numberCount = System.Text.RegularExpressions.Regex.Matches(
+                    headline, @"\d+").Count;
+                var highlight = new bool[numberCount];
+                if (numberCount > 0)
+                    highlight[0] = threshold.IsValueModifiedFromReference();
+                for (var j = 1; j < numberCount; j++)
+                    highlight[j] = true;
+                DrawCenteredNumericChanges(dc, headline,
+                    new Point(cx, footerTop + 11.0),
+                    stageWidth < 245.0 ? 9.0 : 9.8,
+                    text, accent, FontWeights.SemiBold, highlight);
+            }
+            if (recoveryLoss is not null)
+                DrawCenteredNumericChanges(dc,
+                    $"-{recoveryLoss.CurrentNumber * 100:0}% STAMINA RECOVERY",
+                    new Point(cx, footerTop + (narrow ? 50.0 : 37.0)),
+                    narrow ? 9.0 : 9.6, text, accent, FontWeights.SemiBold,
+                    recoveryLoss.IsValueModifiedFromReference());
             dc.Pop();
         }
-
         StageCaption(0, "LOW", low, null);
         StageCaption(1, "MEDIUM", medium, mediumPenalty);
         StageCaption(2, "SEVERE", severe, severePenalty);
-
-        // Read-only estimates from zero HungerPoints with constant source rate.
-        var onsetY = frame.Top + 351.0;
-        dc.DrawLine(new Pen(CloneWithOpacity(border, .58), .8),
-            new Point(plot.Left, onsetY - 10.0),
-            new Point(plot.Right - 10.0, onsetY - 10.0));
-        var onsetStages = new[]
-        {
-            (Name: "LOW", Threshold: low),
-            (Name: "MEDIUM", Threshold: medium),
-            (Name: "SEVERE", Threshold: severe)
-        };
-        for (var i = 0; i < onsetStages.Length; i++)
-        {
-            var cell = new Rect(plot.Left + i * stageWidth,
-                onsetY, stageWidth, 23.0);
-            dc.PushClip(new RectangleGeometry(cell));
-            DrawDerivedCentered(dc,
-                $"{onsetStages[i].Name} IN {HungerOnsetEstimate(onsetStages[i].Threshold.CurrentNumber, rate.CurrentNumber)}",
-                new Point(cell.Left + cell.Width / 2.0, onsetY + 3.0),
-                cell.Width - 6.0, stageWidth < 155.0 ? 10.0 : 11.0,
-                text, accent, FontWeights.SemiBold);
-            dc.Pop();
-        }
     }
 
     // Elapsed REAL seconds from a zero-point hunger pool, assuming the
@@ -5351,7 +5343,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double ConsumableTimelineHeight(double width)
         => ConsumableShortEffectsTrackTop + CompactTrackHeight + 12.0;
     // Reserved space for plot ticks plus three independently readable stage lines.
-    private const double HungerProfileHeight = 388.0;
+    private const double HungerProfileHeight = 344.0;
     private const double CompactRowGap = 8.0;
     private const double CompactColumnGap = 10.0;
 

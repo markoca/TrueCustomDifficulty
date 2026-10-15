@@ -2409,49 +2409,52 @@ else:
     note("Hunger LOW single-hover contract: actual Y(0) handle glow, no generic plot-midpoint overlay")
 
 
-# Hunger-onset estimates are three passive captions BELOW the original
-# stepped profile, driven only by the existing hunger-rate/threshold sources.
-# Never introduce an extra medium-threshold slider or invented game-day clock.
-_hunger_timing_start = _hunger_source.find("var onsetY = frame.Top + 351.0;")
-_hunger_timing_end = _hunger_source.find("private static string HungerOnsetEstimate(", _hunger_timing_start)
-_hunger_timing = (_hunger_source[_hunger_timing_start:_hunger_timing_end]
-                  if 0 <= _hunger_timing_start < _hunger_timing_end else "")
-_hunger_timing_required = (
-    'var onsetY = frame.Top + 351.0;',
-    'onsetStages[i].Name} IN {HungerOnsetEstimate(',
-    '(Name: "LOW", Threshold: low)',
-    '(Name: "MEDIUM", Threshold: medium)',
-    '(Name: "SEVERE", Threshold: severe)',
-    'rate.CurrentNumber',
-    'HungerOnsetEstimate(onsetStages[i].Threshold.CurrentNumber, rate.CurrentNumber)',
-    'DrawDerivedCentered(dc,',
+# Source-linked Hunger footer: one stage/threshold/AFTER summary per column,
+# with the native stamina recovery loss below. No separate IN row or editor.
+_hunger_footer_start = _hunger_source.find('var footerTop = frame.Top + 269.0;')
+_hunger_footer_end = _hunger_source.find('private static string HungerOnsetEstimate(', _hunger_footer_start)
+_hunger_footer = (_hunger_source[_hunger_footer_start:_hunger_footer_end]
+                  if 0 <= _hunger_footer_start < _hunger_footer_end else '')
+_hunger_required = (
+    'void StageCaption(int index, string stageName,',
+    'var narrow = stageWidth < 205.0;',
+    'var elapsed = HungerOnsetEstimate(threshold.CurrentNumber, rate.CurrentNumber);',
+    'var thresholdText = $"{stageName} AT {threshold.CurrentNumber:0} PTS";',
+    'var timeText = $"AFTER {elapsed}";',
+    'var headline = $"{thresholdText} {timeText}";',
+    'highlight[0] = threshold.IsValueModifiedFromReference();',
+    'highlight[j] = true;',
+    'Enumerable.Repeat(true, timeNumbers).ToArray()',
+    '$"-{recoveryLoss.CurrentNumber * 100:0}% STAMINA RECOVERY"',
+    'StageCaption(0, "LOW", low, null);',
+    'StageCaption(1, "MEDIUM", medium, mediumPenalty);',
+    'StageCaption(2, "SEVERE", severe, severePenalty);',
     'private static string HungerOnsetEstimate(double threshold, double pointsPerSecond)',
     'if (threshold <= Epsilon)',
     'if (pointsPerSecond <= Epsilon)',
     'Math.Floor(Math.Max(0.0, threshold) / pointsPerSecond)',
-    'private const double HungerProfileHeight = 388.0;',
+    'private const double HungerProfileHeight = 344.0;',
     'var frameBottom = previewBottom + 55.0 + HungerProfileHeight;',
 )
-if not all(token in _hunger_source for token in _hunger_timing_required):
-    fail("Hunger onset estimates: missing real-source, elapsed-time, zero-rate or shared-height contract")
-if (not _hunger_timing or "AddHorizontalTarget(" in _hunger_timing
-        or "AddVerticalTarget(" in _hunger_timing or "_hitTargets.Add" in _hunger_timing):
-    fail("Hunger onset readouts gained an editable target or were removed")
+if not all(token in _hunger_source for token in _hunger_required):
+    fail('Hunger stage/threshold/onset/recovery summary contract drifted')
+if (not _hunger_footer or any(x in _hunger_footer for x in (
+        'AddHorizontalTarget(', 'AddVerticalTarget(', '_hitTargets.Add',
+        'var onsetY =', 'onsetStages', 'EST. FROM 0 HUNGER PTS',
+    ))):
+    fail('Hunger footer has a duplicate time row or new hit target')
 if _hunger_source.count('DrawCoreResourceRuler(dc, rate, "HUNGER RATE"') != 1:
-    fail("Hunger build-up existing input was duplicated or removed")
-# Native vanilla rate 0.015 pts/s and stage thresholds 17/33/83 PTS:
-# 18m53s, 36m40s, 1h32m13s from zero, no food. Also test retuning.
+    fail('Hunger rate input missing or duplicated')
 for _rate, _threshold, _seconds in (
     (.015, 17, 1133), (.015, 33, 2200), (.015, 83, 5533),
     (.030, 33, 1100), (.001, 83, 83000),
 ):
     if int(_threshold / _rate) != _seconds:
-        fail(f"Hunger onset formula/reference drift: {_threshold} PTS / {_rate} PTS/s")
-if not all(k in _hunger_source for k in ('return "0s";', 'return "NEVER";')):
-    fail("Hunger onset zero-threshold and zero-rate guards absent")
-if not errors:
-    note("Hunger onset: three read-only real-time estimates, live stage/rate sources, no extra sliders")
-
+        fail(f'Hunger onset calculation changed: {_threshold} / {_rate}')
+if not all(x in _hunger_source for x in ('return "0s";', 'return "NEVER";')):
+    fail('Hunger zero-threshold/rate guards absent')
+else:
+    note('Hunger: three merged stage/PTS/AFTER/RECOVERY summaries, no extra sliders')
 
 # WPF tooltip-free interaction: all popups are retired, not hover chrome.
 _tooltip_files = (
@@ -2467,7 +2470,7 @@ for _file, _required in {
     "AggregateVisualControl.cs": (
         "CreateDerivedText(", "DrawDerivedCentered(", "DrawDerivedRight(",
         "DrawDerivedLeft(", "highlightDerivedLastNumber: true",
-        "onsetStages[i].Name} IN {HungerOnsetEstimate(",
+        'var headline = $"{thresholdText} {timeText}";',
     ),
     "ActionCostsRadar.cs": (
         "if (nativeOnly && tokens.Count > 1)",
@@ -2483,7 +2486,7 @@ for _file, _required in {
         fail(f"Derived-number gold contract failed: {_file}")
 if "EST. FROM 0 HUNGER PTS · NO FOOD" in _hunger_source:
     fail("Obsolete Hunger estimate heading returned")
-note("No WPF hover popups; gold contextual numbers and Hunger IN times")
+note("No WPF hover popups; gold contextual numbers and merged Hunger summaries")
 
 # Hunger and Fatigue now share the SAME primary resource ruler as Core
 # Health/Core Stamina. Protect geometry/units/source routing, not screenshots.
