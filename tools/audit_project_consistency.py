@@ -4024,7 +4024,7 @@ if _stamina_sort_begin < 0 or _stamina_sort_end < 0 or any(
 note('Stamina pass 4: unloaded observers and stale gestures released; hidden sort ranks removed')
 
 # Stamina pass 5: native-cost-only highlight; passive Max Stamina
-# percentage/hover projection cannot impersonate a changed CFG value.
+# percentage cannot impersonate a changed CFG value; retired hover overlays stay absent.
 _action_format_start = _action_usage_source.find('private FormattedText CreateSourceValueText(')
 _action_format_end = _action_usage_source.find('private void DrawHandle(', _action_format_start)
 _action_format = _action_usage_source[_action_format_start:_action_format_end]
@@ -4037,10 +4037,9 @@ if (_action_format_start < 0 or _action_format_end < 0
     or 'nativeOnly' in _action_usage_source
     or 'private void DrawSourceValue(' in _action_usage_source
     or 'countText.SetForegroundBrush(accent,' in _action_usage_source
-    or 'countText.SetForegroundBrush(text, number.Index, number.Length);' not in _action_usage_source
     or 'parameter.CurrentNumber / staminaPool' not in _action_usage_source
     or 'Actions[index].SpendCaption' not in _action_usage_source
-    or 'Math.Floor(staminaPool / hovered.CurrentNumber)' not in _action_usage_source):
+    or 'Math.Floor(staminaPool / hovered.CurrentNumber)' in _action_usage_source):
     fail('Stamina Usage edited-cost vs passive projection numeric color contract drifted')
 note('Stamina pass 5: only changed native cost turns gold; derived pool projections stay neutral')
 
@@ -4075,7 +4074,7 @@ if ('SPENT PER ACTION' in _action_usage_source
     or 'string SpendCaption' not in _action_usage_source
     or 'Actions[index].SpendCaption' not in _stamina_six_body
     or any(
-        f'new("{{pid}}", "{{label}}", ActionGroup.{{group}}, "SPENT PER {{event}}")' not in _action_usage_source
+        f'new("{pid}", "{label}", ActionGroup.{group}, "SPENT PER {event}")' not in _action_usage_source
         for pid, label, group, event in _expected_spend_captions
     )):
     fail('Stamina Usage movement/melee contextual spend captions drifted')
