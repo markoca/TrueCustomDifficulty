@@ -167,7 +167,7 @@ internal static class Program
             var cohort = Catalog.Parameters
                 .Where(p => p.Id.StartsWith("survival.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal).ToArray();
-            Check(cohort.Length == 63, "Survival catalog no longer contains exactly 63 parameters");
+            Check(cohort.Length == 64, "Survival catalog no longer contains exactly 64 parameters");
 
             MasterPenaltyKnobSourceContract();
             StarvationKnobRangeContract();
@@ -183,14 +183,14 @@ internal static class Program
                 "Survival catalog-to-live-VM exclusions changed: "
                 + string.Join(", ", unmounted));
             var live = cohort.Where(p => loaded.Contains(p.Id)).ToArray();
-            Check(live.Length == 62, "Expected 62 live Survival source-backed parameters");
+            Check(live.Length == 63, "Expected 63 live Survival source-backed parameters");
 
             var points = Baseline.EditPoints
                 .Where(p => p.ParameterId.StartsWith("survival.", StringComparison.Ordinal))
                 .ToArray();
             Check(points.Length == 145, "Survival manifest no longer contains 145 source edit points");
             Check(points.All(p => p.Scope == "baseGame"), "Survival source unexpectedly targets DLC");
-            Check(points.Select(p => p.ParameterId).Distinct().Count() == 63,
+            Check(points.Select(p => p.ParameterId).Distinct().Count() == 64,
                 "Survival manifest-to-catalog parameter inventory differs");
             Check(points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal)
                       .SetEquals(cohort.Select(p => p.Id)),
@@ -224,6 +224,13 @@ internal static class Program
                 ("survival.energyDrinkFatigueRelief", 1.4)
             });
             TestIndependentInstantRefill();
+            TestIndependentWaterStrengths();
+            TestCombined("Veteran-Independent-Water-Strengths", "Veteran", new[]
+            {
+                ("survival.waterInstantStaminaRestore", 0.44),
+                ("survival.waterStaminaEffectStrength", 1.40),
+                ("survival.waterStaminaCostReduction", 0.75)
+            });
             TestCombined("Veteran-Drink-Independent-Durations", "Veteran", new[]
             {
                 ("survival.waterEffectDuration", 1.5),
@@ -796,6 +803,37 @@ internal static class Program
             if (_keep is null && Directory.Exists(path))
                 Directory.Delete(path, recursive: true);
         }
+    }
+
+    // The +25% Stamina effect is distinct from the native -10% SPDrain:
+    // both have their own full CFG ValueMin/Max ownership and source UI bar.
+    private static void TestIndependentWaterStrengths()
+    {
+        const string test = "Independent-Water-Strengths";
+        var bonusId = "survival.waterStaminaEffectStrength";
+        var costId = "survival.waterStaminaCostReduction";
+        var all = Baseline.EditPoints.Where(p =>
+            p.ParameterId == bonusId || p.ParameterId == costId).ToArray();
+        Check(all.Length == 4 && all.Count(p => p.ParameterId == bonusId) == 2
+            && all.Count(p => p.ParameterId == costId) == 2,
+            test + ": each source must own exactly ValueMin and ValueMax");
+        Check(all.Where(p => p.ParameterId == bonusId).All(p =>
+            p.Prototype == "WaterStamina2" && p.Operation == "scale" && p.SourceRaw == "25%")
+            && all.Where(p => p.ParameterId == costId).All(p =>
+            p.Prototype == "WaterStaminaPerAction1" && p.Operation == "scale"
+            && p.SourceRaw == "-10%"),
+            test + ": native bonus and action SPDrain mappings are not independent");
+        var vm = new MainViewModel(Catalog);
+        foreach (var id in new[] { bonusId, costId })
+        {
+            var source = vm.AllParameters.Single(p => p.Id == id);
+            Check(source.VisualAggregateFamily == "ConsumableMixer"
+                && !source.IsControlVisible && Math.Abs(source.ReferenceNumber - 1.0) < 0.000001
+                && Math.Abs(source.Maximum - 2.0) < 0.000001
+                && Math.Abs(source.TickFrequency - 0.05) < 0.000001,
+                test + ": source is not independently mounted in native Water bar: " + id);
+        }
+        _passed++;
     }
 
     private static void TestIndependentInstantRefill()

@@ -2180,14 +2180,14 @@
       "id": "survival.waterStaminaEffectStrength",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Water Stamina Regeneration + Cost Cut",
-      "description": "Scales Water's sustained stamina-regeneration bonus and per-action stamina-cost reduction together while preserving their authored relationship.",
+      "label": "Water Stamina Bonus",
+      "description": "Scales WaterStamina2's native timed +25% Stamina effect independently of Water's action-stamina cost reduction and immediate 38% stamina refill. The prototype type is Stamina, not verified RegenStamina.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Water sustained stamina regeneration and reduced action cost"
+        "valueLabel": "Water timed +25% Stamina effect"
       },
       "vanilla": {
         "All": 1
@@ -2207,7 +2207,45 @@
           "prototype": "WaterStamina2",
           "path": "ValueMin|ValueMax",
           "operation": "scale"
-        },
+        }
+      ],
+      "support": {
+        "status": "confirmed",
+        "notes": [
+          "WaterStamina2 is EEffectType::Stamina, not RegenStamina; its native +25% effect has a separate 5-second duration.",
+          "The active green bar displays its source magnitude from 0–50%, independently of the native -10% WaterStaminaPerAction1 effect."
+        ]
+      },
+      "rationale": "Scales only WaterStamina2's +25% timed Stamina effect.",
+      "logic": "0x removes this Stamina bonus; 1x keeps +25%, 2x gives +50%. This source is not the instant 38% refill.",
+      "interaction": "Water cost cut and instant refill are separate independent controls.",
+      "exposeInUi": false
+    },
+    {
+      "id": "survival.waterStaminaCostReduction",
+      "tab": "survival",
+      "group": "Consumable Effects",
+      "label": "Water Stamina Cost Reduction",
+      "description": "Independently scales Water's native -10% SPDrain action-stamina-cost reduction without altering the distinct +25% Water Stamina effect or instant stamina gain.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Water reduction of stamina cost per action"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.05
+      },
+      "targets": [
         {
           "scope": "baseGame",
           "file": "GameData/EffectPrototypes.cfg",
@@ -2219,13 +2257,13 @@
       "support": {
         "status": "confirmed",
         "notes": [
-          "The source CFG defines a sustained Water stamina-regeneration effect and a separate per-action stamina-cost reduction.",
-          "One multiplier preserves the authored relationship between those two Water effects."
+          "WaterStaminaPerAction1 is a native -10% SPDrain effect over 30 seconds; it does not share a ValueMin/ValueMax target with WaterStamina2.",
+          "The player-facing green bar shows absolute reduction 0–20% from the unchanged native 0–2x scale."
         ]
       },
-      "rationale": "Scales Water's sustained stamina regeneration and per-action stamina-cost reduction together; instant refill and duration are separate.",
-      "logic": "1x keeps both authored Water stamina effects. 0 removes both sustained Water stamina effects; 2x doubles both while preserving their relative strength.",
-      "interaction": "Water Instant Stamina Restore and Water Effect Duration remain separate controls.",
+      "rationale": "Controls Water's native stamina drain reduction independently of its +25% Stamina effect and 38% instant stamina restoration.",
+      "logic": "0x = 0% cost reduction; 1x = vanilla 10%; 2x = 20%. A scale operation preserves the original negative SPDrain source sign.",
+      "interaction": "Separate independent WaterStamina2 and WaterStaminaInstant sources remain unchanged.",
       "exposeInUi": false
     },
     {

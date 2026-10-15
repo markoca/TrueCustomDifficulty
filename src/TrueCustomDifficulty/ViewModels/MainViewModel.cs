@@ -157,6 +157,7 @@ public sealed class MainViewModel : ObservableObject
         {
             "survival.energyDrinkInstantStaminaRestore",
             "survival.waterStaminaEffectStrength",
+            "survival.waterStaminaCostReduction",
             "survival.energyDrinkStaminaRecoveryStrength",
             "survival.waterRegenDuration",
             "survival.energyFullCostDuration",
@@ -360,6 +361,7 @@ public sealed class MainViewModel : ObservableObject
             "survival.waterInstantStaminaRestore",
             "survival.energyDrinkInstantStaminaRestore",
             "survival.waterStaminaEffectStrength",
+            "survival.waterStaminaCostReduction",
             "survival.energyDrinkStaminaRecoveryStrength",
             "survival.waterEffectDuration",
             "survival.waterRegenDuration",
@@ -1516,6 +1518,19 @@ public sealed class MainViewModel : ObservableObject
                                 refillScale * vanilla, source.Minimum, source.Maximum));
                     }
                 }
+
+                // Backward-compatible split of Water's former shared +25% Stamina
+                // and -10% SPDrain multiplier. Old presets keep both strengths
+                // unless the new cost-cut value is explicitly present.
+                if (!preset.Values.ContainsKey("survival.waterStaminaCostReduction")
+                    && preset.Values.TryGetValue("survival.waterStaminaEffectStrength",
+                        out var legacyWaterStrength)
+                    && legacyWaterStrength.Number is double legacyWaterMultiplier
+                    && double.IsFinite(legacyWaterMultiplier)
+                    && parametersById.TryGetValue("survival.waterStaminaCostReduction",
+                        out var waterCostCut))
+                    waterCostCut.SnapCurrentNumberToMarker(Math.Clamp(
+                        legacyWaterMultiplier, waterCostCut.Minimum, waterCostCut.Maximum));
 
                 // Earlier releases persisted one 1x multiplier for BOTH
                 // BeerAntirad1 (-10) and VodkaAntirad3 (-50). Convert that

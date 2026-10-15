@@ -2989,6 +2989,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static Brush? DrinkEffectLineBrush(string sourceId) => sourceId switch
     {
         "survival.waterEffectDuration" or "survival.waterRegenDuration"
+            or "survival.waterStaminaEffectStrength"
+            or "survival.waterStaminaCostReduction"
             => WaterEffectLineBrush,
         "survival.energyPartialCostDuration" => EnergyDrinkPartialCostLineBrush,
         "survival.energyDrinkEffectDuration" or "survival.energyFullCostDuration"
@@ -3010,7 +3012,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             new Point(effectMarkerX, mainY + offset));
     }
 
-    // Drink strength knobs sit above the combined eight-lane duration graph;
+    // Three drink strength knobs sit above the combined eight-lane duration graph;
     // three independent medicine strength knobs sit beneath it.
     private const double ConsumableStrengthKnobTop = 53.0;
     private const double ConsumableDurationTop = 250.0;
@@ -3026,6 +3028,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var burst = P("survival.waterInstantStaminaRestore");
         var energyBurst = P("survival.energyDrinkInstantStaminaRestore");
         var waterStamina = P("survival.waterStaminaEffectStrength");
+        var waterCostReduction = P("survival.waterStaminaCostReduction");
         var energyStamina = P("survival.energyDrinkStaminaRecoveryStrength");
         var waterTime = P("survival.waterEffectDuration");
         var energyTime = P("survival.energyDrinkEffectDuration");
@@ -3046,7 +3049,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             string.Empty, text, muted, accent);
 
         if (burst is null || energyBurst is null || waterStamina is null ||
-            energyStamina is null ||
+            waterCostReduction is null || energyStamina is null ||
             waterTime is null || energyTime is null ||
             vodkaTime is null || beerTime is null || magicTime is null ||
             waterRegenTime is null || energyFullCostTime is null ||
@@ -3062,11 +3065,12 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var width = Math.Max(460.0, ActualWidth - 34.0);
 
-        // Two independent absolute-percent instant refills beside the two
-        // existing buff multipliers. Compact, native 270-degree rotary grammar.
+        // Two direct-percent refills and the separate Energy regeneration knob;
+        // Water's two independently writable sustained effects live in green
+        // native percent bars below, avoiding duplicate controls.
         const double knobGap = 10.0;
-        var knobBankWidth = Math.Min(720.0, ActualWidth - 34.0);
-        var knobWidth = (knobBankWidth - 3.0 * knobGap) / 4.0;
+        var knobBankWidth = Math.Min(620.0, ActualWidth - 34.0);
+        var knobWidth = (knobBankWidth - 2.0 * knobGap) / 3.0;
         var knobLeft = (ActualWidth - knobBankWidth) / 2.0;
         // Read-only refill points are centered with the editable native percentage.
         var maxStamina = Linked("stamina.maxSP");
@@ -3085,12 +3089,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             secondaryReadout: $"+{energyBurst.CurrentNumber * staminaPool:0.#} stamina",
             secondaryModified: Math.Abs(energyBurst.CurrentNumber * staminaPool
                 - energyBurst.ReferenceNumber * referenceStaminaPool) > Epsilon);
-        DrawSourceKnob(dc, waterStamina, "WATER STAMINA BUFF",
-            new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
-                ConsumableStrengthKnobTop, knobWidth, 181.0),
-            text, muted, border, accent, panel);
         DrawSourceKnob(dc, energyStamina, "ENERGY DRINK REGEN",
-            new Rect(knobLeft + 3.0 * (knobWidth + knobGap),
+            new Rect(knobLeft + 2.0 * (knobWidth + knobGap),
                 ConsumableStrengthKnobTop, knobWidth, 181.0),
             text, muted, border, accent, panel);
 
@@ -3323,6 +3323,30 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Rect(x, y, secondaryWidth, CompactTrackHeight),
                 text, muted, border, accent, panel);
         }
+
+        // Two independently editable green Water strength bars sit below
+        // the existing seconds-based Water/Energy short-effect duration bars.
+        // Their readouts are real percentages, not extra linked multipliers:
+        // WaterStamina2 (Stamina type, +25% at 1x) and the distinct
+        // WaterStaminaPerAction1 (SPDrain, -10% at 1x).
+        const double waterStrengthGap = CompactColumnGap;
+        var waterStrengthWidth = Math.Min(280.0,
+            (preview.Width - 24.0 - waterStrengthGap) / 2.0);
+        var waterStrengthLeft = preview.Left +
+            (preview.Width - 2.0 * waterStrengthWidth - waterStrengthGap) / 2.0;
+        var waterStrengthY = preview.Top + ConsumableWaterStrengthTop;
+        DrawCompactTrack(dc, waterStamina, "WATER STAMINA BONUS",
+            $"+{25.0 * waterStamina.CurrentNumber:0.#}%",
+            "0%", "50%",
+            new Rect(waterStrengthLeft, waterStrengthY,
+                waterStrengthWidth, CompactTrackHeight),
+            text, muted, border, accent, panel, waterGreen: true);
+        DrawCompactTrack(dc, waterCostReduction, "WATER COST CUT",
+            $"{10.0 * waterCostReduction.CurrentNumber:0.#}% LESS",
+            "0%", "20%",
+            new Rect(waterStrengthLeft + waterStrengthWidth + waterStrengthGap,
+                waterStrengthY, waterStrengthWidth, CompactTrackHeight),
+            text, muted, border, accent, panel, waterGreen: true);
 
         // Position below the whole duration chart, including short effects.
         // MeasureOverride and OnRender share the same responsive geometry.
@@ -4697,9 +4721,11 @@ public sealed class AggregateVisualControl : FrameworkElement
     private const double ConsumableShortEffectsHeaderTop = 300.0;
     private const double ConsumableShortEffectsTrackTop = 322.0;
     private const double ConsumableDrinkSectionGap = 16.0;
+    private const double ConsumableWaterStrengthTop =
+        ConsumableShortEffectsTrackTop + CompactTrackHeight + 10.0;
 
     private static double ConsumableTimelineHeight(double width)
-        => ConsumableShortEffectsTrackTop + CompactTrackHeight + 12.0;
+        => ConsumableWaterStrengthTop + CompactTrackHeight + 12.0;
     // Reserved space for plot ticks plus three independently readable stage lines.
     private const double HungerProfileHeight = 344.0;
     private const double CompactRowGap = 8.0;
@@ -4722,7 +4748,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush border,
         Brush accent,
         Brush panel,
-        bool highlightDerivedLastNumber = false)
+        bool highlightDerivedLastNumber = false, bool waterGreen = false)
     {
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
         var contentWidth = Math.Max(1.0, card.Width - 24.0);
@@ -4781,25 +4807,26 @@ public sealed class AggregateVisualControl : FrameworkElement
         var baseX = ValueToX(parameter.ReferenceNumber,
             parameter.Minimum, parameter.Maximum, track, reverse: false);
 
+        var trackAccent = waterGreen ? WaterEffectLineBrush : accent;
         dc.DrawLine(new Pen(border, 4.0),
             new Point(track.Left, y), new Point(track.Right, y));
         if (parameter.IsControlEnabled)
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
+            dc.DrawLine(new Pen(CloneWithOpacity(trackAccent, 0.9), 4.5),
                 new Point(track.Left, y), new Point(currentX, y));
         // Effect-specific underlines are separate; the glow follows only the
         // real primary value and never extends to an unrelated duration marker.
         IndustrialRulerChrome.DrawActiveRailGlint(dc, track.Left, currentX, y,
-            accent, parameter.IsControlEnabled);
+            trackAccent, parameter.IsControlEnabled);
         DrawDrinkEffectLine(dc, parameter, track.Left, currentX, y);
 
         dc.DrawLine(new Pen(muted, 2.0),
             new Point(baseX, y - 10.0), new Point(baseX, y + 10.0));
         dc.DrawEllipse(panel,
-            new Pen(parameter.IsControlEnabled ? accent : muted,
+            new Pen(parameter.IsControlEnabled ? trackAccent : muted,
                 IsSelected(parameter) ? 2.8 : 1.9),
             new Point(currentX, y), 7.0, 7.0);
         if (parameter.IsControlEnabled)
-            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+            dc.DrawEllipse(trackAccent, null, new Point(currentX, y), 2.5, 2.5);
 
         AddHorizontalTarget(parameter,
             new Rect(track.Left - 7.0, track.Top - 3.0,
@@ -6240,6 +6267,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "survival.waterInstantStaminaRestore",
                 "survival.energyDrinkInstantStaminaRestore",
                 "survival.waterStaminaEffectStrength",
+                "survival.waterStaminaCostReduction",
                 "survival.energyDrinkStaminaRecoveryStrength",
                 "survival.waterEffectDuration",
                 "survival.waterRegenDuration",

@@ -4149,6 +4149,7 @@ _consumer_ids = (
     "survival.waterInstantStaminaRestore",
     "survival.energyDrinkInstantStaminaRestore",
     "survival.waterStaminaEffectStrength",
+    "survival.waterStaminaCostReduction",
     "survival.energyDrinkStaminaRecoveryStrength",
 )
 _consumer_catalog = {p["id"]: p for p in parameters_doc["parameters"]}
@@ -4179,9 +4180,8 @@ for _cid in _consumer_ids:
 for _required in (
     'DrawSourceKnob(dc, burst, "WATER STAMINA GAIN",',
     'DrawSourceKnob(dc, energyBurst, "ENERGY DRINK STAMINA GAIN",',
-    'DrawSourceKnob(dc, waterStamina, "WATER STAMINA BUFF",',
     'DrawSourceKnob(dc, energyStamina, "ENERGY DRINK REGEN",',
-    'var knobBankWidth = Math.Min(720.0, ActualWidth - 34.0);',
+    'var knobBankWidth = Math.Min(620.0, ActualWidth - 34.0);',
 ):
     if _required not in _consumer_drinks:
         _consumer_errors.append(f"drink knob missing: {_required}")
@@ -4207,7 +4207,50 @@ for _required in (
 ):
     if _required not in _consumer_medicines:
         _consumer_errors.append(f"medicine knob missing below effects: {_required}")
-if (_consumer_drinks.count("DrawSourceKnob(") != 4
+# Water's Stamina (+25%) and native negative SPDrain (-10%) are now
+# independently editable source bars, with green rails and exact writer scope.
+_water_bonus_pid = "survival.waterStaminaEffectStrength"
+_water_cost_pid = "survival.waterStaminaCostReduction"
+_water_bonus_def = _consumer_catalog.get(_water_bonus_pid, {})
+_water_cost_def = _consumer_catalog.get(_water_cost_pid, {})
+if (len(_water_bonus_def.get("targets", [])) != 1
+    or _water_bonus_def["targets"][0].get("prototype") != "WaterStamina2"
+    or len(_water_cost_def.get("targets", [])) != 1
+    or _water_cost_def["targets"][0].get("prototype") != "WaterStaminaPerAction1"
+    or any(_consumer_catalog.get(pid, {}).get("vanilla", {}).get("All") != 1
+        or _consumer_catalog.get(pid, {}).get("slider", {}).get("max") != 2
+        or _consumer_catalog.get(pid, {}).get("slider", {}).get("step") != 0.05
+        for pid in (_water_bonus_pid, _water_cost_pid))):
+    _consumer_errors.append("Water source strengths no longer own separate CFG targets")
+_water_pts = [p for p in baseline.get("editPoints", [])
+              if p.get("parameterId") in (_water_bonus_pid, _water_cost_pid)]
+if (len(_water_pts) != 4
+    or sorted((p.get("parameterId"), p.get("prototype"), p.get("sourceRaw"))
+              for p in _water_pts) != sorted(
+        [(_water_bonus_pid, "WaterStamina2", "25%")] * 2 +
+        [(_water_cost_pid, "WaterStaminaPerAction1", "-10%")] * 2)):
+    _consumer_errors.append("Water effect baseline targets lost independent owners")
+for _token in (
+    'DrawCompactTrack(dc, waterStamina, "WATER STAMINA BONUS",',
+    'DrawCompactTrack(dc, waterCostReduction, "WATER COST CUT",',
+    '"0%", "50%",', '"0%", "20%",',
+    'waterStrengthY, waterStrengthWidth, CompactTrackHeight)',
+    'waterGreen: true);',
+):
+    if _token not in _consumer_durations:
+        _consumer_errors.append("Water compact green percentage rails missing: " + _token)
+if (_consumer_durations.count('waterGreen: true);') != 2
+    or 'DrawSourceKnob(dc, waterStamina,' in _consumer_drinks
+    or 'private const double ConsumableWaterStrengthTop =' not in _consumer_source
+    or '=> ConsumableWaterStrengthTop + CompactTrackHeight + 12.0;' not in _consumer_source
+    or 'var trackAccent = waterGreen ? WaterEffectLineBrush : accent;' not in _consumer_source
+    or 'or "survival.waterStaminaCostReduction"' not in _consumer_source):
+    _consumer_errors.append("Water green bar geometry/active color/sole source wiring drifted")
+_vm_for_water = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+if (_vm_for_water.count('"survival.waterStaminaCostReduction"') < 4
+    or 'Backward-compatible split of Water' not in _vm_for_water):
+    _consumer_errors.append("Water independent bar live binding / preset migration missing")
+if (_consumer_drinks.count("DrawSourceKnob(") != 3
     or _consumer_durations.count("DrawSourceKnob(") != 0
     or _consumer_medicines.count("DrawSourceKnob(") != 3):
     _consumer_errors.append("knob counts/positions have drifted")
@@ -4230,7 +4273,7 @@ if any("2026-10-11 — Consumable Effects: compact knobs below duration graph"
 if _consumer_errors:
     fail("Consumable Effects no-preview layout: " + "; ".join(_consumer_errors))
 else:
-    note("Consumable Effects: drink knobs, 8 duration lanes, medicine knobs below, no passive preview")
+    note("Consumable Effects: 3 drink knobs, two independent green Water source bars, 8 duration lanes and medicine knobs")
 
 
 # Master medical healing: one responsive instrument bank, not a 2+1 card grid.
@@ -5112,6 +5155,18 @@ for _doc in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md'):
     if 'Starvation onset and Master healing 100% cap (CURRENT)' not in (DOCS / _doc).read_text(encoding='utf-8'):
         fail('Master healing 100% limit missing from current UI catalog: ' + _doc)
 note('Master healing three source sliders 0–100% / original references; starvation onset label contextual')
+
+# Enforce the revised Water two-bar contract and independent writer test.
+_water_test = (ROOT / "tests/SurvivalPatchContract/Program.cs").read_text(encoding="utf-8")
+if ('TestIndependentWaterStrengths();' not in _water_test
+    or 'Veteran-Independent-Water-Strengths' not in _water_test
+    or 'cohort.Length == 64' not in _water_test
+    or 'points.Select(p => p.ParameterId).Distinct().Count() == 64' not in _water_test):
+    fail("Water independent source writer regression coverage missing")
+for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Independent green Water stamina bonus and cost-cut bars (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        fail("Water green-bar current UI catalog contract missing in "+_doc)
+note("Water two green source bars: separate +25% Stamina / -10% SPDrain targets")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
