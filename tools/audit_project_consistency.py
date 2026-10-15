@@ -3029,31 +3029,28 @@ for _token in (
     "new Rect(17.0, previewTop, width, ConsumableTimelineHeight(ActualWidth))",
     "=> ConsumableMedicineKnobTop(width) + 181.0 + 14.0;",
     "var secondary = new ParameterViewModel[][]",
-    "shortEffect.CurrentNumber",
-    "DrawCompactTrack(dc, shortEffect, caption,",
-    'var waterCapCaption = secondaryWidth >= 224.0',
-    'DrawText(dc, "ENERGY DRINK BUFFS",',
-    "private const double ConsumableShortEffectsHeaderTop = 300.0;",
-    "private const double ConsumableShortEffectsTrackTop = 322.0;",
-    "private const double ConsumableDrinkSectionGap = 16.0;",
-    "=> ConsumableShortEffectsTrackTop + CompactTrackHeight + 12.0;",
-    "energySectionLeft + (index - 1) *",
-    "var visibleLabel = card.Width < 235.0 ? parameter.Id switch",
-    "new Point(card.Left + 12.0, card.Top + 7.0)",
-    "(waterRegenTime, \"+25% MAX STAMINA\")",
-    "(energyFullCostTime, \"NO STAMINA COST DURATION\")",
-    "(energyPartialCostTime, \"-30% STAMINA COST DURATION\")",
+    'DrawText(dc, "WATER",',
+    'DrawText(dc, "ENERGY DRINK",',
+    "private const double ConsumableEffectsInlineMinimumWidth = 730.0;",
+    "private const double ConsumableEffectsGroupTop = 300.0;",
+    "var sideBySide = effectsWidth >= ConsumableEffectsInlineMinimumWidth;",
+    "Rect WaterCell(int index) => new(",
+    "Rect EnergyCell(int index) => new(",
+    "var referenceWaterCap = referenceStaminaPool *",
+    "capLabel.SetForegroundBrush(accent, capNumber.Index, capNumber.Length);",
+    "DrawMiniConsumableKnob(dc, waterRegenTime,",
+    "DrawMiniConsumableKnob(dc, waterStamina,",
+    "DrawMiniConsumableKnob(dc, waterCostReduction,",
+    "DrawMiniConsumableKnob(dc, energyFullCostTime,",
+    "DrawMiniConsumableKnob(dc, energyPartialCostTime,",
 ):
     if _token not in _duration_renderer:
-        fail(f"consumable short-duration native control/measurement missing: {_token}")
-if _duration_renderer.count("DrawCompactTrack(dc, shortEffect, caption,") != 1:
-    fail("consumable child duration track registration drifted")
+        fail("Consumable grouped native controls/measurement drifted: " + _token)
+if _duration_renderer.count("DrawMiniConsumableKnob(dc,") != 5:
+    fail("Consumable native mini-knob registration count drifted")
 if ("ConsumableSecondaryColumns(" in _duration_renderer
-    or "stamina EFFECT DURATION" in _duration_renderer
-    or '"stamina COST DURATION"' in _duration_renderer
-    or '(waterRegenTime, "+25% MAX\\nstamina")' in _duration_renderer
     or "var headingLines = label.Split(" in _duration_renderer):
-    fail("consumable short-duration captions or responsive row splitting regressed")
+    fail("Retired consumable duration split-layout resurfaced")
 
 
 _short_drink_ui_names = {
@@ -4208,7 +4205,7 @@ for _required in (
     '(vincaTime, "VINCA")',
     '(herculesTime, "HERCULES")',
     '(psiTime, "PSI BLOCK")',
-    'DrawMiniConsumableKnob(dc, shortEffect, caption,',
+    'DrawMiniConsumableKnob(dc, waterRegenTime, "WATER BONUS DURATION",',
 ):
     if _required not in _consumer_durations:
         _consumer_errors.append(f"duration lane missing: {_required}")
@@ -4250,15 +4247,15 @@ for _token in (
     'DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",',
     'DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",',
     '"0%", "50%",', '"0%", "20%",',
-    'waterStrengthY, waterStrengthWidth, ConsumableMiniKnobHeight)',
+    'WaterCell(1)', 'WaterCell(2)',
     'WaterEffectLineBrush);', 'WaterCostCutLineBrush);',
 ):
     if _token not in _consumer_durations:
         _consumer_errors.append("Water compact green percentage rails missing: " + _token)
-if (_consumer_durations.count('DrawMiniConsumableKnob(dc,') != 3
+if (_consumer_durations.count('DrawMiniConsumableKnob(dc,') != 5
     or 'DrawSourceKnob(dc, waterStamina,' in _consumer_drinks
     or 'private const double ConsumableMiniKnobHeight = 128.0;' not in _consumer_source
-    or '=> ConsumableWaterStrengthTop + ConsumableMiniKnobHeight + 12.0;' not in _consumer_source
+    or 'var sideBySide = effectsWidth >= ConsumableEffectsInlineMinimumWidth;' not in _consumer_source
     or 'private void DrawMiniConsumableKnob(' not in _consumer_source
     or 'new HitTarget(parameter, hit, hit, HitKind.Knob,' not in _consumer_source
     or 'Brush effectBrush)' not in _consumer_source
@@ -5192,21 +5189,25 @@ note("Water two independent source strengths: +25% Stamina / -10% SPDrain target
 # Current five-mini-knob UI and its explicit timeline relationships.
 _mini_ui = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 _mini_impl = _mini_ui.split('private void DrawMiniConsumableKnob(', 1)[-1].split('private void DrawCompactTrack(', 1)[0]
-_mini_body = _mini_ui.split('var shortEffects = new (ParameterViewModel Parameter, string Caption)[]', 1)[-1].split('var medicineKnobTop =', 1)[0]
+_mini_body = _mini_ui.split('var effectsWidth = Math.Min(850.0, preview.Width - 24.0);', 1)[-1].split('var medicineKnobTop =', 1)[0]
 if ('DrawMiniConsumableKnob(' not in _mini_ui or
-    _mini_body.count('DrawMiniConsumableKnob(dc,') != 3 or
-    'DrawCompactTrack(dc, shortEffect' in _mini_body or
+    _mini_body.count('DrawMiniConsumableKnob(dc,') != 5 or
+    'DrawCompactTrack(dc, waterRegenTime' in _mini_body or
     'DrawCompactTrack(dc, waterStamina' in _mini_body or
     'DrawCompactTrack(dc, waterCostReduction' in _mini_body or
     'DrawKnobArc(dc, center, radius' not in _mini_impl or
     'new HitTarget(parameter, hit, hit, HitKind.Knob,' not in _mini_impl or
+    'new Pen(border, .9), card, 4.0, 4.0);' in _mini_impl or
+    'var sideBySide = effectsWidth >= ConsumableEffectsInlineMinimumWidth;' not in _mini_body or
+    'Rect WaterCell(int index) => new(' not in _mini_body or
+    'Rect EnergyCell(int index) => new(' not in _mini_body or
     'WaterCostCutLineBrush' not in _mini_ui or
     'EnergyDrinkPartialCostLineBrush' not in _mini_ui or
     'var waterCap = staminaPool * (1.0 + waterBonusPercent / 100.0);' not in _mini_body or
     'DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0)' not in _mini_ui):
     fail("Five native mini-knob/color-coded Water/Energy duration contract drifted")
 for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
-    if "Five color-linked mini-knobs for Water and Energy effects (CURRENT)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
+    if "Five color-linked mini-knobs for Water and Energy effects (HISTORICAL; SUPERSEDED)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
         fail("Mini-knob source design missing from " + _catalog)
 note("Five mini-knobs for Water and Energy: green/yellow Water pairing and two Energy blues")
 
@@ -5232,6 +5233,17 @@ for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Yellow Water cost-cut duration/strength pairing (CURRENT)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
         fail("Yellow Water cost-cut UI catalog contract missing in "+_catalog)
 note("Yellow Water 30s cost-cut lane / strength knob; green 5s stamina bonus; separate Energy 45s/5s/15s sources")
+
+# Current 3+2 boxed layout must remain documented and responsive.
+for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "One-row Water and Energy Drink mini-knob boxes (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        fail("Water/Energy grouped mini-knob catalog missing: "+_doc)
+if (_mini_body.count('DrawMiniConsumableKnob(dc,') != 5
+    or '_consumer' in _mini_body
+    or 'var energyGroup = new Rect(' not in _mini_body
+    or '2.0 * ConsumableEffectsGroupHeight + ConsumableEffectsGroupGap' not in _mini_ui):
+    fail("Responsive Water/Energy single-row/stacked bank contract drifted")
+note("Water 3 / Energy Drink 2 knobs: compact common row or intact stacked groups")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

@@ -3291,74 +3291,93 @@ public sealed class AggregateVisualControl : FrameworkElement
                 track, source.Minimum, source.Maximum);
         }
 
-        // Independent, compact, source-exact thresholds. Each child ranges
-        // from the original native duration to its live main effect duration.
-        // No duplicate main sliders or fixed pseudo-timeline hit regions.
-        // Beverage headings replace three duplicated long captions.
-        // The three source-backed duration tracks stay on one compact row.
-        var shortEffects = new (ParameterViewModel Parameter, string Caption)[]
-        {
-            (waterRegenTime, "WATER BONUS DURATION"),
-            (energyFullCostTime, "NO COST DURATION"),
-            (energyPartialCostTime, "-30% COST DURATION")
-        };
-        var secondaryWidth = (preview.Width - 24.0 -
-            ConsumableDrinkSectionGap - CompactColumnGap) / 3.0;
-        var waterSectionLeft = preview.Left + 12.0;
-        var energySectionLeft = waterSectionLeft + secondaryWidth +
-            ConsumableDrinkSectionGap;
-        // Temporary +25% maximum-stamina effect: the duration remains its
-        // own source; its result uses the current Core Stamina capacity.
+        // Five native sources in two drink groups; group frames replace
+        // individual mini-card borders. Equal cell sizes when side by side.
+        var effectsWidth = Math.Min(850.0, preview.Width - 24.0);
+        var sideBySide = effectsWidth >= ConsumableEffectsInlineMinimumWidth;
+        var left = preview.Left + (preview.Width - effectsWidth) / 2.0;
+        var top = preview.Top + ConsumableEffectsGroupTop;
+        var uniformWidth = (effectsWidth - ConsumableEffectsGroupGap -
+            4.0 * ConsumableEffectsGroupPadding - 3.0 * ConsumableEffectsCellGap) / 5.0;
+        var waterWidth = sideBySide
+            ? uniformWidth * 3.0 + ConsumableEffectsCellGap * 2.0 +
+                ConsumableEffectsGroupPadding * 2.0
+            : effectsWidth;
+        var energyWidth = sideBySide
+            ? uniformWidth * 2.0 + ConsumableEffectsCellGap +
+                ConsumableEffectsGroupPadding * 2.0
+            : Math.Min(480.0, effectsWidth);
+        var waterGroup = new Rect(left, top, waterWidth, ConsumableEffectsGroupHeight);
+        var energyGroup = new Rect(
+            sideBySide ? waterGroup.Right + ConsumableEffectsGroupGap :
+                left + (effectsWidth - energyWidth) / 2.0,
+            sideBySide ? top : waterGroup.Bottom + ConsumableEffectsGroupGap,
+            energyWidth, ConsumableEffectsGroupHeight);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .76),
+            new Pen(border, .9), waterGroup, 4.0, 4.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .76),
+            new Pen(border, .9), energyGroup, 4.0, 4.0);
+        DrawText(dc, "WATER", new Point(waterGroup.Left + 10.0, waterGroup.Top + 7.0),
+            10.2, text, FontWeights.Bold);
+        DrawText(dc, "ENERGY DRINK", new Point(energyGroup.Left + 10.0, energyGroup.Top + 7.0),
+            10.2, text, FontWeights.Bold);
+
+        // The Water cap remains a useful live projection but need not repeat
+        // the +25% already shown by the separate stamina bonus knob.
         var waterBonusPercent = 25.0 * waterStamina.CurrentNumber;
         var waterCap = staminaPool * (1.0 + waterBonusPercent / 100.0);
-        var waterCapCaption = secondaryWidth >= 224.0
-            ? $"WATER +{waterBonusPercent:0.#}% · {waterCap:0.#} STAMINA CAP"
-            : $"WATER +{waterBonusPercent:0.#}% · {waterCap:0.#} CAP";
-        DrawDerivedLeft(dc, waterCapCaption,
-            new Point(waterSectionLeft + 4.0,
-                preview.Top + ConsumableShortEffectsHeaderTop),
-            secondaryWidth - 8.0, 9.2, text, accent, FontWeights.Bold);
-        DrawText(dc, "ENERGY DRINK BUFFS",
-            new Point(energySectionLeft + 4.0,
-                preview.Top + ConsumableShortEffectsHeaderTop),
-            10.2, text, FontWeights.Bold);
-        for (var index = 0; index < shortEffects.Length; index++)
+        var referenceWaterCap = referenceStaminaPool *
+            (1.0 + 25.0 * waterStamina.ReferenceNumber / 100.0);
+        var waterCapCaption = $"{waterCap:0.#} stamina cap";
+        var capLabel = CreateText(waterCapCaption, 9.2, muted,
+            FontWeights.SemiBold, Math.Max(1.0, waterGroup.Width - 88.0));
+        if (Math.Abs(waterCap - referenceWaterCap) > Epsilon)
         {
-            var (shortEffect, caption) = shortEffects[index];
-            var x = index == 0 ? waterSectionLeft :
-                energySectionLeft + (index - 1) *
-                    (secondaryWidth + CompactColumnGap);
-            var y = preview.Top + ConsumableShortEffectsTrackTop;
-            DrawMiniConsumableKnob(dc, shortEffect, caption,
-                $"{shortEffect.CurrentNumber:0.#}s",
-                $"{shortEffect.Minimum:0.#}s",
-                $"{shortEffect.Maximum:0.#}s",
-                new Rect(x, y, secondaryWidth, ConsumableMiniKnobHeight),
-                text, muted, border, accent, panel,
-                DrinkEffectLineBrush(shortEffect.Id) ?? accent);
+            var capNumber = System.Text.RegularExpressions.Regex.Match(
+                waterCapCaption, @"^\d+(?:\.\d+)?");
+            if (capNumber.Success)
+                capLabel.SetForegroundBrush(accent, capNumber.Index, capNumber.Length);
         }
+        dc.DrawText(capLabel, new Point(
+            waterGroup.Right - 10.0 - capLabel.WidthIncludingTrailingWhitespace,
+            waterGroup.Top + 7.0));
 
-        // Two independent Water mini-knobs: the +25% Stamina bonus stays
-        // green, and the -10% SPDrain cut becomes yellow to match its 30s lane.
-        // Their source ranges, presets and writer targets remain independent.
-        const double waterStrengthGap = CompactColumnGap;
-        var waterStrengthWidth = Math.Min(280.0,
-            (preview.Width - 24.0 - waterStrengthGap) / 2.0);
-        var waterStrengthLeft = preview.Left +
-            (preview.Width - 2.0 * waterStrengthWidth - waterStrengthGap) / 2.0;
-        var waterStrengthY = preview.Top + ConsumableWaterStrengthTop;
+        var waterCellWidth = (waterGroup.Width - 2.0 * ConsumableEffectsGroupPadding -
+            2.0 * ConsumableEffectsCellGap) / 3.0;
+        var energyCellWidth = (energyGroup.Width - 2.0 * ConsumableEffectsGroupPadding -
+            ConsumableEffectsCellGap) / 2.0;
+        Rect WaterCell(int index) => new(
+            waterGroup.Left + ConsumableEffectsGroupPadding +
+                index * (waterCellWidth + ConsumableEffectsCellGap),
+            waterGroup.Top + ConsumableEffectsHeaderHeight,
+            waterCellWidth, ConsumableMiniKnobHeight);
+        Rect EnergyCell(int index) => new(
+            energyGroup.Left + ConsumableEffectsGroupPadding +
+                index * (energyCellWidth + ConsumableEffectsCellGap),
+            energyGroup.Top + ConsumableEffectsHeaderHeight,
+            energyCellWidth, ConsumableMiniKnobHeight);
+
+        DrawMiniConsumableKnob(dc, waterRegenTime, "WATER BONUS DURATION",
+            $"{waterRegenTime.CurrentNumber:0.#}s",
+            $"{waterRegenTime.Minimum:0.#}s", $"{waterRegenTime.Maximum:0.#}s",
+            WaterCell(0), text, muted, border, accent, panel, WaterEffectLineBrush);
         DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",
             $"+{25.0 * waterStamina.CurrentNumber:0.#}%",
-            "0%", "50%",
-            new Rect(waterStrengthLeft, waterStrengthY,
-                waterStrengthWidth, ConsumableMiniKnobHeight),
+            "0%", "50%", WaterCell(1),
             text, muted, border, accent, panel, WaterEffectLineBrush);
         DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",
             $"{10.0 * waterCostReduction.CurrentNumber:0.#}% LESS",
-            "0%", "20%",
-            new Rect(waterStrengthLeft + waterStrengthWidth + waterStrengthGap,
-                waterStrengthY, waterStrengthWidth, ConsumableMiniKnobHeight),
+            "0%", "20%", WaterCell(2),
             text, muted, border, accent, panel, WaterCostCutLineBrush);
+        DrawMiniConsumableKnob(dc, energyFullCostTime, "NO COST DURATION",
+            $"{energyFullCostTime.CurrentNumber:0.#}s",
+            $"{energyFullCostTime.Minimum:0.#}s", $"{energyFullCostTime.Maximum:0.#}s",
+            EnergyCell(0), text, muted, border, accent, panel, EnergyDrinkEffectLineBrush);
+        DrawMiniConsumableKnob(dc, energyPartialCostTime, "-30% COST DURATION",
+            $"{energyPartialCostTime.CurrentNumber:0.#}s",
+            $"{energyPartialCostTime.Minimum:0.#}s", $"{energyPartialCostTime.Maximum:0.#}s",
+            EnergyCell(1), text, muted, border, accent, panel,
+            EnergyDrinkPartialCostLineBrush);
 
         // Position below the whole duration chart, including short effects.
         // MeasureOverride and OnRender share the same responsive geometry.
@@ -4727,18 +4746,26 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Shared density for the large Survival/Health aggregate panels. Rows are
     // column-aware; no independent sliders are stacked inside the same hit area.
     private const double CompactTrackHeight = 82.0;
-    // A single 3-track row belongs to two beverage sections:
-    // Water (one track) and Energy Drink (two adjacent tracks).
-    // Paint and MeasureOverride share the track offset for correct height.
-    private const double ConsumableShortEffectsHeaderTop = 300.0;
-    private const double ConsumableShortEffectsTrackTop = 322.0;
-    private const double ConsumableDrinkSectionGap = 16.0;
+    // Shared geometry for responsive 3+2 grouped source mini-knobs.
     private const double ConsumableMiniKnobHeight = 128.0;
-    private const double ConsumableWaterStrengthTop =
-        ConsumableShortEffectsTrackTop + ConsumableMiniKnobHeight + 10.0;
+    private const double ConsumableEffectsGroupTop = 300.0;
+    private const double ConsumableEffectsHeaderHeight = 24.0;
+    private const double ConsumableEffectsGroupPadding = 8.0;
+    private const double ConsumableEffectsCellGap = 6.0;
+    private const double ConsumableEffectsGroupGap = 12.0;
+    private const double ConsumableEffectsInlineMinimumWidth = 730.0;
+    private const double ConsumableEffectsGroupHeight =
+        ConsumableEffectsHeaderHeight + ConsumableMiniKnobHeight + 8.0;
 
     private static double ConsumableTimelineHeight(double width)
-        => ConsumableWaterStrengthTop + ConsumableMiniKnobHeight + 12.0;
+    {
+        var bankWidth = Math.Min(850.0, Math.Max(460.0, width - 34.0) - 24.0);
+        return ConsumableEffectsGroupTop +
+            (bankWidth >= ConsumableEffectsInlineMinimumWidth
+                ? ConsumableEffectsGroupHeight
+                : 2.0 * ConsumableEffectsGroupHeight + ConsumableEffectsGroupGap)
+            + 12.0;
+    }
     // Reserved space for plot ticks plus three independently readable stage lines.
     private const double HungerProfileHeight = 344.0;
     private const double CompactRowGap = 8.0;
@@ -4757,8 +4784,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush text, Brush muted, Brush border, Brush accent, Brush panel,
         Brush effectBrush)
     {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .76),
-            new Pen(border, .9), card, 4.0, 4.0);
+        // The enclosing WATER / ENERGY DRINK group owns the only frame.
         var active = parameter.IsControlEnabled;
         var title = CreateText(caption, card.Width < 166.0 ? 9.0 : 9.8,
             active ? text : muted, FontWeights.Bold,
