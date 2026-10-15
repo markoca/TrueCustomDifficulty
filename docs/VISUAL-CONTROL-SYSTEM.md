@@ -1,5 +1,10 @@
 # Visual Control System
 
+### 2026-10-15 — Settings CS0103 build fix (CURRENT)
+
+The new `MainWindow.Settings_Click` error handler catches `InvalidDataException` while reporting an invalid saved `~mods` path. Add the required `using System.IO;` in `MainWindow.xaml.cs` to resolve CS0103 on `net10.0-windows`; extend the static consistency audit to protect that dependency. No changes to Settings geometry, footer layout, path persistence, Build Difficulty deployment, CFG writing, presets or native controls. Local .NET publish and Wine acceptance remain pending.
+
+
 ### 2026-10-15 — Footer Settings and direct ~mods difficulty installation (CURRENT)
 
 Replace the lower-left `Modified N · Vanilla N` statistics with exactly one compact `Settings` button. It opens a restrained graphite window with an editable `~mods folder` field and `Browse`, `Save`, `Cancel`. Avoid permanently displayed folder paths, redundant explanations, extra status counters, and full-width panels. The chosen folder must exist and be named `~mods`; Save atomically persists its normalized location to portable `user-settings.json` beside the EXE. Cancel makes no change. The existing right-hand preset/reset button layout remains intact; its primary action becomes **Build Difficulty**.

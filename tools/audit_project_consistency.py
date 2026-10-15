@@ -4696,6 +4696,17 @@ else:
     note("Settings footer and Build Difficulty -> portable ~mods staged deployment locked")
 
 
+# MainWindow Settings path-validation exception requires the System.IO namespace.
+# Keep this as a compile-facing guard: the Settings click handler must resolve
+# InvalidDataException without relying on unrelated global usings.
+_tcd_window_imports = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml.cs").read_text(encoding="utf-8")
+if "private void Settings_Click(" not in _tcd_window_imports:
+    fail("Settings action missing from MainWindow code-behind")
+if "InvalidDataException" in _tcd_window_imports and "using System.IO;" not in _tcd_window_imports:
+    fail("MainWindow Settings catch cannot compile: System.IO import missing (CS0103)")
+else:
+    note("MainWindow Settings InvalidDataException resolves via System.IO")
+
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
