@@ -5185,9 +5185,9 @@ if ('TestIndependentWaterStrengths();' not in _water_test
     or 'points.Select(p => p.ParameterId).Distinct().Count() == 64' not in _water_test):
     fail("Water independent source writer regression coverage missing")
 for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
-    if "Independent green Water stamina bonus and cost-cut bars (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
-        fail("Water green-bar current UI catalog contract missing in "+_doc)
-note("Water two green source bars: separate +25% Stamina / -10% SPDrain targets")
+    if "Independent green Water stamina bonus and cost-cut bars (HISTORICAL; SUPERSEDED)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        fail("Water independent-strength historical source contract missing in "+_doc)
+note("Water two independent source strengths: +25% Stamina / -10% SPDrain targets")
 
 # Current five-mini-knob UI and its explicit timeline relationships.
 _mini_ui = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
@@ -5208,7 +5208,7 @@ if ('DrawMiniConsumableKnob(' not in _mini_ui or
 for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Five color-linked mini-knobs for Water and Energy effects (CURRENT)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
         fail("Mini-knob source design missing from " + _catalog)
-note("Five mini-knobs for Water and Energy: matching bright/dark green and blues")
+note("Five mini-knobs for Water and Energy: green/yellow Water pairing and two Energy blues")
 
 # Yellow Water duration parent / strength-knob source and palette contract.
 for _token in (
