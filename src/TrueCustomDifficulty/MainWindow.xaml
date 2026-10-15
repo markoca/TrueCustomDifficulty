@@ -1162,7 +1162,7 @@
                                        TextTrimming="CharacterEllipsis"
                                        Margin="0,0,0,3" />
                             <ProgressBar Style="{StaticResource WorkbenchBuildProgressStyle}"
-                                         Value="{Binding BuildProgressStep}"
+                                         Value="{Binding BuildProgressStep, Mode=OneWay}"
                                          AutomationProperties.Name="Difficulty build completed stages" />
                         </StackPanel>
                     </Border>

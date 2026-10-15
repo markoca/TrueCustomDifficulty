@@ -28,7 +28,10 @@ root = ET.fromstring(xaml)  # catches malformed styles/closing tags
 # with Settings to its left and the profile selector to its right.
 bars = list(root.iter(w + "ProgressBar"))
 assert len(bars) == 1, f"expected exactly one build progress rail, got {len(bars)}"
-assert bars[0].attrib.get("Value") == "{Binding BuildProgressStep}"
+assert bars[0].attrib.get("Value") == "{Binding BuildProgressStep, Mode=OneWay}", (
+    "ProgressBar.Value defaults to TwoWay in WPF; binding to the read-only "
+    "MainViewModel.BuildProgressStep must explicitly be OneWay"
+)
 assert bars[0].attrib.get("Style") == "{StaticResource WorkbenchBuildProgressStyle}"
 
 footer = next((p for p in root.iter(w + "DockPanel")
