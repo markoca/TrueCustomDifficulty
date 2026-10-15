@@ -301,8 +301,10 @@ public sealed class ActionCostsRadar : FrameworkElement
             var countText = CreateText(count, 9.0, muted, FontWeights.SemiBold);
             var number = System.Text.RegularExpressions.Regex.Match(
                 count, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
+            // This is a read-only pool comparison, not an edited CFG value.
+            // Keep the hovered number legible without false modified-yellow.
             if (number.Success)
-                countText.SetForegroundBrush(accent, number.Index, number.Length);
+                countText.SetForegroundBrush(text, number.Index, number.Length);
             dc.DrawText(countText, new Point(card.Right - 9.0 -
                 countText.WidthIncludingTrailingWhitespace, card.Top + 7.0));
         }
@@ -320,10 +322,13 @@ public sealed class ActionCostsRadar : FrameworkElement
             DrawText(dc, Actions[index].Label, new Point(card.Left + 9.0, top), 9.2,
                 text, FontWeights.Bold);
             var costPercent = 100.0 * parameter.CurrentNumber / staminaPool;
-            DrawSourceValue(dc, parameter,
+            // The absolute cost is the only writable source number. Pool %
+            // is a live, neutral projection and must not be marked as edited.
+            var sourceValue = CreateSourceValueText(parameter,
                 $"{FormatRaw(parameter.CurrentNumber)} STAMINA · {costPercent:0.#}% SPENT PER ACTION",
-                new Point(card.Right - 9.0, top), card.Width >= 300.0 ? 10.0 : 9.0, text, accent,
-                nativeOnly: true);
+                card.Width >= 300.0 ? 10.0 : 9.0, text, accent);
+            dc.DrawText(sourceValue,
+                new Point(card.Right - 9.0 - sourceValue.WidthIncludingTrailingWhitespace, top));
 
             var track = new Rect(card.Left + 9.0, top + 20.0, card.Width - 18.0, 8.0);
             var y = track.Top + track.Height / 2.0;
@@ -595,38 +600,21 @@ public sealed class ActionCostsRadar : FrameworkElement
             track, MappingKind.Absolute, nativeMin, nativeMax);
     }
 
-    // Only the numeric token (including its +/-/%/x) becomes gold when changed.
-    // STAMINA, STAMINA/s, s and other static units remain neutral.
-    private void DrawSourceValue(
-        DrawingContext dc, ParameterViewModel parameter, string value,
-        Point right, double size, Brush text, Brush accent, bool nativeOnly = false)
-    {
-        var formatted = CreateSourceValueText(parameter, value, size, text, accent, nativeOnly);
-        dc.DrawText(formatted,
-            new Point(right.X - formatted.WidthIncludingTrailingWhitespace, right.Y));
-    }
-
+    // Only the first (editable) numeric token may be gold. Derived numbers
+    // such as % of Max Stamina are neutral, even if the source cost changes.
     private FormattedText CreateSourceValueText(
-        ParameterViewModel parameter, string value, double size, Brush text, Brush accent,
-        bool nativeOnly = false)
+        ParameterViewModel parameter, string value, double size, Brush text, Brush accent)
     {
         var formatted = CreateText(value, size, text, FontWeights.Bold);
-        var tokens = System.Text.RegularExpressions.Regex.Matches(
-            value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
         if (parameter.IsValueModifiedFromReference())
         {
-            for (var i = 0; i < tokens.Count; i++)
+            var numeric = System.Text.RegularExpressions.Regex.Match(
+                value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
+            if (numeric.Success)
             {
-                var valueToken = tokens[i];
-                formatted.SetForegroundBrush(accent, valueToken.Index, valueToken.Length);
-                formatted.SetFontSize(size + 1.2, valueToken.Index, valueToken.Length);
-                if (nativeOnly) break;
+                formatted.SetForegroundBrush(accent, numeric.Index, numeric.Length);
+                formatted.SetFontSize(size + 1.2, numeric.Index, numeric.Length);
             }
-        }
-        if (nativeOnly && tokens.Count > 1)
-        {
-            var percent = tokens[1];
-            formatted.SetForegroundBrush(accent, percent.Index, percent.Length);
         }
         return formatted;
     }

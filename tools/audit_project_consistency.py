@@ -3878,6 +3878,28 @@ if _stamina_sort_begin < 0 or _stamina_sort_end < 0 or any(
         f'"{pid}" =>' in _stamina_sort for pid in _hidden_stamina_sort_ids):
     fail('Hidden stamina movement-state parameters returned to normal UI sort ranks')
 note('Stamina pass 4: unloaded observers and stale gestures released; hidden sort ranks removed')
+
+# Stamina pass 5: native-cost-only highlight; passive Max Stamina
+# percentage/hover projection cannot impersonate a changed CFG value.
+_action_format_start = _action_usage_source.find('private FormattedText CreateSourceValueText(')
+_action_format_end = _action_usage_source.find('private void DrawHandle(', _action_format_start)
+_action_format = _action_usage_source[_action_format_start:_action_format_end]
+if (_action_format_start < 0 or _action_format_end < 0
+    or 'parameter.IsValueModifiedFromReference()' not in _action_format
+    or 'Regex.Match(' not in _action_format
+    or 'formatted.SetForegroundBrush(accent, numeric.Index, numeric.Length);' not in _action_format
+    or 'if (numeric.Success)' not in _action_format
+    or 'tokens[1]' in _action_format
+    or 'nativeOnly' in _action_usage_source
+    or 'private void DrawSourceValue(' in _action_usage_source
+    or 'countText.SetForegroundBrush(accent,' in _action_usage_source
+    or 'countText.SetForegroundBrush(text, number.Index, number.Length);' not in _action_usage_source
+    or 'parameter.CurrentNumber / staminaPool' not in _action_usage_source
+    or 'SPENT PER ACTION' not in _action_usage_source
+    or 'Math.Floor(staminaPool / hovered.CurrentNumber)' not in _action_usage_source):
+    fail('Stamina Usage edited-cost vs passive projection numeric color contract drifted')
+note('Stamina pass 5: only changed native cost turns gold; derived pool projections stay neutral')
+
 note('ActionCostsRadar binding cleanup: stale mode handlers detached, active redraw/reset scopes preserved')
 note('ActionCostsRadar cleanup: invisible status/timer and pipe-color helper gone; live editing/reset intact')
 if (not all(token in _action_usage_source for token in (
