@@ -1,5 +1,12 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Water cost-cut duration caption disambiguation (CURRENT)
+
+In **Survival → Consumable Effects → EFFECT DURATION / SECONDS**, the yellow main 30s Water cost-cut **slider** (`survival.waterEffectDuration`) is named **WATER COST CUT DURATION**, while the separate yellow 10%-less **mini-knob** (`survival.waterStaminaCostReduction`) stays **WATER COST CUT** under the WATER group. Both affect the same native `WaterStaminaPerAction1` effect but edit independent seconds and magnitude CFG fields; never couple their values or duplicate either source.
+
+- Render the longer slider caption in the existing **112-DIP** left timeline gutter on two compact lines: **WATER COST CUT** (10.0 DIP bold) above **DURATION** (9.0 DIP muted), with the same **23-DIP row spacing**, source handle, seconds axis, chart height and hit rectangle. The mini-knob stays compact in the existing Water 3 + Energy 2 grouped boxes; do not widen the chart or add explanatory filler.
+- Preserve yellow Water cost-cut controls, green 5s/+25% Water bonus, blue Energy duration markers, modified-value-only gold digits, original keyboard/mouse/wheel/reset interactions, native numerical steps, presets, override logic and CFG mappings. Only the main Water duration label is modified. Confirm the two-line caption visually under Wine.
+
 ### 2026-10-15 — One-row Water and Energy Drink mini-knob boxes (CURRENT)
 
 In **Survival → Consumable Effects → EFFECT DURATION / SECONDS**, display the five independently editable native 270° mini-knobs inside exactly **two compact drink boxes**, not five scattered cards in two rows. At effective centered bank width **≥730 DIP**, place **WATER** (three equally sized knobs) at left and **ENERGY DRINK** (two equally sized knobs) at right in the **same row**, with a 12-DIP inter-group gap and equal 128-DIP mini-knob cells. Cap the entire bank at **850 DIP** so it never stretches unnecessarily.

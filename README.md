@@ -1,5 +1,7 @@
 # True Custom Difficulty
 
+**Water cost-cut duration caption (2026-10-15):** The yellow 30s Water cost-cut timeline slider now reads **WATER COST CUT DURATION** on two compact lines, while the yellow **WATER COST CUT** mini-knob still controls only its independent 10%-less magnitude. No source mappings, layout dimensions or CFG/preset values were changed; verify appearance under Wine.
+
 **Grouped Water and Energy Drink mini-knobs (2026-10-15):** In Consumable Effects the five existing mini-knobs now sit in two compact drink boxes on a single row (Water: bonus duration, stamina bonus, cost cut; Energy Drink: no-cost duration, −30%-cost duration), stacking as complete boxes on narrower windows. Individual mini-card borders and duplicated Water strength text are removed; the live derived Water stamina-cap number remains in the Water box heading. Native source colors, ranges, edit interactions, eight timeline sliders, saved presets and CFG mapping are preserved. Local Wine layout acceptance is pending.
 
 **Water cost-cut identity (2026-10-15):** The 30s main water duration lane in Consumable Effects is now **WATER COST CUT** and uses the same yellow `#F0C419` as its independent 10%-less-cost knob. The separate 5s/+25% Water stamina bonus stays green. Energy retains its independent 45s regeneration / 5s full-cost cut / 15s partial-cost cut durations. No underlying CFG or preset values changed; validate appearance locally under Wine.

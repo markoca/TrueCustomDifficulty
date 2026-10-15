@@ -5213,7 +5213,7 @@ note("Five mini-knobs for Water and Energy: green/yellow Water pairing and two E
 
 # Yellow Water duration parent / strength-knob source and palette contract.
 for _token in (
-    'var names = new[] { "WATER COST CUT", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };',
+    'var names = new[] { "WATER COST CUT DURATION", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };',
     'new SolidColorBrush(Color.FromRgb(240, 196, 25));',
     '"survival.waterEffectDuration" or "survival.waterStaminaCostReduction"',
     'var laneBrush = i == 0 ? WaterCostCutLineBrush : accent;',
@@ -5244,6 +5244,19 @@ if (_mini_body.count('DrawMiniConsumableKnob(dc,') != 5
     or '2.0 * ConsumableEffectsGroupHeight + ConsumableEffectsGroupGap' not in _mini_ui):
     fail("Responsive Water/Energy single-row/stacked bank contract drifted")
 note("Water 3 / Energy Drink 2 knobs: compact common row or intact stacked groups")
+
+# Distinct Water cost-cut duration/magnitude UI names, same CFG effect.
+if ('var names = new[] { "WATER COST CUT DURATION", "ENERGY DRINK"' not in _mini_ui
+    or 'DrawRightAlignedText(dc, "WATER COST CUT",' not in _mini_ui
+    or 'DrawRightAlignedText(dc, "DURATION",' not in _mini_ui
+    or 'new Point(timeline.Left - 13.0, y - 13.0)' not in _mini_ui
+    or 'new Point(timeline.Left - 13.0, y - 1.0)' not in _mini_ui
+    or 'DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",' not in _mini_ui):
+    fail("Water cost-cut seconds lane / magnitude knob visible labels drifted")
+for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Water cost-cut duration caption disambiguation (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        fail("Water duration label contract missing in "+_doc)
+note("Water cost-cut: 30s DURATION lane remains separate from 10%-less magnitude knob")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

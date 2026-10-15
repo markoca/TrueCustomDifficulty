@@ -3144,7 +3144,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var sources = new[] { waterTime, energyTime, vodkaTime, beerTime, magicTime };
-        var names = new[] { "WATER COST CUT", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };
+        var names = new[] { "WATER COST CUT DURATION", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };
         var durations = new[] { 30.0, 45.0, 20.0, 20.0, 90.0 };
         // Three native shorter effect durations now have their own explicit
         // source controls. Small timeline ticks are visual landmarks only;
@@ -3173,9 +3173,24 @@ public sealed class AggregateVisualControl : FrameworkElement
             var track = new Rect(minimumX, y - 6.0,
                 Math.Max(1.0, maximumX - minimumX), 12.0);
 
-            DrawRightAlignedText(dc, names[i],
-                new Point(timeline.Left - 13.0, y - 8.0),
-                10.4, text, FontWeights.Bold);
+            // The Water lane edits seconds, whereas its yellow knob edits
+            // the cost-cut magnitude. Split only this long label within the
+            // fixed 112-DIP gutter; keep the 23-DIP lane spacing unchanged.
+            if (i == 0)
+            {
+                DrawRightAlignedText(dc, "WATER COST CUT",
+                    new Point(timeline.Left - 13.0, y - 13.0),
+                    10.0, text, FontWeights.Bold);
+                DrawRightAlignedText(dc, "DURATION",
+                    new Point(timeline.Left - 13.0, y - 1.0),
+                    9.0, muted, FontWeights.SemiBold);
+            }
+            else
+            {
+                DrawRightAlignedText(dc, names[i],
+                    new Point(timeline.Left - 13.0, y - 8.0),
+                    10.4, text, FontWeights.Bold);
+            }
             // Any grey tail after this source's own max is not editable.
             dc.DrawLine(new Pen(CloneWithOpacity(border, 0.4), 2.0),
                 new Point(timeline.Left, y), new Point(timeline.Right, y));
