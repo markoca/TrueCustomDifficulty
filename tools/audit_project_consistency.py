@@ -2506,8 +2506,8 @@ _fatigue_required = (
     "Enumerable.Repeat(true, count).ToArray()",
     "highlight[0] = thresholds[i].IsValueModifiedFromReference();",
     "highlight[token] = true;",
-    'AIM +{aims[i].CurrentNumber * 100:0.#}%',
-    'RELOAD +{reloads[i - 1].CurrentNumber * 100:0.##}%',
+    'AIM TIME +{aims[i].CurrentNumber * 100:0.#}%',
+    'RELOAD TIME +{reloads[i - 1].CurrentNumber * 100:0.##}%',
     "top + (wrap ? 337.0 : 327.0)",
     'var frame = new Rect(17, top, width, 365);',
 )
@@ -2523,7 +2523,7 @@ for _threshold, _seconds in ((50, 5000), (60, 6000), (80, 8000)):
     if int(_threshold / .010) != _seconds:
         fail("Fatigue vanilla onset arithmetic drifted")
 if not errors:
-    note("Fatigue integrated stage PTS/AFTER/AIM/RELOAD estimates, live rate")
+    note("Fatigue integrated stage PTS/AFTER/AIM TIME/RELOAD TIME percentages, live rate")
 
 # Hunger and Fatigue now share the SAME primary resource ruler as Core
 # Health/Core Stamina. Protect geometry/units/source routing, not screenshots.

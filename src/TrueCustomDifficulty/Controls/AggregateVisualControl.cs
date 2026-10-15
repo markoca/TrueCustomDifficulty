@@ -2251,13 +2251,13 @@ public sealed class AggregateVisualControl : FrameworkElement
                     FontWeights.SemiBold, highlight);
             }
             DrawCenteredNumericChanges(dc,
-                $"AIM +{aims[i].CurrentNumber * 100:0.#}%",
+                $"AIM TIME +{aims[i].CurrentNumber * 100:0.#}%",
                 new Point(cx, top + (wrap ? 314.0 : 304.0)),
                 10.1, text, accent, FontWeights.SemiBold,
                 aims[i].IsValueModifiedFromReference());
             if (i > 0)
                 DrawCenteredNumericChanges(dc,
-                    $"RELOAD +{reloads[i - 1].CurrentNumber * 100:0.##}%",
+                    $"RELOAD TIME +{reloads[i - 1].CurrentNumber * 100:0.##}%",
                     new Point(cx, top + (wrap ? 337.0 : 327.0)),
                     10.1, text, accent, FontWeights.SemiBold,
                     reloads[i - 1].IsValueModifiedFromReference());
