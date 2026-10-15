@@ -33,7 +33,7 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     private static readonly ActionDefinition[] Actions =
     {
-        new("stamina.sprintCost", "SPRINT", ActionGroup.Movement, "PER SPRINT"),
+        new("stamina.sprintCost", "SPRINT", ActionGroup.Movement, "STAMINA DRAIN"),
         new("stamina.jumpCost", "JUMP", ActionGroup.Movement, "PER JUMP"),
         new("stamina.vaultCost", "VAULT", ActionGroup.Movement, "PER VAULT"),
         new("stamina.meleeNormalCost", "QUICK MELEE", ActionGroup.Melee, "PER SWING"),
@@ -303,7 +303,7 @@ public sealed class ActionCostsRadar : FrameworkElement
             // The absolute cost is the only writable source number. Pool %
             // is a live, neutral projection and must not be marked as edited.
             var sourceValue = CreateSourceValueText(parameter,
-                $"{FormatRaw(parameter.CurrentNumber)} stamina · {costPercent:0.#}% {Actions[index].PerCaption}",
+                $"{FormatRaw(parameter.CurrentNumber)} stamina · {costPercent:0.#}% {Actions[index].UsageCaption}",
                 card.Width >= 300.0 ? 10.8 : 9.4, text, accent);
             dc.DrawText(sourceValue,
                 new Point(card.Right - 9.0 - sourceValue.WidthIncludingTrailingWhitespace, top));
@@ -357,7 +357,7 @@ public sealed class ActionCostsRadar : FrameworkElement
                 value => $"{value * 100.0:0.#}%",
                 new Rect(rightX, top, rightWidth, 70.0),
                 text, muted, border, accent, panel);
-            DrawRecoveryStateCard(dc, _sprintRecoveryDelay, "AFTER EXHAUSTION", "REGEN DELAY",
+            DrawRecoveryStateCard(dc, _sprintRecoveryDelay, "AFTER EXHAUSTION", "REGEN STARTS AFTER",
                 value => $"{value:0.0} s",
                 new Rect(rightX, top + 80.0, rightWidth, 70.0),
                 text, muted, border, accent, panel);
@@ -373,7 +373,7 @@ public sealed class ActionCostsRadar : FrameworkElement
                 value => $"{value * 100.0:0.#}%",
                 new Rect(rightX, groupsTop, half, 82.0),
                 text, muted, border, accent, panel);
-            DrawRecoveryStateCard(dc, _sprintRecoveryDelay, "AFTER EXHAUSTION", "REGEN DELAY",
+            DrawRecoveryStateCard(dc, _sprintRecoveryDelay, "AFTER EXHAUSTION", "REGEN STARTS AFTER",
                 value => $"{value:0.0} s",
                 new Rect(rightX + half + gap, groupsTop, half, 82.0),
                 text, muted, border, accent, panel);
@@ -846,7 +846,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         Absolute
     }
 
-    private sealed record ActionDefinition(string ParameterId, string Label, ActionGroup Group, string PerCaption);
+    private sealed record ActionDefinition(string ParameterId, string Label, ActionGroup Group, string UsageCaption);
 
     private sealed record InteractiveTarget(
         ParameterViewModel Parameter,

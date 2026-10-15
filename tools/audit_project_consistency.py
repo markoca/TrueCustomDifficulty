@@ -2482,7 +2482,7 @@ _exhaustion_render_markers = (
     'private const double ExhaustionNarrowHeight = 450.0;',
     'DrawStaminaZonesCard(dc,',
     'DrawRecoveryStateCard(dc, _aimParameter, "AIMING", "REGEN PENALTY"',
-    'DrawRecoveryStateCard(dc, _sprintRecoveryDelay, "AFTER EXHAUSTION", "REGEN DELAY"',
+    'DrawRecoveryStateCard(dc, _sprintRecoveryDelay, "AFTER EXHAUSTION", "REGEN STARTS AFTER"',
     'DrawLowStaminaBoostCard(dc,',
     'DrawRecoverySourceTrack(dc, _lowRecoveryStrength, "STRENGTH"',
     'DrawRecoverySourceTrack(dc, _lowRecoveryDuration, "DURATION"',
@@ -4061,7 +4061,7 @@ if (_action_format_start < 0 or _action_format_end < 0
     or 'private void DrawSourceValue(' in _action_usage_source
     or 'countText.SetForegroundBrush(accent,' in _action_usage_source
     or 'parameter.CurrentNumber / staminaPool' not in _action_usage_source
-    or 'Actions[index].PerCaption' not in _action_usage_source
+    or 'Actions[index].UsageCaption' not in _action_usage_source
     or 'Math.Floor(staminaPool / hovered.CurrentNumber)' in _action_usage_source):
     fail('Stamina Usage edited-cost vs passive projection numeric color contract drifted')
 note('Stamina pass 5: only changed native cost turns gold; derived pool projections stay neutral')
@@ -4076,7 +4076,7 @@ if (_stamina_six_start < 0 or _stamina_six_end < 0
         'FROM FULL', 'POOL/COST', 'NO COST', 'countText',
         'var hovered = indices.Select(', 'Math.Floor(staminaPool / hovered.CurrentNumber)'))
     or '100.0 * parameter.CurrentNumber / staminaPool' not in _stamina_six_body
-    or 'Actions[index].PerCaption' not in _stamina_six_body
+    or 'Actions[index].UsageCaption' not in _stamina_six_body
     or 'ReferenceEquals(_hoverParameter, parameter)' not in _action_usage_source
     or 'ControlHoverGlow.Draw(dc, point, accent,' not in _action_usage_source):
     fail('Stamina Usage retired hover overlays or live source/handle control drifted')
@@ -4086,22 +4086,22 @@ note('Stamina pass 6: count/ratio hover removed, cost percentage and handle glow
 # Source-specific Stamina Usage captions: concise per-action labels.
 # Sprint names the native coefficient, not an assumed fixed sprint duration.
 _expected_spend_captions = (
-    ('stamina.sprintCost', 'SPRINT', 'Movement', 'SPRINT'),
-    ('stamina.jumpCost', 'JUMP', 'Movement', 'JUMP'),
-    ('stamina.vaultCost', 'VAULT', 'Movement', 'VAULT'),
-    ('stamina.meleeNormalCost', 'QUICK MELEE', 'Melee', 'SWING'),
-    ('stamina.meleeStrongCost', 'STRONG MELEE', 'Melee', 'SWING'),
-    ('stamina.butstockCost', 'BUTTSTOCK', 'Melee', 'SWING'),
+    ('stamina.sprintCost', 'SPRINT', 'Movement', 'STAMINA DRAIN'),
+    ('stamina.jumpCost', 'JUMP', 'Movement', 'PER JUMP'),
+    ('stamina.vaultCost', 'VAULT', 'Movement', 'PER VAULT'),
+    ('stamina.meleeNormalCost', 'QUICK MELEE', 'Melee', 'PER SWING'),
+    ('stamina.meleeStrongCost', 'STRONG MELEE', 'Melee', 'PER SWING'),
+    ('stamina.butstockCost', 'BUTTSTOCK', 'Melee', 'PER SWING'),
 )
 if ('SPENT PER' in _action_usage_source
-    or 'string PerCaption' not in _action_usage_source
-    or 'Actions[index].PerCaption' not in _stamina_six_body
+    or 'string UsageCaption' not in _action_usage_source
+    or 'Actions[index].UsageCaption' not in _stamina_six_body
     or any(
-        f'new("{pid}", "{label}", ActionGroup.{group}, "PER {event}")' not in _action_usage_source
+        f'new("{pid}", "{label}", ActionGroup.{group}, "{event}")' not in _action_usage_source
         for pid, label, group, event in _expected_spend_captions
     )):
     fail('Stamina Usage movement/melee contextual spend captions drifted')
-note('Stamina Usage: concise PER SPRINT/JUMP/VAULT/SWING captions verified')
+note('Stamina Usage: sprint drain percentage and contextual jump/vault/swing captions verified')
 
 # Project-wide dead-code cleanup: fourteen never-invoked private helpers
 # deleted without affecting the active editor family dispatch paths.
@@ -5055,14 +5055,31 @@ if _original_bleed_controls != {
         'survival.bleedingStrongDamage': 4}:
     fail('Bleeding visual range changed the game-authored native damage maxima')
 if ('SPENT PER' in _latest_stamina or 'SpendCaption' in _latest_stamina
-    or 'Actions[index].PerCaption' not in _latest_stamina
-    or any(f'new("{pid}", "{label}", ActionGroup.{group}, "PER {event}")'
+    or 'Actions[index].UsageCaption' not in _latest_stamina
+    or any(f'new("{pid}", "{label}", ActionGroup.{group}, "{event}")'
            not in _latest_stamina for pid, label, group, event in _expected_spend_captions)):
     fail('Stamina usage concise contextual per-action labels drifted')
 for _catalog in ('UI-DESIGN-LOCK.md', 'VISUAL-CONTROL-SYSTEM.md'):
     if 'Hercules hero knob, cleaner Bleeding, shorter Stamina readouts (CURRENT)' not in (DOCS / _catalog).read_text(encoding='utf-8'):
         fail('New control design contract missing from '+_catalog)
 note('Hercules is centered medicine hero; Bleeding 0–6 chart; Stamina PER captions')
+
+
+# Active Stamina copy for both responsive layouts and all six usage lanes:
+# Sprint's passive percentage is drain, not a per-sprint activation.
+_stamina_copy_src = (ROOT / "src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs").read_text(encoding="utf-8")
+if (_stamina_copy_src.count(
+        '_sprintRecoveryDelay, "AFTER EXHAUSTION", "REGEN STARTS AFTER"') != 2
+    or 'new("stamina.sprintCost", "SPRINT", ActionGroup.Movement, "STAMINA DRAIN")'
+       not in _stamina_copy_src
+    or 'Actions[index].UsageCaption' not in _stamina_copy_src
+    or '100.0 * parameter.CurrentNumber / staminaPool' not in _stamina_copy_src
+    or any(x in _stamina_copy_src for x in ('"PER SPRINT"', '"REGEN DELAY"', 'PerCaption'))):
+    fail('Stamina Sprint drain / Exhaustion recovery label contract drifted')
+for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if 'Sprint drain percentage and regen start wording (CURRENT)' not in (DOCS / _doc).read_text(encoding="utf-8"):
+        fail('Current Stamina copy contract missing from catalog ' + _doc)
+note('Stamina: SPRINT percentage says STAMINA DRAIN, exhaustion delay says REGEN STARTS AFTER')
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

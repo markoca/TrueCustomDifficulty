@@ -1,10 +1,18 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Sprint drain percentage and regen start wording (CURRENT)
+
+In the Stamina Usage `ActionCostsRadar` MOVEMENT board, **SPRINT** retains its native editable numeric stamina cost and live neutral `100 × cost / current Max Stamina` percentage, but the entire percentage suffix is now **`STAMINA DRAIN`**, e.g. `5.25 stamina · 5.3% STAMINA DRAIN`, with **no `PER SPRINT`**. This is a source-native coefficient/pool projection, **not** a discrete sprint activation or assumed fixed distance/time. The other five action rows retain **`PER JUMP`**, **`PER VAULT`** or **`PER SWING`**, as appropriate; those wording rules remain intact.
+
+In **AFTER EXHAUSTION**, rename only the visible slider caption **`REGEN DELAY` → `REGEN STARTS AFTER`** in both wide and narrow responsive layouts. Leave `AFTER EXHAUSTION`, the real delay source `stamina.sprintRecoveryDelay`, seconds formatting, default/reference/tick scale, drag and reset logic untouched. Do not rename unrelated regen controls or CFG IDs.
+
+This overrides historical `PER SPRINT` and `REGEN DELAY` examples in prior dated catalog entries. No additional explanatory UI text, card expansion, layout movement, value/cost arithmetic or presets. Static source audit enforces the exact two responsive render paths.
+
 ### 2026-10-15 — Hercules hero knob, cleaner Bleeding, shorter Stamina readouts (CURRENT)
 
 - **Consumable Effects / HERCULES CARRY:** Treat the centered carry-bonus dial as a **hero** of the same family as centered Headshot/Starvation/Radiation dials. Use `DrawSourceKnob(... prominent: true)` (native arc radius **1.18×**, larger editable readout, raised caption) and the established **+18 DIP center-column allowance / 188-DIP center height**, leaving both Vinca and Psi at **181 DIP**. Redistribute width within the **same centered medicine bank**, never stretch its overall width. Preserve `+KG`, the in-dial read-only `WITH BUFF` total, per-number modified coloring, all native pointer areas, source IDs, durations, parent timeline, independent resets and CFG/presets.
 - **Bleeding System:** Remove only the redundant `GLOBAL EFFECTS` subtitle. Expand the **visual** Bleeding Damage Profile HP/TICK vertical ruler from **0–4** to **0–6** and draw all seven integer ticks **0, 1, 2, 3, 4, 5, 6**. The renderer's shared `CurveMaximumDamage` governs both vertical display mapping and pointer-to-value conversion; leave the original Low / Medium / Severe independently editable **native maximums 2 / 3 / 4 HP/tick** untouched. Preserve all seven controls, x-axis threshold positions, graph frame size, read-only stage cards, color/reference logic, presets and writer.
-- **Stamina Usage:** Keep the existing six contextual rows and current `cost / maxSP` percentage, but shorten suffixes to **`PER SPRINT`**, **`PER JUMP`**, **`PER VAULT`** and **`PER SWING`** for Quick Melee, Strong Melee and Buttstock. Remove `SPENT` in all on-screen labels. Source value remains the only number that becomes gold when changed; percentage and suffix stay neutral. No impact on controls' width, rails, hit testing or CFG.
+- **Stamina Usage:** Keep the existing six contextual rows and current `cost / maxSP` percentage, but shorten suffixes to **`STAMINA DRAIN`** (Sprint), **`PER JUMP`**, **`PER VAULT`** and **`PER SWING`** for Quick Melee, Strong Melee and Buttstock. Remove `SPENT` in all on-screen labels. Source value remains the only number that becomes gold when changed; percentage and suffix stay neutral. No impact on controls' width, rails, hit testing or CFG.
 
 These replace earlier prescriptive screenshot text where it differs. Static audit enforces all three UI edits, original gameplay limits and representative layout geometry; .NET/Wine visual acceptance remains local.
 

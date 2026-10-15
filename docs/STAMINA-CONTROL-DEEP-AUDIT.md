@@ -1,5 +1,9 @@
 # Stamina Control Deep Audit — v0.2.46
 
+## 2026-10-15 sprint drain and exhaustion copy
+
+SPRINT now shows the source-backed cost percentage as **`% STAMINA DRAIN`** rather than `% PER SPRINT` (no fixed sprint event is implied). The other five action captions still use PER JUMP, PER VAULT and PER SWING. Both narrow and wide AFTER EXHAUSTION cards now name their existing seconds-source track **REGEN STARTS AFTER**. No source mappings, edit ranges, percentages, bindings or control geometry change.
+
 ## 2026-10-15 shorter contextual action-cost text
 
 The six Stamina Usage labels are now `PER SPRINT`, `PER JUMP`, `PER VAULT` and `PER SWING` for all three melee actions; the earlier `SPENT PER ...` strings are retired from the visible UI. Keep the absolute native stamina number plus the neutral live percentage, interaction and persistence unchanged. No sprint duration or activation count is inferred.
