@@ -5004,6 +5004,22 @@ if not (DOCS / "CONTROL-FAMILY-VISUAL-AUDIT.md").exists():
     fail("Cross-family visual-control inventory is missing")
 note("Visual families: 12 native board renderers share title scale, comparable chart axes align, range MIN/MAX track typography is centralized; Health, checkbox and knobs keep family contracts")
 
+# Visible microcopy contract: no redundant repair multiplier suffix or
+# Flycatcher remaining labels, while source-derived math remains untouched.
+_microcopy_ui = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+if (any(retired in _microcopy_ui for retired in (
+        '"MOVEMENT REMAINING"', '"TURN SPEED REMAINING"',
+        'x BASE×REP'))
+    or 'CreateText("MOVEMENT SPEED", 10.5, text, FontWeights.Bold)' not in _microcopy_ui
+    or 'CreateText("TURN SPEED", 10.5, text, FontWeights.Bold)' not in _microcopy_ui
+    or 'DrawDerivedCentered(dc, $"{baseRepair * parameter.CurrentNumber:0.##}x",' not in _microcopy_ui
+    or 'var baseRepair = Linked("economy.repairCostBase")?.CurrentNumber ?? 0.7;' not in _microcopy_ui):
+    fail("Repair reputation/Flycatcher caption contract drifted")
+for _microcopy_doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Repair preview and Flycatcher axis text economy (CURRENT)" not in (DOCS / _microcopy_doc).read_text(encoding="utf-8"):
+        fail("Repair/Flycatcher current caption catalog missing: " + _microcopy_doc)
+note("Repair derived multiplier is numeric-only; Flycatcher axes use SPEED names")
+
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:

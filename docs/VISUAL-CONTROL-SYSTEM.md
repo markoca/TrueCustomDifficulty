@@ -1,5 +1,14 @@
 # Visual Control System
 
+### 2026-10-15 — Repair preview and Flycatcher axis text economy (CURRENT)
+
+Remove redundant explanatory text **without changing gameplay values or edit behavior**:
+
+- **Economy / REPAIR PRICE BY REPUTATION** (`RepairCurve`): beneath each native reputation multiplier keep the exact existing read-only combined multiplier `baseRepairCost × reputationModifier`, displaying the number and its `x` unit only (for example `0.53x`). Remove the appended `BASE×REP` suffix. The computed value and its derived-number coloring stay intact; the chart, real reputation source, reference lines and linked base-repair dependency remain unchanged.
+- **Anomalies / FLYCATCHER SLOWDOWN** (`FlycatcherSlowdown`): the live X-axis title becomes **MOVEMENT SPEED**, and the vertical Y-axis title becomes **TURN SPEED**. Both retained-speed percentages, interactive handles, axis ticks, native CFG sources and their visual coordinates stay unchanged.
+
+This rule supersedes older catalog screenshots/prose requiring `BASE×REP` as a visible suffix or the two `REMAINING` captions. No new control, extra explanation or expansion of the compact board geometry. Static audit guards the live strings and calculation; local Wine layout still requires confirmation.
+
 ### 2026-10-15 — Slider numeral readability, mutant HP, concise anomaly layout (CURRENT)
 
 **Shared slider typography:** Increase editable current-value numerals slightly (usually **+0.8 DIP**) in the ordinary WPF slider template, WPF MIN/MAX range values, and currently rendered hand-drawn horizontal/vertical slider families: Stamina Usage and Recovery, Mutant Health/Group/Part, Human Squad, Item Price, World Loot, Stash Ammo, Bleeding, Drunkenness, Medical and shared Aggregate native slider tracks. The narrow Stamina Usage rows grow only +0.4 DIP to protect one-line readouts. Keep slider cards compact, all original hit areas, native precision/ranges, modified-number-only gold and subdued Vanilla/Base reference markers. Do **not** enlarge every heading, graph legend, axis title or rotary knob as though it were a slider value.

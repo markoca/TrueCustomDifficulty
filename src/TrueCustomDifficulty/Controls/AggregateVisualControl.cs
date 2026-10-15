@@ -777,7 +777,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         // Axis-aligned label/live-value pair, matching Combat. Only modified
         // numbers and their percentage units turn gold.
-        var xCaption = CreateText("MOVEMENT REMAINING", 10.5, text, FontWeights.Bold);
+        var xCaption = CreateText("MOVEMENT SPEED", 10.5, text, FontWeights.Bold);
         var xChanged = movement.IsValueModifiedFromReference();
         var xValue = CreateText($"{movement.CurrentNumber * 100.0:0.#}%",
             xChanged ? 14.2 : 13.0, xChanged ? accent : text, FontWeights.Bold);
@@ -790,7 +790,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             plot.Top - 34.0));
 
         var yCenter = plot.Top + plot.Height / 2.0;
-        var yCaption = CreateText("TURN SPEED REMAINING", 10.5, text, FontWeights.Bold);
+        var yCaption = CreateText("TURN SPEED", 10.5, text, FontWeights.Bold);
         var yChanged = turning.IsValueModifiedFromReference();
         var yValue = CreateText($"{turning.CurrentNumber * 100.0:0.#}%",
             yChanged ? 14.2 : 13.0, yChanged ? accent : text, FontWeights.Bold);
@@ -2943,7 +2943,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             // plotted reputation source. Difficulty layer remains independent;
             // this is not a final coupon bill.
             var baseRepair = Linked("economy.repairCostBase")?.CurrentNumber ?? 0.7;
-            DrawDerivedCentered(dc, $"{baseRepair * parameter.CurrentNumber:0.##}x BASE×REP",
+            DrawDerivedCentered(dc, $"{baseRepair * parameter.CurrentNumber:0.##}x",
                 new Point(x, plot.Bottom + 57.0),
                 plot.Width / 4.0 - 10.0, 9.4, muted, accent, FontWeights.SemiBold);
         }
