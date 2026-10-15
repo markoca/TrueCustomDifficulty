@@ -21,6 +21,7 @@ STATIC = (
     ("combat-catalog", "tools/audit_combat_contract.py"),
     ("ui-cfg", "tools/audit_ui_cfg_contract.py"),
     ("project-consistency", "tools/audit_project_consistency.py"),
+    ("rc-signal-preset", "tools/audit_rc_signal_preset.py"),
     ("world-weapon-nested-source", "tools/audit_world_weapon_nested_source.py"),
 )
 SOURCE = (
@@ -47,11 +48,12 @@ WRITERS = (
     ("economy-bpatch-writer", "EconomyPatchContract", "economy-patch-fixtures", 34),
     ("equipment-bpatch-writer", "EquipmentPatchContract", "equipment-patch-fixtures", 32),
     ("environment-bpatch-writer", "EnvironmentPatchContract", "environment-patch-fixtures", 90),
-    ("alife-bpatch-writer", "ALifePatchContract", "alife-patch-fixtures", 94),
+    ("alife-bpatch-writer", "ALifePatchContract", "alife-patch-fixtures", 92),
     ("loot-direct-bpatch-writer", "LootDirectPatchContract", "loot-direct-patch-fixtures", 117),
     ("loot-special-generators-writer", "LootSpecialGeneratorsContract", "loot-special-generators-fixtures", 63),
     ("loot-world-removals-writer", "LootWorldRemovalsContract", "loot-world-removals-fixtures", 27),
     ("loot-world-placement-writer", "LootWorldPlacementContract", "loot-world-placement-fixtures", 24),
+    ("rc-signal-production-writer", "RCSignalPatchContract", "rc-signal-patch-fixtures", 13),
 )
 MANUAL = (
     "S.T.A.L.K.E.R. 2 Combat BPatch loading and gameplay effects",

@@ -1,5 +1,10 @@
 # True Custom Difficulty — Factory Presets
 
+### 2026-10-15 — Opt-in RC CFG Signal preset (NOT A FACTORY ROLE)
+
+One **diagnostic** profile `RC - CFG Signal` is embedded separately under `src/TrueCustomDifficulty/QA/` and seeded to the portable `Presets/` directory **only when absent**. It is intentionally excluded from the twelve official 248-source factory snapshots, factory SHA migrations, balance matrices and role audits. On load it resets all other Stalker source controls and applies exactly **13 extreme, individually testable CFG settings** (e.g. Starting Coupons 100000, Carry Weight 160, MaxSP/MaxHP 200, 100% Water instant stamina, 100% eligible Blind Dog loot Chance, and 3x source-backed Blind Dog A-Life cap). Player edits to the seeded diagnostic file are never overwritten. For source paths, per-setting A/B procedure, controlled saves and BPatch/gameplay evidence rules see `docs/RC-CFG-SIGNAL-TEST.md`. This is deliberately **not** a balanced playable difficulty and **not** proof of runtime effects.
+
+
 **2026-10-15 — Canonical A-Life group-size profile mapping:** All 12 official factory roles retain 248 native sources and identical true human/mutant integer group caps. Only 39 source multipliers are replaced with the editor's canonical effective stops, across 216 unchanged group-size source outcomes. The per-role before/after matrix is `tools/factory_preset_alife_effective_mapping.json`; the native source ledger, role matrix, docs, and 12-file pristine migration hashes are synchronized. Modified or custom preset files are never overwritten. Local .NET/Wine/in-game verification remains pending.
 
 

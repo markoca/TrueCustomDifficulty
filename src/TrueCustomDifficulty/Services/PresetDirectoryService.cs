@@ -14,6 +14,12 @@ namespace TrueCustomDifficulty.Services;
 public sealed class PresetDirectoryService
 {
     private const string ReadmeResourceName = "TrueCustomDifficulty.Presets.README.md";
+
+    // One opt-in, deliberately exaggerated diagnostic preset. Keep it OUT of
+    // FactoryPresetNames: existing 12-role audit and exact-stock migrations
+    // must remain unchanged. The QA copy is seeded only when absent.
+    private const string RcSignalFileName = "RC - CFG Signal.json";
+    private const string RcSignalResourceName = "TrueCustomDifficulty.QA.RC-CFG-Signal.json";
     private static readonly string[] FactoryPresetNames =
     {
         "Anomaly Runner",
@@ -258,6 +264,12 @@ public sealed class PresetDirectoryService
             if (!File.Exists(destination) || IsUnmodifiedPreviousFactory(name, destination))
                 WriteEmbedded($"TrueCustomDifficulty.Presets.{name}.json", destination);
         }
+
+        // QA profiles are NOT factory roles. Never overwrite a tester's edited
+        // version or migrate it via the stock hash allowlists.
+        var rcSignalPath = Path.Combine(directory, RcSignalFileName);
+        if (!File.Exists(rcSignalPath))
+            WriteEmbedded(RcSignalResourceName, rcSignalPath);
 
         return directory;
     }

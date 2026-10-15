@@ -1,5 +1,10 @@
 # Factory Presets
 
+### 2026-10-15 — Opt-in RC CFG Signal preset (NOT A FACTORY ROLE)
+
+One **diagnostic** profile `RC - CFG Signal` is embedded separately under `src/TrueCustomDifficulty/QA/` and seeded to the portable `Presets/` directory **only when absent**. It is intentionally excluded from the twelve official 248-source factory snapshots, factory SHA migrations, balance matrices and role audits. On load it resets all other Stalker source controls and applies exactly **13 extreme, individually testable CFG settings** (e.g. Starting Coupons 100000, Carry Weight 160, MaxSP/MaxHP 200, 100% Water instant stamina, 100% eligible Blind Dog loot Chance, and 3x source-backed Blind Dog A-Life cap). Player edits to the seeded diagnostic file are never overwritten. For source paths, per-setting A/B procedure, controlled saves and BPatch/gameplay evidence rules see `docs/RC-CFG-SIGNAL-TEST.md`. This is deliberately **not** a balanced playable difficulty and **not** proof of runtime effects.
+
+
 ### 2026-10-15 — Canonical A-Life factory profile mapping (CURRENT)
 
 The existing A-Life integer-effective editor requires one genuine selectable multiplier per distinct set of authored `MaxCount` limits. All **12 factory profiles** now store those canonical stops: **39 multipliers are rewritten while 216/216 active A-Life source outputs stay exactly the same**. The 248 parameter IDs, four human rank controls, fourteen species controls, source-only neutral generic, role-specific intent, difficulty references and all other native values remain intact. The original/current per-profile values and actual rank limits are documented in [`tools/factory_preset_alife_effective_mapping.json`](../tools/factory_preset_alife_effective_mapping.json), with matching full-source ledger, role matrix and A-Life table. `PreEffectiveALifeFactoryBlobs` upgrades only byte-identical old stock factory profiles, never user-edited/custom profiles. No UI renderer/CFG writer change, or measured spawn-frequency claim.

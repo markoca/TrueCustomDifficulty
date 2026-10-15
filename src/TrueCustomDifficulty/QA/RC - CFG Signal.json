@@ -1,0 +1,63 @@
+{
+  "profileVersion": 1,
+  "name": "RC - CFG Signal",
+  "toolVersion": "0.9.26.82",
+  "gameVersion": "2.0.5",
+  "referenceDifficulty": "Stalker",
+  "drinkDurationOverride": false,
+  "medicalOverride": false,
+  "values": {
+    "economy.startingMoney": {
+      "kind": "slider",
+      "number": 100000
+    },
+    "stamina.maxCarryWeight": {
+      "kind": "slider",
+      "number": 160
+    },
+    "stamina.maxSP": {
+      "kind": "slider",
+      "number": 200
+    },
+    "health.maxHP": {
+      "kind": "slider",
+      "number": 200
+    },
+    "health.medkitHealing": {
+      "kind": "slider",
+      "number": 140
+    },
+    "survival.waterInstantStaminaRestore": {
+      "kind": "slider",
+      "number": 1
+    },
+    "combat.npcWeaponDamage": {
+      "kind": "slider",
+      "number": 0
+    },
+    "combat.playerWeaponDamage": {
+      "kind": "slider",
+      "number": 2
+    },
+    "environment.anomalyDamage": {
+      "kind": "slider",
+      "number": 0
+    },
+    "health.vodkaRadiationRemoval": {
+      "kind": "slider",
+      "number": 100
+    },
+    "loot.mutant.blindDogChance": {
+      "kind": "slider",
+      "number": 1
+    },
+    "alife.mutantSpawn.blindDog": {
+      "kind": "slider",
+      "number": 3
+    },
+    "equipment.weaponWearPerShot": {
+      "kind": "slider",
+      "number": 2
+    }
+  }
+}

@@ -1,3 +1,7 @@
+### 2026-10-15 — RC diagnostic preset (NO NEW CONTROL TYPE)
+
+`RC - CFG Signal` is an opt-in sparse v1 test profile seeded alongside (not within) the twelve factory-role snapshots. It introduces **zero** new UI control types, anchors, layout changes, parameter IDs or catalog/source disagreements: it only selects 13 existing source-backed slider values far from their Stalker references. The regular preset selector shows the entry after the factory roles, and a tester's edited diagnostic preset is preserved. See `docs/RC-CFG-SIGNAL-TEST.md` for evidence, BPatch paths and testing boundaries.
+
 ### 2026-10-15 — Effective A-Life factory-role values (CURRENT)
 
 The existing compact A-Life human (four rank) and mutant (fourteen species) controls remain exactly as specified, including source-backed integer-effective steps, no inert multiplier stops, native reset, reference markers, and only modified effective counts highlighted. To match these controls, the twelve factory JSON profiles now store canonical selectable stops for every A-Life source. **39 stored decimal values are remapped without changing any of 216 original real rank/species `MaxCount` results.** No new controls, card expansion, visual text or change to the writer: this is factory preset data, not a UI redesign. See `docs/FACTORY-PRESETS.md` and `tools/factory_preset_alife_effective_mapping.json`.

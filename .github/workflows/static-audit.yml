@@ -31,6 +31,9 @@ jobs:
       - name: Whole-project active source consistency
         run: python tools/audit_project_consistency.py
 
+      - name: RC extreme-signal preset audit
+        run: python tools/audit_rc_signal_preset.py
+
       - name: Regression - vanilla refkey source inheritance
         run: python tools/test_cfg_source_inheritance.py
 
@@ -324,3 +327,16 @@ jobs:
       - name: Exercise all 235 player-editable native CFG source IDs through production writer
         shell: pwsh
         run: dotnet run --project tests/AllControlsPatchContract/AllControlsPatchContract.csproj -c Release
+
+      - name: RC diagnostic profile - all 13 signals through actual C# BPatch writer
+        shell: pwsh
+        run: dotnet run --project tests/RCSignalPatchContract/RCSignalPatchContract.csproj -c Release -- --out audit/rc-signal-patch-fixtures
+
+      - name: Preserve RC diagnostic profile BPatch fixtures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc-signal-patch-contract
+          path: audit/rc-signal-patch-fixtures
+          if-no-files-found: ignore
+          retention-days: 7

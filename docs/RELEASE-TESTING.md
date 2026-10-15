@@ -1,3 +1,9 @@
+### 2026-10-15 — RC extreme-signal functional smoke (NEW; GAMEPLAY NOT YET VERIFIED)
+
+The application embeds and seeds **one** explicit opt-in `RC - CFG Signal` v1 diagnostic preset outside the twelve factory snapshots (13 exaggerated, source-backed scalar changes; no hidden/unsupported IDs). Its full manual A/B matrix, required New Game case, expected BPatch paths, player-rank A-Life count limits and acceptance/report template are in [RC CFG Signal test](RC-CFG-SIGNAL-TEST.md). The preset is created only when missing, so local modified diagnostic copies, normal factory roles and user files are not overwritten.
+
+Run `python tools/audit_rc_signal_preset.py` on Linux for **static validation**. On native Windows/.NET 10, run `dotnet run --project tests/RCSignalPatchContract/RCSignalPatchContract.csproj -c Release -- --out audit/rc-signal-patch-fixtures` to check all thirteen through the actual C# writer. The test is included in the Windows `all-controls-final-writer-windows` CI job and `tools/pre_release.py writer`. After actual `./publish.sh`/Wine, build a real triplet with user-supplied repak/retoc, inspect the packed CFG with read-back and perform isolated in-game trials on matching 2.0.5 source version. **Writer output, archive creation and runtime effect are three distinct PASS gates.** No source or CI claim can substitute for the in-game check.
+
 # Pre-release test and evidence runbook
 
 ### 2026-10-15 — Complete catalog-to-writer CFG acceptance gate
