@@ -24,3 +24,7 @@ Removed only unreachable UI scaffolding: old BlastDamageBoard renderer and regis
 ## 2026-10-15 dead-code pass 2
 
 The visible Combat view explicitly filters four `combat.psy*` and three `combat.accumulatedDamage*` entries and their group headers. Removed unreachable `DrawPsyPhantomPressure` and `DrawRepeatedHitBand` renderers, dispatch/measurement/member entries, obsolete shared-input cases, UI-family/help maps and their aggregate-only subscriptions. Added a second `ParameterViewModel.IsControlVisible` safeguard. All seven source definitions and preset/CFG routes are retained, including both PSY override effects and the repeated-hit `MIN <= MAX` constraint. Actual Combat control layout is unchanged. Static audits verify retirement and writer parity; Wine and in-game acceptance are still local tests.
+
+## 2026-10-15 dead-code pass 3
+
+Removed five private aggregate renderer methods with no call sites: `DrawDualParameterHeading`, `DrawInlineHorizontalTrack`, `DrawCurveLine`, `AddVerticalPointTarget`, and `DrawChangedNumbers`. Eliminated the obsolete Combat paired-value cases and UI sort rankings for hidden parameters. Explosion Damage remains editable under Human Combat; `MainViewModel` now wires its modified state into the active Human Combat aggregate instead of the unused self-aggregate. All Combat sources, preset keys, original CFG targets, and active UI hit/keyboard/reset controls remain intact. The prior 17-item count is a catalog-exposed-source count, not a count of visible widgets. Local build/Wine verification pending.

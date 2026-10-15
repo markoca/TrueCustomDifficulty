@@ -520,7 +520,8 @@ elif not _non_gen_doc.exists():
 else:
     note("non-generator UI coverage: 89 visible anchors across Combat/Health/Stamina/Survival/Economy/Equipment; current grouped editors and 31 Survival controls accounted")
 
-# Combat deep-audit release gate (v0.2.44).
+# Combat source-catalog release gate (v0.2.44). A source exposed in the
+# catalog is not necessarily a widget in the filtered/composite Combat UI.
 _combat_doc = DOCS / "COMBAT-CONTROL-DEEP-AUDIT.md"
 _combat_rows = {p.get("id"): p for p in parameters if p.get("tab") == "combat" and p.get("exposeInUi", True)}
 _combat_runtime_expected = {
@@ -534,7 +535,7 @@ _combat_inverse = {
 _headshot = _combat_rows.get("combat.playerHeadshotMultiplier", {})
 _repeated = next((c for c in parameters_doc.get("sliderConstraints", []) if c.get("id") == "repeatedHitProtectionRange"), {})
 if len(_combat_rows) != 17 or _combat_runtime_actual != _combat_runtime_expected:
-    fail(f"combat deep-audit visible surface drifted: controls={len(_combat_rows)}, runtime={sorted(_combat_runtime_actual)}")
+    fail(f"combat source-catalog exposed entries drifted: entries={len(_combat_rows)}, runtime={sorted(_combat_runtime_actual)}")
 elif any(ops != ["inverseScale"] for ops in _combat_inverse.values()):
     fail(f"combat attack-frequency inverseScale contract drifted: {_combat_inverse}")
 elif _repeated.get("order") != "nondecreasing" or _repeated.get("parameterIds") != ["combat.accumulatedDamageWeightMin", "combat.accumulatedDamageWeightMax"]:
@@ -544,7 +545,7 @@ elif "extra damage" in str(_headshot.get("description", "")).lower() or "1.0x" n
 elif not _combat_doc.exists():
     fail("combat deep-audit document missing from docs/")
 else:
-    note("combat deep audit locked: 17 visible controls / 13 confirmed direct + 4 runtime-gated; Mutant Health remains a standalone aggregate")
+    note("Combat catalog: 17 exposed source entries (13 direct, 4 PSY runtime-gated); actual UI uses fewer aggregate controls")
 
 # Generator-backed UI end-to-end release gate (v0.2.42).
 _e2e_doc = DOCS / "GENERATOR-CONTROL-END-TO-END-VERIFICATION.md"
@@ -2406,6 +2407,29 @@ if ('["combat.explosionDamage"] = "HumanCombatProfile"' not in _combat_vm_source
         or 'DrawHumanCombatProfile(dc, text, muted, border, soft, accent, panel);' not in _combat_visual_source
         or '["HumanCombatProfile"] = "combat.npcHealth"' not in _combat_vm_source):
     fail("Explosion damage lost its active HumanCombatProfile UI owner")
+
+# Combat retirement pass 3: unused aggregate functions stay deleted.
+for _dead in ("DrawDualParameterHeading", "DrawInlineHorizontalTrack",
+              "DrawCurveLine", "AddVerticalPointTarget", "DrawChangedNumbers"):
+    if f"private void {_dead}(" in _combat_visual_source:
+        fail(f"Retired aggregate helper returned: {_dead}")
+if ('"combat.mutantDamage" or "stamina.waterMediumDrain"' in _combat_visual_source
+        or '"combat.explosionDamage" or' in _combat_visual_source):
+    fail("Dead Combat branch returned to the shared paired-value formatter")
+_combat_main_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+_combat_wires = re.findall(r'WireVisualAggregate\((.*?)\);', _combat_main_vm, flags=re.S)
+_human_wires = [block for block in _combat_wires if block.strip().startswith('"combat.npcHealth"')]
+if (len(_human_wires) != 1
+        or '"combat.explosionDamage"' not in _human_wires[0]
+        or any(block.strip().startswith('"combat.explosionDamage"') for block in _combat_wires)):
+    fail("Explosion Damage aggregate ownership drifted from active Human Combat")
+_combat_order_source = (_combat_main_vm.split('if (parameter.Definition.Tab == "combat")', 1)[1]
+                        .split('if (parameter.Definition.Tab == "survival")', 1)[0]
+                        if 'if (parameter.Definition.Tab == "combat")' in _combat_main_vm else "")
+if (any(word in _combat_order_source for word in ('"combat.psy', '"combat.accumulatedDamage',
+                                                   '"combat.mutantDamage"', '"combat.explosionDamage"'))
+        or '"combat.mutantHealth.bloodsucker" => 130' not in _combat_order_source):
+    fail("Combat-only UI sort still contains hidden entries or lost Mutant Health anchor")
 
 # Hunger Survival Profile LOW handle: avoid a second hover circle at the
 # midpoint of the 2D plot. The real LOW handle owns its glow at Y(0).

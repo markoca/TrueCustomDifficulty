@@ -350,7 +350,8 @@ public sealed class MainViewModel : ObservableObject
             "combat.npcHealth",
             "combat.npcWeaponDamage",
             "combat.npcAttackCooldown",
-            "combat.npcHipAccuracy");
+            "combat.npcHipAccuracy",
+            "combat.explosionDamage");
 
         WireVisualAggregate(
             "health.bandageBleeding",
@@ -433,12 +434,6 @@ public sealed class MainViewModel : ObservableObject
             "economy.repairDisaffection",
             "economy.repairNeutral",
             "economy.repairFriend");
-
-        // Each formerly orphaned control now belongs to a source-exact semantic
-        // panel. Cross-section members share a tab; only the anchor stays visible.
-        WireVisualAggregate(
-            "combat.explosionDamage",
-            "combat.explosionDamage");
 
         WireVisualAggregate(
             "stamina.vaultMaxHeight",
@@ -1673,35 +1668,13 @@ public sealed class MainViewModel : ObservableObject
                 "combat.npcAttackCooldown" => 20,
                 "combat.npcHipAccuracy" => 30,
 
-                // Mutant Hit Damage sits inside the Mutant Health section,
-                // directly after its primary radar instead of an orphan group.
-                "combat.mutantDamage" => 129,
                 // Your Weapons
                 "combat.playerWeaponDamage" => 60,
                 "combat.playerHeadshotMultiplier" => 70,
                 "combat.weaponJamming" => 80,
 
-                // Explosives
-                "combat.explosionDamage" => 90,
-
-                // Taking Repeated Hits
-                "combat.accumulatedDamageWeightMax" => 100,
-                "combat.accumulatedDamageWeightMin" => 110,
-                "combat.accumulatedDamageIncludesHealedHealth" => 120,
-                // Mutant Health radar.
+                // Only visible Combat anchors need an explicit sort position.
                 "combat.mutantHealth.bloodsucker" => 130,
-                "combat.mutantHealth.chimera" => 130,
-                "combat.mutantHealth.deer" => 130,
-                "combat.mutantHealth.pseudogiant" => 130,
-                "combat.mutantHealth.pseudodog" => 130,
-                "combat.mutantHealth.burer" => 130,
-                "combat.mutantHealth.bayun" => 130,
-                "combat.mutantHealth.controller" => 130,
-                // Psy Combat
-                "combat.psySpawnCycleDelay" => 160,
-                "combat.psyPhantomCount" => 170,
-                "combat.psyBleeding" => 180,
-                "combat.psyDurabilityDamage" => 190,
                 _ => 199
             };
         }

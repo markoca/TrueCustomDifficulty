@@ -5228,50 +5228,14 @@ public sealed class AggregateVisualControl : FrameworkElement
                 card.Top + 64.0));
     }
 
-    // Small paired panels share this card. Values and titles occupy separate
-    // lines and text is trimmed inside the card, never across the next column.
-    // Exact axis values are given their own line in each half of a crosshair
-    // board. This keeps labels and current/Base Preset values legible at 520 px.
-    private void DrawDualParameterHeading(
-        DrawingContext dc,
-        ParameterViewModel leftParameter,
-        string leftLabel,
-        ParameterViewModel rightParameter,
-        string rightLabel,
-        double top,
-        Brush text,
-        Brush accent)
-    {
-        var leftX = 18.0;
-        var rightX = ActualWidth / 2.0 + 8.0;
-        var cellWidth = Math.Max(1.0, (ActualWidth - 54.0) / 2.0);
-
-        void Cell(ParameterViewModel parameter, string label, double x)
-        {
-            dc.DrawText(CreateText(label, 9.2, text, FontWeights.Bold,
-                    Math.Max(1.0, cellWidth - 110.0)), new Point(x, top));
-            var changed = parameter.IsControlEnabled &&
-                parameter.IsValueModifiedFromReference();
-            var current = CreateText($"{parameter.CurrentNumber:0.##}x",
-                changed ? 11.3 : 10.1, changed ? accent : text,
-                FontWeights.SemiBold, cellWidth);
-            dc.DrawText(current, new Point(
-                x + cellWidth - current.WidthIncludingTrailingWhitespace, top));
-        }
-
-        Cell(leftParameter, leftLabel, leftX);
-        Cell(rightParameter, rightLabel, rightX);
-    }
-
     private static string ComparablePairedValue(ParameterViewModel parameter, double rawValue)
         => parameter.Id switch
         {
-            "combat.mutantDamage" or "stamina.waterMediumDrain" or "stamina.waterStrongDrain" => $"{rawValue:0.##}x",
+            "stamina.waterMediumDrain" or "stamina.waterStrongDrain" => $"{rawValue:0.##}x",
             "stamina.maxSP" => $"{rawValue:0} STAMINA",
             "stamina.regeneration" => $"{rawValue:0.##} STAMINA/s",
             "health.ecoMedkitAntirad" or "health.antiRadRadiation" => $"{rawValue:0} radiation",
             "health.lowHealthRegen" => $"{rawValue:0.0} rate",
-            "combat.explosionDamage" or
             "economy.fastTravelCost" or "economy.upgradeCost" or
             "economy.traderAmmoStock" or "economy.medicStock" or
             "equipment.ammoWeight" or "equipment.consumableWeight" or
@@ -5401,27 +5365,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             card.Top + 52.0));
     }
 
-    private void DrawInlineHorizontalTrack(
-        DrawingContext dc,
-        ParameterViewModel parameter,
-        Rect track,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush accent)
-    {
-        var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(border, 3.0), new Point(track.Left, y), new Point(track.Right, y));
-        DrawReferenceTick(dc, parameter, track, y, muted);
-
-        var x = ValueToX(parameter.CurrentNumber, parameter.Minimum, parameter.Maximum, track, reverse: false);
-        dc.DrawEllipse(accent, null, new Point(x, y), 5.5, 5.5);
-
-        AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
-
-        DrawRightAlignedText(dc, FriendlyValue(parameter), new Point(track.Right, track.Top - 13.0), 8.6, accent, FontWeights.SemiBold);
-    }
-
     private void DrawTogglePill(
         DrawingContext dc,
         ParameterViewModel? parameter,
@@ -5476,25 +5419,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 9.5, muted, FontWeights.Normal);
     }
 
-    private void DrawCurveLine(
-        DrawingContext dc,
-        IReadOnlyList<double> xs,
-        IReadOnlyList<double> values,
-        Rect plot,
-        double minimum,
-        double maximum,
-        Pen pen)
-    {
-        var count = Math.Min(xs.Count, values.Count);
-        for (var i = 1; i < count; i++)
-        {
-            dc.DrawLine(
-                pen,
-                new Point(xs[i - 1], ValueToY(values[i - 1], minimum, maximum, plot)),
-                new Point(xs[i], ValueToY(values[i], minimum, maximum, plot)));
-        }
-    }
-
     private void DrawReferenceTick(
         DrawingContext dc,
         ParameterViewModel parameter,
@@ -5532,16 +5456,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         _hitTargets.Add(new HitTarget(parameter, hitRect, mapRect, HitKind.Vertical, visualMinimum, visualMaximum, false));
-    }
-
-    private void AddVerticalPointTarget(
-        ParameterViewModel parameter,
-        Point point,
-        Rect mapRect,
-        double visualMinimum,
-        double visualMaximum)
-    {
-        AddVerticalTarget(parameter, new Rect(point.X - 18.0, point.Y - 18.0, 36.0, 36.0), mapRect, visualMinimum, visualMaximum);
     }
 
     private void AddToggleTarget(ParameterViewModel parameter, Rect hitRect)
@@ -6488,27 +6402,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         dc.DrawText(formatted, new Point(
             center.X - formatted.Width / 2.0,
             center.Y - formatted.Height / 2.0));
-    }
-
-    private void DrawChangedNumbers(DrawingContext dc, string value, Point position,
-        double size, Brush normal, Brush accent, FontWeight weight,
-        bool modified, bool rightAligned = false)
-    {
-        var formatted = CreateText(value, size, normal, weight);
-        if (modified)
-        {
-            var first = System.Text.RegularExpressions.Regex.Match(
-                value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
-            if (first.Success)
-            {
-                formatted.SetForegroundBrush(accent, first.Index, first.Length);
-                formatted.SetFontSize(Math.Max(9.0, size) + 1.2,
-                    first.Index, first.Length);
-            }
-        }
-        dc.DrawText(formatted, new Point(
-            rightAligned ? position.X - formatted.WidthIncludingTrailingWhitespace : position.X,
-            position.Y));
     }
 
     private void DrawText(DrawingContext dc, string value, Point point, double size, Brush brush, FontWeight weight)
