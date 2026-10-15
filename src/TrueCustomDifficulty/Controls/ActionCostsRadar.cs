@@ -43,7 +43,6 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _actionParameters = new ParameterViewModel?[Actions.Length];
     private readonly List<InteractiveTarget> _targets = new();
-    private readonly VisualStatusMessage _status;
 
     private ParameterViewModel? _aimParameter;
     // Read-only visual ruler dependency. Never include in this board's R-reset group.
@@ -84,7 +83,6 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     public ActionCostsRadar()
     {
-        _status = new VisualStatusMessage(InvalidateVisual);
         Focusable = true;
         MinHeight = 0.0;
         Cursor = Cursors.Arrow;
@@ -234,7 +232,6 @@ public sealed class ActionCostsRadar : FrameworkElement
                 text, muted, border, accent, panel);
         }
 
-        // Silent reset: no transient status text.
     }
 
     private void DrawActionGroup(
@@ -700,7 +697,6 @@ public sealed class ActionCostsRadar : FrameworkElement
 
         _selectedParameter = target.Parameter;
         target.Parameter.ResetToReference();
-        _status.ShowTransient($"{ShortLabel(target.Parameter)} reset to Base Preset.");
         InvalidateVisual();
         e.Handled = true;
     }
@@ -714,9 +710,6 @@ public sealed class ActionCostsRadar : FrameworkElement
             foreach (var parameter in EnumerateBoundParameters())
                 parameter?.ResetToReference();
 
-            _status.ShowTransient(IsExhaustion
-                ? "Exhaustion & Recovery reset to Base Preset."
-                : "Stamina Usage reset to Base Preset.");
             InvalidateVisual();
             e.Handled = true;
             return;
@@ -737,7 +730,6 @@ public sealed class ActionCostsRadar : FrameworkElement
             _selectedParameter.Minimum,
             _selectedParameter.Maximum);
 
-        _status.Clear();
         InvalidateVisual();
         e.Handled = true;
     }
@@ -756,7 +748,6 @@ public sealed class ActionCostsRadar : FrameworkElement
             raw = target.VisualMinimum + ratio * (target.VisualMaximum - target.VisualMinimum);
 
         SetSnapped(target.Parameter, raw);
-        _status.Clear();
         InvalidateVisual();
     }
 
@@ -779,9 +770,6 @@ public sealed class ActionCostsRadar : FrameworkElement
 
         return null;
     }
-
-    private static string ShortLabel(ParameterViewModel parameter)
-        => parameter.Label.Replace(" - ", " ").Trim();
 
     private static string FormatRaw(double value)
         => Math.Abs(value - Math.Round(value)) < Epsilon
@@ -832,13 +820,6 @@ public sealed class ActionCostsRadar : FrameworkElement
             Math.Max(9.0, size),
             brush,
             VisualTreeHelper.GetDpi(this).PixelsPerDip);
-
-        var separatorBrush = FindBrush("AccentBrush", Brushes.Goldenrod);
-        for (var i = 0; i < value.Length; i++)
-        {
-            if (value[i] == '|')
-                formatted.SetForegroundBrush(separatorBrush, i, 1);
-        }
 
         return formatted;
     }

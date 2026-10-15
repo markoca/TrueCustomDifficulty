@@ -3807,6 +3807,27 @@ if (not all(f'P("{pid}")' in _compact_stamina for pid in _compact_stamina_ids)
     fail('Stamina Core/Movement Limits: native vault and calibrated kg limit drifted')
 _action_usage_source = (ROOT / 'src/TrueCustomDifficulty/Controls/ActionCostsRadar.cs').read_text(encoding='utf-8')
 _action_usage_xaml = (ROOT / 'src/TrueCustomDifficulty/MainWindow.xaml').read_text(encoding='utf-8')
+# An older ActionCostsRadar status timer was written but never rendered.
+# Its reset notifications and the separator-colored text branch are dead UI;
+# the actual source actions and redraws must stay functional.
+if any(token in _action_usage_source for token in (
+        'VisualStatusMessage', '_status.', 'private static string ShortLabel(',
+        'separatorBrush', "value[i] == '|'")):
+    fail('ActionCostsRadar resurrected invisible status timer or unused text formatter')
+_action_live_controls = (
+    'DrawActionGroup(dc, ActionGroup.Movement,',
+    'DrawActionGroup(dc, ActionGroup.Melee,',
+    'DrawExhaustionBoard(dc, left, width, text, muted, border, accent, panel);',
+    'target.Parameter.ResetToReference();',
+    'foreach (var parameter in EnumerateBoundParameters())',
+    'parameter?.ResetToReference();',
+    '_selectedParameter.CurrentNumber = Math.Clamp(',
+    'SetSnapped(target.Parameter, raw);',
+    'InvalidateVisual();',
+)
+if any(token not in _action_usage_source for token in _action_live_controls):
+    fail('ActionCostsRadar cleanup removed live editing or redraw path')
+note('ActionCostsRadar cleanup: invisible status/timer and pipe-color helper gone; live editing/reset intact')
 if (not all(token in _action_usage_source for token in (
         'private const double UsageHeight = 187.0;',
         'new Rect(left, 48.0, half, 124.0)',

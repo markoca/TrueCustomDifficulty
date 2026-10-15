@@ -1,5 +1,10 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Stamina ActionCostsRadar dead status removal (CURRENT)
+
+`ActionCostsRadar` displays **no status-message readout** in either the Usage or Exhaustion view, yet retained an orphaned `VisualStatusMessage` instance, a transient timer, `ShowTransient`/`Clear` calls and a `ShortLabel` helper used only for unseen reset messages. Remove those inactive paths; **keep** native drag editing, arrow/plus/minus stepping, per-source right-click reset, `R` family reset, current-value rendering, handle hover and direct `InvalidateVisual` refresh. Leave the shared `VisualStatusMessage` class intact for any other consumers. Also remove the unused `|` separator-coloring loop in `ActionCostsRadar.CreateText`; no current action/recovery heading or readout uses pipe separators. Do not alter the six Movement/Melee sources, six Exhaustion sources, max-stamina read-only comparison, linked constraints, presets, CFG writer or approved compact WPF layouts. Static audits guard removed paths and remaining live interactions.
+
+
 ### 2026-10-15 — Stamina dead UI cleanup, pass 1 (CURRENT)
 
 The `PhysicalLimits` visual family is unreachable: both `stamina.vaultMaxHeight` and `stamina.maxCarryWeight` are mapped to the active compact `StaminaCore` aggregate, and no parameter selects `PhysicalLimits`. Remove its old dispatcher, height/member registry and obsolete help/anchor entries, along with the entire now-unused `DrawPairedSystemBoard` helper. That helper contained historical StaminaCore, Water Stamina Drain, Trader Stock and Item Weight variants which the current dedicated editors supersede; its Radiation Treatment fallback was already retired. Only the obsolete helper is removed; do not delete the active standalone Trader Stock / Item Weight / Water renderer or `DrawHorizontalTrackCard` used by them and other tabs.
