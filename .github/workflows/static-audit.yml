@@ -34,6 +34,9 @@ jobs:
       - name: Build Difficulty activity rail contract
         run: python tools/audit_build_progress_contract.py
 
+      - name: Portable publish folder inode and user-state preservation regression
+        run: python tools/audit_publish_directory_contract.py
+
       - name: RC extreme-signal preset audit
         run: python tools/audit_rc_signal_preset.py
 

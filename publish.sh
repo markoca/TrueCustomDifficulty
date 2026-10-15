@@ -27,8 +27,40 @@ PUBLISH_DIR="$ROOT/publish/win-x64"
 FINAL_EXE="$PUBLISH_DIR/$EXE_NAME"
 TEMP_OUTPUT="$(mktemp -d "${TMPDIR:-/tmp}/TrueCustomDifficulty-publish.XXXXXX")"
 
+# Never remove/recreate publish/win-x64: KDE Dolphin can retain the old
+# inode, and users keep repak/retoc, customized presets and output there.
+PUBLISH_STAGING=""
+PUBLISH_BACKUP=""
+TRANSACTION_STARTED=0
+declare -a INSTALLED_NAMES=()
+declare -a BACKED_UP_NAMES=()
+
 cleanup() {
+    local status=$?
+    trap - EXIT
+
+    if (( status != 0 && TRANSACTION_STARTED )); then
+        # Roll back partially installed runtime artifacts on publish failure.
+        local restore_failed=0
+        for name in "${INSTALLED_NAMES[@]}"; do
+            rm -rf -- "$PUBLISH_DIR/$name" || restore_failed=1
+        done
+        for name in "${BACKED_UP_NAMES[@]}"; do
+            if ! mv -f -- "$PUBLISH_BACKUP/$name" "$PUBLISH_DIR/$name"; then
+                echo "ERROR: Could not restore $name; recover it from $PUBLISH_BACKUP" >&2
+                restore_failed=1
+            fi
+        done
+        if (( restore_failed )); then
+            echo "ERROR: Publish rollback needs manual recovery from $PUBLISH_BACKUP" >&2
+            PUBLISH_BACKUP="" # Keep the backup intact.
+        fi
+    fi
+
+    [[ -z "$PUBLISH_STAGING" ]] || rm -rf -- "$PUBLISH_STAGING"
+    [[ -z "$PUBLISH_BACKUP" ]] || rm -rf -- "$PUBLISH_BACKUP"
     rm -rf -- "$TEMP_OUTPUT"
+    exit "$status"
 }
 trap cleanup EXIT
 
@@ -97,41 +129,84 @@ dotnet publish "$PROJECT" \
     -o "$TEMP_OUTPUT"
 
 BUILT_EXE="$TEMP_OUTPUT/$EXE_NAME"
-rm -rf -- "$PUBLISH_DIR"
-mkdir -p -- "$PUBLISH_DIR"
-if [[ ! -f "$BUILT_EXE" ]]; then
+# Never destroy a prior working build if dotnet publish failed to emit EXE.
+if [[ ! -s "$BUILT_EXE" ]]; then
     echo "ERROR: Publish completed, but the expected EXE was not created:" >&2
     echo "  $BUILT_EXE" >&2
     exit 1
 fi
 
-find "$TEMP_OUTPUT" -maxdepth 1 -type f ! -name '*.pdb' -print0 |
+# Replace published *runtime artifacts*, not the published directory itself.
+# Removing and recreating the directory breaks open Dolphin tabs and destroys
+# user-supplied tools, customized Presets and previously built Output packages.
+if [[ -L "$PUBLISH_DIR" ]]; then
+    echo "ERROR: Refusing to publish into a symlink: $PUBLISH_DIR" >&2
+    exit 1
+fi
+mkdir -p -- "$PUBLISH_DIR"
+if [[ ! -d "$PUBLISH_DIR" ]]; then
+    echo "ERROR: Publish path is not a directory: $PUBLISH_DIR" >&2
+    exit 1
+fi
+
+# Same-filesystem staging + rename keeps the directory inode stable and
+# switches each runtime file into place without exposing partially copied EXEs.
+PUBLISH_STAGING="$(mktemp -d "$PUBLISH_DIR/.tcd-publish-new.XXXXXX")"
+PUBLISH_BACKUP="$(mktemp -d "$PUBLISH_DIR/.tcd-publish-old.XXXXXX")"
+declare -a RUNTIME_NAMES=()
+
 while IFS= read -r -d '' file; do
-    cp -f -- "$file" "$PUBLISH_DIR/$(basename -- "$file")"
-done
+    name="$(basename -- "$file")"
 
-find "$TEMP_OUTPUT" -mindepth 1 -maxdepth 1 -type d -print0 |
-while IFS= read -r -d '' dir; do
-    name="$(basename -- "$dir")"
-    rm -rf -- "$PUBLISH_DIR/$name"
-    cp -a -- "$dir" "$PUBLISH_DIR/$name"
-done
+    # These paths contain user-owned runtime tools, presets and built mods;
+    # .NET must never replace them, even if its output layout changes.
+    case "$name" in
+        tools|Presets|Output|BUILD-INFO.txt)
+            echo "ERROR: Unexpected .NET publish artifact collides with portable state: $name" >&2
+            exit 1
+            ;;
+    esac
 
-mkdir -p "$PUBLISH_DIR/tools"
-mkdir -p "$PUBLISH_DIR/Presets" "$PUBLISH_DIR/Output"
-cp -f -- "$ROOT/src/TrueCustomDifficulty/Presets/README.md" "$PUBLISH_DIR/Presets/README.md"
+    if [[ -f "$file" ]]; then
+        cp -p -- "$file" "$PUBLISH_STAGING/$name"
+    elif [[ -d "$file" ]]; then
+        cp -a -- "$file" "$PUBLISH_STAGING/$name"
+    else
+        echo "ERROR: Unsupported .NET publish artifact: $file" >&2
+        exit 1
+    fi
+    RUNTIME_NAMES+=("$name")
+done < <(find "$TEMP_OUTPUT" -mindepth 1 -maxdepth 1 ! -name '*.pdb' -print0)
 
-SIZE_BYTES="$(stat -c '%s' "$FINAL_EXE")"
+SIZE_BYTES="$(stat -c '%s' "$BUILT_EXE")"
 SIZE_MB="$(awk -v bytes="$SIZE_BYTES" 'BEGIN { printf "%.1f", bytes / 1048576 }')"
+EXE_SHA256="$(sha256sum "$BUILT_EXE" | cut -d' ' -f1)"
+# Publish the matching source/binary receipt as part of the same transaction.
+printf 'source_commit=%s\nexe_sha256=%s\n' "$GIT_HEAD" "$EXE_SHA256" > "$PUBLISH_STAGING/BUILD-INFO.txt"
+RUNTIME_NAMES+=("BUILD-INFO.txt")
+
+TRANSACTION_STARTED=1
+for name in "${RUNTIME_NAMES[@]}"; do
+    if [[ -e "$PUBLISH_DIR/$name" || -L "$PUBLISH_DIR/$name" ]]; then
+        mv -- "$PUBLISH_DIR/$name" "$PUBLISH_BACKUP/$name"
+        BACKED_UP_NAMES+=("$name")
+    fi
+    mv -- "$PUBLISH_STAGING/$name" "$PUBLISH_DIR/$name"
+    INSTALLED_NAMES+=("$name")
+done
+
+mkdir -p -- "$PUBLISH_DIR/tools" "$PUBLISH_DIR/Presets" "$PUBLISH_DIR/Output"
+# Only initialize README if absent. Never reset user-edited portable state.
+if [[ ! -e "$PUBLISH_DIR/Presets/README.md" ]]; then
+    cp -- "$ROOT/src/TrueCustomDifficulty/Presets/README.md" "$PUBLISH_DIR/Presets/README.md"
+fi
+TRANSACTION_STARTED=0
 
 echo
 echo "Published successfully."
 echo "EXE: $EXE_NAME ($SIZE_MB MB)"
 echo "Location: $PUBLISH_DIR"
-# A readable source/binary receipt makes it possible to distinguish an old
-# Wine process or stale executable from the currently published artifact.
-EXE_SHA256="$(sha256sum "$FINAL_EXE" | cut -d' ' -f1)"
-printf 'source_commit=%s\nexe_sha256=%s\n' "$GIT_HEAD" "$EXE_SHA256" > "$PUBLISH_DIR/BUILD-INFO.txt"
+# BUILD-INFO.txt was installed alongside the executable transactionally.
 echo "Build receipt: $PUBLISH_DIR/BUILD-INFO.txt"
 echo "Executable SHA-256: $EXE_SHA256"
 echo

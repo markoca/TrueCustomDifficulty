@@ -22,6 +22,7 @@ STATIC = (
     ("ui-cfg", "tools/audit_ui_cfg_contract.py"),
     ("project-consistency", "tools/audit_project_consistency.py"),
     ("build-progress-contract", "tools/audit_build_progress_contract.py"),
+    ("publish-directory-contract", "tools/audit_publish_directory_contract.py"),
     ("rc-signal-preset", "tools/audit_rc_signal_preset.py"),
     ("world-weapon-nested-source", "tools/audit_world_weapon_nested_source.py"),
 )
