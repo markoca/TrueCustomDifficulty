@@ -1,5 +1,11 @@
 # Preset JSON format
 
+### 2026-10-15 — Role-first deep rebalance (CURRENT)
+
+The current **12 stock profiles** are still **format v1** snapshots with all **248 source-backed IDs**. The 2026-10-15 role-first matrix rebalances 78 source IDs and 702 stored values, with no schema revision or new CFG target. The reference difficulty and prior `savedAtUtc` metadata fields are preserved for compatibility and do not indicate the rebalance date. See `tools/factory_preset_role_rebalance.json` and `docs/FACTORY-PROFILE-DEEP-AUDIT-2026-10-15.md`.
+
+The startup `PresetDirectoryService` also matches **twelve exact Git-blob identities** of the immediately previous 248-key factory release (`PreRoleRebalanceFactoryBlobs`). Only untouched installed factory files are replaced; named user-edited presets and all custom presets are protected. Older migratable factory identities continue to work. Users wishing to adopt the new balance while retaining personalized changes should save their custom preset under another filename, then reseed a pristine factory file. In-game experience and compilation are not verified by the static audit.
+
 ## 2026-10-14 — Abundance-aware factory preset revision
 
 Factory preset format **remains version 1** and each stock file retains all **247** native parameter values and its original `referenceDifficulty`. The most recent rebalance changes source-backed numbers and one existing NPC bonus choice, not CFG semantics or serialization fields. The 46-control authored patch and rationale are in `tools/factory_preset_scarcity_balance.json`; regression tests compare it to each embedded JSON.

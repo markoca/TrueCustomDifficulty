@@ -1,10 +1,22 @@
 # Factory Presets
 
-### 2026-10-15 — 248-source factory presets and exact stock upgrade (CURRENT)
+### 2026-10-15 — Role-first deep rebalance (CURRENT)
+
+All **twelve factory profiles** still store all **248 native CFG-backed catalog parameter entries**, while **78 audited control IDs** have been rebalanced across all ten tabs, resulting in **702 actual value changes**. The committed reproducible source is `tools/factory_preset_role_rebalance.json`, which is checked against every role JSON by `tools/audit_project_consistency.py`. Original 37-source expansion and 46-source scarcity matrices are synchronized wherever this pass changes their controls.
+
+This is a **role and resource-loop rebalance**, not just scaling enemy HP: different specialists are exposed to different resource channels and failure costs. Source-specific world loot, NPC, stash, containers, traders, medical treatment, price multipliers, stamina, bleeding, radiation, anomaly severity, equipment, mutants and A-Life are balanced as complementary systems. Drastically nonvanilla values are intentional when sourced and bounded; labels on removal/density/price sliders do not imply total observed spawn, drop or income rates.
+
+**Preserved:** original profile names and base reference difficulty, native CFG writers, save format v1, quest/unique-weapon placement guarantees, all 248 parameter IDs, UI controls and catalogs, independent Water bonus/cost-cut sources, native slider bounds and time relationships, finite treatment and ammunition even in Hardcore+. The known but unverified hidden `survival.drunknessThresholdScale` factory setting is neutralized to 1x rather than asserting a real gameplay effect.
+
+**Migration:** `PresetDirectoryService.PreRoleRebalanceFactoryBlobs` allowlists the exact Git-blob SHA of each immediately preceding shipped **248-source** preset. Only byte-identical pristine installed factory files upgrade automatically; any edit to a stock name, even metadata only, prevents replacement. Custom/renamed presets remain untouched. Restart may be needed to seed the new stock profiles.
+
+See `docs/FACTORY-PROFILE-DEEP-AUDIT-2026-10-15.md` for per-role decisions and the source-constrained comparison table. Static source validation is not real gameplay benchmarking; local publish/Wine and in-game testing remain necessary.
+
+### 2026-10-15 — 248-source factory presets and exact stock upgrade (HISTORICAL; SUPERSEDED)
 
 The two independent Water strength sources are both present in all **twelve shipped factory presets**: `survival.waterStaminaEffectStrength` (WaterStamina2 +25% Stamina type) and `survival.waterStaminaCostReduction` (WaterStaminaPerAction1 −10% SPDrain). Each new cost-cut entry inherits that factory profile's **previous shared Water strength** so the pre-split gameplay setting stays equivalent. The source catalog has **248** independent entries per factory profile, versus the previous 247. The existing role-specific 46-source scarcity balance values, other drink settings, durations, difficulty references and raw writer routes are untouched. `PresetDirectoryService` recognizes exactly the twelve pristine previously-shipped 247-source JSON blob hashes; it upgrades only those byte-identical stock files and never overwrites user-edited presets. User presets without the new cost key continue to load via the existing in-memory Water split migration.
 
-## 2026-10-14 — Abundance correction: all twelve profiles rebalanced (CURRENT)
+## 2026-10-14 — Abundance correction: all twelve profiles rebalanced (HISTORICAL; SUPERSEDED)
 
 **This numerical pass implements the governing abundance-aware policy below.** Each of the twelve embedded profiles has been rebuilt across **46 existing CFG-backed balance controls** (world sources, NPC/container loot, trader stock, healing, money, repairs, carry/wear and selected hazards). Independent tuning is authored in `tools/factory_preset_scarcity_balance.json`; there is no fake universal scarcity setting. All original 247 parameter IDs remain; the earlier 37-entry source-completion matrix and all UI-control contracts remain unchanged.
 

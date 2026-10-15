@@ -139,6 +139,25 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "0d3be7a1e48a937369c4bd04e7179a155b5e2cb5",
     };
 
+    // Exact 248-source stock identities shipped before role-first tuning.
+    // These do not match player-edited files; never overwrite custom work.
+    private static readonly Dictionary<string, string> PreRoleRebalanceFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Immersive"] = "3c4eea2fb6770f381b4513ea23686edbf3fc88fd",
+        ["Tactical"] = "d5bff23a96938447c25320e1e628c2d1dea29ab1",
+        ["Field Medic"] = "3ca87bc2a719507ebbc9980333cd08ea57deea87",
+        ["Mutant Hunter"] = "43cf8f818707ecb2746331940bca44ecbf8f58f2",
+        ["Anomaly Runner"] = "db3e54c7a022cdafa7a360409ba4d85fa06cc198",
+        ["Wanderer"] = "1f537e4c768a58386f6c5c0cdb6e5b9921ead144",
+        ["Mercenary"] = "22a862e8de46f66a99160d62b25834e0b56c4a62",
+        ["Smuggler"] = "785f390e40c2014aaf756473903170b6e3f05ad4",
+        ["Scavenger"] = "242734e642a08006753826b0c93c1a87d8ecdc33",
+        ["Outcast"] = "4d43faf1ba8d9a7d4613cb78a0648a8435a5c06c",
+        ["Hardcore"] = "aa900e79fd20ad26853333d6ee92864ade7e7715",
+        ["Hardcore+"] = "4a849dff785a8c33864e14b651195ad206385aef",
+    };
+
     public string Ensure()
     {
         var directory = Path.Combine(AppContext.BaseDirectory, "Presets");
@@ -215,7 +234,8 @@ public sealed class PresetDirectoryService
             && !PreShortDurationFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreFullCoverageFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreScarcityBalanceFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreWaterSplitFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreWaterSplitFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreRoleRebalanceFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -241,7 +261,9 @@ public sealed class PresetDirectoryService
                 || (PreScarcityBalanceFactoryBlobs.TryGetValue(name, out var preScarcityHash)
                     && actual.Equals(preScarcityHash, StringComparison.OrdinalIgnoreCase))
                 || (PreWaterSplitFactoryBlobs.TryGetValue(name, out var preWaterHash)
-                    && actual.Equals(preWaterHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preWaterHash, StringComparison.OrdinalIgnoreCase))
+                || (PreRoleRebalanceFactoryBlobs.TryGetValue(name, out var preRoleHash)
+                    && actual.Equals(preRoleHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

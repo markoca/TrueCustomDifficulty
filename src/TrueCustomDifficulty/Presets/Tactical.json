@@ -8,11 +8,11 @@
   "values": {
     "combat.npcHealth": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.65
     },
     "combat.npcWeaponDamage": {
       "kind": "slider",
-      "number": 1.4
+      "number": 1.6
     },
     "combat.mutantDamage": {
       "kind": "slider",
@@ -20,15 +20,15 @@
     },
     "combat.playerWeaponDamage": {
       "kind": "slider",
-      "number": 1.35
+      "number": 1.75
     },
     "combat.playerHeadshotMultiplier": {
       "kind": "slider",
-      "number": 2.85
+      "number": 3.5
     },
     "combat.weaponJamming": {
       "kind": "slider",
-      "number": 1.18
+      "number": 1.1
     },
     "combat.explosionDamage": {
       "kind": "slider",
@@ -104,7 +104,7 @@
     },
     "survival.hungerRate": {
       "kind": "slider",
-      "number": 0.018
+      "number": 0.019
     },
     "survival.hungerMediumStaminaRegen": {
       "kind": "slider",
@@ -116,11 +116,11 @@
     },
     "survival.sleepinessRate": {
       "kind": "slider",
-      "number": 0.012
+      "number": 0.014
     },
     "survival.energyDrinkFatigueRelief": {
       "kind": "slider",
-      "number": 1
+      "number": 1.3
     },
     "survival.sleepEligibilityThreshold": {
       "kind": "slider",
@@ -132,7 +132,7 @@
     },
     "survival.radiationAccumulation": {
       "kind": "slider",
-      "number": 1.17
+      "number": 1.15
     },
     "survival.radiationRecovery": {
       "kind": "slider",
@@ -140,11 +140,11 @@
     },
     "survival.radiationDamage": {
       "kind": "slider",
-      "number": 1.17
+      "number": 1.15
     },
     "survival.bleedingSeverity": {
       "kind": "slider",
-      "number": 1.35
+      "number": 1.4
     },
     "survival.bleedingRecovery": {
       "kind": "slider",
@@ -184,15 +184,15 @@
     },
     "health.medkitHealing": {
       "kind": "slider",
-      "number": 55
+      "number": 45
     },
     "health.armyMedkitHealing": {
       "kind": "slider",
-      "number": 70
+      "number": 60
     },
     "health.ecoMedkitHealing": {
       "kind": "slider",
-      "number": 85
+      "number": 75
     },
     "health.foodHealing": {
       "kind": "toggle",
@@ -228,11 +228,11 @@
     },
     "health.ecoMedkitAntirad": {
       "kind": "slider",
-      "number": 50
+      "number": 45
     },
     "health.antiRadRadiation": {
       "kind": "slider",
-      "number": 85
+      "number": 75
     },
     "stamina.maxSP": {
       "kind": "slider",
@@ -252,11 +252,11 @@
     },
     "stamina.regeneration": {
       "kind": "slider",
-      "number": 7
+      "number": 8
     },
     "stamina.sprintCost": {
       "kind": "slider",
-      "number": 4
+      "number": 3.5
     },
     "stamina.jumpCost": {
       "kind": "slider",
@@ -264,7 +264,7 @@
     },
     "stamina.vaultCost": {
       "kind": "slider",
-      "number": 9
+      "number": 8
     },
     "stamina.meleeNormalCost": {
       "kind": "slider",
@@ -280,11 +280,11 @@
     },
     "stamina.aimRegenCoef": {
       "kind": "slider",
-      "number": 0.2
+      "number": 0.15
     },
     "stamina.maxCarryWeight": {
       "kind": "slider",
-      "number": 75
+      "number": 70
     },
     "loot.npcCorpseBonus": {
       "kind": "choiceSlider",
@@ -292,11 +292,11 @@
     },
     "loot.npcMedicalChance": {
       "kind": "slider",
-      "number": 0.55
+      "number": 0.5
     },
     "loot.npcWeaponAmmoSupply": {
       "kind": "slider",
-      "number": 0.5
+      "number": 0.75
     },
     "loot.droppedWeaponCondition": {
       "kind": "range",
@@ -353,7 +353,7 @@
     },
     "economy.startingMoney": {
       "kind": "slider",
-      "number": 0
+      "number": 300
     },
     "economy.buyCondition": {
       "kind": "slider",
@@ -369,19 +369,19 @@
     },
     "economy.traderAmmoStock": {
       "kind": "slider",
-      "number": 0.75
+      "number": 1
     },
     "economy.medicStock": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.5
     },
     "economy.consumableCost": {
       "kind": "slider",
-      "number": 1.2
+      "number": 1.3
     },
     "economy.ammoCost": {
       "kind": "slider",
-      "number": 1.2
+      "number": 1.35
     },
     "economy.armorCost": {
       "kind": "slider",
@@ -393,15 +393,15 @@
     },
     "economy.artifactCost": {
       "kind": "slider",
-      "number": 1
+      "number": 1.1
     },
     "economy.mutantPartValue": {
       "kind": "slider",
-      "number": 1.1
+      "number": 1.05
     },
     "economy.fastTravelCost": {
       "kind": "slider",
-      "number": 1.15
+      "number": 1.12
     },
     "economy.upgradeCost": {
       "kind": "slider",
@@ -409,7 +409,7 @@
     },
     "economy.repairCostBase": {
       "kind": "slider",
-      "number": 1.15
+      "number": 1.25
     },
     "economy.repairEnemy": {
       "kind": "slider",
@@ -429,19 +429,19 @@
     },
     "economy.mainQuestReward": {
       "kind": "slider",
-      "number": 0.78
+      "number": 0.8
     },
     "economy.sideQuestReward": {
       "kind": "slider",
-      "number": 0.8
+      "number": 0.92
     },
     "equipment.armorDurability": {
       "kind": "slider",
-      "number": 0.82
+      "number": 0.78
     },
     "equipment.ammoWeight": {
       "kind": "slider",
-      "number": 1.18
+      "number": 1.23
     },
     "equipment.consumableWeight": {
       "kind": "slider",
@@ -449,7 +449,7 @@
     },
     "environment.anomalyDamage": {
       "kind": "slider",
-      "number": 1.17
+      "number": 1.15
     },
     "advanced.starvationMechanics": {
       "kind": "toggle",
@@ -509,7 +509,7 @@
     },
     "survival.sleepHealthRestore": {
       "kind": "slider",
-      "number": 45
+      "number": 40
     },
     "survival.sleepStaminaRestore": {
       "kind": "slider",
@@ -617,7 +617,7 @@
     },
     "environment.psyAnomalyIntensity": {
       "kind": "slider",
-      "number": 1.25
+      "number": 1.15
     },
     "loot.mutant.blindDogChance": {
       "kind": "slider",
@@ -625,7 +625,7 @@
     },
     "loot.mutant.bloodsuckerChance": {
       "kind": "slider",
-      "number": 0.352
+      "number": 0.4
     },
     "loot.mutant.boarChance": {
       "kind": "slider",
@@ -641,7 +641,7 @@
     },
     "loot.mutant.chimeraChance": {
       "kind": "slider",
-      "number": 0.572
+      "number": 0.55
     },
     "loot.mutant.controllerChance": {
       "kind": "slider",
@@ -677,11 +677,11 @@
     },
     "equipment.weaponWearPerShot": {
       "kind": "slider",
-      "number": 1.18
+      "number": 1.35
     },
     "loot.worldAmmoCratesRemoved": {
       "kind": "slider",
-      "number": 0.44
+      "number": 0.62
     },
     "loot.worldF1GrenadeBoxes": {
       "kind": "slider",
@@ -689,15 +689,15 @@
     },
     "loot.worldFoodDrinkCratesRemoved": {
       "kind": "slider",
-      "number": 0.37
+      "number": 0.55
     },
     "loot.worldMedicalCratesRemoved": {
       "kind": "slider",
-      "number": 0.48
+      "number": 0.62
     },
     "loot.looseWorldLootRemoved": {
       "kind": "slider",
-      "number": 0.47
+      "number": 0.58
     },
     "loot.worldWeaponShuffle": {
       "kind": "toggle",
@@ -705,7 +705,7 @@
     },
     "loot.worldWeaponDensity": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.55
     },
     "loot.worldAttachmentShuffle": {
       "kind": "toggle",
@@ -785,7 +785,7 @@
     },
     "alife.humanGroupSize.veteran": {
       "kind": "slider",
-      "number": 1.35
+      "number": 1.45
     },
     "alife.humanGroupSize.master": {
       "kind": "slider",
@@ -797,7 +797,7 @@
     },
     "alife.mutantSpawn.blindDog": {
       "kind": "slider",
-      "number": 1.05
+      "number": 0.85
     },
     "alife.mutantSpawn.flesh": {
       "kind": "slider",
@@ -821,7 +821,7 @@
     },
     "alife.mutantSpawn.chimera": {
       "kind": "slider",
-      "number": 0.9
+      "number": 0.85
     },
     "alife.mutantSpawn.bayun": {
       "kind": "slider",
@@ -849,11 +849,11 @@
     },
     "survival.waterRegenDuration": {
       "kind": "slider",
-      "number": 6
+      "number": 5
     },
     "survival.energyFullCostDuration": {
       "kind": "slider",
-      "number": 9
+      "number": 8
     },
     "survival.energyPartialCostDuration": {
       "kind": "slider",
@@ -885,27 +885,27 @@
     },
     "survival.waterInstantStaminaRestore": {
       "kind": "slider",
-      "number": 0.45
+      "number": 0.35
     },
     "survival.energyDrinkInstantStaminaRestore": {
       "kind": "slider",
-      "number": 0.62
+      "number": 0.68
     },
     "survival.waterStaminaEffectStrength": {
       "kind": "slider",
-      "number": 1.1
+      "number": 0.95
     },
     "survival.waterStaminaCostReduction": {
       "kind": "slider",
-      "number": 1.1
+      "number": 0.8
     },
     "survival.waterEffectDuration": {
       "kind": "slider",
-      "number": 1
+      "number": 0.8
     },
     "survival.energyDrinkStaminaRecoveryStrength": {
       "kind": "slider",
-      "number": 1.05
+      "number": 1.25
     },
     "survival.energyDrinkEffectDuration": {
       "kind": "slider",
@@ -941,7 +941,7 @@
     },
     "survival.herculesCarryBonus": {
       "kind": "slider",
-      "number": 22
+      "number": 20
     },
     "survival.herculesDuration": {
       "kind": "slider",
@@ -949,7 +949,7 @@
     },
     "survival.psiBlockRecovery": {
       "kind": "slider",
-      "number": 10
+      "number": 9
     },
     "survival.psiBlockDuration": {
       "kind": "slider",
@@ -969,23 +969,23 @@
     },
     "stamina.sprintUnderRunSpeedRegenCoef": {
       "kind": "slider",
-      "number": -0.55
+      "number": -0.5
     },
     "stamina.joggingRegenCoef": {
       "kind": "slider",
-      "number": 0.1
+      "number": 0.2
     },
     "stamina.slowRunRegenCoef": {
       "kind": "slider",
-      "number": 0.05
+      "number": 0.1
     },
     "stamina.sprintRegenCoef": {
       "kind": "slider",
-      "number": -1.15
+      "number": -1.1
     },
     "stamina.runRegenCoef": {
       "kind": "slider",
-      "number": -0.55
+      "number": -0.5
     },
     "economy.repairDifficultyCost": {
       "kind": "slider",

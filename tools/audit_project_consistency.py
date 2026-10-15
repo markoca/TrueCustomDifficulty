@@ -2051,9 +2051,8 @@ for _name in _factory_preset_names:
     _preset = json.loads((_factory_preset_dir / f"{_name}.json").read_text(encoding="utf-8"))
     _values = _preset["values"]
     if ("survival.waterStaminaCostReduction" not in _values
-        or _values["survival.waterStaminaCostReduction"] !=
-           _values["survival.waterStaminaEffectStrength"]):
-        _factory_errors.append(_name + ": old Water shared factory strength not preserved")
+        or _values["survival.waterStaminaCostReduction"].get("kind") != "slider"):
+        _factory_errors.append(_name + ": Water cost-cut source missing or wrong kind")
 if _factory_service_text.count('PreWaterSplitFactoryBlobs.TryGetValue(name,') != 2:
     _factory_errors.append("Water stock blob lease migration missing from factory service")
 
@@ -2120,36 +2119,21 @@ if ('PreScarcityBalanceFactoryBlobs' not in _factory_service_text
         or 'if (!File.Exists(destination) || IsUnmodifiedPreviousFactory(name, destination))' not in _factory_service_text):
     _factory_errors.append("scarcity balance factory upgrade changed user-file safety contract")
 
-_factory_scarcity_expectations = {
-    "Hardcore": {
-        "loot.looseWorldLootRemoved": 0.72,
-        "loot.worldAmmoCratesRemoved": 0.76,
-        "loot.worldFoodDrinkCratesRemoved": 0.64,
-        "loot.worldMedicalCratesRemoved": 0.76,
-        "loot.worldWeaponDensity": 0.35,
-        "loot.npcMedicalChance": 0.35,
-        "loot.npcWeaponAmmoSupply": 0.25,
-        "economy.traderAmmoStock": 0.25,
-        "economy.medicStock": 0.25,
-    },
-    "Hardcore+": {
-        "loot.looseWorldLootRemoved": 0.84,
-        "loot.worldAmmoCratesRemoved": 0.86,
-        "loot.worldFoodDrinkCratesRemoved": 0.78,
-        "loot.worldMedicalCratesRemoved": 0.86,
-        "loot.worldWeaponDensity": 0.20,
-        "loot.npcMedicalChance": 0.20,
-        "loot.npcWeaponAmmoSupply": 0.25,
-        "economy.traderAmmoStock": 0.25,
-        "economy.medicStock": 0.25,
-    },
-}
-for _name, _expected in _factory_scarcity_expectations.items():
-    _preset = json.loads((_factory_preset_dir / f"{_name}.json").read_text(encoding="utf-8"))
-    for _pid, _value in _expected.items():
-        _actual = _preset["values"][_pid].get("number")
-        if _actual != _value:
-            _factory_errors.append(f"{_name}: scarcity rule drifted {_pid}={_actual}, expected {_value}")
+# Old fixed Hardcore numbers were superseded by native-source role tuning.
+# Hardcore+ must remain more scarce while finite healing/ammo still exists.
+_hc = json.loads((_factory_preset_dir / "Hardcore.json").read_text(encoding="utf-8"))["values"]
+_hcp = json.loads((_factory_preset_dir / "Hardcore+.json").read_text(encoding="utf-8"))["values"]
+for _pid in ("loot.looseWorldLootRemoved", "loot.worldAmmoCratesRemoved",
+             "loot.worldFoodDrinkCratesRemoved", "loot.worldMedicalCratesRemoved"):
+    if _hcp[_pid]["number"] <= _hc[_pid]["number"]:
+        _factory_errors.append("Hardcore+ scarcity progression failed: "+_pid)
+if _hcp["loot.worldWeaponDensity"]["number"] >= _hc["loot.worldWeaponDensity"]["number"]:
+    _factory_errors.append("Hardcore+ weapon supply not scarcer than Hardcore")
+for _hard in (_hc, _hcp):
+    if (_hard["health.medkitHealing"]["number"] <= 0
+        or _hard["survival.sleepHealthRestore"]["number"] <= 0
+        or _hard["economy.traderAmmoStock"]["number"] < .25):
+        _factory_errors.append("Hardcore profile lost all recovery/ammo access")
 
 _factory_medical_expectations = {
     "Scavenger": (10, False),
@@ -2163,6 +2147,71 @@ for _name, (_bandage_expected, _food_expected) in _factory_medical_expectations.
     _food = _preset["values"].get("health.foodHealing", {}).get("boolean")
     if _bandage != _bandage_expected or _food is not _food_expected:
         _factory_errors.append(f"{_name}: medical rule drifted bandage={_bandage}, food={_food}")
+
+# Role-deep audit: each factory remains a 248-source snapshot and the
+# explicitly authored role changes match the reproducible native-source matrix.
+_role_matrix = json.loads((ROOT / "tools/factory_preset_role_rebalance.json").read_text(encoding="utf-8"))
+if (_role_matrix.get("version") != 1
+    or set(_role_matrix.get("profiles", {})) != set(_factory_preset_names)
+    or len(_role_matrix.get("intents", {})) != 12):
+    _factory_errors.append("12-role deep-audit matrix incomplete")
+for _role, _signature in _role_matrix.get("profiles", {}).items():
+    _path = _factory_preset_dir / f"{_role}.json"
+    _document = json.loads(_path.read_text(encoding="utf-8"))
+    _entries = _document["values"]
+    if len(_entries) != 248 or set(_entries) != set(_factory_catalog):
+        _factory_errors.append(f"{_role}: incomplete native catalog")
+    if len(_signature.get("changes", {})) < 30:
+        _factory_errors.append(f"{_role}: insufficient role-specific rebalancing")
+    if _signature.get("referenceDifficulty") != _document.get("referenceDifficulty"):
+        _factory_errors.append(f"{_role}: baseline difficulty changed")
+    for _pid, _target in _signature.get("changes", {}).items():
+        _definition = _factory_catalog.get(_pid)
+        _stored = _entries.get(_pid)
+        if not _definition or not _stored or _definition["control"] != "slider":
+            _factory_errors.append(f"{_role}: unknown/non-native source {_pid}")
+            continue
+        if _stored.get("kind") != "slider" or _stored.get("number") != _target:
+            _factory_errors.append(f"{_role}: authored role drift {_pid}")
+        _bound = _definition["slider"]
+        if not _bound["min"]-1e-8 <= _target <= _bound["max"]+1e-8:
+            _factory_errors.append(f"{_role}: source out of range {_pid}")
+        if _bound.get("stepMode") == "absolute":
+            _units = (_target-_bound["min"])/_bound["step"]
+            if abs(_units-round(_units)) > 1e-5:
+                _factory_errors.append(f"{_role}: absolute step-grid mismatch {_pid}")
+    for _pid in ("survival.drunknessThresholdScale",
+                 "economy.repairDifficultyCost", "alife.mutantSpawn.generic"):
+        if _entries[_pid]["number"] != 1:
+            _factory_errors.append(f"{_role}: unverified hidden {_pid} must be neutral")
+if ("PreRoleRebalanceFactoryBlobs" not in _factory_service_text
+    or "&& !PreRoleRebalanceFactoryBlobs.TryGetValue(name, out knownHash)" not in _factory_service_text
+    or "PreRoleRebalanceFactoryBlobs.TryGetValue(name, out var preRoleHash)" not in _factory_service_text
+    or "if (!File.Exists(destination) || IsUnmodifiedPreviousFactory(name, destination))" not in _factory_service_text):
+    _factory_errors.append("pristine-only new-stock factory migration missing")
+for _role in _factory_preset_names:
+    _table_text = _factory_service_text.split("PreRoleRebalanceFactoryBlobs =", 1)[-1].split("};", 1)[0]
+    if f'["{_role}"]' not in _table_text:
+        _factory_errors.append(f"{_role}: old factory SHA not allowlisted")
+_role_numeric = {name: json.loads((_factory_preset_dir / f"{name}.json").read_text(encoding="utf-8"))["values"]
+                 for name in _factory_preset_names}
+def _role_number(role, pid):
+    return _role_numeric[role][pid]["number"]
+for _good, _meaning in (
+    (_role_number("Tactical", "combat.npcHealth") < _role_number("Immersive", "combat.npcHealth"), "Tactical low human HP"),
+    (_role_number("Field Medic", "health.medkitHealing") > _role_number("Hardcore", "health.medkitHealing"), "Field Medic treatment"),
+    (_role_number("Mutant Hunter", "economy.mutantPartValue") > _role_number("Mercenary", "economy.mutantPartValue"), "hunter trophy value"),
+    (_role_number("Anomaly Runner", "economy.artifactCost") > _role_number("Immersive", "economy.artifactCost"), "runner artifact trade"),
+    (_role_number("Wanderer", "stamina.maxSP") > _role_number("Hardcore+", "stamina.maxSP"), "Wanderer movement"),
+    (_role_number("Mercenary", "economy.sideQuestReward") > _role_number("Scavenger", "economy.sideQuestReward"), "Mercenary contracts"),
+    (_role_number("Smuggler", "stamina.maxCarryWeight") > _role_number("Tactical", "stamina.maxCarryWeight"), "Smuggler cargo"),
+    (_role_number("Scavenger", "loot.worldWeaponDensity") < _role_number("Immersive", "loot.worldWeaponDensity"), "Scavenger scarcity"),
+    (_role_number("Outcast", "loot.looseWorldLootRemoved") > _role_number("Immersive", "loot.looseWorldLootRemoved"), "Outcast subsistence"),
+):
+    if not _good: _factory_errors.append("role identity drifted: "+_meaning)
+for _doc in ("FACTORY-PRESETS.md", "PRESET-FORMAT.md"):
+    if "2026-10-15 — Role-first deep rebalance (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        _factory_errors.append("current factory role documentation missing "+_doc)
 
 if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legacyPath)" not in _factory_service_text:
     _factory_errors.append("legacy factory preset migration cleanup missing")
