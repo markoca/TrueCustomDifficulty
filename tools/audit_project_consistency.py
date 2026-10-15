@@ -1004,15 +1004,37 @@ _alife_human_cleanup = (ROOT / 'src/TrueCustomDifficulty/Controls/HumanGroupSize
 if 'private static double ValueToX(' in _alife_human_cleanup:
     fail('A-Life unused human-group horizontal projector returned')
 for _token in (
-    'new("alife.humanGroupSize.newbie", "NEWBIE", 3.0)',
-    'new("alife.humanGroupSize.experienced", "EXPERIENCED", 4.0)',
-    'new("alife.humanGroupSize.veteran", "VETERAN", 5.0)',
-    'new("alife.humanGroupSize.master", "MASTER", 6.0)',
+    'new("alife.humanGroupSize.newbie", "NEWBIE")',
+    'new("alife.humanGroupSize.experienced", "EXPERIENCED")',
+    'new("alife.humanGroupSize.veteran", "VETERAN")',
+    'new("alife.humanGroupSize.master", "MASTER")',
+    'ALifeIntegerCapSteps.EffectiveCaps(parameter.Id, value)',
+    'ALifeIntegerCapSteps.Move(selected.Id,',
     'private void UpdateFromPoint(', 'protected override void OnMouseRightButtonDown(',
     'protected override void OnKeyDown('):
     if _token not in _alife_human_cleanup:
-        fail('A-Life human-rank source or input contract missing: ' + _token)
-note('A-Life: removed unused X coordinate helper, four rank controls and resets preserved')
+        fail('A-Life human-rank source or effective input contract missing: ' + _token)
+_alife_mutant_ui = (ROOT / 'src/TrueCustomDifficulty/Controls/MutantGroupSizeRadar.cs').read_text(encoding='utf-8')
+if _alife_mutant_ui.count('new("alife.mutantSpawn.') != 14:
+    fail('A-Life mutant roster must retain 14 real editable species')
+for _token in ('ALifeIntegerCapSteps.EffectiveCaps(info.ParameterId,',
+               'ALifeIntegerCapSteps.Move(selected.Id,',
+               'protected override void OnMouseRightButtonDown('):
+    if _token not in _alife_mutant_ui:
+        fail('A-Life mutant source/effective step editor missing: ' + _token)
+_alife_policy = (ROOT / 'src/TrueCustomDifficulty/Services/ALifeIntegerCapSteps.cs').read_text(encoding='utf-8')
+for _token in ('new CfgWriterBaselineService().Load().EditPoints',
+               'scaleIntegerHalfUp', 'scaleIntegerHalfUpPreserveZero',
+               'SequenceEqual(outputs[first])', 'Math.Abs(value - 1.0)',
+               'public static double Move(', 'public static double Snap('):
+    if _token not in _alife_policy:
+        fail('A-Life writer-backed integer-step policy drift: ' + _token)
+_alife_vm = (ROOT / 'src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs').read_text(encoding='utf-8')
+if _alife_vm.count('ALifeIntegerCapSteps.Snap(Id, clamped, Minimum, Maximum, TickFrequency)') != 2:
+    fail('A-Life marker/preset and drag pathways must both normalize ineffective values')
+if 'private static double[] EffectiveCaps(' in _alife_mutant_ui or 'VanillaCap' in _alife_human_cleanup:
+    fail('A-Life renderer duplicates hard-coded native integer cap source')
+note('A-Life: 18 source-backed integer-effective controls, writer-matched counts, native resets and input routes')
 
 # The player-facing ten-lane damage editor is alphabetized by its
 # actual labels, not by CFG IDs, and both special effects use the same

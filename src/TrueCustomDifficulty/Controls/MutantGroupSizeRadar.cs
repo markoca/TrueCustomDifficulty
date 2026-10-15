@@ -172,7 +172,6 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         var info = Axes[row];
         var selected = row == _selectedRow;
         var hovered = row == _hoverRow;
-        var modified = parameter.IsValueModifiedFromReference();
         var currentCaps = ALifeIntegerCapSteps.EffectiveCaps(info.ParameterId, parameter.CurrentNumber);
         var referenceCaps = ALifeIntegerCapSteps.EffectiveCaps(info.ParameterId, parameter.ReferenceNumber);
 
