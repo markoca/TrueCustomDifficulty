@@ -5210,6 +5210,29 @@ for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
         fail("Mini-knob source design missing from " + _catalog)
 note("Five mini-knobs for Water and Energy: matching bright/dark green and blues")
 
+# Yellow Water duration parent / strength-knob source and palette contract.
+for _token in (
+    'var names = new[] { "WATER COST CUT", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };',
+    'new SolidColorBrush(Color.FromRgb(240, 196, 25));',
+    '"survival.waterEffectDuration" or "survival.waterStaminaCostReduction"',
+    'var laneBrush = i == 0 ? WaterCostCutLineBrush : accent;',
+    'new Pen(CloneWithOpacity(laneBrush, 0.75), 4.0)',
+    'new Pen(laneBrush, IsSelected(parameter) ? 2.5 : 1.6)',
+    'dc.DrawEllipse(laneBrush, null, new Point(currentX, y), 2.5, 2.5);',
+    'DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0);',
+    '(waterRegenTime, "WATER BONUS DURATION")',
+    'DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",',
+    'text, muted, border, accent, panel, WaterCostCutLineBrush);',
+    'new[] { waterRegenTime }',
+    'new[] { energyFullCostTime, energyPartialCostTime }',
+):
+    if _token not in _mini_ui:
+        fail("Yellow Water cost-cut duration/knob mapping drifted: "+_token)
+for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Yellow Water cost-cut duration/strength pairing (CURRENT)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
+        fail("Yellow Water cost-cut UI catalog contract missing in "+_catalog)
+note("Yellow Water 30s cost-cut lane / strength knob; green 5s stamina bonus; separate Energy 45s/5s/15s sources")
+
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:

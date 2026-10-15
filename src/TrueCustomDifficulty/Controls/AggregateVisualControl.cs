@@ -2985,10 +2985,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         new SolidColorBrush(Color.FromRgb(92, 186, 243));
     private static readonly Brush EnergyDrinkPartialCostLineBrush =
         new SolidColorBrush(Color.FromRgb(58, 111, 180));
-    // The independent Water action-drain cut is darker than the timed
-    // Stamina bonus: the two strengths match their corresponding duration bars.
+    // The Water 30-second cost-cut duration and its separate magnitude knob
+    // share the warm UI accent yellow (#F0C419), unlike the green 5s bonus.
     private static readonly Brush WaterCostCutLineBrush =
-        new SolidColorBrush(Color.FromRgb(51, 136, 78));
+        new SolidColorBrush(Color.FromRgb(240, 196, 25));
 
     private static Brush? DrinkEffectLineBrush(string sourceId) => sourceId switch
     {
@@ -3070,8 +3070,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         var width = Math.Max(460.0, ActualWidth - 34.0);
 
         // Two direct-percent refills and the separate Energy regeneration knob;
-        // Water's two independently writable sustained effects live in green
-        // native percent bars below, avoiding duplicate controls.
+        // Water's two distinct bonus/cost-cut effects use green/yellow
+        // source-native knobs below, avoiding duplicate controls.
         const double knobGap = 10.0;
         var knobBankWidth = Math.Min(620.0, ActualWidth - 34.0);
         var knobWidth = (knobBankWidth - 2.0 * knobGap) / 3.0;
@@ -3144,7 +3144,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         var sources = new[] { waterTime, energyTime, vodkaTime, beerTime, magicTime };
-        var names = new[] { "WATER", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };
+        var names = new[] { "WATER COST CUT", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA" };
         var durations = new[] { 30.0, 45.0, 20.0, 20.0, 90.0 };
         // Three native shorter effect durations now have their own explicit
         // source controls. Small timeline ticks are visual landmarks only;
@@ -3160,6 +3160,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         for (var i = 0; i < sources.Length; i++)
         {
             var parameter = sources[i];
+            // Match Water's duration lane to the independent cost-cut knob.
+            var laneBrush = i == 0 ? WaterCostCutLineBrush : accent;
             var y = timeline.Top + 8.0 + i * 23.0;
             var currentX = SecondsX(durations[i] * parameter.CurrentNumber);
             var referenceX = SecondsX(durations[i] * parameter.ReferenceNumber);
@@ -3179,7 +3181,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Point(timeline.Left, y), new Point(timeline.Right, y));
             dc.DrawLine(new Pen(border, 3.0),
                 new Point(timeline.Left, y), new Point(maximumX, y));
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.75), 4.0),
+            dc.DrawLine(new Pen(CloneWithOpacity(laneBrush, 0.75), 4.0),
                 new Point(timeline.Left, y), new Point(currentX, y));
             // The colored underlines show the actual child-effect windows,
             // not the drink's longer parent duration. Water has one effect
@@ -3198,18 +3200,17 @@ public sealed class AggregateVisualControl : FrameworkElement
                     new Point(secondaryX, y - 6.0),
                     new Point(secondaryX, y + 6.0));
             }
-            // Water's parent 30-second action-drain lane receives its own
-            // dark-green underline just as the two Energy effect durations
-            // have individual blue underlines. The short +25% Water effect
-            // above keeps the brighter green underline at its own 5s marker.
+            // The Water 30s cost-cut underline is yellow like its knob;
+            // the separate +25% Water bonus 5s marker stays bright green.
+            // Energy's two independently timed cost cuts remain blue.
             if (i == 0)
                 DrawDrinkEffectLine(dc, parameter, timeline.Left, currentX, y, 14.0);
             dc.DrawLine(new Pen(muted, 1.7),
                 new Point(referenceX, y - 8.0), new Point(referenceX, y + 8.0));
             dc.DrawEllipse(panel,
-                new Pen(accent, IsSelected(parameter) ? 2.5 : 1.6),
+                new Pen(laneBrush, IsSelected(parameter) ? 2.5 : 1.6),
                 new Point(currentX, y), 6.0, 6.0);
-            dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
+            dc.DrawEllipse(laneBrush, null, new Point(currentX, y), 2.5, 2.5);
 
             var modified = parameter.IsValueModifiedFromReference();
             DrawRightAlignedText(dc,
@@ -3337,9 +3338,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 DrinkEffectLineBrush(shortEffect.Id) ?? accent);
         }
 
-        // The two independent Water strength knobs remain source-backed:
-        // WaterStamina2 (Stamina +25%) and WaterStaminaPerAction1 (SPDrain -10%).
-        // Green on each dial matches the bright/dark-green timeline duration. 
+        // Two independent Water mini-knobs: the +25% Stamina bonus stays
+        // green, and the -10% SPDrain cut becomes yellow to match its 30s lane.
         // Their source ranges, presets and writer targets remain independent.
         const double waterStrengthGap = CompactColumnGap;
         var waterStrengthWidth = Math.Min(280.0,

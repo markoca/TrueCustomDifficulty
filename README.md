@@ -1,5 +1,7 @@
 # True Custom Difficulty
 
+**Water cost-cut identity (2026-10-15):** The 30s main water duration lane in Consumable Effects is now **WATER COST CUT** and uses the same yellow `#F0C419` as its independent 10%-less-cost knob. The separate 5s/+25% Water stamina bonus stays green. Energy retains its independent 45s regeneration / 5s full-cost cut / 15s partial-cost cut durations. No underlying CFG or preset values changed; validate appearance locally under Wine.
+
 **Cross-family UI parity (2026-10-15):** Standard graph/radar/dashboard panels now share a 12.5-DIP title token, comparable axis captions/ticks and compact source-card headings use common typography, and both ordinary MIN/MAX range tracks share WPF styles. Existing common slider/checkbox templates, knob typography, source-specific layouts, yellow-on-change values and Health-specific scales stay intact. See `docs/CONTROL-FAMILY-VISUAL-AUDIT.md` for the coverage matrix and runtime checks.
 
 **Knob MIN/MAX readability (2026-10-15):** All 270-degree native rotary knobs use pure-white minimum and maximum numbers, 10.8 DIP Segoe UI SemiBold (the same size as each knob's title). Their anchors are moved 6 DIP toward the knob, while the center values, secondary derived readouts, coloring rules and interactive dial behavior stay unchanged.
