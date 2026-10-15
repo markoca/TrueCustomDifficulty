@@ -353,13 +353,6 @@ public sealed class MainViewModel : ObservableObject
             "combat.npcHipAccuracy");
 
         WireVisualAggregate(
-            "combat.psySpawnCycleDelay",
-            "combat.psySpawnCycleDelay",
-            "combat.psyPhantomCount",
-            "combat.psyBleeding",
-            "combat.psyDurabilityDamage");
-
-        WireVisualAggregate(
             "health.bandageBleeding",
             "health.bandageBleeding",
             "health.medkitBleeding",
@@ -412,12 +405,6 @@ public sealed class MainViewModel : ObservableObject
             "survival.starvationDamageInterval",
             "survival.starvationPenaltyDelay",
             "survival.starvationHealthRegenPenalty");
-
-        WireVisualAggregate(
-            "combat.accumulatedDamageWeightMax",
-            "combat.accumulatedDamageWeightMax",
-            "combat.accumulatedDamageWeightMin",
-            "combat.accumulatedDamageIncludesHealedHealth");
 
         WireVisualAggregate(
             "survival.radiationAccumulation",

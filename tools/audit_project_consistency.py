@@ -3381,19 +3381,44 @@ if (not all(v in _stock_knob_source for v in (
           for d in _knob_catalog_texts)):
     fail("Trader Stock dual source knob contract drifted")
 
-# Two converted native rotary families must retain their original source mapping.
-if not all(token in _knob_source for token in (
-    '("combat.psySpawnCycleDelay", "SPAWN DELAY")',
-    '("combat.psyPhantomCount", "PHANTOM COUNT")',
-    '("combat.psyDurabilityDamage", "GEAR DAMAGE")',
-    'DrawTogglePill(dc, bleed, "PHANTOM BLEEDING"',
+# Live Equipment Wear knobs stay supported; hidden Combat visual families do not.
+if (not all(t in _knob_source for t in (
     '("equipment.armorDurability", "ARMOR DURABILITY")',
     '("equipment.weaponWearPerShot", "WEAR PER SHOT")',
-    '"PsyPhantomPressure" => 378.0',
     '"EquipmentWearBalance" => 242.0',
-)) or not knob_wheel_gate_contains(_knob_source, "PsyPhantomPressure", "EquipmentWearBalance") or any('2026-10-11 — Psy Combat and Equipment Wear rotary banks' not in d
-          for d in _knob_catalog_texts):
-    fail("Psy Combat / Equipment Wear knob UI and interaction contract drifted")
+)) or not knob_wheel_gate_contains(_knob_source, "EquipmentWearBalance")
+        or any('2026-10-11 — Psy Combat and Equipment Wear rotary banks' not in d
+               for d in _knob_catalog_texts)):
+    fail("Equipment Wear active rotary contract drifted")
+
+# Hiding PSY and Repeated Hits must not delete their source/writer graph.
+_hidden_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+_hidden_tab = (ROOT / "src/TrueCustomDifficulty/ViewModels/TabViewModel.cs").read_text(encoding="utf-8")
+_hidden_main = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+for family in ("PsyPhantomPressure", "RepeatedHitBand"):
+    if family in _knob_source or family in _hidden_vm:
+        fail(f"Hidden Combat visual family reappeared: {family}")
+for prefix in ("combat.psy", "combat.accumulatedDamage"):
+    if f'!p.Id.StartsWith("{prefix}", StringComparison.Ordinal)' not in _hidden_tab:
+        fail(f"Combat section filter missing: {prefix}")
+    if f'!Id.StartsWith("{prefix}", StringComparison.Ordinal)' not in _hidden_vm:
+        fail(f"Hidden Combat VM visibility guard missing: {prefix}")
+if any(t in _knob_source for t in ('P("combat.psy', 'P("combat.accumulatedDamage')):
+    fail("Retired Combat UI renderer still consumes hidden source")
+for t in ('WireVisualAggregate(\n            "combat.psySpawnCycleDelay"',
+          'WireVisualAggregate(\n            "combat.accumulatedDamageWeightMax"'):
+    if t in _hidden_main:
+        fail("Obsolete Combat visual-only modified-state subscription returned")
+_hidden_catalog_ids = {p["id"] for p in json.loads((DATA / "parameters.json").read_text(encoding="utf-8"))["parameters"]}
+_hidden_writer = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
+_hidden_direct_ids = {p["parameterId"] for p in _hidden_writer["editPoints"]}
+_hidden_psy_ids = set(_hidden_writer["special"]["psyParameterKeys"])
+_hidden_combat_ids = {"combat.psySpawnCycleDelay", "combat.psyPhantomCount",
+    "combat.psyBleeding", "combat.psyDurabilityDamage",
+    "combat.accumulatedDamageWeightMin", "combat.accumulatedDamageWeightMax",
+    "combat.accumulatedDamageIncludesHealedHealth"}
+if not _hidden_combat_ids <= _hidden_catalog_ids or not _hidden_combat_ids <= (_hidden_direct_ids | _hidden_psy_ids):
+    fail("Hidden Combat catalog or CFG writer routes were deleted")
 
 # WPF dial graduation integrity, 2026-10-11. The old fixed "0..10"
 # decoration did not match native 0.25x or 0.01x parameter steps. All eight

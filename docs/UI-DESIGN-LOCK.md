@@ -1,5 +1,10 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Combat PSY / Repeated-Hits dead UI removal (CURRENT)
+
+The four `combat.psy*` and three `combat.accumulatedDamage*` controls remain **intentionally absent** from Combat, including their group headers. Remove the unreachable `PsyPhantomPressure` and `RepeatedHitBand` WPF drawing routines, family rendering/height/member registries, obsolete per-family input dispatches, UI-only modified-state wiring and UI-family help/anchors. **Retain all seven** source parameter definitions, original preset keys, difficulty data, special PSY CFG writer and the value-based `MIN <= MAX` repeated-hit constraint. Preserve live Human Combat, Equipment Wear and Flycatcher crosshair input, knob wheel routes and resets. Historic PSY/Repeated-Hits visual descriptions are superseded, not authorized active editors. No visible Combat redesign or added UI content.
+
+
 ### 2026-10-15 — Combat dead-code cleanup, pass 1 (CURRENT)
 
 Remove the two **unreachable** visual families `BlastDamageBoard` and `MutantCombatPressure` from the aggregate renderer, measurement/family-ID registry and obsolete UI-family anchors. `combat.explosionDamage` remains an independent native CFG parameter edited in the active `HumanCombatProfile`; `combat.mutantDamage` remains a catalog/preset/CFG source and is NOT removed. The retired `combat.mutantAttackCooldown` reference must not be restored through UI legacy cases. No new controls, hit targets, layout changes or altered CFG writer routes. Earlier descriptions of `BlastDamageBoard` or `MutantCombatPressure` as active UI are historical and superseded here. PSY and Repeated-Hits currently have hidden UI routes and are reserved for a separate audit; keep their preset/CFG sources intact.

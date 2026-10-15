@@ -20,3 +20,7 @@ Human Attack Frequency (`combat.npcAttackCooldown`) remains functional. Its UI v
 ## 2026-10-15 dead-code pass 1
 
 Removed only unreachable UI scaffolding: old BlastDamageBoard renderer and registration, MutantCombatPressure case and retired cooldown panel mapping, plus its obsolete formatter branch. Preserved all 30 Combat source definitions, 64 direct edit points, PSY special routes, preset keys, and active HumanCombatProfile / Mutant Health behavior. No runtime build or in-game verification was performed during the connector-side source audit. Follow-up candidates: hidden PSY and Repeated-Hits renderers, plus a dedicated check of current Combat visibility before any further deletion.
+
+## 2026-10-15 dead-code pass 2
+
+The visible Combat view explicitly filters four `combat.psy*` and three `combat.accumulatedDamage*` entries and their group headers. Removed unreachable `DrawPsyPhantomPressure` and `DrawRepeatedHitBand` renderers, dispatch/measurement/member entries, obsolete shared-input cases, UI-family/help maps and their aggregate-only subscriptions. Added a second `ParameterViewModel.IsControlVisible` safeguard. All seven source definitions and preset/CFG routes are retained, including both PSY override effects and the repeated-hit `MIN <= MAX` constraint. Actual Combat control layout is unchanged. Static audits verify retirement and writer parity; Wine and in-game acceptance are still local tests.

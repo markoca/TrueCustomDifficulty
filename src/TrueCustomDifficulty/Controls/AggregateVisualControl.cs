@@ -284,9 +284,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "EquipmentWearBalance":
                 DrawEquipmentWearBalance(dc, text, muted, border, soft, accent, panel);
                 break;
-            case "PsyPhantomPressure":
-                DrawPsyPhantomPressure(dc, text, muted, border, soft, accent, panel);
-                break;
             case "HumanCombatProfile":
                 DrawHumanCombatProfile(dc, text, muted, border, soft, accent, panel);
                 break;
@@ -317,9 +314,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 break;
             case "StarvationTimeline":
                 DrawStarvationTimeline(dc, text, muted, border, soft, accent, panel);
-                break;
-            case "RepeatedHitBand":
-                DrawRepeatedHitBand(dc, text, muted, border, soft, accent, panel);
                 break;
             case "RadiationBalance":
                 DrawRadiationBalance(dc, text, muted, border, soft, accent, panel);
@@ -365,7 +359,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
         // Crosshair X/Y handles already draw the exact shared glow at their
         // own axes. Avoid a second overlay from their broad plot map rect.
-        if (Family is "HumanCombatProfile" or "PsyPhantomPressure"
+        if (Family == "HumanCombatProfile"
             && target.Kind is HitKind.Horizontal or HitKind.Vertical
             && target.MapRect.Width > 100.0 && target.MapRect.Height > 100.0)
             return;
@@ -3224,60 +3218,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             centerX - formatted.WidthIncludingTrailingWhitespace / 2.0, 83.0));
     }
 
-    // Editable axes are deliberately independent. The gold crosshair is a
-    // read-only summary of the two source-exact Psy spawn override multipliers.
-    // Do not imply a simulated spawns-per-minute formula: base encounter timings
-    // and the effective runtime paths are not fully exposed by the CFG dump.
-    private void DrawPsyPhantomPressure(
-        DrawingContext dc, Brush text, Brush muted, Brush border,
-        Brush soft, Brush accent, Brush panel)
-    {
-        DrawHeader(dc, "PSY PHANTOM PRESSURE", "", text, muted, accent);
-        var channels = new (string Id, string Label)[]
-        {
-            ("combat.psySpawnCycleDelay", "SPAWN DELAY"),
-            ("combat.psyPhantomCount", "PHANTOM COUNT"),
-            ("combat.psyDurabilityDamage", "GEAR DAMAGE")
-        };
-        const double gap = 12.0;
-        var knobWidth = Math.Min(194.0, (ActualWidth - 34.0 - 2 * gap) / 3.0);
-        var width = 3 * knobWidth + 2 * gap;
-        var left = (ActualWidth - width) / 2.0;
-        for (var i = 0; i < channels.Length; i++)
-            DrawSourceKnob(dc, P(channels[i].Id), channels[i].Label,
-                new Rect(left + i * (knobWidth + gap), 49.0, knobWidth, 181.0),
-                text, muted, border, accent, panel);
-
-        // Diagram is illustrative of wait/count intensity, NOT spawn-rate prediction.
-        var wait = P("combat.psySpawnCycleDelay");
-        var count = P("combat.psyPhantomCount");
-        if (wait is not null && count is not null)
-        {
-            DrawText(dc, "SPAWN CYCLE / RELATIVE PRESSURE",
-                new Point(left + 6.0, 249.0), 10.0, muted, FontWeights.Bold);
-            var waitLevel = (wait.CurrentNumber - wait.Minimum)
-                / Math.Max(Epsilon, wait.Maximum - wait.Minimum);
-            var countLevel = (count.CurrentNumber - count.Minimum)
-                / Math.Max(Epsilon, count.Maximum - count.Minimum);
-            var preview = new Rect(left + 6.0, 271.0, width - 12.0, 45.0);
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .32),
-                new Pen(CloneWithOpacity(border, .6), .8), preview, 3, 3);
-            for (var i = 0; i < 12; i++)
-            {
-                var x = preview.Left + 8 + i * (preview.Width - 16) / 12.0;
-                var isCycle = i % Math.Max(1, 1 + (int)Math.Round(waitLevel * 4)) == 0;
-                var h = isCycle ? 8.0 + countLevel * 25.0 : 4.0;
-                dc.DrawRectangle(isCycle ? accent : CloneWithOpacity(muted, .22),
-                    null, new Rect(x, preview.Bottom - h - 5.0, 12.0, h));
-            }
-        }
-        var bleed = P("combat.psyBleeding");
-        if (bleed is not null)
-            DrawTogglePill(dc, bleed, "PHANTOM BLEEDING",
-                new Rect((ActualWidth - 194.0) / 2.0, 330.0, 194.0, 36.0),
-                text, muted, border, accent, panel);
-    }
-
     private static double EquipmentWearPlotSide(double width)
         => Math.Min(240.0, Math.Max(200.0, width - 360.0));
 
@@ -4459,155 +4399,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Rect(effectsLeft + i * (effectWidth + effectGap),
                     StarvationEffectsTop, effectWidth, 80.0),
                 text, muted, border, soft, accent, panel);
-    }
-
-    // The summary band is deliberately read-only. MIN/MAX use separate full-width
-    // tracks so identical or near-identical weights never produce overlapping handles.
-    private void DrawRepeatedHitBand(
-        DrawingContext dc,
-        Brush text,
-        Brush muted,
-        Brush border,
-        Brush soft,
-        Brush accent,
-        Brush panel)
-    {
-        var minimum = P("combat.accumulatedDamageWeightMin");
-        var maximum = P("combat.accumulatedDamageWeightMax");
-        var healedMemory = P("combat.accumulatedDamageIncludesHealedHealth");
-
-        DrawText(dc, "REPEATED-HIT PROTECTION", new Point(17.0, 13.0),
-            11.5, accent, FontWeights.Bold);
-        DrawText(dc, "hidden protection during sustained incoming fire", new Point(17.0, 32.0),
-            9.5, text, FontWeights.Normal);
-
-        if (minimum is null || maximum is null || healedMemory is null)
-        {
-            DrawCenteredText(dc, "Repeated-hit protection data unavailable.",
-                new Point(ActualWidth / 2.0, 140.0), 10.0, muted, FontWeights.Bold);
-            return;
-        }
-
-        var contentWidth = Math.Max(460.0, ActualWidth - 34.0);
-        var preview = new Rect(17.0, 56.0, contentWidth, 107.0);
-        dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), preview, 4.0, 4.0);
-        // Current and Base Preset values get their own line. Independent
-        // left/right headings formerly overlapped at the minimum width.
-        var previewTextWidth = Math.Max(1.0, preview.Width - 24.0);
-        dc.DrawText(CreateText("PROTECTION WINDOW  /  READ ONLY",
-                10.0, text, FontWeights.Bold, previewTextWidth),
-            new Point(preview.Left + 12.0, 63.0));
-        dc.DrawText(CreateText(
-                $"PROTECTION  {minimum.CurrentNumber:0.00}–{maximum.CurrentNumber:0.00}",
-                9.8, minimum.IsValueModifiedFromReference() ||
-                    maximum.IsValueModifiedFromReference() ? accent : text,
-                FontWeights.SemiBold, previewTextWidth),
-            new Point(preview.Left + 12.0, 81.0));
-
-        var axis = new Rect(preview.Left + 79.0, 93.0, preview.Width - 98.0, 47.0);
-        var currentY = 105.0;
-        var referenceY = 134.0;
-        double At(double value) => ValueToX(value, 0.0, 1.0, axis, reverse: false);
-
-        DrawText(dc, "CURRENT", new Point(preview.Left + 12.0, currentY - 7.0),
-            9.0, accent, FontWeights.Bold);
-        DrawText(dc, "BASE", new Point(preview.Left + 12.0, referenceY - 7.0),
-            9.0, muted, FontWeights.Bold);
-        dc.DrawLine(new Pen(soft, 4.0), new Point(axis.Left, currentY),
-            new Point(axis.Right, currentY));
-        dc.DrawLine(new Pen(soft, 2.0), new Point(axis.Left, referenceY),
-            new Point(axis.Right, referenceY));
-
-        for (var i = 0; i <= 4; i++)
-        {
-            var x = At(i * 0.25);
-            dc.DrawLine(new Pen(soft, 1.0), new Point(x, currentY - 8.0),
-                new Point(x, referenceY + 8.0));
-        }
-
-        var liveMinX = At(minimum.CurrentNumber);
-        var liveMaxX = At(maximum.CurrentNumber);
-        var baseMinX = At(minimum.ReferenceNumber);
-        var baseMaxX = At(maximum.ReferenceNumber);
-
-        // The global value-based slider constraint maintains MIN <= MAX.
-        // Math.Min/Max also keeps the preview safe while a preset is loading.
-        var liveLeft = Math.Min(liveMinX, liveMaxX);
-        var liveRight = Math.Max(liveMinX, liveMaxX);
-        var baseLeft = Math.Min(baseMinX, baseMaxX);
-        var baseRight = Math.Max(baseMinX, baseMaxX);
-        dc.DrawRoundedRectangle(CloneWithOpacity(accent, 0.24), null,
-            new Rect(liveLeft, currentY - 7.0, Math.Max(1.0, liveRight - liveLeft), 14.0),
-            3.0, 3.0);
-        dc.DrawLine(new Pen(accent, 3.0), new Point(liveLeft, currentY),
-            new Point(liveRight, currentY));
-        dc.DrawEllipse(accent, null, new Point(liveMinX, currentY), 4.5, 4.5);
-        dc.DrawEllipse(accent, null, new Point(liveMaxX, currentY), 4.5, 4.5);
-
-        var basePen = new Pen(muted, 2.0) { DashStyle = DashStyles.Dash };
-        dc.DrawLine(basePen, new Point(baseLeft, referenceY),
-            new Point(baseRight, referenceY));
-        dc.DrawLine(new Pen(muted, 2.0), new Point(baseMinX, referenceY - 7.0),
-            new Point(baseMinX, referenceY + 7.0));
-        dc.DrawLine(new Pen(muted, 2.0), new Point(baseMaxX, referenceY - 7.0),
-            new Point(baseMaxX, referenceY + 7.0));
-        DrawText(dc, "0.00", new Point(axis.Left, 146.0), 9.0, muted, FontWeights.Normal);
-        DrawRightAlignedText(dc, "1.00", new Point(axis.Right, 146.0),
-            9.0, muted, FontWeights.Normal);
-
-        void DrawWeightTrack(ParameterViewModel parameter, string label, double top)
-        {
-            var card = new Rect(17.0, top, contentWidth, 75.0);
-            dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
-            DrawText(dc, label, new Point(card.Left + 12.0, top + 9.0),
-                10.2, text, FontWeights.Bold);
-            DrawRightAlignedText(dc,
-                $"{parameter.CurrentNumber:0.00}",
-                new Point(card.Right - 12.0, top + 8.0), 11.0,
-                parameter.IsControlEnabled ? accent : muted, FontWeights.Bold);
-
-            var track = new Rect(card.Left + 22.0, top + 33.0, card.Width - 44.0, 19.0);
-            var y = track.Top + track.Height / 2.0;
-            var currentX = ValueToX(parameter.CurrentNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-            var referenceX = ValueToX(parameter.ReferenceNumber, parameter.Minimum,
-                parameter.Maximum, track, reverse: false);
-
-            dc.DrawLine(new Pen(soft, 4.0), new Point(track.Left, y),
-                new Point(track.Right, y));
-            if (parameter.IsControlEnabled)
-                dc.DrawLine(new Pen(CloneWithOpacity(accent, 0.72), 4.5),
-                    new Point(track.Left, y), new Point(currentX, y));
-            // Keep the Base Preset marker behind the handle, including when values match.
-            dc.DrawLine(new Pen(muted, 2.0), new Point(referenceX, y - 11.0),
-                new Point(referenceX, y + 11.0));
-            dc.DrawEllipse(panel,
-                new Pen(parameter.IsControlEnabled ? accent : muted,
-                    IsSelected(parameter) ? 2.8 : 1.9),
-                new Point(currentX, y), 7.0, 7.0);
-            if (parameter.IsControlEnabled)
-                dc.DrawEllipse(accent, null, new Point(currentX, y), 2.5, 2.5);
-
-            AddHorizontalTarget(parameter, track, track, parameter.Minimum, parameter.Maximum);
-            DrawText(dc, "0.00 - NO WEIGHT", new Point(track.Left, top + 56.0),
-                8.9, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, "1.00 - MAX WEIGHT",
-                new Point(track.Right, top + 56.0), 8.9, muted, FontWeights.Normal);
-        }
-
-        DrawWeightTrack(minimum, "MINIMUM PROTECTION  /  WEAKER END", 174.0);
-        DrawWeightTrack(maximum, "MAXIMUM PROTECTION  /  STRONGER END", 260.0);
-
-        DrawTogglePill(dc, healedMemory, "HEALED DAMAGE STILL COUNTS",
-            new Rect(17.0, 346.0, contentWidth, 40.0),
-            text, muted, border, accent, panel);
-        DrawText(dc,
-            healedMemory.CurrentBoolean
-                ? "ON: restored HP does not erase earlier hits from the protection tracker."
-                : "OFF: healed damage is excluded from the protection tracker.",
-            new Point(20.0, 393.0), 9.3, text, FontWeights.Normal);
-        DrawText(dc, "CURVE WEIGHTS, NOT DAMAGE-REDUCTION %",
-            new Point(20.0, 409.0), 8.8, muted, FontWeights.Normal);
     }
 
     // Original GameData/EffectPrototypes.cfg ValueMin/ValueMax pairs,
@@ -5940,7 +5731,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             e.Handled = true;
             return;
         }
-        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "PsyPhantomPressure" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects"))
+        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
@@ -6087,7 +5878,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (target.Kind == HitKind.HumanJoint)
             P(Family switch
             {
-                "PsyPhantomPressure" => "combat.psyPhantomCount",
                 "EquipmentWearBalance" => "equipment.weaponWearPerShot",
                 "FlycatcherSlowdown" => "environment.flycatcherTurnSpeed",
                 _ => "combat.npcWeaponDamage"
@@ -6096,7 +5886,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         _status.ShowTransient(target.Kind == HitKind.HumanJoint
             ? (Family switch
             {
-                "PsyPhantomPressure" => "Psy Cycle Wait + Phantom Count reset to Base Preset.",
                 "EquipmentWearBalance" => "Armor Toughness + Weapon Wear reset to Base Preset.",
                 "FlycatcherSlowdown" => "Flycatcher Movement + Turn reset to Base Preset.",
                 _ => "Enemy Health + Gun Damage reset to Base Preset."
@@ -6286,14 +6075,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             var h = P(Family switch
             {
-                "PsyPhantomPressure" => "combat.psySpawnCycleDelay",
                 "EquipmentWearBalance" => "equipment.armorDurability",
                 "FlycatcherSlowdown" => "environment.flycatcherMovementSpeed",
                 _ => "combat.npcHealth"
             });
             var d = P(Family switch
             {
-                "PsyPhantomPressure" => "combat.psyPhantomCount",
                 "EquipmentWearBalance" => "equipment.weaponWearPerShot",
                 "FlycatcherSlowdown" => "environment.flycatcherTurnSpeed",
                 _ => "combat.npcWeaponDamage"
@@ -6828,7 +6615,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),
             "EquipmentWearBalance" => 242.0,
-            "PsyPhantomPressure" => 378.0,
             "HumanCombatProfile" => HumanCombatBoardHeight(width),
             "PlayerWeaponProfile" => 242.0,
             "CoreHealthDashboard" => width >= 700.0 ? 282.0 : 365.0,
@@ -6840,7 +6626,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             "SleepingDashboard" => 370.0,
             "HungerLadder" => CompactHungerHeight(width),
             "StarvationTimeline" => MasterStarvationHeight(width),
-            "RepeatedHitBand" => 455.0,
             "RadiationBalance" => RadiationBoardHeight(width),
             "TradingDashboard" => 273.0,
             "RepairCurve" => 324.0,
@@ -6968,13 +6753,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "equipment.armorDurability",
                 "equipment.weaponWearPerShot"
             },
-            "PsyPhantomPressure" => new[]
-            {
-                "combat.psySpawnCycleDelay",
-                "combat.psyPhantomCount",
-                "combat.psyBleeding",
-                "combat.psyDurabilityDamage"
-            },
             "HumanCombatProfile" => new[]
             {
                 "combat.npcHealth",
@@ -7069,12 +6847,6 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "survival.starvationDamageInterval",
                 "survival.starvationPenaltyDelay",
                 "survival.starvationHealthRegenPenalty"
-            },
-            "RepeatedHitBand" => new[]
-            {
-                "combat.accumulatedDamageWeightMax",
-                "combat.accumulatedDamageWeightMin",
-                "combat.accumulatedDamageIncludesHealedHealth"
             },
             "RadiationBalance" => new[]
             {

@@ -77,13 +77,11 @@ public sealed class ParameterViewModel : ObservableObject
                 {
                     "HumanCombatProfile" => "The health and gun damage readouts reflect the live sources. Drag the bottom ring for health, the left ring for gun damage, or the center for both. Turn the attack frequency, fire accuracy and explosion damage knobs independently; scroll for native-step precision.",
                     "EquipmentWearBalance" => "Drag the bottom ring for armor toughness, the left ring for weapon wear, or the center ring to change both.",
-                    "PsyPhantomPressure" => "Drag the bottom or left ring to change one Psy axis; drag the center to move both. The gear-damage fader and bleeding switch work separately.",
                     "FlycatcherSlowdown" => "Drag the bottom ring to change movement speed, the left ring for turning speed, or the center to adjust both.",
                     "HungerLadder" => "The two upper native rulers set hunger points gained each second and the Well-Fed stamina recovery bonus. Move LOW/MEDIUM/SEVERE thresholds on the graph; stamina penalties remain separate.",
                     "FatigueCurve" => "The upper native rulers set fatigue points gained per second and energy drink fatigue relief. Below, adjust stage thresholds and combat penalties independently.",
                     "RadiationBalance" => "Turn ACCUMULATION RATE and HP DAMAGE as multipliers; RECOVERY is real radiation points per second (0–0.10 PTS/S). Select 1–100 RAD on the ring or RAD CONTROLS bar to inspect its source damage and a fixed-RAD full-HP death estimate (one assumed charge/sec, no healing). ACCUMULATION RATE and RECOVERY do not affect this fixed-level estimate.",
                     "StarvationTimeline" => "Adjust when penalties begin, how often damage ticks occur and the three penalty strengths using their individual controls. The timeline is a preview.",
-                    "RepeatedHitBand" => "Drag MIN or MAX to shape repeated-hit protection. Use the switch to decide whether healed damage stays in the tracker.",
                     "ConsumableMixer" => "WATER STAMINA GAIN and ENERGY DRINK STAMINA GAIN independently set immediate stamina restored in percent (vanilla 38% and 50%). WATER STAMINA BUFF changes Water regeneration and action-cost reduction; ENERGY DRINK REGEN adjusts sustained stamina recovery. Drag duration markers below; OVERRIDE LIMITS expands duration ranges. Limited Energy Drink keeps its vanilla 100% instant refill.",
                     "SleepingDashboard" => "Select 1–14 minimum sleep hours directly in the step row; other tracks set sleep eligibility and wake-up recovery.",
                     "CoreHealthDashboard" => "Set MAX HP and PASSIVE RECOVERY directly; below, Recovery Delay, Recovery Multiplier and Low-HP Recovery Rate are independent CFG sources. Medical items stay in their own section; no synthetic health threshold.",
@@ -409,11 +407,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["equipment.armorDurability"] = "EquipmentWearBalance",
         ["equipment.weaponWearPerShot"] = "EquipmentWearBalance",
 
-        ["combat.psySpawnCycleDelay"] = "PsyPhantomPressure",
-        ["combat.psyPhantomCount"] = "PsyPhantomPressure",
-        ["combat.psyBleeding"] = "PsyPhantomPressure",
-        ["combat.psyDurabilityDamage"] = "PsyPhantomPressure",
-
         ["combat.npcHealth"] = "HumanCombatProfile",
         ["combat.npcWeaponDamage"] = "HumanCombatProfile",
         ["combat.npcAttackCooldown"] = "HumanCombatProfile",
@@ -486,10 +479,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["survival.starvationPenaltyDelay"] = "StarvationTimeline",
         ["survival.starvationHealthRegenPenalty"] = "StarvationTimeline",
 
-        ["combat.accumulatedDamageWeightMax"] = "RepeatedHitBand",
-        ["combat.accumulatedDamageWeightMin"] = "RepeatedHitBand",
-        ["combat.accumulatedDamageIncludesHealedHealth"] = "RepeatedHitBand",
-
         ["survival.radiationAccumulation"] = "RadiationBalance",
         ["survival.radiationRecovery"] = "RadiationBalance",
         ["survival.radiationDamage"] = "RadiationBalance",
@@ -558,7 +547,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["WaterStaminaPressure"] = "stamina.waterMediumDrain",
         ["FatigueCurve"] = "survival.sleepinessRate",
         ["EquipmentWearBalance"] = "equipment.armorDurability",
-        ["PsyPhantomPressure"] = "combat.psySpawnCycleDelay",
         ["HumanCombatProfile"] = "combat.npcHealth",
         ["PlayerWeaponProfile"] = "combat.playerWeaponDamage",
         ["CoreHealthDashboard"] = "health.maxHP",
@@ -570,7 +558,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["SleepingDashboard"] = "survival.sleepEligibilityThreshold",
         ["HungerLadder"] = "survival.hungerRate",
         ["StarvationTimeline"] = "survival.starvationStaminaDrain",
-        ["RepeatedHitBand"] = "combat.accumulatedDamageWeightMax",
         ["RadiationBalance"] = "survival.radiationAccumulation",
         ["CouponFlow"] = "economy.startingMoney",
         ["TradingDashboard"] = "economy.buyCondition",
@@ -637,7 +624,8 @@ public sealed class ParameterViewModel : ObservableObject
         (Definition.ExposeInUi || IsVisualControlAnchor)
         && !Id.Equals("environment.anomalyDamage", StringComparison.Ordinal) // Combined AnomalyDamageRadar.
         && !Id.Equals("alife.mutantSpawn.generic", StringComparison.Ordinal)
-        // Repeated-hit envelope remains mapped for preset/CFG round-trip but has no regular UI.
+        // Hidden Combat sources remain mapped for preset/CFG output but have no visible editor.
+        && !Id.StartsWith("combat.psy", StringComparison.Ordinal)
         && !Id.StartsWith("combat.accumulatedDamage", StringComparison.Ordinal)
         && (!IsStashAmmoMember || IsStashAmmoAnchor)
         && (!IsMutantDropMember || IsMutantDropAnchor)
