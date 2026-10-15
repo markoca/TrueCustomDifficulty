@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-15 — Stamina ActionCostsRadar binding cleanup, pass 3 (CURRENT)
+
+Fix event ownership during `ActionCostsRadar` rebinding: `Mode` and `Parameters` both trigger `RebindParameters`, but unsubscribing via `EnumerateBoundParameters()` after `Mode` changes inspects the **new** source group, leaving handlers attached to the old group. Track the actual subscribed `ParameterViewModel` objects, detach them before rebinding, and attach each active editable source once. Continue observing `stamina.maxSP` as a **read-only** display dependency without including it in `R` reset or editable targets. Keep the two independent WPF modes, six Usage sources, six Exhaustion sources, native editing and reset behavior, existing catalog ranges, compact geometry, yellow-current-value styling and all CFG/preset routes unchanged. Regression audit guards subscription ownership; local WPF/Wine confirmation remains required.
+
 ### 2026-10-15 — Stamina ActionCostsRadar dead status removal (CURRENT)
 
 `ActionCostsRadar` displays **no status-message readout** in either the Usage or Exhaustion view, yet retained an orphaned `VisualStatusMessage` instance, a transient timer, `ShowTransient`/`Clear` calls and a `ShortLabel` helper used only for unseen reset messages. Remove those inactive paths; **keep** native drag editing, arrow/plus/minus stepping, per-source right-click reset, `R` family reset, current-value rendering, handle hover and direct `InvalidateVisual` refresh. Leave the shared `VisualStatusMessage` class intact for any other consumers. Also remove the unused `|` separator-coloring loop in `ActionCostsRadar.CreateText`; no current action/recovery heading or readout uses pipe separators. Do not alter the six Movement/Melee sources, six Exhaustion sources, max-stamina read-only comparison, linked constraints, presets, CFG writer or approved compact WPF layouts. Static audits guard removed paths and remaining live interactions.

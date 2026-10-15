@@ -43,6 +43,8 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     private readonly ParameterViewModel?[] _actionParameters = new ParameterViewModel?[Actions.Length];
     private readonly List<InteractiveTarget> _targets = new();
+    // Track actual event subscriptions, independent of the next Mode/Parameters value.
+    private readonly HashSet<ParameterViewModel> _observedParameters = new();
 
     private ParameterViewModel? _aimParameter;
     // Read-only visual ruler dependency. Never include in this board's R-reset group.
@@ -102,14 +104,11 @@ public sealed class ActionCostsRadar : FrameworkElement
 
     private void RebindParameters()
     {
-        foreach (var parameter in EnumerateBoundParameters())
-        {
-            if (parameter is not null)
-                parameter.PropertyChanged -= Parameter_PropertyChanged;
-        }
-
-        if (_maximumStamina is not null)
-            _maximumStamina.PropertyChanged -= Parameter_PropertyChanged;
+        // Mode may already have changed by the time this callback runs.
+        // Never enumerate the new mode when detaching handlers for the old one.
+        foreach (var parameter in _observedParameters)
+            parameter.PropertyChanged -= Parameter_PropertyChanged;
+        _observedParameters.Clear();
 
         Array.Clear(_actionParameters, 0, _actionParameters.Length);
         _aimParameter = null;
@@ -144,15 +143,18 @@ public sealed class ActionCostsRadar : FrameworkElement
             byId.TryGetValue(LowRecoveryDurationId, out _lowRecoveryDuration);
 
             foreach (var parameter in EnumerateBoundParameters())
-            {
-                if (parameter is not null)
-                    parameter.PropertyChanged += Parameter_PropertyChanged;
-            }
-            if (_maximumStamina is not null)
-                _maximumStamina.PropertyChanged += Parameter_PropertyChanged;
+                ObserveParameter(parameter);
+            // Read-only shared capacity: redraw on changes, never R-reset it.
+            ObserveParameter(_maximumStamina);
         }
 
         InvalidateVisual();
+    }
+
+    private void ObserveParameter(ParameterViewModel? parameter)
+    {
+        if (parameter is not null && _observedParameters.Add(parameter))
+            parameter.PropertyChanged += Parameter_PropertyChanged;
     }
 
     private IEnumerable<ParameterViewModel?> EnumerateBoundParameters()

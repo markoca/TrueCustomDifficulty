@@ -3827,6 +3827,28 @@ _action_live_controls = (
 )
 if any(token not in _action_usage_source for token in _action_live_controls):
     fail('ActionCostsRadar cleanup removed live editing or redraw path')
+# Mode and Parameters callbacks both rebind the same WPF editor. Detach the
+# previously subscribed instances, not the newly selected Mode sources.
+# Observe the capacity ruler once, outside the editable R-reset enumeration.
+_action_binding_contract = (
+    'private readonly HashSet<ParameterViewModel> _observedParameters = new();',
+    'foreach (var parameter in _observedParameters)',
+    'parameter.PropertyChanged -= Parameter_PropertyChanged;',
+    '_observedParameters.Clear();',
+    'foreach (var parameter in EnumerateBoundParameters())',
+    'ObserveParameter(parameter);',
+    'ObserveParameter(_maximumStamina);',
+    'if (parameter is not null && _observedParameters.Add(parameter))',
+    'parameter.PropertyChanged += Parameter_PropertyChanged;',
+)
+if any(token not in _action_usage_source for token in _action_binding_contract):
+    fail('ActionCostsRadar mode-aware subscription ownership drifted')
+if ('foreach (var parameter in EnumerateBoundParameters())\n        {\n'
+        '            if (parameter is not null)\n'
+        '                parameter.PropertyChanged -= Parameter_PropertyChanged;'
+        in _action_usage_source):
+    fail('ActionCostsRadar once again unsubscribes using the NEW Mode instead of the old subscriptions')
+note('ActionCostsRadar binding cleanup: stale mode handlers detached, active redraw/reset scopes preserved')
 note('ActionCostsRadar cleanup: invisible status/timer and pipe-color helper gone; live editing/reset intact')
 if (not all(token in _action_usage_source for token in (
         'private const double UsageHeight = 187.0;',
