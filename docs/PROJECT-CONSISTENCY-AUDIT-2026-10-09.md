@@ -105,3 +105,7 @@ fails on unexpected root files; it does not require local notes to build.
 ## Canonical pre-release tests
 
 [Pre-release test runbook](RELEASE-TESTING.md) now tracks all three static validators, three checks against matching original GameData/DLC1 CFG archives, all 11 Windows production writer scenarios, CI evidence tied to the exact commit and manual Wine/gameplay acceptance. Run `python tools/pre_release.py list` and then select `static`, `source`, `writer` or `all`. The runner reports missing prerequisites as NOT RUN or a failure, never a synthetic PASS.
+
+## 2026-10-15 — Responsive semantic slot cleanup
+
+Compared the central `ResponsiveParameterGridPanel` map against all 247 source catalog parameter IDs and explicit `ParameterViewModel.IsControlVisible` rules. Removed 19 stale **layout-only** dictionary rows: 3 nonexistent legacy IDs, 6 explicitly filtered Combat PSY/repeated-hit entries and 10 `exposeInUi:false` backing children of live composite editors. All 16 supported backing-source CFG/preset records remain unchanged. The Stamina Exhaustion anchor `stamina.sprintDisableThreshold` is intentionally retained although catalog-hidden as a standalone editor; it is the actual visible family anchor. The four paired Economy layout anchors and responsive sizing logic are preserved. The audit checks all 104 surviving slot IDs, rejects nonexistent/filtered and unexpected hidden mappings, and requires the preserved visible anchors. Static source checks passed before pushing; .NET/WPF/Wine runtime acceptance remains pending.

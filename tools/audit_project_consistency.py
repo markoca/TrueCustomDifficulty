@@ -1546,6 +1546,40 @@ elif not _economy_doc.exists():
 else:
     note("economy deep audit locked: 17 visible controls / 12 confirmed + 5 runtime-gated; Item Price Scalers aggregated; 405 direct edit points + trader minimum buy-condition special writer; repair ordering and aggregate surfaces verified")
 
+# Layout-only UI slot registry: never retain entries for nonexistent catalog
+# IDs, filtered Combat sources or hidden backing children of composite editors.
+# One catalog-hidden slot is intentional: the visible Exhaustion anchor itself.
+_semantic_panel = (ROOT / "src/TrueCustomDifficulty/Infrastructure/ResponsiveParameterGridPanel.cs").read_text(encoding="utf-8")
+_semantic_start = _semantic_panel.find("private static readonly IReadOnlyDictionary<string, SemanticSlot> SemanticSlots")
+_semantic_end = _semantic_panel.find("protected override Size MeasureOverride", _semantic_start)
+_semantic_body = _semantic_panel[_semantic_start:_semantic_end]
+_semantic_slots = re.findall(
+    r'\["([^"]+)"\]\s*=\s*new\("([^"]+)",\s*(\d+)\)', _semantic_body)
+_semantic_ids = [entry[0] for entry in _semantic_slots]
+_semantic_catalog = {p["id"]: p for p in parameters}
+if _semantic_start < 0 or _semantic_end <= _semantic_start or len(_semantic_ids) != len(set(_semantic_ids)):
+    fail("Responsive semantic slot registry missing or duplicate layout keys")
+if len(_semantic_slots) != 104:
+    fail(f"Responsive semantic slot count drifted: expected 104, got {len(_semantic_slots)}")
+_semantic_unknown = sorted(set(_semantic_ids) - id_set)
+if _semantic_unknown:
+    fail(f"Responsive slots refer to nonexistent CFG catalog IDs: {_semantic_unknown}")
+_semantic_hidden = {
+    id_ for id_ in _semantic_ids if _semantic_catalog.get(id_, {}).get("exposeInUi", True) is False
+}
+if _semantic_hidden != {"stamina.sprintDisableThreshold"}:
+    fail(f"Responsive slots include non-anchor hidden backings: {sorted(_semantic_hidden)}")
+if any(id_.startswith(("combat.psy", "combat.accumulatedDamage")) for id_ in _semantic_ids):
+    fail("Responsive slots include explicitly filtered Combat sources")
+if ('public bool IsExhaustionRecoveryAnchor => Id == "stamina.sprintDisableThreshold";'
+        not in (ROOT / 'src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs').read_text(encoding='utf-8')
+    or 'if (!IsLayoutVisible(child))' not in _semantic_panel
+    or not all(token in _semantic_panel for token in (
+        'new("economy-moneyflow", 0)', 'new("economy-moneyflow", 1)',
+        'new("economy-expenses", 0)', 'new("economy-expenses", 1)'))):
+    fail("Responsive layout lost visible Stamina/Economy anchor or collapse guard")
+note("Responsive layout: 19 stale slot entries pruned; 104 live maps remain, Exhaustion/Economy anchors intact")
+
 # Economy dashboard approval contract, 2026-10-11. The seven-control
 # baseline, native CFG writer surface and pre-existing responsive layouts
 # must remain intact while the Economy-only grouping is compacted.

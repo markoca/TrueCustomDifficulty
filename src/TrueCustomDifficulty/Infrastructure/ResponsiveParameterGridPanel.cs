@@ -10,8 +10,9 @@ public sealed class ResponsiveParameterGridPanel : Panel
     private const double ColumnGap = 18.0;
     private const double TwoColumnThreshold = 700.0;
 
-    // Explicit UX pairings and trios. The catalog remains the gameplay/source-of-truth order,
-    // while this map decides which related controls should visually share a row.
+    // Layout-only pairings for actual visible editor anchors and standalone rows.
+    // CFG-only backing sources, retired IDs and filtered Combat sources do not
+    // belong here; they remain preserved in the catalog, presets and writer.
     // A one-item row is intentional when the control has no sensible partner.
     private static readonly IReadOnlyDictionary<string, SemanticSlot> SemanticSlots =
         new Dictionary<string, SemanticSlot>(StringComparer.Ordinal)
@@ -21,17 +22,10 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["combat.npcWeaponDamage"] = new("combat-human-1", 1),
             ["combat.npcAttackCooldown"] = new("combat-human-2", 0),
             ["combat.npcHipAccuracy"] = new("combat-human-2", 1),
-            // The mutant hit-damage editor occupies the full first row above the health radar.
-            ["combat.mutantAttackCooldown"] = new("combat-mutant-1", 1),
+            // Mutant Hit Damage and Mutant Health use their own live composite boards.
             ["combat.playerWeaponDamage"] = new("combat-player-weapons", 0),
             ["combat.playerHeadshotMultiplier"] = new("combat-player-weapons", 1),
             ["combat.weaponJamming"] = new("combat-player-weapons", 2),
-            ["combat.accumulatedDamageWeightMax"] = new("combat-repeat-1", 0),
-            ["combat.accumulatedDamageWeightMin"] = new("combat-repeat-1", 1),
-            ["combat.psySpawnCycleDelay"] = new("combat-psy-sliders", 0),
-            ["combat.psyPhantomCount"] = new("combat-psy-sliders", 1),
-            ["combat.psyDurabilityDamage"] = new("combat-psy-sliders", 2),
-            ["combat.psyBleeding"] = new("combat-psy-toggle", 0),
 
             // Survival
             ["survival.hungerRate"] = new("survival-hunger-1", 0),
@@ -47,8 +41,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["survival.fatigueMediumReloadPenalty"] = new("survival-fatigue-reload", 0),
             ["survival.fatigueStrongReloadPenalty"] = new("survival-fatigue-reload", 1),
 
-            ["survival.instantStaminaRestore"] = new("survival-consumables-1", 0),
-            ["survival.alcoholRadiationRemoval"] = new("survival-consumables-1", 1),
             ["survival.waterEffectDuration"] = new("survival-consumables-duration-1", 0),
             ["survival.energyDrinkEffectDuration"] = new("survival-consumables-duration-1", 1),
             ["survival.vodkaEffectDuration"] = new("survival-consumables-duration-2", 0),
@@ -87,14 +79,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["stamina.maxSP"] = new("stamina-core-1", 0),
             ["stamina.regeneration"] = new("stamina-core-1", 1),
             ["stamina.sprintDisableThreshold"] = new("stamina-sprint-recovery-1", 0),
-            ["stamina.sprintRecoveryDelay"] = new("stamina-sprint-recovery-1", 1),
-            ["stamina.lowRecoveryThreshold"] = new("stamina-emergency-1", 0),
-            ["stamina.lowRecoveryStrength"] = new("stamina-emergency-1", 1),
-            ["stamina.lowRecoveryDuration"] = new("stamina-emergency-2", 0),
-            ["stamina.sprintUnderRunSpeedRegenCoef"] = new("stamina-speed-state-1", 0),
-            ["stamina.joggingRegenCoef"] = new("stamina-speed-state-1", 1),
-            ["stamina.slowRunRegenCoef"] = new("stamina-speed-state-2", 0),
-            ["stamina.runRegenCoef"] = new("stamina-speed-state-2", 1),
             ["stamina.waterMediumDrain"] = new("stamina-water-1", 0),
             ["stamina.waterStrongDrain"] = new("stamina-water-1", 1),
 
@@ -129,7 +113,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["economy.medicStock"] = new("economy-stock-1", 1),
             ["economy.upgradeCost"] = new("economy-services", 1),
             ["economy.repairCostBase"] = new("economy-services", 2),
-            ["economy.repairDifficultyCost"] = new("economy-services-hidden", 0),
             ["economy.repairDisaffection"] = new("economy-reputation-1", 1),
             ["economy.repairNeutral"] = new("economy-reputation-2", 0),
             ["economy.repairFriend"] = new("economy-reputation-2", 1),
@@ -146,7 +129,6 @@ public sealed class ResponsiveParameterGridPanel : Panel
             ["environment.flycatcherMovementSpeed"] = new("environment-flycatcher-1", 0),
             ["environment.flycatcherTurnSpeed"] = new("environment-flycatcher-1", 1),
             ["environment.razorBleeding"] = new("environment-bleeding-1", 0),
-            ["environment.diamondBleeding"] = new("environment-bleeding-1", 1),
 
             // Master
             ["advanced.lowHealthMechanics"] = new("master-low-health-1", 0),
