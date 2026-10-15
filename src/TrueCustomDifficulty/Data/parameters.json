@@ -2225,7 +2225,7 @@
       "id": "survival.waterStaminaCostReduction",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Water Stamina Cost Reduction",
+      "label": "Stamina Cost",
       "description": "Independently scales Water's native -10% SPDrain action-stamina-cost reduction without altering the distinct +25% Water Stamina effect or instant stamina gain.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -2258,7 +2258,7 @@
         "status": "confirmed",
         "notes": [
           "WaterStaminaPerAction1 is a native -10% SPDrain effect over 30 seconds; it does not share a ValueMin/ValueMax target with WaterStamina2.",
-          "The player-facing green bar shows absolute reduction 0–20% from the unchanged native 0–2x scale."
+          "The yellow STAMINA COST mini-knob shows the native negative drain modifier as 0% to -20%, without changing its underlying 0–2x scale."
         ]
       },
       "rationale": "Controls Water's native stamina drain reduction independently of its +25% Stamina effect and 38% instant stamina restoration.",

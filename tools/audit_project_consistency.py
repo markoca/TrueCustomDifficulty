@@ -3038,6 +3038,8 @@ for _token in (
     "Rect EnergyCell(int index) => new(",
     "var referenceWaterCap = referenceStaminaPool *",
     "capLabel.SetForegroundBrush(accent, capNumber.Index, capNumber.Length);",
+    "capLabel.SetFontSize(13.0, capNumber.Index, capNumber.Length);",
+    "capLabel.SetFontWeight(FontWeights.Bold, capNumber.Index, capNumber.Length);",
     "DrawMiniConsumableKnob(dc, waterRegenTime,",
     "DrawMiniConsumableKnob(dc, waterStamina,",
     "DrawMiniConsumableKnob(dc, waterCostReduction,",
@@ -4245,10 +4247,10 @@ if (len(_water_pts) != 4
     _consumer_errors.append("Water effect baseline targets lost independent owners")
 for _token in (
     'DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",',
-    'DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",',
-    '"0%", "50%",', '"0%", "20%",',
+    'DrawMiniConsumableKnob(dc, waterCostReduction, "STAMINA COST",',
+    '"0%", "50%",', '"0%", "-20%",',
     'WaterCell(1)', 'WaterCell(2)',
-    '"0%", "20%", WaterCell(1)',
+    '"0%", "-20%", WaterCell(1)',
     '"0%", "50%", WaterCell(2)',
     'WaterEffectLineBrush);', 'WaterCostCutLineBrush);',
 ):
@@ -5211,7 +5213,7 @@ if ('DrawMiniConsumableKnob(' not in _mini_ui or
 for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Five color-linked mini-knobs for Water and Energy effects (HISTORICAL; SUPERSEDED)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
         fail("Mini-knob source design missing from " + _catalog)
-note("Five mini-knobs for Water and Energy: green/yellow Water pairing and two Energy blues")
+note("Five mini-knobs: green Water duration, yellow Water strength pair, two Energy blues")
 
 # Yellow Water duration parent / strength-knob source and palette contract.
 for _token in (
@@ -5224,7 +5226,7 @@ for _token in (
     'dc.DrawEllipse(laneBrush, null, new Point(currentX, y), 2.5, 2.5);',
     'DrawDrinkEffectLine(dc, shortEffect, timeline.Left,',
     '(waterRegenTime, "WATER BONUS DURATION")',
-    'DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",',
+    'DrawMiniConsumableKnob(dc, waterCostReduction, "STAMINA COST",',
     'text, muted, border, accent, panel, WaterCostCutLineBrush);',
     'new[] { waterRegenTime }',
     'new[] { energyFullCostTime, energyPartialCostTime }',
@@ -5259,17 +5261,47 @@ if ('var names = new[] { "WATER", "ENERGY DRINK", "VODKA", "BEER", "MAGIC VODKA"
     or 'new[] { waterRegenTime }' not in _mini_ui
     or 'new[] { energyFullCostTime, energyPartialCostTime }' not in _mini_ui
     or _water_knobs.count('DrawMiniConsumableKnob(dc,') != 2
-    or _water_knobs.index('DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",') >
+    or _water_knobs.index('DrawMiniConsumableKnob(dc, waterCostReduction, "STAMINA COST",') >
        _water_knobs.index('DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",')
-    or '"0%", "20%", WaterCell(1)' not in _water_knobs
+    or '"0%", "-20%", WaterCell(1)' not in _water_knobs
     or '"0%", "50%", WaterCell(2)' not in _water_knobs):
     fail("WATER label, yellow duplicate or mini-knob positions drifted")
 for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     catalog_text = (DOCS / _catalog).read_text(encoding="utf-8")
-    if ("Water timeline cleanup and knob order (CURRENT)" not in catalog_text
+    if ("Water timeline cleanup and knob order (HISTORICAL; SUPERSEDED)" not in catalog_text
         or "Water cost-cut duration caption disambiguation (HISTORICAL; SUPERSEDED)" not in catalog_text):
         fail("Water current UI catalog missing in "+_catalog)
 note("WATER single-line; redundant yellow trace removed; cost-cut before stamina-bonus knobs")
+
+# Current signed cost and larger derived capacity typography contract.
+_water_entry = _consumer_catalog["survival.waterStaminaCostReduction"]
+if (_water_entry["label"] != "Stamina Cost"
+    or _water_entry["targets"][0]["prototype"] != "WaterStaminaPerAction1"):
+    fail("Stamina Cost label/native prototype drifted")
+for _token in (
+    'var capLabel = CreateText(waterCapCaption, 11.2, muted,',
+    'capLabel.SetFontSize(13.0, capNumber.Index, capNumber.Length);',
+    'capLabel.SetFontWeight(FontWeights.Bold, capNumber.Index, capNumber.Length);',
+    'waterGroup.Top + 4.0',
+    'var waterCostPercent = 10.0 * waterCostReduction.CurrentNumber;',
+    'var waterCostText = waterCostPercent <= Epsilon',
+    '? "0%" : $"-{waterCostPercent:0.#}%";',
+    'DrawMiniConsumableKnob(dc, waterCostReduction, "STAMINA COST",',
+    'waterCostText, "0%", "-20%", WaterCell(1),',
+    'DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",',
+    '"0%", "50%", WaterCell(2),',
+    'text, muted, border, accent, panel, WaterCostCutLineBrush);',
+):
+    if _token not in _mini_ui:
+        fail("WATER group cap font, signed cost or yellow bonus drifted: "+_token)
+if (_mini_ui.count('DrawMiniConsumableKnob(dc,') != 5
+    or _water_knobs.index('DrawMiniConsumableKnob(dc, waterCostReduction, "STAMINA COST",') >
+       _water_knobs.index('DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",')):
+    fail("WATER / Energy 3+2 knob positions drifted")
+for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Water stamina-cap typography and signed cost (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        fail("Current Water UI catalog signature missing in "+_doc)
+note("Water cap 11.2/13 DIP; stamina bonus yellow; STAMINA COST -10% (0 to -20%)")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

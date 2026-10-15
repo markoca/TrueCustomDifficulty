@@ -3323,24 +3323,28 @@ public sealed class AggregateVisualControl : FrameworkElement
             10.2, text, FontWeights.Bold);
 
         // The Water cap remains a useful live projection but need not repeat
-        // the +25% already shown by the separate stamina bonus knob.
+        // the +25% already shown by the separate yellow stamina bonus knob.
         var waterBonusPercent = 25.0 * waterStamina.CurrentNumber;
         var waterCap = staminaPool * (1.0 + waterBonusPercent / 100.0);
         var referenceWaterCap = referenceStaminaPool *
             (1.0 + 25.0 * waterStamina.ReferenceNumber / 100.0);
         var waterCapCaption = $"{waterCap:0.#} stamina cap";
-        var capLabel = CreateText(waterCapCaption, 9.2, muted,
+        // The derived header remains compact: larger neutral unit and
+        // larger bold number; modified digits alone use the gold accent.
+        var capLabel = CreateText(waterCapCaption, 11.2, muted,
             FontWeights.SemiBold, Math.Max(1.0, waterGroup.Width - 88.0));
-        if (Math.Abs(waterCap - referenceWaterCap) > Epsilon)
+        var capNumber = System.Text.RegularExpressions.Regex.Match(
+            waterCapCaption, @"^\d+(?:\.\d+)?");
+        if (capNumber.Success)
         {
-            var capNumber = System.Text.RegularExpressions.Regex.Match(
-                waterCapCaption, @"^\d+(?:\.\d+)?");
-            if (capNumber.Success)
+            capLabel.SetFontSize(13.0, capNumber.Index, capNumber.Length);
+            capLabel.SetFontWeight(FontWeights.Bold, capNumber.Index, capNumber.Length);
+            if (Math.Abs(waterCap - referenceWaterCap) > Epsilon)
                 capLabel.SetForegroundBrush(accent, capNumber.Index, capNumber.Length);
         }
         dc.DrawText(capLabel, new Point(
             waterGroup.Right - 10.0 - capLabel.WidthIncludingTrailingWhitespace,
-            waterGroup.Top + 7.0));
+            waterGroup.Top + 4.0));
 
         var waterCellWidth = (waterGroup.Width - 2.0 * ConsumableEffectsGroupPadding -
             2.0 * ConsumableEffectsCellGap) / 3.0;
@@ -3361,14 +3365,18 @@ public sealed class AggregateVisualControl : FrameworkElement
             $"{waterRegenTime.CurrentNumber:0.#}s",
             $"{waterRegenTime.Minimum:0.#}s", $"{waterRegenTime.Maximum:0.#}s",
             WaterCell(0), text, muted, border, accent, panel, WaterEffectLineBrush);
-        DrawMiniConsumableKnob(dc, waterCostReduction, "WATER COST CUT",
-            $"{10.0 * waterCostReduction.CurrentNumber:0.#}% LESS",
-            "0%", "20%", WaterCell(1),
+        // The native source scales -10% SPDrain. Show that signed player
+        // effect directly instead of a positive percentage + LESS suffix.
+        var waterCostPercent = 10.0 * waterCostReduction.CurrentNumber;
+        var waterCostText = waterCostPercent <= Epsilon
+            ? "0%" : $"-{waterCostPercent:0.#}%";
+        DrawMiniConsumableKnob(dc, waterCostReduction, "STAMINA COST",
+            waterCostText, "0%", "-20%", WaterCell(1),
             text, muted, border, accent, panel, WaterCostCutLineBrush);
         DrawMiniConsumableKnob(dc, waterStamina, "WATER STAMINA BONUS",
             $"+{25.0 * waterStamina.CurrentNumber:0.#}%",
             "0%", "50%", WaterCell(2),
-            text, muted, border, accent, panel, WaterEffectLineBrush);
+            text, muted, border, accent, panel, WaterCostCutLineBrush);
         DrawMiniConsumableKnob(dc, energyFullCostTime, "NO COST DURATION",
             $"{energyFullCostTime.CurrentNumber:0.#}s",
             $"{energyFullCostTime.Minimum:0.#}s", $"{energyFullCostTime.Maximum:0.#}s",

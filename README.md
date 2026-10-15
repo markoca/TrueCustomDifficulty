@@ -1,5 +1,7 @@
 # True Custom Difficulty
 
+**Water cap and knob legibility (2026-10-15, current):** The WATER box now displays the derived stamina cap using an 11.2-DIP label and larger 13.0-DIP number, with gold digits only when changed. **WATER STAMINA BONUS** is yellow (its separate bonus duration remains green); the middle knob is **STAMINA COST**, displaying the actual native negative effect as **-10%** (0% to -20%, never -0%). The independently editable Water/energy sources, CFG mapping, values, presets, 3+2 geometry and controls are unchanged. Verify wide/narrow appearance under local Wine.
+
 **Water UI cleanup (2026-10-15, current):** The main yellow Water duration slider is again **WATER**, and its redundant yellow line below it is gone. The independently sourced short green Water effect stripe and both blue Energy effect stripes stay. Within the compact WATER box the order is **WATER BONUS DURATION → WATER COST CUT → WATER STAMINA BONUS**; Energy remains unchanged. This is only layout/visual cleanup: no underlying duration, CFG source, presets, geometry or knob control behavior changed. Older label/underline descriptions below are superseded; verify local Wine rendering.
 
 **Water cost-cut duration caption (2026-10-15):** The yellow 30s Water cost-cut timeline slider now reads **WATER COST CUT DURATION** on two compact lines, while the yellow **WATER COST CUT** mini-knob still controls only its independent 10%-less magnitude. No source mappings, layout dimensions or CFG/preset values were changed; verify appearance under Wine.
