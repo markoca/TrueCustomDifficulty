@@ -4241,6 +4241,52 @@ public sealed class AggregateVisualControl : FrameworkElement
         StageCaption(1, "MEDIUM", medium, mediumPenalty);
         StageCaption(2, "SEVERE", severe, severePenalty);
 
+        // Passive timing projection from ZERO HungerPoints: this is not a
+        // runtime countdown and does not add a threshold editor or hit target.
+        // Keep all three times aligned with the existing stage caption cells.
+        var onsetY = frame.Top + 346.0;
+        dc.DrawLine(new Pen(CloneWithOpacity(border, .58), .8),
+            new Point(plot.Left, onsetY), new Point(plot.Right - 10.0, onsetY));
+        DrawCenteredText(dc, "EST. FROM 0 HUNGER PTS · NO FOOD",
+            new Point(frame.Left + frame.Width / 2.0, onsetY + 15.0),
+            9.2, muted, FontWeights.SemiBold);
+        var onsetStages = new[]
+        {
+            (Name: "LOW", Threshold: low),
+            (Name: "MEDIUM", Threshold: medium),
+            (Name: "SEVERE", Threshold: severe)
+        };
+        for (var i = 0; i < onsetStages.Length; i++)
+        {
+            var cell = new Rect(plot.Left + i * stageWidth,
+                onsetY + 25.0, stageWidth, 21.0);
+            dc.PushClip(new RectangleGeometry(cell));
+            DrawCenteredText(dc,
+                $"{onsetStages[i].Name} {HungerOnsetEstimate(onsetStages[i].Threshold.CurrentNumber, rate.CurrentNumber)}",
+                new Point(cell.Left + cell.Width / 2.0, onsetY + 33.0),
+                stageWidth < 155.0 ? 10.0 : 11.0, text, FontWeights.SemiBold);
+            dc.Pop();
+        }
+    }
+
+    // Elapsed REAL seconds from a zero-point hunger pool, assuming the
+    // configured points/second is constant and no food/other effects apply.
+    // Whole-second truncation preserves the source-rate arithmetic without
+    // interpreting game-day duration or creating a fictitious live clock.
+    private static string HungerOnsetEstimate(double threshold, double pointsPerSecond)
+    {
+        if (threshold <= Epsilon)
+            return "0s";
+        if (pointsPerSecond <= Epsilon)
+            return "NEVER";
+
+        var totalSeconds = (int)Math.Floor(Math.Max(0.0, threshold) / pointsPerSecond);
+        var hours = totalSeconds / 3600;
+        var minutes = totalSeconds % 3600 / 60;
+        var seconds = totalSeconds % 60;
+        return hours > 0
+            ? $"~{hours}h{minutes}m{seconds}s"
+            : $"~{minutes}m{seconds}s";
     }
 
     // A source-grounded tick schedule plus hypothetical raw full-health
@@ -5279,7 +5325,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double ConsumableTimelineHeight(double width)
         => ConsumableShortEffectsTrackTop + CompactTrackHeight + 12.0;
     // Reserved space for plot ticks plus three independently readable stage lines.
-    private const double HungerProfileHeight = 344.0;
+    private const double HungerProfileHeight = 398.0;
     private const double CompactRowGap = 8.0;
     private const double CompactColumnGap = 10.0;
 

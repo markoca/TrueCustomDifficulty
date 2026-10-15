@@ -1,5 +1,14 @@
 # Visual Control System
 
+### 2026-10-15 — Hunger onset times without new threshold sliders (CURRENT)
+
+**Survival → Hunger State Ladder** keeps the existing **HUNGER RATE** and **WELL-FED STAMINA RECOVERY** top-row native rulers, unchanged 0–100 HUNGER POINTS stage preview and original interactive stepped **HUNGER SURVIVAL PROFILE**. **Do not add a Hunger Threshold, Medium Hunger or any other new slider**; the three LOW/MEDIUM/SEVERE threshold values already belong to the existing graph handles and remain independently editable there, with current native ranges, ordering, hit targets, resets, CFG routes and presets.
+
+At the **bottom of the existing stepped profile**, underneath the existing three stage readout columns, add one compact, read-only aligned line showing **LOW**, **MEDIUM**, **SEVERE** with live **estimated real elapsed times** from an assumed `0 HungerPoints` initial state. The neutral heading `EST. FROM 0 HUNGER PTS · NO FOOD` explicitly states the calculation boundary. Each time uses the current `survival.hungerRate` (in points **per real second**, per the existing CFG catalog) and the corresponding live stage threshold: `threshold / rate`, floored to whole seconds and formatted `~18m53s`, `~36m40s`, `~1h32m13s` for vanilla `0.015 PTS/s` and thresholds `17/33/83 PTS`. If the rate is zero, a positive threshold reads `NEVER`; a zero threshold reads `0s`. The readouts update whenever the existing rate slider or existing threshold graph handles move and never become editing/reset targets or persisted values.
+
+Use neutral text (not source-modified yellow), no second panel or duplicate instructions, and three plot-aligned bounded cells beneath the graph footer. Extend the *existing* profile height from **344 to 398 DIP** so the new 52-DIP bottom band is not clipped, using the same `HungerProfileHeight` constant for rendering and `CompactHungerHeight` measurement. Time estimates assume uninterrupted constant gain without food or other game effects; they are **not** the player's current hunger, an in-game clock, a day/night conversion or a guaranteed runtime hunger timer. This approval supersedes older prohibitions on elapsed-time **readouts**, but does **not** authorize fabricated state simulation, countdowns or new gameplay CFG parameters.
+
+
 ### 2026-10-14 — Remove Medical Items Max HP percentages (CURRENT)
 
 **Health → Medical Items** no longer displays the four `N% MAX HP` readouts below **BANDAGE**, **MEDKIT**, **ARMY MEDKIT**, and **SCIENTIFIC MEDKIT**. Do not add replacement text or extra empty layout padding. The four native **HEAL** vertical bars still display their exact editable HP amounts above the bars, while their separately editable **BLEED** bars retain exact bleeding-removal PTS values. Their native HP/PTS axes, colored handles, reference marks, item labels, mouse/keyboard/right-click/reset interactions, Food Healing / Override Limits checkboxes and CFG writer/preset mapping remain intact.

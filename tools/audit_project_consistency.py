@@ -2409,6 +2409,50 @@ else:
     note("Hunger LOW single-hover contract: actual Y(0) handle glow, no generic plot-midpoint overlay")
 
 
+# Hunger-onset estimates are three passive captions BELOW the original
+# stepped profile, driven only by the existing hunger-rate/threshold sources.
+# Never introduce an extra medium-threshold slider or invented game-day clock.
+_hunger_timing_start = _hunger_source.find("var onsetY = frame.Top + 346.0;")
+_hunger_timing_end = _hunger_source.find("private static string HungerOnsetEstimate(", _hunger_timing_start)
+_hunger_timing = (_hunger_source[_hunger_timing_start:_hunger_timing_end]
+                  if 0 <= _hunger_timing_start < _hunger_timing_end else "")
+_hunger_timing_required = (
+    'var onsetY = frame.Top + 346.0;',
+    'EST. FROM 0 HUNGER PTS · NO FOOD',
+    '(Name: "LOW", Threshold: low)',
+    '(Name: "MEDIUM", Threshold: medium)',
+    '(Name: "SEVERE", Threshold: severe)',
+    'rate.CurrentNumber',
+    'HungerOnsetEstimate(onsetStages[i].Threshold.CurrentNumber, rate.CurrentNumber)',
+    'DrawCenteredText(dc,',
+    'private static string HungerOnsetEstimate(double threshold, double pointsPerSecond)',
+    'if (threshold <= Epsilon)',
+    'if (pointsPerSecond <= Epsilon)',
+    'Math.Floor(Math.Max(0.0, threshold) / pointsPerSecond)',
+    'private const double HungerProfileHeight = 398.0;',
+    'var frameBottom = previewBottom + 55.0 + HungerProfileHeight;',
+)
+if not all(token in _hunger_source for token in _hunger_timing_required):
+    fail("Hunger onset estimates: missing real-source, elapsed-time, zero-rate or shared-height contract")
+if (not _hunger_timing or "AddHorizontalTarget(" in _hunger_timing
+        or "AddVerticalTarget(" in _hunger_timing or "_hitTargets.Add" in _hunger_timing):
+    fail("Hunger onset readouts gained an editable target or were removed")
+if _hunger_source.count('DrawCoreResourceRuler(dc, rate, "HUNGER RATE"') != 1:
+    fail("Hunger build-up existing input was duplicated or removed")
+# Native vanilla rate 0.015 pts/s and stage thresholds 17/33/83 PTS:
+# 18m53s, 36m40s, 1h32m13s from zero, no food. Also test retuning.
+for _rate, _threshold, _seconds in (
+    (.015, 17, 1133), (.015, 33, 2200), (.015, 83, 5533),
+    (.030, 33, 1100), (.001, 83, 83000),
+):
+    if int(_threshold / _rate) != _seconds:
+        fail(f"Hunger onset formula/reference drift: {_threshold} PTS / {_rate} PTS/s")
+if not all(k in _hunger_source for k in ('return "0s";', 'return "NEVER";')):
+    fail("Hunger onset zero-threshold and zero-rate guards absent")
+if not errors:
+    note("Hunger onset: three read-only real-time estimates, live stage/rate sources, no extra sliders")
+
+
 # Hunger and Fatigue now share the SAME primary resource ruler as Core
 # Health/Core Stamina. Protect geometry/units/source routing, not screenshots.
 _primary_src = (_semantic_source_dir / "AggregateVisualControl.cs").read_text(encoding="utf-8")
