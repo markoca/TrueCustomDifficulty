@@ -17,8 +17,6 @@
         ResizeMode="CanResize"
         Background="{StaticResource WindowBackgroundBrush}">
     <Window.Resources>
-        <infra:ResponsiveCardWidthConverter x:Key="ResponsiveCardWidthConverter" />
-
         <!-- Subtle fixed 32-DIP instrument grid in the gutters around the cards. -->
         <DrawingBrush x:Key="WorkbenchGridBrush"
                       TileMode="Tile"

@@ -113,3 +113,7 @@ Compared the central `ResponsiveParameterGridPanel` map against all 247 source c
 ## 2026-10-15 — VisualStatusMessage persistent-text cleanup
 
 The shared `VisualStatusMessage` was inspected against all twenty Controls source files. No consumer read its `Text` property or called `SetPersistent`. Removed those orphaned members and their backing `_persistentText` field. The current `ShowTransient`, `Clear`, `ClearTransient`, three-second DispatcherTimer and `InvalidateVisual` callback remain byte-for-byte equivalent in active paths, except removing the dead persistent field assignment from `Clear`. This pass does not attempt to remove transient signaling while input handlers use it; that requires separate UI runtime verification. No Control editor, GUI layout, source catalog, presets or writer changed. Static audit updated.
+
+## 2026-10-15 — Orphan responsive card-width converter removed
+
+The full application source scan (48 C#, XAML and project files) found only the `ResponsiveCardWidthConverter` class definition and one unused keyed XAML resource declaration. No Binding or code consumed it. Deleted both, leaving the live responsive parameter/section panels and all their sizing, grouping and event behavior unchanged. Added an audit guard against accidentally restoring the abandoned converter while asserting both live layout panels remain registered. No CFG writer, preset, parameter catalog or visible UI changed. Full .NET/WPF/Wine runtime verification is pending.

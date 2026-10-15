@@ -1580,6 +1580,18 @@ if ('public bool IsExhaustionRecoveryAnchor => Id == "stamina.sprintDisableThres
     fail("Responsive layout lost visible Stamina/Economy anchor or collapse guard")
 note("Responsive layout: 19 stale slot entries pruned; 104 live maps remain, Exhaustion/Economy anchors intact")
 
+# Orphaned card-width converter was a keyed XAML resource with no consumer.
+# Preserve the two active responsive panels; remove only the unused resource/class.
+if (ROOT / "src/TrueCustomDifficulty/Infrastructure/ResponsiveCardWidthConverter.cs").exists():
+    fail("Orphan responsive card-width converter source has returned")
+_width_xaml = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml").read_text(encoding="utf-8")
+if "ResponsiveCardWidthConverter" in _width_xaml:
+    fail("Unconsumed responsive card-width converter XAML resource has returned")
+for _active_panel in ("ResponsiveParameterGridPanel", "ResponsiveSectionGridPanel"):
+    if f"<infra:{_active_panel} " not in _width_xaml:
+        fail("Live responsive layout panel registration missing: " + _active_panel)
+note("Unused card-width converter retired; both active responsive panels remain registered")
+
 # Shared visual status infrastructure: persistent text used to be stored,
 # but no editor consumed that property or invoked SetPersistent. Preserve
 # transient invalidation and expiration for currently deployed WPF handlers.

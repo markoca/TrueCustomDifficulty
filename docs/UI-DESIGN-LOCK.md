@@ -1,5 +1,9 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Retire unused responsive card-width converter (CURRENT)
+
+`ResponsiveCardWidthConverter` was only instantiated as a resource in `MainWindow.xaml`, with no consuming Binding, other XAML reference, or C# usage across all 48 application `.cs`, `.xaml` and `.csproj` files. Delete the unused converter class and its lone resource declaration. Preserve `ResponsiveParameterGridPanel` and `ResponsiveSectionGridPanel`, their geometry, grouping and responsive breakpoints. No visible control, input behavior, source/CFG mapping, preset or writer changes. WPF/Wine visual regression confirmation is still pending.
+
 ### 2026-10-15 — Shared transient status helper cleanup (CURRENT)
 
 The internal `VisualStatusMessage` helper has no consumer of its former persistent-text property and no caller of `SetPersistent`. Remove `_persistentText`, `Text` and `SetPersistent` only. Keep its existing `ShowTransient`, `Clear`, `ClearTransient`, three-second dispatcher timer, and redraw callback behavior used by active mouse/keyboard handlers across visual families. This is a dead API removal, **not** a redesign of feedback, handle glow, controls, status displays or timing. Maintain the compact visual system, preset and CFG source behavior; local WPF/Wine confirmation remains pending.
