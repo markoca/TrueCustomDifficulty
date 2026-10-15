@@ -14,4 +14,6 @@ internal static class VisualControlTypography
     public const double AxisTick = 9.2;
     // Source-native horizontal track/card titles where clearance permits.
     public const double CardTitle = 10.8;
+    // Unified stage captions below the Hunger and Fatigue profile plots.
+    public const double SurvivalStageSummary = 10.8;
 }

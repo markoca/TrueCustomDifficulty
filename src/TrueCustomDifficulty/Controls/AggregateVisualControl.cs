@@ -1827,17 +1827,20 @@ public sealed class AggregateVisualControl : FrameworkElement
             var timeText = $"AFTER {elapsed}";
             var headline = $"{thresholdText} {timeText}";
             // Measure headline before choosing a one- or two-line treatment.
-            var wrap = cellWidth < 205.0 || CreateText(headline, 9.2,
-                text, FontWeights.SemiBold).WidthIncludingTrailingWhitespace > cellWidth - 14.0;
+            // Use the same larger stage text as Hunger, measuring the full
+            // headline with clearance for selectively enlarged gold numbers.
+            var wrap = cellWidth < 205.0 || CreateText(headline,
+                VisualControlTypography.SurvivalStageSummary,
+                text, FontWeights.SemiBold).WidthIncludingTrailingWhitespace > cellWidth - 22.0;
             if (wrap)
             {
                 DrawCenteredNumericChanges(dc, thresholdText,
-                    new Point(cx, top + 270.0), 9.5, text, accent,
+                    new Point(cx, top + 270.0), VisualControlTypography.SurvivalStageSummary, text, accent,
                     FontWeights.SemiBold, thresholds[i].IsValueModifiedFromReference());
                 var count = System.Text.RegularExpressions.Regex.Matches(
                     timeText, @"\d+").Count;
                 DrawCenteredNumericChanges(dc, timeText,
-                    new Point(cx, top + 291.0), 9.5, text, accent,
+                    new Point(cx, top + 291.0), VisualControlTypography.SurvivalStageSummary, text, accent,
                     FontWeights.SemiBold, Enumerable.Repeat(true, count).ToArray());
             }
             else
@@ -1850,19 +1853,19 @@ public sealed class AggregateVisualControl : FrameworkElement
                 for (var token = 1; token < count; token++)
                     highlight[token] = true;
                 DrawCenteredNumericChanges(dc, headline,
-                    new Point(cx, top + 275.0), 9.2, text, accent,
+                    new Point(cx, top + 275.0), VisualControlTypography.SurvivalStageSummary, text, accent,
                     FontWeights.SemiBold, highlight);
             }
             DrawCenteredNumericChanges(dc,
                 $"AIM TIME +{aims[i].CurrentNumber * 100:0.#}%",
                 new Point(cx, top + (wrap ? 314.0 : 304.0)),
-                10.1, text, accent, FontWeights.SemiBold,
+                VisualControlTypography.SurvivalStageSummary, text, accent, FontWeights.SemiBold,
                 aims[i].IsValueModifiedFromReference());
             if (i > 0)
                 DrawCenteredNumericChanges(dc,
                     $"RELOAD TIME +{reloads[i - 1].CurrentNumber * 100:0.##}%",
                     new Point(cx, top + (wrap ? 337.0 : 327.0)),
-                    10.1, text, accent, FontWeights.SemiBold,
+                    VisualControlTypography.SurvivalStageSummary, text, accent, FontWeights.SemiBold,
                     reloads[i - 1].IsValueModifiedFromReference());
             dc.Pop();
         }
@@ -3810,7 +3813,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         void StageCaption(int index, string stageName,
             ParameterViewModel threshold, ParameterViewModel? recoveryLoss)
         {
-            var narrow = stageWidth < 205.0;
             var cell = new Rect(plot.Left + index * stageWidth,
                 footerTop, stageWidth, 69.0);
             dc.PushClip(new RectangleGeometry(cell));
@@ -3818,20 +3820,29 @@ public sealed class AggregateVisualControl : FrameworkElement
             var elapsed = StageOnsetEstimate(threshold.CurrentNumber, rate.CurrentNumber);
             var thresholdText = $"{stageName} AT {threshold.CurrentNumber:0} PTS";
             var timeText = $"AFTER {elapsed}";
+            var headline = $"{thresholdText} {timeText}";
+            // Match Fatigue's stage type size. Wrap once the measured headline
+            // cannot fit with room for modified-number gold emphasis.
+            var narrow = stageWidth < 205.0 || CreateText(headline,
+                VisualControlTypography.SurvivalStageSummary,
+                text, FontWeights.SemiBold).WidthIncludingTrailingWhitespace > stageWidth - 22.0;
             if (narrow)
             {
                 DrawCenteredNumericChanges(dc, thresholdText,
-                    new Point(cx, footerTop + 7.0), 9.2, text, accent,
-                    FontWeights.SemiBold, threshold.IsValueModifiedFromReference());
+                    new Point(cx, footerTop + 7.0),
+                    VisualControlTypography.SurvivalStageSummary,
+                    text, accent, FontWeights.SemiBold,
+                    threshold.IsValueModifiedFromReference());
                 var timeNumbers = System.Text.RegularExpressions.Regex.Matches(
                     timeText, @"\d+").Count;
                 DrawCenteredNumericChanges(dc, timeText,
-                    new Point(cx, footerTop + 28.0), 9.2, text, accent,
-                    FontWeights.SemiBold, Enumerable.Repeat(true, timeNumbers).ToArray());
+                    new Point(cx, footerTop + 25.0),
+                    VisualControlTypography.SurvivalStageSummary,
+                    text, accent, FontWeights.SemiBold,
+                    Enumerable.Repeat(true, timeNumbers).ToArray());
             }
             else
             {
-                var headline = $"{thresholdText} {timeText}";
                 var numberCount = System.Text.RegularExpressions.Regex.Matches(
                     headline, @"\d+").Count;
                 var highlight = new bool[numberCount];
@@ -3841,15 +3852,38 @@ public sealed class AggregateVisualControl : FrameworkElement
                     highlight[j] = true;
                 DrawCenteredNumericChanges(dc, headline,
                     new Point(cx, footerTop + 11.0),
-                    stageWidth < 245.0 ? 9.0 : 9.8,
+                    VisualControlTypography.SurvivalStageSummary,
                     text, accent, FontWeights.SemiBold, highlight);
             }
             if (recoveryLoss is not null)
-                DrawCenteredNumericChanges(dc,
-                    $"-{recoveryLoss.CurrentNumber * 100:0}% STAMINA RECOVERY",
-                    new Point(cx, footerTop + (narrow ? 50.0 : 37.0)),
-                    narrow ? 9.0 : 9.6, text, accent, FontWeights.SemiBold,
-                    recoveryLoss.IsValueModifiedFromReference());
+            {
+                var recoveryText =
+                    $"-{recoveryLoss.CurrentNumber * 100:0}% STAMINA RECOVERY";
+                var splitRecovery = CreateText(recoveryText,
+                    VisualControlTypography.SurvivalStageSummary,
+                    text, FontWeights.SemiBold).WidthIncludingTrailingWhitespace > stageWidth - 18.0;
+                if (splitRecovery)
+                {
+                    DrawCenteredNumericChanges(dc,
+                        $"-{recoveryLoss.CurrentNumber * 100:0}% STAMINA",
+                        new Point(cx, footerTop + (narrow ? 44.0 : 32.0)),
+                        VisualControlTypography.SurvivalStageSummary,
+                        text, accent, FontWeights.SemiBold,
+                        recoveryLoss.IsValueModifiedFromReference());
+                    DrawCenteredNumericChanges(dc, "RECOVERY",
+                        new Point(cx, footerTop + (narrow ? 60.0 : 49.0)),
+                        VisualControlTypography.SurvivalStageSummary,
+                        text, accent, FontWeights.SemiBold);
+                }
+                else
+                {
+                    DrawCenteredNumericChanges(dc, recoveryText,
+                        new Point(cx, footerTop + (narrow ? 49.0 : 37.0)),
+                        VisualControlTypography.SurvivalStageSummary,
+                        text, accent, FontWeights.SemiBold,
+                        recoveryLoss.IsValueModifiedFromReference());
+                }
+            }
             dc.Pop();
         }
         StageCaption(0, "LOW", low, null);

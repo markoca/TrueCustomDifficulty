@@ -2761,11 +2761,14 @@ _hunger_footer = (_hunger_source[_hunger_footer_start:_hunger_footer_end]
                   if 0 <= _hunger_footer_start < _hunger_footer_end else '')
 _hunger_required = (
     'void StageCaption(int index, string stageName,',
-    'var narrow = stageWidth < 205.0;',
+    'var narrow = stageWidth < 205.0 || CreateText(headline,',
     'var elapsed = StageOnsetEstimate(threshold.CurrentNumber, rate.CurrentNumber);',
     'var thresholdText = $"{stageName} AT {threshold.CurrentNumber:0} PTS";',
     'var timeText = $"AFTER {elapsed}";',
     'var headline = $"{thresholdText} {timeText}";',
+    'VisualControlTypography.SurvivalStageSummary,',
+    'var splitRecovery = CreateText(recoveryText,',
+    'new Point(cx, footerTop + (narrow ? 60.0 : 49.0))',
     'highlight[0] = threshold.IsValueModifiedFromReference();',
     'highlight[j] = true;',
     'Enumerable.Repeat(true, timeNumbers).ToArray()',
@@ -2846,7 +2849,7 @@ _fatigue_required = (
     'var timeText = $"AFTER {elapsed}";',
     'var headline = $"{thresholdText} {timeText}";',
     "var wrap = cellWidth < 205.0",
-    "WidthIncludingTrailingWhitespace > cellWidth - 14.0;",
+    "WidthIncludingTrailingWhitespace > cellWidth - 22.0;",
     "Enumerable.Repeat(true, count).ToArray()",
     "highlight[0] = thresholds[i].IsValueModifiedFromReference();",
     "highlight[token] = true;",
@@ -2868,6 +2871,27 @@ for _threshold, _seconds in ((50, 5000), (60, 6000), (80, 8000)):
         fail("Fatigue vanilla onset arithmetic drifted")
 if not errors:
     note("Fatigue integrated stage PTS/AFTER/AIM TIME/RELOAD TIME percentages, live rate")
+
+# Same 10.8-DIP footer typography in both Survival stage profiles.
+# Preserve 69-/93-DIP clipped stage cells and measured responsive wrapping.
+_footer_scale = "VisualControlTypography.SurvivalStageSummary"
+if (_hunger_footer.count(_footer_scale) != 8
+    or _fatigue_block.count(_footer_scale) != 6
+    or "WidthIncludingTrailingWhitespace > stageWidth - 22.0" not in _hunger_footer
+    or "WidthIncludingTrailingWhitespace > cellWidth - 22.0" not in _fatigue_block
+    or 'var splitRecovery = CreateText(recoveryText,' not in _hunger_footer
+    or 'new Point(cx, footerTop + (narrow ? 60.0 : 49.0))' not in _hunger_footer
+    or 'new Point(cx, footerTop + (narrow ? 44.0 : 32.0))' not in _hunger_footer
+    or '"RECOVERY",' not in _hunger_footer
+    or 'var cell = new Rect(plot.Left + index * stageWidth,' not in _hunger_footer
+    or 'var cell = new Rect(frame.Left + 8.0 + i * cellWidth,' not in _fatigue_block
+    or 'top + (wrap ? 337.0 : 327.0)' not in _fatigue_block):
+    fail("Hunger/Fatigue shared footer font or narrow wrap drifted")
+for _catalog_name in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Unified Hunger and Fatigue profile footer typography (CURRENT)" not in (
+            DOCS / _catalog_name).read_text(encoding="utf-8"):
+        fail("Survival footer font catalog contract missing: "+_catalog_name)
+note("Unified Hunger/Fatigue 10.8 DIP stage footer captions with measured wrapping")
 
 # Hunger and Fatigue now share the SAME primary resource ruler as Core
 # Health/Core Stamina. Protect geometry/units/source routing, not screenshots.
@@ -5057,6 +5081,7 @@ for _token in (
         "public const double AxisTitle = 9.3;",
         "public const double AxisTick = 9.2;",
         "public const double CardTitle = 10.8;",
+        "public const double SurvivalStageSummary = 10.8;",
         ):
     if _token not in _visual_t:
         fail("Visual control type scale missing or drifted: " + _token)

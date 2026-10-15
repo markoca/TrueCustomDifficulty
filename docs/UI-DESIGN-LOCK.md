@@ -1,5 +1,11 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Unified Hunger and Fatigue profile footer typography (CURRENT)
+
+In **Survival → Hunger → HUNGER SURVIVAL PROFILE** and **Survival → Fatigue → FATIGUE COMBAT PROFILE**, all LOW/MEDIUM/SEVERE stage-footer captions share **10.8 DIP Segoe UI SemiBold** through `VisualControlTypography.SurvivalStageSummary`. This increases/equalizes threshold PTS and AFTER-onset headlines, Hunger STAMINA RECOVERY loss and Fatigue AIM TIME / RELOAD TIME penalties, retiring older 9.0–10.1 DIP local sizes. Numeric highlighting still follows the original source/derived semantics and applies its unchanged +1.2 DIP ONLY to highlighted numbers; labels and units remain neutral.
+
+Keep the exact compact **344-DIP Hunger** and **365-DIP Fatigue** frames, each with three equal clipped footer cells. At normal widths display a combined stage/PTS/AFTER headline only if its *measured* larger text fits; otherwise wrap into threshold and AFTER rows. On narrow Hunger cells measure the stamina-recovery loss and split to **`-N% STAMINA`** / **`RECOVERY`** when needed, fitting up to four lines in the existing **69-DIP** footer at +7/+25/+44/+60 DIP. Fatigue preserves its own **93-DIP** footer and separate AIM and RELOAD rows. Never reduce font size for narrow panels, enlarge charts/control widths, duplicate information, touch mouse/keyboard/reset hit maps, alter thresholds, colors, gold reference policy, CFG writer or presets. Local wide/narrow Wine screenshot acceptance remains pending.
+
 ### 2026-10-15 — Water stamina-cap typography and signed cost (CURRENT)
 
 In **Survival → Consumable Effects → WATER**, make these display-only refinements to the same compact, centered three-knob bank:
