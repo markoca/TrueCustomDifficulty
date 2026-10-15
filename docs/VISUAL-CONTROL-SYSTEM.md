@@ -1,5 +1,9 @@
 # Visual Control System
 
+### 2026-10-15 — Factory consumable override snapshot, no UI redesign (CURRENT)
+
+Factory profiles explicitly persist the **existing** `drinkDurationOverride` root mode, enabling drink durations up to 270s and Vinca/Hercules/Psi Block durations up to 900s; Field Medic additionally uses the separate Medical Items override. These are saved role snapshots and independent native CFG-backed values, **not new UI controls or synthetic CFG parameters**. Preserve both compact override checkboxes, shared cap/step/parent-child logic, native interaction, existing typography, knob and slider positions, modified-number highlighting and no full-width/redundant UI labels. Match `tools/factory_preset_consumable_balance.json` without redesigning these controls.
+
 ### 2026-10-15 — Unified Hunger and Fatigue profile footer typography (CURRENT)
 
 In **Survival → Hunger → HUNGER SURVIVAL PROFILE** and **Survival → Fatigue → FATIGUE COMBAT PROFILE**, all LOW/MEDIUM/SEVERE stage-footer captions share **10.8 DIP Segoe UI SemiBold** through `VisualControlTypography.SurvivalStageSummary`. This increases/equalizes threshold PTS and AFTER-onset headlines, Hunger STAMINA RECOVERY loss and Fatigue AIM TIME / RELOAD TIME penalties, retiring older 9.0–10.1 DIP local sizes. Numeric highlighting still follows the original source/derived semantics and applies its unchanged +1.2 DIP ONLY to highlighted numbers; labels and units remain neutral.

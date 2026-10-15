@@ -2010,7 +2010,19 @@ for _name in _factory_preset_names:
                 _factory_errors.append(f"{_name}: authored value drifted {_pid}: {_stored} != {_target}")
             if _expected_kind == "slider":
                 _range = _definition["slider"]
-                if not _range["min"] - 1e-8 <= _target <= _range["max"] + 1e-8:
+                _allowed_max = _range["max"]
+                if _preset.get("drinkDurationOverride") is True:
+                    if _pid == "survival.waterEffectDuration":
+                        _allowed_max = 270.0 / 30.0
+                    elif _pid == "survival.energyDrinkEffectDuration":
+                        _allowed_max = 270.0 / 45.0
+                    elif _pid in ("survival.vodkaEffectDuration", "survival.beerEffectDuration", "survival.magicVodkaEffectDuration"):
+                        _allowed_max = 270.0 / (90.0 if _pid == "survival.magicVodkaEffectDuration" else 20.0)
+                    elif _pid in ("survival.waterRegenDuration", "survival.energyFullCostDuration", "survival.energyPartialCostDuration"):
+                        _allowed_max = 270.0
+                    elif _pid in ("survival.vincaDuration", "survival.herculesDuration", "survival.psiBlockDuration"):
+                        _allowed_max = 900.0
+                if not _range["min"] - 1e-8 <= _target <= _allowed_max + 1e-8:
                     _factory_errors.append(f"{_name}: out-of-range {_pid}: {_target}")
     # All five parent drink effects use a *whole-second* internal snap grid.
     # Reject attractive-looking multipliers that would silently round on load.
@@ -2174,7 +2186,19 @@ for _role, _signature in _role_matrix.get("profiles", {}).items():
         if _stored.get("kind") != "slider" or _stored.get("number") != _target:
             _factory_errors.append(f"{_role}: authored role drift {_pid}")
         _bound = _definition["slider"]
-        if not _bound["min"]-1e-8 <= _target <= _bound["max"]+1e-8:
+        _role_cap = _bound["max"]
+        if _document.get("drinkDurationOverride") is True:
+            if _pid == "survival.waterEffectDuration":
+                _role_cap = 270.0 / 30.0
+            elif _pid == "survival.energyDrinkEffectDuration":
+                _role_cap = 270.0 / 45.0
+            elif _pid in ("survival.vodkaEffectDuration", "survival.beerEffectDuration", "survival.magicVodkaEffectDuration"):
+                _role_cap = 270.0 / (90.0 if _pid == "survival.magicVodkaEffectDuration" else 20.0)
+            elif _pid in ("survival.waterRegenDuration", "survival.energyFullCostDuration", "survival.energyPartialCostDuration"):
+                _role_cap = 270.0
+            elif _pid in ("survival.vincaDuration", "survival.herculesDuration", "survival.psiBlockDuration"):
+                _role_cap = 900.0
+        if not _bound["min"]-1e-8 <= _target <= _role_cap+1e-8:
             _factory_errors.append(f"{_role}: source out of range {_pid}")
         if _bound.get("stepMode") == "absolute":
             _units = (_target-_bound["min"])/_bound["step"]
@@ -2212,6 +2236,92 @@ for _good, _meaning in (
 for _doc in ("FACTORY-PRESETS.md", "PRESET-FORMAT.md"):
     if "2026-10-15 — Role-first deep rebalance (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
         _factory_errors.append("current factory role documentation missing "+_doc)
+
+# 2026-10-15 source-backed consumable cadence + override upgrade.
+# Check serialized flags, per-source authoring, UI-only bounds, step grids,
+# exact-pristine factory migration and independent existing catalog metadata.
+_consumable_matrix = json.loads((ROOT / "tools/factory_preset_consumable_balance.json").read_text(encoding="utf-8"))
+if (_consumable_matrix.get("version") != 1
+    or set(_consumable_matrix.get("profiles", {})) != set(_factory_preset_names)):
+    _factory_errors.append("consumable authoring matrix must cover all 12 factory roles")
+if ('PreConsumableRebalanceFactoryBlobs' not in _factory_service_text
+    or '&& !PreConsumableRebalanceFactoryBlobs.TryGetValue(name, out knownHash)' not in _factory_service_text
+    or 'PreConsumableRebalanceFactoryBlobs.TryGetValue(name, out var preConsumableHash)' not in _factory_service_text):
+    _factory_errors.append("exact-pristine consumable migration not wired")
+for _role, _settings in _consumable_matrix.get("profiles", {}).items():
+    _snapshot = json.loads((_factory_preset_dir / f"{_role}.json").read_text(encoding="utf-8"))
+    _entries = _snapshot["values"]
+    _drink_override = _settings["drinkDurationOverride"]
+    _medical_override = _settings["medicalOverride"]
+    if (_snapshot.get("drinkDurationOverride") is not _drink_override
+        or _snapshot.get("medicalOverride") is not _medical_override
+        or not _drink_override):
+        _factory_errors.append(f"{_role}: missing or inconsistent override mode")
+    if len(_entries) != 248 or set(_entries) != set(_factory_catalog):
+        _factory_errors.append(f"{_role}: lost native catalog values")
+    if not _settings.get("intent"):
+        _factory_errors.append(f"{_role}: missing balance intent")
+    for _pid, _target in _settings["changes"].items():
+        _definition = _factory_catalog.get(_pid, {})
+        _stored = _entries.get(_pid, {})
+        if (_definition.get("control") != "slider" or _stored.get("kind") != "slider"
+            or abs(_stored.get("number", -100000) - _target) > 1e-8):
+            _factory_errors.append(f"{_role}: sourced consumable mismatch {_pid}")
+            continue
+        _bounds = _definition["slider"]
+        _max_allowed = _bounds["max"]
+        if _pid in ("survival.waterEffectDuration", "survival.energyDrinkEffectDuration"):
+            _max_allowed = (270.0 / (30.0 if _pid == "survival.waterEffectDuration" else 45.0)
+                            if _drink_override else _bounds["max"])
+        elif _pid in ("survival.vodkaEffectDuration", "survival.beerEffectDuration", "survival.magicVodkaEffectDuration"):
+            _max_allowed = (270.0 / (90.0 if _pid == "survival.magicVodkaEffectDuration" else 20.0)
+                            if _drink_override else _bounds["max"])
+        elif _pid in ("survival.vincaDuration", "survival.herculesDuration", "survival.psiBlockDuration"):
+            _max_allowed = 900.0 if _drink_override else _bounds["max"]
+        elif _pid in ("survival.waterRegenDuration", "survival.energyFullCostDuration", "survival.energyPartialCostDuration"):
+            _max_allowed = 270.0 if _drink_override else _bounds["max"]
+        elif _pid in ("health.medkitBleeding", "health.ecoMedkitBleeding"):
+            _max_allowed = 100.0 if _medical_override else _bounds["max"]
+        if not _bounds["min"] - 1e-8 <= _target <= _max_allowed + 1e-8:
+            _factory_errors.append(f"{_role}: out of active override limits {_pid}={_target}")
+        if _bounds.get("stepMode") == "absolute":
+            _units = (_target - _bounds["min"]) / _bounds["step"]
+            if abs(_units - round(_units)) > 1e-5:
+                _factory_errors.append(f"{_role}: bad absolute source grid {_pid}")
+    for _id, _base in (("survival.waterEffectDuration", 30),
+                        ("survival.energyDrinkEffectDuration", 45),
+                        ("survival.vodkaEffectDuration", 20),
+                        ("survival.beerEffectDuration", 20),
+                        ("survival.magicVodkaEffectDuration", 90)):
+        _sec = _entries[_id]["number"] * _base
+        if abs(_sec / 5.0 - round(_sec / 5.0)) > 1e-7:
+            _factory_errors.append(f"{_role}: drink parent does not round-trip 5s snap {_id}")
+    for _id, _parent, _base in (
+        ("survival.waterRegenDuration", "survival.waterEffectDuration", 30),
+        ("survival.energyFullCostDuration", "survival.energyDrinkEffectDuration", 45),
+        ("survival.energyPartialCostDuration", "survival.energyDrinkEffectDuration", 45)):
+        _sec = _entries[_id]["number"]
+        if _sec > _entries[_parent]["number"] * _base + 1e-8 or abs(_sec/5-round(_sec/5)) > 1e-7:
+            _factory_errors.append(f"{_role}: child violates parent or 5s grid {_id}")
+    for _id in ("survival.vincaDuration", "survival.herculesDuration", "survival.psiBlockDuration"):
+        _sec = _entries[_id]["number"]
+        if abs(_sec/5-round(_sec/5)) > 1e-7:
+            _factory_errors.append(f"{_role}: medicine misses 5s grid {_id}")
+    if not 0 < _entries["survival.hungerRate"]["number"] <= 0.014:
+        _factory_errors.append(f"{_role}: hunger still too frequent")
+    if _entries["health.foodHealing"]["boolean"] is not False:
+        _factory_errors.append(f"{_role}: food HP restore unexpectedly enabled")
+    _old_blobs = _factory_service_text.split("PreConsumableRebalanceFactoryBlobs =", 1)[-1].split("};", 1)[0]
+    if f'["{_role}"]' not in _old_blobs:
+        _factory_errors.append(f"{_role}: predecessor pristine stock hash missing")
+if (len({_role_number(name, "survival.hungerRate") for name in _factory_preset_names}) < 5
+    or _role_number("Wanderer", "survival.waterEffectDuration") * 30 < 240
+    or _role_number("Wanderer", "survival.energyDrinkEffectDuration") * 45 < 270
+    or not _consumable_matrix["profiles"]["Field Medic"]["medicalOverride"]):
+    _factory_errors.append("factory consumable role separation regressed")
+for _doc in ("FACTORY-PRESETS.md", "PRESET-FORMAT.md"):
+    if "2026-10-15 — Consumable cadence, override" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        _factory_errors.append("consumable contract documentation missing "+_doc)
 
 if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legacyPath)" not in _factory_service_text:
     _factory_errors.append("legacy factory preset migration cleanup missing")

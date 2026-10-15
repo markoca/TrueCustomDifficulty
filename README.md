@@ -1,5 +1,7 @@
 # True Custom Difficulty
 
+**Consumable cadence update (2026-10-15):** All 12 factory profiles reduce repetitive hunger, activate the source-backed duration override and use longer, distinct Water/Energy/Vinca/Hercules/Psi Block effects. Field Medic also uses the separate Medical Items override. UI/catalog and CFG writer contracts remain unchanged. See `docs/FACTORY-PRESETS.md` and `tools/factory_preset_consumable_balance.json`. Local Wine and gameplay verification pending.
+
 **Deep role-based factory profiles (2026-10-15):** All 12 stock presets with 248 native controls have been source-audited and rebalanced over 78 control IDs (702 actual changes) to emphasize distinct professions and non-vanilla resource loops. The 37-/46-source authored matrices, exact pristine-stock migration, source audit and role documentation are synchronized. No UI or CFG-writer changes. See `docs/FACTORY-PROFILE-DEEP-AUDIT-2026-10-15.md`; local publish/Wine and in-game validation remain pending.
 
 **Water cap and knob legibility (2026-10-15, current):** The WATER box now displays the derived stamina cap using an 11.2-DIP label and larger 13.0-DIP number, with gold digits only when changed. **WATER STAMINA BONUS** is yellow (its separate bonus duration remains green); the middle knob is **STAMINA COST**, displaying the actual native negative effect as **-10%** (0% to -20%, never -0%). The independently editable Water/energy sources, CFG mapping, values, presets, 3+2 geometry and controls are unchanged. Verify wide/narrow appearance under local Wine.

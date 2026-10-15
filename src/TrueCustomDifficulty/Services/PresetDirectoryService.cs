@@ -158,6 +158,25 @@ public sealed class PresetDirectoryService
         ["Hardcore+"] = "4a849dff785a8c33864e14b651195ad206385aef",
     };
 
+    // Exact pristine stock profiles before 2026-10-15 consumable cadence
+    // and duration-override rebalance. Customized files remain untouched.
+    private static readonly Dictionary<string, string> PreConsumableRebalanceFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Immersive"] = "76c40e5a7c364991d320d01be671cbf2a73a81b0",
+        ["Tactical"] = "3017ab08b5f9933bce9e22603a02b2803e17c015",
+        ["Field Medic"] = "68aaf6c89241a2fa066c73db838855faba41b924",
+        ["Mutant Hunter"] = "cde631534a0ebf351512b0d976c774adf59c7c97",
+        ["Anomaly Runner"] = "5f9e5f091ae94b6dbfbfd0c9d172aae74a69a38a",
+        ["Wanderer"] = "5cdd7192768e06096f93d6a9c74941b294b07493",
+        ["Mercenary"] = "33f3248392c502f4696137188fc0274490372f9a",
+        ["Smuggler"] = "d0eedab8dba1d6a6a991606aa29954b722160266",
+        ["Scavenger"] = "cd6d395e72fd0762a96e322770cfbb25ed5e684a",
+        ["Outcast"] = "e7addc89ef6e160e7e6c81f22dbfe1d6a27694b4",
+        ["Hardcore"] = "7e85bf6f1e892d4b106122beee45ce03db6dc3ea",
+        ["Hardcore+"] = "1393b57ab6d7a8428d1728602396ea18c911b256",
+    };
+
     public string Ensure()
     {
         var directory = Path.Combine(AppContext.BaseDirectory, "Presets");
@@ -235,7 +254,8 @@ public sealed class PresetDirectoryService
             && !PreFullCoverageFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreScarcityBalanceFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreWaterSplitFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreRoleRebalanceFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreRoleRebalanceFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreConsumableRebalanceFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -263,7 +283,9 @@ public sealed class PresetDirectoryService
                 || (PreWaterSplitFactoryBlobs.TryGetValue(name, out var preWaterHash)
                     && actual.Equals(preWaterHash, StringComparison.OrdinalIgnoreCase))
                 || (PreRoleRebalanceFactoryBlobs.TryGetValue(name, out var preRoleHash)
-                    && actual.Equals(preRoleHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preRoleHash, StringComparison.OrdinalIgnoreCase))
+                || (PreConsumableRebalanceFactoryBlobs.TryGetValue(name, out var preConsumableHash)
+                    && actual.Equals(preConsumableHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

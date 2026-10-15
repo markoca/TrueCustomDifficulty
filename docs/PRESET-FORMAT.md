@@ -1,5 +1,9 @@
 # Preset JSON format
 
+### 2026-10-15 — Consumable cadence, override and role differentiation (CURRENT)
+
+All twelve embedded factory profiles now serialize `"drinkDurationOverride": true` **at preset root**, never in `values`, and the Field Medic alone serializes `"medicalOverride": true` for stronger bleeding treatments. These are *UI-only editor-ceiling flags* restored before numerical values; neither creates a new game CFG option. Profiles still contain **248 native entries**, original `referenceDifficulty` and v1 format. A missing override in a custom or old preset remains false by default. Exact Git-blob migration of the previous stock JSONs occurs through `PreConsumableRebalanceFactoryBlobs` and never overwrites user edits. Consult `tools/factory_preset_consumable_balance.json` for individual role values and `docs/FACTORY-PRESETS.md` for the cadence rationale.
+
 ### 2026-10-15 — Role-first deep rebalance (CURRENT)
 
 The current **12 stock profiles** are still **format v1** snapshots with all **248 source-backed IDs**. The 2026-10-15 role-first matrix rebalances 78 source IDs and 702 stored values, with no schema revision or new CFG target. The reference difficulty and prior `savedAtUtc` metadata fields are preserved for compatibility and do not indicate the rebalance date. See `tools/factory_preset_role_rebalance.json` and `docs/FACTORY-PROFILE-DEEP-AUDIT-2026-10-15.md`.

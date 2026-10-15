@@ -4,6 +4,8 @@
   "toolVersion": "0.9.26.82",
   "gameVersion": "2.0.5",
   "referenceDifficulty": "Master",
+  "drinkDurationOverride": true,
+  "medicalOverride": false,
   "savedAtUtc": "2026-10-14T14:30:00Z",
   "values": {
     "combat.npcHealth": {
@@ -104,7 +106,7 @@
     },
     "survival.hungerRate": {
       "kind": "slider",
-      "number": 0.025
+      "number": 0.013
     },
     "survival.hungerMediumStaminaRegen": {
       "kind": "slider",
@@ -849,15 +851,15 @@
     },
     "survival.waterRegenDuration": {
       "kind": "slider",
-      "number": 5
+      "number": 25
     },
     "survival.energyFullCostDuration": {
       "kind": "slider",
-      "number": 5
+      "number": 15
     },
     "survival.energyPartialCostDuration": {
       "kind": "slider",
-      "number": 15
+      "number": 50
     },
     "combat.mutantHealth.blinddog": {
       "kind": "slider",
@@ -885,11 +887,11 @@
     },
     "survival.waterInstantStaminaRestore": {
       "kind": "slider",
-      "number": 0.3
+      "number": 0.35
     },
     "survival.energyDrinkInstantStaminaRestore": {
       "kind": "slider",
-      "number": 0.4
+      "number": 0.45
     },
     "survival.waterStaminaEffectStrength": {
       "kind": "slider",
@@ -897,19 +899,19 @@
     },
     "survival.waterStaminaCostReduction": {
       "kind": "slider",
-      "number": 0.55
+      "number": 0.75
     },
     "survival.waterEffectDuration": {
       "kind": "slider",
-      "number": 0.8
+      "number": 4
     },
     "survival.energyDrinkStaminaRecoveryStrength": {
       "kind": "slider",
-      "number": 0.75
+      "number": 0.85
     },
     "survival.energyDrinkEffectDuration": {
       "kind": "slider",
-      "number": 0.8
+      "number": 4
     },
     "health.beerRadiationRemoval": {
       "kind": "slider",
@@ -921,39 +923,39 @@
     },
     "survival.vodkaEffectDuration": {
       "kind": "slider",
-      "number": 1.3
+      "number": 1.5
     },
     "survival.beerEffectDuration": {
       "kind": "slider",
-      "number": 1.2
+      "number": 1.25
     },
     "survival.magicVodkaEffectDuration": {
       "kind": "slider",
-      "number": 0.9
+      "number": 1
     },
     "survival.vincaBleedRecovery": {
       "kind": "slider",
-      "number": 7
+      "number": 6
     },
     "survival.vincaDuration": {
       "kind": "slider",
-      "number": 140
+      "number": 425
     },
     "survival.herculesCarryBonus": {
       "kind": "slider",
-      "number": 15
+      "number": 14
     },
     "survival.herculesDuration": {
       "kind": "slider",
-      "number": 240
+      "number": 310
     },
     "survival.psiBlockRecovery": {
       "kind": "slider",
-      "number": 6
+      "number": 5
     },
     "survival.psiBlockDuration": {
       "kind": "slider",
-      "number": 50
+      "number": 250
     },
     "survival.drunknessThresholdScale": {
       "kind": "slider",

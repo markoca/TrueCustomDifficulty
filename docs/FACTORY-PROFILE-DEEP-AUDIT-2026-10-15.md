@@ -1,5 +1,7 @@
 # Factory-profile deep audit — 2026-10-15
 
+**Historical baseline:** The 78-source role pass documented below has been followed by a consumable cadence / override rebalance. Current values and the new source-backed per-role contract live in `tools/factory_preset_consumable_balance.json` and `docs/FACTORY-PRESETS.md`; earlier hunger/drink values here are not the current factory snapshots.
+
 ## Scope and source verification
 
 Twelve role-defined stock files each continue to ship **248 native CFG-backed parameters** (2,976 stored entries) across Combat, Survival, Health, Master, Stamina, Loot, Economy, Equipment, Environment and A-Life. A further **78 real source controls** are explicitly reauthored in `tools/factory_preset_role_rebalance.json`, yielding **702 changed source values**. Complete snapshots remain in `src/TrueCustomDifficulty/Presets/*.json`. This new matrix governs only changed values; unchanged source values retain their earlier provenance, bounds and CFG mappings. Original 37-source expansion and 46-source scarcity matrices have been synchronized.

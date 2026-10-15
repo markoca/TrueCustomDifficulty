@@ -1,5 +1,13 @@
 # Factory Presets
 
+### 2026-10-15 — Consumable cadence, override and role differentiation (CURRENT)
+
+All 12 factory profiles explicitly save the existing `drinkDurationOverride` UI-only root flag. This permits **270s maximum drink effects** and **900s maximum Vinca/Hercules/Psi Block durations** without inventing a CFG parameter. Each profile retains **248 native CFG-backed controls** (preset format v1) and the same independent Water bonus/cost-cut sources and parent/child duration limits. **Field Medic** alone additionally enables the independent `medicalOverride` to allow much stronger source-backed medkit bleeding treatment. The source of truth is `tools/factory_preset_consumable_balance.json`; earlier expansion/scarcity/role matrix expectations remain synchronized.
+
+Every preset now uses a **0.007–0.014 points/s hunger gain** (vanilla **0.015**), reducing repeated eating while keeping ordinary-food HP healing OFF, food scarcity, hunger thresholds and starvation rules unchanged. Role-specific Water and Energy Drink main durations cover **90–240s / 135–270s**, with matching source-native short effects; Vinca **350–750s**, Hercules **270–800s**, and Psi Block **200–850s**. Drink restoration amounts, stamina benefits, Vinca/Psi strength and Hercules load capacity also vary strongly by profession. These are configured effect duration and magnitude sources, **not measured hunger frequency or verified in-game effect stacking**.
+
+The existing preset loader restores override mode **before** source values. `PreConsumableRebalanceFactoryBlobs` authorizes reseeding only *exact-byte pristine* previous factory files; modified factory files and user-created profiles are never overwritten. No UI geometry, interaction, title, CFG writer or native parameter was added/changed; Wine and game validation remain pending.
+
 ### 2026-10-15 — Role-first deep rebalance (CURRENT)
 
 All **twelve factory profiles** still store all **248 native CFG-backed catalog parameter entries**, while **78 audited control IDs** have been rebalanced across all ten tabs, resulting in **702 actual value changes**. The committed reproducible source is `tools/factory_preset_role_rebalance.json`, which is checked against every role JSON by `tools/audit_project_consistency.py`. Original 37-source expansion and 46-source scarcity matrices are synchronized wherever this pass changes their controls.
