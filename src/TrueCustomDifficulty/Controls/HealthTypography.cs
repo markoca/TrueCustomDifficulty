@@ -6,7 +6,7 @@ namespace TrueCustomDifficulty.Controls;
 /// </summary>
 internal static class HealthTypography
 {
-    public const double Title = 12.5;
+    public const double Title = VisualControlTypography.BoardTitle;
     public const double Label = 11.4;
     public const double Value = 12.8;
     public const double Axis = 10.4;

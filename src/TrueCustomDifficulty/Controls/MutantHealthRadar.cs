@@ -139,7 +139,7 @@ public sealed class MutantHealthRadar : FrameworkElement
         _targets.Clear();
         _damageMarkerTargets.Clear();
         DrawCenteredText(dc, "MUTANT DAMAGE AND HEALTH", new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
         // Stamina Usage-style grouped, independent horizontal controls.
         // Seven rows, two columns, alphabetically ordered down each column.
@@ -165,7 +165,7 @@ public sealed class MutantHealthRadar : FrameworkElement
             return;
         var card = new Rect(content.Left, 43.0, content.Width, 71.0);
         dc.DrawRoundedRectangle(panel, new Pen(border, 0.9), card, 4.0, 4.0);
-        DrawText(dc, "MUTANT HIT DAMAGE", new Point(card.Left + 11.0, card.Top + 7.0), 10.8, text, FontWeights.Bold);
+        DrawText(dc, "MUTANT HIT DAMAGE", new Point(card.Left + 11.0, card.Top + 7.0), VisualControlTypography.CardTitle, text, FontWeights.Bold);
         var value = CreateText($"{damage.CurrentNumber:0.##}x hit dmg", 11.0,
             damage.IsValueModifiedFromReference() ? accent : text, FontWeights.Bold);
         dc.DrawText(value, new Point(card.Right - 11.0 - value.Width, card.Top + 7.0));

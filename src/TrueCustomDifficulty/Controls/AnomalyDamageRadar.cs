@@ -151,7 +151,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         _targets.Clear();
 
         DrawCenteredText(dc, "ANOMALY DAMAGE",
-            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
+            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
         // One shared frame for GLOBAL and all eleven native source sliders.
         // Global remains an independent 0..2.5x/0.01x difficulty source.
@@ -183,7 +183,7 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         }
         var axis = new Point(11.0, (top + bottom) / 2);
         dc.PushTransform(new RotateTransform(-90, axis.X, axis.Y));
-        DrawCenteredText(dc, "% VANILLA", axis, 9.0, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "% VANILLA", axis, VisualControlTypography.AxisTitle, accent, FontWeights.Bold);
         dc.Pop();
 
         for (var i = 0; i < Anomalies.Length; i++)

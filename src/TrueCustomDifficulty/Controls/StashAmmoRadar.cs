@@ -134,7 +134,7 @@ public sealed class StashAmmoRadar : FrameworkElement
         _targets.Clear();
 
         DrawCenteredText(dc, "STASH AMMO AMOUNTS", new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
 
         for (var tier = 0; tier < Tiers.Length; tier++)

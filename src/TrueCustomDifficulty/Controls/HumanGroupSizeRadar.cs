@@ -136,7 +136,7 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
         _targets.Clear();
         DrawCenteredText(dc, "HUMAN SQUAD SIZE",
             new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
         const double top = 111.0, bottom = 281.0;
         const double maxAxis = 3.0;
@@ -148,11 +148,11 @@ public sealed class HumanGroupSizeRadar : FrameworkElement
             dc.DrawLine(new Pen(CloneWithOpacity(border, .4), .8),
                 new Point(left, yTick), new Point(ActualWidth - 20.0, yTick));
             DrawRightAlignedText(dc, $"{tick * .5:0.#}x",
-                new Point(left - 8.0, yTick - 6.0), 9.0, muted, FontWeights.SemiBold);
+                new Point(left - 8.0, yTick - 6.0), VisualControlTypography.AxisTick, muted, FontWeights.SemiBold);
         }
         var axis = new Point(12.0, (top + bottom) / 2);
         dc.PushTransform(new RotateTransform(-90, axis.X, axis.Y));
-        DrawCenteredText(dc, "SQUAD SIZE", axis, 9.2, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "SQUAD SIZE", axis, VisualControlTypography.AxisTitle, accent, FontWeights.Bold);
         dc.Pop();
 
         for (var i = 0; i < Ranks.Length; i++)

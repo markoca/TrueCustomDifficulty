@@ -1,5 +1,7 @@
 # True Custom Difficulty
 
+**Cross-family UI parity (2026-10-15):** Standard graph/radar/dashboard panels now share a 12.5-DIP title token, comparable axis captions/ticks and compact source-card headings use common typography, and both ordinary MIN/MAX range tracks share WPF styles. Existing common slider/checkbox templates, knob typography, source-specific layouts, yellow-on-change values and Health-specific scales stay intact. See `docs/CONTROL-FAMILY-VISUAL-AUDIT.md` for the coverage matrix and runtime checks.
+
 **Knob MIN/MAX readability (2026-10-15):** All 270-degree native rotary knobs use pure-white minimum and maximum numbers, 10.8 DIP Segoe UI SemiBold (the same size as each knob's title). Their anchors are moved 6 DIP toward the knob, while the center values, secondary derived readouts, coloring rules and interactive dial behavior stay unchanged.
 
 **Knob typography (2026-10-15):** Every 270-degree knob now uses the same slightly larger Segoe UI title (**10.8 DIP Bold**) and lower MIN/MAX numbers (**10.2 DIP SemiBold**), including the separate Global Anomaly Damage knob. No changes to the middle readouts, slider/knob geometry, source parameters, presets or CFG output.

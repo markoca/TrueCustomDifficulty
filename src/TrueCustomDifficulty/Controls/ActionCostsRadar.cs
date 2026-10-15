@@ -244,7 +244,7 @@ public sealed class ActionCostsRadar : FrameworkElement
         DrawCenteredText(dc,
             IsExhaustion ? "EXHAUSTION & RECOVERY" : "STAMINA USAGE",
             new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
         const double left = 18.0;
         var width = Math.Max(1.0, ActualWidth - 36.0);

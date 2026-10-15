@@ -4485,7 +4485,7 @@ for _drunkenness_header_token in (
     'private const double HeaderOffset = 42.0;',
     'private const double BoardHeight = 360.0 + HeaderOffset;',
     'DrawCenteredText(dc, "ALCOHOL TOLERANCE",',
-    'new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);',
+    'new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);',
     'IndustrialChrome.DrawFrame(',
     'accentEdge: true,',
     'technicalMarks: true,',
@@ -4890,6 +4890,76 @@ for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "White, closer MIN/MAX numbers on all rotary knobs (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
         fail("White and raised rotary endpoints missing from UI catalog " + _doc)
 note("All rotary knobs: 10.8 DIP headings and white 10.8 DIP MIN/MAX values lifted 6 DIP; native dial geometry unchanged")
+
+# Cross-family visual parity: WPF native cards, diagram/radar boards and
+# editable MIN/MAX ranges use shared style tokens without changing source bindings.
+_visual_t = (ROOT / "src/TrueCustomDifficulty/Controls/VisualControlTypography.cs").read_text(encoding="utf-8")
+for _token in (
+        "internal static class VisualControlTypography",
+        "public const double BoardTitle = 12.5;",
+        "public const double AxisTitle = 9.3;",
+        "public const double AxisTick = 9.2;",
+        "public const double CardTitle = 10.8;",
+        ):
+    if _token not in _visual_t:
+        fail("Visual control type scale missing or drifted: " + _token)
+_visual_dir = ROOT / "src/TrueCustomDifficulty/Controls"
+_visual_boards = {
+    "ActionCostsRadar.cs": 1,
+    "BleedingCurveControl.cs": 1,
+    "DrunkennessControl.cs": 1,
+    "HumanGroupSizeRadar.cs": 1,
+    "ItemPriceScalersRadar.cs": 1,
+    "MutantGroupSizeRadar.cs": 1,
+    "MutantHealthRadar.cs": 1,
+    "MutantDropRadar.cs": 1,
+    "StashAmmoRadar.cs": 1,
+    "WorldLootRemovalRadar.cs": 1,
+    "AnomalyDamageRadar.cs": 1,
+    "AggregateVisualControl.cs": 6,
+}
+for _file, _expected in _visual_boards.items():
+    _source = (_visual_dir / _file).read_text(encoding="utf-8")
+    if _source.count("VisualControlTypography.BoardTitle, accent, FontWeights.Bold);") != _expected:
+        fail("Diagram/board heading family typography drifted: " + _file)
+_health_visual = (_visual_dir / "HealthTypography.cs").read_text(encoding="utf-8")
+if "public const double Title = VisualControlTypography.BoardTitle;" not in _health_visual:
+    fail("Health and medical board titles no longer follow the common hierarchy")
+for _file, _axis_title, _axis_tick in (
+        ("HumanGroupSizeRadar.cs", True, True),
+        ("ItemPriceScalersRadar.cs", True, True),
+        ("WorldLootRemovalRadar.cs", True, True),
+        ("AnomalyDamageRadar.cs", True, False),
+        ("AggregateVisualControl.cs", False, True),
+        ):
+    _source = (_visual_dir / _file).read_text(encoding="utf-8")
+    if _axis_title and "VisualControlTypography.AxisTitle" not in _source:
+        fail("Comparable chart axis caption drifted: " + _file)
+    if _axis_tick and "VisualControlTypography.AxisTick" not in _source:
+        fail("Comparable chart scale tick drifted: " + _file)
+for _file in ("BleedingCurveControl.cs", "DrunkennessControl.cs",
+              "MutantHealthRadar.cs", "AggregateVisualControl.cs"):
+    if "VisualControlTypography.CardTitle" not in (_visual_dir / _file).read_text(encoding="utf-8"):
+        fail("Comparable short card/track title drifted: " + _file)
+_range_ui = (ROOT / "src/TrueCustomDifficulty/MainWindow.xaml").read_text(encoding="utf-8")
+for _token in (
+        '<Style x:Key="RangeTrackCaptionStyle" TargetType="{x:Type TextBlock}">',
+        '<Style x:Key="RangeTrackValueStyle" TargetType="{x:Type TextBlock}">',
+        'Text="MIN" Style="{StaticResource RangeTrackCaptionStyle}"',
+        'Text="MAX" Style="{StaticResource RangeTrackCaptionStyle}"',
+        'Text="{Binding RangeMinDisplay}" Style="{StaticResource RangeTrackValueStyle}"',
+        'Text="{Binding RangeMaxDisplay}" Style="{StaticResource RangeTrackValueStyle}"',
+        '<Setter TargetName="RangeMinValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />',
+        '<Setter TargetName="RangeMaxValueText" Property="Foreground" Value="{StaticResource AccentBrush}" />',
+        ):
+    if _token not in _range_ui:
+        fail("Native range control shared style/editable modified tint drifted: " + _token)
+for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
+    if "Visual parity across related controls (CURRENT)" not in (DOCS / _catalog).read_text(encoding="utf-8"):
+        fail("Control-family visual parity missing from " + _catalog)
+if not (DOCS / "CONTROL-FAMILY-VISUAL-AUDIT.md").exists():
+    fail("Cross-family visual-control inventory is missing")
+note("Visual families: 12 native board renderers share title scale, comparable chart axes align, range MIN/MAX track typography is centralized; Health, checkbox and knobs keep family contracts")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

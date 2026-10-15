@@ -132,7 +132,7 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
         _targets.Clear();
 
         DrawCenteredText(dc, "WORLD LOOT DEPLETION", new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
 
         // Five independent 0–100% depletion controls, on one physical ruler.
@@ -146,11 +146,11 @@ public sealed class WorldLootRemovalRadar : FrameworkElement
             dc.DrawLine(new Pen(CloneWithOpacity(border, .43), .8),
                 new Point(left, y), new Point(ActualWidth - 19, y));
             DrawRightAlignedText(dc, $"{step * 25}%",
-                new Point(left - 9, y - 6), 9, muted, FontWeights.SemiBold);
+                new Point(left - 9, y - 6), VisualControlTypography.AxisTick, muted, FontWeights.SemiBold);
         }
         var axis = new Point(12, (plotTop + plotBottom) / 2);
         dc.PushTransform(new RotateTransform(-90, axis.X, axis.Y));
-        DrawCenteredText(dc, "REMOVED", axis, 9.3, accent, FontWeights.Bold);
+        DrawCenteredText(dc, "REMOVED", axis, VisualControlTypography.AxisTitle, accent, FontWeights.Bold);
         dc.Pop();
 
         for (var i = 0; i < Populations.Length; i++)

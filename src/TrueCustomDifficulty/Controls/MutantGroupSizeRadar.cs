@@ -139,7 +139,7 @@ public sealed class MutantGroupSizeRadar : FrameworkElement
         _targets.Clear();
         DrawCenteredText(dc, "MUTANT GROUP SIZE",
             new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
         DrawCenteredText(dc, "14 SPECIES  |  N / E / V / M = PLAYER RANK",
             new Point(ActualWidth / 2.0, 43.0),
             9.2, muted, FontWeights.SemiBold);

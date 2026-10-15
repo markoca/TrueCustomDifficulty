@@ -700,7 +700,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent, Brush panel)
     {
         DrawCenteredText(dc, "ITEM WEIGHT",
-            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
+            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
         var controls = new (string Id, string Label)[]
         {
@@ -727,7 +727,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush accent, Brush panel)
     {
         DrawCenteredText(dc, "GLOBAL ANOMALY DAMAGE",
-            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
+            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
         // Reuse the native-source rotary control from Your Weapons, without
         // changing EnvironmentDifficulty.Anomaly_Damage or the selected baseline.
         // This single knob stays centered and bounded within its full-width group.
@@ -757,7 +757,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         DrawCenteredText(dc, "FLYCATCHER SLOWDOWN",
             new Point((ActualWidth - FlycatcherEffectsWidth(ActualWidth) - 24.0) / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
         var movement = P("environment.flycatcherMovementSpeed");
         var turning = P("environment.flycatcherTurnSpeed");
@@ -889,7 +889,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         DrawCenteredText(dc, "SPECIAL ANOMALY EFFECTS",
             new Point(area.Left + area.Width / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
         // Match the standard 181-DIP mechanical source knob grammar exactly.
         // Keep both editors side by side, even in the 248-DIP narrow panel.
@@ -1209,7 +1209,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             rangeCard, 4.0, 4.0);
         DrawText(dc, "DROPPED WEAPON CONDITION",
             new Point(rangeCard.Left + 11.0, rangeCard.Top + 8.0),
-            10.8, text, FontWeights.Bold);
+            VisualControlTypography.CardTitle, text, FontWeights.Bold);
         var accepted = Linked("economy.traderMinBuyCondition");
         if (accepted is not null)
             DrawDerivedRight(dc, $"TRADER ACCEPTS ≥ {accepted.CurrentNumber * 100.0:0}%",
@@ -1762,7 +1762,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
         for (int t = 0; t <= 100; t += 25)
             DrawCenteredText(dc, $"{t}", new Point(X(t), area.Bottom + 16),
-                9.2, muted, FontWeights.SemiBold);
+                VisualControlTypography.AxisTick, muted, FontWeights.SemiBold);
         void Steps(ParameterViewModel[] effects, bool reload, bool basePreset, Pen pen)
         {
             // Reload's white response is shown only in its MEDIUM–SEVERE
@@ -1894,7 +1894,7 @@ public sealed class AggregateVisualControl : FrameworkElement
 
     private void DrawMasterSectionTitle(DrawingContext dc, string title, Brush accent)
         => DrawCenteredText(dc, title, new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
     private void DrawMasterBundleToggle(
         DrawingContext dc, ParameterViewModel? toggle, string label,
@@ -4988,7 +4988,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         // Consistent centered card heading across every aggregate visual.
         DrawCenteredText(dc, title, new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
         if (!string.IsNullOrWhiteSpace(subtitle))
             DrawCenteredText(dc, subtitle, new Point(ActualWidth / 2.0, 39.0),
                 9.5, muted, FontWeights.Normal);

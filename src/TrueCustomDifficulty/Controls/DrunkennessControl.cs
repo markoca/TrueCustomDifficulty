@@ -133,7 +133,7 @@ public sealed class DrunkennessControl : FrameworkElement
             technicalMarks: true);
 
         DrawCenteredText(dc, "ALCOHOL TOLERANCE",
-            new Point(ActualWidth / 2.0, 21.0), 12.5, accent, FontWeights.Bold);
+            new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
         dc.PushTransform(new TranslateTransform(0.0, HeaderOffset));
 
         var gap = 8.0;
@@ -235,7 +235,7 @@ public sealed class DrunkennessControl : FrameworkElement
         var drinkLabel = drinks == 1 ? singular : plural;
 
         // Row 1: drink name + centered gameplay consequence.
-        DrawText(dc, singular, new Point(rect.Left + 10, rect.Top + 7), 11.0, text, FontWeights.Bold);
+        DrawText(dc, singular, new Point(rect.Left + 10, rect.Top + 7), VisualControlTypography.CardTitle, text, FontWeights.Bold);
         DrawCenteredStatus(
             dc,
             "WASTED AFTER ",

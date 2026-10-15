@@ -168,7 +168,7 @@ public sealed class BleedingCurveControl : FrameworkElement
             technicalMarks: true);
 
         DrawCenteredText(dc, "BLEEDING SYSTEM", new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
         DrawText(dc, "GLOBAL EFFECTS", new Point(16, 34), 8.8, muted, FontWeights.Bold);
 
         var gap = 10.0;
@@ -233,7 +233,7 @@ public sealed class BleedingCurveControl : FrameworkElement
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), rect, 3.0, 3.0);
 
         DrawText(dc, label, new Point(rect.Left + 10, rect.Top + 8),
-            10.8, text, FontWeights.Bold);
+            VisualControlTypography.CardTitle, text, FontWeights.Bold);
 
         if (parameter is null)
         {

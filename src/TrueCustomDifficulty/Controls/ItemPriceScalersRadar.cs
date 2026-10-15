@@ -102,7 +102,7 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             panel, border, accent, border, 8, accentEdge: true, technicalMarks: true);
         _hits.Clear();
         Center(dc, "ITEM VALUE LAYERS", ActualWidth / 2.0, 21,
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
         // Every live source has an audited 0–2x native range. All six columns
         // therefore share one REAL scale; never normalize each source to a
@@ -118,12 +118,12 @@ public sealed class ItemPriceScalersRadar : FrameworkElement
             var y = chart.Bottom - step * PlotHeight / 4.0;
             dc.DrawLine(new Pen(Clone(border, .48), .8),
                 new Point(plotLeft, y), new Point(plotRight, y));
-            var tick = Text($"{step * .5:0.#}x", 9.2, muted, FontWeights.SemiBold);
+            var tick = Text($"{step * .5:0.#}x", VisualControlTypography.AxisTick, muted, FontWeights.SemiBold);
             dc.DrawText(tick, new Point(plotLeft - tick.Width - 9.0, y - tick.Height / 2));
         }
         var axis = new Point(12.0, chart.Top + chart.Height / 2);
         dc.PushTransform(new RotateTransform(-90, axis.X, axis.Y));
-        Center(dc, "VALUE", axis.X, axis.Y, 9.2, accent, FontWeights.Bold);
+        Center(dc, "VALUE", axis.X, axis.Y, VisualControlTypography.AxisTitle, accent, FontWeights.Bold);
         dc.Pop();
 
         for (var i = 0; i < Items.Length; i++)

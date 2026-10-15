@@ -142,7 +142,7 @@ public sealed class MutantDropRadar : FrameworkElement
         _targets.Clear();
 
         DrawCenteredText(dc, "MUTANT PART DROPS", new Point(ActualWidth / 2.0, 21.0),
-            12.5, accent, FontWeights.Bold);
+            VisualControlTypography.BoardTitle, accent, FontWeights.Bold);
 
 
         var outerLeft = 18.0;
