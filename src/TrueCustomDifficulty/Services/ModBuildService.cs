@@ -26,7 +26,8 @@ public sealed class ModBuildService
     public ModBuildResult Build(
         MainViewModel vm,
         ParameterCatalog catalog,
-        GameInstallInfo? gameInstall)
+        GameInstallInfo? gameInstall,
+        IProgress<BuildProgressUpdate>? progress = null)
     {
         var outputDirectory = Path.Combine(AppContext.BaseDirectory, "Output");
         var workRoot = Path.Combine(
@@ -46,7 +47,9 @@ public sealed class ModBuildService
 
             if (cfgResult.FileCount == 0)
             {
+                progress?.Report(new BuildProgressUpdate(4, "CLEARING OUTPUT"));
                 ReplaceOutputWithEmptyDirectory(outputDirectory);
+                progress?.Report(new BuildProgressUpdate(5, "INSTALLING"));
                 return new ModBuildResult
                 {
                     OutputDirectory = outputDirectory,
@@ -68,17 +71,22 @@ public sealed class ModBuildService
             // CFG patches are ordinary loose files and belong in the .pak container.
             // Explicit V11 + ../../../ produces paths such as
             // ../../../Stalker2/Content/GameLite/GameData/... inside the archive.
+            progress?.Report(new BuildProgressUpdate(1, "PACKING PAK"));
             RunRepak(repakPath, stagingRoot, pakPath);
 
             // retoc's to-zen path creates the IoStore companion container. For this
             // CFG-only staging tree there are no cooked assets to convert, and retoc
             // intentionally leaves the already-existing .pak untouched.
+            progress?.Report(new BuildProgressUpdate(2, "BUILDING IOSTORE"));
             RunRetoc(retocPath, stagingRoot, utocPath);
 
             var expected = new[] { pakPath, utocPath, ucasPath };
 
+            progress?.Report(new BuildProgressUpdate(3, "VERIFYING PACKAGE"));
             ValidateTriplet(expected);
+            progress?.Report(new BuildProgressUpdate(4, "PUBLISHING OUTPUT"));
             CommitTriplet(outputDirectory, expected);
+            progress?.Report(new BuildProgressUpdate(5, "INSTALLING"));
 
             var finalFiles = expected
                 .Select(path => Path.GetFileName(path))

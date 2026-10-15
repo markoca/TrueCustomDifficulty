@@ -24,6 +24,14 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        // The worker owns temporary staging and an atomic install. Do not let
+        // closing the window interrupt a live external repak/retoc process.
+        Closing += (_, e) =>
+        {
+            if (DataContext is MainViewModel { IsBuilding: true })
+                e.Cancel = true;
+        };
+
         SourceInitialized += (_, _) =>
         {
             if (PresentationSource.FromVisual(this) is HwndSource source)
@@ -52,6 +60,9 @@ public partial class MainWindow : Window
 
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
+        if (DataContext is MainViewModel { IsBuilding: true })
+            return;
+
         try
         {
             var settings = new ModDestinationSettingsService();

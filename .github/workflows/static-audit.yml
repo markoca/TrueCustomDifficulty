@@ -31,6 +31,9 @@ jobs:
       - name: Whole-project active source consistency
         run: python tools/audit_project_consistency.py
 
+      - name: Build Difficulty activity rail contract
+        run: python tools/audit_build_progress_contract.py
+
       - name: RC extreme-signal preset audit
         run: python tools/audit_rc_signal_preset.py
 

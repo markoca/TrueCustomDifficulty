@@ -26,6 +26,37 @@ public sealed class MainViewModel : ObservableObject
     private PresetListItem? _selectedPreset;
     private string? _loadedPresetName;
     private bool _suppressPresetSelection;
+    private bool _isBuilding;
+    private int _buildProgressStep;
+    private string _buildProgressLabel = string.Empty;
+
+    // All mutable editor inputs are locked during the off-thread CFG/package
+    // build. Only completed pipeline stages advance the progress bar.
+    public bool IsBuilding
+    {
+        get => _isBuilding;
+        private set
+        {
+            if (!SetProperty(ref _isBuilding, value))
+                return;
+            OnPropertyChanged(nameof(IsBuildIdle));
+            BuildCommand?.RaiseCanExecuteChanged();
+        }
+    }
+
+    public bool IsBuildIdle => !IsBuilding;
+
+    public int BuildProgressStep
+    {
+        get => _buildProgressStep;
+        private set => SetProperty(ref _buildProgressStep, value);
+    }
+
+    public string BuildProgressLabel
+    {
+        get => _buildProgressLabel;
+        private set => SetProperty(ref _buildProgressLabel, value);
+    }
 
     public string AppName => _catalog.App.Name;
     public string AppVersion => _catalog.App.Version;
@@ -992,7 +1023,7 @@ public sealed class MainViewModel : ObservableObject
         ResetAllCommand = new RelayCommand(_ => ApplyReferenceDifficulty(resetAll: true));
         SavePresetCommand = new RelayCommand(_ => SavePreset());
         LoadPresetCommand = new RelayCommand(_ => LoadPreset());
-        BuildCommand = new RelayCommand(_ => Build());
+        BuildCommand = new RelayCommand(_ => _ = BuildAsync(), _ => !IsBuilding);
     }
 
     public string BuildPresetName
@@ -1601,45 +1632,100 @@ public sealed class MainViewModel : ObservableObject
         }
     }
 
-    private void Build()
+    private async Task BuildAsync()
     {
+        if (IsBuilding)
+            return;
+
+        ModBuildResult? result = null;
+        IReadOnlyList<string>? installedFiles = null;
+        string? modsFolder = null;
+        Exception? buildError = null;
+
         try
         {
-            var modsFolder = _modDestinationSettings.RequireConfiguredPath();
+            // Validate before showing the busy rail: no build was started if
+            // the mods path is not configured.
+            modsFolder = _modDestinationSettings.RequireConfiguredPath();
             _sliderConstraintCoordinator.NormalizeAll();
-            var result = _modBuildService.Build(this, _catalog, _gameInstall);
-            var installedFiles = _modDeploymentService.Install(modsFolder, result.Files);
 
-            if (!result.HasMod)
+            BuildProgressStep = 0;
+            BuildProgressLabel = "WRITING CFG";
+            IsBuilding = true;
+
+            // Progress<T> marshals the worker's completed-stage notifications
+            // back to the WPF dispatcher without blocking the UI thread.
+            var progress = new Progress<BuildProgressUpdate>(update =>
             {
-                MessageBox.Show(
-                    "No gameplay values differ from the selected vanilla baseline.\n\n" +
-                    "Previous True Custom Difficulty files were removed from:\n" + modsFolder,
-                    AppName,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-                return;
-            }
+                if (!IsBuilding || update.CompletedStages < BuildProgressStep)
+                    return;
 
-            MessageBox.Show(
-                $"Built and installed True Custom Difficulty successfully.\n\n" +
-                $"{result.PatchFileCount} BPatch CFG file(s)\n" +
-                $"{result.ParameterCount} modified control(s)\n" +
-                $"{result.EditCount} concrete CFG edit(s)\n\n" +
-                $"Installed to:\n{modsFolder}\n\n" +
-                string.Join("\n", installedFiles.Select(Path.GetFileName)),
-                AppName,
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+                BuildProgressStep = update.CompletedStages;
+                BuildProgressLabel = update.Phase;
+            });
+
+            // Reading the VM is safe while all editors and presets are locked.
+            // No expensive CFG writing, repak, retoc or file deployment work
+            // may block the WPF dispatcher during a build.
+            result = await Task.Run(() =>
+                _modBuildService.Build(this, _catalog, _gameInstall, progress));
+
+            BuildProgressStep = 5;
+            BuildProgressLabel = "INSTALLING";
+            installedFiles = await Task.Run(() =>
+                _modDeploymentService.Install(modsFolder!, result.Files));
+
+            BuildProgressStep = 6;
+            BuildProgressLabel = "COMPLETE";
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
+        catch (Exception ex)
+        {
+            // This command is dispatched without an await by ICommand.
+            // Unexpected worker failures must be surfaced rather than lost
+            // as unobserved Task exceptions, and the footer must still reset.
+            buildError = ex;
+        }
+        finally
+        {
+            // Clear the rail before the result dialog appears, on success,
+            // failure and the no-mod/uninstall path alike.
+            IsBuilding = false;
+        }
+
+        if (buildError is not null)
         {
             MessageBox.Show(
-                $"Mod could not be built.\n\n{ex.Message}",
+                $"Mod could not be built.\n\n{buildError.Message}",
                 AppName,
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
+            return;
         }
+
+        if (result is null || modsFolder is null || installedFiles is null)
+            return;
+
+        if (!result.HasMod)
+        {
+            MessageBox.Show(
+                "No gameplay values differ from the selected vanilla baseline.\n\n" +
+                "Previous True Custom Difficulty files were removed from:\n" + modsFolder,
+                AppName,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            return;
+        }
+
+        MessageBox.Show(
+            $"Built and installed True Custom Difficulty successfully.\n\n" +
+            $"{result.PatchFileCount} BPatch CFG file(s)\n" +
+            $"{result.ParameterCount} modified control(s)\n" +
+            $"{result.EditCount} concrete CFG edit(s)\n\n" +
+            $"Installed to:\n{modsFolder}\n\n" +
+            string.Join("\n", installedFiles.Select(Path.GetFileName)),
+            AppName,
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
     }
 
     private static int ParameterSortOrder(ParameterViewModel parameter)

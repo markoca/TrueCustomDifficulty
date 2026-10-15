@@ -51,6 +51,59 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
+        <!-- LocalizationWorkbench StalkerProgressBar in WPF form: an 8-DIP
+             graphite rail with a warm-yellow owner-styled gradient, never
+             the native Windows/Wine progress-bar theme. Six *completed
+             pipeline stages*, not invented elapsed-time percentages. -->
+        <Style x:Key="WorkbenchBuildProgressStyle" TargetType="{x:Type ProgressBar}">
+            <Setter Property="Height" Value="8" />
+            <Setter Property="Maximum" Value="6" />
+            <Setter Property="IsHitTestVisible" Value="False" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ProgressBar}">
+                        <Border Height="8"
+                                Background="{StaticResource TitleBarBrush}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                SnapsToDevicePixels="True">
+                            <Grid x:Name="PART_Track" ClipToBounds="True">
+                                <Rectangle x:Name="PART_Indicator"
+                                           HorizontalAlignment="Left"
+                                           SnapsToDevicePixels="True">
+                                    <Rectangle.Fill>
+                                        <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                            <GradientStop Color="#FFD438" Offset="0" />
+                                            <GradientStop Color="#F0C419" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Gentle live-work pulse even while repak/retoc
+                                 cannot report a meaningful internal percent. -->
+                            <Trigger Property="IsVisible" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="PART_Indicator"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             From="1" To="0.65"
+                                                             Duration="0:0:0.8"
+                                                             AutoReverse="True"
+                                                             RepeatBehavior="Forever" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <DataTemplate x:Key="ParameterCardTemplate" DataType="{x:Type vm:ParameterViewModel}">
                                                     <Border x:Name="ParameterCard"
                                                             PreviewMouseLeftButtonDown="ParameterCard_PreviewMouseLeftButtonDown"
@@ -697,7 +750,8 @@
                 </StackPanel>
             </Grid>
 
-            <Grid Grid.Row="1" Margin="14,12,14,10">
+            <Grid Grid.Row="1" Margin="14,12,14,10"
+                  IsEnabled="{Binding IsBuildIdle}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -753,6 +807,7 @@
             </Grid>
 
             <TabControl Grid.Row="2" Margin="12,0,12,0"
+                        IsEnabled="{Binding IsBuildIdle}"
                         ItemsSource="{Binding Tabs}"
                         SelectedItem="{Binding SelectedTab}">
                 <TabControl.ItemTemplate>
@@ -1063,11 +1118,13 @@
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="0,1,0,0"
                     Padding="12,9" Margin="0,8,0,0">
-                <DockPanel LastChildFill="False">
+                <DockPanel LastChildFill="True">
                     <Button DockPanel.Dock="Left" Content="Settings" Click="Settings_Click"
+                            IsEnabled="{Binding IsBuildIdle}"
                             VerticalAlignment="Center" MinWidth="82" />
 
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"
+                                IsEnabled="{Binding IsBuildIdle}">
                         <ComboBox Width="190"
                                   Margin="0,0,7,0"
                                   ItemsSource="{Binding AvailablePresets}"
@@ -1081,6 +1138,34 @@
                         <Button Content="Build Difficulty" Command="{Binding BuildCommand}"
                                 Style="{StaticResource PrimaryButtonStyle}" />
                     </StackPanel>
+
+                    <!-- Only visible during the *real* asynchronous build.
+                         Dock fill uses exactly the gap between Settings and
+                         the right-side profile/actions, with no fixed-width
+                         spacer when hidden. -->
+                    <Border Margin="13,0,14,0" VerticalAlignment="Center"
+                            AutomationProperties.Name="Difficulty build progress">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsBuilding}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <TextBlock Text="{Binding BuildProgressLabel}"
+                                       Foreground="{StaticResource MutedTextBrush}"
+                                       FontSize="9" FontWeight="SemiBold"
+                                       TextTrimming="CharacterEllipsis"
+                                       Margin="0,0,0,3" />
+                            <ProgressBar Style="{StaticResource WorkbenchBuildProgressStyle}"
+                                         Value="{Binding BuildProgressStep}"
+                                         AutomationProperties.Name="Difficulty build completed stages" />
+                        </StackPanel>
+                    </Border>
                 </DockPanel>
             </Border>
         </Grid>
