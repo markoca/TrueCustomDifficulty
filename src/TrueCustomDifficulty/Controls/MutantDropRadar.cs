@@ -66,7 +66,6 @@ public sealed class MutantDropRadar : FrameworkElement
         MinHeight = 0;
         Cursor = Cursors.Arrow;
         SnapsToDevicePixels = true;
-        ToolTip = "Edit each mutant part drop chance independently. Grey ticks mark the selected difficulty reference.";
     }
 
     protected override Size MeasureOverride(Size availableSize)

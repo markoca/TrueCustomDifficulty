@@ -70,7 +70,6 @@
         
                                                                 <TextBlock x:Name="ParameterLabel"
                                                                            Text="{Binding Label}"
-                                                                           ToolTip="{Binding Label}"
                                                                            FontSize="11.5"
                                                                            FontWeight="Normal"
                                                                            Foreground="{StaticResource RadarMutedTextBrush}"
@@ -1065,7 +1064,7 @@
                                   ItemsSource="{Binding AvailablePresets}"
                                   SelectedItem="{Binding SelectedPreset, Mode=TwoWay}"
                                   DisplayMemberPath="Name"
-                                  ToolTip="Presets from the portable Presets folder" />
+                                  />
                         <Button Content="Load Preset" Command="{Binding LoadPresetCommand}" />
                         <Button Content="Save Preset" Command="{Binding SavePresetCommand}" />
                         <Button Content="Reset Tab" Command="{Binding ResetCurrentTabCommand}" />

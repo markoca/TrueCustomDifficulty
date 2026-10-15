@@ -492,7 +492,8 @@ public sealed class BleedingCurveControl : FrameworkElement
                 $"{currentValues[i]:0.##} HP/TICK · {100.0 * currentValues[i] / pool:0.#}% MAX HP",
                 new Point(card.Left + card.Width / 2, card.Top + 25),
                 9.0, text, accent, FontWeights.Bold,
-                _damage[i]?.IsValueModifiedFromReference() == true);
+                _damage[i]?.IsValueModifiedFromReference() == true,
+                highlightDerivedLastNumber: true);
         }
 
         _mediumThresholdHitRect = new Rect(x[1] - 20.0, _plotRect.Bottom - 10.0, 40.0, 34.0);
@@ -638,7 +639,6 @@ public sealed class BleedingCurveControl : FrameworkElement
         base.OnMouseLeave(e);
         _hoverTarget = DragTarget.None;
         _hoverDifficultyValue = null;
-        ToolTip = null;
         Cursor = Cursors.Arrow;
         InvalidateVisual();
     }
@@ -960,7 +960,8 @@ public sealed class BleedingCurveControl : FrameworkElement
     }
 
     private void DrawSourceNumber(DrawingContext dc, string value, Point point,
-        double size, Brush text, Brush accent, FontWeight weight, bool modified)
+        double size, Brush text, Brush accent, FontWeight weight, bool modified,
+        bool highlightDerivedLastNumber = false)
     {
         var ft = CreateText(value, size, text, weight);
         if (modified)
@@ -972,6 +973,16 @@ public sealed class BleedingCurveControl : FrameworkElement
                 ft.SetForegroundBrush(accent, number.Index, number.Length);
                 ft.SetFontSize(Math.Max(9.0, size) + 1.2,
                     number.Index, number.Length);
+            }
+        }
+        if (highlightDerivedLastNumber)
+        {
+            var numbers = System.Text.RegularExpressions.Regex.Matches(value,
+                @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
+            if (numbers.Count > 0)
+            {
+                var derived = numbers[numbers.Count - 1];
+                ft.SetForegroundBrush(accent, derived.Index, derived.Length);
             }
         }
         dc.DrawText(ft, new Point(point.X - ft.WidthIncludingTrailingWhitespace / 2.0,

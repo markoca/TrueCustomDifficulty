@@ -459,11 +459,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         }
         Cursor = globalHover ? Cursors.Hand
             : hover >= 0 ? Cursors.SizeNS : Cursors.Arrow;
-        ToolTip = globalHover
-            ? "Scales damage for all anomalies. Turn or scroll in 0.01x steps; right-click resets global."
-            : hover >= 0
-                ? "FINAL = BASE × global (before protection). BASE is this anomaly's editable value; the bar compares it with vanilla. Right-click resets this anomaly."
-                : null;
 
         if (_dragRow >= 0 && e.LeftButton == MouseButtonState.Pressed)
         {
@@ -477,7 +472,6 @@ public sealed class AnomalyDamageRadar : FrameworkElement
         base.OnMouseLeave(e);
         _hoverRow = -1;
         _hoverGlobalKnob = false;
-        ToolTip = null;
         InvalidateVisual();
     }
 

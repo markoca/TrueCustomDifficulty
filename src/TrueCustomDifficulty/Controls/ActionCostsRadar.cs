@@ -268,8 +268,13 @@ public sealed class ActionCostsRadar : FrameworkElement
                 : hovered.Id == "stamina.sprintCost"
                     ? $"{staminaPool / hovered.CurrentNumber:0.#}x POOL/COST"
                     : $"{Math.Floor(staminaPool / hovered.CurrentNumber):0} FROM FULL";
-            DrawRightAlignedText(dc, count, new Point(card.Right - 9.0, card.Top + 7.0),
-                9.0, muted, FontWeights.SemiBold);
+            var countText = CreateText(count, 9.0, muted, FontWeights.SemiBold);
+            var number = System.Text.RegularExpressions.Regex.Match(
+                count, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
+            if (number.Success)
+                countText.SetForegroundBrush(accent, number.Index, number.Length);
+            dc.DrawText(countText, new Point(card.Right - 9.0 -
+                countText.WidthIncludingTrailingWhitespace, card.Top + 7.0));
         }
 
         for (var local = 0; local < indices.Length; local++)
@@ -576,18 +581,22 @@ public sealed class ActionCostsRadar : FrameworkElement
         bool nativeOnly = false)
     {
         var formatted = CreateText(value, size, text, FontWeights.Bold);
+        var tokens = System.Text.RegularExpressions.Regex.Matches(
+            value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
         if (parameter.IsValueModifiedFromReference())
         {
-            foreach (System.Text.RegularExpressions.Match token in
-                System.Text.RegularExpressions.Regex.Matches(
-                    value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
+            for (var i = 0; i < tokens.Count; i++)
             {
-                formatted.SetForegroundBrush(accent, token.Index, token.Length);
-                formatted.SetFontSize(size + 1.2, token.Index, token.Length);
-                // The capacity percentage is a read-only derived value.
-                // Only the first (real CFG) amount gets edited-number gold.
+                var valueToken = tokens[i];
+                formatted.SetForegroundBrush(accent, valueToken.Index, valueToken.Length);
+                formatted.SetFontSize(size + 1.2, valueToken.Index, valueToken.Length);
                 if (nativeOnly) break;
             }
+        }
+        if (nativeOnly && tokens.Count > 1)
+        {
+            var percent = tokens[1];
+            formatted.SetForegroundBrush(accent, percent.Index, percent.Length);
         }
         return formatted;
     }

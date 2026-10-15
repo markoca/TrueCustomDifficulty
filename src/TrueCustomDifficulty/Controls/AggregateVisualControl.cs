@@ -93,8 +93,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         MinHeight = 0.0;
         SnapsToDevicePixels = true;
         Cursor = Cursors.Arrow;
-        ToolTipService.SetInitialShowDelay(this, 550);
-        ToolTipService.SetShowDuration(this, 10000);
         Loaded += (_, _) => RebindParameters();
     }
 
@@ -186,7 +184,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         _radRingCompleted = false;
         _dragTarget = null;
         _hoverTarget = null;
-        ToolTip = null;
         Cursor = Cursors.Arrow;
         _selectedParameter = null;
         _selectedHitKind = null;
@@ -1226,6 +1223,37 @@ public sealed class AggregateVisualControl : FrameworkElement
             _ => $"{raw:0.##}x"
         };
 
+    // Contextual readout: only dynamic numeric tokens use the gold accent.
+    private FormattedText CreateDerivedText(string label, double size,
+        Brush neutral, Brush accent, FontWeight weight, double width)
+    {
+        var result = CreateText(label, size, neutral, weight, width);
+        foreach (System.Text.RegularExpressions.Match number in
+            System.Text.RegularExpressions.Regex.Matches(label, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?"))
+            result.SetForegroundBrush(accent, number.Index, number.Length);
+        return result;
+    }
+
+    private void DrawDerivedCentered(DrawingContext dc, string value, Point top,
+        double width, double size, Brush neutral, Brush accent, FontWeight weight)
+    {
+        var ft = CreateDerivedText(value, size, neutral, accent, weight, width);
+        dc.DrawText(ft, new Point(top.X - ft.WidthIncludingTrailingWhitespace / 2.0, top.Y));
+    }
+
+    private void DrawDerivedRight(DrawingContext dc, string value, Point rightTop,
+        double size, Brush neutral, Brush accent, FontWeight weight)
+    {
+        var right = Math.Min(rightTop.X, ActualWidth - 12.0);
+        var ft = CreateDerivedText(value, size, neutral, accent, weight,
+            Math.Max(1.0, right - 12.0));
+        dc.DrawText(ft, new Point(right - ft.WidthIncludingTrailingWhitespace, rightTop.Y));
+    }
+
+    private void DrawDerivedLeft(DrawingContext dc, string value, Point topLeft,
+        double width, double size, Brush neutral, Brush accent, FontWeight weight)
+        => dc.DrawText(CreateDerivedText(value, size, neutral, accent, weight, width), topLeft);
+
     private void DrawMixerCentered(
         DrawingContext dc,
         string label,
@@ -1382,7 +1410,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 selected ? CloneWithOpacity(accent, 0.10) : panel,
                 new Pen(selected ? accent : hover ? CloneWithOpacity(accent, 0.7) : border,
                     selected ? 1.6 : 0.9), rect, 4.0, 4.0);
-            // Icon-only option; exact package name is available on hover.
+            // Icon-only selector; the source-backed choice stays visible.
             DrawNpcCorpsePackageIcon(dc, corpse.ChoiceOptions[i].Value,
                 new Point(rect.Left + rect.Width / 2.0, rect.Top + rect.Height / 2.0),
                 hover ? Brushes.White : selected ? accent : text);
@@ -1462,9 +1490,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             10.8, text, FontWeights.Bold);
         var accepted = Linked("economy.traderMinBuyCondition");
         if (accepted is not null)
-            DrawRightAlignedText(dc, $"TRADER ACCEPTS ≥ {accepted.CurrentNumber * 100.0:0}%",
+            DrawDerivedRight(dc, $"TRADER ACCEPTS ≥ {accepted.CurrentNumber * 100.0:0}%",
                 new Point(rangeCard.Right - 11.0, rangeCard.Top + 8.0),
-                8.8, muted, FontWeights.SemiBold);
+                8.8, muted, accent, FontWeights.SemiBold);
 
         var minModified = Math.Abs(condition.CurrentMinNumber - 0.25) > Epsilon;
         var maxModified = Math.Abs(condition.CurrentMaxNumber - 0.50) > Epsilon;
@@ -2030,9 +2058,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         // passive source-linked landmark, not a fourth fatigue stage editor.
         var sleepGate = Linked("survival.sleepEligibilityThreshold");
         if (sleepGate is not null)
-            DrawRightAlignedText(dc, $"SLEEP AVAILABLE {sleepGate.CurrentNumber:0} PTS",
+            DrawDerivedRight(dc, $"SLEEP AVAILABLE {sleepGate.CurrentNumber:0} PTS",
                 new Point(preview.Right - 12.0, preview.Top + 8.0),
-                9.0, muted, FontWeights.SemiBold);
+                9.0, muted, accent, FontWeights.SemiBold);
         var axis = new Rect(preview.Left + 81, preview.Top + 32, preview.Width - 111, 12);
         double X(double value) => ValueToX(value, 0, 100, axis, false);
         var y = axis.Top + axis.Height / 2;
@@ -2976,9 +3004,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 active ? modified ? accent : text : muted, FontWeights.Bold);
         }
         if (secondaryReadout is not null)
-            DrawCenteredText(dc, secondaryReadout,
+            DrawDerivedCentered(dc, secondaryReadout,
                 new Point(center.X, center.Y + 7.0),
-                11.0, active ? text : muted, FontWeights.Bold);
+                Math.Max(1.0, card.Width - 12.0), 11.0,
+                active ? text : muted, active ? accent : muted, FontWeights.Bold);
         if (rateReadout)
             DrawCenteredText(dc, "PTS/S",
                 new Point(center.X, center.Y + 5.0),
@@ -3377,9 +3406,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             // plotted reputation source. Difficulty layer remains independent;
             // this is not a final coupon bill.
             var baseRepair = Linked("economy.repairCostBase")?.CurrentNumber ?? 0.7;
-            DrawMixerCentered(dc, $"{baseRepair * parameter.CurrentNumber:0.##}x BASE×REP",
+            DrawDerivedCentered(dc, $"{baseRepair * parameter.CurrentNumber:0.##}x BASE×REP",
                 new Point(x, plot.Bottom + 57.0),
-                plot.Width / 4.0 - 10.0, 9.4, muted, FontWeights.SemiBold);
+                plot.Width / 4.0 - 10.0, 9.4, muted, accent, FontWeights.SemiBold);
         }
 
         var basePen = new Pen(CloneWithOpacity(muted, .70), 1.3)
@@ -3728,10 +3757,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         var waterCapCaption = secondaryWidth >= 224.0
             ? $"WATER BUFF · {staminaPool * 1.25:0.#} STAMINA CAP"
             : $"WATER · {staminaPool * 1.25:0.#} CAP";
-        DrawText(dc, waterCapCaption,
+        DrawDerivedLeft(dc, waterCapCaption,
             new Point(waterSectionLeft + 4.0,
                 preview.Top + ConsumableShortEffectsHeaderTop),
-            9.2, text, FontWeights.Bold);
+            secondaryWidth - 8.0, 9.2, text, accent, FontWeights.Bold);
         DrawText(dc, "ENERGY DRINK BUFFS",
             new Point(energySectionLeft + 4.0,
                 preview.Top + ConsumableShortEffectsHeaderTop),
@@ -3868,7 +3897,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             $"+{healthRestore.CurrentNumber:0.#} HP · {100.0 * healthRestore.CurrentNumber / maxHealth:0.#}%",
             $"{healthRestore.Minimum:0} HP", $"{healthRestore.Maximum:0} HP",
             new Rect(left, 274.0, column, 82.0),
-            text, muted, border, accent, panel);
+            text, muted, border, accent, panel, highlightDerivedLastNumber: true);
         DrawCompactTrack(dc, staminaRestore, "STAMINA RESTORE STRENGTH",
             $"+{staminaRestore.CurrentNumber * 100:0.#}%",
             $"{staminaRestore.Minimum * 100:0.#}%",
@@ -4241,15 +4270,11 @@ public sealed class AggregateVisualControl : FrameworkElement
         StageCaption(1, "MEDIUM", medium, mediumPenalty);
         StageCaption(2, "SEVERE", severe, severePenalty);
 
-        // Passive timing projection from ZERO HungerPoints: this is not a
-        // runtime countdown and does not add a threshold editor or hit target.
-        // Keep all three times aligned with the existing stage caption cells.
-        var onsetY = frame.Top + 346.0;
+        // Read-only estimates from zero HungerPoints with constant source rate.
+        var onsetY = frame.Top + 351.0;
         dc.DrawLine(new Pen(CloneWithOpacity(border, .58), .8),
-            new Point(plot.Left, onsetY), new Point(plot.Right - 10.0, onsetY));
-        DrawCenteredText(dc, "EST. FROM 0 HUNGER PTS · NO FOOD",
-            new Point(frame.Left + frame.Width / 2.0, onsetY + 15.0),
-            9.2, muted, FontWeights.SemiBold);
+            new Point(plot.Left, onsetY - 10.0),
+            new Point(plot.Right - 10.0, onsetY - 10.0));
         var onsetStages = new[]
         {
             (Name: "LOW", Threshold: low),
@@ -4259,12 +4284,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         for (var i = 0; i < onsetStages.Length; i++)
         {
             var cell = new Rect(plot.Left + i * stageWidth,
-                onsetY + 25.0, stageWidth, 21.0);
+                onsetY, stageWidth, 23.0);
             dc.PushClip(new RectangleGeometry(cell));
-            DrawCenteredText(dc,
-                $"{onsetStages[i].Name} {HungerOnsetEstimate(onsetStages[i].Threshold.CurrentNumber, rate.CurrentNumber)}",
-                new Point(cell.Left + cell.Width / 2.0, onsetY + 33.0),
-                stageWidth < 155.0 ? 10.0 : 11.0, text, FontWeights.SemiBold);
+            DrawDerivedCentered(dc,
+                $"{onsetStages[i].Name} IN {HungerOnsetEstimate(onsetStages[i].Threshold.CurrentNumber, rate.CurrentNumber)}",
+                new Point(cell.Left + cell.Width / 2.0, onsetY + 3.0),
+                cell.Width - 6.0, stageWidth < 155.0 ? 10.0 : 11.0,
+                text, accent, FontWeights.SemiBold);
             dc.Pop();
         }
     }
@@ -5325,7 +5351,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     private static double ConsumableTimelineHeight(double width)
         => ConsumableShortEffectsTrackTop + CompactTrackHeight + 12.0;
     // Reserved space for plot ticks plus three independently readable stage lines.
-    private const double HungerProfileHeight = 398.0;
+    private const double HungerProfileHeight = 388.0;
     private const double CompactRowGap = 8.0;
     private const double CompactColumnGap = 10.0;
 
@@ -5365,7 +5391,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         Brush muted,
         Brush border,
         Brush accent,
-        Brush panel)
+        Brush panel,
+        bool highlightDerivedLastNumber = false)
     {
         dc.DrawRoundedRectangle(panel, new Pen(border, 1.0), card, 4.0, 4.0);
         var contentWidth = Math.Max(1.0, card.Width - 24.0);
@@ -5381,6 +5408,16 @@ public sealed class AggregateVisualControl : FrameworkElement
                 valueText.SetForegroundBrush(accent, token.Index, token.Length);
                 valueText.SetFontSize(11.9, token.Index, token.Length);
             }
+        if (highlightDerivedLastNumber && parameter.IsControlEnabled)
+        {
+            var nums = System.Text.RegularExpressions.Regex.Matches(
+                value, @"[+\-−]?\d+(?:\.\d+)?(?:[%x×])?");
+            if (nums.Count > 0)
+            {
+                var derived = nums[nums.Count - 1];
+                valueText.SetForegroundBrush(accent, derived.Index, derived.Length);
+            }
+        }
         // Measure after number highlights enlarge edited values; reserve a
         // genuine 10-DIP gap without making the compact card any wider.
         var labelWidth = Math.Max(1.0,
@@ -5893,8 +5930,6 @@ public sealed class AggregateVisualControl : FrameworkElement
             if (next >= 0)
             {
                 Cursor = Cursors.Hand;
-                ToolTip = "Click to set Starting Coupons to " +
-                    marker.Value.ToString("N0", CultureInfo.InvariantCulture);
                 return;
             }
         }
@@ -5909,12 +5944,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             SetHoverTarget(null);
             Cursor = Cursors.Hand;
-            ToolTip = "Drag ring: 0–100 RAD · Wheel / arrows ±1 · Right-click resets to 0 RAD.";
             return;
         }
-        // Preview RAD controls do not take ownership of native parameter hover.
-        if (Family == "RadiationBalance" && _dragTarget is null)
-            ToolTip = null;
         // Keep BOTH the edited value and the visible hover indicator on
         // the captured endpoint until mouse-up. A nearby opposite handle
         // must never appear to steal the current drag.
@@ -6018,7 +6049,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (_dragTarget is null && !_radRingDragging)
         {
             SetHoverTarget(null);
-            ToolTip = null;
             Cursor = Cursors.Arrow;
         }
     }
@@ -6042,17 +6072,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         InvalidateVisual();
     }
 
-    private static string NpcCorpseChoiceTooltip(HitTarget target)
-    {
-        var option = target.Parameter.ChoiceOptions[(int)target.VisualMinimum];
-        var detail = option.Value.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)
-            ? "Adds medicine and bonus ammo to normal NPC inventory."
-            : option.Value.Contains("NPC_Water_Smart", StringComparison.Ordinal)
-                ? "Adds bonus water; normal NPC inventory remains."
-                : "No extra package; normal NPC inventory remains.";
-        return option.Label + "\n" + detail + "\nRight-click = Base Preset";
-    }
-
     private void SetHoverTarget(HitTarget? target)
     {
         // HitTarget records are rebuilt on every render. Compare their source
@@ -6068,28 +6087,6 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
 
         _hoverTarget = target;
-        ToolTip = target is null
-            ? null
-            : target.Kind switch
-            {
-                HitKind.Knob => $"{target.Parameter.Label}\nTurn around the dial or scroll to adjust · Right-click = Base Preset",
-                HitKind.Toggle => $"{target.Parameter.Label}\nClick to toggle · Right-click = Base Preset",
-                HitKind.DrinkDurationOverride =>
-                    "Override Consumable Duration Limits\nOFF: native limits. ON: drinks up to 270 s and Vinca, Hercules, Psi Block up to 900 s.\nRight-click resets.",
-                HitKind.Choice when Family == "NpcLootLoadout" => NpcCorpseChoiceTooltip(target),
-                HitKind.Choice => $"{target.Parameter.Label}\nChoose a corpse-loot package · Right-click = Base Preset",
-                HitKind.Horizontal when target.Parameter.Id == "loot.npcWeaponAmmoSupply" =>
-                    "NPC Ammo Drops\nScales bonus ammo with Medicine + Ammo; normal weapon ammo is unchanged.",
-                HitKind.MixerBaseMarker => $"{target.Parameter.Label}\nClick to snap to selected Base Preset",
-                HitKind.MixerSelect => $"{target.Parameter.Label}\nClick for detailed rationale · Use the fader rail to edit",
-                HitKind.RangeMin => "NPC weapon condition MIN\nDrag or use arrow keys · Right-click = reset full range",
-                HitKind.RangeMax => "NPC weapon condition MAX\nDrag or use arrow keys · Right-click = reset full range",
-                HitKind.HumanJoint when Family == "EquipmentWearBalance" =>
-                    "Armor Toughness + Weapon Wear / Shot\nDrag in both directions · Right-click resets both",
-                HitKind.HumanJoint when Family == "FlycatcherSlowdown" =>
-                    "Flycatcher Move + Turn Remaining\nDrag in both directions · Right-click resets both",
-                _ => $"{target.Parameter.Label}\nDrag or use arrow keys to adjust · Right-click = Base Preset"
-            };
         InvalidateVisual();
     }
 

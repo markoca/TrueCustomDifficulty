@@ -2412,24 +2412,24 @@ else:
 # Hunger-onset estimates are three passive captions BELOW the original
 # stepped profile, driven only by the existing hunger-rate/threshold sources.
 # Never introduce an extra medium-threshold slider or invented game-day clock.
-_hunger_timing_start = _hunger_source.find("var onsetY = frame.Top + 346.0;")
+_hunger_timing_start = _hunger_source.find("var onsetY = frame.Top + 351.0;")
 _hunger_timing_end = _hunger_source.find("private static string HungerOnsetEstimate(", _hunger_timing_start)
 _hunger_timing = (_hunger_source[_hunger_timing_start:_hunger_timing_end]
                   if 0 <= _hunger_timing_start < _hunger_timing_end else "")
 _hunger_timing_required = (
-    'var onsetY = frame.Top + 346.0;',
-    'EST. FROM 0 HUNGER PTS · NO FOOD',
+    'var onsetY = frame.Top + 351.0;',
+    'onsetStages[i].Name} IN {HungerOnsetEstimate(',
     '(Name: "LOW", Threshold: low)',
     '(Name: "MEDIUM", Threshold: medium)',
     '(Name: "SEVERE", Threshold: severe)',
     'rate.CurrentNumber',
     'HungerOnsetEstimate(onsetStages[i].Threshold.CurrentNumber, rate.CurrentNumber)',
-    'DrawCenteredText(dc,',
+    'DrawDerivedCentered(dc,',
     'private static string HungerOnsetEstimate(double threshold, double pointsPerSecond)',
     'if (threshold <= Epsilon)',
     'if (pointsPerSecond <= Epsilon)',
     'Math.Floor(Math.Max(0.0, threshold) / pointsPerSecond)',
-    'private const double HungerProfileHeight = 398.0;',
+    'private const double HungerProfileHeight = 388.0;',
     'var frameBottom = previewBottom + 55.0 + HungerProfileHeight;',
 )
 if not all(token in _hunger_source for token in _hunger_timing_required):
@@ -2452,6 +2452,38 @@ if not all(k in _hunger_source for k in ('return "0s";', 'return "NEVER";')):
 if not errors:
     note("Hunger onset: three read-only real-time estimates, live stage/rate sources, no extra sliders")
 
+
+# WPF tooltip-free interaction: all popups are retired, not hover chrome.
+_tooltip_files = (
+    ROOT / "src/TrueCustomDifficulty/MainWindow.xaml",
+    ROOT / "src/TrueCustomDifficulty/App.xaml",
+    *(_semantic_source_dir.glob("*.cs")),
+)
+for _path in _tooltip_files:
+    _text = _path.read_text(encoding="utf-8")
+    if re.search(r"\bToolTip\s*=|\bToolTipService\s*\.|NpcCorpseChoiceTooltip", _text):
+        fail(f"WPF tooltip source returned: {_path.relative_to(ROOT)}")
+for _file, _required in {
+    "AggregateVisualControl.cs": (
+        "CreateDerivedText(", "DrawDerivedCentered(", "DrawDerivedRight(",
+        "DrawDerivedLeft(", "highlightDerivedLastNumber: true",
+        "onsetStages[i].Name} IN {HungerOnsetEstimate(",
+    ),
+    "ActionCostsRadar.cs": (
+        "if (nativeOnly && tokens.Count > 1)",
+        "countText.SetForegroundBrush(accent, number.Index, number.Length);",
+    ),
+    "BleedingCurveControl.cs": (
+        "highlightDerivedLastNumber: true",
+        "ft.SetForegroundBrush(accent, derived.Index, derived.Length);",
+    ),
+}.items():
+    _body = (_semantic_source_dir / _file).read_text(encoding="utf-8")
+    if any(token not in _body for token in _required):
+        fail(f"Derived-number gold contract failed: {_file}")
+if "EST. FROM 0 HUNGER PTS · NO FOOD" in _hunger_source:
+    fail("Obsolete Hunger estimate heading returned")
+note("No WPF hover popups; gold contextual numbers and Hunger IN times")
 
 # Hunger and Fatigue now share the SAME primary resource ruler as Core
 # Health/Core Stamina. Protect geometry/units/source routing, not screenshots.
@@ -3990,7 +4022,6 @@ if any(_tok not in _npc_preview_source for _tok in (
     "DrawNpcCorpsePackageIcon(dc, corpse.ChoiceOptions[i].Value,",
     'optionValue.Contains("NPC_Ammo_Smart", StringComparison.Ordinal)',
     'optionValue.Contains("NPC_Water_Smart", StringComparison.Ordinal)',
-    'HitKind.Choice when Family == "NpcLootLoadout" => NpcCorpseChoiceTooltip(target)',
     'var ammoPackageActive = NpcBonusPackageSelected();',
     'private bool NpcBonusPackageSelected()',
     'private bool IsNpcBonusSliderLocked(ParameterViewModel? parameter)',

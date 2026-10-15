@@ -1,5 +1,14 @@
 # UI Design Lock — Approval-Only Contract
 
+### 2026-10-15 — Remove hover tooltips, highlight live numbers and rename Hunger times (CURRENT)
+
+Remove every **on-hover WPF tooltip** from parameter and Preset XAML labels, Mutant Parts, Anomaly Damage and all AggregateVisualControl controls (knobs, sliders, NPC loot icons, Starting Coupons markers, Radiation ring). Disable hover-only popup producers and tooltip-delay configuration, **not** white-hover chrome, hover cursors, click/drag, wheel/keyboard, independent/reset semantics, non-hover explanations, native CFG fields or presets. No new tooltips.
+
+All live **derived / relative numeric values** are rendered **gold**; words and units remain neutral. Cover stamina spent percentage and hovered repeat/ratio count, Water/Energy Drink restored stamina points, temporary Water max-SP cap, Hercules total `N WITH BUFF`, Sleep health-restored percent, Fatigue sleep-availability threshold, NPC trader acceptance threshold, repair Base×Reputation combined multiplier, and Bleeding damage `% MAX HP`. These remain passive calculations, not new knobs, editable hit targets, CFG or reset members. Native source values continue using modified-only gold; do not emphasize Base/Vanilla.
+
+At the bottom of the existing **Hunger State Ladder** stepped graph show three live read-only results `LOW IN ~18m53s`, `MEDIUM IN ~36m40s`, `SEVERE IN ~1h32m13s` for vanilla 0.015 HungerPoints/s, thresholds 17/33/83. Only the **changing time digits** turn gold; the stage names, `IN` and time units remain neutral. Remove `EST. FROM 0 HUNGER PTS · NO FOOD` completely with no replacement subtitle. Preserve native HUNGER RATE, WELL-FED and existing interactive threshold handles; **no new Hunger Threshold slider**. Keep a compact single panel with 388-DIP HungerProfileHeight measurement and matching rendered frame. These estimates assume uninterrupted constant gain from zero HungerPoints without eating/other effects, not the game's current hunger, a day/night conversion or a guaranteed clock. Zero rate with positive threshold reads NEVER.
+
+
 ### 2026-10-15 — Hunger onset times without new threshold sliders (CURRENT)
 
 **Survival → Hunger State Ladder** keeps the existing **HUNGER RATE** and **WELL-FED STAMINA RECOVERY** top-row native rulers, unchanged 0–100 HUNGER POINTS stage preview and original interactive stepped **HUNGER SURVIVAL PROFILE**. **Do not add a Hunger Threshold, Medium Hunger or any other new slider**; the three LOW/MEDIUM/SEVERE threshold values already belong to the existing graph handles and remain independently editable there, with current native ranges, ordering, hit targets, resets, CFG routes and presets.
