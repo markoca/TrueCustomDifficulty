@@ -164,3 +164,7 @@ The deep audit does not turn every survival-related CFG field into a slider. The
 - Master-only starvation, severe-fatigue and radiation bundles, which remain in the Master tab.
 
 This is intentional scope control, not missing writer coverage.
+
+## 2026-10-15 Survival tab cleanup — bleeding and alcohol
+
+Removed the uncalled `BleedingCurveControl.DrawPolyline` painter, after confirming the live bleeding graph uses native per-parameter rulers and existing source drawing. Removed the unused `DrunkennessControl.OverDrunknessReference` constant (89.0), which was never displayed, linked to a parameter, or used in an event/CFG calculation. All seven bleeding parameters, separate Beer/Vodka strength editors, WASTED AFTER projection, drink-progress steps, visible stage thresholds, input/reset paths and presets/writer routes remain unchanged. No visible layouts or derived game mechanics were altered. Project consistency audit extended; local .NET/WPF/Wine testing pending.

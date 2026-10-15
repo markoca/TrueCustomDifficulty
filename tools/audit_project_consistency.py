@@ -4255,6 +4255,31 @@ if ('DrawKnobArc(dc, center, KnobRadius, KnobSweepAngle,' not in _inner_anomaly_
         or 'var baseAngle = KnobStartAngle + reference * KnobSweepAngle;' not in _inner_anomaly_source):
     fail("Anomaly knob arc or muted reference mapping changed")
 
+# Survival tab: current Bleeding stages use individually drawn source-backed
+# axes rather than the dormant polyline helper. Alcohol Tolerance has no
+# source connection to an old hard-coded OverDrunkness reference constant.
+_survival_bleeding_cleanup = (ROOT / 'src/TrueCustomDifficulty/Controls/BleedingCurveControl.cs').read_text(encoding='utf-8')
+_survival_alcohol_cleanup = (ROOT / 'src/TrueCustomDifficulty/Controls/DrunkennessControl.cs').read_text(encoding='utf-8')
+if 'private static void DrawPolyline(' in _survival_bleeding_cleanup:
+    fail('Survival unused bleeding polyline helper returned')
+if 'OverDrunknessReference' in _survival_alcohol_cleanup:
+    fail('Survival unused fixed over-drunkness reference constant returned')
+for _active in (
+    'private double DamageToY(', 'private static double GetSharedVanilla(',
+    'private static double ValueToX(', 'private void DrawSourceNumber(',
+    'protected override void OnMouseRightButtonDown(',
+    'protected override void OnKeyDown('):
+    if _active not in _survival_bleeding_cleanup:
+        fail('Survival bleeding native source/input path missing: ' + _active)
+for _active in (
+    'private void DrawDrinkCard(', 'private void DrawProgressionRow(',
+    'private void DrawTierCards(', 'private static int RequiredWholeDrinks(',
+    'protected override void OnMouseRightButtonDown(',
+    'protected override void OnKeyDown('):
+    if _active not in _survival_alcohol_cleanup:
+        fail('Survival alcohol editor source/input path missing: ' + _active)
+note('Survival: old polyline and unconsumed alcohol constant removed; live seven bleeding and both drink editors retained')
+
 # Source-only HUD eye candy: all four shared decorative treatments.
 _telemetry_chrome = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "IndustrialFrame.cs").read_text(encoding="utf-8")
 _telemetry_aggregate = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")

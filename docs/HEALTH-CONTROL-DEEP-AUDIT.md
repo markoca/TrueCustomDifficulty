@@ -99,3 +99,7 @@ The cleanup regression audit matches old hidden-bleeding aggregate wiring with a
 ## 2026-10-15 Health dead-code pass 2
 
 Removed the unused `soft` brush argument from `DrawCoreHealthDashboard` and its dispatcher, the unused `HealthTypography.Section` constant, and five impossible Health-tab sort cases for parameters actually assigned to the Master tab. The Master `Low Health` and `Medical Effect Modifier` controls, real parameters, presets and CFG routes are unchanged. Inspected all `MedicalHealingRadar` methods and interactive targets; its current HEAL/BLEED/RAD, Food Healing and override paths are live, so none were removed. Updated static audit checks for Health source-tab sort parity, active Core Health rendering and obsolete typography/dispatch members. Build, WPF UI and Wine verification remain local and are not claimed as completed.
+
+## 2026-10-15 Health tab cleanup review — no removal
+
+Rechecked current Core Health aggregate rendering and every `MedicalHealingRadar` private edit/paint helper after the Stamina, Loot and Combat source cleanups. No additional private drawing method without a caller was confirmed. All thirteen medical-source controls, food checkbox, override-limits handling and five Core Health native sources are live and therefore retained. This pass makes **no Health code, layout, catalog-range, preset or CFG-writer change**. Do not infer an extra Health feature or intentionally hide any active treatment. Local build and Wine acceptance remain pending.

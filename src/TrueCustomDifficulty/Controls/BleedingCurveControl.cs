@@ -924,12 +924,6 @@ public sealed class BleedingCurveControl : FrameworkElement
         return left + (right - left) * ratio;
     }
 
-    private static void DrawPolyline(DrawingContext dc, IReadOnlyList<Point> points, Pen pen)
-    {
-        for (var i = 1; i < points.Count; i++)
-            dc.DrawLine(pen, points[i - 1], points[i]);
-    }
-
     private Brush FindBrush(string key, Brush fallback)
         => TryFindResource(key) as Brush ?? fallback;
 

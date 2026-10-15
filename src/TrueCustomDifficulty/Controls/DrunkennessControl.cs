@@ -25,7 +25,6 @@ public sealed class DrunkennessControl : FrameworkElement
     private const double VanillaLow = 0.001;
     private const double VanillaMedium = 30.0;
     private const double VanillaStrong = 80.0;
-    private const double OverDrunknessReference = 89.0;
     private const double VanillaBeerDrunkness = 15.0;
     private const double VanillaVodkaDrunkness = 30.0;
 

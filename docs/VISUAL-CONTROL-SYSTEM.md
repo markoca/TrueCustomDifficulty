@@ -1,5 +1,11 @@
 # Visual Control System
 
+### 2026-10-15 — Survival dead-helper cleanup and Health no-op review (CURRENT)
+
+The active Survival `BleedingCurveControl` uses separate CFG-backed severity/recovery controls, independently source-owned bleeding damage/threshold editors, read-only stage cards and a passive Max Health comparison. Remove only its unreachable `DrawPolyline` helper; no active drawing or hit-testing path calls it. `DrunkennessControl` retains both Beer and Vodka strength controls, progression markers, the three authored drunkness thresholds and its compact Alcohol Tolerance interface. Remove only the unused `OverDrunknessReference = 89.0` constant; this had no event source, renderer reference, editable range or CFG mapping. Keep both controls' actual values, per-source input/hover/reset semantics, native ranges, styles, dimensions, presets and CFG writer unchanged.
+
+The Health tab was reviewed in the same pass: `CoreHealthDashboard` and `MedicalHealingRadar` expose no further independently proven dead private drawing methods, so **no Health code or UI is changed**. Do not delete active HEAL/BLEED/RAD/food inputs or the Max Health/recovery rulers. Static regression guards validate Survival removals and continued active inputs; local build/Wine acceptance remains pending.
+
 ### 2026-10-15 — Combat / Mutant Health unused renderer cleanup (CURRENT)
 
 Keep the live two-column `MutantHealthRadar` (14 independently editable source-backed species, native 0.05–2x controls, read-only derived HP values and the separate mutant hit-damage track) exactly as approved. Remove its unused `HpToX` absolute-pool mapping and its now-orphaned `GlobalHpMaximum = 7500` constant; the obsolete `ValueToY` mapping, uncalled `DrawRightAlignedText` helper, and never-used pipe-character accent loop in `CreateText`. Also remove the unconsumed `ShowMist` flag from the internal `MutantDefinition` record and its 14 constructor calls; retain all source IDs, names and original vanilla-HP numbers. The active `ContentRect`, `ValueToX`, drawing and mouse/keyboard/reset functions stay unchanged. This removes only dead renderer metadata: do not change actual mutant health values, CFG writer/presets, 605-DIP layout, typography, hit zones, color rules or active Combat tabs. Static audit is updated; local .NET/Wine build and in-game confirmation remain pending.
