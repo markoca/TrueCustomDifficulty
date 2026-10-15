@@ -3,7 +3,7 @@
   "auditDate": "2026-10-15",
   "basedOnMainCommit": "dc062040acce0926b320e708144e42df1dc236ac",
   "targetGameVersion": "2.0.5",
-  "policy": "Every one of 248 catalog settings in each of 12 profiles has an explicit source rationale, exact authored value and role-aware reason. Native CFG mapping sourced from parameters.json; runtime_test_required means no gameplay claim. This records configured rules, not observed outcomes. The 2026-10-15 final CFG route audit neutralizes 108 source-inert A-Life count multipliers across factory profiles; all actual non-reference direct A-Life settings must alter at least one baseline integer.",
+  "policy": "Every one of 248 catalog settings in each of 12 profiles has an explicit source rationale, exact authored value and role-aware reason. Native CFG mapping sourced from parameters.json; runtime_test_required means no gameplay claim. This records configured rules, not observed outcomes. The 2026-10-15 final CFG route audit neutralizes 108 source-inert A-Life count multipliers across factory profiles; all actual non-reference direct A-Life settings must alter at least one baseline integer. The shipped A-Life roles now store integer-effective canonical steps: 39 original decimals remap without changing any of 216 native ranked MaxCount outputs.",
   "roles": {
     "Immersive": {
       "referenceDifficulty": "Stalker",
@@ -22267,16 +22267,16 @@
           "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
-          "value": 0.8,
+          "value": 0.5,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Human Group Size set to 0.8 (below Stalker reference 1), while keeping its distinct CFG source."
+          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Human Group Size set to 0.5 (below Stalker reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.5x instead of 0.8x while retaining identical authored MaxCount limits (2) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Wanderer": {
-          "value": 0.8,
+          "value": 0.5,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Human Group Size set to 0.8 (below Stalker reference 1), while keeping its distinct CFG source."
+          "reason": "less unnecessary combat on long treks; Human Group Size set to 0.5 (below Stalker reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.5x instead of 0.8x while retaining identical authored MaxCount limits (2) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Mercenary": {
           "value": 1,
@@ -22291,10 +22291,10 @@
           "reason": "The previous 0.85× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
-          "value": 0.7,
+          "value": 0.5,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Human Group Size set to 0.7 (below Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "common wildlife makes salvage routes risky; Human Group Size set to 0.5 (below Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.5x instead of 0.7x while retaining identical authored MaxCount limits (2) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Outcast": {
           "value": 1,
@@ -22309,10 +22309,10 @@
           "reason": "severe encounter pressure drives supplies down; Human Group Size set to 1.2 (above Master reference 1), while keeping its distinct CFG source."
         },
         "Hardcore+": {
-          "value": 1.4,
+          "value": 1.2,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Human Group Size set to 1.4 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Human Group Size set to 1.2 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.2x instead of 1.4x while retaining identical authored MaxCount limits (4) for this source's player ranks. This is not an encounter-frequency change."
         }
       }
     },
@@ -22361,10 +22361,10 @@
           "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
-          "value": 0.85,
+          "value": 0.65,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Experienced Human Group Size set to 0.85 (below Stalker reference 1), while keeping its distinct CFG source."
+          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Experienced Human Group Size set to 0.65 (below Stalker reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.65x instead of 0.85x while retaining identical authored MaxCount limits (3) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Wanderer": {
           "value": 1,
@@ -22373,10 +22373,10 @@
           "reason": "The previous 0.9× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mercenary": {
-          "value": 1.2,
+          "value": 1.15,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "more armed patrols fit contract work; Experienced Human Group Size set to 1.2 (above Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "more armed patrols fit contract work; Experienced Human Group Size set to 1.15 (above Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.15x instead of 1.2x while retaining identical authored MaxCount limits (5) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Smuggler": {
           "value": 1,
@@ -22385,10 +22385,10 @@
           "reason": "The previous 0.95× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
-          "value": 0.8,
+          "value": 0.65,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Experienced Human Group Size set to 0.8 (below Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "common wildlife makes salvage routes risky; Experienced Human Group Size set to 0.65 (below Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.65x instead of 0.8x while retaining identical authored MaxCount limits (3) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Outcast": {
           "value": 1,
@@ -22397,16 +22397,16 @@
           "reason": "The previous 1.1× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore": {
-          "value": 1.25,
+          "value": 1.15,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Experienced Human Group Size set to 1.25 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "severe encounter pressure drives supplies down; Experienced Human Group Size set to 1.15 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.15x instead of 1.25x while retaining identical authored MaxCount limits (5) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Hardcore+": {
-          "value": 1.5,
+          "value": 1.4,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Experienced Human Group Size set to 1.5 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Experienced Human Group Size set to 1.4 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.4x instead of 1.5x while retaining identical authored MaxCount limits (6) for this source's player ranks. This is not an encounter-frequency change."
         }
       }
     },
@@ -22437,10 +22437,10 @@
           "reason": "moderate group encounters keep journeys populated; Veteran Human Group Size set to 1 (at Stalker reference 1), while keeping its distinct CFG source."
         },
         "Tactical": {
-          "value": 1.45,
+          "value": 1.3,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Veteran Human Group Size set to 1.45 (above Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "dangerous human patrols are combat-focused; Veteran Human Group Size set to 1.3 (above Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.3x instead of 1.45x while retaining identical authored MaxCount limits (7) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Field Medic": {
           "value": 1,
@@ -22455,22 +22455,22 @@
           "reason": "more hunting targets and wildlife pressure; Veteran Human Group Size set to 1 (at Veteran reference 1), while keeping its distinct CFG source."
         },
         "Anomaly Runner": {
-          "value": 0.85,
+          "value": 0.7,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Veteran Human Group Size set to 0.85 (below Stalker reference 1), while keeping its distinct CFG source."
+          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Veteran Human Group Size set to 0.7 (below Stalker reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.7x instead of 0.85x while retaining identical authored MaxCount limits (4) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Wanderer": {
-          "value": 0.75,
+          "value": 0.7,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "less unnecessary combat on long treks; Veteran Human Group Size set to 0.75 (below Stalker reference 1), while keeping its distinct CFG source."
+          "reason": "less unnecessary combat on long treks; Veteran Human Group Size set to 0.7 (below Stalker reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.7x instead of 0.75x while retaining identical authored MaxCount limits (4) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Mercenary": {
-          "value": 1.45,
+          "value": 1.3,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "more armed patrols fit contract work; Veteran Human Group Size set to 1.45 (above Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "more armed patrols fit contract work; Veteran Human Group Size set to 1.3 (above Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.3x instead of 1.45x while retaining identical authored MaxCount limits (7) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Smuggler": {
           "value": 1,
@@ -22479,10 +22479,10 @@
           "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Scavenger": {
-          "value": 0.85,
+          "value": 0.7,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Veteran Human Group Size set to 0.85 (below Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "common wildlife makes salvage routes risky; Veteran Human Group Size set to 0.7 (below Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.7x instead of 0.85x while retaining identical authored MaxCount limits (4) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Outcast": {
           "value": 1.1,
@@ -22491,10 +22491,10 @@
           "reason": "isolated travel is not empty, wildlife remains a threat; Veteran Human Group Size set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
         },
         "Hardcore": {
-          "value": 1.35,
+          "value": 1.3,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Veteran Human Group Size set to 1.35 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "severe encounter pressure drives supplies down; Veteran Human Group Size set to 1.3 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.3x instead of 1.35x while retaining identical authored MaxCount limits (7) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Hardcore+": {
           "value": 1.5,
@@ -22531,10 +22531,10 @@
           "reason": "moderate group encounters keep journeys populated; Master Human Group Size set to 1 (at Stalker reference 1), while keeping its distinct CFG source."
         },
         "Tactical": {
-          "value": 1.5,
+          "value": 1.45,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "dangerous human patrols are combat-focused; Master Human Group Size set to 1.5 (above Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "dangerous human patrols are combat-focused; Master Human Group Size set to 1.45 (above Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.45x instead of 1.5x while retaining identical authored MaxCount limits (9) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Field Medic": {
           "value": 1,
@@ -22561,10 +22561,10 @@
           "reason": "less unnecessary combat on long treks; Master Human Group Size set to 1 (at Stalker reference 1), while keeping its distinct CFG source."
         },
         "Mercenary": {
-          "value": 1.4,
+          "value": 1.25,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "more armed patrols fit contract work; Master Human Group Size set to 1.4 (above Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "more armed patrols fit contract work; Master Human Group Size set to 1.25 (above Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.25x instead of 1.4x while retaining identical authored MaxCount limits (8) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Smuggler": {
           "value": 1.1,
@@ -22573,10 +22573,10 @@
           "reason": "mixed roaming danger around trade routes; Master Human Group Size set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
         },
         "Scavenger": {
-          "value": 0.9,
+          "value": 0.75,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "common wildlife makes salvage routes risky; Master Human Group Size set to 0.9 (below Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "common wildlife makes salvage routes risky; Master Human Group Size set to 0.75 (below Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.75x instead of 0.9x while retaining identical authored MaxCount limits (5) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Outcast": {
           "value": 1.25,
@@ -22585,10 +22585,10 @@
           "reason": "isolated travel is not empty, wildlife remains a threat; Master Human Group Size set to 1.25 (above Veteran reference 1), while keeping its distinct CFG source."
         },
         "Hardcore": {
-          "value": 1.4,
+          "value": 1.25,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Master Human Group Size set to 1.4 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "severe encounter pressure drives supplies down; Master Human Group Size set to 1.25 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.25x instead of 1.4x while retaining identical authored MaxCount limits (8) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Hardcore+": {
           "value": 1.75,
@@ -23003,10 +23003,10 @@
           "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.35,
+          "value": 1.3,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Flesh Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "more hunting targets and wildlife pressure; Flesh Spawn set to 1.3 (above Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.3x instead of 1.35x while retaining identical authored MaxCount limits (3 / 4 / 7 / 8) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Anomaly Runner": {
           "value": 0.9,
@@ -23039,22 +23039,22 @@
           "reason": "common wildlife makes salvage routes risky; Flesh Spawn set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
         },
         "Outcast": {
-          "value": 1.35,
+          "value": 1.3,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Flesh Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "isolated travel is not empty, wildlife remains a threat; Flesh Spawn set to 1.3 (above Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.3x instead of 1.35x while retaining identical authored MaxCount limits (3 / 4 / 7 / 8) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Hardcore": {
-          "value": 1.35,
+          "value": 1.3,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Flesh Spawn set to 1.35 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "severe encounter pressure drives supplies down; Flesh Spawn set to 1.3 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.3x instead of 1.35x while retaining identical authored MaxCount limits (3 / 4 / 7 / 8) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Hardcore+": {
-          "value": 1.65,
+          "value": 1.6,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Flesh Spawn set to 1.65 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Flesh Spawn set to 1.6 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.6x instead of 1.65x while retaining identical authored MaxCount limits (3 / 5 / 8 / 10) for this source's player ranks. This is not an encounter-frequency change."
         }
       }
     },
@@ -23239,10 +23239,10 @@
           "reason": "The previous 1.15× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
-          "value": 0.7,
+          "value": 0.25,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Poltergeist Spawn set to 0.7 (below Stalker reference 1), while keeping its distinct CFG source."
+          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Poltergeist Spawn set to 0.25 (below Stalker reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.25x instead of 0.7x while retaining identical authored MaxCount limits (1 / 1 / 1 / 1) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Wanderer": {
           "value": 1,
@@ -23281,10 +23281,10 @@
           "reason": "The previous 1.2× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
-          "value": 1.45,
+          "value": 1.25,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Poltergeist Spawn set to 1.45 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Poltergeist Spawn set to 1.25 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.25x instead of 1.45x while retaining identical authored MaxCount limits (1 / 1 / 3 / 3) for this source's player ranks. This is not an encounter-frequency change."
         }
       }
     },
@@ -23348,10 +23348,10 @@
           "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.35,
+          "value": 1.25,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Snork Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "more hunting targets and wildlife pressure; Snork Spawn set to 1.25 (above Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.25x instead of 1.35x while retaining identical authored MaxCount limits (1 / 4 / 5 / 8) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Anomaly Runner": {
           "value": 0.9,
@@ -23384,16 +23384,16 @@
           "reason": "common wildlife makes salvage routes risky; Snork Spawn set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
         },
         "Outcast": {
-          "value": 1.35,
+          "value": 1.25,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Snork Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "isolated travel is not empty, wildlife remains a threat; Snork Spawn set to 1.25 (above Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.25x instead of 1.35x while retaining identical authored MaxCount limits (1 / 4 / 5 / 8) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Hardcore": {
-          "value": 1.35,
+          "value": 1.25,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Snork Spawn set to 1.35 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "severe encounter pressure drives supplies down; Snork Spawn set to 1.25 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.25x instead of 1.35x while retaining identical authored MaxCount limits (1 / 4 / 5 / 8) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Hardcore+": {
           "value": 1.65,
@@ -23463,10 +23463,10 @@
           "reason": "The previous 1.05× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Mutant Hunter": {
-          "value": 1.35,
+          "value": 1.3,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "more hunting targets and wildlife pressure; Boar Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "more hunting targets and wildlife pressure; Boar Spawn set to 1.3 (above Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.3x instead of 1.35x while retaining identical authored MaxCount limits (3 / 4 / 7 / 8) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Anomaly Runner": {
           "value": 0.9,
@@ -23499,22 +23499,22 @@
           "reason": "common wildlife makes salvage routes risky; Boar Spawn set to 1.1 (above Veteran reference 1), while keeping its distinct CFG source."
         },
         "Outcast": {
-          "value": 1.35,
+          "value": 1.3,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "isolated travel is not empty, wildlife remains a threat; Boar Spawn set to 1.35 (above Veteran reference 1), while keeping its distinct CFG source."
+          "reason": "isolated travel is not empty, wildlife remains a threat; Boar Spawn set to 1.3 (above Veteran reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.3x instead of 1.35x while retaining identical authored MaxCount limits (3 / 4 / 7 / 8) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Hardcore": {
-          "value": 1.35,
+          "value": 1.3,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "severe encounter pressure drives supplies down; Boar Spawn set to 1.35 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "severe encounter pressure drives supplies down; Boar Spawn set to 1.3 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.3x instead of 1.35x while retaining identical authored MaxCount limits (3 / 4 / 7 / 8) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Hardcore+": {
-          "value": 1.65,
+          "value": 1.6,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Boar Spawn set to 1.65 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Boar Spawn set to 1.6 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.6x instead of 1.65x while retaining identical authored MaxCount limits (3 / 5 / 8 / 10) for this source's player ranks. This is not an encounter-frequency change."
         }
       }
     },
@@ -23699,10 +23699,10 @@
           "reason": "The previous 1.15× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
-          "value": 0.7,
+          "value": 0.25,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Bayun Spawn set to 0.7 (below Stalker reference 1), while keeping its distinct CFG source."
+          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Bayun Spawn set to 0.25 (below Stalker reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.25x instead of 0.7x while retaining identical authored MaxCount limits (1 / 1 / 1 / 1) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Wanderer": {
           "value": 1,
@@ -23741,10 +23741,10 @@
           "reason": "The previous 1.2× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
-          "value": 1.45,
+          "value": 1.25,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Bayun Spawn set to 1.45 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Bayun Spawn set to 1.25 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.25x instead of 1.45x while retaining identical authored MaxCount limits (1 / 1 / 1 / 3) for this source's player ranks. This is not an encounter-frequency change."
         }
       }
     },
@@ -23971,10 +23971,10 @@
           "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
-          "value": 1.65,
+          "value": 1.5,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Rat Swarm Spawn set to 1.65 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Rat Swarm Spawn set to 1.5 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.5x instead of 1.65x while retaining identical authored MaxCount limits (2 / 2 / 2 / 2) for this source's player ranks. This is not an encounter-frequency change."
         }
       }
     },
@@ -24044,10 +24044,10 @@
           "reason": "The previous 1.15× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Anomaly Runner": {
-          "value": 0.7,
+          "value": 0.25,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Burer Spawn set to 0.7 (below Stalker reference 1), while keeping its distinct CFG source."
+          "reason": "fewer rare monsters during artifact routes, more common patrol hazards; Burer Spawn set to 0.25 (below Stalker reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 0.25x instead of 0.7x while retaining identical authored MaxCount limits (1 / 1 / 1 / 1) for this source's player ranks. This is not an encounter-frequency change."
         },
         "Wanderer": {
           "value": 1,
@@ -24086,10 +24086,10 @@
           "reason": "The previous 1.2× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
-          "value": 1.4,
+          "value": 1.25,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Burer Spawn set to 1.4 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Burer Spawn set to 1.25 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.25x instead of 1.4x while retaining identical authored MaxCount limits (1 / 1 / 1 / 3) for this source's player ranks. This is not an encounter-frequency change."
         }
       }
     },
@@ -24201,10 +24201,10 @@
           "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
-          "value": 1.65,
+          "value": 1.5,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Pseudodog Spawn set to 1.65 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Pseudodog Spawn set to 1.5 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.5x instead of 1.65x while retaining identical authored MaxCount limits (2 / 2 / 2 / 2) for this source's player ranks. This is not an encounter-frequency change."
         }
       }
     },
@@ -24316,10 +24316,10 @@
           "reason": "The previous 1.35× multiplier rounded every source-native integer A-Life limit back to the original count; it had no BPatch effect and could block Build. Keep this source at genuine neutral 1× rather than advertise nonexistent encounter changes. This role retains its other independently effective A-Life sources. This is an integer CFG limit, not measured encounter frequency."
         },
         "Hardcore+": {
-          "value": 1.65,
+          "value": 1.5,
           "reference": 1,
           "decision": "intentional-deviation",
-          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Deer Spawn set to 1.65 (above Master reference 1), while keeping its distinct CFG source."
+          "reason": "hardest group caps across humans and monsters without invented spawn frequency; Deer Spawn set to 1.5 (above Master reference 1), while keeping its distinct CFG source. The integer-effective UI now selects 1.5x instead of 1.65x while retaining identical authored MaxCount limits (2 / 2 / 2 / 2) for this source's player ranks. This is not an encounter-frequency change."
         }
       }
     }

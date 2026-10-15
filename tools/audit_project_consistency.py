@@ -2478,6 +2478,114 @@ if "2026-10-15 — Full source-backed factory audit" not in (
     DOCS / "FACTORY-PRESETS.md").read_text(encoding="utf-8"):
     _factory_errors.append("factory overview missing latest deep-audit contract")
 
+
+# Canonical A-Life factory profile mapping: all 12 x 18 shipped source
+# multipliers must be real UI stops and retain the same native integer
+# MaxCount outputs as their previous official versions.
+_alife_role_map = json.loads((ROOT / "tools/factory_preset_alife_effective_mapping.json").read_text(encoding="utf-8"))
+_alife_points = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))["editPoints"]
+_alife_caps_by_id = {}
+for _point in _alife_points:
+    _id = _point["parameterId"]
+    if not _id.startswith("alife.") or _id == "alife.mutantSpawn.generic":
+        continue
+    if _point["operation"] not in ("scaleIntegerHalfUp", "scaleIntegerHalfUpPreserveZero"):
+        _factory_errors.append("Unexpected A-Life source operation: " + _id)
+    _alife_caps_by_id.setdefault(_id, []).append(
+        (int(_point["nodePath"][1].strip("[]")), int(_point["sourceRaw"])))
+for _id in _alife_caps_by_id:
+    _alife_caps_by_id[_id].sort()
+def _alife_rank_caps(_id, multiplier):
+    return [0 if original == 0 else max(1, int(original * multiplier + .5))
+            for _, original in _alife_caps_by_id[_id]]
+def _alife_native_stops(_id):
+    native_grid = [round(.25 + n * .05, 9) for n in range(56)]
+    outputs = [_alife_rank_caps(_id, value) for value in native_grid]
+    stops = []
+    first = 0
+    while first < len(native_grid):
+        last = first
+        while last + 1 < len(native_grid) and outputs[last + 1] == outputs[first]:
+            last += 1
+        neutral = next((native_grid[i] for i in range(first, last + 1)
+                        if abs(native_grid[i] - 1) < 1e-6), None)
+        stops.append(neutral if neutral is not None
+                     else native_grid[last] if last == len(native_grid) - 1
+                     else native_grid[first])
+        first = last + 1
+    return stops
+def _alife_normalize(_id, requested):
+    candidate = max(.25, min(3.0, .25 +
+        _audit_round_away_from_zero((requested - .25) / .05) * .05))
+    intended = _alife_rank_caps(_id, candidate)
+    return next((v for v in _alife_native_stops(_id)
+                 if _alife_rank_caps(_id, v) == intended), None)
+if (_alife_role_map.get("schemaVersion") != 1
+    or set(_alife_role_map.get("profiles", {})) != set(_factory_preset_names)
+    or set(_alife_caps_by_id) != {
+        id for id in _factory_catalog if id.startswith("alife.")
+        and id != "alife.mutantSpawn.generic"
+    }
+    or len(_alife_caps_by_id) != 18):
+    _factory_errors.append("12-role A-Life mapping source coverage drift")
+_alife_verified = 0
+_alife_rewritten = 0
+for _name in _factory_preset_names:
+    _actual_preset = json.loads((_factory_preset_dir / f"{_name}.json").read_text(encoding="utf-8"))
+    _record = _alife_role_map["profiles"][_name]
+    _settings = _record.get("settings", {})
+    if (set(_settings) != set(_alife_caps_by_id)
+        or _record.get("referenceDifficulty") != _actual_preset["referenceDifficulty"]):
+        _factory_errors.append(f"{_name}: A-Life profile matrix incomplete or wrong difficulty")
+        continue
+    _adjusted_ids = set()
+    for _id, _cell in _settings.items():
+        _old = _cell["previousMultiplier"]
+        _new = _cell["effectiveMultiplier"]
+        _normalized = _alife_normalize(_id, _old)
+        if (_normalized is None or abs(_new - _normalized) > 1e-7
+            or abs(_actual_preset["values"][_id]["number"] - _new) > 1e-7
+            or _alife_rank_caps(_id, _old) != _alife_rank_caps(_id, _new)
+            or _alife_rank_caps(_id, _new) != _cell["integerCaps"]):
+            _factory_errors.append(f"{_name}: noncanonical or changed integer MaxCount {_id}")
+        if abs(_old - _new) > 1e-7:
+            _adjusted_ids.add(_id)
+            _alife_rewritten += 1
+        _alife_verified += 1
+    _listed = _record.get("adjustments", [])
+    if (len(_listed) != len(_adjusted_ids)
+        or set(row["parameterId"] for row in _listed) != _adjusted_ids):
+        _factory_errors.append(f"{_name}: canonicalization change list drift")
+    for _row in _listed:
+        _cell = _settings[_row["parameterId"]]
+        if any(_row.get(k) != _cell[k]
+               for k in ("previousMultiplier", "effectiveMultiplier", "integerCaps")):
+            _factory_errors.append(f"{_name}: A-Life adjustment record drift")
+_summary = _alife_role_map.get("auditSummary", {})
+if (_alife_verified != 216 or _alife_rewritten != 39
+    or _summary.get("profileCount") != 12
+    or _summary.get("sourceSettingsPerProfile") != 18
+    or _summary.get("totalSettings") != 216
+    or _summary.get("adjustedMultipliers") != 39
+    or _summary.get("preservedIntegerOutputs") != 216):
+    _factory_errors.append("canonical A-Life 12 x 18 coverage/count mismatch")
+if ('PreEffectiveALifeFactoryBlobs' not in _factory_service_text
+    or '&& !PreEffectiveALifeFactoryBlobs.TryGetValue(name, out knownHash)' not in _factory_service_text
+    or 'PreEffectiveALifeFactoryBlobs.TryGetValue(name, out var preEffectiveALifeHash)' not in _factory_service_text
+    or _factory_service_text.count('PreEffectiveALifeFactoryBlobs.TryGetValue(name,') != 2):
+    _factory_errors.append("canonical A-Life factory exact-stock migration is not wired")
+_old_alife_blob_table = _factory_service_text.split(
+    'PreEffectiveALifeFactoryBlobs =', 1)[-1].split('};', 1)[0]
+for _name, _profile in _alife_role_map.get("profiles", {}).items():
+    _blob = _profile.get("previousStockBlobSha", "")
+    if (len(_blob) != 40
+        or f'["{_name}"] = "{_blob}",' not in _old_alife_blob_table):
+        _factory_errors.append(f"{_name}: old pristine A-Life factory blob identity missing")
+if "2026-10-15 — Canonical A-Life factory profile mapping" not in (
+    DOCS / "FACTORY-PRESETS.md").read_text(encoding="utf-8"):
+    _factory_errors.append("canonical A-Life factory mapping doc missing")
+note("factory A-Life: 12 roles x 18 sources, 216 integer outputs preserved, 39 stored stops canonicalized")
+
 # 2026-10-15 final source-to-writer proof and source-inert integer correction.
 # Source mapping coverage is independently rechecked by audit_final_cfg_mapping.py;
 # this audit pins the new contract and exact-pristine stock upgrade.

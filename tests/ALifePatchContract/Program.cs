@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Text.Json;
 using TrueCustomDifficulty.Models;
 using TrueCustomDifficulty.Services;
 using TrueCustomDifficulty.ViewModels;
@@ -136,6 +137,8 @@ internal static class Program
             humanNewbie.ResetToReference();
             blindDog.ResetToReference();
 
+            CheckFactoryProfileMapping(ids);
+
             foreach (var difficulty in Difficulties)
                 Case(difficulty, new Dictionary<string, double>(), "vanilla");
             foreach (var id in ids)
@@ -177,6 +180,54 @@ internal static class Program
             return 0;
         }
         catch (Exception e) { Console.Error.WriteLine("FAIL: " + e); return 1; }
+    }
+
+
+    private static void CheckFactoryProfileMapping(IReadOnlyList<string> sourceIds)
+    {
+        // Read all real bundled factory snapshots, not a copied numeric
+        // fixture, and verify that no profile A-Life value will silently
+        // resnap when it passes through the production live editor.
+        string[] names =
+        {
+            "Immersive", "Tactical", "Field Medic", "Mutant Hunter",
+            "Anomaly Runner", "Wanderer", "Mercenary", "Smuggler",
+            "Scavenger", "Outcast", "Hardcore", "Hardcore+"
+        };
+
+        var checkedSources = 0;
+        foreach (var name in names)
+        {
+            using var resource = typeof(MainViewModel).Assembly.GetManifestResourceStream(
+                "TrueCustomDifficulty.Presets." + name + ".json")
+                ?? throw new InvalidDataException("Missing embedded factory preset: " + name);
+            var preset = JsonSerializer.Deserialize<PresetFile>(resource)
+                ?? throw new InvalidDataException("Cannot parse embedded factory preset: " + name);
+            Check(preset.Values.Count == 248, "Incomplete factory source count: " + name);
+            Check(preset.Values.TryGetValue("alife.mutantSpawn.generic", out var generic)
+                && generic.Number == 1.0, "Hidden A-Life generic must remain neutral: " + name);
+
+            foreach (var id in sourceIds)
+            {
+                Check(preset.Values.TryGetValue(id, out var setting)
+                    && setting.Kind == "slider" && setting.Number.HasValue,
+                    "Missing factory A-Life slider: " + name + "/" + id);
+                var slider = Catalog.Parameters.Single(p => p.Id == id).Slider
+                    ?? throw new InvalidDataException("Factory A-Life source missing range: " + id);
+                var stored = setting!.Number!.Value;
+                var canonical = ALifeIntegerCapSteps.Snap(
+                    id, stored, slider.Min, slider.Max, slider.Step);
+                Check(Math.Abs(canonical - stored) < 0.0000011,
+                    "Factory value would silently change on load: " + name + "/" + id);
+                Check(ALifeIntegerCapSteps.EffectiveCaps(id, stored)
+                    .SequenceEqual(ALifeIntegerCapSteps.EffectiveCaps(id, canonical)),
+                    "Factory effective count does not match writer: " + name + "/" + id);
+                checkedSources++;
+            }
+        }
+
+        Check(checkedSources == 216, "Expected 12 x 18 canonical A-Life factory sources");
+        Console.WriteLine("PASS: " + checkedSources + " source-effective embedded factory A-Life values");
     }
 
     private static void Case(string difficulty, Dictionary<string, double> values, string kind)

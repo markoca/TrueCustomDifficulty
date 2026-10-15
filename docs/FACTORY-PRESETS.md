@@ -1,6 +1,11 @@
 # Factory Presets
 
-### 2026-10-15 — Final CFG route / non-noop A-Life correction (CURRENT)
+### 2026-10-15 — Canonical A-Life factory profile mapping (CURRENT)
+
+The existing A-Life integer-effective editor requires one genuine selectable multiplier per distinct set of authored `MaxCount` limits. All **12 factory profiles** now store those canonical stops: **39 multipliers are rewritten while 216/216 active A-Life source outputs stay exactly the same**. The 248 parameter IDs, four human rank controls, fourteen species controls, source-only neutral generic, role-specific intent, difficulty references and all other native values remain intact. The original/current per-profile values and actual rank limits are documented in [`tools/factory_preset_alife_effective_mapping.json`](../tools/factory_preset_alife_effective_mapping.json), with matching full-source ledger, role matrix and A-Life table. `PreEffectiveALifeFactoryBlobs` upgrades only byte-identical old stock factory profiles, never user-edited/custom profiles. No UI renderer/CFG writer change, or measured spawn-frequency claim.
+
+
+### 2026-10-15 — Final CFG route / non-noop A-Life correction (HISTORICAL; SUPERSEDED)
 
 The final source-to-production-writer audit found **108 ineffective A-Life group-size multipliers** across the twelve shipped stock profiles. Their decimal values differed from 1×, but integer `MaxCount` patch transformations produced exactly the original source values, potentially causing Build to reject a profile for lack of concrete output. All 108 affected values are now **genuine neutral 1×**; effective A-Life and the 247 other settings are preserved. Every revised profile still contains 248 native sources. The updated `tools/factory_preset_full_source_audit.json` records each reason; `tools/factory_preset_role_rebalance.json` stays synchronized. Pristine-only previous stock hashes are migrated by `PreFinalCfgAuditFactoryBlobs` and edited/custom profiles stay untouched. For per-source BPatch evidence and limitations see [the final CFG audit](FINAL-CFG-MAPPING-AUDIT-2026-10-15.md).
 

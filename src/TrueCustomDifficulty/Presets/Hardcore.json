@@ -783,15 +783,15 @@
     },
     "alife.humanGroupSize.experienced": {
       "kind": "slider",
-      "number": 1.25
+      "number": 1.15
     },
     "alife.humanGroupSize.veteran": {
       "kind": "slider",
-      "number": 1.35
+      "number": 1.3
     },
     "alife.humanGroupSize.master": {
       "kind": "slider",
-      "number": 1.4
+      "number": 1.25
     },
     "alife.mutantSpawn.bloodsucker": {
       "kind": "slider",
@@ -803,7 +803,7 @@
     },
     "alife.mutantSpawn.flesh": {
       "kind": "slider",
-      "number": 1.35
+      "number": 1.3
     },
     "alife.mutantSpawn.controller": {
       "kind": "slider",
@@ -815,11 +815,11 @@
     },
     "alife.mutantSpawn.snork": {
       "kind": "slider",
-      "number": 1.35
+      "number": 1.25
     },
     "alife.mutantSpawn.boar": {
       "kind": "slider",
-      "number": 1.35
+      "number": 1.3
     },
     "alife.mutantSpawn.chimera": {
       "kind": "slider",

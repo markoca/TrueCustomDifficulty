@@ -2,6 +2,9 @@
 
 # A-Life Spawn Mapping
 
+**2026-10-15 factory profile mapping:** All 12 shipped role presets now use the canonical selectable integer-effective A-Life multiplier for each of the four human rank sources and 14 mutant species. The 39 noncanonical multiplier values are replaced with plateau representatives; **216/216 original integer `MaxCount` outcomes are preserved**. `alife.mutantSpawn.generic` remains hidden/neutral (1x). Full source-per-profile before/after list: `tools/factory_preset_alife_effective_mapping.json`. This does not alter actual group limits, lair refill, world population, or encounter frequency. Only pristine byte-identical older official presets upgrade; custom files remain protected.
+
+
 ## Current A-Life UI layout (2026-10-15)
 
 **Integer-effective input policy (covered by the production A-Life contract and project consistency static guard):** The A-Life editor uses the exact embedded CFG baseline `MaxCount` source rows to build outcome-changing steps from its underlying 0.25–3x / 0.05x grid. Ineffective plateaus collapse to one representative, with 1x preferred for the unchanged source. Mouse, keyboard, markers and imported presets use the same normalization. A 0.95x one-cap mutant is neutral 1x; a 0.95x Blind Dog changes Master 12 to 11 and remains a real choice. Human rank cards and the four-rank mutant count readouts display real integer outcomes. The old 0.05x all-steps-available description below is historical; source mapping, writer operation and physical board sizes remain unchanged.

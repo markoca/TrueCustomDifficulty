@@ -779,15 +779,15 @@
     },
     "alife.humanGroupSize.newbie": {
       "kind": "slider",
-      "number": 0.8
+      "number": 0.5
     },
     "alife.humanGroupSize.experienced": {
       "kind": "slider",
-      "number": 0.85
+      "number": 0.65
     },
     "alife.humanGroupSize.veteran": {
       "kind": "slider",
-      "number": 0.85
+      "number": 0.7
     },
     "alife.humanGroupSize.master": {
       "kind": "slider",
@@ -811,7 +811,7 @@
     },
     "alife.mutantSpawn.poltergeist": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.25
     },
     "alife.mutantSpawn.snork": {
       "kind": "slider",
@@ -827,7 +827,7 @@
     },
     "alife.mutantSpawn.bayun": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.25
     },
     "alife.mutantSpawn.tushkan": {
       "kind": "slider",
@@ -839,7 +839,7 @@
     },
     "alife.mutantSpawn.burer": {
       "kind": "slider",
-      "number": 0.7
+      "number": 0.25
     },
     "alife.mutantSpawn.pseudodog": {
       "kind": "slider",

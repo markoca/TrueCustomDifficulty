@@ -779,11 +779,11 @@
     },
     "alife.humanGroupSize.newbie": {
       "kind": "slider",
-      "number": 1.4
+      "number": 1.2
     },
     "alife.humanGroupSize.experienced": {
       "kind": "slider",
-      "number": 1.5
+      "number": 1.4
     },
     "alife.humanGroupSize.veteran": {
       "kind": "slider",
@@ -803,7 +803,7 @@
     },
     "alife.mutantSpawn.flesh": {
       "kind": "slider",
-      "number": 1.65
+      "number": 1.6
     },
     "alife.mutantSpawn.controller": {
       "kind": "slider",
@@ -811,7 +811,7 @@
     },
     "alife.mutantSpawn.poltergeist": {
       "kind": "slider",
-      "number": 1.45
+      "number": 1.25
     },
     "alife.mutantSpawn.snork": {
       "kind": "slider",
@@ -819,7 +819,7 @@
     },
     "alife.mutantSpawn.boar": {
       "kind": "slider",
-      "number": 1.65
+      "number": 1.6
     },
     "alife.mutantSpawn.chimera": {
       "kind": "slider",
@@ -827,7 +827,7 @@
     },
     "alife.mutantSpawn.bayun": {
       "kind": "slider",
-      "number": 1.45
+      "number": 1.25
     },
     "alife.mutantSpawn.tushkan": {
       "kind": "slider",
@@ -835,19 +835,19 @@
     },
     "alife.mutantSpawn.ratSwarm": {
       "kind": "slider",
-      "number": 1.65
+      "number": 1.5
     },
     "alife.mutantSpawn.burer": {
       "kind": "slider",
-      "number": 1.4
+      "number": 1.25
     },
     "alife.mutantSpawn.pseudodog": {
       "kind": "slider",
-      "number": 1.65
+      "number": 1.5
     },
     "alife.mutantSpawn.deer": {
       "kind": "slider",
-      "number": 1.65
+      "number": 1.5
     },
     "survival.waterRegenDuration": {
       "kind": "slider",

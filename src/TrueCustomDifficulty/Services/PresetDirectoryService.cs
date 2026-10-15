@@ -215,6 +215,25 @@ public sealed class PresetDirectoryService
         ["Hardcore+"] = "f813e67c0aed365638c8e822a1bded45774b0769",
     };
 
+    // Load the newly canonical A-Life stock values only when the previous
+    // factory file is byte-identical. A user-edited file must not be replaced.
+    private static readonly Dictionary<string, string> PreEffectiveALifeFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Immersive"] = "e21b9812866616a6bc9cc4dd337d56c3e82d7f75",
+        ["Tactical"] = "560c735dcd1f4ba18e6942f727b11159d6e1428f",
+        ["Field Medic"] = "a26c8021f42d62073e5a967be4444cd9a0332941",
+        ["Mutant Hunter"] = "39ecdcc19e0144ec6ffea5977c785039c8a4fa10",
+        ["Anomaly Runner"] = "8a93952d58c7ca5ba8a4b6feefe5a1e39817bfeb",
+        ["Wanderer"] = "d671b9cf32f67932c7d518b2b0aa03f5931430f0",
+        ["Mercenary"] = "b63ed1dd6fcd195d0a7c027d546825fed3493a86",
+        ["Smuggler"] = "098a1159bb3e209ba4292e477dfa741b1f809381",
+        ["Scavenger"] = "d2126bd33893994a400a80d1d3809d38e3f8a438",
+        ["Outcast"] = "94797e80f8498383f20c73e8402f04915cb48e49",
+        ["Hardcore"] = "c1a9b1ec2b87a59dd92b83e52bee302790b53e3e",
+        ["Hardcore+"] = "6674aa193990081ed3e4166645873ac9e6e7b3ee",
+    };
+
     public string Ensure()
     {
         var directory = Path.Combine(AppContext.BaseDirectory, "Presets");
@@ -295,7 +314,8 @@ public sealed class PresetDirectoryService
             && !PreRoleRebalanceFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreConsumableRebalanceFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreFullDeepAuditFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreFinalCfgAuditFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreFinalCfgAuditFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreEffectiveALifeFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -329,7 +349,9 @@ public sealed class PresetDirectoryService
                 || (PreFullDeepAuditFactoryBlobs.TryGetValue(name, out var preDeepHash)
                     && actual.Equals(preDeepHash, StringComparison.OrdinalIgnoreCase))
                 || (PreFinalCfgAuditFactoryBlobs.TryGetValue(name, out var preFinalCfgHash)
-                    && actual.Equals(preFinalCfgHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preFinalCfgHash, StringComparison.OrdinalIgnoreCase))
+                || (PreEffectiveALifeFactoryBlobs.TryGetValue(name, out var preEffectiveALifeHash)
+                    && actual.Equals(preEffectiveALifeHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

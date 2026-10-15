@@ -1,0 +1,2497 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-15",
+  "source": "GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg / ALifeDirectorPreset / ALifeScenarioNPCArchetypesLimitsPerPlayerRank[].Restrictions[].MaxCount",
+  "policy": "Canonical source-backed integer-effective A-Life editor stops (0.25–3x native, 0.05x grid, 1x neutral anchor), without changing any preexisting rank-specific MaxCount output. Does not measure encounter frequency.",
+  "sourceParameterCount": 18,
+  "profiles": {
+    "Immersive": {
+      "referenceDifficulty": "Stalker",
+      "previousStockBlobSha": "e21b9812866616a6bc9cc4dd337d56c3e82d7f75",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            4
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            6
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            3
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            5
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            4,
+            6,
+            8,
+            12
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            2,
+            3,
+            5,
+            6
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            2,
+            3,
+            5,
+            6
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            3,
+            4,
+            6
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 1.05,
+          "effectiveMultiplier": 1.05,
+          "integerCaps": [
+            6,
+            8,
+            13,
+            17
+          ]
+        }
+      },
+      "adjustments": []
+    },
+    "Tactical": {
+      "referenceDifficulty": "Veteran",
+      "previousStockBlobSha": "560c735dcd1f4ba18e6942f727b11159d6e1428f",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 1.15,
+          "effectiveMultiplier": 1.15,
+          "integerCaps": [
+            5
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 1.5,
+          "effectiveMultiplier": 1.45,
+          "integerCaps": [
+            9
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            3
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 1.45,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            7
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 0.85,
+          "effectiveMultiplier": 0.85,
+          "integerCaps": [
+            3,
+            5,
+            7,
+            10
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            2,
+            3,
+            5,
+            6
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            2,
+            3,
+            5,
+            6
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            3,
+            4,
+            6
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 1.05,
+          "effectiveMultiplier": 1.05,
+          "integerCaps": [
+            6,
+            8,
+            13,
+            17
+          ]
+        }
+      },
+      "adjustments": [
+        {
+          "parameterId": "alife.humanGroupSize.master",
+          "previousMultiplier": 1.5,
+          "effectiveMultiplier": 1.45,
+          "integerCaps": [
+            9
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.veteran",
+          "previousMultiplier": 1.45,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            7
+          ]
+        }
+      ]
+    },
+    "Field Medic": {
+      "referenceDifficulty": "Stalker",
+      "previousStockBlobSha": "a26c8021f42d62073e5a967be4444cd9a0332941",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            4
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            6
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            3
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            5
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 0.85,
+          "effectiveMultiplier": 0.85,
+          "integerCaps": [
+            3,
+            5,
+            7,
+            10
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            2,
+            3,
+            5,
+            6
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            2,
+            3,
+            5,
+            6
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            3,
+            4,
+            6
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 1.05,
+          "effectiveMultiplier": 1.05,
+          "integerCaps": [
+            6,
+            8,
+            13,
+            17
+          ]
+        }
+      },
+      "adjustments": []
+    },
+    "Mutant Hunter": {
+      "referenceDifficulty": "Veteran",
+      "previousStockBlobSha": "39ecdcc19e0144ec6ffea5977c785039c8a4fa10",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            4
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            6
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            3
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            5
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 1.25,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            5,
+            8,
+            10,
+            15
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            4,
+            5,
+            8
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.35,
+          "integerCaps": [
+            8,
+            11,
+            16,
+            22
+          ]
+        }
+      },
+      "adjustments": [
+        {
+          "parameterId": "alife.mutantSpawn.boar",
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.flesh",
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.snork",
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            4,
+            5,
+            8
+          ]
+        }
+      ]
+    },
+    "Anomaly Runner": {
+      "referenceDifficulty": "Stalker",
+      "previousStockBlobSha": "8a93952d58c7ca5ba8a4b6feefe5a1e39817bfeb",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 0.85,
+          "effectiveMultiplier": 0.65,
+          "integerCaps": [
+            3
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            6
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 0.8,
+          "effectiveMultiplier": 0.5,
+          "integerCaps": [
+            2
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 0.85,
+          "effectiveMultiplier": 0.7,
+          "integerCaps": [
+            4
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 0.7,
+          "effectiveMultiplier": 0.25,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 1.15,
+          "effectiveMultiplier": 1.15,
+          "integerCaps": [
+            5,
+            7,
+            9,
+            14
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 0.9,
+          "effectiveMultiplier": 0.9,
+          "integerCaps": [
+            2,
+            3,
+            5,
+            5
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 0.7,
+          "effectiveMultiplier": 0.25,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 0.9,
+          "effectiveMultiplier": 0.9,
+          "integerCaps": [
+            2,
+            3,
+            5,
+            5
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 0.7,
+          "effectiveMultiplier": 0.25,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 0.9,
+          "effectiveMultiplier": 0.9,
+          "integerCaps": [
+            1,
+            3,
+            4,
+            5
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 0.9,
+          "effectiveMultiplier": 0.9,
+          "integerCaps": [
+            5,
+            7,
+            11,
+            14
+          ]
+        }
+      },
+      "adjustments": [
+        {
+          "parameterId": "alife.humanGroupSize.experienced",
+          "previousMultiplier": 0.85,
+          "effectiveMultiplier": 0.65,
+          "integerCaps": [
+            3
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.newbie",
+          "previousMultiplier": 0.8,
+          "effectiveMultiplier": 0.5,
+          "integerCaps": [
+            2
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.veteran",
+          "previousMultiplier": 0.85,
+          "effectiveMultiplier": 0.7,
+          "integerCaps": [
+            4
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.bayun",
+          "previousMultiplier": 0.7,
+          "effectiveMultiplier": 0.25,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.burer",
+          "previousMultiplier": 0.7,
+          "effectiveMultiplier": 0.25,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.poltergeist",
+          "previousMultiplier": 0.7,
+          "effectiveMultiplier": 0.25,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "Wanderer": {
+      "referenceDifficulty": "Stalker",
+      "previousStockBlobSha": "d671b9cf32f67932c7d518b2b0aa03f5931430f0",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            4
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            6
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 0.8,
+          "effectiveMultiplier": 0.5,
+          "integerCaps": [
+            2
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 0.75,
+          "effectiveMultiplier": 0.7,
+          "integerCaps": [
+            4
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 1.15,
+          "effectiveMultiplier": 1.15,
+          "integerCaps": [
+            5,
+            7,
+            9,
+            14
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            2,
+            3,
+            6,
+            7
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            2,
+            3,
+            6,
+            7
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            1,
+            3,
+            4,
+            7
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            7,
+            9,
+            13,
+            18
+          ]
+        }
+      },
+      "adjustments": [
+        {
+          "parameterId": "alife.humanGroupSize.newbie",
+          "previousMultiplier": 0.8,
+          "effectiveMultiplier": 0.5,
+          "integerCaps": [
+            2
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.veteran",
+          "previousMultiplier": 0.75,
+          "effectiveMultiplier": 0.7,
+          "integerCaps": [
+            4
+          ]
+        }
+      ]
+    },
+    "Mercenary": {
+      "referenceDifficulty": "Veteran",
+      "previousStockBlobSha": "b63ed1dd6fcd195d0a7c027d546825fed3493a86",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 1.2,
+          "effectiveMultiplier": 1.15,
+          "integerCaps": [
+            5
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 1.4,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            8
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            3
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 1.45,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            7
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            4,
+            6,
+            8,
+            12
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            2,
+            3,
+            5,
+            6
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            2,
+            3,
+            5,
+            6
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            3,
+            4,
+            6
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            6,
+            8,
+            12,
+            16
+          ]
+        }
+      },
+      "adjustments": [
+        {
+          "parameterId": "alife.humanGroupSize.experienced",
+          "previousMultiplier": 1.2,
+          "effectiveMultiplier": 1.15,
+          "integerCaps": [
+            5
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.master",
+          "previousMultiplier": 1.4,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            8
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.veteran",
+          "previousMultiplier": 1.45,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            7
+          ]
+        }
+      ]
+    },
+    "Smuggler": {
+      "referenceDifficulty": "Veteran",
+      "previousStockBlobSha": "098a1159bb3e209ba4292e477dfa741b1f809381",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            4
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            7
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            3
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            5
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 0.95,
+          "effectiveMultiplier": 0.95,
+          "integerCaps": [
+            4,
+            6,
+            8,
+            11
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            2,
+            3,
+            6,
+            7
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            2,
+            3,
+            6,
+            7
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            1,
+            3,
+            4,
+            7
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            7,
+            9,
+            13,
+            18
+          ]
+        }
+      },
+      "adjustments": []
+    },
+    "Scavenger": {
+      "referenceDifficulty": "Veteran",
+      "previousStockBlobSha": "d2126bd33893994a400a80d1d3809d38e3f8a438",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 0.8,
+          "effectiveMultiplier": 0.65,
+          "integerCaps": [
+            3
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 0.9,
+          "effectiveMultiplier": 0.75,
+          "integerCaps": [
+            5
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 0.7,
+          "effectiveMultiplier": 0.5,
+          "integerCaps": [
+            2
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 0.85,
+          "effectiveMultiplier": 0.7,
+          "integerCaps": [
+            4
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            4,
+            7,
+            9,
+            13
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            2,
+            3,
+            6,
+            7
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            2,
+            3,
+            6,
+            7
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            1,
+            3,
+            4,
+            7
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            7,
+            9,
+            13,
+            18
+          ]
+        }
+      },
+      "adjustments": [
+        {
+          "parameterId": "alife.humanGroupSize.experienced",
+          "previousMultiplier": 0.8,
+          "effectiveMultiplier": 0.65,
+          "integerCaps": [
+            3
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.master",
+          "previousMultiplier": 0.9,
+          "effectiveMultiplier": 0.75,
+          "integerCaps": [
+            5
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.newbie",
+          "previousMultiplier": 0.7,
+          "effectiveMultiplier": 0.5,
+          "integerCaps": [
+            2
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.veteran",
+          "previousMultiplier": 0.85,
+          "effectiveMultiplier": 0.7,
+          "integerCaps": [
+            4
+          ]
+        }
+      ]
+    },
+    "Outcast": {
+      "referenceDifficulty": "Veteran",
+      "previousStockBlobSha": "94797e80f8498383f20c73e8402f04915cb48e49",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            4
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 1.25,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            8
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            3
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 1.1,
+          "effectiveMultiplier": 1.1,
+          "integerCaps": [
+            6
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 1.2,
+          "effectiveMultiplier": 1.2,
+          "integerCaps": [
+            5,
+            7,
+            10,
+            14
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            4,
+            5,
+            8
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.35,
+          "integerCaps": [
+            8,
+            11,
+            16,
+            22
+          ]
+        }
+      },
+      "adjustments": [
+        {
+          "parameterId": "alife.mutantSpawn.boar",
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.flesh",
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.snork",
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            4,
+            5,
+            8
+          ]
+        }
+      ]
+    },
+    "Hardcore": {
+      "referenceDifficulty": "Master",
+      "previousStockBlobSha": "c1a9b1ec2b87a59dd92b83e52bee302790b53e3e",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 1.25,
+          "effectiveMultiplier": 1.15,
+          "integerCaps": [
+            5
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 1.4,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            8
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 1.2,
+          "effectiveMultiplier": 1.2,
+          "integerCaps": [
+            4
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            7
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 1.25,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            5,
+            8,
+            10,
+            15
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            4,
+            5,
+            8
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.35,
+          "integerCaps": [
+            8,
+            11,
+            16,
+            22
+          ]
+        }
+      },
+      "adjustments": [
+        {
+          "parameterId": "alife.humanGroupSize.experienced",
+          "previousMultiplier": 1.25,
+          "effectiveMultiplier": 1.15,
+          "integerCaps": [
+            5
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.master",
+          "previousMultiplier": 1.4,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            8
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.veteran",
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            7
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.boar",
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.flesh",
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            3,
+            4,
+            7,
+            8
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.snork",
+          "previousMultiplier": 1.35,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            4,
+            5,
+            8
+          ]
+        }
+      ]
+    },
+    "Hardcore+": {
+      "referenceDifficulty": "Master",
+      "previousStockBlobSha": "6674aa193990081ed3e4166645873ac9e6e7b3ee",
+      "settings": {
+        "alife.humanGroupSize.experienced": {
+          "previousMultiplier": 1.5,
+          "effectiveMultiplier": 1.4,
+          "integerCaps": [
+            6
+          ]
+        },
+        "alife.humanGroupSize.master": {
+          "previousMultiplier": 1.75,
+          "effectiveMultiplier": 1.75,
+          "integerCaps": [
+            11
+          ]
+        },
+        "alife.humanGroupSize.newbie": {
+          "previousMultiplier": 1.4,
+          "effectiveMultiplier": 1.2,
+          "integerCaps": [
+            4
+          ]
+        },
+        "alife.humanGroupSize.veteran": {
+          "previousMultiplier": 1.5,
+          "effectiveMultiplier": 1.5,
+          "integerCaps": [
+            8
+          ]
+        },
+        "alife.mutantSpawn.bayun": {
+          "previousMultiplier": 1.45,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            3
+          ]
+        },
+        "alife.mutantSpawn.blindDog": {
+          "previousMultiplier": 1.3,
+          "effectiveMultiplier": 1.3,
+          "integerCaps": [
+            5,
+            8,
+            10,
+            16
+          ]
+        },
+        "alife.mutantSpawn.bloodsucker": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.boar": {
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.6,
+          "integerCaps": [
+            3,
+            5,
+            8,
+            10
+          ]
+        },
+        "alife.mutantSpawn.burer": {
+          "previousMultiplier": 1.4,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            3
+          ]
+        },
+        "alife.mutantSpawn.chimera": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.controller": {
+          "previousMultiplier": 1,
+          "effectiveMultiplier": 1,
+          "integerCaps": [
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "alife.mutantSpawn.deer": {
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.5,
+          "integerCaps": [
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.flesh": {
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.6,
+          "integerCaps": [
+            3,
+            5,
+            8,
+            10
+          ]
+        },
+        "alife.mutantSpawn.poltergeist": {
+          "previousMultiplier": 1.45,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            1,
+            3,
+            3
+          ]
+        },
+        "alife.mutantSpawn.pseudodog": {
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.5,
+          "integerCaps": [
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.ratSwarm": {
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.5,
+          "integerCaps": [
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        "alife.mutantSpawn.snork": {
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.65,
+          "integerCaps": [
+            2,
+            5,
+            7,
+            10
+          ]
+        },
+        "alife.mutantSpawn.tushkan": {
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.65,
+          "integerCaps": [
+            10,
+            13,
+            20,
+            26
+          ]
+        }
+      },
+      "adjustments": [
+        {
+          "parameterId": "alife.humanGroupSize.experienced",
+          "previousMultiplier": 1.5,
+          "effectiveMultiplier": 1.4,
+          "integerCaps": [
+            6
+          ]
+        },
+        {
+          "parameterId": "alife.humanGroupSize.newbie",
+          "previousMultiplier": 1.4,
+          "effectiveMultiplier": 1.2,
+          "integerCaps": [
+            4
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.bayun",
+          "previousMultiplier": 1.45,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            3
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.boar",
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.6,
+          "integerCaps": [
+            3,
+            5,
+            8,
+            10
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.burer",
+          "previousMultiplier": 1.4,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            1,
+            1,
+            3
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.deer",
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.5,
+          "integerCaps": [
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.flesh",
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.6,
+          "integerCaps": [
+            3,
+            5,
+            8,
+            10
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.poltergeist",
+          "previousMultiplier": 1.45,
+          "effectiveMultiplier": 1.25,
+          "integerCaps": [
+            1,
+            1,
+            3,
+            3
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.pseudodog",
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.5,
+          "integerCaps": [
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        {
+          "parameterId": "alife.mutantSpawn.ratSwarm",
+          "previousMultiplier": 1.65,
+          "effectiveMultiplier": 1.5,
+          "integerCaps": [
+            2,
+            2,
+            2,
+            2
+          ]
+        }
+      ]
+    }
+  },
+  "auditSummary": {
+    "profileCount": 12,
+    "sourceSettingsPerProfile": 18,
+    "totalSettings": 216,
+    "adjustedMultipliers": 39,
+    "preservedIntegerOutputs": 216
+  }
+}

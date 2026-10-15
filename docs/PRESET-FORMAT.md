@@ -1,5 +1,10 @@
 # Preset JSON format
 
+### 2026-10-15 — Canonical A-Life factory values (CURRENT)
+
+All 12 embedded factory v1 JSON presets preserve their **248** native source entries; only **39** A-Life multipliers are re-expressed as canonical integer-effective editor stops without changing any of the **216** real rank/species group-size limits. Their 1x neutral source, reference difficulties, UI-only override flags and unrelated values remain intact. Earlier user presets load through the A-Life integer-effective value normalization without changing the JSON schema. Only byte-identical old official factory files are automatically upgraded via `PreEffectiveALifeFactoryBlobs`; edited factory-name files and custom presets are protected. See `tools/factory_preset_alife_effective_mapping.json`.
+
+
 ### 2026-10-15 — Full 248-source factory audit (CURRENT)
 
 Factory profiles stay **v1** with exactly 248 `values` entries and the existing `drinkDurationOverride`/`medicalOverride` root UI-only flags. Each profile-setting value and its source-specific reason is recorded in `tools/factory_preset_full_source_audit.json` and summarized in `docs/FACTORY-PROFILE-FULL-AUDIT-2026-10-15.md`. Source-native UI step normalization (including 5-percentage-point chance steps and 5-second override duration steps) is pre-applied to stock JSONs, so load no longer silently changes those values. Stock migration uses exact `PreFullDeepAuditFactoryBlobs` hashes; user-created/edited profiles are preserved. No new gameplay CFG parameter or serializer version is introduced.
