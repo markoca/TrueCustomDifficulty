@@ -2,11 +2,11 @@
 
 ## 2026-10-16 — Stash content / gear visual family lock (CURRENT)
 
-Implement two distinct 324-DIP aggregate boards in Loot directly after STASH REWARDS:
-- `StashContentMix` / anchor `loot.stashMixAmmo`: independent real-source tracks for `loot.stashMix{Ammo,Medical,Food,Drinks,Grenades,Coupons}`. Exactly **six tracks, 0–3x, 0.25x step, 1x reference**.
-- `StashGear` / anchor `loot.stashGearCheapWeapon`: independent tier/matter controls `loot.stashGear{Cheap,Medium,Expensive}{Weapon,Armor}`. Exactly **six tracks**, **0 OFF, 1 RARE, 2 MODERATE, 3 FREQUENT**, native step 1.
+Implement two distinct centered chart boards in Loot immediately after STASH REWARDS:
+- `StashContentMix` / anchor `loot.stashMixAmmo`: **376-DIP, six-row shared-axis horizontal bar chart**, sources `loot.stashMix{Ammo,Medical,Food,Drinks,Grenades,Coupons}`, native 0–3x / 0.25x. One labelled 0x/1x/2x/3x axis spans the six rows, with a neutral reference guide and individually draggable/clickable series.
+- `StashGear` / anchor `loot.stashGearCheapWeapon`: **370-DIP, 3×2 discrete dot plot**, rows BASIC/STANDARD/RARE and columns WEAPONS/ARMOR, sources `loot.stashGear{Cheap,Medium,Expensive}{Weapon,Armor}`, native 0 OFF / 1 RARE / 2 MODERATE / 3 FREQUENT stops. Two common labelled axes underneath its columns; six separate active markers and readouts.
 
-Both draw as centered *two-column, three-row* balanced cards with max 740-DIP aggregate bank width, 10-DIP inter-card gap and identical `DrawCompactTrack` rail/hit geometry to Stamina Usage. A changed numeric text token alone turns gold. White/grey neutral text/label and base tick are not emphasized. Handle hover and keyboard/pointer/right-click/R reset follow current `AggregateVisualControl` contracts. No duplicate source rows; every member has separate ID, preset value, modified state and CFG transformation. Long card explanations stay only in rationale/help, never the board.
+Both graphs have maximum plot bank width 785 DIP, no nested six-card layout and no redundant labels. Current values and edited parameters are still independent. Only changed numeric readouts turn gold; reference lines and category/mode names remain neutral. `AddHorizontalTarget` on every bar or cell provides existing hover, pointer click/drag and precise native snapping; arrow/Home/End and R/right-click reset still work. The `Weight` and `Chance` multipliers and gear modes are **source settings**, not normalized loot shares or actual probabilities of finding an item in a stash.
 
 Both are production-only generator editors, structurally independent from the existing `StashRewardProfile` ammo/bonus family, but sharing one actual clone writer per tier. No promised whole-stash probability or imaginary gameplay formula. See [STASH-CONTENT-GEAR-IMPLEMENTATION.md](STASH-CONTENT-GEAR-IMPLEMENTATION.md) for exact source/weight/chance/rank and release acceptance.
 

@@ -102,6 +102,8 @@ public sealed class ParameterViewModel : ObservableObject
                     "AnomalySpecialEffects" => "Drag the Razor, Diamond or Psy track you want to change; each is independent.",
                     "NpcLootLoadout" => "Choose a corpse bonus icon, tune medical or bonus ammo drops, or adjust weapon condition MIN/MAX. Bonus ammo only applies with Medicine + Ammo; regular weapon ammo stays unchanged.",
                     "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
+                    "StashContentMix" => "The six horizontal bars compare AMMO, MEDICAL, FOOD, DRINKS, GRENADES and COUPONS on the same 0–3x source scale. The grey 1x line is vanilla. Click or drag an individual bar to change that category; values are Weight/Chance biases, NOT percentages of stashes containing it.",
+                    "StashGear" => "Each graph row is a stash tier (BASIC, STANDARD, RARE). Each column independently controls additional WEAPONS or ARMOR. Drag its marker between OFF, RARE, MODERATE and FREQUENT; these are source chance modes, NOT guaranteed per-stash drop odds.",
                     "StashRewardProfile" => "Drag the BASIC, STANDARD or RARE ammo-tier bars; bonus grenade and coupon rolls have independent controls below.",
                     "AmmoDistribution" => "Use AMMO YIELD or GRENADE YIELD for quantities. Turn the four AMMO FAMILY WEIGHTS knobs to change which calibers are favored; SNG/NATO pool bars are read-only.",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",

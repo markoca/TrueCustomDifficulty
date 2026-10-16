@@ -4509,10 +4509,9 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // Three native stash ammo quantities + three independent bonus rewards.
-    // Native Stamina-style compact horizontal source tracks, two balanced columns.
-    // Bias scales only existing Chance/Weight entries; a rendered value is NOT a
-    // guarantee that a given world stash contains the requested category.
+    // An actual shared-axis bar chart: six real source multipliers, never a
+    // fabricated percentage of loot in a particular stash. All six bars use
+    // the SAME 0..3x scale, and the 1x reference remains a neutral guide.
     private void DrawStashContentMix(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -4527,57 +4526,207 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("loot.stashMixGrenades", "GRENADES"),
             ("loot.stashMixCoupons", "COUPONS")
         };
-        const double gap = 10.0;
-        var totalWidth = Math.Min(740.0, Math.Max(1.0, ActualWidth - 34.0));
-        var half = (totalWidth - gap) / 2.0;
-        var origin = (ActualWidth - totalWidth) / 2.0;
+
+        var bankWidth = Math.Min(785.0, Math.Max(1.0, ActualWidth - 34.0));
+        var left = (ActualWidth - bankWidth) / 2.0;
+        var plotLeft = left + 117.0;
+        var plotWidth = Math.Max(1.0, bankWidth - 197.0);
+        var plot = new Rect(plotLeft, 86.0, plotWidth, 12.0);
+        const double firstRowTop = 88.0;
+        const double rowPitch = 42.0;
+
+        DrawText(dc, "ITEM CATEGORY", new Point(left + 11.0, 61.0),
+            9.1, muted, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, "BIAS", new Point(left + bankWidth - 11.0, 61.0),
+            9.1, muted, FontWeights.SemiBold);
+
+        // A common horizontal native scale makes categories directly comparable.
+        for (var tick = 0; tick <= 3; tick++)
+        {
+            var tickX = ValueToX(tick, 0.0, 3.0, plot, false);
+            DrawCenteredText(dc, $"{tick}x", new Point(tickX, 61.0),
+                9.4, muted, FontWeights.SemiBold);
+            dc.DrawLine(
+                new Pen(CloneWithOpacity(muted, tick == 1 ? 0.33 : 0.16),
+                    tick == 1 ? 1.6 : 0.8),
+                new Point(tickX, firstRowTop + 1.0),
+                new Point(tickX, firstRowTop + 5.0 * rowPitch + 31.0));
+        }
+
         for (var i = 0; i < entries.Length; i++)
         {
             var p = P(entries[i].Id);
             if (p is null)
                 continue;
-            var bounds = new Rect(origin + (i % 2) * (half + gap),
-                54.0 + (i / 2) * 84.0, half, 76.0);
-            DrawCompactTrack(dc, p, entries[i].Label,
-                $"{p.CurrentNumber:0.##}x", "0x", "3x", bounds,
-                text, muted, border, accent, panel);
+
+            var top = firstRowTop + i * rowPitch;
+            var row = new Rect(left + 2.0, top - 3.0, bankWidth - 4.0, 37.0);
+            if (i % 2 == 0)
+                dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.55),
+                    null, row, 3.0, 3.0);
+
+            var enabled = p.IsControlEnabled;
+            var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, p);
+            var modified = enabled && p.IsValueModifiedFromReference();
+            DrawText(dc, entries[i].Label, new Point(left + 11.0, top + 8.0),
+                10.7, enabled ? text : muted, FontWeights.SemiBold);
+
+            var bar = new Rect(plotLeft, top + 11.0, plotWidth, 12.0);
+            var x = ValueToX(p.CurrentNumber, p.Minimum, p.Maximum, bar, false);
+            var referenceX = ValueToX(p.ReferenceNumber, p.Minimum, p.Maximum, bar, false);
+            dc.DrawRoundedRectangle(CloneWithOpacity(border, .38),
+                null, bar, 3.0, 3.0);
+            if (x > bar.Left)
+                dc.DrawRoundedRectangle(
+                    CloneWithOpacity(enabled ? accent : muted, .66),
+                    null, new Rect(bar.Left, bar.Top + 2.0,
+                        x - bar.Left, bar.Height - 4.0), 2.0, 2.0);
+
+            // Reference is not a highlighted "Base" badge.
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .75), 1.7),
+                new Point(referenceX, bar.Top - 5.0),
+                new Point(referenceX, bar.Bottom + 5.0));
+            if (enabled)
+                ControlHoverGlow.Draw(dc, new Point(x, bar.Top + 6.0),
+                    accent, hovered);
+            dc.DrawEllipse(panel,
+                new Pen(enabled ? accent : muted, hovered ? 2.5 : 1.7),
+                new Point(x, bar.Top + 6.0), 5.8, 5.8);
+
+            DrawRightAlignedText(dc, $"{p.CurrentNumber:0.##}x",
+                new Point(left + bankWidth - 11.0, top + 5.0),
+                11.7, modified ? accent : enabled ? text : muted,
+                FontWeights.SemiBold);
+            AddHorizontalTarget(p,
+                new Rect(bar.Left - 7.0, top + 1.0,
+                    bar.Width + 14.0, 32.0),
+                bar, p.Minimum, p.Maximum);
         }
+
+        DrawCenteredText(dc, "RELATIVE SOURCE WEIGHT / CHANCE · NOT STASH DROP %",
+            new Point(ActualWidth / 2.0, 347.0),
+            9.0, muted, FontWeights.Normal);
     }
 
-    // Each numeric stop is discrete: 0=OFF, 1=RARE, 2=MODERATE, 3=FREQUENT.
-    // Labels describe relative TCD-authored source chances, NOT absolute
-    // probabilities that a container will contain gear after all engine rolls.
+    // Gear is a 3 (stash quality) by 2 (item class) discrete dot plot.
+    // The four stops are named modes, NOT guaranteed per-stash drop odds.
+    // Horizontal positions/editing use the underlying native 0..3 source grid.
     private void DrawStashGear(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "EXTRA STASH GEAR", "", text, muted, accent);
-        var entries = new (string Id, string Label)[]
+        var bankWidth = Math.Min(785.0, Math.Max(1.0, ActualWidth - 34.0));
+        var left = (ActualWidth - bankWidth) / 2.0;
+        const double tierLane = 91.0;
+        const double gap = 14.0;
+        var columnWidth = (bankWidth - tierLane - gap) / 2.0;
+        var weaponLeft = left + tierLane;
+        var armorLeft = weaponLeft + columnWidth + gap;
+
+        DrawCenteredText(dc, "WEAPONS",
+            new Point(weaponLeft + columnWidth / 2.0, 56.0),
+            11.3, text, FontWeights.Bold);
+        DrawCenteredText(dc, "ARMOR",
+            new Point(armorLeft + columnWidth / 2.0, 56.0),
+            11.3, text, FontWeights.Bold);
+
+        var rows = new (string Tier, string WeaponId, string ArmorId)[]
         {
-            ("loot.stashGearCheapWeapon", "BASIC WEAPONS"),
-            ("loot.stashGearCheapArmor", "BASIC ARMOR"),
-            ("loot.stashGearMediumWeapon", "STANDARD WEAPONS"),
-            ("loot.stashGearMediumArmor", "STANDARD ARMOR"),
-            ("loot.stashGearExpensiveWeapon", "RARE WEAPONS"),
-            ("loot.stashGearExpensiveArmor", "RARE ARMOR")
+            ("BASIC", "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor"),
+            ("STANDARD", "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor"),
+            ("RARE", "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor")
         };
-        const double gap = 10.0;
-        var totalWidth = Math.Min(740.0, Math.Max(1.0, ActualWidth - 34.0));
-        var half = (totalWidth - gap) / 2.0;
-        var origin = (ActualWidth - totalWidth) / 2.0;
-        var names = new[] { "OFF", "RARE", "MODERATE", "FREQUENT" };
-        for (var i = 0; i < entries.Length; i++)
+        for (var rowIndex = 0; rowIndex < rows.Length; rowIndex++)
         {
-            var p = P(entries[i].Id);
-            if (p is null)
-                continue;
-            var level = Math.Clamp((int)Math.Round(p.CurrentNumber), 0, 3);
-            var bounds = new Rect(origin + (i % 2) * (half + gap),
-                54.0 + (i / 2) * 84.0, half, 76.0);
-            DrawCompactTrack(dc, p, entries[i].Label,
-                $"{level} {names[level]}", "OFF", "FREQUENT", bounds,
-                text, muted, border, accent, panel);
+            var rowTop = 84.0 + rowIndex * 72.0;
+            var background = new Rect(left + 2.0, rowTop,
+                bankWidth - 4.0, 65.0);
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .52),
+                new Pen(CloneWithOpacity(border, .53), .8),
+                background, 3.0, 3.0);
+
+            DrawText(dc, rows[rowIndex].Tier,
+                new Point(left + 12.0, rowTop + 26.0),
+                10.7, text, FontWeights.Bold);
+
+            DrawStashGearPlotCell(dc, P(rows[rowIndex].WeaponId),
+                weaponLeft, rowTop, columnWidth, text, muted, border, accent, panel);
+            DrawStashGearPlotCell(dc, P(rows[rowIndex].ArmorId),
+                armorLeft, rowTop, columnWidth, text, muted, border, accent, panel);
         }
+
+        // Two aligned axes, shown only once rather than repeated in each cell.
+        var axisNames = new[] { "OFF", "RARE", "MOD", "FREQ" };
+        foreach (var columnLeft in new[] { weaponLeft, armorLeft })
+        {
+            var plot = new Rect(columnLeft + 19.0, 300.0,
+                Math.Max(1.0, columnWidth - 38.0), 1.0);
+            for (var i = 0; i < axisNames.Length; i++)
+                DrawCenteredText(dc, axisNames[i],
+                    new Point(ValueToX(i, 0.0, 3.0, plot, false), 303.0),
+                    8.8, muted, FontWeights.SemiBold);
+        }
+        DrawCenteredText(dc, "SOURCE CHANCE MODES · NOT GUARANTEED FINDS",
+            new Point(ActualWidth / 2.0, 343.0),
+            9.0, muted, FontWeights.Normal);
+    }
+
+    private void DrawStashGearPlotCell(
+        DrawingContext dc, ParameterViewModel? p, double left, double top,
+        double width, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        if (p is null)
+            return;
+
+        var enabled = p.IsControlEnabled;
+        var modified = enabled && p.IsValueModifiedFromReference();
+        var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, p);
+        var level = Math.Clamp((int)Math.Round(p.CurrentNumber), 0, 3);
+        var modes = new[] { "OFF", "RARE", "MODERATE", "FREQUENT" };
+
+        // Highlight only the changed numeric value, never the neutral mode name.
+        var readout = CreateText($"{level}  {modes[level]}", 10.8,
+            enabled ? text : muted, FontWeights.SemiBold,
+            Math.Max(1.0, width - 28.0));
+        if (modified)
+            readout.SetForegroundBrush(accent, 0, 1);
+        dc.DrawText(readout, new Point(left + width - 13.0
+            - readout.WidthIncludingTrailingWhitespace, top + 8.0));
+
+        var track = new Rect(left + 19.0, top + 38.0,
+            Math.Max(1.0, width - 38.0), 12.0);
+        var y = track.Top + track.Height / 2.0;
+        dc.DrawLine(new Pen(CloneWithOpacity(border, .72), 3.0),
+            new Point(track.Left, y), new Point(track.Right, y));
+        var activeX = ValueToX(level, 0.0, 3.0, track, false);
+        if (enabled && level > 0)
+            dc.DrawLine(new Pen(CloneWithOpacity(accent, .73), 4.0),
+                new Point(track.Left, y), new Point(activeX, y));
+
+        // Four clearly separate stops; OFF remains neutral (zero extra gear).
+        for (var step = 0; step <= 3; step++)
+        {
+            var x = ValueToX(step, 0.0, 3.0, track, false);
+            var selected = step == level;
+            dc.DrawEllipse(
+                selected ? panel
+                    : CloneWithOpacity(enabled && step > 0 && step < level
+                        ? accent : border, .8),
+                new Pen(selected ? (enabled ? accent : muted) : muted,
+                    selected && hovered ? 2.8 : selected ? 2.0 : .9),
+                new Point(x, y), selected ? 6.2 : 4.3, selected ? 6.2 : 4.3);
+            if (selected && enabled)
+                ControlHoverGlow.Draw(dc, new Point(x, y), accent, hovered);
+        }
+
+        // One continuous plot hit region permits click/drag across all stops,
+        // arrow keys, Home/End, and the shared R/right-click reset contract.
+        AddHorizontalTarget(p,
+            new Rect(track.Left - 10.0, top + 25.0,
+                track.Width + 20.0, 34.0),
+            track, 0.0, 3.0);
     }
 
     // Current/source label/rail obey the Stamina Usage anatomy; no simulated
@@ -6328,8 +6477,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             "AnomalySpecialEffects" => 270.0,
             "NpcLootLoadout" => 564.0,
             "WorldLootLayout" => 275.0,
-            "StashContentMix" => 324.0,
-            "StashGear" => 324.0,
+            "StashContentMix" => 376.0,
+            "StashGear" => 370.0,
             "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
             "StaminaCore" => 323.0,
             "WaterStaminaPressure" => 171.0,

@@ -43,6 +43,30 @@ for tier, name, n in (("Cheap", "cheapStashProduction", 12),
                       ("Medium", "mediumStashAmmoProduction", 10),
                       ("Expensive", "expensiveStashProduction", 19)):
     assert len(baseline["special"][name]["templateCategories"]) == n
+# Both native composite editors must remain genuine shared-scale graphs rather
+# than reverting to the former six separate DrawCompactTrack slider cards.
+content_plot = ui.split("private void DrawStashContentMix(", 1)[1].split(
+    "private void DrawStashGear(", 1)[0]
+gear_plot = ui.split("private void DrawStashGear(", 1)[1].split(
+    "private void DrawCompactStashRewards(", 1)[0]
+assert "DrawCompactTrack(" not in content_plot + gear_plot
+assert "const double rowPitch = 42.0;" in content_plot
+assert "for (var tick = 0; tick <= 3; tick++)" in content_plot
+assert 'DrawRightAlignedText(dc, $"{p.CurrentNumber:0.##}x"' in content_plot
+assert "p.ReferenceNumber" in content_plot and "AddHorizontalTarget(p" in content_plot
+assert 'RELATIVE SOURCE WEIGHT / CHANCE · NOT STASH DROP %' in content_plot
+assert 'DrawStashGearPlotCell(dc, P(rows[rowIndex].WeaponId)' in gear_plot
+assert 'DrawStashGearPlotCell(dc, P(rows[rowIndex].ArmorId)' in gear_plot
+assert "for (var rowIndex = 0; rowIndex < rows.Length; rowIndex++)" in gear_plot
+assert "for (var step = 0; step <= 3; step++)" in gear_plot
+assert "AddHorizontalTarget(p" in gear_plot
+assert '"StashContentMix" => 376.0' in ui
+assert '"StashGear" => 370.0' in ui
+for document in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md",
+                 "STASH-CONTENT-GEAR-IMPLEMENTATION.md"):
+    assert "bar" in (root / "docs" / document).read_text(encoding="utf-8").lower()
+    assert "dot plot" in (root / "docs" / document).read_text(encoding="utf-8").lower()
+
 for p in (source / "Presets").glob("*.json"):
     document = json.loads(p.read_text(encoding="utf-8"))
     for key in ids:
@@ -54,4 +78,4 @@ for path in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md",
     assert (root / "docs" / path).is_file(), path
 print("PASS: 12 new stash source IDs, 3 clone writers, source matrix, UI, "
       "and 12 neutral factory profiles structurally mapped.")
-print("NOT RUN: Windows C# production build, Wine UI or game drop-frequency acceptance.")
+print("NOT RUN: Windows C# production build, Wine chart interactivity or game drop-frequency acceptance.")

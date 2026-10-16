@@ -4,7 +4,7 @@
 
 **Live inventory is now 260 catalogued / 250 instantiated ParameterViewModel sources (160 exposed anchors / 90 backing composite members, 10 non-instantiated)**, replacing the preceding 248/238 historical checklist snapshot. The original individual 238 rows below remain valid for previous controls. In addition, test all 12 new rows using the same **V (visual), I (interaction), P (preset), B (CFG build), G (gameplay)** test axes.
 
-### STASH CONTENT — 0..3x, step 0.25, 1x untouched
+### STASH CONTENT — six-row shared-scale bar graph, 0..3x / 0.25x steps, 1x baseline
 
 - [ ] Ammo — `loot.stashMixAmmo`: V[ ] I[ ] P[ ] B[ ] G[ ]
 - [ ] Medical — `loot.stashMixMedical`: V[ ] I[ ] P[ ] B[ ] G[ ]
@@ -13,7 +13,7 @@
 - [ ] Grenades — `loot.stashMixGrenades`: V[ ] I[ ] P[ ] B[ ] G[ ]
 - [ ] Coupons — `loot.stashMixCoupons`: V[ ] I[ ] P[ ] B[ ] G[ ]
 
-### EXTRA STASH GEAR — 0 OFF, 1 RARE, 2 MODERATE, 3 FREQUENT
+### EXTRA STASH GEAR — 3-tier × 2-class dot plot, 0 OFF, 1 RARE, 2 MODERATE, 3 FREQUENT
 
 - [ ] Basic Weapon — `loot.stashGearCheapWeapon`: V[ ] I[ ] P[ ] B[ ] G[ ]
 - [ ] Basic Armor — `loot.stashGearCheapArmor`: V[ ] I[ ] P[ ] B[ ] G[ ]
@@ -22,7 +22,7 @@
 - [ ] Rare Weapon — `loot.stashGearExpensiveWeapon`: V[ ] I[ ] P[ ] B[ ] G[ ]
 - [ ] Rare Armor — `loot.stashGearExpensiveArmor`: V[ ] I[ ] P[ ] B[ ] G[ ]
 
-Additional gates: check source `Weight` relative odds vs bounded source `Chance`, rank gates, no quest/scripted changes, Tier+Ammo+Coupon/Grenade composition, exact pristine-only factory preset updates. Do **not** mark game behavior PASS on CFG diff alone. Full mechanics: [STASH-CONTENT-GEAR-IMPLEMENTATION.md](STASH-CONTENT-GEAR-IMPLEMENTATION.md).
+Additional visual gates: [ ] all six bar labels visible and aligned to common 0x/1x/2x/3x axis; [ ] six independent current-value/readout bars; [ ] both gear columns align to BASIC/STANDARD/RARE rows; [ ] OFF/RARE/MOD/FREQ legend legible, six hover/edit dots, proper number-only gold when changed; [ ] native snapping, independent right-click and R reset at minimum and normal widths; [ ] no old standalone slider cards, no claims of measured stash percentages. Mechanical gates: source `Weight` relative odds vs bounded source `Chance`, rank gates, no quest/scripted changes, Tier+Ammo+Coupon/Grenade composition, exact pristine-only factory preset updates. Do **not** mark game behavior PASS on CFG diff alone. Full mechanics: [STASH-CONTENT-GEAR-IMPLEMENTATION.md](STASH-CONTENT-GEAR-IMPLEMENTATION.md).
 
 **Historical checklist below uses the prior 248/238 snapshot; its untested status remains correct.**
 
