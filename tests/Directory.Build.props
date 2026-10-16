@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <!-- All 13 WPF contract executables target Windows even when their host SDK
+         runs on Linux. This applies to test projects only, not the app build. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+</Project>

@@ -1,3 +1,5 @@
+**Linux WPF contract test fix (2026-10-16):** All 13 `tests/*Contract` projects inherit `EnableWindowsTargeting=true` from `tests/Directory.Build.props`, preventing `NETSDK1100` when cross-building their `net10.0-windows` targets on Linux. Compile with `dotnet build tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release -r win-x64`, then **execute via Wine** with `./tests/run-wine.sh LootSpecialGeneratorsContract`. Linux `dotnet run` cannot run Windows WPF test executables; native Windows CI still uses `dotnet run`. [Test instructions](docs/RELEASE-TESTING.md).
+
 # True Custom Difficulty
 
 **World SmartLoot generation now source-backed (2026-10-16):** The existing Stashes graphs edit TCD-owned ItemGenerator clones **and** source-native clones of 13 normal-world SmartLoot prototypes, redirected for 831 ordinary ItemContainer actors extracted from the uploaded CFG dump. 71 actors with Blueprint/Unique/Quest generator references remain excluded. Existing profiles/UI unchanged; runtime testing remains required. [Current source audit](docs/generators/SMARTLOOT-PRODUCTION-EXTENSION-2026-10-16.md).
