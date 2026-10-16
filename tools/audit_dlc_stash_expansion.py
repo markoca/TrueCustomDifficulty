@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Source-only DLC1 Stashes production gate; no gameplay or Wine assertions."""
 import csv
+import hashlib
 import json
 import re
 from collections import Counter
@@ -72,6 +73,9 @@ check(types == {
     "GamePass_Stash_ItemGenerator_CheapNoFresh": 6,
     "": 4
 }, "source generator class count drift")
+check(hashlib.sha256((DATA / "cheap-no-fresh-stash-item-entries.csv").read_bytes())
+      .hexdigest() == "ec883cba352f2bf21da023ecd6ec9da3c93cef2a2785252db8fc3f6c8a4e2317",
+      "CheapNoFresh source rows differ from exact 2026-10-16 base CFG dump")
 check(len(source) == 35 and
       len({(x["CategoryIndex"], x["ItemIndex"]) for x in source}) == 35,
       "35-row no-fresh source inventory changed")
