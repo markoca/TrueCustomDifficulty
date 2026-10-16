@@ -1,5 +1,7 @@
 # STASH CONTENT & EXTRA STASH GEAR — implementation contract (2026-10-16)
 
+**CURRENT 2026-10-16 — ordinary additional stash source discovery:** Source mapping covers 7 world SmartLoot ammo families, 2 food/drink families, 2 grenade families and the 2 previously discovered medical SmartLoot families, plus 17 GamePass/CNPP core/helper generator SIDs. Details and exclusions: [full audit](generators/STASH-REGULAR-CATEGORIES-AUDIT-2026-10-16.md). This registry does **not** mean gameplay control coverage was added: existing Stash Content controls still write only the three regular TCD ItemGenerator clone families. Safe shared SmartLoot production redirects require the exact source actor consumer manifest absent from GitHub. Do not treat quest/unique/one-off items as ordinary rewards.
+
 **CURRENT 2026-10-16:** Zero global MEDICAL or item-specific medical bias now zeros native entry counts in addition to Chance/Weight in audited regular stash generator clones. This guards against ambiguous all-zero weighted selection behavior; it does not cover previously populated, scripted/quest, separate CNPP, or unredirected stashes. Source-level tests were added, but gameplay is not yet verified.
 
 

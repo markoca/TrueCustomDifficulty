@@ -5841,6 +5841,32 @@ for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
         fail("Current Water UI catalog signature missing in "+_doc)
 note("Water cap 11.2/13 DIP; stamina bonus yellow; STAMINA COST -10% (0 to -20%)")
 
+# Audited ordinary stash source candidates are tracked independently of
+# implemented CFG controls; document discovery is not gameplay coverage.
+_regular_inventory_path = ROOT / "tools" / "regular-stash-source-inventory.json"
+_regular_inventory_audit = ROOT / "tools" / "audit_regular_stash_source_inventory.py"
+_regular_inventory_doc = DOCS / "generators" / "STASH-REGULAR-CATEGORIES-AUDIT-2026-10-16.md"
+if (not _regular_inventory_path.is_file()
+    or not _regular_inventory_audit.is_file()
+    or not _regular_inventory_doc.is_file()):
+    fail("Missing regular-stash categorized source inventory or its regression audit")
+else:
+    _regular_registry = json.loads(_regular_inventory_path.read_text(encoding="utf-8"))
+    _regular_stats = _regular_registry.get("totals", {})
+    _regular_sources = _regular_registry.get("items", {})
+    if (_regular_stats.get("coreGenerators") != 17
+        or _regular_stats.get("coreRows") != 245
+        or _regular_stats.get("smartGenerators") != 13
+        or _regular_stats.get("smartRows") != 991
+        or _regular_stats.get("smartProductionEdges") != 2143
+        or len(_regular_sources.get("smartLootWorld", [])) != 13
+        or any(x.get("status") != "not_in_tcd_writer"
+               for x in _regular_sources.get("smartLootWorld", []))):
+        fail("Ordinary stash source inventory cardinality or writer-coverage labels drifted")
+    else:
+        note("17 regular ItemGenerator core SIDs and 13 SmartLoot source SIDs cataloged separately from implemented CFG")
+        not_run("Run python tools/audit_regular_stash_source_inventory.py to re-parse tracked raw-row catalogs")
+
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:

@@ -20,6 +20,7 @@ The runtime dump is treated as the source of truth for effective values. Inherit
 | `GENERATOR-TARGET-ALLOWLISTS.md` | human-readable strict single-domain candidate tables |
 | `GENERATOR-CONSUMER-CATALOG.md` | all 13,647 external consumer edges with exact generator, context, consumer, file, line and key |
 | `GENERATOR-BRANCH-CATALOG.md` | exact branch/entry table for every effective generator category and item/nested-generator row |
+| `STASH-REGULAR-CATEGORIES-AUDIT-2026-10-16.md` | full tracked standard item class source inventory: 17 GamePass cores/245 rows, 13 SmartLoot roots/991 item rows, production/quest/test boundary, missing consumer manifest; does NOT change gameplay |
 | `STASH-MEDICAL-ALL-SOURCE-AUDIT-2026-10-16.md` | consolidate 6 medical ItemGenerator stash cores, both untouched StashMedicine SmartLoot families, independent medical destructible pools and quest/NPC exclusions; separate verified source inventory from runtime effects |
 | `STASH-BACKBONE-AUDIT.md` | deep audit of Cheap/Medium/Expensive world-stash tier wrappers and shared core pools, exact item/Chance/Weight/count structure, footprint, mod cross-check and control-surface verdicts |
 | `CHEAP-STASH-CATEGORY-AUDIT.md` | Cheap-parent category deep dive: ammo/grenade/medical/food/coupons, count-vs-selection control verdicts, and production-only fan-out boundary |
@@ -54,6 +55,8 @@ The runtime dump is treated as the source of truth for effective values. Inherit
 | `SMARTLOOT-CORPSE-BONUS-ENTRY-CATALOG.md` | every exact group/item row in the three selectable corpse-bonus SmartLoot packages |
 
 ## Machine-readable files
+
+- `../../tools/regular-stash-source-inventory.json` — versioned categorized source register (no in-game modification) verified by `../../tools/audit_regular_stash_source_inventory.py`.
 
 | File | Purpose |
 | --- | --- |

@@ -1,0 +1,845 @@
+{
+  "sourceVersion": "STALKER2 v2.0.5 CFG baseline; tracked source catalogues",
+  "date": "2026-10-16",
+  "scope": "ordinary world stash ItemGenerator and SmartLoot source rows only; not authored unique/quest content, NPC corpse smartloot or destructible crate control policy",
+  "sourceFiles": [
+    "docs/generators/WORLD-STASH-CORE-POOL-CATALOG.md",
+    "docs/generators/SMARTLOOT-BRANCH-CATALOG.md"
+  ],
+  "tuningParameterIds": {
+    "AMMO": "loot.stashMixAmmo",
+    "MEDICAL": "loot.stashMixMedical",
+    "FOOD": "loot.stashMixFood",
+    "DRINKS": "loot.stashMixDrinks",
+    "GRENADES": "loot.stashMixGrenades",
+    "COUPONS": "loot.stashMixCoupons"
+  },
+  "items": {
+    "itemGeneratorCore": [
+      {
+        "sid": "CNPPGamePass_Stash_ItemGenerator_Cheap",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 15,
+        "categoryRows": {
+          "MEDICAL": 8,
+          "FOOD": 2,
+          "DRINKS": 1,
+          "AMMO": 3,
+          "GRENADES": 1
+        },
+        "itemSids": [
+          "A012D",
+          "A918D",
+          "A919D",
+          "Antirad",
+          "Bandage",
+          "CannedFood",
+          "GrenadeRGD5",
+          "Medkit",
+          "Water"
+        ],
+        "status": "no_resolved_runtime_consumer"
+      },
+      {
+        "sid": "CNPPGamePass_Stash_ItemGenerator_Rare",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 33,
+        "categoryRows": {
+          "MEDICAL": 6,
+          "FOOD": 1,
+          "AMMO": 25,
+          "GRENADES": 1
+        },
+        "itemSids": [
+          "A012A",
+          "A012E",
+          "A045A",
+          "A545A",
+          "A556A",
+          "A762SniperA",
+          "A762SniperD",
+          "A918A",
+          "A919A",
+          "A939A",
+          "AntiRad",
+          "ArmyMedkit",
+          "Bandage",
+          "CannedFood",
+          "GrenadeRGD5",
+          "Medkit"
+        ],
+        "status": "world_only_candidate_needs_runtime_manifest"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_Cheap",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 52,
+        "categoryRows": {
+          "MEDICAL": 12,
+          "FOOD": 22,
+          "DRINKS": 11,
+          "AMMO": 3,
+          "GRENADES": 1,
+          "COUPONS": 3
+        },
+        "itemSids": [
+          "A012D",
+          "A918D",
+          "A919D",
+          "Bandage",
+          "Bread",
+          "CannedFood",
+          "Energetic",
+          "GrenadeRGD5",
+          "Medkit",
+          "Milk",
+          "MoneyCommon",
+          "MoneyEpic",
+          "MoneyRare",
+          "Sausage",
+          "Vodka",
+          "Water"
+        ],
+        "status": "tcd_production_clone_active"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_CheapNoFresh",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 35,
+        "categoryRows": {
+          "MEDICAL": 12,
+          "DRINKS": 11,
+          "FOOD": 5,
+          "AMMO": 3,
+          "GRENADES": 1,
+          "COUPONS": 3
+        },
+        "itemSids": [
+          "A012D",
+          "A918D",
+          "A919D",
+          "Bandage",
+          "Beer",
+          "CannedFood",
+          "Energetic",
+          "GrenadeRGD5",
+          "Medkit",
+          "MoneyCommon",
+          "MoneyEpic",
+          "MoneyRare",
+          "Vodka",
+          "Water"
+        ],
+        "status": "world_only_candidate_needs_runtime_manifest"
+      },
+      {
+        "sid": "Gamepass_Stash_ItemGenerator_Common",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "NESTED": 2
+        },
+        "itemSids": [
+          "GamePass_Stash_ItemGenerator_Common_Var1",
+          "GamePass_Stash_ItemGenerator_Common_Var2"
+        ],
+        "status": "nested_wrapper_review"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_Common_Var1",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 39,
+        "categoryRows": {
+          "MEDICAL": 6,
+          "DRINKS": 5,
+          "AMMO": 25,
+          "COUPONS": 3
+        },
+        "itemSids": [
+          "A012D",
+          "A045D",
+          "A545D",
+          "A556D",
+          "A762SniperD",
+          "A762SniperS",
+          "A919D",
+          "A939D",
+          "Bandage",
+          "Energetic",
+          "Medkit",
+          "MoneyCommon",
+          "MoneyEpic",
+          "MoneyRare",
+          "Vodka"
+        ],
+        "status": "tcd_production_clone_active"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_Common_Var2",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 9,
+        "categoryRows": {
+          "FOOD": 3,
+          "DRINKS": 2,
+          "AMMO": 4
+        },
+        "itemSids": [
+          "A012D",
+          "A545D",
+          "A918D",
+          "A919D",
+          "Bread",
+          "CannedFood",
+          "Energetic",
+          "Sausage",
+          "Vodka"
+        ],
+        "status": "world_only_candidate_needs_runtime_manifest"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_PistolAmmo_Cheap",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "AMMO": 2
+        },
+        "itemSids": [
+          "A045D",
+          "A918D"
+        ],
+        "status": "nested_ammo_pool_scope_unverified"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_PistolAmmo_Common",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "AMMO": 2
+        },
+        "itemSids": [
+          "A045D",
+          "A918D"
+        ],
+        "status": "nested_ammo_pool_scope_unverified"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_PistolAmmo_Rare",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "AMMO": 2
+        },
+        "itemSids": [
+          "A045D",
+          "A918D"
+        ],
+        "status": "nested_ammo_pool_scope_unverified"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_PrimaryAmmo_Cheap",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "AMMO": 2
+        },
+        "itemSids": [
+          "A545D",
+          "A919D"
+        ],
+        "status": "nested_ammo_pool_scope_unverified"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_PrimaryAmmo_Common",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "AMMO": 2
+        },
+        "itemSids": [
+          "A545D",
+          "A919D"
+        ],
+        "status": "nested_ammo_pool_scope_unverified"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_PrimaryAmmo_Rare",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "AMMO": 2
+        },
+        "itemSids": [
+          "A545D",
+          "A919D"
+        ],
+        "status": "nested_ammo_pool_scope_unverified"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_Rare",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 42,
+        "categoryRows": {
+          "MEDICAL": 6,
+          "FOOD": 1,
+          "DRINKS": 1,
+          "AMMO": 25,
+          "GRENADES": 1,
+          "COUPONS": 8
+        },
+        "itemSids": [
+          "A012A",
+          "A012E",
+          "A045A",
+          "A545A",
+          "A556A",
+          "A762SniperA",
+          "A762SniperD",
+          "A918A",
+          "A919A",
+          "A939A",
+          "AntiRad",
+          "ArmyMedkit",
+          "Bandage",
+          "CannedFood",
+          "Energetic",
+          "GrenadeRGD5",
+          "Medkit",
+          "MoneyCommon",
+          "MoneyEpic",
+          "MoneyLegendary",
+          "MoneyRare"
+        ],
+        "status": "tcd_production_clone_active"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_SecondaryAmmo_Cheap",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "AMMO": 2
+        },
+        "itemSids": [
+          "A012D",
+          "A919D"
+        ],
+        "status": "nested_ammo_pool_scope_unverified"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_SecondaryAmmo_Common",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "AMMO": 2
+        },
+        "itemSids": [
+          "A012D",
+          "A919D"
+        ],
+        "status": "nested_ammo_pool_scope_unverified"
+      },
+      {
+        "sid": "GamePass_Stash_ItemGenerator_SecondaryAmmo_Rare",
+        "kind": "item_generator",
+        "source": "GameData/ItemGeneratorPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "AMMO": 2
+        },
+        "itemSids": [
+          "A012D",
+          "A919D"
+        ],
+        "status": "nested_ammo_pool_scope_unverified"
+      }
+    ],
+    "smartLootWorld": [
+      {
+        "sid": "Stash_Ammo_Smart_Cheap",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 99,
+        "categoryRows": {
+          "AMMO": 99
+        },
+        "itemSids": [
+          "A012A",
+          "A012D",
+          "A012E",
+          "A545A",
+          "A545D",
+          "A545E",
+          "A762SniperA",
+          "A762SniperD",
+          "A762SniperS",
+          "A918A",
+          "A918D",
+          "A919D",
+          "A939A",
+          "A939D",
+          "A939E",
+          "A939S"
+        ],
+        "rankCount": 4,
+        "sourceGroupKinds": [
+          "PistolWeaponParams",
+          "PrimaryWeaponParams",
+          "SecondaryWeaponParams"
+        ],
+        "consumerEdges": 46,
+        "productionEdges": 46,
+        "excludedOrUnresolvedEdges": 0,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": true
+      },
+      {
+        "sid": "Stash_Ammo_Smart_CommonRare",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 51,
+        "categoryRows": {
+          "AMMO": 51
+        },
+        "itemSids": [
+          "A012A",
+          "A012D",
+          "A012E",
+          "A045D",
+          "A545A",
+          "A545D",
+          "A545E",
+          "A556D",
+          "A762SniperA",
+          "A762SniperD",
+          "A762SniperS",
+          "A918A",
+          "A918D",
+          "A919D",
+          "A939A",
+          "A939D",
+          "A939E",
+          "A939S"
+        ],
+        "rankCount": 4,
+        "sourceGroupKinds": [
+          "PrimaryWeaponParams",
+          "SecondaryWeaponParams"
+        ],
+        "consumerEdges": 985,
+        "productionEdges": 980,
+        "excludedOrUnresolvedEdges": 5,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": false
+      },
+      {
+        "sid": "Stash_AmmoAll_Cheap",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 284,
+        "categoryRows": {
+          "AMMO": 284
+        },
+        "itemSids": [
+          "A012A",
+          "A012D",
+          "A012E",
+          "A045A",
+          "A045D",
+          "A045E",
+          "A545A",
+          "A545D",
+          "A545E",
+          "A556A",
+          "A556D",
+          "A556E",
+          "A556S",
+          "A762NATOA",
+          "A762NATOD",
+          "A762NATOS",
+          "A762SniperA",
+          "A762SniperD",
+          "A762SniperS",
+          "A918A",
+          "A918D",
+          "A919A",
+          "A919D",
+          "A939A",
+          "A939D",
+          "A939E",
+          "A939S"
+        ],
+        "rankCount": 4,
+        "sourceGroupKinds": [
+          "PistolWeaponParams",
+          "PrimaryWeaponParams",
+          "SecondaryWeaponParams"
+        ],
+        "consumerEdges": 20,
+        "productionEdges": 19,
+        "excludedOrUnresolvedEdges": 1,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": false
+      },
+      {
+        "sid": "Stash_AmmoNATO_Smart",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 151,
+        "categoryRows": {
+          "AMMO": 151
+        },
+        "itemSids": [
+          "A012A",
+          "A012D",
+          "A012E",
+          "A045A",
+          "A045D",
+          "A045E",
+          "A556A",
+          "A556D",
+          "A556E",
+          "A556S",
+          "A762NATOA",
+          "A762NATOD",
+          "A762NATOS",
+          "A762SniperA",
+          "A762SniperD",
+          "A762SniperS",
+          "A919A",
+          "A919D",
+          "A939A",
+          "A939D",
+          "A939E",
+          "A939S"
+        ],
+        "rankCount": 4,
+        "sourceGroupKinds": [
+          "PistolWeaponParams",
+          "PrimaryWeaponParams",
+          "SecondaryWeaponParams"
+        ],
+        "consumerEdges": 12,
+        "productionEdges": 9,
+        "excludedOrUnresolvedEdges": 3,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": false
+      },
+      {
+        "sid": "Stash_AmmoNATO_Smart_MainLoot",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 151,
+        "categoryRows": {
+          "AMMO": 151
+        },
+        "itemSids": [
+          "A012A",
+          "A012D",
+          "A012E",
+          "A045A",
+          "A045D",
+          "A045E",
+          "A556A",
+          "A556D",
+          "A556E",
+          "A556S",
+          "A762NATOA",
+          "A762NATOD",
+          "A762NATOS",
+          "A762SniperA",
+          "A762SniperD",
+          "A762SniperS",
+          "A919A",
+          "A919D",
+          "A939A",
+          "A939D",
+          "A939E",
+          "A939S"
+        ],
+        "rankCount": 4,
+        "sourceGroupKinds": [
+          "PistolWeaponParams",
+          "PrimaryWeaponParams",
+          "SecondaryWeaponParams"
+        ],
+        "consumerEdges": 3,
+        "productionEdges": 3,
+        "excludedOrUnresolvedEdges": 0,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": true
+      },
+      {
+        "sid": "Stash_AmmoSNG_Smart",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 104,
+        "categoryRows": {
+          "AMMO": 104
+        },
+        "itemSids": [
+          "A012A",
+          "A012D",
+          "A012E",
+          "A545A",
+          "A545D",
+          "A545E",
+          "A762SniperA",
+          "A762SniperD",
+          "A762SniperS",
+          "A918A",
+          "A918D",
+          "A939A",
+          "A939D",
+          "A939E",
+          "A939S"
+        ],
+        "rankCount": 4,
+        "sourceGroupKinds": [
+          "PistolWeaponParams",
+          "PrimaryWeaponParams",
+          "SecondaryWeaponParams"
+        ],
+        "consumerEdges": 3,
+        "productionEdges": 3,
+        "excludedOrUnresolvedEdges": 0,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": true
+      },
+      {
+        "sid": "Stash_AmmoSNG_Smart_MainLoot",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 104,
+        "categoryRows": {
+          "AMMO": 104
+        },
+        "itemSids": [
+          "A012A",
+          "A012D",
+          "A012E",
+          "A545A",
+          "A545D",
+          "A545E",
+          "A762SniperA",
+          "A762SniperD",
+          "A762SniperS",
+          "A918A",
+          "A918D",
+          "A939A",
+          "A939D",
+          "A939E",
+          "A939S"
+        ],
+        "rankCount": 4,
+        "sourceGroupKinds": [
+          "PistolWeaponParams",
+          "PrimaryWeaponParams",
+          "SecondaryWeaponParams"
+        ],
+        "consumerEdges": 2,
+        "productionEdges": 2,
+        "excludedOrUnresolvedEdges": 0,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": true
+      },
+      {
+        "sid": "StashFood_Cheap",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 3,
+        "categoryRows": {
+          "FOOD": 2,
+          "DRINKS": 1
+        },
+        "itemSids": [
+          "Bread",
+          "Energetic",
+          "Sausage"
+        ],
+        "rankCount": 1,
+        "sourceGroupKinds": [
+          "ConsumablesParams"
+        ],
+        "consumerEdges": 11,
+        "productionEdges": 7,
+        "excludedOrUnresolvedEdges": 4,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": false
+      },
+      {
+        "sid": "StashFood_Smart",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 26,
+        "categoryRows": {
+          "FOOD": 12,
+          "DRINKS": 14
+        },
+        "itemSids": [
+          "Beer",
+          "Bread",
+          "CannedFood",
+          "Energetic",
+          "Milk",
+          "Sausage",
+          "Vodka",
+          "Water"
+        ],
+        "rankCount": 4,
+        "sourceGroupKinds": [
+          "ConsumablesParams"
+        ],
+        "consumerEdges": 5,
+        "productionEdges": 4,
+        "excludedOrUnresolvedEdges": 1,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": false
+      },
+      {
+        "sid": "StashGrenade_Cheap",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "GRENADES": 2
+        },
+        "itemSids": [
+          "GrenadeF1",
+          "GrenadeRGD5"
+        ],
+        "rankCount": 1,
+        "sourceGroupKinds": [
+          "GrenadesParams"
+        ],
+        "consumerEdges": 12,
+        "productionEdges": 11,
+        "excludedOrUnresolvedEdges": 1,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": false
+      },
+      {
+        "sid": "StashGrenade_Smart",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 1,
+        "categoryRows": {
+          "GRENADES": 1
+        },
+        "itemSids": [
+          "GrenadeRGD5"
+        ],
+        "rankCount": 1,
+        "sourceGroupKinds": [
+          "GrenadesParams"
+        ],
+        "consumerEdges": 5,
+        "productionEdges": 5,
+        "excludedOrUnresolvedEdges": 0,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": true
+      },
+      {
+        "sid": "StashMedicine_Cheap",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 2,
+        "categoryRows": {
+          "MEDICAL": 2
+        },
+        "itemSids": [
+          "Bandage",
+          "Medkit"
+        ],
+        "rankCount": 1,
+        "sourceGroupKinds": [
+          "ConsumablesParams"
+        ],
+        "consumerEdges": 22,
+        "productionEdges": 18,
+        "excludedOrUnresolvedEdges": 4,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": false
+      },
+      {
+        "sid": "StashMedicine_Smart",
+        "kind": "smart_loot",
+        "source": "GameData/StashPrototypes.cfg",
+        "rawRowCount": 13,
+        "categoryRows": {
+          "MEDICAL": 13
+        },
+        "itemSids": [
+          "Antirad",
+          "ArmyMedkit",
+          "Bandage",
+          "Medkit"
+        ],
+        "rankCount": 4,
+        "sourceGroupKinds": [
+          "ConsumablesParams"
+        ],
+        "consumerEdges": 1044,
+        "productionEdges": 1036,
+        "excludedOrUnresolvedEdges": 8,
+        "status": "not_in_tcd_writer",
+        "productionOnlyGloballyShared": false
+      }
+    ]
+  },
+  "excludedSmartLootPrototypes": [
+    "NPC_Ammo_Smart",
+    "NPC_Medicine_Smart",
+    "NPC_Water_Smart",
+    "StashMedicine_Corpse",
+    "StashVodka_Corpse"
+  ],
+  "warnings": [
+    "ItemGenerator core catalogue has only LOCAL source rows and not a recursively complete map of all dynamic or manually-authored stash rewards.",
+    "SmartLoot world audit provides production edge COUNTS but the actor-level manifest required for safe production-only rewrites is not committed to this repository.",
+    "Five SmartLoot prototypes have only production consumers in the audited edge catalog, but direct global patches still require checking indirect/script use and runtime group semantics.",
+    "Uniformly multiplying every item Weight in a weighted pool does not change relative selection probabilities, so treating it as a general spawn-rate multiplier would be misleading.",
+    "Ammo *MainLoot SmartLoot groups include native 0..0 spawn endpoints and are live in the world; do not interpret them as guaranteed disabled or set fabricated spawn percent.",
+    "Vanilla ItemGenerator entries are classified by source SID; category Artifact can contain ordinary grenades, and nested generator references are not collectable unique items.",
+    "Regular weapon/armor are offered through TCD-added source-backed gear choices, not proven native rows in these 17 GamePass core pools.",
+    "Separate destructible medical/food/ammo/grenade generator families belong to Loot breakable boxes unless explicitly respecified; they are not normal ItemContainer stash layers."
+  ],
+  "totals": {
+    "coreGenerators": 17,
+    "coreRows": 245,
+    "smartGenerators": 13,
+    "smartRows": 991,
+    "smartConsumerEdges": 2170,
+    "smartProductionEdges": 2143,
+    "categoryTotals": {
+      "MEDICAL": 65,
+      "FOOD": 48,
+      "DRINKS": 46,
+      "AMMO": 1050,
+      "GRENADES": 8,
+      "COUPONS": 17,
+      "NESTED": 2
+    },
+    "productionOnly": [
+      "Stash_Ammo_Smart_Cheap",
+      "Stash_AmmoNATO_Smart_MainLoot",
+      "Stash_AmmoSNG_Smart",
+      "Stash_AmmoSNG_Smart_MainLoot",
+      "StashGrenade_Smart"
+    ]
+  }
+}
