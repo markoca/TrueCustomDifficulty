@@ -235,6 +235,17 @@ assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in browser
 assert 'DrawStashBranchBrowser(dc, new Rect(left, 237.0, width, 420.0)' in content
 assert 'StashContentMixHeight(width)' in source
 assert 'TryStashBrowserClick(point)' in source
+# Read-only live source inputs must cover the complete TierField pipeline:
+# selected source count floors/caps and all Stash Rewards bonus sources.
+mix_links = source.split('"StashContentMix" => new[]', 1)[1].split('"StashMedicalComposition"', 1)[0]
+for linked in (
+    "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
+    "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount",
+    "loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",
+    "loot.expensiveStashAmmoQuantity", "loot.cheapStashGrenadeChance",
+    "loot.cheapStashGrenadeQuantity", "loot.expensiveStashMoneyChance",
+):
+    assert f'"{linked}"' in mix_links, linked
 assert 'UpdateStashBrowserHover(point)' in source
 assert 'private StashEffectiveState CurrentStashEffectiveState(string difficultySid = "Easy")' in source
 assert "NavigateStash(" in source and "NavigateStash(" in browser

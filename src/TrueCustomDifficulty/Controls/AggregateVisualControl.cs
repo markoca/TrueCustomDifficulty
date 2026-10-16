@@ -161,9 +161,15 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             {
                 "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
                 "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
-                "loot.stashMedkitMaxCount", "loot.stashArmyMedkitMaxCount",
-                // Complete native Chance overrides, read-only on this mixer.
-                "loot.cheapStashGrenadeChance", "loot.expensiveStashMoneyChance"
+                // All medical bounds and Stash Rewards numeric inputs also
+                // affect source-native item counts (not just Chance fields).
+                // These links update previews without changing family edit/reset.
+                "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
+                "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount",
+                "loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",
+                "loot.expensiveStashAmmoQuantity",
+                "loot.cheapStashGrenadeChance", "loot.cheapStashGrenadeQuantity",
+                "loot.expensiveStashMoneyChance"
             },
             "StashMedicalComposition" => new[]
             {
