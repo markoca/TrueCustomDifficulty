@@ -1,6 +1,6 @@
 # Stashes — generator-branch mixer architecture and source inventory
 
-**Status:** **Phase 1 documented and inventoried** (2026-10-16). **No new generator selector, per-branch editor or shared writer/preview engine is implemented in this phase.** The existing Stashes UI and CFG writers remain the current implementation. This specification records the approved direction, not completed runtime functionality.
+**Status:** **Phase 1 native source inventory AND Phase 2 guarded consumer graph documented and generated** (2026-10-16). See [5,007 source consumer edges and guard details](STASH-CONSUMER-GRAPH-2026-10-16.md). **No new generator selector, per-branch editing UI, shared effective-state engine or dynamic CFG-output parity is implemented yet.** Existing Stashes UI and CFG writers remain current; source eligibility is not an actual generated/drop outcome.
 
 **Authority:** original STALKER 2 v2.0.5 CFG evidence already extracted into this repository, with GameData input references below. The embedded writer baseline and SmartLoot row catalog are the current **source records**, not the game engine's source code. Runtime mechanics and probabilities remain subject to independent testing.
 
@@ -77,7 +77,7 @@ Other direct item entries, quest rewards, unique/blueprint stashes, DLC-only gen
 ## Implementation phases (locked order)
 
 1. **Source graph and branch inventory — PHASE 1: inventoried.** Check 41 ItemGenerator + 422 SmartLoot branch keys; retain every original item entry, `Weight` vs `Chance`, numeric source values, `Diff`/`PlayerRank`, SmartLoot rank/group/set boundaries and spawn fields. Generated snapshot and deterministic audit live in this commit. This does **not** certify per-actor reachability.
-2. **Consumer graph and safety gate — NOT YET DONE.** Join each source SID/group to approved original `SpawnActorPrototypes` consumers and source wrapper/redirect graph; preserve ordering, indirect edges, quest/blueprint/named-clue exclusions, 803 base SmartLoot, separately gated 112 DLC1 and protected actors. Treat duplicate/indirect wrappers explicitly. Validate active/non-active status against output filter logic. Direct items require separately admitted source datasets.
+2. **Consumer graph and static safety gate — PHASE 2: SOURCE-GRAPH COMPLETE.** [Checked 5,007 source edges](STASH-CONSUMER-GRAPH-2026-10-16.md) join tier and SmartLoot original actor sources to the Phase 1 generator families/branch keys and retain all blocked/indirect/DLC references without reauthorizing them. Six approved DLC CheapNoFresh actors are clearly flagged outside the 463-index. **Dynamic per-build patch/affected-prototype activation, the full transitive graph of unindexed local wrappers and separately authored direct item rewards are NOT covered by this phase** and require Phase 3 or a separate source-approved extension.
 3. **One source-to-effective-state engine — NOT YET DONE.** Extract shared pure transformation from existing tier/SmartLoot writers to immutable source + control snapshot → effective native fields + provenance. Writers *and* preview must use the SAME calculation, not two independently copied formulas. Preserve every existing source row and writer operation, source counts, rank/difficulty guards, bonus order, explicit 0-items, original format and reference clones. Do not change output for existing profiles except when fixing a demonstrated bug, with regression proof.
 4. **Per-branch mixer UI — NOT YET DONE.** Compact generator selector (`ItemGenerator` tier / `SmartLoot` prototype), actual branch selector (rank, difficulty, group), readable Weight or Chance visualization and optional per-item details. Keep single-row six color-keyed knobs for global category tuning, Stamina Usage yellow modified-digit conventions, no redundant tiles/whole-width controls; follow `docs/UI-DESIGN-LOCK.md` and `docs/VISUAL-CONTROL-SYSTEM.md`. Do not create 463 knobs/cards or assume all branches are active. Changes to per-branch **editability** would add new persistable settings, change presets/writer/catalog and need separate explicit design approval.
 5. **Parity and runtime acceptance — NOT YET DONE.** Unit tests for representative Weight/Chance, 1×/0×/3×, all-zero pools, rank/difficulty gating, mixed Basic bonus + category, Rare coupon + category, medical suppression, group endpoint update, DLC/no-DLC and protected actors. Compare every previewed field against actual emitted CFG (not merely source JSON). Build `net10.0-windows`, run Wine controls at normal/narrow width, verify untouched quest/unique output and newly generated unpopulated stash behavior in game. **No game-probability proof until measured in game.**
@@ -91,11 +91,12 @@ Other direct item entries, quest rewards, unique/blueprint stashes, DLC-only gen
 - Existing **26 Stashes persisted parameter IDs**, factory/user presets, written CFG semantics and all source guards remain unchanged in Phase 1. New UI bindings must not be presented as implemented before a code+docs+tests commit.
 - Every phase lands directly on `main` as **one verified code + relevant docs commit**, with source provenance and audits; builds/game effects must be reported separately from static review.
 
-## Phase 1 validation
+## Phases 1–2 source audit validation
 
 ```bash
 python tools/audit_stash_generator_branches.py
+python tools/audit_stash_consumer_graph.py
 python tools/audit_stashes_mixer_ui.py
 ```
 
-The first audit proves the checked-in branch *source inventory* agrees exactly with embedded authored inputs and has no mixed `Weight`/`Chance` groups. The existing mixer audit is a separate regression check for current UI, not proof of future shared output parity. **A 1:1 match to the source groups becomes a 1:1 match to generated CFG only after Phase 3 parity tests**; neither claim proves actual game-world drop probabilities.
+The first audit proves native branch source inventory equality; the second proves eligible/blocked physical source joins reproduce the writer-manifest guards, not dynamic emission. The existing mixer audit is a separate regression check for current UI, not proof of future shared output parity. **A 1:1 match to the source groups becomes a 1:1 match to generated CFG only after Phase 3 parity tests**; neither claim proves actual game-world drop probabilities.

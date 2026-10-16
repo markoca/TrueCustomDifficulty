@@ -1,3 +1,5 @@
+**CURRENT 2026-10-16 — STASHES PHASE 2 SOURCE CONSUMER GRAPH:** The [5,007-row guarded source edge graph](stash-consumer-generator-edges.csv) and [implementation contract](STASH-CONSUMER-GRAPH-2026-10-16.md) preserve all blocked paths, 803 base / 112 DLC SmartLoot actor lists and observed non-authorizing source references. The graph does not modify existing writer guards or establish dynamic active CFG effects; run `python tools/audit_stash_consumer_graph.py`.
+
 **CURRENT 2026-10-16 — STASHES BRANCH MIXER ARCHITECTURE (PHASE 1 ONLY):** Generator-branch inventory, 463 source groups, writer/preview parity gaps and rollout phases are recorded in [Stashes generator-branch architecture](STASH-GENERATOR-BRANCH-ARCHITECTURE-2026-10-16.md) and [source branch inventory](stash-generator-branches.csv). Current source previews remain partial; the future shared transformation engine and per-branch selection UI are **not yet implemented**. Do not equate group/source inventory with independently reachable game drop events.
 
 # Regular stash sources for all ordinary loot categories (2026-10-16)

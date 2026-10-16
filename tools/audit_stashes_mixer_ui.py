@@ -172,6 +172,15 @@ for name, document in [("UI-DESIGN-LOCK", lock),
 
 # Phase 1 invariant: the Stashes UI audit also checks the native source
 # inventory, which does not establish engine-runtime probabilities.
+consumer_audit = subprocess.run(
+    [sys.executable, str(root / "tools/audit_stash_consumer_graph.py")],
+    capture_output=True, text=True, check=False,
+)
+assert consumer_audit.returncode == 0, (
+    consumer_audit.stdout + consumer_audit.stderr
+)
+print("PASS: guarded consumer -> generator -> native branch graph synchronized")
+
 branch_audit = subprocess.run(
     [sys.executable, str(root / "tools/audit_stash_generator_branches.py")],
     capture_output=True, text=True, check=False,
