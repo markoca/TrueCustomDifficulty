@@ -31,7 +31,7 @@ Only the audited production-only TCD generator clones/redirects are changed: som
 4. MEDKIT QUANTITY: two rows by two columns of selectable dot plots. MIN FLOOR 0 AUTO/1..6; MAX CAP 0 ITEMS (stored -1), AUTO (stored 0), and 1..6. Explicit zero also sets native Chance/Weight to zero for that Medkit or ArmyMedkit entry; existing presets with stored 0 remain AUTO.
 5. EXTRA STASH GEAR: a 3x2 matrix Basic/Standard/Rare by Weapons/Armor. Each cell gets an OFF/RARE/MODERATE/FREQUENT native discrete selector; do not stretch cells across full width or duplicate their explanations.
 
-All five charts are centered, bounded, source-editable, and have right-aligned live values and changed-number-only highlights. The new explicit -1 MAX stop is the only catalog range expansion. Both authoritative visual catalogs were updated as part of the implementation. No separate redundant editors appear.
+All five charts are centered, bounded, source-editable, and have right-aligned live values and changed-digit-only gold highlights (unit labels remain white). The new explicit -1 MAX stop is the only catalog range expansion. Both authoritative visual catalogs were updated as part of the implementation. No separate redundant editors appear.
 
 ## Local acceptance after pull/build
 

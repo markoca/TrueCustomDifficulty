@@ -4192,6 +4192,8 @@ _med_caps = {"loot.stashMedkitMaxCount", "loot.stashArmyMedkitMaxCount"}
 _med_caps_rows = [p for p in parameters if p.get("id") in _med_caps]
 _graph_required = (
     "DrawStashRewardGraphRow(",
+    "DrawStashNumericReadout(",
+    "0 ITEMS = OFF · AUTO = ORIGINAL", 
     '("loot.cheapStashAmmoQuantity", "BASIC")',
     '("loot.mediumStashAmmoQuantity", "STANDARD")',
     '("loot.expensiveStashAmmoQuantity", "RARE")',

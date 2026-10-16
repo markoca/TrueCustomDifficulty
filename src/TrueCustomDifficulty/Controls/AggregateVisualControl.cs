@@ -4599,10 +4599,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                 new Pen(enabled ? accent : muted, hovered ? 2.5 : 1.7),
                 new Point(x, bar.Top + 6.0), 5.8, 5.8);
 
-            DrawRightAlignedText(dc, $"{p.CurrentNumber:0.##}x",
+            DrawStashNumericReadout(dc, $"{p.CurrentNumber:0.##}x",
                 new Point(left + bankWidth - 11.0, top + 5.0),
-                11.7, modified ? accent : enabled ? text : muted,
-                FontWeights.SemiBold);
+                11.7, enabled, modified, text, muted, accent);
             AddHorizontalTarget(p,
                 new Rect(bar.Left - 7.0, top + 1.0,
                     bar.Width + 14.0, 32.0),
@@ -4675,10 +4674,10 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ControlHoverGlow.Draw(dc, new Point(x, bar.Top + 6), accent, hover);
             dc.DrawEllipse(panel, new Pen(enabled ? accent : muted, hover ? 2.5 : 1.7),
                 new Point(x, bar.Top + 6), 5.8, 5.8);
-            DrawRightAlignedText(dc, $"{source.CurrentNumber:0.##}x",
+            DrawStashNumericReadout(dc, $"{source.CurrentNumber:0.##}x",
                 new Point(left + bankWidth - 11, y + 4),
-                11.6, enabled && source.IsValueModifiedFromReference()
-                    ? accent : enabled ? text : muted, FontWeights.SemiBold);
+                11.6, enabled, source.IsValueModifiedFromReference(),
+                text, muted, accent);
             AddHorizontalTarget(source,
                 new Rect(bar.Left - 7, y, bar.Width + 14, 32),
                 bar, 0.0, 3.0);
@@ -4731,7 +4730,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 text, muted, border, accent, panel);
         }
 
-        DrawCenteredText(dc, "AUTO KEEPS ORIGINAL COUNTS · MAX: 0 MEANS EMPTY",
+        DrawCenteredText(dc, "0 ITEMS = OFF · AUTO = ORIGINAL",
             new Point(ActualWidth / 2.0, 263.0),
             9.0, muted, FontWeights.Normal);
     }
@@ -5010,14 +5009,33 @@ public sealed class AggregateVisualControl : FrameworkElement
             "loot.cheapStashGrenadeQuantity" => $"{p.CurrentNumber:0}",
             _ => $"{p.CurrentNumber:0.##}x"
         };
-        DrawRightAlignedText(dc, display,
+        DrawStashNumericReadout(dc, display,
             new Point(left + bankWidth - 11.0, top + 4.0),
-            12.1, modified ? accent : enabled ? text : muted,
-            FontWeights.SemiBold);
+            12.1, enabled, modified, text, muted, accent);
         AddHorizontalTarget(p,
             new Rect(bar.Left - 7.0, top + 2.0,
                 bar.Width + 14.0, 30.0),
             bar, p.Minimum, p.Maximum);
+    }
+
+    // Same value alignment and changed-digit-only gold rule on ALL Stashes
+    // graphs. Units/suffixes (x, %, ITEMS) remain white even when modified.
+    private void DrawStashNumericReadout(
+        DrawingContext dc, string value, Point right, double size,
+        bool enabled, bool modified, Brush text, Brush muted, Brush accent)
+    {
+        var formatted = CreateText(value, size, enabled ? text : muted,
+            FontWeights.SemiBold);
+        if (enabled && modified)
+        {
+            foreach (System.Text.RegularExpressions.Match number in
+                System.Text.RegularExpressions.Regex.Matches(
+                    value, @"-?\d+(?:\.\d+)?"))
+                formatted.SetForegroundBrush(accent, number.Index, number.Length);
+        }
+        var x = Math.Min(right.X, ActualWidth - 12.0)
+            - formatted.WidthIncludingTrailingWhitespace;
+        dc.DrawText(formatted, new Point(x, right.Y));
     }
 
     // The real SNG/NATO generator pools are distinct. Their previews show the
