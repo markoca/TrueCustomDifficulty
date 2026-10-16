@@ -1,5 +1,8 @@
 # STASH CONTENT & EXTRA STASH GEAR — implementation contract (2026-10-16)
 
+**CURRENT 2026-10-16 — stricter quest/unique safety:** The supplied 831-row ordinary stash candidate CSV is a source inventory, not the full active patch list. In addition to the 71 explicit quest/unique/blueprint exclusions, 28 more candidate actors with named `ClueVariableSID` values are now withheld. Only **803** actors with `ClueVariableSID=EmptyInherited` are eligible for SmartLoot redirection. All existing Stashes controls, graph layout, source IDs and preset values remain unchanged; no vanilla SmartLoot root is globally edited.
+
+
 **CURRENT 2026-10-16 — world SmartLoot coverage implemented:** The Stashes regular categories now operate across both the three audited ItemGenerator stash clones and 13 TCD reference-cloned SmartLoot world prototypes. The writer redirects 831 source-backed WorldMap_WP ItemContainer actors; 71 actors with Blueprint/Unique/Quest ItemGenerator references remain excluded. All source rank/slot/item paths come from the uploaded CFG dump. This adds no new UI controls, and does not rewrite quest rewards, NPC corpses, breakable crates or already-generated inventory. Game and Wine validation still pending. [Source contract](generators/SMARTLOOT-PRODUCTION-EXTENSION-2026-10-16.md).
 
 

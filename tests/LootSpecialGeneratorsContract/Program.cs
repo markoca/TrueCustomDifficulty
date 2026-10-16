@@ -286,6 +286,7 @@ internal static class Program
                     x.StartsWith("098E76F14ADD5CFF9C62508DB31013E3/",
                         StringComparison.Ordinal)),
                     name + ": unique blueprint actor was rewritten");
+                Check(!actors.Keys.Any(k => k.StartsWith("02E9BD8341141FEC43FBBB9B6E8F8891/", StringComparison.Ordinal)), name + ": withheld named clue actor was redirected");
                 Check(actors.Keys.Any(x => x.EndsWith("/StashPrototypeSID",
                     StringComparison.Ordinal) && x.Length >= 33),
                     name + ": no normal world actors were redirected");

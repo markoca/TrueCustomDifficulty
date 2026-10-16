@@ -69,6 +69,9 @@ assert 'bias *= StashTuningCurrent(all, detailId, 1);' in tuning
 smartloot = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashSmartLoot.cs").read_text(encoding="utf-8")
 assert "WriteWorldStashSmartLoot(" in smartloot and "GetOrAddReferencedRoot(" in smartloot
 assert "StashPrototypeSID" in smartloot and "if (disabled)" in smartloot
+assert 'ordinary.Length != 803' in smartloot
+assert 'x.ClueSid == "EmptyInherited"' in smartloot
+assert '02E9BD8341141FEC43FBBB9B6E8F8891/' in (root / "tests" / "LootSpecialGeneratorsContract" / "Program.cs").read_text(encoding="utf-8")
 assert (root / "src/TrueCustomDifficulty/Data/smartloot-regular-world-actor-manifest.csv").is_file()
 assert (root / "src/TrueCustomDifficulty/Data/smartloot-world-source-entries.csv").is_file()
 assert "if (maxCap > 0)" in tuning and "min = max;" in tuning

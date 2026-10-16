@@ -1,5 +1,8 @@
 ### 2026-10-16 — Top-left radiation mark spins during Build Difficulty
 
+**CURRENT 2026-10-16 — stricter quest/unique safety:** The supplied 831-row ordinary stash candidate CSV is a source inventory, not the full active patch list. In addition to the 71 explicit quest/unique/blueprint exclusions, 28 more candidate actors with named `ClueVariableSID` values are now withheld. Only **803** actors with `ClueVariableSID=EmptyInherited` are eligible for SmartLoot redirection. All existing Stashes controls, graph layout, source IDs and preset values remain unchanged; no vanilla SmartLoot root is globally edited.
+
+
 **CURRENT 2026-10-16 — source-native world SmartLoot extension:** Existing compact Stashes graphs now cover 13 independently-authored SmartLoot source prototypes in addition to regular ItemGenerator stashes, using 991 verbatim item entries extracted from the supplied CFG dump and an 831-actor normal WorldMap_WP ItemContainer allowlist. 71 quest/unique/blueprint-linked actors are excluded; all original NPC/quest/scripted and breakable paths remain separate. TCD_ SmartLoot reference clones and ordered StashPrototypeSID redirects do not change the physical actor's ItemGeneratorSettings. Zero bias explicitly zeros item selection and counts in the allowed SmartLoot source; positive bias scales matching source fields and homogeneous group spawn endpoints, preserving authored zero endpoint pairs. No graph/preset ID changes or claim of verified game runtime success. [Source details](generators/SMARTLOOT-PRODUCTION-EXTENSION-2026-10-16.md).
 
 

@@ -10,9 +10,10 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Services;
 
 // Adds the independently-authored StashPrototypes SmartLoot layer to the
-// existing source-backed Stashes controls. Only the audited 831 ordinary
-// WorldMap_WP actor allowlist entries are ever redirected. Their other
-// ItemGeneratorSettings, clue, quest and unique item content is unchanged.
+// existing source-backed Stashes controls. Of 831 audited candidate
+// WorldMap_WP actors, 28 carry named clue SIDs and are held back for review.
+// Only 803 no-clue ordinary actors may be redirected. Unique, quest and
+// independent ItemGeneratorSettings remain unchanged.
 public sealed partial class CfgPatchWriterService
 {
     private const string SmartLootSourceResource =
@@ -26,7 +27,7 @@ public sealed partial class CfgPatchWriterService
         string MinCount, string MaxCount,
         string MinSpawnChance, string MaxSpawnChance, string ItemSetCount);
 
-    private sealed record SmartStashActor(string ActorSid, string[] SourceSids);
+    private sealed record SmartStashActor(string ActorSid, string[] SourceSids, string ClueSid);
 
     private static IReadOnlyList<string[]> ReadStashCsv(string resource, int columns)
     {
@@ -103,7 +104,8 @@ public sealed partial class CfgPatchWriterService
     {
         var rows = ReadStashCsv(SmartLootActorResource, 8);
         var actors = rows.Select(x => new SmartStashActor(x[0],
-            x[1].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))).ToArray();
+            x[1].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
+            x[3])).ToArray();
         if (actors.Length != 831
             || actors.Select(x => x.ActorSid).Distinct(StringComparer.Ordinal).Count() != 831
             || actors.Any(x => x.ActorSid.Length != 32 || x.SourceSids.Length == 0)
@@ -111,7 +113,12 @@ public sealed partial class CfgPatchWriterService
                 || x[2].Contains("Unique", StringComparison.OrdinalIgnoreCase)
                 || x[2].Contains("Quest", StringComparison.OrdinalIgnoreCase)))
             throw new InvalidDataException("Unsafe or unexpected world SmartLoot actor manifest");
-        return actors;
+        // A named stash clue can indicate an authored/quest-associated reward.
+        // Protect those actors until individual actor/gameplay verification.
+        var ordinary = actors.Where(x => x.ClueSid == "EmptyInherited").ToArray();
+        if (ordinary.Length != 803)
+            throw new InvalidDataException("Safe no-clue stash actor boundary drift: expected 803.");
+        return ordinary;
     }
 
     private static string? SmartStashSourceId(string itemSid) => itemSid switch
