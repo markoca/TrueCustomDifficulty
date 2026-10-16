@@ -969,7 +969,7 @@ public sealed partial class CfgPatchWriterService
                 ammoChanged ? ammoParameter.CurrentNumber : 1.0,
                 grenadeChanceChanged ? grenadeChanceParameter.CurrentNumber : ParseNumber(config.GrenadeEntry.SourceChanceRaw),
                 grenadeQuantityChanged ? (int)Math.Round(grenadeQuantityParameter.CurrentNumber, MidpointRounding.AwayFromZero) : config.GrenadeEntry.SourceMinCount,
-                allById);
+                allById, baseline, modifiedById);
         }
 
         foreach (var redirect in LoadCheapStashRedirects(config.RedirectManifestResource))
@@ -1004,14 +1004,20 @@ public sealed partial class CfgPatchWriterService
         double ammoMultiplier,
         double grenadeChance,
         int grenadeQuantity,
-        IReadOnlyDictionary<string, ParameterViewModel> allById)
+        IReadOnlyDictionary<string, ParameterViewModel> allById,
+        CfgWriterBaseline baseline,
+        IReadOnlyDictionary<string, ParameterViewModel> modifiedById)
     {
+
+        // Immutable snapshot shared by the actual CFG writer and Stashes UI.
+        var effective = new StashEffectiveState(
+            allById.Values, modifiedById.Keys,
+            "Easy");
         if (ammoMultiplier <= 0)
             throw new InvalidDataException("Cheap Stash Ammo Quantity must be greater than zero.");
         if (grenadeQuantity < 0)
             throw new InvalidDataException("Cheap Stash RGD-5 Quantity cannot be negative.");
 
-        var ammoByNode = config.AmmoEntries.ToDictionary(x => x.EntryNode, StringComparer.Ordinal);
         var itemGenerator = root.GetOrAddChild("ItemGenerator", useBpatch: false);
         var edits = 0;
 
@@ -1030,28 +1036,8 @@ public sealed partial class CfgPatchWriterService
                 var item = possibleItems.GetOrAddChild(itemDefinition.Node, useBpatch: false);
                 foreach (var field in itemDefinition.Fields)
                 {
-                    var value = field.Value;
-                    if (categoryDefinition.Node == "[3]"
-                        && ammoByNode.TryGetValue(itemDefinition.Node, out var ammoEntry))
-                    {
-                        if (field.Key == "MinCount")
-                            value = ScalePositiveInteger(ammoEntry.SourceMinCount, ammoMultiplier).ToString(CultureInfo.InvariantCulture);
-                        else if (field.Key == "MaxCount")
-                            value = ScalePositiveInteger(ammoEntry.SourceMaxCount, ammoMultiplier).ToString(CultureInfo.InvariantCulture);
-                    }
-                    else if (categoryDefinition.Node == config.GrenadeEntry.CategoryNode
-                        && itemDefinition.Node == config.GrenadeEntry.EntryNode)
-                    {
-                        if (field.Key == "Chance")
-                            value = FormatLikeSource(grenadeChance, config.GrenadeEntry.SourceChanceRaw);
-                        else if (field.Key is "MinCount" or "MaxCount")
-                            value = grenadeQuantity.ToString(CultureInfo.InvariantCulture);
-                    }
-
-                    var itemSid = itemDefinition.Fields["ItemPrototypeSID"];
-                    value = TuneStashSelectionField(itemSid, field.Key, value, allById);
-                    value = TuneStashMedicalCountField(
-                        itemDefinition.Fields, field.Key, value, allById);
+                    var value = effective.TierField(
+                        baseline, "Cheap", categoryDefinition, itemDefinition, field.Key);
                     item.SetAssignment(field.Key, value);
                     edits++;
                 }
@@ -1165,7 +1151,8 @@ public sealed partial class CfgPatchWriterService
             root.SetAssignment("SID", sid);
             edits++;
             edits += WriteMediumStashAmmoTemplate(root, config,
-                modifiedById.ContainsKey(config.ParameterId) ? parameter.CurrentNumber : 1.0, allById);
+                modifiedById.ContainsKey(config.ParameterId) ? parameter.CurrentNumber : 1.0,
+                allById, baseline, modifiedById);
         }
 
         foreach (var redirect in LoadMediumStashRedirects(config.RedirectManifestResource))
@@ -1193,11 +1180,15 @@ public sealed partial class CfgPatchWriterService
         PatchNode root,
         CfgWriterMediumStashAmmoProduction config,
         double ammoMultiplier,
-        IReadOnlyDictionary<string, ParameterViewModel> allById)
+        IReadOnlyDictionary<string, ParameterViewModel> allById,
+        CfgWriterBaseline baseline,
+        IReadOnlyDictionary<string, ParameterViewModel> modifiedById)
     {
-        var ammoByNode = config.AmmoEntries.ToDictionary(
-            x => (x.CategoryNode, x.EntryNode),
-            x => x);
+
+        // Immutable snapshot shared by the actual CFG writer and Stashes UI.
+        var effective = new StashEffectiveState(
+            allById.Values, modifiedById.Keys,
+            "Easy");
         var itemGenerator = root.GetOrAddChild("ItemGenerator", useBpatch: false);
         var edits = 0;
 
@@ -1214,23 +1205,11 @@ public sealed partial class CfgPatchWriterService
             foreach (var itemDefinition in categoryDefinition.Items)
             {
                 var item = possibleItems.GetOrAddChild(itemDefinition.Node, useBpatch: false);
-                ammoByNode.TryGetValue((categoryDefinition.Node, itemDefinition.Node), out var ammoEntry);
 
                 foreach (var field in itemDefinition.Fields)
                 {
-                    var value = field.Value;
-                    if (ammoEntry is not null)
-                    {
-                        if (field.Key == "MinCount")
-                            value = ScalePositiveInteger(ammoEntry.SourceMinCount, ammoMultiplier).ToString(CultureInfo.InvariantCulture);
-                        else if (field.Key == "MaxCount")
-                            value = ScalePositiveInteger(ammoEntry.SourceMaxCount, ammoMultiplier).ToString(CultureInfo.InvariantCulture);
-                    }
-
-                    var itemSid = itemDefinition.Fields["ItemPrototypeSID"];
-                    value = TuneStashSelectionField(itemSid, field.Key, value, allById);
-                    value = TuneStashMedicalCountField(
-                        itemDefinition.Fields, field.Key, value, allById);
+                    var value = effective.TierField(
+                        baseline, "Medium", categoryDefinition, itemDefinition, field.Key);
                     item.SetAssignment(field.Key, value);
                     edits++;
                 }
@@ -1353,7 +1332,7 @@ public sealed partial class CfgPatchWriterService
                     ? ammoParameter.CurrentNumber : 1.0,
                 couponChanged ? couponParameter?.CurrentNumber : null,
                 difficultySid,
-                allById);
+                allById, baseline, modifiedById);
         }
 
         foreach (var redirect in LoadExpensiveStashRedirects(config.RedirectManifestResource))
@@ -1383,14 +1362,15 @@ public sealed partial class CfgPatchWriterService
         double ammoMultiplier,
         double? couponChance,
         string difficultySid,
-        IReadOnlyDictionary<string, ParameterViewModel> allById)
+        IReadOnlyDictionary<string, ParameterViewModel> allById,
+        CfgWriterBaseline baseline,
+        IReadOnlyDictionary<string, ParameterViewModel> modifiedById)
     {
-        var ammoByNode = config.AmmoEntries.ToDictionary(
-            x => (x.CategoryNode, x.EntryNode),
-            x => x);
-        var couponByNode = config.CouponEntries.ToDictionary(
-            x => (x.CategoryNode, x.EntryNode),
-            x => x);
+
+        // Immutable snapshot shared by the actual CFG writer and Stashes UI.
+        var effective = new StashEffectiveState(
+            allById.Values, modifiedById.Keys,
+            difficultySid);
         var itemGenerator = root.GetOrAddChild("ItemGenerator", useBpatch: false);
         var edits = 0;
 
@@ -1407,31 +1387,11 @@ public sealed partial class CfgPatchWriterService
             foreach (var itemDefinition in categoryDefinition.Items)
             {
                 var item = possibleItems.GetOrAddChild(itemDefinition.Node, useBpatch: false);
-                ammoByNode.TryGetValue((categoryDefinition.Node, itemDefinition.Node), out var ammoEntry);
-                couponByNode.TryGetValue((categoryDefinition.Node, itemDefinition.Node), out var couponEntry);
 
                 foreach (var field in itemDefinition.Fields)
                 {
-                    var value = field.Value;
-                    if (ammoEntry is not null)
-                    {
-                        if (field.Key == "MinCount")
-                            value = ScalePositiveInteger(ammoEntry.SourceMinCount, ammoMultiplier).ToString(CultureInfo.InvariantCulture);
-                        else if (field.Key == "MaxCount")
-                            value = ScalePositiveInteger(ammoEntry.SourceMaxCount, ammoMultiplier).ToString(CultureInfo.InvariantCulture);
-                    }
-                    else if (couponChance.HasValue
-                        && couponEntry is not null
-                        && field.Key == "Chance"
-                        && couponEntry.DifficultySids.Contains(difficultySid, StringComparer.OrdinalIgnoreCase))
-                    {
-                        value = FormatNumber(couponChance.Value);
-                    }
-
-                    var itemSid = itemDefinition.Fields["ItemPrototypeSID"];
-                    value = TuneStashSelectionField(itemSid, field.Key, value, allById);
-                    value = TuneStashMedicalCountField(
-                        itemDefinition.Fields, field.Key, value, allById);
+                    var value = effective.TierField(
+                        baseline, "Expensive", categoryDefinition, itemDefinition, field.Key);
                     item.SetAssignment(field.Key, value);
                     edits++;
                 }

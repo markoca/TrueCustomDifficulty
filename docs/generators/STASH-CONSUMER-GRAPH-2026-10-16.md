@@ -1,3 +1,5 @@
+**CURRENT 2026-10-16 — STASHES PHASE 3 SHARED EFFECTIVE CFG:** [Phase 3 shared effective CFG calculator](STASH-EFFECTIVE-CFG-CALCULATION-2026-10-16.md) tracks one numeric source-to-field calculator now called by tier and SmartLoot writers and existing Stashes source examples. Basic RGD-5/Rare Coupons bonus Chance ordering and Medical zero-count are shared. The new generated CFG contract has not yet been executed on Wine, and dynamic per-actor activation remains conditional. Phase 4 per-branch selector is not built.
+
 # Stashes phase 2 — protected consumer graph and native branch join
 
 **Status: source-level consumer graph IMPLEMENTED (2026-10-16), writer/runtime parity NOT claimed.** Phase 1 native branch source inventory remains canonical: [native branch architecture](STASH-GENERATOR-BRANCH-ARCHITECTURE-2026-10-16.md), [463 native source branches](stash-generator-branches.csv). This phase adds [a checked-in consumer edge graph](stash-consumer-generator-edges.csv) and [regenerating / checking code](../../tools/audit_stash_consumer_graph.py) directly from the **same manifests used by the CFG writers**.

@@ -4177,66 +4177,47 @@ for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
         fail("Slider numeral/anomaly catalog contract missing from " + _catalog)
 note("Slider numerals enlarged; mutant HP prominent; redundant anomaly headings absent")
 
-# Stashes native graph contract: reward bars and medical count dot-grid.
-# All source IDs, input/drag/preset routes and source-true quantity values
-# must remain real editable parameters after the slider/knob redesign.
-_graph_start = _knob_source.find("private void DrawCompactStashRewards(")
-_graph_end = _knob_source.find("private void DrawAmmoDistribution(", _graph_start)
-_graph_body = _knob_source[_graph_start:_graph_end]
-_med_graph_start = _knob_source.find("private void DrawStashMedicalQuantity(")
-_med_graph_end = _knob_source.find("private void DrawStashGear(", _med_graph_start)
-_med_graph_body = _knob_source[_med_graph_start:_med_graph_end]
-_med_writer = (ROOT / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
-_med_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
-_med_caps = {"loot.stashMedkitMaxCount", "loot.stashArmyMedkitMaxCount"}
-_med_caps_rows = [p for p in parameters if p.get("id") in _med_caps]
-_graph_required = (
-    "DrawStashRewardGraphRow(",
-    "DrawStashNumericReadout(",
-    "0 ITEMS = OFF · VANILLA = ORIGINAL", 
-    '("loot.cheapStashAmmoQuantity", "BASIC")',
-    '("loot.mediumStashAmmoQuantity", "STANDARD")',
-    '("loot.expensiveStashAmmoQuantity", "RARE")',
-    '("loot.cheapStashGrenadeChance", "RGD-5 CHANCE")',
-    '("loot.cheapStashGrenadeQuantity", "RGD-5 AMOUNT")',
-    '("loot.expensiveStashMoneyChance", "RARE COUPONS")',
-    "AddHorizontalTarget(p,",
-)
-_med_required = ("DrawMedicalCountDots(", "AddHorizontalTarget(p,",
-                 "MAX CAP", "MIN FLOOR", "0 ITEMS", "VANILLA",
-                 '("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount", "MEDKITS")',
-                 '("loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount", "ARMY MEDKITS")')
-if (not all(token in _graph_body for token in _graph_required)
-    or "DrawSourceKnob(" in _graph_body
-    or "DrawHorizontalTrackCard(" in _graph_body
-    or not all(token in _med_graph_body for token in _med_required)
-    or "DrawCompactTrack(" in _med_graph_body
-    or len(_med_caps_rows) != 2
-    or any(p.get("slider", {}).get("min") != -1 or p.get("slider", {}).get("max") != 6
-           or p.get("vanilla", {}).get("All") != 0 for p in _med_caps_rows)
-    or 'if (maxCap == -1)\n            return "0";' not in _med_writer
-    or _med_writer.find('if (maxCap == -1)') > _med_writer.find('var min = minFloor > 0')
-    or 'StashTuningCurrent(all, $"loot.stash{itemSid}MaxCount", 0) < -0.5' not in _med_writer
-    or 'return FormatLikeSource(0.0, currentRaw);' not in _med_writer
-    or 'private static bool IsStashMedicalSelectionDisabled(' not in _med_writer
-    or 'if (IsStashMedicalSelectionDisabled(itemSid, all))' not in _med_writer
-    or 'if (IsStashMedicalSelectionDisabled(sid, all))' not in _med_writer
-    or 'return "0";' not in _med_writer
-    or 'CurrentNumber < 0 ? "0 items"' not in _med_vm
-    or '"StashMedicalQuantity" => 290.0,' not in _knob_source
-    or 'current == 0 ? "VANILLA"' not in _knob_source
-    or _knob_source.count('DrawCenteredText(dc, "VANILLA", new Point(') != 2
-    or '"VANILLA" : $"{CurrentNumber:0} items max"' not in _med_vm
-    or '"VANILLA" : $"{CurrentNumber:0} items min"' not in _med_vm
-    or '"StashRewardProfile" => 398.0,' not in _knob_source
-    or 'var stashGraph = Family is "StashRewardProfile" or "StashContentMix"' not in _knob_source
-    or 'or "StashMedicalComposition" or "StashMedicalQuantity" or "StashGear";' not in _knob_source
-    or any("CURRENT 2026-10-16 — STASHES GRAPH-ONLY REDESIGN" not in
-           (DOCS / doc).read_text(encoding="utf-8")
-           for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))):
-    fail("Stashes graph-only reward/medical editors or explicit zero count drifted")
+# Stashes PHASE-3 source-effective CFG contract: native bar/quantity
+# editors and the single writer/preview field transform. These checks
+# supersede old GRAPH-ONLY / VANILLA knob strings from prior UI iterations.
+_stash_ui = _knob_source
+_stash_engine = (ROOT / "src/TrueCustomDifficulty/Services/StashEffectiveState.cs").read_text(
+    encoding="utf-8")
+_stash_tier = (ROOT / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text(
+    encoding="utf-8")
+_stash_smart = (ROOT / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashSmartLoot.cs").read_text(
+    encoding="utf-8")
+_stash_tuning = (ROOT / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashTuning.cs").read_text(
+    encoding="utf-8")
+_stash_harness = (ROOT / "tests/LootSpecialGeneratorsContract/Program.cs").read_text(
+    encoding="utf-8")
+_stash_med_caps = [p for p in parameters if p.get("id") in (
+    "loot.stashMedkitMaxCount", "loot.stashArmyMedkitMaxCount")]
+if (len(_stash_med_caps) != 2
+    or any(p.get("slider", {}).get("min") != -1 or
+           p.get("slider", {}).get("max") != 6 or
+           p.get("vanilla", {}).get("All") != 0 for p in _stash_med_caps)
+    or "DrawStashQuantityDots(" not in _stash_ui
+    or "DrawStashGearMode(" not in _stash_ui
+    or "DrawStashPoolBar(" not in _stash_ui
+    or "DrawStashMedicalSourcePreview(" not in _stash_ui
+    or "effective.TierField(" not in _stash_ui
+    or _stash_tier.count("effective.TierField(") != 3
+    or "effective.SmartSelection(" not in _stash_smart
+    or "StashEffectiveState.UniformSmartFactor(" not in _stash_smart
+    or "StashState(all).TuneSelection(" not in _stash_tuning
+    or "StashState(all).TuneCount(" not in _stash_tuning
+    or "private bool MedicalDisabled(" not in _stash_engine
+    or "if (cap == -1) return \"0\";" not in _stash_engine
+    or "Changed(config.GrenadeChanceParameterId)" not in _stash_engine
+    or "Changed(config.CouponChanceParameterId)" not in _stash_engine
+    or "VerifyStashEffectiveParity();" not in _stash_harness
+    or not all("STASHES PHASE 3 SHARED EFFECTIVE CFG" in
+               (DOCS / doc).read_text(encoding="utf-8")
+               for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))):
+    fail("Stashes Phase-3 shared calculation / native UI / medical counts drifted")
 else:
-    note("Stashes rewards: six native graphical rows; medical quantity: 2x2 dot graph with 0 ITEMS/VANILLA distinct and zero-entry writer")
+    note("Stashes Phase 3: common native tier/SmartLoot effective values, bonus overrides and output parity harness")
 
 # Trader Stock native rotary bank uses the existing input/grid infrastructure.
 _stock_knob_source = _knob_source

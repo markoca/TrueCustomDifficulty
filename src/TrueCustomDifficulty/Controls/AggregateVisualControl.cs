@@ -161,7 +161,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             {
                 "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
                 "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
-                "loot.stashMedkitMaxCount", "loot.stashArmyMedkitMaxCount"
+                "loot.stashMedkitMaxCount", "loot.stashArmyMedkitMaxCount",
+                // Complete native Chance overrides, read-only on this mixer.
+                "loot.cheapStashGrenadeChance", "loot.expensiveStashMoneyChance"
             },
             "StashMedicalComposition" => new[]
             {
@@ -4830,67 +4832,17 @@ public sealed class AggregateVisualControl : FrameworkElement
         return groups?.FirstOrDefault(g => g.Node == $"[{index}]");
     }
 
-    private static double StashSourceNumber(string raw)
+    // Same immutable numeric snapshot as the actual CFG patch writer.
+    // Preview sample is explicitly Easy for difficulty-gated Rare Coupons;
+    // the branch selector for all difficulty/rank variants comes in Phase 4.
+    private StashEffectiveState CurrentStashEffectiveState()
     {
-        if (!double.TryParse(raw.TrimEnd('f', 'F'), NumberStyles.Float,
-                CultureInfo.InvariantCulture, out var value))
-            throw new InvalidDataException($"Invalid authored stash field: {raw}");
-        return value;
-    }
-
-    private static int StashCategoryIndex(string sid)
-    {
-        if (sid.Length > 1 && sid[0] == 'A' && char.IsDigit(sid[1]))
-            return 0; // Ammo
-        if (sid is "Bandage" or "Medkit" or "ArmyMedkit" or "AntiRad" or "Antirad"
-            or "EcoMedkit")
-            return 1; // Medical
-        if (sid is "Bread" or "Sausage" or "CannedFood")
-            return 2; // Food
-        if (sid is "Milk" or "Water" or "Energetic" or "Vodka" or "Beer")
-            return 3; // Drinks
-        if (sid is "GrenadeRGD5" or "GrenadeF1")
-            return 4; // Grenades
-        if (sid.StartsWith("Money", StringComparison.Ordinal))
-            return 5; // Coupons
-        return -1;
-    }
-
-    private double StashSourceValue(string id, double otherwise = 1.0)
-        => P(id)?.CurrentNumber ?? Linked(id)?.CurrentNumber ?? otherwise;
-
-    private double StashSourceFactor(string sid)
-    {
-        var kind = StashCategoryIndex(sid);
-        if (kind < 0) return 1.0;
-        var ids = new[]
-        {
-            "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
-            "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons"
-        };
-        var factor = Math.Max(0.0, StashSourceValue(ids[kind]));
-        var detail = sid switch
-        {
-            "Bandage" => "loot.stashMedicalBandageBias",
-            "Medkit" => "loot.stashMedicalMedkitBias",
-            "ArmyMedkit" => "loot.stashMedicalArmyMedkitBias",
-            "AntiRad" or "Antirad" => "loot.stashMedicalAntiRadBias",
-            _ => null
-        };
-        if (detail is not null)
-            factor *= Math.Max(0.0, StashSourceValue(detail));
-        if (sid == "Medkit" && StashSourceValue("loot.stashMedkitMaxCount", 0.0) < -.5
-            || sid == "ArmyMedkit" &&
-                StashSourceValue("loot.stashArmyMedkitMaxCount", 0.0) < -.5)
-            return 0.0;
-        return factor;
-    }
-
-    private double StashEffectiveField(string sid, string raw, bool chance)
-    {
-        var source = StashSourceNumber(raw);
-        var scaled = Math.Max(0.0, source * StashSourceFactor(sid));
-        return chance ? Math.Clamp(scaled, 0.0, 1.0) : scaled;
+        var sources = _parameters.Values.Concat(_linkedSources.Values)
+            .GroupBy(p => p.Id, StringComparer.Ordinal)
+            .Select(g => g.First()).ToArray();
+        return new StashEffectiveState(sources,
+            sources.Where(p => p.IsValueModifiedFromReference()).Select(p => p.Id),
+            "Easy");
     }
 
     private void DrawStashPoolBar(
@@ -4906,7 +4858,8 @@ public sealed class AggregateVisualControl : FrameworkElement
                 continue;
             var category = StashCategoryIndex(sid);
             if (category >= 0)
-                totals[category] += StashEffectiveField(sid, raw, false);
+                totals[category] += StashEffectiveState.Number(
+                    CurrentStashEffectiveState().TuneSelection(sid, "Weight", raw));
         }
         var total = totals.Sum();
         DrawText(dc, caption, new Point(row.Left, row.Top), 9.6,
@@ -4949,16 +4902,13 @@ public sealed class AggregateVisualControl : FrameworkElement
         }
     }
 
-    private (string Sid, string Raw)? StashChanceSample(
+    private static CfgWriterCheapStashItem? StashChanceSample(
         string tier, int groupIndex, string expectedSid)
     {
         var group = StashPreviewGroup(tier, groupIndex);
-        var item = group?.Items.FirstOrDefault(x =>
+        return group?.Items.FirstOrDefault(x =>
             x.Fields.TryGetValue("ItemPrototypeSID", out var sid)
-            && sid == expectedSid
-            && x.Fields.ContainsKey("Chance"));
-        if (item is null) return null;
-        return (expectedSid, item.Fields["Chance"]);
+            && sid == expectedSid && x.Fields.ContainsKey("Chance"));
     }
 
     private void DrawStashChanceSample(
@@ -4969,7 +4919,18 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (source is null) return;
         var kind = StashCategoryIndex(sid);
         if (kind < 0) return;
-        var chance = StashEffectiveField(sid, source.Value.Raw, true);
+        var category = StashPreviewGroup(tier, groupIndex)!;
+        var effective = CurrentStashEffectiveState();
+        var tierName = tier switch
+        {
+            "BASIC" => "Cheap", "STANDARD" => "Medium",
+            "RARE" => "Expensive",
+            _ => throw new InvalidDataException("Invalid preview tier " + tier)
+        };
+        // Production tier writer calls TierField for this very category/item.
+        // Includes special RGD-5 and difficulty-gated Rare Coupons bonuses.
+        var chance = StashEffectiveState.Number(effective.TierField(
+            StashPreviewBaseline.Value, tierName, category, source, "Chance"));
         DrawText(dc, label, new Point(cell.Left + 1.0, cell.Top),
             9.4, text, FontWeights.SemiBold);
         DrawRightAlignedText(dc, $"{chance * 100.0:0.#}%",
@@ -5009,7 +4970,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         DrawText(dc, "SOURCE CHANCE FIELDS",
             new Point(inner.Left, card.Top + 146.0),
             10.0, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "SEPARATE ROLLS · CONTENT BIAS ONLY",
+        DrawRightAlignedText(dc, "NATIVE CHANCE · BONUS + BIAS",
             new Point(inner.Right, card.Top + 146.0),
             8.6, muted, FontWeights.SemiBold);
         var samples = new (string Tier, int Group, string Sid, string Label)[]
@@ -5019,7 +4980,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("RARE", 0, "CannedFood", "FOOD · RARE"),
             ("BASIC", 0, "Vodka", "DRINKS · BASIC"),
             ("BASIC", 5, "GrenadeRGD5", "GRENADES · BASIC"),
-            ("RARE", 11, "MoneyCommon", "COUPONS · RARE")
+            ("RARE", 11, "MoneyCommon", "COUPONS · RARE EASY")
         };
         var columns = ActualWidth >= 700.0 ? 3 : 2;
         var gap = 13.0;
@@ -5033,7 +4994,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                     card.Top + 165.0 + (i / columns) * 32.0,
                     cellWidth, 27.0), text, muted, border);
         }
-        DrawText(dc, "Individual source fields, not whole-stash drop probability.",
+        DrawText(dc, "Easy-tier examples; not whole-stash drop probability.",
             new Point(inner.Left, card.Bottom - 19.0),
             9.0, muted, FontWeights.Normal);
     }

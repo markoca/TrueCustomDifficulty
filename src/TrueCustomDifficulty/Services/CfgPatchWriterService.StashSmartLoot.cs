@@ -208,39 +208,6 @@ public sealed partial class CfgPatchWriterService
            && (!file.Equals(DlcSmartLootActorFile, StringComparison.OrdinalIgnoreCase)
                || DlcActors.Value.Any(x => x.ActorSid == actorSid));
 
-    private static string? SmartStashSourceId(string itemSid) => itemSid switch
-    {
-        "Bandage" or "Medkit" or "ArmyMedkit" or "Antirad" => "loot.stashMixMedical",
-        "Bread" or "Sausage" or "CannedFood" => "loot.stashMixFood",
-        "Water" or "Milk" or "Energetic" or "Vodka" or "Beer" => "loot.stashMixDrinks",
-        "GrenadeRGD5" or "GrenadeF1" => "loot.stashMixGrenades",
-        _ when itemSid.Length > 1 && itemSid[0] == 'A'
-            && char.IsDigit(itemSid[1]) => "loot.stashMixAmmo",
-        _ => null
-    };
-
-    private static double SmartStashBias(
-        SmartStashItem item, IReadOnlyDictionary<string, ParameterViewModel> all)
-    {
-        var sourceId = SmartStashSourceId(item.ItemSid)
-            ?? throw new InvalidDataException("Unclassified regular SmartLoot item: " + item.ItemSid);
-        var value = StashTuningCurrent(all, sourceId, 1.0);
-        var detailId = item.ItemSid switch
-        {
-            "Bandage" => "loot.stashMedicalBandageBias",
-            "Medkit" => "loot.stashMedicalMedkitBias",
-            "ArmyMedkit" => "loot.stashMedicalArmyMedkitBias",
-            "Antirad" => "loot.stashMedicalAntiRadBias",
-            _ => null
-        };
-        if (detailId is not null)
-            value *= StashTuningCurrent(all, detailId, 1.0);
-        if ((item.ItemSid is "Medkit" or "ArmyMedkit")
-            && StashTuningCurrent(all, $"loot.stash{item.ItemSid}MaxCount", 0) < -0.5)
-            return 0.0;
-        return value;
-    }
-
     private static PatchNode SmartStashGroupNode(PatchNode root, SmartStashItem item)
         => root.GetOrAddChild("ItemGenerators", useBpatch: true)
             .GetOrAddChild($"[{item.Rank}]", useBpatch: true)
@@ -260,6 +227,8 @@ public sealed partial class CfgPatchWriterService
             .Where(modified.ContainsKey).ToArray();
         if (relevant.Length == 0)
             return 0;
+        // One numeric source snapshot for all affected SmartLoot groups.
+        var effective = new StashEffectiveState(all.Values, modified.Keys, "Easy");
         var source = LoadSmartStashItems();
         var actors = LoadSmartStashActors();
         var groups = source.GroupBy(x => x.Prototype, StringComparer.Ordinal).ToArray();
@@ -269,7 +238,7 @@ public sealed partial class CfgPatchWriterService
         foreach (var group in groups)
         {
             var affected = group.Where(item =>
-                Math.Abs(SmartStashBias(item, all) - 1.0) > 0.0000001
+                Math.Abs(effective.SmartFactor(item.ItemSid) - 1.0) > 0.0000001
                 || (item.ItemSid is "Medkit" or "ArmyMedkit")
                 && (StashTuningCurrent(all, $"loot.stash{item.ItemSid}MinCount", 0) > 0
                     || StashTuningCurrent(all, $"loot.stash{item.ItemSid}MaxCount", 0) > 0))
@@ -288,12 +257,10 @@ public sealed partial class CfgPatchWriterService
             foreach (var category in group.GroupBy(x => (x.Rank, x.Group, x.Set)))
             {
                 var items = category.ToArray();
-                var biases = items.Select(item => SmartStashBias(item, all)).ToArray();
+                var biases = items.Select(item => effective.SmartFactor(item.ItemSid)).ToArray();
                 var groupNode = SmartStashGroupNode(root, items[0]);
-                if (biases.All(x => Math.Abs(x - biases[0]) < 0.0000001)
-                    && Math.Abs(biases[0] - 1.0) > 0.0000001)
+                if (StashEffectiveState.UniformSmartFactor(biases, out var factor))
                 {
-                    var factor = biases[0];
                     foreach (var pair in new[]
                     {
                         (Name: "MinSpawnChance", Raw: items[0].MinSpawnChance),
@@ -302,7 +269,7 @@ public sealed partial class CfgPatchWriterService
                     {
                         if (string.IsNullOrWhiteSpace(pair.Raw)) continue;
                         groupNode.SetAssignment(pair.Name,
-                            FormatLikeSource(Math.Clamp(ParseNumber(pair.Raw) * factor, 0.0, 1.0), pair.Raw));
+                            StashEffectiveState.SmartSpawnEndpoint(pair.Raw, factor));
                         edits++;
                     }
                     if (factor <= 0.0 && !string.IsNullOrWhiteSpace(items[0].ItemSetCount))
@@ -315,7 +282,7 @@ public sealed partial class CfgPatchWriterService
 
             foreach (var item in affected)
             {
-                var factor = SmartStashBias(item, all);
+                var factor = effective.SmartFactor(item.ItemSid);
                 var disabled = factor <= 0.0000001;
                 var itemNode = SmartStashGroupNode(root, item)
                     .GetOrAddChild("Items", useBpatch: true)
@@ -323,12 +290,8 @@ public sealed partial class CfgPatchWriterService
                 foreach (var field in new[] { ("Weight", item.Weight), ("Chance", item.Chance) })
                 {
                     if (field.Item2.Length == 0) continue;
-                    var original = ParseNumber(field.Item2);
-                    var tuned = disabled ? 0.0
-                        : field.Item1 == "Chance"
-                            ? Math.Clamp(original * factor, 0.0, 1.0)
-                            : Math.Max(0.0, original * factor);
-                    itemNode.SetAssignment(field.Item1, FormatLikeSource(tuned, field.Item2));
+                    var tuned = effective.SmartSelection(item.ItemSid, field.Item1, field.Item2);
+                    itemNode.SetAssignment(field.Item1, tuned);
                     edits++;
                 }
                 if (disabled)
@@ -358,7 +321,7 @@ public sealed partial class CfgPatchWriterService
                         { ("MinCount", item.MinCount), ("MaxCount", item.MaxCount) })
                     {
                         if (raw.Length == 0) continue;
-                        var tuned = TuneStashMedicalCountField(limits, fieldName, raw, all);
+                        var tuned = effective.TuneCount(limits, fieldName, raw);
                         if (tuned == raw) continue;
                         itemNode.SetAssignment(fieldName, tuned);
                         edits++;

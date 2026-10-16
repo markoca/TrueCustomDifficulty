@@ -101,6 +101,7 @@ internal static class Program
             VerifyCabinDirectMedical();
             VerifyRegularStashDirectMedical();
             VerifyDlcStashExpansion();
+            VerifyStashEffectiveParity();
             Console.WriteLine($"PASS: {Passed} Loot SPECIAL generator and corpse writer scenarios plus 3 medical-zero production CFG scenarios");
             Console.WriteLine("NOT VERIFIED: original decoded CFG source values, world shuffle/removal writers, Unreal patch loading or gameplay");
             return 0;
@@ -364,6 +365,122 @@ internal static class Program
     // can have a normal Rare generator next to its special blueprint reward.
     // The base-game tier manifests contain 30 such redirects; they must never
     // enter BPatch output for an ordinary Stashes slider.
+    // Phase 3: every field of all three tier clones is predicted from the
+    // same StashEffectiveState.TierField implementation the writer calls.
+    // This checks ACTUAL generated CFG fields, not a source-only example.
+    static void VerifyStashEffectiveParity()
+    {
+        var samples = new[]
+        {
+            (Name: "easy-bonus-composition", Difficulty: "Novice", Dlc: false,
+                Changes: new Dictionary<string,double>
+                {
+                    ["loot.stashMixMedical"] = .5,
+                    ["loot.stashMedicalBandageBias"] = 2,
+                    ["loot.cheapStashGrenadeChance"] = .65,
+                    ["loot.stashMixGrenades"] = 1.5,
+                    ["loot.expensiveStashMoneyChance"] = .35,
+                    ["loot.stashMixCoupons"] = 1.75,
+                    ["loot.stashMedkitMaxCount"] = -1
+                }),
+            (Name: "hard-bonus-zero", Difficulty: "Veteran", Dlc: true,
+                Changes: new Dictionary<string,double>
+                {
+                    ["loot.stashMixMedical"] = 0,
+                    ["loot.stashMixFood"] = 3,
+                    ["loot.stashMixAmmo"] = .5,
+                    ["loot.cheapStashGrenadeChance"] = .4,
+                    ["loot.expensiveStashMoneyChance"] = .8
+                })
+        };
+        foreach (var scenario in samples)
+        {
+            var dir = Path.Combine(Keep ?? Path.GetTempPath(),
+                "TCD_Stash_Parity", scenario.Name);
+            try
+            {
+                var vm = new MainViewModel(Catalog)
+                    { SelectedReferenceDifficulty = scenario.Difficulty };
+                foreach (var (id, target) in scenario.Changes)
+                {
+                    var source = vm.AllParameters.Single(p => p.Id == id);
+                    source.SnapCurrentNumberToMarker(target);
+                    Check(source.IsValueModifiedFromReference(),
+                        scenario.Name + ": unchanged source " + id);
+                }
+                var modified = vm.AllParameters
+                    .Where(p => p.IsValueModifiedFromReference())
+                    .Select(p => p.Id).ToArray();
+                var difficultySid = Catalog.DifficultyProfiles[
+                    scenario.Difficulty].Sid;
+                var snapshot = new StashEffectiveState(
+                    vm.AllParameters, modified, difficultySid);
+                var result = new CfgPatchWriterService().Write(
+                    vm, Catalog, scenario.Dlc
+                        ? new GameInstallInfo { HasDlc1 = true } : null, dir);
+                Check(result.ParameterCount > 0, "parity writer is empty");
+                var outputs = ReadOutput(dir);
+                // Use homogeneous template category type, not a tuple of
+                // heterogeneous tier-specific baseline config classes.
+                var sources = new[]
+                {
+                    (Tier: "Cheap", File: Baseline.Special.CheapStashProduction.File,
+                        Sid: Baseline.Special.CheapStashProduction.CustomGeneratorSid,
+                        Categories: Baseline.Special.CheapStashProduction.TemplateCategories),
+                    (Tier: "Medium", File: Baseline.Special.MediumStashAmmoProduction.File,
+                        Sid: Baseline.Special.MediumStashAmmoProduction.CustomGeneratorSid,
+                        Categories: Baseline.Special.MediumStashAmmoProduction.TemplateCategories),
+                    (Tier: "Expensive", File: Baseline.Special.ExpensiveStashProduction.File,
+                        Sid: Baseline.Special.ExpensiveStashProduction.CustomGeneratorSid,
+                        Categories: Baseline.Special.ExpensiveStashProduction.TemplateCategories)
+                };
+                var compared = 0;
+                foreach (var tier in sources)
+                {
+                    Check(outputs.TryGetValue(tier.File, out var file),
+                        scenario.Name + ": missing clone file " + tier.File);
+                    foreach (var category in tier.Categories)
+                    foreach (var item in category.Items)
+                    foreach (var field in item.Fields)
+                    {
+                        var expected = snapshot.TierField(
+                            Baseline, tier.Tier, category, item, field.Key);
+                        var key = tier.Sid + "/ItemGenerator/" + category.Node
+                            + "/PossibleItems/" + item.Node + "/" + field.Key;
+                        Check(file!.TryGetValue(key, out var actual),
+                            scenario.Name + ": missing emitted field " + key);
+                        Check(string.Equals(actual, expected,
+                            StringComparison.OrdinalIgnoreCase),
+                            scenario.Name + ": preview/writer mismatch " + key
+                            + " preview=" + expected + ", writer=" + actual);
+                        compared++;
+                    }
+                }
+                // SmartLoot is independently gated, and the source group
+                // here is an original Weight entry with an affected Medical
+                // multiplier. The shared SmartSelection result must equal
+                // the actual emitted TCD_ reference clone leaf.
+                Check(outputs.TryGetValue("GameData/StashPrototypes.cfg", out var smart),
+                    scenario.Name + ": missing SmartLoot clone");
+                const string smartKey = "TCD_StashMedicine_Smart/ItemGenerators/[0]"
+                    + "/SmartLootParams/ConsumablesParams/[0]/Items/[0]/Weight";
+                var predicted = snapshot.SmartSelection("Medkit", "Weight", "1");
+                Check(smart!.TryGetValue(smartKey, out var emitted)
+                    && string.Equals(predicted, emitted, StringComparison.OrdinalIgnoreCase),
+                    scenario.Name + ": SmartLoot shared calculation mismatch");
+                AssertProtectedBaseStashesUntouched(outputs, scenario.Name);
+                Console.WriteLine("PASS " + scenario.Name
+                    + ": " + compared + " ItemGenerator fields + SmartLoot Weight"
+                    + " match actual generated CFG");
+            }
+            finally
+            {
+                if (Keep is null && Directory.Exists(dir))
+                    Directory.Delete(dir, true);
+            }
+        }
+    }
+
     static readonly Lazy<HashSet<string>> BaseProtectedActorIds = new(() =>
     {
         var dir = new DirectoryInfo(Directory.GetCurrentDirectory());

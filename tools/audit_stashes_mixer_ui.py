@@ -91,12 +91,12 @@ assert 'StashPreviewGroup("BASIC", 1)' in preview
 assert 'StashPreviewGroup("RARE", 11)' not in preview  # chance only, never a weight pool
 assert "StashChanceSample(" in preview
 assert '"SOURCE CHANCE FIELDS"' in preview
-assert '"SEPARATE ROLLS · CONTENT BIAS ONLY"' in preview
-assert "StashEffectiveField(sid, raw, false)" in preview
-assert "StashEffectiveField(sid, source.Value.Raw, true)" in preview
-assert "Math.Clamp(scaled, 0.0, 1.0)" in source
-assert "StashSourceFactor(sid)" in source
-assert "StashSourceNumber(raw)" in source
+assert '"NATIVE CHANCE · BONUS + BIAS"' in preview
+assert 'CurrentStashEffectiveState().TuneSelection(sid, "Weight", raw)' in preview
+assert "effective.TierField(" in preview
+assert "StashEffectiveState.Number(" in preview
+assert "StashSourceFactor(" not in source
+assert "StashSourceNumber(" not in source
 assert "CfgWriterBaselineService().Load()" in source
 assert "StashMedicalSourcePreview" in source
 assert 'new[] { "0 ITEMS", "AUTO", "1", "2", "3", "4", "5", "6" }' in quantity
@@ -195,3 +195,29 @@ print("PASS: source-native Easy/Medium Experienced and Hard weighted pools")
 print("PASS: 1x/0x/3x numeric regressions and nine original authored Chance fields")
 print("PASS: separate chance field examples, zero guards, responsive geometry/UI catalogs")
 print("PENDING: local .NET build, Wine layout/behavior, in-game stash runtime results")
+
+# Phase-3 executable CFG output parity lives in LootSpecialGeneratorsContract.
+# Static source auditing ensures both UI and tier/SmartLoot producers take the
+# SAME shared transformation. It cannot replace running the Windows harness.
+effective = (root / "src/TrueCustomDifficulty/Services/StashEffectiveState.cs").read_text()
+writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text()
+smart = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashSmartLoot.cs").read_text()
+tuning = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashTuning.cs").read_text()
+harness = (root / "tests/LootSpecialGeneratorsContract/Program.cs").read_text()
+assert writer.count("effective.TierField(") == 3
+assert "effective.SmartSelection(" in smart
+assert "StashEffectiveState.UniformSmartFactor(" in smart
+assert "StashEffectiveState.SmartSpawnEndpoint(" in smart
+assert "StashState(all).TuneSelection(" in tuning
+assert "StashState(all).TuneCount(" in tuning
+assert "effective.TierField(" in preview
+assert "CurrentStashEffectiveState()" in source
+assert "loot.cheapStashGrenadeChance" in source.split('"StashContentMix" => new[]', 1)[1].split('"StashMedicalComposition"', 1)[0]
+assert "loot.expensiveStashMoneyChance" in source.split('"StashContentMix" => new[]', 1)[1].split('"StashMedicalComposition"', 1)[0]
+assert "VerifyStashEffectiveParity();" in harness
+assert "snapshot.TierField(" in harness
+assert "snapshot.SmartSelection(" in harness
+assert "MedicalDisabled(" in effective and "TuneCount(" in effective
+assert "Changed(config.GrenadeChanceParameterId)" in effective
+assert "Changed(config.CouponChanceParameterId)" in effective
+print("PASS: shared writer/preview tier and SmartLoot calculation, bonus Chance composition")
