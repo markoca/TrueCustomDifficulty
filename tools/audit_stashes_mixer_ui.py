@@ -1,25 +1,19 @@
 #!/usr/bin/env python3
-"""Authoritative Stashes mixer/dial UI-source regression (not a WPF visual test).
+"""Static source/control audit for Stashes mixed native editors and bias previews.
 
-Verify all five original aggregate families retain their exact 26 source IDs,
-Reward plot remains unchanged, Content/Medical/Quantity/Gear use native
-source-backed knobs at matching adaptive measure/draw breakpoints, and the
-45 authored stash gear rewards never become unrelated mixer parameters.
+This does not claim a .NET/Wine render or gameplay probability validation.
 """
 import json
 import re
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
-data = root / "src/TrueCustomDifficulty/Data"
-control = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text()
-catalog = json.loads((data / "parameters.json").read_text())
-proposal = (root / "docs/STASHES-TAB-AND-REDESIGN-PROPOSAL.md").read_text()
+source = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text()
+catalog = json.loads((root / "src/TrueCustomDifficulty/Data/parameters.json").read_text())
 lock = (root / "docs/UI-DESIGN-LOCK.md").read_text()
 system = (root / "docs/VISUAL-CONTROL-SYSTEM.md").read_text()
+proposal = (root / "docs/STASHES-TAB-AND-REDESIGN-PROPOSAL.md").read_text()
 
-ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
-assert len(ids) == len(set(ids)) == 26
 expected = {
     "StashRewardProfile": [
         "loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",
@@ -37,71 +31,83 @@ expected = {
     "StashGear": [
         "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor",
         "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
-        "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"]
+        "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"],
 }
-family = control.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
-for name, sources in expected.items():
-    hit = re.search(r'"' + re.escape(name) + r'"\s*=>\s*new\[\]\s*\{(.*?)\}', family, re.S)
-    assert hit, f"Missing {name} family source declarations"
-    values = re.findall(r'"(loot\.[A-Za-z0-9.]+)"', hit.group(1))
-    assert values == sources, f"{name} catalog sources drift: {values}"
+ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
+assert len(ids) == len(set(ids)) == 26
 assert set(ids) == set(sum(expected.values(), []))
-assert catalog["tabs"][next(i for i,x in enumerate(catalog["tabs"]) if x["id"] == "stashes")]["order"] == 55
+family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
+for family, values in expected.items():
+    match = re.search(r'"' + re.escape(family) + r'"\s*=>\s*new\[\]\s*\{(.*?)\}', family_ids, re.S)
+    assert match, family
+    assert re.findall(r'"(loot\.[A-Za-z0-9.]+)"', match.group(1)) == values, family
+assert next(x for x in catalog["tabs"] if x["id"] == "stashes")["order"] == 55
 
-assert 'DrawHeader(dc, "STASH CONTENT MIX"' in control
-assert 'DrawHeader(dc, "MEDICAL COMPOSITION"' in control
-assert 'DrawHeader(dc, "MEDICAL QUANTITY"' in control
-assert 'DrawHeader(dc, "EXTRA STASH GEAR"' in control
-assert "StashContentMixHeight(width)" in control
-assert "StashMedicalCompositionHeight(width)" in control
-assert "StashMedicalQuantityHeight(width)" in control
-assert "StashGearHeight(width)" in control
-assert "ActualWidth >= 700.0 ? 3 : 2" in control
-assert "ActualWidth >= 720.0 ? 4 : 2" in control
-assert "ActualWidth >= 700.0 ? 2 : 1" in control
-assert "ActualWidth >= 746.0 ? 3 : ActualWidth >= 580.0 ? 2 : 1" in control
-assert 'DrawSourceKnob(dc, source, entries[i].Label' in control
-assert 'DrawMiniConsumableKnob(dc, source, entries[i].Caption' in control
-assert 'DrawStashCountKnob(dc, P(families[i].Min)' in control
-assert 'DrawStashCountKnob(dc, P(families[i].Max)' in control
-assert 'DrawStashGearDial(dc, P(tiers[i].Weapon)' in control
-assert 'DrawStashGearDial(dc, P(tiers[i].Armor)' in control
-
-def method(name, next_name):
-    start = control.index("    private void " + name + "(")
-    finish = control.index("    private void " + next_name + "(", start + 10)
-    return control[start:finish]
+def method(name, successor):
+    start = source.index("    private void " + name + "(")
+    end = source.index("    private void " + successor + "(", start + 10)
+    return source[start:end]
 
 content = method("DrawStashContentMix", "DrawStashMedicalComposition")
 medical = method("DrawStashMedicalComposition", "DrawStashMedicalQuantity")
-quantity = method("DrawStashMedicalQuantity", "DrawStashCountKnob")
-gear = method("DrawStashGear", "DrawStashGearDial")
+quantity = method("DrawStashMedicalQuantity", "DrawStashGear")
+gear = method("DrawStashGear", "DrawStashGearMode")
+preview = method("DrawStashBiasPreview", "DrawCompactStashRewards")
+
 assert content.count('("loot.stashMix') == 6
 assert medical.count('("loot.stashMedical') == 4
 assert quantity.count('("MEDKITS"') + quantity.count('("ARMY MEDKITS"') == 2
 assert gear.count('("BASIC"') + gear.count('("STANDARD"') + gear.count('("RARE"') == 3
+assert 'DrawSourceKnob(dc, source, entries[i].Label' in content
+assert 'DrawStashBiasPreview(dc, entries,' in content
+assert 'DrawStashRewardGraphRow(dc, P(entries[i].Id)' in medical
+assert 'DrawStashBiasPreview(dc, entries,' in medical
+assert "DrawStashQuantityDots(dc, P(families[i].Min)" in quantity
+assert "DrawStashQuantityDots(dc, P(families[i].Max)" in quantity
+assert "DrawStashGearMode(dc, P(tiers[i].Weapon)" in gear
+assert "DrawStashGearMode(dc, P(tiers[i].Armor)" in gear
+assert "DrawMiniConsumableKnob" not in content + medical + quantity + gear
+assert "DrawStashCountKnob" not in source
+assert "DrawStashGearDial" not in source
 assert "DrawHorizontalTrackCard" not in content + medical + quantity + gear
-assert "AddHorizontalTarget(" not in content + medical + quantity + gear
-assert 'if (Family == "StashContentMix")' in control
-assert "formatted.SetForegroundBrush(accent, token.Index, token.Length)" in control
-assert "HitKind.Knob" in control and "KnobVisibleStepStride" in control
-assert "target.Kind == HitKind.Knob" in control
-assert 'or "StashMedicalQuantity" or "StashGear"' in control
-assert "source.ResetToReference()" not in content + medical + quantity + gear
-assert 'current < 0 ? "0 ITEMS"' in control
-assert 'current == 0 ? "AUTO"' in control
-assert '"OFF", "RARE", "MOD", "FREQ"' in control
-assert 'var endpointInk = stashDial ? Brushes.White : muted;' in control
-assert 'var endpointY = card.Bottom - (stashDial ? 22.0 : 17.0);' in control
-assert '"StashRewardProfile" => 398.0' in control
-assert "DrawCompactStashRewards(" in control
+assert "AddHorizontalTarget(source" in quantity and "AddHorizontalTarget(source" in source
+assert 'new[] { "0 ITEMS", "AUTO", "1", "2", "3", "4", "5", "6" }' in quantity
+assert "var minimum = isMax ? -1.0 : 0.0;" in quantity
+assert 'new[] { "OFF", "RARE", "MOD", "FREQ" }' in source
+assert "DrawStashNumericReadout(dc, display" in quantity
+assert "HitKind.Horizontal" in source and "HitKind.Knob" in source
+assert "target.Kind == HitKind.Knob" in source
+assert 'or "StashMedicalQuantity" or "StashGear"' in source
+assert 'DrawCompactStashRewards(' in source
+assert '"StashRewardProfile" => 398.0' in source
 
-for path, body in (("UI-DESIGN-LOCK", lock),
-                   ("VISUAL-CONTROL-SYSTEM", system),
-                   ("STASHES-TAB-AND-REDESIGN-PROPOSAL", proposal)):
-    assert "A+C STASHES MIXER" in body, f"Current Stashes layout missing in {path}"
+# Preview must be noninteractive, explicitly NOT a probability estimate, and
+# must avoid fabricated nonzero percentages when every bias is disabled.
+assert 'MULTIPLIERS, NOT DROP ODDS' in preview
+assert "Math.Max(0.0, P(e.Id)?.CurrentNumber ?? 0.0)" in preview
+assert "weights.Sum()" in preview
+assert "sum > Epsilon ? weights[i] / sum : 0.0" in preview
+assert "sum > Epsilon ? weights[i] * 100.0 / sum : 0.0" in preview
+assert "AddHorizontalTarget" not in preview and "AddRangeTarget" not in preview
+assert "DrawStashNumericReadout" not in preview  # derived % always neutral
 
-print("PASS: five Stashes family renderers, 26 stable source IDs, compact adaptive knobs")
-print("PASS: source-native click/drag/wheel/keyboard/reset, changed digits only,")
-print("      Medical MIN/MAX -1/0 separation, 3x2 gear tier grouping and intact Rewards")
-print("NOT VERIFIED: WPF rendering, window geometry at runtime, Wine, or CFG gameplay")
+# Same breakpoints and measured last-card clearance as renderers.
+assert "ActualWidth >= 700.0 ? 3 : 2" in content
+assert "ActualWidth >= 700.0 ? 2 : 1" in quantity
+assert "ActualWidth >= 746.0 ? 3 : ActualWidth >= 580.0 ? 2 : 1" in gear
+assert "=> width >= 700.0 ? 550.0 : 754.0;" in source
+assert "=> 373.0;" in source
+assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
+assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
+assert 'var endpointInk = stashDial ? Brushes.White : muted;' in source
+assert "DrawStashNumericReadout(dc, display" in source
+
+for name, doc in [("UI-DESIGN-LOCK", lock), ("VISUAL-CONTROL-SYSTEM", system),
+                  ("STASHES-TAB-AND-REDESIGN-PROPOSAL", proposal)]:
+    assert "STASHES MIXED CONTROLS + LIVE BIAS FEEDBACK" in doc, name
+    assert "NOT" in doc and "drop" in doc.lower(), name
+
+print("PASS: five families, 26 persisted sources, independent native editors")
+print("PASS: live noninteractive bias preview, 0x guard, source-native quantity/gear")
+print("PASS: responsive measurements and matched authoritative UI catalogs")
+print("PENDING: local .NET build, Wine appearance and real game outcome tests")
