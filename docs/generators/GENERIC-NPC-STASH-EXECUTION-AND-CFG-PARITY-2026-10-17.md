@@ -106,7 +106,7 @@ TCD_GenericLoot_PreGame):
 
     ./tests/run-wine.sh LootSpecialGeneratorsContract --out audit/generic-loot-fixtures
 
-The runner cross-compiles the test to win-x64 and runs it under Wine;
+The runner preserves its executable Git file mode, cross-compiles the test to win-x64 and runs it under Wine;
 requires the project's .NET 10 SDK and Wine. It does not modify the
 main program's published executable. Inspect real output at, for example:
 
