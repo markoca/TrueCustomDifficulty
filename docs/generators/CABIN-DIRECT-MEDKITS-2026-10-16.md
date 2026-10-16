@@ -1,3 +1,5 @@
+**Follow-up regular-stash scope:** Two Cabin-specific direct Medkits remain active as written here; ten additional canonical direct medical rows from six other ordinary stash actors are now independently patched under the same controls, without changes to Cabin or any gear/booster items. [Source-exact direct consumables catalog](REGULAR-STASH-DIRECT-CONSUMABLES-2026-10-16.md).
+
 # Richter's Cabin direct Medkits — regular stash coverage (2026-10-16)
 
 ## Reproduced in the 2.0.5 CFG dump

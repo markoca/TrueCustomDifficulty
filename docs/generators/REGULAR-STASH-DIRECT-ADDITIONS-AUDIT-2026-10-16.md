@@ -1,3 +1,5 @@
+**CURRENT 2026-10-16 coverage update:** The original 80-row inventory remains a source-era snapshot and its `CoverageStatus=ADDITIONAL_GENERIC_SOURCE_UNTUNED` labels are *historical at audit time*, not current production state. Existing Cabin 2 medical rows remain patched; **10 additional canonical medical rows on six normal stash actors are now handled by the original MEDICAL/Medkit/ArmyMedkit/Bandage editors**. All nine boosters and lowercase `medkit` remain deferred. **All 45 authored gear/equipment rows are reserved for future randomization** in the [prominent queue](STASH-GEAR-UNIQUE-RANDOMIZATION-BACKLOG.md). [Direct consumables writer and tests](REGULAR-STASH-DIRECT-CONSUMABLES-2026-10-16.md).
+
 # Additional direct loot in otherwise ordinary world stash wrappers — source audit (2026-10-16)
 
 **Audit only. No writer, UI or preset changes in this audit.** The two directly-authored Medkits at Richter's Cabin were fixed separately in [the Cabin implementation](CABIN-DIRECT-MEDKITS-2026-10-16.md).

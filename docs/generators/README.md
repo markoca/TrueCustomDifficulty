@@ -1,5 +1,12 @@
 # Generator map data
 
+## NEXT FEATURE — Authored gear & unique-weapon shuffle (RESERVED)
+
+**45 original gear/weapon rows, 31 distinct SIDs, 41 ordinary stash actors; not yet randomized.** [Prominent canonical work queue](STASH-GEAR-UNIQUE-RANDOMIZATION-BACKLOG.md) | [all 45 source-exact slots](stash-gear-unique-randomization-backlog.csv). Preserve the original guaranteed/authored rewards while working on consumables.
+
+**Current direct consumables:** [22 source Chance=1 rows](REGULAR-STASH-DIRECT-CONSUMABLES-2026-10-16.md) — 12 canonical medical (10 new + 2 Cabin), 9 Hercules/PSYBlocker deferred, one unrecognized lowercase `medkit` deferred. Only the canonical medical entries are controlled now.
+
+
 This directory is the machine-readable companion to [`../GENERATOR-MAP.md`](../GENERATOR-MAP.md).
 
 Source baseline:
@@ -23,6 +30,8 @@ The runtime dump is treated as the source of truth for effective values. Inherit
 | `DLC1-STASH-REGULAR-PRODUCTION-2026-10-16.md` | Implemented DLC1 safe-source writer: 112 ordinary SmartLoot actors, six separate CheapNoFresh ItemGenerator redirects, 69 repaired Medium file paths and the unchanged UI/preset contract |
 | `DLC1-STASH-GENERIC-ITEM-AUDIT-2026-10-16.md` | standalone DLC1 actor census and generic source/path triage; links exact 196-row actor/source CSV, notes separate DLC1 patch-file scope and source-manifest target-path hazards |
 | `STASH-SAFE-EXPANSION-FOLLOWUP-2026-10-16.md` | follow-up actor-level audit from byte-identical 2026-10-16 dump: 803 active, 28 named-clue deferred, 71 special excluded, 227 ItemGenerator-manifested no-SmartLoot and 12 unresolved; links the 40-row deferred actor CSV |
+| `STASH-GEAR-UNIQUE-RANDOMIZATION-BACKLOG.md` | **NEXT FEATURE / RESERVED:** 45 authored gear, weapon, magazine, optics, suppressor, helmets and armor entries for future bounded shuffle |
+| `REGULAR-STASH-DIRECT-CONSUMABLES-2026-10-16.md` | **CURRENT:** 22 direct Chance=1 consumables, medical 10 new source-backed patches, nine booster deferrals and lowercase medkit caveat |
 | `REGULAR-STASH-DIRECT-ADDITIONS-AUDIT-2026-10-16.md` | Full base regular-world wrapper survey: 55 actors, 80 direct authored item rows (including ten additional medical rows on six actors) and source case-sensitivity hazards |
 | `CABIN-DIRECT-MEDKITS-2026-10-16.md` | Two fixed guaranteed Medkit entries in ordinary Richter Cabin stash wrappers; MEDICAL/Medkit controls, exact ActorSID/root spelling and generated-CFG regression |
 | `BASE-STASH-PROTECTED-ACTORS-2026-10-16.md` | Current whole-actor protection for 106 base WorldMap ItemContainers; tracks 30 redirected Basic/Standard/Rare manifest entries excluded at runtime |

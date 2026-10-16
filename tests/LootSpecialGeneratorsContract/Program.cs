@@ -99,6 +99,7 @@ internal static class Program
             VerifyMedicalZeroExclusion();
             VerifyWorldStashSmartLoot();
             VerifyCabinDirectMedical();
+            VerifyRegularStashDirectMedical();
             VerifyDlcStashExpansion();
             Console.WriteLine($"PASS: {Passed} Loot SPECIAL generator and corpse writer scenarios plus 3 medical-zero production CFG scenarios");
             Console.WriteLine("NOT VERIFIED: original decoded CFG source values, world shuffle/removal writers, Unreal patch loading or gameplay");
@@ -541,6 +542,136 @@ internal static class Program
             if (Keep == null && Directory.Exists(foodDir))
                 Directory.Delete(foodDir, true);
         }
+    }
+
+
+    // These 10 100%-chance Medkit/ArmyMedkit/EcoMedkit/Bandage entries
+    // coexist with, but are independent of, ordinary generic stash subpools.
+    // Existing medical controls must modify their exact physical source item
+    // fields without touching authored weapon/gear or stimulant sibling items.
+    static void VerifyRegularStashDirectMedical()
+    {
+        var original = LoadDirectStashAuditCsv();
+        var medical = original.Where(r =>
+            r["ItemClass"] == "MEDICAL"
+            && r["CoverageStatus"] == "ADDITIONAL_GENERIC_SOURCE_UNTUNED").ToArray();
+        var gear = original.Where(r => r["ItemClass"] == "OTHER_AUTHORED").ToArray();
+        var boosters = original.Where(r => r["ItemClass"] == "BOOSTER").ToArray();
+        var unresolved = original.Where(r => r["ItemClass"] == "MEDICAL_SID_CASE_REVIEW").ToArray();
+        Check(medical.Length == 10
+            && medical.Select(r => r["ActorSID"]).Distinct().Count() == 6
+            && gear.Length == 45
+            && gear.Select(r => r["ItemPrototypeSID"]).Distinct().Count() == 31
+            && boosters.Length == 9 && unresolved.Length == 1
+            && unresolved[0]["ItemPrototypeSID"] == "medkit",
+            "Additional ordinary stash content source class drift");
+
+        var tests = new[]
+        {
+            (Name: "all-medical-0", Source: "loot.stashMixMedical", Value: 0.0,
+                Relevant: "all", Chance: 0.0, Disabled: true),
+            (Name: "all-medical-half", Source: "loot.stashMixMedical", Value: 0.5,
+                Relevant: "all", Chance: 0.5, Disabled: false),
+            (Name: "bandages-0", Source: "loot.stashMedicalBandageBias", Value: 0.0,
+                Relevant: "Bandage", Chance: 0.0, Disabled: true),
+            (Name: "medkits-0", Source: "loot.stashMedicalMedkitBias", Value: 0.0,
+                Relevant: "Medkit", Chance: 0.0, Disabled: true),
+            (Name: "medkit-max-0", Source: "loot.stashMedkitMaxCount", Value: -1.0,
+                Relevant: "Medkit", Chance: 0.0, Disabled: true),
+            (Name: "army-medkits-0", Source: "loot.stashMedicalArmyMedkitBias", Value: 0.0,
+                Relevant: "ArmyMedkit", Chance: 0.0, Disabled: true),
+            (Name: "army-max-0", Source: "loot.stashArmyMedkitMaxCount", Value: -1.0,
+                Relevant: "ArmyMedkit", Chance: 0.0, Disabled: true)
+        };
+        foreach (var scenario in tests)
+        {
+            var dir = Path.Combine(Keep ?? Path.GetTempPath(),
+                "TCD_RegularStashDirectMedical", scenario.Name);
+            try
+            {
+                var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Stalker" };
+                var value = vm.AllParameters.Single(p => p.Id == scenario.Source);
+                value.SnapCurrentNumberToMarker(scenario.Value);
+                Check(value.IsValueModifiedFromReference(), scenario.Name + ": unchanged control");
+                AssertOnlyExpectedNonLootDefault(vm);
+                var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+                Check(result.ParameterCount == 2, scenario.Name + ": wrong modified sources");
+                var output = ReadOutput(dir);
+                Check(output.TryGetValue("GameData/ItemGeneratorPrototypes.cfg", out var doc),
+                    scenario.Name + ": missing direct source CFG");
+                foreach (var entry in medical)
+                {
+                    var sid = entry["ItemPrototypeSID"];
+                    var prefix = entry["GeneratorRoot"] + "/ItemGenerator/["
+                        + entry["CategoryIndex"] + "]/PossibleItems/["
+                        + entry["ItemIndex"] + "]/";
+                    var affected = scenario.Relevant == "all" || scenario.Relevant == sid;
+                    if (affected)
+                    {
+                        Check(doc!.TryGetValue(prefix + "Chance", out var chance)
+                            && Math.Abs(Num(chance!) - scenario.Chance) < 0.0000001,
+                            scenario.Name + ": medical direct chance not tuned: " + prefix);
+                        foreach (var field in new[] { "MinCount", "MaxCount" })
+                            if (scenario.Disabled)
+                                Check(doc!.TryGetValue(prefix + field, out var count)
+                                    && count == "0",
+                                    scenario.Name + ": medical direct count not zero: " + prefix + field);
+                            else
+                                Check(!doc!.ContainsKey(prefix + field),
+                                    scenario.Name + ": unchanged count was rewritten: " + prefix + field);
+                    }
+                    else
+                        Check(!doc!.Keys.Any(key => key.StartsWith(prefix, StringComparison.Ordinal)),
+                            scenario.Name + ": unrelated medical item was rewritten: " + prefix);
+                }
+
+                // Every authored item, including all 45 reserved weapon/gear
+                // rows and all nine booster rows, MUST remain untouched.
+                foreach (var row in gear.Concat(boosters).Concat(unresolved))
+                {
+                    var prefix = row["GeneratorRoot"] + "/ItemGenerator/["
+                        + row["CategoryIndex"] + "]/PossibleItems/["
+                        + row["ItemIndex"] + "]/";
+                    Check(!doc!.Keys.Any(key => key.StartsWith(prefix, StringComparison.Ordinal)),
+                        scenario.Name + ": reserved or unresolved item was rewritten: " + prefix);
+                }
+                AssertProtectedBaseStashesUntouched(output, scenario.Name);
+                Console.WriteLine("PASS direct medical source scope: " + scenario.Name);
+            }
+            finally
+            {
+                if (Keep == null && Directory.Exists(dir))
+                    Directory.Delete(dir, true);
+            }
+        }
+    }
+
+    static IReadOnlyList<Dictionary<string, string>> LoadDirectStashAuditCsv()
+    {
+        var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
+        while (dir != null)
+        {
+            var path = Path.Combine(dir.FullName, "docs", "generators",
+                "regular-stash-direct-additions-2026-10-16.csv");
+            if (File.Exists(path))
+            {
+                var rows = File.ReadAllLines(path);
+                var header = rows[0].Split(',');
+                var result = rows.Skip(1).Where(s => s.Length > 0)
+                    .Select(line =>
+                    {
+                        var values = line.Split(',');
+                        Check(values.Length == header.Length,
+                            "Additional source CSV changed shape");
+                        return header.Zip(values).ToDictionary(pair => pair.First,
+                            pair => pair.Second, StringComparer.Ordinal);
+                    }).ToArray();
+                Check(result.Length == 80, "Additional source CSV must have 80 rows");
+                return result;
+            }
+            dir = dir.Parent;
+        }
+        throw new FileNotFoundException("Missing direct stash item source audit CSV");
     }
 
     // The machine roster is the sole DLC1 approval authority for generator
