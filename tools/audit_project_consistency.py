@@ -4218,6 +4218,9 @@ if (not all(token in _graph_body for token in _graph_required)
     or _med_writer.find('if (maxCap == -1)') > _med_writer.find('var min = minFloor > 0')
     or 'StashTuningCurrent(all, $"loot.stash{itemSid}MaxCount", 0) < -0.5' not in _med_writer
     or 'return FormatLikeSource(0.0, currentRaw);' not in _med_writer
+    or 'private static bool IsStashMedicalSelectionDisabled(' not in _med_writer
+    or 'if (IsStashMedicalSelectionDisabled(itemSid, all))' not in _med_writer
+    or 'if (IsStashMedicalSelectionDisabled(sid, all))' not in _med_writer
     or 'return "0";' not in _med_writer
     or 'CurrentNumber < 0 ? "0 items"' not in _med_vm
     or '"StashMedicalQuantity" => 290.0,' not in _knob_source

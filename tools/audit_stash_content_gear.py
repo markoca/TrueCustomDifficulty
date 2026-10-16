@@ -17,7 +17,7 @@ ids = mix + gear
 contract = baseline["special"]["stashContentAndGearProduction"]
 assert len(ids) == 12 and contract["parameterIds"] == ids
 assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 268
-assert all(x in by_id and by_id[x]["tab"] == "loot" and
+assert all(x in by_id and by_id[x]["tab"] == "stashes" and
            by_id[x]["control"] == "slider" and
            by_id[x]["support"]["status"] == "runtime_test_required" for x in ids)
 assert all(by_id[x]["slider"]["min"] == 0 and
@@ -50,9 +50,9 @@ quantity = ["loot.stash" + k + lim + "Count" for k in
             ("Medkit", "ArmyMedkit") for lim in ("Min", "Max")]
 med_ids = medical + quantity
 assert baseline["special"]["stashMedicalProduction"]["parameterIds"] == med_ids
-assert all(k in by_id and by_id[k]["tab"] == "loot" and
+assert all(k in by_id and by_id[k]["tab"] == "stashes" and
            by_id[k]["support"]["status"] == "runtime_test_required" for k in med_ids)
-assert all(by_id[k]["slider"]["min"] == 0 and
+assert all(by_id[k]["slider"]["min"] == (-1 if k.endswith("MaxCount") else 0) and
            by_id[k]["slider"]["max"] == (3 if k in medical else 6) and
            by_id[k]["slider"]["step"] == (.25 if k in medical else 1)
            for k in med_ids)
@@ -67,6 +67,18 @@ assert writers.count("TuneStashMedicalCountField(") == 3
 assert 'supported.UnionWith(StashMedicalParameterIds);' in writers
 assert 'bias *= StashTuningCurrent(all, detailId, 1);' in tuning
 assert "if (maxCap > 0)" in tuning and "min = max;" in tuning
+# Profile-driven medical suppression must not rely solely on a zero Chance or
+# Weight when a weighted category is left with no eligible positive weights.
+assert "private static bool IsStashMedicalSelectionDisabled(" in tuning
+assert "if (IsStashMedicalSelectionDisabled(itemSid, all))" in tuning
+assert 'if (IsStashMedicalSelectionDisabled(sid, all))' in tuning
+assert tuning.index('if (IsStashMedicalSelectionDisabled(sid, all))') < tuning.index('var minFloor =')
+assert all(sid in tuning for sid in ('"Bandage"', '"Medkit"', '"ArmyMedkit"', '"AntiRad"', '"EcoMedkit"'))
+assert 'if (maxCap == -1)' in tuning
+test = (root / "tests" / "LootSpecialGeneratorsContract" / "Program.cs").read_text(encoding="utf-8")
+assert "VerifyMedicalZeroExclusion();" in test
+assert all(case in test for case in ("global-medical-zero", "bandage-zero-only", "max-zero-overrides-floor"))
+
 for tier, key in (("Basic", "cheapStashProduction"),
                   ("Standard", "mediumStashAmmoProduction"),
                   ("Rare", "expensiveStashProduction")):
@@ -88,7 +100,7 @@ gear_plot = ui.split("private void DrawStashGear(", 1)[1].split(
 assert "DrawCompactTrack(" not in content_plot + gear_plot
 assert "const double rowPitch = 42.0;" in content_plot
 assert "for (var tick = 0; tick <= 3; tick++)" in content_plot
-assert 'DrawRightAlignedText(dc, $"{p.CurrentNumber:0.##}x"' in content_plot
+assert 'DrawStashNumericReadout(dc, $"{p.CurrentNumber:0.##}x"' in content_plot
 assert "p.ReferenceNumber" in content_plot and "AddHorizontalTarget(p" in content_plot
 assert 'RELATIVE SOURCE WEIGHT / CHANCE · NOT STASH DROP %' in content_plot
 assert 'DrawStashGearPlotCell(dc, P(rows[rowIndex].WeaponId)' in gear_plot
@@ -103,18 +115,18 @@ for document in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md",
     assert "bar" in (root / "docs" / document).read_text(encoding="utf-8").lower()
     assert "dot plot" in (root / "docs" / document).read_text(encoding="utf-8").lower()
 
-# The detailed item graph and AUTO quantity rulers have their own
+# The detailed item graph and VANILLA quantity dots have their own
 # independent hit regions and must not overlap the Gear plot controls.
 detail_plot = ui.split("private void DrawStashMedicalComposition(", 1)[1].split(
     "private void DrawStashMedicalQuantity(", 1)[0]
 quantity_plot = ui.split("private void DrawStashMedicalQuantity(", 1)[1].split(
     "private void DrawStashGear(", 1)[0]
 assert "DrawCompactTrack(" not in detail_plot
-assert "DrawCompactTrack(" in quantity_plot
+assert "DrawMedicalCountDots(" in quantity_plot and "DrawCompactTrack(" not in quantity_plot
 assert "AddHorizontalTarget(source" in detail_plot
 assert '"StashMedicalComposition" => 304.0' in ui
-assert '"StashMedicalQuantity" => 257.0' in ui
-assert "AUTO" in quantity_plot and "MAX CAP" in quantity_plot
+assert '"StashMedicalQuantity" => 290.0' in ui
+assert "VANILLA" in quantity_plot and "0 ITEMS" in quantity_plot and "MAX CAP" in quantity_plot
 
 # Literal source fixtures prevent counting an unchanged Chance=1 as
 # a 3x overall spawn rate. This checks the documented math, not the
@@ -126,6 +138,8 @@ assert bounded_chance(1, 1, 3) == 1
 assert bounded_chance(.4, 0, 3) == 0
 
 def medkit_bounds(original_min, original_max, floor, cap):
+    if cap == -1:
+        return 0, 0
     low = max(original_min, floor) if floor > 0 else original_min
     high = min(original_max, cap) if cap > 0 else original_max
     if low > high:
@@ -136,6 +150,7 @@ assert medkit_bounds(2, 4, 0, 0) == (2, 4)
 assert medkit_bounds(2, 4, 0, 1) == (1, 1)
 assert medkit_bounds(1, 2, 3, 0) == (3, 3)
 assert medkit_bounds(1, 4, 3, 1) == (1, 1)
+assert medkit_bounds(1, 4, 1, -1) == (0, 0)
 
 for p in (source / "Presets").glob("*.json"):
     document = json.loads(p.read_text(encoding="utf-8"))
@@ -146,5 +161,5 @@ for p in (source / "Presets").glob("*.json"):
 for path in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md",
              "STASH-CONTENT-GEAR-IMPLEMENTATION.md"):
     assert (root / "docs" / path).is_file(), path
-print("PASS: 20 stash source IDs (12 global/gear + 8 individual medical), 3 audited stash clone writers, UI graph/range geometry, 12 neutral factory profiles.")
+print("PASS: 20 stash source IDs, 3 production clone writers, graph editor, VANILLA versus 0 ITEMS, medical zero-count fail-safe, and 12 factory profiles.")
 print("NOT RUN: Windows C# production build, Wine chart interactivity or game drop-frequency acceptance.")

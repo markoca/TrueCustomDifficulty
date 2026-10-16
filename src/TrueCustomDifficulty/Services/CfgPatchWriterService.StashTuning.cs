@@ -69,16 +69,42 @@ public sealed partial class CfgPatchWriterService
         _ => null
     };
 
+    // Medical 0x is a hard exclusion within production stash generator clones.
+    // A zero Weight on an all-zero weighted pool might still be selected by
+    // engine fallback logic, so combine zero selection with zero stack counts.
+    // Keep this limited to audited medical SIDs, not unrelated stash rewards.
+    private static bool IsStashMedicalSelectionDisabled(
+        string itemSid, IReadOnlyDictionary<string, ParameterViewModel> all)
+    {
+        var itemBiasId = itemSid switch
+        {
+            "Bandage" => "loot.stashMedicalBandageBias",
+            "Medkit" => "loot.stashMedicalMedkitBias",
+            "ArmyMedkit" => "loot.stashMedicalArmyMedkitBias",
+            "AntiRad" => "loot.stashMedicalAntiRadBias",
+            "EcoMedkit" => null, // Global MEDICAL applies; no individual slider.
+            _ => string.Empty
+        };
+        if (itemBiasId == string.Empty)
+            return false;
+        if (itemSid is "Medkit" or "ArmyMedkit"
+            && StashTuningCurrent(all, $"loot.stash{itemSid}MaxCount", 0) < -0.5)
+            return true;
+        return StashTuningCurrent(all, "loot.stashMixMedical", 1) <= 0.0
+            || itemBiasId is not null
+            && StashTuningCurrent(all, itemBiasId, 1) <= 0.0;
+    }
+
     private static string TuneStashSelectionField(
         string itemSid, string field, string currentRaw,
         IReadOnlyDictionary<string, ParameterViewModel> all)
     {
         if (field is not ("Chance" or "Weight"))
             return currentRaw;
-        // Explicit zero-item MAX also disables its source selection entry:
-        // do not rely on the engine accepting MinCount=MaxCount=0 alone.
-        if (itemSid is "Medkit" or "ArmyMedkit"
-            && StashTuningCurrent(all, $"loot.stash{itemSid}MaxCount", 0) < -0.5)
+        // Hard-disable both source selection fields and source counts when a
+        // medical class is explicitly excluded; zero Weight alone may not be
+        // sufficient for an entirely zero-weight selection group.
+        if (IsStashMedicalSelectionDisabled(itemSid, all))
             return FormatLikeSource(0.0, currentRaw);
         var biasId = StashItemBiasId(itemSid);
         if (biasId is null)
@@ -112,8 +138,14 @@ public sealed partial class CfgPatchWriterService
         string raw, IReadOnlyDictionary<string, ParameterViewModel> all)
     {
         if (field is not ("MinCount" or "MaxCount")
-            || !source.TryGetValue("ItemPrototypeSID", out var sid)
-            || sid is not ("Medkit" or "ArmyMedkit"))
+            || !source.TryGetValue("ItemPrototypeSID", out var sid))
+            return raw;
+        // When a medical entry is suppressed, force zero stack size as well
+        // as Chance/Weight=0. This includes Bandage, AntiRad and EcoMedkit,
+        // not just the two items with dedicated MIN/MAX editors.
+        if (IsStashMedicalSelectionDisabled(sid, all))
+            return "0";
+        if (sid is not ("Medkit" or "ArmyMedkit"))
             return raw;
         var minFloor = (int)Math.Round(StashTuningCurrent(
             all, $"loot.stash{sid}MinCount", 0));

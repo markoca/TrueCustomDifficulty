@@ -1,5 +1,8 @@
 ### 2026-10-16 — Top-left radiation mark spins during Build Difficulty
 
+**CURRENT 2026-10-16 — MEDICAL 0x generated-CFG fail-safe:** In TCD regular Basic/Standard/Rare production stash clones, disabling general MEDICAL or an individual Bandage/Medkit/ArmyMedkit/AntiRad bias now sets both selection Chance/Weight and the item MinCount/MaxCount to 0; EcoMedkit follows general MEDICAL. VANILLA count bounds never override an explicit 0x exclusion. The UI source graph is unchanged. Existing populated, quest/scripted/CNPP/unredirected and third-party stash generators are outside this claim. Runtime game effect is not yet verified. Generator-output regression is enforced by LootSpecialGeneratorsContract and audit_stash_content_gear.py.
+
+
 **VANILLA / zero conflict:** Native **VANILLA** retains the game's individual Medkit/ArmyMedkit bounds and is stored as MAX=0. The separate visual MAX `0 ITEMS` value is stored as -1. If MIN FLOOR=1 (or 2–6) and MAX CAP=0 ITEMS, the explicit zero overrides the minimum: writer sets both count fields to 0 and the matching selection Chance/Weight to 0. Positive MAX caps retain their ordinary cap-over-floor rule. This affects only eligible TCD regular stash generators, not scripted rewards or other medical items; in-game validation remains required.
 
 

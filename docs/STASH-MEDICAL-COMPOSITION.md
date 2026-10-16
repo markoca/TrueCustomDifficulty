@@ -1,5 +1,14 @@
 # Stash Medical Composition and Quantity — source-backed contract (2026-10-16)
 
+## CURRENT 2026-10-16 — medical 0x source suppression regression
+
+A reproduced saved-profile configuration has global MEDICAL=0x and each Bandage/Medkit/ArmyMedkit/AntiRad bias=0x while its quantity limits remain VANILLA. This is a valid setup: VANILLA only preserves source counts when the item is otherwise eligible, and must never re-enable items disabled by 0x.
+
+Previous production-clone generation zeroed Chance or Weight but left MinCount and MaxCount positive; behavior of an all-zero weighted pool is not established by static CFG data. The writer now sets both selection and count fields to zero for excluded Bandage, Medkit, ArmyMedkit, AntiRad, and EcoMedkit entries. Global MEDICAL=0x disables all those audited medical SIDs; item-specific 0x disables only that item. MAX CAP=0 ITEMS (-1) remains a separate suppression for Medkit and ArmyMedkit and overrides a positive MIN FLOOR.
+
+This is defensive CFG generation, not proof of the root cause of an observed in-game drop. Scope is still TCD-owned, redirected Basic/Standard/Rare regular production generators; previously-filled stashes, quest/scripted/unique/test/unresolved and separate CNPP generator pools, and other mod overrides are outside confirmed coverage. Saving a JSON preset alone does not install a mod: Build Difficulty creates and deploys .pak/.utoc/.ucas to the configured ~mods directory. Use a fresh ungenerated stash for manual runtime verification. LootSpecialGeneratorsContract now includes three generated-CFG zero-medical acceptance scenarios.
+
+
 ### 2026-10-16 — MIN FLOOR versus explicit 0 ITEMS precedence
 
 **VANILLA** is the native source-bound preservation mode: the source can define different Medkit/ArmyMedkit stack counts by difficulty, tier and rank. On either MIN or MAX, stored `0` means VANILLA and never means "force no item". The new visible MAX CAP `0 ITEMS` point stores **-1**, distinct from VANILLA. For **MIN FLOOR = 1** (or any 1–6) and **MAX CAP = 0 ITEMS**, explicit zero wins: generated **MinCount = 0**, **MaxCount = 0**, and the applicable item entry **Chance/Weight = 0**, leaving no Medkit/ArmyMedkit from that eligible TCD production generator. No assertion is made about unrelated medical types or authored/quest stashes. If MAX is VANILLA and MIN is 1, MIN remains a floor rather than suppressing the item; if MIN is VANILLA and MAX is 1, source counts are capped at one. In-game validation of suppression remains required.

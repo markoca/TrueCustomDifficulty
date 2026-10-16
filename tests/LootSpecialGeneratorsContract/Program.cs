@@ -95,11 +95,144 @@ internal static class Program
             Run("Novice",true,new(){["loot.npcWeaponAmmoSupply"]=2.0},"corpse-ammo-present-dlc");
             Run("Veteran",false,new(){["loot.npcWeaponAmmoSupply"]=2.0},"corpse-ammo-absent");
             Check(Passed==63,"Expected 63 special Loot scenarios, got "+Passed);
-            Console.WriteLine($"PASS: {Passed} Loot SPECIAL generator and corpse writer scenarios");
+            VerifyMedicalZeroExclusion();
+            Console.WriteLine($"PASS: {Passed} Loot SPECIAL generator and corpse writer scenarios plus 3 medical-zero production CFG scenarios");
             Console.WriteLine("NOT VERIFIED: original decoded CFG source values, world shuffle/removal writers, Unreal patch loading or gameplay");
             return 0;
         }
         catch(Exception ex){Console.Error.WriteLine("FAIL: "+ex);return 1;}
+    }
+
+    // Regression: zero medical bias must suppress actual stack counts as
+    // well as Chance/Weight in all eligible production stash clone templates.
+    // This is a generated-CFG check, never a claim about prefilled or quest
+    // stashes, engine parsing or runtime drops.
+    static void VerifyMedicalZeroExclusion()
+    {
+        var cases = new[]
+        {
+            (
+                Name: "global-medical-zero",
+                Changes: new Dictionary<string, double>
+                {
+                    ["loot.stashMixMedical"] = 0
+                },
+                Disabled: new[] { "Bandage", "Medkit", "ArmyMedkit", "AntiRad", "EcoMedkit" },
+                Unchanged: Array.Empty<string>()
+            ),
+            (
+                Name: "bandage-zero-only",
+                Changes: new Dictionary<string, double>
+                {
+                    ["loot.stashMedicalBandageBias"] = 0
+                },
+                Disabled: new[] { "Bandage" },
+                Unchanged: new[] { "Medkit" }
+            ),
+            (
+                Name: "max-zero-overrides-floor",
+                Changes: new Dictionary<string, double>
+                {
+                    ["loot.stashMedkitMinCount"] = 1,
+                    ["loot.stashMedkitMaxCount"] = -1
+                },
+                Disabled: new[] { "Medkit" },
+                Unchanged: new[] { "Bandage" }
+            )
+        };
+
+        foreach (var scenario in cases)
+        {
+            var dir = Path.Combine(Keep ?? Path.GetTempPath(),
+                "TCD_LootSpecial_MedicalZero", scenario.Name);
+            try
+            {
+                var vm = new MainViewModel(Catalog)
+                    { SelectedReferenceDifficulty = "Stalker" };
+                foreach (var (id, target) in scenario.Changes)
+                {
+                    var parameter = vm.AllParameters.Single(x => x.Id == id);
+                    Check(parameter.IsControlEnabled && parameter.IsSlider,
+                        scenario.Name + ": source disabled " + id);
+                    parameter.SnapCurrentNumberToMarker(target);
+                    Check(parameter.IsValueModifiedFromReference()
+                        && Math.Abs(parameter.CurrentNumber - target) < 1e-7,
+                        scenario.Name + ": profile value did not apply " + id);
+                }
+
+                var built = new CfgPatchWriterService()
+                    .Write(vm, Catalog, null, dir);
+                Check(built.ParameterCount == scenario.Changes.Count,
+                    scenario.Name + ": not all modified sources were written");
+                var output = ReadOutput(dir);
+                var touched = 0;
+                var seenSids = new HashSet<string>(StringComparer.Ordinal);
+                var untouched = 0;
+                foreach (var tier in new[]
+                    { "cheapStashProduction", "mediumStashAmmoProduction", "expensiveStashProduction" })
+                {
+                    var config = Special.GetProperty(tier);
+                    var file = Str(config, "file");
+                    Check(output.TryGetValue(file, out var fields),
+                        scenario.Name + ": missing regular stash clone CFG " + tier);
+                    var roots = new[] { Str(config, "customGeneratorSid") }
+                        .Concat(config.GetProperty("rankWrappers").EnumerateArray()
+                            .Select(rank => Str(rank, "targetSid")));
+                    foreach (var root in roots)
+                    foreach (var category in config.GetProperty("templateCategories").EnumerateArray())
+                    foreach (var item in category.GetProperty("items").EnumerateArray())
+                    {
+                        var sourceFields = item.GetProperty("fields");
+                        var sid = Str(sourceFields, "ItemPrototypeSID");
+                        var disabled = scenario.Disabled.Contains(sid);
+                        var keep = scenario.Unchanged.Contains(sid);
+                        if (!disabled && !keep)
+                            continue;
+
+                        var prefix = root + "/ItemGenerator/"
+                            + Str(category, "node") + "/PossibleItems/"
+                            + Str(item, "node") + "/";
+                        foreach (var fieldName in new[]
+                            { "Chance", "Weight", "MinCount", "MaxCount" })
+                        {
+                            if (!sourceFields.TryGetProperty(fieldName, out var source))
+                                continue;
+                            var full = prefix + fieldName;
+                            Check(fields!.TryGetValue(full, out var generated),
+                                scenario.Name + ": missing " + file + "|" + full);
+                            if (disabled)
+                            {
+                                Check(Math.Abs(Num(generated!)) < 1e-8,
+                                    scenario.Name + ": medical zero leaked into "
+                                    + file + "|" + full + "=" + generated);
+                                touched++;
+                                seenSids.Add(sid);
+                            }
+                            else if (fieldName is "Chance" or "Weight")
+                            {
+                                Check(Math.Abs(Num(generated!) - Num(source.GetString()!)) < 1e-8,
+                                    scenario.Name + ": unrelated selection was modified "
+                                    + sid + "/" + fieldName);
+                                untouched++;
+                            }
+                        }
+                    }
+                }
+                Check(touched >= 20 && seenSids.Contains("Medkit")
+                    || scenario.Disabled.Length == 1 && touched >= 10,
+                    scenario.Name + ": medical suppression covered no actual template entries");
+                if (scenario.Unchanged.Length != 0)
+                    Check(untouched > 0,
+                        scenario.Name + ": failed to verify unchanged medical entries");
+                Console.WriteLine("PASS " + scenario.Name
+                    + ": " + touched + " zeroed medical generator CFG fields");
+            }
+            finally
+            {
+                if (Keep is null && Directory.Exists(dir))
+                    Directory.Delete(dir, true);
+            }
+        }
     }
 
     static JsonElement LoadSpecial()

@@ -1,5 +1,8 @@
 # True Custom Difficulty
 
+**Stashes medical suppression (2026-10-16):** Zero MEDICAL or item-specific medical bias now forces both Chance/Weight and MinCount/MaxCount to zero in audited regular stash clone output. VANILLA quantity does not re-enable medical drops. User JSON profiles do not install the game mod: Build Difficulty creates and deploys the .pak/.utoc/.ucas triplet to the configured ~mods directory. Existing populated, scripted/quest, CNPP and incompatible third-party stash generators remain outside audited scope; in-game verification is pending.
+
+
 **Stash Medical Composition / Quantity (2026-10-16):** In Loot, four independent **Bandages/Medkits/Army Medkits/Anti-Rad** source `Weight`/`Chance` biases (0–3x) now have their own compact shared-axis chart, multiplicatively composing with the existing MEDICAL category control. A separate MEDKIT QUANTITY board has MIN FLOOR and MAX CAP for regular and Army Medkits (0 AUTO = preserve vanilla per-tier source count; 1–6 limits; explicit cap wins on conflict). All eight additions use the existing source-validated production-only stash clone writers; no authored quest rewards or previously unsupported items are added. Existing presets remain compatible, pristine factory presets are hash-gated. [Mechanics and QA](docs/STASH-MEDICAL-COMPOSITION.md). **No runtime drop probability is claimed.**
 
 
