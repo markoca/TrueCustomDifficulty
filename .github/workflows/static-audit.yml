@@ -28,6 +28,9 @@ jobs:
       - name: Final 268-source CFG to actual BPatch writer route and factory-output audit
         run: python tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
 
+      - name: Stashes A+C knob mixer layout/source contract
+        run: python tools/audit_stashes_mixer_ui.py
+
       - name: Reserved gear queue and direct medical consumables source audit
         run: python tools/audit_regular_stash_consumables.py
 

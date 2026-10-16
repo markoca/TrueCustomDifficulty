@@ -52,7 +52,8 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         if (Family is "AnomalyGlobalDamage" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
             or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "EquipmentWearBalance"
-            or "StashRewardProfile" or "StashContentMix" or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
+            or "StashRewardProfile" or "StashContentMix" or "StashMedicalComposition"
+            or "StashMedicalQuantity" or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
             or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"
             or "RadiationBalance" or "StaminaCore" or "ConsumableMixer"
@@ -2608,6 +2609,17 @@ public sealed class AggregateVisualControl : FrameworkElement
             dc.DrawText(combined, new Point(
                 center.X - combined.WidthIncludingTrailingWhitespace / 2.0, currentTop));
         }
+        else if (Family == "StashContentMix")
+        {
+            var formatted = CreateText(currentLabel, modified ? 16.2 : 15.0,
+                active ? text : muted, FontWeights.Bold, Math.Max(1.0, card.Width - 12.0));
+            if (modified)
+                foreach (System.Text.RegularExpressions.Match token in
+                    System.Text.RegularExpressions.Regex.Matches(currentLabel, @"\d+(?:\.\d+)?"))
+                    formatted.SetForegroundBrush(accent, token.Index, token.Length);
+            dc.DrawText(formatted, new Point(center.X -
+                formatted.WidthIncludingTrailingWhitespace / 2.0, currentTop));
+        }
         else
         {
             DrawCenteredText(dc, currentLabel, new Point(center.X, currentTop),
@@ -4518,11 +4530,15 @@ public sealed class AggregateVisualControl : FrameworkElement
     // An actual shared-axis bar chart: six real source multipliers, never a
     // fabricated percentage of loot in a particular stash. All six bars use
     // the SAME 0..3x scale, and the 1x reference remains a neutral guide.
+    // Stash A+C mixer: six compact interactive native source knobs.
+    // The Medical dial uses the SAME source parameter as the detail banks
+    // directly below; changing its value instantly updates their effective
+    // generator weights without inventing a fictitious drop percentage.
     private void DrawStashContentMix(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        DrawHeader(dc, "STASH CONTENT", "", text, muted, accent);
+        DrawHeader(dc, "STASH CONTENT MIX", "", text, muted, accent);
         var entries = new (string Id, string Label)[]
         {
             ("loot.stashMixAmmo", "AMMO"),
@@ -4532,390 +4548,185 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("loot.stashMixGrenades", "GRENADES"),
             ("loot.stashMixCoupons", "COUPONS")
         };
-
-        var bankWidth = Math.Min(785.0, Math.Max(1.0, ActualWidth - 34.0));
-        var left = (ActualWidth - bankWidth) / 2.0;
-        var plotLeft = left + 117.0;
-        var plotWidth = Math.Max(1.0, bankWidth - 197.0);
-        var plot = new Rect(plotLeft, 86.0, plotWidth, 12.0);
-        const double firstRowTop = 88.0;
-        const double rowPitch = 42.0;
-
-        DrawText(dc, "ITEM CATEGORY", new Point(left + 11.0, 61.0),
-            9.1, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "BIAS", new Point(left + bankWidth - 11.0, 61.0),
-            9.1, muted, FontWeights.SemiBold);
-
-        // A common horizontal native scale makes categories directly comparable.
-        for (var tick = 0; tick <= 3; tick++)
-        {
-            var tickX = ValueToX(tick, 0.0, 3.0, plot, false);
-            DrawCenteredText(dc, $"{tick}x", new Point(tickX, 61.0),
-                9.4, muted, FontWeights.SemiBold);
-            dc.DrawLine(
-                new Pen(CloneWithOpacity(muted, tick == 1 ? 0.33 : 0.16),
-                    tick == 1 ? 1.6 : 0.8),
-                new Point(tickX, firstRowTop + 1.0),
-                new Point(tickX, firstRowTop + 5.0 * rowPitch + 31.0));
-        }
-
+        var columns = ActualWidth >= 700.0 ? 3 : 2;
+        var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
+        var left = (ActualWidth - width) / 2.0;
+        const double gap = 11.0;
+        const double pitchY = 186.0;
+        const double cardTop = 49.0;
+        const double cardHeight = 176.0;
+        var cell = (width - gap * (columns - 1)) / columns;
         for (var i = 0; i < entries.Length; i++)
         {
-            var p = P(entries[i].Id);
-            if (p is null)
-                continue;
-
-            var top = firstRowTop + i * rowPitch;
-            var row = new Rect(left + 2.0, top - 3.0, bankWidth - 4.0, 37.0);
-            if (i % 2 == 0)
-                dc.DrawRoundedRectangle(CloneWithOpacity(panel, 0.55),
-                    null, row, 3.0, 3.0);
-
-            var enabled = p.IsControlEnabled;
-            var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, p);
-            var modified = enabled && p.IsValueModifiedFromReference();
-            DrawText(dc, entries[i].Label, new Point(left + 11.0, top + 8.0),
-                10.7, enabled ? text : muted, FontWeights.SemiBold);
-
-            var bar = new Rect(plotLeft, top + 11.0, plotWidth, 12.0);
-            var x = ValueToX(p.CurrentNumber, p.Minimum, p.Maximum, bar, false);
-            var referenceX = ValueToX(p.ReferenceNumber, p.Minimum, p.Maximum, bar, false);
-            dc.DrawRoundedRectangle(CloneWithOpacity(border, .38),
-                null, bar, 3.0, 3.0);
-            if (x > bar.Left)
-                dc.DrawRoundedRectangle(
-                    CloneWithOpacity(enabled ? accent : muted, .66),
-                    null, new Rect(bar.Left, bar.Top + 2.0,
-                        x - bar.Left, bar.Height - 4.0), 2.0, 2.0);
-
-            // Reference is not a highlighted "Base" badge.
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, .75), 1.7),
-                new Point(referenceX, bar.Top - 5.0),
-                new Point(referenceX, bar.Bottom + 5.0));
-            if (enabled)
-                ControlHoverGlow.Draw(dc, new Point(x, bar.Top + 6.0),
-                    accent, hovered);
-            dc.DrawEllipse(panel,
-                new Pen(enabled ? accent : muted, hovered ? 2.5 : 1.7),
-                new Point(x, bar.Top + 6.0), 5.8, 5.8);
-
-            DrawStashNumericReadout(dc, $"{p.CurrentNumber:0.##}x",
-                new Point(left + bankWidth - 11.0, top + 5.0),
-                11.7, enabled, modified, text, muted, accent);
-            AddHorizontalTarget(p,
-                new Rect(bar.Left - 7.0, top + 1.0,
-                    bar.Width + 14.0, 32.0),
-                bar, p.Minimum, p.Maximum);
+            var col = i % columns;
+            var row = i / columns;
+            var card = new Rect(left + col * (cell + gap),
+                cardTop + row * pitchY, cell, cardHeight);
+            var source = P(entries[i].Id);
+            var focused = source is not null && ReferenceEquals(_selectedParameter, source);
+            var hover = source is not null &&
+                ReferenceEquals(_hoverTarget?.Parameter, source);
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, focused ? .77 : .56),
+                new Pen(CloneWithOpacity(focused || hover ? accent : border,
+                    focused ? .73 : .37), focused ? 1.35 : .85),
+                card, 5.0, 5.0);
+            DrawSourceKnob(dc, source, entries[i].Label, card,
+                text, muted, border, accent, panel);
         }
-
-        DrawCenteredText(dc, "RELATIVE SOURCE WEIGHT / CHANCE · NOT STASH DROP %",
-            new Point(ActualWidth / 2.0, 347.0),
-            9.0, muted, FontWeights.Normal);
     }
 
-    // Item-level MEDICAL source-bias chart. Global MEDICAL multiplies these
-    // four independent Weight/Chance controls; neither display is a predicted
-    // percentage of generated stashes containing the listed medical item.
+    // Focus detail panel directly below Content Mix: same 0..3x source
+    // dial grammar, smaller visual footprint. No invisible controls or
+    // duplicated numeric widgets; right-click/R/reset and wheel are native.
     private void DrawStashMedicalComposition(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        DrawHeader(dc, "MEDICAL LOOT COMPOSITION", "", text, muted, accent);
-        var items = new (string Id, string Caption)[]
+        DrawHeader(dc, "MEDICAL COMPOSITION", "", text, muted, accent);
+        var entries = new (string Id, string Caption)[]
         {
             ("loot.stashMedicalBandageBias", "BANDAGES"),
             ("loot.stashMedicalMedkitBias", "MEDKITS"),
             ("loot.stashMedicalArmyMedkitBias", "ARMY MEDKITS"),
             ("loot.stashMedicalAntiRadBias", "ANTI-RAD")
         };
-        var bankWidth = Math.Min(785.0, Math.Max(1.0, ActualWidth - 34.0));
-        var left = (ActualWidth - bankWidth) / 2.0;
-        var plotLeft = left + 133.0;
-        var plotWidth = Math.Max(1.0, bankWidth - 215.0);
-        var ruler = new Rect(plotLeft, 0.0, plotWidth, 1.0);
-        const double firstTop = 91.0;
-        const double stepY = 43.0;
-        DrawText(dc, "MEDICAL ITEM", new Point(left + 11, 61.0),
-            9.4, muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "BIAS", new Point(left + bankWidth - 11, 61.0),
-            9.4, muted, FontWeights.SemiBold);
-        for (var tick = 0; tick <= 3; tick++)
+        var columns = ActualWidth >= 720.0 ? 4 : 2;
+        var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
+        var left = (ActualWidth - width) / 2.0;
+        const double gap = 10.0;
+        const double top = 52.0;
+        const double pitch = 167.0;
+        const double height = 155.0;
+        var cell = (width - gap * (columns - 1)) / columns;
+        for (var i = 0; i < entries.Length; i++)
         {
-            var x = ValueToX(tick, 0, 3, ruler, false);
-            DrawCenteredText(dc, $"{tick}x", new Point(x, 61.0),
-                9.4, muted, FontWeights.SemiBold);
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, tick == 1 ? .32 : .16),
-                    tick == 1 ? 1.6 : .8),
-                new Point(x, firstTop - 4),
-                new Point(x, firstTop + stepY * 3 + 27));
-        }
-        for (var i = 0; i < items.Length; i++)
-        {
-            var source = P(items[i].Id);
+            var source = P(entries[i].Id);
             if (source is null) continue;
-            var y = firstTop + i * stepY;
-            if (i % 2 == 0)
-                dc.DrawRoundedRectangle(CloneWithOpacity(panel, .50), null,
-                    new Rect(left + 2, y - 5, bankWidth - 4, 38), 3, 3);
-            var enabled = source.IsControlEnabled;
-            var hover = enabled && ReferenceEquals(_hoverTarget?.Parameter, source);
-            DrawText(dc, items[i].Caption, new Point(left + 11, y + 8),
-                10.4, enabled ? text : muted, FontWeights.SemiBold);
-            var bar = new Rect(plotLeft, y + 8.0, plotWidth, 12.0);
-            var x = ValueToX(source.CurrentNumber, 0.0, 3.0, bar, false);
-            var baseX = ValueToX(source.ReferenceNumber, 0.0, 3.0, bar, false);
-            dc.DrawRoundedRectangle(CloneWithOpacity(border, .36), null, bar, 3, 3);
-            if (x > bar.Left)
-                dc.DrawRoundedRectangle(CloneWithOpacity(enabled ? accent : muted, .64),
-                    null, new Rect(bar.Left, bar.Top + 2, x - bar.Left, 8), 2, 2);
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, .72), 1.7),
-                new Point(baseX, bar.Top - 5), new Point(baseX, bar.Bottom + 5));
-            if (enabled)
-                ControlHoverGlow.Draw(dc, new Point(x, bar.Top + 6), accent, hover);
-            dc.DrawEllipse(panel, new Pen(enabled ? accent : muted, hover ? 2.5 : 1.7),
-                new Point(x, bar.Top + 6), 5.8, 5.8);
-            DrawStashNumericReadout(dc, $"{source.CurrentNumber:0.##}x",
-                new Point(left + bankWidth - 11, y + 4),
-                11.6, enabled, source.IsValueModifiedFromReference(),
-                text, muted, accent);
-            AddHorizontalTarget(source,
-                new Rect(bar.Left - 7, y, bar.Width + 14, 32),
-                bar, 0.0, 3.0);
+            var col = i % columns;
+            var row = i / columns;
+            var card = new Rect(left + col * (cell + gap), top + row * pitch,
+                cell, height);
+            var focused = ReferenceEquals(_selectedParameter, source);
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, focused ? .76 : .55),
+                new Pen(CloneWithOpacity(focused ? accent : border, focused ? .74 : .39),
+                    focused ? 1.3 : .85),
+                card, 5.0, 5.0);
+            DrawMiniConsumableKnob(dc, source, entries[i].Caption,
+                $"{source.CurrentNumber:0.##}x", "0x", "3x", card,
+                text, muted, border, accent, panel, accent);
         }
-        DrawCenteredText(dc, "ITEM BIAS × GENERAL MEDICAL · NO STASH DROP GUARANTEE",
-            new Point(ActualWidth / 2.0, 278.0),
-            9.0, muted, FontWeights.Normal);
     }
 
-    // Native 2×2 medical-count DOT GRAPH. MAX has an explicit 0 ITEMS
-    // stop (-1 in persisted source state); 0 retains original VANILLA bounds.
-    // All points are source-backed, focusable and independently adjustable.
+    // Paired native MIN/MAX selectors: each medication family gets exactly
+    // one compact card, not four detached generic source sliders.
     private void DrawStashMedicalQuantity(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
-        DrawHeader(dc, "MEDKIT QUANTITY", "", text, muted, accent);
-        var rows = new (string MinId, string MaxId, string Label)[]
+        DrawHeader(dc, "MEDICAL QUANTITY", "", text, muted, accent);
+        var families = new (string Name, string Min, string Max)[]
         {
-            ("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount", "MEDKITS"),
-            ("loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount", "ARMY MEDKITS")
+            ("MEDKITS", "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount"),
+            ("ARMY MEDKITS", "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount")
         };
-
-        var bankWidth = Math.Min(785.0, Math.Max(1.0, ActualWidth - 32.0));
-        var left = (ActualWidth - bankWidth) / 2.0;
-        var tierWidth = bankWidth >= 660.0 ? 115.0 : 93.0;
-        const double gap = 11.0;
-        var column = Math.Max(1.0, (bankWidth - tierWidth - gap) / 2.0);
-        var minLeft = left + tierWidth;
-        var maxLeft = minLeft + column + gap;
-
-        DrawCenteredText(dc, "MIN FLOOR", new Point(minLeft + column / 2.0, 57.0),
-            11.0, text, FontWeights.Bold);
-        DrawCenteredText(dc, "MAX CAP", new Point(maxLeft + column / 2.0, 57.0),
-            11.0, text, FontWeights.Bold);
-
-        for (var row = 0; row < rows.Length; row++)
+        var columns = ActualWidth >= 700.0 ? 2 : 1;
+        var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
+        var left = (ActualWidth - width) / 2.0;
+        const double gap = 12.0;
+        const double cardHeight = 186.0;
+        var cell = (width - gap * (columns - 1)) / columns;
+        for (var i = 0; i < families.Length; i++)
         {
-            var y = 80.0 + row * 83.0;
-            var rowArea = new Rect(left + 2.0, y, bankWidth - 4.0, 75.0);
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .56),
-                new Pen(CloneWithOpacity(border, .43), .8), rowArea, 3, 3);
-            DrawText(dc, rows[row].Label, new Point(left + 9.0, y + 28.0),
-                10.6, text, FontWeights.Bold);
-            DrawMedicalCountDots(dc, P(rows[row].MinId),
-                new Rect(minLeft, y + 4.0, column, 66.0),
+            var x = left + (i % columns) * (cell + gap);
+            var y = 53.0 + (i / columns) * (cardHeight + gap);
+            var card = new Rect(x, y, cell, cardHeight);
+            var focused = ReferenceEquals(_selectedParameter, P(families[i].Min))
+                || ReferenceEquals(_selectedParameter, P(families[i].Max));
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, focused ? .77 : .57),
+                new Pen(CloneWithOpacity(focused ? accent : border, focused ? .72 : .45),
+                    focused ? 1.3 : .9), card, 5.0, 5.0);
+            DrawCenteredText(dc, families[i].Name, new Point(card.Left + cell / 2.0, y + 9.0),
+                11.2, text, FontWeights.Bold);
+            const double innerGap = 8.0;
+            var half = (cell - 22.0 - innerGap) / 2.0;
+            var first = new Rect(x + 11.0, y + 25.0, half, 147.0);
+            var second = new Rect(first.Right + innerGap, first.Top, half, first.Height);
+            DrawStashCountKnob(dc, P(families[i].Min), "MIN", first,
                 text, muted, border, accent, panel);
-            DrawMedicalCountDots(dc, P(rows[row].MaxId),
-                new Rect(maxLeft, y + 4.0, column, 66.0),
+            DrawStashCountKnob(dc, P(families[i].Max), "MAX", second,
                 text, muted, border, accent, panel);
         }
-
-        DrawCenteredText(dc, "0 ITEMS = OFF · VANILLA = ORIGINAL",
-            new Point(ActualWidth / 2.0, 263.0),
-            9.0, muted, FontWeights.Normal);
     }
 
-    private void DrawMedicalCountDots(
-        DrawingContext dc, ParameterViewModel? p, Rect cell,
+    private void DrawStashCountKnob(
+        DrawingContext dc, ParameterViewModel? source, string caption, Rect cell,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        if (p is null) return;
-        var isMax = p.Id.EndsWith("MaxCount", StringComparison.Ordinal);
-        var enabled = p.IsControlEnabled;
-        var modified = enabled && p.IsValueModifiedFromReference();
-        var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, p);
-        // -1 stores an explicit empty count; 0 retains VANILLA source limits.
-        var current = (int)Math.Round(p.CurrentNumber);
+        if (source is null) return;
+        var current = (int)Math.Round(source.CurrentNumber);
+        var isMax = source.Id.EndsWith("MaxCount", StringComparison.Ordinal);
+        // -1 is the explicit 0 ITEMS state; 0 remains unmodified source bounds.
         var display = current < 0 ? "0 ITEMS"
-            : current == 0 ? "VANILLA" : $"{current} ITEMS";
-        var readout = CreateText(display, 11.6, enabled ? text : muted,
-            FontWeights.SemiBold, Math.Max(1, cell.Width - 16));
-        if (modified && current != 0)
-            readout.SetForegroundBrush(accent, 0, current < 0 ? 1 :
-                current.ToString(CultureInfo.InvariantCulture).Length);
-        dc.DrawText(readout, new Point(
-            cell.Right - 8.0 - readout.WidthIncludingTrailingWhitespace,
-            cell.Top + 1.0));
-
-        var plot = new Rect(cell.Left + 15.0, cell.Top + 37.0,
-            Math.Max(1.0, cell.Width - 30.0), 1.0);
-        var trackY = plot.Top;
-        dc.DrawLine(new Pen(CloneWithOpacity(border, .6), 1.1),
-            new Point(plot.Left, trackY), new Point(plot.Right, trackY));
-        var minimum = isMax ? -1.0 : 0.0;
-        for (var step = (int)minimum; step <= 6; step++)
-        {
-            var x = ValueToX(step, minimum, 6.0, plot, false);
-            var selected = step == current;
-            var radius = selected ? 6.2 : 4.0;
-            dc.DrawEllipse(selected ? panel : CloneWithOpacity(border, .42),
-                new Pen(selected ? (enabled ? accent : muted) : muted,
-                    selected && hovered ? 2.7 : selected ? 2.0 : .75),
-                new Point(x, trackY), radius, radius);
-            if (selected && enabled)
-                ControlHoverGlow.Draw(dc, new Point(x, trackY),
-                    accent, hovered);
-        }
-
-        if (isMax)
-        {
-            DrawCenteredText(dc, "0", new Point(plot.Left, cell.Top + 49.0),
-                9.2, muted, FontWeights.SemiBold);
-            DrawCenteredText(dc, "VANILLA", new Point(
-                ValueToX(0, -1, 6, plot, false), cell.Top + 49.0),
-                9.1, muted, FontWeights.SemiBold);
-        }
-        else
-            DrawCenteredText(dc, "VANILLA", new Point(plot.Left, cell.Top + 49.0),
-                9.1, muted, FontWeights.SemiBold);
-        DrawCenteredText(dc, "6", new Point(plot.Right, cell.Top + 49.0),
-            9.2, muted, FontWeights.SemiBold);
-
-        AddHorizontalTarget(p,
-            new Rect(plot.Left - 9.0, cell.Top + 21.0,
-                plot.Width + 18.0, 32.0),
-            plot, minimum, 6.0);
+            : current == 0 ? "AUTO" : $"{current} ITEMS";
+        DrawMiniConsumableKnob(dc, source, caption, display,
+            isMax ? "0" : "AUTO", "6", cell,
+            text, muted, border, accent, panel, accent);
     }
 
-    // Gear is a 3 (stash quality) by 2 (item class) discrete dot plot.
-    // The four stops are named modes, NOT guaranteed per-stash drop odds.
-    // Horizontal positions/editing use the underlying native 0..3 source grid.
+    // Native source-geared 3-tier cards: WEAPON and ARMOR dials inside each
+    // tier. These affect TCD-generated generic extras, never 45 reserved
+    // authored unique/equipment rewards in the separate shuffle backlog.
     private void DrawStashGear(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "EXTRA STASH GEAR", "", text, muted, accent);
-        var bankWidth = Math.Min(785.0, Math.Max(1.0, ActualWidth - 34.0));
-        var left = (ActualWidth - bankWidth) / 2.0;
-        const double tierLane = 91.0;
-        const double gap = 14.0;
-        var columnWidth = (bankWidth - tierLane - gap) / 2.0;
-        var weaponLeft = left + tierLane;
-        var armorLeft = weaponLeft + columnWidth + gap;
-
-        DrawCenteredText(dc, "WEAPONS",
-            new Point(weaponLeft + columnWidth / 2.0, 56.0),
-            11.3, text, FontWeights.Bold);
-        DrawCenteredText(dc, "ARMOR",
-            new Point(armorLeft + columnWidth / 2.0, 56.0),
-            11.3, text, FontWeights.Bold);
-
-        var rows = new (string Tier, string WeaponId, string ArmorId)[]
+        var tiers = new (string Tier, string Weapon, string Armor)[]
         {
             ("BASIC", "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor"),
             ("STANDARD", "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor"),
             ("RARE", "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor")
         };
-        for (var rowIndex = 0; rowIndex < rows.Length; rowIndex++)
+        var columns = ActualWidth >= 746.0 ? 3 : ActualWidth >= 580.0 ? 2 : 1;
+        var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
+        var left = (ActualWidth - width) / 2.0;
+        const double gap = 11.0;
+        const double cardHeight = 202.0;
+        var cell = (width - gap * (columns - 1)) / columns;
+        for (var i = 0; i < tiers.Length; i++)
         {
-            var rowTop = 84.0 + rowIndex * 72.0;
-            var background = new Rect(left + 2.0, rowTop,
-                bankWidth - 4.0, 65.0);
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .52),
-                new Pen(CloneWithOpacity(border, .53), .8),
-                background, 3.0, 3.0);
-
-            DrawText(dc, rows[rowIndex].Tier,
-                new Point(left + 12.0, rowTop + 26.0),
-                10.7, text, FontWeights.Bold);
-
-            DrawStashGearPlotCell(dc, P(rows[rowIndex].WeaponId),
-                weaponLeft, rowTop, columnWidth, text, muted, border, accent, panel);
-            DrawStashGearPlotCell(dc, P(rows[rowIndex].ArmorId),
-                armorLeft, rowTop, columnWidth, text, muted, border, accent, panel);
+            var x = left + (i % columns) * (cell + gap);
+            var y = 52.0 + (i / columns) * (cardHeight + gap);
+            var card = new Rect(x, y, cell, cardHeight);
+            var focused = ReferenceEquals(_selectedParameter, P(tiers[i].Weapon))
+                || ReferenceEquals(_selectedParameter, P(tiers[i].Armor));
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, focused ? .77 : .60),
+                new Pen(CloneWithOpacity(focused ? accent : border, focused ? .74 : .48),
+                    focused ? 1.3 : .9), card, 5.0, 5.0);
+            DrawCenteredText(dc, tiers[i].Tier,
+                new Point(x + cell / 2.0, y + 11.0),
+                11.5, text, FontWeights.Bold);
+            const double inner = 6.0;
+            var half = (cell - 18.0 - inner) / 2.0;
+            DrawStashGearDial(dc, P(tiers[i].Weapon), "WEAPONS",
+                new Rect(x + 9.0, y + 32.0, half, 152.0),
+                text, muted, border, accent, panel);
+            DrawStashGearDial(dc, P(tiers[i].Armor), "ARMOR",
+                new Rect(x + 9.0 + half + inner, y + 32.0, half, 152.0),
+                text, muted, border, accent, panel);
         }
-
-        // Two aligned axes, shown only once rather than repeated in each cell.
-        var axisNames = new[] { "OFF", "RARE", "MOD", "FREQ" };
-        foreach (var columnLeft in new[] { weaponLeft, armorLeft })
-        {
-            var plot = new Rect(columnLeft + 19.0, 300.0,
-                Math.Max(1.0, columnWidth - 38.0), 1.0);
-            for (var i = 0; i < axisNames.Length; i++)
-                DrawCenteredText(dc, axisNames[i],
-                    new Point(ValueToX(i, 0.0, 3.0, plot, false), 303.0),
-                    8.8, muted, FontWeights.SemiBold);
-        }
-        DrawCenteredText(dc, "SOURCE CHANCE MODES · NOT GUARANTEED FINDS",
-            new Point(ActualWidth / 2.0, 343.0),
-            9.0, muted, FontWeights.Normal);
     }
 
-    private void DrawStashGearPlotCell(
-        DrawingContext dc, ParameterViewModel? p, double left, double top,
-        double width, Brush text, Brush muted, Brush border,
-        Brush accent, Brush panel)
+    private void DrawStashGearDial(
+        DrawingContext dc, ParameterViewModel? source, string label, Rect card,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
-        if (p is null)
-            return;
-
-        var enabled = p.IsControlEnabled;
-        var modified = enabled && p.IsValueModifiedFromReference();
-        var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, p);
-        var level = Math.Clamp((int)Math.Round(p.CurrentNumber), 0, 3);
-        var modes = new[] { "OFF", "RARE", "MODERATE", "FREQUENT" };
-
-        // Highlight only the changed numeric value, never the neutral mode name.
-        var readout = CreateText($"{level}  {modes[level]}", 10.8,
-            enabled ? text : muted, FontWeights.SemiBold,
-            Math.Max(1.0, width - 28.0));
-        if (modified)
-            readout.SetForegroundBrush(accent, 0, 1);
-        dc.DrawText(readout, new Point(left + width - 13.0
-            - readout.WidthIncludingTrailingWhitespace, top + 8.0));
-
-        var track = new Rect(left + 19.0, top + 38.0,
-            Math.Max(1.0, width - 38.0), 12.0);
-        var y = track.Top + track.Height / 2.0;
-        dc.DrawLine(new Pen(CloneWithOpacity(border, .72), 3.0),
-            new Point(track.Left, y), new Point(track.Right, y));
-        var activeX = ValueToX(level, 0.0, 3.0, track, false);
-        if (enabled && level > 0)
-            dc.DrawLine(new Pen(CloneWithOpacity(accent, .73), 4.0),
-                new Point(track.Left, y), new Point(activeX, y));
-
-        // Four clearly separate stops; OFF remains neutral (zero extra gear).
-        for (var step = 0; step <= 3; step++)
-        {
-            var x = ValueToX(step, 0.0, 3.0, track, false);
-            var selected = step == level;
-            dc.DrawEllipse(
-                selected ? panel
-                    : CloneWithOpacity(enabled && step > 0 && step < level
-                        ? accent : border, .8),
-                new Pen(selected ? (enabled ? accent : muted) : muted,
-                    selected && hovered ? 2.8 : selected ? 2.0 : .9),
-                new Point(x, y), selected ? 6.2 : 4.3, selected ? 6.2 : 4.3);
-            if (selected && enabled)
-                ControlHoverGlow.Draw(dc, new Point(x, y), accent, hovered);
-        }
-
-        // One continuous plot hit region permits click/drag across all stops,
-        // arrow keys, Home/End, and the shared R/right-click reset contract.
-        AddHorizontalTarget(p,
-            new Rect(track.Left - 10.0, top + 25.0,
-                track.Width + 20.0, 34.0),
-            track, 0.0, 3.0);
+        if (source is null) return;
+        var value = (int)Math.Round(source.CurrentNumber);
+        var modes = new[] { "OFF", "RARE", "MOD", "FREQ" };
+        DrawMiniConsumableKnob(dc, source, label,
+            $"{value} {modes[Math.Clamp(value, 0, 3)]}", "0", "3",
+            card, text, muted, border, accent, panel, accent);
     }
 
     // STASH REWARDS: two compact interactive BAR GRAPH banks.
@@ -5365,12 +5176,19 @@ public sealed class AggregateVisualControl : FrameworkElement
                 formatted.SetForegroundBrush(accent, token.Index, token.Length);
         dc.DrawText(formatted, new Point(center.X -
             formatted.WidthIncludingTrailingWhitespace / 2.0, center.Y - 8.0));
+        // Stashes knobs share the same small white lower value grammar as
+        // the other native knobs. Keep ConsumableMixer's original typography.
+        var stashDial = Family is "StashMedicalComposition"
+            or "StashMedicalQuantity" or "StashGear";
+        var endpointSize = stashDial ? (card.Width < 166.0 ? 9.0 : 9.8) : 8.7;
+        var endpointInk = stashDial ? Brushes.White : muted;
+        var endpointY = card.Bottom - (stashDial ? 22.0 : 17.0);
         DrawCenteredText(dc, minimumLabel,
-            new Point(center.X - radius * .80, card.Bottom - 17.0),
-            8.7, muted, FontWeights.SemiBold);
+            new Point(center.X - radius * .80, endpointY),
+            endpointSize, endpointInk, FontWeights.SemiBold);
         DrawCenteredText(dc, maximumLabel,
-            new Point(center.X + radius * .80, card.Bottom - 17.0),
-            8.7, muted, FontWeights.SemiBold);
+            new Point(center.X + radius * .80, endpointY),
+            endpointSize, endpointInk, FontWeights.SemiBold);
         if (!active) return;
         var hit = new Rect(center.X - radius - 6.0, center.Y - radius - 6.0,
             2.0 * (radius + 6.0), 2.0 * (radius + 6.0));
@@ -6731,10 +6549,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             "AnomalySpecialEffects" => 270.0,
             "NpcLootLoadout" => 564.0,
             "WorldLootLayout" => 275.0,
-            "StashContentMix" => 376.0,
-            "StashMedicalComposition" => 304.0,
-            "StashMedicalQuantity" => 290.0,
-            "StashGear" => 370.0,
+            "StashContentMix" => StashContentMixHeight(width),
+            "StashMedicalComposition" => StashMedicalCompositionHeight(width),
+            "StashMedicalQuantity" => StashMedicalQuantityHeight(width),
+            "StashGear" => StashGearHeight(width),
             "StashRewardProfile" => 398.0,
             "StaminaCore" => 323.0,
             "WaterStaminaPressure" => 171.0,
@@ -6757,6 +6575,17 @@ public sealed class AggregateVisualControl : FrameworkElement
             "AmmoDistribution" => 715.0,
             _ => 340.0
         };
+
+    // The same adaptive column thresholds drive both WPF Measure and Draw,
+    // so the last dial row is never clipped by the group host.
+    private static double StashContentMixHeight(double width)
+        => width >= 700.0 ? 431.0 : 616.0;
+    private static double StashMedicalCompositionHeight(double width)
+        => width >= 720.0 ? 224.0 : 392.0;
+    private static double StashMedicalQuantityHeight(double width)
+        => width >= 700.0 ? 252.0 : 450.0;
+    private static double StashGearHeight(double width)
+        => width >= 746.0 ? 270.0 : width >= 580.0 ? 485.0 : 698.0;
 
     // Renderer measurements and painted card extents must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)

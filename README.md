@@ -1,3 +1,5 @@
+**Stashes A+C visual redesign (2026-10-16):** Six always-visible category mixer knobs, compact Medical Composition detail dials and paired MIN/MAX knobs, plus Basic/Standard/Rare gear cards with independent Weapon/Armor dials. The existing Rewards graph, 26 stable source IDs, CFG behavior, presets and 45 reserved authored gear slots are unchanged. [Current visual lock](docs/UI-DESIGN-LOCK.md) · [implementation and pending local Wine visual test](docs/STASHES-TAB-AND-REDESIGN-PROPOSAL.md). Run `python tools/audit_stashes_mixer_ui.py` then `./publish.sh` to inspect.
+
 ## NEXT UP — Reserved stash gear and unique-weapon randomizer
 
 **45 exact authored gear/weapon stash entries (31 different SIDs, 41 physical stash actors) are RESERVED and intentionally untouched.** Future work: gear/attachment and unique/special weapon shuffle design. Do not conflate these with ordinary medical or guaranteed consumable items. [Visible 45-entry master queue](docs/generators/STASH-GEAR-UNIQUE-RANDOMIZATION-BACKLOG.md) · [machine-readable source slots](docs/generators/stash-gear-unique-randomization-backlog.csv).

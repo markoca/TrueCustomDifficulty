@@ -1,3 +1,16 @@
+## 2026-10-16 — A+C Stashes mixer visual acceptance (awaiting local Wine)
+
+Five original aggregate families and 26 `loot.*` sources remain; only four Stashes renderers were redesigned:
+`StashContentMix` six native knobs in 3×2/2×3,
+`StashMedicalComposition` four compact bias knobs in 4×1/2×2,
+`StashMedicalQuantity` two native MIN/MAX paired-knob cards in 2/1 columns,
+`StashGear` three Basic/Standard/Rare tier cards with a Weapon/Armor knob each in 3/2/1 columns.
+`StashRewardProfile` stays a six-row 398-DIP bar board.
+
+Run `python tools/audit_stashes_mixer_ui.py` to confirm source binding and renderer/measure parity before `./publish.sh` and Wine visual testing. At 920 and narrower control-panel widths inspect card bounds, reference and endpoint labels, selected focus/rationale, value center typography, mouse click/drag/wheel and keyboard precision. Right-click resets only the selected source; `R` resets the current family; opening, saving and reloading presets must preserve the same 26 numeric IDs. Especially check **MAX CAP 0 ITEMS** still maps to -1, while AUTO remains source 0; only modified digits become yellow, not units/mode names. Do not mistake a relative source `Weight` for a 0–100% stash drop rate. The new Gear panel is only for TCD-generated additional equipment, **not** the 45 reserved authored gear/unique weapon slots.
+
+**Verification status:** GitHub code/static source checks only until user builds; no Wine screenshot/compiled binary or in-game UI regression has been verified yet.
+
 **2026-10-16 — Direct stash consumables acceptance:** Reserve 45 weapon/gear source rows, implement only ten newly audited canonical medical rows in six ordinary WorldMap stash wrappers using existing Stash Content MEDICAL and individual medical selectors. `python tools/audit_regular_stash_consumables.py` checks exactly 45 unchanged gear slots, ten embedded medical source rows, nine deferred boosters and one unresolved lowercase `medkit`. Then `dotnet build tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release -r win-x64` and `./tests/run-wine.sh LootSpecialGeneratorsContract`; new CFG cases check 0x, 0.5x, per-item biases/max zero and **no direct patch assignment on any reserved gear/booster/case-review source item**. In-game test requires newly generated containers, and is not claimed passed. [Consumable contract](generators/REGULAR-STASH-DIRECT-CONSUMABLES-2026-10-16.md) · [gear shuffle backlog](generators/STASH-GEAR-UNIQUE-RANDOMIZATION-BACKLOG.md).
 
 **Richter Cabin MEDICAL 0x gameplay regression (2026-10-16):** The post-prologue Cabin BigSafe and SmallSafe each contain 1 hard-coded `Medkit` outside their 803-actor SmartLoot and ordinary Cheap generator overlays, resulting in exactly 2 medkits across 3 opened nearby containers even after the other medical rows were zeroed. New source-specific writer and `VerifyCabinDirectMedical` tests cover both originals, MEDICAL 0x, individual Medkit 0x, MAX=0 ITEMS, MEDICAL 0.5x and FOOD isolation. Run `python tools/audit_cabin_medkit_stash.py`, `./tests/run-wine.sh LootSpecialGeneratorsContract`, then test unopened/not-yet-generated Cabin safes in game. [Source details](generators/CABIN-DIRECT-MEDKITS-2026-10-16.md).
