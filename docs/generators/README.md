@@ -20,6 +20,7 @@ The runtime dump is treated as the source of truth for effective values. Inherit
 | `GENERATOR-TARGET-ALLOWLISTS.md` | human-readable strict single-domain candidate tables |
 | `GENERATOR-CONSUMER-CATALOG.md` | all 13,647 external consumer edges with exact generator, context, consumer, file, line and key |
 | `GENERATOR-BRANCH-CATALOG.md` | exact branch/entry table for every effective generator category and item/nested-generator row |
+| `SMARTLOOT-PRODUCTION-EXTENSION-2026-10-16.md` | exact 831-actor normal production SmartLoot redirect scope and 991 verbatim source item rows from user CFG dump, original rank/set/source semantics and 71 protected quest/unique/blueprint-linked actors; runtime validation still pending |
 | `STASH-REGULAR-CATEGORIES-AUDIT-2026-10-16.md` | full tracked standard item class source inventory: 17 GamePass cores/245 rows, 13 SmartLoot roots/991 item rows, production/quest/test boundary, missing consumer manifest; does NOT change gameplay |
 | `STASH-MEDICAL-ALL-SOURCE-AUDIT-2026-10-16.md` | consolidate 6 medical ItemGenerator stash cores, both untouched StashMedicine SmartLoot families, independent medical destructible pools and quest/NPC exclusions; separate verified source inventory from runtime effects |
 | `STASH-BACKBONE-AUDIT.md` | deep audit of Cheap/Medium/Expensive world-stash tier wrappers and shared core pools, exact item/Chance/Weight/count structure, footprint, mod cross-check and control-surface verdicts |

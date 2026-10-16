@@ -1,5 +1,9 @@
 # External tools
 
+## Reproduce regular-world stash allowlist from supplied CFG dump
+
+Run `python tools/audit_regular_stash_actor_dump.py "STALKER2-GameData-CFG(20261016-142306).zip" --output /tmp/ordinary-stashes.csv --excluded-output /tmp/special-stashes.csv`. The verified user dump contains 902 main-world SmartLoot ItemContainers: 831 ordinary candidates and 71 protected blueprint/unique/quest-linked actors. The corresponding source-backed actor list and all 991 `StashPrototypes.cfg` world item rows are now embedded resources in `src/TrueCustomDifficulty/Data/`. Run `python tools/audit_regular_stash_source_inventory.py` and Windows `tests/LootSpecialGeneratorsContract` to check source semantics; do not claim game success without runtime verification.
+
 ## Regular stash source inventory
 
 Run `python tools/audit_regular_stash_source_inventory.py` at the repository root to verify `tools/regular-stash-source-inventory.json` against the source-derived ItemGenerator and SmartLoot catalogs. This is a fail-closed source inventory for six regular stash categories (ammo, medical, food, drinks, grenades, coupons), **not** an active SmartLoot patch or a game runtime test. Source-level consumer edges must be added before introducing any actor-specific quest-safe CFG writer extensions.

@@ -404,7 +404,7 @@
         "consumerEdges": 46,
         "productionEdges": 46,
         "excludedOrUnresolvedEdges": 0,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": true
       },
       {
@@ -443,7 +443,7 @@
         "consumerEdges": 985,
         "productionEdges": 980,
         "excludedOrUnresolvedEdges": 5,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": false
       },
       {
@@ -492,7 +492,7 @@
         "consumerEdges": 20,
         "productionEdges": 19,
         "excludedOrUnresolvedEdges": 1,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": false
       },
       {
@@ -536,7 +536,7 @@
         "consumerEdges": 12,
         "productionEdges": 9,
         "excludedOrUnresolvedEdges": 3,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": false
       },
       {
@@ -580,7 +580,7 @@
         "consumerEdges": 3,
         "productionEdges": 3,
         "excludedOrUnresolvedEdges": 0,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": true
       },
       {
@@ -617,7 +617,7 @@
         "consumerEdges": 3,
         "productionEdges": 3,
         "excludedOrUnresolvedEdges": 0,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": true
       },
       {
@@ -654,7 +654,7 @@
         "consumerEdges": 2,
         "productionEdges": 2,
         "excludedOrUnresolvedEdges": 0,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": true
       },
       {
@@ -678,7 +678,7 @@
         "consumerEdges": 11,
         "productionEdges": 7,
         "excludedOrUnresolvedEdges": 4,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": false
       },
       {
@@ -707,7 +707,7 @@
         "consumerEdges": 5,
         "productionEdges": 4,
         "excludedOrUnresolvedEdges": 1,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": false
       },
       {
@@ -729,7 +729,7 @@
         "consumerEdges": 12,
         "productionEdges": 11,
         "excludedOrUnresolvedEdges": 1,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": false
       },
       {
@@ -750,7 +750,7 @@
         "consumerEdges": 5,
         "productionEdges": 5,
         "excludedOrUnresolvedEdges": 0,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": true
       },
       {
@@ -772,7 +772,7 @@
         "consumerEdges": 22,
         "productionEdges": 18,
         "excludedOrUnresolvedEdges": 4,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": false
       },
       {
@@ -796,7 +796,7 @@
         "consumerEdges": 1044,
         "productionEdges": 1036,
         "excludedOrUnresolvedEdges": 8,
-        "status": "not_in_tcd_writer",
+        "status": "tcd_production_actor_smartloot_clone",
         "productionOnlyGloballyShared": false
       }
     ]
@@ -841,5 +841,12 @@
       "Stash_AmmoSNG_Smart_MainLoot",
       "StashGrenade_Smart"
     ]
+  },
+  "currentProductionActorAllowlist": {
+    "sourceZipSha256": "937b3fb4c74d1311b6e052c010aa0795073ccdc60d2ca6d8b5228ee3ce0b6083",
+    "allOrdinaryCandidates": 902,
+    "excludedSpecial": 71,
+    "allowed": 831,
+    "smartLootItemRows": 991
   }
 }

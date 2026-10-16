@@ -155,6 +155,12 @@ public sealed partial class CfgPatchWriterService
             documents,
             writtenParameters);
 
+        editCount += WriteWorldStashSmartLoot(
+            modifiedById,
+            allById,
+            documents,
+            writtenParameters);
+
         editCount += WriteDestructibleAmmoProduction(
             baseline,
             modifiedById,

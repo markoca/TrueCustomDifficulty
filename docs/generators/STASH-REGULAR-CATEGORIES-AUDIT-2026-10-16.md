@@ -1,5 +1,8 @@
 # Regular stash sources for all ordinary loot categories (2026-10-16)
 
+**CURRENT 2026-10-16 — implemented after supplied CFG dump:** 991 SmartLoot item rows, 13 original world SmartLoot prototypes and 831 safe physical WorldMap_WP ItemContainer actor references from the user ZIP are now embedded and used for cloned per-actor SmartLoot production. 71 actors with Blueprint/Unique/Quest ItemGenerator references are excluded. The existing Stashes category and medical graphs drive both independent sources. No unique/quest source item rows are modified. Older notes below saying "no game patch" are historical. Runtime validation still required. [Current source/patch details](SMARTLOOT-PRODUCTION-EXTENSION-2026-10-16.md).
+
+
 **Source:** tracked STALKER 2 v2.0.5 CFG row catalogs. **Deliverable:** `tools/regular-stash-source-inventory.json` plus `tools/audit_regular_stash_source_inventory.py`. **Game patch status: NONE added in this inventory commit.** Current Basic/Standard/Rare ItemGenerator stash tuning remains exactly as before. No unique/quest/single-instance items or actor patches are introduced.
 
 ## What we found

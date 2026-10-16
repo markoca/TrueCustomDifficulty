@@ -66,6 +66,11 @@ assert "IsStashMedicalSourceInTier(id, tier)" in tuning
 assert writers.count("TuneStashMedicalCountField(") == 3
 assert 'supported.UnionWith(StashMedicalParameterIds);' in writers
 assert 'bias *= StashTuningCurrent(all, detailId, 1);' in tuning
+smartloot = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashSmartLoot.cs").read_text(encoding="utf-8")
+assert "WriteWorldStashSmartLoot(" in smartloot and "GetOrAddReferencedRoot(" in smartloot
+assert "StashPrototypeSID" in smartloot and "if (disabled)" in smartloot
+assert (root / "src/TrueCustomDifficulty/Data/smartloot-regular-world-actor-manifest.csv").is_file()
+assert (root / "src/TrueCustomDifficulty/Data/smartloot-world-source-entries.csv").is_file()
 assert "if (maxCap > 0)" in tuning and "min = max;" in tuning
 # Profile-driven medical suppression must not rely solely on a zero Chance or
 # Weight when a weighted category is left with no eligible positive weights.

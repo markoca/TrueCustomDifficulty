@@ -33,6 +33,10 @@ All project documentation lives under `docs/`. The repository root is intentiona
 - [Build-time crate reduction](CRATE-SPAWN-AUDIT.md)
 - [Master mapping](MASTER-MAPPING.md)
 
+## Current SmartLoot production extension (2026-10-16)
+
+- [Actual CFG-dump world SmartLoot extension](generators/SMARTLOOT-PRODUCTION-EXTENSION-2026-10-16.md) — 13 source prototypes / 991 exact rows / 831 regular item-container actors, plus 71 protected Blueprint/Unique/Quest-linked actors. Embedded source CSVs and .NET output tests; gameplay validation pending.
+
 ## Generator research
 
 - [Regular stash ordinary categories — ItemGenerator + SmartLoot inventory (2026-10-16)](generators/STASH-REGULAR-CATEGORIES-AUDIT-2026-10-16.md): 17 core generator SIDs, 13 SmartLoot generator SIDs, 2,143 production edges, explicit uniqueness/quest exclusions and missing manifest limitation. Source audit only, not gameplay changes.

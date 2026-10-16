@@ -53,7 +53,7 @@ for key, filename, column, exclude in (
             assert entry["excludedOrUnresolvedEdges"] == entry["consumerEdges"] - entry["productionEdges"], sid
             assert entry["rankCount"] == len({r[1] for r in source_rows}), sid
             assert entry["sourceGroupKinds"] == sorted({r[2] for r in source_rows}), sid
-            assert entry["status"] == "not_in_tcd_writer", sid
+            assert entry["status"] == "tcd_production_actor_smartloot_clone", sid
             summary["smartConsumers"] += entry["consumerEdges"]
             summary["smartProduction"] += entry["productionEdges"]
         summary[key + "Rows"] += len(source_rows)
@@ -74,6 +74,15 @@ params = {p["id"]: p for p in json.loads((ROOT / "src" / "TrueCustomDifficulty" 
 assert all(id in params and params[id]["tab"] == "stashes" for id in CONTROL.values())
 writer = (ROOT / "src" / "TrueCustomDifficulty" / "Services" / "CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
 assert "HasStashTuningChange" in writer and "StashMixParameterIds" in writer
-assert "StashPrototypes.cfg" not in writer, "Update inventory status when SmartLoot writer is implemented."
-print("PASS: 17 ItemGenerator cores / 245 rows; 13 world SmartLoot roots / 991 rows; 2143 production edges.")
-print("NOT VERIFIED: concrete actor-level SmartLoot redirects, runtime loot and special/quest actor behavior.")
+smart = (ROOT / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashSmartLoot.cs").read_text(encoding="utf-8")
+assert "WriteWorldStashSmartLoot(" in smart and "GetOrAddReferencedRoot(" in smart
+assert 'StashPrototypeSID", string.Join(",", mapped)' in smart
+assert doc["currentProductionActorAllowlist"]["allowed"] == 831
+assert doc["currentProductionActorAllowlist"]["excludedSpecial"] == 71
+for source, expected in [("smartloot-regular-world-actor-manifest.csv", 832), ("smartloot-world-source-entries.csv", 992)]:
+    assert len((ROOT / "src/TrueCustomDifficulty/Data" / source).read_text(encoding="utf-8").splitlines()) == expected
+
+print("PASS: 17 historic ItemGenerator cores / 245 source rows; 13 SmartLoot roots / 991 source rows.")
+print("PASS: current user CFG dump: 831 strict actor allowlist, 71 blueprint/unique/quest generator-linked actors excluded.")
+print("HISTORIC AUDIT ONLY: 2143 production edges from earlier snapshot; not an actor count for this supplied ZIP.")
+print("NOT VERIFIED: actual C# build, resulting UE5 CFG clone behavior, saved-stash generation or in-game effects.")

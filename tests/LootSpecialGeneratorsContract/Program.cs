@@ -96,6 +96,7 @@ internal static class Program
             Run("Veteran",false,new(){["loot.npcWeaponAmmoSupply"]=2.0},"corpse-ammo-absent");
             Check(Passed==63,"Expected 63 special Loot scenarios, got "+Passed);
             VerifyMedicalZeroExclusion();
+            VerifyWorldStashSmartLoot();
             Console.WriteLine($"PASS: {Passed} Loot SPECIAL generator and corpse writer scenarios plus 3 medical-zero production CFG scenarios");
             Console.WriteLine("NOT VERIFIED: original decoded CFG source values, world shuffle/removal writers, Unreal patch loading or gameplay");
             return 0;
@@ -226,6 +227,70 @@ internal static class Program
                         scenario.Name + ": failed to verify unchanged medical entries");
                 Console.WriteLine("PASS " + scenario.Name
                     + ": " + touched + " zeroed medical generator CFG fields");
+            }
+            finally
+            {
+                if (Keep is null && Directory.Exists(dir))
+                    Directory.Delete(dir, true);
+            }
+        }
+    }
+
+    static void VerifyWorldStashSmartLoot()
+    {
+        // This tests the exact generated CFG fields, not engine loot telemetry.
+        // No novel quest/blueprint ItemGenerator should be overwritten.
+        var cases = new[]
+        {
+            ("smart-medical-zero", "loot.stashMixMedical", 0.0,
+                "TCD_StashMedicine_Smart", "ConsumablesParams", "0", "0", "Weight"),
+            ("smart-bandage-zero", "loot.stashMedicalBandageBias", 0.0,
+                "TCD_StashMedicine_Smart", "ConsumablesParams", "1", "0", "Weight"),
+            ("smart-ammo-zero", "loot.stashMixAmmo", 0.0,
+                "TCD_Stash_Ammo_Smart_CommonRare", "PrimaryWeaponParams", "0", "0", "Weight"),
+            ("smart-food-zero", "loot.stashMixFood", 0.0,
+                "TCD_StashFood_Cheap", "ConsumablesParams", "0", "0", "Weight"),
+            ("smart-grenade-zero", "loot.stashMixGrenades", 0.0,
+                "TCD_StashGrenade_Smart", "GrenadesParams", "0", "0", "Chance")
+        };
+        foreach (var (name, id, value, prototype, group, set, item, field) in cases)
+        {
+            var dir = Path.Combine(Keep ?? Path.GetTempPath(), "TCD_SmartLoot_Source", name);
+            try
+            {
+                var vm = new MainViewModel(Catalog)
+                    { SelectedReferenceDifficulty = "Stalker" };
+                var p = vm.AllParameters.Single(x => x.Id == id);
+                p.SnapCurrentNumberToMarker(value);
+                Check(p.IsValueModifiedFromReference(), name + ": source did not change");
+                var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+                Check(result.ParameterCount == 1,
+                    name + ": unexpected modified parameter count");
+                var outp = ReadOutput(dir);
+                Check(outp.TryGetValue("GameData/StashPrototypes.cfg", out var smart),
+                    name + ": missing SmartLoot prototype patch");
+                Check(outp.TryGetValue("GameData/SpawnActorPrototypes.cfg", out var actors),
+                    name + ": missing filtered production actor redirects");
+                var prefix = prototype + "/ItemGenerators/[0]/SmartLootParams/"
+                    + group + "/[" + set + "]/Items/[" + item + "]/";
+                foreach (var key in new[] { field, "MinCount", "MaxCount" })
+                {
+                    Check(smart!.TryGetValue(prefix + key, out var n),
+                        name + ": absent SmartLoot source " + prefix + key);
+                    Check(Math.Abs(Num(n!)) < 0.0000001,
+                        name + ": source still positive " + prefix + key + "=" + n);
+                }
+                // A vanilla blueprint generator on this physical actor is not
+                // an approved ordinary target even when its SmartLoot is shared.
+                Check(!actors!.Keys.Any(x =>
+                    x.StartsWith("098E76F14ADD5CFF9C62508DB31013E3/",
+                        StringComparison.Ordinal)),
+                    name + ": unique blueprint actor was rewritten");
+                Check(actors.Keys.Any(x => x.EndsWith("/StashPrototypeSID",
+                    StringComparison.Ordinal) && x.Length >= 33),
+                    name + ": no normal world actors were redirected");
+                Console.WriteLine("PASS " + name
+                    + ": source-zero and filtered actor redirect");
             }
             finally
             {

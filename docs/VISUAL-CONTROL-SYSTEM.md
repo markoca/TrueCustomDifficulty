@@ -1,5 +1,8 @@
 ### 2026-10-16 — Top-left radiation mark spins during Build Difficulty
 
+**CURRENT 2026-10-16 — active SmartLoot source contract:** The five existing compact Stashes visual families are unchanged. Their source actions now include TCD_ clone edits in StashPrototypes.cfg for the 13 world SmartLoot prototypes represented by 991 exact source item entries, and actor-only StashPrototypeSID redirects on 831 safe WorldMap_WP ItemContainers from the uploaded CFG dump. All 71 blueprint/unique/quest-linked actor references remain unaffected; NPC corpse and destructible loot remain out of this domain. MEDICAL 0x suppresses both selection and counts in these source entries; original per-tier ItemGenerator behavior is retained. Native control layouts, current-value gold semantics and v1 profiles unchanged. In-game result and WPF build not confirmed. [Evidence](generators/SMARTLOOT-PRODUCTION-EXTENSION-2026-10-16.md).
+
+
 **CURRENT 2026-10-16 — MEDICAL 0x generated-CFG fail-safe:** In TCD regular Basic/Standard/Rare production stash clones, disabling general MEDICAL or an individual Bandage/Medkit/ArmyMedkit/AntiRad bias now sets both selection Chance/Weight and the item MinCount/MaxCount to 0; EcoMedkit follows general MEDICAL. VANILLA count bounds never override an explicit 0x exclusion. The UI source graph is unchanged. Existing populated, quest/scripted/CNPP/unredirected and third-party stash generators are outside this claim. Runtime game effect is not yet verified. Generator-output regression is enforced by LootSpecialGeneratorsContract and audit_stash_content_gear.py.
 
 

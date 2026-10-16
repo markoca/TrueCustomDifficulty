@@ -5860,12 +5860,27 @@ else:
         or _regular_stats.get("smartRows") != 991
         or _regular_stats.get("smartProductionEdges") != 2143
         or len(_regular_sources.get("smartLootWorld", [])) != 13
-        or any(x.get("status") != "not_in_tcd_writer"
+        or any(x.get("status") != "tcd_production_actor_smartloot_clone"
                for x in _regular_sources.get("smartLootWorld", []))):
         fail("Ordinary stash source inventory cardinality or writer-coverage labels drifted")
     else:
-        note("17 regular ItemGenerator core SIDs and 13 SmartLoot source SIDs cataloged separately from implemented CFG")
-        not_run("Run python tools/audit_regular_stash_source_inventory.py to re-parse tracked raw-row catalogs")
+        note("17 existing ItemGenerator cores; 13 SmartLoot source roots now cloned for 831 audited ordinary actors")
+        not_run("Recheck uploaded CFG actor-derived allowlist and .NET SmartLoot generated CFG acceptance")
+
+# Game source audit: actor allowlist and SmartLoot references must stay in sync.
+_smart_code = (ROOT / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashSmartLoot.cs").read_text(encoding="utf-8")
+_smart_test = (ROOT / "tests/LootSpecialGeneratorsContract/Program.cs").read_text(encoding="utf-8")
+_smart_actor = (DATA / "smartloot-regular-world-actor-manifest.csv").read_text(encoding="utf-8").splitlines()
+_smart_source = (DATA / "smartloot-world-source-entries.csv").read_text(encoding="utf-8").splitlines()
+_smart_proj = CSPROJ.read_text(encoding="utf-8")
+if (len(_smart_actor) != 832 or len(_smart_source) != 992
+    or not all(x in _smart_proj for x in ("smartloot-regular-world-actor-manifest.csv", "smartloot-world-source-entries.csv"))
+    or "GetOrAddReferencedRoot(" not in _smart_code
+    or "WriteWorldStashSmartLoot(" not in _smart_code
+    or "VerifyWorldStashSmartLoot();" not in _smart_test):
+    fail("Source-native SmartLoot production actor extension or test drifted")
+else:
+    note("SmartLoot: 991 real source entries; 13 native roots; 831 allowed normal actors; 71 special actors excluded")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
