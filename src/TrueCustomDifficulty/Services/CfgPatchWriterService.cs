@@ -969,7 +969,7 @@ public sealed partial class CfgPatchWriterService
         foreach (var redirect in LoadCheapStashRedirects(config.RedirectManifestResource))
         {
             if (!IsScopeApplicable(redirect.Scope, hasDlc1)
-                || !IsApprovedDlcStashTierRedirect(redirect.File, redirect.Prototype))
+                || !IsApprovedStashTierRedirect(redirect.File, redirect.Prototype, redirect.PhysicalContainerSid))
                 continue;
 
             var redirectDocument = GetDocument(documents, redirect.File);
@@ -1102,7 +1102,8 @@ public sealed partial class CfgPatchWriterService
                 columns[2].Trim(),
                 nodePath,
                 columns[4].Trim(),
-                columns[6].Trim()));
+                columns[6].Trim(),
+                columns[7].Trim()));
         }
 
         if (redirects.Count != 1271)
@@ -1120,7 +1121,8 @@ public sealed partial class CfgPatchWriterService
         string Prototype,
         IReadOnlyList<string> NodePath,
         string Key,
-        string TargetValue);
+        string TargetValue,
+        string PhysicalContainerSid);
 
     private static int WriteMediumStashAmmoProduction(
         CfgWriterBaseline baseline,
@@ -1163,7 +1165,7 @@ public sealed partial class CfgPatchWriterService
         foreach (var redirect in LoadMediumStashRedirects(config.RedirectManifestResource))
         {
             if (!IsScopeApplicable(redirect.Scope, hasDlc1)
-                || !IsApprovedDlcStashTierRedirect(redirect.File, redirect.Prototype))
+                || !IsApprovedStashTierRedirect(redirect.File, redirect.Prototype, redirect.PhysicalContainerSid))
                 continue;
 
             var redirectDocument = GetDocument(documents, redirect.File);
@@ -1273,7 +1275,8 @@ public sealed partial class CfgPatchWriterService
                 columns[2].Trim(),
                 nodePath,
                 columns[4].Trim(),
-                columns[6].Trim()));
+                columns[6].Trim(),
+                columns[7].Trim()));
         }
 
         if (redirects.Count != 450)
@@ -1291,7 +1294,8 @@ public sealed partial class CfgPatchWriterService
         string Prototype,
         IReadOnlyList<string> NodePath,
         string Key,
-        string TargetValue);
+        string TargetValue,
+        string PhysicalContainerSid);
 
     private static int WriteExpensiveStashProduction(
         CfgWriterBaseline baseline,
@@ -1349,7 +1353,7 @@ public sealed partial class CfgPatchWriterService
         foreach (var redirect in LoadExpensiveStashRedirects(config.RedirectManifestResource))
         {
             if (!IsScopeApplicable(redirect.Scope, hasDlc1)
-                || !IsApprovedDlcStashTierRedirect(redirect.File, redirect.Prototype))
+                || !IsApprovedStashTierRedirect(redirect.File, redirect.Prototype, redirect.PhysicalContainerSid))
                 continue;
 
             var redirectDocument = GetDocument(documents, redirect.File);
@@ -1472,7 +1476,8 @@ public sealed partial class CfgPatchWriterService
                 columns[2].Trim(),
                 nodePath,
                 columns[4].Trim(),
-                columns[6].Trim()));
+                columns[6].Trim(),
+                columns[7].Trim()));
         }
 
         if (redirects.Count != 305)
@@ -1490,7 +1495,8 @@ public sealed partial class CfgPatchWriterService
         string Prototype,
         IReadOnlyList<string> NodePath,
         string Key,
-        string TargetValue);
+        string TargetValue,
+        string PhysicalContainerSid);
 
     private static int WriteDestructibleAmmoProduction(
         CfgWriterBaseline baseline,

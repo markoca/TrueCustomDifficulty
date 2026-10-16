@@ -155,11 +155,58 @@ public sealed partial class CfgPatchWriterService
         return actors;
     }
 
-    // Existing tier redirects must never begin touching mixed/special DLC actors
-    // simply because their production manifest references a generic subpool.
-    private static bool IsApprovedDlcStashTierRedirect(string file, string actorSid)
-        => !file.Equals(DlcSmartLootActorFile, StringComparison.Ordinal)
-           || DlcActors.Value.Any(x => x.ActorSid == actorSid);
+    private const string BaseProtectedActorFile = "GameData/SpawnActorPrototypes.cfg";
+    private const string BaseProtectedActorResource =
+        "TrueCustomDifficulty.Data.base-stash-protected-actor-manifest.csv";
+
+    // All 106 protected WorldMap_WP ItemContainer roots from the exact base CFG:
+    // 77 special-generator actors (including 5 named clues) and 29 other
+    // named-clue actors. Do not redirect ANY ItemGeneratorSettings on them,
+    // even if a tier manifest also references an otherwise ordinary loot pool.
+    private static readonly Lazy<HashSet<string>> BaseProtectedStashActors =
+        new(LoadBaseProtectedStashActors);
+
+    private static HashSet<string> LoadBaseProtectedStashActors()
+    {
+        var entries = ReadStashCsv(BaseProtectedActorResource, 2);
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        var special = 0;
+        var named = 0;
+        var overlap = 0;
+        foreach (var entry in entries)
+        {
+            if (entry[0].Length != 32 || !entry[0].All(Uri.IsHexDigit)
+                || !ids.Add(entry[0]))
+                throw new InvalidDataException("Invalid or duplicate protected base stash actor SID");
+            switch (entry[1])
+            {
+                case "SPECIAL_GENERATOR": special++; break;
+                case "NAMED_CLUE": named++; break;
+                case "SPECIAL_GENERATOR_AND_NAMED_CLUE": overlap++; break;
+                default: throw new InvalidDataException("Unrecognized base stash protection reason");
+            }
+        }
+        if (ids.Count != 106 || special != 72 || named != 29 || overlap != 5
+            || !ids.Contains("098E76F14ADD5CFF9C62508DB31013E3")
+            || !ids.Contains("02E9BD8341141FEC43FBBB9B6E8F8891"))
+            throw new InvalidDataException(
+                "The exact 106-actor base world stash protection gate has drifted");
+        return ids;
+    }
+
+    // This guard is shared by every Basic/Standard/Rare ItemGenerator writer.
+    // It protects direct actor edits AND indirect wrapper generator paths,
+    // identified by the physical_container_sid column in all three manifests.
+    // SmartLoot independently uses its 803-actor positive allowlist.
+    private static bool IsApprovedStashTierRedirect(
+        string file, string actorSid, string physicalContainerSid)
+        // Wrapper ItemGeneratorPrototypes.cfg paths may be tied to a protected
+        // physical bag even when their prototype name is not an actor GUID.
+        => !BaseProtectedStashActors.Value.Contains(physicalContainerSid)
+           && (!file.Equals(BaseProtectedActorFile, StringComparison.OrdinalIgnoreCase)
+               || !BaseProtectedStashActors.Value.Contains(actorSid))
+           && (!file.Equals(DlcSmartLootActorFile, StringComparison.OrdinalIgnoreCase)
+               || DlcActors.Value.Any(x => x.ActorSid == actorSid));
 
     private static string? SmartStashSourceId(string itemSid) => itemSid switch
     {

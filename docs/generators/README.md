@@ -23,6 +23,7 @@ The runtime dump is treated as the source of truth for effective values. Inherit
 | `DLC1-STASH-REGULAR-PRODUCTION-2026-10-16.md` | Implemented DLC1 safe-source writer: 112 ordinary SmartLoot actors, six separate CheapNoFresh ItemGenerator redirects, 69 repaired Medium file paths and the unchanged UI/preset contract |
 | `DLC1-STASH-GENERIC-ITEM-AUDIT-2026-10-16.md` | standalone DLC1 actor census and generic source/path triage; links exact 196-row actor/source CSV, notes separate DLC1 patch-file scope and source-manifest target-path hazards |
 | `STASH-SAFE-EXPANSION-FOLLOWUP-2026-10-16.md` | follow-up actor-level audit from byte-identical 2026-10-16 dump: 803 active, 28 named-clue deferred, 71 special excluded, 227 ItemGenerator-manifested no-SmartLoot and 12 unresolved; links the 40-row deferred actor CSV |
+| `BASE-STASH-PROTECTED-ACTORS-2026-10-16.md` | Current whole-actor protection for 106 base WorldMap ItemContainers; tracks 30 redirected Basic/Standard/Rare manifest entries excluded at runtime |
 | `SMARTLOOT-PRODUCTION-EXTENSION-2026-10-16.md` | exact 831-actor normal production SmartLoot redirect scope and 991 verbatim source item rows from user CFG dump, original rank/set/source semantics and 71 protected quest/unique/blueprint-linked actors; runtime validation still pending |
 | `STASH-REGULAR-CATEGORIES-AUDIT-2026-10-16.md` | full tracked standard item class source inventory: 17 GamePass cores/245 rows, 13 SmartLoot roots/991 item rows, production/quest/test boundary, missing consumer manifest; does NOT change gameplay |
 | `STASH-MEDICAL-ALL-SOURCE-AUDIT-2026-10-16.md` | consolidate 6 medical ItemGenerator stash cores, both untouched StashMedicine SmartLoot families, independent medical destructible pools and quest/NPC exclusions; separate verified source inventory from runtime effects |
@@ -62,6 +63,8 @@ The runtime dump is treated as the source of truth for effective values. Inherit
 
 - `../../src/TrueCustomDifficulty/Data/dlc1-stash-eligible-actor-manifest.csv` — 112 exact DLC1 no-clue regular SmartLoot actor targets; only these may receive new DLC generic-source redirects.
 - `../../src/TrueCustomDifficulty/Data/cheap-no-fresh-stash-item-entries.csv` — 35 original source rows for the DLC1-only `TCD_GamePass_Stash_ItemGenerator_CheapNoFresh` clone.
+
+- `../../src/TrueCustomDifficulty/Data/base-stash-protected-actor-manifest.csv` — 106 source-audited protected WorldMap actor IDs, consumed by every tier redirect writer.
 
 ## Machine-readable files
 

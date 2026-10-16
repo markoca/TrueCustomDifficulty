@@ -1,3 +1,5 @@
+**Base stash blueprint/clue integrity regression (2026-10-16):** `LootSpecialGeneratorsContract` previously failed on `smart-medical-zero: unique blueprint actor was rewritten`; Rare's ordinary ItemGenerator manifest still targeted a mixed `GamePass_Stash_ItemGenerator_Rare` plus `Stash_Blueprint_APB_Upgrade_2` actor even though SmartLoot excluded it. A shared Basic/Standard/Rare writer gate now refuses 106 protected base-world actors, skipping 105 source-manifest redirects (30 direct, 75 indirect). Run `python tools/audit_base_stash_protection.py` (with optional `--source-zip` to independently verify the 106 actors), then `./tests/run-wine.sh LootSpecialGeneratorsContract` for generated-CFG protection across all 106, then actual ungenerated in-game stash testing. No claim of local Wine PASS before the user's rerun.
+
 
 ## 2026-10-16 — Linux Wine LootSpecial contract: fixed non-Loot baseline
 

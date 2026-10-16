@@ -94,6 +94,7 @@ internal static class Program
             Run("Novice",true,new(){["loot.npcWeaponAmmoSupply"]=2.0},"corpse-ammo-present-dlc");
             Run("Veteran",false,new(){["loot.npcWeaponAmmoSupply"]=2.0},"corpse-ammo-absent");
             Check(Passed==63,"Expected 63 special Loot scenarios, got "+Passed);
+            VerifyBaseTierRedirectProtection();
             VerifyFixedSleepRestoreBaseline();
             VerifyMedicalZeroExclusion();
             VerifyWorldStashSmartLoot();
@@ -338,13 +339,10 @@ internal static class Program
                     Check(Math.Abs(Num(n!)) < 0.0000001,
                         name + ": source still positive " + prefix + key + "=" + n);
                 }
-                // A vanilla blueprint generator on this physical actor is not
-                // an approved ordinary target even when its SmartLoot is shared.
-                Check(!actors!.Keys.Any(x =>
-                    x.StartsWith("098E76F14ADD5CFF9C62508DB31013E3/",
-                        StringComparison.Ordinal)),
-                    name + ": unique blueprint actor was rewritten");
-                Check(!actors.Keys.Any(k => k.StartsWith("02E9BD8341141FEC43FBBB9B6E8F8891/", StringComparison.Ordinal)), name + ": withheld named clue actor was redirected");
+                // Includes full ItemGenerator redirects in the same document,
+                // not just StashPrototypeSID leaves. The 106-actor exclusion
+                // must protect ALL fields of blueprints and named-clue stashes.
+                AssertProtectedBaseStashesUntouched(outp, name);
                 Check(actors.Keys.Any(x => x.EndsWith("/StashPrototypeSID",
                     StringComparison.Ordinal) && x.Length >= 33),
                     name + ": no normal world actors were redirected");
@@ -359,6 +357,99 @@ internal static class Program
         }
     }
 
+
+    // Protect the full actor, not just its StashPrototypeSID. A blueprint bag
+    // can have a normal Rare generator next to its special blueprint reward.
+    // The base-game tier manifests contain 30 such redirects; they must never
+    // enter BPatch output for an ordinary Stashes slider.
+    static readonly Lazy<HashSet<string>> BaseProtectedActorIds = new(() =>
+    {
+        var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
+        while (dir != null)
+        {
+            var file = Path.Combine(dir.FullName, "src", "TrueCustomDifficulty",
+                "Data", "base-stash-protected-actor-manifest.csv");
+            if (File.Exists(file))
+            {
+                var lines = File.ReadAllLines(file).Skip(1)
+                    .Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
+                var ids = lines.Select(line => line.Split(',')[0])
+                    .ToHashSet(StringComparer.Ordinal);
+                Check(lines.Length == 106 && ids.Count == 106
+                    && ids.Contains("098E76F14ADD5CFF9C62508DB31013E3")
+                    && ids.Contains("02E9BD8341141FEC43FBBB9B6E8F8891"),
+                    "Protected base-world actor manifest drift");
+                return ids;
+            }
+            dir = dir.Parent;
+        }
+        throw new FileNotFoundException("Missing base stash actor protection manifest");
+    });
+
+    static void AssertProtectedBaseStashesUntouched(
+        IReadOnlyDictionary<string, Dictionary<string, string>> generated,
+        string label)
+    {
+        if (generated.TryGetValue("GameData/SpawnActorPrototypes.cfg", out var actors))
+        {
+            var touched = actors.Keys.Where(key =>
+                BaseProtectedActorIds.Value.Contains(key.Split('/')[0])).ToArray();
+            Check(touched.Length == 0,
+                label + ": source-protected world stash actor redirect: "
+                + string.Join(", ", touched.Take(8)));
+        }
+
+        // A protected physical stash can ALSO be redirected indirectly through
+        // a named ItemGeneratorPrototypes wrapper. Check the precise real CFG
+        // leaf, not only its actor SID in SpawnActorPrototypes.cfg.
+        foreach (var name in new[] {
+            "cheapStashProduction", "mediumStashAmmoProduction",
+            "expensiveStashProduction" })
+        {
+            foreach (var row in Redirects(Special.GetProperty(name), includeDlc: true))
+            {
+                if (!BaseProtectedActorIds.Value.Contains(row.PhysicalContainerSid)
+                    || !generated.TryGetValue(row.File, out var emitted))
+                    continue;
+                var leaf = row.Prototype + "/" + row.NodePath.Replace(".", "/")
+                    + "/" + row.Key;
+                Check(!emitted.ContainsKey(leaf),
+                    label + ": protected " + name
+                    + " actor indirectly redirected through " + row.File + "|" + leaf);
+            }
+        }
+    }
+
+    static void VerifyBaseTierRedirectProtection()
+    {
+        var tiers = new[]
+        {
+            (Name: "cheapStashProduction", Direct: 2, Indirect: 10),
+            (Name: "mediumStashAmmoProduction", Direct: 17, Indirect: 26),
+            (Name: "expensiveStashProduction", Direct: 11, Indirect: 39)
+        };
+        foreach (var (name, direct, indirect) in tiers)
+        {
+            var manifest = Special.GetProperty(name);
+            var raw = Redirects(manifest, includeDlc: true).ToArray();
+            var safe = Redirects(manifest, includeDlc: true,
+                excludeProtectedActors: true).ToArray();
+            var guarded = raw.Where(row =>
+                BaseProtectedActorIds.Value.Contains(row.PhysicalContainerSid))
+                .ToArray();
+            Check(guarded.Count(row => row.File == "GameData/SpawnActorPrototypes.cfg")
+                    == direct && guarded.Length == direct + indirect,
+                name + ": direct/indirect protected source redirect counts changed");
+            Check(raw.Length >= safe.Length + guarded.Length,
+                name + ": physical actor protection was not applied");
+            Check(safe.All(row =>
+                !BaseProtectedActorIds.Value.Contains(row.PhysicalContainerSid)
+                && (row.File != "GameData/SpawnActorPrototypes.cfg"
+                    || !BaseProtectedActorIds.Value.Contains(row.Prototype))),
+                name + ": protected physical actor passed tier redirect gate");
+        }
+        Console.WriteLine("PASS base-world tier guard: 106 protected actors, 105 suppressed redirects (30 direct / 75 indirect)");
+    }
 
     // The machine roster is the sole DLC1 approval authority for generator
     // rewrites. Read it from the current source tree, not generated artifacts.
@@ -577,6 +668,7 @@ internal static class Program
             var actual=new CfgPatchWriterService().Write(vm,Catalog,
                 dlc?new GameInstallInfo{HasDlc1=true}:null,dir);
             var paths=ReadOutput(dir);
+            AssertProtectedBaseStashesUntouched(paths, label);
             var expected=new Dictionary<string,string>(StringComparer.Ordinal);
             var refs=new Dictionary<string,string>(StringComparer.Ordinal);
             void Add(string file,string path,string value)
@@ -647,16 +739,8 @@ internal static class Program
                         }
                     }
                 }
-                foreach(var row in Redirects(config,dlc))
-                {
-                    // DLC1 mixed/quest stashes may have a generic core alongside
-                    // authored unique rewards; production reroutes use the strict
-                    // 112-actor no-clue allowlist, not all manifest members.
-                    if(row.File=="DLCGameData/DLC1/SpawnActorPrototypes.cfg"
-                       && !DlcEligibleActorIds.Value.Contains(row.Prototype))
-                        continue;
+                foreach(var row in Redirects(config,dlc,excludeProtectedActors:true))
                     Add(row.File,row.Prototype+"/"+row.NodePath.Replace(".","/")+"/"+row.Key,row.Target);
-                }
             }
             void Medical(double multiplier)
             {
@@ -839,8 +923,10 @@ internal static class Program
     static int HalfUpZero(int source,double scale)=>Math.Max(0,(int)Math.Floor(source*scale+0.5));
     static double Num(string s)=>double.Parse(s.TrimEnd('f','F'),CultureInfo.InvariantCulture);
 
-    readonly record struct Redirect(string File,string Prototype,string NodePath,string Key,string Target);
-    static IEnumerable<Redirect> Redirects(JsonElement config,bool includeDlc)
+    readonly record struct Redirect(string File,string Prototype,string NodePath,
+                                    string Key,string Target,string PhysicalContainerSid);
+    static IEnumerable<Redirect> Redirects(JsonElement config,bool includeDlc,
+                                           bool excludeProtectedActors=false)
     {
         if(!config.TryGetProperty("redirectManifestResource",out var prop))
             yield break;
@@ -855,10 +941,20 @@ internal static class Program
         foreach(var line in lines.Skip(1).Where(x=>!string.IsNullOrWhiteSpace(x)))
         {
             var c=line.Split(',');
-            Check(c.Length>=7,"Wrong production CSV columns "+file);
+            Check(c.Length>=8,"Wrong production CSV columns "+file);
             if(!includeDlc && c[1].StartsWith("DLCGameData/",StringComparison.OrdinalIgnoreCase))
                 continue;
-            yield return new Redirect(c[1].Trim(),c[2].Trim(),c[3].Trim(),c[4].Trim(),c[6].Trim());
+            if(excludeProtectedActors)
+            {
+                if(BaseProtectedActorIds.Value.Contains(c[7])
+                   || c[1]=="GameData/SpawnActorPrototypes.cfg"
+                      && BaseProtectedActorIds.Value.Contains(c[2]))
+                    continue;
+                if(c[1]=="DLCGameData/DLC1/SpawnActorPrototypes.cfg"
+                   && !DlcEligibleActorIds.Value.Contains(c[2]))
+                    continue;
+            }
+            yield return new Redirect(c[1].Trim(),c[2].Trim(),c[3].Trim(),c[4].Trim(),c[6].Trim(),c[7].Trim());
         }
     }
 

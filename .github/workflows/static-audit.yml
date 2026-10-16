@@ -28,6 +28,9 @@ jobs:
       - name: Final 268-source CFG to actual BPatch writer route and factory-output audit
         run: python tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
 
+      - name: Protect blueprint and named-clue base stash actors across all tier writers
+        run: python tools/audit_base_stash_protection.py
+
       - name: Stash content, gear and medical composition/source-count contract
         run: python tools/audit_stash_content_gear.py
 
