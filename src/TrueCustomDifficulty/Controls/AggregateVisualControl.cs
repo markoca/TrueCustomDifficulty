@@ -2472,7 +2472,8 @@ public sealed class AggregateVisualControl : FrameworkElement
         int percentageSign = 0, bool rawReadout = false,
         string? nativeUnit = null, bool prominent = false,
         bool positivePrefix = true, string? secondaryReadout = null,
-        bool inlineNativeUnit = false, bool secondaryModified = false)
+        bool inlineNativeUnit = false, bool secondaryModified = false,
+        Brush? dialAccent = null, double dialScale = 1.0)
     {
         // All larger hero dials (Headshot, Starvation HP and Radiation HP)
         // raise ONLY the caption by 9 DIP to restore the ordinary knob's
@@ -2485,7 +2486,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             return;
 
         var center = new Point(card.Left + card.Width / 2, card.Top + 97.0);
-        var radius = Math.Min(WeaponKnobRadius * (prominent ? 1.18 : 1.0),
+        var radius = Math.Min(WeaponKnobRadius * (prominent ? 1.18 : 1.0) * dialScale,
             (card.Width - 24.0) / 2.0);
         var range = Math.Max(Epsilon, parameter.Maximum - parameter.Minimum);
         var position = Math.Clamp((parameter.CurrentNumber - parameter.Minimum) / range, 0.0, 1.0);
@@ -2493,6 +2494,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         var hovered = _hoverTarget?.Kind == HitKind.Knob
             && ReferenceEquals(_hoverTarget.Parameter, parameter);
         var active = parameter.IsControlEnabled;
+        var dialInk = dialAccent ?? accent;
         var face = CloneWithOpacity(panel, .96);
 
         // Industrial dial face and a 270-degree graduated rail, leaving the
@@ -2545,7 +2547,7 @@ public sealed class AggregateVisualControl : FrameworkElement
         if (position > Epsilon)
             DrawKnobArc(dc, center, radius, WeaponKnobStartAngle,
                 position * WeaponKnobSweepAngle,
-                new Pen(CloneWithOpacity(active ? accent : muted, active ? .94 : .35),
+                new Pen(CloneWithOpacity(active ? dialInk : muted, active ? .94 : .35),
                     prominent ? 7.0 : 6.0));
         var baselineAngle = WeaponKnobStartAngle + WeaponKnobSweepAngle * reference;
         dc.DrawLine(new Pen(muted, 2.4),
@@ -2554,15 +2556,15 @@ public sealed class AggregateVisualControl : FrameworkElement
 
         var angleNow = WeaponKnobStartAngle + position * WeaponKnobSweepAngle;
         if (hovered)
-            dc.DrawEllipse(CloneWithOpacity(accent, .13), null,
+            dc.DrawEllipse(CloneWithOpacity(dialInk, .13), null,
                 center, radius - 11, radius - 11);
-        dc.DrawLine(new Pen(hovered ? Brushes.White : active ? accent : muted,
+        dc.DrawLine(new Pen(hovered ? Brushes.White : active ? dialInk : muted,
                 hovered ? 3.0 : 2.4),
             KnobPoint(center, radius - 8, angleNow),
             KnobPoint(center, radius + 3, angleNow));
         // A tiny mechanical pointer rivet follows the current source position.
         // Base stays represented solely by its original muted tick.
-        dc.DrawEllipse(active ? CloneWithOpacity(accent, .82) : CloneWithOpacity(muted, .35),
+        dc.DrawEllipse(active ? CloneWithOpacity(dialInk, .82) : CloneWithOpacity(muted, .35),
             null, KnobPoint(center, radius + 2.0, angleNow), 1.7, 1.7);
 
         var modified = active && parameter.IsValueModifiedFromReference();
@@ -4534,6 +4536,19 @@ public sealed class AggregateVisualControl : FrameworkElement
     // The Medical dial uses the SAME source parameter as the detail banks
     // directly below; changing its value instantly updates their effective
     // generator weights without inventing a fictitious drop percentage.
+    // Shared category identity for the six-source Stashes mixer. Keep rings,
+    // pointers, stacked preview segments and legend swatches in EXACTLY the
+    // same order/brushes. The modified-value NUMBERS still use global gold.
+    private static readonly Brush[] StashMixPalette =
+    {
+        new SolidColorBrush(Color.FromRgb(0xF4, 0xC1, 0x3C)), // Ammo: gold
+        new SolidColorBrush(Color.FromRgb(0x53, 0xCC, 0x9F)), // Medical: mint
+        new SolidColorBrush(Color.FromRgb(0xF0, 0x93, 0x4D)), // Food: amber
+        new SolidColorBrush(Color.FromRgb(0x67, 0xB6, 0xE7)), // Drinks: blue
+        new SolidColorBrush(Color.FromRgb(0xE9, 0x68, 0x64)), // Grenades: coral
+        new SolidColorBrush(Color.FromRgb(0xB6, 0x96, 0xE9))  // Coupons: violet
+    };
+
     private void DrawStashContentMix(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -4548,41 +4563,44 @@ public sealed class AggregateVisualControl : FrameworkElement
             ("loot.stashMixGrenades", "GRENADES"),
             ("loot.stashMixCoupons", "COUPONS")
         };
-        var columns = ActualWidth >= 700.0 ? 3 : 2;
+        // One centered line at all supported panel widths, no tile/frame.
+        // Size hierarchy: Ammo/Medical hero, Food/Drinks medium, remaining
+        // two smaller. Allocate the wider hit regions with the wider dials.
+        var sizeWeights = new[] { 1.28, 1.28, 1.05, 1.05, .92, .92 };
+        var dialScales = new[] { 1.24, 1.24, .98, .98, .78, .78 };
         var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
         var left = (ActualWidth - width) / 2.0;
-        const double gap = 11.0;
-        const double pitchY = 186.0;
-        const double cardTop = 49.0;
-        const double cardHeight = 176.0;
-        var cell = (width - gap * (columns - 1)) / columns;
+        const double gap = 8.0;
+        var available = Math.Max(1.0, width - gap * (entries.Length - 1));
+        var totalWeight = sizeWeights.Sum();
+        var cursor = left;
         for (var i = 0; i < entries.Length; i++)
         {
-            var col = i % columns;
-            var row = i / columns;
-            var card = new Rect(left + col * (cell + gap),
-                cardTop + row * pitchY, cell, cardHeight);
+            var cell = available * sizeWeights[i] / totalWeight;
+            var card = new Rect(cursor, 49.0, cell, 176.0);
             var source = P(entries[i].Id);
-            var focused = source is not null && ReferenceEquals(_selectedParameter, source);
-            var hover = source is not null &&
+            var focused = source is not null &&
+                ReferenceEquals(_selectedParameter, source);
+            var hovered = source is not null &&
                 ReferenceEquals(_hoverTarget?.Parameter, source);
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, focused ? .77 : .56),
-                new Pen(CloneWithOpacity(focused || hover ? accent : border,
-                    focused ? .73 : .37), focused ? 1.35 : .85),
-                card, 5.0, 5.0);
+            if (focused || hovered)
+                dc.DrawLine(new Pen(CloneWithOpacity(StashMixPalette[i],
+                        focused ? .92 : .65), focused ? 2.0 : 1.2),
+                    new Point(card.Left + cell * .28, card.Top + 37.0),
+                    new Point(card.Right - cell * .28, card.Top + 37.0));
             DrawSourceKnob(dc, source, entries[i].Label, card,
-                text, muted, border, accent, panel);
+                text, muted, border, accent, panel,
+                dialAccent: StashMixPalette[i], dialScale: dialScales[i]);
+            cursor += cell + gap;
         }
 
-        // Live, read-only balance of the six independent tuning multipliers.
-        // These categories have different underlying generator bases: the
-        // normalized settings are NOT measured stash composition or drop odds.
-        var previewTop = cardTop + ((entries.Length + columns - 1) / columns - 1)
-            * pitchY + cardHeight + 10.0;
-        var previewHeight = columns == 3 ? 105.0 : 130.0;
+        // Same six colors and order as the source dials. Percentages show
+        // only NORMALIZED EDITED MULTIPLIERS, not real loot/drop odds.
+        var legendColumns = ActualWidth >= 700.0 ? 6 : 3;
+        var previewHeight = legendColumns == 6 ? 105.0 : 130.0;
         DrawStashBiasPreview(dc, entries,
-            new Rect(left, previewTop, width, previewHeight),
-            columns == 3 ? 6 : 3, text, muted, border, accent, panel);
+            new Rect(left, 237.0, width, previewHeight), legendColumns,
+            text, muted, border, accent, panel);
     }
 
     // Medical biases are source-editable tracks; a separate, noninteractive
@@ -4802,6 +4820,11 @@ public sealed class AggregateVisualControl : FrameworkElement
             Math.Max(0.0, P(e.Id)?.CurrentNumber ?? 0.0)).ToArray();
         var sum = weights.Sum();
         var tones = new[] { .96, .81, .67, .54, .42, .29 };
+        var isContentMix = entries.Length == 6
+            && entries[0].Id == "loot.stashMixAmmo";
+        Brush CategoryBrush(int index) => isContentMix
+            ? StashMixPalette[index]
+            : CloneWithOpacity(accent, tones[index]);
         var cursor = bar.Left;
         for (var i = 0; i < entries.Length; i++)
         {
@@ -4810,18 +4833,16 @@ public sealed class AggregateVisualControl : FrameworkElement
                 ? Math.Max(0.0, bar.Right - cursor)
                 : bar.Width * share;
             if (w > Epsilon)
-                dc.DrawRectangle(CloneWithOpacity(accent, tones[i]), null,
+                dc.DrawRectangle(CategoryBrush(i), null,
                     new Rect(cursor, bar.Top, w, bar.Height));
             cursor += w;
         }
-        var rows = (entries.Length + columns - 1) / columns;
         for (var i = 0; i < entries.Length; i++)
         {
-            var source = P(entries[i].Id);
             var x = card.Left + 11.0 +
                 (i % columns) * (card.Width - 22.0) / columns;
             var y = card.Top + 52.0 + (i / columns) * 26.0;
-            dc.DrawRectangle(CloneWithOpacity(accent, tones[i]), null,
+            dc.DrawRectangle(CategoryBrush(i), null,
                 new Rect(x, y + 3.0, 8.0, 8.0));
             DrawText(dc, entries[i].Label, new Point(x + 12.0, y),
                 columns == 6 ? 8.8 : 9.5, text, FontWeights.SemiBold);
@@ -6684,7 +6705,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     // The same adaptive column thresholds drive both WPF Measure and Draw,
     // so the last dial row is never clipped by the group host.
     private static double StashContentMixHeight(double width)
-        => width >= 700.0 ? 550.0 : 754.0;
+        => width >= 700.0 ? 360.0 : 385.0;
     private static double StashMedicalCompositionHeight(double width)
         => 373.0;
     private static double StashMedicalQuantityHeight(double width)

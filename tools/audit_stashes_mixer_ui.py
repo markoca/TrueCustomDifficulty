@@ -92,10 +92,22 @@ assert "AddHorizontalTarget" not in preview and "AddRangeTarget" not in preview
 assert "DrawStashNumericReadout" not in preview  # derived % always neutral
 
 # Same breakpoints and measured last-card clearance as renderers.
-assert "ActualWidth >= 700.0 ? 3 : 2" in content
+assert "var sizeWeights = new[] { 1.28, 1.28, 1.05, 1.05, .92, .92 };" in content
+assert "var dialScales = new[] { 1.24, 1.24, .98, .98, .78, .78 };" in content
+assert "var legendColumns = ActualWidth >= 700.0 ? 6 : 3;" in content
+assert "dialAccent: StashMixPalette[i], dialScale: dialScales[i]" in content
+assert "DrawRoundedRectangle" not in content  # no per-knob bounding boxes
+assert "var card = new Rect(cursor, 49.0, cell, 176.0);" in content
+assert "new Rect(left, 237.0, width, previewHeight)" in content
+assert "var dialInk = dialAccent ?? accent;" in source
+assert "new SolidColorBrush(Color.FromRgb(" in source
+assert source.count("new SolidColorBrush(Color.FromRgb(") >= 6
+assert "var isContentMix = entries.Length == 6" in preview
+assert "StashMixPalette[index]" in preview
+assert "CategoryBrush(i)" in preview
 assert "ActualWidth >= 700.0 ? 2 : 1" in quantity
 assert "ActualWidth >= 746.0 ? 3 : ActualWidth >= 580.0 ? 2 : 1" in gear
-assert "=> width >= 700.0 ? 550.0 : 754.0;" in source
+assert "=> width >= 700.0 ? 360.0 : 385.0;" in source
 assert "=> 373.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -104,6 +116,7 @@ assert "DrawStashNumericReadout(dc, display" in source
 
 for name, doc in [("UI-DESIGN-LOCK", lock), ("VISUAL-CONTROL-SYSTEM", system),
                   ("STASHES-TAB-AND-REDESIGN-PROPOSAL", proposal)]:
+    assert "STASH CONTENT MIX SINGLE-ROW COLOR-KEYED DIALS" in doc, name
     assert "STASHES MIXED CONTROLS + LIVE BIAS FEEDBACK" in doc, name
     assert "NOT" in doc and "drop" in doc.lower(), name
 
