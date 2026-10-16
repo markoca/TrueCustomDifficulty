@@ -25,10 +25,10 @@ jobs:
       - name: Active UI-to-CFG contract
         run: python tools/audit_ui_cfg_contract.py
 
-      - name: Final 260-source CFG to actual BPatch writer route and factory-output audit
+      - name: Final 268-source CFG to actual BPatch writer route and factory-output audit
         run: python tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
 
-      - name: Stash contents and gear source contract
+      - name: Stash content, gear and medical composition/source-count contract
         run: python tools/audit_stash_content_gear.py
 
       - name: Whole-project active source consistency
@@ -333,7 +333,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-      - name: Exercise all 247 player-editable native CFG source IDs through production writer
+      - name: Exercise all 255 player-editable native CFG source IDs through production writer
         shell: pwsh
         run: dotnet run --project tests/AllControlsPatchContract/AllControlsPatchContract.csproj -c Release
 

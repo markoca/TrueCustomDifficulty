@@ -1048,6 +1048,38 @@
     "loot.stashGearExpensiveArmor": {
       "kind": "slider",
       "number": 0
+    },
+    "loot.stashMedicalBandageBias": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMedicalMedkitBias": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMedicalArmyMedkitBias": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMedicalAntiRadBias": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMedkitMinCount": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.stashMedkitMaxCount": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.stashArmyMedkitMinCount": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.stashArmyMedkitMaxCount": {
+      "kind": "slider",
+      "number": 0
     }
   }
 }

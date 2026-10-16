@@ -17,6 +17,14 @@ public sealed partial class CfgPatchWriterService
         "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons"
     };
 
+    private static readonly string[] StashMedicalParameterIds =
+    {
+        "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
+        "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
+        "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
+        "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"
+    };
+
     private static readonly string[] StashGearParameterIds =
     {
         "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor",
@@ -24,9 +32,21 @@ public sealed partial class CfgPatchWriterService
         "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"
     };
 
+    private static bool IsStashMedicalSourceInTier(string parameterId, string tier)
+        // ArmyMedkit and AntiRad are authored only in the Rare source template.
+        // Do not generate unrelated Basic/Standard clone redirects for them.
+        => tier == "Expensive"
+            || parameterId is not (
+                "loot.stashMedicalArmyMedkitBias"
+                or "loot.stashMedicalAntiRadBias"
+                or "loot.stashArmyMedkitMinCount"
+                or "loot.stashArmyMedkitMaxCount");
+
     private static bool HasStashTuningChange(
         IReadOnlyDictionary<string, ParameterViewModel> modified, string tier)
         => StashMixParameterIds.Any(modified.ContainsKey)
+           || StashMedicalParameterIds.Any(id =>
+               IsStashMedicalSourceInTier(id, tier) && modified.ContainsKey(id))
            || modified.ContainsKey($"loot.stashGear{tier}Weapon")
            || modified.ContainsKey($"loot.stashGear{tier}Armor");
 
@@ -59,6 +79,18 @@ public sealed partial class CfgPatchWriterService
         if (biasId is null)
             return currentRaw;
         var bias = StashTuningCurrent(all, biasId, 1);
+        // Global medical bias and per-item factor compose, rather than
+        // changing the chances or weights of every medkit as one group.
+        var detailId = itemSid switch
+        {
+            "Bandage" => "loot.stashMedicalBandageBias",
+            "Medkit" => "loot.stashMedicalMedkitBias",
+            "ArmyMedkit" => "loot.stashMedicalArmyMedkitBias",
+            "AntiRad" => "loot.stashMedicalAntiRadBias",
+            _ => null
+        };
+        if (detailId is not null)
+            bias *= StashTuningCurrent(all, detailId, 1);
         if (Math.Abs(bias - 1) < 0.0000001)
             return currentRaw;
         var source = ParseNumber(currentRaw);
@@ -70,12 +102,56 @@ public sealed partial class CfgPatchWriterService
         return FormatLikeSource(tuned, currentRaw);
     }
 
+    private static string TuneStashMedicalCountField(
+        IReadOnlyDictionary<string, string> source, string field,
+        string raw, IReadOnlyDictionary<string, ParameterViewModel> all)
+    {
+        if (field is not ("MinCount" or "MaxCount")
+            || !source.TryGetValue("ItemPrototypeSID", out var sid)
+            || sid is not ("Medkit" or "ArmyMedkit"))
+            return raw;
+        var minFloor = (int)Math.Round(StashTuningCurrent(
+            all, $"loot.stash{sid}MinCount", 0));
+        var maxCap = (int)Math.Round(StashTuningCurrent(
+            all, $"loot.stash{sid}MaxCount", 0));
+        if (minFloor == 0 && maxCap == 0)
+            return raw;
+
+        if (!source.TryGetValue("MinCount", out var originalMinRaw)
+            || !source.TryGetValue("MaxCount", out var originalMaxRaw)
+            || !int.TryParse(originalMinRaw, NumberStyles.Integer,
+                CultureInfo.InvariantCulture, out var sourceMin)
+            || !int.TryParse(originalMaxRaw, NumberStyles.Integer,
+                CultureInfo.InvariantCulture, out var sourceMax))
+            throw new InvalidDataException(
+                $"Source stash {sid} has missing/invalid MinCount or MaxCount.");
+        if (sourceMin < 0 || sourceMax < sourceMin)
+            throw new InvalidDataException($"Invalid source stash {sid} count bounds.");
+
+        // Positive values are a minimum floor or maximum cap; 0 is AUTO,
+        // not an instruction to put zero medical items in a stash.
+        var min = minFloor > 0 ? Math.Max(sourceMin, minFloor) : sourceMin;
+        var max = maxCap > 0 ? Math.Min(sourceMax, maxCap) : sourceMax;
+        if (min > max)
+        {
+            if (maxCap > 0)
+                min = max;  // explicit cap wins
+            else
+                max = min;  // requested floor extends a lower source maximum
+        }
+        return (field == "MinCount" ? min : max)
+            .ToString(CultureInfo.InvariantCulture);
+    }
+
     private static void MarkModifiedStashTuning(
         IReadOnlyDictionary<string, ParameterViewModel> modified,
         string tier, ISet<string> written)
     {
         foreach (var id in StashMixParameterIds)
             if (modified.ContainsKey(id)) written.Add(id);
+        foreach (var id in StashMedicalParameterIds)
+            if (IsStashMedicalSourceInTier(id, tier) && modified.ContainsKey(id))
+                written.Add(id);
         foreach (var suffix in new[] { "Weapon", "Armor" })
         {
             var id = $"loot.stashGear{tier}{suffix}";

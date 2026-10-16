@@ -1,5 +1,24 @@
 # True Custom Difficulty — kompletna ručna QA checklista
 
+## CURRENT 2026-10-16 — 8 new medical stash source controls
+
+**Current catalog snapshot:** 268 parameter definitions, 168 visible exposed source IDs, 100 hidden definitions, 255 player-editable source IDs (13 audit-only). Historical sections below preserve their original date-scoped counts. These eight sources must each pass V (visual), I (interaction), P (preset), B (CFG), G (gameplay/pending).
+
+**MEDICAL LOOT COMPOSITION** (0–3x, 0.25x, 1x neutral):
+- [ ] Bandages `loot.stashMedicalBandageBias`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Medkits `loot.stashMedicalMedkitBias`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Army Medkits `loot.stashMedicalArmyMedkitBias`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Anti-Rad `loot.stashMedicalAntiRadBias`: V[ ] I[ ] P[ ] B[ ] G[ ]
+
+**MEDKIT QUANTITY** (AUTO=0, MIN FLOOR/MAX CAP=1..6, source stack count):
+- [ ] Medkit MIN FLOOR `loot.stashMedkitMinCount`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Medkit MAX CAP `loot.stashMedkitMaxCount`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Army Medkit MIN FLOOR `loot.stashArmyMedkitMinCount`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Army Medkit MAX CAP `loot.stashArmyMedkitMaxCount`: V[ ] I[ ] P[ ] B[ ] G[ ]
+
+Extra regression: [ ] no Medkit in missing branches is invented; [ ] Medic/Army cap 1 emits 1–1 where source >1; [ ] a global MEDICAL x0 cannot be canceled by individual x3; [ ] original 260-ID user presets preserve all existing values and default the eight new sources; [ ] only exact pristine 260-ID factory JSON files auto-upgrade; [ ] unchanged Rare Ammo setting does not leak into a medical-only clone; [ ] 1271/450/305 manifests preserved; [ ] in-game freshly spawned stashes sampled before setting gameplay PASS. See [STASH-MEDICAL-COMPOSITION.md](STASH-MEDICAL-COMPOSITION.md).
+
+
 ## 2026-10-16 — New stash systems (12 additional active source controls)
 
 **Live inventory is now 260 catalogued / 250 instantiated ParameterViewModel sources (160 exposed anchors / 90 backing composite members, 10 non-instantiated)**, replacing the preceding 248/238 historical checklist snapshot. The original individual 238 rows below remain valid for previous controls. In addition, test all 12 new rows using the same **V (visual), I (interaction), P (preset), B (CFG build), G (gameplay)** test axes.

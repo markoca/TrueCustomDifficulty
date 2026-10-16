@@ -125,8 +125,8 @@ internal static class Program
         var specials=defs.Where(x=>!direct.Contains(x.Id)).Select(x=>x.Id).ToHashSet(StringComparer.Ordinal);
         var ours=ScalarIds.Concat(new[]{"loot.npcCorpseBonus","loot.npcWeaponAmmoSupply"})
             .ToHashSet(StringComparer.Ordinal);
-        Check(defs.Length==40 && direct.Count==16 && specials.Count==24
-            && ours.IsSubsetOf(specials),"Loot taxonomy changed: 16 direct, 24 special, 14 selected generator inputs");
+        Check(defs.Length==61 && direct.Count==16 && specials.Count==45
+            && ours.IsSubsetOf(specials),"Loot taxonomy changed: 16 direct, 45 special, 14 legacy generator inputs; 8 new source-native medical editors");
         var mounted=new MainViewModel(Catalog).AllParameters;
         Check(ours.All(id=>mounted.Any(x=>x.Id==id && x.IsControlEnabled)),
             "A generator source is not in the actual ViewModel");

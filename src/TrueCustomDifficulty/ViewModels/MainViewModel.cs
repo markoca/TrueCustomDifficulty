@@ -530,6 +530,22 @@ public sealed class MainViewModel : ObservableObject
             "loot.stashMixGrenades",
             "loot.stashMixCoupons");
 
+        // One native relative-bias chart for actual medical ItemPrototypeSIDs
+        // and one separate Medkit/Army stack floor/cap editor (0 = AUTO).
+        WireVisualAggregate(
+            "loot.stashMedicalBandageBias",
+            "loot.stashMedicalBandageBias",
+            "loot.stashMedicalMedkitBias",
+            "loot.stashMedicalArmyMedkitBias",
+            "loot.stashMedicalAntiRadBias");
+
+        WireVisualAggregate(
+            "loot.stashMedkitMinCount",
+            "loot.stashMedkitMinCount",
+            "loot.stashMedkitMaxCount",
+            "loot.stashArmyMedkitMinCount",
+            "loot.stashArmyMedkitMaxCount");
+
         WireVisualAggregate(
             "loot.stashGearCheapWeapon",
             "loot.stashGearCheapWeapon",
@@ -2058,6 +2074,14 @@ public sealed class MainViewModel : ObservableObject
                 "loot.stashMixDrinks" => 313,
                 "loot.stashMixGrenades" => 314,
                 "loot.stashMixCoupons" => 315,
+                "loot.stashMedicalBandageBias" => 316,
+                "loot.stashMedicalMedkitBias" => 317,
+                "loot.stashMedicalArmyMedkitBias" => 318,
+                "loot.stashMedicalAntiRadBias" => 319,
+                "loot.stashMedkitMinCount" => 326,
+                "loot.stashMedkitMaxCount" => 327,
+                "loot.stashArmyMedkitMinCount" => 328,
+                "loot.stashArmyMedkitMaxCount" => 329,
                 "loot.stashGearCheapWeapon" => 320,
                 "loot.stashGearCheapArmor" => 321,
                 "loot.stashGearMediumWeapon" => 322,

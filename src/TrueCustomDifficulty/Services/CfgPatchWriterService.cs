@@ -311,6 +311,7 @@ public sealed partial class CfgPatchWriterService
         supported.Add("loot.blueprintShuffle");
         supported.Add("loot.looseWorldLootRemoved");
         supported.UnionWith(StashMixParameterIds);
+        supported.UnionWith(StashMedicalParameterIds);
         supported.UnionWith(StashGearParameterIds);
         // An exact manifest-backed special route, not a fictional direct CFG leaf.
         var uniqueShuffleRoute = baseline.Special.LooseUniqueWeaponShuffle;
@@ -1025,8 +1026,11 @@ public sealed partial class CfgPatchWriterService
                             value = grenadeQuantity.ToString(CultureInfo.InvariantCulture);
                     }
 
-                    item.SetAssignment(field.Key, TuneStashSelectionField(
-                        itemDefinition.Fields["ItemPrototypeSID"], field.Key, value, allById));
+                    var itemSid = itemDefinition.Fields["ItemPrototypeSID"];
+                    value = TuneStashSelectionField(itemSid, field.Key, value, allById);
+                    value = TuneStashMedicalCountField(
+                        itemDefinition.Fields, field.Key, value, allById);
+                    item.SetAssignment(field.Key, value);
                     edits++;
                 }
             }
@@ -1198,8 +1202,11 @@ public sealed partial class CfgPatchWriterService
                             value = ScalePositiveInteger(ammoEntry.SourceMaxCount, ammoMultiplier).ToString(CultureInfo.InvariantCulture);
                     }
 
-                    item.SetAssignment(field.Key, TuneStashSelectionField(
-                        itemDefinition.Fields["ItemPrototypeSID"], field.Key, value, allById));
+                    var itemSid = itemDefinition.Fields["ItemPrototypeSID"];
+                    value = TuneStashSelectionField(itemSid, field.Key, value, allById);
+                    value = TuneStashMedicalCountField(
+                        itemDefinition.Fields, field.Key, value, allById);
+                    item.SetAssignment(field.Key, value);
                     edits++;
                 }
             }
@@ -1315,7 +1322,8 @@ public sealed partial class CfgPatchWriterService
             edits += WriteExpensiveStashTemplate(
                 root,
                 config,
-                ammoParameter.CurrentNumber,
+                modifiedById.ContainsKey(config.AmmoQuantityParameterId)
+                    ? ammoParameter.CurrentNumber : 1.0,
                 couponChanged ? couponParameter?.CurrentNumber : null,
                 difficultySid,
                 allById);
@@ -1392,8 +1400,11 @@ public sealed partial class CfgPatchWriterService
                         value = FormatNumber(couponChance.Value);
                     }
 
-                    item.SetAssignment(field.Key, TuneStashSelectionField(
-                        itemDefinition.Fields["ItemPrototypeSID"], field.Key, value, allById));
+                    var itemSid = itemDefinition.Fields["ItemPrototypeSID"];
+                    value = TuneStashSelectionField(itemSid, field.Key, value, allById);
+                    value = TuneStashMedicalCountField(
+                        itemDefinition.Fields, field.Key, value, allById);
+                    item.SetAssignment(field.Key, value);
                     edits++;
                 }
             }

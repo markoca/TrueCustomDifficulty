@@ -1,5 +1,13 @@
 ### 2026-10-16 — Top-left radiation mark spins during Build Difficulty
 
+## CURRENT 2026-10-16 — Medical stash charts and source-native stack bounds
+
+In Loot, keep `StashContentMix` (six-row shared-scale graph) and `StashGear` (Basic/Standard/Rare × Weapon/Armor dot plot) unchanged; insert the following independently wired visual families with compact top/bottom typography:
+- **`StashMedicalComposition`** — anchor `loot.stashMedicalBandageBias` and backing members `loot.stashMedical{Medkit,ArmyMedkit,AntiRad}Bias`; 304-DIP four-bar shared 0x..3x axis with muted 1x reference. Individual 0.25x native snap. This graph is *not* a 0–100% inventory simulation. All four are independently selectable source-backed `Weight`/`Chance` multipliers.
+- **`StashMedicalQuantity`** — anchor `loot.stashMedkitMinCount` and backing members `loot.stashMedkitMaxCount`, `loot.stashArmyMedkitMinCount`, `loot.stashArmyMedkitMaxCount`; 257-DIP two-row/two-column native tracks, clearly labeled MEDKITS / ARMY MEDKITS × MIN FLOOR / MAX CAP. Numeric 0 is visibly `AUTO` and means retain original source `MinCount`/`MaxCount`; 1..6 are floors/caps. If both are enabled and conflict, MAX CAP wins. Clicking one slider modifies only its one persistent ID.
+Both use source-based `CurrentNumber`, `AddHorizontalTarget` and the existing reset/preset/modified-color contracts; no duplicate standalone row for visual members, no golden vanilla labels, no unnecessary full-width individual slider cards. Source/writer details and manual QA are in [STASH-MEDICAL-COMPOSITION.md](STASH-MEDICAL-COMPOSITION.md).
+
+
 ## 2026-10-16 — Stash content / gear visual family lock (CURRENT)
 
 Implement two distinct centered chart boards in Loot immediately after STASH REWARDS:

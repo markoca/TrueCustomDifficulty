@@ -1,5 +1,8 @@
 # True Custom Difficulty
 
+**Stash Medical Composition / Quantity (2026-10-16):** In Loot, four independent **Bandages/Medkits/Army Medkits/Anti-Rad** source `Weight`/`Chance` biases (0–3x) now have their own compact shared-axis chart, multiplicatively composing with the existing MEDICAL category control. A separate MEDKIT QUANTITY board has MIN FLOOR and MAX CAP for regular and Army Medkits (0 AUTO = preserve vanilla per-tier source count; 1–6 limits; explicit cap wins on conflict). All eight additions use the existing source-validated production-only stash clone writers; no authored quest rewards or previously unsupported items are added. Existing presets remain compatible, pristine factory presets are hash-gated. [Mechanics and QA](docs/STASH-MEDICAL-COMPOSITION.md). **No runtime drop probability is claimed.**
+
+
 **Stash composition and gear (2026-10-16):** Loot now has 12 additional independently editable native sources: six **STASH CONTENT** (existing ammo/medical/food/drinks/grenades/coupons Weight or Chance multipliers) and six **EXTRA STASH GEAR** (Weapon/Armor per Basic/Standard/Rare, four discrete OFF/RARE/MODERATE/FREQUENT levels). All changes share the existing production-only stash clones and redirect manifests, keep quest/scripted rewards untouched and compose with the existing ammo/grenade/coupon writer. The six content settings now appear on one shared-scale **bar graph**; Basic/Standard/Rare × Weapon/Armor are compared on one discrete **dot-plot matrix**. All 12 factory presets default neutral. See [implementation and runtime QA contract](docs/STASH-CONTENT-GEAR-IMPLEMENTATION.md) and [UI catalogs](docs/UI-DESIGN-LOCK.md). **Runtime drop probabilities and local Wine acceptance are pending.**
 
 

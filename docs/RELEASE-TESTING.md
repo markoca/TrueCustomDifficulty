@@ -1,5 +1,10 @@
 ### 2026-10-16 — Linux portable publish: Dolphin directory identity and user-state preservation
 
+### CURRENT 2026-10-16 — Detailed stash medical controls acceptance
+
+Eight additional Loot sources, **MEDICAL LOOT COMPOSITION** 4 × 0–3x / 0.25x item-specific biases (Bandage, Medkit, ArmyMedkit, AntiRad) plus **MEDKIT QUANTITY** four 0 AUTO / 1..6 discrete MIN FLOOR and MAX CAP source controls for Medkit and ArmyMedkit. Manual gates: verify four independent chart bars, 1x neutral line, no fake percent, two Medkit+Army rows with MIN/MAX labels and 0 shown as AUTO; ensure Medical 0x × item 3x still gives source 0; verify Chance=1 remains capped at 1 under 3x; Medkit CAP=1 clamps all eligible MinCount/MaxCount to <=1, does NOT create missing items; confirm per-stash-tier/rank/difficulty variation survives AUTO and conflicts favor MAX CAP; test with all existing Stash Rewards and Gear settings together. Production-only redirect counts 1271/450/305 and existing story/quest exclusions unchanged. There is no verified in-game drop frequency or complete Wine/WPF runtime proof until the operator performs it. [Full source and QA contract](STASH-MEDICAL-COMPOSITION.md).
+
+
 ### 2026-10-16 — STASH CONTENT / EXTRA STASH GEAR manual acceptance
 
 Twelve new Loot source editors, six multipliers for eligible existing stash item categories and six four-stop gear editors (BASIC/STANDARD/RARE × WEAPON/ARMOR). STASH CONTENT is now a compact **six-series, shared-axis horizontal bar plot (376 DIP)**; EXTRA STASH GEAR is a **three-tier × two-class discrete dot plot (370 DIP)**. Each retains native 0.25x/integer snapping, hover/click/drag, keyboard, reset, preset and only-gold-when-modified numeric readouts. Neither draws fabricated per-stash percentage graphs.

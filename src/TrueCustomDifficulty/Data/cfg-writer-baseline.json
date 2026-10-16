@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 260,
+  "supportedParameterCount": 268,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -22706,6 +22706,21 @@
       ],
       "scope": "TCD-owned production-only stash generator redirects",
       "notes": "Joint writer composition with existing stash ammo/grenades/coupon patching, 0/1/2/3 gear states; explicit PlayerRank branch gates."
+    },
+    "stashMedicalProduction": {
+      "parameterIds": [
+        "loot.stashMedicalBandageBias",
+        "loot.stashMedicalMedkitBias",
+        "loot.stashMedicalArmyMedkitBias",
+        "loot.stashMedicalAntiRadBias",
+        "loot.stashMedkitMinCount",
+        "loot.stashMedkitMaxCount",
+        "loot.stashArmyMedkitMinCount",
+        "loot.stashArmyMedkitMaxCount"
+      ],
+      "source": "GameData/ItemGeneratorPrototypes.cfg",
+      "scope": "Existing TCD-owned production-only Cheap/Medium/Expensive stash copies; branch/candidate coverage from source 2.0.5",
+      "notes": "4 independent item selection biases times global Medical and 4 Medkit/ArmyMedkit AUTO / floor / cap controls; output remains rank/difficulty gated and untouched for scripted loot."
     }
   }
 }

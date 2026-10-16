@@ -6022,6 +6022,390 @@
       "exposeInUi": true
     },
     {
+      "id": "loot.stashMedicalBandageBias",
+      "tab": "loot",
+      "group": "Stash Medical Composition",
+      "label": "Bandages Stash Selection",
+      "description": "Adjusts the existing Bandage Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Individual source selection bias"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=Bandage].Weight / Chance",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Selection bias multiplies the global Medical bias, then clamps Chance to [0,1].",
+          "0x turns off existing eligible entries; the authored rank/difficulty branches and one-off/quest stash contents are untouched.",
+          "Weight is relative within an eligible list, not percentage of stash containing the item."
+        ]
+      },
+      "rationale": "Give Bandages an independent source chance/weight bias without inflating other medical items.",
+      "logic": "1x preserves source. 3x can do nothing for an entry whose Chance is already 1; 0x writes zero where eligible.",
+      "interaction": "Use one direct bar for this medical item; the general Medical bar multiplies this source.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMedicalMedkitBias",
+      "tab": "loot",
+      "group": "Stash Medical Composition",
+      "label": "Medkits Stash Selection",
+      "description": "Adjusts the existing Medkit Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Individual source selection bias"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=Medkit].Weight / Chance",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Selection bias multiplies the global Medical bias, then clamps Chance to [0,1].",
+          "0x turns off existing eligible entries; the authored rank/difficulty branches and one-off/quest stash contents are untouched.",
+          "Weight is relative within an eligible list, not percentage of stash containing the item."
+        ]
+      },
+      "rationale": "Give Medkits an independent source chance/weight bias without inflating other medical items.",
+      "logic": "1x preserves source. 3x can do nothing for an entry whose Chance is already 1; 0x writes zero where eligible.",
+      "interaction": "Use one direct bar for this medical item; the general Medical bar multiplies this source.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMedicalArmyMedkitBias",
+      "tab": "loot",
+      "group": "Stash Medical Composition",
+      "label": "Army Medkits Stash Selection",
+      "description": "Adjusts the existing ArmyMedkit Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Individual source selection bias"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=ArmyMedkit].Weight / Chance",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Selection bias multiplies the global Medical bias, then clamps Chance to [0,1].",
+          "0x turns off existing eligible entries; the authored rank/difficulty branches and one-off/quest stash contents are untouched.",
+          "Weight is relative within an eligible list, not percentage of stash containing the item."
+        ]
+      },
+      "rationale": "Give Army Medkits an independent source chance/weight bias without inflating other medical items.",
+      "logic": "1x preserves source. 3x can do nothing for an entry whose Chance is already 1; 0x writes zero where eligible.",
+      "interaction": "Use one direct bar for this medical item; the general Medical bar multiplies this source.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMedicalAntiRadBias",
+      "tab": "loot",
+      "group": "Stash Medical Composition",
+      "label": "Anti-Rad Stash Selection",
+      "description": "Adjusts the existing AntiRad Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Individual source selection bias"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=AntiRad].Weight / Chance",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Selection bias multiplies the global Medical bias, then clamps Chance to [0,1].",
+          "0x turns off existing eligible entries; the authored rank/difficulty branches and one-off/quest stash contents are untouched.",
+          "Weight is relative within an eligible list, not percentage of stash containing the item."
+        ]
+      },
+      "rationale": "Give Anti-Rad an independent source chance/weight bias without inflating other medical items.",
+      "logic": "1x preserves source. 3x can do nothing for an entry whose Chance is already 1; 0x writes zero where eligible.",
+      "interaction": "Use one direct bar for this medical item; the general Medical bar multiplies this source.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMedkitMinCount",
+      "tab": "loot",
+      "group": "Stash Medical Quantity",
+      "label": "Medkits Minimum Count",
+      "description": "Controls the minimum stack floor for existing Medkit entries, retaining the original source value at 0 (AUTO). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "control": "slider",
+      "valueKind": "integer",
+      "display": {
+        "primary": "integer",
+        "rawFormat": "0",
+        "valueLabel": "Source minimum stack floor; 0 = AUTO",
+        "unit": "items"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=Medkit].MinCount/MaxCount",
+          "operation": "setInteger"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "0 AUTO leaves the corresponding source limit intact; it does not mean zero items.",
+          "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
+          "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
+          "MAX CAP=1 makes eligible Medkit stacks no larger than 1, including originally 2–4 item Easy/Rare entries."
+        ]
+      },
+      "rationale": "Control medkits stack floor separately from selection chance.",
+      "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
+      "interaction": "0 AUTO uses vanilla per-entry limit. Positive value is a floor for MIN or a cap for MAX; reset restores source native counts.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMedkitMaxCount",
+      "tab": "loot",
+      "group": "Stash Medical Quantity",
+      "label": "Medkits Maximum Count",
+      "description": "Controls the maximum stack cap for existing Medkit entries, retaining the original source value at 0 (AUTO). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "control": "slider",
+      "valueKind": "integer",
+      "display": {
+        "primary": "integer",
+        "rawFormat": "0",
+        "valueLabel": "Source maximum stack cap; 0 = AUTO",
+        "unit": "items"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=Medkit].MinCount/MaxCount",
+          "operation": "setInteger"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "0 AUTO leaves the corresponding source limit intact; it does not mean zero items.",
+          "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
+          "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
+          "MAX CAP=1 makes eligible Medkit stacks no larger than 1, including originally 2–4 item Easy/Rare entries."
+        ]
+      },
+      "rationale": "Control medkits stack cap separately from selection chance.",
+      "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
+      "interaction": "0 AUTO uses vanilla per-entry limit. Positive value is a floor for MIN or a cap for MAX; reset restores source native counts.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashArmyMedkitMinCount",
+      "tab": "loot",
+      "group": "Stash Medical Quantity",
+      "label": "Army Medkits Minimum Count",
+      "description": "Controls the minimum stack floor for existing ArmyMedkit entries, retaining the original source value at 0 (AUTO). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "control": "slider",
+      "valueKind": "integer",
+      "display": {
+        "primary": "integer",
+        "rawFormat": "0",
+        "valueLabel": "Source minimum stack floor; 0 = AUTO",
+        "unit": "items"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=ArmyMedkit].MinCount/MaxCount",
+          "operation": "setInteger"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "0 AUTO leaves the corresponding source limit intact; it does not mean zero items.",
+          "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
+          "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
+          "MAX CAP=1 makes eligible Medkit stacks no larger than 1, including originally 2–4 item Easy/Rare entries."
+        ]
+      },
+      "rationale": "Control army medkits stack floor separately from selection chance.",
+      "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
+      "interaction": "0 AUTO uses vanilla per-entry limit. Positive value is a floor for MIN or a cap for MAX; reset restores source native counts.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashArmyMedkitMaxCount",
+      "tab": "loot",
+      "group": "Stash Medical Quantity",
+      "label": "Army Medkits Maximum Count",
+      "description": "Controls the maximum stack cap for existing ArmyMedkit entries, retaining the original source value at 0 (AUTO). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "control": "slider",
+      "valueKind": "integer",
+      "display": {
+        "primary": "integer",
+        "rawFormat": "0",
+        "valueLabel": "Source maximum stack cap; 0 = AUTO",
+        "unit": "items"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=ArmyMedkit].MinCount/MaxCount",
+          "operation": "setInteger"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "0 AUTO leaves the corresponding source limit intact; it does not mean zero items.",
+          "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
+          "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
+          "MAX CAP=1 makes eligible Medkit stacks no larger than 1, including originally 2–4 item Easy/Rare entries."
+        ]
+      },
+      "rationale": "Control army medkits stack cap separately from selection chance.",
+      "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
+      "interaction": "0 AUTO uses vanilla per-entry limit. Positive value is a floor for MIN or a cap for MAX; reset restores source native counts.",
+      "exposeInUi": true
+    },
+    {
       "id": "loot.stashGearCheapWeapon",
       "tab": "loot",
       "group": "Stash Gear",

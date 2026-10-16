@@ -266,6 +266,12 @@ public sealed class AggregateVisualControl : FrameworkElement
             case "StashContentMix":
                 DrawStashContentMix(dc, text, muted, border, accent, panel);
                 break;
+            case "StashMedicalComposition":
+                DrawStashMedicalComposition(dc, text, muted, border, accent, panel);
+                break;
+            case "StashMedicalQuantity":
+                DrawStashMedicalQuantity(dc, text, muted, border, accent, panel);
+                break;
             case "StashGear":
                 DrawStashGear(dc, text, muted, border, accent, panel);
                 break;
@@ -4608,6 +4614,116 @@ public sealed class AggregateVisualControl : FrameworkElement
             9.0, muted, FontWeights.Normal);
     }
 
+    // Item-level MEDICAL source-bias chart. Global MEDICAL multiplies these
+    // four independent Weight/Chance controls; neither display is a predicted
+    // percentage of generated stashes containing the listed medical item.
+    private void DrawStashMedicalComposition(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawHeader(dc, "MEDICAL LOOT COMPOSITION", "", text, muted, accent);
+        var items = new (string Id, string Caption)[]
+        {
+            ("loot.stashMedicalBandageBias", "BANDAGES"),
+            ("loot.stashMedicalMedkitBias", "MEDKITS"),
+            ("loot.stashMedicalArmyMedkitBias", "ARMY MEDKITS"),
+            ("loot.stashMedicalAntiRadBias", "ANTI-RAD")
+        };
+        var bankWidth = Math.Min(785.0, Math.Max(1.0, ActualWidth - 34.0));
+        var left = (ActualWidth - bankWidth) / 2.0;
+        var plotLeft = left + 133.0;
+        var plotWidth = Math.Max(1.0, bankWidth - 215.0);
+        var ruler = new Rect(plotLeft, 0.0, plotWidth, 1.0);
+        const double firstTop = 91.0;
+        const double stepY = 43.0;
+        DrawText(dc, "MEDICAL ITEM", new Point(left + 11, 61.0),
+            9.4, muted, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, "BIAS", new Point(left + bankWidth - 11, 61.0),
+            9.4, muted, FontWeights.SemiBold);
+        for (var tick = 0; tick <= 3; tick++)
+        {
+            var x = ValueToX(tick, 0, 3, ruler, false);
+            DrawCenteredText(dc, $"{tick}x", new Point(x, 61.0),
+                9.4, muted, FontWeights.SemiBold);
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, tick == 1 ? .32 : .16),
+                    tick == 1 ? 1.6 : .8),
+                new Point(x, firstTop - 4),
+                new Point(x, firstTop + stepY * 3 + 27));
+        }
+        for (var i = 0; i < items.Length; i++)
+        {
+            var source = P(items[i].Id);
+            if (source is null) continue;
+            var y = firstTop + i * stepY;
+            if (i % 2 == 0)
+                dc.DrawRoundedRectangle(CloneWithOpacity(panel, .50), null,
+                    new Rect(left + 2, y - 5, bankWidth - 4, 38), 3, 3);
+            var enabled = source.IsControlEnabled;
+            var hover = enabled && ReferenceEquals(_hoverTarget?.Parameter, source);
+            DrawText(dc, items[i].Caption, new Point(left + 11, y + 8),
+                10.4, enabled ? text : muted, FontWeights.SemiBold);
+            var bar = new Rect(plotLeft, y + 8.0, plotWidth, 12.0);
+            var x = ValueToX(source.CurrentNumber, 0.0, 3.0, bar, false);
+            var baseX = ValueToX(source.ReferenceNumber, 0.0, 3.0, bar, false);
+            dc.DrawRoundedRectangle(CloneWithOpacity(border, .36), null, bar, 3, 3);
+            if (x > bar.Left)
+                dc.DrawRoundedRectangle(CloneWithOpacity(enabled ? accent : muted, .64),
+                    null, new Rect(bar.Left, bar.Top + 2, x - bar.Left, 8), 2, 2);
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .72), 1.7),
+                new Point(baseX, bar.Top - 5), new Point(baseX, bar.Bottom + 5));
+            if (enabled)
+                ControlHoverGlow.Draw(dc, new Point(x, bar.Top + 6), accent, hover);
+            dc.DrawEllipse(panel, new Pen(enabled ? accent : muted, hover ? 2.5 : 1.7),
+                new Point(x, bar.Top + 6), 5.8, 5.8);
+            DrawRightAlignedText(dc, $"{source.CurrentNumber:0.##}x",
+                new Point(left + bankWidth - 11, y + 4),
+                11.6, enabled && source.IsValueModifiedFromReference()
+                    ? accent : enabled ? text : muted, FontWeights.SemiBold);
+            AddHorizontalTarget(source,
+                new Rect(bar.Left - 7, y, bar.Width + 14, 32),
+                bar, 0.0, 3.0);
+        }
+        DrawCenteredText(dc, "ITEM BIAS × GENERAL MEDICAL · NO STASH DROP GUARANTEE",
+            new Point(ActualWidth / 2.0, 278.0),
+            9.0, muted, FontWeights.Normal);
+    }
+
+    // Explicit AUTO(0) / 1..6 source-count controls. MIN FLOOR and MAX CAP
+    // retain each rank/difficulty's native stack-size defaults at AUTO.
+    private void DrawStashMedicalQuantity(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawHeader(dc, "MEDKIT QUANTITY", "", text, muted, accent);
+        var rows = new (string MinId, string MaxId, string Item)[]
+        {
+            ("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount", "MEDKITS"),
+            ("loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount", "ARMY MEDKITS")
+        };
+        const double gap = 12.0;
+        var width = Math.Min(785.0, Math.Max(1.0, ActualWidth - 34.0));
+        var column = (width - gap) / 2.0;
+        var left = (ActualWidth - width) / 2.0;
+        for (var row = 0; row < rows.Length; row++)
+        {
+            var y = 49.0 + row * 90.0;
+            var min = P(rows[row].MinId);
+            var max = P(rows[row].MaxId);
+            if (min is null || max is null) continue;
+            DrawCompactTrack(dc, min, rows[row].Item + " · MIN FLOOR",
+                min.CurrentNumber == 0 ? "AUTO" : $"{min.CurrentNumber:0} MIN",
+                "AUTO", "6", new Rect(left, y, column, 82),
+                text, muted, border, accent, panel);
+            DrawCompactTrack(dc, max, rows[row].Item + " · MAX CAP",
+                max.CurrentNumber == 0 ? "AUTO" : $"{max.CurrentNumber:0} MAX",
+                "AUTO", "6", new Rect(left + column + gap, y, column, 82),
+                text, muted, border, accent, panel);
+        }
+        DrawCenteredText(dc, "AUTO = NATIVE STACK COUNT · MAX CAP WINS ON CONFLICT",
+            new Point(ActualWidth / 2.0, 238.0),
+            8.7, muted, FontWeights.Normal);
+    }
+
     // Gear is a 3 (stash quality) by 2 (item class) discrete dot plot.
     // The four stops are named modes, NOT guaranteed per-stash drop odds.
     // Horizontal positions/editing use the underlying native 0..3 source grid.
@@ -6478,6 +6594,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             "NpcLootLoadout" => 564.0,
             "WorldLootLayout" => 275.0,
             "StashContentMix" => 376.0,
+            "StashMedicalComposition" => 304.0,
+            "StashMedicalQuantity" => 257.0,
             "StashGear" => 370.0,
             "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
             "StaminaCore" => 323.0,
@@ -6582,6 +6700,16 @@ public sealed class AggregateVisualControl : FrameworkElement
             {
                 "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
                 "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons"
+            },
+            "StashMedicalComposition" => new[]
+            {
+                "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
+                "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias"
+            },
+            "StashMedicalQuantity" => new[]
+            {
+                "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
+                "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"
             },
             "StashGear" => new[]
             {

@@ -259,6 +259,25 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "8d123be710f4d625be5577c9efcae7d856bb0e7b",
     };
 
+    // Exact pristine 260-ID factories before medical item composition and
+    // MEDKIT/ARMY-MEDKIT floor+cap editors. Never touch user-edited profiles.
+    private static readonly Dictionary<string, string> PreStashMedicalFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "3b0fef0b27a44f3a70f0e08e62488cf97182cdc0",
+        ["Field Medic"] = "d9250d4f8d767a99aac67b1293cc4b6e3eff15f0",
+        ["Hardcore"] = "2227134a19e8d77180a0b67f5959a46eba1cba83",
+        ["Hardcore+"] = "9c20a11521f2e534354298f38a33ba9fc9539e07",
+        ["Immersive"] = "4c3203a6548fe4b2ab150cc73adb9f1a2f41317d",
+        ["Mercenary"] = "992ffbac1374999d8f2537d69dad9865ed8e0544",
+        ["Mutant Hunter"] = "0f9b4ca152f809efcc58cc1e6658120f01da9616",
+        ["Outcast"] = "0b740b087617c436851fc17ef863b35984093e7b",
+        ["Scavenger"] = "a11d1f1a061c3470008b8742356d02b9b3ae1a2d",
+        ["Smuggler"] = "79556f665374d4dedcfe76670ba9464ecde50b81",
+        ["Tactical"] = "28c409102233024bfe95a470bb9dd599913d62e4",
+        ["Wanderer"] = "081d139380524ce9527a76f6de92ff2f1beb406f",
+    };
+
     public string Ensure()
     {
         var directory = Path.Combine(AppContext.BaseDirectory, "Presets");
@@ -347,7 +366,8 @@ public sealed class PresetDirectoryService
             && !PreFullDeepAuditFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreFinalCfgAuditFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreEffectiveALifeFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreStashContentGearFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreStashContentGearFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreStashMedicalFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -385,7 +405,9 @@ public sealed class PresetDirectoryService
                 || (PreEffectiveALifeFactoryBlobs.TryGetValue(name, out var preEffectiveALifeHash)
                     && actual.Equals(preEffectiveALifeHash, StringComparison.OrdinalIgnoreCase))
                 || (PreStashContentGearFactoryBlobs.TryGetValue(name, out var preStashHash)
-                    && actual.Equals(preStashHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preStashHash, StringComparison.OrdinalIgnoreCase))
+                || (PreStashMedicalFactoryBlobs.TryGetValue(name, out var preMedicalHash)
+                    && actual.Equals(preMedicalHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {
