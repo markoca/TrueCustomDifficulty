@@ -279,3 +279,34 @@ assert "STASH-PER-BRANCH-BROWSER-2026-10-16.md" in (
     root / "docs/generators/STASH-GENERATOR-BRANCH-ARCHITECTURE-2026-10-16.md"
 ).read_text()
 print("PASS: phase 4 native branch browser, 463 source groups / 1,124 authored rows")
+
+
+# Phase 5: emitted patch parity must be wired into the executable contract.
+# This is a static integration gate, not a claim that the .NET/Wine suite ran.
+phase5 = (root / "tests/LootSpecialGeneratorsContract/StashBranchParity.cs").read_text()
+program = (root / "tests/LootSpecialGeneratorsContract/Program.cs").read_text()
+assert "internal static partial class Program" in program
+assert "VerifyStashBranchBrowserParity();" in program
+assert "internal static partial class Program" in phase5
+assert "StashBranchPreviewCatalog.Load(Baseline)" in phase5
+assert "VerifyNativeEmittedFields(" in phase5
+assert "new CfgPatchWriterService().Write(" in phase5
+assert "ReadOutput(dir)" in phase5
+assert "group.EffectiveSelection(Baseline, snapshot, row)" in phase5
+assert "group.EffectiveCount(Baseline, snapshot, row" in phase5
+assert "group.EffectiveSpawn(snapshot)" in phase5
+assert "AssertProtectedBaseStashesUntouched(generated, name)" in phase5
+assert "DlcEligibleActorIds.Value" in phase5
+assert '"all-category-zero"' in phase5 and '"food-3x"' in phase5
+assert '"hard-bonus-medical-dlc"' in phase5
+assert "public string SmartCount(" in effective
+assert "effective.SmartCount(item.ItemSid, fieldName," in smart
+assert "state.SmartCount(item.ItemSid, field, raw," in branches
+assert 'new Point(x + width - 3.0, rowY + 12.0)' in browser
+for doc in (lock, system, proposal):
+    assert "STASHES PHASE 5 CFG PARITY GATE" in doc
+assert "STASH-PHASE-5-CFG-PARITY-AND-ACCEPTANCE-2026-10-16.md" in (
+    root / "docs/generators/STASH-GENERATOR-BRANCH-ARCHITECTURE-2026-10-16.md"
+).read_text()
+print("PASS: Phase 5 browser/writer SmartLoot count parity and real-emitted-CFG harness wired")
+print("PENDING: cross-compiled .NET 10, Wine suite, wide/narrow visual and STALKER 2 gameplay")

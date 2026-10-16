@@ -1,3 +1,5 @@
+**CURRENT PHASE 5 2026-10-16:** [Native preview vs emitted CFG parity and runtime acceptance contract](STASH-PHASE-5-CFG-PARITY-AND-ACCEPTANCE-2026-10-16.md) is now implemented with shared SmartLoot count suppression; previously documented 'Phase 5 NOT YET DONE' is historical implementation-phase status. .NET/Wine/game execution is still pending.
+
 # Stashes Phase 4 — native generator branch browser
 
 **Status: source-browser UI implemented on main (2026-10-16); .NET/Wine and gameplay testing still required.**

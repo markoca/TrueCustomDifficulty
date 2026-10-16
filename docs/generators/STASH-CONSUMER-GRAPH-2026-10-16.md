@@ -1,3 +1,5 @@
+**PHASE 5 FOLLOW-UP 2026-10-16:** [Generated CFG parity suite and safety acceptance](STASH-PHASE-5-CFG-PARITY-AND-ACCEPTANCE-2026-10-16.md) now asserts emitted native tier and conditionally affected SmartLoot fields against the source browser as well as existing protected 106-base-actor and 112-DLC1 gates. Source consumer statuses still mean conditional eligibility only, not active or guaranteed item-spawn routes. Tests have not yet been run under Wine in this session.
+
 **CURRENT 2026-10-16 — STASHES PHASE 3 SHARED EFFECTIVE CFG:** [Phase 3 shared effective CFG calculator](STASH-EFFECTIVE-CFG-CALCULATION-2026-10-16.md) tracks one numeric source-to-field calculator now called by tier and SmartLoot writers and existing Stashes source examples. Basic RGD-5/Rare Coupons bonus Chance ordering and Medical zero-count are shared. The new generated CFG contract has not yet been executed on Wine, and dynamic per-actor activation remains conditional. Phase 4 per-branch selector is not built.
 
 # Stashes phase 2 — protected consumer graph and native branch join

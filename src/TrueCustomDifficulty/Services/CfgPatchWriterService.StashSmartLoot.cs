@@ -294,35 +294,18 @@ public sealed partial class CfgPatchWriterService
                     itemNode.SetAssignment(field.Item1, tuned);
                     edits++;
                 }
-                if (disabled)
+                // All zero-factor SmartLoot entries need both count endpoints
+                // explicitly disabled: selection zero alone may have engine
+                // fallback semantics. Share EXACT count output with the browser.
+                if (disabled || item.ItemSid is "Medkit" or "ArmyMedkit")
                 {
-                    // Source selection zero alone is not guaranteed to prevent
-                    // engine fallback in an all-zero weighted group.
-                    if (item.MinCount.Length != 0)
-                    {
-                        itemNode.SetAssignment("MinCount", "0");
-                        edits++;
-                    }
-                    if (item.MaxCount.Length != 0)
-                    {
-                        itemNode.SetAssignment("MaxCount", "0");
-                        edits++;
-                    }
-                }
-                else if (item.ItemSid is "Medkit" or "ArmyMedkit")
-                {
-                    var limits = new Dictionary<string, string>(StringComparer.Ordinal)
-                    {
-                        ["ItemPrototypeSID"] = item.ItemSid,
-                        ["MinCount"] = item.MinCount,
-                        ["MaxCount"] = item.MaxCount
-                    };
                     foreach (var (fieldName, raw) in new[]
                         { ("MinCount", item.MinCount), ("MaxCount", item.MaxCount) })
                     {
                         if (raw.Length == 0) continue;
-                        var tuned = effective.TuneCount(limits, fieldName, raw);
-                        if (tuned == raw) continue;
+                        var tuned = effective.SmartCount(item.ItemSid, fieldName,
+                            raw, item.MinCount, item.MaxCount);
+                        if (!disabled && tuned == raw) continue;
                         itemNode.SetAssignment(fieldName, tuned);
                         edits++;
                     }

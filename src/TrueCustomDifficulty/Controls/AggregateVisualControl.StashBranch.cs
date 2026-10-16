@@ -116,7 +116,9 @@ public sealed partial class AggregateVisualControl
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         _stashBrowserTargets.Clear();
-        _stashBrowserHover = Math.Min(_stashBrowserHover, 30);
+        // The hot target list is rebuilt with each paint, so never keep a
+        // stale hover index after changing a generator or shrinking the list.
+        _stashBrowserHover = Math.Clamp(_stashBrowserHover, -1, 9);
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .58),
             new Pen(CloneWithOpacity(border, .65), .9),
             outer, 4.0, 4.0);
@@ -230,8 +232,11 @@ public sealed partial class AggregateVisualControl
             var actual = values[i];
             var min = branch.EffectiveCount(StashPreviewBaseline.Value, state, item, "MinCount");
             var max = branch.EffectiveCount(StashPreviewBaseline.Value, state, item, "MaxCount");
+            // Keep current values legible on narrow boards: show quantities
+            // on their own short line, omitting a redundant unchanged arrow.
             var countDetail = item.MinCount.Length > 0 && item.MaxCount.Length > 0
-                ? $"  ·  {item.MinCount}–{item.MaxCount} → {min}–{max}"
+                ? item.MinCount == min && item.MaxCount == max
+                    ? $"{min}–{max}" : $"{item.MinCount}–{item.MaxCount} → {min}–{max}"
                 : "";
             var share = branch.Field == "Weight"
                 ? total > Epsilon ? actual / total : 0.0 : actual;
@@ -243,10 +248,14 @@ public sealed partial class AggregateVisualControl
                 ? $"{original * 100:0.#}% → {actual * 100:0.#}%"
                 : $"{original:0.###} → {actual:0.###}";
             DrawRightAlignedText(dc, branch.Field == "Weight"
-                ? $"{sourceNumbers} · {(total > Epsilon ? $"{share * 100:0.#}%" : "UNDEFINED")}{countDetail}"
-                : sourceNumbers + countDetail,
+                ? $"{sourceNumbers} · {(total > Epsilon ? $"{share * 100:0.#}%" : "UNDEFINED")}"
+                : sourceNumbers,
                 new Point(x + width - 3.0, rowY + 1.0),
-                9.7, muted, FontWeights.SemiBold);
+                9.5, muted, FontWeights.SemiBold);
+            if (countDetail.Length > 0)
+                DrawRightAlignedText(dc, countDetail,
+                    new Point(x + width - 3.0, rowY + 12.0),
+                    8.9, muted, FontWeights.Normal);
             var bar = new Rect(x + 3.0, rowY + rowHeight - 8.0,
                 width - 6.0, 3.0);
             dc.DrawRoundedRectangle(CloneWithOpacity(border, .27), null,

@@ -55,13 +55,8 @@ public sealed record StashBranchPreview(
         if (raw.Length == 0) return "";
         if (!IsSmart)
             return state.TierField(baseline, Tier, TierCategory!, item.TierItem!, field);
-        var fields = new Dictionary<string, string>(StringComparer.Ordinal)
-        {
-            ["ItemPrototypeSID"] = item.ItemSid,
-            ["MinCount"] = item.MinCount,
-            ["MaxCount"] = item.MaxCount
-        };
-        return state.TuneCount(fields, field, raw);
+        return state.SmartCount(item.ItemSid, field, raw,
+            item.MinCount, item.MaxCount);
     }
 
     public (string Min, string Max, string Sets) EffectiveSpawn(StashEffectiveState state)

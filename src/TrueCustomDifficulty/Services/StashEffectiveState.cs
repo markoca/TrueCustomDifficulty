@@ -282,6 +282,27 @@ public sealed class StashEffectiveState
         return FormatLikeSource(output, raw);
     }
 
+    /// <summary>
+    /// Shared SmartLoot count output for the world writer AND native group preview.
+    /// Any zero selection factor disables the item's count (including grenades,
+    /// food, ammo and lowercase Antirad), not only medical Medkits.
+    /// </summary>
+    public string SmartCount(string sid, string field, string raw,
+        string originalMin, string originalMax)
+    {
+        if (field is not ("MinCount" or "MaxCount") || raw.Length == 0)
+            return raw;
+        if (SmartFactor(sid) <= 0.0000001) return "0";
+        if (sid is not ("Medkit" or "ArmyMedkit")) return raw;
+        var original = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["ItemPrototypeSID"] = sid,
+            ["MinCount"] = originalMin,
+            ["MaxCount"] = originalMax
+        };
+        return TuneCount(original, field, raw);
+    }
+
     public static bool UniformSmartFactor(
         IEnumerable<double> values, out double factor)
     {

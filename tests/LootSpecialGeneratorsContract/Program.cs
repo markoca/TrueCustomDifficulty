@@ -11,7 +11,7 @@ namespace LootSpecialGeneratorsContract;
 // Phase 14B1: real production writer, cloned template bodies, original
 // redirect CSV fanouts, and exact source-level control ownership.
 // World actor-removal/shuffle writers have their own separate acceptance gate.
-internal static class Program
+internal static partial class Program
 {
     static readonly ParameterCatalog Catalog = new ParameterCatalogService().Load();
     static readonly CfgWriterBaseline Baseline = new CfgWriterBaselineService().Load();
@@ -102,6 +102,7 @@ internal static class Program
             VerifyRegularStashDirectMedical();
             VerifyDlcStashExpansion();
             VerifyStashEffectiveParity();
+            VerifyStashBranchBrowserParity();
             Console.WriteLine($"PASS: {Passed} Loot SPECIAL generator and corpse writer scenarios plus 3 medical-zero production CFG scenarios");
             Console.WriteLine("NOT VERIFIED: original decoded CFG source values, world shuffle/removal writers, Unreal patch loading or gameplay");
             return 0;

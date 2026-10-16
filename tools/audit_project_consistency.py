@@ -5863,6 +5863,31 @@ if (len(_smart_actor) != 832 or len(_smart_source) != 992
 else:
     note("SmartLoot: 991 real source entries; 13 native roots; 831 allowed normal actors; 71 special actors excluded")
 
+# Phase 5 native Stashes browser / writer parity acceptance integration.
+# A static audit cannot replace executable net10.0-windows/Wine checks.
+_stash_phase5 = (ROOT / "tests/LootSpecialGeneratorsContract/StashBranchParity.cs").read_text(encoding="utf-8")
+_stash_browser = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text(encoding="utf-8")
+_stash_branches = (ROOT / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.cs").read_text(encoding="utf-8")
+_stash_runtime_program = (ROOT / "tests/LootSpecialGeneratorsContract/Program.cs").read_text(encoding="utf-8")
+if (not all(token in _stash_phase5 for token in (
+       "VerifyStashBranchBrowserParity()", "VerifyNativeEmittedFields(",
+       "new CfgPatchWriterService().Write(", "ReadOutput(dir)",
+       "AssertProtectedBaseStashesUntouched(generated, name)",
+       "DlcEligibleActorIds.Value", '"all-category-zero"',
+       '"hard-bonus-medical-dlc"'))
+    or "VerifyStashBranchBrowserParity();" not in _stash_runtime_program
+    or "internal static partial class Program" not in _stash_runtime_program
+    or "public string SmartCount(" not in _stash_engine
+    or "effective.SmartCount(" not in _stash_smart
+    or "state.SmartCount(" not in _stash_branches
+    or "DrawStashBranchBrowser(" not in _stash_browser
+    or not all("STASHES PHASE 5 CFG PARITY GATE" in
+               (DOCS / f).read_text(encoding="utf-8")
+               for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))):
+    fail("Stashes Phase 5 native browser / writer CFG parity or UI catalog drift")
+else:
+    note("Stashes Phase 5: 463-group browser parity, common SmartLoot count path, generated-CFG and guard tests linked; Windows/Wine game acceptance NOT RUN")
+
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
 for msg in notes:
