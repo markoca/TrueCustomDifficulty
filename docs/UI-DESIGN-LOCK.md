@@ -1,5 +1,14 @@
 ### 2026-10-16 — Top-left radiation mark spins during Build Difficulty
 
+## CURRENT 2026-10-16 — STASHES GRAPH-ONLY REDESIGN AND TRUE ZERO MEDICAL COUNT
+
+All five Stashes sections use interactive graphs, not standalone sliders or rotary knobs. STASH REWARDS is now a centered 398-DIP six-row bar chart in two banks: Basic/Standard/Rare ammo amounts share a 0.25–2x scale, while RGD-5 Chance, RGD-5 Amount and Rare Coupons use independent native normalized bar rows. Edited numbers align on the right, with muted source ticks and changed numbers only highlighted yellow. These are the editors, not redundant visual previews. Old reward knobs and isolated bonus slider cards are removed.
+
+MEDKIT QUANTITY is now a centered 290-DIP 2x2 dot graph: Medkit/Army Medkit versus MIN FLOOR/MAX CAP. MIN has AUTO/1..6; MAX has distinct 0 ITEMS/AUTO/1..6 plotted points. MAX 0 ITEMS persists as -1 in the same stable source ID and means emit MinCount=MaxCount=0 plus Chance/Weight=0 for that matching eligible Medkit/ArmyMedkit item. Existing 0 remains AUTO, retaining every old preset and factory snapshot. Positive caps still behave as before, including MAX precedence on conflicts. The actual in-game result and authored quest stash boundaries remain unverified.
+
+The other three Stashes families remain real graphs: six-series STASH CONTENT selection biases, four-series MEDICAL LOOT COMPOSITION biases and 3x2 EXTRA STASH GEAR mode dot plot. Keep all native keyboard/drag/click/right-click/R reset, compact bounded widths, source help, source-only modified gold typography and subdued Vanilla/Base markers. No new independent game parameter, no ID changes, and no effects on Loot breakable crates. This CURRENT section supersedes earlier Stash Rewards rotary designs and the proposed-only Stashes graph redesign.
+
+
 ## CURRENT 2026-10-16 — STASHES TAB OWNERSHIP (authoritative, supersedes earlier Loot placement)
 
 The STASHES tab is placed immediately to the right of LOOT, before ECONOMY (catalog tab order 55). Exactly 26 original stash source IDs, 24 player-visible, move from Loot to Stashes. Their persistent loot.* IDs, numerical values, factory/user presets, aggregate anchors, writer targets, native controls and gameplay semantics do not change. Reset Tab now applies exclusively to stash sources when Stashes is selected.

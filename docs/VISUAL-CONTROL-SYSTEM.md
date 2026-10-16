@@ -1,5 +1,12 @@
 ### 2026-10-16 — Top-left radiation mark spins during Build Difficulty
 
+## CURRENT 2026-10-16 — STASHES GRAPH-ONLY NATIVE VISUAL CONTRACT
+
+Stashes has five independent edit graphs, no ordinary slider cards: StashRewardProfile is the 398-DIP two-section six-row source-true bar chart (3 ammo tiers, RGD-5 chance, RGD-5 amount, Rare coupon chance); StashContentMix is the existing 376-DIP six-row shared-scale bias bar graph; StashMedicalComposition is the existing 304-DIP four-row bias bar graph; StashMedicalQuantity is the new 290-DIP two-row/two-column dot graph; StashGear is the existing 370-DIP 3x2 four-mode dot plot.
+
+The new MEDKIT MAX CAP and ARMY MEDKIT MAX CAP dot axes distinguish 0 ITEMS at stored -1 from AUTO at stored 0. MIN axes retain AUTO/1..6. Selection of zero writes native zero MinCount/MaxCount and also zero Chance/Weight on the corresponding Medkit/ArmyMedkit entry in TCD regular stash clones. It does not affect scripted/unrouted rewards. Click/drag of each plotted row/point uses AddHorizontalTarget with source VM and native step; arrows, Home/End, group R and per-input right-click reset stay available. Text and changed numeric readouts follow the Stamina Usage layout. Reference lines are muted, no highlighted Vanilla/Base. Stash Rewards contains no DrawSourceKnob and no DrawHorizontalTrackCard; Medkit Quantity contains no DrawCompactTrack. Existing stable loot.* preset IDs and writer paths are unchanged.
+
+
 ## CURRENT 2026-10-16 — STASHES NAVIGATION AND COMPACT VISUAL CONTRACT
 
 Stashes is a first-class grouped tab immediately after Loot, before Economy, using existing WPF TabControl and existing five compact aggregate boards. No chart doubles as a new parameter: the 26 stable loot.* sources retain 24 visible controls and two hidden backing values. The sources stay in StashRewardProfile (6), StashContentMix (6), StashMedicalComposition (4), StashMedicalQuantity (4), StashGear (6). Reuse original renderers, widths, input mechanics, shared readout placement and source-specific preset/CFG routing.

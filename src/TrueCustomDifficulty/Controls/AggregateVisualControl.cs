@@ -4688,40 +4688,114 @@ public sealed class AggregateVisualControl : FrameworkElement
             9.0, muted, FontWeights.Normal);
     }
 
-    // Explicit AUTO(0) / 1..6 source-count controls. MIN FLOOR and MAX CAP
-    // retain each rank/difficulty's native stack-size defaults at AUTO.
+    // Native 2×2 medical-count DOT GRAPH. MAX has an explicit 0 ITEMS
+    // stop (-1 in persisted source state); the historical 0 remains AUTO.
+    // All points are source-backed, focusable and independently adjustable.
     private void DrawStashMedicalQuantity(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "MEDKIT QUANTITY", "", text, muted, accent);
-        var rows = new (string MinId, string MaxId, string Item)[]
+        var rows = new (string MinId, string MaxId, string Label)[]
         {
             ("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount", "MEDKITS"),
             ("loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount", "ARMY MEDKITS")
         };
-        const double gap = 12.0;
-        var width = Math.Min(785.0, Math.Max(1.0, ActualWidth - 34.0));
-        var column = (width - gap) / 2.0;
-        var left = (ActualWidth - width) / 2.0;
+
+        var bankWidth = Math.Min(785.0, Math.Max(1.0, ActualWidth - 32.0));
+        var left = (ActualWidth - bankWidth) / 2.0;
+        var tierWidth = bankWidth >= 660.0 ? 115.0 : 93.0;
+        const double gap = 11.0;
+        var column = Math.Max(1.0, (bankWidth - tierWidth - gap) / 2.0);
+        var minLeft = left + tierWidth;
+        var maxLeft = minLeft + column + gap;
+
+        DrawCenteredText(dc, "MIN FLOOR", new Point(minLeft + column / 2.0, 57.0),
+            11.0, text, FontWeights.Bold);
+        DrawCenteredText(dc, "MAX CAP", new Point(maxLeft + column / 2.0, 57.0),
+            11.0, text, FontWeights.Bold);
+
         for (var row = 0; row < rows.Length; row++)
         {
-            var y = 49.0 + row * 90.0;
-            var min = P(rows[row].MinId);
-            var max = P(rows[row].MaxId);
-            if (min is null || max is null) continue;
-            DrawCompactTrack(dc, min, rows[row].Item + " · MIN FLOOR",
-                min.CurrentNumber == 0 ? "AUTO" : $"{min.CurrentNumber:0} MIN",
-                "AUTO", "6", new Rect(left, y, column, 82),
+            var y = 80.0 + row * 83.0;
+            var rowArea = new Rect(left + 2.0, y, bankWidth - 4.0, 75.0);
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .56),
+                new Pen(CloneWithOpacity(border, .43), .8), rowArea, 3, 3);
+            DrawText(dc, rows[row].Label, new Point(left + 9.0, y + 28.0),
+                10.6, text, FontWeights.Bold);
+            DrawMedicalCountDots(dc, P(rows[row].MinId),
+                new Rect(minLeft, y + 4.0, column, 66.0),
                 text, muted, border, accent, panel);
-            DrawCompactTrack(dc, max, rows[row].Item + " · MAX CAP",
-                max.CurrentNumber == 0 ? "AUTO" : $"{max.CurrentNumber:0} MAX",
-                "AUTO", "6", new Rect(left + column + gap, y, column, 82),
+            DrawMedicalCountDots(dc, P(rows[row].MaxId),
+                new Rect(maxLeft, y + 4.0, column, 66.0),
                 text, muted, border, accent, panel);
         }
-        DrawCenteredText(dc, "AUTO = NATIVE STACK COUNT · MAX CAP WINS ON CONFLICT",
-            new Point(ActualWidth / 2.0, 238.0),
-            8.7, muted, FontWeights.Normal);
+
+        DrawCenteredText(dc, "AUTO KEEPS ORIGINAL COUNTS · MAX: 0 MEANS EMPTY",
+            new Point(ActualWidth / 2.0, 263.0),
+            9.0, muted, FontWeights.Normal);
+    }
+
+    private void DrawMedicalCountDots(
+        DrawingContext dc, ParameterViewModel? p, Rect cell,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        if (p is null) return;
+        var isMax = p.Id.EndsWith("MaxCount", StringComparison.Ordinal);
+        var enabled = p.IsControlEnabled;
+        var modified = enabled && p.IsValueModifiedFromReference();
+        var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, p);
+        // -1 stores an explicit empty count; 0 retains historical AUTO.
+        var current = (int)Math.Round(p.CurrentNumber);
+        var display = current < 0 ? "0 ITEMS"
+            : current == 0 ? "AUTO" : $"{current} ITEMS";
+        var readout = CreateText(display, 11.6, enabled ? text : muted,
+            FontWeights.SemiBold, Math.Max(1, cell.Width - 16));
+        if (modified && current != 0)
+            readout.SetForegroundBrush(accent, 0, current < 0 ? 1 :
+                current.ToString(CultureInfo.InvariantCulture).Length);
+        dc.DrawText(readout, new Point(
+            cell.Right - 8.0 - readout.WidthIncludingTrailingWhitespace,
+            cell.Top + 1.0));
+
+        var plot = new Rect(cell.Left + 15.0, cell.Top + 37.0,
+            Math.Max(1.0, cell.Width - 30.0), 1.0);
+        var trackY = plot.Top;
+        dc.DrawLine(new Pen(CloneWithOpacity(border, .6), 1.1),
+            new Point(plot.Left, trackY), new Point(plot.Right, trackY));
+        var minimum = isMax ? -1.0 : 0.0;
+        for (var step = (int)minimum; step <= 6; step++)
+        {
+            var x = ValueToX(step, minimum, 6.0, plot, false);
+            var selected = step == current;
+            var radius = selected ? 6.2 : 4.0;
+            dc.DrawEllipse(selected ? panel : CloneWithOpacity(border, .42),
+                new Pen(selected ? (enabled ? accent : muted) : muted,
+                    selected && hovered ? 2.7 : selected ? 2.0 : .75),
+                new Point(x, trackY), radius, radius);
+            if (selected && enabled)
+                ControlHoverGlow.Draw(dc, new Point(x, trackY),
+                    accent, hovered);
+        }
+
+        if (isMax)
+        {
+            DrawCenteredText(dc, "0", new Point(plot.Left, cell.Top + 49.0),
+                9.2, muted, FontWeights.SemiBold);
+            DrawCenteredText(dc, "AUTO", new Point(
+                ValueToX(0, -1, 6, plot, false), cell.Top + 49.0),
+                9.1, muted, FontWeights.SemiBold);
+        }
+        else
+            DrawCenteredText(dc, "AUTO", new Point(plot.Left, cell.Top + 49.0),
+                9.1, muted, FontWeights.SemiBold);
+        DrawCenteredText(dc, "6", new Point(plot.Right, cell.Top + 49.0),
+            9.2, muted, FontWeights.SemiBold);
+
+        AddHorizontalTarget(p,
+            new Rect(plot.Left - 9.0, cell.Top + 21.0,
+                plot.Width + 18.0, 32.0),
+            plot, minimum, 6.0);
     }
 
     // Gear is a 3 (stash quality) by 2 (item class) discrete dot plot.
@@ -4845,63 +4919,105 @@ public sealed class AggregateVisualControl : FrameworkElement
             track, 0.0, 3.0);
     }
 
-    // Current/source label/rail obey the Stamina Usage anatomy; no simulated
-    // certainty is suggested for independent chance/count rolls.
-    // Ammo tiers form one bounded three-column rack; bonus rolls retain
-    // their own independent real-source horizontal cards underneath.
+    // STASH REWARDS: two compact interactive BAR GRAPH banks.
+    // The upper rows share an ammo-amount multiplier scale; the lower rows
+    // preserve their own independent Chance/Count source axes.
     private void DrawCompactStashRewards(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "STASH REWARDS", "", text, muted, accent);
-        DrawText(dc, "AMMO BY STASH TIER",
-            new Point(18, 47), 10.4, muted, FontWeights.Bold);
-        var tiers = new (string Id, string Label)[]
+        var bankWidth = Math.Min(785.0, Math.Max(1.0, ActualWidth - 34.0));
+        var left = (ActualWidth - bankWidth) / 2.0;
+        var plotLeft = left + (bankWidth >= 640.0 ? 152.0 : 126.0);
+        var plotWidth = Math.Max(1.0, bankWidth - (plotLeft - left) - 84.0);
+
+        DrawText(dc, "AMMO QUANTITY", new Point(left + 12.0, 49.0),
+            10.7, muted, FontWeights.Bold);
+        var ammoEntries = new (string Id, string Caption)[]
         {
             ("loot.cheapStashAmmoQuantity", "BASIC"),
             ("loot.mediumStashAmmoQuantity", "STANDARD"),
             ("loot.expensiveStashAmmoQuantity", "RARE")
         };
-        // The three independent stash-tier ammo multipliers share the same native
-        // rotary renderer, snap grid and pointer/keyboard behavior as Your Weapons.
-        const double gap = 11.0;
-        const double knobWidth = 194.0;
-        const double knobHeight = 181.0;
-        var bankWidth = Math.Min(606.0, ActualWidth - 34.0);
-        var left = (ActualWidth - bankWidth) / 2.0;
-        for (var i = 0; i < tiers.Length; i++)
-        {
-            var tier = tiers[i];
-            var cellLeft = left + i * (bankWidth / 3.0);
-            DrawSourceKnob(dc, P(tier.Id), tier.Label,
-                new Rect(cellLeft + (bankWidth / 3.0 - knobWidth) / 2.0,
-                    69.0, knobWidth, knobHeight),
-                text, muted, border, accent, panel);
-        }
+        var ammoScale = new Rect(plotLeft, 67.0, plotWidth, 1.0);
+        foreach (var tick in new[] { 0.25, 1.0, 2.0 })
+            DrawCenteredText(dc, $"{tick:0.##}x",
+                new Point(ValueToX(tick, .25, 2.0, ammoScale, false), 66.0),
+                9.4, muted, FontWeights.SemiBold);
+        for (var i = 0; i < ammoEntries.Length; i++)
+            DrawStashRewardGraphRow(dc, P(ammoEntries[i].Id),
+                ammoEntries[i].Caption, left,
+                92.0 + 43.0 * i, bankWidth,
+                plotLeft, plotWidth, text, muted, border, accent, panel);
 
-        DrawText(dc, "BONUS REWARDS",
-            new Point(18, 270), 10.4, muted, FontWeights.Bold);
-        var rewards = new (string Id, string Label)[]
+        DrawText(dc, "BONUS REWARDS", new Point(left + 12.0, 225.0),
+            10.7, muted, FontWeights.Bold);
+        var bonusEntries = new (string Id, string Caption)[]
         {
             ("loot.cheapStashGrenadeChance", "RGD-5 CHANCE"),
             ("loot.cheapStashGrenadeQuantity", "RGD-5 AMOUNT"),
-            ("loot.expensiveStashMoneyChance", "COUPON CHANCE")
+            ("loot.expensiveStashMoneyChance", "RARE COUPONS")
         };
-        var columns = ActualWidth >= 740.0 ? 3 : 2;
-        var cardWidth = Math.Min(280.0,
-            (ActualWidth - 34.0 - (columns - 1) * gap) / columns);
-        for (var i = 0; i < rewards.Length; i++)
+        for (var i = 0; i < bonusEntries.Length; i++)
+            DrawStashRewardGraphRow(dc, P(bonusEntries[i].Id),
+                bonusEntries[i].Caption, left,
+                252.0 + 43.0 * i, bankWidth,
+                plotLeft, plotWidth, text, muted, border, accent, panel);
+    }
+
+    private void DrawStashRewardGraphRow(
+        DrawingContext dc, ParameterViewModel? p, string label,
+        double left, double top, double bankWidth,
+        double plotLeft, double plotWidth,
+        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    {
+        if (p is null) return;
+        var enabled = p.IsControlEnabled;
+        var modified = enabled && p.IsValueModifiedFromReference();
+        var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, p);
+        var row = new Rect(left + 2.0, top - 2.0, bankWidth - 4.0, 35.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .47), null,
+            row, 3.0, 3.0);
+        DrawText(dc, label, new Point(left + 12.0, top + 6.0),
+            10.5, enabled ? text : muted, FontWeights.SemiBold);
+
+        var bar = new Rect(plotLeft, top + 11.0, plotWidth, 12.0);
+        var x = ValueToX(p.CurrentNumber, p.Minimum, p.Maximum, bar, false);
+        var nativeX = ValueToX(p.ReferenceNumber, p.Minimum, p.Maximum, bar, false);
+        // A plotted magnitude bar and data point, not a stand-alone slider.
+        dc.DrawRoundedRectangle(CloneWithOpacity(border, .23),
+            null, bar, 2.0, 2.0);
+        if (x > bar.Left)
+            dc.DrawRoundedRectangle(CloneWithOpacity(
+                enabled ? accent : muted, .56), null,
+                new Rect(bar.Left, bar.Top + 2.0,
+                    x - bar.Left, bar.Height - 4.0), 2.0, 2.0);
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, .65), 1.4),
+            new Point(nativeX, bar.Top - 4.0),
+            new Point(nativeX, bar.Bottom + 4.0));
+        if (enabled)
+            ControlHoverGlow.Draw(dc, new Point(x, bar.Top + 6.0),
+                accent, hovered);
+        dc.DrawEllipse(panel,
+            new Pen(enabled ? accent : muted, hovered ? 2.5 : 1.8),
+            new Point(x, bar.Top + 6.0), 5.7, 5.7);
+
+        var display = p.Id switch
         {
-            var row = i / columns;
-            var rowCount = Math.Min(columns, rewards.Length - row * columns);
-            var rowWidth = rowCount * cardWidth + (rowCount - 1) * gap;
-            var x0 = (ActualWidth - rowWidth) / 2.0;
-            DrawHorizontalTrackCard(dc, P(rewards[i].Id), rewards[i].Label,
-                new Rect(x0 + (i % columns) * (cardWidth + gap),
-                    290.0 + row * 83.0, cardWidth, 72.0),
-                text, muted, border, accent, panel,
-                pairedValueFormatting: true, hideBaseText: true);
-        }
+            "loot.cheapStashGrenadeChance" or "loot.expensiveStashMoneyChance"
+                => $"{p.CurrentNumber * 100.0:0}%",
+            "loot.cheapStashGrenadeQuantity" => $"{p.CurrentNumber:0}",
+            _ => $"{p.CurrentNumber:0.##}x"
+        };
+        DrawRightAlignedText(dc, display,
+            new Point(left + bankWidth - 11.0, top + 4.0),
+            12.1, modified ? accent : enabled ? text : muted,
+            FontWeights.SemiBold);
+        AddHorizontalTarget(p,
+            new Rect(bar.Left - 7.0, top + 2.0,
+                bar.Width + 14.0, 30.0),
+            bar, p.Minimum, p.Maximum);
     }
 
     // The real SNG/NATO generator pools are distinct. Their previews show the
@@ -5738,18 +5854,22 @@ public sealed class AggregateVisualControl : FrameworkElement
             e.Handled = true;
             return;
         }
-        if (Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "StashRewardProfile" or "TraderStockBoard" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects"))
+        var stashGraph = Family is "StashRewardProfile" or "StashContentMix"
+            or "StashMedicalComposition" or "StashMedicalQuantity" or "StashGear";
+        if (!stashGraph && Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "TraderStockBoard" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects"))
             return;
 
         var target = FindTarget(e.GetPosition(this));
-        if (target is null || target.Kind != HitKind.Knob
+        if (target is null
+            || target.Kind != HitKind.Knob
+               && !(stashGraph && target.Kind == HitKind.Horizontal)
             || !target.Parameter.IsControlEnabled)
             return;
 
         Focus();
         _radRingFocus = false;
         _selectedParameter = target.Parameter;
-        _selectedHitKind = HitKind.Knob;
+        _selectedHitKind = target.Kind;
         SetHoverTarget(target);
         RaiseParameterSelected(target.Parameter);
         var direction = Math.Sign(e.Delta);
@@ -6595,9 +6715,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             "WorldLootLayout" => 275.0,
             "StashContentMix" => 376.0,
             "StashMedicalComposition" => 304.0,
-            "StashMedicalQuantity" => 257.0,
+            "StashMedicalQuantity" => 290.0,
             "StashGear" => 370.0,
-            "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
+            "StashRewardProfile" => 398.0,
             "StaminaCore" => 323.0,
             "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),

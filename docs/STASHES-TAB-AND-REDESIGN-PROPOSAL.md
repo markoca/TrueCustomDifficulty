@@ -1,6 +1,6 @@
 # Stashes tab — verified source meanings and UI redesign proposal
 
-Date: 2026-10-16. Navigation relocation is IMPLEMENTED; everything under the redesign heading is PROPOSED ONLY.
+Date: 2026-10-16. Navigation relocation and five-section graphical redesign are IMPLEMENTED on main.
 
 ## Implemented: which controls move
 
@@ -23,15 +23,15 @@ Place Stashes between Loot and Economy. All 26 existing stash parameters use the
 
 Only the audited production-only TCD generator clones/redirects are changed: some scripted, quest and standalone/unredirected stashes remain untouched. Weight is a relative selection input, while Chance is an entry field, not measured per-stash occurrence. In-game testing remains required.
 
-## PROPOSED ONLY — compact future redesign, no code changes yet
+## IMPLEMENTED — compact graphical design
 
-1. STASH REWARDS: one compact strip of three equal ammo quantity knobs (BASIC / STANDARD / RARE), with three smaller native source-specific RGD-5 CHANCE, RGD-5 AMOUNT and RARE COUPONS controls immediately below. Show proper units and one clean current number for each.
+1. STASH REWARDS: six bar-graph rows in two banks: three BASIC/STANDARD/RARE ammo quantity tracks on one multiplier axis, followed by three separate plotted RGD-5 CHANCE, RGD-5 AMOUNT and RARE COUPONS tracks on source-native axes. No knobs or ordinary slider tiles.
 2. STASH CONTENT: six aligned horizontal tracks sharing a single scale. Labels left; current value numbers consistently right like Stamina Usage. One shared muted reference 1x marker, no repeated redundant scale text or pie-chart pseudo-probability.
 3. MEDICAL COMPOSITION: four short tracks in the same grammar as Content; a minimal group hint explains that item bias multiplies general MEDICAL. Separate item rows should never falsely suggest stack count.
-4. MEDKIT QUANTITY: two rows (MEDKIT, ARMY MEDKIT), two columns (MIN FLOOR, MAX CAP), four compact AUTO/1..6 native editors. Show AUTO instead of 0 items and put conflict precedence only in tooltips.
+4. MEDKIT QUANTITY: two rows by two columns of selectable dot plots. MIN FLOOR 0 AUTO/1..6; MAX CAP 0 ITEMS (stored -1), AUTO (stored 0), and 1..6. Explicit zero also sets native Chance/Weight to zero for that Medkit or ArmyMedkit entry; existing presets with stored 0 remain AUTO.
 5. EXTRA STASH GEAR: a 3x2 matrix Basic/Standard/Rare by Weapons/Armor. Each cell gets an OFF/RARE/MODERATE/FREQUENT native discrete selector; do not stretch cells across full width or duplicate their explanations.
 
-Across all five groups: fixed maximum bank width and centered placement, original input ranges and precision, only modified numbers highlighted, Vanilla/Base muted, no extra standalone editors for hidden backing IDs. Redesign requires separate approval and updated UI lock before coding.
+All five charts are centered, bounded, source-editable, and have right-aligned live values and changed-number-only highlights. The new explicit -1 MAX stop is the only catalog range expansion. Both authoritative visual catalogs were updated as part of the implementation. No separate redundant editors appear.
 
 ## Local acceptance after pull/build
 

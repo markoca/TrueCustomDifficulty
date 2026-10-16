@@ -3723,6 +3723,19 @@ else:
     note(f"XAML StaticResource integrity locked: {len(_xaml_static_refs)} references resolved")
 
 # Stashes navigation contract. Source IDs and factory JSONs are unchanged.
+_stash_sort_start = _stash_vm_text.find('if (parameter.Definition.Tab == "stashes")')
+_stash_sort_body = _stash_vm_text[_stash_sort_start:_stash_vm_text.find("\n        return 100;", _stash_sort_start)]
+_stash_order_check = (
+    '"loot.cheapStashAmmoQuantity" => 300,'
+    '"loot.stashMixAmmo" => 310,'
+    '"loot.stashMedicalBandageBias" => 316,'
+    '"loot.stashMedkitMinCount" => 320,'
+    '"loot.stashGearCheapWeapon" => 330,'
+)
+if not all(t in _stash_sort_body for t in _stash_order_check):
+    fail("Stashes sections drifted from Rewards > Content > Medical Composition > Quantity > Extra Gear")
+
+
 _stash_groups = {"Stashes", "Stash Content", "Stash Medical Composition", "Stash Medical Quantity", "Stash Gear"}
 _stash_rows = [p for p in parameters if p.get("group") in _stash_groups]
 _stash_ids = {p["id"] for p in _stash_rows}
@@ -4164,28 +4177,55 @@ for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
         fail("Slider numeral/anomaly catalog contract missing from " + _catalog)
 note("Slider numerals enlarged; mutant HP prominent; redundant anomaly headings absent")
 
-# Stash-tier ammo uses three independent native rotary controls; bonus rewards
-# remain horizontal because they represent different chance/count mechanics.
-_stash_knob_start = _knob_source.find('private void DrawCompactStashRewards(')
-_stash_knob_end = _knob_source.find('DrawText(dc, "BONUS REWARDS"', _stash_knob_start)
-_stash_knob_body = _knob_source[_stash_knob_start:_stash_knob_end]
-_stash_knob_tokens = (
+# Stashes native graph contract: reward bars and medical count dot-grid.
+# All source IDs, input/drag/preset routes and source-true quantity values
+# must remain real editable parameters after the slider/knob redesign.
+_graph_start = _knob_source.find("private void DrawCompactStashRewards(")
+_graph_end = _knob_source.find("private void DrawAmmoDistribution(", _graph_start)
+_graph_body = _knob_source[_graph_start:_graph_end]
+_med_graph_start = _knob_source.find("private void DrawStashMedicalQuantity(")
+_med_graph_end = _knob_source.find("private void DrawStashGear(", _med_graph_start)
+_med_graph_body = _knob_source[_med_graph_start:_med_graph_end]
+_med_writer = (ROOT / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
+_med_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+_med_caps = {"loot.stashMedkitMaxCount", "loot.stashArmyMedkitMaxCount"}
+_med_caps_rows = [p for p in parameters if p.get("id") in _med_caps]
+_graph_required = (
+    "DrawStashRewardGraphRow(",
     '("loot.cheapStashAmmoQuantity", "BASIC")',
     '("loot.mediumStashAmmoQuantity", "STANDARD")',
     '("loot.expensiveStashAmmoQuantity", "RARE")',
-    'DrawSourceKnob(dc, P(tier.Id), tier.Label,',
-    'const double knobWidth = 194.0;',
-    'const double knobHeight = 181.0;',
+    '("loot.cheapStashGrenadeChance", "RGD-5 CHANCE")',
+    '("loot.cheapStashGrenadeQuantity", "RGD-5 AMOUNT")',
+    '("loot.expensiveStashMoneyChance", "RARE COUPONS")',
+    "AddHorizontalTarget(p,",
 )
-if (not all(token in _stash_knob_body for token in _stash_knob_tokens)
-    or 'DrawNativeGauge(dc, P(tier.Id)' in _stash_knob_body
-    or not knob_wheel_gate_contains(_knob_source, "StashRewardProfile")
-    or any('2026-10-11 — Ammo by Stash Tier rotary' not in doc
-           for doc in _knob_catalog_texts)):
-    fail("Ammo by Stash Tier: three native rotary controls / interaction / catalogs drifted")
+_med_required = ("DrawMedicalCountDots(", "AddHorizontalTarget(p,",
+                 "MAX CAP", "MIN FLOOR", "0 ITEMS", "AUTO",
+                 '("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount", "MEDKITS")',
+                 '("loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount", "ARMY MEDKITS")')
+if (not all(token in _graph_body for token in _graph_required)
+    or "DrawSourceKnob(" in _graph_body
+    or "DrawHorizontalTrackCard(" in _graph_body
+    or not all(token in _med_graph_body for token in _med_required)
+    or "DrawCompactTrack(" in _med_graph_body
+    or len(_med_caps_rows) != 2
+    or any(p.get("slider", {}).get("min") != -1 or p.get("slider", {}).get("max") != 6
+           or p.get("vanilla", {}).get("All") != 0 for p in _med_caps_rows)
+    or 'if (maxCap == -1)' not in _med_writer
+    or 'return FormatLikeSource(0.0, currentRaw);' not in _med_writer
+    or 'return "0";' not in _med_writer
+    or 'CurrentNumber < 0 ? "0 items"' not in _med_vm
+    or '"StashMedicalQuantity" => 290.0,' not in _knob_source
+    or '"StashRewardProfile" => 398.0,' not in _knob_source
+    or 'var stashGraph = Family is "StashRewardProfile" or "StashContentMix"' not in _knob_source
+    or 'or "StashMedicalComposition" or "StashMedicalQuantity" or "StashGear";' not in _knob_source
+    or any("CURRENT 2026-10-16 — STASHES GRAPH-ONLY REDESIGN" not in
+           (DOCS / doc).read_text(encoding="utf-8")
+           for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))):
+    fail("Stashes graph-only reward/medical editors or explicit zero count drifted")
 else:
-    note("Ammo by Stash Tier: BASIC/STANDARD/RARE native source knobs; bonus reward rails unchanged")
-
+    note("Stashes rewards: six native graphical rows; medical quantity: 2x2 dot graph with 0 ITEMS/AUTO distinct and zero-entry writer")
 
 # Trader Stock native rotary bank uses the existing input/grid infrastructure.
 _stock_knob_source = _knob_source
@@ -4332,7 +4372,7 @@ _seven_required_code = (
     'const int hoursCount = 14;',
     'const double sharedTop = 3.0;',
     'Math.Min(780.0, ActualWidth - 34.0)',
-    'Math.Min(606.0, ActualWidth - 34.0)',
+    'Math.Min(785.0, Math.Max(1.0, ActualWidth - 34.0))',
     'if (Family == "SleepingDashboard"',
     'or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"',
     'or "RadiationBalance" or "StaminaCore"',
@@ -4389,31 +4429,8 @@ for _id, _native in _seven_expected_sliders.items():
 for _marker in _seven_required_code:
     if _marker not in _seven_src:
         _seven_errors.append(f'missing seven-controller interaction/geometry marker {_marker}')
-# Check each *active renderer* rather than assuming the old stash-tier
-# Preserve source IDs and native interaction after approved rotary redesigns.
-# Stash tiers AND RadiationBalance are now knobs, while RepairCurve retains
-# its interactive four-point source graph; bonus rewards stay separate.
-_seven_stash_start = _seven_src.find('private void DrawCompactStashRewards(')
-_seven_stash_end = _seven_src.find('DrawText(dc, "BONUS REWARDS"', _seven_stash_start)
-_seven_stash_body = (_seven_src[_seven_stash_start:_seven_stash_end]
-                     if 0 <= _seven_stash_start < _seven_stash_end else '')
-_seven_stash_native = (
-    '("loot.cheapStashAmmoQuantity", "BASIC")',
-    '("loot.mediumStashAmmoQuantity", "STANDARD")',
-    '("loot.expensiveStashAmmoQuantity", "RARE")',
-    'DrawSourceKnob(dc, P(tier.Id), tier.Label,',
-    'Math.Min(606.0, ActualWidth - 34.0)',
-)
-_seven_bonus_start = _seven_src.find('DrawText(dc, "BONUS REWARDS"', _seven_stash_end)
-_seven_stash_method_end = _seven_src.find('\n    private ', _seven_stash_end)
-_seven_bonus_body = (_seven_src[_seven_bonus_start:_seven_stash_method_end]
-                     if 0 <= _seven_bonus_start < _seven_stash_method_end else '')
-_seven_bonus_native = (
-    '("loot.cheapStashGrenadeChance", "RGD-5 CHANCE")',
-    '("loot.cheapStashGrenadeQuantity", "RGD-5 AMOUNT")',
-    '("loot.expensiveStashMoneyChance", "COUPON CHANCE")',
-    'DrawHorizontalTrackCard(dc, P(rewards[i].Id), rewards[i].Label,',
-)
+# Stash graph and zero-count semantics are verified above; this seven-visual
+# audit continues to verify RadiationBalance and RepairCurve independently.
 _seven_radiation_start = _seven_src.find('private void DrawRadiationBalance(')
 _seven_radiation_end = _seven_src.find('\n    private ', _seven_radiation_start)
 _seven_radiation_body = (_seven_src[_seven_radiation_start:_seven_radiation_end]
@@ -4437,16 +4454,11 @@ _seven_repair_native = (
     '("economy.repairEnemy", "HOSTILE")',
     'AddVerticalTarget(parameter,',
 )
-if (not all(t in _seven_stash_body for t in _seven_stash_native)
-    or 'DrawNativeGauge(dc, P(tier.Id)' in _seven_stash_body
-    or not all(t in _seven_bonus_body for t in _seven_bonus_native)
-    or not all(t in _seven_radiation_body for t in _seven_radiation_native)
+if (not all(t in _seven_radiation_body for t in _seven_radiation_native)
     or 'DrawNativeGauge(dc, P(source.Id)' in _seven_radiation_body
     or not knob_wheel_gate_contains(_seven_src, 'RadiationBalance')
-    or not all(t in _seven_repair_body for t in _seven_repair_native)
-    or '"StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,' not in _seven_src
-    or not knob_wheel_gate_contains(_seven_src, 'StashRewardProfile')):
-    _seven_errors.append('stash-tier/radiation native knobs, bonus rails or repair graph lost source wiring')
+    or not all(t in _seven_repair_body for t in _seven_repair_native)):
+    _seven_errors.append('radiation native knobs or interactive repair graph lost source wiring')
 if not all(t in _seven_vm for t in ('"RadiationBalance" => "Turn ACCUMULATION RATE',
                                   '"RepairCurve" => "Drag one reputation point',
                                   '"SleepingDashboard" => "Select 1–14 minimum sleep hours')):
@@ -4458,7 +4470,7 @@ if any('2026-10-11 — Seven gamer-centric native visual controllers' not in
 if _seven_errors:
     fail('Seven source-native visual controls: ' + '; '.join(_seven_errors))
 else:
-    note('Seven source-backed visual editors: 7 renderers / 31 unchanged CFG members; stash-tier/radiation native knobs, separate bonus rewards, repair curve, stepped sleep and vault ruler; native frame heights match')
+    note('Seven source-backed visual editors: stash rewards now native bar graphs; RadiationBalance native knobs, repair curve, sleep/vault and other source routes retained')
 
 
 # Source-native compact Health/Stamina revision. Protect real parameter

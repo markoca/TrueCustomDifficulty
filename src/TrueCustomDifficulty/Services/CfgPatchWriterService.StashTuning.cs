@@ -75,6 +75,11 @@ public sealed partial class CfgPatchWriterService
     {
         if (field is not ("Chance" or "Weight"))
             return currentRaw;
+        // Explicit zero-item MAX also disables its source selection entry:
+        // do not rely on the engine accepting MinCount=MaxCount=0 alone.
+        if (itemSid is "Medkit" or "ArmyMedkit"
+            && StashTuningCurrent(all, $"loot.stash{itemSid}MaxCount", 0) < -0.5)
+            return FormatLikeSource(0.0, currentRaw);
         var biasId = StashItemBiasId(itemSid);
         if (biasId is null)
             return currentRaw;

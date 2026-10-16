@@ -2098,16 +2098,18 @@ public sealed class MainViewModel : ObservableObject
                 "loot.stashMedicalMedkitBias" => 317,
                 "loot.stashMedicalArmyMedkitBias" => 318,
                 "loot.stashMedicalAntiRadBias" => 319,
-                "loot.stashMedkitMinCount" => 326,
-                "loot.stashMedkitMaxCount" => 327,
-                "loot.stashArmyMedkitMinCount" => 328,
-                "loot.stashArmyMedkitMaxCount" => 329,
-                "loot.stashGearCheapWeapon" => 320,
-                "loot.stashGearCheapArmor" => 321,
-                "loot.stashGearMediumWeapon" => 322,
-                "loot.stashGearMediumArmor" => 323,
-                "loot.stashGearExpensiveWeapon" => 324,
-                "loot.stashGearExpensiveArmor" => 325,
+                // Medical selection and stack size form one readable flow.
+                "loot.stashMedkitMinCount" => 320,
+                "loot.stashMedkitMaxCount" => 321,
+                "loot.stashArmyMedkitMinCount" => 322,
+                "loot.stashArmyMedkitMaxCount" => 323,
+                // Additional weapons/armor are a separate final section.
+                "loot.stashGearCheapWeapon" => 330,
+                "loot.stashGearCheapArmor" => 331,
+                "loot.stashGearMediumWeapon" => 332,
+                "loot.stashGearMediumArmor" => 333,
+                "loot.stashGearExpensiveWeapon" => 334,
+                "loot.stashGearExpensiveArmor" => 335,
 
                 // Three stash tiers and three independent bonus rolls
                 "loot.cheapStashAmmoQuantity" => 300,

@@ -1,5 +1,10 @@
 # Stash Medical Composition and Quantity — source-backed contract (2026-10-16)
 
+## CURRENT 2026-10-16 — MAX CAP now supports actual 0 ITEMS
+
+Medkit and Army Medkit quantity are editable in one 2x2 dot graph. MIN FLOOR has native 0=AUTO and 1..6 item stops. MAX CAP has a separate 0 ITEMS point (stored -1), historical 0=AUTO and 1..6 caps. Selecting 0 ITEMS zeros both native MinCount and MaxCount and also zeros the eligible Medkit or ArmyMedkit item source Chance/Weight in production-only clone generators. Positive MAX only limits counts. This avoids relying solely on how the engine handles a selected zero-count entry. Normal AUTO keeps source values; older saved preset MAX 0 values remain AUTO. Use general Medical 0x to suppress all eligible medical items instead of just the two Medkit types. This is a source-level guarantee; unopened stash gameplay validation is still pending. Earlier MAX 0..6-only text below is historical.
+
+
 **Status:** Implemented in TrueCustomDifficulty source; game runtime validation still required. Source version **2.0.5** (project's 2026-10-16 ItemGeneratorPrototypes CFG baseline). These are *production-only TCD-owned generator clone* edits, not blanket replacements of all game stashes.
 
 ## Why a single MEDICAL multiplier is insufficient

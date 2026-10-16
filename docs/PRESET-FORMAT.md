@@ -1,5 +1,10 @@
 # Preset JSON format
 
+## CURRENT 2026-10-16 — Stashes graphs and backward-compatible zero-item caps
+
+The two medical MAX CAP sources accept an additional -1 value that represents 0 ITEMS in the graphical UI. Existing v1 profile 0 remains AUTO; the 12 factory JSONs are unchanged. Save/Load serializes the same source IDs and the new -1 when explicitly chosen. The writer suppresses that Medkit/ArmyMedkit entry via native count and chance/weight zeroing. Stash Rewards is a six-row native bar graph and Medical Quantity is a four-cell dot graph; no preset format bump or parameter rename.
+
+
 ## 2026-10-16 — Stashes navigation does not change preset format
 
 The 26 source-backed stash parameters remain in the unchanged v1 JSON values dictionary with their historical loot.* IDs. Only catalog tab membership moves to Stashes beside Loot. Save/Load still uses the same all-parameter serialization and 12 factory presets; existing custom profiles need no migration. The documented UI redesign is PROPOSED ONLY and makes no schema change.

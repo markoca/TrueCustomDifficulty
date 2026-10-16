@@ -1,4 +1,9 @@
 > **CURRENT 2026-10-16 STASHES NAVIGATION:** All 26 stash reward/composition/quantity/gear source IDs now live in the adjacent Stashes tab, without changing any loot.* ID, source values or writer paths. Existing historical Loot references below are source audits, not the current tab location. See STASHES-TAB-AND-REDESIGN-PROPOSAL.md.
+
+## CURRENT 2026-10-16 — Stashes are now edited as native graphs
+
+The separate Stashes tab implements a six-row reward bar graph and a four-cell Medkit Quantity dot plot, in addition to the existing Content, Medical Composition and Gear graphs. No stash reward knob or ordinary medical amount slider remains. Two MAX CAP axes offer 0 ITEMS separately from AUTO, while ordinary Loot world crates and NPC/mutant rewards are unchanged.
+
 # Loot UI Review
 
 Version: 0.9.26.44

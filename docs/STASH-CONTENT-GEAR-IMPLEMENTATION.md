@@ -1,5 +1,10 @@
 # STASH CONTENT & EXTRA STASH GEAR — implementation contract (2026-10-16)
 
+## CURRENT 2026-10-16 — Graphical Stash Rewards and Medical Quantity
+
+STASH REWARDS is a six-row chart: three native ammo-tier multipliers followed by RGD-5 Chance, RGD-5 Amount and Rare Coupons, all editable. MEDKIT QUANTITY is a separate 2x2 dot graph with MAX 0 ITEMS and AUTO as distinct stops. Stash Content and Extra Stash Gear retain their native bar/dot visualizations. Older rotary/standard-slider descriptions below are superseded for presentation only. Source item semantics and exact production clone ownership stay unchanged.
+
+
 **Scope:** Source-backed optional controls for the production-only Basic, Standard and Rare stash generators. These controls are in **Stashes** and are distinct from **Stash Rewards** (ammo amounts and bonus grenade/coupon rolls), **Breakable Boxes**, **World Loot** and hand-authored one-off rewards.
 
 **Evidence:** `STALKER2-GameData-CFG(20261016-101952).zip` → `GameData/ItemGeneratorPrototypes.cfg` (source game version 2.0.5, as tracked by project baseline). The source contains `Stash_Cheap_*`, `Stash_Medium_*`, `Stash_Expensive_*` wrappers pointing to `GamePass_Stash_ItemGenerator_Cheap`, `GamePass_Stash_ItemGenerator_Common_Var1` and `GamePass_Stash_ItemGenerator_Rare`. Categories use both `PossibleItems[*].Weight` and `Chance`; they may carry `Diff`/`PlayerRank` gates. Confirmed separately on normal authored stash prototypes: `WeaponPrimary` and `BodyArmor` categories. This is **structural source evidence, not game runtime proof**.
