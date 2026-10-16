@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-"""Static source/control audit for Stashes mixed native editors and bias previews.
+"""Audit actual-source Stashes previews and stable edit/preset/writer contracts.
 
-This does not claim a .NET/Wine render or gameplay probability validation.
+Reads the same embedded CFG writer source fixture used by the WPF preview.
+Does not substitute static source checks for .NET/Wine or game QA.
 """
 import json
+import math
 import re
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
+data = root / "src/TrueCustomDifficulty/Data"
 source = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text()
-catalog = json.loads((root / "src/TrueCustomDifficulty/Data/parameters.json").read_text())
+catalog = json.loads((data / "parameters.json").read_text())
+baseline = json.loads((data / "cfg-writer-baseline.json").read_text())["special"]
 lock = (root / "docs/UI-DESIGN-LOCK.md").read_text()
 system = (root / "docs/VISUAL-CONTROL-SYSTEM.md").read_text()
 proposal = (root / "docs/STASHES-TAB-AND-REDESIGN-PROPOSAL.md").read_text()
@@ -37,90 +41,135 @@ ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
 assert len(ids) == len(set(ids)) == 26
 assert set(ids) == set(sum(expected.values(), []))
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
-for family, values in expected.items():
-    match = re.search(r'"' + re.escape(family) + r'"\s*=>\s*new\[\]\s*\{(.*?)\}', family_ids, re.S)
-    assert match, family
-    assert re.findall(r'"(loot\.[A-Za-z0-9.]+)"', match.group(1)) == values, family
+for family, expected_ids in expected.items():
+    hit = re.search(r'"' + re.escape(family) + r'"\s*=>\s*new\[\]\s*\{(.*?)\}', family_ids, re.S)
+    assert hit, family
+    assert re.findall(r'"(loot\.[A-Za-z0-9.]+)"', hit.group(1)) == expected_ids, family
 assert next(x for x in catalog["tabs"] if x["id"] == "stashes")["order"] == 55
 
-def method(name, successor):
-    start = source.index("    private void " + name + "(")
-    end = source.index("    private void " + successor + "(", start + 10)
-    return source[start:end]
+def method(start, finish):
+    return source[source.index("    private void " + start + "("):
+                  source.index("    private void " + finish + "(")]
 
 content = method("DrawStashContentMix", "DrawStashMedicalComposition")
 medical = method("DrawStashMedicalComposition", "DrawStashMedicalQuantity")
 quantity = method("DrawStashMedicalQuantity", "DrawStashGear")
 gear = method("DrawStashGear", "DrawStashGearMode")
-preview = method("DrawStashBiasPreview", "DrawCompactStashRewards")
+preview = method("DrawStashPoolBar", "DrawCompactStashRewards")
 
 assert content.count('("loot.stashMix') == 6
 assert medical.count('("loot.stashMedical') == 4
 assert quantity.count('("MEDKITS"') + quantity.count('("ARMY MEDKITS"') == 2
 assert gear.count('("BASIC"') + gear.count('("STANDARD"') + gear.count('("RARE"') == 3
 assert 'DrawSourceKnob(dc, source, entries[i].Label' in content
-assert 'DrawStashBiasPreview(dc, entries,' in content
-assert 'DrawStashRewardGraphRow(dc, P(entries[i].Id)' in medical
-assert 'DrawStashBiasPreview(dc, entries,' in medical
+assert "DrawStashSourcePreview(dc," in content
+assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" in medical
+assert "DrawStashMedicalSourcePreview(dc," in medical
 assert "DrawStashQuantityDots(dc, P(families[i].Min)" in quantity
 assert "DrawStashQuantityDots(dc, P(families[i].Max)" in quantity
 assert "DrawStashGearMode(dc, P(tiers[i].Weapon)" in gear
 assert "DrawStashGearMode(dc, P(tiers[i].Armor)" in gear
-assert "DrawMiniConsumableKnob" not in content + medical + quantity + gear
+assert "DrawStashBiasPreview" not in source
 assert "DrawStashCountKnob" not in source
 assert "DrawStashGearDial" not in source
-assert "DrawHorizontalTrackCard" not in content + medical + quantity + gear
-assert "AddHorizontalTarget(source" in quantity and "AddHorizontalTarget(source" in source
+assert "AddHorizontalTarget(" not in preview  # never an editable preview
+assert "DrawStashNumericReadout" not in preview
+assert "MULTIPLIERS, NOT DROP ODDS" not in source
+assert "weights.Sum()" not in preview # normalized six source multipliers retired
+
+# Unboxed single-row six distinct color/category knobs retain native input.
+assert "var cursor = left;" in content and "cursor += cell + gap;" in content
+assert "DrawRoundedRectangle" not in content
+assert "dialAccent: StashMixPalette[i], dialScale: dialScales[i]" in content
+assert "var dialInk = dialAccent ?? accent;" in source
+assert source.count("new SolidColorBrush(Color.FromRgb(") >= 6
+assert "StashMixPalette[kind]" in preview
+assert 'StashPreviewGroup("BASIC", 7)' in preview
+assert 'StashPreviewGroup("BASIC", 1)' in preview
+assert 'StashPreviewGroup("RARE", 11)' not in preview  # chance only, never a weight pool
+assert "StashChanceSample(" in preview
+assert '"SOURCE CHANCE FIELDS"' in preview
+assert '"SEPARATE ROLLS · CONTENT BIAS ONLY"' in preview
+assert "StashEffectiveField(sid, raw, false)" in preview
+assert "StashEffectiveField(sid, source.Value.Raw, true)" in preview
+assert "Math.Clamp(scaled, 0.0, 1.0)" in source
+assert "StashSourceFactor(sid)" in source
+assert "StashSourceNumber(raw)" in source
+assert "CfgWriterBaselineService().Load()" in source
+assert "StashMedicalSourcePreview" in source
 assert 'new[] { "0 ITEMS", "AUTO", "1", "2", "3", "4", "5", "6" }' in quantity
 assert "var minimum = isMax ? -1.0 : 0.0;" in quantity
-assert 'new[] { "OFF", "RARE", "MOD", "FREQ" }' in source
-assert "DrawStashNumericReadout(dc, display" in quantity
-assert "HitKind.Horizontal" in source and "HitKind.Knob" in source
-assert "target.Kind == HitKind.Knob" in source
-assert 'or "StashMedicalQuantity" or "StashGear"' in source
-assert 'DrawCompactStashRewards(' in source
-assert '"StashRewardProfile" => 398.0' in source
 
-# Preview must be noninteractive, explicitly NOT a probability estimate, and
-# must avoid fabricated nonzero percentages when every bias is disabled.
-assert 'MULTIPLIERS, NOT DROP ODDS' in preview
-assert "Math.Max(0.0, P(e.Id)?.CurrentNumber ?? 0.0)" in preview
-assert "weights.Sum()" in preview
-assert "sum > Epsilon ? weights[i] / sum : 0.0" in preview
-assert "sum > Epsilon ? weights[i] * 100.0 / sum : 0.0" in preview
-assert "AddHorizontalTarget" not in preview and "AddRangeTarget" not in preview
-assert "DrawStashNumericReadout" not in preview  # derived % always neutral
+# Authoritative baseline input: 2 representative DIFFERENT actual-native
+# weight pools from GameData/ItemGeneratorPrototypes.cfg. At 1x the real
+# category shares are not 16.7%; chance rows are NOT added to these pools.
+basic = baseline["cheapStashProduction"]["templateCategories"]
+hard = basic[1]
+exp = basic[7]
+assert hard["node"] == "[1]"
+assert hard["fields"]["Diff"] == "EGameDifficulty::Hard"
+assert exp["node"] == "[7]"
+assert exp["fields"]["Diff"] == "EGameDifficulty::Easy, EGameDifficulty::Medium"
+assert exp["fields"]["PlayerRank"] == "ERank::Experienced"
 
-# Same breakpoints and measured last-card clearance as renderers.
-assert "var sizeWeights = new[] { 1.28, 1.28, 1.05, 1.05, .92, .92 };" in content
-assert "var dialScales = new[] { 1.24, 1.24, .98, .98, .78, .78 };" in content
-assert "var legendColumns = ActualWidth >= 700.0 ? 6 : 3;" in content
-assert "dialAccent: StashMixPalette[i], dialScale: dialScales[i]" in content
-assert "DrawRoundedRectangle" not in content  # no per-knob bounding boxes
-assert "var card = new Rect(cursor, 49.0, cell, 176.0);" in content
-assert "new Rect(left, 237.0, width, previewHeight)" in content
-assert "var dialInk = dialAccent ?? accent;" in source
-assert "new SolidColorBrush(Color.FromRgb(" in source
-assert source.count("new SolidColorBrush(Color.FromRgb(") >= 6
-assert "var isContentMix = entries.Length == 6" in preview
-assert "StashMixPalette[index]" in preview
-assert "CategoryBrush(i)" in preview
-assert "ActualWidth >= 700.0 ? 2 : 1" in quantity
-assert "ActualWidth >= 746.0 ? 3 : ActualWidth >= 580.0 ? 2 : 1" in gear
-assert "=> width >= 700.0 ? 360.0 : 385.0;" in source
-assert "=> 373.0;" in source
+category = {
+    "Milk": 3, "Bread": 2, "Sausage": 2, "CannedFood": 2,
+    "Bandage": 1, "MoneyCommon": 5,
+}
+def native_group_weights(group, multipliers):
+    out = [0.0] * 6
+    for item in group["items"]:
+        row = item["fields"]
+        sid = row["ItemPrototypeSID"]
+        assert "Weight" in row and "Chance" not in row, (group["node"], sid)
+        out[category[sid]] += float(row["Weight"].rstrip("fF")) * multipliers[category[sid]]
+    return out
+
+base = native_group_weights(exp, [1] * 6)
+assert base == [0, 2, 13, 1, 0, 1.77], base
+assert math.isclose(sum(base), 17.77, abs_tol=1e-9)
+assert math.isclose(100 * base[2] / sum(base), 73.157, abs_tol=0.01)
+hard_default = native_group_weights(hard, [1] * 6)
+assert hard_default == [0, 2, 13, 1, 0, 0], hard_default
+assert sum(hard_default) == 16
+food_disabled = native_group_weights(exp, [1, 1, 0, 1, 1, 1])
+assert food_disabled[2] == 0 and food_disabled[1] == 2
+all_disabled = native_group_weights(exp, [0] * 6)
+assert sum(all_disabled) == 0
+food_triple = native_group_weights(exp, [1, 1, 3, 1, 1, 1])
+assert food_triple[2] == 39 and math.isclose(sum(food_triple), 43.77)
+
+samples = [
+    ("expensiveStashProduction", 1, "A918A", 1.0),
+    ("cheapStashProduction", 0, "Bandage", .4),
+    ("expensiveStashProduction", 0, "CannedFood", 1.0),
+    ("cheapStashProduction", 0, "Vodka", .5),
+    ("cheapStashProduction", 5, "GrenadeRGD5", .1),
+    ("expensiveStashProduction", 11, "MoneyCommon", .2),
+    ("cheapStashProduction", 0, "Medkit", .4),
+    ("expensiveStashProduction", 4, "ArmyMedkit", 1.0),
+    ("expensiveStashProduction", 4, "AntiRad", 1.0),
+]
+for family, branch, sid, expected_chance in samples:
+    source_group = baseline[family]["templateCategories"][branch]
+    rows = [item["fields"] for item in source_group["items"]
+            if item["fields"]["ItemPrototypeSID"] == sid]
+    assert len(rows) == 1 and "Chance" in rows[0], (family, branch, sid)
+    chance = float(rows[0]["Chance"].rstrip("fF"))
+    assert math.isclose(chance, expected_chance, abs_tol=1e-8)
+    assert math.isclose(min(1, max(0, chance * 3)), min(1, chance * 3))
+
+assert "=> width >= 700.0 ? 520.0 : 557.0;" in source
+assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
-assert 'var endpointInk = stashDial ? Brushes.White : muted;' in source
-assert "DrawStashNumericReadout(dc, display" in source
+for name, document in [("UI-DESIGN-LOCK", lock),
+                       ("VISUAL-CONTROL-SYSTEM", system),
+                       ("STASHES-TAB-AND-REDESIGN-PROPOSAL", proposal)]:
+    assert "STASHES SOURCE-NATIVE WEIGHT/CHANCE PREVIEWS" in document, name
 
-for name, doc in [("UI-DESIGN-LOCK", lock), ("VISUAL-CONTROL-SYSTEM", system),
-                  ("STASHES-TAB-AND-REDESIGN-PROPOSAL", proposal)]:
-    assert "STASH CONTENT MIX SINGLE-ROW COLOR-KEYED DIALS" in doc, name
-    assert "STASHES MIXED CONTROLS + LIVE BIAS FEEDBACK" in doc, name
-    assert "NOT" in doc and "drop" in doc.lower(), name
-
-print("PASS: five families, 26 persisted sources, independent native editors")
-print("PASS: live noninteractive bias preview, 0x guard, source-native quantity/gear")
-print("PASS: responsive measurements and matched authoritative UI catalogs")
-print("PENDING: local .NET build, Wine appearance and real game outcome tests")
+print("PASS: 26 original source IDs, editable controls, no synthetic six-way probability")
+print("PASS: source-native Easy/Medium Experienced and Hard weighted pools")
+print("PASS: 1x/0x/3x numeric regressions and nine original authored Chance fields")
+print("PASS: separate chance field examples, zero guards, responsive geometry/UI catalogs")
+print("PENDING: local .NET build, Wine layout/behavior, in-game stash runtime results")

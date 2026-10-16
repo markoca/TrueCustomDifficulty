@@ -6,6 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using TrueCustomDifficulty.ViewModels;
+using TrueCustomDifficulty.Models;
+using TrueCustomDifficulty.Services;
 
 namespace TrueCustomDifficulty.Controls;
 
@@ -153,6 +155,19 @@ public sealed class AggregateVisualControl : FrameworkElement
             "SleepingDashboard" => new[] { "health.maxHP" },
             "FatigueCurve" => new[] { "survival.sleepEligibilityThreshold" },
             "RepairCurve" => new[] { "economy.repairCostBase" },
+            // Preview-only cross-family inputs: observe source changes without
+            // adding them to this board's edit/reset membership.
+            "StashContentMix" => new[]
+            {
+                "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
+                "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
+                "loot.stashMedkitMaxCount", "loot.stashArmyMedkitMaxCount"
+            },
+            "StashMedicalComposition" => new[]
+            {
+                "loot.stashMixMedical", "loot.stashMedkitMaxCount",
+                "loot.stashArmyMedkitMaxCount"
+            },
             "NpcLootLoadout" => new[] { "economy.traderMinBuyCondition" },
             _ => Array.Empty<string>()
         };
@@ -4594,12 +4609,10 @@ public sealed class AggregateVisualControl : FrameworkElement
             cursor += cell + gap;
         }
 
-        // Same six colors and order as the source dials. Percentages show
-        // only NORMALIZED EDITED MULTIPLIERS, not real loot/drop odds.
-        var legendColumns = ActualWidth >= 700.0 ? 6 : 3;
-        var previewHeight = legendColumns == 6 ? 105.0 : 130.0;
-        DrawStashBiasPreview(dc, entries,
-            new Rect(left, 237.0, width, previewHeight), legendColumns,
+        // Exact source rows, never a synthetic six-way category probability.
+        DrawStashSourcePreview(dc,
+            new Rect(left, 237.0, width,
+                ActualWidth >= 700.0 ? 268.0 : 304.0),
             text, muted, border, accent, panel);
     }
 
@@ -4631,8 +4644,9 @@ public sealed class AggregateVisualControl : FrameworkElement
                 left, 72.0 + 43.0 * i, width, plotLeft, plotWidth,
                 text, muted, border, accent, panel);
 
-        DrawStashBiasPreview(dc, entries,
-            new Rect(left, 253.0, width, 105.0), 4,
+        DrawStashMedicalSourcePreview(dc,
+            new Rect(left, 253.0, width,
+                ActualWidth >= 700.0 ? 105.0 : 141.0),
             text, muted, border, accent, panel);
     }
 
@@ -4797,62 +4811,264 @@ public sealed class AggregateVisualControl : FrameworkElement
             rail, 0.0, 3.0);
     }
 
-    // Shared live normalized multiplier preview. The six stash categories
-    // are independent generator rules, so percent here describes only the
-    // *share of the edited multiplier totals*, never actual loot frequency.
-    private void DrawStashBiasPreview(
-        DrawingContext dc, (string Id, string Label)[] entries, Rect card,
-        int columns, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+    // The UI reads the SAME embedded ItemGenerator source templates as the
+    // writer. Source categories are independent rolls; only Weight values
+    // inside one exact PossibleItems branch can be normalized together.
+    private static readonly Lazy<CfgWriterBaseline> StashPreviewBaseline =
+        new(() => new CfgWriterBaselineService().Load());
+
+    private static CfgWriterCheapStashCategory? StashPreviewGroup(string tier, int index)
+    {
+        var sources = StashPreviewBaseline.Value.Special;
+        var groups = tier switch
+        {
+            "BASIC" => sources.CheapStashProduction.TemplateCategories,
+            "STANDARD" => sources.MediumStashAmmoProduction.TemplateCategories,
+            "RARE" => sources.ExpensiveStashProduction.TemplateCategories,
+            _ => null
+        };
+        return groups?.FirstOrDefault(g => g.Node == $"[{index}]");
+    }
+
+    private static double StashSourceNumber(string raw)
+    {
+        if (!double.TryParse(raw.TrimEnd('f', 'F'), NumberStyles.Float,
+                CultureInfo.InvariantCulture, out var value))
+            throw new InvalidDataException($"Invalid authored stash field: {raw}");
+        return value;
+    }
+
+    private static int StashCategoryIndex(string sid)
+    {
+        if (sid.Length > 1 && sid[0] == 'A' && char.IsDigit(sid[1]))
+            return 0; // Ammo
+        if (sid is "Bandage" or "Medkit" or "ArmyMedkit" or "AntiRad" or "Antirad"
+            or "EcoMedkit")
+            return 1; // Medical
+        if (sid is "Bread" or "Sausage" or "CannedFood")
+            return 2; // Food
+        if (sid is "Milk" or "Water" or "Energetic" or "Vodka" or "Beer")
+            return 3; // Drinks
+        if (sid is "GrenadeRGD5" or "GrenadeF1")
+            return 4; // Grenades
+        if (sid.StartsWith("Money", StringComparison.Ordinal))
+            return 5; // Coupons
+        return -1;
+    }
+
+    private double StashSourceValue(string id, double otherwise = 1.0)
+        => P(id)?.CurrentNumber ?? Linked(id)?.CurrentNumber ?? otherwise;
+
+    private double StashSourceFactor(string sid)
+    {
+        var kind = StashCategoryIndex(sid);
+        if (kind < 0) return 1.0;
+        var ids = new[]
+        {
+            "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
+            "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons"
+        };
+        var factor = Math.Max(0.0, StashSourceValue(ids[kind]));
+        var detail = sid switch
+        {
+            "Bandage" => "loot.stashMedicalBandageBias",
+            "Medkit" => "loot.stashMedicalMedkitBias",
+            "ArmyMedkit" => "loot.stashMedicalArmyMedkitBias",
+            "AntiRad" or "Antirad" => "loot.stashMedicalAntiRadBias",
+            _ => null
+        };
+        if (detail is not null)
+            factor *= Math.Max(0.0, StashSourceValue(detail));
+        if (sid == "Medkit" && StashSourceValue("loot.stashMedkitMaxCount", 0.0) < -.5
+            || sid == "ArmyMedkit" &&
+                StashSourceValue("loot.stashArmyMedkitMaxCount", 0.0) < -.5)
+            return 0.0;
+        return factor;
+    }
+
+    private double StashEffectiveField(string sid, string raw, bool chance)
+    {
+        var source = StashSourceNumber(raw);
+        var scaled = Math.Max(0.0, source * StashSourceFactor(sid));
+        return chance ? Math.Clamp(scaled, 0.0, 1.0) : scaled;
+    }
+
+    private void DrawStashPoolBar(
+        DrawingContext dc, CfgWriterCheapStashCategory? group,
+        string caption, Rect row, Brush text, Brush muted, Brush border)
+    {
+        if (group is null) return;
+        var totals = new double[6];
+        foreach (var item in group.Items)
+        {
+            if (!item.Fields.TryGetValue("Weight", out var raw)
+                || !item.Fields.TryGetValue("ItemPrototypeSID", out var sid))
+                continue;
+            var category = StashCategoryIndex(sid);
+            if (category >= 0)
+                totals[category] += StashEffectiveField(sid, raw, false);
+        }
+        var total = totals.Sum();
+        DrawText(dc, caption, new Point(row.Left, row.Top), 9.6,
+            text, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, $"TOTAL WEIGHT {total:0.##}",
+            new Point(row.Right, row.Top), 9.0, muted, FontWeights.SemiBold);
+        var bar = new Rect(row.Left, row.Top + 17.0, row.Width, 11.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(border, .28), null,
+            bar, 2.0, 2.0);
+        var labels = new[] { "AMMO", "MEDICAL", "FOOD", "DRINKS", "GRENADES", "COUPONS" };
+        var cursor = bar.Left;
+        for (var i = 0; i < totals.Length; i++)
+        {
+            var fraction = total > Epsilon ? totals[i] / total : 0.0;
+            var span = bar.Width * fraction;
+            if (span > Epsilon)
+                dc.DrawRectangle(StashMixPalette[i], null,
+                    new Rect(cursor, bar.Top, span, bar.Height));
+            cursor += span;
+        }
+        // Only categories with a native member in THIS exact source pool
+        // belong in the legend. Disabled members retain their 0% label.
+        var present = group.Items
+            .Select(x => x.Fields.TryGetValue("ItemPrototypeSID", out var sid)
+                ? StashCategoryIndex(sid) : -1)
+            .Where(x => x >= 0).Distinct().OrderBy(x => x).ToArray();
+        for (var col = 0; col < present.Length; col++)
+        {
+            var kind = present[col];
+            var x = row.Left + col * row.Width / present.Length;
+            var slot = row.Width / present.Length;
+            dc.DrawRectangle(StashMixPalette[kind], null,
+                new Rect(x, row.Top + 37.0, 7.0, 7.0));
+            DrawText(dc, labels[kind], new Point(x + 10.0, row.Top + 33.0),
+                8.9, text, FontWeights.SemiBold);
+            var share = total > Epsilon ? totals[kind] * 100.0 / total : 0.0;
+            DrawRightAlignedText(dc, $"{share:0.#}%",
+                new Point(x + slot - 3.0, row.Top + 33.0),
+                9.2, muted, FontWeights.SemiBold);
+        }
+    }
+
+    private (string Sid, string Raw)? StashChanceSample(
+        string tier, int groupIndex, string expectedSid)
+    {
+        var group = StashPreviewGroup(tier, groupIndex);
+        var item = group?.Items.FirstOrDefault(x =>
+            x.Fields.TryGetValue("ItemPrototypeSID", out var sid)
+            && sid == expectedSid
+            && x.Fields.ContainsKey("Chance"));
+        if (item is null) return null;
+        return (expectedSid, item.Fields["Chance"]);
+    }
+
+    private void DrawStashChanceSample(
+        DrawingContext dc, string tier, int groupIndex, string sid,
+        string label, Rect cell, Brush text, Brush muted, Brush border)
+    {
+        var source = StashChanceSample(tier, groupIndex, sid);
+        if (source is null) return;
+        var kind = StashCategoryIndex(sid);
+        if (kind < 0) return;
+        var chance = StashEffectiveField(sid, source.Value.Raw, true);
+        DrawText(dc, label, new Point(cell.Left + 1.0, cell.Top),
+            9.4, text, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, $"{chance * 100.0:0.#}%",
+            new Point(cell.Right - 1.0, cell.Top), 9.6,
+            muted, FontWeights.SemiBold);
+        var line = new Rect(cell.Left + 1.0, cell.Top + 17.0,
+            Math.Max(1.0, cell.Width - 2.0), 6.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(border, .25),
+            null, line, 2.0, 2.0);
+        if (chance > Epsilon)
+            dc.DrawRoundedRectangle(StashMixPalette[kind], null,
+                new Rect(line.Left, line.Top, chance * line.Width, line.Height),
+                2.0, 2.0);
+    }
+
+    private void DrawStashSourcePreview(
+        DrawingContext dc, Rect card, Brush text, Brush muted,
+        Brush border, Brush accent, Brush panel)
     {
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .60),
             new Pen(CloneWithOpacity(border, .66), .9), card, 4.0, 4.0);
-        DrawText(dc, "RELATIVE BIAS BALANCE",
-            new Point(card.Left + 11.0, card.Top + 7.0), 10.4,
-            text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "MULTIPLIERS, NOT DROP ODDS",
-            new Point(card.Right - 11.0, card.Top + 7.0), 9.0,
-            muted, FontWeights.SemiBold);
-        var bar = new Rect(card.Left + 11.0, card.Top + 30.0,
-            Math.Max(1.0, card.Width - 22.0), 12.0);
-        dc.DrawRoundedRectangle(CloneWithOpacity(border, .26), null,
-            bar, 2.0, 2.0);
-        var weights = entries.Select(e =>
-            Math.Max(0.0, P(e.Id)?.CurrentNumber ?? 0.0)).ToArray();
-        var sum = weights.Sum();
-        var tones = new[] { .96, .81, .67, .54, .42, .29 };
-        var isContentMix = entries.Length == 6
-            && entries[0].Id == "loot.stashMixAmmo";
-        Brush CategoryBrush(int index) => isContentMix
-            ? StashMixPalette[index]
-            : CloneWithOpacity(accent, tones[index]);
-        var cursor = bar.Left;
+        DrawText(dc, "NATIVE SOURCE POOLS",
+            new Point(card.Left + 11.0, card.Top + 7.0),
+            10.4, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "WEIGHT ONLY WITHIN EACH POOL",
+            new Point(card.Right - 11.0, card.Top + 7.0),
+            8.9, muted, FontWeights.SemiBold);
+        var inner = new Rect(card.Left + 12.0, card.Top + 27.0,
+            Math.Max(1.0, card.Width - 24.0), 48.0);
+        DrawStashPoolBar(dc, StashPreviewGroup("BASIC", 7),
+            "BASIC / EASY+MEDIUM / EXPERIENCED / CONSUMABLE",
+            inner, text, muted, border);
+        DrawStashPoolBar(dc, StashPreviewGroup("BASIC", 1),
+            "BASIC / HARD / CONSUMABLE",
+            new Rect(inner.Left, inner.Top + 57.0, inner.Width, inner.Height),
+            text, muted, border);
+        DrawText(dc, "SOURCE CHANCE FIELDS",
+            new Point(inner.Left, card.Top + 146.0),
+            10.0, text, FontWeights.Bold);
+        DrawRightAlignedText(dc, "SEPARATE ROLLS · CONTENT BIAS ONLY",
+            new Point(inner.Right, card.Top + 146.0),
+            8.6, muted, FontWeights.SemiBold);
+        var samples = new (string Tier, int Group, string Sid, string Label)[]
+        {
+            ("RARE", 1, "A918A", "AMMO · RARE"),
+            ("BASIC", 0, "Bandage", "MEDICAL · BASIC"),
+            ("RARE", 0, "CannedFood", "FOOD · RARE"),
+            ("BASIC", 0, "Vodka", "DRINKS · BASIC"),
+            ("BASIC", 5, "GrenadeRGD5", "GRENADES · BASIC"),
+            ("RARE", 11, "MoneyCommon", "COUPONS · RARE")
+        };
+        var columns = ActualWidth >= 700.0 ? 3 : 2;
+        var gap = 13.0;
+        var cellWidth = (inner.Width - (columns - 1) * gap) / columns;
+        for (var i = 0; i < samples.Length; i++)
+        {
+            var sample = samples[i];
+            DrawStashChanceSample(dc, sample.Tier, sample.Group,
+                sample.Sid, sample.Label,
+                new Rect(inner.Left + (i % columns) * (cellWidth + gap),
+                    card.Top + 165.0 + (i / columns) * 32.0,
+                    cellWidth, 27.0), text, muted, border);
+        }
+        DrawText(dc, "Individual source fields, not whole-stash drop probability.",
+            new Point(inner.Left, card.Bottom - 19.0),
+            9.0, muted, FontWeights.Normal);
+    }
+
+    private void DrawStashMedicalSourcePreview(
+        DrawingContext dc, Rect card, Brush text, Brush muted,
+        Brush border, Brush accent, Brush panel)
+    {
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .60),
+            new Pen(CloneWithOpacity(border, .66), .9), card, 4.0, 4.0);
+        DrawText(dc, "MEDICAL SOURCE CHANCE FIELDS",
+            new Point(card.Left + 11.0, card.Top + 7.0),
+            10.2, text, FontWeights.Bold);
+        var entries = new (string Tier, int Group, string Sid, string Label)[]
+        {
+            ("BASIC", 0, "Bandage", "BANDAGE · BASIC"),
+            ("BASIC", 0, "Medkit", "MEDKIT · BASIC"),
+            ("RARE", 4, "ArmyMedkit", "ARMY MEDKIT · RARE"),
+            ("RARE", 4, "AntiRad", "ANTI-RAD · RARE")
+        };
+        var columns = ActualWidth >= 700.0 ? 4 : 2;
+        var available = card.Width - 22.0;
+        var gap = 10.0;
+        var cellWidth = (available - (columns - 1) * gap) / columns;
         for (var i = 0; i < entries.Length; i++)
         {
-            var share = sum > Epsilon ? weights[i] / sum : 0.0;
-            var w = i == entries.Length - 1 && sum > Epsilon
-                ? Math.Max(0.0, bar.Right - cursor)
-                : bar.Width * share;
-            if (w > Epsilon)
-                dc.DrawRectangle(CategoryBrush(i), null,
-                    new Rect(cursor, bar.Top, w, bar.Height));
-            cursor += w;
+            var e = entries[i];
+            DrawStashChanceSample(dc, e.Tier, e.Group, e.Sid, e.Label,
+                new Rect(card.Left + 11.0 + (i % columns) * (cellWidth + gap),
+                    card.Top + 33.0 + (i / columns) * 36.0,
+                    cellWidth, 28.0), text, muted, border);
         }
-        for (var i = 0; i < entries.Length; i++)
-        {
-            var x = card.Left + 11.0 +
-                (i % columns) * (card.Width - 22.0) / columns;
-            var y = card.Top + 52.0 + (i / columns) * 26.0;
-            dc.DrawRectangle(CategoryBrush(i), null,
-                new Rect(x, y + 3.0, 8.0, 8.0));
-            DrawText(dc, entries[i].Label, new Point(x + 12.0, y),
-                columns == 6 ? 8.8 : 9.5, text, FontWeights.SemiBold);
-            var fraction = sum > Epsilon ? weights[i] * 100.0 / sum : 0.0;
-            // Derived shares are never highlighted as changed parameters.
-            DrawRightAlignedText(dc, $"{fraction:0.#}%",
-                new Point(card.Left + 11.0 +
-                    (i % columns + 1) * (card.Width - 22.0) / columns - 3.0,
-                    y), 9.5, muted, FontWeights.SemiBold);
-        }
+        DrawText(dc, "Per-entry Chance, not stash drop odds.",
+            new Point(card.Left + 11.0, card.Bottom - 18.0),
+            9.0, muted, FontWeights.Normal);
     }
 
     // STASH REWARDS:    // STASH REWARDS: two compact interactive BAR GRAPH banks.
@@ -6705,9 +6921,9 @@ public sealed class AggregateVisualControl : FrameworkElement
     // The same adaptive column thresholds drive both WPF Measure and Draw,
     // so the last dial row is never clipped by the group host.
     private static double StashContentMixHeight(double width)
-        => width >= 700.0 ? 360.0 : 385.0;
+        => width >= 700.0 ? 520.0 : 557.0;
     private static double StashMedicalCompositionHeight(double width)
-        => 373.0;
+        => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)
         => width >= 700.0 ? 220.0 : 383.0;
     private static double StashGearHeight(double width)
