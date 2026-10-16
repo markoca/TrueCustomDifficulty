@@ -1,5 +1,7 @@
 # True Custom Difficulty
 
+**Per-control manual QA (2026-10-16):** [Complete 238-active-parameter checklist](docs/MANUAL-EVERY-CONTROL-QA-CHECKLIST.md) for UI, interaction, presets, build and gameplay; no manual test is claimed passed.
+
 **Linux/KDE portable publish safety (2026-10-16):** `publish.sh` no longer deletes/recreates `publish/win-x64`, which could leave an already-open Dolphin folder showing the old (empty) inode, and also erased user-supplied `tools/`, edited `Presets/`, and generated `Output/`. Re-publishing now preserves the directory and all portable user state while replacing only the app's runtime files and build receipt. Run `python tools/audit_publish_directory_contract.py` to exercise a disposable mock .NET publish twice and test failed-build preservation, then perform a real `./publish.sh` test and verify in Dolphin. See `docs/RELEASE-TESTING.md` for acceptance criteria.
 
 
