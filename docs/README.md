@@ -35,6 +35,7 @@ All project documentation lives under `docs/`. The repository root is intentiona
 
 ## Generator research
 
+- [Medical stash generators — all audited source families (2026-10-16)](generators/STASH-MEDICAL-ALL-SOURCE-AUDIT-2026-10-16.md): six medical GamePass ItemGenerator cores, untouched medical SmartLoot, medical destructibles, producer-layer boundaries and production-only next steps.
 - [Generator map](GENERATOR-MAP.md)
 - [Generator catalog](GENERATOR-CATALOG.md)
 - [Generator gameplay groups](GENERATOR-GAMEPLAY-GROUPS.md)
