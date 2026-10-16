@@ -20,6 +20,7 @@ The runtime dump is treated as the source of truth for effective values. Inherit
 | `GENERATOR-TARGET-ALLOWLISTS.md` | human-readable strict single-domain candidate tables |
 | `GENERATOR-CONSUMER-CATALOG.md` | all 13,647 external consumer edges with exact generator, context, consumer, file, line and key |
 | `GENERATOR-BRANCH-CATALOG.md` | exact branch/entry table for every effective generator category and item/nested-generator row |
+| `DLC1-STASH-GENERIC-ITEM-AUDIT-2026-10-16.md` | standalone DLC1 actor census and generic source/path triage; links exact 196-row actor/source CSV, notes separate DLC1 patch-file scope and source-manifest target-path hazards |
 | `STASH-SAFE-EXPANSION-FOLLOWUP-2026-10-16.md` | follow-up actor-level audit from byte-identical 2026-10-16 dump: 803 active, 28 named-clue deferred, 71 special excluded, 227 ItemGenerator-manifested no-SmartLoot and 12 unresolved; links the 40-row deferred actor CSV |
 | `SMARTLOOT-PRODUCTION-EXTENSION-2026-10-16.md` | exact 831-actor normal production SmartLoot redirect scope and 991 verbatim source item rows from user CFG dump, original rank/set/source semantics and 71 protected quest/unique/blueprint-linked actors; runtime validation still pending |
 | `STASH-REGULAR-CATEGORIES-AUDIT-2026-10-16.md` | full tracked standard item class source inventory: 17 GamePass cores/245 rows, 13 SmartLoot roots/991 item rows, production/quest/test boundary, missing consumer manifest; does NOT change gameplay |
