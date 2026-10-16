@@ -98,6 +98,7 @@ internal static class Program
             VerifyFixedSleepRestoreBaseline();
             VerifyMedicalZeroExclusion();
             VerifyWorldStashSmartLoot();
+            VerifyCabinDirectMedical();
             VerifyDlcStashExpansion();
             Console.WriteLine($"PASS: {Passed} Loot SPECIAL generator and corpse writer scenarios plus 3 medical-zero production CFG scenarios");
             Console.WriteLine("NOT VERIFIED: original decoded CFG source values, world shuffle/removal writers, Unreal patch loading or gameplay");
@@ -449,6 +450,97 @@ internal static class Program
                 name + ": protected physical actor passed tier redirect gate");
         }
         Console.WriteLine("PASS base-world tier guard: 106 protected actors, 105 suppressed redirects (30 direct / 75 indirect)");
+    }
+
+    static void VerifyCabinDirectMedical()
+    {
+        // These two no-clue ordinary Cabin containers have a guaranteed
+        // Medkit on ItemGenerator.[1], IN ADDITION to their regular Cheap
+        // subgenerator and the separate StashMedicine_Smart overlay.
+        // Regression uses the same real CFG writer and exact source root
+        // spellings to prevent bypass of Medical = 0x.
+        var actors = new[]
+        {
+            "LesserZone_Cabin_StashGenerator1_1C2FD1C141D6DA11E518758CC1CD36AE",
+            "LesserZone_Cabin_StashGenerator3_59FDC1CD4D0D094270C695A18D84373A"
+        };
+        var cases = new[]
+        {
+            ("global-medical-zero", "loot.stashMixMedical", 0.0, 0.0, 0, 0),
+            ("medkit-bias-zero", "loot.stashMedicalMedkitBias", 0.0, 0.0, 0, 0),
+            ("medkit-max-zero", "loot.stashMedkitMaxCount", -1.0, 0.0, 0, 0),
+            ("medical-half", "loot.stashMixMedical", 0.5, 0.5, 1, 1)
+        };
+        foreach (var (name, controlId, target, chance, min, max) in cases)
+        {
+            var dir = Path.Combine(Keep ?? Path.GetTempPath(), "TCD_Cabin_Stash", name);
+            try
+            {
+                var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Stalker" };
+                var control = vm.AllParameters.Single(p => p.Id == controlId);
+                control.SnapCurrentNumberToMarker(target);
+                Check(control.IsValueModifiedFromReference(), name + ": control is unchanged");
+                AssertOnlyExpectedNonLootDefault(vm);
+                var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+                Check(result.ParameterCount == 2,
+                    name + ": missing fixed Sleep Health default or medical control");
+                var output = ReadOutput(dir);
+                Check(output.TryGetValue("GameData/ItemGeneratorPrototypes.cfg", out var gen),
+                    name + ": missing Cabin ItemGenerator patch");
+                foreach (var actor in actors)
+                {
+                    var prefix = actor + "/ItemGenerator/[1]/PossibleItems/[0]/";
+                    Check(gen!.TryGetValue(prefix + "Chance", out var raw)
+                        && Math.Abs(Num(raw!) - chance) < 0.0000001,
+                        name + ": missed guaranteed Cabin Medkit " + actor);
+                    if (chance == 0)
+                    {
+                        Check(gen.TryGetValue(prefix + "MinCount", out var rawMin)
+                            && rawMin == min.ToString(CultureInfo.InvariantCulture),
+                            name + ": Cabin Medkit MinCount not zero");
+                        Check(gen.TryGetValue(prefix + "MaxCount", out var rawMax)
+                            && rawMax == max.ToString(CultureInfo.InvariantCulture),
+                            name + ": Cabin Medkit MaxCount not zero");
+                    }
+                    else
+                    {
+                        Check(!gen.Keys.Any(path => path.StartsWith(prefix + "MinCount")
+                            || path.StartsWith(prefix + "MaxCount")),
+                            name + ": positive chance modified fixed count on " + actor);
+                    }
+                }
+                AssertProtectedBaseStashesUntouched(output, "Cabin " + name);
+                Console.WriteLine("PASS Cabin source-native direct Medkit: " + name);
+            }
+            finally
+            {
+                if (Keep == null && Directory.Exists(dir))
+                    Directory.Delete(dir, true);
+            }
+        }
+
+        // A food-only edit must not touch the explicit medical reward rows.
+        var foodDir = Path.Combine(Keep ?? Path.GetTempPath(),
+            "TCD_Cabin_Stash", "food-only");
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Stalker" };
+            vm.AllParameters.Single(p => p.Id == "loot.stashMixFood")
+                .SnapCurrentNumberToMarker(0.0);
+            new CfgPatchWriterService().Write(vm, Catalog, null, foodDir);
+            var output = ReadOutput(foodDir);
+            if (output.TryGetValue("GameData/ItemGeneratorPrototypes.cfg", out var gen))
+                foreach (var actor in actors)
+                    Check(!gen.Keys.Any(k =>
+                        k.StartsWith(actor + "/ItemGenerator/[1]/PossibleItems/[0]/",
+                            StringComparison.Ordinal)),
+                        "Food slider rewrote an unrelated Cabin direct Medkit");
+        }
+        finally
+        {
+            if (Keep == null && Directory.Exists(foodDir))
+                Directory.Delete(foodDir, true);
+        }
     }
 
     // The machine roster is the sole DLC1 approval authority for generator

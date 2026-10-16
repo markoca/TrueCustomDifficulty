@@ -162,6 +162,9 @@ public sealed partial class CfgPatchWriterService
             documents,
             writtenParameters);
 
+        editCount += WriteCabinDirectMedkits(
+            modifiedById, allById, documents, writtenParameters);
+
         editCount += WriteDlcCheapNoFreshStashes(
             baseline,
             modifiedById,

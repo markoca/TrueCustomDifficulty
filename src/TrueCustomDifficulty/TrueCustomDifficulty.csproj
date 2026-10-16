@@ -31,6 +31,7 @@
     <EmbeddedResource Include="Data\medium-stash-production-redirect-manifest.csv" LogicalName="TrueCustomDifficulty.Data.medium-stash-production-redirect-manifest.csv" />
     <EmbeddedResource Include="Data\expensive-stash-production-redirect-manifest.csv" LogicalName="TrueCustomDifficulty.Data.expensive-stash-production-redirect-manifest.csv" />
     <EmbeddedResource Include="Data\dlc1-stash-eligible-actor-manifest.csv" LogicalName="TrueCustomDifficulty.Data.dlc1-stash-eligible-actor-manifest.csv" />
+    <EmbeddedResource Include="Data\cabin-direct-medkit-item-entries.csv" LogicalName="TrueCustomDifficulty.Data.cabin-direct-medkit-item-entries.csv" />
     <EmbeddedResource Include="Data\cheap-no-fresh-stash-item-entries.csv" LogicalName="TrueCustomDifficulty.Data.cheap-no-fresh-stash-item-entries.csv" />
     <EmbeddedResource Include="Data\base-stash-protected-actor-manifest.csv" LogicalName="TrueCustomDifficulty.Data.base-stash-protected-actor-manifest.csv" />
     <EmbeddedResource Include="Data\smartloot-regular-world-actor-manifest.csv" LogicalName="TrueCustomDifficulty.Data.smartloot-regular-world-actor-manifest.csv" />
