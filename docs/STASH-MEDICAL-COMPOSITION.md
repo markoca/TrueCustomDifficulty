@@ -1,3 +1,5 @@
+**Additional ordinary-world direct-item audit (2026-10-16):** The original CFG contains [ten more canonical MEDICAL source rows on six location-specific stash wrappers](generators/REGULAR-STASH-DIRECT-ADDITIONS-AUDIT-2026-10-16.md) beyond the two already fixed Cabin Medkits. These are **not yet written by TCD's medical slider**. The same audit maps 11 direct ammo, two grenades and nine booster rows; a lowercase `medkit` SID requires separate resolution. Actor/item-level gating is required before safely expanding.
+
 # Stash Medical Composition and Quantity — source-backed contract (2026-10-16)
 
 ## CURRENT 2026-10-16 — medical 0x source suppression regression
