@@ -158,6 +158,15 @@ public sealed partial class CfgPatchWriterService
         editCount += WriteWorldStashSmartLoot(
             modifiedById,
             allById,
+            hasDlc1,
+            documents,
+            writtenParameters);
+
+        editCount += WriteDlcCheapNoFreshStashes(
+            baseline,
+            modifiedById,
+            allById,
+            hasDlc1,
             documents,
             writtenParameters);
 
@@ -959,7 +968,8 @@ public sealed partial class CfgPatchWriterService
 
         foreach (var redirect in LoadCheapStashRedirects(config.RedirectManifestResource))
         {
-            if (!IsScopeApplicable(redirect.Scope, hasDlc1))
+            if (!IsScopeApplicable(redirect.Scope, hasDlc1)
+                || !IsApprovedDlcStashTierRedirect(redirect.File, redirect.Prototype))
                 continue;
 
             var redirectDocument = GetDocument(documents, redirect.File);
@@ -1152,7 +1162,8 @@ public sealed partial class CfgPatchWriterService
 
         foreach (var redirect in LoadMediumStashRedirects(config.RedirectManifestResource))
         {
-            if (!IsScopeApplicable(redirect.Scope, hasDlc1))
+            if (!IsScopeApplicable(redirect.Scope, hasDlc1)
+                || !IsApprovedDlcStashTierRedirect(redirect.File, redirect.Prototype))
                 continue;
 
             var redirectDocument = GetDocument(documents, redirect.File);
@@ -1337,7 +1348,8 @@ public sealed partial class CfgPatchWriterService
 
         foreach (var redirect in LoadExpensiveStashRedirects(config.RedirectManifestResource))
         {
-            if (!IsScopeApplicable(redirect.Scope, hasDlc1))
+            if (!IsScopeApplicable(redirect.Scope, hasDlc1)
+                || !IsApprovedDlcStashTierRedirect(redirect.File, redirect.Prototype))
                 continue;
 
             var redirectDocument = GetDocument(documents, redirect.File);

@@ -20,6 +20,9 @@ public sealed partial class CfgPatchWriterService
         "TrueCustomDifficulty.Data.smartloot-world-source-entries.csv";
     private const string SmartLootActorResource =
         "TrueCustomDifficulty.Data.smartloot-regular-world-actor-manifest.csv";
+    private const string DlcSmartLootActorFile = "DLCGameData/DLC1/SpawnActorPrototypes.cfg";
+    private const string DlcStashActorResource =
+        "TrueCustomDifficulty.Data.dlc1-stash-eligible-actor-manifest.csv";
 
     private sealed record SmartStashItem(
         string Prototype, int Rank, string Group, int Set, int Item,
@@ -121,6 +124,43 @@ public sealed partial class CfgPatchWriterService
         return ordinary;
     }
 
+    // Read the independently audited DLC actor list. Do not infer DLC approval
+    // from the mere presence of a generic generator on a quest/unique stash.
+    private static readonly Lazy<IReadOnlyList<SmartStashActor>> DlcActors =
+        new(LoadDlcSmartStashActors);
+
+    private static IReadOnlyList<SmartStashActor> LoadDlcSmartStashActors()
+    {
+        var rows = ReadStashCsv(DlcStashActorResource, 4);
+        var allowedGenerators = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "", "GamePass_Stash_ItemGenerator_Cheap",
+            "GamePass_Stash_ItemGenerator_CheapNoFresh",
+            "GamePass_Stash_ItemGenerator_Common_Var1",
+            "GamePass_Stash_ItemGenerator_Rare"
+        };
+        var actors = rows.Select(x => new SmartStashActor(x[0],
+            x[1].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
+            x[3])).ToArray();
+        if (actors.Length != 112
+            || actors.Select(x => x.ActorSid).Distinct(StringComparer.Ordinal).Count() != 112
+            || actors.Any(x => x.ActorSid.Length != 32 || !x.ActorSid.All(Uri.IsHexDigit)
+                || x.SourceSids.Length == 0 || x.ClueSid != "EmptyInherited")
+            || rows.Any(x => !allowedGenerators.Contains(x[2])
+                || x[1].Contains("NPC_", StringComparison.Ordinal)
+                || x[1].Contains("Corpse", StringComparison.Ordinal)
+                || x[1].Contains("Unique", StringComparison.Ordinal)
+                || x[1].Contains("Quest", StringComparison.Ordinal)))
+            throw new InvalidDataException("Unexpected DLC1 ordinary stash allowlist");
+        return actors;
+    }
+
+    // Existing tier redirects must never begin touching mixed/special DLC actors
+    // simply because their production manifest references a generic subpool.
+    private static bool IsApprovedDlcStashTierRedirect(string file, string actorSid)
+        => !file.Equals(DlcSmartLootActorFile, StringComparison.Ordinal)
+           || DlcActors.Value.Any(x => x.ActorSid == actorSid);
+
     private static string? SmartStashSourceId(string itemSid) => itemSid switch
     {
         "Bandage" or "Medkit" or "ArmyMedkit" or "Antirad" => "loot.stashMixMedical",
@@ -164,6 +204,7 @@ public sealed partial class CfgPatchWriterService
     private static int WriteWorldStashSmartLoot(
         IReadOnlyDictionary<string, ParameterViewModel> modified,
         IReadOnlyDictionary<string, ParameterViewModel> all,
+        bool hasDlc1,
         IDictionary<string, PatchDocument> documents,
         ISet<string> written)
     {
@@ -280,16 +321,25 @@ public sealed partial class CfgPatchWriterService
         }
         if (rewritten.Count == 0) return 0;
 
-        var actorDoc = GetDocument(documents, "GameData/SpawnActorPrototypes.cfg");
-        foreach (var actor in actors)
+        var actorSources = new List<(string File, IReadOnlyList<SmartStashActor> Actors)>
         {
-            var mapped = actor.SourceSids.Select(x =>
-                rewritten.TryGetValue(x, out var replacement) ? replacement : x).ToArray();
-            if (actor.SourceSids.SequenceEqual(mapped, StringComparer.Ordinal))
-                continue;
-            actorDoc.AddAssignment(actor.ActorSid, Array.Empty<string>(),
-                "StashPrototypeSID", string.Join(",", mapped));
-            edits++;
+            ("GameData/SpawnActorPrototypes.cfg", actors)
+        };
+        if (hasDlc1)
+            actorSources.Add((DlcSmartLootActorFile, DlcActors.Value));
+        foreach (var (file, sourceActors) in actorSources)
+        {
+            var actorDoc = GetDocument(documents, file);
+            foreach (var actor in sourceActors)
+            {
+                var mapped = actor.SourceSids.Select(x =>
+                    rewritten.TryGetValue(x, out var replacement) ? replacement : x).ToArray();
+                if (actor.SourceSids.SequenceEqual(mapped, StringComparer.Ordinal))
+                    continue;
+                actorDoc.AddAssignment(actor.ActorSid, Array.Empty<string>(),
+                    "StashPrototypeSID", string.Join(",", mapped));
+                edits++;
+            }
         }
 
         foreach (var id in relevant)

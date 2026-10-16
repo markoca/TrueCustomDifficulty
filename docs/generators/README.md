@@ -20,6 +20,7 @@ The runtime dump is treated as the source of truth for effective values. Inherit
 | `GENERATOR-TARGET-ALLOWLISTS.md` | human-readable strict single-domain candidate tables |
 | `GENERATOR-CONSUMER-CATALOG.md` | all 13,647 external consumer edges with exact generator, context, consumer, file, line and key |
 | `GENERATOR-BRANCH-CATALOG.md` | exact branch/entry table for every effective generator category and item/nested-generator row |
+| `DLC1-STASH-REGULAR-PRODUCTION-2026-10-16.md` | Implemented DLC1 safe-source writer: 112 ordinary SmartLoot actors, six separate CheapNoFresh ItemGenerator redirects, 69 repaired Medium file paths and the unchanged UI/preset contract |
 | `DLC1-STASH-GENERIC-ITEM-AUDIT-2026-10-16.md` | standalone DLC1 actor census and generic source/path triage; links exact 196-row actor/source CSV, notes separate DLC1 patch-file scope and source-manifest target-path hazards |
 | `STASH-SAFE-EXPANSION-FOLLOWUP-2026-10-16.md` | follow-up actor-level audit from byte-identical 2026-10-16 dump: 803 active, 28 named-clue deferred, 71 special excluded, 227 ItemGenerator-manifested no-SmartLoot and 12 unresolved; links the 40-row deferred actor CSV |
 | `SMARTLOOT-PRODUCTION-EXTENSION-2026-10-16.md` | exact 831-actor normal production SmartLoot redirect scope and 991 verbatim source item rows from user CFG dump, original rank/set/source semantics and 71 protected quest/unique/blueprint-linked actors; runtime validation still pending |
@@ -58,6 +59,9 @@ The runtime dump is treated as the source of truth for effective values. Inherit
 | `SMARTLOOT-CORPSE-BONUS-ENTRY-CATALOG.md` | every exact group/item row in the three selectable corpse-bonus SmartLoot packages |
 
 - `stash-safe-expansion-deferred-actors.csv` — 40 full actor IDs and original generator/clue/SmartLoot source lists held back for future actor-by-actor implementation checks (never an active allowlist).
+
+- `../../src/TrueCustomDifficulty/Data/dlc1-stash-eligible-actor-manifest.csv` — 112 exact DLC1 no-clue regular SmartLoot actor targets; only these may receive new DLC generic-source redirects.
+- `../../src/TrueCustomDifficulty/Data/cheap-no-fresh-stash-item-entries.csv` — 35 original source rows for the DLC1-only `TCD_GamePass_Stash_ItemGenerator_CheapNoFresh` clone.
 
 ## Machine-readable files
 

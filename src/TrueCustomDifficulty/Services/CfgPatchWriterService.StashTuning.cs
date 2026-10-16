@@ -60,7 +60,7 @@ public sealed partial class CfgPatchWriterService
         "Bandage" or "Medkit" or "ArmyMedkit" or "EcoMedkit" or "AntiRad"
             => "loot.stashMixMedical",
         "Bread" or "Sausage" or "CannedFood" => "loot.stashMixFood",
-        "Vodka" or "Water" or "Milk" or "Energetic" => "loot.stashMixDrinks",
+        "Vodka" or "Water" or "Milk" or "Energetic" or "Beer" => "loot.stashMixDrinks",
         "GrenadeRGD5" or "GrenadeF1" => "loot.stashMixGrenades",
         "MoneyCommon" or "MoneyRare" or "MoneyEpic" or "MoneyLegendary"
             => "loot.stashMixCoupons",

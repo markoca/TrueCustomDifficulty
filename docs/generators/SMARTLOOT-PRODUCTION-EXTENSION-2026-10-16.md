@@ -1,3 +1,5 @@
+**CURRENT DLC1 addendum (2026-10-16):** Existing base 803 active SmartLoot actor limit is **unchanged**. When DLC1 is present, the same category/medical source clones may additionally redirect [112 explicitly approved DLC1 normal-world ItemContainers](DLC1-STASH-REGULAR-PRODUCTION-2026-10-16.md) in `DLCGameData/DLC1/SpawnActorPrototypes.cfg`. No base actor is moved and no clue/quest/unique scope is broadened. The six DLC CheapNoFresh ItemGenerator source clones are independent of the base SmartLoot writer. In-game verification still required.
+
 # Regular world stash SmartLoot implementation (2026-10-16)
 
 ## Current actor safety boundary: 803 active of 831 (2026-10-16)

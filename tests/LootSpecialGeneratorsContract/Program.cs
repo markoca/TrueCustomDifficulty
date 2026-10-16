@@ -97,6 +97,7 @@ internal static class Program
             Check(Passed==63,"Expected 63 special Loot scenarios, got "+Passed);
             VerifyMedicalZeroExclusion();
             VerifyWorldStashSmartLoot();
+            VerifyDlcStashExpansion();
             Console.WriteLine($"PASS: {Passed} Loot SPECIAL generator and corpse writer scenarios plus 3 medical-zero production CFG scenarios");
             Console.WriteLine("NOT VERIFIED: original decoded CFG source values, world shuffle/removal writers, Unreal patch loading or gameplay");
             return 0;
@@ -301,6 +302,133 @@ internal static class Program
         }
     }
 
+
+    // The machine roster is the sole DLC1 approval authority for generator
+    // rewrites. Read it from the current source tree, not generated artifacts.
+    static readonly Lazy<HashSet<string>> DlcEligibleActorIds = new(() =>
+    {
+        var dir=new DirectoryInfo(Directory.GetCurrentDirectory());
+        while(dir!=null)
+        {
+            var file=Path.Combine(dir.FullName,"src","TrueCustomDifficulty",
+                "Data","dlc1-stash-eligible-actor-manifest.csv");
+            if(File.Exists(file))
+            {
+                var entries=File.ReadAllLines(file).Skip(1).Where(x=>x.Length>0)
+                    .Select(x=>x.Substring(0,32)).ToHashSet(StringComparer.Ordinal);
+                Check(entries.Count==112,"DLC1 eligible actor SID list count drift");
+                return entries;
+            }
+            dir=dir.Parent;
+        }
+        throw new FileNotFoundException("Missing DLC1 stash allowlist");
+    });
+
+    static void VerifyDlcStashExpansion()
+    {
+        foreach(var (label, values, expectFresh) in new[]
+        {
+            ("medical-zero",new Dictionary<string,double> { ["loot.stashMixMedical"]=0 },true),
+            ("medkit-zero",new Dictionary<string,double> { ["loot.stashMedkitMaxCount"]=-1 },true),
+            ("cheap-ammo-half",new Dictionary<string,double> { ["loot.cheapStashAmmoQuantity"]=0.5 },true),
+            ("medium-ammo-half",new Dictionary<string,double> { ["loot.mediumStashAmmoQuantity"]=0.5 },false)
+        })
+        {
+            var dir=Path.Combine(Keep??Path.GetTempPath(),"TCD_DLC1_Stashes",label);
+            try
+            {
+                var vm=new MainViewModel(Catalog) {SelectedReferenceDifficulty="Stalker"};
+                foreach(var (key,value) in values)
+                {
+                    var control=vm.AllParameters.Single(x=>x.Id==key);
+                    control.SnapCurrentNumberToMarker(value);
+                    Check(control.IsValueModifiedFromReference(),
+                        label+": control did not modify "+key);
+                }
+                var result=new CfgPatchWriterService().Write(vm,Catalog,
+                    new GameInstallInfo {HasDlc1=true},dir);
+                var files=ReadOutput(dir);
+                Check(result.ParameterCount==1,label+": modified parameter count drift");
+                Check(files.TryGetValue("DLCGameData/DLC1/SpawnActorPrototypes.cfg",out var dlc),
+                    label+": missing DLC1 actor patch");
+                var actorSids=dlc!.Keys.Select(x=>x.Split('/')[0]).ToHashSet();
+                Check(actorSids.Count>0 && actorSids.IsSubsetOf(DlcEligibleActorIds.Value),
+                    label+": touched protected DLC1 actor");
+                if(label=="medium-ammo-half")
+                {
+                    Check(actorSids.Count==59,
+                        label+": expected 59 ordinary medium actor redirects, got "+actorSids.Count);
+                    Check(!files.GetValueOrDefault("GameData/SpawnActorPrototypes.cfg",
+                        new Dictionary<string,string>()).Keys.Any(x=>
+                            x.StartsWith("04D6AF3C427C5AAA381355A460EEFFF9/")),
+                        label+": medium DLC root incorrectly patched in base GameData");
+                }
+                if(expectFresh)
+                {
+                    Check(files.TryGetValue("GameData/ItemGeneratorPrototypes.cfg",out var gens)
+                        && gens!.ContainsKey("TCD_GamePass_Stash_ItemGenerator_CheapNoFresh/SID"),
+                        label+": missing cheap-no-fresh clone");
+                    foreach(var id in new[]{
+                        "19EB12D645F5460C36D417AA5A224259",
+                        "F943F3C84EB1391403756181AF2AB692" })
+                        Check(dlc.ContainsKey(id+"/ItemGeneratorSettings/[0]/PrototypeSID")
+                            && dlc[id+"/ItemGeneratorSettings/[0]/PrototypeSID"]==
+                                "TCD_GamePass_Stash_ItemGenerator_CheapNoFresh",
+                            label+": missing ordinary CheapNoFresh redirect "+id);
+                    var root="TCD_GamePass_Stash_ItemGenerator_CheapNoFresh/ItemGenerator/";
+                    if(label=="medical-zero")
+                        foreach(var field in new[]{"Chance","MinCount","MaxCount"})
+                            Check(gens![root+"[0]/PossibleItems/[0]/"+field]=="0",
+                                label+": Bandage was not hard-disabled in source CFG "+field);
+                    if(label=="medkit-zero")
+                        foreach(var field in new[]{"Chance","MinCount","MaxCount"})
+                            Check(gens![root+"[0]/PossibleItems/[2]/"+field]=="0",
+                                label+": Medkit MAX 0 did not hard-disable "+field);
+                    if(label=="cheap-ammo-half")
+                        Check(gens![root+"[3]/PossibleItems/[0]/MinCount"]=="1",
+                            label+": CheapNoFresh ammo 2 -> 1 source scaling failed");
+                }
+                if(label=="medical-zero" || label=="medkit-zero")
+                {
+                    Check(files.ContainsKey("GameData/StashPrototypes.cfg"),
+                        label+": base SmartLoot source clone missing");
+                    Check(dlc.Keys.Any(x=>x.EndsWith("/StashPrototypeSID",
+                        StringComparison.Ordinal)),
+                        label+": DLC1 SmartLoot redirect missing");
+                }
+            }
+            finally
+            {
+                if(Keep==null && Directory.Exists(dir))
+                    Directory.Delete(dir,true);
+            }
+        }
+
+        // Same medical edit without DLC must not emit a DLC actor target or
+        // a CheapNoFresh clone, even though base SmartLoot remains active.
+        var baseDir=Path.Combine(Keep??Path.GetTempPath(),"TCD_DLC1_Stashes","base-only");
+        try
+        {
+            var vm=new MainViewModel(Catalog) {SelectedReferenceDifficulty="Stalker"};
+            vm.AllParameters.Single(x=>x.Id=="loot.stashMixMedical")
+                .SnapCurrentNumberToMarker(0);
+            new CfgPatchWriterService().Write(vm,Catalog,null,baseDir);
+            var onlyBase=ReadOutput(baseDir);
+            Check(!onlyBase.ContainsKey("DLCGameData/DLC1/SpawnActorPrototypes.cfg"),
+                "base-only wrote DLC1 actor file");
+            Check(!onlyBase.GetValueOrDefault("GameData/ItemGeneratorPrototypes.cfg",
+                new Dictionary<string,string>()).ContainsKey(
+                    "TCD_GamePass_Stash_ItemGenerator_CheapNoFresh/SID"),
+                "base-only generated DLC1 CheapNoFresh pool");
+        }
+        finally
+        {
+            if(Keep==null && Directory.Exists(baseDir))
+                Directory.Delete(baseDir,true);
+        }
+        Console.WriteLine("PASS DLC1 stash medical, explicit zero, CheapNoFresh, medium path and safe actor scope");
+    }
+
     static JsonElement LoadSpecial()
     {
         var dir=new DirectoryInfo(Directory.GetCurrentDirectory());
@@ -452,7 +580,15 @@ internal static class Program
                     }
                 }
                 foreach(var row in Redirects(config,dlc))
+                {
+                    // DLC1 mixed/quest stashes may have a generic core alongside
+                    // authored unique rewards; production reroutes use the strict
+                    // 112-actor no-clue allowlist, not all manifest members.
+                    if(row.File=="DLCGameData/DLC1/SpawnActorPrototypes.cfg"
+                       && !DlcEligibleActorIds.Value.Contains(row.Prototype))
+                        continue;
                     Add(row.File,row.Prototype+"/"+row.NodePath.Replace(".","/")+"/"+row.Key,row.Target);
+                }
             }
             void Medical(double multiplier)
             {
@@ -581,7 +717,12 @@ internal static class Program
                 var altered=string.Join(", ",packages.Select(x=>x=="NPC_Ammo_Smart"?root:x));
                 Add("GameData/DifficultyPrototypes.cfg",sid+"/EconomyDifficulty/CorpseSmartLoot/GeneralNPC",altered);
             }
-            Check(paths.Values.SelectMany(x=>x.Keys).Count()==expected.Count,
+            var dlcFreshExtension=dlc && new[]{
+                "loot.cheapStashAmmoQuantity","loot.cheapStashGrenadeChance",
+                "loot.cheapStashGrenadeQuantity" }.Any(changes.ContainsKey);
+            Check(dlcFreshExtension
+                ? paths.Values.SelectMany(x=>x.Keys).Count()>=expected.Count
+                : paths.Values.SelectMany(x=>x.Keys).Count()==expected.Count,
                 label+": unexpected number of production assignments observed "
                 +paths.Values.SelectMany(x=>x.Keys).Count()+" expected "+expected.Count);
             foreach(var (key,expectedValue) in expected)
@@ -598,10 +739,11 @@ internal static class Program
                 else Check(string.Equals(expectedValue,actualVal,StringComparison.Ordinal),
                     label+": raw CFG text mismatch "+key+" expected="+expectedValue+" actual="+actualVal);
             }
-            foreach(var file in paths)
-                foreach(var leaf in file.Value.Keys)
-                    Check(expected.ContainsKey(file.Key+"|"+leaf),label+": unrelated writer field "
-                        +file.Key+"|"+leaf);
+            if (!dlcFreshExtension)
+                foreach(var file in paths)
+                    foreach(var leaf in file.Value.Keys)
+                        Check(expected.ContainsKey(file.Key+"|"+leaf),label+": unrelated writer field "
+                            +file.Key+"|"+leaf);
             foreach(var (key,refval) in refs)
             {
                 var split=key.Split('|',2);
@@ -614,7 +756,7 @@ internal static class Program
             Check(actual.FileCount==paths.Count && actual.ParameterCount==expectedIDs.Count,
                 label+": writer file/control counts disagree with source modifications: "
                 +actual.FileCount+"/"+actual.ParameterCount+"/"+actual.EditCount);
-            if(corpseChoice==null && !changes.ContainsKey("loot.npcWeaponAmmoSupply"))
+            if(!dlcFreshExtension && corpseChoice==null && !changes.ContainsKey("loot.npcWeaponAmmoSupply"))
                 Check(actual.EditCount==expected.Count,label+": one emitted assignment per intended field drift");
             Console.WriteLine("PASS "+difficulty+" "+label+(dlc?" +DLC1":" BASE")
                 +" ("+paths.Count+" files / "+expected.Count+" exact assigned fields)");

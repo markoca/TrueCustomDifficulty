@@ -1,3 +1,5 @@
+**CURRENT IMPLEMENTATION (2026-10-16):** The previous 196-actor CSV is a discovery register, not a writer manifest. [DLC1 safe writer contract](DLC1-STASH-REGULAR-PRODUCTION-2026-10-16.md) now approves only 112 ordinary DLC WorldMap actors, with 6 CheapNoFresh and 59 Medium ItemGenerator safe targets. The 69 historical Medium wrong-target-path rows documented below have now been corrected in the production manifest; 10 mixed/special Medium actors remain excluded by the runtime guard. The archived findings below remain source evidence and should not be interpreted as current missing code.
+
 # DLC1 stash generic-item source map — CFG audit (2026-10-16)
 
 ## Scope and evidence
