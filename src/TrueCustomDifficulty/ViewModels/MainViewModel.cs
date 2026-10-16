@@ -2041,9 +2041,8 @@ public sealed class MainViewModel : ObservableObject
 
         if (parameter.Definition.Tab == "loot")
         {
-            // Exactly six visible Loot anchors, ordered to match the approved
-            // gamer-centric workflow. Hidden backing sources remain in the same
-            // parameter graph and are ordered within their real source family.
+            // World pickup, container, NPC and mutant controls stay in Loot.
+            // Stash families are owned by the adjacent Stashes tab.
             return parameter.Id switch
             {
                 // World depletion
@@ -2067,6 +2066,27 @@ public sealed class MainViewModel : ObservableObject
                 "loot.npcWeaponAmmoSupply" => 202,
                 "loot.droppedWeaponCondition" => 203,
 
+                // Two box yields and four ammo family weight sources
+                "loot.ammoBoxWeight918" => 400,
+                "loot.destructibleAmmoQuantity" => 401,
+                "loot.destructibleGrenadeQuantity" => 402,
+                "loot.ammoBoxWeight045" => 403,
+                "loot.ammoBoxWeight545" => 404,
+                "loot.ammoBoxWeight012" => 405,
+
+                // The 14 species remain an independently edited sixth card
+                _ when parameter.Id.StartsWith("loot.mutant.", StringComparison.Ordinal)
+                    => 500,
+                _ => 600
+            };
+        }
+
+        if (parameter.Definition.Tab == "stashes")
+        {
+            // Preserve stable loot.* IDs: moving UI ownership does not rename
+            // preset entries or change the production CFG writer.
+            return parameter.Id switch
+            {
                 // Six compact stash composition controls and six optional gear tiers.
                 "loot.stashMixAmmo" => 310,
                 "loot.stashMixMedical" => 311,
@@ -2097,17 +2117,6 @@ public sealed class MainViewModel : ObservableObject
                 "loot.cheapStashGrenadeQuantity" => 304,
                 "loot.expensiveStashMoneyChance" => 305,
 
-                // Two box yields and four ammo family weight sources
-                "loot.ammoBoxWeight918" => 400,
-                "loot.destructibleAmmoQuantity" => 401,
-                "loot.destructibleGrenadeQuantity" => 402,
-                "loot.ammoBoxWeight045" => 403,
-                "loot.ammoBoxWeight545" => 404,
-                "loot.ammoBoxWeight012" => 405,
-
-                // The 14 species remain an independently edited sixth card
-                _ when parameter.Id.StartsWith("loot.mutant.", StringComparison.Ordinal)
-                    => 500,
                 _ => 600
             };
         }

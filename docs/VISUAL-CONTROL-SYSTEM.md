@@ -1,5 +1,14 @@
 ### 2026-10-16 — Top-left radiation mark spins during Build Difficulty
 
+## CURRENT 2026-10-16 — STASHES NAVIGATION AND COMPACT VISUAL CONTRACT
+
+Stashes is a first-class grouped tab immediately after Loot, before Economy, using existing WPF TabControl and existing five compact aggregate boards. No chart doubles as a new parameter: the 26 stable loot.* sources retain 24 visible controls and two hidden backing values. The sources stay in StashRewardProfile (6), StashContentMix (6), StashMedicalComposition (4), StashMedicalQuantity (4), StashGear (6). Reuse original renderers, widths, input mechanics, shared readout placement and source-specific preset/CFG routing.
+
+Preserve the 382/465-DIP stash reward control, 376-DIP stash content chart, 304-DIP medical composition, 257-DIP min/cap board and 370-DIP gear dot plot; none should unnecessarily fill an entire window. Yellow only on actually modified numeric values; native Vanilla/Base markers stay subdued, source titles and unmodified secondary numbers remain neutral. Do not repeat separate slider cards for aggregate members or show invented total stash probabilities. Loot still displays breakable crates and independent world/NPC/mutant loot controls. Older dated instructions about placing stash visuals inside Loot are superseded ONLY for navigation.
+
+The alternate streamlined design in STASHES-TAB-AND-REDESIGN-PROPOSAL.md is PROPOSED ONLY, not implemented and not authoritative until approved; this migration strictly changes source tab membership, not visual controls or data.
+
+
 ## CURRENT 2026-10-16 — Medical stash charts and source-native stack bounds
 
 In Loot, keep `StashContentMix` (six-row shared-scale graph) and `StashGear` (Basic/Standard/Rare × Weapon/Armor dot plot) unchanged; insert the following independently wired visual families with compact top/bottom typography:

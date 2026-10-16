@@ -1,5 +1,9 @@
 # Preset JSON format
 
+## 2026-10-16 — Stashes navigation does not change preset format
+
+The 26 source-backed stash parameters remain in the unchanged v1 JSON values dictionary with their historical loot.* IDs. Only catalog tab membership moves to Stashes beside Loot. Save/Load still uses the same all-parameter serialization and 12 factory presets; existing custom profiles need no migration. The documented UI redesign is PROPOSED ONLY and makes no schema change.
+
 ### 2026-10-15 — Canonical A-Life factory values (CURRENT)
 
 All 12 embedded factory v1 JSON presets preserve their **248** native source entries; only **39** A-Life multipliers are re-expressed as canonical integer-effective editor stops without changing any of the **216** real rank/species group-size limits. Their 1x neutral source, reference difficulties, UI-only override flags and unrelated values remain intact. Earlier user presets load through the A-Life integer-effective value normalization without changing the JSON schema. Only byte-identical old official factory files are automatically upgraded via `PreEffectiveALifeFactoryBlobs`; edited factory-name files and custom presets are protected. See `tools/factory_preset_alife_effective_mapping.json`.

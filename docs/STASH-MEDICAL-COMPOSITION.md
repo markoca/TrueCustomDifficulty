@@ -19,7 +19,7 @@ Audited source examples:
 
 `Chance` is a particular source entry's selection field, **not a verified whole-stash drop percentage**. `Weight` represents relative choice only among that source group's applicable candidate items. Source categories can vary by difficulty, player rank and stash tier.
 
-## UI: two focused source-true panels in Loot
+## UI: two focused source-true panels in Stashes
 
 1. **MEDICAL LOOT COMPOSITION** — compact **four-row shared-scale horizontal bar graph**: Bandages, Medkits, Army Medkits and Anti-Rad. Each selection-bias source has **0–3x** range, **0.25x** step, **1x native baseline**. The chart shows numeric value at right, labels on the left, and the same 0x/1x/2x/3x reference ruler for all four real source channels. A value of 0x removes that item from the eligible TCD production clone entry; it does not rewrite scripted/quest stash loot.
 2. **MEDKIT QUANTITY** — one compact native-source **2×2 control**: Medkits MIN FLOOR / MAX CAP and Army Medkits MIN FLOOR / MAX CAP. Four independent **0 AUTO / 1–6 items** native integer controls. `AUTO` (0) preserves the **original per-entry MinCount or MaxCount**, not zero items. No invented default "1–2" is imposed across all tiers.

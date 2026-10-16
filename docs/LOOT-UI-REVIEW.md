@@ -1,3 +1,4 @@
+> **CURRENT 2026-10-16 STASHES NAVIGATION:** All 26 stash reward/composition/quantity/gear source IDs now live in the adjacent Stashes tab, without changing any loot.* ID, source values or writer paths. Existing historical Loot references below are source audits, not the current tab location. See STASHES-TAB-AND-REDESIGN-PROPOSAL.md.
 # Loot UI Review
 
 Version: 0.9.26.44

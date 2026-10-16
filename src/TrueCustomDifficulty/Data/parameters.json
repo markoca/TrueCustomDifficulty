@@ -23,6 +23,7 @@
       "health",
       "stamina",
       "loot",
+      "stashes",
       "economy",
       "equipment",
       "environment",
@@ -80,6 +81,11 @@
       "id": "loot",
       "label": "Loot",
       "order": 50
+    },
+    {
+      "id": "stashes",
+      "label": "Stashes",
+      "order": 55
     },
     {
       "id": "economy",
@@ -5741,7 +5747,7 @@
     },
     {
       "id": "loot.stashMixAmmo",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Content",
       "label": "Ammo Stash Weight",
       "description": "Rescales existing ammo entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
@@ -5788,7 +5794,7 @@
     },
     {
       "id": "loot.stashMixMedical",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Content",
       "label": "Medical Stash Weight",
       "description": "Rescales existing medical entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
@@ -5835,7 +5841,7 @@
     },
     {
       "id": "loot.stashMixFood",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Content",
       "label": "Food Stash Weight",
       "description": "Rescales existing food entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
@@ -5882,7 +5888,7 @@
     },
     {
       "id": "loot.stashMixDrinks",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Content",
       "label": "Drinks Stash Weight",
       "description": "Rescales existing drinks entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
@@ -5929,7 +5935,7 @@
     },
     {
       "id": "loot.stashMixGrenades",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Content",
       "label": "Grenades Stash Weight",
       "description": "Rescales existing grenades entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
@@ -5976,7 +5982,7 @@
     },
     {
       "id": "loot.stashMixCoupons",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Content",
       "label": "Coupons Stash Weight",
       "description": "Rescales existing coupons entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
@@ -6023,7 +6029,7 @@
     },
     {
       "id": "loot.stashMedicalBandageBias",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Bandages Stash Selection",
       "description": "Adjusts the existing Bandage Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
@@ -6070,7 +6076,7 @@
     },
     {
       "id": "loot.stashMedicalMedkitBias",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Medkits Stash Selection",
       "description": "Adjusts the existing Medkit Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
@@ -6117,7 +6123,7 @@
     },
     {
       "id": "loot.stashMedicalArmyMedkitBias",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Army Medkits Stash Selection",
       "description": "Adjusts the existing ArmyMedkit Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
@@ -6164,7 +6170,7 @@
     },
     {
       "id": "loot.stashMedicalAntiRadBias",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Anti-Rad Stash Selection",
       "description": "Adjusts the existing AntiRad Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
@@ -6211,7 +6217,7 @@
     },
     {
       "id": "loot.stashMedkitMinCount",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Medical Quantity",
       "label": "Medkits Minimum Count",
       "description": "Controls the minimum stack floor for existing Medkit entries, retaining the original source value at 0 (AUTO). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
@@ -6260,7 +6266,7 @@
     },
     {
       "id": "loot.stashMedkitMaxCount",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Medical Quantity",
       "label": "Medkits Maximum Count",
       "description": "Controls the maximum stack cap for existing Medkit entries, retaining the original source value at 0 (AUTO). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
@@ -6309,7 +6315,7 @@
     },
     {
       "id": "loot.stashArmyMedkitMinCount",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Medical Quantity",
       "label": "Army Medkits Minimum Count",
       "description": "Controls the minimum stack floor for existing ArmyMedkit entries, retaining the original source value at 0 (AUTO). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
@@ -6358,7 +6364,7 @@
     },
     {
       "id": "loot.stashArmyMedkitMaxCount",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Medical Quantity",
       "label": "Army Medkits Maximum Count",
       "description": "Controls the maximum stack cap for existing ArmyMedkit entries, retaining the original source value at 0 (AUTO). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
@@ -6407,7 +6413,7 @@
     },
     {
       "id": "loot.stashGearCheapWeapon",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Gear",
       "label": "Basic Stash Weapon",
       "description": "Adds eligible non-unique weapon generator entries to basic world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
@@ -6455,7 +6461,7 @@
     },
     {
       "id": "loot.stashGearCheapArmor",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Gear",
       "label": "Basic Stash Armor",
       "description": "Adds eligible non-unique armor generator entries to basic world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
@@ -6503,7 +6509,7 @@
     },
     {
       "id": "loot.stashGearMediumWeapon",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Gear",
       "label": "Standard Stash Weapon",
       "description": "Adds eligible non-unique weapon generator entries to standard world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
@@ -6551,7 +6557,7 @@
     },
     {
       "id": "loot.stashGearMediumArmor",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Gear",
       "label": "Standard Stash Armor",
       "description": "Adds eligible non-unique armor generator entries to standard world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
@@ -6599,7 +6605,7 @@
     },
     {
       "id": "loot.stashGearExpensiveWeapon",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Gear",
       "label": "Rare Stash Weapon",
       "description": "Adds eligible non-unique weapon generator entries to rare world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
@@ -6647,7 +6653,7 @@
     },
     {
       "id": "loot.stashGearExpensiveArmor",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stash Gear",
       "label": "Rare Stash Armor",
       "description": "Adds eligible non-unique armor generator entries to rare world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
@@ -6695,7 +6701,7 @@
     },
     {
       "id": "loot.cheapStashAmmoQuantity",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stashes",
       "label": "Stash Ammo Amounts",
       "description": "Changes ammo amounts in Basic, Standard, and Rare stashes.",
@@ -6768,7 +6774,7 @@
     },
     {
       "id": "loot.cheapStashGrenadeChance",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stashes",
       "label": "Basic Stash RGD-5 Grenade Chance",
       "description": "Changes how likely a Basic stash is to contain its RGD-5 grenade reward. This does not change how many grenades you get when the roll succeeds.",
@@ -6819,7 +6825,7 @@
     },
     {
       "id": "loot.cheapStashGrenadeQuantity",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stashes",
       "label": "Basic Stash RGD-5 Grenade Amount",
       "description": "Changes how many RGD-5 grenades you receive when a Basic stash successfully rolls its grenade reward. The chance to receive grenades is controlled separately.",
@@ -6873,7 +6879,7 @@
     },
     {
       "id": "loot.mediumStashAmmoQuantity",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stashes",
       "label": "Standard Stash Ammo",
       "description": "Changes how much ammo Standard stashes give you. Which calibers can appear still follows vanilla progression.",
@@ -7313,7 +7319,7 @@
     },
     {
       "id": "loot.expensiveStashAmmoQuantity",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stashes",
       "label": "Rare Stash Ammo",
       "description": "Changes how much ammo Rare stashes give you. Vanilla rarity, progression and ammo-type selection remain unchanged; only the amount found changes.",
@@ -7421,7 +7427,7 @@
     },
     {
       "id": "loot.expensiveStashMoneyChance",
-      "tab": "loot",
+      "tab": "stashes",
       "group": "Stashes",
       "label": "Rare Stash Coupon Rewards",
       "description": "Changes how likely an eligible Rare stash is to contain coupon rewards. The game still chooses the reward tier from vanilla progression.",

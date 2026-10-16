@@ -2430,7 +2430,7 @@ for _name in _factory_preset_names:
     if (_role_record.get("referenceDifficulty") != _doc["referenceDifficulty"]
         or _role_record.get("drinkDurationOverride") != _doc.get("drinkDurationOverride")
         or _role_record.get("medicalOverride") != _doc.get("medicalOverride")
-        or set(_role_record.get("tabStrategies", {})) != set(p.get("tab") for p in parameters)
+        or set(_role_record.get("tabStrategies", {})) != set(p.get("tab") for p in parameters if p.get("tab") != "stashes")
         or any(len(x.strip()) < 12 for x in _role_record.get("tabStrategies", {}).values())):
         _factory_errors.append(f"{_name}: audited role metadata/strategy drift")
     for _pid, _source in _factory_legacy_catalog.items():
@@ -2475,7 +2475,7 @@ for _name in _factory_preset_names:
         _factory_errors.append(f"{_name}: buy/sell condition inverted")
 for _pid, _source in _factory_legacy_catalog.items():
     _row = _full_rows.get(_pid, {})
-    if (_row.get("tab") != _source.get("tab") or _row.get("group") != _source.get("group")
+    if (_row.get("tab") != ("loot" if _source.get("tab") == "stashes" else _source.get("tab")) or _row.get("group") != _source.get("group")
         or _row.get("control") != _source.get("control")
         or _row.get("sourceStatus") != (_source.get("support") or {}).get("status")
         or not _row.get("catalogPurpose")
@@ -3722,6 +3722,27 @@ if _xaml_missing_resources:
 else:
     note(f"XAML StaticResource integrity locked: {len(_xaml_static_refs)} references resolved")
 
+# Stashes navigation contract. Source IDs and factory JSONs are unchanged.
+_stash_groups = {"Stashes", "Stash Content", "Stash Medical Composition", "Stash Medical Quantity", "Stash Gear"}
+_stash_rows = [p for p in parameters if p.get("group") in _stash_groups]
+_stash_ids = {p["id"] for p in _stash_rows}
+_stash_tabs = [t for t in parameters_doc.get("tabs", []) if t.get("id") == "stashes"]
+_stash_include = parameters_doc.get("scope", {}).get("includedTabs", [])
+_stash_vm_text = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
+_stash_tab_text = (ROOT / "src/TrueCustomDifficulty/ViewModels/TabViewModel.cs").read_text(encoding="utf-8")
+if (len(_stash_rows) != 26 or len(_stash_ids) != 26
+    or _stash_tabs != [{"id": "stashes", "label": "Stashes", "order": 55}]
+    or _stash_include.index("stashes") != _stash_include.index("loot") + 1
+    or any(p.get("tab") != "stashes" or not p["id"].startswith("loot.") for p in _stash_rows)
+    or any(p.get("tab") == "stashes" and p["id"] not in _stash_ids for p in parameters)
+    or set(p.get("group") for p in _stash_rows) != _stash_groups
+    or 'Id is "loot" or "stashes"' not in _stash_tab_text
+    or 'if (parameter.Definition.Tab == "stashes")' not in _stash_vm_text
+    or not all(f'"{pid}"' in _stash_vm_text for pid in _stash_ids)):
+    fail("Stashes tab catalog and WPF ViewModel ownership drifted")
+else:
+    note("Stashes tab: 26 stable source IDs, 24 visible inputs, positioned after Loot")
+
 # Global cross-domain control audit release gate (v0.2.50).
 _global_doc = DOCS / "GLOBAL-CROSS-DOMAIN-AUDIT.md"
 _global_visible = [p for p in parameters if p.get("exposeInUi", True)]
@@ -3740,7 +3761,8 @@ _global_expected_tabs = {
     "equipment": 4,
     "master": 20,
     "environment": 6,
-    "loot": 51,
+    "loot": 27,
+    "stashes": 24,
     "alife": 2,
 }
 _global_confirmed = sum(p.get("support", {}).get("status") == "confirmed" for p in _global_visible)

@@ -55,7 +55,7 @@ public sealed class TabViewModel : ObservableObject
                 && !p.Id.StartsWith("combat.accumulatedDamage", StringComparison.Ordinal);
 
         // Tabs with multiple distinct CFG domains are grouped visibly so unrelated mechanics are not presented as one undifferentiated list.
-        if (Id is "loot" or "combat" or "survival" or "health" or "stamina" or "economy" or "equipment" or "environment" or "alife" or "master")
+        if (Id is "loot" or "stashes" or "combat" or "survival" or "health" or "stamina" or "economy" or "equipment" or "environment" or "alife" or "master")
             ParametersView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(ParameterViewModel.Group)));
 
         SelectedParameter = Parameters.FirstOrDefault(p => p.IsControlVisible);
@@ -76,7 +76,8 @@ public sealed class TabViewModel : ObservableObject
         "equipment" => "Armor durability, weapon wear and the weight of ammunition and consumables.",
         "health" => "Player health, recovery and direct medical treatment.",
         "stamina" => "Stamina pool and recovery, action costs, movement penalties, vaulting and carry capacity.",
-        "loot" => "Corpse, stash, ammo, weapon-condition and mutant drop amounts while preserving Difficulty and Progression Rank differences.",
+        "loot" => "World pickups, breakable boxes, NPC corpse equipment and mutant parts; stash rewards are in Stashes.",
+        "stashes" => "Basic, Standard and Rare stash rewards: ammo stacks, bonus rolls, content biases, medical amounts and extra gear.",
         "economy" => "Starting coupons, trader pricing, item and service costs, repair by reputation and quest coupon income.",
         "environment" => "Global anomaly damage, 11 individual damage sources, Flycatcher slowdown and three special effects; no weather/emission timing.",
         "alife" => "Human and mutant encounter group-size caps by player rank; world population and spawn timing are unchanged.",
