@@ -4688,7 +4688,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
     // Native 2×2 medical-count DOT GRAPH. MAX has an explicit 0 ITEMS
-    // stop (-1 in persisted source state); the historical 0 remains AUTO.
+    // stop (-1 in persisted source state); 0 retains original VANILLA bounds.
     // All points are source-backed, focusable and independently adjustable.
     private void DrawStashMedicalQuantity(
         DrawingContext dc, Brush text, Brush muted, Brush border,
@@ -4730,7 +4730,7 @@ public sealed class AggregateVisualControl : FrameworkElement
                 text, muted, border, accent, panel);
         }
 
-        DrawCenteredText(dc, "0 ITEMS = OFF · AUTO = ORIGINAL",
+        DrawCenteredText(dc, "0 ITEMS = OFF · VANILLA = ORIGINAL",
             new Point(ActualWidth / 2.0, 263.0),
             9.0, muted, FontWeights.Normal);
     }
@@ -4744,10 +4744,10 @@ public sealed class AggregateVisualControl : FrameworkElement
         var enabled = p.IsControlEnabled;
         var modified = enabled && p.IsValueModifiedFromReference();
         var hovered = enabled && ReferenceEquals(_hoverTarget?.Parameter, p);
-        // -1 stores an explicit empty count; 0 retains historical AUTO.
+        // -1 stores an explicit empty count; 0 retains VANILLA source limits.
         var current = (int)Math.Round(p.CurrentNumber);
         var display = current < 0 ? "0 ITEMS"
-            : current == 0 ? "AUTO" : $"{current} ITEMS";
+            : current == 0 ? "VANILLA" : $"{current} ITEMS";
         var readout = CreateText(display, 11.6, enabled ? text : muted,
             FontWeights.SemiBold, Math.Max(1, cell.Width - 16));
         if (modified && current != 0)
@@ -4781,12 +4781,12 @@ public sealed class AggregateVisualControl : FrameworkElement
         {
             DrawCenteredText(dc, "0", new Point(plot.Left, cell.Top + 49.0),
                 9.2, muted, FontWeights.SemiBold);
-            DrawCenteredText(dc, "AUTO", new Point(
+            DrawCenteredText(dc, "VANILLA", new Point(
                 ValueToX(0, -1, 6, plot, false), cell.Top + 49.0),
                 9.1, muted, FontWeights.SemiBold);
         }
         else
-            DrawCenteredText(dc, "AUTO", new Point(plot.Left, cell.Top + 49.0),
+            DrawCenteredText(dc, "VANILLA", new Point(plot.Left, cell.Top + 49.0),
                 9.1, muted, FontWeights.SemiBold);
         DrawCenteredText(dc, "6", new Point(plot.Right, cell.Top + 49.0),
             9.2, muted, FontWeights.SemiBold);

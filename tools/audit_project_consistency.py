@@ -4193,7 +4193,7 @@ _med_caps_rows = [p for p in parameters if p.get("id") in _med_caps]
 _graph_required = (
     "DrawStashRewardGraphRow(",
     "DrawStashNumericReadout(",
-    "0 ITEMS = OFF · AUTO = ORIGINAL", 
+    "0 ITEMS = OFF · VANILLA = ORIGINAL", 
     '("loot.cheapStashAmmoQuantity", "BASIC")',
     '("loot.mediumStashAmmoQuantity", "STANDARD")',
     '("loot.expensiveStashAmmoQuantity", "RARE")',
@@ -4203,7 +4203,7 @@ _graph_required = (
     "AddHorizontalTarget(p,",
 )
 _med_required = ("DrawMedicalCountDots(", "AddHorizontalTarget(p,",
-                 "MAX CAP", "MIN FLOOR", "0 ITEMS", "AUTO",
+                 "MAX CAP", "MIN FLOOR", "0 ITEMS", "VANILLA",
                  '("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount", "MEDKITS")',
                  '("loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount", "ARMY MEDKITS")')
 if (not all(token in _graph_body for token in _graph_required)
@@ -4221,6 +4221,10 @@ if (not all(token in _graph_body for token in _graph_required)
     or 'return "0";' not in _med_writer
     or 'CurrentNumber < 0 ? "0 items"' not in _med_vm
     or '"StashMedicalQuantity" => 290.0,' not in _knob_source
+    or 'current == 0 ? "VANILLA"' not in _knob_source
+    or _knob_source.count('DrawCenteredText(dc, "VANILLA", new Point(') != 2
+    or '"VANILLA" : $"{CurrentNumber:0} items max"' not in _med_vm
+    or '"VANILLA" : $"{CurrentNumber:0} items min"' not in _med_vm
     or '"StashRewardProfile" => 398.0,' not in _knob_source
     or 'var stashGraph = Family is "StashRewardProfile" or "StashContentMix"' not in _knob_source
     or 'or "StashMedicalComposition" or "StashMedicalQuantity" or "StashGear";' not in _knob_source
@@ -4229,7 +4233,7 @@ if (not all(token in _graph_body for token in _graph_required)
            for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))):
     fail("Stashes graph-only reward/medical editors or explicit zero count drifted")
 else:
-    note("Stashes rewards: six native graphical rows; medical quantity: 2x2 dot graph with 0 ITEMS/AUTO distinct and zero-entry writer")
+    note("Stashes rewards: six native graphical rows; medical quantity: 2x2 dot graph with 0 ITEMS/VANILLA distinct and zero-entry writer")
 
 # Trader Stock native rotary bank uses the existing input/grid infrastructure.
 _stock_knob_source = _knob_source

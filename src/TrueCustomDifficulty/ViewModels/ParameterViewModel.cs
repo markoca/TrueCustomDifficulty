@@ -104,7 +104,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
                     "StashContentMix" => "The six horizontal bars compare AMMO, MEDICAL, FOOD, DRINKS, GRENADES and COUPONS on the same 0–3x source scale. The grey 1x line is vanilla. Click or drag an individual bar to change that category; values are Weight/Chance biases, NOT percentages of stashes containing it.",
                     "StashMedicalComposition" => "Set Bandage, Medkit, Army Medkit and Anti-Rad entry bias independently on one source 0–3x graph. These biases multiply the general MEDICAL category control: a Medical 0x still disables every medical entry in these TCD production generators. Changing only one bar does not change stack size or unlisted/quest stashes.",
-                    "StashMedicalQuantity" => "MEDKIT and ARMY MEDKIT use clickable two-column dot graphs. MIN FLOOR: AUTO or 1–6. MAX CAP: 0 ITEMS, AUTO or 1–6. The 0 ITEMS point stores -1, zeros that Medkit type's counts and selection entry; historical AUTO stays stored as 0. General MEDICAL 0x instead disables all eligible medical types. Positive caps only change count; MAX CAP wins on conflicts.",
+                    "StashMedicalQuantity" => "MEDKIT and ARMY MEDKIT use clickable two-column dot graphs. MIN FLOOR: VANILLA or 1–6. MAX CAP: 0 ITEMS, VANILLA or 1–6. VANILLA preserves the original per-entry counts (stored as 0 for backward compatibility). The 0 ITEMS point stores -1 and zeros that Medkit type's counts and selection entry. General MEDICAL 0x disables all eligible medical types. Positive caps only change count; MAX CAP wins on conflicts.",
                     "StashGear" => "Each graph row is a stash tier (BASIC, STANDARD, RARE). Each column independently controls additional WEAPONS or ARMOR. Drag its marker between OFF, RARE, MODERATE and FREQUENT; these are source chance modes, NOT guaranteed per-stash drop odds.",
                     "StashRewardProfile" => "The top three chart rows adjust BASIC/STANDARD/RARE ammo stack quantities (not ammo selection). Three independent lower chart rows control Basic RGD-5 chance, grenade amount and Rare coupon chance. Each plotted value is directly clickable/draggable; right-click resets just that source.",
                     "AmmoDistribution" => "Use AMMO YIELD or GRENADE YIELD for quantities. Turn the four AMMO FAMILY WEIGHTS knobs to change which calibers are favored; SNG/NATO pool bars are read-only.",
@@ -1007,9 +1007,9 @@ public sealed class ParameterViewModel : ObservableObject
     {
         if (Id is "loot.stashMedkitMaxCount" or "loot.stashArmyMedkitMaxCount")
             return CurrentNumber < 0 ? "0 items" : CurrentNumber == 0
-                ? "AUTO" : $"{CurrentNumber:0} items max";
+                ? "VANILLA" : $"{CurrentNumber:0} items max";
         if (Id is "loot.stashMedkitMinCount" or "loot.stashArmyMedkitMinCount")
-            return CurrentNumber == 0 ? "AUTO" : $"{CurrentNumber:0} items min";
+            return CurrentNumber == 0 ? "VANILLA" : $"{CurrentNumber:0} items min";
         return Id switch
         {
             // Combat: keep true scalers as scalers, but say what is being scaled.

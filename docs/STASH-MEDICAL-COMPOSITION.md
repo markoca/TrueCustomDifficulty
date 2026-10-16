@@ -2,12 +2,12 @@
 
 ### 2026-10-16 — MIN FLOOR versus explicit 0 ITEMS precedence
 
-**AUTO** is the native source-bound preservation mode: the source can define different Medkit/ArmyMedkit stack counts by difficulty, tier and rank. On either MIN or MAX, stored `0` means AUTO and never means "force no item". The new visible MAX CAP `0 ITEMS` point stores **-1**, distinct from AUTO. For **MIN FLOOR = 1** (or any 1–6) and **MAX CAP = 0 ITEMS**, explicit zero wins: generated **MinCount = 0**, **MaxCount = 0**, and the applicable item entry **Chance/Weight = 0**, leaving no Medkit/ArmyMedkit from that eligible TCD production generator. No assertion is made about unrelated medical types or authored/quest stashes. If MAX is AUTO and MIN is 1, MIN remains a floor rather than suppressing the item; if MIN is AUTO and MAX is 1, source counts are capped at one. In-game validation of suppression remains required.
+**VANILLA** is the native source-bound preservation mode: the source can define different Medkit/ArmyMedkit stack counts by difficulty, tier and rank. On either MIN or MAX, stored `0` means VANILLA and never means "force no item". The new visible MAX CAP `0 ITEMS` point stores **-1**, distinct from VANILLA. For **MIN FLOOR = 1** (or any 1–6) and **MAX CAP = 0 ITEMS**, explicit zero wins: generated **MinCount = 0**, **MaxCount = 0**, and the applicable item entry **Chance/Weight = 0**, leaving no Medkit/ArmyMedkit from that eligible TCD production generator. No assertion is made about unrelated medical types or authored/quest stashes. If MAX is VANILLA and MIN is 1, MIN remains a floor rather than suppressing the item; if MIN is VANILLA and MAX is 1, source counts are capped at one. In-game validation of suppression remains required.
 
 
 ## CURRENT 2026-10-16 — MAX CAP now supports actual 0 ITEMS
 
-Medkit and Army Medkit quantity are editable in one 2x2 dot graph. MIN FLOOR has native 0=AUTO and 1..6 item stops. MAX CAP has a separate 0 ITEMS point (stored -1), historical 0=AUTO and 1..6 caps. Selecting 0 ITEMS zeros both native MinCount and MaxCount and also zeros the eligible Medkit or ArmyMedkit item source Chance/Weight in production-only clone generators. Positive MAX only limits counts. This avoids relying solely on how the engine handles a selected zero-count entry. Normal AUTO keeps source values; older saved preset MAX 0 values remain AUTO. Use general Medical 0x to suppress all eligible medical items instead of just the two Medkit types. This is a source-level guarantee; unopened stash gameplay validation is still pending. Earlier MAX 0..6-only text below is historical.
+Medkit and Army Medkit quantity are editable in one 2x2 dot graph. MIN FLOOR has native 0=VANILLA and 1..6 item stops. MAX CAP has a separate 0 ITEMS point (stored -1), historical 0=VANILLA and 1..6 caps. Selecting 0 ITEMS zeros both native MinCount and MaxCount and also zeros the eligible Medkit or ArmyMedkit item source Chance/Weight in production-only clone generators. Positive MAX only limits counts. This avoids relying solely on how the engine handles a selected zero-count entry. Normal VANILLA keeps source values; older saved preset MAX 0 values remain VANILLA. Use general Medical 0x to suppress all eligible medical items instead of just the two Medkit types. This is a source-level guarantee; unopened stash gameplay validation is still pending. Earlier MAX 0..6-only text below is historical.
 
 
 **Status:** Implemented in TrueCustomDifficulty source; game runtime validation still required. Source version **2.0.5** (project's 2026-10-16 ItemGeneratorPrototypes CFG baseline). These are *production-only TCD-owned generator clone* edits, not blanket replacements of all game stashes.
@@ -32,7 +32,7 @@ Audited source examples:
 ## UI: two focused source-true panels in Stashes
 
 1. **MEDICAL LOOT COMPOSITION** — compact **four-row shared-scale horizontal bar graph**: Bandages, Medkits, Army Medkits and Anti-Rad. Each selection-bias source has **0–3x** range, **0.25x** step, **1x native baseline**. The chart shows numeric value at right, labels on the left, and the same 0x/1x/2x/3x reference ruler for all four real source channels. A value of 0x removes that item from the eligible TCD production clone entry; it does not rewrite scripted/quest stash loot.
-2. **MEDKIT QUANTITY** — one compact native-source **2×2 control**: Medkits MIN FLOOR / MAX CAP and Army Medkits MIN FLOOR / MAX CAP. Four independent **0 AUTO / 1–6 items** native integer controls. `AUTO` (0) preserves the **original per-entry MinCount or MaxCount**, not zero items. No invented default "1–2" is imposed across all tiers.
+2. **MEDKIT QUANTITY** — one compact native-source **2×2 control**: Medkits MIN FLOOR / MAX CAP and Army Medkits MIN FLOOR / MAX CAP. Four independent **0 VANILLA / 1–6 items** native integer controls. `VANILLA` (0) preserves the **original per-entry MinCount or MaxCount**, not zero items. No invented default "1–2" is imposed across all tiers.
 
 All eight sources have separate preset state, independent native pointer + keyboard edits, right-click reset of just that source, **R** resetting the aggregate family, changed-number-only gold typography, and existing reference marker behavior. The original STASH CONTENT chart and EXTRA STASH GEAR remain intact.
 
@@ -53,19 +53,19 @@ Count controls (two per item):
 - `loot.stashMedkitMinCount` / `loot.stashMedkitMaxCount`
 - `loot.stashArmyMedkitMinCount` / `loot.stashArmyMedkitMaxCount`
 
-Given original `[sourceMin, sourceMax]`, `minFloor=0` means untouched source minimum, otherwise `min=max(sourceMin, minFloor)`. `maxCap=0` means untouched source maximum, otherwise `max=min(sourceMax, maxCap)`. If `min > max` **MAX CAP wins when set**, so `min=max`; otherwise the explicit MIN FLOOR raises the maximum to the requested minimum, so `max=min`. Each emitted entry satisfies **0 ≤ MinCount ≤ MaxCount** and keeps per-tier/branch behavior when both sliders are `AUTO`. In particular, **Medkit MAX CAP = 1** reduces existing 2–4 stacks to a maximum of 1 while not changing chances. It does not guarantee that a Medkit appears.
+Given original `[sourceMin, sourceMax]`, `minFloor=0` means untouched source minimum, otherwise `min=max(sourceMin, minFloor)`. `maxCap=0` means untouched source maximum, otherwise `max=min(sourceMax, maxCap)`. If `min > max` **MAX CAP wins when set**, so `min=max`; otherwise the explicit MIN FLOOR raises the maximum to the requested minimum, so `max=min`. Each emitted entry satisfies **0 ≤ MinCount ≤ MaxCount** and keeps per-tier/branch behavior when both sliders are `VANILLA`. In particular, **Medkit MAX CAP = 1** reduces existing 2–4 stacks to a maximum of 1 while not changing chances. It does not guarantee that a Medkit appears.
 
 All source categories/rank/difficulty guards, existing count overrides on other item types, TCD gear modes and production-only manifests remain intact. A Rare medical-only edit must not silently apply the selected profile's *unmodified* Rare Stash Ammo Quantity: the writer now passes **1x** for ammo when that source is not modified.
 
 ## QA — expected static behavior and manual game observations
 
 - [ ] Startup + UI: four compositional bars and 2×2 quantity controls display, use stable native WPF hover, clamp, keyboard, reset and independent modified-state colors; no overlapping or clipped cards at narrow width
-- [ ] Both 1x/1x and AUTO/AUTO preserve exact native Medkit fields, while Medical 3x × Medkit 0x yields source zero on eligible Medkits without zeroing Bandages
+- [ ] Both 1x/1x and VANILLA/VANILLA preserve exact native Medkit fields, while Medical 3x × Medkit 0x yields source zero on eligible Medkits without zeroing Bandages
 - [ ] Medical 0x × Medkit 3x remains 0; Medkit 1x alone does not inflate `Chance=1`; 0.25x changes `Chance=0.4` to `0.1`
 - [ ] Basic/Standard/Rare clone references and manifest routing stay 1,271/450/305; no quest/scripted/unresolved/test stash modification
 - [ ] Medkit MAX CAP=1 clamps each existing `MaxCount` and `MinCount` to no more than 1; no impact on Bandage or ammo quantities
-- [ ] Army Medkit changes only source branches that already contain `ArmyMedkit`; its count AUTO values preserve 1–2 in the relevant Rare Easy bonus
-- [ ] MIN FLOOR=3, MAX CAP=AUTO raises insufficient maximum to 3; MIN FLOOR=3, MAX CAP=1 resolves to 1–1 (explicit cap wins)
+- [ ] Army Medkit changes only source branches that already contain `ArmyMedkit`; its count VANILLA values preserve 1–2 in the relevant Rare Easy bonus
+- [ ] MIN FLOOR=3, MAX CAP=VANILLA raises insufficient maximum to 3; MIN FLOOR=3, MAX CAP=1 resolves to 1–1 (explicit cap wins)
 - [ ] Build composition: Basic RGD-5 chance/quantity + MEDICAL global + item Medkit bias + Medkit cap + Rare coupon + ammunition + optional gear all coexist, without stale/duplicate generator patch overwrites
 - [ ] Save/load all eight added sources, retain existing presets, and protect user-edited stock profiles against auto-migration
 - [ ] Freshly populated in-game regular stash trials across game difficulties, player ranks and tiers verify the practical effect; **do not infer an in-game success or absolute spawn percentage solely from a CFG diff**

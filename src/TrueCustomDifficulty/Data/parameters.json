@@ -6220,13 +6220,13 @@
       "tab": "stashes",
       "group": "Stash Medical Quantity",
       "label": "Medkits Minimum Count",
-      "description": "Controls the minimum stack floor for existing Medkit entries, retaining the original source value at 0 (AUTO). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "description": "Controls the minimum stack floor for existing Medkit entries, retaining the original source value at 0 (VANILLA). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
       "control": "slider",
       "valueKind": "integer",
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "Source minimum stack floor; 0 = AUTO",
+        "valueLabel": "Source minimum stack floor; 0 = VANILLA",
         "unit": "items"
       },
       "vanilla": {
@@ -6253,7 +6253,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "0 AUTO leaves the corresponding source limit intact; it does not mean zero items.",
+          "0 VANILLA leaves the corresponding source limit intact; it does not mean zero items.",
           "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
           "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
           "MAX CAP=1 makes eligible Medkit stacks no larger than 1, including originally 2–4 item Easy/Rare entries."
@@ -6261,7 +6261,7 @@
       },
       "rationale": "Control medkits stack floor separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "0 AUTO uses vanilla per-entry limit. Positive value is a floor for MIN or a cap for MAX; reset restores source native counts.",
+      "interaction": "0 VANILLA uses vanilla per-entry limit. Positive value is a floor for MIN or a cap for MAX; reset restores source native counts.",
       "exposeInUi": true
     },
     {
@@ -6269,13 +6269,13 @@
       "tab": "stashes",
       "group": "Stash Medical Quantity",
       "label": "Medkits Maximum Count",
-      "description": "Controls the maximum stack cap for existing Medkit entries, retaining the original source value at 0 (AUTO); selecting the explicit 0 ITEMS graph stop writes zero generated items. Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "description": "Controls the maximum stack cap for existing Medkit entries, retaining the original source value at 0 (VANILLA); selecting the explicit 0 ITEMS graph stop writes zero generated items. Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
       "control": "slider",
       "valueKind": "integer",
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "MAX CAP: 0 AUTO, -1 = 0 items",
+        "valueLabel": "MAX CAP: 0 VANILLA, -1 = 0 items",
         "unit": "items"
       },
       "vanilla": {
@@ -6302,7 +6302,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "0 AUTO leaves the corresponding source limit intact; the separate 0 ITEMS stop stores -1 and writes MinCount=MaxCount=0.",
+          "0 VANILLA leaves the corresponding source limit intact; the separate 0 ITEMS stop stores -1 and writes MinCount=MaxCount=0.",
           "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
           "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
           "MAX CAP=1 makes eligible Medkit stacks no larger than 1. Explicit 0 ITEMS sets both native stack fields to zero; actual game behavior needs in-game validation."
@@ -6310,7 +6310,7 @@
       },
       "rationale": "Control medkits stack cap separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "0 AUTO preserves vanilla per-entry limit; -1 displays as 0 ITEMS and writes a zero count, while positive values cap maximum. Reset returns to AUTO.",
+      "interaction": "0 VANILLA preserves vanilla per-entry limit; -1 displays as 0 ITEMS and writes a zero count, while positive values cap maximum. Reset returns to VANILLA.",
       "exposeInUi": true
     },
     {
@@ -6318,13 +6318,13 @@
       "tab": "stashes",
       "group": "Stash Medical Quantity",
       "label": "Army Medkits Minimum Count",
-      "description": "Controls the minimum stack floor for existing ArmyMedkit entries, retaining the original source value at 0 (AUTO). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "description": "Controls the minimum stack floor for existing ArmyMedkit entries, retaining the original source value at 0 (VANILLA). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
       "control": "slider",
       "valueKind": "integer",
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "Source minimum stack floor; 0 = AUTO",
+        "valueLabel": "Source minimum stack floor; 0 = VANILLA",
         "unit": "items"
       },
       "vanilla": {
@@ -6351,7 +6351,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "0 AUTO leaves the corresponding source limit intact; it does not mean zero items.",
+          "0 VANILLA leaves the corresponding source limit intact; it does not mean zero items.",
           "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
           "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
           "MAX CAP=1 makes eligible Medkit stacks no larger than 1, including originally 2–4 item Easy/Rare entries."
@@ -6359,7 +6359,7 @@
       },
       "rationale": "Control army medkits stack floor separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "0 AUTO uses vanilla per-entry limit. Positive value is a floor for MIN or a cap for MAX; reset restores source native counts.",
+      "interaction": "0 VANILLA uses vanilla per-entry limit. Positive value is a floor for MIN or a cap for MAX; reset restores source native counts.",
       "exposeInUi": true
     },
     {
@@ -6367,13 +6367,13 @@
       "tab": "stashes",
       "group": "Stash Medical Quantity",
       "label": "Army Medkits Maximum Count",
-      "description": "Controls the maximum stack cap for existing ArmyMedkit entries, retaining the original source value at 0 (AUTO); selecting the explicit 0 ITEMS graph stop writes zero generated items. Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "description": "Controls the maximum stack cap for existing ArmyMedkit entries, retaining the original source value at 0 (VANILLA); selecting the explicit 0 ITEMS graph stop writes zero generated items. Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
       "control": "slider",
       "valueKind": "integer",
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "MAX CAP: 0 AUTO, -1 = 0 items",
+        "valueLabel": "MAX CAP: 0 VANILLA, -1 = 0 items",
         "unit": "items"
       },
       "vanilla": {
@@ -6400,7 +6400,7 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "0 AUTO leaves the corresponding source limit intact; the separate 0 ITEMS stop stores -1 and writes MinCount=MaxCount=0.",
+          "0 VANILLA leaves the corresponding source limit intact; the separate 0 ITEMS stop stores -1 and writes MinCount=MaxCount=0.",
           "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
           "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
           "MAX CAP=1 makes eligible Medkit stacks no larger than 1. Explicit 0 ITEMS sets both native stack fields to zero; actual game behavior needs in-game validation."
@@ -6408,7 +6408,7 @@
       },
       "rationale": "Control army medkits stack cap separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "0 AUTO preserves vanilla per-entry limit; -1 displays as 0 ITEMS and writes a zero count, while positive values cap maximum. Reset returns to AUTO.",
+      "interaction": "0 VANILLA preserves vanilla per-entry limit; -1 displays as 0 ITEMS and writes a zero count, while positive values cap maximum. Reset returns to VANILLA.",
       "exposeInUi": true
     },
     {
