@@ -1,3 +1,5 @@
+**PRE-GAME SOURCE/WINDOWS CFG DIAGNOSTICS (2026-10-17):** [Production generator execution map and 13-source fixture suite](GENERIC-NPC-STASH-EXECUTION-AND-CFG-PARITY-2026-10-17.md) checks ordinary-human medical 0x/2x, separate corpse package states and selected/inactive 43-entry extra ammo source. These verify emitted CFG, not which items a live NPC will actually drop. Every manual NPC case remains NOT_RUN.
+
 # Ordinary human NPC corpses — source-separated in-game loot validation
 
 **Status: TEST PLAN ONLY; no in-game observations accepted.** This is the second primary target alongside [ordinary world stashes](STASH-INGAME-LOOT-TYPE-VALIDATION-2026-10-16.md).

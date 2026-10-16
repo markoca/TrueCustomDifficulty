@@ -302,7 +302,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-      - name: Validate NPC corpse and medical stash and breakable generation BPatch
+      - name: Validate NPC/ordinary stash generator output, corpse bonus, and breakable BPatch (13 pre-game fixtures)
         shell: pwsh
         run: dotnet run --project tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release -- --out audit/loot-special-generators-fixtures
       - name: Preserve generated special Loot CFG fixtures

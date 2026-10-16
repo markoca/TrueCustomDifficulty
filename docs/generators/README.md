@@ -1,3 +1,5 @@
+**GENERIC NPC + STASH CFG PRE-GAME GATE (2026-10-17):** [Original generator execution diagram, 13 source-diagnostic CFG cases and unchanged gameplay acceptance boundary](GENERIC-NPC-STASH-EXECUTION-AND-CFG-PARITY-2026-10-17.md). Real production-writer tests now cover ordinary NPC consumables versus corpse SmartLoot and world stash tier ItemGenerator versus SmartLoot without altering regular app controls or source guards. Wine/.NET and game runtime checks still pending.
+
 # Generator map data
 
 ## NEXT FEATURE — Authored gear & unique-weapon shuffle (RESERVED)

@@ -1,3 +1,5 @@
+**PRE-GAME GENERIC ITEMGENERATOR/SMARTLOOT FIELD DIAGNOSTICS (2026-10-17):** [13-source emitted-CFG fixture contract](GENERIC-NPC-STASH-EXECUTION-AND-CFG-PARITY-2026-10-17.md) verifies all six generic content knobs at 0x against actual tier writer output and an independent SmartLoot source, with coupon-only negative SmartLoot proof. Export via the amended Wine runner's `--out` option. This is not an isolated one-physical-actor PAK or evidence of Unreal fallback/loot spawn; all 45 stash gameplay records remain NOT_RUN.
+
 # Stashes — controlled in-game loot-type validation campaign
 
 **2026-10-16 | STATUS: NOT RUN on the current build.** Generic ordinary stashes are the primary scope; Richter Cabin and other bespoke direct generators are regression-only. This is an executable *human game-test protocol* and a source-pinned [45-case matrix](stash-ingame-loot-test-matrix.csv), **not** a claim that the game was tested by GitHub, Wine, or this document. Preparation precedes accepting Phases 3–5; Phases 1–2 remain source-level evidence. Do not claim 100% physical stash drops from a CFG `Chance=1` row.

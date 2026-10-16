@@ -7,8 +7,16 @@ ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 TEST_NAME="${1:-LootSpecialGeneratorsContract}"
-if (( $# > 1 )) || [[ ! "$TEST_NAME" =~ ^[A-Za-z][A-Za-z0-9]*$ ]]; then
-    echo "Usage: ./tests/run-wine.sh [TestProjectName]" >&2
+EXE_ARGS=()
+if (( $# == 3 )) && [[ "$TEST_NAME" == "LootSpecialGeneratorsContract" && "${2:-}" == "--out" && -n "${3:-}" ]]; then
+    # Explicitly export inspectable GENERIC NPC/stash CFG fixtures, not a PAK.
+    EXE_ARGS=(--out "$3")
+elif (( $# > 1 )); then
+    echo "Usage: ./tests/run-wine.sh [TestProjectName] [--out RELATIVE-FIXTURE-PATH (LootSpecialGeneratorsContract only)]" >&2
+    exit 2
+fi
+if [[ ! "$TEST_NAME" =~ ^[A-Za-z][A-Za-z0-9]*$ ]]; then
+    echo "Invalid test project name" >&2
     exit 2
 fi
 
@@ -52,4 +60,4 @@ fi
 echo "Running $TEST_NAME through Wine (not dotnet run)..."
 env WINEPREFIX="${WINEPREFIX:-$HOME/.wine-s2}" \
     WINEDEBUG="${WINEDEBUG:--all}" \
-    wine "$EXE"
+    wine "$EXE" "${EXE_ARGS[@]}"

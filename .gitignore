@@ -14,3 +14,6 @@ publish/
 # Local pre-release audit logs/receipts and generated writer fixtures.
 audit/pre-release/
 audit/combat-patch-fixtures/
+
+# Manually retained generic NPC/stash pre-game source/CFG contract fixtures.
+audit/generic-loot-fixtures/

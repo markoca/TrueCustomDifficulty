@@ -1,3 +1,5 @@
+**SOURCE-EXECUTION AND CFG DIAGNOSTIC UPDATE (2026-10-17):** [13 isolated category/bonus output scenarios, explicit original source mapping and real production-writer BPatch field checks](GENERIC-NPC-STASH-EXECUTION-AND-CFG-PARITY-2026-10-17.md) are now wired to LootSpecialGeneratorsContract. They verify 58 NPC medical Chance rows/46 unaffected consumable rows, 33 production redirects, 43 corpse bonus ammo counts, corpse set-list activation, independent tier versus SmartLoot stash fields and cross-domain safety. Export via `./tests/run-wine.sh LootSpecialGeneratorsContract --out audit/generic-loot-fixtures` on local Wine/.NET. No source-level test proves game spawn activation; 77 original manual cases remain NOT_RUN.
+
 # Generic world stashes + ordinary human corpses — pre-game test readiness
 
 **Scope locked before the first physical game test. Source matrix preparation
