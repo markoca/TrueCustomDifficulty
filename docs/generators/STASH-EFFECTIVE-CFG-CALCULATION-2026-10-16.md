@@ -1,3 +1,5 @@
+**PHASE 4 FOLLOW-UP 2026-10-16:** [Native branch browser](STASH-PER-BRANCH-BROWSER-2026-10-16.md) now uses the same StashEffectiveState for native rank/difficulty-selected branch output. Historical mentions below of a future selector refer to the Phase 3 handoff. .NET/Wine/generated-CFG parity remain unverified.
+
 # Stashes Phase 3 — shared source-to-effective CFG calculation
 
 **Status (2026-10-16): implemented in code; .NET/Wine runtime test not executed in this session.** This phase changes tier/SmartLoot writers and the existing Stashes sample preview to use a shared source-field transformer. It does not add the Phase 4 branch selector or independent per-branch editing.

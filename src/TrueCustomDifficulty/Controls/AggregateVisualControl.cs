@@ -16,7 +16,7 @@ namespace TrueCustomDifficulty.Controls;
 /// ParameterViewModels as curves, faders, dashboards, ladders, timelines, bands,
 /// balance meters or distributions without changing preset/writer semantics.
 /// </summary>
-public sealed class AggregateVisualControl : FrameworkElement
+public sealed partial class AggregateVisualControl : FrameworkElement
 {
     private const double Epsilon = 0.000001;
 
@@ -4611,10 +4611,9 @@ public sealed class AggregateVisualControl : FrameworkElement
             cursor += cell + gap;
         }
 
-        // Exact source rows, never a synthetic six-way category probability.
-        DrawStashSourcePreview(dc,
-            new Rect(left, 237.0, width,
-                ActualWidth >= 700.0 ? 268.0 : 304.0),
+        // Phase 4: browse actual gated native groups instead of six fixed
+        // cross-branch samples. Navigation is read-only and never persisted.
+        DrawStashBranchBrowser(dc, new Rect(left, 237.0, width, 420.0),
             text, muted, border, accent, panel);
     }
 
@@ -4835,14 +4834,14 @@ public sealed class AggregateVisualControl : FrameworkElement
     // Same immutable numeric snapshot as the actual CFG patch writer.
     // Preview sample is explicitly Easy for difficulty-gated Rare Coupons;
     // the branch selector for all difficulty/rank variants comes in Phase 4.
-    private StashEffectiveState CurrentStashEffectiveState()
+    private StashEffectiveState CurrentStashEffectiveState(string difficultySid = "Easy")
     {
         var sources = _parameters.Values.Concat(_linkedSources.Values)
             .GroupBy(p => p.Id, StringComparer.Ordinal)
             .Select(g => g.First()).ToArray();
         return new StashEffectiveState(sources,
             sources.Where(p => p.IsValueModifiedFromReference()).Select(p => p.Id),
-            "Easy");
+            difficultySid);
     }
 
     private void DrawStashPoolBar(
@@ -5854,6 +5853,15 @@ public sealed class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        if (TryStashBrowserClick(point))
+        {
+            _selectedParameter = null;
+            _selectedHitKind = null;
+            _stashBrowserHover = -1;
+            Cursor = Cursors.Hand;
+            e.Handled = true;
+            return;
+        }
         var couponMarker = Family == "CouponFlow"
             ? _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point)) : default;
         if (couponMarker.Parameter is { IsControlEnabled: true })
@@ -5972,6 +5980,7 @@ public sealed class AggregateVisualControl : FrameworkElement
             _ => Cursors.Arrow
         };
 
+        UpdateStashBrowserHover(point);
         if (_dragTarget is null || e.LeftButton != MouseButtonState.Pressed)
             return;
 
@@ -6048,6 +6057,11 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
+        if (Family == "StashContentMix")
+        {
+            _stashBrowserHover = -1;
+            InvalidateVisual();
+        }
         if (_hoverCouponMarker >= 0)
         {
             _hoverCouponMarker = -1;
@@ -6163,6 +6177,22 @@ public sealed class AggregateVisualControl : FrameworkElement
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
+
+        // Keyboard branch browsing is separate from source slider keys:
+        // Alt+Left/Right switches groups; Alt+Up/Down switches rank.
+        // Ctrl+Left/Right changes difficulty or the SmartLoot prototype.
+        if (Family == "StashContentMix"
+            && e.Key is Key.Left or Key.Right or Key.Up or Key.Down
+            && (Keyboard.Modifiers & (ModifierKeys.Alt | ModifierKeys.Control)) != 0)
+        {
+            var direction = e.Key is Key.Right or Key.Down ? 1 : -1;
+            if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
+                NavigateStash(_stashBrowserMode == 3 ? 3 : 1, direction);
+            else
+                NavigateStash(e.Key is Key.Left or Key.Right ? 4 : 2, direction);
+            e.Handled = true;
+            return;
+        }
 
         if (e.Key == Key.R)
         {
@@ -6882,7 +6912,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     // The same adaptive column thresholds drive both WPF Measure and Draw,
     // so the last dial row is never clipped by the group host.
     private static double StashContentMixHeight(double width)
-        => width >= 700.0 ? 520.0 : 557.0;
+        => 675.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)

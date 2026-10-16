@@ -4,6 +4,7 @@
 Reads the same embedded CFG writer source fixture used by the WPF preview.
 Does not substitute static source checks for .NET/Wine or game QA.
 """
+import csv
 import json
 import math
 import re
@@ -64,7 +65,7 @@ assert medical.count('("loot.stashMedical') == 4
 assert quantity.count('("MEDKITS"') + quantity.count('("ARMY MEDKITS"') == 2
 assert gear.count('("BASIC"') + gear.count('("STANDARD"') + gear.count('("RARE"') == 3
 assert 'DrawSourceKnob(dc, source, entries[i].Label' in content
-assert "DrawStashSourcePreview(dc," in content
+assert "DrawStashBranchBrowser(dc," in content
 assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" in medical
 assert "DrawStashMedicalSourcePreview(dc," in medical
 assert "DrawStashQuantityDots(dc, P(families[i].Min)" in quantity
@@ -161,7 +162,7 @@ for family, branch, sid, expected_chance in samples:
     assert math.isclose(chance, expected_chance, abs_tol=1e-8)
     assert math.isclose(min(1, max(0, chance * 3)), min(1, chance * 3))
 
-assert "=> width >= 700.0 ? 520.0 : 557.0;" in source
+assert "=> 675.0;" in source
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -221,3 +222,49 @@ assert "MedicalDisabled(" in effective and "TuneCount(" in effective
 assert "Changed(config.GrenadeChanceParameterId)" in effective
 assert "Changed(config.CouponChanceParameterId)" in effective
 print("PASS: shared writer/preview tier and SmartLoot calculation, bonus Chance composition")
+
+
+# Phase 4 contract: runtime branch navigation derives from original embedded
+# writer inputs; it does not add persistable sliders or independent edits.
+browser = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text()
+branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.cs").read_text()
+csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
+assert "public sealed partial class AggregateVisualControl" in source
+assert "public sealed partial class AggregateVisualControl" in browser
+assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in browser
+assert 'DrawStashBranchBrowser(dc, new Rect(left, 237.0, width, 420.0)' in content
+assert 'StashContentMixHeight(width)' in source
+assert 'TryStashBrowserClick(point)' in source
+assert 'UpdateStashBrowserHover(point)' in source
+assert 'private StashEffectiveState CurrentStashEffectiveState(string difficultySid = "Easy")' in source
+assert "NavigateStash(" in source and "NavigateStash(" in browser
+assert "branch.EffectiveSelection(StashPreviewBaseline.Value, state, item)" in browser
+assert "branch.EffectiveSpawn(state)" in browser
+assert "CurrentStashEffectiveState(" in browser
+assert "state.TierField(" in branches and "state.SmartSelection(" in branches
+assert "StashEffectiveState.UniformSmartFactor(" in branches
+assert "StashEffectiveState.SmartSpawnEndpoint(" in branches
+assert "state.TuneCount(" in branches
+assert "GetManifestResourceStream(SmartSource)" in branches
+assert "Clone" not in browser and "CurrentNumber =" not in browser
+assert "Data\\smartloot-world-source-entries.csv" in csproj
+tier_groups = sum(len(baseline[key]["templateCategories"]) for key in [
+    "cheapStashProduction", "mediumStashAmmoProduction", "expensiveStashProduction"])
+tier_items = sum(len(g["items"]) for key in [
+    "cheapStashProduction", "mediumStashAmmoProduction", "expensiveStashProduction"]
+    for g in baseline[key]["templateCategories"])
+with (data / "smartloot-world-source-entries.csv").open(newline="") as stream:
+    rows = list(csv.DictReader(stream))
+group_keys = {(r["Prototype"], r["RankIndex"], r["Group"], r["GroupIndex"])
+              for r in rows}
+assert (tier_groups, tier_items, len(group_keys), len(rows)) == (41, 133, 422, 991)
+assert all(r["Weight"] != r["Chance"] for r in rows)
+assert "result.Count != 463" in branches and "result.Sum(x => x.Items.Count) != 1124" in branches
+assert sum(1 for r in rows if r["Weight"]) > 0
+assert sum(1 for r in rows if r["Chance"]) > 0
+for doc in (lock, system, proposal):
+    assert "STASHES PHASE 4 NATIVE BRANCH BROWSER" in doc
+assert "STASH-PER-BRANCH-BROWSER-2026-10-16.md" in (
+    root / "docs/generators/STASH-GENERATOR-BRANCH-ARCHITECTURE-2026-10-16.md"
+).read_text()
+print("PASS: phase 4 native branch browser, 463 source groups / 1,124 authored rows")
