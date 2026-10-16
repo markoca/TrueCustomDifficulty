@@ -4207,7 +4207,7 @@ if (len(_stash_med_caps) != 2
     or "StashEffectiveState.UniformSmartFactor(" not in _stash_smart
     or "StashState(all).TuneSelection(" not in _stash_tuning
     or "StashState(all).TuneCount(" not in _stash_tuning
-    or "private bool MedicalDisabled(" not in _stash_engine
+    or "public bool MedicalDisabled(" not in _stash_engine
     or "if (cap == -1) return \"0\";" not in _stash_engine
     or "Changed(config.GrenadeChanceParameterId)" not in _stash_engine
     or "Changed(config.CouponChanceParameterId)" not in _stash_engine
@@ -5881,6 +5881,9 @@ if (not all(token in _stash_phase5 for token in (
     or "effective.SmartCount(" not in _stash_smart
     or "state.SmartCount(" not in _stash_branches
     or "DrawStashBranchBrowser(" not in _stash_browser
+    or "private static int StashCategoryIndex(string sid)" not in _stash_browser
+    or "StashEffectiveState.ItemBiasId(sid)" not in _stash_browser
+    or "StashEffectiveState.SmartItemBiasId(sid)" not in _stash_browser
     or not all("STASHES PHASE 5 CFG PARITY GATE" in
                (DOCS / f).read_text(encoding="utf-8")
                for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))):

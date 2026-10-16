@@ -22,6 +22,23 @@ public sealed partial class AggregateVisualControl
     private int _stashBrowserGroup;
     private int _stashBrowserHover = -1;
 
+    // Shared native category semantics. The ItemGenerator and SmartLoot
+    // writers have slightly different source SID capitalization (AntiRad vs
+    // Antirad), so resolve through BOTH production mappings. Unclassified
+    // future source items remain neutral rather than assigned an invented pool.
+    private static int StashCategoryIndex(string sid)
+        => (StashEffectiveState.ItemBiasId(sid)
+            ?? StashEffectiveState.SmartItemBiasId(sid)) switch
+        {
+            "loot.stashMixAmmo" => 0,
+            "loot.stashMixMedical" => 1,
+            "loot.stashMixFood" => 2,
+            "loot.stashMixDrinks" => 3,
+            "loot.stashMixGrenades" => 4,
+            "loot.stashMixCoupons" => 5,
+            _ => -1
+        };
+
     private static readonly string[] StashDifficulties =
         { "Easy", "Medium", "Hard", "Stalker" };
 
@@ -88,11 +105,14 @@ public sealed partial class AggregateVisualControl
     {
         if (Family != "StashContentMix") return;
         var next = _stashBrowserTargets.FindIndex(x => x.Hit.Contains(point));
-        if (next == _stashBrowserHover) return;
+        // OnMouseMove already picks the source knob/slider cursor. A browser
+        // miss must NOT reset that cursor to Arrow; an unchanged browser hover
+        // must still display Hand after the common hover-handler ran.
+        var changed = next != _stashBrowserHover;
         _stashBrowserHover = next;
-        if (_dragTarget is null)
-            Cursor = next < 0 ? Cursors.Arrow : Cursors.Hand;
-        InvalidateVisual();
+        if (_dragTarget is null && next >= 0)
+            Cursor = Cursors.Hand;
+        if (changed) InvalidateVisual();
     }
 
     private void DrawStashBrowserButton(

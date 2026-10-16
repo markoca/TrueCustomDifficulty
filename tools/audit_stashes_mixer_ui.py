@@ -255,7 +255,12 @@ assert "CurrentStashEffectiveState(" in browser
 assert "state.TierField(" in branches and "state.SmartSelection(" in branches
 assert "StashEffectiveState.UniformSmartFactor(" in branches
 assert "StashEffectiveState.SmartSpawnEndpoint(" in branches
-assert "state.TuneCount(" in branches
+assert "state.SmartCount(" in branches
+assert "private static int StashCategoryIndex(string sid)" in browser
+assert "StashEffectiveState.ItemBiasId(sid)" in browser
+assert "StashEffectiveState.SmartItemBiasId(sid)" in browser
+assert 'if (_dragTarget is null && next >= 0)' in browser
+assert 'if (changed) InvalidateVisual();' in browser
 assert "GetManifestResourceStream(SmartSource)" in branches
 assert "Clone" not in browser and "CurrentNumber =" not in browser
 assert "Data\\smartloot-world-source-entries.csv" in csproj

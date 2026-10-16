@@ -41,6 +41,24 @@ internal static partial class Program
                 .Distinct().Count() == 463,
             "Native group paths collided or were deduplicated.");
 
+        // Every native source SID must resolve to the same six UI palettes
+        // used by ItemGenerator / SmartLoot calculations; "Antirad" is a
+        // deliberate case-sensitive SmartLoot alias and cannot be omitted.
+        var categoryIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
+            "loot.stashMixDrinks", "loot.stashMixGrenades",
+            "loot.stashMixCoupons"
+        };
+        var itemSids = branches.SelectMany(b => b.Items)
+            .Select(item => item.ItemSid).Distinct(StringComparer.Ordinal).ToArray();
+        Check(itemSids.Length == 46 && itemSids.Contains("Antirad"),
+            "Native item SID coverage or case-sensitive AntiRad alias drift.");
+        Check(itemSids.All(sid => categoryIds.Contains(
+                StashEffectiveState.ItemBiasId(sid)
+                    ?? StashEffectiveState.SmartItemBiasId(sid) ?? "")),
+            "A source item lost its native six-color category mapping.");
+
         var basic = NativeBranch(branches, "GamePass_Stash_ItemGenerator_Cheap",
             "ItemGenerator.[7].PossibleItems");
         var hard = NativeBranch(branches, "GamePass_Stash_ItemGenerator_Cheap",
