@@ -4214,7 +4214,9 @@ if (not all(token in _graph_body for token in _graph_required)
     or len(_med_caps_rows) != 2
     or any(p.get("slider", {}).get("min") != -1 or p.get("slider", {}).get("max") != 6
            or p.get("vanilla", {}).get("All") != 0 for p in _med_caps_rows)
-    or 'if (maxCap == -1)' not in _med_writer
+    or 'if (maxCap == -1)\n            return "0";' not in _med_writer
+    or _med_writer.find('if (maxCap == -1)') > _med_writer.find('var min = minFloor > 0')
+    or 'StashTuningCurrent(all, $"loot.stash{itemSid}MaxCount", 0) < -0.5' not in _med_writer
     or 'return FormatLikeSource(0.0, currentRaw);' not in _med_writer
     or 'return "0";' not in _med_writer
     or 'CurrentNumber < 0 ? "0 items"' not in _med_vm

@@ -133,6 +133,13 @@ public sealed partial class CfgPatchWriterService
         if (sourceMin < 0 || sourceMax < sourceMin)
             throw new InvalidDataException($"Invalid source stash {sid} count bounds.");
 
+        // Explicit 0 ITEMS (MAX=-1) always overrides a positive MIN FLOOR:
+        // write both native count fields as 0. TuneStashSelectionField also
+        // zeros the associated Medkit/ArmyMedkit Chance/Weight entry.
+        // Old stored MAX=0 is still AUTO and leaves source counts intact.
+        if (maxCap == -1)
+            return "0";
+
         // Positive values are a minimum floor or maximum cap; 0 is AUTO,
         // not an instruction to put zero medical items in a stash.
         var min = minFloor > 0 ? Math.Max(sourceMin, minFloor) : sourceMin;

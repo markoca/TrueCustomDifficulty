@@ -1,5 +1,8 @@
 ### 2026-10-16 — Top-left radiation mark spins during Build Difficulty
 
+**AUTO / zero conflict:** Native **AUTO** retains the game's individual Medkit/ArmyMedkit bounds and is stored as MAX=0. The separate visual MAX `0 ITEMS` value is stored as -1. If MIN FLOOR=1 (or 2–6) and MAX CAP=0 ITEMS, the explicit zero overrides the minimum: writer sets both count fields to 0 and the matching selection Chance/Weight to 0. Positive MAX caps retain their ordinary cap-over-floor rule. This affects only eligible TCD regular stash generators, not scripted rewards or other medical items; in-game validation remains required.
+
+
 ## CURRENT 2026-10-16 — STASHES GRAPH-ONLY NATIVE VISUAL CONTRACT
 
 Stashes has five independent edit graphs, no ordinary slider cards. DrawStashNumericReadout must give the same right-aligned value lane in Rewards/Content/Medical Composition and color only changed number glyphs, not x/%/ITEMS suffixes. The medical dot plot likewise colors only the 0 or count number.  StashRewardProfile is the 398-DIP two-section six-row source-true bar chart (3 ammo tiers, RGD-5 chance, RGD-5 amount, Rare coupon chance); StashContentMix is the existing 376-DIP six-row shared-scale bias bar graph; StashMedicalComposition is the existing 304-DIP four-row bias bar graph; StashMedicalQuantity is the new 290-DIP two-row/two-column dot graph; StashGear is the existing 370-DIP 3x2 four-mode dot plot.

@@ -1,5 +1,8 @@
 ### 2026-10-16 — Top-left radiation mark spins during Build Difficulty
 
+**AUTO / zero conflict:** Native **AUTO** retains the game's individual Medkit/ArmyMedkit bounds and is stored as MAX=0. The separate visual MAX `0 ITEMS` value is stored as -1. If MIN FLOOR=1 (or 2–6) and MAX CAP=0 ITEMS, the explicit zero overrides the minimum: writer sets both count fields to 0 and the matching selection Chance/Weight to 0. Positive MAX caps retain their ordinary cap-over-floor rule. This affects only eligible TCD regular stash generators, not scripted rewards or other medical items; in-game validation remains required.
+
+
 ## CURRENT 2026-10-16 — STASHES GRAPH-ONLY REDESIGN AND TRUE ZERO MEDICAL COUNT
 
 All five Stashes sections use interactive graphs, not standalone sliders or rotary knobs. Numeric readouts color ONLY changed digits yellow; the unit symbols x, % and ITEMS remain white, even when edited. STASH REWARDS is now a centered 398-DIP six-row bar chart in two banks: Basic/Standard/Rare ammo amounts share a 0.25–2x scale, while RGD-5 Chance, RGD-5 Amount and Rare Coupons use independent native normalized bar rows. Edited numbers align on the right, with muted source ticks and changed numbers only highlighted yellow. These are the editors, not redundant visual previews. Old reward knobs and isolated bonus slider cards are removed.
