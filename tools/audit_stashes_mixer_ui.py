@@ -7,6 +7,8 @@ Does not substitute static source checks for .NET/Wine or game QA.
 import json
 import math
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
@@ -167,6 +169,17 @@ for name, document in [("UI-DESIGN-LOCK", lock),
                        ("VISUAL-CONTROL-SYSTEM", system),
                        ("STASHES-TAB-AND-REDESIGN-PROPOSAL", proposal)]:
     assert "STASHES SOURCE-NATIVE WEIGHT/CHANCE PREVIEWS" in document, name
+
+# Phase 1 invariant: the Stashes UI audit also checks the native source
+# inventory, which does not establish engine-runtime probabilities.
+branch_audit = subprocess.run(
+    [sys.executable, str(root / "tools/audit_stash_generator_branches.py")],
+    capture_output=True, text=True, check=False,
+)
+assert branch_audit.returncode == 0, (
+    branch_audit.stdout + branch_audit.stderr
+)
+print("PASS: branch-level source inventory synchronized with CFG inputs")
 
 print("PASS: 26 original source IDs, editable controls, no synthetic six-way probability")
 print("PASS: source-native Easy/Medium Experienced and Hard weighted pools")
