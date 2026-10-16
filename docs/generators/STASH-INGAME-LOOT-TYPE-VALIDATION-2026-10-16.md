@@ -1,6 +1,6 @@
 # Stashes — controlled in-game loot-type validation campaign
 
-**2026-10-16 | STATUS: NOT RUN on the current build.** This is an executable *human game-test protocol* and a source-pinned [30-case matrix](stash-ingame-loot-test-matrix.csv), **not** a claim that the game was tested by GitHub, Wine, or this document. Preparation precedes accepting Phases 3–5; Phases 1–2 remain source-level evidence. Do not claim 100% physical stash drops from a CFG `Chance=1` row.
+**2026-10-16 | STATUS: NOT RUN on the current build.** Generic ordinary stashes are the primary scope; Richter Cabin and other bespoke direct generators are regression-only. This is an executable *human game-test protocol* and a source-pinned [45-case matrix](stash-ingame-loot-test-matrix.csv), **not** a claim that the game was tested by GitHub, Wine, or this document. Preparation precedes accepting Phases 3–5; Phases 1–2 remain source-level evidence. Do not claim 100% physical stash drops from a CFG `Chance=1` row.
 
 ## The actual earlier 100% medical finding — do not lose the evidence
 
@@ -30,26 +30,74 @@ Do **not** replace this 2-of-3 observed total with an unsupported claim that *al
 - Record current item counts **before opening**, everything obtained **after opening**, and whether the stash was previously visited/generated. Do not combine two containers' contents. Record a screenshot/video and the exact `ActorSID` tied to location, plus applied profile, built PAK name/hash if available, difficulty/rank/DLC/mod order, and native CFG outputs.
 - An actor GUID is a **source-accurate target, not a documented in-game waypoint**. Coordinates in `smartloot-regular-world-actor-manifest.csv` are source world coordinates; locate visually/with your own mapping before calling it verified in-game.
 
-### First wave — repeat the Richter Cabin case
+### First wave — generic ordinary containers (35 cases)
 
-1. Record reference contents of **BigSafe, Bag, SmallSafe individually** (three `CAB-*-BASE` rows), on uncontaminated generation states. Historical observation: 2 Medkits in total, not a new pass guarantee.
-2. Reproduce on untouched actors with **`loot.stashMixMedical=0`** (three `CAB-*-ZERO` rows). Verify generated CFG *direct* fields for BigSafe/SmallSafe AND both smart/tier paths before concluding why a Medkit does or does not remain.
-3. Use **`loot.stashMixFood=0` only** on BigSafe (`CAB-BIG-NEG-FOOD`) as a negative control: Cabin *direct* Medkit fields must remain at authored values. The entire physical stash's contents are still engine-gated.
-4. Independently use **`loot.stashMedkitMaxCount=-1`** on BigSafe/SmallSafe. Check that a 0 ITEMS Medkit is absent *from the direct patched row*. Other unrelated medical SIDs may still spawn.
-5. If the game results conflict with the generated CFG, stop expanding categories and trace the exact affected actor/root/patch load, rather than relaxing assertions or increasing controls.
+This is the primary player-facing scope. All **35 generic rows come before**
+the **10 regression-only direct/other cases** in
+[stash-ingame-loot-test-matrix.csv](stash-ingame-loot-test-matrix.csv).
 
-### Second wave — one category, one knob, separated native producers
+For **15 distinct original actor + producer + loot-category combinations**,
+the matrix now contains an explicit untouched **BASE** row immediately
+before the corresponding **ZERO** 0x test; eligible families with a
+HIGH 3x test compare against the same baseline. The exact original
+physical actor SID and source SID are pinned, but an SID alone is **not**
+an in-game waypoint or proof that the source activates on encounter.
 
-| Category | Regular generator target | Independent SmartLoot target | Additional meaningful test |
+Order of ordinary tests:
+
+1. Medical from Basic, Standard, Rare ItemGenerator and two independent
+   Medical SmartLoot prototypes (five baseline/zero pairs).
+2. Food and Drinks separately from generic ItemGenerator and SmartLoot;
+   other categories remain at native values in each build.
+3. Ammo from generic ItemGenerator and SmartLoot **on the same actor**.
+   When both produce the same visible ammo SID, ordinary contents alone
+   cannot establish which producer supplied it.
+4. Grenades from original Basic tier Chance and two separate SmartLoot
+   packages, without equating Chance with the probability of a whole stash.
+5. Coupons from Rare original ItemGenerator groups, preserving native
+   rank and difficulty gates. No separate coupon SmartLoot package is
+   claimed among the inventoried world prototype sources.
+
+The 3x value changes specific authored field values, not an implied 3x
+physical whole-stash reward frequency. A 0x test is not independently
+source-attributable on mixed-layer actors until an **actor-scoped debug
+CFG isolation build** turns off exactly one producer. That diagnostic
+patch is NOT a persistent UI/preset feature, and has not been built here.
+Keep all original blueprint/quest/named-clue protections.
+
+### Source-family references for generic tests
+
+| Category | Native ItemGenerator physical source | Parallel SmartLoot source | Main risk |
 | --- | --- | --- | --- |
-| **Medical** | Basic `006CDB98...`, Standard `12775ACA...`, Rare `069FAF0C...` | `StashMedicine_Cheap` actor `51AE018D...`; `StashMedicine_Smart` `006CDB98...` | Cabin direct pair + Rostok `12AA126A...` authored ArmyMedkit |
-| **Food** | Basic `006CDB98...` | `StashFood_Smart` actor `0F395036...` | Baseline → 0x → 3x; note very low SmartLoot source spawn endpoints |
-| **Drinks** | Basic `006CDB98...` | *Drinks sets within* `StashFood_Smart` actor `0F395036...` | Keep Food 1x when testing Drinks |
-| **Ammo** | Basic `006CDB98...` | `Stash_Ammo_Smart_CommonRare` same actor | Dual source = no visual attribution without targeted isolation patch |
-| **Grenades** | Basic `006CDB98...` (RGD-5) | `StashGrenade_Cheap` actor `6BC070D3...` and `StashGrenade_Smart` actor `0F395036...` | Source `Chance` is not a full physical stash frequency |
-| **Coupons** | Rare `069FAF0C...` | **No SmartLoot coupon source indexed among these 13 originals** | Test exact rank/difficulty-gated native tier groups |
+| Medical | Basic 006CDB98..., Standard 12775ACA..., Rare 069FAF0C... | StashMedicine_Cheap 51AE018D..., StashMedicine_Smart 006CDB98... | Alternative medical producers |
+| Food | Basic 006CDB98... | StashFood_Smart 0F395036... | SmartLoot activation group may be rare |
+| Drinks | Basic 006CDB98... | Drinks groups within StashFood_Smart 0F395036... | Do not also change Food |
+| Ammo | Basic 006CDB98... | Stash_Ammo_Smart_CommonRare on same actor | Same item SID from two sources |
+| Grenades | Basic 006CDB98... | StashGrenade_Cheap 6BC070D3..., StashGrenade_Smart 0F395036... | Native Chance versus SmartLoot Weight |
+| Coupons | Rare 069FAF0C... | None in current indexed SmartLoot sources | Difficulty/rank gates |
 
-The full exact actor SIDs, single setting, original producer, variant and unfilled game-result slot are in [stash-ingame-loot-test-matrix.csv](stash-ingame-loot-test-matrix.csv). The 30 rows are **test cases**, not 30 guaranteed accessible containers or 30 statistically independent rolls. Running the same actor under new/changed source conditions requires a genuinely clean regeneration state. Order in which actors are visited can matter.
+### Second wave — direct-source regression only (10 cases)
+
+**Richter Cabin is a known 100% conditional item-row finding, not an
+ordinary-stash frequency benchmark.** Keep it at the end, including
+BigSafe, Bag and SmallSafe baselines, Medical 0x tests, the unrelated Food
+0x negative control and Medkit 0 ITEMS cases:
+
+1. Record reference contents separately for BigSafe, Bag and SmallSafe,
+   starting from uncontaminated generation states; prior total of two
+   Medkits across three containers is historical evidence only.
+2. Reproduce the Medical=0 experiment, checking the two direct Chance=1
+   Medkit rows and other independent generators for these three actors.
+3. On BigSafe change Food=0 while preserving Medical: direct Medkit
+   Chance/count must not change.
+4. Separately test Medkit MAX=-1 on the direct BigSafe and SmallSafe
+   rows. This disables that item source, not every other medical producer.
+5. Keep the Rostok ArmyMedkit direct row as a **regression-only** source,
+   not an example of generic stash mechanics.
+
+A failure on Cabin/Rostok must be recorded, but it must not cause special
+item-generator behavior to be generalized into the 35 ordinary-container
+test cases.
 
 ### Observations — use one record per case and physical generation event
 
@@ -84,4 +132,4 @@ python3 tools/audit_stashes_mixer_ui.py
 
 The first command validates that each matrix row maps to **exact real allowlisted source actor / native layer**, including original Cabin and Rostok direct item entries, that control values fit native UI ranges, and that no physical gameplay test is pre-marked as passed. The last command still needs actual .NET/Wine execution; a green static result is never game verification.
 
-**Stop/go:** no new Phase 4/5 "complete" status until BigSafe/Bag/SmallSafe reference/0x checks and each source family of Medical pass an attributable generation check; no global *physical* drop odds before later independent samples. **Do not broaden protected actor redirects or modify vanilla shared generators to force tests to look successful.**
+**Stop/go:** no new Phase 4/5 "complete" status until the five ordinary Medical source-family baseline/0x pairs have attributable generation results, plus the Cabin regression checks; no global *physical* drop odds before later independent samples. **Do not broaden protected actor redirects or modify vanilla shared generators to force tests to look successful.**

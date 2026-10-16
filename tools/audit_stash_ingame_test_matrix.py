@@ -22,7 +22,30 @@ def tokens(raw):
 
 def main():
     tests = rows(MATRIX)
-    assert len(tests) == 30, ("Source-pinned case coverage drift", len(tests))
+    assert len(tests) == 45, ("Source-pinned case coverage drift", len(tests))
+    # Ordinary repeatable stash cases are the experiment. Cabin / Rostok
+    # bespoke direct rows are regression controls only, never generic proof.
+    scopes = [r["test_scope"] for r in tests]
+    assert scopes == ["GENERIC"] * 35 + ["REGRESSION"] * 10, (
+        "Generic actor tests must come first; direct Cabin/Rostok last")
+    assert all(not r["case_id"].startswith(("CAB-", "DIRECT-"))
+               for r in tests[:35])
+    assert all(r["case_id"].startswith(("CAB-", "DIRECT-"))
+               for r in tests[35:])
+    generic = tests[:35]
+    # For each exact original actor+producer+type, an untouched reference
+    # observation is mandatory before interpreting zero/high outcomes.
+    group_key = lambda r: (r["item_type"], r["source_layer"],
+                           r["actor_sid"], r["source_sid"])
+    groups = {}
+    for row in generic:
+        groups.setdefault(group_key(row), []).append(row)
+    assert len(groups) == 15, ("Expected 15 generic baselines", len(groups))
+    for group, members in groups.items():
+        assert sum(row["stage"] == "baseline" for row in members) == 1, group
+        assert any(row["stage"] == "zero" for row in members), group
+    assert sum(r["stage"] == "baseline" for r in generic) == 15
+
     ids = [r["case_id"] for r in tests]
     assert len(ids) == len(set(ids)), "Duplicate test case"
     assert all(r["expected_cfg_signal"].strip() for r in tests)
@@ -63,6 +86,12 @@ def main():
         assert actor_id not in protected, (case, "Protected actor")
 
         layer, source = r["source_layer"], r["source_sid"]
+        if r["test_scope"] == "GENERIC":
+            assert layer in ("ITEMGENERATOR", "SMARTLOOT"), (
+                case, "Generic test may not use local direct/quest root")
+        else:
+            assert layer in ("DIRECT", "SMARTLOOT"), (
+                case, "Regression scope drift")
         if layer == "DIRECT":
             assert (actor_id, source) in direct, (
                 case, "Not in an exact direct-item allowlist")
@@ -111,7 +140,8 @@ def main():
             "MED-BASIC-ZERO", "MED-STANDARD-ZERO", "MED-RARE-ZERO",
             "MED-SMART-CHEAP-ZERO", "MED-SMART-SMART-ZERO",
             "DIRECT-ROSTOK-MED-ZERO"} <= set(ids)
-    print(f"PASS: {len(tests)} original-source validated, guarded manual game cases")
+    print(f"PASS: {len(tests)} source-validated cases: 35 ordinary stashes, 10 direct/Cabin regressions")
+    print("PASS: 15 exact actor/source baseline pairs before zero/high experiments")
     print("PASS: all six loot categories and three independent source layers indexed")
     print("PASS: Cabin 2 direct Chance=1 medkits plus Bag negative source, "
           "Basic/Standard/Rare, SmartLoot and Rostok direct covered")

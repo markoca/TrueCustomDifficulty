@@ -28,8 +28,11 @@ jobs:
       - name: Final 268-source CFG to actual BPatch writer route and factory-output audit
         run: python tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
 
-      - name: Stashes actor-verified in-game loot type test matrix (source evidence only)
+      - name: Generic world stash 45-case in-game test source matrix
         run: python tools/audit_stash_ingame_test_matrix.py
+
+      - name: Ordinary human NPC corpse 32-case source matrix
+        run: python tools/audit_npc_corpse_ingame_test_matrix.py
 
       - name: Stashes A+C knob mixer layout/source contract
         run: python tools/audit_stashes_mixer_ui.py
