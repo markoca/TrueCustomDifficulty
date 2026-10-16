@@ -240,6 +240,25 @@ public sealed class PresetDirectoryService
         ["Hardcore+"] = "6674aa193990081ed3e4166645873ac9e6e7b3ee",
     };
 
+    // Exact pristine factory snapshots before STASH CONTENT / EXTRA STASH GEAR.
+    // Only these byte-identical older stock files migrate; user-edited copies stay.
+    private static readonly Dictionary<string, string> PreStashContentGearFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "e71030009d9b56aa8c9e86611b9a27ddfed690f5",
+        ["Field Medic"] = "a26c8021f42d62073e5a967be4444cd9a0332941",
+        ["Hardcore"] = "bc732679c08c08121ebc9ee42e5731b09cd5ed9e",
+        ["Hardcore+"] = "762a2aba5004a0d6474faae8ea497216f0e717f9",
+        ["Immersive"] = "e21b9812866616a6bc9cc4dd337d56c3e82d7f75",
+        ["Mercenary"] = "73d7d0219e4ad678a7c251de189c4b912bdd76ed",
+        ["Mutant Hunter"] = "5b737bada7c573a69484e85a6737f87741053d4a",
+        ["Outcast"] = "92813860b2ba0513b90dbc5516c55f42ca467193",
+        ["Scavenger"] = "2261537e26b9d250bff313dabbbdae5cf9298f9a",
+        ["Smuggler"] = "098a1159bb3e209ba4292e477dfa741b1f809381",
+        ["Tactical"] = "d15b267d8c6a0ffc7f9f1f3005b66d4e0ca366fd",
+        ["Wanderer"] = "8d123be710f4d625be5577c9efcae7d856bb0e7b",
+    };
+
     public string Ensure()
     {
         var directory = Path.Combine(AppContext.BaseDirectory, "Presets");
@@ -327,7 +346,8 @@ public sealed class PresetDirectoryService
             && !PreConsumableRebalanceFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreFullDeepAuditFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreFinalCfgAuditFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreEffectiveALifeFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreEffectiveALifeFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreStashContentGearFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -363,7 +383,9 @@ public sealed class PresetDirectoryService
                 || (PreFinalCfgAuditFactoryBlobs.TryGetValue(name, out var preFinalCfgHash)
                     && actual.Equals(preFinalCfgHash, StringComparison.OrdinalIgnoreCase))
                 || (PreEffectiveALifeFactoryBlobs.TryGetValue(name, out var preEffectiveALifeHash)
-                    && actual.Equals(preEffectiveALifeHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preEffectiveALifeHash, StringComparison.OrdinalIgnoreCase))
+                || (PreStashContentGearFactoryBlobs.TryGetValue(name, out var preStashHash)
+                    && actual.Equals(preStashHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

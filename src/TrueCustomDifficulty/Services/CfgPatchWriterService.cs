@@ -15,7 +15,7 @@ namespace TrueCustomDifficulty.Services;
 /// folder. Singular/global CFGs are emitted as cfg_patch files beside the
 /// original logical CFG path. No full vanilla CFG is copied into the final mod output.
 /// </summary>
-public sealed class CfgPatchWriterService
+public sealed partial class CfgPatchWriterService
 {
     private const string PatchSuffix = "TrueCustomDifficulty";
     private readonly CfgWriterBaselineService _baselineService = new();
@@ -310,6 +310,8 @@ public sealed class CfgPatchWriterService
         supported.Add("loot.worldF1GrenadeBoxes");
         supported.Add("loot.blueprintShuffle");
         supported.Add("loot.looseWorldLootRemoved");
+        supported.UnionWith(StashMixParameterIds);
+        supported.UnionWith(StashGearParameterIds);
         // An exact manifest-backed special route, not a fictional direct CFG leaf.
         var uniqueShuffleRoute = baseline.Special.LooseUniqueWeaponShuffle;
         if (uniqueShuffleRoute.ParameterId != "loot.looseUniqueWeaponShuffle"
@@ -915,7 +917,8 @@ public sealed class CfgPatchWriterService
         var ammoChanged = modifiedById.ContainsKey(config.AmmoQuantityParameterId);
         var grenadeChanceChanged = modifiedById.ContainsKey(config.GrenadeChanceParameterId);
         var grenadeQuantityChanged = modifiedById.ContainsKey(config.GrenadeQuantityParameterId);
-        if (!ammoChanged && !grenadeChanceChanged && !grenadeQuantityChanged)
+        if (!ammoChanged && !grenadeChanceChanged && !grenadeQuantityChanged
+            && !HasStashTuningChange(modifiedById, "Cheap"))
             return 0;
 
         if (!allById.TryGetValue(config.AmmoQuantityParameterId, out var ammoParameter))
@@ -943,7 +946,8 @@ public sealed class CfgPatchWriterService
                 config,
                 ammoChanged ? ammoParameter.CurrentNumber : 1.0,
                 grenadeChanceChanged ? grenadeChanceParameter.CurrentNumber : ParseNumber(config.GrenadeEntry.SourceChanceRaw),
-                grenadeQuantityChanged ? (int)Math.Round(grenadeQuantityParameter.CurrentNumber, MidpointRounding.AwayFromZero) : config.GrenadeEntry.SourceMinCount);
+                grenadeQuantityChanged ? (int)Math.Round(grenadeQuantityParameter.CurrentNumber, MidpointRounding.AwayFromZero) : config.GrenadeEntry.SourceMinCount,
+                allById);
         }
 
         foreach (var redirect in LoadCheapStashRedirects(config.RedirectManifestResource))
@@ -967,6 +971,7 @@ public sealed class CfgPatchWriterService
         if (grenadeQuantityChanged)
             writtenParameters.Add(config.GrenadeQuantityParameterId);
 
+        MarkModifiedStashTuning(modifiedById, "Cheap", writtenParameters);
         return edits;
     }
 
@@ -975,7 +980,8 @@ public sealed class CfgPatchWriterService
         CfgWriterCheapStashProduction config,
         double ammoMultiplier,
         double grenadeChance,
-        int grenadeQuantity)
+        int grenadeQuantity,
+        IReadOnlyDictionary<string, ParameterViewModel> allById)
     {
         if (ammoMultiplier <= 0)
             throw new InvalidDataException("Cheap Stash Ammo Quantity must be greater than zero.");
@@ -1019,12 +1025,15 @@ public sealed class CfgPatchWriterService
                             value = grenadeQuantity.ToString(CultureInfo.InvariantCulture);
                     }
 
-                    item.SetAssignment(field.Key, value);
+                    item.SetAssignment(field.Key, TuneStashSelectionField(
+                        itemDefinition.Fields["ItemPrototypeSID"], field.Key, value, allById));
                     edits++;
                 }
             }
         }
 
+        edits += WriteExtraStashGear(itemGenerator, allById,
+            "Cheap", config.TemplateCategories.Count);
         return edits;
     }
 
@@ -1105,7 +1114,8 @@ public sealed class CfgPatchWriterService
         if (string.IsNullOrWhiteSpace(config.ParameterId))
             return 0;
 
-        if (!modifiedById.ContainsKey(config.ParameterId))
+        if (!modifiedById.ContainsKey(config.ParameterId)
+            && !HasStashTuningChange(modifiedById, "Medium"))
             return 0;
 
         if (!allById.TryGetValue(config.ParameterId, out var parameter))
@@ -1126,7 +1136,8 @@ public sealed class CfgPatchWriterService
                 config.BaseTemplateRefKey);
             root.SetAssignment("SID", sid);
             edits++;
-            edits += WriteMediumStashAmmoTemplate(root, config, parameter.CurrentNumber);
+            edits += WriteMediumStashAmmoTemplate(root, config,
+                modifiedById.ContainsKey(config.ParameterId) ? parameter.CurrentNumber : 1.0, allById);
         }
 
         foreach (var redirect in LoadMediumStashRedirects(config.RedirectManifestResource))
@@ -1143,14 +1154,17 @@ public sealed class CfgPatchWriterService
             edits++;
         }
 
-        writtenParameters.Add(config.ParameterId);
+        if (modifiedById.ContainsKey(config.ParameterId))
+            writtenParameters.Add(config.ParameterId);
+        MarkModifiedStashTuning(modifiedById, "Medium", writtenParameters);
         return edits;
     }
 
     private static int WriteMediumStashAmmoTemplate(
         PatchNode root,
         CfgWriterMediumStashAmmoProduction config,
-        double ammoMultiplier)
+        double ammoMultiplier,
+        IReadOnlyDictionary<string, ParameterViewModel> allById)
     {
         var ammoByNode = config.AmmoEntries.ToDictionary(
             x => (x.CategoryNode, x.EntryNode),
@@ -1184,12 +1198,15 @@ public sealed class CfgPatchWriterService
                             value = ScalePositiveInteger(ammoEntry.SourceMaxCount, ammoMultiplier).ToString(CultureInfo.InvariantCulture);
                     }
 
-                    item.SetAssignment(field.Key, value);
+                    item.SetAssignment(field.Key, TuneStashSelectionField(
+                        itemDefinition.Fields["ItemPrototypeSID"], field.Key, value, allById));
                     edits++;
                 }
             }
         }
 
+        edits += WriteExtraStashGear(itemGenerator, allById,
+            "Medium", config.TemplateCategories.Count);
         return edits;
     }
 
@@ -1267,7 +1284,8 @@ public sealed class CfgPatchWriterService
 
         // Existing coupon-only builds keep using the audited vanilla-wrapper edit points.
         // TCD-owned Expensive roots are needed only when ammo quantity redirects production stash paths.
-        if (!modifiedById.ContainsKey(config.AmmoQuantityParameterId))
+        if (!modifiedById.ContainsKey(config.AmmoQuantityParameterId)
+            && !HasStashTuningChange(modifiedById, "Expensive"))
             return 0;
 
         if (!allById.TryGetValue(config.AmmoQuantityParameterId, out var ammoParameter))
@@ -1299,7 +1317,8 @@ public sealed class CfgPatchWriterService
                 config,
                 ammoParameter.CurrentNumber,
                 couponChanged ? couponParameter?.CurrentNumber : null,
-                difficultySid);
+                difficultySid,
+                allById);
         }
 
         foreach (var redirect in LoadExpensiveStashRedirects(config.RedirectManifestResource))
@@ -1316,7 +1335,9 @@ public sealed class CfgPatchWriterService
             edits++;
         }
 
-        writtenParameters.Add(config.AmmoQuantityParameterId);
+        if (modifiedById.ContainsKey(config.AmmoQuantityParameterId))
+            writtenParameters.Add(config.AmmoQuantityParameterId);
+        MarkModifiedStashTuning(modifiedById, "Expensive", writtenParameters);
         return edits;
     }
 
@@ -1325,7 +1346,8 @@ public sealed class CfgPatchWriterService
         CfgWriterExpensiveStashProduction config,
         double ammoMultiplier,
         double? couponChance,
-        string difficultySid)
+        string difficultySid,
+        IReadOnlyDictionary<string, ParameterViewModel> allById)
     {
         var ammoByNode = config.AmmoEntries.ToDictionary(
             x => (x.CategoryNode, x.EntryNode),
@@ -1370,12 +1392,15 @@ public sealed class CfgPatchWriterService
                         value = FormatNumber(couponChance.Value);
                     }
 
-                    item.SetAssignment(field.Key, value);
+                    item.SetAssignment(field.Key, TuneStashSelectionField(
+                        itemDefinition.Fields["ItemPrototypeSID"], field.Key, value, allById));
                     edits++;
                 }
             }
         }
 
+        edits += WriteExtraStashGear(itemGenerator, allById,
+            "Expensive", config.TemplateCategories.Count);
         return edits;
     }
 

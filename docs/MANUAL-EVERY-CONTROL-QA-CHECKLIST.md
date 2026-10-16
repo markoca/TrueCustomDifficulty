@@ -1,5 +1,32 @@
 # True Custom Difficulty — kompletna ručna QA checklista
 
+## 2026-10-16 — New stash systems (12 additional active source controls)
+
+**Live inventory is now 260 catalogued / 250 instantiated ParameterViewModel sources (160 exposed anchors / 90 backing composite members, 10 non-instantiated)**, replacing the preceding 248/238 historical checklist snapshot. The original individual 238 rows below remain valid for previous controls. In addition, test all 12 new rows using the same **V (visual), I (interaction), P (preset), B (CFG build), G (gameplay)** test axes.
+
+### STASH CONTENT — 0..3x, step 0.25, 1x untouched
+
+- [ ] Ammo — `loot.stashMixAmmo`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Medical — `loot.stashMixMedical`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Food — `loot.stashMixFood`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Drinks — `loot.stashMixDrinks`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Grenades — `loot.stashMixGrenades`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Coupons — `loot.stashMixCoupons`: V[ ] I[ ] P[ ] B[ ] G[ ]
+
+### EXTRA STASH GEAR — 0 OFF, 1 RARE, 2 MODERATE, 3 FREQUENT
+
+- [ ] Basic Weapon — `loot.stashGearCheapWeapon`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Basic Armor — `loot.stashGearCheapArmor`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Standard Weapon — `loot.stashGearMediumWeapon`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Standard Armor — `loot.stashGearMediumArmor`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Rare Weapon — `loot.stashGearExpensiveWeapon`: V[ ] I[ ] P[ ] B[ ] G[ ]
+- [ ] Rare Armor — `loot.stashGearExpensiveArmor`: V[ ] I[ ] P[ ] B[ ] G[ ]
+
+Additional gates: check source `Weight` relative odds vs bounded source `Chance`, rank gates, no quest/scripted changes, Tier+Ammo+Coupon/Grenade composition, exact pristine-only factory preset updates. Do **not** mark game behavior PASS on CFG diff alone. Full mechanics: [STASH-CONTENT-GEAR-IMPLEMENTATION.md](STASH-CONTENT-GEAR-IMPLEMENTATION.md).
+
+**Historical checklist below uses the prior 248/238 snapshot; its untested status remains correct.**
+
+
 **Kataloški snapshot:** `main` `c5356f011070` (2026-10-16). Autoritet za izgled: [UI-DESIGN-LOCK.md](UI-DESIGN-LOCK.md) i [VISUAL-CONTROL-SYSTEM.md](VISUAL-CONTROL-SYSTEM.md). Autoritet za izvorne min/max/step i source ID: `src/TrueCustomDifficulty/Data/parameters.json` iz istog commita.
 
 **Pokrivenost:** 248 source definicija; **238 aktivnih ParameterViewModel izvora** (od čega 148 glavnih UI sidara i 90 člana složenih panela); 10 izvornih ID-eva bez aktivnog editora. Svaka aktivna stavka ima svoju checkbox liniju. Nijedna ovde nije prijavljena kao stvarno testirana.

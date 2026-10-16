@@ -39,6 +39,9 @@ def walk_parameter_ids(value, path="special"):
             elif key == "weightParameterIds" and isinstance(child, dict):
                 for parameter_id in child.values():
                     yield f"{child_path}[value]", parameter_id
+            elif key == "parameterIds" and isinstance(child, list):
+                for index, parameter_id in enumerate(child):
+                    yield f"{child_path}[{index}]", parameter_id
             else:
                 yield from walk_parameter_ids(child, child_path)
     elif isinstance(value, list):
@@ -564,12 +567,17 @@ _e2e_runtime = {
     "loot.droppedWeaponCondition", "loot.npcWeaponAmmoSupply", "economy.medicStock",
     "loot.blueprintShuffle", "loot.worldWeaponDensity", "loot.worldAttachmentShuffle", "loot.worldDetectors",
     "loot.ammoBoxWeight918",
+    "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
+    "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
+    "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor",
+    "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
+    "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor",
 }
 _e2e_all = _e2e_static | _e2e_runtime
 _catalog_ids = {p.get("id") for p in parameters}
 _missing_e2e = sorted(_e2e_all - _catalog_ids)
-if len(_e2e_all) != 32 or len(_e2e_static) != 16 or len(_e2e_runtime) != 16 or _missing_e2e:
-    fail(f"generator UI E2E gate drifted: total={len(_e2e_all)}, static={len(_e2e_static)}, runtime={len(_e2e_runtime)}, missing={_missing_e2e}; expected 32/16/16/0")
+if len(_e2e_all) != 44 or len(_e2e_static) != 16 or len(_e2e_runtime) != 28 or _missing_e2e:
+    fail(f"generator UI E2E gate drifted: total={len(_e2e_all)}, static={len(_e2e_static)}, runtime={len(_e2e_runtime)}, missing={_missing_e2e}; expected 44/16/28/0")
 elif not _e2e_doc.exists():
     fail("generator UI E2E verification document missing from docs/")
 else:
@@ -577,7 +585,7 @@ else:
     if not _bayun or _bayun.get("label") != "Bayun Part Drop Chance":
         fail("Bayun compatibility contract drifted: legacy loot.mutant.catChance must retain player-facing Bayun label")
     else:
-        note("generator UI E2E gate: 32 controls = 16 static 1:1 + 16 runtime-test-required; 0 invalid/partial; Ammo Box Distribution + Stash Ammo Amounts + Mutant Part Drop Chances aggregate radars included")
+        note("generator UI E2E gate: 44 controls = 16 static 1:1 + 28 runtime-test-required; 0 invalid/partial; Ammo Box Distribution + Stash Ammo Amounts + Mutant Part Drop Chances aggregate radars included")
 
 
 
@@ -1950,7 +1958,7 @@ if _build_name_errors:
 else:
     note("preset-aware triplet naming locked: zzzzz_TrueCustomDifficulty_<loaded preset>; safe underscores; Custom fallback")
 
-# Current 12 source-backed factory presets, complete 248 controls after the independent Water cost-cut split.
+# Current 12 source-backed factory presets, complete 260 controls after the independent Water cost-cut split.
 _factory_preset_names = [
     "Anomaly Runner", "Field Medic", "Hardcore+", "Hardcore",
     "Immersive", "Mercenary", "Mutant Hunter", "Outcast",
@@ -1979,8 +1987,8 @@ for _name in _factory_preset_names:
         continue
     _preset = json.loads(_preset_path.read_text(encoding="utf-8"))
     _values = _preset.get("values", {})
-    if len(_values) != 248:
-        _factory_errors.append(f"{_name}: {len(_values)} values, expected 248")
+    if len(_values) != 260:
+        _factory_errors.append(f"{_name}: {len(_values)} values, expected 260")
     if _preset.get("referenceDifficulty") not in {"Novice", "Stalker", "Veteran", "Master"}:
         _factory_errors.append(f"{_name}: invalid referenceDifficulty={_preset.get('referenceDifficulty')}")
     if f'Presets\\{_name}.json' not in _factory_csproj_text:
@@ -1993,12 +2001,16 @@ for _name in _factory_preset_names:
 # Compare each shipped preset against the entire current catalog and that
 # matrix; no hidden source may be invented, silently dropped, or made synthetic.
 _factory_catalog = {p["id"]: p for p in parameters}
+# Frozen 2026-10-15 audit ledgers describe the preceding 248 IDs; never
+# retroactively pretend the newly introduced stash gear was source-audited then.
+_factory_legacy_catalog = {pid: p for pid, p in _factory_catalog.items()
+                           if not pid.startswith(("loot.stashMix", "loot.stashGear"))}
 _factory_tuning = json.loads((ROOT / "tools/factory_preset_expansion.json").read_text(encoding="utf-8"))
 _factory_groups = _factory_tuning["groups"]
 _factory_tuning_profiles = _factory_tuning["profiles"]
 _factory_tuned_ids = [pid for members in _factory_groups.values() for pid in members]
-if len(_factory_catalog) != 248 or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
-    _factory_errors.append("expected 248 unique source IDs and 34 new + 3 drink duration matrix slots")
+if len(_factory_catalog) != 260 or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
+    _factory_errors.append("expected 260 current source IDs and 34 historical + 3 drink duration matrix slots")
 if set(_factory_tuning_profiles) != set(_factory_preset_names):
     _factory_errors.append("tuning matrix has missing/unknown factory names")
 
@@ -2193,7 +2205,7 @@ for _role, _signature in _role_matrix.get("profiles", {}).items():
     _path = _factory_preset_dir / f"{_role}.json"
     _document = json.loads(_path.read_text(encoding="utf-8"))
     _entries = _document["values"]
-    if len(_entries) != 248 or set(_entries) != set(_factory_catalog):
+    if len(_entries) != 260 or set(_entries) != set(_factory_catalog):
         _factory_errors.append(f"{_role}: incomplete native catalog")
     if len(_signature.get("changes", {})) < 30:
         _factory_errors.append(f"{_role}: insufficient role-specific rebalancing")
@@ -2279,7 +2291,7 @@ for _role, _settings in _consumable_matrix.get("profiles", {}).items():
         or _snapshot.get("medicalOverride") is not _medical_override
         or not _drink_override):
         _factory_errors.append(f"{_role}: missing or inconsistent override mode")
-    if len(_entries) != 248 or set(_entries) != set(_factory_catalog):
+    if len(_entries) != 260 or set(_entries) != set(_factory_catalog):
         _factory_errors.append(f"{_role}: lost native catalog values")
     if not _settings.get("intent"):
         _factory_errors.append(f"{_role}: missing balance intent")
@@ -2350,7 +2362,7 @@ for _doc in ("FACTORY-PRESETS.md", "PRESET-FORMAT.md"):
 _full_ledger = json.loads((ROOT / "tools/factory_preset_full_source_audit.json").read_text(encoding="utf-8"))
 _full_rows = _full_ledger.get("settings", {})
 _full_roles = _full_ledger.get("roles", {})
-if (set(_full_rows) != set(_factory_catalog) or len(_full_rows) != 248
+if (set(_full_rows) != set(_factory_legacy_catalog) or len(_full_rows) != 248
     or set(_full_roles) != set(_factory_preset_names)):
     _factory_errors.append("full decision ledger must cover every native source in all twelve roles")
 if ('PreFullDeepAuditFactoryBlobs' not in _factory_service_text
@@ -2417,7 +2429,7 @@ for _name in _factory_preset_names:
         or set(_role_record.get("tabStrategies", {})) != set(p.get("tab") for p in parameters)
         or any(len(x.strip()) < 12 for x in _role_record.get("tabStrategies", {}).values())):
         _factory_errors.append(f"{_name}: audited role metadata/strategy drift")
-    for _pid, _source in _factory_catalog.items():
+    for _pid, _source in _factory_legacy_catalog.items():
         _row = _full_rows.get(_pid, {})
         _cell = (_row.get("roleDecisions") or {}).get(_name, {})
         _stored = _values[_pid]
@@ -2457,7 +2469,7 @@ for _name in _factory_preset_names:
             _factory_errors.append(f"{_name}: coupled-source ordering broken {_low}")
     if _values["economy.buyCondition"]["number"] >= _values["economy.sellCondition"]["number"]:
         _factory_errors.append(f"{_name}: buy/sell condition inverted")
-for _pid, _source in _factory_catalog.items():
+for _pid, _source in _factory_legacy_catalog.items():
     _row = _full_rows.get(_pid, {})
     if (_row.get("tab") != _source.get("tab") or _row.get("group") != _source.get("group")
         or _row.get("control") != _source.get("control")
@@ -2599,14 +2611,14 @@ if not (ROOT / "tools/final_cfg_mapping_inventory.json").is_file():
     _factory_errors.append("full 248-source CFG mapping inventory is missing")
 else:
     _final_cfg_index = json.loads((ROOT / "tools/final_cfg_mapping_inventory.json").read_text(encoding="utf-8"))
-    if (set(_final_cfg_index.get("parameters", {})) != set(_factory_catalog)
+    if (set(_final_cfg_index.get("parameters", {})) != set(_factory_legacy_catalog)
         or _final_cfg_index.get("counts", {}).get("catalog") != 248
         or _final_cfg_index.get("counts", {}).get("direct") != 213
         or _final_cfg_index.get("counts", {}).get("special") != 35
         or _final_cfg_index.get("counts", {}).get("editable") != 235
         or _final_cfg_index.get("counts", {}).get("directLeafPoints") != 1230):
         _factory_errors.append("final CFG mapping inventory differs from live catalogue/baseline")
-if "248 unique" not in (ROOT / "tools/audit_final_cfg_mapping.py").read_text(encoding="utf-8"):
+if "260 unique" not in (ROOT / "tools/audit_final_cfg_mapping.py").read_text(encoding="utf-8"):
     _factory_errors.append("new static CFG mapping writer audit entrypoint is missing")
 _final_workflow = (ROOT / ".github/workflows/static-audit.yml").read_text(encoding="utf-8")
 if ("python tools/audit_final_cfg_mapping.py" not in _final_workflow
@@ -2622,7 +2634,7 @@ if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legac
 if _factory_errors:
     fail("current 12 factory presets drifted: " + "; ".join(_factory_errors))
 else:
-    note("factory presets: twelve 248-source scarcity-first profiles with independent Water values; exact-stock upgrade preserves edits")
+    note("factory presets: twelve 260-source scarcity-first profiles with independent Water values; exact-stock upgrade preserves edits")
 
 # Originally twelve visual-only live projections approved 2026-10-14;
 # nine remain after retiring the Medical Items percentage / bleed stage
@@ -3724,7 +3736,7 @@ _global_expected_tabs = {
     "equipment": 4,
     "master": 20,
     "environment": 6,
-    "loot": 31,
+    "loot": 43,
     "alife": 2,
 }
 _global_confirmed = sum(p.get("support", {}).get("status") == "confirmed" for p in _global_visible)
@@ -3877,14 +3889,14 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 248 or len(_global_visible) != 148 or len(_global_hidden) != 100:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 248/148/100")
+if len(parameters) != 260 or len(_global_visible) != 160 or len(_global_hidden) != 100:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 260/160/100")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 31:
+elif _global_confirmed != 117 or _global_runtime != 43:
     fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/31")
-elif _global_control_counts != {"slider": 134, "toggle": 12, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 134 sliders / 12 toggles / 1 choiceSlider / 1 range")
+elif _global_control_counts != {"slider": 146, "toggle": 12, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 146 sliders / 12 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -3909,7 +3921,7 @@ elif _global_anomaly_missing or "SetEffectiveDamageMultiplierProvider" not in _g
 elif not _global_doc.exists():
     fail("global cross-domain audit document missing from docs/")
 else:
-    note("current cross-domain structural audit: 248 catalog / 148 visible / 100 hidden; 117 visible confirmed + 31 runtime-test-required; zero direct collisions")
+    note("current cross-domain structural audit: 260 catalog / 160 visible / 100 hidden; 117 visible confirmed + 43 runtime-test-required; zero direct collisions")
 
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("v0.2.51-v0.3.0 override/CFG-placement/provenance/production snapshots (current UI/Combat tools + active source checks are authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")

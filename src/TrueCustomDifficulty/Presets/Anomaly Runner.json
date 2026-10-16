@@ -1000,6 +1000,54 @@
     "alife.mutantSpawn.generic": {
       "kind": "slider",
       "number": 1
+    },
+    "loot.stashMixAmmo": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMixMedical": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMixFood": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMixDrinks": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMixGrenades": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMixCoupons": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashGearCheapWeapon": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.stashGearCheapArmor": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.stashGearMediumWeapon": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.stashGearMediumArmor": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.stashGearExpensiveWeapon": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.stashGearExpensiveArmor": {
+      "kind": "slider",
+      "number": 0
     }
   }
 }

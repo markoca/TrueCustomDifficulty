@@ -5740,6 +5740,576 @@
       "interaction": "Changes only the condition of weapons dropped by ordinary human enemies. It does not change which weapons they use, their ammo, health, traders, zombies, or story characters."
     },
     {
+      "id": "loot.stashMixAmmo",
+      "tab": "loot",
+      "group": "Stash Content",
+      "label": "Ammo Stash Weight",
+      "description": "Rescales existing ammo entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Stash item selection bias"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "1x keeps authored Weight and Chance, including zero-valued rows.",
+          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "Does not independently increase total stash occurrences or turn absent items into available loot."
+        ]
+      },
+      "rationale": "Adjust relative ammo presence without touching ammo stack size or quest rewards.",
+      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMixMedical",
+      "tab": "loot",
+      "group": "Stash Content",
+      "label": "Medical Stash Weight",
+      "description": "Rescales existing medical entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Stash item selection bias"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "1x keeps authored Weight and Chance, including zero-valued rows.",
+          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "Does not independently increase total stash occurrences or turn absent items into available loot."
+        ]
+      },
+      "rationale": "Adjust relative medical presence without touching ammo stack size or quest rewards.",
+      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMixFood",
+      "tab": "loot",
+      "group": "Stash Content",
+      "label": "Food Stash Weight",
+      "description": "Rescales existing food entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Stash item selection bias"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "1x keeps authored Weight and Chance, including zero-valued rows.",
+          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "Does not independently increase total stash occurrences or turn absent items into available loot."
+        ]
+      },
+      "rationale": "Adjust relative food presence without touching ammo stack size or quest rewards.",
+      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMixDrinks",
+      "tab": "loot",
+      "group": "Stash Content",
+      "label": "Drinks Stash Weight",
+      "description": "Rescales existing drinks entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Stash item selection bias"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "1x keeps authored Weight and Chance, including zero-valued rows.",
+          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "Does not independently increase total stash occurrences or turn absent items into available loot."
+        ]
+      },
+      "rationale": "Adjust relative drinks presence without touching ammo stack size or quest rewards.",
+      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMixGrenades",
+      "tab": "loot",
+      "group": "Stash Content",
+      "label": "Grenades Stash Weight",
+      "description": "Rescales existing grenades entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Stash item selection bias"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "1x keeps authored Weight and Chance, including zero-valued rows.",
+          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "Does not independently increase total stash occurrences or turn absent items into available loot."
+        ]
+      },
+      "rationale": "Adjust relative grenades presence without touching ammo stack size or quest rewards.",
+      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMixCoupons",
+      "tab": "loot",
+      "group": "Stash Content",
+      "label": "Coupons Stash Weight",
+      "description": "Rescales existing coupons entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Stash item selection bias"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 0.25,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "1x keeps authored Weight and Chance, including zero-valued rows.",
+          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "Does not independently increase total stash occurrences or turn absent items into available loot."
+        ]
+      },
+      "rationale": "Adjust relative coupons presence without touching ammo stack size or quest rewards.",
+      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashGearCheapWeapon",
+      "tab": "loot",
+      "group": "Stash Gear",
+      "label": "Basic Stash Weapon",
+      "description": "Adds eligible non-unique weapon generator entries to basic world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "control": "slider",
+      "valueKind": "integer",
+      "display": {
+        "primary": "integer",
+        "rawFormat": "0",
+        "valueLabel": "Extra weapon frequency"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap_*",
+          "path": "ItemGenerator[new WeaponPrimary rank-gated categories].PossibleItems[*].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
+          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
+          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
+          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
+        ]
+      },
+      "rationale": "Optional extra weapon in basic stashes without affecting authored one-off items.",
+      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
+      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashGearCheapArmor",
+      "tab": "loot",
+      "group": "Stash Gear",
+      "label": "Basic Stash Armor",
+      "description": "Adds eligible non-unique armor generator entries to basic world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "control": "slider",
+      "valueKind": "integer",
+      "display": {
+        "primary": "integer",
+        "rawFormat": "0",
+        "valueLabel": "Extra armor frequency"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Cheap_*",
+          "path": "ItemGenerator[new BodyArmor rank-gated categories].PossibleItems[*].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
+          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
+          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
+          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
+        ]
+      },
+      "rationale": "Optional extra armor in basic stashes without affecting authored one-off items.",
+      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
+      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashGearMediumWeapon",
+      "tab": "loot",
+      "group": "Stash Gear",
+      "label": "Standard Stash Weapon",
+      "description": "Adds eligible non-unique weapon generator entries to standard world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "control": "slider",
+      "valueKind": "integer",
+      "display": {
+        "primary": "integer",
+        "rawFormat": "0",
+        "valueLabel": "Extra weapon frequency"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Medium_*",
+          "path": "ItemGenerator[new WeaponPrimary rank-gated categories].PossibleItems[*].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
+          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
+          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
+          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
+        ]
+      },
+      "rationale": "Optional extra weapon in standard stashes without affecting authored one-off items.",
+      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
+      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashGearMediumArmor",
+      "tab": "loot",
+      "group": "Stash Gear",
+      "label": "Standard Stash Armor",
+      "description": "Adds eligible non-unique armor generator entries to standard world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "control": "slider",
+      "valueKind": "integer",
+      "display": {
+        "primary": "integer",
+        "rawFormat": "0",
+        "valueLabel": "Extra armor frequency"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Medium_*",
+          "path": "ItemGenerator[new BodyArmor rank-gated categories].PossibleItems[*].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
+          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
+          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
+          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
+        ]
+      },
+      "rationale": "Optional extra armor in standard stashes without affecting authored one-off items.",
+      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
+      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashGearExpensiveWeapon",
+      "tab": "loot",
+      "group": "Stash Gear",
+      "label": "Rare Stash Weapon",
+      "description": "Adds eligible non-unique weapon generator entries to rare world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "control": "slider",
+      "valueKind": "integer",
+      "display": {
+        "primary": "integer",
+        "rawFormat": "0",
+        "valueLabel": "Extra weapon frequency"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Expensive_*",
+          "path": "ItemGenerator[new WeaponPrimary rank-gated categories].PossibleItems[*].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
+          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
+          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
+          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
+        ]
+      },
+      "rationale": "Optional extra weapon in rare stashes without affecting authored one-off items.",
+      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
+      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashGearExpensiveArmor",
+      "tab": "loot",
+      "group": "Stash Gear",
+      "label": "Rare Stash Armor",
+      "description": "Adds eligible non-unique armor generator entries to rare world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "control": "slider",
+      "valueKind": "integer",
+      "display": {
+        "primary": "integer",
+        "rawFormat": "0",
+        "valueLabel": "Extra armor frequency"
+      },
+      "vanilla": {
+        "All": 0
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 3,
+        "step": 1,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_Expensive_*",
+          "path": "ItemGenerator[new BodyArmor rank-gated categories].PossibleItems[*].Chance",
+          "operation": "set"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
+          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
+          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
+          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
+        ]
+      },
+      "rationale": "Optional extra armor in rare stashes without affecting authored one-off items.",
+      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
+      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "exposeInUi": true
+    },
+    {
       "id": "loot.cheapStashAmmoQuantity",
       "tab": "loot",
       "group": "Stashes",

@@ -119,6 +119,19 @@ def method_routes(special):
     add("WriteCheapStashProduction", *(
         special["cheapStashProduction"][key] for key in
         ("ammoQuantityParameterId", "grenadeChanceParameterId", "grenadeQuantityParameterId")))
+    # Twelve additional sources share the three audited production-only
+    # stash clone writers. A source is routed to the class it changes; content
+    # bias uses all three but represents one user control each.
+    stash_ids = special["stashContentAndGearProduction"]["parameterIds"]
+    require(len(stash_ids) == 12 and len(set(stash_ids)) == 12,
+            "stash content/gear source roster drift")
+    for pid in stash_ids[:6]:
+        add("WriteCheapStashProduction", pid)
+    for pid in stash_ids[6:]:
+        tier = "Cheap" if "Cheap" in pid else ("Medium" if "Medium" in pid else "Expensive")
+        add({"Cheap":"WriteCheapStashProduction",
+             "Medium":"WriteMediumStashAmmoProduction",
+             "Expensive":"WriteExpensiveStashProduction"}[tier], pid)
     add("WriteMediumStashAmmoProduction", special["mediumStashAmmoProduction"]["parameterId"])
     add("WriteExpensiveStashProduction", special["expensiveStashProduction"]["ammoQuantityParameterId"])
     add("WriteDestructibleAmmoProduction", special["destructibleAmmoProduction"]["parameterId"],
@@ -143,8 +156,8 @@ def main():
     baseline = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
     code = WRITER_PATH.read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
-    require(len(definitions) == len(catalog["parameters"]) == 248, "248 unique CFG source IDs expected")
-    require(baseline["supportedParameterCount"] == 248, "writer expected coverage drift")
+    require(len(definitions) == len(catalog["parameters"]) == 260, "260 unique CFG source IDs expected")
+    require(baseline["supportedParameterCount"] == 260, "writer expected coverage drift")
     require(not baseline["deferredParameterIds"], "deferred production parameters")
     require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.0.5", "source/game baseline mismatch")
     require(set(catalog["difficultyProfiles"]) == set(SIDS), "difficulty baseline drift")
@@ -175,10 +188,10 @@ def main():
     require(len(baseline["editPoints"]) == 1230 and len(direct) == 213,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
-    require(len(special) == 35, "special writer route count drift")
+    require(len(special) == 47, "special writer route count drift")
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     require(set(direct) | set(special) == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 235, "UI dimension count drift")
+    require(len(definitions) - len(NON_UI) == 247, "UI dimension count drift")
     require(NON_UI.issubset(definitions), "missing intentional hidden source")
     for pid in NON_UI:
         require(definitions[pid].get("exposeInUi") is False, "non-UI setting exposed " + pid)
@@ -235,7 +248,7 @@ def main():
     inert = []
     for name in NAMES:
         doc = json.loads((PRESETS / (name + ".json")).read_text(encoding="utf-8"))
-        require(len(doc["values"]) == 248, "factory catalog source count drift " + name)
+        require(len(doc["values"]) == 260, "factory catalog source count drift " + name)
         sid = SIDS[doc["referenceDifficulty"]]
         for pid, p in definitions.items():
             if pid not in direct:

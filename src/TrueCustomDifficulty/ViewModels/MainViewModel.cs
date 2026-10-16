@@ -522,6 +522,24 @@ public sealed class MainViewModel : ObservableObject
 
         // Six real stash sources: three tier ammo amounts and three bonus rolls.
         WireVisualAggregate(
+            "loot.stashMixAmmo",
+            "loot.stashMixAmmo",
+            "loot.stashMixMedical",
+            "loot.stashMixFood",
+            "loot.stashMixDrinks",
+            "loot.stashMixGrenades",
+            "loot.stashMixCoupons");
+
+        WireVisualAggregate(
+            "loot.stashGearCheapWeapon",
+            "loot.stashGearCheapWeapon",
+            "loot.stashGearCheapArmor",
+            "loot.stashGearMediumWeapon",
+            "loot.stashGearMediumArmor",
+            "loot.stashGearExpensiveWeapon",
+            "loot.stashGearExpensiveArmor");
+
+        WireVisualAggregate(
             "loot.cheapStashAmmoQuantity",
             "loot.cheapStashAmmoQuantity",
             "loot.mediumStashAmmoQuantity",
@@ -2032,6 +2050,20 @@ public sealed class MainViewModel : ObservableObject
                 "loot.npcMedicalChance" => 201,
                 "loot.npcWeaponAmmoSupply" => 202,
                 "loot.droppedWeaponCondition" => 203,
+
+                // Six compact stash composition controls and six optional gear tiers.
+                "loot.stashMixAmmo" => 310,
+                "loot.stashMixMedical" => 311,
+                "loot.stashMixFood" => 312,
+                "loot.stashMixDrinks" => 313,
+                "loot.stashMixGrenades" => 314,
+                "loot.stashMixCoupons" => 315,
+                "loot.stashGearCheapWeapon" => 320,
+                "loot.stashGearCheapArmor" => 321,
+                "loot.stashGearMediumWeapon" => 322,
+                "loot.stashGearMediumArmor" => 323,
+                "loot.stashGearExpensiveWeapon" => 324,
+                "loot.stashGearExpensiveArmor" => 325,
 
                 // Three stash tiers and three independent bonus rolls
                 "loot.cheapStashAmmoQuantity" => 300,

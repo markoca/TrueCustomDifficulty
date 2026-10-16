@@ -1,5 +1,16 @@
 ### 2026-10-16 — Top-left radiation mark spins during Build Difficulty
 
+## 2026-10-16 — Stash content / gear visual family lock (CURRENT)
+
+Implement two distinct 324-DIP aggregate boards in Loot directly after STASH REWARDS:
+- `StashContentMix` / anchor `loot.stashMixAmmo`: independent real-source tracks for `loot.stashMix{Ammo,Medical,Food,Drinks,Grenades,Coupons}`. Exactly **six tracks, 0–3x, 0.25x step, 1x reference**.
+- `StashGear` / anchor `loot.stashGearCheapWeapon`: independent tier/matter controls `loot.stashGear{Cheap,Medium,Expensive}{Weapon,Armor}`. Exactly **six tracks**, **0 OFF, 1 RARE, 2 MODERATE, 3 FREQUENT**, native step 1.
+
+Both draw as centered *two-column, three-row* balanced cards with max 740-DIP aggregate bank width, 10-DIP inter-card gap and identical `DrawCompactTrack` rail/hit geometry to Stamina Usage. A changed numeric text token alone turns gold. White/grey neutral text/label and base tick are not emphasized. Handle hover and keyboard/pointer/right-click/R reset follow current `AggregateVisualControl` contracts. No duplicate source rows; every member has separate ID, preset value, modified state and CFG transformation. Long card explanations stay only in rationale/help, never the board.
+
+Both are production-only generator editors, structurally independent from the existing `StashRewardProfile` ammo/bonus family, but sharing one actual clone writer per tier. No promised whole-stash probability or imaginary gameplay formula. See [STASH-CONTENT-GEAR-IMPLEMENTATION.md](STASH-CONTENT-GEAR-IMPLEMENTATION.md) for exact source/weight/chance/rank and release acceptance.
+
+
 The existing **38-DIP top-left radiation mark** retains its original three 120°-spaced yellow blades, center dot, size, spacing and palette. Follow the connected Localization Workbench's `UI/StalkerTheme.cs` `StalkerBrandMark.Spinning` behavior: **clockwise +10° per ~33ms (~300°/second)** while the application is busy, **stationary at 0° when idle**. In TrueCustomDifficulty, the original 34×34 Canvas uses a WPF `RotateTransform` centered at (17,17) with a linear, repeating **0→360° / 1.2-second** storyboard. A `DataTrigger` bound to the existing read-only `MainViewModel.IsBuilding` begins the animation after a real build begins and a matching `StopStoryboard` resets the icon when the build completes or fails. The already asynchronous repak/retoc pipeline keeps the animation responsive; no UI timer, artificial progress estimation, non-build spinning, profile/CFG alteration or new UI control appears. Error dialogs are displayed only after `IsBuilding=False`, so the icon must not keep spinning behind the dialog.
 
 Regression: `python tools/audit_build_progress_contract.py` checks icon shape and geometry, exact 300deg/s equivalent speed, build-only trigger, exit reset and unchanged OneWay progress bar binding. **Manual Wine QA still required:** icon stationary at startup, spinning throughout ~10-second CFG/repak/retoc/install build, smooth animation without white background, returning to the same idle orientation on success **and** on failure/no-op/vanilla build; the default WPF title-bar border and other controls must remain unchanged. Source static acceptance never substitutes for Wine visual confirmation.

@@ -1,5 +1,8 @@
 # True Custom Difficulty
 
+**Stash composition and gear (2026-10-16):** Loot now has 12 additional independently editable native sources: six **STASH CONTENT** (existing ammo/medical/food/drinks/grenades/coupons Weight or Chance multipliers) and six **EXTRA STASH GEAR** (Weapon/Armor per Basic/Standard/Rare, four discrete OFF/RARE/MODERATE/FREQUENT levels). All changes share the existing production-only stash clones and redirect manifests, keep quest/scripted rewards untouched and compose with the existing ammo/grenade/coupon writer. Both boards are compact 2×3 Stamina-style native tracks, all 12 factory presets default neutral. See [implementation and runtime QA contract](docs/STASH-CONTENT-GEAR-IMPLEMENTATION.md) and [UI catalogs](docs/UI-DESIGN-LOCK.md). **Runtime drop probabilities and local Wine acceptance are pending.**
+
+
 **Per-control manual QA (2026-10-16):** [Complete 238-active-parameter checklist](docs/MANUAL-EVERY-CONTROL-QA-CHECKLIST.md) for UI, interaction, presets, build and gameplay; no manual test is claimed passed.
 
 **Linux/KDE portable publish safety (2026-10-16):** `publish.sh` no longer deletes/recreates `publish/win-x64`, which could leave an already-open Dolphin folder showing the old (empty) inode, and also erased user-supplied `tools/`, edited `Presets/`, and generated `Output/`. Re-publishing now preserves the directory and all portable user state while replacing only the app's runtime files and build receipt. Run `python tools/audit_publish_directory_contract.py` to exercise a disposable mock .NET publish twice and test failed-build preservation, then perform a real `./publish.sh` test and verify in Dolphin. See `docs/RELEASE-TESTING.md` for acceptance criteria.

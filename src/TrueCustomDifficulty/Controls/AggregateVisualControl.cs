@@ -52,7 +52,7 @@ public sealed class AggregateVisualControl : FrameworkElement
     {
         if (Family is "AnomalyGlobalDamage" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
             or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "EquipmentWearBalance"
-            or "StashRewardProfile" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
+            or "StashRewardProfile" or "StashContentMix" or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
             or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"
             or "RadiationBalance" or "StaminaCore" or "ConsumableMixer"
@@ -262,6 +262,12 @@ public sealed class AggregateVisualControl : FrameworkElement
                 break;
             case "WorldLootLayout":
                 DrawWorldLootLayout(dc, text, muted, border, accent, panel);
+                break;
+            case "StashContentMix":
+                DrawStashContentMix(dc, text, muted, border, accent, panel);
+                break;
+            case "StashGear":
+                DrawStashGear(dc, text, muted, border, accent, panel);
                 break;
             case "StashRewardProfile":
                 DrawCompactStashRewards(dc, text, muted, border, accent, panel);
@@ -4504,6 +4510,76 @@ public sealed class AggregateVisualControl : FrameworkElement
     }
 
     // Three native stash ammo quantities + three independent bonus rewards.
+    // Native Stamina-style compact horizontal source tracks, two balanced columns.
+    // Bias scales only existing Chance/Weight entries; a rendered value is NOT a
+    // guarantee that a given world stash contains the requested category.
+    private void DrawStashContentMix(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawHeader(dc, "STASH CONTENT", "", text, muted, accent);
+        var entries = new (string Id, string Label)[]
+        {
+            ("loot.stashMixAmmo", "AMMO"),
+            ("loot.stashMixMedical", "MEDICAL"),
+            ("loot.stashMixFood", "FOOD"),
+            ("loot.stashMixDrinks", "DRINKS"),
+            ("loot.stashMixGrenades", "GRENADES"),
+            ("loot.stashMixCoupons", "COUPONS")
+        };
+        const double gap = 10.0;
+        var totalWidth = Math.Min(740.0, Math.Max(1.0, ActualWidth - 34.0));
+        var half = (totalWidth - gap) / 2.0;
+        var origin = (ActualWidth - totalWidth) / 2.0;
+        for (var i = 0; i < entries.Length; i++)
+        {
+            var p = P(entries[i].Id);
+            if (p is null)
+                continue;
+            var bounds = new Rect(origin + (i % 2) * (half + gap),
+                54.0 + (i / 2) * 84.0, half, 76.0);
+            DrawCompactTrack(dc, p, entries[i].Label,
+                $"{p.CurrentNumber:0.##}x", "0x", "3x", bounds,
+                text, muted, border, accent, panel);
+        }
+    }
+
+    // Each numeric stop is discrete: 0=OFF, 1=RARE, 2=MODERATE, 3=FREQUENT.
+    // Labels describe relative TCD-authored source chances, NOT absolute
+    // probabilities that a container will contain gear after all engine rolls.
+    private void DrawStashGear(
+        DrawingContext dc, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
+    {
+        DrawHeader(dc, "EXTRA STASH GEAR", "", text, muted, accent);
+        var entries = new (string Id, string Label)[]
+        {
+            ("loot.stashGearCheapWeapon", "BASIC WEAPONS"),
+            ("loot.stashGearCheapArmor", "BASIC ARMOR"),
+            ("loot.stashGearMediumWeapon", "STANDARD WEAPONS"),
+            ("loot.stashGearMediumArmor", "STANDARD ARMOR"),
+            ("loot.stashGearExpensiveWeapon", "RARE WEAPONS"),
+            ("loot.stashGearExpensiveArmor", "RARE ARMOR")
+        };
+        const double gap = 10.0;
+        var totalWidth = Math.Min(740.0, Math.Max(1.0, ActualWidth - 34.0));
+        var half = (totalWidth - gap) / 2.0;
+        var origin = (ActualWidth - totalWidth) / 2.0;
+        var names = new[] { "OFF", "RARE", "MODERATE", "FREQUENT" };
+        for (var i = 0; i < entries.Length; i++)
+        {
+            var p = P(entries[i].Id);
+            if (p is null)
+                continue;
+            var level = Math.Clamp((int)Math.Round(p.CurrentNumber), 0, 3);
+            var bounds = new Rect(origin + (i % 2) * (half + gap),
+                54.0 + (i / 2) * 84.0, half, 76.0);
+            DrawCompactTrack(dc, p, entries[i].Label,
+                $"{level} {names[level]}", "OFF", "FREQUENT", bounds,
+                text, muted, border, accent, panel);
+        }
+    }
+
     // Current/source label/rail obey the Stamina Usage anatomy; no simulated
     // certainty is suggested for independent chance/count rolls.
     // Ammo tiers form one bounded three-column rack; bonus rolls retain
@@ -6252,6 +6328,8 @@ public sealed class AggregateVisualControl : FrameworkElement
             "AnomalySpecialEffects" => 270.0,
             "NpcLootLoadout" => 564.0,
             "WorldLootLayout" => 275.0,
+            "StashContentMix" => 324.0,
+            "StashGear" => 324.0,
             "StashRewardProfile" => width >= 740.0 ? 382.0 : 465.0,
             "StaminaCore" => 323.0,
             "WaterStaminaPressure" => 171.0,
@@ -6350,6 +6428,17 @@ public sealed class AggregateVisualControl : FrameworkElement
                 "loot.worldAttachmentShuffle",
                 "loot.worldDetectors",
                 "loot.blueprintShuffle"
+            },
+            "StashContentMix" => new[]
+            {
+                "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
+                "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons"
+            },
+            "StashGear" => new[]
+            {
+                "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor",
+                "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
+                "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"
             },
             "StashRewardProfile" => new[]
             {

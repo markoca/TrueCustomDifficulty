@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 248,
+  "supportedParameterCount": 260,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -22682,6 +22682,30 @@
           "maxCount": 20
         }
       ]
+    },
+    "stashContentAndGearProduction": {
+      "parameterIds": [
+        "loot.stashMixAmmo",
+        "loot.stashMixMedical",
+        "loot.stashMixFood",
+        "loot.stashMixDrinks",
+        "loot.stashMixGrenades",
+        "loot.stashMixCoupons",
+        "loot.stashGearCheapWeapon",
+        "loot.stashGearCheapArmor",
+        "loot.stashGearMediumWeapon",
+        "loot.stashGearMediumArmor",
+        "loot.stashGearExpensiveWeapon",
+        "loot.stashGearExpensiveArmor"
+      ],
+      "source": "GameData/ItemGeneratorPrototypes.cfg",
+      "templateTiers": [
+        "Cheap",
+        "Medium",
+        "Expensive"
+      ],
+      "scope": "TCD-owned production-only stash generator redirects",
+      "notes": "Joint writer composition with existing stash ammo/grenades/coupon patching, 0/1/2/3 gear states; explicit PlayerRank branch gates."
     }
   }
 }

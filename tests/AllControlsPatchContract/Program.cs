@@ -35,8 +35,8 @@ internal static class Program
 
             var ids = Catalog.Parameters.Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var tested = ids.Except(NonUi, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-            Check(ids.Count == 248 && NonUi.IsSubsetOf(ids) && tested.Length == 235,
-                "Expected complete 248-source / 235-editable audit scope");
+            Check(ids.Count == 260 && NonUi.IsSubsetOf(ids) && tested.Length == 247,
+                "Expected complete 260-source / 247-editable audit scope");
 
             var executed = 0;
             var failed = new List<string>();
@@ -121,8 +121,8 @@ internal static class Program
                     failed.Add(id + ": " + string.Join(" | ", issues));
             }
             Check(failed.Count == 0, "Writer probe failures:\n" + string.Join("\n", failed));
-            Check(executed == 235, "Not every effective source was executed");
-            Console.WriteLine($"PASS: {executed}/235 editable native source IDs produced actual production staged CFG output.");
+            Check(executed == 247, "Not every effective source was executed");
+            Console.WriteLine($"PASS: {executed}/247 editable native source IDs produced actual production staged CFG output.");
             Console.WriteLine("NOT VERIFIED: in-game STALKER 2 CFG merge, UI interaction via Wine, or gameplay effects.");
             return 0;
         }

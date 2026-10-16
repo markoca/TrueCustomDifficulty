@@ -1,5 +1,16 @@
 # Generator Control End-to-End Verification — v0.2.42
 
+## 2026-10-16 — Additional stash content and gear source routes (CURRENT extension)
+
+New **12 runtime-test-required generator controls** extend the preceding historical 32-control result to **44 generator-backed UI source controls** (16 previous static 1:1 + 28 runtime-gated). They use the same pre-audited TCD-owned production-only stash template clones and redirect counts: **Basic 1271, Standard 450, Rare 305**. Their source IDs are exactly:
+- Six global content multipliers: `loot.stashMixAmmo`, `stashMixMedical`, `stashMixFood`, `stashMixDrinks`, `stashMixGrenades`, `stashMixCoupons`.
+- Six gear tiers: `loot.stashGearCheapWeapon`, `stashGearCheapArmor`, `stashGearMediumWeapon`, `stashGearMediumArmor`, `stashGearExpensiveWeapon`, `stashGearExpensiveArmor`.
+
+The underlying native `ItemGenerator.PossibleItems` field is `Weight` (relative source selection) or `Chance` (per-item bounded roll); not one overall stash probability. The gear controls inject rank-restricted candidate `WeaponPrimary` / `BodyArmor` categories only in TCD clones. Existing stash ammo quantity and grenade/coupon controls compose with the biases rather than generating conflicting independent patches. All 12 source routes are **STATIC STRUCTURE MAPPED / RUNTIME TEST REQUIRED**; do not mark in-game gear drop odds verified. See [STASH-CONTENT-GEAR-IMPLEMENTATION.md](STASH-CONTENT-GEAR-IMPLEMENTATION.md).
+
+**Historical section below remains the 2026-10-15 baseline before the 12-source extension**, not the current control total.
+
+
 This is the release gate for every **generator-backed control currently exposed in the normal UI**. It verifies the complete static chain:
 
 `UI parameter -> writer route -> CFG field/operation -> isolated generator production surface -> consumer meaning`

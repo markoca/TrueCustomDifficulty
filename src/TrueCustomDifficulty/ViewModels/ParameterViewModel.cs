@@ -526,6 +526,19 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.worldDetectors"] = "WorldLootLayout",
         ["loot.blueprintShuffle"] = "WorldLootLayout",
 
+        ["loot.stashMixAmmo"] = "StashContentMix",
+        ["loot.stashMixMedical"] = "StashContentMix",
+        ["loot.stashMixFood"] = "StashContentMix",
+        ["loot.stashMixDrinks"] = "StashContentMix",
+        ["loot.stashMixGrenades"] = "StashContentMix",
+        ["loot.stashMixCoupons"] = "StashContentMix",
+        ["loot.stashGearCheapWeapon"] = "StashGear",
+        ["loot.stashGearCheapArmor"] = "StashGear",
+        ["loot.stashGearMediumWeapon"] = "StashGear",
+        ["loot.stashGearMediumArmor"] = "StashGear",
+        ["loot.stashGearExpensiveWeapon"] = "StashGear",
+        ["loot.stashGearExpensiveArmor"] = "StashGear",
+
         ["loot.cheapStashAmmoQuantity"] = "StashRewardProfile",
         ["loot.mediumStashAmmoQuantity"] = "StashRewardProfile",
         ["loot.expensiveStashAmmoQuantity"] = "StashRewardProfile",
@@ -570,6 +583,8 @@ public sealed class ParameterViewModel : ObservableObject
         ["AnomalySpecialEffects"] = "environment.razorBleeding",
         ["NpcLootLoadout"] = "loot.npcCorpseBonus",
         ["WorldLootLayout"] = "loot.worldWeaponShuffle",
+        ["StashContentMix"] = "loot.stashMixAmmo",
+        ["StashGear"] = "loot.stashGearCheapWeapon",
         ["StashRewardProfile"] = "loot.cheapStashAmmoQuantity",
          ["AmmoDistribution"] = "loot.ammoBoxWeight918"
     };
