@@ -96,7 +96,7 @@ def main():
     guard = (SRC / "CfgPatchWriterService.StashSmartLoot.cs").read_text(encoding="utf-8")
     project = (ROOT / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text(encoding="utf-8")
     contract = (ROOT / "tests/LootSpecialGeneratorsContract/Program.cs").read_text(encoding="utf-8")
-    assert writer.count("!IsApprovedStashTierRedirect(redirect.File, redirect.Prototype)") == 3, (
+    assert writer.count("!IsApprovedStashTierRedirect(redirect.File, redirect.Prototype, redirect.PhysicalContainerSid)") == 3, (
         "All 3 rank ItemGenerator redirect writers must enforce base AND DLC protection")
     assert "BaseProtectedStashActors.Value.Contains(physicalContainerSid)" in guard
     assert "ids.Count != 106" in guard and "special != 72" in guard

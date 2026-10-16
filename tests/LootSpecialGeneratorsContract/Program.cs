@@ -343,7 +343,7 @@ internal static class Program
                 // not just StashPrototypeSID leaves. The 106-actor exclusion
                 // must protect ALL fields of blueprints and named-clue stashes.
                 AssertProtectedBaseStashesUntouched(outp, name);
-                Check(actors.Keys.Any(x => x.EndsWith("/StashPrototypeSID",
+                Check(actors!.Keys.Any(x => x.EndsWith("/StashPrototypeSID",
                     StringComparison.Ordinal) && x.Length >= 33),
                     name + ": no normal world actors were redirected");
                 Console.WriteLine("PASS " + name

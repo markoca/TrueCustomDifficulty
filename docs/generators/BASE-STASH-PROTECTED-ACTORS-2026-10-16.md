@@ -35,6 +35,14 @@ The 71 special-generator actors excluded by the existing SmartLoot source audit 
 
 The original `cheap/medium/expensive-stash-production-redirect-manifest.csv` files are retained as source inventories; 105 actor-associated assignments (30 direct and 75 indirect) are skipped by the writer at emission. The rest of eligible regular generator assignments and untouched special rewards are preserved. Existing `GameData/StashPrototypes.cfg` **reference clones** and the 803-base/112-DLC1 SmartLoot source adaptation are unchanged.
 
+### 2026-10-16 — Linux audit assertion and nullable contract cleanup
+
+The source gate in `CfgPatchWriterService.cs` already calls `IsApprovedStashTierRedirect(redirect.File, redirect.Prototype, redirect.PhysicalContainerSid)` in **all three** Cheap/Medium/Expensive writers. The Python static audit incorrectly checked an obsolete *two-argument* call signature, producing an `AssertionError` despite the physical-actor protection being present. Its assertion now checks the actual three-argument call exactly three times. This is a **test correction**, not a relaxation of the production protection or the 106 protected actors / 105 excluded redirects (30 direct, 75 indirect).
+
+The Wine `LootSpecialGeneratorsContract` also compiled with `CS8602` at the SmartLoot actor lookup because its custom `Check(...)` function does not inform C# nullable flow analysis. The follow-on lookup uses `actors!` after the existing explicit guard. No output assertion or protected actor condition was removed. The user's latest log confirms cross-compilation succeeded; the Wine run printed only its startup line, so **the completed runtime result is still unknown**.
+
+To recheck: `python tools/audit_base_stash_protection.py`, `dotnet build tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release -r win-x64` and `./tests/run-wine.sh LootSpecialGeneratorsContract`.
+
 ## Repeatability and acceptance
 
 - Complete machine-protected IDs (106 with exact reason): `src/TrueCustomDifficulty/Data/base-stash-protected-actor-manifest.csv`, embedded in the Windows binary; header `ActorSID,ProtectionReason`. The code rejects extra/missing/duplicated IDs and class count drift.

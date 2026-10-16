@@ -1,3 +1,12 @@
+### 2026-10-16 — Linux audit assertion and nullable contract cleanup
+
+The source gate in `CfgPatchWriterService.cs` already calls `IsApprovedStashTierRedirect(redirect.File, redirect.Prototype, redirect.PhysicalContainerSid)` in **all three** Cheap/Medium/Expensive writers. The Python static audit incorrectly checked an obsolete *two-argument* call signature, producing an `AssertionError` despite the physical-actor protection being present. Its assertion now checks the actual three-argument call exactly three times. This is a **test correction**, not a relaxation of the production protection or the 106 protected actors / 105 excluded redirects (30 direct, 75 indirect).
+
+The Wine `LootSpecialGeneratorsContract` also compiled with `CS8602` at the SmartLoot actor lookup because its custom `Check(...)` function does not inform C# nullable flow analysis. The follow-on lookup uses `actors!` after the existing explicit guard. No output assertion or protected actor condition was removed. The user's latest log confirms cross-compilation succeeded; the Wine run printed only its startup line, so **the completed runtime result is still unknown**.
+
+To recheck: `python tools/audit_base_stash_protection.py`, `dotnet build tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release -r win-x64` and `./tests/run-wine.sh LootSpecialGeneratorsContract`.
+
+
 **Base stash blueprint/clue integrity regression (2026-10-16):** `LootSpecialGeneratorsContract` previously failed on `smart-medical-zero: unique blueprint actor was rewritten`; Rare's ordinary ItemGenerator manifest still targeted a mixed `GamePass_Stash_ItemGenerator_Rare` plus `Stash_Blueprint_APB_Upgrade_2` actor even though SmartLoot excluded it. A shared Basic/Standard/Rare writer gate now refuses 106 protected base-world actors, skipping 105 source-manifest redirects (30 direct, 75 indirect). Run `python tools/audit_base_stash_protection.py` (with optional `--source-zip` to independently verify the 106 actors), then `./tests/run-wine.sh LootSpecialGeneratorsContract` for generated-CFG protection across all 106, then actual ungenerated in-game stash testing. No claim of local Wine PASS before the user's rerun.
 
 
