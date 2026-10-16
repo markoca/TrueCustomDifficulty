@@ -26,7 +26,6 @@ internal static class Program
         "loot.ammoBoxWeight012"
     };
     static readonly JsonElement Special = LoadSpecial();
-    static readonly string MainFile = "GameData/ItemGeneratorPrototypes.cfg";
     static int Passed;
     static string? Keep;
 
@@ -95,6 +94,7 @@ internal static class Program
             Run("Novice",true,new(){["loot.npcWeaponAmmoSupply"]=2.0},"corpse-ammo-present-dlc");
             Run("Veteran",false,new(){["loot.npcWeaponAmmoSupply"]=2.0},"corpse-ammo-absent");
             Check(Passed==63,"Expected 63 special Loot scenarios, got "+Passed);
+            VerifyFixedSleepRestoreBaseline();
             VerifyMedicalZeroExclusion();
             VerifyWorldStashSmartLoot();
             VerifyDlcStashExpansion();
@@ -103,6 +103,61 @@ internal static class Program
             return 0;
         }
         catch(Exception ex){Console.Error.WriteLine("FAIL: "+ex);return 1;}
+    }
+
+
+    // The app deliberately starts Sleep Health Restore at 100 HP although the
+    // original source has 300 HP. The UI editor is capped at 200 HP: do NOT
+    // "neutralize" the test by trying to set an out-of-range 300 HP.
+    // Every loot-only contract must expect this independent fixed-default CFG
+    // override, and must reject any *other* non-loot writes.
+    static void AssertOnlyExpectedNonLootDefault(MainViewModel vm)
+    {
+        var modified = vm.AllParameters
+            .Where(p => p.IsControlEnabled && p.IsValueModifiedFromReference()
+                && !p.Id.StartsWith("loot.", StringComparison.Ordinal))
+            .Select(p => p.Id)
+            .OrderBy(id => id, StringComparer.Ordinal)
+            .ToArray();
+        Check(modified.SequenceEqual(new[] { "survival.sleepHealthRestore" }),
+            "Unexpected non-Loot modified controls: " + string.Join(",", modified));
+        var sleep = vm.AllParameters.Single(p => p.Id == "survival.sleepHealthRestore");
+        Check(sleep.IsSlider && sleep.CurrentNumber == 100
+            && sleep.ReferenceNumber == 300 && sleep.Maximum == 200,
+            "The intentional 100-HP fixed default / 300-HP source contract changed");
+    }
+
+    static void VerifyFixedSleepRestoreBaseline()
+    {
+        var dir = Path.Combine(Keep ?? Path.GetTempPath(),
+            "TCD_LootSpecial_FixedDefault", "default-only");
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Novice" };
+            AssertOnlyExpectedNonLootDefault(vm);
+            Check(!vm.AllParameters.Any(p => p.Id.StartsWith("loot.", StringComparison.Ordinal)
+                && p.IsValueModifiedFromReference()),
+                "A freshly initialized vanilla Loot tab has modified sources");
+
+            var built = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+            var output = ReadOutput(dir);
+            Check(output.Count == 1
+                && output.TryGetValue("GameData/EffectPrototypes.cfg", out var fields)
+                && fields!.Count == 2
+                && fields.TryGetValue("SleepHealthRestore/ValueMin", out var min)
+                && fields.TryGetValue("SleepHealthRestore/ValueMax", out var max)
+                && min == "100" && max == "100",
+                "Intentional fixed Sleep Health Restore should produce exactly two 100-HP CFG leaves");
+            Check(built.FileCount == 1 && built.EditCount == 2
+                && built.ParameterCount == 1,
+                "The one modified non-Loot default generated unexpected output");
+            Console.WriteLine("PASS baseline fixed-default: 100-HP SleepHealthRestore ValueMin/ValueMax only");
+        }
+        finally
+        {
+            if (Keep is null && Directory.Exists(dir))
+                Directory.Delete(dir, true);
+        }
     }
 
     // Regression: zero medical bias must suppress actual stack counts as
@@ -162,9 +217,10 @@ internal static class Program
                         scenario.Name + ": profile value did not apply " + id);
                 }
 
+                AssertOnlyExpectedNonLootDefault(vm);
                 var built = new CfgPatchWriterService()
                     .Write(vm, Catalog, null, dir);
-                Check(built.ParameterCount == scenario.Changes.Count,
+                Check(built.ParameterCount == scenario.Changes.Count + 1,
                     scenario.Name + ": not all modified sources were written");
                 var output = ReadOutput(dir);
                 var touched = 0;
@@ -264,8 +320,9 @@ internal static class Program
                 var p = vm.AllParameters.Single(x => x.Id == id);
                 p.SnapCurrentNumberToMarker(value);
                 Check(p.IsValueModifiedFromReference(), name + ": source did not change");
+                AssertOnlyExpectedNonLootDefault(vm);
                 var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
-                Check(result.ParameterCount == 1,
+                Check(result.ParameterCount == 2,
                     name + ": unexpected modified parameter count");
                 var outp = ReadOutput(dir);
                 Check(outp.TryGetValue("GameData/StashPrototypes.cfg", out var smart),
@@ -345,10 +402,11 @@ internal static class Program
                     Check(control.IsValueModifiedFromReference(),
                         label+": control did not modify "+key);
                 }
+                AssertOnlyExpectedNonLootDefault(vm);
                 var result=new CfgPatchWriterService().Write(vm,Catalog,
                     new GameInstallInfo {HasDlc1=true},dir);
                 var files=ReadOutput(dir);
-                Check(result.ParameterCount==1,label+": modified parameter count drift");
+                Check(result.ParameterCount==2,label+": modified parameter count drift");
                 Check(files.TryGetValue("DLCGameData/DLC1/SpawnActorPrototypes.cfg",out var dlc),
                     label+": missing DLC1 actor patch");
                 var actorSids=dlc!.Keys.Select(x=>x.Split('/')[0]).ToHashSet();
@@ -412,6 +470,7 @@ internal static class Program
             var vm=new MainViewModel(Catalog) {SelectedReferenceDifficulty="Stalker"};
             vm.AllParameters.Single(x=>x.Id=="loot.stashMixMedical")
                 .SnapCurrentNumberToMarker(0);
+            AssertOnlyExpectedNonLootDefault(vm);
             new CfgPatchWriterService().Write(vm,Catalog,null,baseDir);
             var onlyBase=ReadOutput(baseDir);
             Check(!onlyBase.ContainsKey("DLCGameData/DLC1/SpawnActorPrototypes.cfg"),
@@ -505,11 +564,15 @@ internal static class Program
                 Check(corpse.IsValueModifiedFromReference(),"Corpse switch failed");
             }
 
+            AssertOnlyExpectedNonLootDefault(vm);
             var changed=vm.AllParameters.Where(p=>p.Id.StartsWith("loot.",StringComparison.Ordinal)
                 && p.IsValueModifiedFromReference()).Select(p=>p.Id).ToHashSet(StringComparer.Ordinal);
             var expectedIDs=changes.Keys.ToHashSet(StringComparer.Ordinal);
             if(corpseChoice!=null)expectedIDs.Add("loot.npcCorpseBonus");
             Check(changed.SetEquals(expectedIDs),"Unexpected unrelated Loot changes: "+string.Join(",",changed));
+            // Count the intentional non-Loot 100-HP default only after checking
+            // the requested Loot parameter set itself.
+            expectedIDs.Add("survival.sleepHealthRestore");
             // Only source-level modifications can activate special generators.
             var actual=new CfgPatchWriterService().Write(vm,Catalog,
                 dlc?new GameInstallInfo{HasDlc1=true}:null,dir);
@@ -521,6 +584,11 @@ internal static class Program
                 var key=file+"|"+path;
                 Check(expected.TryAdd(key,value),"Expected special CFG leaf collision: "+key);
             }
+            // Explicitly account for the source-backed default outside Loot.
+            // Otherwise a valid fresh app profile incorrectly looks like two
+            // unexpected edits in every vanilla Loot-only scenario.
+            Add("GameData/EffectPrototypes.cfg", "SleepHealthRestore/ValueMin", "100");
+            Add("GameData/EffectPrototypes.cfg", "SleepHealthRestore/ValueMax", "100");
             void Generator(string configName,double quantity,double? chance=null,double? grenadeQty=null)
             {
                 var config=Special.GetProperty(configName);

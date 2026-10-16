@@ -21,6 +21,13 @@ Never broaden the 112-row actor list by naming pattern or substring. The DLC1 ar
 
 Nothing here touches item generators used by NPC corpses, destructible crates, dialogue gifts, one-time pickups, stash clue variables, or source-authored unique weapon/armor paths. The base 28 named clues and 71 excluded Blueprint/Unique/Quest actors remain outside the 803 base SmartLoot actors. DLC1 remains fully disabled when `hasDlc1=false`. All existing `loot.*` IDs, factory presets and locked five-graph Stashes visual design stay identical; baseline Vanilla/Base values are not emphasized.
 
+
+## 2026-10-16 — Linux Wine LootSpecial contract: fixed non-Loot baseline
+
+The Windows-targeted test now builds successfully on Linux after `tests/Directory.Build.props`, but the first `Novice / vanilla` scenario exposed a **test expectation defect**, not evidence of unwanted Stashes output: `survival.sleepHealthRestore` deliberately starts at **100 HP**, compared with a source-authored **300 HP** (two legitimate leaves in `GameData/EffectPrototypes.cfg`: `SleepHealthRestore.ValueMin` and `ValueMax`). The slider permits only 0–200 HP; resetting it to 300 in the test would be invalid and would change the source contract. The LootSpecialGeneratorsContract regression now explicitly tests the **two exact 100-HP leaves** and counts that fixed-default parameter in each Loot-only scenario; it rejects any additional non-Loot modifications. No production writer, game defaults or Stashes logic changed in this correction. Removed an unused test-only `MainFile` constant that raised `CS0414`.
+
+**Verification:** `dotnet build tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release -r win-x64` followed by `./tests/run-wine.sh LootSpecialGeneratorsContract`. This was previously confirmed to compile on the user's Linux machine; the corrected Wine contract still requires rerunning. Do not treat Vulkan/RADV's diagnostic warning as this CFG validation error.
+
 ## Evidence, tests and acceptance
 
 - Evidence ZIPs: `STALKER2-GameData-CFG(20261016-152136).zip` SHA-256 `937b3fb4c74d1311b6e052c010aa0795073ccdc60d2ca6d8b5228ee3ce0b6083`, `STALKER2-DLC1-CFG(7).zip` SHA-256 `93ccb9bcc9043f7c171d439b2c25c38f61311506bc33c0b926a16f526ccd6114`.
