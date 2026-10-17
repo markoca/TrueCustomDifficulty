@@ -321,7 +321,18 @@ assert 'return MedicalDetailId(sid) is { } detail && Value(detail) <= 0;' in eff
 assert "public double SmartSelectionFactor(string sid, string selectionField)" in effective
 assert "if (SmartSelectionFactor(sid, selectionField) <= 0.0000001)" in effective
 assert 'if (ItemBiasId(sid) is null) return raw;' in effective
-assert 'var id = SmartItemBiasId(sid)' in effective
+# SmartLoot membership is checked directly inside SmartSelectionFactor;
+# the old temporary 'var id = SmartItemBiasId(sid)' no longer exists.
+# Check the actual guarded selection branch and retain Weight/Chance split.
+smart_selection = effective.split("public double SmartSelectionFactor(", 1)[1].split(
+    "public string SmartSelection(", 1)[0]
+assert "if (SmartItemBiasId(sid) is null)" in smart_selection
+assert 'throw new InvalidDataException("Unclassified SmartLoot item: " + sid)' in smart_selection
+assert "return SelectionFactor(sid, selectionField);" in smart_selection
+smart_factor = effective.split("public double SmartFactor(", 1)[1].split(
+    "public double SmartSelectionFactor(", 1)[0]
+assert "if (SmartItemBiasId(sid) is null)" in smart_factor
+assert "return TierFactor(sid);" in smart_factor
 assert "StashMixParameterIds.Any(modified.ContainsKey)" in tuning
 assert "StashMixParameterIds.Concat(StashMedicalParameterIds)" in smart
 assert "StashMixParameterIds.Concat(StashMedicalParameterIds)" in (
