@@ -1,3 +1,13 @@
+## 2026-10-17 — STASHES TAB RENDER CRASH FIX
+
+**Regression:** Clicking Stashes could throw `InvalidDataException: Missing live stash Chance control loot.mediumStashMedicalChance` from `AggregateVisualControl.DrawStashChanceTier` during WPF Arrange/OnRender. The source code previously used `P(id) ?? throw` and assumed the full `AllParameters` Window binding was already populated every time the visual family was rendered. That is not a safe render-time precondition.
+
+**Rendering contract:** All eight tier Chance IDs remain real, catalog-exposed, bound aggregate members and CFG writer parameters, not fake readouts. When the bound ParameterViewModel cannot yet be found, the Standard/Rare card must render a compact, disabled **LOADING** or **CONTROL UNAVAILABLE** state with the actual static source Vanilla range, without creating a hit target or attempting a CFG modification. When the collection binding settles, existing WPF `OnBindingChanged`/`Loaded` `RebindParameters` restores the active source controls and the full live readout. A genuine persistent catalog mismatch is still visibly identified as unavailable instead of silently claiming the slider works. No fallback synthetic or inferred Chance is allowed.
+
+**Static regression:** `tools/audit_stashes_mixer_ui.py` checks all eight new IDs against the embedded source catalog, family membership, ParameterViewModel mapping, and MainViewModel, plus the nonthrowing render branch. Keep this check aligned with the WPF design locks. No changes to source-native Chance math, protected actor allowlists, preset IDs, or production CFG writer.
+
+**Validation:** Source-level and GitHub tree verification only; local .NET/Wine launch remains required. If **CONTROL UNAVAILABLE** remains after the tab fully loads, check for a stale explicit `STALKER2_TCD_PARAMETERS_PATH` catalog override and inspect the WPF `AllParameters` binding rather than treating Vanilla preview values as editable controls.
+
 ## STANDARD / RARE NATIVE CHANCE SLIDERS — CURRENT (2026-10-17)
 
 Authoritative update (supersedes old read-only colored Standard/Rare tiles): these tier cards now contain **interactive colored Chance rails** with filled effective *per-item native CFG Chance*, a white current-value range (e.g. Standard drinks 50–100%), and an always-visible muted **V** Vanilla range plus a narrow Vanilla tick. Each category's native source row remains independent; a combined range is explicitly *not* a physical-stash drop percentage. No broad invented chance or synthetic normalization is allowed. Standard Ammo has only native Weight: it is a non-interactive **WEIGHT ONLY** rail. Rare Ammo has native Weight **and** Chance: its real Chance rows become editable, while weighted rows remain unaffected.

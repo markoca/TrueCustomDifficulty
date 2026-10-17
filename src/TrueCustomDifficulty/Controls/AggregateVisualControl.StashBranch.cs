@@ -404,8 +404,26 @@ public sealed partial class AggregateVisualControl
                         r.Item.ItemSid) ?? (tierName == "Expensive" && kind == 5
                             ? "loot.expensiveStashMoneyChance" : "")) != id))
                 throw new InvalidDataException("Unmapped tier-native Chance " + name);
-            var parameter = P(id) ?? throw new InvalidDataException(
-                "Missing live stash Chance control " + id);
+            // WPF may invoke OnRender after Family is bound but before
+            // the Window-level AllParameters binding is available. This is
+            // a transient UI state, not malformed native stash CFG. Never
+            // crash the entire app while waiting for the actual live VM.
+            var parameter = P(id);
+            if (parameter is null)
+            {
+                var label = Parameters is null ? "LOADING" : "CONTROL UNAVAILABLE";
+                dc.DrawText(CreateText(label, 9.0, muted, FontWeights.SemiBold,
+                        Math.Max(1.0, cell.Width - 16.0)),
+                    new Point(x + 8.0, y + 23.0));
+                var vanillaValues = rows.Select(r =>
+                    StashEffectiveState.Number(r.Item.SourceRaw)).ToArray();
+                dc.DrawText(CreateText("V " + PercentRange(
+                        vanillaValues.Min(), vanillaValues.Max()),
+                        8.5, muted, FontWeights.SemiBold,
+                        Math.Max(1.0, cell.Width - 16.0)),
+                    new Point(x + 8.0, y + 50.0));
+                continue;
+            }
             var sourceValues = rows.Select(r =>
                 StashEffectiveState.Number(r.Item.SourceRaw)).ToArray();
             var activeValues = rows.Select(r =>

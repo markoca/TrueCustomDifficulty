@@ -373,6 +373,29 @@ for source_key, tier_id, group_count, item_count, expected_weight, expected_chan
     assert weight == expected_weight, (tier_id, weight)
     assert chance == expected_chance, (tier_id, chance)
 
+# Regression: WPF can render a visible StashContentMix family before the
+# Window-level AllParameters binding arrives. Eight new authored Chance
+# parameters must be present in the embedded catalog, aggregate family and
+# main ViewModel, but missing early VMs must never throw during OnRender.
+tier_chance_ids = [
+    "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
+    "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
+    "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
+    "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
+]
+catalog_by_id = {p["id"]: p for p in catalog["parameters"]}
+viewmodel = (root / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text()
+main_vm = (root / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text()
+for pid in tier_chance_ids:
+    entry = catalog_by_id[pid]
+    assert entry["exposeInUi"] is True, pid
+    assert entry["group"] == "Stash Content", pid
+    assert pid in expected["StashContentMix"], pid
+    assert f'["{pid}"] = "StashContentMix"' in viewmodel, pid
+    assert f'"{pid}"' in main_vm, pid
+assert 'Parameters="{Binding DataContext.AllParameters' in (
+    root / "src/TrueCustomDifficulty/MainWindow.xaml").read_text()
+
 tier_preview = coverage.split("private void DrawStashChanceTier(", 1)[1]
 assert "StashSourceGroups.Value" in tier_preview
 assert "!g.IsSmart && g.Tier == tierName" in tier_preview
@@ -387,6 +410,13 @@ assert "SequenceEqual(expected)" in tier_preview
 assert "100.0 * totals" not in tier_preview
 assert "totals.Sum()" not in tier_preview
 assert "AddHorizontalTarget(parameter," in tier_preview
+assert "var parameter = P(id);" in tier_preview
+assert "if (parameter is null)" in tier_preview
+assert 'Parameters is null ? "LOADING" : "CONTROL UNAVAILABLE"' in tier_preview
+assert "continue;" in tier_preview
+assert 'throw new InvalidDataException(\n                "Missing live stash Chance control "' not in tier_preview
+assert "var vanillaValues = rows.Select(" in tier_preview
+assert "OnBindingChanged" in source and "Loaded += (_, _) => RebindParameters();" in source
 assert "CurrentNumber =" not in tier_preview
 assert "DrawStashNativeRollControl(" in coverage
 assert "DrawStashPoolBar(dc, experienced," in coverage
