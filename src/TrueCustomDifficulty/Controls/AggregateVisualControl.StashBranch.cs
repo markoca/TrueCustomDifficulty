@@ -8,7 +8,7 @@ using TrueCustomDifficulty.Services;
 
 namespace TrueCustomDifficulty.Controls;
 
-// A bounded, read-only native branch inspector directly below the six knobs.
+// An always-visible, bounded, read-only native branch inspector below the six knobs.
 // Browser navigation is transient UI state: it never changes presets/CFG output.
 public sealed partial class AggregateVisualControl
 {
@@ -16,8 +16,7 @@ public sealed partial class AggregateVisualControl
         new(() => StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value));
     private readonly List<(Rect Hit, Action Navigate)> _stashBrowserTargets = new();
     // The six knobs use one global category factor. This native browser
-    // is optional read-only inspection, not an independent tuning axis.
-    private bool _stashBrowserExpanded;
+    // is always visible and is not an independent tuning axis.
     private int _stashBrowserMode; // 0 Basic, 1 Standard, 2 Rare, 3 SmartLoot
     private int _stashBrowserRank = 1; // Experienced
     private int _stashBrowserPrototype;
@@ -98,15 +97,6 @@ public sealed partial class AggregateVisualControl
         InvalidateVisual();
     }
 
-    private void ToggleStashBrowser()
-    {
-        _stashBrowserExpanded = !_stashBrowserExpanded;
-        _stashBrowserTargets.Clear();
-        _stashBrowserHover = -1;
-        InvalidateMeasure();
-        InvalidateVisual();
-    }
-
     private bool TryStashBrowserClick(Point point)
     {
         if (Family != "StashContentMix") return false;
@@ -156,7 +146,7 @@ public sealed partial class AggregateVisualControl
         _stashBrowserTargets.Clear();
         // The hot target list is rebuilt with each paint, so never keep a
         // stale hover index after changing a generator or shrinking the list.
-        // The disclosure button gets an additional dynamic hit target.
+        // No disclosure control: source details are always rendered.
         _stashBrowserHover = Math.Max(-1, _stashBrowserHover);
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .58),
             new Pen(CloneWithOpacity(border, .65), .9),

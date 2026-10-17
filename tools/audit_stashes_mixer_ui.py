@@ -162,7 +162,7 @@ for family, branch, sid, expected_chance in samples:
     assert math.isclose(chance, expected_chance, abs_tol=1e-8)
     assert math.isclose(min(1, max(0, chance * 3)), min(1, chance * 3))
 
-assert "=> _stashBrowserExpanded ? 705.0 : 265.0;" in source
+assert "=> 675.0;" in source
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -226,19 +226,30 @@ print("PASS: shared writer/preview tier and SmartLoot calculation, bonus Chance 
 
 # Phase 4 contract: runtime branch navigation derives from original embedded
 # writer inputs; it does not add persistable sliders or independent edits.
+# All six category knobs are capped at original 1x and advance by 0.10x.
+mix_ids = expected["StashContentMix"]
+for pid in mix_ids:
+    item = next(p for p in catalog["parameters"] if p["id"] == pid)
+    slider = item["slider"]
+    assert (slider["min"], slider["max"], slider["step"]) == (0, 1, 0.1), pid
+    assert item["vanilla"]["All"] == 1, pid
+    assert "Weight / Chance" in item["targets"][0]["path"], pid
+assert "source Weight or clamps source Chance" not in "\n".join(
+    p["description"] for p in catalog["parameters"] if p["id"] in mix_ids
+)
+
 browser = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text()
 branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.cs").read_text()
 csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
 assert "public sealed partial class AggregateVisualControl" in source
 assert "public sealed partial class AggregateVisualControl" in browser
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in browser
-assert 'DrawStashBranchBrowser(dc, new Rect(left, 265.0, width, 420.0)' in content
-assert 'if (_stashBrowserExpanded)' in content
-assert '"SOURCE DETAILS"' in content and '"HIDE DETAILS"' in content
-assert 'false, ToggleStashBrowser,' in content
-assert 'private bool _stashBrowserExpanded;' in browser
-assert 'InvalidateMeasure();' in browser
-assert '&& _stashBrowserExpanded' in source
+assert 'DrawStashBranchBrowser(dc, new Rect(left, 237.0, width, 420.0)' in content
+assert '_stashBrowserExpanded' not in content
+assert 'SOURCE DETAILS' not in content and 'HIDE DETAILS' not in content
+assert 'ToggleStashBrowser' not in source + browser
+assert 'private bool _stashBrowserExpanded;' not in browser
+assert '&& _stashBrowserExpanded' not in source
 assert 'StashContentMixHeight(width)' in source
 assert 'TryStashBrowserClick(point)' in source
 # Read-only live source inputs must cover the complete TierField pipeline:

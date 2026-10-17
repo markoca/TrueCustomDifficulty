@@ -5749,8 +5749,8 @@
       "id": "loot.stashMixAmmo",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Ammo Stash Weight",
-      "description": "Rescales existing ammo entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "label": "Ammo Stash Selection",
+      "description": "Rescales existing ammo entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5766,8 +5766,8 @@
       },
       "slider": {
         "min": 0,
-        "max": 3,
-        "step": 0.25,
+        "max": 1,
+        "step": 0.1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -5796,8 +5796,8 @@
       "id": "loot.stashMixMedical",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Medical Stash Weight",
-      "description": "Rescales existing medical entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "label": "Medical Stash Selection",
+      "description": "Rescales existing medical entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5813,8 +5813,8 @@
       },
       "slider": {
         "min": 0,
-        "max": 3,
-        "step": 0.25,
+        "max": 1,
+        "step": 0.1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -5843,8 +5843,8 @@
       "id": "loot.stashMixFood",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Food Stash Weight",
-      "description": "Rescales existing food entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "label": "Food Stash Selection",
+      "description": "Rescales existing food entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5860,8 +5860,8 @@
       },
       "slider": {
         "min": 0,
-        "max": 3,
-        "step": 0.25,
+        "max": 1,
+        "step": 0.1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -5890,8 +5890,8 @@
       "id": "loot.stashMixDrinks",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Drinks Stash Weight",
-      "description": "Rescales existing drinks entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "label": "Drinks Stash Selection",
+      "description": "Rescales existing drinks entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5907,8 +5907,8 @@
       },
       "slider": {
         "min": 0,
-        "max": 3,
-        "step": 0.25,
+        "max": 1,
+        "step": 0.1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -5937,8 +5937,8 @@
       "id": "loot.stashMixGrenades",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Grenades Stash Weight",
-      "description": "Rescales existing grenades entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "label": "Grenades Stash Selection",
+      "description": "Rescales existing grenades entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5954,8 +5954,8 @@
       },
       "slider": {
         "min": 0,
-        "max": 3,
-        "step": 0.25,
+        "max": 1,
+        "step": 0.1,
         "stepMode": "absolute"
       },
       "targets": [
@@ -5984,8 +5984,8 @@
       "id": "loot.stashMixCoupons",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Coupons Stash Weight",
-      "description": "Rescales existing coupons entries in the audited Basic, Standard and Rare stash generator copies. Multiplies source Weight or clamps source Chance; no new items or spawn guarantees.",
+      "label": "Coupons Stash Selection",
+      "description": "Rescales existing coupons entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6001,8 +6001,8 @@
       },
       "slider": {
         "min": 0,
-        "max": 3,
-        "step": 0.25,
+        "max": 1,
+        "step": 0.1,
         "stepMode": "absolute"
       },
       "targets": [

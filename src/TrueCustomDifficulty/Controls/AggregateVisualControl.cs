@@ -4647,17 +4647,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             cursor += cell + gap;
         }
 
-        // All six knobs stay global across source families and ranks.
-        // Optional branch inspection must never add extra tuning controls.
-        if (_stashBrowserExpanded)
-            DrawStashBranchBrowser(dc, new Rect(left, 265.0, width, 420.0),
-                text, muted, border, accent, panel);
-        else
-            _stashBrowserTargets.Clear();
-        DrawStashBrowserButton(dc,
-            _stashBrowserExpanded ? "HIDE DETAILS" : "SOURCE DETAILS",
-            new Rect(left + (width - 142.0) / 2.0, 233.0, 142.0, 22.0),
-            false, ToggleStashBrowser, text, muted, border, accent, panel);
+        // Six global category knobs; keep native source detail visible
+        // without adding a disclosure button or another editing dimension.
+        DrawStashBranchBrowser(dc, new Rect(left, 237.0, width, 420.0),
+            text, muted, border, accent, panel);
     }
 
     // Medical biases are source-editable tracks; a separate, noninteractive
@@ -6225,7 +6218,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Alt+Left/Right switches groups; Alt+Up/Down switches rank.
         // Ctrl+Left/Right changes only SmartLoot prototype, never the
         // selected global Base Preset (or a shadow difficulty).
-        if (Family == "StashContentMix" && _stashBrowserExpanded
+        if (Family == "StashContentMix"
             && e.Key is Key.Left or Key.Right or Key.Up or Key.Down
             && (Keyboard.Modifiers & (ModifierKeys.Alt | ModifierKeys.Control)) != 0
             && ((Keyboard.Modifiers & ModifierKeys.Control) == 0
@@ -6958,7 +6951,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // The same adaptive column thresholds drive both WPF Measure and Draw,
     // so the last dial row is never clipped by the group host.
     private double StashContentMixHeight(double width)
-        => _stashBrowserExpanded ? 705.0 : 265.0;
+        => 675.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)
