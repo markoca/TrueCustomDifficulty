@@ -69,6 +69,32 @@ def main():
     assert found["02E9BD8341141FEC43FBBB9B6E8F8891"] == "NAMED_CLUE", (
         "Named clue stash protection missing")
 
+    # Whole-actor prohibition applies across SmartLoot, direct medical edits,
+    # and tier redirections. A generic source on a protected stash is NOT safe.
+    world = table(DATA / "smartloot-regular-world-actor-manifest.csv")
+    ordinary = {r["ActorSID"] for r in world
+                if r["ClueVariableSID"] == "EmptyInherited"}
+    assert len(world) == 831 and len(ordinary) == 803, (
+        "Regular SmartLoot 831/803 source roster drift")
+    assert not ordinary.intersection(found), (
+        "A unique/quest/clue protected actor entered the regular SmartLoot allowlist")
+    for manifest, expected_rows in (
+            ("regular-stash-direct-medical-entries.csv", 10),
+            ("cabin-direct-medkit-item-entries.csv", 2)):
+        direct = table(DATA / manifest)
+        assert len(direct) == expected_rows
+        assert all(row["ActorSID"] in ordinary and row["ActorSID"] not in found
+                   for row in direct), (
+            f"Direct medical writer can touch protected or non-regular stash: {manifest}")
+
+    dlc = table(DATA / "dlc1-stash-eligible-actor-manifest.csv")
+    assert len(dlc) == 112 and len({row["ActorSID"] for row in dlc}) == 112
+    assert all(row["ClueVariableSID"] == "EmptyInherited" and
+               not any(x in (row["OriginalStashPrototypeSIDs"] + "," +
+                             row["OriginalItemGeneratorSIDs"]).lower()
+                       for x in ("blueprint", "unique", "quest"))
+               for row in dlc), "DLC1 special/quest stash entered the 112-actor allowlist"
+
     # The source manifests stay verbatim for provenance; the runtime emits
     # only approved rows and no protected base ItemGeneratorSettings patch.
     total_blocked = 0
@@ -98,7 +124,15 @@ def main():
     contract = (ROOT / "tests/LootSpecialGeneratorsContract/Program.cs").read_text(encoding="utf-8")
     assert writer.count("!IsApprovedStashTierRedirect(redirect.File, redirect.Prototype, redirect.PhysicalContainerSid)") == 3, (
         "All 3 rank ItemGenerator redirect writers must enforce base AND DLC protection")
-    assert "BaseProtectedStashActors.Value.Contains(physicalContainerSid)" in guard
+    assert "return actors.Any(BaseProtectedStashActors.Value.Contains);" in guard
+    assert "ordinary.Any(x => BaseProtectedStashActors.Value.Contains(x.ActorSid))" in guard
+    assert 'x[1].Contains("Blueprint", StringComparison.OrdinalIgnoreCase)' in guard
+    directMedical = (SRC / "CfgPatchWriterService.StashDirectMedical.cs").read_text(
+        encoding="utf-8")
+    cabin = (SRC / "CfgPatchWriterService.StashCabin.cs").read_text(
+        encoding="utf-8")
+    assert "BaseProtectedStashActors.Value.Contains(e.ActorSid)" in directMedical
+    assert "BaseProtectedStashActors.Value.Contains(e.ActorSid)" in cabin
     assert "ids.Count != 106" in guard and "special != 72" in guard
     assert "Data\\base-stash-protected-actor-manifest.csv" in project
     assert "VerifyBaseTierRedirectProtection();" in contract
@@ -113,6 +147,8 @@ def main():
             f"changed reasons={sorted(sid for sid in set(found)&set(source) if found[sid]!=source[sid])}")
         print("PASS: exact base CFG dump independently reproduces the 106-actor protection list.")
 
+    print("PASS: whole-actor exclusion across 803 regular SmartLoot,")
+    print("      12 direct medical source rows and 112 DLC1 approved actors.")
     print("PASS: 106 protected world stash actors; 77 special generator actors,")
     print("      34 named clues with 5 overlaps, 105 tier redirects excluded")
     print("      (Basic 2 direct + 10 indirect; Standard 17 + 26; Rare 11 + 39).")

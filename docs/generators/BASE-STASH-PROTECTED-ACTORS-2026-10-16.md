@@ -2,6 +2,12 @@
 
 # Base world stash actor redirection protection (2026-10-16)
 
+## Whole-container exclusion rule (confirmed 2026-10-17)
+
+The regular Stashes controls must never edit a physical stash containing a quest or unique reward, **including that stash's otherwise ordinary ammo/medical/food/drink rows**. Named-clue and ambiguous mixed sources remain denied. All generator layers are treated as belonging to the same protected actor: tier redirections, shared/indirect wrapper edits, world SmartLoot redirection, and direct medical edits. DLC1 must use its exact no-clue regular actor allowlist; a generic-looking item or tier is not sufficient to approve a special stash.
+
+The 2026-10-17 GameData CFG dump still extracts 1,141 WorldMap ItemContainers and exactly the same 106 protected actors by the existing named-clue/special-generator signals (72 special-only, 29 clue-only, 5 overlapping). For fail-closed defense-in-depth, the production SmartLoot actor loader now checks protected SID non-overlap; both base direct-medical loaders check the same denylist as well as their exact ordinary actor membership. DLC1 verifies blueprint/unique/quest signatures and remains restricted to its 112 exact approved actors. Static audit checks mutual exclusion and protection at all writer entry points. No new user controls or CFG transforms were introduced. The dump/manifest signals cannot prove every possible script-level quest dependency: unidentified sources remain deferred, not assumed safe.
+
 ## Root cause and production repair
 
 The Linux Wine `LootSpecialGeneratorsContract` test reported

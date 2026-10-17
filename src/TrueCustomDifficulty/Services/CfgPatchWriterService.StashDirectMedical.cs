@@ -57,9 +57,10 @@ public sealed partial class CfgPatchWriterService
         // The direct additions must still belong to the exact 803 ordinary
         // WorldMap no-clue actors; never patch quest/unique generator wrappers.
         var ordinary = ReadStashCsv(SmartLootActorResource, 8);
-        if (entries.Any(e => !ordinary.Any(a =>
-            a[0] == e.ActorSid && a[2].Split(',', StringSplitOptions.TrimEntries)
-                .Contains(e.Sid, StringComparer.Ordinal) && a[3] == "EmptyInherited")))
+        if (entries.Any(e => BaseProtectedStashActors.Value.Contains(e.ActorSid)
+            || !ordinary.Any(a =>
+                a[0] == e.ActorSid && a[2].Split(',', StringSplitOptions.TrimEntries)
+                    .Contains(e.Sid, StringComparer.Ordinal) && a[3] == "EmptyInherited")))
             throw new InvalidDataException("Non-ordinary stash entered direct medical roster.");
         return entries;
     }

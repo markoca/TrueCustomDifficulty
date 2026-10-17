@@ -119,8 +119,12 @@ public sealed partial class CfgPatchWriterService
         // A named stash clue can indicate an authored/quest-associated reward.
         // Protect those actors until individual actor/gameplay verification.
         var ordinary = actors.Where(x => x.ClueSid == "EmptyInherited").ToArray();
-        if (ordinary.Length != 803)
-            throw new InvalidDataException("Safe no-clue stash actor boundary drift: expected 803.");
+        // Entire protected stash is off-limits, even if its SmartLoot is generic:
+        // never reroute one source layer of a quest/unique/clue-bearing container.
+        if (ordinary.Length != 803
+            || ordinary.Any(x => BaseProtectedStashActors.Value.Contains(x.ActorSid)))
+            throw new InvalidDataException(
+                "Unsafe regular SmartLoot allowlist: protected or unexpected stash actor.");
         return ordinary;
     }
 
@@ -149,8 +153,9 @@ public sealed partial class CfgPatchWriterService
             || rows.Any(x => !allowedGenerators.Contains(x[2])
                 || x[1].Contains("NPC_", StringComparison.Ordinal)
                 || x[1].Contains("Corpse", StringComparison.Ordinal)
-                || x[1].Contains("Unique", StringComparison.Ordinal)
-                || x[1].Contains("Quest", StringComparison.Ordinal)))
+                || x[1].Contains("Blueprint", StringComparison.OrdinalIgnoreCase)
+                || x[1].Contains("Unique", StringComparison.OrdinalIgnoreCase)
+                || x[1].Contains("Quest", StringComparison.OrdinalIgnoreCase)))
             throw new InvalidDataException("Unexpected DLC1 ordinary stash allowlist");
         return actors;
     }

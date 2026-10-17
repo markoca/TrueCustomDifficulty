@@ -9,6 +9,14 @@
 - Inspected the full `StashPrototypes.cfg`, `CorpseClueStashPrototypes.cfg`, `ItemContainerPrototypes.cfg` and both `ItemGeneratorPrototypes.cfg` files, plus source examples in `SpawnActorPrototypes.cfg`. Counts below are syntactic/local authored rows under **named, stated source selections**, not a global number of active stashes. Inherited `refkey/refurl` branches must be resolved before inferring final values.
 - Source words are preserved deliberately: **item `Weight`** = relative selection within an eligible group; **item `Chance`** = authored chance field in that row; **group `MinSpawnChance/MaxSpawnChance`** = separate SmartLoot spawn bounds; **`BaseSpawnChance/AddSpawnChance`** = clue discovery, not stash content. CFG alone does not establish the entire engine RNG algorithm or runtime probability.
 
+## Strict scope decision: exclude quest / unique stashes entirely
+
+**Accepted 2026-10-17:** Any physical stash containing a quest-specific or unique item/source is **out of scope as a whole actor** for the regular Stashes tuning feature. Do not tune even its ordinary ammo/medical/food/drink items through a second parallel source, and do not redirect its inherited wrapper, SmartLoot, or direct-item generator. Named clue or otherwise unreviewed/mixed containers remain excluded conservatively. This rule covers both base game and DLC1, independent of whether their ordinary rows use `Weight`, `Chance` or both.
+
+**Existing and reinforced protections:** The source-audited base denylist has 106 distinct protected WorldMap item containers (77 with special generator, 34 named clues, five overlap). Three tier redirect writers already veto protected physical actor consumers, including indirect shared wrappers. The 803 base ordinary SmartLoot allowlist now explicitly fails closed if any protected SID enters its effective 803 actors, and the two base direct-medical paths check that denylist in addition to their ordinary source manifests. DLC1 retains only its exact 112 no-clue regular actors; blueprint/unique/quest markers in its SmartLoot source are rejected. These are **source-based protection rules**, not a claim that every runtime quest association is discoverable from an arbitrary SID string.
+
+**Reference interpretation:** Counts in this audit describe CFG source *types*, not a declaration that any special stash is modifiable. Quest/unique or direct/scripted example rows below are kept solely to explain how native `Weight` and `Chance` work, and are **never eligible** for the regular Stashes control surface. New or ambiguous physical actors must not be auto-included without complete actor + generator + reward provenance and a new reviewed allowlist.
+
 ## Result: different stash source families
 
 | Source family / example | Local fields observed | Classification / boundary |

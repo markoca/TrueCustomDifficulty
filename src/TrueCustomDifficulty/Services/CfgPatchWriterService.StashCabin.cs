@@ -49,7 +49,8 @@ public sealed partial class CfgPatchWriterService
         // Both full ActorSIDs must still belong to the audited 803 no-clue
         // base-game regular SmartLoot allowlist. Do not leak into quest stashes.
         var ordinary = ReadStashCsv(SmartLootActorResource, 8);
-        if (entries.Any(e => !ordinary.Any(x =>
+        if (entries.Any(e => BaseProtectedStashActors.Value.Contains(e.ActorSid)
+            || !ordinary.Any(x =>
                 x[0] == e.ActorSid && x[2] == e.GeneratorSid
                 && x[3] == "EmptyInherited")))
             throw new InvalidDataException("Cabin Medkit actor is no longer an ordinary base stash.");
