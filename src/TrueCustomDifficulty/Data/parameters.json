@@ -6073,8 +6073,8 @@
       "id": "loot.stashMedicalBandageBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Bandages Stash Selection",
-      "description": "Adjusts the existing Bandage Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
+      "label": "Bandages Stash Weight",
+      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6099,29 +6099,76 @@
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
-          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=Bandage].Weight / Chance",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=Bandage].Weight",
           "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Selection bias multiplies the global Medical bias, then clamps Chance to [0,1].",
-          "0x turns off existing eligible entries; the authored rank/difficulty branches and one-off/quest stash contents are untouched.",
-          "Weight is relative within an eligible list, not percentage of stash containing the item."
+          "Weight applies only where the source actually contains Weight.",
+          "Existing Chance rows are unaffected by this control.",
+          "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Give Bandages an independent source chance/weight bias without inflating other medical items.",
-      "logic": "1x preserves source. 3x can do nothing for an entry whose Chance is already 1; 0x writes zero where eligible.",
-      "interaction": "Use one direct bar for this medical item; the general Medical bar multiplies this source.",
+      "rationale": "Control native relative Weight independently from item-specific Chance.",
+      "logic": "0×–3× of native Weight; 1× retains authored source. A weighted pool's outcome remains relative to its other entries.",
+      "interaction": "Medical Weight Mix rotary knob; does not change native Chance.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMedicalBandageChanceScale",
+      "tab": "stashes",
+      "group": "Stash Medical Composition",
+      "label": "Bandages Stash Chance Scale",
+      "description": "Scales the actual authored per-entry Chance for Bandages in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Percent of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD eligible production stash / SmartLoot generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=Bandage].Chance",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "0%–100%, 5% increments; default 100% leaves native chances unchanged.",
+          "No Chance entry is created where CFG has Weight only.",
+          "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
+        ]
+      },
+      "rationale": "Keep medical Chance independent from relative Weight.",
+      "logic": "Original Chance multiplied by user percent / 100 and clamped to [0,1]. Source 40% at slider 50% becomes 20%.",
+      "interaction": "A separate medical Chance Scale rotary knob with the same item color as its Weight mixer dial.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalMedkitBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Medkits Stash Selection",
-      "description": "Adjusts the existing Medkit Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
+      "label": "Medkits Stash Weight",
+      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6146,29 +6193,76 @@
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
-          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=Medkit].Weight / Chance",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=Medkit].Weight",
           "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Selection bias multiplies the global Medical bias, then clamps Chance to [0,1].",
-          "0x turns off existing eligible entries; the authored rank/difficulty branches and one-off/quest stash contents are untouched.",
-          "Weight is relative within an eligible list, not percentage of stash containing the item."
+          "Weight applies only where the source actually contains Weight.",
+          "Existing Chance rows are unaffected by this control.",
+          "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Give Medkits an independent source chance/weight bias without inflating other medical items.",
-      "logic": "1x preserves source. 3x can do nothing for an entry whose Chance is already 1; 0x writes zero where eligible.",
-      "interaction": "Use one direct bar for this medical item; the general Medical bar multiplies this source.",
+      "rationale": "Control native relative Weight independently from item-specific Chance.",
+      "logic": "0×–3× of native Weight; 1× retains authored source. A weighted pool's outcome remains relative to its other entries.",
+      "interaction": "Medical Weight Mix rotary knob; does not change native Chance.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMedicalMedkitChanceScale",
+      "tab": "stashes",
+      "group": "Stash Medical Composition",
+      "label": "Medkits Stash Chance Scale",
+      "description": "Scales the actual authored per-entry Chance for Medkits in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Percent of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD eligible production stash / SmartLoot generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=Medkit].Chance",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "0%–100%, 5% increments; default 100% leaves native chances unchanged.",
+          "No Chance entry is created where CFG has Weight only.",
+          "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
+        ]
+      },
+      "rationale": "Keep medical Chance independent from relative Weight.",
+      "logic": "Original Chance multiplied by user percent / 100 and clamped to [0,1]. Source 40% at slider 50% becomes 20%.",
+      "interaction": "A separate medical Chance Scale rotary knob with the same item color as its Weight mixer dial.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalArmyMedkitBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Army Medkits Stash Selection",
-      "description": "Adjusts the existing ArmyMedkit Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
+      "label": "Army Medkits Stash Weight",
+      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6193,29 +6287,76 @@
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
-          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=ArmyMedkit].Weight / Chance",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=ArmyMedkit].Weight",
           "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Selection bias multiplies the global Medical bias, then clamps Chance to [0,1].",
-          "0x turns off existing eligible entries; the authored rank/difficulty branches and one-off/quest stash contents are untouched.",
-          "Weight is relative within an eligible list, not percentage of stash containing the item."
+          "Weight applies only where the source actually contains Weight.",
+          "Existing Chance rows are unaffected by this control.",
+          "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Give Army Medkits an independent source chance/weight bias without inflating other medical items.",
-      "logic": "1x preserves source. 3x can do nothing for an entry whose Chance is already 1; 0x writes zero where eligible.",
-      "interaction": "Use one direct bar for this medical item; the general Medical bar multiplies this source.",
+      "rationale": "Control native relative Weight independently from item-specific Chance.",
+      "logic": "0×–3× of native Weight; 1× retains authored source. A weighted pool's outcome remains relative to its other entries.",
+      "interaction": "Medical Weight Mix rotary knob; does not change native Chance.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMedicalArmyMedkitChanceScale",
+      "tab": "stashes",
+      "group": "Stash Medical Composition",
+      "label": "Army Medkits Stash Chance Scale",
+      "description": "Scales the actual authored per-entry Chance for Army Medkits in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Percent of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD eligible production stash / SmartLoot generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=ArmyMedkit].Chance",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "0%–100%, 5% increments; default 100% leaves native chances unchanged.",
+          "No Chance entry is created where CFG has Weight only.",
+          "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
+        ]
+      },
+      "rationale": "Keep medical Chance independent from relative Weight.",
+      "logic": "Original Chance multiplied by user percent / 100 and clamped to [0,1]. Source 40% at slider 50% becomes 20%.",
+      "interaction": "A separate medical Chance Scale rotary knob with the same item color as its Weight mixer dial.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalAntiRadBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Anti-Rad Stash Selection",
-      "description": "Adjusts the existing AntiRad Weight or Chance only in TCD-owned Basic/Standard/Rare production stash generator copies. Combines multiplicatively with the general MEDICAL category bias; never creates this item where its vanilla branch has no entry.",
+      "label": "Anti-Rad Stash Weight",
+      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6240,21 +6381,68 @@
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
-          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=AntiRad].Weight / Chance",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=AntiRad].Weight",
           "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Selection bias multiplies the global Medical bias, then clamps Chance to [0,1].",
-          "0x turns off existing eligible entries; the authored rank/difficulty branches and one-off/quest stash contents are untouched.",
-          "Weight is relative within an eligible list, not percentage of stash containing the item."
+          "Weight applies only where the source actually contains Weight.",
+          "Existing Chance rows are unaffected by this control.",
+          "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Give Anti-Rad an independent source chance/weight bias without inflating other medical items.",
-      "logic": "1x preserves source. 3x can do nothing for an entry whose Chance is already 1; 0x writes zero where eligible.",
-      "interaction": "Use one direct bar for this medical item; the general Medical bar multiplies this source.",
+      "rationale": "Control native relative Weight independently from item-specific Chance.",
+      "logic": "0×–3× of native Weight; 1× retains authored source. A weighted pool's outcome remains relative to its other entries.",
+      "interaction": "Medical Weight Mix rotary knob; does not change native Chance.",
+      "exposeInUi": true
+    },
+    {
+      "id": "loot.stashMedicalAntiRadChanceScale",
+      "tab": "stashes",
+      "group": "Stash Medical Composition",
+      "label": "Anti-Rad Stash Chance Scale",
+      "description": "Scales the actual authored per-entry Chance for Anti-Rad in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "percent",
+        "rawFormat": "0.00",
+        "valueLabel": "Percent of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.05,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD eligible production stash / SmartLoot generator copies",
+          "path": "ItemGenerator[*].PossibleItems[ItemPrototypeSID=AntiRad].Chance",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "0%–100%, 5% increments; default 100% leaves native chances unchanged.",
+          "No Chance entry is created where CFG has Weight only.",
+          "Native chance rows can differ by tier/difficulty; this is a percentage-of-native control, not a single absolute drop chance."
+        ]
+      },
+      "rationale": "Keep medical Chance independent from relative Weight.",
+      "logic": "Original Chance multiplied by user percent / 100 and clamped to [0,1]. Source 40% at slider 50% becomes 20%.",
+      "interaction": "A separate medical Chance Scale rotary knob with the same item color as its Weight mixer dial.",
       "exposeInUi": true
     },
     {

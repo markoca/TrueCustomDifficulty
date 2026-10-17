@@ -108,15 +108,26 @@ public sealed class StashEffectiveState
         _ => null
     };
 
+    // Dedicated 0–100% native Chance scale. These four IDs are independent
+    // from medical Weight biases; 100% preserves EACH authored Chance value.
+    private static string? MedicalChanceScaleId(string sid) => sid switch
+    {
+        "Bandage" => "loot.stashMedicalBandageChanceScale",
+        "Medkit" => "loot.stashMedicalMedkitChanceScale",
+        "ArmyMedkit" => "loot.stashMedicalArmyMedkitChanceScale",
+        "AntiRad" or "Antirad" => "loot.stashMedicalAntiRadChanceScale",
+        _ => null
+    };
+
     public bool MedicalDisabled(string sid)
     {
         if (sid is not ("Bandage" or "Medkit" or "ArmyMedkit"
             or "AntiRad" or "EcoMedkit")) return false;
-        if (sid is "Medkit" or "ArmyMedkit"
-            && Value($"loot.stash{sid}MaxCount", 0) < -.5) return true;
-        // Global stash knobs tune Weight ONLY. Chance-based medical entries
-        // are disabled only by an actual medical source-specific control.
-        return MedicalDetailId(sid) is { } detail && Value(detail) <= 0;
+        // A genuine medical quantity exclusion suppresses both fields.
+        // A zero Weight dial must NOT switch off a Chance-only native row.
+        // A zero Chance scale must NOT switch off a Weight-only native row.
+        return (sid is "Medkit" or "ArmyMedkit")
+            && Value($"loot.stash{sid}MaxCount", 0) < -.5;
     }
 
     // Weight-only global factor. This is NOT a multiplier of authored Chance.
@@ -130,13 +141,13 @@ public sealed class StashEffectiveState
         return factor;
     }
 
-    // Existing Medical Composition is already a source-exposed per-item
-    // selector. Keep its original Chance behavior, without applying the six
-    // global Weight knobs to independently-authored native Chance entries.
+    // Chance-only percent-of-source: 100% = authored native Chance.
+    // An absolute 100% per-stash probability would be fabricated because
+    // the same item SID can have distinct authored Chance rows per tier.
     public double ChanceFactor(string sid)
     {
         if (MedicalDisabled(sid)) return 0.0;
-        return MedicalDetailId(sid) is { } detail ? Value(detail) : 1.0;
+        return MedicalChanceScaleId(sid) is { } scale ? Value(scale) : 1.0;
     }
 
     public double SelectionFactor(string sid, string field)

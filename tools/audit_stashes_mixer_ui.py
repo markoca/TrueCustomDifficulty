@@ -36,7 +36,9 @@ expected = {
         "loot.expensiveStashMoneyChance"],
     "StashMedicalComposition": [
         "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
-        "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias"],
+        "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
+        "loot.stashMedicalBandageChanceScale", "loot.stashMedicalMedkitChanceScale",
+        "loot.stashMedicalArmyMedkitChanceScale", "loot.stashMedicalAntiRadChanceScale"],
     "StashMedicalQuantity": [
         "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
         "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"],
@@ -46,7 +48,7 @@ expected = {
         "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"],
 }
 ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
-assert len(ids) == len(set(ids)) == 34
+assert len(ids) == len(set(ids)) == 38
 assert set(ids) == set(sum(expected.values(), []))
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for family, expected_ids in expected.items():
@@ -72,8 +74,16 @@ assert gear.count('("BASIC"') + gear.count('("STANDARD"') + gear.count('("RARE"'
 assert 'DrawSourceKnob(' not in content
 assert "DrawStashWeightMixer(dc," in content
 assert "DrawStashBasicNativePools(dc," in content
-assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" in medical
-assert "DrawStashMedicalSourcePreview(dc," in medical
+assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" not in medical
+assert "DrawStashMedicalSourcePreview(" not in source
+assert 'DrawText(dc, "WEIGHT MIX"' in medical
+assert 'DrawText(dc, "CHANCE SCALE"' in medical
+assert "DrawSourceKnob(dc, P(entry.WeightId)" in medical
+assert "DrawSourceKnob(dc, P(entry.ChanceId)" in medical
+assert "percentageReadout: true, dialAccent: entry.Tone" in medical
+assert 'StashMedicalCompositionHeight(double width)' in source
+assert '=> width >= 700.0 ? 398.0 : 704.0;' in source
+assert "StashMedicalPalette[0]" in medical and "StashMedicalPalette[3]" in medical
 assert "DrawStashQuantityDots(dc, P(families[i].Min)" in quantity
 assert "DrawStashQuantityDots(dc, P(families[i].Max)" in quantity
 assert "DrawStashGearMode(dc, P(tiers[i].Weapon)" in gear
@@ -119,7 +129,7 @@ assert "StashEffectiveState.Number(" in preview
 assert "StashSourceFactor(" not in source
 assert "StashSourceNumber(" not in source
 assert "CfgWriterBaselineService().Load()" in source
-assert "StashMedicalSourcePreview" in source
+assert "StashMedicalSourcePreview" not in source
 assert 'new[] { "0 ITEMS", "AUTO", "1", "2", "3", "4", "5", "6" }' in quantity
 assert "var minimum = isMax ? -1.0 : 0.0;" in quantity
 

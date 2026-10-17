@@ -30,6 +30,8 @@ public sealed partial class CfgPatchWriterService
     {
         "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
         "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
+        "loot.stashMedicalBandageChanceScale", "loot.stashMedicalMedkitChanceScale",
+        "loot.stashMedicalArmyMedkitChanceScale", "loot.stashMedicalAntiRadChanceScale",
         "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
         "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"
     };
@@ -48,6 +50,8 @@ public sealed partial class CfgPatchWriterService
             || parameterId is not (
                 "loot.stashMedicalArmyMedkitBias"
                 or "loot.stashMedicalAntiRadBias"
+                or "loot.stashMedicalArmyMedkitChanceScale"
+                or "loot.stashMedicalAntiRadChanceScale"
                 or "loot.stashArmyMedkitMinCount"
                 or "loot.stashArmyMedkitMaxCount");
 

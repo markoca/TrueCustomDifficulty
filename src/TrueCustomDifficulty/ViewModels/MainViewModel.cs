@@ -557,7 +557,11 @@ public sealed class MainViewModel : ObservableObject
             "loot.stashMedicalBandageBias",
             "loot.stashMedicalMedkitBias",
             "loot.stashMedicalArmyMedkitBias",
-            "loot.stashMedicalAntiRadBias");
+            "loot.stashMedicalAntiRadBias",
+            "loot.stashMedicalBandageChanceScale",
+            "loot.stashMedicalMedkitChanceScale",
+            "loot.stashMedicalArmyMedkitChanceScale",
+            "loot.stashMedicalAntiRadChanceScale");
 
         WireVisualAggregate(
             "loot.stashMedkitMinCount",

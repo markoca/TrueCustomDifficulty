@@ -170,136 +170,52 @@ internal static partial class Program
     // well as Chance/Weight in all eligible production stash clone templates.
     // This is a generated-CFG check, never a claim about prefilled or quest
     // stashes, engine parsing or runtime drops.
+    // A medical Weight modifier must never control native Chance, and
+    // the independent Chance scale must never control native Weight.
     static void VerifyMedicalZeroExclusion()
     {
-        var cases = new[]
-        {
-            (
-                Name: "all-native-medical-details-zero",
-                Changes: new Dictionary<string, double>
-                {
-                    ["loot.stashMedicalBandageBias"] = 0,
-                    ["loot.stashMedicalMedkitBias"] = 0,
-                    ["loot.stashMedicalArmyMedkitBias"] = 0,
-                    ["loot.stashMedicalAntiRadBias"] = 0
-                },
-                Disabled: new[] { "Bandage", "Medkit", "ArmyMedkit", "AntiRad" },
-                Unchanged: Array.Empty<string>()
-            ),
-            (
-                Name: "bandage-zero-only",
-                Changes: new Dictionary<string, double>
-                {
-                    ["loot.stashMedicalBandageBias"] = 0
-                },
-                Disabled: new[] { "Bandage" },
-                Unchanged: new[] { "Medkit" }
-            ),
-            (
-                Name: "max-zero-overrides-floor",
-                Changes: new Dictionary<string, double>
-                {
-                    ["loot.stashMedkitMinCount"] = 1,
-                    ["loot.stashMedkitMaxCount"] = -1
-                },
-                Disabled: new[] { "Medkit" },
-                Unchanged: new[] { "Bandage" }
-            )
+        var sids = new[] { "Bandage", "Medkit", "ArmyMedkit", "AntiRad" };
+        var weightIds = new[] {
+            "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
+            "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias"
         };
-
-        foreach (var scenario in cases)
+        var chanceIds = new[] {
+            "loot.stashMedicalBandageChanceScale",
+            "loot.stashMedicalMedkitChanceScale",
+            "loot.stashMedicalArmyMedkitChanceScale",
+            "loot.stashMedicalAntiRadChanceScale"
+        };
+        for (var i = 0; i < sids.Length; i++)
         {
-            var dir = Path.Combine(Keep ?? Path.GetTempPath(),
-                "TCD_LootSpecial_MedicalZero", scenario.Name);
-            try
-            {
-                var vm = new MainViewModel(Catalog)
-                    { SelectedReferenceDifficulty = "Stalker" };
-                foreach (var (id, target) in scenario.Changes)
-                {
-                    var parameter = vm.AllParameters.Single(x => x.Id == id);
-                    Check(parameter.IsControlEnabled && parameter.IsSlider,
-                        scenario.Name + ": source disabled " + id);
-                    parameter.SnapCurrentNumberToMarker(target);
-                    Check(parameter.IsValueModifiedFromReference()
-                        && Math.Abs(parameter.CurrentNumber - target) < 1e-7,
-                        scenario.Name + ": profile value did not apply " + id);
-                }
+            var weight = new StashEffectiveState(
+                new Dictionary<string,double> { [weightIds[i]] = 0 },
+                new[] { weightIds[i] }, "Easy");
+            Check(Num(weight.TuneSelection(sids[i], "Weight", "2")) == 0,
+                "Medical weight zero failed: " + sids[i]);
+            Check(Math.Abs(Num(weight.TuneSelection(sids[i], "Chance", "0.4")) - .4) < 1e-8,
+                "Weight changed Chance: " + sids[i]);
 
-                AssertOnlyExpectedNonLootDefault(vm);
-                var built = new CfgPatchWriterService()
-                    .Write(vm, Catalog, null, dir);
-                Check(built.ParameterCount == scenario.Changes.Count + 1,
-                    scenario.Name + ": not all modified sources were written");
-                var output = ReadOutput(dir);
-                var touched = 0;
-                var seenSids = new HashSet<string>(StringComparer.Ordinal);
-                var untouched = 0;
-                foreach (var tier in new[]
-                    { "cheapStashProduction", "mediumStashAmmoProduction", "expensiveStashProduction" })
-                {
-                    var config = Special.GetProperty(tier);
-                    var file = Str(config, "file");
-                    Check(output.TryGetValue(file, out var fields),
-                        scenario.Name + ": missing regular stash clone CFG " + tier);
-                    var roots = new[] { Str(config, "customGeneratorSid") }
-                        .Concat(config.GetProperty("rankWrappers").EnumerateArray()
-                            .Select(rank => Str(rank, "targetSid")));
-                    foreach (var root in roots)
-                    foreach (var category in config.GetProperty("templateCategories").EnumerateArray())
-                    foreach (var item in category.GetProperty("items").EnumerateArray())
-                    {
-                        var sourceFields = item.GetProperty("fields");
-                        var sid = Str(sourceFields, "ItemPrototypeSID");
-                        var disabled = scenario.Disabled.Contains(sid);
-                        var keep = scenario.Unchanged.Contains(sid);
-                        if (!disabled && !keep)
-                            continue;
-
-                        var prefix = root + "/ItemGenerator/"
-                            + Str(category, "node") + "/PossibleItems/"
-                            + Str(item, "node") + "/";
-                        foreach (var fieldName in new[]
-                            { "Chance", "Weight", "MinCount", "MaxCount" })
-                        {
-                            if (!sourceFields.TryGetProperty(fieldName, out var source))
-                                continue;
-                            var full = prefix + fieldName;
-                            Check(fields!.TryGetValue(full, out var generated),
-                                scenario.Name + ": missing " + file + "|" + full);
-                            if (disabled)
-                            {
-                                Check(Math.Abs(Num(generated!)) < 1e-8,
-                                    scenario.Name + ": medical zero leaked into "
-                                    + file + "|" + full + "=" + generated);
-                                touched++;
-                                seenSids.Add(sid);
-                            }
-                            else if (fieldName is "Chance" or "Weight")
-                            {
-                                Check(Math.Abs(Num(generated!) - Num(source.GetString()!)) < 1e-8,
-                                    scenario.Name + ": unrelated selection was modified "
-                                    + sid + "/" + fieldName);
-                                untouched++;
-                            }
-                        }
-                    }
-                }
-                Check(touched >= 20 && seenSids.Contains("Medkit")
-                    || scenario.Disabled.Length == 1 && touched >= 10,
-                    scenario.Name + ": medical suppression covered no actual template entries");
-                if (scenario.Unchanged.Length != 0)
-                    Check(untouched > 0,
-                        scenario.Name + ": failed to verify unchanged medical entries");
-                Console.WriteLine("PASS " + scenario.Name
-                    + ": " + touched + " zeroed medical generator CFG fields");
-            }
-            finally
-            {
-                if (Keep is null && Directory.Exists(dir))
-                    Directory.Delete(dir, true);
-            }
+            var chance = new StashEffectiveState(
+                new Dictionary<string,double> { [chanceIds[i]] = .5 },
+                new[] { chanceIds[i] }, "Easy");
+            Check(Math.Abs(Num(chance.TuneSelection(sids[i], "Weight", "2")) - 2) < 1e-8,
+                "Chance changed Weight: " + sids[i]);
+            Check(Math.Abs(Num(chance.TuneSelection(sids[i], "Chance", "0.4")) - .2) < 1e-8,
+                "Medical 50% Chance scale failed: " + sids[i]);
+            var off = new StashEffectiveState(
+                new Dictionary<string,double> { [chanceIds[i]] = 0 },
+                new[] { chanceIds[i] }, "Easy");
+            Check(Num(off.TuneSelection(sids[i], "Chance", "0.4")) == 0,
+                "Medical 0% Chance scale failed: " + sids[i]);
         }
+        var countOff = new StashEffectiveState(
+            new Dictionary<string,double> { ["loot.stashMedkitMaxCount"] = -1 },
+            new[] { "loot.stashMedkitMaxCount" }, "Easy");
+        Check(countOff.MedicalDisabled("Medkit") &&
+            Num(countOff.TuneSelection("Medkit", "Chance", "0.4")) == 0 &&
+            Num(countOff.TuneSelection("Medkit", "Weight", "2")) == 0,
+            "Explicit medical 0-items exclusion must suppress both fields");
+        Console.WriteLine("PASS independent medical Weight / Chance + count exclusion");
     }
 
     static void VerifyWorldStashSmartLoot()
@@ -601,7 +517,6 @@ internal static partial class Program
         };
         var cases = new[]
         {
-            ("medkit-bias-zero", "loot.stashMedicalMedkitBias", 0.0, 0.0, 0, 0),
             ("medkit-max-zero", "loot.stashMedkitMaxCount", -1.0, 0.0, 0, 0)
         };
         foreach (var (name, controlId, target, chance, min, max) in cases)
@@ -700,14 +615,8 @@ internal static partial class Program
 
         var tests = new[]
         {
-            (Name: "bandages-0", Source: "loot.stashMedicalBandageBias", Value: 0.0,
-                Relevant: "Bandage", Chance: 0.0, Disabled: true),
-            (Name: "medkits-0", Source: "loot.stashMedicalMedkitBias", Value: 0.0,
-                Relevant: "Medkit", Chance: 0.0, Disabled: true),
             (Name: "medkit-max-0", Source: "loot.stashMedkitMaxCount", Value: -1.0,
                 Relevant: "Medkit", Chance: 0.0, Disabled: true),
-            (Name: "army-medkits-0", Source: "loot.stashMedicalArmyMedkitBias", Value: 0.0,
-                Relevant: "ArmyMedkit", Chance: 0.0, Disabled: true),
             (Name: "army-max-0", Source: "loot.stashArmyMedkitMaxCount", Value: -1.0,
                 Relevant: "ArmyMedkit", Chance: 0.0, Disabled: true)
         };
@@ -827,7 +736,7 @@ internal static partial class Program
     {
         foreach(var (label, values, expectFresh) in new[]
         {
-            ("bandage-zero",new Dictionary<string,double> { ["loot.stashMedicalBandageBias"]=0 },true),
+            ("bandage-zero",new Dictionary<string,double> { ["loot.stashMedicalBandageChanceScale"]=0 },true),
             ("medkit-zero",new Dictionary<string,double> { ["loot.stashMedkitMaxCount"]=-1 },true),
             ("cheap-ammo-half",new Dictionary<string,double> { ["loot.cheapStashAmmoQuantity"]=0.5 },true),
             ("medium-ammo-half",new Dictionary<string,double> { ["loot.mediumStashAmmoQuantity"]=0.5 },false)
@@ -877,9 +786,12 @@ internal static partial class Program
                             label+": missing ordinary CheapNoFresh redirect "+id);
                     var root="TCD_GamePass_Stash_ItemGenerator_CheapNoFresh/ItemGenerator/";
                     if(label=="bandage-zero")
-                        foreach(var field in new[]{"Chance","MinCount","MaxCount"})
-                            Check(gens![root+"[0]/PossibleItems/[0]/"+field]=="0",
-                                label+": Bandage was not hard-disabled in source CFG "+field);
+                    {
+                        Check(gens![root+"[0]/PossibleItems/[0]/Chance"]=="0",
+                            label+": Bandage Chance 0% did not reach generated CFG");
+                        // Separate Weight/Chance modes must never overwrite
+                        // a native stack count for a chance-only edit.
+                    }
                     if(label=="medkit-zero")
                         foreach(var field in new[]{"Chance","MinCount","MaxCount"})
                             Check(gens![root+"[0]/PossibleItems/[2]/"+field]=="0",
@@ -927,7 +839,7 @@ internal static partial class Program
             if(Keep==null && Directory.Exists(baseDir))
                 Directory.Delete(baseDir,true);
         }
-        Console.WriteLine("PASS DLC1 stash medical, explicit zero, CheapNoFresh, medium path and safe actor scope");
+        Console.WriteLine("PASS DLC1 stash medical native Chance, quantity exclusion and safe actor scope");
     }
 
     static JsonElement LoadSpecial()

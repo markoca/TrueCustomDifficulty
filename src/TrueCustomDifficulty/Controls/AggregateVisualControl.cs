@@ -188,6 +188,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             {
                 "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
                 "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
+                "loot.stashMedicalBandageChanceScale", "loot.stashMedicalMedkitChanceScale",
+                "loot.stashMedicalArmyMedkitChanceScale", "loot.stashMedicalAntiRadChanceScale",
                 // All medical bounds and Stash Rewards numeric inputs also
                 // affect source-native item counts (not just Chance fields).
                 // These links update previews without changing family edit/reset.
@@ -4579,6 +4581,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         new SolidColorBrush(Color.FromRgb(0xB6, 0x96, 0xE9))  // Coupons
     };
 
+    private static readonly Brush[] StashMedicalPalette =
+    {
+        new SolidColorBrush(Color.FromRgb(0xCD, 0xB9, 0x9A)), // Bandages
+        new SolidColorBrush(Color.FromRgb(0xE9, 0x91, 0x4F)), // Medkits
+        new SolidColorBrush(Color.FromRgb(0x62, 0xB8, 0xE4)), // Army Medkits
+        new SolidColorBrush(Color.FromRgb(0xAA, 0x85, 0xD9))  // Anti-Rad
+    };
+
     // BASIC is a visual home for the six GLOBAL category weights.
     // Exactly as in Breakable Boxes, native pools are shown separately:
     // percentages mean relative selection INSIDE one native Weight group,
@@ -4628,36 +4638,56 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     // Medical biases are source-editable tracks; a separate, noninteractive
     // preview represents only the relative balance of these four settings.
-        private void DrawStashMedicalComposition(
+        // Two independent native field banks: Weight changes only relative
+    // selection, Chance scales authored per-entry probability (not stash odds).
+    // Four item colors follow the actual medical item's identity.
+    private void DrawStashMedicalComposition(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "MEDICAL COMPOSITION", "", text, muted, accent);
-        var entries = new (string Id, string Label)[]
-        {
-            ("loot.stashMedicalBandageBias", "BANDAGES"),
-            ("loot.stashMedicalMedkitBias", "MEDKITS"),
-            ("loot.stashMedicalArmyMedkitBias", "ARMY MEDKITS"),
-            ("loot.stashMedicalAntiRadBias", "ANTI-RAD")
-        };
         var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
         var left = (ActualWidth - width) / 2.0;
-        var plotLeft = left + (width >= 550.0 ? 160.0 : 126.0);
-        var plotWidth = Math.Max(1.0, width - (plotLeft - left) - 76.0);
-        var axis = new Rect(plotLeft, 55.0, plotWidth, 1.0);
-        foreach (var tick in new[] { 0.0, 1.0, 2.0, 3.0 })
-            DrawCenteredText(dc, $"{tick:0}x",
-                new Point(ValueToX(tick, 0.0, 3.0, axis, false), 52.0),
-                9.4, muted, FontWeights.SemiBold);
+        var wide = width >= 670.0;
+        var columns = wide ? 4 : 2;
+        const double gap = 8.0;
+        const double inset = 12.0;
+        const double cardHeight = 146.0;
+        var cardWidth = Math.Max(1.0,
+            (width - 2.0 * inset - (columns - 1) * gap) / columns);
+        var weightTop = 53.0;
+        var chanceTop = wide ? 225.0 : 381.0;
+        var entries = new (string Label, string WeightId, string ChanceId, Brush Tone)[]
+        {
+            ("BANDAGES", "loot.stashMedicalBandageBias",
+                "loot.stashMedicalBandageChanceScale", StashMedicalPalette[0]),
+            ("MEDKITS", "loot.stashMedicalMedkitBias",
+                "loot.stashMedicalMedkitChanceScale", StashMedicalPalette[1]),
+            ("ARMY MEDKITS", "loot.stashMedicalArmyMedkitBias",
+                "loot.stashMedicalArmyMedkitChanceScale", StashMedicalPalette[2]),
+            ("ANTI-RAD", "loot.stashMedicalAntiRadBias",
+                "loot.stashMedicalAntiRadChanceScale", StashMedicalPalette[3])
+        };
+        DrawText(dc, "WEIGHT MIX", new Point(left + 12.0, 37.0),
+            10.8, text, FontWeights.Bold);
+        DrawText(dc, "CHANCE SCALE", new Point(left + 12.0, wide ? 209.0 : 364.0),
+            10.8, text, FontWeights.Bold);
+        // Both banks use the Stamina/Weight Mix dial grammar. Native limits,
+        // hit testing, drag and reset are supplied by their real parameter VM.
         for (var i = 0; i < entries.Length; i++)
-            DrawStashRewardGraphRow(dc, P(entries[i].Id), entries[i].Label,
-                left, 72.0 + 43.0 * i, width, plotLeft, plotWidth,
-                text, muted, border, accent, panel);
-
-        DrawStashMedicalSourcePreview(dc,
-            new Rect(left, 253.0, width,
-                ActualWidth >= 700.0 ? 105.0 : 141.0),
-            text, muted, border, accent, panel);
+        {
+            var entry = entries[i];
+            var x = left + inset + (i % columns) * (cardWidth + gap);
+            var row = (i / columns) * (cardHeight + gap);
+            DrawSourceKnob(dc, P(entry.WeightId), entry.Label,
+                new Rect(x, weightTop + row, cardWidth, cardHeight),
+                text, muted, border, accent, panel,
+                dialAccent: entry.Tone, dialScale: .74);
+            DrawSourceKnob(dc, P(entry.ChanceId), entry.Label,
+                new Rect(x, chanceTop + row, cardWidth, cardHeight),
+                text, muted, border, accent, panel,
+                percentageReadout: true, dialAccent: entry.Tone, dialScale: .74);
+        }
     }
 
     // Two native range-selector cards; AUTO retains source 0, while MAX
@@ -5019,39 +5049,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
         DrawText(dc, "Easy-tier examples; not whole-stash drop probability.",
             new Point(inner.Left, card.Bottom - 19.0),
-            9.0, muted, FontWeights.Normal);
-    }
-
-    private void DrawStashMedicalSourcePreview(
-        DrawingContext dc, Rect card, Brush text, Brush muted,
-        Brush border, Brush accent, Brush panel)
-    {
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .60),
-            new Pen(CloneWithOpacity(border, .66), .9), card, 4.0, 4.0);
-        DrawText(dc, "MEDICAL SOURCE CHANCE FIELDS",
-            new Point(card.Left + 11.0, card.Top + 7.0),
-            10.2, text, FontWeights.Bold);
-        var entries = new (string Tier, int Group, string Sid, string Label)[]
-        {
-            ("BASIC", 0, "Bandage", "BANDAGE · BASIC"),
-            ("BASIC", 0, "Medkit", "MEDKIT · BASIC"),
-            ("RARE", 4, "ArmyMedkit", "ARMY MEDKIT · RARE"),
-            ("RARE", 4, "AntiRad", "ANTI-RAD · RARE")
-        };
-        var columns = ActualWidth >= 700.0 ? 4 : 2;
-        var available = card.Width - 22.0;
-        var gap = 10.0;
-        var cellWidth = (available - (columns - 1) * gap) / columns;
-        for (var i = 0; i < entries.Length; i++)
-        {
-            var e = entries[i];
-            DrawStashChanceSample(dc, e.Tier, e.Group, e.Sid, e.Label,
-                new Rect(card.Left + 11.0 + (i % columns) * (cellWidth + gap),
-                    card.Top + 33.0 + (i / columns) * 36.0,
-                    cellWidth, 28.0), text, muted, border);
-        }
-        DrawText(dc, "Per-entry Chance, not stash drop odds.",
-            new Point(card.Left + 11.0, card.Bottom - 18.0),
             9.0, muted, FontWeights.Normal);
     }
 
@@ -6894,7 +6891,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private double StashContentMixHeight(double width)
         => width >= 700.0 ? 588.0 : 922.0;
     private static double StashMedicalCompositionHeight(double width)
-        => width >= 700.0 ? 373.0 : 409.0;
+        => width >= 700.0 ? 398.0 : 704.0;
     private static double StashMedicalQuantityHeight(double width)
         => width >= 700.0 ? 220.0 : 383.0;
     private static double StashGearHeight(double width)
@@ -6990,7 +6987,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "StashMedicalComposition" => new[]
             {
                 "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
-                "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias"
+                "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
+                "loot.stashMedicalBandageChanceScale", "loot.stashMedicalMedkitChanceScale",
+                "loot.stashMedicalArmyMedkitChanceScale", "loot.stashMedicalAntiRadChanceScale"
             },
             "StashMedicalQuantity" => new[]
             {
