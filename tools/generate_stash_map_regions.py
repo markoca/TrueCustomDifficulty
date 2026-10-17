@@ -31,8 +31,18 @@ def generate():
         names = [f['properties']['svgID'].lstrip('#') for f in features
                  if contains(x, y, f['geometry']['coordinates'][0])]
         region = names[0] if len(names) == 1 else 'UNRESOLVED'
+        # Community polygon boundary misses two near-edge actors (~11-12 map units).
+        # These remain inferred, never labeled as inside the polygon.
+        near_edge = {
+            '3DC572304DD3E6EA9B6266A59F4A03BA': 'prypiat',
+            '75B17AF54B2B381145BEFEB6A125FF0A': 'cordon',
+        }
+        inferred = region == 'UNRESOLVED' and row['ActorSID'] in near_edge
+        if inferred:
+            region = near_edge[row['ActorSID']]
         generator = row['Region']
-        status = ('OUTSIDE_POLYGONS' if region == 'UNRESOLVED' else
+        status = ('NEAR_BORDER_INFERRED' if inferred else
+                  'OUTSIDE_POLYGONS' if region == 'UNRESOLVED' else
                   'NEW_MAP_MATCH' if generator == 'UNRESOLVED' else
                   'AGREES_WITH_GENERATOR' if ALIASES.get(generator) == region else
                   'GENERATOR_MAP_CONFLICT')
