@@ -162,7 +162,29 @@ for family, branch, sid, expected_chance in samples:
     assert math.isclose(chance, expected_chance, abs_tol=1e-8)
     assert 0 <= chance <= 1  # Native Chance is separate from global Weight.
 
-assert "=> width >= 700.0 ? 520.0 : 665.0;" in source
+# The host's measured height must agree with the live, read-only
+# player-facing panel extents at BOTH breakpoints; the retired 520/665
+# source-counter panel is not the current Stash Content Mix UI.
+height_match = re.search(
+    r"private double StashContentMixHeight\(double width\)\s*"
+    r"=> width >= ([\d.]+) \? ([\d.]+) : ([\d.]+);",
+    source,
+)
+coverage_match = re.search(
+    r"DrawStashGlobalCoverage\(dc, new Rect\(left, ([\d.]+), width,\s*"
+    r"width >= ([\d.]+) \? ([\d.]+) : ([\d.]+)\)",
+    content,
+)
+assert height_match is not None, "missing StashContentMix measured height"
+assert coverage_match is not None, "missing StashContentMix coverage panel"
+host_break, wide_host, narrow_host = map(float, height_match.groups())
+panel_top, panel_break, wide_panel, narrow_panel = map(float, coverage_match.groups())
+assert (host_break, wide_host, narrow_host) == (700.0, 545.0, 755.0)
+assert (panel_top, panel_break, wide_panel, narrow_panel) == (237.0, 670.0, 290.0, 500.0)
+assert "ActualWidth - 30.0" in content  # panel width inset from host
+assert host_break - panel_break == 30.0
+assert wide_host - (panel_top + wide_panel) == 18.0
+assert narrow_host - (panel_top + narrow_panel) == 18.0
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
