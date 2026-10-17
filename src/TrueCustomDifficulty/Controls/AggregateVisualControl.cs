@@ -4592,7 +4592,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var left = (ActualWidth - width) / 2.0;
         var wide = width >= 670.0;
 
-        DrawText(dc, "BASIC  ·  WEIGHT MIX",
+        DrawText(dc, "WEIGHT MIX · ALL TIERS",
             new Point(left + 13.0, 37.0), 10.7, text, FontWeights.Bold);
         DrawStashWeightMixer(dc, new Rect(left, 53.0, width,
                 wide ? 146.0 : 300.0), text, muted, border, accent, panel);
@@ -4855,7 +4855,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     private void DrawStashPoolBar(
         DrawingContext dc, CfgWriterCheapStashCategory? group,
-        string caption, Rect row, Brush text, Brush muted, Brush border)
+        string caption, Rect row, Brush text, Brush muted, Brush border,
+        string? rankCaption = null)
     {
         if (group is null) return;
         var totals = new double[6];
@@ -4870,9 +4871,22 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                     CurrentStashEffectiveState().TuneSelection(sid, "Weight", raw));
         }
         var total = totals.Sum();
-        DrawText(dc, caption, new Point(row.Left, row.Top), 9.6,
-            text, FontWeights.SemiBold);
-        var bar = new Rect(row.Left, row.Top + 17.0, row.Width, 11.0);
+        // Difficulty and player rank are independent authored CFG gates.
+        var captionSize = row.Width < 440.0 ? 9.6 : 10.8;
+        if (rankCaption is null)
+            DrawText(dc, caption, new Point(row.Left, row.Top), captionSize,
+                text, FontWeights.SemiBold);
+        else
+        {
+            var secondary = CreateText(rankCaption, row.Width < 440.0 ? 9.0 : 9.8,
+                muted, FontWeights.SemiBold, Math.Max(1.0, row.Width * .46));
+            var rightX = row.Right - secondary.WidthIncludingTrailingWhitespace;
+            dc.DrawText(CreateText(caption, captionSize, text,
+                    FontWeights.SemiBold, Math.Max(1.0, rightX - row.Left - 8.0)),
+                new Point(row.Left, row.Top));
+            dc.DrawText(secondary, new Point(rightX, row.Top));
+        }
+        var bar = new Rect(row.Left, row.Top + 15.0, row.Width, 11.0);
         dc.DrawRoundedRectangle(CloneWithOpacity(border, .28), null,
             bar, 2.0, 2.0);
         var labels = new[] { "AMMO", "MEDICAL", "FOOD", "DRINKS", "GRENADES", "COUPONS" };
@@ -4898,13 +4912,16 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             var x = row.Left + col * row.Width / present.Length;
             var slot = row.Width / present.Length;
             dc.DrawRectangle(StashMixPalette[kind], null,
-                new Rect(x, row.Top + 37.0, 7.0, 7.0));
-            DrawText(dc, labels[kind], new Point(x + 10.0, row.Top + 33.0),
-                8.9, text, FontWeights.SemiBold);
+                new Rect(x, row.Top + 31.0, 7.0, 7.0));
+            // Larger captions on a wide editor, compact labels on narrow screens.
+            var legendSize = row.Width >= 580.0 ? 10.0 : 8.9;
+            DrawText(dc, labels[kind], new Point(x + 10.0, row.Top + 28.0),
+                legendSize, text, FontWeights.SemiBold);
             var share = total > Epsilon ? totals[kind] * 100.0 / total : 0.0;
             DrawRightAlignedText(dc, $"{share:0.#}%",
-                new Point(x + slot - 3.0, row.Top + 33.0),
-                9.2, muted, FontWeights.SemiBold);
+                new Point(x + slot - 3.0, row.Top + 28.0),
+                row.Width >= 580.0 ? 10.1 : 9.1,
+                muted, FontWeights.SemiBold);
         }
     }
 

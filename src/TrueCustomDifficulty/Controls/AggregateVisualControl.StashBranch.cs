@@ -282,12 +282,18 @@ public sealed partial class AggregateVisualControl
                 "Basic source Weight groups are no longer native-only.");
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .66),
             new Pen(CloneWithOpacity(border, .66), .9), outer, 4.0, 4.0);
-        var inside = new Rect(outer.Left + 12.0, outer.Top + 8.0,
-            Math.Max(1.0, outer.Width - 24.0), 48.0);
+        // Basic stash pool examples: difficulty and player-rank gates
+        // are distinct. Easy/Medium/Hard map to Novice/Stalker/Veteran.
+        DrawText(dc, "BASIC · LOOT EXAMPLES",
+            new Point(outer.Left + 12.0, outer.Top + 3.0),
+            10.6, text, FontWeights.Bold);
+        var inside = new Rect(outer.Left + 12.0, outer.Top + 21.0,
+            Math.Max(1.0, outer.Width - 24.0), 43.0);
         DrawStashPoolBar(dc, experienced,
-            "EASY/MEDIUM · EXPERIENCED", inside, text, muted, border);
+            "NOVICE / STALKER", inside, text, muted, border,
+            rankCaption: "RANK: EXPERIENCED");
         DrawStashPoolBar(dc, hard,
-            "HARD", new Rect(inside.Left, inside.Top + 56.0,
+            "VETERAN", new Rect(inside.Left, inside.Top + 47.0,
                 inside.Width, inside.Height), text, muted, border);
     }
 
@@ -336,7 +342,7 @@ public sealed partial class AggregateVisualControl
 
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .65),
             new Pen(CloneWithOpacity(border, .61), .9), outer, 4.0, 4.0);
-        dc.DrawText(CreateText(label, 10.5, text, FontWeights.Bold),
+        dc.DrawText(CreateText(label, 11.4, text, FontWeights.Bold),
             new Point(outer.Left + 12.0, outer.Top + 8.0));
         var columns = outer.Width >= 670.0 ? present.Length : 2;
         const double inset = 12.0;
@@ -371,14 +377,14 @@ public sealed partial class AggregateVisualControl
                 new Pen(CloneWithOpacity(tone, .75), .9), cell, 3.0, 3.0);
             dc.DrawRectangle(tone, null, new Rect(x + 6.0, y + 6.0, 3.0, 12.0));
             var name = GlobalStashCategoryNames[kind];
-            dc.DrawText(CreateText(name, 9.1, text, FontWeights.Bold,
+            dc.DrawText(CreateText(name, 10.2, text, FontWeights.Bold,
                     Math.Max(1.0, cell.Width - 15.0)),
                 new Point(x + 13.0, y + 4.0));
 
             if (rows.Length == 0)
             {
                 // Ammo has native Weight, not Chance: no phantom slider.
-                dc.DrawText(CreateText("WEIGHT", 9.1, muted,
+                dc.DrawText(CreateText("WEIGHT", 10.1, muted,
                         FontWeights.SemiBold),
                     new Point(x + 8.0, y + 23.0));
                 continue;
@@ -417,7 +423,7 @@ public sealed partial class AggregateVisualControl
             var changed = parameter.IsControlEnabled &&
                 parameter.IsValueModifiedFromReference();
             var currentText = PercentRange(nowMin, nowMax);
-            var currentLabel = CreateText(currentText, 9.6,
+            var currentLabel = CreateText(currentText, 10.4,
                 changed ? accent : text, FontWeights.Bold,
                 Math.Max(1.0, cell.Width - 14.0));
             dc.DrawText(currentLabel, new Point(x + 8.0, y + 21.0));

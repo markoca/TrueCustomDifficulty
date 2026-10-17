@@ -387,6 +387,29 @@ for source_key, tier_id, group_count, item_count, expected_weight, expected_chan
     assert weight == expected_weight, (tier_id, weight)
     assert chance == expected_chance, (tier_id, chance)
 
+
+# These two visible Basic source pools have different difficulty and rank
+# gates; neither is a distinct stash tier or a percentage drop chance.
+basic_preview = baseline["cheapStashProduction"]["templateCategories"]
+assert basic_preview[7]["fields"]["Diff"] == (
+    "EGameDifficulty::Easy, EGameDifficulty::Medium")
+assert basic_preview[7]["fields"]["PlayerRank"] == "ERank::Experienced"
+assert basic_preview[1]["fields"]["Diff"] == "EGameDifficulty::Hard"
+assert "PlayerRank" not in basic_preview[1]["fields"]
+
+assert '"WEIGHT MIX · ALL TIERS"' in content
+assert '"BASIC  ·  WEIGHT MIX"' not in content
+assert '"BASIC · LOOT EXAMPLES"' in coverage
+assert '"NOVICE / STALKER"' in coverage
+assert 'rankCaption: "RANK: EXPERIENCED"' in coverage
+assert '"VETERAN"' in coverage
+assert '"EASY/MEDIUM · EXPERIENCED"' not in coverage
+assert 'CreateText(label, 11.4, text' in coverage
+assert 'CreateText(name, 10.2, text' in coverage
+assert 'CreateText(currentText, 10.4,' in coverage
+assert "row.Width < 440.0 ? 9.6 : 10.8" in source
+assert "row.Width >= 580.0 ? 10.0 : 8.9" in source
+
 # Regression: WPF can render a visible StashContentMix family before the
 # Window-level AllParameters binding arrives. Eight new authored Chance
 # parameters must be present in the embedded catalog, aggregate family and
