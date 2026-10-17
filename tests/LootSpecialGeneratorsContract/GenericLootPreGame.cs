@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.IO;
 using TrueCustomDifficulty.Models;
 using TrueCustomDifficulty.Services;
 using TrueCustomDifficulty.ViewModels;
@@ -203,8 +204,12 @@ internal static partial class Program
                 name + ": inactive Water package still emitted bonus-ammo CFG");
             return;
         }
-        Check(output.TryGetValue("GameData/StashPrototypes.cfg", out var emitted)
-            && output.TryGetValue("GameData/DifficultyPrototypes.cfg", out var difficultyCfg),
+        // Evaluate both lookups unconditionally: a short-circuited && does
+        // not definitely assign the second out variable (CS0165).
+        var hasSmart = output.TryGetValue("GameData/StashPrototypes.cfg", out var emitted);
+        var hasDifficulty = output.TryGetValue(
+            "GameData/DifficultyPrototypes.cfg", out var difficultyCfg);
+        Check(hasSmart && hasDifficulty,
             name + ": selected NPC ammo bonus does not emit both source and list");
         Check(difficultyCfg!.TryGetValue(
                 "Easy/EconomyDifficulty/CorpseSmartLoot/GeneralNPC", out var choice)
