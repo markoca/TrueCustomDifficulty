@@ -2661,17 +2661,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             dc.DrawText(combined, new Point(
                 center.X - combined.WidthIncludingTrailingWhitespace / 2.0, currentTop));
         }
-        else if (Family == "StashContentMix")
-        {
-            var formatted = CreateText(currentLabel, modified ? 16.2 : 15.0,
-                active ? text : muted, FontWeights.Bold, Math.Max(1.0, card.Width - 12.0));
-            if (modified)
-                foreach (System.Text.RegularExpressions.Match token in
-                    System.Text.RegularExpressions.Regex.Matches(currentLabel, @"\d+(?:\.\d+)?"))
-                    formatted.SetForegroundBrush(accent, token.Index, token.Length);
-            dc.DrawText(formatted, new Point(center.X -
-                formatted.WidthIncludingTrailingWhitespace / 2.0, currentTop));
-        }
         else
         {
             DrawCenteredText(dc, currentLabel, new Point(center.X, currentTop),
@@ -4579,82 +4568,31 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // Global knobs retain each original Weight/Chance rule; never normalize
-    // unrelated source groups into a fabricated stash-wide percentage.
-    // Stash A+C mixer: six compact interactive native source knobs.
-    // The Medical dial uses the SAME source parameter as the detail banks
-    // directly below; changing its value instantly updates their effective
-    // generator weights without inventing a fictitious drop percentage.
-    // Shared category identity for the six-source Stashes mixer. Keep rings,
-    // pointers, stacked preview segments and legend swatches in EXACTLY the
-    // same order/brushes. The modified-value NUMBERS still use global gold.
+    // The six persisted stash channels scale original native Weight only.
+    // Selection Chance is never normalized, combined, or invented here.
     private static readonly Brush[] StashMixPalette =
     {
-        new SolidColorBrush(Color.FromRgb(0xF4, 0xC1, 0x3C)), // Ammo: gold
-        new SolidColorBrush(Color.FromRgb(0x53, 0xCC, 0x9F)), // Medical: mint
-        new SolidColorBrush(Color.FromRgb(0xF0, 0x93, 0x4D)), // Food: amber
-        new SolidColorBrush(Color.FromRgb(0x67, 0xB6, 0xE7)), // Drinks: blue
-        new SolidColorBrush(Color.FromRgb(0xE9, 0x68, 0x64)), // Grenades: coral
-        new SolidColorBrush(Color.FromRgb(0xB6, 0x96, 0xE9))  // Coupons: violet
+        new SolidColorBrush(Color.FromRgb(0xF4, 0xC1, 0x3C)), // Ammo
+        new SolidColorBrush(Color.FromRgb(0x53, 0xCC, 0x9F)), // Medical
+        new SolidColorBrush(Color.FromRgb(0xF0, 0x93, 0x4D)), // Food
+        new SolidColorBrush(Color.FromRgb(0x67, 0xB6, 0xE7)), // Drinks
+        new SolidColorBrush(Color.FromRgb(0xE9, 0x68, 0x64)), // Grenades
+        new SolidColorBrush(Color.FromRgb(0xB6, 0x96, 0xE9))  // Coupons
     };
 
+    // A single compact 6-channel Weight mixer, borrowing the independent
+    // source-scale grammar of Survival's Ammo Distribution, NEVER its
+    // per-pool percent composition. These are not one shared stash pool.
     private void DrawStashContentMix(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "STASH CONTENT MIX", "", text, muted, accent);
-        var entries = new (string Id, string Label)[]
-        {
-            ("loot.stashMixAmmo", "AMMO"),
-            ("loot.stashMixMedical", "MEDICAL"),
-            ("loot.stashMixFood", "FOOD"),
-            ("loot.stashMixDrinks", "DRINKS"),
-            ("loot.stashMixGrenades", "GRENADES"),
-            ("loot.stashMixCoupons", "COUPONS")
-        };
-        // One centered line at all supported panel widths, no tile/frame.
-        // Size hierarchy: Ammo/Medical hero, Food/Drinks medium, remaining
-        // two smaller. Allocate the wider hit regions with the wider dials.
-        var sizeWeights = new[] { 1.28, 1.28, 1.05, 1.05, .92, .92 };
-        var dialScales = new[] { 1.24, 1.24, .98, .98, .78, .78 };
         var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
         var left = (ActualWidth - width) / 2.0;
-        const double gap = 8.0;
-        var available = Math.Max(1.0, width - gap * (entries.Length - 1));
-        var totalWeight = sizeWeights.Sum();
-        var cursor = left;
-        var statusState = CurrentStashEffectiveState();
-        for (var i = 0; i < entries.Length; i++)
-        {
-            var cell = available * sizeWeights[i] / totalWeight;
-            var card = new Rect(cursor, 49.0, cell, 176.0);
-            var source = P(entries[i].Id);
-            var focused = source is not null &&
-                ReferenceEquals(_selectedParameter, source);
-            var hovered = source is not null &&
-                ReferenceEquals(_hoverTarget?.Parameter, source);
-            if (focused || hovered)
-                dc.DrawLine(new Pen(CloneWithOpacity(StashMixPalette[i],
-                        focused ? .92 : .65), focused ? 2.0 : 1.2),
-                    new Point(card.Left + cell * .28, card.Top + 37.0),
-                    new Point(card.Right - cell * .28, card.Top + 37.0));
-            DrawSourceKnob(dc, source, entries[i].Label, card,
-                text, muted, border, accent, panel,
-                dialAccent: StashMixPalette[i], dialScale: dialScales[i]);
-            // Weight multiplier, never a whole-stash drop probability.
-            // Native Chance entries use only their own source controls.
-            if (source is not null)
-                DrawCenteredText(dc, GlobalStashStatus(i, statusState),
-                    new Point(card.Left + cell / 2.0, card.Bottom - 8.0),
-                    8.8, muted, FontWeights.SemiBold);
-            cursor += cell + gap;
-        }
-
-        // Player-facing status, not developer counters or invented drop
-        // probabilities; covers all eligible source ranks and groups.
-        DrawStashGlobalCoverage(dc, new Rect(left, 237.0, width,
-                width >= 670.0 ? 290.0 : 500.0),
-            text, muted, border, panel);
+        DrawStashWeightMixer(dc, new Rect(left, 38.0, width,
+                width >= 670.0 ? 262.0 : 496.0),
+            text, muted, border, accent, panel);
     }
 
     // Medical biases are source-editable tracks; a separate, noninteractive
@@ -6919,10 +6857,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             _ => 340.0
         };
 
-    // The same adaptive column thresholds drive both WPF Measure and Draw,
-    // so the last dial row is never clipped by the group host.
+    // Measured heights follow the painted responsive editors, so the
+    // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 545.0 : 755.0;
+        => width >= 700.0 ? 312.0 : 546.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)

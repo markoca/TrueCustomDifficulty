@@ -60,12 +60,12 @@ quantity = method("DrawStashMedicalQuantity", "DrawStashGear")
 gear = method("DrawStashGear", "DrawStashGearMode")
 preview = method("DrawStashPoolBar", "DrawCompactStashRewards")
 
-assert content.count('("loot.stashMix') == 6
+assert 'DrawStashWeightMixer(dc, new Rect(left, 38.0, width,' in content
 assert medical.count('("loot.stashMedical') == 4
 assert quantity.count('("MEDKITS"') + quantity.count('("ARMY MEDKITS"') == 2
 assert gear.count('("BASIC"') + gear.count('("STANDARD"') + gear.count('("RARE"') == 3
-assert 'DrawSourceKnob(dc, source, entries[i].Label' in content
-assert "DrawStashGlobalCoverage(dc," in content
+assert 'DrawSourceKnob(' not in content
+assert "DrawStashWeightMixer(dc," in content
 assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" in medical
 assert "DrawStashMedicalSourcePreview(dc," in medical
 assert "DrawStashQuantityDots(dc, P(families[i].Min)" in quantity
@@ -80,11 +80,11 @@ assert "DrawStashNumericReadout" not in preview
 assert "MULTIPLIERS, NOT DROP ODDS" not in source
 assert "weights.Sum()" not in preview # normalized six source multipliers retired
 
-# Unboxed single-row six distinct color/category knobs retain native input.
-assert "var cursor = left;" in content and "cursor += cell + gap;" in content
-assert "DrawRoundedRectangle" not in content
-assert "dialAccent: StashMixPalette[i], dialScale: dialScales[i]" in content
-assert "var dialInk = dialAccent ?? accent;" in source
+# One bounded 3x2/6x1 relative-Weight mixer, not six rotary dials
+# and never an invented 100% stash-wide probability.
+assert "Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0))" in content
+assert "DrawStashWeightMixer(dc," in content
+assert "DrawSourceKnob(" not in content
 assert source.count("new SolidColorBrush(Color.FromRgb(") >= 6
 assert "StashMixPalette[kind]" in preview
 assert 'StashPreviewGroup("BASIC", 7)' in preview
@@ -162,29 +162,26 @@ for family, branch, sid, expected_chance in samples:
     assert math.isclose(chance, expected_chance, abs_tol=1e-8)
     assert 0 <= chance <= 1  # Native Chance is separate from global Weight.
 
-# The host's measured height must agree with the live, read-only
-# player-facing panel extents at BOTH breakpoints; the retired 520/665
-# source-counter panel is not the current Stash Content Mix UI.
+# The measured host and new unified mixer have one breakpoint.
 height_match = re.search(
     r"private double StashContentMixHeight\(double width\)\s*"
     r"=> width >= ([\d.]+) \? ([\d.]+) : ([\d.]+);",
     source,
 )
-coverage_match = re.search(
-    r"DrawStashGlobalCoverage\(dc, new Rect\(left, ([\d.]+), width,\s*"
+mixer_match = re.search(
+    r"DrawStashWeightMixer\(dc, new Rect\(left, ([\d.]+), width,\s*"
     r"width >= ([\d.]+) \? ([\d.]+) : ([\d.]+)\)",
     content,
 )
 assert height_match is not None, "missing StashContentMix measured height"
-assert coverage_match is not None, "missing StashContentMix coverage panel"
+assert mixer_match is not None, "missing StashContentMix mixer"
 host_break, wide_host, narrow_host = map(float, height_match.groups())
-panel_top, panel_break, wide_panel, narrow_panel = map(float, coverage_match.groups())
-assert (host_break, wide_host, narrow_host) == (700.0, 545.0, 755.0)
-assert (panel_top, panel_break, wide_panel, narrow_panel) == (237.0, 670.0, 290.0, 500.0)
-assert "ActualWidth - 30.0" in content  # panel width inset from host
+panel_top, panel_break, wide_panel, narrow_panel = map(float, mixer_match.groups())
+assert (host_break, wide_host, narrow_host) == (700.0, 312.0, 546.0)
+assert (panel_top, panel_break, wide_panel, narrow_panel) == (38.0, 670.0, 262.0, 496.0)
 assert host_break - panel_break == 30.0
-assert wide_host - (panel_top + wide_panel) == 18.0
-assert narrow_host - (panel_top + narrow_panel) == 18.0
+assert wide_host - (panel_top + wide_panel) == 12.0
+assert narrow_host - (panel_top + narrow_panel) == 12.0
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -266,22 +263,20 @@ for pid in mix_ids:
 coverage = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text()
 branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.cs").read_text()
 csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
-assert 'DrawStashGlobalCoverage(dc, new Rect(left, 237.0, width,' in content
-assert 'width >= 670.0 ? 290.0 : 500.0' in content
-assert 'StashContentMixHeight(width)' in source
-assert '=> width >= 700.0 ? 545.0 : 755.0;' in source
+assert 'DrawStashWeightMixer(dc, new Rect(left, 38.0, width,' in content
+assert "StashContentMixHeight(width)" in source
+assert '=> width >= 700.0 ? 312.0 : 546.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
 assert "StashCategoryIndex(item.ItemSid)" in coverage
-assert '"WEIGHT ' not in coverage and '"CHANCE ' not in coverage
 assert '"ITEMGEN ' not in coverage and '"WORLD ' not in coverage
-assert '"STASH ITEM WEIGHTS"' in coverage
-assert '"CHANCE CONTROLS ARE SEPARATE"' in coverage
+assert '"STASH ITEM WEIGHTS"' not in coverage
+assert '"RELATIVE WEIGHT · CHANCE REMAINS INDEPENDENT"' in coverage
 assert '"WEIGHT OFF"' in coverage and '"REDUCED"' in coverage
 assert '"INCREASED"' in coverage and '"EXCLUDED"' in coverage
 assert '"ORIGINAL"' in coverage and '"PARTIAL"' in coverage
-assert '"WEIGHT IS RELATIVE · CHANCE REMAINS SEPARATE"' in coverage
+assert '"WEIGHT OFF · INDEPENDENT CHANCE MAY STILL ROLL"' in coverage
 assert "StashEffectiveState.ItemBiasId(sid)" in coverage
 assert "StashEffectiveState.SmartItemBiasId(sid)" in coverage
 for retired in ("DrawStashBranchBrowser(", "NavigateStash(", "TryStashBrowserClick(",
@@ -290,11 +285,30 @@ for retired in ("DrawStashBranchBrowser(", "NavigateStash(", "TryStashBrowserCli
                 "SOURCE DETAILS", "HIDE DETAILS"):
     assert retired not in source + coverage, retired
 assert "CurrentNumber =" not in coverage
-assert "AddHorizontalTarget(" not in coverage
+assert "AddHorizontalTarget(p," in coverage
+assert "for (var stop = " not in coverage
+assert "foreach (var stop in new[] { 0.0, 1.0, 3.0 })" in coverage
+assert "const double rowPitch = 78.0;" in coverage
+assert "var columns = outer.Width >= 670.0 ? 2 : 1;" in coverage
+assert "var rail = new Rect(x + 10.0, y + 28.0," in coverage
+assert "p.IsValueModifiedFromReference()" in coverage
+assert "formatted.SetForegroundBrush(accent, 0, digits.Length)" in coverage
+assert "ValueToX(p.CurrentNumber, p.Minimum, p.Maximum, rail, false)" in coverage
+assert "p.ReferenceNumber" in coverage
+assert "Normalize(" not in coverage
+assert "percentages" not in coverage
 assert "StashMixPalette[i]" in coverage
 assert "GlobalMedicalItems.Select(item => state.ChanceFactor(item.Sid))" in coverage
 assert "EXCLUDED: " in coverage
-assert 'GlobalStashStatus(i, statusState)' in source
+assert 'GlobalStashStatus(i, state)' in coverage
+assert 'GlobalStashDetail(i, status, state)' in coverage
+assert 'GlobalStashParameterIds' in coverage
+bound_mix = re.search(
+    r"private static readonly string\[\] GlobalStashParameterIds\s*=\s*\{(.*?)\};",
+    coverage, re.S
+)
+assert bound_mix is not None
+assert re.findall(r'"(loot\.stashMix[A-Za-z]+)"', bound_mix.group(1)) == mix_ids
 assert '"RARE COUPONS"' in source and '"RGD-5 CHANCE"' in source
 assert 'GlobalStashItemDescriptions' in coverage
 assert "GetManifestResourceStream(SmartSource)" in branches
@@ -334,7 +348,7 @@ for doc in (lock, system, proposal):
     assert "STASHES GLOBAL ITEM-CATEGORY SOURCE COVERAGE (CURRENT)" in doc
     assert "STASHES PLAYER-FACING LOOT STATUS (CURRENT)" in doc
     assert "STASHES GLOBAL WEIGHT WITH NATIVE CHANCE EXCEPTIONS (CURRENT)" in doc
-print("PASS: six global item-type knobs and full native source coverage, no branch/rank selection")
+print("PASS: six editable native Weight mixer lanes and full source coverage, no branch/rank selection")
 
 # Phase 5: emitted patch parity must be wired into the executable contract.
 # This is a static integration gate, not a claim that the .NET/Wine suite ran.

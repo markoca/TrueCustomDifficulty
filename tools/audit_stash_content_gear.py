@@ -1,173 +1,130 @@
 #!/usr/bin/env python3
-"""Static evidence for optional stash contents and gear; game runtime unverified."""
+"""Current Stash Content Mix/Extra Gear UI and native source contract.
+
+This is static source verification only: no Wine, .NET execution, or
+in-game loot probability can be inferred from these assertions.
+"""
 import json
+import re
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
-source = root / "src" / "TrueCustomDifficulty"
-data = source / "Data"
+src = root / "src/TrueCustomDifficulty"
+data = src / "Data"
 catalog = json.loads((data / "parameters.json").read_text(encoding="utf-8"))
 baseline = json.loads((data / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
-by_id = {p["id"]: p for p in catalog["parameters"]}
-mix = ["loot.stashMix" + v for v in
-       ("Ammo", "Medical", "Food", "Drinks", "Grenades", "Coupons")]
-gear = [f"loot.stashGear{t}{g}" for t in
-        ("Cheap", "Medium", "Expensive") for g in ("Weapon", "Armor")]
-ids = mix + gear
-contract = baseline["special"]["stashContentAndGearProduction"]
-assert len(ids) == 12 and contract["parameterIds"] == ids
-assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 268
-assert all(x in by_id and by_id[x]["tab"] == "stashes" and
-           by_id[x]["control"] == "slider" and
-           by_id[x]["support"]["status"] == "runtime_test_required" for x in ids)
-assert all(by_id[x]["slider"]["min"] == 0 and
-           by_id[x]["slider"]["max"] == 3 and
-           by_id[x]["slider"]["step"] == (.25 if x in mix else 1)
-           for x in ids)
-assert all(by_id[x]["vanilla"]["All"] == (1 if x in mix else 0)
-           for x in ids)
-writers = (source / "Services" / "CfgPatchWriterService.cs").read_text(encoding="utf-8")
-tuning = (source / "Services" / "CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
-vm = (source / "ViewModels" / "ParameterViewModel.cs").read_text(encoding="utf-8")
-ui = (source / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
-assert all(f'"{x}"' in tuning and f'"{x}"' in vm and f'"{x}"' in ui for x in ids)
-assert all(f'MarkModifiedStashTuning(modifiedById, "{tier}"' in writers and
-           f'"{tier}", config.TemplateCategories.Count' in writers
-           for tier in ("Cheap", "Medium", "Expensive"))
-assert all(name in writers for name in ("TuneStashSelectionField", "WriteExtraStashGear",
-                                       "StashMixParameterIds", "StashGearParameterIds"))
-assert "Math.Clamp(source * bias, 0.0, 1.0)" in tuning
-assert "StashTuningCurrent(all, biasId, 1)" in tuning
-assert "Source" not in contract or contract["source"] == "GameData/ItemGeneratorPrototypes.cfg"
-for tier, name, n in (("Cheap", "cheapStashProduction", 12),
-                      ("Medium", "mediumStashAmmoProduction", 10),
-                      ("Expensive", "expensiveStashProduction", 19)):
-    assert len(baseline["special"][name]["templateCategories"]) == n
-# Medical entries are source-backed, not a new synthetic inventory pool.
-medical = ["loot.stashMedical" + k + "Bias" for k in
+parameters = {p["id"]: p for p in catalog["parameters"]}
+mix = ["loot.stashMix" + category for category in (
+    "Ammo", "Medical", "Food", "Drinks", "Grenades", "Coupons")]
+gear = [f"loot.stashGear{tier}{kind}" for tier in
+        ("Cheap", "Medium", "Expensive") for kind in ("Weapon", "Armor")]
+medical = ["loot.stashMedical" + kind + "Bias" for kind in
            ("Bandage", "Medkit", "ArmyMedkit", "AntiRad")]
-quantity = ["loot.stash" + k + lim + "Count" for k in
-            ("Medkit", "ArmyMedkit") for lim in ("Min", "Max")]
-med_ids = medical + quantity
-assert baseline["special"]["stashMedicalProduction"]["parameterIds"] == med_ids
-assert all(k in by_id and by_id[k]["tab"] == "stashes" and
-           by_id[k]["support"]["status"] == "runtime_test_required" for k in med_ids)
-assert all(by_id[k]["slider"]["min"] == (-1 if k.endswith("MaxCount") else 0) and
-           by_id[k]["slider"]["max"] == (3 if k in medical else 6) and
-           by_id[k]["slider"]["step"] == (.25 if k in medical else 1)
-           for k in med_ids)
-assert all(by_id[k]["vanilla"]["All"] == (1 if k in medical else 0)
-           for k in med_ids)
-assert all(f'"{k}"' in tuning and f'"{k}"' in vm and f'"{k}"' in ui
-           for k in med_ids)
-assert "TuneStashMedicalCountField" in tuning
-assert "StashMedicalParameterIds.Any(id =>" in tuning
-assert "IsStashMedicalSourceInTier(id, tier)" in tuning
-assert writers.count("TuneStashMedicalCountField(") == 3
-assert 'supported.UnionWith(StashMedicalParameterIds);' in writers
-assert 'bias *= StashTuningCurrent(all, detailId, 1);' in tuning
-smartloot = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashSmartLoot.cs").read_text(encoding="utf-8")
-assert "WriteWorldStashSmartLoot(" in smartloot and "GetOrAddReferencedRoot(" in smartloot
-assert "StashPrototypeSID" in smartloot and "if (disabled)" in smartloot
-assert 'ordinary.Length != 803' in smartloot
-assert 'x.ClueSid == "EmptyInherited"' in smartloot
-assert '02E9BD8341141FEC43FBBB9B6E8F8891/' in (root / "tests" / "LootSpecialGeneratorsContract" / "Program.cs").read_text(encoding="utf-8")
-assert (root / "src/TrueCustomDifficulty/Data/smartloot-regular-world-actor-manifest.csv").is_file()
-assert (root / "src/TrueCustomDifficulty/Data/smartloot-world-source-entries.csv").is_file()
-assert "if (maxCap > 0)" in tuning and "min = max;" in tuning
-# Profile-driven medical suppression must not rely solely on a zero Chance or
-# Weight when a weighted category is left with no eligible positive weights.
-assert "private static bool IsStashMedicalSelectionDisabled(" in tuning
-assert "if (IsStashMedicalSelectionDisabled(itemSid, all))" in tuning
-assert 'if (IsStashMedicalSelectionDisabled(sid, all))' in tuning
-assert tuning.index('if (IsStashMedicalSelectionDisabled(sid, all))') < tuning.index('var minFloor =')
-assert all(sid in tuning for sid in ('"Bandage"', '"Medkit"', '"ArmyMedkit"', '"AntiRad"', '"EcoMedkit"'))
-assert 'if (maxCap == -1)' in tuning
-test = (root / "tests" / "LootSpecialGeneratorsContract" / "Program.cs").read_text(encoding="utf-8")
-assert "VerifyMedicalZeroExclusion();" in test
-assert all(case in test for case in ("global-medical-zero", "bandage-zero-only", "max-zero-overrides-floor"))
+quantity = ["loot.stash" + kind + end + "Count" for kind in
+            ("Medkit", "ArmyMedkit") for end in ("Min", "Max")]
 
-for tier, key in (("Basic", "cheapStashProduction"),
-                  ("Standard", "mediumStashAmmoProduction"),
-                  ("Rare", "expensiveStashProduction")):
-    entries = [row["fields"]["ItemPrototypeSID"]
-               for group in baseline["special"][key]["templateCategories"]
-               for row in group["items"]]
-    assert "Medkit" in entries, tier
-    assert ("ArmyMedkit" in entries) == (tier == "Rare"), tier
-    assert ("AntiRad" in entries) == (tier == "Rare"), tier
-assert all("Medkit" not in p["id"] or p["vanilla"]["All"] in (0, 1)
-           for p in catalog["parameters"] if p["id"] in med_ids)
+assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 268
+assert baseline["special"]["stashContentAndGearProduction"]["parameterIds"] == mix + gear
+assert baseline["special"]["stashMedicalProduction"]["parameterIds"] == medical + quantity
+assert len({*mix, *gear, *medical, *quantity}) == 20
+assert all(parameters[x]["tab"] == "stashes" and
+           parameters[x]["control"] == "slider" for x in mix + gear + medical + quantity)
+for name in mix:
+    p = parameters[name]
+    assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 3, 0.1)
+    assert p["vanilla"]["All"] == 1
+    assert len(p["targets"]) == 2
+    assert "Weight" in p["targets"][0]["path"]
+    assert all("Chance" not in entry["path"] for entry in p["targets"])
+for name in gear:
+    p = parameters[name]
+    assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 3, 1)
+    assert p["vanilla"]["All"] == 0
+for name in medical:
+    p = parameters[name]
+    assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 3, .25)
+for name in quantity:
+    p = parameters[name]
+    assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (
+        -1 if name.endswith("MaxCount") else 0, 6, 1)
 
-# Both native composite editors must remain genuine shared-scale graphs rather
-# than reverting to the former six separate DrawCompactTrack slider cards.
-content_plot = ui.split("private void DrawStashContentMix(", 1)[1].split(
+ui = (src / "Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+mixer = (src / "Controls/AggregateVisualControl.StashBranch.cs").read_text(encoding="utf-8")
+vm = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
+writer = (src / "Services/CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
+assert "DrawStashWeightMixer(dc, new Rect(left, 38.0, width," in ui
+assert "width >= 670.0 ? 262.0 : 496.0" in ui
+assert "=> width >= 700.0 ? 312.0 : 546.0;" in ui
+assert "const double rowPitch = 78.0;" in mixer
+assert "var columns = outer.Width >= 670.0 ? 2 : 1;" in mixer
+assert "AddHorizontalTarget(p," in mixer
+assert "foreach (var stop in new[] { 0.0, 1.0, 3.0 })" in mixer
+assert "p.IsValueModifiedFromReference()" in mixer
+assert "formatted.SetForegroundBrush(accent, 0, digits.Length)" in mixer
+assert "CurrentStashEffectiveState()" in mixer
+assert "GlobalStashDetail(i, status, state)" in mixer
+assert '"WEIGHT OFF · INDEPENDENT CHANCE MAY STILL ROLL"' in mixer
+assert "Normalize(" not in mixer and "percentages" not in mixer
+assert "DrawStashGlobalCoverage(" not in ui + mixer
+assert '"STASH ITEM WEIGHTS"' not in mixer
+assert "DrawSourceKnob(" not in ui.split("private void DrawStashContentMix(", 1)[1].split(
     "private void DrawStashMedicalComposition(", 1)[0]
-gear_plot = ui.split("private void DrawStashGear(", 1)[1].split(
-    "private void DrawCompactStashRewards(", 1)[0]
-assert "DrawCompactTrack(" not in content_plot + gear_plot
-assert "const double rowPitch = 42.0;" in content_plot
-assert "for (var tick = 0; tick <= 3; tick++)" in content_plot
-assert 'DrawStashNumericReadout(dc, $"{p.CurrentNumber:0.##}x"' in content_plot
-assert "p.ReferenceNumber" in content_plot and "AddHorizontalTarget(p" in content_plot
-assert 'RELATIVE SOURCE WEIGHT / CHANCE · NOT STASH DROP %' in content_plot
-assert 'DrawStashGearPlotCell(dc, P(rows[rowIndex].WeaponId)' in gear_plot
-assert 'DrawStashGearPlotCell(dc, P(rows[rowIndex].ArmorId)' in gear_plot
-assert "for (var rowIndex = 0; rowIndex < rows.Length; rowIndex++)" in gear_plot
-assert "for (var step = 0; step <= 3; step++)" in gear_plot
-assert "AddHorizontalTarget(p" in gear_plot
-assert '"StashContentMix" => 376.0' in ui
-assert '"StashGear" => 370.0' in ui
-for document in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md",
-                 "STASH-CONTENT-GEAR-IMPLEMENTATION.md"):
-    assert "bar" in (root / "docs" / document).read_text(encoding="utf-8").lower()
-    assert "dot plot" in (root / "docs" / document).read_text(encoding="utf-8").lower()
+ids_match = re.search(
+    r"private static readonly string\[\] GlobalStashParameterIds\s*=\s*\{(.*?)\};",
+    mixer, re.S)
+assert ids_match, "missing mixer source binding array"
+assert re.findall(r'"(loot\.stashMix[A-Za-z]+)"', ids_match.group(1)) == mix
 
-# The detailed item graph and VANILLA quantity dots have their own
-# independent hit regions and must not overlap the Gear plot controls.
-detail_plot = ui.split("private void DrawStashMedicalComposition(", 1)[1].split(
-    "private void DrawStashMedicalQuantity(", 1)[0]
-quantity_plot = ui.split("private void DrawStashMedicalQuantity(", 1)[1].split(
-    "private void DrawStashGear(", 1)[0]
-assert "DrawCompactTrack(" not in detail_plot
-assert "DrawMedicalCountDots(" in quantity_plot and "DrawCompactTrack(" not in quantity_plot
-assert "AddHorizontalTarget(source" in detail_plot
-assert '"StashMedicalComposition" => 304.0' in ui
-assert '"StashMedicalQuantity" => 290.0' in ui
-assert "VANILLA" in quantity_plot and "0 ITEMS" in quantity_plot and "MAX CAP" in quantity_plot
+assert 'DrawStashGearMode(dc, P(tiers[i].Weapon)' in ui
+assert 'DrawStashGearMode(dc, P(tiers[i].Armor)' in ui
+assert '\"StashGear\" => StashGearHeight(width)' in ui
+assert '\"StashMedicalComposition\" => StashMedicalCompositionHeight(width)' in ui
+assert '\"StashMedicalQuantity\" => StashMedicalQuantityHeight(width)' in ui
+assert 'DrawStashMedicalSourcePreview(dc,' in ui
+assert 'DrawStashQuantityDots(dc,' in ui
+assert '\"0 ITEMS\"' in ui and '\"AUTO\"' in ui
+assert "IsStashMedicalSelectionDisabled(" in writer
+assert "TuneStashMedicalCountField(" in writer
+assert "StashState(all).TuneSelection(" in writer
+assert "StashContentMix" in vm and "independent native Chance rolls" in vm
+assert "StashMedicalComposition" in vm
+for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md",
+            "STASHES-TAB-AND-REDESIGN-PROPOSAL.md",
+            "STASH-CONTENT-GEAR-IMPLEMENTATION.md"):
+    text = (root / "docs" / doc).read_text(encoding="utf-8")
+    assert "STASHES COMPACT RELATIVE WEIGHT MIXER" in text or (
+        doc == "STASH-CONTENT-GEAR-IMPLEMENTATION.md"
+        and "COMPACT STASH WEIGHT MIXER" in text)
+# Keep the source-native writer and regression harness gates: changing
+# the mixer must never silently weaken inventory, actor protection, or
+# per-field Weight/Chance behavior.
+effective = (src / "Services/StashEffectiveState.cs").read_text(encoding="utf-8")
+smart = (src / "Services/CfgPatchWriterService.StashSmartLoot.cs").read_text(encoding="utf-8")
+production = (src / "Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
+program = (root / "tests/LootSpecialGeneratorsContract/Program.cs").read_text(encoding="utf-8")
+assert "public bool MedicalDisabled(string sid)" in effective
+assert "public double TierFactor(string sid)" in effective
+assert "public double ChanceFactor(string sid)" in effective
+assert "public double SelectionFactor(string sid, string field)" in effective
+assert '"Weight" => TierFactor(sid)' in effective
+assert '"Chance" => ChanceFactor(sid)' in effective
+assert "public double SmartSelectionFactor(string sid, string selectionField)" in effective
+assert "SmartSelectionFactor(item.ItemSid, selectionField)" in smart
+assert "StashMixParameterIds.Concat(StashMedicalParameterIds)" in smart
+assert "WriteWorldStashSmartLoot(" in smart
+assert "GetOrAddReferencedRoot(" in smart
+assert "WriteExtraStashGear(" in writer
+assert "MarkModifiedStashTuning(" in production
+assert "VerifyMedicalZeroExclusion();" in program
+assert "VerifyWorldStashSmartLoot();" in program
+assert "VerifyStashEffectiveParity();" in program
+assert "VerifyStashBranchBrowserParity();" in program
+assert "GetFamilyIds(" in ui and '\"StashContentMix\" => new[]' in ui
+# The 463 native groups and 1,124 original item entries are backend
+# parity evidence only. Never report them as a combined game drop chance.
+assert "groups.Count != 463" in mixer
+assert "groups.Sum(x => x.Items.Count) != 1124" in mixer
+assert not re.search(r'new\[\] \{ .*?1\.0 / 6', mixer)
 
-# Literal source fixtures prevent counting an unchanged Chance=1 as
-# a 3x overall spawn rate. This checks the documented math, not the
-# live game's stochastic distribution or C# execution.
-def bounded_chance(source_chance, medical, specific):
-    return min(1.0, max(0.0, source_chance * medical * specific))
-assert bounded_chance(.4, 1, .25) == .1
-assert bounded_chance(1, 1, 3) == 1
-assert bounded_chance(.4, 0, 3) == 0
-
-def medkit_bounds(original_min, original_max, floor, cap):
-    if cap == -1:
-        return 0, 0
-    low = max(original_min, floor) if floor > 0 else original_min
-    high = min(original_max, cap) if cap > 0 else original_max
-    if low > high:
-        low = high if cap > 0 else low
-        high = low
-    return low, high
-assert medkit_bounds(2, 4, 0, 0) == (2, 4)
-assert medkit_bounds(2, 4, 0, 1) == (1, 1)
-assert medkit_bounds(1, 2, 3, 0) == (3, 3)
-assert medkit_bounds(1, 4, 3, 1) == (1, 1)
-assert medkit_bounds(1, 4, 1, -1) == (0, 0)
-
-for p in (source / "Presets").glob("*.json"):
-    document = json.loads(p.read_text(encoding="utf-8"))
-    for key in ids + med_ids:
-        assert document["values"][key] == {
-            "kind": "slider", "number": 1 if key in mix + medical else 0
-        }, (p.name, key)
-for path in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md",
-             "STASH-CONTENT-GEAR-IMPLEMENTATION.md"):
-    assert (root / "docs" / path).is_file(), path
-print("PASS: 20 stash source IDs, 3 production clone writers, graph editor, VANILLA versus 0 ITEMS, medical zero-count fail-safe, and 12 factory profiles.")
-print("NOT RUN: Windows C# production build, Wine chart interactivity or game drop-frequency acceptance.")
+print("PASS: 20 source-backed Stash Content/Gear/Medical IDs; compact 6-lane native Weight editor; 3x2/6x1 geometry and input; Chance kept separate.")
+print("NOT RUN: Windows .NET publish, Wine interaction, real game RNG acceptance.")

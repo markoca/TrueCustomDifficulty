@@ -5908,20 +5908,19 @@ if (not all(token in _stash_phase5 for token in (
     or "public string SmartCount(" not in _stash_engine
     or "effective.SmartCount(" not in _stash_smart
     or "state.SmartCount(" not in _stash_branches
-    or "DrawStashGlobalCoverage(" not in _stash_browser
+    or "DrawStashWeightMixer(" not in _stash_browser
     or "private static int StashCategoryIndex(string sid)" not in _stash_browser
     or "StashEffectiveState.ItemBiasId(sid)" not in _stash_browser
     or "StashEffectiveState.SmartItemBiasId(sid)" not in _stash_browser
     or "groups.Sum(x => x.Items.Count) != 1124" not in _stash_browser
-    or '"STASH ITEM WEIGHTS"' not in _stash_browser
+    or '"RELATIVE WEIGHT · CHANCE REMAINS INDEPENDENT"' not in _stash_browser
     or "GlobalStashStatus(int category, StashEffectiveState state)" not in _stash_browser
     or "GlobalMedicalItems.Select(item => state.ChanceFactor(item.Sid))" not in _stash_browser
     or '"WEIGHT OFF"' not in _stash_browser
     or '"INCREASED"' not in _stash_browser
-    or '"CHANCE CONTROLS ARE SEPARATE"' not in _stash_browser
+    or '"WEIGHT OFF · INDEPENDENT CHANCE MAY STILL ROLL"' not in _stash_browser
     or "public double ChanceFactor(" not in _stash_engine
     or "SmartSelectionFactor(item.ItemSid, selectionField)" not in _stash_smart
-    or '"WEIGHT ' in _stash_browser
     or '"ITEMGEN ' in _stash_browser
     or "_stashBrowserRank" in _stash_browser
     or "NavigateStash(" in _stash_browser
@@ -5933,7 +5932,7 @@ if (not all(token in _stash_phase5 for token in (
                for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))):
     fail("Stashes Phase 5 native browser / writer CFG parity or UI catalog drift")
 else:
-    note("Stashes: six global Weight-only 0..3x knobs; original Chance independent and only authored chance editors exposed. SmartLoot zero-weight/count parity retained; Windows/Wine game acceptance NOT RUN")
+    note("Stashes: one compact 6-lane Weight-only 0..3x mixer; original Chance independent and only authored chance editors exposed. SmartLoot zero-weight/count parity retained; Windows/Wine game acceptance NOT RUN")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
