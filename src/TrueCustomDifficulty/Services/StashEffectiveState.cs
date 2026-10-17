@@ -147,6 +147,34 @@ public sealed class StashEffectiveState
             _ => throw new InvalidDataException("Unknown stash selection field: " + field)
         };
 
+    // Only standard/rare regular ItemGenerator Chance entries; no SmartLoot,
+    // non-matching rank gate, shared clue stash or quest/direct rewards.
+    // Each source row keeps its own authored native probability: one compact
+    // per-category slider scales those probabilities, never averaging them.
+    public static string? TierChanceParameterId(string tier, string sid)
+    {
+        var suffix = ItemBiasId(sid) switch
+        {
+            "loot.stashMixAmmo" => "Ammo",
+            "loot.stashMixMedical" => "Medical",
+            "loot.stashMixFood" => "Food",
+            "loot.stashMixDrinks" => "Drinks",
+            "loot.stashMixGrenades" => "Grenades",
+            "loot.stashMixCoupons" => "Coupons",
+            _ => null
+        };
+        if (suffix is null) return null;
+        return tier switch
+        {
+            "Medium" when suffix is "Medical" or "Drinks" or "Coupons"
+                => "loot.mediumStash" + suffix + "Chance",
+            "Expensive" when suffix is "Ammo" or "Medical" or "Food"
+                or "Drinks" or "Grenades"
+                => "loot.expensiveStash" + suffix + "Chance",
+            _ => null
+        };
+    }
+
     public string TuneSelection(string sid, string field, string raw)
     {
         if (field is not ("Chance" or "Weight")) return raw;
@@ -264,6 +292,14 @@ public sealed class StashEffectiveState
         }
         else throw new InvalidDataException($"Unsupported stash tier {tier}.");
         updated = TuneSelection(sid, field, updated);
+        if (field == "Chance" && TierChanceParameterId(tier, sid) is { } scopedId)
+        {
+            var multiplier = Value(scopedId);
+            if (Math.Abs(multiplier - 1.0) > 0.0000001)
+                updated = FormatLikeSource(
+                    Math.Clamp(Number(updated) * multiplier, 0.0, 1.0),
+                    updated);
+        }
         return TuneCount(item.Fields, field, updated);
     }
 

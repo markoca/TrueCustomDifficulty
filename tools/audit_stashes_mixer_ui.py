@@ -29,6 +29,10 @@ expected = {
         "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
         "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
         "loot.cheapStashGrenadeChance", "loot.cheapStashGrenadeQuantity",
+        "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
+        "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
+        "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
+        "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
         "loot.expensiveStashMoneyChance"],
     "StashMedicalComposition": [
         "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
@@ -42,7 +46,7 @@ expected = {
         "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"],
 }
 ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
-assert len(ids) == len(set(ids)) == 26
+assert len(ids) == len(set(ids)) == 34
 assert set(ids) == set(sum(expected.values(), []))
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for family, expected_ids in expected.items():
@@ -84,7 +88,7 @@ assert "weights.Sum()" not in preview # normalized six source multipliers retire
 assert 'DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",' in content
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in content
 assert "wide ? 415.0 : 569.0, width," in content
-assert "wide ? 72.0 : 116.0" in content
+assert "wide ? 100.0 : 177.0" in content
 
 # One bounded 3x2/6x1 relative-Weight mixer, not six rotary dials
 # and never an invented 100% stash-wide probability.
@@ -196,13 +200,13 @@ mixer_match = re.search(
 )
 assert height_match is not None, "missing StashContentMix measured height"
 assert mixer_match is not None, "missing StashContentMix mixer"
-assert tuple(map(float, height_match.groups())) == (700.0, 645.0, 913.0)
+assert tuple(map(float, height_match.groups())) == (700.0, 637.0, 1019.0)
 assert tuple(map(float, mixer_match.groups())) == (53.0, 146.0, 300.0)
 assert "wide ? 415.0 : 569.0, width," in content
-assert "wide ? 72.0 : 116.0" in content
+assert "wide ? 100.0 : 177.0" in content
 assert "var wide = width >= 670.0;" in content
-assert 645.0 - (575.0 + 56.0) == 14.0
-assert 913.0 - (843.0 + 56.0) == 14.0
+assert 637.0 - (523.0 + 100.0) == 14.0
+assert 1019.0 - (754.0 + 251.0) == 14.0
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -286,7 +290,17 @@ branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.
 csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
 assert 'DrawStashWeightMixer(dc, new Rect(left, 53.0, width,' in content
 assert "StashContentMixHeight(width)" in source
-assert '=> width >= 700.0 ? 645.0 : 913.0;' in source
+assert '"loot.mediumStashMedicalChance"' in source
+assert '"loot.mediumStashCouponsChance"' in source
+assert '"loot.expensiveStashAmmoChance"' in source
+assert '"loot.expensiveStashGrenadesChance"' in source
+assert "TierChanceParameterId(tierName," in coverage
+assert "StashPreviewBaseline.Value, effective, r.Item" in coverage
+assert "V " in coverage and "vanillaX" in coverage
+assert "Math.Clamp(Number(updated) * multiplier, 0.0, 1.0)" in effective
+assert 'StashTierChanceParameterIds.Any(id =>' in tuning
+
+assert '=> width >= 700.0 ? 637.0 : 1019.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
@@ -364,15 +378,15 @@ assert "StashSourceGroups.Value" in tier_preview
 assert "!g.IsSmart && g.Tier == tierName" in tier_preview
 assert "hasWeight[kind] = true" in tier_preview
 assert "hasChance[kind] = true" in tier_preview
-assert "hasWeight[index] || hasChance[index]" in tier_preview
-assert '"CHANCE ONLY"' in tier_preview
-assert '"WEIGHT + CHANCE"' in tier_preview
-assert '"CHANCE-LED · NATIVE SOURCES"' in tier_preview
-assert "expectedKinds" in tier_preview
-assert "SequenceEqual(expectedKinds)" in tier_preview
+assert "hasWeight[k] || hasChance[k]" in tier_preview
+assert '"NATIVE CHANCE"' in tier_preview
+assert '"WEIGHT ONLY"' in tier_preview
+assert '"NATIVE CHANCE"' in tier_preview
+assert "var expected = tierName == \"Medium\"" in tier_preview
+assert "SequenceEqual(expected)" in tier_preview
 assert "100.0 * totals" not in tier_preview
 assert "totals.Sum()" not in tier_preview
-assert "AddHorizontalTarget(" not in tier_preview
+assert "AddHorizontalTarget(parameter," in tier_preview
 assert "CurrentNumber =" not in tier_preview
 assert "DrawStashNativeRollControl(" in coverage
 assert "DrawStashPoolBar(dc, experienced," in coverage

@@ -346,6 +346,7 @@ public sealed partial class CfgPatchWriterService
         }
         supported.Add(uniqueShuffleRoute.ParameterId);
         supported.Add("economy.traderMinBuyCondition");
+        supported.UnionWith(StashTierChanceParameterIds);
         supported.UnionWith(baseline.Special.ListMembership.Select(p => p.ParameterId));
         supported.UnionWith(baseline.Special.SetList.Select(p => p.ParameterId));
         supported.UnionWith(baseline.Special.PsyParameterKeys.Keys);

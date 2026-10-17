@@ -294,100 +294,173 @@ public sealed partial class AggregateVisualControl
                 inside.Width, inside.Height), text, muted, border);
     }
 
-    // Purely informational native source-coverage rows, never sliders or
-    // cross-group probability bars. Standard/Rare are Chance-led by CATEGORY,
-    // while their remaining authored Weight branches remain explicitly visible.
+    // A filled rail is the ACTUAL native per-item Chance (or its min/max
+    // across differently authored rows). The muted tick is the original
+    // authored Vanilla Chance, not a second playable probability.
+    // W-only rows are informational and cannot masquerade as Chance rolls.
     private void DrawStashChanceTier(
         DrawingContext dc, string label, string tierName, int expectedGroups,
-        Rect outer, Brush text, Brush muted, Brush border, Brush panel)
+        Rect outer, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         var groups = StashSourceGroups.Value
             .Where(g => !g.IsSmart && g.Tier == tierName).ToArray();
         if (groups.Length != expectedGroups)
-            throw new InvalidDataException("Stash source groups changed: " + tierName);
+            throw new InvalidDataException("Stash native tier source count drift: " + tierName);
 
         var hasWeight = new bool[GlobalStashCategoryNames.Length];
         var hasChance = new bool[GlobalStashCategoryNames.Length];
         foreach (var group in groups)
         {
             if (group.Field is not ("Weight" or "Chance"))
-                throw new InvalidDataException(
-                    "Unexpected native stash selection field " + group.Field);
+                throw new InvalidDataException("Unknown native stash field " + group.Field);
             foreach (var item in group.Items)
             {
                 var kind = StashCategoryIndex(item.ItemSid);
                 if (kind < 0)
-                    throw new InvalidDataException(
-                        "Unclassified native stash item " + item.ItemSid);
+                    throw new InvalidDataException("Unknown native stash item " + item.ItemSid);
                 if (group.Field == "Weight") hasWeight[kind] = true;
                 else hasChance[kind] = true;
             }
         }
         var present = Enumerable.Range(0, GlobalStashCategoryNames.Length)
-            .Where(index => hasWeight[index] || hasChance[index]).ToArray();
-        // Fail closed instead of displaying a friendly but incorrect tier.
-        var expectedKinds = tierName == "Medium"
+            .Where(k => hasWeight[k] || hasChance[k]).ToArray();
+        var expected = tierName == "Medium"
             ? new[] { 0, 1, 3, 5 }
             : tierName == "Expensive"
                 ? new[] { 0, 1, 2, 3, 4, 5 }
-                : throw new InvalidDataException("Unsupported stash tier preview");
-        if (!present.SequenceEqual(expectedKinds)
-            || tierName == "Medium" && (
-                !hasWeight[0] || hasChance[0]
+                : throw new InvalidDataException("Invalid stash preview tier");
+        if (!present.SequenceEqual(expected)
+            || tierName == "Medium" &&
+               (!hasWeight[0] || hasChance[0]
                 || present.Where(k => k != 0).Any(k => hasWeight[k] || !hasChance[k]))
-            || tierName == "Expensive" && (
-                !hasWeight[0] || !hasChance[0]
+            || tierName == "Expensive" &&
+               (!hasWeight[0] || !hasChance[0]
                 || present.Where(k => k != 0).Any(k => hasWeight[k] || !hasChance[k])))
-            throw new InvalidDataException(
-                "Native stash Weight/Chance coverage changed: " + tierName);
+            throw new InvalidDataException("Native stash Chance/Weight shape drift");
 
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .65),
             new Pen(CloneWithOpacity(border, .61), .9), outer, 4.0, 4.0);
         dc.DrawText(CreateText(label, 10.5, text, FontWeights.Bold),
             new Point(outer.Left + 12.0, outer.Top + 8.0));
-        const string description = "CHANCE-LED · NATIVE SOURCES";
-        var heading = CreateText(description, 9.0, muted, FontWeights.SemiBold,
-            Math.Max(1.0, outer.Width - 130.0));
-        dc.DrawText(heading, new Point(
-            outer.Right - heading.WidthIncludingTrailingWhitespace - 12.0,
-            outer.Top + 9.0));
+        dc.DrawText(CreateText("NATIVE CHANCE", 8.8, muted, FontWeights.SemiBold),
+            new Point(outer.Right - 101.0, outer.Top + 9.0));
 
         var columns = outer.Width >= 670.0 ? present.Length : 2;
         const double inset = 12.0;
         const double gap = 6.0;
-        const double pitch = 37.0;
+        const double pitch = 74.0;
         var cellWidth = Math.Max(1.0,
-            (outer.Width - inset * 2.0 - (columns - 1) * gap) / columns);
+            (outer.Width - 2.0 * inset - (columns - 1) * gap) / columns);
+        var selectedDifficulty = SelectedReferenceDifficulty switch
+        {
+            "Novice" => "Easy", "Stalker" => "Medium",
+            "Veteran" => "Hard", "Master" => "Stalker",
+            _ => "Easy"
+        };
+        var effective = CurrentStashEffectiveState(selectedDifficulty);
+        static string PercentRange(double minimum, double maximum) =>
+            Math.Abs(minimum - maximum) < 0.000001
+                ? $"{maximum * 100.0:0.#}%"
+                : $"{minimum * 100.0:0.#}–{maximum * 100.0:0.#}%";
+
         for (var n = 0; n < present.Length; n++)
         {
             var kind = present[n];
-            var weighted = hasWeight[kind];
-            var chance = hasChance[kind];
-            var tone = StashMixPalette[kind];
+            var rows = groups.Where(g => g.Field == "Chance")
+                .SelectMany(g => g.Items
+                    .Where(item => StashCategoryIndex(item.ItemSid) == kind)
+                    .Select(item => (Group: g, Item: item))).ToArray();
             var x = outer.Left + inset + (n % columns) * (cellWidth + gap);
             var y = outer.Top + 27.0 + (n / columns) * pitch;
-            var tile = new Rect(x, y, cellWidth, 33.0);
+            var cell = new Rect(x, y, cellWidth, 67.0);
+            var tone = StashMixPalette[kind];
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .5),
+                new Pen(CloneWithOpacity(tone, .75), .9), cell, 3.0, 3.0);
+            dc.DrawRectangle(tone, null, new Rect(x + 6.0, y + 6.0, 3.0, 12.0));
+            var name = GlobalStashCategoryNames[kind];
+            dc.DrawText(CreateText(name, 9.1, text, FontWeights.Bold,
+                    Math.Max(1.0, cell.Width - 15.0)),
+                new Point(x + 13.0, y + 4.0));
 
-            // Chance-only = outlined colored card; authored Weight = muted
-            // colored fill. Both fields = tinted + outlined, never a percentage.
-            var fill = weighted
-                ? CloneWithOpacity(tone, .22)
-                : CloneWithOpacity(panel, .35);
-            var outline = chance ? CloneWithOpacity(tone, .75)
-                : CloneWithOpacity(border, .44);
-            dc.DrawRoundedRectangle(fill,
-                new Pen(outline, chance ? 1.1 : .8), tile, 3.0, 3.0);
-            dc.DrawRectangle(tone, null,
-                new Rect(tile.Left + 6.0, tile.Top + 6.0, 3.0, 9.0));
-            dc.DrawText(CreateText(GlobalStashCategoryNames[kind], 9.1,
-                    text, FontWeights.SemiBold, Math.Max(1.0, tile.Width - 19.0)),
-                new Point(tile.Left + 13.0, tile.Top + 3.0));
-            var fieldLabel = weighted && chance ? "WEIGHT + CHANCE"
-                : weighted ? "WEIGHT" : "CHANCE ONLY";
-            dc.DrawText(CreateText(fieldLabel, 8.6, muted,
-                    FontWeights.SemiBold, Math.Max(1.0, tile.Width - 15.0)),
-                new Point(tile.Left + 8.0, tile.Top + 18.0));
+            if (rows.Length == 0)
+            {
+                // Standard Ammo has a real Weight source, but no authored
+                // percentage. A neutral rail never claims an invented odds.
+                dc.DrawText(CreateText("WEIGHT ONLY", 9.1, muted,
+                        FontWeights.SemiBold),
+                    new Point(x + 8.0, y + 25.0));
+                dc.DrawLine(new Pen(CloneWithOpacity(border, .7), 3.0),
+                    new Point(x + 8.0, y + 46.0),
+                    new Point(cell.Right - 8.0, y + 46.0));
+                continue;
+            }
+
+            var id = StashEffectiveState.TierChanceParameterId(
+                tierName, rows[0].Item.ItemSid);
+            if (tierName == "Expensive" && kind == 5)
+                id = "loot.expensiveStashMoneyChance";
+            if (id is null || rows.Any(r =>
+                    (StashEffectiveState.TierChanceParameterId(tierName,
+                        r.Item.ItemSid) ?? (tierName == "Expensive" && kind == 5
+                            ? "loot.expensiveStashMoneyChance" : "")) != id))
+                throw new InvalidDataException("Unmapped tier-native Chance " + name);
+            var parameter = P(id) ?? throw new InvalidDataException(
+                "Missing live stash Chance control " + id);
+            var sourceValues = rows.Select(r =>
+                StashEffectiveState.Number(r.Item.SourceRaw)).ToArray();
+            var activeValues = rows.Select(r =>
+                StashEffectiveState.Number(r.Group.EffectiveSelection(
+                    StashPreviewBaseline.Value, effective, r.Item))).ToArray();
+            var baseMin = sourceValues.Min();
+            var baseMax = sourceValues.Max();
+            var nowMin = activeValues.Min();
+            var nowMax = activeValues.Max();
+            var changed = parameter.IsControlEnabled &&
+                parameter.IsValueModifiedFromReference();
+            var currentText = PercentRange(nowMin, nowMax);
+            var currentLabel = CreateText(currentText, 9.6,
+                changed ? accent : text, FontWeights.Bold,
+                Math.Max(1.0, cell.Width - 14.0));
+            dc.DrawText(currentLabel, new Point(x + 8.0, y + 21.0));
+
+            var rail = new Rect(x + 9.0, y + 42.0,
+                Math.Max(1.0, cell.Width - 18.0), 5.0);
+            var trackY = rail.Top + rail.Height / 2.0;
+            var vanillaX = rail.Left + rail.Width * baseMax;
+            var nativeX = rail.Left + rail.Width * nowMax;
+            dc.DrawLine(new Pen(CloneWithOpacity(border, .9), 3.6),
+                new Point(rail.Left, trackY), new Point(rail.Right, trackY));
+            dc.DrawLine(new Pen(CloneWithOpacity(tone, .95), 3.6),
+                new Point(rail.Left, trackY), new Point(nativeX, trackY));
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .9), 1.5),
+                new Point(vanillaX, rail.Top - 4.0),
+                new Point(vanillaX, rail.Bottom + 4.0));
+            var hovered = parameter.IsControlEnabled &&
+                _hoverTarget?.Kind == HitKind.Horizontal
+                && ReferenceEquals(_hoverTarget.Parameter, parameter);
+            dc.DrawEllipse(panel, new Pen(hovered ? Brushes.White : tone, 1.6),
+                new Point(nativeX, trackY), 3.4, 3.4);
+            // The small lower label always shows the actual source-native
+            // Vanilla range, not its separate 1× factor.
+            dc.DrawText(CreateText("V " + PercentRange(baseMin, baseMax),
+                    8.5, muted, FontWeights.SemiBold,
+                    Math.Max(1.0, cell.Width - 16.0)),
+                new Point(x + 8.0, y + 50.0));
+
+            // For the scope-specific multipliers native maximum is 100%
+            // except Standard Coupons, whose 10% native value is scaled
+            // 0..10x to expose a truthful 0..100% per-entry Chance.
+            // For Rare coupons keep the existing absolute Chance parameter.
+            var nativeMax = baseMax <= 0.0000001 ? 1.0 : baseMax;
+            var hitMin = 0.0;
+            var hitMax = tierName == "Expensive" && kind == 5
+                ? 1.0 : 1.0 / nativeMax;
+            AddHorizontalTarget(parameter,
+                new Rect(rail.Left - 5.0, rail.Top - 8.0,
+                    rail.Width + 10.0, rail.Height + 16.0),
+                rail, hitMin, hitMax);
         }
     }
+
 
 }

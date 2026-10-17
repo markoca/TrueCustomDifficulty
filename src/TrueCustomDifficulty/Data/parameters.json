@@ -7468,6 +7468,366 @@
       "exposeInUi": false
     },
     {
+      "id": "loot.mediumStashMedicalChance",
+      "tab": "stashes",
+      "group": "Stash Content",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Multiplier of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
+          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+        ]
+      },
+      "exposeInUi": true,
+      "label": "Standard medical Chance",
+      "description": "Source-native Bandage and Medkit source Chance entries, originally 40%/100% across branches. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GamePass_Stash_ItemGenerator_Common_Var1 and approved tier wrappers",
+          "path": "ItemGenerator[*].PossibleItems[*].Chance for Medical entries only, including native rank/difficulty gates",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
+      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+    },
+    {
+      "id": "loot.mediumStashDrinksChance",
+      "tab": "stashes",
+      "group": "Stash Content",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Multiplier of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
+          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+        ]
+      },
+      "exposeInUi": true,
+      "label": "Standard drinks Chance",
+      "description": "Source-native Vodka and Energetic source Chance entries, originally 50%/100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GamePass_Stash_ItemGenerator_Common_Var1 and approved tier wrappers",
+          "path": "ItemGenerator[*].PossibleItems[*].Chance for Drinks entries only, including native rank/difficulty gates",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
+      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+    },
+    {
+      "id": "loot.mediumStashCouponsChance",
+      "tab": "stashes",
+      "group": "Stash Content",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Multiplier of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
+          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+        ]
+      },
+      "exposeInUi": true,
+      "label": "Standard coupons Chance",
+      "description": "Source-native Rank-gated coupon reward source Chance, originally 10%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "slider": {
+        "min": 0,
+        "max": 10,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GamePass_Stash_ItemGenerator_Common_Var1 and approved tier wrappers",
+          "path": "ItemGenerator[*].PossibleItems[*].Chance for Coupons entries only, including native rank/difficulty gates",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
+      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+    },
+    {
+      "id": "loot.expensiveStashAmmoChance",
+      "tab": "stashes",
+      "group": "Stash Content",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Multiplier of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
+          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+        ]
+      },
+      "exposeInUi": true,
+      "label": "Rare ammo Chance",
+      "description": "Source-native Newbie ammo Chance entries, originally 50%/100%; other ranks use Weight and remain unaffected. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GamePass_Stash_ItemGenerator_Rare and approved tier wrappers",
+          "path": "ItemGenerator[*].PossibleItems[*].Chance for Ammo entries only, including native rank/difficulty gates",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
+      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+    },
+    {
+      "id": "loot.expensiveStashMedicalChance",
+      "tab": "stashes",
+      "group": "Stash Content",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Multiplier of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
+          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+        ]
+      },
+      "exposeInUi": true,
+      "label": "Rare medical Chance",
+      "description": "Source-native Bandage, Medkit, AntiRad and ArmyMedkit source Chance entries, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GamePass_Stash_ItemGenerator_Rare and approved tier wrappers",
+          "path": "ItemGenerator[*].PossibleItems[*].Chance for Medical entries only, including native rank/difficulty gates",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
+      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+    },
+    {
+      "id": "loot.expensiveStashFoodChance",
+      "tab": "stashes",
+      "group": "Stash Content",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Multiplier of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
+          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+        ]
+      },
+      "exposeInUi": true,
+      "label": "Rare food Chance",
+      "description": "Source-native CannedFood source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GamePass_Stash_ItemGenerator_Rare and approved tier wrappers",
+          "path": "ItemGenerator[*].PossibleItems[*].Chance for Food entries only, including native rank/difficulty gates",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
+      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+    },
+    {
+      "id": "loot.expensiveStashDrinksChance",
+      "tab": "stashes",
+      "group": "Stash Content",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Multiplier of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
+          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+        ]
+      },
+      "exposeInUi": true,
+      "label": "Rare drinks Chance",
+      "description": "Source-native Energetic source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GamePass_Stash_ItemGenerator_Rare and approved tier wrappers",
+          "path": "ItemGenerator[*].PossibleItems[*].Chance for Drinks entries only, including native rank/difficulty gates",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
+      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+    },
+    {
+      "id": "loot.expensiveStashGrenadesChance",
+      "tab": "stashes",
+      "group": "Stash Content",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Multiplier of source-native Chance"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Scales only authored per-item Chance rows in this regular stash tier; original entry-specific Chance fields and rank/difficulty eligibility remain distinct.",
+          "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
+        ]
+      },
+      "exposeInUi": true,
+      "label": "Rare grenades Chance",
+      "description": "Source-native RGD-5 source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
+      "slider": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GamePass_Stash_ItemGenerator_Rare and approved tier wrappers",
+          "path": "ItemGenerator[*].PossibleItems[*].Chance for Grenades entries only, including native rank/difficulty gates",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
+      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+    },
+    {
       "id": "loot.expensiveStashMoneyChance",
       "tab": "stashes",
       "group": "Stash Content",

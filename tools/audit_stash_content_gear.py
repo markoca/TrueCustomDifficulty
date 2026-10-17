@@ -23,7 +23,7 @@ medical = ["loot.stashMedical" + kind + "Bias" for kind in
 quantity = ["loot.stash" + kind + end + "Count" for kind in
             ("Medkit", "ArmyMedkit") for end in ("Min", "Max")]
 
-assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 268
+assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 276
 assert baseline["special"]["stashContentAndGearProduction"]["parameterIds"] == mix + gear
 assert baseline["special"]["stashMedicalProduction"]["parameterIds"] == medical + quantity
 assert len({*mix, *gear, *medical, *quantity}) == 20
@@ -65,23 +65,23 @@ assert "DrawStashBasicNativePools(dc," in ui
 assert '"RGD-5 AMOUNT"' in ui
 assert "percentage: false" in ui
 assert "wide ? 146.0 : 300.0" in ui
-assert "=> width >= 700.0 ? 645.0 : 913.0;" in ui
+assert "=> width >= 700.0 ? 637.0 : 1019.0;" in ui
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in ui
-assert "wide ? 72.0 : 116.0" in ui
+assert "wide ? 100.0 : 177.0" in ui
 assert "private void DrawStashChanceTier(" in mixer
 tier_preview = mixer.split("private void DrawStashChanceTier(", 1)[1]
 assert "StashSourceGroups.Value" in tier_preview
 assert "!g.IsSmart && g.Tier == tierName" in tier_preview
 assert "hasWeight[kind] = true" in tier_preview
 assert "hasChance[kind] = true" in tier_preview
-assert "hasWeight[index] || hasChance[index]" in tier_preview
-assert '"WEIGHT + CHANCE"' in tier_preview
-assert '"CHANCE ONLY"' in tier_preview
-assert '"CHANCE-LED · NATIVE SOURCES"' in tier_preview
-assert '"CHANCE-LED · NATIVE SOURCES"' in tier_preview
+assert "hasWeight[k] || hasChance[k]" in tier_preview
+assert '"WEIGHT ONLY"' in tier_preview
+assert '"NATIVE CHANCE"' in tier_preview
+assert '"NATIVE CHANCE"' in tier_preview
+assert '"NATIVE CHANCE"' in tier_preview
 assert "100.0 * totals" not in tier_preview
-assert "TierField(" not in tier_preview
-assert "AddHorizontalTarget(" not in tier_preview
+assert "EffectiveSelection(" in tier_preview
+assert "AddHorizontalTarget(parameter," in tier_preview
 assert "const double cardHeight = 146.0;" in mixer
 assert "BasicVisibleWeightKinds = { 1, 2, 3, 5 }" in mixer
 assert "previewGroups.Where(g => g is not null)" in mixer
@@ -115,7 +115,7 @@ assert '\"0 ITEMS\"' in ui and '\"AUTO\"' in ui
 assert "IsStashMedicalSelectionDisabled(" in writer
 assert "TuneStashMedicalCountField(" in writer
 assert "StashState(all).TuneSelection(" in writer
-assert "StashContentMix" in vm and "independent native Chance rolls" in vm
+assert "StashContentMix" in vm and "source-native per-entry Chance controls" in vm
 assert "StashMedicalComposition" in vm
 for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md",
             "STASHES-TAB-AND-REDESIGN-PROPOSAL.md",

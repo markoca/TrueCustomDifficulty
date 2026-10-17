@@ -4626,17 +4626,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         DrawStashChanceTier(dc, "STANDARD", "Medium", 10,
             new Rect(left, wide ? 415.0 : 569.0, width,
-                wide ? 72.0 : 116.0), text, muted, border, panel);
+                wide ? 100.0 : 177.0), text, muted, border, accent, panel);
         DrawStashChanceTier(dc, "RARE", "Expensive", 19,
-            new Rect(left, wide ? 495.0 : 693.0, width,
-                wide ? 72.0 : 142.0), text, muted, border, panel);
-
-        var couponWidth = Math.Min(360.0, Math.Max(1.0, width - 28.0));
-        DrawStashNativeRollControl(dc, "loot.expensiveStashMoneyChance",
-            "RARE COUPON CHANCE", 5,
-            new Rect(left + width - couponWidth - 14.0,
-                wide ? 575.0 : 843.0, couponWidth, 56.0),
-            text, muted, border, accent, panel);
+            new Rect(left, wide ? 523.0 : 754.0, width,
+                wide ? 100.0 : 251.0), text, muted, border, accent, panel);
     }
 
     // Medical biases are source-editable tracks; a separate, noninteractive
@@ -6890,7 +6883,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 645.0 : 913.0;
+        => width >= 700.0 ? 637.0 : 1019.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)
@@ -6979,6 +6972,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
                 "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
                 "loot.cheapStashGrenadeChance", "loot.cheapStashGrenadeQuantity",
+                "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
+                "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
+                "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
+                "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
                 "loot.expensiveStashMoneyChance"
             },
             "StashMedicalComposition" => new[]

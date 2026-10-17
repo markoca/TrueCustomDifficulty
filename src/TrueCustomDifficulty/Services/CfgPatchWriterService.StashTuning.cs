@@ -17,6 +17,15 @@ public sealed partial class CfgPatchWriterService
         "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons"
     };
 
+    private static readonly string[] StashTierChanceParameterIds =
+    {
+        "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
+        "loot.mediumStashCouponsChance",
+        "loot.expensiveStashAmmoChance", "loot.expensiveStashMedicalChance",
+        "loot.expensiveStashFoodChance", "loot.expensiveStashDrinksChance",
+        "loot.expensiveStashGrenadesChance"
+    };
+
     private static readonly string[] StashMedicalParameterIds =
     {
         "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
@@ -45,6 +54,10 @@ public sealed partial class CfgPatchWriterService
     private static bool HasStashTuningChange(
         IReadOnlyDictionary<string, ParameterViewModel> modified, string tier)
         => StashMixParameterIds.Any(modified.ContainsKey)
+           || StashTierChanceParameterIds.Any(id =>
+               id.StartsWith(tier == "Medium" ? "loot.mediumStash"
+                   : tier == "Expensive" ? "loot.expensiveStash" : "loot.cheapStash",
+                   StringComparison.Ordinal) && modified.ContainsKey(id))
            || StashMedicalParameterIds.Any(id =>
                IsStashMedicalSourceInTier(id, tier) && modified.ContainsKey(id))
            || modified.ContainsKey($"loot.stashGear{tier}Weapon")
@@ -84,6 +97,11 @@ public sealed partial class CfgPatchWriterService
     {
         foreach (var id in StashMixParameterIds)
             if (modified.ContainsKey(id)) written.Add(id);
+        foreach (var id in StashTierChanceParameterIds)
+            if (id.StartsWith(tier == "Medium" ? "loot.mediumStash"
+                : tier == "Expensive" ? "loot.expensiveStash" : "loot.cheapStash",
+                StringComparison.Ordinal) && modified.ContainsKey(id))
+                written.Add(id);
         foreach (var id in StashMedicalParameterIds)
             if (IsStashMedicalSourceInTier(id, tier) && modified.ContainsKey(id))
                 written.Add(id);

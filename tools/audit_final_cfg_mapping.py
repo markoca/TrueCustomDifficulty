@@ -161,8 +161,8 @@ def main():
     baseline = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
     code = WRITER_PATH.read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
-    require(len(definitions) == len(catalog["parameters"]) == 268, "268 unique CFG source IDs expected")
-    require(baseline["supportedParameterCount"] == 268, "writer expected coverage drift")
+    require(len(definitions) == len(catalog["parameters"]) == 276, "276 unique CFG source IDs expected")
+    require(baseline["supportedParameterCount"] == 276, "writer expected coverage drift")
     require(not baseline["deferredParameterIds"], "deferred production parameters")
     require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.0.5", "source/game baseline mismatch")
     require(set(catalog["difficultyProfiles"]) == set(SIDS), "difficulty baseline drift")
@@ -253,7 +253,7 @@ def main():
     inert = []
     for name in NAMES:
         doc = json.loads((PRESETS / (name + ".json")).read_text(encoding="utf-8"))
-        require(len(doc["values"]) == 268, "factory catalog source count drift " + name)
+        require(len(doc["values"]) == 276, "factory catalog source count drift " + name)
         sid = SIDS[doc["referenceDifficulty"]]
         for pid, p in definitions.items():
             if pid not in direct:
