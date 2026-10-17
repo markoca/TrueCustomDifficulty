@@ -29,7 +29,7 @@ if __name__ == '__main__':
     if len(rows) != 831 or len({r['ActorSID'] for r in rows}) != 831:
         sys.exit('Unexpected regular stash inventory count or duplicate actor SID')
     buf = io.StringIO(newline='')
-    writer = csv.DictWriter(buf, fieldnames=['ActorSID','Region','RegionEvidence','OriginalItemGeneratorSIDs','X','Y','Z'], lineterminator='\\n')
+    writer = csv.DictWriter(buf, fieldnames=['ActorSID','Region','RegionEvidence','OriginalItemGeneratorSIDs','X','Y','Z'], lineterminator='\n')
     writer.writeheader()
     writer.writerows(rows)
     text = buf.getvalue()
