@@ -4582,6 +4582,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // A single compact 6-channel Weight mixer, borrowing the independent
     // source-scale grammar of Survival's Ammo Distribution, NEVER its
     // per-pool percent composition. These are not one shared stash pool.
+    // BASIC is the visual home for the six GLOBAL Weight settings; the
+    // source-side classification below remains exact for Standard and Rare.
+    // This grouping changes neither tier-specific applicability nor CFG.
     private void DrawStashContentMix(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -4589,22 +4592,39 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawHeader(dc, "STASH CONTENT MIX", "", text, muted, accent);
         var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
         var left = (ActualWidth - width) / 2.0;
-        DrawStashWeightMixer(dc, new Rect(left, 38.0, width,
-                width >= 670.0 ? 262.0 : 496.0),
+        var wide = width >= 670.0;
+
+        DrawText(dc, "BASIC  ·  WEIGHT MIX",
+            new Point(left + 13.0, 37.0), 10.7, text, FontWeights.Bold);
+        var scope = CreateText("WEIGHT APPLIES TO ALL TIERS",
+            9.0, muted, FontWeights.SemiBold,
+            Math.Max(1.0, width - 190.0));
+        dc.DrawText(scope, new Point(
+            left + width - scope.WidthIncludingTrailingWhitespace - 13.0, 39.0));
+
+        DrawStashWeightMixer(dc, new Rect(left, 53.0, width,
+                wide ? 262.0 : 496.0), text, muted, border, accent, panel);
+
+        // Real authored Chance fields: one Basic grenade roll and one Rare
+        // coupon roll. No broad category-wide Chance editor is invented.
+        var chanceWidth = Math.Min(360.0, Math.Max(1.0, width - 28.0));
+        DrawStashNativeChanceControl(dc, "loot.cheapStashGrenadeChance",
+            "BASIC RGD-5 CHANCE", 4,
+            new Rect(left + 14.0, wide ? 321.0 : 555.0,
+                chanceWidth, 56.0), text, muted, border, accent, panel);
+
+        DrawStashChanceTier(dc, "STANDARD", "Medium", 10,
+            new Rect(left, wide ? 385.0 : 620.0, width,
+                wide ? 72.0 : 116.0), text, muted, border, panel);
+
+        DrawStashChanceTier(dc, "RARE", "Expensive", 19,
+            new Rect(left, wide ? 465.0 : 745.0, width,
+                wide ? 140.0 : 216.0), text, muted, border, panel);
+        DrawStashNativeChanceControl(dc, "loot.expensiveStashMoneyChance",
+            "RARE COUPON CHANCE", 5,
+            new Rect(left + width - chanceWidth - 14.0,
+                wide ? 535.0 : 890.0, chanceWidth, 56.0),
             text, muted, border, accent, panel);
-        // Two distinct authored native Chance controls beneath Grenades/Coupons.
-        DrawStashNativeChanceControls(dc, new Rect(left,
-                width >= 670.0 ? 308.0 : 542.0, width,
-                width >= 670.0 ? 58.0 : 118.0),
-            text, muted, border, accent, panel);
-        // One read-only, source-native Weight composition per stash tier;
-        // each bar belongs to ONE identified generator group, not a
-        // fabricated pool pooled across rank/difficulty/Chance entries.
-        var narrowPreview = width < 670.0;
-        DrawStashTierWeightPools(dc, new Rect(left,
-                width >= 670.0 ? 378.0 : 672.0, width,
-                narrowPreview ? 302.0 : 244.0),
-            text, muted, border, panel);
     }
 
     // Medical biases are source-editable tracks; a separate, noninteractive
@@ -6864,7 +6884,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 634.0 : 986.0;
+        => width >= 700.0 ? 619.0 : 975.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)

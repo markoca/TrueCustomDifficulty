@@ -5909,18 +5909,18 @@ if (not all(token in _stash_phase5 for token in (
     or "effective.SmartCount(" not in _stash_smart
     or "state.SmartCount(" not in _stash_branches
     or "DrawStashWeightMixer(" not in _stash_browser
-    or "DrawStashTierWeightPools(" not in _stash_browser
-    or "!g.IsSmart && g.Tier == tier.SourceTier" not in _stash_browser
+    or "DrawStashChanceTier(" not in _stash_browser
+    or "!g.IsSmart && g.Tier == tierName" not in _stash_browser
     or "hasWeight[kind] = true" not in _stash_browser
     or "hasChance[kind] = true" not in _stash_browser
     or '"CHANCE ONLY"' not in _stash_browser
-    or '"STASH CONTENT BY TIER"' not in _stash_browser
-    or '"WEIGHT = SCALAR · OUTLINED = INDEPENDENT CHANCE · NOT DROP ODDS"' not in _stash_browser
+    or '"CHANCE-LED · NATIVE SOURCES"' not in _stash_browser
+    or '"WEIGHT + CHANCE"' not in _stash_browser
     or "private static int StashCategoryIndex(string sid)" not in _stash_browser
     or "StashEffectiveState.ItemBiasId(sid)" not in _stash_browser
     or "StashEffectiveState.SmartItemBiasId(sid)" not in _stash_browser
     or "groups.Sum(x => x.Items.Count) != 1124" not in _stash_browser
-    or '"RELATIVE WEIGHT · CHANCE REMAINS INDEPENDENT"' not in _stash_browser
+    or '"WEIGHT APPLIES TO ALL TIERS"' not in (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
     or "GlobalStashStatus(int category, StashEffectiveState state)" not in _stash_browser
     or "GlobalMedicalItems.Select(item => state.ChanceFactor(item.Sid))" not in _stash_browser
     or '"WEIGHT OFF"' not in _stash_browser
@@ -5939,7 +5939,7 @@ if (not all(token in _stash_phase5 for token in (
                for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))):
     fail("Stashes Phase 5 native browser / writer CFG parity or UI catalog drift")
 else:
-    note("Stashes: six Weight-only 0..3x lanes and three tier-wide native ItemGenerator category-presence strips (Weight distinguished from Chance); SmartLoot remains independent. Windows/Wine game acceptance NOT RUN")
+    note("Stashes: six global Weight lanes displayed under Basic, two true Chance controls, Standard/Rare source-native status cards; SmartLoot stays independent. Windows/Wine/game acceptance NOT RUN")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

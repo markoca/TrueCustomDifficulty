@@ -122,97 +122,82 @@ public sealed partial class AggregateVisualControl
     }
 
 
-    // Only two independent native Chance controls: Basic RGD-5 and Rare coupons.
-    // Neither belongs to the six global source Weight multipliers.
-    private void DrawStashNativeChanceControls(
-        DrawingContext dc, Rect outer, Brush text, Brush muted,
-        Brush border, Brush accent, Brush panel)
+    // Source-authored Chance: scoped to the eligible native Basic grenade /
+    // Rare coupon branch. These are not global item-type drop probabilities.
+    private void DrawStashNativeChanceControl(
+        DrawingContext dc, string id, string label, int category,
+        Rect card, Brush text, Brush muted, Brush border,
+        Brush accent, Brush panel)
     {
-        var columns = outer.Width >= 670.0 ? 2 : 1;
-        const double inset = 14.0;
-        const double gap = 16.0;
-        var cellWidth = Math.Max(1.0,
-            (outer.Width - 2.0 * inset - (columns - 1) * gap) / columns);
-        var entries = new (string Id, string Label, int Category)[]
+        var p = P(id);
+        if (p is null) return;
+        var enabled = p.IsControlEnabled;
+        var tone = StashMixPalette[category];
+        var x = card.Left;
+        var y = card.Top;
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .54),
+            new Pen(CloneWithOpacity(border, .52), .8), card, 3.0, 3.0);
+        dc.DrawRectangle(tone, null, new Rect(x + 6.0, y + 7.0, 3.0, 13.0));
+        dc.DrawText(CreateText(label, 10.0,
+                enabled ? text : muted, FontWeights.SemiBold,
+                Math.Max(1.0, card.Width - 102.0)),
+            new Point(x + 14.0, y + 5.0));
+
+        var digits = (p.CurrentNumber * 100.0).ToString("0.#",
+            System.Globalization.CultureInfo.InvariantCulture);
+        var modified = enabled && p.IsValueModifiedFromReference();
+        var number = CreateText(digits + "%", modified ? 12.6 : 11.8,
+            enabled ? text : muted, FontWeights.Bold);
+        if (modified) number.SetForegroundBrush(accent, 0, digits.Length);
+        dc.DrawText(number,
+            new Point(card.Right - number.WidthIncludingTrailingWhitespace - 11.0,
+                y + 3.0));
+
+        var rail = new Rect(x + 13.0, y + 26.0,
+            Math.Max(1.0, card.Width - 26.0), 8.0);
+        var mid = rail.Top + rail.Height / 2.0;
+        var currentX = ValueToX(p.CurrentNumber,
+            p.Minimum, p.Maximum, rail, false);
+        var originalX = ValueToX(p.ReferenceNumber,
+            p.Minimum, p.Maximum, rail, false);
+        var hovered = enabled && _hoverTarget?.Kind == HitKind.Horizontal
+            && ReferenceEquals(_hoverTarget.Parameter, p);
+        dc.DrawLine(new Pen(CloneWithOpacity(border, .90), 3.5),
+            new Point(rail.Left, mid), new Point(rail.Right, mid));
+        dc.DrawLine(new Pen(CloneWithOpacity(enabled ? tone : muted,
+                enabled ? .94 : .34), 3.5),
+            new Point(rail.Left, mid), new Point(currentX, mid));
+        dc.DrawLine(new Pen(CloneWithOpacity(muted, .78), 1.5),
+            new Point(originalX, mid - 5.5),
+            new Point(originalX, mid + 5.5));
+        dc.DrawEllipse(panel,
+            new Pen(hovered ? Brushes.White : enabled ? tone : muted,
+                hovered || IsSelected(p) ? 2.3 : 1.5),
+            new Point(currentX, mid), 5.3, 5.3);
+
+        // Full rail first, then 0%/100% hit markers with priority on hover.
+        AddHorizontalTarget(p,
+            new Rect(rail.Left - 6.0, rail.Top - 6.0,
+                rail.Width + 12.0, rail.Height + 11.0),
+            rail, p.Minimum, p.Maximum);
+        foreach (var stop in new[] { 0.0, 1.0 })
         {
-            ("loot.cheapStashGrenadeChance", "BASIC RGD-5 CHANCE", 4),
-            ("loot.expensiveStashMoneyChance", "RARE COUPON CHANCE", 5)
-        };
-
-        for (var i = 0; i < entries.Length; i++)
-        {
-            var p = P(entries[i].Id);
-            if (p is null) continue;
-            var enabled = p.IsControlEnabled;
-            var tone = StashMixPalette[entries[i].Category];
-            var x = outer.Left + inset + (i % columns) * (cellWidth + gap);
-            var y = outer.Top + (i / columns) * 61.0;
-            var card = new Rect(x, y, cellWidth, 56.0);
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .54),
-                new Pen(CloneWithOpacity(border, .52), .8), card, 3.0, 3.0);
-            dc.DrawRectangle(tone, null, new Rect(x + 6.0, y + 7.0, 3.0, 13.0));
-            dc.DrawText(CreateText(entries[i].Label, 10.0,
-                    enabled ? text : muted, FontWeights.SemiBold,
-                    Math.Max(1.0, cellWidth - 102.0)),
-                new Point(x + 14.0, y + 5.0));
-
-            var digits = (p.CurrentNumber * 100.0).ToString("0.#",
-                System.Globalization.CultureInfo.InvariantCulture);
-            var modified = enabled && p.IsValueModifiedFromReference();
-            var number = CreateText(digits + "%", modified ? 12.6 : 11.8,
-                enabled ? text : muted, FontWeights.Bold);
-            if (modified) number.SetForegroundBrush(accent, 0, digits.Length);
-            dc.DrawText(number,
-                new Point(card.Right - number.WidthIncludingTrailingWhitespace - 11.0,
-                    y + 3.0));
-
-            var rail = new Rect(x + 13.0, y + 26.0,
-                Math.Max(1.0, cellWidth - 26.0), 8.0);
-            var mid = rail.Top + rail.Height / 2.0;
-            var currentX = ValueToX(p.CurrentNumber,
-                p.Minimum, p.Maximum, rail, false);
-            var originalX = ValueToX(p.ReferenceNumber,
-                p.Minimum, p.Maximum, rail, false);
-            var hovered = enabled && _hoverTarget?.Kind == HitKind.Horizontal
-                && ReferenceEquals(_hoverTarget.Parameter, p);
-            dc.DrawLine(new Pen(CloneWithOpacity(border, .90), 3.5),
-                new Point(rail.Left, mid), new Point(rail.Right, mid));
-            dc.DrawLine(new Pen(CloneWithOpacity(enabled ? tone : muted,
-                    enabled ? .94 : .34), 3.5),
-                new Point(rail.Left, mid), new Point(currentX, mid));
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, .78), 1.5),
-                new Point(originalX, mid - 5.5),
-                new Point(originalX, mid + 5.5));
-            dc.DrawEllipse(panel,
-                new Pen(hovered ? Brushes.White : enabled ? tone : muted,
-                    hovered || IsSelected(p) ? 2.3 : 1.5),
-                new Point(currentX, mid), 5.3, 5.3);
-
-            // Register long rail before the exact 0% / 100% landmark targets,
-            // which override it during reverse hit testing.
+            var markerX = ValueToX(stop, p.Minimum, p.Maximum, rail, false);
+            var markerHover = hovered && _hoverTarget is { } target
+                && Math.Abs(target.VisualMinimum - stop) < Epsilon
+                && Math.Abs(target.VisualMaximum - stop) < Epsilon;
+            var glyph = CreateText($"{stop * 100.0:0}%", 9.1,
+                markerHover ? Brushes.White : muted, FontWeights.SemiBold);
+            var glyphX = stop == 0.0 ? rail.Left
+                : rail.Right - glyph.WidthIncludingTrailingWhitespace;
+            var glyphY = y + 40.5;
+            dc.DrawText(glyph, new Point(glyphX, glyphY));
             AddHorizontalTarget(p,
-                new Rect(rail.Left - 6.0, rail.Top - 6.0,
-                    rail.Width + 12.0, rail.Height + 11.0),
-                rail, p.Minimum, p.Maximum);
-            foreach (var stop in new[] { 0.0, 1.0 })
-            {
-                var markerX = ValueToX(stop, p.Minimum, p.Maximum, rail, false);
-                var isHovered = hovered && _hoverTarget is { } target
-                    && Math.Abs(target.VisualMinimum - stop) < Epsilon
-                    && Math.Abs(target.VisualMaximum - stop) < Epsilon;
-                var glyph = CreateText($"{stop * 100.0:0}%", 9.1,
-                    isHovered ? Brushes.White : muted, FontWeights.SemiBold);
-                var glyphX = stop == 0.0 ? rail.Left
-                    : rail.Right - glyph.WidthIncludingTrailingWhitespace;
-                var glyphY = y + 40.5;
-                dc.DrawText(glyph, new Point(glyphX, glyphY));
-                AddHorizontalTarget(p,
-                    new Rect(glyphX - 4.0, glyphY - 2.0,
-                        glyph.WidthIncludingTrailingWhitespace + 8.0,
-                        glyph.Height + 4.0),
-                    new Rect(markerX, glyphY, 1.0, Math.Max(1.0, glyph.Height)),
-                    stop, stop);
-            }
+                new Rect(glyphX - 4.0, glyphY - 2.0,
+                    glyph.WidthIncludingTrailingWhitespace + 8.0,
+                    glyph.Height + 4.0),
+                new Rect(markerX, glyphY, 1.0, Math.Max(1.0, glyph.Height)),
+                stop, stop);
         }
     }
 
@@ -224,6 +209,10 @@ public sealed partial class AggregateVisualControl
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
     {
         _ = GlobalStashKindsVerified.Value;
+        var basicGroups = StashSourceGroups.Value
+            .Where(g => !g.IsSmart && g.Tier == "Cheap").ToArray();
+        if (basicGroups.Length != 12 || basicGroups.Sum(g => g.Items.Count) != 52)
+            throw new InvalidDataException("Native Basic stash source coverage changed.");
         var state = CurrentStashEffectiveState();
         var columns = outer.Width >= 670.0 ? 2 : 1;
         const double inset = 14.0;
@@ -326,158 +315,104 @@ public sealed partial class AggregateVisualControl
                 new Point(x + 3.0, y + 62.0));
         }
 
-        // One unobtrusive caveat for the mixer, no repeated six-row table.
-        dc.DrawText(CreateText("RELATIVE WEIGHT · CHANCE REMAINS INDEPENDENT",
-                8.8, muted, FontWeights.SemiBold,
-                Math.Max(1.0, outer.Width - 2.0 * inset)),
-            new Point(outer.Left + inset, outer.Bottom - 15.0));
+        // Scope is explained once in the BASIC header; no redundant footer.
     }
 
 
-    // Tier rows reflect ALL 41 authored ItemGenerator groups rather than one
-    // cherry-picked Weight group. Color slots show native item presence,
-    // not a 100% cross-group probability. Weight and independently-authored
-    // Chance remain distinct even when both occur in the same category.
-    private void DrawStashTierWeightPools(
-        DrawingContext dc, Rect outer,
-        Brush text, Brush muted, Brush border, Brush panel)
+    // Purely informational native source-coverage rows, never sliders or
+    // cross-group probability bars. Standard/Rare are Chance-led by CATEGORY,
+    // while their remaining authored Weight branches remain explicitly visible.
+    private void DrawStashChanceTier(
+        DrawingContext dc, string label, string tierName, int expectedGroups,
+        Rect outer, Brush text, Brush muted, Brush border, Brush panel)
     {
-        _ = GlobalStashKindsVerified.Value;
-        var state = CurrentStashEffectiveState();
-        var compact = outer.Width < 670.0;
-        const double inset = 12.0;
-        const double gap = 5.0;
-        var rowPitch = compact ? 82.0 : 64.0;
-        var tiers = new (string Label, string SourceTier, int GroupCount)[]
-        {
-            ("BASIC", "Cheap", 12),
-            ("STANDARD", "Medium", 10),
-            ("RARE", "Expensive", 19)
-        };
+        var groups = StashSourceGroups.Value
+            .Where(g => !g.IsSmart && g.Tier == tierName).ToArray();
+        if (groups.Length != expectedGroups)
+            throw new InvalidDataException("Stash source groups changed: " + tierName);
 
-        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .70),
-            new Pen(CloneWithOpacity(border, .72), 0.9), outer, 4.0, 4.0);
-        dc.DrawText(CreateText("STASH CONTENT BY TIER", 10.5,
-                text, FontWeights.Bold, Math.Max(1.0, outer.Width - 2.0 * inset)),
-            new Point(outer.Left + inset, outer.Top + 8.0));
-
-        for (var t = 0; t < tiers.Length; t++)
+        var hasWeight = new bool[GlobalStashCategoryNames.Length];
+        var hasChance = new bool[GlobalStashCategoryNames.Length];
+        foreach (var group in groups)
         {
-            var tier = tiers[t];
-            var groups = StashSourceGroups.Value
-                .Where(g => !g.IsSmart && g.Tier == tier.SourceTier).ToArray();
-            if (groups.Length != tier.GroupCount)
+            if (group.Field is not ("Weight" or "Chance"))
                 throw new InvalidDataException(
-                    "Stash tier ItemGenerator inventory changed: " + tier.SourceTier);
-            var hasWeight = new bool[GlobalStashCategoryNames.Length];
-            var hasChance = new bool[GlobalStashCategoryNames.Length];
-            foreach (var group in groups)
+                    "Unexpected native stash selection field " + group.Field);
+            foreach (var item in group.Items)
             {
-                if (group.Field is not ("Weight" or "Chance"))
+                var kind = StashCategoryIndex(item.ItemSid);
+                if (kind < 0)
                     throw new InvalidDataException(
-                        "Unexpected native stash selection field " + group.Field);
-                foreach (var item in group.Items)
-                {
-                    var kind = StashCategoryIndex(item.ItemSid);
-                    if (kind < 0)
-                        throw new InvalidDataException(
-                            "Unclassified stash tier item " + item.ItemSid);
-                    if (group.Field == "Weight")
-                        hasWeight[kind] = true;
-                    else
-                        hasChance[kind] = true;
-                }
-            }
-            var present = Enumerable.Range(0, GlobalStashCategoryNames.Length)
-                .Where(index => hasWeight[index] || hasChance[index]).ToArray();
-            if (present.Length == 0)
-                throw new InvalidDataException("Empty native stash tier " + tier.SourceTier);
-
-            var row = new Rect(outer.Left + inset,
-                outer.Top + 30.0 + t * rowPitch,
-                Math.Max(1.0, outer.Width - 2.0 * inset), rowPitch - 3.0);
-            dc.DrawText(CreateText(tier.Label, 10.2, text,
-                    FontWeights.Bold, Math.Max(1.0, row.Width)),
-                new Point(row.Left, row.Top));
-
-            // Every segment represents exactly ONE present category, NOT
-            // a proportional slice of a combined, unrelated source pool.
-            // Color/opacity reflects its global 0..3x setting only if at
-            // least one real native Weight item exists for this tier.
-            var segmentWidth = Math.Max(1.0,
-                (row.Width - gap * (present.Length - 1)) / present.Length);
-            for (var n = 0; n < present.Length; n++)
-            {
-                var kind = present[n];
-                var segmentLeft = row.Left + n * (segmentWidth + gap);
-                var current = Math.Clamp(
-                    state.Value(GlobalStashParameterIds[kind]), 0.0, 3.0);
-                var ink = StashMixPalette[kind];
-                var weighted = hasWeight[kind];
-                var chance = hasChance[kind];
-                var selectedWeight = weighted && current > Epsilon;
-
-                // Full segment width means source presence, not likelihood.
-                // Chance-only segments have an outline, never a simulated
-                // Weight fill. At Weight 0x an independent Chance still exists.
-                var fill = selectedWeight
-                    ? CloneWithOpacity(ink, 0.40 + 0.60 * current / 3.0)
-                    : CloneWithOpacity(border, .16);
-                var outline = chance
-                    ? CloneWithOpacity(ink, .72)
-                    : CloneWithOpacity(border, .40);
-                var tile = new Rect(segmentLeft, row.Top + 19.0,
-                    segmentWidth, 10.0);
-                dc.DrawRoundedRectangle(fill, new Pen(outline,
-                    chance ? 1.2 : .65), tile, 1.8, 1.8);
-            }
-
-            var legendColumns = compact ? 2 : present.Length;
-            var legendGap = 7.0;
-            var legendCell = Math.Max(1.0,
-                (row.Width - legendGap * (legendColumns - 1)) / legendColumns);
-            for (var n = 0; n < present.Length; n++)
-            {
-                var kind = present[n];
-                var column = n % legendColumns;
-                var line = n / legendColumns;
-                var x = row.Left + column * (legendCell + legendGap);
-                var y = row.Top + 35.0 + (compact ? line * 16.0 : 0.0);
-                var number = state.Value(GlobalStashParameterIds[kind])
-                    .ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
-                var status = hasWeight[kind]
-                    ? (hasChance[kind] ? number + "x + CHANCE" : number + "x")
-                    : "CHANCE ONLY";
-                var statusText = CreateText(status, 8.3, muted,
-                    FontWeights.SemiBold, Math.Max(1.0, legendCell - 13.0));
-
-                dc.DrawRectangle(StashMixPalette[kind], null,
-                    new Rect(x, y + 2.0, 6.0, 7.0));
-                if (compact)
-                {
-                    // On narrow layouts the two-column legend retains one
-                    // line per category. Clip names before status overlap.
-                    dc.DrawText(CreateText(GlobalStashCategoryNames[kind],
-                        8.7, text, FontWeights.SemiBold,
-                        Math.Max(1.0, legendCell - statusText.Width - 16.0)),
-                        new Point(x + 9.0, y));
-                    dc.DrawText(statusText, new Point(
-                        x + legendCell - statusText.WidthIncludingTrailingWhitespace, y));
-                }
-                else
-                {
-                    dc.DrawText(CreateText(GlobalStashCategoryNames[kind],
-                        8.8, text, FontWeights.SemiBold,
-                        Math.Max(1.0, legendCell - 11.0)), new Point(x + 9.0, y));
-                    dc.DrawText(statusText, new Point(x + 1.0, y + 12.0));
-                }
+                        "Unclassified native stash item " + item.ItemSid);
+                if (group.Field == "Weight") hasWeight[kind] = true;
+                else hasChance[kind] = true;
             }
         }
-        dc.DrawText(CreateText(
-                "WEIGHT = SCALAR · OUTLINED = INDEPENDENT CHANCE · NOT DROP ODDS",
-                8.5, muted, FontWeights.SemiBold,
-                Math.Max(1.0, outer.Width - 2.0 * inset)),
-            new Point(outer.Left + inset, outer.Bottom - 17.0));
+        var present = Enumerable.Range(0, GlobalStashCategoryNames.Length)
+            .Where(index => hasWeight[index] || hasChance[index]).ToArray();
+        // Fail closed instead of displaying a friendly but incorrect tier.
+        var expectedKinds = tierName == "Medium"
+            ? new[] { 0, 1, 3, 5 }
+            : tierName == "Expensive"
+                ? new[] { 0, 1, 2, 3, 4, 5 }
+                : throw new InvalidDataException("Unsupported stash tier preview");
+        if (!present.SequenceEqual(expectedKinds)
+            || tierName == "Medium" && (
+                !hasWeight[0] || hasChance[0]
+                || present.Where(k => k != 0).Any(k => hasWeight[k] || !hasChance[k]))
+            || tierName == "Expensive" && (
+                !hasWeight[0] || !hasChance[0]
+                || present.Where(k => k != 0).Any(k => hasWeight[k] || !hasChance[k])))
+            throw new InvalidDataException(
+                "Native stash Weight/Chance coverage changed: " + tierName);
+
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .65),
+            new Pen(CloneWithOpacity(border, .61), .9), outer, 4.0, 4.0);
+        dc.DrawText(CreateText(label, 10.5, text, FontWeights.Bold),
+            new Point(outer.Left + 12.0, outer.Top + 8.0));
+        const string description = "CHANCE-LED · NATIVE SOURCES";
+        var heading = CreateText(description, 9.0, muted, FontWeights.SemiBold,
+            Math.Max(1.0, outer.Width - 130.0));
+        dc.DrawText(heading, new Point(
+            outer.Right - heading.WidthIncludingTrailingWhitespace - 12.0,
+            outer.Top + 9.0));
+
+        var columns = outer.Width >= 670.0 ? present.Length : 2;
+        const double inset = 12.0;
+        const double gap = 6.0;
+        const double pitch = 37.0;
+        var cellWidth = Math.Max(1.0,
+            (outer.Width - inset * 2.0 - (columns - 1) * gap) / columns);
+        for (var n = 0; n < present.Length; n++)
+        {
+            var kind = present[n];
+            var weighted = hasWeight[kind];
+            var chance = hasChance[kind];
+            var tone = StashMixPalette[kind];
+            var x = outer.Left + inset + (n % columns) * (cellWidth + gap);
+            var y = outer.Top + 27.0 + (n / columns) * pitch;
+            var tile = new Rect(x, y, cellWidth, 33.0);
+
+            // Chance-only = outlined colored card; authored Weight = muted
+            // colored fill. Both fields = tinted + outlined, never a percentage.
+            var fill = weighted
+                ? CloneWithOpacity(tone, .22)
+                : CloneWithOpacity(panel, .35);
+            var outline = chance ? CloneWithOpacity(tone, .75)
+                : CloneWithOpacity(border, .44);
+            dc.DrawRoundedRectangle(fill,
+                new Pen(outline, chance ? 1.1 : .8), tile, 3.0, 3.0);
+            dc.DrawRectangle(tone, null,
+                new Rect(tile.Left + 6.0, tile.Top + 6.0, 3.0, 9.0));
+            dc.DrawText(CreateText(GlobalStashCategoryNames[kind], 9.1,
+                    text, FontWeights.SemiBold, Math.Max(1.0, tile.Width - 19.0)),
+                new Point(tile.Left + 13.0, tile.Top + 3.0));
+            var fieldLabel = weighted && chance ? "WEIGHT + CHANCE"
+                : weighted ? "WEIGHT" : "CHANCE ONLY";
+            dc.DrawText(CreateText(fieldLabel, 8.6, muted,
+                    FontWeights.SemiBold, Math.Max(1.0, tile.Width - 15.0)),
+                new Point(tile.Left + 8.0, tile.Top + 18.0));
+        }
     }
 
 }

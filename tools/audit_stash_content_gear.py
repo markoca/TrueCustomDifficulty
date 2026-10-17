@@ -52,22 +52,22 @@ ui = (src / "Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 mixer = (src / "Controls/AggregateVisualControl.StashBranch.cs").read_text(encoding="utf-8")
 vm = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 writer = (src / "Services/CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
-assert "DrawStashWeightMixer(dc, new Rect(left, 38.0, width," in ui
-assert "width >= 670.0 ? 262.0 : 496.0" in ui
-assert "=> width >= 700.0 ? 634.0 : 986.0;" in ui
-assert "DrawStashTierWeightPools(dc, new Rect(left," in ui
-assert "narrowPreview ? 302.0 : 244.0" in ui
-assert "private void DrawStashTierWeightPools(" in mixer
-tier_preview = mixer.split("private void DrawStashTierWeightPools(", 1)[1]
+assert "DrawStashWeightMixer(dc, new Rect(left, 53.0, width," in ui
+assert "wide ? 262.0 : 496.0" in ui
+assert "=> width >= 700.0 ? 619.0 : 975.0;" in ui
+assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in ui
+assert "wide ? 72.0 : 116.0" in ui
+assert "private void DrawStashChanceTier(" in mixer
+tier_preview = mixer.split("private void DrawStashChanceTier(", 1)[1]
 assert "StashSourceGroups.Value" in tier_preview
-assert "!g.IsSmart && g.Tier == tier.SourceTier" in tier_preview
+assert "!g.IsSmart && g.Tier == tierName" in tier_preview
 assert "hasWeight[kind] = true" in tier_preview
 assert "hasChance[kind] = true" in tier_preview
 assert "hasWeight[index] || hasChance[index]" in tier_preview
-assert 'number + "x + CHANCE"' in tier_preview
+assert '"WEIGHT + CHANCE"' in tier_preview
 assert '"CHANCE ONLY"' in tier_preview
-assert '"STASH CONTENT BY TIER"' in tier_preview
-assert '"WEIGHT = SCALAR · OUTLINED = INDEPENDENT CHANCE · NOT DROP ODDS"' in tier_preview
+assert '"CHANCE-LED · NATIVE SOURCES"' in tier_preview
+assert '"CHANCE-LED · NATIVE SOURCES"' in tier_preview
 assert "100.0 * totals" not in tier_preview
 assert "TierField(" not in tier_preview
 assert "AddHorizontalTarget(" not in tier_preview
