@@ -82,7 +82,11 @@ def build_graph():
 
     def add(**kwargs):
         assert set(kwargs) == set(FIELDS), set(kwargs) ^ set(FIELDS)
-        assert len(kwargs["physical_actor_sid"]) == 32
+        physical_sid = kwargs["physical_actor_sid"]
+        assert (len(physical_sid) == 32
+                and all(ch in "0123456789ABCDEF" for ch in physical_sid)), (
+            "Expected one expanded physical ActorSID, not a compound wrapper",
+            kwargs["consumer_provenance"], physical_sid)
         layer = kwargs["source_group_layer"]
         sid = kwargs["canonical_generator_sid"]
         expected_count = len(groups[(layer, sid)]) if layer else 0

@@ -162,7 +162,7 @@ for family, branch, sid, expected_chance in samples:
     assert math.isclose(chance, expected_chance, abs_tol=1e-8)
     assert math.isclose(min(1, max(0, chance * 3)), min(1, chance * 3))
 
-assert "=> 675.0;" in source
+assert "=> _stashBrowserExpanded ? 705.0 : 265.0;" in source
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -232,7 +232,13 @@ csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_te
 assert "public sealed partial class AggregateVisualControl" in source
 assert "public sealed partial class AggregateVisualControl" in browser
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in browser
-assert 'DrawStashBranchBrowser(dc, new Rect(left, 237.0, width, 420.0)' in content
+assert 'DrawStashBranchBrowser(dc, new Rect(left, 265.0, width, 420.0)' in content
+assert 'if (_stashBrowserExpanded)' in content
+assert '"SOURCE DETAILS"' in content and '"HIDE DETAILS"' in content
+assert 'false, ToggleStashBrowser,' in content
+assert 'private bool _stashBrowserExpanded;' in browser
+assert 'InvalidateMeasure();' in browser
+assert '&& _stashBrowserExpanded' in source
 assert 'StashContentMixHeight(width)' in source
 assert 'TryStashBrowserClick(point)' in source
 # Read-only live source inputs must cover the complete TierField pipeline:
@@ -291,7 +297,10 @@ assert "StashEffectiveState.SmartItemBiasId(sid)" in browser
 assert 'if (_dragTarget is null && next >= 0)' in browser
 assert 'if (changed) InvalidateVisual();' in browser
 assert "GetManifestResourceStream(SmartSource)" in branches
-assert "Clone" not in browser and "CurrentNumber =" not in browser
+# CloneWithOpacity is a WPF brush utility, not a generator clone or a value write.
+assert "CurrentNumber =" not in browser
+assert "CloneWithOpacity(" in browser
+assert 'public static string? SmartItemBiasId(string sid) => ItemBiasId(sid);' in effective
 assert "Data\\smartloot-world-source-entries.csv" in csproj
 tier_groups = sum(len(baseline[key]["templateCategories"]) for key in [
     "cheapStashProduction", "mediumStashAmmoProduction", "expensiveStashProduction"])

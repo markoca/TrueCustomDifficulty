@@ -4647,10 +4647,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             cursor += cell + gap;
         }
 
-        // Phase 4: browse actual gated native groups instead of six fixed
-        // cross-branch samples. Navigation is read-only and never persisted.
-        DrawStashBranchBrowser(dc, new Rect(left, 237.0, width, 420.0),
-            text, muted, border, accent, panel);
+        // All six knobs stay global across source families and ranks.
+        // Optional branch inspection must never add extra tuning controls.
+        if (_stashBrowserExpanded)
+            DrawStashBranchBrowser(dc, new Rect(left, 265.0, width, 420.0),
+                text, muted, border, accent, panel);
+        else
+            _stashBrowserTargets.Clear();
+        DrawStashBrowserButton(dc,
+            _stashBrowserExpanded ? "HIDE DETAILS" : "SOURCE DETAILS",
+            new Rect(left + (width - 142.0) / 2.0, 233.0, 142.0, 22.0),
+            false, ToggleStashBrowser, text, muted, border, accent, panel);
     }
 
     // Medical biases are source-editable tracks; a separate, noninteractive
@@ -6218,7 +6225,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Alt+Left/Right switches groups; Alt+Up/Down switches rank.
         // Ctrl+Left/Right changes only SmartLoot prototype, never the
         // selected global Base Preset (or a shadow difficulty).
-        if (Family == "StashContentMix"
+        if (Family == "StashContentMix" && _stashBrowserExpanded
             && e.Key is Key.Left or Key.Right or Key.Up or Key.Down
             && (Keyboard.Modifiers & (ModifierKeys.Alt | ModifierKeys.Control)) != 0
             && ((Keyboard.Modifiers & ModifierKeys.Control) == 0
@@ -6909,7 +6916,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static string FormatCompact(double value)
         => value.ToString(Math.Abs(value) < 1.0 ? "0.###" : "0.##", CultureInfo.InvariantCulture);
 
-    private static double GetDesiredHeight(string family, double width)
+    private double GetDesiredHeight(string family, double width)
         => family switch
         {
             "CouponFlow" => CouponBoardHeight(width),
@@ -6950,8 +6957,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     // The same adaptive column thresholds drive both WPF Measure and Draw,
     // so the last dial row is never clipped by the group host.
-    private static double StashContentMixHeight(double width)
-        => 675.0;
+    private double StashContentMixHeight(double width)
+        => _stashBrowserExpanded ? 705.0 : 265.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)

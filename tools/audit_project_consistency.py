@@ -3723,6 +3723,7 @@ else:
     note(f"XAML StaticResource integrity locked: {len(_xaml_static_refs)} references resolved")
 
 # Stashes navigation contract. Source IDs and factory JSONs are unchanged.
+_stash_vm_text = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
 _stash_sort_start = _stash_vm_text.find('if (parameter.Definition.Tab == "stashes")')
 _stash_sort_body = _stash_vm_text[_stash_sort_start:_stash_vm_text.find("\n        return 100;", _stash_sort_start)]
 _stash_order_check = (
@@ -3741,7 +3742,6 @@ _stash_rows = [p for p in parameters if p.get("group") in _stash_groups]
 _stash_ids = {p["id"] for p in _stash_rows}
 _stash_tabs = [t for t in parameters_doc.get("tabs", []) if t.get("id") == "stashes"]
 _stash_include = parameters_doc.get("scope", {}).get("includedTabs", [])
-_stash_vm_text = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
 _stash_tab_text = (ROOT / "src/TrueCustomDifficulty/ViewModels/TabViewModel.cs").read_text(encoding="utf-8")
 if (len(_stash_rows) != 26 or len(_stash_ids) != 26
     or _stash_tabs != [{"id": "stashes", "label": "Stashes", "order": 55}]

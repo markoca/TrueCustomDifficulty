@@ -87,7 +87,7 @@ public sealed class StashEffectiveState
 
     public static string? ItemBiasId(string sid) => sid switch
     {
-        "Bandage" or "Medkit" or "ArmyMedkit" or "EcoMedkit" or "AntiRad"
+        "Bandage" or "Medkit" or "ArmyMedkit" or "EcoMedkit" or "AntiRad" or "Antirad"
             => "loot.stashMixMedical",
         "Bread" or "Sausage" or "CannedFood" => "loot.stashMixFood",
         "Vodka" or "Water" or "Milk" or "Energetic" or "Beer" => "loot.stashMixDrinks",
@@ -249,16 +249,8 @@ public sealed class StashEffectiveState
         return TuneCount(item.Fields, field, updated);
     }
 
-    public static string? SmartItemBiasId(string sid) => sid switch
-    {
-        "Bandage" or "Medkit" or "ArmyMedkit" or "Antirad" => "loot.stashMixMedical",
-        "Bread" or "Sausage" or "CannedFood" => "loot.stashMixFood",
-        "Water" or "Milk" or "Energetic" or "Vodka" or "Beer" => "loot.stashMixDrinks",
-        "GrenadeRGD5" or "GrenadeF1" => "loot.stashMixGrenades",
-        _ when sid.Length > 1 && sid[0] == 'A'
-            && char.IsDigit(sid[1]) => "loot.stashMixAmmo",
-        _ => null
-    };
+    // One item-type mapping shared by tier and SmartLoot source families.
+    public static string? SmartItemBiasId(string sid) => ItemBiasId(sid);
 
     public double SmartFactor(string sid)
     {
