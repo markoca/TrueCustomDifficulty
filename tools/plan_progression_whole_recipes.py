@@ -9,9 +9,9 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 DATA = Path(__file__).resolve().parents[1] / "src/TrueCustomDifficulty/Data"
-OPEN = re.compile(r"^\\s*([^:]+?)\\s*:\\s*struct\\.begin\\b")
-CLOSE = re.compile(r"^\\s*struct\\.end\\s*$")
-ITEM = re.compile(r"^\\s*ItemPrototypeSID\\s*=\\s*(\\S+)\\s*$", re.M)
+OPEN = re.compile(r"^\s*([^:]+?)\s*:\s*struct\.begin\b")
+CLOSE = re.compile(r"^\s*struct\.end\s*$")
+ITEM = re.compile(r"^\s*ItemPrototypeSID\s*=\s*(\S+)\s*$", re.M)
 
 def read_csv(name):
     with (DATA / name).open(newline="", encoding="utf-8-sig") as f:
