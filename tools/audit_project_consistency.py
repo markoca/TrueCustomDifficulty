@@ -4375,7 +4375,7 @@ _seven_catalog = {p['id']: p for p in parameters_doc['parameters']}
 _seven_methods = {
     'RepairCurve': ('DrawRepairCurve', 324.0, ('economy.repairFriend', 'economy.repairNeutral', 'economy.repairDisaffection', 'economy.repairEnemy')),
     'TradingDashboard': ('DrawTradingDashboard', 273.0, ('economy.buyCondition', 'economy.sellCondition', 'economy.traderMinBuyCondition', 'economy.itemValueFloor')),
-    'StashRewardProfile': ('DrawCompactStashRewards', None, ('loot.cheapStashAmmoQuantity', 'loot.mediumStashAmmoQuantity', 'loot.expensiveStashAmmoQuantity', 'loot.cheapStashGrenadeChance', 'loot.cheapStashGrenadeQuantity', 'loot.expensiveStashMoneyChance')),
+    'StashRewardProfile': ('DrawCompactStashRewards', None, ('loot.cheapStashAmmoQuantity', 'loot.mediumStashAmmoQuantity', 'loot.expensiveStashAmmoQuantity')),
     'SleepingDashboard': ('DrawSleepingDashboard', 370.0, ('survival.sleepEligibilityThreshold', 'survival.minimumSleepHours', 'survival.sleepHealthRestore', 'survival.sleepStaminaRestore')),
     'SevereFatiguePenaltyBoard': ('DrawSevereFatiguePenaltyBoard', 376.0, ('advanced.fatigueMechanics', 'survival.severeFatigueMaxStamina', 'survival.severeFatigueCarryWeight', 'survival.severeFatigueRecoil', 'survival.severeFatigueAimSway', 'survival.severeFatigueDispersion')),
     'RadiationBalance': ('DrawRadiationBalance', None, ('survival.radiationAccumulation', 'survival.radiationRecovery', 'survival.radiationDamage')),
@@ -5909,6 +5909,8 @@ if (not all(token in _stash_phase5 for token in (
     or "effective.SmartCount(" not in _stash_smart
     or "state.SmartCount(" not in _stash_branches
     or "DrawStashWeightMixer(" not in _stash_browser
+    or "DrawStashBasicNativePools(" not in _stash_browser
+    or "DrawStashNativeRollControl(" not in _stash_browser
     or "DrawStashChanceTier(" not in _stash_browser
     or "!g.IsSmart && g.Tier == tierName" not in _stash_browser
     or "hasWeight[kind] = true" not in _stash_browser

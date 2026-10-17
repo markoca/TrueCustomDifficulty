@@ -4579,12 +4579,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         new SolidColorBrush(Color.FromRgb(0xB6, 0x96, 0xE9))  // Coupons
     };
 
-    // A single compact 6-channel Weight mixer, borrowing the independent
-    // source-scale grammar of Survival's Ammo Distribution, NEVER its
-    // per-pool percent composition. These are not one shared stash pool.
-    // BASIC is the visual home for the six GLOBAL Weight settings; the
-    // source-side classification below remains exact for Standard and Rare.
-    // This grouping changes neither tier-specific applicability nor CFG.
+    // BASIC is a visual home for the six GLOBAL category weights.
+    // Exactly as in Breakable Boxes, native pools are shown separately:
+    // percentages mean relative selection INSIDE one native Weight group,
+    // never a synthetic chance to find an item in a physical stash.
     private void DrawStashContentMix(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -4603,27 +4601,41 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             left + width - scope.WidthIncludingTrailingWhitespace - 13.0, 39.0));
 
         DrawStashWeightMixer(dc, new Rect(left, 53.0, width,
-                wide ? 262.0 : 496.0), text, muted, border, accent, panel);
+                wide ? 300.0 : 454.0), text, muted, border, accent, panel);
 
-        // Real authored Chance fields: one Basic grenade roll and one Rare
-        // coupon roll. No broad category-wide Chance editor is invented.
-        var chanceWidth = Math.Min(360.0, Math.Max(1.0, width - 28.0));
-        DrawStashNativeChanceControl(dc, "loot.cheapStashGrenadeChance",
-            "BASIC RGD-5 CHANCE", 4,
-            new Rect(left + 14.0, wide ? 321.0 : 555.0,
-                chanceWidth, 56.0), text, muted, border, accent, panel);
+        // Two demonstrably independent source Weight groups, exactly as the
+        // SNG and NATO compositions in Breakable Boxes. Their shares are
+        // computed from the same embedded CFG snapshot as the writer.
+        DrawStashBasicNativePools(dc,
+            new Rect(left, wide ? 361.0 : 515.0, width, 136.0),
+            text, muted, border, panel);
+
+        // RGD-5's real authored Chance and its separate integer stack amount
+        // stay physically adjacent, and both use their ORIGINAL parameter IDs.
+        var pairGap = 10.0;
+        var pairWidth = (width - 28.0 - pairGap) / 2.0;
+        var pairTop = wide ? 505.0 : 659.0;
+        DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",
+            "RGD-5 CHANCE", 4,
+            new Rect(left + 14.0, pairTop, pairWidth, 56.0),
+            text, muted, border, accent, panel);
+        DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",
+            "RGD-5 AMOUNT", 4,
+            new Rect(left + 14.0 + pairWidth + pairGap, pairTop, pairWidth, 56.0),
+            text, muted, border, accent, panel, percentage: false);
 
         DrawStashChanceTier(dc, "STANDARD", "Medium", 10,
-            new Rect(left, wide ? 385.0 : 620.0, width,
+            new Rect(left, wide ? 569.0 : 723.0, width,
                 wide ? 72.0 : 116.0), text, muted, border, panel);
-
         DrawStashChanceTier(dc, "RARE", "Expensive", 19,
-            new Rect(left, wide ? 465.0 : 745.0, width,
-                wide ? 140.0 : 216.0), text, muted, border, panel);
-        DrawStashNativeChanceControl(dc, "loot.expensiveStashMoneyChance",
+            new Rect(left, wide ? 649.0 : 847.0, width,
+                wide ? 72.0 : 142.0), text, muted, border, panel);
+
+        var couponWidth = Math.Min(360.0, Math.Max(1.0, width - 28.0));
+        DrawStashNativeRollControl(dc, "loot.expensiveStashMoneyChance",
             "RARE COUPON CHANCE", 5,
-            new Rect(left + width - chanceWidth - 14.0,
-                wide ? 535.0 : 890.0, chanceWidth, 56.0),
+            new Rect(left + width - couponWidth - 14.0,
+                wide ? 729.0 : 997.0, couponWidth, 56.0),
             text, muted, border, accent, panel);
     }
 
@@ -4873,7 +4885,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var total = totals.Sum();
         DrawText(dc, caption, new Point(row.Left, row.Top), 9.6,
             text, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, $"TOTAL WEIGHT {total:0.##}",
+        DrawRightAlignedText(dc, "RELATIVE SELECTION",
             new Point(row.Right, row.Top), 9.0, muted, FontWeights.SemiBold);
         var bar = new Rect(row.Left, row.Top + 17.0, row.Width, 11.0);
         dc.DrawRoundedRectangle(CloneWithOpacity(border, .28), null,
@@ -5072,12 +5084,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 ammoEntries[i].Caption, left,
                 92.0 + 43.0 * i, bankWidth,
                 plotLeft, plotWidth, text, muted, border, accent, panel);
-
-        DrawText(dc, "GRENADE AMOUNT", new Point(left + 12.0, 225.0),
-            10.7, muted, FontWeights.Bold);
-        DrawStashRewardGraphRow(dc, P("loot.cheapStashGrenadeQuantity"),
-            "BASIC RGD-5", left, 252.0, bankWidth,
-            plotLeft, plotWidth, text, muted, border, accent, panel);
     }
 
     private void DrawStashRewardGraphRow(
@@ -6858,7 +6864,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "StashMedicalComposition" => StashMedicalCompositionHeight(width),
             "StashMedicalQuantity" => StashMedicalQuantityHeight(width),
             "StashGear" => StashGearHeight(width),
-            "StashRewardProfile" => 310.0,
+            "StashRewardProfile" => 225.0,
             "StaminaCore" => 323.0,
             "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),
@@ -6884,7 +6890,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 619.0 : 975.0;
+        => width >= 700.0 ? 799.0 : 1067.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)
@@ -6972,7 +6978,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             {
                 "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
                 "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
-                "loot.cheapStashGrenadeChance", "loot.expensiveStashMoneyChance"
+                "loot.cheapStashGrenadeChance", "loot.cheapStashGrenadeQuantity",
+                "loot.expensiveStashMoneyChance"
             },
             "StashMedicalComposition" => new[]
             {
@@ -6994,8 +7001,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             {
                 "loot.cheapStashAmmoQuantity",
                 "loot.mediumStashAmmoQuantity",
-                "loot.expensiveStashAmmoQuantity",
-                "loot.cheapStashGrenadeQuantity"
+                "loot.expensiveStashAmmoQuantity"
             },
             "StaminaCore" => new[] {
                 "stamina.maxSP", "stamina.regeneration",

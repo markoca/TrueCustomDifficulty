@@ -53,8 +53,11 @@ mixer = (src / "Controls/AggregateVisualControl.StashBranch.cs").read_text(encod
 vm = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 writer = (src / "Services/CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
 assert "DrawStashWeightMixer(dc, new Rect(left, 53.0, width," in ui
-assert "wide ? 262.0 : 496.0" in ui
-assert "=> width >= 700.0 ? 619.0 : 975.0;" in ui
+assert "DrawStashBasicNativePools(dc," in ui
+assert '"RGD-5 AMOUNT"' in ui
+assert "percentage: false" in ui
+assert "wide ? 300.0 : 454.0" in ui
+assert "=> width >= 700.0 ? 799.0 : 1067.0;" in ui
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in ui
 assert "wide ? 72.0 : 116.0" in ui
 assert "private void DrawStashChanceTier(" in mixer
@@ -71,14 +74,14 @@ assert '"CHANCE-LED · NATIVE SOURCES"' in tier_preview
 assert "100.0 * totals" not in tier_preview
 assert "TierField(" not in tier_preview
 assert "AddHorizontalTarget(" not in tier_preview
-assert "const double rowPitch = 78.0;" in mixer
-assert "var columns = outer.Width >= 670.0 ? 2 : 1;" in mixer
+assert "const double cardHeight = 146.0;" in mixer
+assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in mixer
 assert "AddHorizontalTarget(p," in mixer
-assert "foreach (var stop in new[] { 0.0, 1.0, 3.0 })" in mixer
+assert "foreach (var stop in new[] { p.Minimum, p.Maximum })" in mixer
 assert "p.IsValueModifiedFromReference()" in mixer
-assert "formatted.SetForegroundBrush(accent, 0, digits.Length)" in mixer
-assert "CurrentStashEffectiveState()" in mixer
-assert "GlobalStashDetail(i, status, state)" in mixer
+assert "number.SetForegroundBrush(accent, 0, digits.Length)" in mixer
+assert "CurrentStashEffectiveState()" in ui
+assert "DrawStashBasicNativePools(" in mixer
 assert '"WEIGHT OFF · INDEPENDENT CHANCE MAY STILL ROLL"' in mixer
 assert "Normalize(" not in mixer and "percentages" not in mixer
 assert "DrawStashGlobalCoverage(" not in ui + mixer

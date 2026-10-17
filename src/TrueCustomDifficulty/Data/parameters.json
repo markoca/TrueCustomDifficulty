@@ -6868,7 +6868,7 @@
     {
       "id": "loot.cheapStashGrenadeQuantity",
       "tab": "stashes",
-      "group": "Stashes",
+      "group": "Stash Content",
       "label": "Basic Stash RGD-5 Grenade Amount",
       "description": "Changes how many RGD-5 grenades you receive when a Basic stash successfully rolls its grenade reward. The chance to receive grenades is controlled separately.",
       "control": "slider",

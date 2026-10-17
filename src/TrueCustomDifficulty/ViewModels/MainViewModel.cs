@@ -643,8 +643,9 @@ public sealed class MainViewModel : ObservableObject
         }
 
         // Stash Ammo is no longer a separate special editor. The native
-        // StashRewardProfile aggregates three ammo quantities and RGD-5 count;
-        // the two existing native Chance edits belong to StashContentMix.
+        // Stash Rewards aggregates only three tier ammo stack amounts. The
+        // existing RGD-5 Chance/Amount pair and Rare Coupons Chance are
+        // members of StashContentMix; production/preset IDs do not change.
 
         if (parametersById.TryGetValue("loot.mutant.blindDogChance", out var mutantDropAnchor))
         {
@@ -2111,8 +2112,8 @@ public sealed class MainViewModel : ObservableObject
                 "loot.stashGearExpensiveWeapon" => 334,
                 "loot.stashGearExpensiveArmor" => 335,
 
-                // Three native stash tier ammo quantities plus RGD-5 count; the two
-                // native Chance edits now belong to StashContentMix.
+                // Three native stash tier ammo quantities; RGD-5 Chance/Amount and
+                // Rare Coupon Chance are members of StashContentMix.
                 "loot.cheapStashAmmoQuantity" => 300,
                 "loot.mediumStashAmmoQuantity" => 301,
                 "loot.expensiveStashAmmoQuantity" => 302,

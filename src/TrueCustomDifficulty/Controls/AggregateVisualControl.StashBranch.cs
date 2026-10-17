@@ -122,12 +122,12 @@ public sealed partial class AggregateVisualControl
     }
 
 
-    // Source-authored Chance: scoped to the eligible native Basic grenade /
-    // Rare coupon branch. These are not global item-type drop probabilities.
-    private void DrawStashNativeChanceControl(
+    // Source-authored Basic RGD-5 Chance / integer Amount and Rare coupons.
+    // Same compact native rail, but independent persisted source fields.
+    private void DrawStashNativeRollControl(
         DrawingContext dc, string id, string label, int category,
         Rect card, Brush text, Brush muted, Brush border,
-        Brush accent, Brush panel)
+        Brush accent, Brush panel, bool percentage = true)
     {
         var p = P(id);
         if (p is null) return;
@@ -143,10 +143,12 @@ public sealed partial class AggregateVisualControl
                 Math.Max(1.0, card.Width - 102.0)),
             new Point(x + 14.0, y + 5.0));
 
-        var digits = (p.CurrentNumber * 100.0).ToString("0.#",
-            System.Globalization.CultureInfo.InvariantCulture);
+        var digits = (percentage ? p.CurrentNumber * 100.0 : p.CurrentNumber)
+            .ToString(percentage ? "0.#" : "0",
+                System.Globalization.CultureInfo.InvariantCulture);
         var modified = enabled && p.IsValueModifiedFromReference();
-        var number = CreateText(digits + "%", modified ? 12.6 : 11.8,
+        var number = CreateText(digits + (percentage ? "%" : ""),
+            modified ? 12.6 : 11.8,
             enabled ? text : muted, FontWeights.Bold);
         if (modified) number.SetForegroundBrush(accent, 0, digits.Length);
         dc.DrawText(number,
@@ -175,20 +177,23 @@ public sealed partial class AggregateVisualControl
                 hovered || IsSelected(p) ? 2.3 : 1.5),
             new Point(currentX, mid), 5.3, 5.3);
 
-        // Full rail first, then 0%/100% hit markers with priority on hover.
+        // Full rail first, then real native endpoints with hover priority.
+        // The Amount endpoint is 4 grenades, NEVER an invented 100% drop.
         AddHorizontalTarget(p,
             new Rect(rail.Left - 6.0, rail.Top - 6.0,
                 rail.Width + 12.0, rail.Height + 11.0),
             rail, p.Minimum, p.Maximum);
-        foreach (var stop in new[] { 0.0, 1.0 })
+        foreach (var stop in new[] { p.Minimum, p.Maximum })
         {
             var markerX = ValueToX(stop, p.Minimum, p.Maximum, rail, false);
             var markerHover = hovered && _hoverTarget is { } target
                 && Math.Abs(target.VisualMinimum - stop) < Epsilon
                 && Math.Abs(target.VisualMaximum - stop) < Epsilon;
-            var glyph = CreateText($"{stop * 100.0:0}%", 9.1,
+            var stopValue = percentage ? stop * 100.0 : stop;
+            var glyph = CreateText(
+                $"{stopValue:0}{(percentage ? "%" : "")}", 9.1,
                 markerHover ? Brushes.White : muted, FontWeights.SemiBold);
-            var glyphX = stop == 0.0 ? rail.Left
+            var glyphX = stop <= p.Minimum + Epsilon ? rail.Left
                 : rail.Right - glyph.WidthIncludingTrailingWhitespace;
             var glyphY = y + 40.5;
             dc.DrawText(glyph, new Point(glyphX, glyphY));
@@ -201,9 +206,9 @@ public sealed partial class AggregateVisualControl
         }
     }
 
-    // One mixer frame with 3x2 / 6x1 equally scaled, genuinely editable
-    // source tracks. Equal widths here represent the common 0..3x INPUT
-    // range, not a synthetic six-way selection probability.
+    // Borrow the exact six colored native rotary controls used in Breakable
+    // Boxes, rather than faking one six-item probability pool. These scalars
+    // still edit global Weight across approved stash actors in all tiers.
     private void DrawStashWeightMixer(
         DrawingContext dc, Rect outer,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
@@ -213,111 +218,60 @@ public sealed partial class AggregateVisualControl
             .Where(g => !g.IsSmart && g.Tier == "Cheap").ToArray();
         if (basicGroups.Length != 12 || basicGroups.Sum(g => g.Items.Count) != 52)
             throw new InvalidDataException("Native Basic stash source coverage changed.");
-        var state = CurrentStashEffectiveState();
-        var columns = outer.Width >= 670.0 ? 2 : 1;
-        const double inset = 14.0;
-        const double gap = 16.0;
-        const double rowPitch = 78.0;
-        var cellWidth = Math.Max(1.0,
-            (outer.Width - 2.0 * inset - (columns - 1) * gap) / columns);
 
+        var columns = outer.Width >= 670.0 ? 3 : 2;
+        const double inset = 12.0;
+        const double gap = 8.0;
+        const double cardHeight = 146.0;
+        var cardWidth = Math.Max(1.0,
+            (outer.Width - 2.0 * inset - (columns - 1) * gap) / columns);
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .72),
             new Pen(CloneWithOpacity(border, .68), 1.0), outer, 4.0, 4.0);
 
         for (var i = 0; i < GlobalStashParameterIds.Length; i++)
         {
-            var p = P(GlobalStashParameterIds[i]);
-            var x = outer.Left + inset + (i % columns) * (cellWidth + gap);
-            var y = outer.Top + 13.0 + (i / columns) * rowPitch;
-            var enabled = p?.IsControlEnabled == true;
-            var name = GlobalStashCategoryNames[i];
-            var tone = StashMixPalette[i];
-
-            dc.DrawRectangle(tone, null, new Rect(x, y + 4.0, 3.0, 13.0));
-            dc.DrawText(CreateText(name, 10.8, enabled ? text : muted,
-                    FontWeights.Bold, Math.Max(1.0, cellWidth - 80.0)),
-                new Point(x + 9.0, y + 2.0));
-            if (p is null)
-                continue;
-
-            // The number is the exact persisted multiplier. Only modified
-            // digits grow and turn gold; the x suffix stays neutral.
-            var modified = enabled && p.IsValueModifiedFromReference();
-            var digits = p.CurrentNumber.ToString("0.#",
-                System.Globalization.CultureInfo.InvariantCulture);
-            var formatted = CreateText(digits + "x", modified ? 14.0 : 12.8,
-                enabled ? text : muted, FontWeights.Bold, Math.Max(1.0, cellWidth - 75.0));
-            if (modified)
-                formatted.SetForegroundBrush(accent, 0, digits.Length);
-            dc.DrawText(formatted, new Point(
-                x + cellWidth - formatted.WidthIncludingTrailingWhitespace,
-                y - 1.0));
-
-            var rail = new Rect(x + 10.0, y + 28.0,
-                Math.Max(1.0, cellWidth - 20.0), 10.0);
-            var midY = rail.Top + rail.Height / 2.0;
-            var currentX = ValueToX(p.CurrentNumber, p.Minimum, p.Maximum, rail, false);
-            var referenceX = ValueToX(p.ReferenceNumber, p.Minimum, p.Maximum, rail, false);
-            var hovered = enabled && _hoverTarget?.Kind == HitKind.Horizontal
-                && ReferenceEquals(_hoverTarget.Parameter, p);
-
-            dc.DrawLine(new Pen(CloneWithOpacity(border, .94), 4.5),
-                new Point(rail.Left, midY), new Point(rail.Right, midY));
-            dc.DrawLine(new Pen(CloneWithOpacity(enabled ? tone : muted,
-                    enabled ? .96 : .33), 4.5),
-                new Point(rail.Left, midY), new Point(currentX, midY));
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, .85), 1.8),
-                new Point(referenceX, midY - 7.0),
-                new Point(referenceX, midY + 7.0));
-            dc.DrawEllipse(panel,
-                new Pen(hovered ? Brushes.White : enabled ? tone : muted,
-                    hovered || IsSelected(p) ? 2.6 : 1.6),
-                new Point(currentX, midY), 6.5, 6.5);
-            if (enabled)
-                dc.DrawEllipse(tone, null, new Point(currentX, midY), 2.2, 2.2);
-
-            // Native 0x/1x/3x landmarks have physical click targets and
-            // white hover text, matching the shared Stamina slider contract.
-            // Register the long hit rail FIRST, then the marker targets,
-            // because FindTarget searches in reverse order.
-            AddHorizontalTarget(p,
-                new Rect(rail.Left - 6.0, rail.Top - 10.0,
-                    rail.Width + 12.0, rail.Height + 16.0),
-                rail, p.Minimum, p.Maximum);
-            foreach (var stop in new[] { 0.0, 1.0, 3.0 })
-            {
-                var markerX = ValueToX(stop, p.Minimum, p.Maximum, rail, false);
-                var isHovered = hovered && _hoverTarget is { } hoveredTarget
-                    && Math.Abs(hoveredTarget.VisualMinimum - stop) < Epsilon
-                    && Math.Abs(hoveredTarget.VisualMaximum - stop) < Epsilon;
-                var glyph = CreateText($"{stop:0}x", 9.4,
-                    isHovered ? Brushes.White : muted, FontWeights.SemiBold);
-                var glyphX = stop <= p.Minimum + Epsilon ? rail.Left
-                    : stop >= p.Maximum - Epsilon
-                        ? rail.Right - glyph.WidthIncludingTrailingWhitespace
-                        : markerX - glyph.WidthIncludingTrailingWhitespace / 2.0;
-                var glyphY = y + 43.0;
-                dc.DrawText(glyph, new Point(glyphX, glyphY));
-                AddHorizontalTarget(p,
-                    new Rect(glyphX - 4.0, glyphY - 2.0,
-                        glyph.WidthIncludingTrailingWhitespace + 8.0,
-                        glyph.Height + 4.0),
-                    new Rect(markerX, glyphY, 1.0, Math.Max(1.0, glyph.Height)),
-                    stop, stop);
-            }
-
-            // Inventory/eligibility guidance appears only once, within the
-            // same lane. 0x Weight never claims that Chance rows vanished.
-            var status = GlobalStashStatus(i, state);
-            var detail = GlobalStashDetail(i, status, state);
-            dc.DrawText(CreateText(detail, 9.2, muted, FontWeights.SemiBold,
-                    Math.Max(1.0, cellWidth - 6.0)),
-                new Point(x + 3.0, y + 62.0));
+            var x = outer.Left + inset + (i % columns) * (cardWidth + gap);
+            var y = outer.Top + (i / columns) * (cardHeight + gap);
+            // 0..3x / 0.1x original knob semantics, changed-digit-only gold
+            // and the same 270-degree drag/wheel/keyboard interaction.
+            DrawSourceKnob(dc, P(GlobalStashParameterIds[i]),
+                GlobalStashCategoryNames[i],
+                new Rect(x, y, cardWidth, cardHeight),
+                text, muted, border, accent, panel,
+                dialAccent: StashMixPalette[i], dialScale: .74);
         }
-
-        // Scope is explained once in the BASIC header; no redundant footer.
     }
 
+    // Breakable Boxes-inspired read-only distribution. Two ACTUAL distinct
+    // Basic ItemGenerator Weight branches, no across-branch normalization.
+    // The selected numeric pool shares update with the six global knobs;
+    // chance-only grenade and other rows remain independent of these bars.
+    private void DrawStashBasicNativePools(
+        DrawingContext dc, Rect outer,
+        Brush text, Brush muted, Brush border, Brush panel)
+    {
+        var experienced = StashPreviewGroup("BASIC", 7);
+        var hard = StashPreviewGroup("BASIC", 1);
+        if (experienced is null || hard is null
+            || experienced.Items.Any(item => !item.Fields.ContainsKey("Weight")
+                || item.Fields.ContainsKey("Chance"))
+            || hard.Items.Any(item => !item.Fields.ContainsKey("Weight")
+                || item.Fields.ContainsKey("Chance")))
+            throw new InvalidDataException(
+                "Basic source Weight groups are no longer native-only.");
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .66),
+            new Pen(CloneWithOpacity(border, .66), .9), outer, 4.0, 4.0);
+        dc.DrawText(CreateText("BASIC POOL COMPOSITION",
+                10.2, text, FontWeights.Bold, Math.Max(1.0, outer.Width - 24.0)),
+            new Point(outer.Left + 12.0, outer.Top + 6.0));
+        var inside = new Rect(outer.Left + 12.0, outer.Top + 28.0,
+            Math.Max(1.0, outer.Width - 24.0), 48.0);
+        DrawStashPoolBar(dc, experienced,
+            "EASY/MEDIUM · EXPERIENCED", inside, text, muted, border);
+        DrawStashPoolBar(dc, hard,
+            "HARD", new Rect(inside.Left, inside.Top + 56.0,
+                inside.Width, inside.Height), text, muted, border);
+    }
 
     // Purely informational native source-coverage rows, never sliders or
     // cross-group probability bars. Standard/Rare are Chance-led by CATEGORY,

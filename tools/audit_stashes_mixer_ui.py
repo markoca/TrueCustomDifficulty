@@ -24,11 +24,12 @@ proposal = (root / "docs/STASHES-TAB-AND-REDESIGN-PROPOSAL.md").read_text()
 expected = {
     "StashRewardProfile": [
         "loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",
-        "loot.expensiveStashAmmoQuantity", "loot.cheapStashGrenadeQuantity"],
+        "loot.expensiveStashAmmoQuantity"],
     "StashContentMix": [
         "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
         "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
-        "loot.cheapStashGrenadeChance", "loot.expensiveStashMoneyChance"],
+        "loot.cheapStashGrenadeChance", "loot.cheapStashGrenadeQuantity",
+        "loot.expensiveStashMoneyChance"],
     "StashMedicalComposition": [
         "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
         "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias"],
@@ -66,6 +67,7 @@ assert quantity.count('("MEDKITS"') + quantity.count('("ARMY MEDKITS"') == 2
 assert gear.count('("BASIC"') + gear.count('("STANDARD"') + gear.count('("RARE"') == 3
 assert 'DrawSourceKnob(' not in content
 assert "DrawStashWeightMixer(dc," in content
+assert "DrawStashBasicNativePools(dc," in content
 assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" in medical
 assert "DrawStashMedicalSourcePreview(dc," in medical
 assert "DrawStashQuantityDots(dc, P(families[i].Min)" in quantity
@@ -79,18 +81,21 @@ assert "AddHorizontalTarget(" not in preview  # never an editable preview
 assert "DrawStashNumericReadout" not in preview
 assert "MULTIPLIERS, NOT DROP ODDS" not in source
 assert "weights.Sum()" not in preview # normalized six source multipliers retired
-assert 'DrawStashNativeChanceControl(dc, "loot.cheapStashGrenadeChance",' in content
+assert 'DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",' in content
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in content
-assert "wide ? 385.0 : 620.0, width," in content
+assert "wide ? 569.0 : 723.0, width," in content
 assert "wide ? 72.0 : 116.0" in content
 
 # One bounded 3x2/6x1 relative-Weight mixer, not six rotary dials
 # and never an invented 100% stash-wide probability.
 assert "Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0))" in content
 assert "DrawStashWeightMixer(dc," in content
+assert "DrawStashBasicNativePools(dc," in content
 assert "DrawSourceKnob(" not in content
+assert "DrawStashBasicNativePools(dc," in content
+assert '"RGD-5 AMOUNT"' in content
+assert "percentage: false" in content
 assert source.count("new SolidColorBrush(Color.FromRgb(") >= 6
-assert "StashMixPalette[kind]" in coverage
 assert 'StashPreviewGroup("BASIC", 7)' in preview
 assert 'StashPreviewGroup("BASIC", 1)' in preview
 assert 'StashPreviewGroup("RARE", 11)' not in preview  # chance only, never a weight pool
@@ -180,13 +185,13 @@ mixer_match = re.search(
 )
 assert height_match is not None, "missing StashContentMix measured height"
 assert mixer_match is not None, "missing StashContentMix mixer"
-assert tuple(map(float, height_match.groups())) == (700.0, 619.0, 975.0)
-assert tuple(map(float, mixer_match.groups())) == (53.0, 262.0, 496.0)
-assert "wide ? 385.0 : 620.0, width," in content
+assert tuple(map(float, height_match.groups())) == (700.0, 799.0, 1067.0)
+assert tuple(map(float, mixer_match.groups())) == (53.0, 300.0, 454.0)
+assert "wide ? 569.0 : 723.0, width," in content
 assert "wide ? 72.0 : 116.0" in content
 assert "var wide = width >= 670.0;" in content
-assert 619.0 - (465.0 + 140.0) == 14.0
-assert 975.0 - (745.0 + 216.0) == 14.0
+assert 799.0 - (729.0 + 56.0) == 14.0
+assert 1067.0 - (997.0 + 56.0) == 14.0
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -218,7 +223,7 @@ print("PASS: branch-level source inventory synchronized with CFG inputs")
 print("PASS: 26 original source IDs, editable controls, no synthetic six-way probability")
 print("PASS: source-native Easy/Medium Experienced and Hard weighted pools")
 print("PASS: 1x/0x/3x numeric regressions and nine original authored Chance fields")
-print("PASS: scoped native Chance subcontrols, zero guards, responsive geometry/UI catalogs")
+print("PASS: real grenade Chance and Amount adjacent; Rare Coupon Chance preserved")
 print("PENDING: local .NET build, Wine layout/behavior, in-game stash runtime results")
 
 # Phase-3 executable CFG output parity lives in LootSpecialGeneratorsContract.
@@ -270,7 +275,7 @@ branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.
 csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
 assert 'DrawStashWeightMixer(dc, new Rect(left, 53.0, width,' in content
 assert "StashContentMixHeight(width)" in source
-assert '=> width >= 700.0 ? 619.0 : 975.0;' in source
+assert '=> width >= 700.0 ? 799.0 : 1067.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
@@ -291,12 +296,12 @@ for retired in ("DrawStashBranchBrowser(", "NavigateStash(", "TryStashBrowserCli
 assert "CurrentNumber =" not in coverage
 assert "AddHorizontalTarget(p," in coverage
 assert "for (var stop = " not in coverage
-assert "foreach (var stop in new[] { 0.0, 1.0, 3.0 })" in coverage
-assert "const double rowPitch = 78.0;" in coverage
-assert "var columns = outer.Width >= 670.0 ? 2 : 1;" in coverage
-assert "var rail = new Rect(x + 10.0, y + 28.0," in coverage
+assert "foreach (var stop in new[] { p.Minimum, p.Maximum })" in coverage
+assert "const double cardHeight = 146.0;" in coverage
+assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in coverage
+assert "var rail = new Rect(x + 13.0, y + 26.0," in coverage
 assert "p.IsValueModifiedFromReference()" in coverage
-assert "formatted.SetForegroundBrush(accent, 0, digits.Length)" in coverage
+assert "number.SetForegroundBrush(accent, 0, digits.Length)" in coverage
 assert "ValueToX(p.CurrentNumber, p.Minimum, p.Maximum, rail, false)" in coverage
 assert "p.ReferenceNumber" in coverage
 assert "Normalize(" not in coverage
@@ -358,7 +363,12 @@ assert "100.0 * totals" not in tier_preview
 assert "totals.Sum()" not in tier_preview
 assert "AddHorizontalTarget(" not in tier_preview
 assert "CurrentNumber =" not in tier_preview
-assert "DrawStashNativeChanceControl(" in coverage
+assert "DrawStashNativeRollControl(" in coverage
+assert "DrawStashPoolBar(dc, experienced," in coverage
+assert "DrawStashPoolBar(dc, hard," in coverage
+assert 'StashPreviewGroup("BASIC", 7)' in coverage
+assert 'StashPreviewGroup("BASIC", 1)' in coverage
+assert "dialAccent: StashMixPalette[i], dialScale: .74" in coverage
 assert '"BASIC RGD-5 CHANCE"' in source
 assert '"RARE COUPON CHANCE"' in source
 for doc in (lock, system, proposal):
@@ -367,8 +377,8 @@ for doc in (lock, system, proposal):
 assert "StashMixPalette[i]" in coverage
 assert "GlobalMedicalItems.Select(item => state.ChanceFactor(item.Sid))" in coverage
 assert "EXCLUDED: " in coverage
-assert 'GlobalStashStatus(i, state)' in coverage
-assert 'GlobalStashDetail(i, status, state)' in coverage
+assert 'GlobalStashStatus(int category, StashEffectiveState state)' in coverage
+assert 'GlobalStashDetail(int category, string status,' in coverage
 assert 'GlobalStashParameterIds' in coverage
 bound_mix = re.search(
     r"private static readonly string\[\] GlobalStashParameterIds\s*=\s*\{(.*?)\};",
@@ -376,13 +386,14 @@ bound_mix = re.search(
 )
 assert bound_mix is not None
 assert re.findall(r'"(loot\.stashMix[A-Za-z]+)"', bound_mix.group(1)) == mix_ids
-assert 'foreach (var stop in new[] { 0.0, 1.0 })' in coverage
+assert 'foreach (var stop in new[] { p.Minimum, p.Maximum })' in coverage
 assert 'AddHorizontalTarget(p,' in coverage
 reward_body = source.split('private void DrawCompactStashRewards(',1)[1].split(
     'private void DrawStashRewardGraphRow(',1)[0]
 assert '"loot.cheapStashGrenadeChance"' not in reward_body
 assert '"loot.expensiveStashMoneyChance"' not in reward_body
-assert '"loot.cheapStashGrenadeQuantity"' in reward_body
+assert '"loot.cheapStashGrenadeQuantity"' not in reward_body
+assert '"loot.cheapStashGrenadeQuantity"' in content
 assert 'GlobalStashItemDescriptions' in coverage
 assert "GetManifestResourceStream(SmartSource)" in branches
 assert "public static string? SmartItemBiasId(string sid) => ItemBiasId(sid);" in effective
@@ -432,7 +443,7 @@ for doc in (lock, system, proposal):
     assert "STASHES GLOBAL ITEM-CATEGORY SOURCE COVERAGE (CURRENT)" in doc
     assert "STASHES PLAYER-FACING LOOT STATUS (CURRENT)" in doc
     assert "STASHES GLOBAL WEIGHT WITH NATIVE CHANCE EXCEPTIONS (CURRENT)" in doc
-print("PASS: 41 native groups; Basic global Weight and Standard/Rare Chance-led source tiles")
+print("PASS: Basic rotary Weight + native source pools, Standard/Rare Chance-led tiles")
 
 # Phase 5: emitted patch parity must be wired into the executable contract.
 # This is a static integration gate, not a claim that the .NET/Wine suite ran.
