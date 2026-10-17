@@ -20,6 +20,7 @@ baseline = json.loads((data / "cfg-writer-baseline.json").read_text())["special"
 lock = (root / "docs/UI-DESIGN-LOCK.md").read_text()
 system = (root / "docs/VISUAL-CONTROL-SYSTEM.md").read_text()
 proposal = (root / "docs/STASHES-TAB-AND-REDESIGN-PROPOSAL.md").read_text()
+coverage = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text()
 
 expected = {
     "StashRewardProfile": [
@@ -62,8 +63,9 @@ def method(start, finish):
 
 content = method("DrawStashContentMix", "DrawStashMedicalComposition")
 medical = method("DrawStashMedicalComposition", "DrawStashMedicalQuantityCards")
-quantity = method("DrawStashMedicalQuantityCards", "DrawStashQuantityDots")
-quantity_dots = method("DrawStashQuantityDots", "DrawStashGear")
+selector = method("DrawStashMedicalModeSelector", "DrawStashMedicalQuantityCards")
+quantity = method("DrawStashMedicalQuantityCards", "DrawStashQuantityDualRail")
+quantity_rail = method("DrawStashQuantityDualRail", "DrawStashGear")
 gear = method("DrawStashGear", "DrawStashGearMode")
 preview = method("DrawStashPoolBar", "DrawCompactStashRewards")
 
@@ -78,35 +80,34 @@ assert all(p["group"] == "Stash Medical Composition" for p in catalog["parameter
 assert '"StashMedicalQuantity" => new[]' not in family_ids
 assert 'case "StashMedicalQuantity":' not in source
 assert '"StashMedicalQuantity" => StashMedicalQuantityHeight' not in source
-assert "DrawStashMedicalQuantityCards(dc, left, width, quantityTop, wide," in medical
+assert "DrawStashMedicalQuantityCards(dc, left, width," in medical
 assert "DrawStashMedicalWeightPreview(" not in coverage
 assert "DrawStashMedicalWeightPreview(" not in medical
-assert "previewTop" not in medical
-assert "var chanceTop = wide ? 224.0 : 376.0;" in medical
-assert "var quantityTop = wide ? 410.0 : 716.0;" in medical
-assert 'new Point(left + 12.0, wide ? 208.0 : 360.0)' in medical
-assert 'new Point(left + 12.0, wide ? 391.0 : 697.0)' in medical
-assert "cardWidth, 121.0" in quantity
-assert "DrawStashQuantityDots(dc, P(family.Min)" in quantity
-assert "DrawStashQuantityDots(dc, P(family.Max)" in quantity
-assert "glyph.WidthIncludingTrailingWhitespace + 6.0" in quantity_dots
-assert '=> width >= 700.0 ? 550.0 : 990.0;' in source
+assert "wide ? 229.0 : 386.0" in medical
+assert "cardWidth, 98.0" in quantity
+assert "DrawStashQuantityDualRail(dc, P(family.Min), P(family.Max)" in quantity
+assert "DrawHalf(min, minRail, 0.0, 6.0, true);" in quantity_rail
+assert "DrawHalf(max, maxRail, -1.0, 6.0, false);" in quantity_rail
+assert 'value < -.5 ? "0"' in quantity_rail
+assert '"VANILLA"' in quantity_rail
+assert "AddHorizontalTarget(p," in quantity_rail
+assert "DrawStashMedicalModeSelector(dc, i, card," in medical
+assert '"WEIGHT"' in selector and '"CHANCE"' in selector
+assert "_stashMedicalShowChance[selector.Index] = selector.Chance;" in source
+assert "DrawStashQuantityDots(" not in source
+assert "DrawStashMedicalSourcePreview(" not in source
+assert '=> width >= 700.0 ? 345.0 : 607.0;' in source
 assert gear.count('("BASIC"') + gear.count('("STANDARD"') + gear.count('("RARE"') == 3
 assert 'DrawSourceKnob(' not in content
 assert "DrawStashWeightMixer(dc," in content
 assert "DrawStashBasicNativePools(dc," in content
 assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" not in medical
 assert "DrawStashMedicalSourcePreview(" not in source
-assert 'DrawText(dc, "WEIGHT MIX"' in medical
-assert 'DrawText(dc, "CHANCE SCALE"' in medical
-assert "DrawSourceKnob(dc, P(entry.WeightId)" in medical
-assert "DrawSourceKnob(dc, P(entry.ChanceId)" in medical
-assert "percentageReadout: true, dialAccent: entry.Tone" in medical
-assert 'StashMedicalCompositionHeight(double width)' in source
-assert '=> width >= 700.0 ? 550.0 : 990.0;' in source
+assert "DrawSourceKnob(dc, P(chance ? entry.ChanceId : entry.WeightId)" in medical
+assert "percentageReadout: chance, dialAccent: entry.Tone" in medical
 assert "StashMedicalPalette[0]" in medical and "StashMedicalPalette[3]" in medical
-assert "DrawStashQuantityDots(dc, P(family.Min)" in quantity
-assert "DrawStashQuantityDots(dc, P(family.Max)" in quantity
+assert '"MEDICAL COMPOSITION"' in medical
+assert "DrawStashMedicalModeSelector" in medical
 assert "DrawStashGearMode(dc, P(tiers[i].Weapon)" in gear
 assert "DrawStashGearMode(dc, P(tiers[i].Armor)" in gear
 assert "DrawStashBiasPreview" not in source
@@ -151,8 +152,8 @@ assert "StashSourceFactor(" not in source
 assert "StashSourceNumber(" not in source
 assert "CfgWriterBaselineService().Load()" in source
 assert "StashMedicalSourcePreview" not in source
-assert 'new[] { "0 ITEMS", "AUTO", "1", "2", "3", "4", "5", "6" }' in quantity_dots
-assert "var minimum = isMax ? -1.0 : 0.0;" in quantity_dots
+assert '"0 ITEMS"' not in quantity_rail and '"AUTO"' not in quantity_rail
+assert 'value < -.5 ? "0"' in quantity_rail
 
 # Authoritative baseline input: 2 representative DIFFERENT actual-native
 # weight pools from GameData/ItemGeneratorPrototypes.cfg. At 1x the real

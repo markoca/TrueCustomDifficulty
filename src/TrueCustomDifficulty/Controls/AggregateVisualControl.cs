@@ -39,6 +39,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private bool _radRingHadScrub;
     private bool _radRingCompleted;
 
+    // Per-item visual mode; native Weight and Chance values always stay independent.
+    private readonly bool[] _stashMedicalShowChance = new bool[4];
+    private readonly List<(Rect Hit, int Index, bool Chance)> _stashMedicalModes = new();
+    private int _stashMedicalHoveredMode = -1;
+    private bool _stashMedicalHoveredChance;
     private HitTarget? _dragTarget;
     private HitTarget? _hoverTarget;
     private int _hoverCouponMarker = -1;
@@ -4632,14 +4637,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 wide ? 86.0 : 206.0), text, muted, border, accent, panel);
     }
 
-    // Medical biases are source-editable tracks; a separate, noninteractive
-    // preview represents only the relative balance of these four settings.
-        // One medical panel, keeping native Weight, Chance and Count independent.
+
+    // Mode selects which independent, persisted native field is edited.
     private void DrawStashMedicalComposition(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "MEDICAL COMPOSITION", "", text, muted, accent);
+        _stashMedicalModes.Clear();
         var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
         var left = (ActualWidth - width) / 2.0;
         var wide = width >= 670.0;
@@ -4649,9 +4654,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         const double cardHeight = 146.0;
         var cardWidth = Math.Max(1.0,
             (width - 2.0 * inset - (columns - 1) * gap) / columns);
-        var weightTop = 53.0;
-        var chanceTop = wide ? 224.0 : 376.0;
-        var quantityTop = wide ? 410.0 : 716.0;
         var entries = new (string Label, string WeightId, string ChanceId, Brush Tone)[]
         {
             ("BANDAGES", "loot.stashMedicalBandageBias",
@@ -4663,32 +4665,54 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             ("ANTI-RAD", "loot.stashMedicalAntiRadBias",
                 "loot.stashMedicalAntiRadChanceScale", StashMedicalPalette[3])
         };
-        DrawText(dc, "WEIGHT MIX", new Point(left + 12.0, 37.0),
-            10.8, text, FontWeights.Bold);
-        DrawText(dc, "CHANCE SCALE",
-            new Point(left + 12.0, wide ? 208.0 : 360.0),
-            10.8, text, FontWeights.Bold);
-        DrawText(dc, "QUANTITY",
-            new Point(left + 12.0, wide ? 391.0 : 697.0),
-            10.8, text, FontWeights.Bold);
         for (var i = 0; i < entries.Length; i++)
         {
             var entry = entries[i];
             var x = left + inset + (i % columns) * (cardWidth + gap);
-            var row = (i / columns) * (cardHeight + gap);
-            DrawSourceKnob(dc, P(entry.WeightId), entry.Label,
-                new Rect(x, weightTop + row, cardWidth, cardHeight),
-                text, muted, border, accent, panel,
-                dialAccent: entry.Tone, dialScale: .74);
-            DrawSourceKnob(dc, P(entry.ChanceId), entry.Label,
-                new Rect(x, chanceTop + row, cardWidth, cardHeight),
-                text, muted, border, accent, panel,
-                percentageReadout: true, dialAccent: entry.Tone, dialScale: .74);
+            var y = 53.0 + (i / columns) * (cardHeight + gap);
+            var card = new Rect(x, y, cardWidth, cardHeight);
+            var chance = _stashMedicalShowChance[i];
+            DrawSourceKnob(dc, P(chance ? entry.ChanceId : entry.WeightId),
+                entry.Label, card, text, muted, border, accent, panel,
+                percentageReadout: chance, dialAccent: entry.Tone, dialScale: .74);
+            DrawStashMedicalModeSelector(dc, i, card, entry.WeightId,
+                entry.ChanceId, chance, entry.Tone, muted, border);
         }
-        DrawStashMedicalQuantityCards(dc, left, width, quantityTop, wide,
-            text, muted, border, panel);
+        DrawText(dc, "QUANTITY",
+            new Point(left + 12.0, wide ? 208.0 : 365.0),
+            10.8, text, FontWeights.Bold);
+        DrawStashMedicalQuantityCards(dc, left, width,
+            wide ? 229.0 : 386.0, wide, text, muted, border, panel);
     }
 
+    private void DrawStashMedicalModeSelector(
+        DrawingContext dc, int index, Rect card,
+        string weightId, string chanceId, bool chance,
+        Brush tone, Brush muted, Brush border)
+    {
+        var half = Math.Min(65.0, (card.Width - 16.0) / 2.0);
+        var x = card.Left + (card.Width - half * 2.0) / 2.0;
+        for (var mode = 0; mode < 2; mode++)
+        {
+            var isChance = mode == 1;
+            var selected = chance == isChance;
+            var rect = new Rect(x + mode * half, card.Top + 36.0, half, 21.0);
+            var enabled = P(isChance ? chanceId : weightId)?.IsControlEnabled == true;
+            var hover = _stashMedicalHoveredMode == index
+                && _stashMedicalHoveredChance == isChance;
+            DrawCenteredText(dc, isChance ? "CHANCE" : "WEIGHT",
+                new Point(rect.Left + rect.Width / 2.0, rect.Top + 2.0),
+                9.1, enabled && (selected || hover) ? Brushes.White : muted,
+                selected ? FontWeights.Bold : FontWeights.SemiBold);
+            dc.DrawLine(new Pen(selected ? tone : border, selected ? 2.0 : .8),
+                new Point(rect.Left + 7.0, rect.Bottom - 1.0),
+                new Point(rect.Right - 7.0, rect.Bottom - 1.0));
+            if (enabled) _stashMedicalModes.Add((rect, index, isChance));
+        }
+    }
+
+    // Two independently editable handles on ONE two-way rail per item.
+    // MIN: 0 (VANILLA) to 6, MAX: -1 (0 items) / 0 (VANILLA) to 6.
     private void DrawStashMedicalQuantityCards(
         DrawingContext dc, double left, double width, double top, bool wide,
         Brush text, Brush muted, Brush border, Brush panel)
@@ -4707,78 +4731,86 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             var family = families[i];
             var x = left + (i % columns) * (cardWidth + gap);
-            var y = top + (i / columns) * 129.0;
-            var card = new Rect(x, y, cardWidth, 121.0);
-            var focused = IsSelected(P(family.Min)) || IsSelected(P(family.Max));
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, focused ? .72 : .58),
-                new Pen(CloneWithOpacity(focused ? family.Tone : border,
-                    focused ? .84 : .54), focused ? 1.2 : .9),
-                card, 4.0, 4.0);
-            dc.DrawRectangle(family.Tone, null,
-                new Rect(x + 9.0, y + 9.0, 3.0, 12.0));
-            dc.DrawText(CreateText(family.Name, 10.8, text, FontWeights.Bold,
-                    Math.Max(1.0, cardWidth - 26.0)),
-                new Point(x + 17.0, y + 7.0));
-            DrawStashQuantityDots(dc, P(family.Min), "MIN",
-                new Rect(x + 9.0, y + 30.0, cardWidth - 18.0, 39.0),
-                text, muted, border, panel, family.Tone);
-            DrawStashQuantityDots(dc, P(family.Max), "MAX",
-                new Rect(x + 9.0, y + 73.0, cardWidth - 18.0, 39.0),
+            var y = top + (i / columns) * 107.0;
+            DrawStashQuantityDualRail(dc, P(family.Min), P(family.Max),
+                family.Name, new Rect(x, y, cardWidth, 98.0),
                 text, muted, border, panel, family.Tone);
         }
     }
 
-    // Exact native integers; only MAX has an additional -1 (0 ITEMS) stop.
-    // Avoid the redundant far-right AUTO readout.
-    private void DrawStashQuantityDots(
-        DrawingContext dc, ParameterViewModel? source, string caption, Rect row,
-        Brush text, Brush muted, Brush border, Brush panel, Brush tone)
+    private void DrawStashQuantityDualRail(
+        DrawingContext dc, ParameterViewModel? min, ParameterViewModel? max,
+        string name, Rect card, Brush text, Brush muted, Brush border,
+        Brush panel, Brush tone)
     {
-        if (source is null) return;
-        var enabled = source.IsControlEnabled;
-        var current = (int)Math.Round(source.CurrentNumber);
-        var isMax = source.Id.EndsWith("MaxCount", StringComparison.Ordinal);
-        var labels = isMax
-            ? new[] { "0 ITEMS", "AUTO", "1", "2", "3", "4", "5", "6" }
-            : new[] { "AUTO", "1", "2", "3", "4", "5", "6" };
-        var minimum = isMax ? -1.0 : 0.0;
-        var rail = new Rect(row.Left + 57.0, row.Top + 10.0,
-            Math.Max(1.0, row.Width - 69.0), 1.0);
-        DrawText(dc, caption, new Point(row.Left + 2.0, row.Top + 3.0),
-            10.2, enabled ? text : muted, FontWeights.Bold);
-        dc.DrawLine(new Pen(CloneWithOpacity(border, .92), 2.0),
-            new Point(rail.Left, rail.Top), new Point(rail.Right, rail.Top));
-        AddHorizontalTarget(source,
-            new Rect(rail.Left - 7.0, row.Top - 2.0, rail.Width + 14.0, 37.0),
-            rail, minimum, 6.0);
-        for (var i = 0; i < labels.Length; i++)
+        var focused = IsSelected(min) || IsSelected(max);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, focused ? .72 : .58),
+            new Pen(CloneWithOpacity(focused ? tone : border,
+                focused ? .84 : .54), focused ? 1.2 : .9),
+            card, 4.0, 4.0);
+        dc.DrawRectangle(tone, null,
+            new Rect(card.Left + 9.0, card.Top + 9.0, 3.0, 12.0));
+        DrawText(dc, name, new Point(card.Left + 18.0, card.Top + 7.0),
+            10.8, text, FontWeights.Bold);
+        if (min is null || max is null)
         {
-            var value = minimum + i;
-            var pos = ValueToX(value, minimum, 6.0, rail, false);
-            var selected = Math.Abs(current - value) < Epsilon;
-            var hovered = _hoverTarget is { Kind: HitKind.Horizontal } target
-                && ReferenceEquals(target.Parameter, source)
-                && Math.Abs(target.VisualMinimum - value) < Epsilon
-                && Math.Abs(target.VisualMaximum - value) < Epsilon;
-            dc.DrawEllipse(selected ? (enabled ? tone : muted) : panel,
-                new Pen(hovered ? Brushes.White :
-                    selected && enabled ? tone : muted,
-                    hovered || selected ? 1.7 : 1.0),
-                new Point(pos, rail.Top), selected ? 5.0 : 3.5,
-                selected ? 5.0 : 3.5);
-            var glyph = CreateText(labels[i], labels[i].Length > 2 ? 8.4 : 9.6,
-                hovered || selected && enabled ? Brushes.White : muted,
-                FontWeights.SemiBold);
-            var glyphX = Math.Clamp(pos - glyph.WidthIncludingTrailingWhitespace / 2.0,
-                row.Left, Math.Max(row.Left,
-                    row.Right - glyph.WidthIncludingTrailingWhitespace));
-            dc.DrawText(glyph, new Point(glyphX, row.Top + 22.0));
-            // Labels themselves are clickable, not decorative.
-            AddHorizontalTarget(source,
-                new Rect(glyphX - 3.0, row.Top + 1.0,
-                    glyph.WidthIncludingTrailingWhitespace + 6.0, 35.0),
-                new Rect(pos, row.Top + 1.0, 1.0, 1.0), value, value);
+            DrawCenteredText(dc, "LOADING",
+                new Point(card.Left + card.Width / 2.0, card.Top + 48.0),
+                10.0, muted, FontWeights.SemiBold);
+            return;
         }
+
+        static string CountLabel(double value) => value < -.5 ? "0"
+            : Math.Abs(value) < .5 ? "VANILLA"
+            : Math.Round(value).ToString(CultureInfo.InvariantCulture);
+        void DrawCaption(ParameterViewModel p, string title, Point point)
+        {
+            var label = CountLabel(p.CurrentNumber);
+            var rendered = CreateText(title + "  " + label, 10.7,
+                p.IsControlEnabled ? text : muted, FontWeights.SemiBold,
+                Math.Max(1.0, card.Width / 2.0 - 18.0));
+            if (p.IsControlEnabled && p.IsValueModifiedFromReference()
+                && label != "VANILLA")
+                rendered.SetForegroundBrush(Brushes.Yellow, title.Length + 2,
+                    label.Length);
+            dc.DrawText(rendered, point);
+        }
+        DrawCaption(min, "MIN", new Point(card.Left + 13.0, card.Top + 33.0));
+        DrawCaption(max, "MAX",
+            new Point(card.Left + card.Width / 2.0 + 9.0, card.Top + 33.0));
+        var middle = card.Left + card.Width / 2.0;
+        var y = card.Top + 68.0;
+        var minRail = new Rect(card.Left + 18.0, y,
+            Math.Max(1.0, middle - card.Left - 30.0), 1.0);
+        var maxRail = new Rect(middle + 12.0, y,
+            Math.Max(1.0, card.Right - middle - 30.0), 1.0);
+
+        void DrawHalf(ParameterViewModel p, Rect rail,
+            double minimum, double maximum, bool reverse)
+        {
+            dc.DrawLine(new Pen(CloneWithOpacity(border, .94), 3.0),
+                new Point(rail.Left, y), new Point(rail.Right, y));
+            var pos = ValueToX(p.CurrentNumber, minimum, maximum, rail, reverse);
+            var origin = ValueToX(0.0, minimum, maximum, rail, reverse);
+            if (p.IsControlEnabled)
+                dc.DrawLine(new Pen(CloneWithOpacity(tone, .84), 3.2),
+                    new Point(origin, y), new Point(pos, y));
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .6), 1.4),
+                new Point(origin, y - 7.0), new Point(origin, y + 7.0));
+            var hover = _hoverTarget is { Kind: HitKind.Horizontal } target
+                && ReferenceEquals(target.Parameter, p);
+            dc.DrawEllipse(panel,
+                new Pen(hover ? Brushes.White : p.IsControlEnabled ? tone : muted,
+                    hover ? 2.8 : 2.0),
+                new Point(pos, y), 7.0, 7.0);
+            if (p.IsControlEnabled)
+                dc.DrawEllipse(tone, null, new Point(pos, y), 2.5, 2.5);
+            AddHorizontalTarget(p,
+                new Rect(rail.Left - 6.0, y - 14.0, rail.Width + 12.0, 32.0),
+                rail, minimum, maximum, reverse);
+        }
+        DrawHalf(min, minRail, 0.0, 6.0, true);
+        DrawHalf(max, maxRail, -1.0, 6.0, false);
     }
 
     // Source levels are 0 OFF, 1 RARE, 2 MOD, 3 FREQ. These are native
@@ -5864,6 +5896,31 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
+        if (Family == "StashMedicalComposition")
+        {
+            var selector = _stashMedicalModes.FirstOrDefault(m => m.Hit.Contains(point));
+            if (selector.Hit.Width > 0.0)
+            {
+                var id = selector.Index switch
+                {
+                    0 => selector.Chance ? "loot.stashMedicalBandageChanceScale" : "loot.stashMedicalBandageBias",
+                    1 => selector.Chance ? "loot.stashMedicalMedkitChanceScale" : "loot.stashMedicalMedkitBias",
+                    2 => selector.Chance ? "loot.stashMedicalArmyMedkitChanceScale" : "loot.stashMedicalArmyMedkitBias",
+                    _ => selector.Chance ? "loot.stashMedicalAntiRadChanceScale" : "loot.stashMedicalAntiRadBias"
+                };
+                var p = P(id);
+                if (p?.IsControlEnabled == true)
+                {
+                    _stashMedicalShowChance[selector.Index] = selector.Chance;
+                    _selectedParameter = p;
+                    _selectedHitKind = HitKind.Knob;
+                    RaiseParameterSelected(p);
+                    InvalidateVisual();
+                    e.Handled = true;
+                    return;
+                }
+            }
+        }
         var couponMarker = Family == "CouponFlow"
             ? _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point)) : default;
         if (couponMarker.Parameter is { IsControlEnabled: true })
@@ -5931,6 +5988,24 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
+        if (Family == "StashMedicalComposition" && _dragTarget is null)
+        {
+            var selector = _stashMedicalModes.FirstOrDefault(m => m.Hit.Contains(point));
+            var hoverIndex = selector.Hit.Width > 0.0 ? selector.Index : -1;
+            if (_stashMedicalHoveredMode != hoverIndex
+                || hoverIndex >= 0 && _stashMedicalHoveredChance != selector.Chance)
+            {
+                _stashMedicalHoveredMode = hoverIndex;
+                _stashMedicalHoveredChance = selector.Chance;
+                InvalidateVisual();
+            }
+            if (hoverIndex >= 0)
+            {
+                SetHoverTarget(null);
+                Cursor = Cursors.Hand;
+                return;
+            }
+        }
         if (Family == "CouponFlow" && _dragTarget is null)
         {
             var marker = _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point));
@@ -6058,6 +6133,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
+        if (_stashMedicalHoveredMode >= 0)
+        {
+            _stashMedicalHoveredMode = -1;
+            InvalidateVisual();
+        }
         if (_hoverCouponMarker >= 0)
         {
             _hoverCouponMarker = -1;
@@ -6894,7 +6974,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private double StashContentMixHeight(double width)
         => width >= 700.0 ? 588.0 : 922.0;
     private static double StashMedicalCompositionHeight(double width)
-        => width >= 700.0 ? 550.0 : 990.0;
+        => width >= 700.0 ? 345.0 : 607.0;
     private static double StashGearHeight(double width)
         => width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;
 

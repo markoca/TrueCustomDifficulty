@@ -6456,7 +6456,7 @@
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "Source minimum stack floor; 0 = VANILLA",
+        "valueLabel": "MIN: VANILLA retains source count; 1–6 sets floor",
         "unit": "items"
       },
       "vanilla": {
@@ -6491,7 +6491,7 @@
       },
       "rationale": "Control medkits stack floor separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "0 VANILLA uses vanilla per-entry limit. Positive value is a floor for MIN or a cap for MAX; reset restores source native counts.",
+      "interaction": "One two-way Quantity rail: left MIN handle. VANILLA retains native floor; 1–6 sets floor. Right-click resets MIN only.",
       "exposeInUi": true
     },
     {
@@ -6505,7 +6505,7 @@
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "MAX CAP: 0 VANILLA, -1 = 0 items",
+        "valueLabel": "MAX: VANILLA retains source count; 0 excludes items; 1–6 caps count",
         "unit": "items"
       },
       "vanilla": {
@@ -6540,7 +6540,7 @@
       },
       "rationale": "Control medkits stack cap separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "0 VANILLA preserves vanilla per-entry limit; -1 displays as 0 ITEMS and writes a zero count, while positive values cap maximum. Reset returns to VANILLA.",
+      "interaction": "One two-way Quantity rail: right MAX handle. VANILLA retains native cap; display 0 stores native -1 exclusion; 1–6 sets cap. Right-click resets MAX only.",
       "exposeInUi": true
     },
     {
@@ -6554,7 +6554,7 @@
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "Source minimum stack floor; 0 = VANILLA",
+        "valueLabel": "MIN: VANILLA retains source count; 1–6 sets floor",
         "unit": "items"
       },
       "vanilla": {
@@ -6589,7 +6589,7 @@
       },
       "rationale": "Control army medkits stack floor separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "0 VANILLA uses vanilla per-entry limit. Positive value is a floor for MIN or a cap for MAX; reset restores source native counts.",
+      "interaction": "One two-way Quantity rail: left MIN handle. VANILLA retains native floor; 1–6 sets floor. Right-click resets MIN only.",
       "exposeInUi": true
     },
     {
@@ -6603,7 +6603,7 @@
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "MAX CAP: 0 VANILLA, -1 = 0 items",
+        "valueLabel": "MAX: VANILLA retains source count; 0 excludes items; 1–6 caps count",
         "unit": "items"
       },
       "vanilla": {
@@ -6638,7 +6638,7 @@
       },
       "rationale": "Control army medkits stack cap separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "0 VANILLA preserves vanilla per-entry limit; -1 displays as 0 ITEMS and writes a zero count, while positive values cap maximum. Reset returns to VANILLA.",
+      "interaction": "One two-way Quantity rail: right MAX handle. VANILLA retains native cap; display 0 stores native -1 exclusion; 1–6 sets cap. Right-click resets MAX only.",
       "exposeInUi": true
     },
     {
