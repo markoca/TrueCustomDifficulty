@@ -339,6 +339,7 @@
                                                                                                  MinHeight="0"
                                                                                                  Visibility="Collapsed"
                                                                                                  Family="{Binding VisualAggregateFamily}"
+                                                                                                 SelectedReferenceDifficulty="{Binding DataContext.SelectedReferenceDifficulty, RelativeSource={RelativeSource AncestorType=Window}}"
                                                                                                  Parameters="{Binding DataContext.AllParameters, RelativeSource={RelativeSource AncestorType=Window}}" />
 
                                                                 <controls:BleedingCurveControl x:Name="BleedingCurveControl"

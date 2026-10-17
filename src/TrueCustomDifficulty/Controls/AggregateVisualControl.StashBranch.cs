@@ -17,7 +17,6 @@ public sealed partial class AggregateVisualControl
     private readonly List<(Rect Hit, Action Navigate)> _stashBrowserTargets = new();
     private int _stashBrowserMode; // 0 Basic, 1 Standard, 2 Rare, 3 SmartLoot
     private int _stashBrowserRank = 1; // Experienced
-    private int _stashBrowserDifficulty;
     private int _stashBrowserPrototype;
     private int _stashBrowserGroup;
     private int _stashBrowserHover = -1;
@@ -39,8 +38,18 @@ public sealed partial class AggregateVisualControl
             _ => -1
         };
 
-    private static readonly string[] StashDifficulties =
-        { "Easy", "Medium", "Hard", "Stalker" };
+    // The app's top Base Preset is the sole difficulty selector.
+    // UI Novice/Stalker/Veteran/Master map to native Easy/Medium/Hard/Stalker.
+    // Resolve on every render/filter so changing Base Preset updates the browser.
+    private string CurrentStashNativeDifficulty => SelectedReferenceDifficulty switch
+    {
+        "Novice" => "Easy",
+        "Stalker" => "Medium",
+        "Veteran" => "Hard",
+        "Master" => "Stalker",
+        _ => throw new InvalidOperationException(
+            "Unknown Base Preset difficulty: " + SelectedReferenceDifficulty)
+    };
 
     private static IReadOnlyList<string> StashSmartPrototypes =>
         StashBranches.Value.Where(b => b.IsSmart)
@@ -59,7 +68,7 @@ public sealed partial class AggregateVisualControl
                     ? x.IsSmart && x.Prototype == prototype
                     : !x.IsSmart && x.Tier == tier)
                 && x.AppliesTo(_stashBrowserRank,
-                    StashDifficulties[_stashBrowserDifficulty]))
+                    CurrentStashNativeDifficulty))
             .ToArray();
     }
 
@@ -75,9 +84,6 @@ public sealed partial class AggregateVisualControl
         switch (action)
         {
             case 0: _stashBrowserMode = (int)Math.Clamp(delta, 0, 3); break;
-            case 1:
-                _stashBrowserDifficulty = (_stashBrowserDifficulty + delta + 4) % 4;
-                break;
             case 2: _stashBrowserRank = (_stashBrowserRank + delta + 4) % 4; break;
             case 3:
                 var count = StashSmartPrototypes.Count;
@@ -162,15 +168,16 @@ public sealed partial class AggregateVisualControl
                 () => NavigateStash(0, index), text, muted, border, accent, panel);
         }
 
-        // Two bounded selector rails, with source-native rank and difficulty.
+        // Only native RANK is navigable for tier groups. Difficulty comes
+        // from the top Base Preset; SmartLoot still has PROTOTYPE + RANK.
         var railY = outer.Top + 64.0;
         var half = (width - 12.0) / 2.0;
         void NavRail(double railX, double railWidth, string title,
-            string current, int kind)
+            string current, int kind, double centerFactor = .60)
         {
             DrawText(dc, title,
                 new Point(railX, railY + 5.0), 9.0, muted, FontWeights.SemiBold);
-            var center = railX + railWidth * .60;
+            var center = railX + railWidth * centerFactor;
             var leftButton = new Rect(center - 92.0, railY, 24.0, 25.0);
             var rightButton = new Rect(center + 68.0, railY, 24.0, 25.0);
             DrawStashBrowserButton(dc, "‹", leftButton, false,
@@ -188,11 +195,12 @@ public sealed partial class AggregateVisualControl
             if (compact.Length > 20) compact = compact[..19] + "…";
             NavRail(x, half, "PROTOTYPE", compact, 3);
         }
+        if (_stashBrowserMode == 3)
+            NavRail(x + half + 12.0, half, "RANK",
+                StashBranchPreview.RankName(_stashBrowserRank).ToUpperInvariant(), 2);
         else
-            NavRail(x, half, "DIFFICULTY",
-                StashDifficulties[_stashBrowserDifficulty].ToUpperInvariant(), 1);
-        NavRail(x + half + 12.0, half, "RANK",
-            StashBranchPreview.RankName(_stashBrowserRank).ToUpperInvariant(), 2);
+            NavRail(x + (width - half) / 2.0, half, "RANK",
+                StashBranchPreview.RankName(_stashBrowserRank).ToUpperInvariant(), 2, .50);
 
         var available = AvailableStashBranches();
         if (_stashBrowserGroup >= available.Count)
@@ -229,8 +237,7 @@ public sealed partial class AggregateVisualControl
             new Point(outer.Right - 12.0, outer.Top + 134.0),
             9.0, muted, FontWeights.SemiBold);
 
-        var state = CurrentStashEffectiveState(
-            StashDifficulties[_stashBrowserDifficulty]);
+        var state = CurrentStashEffectiveState(CurrentStashNativeDifficulty);
         var values = branch.Items.Select(item => StashEffectiveState.Number(
                 branch.EffectiveSelection(StashPreviewBaseline.Value, state, item)))
             .ToArray();

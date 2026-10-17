@@ -76,6 +76,29 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         typeof(AggregateVisualControl),
         new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure, OnBindingChanged));
 
+    // Read-only link to the same Base Preset displayed in the top bar.
+    // Navigation within Stash Content Mix must not have a second difficulty.
+    public static readonly DependencyProperty SelectedReferenceDifficultyProperty =
+        DependencyProperty.Register(
+            nameof(SelectedReferenceDifficulty),
+            typeof(string),
+            typeof(AggregateVisualControl),
+            new FrameworkPropertyMetadata("Novice",
+                FrameworkPropertyMetadataOptions.AffectsRender, OnReferenceDifficultyChanged));
+
+    private static void OnReferenceDifficultyChanged(
+        DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var control = (AggregateVisualControl)d;
+        if (control.Family != "StashContentMix")
+            return;
+        // Native group counts vary by selected difficulty. Never retain
+        // an index from a different filtered set of original source branches.
+        control._stashBrowserGroup = 0;
+        control._stashBrowserHover = -1;
+        control.InvalidateVisual();
+    }
+
     public IEnumerable? Parameters
     {
         get => (IEnumerable?)GetValue(ParametersProperty);
@@ -86,6 +109,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         get => (string)GetValue(FamilyProperty);
         set => SetValue(FamilyProperty, value);
+    }
+
+    public string SelectedReferenceDifficulty
+    {
+        get => (string)GetValue(SelectedReferenceDifficultyProperty);
+        set => SetValue(SelectedReferenceDifficultyProperty, value);
     }
 
     public AggregateVisualControl()
@@ -6187,14 +6216,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         // Keyboard branch browsing is separate from source slider keys:
         // Alt+Left/Right switches groups; Alt+Up/Down switches rank.
-        // Ctrl+Left/Right changes difficulty or the SmartLoot prototype.
+        // Ctrl+Left/Right changes only SmartLoot prototype, never the
+        // selected global Base Preset (or a shadow difficulty).
         if (Family == "StashContentMix"
             && e.Key is Key.Left or Key.Right or Key.Up or Key.Down
-            && (Keyboard.Modifiers & (ModifierKeys.Alt | ModifierKeys.Control)) != 0)
+            && (Keyboard.Modifiers & (ModifierKeys.Alt | ModifierKeys.Control)) != 0
+            && ((Keyboard.Modifiers & ModifierKeys.Control) == 0
+                || _stashBrowserMode == 3))
         {
             var direction = e.Key is Key.Right or Key.Down ? 1 : -1;
             if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
-                NavigateStash(_stashBrowserMode == 3 ? 3 : 1, direction);
+                NavigateStash(3, direction);
             else
                 NavigateStash(e.Key is Key.Left or Key.Right ? 4 : 2, direction);
             e.Handled = true;

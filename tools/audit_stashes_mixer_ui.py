@@ -248,6 +248,35 @@ for linked in (
     assert f'"{linked}"' in mix_links, linked
 assert 'UpdateStashBrowserHover(point)' in source
 assert 'private StashEffectiveState CurrentStashEffectiveState(string difficultySid = "Easy")' in source
+# The top Base Preset is the SINGLE source of native difficulty for the
+# non-editable generator inspector. UI and CFG use different Stalker labels.
+window_xaml = (root / "src/TrueCustomDifficulty/MainWindow.xaml").read_text()
+model = (root / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text()
+assert 'Text="{Binding SelectedReferenceDifficulty}"' in window_xaml
+assert 'Value="{Binding BasePresetIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"' in window_xaml
+assert ('SelectedReferenceDifficulty="{Binding DataContext.SelectedReferenceDifficulty, '
+        'RelativeSource={RelativeSource AncestorType=Window}}"') in window_xaml
+assert 'public static readonly DependencyProperty SelectedReferenceDifficultyProperty' in source
+assert 'FrameworkPropertyMetadataOptions.AffectsRender, OnReferenceDifficultyChanged' in source
+assert 'control._stashBrowserGroup = 0;' in source
+assert 'public string SelectedReferenceDifficulty' in source
+assert 'public string SelectedReferenceDifficulty' in model
+assert 'OnPropertyChanged(nameof(SelectedReferenceDifficulty))' in model
+for ui, native in (
+    ("Novice", "Easy"), ("Stalker", "Medium"),
+    ("Veteran", "Hard"), ("Master", "Stalker"),
+):
+    assert f'"{ui}" => "{native}"' in browser
+assert 'x.AppliesTo(_stashBrowserRank,' in browser
+assert 'CurrentStashNativeDifficulty))' in browser
+assert 'CurrentStashEffectiveState(CurrentStashNativeDifficulty)' in browser
+assert '_stashBrowserDifficulty' not in browser
+assert 'StashDifficulties' not in browser
+assert 'NavRail(x, half, "DIFFICULTY"' not in browser
+assert 'NavRail(x + (width - half) / 2.0, half, "RANK"' in browser
+assert 'NavigateStash(3, direction);' in source
+assert '|| _stashBrowserMode == 3)' in source
+assert 'NavigateStash(_stashBrowserMode == 3 ? 3 : 1, direction)' not in source
 assert "NavigateStash(" in source and "NavigateStash(" in browser
 assert "branch.EffectiveSelection(StashPreviewBaseline.Value, state, item)" in browser
 assert "branch.EffectiveSpawn(state)" in browser
