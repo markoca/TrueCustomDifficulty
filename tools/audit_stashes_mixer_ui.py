@@ -15,6 +15,7 @@ from pathlib import Path
 root = Path(__file__).resolve().parents[1]
 data = root / "src/TrueCustomDifficulty/Data"
 source = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text()
+main_vm_source = (root / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text()
 catalog = json.loads((data / "parameters.json").read_text())
 baseline = json.loads((data / "cfg-writer-baseline.json").read_text())["special"]
 lock = (root / "docs/UI-DESIGN-LOCK.md").read_text()
@@ -91,6 +92,19 @@ assert "DrawHalf(max, maxRail, -1.0, 6.0, false);" in quantity_rail
 assert 'value < -.5 ? "0"' in quantity_rail
 assert '"VANILLA"' in quantity_rail
 assert "AddHorizontalTarget(p," in quantity_rail
+# The same source-backed MIN/MAX coupling is applied to live input and bulk
+# preset/save/build normalization without removing the native MAX=-1 exclusion.
+assert "EnforceStashMedicalQuantityBounds(p);" in main_vm_source
+assert "if (min.CurrentNumber > 0.0 && max.CurrentNumber < min.CurrentNumber)" in main_vm_source
+assert "max.CurrentNumber = min.CurrentNumber;" in main_vm_source
+assert '("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount")' in main_vm_source
+assert '("loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount")' in main_vm_source
+assert main_vm_source.count("NormalizeEditorConstraints();") == 5
+assert "_sliderConstraintCoordinator.NormalizeAll();" in main_vm_source
+for medical_id in ("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
+                   "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"):
+    entry = next(p for p in catalog["parameters"] if p["id"] == medical_id)
+    assert "MAX" in entry["interaction"] and "MIN" in entry["interaction"]
 assert "DrawStashMedicalModeSelector(dc, i, card," in medical
 assert '"WEIGHT"' in selector and '"CHANCE"' in selector
 assert "_stashMedicalShowChance[selector.Index] = selector.Chance;" in source

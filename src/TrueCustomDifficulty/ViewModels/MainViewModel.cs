@@ -1040,6 +1040,7 @@ public sealed class MainViewModel : ObservableObject
                     && args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
                 {
                     _sliderConstraintCoordinator.ApplyFrom(p);
+                    EnforceStashMedicalQuantityBounds(p);
                 }
             };
 
@@ -1140,6 +1141,36 @@ public sealed class MainViewModel : ObservableObject
 
 
 
+    // One-way coupling: MIN is authoritative; a MAX below MIN is raised,
+    // never the other way around. Applied to live edits and bulk/preset states.
+    private void EnforceStashMedicalQuantityBounds(ParameterViewModel? edited = null)
+    {
+        var pairs = new (string Min, string Max)[]
+        {
+            ("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount"),
+            ("loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount")
+        };
+        foreach (var pair in pairs)
+        {
+            if (edited is not null && edited.Id != pair.Min && edited.Id != pair.Max)
+                continue;
+
+            var min = AllParameters.First(p => p.Id == pair.Min);
+            var max = AllParameters.First(p => p.Id == pair.Max);
+            // MIN=0 means unchanged vanilla floor. With that floor only,
+            // MAX=-1 remains the genuine zero-items override; an active MIN
+            // cannot coexist with exclusion or a smaller explicit MAX.
+            if (min.CurrentNumber > 0.0 && max.CurrentNumber < min.CurrentNumber)
+                max.CurrentNumber = min.CurrentNumber;
+        }
+    }
+
+    private void NormalizeEditorConstraints()
+    {
+        _sliderConstraintCoordinator.NormalizeAll();
+        EnforceStashMedicalQuantityBounds();
+    }
+
     private void ApplyReferenceDifficulty(bool resetAll)
     {
         _isApplyingReference = true;
@@ -1162,7 +1193,7 @@ public sealed class MainViewModel : ObservableObject
             AllParameters.First(p => p.Id == "health.bandageHealing")
                 .MedicalOverrideEnabled = false;
         }
-        _sliderConstraintCoordinator.NormalizeAll();
+        NormalizeEditorConstraints();
         RefreshState();
     }
 
@@ -1188,7 +1219,7 @@ public sealed class MainViewModel : ObservableObject
             _suspendSliderConstraints = false;
         }
 
-        _sliderConstraintCoordinator.NormalizeAll();
+        NormalizeEditorConstraints();
         RefreshState();
     }
 
@@ -1303,7 +1334,7 @@ public sealed class MainViewModel : ObservableObject
 
     private void SavePreset()
     {
-        _sliderConstraintCoordinator.NormalizeAll();
+        NormalizeEditorConstraints();
 
         var dialog = new SaveFileDialog
         {
@@ -1668,7 +1699,7 @@ public sealed class MainViewModel : ObservableObject
                 _isApplyingReference = false;
             }
 
-            _sliderConstraintCoordinator.NormalizeAll();
+            NormalizeEditorConstraints();
             RefreshState();
             _loadedPresetName = string.IsNullOrWhiteSpace(preset.Name)
                 ? Path.GetFileNameWithoutExtension(path)
@@ -1700,7 +1731,7 @@ public sealed class MainViewModel : ObservableObject
             // Validate before showing the busy rail: no build was started if
             // the mods path is not configured.
             modsFolder = _modDestinationSettings.RequireConfiguredPath();
-            _sliderConstraintCoordinator.NormalizeAll();
+            NormalizeEditorConstraints();
 
             BuildProgressStep = 0;
             BuildProgressLabel = "WRITING CFG";

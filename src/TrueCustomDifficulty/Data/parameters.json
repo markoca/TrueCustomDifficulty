@@ -6485,13 +6485,13 @@
         "notes": [
           "0 VANILLA leaves the corresponding source limit intact; it does not mean zero items.",
           "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
-          "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
+          "The editor auto-raises MAX to MIN on a conflicting setting; MAX=-1 zero-items exclusion remains available with MIN=VANILLA. The CFG writer still reconciles edited limits with each entry's native floor and cap.",
           "MAX CAP=1 makes eligible Medkit stacks no larger than 1, including originally 2–4 item Easy/Rare entries."
         ]
       },
       "rationale": "Control medkits stack floor separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One two-way Quantity rail: left MIN handle. VANILLA retains native floor; 1–6 sets floor. Right-click resets MIN only.",
+      "interaction": "One two-way Quantity rail: left MIN handle. VANILLA retains native floor; 1–6 sets floor. Raising MIN above MAX also raises MAX to match. Right-click resets MIN only.",
       "exposeInUi": true
     },
     {
@@ -6534,13 +6534,13 @@
         "notes": [
           "0 VANILLA leaves the corresponding source limit intact; the separate 0 ITEMS stop stores -1 and writes MinCount=MaxCount=0.",
           "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
-          "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
+          "The editor auto-raises MAX to MIN on a conflicting setting; MAX=-1 zero-items exclusion remains available with MIN=VANILLA. The CFG writer still reconciles edited limits with each entry's native floor and cap.",
           "MAX CAP=1 makes eligible Medkit stacks no larger than 1. Explicit 0 ITEMS sets both native stack fields to zero; actual game behavior needs in-game validation."
         ]
       },
       "rationale": "Control medkits stack cap separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One two-way Quantity rail: right MAX handle. VANILLA retains native cap; display 0 stores native -1 exclusion; 1–6 sets cap. Right-click resets MAX only.",
+      "interaction": "One two-way Quantity rail: right MAX handle. VANILLA retains native cap; display 0 stores native -1 exclusion with MIN=VANILLA; 1–6 sets cap. MAX cannot go below an active MIN and is raised to match it. Right-click resets MAX only.",
       "exposeInUi": true
     },
     {
@@ -6583,13 +6583,13 @@
         "notes": [
           "0 VANILLA leaves the corresponding source limit intact; it does not mean zero items.",
           "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
-          "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
+          "The editor auto-raises MAX to MIN on a conflicting setting; MAX=-1 zero-items exclusion remains available with MIN=VANILLA. The CFG writer still reconciles edited limits with each entry's native floor and cap.",
           "MAX CAP=1 makes eligible Medkit stacks no larger than 1, including originally 2–4 item Easy/Rare entries."
         ]
       },
       "rationale": "Control army medkits stack floor separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One two-way Quantity rail: left MIN handle. VANILLA retains native floor; 1–6 sets floor. Right-click resets MIN only.",
+      "interaction": "One two-way Quantity rail: left MIN handle. VANILLA retains native floor; 1–6 sets floor. Raising MIN above MAX also raises MAX to match. Right-click resets MIN only.",
       "exposeInUi": true
     },
     {
@@ -6632,13 +6632,13 @@
         "notes": [
           "0 VANILLA leaves the corresponding source limit intact; the separate 0 ITEMS stop stores -1 and writes MinCount=MaxCount=0.",
           "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
-          "If MIN FLOOR and MAX CAP conflict, MAX CAP wins. If only MIN FLOOR exceeds the source maximum, that maximum rises to the requested floor.",
+          "The editor auto-raises MAX to MIN on a conflicting setting; MAX=-1 zero-items exclusion remains available with MIN=VANILLA. The CFG writer still reconciles edited limits with each entry's native floor and cap.",
           "MAX CAP=1 makes eligible Medkit stacks no larger than 1. Explicit 0 ITEMS sets both native stack fields to zero; actual game behavior needs in-game validation."
         ]
       },
       "rationale": "Control army medkits stack cap separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One two-way Quantity rail: right MAX handle. VANILLA retains native cap; display 0 stores native -1 exclusion; 1–6 sets cap. Right-click resets MAX only.",
+      "interaction": "One two-way Quantity rail: right MAX handle. VANILLA retains native cap; display 0 stores native -1 exclusion with MIN=VANILLA; 1–6 sets cap. MAX cannot go below an active MIN and is raised to match it. Right-click resets MAX only.",
       "exposeInUi": true
     },
     {
