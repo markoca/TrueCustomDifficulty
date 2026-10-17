@@ -195,8 +195,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount",
                 "loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",
                 "loot.expensiveStashAmmoQuantity",
-                "loot.cheapStashGrenadeChance", "loot.cheapStashGrenadeQuantity",
-                "loot.expensiveStashMoneyChance"
+                "loot.cheapStashGrenadeQuantity"
             },
             "StashMedicalComposition" => new[]
             {
@@ -4593,12 +4592,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawStashWeightMixer(dc, new Rect(left, 38.0, width,
                 width >= 670.0 ? 262.0 : 496.0),
             text, muted, border, accent, panel);
+        // Two distinct authored native Chance controls beneath Grenades/Coupons.
+        DrawStashNativeChanceControls(dc, new Rect(left,
+                width >= 670.0 ? 308.0 : 542.0, width,
+                width >= 670.0 ? 58.0 : 118.0),
+            text, muted, border, accent, panel);
         // One read-only, source-native Weight composition per stash tier;
         // each bar belongs to ONE identified generator group, not a
         // fabricated pool pooled across rank/difficulty/Chance entries.
         var narrowPreview = width < 670.0;
         DrawStashTierWeightPools(dc, new Rect(left,
-                width >= 670.0 ? 312.0 : 546.0, width,
+                width >= 670.0 ? 378.0 : 672.0, width,
                 narrowPreview ? 302.0 : 244.0),
             text, muted, border, panel);
     }
@@ -5049,19 +5053,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 92.0 + 43.0 * i, bankWidth,
                 plotLeft, plotWidth, text, muted, border, accent, panel);
 
-        DrawText(dc, "BONUS REWARDS", new Point(left + 12.0, 225.0),
+        DrawText(dc, "GRENADE AMOUNT", new Point(left + 12.0, 225.0),
             10.7, muted, FontWeights.Bold);
-        var bonusEntries = new (string Id, string Caption)[]
-        {
-            ("loot.cheapStashGrenadeChance", "RGD-5 CHANCE"),
-            ("loot.cheapStashGrenadeQuantity", "RGD-5 AMOUNT"),
-            ("loot.expensiveStashMoneyChance", "RARE COUPONS")
-        };
-        for (var i = 0; i < bonusEntries.Length; i++)
-            DrawStashRewardGraphRow(dc, P(bonusEntries[i].Id),
-                bonusEntries[i].Caption, left,
-                252.0 + 43.0 * i, bankWidth,
-                plotLeft, plotWidth, text, muted, border, accent, panel);
+        DrawStashRewardGraphRow(dc, P("loot.cheapStashGrenadeQuantity"),
+            "BASIC RGD-5", left, 252.0, bankWidth,
+            plotLeft, plotWidth, text, muted, border, accent, panel);
     }
 
     private void DrawStashRewardGraphRow(
@@ -6842,7 +6838,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "StashMedicalComposition" => StashMedicalCompositionHeight(width),
             "StashMedicalQuantity" => StashMedicalQuantityHeight(width),
             "StashGear" => StashGearHeight(width),
-            "StashRewardProfile" => 398.0,
+            "StashRewardProfile" => 310.0,
             "StaminaCore" => 323.0,
             "WaterStaminaPressure" => 171.0,
             "FatigueCurve" => CompactFatigueHeight(width),
@@ -6868,7 +6864,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 568.0 : 860.0;
+        => width >= 700.0 ? 634.0 : 986.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)
@@ -6955,7 +6951,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "StashContentMix" => new[]
             {
                 "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
-                "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons"
+                "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
+                "loot.cheapStashGrenadeChance", "loot.expensiveStashMoneyChance"
             },
             "StashMedicalComposition" => new[]
             {
@@ -6978,9 +6975,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.cheapStashAmmoQuantity",
                 "loot.mediumStashAmmoQuantity",
                 "loot.expensiveStashAmmoQuantity",
-                "loot.cheapStashGrenadeChance",
-                "loot.cheapStashGrenadeQuantity",
-                "loot.expensiveStashMoneyChance"
+                "loot.cheapStashGrenadeQuantity"
             },
             "StaminaCore" => new[] {
                 "stamina.maxSP", "stamina.regeneration",

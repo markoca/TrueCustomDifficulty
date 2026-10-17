@@ -6817,7 +6817,7 @@
     {
       "id": "loot.cheapStashGrenadeChance",
       "tab": "stashes",
-      "group": "Stashes",
+      "group": "Stash Content",
       "label": "Basic Stash RGD-5 Grenade Chance",
       "description": "Changes how likely a Basic stash is to contain its RGD-5 grenade reward. This does not change how many grenades you get when the roll succeeds.",
       "control": "slider",
@@ -6857,7 +6857,7 @@
         ]
       },
       "rationale": "Controls how often an RGD-5 grenade appears in a Basic stash. It does not change the grenade amount or other stash loot.",
-      "logic": "0% means Basic stashes never contain the RGD-5 from this setting. 10% is vanilla. 100% means it always appears.",
+      "logic": "0% means Basic stashes never contain the RGD-5 from this setting. 10% is vanilla. 100% sets the native Basic RGD-5 chance when that eligible source branch is evaluated; it does not force every physical stash to contain grenades.",
       "interaction": "Pair it with Basic Stash RGD-5 Grenade Amount: Chance decides whether the grenade appears; Amount decides how many you get.",
       "lootHint": {
         "kind": "absoluteChancePer100",
@@ -7470,7 +7470,7 @@
     {
       "id": "loot.expensiveStashMoneyChance",
       "tab": "stashes",
-      "group": "Stashes",
+      "group": "Stash Content",
       "label": "Rare Stash Coupon Rewards",
       "description": "Changes how likely an eligible Rare stash is to contain coupon rewards. The game still chooses the reward tier from vanilla progression.",
       "control": "slider",

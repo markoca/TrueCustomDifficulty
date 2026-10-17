@@ -121,6 +121,101 @@ public sealed partial class AggregateVisualControl
         };
     }
 
+
+    // Only two independent native Chance controls: Basic RGD-5 and Rare coupons.
+    // Neither belongs to the six global source Weight multipliers.
+    private void DrawStashNativeChanceControls(
+        DrawingContext dc, Rect outer, Brush text, Brush muted,
+        Brush border, Brush accent, Brush panel)
+    {
+        var columns = outer.Width >= 670.0 ? 2 : 1;
+        const double inset = 14.0;
+        const double gap = 16.0;
+        var cellWidth = Math.Max(1.0,
+            (outer.Width - 2.0 * inset - (columns - 1) * gap) / columns);
+        var entries = new (string Id, string Label, int Category)[]
+        {
+            ("loot.cheapStashGrenadeChance", "BASIC RGD-5 CHANCE", 4),
+            ("loot.expensiveStashMoneyChance", "RARE COUPON CHANCE", 5)
+        };
+
+        for (var i = 0; i < entries.Length; i++)
+        {
+            var p = P(entries[i].Id);
+            if (p is null) continue;
+            var enabled = p.IsControlEnabled;
+            var tone = StashMixPalette[entries[i].Category];
+            var x = outer.Left + inset + (i % columns) * (cellWidth + gap);
+            var y = outer.Top + (i / columns) * 61.0;
+            var card = new Rect(x, y, cellWidth, 56.0);
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, .54),
+                new Pen(CloneWithOpacity(border, .52), .8), card, 3.0, 3.0);
+            dc.DrawRectangle(tone, null, new Rect(x + 6.0, y + 7.0, 3.0, 13.0));
+            dc.DrawText(CreateText(entries[i].Label, 10.0,
+                    enabled ? text : muted, FontWeights.SemiBold,
+                    Math.Max(1.0, cellWidth - 102.0)),
+                new Point(x + 14.0, y + 5.0));
+
+            var digits = (p.CurrentNumber * 100.0).ToString("0.#",
+                System.Globalization.CultureInfo.InvariantCulture);
+            var modified = enabled && p.IsValueModifiedFromReference();
+            var number = CreateText(digits + "%", modified ? 12.6 : 11.8,
+                enabled ? text : muted, FontWeights.Bold);
+            if (modified) number.SetForegroundBrush(accent, 0, digits.Length);
+            dc.DrawText(number,
+                new Point(card.Right - number.WidthIncludingTrailingWhitespace - 11.0,
+                    y + 3.0));
+
+            var rail = new Rect(x + 13.0, y + 26.0,
+                Math.Max(1.0, cellWidth - 26.0), 8.0);
+            var mid = rail.Top + rail.Height / 2.0;
+            var currentX = ValueToX(p.CurrentNumber,
+                p.Minimum, p.Maximum, rail, false);
+            var originalX = ValueToX(p.ReferenceNumber,
+                p.Minimum, p.Maximum, rail, false);
+            var hovered = enabled && _hoverTarget?.Kind == HitKind.Horizontal
+                && ReferenceEquals(_hoverTarget.Parameter, p);
+            dc.DrawLine(new Pen(CloneWithOpacity(border, .90), 3.5),
+                new Point(rail.Left, mid), new Point(rail.Right, mid));
+            dc.DrawLine(new Pen(CloneWithOpacity(enabled ? tone : muted,
+                    enabled ? .94 : .34), 3.5),
+                new Point(rail.Left, mid), new Point(currentX, mid));
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .78), 1.5),
+                new Point(originalX, mid - 5.5),
+                new Point(originalX, mid + 5.5));
+            dc.DrawEllipse(panel,
+                new Pen(hovered ? Brushes.White : enabled ? tone : muted,
+                    hovered || IsSelected(p) ? 2.3 : 1.5),
+                new Point(currentX, mid), 5.3, 5.3);
+
+            // Register long rail before the exact 0% / 100% landmark targets,
+            // which override it during reverse hit testing.
+            AddHorizontalTarget(p,
+                new Rect(rail.Left - 6.0, rail.Top - 6.0,
+                    rail.Width + 12.0, rail.Height + 11.0),
+                rail, p.Minimum, p.Maximum);
+            foreach (var stop in new[] { 0.0, 1.0 })
+            {
+                var markerX = ValueToX(stop, p.Minimum, p.Maximum, rail, false);
+                var isHovered = hovered && _hoverTarget is { } target
+                    && Math.Abs(target.VisualMinimum - stop) < Epsilon
+                    && Math.Abs(target.VisualMaximum - stop) < Epsilon;
+                var glyph = CreateText($"{stop * 100.0:0}%", 9.1,
+                    isHovered ? Brushes.White : muted, FontWeights.SemiBold);
+                var glyphX = stop == 0.0 ? rail.Left
+                    : rail.Right - glyph.WidthIncludingTrailingWhitespace;
+                var glyphY = y + 40.5;
+                dc.DrawText(glyph, new Point(glyphX, glyphY));
+                AddHorizontalTarget(p,
+                    new Rect(glyphX - 4.0, glyphY - 2.0,
+                        glyph.WidthIncludingTrailingWhitespace + 8.0,
+                        glyph.Height + 4.0),
+                    new Rect(markerX, glyphY, 1.0, Math.Max(1.0, glyph.Height)),
+                    stop, stop);
+            }
+        }
+    }
+
     // One mixer frame with 3x2 / 6x1 equally scaled, genuinely editable
     // source tracks. Equal widths here represent the common 0..3x INPUT
     // range, not a synthetic six-way selection probability.

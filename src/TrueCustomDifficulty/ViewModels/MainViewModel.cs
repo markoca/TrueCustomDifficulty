@@ -643,8 +643,8 @@ public sealed class MainViewModel : ObservableObject
         }
 
         // Stash Ammo is no longer a separate special editor. The native
-        // StashRewardProfile aggregate tracks all six stash members including
-        // the grenade/coupon rewards; avoid overriding that source provider.
+        // StashRewardProfile aggregates three ammo quantities and RGD-5 count;
+        // the two existing native Chance edits belong to StashContentMix.
 
         if (parametersById.TryGetValue("loot.mutant.blindDogChance", out var mutantDropAnchor))
         {
@@ -2111,7 +2111,8 @@ public sealed class MainViewModel : ObservableObject
                 "loot.stashGearExpensiveWeapon" => 334,
                 "loot.stashGearExpensiveArmor" => 335,
 
-                // Three stash tiers and three independent bonus rolls
+                // Three native stash tier ammo quantities plus RGD-5 count; the two
+                // native Chance edits now belong to StashContentMix.
                 "loot.cheapStashAmmoQuantity" => 300,
                 "loot.mediumStashAmmoQuantity" => 301,
                 "loot.expensiveStashAmmoQuantity" => 302,

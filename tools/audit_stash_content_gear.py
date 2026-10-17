@@ -54,7 +54,7 @@ vm = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 writer = (src / "Services/CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
 assert "DrawStashWeightMixer(dc, new Rect(left, 38.0, width," in ui
 assert "width >= 670.0 ? 262.0 : 496.0" in ui
-assert "=> width >= 700.0 ? 568.0 : 860.0;" in ui
+assert "=> width >= 700.0 ? 634.0 : 986.0;" in ui
 assert "DrawStashTierWeightPools(dc, new Rect(left," in ui
 assert "narrowPreview ? 302.0 : 244.0" in ui
 assert "private void DrawStashTierWeightPools(" in mixer
