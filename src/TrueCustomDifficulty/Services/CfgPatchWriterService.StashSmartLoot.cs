@@ -250,7 +250,8 @@ public sealed partial class CfgPatchWriterService
         foreach (var group in groups)
         {
             var affected = group.Where(item =>
-                Math.Abs(effective.SmartFactor(item.ItemSid) - 1.0) > 0.0000001
+                Math.Abs(effective.SmartSelectionFactor(item.ItemSid,
+                    item.Chance.Length > 0 ? "Chance" : "Weight") - 1.0) > 0.0000001
                 || (item.ItemSid is "Medkit" or "ArmyMedkit")
                 && (StashTuningCurrent(all, $"loot.stash{item.ItemSid}MinCount", 0) > 0
                     || StashTuningCurrent(all, $"loot.stash{item.ItemSid}MaxCount", 0) > 0))
@@ -263,15 +264,18 @@ public sealed partial class CfgPatchWriterService
             root.SetAssignment("SID", target);
             edits++;
 
-            // A source group has its own spawn-chance endpoints. Scale those
-            // only if every item in that exact group has the same bias.
-            // Never force an originally 0..0 MainLoot group to spawn.
+            // Native spawn endpoints are NOT global Weight multipliers.
+            // Suppress only an all-zero Weight group (fallback guard);
+            // preserve legacy Medical Chance-only modifier behavior.
             foreach (var category in group.GroupBy(x => (x.Rank, x.Group, x.Set)))
             {
                 var items = category.ToArray();
-                var biases = items.Select(item => effective.SmartFactor(item.ItemSid)).ToArray();
+                var selectionField = items[0].Chance.Length > 0 ? "Chance" : "Weight";
+                var biases = items.Select(item =>
+                    effective.SmartSelectionFactor(item.ItemSid, selectionField)).ToArray();
                 var groupNode = SmartStashGroupNode(root, items[0]);
-                if (StashEffectiveState.UniformSmartFactor(biases, out var factor))
+                if (StashEffectiveState.UniformSmartFactor(biases, out var factor)
+                    && (selectionField == "Chance" || factor <= 0.0000001))
                 {
                     foreach (var pair in new[]
                     {
@@ -294,7 +298,8 @@ public sealed partial class CfgPatchWriterService
 
             foreach (var item in affected)
             {
-                var factor = effective.SmartFactor(item.ItemSid);
+                var selectionField = item.Chance.Length > 0 ? "Chance" : "Weight";
+                var factor = effective.SmartSelectionFactor(item.ItemSid, selectionField);
                 var disabled = factor <= 0.0000001;
                 var itemNode = SmartStashGroupNode(root, item)
                     .GetOrAddChild("Items", useBpatch: true)
@@ -316,7 +321,7 @@ public sealed partial class CfgPatchWriterService
                     {
                         if (raw.Length == 0) continue;
                         var tuned = effective.SmartCount(item.ItemSid, fieldName,
-                            raw, item.MinCount, item.MaxCount);
+                            raw, item.MinCount, item.MaxCount, selectionField);
                         if (!disabled && tuned == raw) continue;
                         itemNode.SetAssignment(fieldName, tuned);
                         edits++;

@@ -56,7 +56,7 @@ public sealed record StashBranchPreview(
         if (!IsSmart)
             return state.TierField(baseline, Tier, TierCategory!, item.TierItem!, field);
         return state.SmartCount(item.ItemSid, field, raw,
-            item.MinCount, item.MaxCount);
+            item.MinCount, item.MaxCount, Field);
     }
 
     public (string Min, string Max, string Sets) EffectiveSpawn(StashEffectiveState state)
@@ -66,7 +66,9 @@ public sealed record StashBranchPreview(
         var max = MaxSpawnChance;
         var sets = ItemSetCount;
         if (StashEffectiveState.UniformSmartFactor(
-                Items.Select(i => state.SmartFactor(i.ItemSid)), out var factor))
+                Items.Select(i => state.SmartSelectionFactor(i.ItemSid, Field)),
+                out var factor)
+            && (Field == "Chance" || factor <= 0.0000001))
         {
             if (min.Length > 0) min = StashEffectiveState.SmartSpawnEndpoint(min, factor);
             if (max.Length > 0) max = StashEffectiveState.SmartSpawnEndpoint(max, factor);

@@ -175,12 +175,15 @@ internal static partial class Program
         var cases = new[]
         {
             (
-                Name: "global-medical-zero",
+                Name: "all-native-medical-details-zero",
                 Changes: new Dictionary<string, double>
                 {
-                    ["loot.stashMixMedical"] = 0
+                    ["loot.stashMedicalBandageBias"] = 0,
+                    ["loot.stashMedicalMedkitBias"] = 0,
+                    ["loot.stashMedicalArmyMedkitBias"] = 0,
+                    ["loot.stashMedicalAntiRadBias"] = 0
                 },
-                Disabled: new[] { "Bandage", "Medkit", "ArmyMedkit", "AntiRad", "EcoMedkit" },
+                Disabled: new[] { "Bandage", "Medkit", "ArmyMedkit", "AntiRad" },
                 Unchanged: Array.Empty<string>()
             ),
             (
@@ -305,7 +308,7 @@ internal static partial class Program
         // No novel quest/blueprint ItemGenerator should be overwritten.
         var cases = new[]
         {
-            ("smart-medical-zero", "loot.stashMixMedical", 0.0,
+            ("smart-medkit-zero", "loot.stashMedicalMedkitBias", 0.0,
                 "TCD_StashMedicine_Smart", "ConsumablesParams", "0", "0", "Weight"),
             ("smart-bandage-zero", "loot.stashMedicalBandageBias", 0.0,
                 "TCD_StashMedicine_Smart", "ConsumablesParams", "1", "0", "Weight"),
@@ -313,8 +316,8 @@ internal static partial class Program
                 "TCD_Stash_Ammo_Smart_CommonRare", "PrimaryWeaponParams", "0", "0", "Weight"),
             ("smart-food-zero", "loot.stashMixFood", 0.0,
                 "TCD_StashFood_Cheap", "ConsumablesParams", "0", "0", "Weight"),
-            ("smart-grenade-zero", "loot.stashMixGrenades", 0.0,
-                "TCD_StashGrenade_Smart", "GrenadesParams", "0", "0", "Chance")
+            ("smart-grenade-weight-zero", "loot.stashMixGrenades", 0.0,
+                "TCD_StashGrenade_Cheap", "GrenadesParams", "0", "0", "Weight")
         };
         foreach (var (name, id, value, prototype, group, set, item, field) in cases)
         {
@@ -598,10 +601,8 @@ internal static partial class Program
         };
         var cases = new[]
         {
-            ("global-medical-zero", "loot.stashMixMedical", 0.0, 0.0, 0, 0),
             ("medkit-bias-zero", "loot.stashMedicalMedkitBias", 0.0, 0.0, 0, 0),
-            ("medkit-max-zero", "loot.stashMedkitMaxCount", -1.0, 0.0, 0, 0),
-            ("medical-half", "loot.stashMixMedical", 0.5, 0.5, 1, 1)
+            ("medkit-max-zero", "loot.stashMedkitMaxCount", -1.0, 0.0, 0, 0)
         };
         foreach (var (name, controlId, target, chance, min, max) in cases)
         {
@@ -699,10 +700,6 @@ internal static partial class Program
 
         var tests = new[]
         {
-            (Name: "all-medical-0", Source: "loot.stashMixMedical", Value: 0.0,
-                Relevant: "all", Chance: 0.0, Disabled: true),
-            (Name: "all-medical-half", Source: "loot.stashMixMedical", Value: 0.5,
-                Relevant: "all", Chance: 0.5, Disabled: false),
             (Name: "bandages-0", Source: "loot.stashMedicalBandageBias", Value: 0.0,
                 Relevant: "Bandage", Chance: 0.0, Disabled: true),
             (Name: "medkits-0", Source: "loot.stashMedicalMedkitBias", Value: 0.0,
@@ -830,7 +827,7 @@ internal static partial class Program
     {
         foreach(var (label, values, expectFresh) in new[]
         {
-            ("medical-zero",new Dictionary<string,double> { ["loot.stashMixMedical"]=0 },true),
+            ("bandage-zero",new Dictionary<string,double> { ["loot.stashMedicalBandageBias"]=0 },true),
             ("medkit-zero",new Dictionary<string,double> { ["loot.stashMedkitMaxCount"]=-1 },true),
             ("cheap-ammo-half",new Dictionary<string,double> { ["loot.cheapStashAmmoQuantity"]=0.5 },true),
             ("medium-ammo-half",new Dictionary<string,double> { ["loot.mediumStashAmmoQuantity"]=0.5 },false)
@@ -879,7 +876,7 @@ internal static partial class Program
                                 "TCD_GamePass_Stash_ItemGenerator_CheapNoFresh",
                             label+": missing ordinary CheapNoFresh redirect "+id);
                     var root="TCD_GamePass_Stash_ItemGenerator_CheapNoFresh/ItemGenerator/";
-                    if(label=="medical-zero")
+                    if(label=="bandage-zero")
                         foreach(var field in new[]{"Chance","MinCount","MaxCount"})
                             Check(gens![root+"[0]/PossibleItems/[0]/"+field]=="0",
                                 label+": Bandage was not hard-disabled in source CFG "+field);
@@ -891,7 +888,7 @@ internal static partial class Program
                         Check(gens![root+"[3]/PossibleItems/[0]/MinCount"]=="1",
                             label+": CheapNoFresh ammo 2 -> 1 source scaling failed");
                 }
-                if(label=="medical-zero" || label=="medkit-zero")
+                if(label=="bandage-zero" || label=="medkit-zero")
                 {
                     Check(files.ContainsKey("GameData/StashPrototypes.cfg"),
                         label+": base SmartLoot source clone missing");

@@ -98,7 +98,10 @@ public sealed partial class CfgPatchWriterService
             var isAmmo = entry.Sid.Length > 1 && entry.Sid[0] == 'A'
                 && char.IsDigit(entry.Sid[1]);
             var isGrenade = entry.Sid == "GrenadeRGD5";
-            var sourceBiasZero = categoryId != null
+            // Global knobs affect only native Weight. A Chance-only DLC
+            // entry must not disappear when its category Weight is zero.
+            var sourceBiasZero = entry.Weight.Length > 0 && entry.Chance.Length == 0
+                && categoryId != null
                 && StashTuningCurrent(all, categoryId, 1.0) <= 0.0000001;
             var forcedZero = sourceBiasZero
                 || IsStashMedicalSelectionDisabled(entry.Sid, all)

@@ -114,10 +114,12 @@ public sealed class StashEffectiveState
             or "AntiRad" or "EcoMedkit")) return false;
         if (sid is "Medkit" or "ArmyMedkit"
             && Value($"loot.stash{sid}MaxCount", 0) < -.5) return true;
-        return Value("loot.stashMixMedical") <= 0 ||
-            MedicalDetailId(sid) is { } detail && Value(detail) <= 0;
+        // Global stash knobs tune Weight ONLY. Chance-based medical entries
+        // are disabled only by an actual medical source-specific control.
+        return MedicalDetailId(sid) is { } detail && Value(detail) <= 0;
     }
 
+    // Weight-only global factor. This is NOT a multiplier of authored Chance.
     public double TierFactor(string sid)
     {
         if (MedicalDisabled(sid)) return 0.0;
@@ -128,12 +130,28 @@ public sealed class StashEffectiveState
         return factor;
     }
 
+    // Existing Medical Composition is already a source-exposed per-item
+    // selector. Keep its original Chance behavior, without applying the six
+    // global Weight knobs to independently-authored native Chance entries.
+    public double ChanceFactor(string sid)
+    {
+        if (MedicalDisabled(sid)) return 0.0;
+        return MedicalDetailId(sid) is { } detail ? Value(detail) : 1.0;
+    }
+
+    public double SelectionFactor(string sid, string field)
+        => field switch
+        {
+            "Weight" => TierFactor(sid),
+            "Chance" => ChanceFactor(sid),
+            _ => throw new InvalidDataException("Unknown stash selection field: " + field)
+        };
+
     public string TuneSelection(string sid, string field, string raw)
     {
         if (field is not ("Chance" or "Weight")) return raw;
-        if (MedicalDisabled(sid)) return FormatLikeSource(0.0, raw);
         if (ItemBiasId(sid) is null) return raw;
-        var bias = TierFactor(sid);
+        var bias = SelectionFactor(sid, field);
         if (Math.Abs(bias - 1) < 0.0000001) return raw;
         var original = Number(raw);
         var result = field == "Chance"
@@ -254,20 +272,22 @@ public sealed class StashEffectiveState
 
     public double SmartFactor(string sid)
     {
-        var id = SmartItemBiasId(sid)
-            ?? throw new InvalidDataException("Unclassified SmartLoot item: " + sid);
-        var value = Value(id);
-        if (MedicalDetailId(sid) is { } detail) value *= Value(detail);
-        if (sid is "Medkit" or "ArmyMedkit"
-            && Value($"loot.stash{sid}MaxCount", 0) < -.5)
-            return 0;
-        return value;
+        if (SmartItemBiasId(sid) is null)
+            throw new InvalidDataException("Unclassified SmartLoot item: " + sid);
+        return TierFactor(sid);
+    }
+
+    public double SmartSelectionFactor(string sid, string selectionField)
+    {
+        if (SmartItemBiasId(sid) is null)
+            throw new InvalidDataException("Unclassified SmartLoot item: " + sid);
+        return SelectionFactor(sid, selectionField);
     }
 
     public string SmartSelection(string sid, string field, string raw)
     {
         if (field is not ("Weight" or "Chance") || raw.Length == 0) return raw;
-        var factor = SmartFactor(sid);
+        var factor = SmartSelectionFactor(sid, field);
         var output = factor <= .0000001 ? 0.0 : field == "Chance"
             ? Math.Clamp(Number(raw) * factor, 0, 1)
             : Math.Max(0, Number(raw) * factor);
@@ -276,15 +296,15 @@ public sealed class StashEffectiveState
 
     /// <summary>
     /// Shared SmartLoot count output for the world writer AND native group preview.
-    /// Any zero selection factor disables the item's count (including grenades,
-    /// food, ammo and lowercase Antirad), not only medical Medkits.
+    /// Count suppression follows that exact item's native selection FIELD.
+    /// Global Weight=0 does not silently suppress a Chance-only entry.
     /// </summary>
     public string SmartCount(string sid, string field, string raw,
-        string originalMin, string originalMax)
+        string originalMin, string originalMax, string selectionField)
     {
         if (field is not ("MinCount" or "MaxCount") || raw.Length == 0)
             return raw;
-        if (SmartFactor(sid) <= 0.0000001) return "0";
+        if (SmartSelectionFactor(sid, selectionField) <= 0.0000001) return "0";
         if (sid is not ("Medkit" or "ArmyMedkit")) return raw;
         var original = new Dictionary<string, string>(StringComparer.Ordinal)
         {

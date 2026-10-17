@@ -5749,14 +5749,14 @@
       "id": "loot.stashMixAmmo",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Ammo Stash Selection",
-      "description": "How much ammo selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
+      "label": "Ammo Stash Weight",
+      "description": "Global relative ammo Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–3x decreases or increases their relative selection priority. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Original stash selection multiplier — not overall drop chance"
+        "valueLabel": "Relative item Weight — not drop chance"
       },
       "vanilla": {
         "All": 1
@@ -5766,7 +5766,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 3,
         "step": 0.1,
         "stepMode": "absolute"
       },
@@ -5775,27 +5775,27 @@
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
-          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         },
         {
           "scope": "baseGame",
           "file": "GameData/StashPrototypes.cfg",
           "prototype": "TCD-owned world SmartLoot source clones",
-          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
+          "1x keeps native Weight; independently-authored Chance is untouched.",
+          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
       "rationale": "Adjust relative ammo presence without touching ammo stack size or quest rewards.",
-      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
       "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
       "exposeInUi": true
     },
@@ -5803,14 +5803,14 @@
       "id": "loot.stashMixMedical",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Medical Stash Selection",
-      "description": "How much medical selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
+      "label": "Medical Stash Weight",
+      "description": "Global relative medical Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–3x decreases or increases their relative selection priority. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Original stash selection multiplier — not overall drop chance"
+        "valueLabel": "Relative item Weight — not drop chance"
       },
       "vanilla": {
         "All": 1
@@ -5820,7 +5820,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 3,
         "step": 0.1,
         "stepMode": "absolute"
       },
@@ -5829,27 +5829,27 @@
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
-          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         },
         {
           "scope": "baseGame",
           "file": "GameData/StashPrototypes.cfg",
           "prototype": "TCD-owned world SmartLoot source clones",
-          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
+          "1x keeps native Weight; independently-authored Chance is untouched.",
+          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
       "rationale": "Adjust relative medical presence without touching ammo stack size or quest rewards.",
-      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
       "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
       "exposeInUi": true
     },
@@ -5857,14 +5857,14 @@
       "id": "loot.stashMixFood",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Food Stash Selection",
-      "description": "How much food selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
+      "label": "Food Stash Weight",
+      "description": "Global relative food Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–3x decreases or increases their relative selection priority. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Original stash selection multiplier — not overall drop chance"
+        "valueLabel": "Relative item Weight — not drop chance"
       },
       "vanilla": {
         "All": 1
@@ -5874,7 +5874,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 3,
         "step": 0.1,
         "stepMode": "absolute"
       },
@@ -5883,27 +5883,27 @@
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
-          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         },
         {
           "scope": "baseGame",
           "file": "GameData/StashPrototypes.cfg",
           "prototype": "TCD-owned world SmartLoot source clones",
-          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
+          "1x keeps native Weight; independently-authored Chance is untouched.",
+          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
       "rationale": "Adjust relative food presence without touching ammo stack size or quest rewards.",
-      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
       "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
       "exposeInUi": true
     },
@@ -5911,14 +5911,14 @@
       "id": "loot.stashMixDrinks",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Drinks Stash Selection",
-      "description": "How much drinks selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
+      "label": "Drinks Stash Weight",
+      "description": "Global relative drinks Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–3x decreases or increases their relative selection priority. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Original stash selection multiplier — not overall drop chance"
+        "valueLabel": "Relative item Weight — not drop chance"
       },
       "vanilla": {
         "All": 1
@@ -5928,7 +5928,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 3,
         "step": 0.1,
         "stepMode": "absolute"
       },
@@ -5937,27 +5937,27 @@
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
-          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         },
         {
           "scope": "baseGame",
           "file": "GameData/StashPrototypes.cfg",
           "prototype": "TCD-owned world SmartLoot source clones",
-          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
+          "1x keeps native Weight; independently-authored Chance is untouched.",
+          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
       "rationale": "Adjust relative drinks presence without touching ammo stack size or quest rewards.",
-      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
       "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
       "exposeInUi": true
     },
@@ -5965,14 +5965,14 @@
       "id": "loot.stashMixGrenades",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Grenades Stash Selection",
-      "description": "How much grenades selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
+      "label": "Grenades Stash Weight",
+      "description": "Global relative grenades Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–3x decreases or increases their relative selection priority. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Original stash selection multiplier — not overall drop chance"
+        "valueLabel": "Relative item Weight — not drop chance"
       },
       "vanilla": {
         "All": 1
@@ -5982,7 +5982,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 3,
         "step": 0.1,
         "stepMode": "absolute"
       },
@@ -5991,27 +5991,27 @@
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
-          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         },
         {
           "scope": "baseGame",
           "file": "GameData/StashPrototypes.cfg",
           "prototype": "TCD-owned world SmartLoot source clones",
-          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
+          "1x keeps native Weight; independently-authored Chance is untouched.",
+          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
       "rationale": "Adjust relative grenades presence without touching ammo stack size or quest rewards.",
-      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
       "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
       "exposeInUi": true
     },
@@ -6019,14 +6019,14 @@
       "id": "loot.stashMixCoupons",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Coupons Stash Selection",
-      "description": "How much coupons selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
+      "label": "Coupons Stash Weight",
+      "description": "Global relative coupons Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–3x decreases or increases their relative selection priority. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Original stash selection multiplier — not overall drop chance"
+        "valueLabel": "Relative item Weight — not drop chance"
       },
       "vanilla": {
         "All": 1
@@ -6036,7 +6036,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 3,
         "step": 0.1,
         "stepMode": "absolute"
       },
@@ -6045,27 +6045,27 @@
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
-          "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerator[*].PossibleItems[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         },
         {
           "scope": "baseGame",
           "file": "GameData/StashPrototypes.cfg",
           "prototype": "TCD-owned world SmartLoot source clones",
-          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight, classified by ItemPrototypeSID",
           "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
+          "1x keeps native Weight; independently-authored Chance is untouched.",
+          "0x zeros only eligible Weight entries, not Chance-only entries; full exclusion is not guaranteed.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
       "rationale": "Adjust relative coupons presence without touching ammo stack size or quest rewards.",
-      "logic": "Weight is relative selection weight; Chance is per-entry chance and is clamped to 1, not a stash-wide drop percentage.",
+      "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
       "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
       "exposeInUi": true
     },

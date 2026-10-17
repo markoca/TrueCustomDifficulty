@@ -92,7 +92,7 @@ assert 'StashPreviewGroup("BASIC", 1)' in preview
 assert 'StashPreviewGroup("RARE", 11)' not in preview  # chance only, never a weight pool
 assert "StashChanceSample(" in preview
 assert '"SOURCE CHANCE FIELDS"' in preview
-assert '"NATIVE CHANCE · BONUS + BIAS"' in preview
+assert '"NATIVE CHANCE · INDEPENDENT"' in preview
 assert 'CurrentStashEffectiveState().TuneSelection(sid, "Weight", raw)' in preview
 assert "effective.TierField(" in preview
 assert "StashEffectiveState.Number(" in preview
@@ -160,7 +160,7 @@ for family, branch, sid, expected_chance in samples:
     assert len(rows) == 1 and "Chance" in rows[0], (family, branch, sid)
     chance = float(rows[0]["Chance"].rstrip("fF"))
     assert math.isclose(chance, expected_chance, abs_tol=1e-8)
-    assert math.isclose(min(1, max(0, chance * 3)), min(1, chance * 3))
+    assert 0 <= chance <= 1  # Native Chance is separate from global Weight.
 
 assert "=> width >= 700.0 ? 520.0 : 665.0;" in source
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
@@ -208,6 +208,8 @@ harness = (root / "tests/LootSpecialGeneratorsContract/Program.cs").read_text()
 assert writer.count("effective.TierField(") == 3
 assert "effective.SmartSelection(" in smart
 assert "StashEffectiveState.UniformSmartFactor(" in smart
+assert 'selectionField == "Chance" || factor <= 0.0000001' in smart
+assert "effective.SmartSelectionFactor(item.ItemSid, selectionField)" in smart
 assert "StashEffectiveState.SmartSpawnEndpoint(" in smart
 assert "StashState(all).TuneSelection(" in tuning
 assert "StashState(all).TuneCount(" in tuning
@@ -230,9 +232,10 @@ mix_ids = expected["StashContentMix"]
 for pid in mix_ids:
     item = next(p for p in catalog["parameters"] if p["id"] == pid)
     slider = item["slider"]
-    assert (slider["min"], slider["max"], slider["step"]) == (0, 1, 0.1), pid
+    assert (slider["min"], slider["max"], slider["step"]) == (0, 3, 0.1), pid
     assert item["vanilla"]["All"] == 1, pid
-    assert "Weight / Chance" in item["targets"][0]["path"], pid
+    assert "Weight" in item["targets"][0]["path"], pid
+    assert all("Chance" not in target["path"] for target in item["targets"]), pid
     assert len(item["targets"]) == 2, pid
     assert item["targets"][0]["file"] == "GameData/ItemGeneratorPrototypes.cfg", pid
     assert item["targets"][1]["file"] == "GameData/StashPrototypes.cfg", pid
@@ -251,10 +254,12 @@ assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
 assert "StashCategoryIndex(item.ItemSid)" in coverage
 assert '"WEIGHT ' not in coverage and '"CHANCE ' not in coverage
 assert '"ITEMGEN ' not in coverage and '"WORLD ' not in coverage
-assert '"WHAT CAN APPEAR"' in coverage
-assert '"EXCLUDED"' in coverage and '"REDUCED"' in coverage
+assert '"STASH ITEM WEIGHTS"' in coverage
+assert '"CHANCE CONTROLS ARE SEPARATE"' in coverage
+assert '"WEIGHT OFF"' in coverage and '"REDUCED"' in coverage
+assert '"INCREASED"' in coverage and '"EXCLUDED"' in coverage
 assert '"ORIGINAL"' in coverage and '"PARTIAL"' in coverage
-assert '"NOT GUARANTEED · MOD-CONTROLLED STASHES ONLY"' in coverage
+assert '"WEIGHT IS RELATIVE · CHANCE REMAINS SEPARATE"' in coverage
 assert "StashEffectiveState.ItemBiasId(sid)" in coverage
 assert "StashEffectiveState.SmartItemBiasId(sid)" in coverage
 for retired in ("DrawStashBranchBrowser(", "NavigateStash(", "TryStashBrowserClick(",
@@ -265,14 +270,20 @@ for retired in ("DrawStashBranchBrowser(", "NavigateStash(", "TryStashBrowserCli
 assert "CurrentNumber =" not in coverage
 assert "AddHorizontalTarget(" not in coverage
 assert "StashMixPalette[i]" in coverage
-assert "GlobalMedicalItems.Select(item => state.TierFactor(item.Sid))" in coverage
+assert "GlobalMedicalItems.Select(item => state.ChanceFactor(item.Sid))" in coverage
 assert "EXCLUDED: " in coverage
 assert 'GlobalStashStatus(i, statusState)' in source
+assert '"RARE COUPONS"' in source and '"RGD-5 CHANCE"' in source
 assert 'GlobalStashItemDescriptions' in coverage
 assert "GetManifestResourceStream(SmartSource)" in branches
 assert "public static string? SmartItemBiasId(string sid) => ItemBiasId(sid);" in effective
 assert "public double TierFactor(string sid)" in effective
 assert "public double SmartFactor(string sid)" in effective
+assert "public double ChanceFactor(string sid)" in effective
+assert "public double SelectionFactor(string sid, string field)" in effective
+assert 'return MedicalDetailId(sid) is { } detail && Value(detail) <= 0;' in effective
+assert "public double SmartSelectionFactor(string sid, string selectionField)" in effective
+assert "if (SmartSelectionFactor(sid, selectionField) <= 0.0000001)" in effective
 assert 'if (ItemBiasId(sid) is null) return raw;' in effective
 assert 'var id = SmartItemBiasId(sid)' in effective
 assert "StashMixParameterIds.Any(modified.ContainsKey)" in tuning
@@ -300,6 +311,7 @@ assert sum(1 for r in rows if r["Chance"]) > 0
 for doc in (lock, system, proposal):
     assert "STASHES GLOBAL ITEM-CATEGORY SOURCE COVERAGE (CURRENT)" in doc
     assert "STASHES PLAYER-FACING LOOT STATUS (CURRENT)" in doc
+    assert "STASHES GLOBAL WEIGHT WITH NATIVE CHANCE EXCEPTIONS (CURRENT)" in doc
 print("PASS: six global item-type knobs and full native source coverage, no branch/rank selection")
 
 # Phase 5: emitted patch parity must be wired into the executable contract.
@@ -320,9 +332,13 @@ assert "AssertProtectedBaseStashesUntouched(generated, name)" in phase5
 assert "DlcEligibleActorIds.Value" in phase5
 assert '"all-category-zero"' in phase5 and '"food-3x"' in phase5
 assert '"hard-bonus-medical-dlc"' in phase5
+assert 'Math.Abs(NativeValue(grenade, chance) - .8)' in phase5
+assert 'Math.Abs(NativeValue(rareEasy, couponEasy) - .6)' in phase5
 assert "public string SmartCount(" in effective
 assert "effective.SmartCount(item.ItemSid, fieldName," in smart
+assert "raw, item.MinCount, item.MaxCount, selectionField);" in smart
 assert "state.SmartCount(item.ItemSid, field, raw," in branches
+assert "item.MinCount, item.MaxCount, Field);" in branches
 assert 'var half = NativeState(difficulty, (categoryId, .5));' in phase5
 for doc in (lock, system, proposal):
     assert "STASHES PHASE 5 CFG PARITY GATE" in doc

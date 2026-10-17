@@ -81,23 +81,24 @@ public sealed partial class AggregateVisualControl
             _ => -1
         };
 
-    // A reduced Weight only lowers its native relative priority, while a
-    // reduced Chance scales that original independent chance. Neither is an
-    // estimate of how many stashes the player will actually find.
+    // Only original Weight is scaled by these six global knobs. Native Chance
+    // entries remain independently possible even when a Weight knob is 0x.
+    // Never describe a pure Weight adjustment as a drop probability.
     private static string GlobalStashStatus(int category, StashEffectiveState state)
     {
         var value = state.Value("loot.stashMix" +
             new[] { "Ammo", "Medical", "Food", "Drinks", "Grenades", "Coupons" }[category]);
         if (category == 1)
         {
-            var factors = GlobalMedicalItems.Select(item => state.TierFactor(item.Sid))
+            var factors = GlobalMedicalItems.Select(item => state.ChanceFactor(item.Sid))
                 .ToArray();
             if (factors.All(f => f <= 0.0000001)) return "EXCLUDED";
             if (factors.Any(f => f <= 0.0000001)) return "PARTIAL";
             if (factors.Any(f => f > 1.0000001)) return "ADJUSTED";
         }
-        if (value <= 0.0000001) return "EXCLUDED";
+        if (value <= 0.0000001) return "WEIGHT OFF";
         if (value < 0.9999999) return "REDUCED";
+        if (value > 1.0000001) return "INCREASED";
         return "ORIGINAL";
     }
 
@@ -107,16 +108,18 @@ public sealed partial class AggregateVisualControl
         if (category == 1 && status == "PARTIAL")
         {
             var excluded = GlobalMedicalItems
-                .Where(item => state.TierFactor(item.Sid) <= 0.0000001)
+                .Where(item => state.ChanceFactor(item.Sid) <= 0.0000001)
                 .Select(item => item.Label).ToArray();
             return "EXCLUDED: " + string.Join(" · ", excluded);
         }
         return status switch
         {
-            "EXCLUDED" => "NOT SELECTED BY MODIFIED STASH GENERATORS",
-            "REDUCED" => "STILL POSSIBLE · ORIGINAL SELECTION SCALED DOWN",
-            "ADJUSTED" => "STILL POSSIBLE · MEDICAL MODIFIERS ACTIVE",
-            _ => "CAN APPEAR · ORIGINAL SELECTION SETTINGS"
+            "EXCLUDED" => "ALL MEDICAL SUBTYPES DISABLED BY MEDICAL CONTROLS",
+            "WEIGHT OFF" => "WEIGHT OFF · INDEPENDENT CHANCE MAY STILL APPEAR",
+            "REDUCED" => "LOWER PRIORITY IN WEIGHTED SELECTION",
+            "INCREASED" => "HIGHER PRIORITY IN WEIGHTED SELECTION",
+            "ADJUSTED" => "MEDICAL SOURCE MODIFIERS ACTIVE",
+            _ => "ORIGINAL WEIGHT · CHANCE CONTROLS INDEPENDENT"
         };
     }
 
@@ -138,10 +141,10 @@ public sealed partial class AggregateVisualControl
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .72),
             new Pen(CloneWithOpacity(border, .68), 1.0),
             outer, 4.0, 4.0);
-        DrawText(dc, "WHAT CAN APPEAR",
+        DrawText(dc, "STASH ITEM WEIGHTS",
             new Point(outer.Left + 12.0, outer.Top + 10.0),
             10.5, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "CURRENT STASH SETTINGS",
+        DrawRightAlignedText(dc, "CHANCE CONTROLS ARE SEPARATE",
             new Point(outer.Right - 12.0, outer.Top + 11.0),
             8.8, muted, FontWeights.SemiBold);
 
@@ -175,8 +178,8 @@ public sealed partial class AggregateVisualControl
         }
 
         var caveat = columns == 2
-            ? "POSSIBLE IS NOT GUARANTEED · OFF APPLIES ONLY TO MOD-CONTROLLED STASHES"
-            : "NOT GUARANTEED · MOD-CONTROLLED STASHES ONLY";
+            ? "WEIGHT IS RELATIVE · CHANCE-ONLY ENTRIES REMAIN UNCHANGED"
+            : "WEIGHT IS RELATIVE · CHANCE REMAINS SEPARATE";
         dc.DrawText(CreateText(caveat,
                 8.5, muted, FontWeights.Normal, Math.Max(1.0, outer.Width - 24.0)),
             new Point(outer.Left + 12.0, outer.Bottom - 17.0));

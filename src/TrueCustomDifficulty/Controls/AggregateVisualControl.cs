@@ -4641,8 +4641,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             DrawSourceKnob(dc, source, entries[i].Label, card,
                 text, muted, border, accent, panel,
                 dialAccent: StashMixPalette[i], dialScale: dialScales[i]);
-            // Knob value is a multiplier, not a visible drop percentage.
-            // Translate it immediately into a player-facing item state.
+            // Weight multiplier, never a whole-stash drop probability.
+            // Native Chance entries use only their own source controls.
             if (source is not null)
                 DrawCenteredText(dc, GlobalStashStatus(i, statusState),
                     new Point(card.Left + cell / 2.0, card.Bottom - 8.0),
@@ -5009,7 +5009,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawText(dc, "SOURCE CHANCE FIELDS",
             new Point(inner.Left, card.Top + 146.0),
             10.0, text, FontWeights.Bold);
-        DrawRightAlignedText(dc, "NATIVE CHANCE · BONUS + BIAS",
+        DrawRightAlignedText(dc, "NATIVE CHANCE · INDEPENDENT",
             new Point(inner.Right, card.Top + 146.0),
             8.6, muted, FontWeights.SemiBold);
         var samples = new (string Tier, int Group, string Sid, string Label)[]

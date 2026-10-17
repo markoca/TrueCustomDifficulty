@@ -120,8 +120,8 @@ internal static partial class Program
         var chance = NativeState("Easy",
             ("loot.cheapStashGrenadeChance", .8),
             ("loot.stashMixGrenades", 3));
-        Check(Math.Abs(NativeValue(grenade, chance) - 1) < 1e-9,
-            "Grenade bonus must precede bias and clamp native Chance to 1.");
+        Check(Math.Abs(NativeValue(grenade, chance) - .8) < 1e-9,
+            "Native RGD-5 Chance must remain .8 even when global Grenades Weight is 3x.");
         var rareEasy = NativeBranch(branches, "GamePass_Stash_ItemGenerator_Rare",
             "ItemGenerator.[11].PossibleItems");
         var rareHard = NativeBranch(branches, "GamePass_Stash_ItemGenerator_Rare",
@@ -134,10 +134,10 @@ internal static partial class Program
             ("loot.stashMixCoupons", 1.5));
         Check(rareEasy.AppliesTo(0, "Easy") && !rareEasy.AppliesTo(0, "Hard")
             && rareHard.AppliesTo(0, "Hard") && !rareHard.AppliesTo(0, "Easy")
-            && Math.Abs(NativeValue(rareEasy, couponEasy) - .9) < 1e-9
-            && Math.Abs(NativeValue(rareHard, couponHard) - .9) < 1e-9
+            && Math.Abs(NativeValue(rareEasy, couponEasy) - .6) < 1e-9
+            && Math.Abs(NativeValue(rareHard, couponHard) - .6) < 1e-9
             && Math.Abs(NativeValue(rareEasy, couponHard) - .3) < 1e-9,
-            "Rare Coupons bonus must obey actual native difficulty gates.");
+            "Rare Coupons Chance remains independently editable and difficulty-gated.");
 
         var smartMixed = NativeBranch(branches, "StashMedicine_Smart",
             "ItemGenerators.[2].SmartLootParams.ConsumablesParams.[0].Items");
@@ -161,13 +161,33 @@ internal static partial class Program
         var smartGrenades = NativeBranch(branches, "StashGrenade_Cheap",
             "ItemGenerators.[0].SmartLootParams.GrenadesParams.[0].Items");
         var smartOff = NativeState("Easy", ("loot.stashMixGrenades", 0));
-        Check(smartGrenades.Items.All(item =>
+        Check(smartGrenades.Field == "Weight"
+            && smartGrenades.Items.All(item =>
                 smartGrenades.EffectiveCount(Baseline, smartOff, item, "MinCount") == "0"
                 && smartGrenades.EffectiveCount(Baseline, smartOff, item, "MaxCount") == "0")
             && smartGrenades.EffectiveSpawn(smartOff).Sets == "0",
             "SmartLoot zero-factor count and ItemSetCount must be disabled together.");
 
-        Console.WriteLine("PASS Phase 5: six global category factors across "
+        // Global Weight must never scale native Chance-only rows.
+        foreach (var chanceBranch in branches.Where(g => g.Field == "Chance"))
+        {
+            var sid = chanceBranch.Items[0].ItemSid;
+            var id = StashEffectiveState.ItemBiasId(sid)!;
+            var weightedOff = NativeState("Easy", (id, 0));
+            var weightedTriple = NativeState("Easy", (id, 3));
+            var item = chanceBranch.Items[0];
+            var source = StashEffectiveState.Number(
+                chanceBranch.EffectiveSelection(Baseline, neutral, item));
+            Check(Math.Abs(StashEffectiveState.Number(
+                      chanceBranch.EffectiveSelection(Baseline, weightedOff, item))
+                      - source) < 1e-9
+                && Math.Abs(StashEffectiveState.Number(
+                      chanceBranch.EffectiveSelection(Baseline, weightedTriple, item))
+                      - source) < 1e-9,
+                "Global Weight knob leaked into native Chance row: " + sid);
+        }
+
+        Console.WriteLine("PASS Phase 5: six global Weight categories across "
             + "463 native source groups and all 1124 original item entries");
 
         // Each profile generates REAL CFG patch files, then checks every
@@ -279,7 +299,7 @@ internal static partial class Program
                     group.GroupPath.Replace(".", "/");
                 var prefix = root[..root.LastIndexOf("/Items", StringComparison.Ordinal)];
                 var affected = group.Items.Where(row =>
-                    Math.Abs(snapshot.SmartFactor(row.ItemSid) - 1) > 1e-7
+                    Math.Abs(snapshot.SmartSelectionFactor(row.ItemSid, group.Field) - 1) > 1e-7
                     || (row.ItemSid is "Medkit" or "ArmyMedkit")
                     && (snapshot.Value($"loot.stash{row.ItemSid}MinCount", 0) > 0
                         || snapshot.Value($"loot.stash{row.ItemSid}MaxCount", 0) > 0))
@@ -304,7 +324,7 @@ internal static partial class Program
                         var count = group.EffectiveCount(Baseline, snapshot, row, field);
                         // Writer explicitly patches both endpoints at factor=0,
                         // and otherwise only changes native Medkit count bounds.
-                        if (snapshot.SmartFactor(row.ItemSid) > 1e-7
+                        if (snapshot.SmartSelectionFactor(row.ItemSid, group.Field) > 1e-7
                             && count == raw) continue;
                         key = itemPrefix + field;
                         Check(smart.TryGetValue(key, out actual) && actual == count,
@@ -316,8 +336,9 @@ internal static partial class Program
                 }
 
                 if (StashEffectiveState.UniformSmartFactor(
-                    group.Items.Select(x => snapshot.SmartFactor(x.ItemSid)),
-                    out var uniform))
+                    group.Items.Select(x => snapshot.SmartSelectionFactor(x.ItemSid, group.Field)),
+                    out var uniform)
+                    && (group.Field == "Chance" || uniform <= 1e-7))
                 {
                     var spawn = group.EffectiveSpawn(snapshot);
                     foreach (var (field, original, predicted) in new[]
