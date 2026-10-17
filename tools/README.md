@@ -1,3 +1,18 @@
+## Source-backed spawn-referenced item SID inventory
+
+`docs/SPAWNABLE-ITEM-SIDS.md` lists every item SID backed by a base/DLC1 ItemPrototypes definition and a spawn-related CFG reference; the companion `src/TrueCustomDifficulty/Data/spawnable-item-sids.csv` retains the evidence paths and item type per SID. It is **not** an unconditional in-game spawn list; quest/rank/other gates still apply. The 7.62×39 cut ammo family (`A762D/A762A/A762E`) is excluded.
+
+To regenerate from locally supplied extracted CFG archives (ZIPs are not committed to GitHub):
+
+```bash
+python3 tools/generate_spawn_item_sids.py \
+  --game "/path/to/STALKER2-GameData-CFG.zip" \
+  --dlc "/path/to/STALKER2-DLC1-CFG.zip"
+python3 tools/audit_spawn_item_sids.py
+```
+
+The static audit also runs with `python3 tools/pre_release.py static`. It checks internal consistency only, not actual gameplay drops.
+
 # External tools
 
 ## Reproduce regular-world stash allowlist from supplied CFG dump
