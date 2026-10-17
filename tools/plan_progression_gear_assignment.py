@@ -4,6 +4,7 @@ import argparse
 import csv
 import hashlib
 import random
+import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -43,6 +44,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--seed', default='42')
     p.add_argument('--check', action='store_true', help='Verify determinism and conservation without printing rows')
+    p.add_argument('--patch-preview', action='store_true', help='Print CFG bpatch preview for changed safe slots (not written to disk)')
     args = p.parse_args()
     rows = plan(args.seed)
     if args.check:
@@ -50,6 +52,27 @@ def main():
         assert Counter(r['original_item_sid'] for r in rows) == Counter(r['assigned_item_sid'] for r in rows)
         assert all(r['tier'] in {'T1','T2','T3','T4'} for r in rows)
         print(f'[OK] progression gear planner: {len(rows)} allowlisted weapon slots, strict tier/family, deterministic and conserved')
+        return
+    if args.patch_preview:
+        print('// Preview only: does not write a game patch. Weapon-specific Upgrades/Attaches must be validated before production use.')
+        for row in rows:
+            if row['changed'] != 'true':
+                continue
+            path = row['node_path'].split('/')
+            assert path[0] == 'ItemGenerator' and path[2] == 'PossibleItems' and len(path) == 4
+            assert re.fullmatch(r'\\[\\d+\\]', path[1]) and re.fullmatch(r'\\[\\d+\\]', path[3])
+            print(f'// {row["original_item_sid"]} -> {row["assigned_item_sid"]} ({row["tier"]}/{row["family"]})')
+            print(f'{row["generator_sid"]} : struct.begin {{bpatch}}')
+            print('    ItemGenerator : struct.begin')
+            print(f'        {path[1]} : struct.begin {{bpatch}}')
+            print('            PossibleItems : struct.begin')
+            print(f'                {path[3]} : struct.begin {{bpatch}}')
+            print(f'                    ItemPrototypeSID = {row["assigned_item_sid"]}')
+            print('                struct.end')
+            print('            struct.end')
+            print('        struct.end')
+            print('    struct.end')
+            print('struct.end')
         return
     fields = ['generator_sid','node_path','tier','family','original_item_sid','assigned_item_sid','changed']
     writer = csv.DictWriter(sys.stdout, fieldnames=fields, lineterminator='\\n')
