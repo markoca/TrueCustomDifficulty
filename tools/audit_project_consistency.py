@@ -5909,6 +5909,9 @@ if (not all(token in _stash_phase5 for token in (
     or "effective.SmartCount(" not in _stash_smart
     or "state.SmartCount(" not in _stash_branches
     or "DrawStashWeightMixer(" not in _stash_browser
+    or "DrawStashTierWeightPools(" not in _stash_browser
+    or 'example.Tier, group, item, "Weight"' not in _stash_browser
+    or '"ONE SOURCE GROUP PER TIER · NOT STASH DROP ODDS"' not in _stash_browser
     or "private static int StashCategoryIndex(string sid)" not in _stash_browser
     or "StashEffectiveState.ItemBiasId(sid)" not in _stash_browser
     or "StashEffectiveState.SmartItemBiasId(sid)" not in _stash_browser
@@ -5932,7 +5935,7 @@ if (not all(token in _stash_phase5 for token in (
                for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))):
     fail("Stashes Phase 5 native browser / writer CFG parity or UI catalog drift")
 else:
-    note("Stashes: one compact 6-lane Weight-only 0..3x mixer; original Chance independent and only authored chance editors exposed. SmartLoot zero-weight/count parity retained; Windows/Wine game acceptance NOT RUN")
+    note("Stashes: six Weight-only 0..3x lanes with three source-native read-only tier composition bars; Chance and original SmartLoot rules independent. Windows/Wine game acceptance NOT RUN")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")
