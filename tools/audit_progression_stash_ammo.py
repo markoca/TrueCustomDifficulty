@@ -48,6 +48,7 @@ def main():
     blocks = parse(lines)
     missing = []
     uncertain = []
+    confirmed = 0
     for row in sorted(rows, key=lambda r: r["generator_sid"]):
         gen = row["generator_sid"]
         weapon = (gen, *row["node_path"].split("/"))
@@ -59,32 +60,31 @@ def main():
         sids = SID.findall("\n".join(lines[start:end]))
         if sids != [row["item_sid"]]:
             raise ValueError(f"Weapon source mismatch: {gen} {sids}")
-        # ItemGenerator/[n]/PossibleItems/[m] -> sibling category nodes
-        category_parent = weapon[:2]
-        sibling_paths = sorted(
-            p for p in blocks
-            if len(p) == 3 and p[:2] == category_parent and p[2] == "PossibleItems"
-        )
         # Categories at ItemGenerator/[n] across this generator, not just the weapon.
         category_paths = sorted(p for p in blocks if len(p) == 3 and p[0] == gen and p[1] == "ItemGenerator")
         ammo = []
         other = []
+        unknown = []
         for p in category_paths:
             for s, e in blocks[p]:
                 body = "\n".join(lines[s:e])
-                category = re.search(r"^\s*Category\s*=\s*(\S+)", body, re.M)
+                category = re.search(r"^\s*(?:Category|ItemCategory)\s*=\s*(\S+)", body, re.M)
                 label = category.group(1) if category else "UNKNOWN"
                 item_sids = SID.findall(body)
-                if label == "Ammo":
+                if label in {"Ammo", "EItemGeneratorCategory::Ammo"}:
                     ammo.extend(item_sids)
-                elif label != "WeaponPrimary" and label != "WeaponPistol":
+                elif label not in {"WeaponPrimary", "WeaponPistol", "EItemGeneratorCategory::WeaponPrimary", "EItemGeneratorCategory::WeaponPistol"}:
                     other.append(label)
+                if label == "UNKNOWN":
+                    unknown.append(p)
         print(f"{gen},weapon={row['item_sid']},tier={row['progression_tier']},ammo_sids={';'.join(ammo) or 'NONE'},other_categories={';'.join(other) or 'NONE'}")
-        if other or not ammo:
+        if other or not ammo or unknown:
             uncertain.append(gen)
+        else:
+            confirmed += 1
     if missing:
         raise ValueError(f"Unresolved weapon source blocks: {missing}")
-    print(f"[AUDIT] {len(rows)} weapon slots inspected; {len(uncertain)} generators require manual category review")
+    print(f"[AUDIT] {len(rows)} weapon slots inspected; {confirmed} category-only candidates; {len(uncertain)} generators require manual review")
     if args.strict and uncertain:
         raise ValueError(f"Unclassified/absent sibling ammo in {len(uncertain)} generators; no patch is safe")
 
