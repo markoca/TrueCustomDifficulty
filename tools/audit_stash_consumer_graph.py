@@ -77,6 +77,8 @@ def build_graph():
         **{("dlc1", r["ActorSID"]): r for r in dlc},
     }
     graph = []
+    compound_rosters = []
+    compound_protected = []
 
     def add(**kwargs):
         assert set(kwargs) == set(FIELDS), set(kwargs) ^ set(FIELDS)
@@ -99,7 +101,19 @@ def build_graph():
         expected = {"Basic": 1271, "Standard": 450, "Rare": 305}[tier]
         assert len(manifest) == expected
         for row in manifest:
-            sid = row["physical_container_sid"]
+            # A single authored wrapper redirect can service multiple physical
+            # stash actors separated by '|'. Expand its consumer edges, but
+            # treat the whole shared patch as protected if ANY actor is blocked.
+            physical_ids = row["physical_container_sid"].split("|")
+            assert (physical_ids and len(physical_ids) == len(set(physical_ids))
+                    and all(len(sid) == 32 and
+                            all(ch in "0123456789ABCDEF" for ch in sid)
+                            for sid in physical_ids)), row
+            protected_actors = [sid for sid in physical_ids if sid in protected]
+            if len(physical_ids) > 1:
+                compound_rosters.append(tuple(physical_ids))
+                if protected_actors:
+                    compound_protected.append(tuple(physical_ids))
             path = row["file"]
             scope = "dlc1" if path == "DLCGameData/DLC1/SpawnActorPrototypes.cfg" else "base"
             assert path in (
@@ -114,30 +128,33 @@ def build_graph():
             assert row["redirect_kind"] in (
                 "DIRECT_CONTAINER_SETTING", "RANK_CONTAINER_SETTING",
                 "LOCATION_WRAPPER_SUBGENERATOR")
-            if sid in protected:
-                status, reason = "BLOCKED_PROTECTED_ACTOR", protected[sid]
-            elif scope == "dlc1" and row["prototype"] not in approved_dlc:
-                status, reason = "BLOCKED_DLC_NOT_ALLOWLISTED", "not_in_112_dlc1_allowlist"
-            else:
-                status, reason = "ELIGIBLE_CONDITIONAL", "approved_writer_redirect"
-            add(source_scope=scope,
-                physical_actor_sid=sid,
-                source_layer="TierRedirect",
-                edge_kind=row["redirect_kind"],
-                patch_file=path,
-                edit_prototype=row["prototype"],
-                edit_path=row["node_path"] + "." + row["key"],
-                source_reference_sid=row["source_value"],
-                canonical_generator_sid=original,
-                planned_clone_sid=row["target_value"],
-                rank_gate=row["player_rank"],
-                source_group_layer="ItemGenerator",
-                branch_count=len(groups[("ItemGenerator", original)]),
-                guard_status=status,
-                guard_reason=reason,
-                applicability=("requires_tier_writer_change_and_dlc1"
-                               if scope == "dlc1" else "requires_tier_writer_change"),
-                consumer_provenance=filename)
+            for sid in physical_ids:
+                if protected_actors:
+                    status = "BLOCKED_PROTECTED_ACTOR"
+                    reason = protected.get(sid, "SHARED_WRAPPER_PROTECTED_ACTOR")
+                elif scope == "dlc1" and row["prototype"] not in approved_dlc:
+                    status, reason = ("BLOCKED_DLC_NOT_ALLOWLISTED",
+                                      "not_in_112_dlc1_allowlist")
+                else:
+                    status, reason = "ELIGIBLE_CONDITIONAL", "approved_writer_redirect"
+                add(source_scope=scope,
+                    physical_actor_sid=sid,
+                    source_layer="TierRedirect",
+                    edge_kind=row["redirect_kind"],
+                    patch_file=path,
+                    edit_prototype=row["prototype"],
+                    edit_path=row["node_path"] + "." + row["key"],
+                    source_reference_sid=row["source_value"],
+                    canonical_generator_sid=original,
+                    planned_clone_sid=row["target_value"],
+                    rank_gate=row["player_rank"],
+                    source_group_layer="ItemGenerator",
+                    branch_count=len(groups[("ItemGenerator", original)]),
+                    guard_status=status,
+                    guard_reason=reason,
+                    applicability=("requires_tier_writer_change_and_dlc1"
+                                   if scope == "dlc1" else "requires_tier_writer_change"),
+                    consumer_provenance=filename)
 
     for scope, filename, actors in (
         ("base", BASE_ACTORS, base), ("dlc1", DLC_ACTORS, dlc)
@@ -230,22 +247,30 @@ def build_graph():
                 applicability="no_patch_inferred_from_source_reference",
                 consumer_provenance=(BASE_ACTORS if scope == "base" else DLC_ACTORS))
 
+    # Fail closed if a source manifest silently changes multi-consumer
+    # wrappers. The protected Rostok pair must block the ENTIRE row.
+    assert len(compound_rosters) == 4, compound_rosters
+    assert sorted(len(ids) for ids in compound_rosters) == [2, 2, 3, 3]
+    assert len(compound_protected) == 1, compound_protected
+    assert "4CB13DA742F13C8414BD1DA9F5368ED4" in compound_protected[0]
+    assert "D0D974B342233E90E494C1BE1CB21240" in compound_protected[0]
+
     stats = Counter((e["source_layer"], e["guard_status"]) for e in graph)
     protected_tier = sum(n for (layer, status), n in stats.items()
                          if layer == "TierRedirect"
                          and status == "BLOCKED_PROTECTED_ACTOR")
-    assert protected_tier == 105, stats
+    assert protected_tier == 107, stats
     assert stats[("TierRedirect", "BLOCKED_DLC_NOT_ALLOWLISTED")] == 29, stats
-    assert stats[("TierRedirect", "ELIGIBLE_CONDITIONAL")] == 1892, stats
+    assert stats[("TierRedirect", "ELIGIBLE_CONDITIONAL")] == 1896, stats
     assert stats[("SmartLoot", "ELIGIBLE_CONDITIONAL")] == 1816, stats
     assert stats[("SmartLoot", "BLOCKED_NAMED_CLUE")] == 56, stats
     assert stats[("SmartLoot", "BLOCKED_NAMED_CLUE")] > 0
     assert stats[("SpecialDlcCheapNoFresh", "ELIGIBLE_SEPARATE_OUT_OF_INDEX")] == 6
     assert sum(n for (kind, _), n in stats.items()
-               if kind == "TierRedirect") == 2026
+               if kind == "TierRedirect") == 2032
     assert sum(n for (kind, _), n in stats.items()
                if kind == "ObservedItemGenerator") == 1103
-    assert len(graph) == 5007, len(graph)
+    assert len(graph) == 5013, len(graph)
 
     # Safety drift gate: generated source inventory cannot silently stay green
     # if the real writer stops invoking whole-actor protection or SmartLoot
@@ -261,7 +286,8 @@ def build_graph():
         "IsApprovedStashTierRedirect(redirect.File, redirect.Prototype, "
         "redirect.PhysicalContainerSid)") == 3
     for contract in (
-        "BaseProtectedStashActors.Value.Contains(physicalContainerSid)",
+        "TouchesProtectedStashTierActor(physicalContainerSid)",
+        "actors.Any(BaseProtectedStashActors.Value.Contains)",
         'file.Equals(DlcSmartLootActorFile',
         'x.ClueSid == "EmptyInherited"',
         'if (hasDlc1)',
@@ -324,11 +350,11 @@ def main():
             f"Stash consumer graph drift: {OUT}. Inspect source inputs and "
             "writer guard changes before intentional --write regeneration."
         )
-    print("PASS: 2,026 tier redirect edges, 105 protected, 29 DLC denied")
+    print("PASS: 2,032 tier physical edges, 107 protected (106 manifest rows), 29 DLC denied")
     print("PASS: 831 base / 112 DLC SmartLoot actor source inventories")
     print("PASS: 6 separately sourced DLC1 CheapNoFresh actor routes")
     print("PASS: 1,103 original ItemGenerator observation-only references")
-    print("PASS: 5,007 source edges joined to 463 exact native branch IDs")
+    print("PASS: 5,013 source edges joined to 463 exact native branch IDs")
     print("PENDING: per-profile dynamic CFG writer/output parity and in-game RNG")
     if args.actor:
         show_actor(graph, groups, args.actor, args.expand_branches)

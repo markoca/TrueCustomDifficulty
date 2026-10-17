@@ -194,15 +194,27 @@ public sealed partial class CfgPatchWriterService
         return ids;
     }
 
-    // This guard is shared by every Basic/Standard/Rare ItemGenerator writer.
-    // It protects direct actor edits AND indirect wrapper generator paths,
-    // identified by the physical_container_sid column in all three manifests.
-    // SmartLoot independently uses its 803-actor positive allowlist.
+    // The redirect manifest sometimes gives ONE shared wrapper generator
+    // multiple physical actor SIDs joined by '|'. Reject the entire edit
+    // whenever ANY consumer is protected: partial approval would rewrite
+    // the same wrapper for a named/quest-related stash.
+    private static bool TouchesProtectedStashTierActor(string physicalContainerSids)
+    {
+        var actors = physicalContainerSids.Split('|', StringSplitOptions.TrimEntries);
+        if (actors.Length == 0 || actors.Any(sid =>
+                sid.Length != 32 || !sid.All(Uri.IsHexDigit))
+            || actors.Distinct(StringComparer.Ordinal).Count() != actors.Length)
+            throw new InvalidDataException(
+                "Malformed stash tier redirect physical actor SID roster: "
+                + physicalContainerSids);
+        return actors.Any(BaseProtectedStashActors.Value.Contains);
+    }
+
+    // Shared for all three Basic/Standard/Rare writer paths. Direct and
+    // indirect wrapper edits obey the same full-physical-consumer guard.
     private static bool IsApprovedStashTierRedirect(
         string file, string actorSid, string physicalContainerSid)
-        // Wrapper ItemGeneratorPrototypes.cfg paths may be tied to a protected
-        // physical bag even when their prototype name is not an actor GUID.
-        => !BaseProtectedStashActors.Value.Contains(physicalContainerSid)
+        => !TouchesProtectedStashTierActor(physicalContainerSid)
            && (!file.Equals(BaseProtectedActorFile, StringComparison.OrdinalIgnoreCase)
                || !BaseProtectedStashActors.Value.Contains(actorSid))
            && (!file.Equals(DlcSmartLootActorFile, StringComparison.OrdinalIgnoreCase)

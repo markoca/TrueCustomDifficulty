@@ -507,6 +507,18 @@ internal static partial class Program
         throw new FileNotFoundException("Missing base stash actor protection manifest");
     });
 
+    // A shared tier wrapper is protected if even ONE physical consumer is.
+    // Keep this source-derived test independent from the private writer guard.
+    static bool IncludesProtectedPhysicalStash(string actorSids)
+    {
+        var ids = actorSids.Split('|', StringSplitOptions.TrimEntries);
+        Check(ids.Length > 0 && ids.All(id => id.Length == 32
+            && id.All(Uri.IsHexDigit))
+            && ids.Distinct(StringComparer.Ordinal).Count() == ids.Length,
+            "Malformed physical actor SID roster in stash tier manifest");
+        return ids.Any(BaseProtectedActorIds.Value.Contains);
+    }
+
     static void AssertProtectedBaseStashesUntouched(
         IReadOnlyDictionary<string, Dictionary<string, string>> generated,
         string label)
@@ -529,7 +541,7 @@ internal static partial class Program
         {
             foreach (var row in Redirects(Special.GetProperty(name), includeDlc: true))
             {
-                if (!BaseProtectedActorIds.Value.Contains(row.PhysicalContainerSid)
+                if (!IncludesProtectedPhysicalStash(row.PhysicalContainerSid)
                     || !generated.TryGetValue(row.File, out var emitted))
                     continue;
                 var leaf = row.Prototype + "/" + row.NodePath.Replace(".", "/")
@@ -547,7 +559,7 @@ internal static partial class Program
         {
             (Name: "cheapStashProduction", Direct: 2, Indirect: 10),
             (Name: "mediumStashAmmoProduction", Direct: 17, Indirect: 26),
-            (Name: "expensiveStashProduction", Direct: 11, Indirect: 39)
+            (Name: "expensiveStashProduction", Direct: 11, Indirect: 40)
         };
         foreach (var (name, direct, indirect) in tiers)
         {
@@ -556,7 +568,7 @@ internal static partial class Program
             var safe = Redirects(manifest, includeDlc: true,
                 excludeProtectedActors: true).ToArray();
             var guarded = raw.Where(row =>
-                BaseProtectedActorIds.Value.Contains(row.PhysicalContainerSid))
+                IncludesProtectedPhysicalStash(row.PhysicalContainerSid))
                 .ToArray();
             Check(guarded.Count(row => row.File == "GameData/SpawnActorPrototypes.cfg")
                     == direct && guarded.Length == direct + indirect,
@@ -564,12 +576,12 @@ internal static partial class Program
             Check(raw.Length >= safe.Length + guarded.Length,
                 name + ": physical actor protection was not applied");
             Check(safe.All(row =>
-                !BaseProtectedActorIds.Value.Contains(row.PhysicalContainerSid)
+                !IncludesProtectedPhysicalStash(row.PhysicalContainerSid)
                 && (row.File != "GameData/SpawnActorPrototypes.cfg"
                     || !BaseProtectedActorIds.Value.Contains(row.Prototype))),
                 name + ": protected physical actor passed tier redirect gate");
         }
-        Console.WriteLine("PASS base-world tier guard: 106 protected actors, 105 suppressed redirects (30 direct / 75 indirect)");
+        Console.WriteLine("PASS base-world tier guard: 106 protected actors, 106 suppressed redirects (30 direct / 76 indirect)");
     }
 
     static void VerifyCabinDirectMedical()
@@ -1288,7 +1300,7 @@ internal static partial class Program
                 continue;
             if(excludeProtectedActors)
             {
-                if(BaseProtectedActorIds.Value.Contains(c[7])
+                if(IncludesProtectedPhysicalStash(c[7])
                    || c[1]=="GameData/SpawnActorPrototypes.cfg"
                       && BaseProtectedActorIds.Value.Contains(c[2]))
                     continue;
