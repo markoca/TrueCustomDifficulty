@@ -5908,16 +5908,22 @@ if (not all(token in _stash_phase5 for token in (
     or "public string SmartCount(" not in _stash_engine
     or "effective.SmartCount(" not in _stash_smart
     or "state.SmartCount(" not in _stash_branches
-    or "DrawStashBranchBrowser(" not in _stash_browser
+    or "DrawStashGlobalCoverage(" not in _stash_browser
     or "private static int StashCategoryIndex(string sid)" not in _stash_browser
     or "StashEffectiveState.ItemBiasId(sid)" not in _stash_browser
     or "StashEffectiveState.SmartItemBiasId(sid)" not in _stash_browser
+    or "result.Sum(c => c.Total) != 1124" not in _stash_browser
+    or "_stashBrowserRank" in _stash_browser
+    or "NavigateStash(" in _stash_browser
+    or not all("STASHES GLOBAL ITEM-CATEGORY SOURCE COVERAGE (CURRENT)" in
+               (DOCS / f).read_text(encoding="utf-8")
+               for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))
     or not all("STASHES PHASE 5 CFG PARITY GATE" in
                (DOCS / f).read_text(encoding="utf-8")
                for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))):
     fail("Stashes Phase 5 native browser / writer CFG parity or UI catalog drift")
 else:
-    note("Stashes Phase 5: 463-group browser parity, common SmartLoot count path, generated-CFG and guard tests linked; Windows/Wine game acceptance NOT RUN")
+    note("Stashes: six global item-type knobs, non-interactive native source coverage, shared SmartLoot count path and generated-CFG guard tests linked; Windows/Wine game acceptance NOT RUN")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

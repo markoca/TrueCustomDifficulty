@@ -5750,7 +5750,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Ammo Stash Selection",
-      "description": "Rescales existing ammo entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
+      "description": "One global ammo factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5777,13 +5777,20 @@
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
           "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
           "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/StashPrototypes.cfg",
+          "prototype": "TCD-owned world SmartLoot source clones",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
           "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
@@ -5797,7 +5804,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Medical Stash Selection",
-      "description": "Rescales existing medical entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
+      "description": "One global medical factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5824,13 +5831,20 @@
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
           "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
           "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/StashPrototypes.cfg",
+          "prototype": "TCD-owned world SmartLoot source clones",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
           "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
@@ -5844,7 +5858,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Food Stash Selection",
-      "description": "Rescales existing food entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
+      "description": "One global food factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5871,13 +5885,20 @@
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
           "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
           "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/StashPrototypes.cfg",
+          "prototype": "TCD-owned world SmartLoot source clones",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
           "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
@@ -5891,7 +5912,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Drinks Stash Selection",
-      "description": "Rescales existing drinks entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
+      "description": "One global drinks factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5918,13 +5939,20 @@
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
           "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
           "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/StashPrototypes.cfg",
+          "prototype": "TCD-owned world SmartLoot source clones",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
           "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
@@ -5938,7 +5966,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Grenades Stash Selection",
-      "description": "Rescales existing grenades entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
+      "description": "One global grenades factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -5965,13 +5993,20 @@
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
           "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
           "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/StashPrototypes.cfg",
+          "prototype": "TCD-owned world SmartLoot source clones",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
           "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },
@@ -5985,7 +6020,7 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Coupons Stash Selection",
-      "description": "Rescales existing coupons entries in eligible Basic, Standard, Rare and world SmartLoot generator clones. Preserves native Weight or Chance field semantics; no new items or spawn guarantees.",
+      "description": "One global coupons factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6012,13 +6047,20 @@
           "prototype": "TCD_Stash_Cheap/Medium/Expensive generator copies",
           "path": "ItemGenerator[*].PossibleItems[*].Weight / Chance, classified by ItemPrototypeSID",
           "operation": "scale"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/StashPrototypes.cfg",
+          "prototype": "TCD-owned world SmartLoot source clones",
+          "path": "ItemGenerators[*].SmartLootParams[*].Items[*].Weight / Chance, classified by ItemPrototypeSID",
+          "operation": "scale"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
           "1x keeps authored Weight and Chance, including zero-valued rows.",
-          "0x excludes only existing eligible entries from the TCD production copy; Chance is capped at 1.",
+          "0x suppresses eligible matching source entries in TCD-owned clones and supported guarded direct/DLC1 paths; Chance is capped at 1.",
           "Does not independently increase total stash occurrences or turn absent items into available loot."
         ]
       },

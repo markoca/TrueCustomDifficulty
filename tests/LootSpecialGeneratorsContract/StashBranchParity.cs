@@ -60,6 +60,24 @@ internal static partial class Program
                     ?? StashEffectiveState.SmartItemBiasId(sid) ?? "")),
             "A source item lost its native six-color category mapping.");
 
+        // Every category factor is the SAME for all ranks and tier/world
+        // sources; original generator eligibility gates remain native.
+        foreach (var categoryId in categoryIds)
+        {
+            var categorySids = itemSids
+                .Where(sid => StashEffectiveState.ItemBiasId(sid) == categoryId)
+                .ToArray();
+            Check(categorySids.Length > 0, categoryId + ": empty global category");
+            foreach (var difficulty in new[] { "Easy", "Medium", "Hard", "Stalker" })
+            {
+                var half = NativeState(difficulty, (categoryId, .5));
+                Check(categorySids.All(sid =>
+                        Math.Abs(half.TierFactor(sid) - .5) < 1e-9
+                        && Math.Abs(half.SmartFactor(sid) - .5) < 1e-9),
+                    categoryId + ": global factor changed with difficulty");
+            }
+        }
+
         var basic = NativeBranch(branches, "GamePass_Stash_ItemGenerator_Cheap",
             "ItemGenerator.[7].PossibleItems");
         var hard = NativeBranch(branches, "GamePass_Stash_ItemGenerator_Cheap",
@@ -142,8 +160,8 @@ internal static partial class Program
             && smartGrenades.EffectiveSpawn(smartOff).Sets == "0",
             "SmartLoot zero-factor count and ItemSetCount must be disabled together.");
 
-        Console.WriteLine("PASS Phase 5: all 463 browser groups, 1124 rows, gates, "
-            + "Weight/Chance, category 0x/3x, coupon/bonus, zero counts and spawn math");
+        Console.WriteLine("PASS Phase 5: six global category factors across "
+            + "463 native source groups and all 1124 original item entries");
 
         // Each profile generates REAL CFG patch files, then checks every
         // emitted field belonging to an actually affected native group.

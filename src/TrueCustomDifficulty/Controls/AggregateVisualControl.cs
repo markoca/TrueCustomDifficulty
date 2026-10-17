@@ -76,8 +76,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         typeof(AggregateVisualControl),
         new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure, OnBindingChanged));
 
-    // Read-only link to the same Base Preset displayed in the top bar.
-    // Navigation within Stash Content Mix must not have a second difficulty.
+    // Preserve Base Preset for native field math; the global category panel
+    // never filters knobs by rank, branch, prototype or difficulty.
     public static readonly DependencyProperty SelectedReferenceDifficultyProperty =
         DependencyProperty.Register(
             nameof(SelectedReferenceDifficulty),
@@ -92,10 +92,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var control = (AggregateVisualControl)d;
         if (control.Family != "StashContentMix")
             return;
-        // Native group counts vary by selected difficulty. Never retain
-        // an index from a different filtered set of original source branches.
-        control._stashBrowserGroup = 0;
-        control._stashBrowserHover = -1;
+        // No rank/branch selection exists in this global category UI.
         control.InvalidateVisual();
     }
 
@@ -4582,9 +4579,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
     }
 
-    // An actual shared-axis bar chart: six real source multipliers, never a
-    // fabricated percentage of loot in a particular stash. All six bars use
-    // the SAME 0..3x scale, and the 1x reference remains a neutral guide.
+    // Global knobs retain each original Weight/Chance rule; never normalize
+    // unrelated source groups into a fabricated stash-wide percentage.
     // Stash A+C mixer: six compact interactive native source knobs.
     // The Medical dial uses the SAME source parameter as the detail banks
     // directly below; changing its value instantly updates their effective
@@ -4647,10 +4643,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             cursor += cell + gap;
         }
 
-        // Six global category knobs; keep native source detail visible
-        // without adding a disclosure button or another editing dimension.
-        DrawStashBranchBrowser(dc, new Rect(left, 237.0, width, 420.0),
-            text, muted, border, accent, panel);
+        // The same six multipliers apply throughout all source families.
+        // The read-only summary includes every original rank/group.
+        DrawStashGlobalCoverage(dc, new Rect(left, 237.0, width,
+                width >= 670.0 ? 268.0 : 408.0),
+            text, muted, border, panel);
     }
 
     // Medical biases are source-editable tracks; a separate, noninteractive
@@ -5889,15 +5886,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         Focus();
 
         var point = e.GetPosition(this);
-        if (TryStashBrowserClick(point))
-        {
-            _selectedParameter = null;
-            _selectedHitKind = null;
-            _stashBrowserHover = -1;
-            Cursor = Cursors.Hand;
-            e.Handled = true;
-            return;
-        }
         var couponMarker = Family == "CouponFlow"
             ? _couponMarkers.FirstOrDefault(m => m.Hit.Contains(point)) : default;
         if (couponMarker.Parameter is { IsControlEnabled: true })
@@ -6016,7 +6004,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             _ => Cursors.Arrow
         };
 
-        UpdateStashBrowserHover(point);
         if (_dragTarget is null || e.LeftButton != MouseButtonState.Pressed)
             return;
 
@@ -6093,11 +6080,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
-        if (Family == "StashContentMix")
-        {
-            _stashBrowserHover = -1;
-            InvalidateVisual();
-        }
         if (_hoverCouponMarker >= 0)
         {
             _hoverCouponMarker = -1;
@@ -6214,25 +6196,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnKeyDown(e);
 
-        // Keyboard branch browsing is separate from source slider keys:
-        // Alt+Left/Right switches groups; Alt+Up/Down switches rank.
-        // Ctrl+Left/Right changes only SmartLoot prototype, never the
-        // selected global Base Preset (or a shadow difficulty).
-        if (Family == "StashContentMix"
-            && e.Key is Key.Left or Key.Right or Key.Up or Key.Down
-            && (Keyboard.Modifiers & (ModifierKeys.Alt | ModifierKeys.Control)) != 0
-            && ((Keyboard.Modifiers & ModifierKeys.Control) == 0
-                || _stashBrowserMode == 3))
-        {
-            var direction = e.Key is Key.Right or Key.Down ? 1 : -1;
-            if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
-                NavigateStash(3, direction);
-            else
-                NavigateStash(e.Key is Key.Left or Key.Right ? 4 : 2, direction);
-            e.Handled = true;
-            return;
-        }
-
+        // Category knobs use the same keys as all other source knobs.
         if (e.Key == Key.R)
         {
             if (Family == "RadiationBalance")
@@ -6951,7 +6915,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // The same adaptive column thresholds drive both WPF Measure and Draw,
     // so the last dial row is never clipped by the group host.
     private double StashContentMixHeight(double width)
-        => 675.0;
+        => width >= 700.0 ? 520.0 : 665.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)

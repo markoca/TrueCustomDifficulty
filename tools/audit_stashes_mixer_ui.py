@@ -65,7 +65,7 @@ assert medical.count('("loot.stashMedical') == 4
 assert quantity.count('("MEDKITS"') + quantity.count('("ARMY MEDKITS"') == 2
 assert gear.count('("BASIC"') + gear.count('("STANDARD"') + gear.count('("RARE"') == 3
 assert 'DrawSourceKnob(dc, source, entries[i].Label' in content
-assert "DrawStashBranchBrowser(dc," in content
+assert "DrawStashGlobalCoverage(dc," in content
 assert "DrawStashRewardGraphRow(dc, P(entries[i].Id)" in medical
 assert "DrawStashMedicalSourcePreview(dc," in medical
 assert "DrawStashQuantityDots(dc, P(families[i].Min)" in quantity
@@ -162,7 +162,7 @@ for family, branch, sid, expected_chance in samples:
     assert math.isclose(chance, expected_chance, abs_tol=1e-8)
     assert math.isclose(min(1, max(0, chance * 3)), min(1, chance * 3))
 
-assert "=> 675.0;" in source
+assert "=> width >= 700.0 ? 520.0 : 665.0;" in source
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -224,9 +224,8 @@ assert "Changed(config.CouponChanceParameterId)" in effective
 print("PASS: shared writer/preview tier and SmartLoot calculation, bonus Chance composition")
 
 
-# Phase 4 contract: runtime branch navigation derives from original embedded
-# writer inputs; it does not add persistable sliders or independent edits.
-# All six category knobs are capped at original 1x and advance by 0.10x.
+# Stashes edits are genuinely GLOBAL by item SID, not branch or rank.
+# The fixed authored native group catalog remains backend-only parity evidence.
 mix_ids = expected["StashContentMix"]
 for pid in mix_ids:
     item = next(p for p in catalog["parameters"] if p["id"] == pid)
@@ -234,85 +233,48 @@ for pid in mix_ids:
     assert (slider["min"], slider["max"], slider["step"]) == (0, 1, 0.1), pid
     assert item["vanilla"]["All"] == 1, pid
     assert "Weight / Chance" in item["targets"][0]["path"], pid
-assert "source Weight or clamps source Chance" not in "\n".join(
-    p["description"] for p in catalog["parameters"] if p["id"] in mix_ids
-)
+    assert len(item["targets"]) == 2, pid
+    assert item["targets"][0]["file"] == "GameData/ItemGeneratorPrototypes.cfg", pid
+    assert item["targets"][1]["file"] == "GameData/StashPrototypes.cfg", pid
+    assert "SmartLootParams" in item["targets"][1]["path"], pid
 
-browser = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text()
+coverage = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text()
 branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.cs").read_text()
 csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
-assert "public sealed partial class AggregateVisualControl" in source
-assert "public sealed partial class AggregateVisualControl" in browser
-assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in browser
-assert 'DrawStashBranchBrowser(dc, new Rect(left, 237.0, width, 420.0)' in content
-assert '_stashBrowserExpanded' not in content
-assert 'SOURCE DETAILS' not in content and 'HIDE DETAILS' not in content
-assert 'ToggleStashBrowser' not in source + browser
-assert 'private bool _stashBrowserExpanded;' not in browser
-assert '&& _stashBrowserExpanded' not in source
+assert 'DrawStashGlobalCoverage(dc, new Rect(left, 237.0, width,' in content
+assert 'width >= 670.0 ? 268.0 : 408.0' in content
 assert 'StashContentMixHeight(width)' in source
-assert 'TryStashBrowserClick(point)' in source
-# Read-only live source inputs must cover the complete TierField pipeline:
-# selected source count floors/caps and all Stash Rewards bonus sources.
-mix_links = source.split('"StashContentMix" => new[]', 1)[1].split('"StashMedicalComposition"', 1)[0]
-for linked in (
-    "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
-    "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount",
-    "loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",
-    "loot.expensiveStashAmmoQuantity", "loot.cheapStashGrenadeChance",
-    "loot.cheapStashGrenadeQuantity", "loot.expensiveStashMoneyChance",
-):
-    assert f'"{linked}"' in mix_links, linked
-assert 'UpdateStashBrowserHover(point)' in source
-assert 'private StashEffectiveState CurrentStashEffectiveState(string difficultySid = "Easy")' in source
-# The top Base Preset is the SINGLE source of native difficulty for the
-# non-editable generator inspector. UI and CFG use different Stalker labels.
-window_xaml = (root / "src/TrueCustomDifficulty/MainWindow.xaml").read_text()
-model = (root / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text()
-assert 'Text="{Binding SelectedReferenceDifficulty}"' in window_xaml
-assert 'Value="{Binding BasePresetIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"' in window_xaml
-assert ('SelectedReferenceDifficulty="{Binding DataContext.SelectedReferenceDifficulty, '
-        'RelativeSource={RelativeSource AncestorType=Window}}"') in window_xaml
-assert 'public static readonly DependencyProperty SelectedReferenceDifficultyProperty' in source
-assert 'FrameworkPropertyMetadataOptions.AffectsRender, OnReferenceDifficultyChanged' in source
-assert 'control._stashBrowserGroup = 0;' in source
-assert 'public string SelectedReferenceDifficulty' in source
-assert 'public string SelectedReferenceDifficulty' in model
-assert 'OnPropertyChanged(nameof(SelectedReferenceDifficulty))' in model
-for ui, native in (
-    ("Novice", "Easy"), ("Stalker", "Medium"),
-    ("Veteran", "Hard"), ("Master", "Stalker"),
-):
-    assert f'"{ui}" => "{native}"' in browser
-assert 'x.AppliesTo(_stashBrowserRank,' in browser
-assert 'CurrentStashNativeDifficulty))' in browser
-assert 'CurrentStashEffectiveState(CurrentStashNativeDifficulty)' in browser
-assert '_stashBrowserDifficulty' not in browser
-assert 'StashDifficulties' not in browser
-assert 'NavRail(x, half, "DIFFICULTY"' not in browser
-assert 'NavRail(x + (width - half) / 2.0, half, "RANK"' in browser
-assert 'NavigateStash(3, direction);' in source
-assert '|| _stashBrowserMode == 3)' in source
-assert 'NavigateStash(_stashBrowserMode == 3 ? 3 : 1, direction)' not in source
-assert "NavigateStash(" in source and "NavigateStash(" in browser
-assert "branch.EffectiveSelection(StashPreviewBaseline.Value, state, item)" in browser
-assert "branch.EffectiveSpawn(state)" in browser
-assert "CurrentStashEffectiveState(" in browser
-assert "state.TierField(" in branches and "state.SmartSelection(" in branches
-assert "StashEffectiveState.UniformSmartFactor(" in branches
-assert "StashEffectiveState.SmartSpawnEndpoint(" in branches
-assert "state.SmartCount(" in branches
-assert "private static int StashCategoryIndex(string sid)" in browser
-assert "StashEffectiveState.ItemBiasId(sid)" in browser
-assert "StashEffectiveState.SmartItemBiasId(sid)" in browser
-assert 'if (_dragTarget is null && next >= 0)' in browser
-assert 'if (changed) InvalidateVisual();' in browser
+assert '=> width >= 700.0 ? 520.0 : 665.0;' in source
+assert "GlobalStashSourceCounts.Value" in coverage
+assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
+assert "result.Sum(c => c.Total) != 1124" in coverage
+assert "StashCategoryIndex(item.ItemSid)" in coverage
+assert 'WEIGHT {count.Weight}   CHANCE {count.Chance}' in coverage
+assert 'ITEMGEN {count.ItemGenerator}   WORLD {count.SmartLoot}' in coverage
+assert "NATIVE SOURCE ENTRIES · NOT DROP PROBABILITIES" in coverage
+assert "StashEffectiveState.ItemBiasId(sid)" in coverage
+assert "StashEffectiveState.SmartItemBiasId(sid)" in coverage
+for retired in ("DrawStashBranchBrowser(", "NavigateStash(", "TryStashBrowserClick(",
+                "UpdateStashBrowserHover(", "_stashBrowserMode", "_stashBrowserRank",
+                "_stashBrowserGroup", "_stashBrowserPrototype", "_stashBrowserHover",
+                "SOURCE DETAILS", "HIDE DETAILS"):
+    assert retired not in source + coverage, retired
+assert "CurrentNumber =" not in coverage
+assert "AddHorizontalTarget(" not in coverage
+assert "StashMixPalette[i]" in coverage
+assert "public static string? SmartItemBiasId(string sid) => ItemBiasId(sid);" in effective
+assert "public double TierFactor(string sid)" in effective
+assert "public double SmartFactor(string sid)" in effective
+assert 'if (ItemBiasId(sid) is null) return raw;' in effective
+assert 'var id = SmartItemBiasId(sid)' in effective
+assert "StashMixParameterIds.Any(modified.ContainsKey)" in tuning
+assert "StashMixParameterIds.Concat(StashMedicalParameterIds)" in smart
+assert "StashMixParameterIds.Concat(StashMedicalParameterIds)" in (
+    root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashDlc1.cs"
+).read_text()
 assert "GetManifestResourceStream(SmartSource)" in branches
-# CloneWithOpacity is a WPF brush utility, not a generator clone or a value write.
-assert "CurrentNumber =" not in browser
-assert "CloneWithOpacity(" in browser
-assert 'public static string? SmartItemBiasId(string sid) => ItemBiasId(sid);' in effective
 assert "Data\\smartloot-world-source-entries.csv" in csproj
+
 tier_groups = sum(len(baseline[key]["templateCategories"]) for key in [
     "cheapStashProduction", "mediumStashAmmoProduction", "expensiveStashProduction"])
 tier_items = sum(len(g["items"]) for key in [
@@ -328,12 +290,8 @@ assert "result.Count != 463" in branches and "result.Sum(x => x.Items.Count) != 
 assert sum(1 for r in rows if r["Weight"]) > 0
 assert sum(1 for r in rows if r["Chance"]) > 0
 for doc in (lock, system, proposal):
-    assert "STASHES PHASE 4 NATIVE BRANCH BROWSER" in doc
-assert "STASH-PER-BRANCH-BROWSER-2026-10-16.md" in (
-    root / "docs/generators/STASH-GENERATOR-BRANCH-ARCHITECTURE-2026-10-16.md"
-).read_text()
-print("PASS: phase 4 native branch browser, 463 source groups / 1,124 authored rows")
-
+    assert "STASHES GLOBAL ITEM-CATEGORY SOURCE COVERAGE (CURRENT)" in doc
+print("PASS: six global item-type knobs and full native source coverage, no branch/rank selection")
 
 # Phase 5: emitted patch parity must be wired into the executable contract.
 # This is a static integration gate, not a claim that the .NET/Wine suite ran.
@@ -356,11 +314,11 @@ assert '"hard-bonus-medical-dlc"' in phase5
 assert "public string SmartCount(" in effective
 assert "effective.SmartCount(item.ItemSid, fieldName," in smart
 assert "state.SmartCount(item.ItemSid, field, raw," in branches
-assert 'new Point(x + width - 3.0, rowY + 12.0)' in browser
+assert 'var half = NativeState(difficulty, (categoryId, .5));' in phase5
 for doc in (lock, system, proposal):
     assert "STASHES PHASE 5 CFG PARITY GATE" in doc
 assert "STASH-PHASE-5-CFG-PARITY-AND-ACCEPTANCE-2026-10-16.md" in (
     root / "docs/generators/STASH-GENERATOR-BRANCH-ARCHITECTURE-2026-10-16.md"
 ).read_text()
-print("PASS: Phase 5 browser/writer SmartLoot count parity and real-emitted-CFG harness wired")
+print("PASS: Phase 5 six-category global parity and emitted-CFG guard harness wired")
 print("PENDING: cross-compiled .NET 10, Wine suite, wide/narrow visual and STALKER 2 gameplay")
