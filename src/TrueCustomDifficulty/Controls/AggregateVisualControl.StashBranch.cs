@@ -411,8 +411,8 @@ public sealed partial class AggregateVisualControl
             var parameter = P(id);
             if (parameter is null)
             {
-                var label = Parameters is null ? "LOADING" : "CONTROL UNAVAILABLE";
-                dc.DrawText(CreateText(label, 9.0, muted, FontWeights.SemiBold,
+                var unavailableText = Parameters is null ? "LOADING" : "CONTROL UNAVAILABLE";
+                dc.DrawText(CreateText(unavailableText, 9.0, muted, FontWeights.SemiBold,
                         Math.Max(1.0, cell.Width - 16.0)),
                     new Point(x + 8.0, y + 23.0));
                 var vanillaValues = rows.Select(r =>

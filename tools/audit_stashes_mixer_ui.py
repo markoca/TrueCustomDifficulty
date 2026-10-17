@@ -412,7 +412,9 @@ assert "totals.Sum()" not in tier_preview
 assert "AddHorizontalTarget(parameter," in tier_preview
 assert "var parameter = P(id);" in tier_preview
 assert "if (parameter is null)" in tier_preview
-assert 'Parameters is null ? "LOADING" : "CONTROL UNAVAILABLE"' in tier_preview
+assert 'var unavailableText = Parameters is null ? "LOADING" : "CONTROL UNAVAILABLE";' in tier_preview
+assert "CreateText(unavailableText, 9.0" in tier_preview
+assert 'var label = Parameters is null' not in tier_preview
 assert "continue;" in tier_preview
 assert 'throw new InvalidDataException(\n                "Missing live stash Chance control "' not in tier_preview
 assert "var vanillaValues = rows.Select(" in tier_preview

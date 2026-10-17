@@ -1,3 +1,7 @@
+## 2026-10-17 — STASH CHANCE BUILD REGRESSION (CS0136)
+
+`DrawStashChanceTier` receives a `label` argument. The missing-VM render fallback must name its temporary status string `unavailableText`, not redeclare `label` in a nested scope (C# CS0136). Keep `LOADING` / `CONTROL UNAVAILABLE` non-interactive, without synthetic Chance or hit targets; use source-native percentages only. `tools/audit_stashes_mixer_ui.py` checks this identifier and fallback call, and both UI design catalogs must stay consistent with implementation. A failed publish does not replace the previously built Windows executable; do not interpret its subsequent Wine crash as evidence that the new render fix ran. Verify a successful .NET build before the Wine launch.
+
 ## 2026-10-17 — STASHES TAB RENDER CRASH FIX
 
 **Regression:** Clicking Stashes could throw `InvalidDataException: Missing live stash Chance control loot.mediumStashMedicalChance` from `AggregateVisualControl.DrawStashChanceTier` during WPF Arrange/OnRender. The source code previously used `P(id) ?? throw` and assumed the full `AllParameters` Window binding was already populated every time the visual family was rendered. That is not a safe render-time precondition.
