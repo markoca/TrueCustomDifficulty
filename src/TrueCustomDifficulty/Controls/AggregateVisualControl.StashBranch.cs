@@ -239,135 +239,150 @@ public sealed partial class AggregateVisualControl
     }
 
 
-    // Each example is one audited native ItemGenerator Weight group.
-    // These are three SEPARATE pools, not a tier-wide weighted sum or a
-    // percentage of physical stashes. Chance-only rows are intentionally
-    // excluded, as are unrelated SmartLoot groups and rank branches.
+    // Tier rows reflect ALL 41 authored ItemGenerator groups rather than one
+    // cherry-picked Weight group. Color slots show native item presence,
+    // not a 100% cross-group probability. Weight and independently-authored
+    // Chance remain distinct even when both occur in the same category.
     private void DrawStashTierWeightPools(
         DrawingContext dc, Rect outer,
         Brush text, Brush muted, Brush border, Brush panel)
     {
         _ = GlobalStashKindsVerified.Value;
         var state = CurrentStashEffectiveState();
-        var compact = outer.Width < 550.0;
+        var compact = outer.Width < 670.0;
+        const double inset = 12.0;
+        const double gap = 5.0;
         var rowPitch = compact ? 82.0 : 64.0;
-        var examples = new (string Label, string Tier, int GroupIndex,
-            string NativeCategory, string RankGate, string DifficultyGate,
-            int ItemCount)[]
+        var tiers = new (string Label, string SourceTier, int GroupCount)[]
         {
-            ("BASIC · CONSUMABLE · EXPERIENCED · EASY/MEDIUM", "Cheap", 7,
-                "EItemGenerationCategory::Consumable", "ERank::Experienced",
-                "EGameDifficulty::Easy, EGameDifficulty::Medium", 6),
-            ("STANDARD · AMMO · EXPERIENCED", "Medium", 3,
-                "EItemGenerationCategory::Ammo", "ERank::Experienced", "", 5),
-            ("RARE · AMMO · EXPERIENCED", "Expensive", 6,
-                "EItemGenerationCategory::Ammo", "ERank::Experienced", "", 3)
+            ("BASIC", "Cheap", 12),
+            ("STANDARD", "Medium", 10),
+            ("RARE", "Expensive", 19)
         };
 
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .70),
             new Pen(CloneWithOpacity(border, .72), 0.9), outer, 4.0, 4.0);
-        dc.DrawText(CreateText("STASH POOL COMPOSITION", 10.5,
-                text, FontWeights.Bold, Math.Max(1.0, outer.Width - 24.0)),
-            new Point(outer.Left + 12.0, outer.Top + 8.0));
+        dc.DrawText(CreateText("STASH CONTENT BY TIER", 10.5,
+                text, FontWeights.Bold, Math.Max(1.0, outer.Width - 2.0 * inset)),
+            new Point(outer.Left + inset, outer.Top + 8.0));
 
-        for (var i = 0; i < examples.Length; i++)
+        for (var t = 0; t < tiers.Length; t++)
         {
-            var example = examples[i];
-            var tierLabel = example.Tier switch
-            {
-                "Cheap" => "BASIC",
-                "Medium" => "STANDARD",
-                "Expensive" => "RARE",
-                _ => throw new InvalidDataException("Unknown stash preview tier")
-            };
-            var group = StashPreviewGroup(tierLabel, example.GroupIndex);
-            if (group is null || group.Items.Count != example.ItemCount
-                || group.Fields.GetValueOrDefault("Category", "") != example.NativeCategory
-                || group.Fields.GetValueOrDefault("PlayerRank", "") != example.RankGate
-                || group.Fields.GetValueOrDefault("Diff", "") != example.DifficultyGate
-                || group.Items.Any(item => !item.Fields.ContainsKey("Weight")
-                    || item.Fields.ContainsKey("Chance")))
+            var tier = tiers[t];
+            var groups = StashSourceGroups.Value
+                .Where(g => !g.IsSmart && g.Tier == tier.SourceTier).ToArray();
+            if (groups.Length != tier.GroupCount)
                 throw new InvalidDataException(
-                    "Stash tier Weight preview source group changed: " + tierLabel);
-
-            var totals = new double[GlobalStashCategoryNames.Length];
-            var present = new SortedSet<int>();
-            foreach (var item in group.Items)
+                    "Stash tier ItemGenerator inventory changed: " + tier.SourceTier);
+            var hasWeight = new bool[GlobalStashCategoryNames.Length];
+            var hasChance = new bool[GlobalStashCategoryNames.Length];
+            foreach (var group in groups)
             {
-                var sid = item.Fields["ItemPrototypeSID"];
-                var category = StashCategoryIndex(sid);
-                if (category < 0)
-                    throw new InvalidDataException("Unclassified stash Weight item " + sid);
-                present.Add(category);
-                // EXACT same field pipeline as the production tier writer.
-                var value = StashEffectiveState.Number(state.TierField(
-                    StashPreviewBaseline.Value, example.Tier, group, item, "Weight"));
-                if (!double.IsFinite(value) || value < 0.0)
-                    throw new InvalidDataException("Invalid effective stash Weight " + sid);
-                totals[category] += value;
+                if (group.Field is not ("Weight" or "Chance"))
+                    throw new InvalidDataException(
+                        "Unexpected native stash selection field " + group.Field);
+                foreach (var item in group.Items)
+                {
+                    var kind = StashCategoryIndex(item.ItemSid);
+                    if (kind < 0)
+                        throw new InvalidDataException(
+                            "Unclassified stash tier item " + item.ItemSid);
+                    if (group.Field == "Weight")
+                        hasWeight[kind] = true;
+                    else
+                        hasChance[kind] = true;
+                }
             }
+            var present = Enumerable.Range(0, GlobalStashCategoryNames.Length)
+                .Where(index => hasWeight[index] || hasChance[index]).ToArray();
+            if (present.Length == 0)
+                throw new InvalidDataException("Empty native stash tier " + tier.SourceTier);
 
-            var sum = totals.Sum();
-            var row = new Rect(outer.Left + 12.0,
-                outer.Top + 30.0 + i * rowPitch,
-                Math.Max(1.0, outer.Width - 24.0), rowPitch - 4.0);
-            dc.DrawText(CreateText(example.Label, 10.0, text,
-                    FontWeights.SemiBold, Math.Max(1.0, row.Width)),
+            var row = new Rect(outer.Left + inset,
+                outer.Top + 30.0 + t * rowPitch,
+                Math.Max(1.0, outer.Width - 2.0 * inset), rowPitch - 3.0);
+            dc.DrawText(CreateText(tier.Label, 10.2, text,
+                    FontWeights.Bold, Math.Max(1.0, row.Width)),
                 new Point(row.Left, row.Top));
 
-            var bar = new Rect(row.Left, row.Top + 19.0,
-                Math.Max(1.0, row.Width), 10.0);
-            dc.DrawRoundedRectangle(CloneWithOpacity(border, .28), null,
-                bar, 2.0, 2.0);
-            var cursor = bar.Left;
-            var lastNonzero = Array.FindLastIndex(totals, x => x > Epsilon);
-            for (var category = 0; category < totals.Length; category++)
+            // Every segment represents exactly ONE present category, NOT
+            // a proportional slice of a combined, unrelated source pool.
+            // Color/opacity reflects its global 0..3x setting only if at
+            // least one real native Weight item exists for this tier.
+            var segmentWidth = Math.Max(1.0,
+                (row.Width - gap * (present.Length - 1)) / present.Length);
+            for (var n = 0; n < present.Length; n++)
             {
-                var part = totals[category];
-                if (part <= Epsilon || sum <= Epsilon) continue;
-                var span = category == lastNonzero
-                    ? Math.Max(0.0, bar.Right - cursor)
-                    : Math.Max(0.0, bar.Width * part / sum);
-                if (span > Epsilon)
-                    dc.DrawRectangle(StashMixPalette[category], null,
-                        new Rect(cursor, bar.Top, span, bar.Height));
-                cursor += span;
+                var kind = present[n];
+                var segmentLeft = row.Left + n * (segmentWidth + gap);
+                var current = Math.Clamp(
+                    state.Value(GlobalStashParameterIds[kind]), 0.0, 3.0);
+                var ink = StashMixPalette[kind];
+                var weighted = hasWeight[kind];
+                var chance = hasChance[kind];
+                var selectedWeight = weighted && current > Epsilon;
+
+                // Full segment width means source presence, not likelihood.
+                // Chance-only segments have an outline, never a simulated
+                // Weight fill. At Weight 0x an independent Chance still exists.
+                var fill = selectedWeight
+                    ? CloneWithOpacity(ink, 0.40 + 0.60 * current / 3.0)
+                    : CloneWithOpacity(border, .16);
+                var outline = chance
+                    ? CloneWithOpacity(ink, .72)
+                    : CloneWithOpacity(border, .40);
+                var tile = new Rect(segmentLeft, row.Top + 19.0,
+                    segmentWidth, 10.0);
+                dc.DrawRoundedRectangle(fill, new Pen(outline,
+                    chance ? 1.2 : .65), tile, 1.8, 1.8);
             }
 
-            // Breakable Boxes-style swatches/percent labels are valid only
-            // INSIDE this specific native group. Retain 0% labels for native
-            // members switched off, and never add absent item kinds.
-            var kinds = present.ToArray();
-            var legendColumns = compact ? Math.Min(2, kinds.Length) : kinds.Length;
-            var columnGap = 8.0;
-            var slotWidth = Math.Max(1.0,
-                (row.Width - columnGap * (legendColumns - 1)) / legendColumns);
-            for (var n = 0; n < kinds.Length; n++)
+            var legendColumns = compact ? 2 : present.Length;
+            var legendGap = 7.0;
+            var legendCell = Math.Max(1.0,
+                (row.Width - legendGap * (legendColumns - 1)) / legendColumns);
+            for (var n = 0; n < present.Length; n++)
             {
-                var category = kinds[n];
+                var kind = present[n];
                 var column = n % legendColumns;
                 var line = n / legendColumns;
-                var x = row.Left + column * (slotWidth + columnGap);
-                var y = row.Top + 37.0 + line * 16.0;
-                dc.DrawRectangle(StashMixPalette[category], null,
-                    new Rect(x, y + 2.0, 7.0, 7.0));
-                dc.DrawText(CreateText(GlobalStashCategoryNames[category],
-                        8.6, text, FontWeights.SemiBold,
-                        Math.Max(1.0, slotWidth - 52.0)),
-                    new Point(x + 10.0, y));
-                var share = sum > Epsilon ? 100.0 * totals[category] / sum : 0.0;
-                DrawRightAlignedText(dc, $"{share:0.#}%",
-                    new Point(x + slotWidth, y),
-                    8.6, muted, FontWeights.SemiBold);
-            }
-            if (sum <= Epsilon)
-                DrawRightAlignedText(dc, "NO WEIGHTED ITEMS",
-                    new Point(row.Right, row.Top),
-                    8.7, muted, FontWeights.SemiBold);
-        }
+                var x = row.Left + column * (legendCell + legendGap);
+                var y = row.Top + 35.0 + (compact ? line * 16.0 : 0.0);
+                var number = state.Value(GlobalStashParameterIds[kind])
+                    .ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+                var status = hasWeight[kind]
+                    ? (hasChance[kind] ? number + "x + CHANCE" : number + "x")
+                    : "CHANCE ONLY";
+                var statusText = CreateText(status, 8.3, muted,
+                    FontWeights.SemiBold, Math.Max(1.0, legendCell - 13.0));
 
-        dc.DrawText(CreateText("ONE SOURCE GROUP PER TIER · NOT STASH DROP ODDS",
-                8.6, muted, FontWeights.SemiBold, Math.Max(1.0, outer.Width - 24.0)),
-            new Point(outer.Left + 12.0, outer.Bottom - 17.0));
+                dc.DrawRectangle(StashMixPalette[kind], null,
+                    new Rect(x, y + 2.0, 6.0, 7.0));
+                if (compact)
+                {
+                    // On narrow layouts the two-column legend retains one
+                    // line per category. Clip names before status overlap.
+                    dc.DrawText(CreateText(GlobalStashCategoryNames[kind],
+                        8.7, text, FontWeights.SemiBold,
+                        Math.Max(1.0, legendCell - statusText.Width - 16.0)),
+                        new Point(x + 9.0, y));
+                    dc.DrawText(statusText, new Point(
+                        x + legendCell - statusText.WidthIncludingTrailingWhitespace, y));
+                }
+                else
+                {
+                    dc.DrawText(CreateText(GlobalStashCategoryNames[kind],
+                        8.8, text, FontWeights.SemiBold,
+                        Math.Max(1.0, legendCell - 11.0)), new Point(x + 9.0, y));
+                    dc.DrawText(statusText, new Point(x + 1.0, y + 12.0));
+                }
+            }
+        }
+        dc.DrawText(CreateText(
+                "WEIGHT = SCALAR · OUTLINED = INDEPENDENT CHANCE · NOT DROP ODDS",
+                8.5, muted, FontWeights.SemiBold,
+                Math.Max(1.0, outer.Width - 2.0 * inset)),
+            new Point(outer.Left + inset, outer.Bottom - 17.0));
     }
+
 }

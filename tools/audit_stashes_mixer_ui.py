@@ -169,8 +169,7 @@ for family, branch, sid, expected_chance in samples:
 # The host must exactly contain each painted panel at all breakpoints.
 height_match = re.search(
     r"private double StashContentMixHeight\(double width\)\s*"
-    r"=> width >= ([\d.]+) \? ([\d.]+) : width >= ([\d.]+)"
-    r" \? ([\d.]+) : ([\d.]+);",
+    r"=> width >= ([\d.]+) \? ([\d.]+) : ([\d.]+);",
     source,
 )
 mixer_match = re.search(
@@ -180,13 +179,12 @@ mixer_match = re.search(
 )
 assert height_match is not None, "missing StashContentMix measured height"
 assert mixer_match is not None, "missing StashContentMix mixer"
-assert tuple(map(float, height_match.groups())) == (700.0, 568.0, 580.0, 802.0, 860.0)
+assert tuple(map(float, height_match.groups())) == (700.0, 568.0, 860.0)
 assert tuple(map(float, mixer_match.groups())) == (38.0, 670.0, 262.0, 496.0)
 assert "width >= 670.0 ? 312.0 : 546.0, width," in content
 assert "narrowPreview ? 302.0 : 244.0" in content
-assert "width < 550.0" in content
+assert "width < 670.0" in content
 assert 568.0 - (312.0 + 244.0) == 12.0
-assert 802.0 - (546.0 + 244.0) == 12.0
 assert 860.0 - (546.0 + 302.0) == 12.0
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
@@ -271,7 +269,7 @@ branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.
 csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
 assert 'DrawStashWeightMixer(dc, new Rect(left, 38.0, width,' in content
 assert "StashContentMixHeight(width)" in source
-assert '=> width >= 700.0 ? 568.0 : width >= 580.0 ? 802.0 : 860.0;' in source
+assert '=> width >= 700.0 ? 568.0 : 860.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
@@ -303,54 +301,77 @@ assert "ValueToX(p.CurrentNumber, p.Minimum, p.Maximum, rail, false)" in coverag
 assert "p.ReferenceNumber" in coverage
 assert "Normalize(" not in coverage
 assert "percentages" not in coverage
-# Three separately guarded real ItemGenerator pools, one per stash tier.
-# The renderer uses the production TierField pipeline rather than synthetic
-# six-way global percentages or pooling mutually exclusive source groups.
-tier_examples = (
-    ("cheapStashProduction", 7, "EItemGenerationCategory::Consumable",
-     "ERank::Experienced", "EGameDifficulty::Easy, EGameDifficulty::Medium",
-     [0.0, 2.0, 13.0, 1.0, 0.0, 1.77]),
-    ("mediumStashAmmoProduction", 3, "EItemGenerationCategory::Ammo",
-     "ERank::Experienced", "", [23.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
-    ("expensiveStashProduction", 6, "EItemGenerationCategory::Ammo",
-     "ERank::Experienced", "", [5.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+# Reconcile ALL ItemGenerator categories and their source-native fields
+# in each tier, not a sampled ammo/consumable Weight group.
+source_kind_sids = {
+    1: {"Bandage", "Medkit", "ArmyMedkit", "EcoMedkit", "AntiRad", "Antirad"},
+    2: {"Bread", "Sausage", "CannedFood"},
+    3: {"Water", "Energetic", "Beer", "Milk", "Vodka"},
+    4: {"GrenadeRGD5", "GrenadeF1"},
+    5: {"MoneyCommon", "MoneyRare", "MoneyEpic", "MoneyLegendary"}
+}
+def source_category(sid):
+    if len(sid) > 1 and sid[0] == "A" and sid[1].isdigit():
+        return 0
+    return next((k for k, names in source_kind_sids.items() if sid in names), -1)
+
+tier_coverage = (
+    ("cheapStashProduction", "Cheap", 12, 52,
+     [3, 6, 18, 8, 0, 3], [0, 6, 4, 3, 1, 0]),
+    ("mediumStashAmmoProduction", "Medium", 10, 39,
+     [25, 0, 0, 0, 0, 0], [0, 6, 0, 5, 0, 3]),
+    ("expensiveStashProduction", "Expensive", 19, 42,
+     [23, 0, 0, 0, 0, 0], [2, 6, 1, 1, 1, 8])
 )
-source_kinds = dict(category)
-for tier, idx, kind, rank, difficulty, expected_totals in tier_examples:
-    group = baseline[tier]["templateCategories"][idx]
-    assert group["node"] == f"[{idx}]", tier
-    assert group["fields"]["Category"] == kind, tier
-    assert group["fields"].get("PlayerRank", "") == rank, tier
-    assert group["fields"].get("Diff", "") == difficulty, tier
-    total = [0.0] * 6
-    for item in group["items"]:
-        fields = item["fields"]
-        assert "Weight" in fields and "Chance" not in fields, (tier, idx)
-        sid = fields["ItemPrototypeSID"]
-        category_id = 0 if sid.startswith("A") and len(sid) > 1 and sid[1].isdigit() \
-            else source_kinds[sid]
-        total[category_id] += float(fields["Weight"].rstrip("fF"))
-    assert all(math.isclose(x, y) for x, y in zip(total, expected_totals)), tier
-    assert sum(0.0 * x for x in total) == 0  # zero-source preview is EMPTY
-assert math.isclose(100.0 * 13.0 / 17.77, 73.157, abs_tol=.01)
-assert '("BASIC · CONSUMABLE · EXPERIENCED · EASY/MEDIUM", "Cheap", 7,' in coverage
-assert '("STANDARD · AMMO · EXPERIENCED", "Medium", 3,' in coverage
-assert '("RARE · AMMO · EXPERIENCED", "Expensive", 6,' in coverage
-assert "private void DrawStashTierWeightPools(" in coverage
+for source_key, tier_id, group_count, item_count, expected_weight, expected_chance in tier_coverage:
+    groups = baseline[source_key]["templateCategories"]
+    assert len(groups) == group_count, tier_id
+    assert sum(len(g["items"]) for g in groups) == item_count, tier_id
+    weight = [0] * 6
+    chance = [0] * 6
+    for group in groups:
+        assert group["items"]
+        group_field = "Weight" if "Weight" in group["items"][0]["fields"] else "Chance"
+        for item in group["items"]:
+            fields = item["fields"]
+            assert (("Weight" in fields), ("Chance" in fields)) in (
+                (True, False), (False, True)), (tier_id, fields)
+            assert group_field in fields
+            index = source_category(fields["ItemPrototypeSID"])
+            assert 0 <= index < 6, (tier_id, fields["ItemPrototypeSID"])
+            (weight if group_field == "Weight" else chance)[index] += 1
+    assert weight == expected_weight, (tier_id, weight)
+    assert chance == expected_chance, (tier_id, chance)
+
 tier_preview = coverage.split("private void DrawStashTierWeightPools(", 1)[1]
-assert "StashPreviewGroup(tierLabel, example.GroupIndex)" in tier_preview
-assert 'state.TierField(' in tier_preview
-assert 'example.Tier, group, item, "Weight"' in tier_preview
-assert 'item.Fields.ContainsKey("Chance")' in tier_preview
-assert 'StashEffectiveState.Number(' in tier_preview
-assert 'var share = sum > Epsilon ? 100.0 * totals[category] / sum : 0.0;' in tier_preview
-assert 'if (sum <= Epsilon)' in tier_preview
-assert '"NO WEIGHTED ITEMS"' in tier_preview
-assert '"ONE SOURCE GROUP PER TIER · NOT STASH DROP ODDS"' in tier_preview
-assert 'AddHorizontalTarget(' not in tier_preview
-assert 'new HitTarget(' not in tier_preview
+assert "StashSourceGroups.Value" in tier_preview
+assert "!g.IsSmart && g.Tier == tier.SourceTier" in tier_preview
+assert '("BASIC", "Cheap", 12)' in tier_preview
+assert '("STANDARD", "Medium", 10)' in tier_preview
+assert '("RARE", "Expensive", 19)' in tier_preview
+assert "group.Field is not (" in tier_preview
+assert 'group.Field == "Weight"' in tier_preview
+assert "hasWeight[kind] = true" in tier_preview
+assert "hasChance[kind] = true" in tier_preview
+assert "hasWeight[index] || hasChance[index]" in tier_preview
+assert "state.Value(GlobalStashParameterIds[kind])" in tier_preview
+assert "CloneWithOpacity(ink, 0.40 + 0.60 * current / 3.0)" in tier_preview
+assert "var segmentWidth" in tier_preview
+assert "Math.Clamp(" in tier_preview
+assert '"CHANCE ONLY"' in tier_preview
+assert 'number + "x + CHANCE"' in tier_preview
+assert "chance ? 1.2 : .65" in tier_preview
+assert '"STASH CONTENT BY TIER"' in tier_preview
+assert '"WEIGHT = SCALAR · OUTLINED = INDEPENDENT CHANCE · NOT DROP ODDS"' in tier_preview
+assert "100.0 * totals" not in tier_preview
+assert "totals.Sum()" not in tier_preview
+assert "StashPreviewGroup(" not in tier_preview
+assert "TierField(" not in tier_preview
+assert "AddHorizontalTarget(" not in tier_preview
+assert "new HitTarget(" not in tier_preview
+assert "CurrentNumber =" not in tier_preview
 for doc in (lock, system, proposal):
-    assert "STASHES — THREE SOURCE-NATIVE TIER POOL BARS (CURRENT)" in doc
+    assert "STASHES — ACTUAL TIER CONTENT / WEIGHT-CHANCE COVERAGE (CURRENT)" in doc
 
 assert "StashMixPalette[i]" in coverage
 assert "GlobalMedicalItems.Select(item => state.ChanceFactor(item.Sid))" in coverage
@@ -414,7 +435,7 @@ for doc in (lock, system, proposal):
     assert "STASHES GLOBAL ITEM-CATEGORY SOURCE COVERAGE (CURRENT)" in doc
     assert "STASHES PLAYER-FACING LOOT STATUS (CURRENT)" in doc
     assert "STASHES GLOBAL WEIGHT WITH NATIVE CHANCE EXCEPTIONS (CURRENT)" in doc
-print("PASS: six editable native Weight lanes plus three read-only source-native tier pool bars")
+print("PASS: all 41 tier ItemGenerator groups classified by real Weight/Chance fields; 6 editable Weight lanes and 3 read-only native category-presence strips")
 
 # Phase 5: emitted patch parity must be wired into the executable contract.
 # This is a static integration gate, not a claim that the .NET/Wine suite ran.

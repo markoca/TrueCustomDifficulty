@@ -4596,7 +4596,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // One read-only, source-native Weight composition per stash tier;
         // each bar belongs to ONE identified generator group, not a
         // fabricated pool pooled across rank/difficulty/Chance entries.
-        var narrowPreview = width < 550.0;
+        var narrowPreview = width < 670.0;
         DrawStashTierWeightPools(dc, new Rect(left,
                 width >= 670.0 ? 312.0 : 546.0, width,
                 narrowPreview ? 302.0 : 244.0),
@@ -6868,7 +6868,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 568.0 : width >= 580.0 ? 802.0 : 860.0;
+        => width >= 700.0 ? 568.0 : 860.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)

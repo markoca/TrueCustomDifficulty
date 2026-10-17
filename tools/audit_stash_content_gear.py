@@ -54,15 +54,22 @@ vm = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 writer = (src / "Services/CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
 assert "DrawStashWeightMixer(dc, new Rect(left, 38.0, width," in ui
 assert "width >= 670.0 ? 262.0 : 496.0" in ui
-assert "=> width >= 700.0 ? 568.0 : width >= 580.0 ? 802.0 : 860.0;" in ui
+assert "=> width >= 700.0 ? 568.0 : 860.0;" in ui
 assert "DrawStashTierWeightPools(dc, new Rect(left," in ui
 assert "narrowPreview ? 302.0 : 244.0" in ui
 assert "private void DrawStashTierWeightPools(" in mixer
 tier_preview = mixer.split("private void DrawStashTierWeightPools(", 1)[1]
-assert 'state.TierField(' in tier_preview
-assert 'example.Tier, group, item, "Weight"' in tier_preview
-assert '"NO WEIGHTED ITEMS"' in tier_preview
-assert '"ONE SOURCE GROUP PER TIER · NOT STASH DROP ODDS"' in tier_preview
+assert "StashSourceGroups.Value" in tier_preview
+assert "!g.IsSmart && g.Tier == tier.SourceTier" in tier_preview
+assert "hasWeight[kind] = true" in tier_preview
+assert "hasChance[kind] = true" in tier_preview
+assert "hasWeight[index] || hasChance[index]" in tier_preview
+assert 'number + "x + CHANCE"' in tier_preview
+assert '"CHANCE ONLY"' in tier_preview
+assert '"STASH CONTENT BY TIER"' in tier_preview
+assert '"WEIGHT = SCALAR · OUTLINED = INDEPENDENT CHANCE · NOT DROP ODDS"' in tier_preview
+assert "100.0 * totals" not in tier_preview
+assert "TierField(" not in tier_preview
 assert "AddHorizontalTarget(" not in tier_preview
 assert "const double rowPitch = 78.0;" in mixer
 assert "var columns = outer.Width >= 670.0 ? 2 : 1;" in mixer
@@ -135,5 +142,5 @@ assert "groups.Count != 463" in mixer
 assert "groups.Sum(x => x.Items.Count) != 1124" in mixer
 assert not re.search(r'new\[\] \{ .*?1\.0 / 6', mixer)
 
-print("PASS: 20 source-backed Stash IDs; compact 6-lane mixer plus three original read-only Basic/Standard/Rare Weight compositions; Chance separate.")
+print("PASS: 20 Stash CFG IDs, 6-lane Weight mixer, three complete native tier category/Weight/Chance strips; no invented tier drop percentages.")
 print("NOT RUN: Windows .NET publish, Wine interaction, real game RNG acceptance.")
