@@ -1,3 +1,5 @@
+**C# build blocker fix (2026-10-17):** Local build reported CS1628 in StashEffectiveState.UniformSmartFactor (lambda captured the out factor parameter), fixed by capturing an ordinary local while preserving its exact comparison and out assignment. Local build also reported CS0246 in AggregateVisualControl's invalid-tier guard, fixed by importing System.IO for InvalidDataException. Neither edit modifies category calculation, gameplay tuning, presets, generator source references or UI layout. Pending actual local .NET/Wine recompile; previous CI jobs ended before running steps.
+
 # Ordinary NPC loot and generic world stashes — generator execution / CFG parity gate
 
 **State: original CFG/source linkage and automated production-writer diagnostics.

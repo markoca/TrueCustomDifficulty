@@ -307,10 +307,13 @@ public sealed class StashEffectiveState
         IEnumerable<double> values, out double factor)
     {
         var list = values.ToArray();
-        factor = list.Length > 0 ? list[0] : 1.0;
+        // C# forbids capturing an out parameter inside a lambda (CS1628).
+        // Capture an ordinary local while preserving the native group rule.
+        var reference = list.Length > 0 ? list[0] : 1.0;
+        factor = reference;
         return list.Length > 0
-            && list.All(x => Math.Abs(x - factor) < .0000001)
-            && Math.Abs(factor - 1) > .0000001;
+            && list.All(x => Math.Abs(x - reference) < .0000001)
+            && Math.Abs(reference - 1) > .0000001;
     }
 
     public static string SmartSpawnEndpoint(string raw, double factor)
