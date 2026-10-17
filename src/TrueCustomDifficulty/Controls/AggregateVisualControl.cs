@@ -4650,9 +4650,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var cardWidth = Math.Max(1.0,
             (width - 2.0 * inset - (columns - 1) * gap) / columns);
         var weightTop = 53.0;
-        var previewTop = wide ? 207.0 : 361.0;
-        var chanceTop = wide ? 330.0 : 482.0;
-        var quantityTop = wide ? 520.0 : 822.0;
+        var chanceTop = wide ? 224.0 : 376.0;
+        var quantityTop = wide ? 410.0 : 716.0;
         var entries = new (string Label, string WeightId, string ChanceId, Brush Tone)[]
         {
             ("BANDAGES", "loot.stashMedicalBandageBias",
@@ -4666,13 +4665,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         };
         DrawText(dc, "WEIGHT MIX", new Point(left + 12.0, 37.0),
             10.8, text, FontWeights.Bold);
-        DrawStashMedicalWeightPreview(dc, new Rect(left, previewTop, width, 99.0),
-            text, muted, border, panel);
         DrawText(dc, "CHANCE SCALE",
-            new Point(left + 12.0, wide ? 314.0 : 466.0),
+            new Point(left + 12.0, wide ? 208.0 : 360.0),
             10.8, text, FontWeights.Bold);
         DrawText(dc, "QUANTITY",
-            new Point(left + 12.0, wide ? 501.0 : 803.0),
+            new Point(left + 12.0, wide ? 391.0 : 697.0),
             10.8, text, FontWeights.Bold);
         for (var i = 0; i < entries.Length; i++)
         {
@@ -6897,7 +6894,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private double StashContentMixHeight(double width)
         => width >= 700.0 ? 588.0 : 922.0;
     private static double StashMedicalCompositionHeight(double width)
-        => width >= 700.0 ? 660.0 : 1090.0;
+        => width >= 700.0 ? 550.0 : 990.0;
     private static double StashGearHeight(double width)
         => width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;
 

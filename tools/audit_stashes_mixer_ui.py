@@ -79,14 +79,18 @@ assert '"StashMedicalQuantity" => new[]' not in family_ids
 assert 'case "StashMedicalQuantity":' not in source
 assert '"StashMedicalQuantity" => StashMedicalQuantityHeight' not in source
 assert "DrawStashMedicalQuantityCards(dc, left, width, quantityTop, wide," in medical
-assert "DrawStashMedicalWeightPreview(dc," in medical
-assert "var previewTop = wide ? 207.0 : 361.0;" in medical
-assert "var quantityTop = wide ? 520.0 : 822.0;" in medical
+assert "DrawStashMedicalWeightPreview(" not in coverage
+assert "DrawStashMedicalWeightPreview(" not in medical
+assert "previewTop" not in medical
+assert "var chanceTop = wide ? 224.0 : 376.0;" in medical
+assert "var quantityTop = wide ? 410.0 : 716.0;" in medical
+assert 'new Point(left + 12.0, wide ? 208.0 : 360.0)' in medical
+assert 'new Point(left + 12.0, wide ? 391.0 : 697.0)' in medical
 assert "cardWidth, 121.0" in quantity
 assert "DrawStashQuantityDots(dc, P(family.Min)" in quantity
 assert "DrawStashQuantityDots(dc, P(family.Max)" in quantity
 assert "glyph.WidthIncludingTrailingWhitespace + 6.0" in quantity_dots
-assert '=> width >= 700.0 ? 660.0 : 1090.0;' in source
+assert '=> width >= 700.0 ? 550.0 : 990.0;' in source
 assert gear.count('("BASIC"') + gear.count('("STANDARD"') + gear.count('("RARE"') == 3
 assert 'DrawSourceKnob(' not in content
 assert "DrawStashWeightMixer(dc," in content
@@ -99,7 +103,7 @@ assert "DrawSourceKnob(dc, P(entry.WeightId)" in medical
 assert "DrawSourceKnob(dc, P(entry.ChanceId)" in medical
 assert "percentageReadout: true, dialAccent: entry.Tone" in medical
 assert 'StashMedicalCompositionHeight(double width)' in source
-assert '=> width >= 700.0 ? 660.0 : 1090.0;' in source
+assert '=> width >= 700.0 ? 550.0 : 990.0;' in source
 assert "StashMedicalPalette[0]" in medical and "StashMedicalPalette[3]" in medical
 assert "DrawStashQuantityDots(dc, P(family.Min)" in quantity
 assert "DrawStashQuantityDots(dc, P(family.Max)" in quantity
@@ -461,29 +465,24 @@ assert 'Parameters="{Binding DataContext.AllParameters' in (
     root / "src/TrueCustomDifficulty/MainWindow.xaml").read_text()
 
 
-med_preview = coverage.split("private void DrawStashMedicalWeightPreview(", 1)[1].split(
-    "private void DrawStashChanceTier(", 1)[0]
-assert '"StashMedicine_Smart"' in med_preview
-assert 'g.RankIndex is 2 or 3' in med_preview
-assert 'g.Field == "Weight"' in med_preview
-assert '".ConsumablesParams.[0].Items"' in med_preview
-assert 'g.Items.Count != 2' in med_preview
-assert 'g.Items[0].ItemSid != "Medkit"' in med_preview
-assert 'g.Items[1].ItemSid != "ArmyMedkit"' in med_preview
-assert "group.EffectiveSelection(StashPreviewBaseline.Value," in med_preview
-assert "CurrentStashEffectiveState()" in med_preview
-assert '"RANK: VETERAN"' in med_preview and '"RANK: MASTER"' in med_preview
-assert "AddHorizontalTarget(" not in med_preview
+
+# No four-way medical Weight pool exists in the authored sources. All four
+# medical item classes nevertheless have real independent native Weight rows,
+# so each has a real 0–3x knob without a synthetic relative-selection bar.
+assert "DrawStashMedicalWeightPreview(" not in coverage
+assert "RANK: VETERAN" not in medical and "RANK: MASTER" not in medical
 with (data / "smartloot-world-source-entries.csv").open(newline="") as f:
     medical_rows = list(csv.DictReader(f))
-for rank, weights in [(2, [("Medkit", "5"), ("ArmyMedkit", "1")]),
-                      (3, [("Medkit", "4"), ("ArmyMedkit", "1")])]:
-    actual = [(r["ItemSID"], r["Weight"]) for r in medical_rows
-              if r["Prototype"] == "StashMedicine_Smart"
-              and int(r["RankIndex"]) == rank
-              and r["Group"] == "ConsumablesParams"
-              and r["GroupIndex"] == "0"]
-    assert actual == weights, (rank, actual)
+for sid in ("Bandage", "Medkit", "ArmyMedkit", "Antirad"):
+    assert any(row["ItemSID"] == sid
+               and row["Weight"] != ""
+               and row["Chance"] == ""
+               for row in medical_rows), sid
+# The Basic ItemGenerator also carries genuine Bandage Weight:
+assert any(item["fields"].get("ItemPrototypeSID") == "Bandage"
+           and "Weight" in item["fields"]
+           for group in baseline["cheapStashProduction"]["templateCategories"]
+           for item in group["items"])
 
 tier_preview = coverage.split("private void DrawStashChanceTier(", 1)[1]
 assert "StashSourceGroups.Value" in tier_preview
