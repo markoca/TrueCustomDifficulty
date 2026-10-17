@@ -5750,13 +5750,13 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Ammo Stash Selection",
-      "description": "One global ammo factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
+      "description": "How much ammo selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Stash item selection bias"
+        "valueLabel": "Original stash selection multiplier — not overall drop chance"
       },
       "vanilla": {
         "All": 1
@@ -5804,13 +5804,13 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Medical Stash Selection",
-      "description": "One global medical factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
+      "description": "How much medical selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Stash item selection bias"
+        "valueLabel": "Original stash selection multiplier — not overall drop chance"
       },
       "vanilla": {
         "All": 1
@@ -5858,13 +5858,13 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Food Stash Selection",
-      "description": "One global food factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
+      "description": "How much food selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Stash item selection bias"
+        "valueLabel": "Original stash selection multiplier — not overall drop chance"
       },
       "vanilla": {
         "All": 1
@@ -5912,13 +5912,13 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Drinks Stash Selection",
-      "description": "One global drinks factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
+      "description": "How much drinks selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Stash item selection bias"
+        "valueLabel": "Original stash selection multiplier — not overall drop chance"
       },
       "vanilla": {
         "All": 1
@@ -5966,13 +5966,13 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Grenades Stash Selection",
-      "description": "One global grenades factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
+      "description": "How much grenades selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Stash item selection bias"
+        "valueLabel": "Original stash selection multiplier — not overall drop chance"
       },
       "vanilla": {
         "All": 1
@@ -6020,13 +6020,13 @@
       "tab": "stashes",
       "group": "Stash Content",
       "label": "Coupons Stash Selection",
-      "description": "One global coupons factor for all eligible matching stash items, regardless of native rank, difficulty, group or generator. Applies across Basic, Standard, Rare, SmartLoot and supported guarded direct/DLC1 paths. Preserves native Weight/Chance semantics and never inserts items or guarantees spawns.",
+      "description": "How much coupons selection is retained in supported random stashes. 1x keeps the original selection settings, 0x excludes matching entries from mod-controlled generators, and values in between scale the original selection. Available items are not guaranteed drops, and story/quest loot is not included.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
         "primary": "multiplier",
         "rawFormat": "0.##x",
-        "valueLabel": "Stash item selection bias"
+        "valueLabel": "Original stash selection multiplier — not overall drop chance"
       },
       "vanilla": {
         "All": 1

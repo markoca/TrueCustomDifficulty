@@ -242,16 +242,19 @@ coverage = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.Sta
 branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.cs").read_text()
 csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
 assert 'DrawStashGlobalCoverage(dc, new Rect(left, 237.0, width,' in content
-assert 'width >= 670.0 ? 268.0 : 408.0' in content
+assert 'width >= 670.0 ? 290.0 : 500.0' in content
 assert 'StashContentMixHeight(width)' in source
-assert '=> width >= 700.0 ? 520.0 : 665.0;' in source
-assert "GlobalStashSourceCounts.Value" in coverage
+assert '=> width >= 700.0 ? 545.0 : 755.0;' in source
+assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
-assert "result.Sum(c => c.Total) != 1124" in coverage
+assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
 assert "StashCategoryIndex(item.ItemSid)" in coverage
-assert 'WEIGHT {count.Weight}   CHANCE {count.Chance}' in coverage
-assert 'ITEMGEN {count.ItemGenerator}   WORLD {count.SmartLoot}' in coverage
-assert "NATIVE SOURCE ENTRIES · NOT DROP PROBABILITIES" in coverage
+assert '"WEIGHT ' not in coverage and '"CHANCE ' not in coverage
+assert '"ITEMGEN ' not in coverage and '"WORLD ' not in coverage
+assert '"WHAT CAN APPEAR"' in coverage
+assert '"EXCLUDED"' in coverage and '"REDUCED"' in coverage
+assert '"ORIGINAL"' in coverage and '"PARTIAL"' in coverage
+assert '"NOT GUARANTEED · MOD-CONTROLLED STASHES ONLY"' in coverage
 assert "StashEffectiveState.ItemBiasId(sid)" in coverage
 assert "StashEffectiveState.SmartItemBiasId(sid)" in coverage
 for retired in ("DrawStashBranchBrowser(", "NavigateStash(", "TryStashBrowserClick(",
@@ -262,6 +265,11 @@ for retired in ("DrawStashBranchBrowser(", "NavigateStash(", "TryStashBrowserCli
 assert "CurrentNumber =" not in coverage
 assert "AddHorizontalTarget(" not in coverage
 assert "StashMixPalette[i]" in coverage
+assert "GlobalMedicalItems.Select(item => state.TierFactor(item.Sid))" in coverage
+assert "EXCLUDED: " in coverage
+assert 'GlobalStashStatus(i, statusState)' in source
+assert 'GlobalStashItemDescriptions' in coverage
+assert "GetManifestResourceStream(SmartSource)" in branches
 assert "public static string? SmartItemBiasId(string sid) => ItemBiasId(sid);" in effective
 assert "public double TierFactor(string sid)" in effective
 assert "public double SmartFactor(string sid)" in effective
@@ -291,6 +299,7 @@ assert sum(1 for r in rows if r["Weight"]) > 0
 assert sum(1 for r in rows if r["Chance"]) > 0
 for doc in (lock, system, proposal):
     assert "STASHES GLOBAL ITEM-CATEGORY SOURCE COVERAGE (CURRENT)" in doc
+    assert "STASHES PLAYER-FACING LOOT STATUS (CURRENT)" in doc
 print("PASS: six global item-type knobs and full native source coverage, no branch/rank selection")
 
 # Phase 5: emitted patch parity must be wired into the executable contract.

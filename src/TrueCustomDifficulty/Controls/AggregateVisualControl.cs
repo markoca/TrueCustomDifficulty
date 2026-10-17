@@ -4623,6 +4623,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var available = Math.Max(1.0, width - gap * (entries.Length - 1));
         var totalWeight = sizeWeights.Sum();
         var cursor = left;
+        var statusState = CurrentStashEffectiveState();
         for (var i = 0; i < entries.Length; i++)
         {
             var cell = available * sizeWeights[i] / totalWeight;
@@ -4640,13 +4641,19 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             DrawSourceKnob(dc, source, entries[i].Label, card,
                 text, muted, border, accent, panel,
                 dialAccent: StashMixPalette[i], dialScale: dialScales[i]);
+            // Knob value is a multiplier, not a visible drop percentage.
+            // Translate it immediately into a player-facing item state.
+            if (source is not null)
+                DrawCenteredText(dc, GlobalStashStatus(i, statusState),
+                    new Point(card.Left + cell / 2.0, card.Bottom - 8.0),
+                    8.8, muted, FontWeights.SemiBold);
             cursor += cell + gap;
         }
 
-        // The same six multipliers apply throughout all source families.
-        // The read-only summary includes every original rank/group.
+        // Player-facing status, not developer counters or invented drop
+        // probabilities; covers all eligible source ranks and groups.
         DrawStashGlobalCoverage(dc, new Rect(left, 237.0, width,
-                width >= 670.0 ? 268.0 : 408.0),
+                width >= 670.0 ? 290.0 : 500.0),
             text, muted, border, panel);
     }
 
@@ -6915,7 +6922,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // The same adaptive column thresholds drive both WPF Measure and Draw,
     // so the last dial row is never clipped by the group host.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 520.0 : 665.0;
+        => width >= 700.0 ? 545.0 : 755.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)

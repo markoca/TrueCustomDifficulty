@@ -70,11 +70,18 @@ internal static partial class Program
             Check(categorySids.Length > 0, categoryId + ": empty global category");
             foreach (var difficulty in new[] { "Easy", "Medium", "Hard", "Stalker" })
             {
+                var off = NativeState(difficulty, (categoryId, 0));
                 var half = NativeState(difficulty, (categoryId, .5));
+                var original = NativeState(difficulty, (categoryId, 1));
                 Check(categorySids.All(sid =>
-                        Math.Abs(half.TierFactor(sid) - .5) < 1e-9
-                        && Math.Abs(half.SmartFactor(sid) - .5) < 1e-9),
-                    categoryId + ": global factor changed with difficulty");
+                        Math.Abs(off.TierFactor(sid)) < 1e-9
+                        && Math.Abs(off.SmartFactor(sid)) < 1e-9
+                        && Math.Abs(half.TierFactor(sid) - .5) < 1e-9
+                        && Math.Abs(half.SmartFactor(sid) - .5) < 1e-9
+                        && Math.Abs(original.TierFactor(sid) - 1) < 1e-9
+                        && Math.Abs(original.SmartFactor(sid) - 1) < 1e-9),
+                    categoryId + ": global OFF / REDUCED / ORIGINAL state "
+                    + "changed with rank, tier or difficulty");
             }
         }
 
