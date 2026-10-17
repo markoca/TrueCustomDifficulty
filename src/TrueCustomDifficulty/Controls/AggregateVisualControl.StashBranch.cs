@@ -297,6 +297,77 @@ public sealed partial class AggregateVisualControl
                 inside.Width, inside.Height), text, muted, border);
     }
 
+    // Only TWO medical kinds ever compete in the same authored SmartLoot
+    // Weight group: Medkit and ArmyMedkit, in Veteran/Master rank group [0].
+    // Bandage and Anti-Rad are in independent groups; combining all four
+    // would invent a distribution that the game's CFG never contains.
+    private void DrawStashMedicalWeightPreview(
+        DrawingContext dc, Rect outer,
+        Brush text, Brush muted, Brush border, Brush panel)
+    {
+        var groups = StashSourceGroups.Value
+            .Where(g => g.IsSmart
+                && g.Prototype == "StashMedicine_Smart"
+                && g.Field == "Weight"
+                && g.GroupPath.EndsWith(
+                    ".ConsumablesParams.[0].Items", StringComparison.Ordinal)
+                && g.RankIndex is 2 or 3)
+            .OrderBy(g => g.RankIndex).ToArray();
+        if (groups.Length != 2 || groups[0].RankIndex != 2
+            || groups[1].RankIndex != 3
+            || groups.Any(g => g.Items.Count != 2
+                || g.Items[0].ItemSid != "Medkit"
+                || g.Items[1].ItemSid != "ArmyMedkit"))
+            throw new InvalidDataException(
+                "Native medical Medkit/ArmyMedkit Weight pool changed.");
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .67),
+            new Pen(CloneWithOpacity(border, .62), .9),
+            outer, 4.0, 4.0);
+        var effective = CurrentStashEffectiveState();
+        for (var i = 0; i < groups.Length; i++)
+        {
+            var group = groups[i];
+            var x = outer.Left + 12.0;
+            var top = outer.Top + 6.0 + i * 47.0;
+            var width = Math.Max(1.0, outer.Width - 24.0);
+            var weightMedkit = Math.Max(0.0, StashEffectiveState.Number(
+                group.EffectiveSelection(StashPreviewBaseline.Value,
+                    effective, group.Items[0])));
+            var weightArmy = Math.Max(0.0, StashEffectiveState.Number(
+                group.EffectiveSelection(StashPreviewBaseline.Value,
+                    effective, group.Items[1])));
+            var total = weightMedkit + weightArmy;
+            var shareMedkit = total > Epsilon ? weightMedkit / total : 0.0;
+            var shareArmy = total > Epsilon ? weightArmy / total : 0.0;
+            DrawText(dc, i == 0 ? "RANK: VETERAN" : "RANK: MASTER",
+                new Point(x, top), 10.0, text, FontWeights.SemiBold);
+            var bar = new Rect(x, top + 14.0, width, 9.0);
+            dc.DrawRoundedRectangle(CloneWithOpacity(border, .32),
+                null, bar, 2.0, 2.0);
+            if (shareMedkit > Epsilon)
+                dc.DrawRectangle(StashMedicalPalette[1], null,
+                    new Rect(x, bar.Top, bar.Width * shareMedkit, bar.Height));
+            if (shareArmy > Epsilon)
+                dc.DrawRectangle(StashMedicalPalette[2], null,
+                    new Rect(x + bar.Width * shareMedkit, bar.Top,
+                        bar.Width * shareArmy, bar.Height));
+            var slot = width / 2.0;
+            for (var k = 0; k < 2; k++)
+            {
+                var colX = x + k * slot;
+                dc.DrawRectangle(StashMedicalPalette[k + 1], null,
+                    new Rect(colX, top + 29.0, 7.0, 7.0));
+                DrawText(dc, k == 0 ? "MEDKITS" : "ARMY MEDKITS",
+                    new Point(colX + 10.0, top + 25.0), 9.7,
+                    text, FontWeights.SemiBold);
+                DrawRightAlignedText(dc,
+                    $"{(k == 0 ? shareMedkit : shareArmy) * 100.0:0.#}%",
+                    new Point(colX + slot - 3.0, top + 25.0), 9.9,
+                    muted, FontWeights.SemiBold);
+            }
+        }
+    }
+
     // A filled rail is the ACTUAL native per-item Chance (or its min/max
     // across differently authored rows), never a stash-wide drop chance.
     // W-only rows are informational and must not resemble editable rails.

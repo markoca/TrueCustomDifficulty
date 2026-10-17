@@ -56,7 +56,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (Family is "AnomalyGlobalDamage" or "FlycatcherSlowdown" or "AnomalySpecialEffects" or "ServiceCostsBoard"
             or "CouponFlow" or "TraderStockBoard" or "ItemWeightBoard" or "EquipmentWearBalance"
             or "StashRewardProfile" or "StashContentMix" or "StashMedicalComposition"
-            or "StashMedicalQuantity" or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
+            or "StashGear" or "NpcLootLoadout" or "HumanCombatProfile" or "PlayerWeaponProfile"
             or "StarvationTimeline" or "SevereFatiguePenaltyBoard"
             or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"
             or "RadiationBalance" or "StaminaCore" or "ConsumableMixer"
@@ -201,8 +201,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             },
             "StashMedicalComposition" => new[]
             {
-                "loot.stashMixMedical", "loot.stashMedkitMaxCount",
-                "loot.stashArmyMedkitMaxCount"
+                "loot.stashMixMedical"
             },
             "NpcLootLoadout" => new[] { "economy.traderMinBuyCondition" },
             _ => Array.Empty<string>()
@@ -320,9 +319,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 break;
             case "StashMedicalComposition":
                 DrawStashMedicalComposition(dc, text, muted, border, accent, panel);
-                break;
-            case "StashMedicalQuantity":
-                DrawStashMedicalQuantity(dc, text, muted, border, accent, panel);
                 break;
             case "StashGear":
                 DrawStashGear(dc, text, muted, border, accent, panel);
@@ -4638,9 +4634,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     // Medical biases are source-editable tracks; a separate, noninteractive
     // preview represents only the relative balance of these four settings.
-        // Two independent native field banks: Weight changes only relative
-    // selection, Chance scales authored per-entry probability (not stash odds).
-    // Four item colors follow the actual medical item's identity.
+        // One medical panel, keeping native Weight, Chance and Count independent.
     private void DrawStashMedicalComposition(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -4656,7 +4650,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var cardWidth = Math.Max(1.0,
             (width - 2.0 * inset - (columns - 1) * gap) / columns);
         var weightTop = 53.0;
-        var chanceTop = wide ? 225.0 : 381.0;
+        var previewTop = wide ? 207.0 : 361.0;
+        var chanceTop = wide ? 330.0 : 482.0;
+        var quantityTop = wide ? 520.0 : 822.0;
         var entries = new (string Label, string WeightId, string ChanceId, Brush Tone)[]
         {
             ("BANDAGES", "loot.stashMedicalBandageBias",
@@ -4670,10 +4666,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         };
         DrawText(dc, "WEIGHT MIX", new Point(left + 12.0, 37.0),
             10.8, text, FontWeights.Bold);
-        DrawText(dc, "CHANCE SCALE", new Point(left + 12.0, wide ? 209.0 : 364.0),
+        DrawStashMedicalWeightPreview(dc, new Rect(left, previewTop, width, 99.0),
+            text, muted, border, panel);
+        DrawText(dc, "CHANCE SCALE",
+            new Point(left + 12.0, wide ? 314.0 : 466.0),
             10.8, text, FontWeights.Bold);
-        // Both banks use the Stamina/Weight Mix dial grammar. Native limits,
-        // hit testing, drag and reset are supplied by their real parameter VM.
+        DrawText(dc, "QUANTITY",
+            new Point(left + 12.0, wide ? 501.0 : 803.0),
+            10.8, text, FontWeights.Bold);
         for (var i = 0; i < entries.Length; i++)
         {
             var entry = entries[i];
@@ -4688,92 +4688,100 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 text, muted, border, accent, panel,
                 percentageReadout: true, dialAccent: entry.Tone, dialScale: .74);
         }
+        DrawStashMedicalQuantityCards(dc, left, width, quantityTop, wide,
+            text, muted, border, panel);
     }
 
-    // Two native range-selector cards; AUTO retains source 0, while MAX
-    // 0 ITEMS is the distinct stored -1 exclusion (never silently AUTO).
-        private void DrawStashMedicalQuantity(
-        DrawingContext dc, Brush text, Brush muted, Brush border,
-        Brush accent, Brush panel)
+    private void DrawStashMedicalQuantityCards(
+        DrawingContext dc, double left, double width, double top, bool wide,
+        Brush text, Brush muted, Brush border, Brush panel)
     {
-        DrawHeader(dc, "MEDICAL QUANTITY", "", text, muted, accent);
-        var families = new (string Name, string Min, string Max)[]
+        var families = new (string Name, string Min, string Max, Brush Tone)[]
         {
-            ("MEDKITS", "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount"),
-            ("ARMY MEDKITS", "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount")
+            ("MEDKITS", "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
+                StashMedicalPalette[1]),
+            ("ARMY MEDKITS", "loot.stashArmyMedkitMinCount",
+                "loot.stashArmyMedkitMaxCount", StashMedicalPalette[2])
         };
-        var columns = ActualWidth >= 700.0 ? 2 : 1;
-        var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
-        var left = (ActualWidth - width) / 2.0;
-        const double gap = 12.0;
-        const double cardHeight = 151.0;
-        var cell = (width - gap * (columns - 1)) / columns;
+        const double gap = 10.0;
+        var columns = wide ? 2 : 1;
+        var cardWidth = (width - gap * (columns - 1)) / columns;
         for (var i = 0; i < families.Length; i++)
         {
-            var x = left + (i % columns) * (cell + gap);
-            var y = 53.0 + (i / columns) * (cardHeight + gap);
-            var card = new Rect(x, y, cell, cardHeight);
-            var focused = ReferenceEquals(_selectedParameter, P(families[i].Min))
-                || ReferenceEquals(_selectedParameter, P(families[i].Max));
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, focused ? .77 : .57),
-                new Pen(CloneWithOpacity(focused ? accent : border, focused ? .72 : .45),
-                    focused ? 1.3 : .9), card, 5.0, 5.0);
-            DrawCenteredText(dc, families[i].Name,
-                new Point(card.Left + cell / 2.0, y + 10.0),
-                11.2, text, FontWeights.Bold);
-            DrawStashQuantityDots(dc, P(families[i].Min), "MIN",
-                new Rect(x + 8.0, y + 38.0, cell - 16.0, 48.0),
-                text, muted, border, accent, panel);
-            DrawStashQuantityDots(dc, P(families[i].Max), "MAX",
-                new Rect(x + 8.0, y + 91.0, cell - 16.0, 48.0),
-                text, muted, border, accent, panel);
+            var family = families[i];
+            var x = left + (i % columns) * (cardWidth + gap);
+            var y = top + (i / columns) * 129.0;
+            var card = new Rect(x, y, cardWidth, 121.0);
+            var focused = IsSelected(P(family.Min)) || IsSelected(P(family.Max));
+            dc.DrawRoundedRectangle(CloneWithOpacity(panel, focused ? .72 : .58),
+                new Pen(CloneWithOpacity(focused ? family.Tone : border,
+                    focused ? .84 : .54), focused ? 1.2 : .9),
+                card, 4.0, 4.0);
+            dc.DrawRectangle(family.Tone, null,
+                new Rect(x + 9.0, y + 9.0, 3.0, 12.0));
+            dc.DrawText(CreateText(family.Name, 10.8, text, FontWeights.Bold,
+                    Math.Max(1.0, cardWidth - 26.0)),
+                new Point(x + 17.0, y + 7.0));
+            DrawStashQuantityDots(dc, P(family.Min), "MIN",
+                new Rect(x + 9.0, y + 30.0, cardWidth - 18.0, 39.0),
+                text, muted, border, panel, family.Tone);
+            DrawStashQuantityDots(dc, P(family.Max), "MAX",
+                new Rect(x + 9.0, y + 73.0, cardWidth - 18.0, 39.0),
+                text, muted, border, panel, family.Tone);
         }
     }
 
+    // Exact native integers; only MAX has an additional -1 (0 ITEMS) stop.
+    // Avoid the redundant far-right AUTO readout.
     private void DrawStashQuantityDots(
         DrawingContext dc, ParameterViewModel? source, string caption, Rect row,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
+        Brush text, Brush muted, Brush border, Brush panel, Brush tone)
     {
         if (source is null) return;
         var enabled = source.IsControlEnabled;
-        var modified = enabled && source.IsValueModifiedFromReference();
         var current = (int)Math.Round(source.CurrentNumber);
         var isMax = source.Id.EndsWith("MaxCount", StringComparison.Ordinal);
-        // Native order: MAX -1=0 ITEMS, 0=AUTO, 1..6; MIN 0=AUTO, 1..6.
         var labels = isMax
             ? new[] { "0 ITEMS", "AUTO", "1", "2", "3", "4", "5", "6" }
             : new[] { "AUTO", "1", "2", "3", "4", "5", "6" };
         var minimum = isMax ? -1.0 : 0.0;
-        var rail = new Rect(row.Left + 48.0, row.Top + 12.0,
-            Math.Max(1.0, row.Width - 96.0), 1.0);
-        DrawText(dc, caption, new Point(row.Left + 3.0, row.Top + 4.0),
-            10.7, enabled ? text : muted, FontWeights.Bold);
+        var rail = new Rect(row.Left + 57.0, row.Top + 10.0,
+            Math.Max(1.0, row.Width - 69.0), 1.0);
+        DrawText(dc, caption, new Point(row.Left + 2.0, row.Top + 3.0),
+            10.2, enabled ? text : muted, FontWeights.Bold);
         dc.DrawLine(new Pen(CloneWithOpacity(border, .92), 2.0),
             new Point(rail.Left, rail.Top), new Point(rail.Right, rail.Top));
+        AddHorizontalTarget(source,
+            new Rect(rail.Left - 7.0, row.Top - 2.0, rail.Width + 14.0, 37.0),
+            rail, minimum, 6.0);
         for (var i = 0; i < labels.Length; i++)
         {
             var value = minimum + i;
             var pos = ValueToX(value, minimum, 6.0, rail, false);
-            var selected = Math.Abs(source.CurrentNumber - value) < Epsilon;
-            var hovered = ReferenceEquals(_hoverTarget?.Parameter, source);
-            dc.DrawEllipse(selected ? accent : panel,
-                new Pen(selected && enabled ? accent : muted, selected ? 1.5 : 1.0),
-                new Point(pos, rail.Top), selected ? 5.2 : 3.8,
-                selected ? 5.2 : 3.8);
-            if (selected && hovered && enabled)
-                ControlHoverGlow.Draw(dc, new Point(pos, rail.Top), accent, true);
-            DrawCenteredText(dc, labels[i], new Point(pos, row.Top + 24.0),
-                labels[i].Length > 2 ? 8.1 : 9.6,
-                selected && enabled ? text : muted, FontWeights.SemiBold);
+            var selected = Math.Abs(current - value) < Epsilon;
+            var hovered = _hoverTarget is { Kind: HitKind.Horizontal } target
+                && ReferenceEquals(target.Parameter, source)
+                && Math.Abs(target.VisualMinimum - value) < Epsilon
+                && Math.Abs(target.VisualMaximum - value) < Epsilon;
+            dc.DrawEllipse(selected ? (enabled ? tone : muted) : panel,
+                new Pen(hovered ? Brushes.White :
+                    selected && enabled ? tone : muted,
+                    hovered || selected ? 1.7 : 1.0),
+                new Point(pos, rail.Top), selected ? 5.0 : 3.5,
+                selected ? 5.0 : 3.5);
+            var glyph = CreateText(labels[i], labels[i].Length > 2 ? 8.4 : 9.6,
+                hovered || selected && enabled ? Brushes.White : muted,
+                FontWeights.SemiBold);
+            var glyphX = Math.Clamp(pos - glyph.WidthIncludingTrailingWhitespace / 2.0,
+                row.Left, Math.Max(row.Left,
+                    row.Right - glyph.WidthIncludingTrailingWhitespace));
+            dc.DrawText(glyph, new Point(glyphX, row.Top + 22.0));
+            // Labels themselves are clickable, not decorative.
+            AddHorizontalTarget(source,
+                new Rect(glyphX - 3.0, row.Top + 1.0,
+                    glyph.WidthIncludingTrailingWhitespace + 6.0, 35.0),
+                new Rect(pos, row.Top + 1.0, 1.0, 1.0), value, value);
         }
-        var display = current < 0 ? "0 ITEMS"
-            : current == 0 ? "AUTO" : $"{current}";
-        DrawStashNumericReadout(dc, display,
-            new Point(row.Right - 2.0, row.Top + 4.0), 11.3,
-            enabled, modified, text, muted, accent);
-        AddHorizontalTarget(source,
-            new Rect(rail.Left - 9.0, row.Top + 1.0, rail.Width + 18.0, 40.0),
-            rail, minimum, 6.0);
     }
 
     // Source levels are 0 OFF, 1 RARE, 2 MOD, 3 FREQ. These are native
@@ -5487,8 +5495,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             formatted.WidthIncludingTrailingWhitespace / 2.0, center.Y - 8.0));
         // Stashes knobs share the same small white lower value grammar as
         // the other native knobs. Keep ConsumableMixer's original typography.
-        var stashDial = Family is "StashMedicalComposition"
-            or "StashMedicalQuantity" or "StashGear";
+        var stashDial = Family is "StashMedicalComposition" or "StashGear";
         var endpointSize = stashDial ? (card.Width < 166.0 ? 9.0 : 9.8) : 8.7;
         var endpointInk = stashDial ? Brushes.White : muted;
         var endpointY = card.Bottom - (stashDial ? 22.0 : 17.0);
@@ -6000,7 +6007,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             return;
         }
         var stashGraph = Family is "StashRewardProfile" or "StashContentMix"
-            or "StashMedicalComposition" or "StashMedicalQuantity" or "StashGear";
+            or "StashMedicalComposition" or "StashGear";
         if (!stashGraph && Family is not ("PlayerWeaponProfile" or "AnomalyGlobalDamage" or "AmmoDistribution" or "ConsumableMixer" or "TraderStockBoard" or "EquipmentWearBalance" or "ServiceCostsBoard" or "RadiationBalance" or "HumanCombatProfile" or "StarvationTimeline" or "FlycatcherSlowdown" or "AnomalySpecialEffects"))
             return;
 
@@ -6861,7 +6868,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             "WorldLootLayout" => 275.0,
             "StashContentMix" => StashContentMixHeight(width),
             "StashMedicalComposition" => StashMedicalCompositionHeight(width),
-            "StashMedicalQuantity" => StashMedicalQuantityHeight(width),
             "StashGear" => StashGearHeight(width),
             "StashRewardProfile" => 225.0,
             "StaminaCore" => 323.0,
@@ -6891,9 +6897,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private double StashContentMixHeight(double width)
         => width >= 700.0 ? 588.0 : 922.0;
     private static double StashMedicalCompositionHeight(double width)
-        => width >= 700.0 ? 398.0 : 704.0;
-    private static double StashMedicalQuantityHeight(double width)
-        => width >= 700.0 ? 220.0 : 383.0;
+        => width >= 700.0 ? 660.0 : 1090.0;
     private static double StashGearHeight(double width)
         => width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;
 
@@ -6989,10 +6993,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
                 "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
                 "loot.stashMedicalBandageChanceScale", "loot.stashMedicalMedkitChanceScale",
-                "loot.stashMedicalArmyMedkitChanceScale", "loot.stashMedicalAntiRadChanceScale"
-            },
-            "StashMedicalQuantity" => new[]
-            {
+                "loot.stashMedicalArmyMedkitChanceScale", "loot.stashMedicalAntiRadChanceScale",
                 "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
                 "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"
             },

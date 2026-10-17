@@ -6448,7 +6448,7 @@
     {
       "id": "loot.stashMedkitMinCount",
       "tab": "stashes",
-      "group": "Stash Medical Quantity",
+      "group": "Stash Medical Composition",
       "label": "Medkits Minimum Count",
       "description": "Controls the minimum stack floor for existing Medkit entries, retaining the original source value at 0 (VANILLA). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
       "control": "slider",
@@ -6497,7 +6497,7 @@
     {
       "id": "loot.stashMedkitMaxCount",
       "tab": "stashes",
-      "group": "Stash Medical Quantity",
+      "group": "Stash Medical Composition",
       "label": "Medkits Maximum Count",
       "description": "Controls the maximum stack cap for existing Medkit entries, retaining the original source value at 0 (VANILLA); selecting the explicit 0 ITEMS graph stop writes zero generated items. Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
       "control": "slider",
@@ -6546,7 +6546,7 @@
     {
       "id": "loot.stashArmyMedkitMinCount",
       "tab": "stashes",
-      "group": "Stash Medical Quantity",
+      "group": "Stash Medical Composition",
       "label": "Army Medkits Minimum Count",
       "description": "Controls the minimum stack floor for existing ArmyMedkit entries, retaining the original source value at 0 (VANILLA). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
       "control": "slider",
@@ -6595,7 +6595,7 @@
     {
       "id": "loot.stashArmyMedkitMaxCount",
       "tab": "stashes",
-      "group": "Stash Medical Quantity",
+      "group": "Stash Medical Composition",
       "label": "Army Medkits Maximum Count",
       "description": "Controls the maximum stack cap for existing ArmyMedkit entries, retaining the original source value at 0 (VANILLA); selecting the explicit 0 ITEMS graph stop writes zero generated items. Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
       "control": "slider",

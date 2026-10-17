@@ -38,8 +38,7 @@ expected = {
         "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
         "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
         "loot.stashMedicalBandageChanceScale", "loot.stashMedicalMedkitChanceScale",
-        "loot.stashMedicalArmyMedkitChanceScale", "loot.stashMedicalAntiRadChanceScale"],
-    "StashMedicalQuantity": [
+        "loot.stashMedicalArmyMedkitChanceScale", "loot.stashMedicalAntiRadChanceScale",
         "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
         "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"],
     "StashGear": [
@@ -62,14 +61,32 @@ def method(start, finish):
                   source.index("    private void " + finish + "(")]
 
 content = method("DrawStashContentMix", "DrawStashMedicalComposition")
-medical = method("DrawStashMedicalComposition", "DrawStashMedicalQuantity")
-quantity = method("DrawStashMedicalQuantity", "DrawStashGear")
+medical = method("DrawStashMedicalComposition", "DrawStashMedicalQuantityCards")
+quantity = method("DrawStashMedicalQuantityCards", "DrawStashQuantityDots")
+quantity_dots = method("DrawStashQuantityDots", "DrawStashGear")
 gear = method("DrawStashGear", "DrawStashGearMode")
 preview = method("DrawStashPoolBar", "DrawCompactStashRewards")
 
 assert 'DrawStashWeightMixer(dc, new Rect(left, 53.0, width,' in content
-assert medical.count('("loot.stashMedical') == 4
+assert all(f'("{label}"' in medical for label in
+    ("BANDAGES", "MEDKITS", "ARMY MEDKITS", "ANTI-RAD"))
 assert quantity.count('("MEDKITS"') + quantity.count('("ARMY MEDKITS"') == 2
+assert len([p for p in catalog["parameters"]
+    if p["group"] == "Stash Medical Composition"]) == 12
+assert all(p["group"] == "Stash Medical Composition" for p in catalog["parameters"]
+    if p["id"] in expected["StashMedicalComposition"])
+assert '"StashMedicalQuantity" => new[]' not in family_ids
+assert 'case "StashMedicalQuantity":' not in source
+assert '"StashMedicalQuantity" => StashMedicalQuantityHeight' not in source
+assert "DrawStashMedicalQuantityCards(dc, left, width, quantityTop, wide," in medical
+assert "DrawStashMedicalWeightPreview(dc," in medical
+assert "var previewTop = wide ? 207.0 : 361.0;" in medical
+assert "var quantityTop = wide ? 520.0 : 822.0;" in medical
+assert "cardWidth, 121.0" in quantity
+assert "DrawStashQuantityDots(dc, P(family.Min)" in quantity
+assert "DrawStashQuantityDots(dc, P(family.Max)" in quantity
+assert "glyph.WidthIncludingTrailingWhitespace + 6.0" in quantity_dots
+assert '=> width >= 700.0 ? 660.0 : 1090.0;' in source
 assert gear.count('("BASIC"') + gear.count('("STANDARD"') + gear.count('("RARE"') == 3
 assert 'DrawSourceKnob(' not in content
 assert "DrawStashWeightMixer(dc," in content
@@ -82,10 +99,10 @@ assert "DrawSourceKnob(dc, P(entry.WeightId)" in medical
 assert "DrawSourceKnob(dc, P(entry.ChanceId)" in medical
 assert "percentageReadout: true, dialAccent: entry.Tone" in medical
 assert 'StashMedicalCompositionHeight(double width)' in source
-assert '=> width >= 700.0 ? 398.0 : 704.0;' in source
+assert '=> width >= 700.0 ? 660.0 : 1090.0;' in source
 assert "StashMedicalPalette[0]" in medical and "StashMedicalPalette[3]" in medical
-assert "DrawStashQuantityDots(dc, P(families[i].Min)" in quantity
-assert "DrawStashQuantityDots(dc, P(families[i].Max)" in quantity
+assert "DrawStashQuantityDots(dc, P(family.Min)" in quantity
+assert "DrawStashQuantityDots(dc, P(family.Max)" in quantity
 assert "DrawStashGearMode(dc, P(tiers[i].Weapon)" in gear
 assert "DrawStashGearMode(dc, P(tiers[i].Armor)" in gear
 assert "DrawStashBiasPreview" not in source
@@ -130,8 +147,8 @@ assert "StashSourceFactor(" not in source
 assert "StashSourceNumber(" not in source
 assert "CfgWriterBaselineService().Load()" in source
 assert "StashMedicalSourcePreview" not in source
-assert 'new[] { "0 ITEMS", "AUTO", "1", "2", "3", "4", "5", "6" }' in quantity
-assert "var minimum = isMax ? -1.0 : 0.0;" in quantity
+assert 'new[] { "0 ITEMS", "AUTO", "1", "2", "3", "4", "5", "6" }' in quantity_dots
+assert "var minimum = isMax ? -1.0 : 0.0;" in quantity_dots
 
 # Authoritative baseline input: 2 representative DIFFERENT actual-native
 # weight pools from GameData/ItemGeneratorPrototypes.cfg. At 1x the real
@@ -442,6 +459,31 @@ for pid in tier_chance_ids:
     assert f'"{pid}"' in main_vm, pid
 assert 'Parameters="{Binding DataContext.AllParameters' in (
     root / "src/TrueCustomDifficulty/MainWindow.xaml").read_text()
+
+
+med_preview = coverage.split("private void DrawStashMedicalWeightPreview(", 1)[1].split(
+    "private void DrawStashChanceTier(", 1)[0]
+assert '"StashMedicine_Smart"' in med_preview
+assert 'g.RankIndex is 2 or 3' in med_preview
+assert 'g.Field == "Weight"' in med_preview
+assert '".ConsumablesParams.[0].Items"' in med_preview
+assert 'g.Items.Count != 2' in med_preview
+assert 'g.Items[0].ItemSid != "Medkit"' in med_preview
+assert 'g.Items[1].ItemSid != "ArmyMedkit"' in med_preview
+assert "group.EffectiveSelection(StashPreviewBaseline.Value," in med_preview
+assert "CurrentStashEffectiveState()" in med_preview
+assert '"RANK: VETERAN"' in med_preview and '"RANK: MASTER"' in med_preview
+assert "AddHorizontalTarget(" not in med_preview
+with (data / "smartloot-world-source-entries.csv").open(newline="") as f:
+    medical_rows = list(csv.DictReader(f))
+for rank, weights in [(2, [("Medkit", "5"), ("ArmyMedkit", "1")]),
+                      (3, [("Medkit", "4"), ("ArmyMedkit", "1")])]:
+    actual = [(r["ItemSID"], r["Weight"]) for r in medical_rows
+              if r["Prototype"] == "StashMedicine_Smart"
+              and int(r["RankIndex"]) == rank
+              and r["Group"] == "ConsumablesParams"
+              and r["GroupIndex"] == "0"]
+    assert actual == weights, (rank, actual)
 
 tier_preview = coverage.split("private void DrawStashChanceTier(", 1)[1]
 assert "StashSourceGroups.Value" in tier_preview
