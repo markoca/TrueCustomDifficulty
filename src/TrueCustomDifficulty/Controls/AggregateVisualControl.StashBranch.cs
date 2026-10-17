@@ -282,10 +282,7 @@ public sealed partial class AggregateVisualControl
                 "Basic source Weight groups are no longer native-only.");
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .66),
             new Pen(CloneWithOpacity(border, .66), .9), outer, 4.0, 4.0);
-        dc.DrawText(CreateText("BASIC POOL COMPOSITION",
-                10.2, text, FontWeights.Bold, Math.Max(1.0, outer.Width - 24.0)),
-            new Point(outer.Left + 12.0, outer.Top + 6.0));
-        var inside = new Rect(outer.Left + 12.0, outer.Top + 28.0,
+        var inside = new Rect(outer.Left + 12.0, outer.Top + 8.0,
             Math.Max(1.0, outer.Width - 24.0), 48.0);
         DrawStashPoolBar(dc, experienced,
             "EASY/MEDIUM · EXPERIENCED", inside, text, muted, border);
@@ -295,9 +292,8 @@ public sealed partial class AggregateVisualControl
     }
 
     // A filled rail is the ACTUAL native per-item Chance (or its min/max
-    // across differently authored rows). The muted tick is the original
-    // authored Vanilla Chance, not a second playable probability.
-    // W-only rows are informational and cannot masquerade as Chance rolls.
+    // across differently authored rows), never a stash-wide drop chance.
+    // W-only rows are informational and must not resemble editable rails.
     private void DrawStashChanceTier(
         DrawingContext dc, string label, string tierName, int expectedGroups,
         Rect outer, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
@@ -342,13 +338,10 @@ public sealed partial class AggregateVisualControl
             new Pen(CloneWithOpacity(border, .61), .9), outer, 4.0, 4.0);
         dc.DrawText(CreateText(label, 10.5, text, FontWeights.Bold),
             new Point(outer.Left + 12.0, outer.Top + 8.0));
-        dc.DrawText(CreateText("NATIVE CHANCE", 8.8, muted, FontWeights.SemiBold),
-            new Point(outer.Right - 101.0, outer.Top + 9.0));
-
         var columns = outer.Width >= 670.0 ? present.Length : 2;
         const double inset = 12.0;
         const double gap = 6.0;
-        const double pitch = 74.0;
+        const double pitch = 60.0;
         var cellWidth = Math.Max(1.0,
             (outer.Width - 2.0 * inset - (columns - 1) * gap) / columns);
         var selectedDifficulty = SelectedReferenceDifficulty switch
@@ -372,7 +365,7 @@ public sealed partial class AggregateVisualControl
                     .Select(item => (Group: g, Item: item))).ToArray();
             var x = outer.Left + inset + (n % columns) * (cellWidth + gap);
             var y = outer.Top + 27.0 + (n / columns) * pitch;
-            var cell = new Rect(x, y, cellWidth, 67.0);
+            var cell = new Rect(x, y, cellWidth, 53.0);
             var tone = StashMixPalette[kind];
             dc.DrawRoundedRectangle(CloneWithOpacity(panel, .5),
                 new Pen(CloneWithOpacity(tone, .75), .9), cell, 3.0, 3.0);
@@ -384,14 +377,10 @@ public sealed partial class AggregateVisualControl
 
             if (rows.Length == 0)
             {
-                // Standard Ammo has a real Weight source, but no authored
-                // percentage. A neutral rail never claims an invented odds.
-                dc.DrawText(CreateText("WEIGHT ONLY", 9.1, muted,
+                // Ammo has native Weight, not Chance: no phantom slider.
+                dc.DrawText(CreateText("WEIGHT", 9.1, muted,
                         FontWeights.SemiBold),
-                    new Point(x + 8.0, y + 25.0));
-                dc.DrawLine(new Pen(CloneWithOpacity(border, .7), 3.0),
-                    new Point(x + 8.0, y + 46.0),
-                    new Point(cell.Right - 8.0, y + 46.0));
+                    new Point(x + 8.0, y + 23.0));
                 continue;
             }
 
@@ -415,13 +404,6 @@ public sealed partial class AggregateVisualControl
                 dc.DrawText(CreateText(unavailableText, 9.0, muted, FontWeights.SemiBold,
                         Math.Max(1.0, cell.Width - 16.0)),
                     new Point(x + 8.0, y + 23.0));
-                var vanillaValues = rows.Select(r =>
-                    StashEffectiveState.Number(r.Item.SourceRaw)).ToArray();
-                dc.DrawText(CreateText("V " + PercentRange(
-                        vanillaValues.Min(), vanillaValues.Max()),
-                        8.5, muted, FontWeights.SemiBold,
-                        Math.Max(1.0, cell.Width - 16.0)),
-                    new Point(x + 8.0, y + 50.0));
                 continue;
             }
             var sourceValues = rows.Select(r =>
@@ -429,7 +411,6 @@ public sealed partial class AggregateVisualControl
             var activeValues = rows.Select(r =>
                 StashEffectiveState.Number(r.Group.EffectiveSelection(
                     StashPreviewBaseline.Value, effective, r.Item))).ToArray();
-            var baseMin = sourceValues.Min();
             var baseMax = sourceValues.Max();
             var nowMin = activeValues.Min();
             var nowMax = activeValues.Max();
@@ -444,27 +425,16 @@ public sealed partial class AggregateVisualControl
             var rail = new Rect(x + 9.0, y + 42.0,
                 Math.Max(1.0, cell.Width - 18.0), 5.0);
             var trackY = rail.Top + rail.Height / 2.0;
-            var vanillaX = rail.Left + rail.Width * baseMax;
             var nativeX = rail.Left + rail.Width * nowMax;
             dc.DrawLine(new Pen(CloneWithOpacity(border, .9), 3.6),
                 new Point(rail.Left, trackY), new Point(rail.Right, trackY));
             dc.DrawLine(new Pen(CloneWithOpacity(tone, .95), 3.6),
                 new Point(rail.Left, trackY), new Point(nativeX, trackY));
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, .9), 1.5),
-                new Point(vanillaX, rail.Top - 4.0),
-                new Point(vanillaX, rail.Bottom + 4.0));
             var hovered = parameter.IsControlEnabled &&
                 _hoverTarget?.Kind == HitKind.Horizontal
                 && ReferenceEquals(_hoverTarget.Parameter, parameter);
             dc.DrawEllipse(panel, new Pen(hovered ? Brushes.White : tone, 1.6),
                 new Point(nativeX, trackY), 3.4, 3.4);
-            // The small lower label always shows the actual source-native
-            // Vanilla range, not its separate 1× factor.
-            dc.DrawText(CreateText("V " + PercentRange(baseMin, baseMax),
-                    8.5, muted, FontWeights.SemiBold,
-                    Math.Max(1.0, cell.Width - 16.0)),
-                new Point(x + 8.0, y + 50.0));
-
             // For the scope-specific multipliers native maximum is 100%
             // except Standard Coupons, whose 10% native value is scaled
             // 0..10x to expose a truthful 0..100% per-entry Chance.

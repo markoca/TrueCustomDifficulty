@@ -87,8 +87,15 @@ assert "MULTIPLIERS, NOT DROP ODDS" not in source
 assert "weights.Sum()" not in preview # normalized six source multipliers retired
 assert 'DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",' in content
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in content
-assert "wide ? 415.0 : 569.0, width," in content
-assert "wide ? 100.0 : 177.0" in content
+assert "wide ? 394.0 : 548.0, width," in content
+assert "wide ? 86.0 : 146.0" in content
+assert "wide ? 488.0 : 702.0, width," in content
+assert "wide ? 86.0 : 206.0" in content
+assert "wide ? 207.0 : 361.0, width, 115.0" in content
+assert "var pairTop = wide ? 330.0 : 484.0;" in content
+assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
+assert '"RELATIVE SELECTION"' not in source
+assert '"BASIC POOL COMPOSITION"' not in coverage
 
 # One bounded 3x2/6x1 relative-Weight mixer, not six rotary dials
 # and never an invented 100% stash-wide probability.
@@ -202,8 +209,15 @@ assert height_match is not None, "missing StashContentMix measured height"
 assert mixer_match is not None, "missing StashContentMix mixer"
 assert tuple(map(float, height_match.groups())) == (700.0, 637.0, 1019.0)
 assert tuple(map(float, mixer_match.groups())) == (53.0, 146.0, 300.0)
-assert "wide ? 415.0 : 569.0, width," in content
-assert "wide ? 100.0 : 177.0" in content
+assert "wide ? 394.0 : 548.0, width," in content
+assert "wide ? 86.0 : 146.0" in content
+assert "wide ? 488.0 : 702.0, width," in content
+assert "wide ? 86.0 : 206.0" in content
+assert "wide ? 207.0 : 361.0, width, 115.0" in content
+assert "var pairTop = wide ? 330.0 : 484.0;" in content
+assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
+assert '"RELATIVE SELECTION"' not in source
+assert '"BASIC POOL COMPOSITION"' not in coverage
 assert "var wide = width >= 670.0;" in content
 assert 637.0 - (523.0 + 100.0) == 14.0
 assert 1019.0 - (754.0 + 251.0) == 14.0
@@ -296,11 +310,11 @@ assert '"loot.expensiveStashAmmoChance"' in source
 assert '"loot.expensiveStashGrenadesChance"' in source
 assert "TierChanceParameterId(tierName," in coverage
 assert "StashPreviewBaseline.Value, effective, r.Item" in coverage
-assert "V " in coverage and "vanillaX" in coverage
+assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * multiplier, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
 
-assert '=> width >= 700.0 ? 637.0 : 1019.0;' in source
+assert '=> width >= 700.0 ? 588.0 : 922.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
@@ -402,9 +416,13 @@ assert "!g.IsSmart && g.Tier == tierName" in tier_preview
 assert "hasWeight[kind] = true" in tier_preview
 assert "hasChance[kind] = true" in tier_preview
 assert "hasWeight[k] || hasChance[k]" in tier_preview
-assert '"NATIVE CHANCE"' in tier_preview
-assert '"WEIGHT ONLY"' in tier_preview
-assert '"NATIVE CHANCE"' in tier_preview
+assert '"NATIVE CHANCE"' not in tier_preview
+assert 'CreateText("WEIGHT", 9.1' in tier_preview
+assert '"WEIGHT ONLY"' not in tier_preview
+assert "const double pitch = 60.0;" in tier_preview
+assert "cellWidth, 53.0" in tier_preview
+assert 'CreateText("V "' not in tier_preview
+assert "vanillaX" not in tier_preview
 assert "var expected = tierName == \"Medium\"" in tier_preview
 assert "SequenceEqual(expected)" in tier_preview
 assert "100.0 * totals" not in tier_preview
@@ -417,7 +435,7 @@ assert "CreateText(unavailableText, 9.0" in tier_preview
 assert 'var label = Parameters is null' not in tier_preview
 assert "continue;" in tier_preview
 assert 'throw new InvalidDataException(\n                "Missing live stash Chance control "' not in tier_preview
-assert "var vanillaValues = rows.Select(" in tier_preview
+assert "var vanillaValues = rows.Select(" not in tier_preview
 assert "OnBindingChanged" in source and "Loaded += (_, _) => RebindParameters();" in source
 assert "CurrentNumber =" not in tier_preview
 assert "DrawStashNativeRollControl(" in coverage

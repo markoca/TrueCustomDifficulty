@@ -4594,12 +4594,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         DrawText(dc, "BASIC  ·  WEIGHT MIX",
             new Point(left + 13.0, 37.0), 10.7, text, FontWeights.Bold);
-        var scope = CreateText("WEIGHT APPLIES TO ALL TIERS",
-            9.0, muted, FontWeights.SemiBold,
-            Math.Max(1.0, width - 190.0));
-        dc.DrawText(scope, new Point(
-            left + width - scope.WidthIncludingTrailingWhitespace - 13.0, 39.0));
-
         DrawStashWeightMixer(dc, new Rect(left, 53.0, width,
                 wide ? 146.0 : 300.0), text, muted, border, accent, panel);
 
@@ -4607,14 +4601,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // SNG and NATO compositions in Breakable Boxes. Their shares are
         // computed from the same embedded CFG snapshot as the writer.
         DrawStashBasicNativePools(dc,
-            new Rect(left, wide ? 207.0 : 361.0, width, 136.0),
+            new Rect(left, wide ? 207.0 : 361.0, width, 115.0),
             text, muted, border, panel);
 
         // RGD-5's real authored Chance and its separate integer stack amount
         // stay physically adjacent, and both use their ORIGINAL parameter IDs.
         var pairGap = 10.0;
         var pairWidth = (width - 28.0 - pairGap) / 2.0;
-        var pairTop = wide ? 351.0 : 505.0;
+        var pairTop = wide ? 330.0 : 484.0;
         DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",
             "RGD-5 CHANCE", 4,
             new Rect(left + 14.0, pairTop, pairWidth, 56.0),
@@ -4625,11 +4619,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel, percentage: false);
 
         DrawStashChanceTier(dc, "STANDARD", "Medium", 10,
-            new Rect(left, wide ? 415.0 : 569.0, width,
-                wide ? 100.0 : 177.0), text, muted, border, accent, panel);
+            new Rect(left, wide ? 394.0 : 548.0, width,
+                wide ? 86.0 : 146.0), text, muted, border, accent, panel);
         DrawStashChanceTier(dc, "RARE", "Expensive", 19,
-            new Rect(left, wide ? 523.0 : 754.0, width,
-                wide ? 100.0 : 251.0), text, muted, border, accent, panel);
+            new Rect(left, wide ? 488.0 : 702.0, width,
+                wide ? 86.0 : 206.0), text, muted, border, accent, panel);
     }
 
     // Medical biases are source-editable tracks; a separate, noninteractive
@@ -4878,8 +4872,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var total = totals.Sum();
         DrawText(dc, caption, new Point(row.Left, row.Top), 9.6,
             text, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, "RELATIVE SELECTION",
-            new Point(row.Right, row.Top), 9.0, muted, FontWeights.SemiBold);
         var bar = new Rect(row.Left, row.Top + 17.0, row.Width, 11.0);
         dc.DrawRoundedRectangle(CloneWithOpacity(border, .28), null,
             bar, 2.0, 2.0);
@@ -6883,7 +6875,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 637.0 : 1019.0;
+        => width >= 700.0 ? 588.0 : 922.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 373.0 : 409.0;
     private static double StashMedicalQuantityHeight(double width)
