@@ -83,7 +83,7 @@ assert "MULTIPLIERS, NOT DROP ODDS" not in source
 assert "weights.Sum()" not in preview # normalized six source multipliers retired
 assert 'DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",' in content
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in content
-assert "wide ? 569.0 : 723.0, width," in content
+assert "wide ? 415.0 : 569.0, width," in content
 assert "wide ? 72.0 : 116.0" in content
 
 # One bounded 3x2/6x1 relative-Weight mixer, not six rotary dials
@@ -137,6 +137,17 @@ def native_group_weights(group, multipliers):
         out[category[sid]] += float(row["Weight"].rstrip("fF")) * multipliers[category[sid]]
     return out
 
+# Only categories that actually change the two rendered native
+# multi-category Weight pools have knobs.
+pool_kinds = sorted({category[row["fields"]["ItemPrototypeSID"]]
+    for group in (hard, exp) for row in group["items"]})
+assert pool_kinds == [1, 2, 3, 5], pool_kinds
+for pid in ("loot.stashMixAmmo", "loot.stashMixGrenades"):
+    assert next(p for p in catalog["parameters"] if p["id"] == pid)["exposeInUi"] is False
+for pid in ("loot.stashMixMedical", "loot.stashMixFood",
+            "loot.stashMixDrinks", "loot.stashMixCoupons"):
+    assert next(p for p in catalog["parameters"] if p["id"] == pid)["exposeInUi"] is True
+
 base = native_group_weights(exp, [1] * 6)
 assert base == [0, 2, 13, 1, 0, 1.77], base
 assert math.isclose(sum(base), 17.77, abs_tol=1e-9)
@@ -148,8 +159,8 @@ food_disabled = native_group_weights(exp, [1, 1, 0, 1, 1, 1])
 assert food_disabled[2] == 0 and food_disabled[1] == 2
 all_disabled = native_group_weights(exp, [0] * 6)
 assert sum(all_disabled) == 0
-food_triple = native_group_weights(exp, [1, 1, 3, 1, 1, 1])
-assert food_triple[2] == 39 and math.isclose(sum(food_triple), 43.77)
+food_half = native_group_weights(exp, [1, 1, .5, 1, 1, 1])
+assert food_half[2] == 6.5 and math.isclose(sum(food_half), 11.27)
 
 samples = [
     ("expensiveStashProduction", 1, "A918A", 1.0),
@@ -185,13 +196,13 @@ mixer_match = re.search(
 )
 assert height_match is not None, "missing StashContentMix measured height"
 assert mixer_match is not None, "missing StashContentMix mixer"
-assert tuple(map(float, height_match.groups())) == (700.0, 799.0, 1067.0)
-assert tuple(map(float, mixer_match.groups())) == (53.0, 300.0, 454.0)
-assert "wide ? 569.0 : 723.0, width," in content
+assert tuple(map(float, height_match.groups())) == (700.0, 645.0, 913.0)
+assert tuple(map(float, mixer_match.groups())) == (53.0, 146.0, 300.0)
+assert "wide ? 415.0 : 569.0, width," in content
 assert "wide ? 72.0 : 116.0" in content
 assert "var wide = width >= 670.0;" in content
-assert 799.0 - (729.0 + 56.0) == 14.0
-assert 1067.0 - (997.0 + 56.0) == 14.0
+assert 645.0 - (575.0 + 56.0) == 14.0
+assert 913.0 - (843.0 + 56.0) == 14.0
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -222,7 +233,7 @@ print("PASS: branch-level source inventory synchronized with CFG inputs")
 
 print("PASS: 26 original source IDs, editable controls, no synthetic six-way probability")
 print("PASS: source-native Easy/Medium Experienced and Hard weighted pools")
-print("PASS: 1x/0x/3x numeric regressions and nine original authored Chance fields")
+print("PASS: 0x/0.5x/1x native-group ratios, Chance-only fields untouched")
 print("PASS: real grenade Chance and Amount adjacent; Rare Coupon Chance preserved")
 print("PENDING: local .NET build, Wine layout/behavior, in-game stash runtime results")
 
@@ -261,7 +272,7 @@ mix_ids = expected["StashContentMix"][:6]  # global Weight only; remaining two a
 for pid in mix_ids:
     item = next(p for p in catalog["parameters"] if p["id"] == pid)
     slider = item["slider"]
-    assert (slider["min"], slider["max"], slider["step"]) == (0, 3, 0.1), pid
+    assert (slider["min"], slider["max"], slider["step"]) == (0, 1, 0.1), pid
     assert item["vanilla"]["All"] == 1, pid
     assert "Weight" in item["targets"][0]["path"], pid
     assert all("Chance" not in target["path"] for target in item["targets"]), pid
@@ -275,7 +286,7 @@ branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.
 csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
 assert 'DrawStashWeightMixer(dc, new Rect(left, 53.0, width,' in content
 assert "StashContentMixHeight(width)" in source
-assert '=> width >= 700.0 ? 799.0 : 1067.0;' in source
+assert '=> width >= 700.0 ? 645.0 : 913.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
@@ -298,7 +309,7 @@ assert "AddHorizontalTarget(p," in coverage
 assert "for (var stop = " not in coverage
 assert "foreach (var stop in new[] { p.Minimum, p.Maximum })" in coverage
 assert "const double cardHeight = 146.0;" in coverage
-assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in coverage
+assert "var columns = outer.Width >= 670.0 ? 4 : 2;" in coverage
 assert "var rail = new Rect(x + 13.0, y + 26.0," in coverage
 assert "p.IsValueModifiedFromReference()" in coverage
 assert "number.SetForegroundBrush(accent, 0, digits.Length)" in coverage
@@ -368,7 +379,10 @@ assert "DrawStashPoolBar(dc, experienced," in coverage
 assert "DrawStashPoolBar(dc, hard," in coverage
 assert 'StashPreviewGroup("BASIC", 7)' in coverage
 assert 'StashPreviewGroup("BASIC", 1)' in coverage
-assert "dialAccent: StashMixPalette[i], dialScale: .74" in coverage
+assert "dialAccent: StashMixPalette[kind], dialScale: .74" in coverage
+assert "private static readonly int[] BasicVisibleWeightKinds = { 1, 2, 3, 5 };" in coverage
+assert "BasicVisibleWeightKinds.Length" in coverage
+assert "previewGroups.Where(g => g is not null)" in coverage
 assert '"BASIC RGD-5 CHANCE"' in source
 assert '"RARE COUPON CHANCE"' in source
 for doc in (lock, system, proposal):

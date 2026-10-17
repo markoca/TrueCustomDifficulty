@@ -3759,7 +3759,7 @@ if (len(_stash_rows) != 26 or len(_stash_ids) != 26
     or not all(f'"{pid}"' in _stash_vm_text for pid in _stash_ids)):
     fail("Stashes tab catalog and WPF ViewModel ownership drifted")
 else:
-    note("Stashes tab: 26 stable source IDs, 24 visible inputs, positioned after Loot")
+    note("Stashes tab: 26 stable source IDs, 22 catalog-exposed parameters; four editable Basic pool knobs, two hidden legacy multipliers")
 
 # Global cross-domain control audit release gate (v0.2.50).
 _global_doc = DOCS / "GLOBAL-CROSS-DOMAIN-AUDIT.md"
@@ -3780,7 +3780,7 @@ _global_expected_tabs = {
     "master": 20,
     "environment": 6,
     "loot": 27,
-    "stashes": 24,
+    "stashes": 22,
     "alife": 2,
 }
 _global_confirmed = sum(p.get("support", {}).get("status") == "confirmed" for p in _global_visible)
@@ -3940,14 +3940,14 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 268 or len(_global_visible) != 168 or len(_global_hidden) != 100:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 268/168/100")
+if len(parameters) != 268 or len(_global_visible) != 166 or len(_global_hidden) != 102:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 268/166/102")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 51:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/51")
-elif _global_control_counts != {"slider": 154, "toggle": 12, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 154 sliders / 12 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 49:
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/49")
+elif _global_control_counts != {"slider": 152, "toggle": 12, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 152 sliders / 12 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -3972,7 +3972,7 @@ elif _global_anomaly_missing or "SetEffectiveDamageMultiplierProvider" not in _g
 elif not _global_doc.exists():
     fail("global cross-domain audit document missing from docs/")
 else:
-    note("current cross-domain structural audit: 268 catalog / 168 visible / 100 hidden; 117 visible confirmed + 51 runtime-test-required; zero direct collisions")
+    note("current cross-domain structural audit: 268 catalog / 166 visible / 102 hidden; 117 visible confirmed + 49 runtime-test-required; zero direct collisions")
 
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("v0.2.51-v0.3.0 override/CFG-placement/provenance/production snapshots (current UI/Combat tools + active source checks are authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
@@ -5941,7 +5941,7 @@ if (not all(token in _stash_phase5 for token in (
                for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"))):
     fail("Stashes Phase 5 native browser / writer CFG parity or UI catalog drift")
 else:
-    note("Stashes: six global Weight lanes displayed under Basic, two true Chance controls, Standard/Rare source-native status cards; SmartLoot stays independent. Windows/Wine/game acceptance NOT RUN")
+    note("Stashes: four native Basic Weight knobs at 0..1x, two hidden compatible Weight sources, two Chance sources; Standard/Rare coverage unchanged. Windows/Wine/game acceptance NOT RUN")
 
 # Report only after every current and regression contract was checked.
 print("True Custom Difficulty — current-source consistency audit")

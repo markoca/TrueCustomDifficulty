@@ -206,9 +206,15 @@ public sealed partial class AggregateVisualControl
         }
     }
 
-    // Borrow the exact six colored native rotary controls used in Breakable
-    // Boxes, rather than faking one six-item probability pool. These scalars
-    // still edit global Weight across approved stash actors in all tiers.
+    // Exactly the categories that can shift relative choice INSIDE either
+    // displayed Basic source-native multi-category Weight pool. Global AMMO
+    // only occurs in isolated ammo groups here; Basic grenade is Chance-only.
+    // Keep both historic IDs cataloged for preset compatibility, but never
+    // misrepresent either as an adjustable member of these two mixer pools.
+    private static readonly int[] BasicVisibleWeightKinds = { 1, 2, 3, 5 };
+
+    // Breakable Boxes-style compact source dials; global eligible Weight
+    // behavior stays independent of these Basic-only preview samples.
     private void DrawStashWeightMixer(
         DrawingContext dc, Rect outer,
         Brush text, Brush muted, Brush border, Brush accent, Brush panel)
@@ -219,7 +225,21 @@ public sealed partial class AggregateVisualControl
         if (basicGroups.Length != 12 || basicGroups.Sum(g => g.Items.Count) != 52)
             throw new InvalidDataException("Native Basic stash source coverage changed.");
 
-        var columns = outer.Width >= 670.0 ? 3 : 2;
+        var previewGroups = new[] {
+            StashPreviewGroup("BASIC", 7),
+            StashPreviewGroup("BASIC", 1)
+        };
+        if (previewGroups.Any(g => g is null))
+            throw new InvalidDataException("Basic weight preview source missing.");
+        var relevant = previewGroups.Where(g => g is not null)
+            .SelectMany(g => g!.Items)
+            .Select(item => StashCategoryIndex(item.Fields["ItemPrototypeSID"]))
+            .Distinct().OrderBy(k => k).ToArray();
+        if (!relevant.SequenceEqual(BasicVisibleWeightKinds))
+            throw new InvalidDataException(
+                "Basic native mixer categories changed; review visible knobs.");
+
+        var columns = outer.Width >= 670.0 ? 4 : 2;
         const double inset = 12.0;
         const double gap = 8.0;
         const double cardHeight = 146.0;
@@ -228,23 +248,24 @@ public sealed partial class AggregateVisualControl
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .72),
             new Pen(CloneWithOpacity(border, .68), 1.0), outer, 4.0, 4.0);
 
-        for (var i = 0; i < GlobalStashParameterIds.Length; i++)
+        for (var i = 0; i < BasicVisibleWeightKinds.Length; i++)
         {
+            var kind = BasicVisibleWeightKinds[i];
             var x = outer.Left + inset + (i % columns) * (cardWidth + gap);
             var y = outer.Top + (i / columns) * (cardHeight + gap);
-            // 0..3x / 0.1x original knob semantics, changed-digit-only gold
-            // and the same 270-degree drag/wheel/keyboard interaction.
-            DrawSourceKnob(dc, P(GlobalStashParameterIds[i]),
-                GlobalStashCategoryNames[i],
+            // True 0..1x bounds / 0.1x steps, original at 1x. Reducing one
+            // category boosts other positive categories' RELATIVE share.
+            DrawSourceKnob(dc, P(GlobalStashParameterIds[kind]),
+                GlobalStashCategoryNames[kind],
                 new Rect(x, y, cardWidth, cardHeight),
                 text, muted, border, accent, panel,
-                dialAccent: StashMixPalette[i], dialScale: .74);
+                dialAccent: StashMixPalette[kind], dialScale: .74);
         }
     }
 
     // Breakable Boxes-inspired read-only distribution. Two ACTUAL distinct
     // Basic ItemGenerator Weight branches, no across-branch normalization.
-    // The selected numeric pool shares update with the six global knobs;
+    // Only four of the six cataloged global IDs influence these two pools;
     // chance-only grenade and other rows remain independent of these bars.
     private void DrawStashBasicNativePools(
         DrawingContext dc, Rect outer,

@@ -31,11 +31,19 @@ assert all(parameters[x]["tab"] == "stashes" and
            parameters[x]["control"] == "slider" for x in mix + gear + medical + quantity)
 for name in mix:
     p = parameters[name]
-    assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 3, 0.1)
+    assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 1, 0.1)
     assert p["vanilla"]["All"] == 1
     assert len(p["targets"]) == 2
     assert "Weight" in p["targets"][0]["path"]
     assert all("Chance" not in entry["path"] for entry in p["targets"])
+# The mixer only displays four source-effective categories; the old Ammo
+# and Grenades backend IDs remain hidden to preserve legacy preset loading.
+for name in ("loot.stashMixAmmo", "loot.stashMixGrenades"):
+    assert parameters[name]["exposeInUi"] is False
+for name in ("loot.stashMixMedical", "loot.stashMixFood",
+             "loot.stashMixDrinks", "loot.stashMixCoupons"):
+    assert parameters[name]["exposeInUi"] is True
+
 for name in gear:
     p = parameters[name]
     assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 3, 1)
@@ -56,8 +64,8 @@ assert "DrawStashWeightMixer(dc, new Rect(left, 53.0, width," in ui
 assert "DrawStashBasicNativePools(dc," in ui
 assert '"RGD-5 AMOUNT"' in ui
 assert "percentage: false" in ui
-assert "wide ? 300.0 : 454.0" in ui
-assert "=> width >= 700.0 ? 799.0 : 1067.0;" in ui
+assert "wide ? 146.0 : 300.0" in ui
+assert "=> width >= 700.0 ? 645.0 : 913.0;" in ui
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in ui
 assert "wide ? 72.0 : 116.0" in ui
 assert "private void DrawStashChanceTier(" in mixer
@@ -75,7 +83,9 @@ assert "100.0 * totals" not in tier_preview
 assert "TierField(" not in tier_preview
 assert "AddHorizontalTarget(" not in tier_preview
 assert "const double cardHeight = 146.0;" in mixer
-assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in mixer
+assert "BasicVisibleWeightKinds = { 1, 2, 3, 5 }" in mixer
+assert "previewGroups.Where(g => g is not null)" in mixer
+assert "var columns = outer.Width >= 670.0 ? 4 : 2;" in mixer
 assert "AddHorizontalTarget(p," in mixer
 assert "foreach (var stop in new[] { p.Minimum, p.Maximum })" in mixer
 assert "p.IsValueModifiedFromReference()" in mixer
@@ -145,5 +155,5 @@ assert "groups.Count != 463" in mixer
 assert "groups.Sum(x => x.Items.Count) != 1124" in mixer
 assert not re.search(r'new\[\] \{ .*?1\.0 / 6', mixer)
 
-print("PASS: 20 Stash CFG IDs, 6-lane Weight mixer, three complete native tier category/Weight/Chance strips; no invented tier drop percentages.")
+print("PASS: four visible 0–1x native Basic weight knobs; six legacy IDs retained, source-native Chance kept separate.")
 print("NOT RUN: Windows .NET publish, Wine interaction, real game RNG acceptance.")

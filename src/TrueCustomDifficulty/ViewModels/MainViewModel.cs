@@ -257,6 +257,13 @@ public sealed class MainViewModel : ObservableObject
             "alife.mutantSpawn.deer"
         };
 
+        // Keep deprecated stash Weight IDs instantiated for old presets and
+        // source patch compatibility, without showing inert Basic mixer knobs.
+        var legacyStashWeightIds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "loot.stashMixAmmo", "loot.stashMixGrenades"
+        };
+
         // Every slider constraint member needs a live VM, even when its
         // value is edited only through a composite visual's handles.
         // Otherwise SliderConstraintCoordinator indexes a missing ID at startup.
@@ -267,6 +274,7 @@ public sealed class MainViewModel : ObservableObject
         var parameterVMs = catalog.Parameters
             .Where(p => p.ExposeInUi
                 || constrainedParameterIds.Contains(p.Id)
+                || legacyStashWeightIds.Contains(p.Id)
                 || ammoDistributionParameterIds.Contains(p.Id)
                 || stashAmmoParameterIds.Contains(p.Id)
                 || mutantDropParameterIds.Contains(p.Id)
@@ -520,15 +528,19 @@ public sealed class MainViewModel : ObservableObject
             "loot.worldDetectors",
             "loot.blueprintShuffle");
 
-        // Six real stash sources: three tier ammo amounts and three bonus rolls.
+        // Visual Basic mixer now has only four source-effective weight knobs.
+        // The two hidden historic scalars still load through the preset graph.
         WireVisualAggregate(
-            "loot.stashMixAmmo",
+            "loot.stashMixMedical",
             "loot.stashMixAmmo",
             "loot.stashMixMedical",
             "loot.stashMixFood",
             "loot.stashMixDrinks",
             "loot.stashMixGrenades",
-            "loot.stashMixCoupons");
+            "loot.stashMixCoupons",
+            "loot.cheapStashGrenadeChance",
+            "loot.cheapStashGrenadeQuantity",
+            "loot.expensiveStashMoneyChance");
 
         // One native relative-bias chart for actual medical ItemPrototypeSIDs
         // and one separate Medkit/Army stack floor/cap editor (0 = AUTO).
@@ -559,10 +571,7 @@ public sealed class MainViewModel : ObservableObject
             "loot.cheapStashAmmoQuantity",
             "loot.cheapStashAmmoQuantity",
             "loot.mediumStashAmmoQuantity",
-            "loot.expensiveStashAmmoQuantity",
-            "loot.cheapStashGrenadeChance",
-            "loot.cheapStashGrenadeQuantity",
-            "loot.expensiveStashMoneyChance");
+            "loot.expensiveStashAmmoQuantity");
 
         // Breakable box quantities and relative SNG/NATO ammo weights are
         // independent sources in one compact control, not duplicate editors.
