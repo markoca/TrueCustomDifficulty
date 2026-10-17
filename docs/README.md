@@ -39,6 +39,9 @@ All project documentation lives under `docs/`. The repository root is intentiona
 
 ## Generator research
 
+- [Stash Weight / Chance source classification (2026-10-17)](STASH-WEIGHT-CHANCE-SOURCE-AUDIT-2026-10-17.md) — direct ItemGenerator, shared tier wrappers, 13 SmartLoot prototypes, nested generator weights, DLC1, physical/quest stash and corpse-clue discovery boundaries; research-only, no gameplay or UI changes.
+
+
 - [Regular stash ordinary categories — ItemGenerator + SmartLoot inventory (2026-10-16)](generators/STASH-REGULAR-CATEGORIES-AUDIT-2026-10-16.md): 17 core generator SIDs, 13 SmartLoot generator SIDs, 2,143 production edges, explicit uniqueness/quest exclusions and missing manifest limitation. Source audit only, not gameplay changes.
 
 - [Medical stash generators — all audited source families (2026-10-16)](generators/STASH-MEDICAL-ALL-SOURCE-AUDIT-2026-10-16.md): six medical GamePass ItemGenerator cores, untouched medical SmartLoot, medical destructibles, producer-layer boundaries and production-only next steps.
