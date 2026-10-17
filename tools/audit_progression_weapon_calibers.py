@@ -13,19 +13,12 @@ CALIBER = re.compile(r'^(?:EAmmoCaliber::)?([A-Za-z0-9_]+)$')
 
 def cfg_blocks(file):
     lines = file.read_text(encoding='utf-8-sig').splitlines()
-    stack = []
-    for i, line in enumerate(lines):
-        m = OPEN.match(line)
-        if m:
-            stack.append((m.group(1).strip(), i))
-        elif CLOSE.match(line):
-            if not stack:
-                raise ValueError(f'{file}:{i+1}: unmatched struct.end')
-            name, start = stack.pop()
-            if len(stack) == 0:
-                yield name, lines[start:i+1]
-    if stack:
-        raise ValueError(f'{file}: unclosed block')
+    starts = [(i, m.group(1)) for i, line in enumerate(lines)
+              if (m := OPEN.match(line)) and not line[0].isspace()]
+    for n, (start, sid) in enumerate(starts):
+        end = starts[n+1][0] if n+1 < len(starts) else len(lines)
+        yield sid, lines[start:end]
+
 
 def direct_properties(block):
     depth = 0
@@ -63,8 +56,8 @@ def main():
     ammo = {}
     for sid, block in cfg_blocks(a.ammo_cfg):
         props = direct_properties(block)
-        caliber = props.get('AmmoCaliber')
-        if not caliber or props.get('AmmoType') != 'Default':
+        caliber = props.get('Caliber')
+        if not caliber or props.get('AmmoType') != 'EAmmoType::Default':
             continue
         match = CALIBER.fullmatch(caliber)
         if not match:

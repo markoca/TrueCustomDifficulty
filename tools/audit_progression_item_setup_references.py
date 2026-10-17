@@ -10,30 +10,23 @@ from pathlib import Path
 DATA = Path(__file__).resolve().parents[1] / "src/TrueCustomDifficulty/Data"
 OPEN = re.compile(r'^\s*([^:]+?)\s*:\s*struct\.begin\b(.*)$')
 CLOSE = re.compile(r'^\s*struct\.end\s*$')
-PARENT = re.compile(r'\bref\s*:\s*([A-Za-z0-9_]+)\b')
+PARENT = re.compile(r'\brefkey\s*=\s*([A-Za-z0-9_]+)\b')
 PROPERTY = re.compile(r'^\s*([A-Za-z][A-Za-z0-9_]*)\s*=\s*(.*?)\s*(?://.*)?$')
-SETUP_FIELDS = ("WeaponGeneralSetupSID", "WeaponGeneralSetupPrototypeSID",
-                "WeaponSetupSID", "WeaponSetupPrototypeSID")
+SETUP_FIELDS = ("GeneralWeaponSetup",)
 
 
 def blocks(path):
     lines = path.read_text(encoding="utf-8-sig").splitlines()
-    stack = []
-    for index, line in enumerate(lines):
-        match = OPEN.match(line)
-        if match:
-            refs = PARENT.findall(match.group(2))
-            if len(refs) > 1:
-                raise ValueError(f"{path}:{index+1}: ambiguous parent")
-            stack.append((match.group(1).strip(), index, refs[0] if refs else None))
-        elif CLOSE.match(line):
-            if not stack:
-                raise ValueError(f"{path}:{index+1}: unmatched struct.end")
-            sid, start, parent = stack.pop()
-            if not stack:
-                yield sid, lines[start:index+1], parent
-    if stack:
-        raise ValueError(f"{path}: unclosed struct")
+    starts = [(i, match.group(1), match.group(2))
+              for i, line in enumerate(lines)
+              if (match := OPEN.match(line)) and not line[0].isspace()]
+    for n, (start, sid, attrs) in enumerate(starts):
+        end = starts[n + 1][0] if n + 1 < len(starts) else len(lines)
+        body = lines[start:end]
+        parents = PARENT.findall(attrs)
+        if len(parents) > 1:
+            raise ValueError(f"{path}:{start+1}: ambiguous parent")
+        yield sid, body, parents[0] if parents else None
 
 
 def direct(block):
