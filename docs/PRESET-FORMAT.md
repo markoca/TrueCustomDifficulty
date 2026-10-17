@@ -1,5 +1,9 @@
 # Preset JSON format
 
+### 2026-10-17 — Current factory/audit reconciliation
+
+The twelve official role presets remain v1 snapshots of 248 source-backed parameters; exact-stock migration protects edited factory files and all custom presets. The 2026-10-15 role-first rebalance is **HISTORICAL; SUPERSEDED** by the current full source-backed review and canonical A-Life mapping. RC CFG Signal is an opt-in diagnostic, not a thirteenth factory role. Static checks must not expect the retired role-first section to be labelled CURRENT. No factory values, migration rules or JSON schema change in this revision.
+
 ## CURRENT 2026-10-16 — Stashes graphs and backward-compatible zero-item caps
 
 The two medical MAX CAP sources accept an additional -1 value that represents 0 ITEMS in the graphical UI. Existing v1 profile 0 remains VANILLA; the 12 factory JSONs are unchanged. Save/Load serializes the same source IDs and the new -1 when explicitly chosen. The writer suppresses that Medkit/ArmyMedkit entry via native count and chance/weight zeroing. Stash Rewards is a six-row native bar graph and Medical Quantity is a four-cell dot graph; no preset format bump or parameter rename.

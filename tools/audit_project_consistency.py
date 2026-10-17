@@ -4,6 +4,7 @@ from __future__ import annotations
 import csv as _csv
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -21,9 +22,13 @@ def note(msg: str) -> None: notes.append(msg)
 # Check each required knob family independently of the order of the shared
 # wheel gate; adding a new approved rotary family must not regress old audits.
 def knob_wheel_gate_contains(source: str, *families: str) -> bool:
-    gate = next((line.strip() for line in source.splitlines()
-                 if line.strip().startswith('if (Family is not (')), '')
-    return all(f'"{family}"' in gate for family in families)
+    """Read the actual rotary wheel handler, including its Stashes precondition."""
+    parts = source.split("protected override void OnMouseWheel(MouseWheelEventArgs e)", 1)
+    if len(parts) != 2:
+        return False
+    wheel = parts[1].split("\n    protected override ", 1)[0]
+    gates = re.findall(r"\bFamily\s+is\s+not\s*\(([^)]*)\)", wheel, re.S)
+    return any(all(f'"{family}"' in gate for family in families) for gate in gates)
 
 def not_run(msg: str) -> None: not_run_items.append(msg)
 
@@ -959,7 +964,7 @@ if ('new("environment.razorHealthDamage", "GLASS SHARDS", true)' not in _anomaly
     fail("Anomaly Damage radar must show ten items and GLASS SHARDS, never Diamond")
 if ('P("environment.razorBleeding"), "GLASS SHARDS"' not in _anomaly_ui_aggregate
     or 'P("environment.diamondBleeding")' in _anomaly_ui_aggregate
-    or '("environment.razorBleeding", "GLASS SHARDS BLEEDING")' not in _anomaly_ui_aggregate
+    or 'DrawSourceKnob(dc, P("environment.razorBleeding"), "GLASS SHARDS"' not in _anomaly_ui_aggregate
     or '("environment.diamondBleeding", "DIAMOND BLEEDING")' in _anomaly_ui_aggregate):
     fail("Flycatcher and legacy anomaly special effects should not display Diamond")
 for _source, _pid in (
@@ -1197,7 +1202,7 @@ else:
     if "DrawHorizontalTrackCard" in _abd_knob_code:
         _abd_errors.append("ammo-family horizontal sliders returned")
     _abd_knob_input = (
-        'if (Family is not (',
+        'if (!stashGraph && Family is not (',
         'if (target.Kind == HitKind.Knob)',
         'protected override void OnMouseWheel(MouseWheelEventArgs e)',
         'EnforceFamilyConstraints(target.Parameter);',
@@ -1954,8 +1959,9 @@ if "_loadedPresetName = string.IsNullOrWhiteSpace(preset.Name)" not in _build_vm
     _build_name_errors.append("successful preset load does not capture preset name")
 if "TrueCustomDifficulty_P.pak" in _build_vm_text or "TrueCustomDifficulty_P.utoc" in _build_vm_text or "TrueCustomDifficulty_P.ucas" in _build_vm_text:
     _build_name_errors.append("build dialog still advertises retired static triplet names")
-if 'string.Join("\\n", result.Files.Select(Path.GetFileName))' not in _build_vm_text:
-    _build_name_errors.append("build dialog does not report actual final triplet files")
+if ('string.Join("\\n", installedFiles.Select(Path.GetFileName))' not in _build_vm_text
+    or '_modDeploymentService.Install(modsFolder!, result.Files)' not in _build_vm_text):
+    _build_name_errors.append("build dialog does not report actually installed final triplet files")
 
 if _build_name_errors:
     fail("preset-aware output naming drifted: " + "; ".join(_build_name_errors))
@@ -2272,8 +2278,8 @@ for _good, _meaning in (
 ):
     if not _good: _factory_errors.append("role identity drifted: "+_meaning)
 for _doc in ("FACTORY-PRESETS.md", "PRESET-FORMAT.md"):
-    if "2026-10-15 — Role-first deep rebalance (CURRENT)" not in (DOCS / _doc).read_text(encoding="utf-8"):
-        _factory_errors.append("current factory role documentation missing "+_doc)
+    if "2026-10-15 — Role-first deep rebalance (HISTORICAL; SUPERSEDED)" not in (DOCS / _doc).read_text(encoding="utf-8"):
+        _factory_errors.append("factory role history documentation missing "+_doc)
 
 # 2026-10-15 source-backed consumable cadence + override upgrade.
 # Check serialized flags, per-source authoring, UI-only bounds, step grids,
@@ -2650,7 +2656,7 @@ _linked_projection_contract = {
     "ActionCostsRadar.cs": (
         'byId.TryGetValue(MaxStaminaParameterId, out _maximumStamina);',
         'parameter.CurrentNumber / staminaPool',
-        'Math.Floor(staminaPool / hovered.CurrentNumber)',
+        'var costPercent = 100.0 * parameter.CurrentNumber / staminaPool;',
         'Math.Max(100.0, _maximumStamina?.CurrentNumber ?? 100.0)',
     ),
     "AggregateVisualControl.cs": (
@@ -2660,7 +2666,7 @@ _linked_projection_contract = {
         'parameter.PropertyChanged -= Parameter_PropertyChanged;',
         'burst.CurrentNumber * staminaPool',
         'energyBurst.CurrentNumber * staminaPool',
-        'staminaPool * 1.25',
+        'var waterCap = staminaPool * (1.0 + waterBonusPercent / 100.0);',
         'baseCarry + herculesStrength.CurrentNumber',
         'healthRestore.CurrentNumber / maxHealth',
         'sleepGate.CurrentNumber',
@@ -2997,7 +3003,7 @@ elif any(_exhaustion_catalog[pid]["slider"]["max"] != maximum
              "stamina.lowRecoveryThreshold": 60,
          }.items()):
     fail("Stamina thresholds: native 32.2/60 edit maxima drifted")
-elif '_maximumStamina?.CurrentNumber' not in _exhaustion_renderer or 'if (_maximumStamina is not null)' not in _exhaustion_renderer:
+elif '_maximumStamina?.CurrentNumber' not in _exhaustion_renderer or 'ObserveParameter(_maximumStamina);' not in _exhaustion_renderer:
     fail("Stamina thresholds: Max Stamina change subscription missing")
 else:
     note("Stamina thresholds: dynamic default 0..100 stamina ruler, independent native ranges, three source-backed recovery groups")
@@ -3239,8 +3245,8 @@ for _file, _required in {
         'var headline = $"{thresholdText} {timeText}";',
     ),
     "ActionCostsRadar.cs": (
-        "if (nativeOnly && tokens.Count > 1)",
-        "countText.SetForegroundBrush(accent, number.Index, number.Length);",
+        "private FormattedText CreateSourceValueText(",
+        "formatted.SetForegroundBrush(accent, numeric.Index, numeric.Length);",
     ),
     "BleedingCurveControl.cs": (
         "highlightDerivedLastNumber: true",
@@ -3479,7 +3485,6 @@ if (not all(item in _radiation_renderer for item in _radiation_required)
     or 'SetRadiationFromRail(' in _radiation_source
     or '_radLevelDragging' in _radiation_source
     or 'var stageRange = index < 0 ? "0 RAD"' not in _radiation_source
-    or 'var stageTo = index < 0 ? 0.0' not in _radiation_source
     or 'private double RadiationTimeToZeroHp()' not in _radiation_source
     or 'RADIATION SIMULATION' in _radiation_source
     or 'RADIATION TIMELINE' in _radiation_source):
@@ -3601,7 +3606,7 @@ for _pid, (_unit, _face, _title) in _native_medicine_units.items():
         or f'DrawSourceKnob(dc, ' not in _duration_renderer
         or f'"{_title}"' not in _duration_renderer):
         fail(f"medicine native points/kg UI unit contract drifted: {_pid}")
-if ("else if (nativeUnit is not null)" not in _duration_renderer
+if ("else if (nativeUnit is not null && !inlineNativeUnit)" not in _duration_renderer
     or "parameter.CurrentNumber > Epsilon" not in _duration_renderer):
     fail("medicine compact dial no longer displays signed values with their own source-native units")
 # Source-exact seconds constraints: no fixed fake cap or duplicate writer ownership.
@@ -3683,8 +3688,8 @@ for _token in (
     "BooleanCheckboxChrome.Draw(dc, checkboxRect, burst.DrinkDurationOverrideEnabled",
     "HitKind.DrinkDurationOverride",
     "previewTop + 67.0",
-    "preview.Top + 300.0",
-    "return 300.0 + rows * CompactTrackHeight",
+    "var previewTop = ConsumableDurationTop;",
+    "=> ConsumableMedicineKnobTop(width) + 181.0 + 14.0;",
     "const double medicineMaximumSeconds = 900.0;",
     "target.Parameter.DrinkDurationOverrideEnabled =",
     "_selectedParameter.DrinkDurationOverrideEnabled =",
@@ -3908,6 +3913,13 @@ _global_negative_visible = []
 for _row in _global_visible:
     _vanilla_values = (_row.get("vanilla") or {}).values()
     _slider = _row.get("slider") or {}
+    # Two authored MAX=-1 sentinels render as the explicit '0 ITEMS' choice,
+    # not as a negative player-facing numeric value.
+    if _row.get("id") in ("loot.stashMedkitMaxCount", "loot.stashArmyMedkitMaxCount"):
+        if (_slider.get("min") != -1
+            or '"0 ITEMS"' not in (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")):
+            _global_negative_visible.append(_row.get("id"))
+        continue
     if any(isinstance(v, (int, float)) and v < 0 for v in _vanilla_values):
         _global_negative_visible.append(_row.get("id"))
     elif isinstance(_slider.get("min"), (int, float)) and _slider.get("min") < 0:
@@ -3979,7 +3991,7 @@ for _source_path in ROOT.rglob("*"):
     # Standalone test projects are not duplicate production source trees.
     # Only explicitly registered Windows writer contract projects are exempt.
     if any(_source_path.is_relative_to(ROOT / "tests" / test_project)
-           for test_project in ("CombatPatchContract", "HealthStaminaPatchContract", "SurvivalPatchContract", "EconomyPatchContract", "EquipmentPatchContract", "EnvironmentPatchContract", "ALifePatchContract", "LootDirectPatchContract", "LootSpecialGeneratorsContract", "LootWorldRemovalsContract", "LootWorldPlacementContract")):
+           for test_project in ("CombatPatchContract", "HealthStaminaPatchContract", "SurvivalPatchContract", "EconomyPatchContract", "EquipmentPatchContract", "EnvironmentPatchContract", "ALifePatchContract", "LootDirectPatchContract", "LootSpecialGeneratorsContract", "LootWorldRemovalsContract", "LootWorldPlacementContract", "AllControlsPatchContract", "RCSignalPatchContract")):
         continue
     if _source_path.suffix.lower() in {".cs", ".xaml", ".csproj"}:
         _legacy_source.append(_source_path.relative_to(ROOT).as_posix())
@@ -3995,8 +4007,15 @@ for _cs_path in _canonical_src.rglob("*.cs"):
     for _match in _cs_type_pattern.finditer(_cs_text):
         _cs_name = _match.group(1)
         _cs_line = _cs_text.count("\n", 0, _match.start()) + 1
-        _cs_type_declarations.setdefault(_cs_name, []).append(f"{_cs_path.relative_to(ROOT).as_posix()}:{_cs_line}")
-_cs_duplicate_types = {name: locations for name, locations in _cs_type_declarations.items() if len(locations) > 1}
+        _cs_type_declarations.setdefault(_cs_name, []).append((
+            f"{_cs_path.relative_to(ROOT).as_posix()}:{_cs_line}",
+            bool(re.search(r"\bpartial\b", _match.group(0)))))
+# Legitimate C# partial classes may span files; non-partial duplicates still fail.
+_cs_duplicate_types = {
+    name: [location for location, _ in occurrences]
+    for name, occurrences in _cs_type_declarations.items()
+    if len(occurrences) > 1 and not all(is_partial for _, is_partial in occurrences)
+}
 if _cs_duplicate_types:
     fail(f"duplicate top-level C# type definitions detected: {_cs_duplicate_types}")
 else:
@@ -4018,7 +4037,15 @@ _required_root_files = {".gitignore", "README.md", "TrueCustomDifficulty.sln", "
 _optional_root_files = {"prompt.md"}  # local prompt may exist but is not needed for build/audit.
 _actual_root_files = {p.name for p in ROOT.iterdir() if p.is_file()}
 _root_missing = sorted(_required_root_files - _actual_root_files)
-_root_unexpected = sorted(_actual_root_files - _required_root_files - _optional_root_files)
+# Compare Git-tracked root files: local untracked scratch notes are not repo drift.
+_tracked_root_files = _actual_root_files
+if (ROOT / ".git").exists():
+    _tracked = subprocess.run(["git", "ls-files", "--cached", "-z"],
+                              cwd=ROOT, capture_output=True, text=True, check=False)
+    if _tracked.returncode == 0:
+        _tracked_root_files = {entry for entry in _tracked.stdout.split("\0")
+                               if entry and "/" not in entry}
+_root_unexpected = sorted(_tracked_root_files - _required_root_files - _optional_root_files)
 if _root_missing or _root_unexpected:
     fail(f"repository root file set drifted: missing={_root_missing}; unexpected={_root_unexpected}")
 elif 'PUBLISH_DIR="$ROOT/publish/win-x64"' not in (ROOT / "publish.sh").read_text(encoding="utf-8"):
@@ -4127,7 +4154,7 @@ _anomaly_combined_required = (
     '_globalDamage?.ResetToReference();',
     'DrawCenteredText(dc, "EFFECTIVE", new Point(center, 256)',
     'DrawCenteredText(dc, effectiveText, new Point(center, 268), 11.2,',
-    'DrawCenteredText(dc, "BASE", new Point(center, 341)',
+    'DrawCenteredText(dc, "BASE", new Point(center, 283)',
     'EffectiveDamageValue',
     'parameter.IsValueModifiedFromReference()',
     '_globalDamage?.IsValueModifiedFromReference() == true',
@@ -4565,10 +4592,10 @@ if (not all(token in _action_usage_source for token in (
         '_dragTarget = null;', 'if (IsMouseCaptured)', 'ReleaseMouseCapture();'))
     or 'ReleaseDragCapture();\n        e.Handled = true;' not in _action_usage_source):
     fail('ActionCostsRadar drag/rebind/unload lifecycle contract drifted')
-_stamina_vm = (ROOT / 'src/TrueCustomDifficulty/ViewModels/MainViewModel.cs').read_text(encoding='utf-8')
-_stamina_sort_begin = _stamina_vm.find('if (parameter.Definition.Tab == "stamina")')
-_stamina_sort_end = _stamina_vm.find('if (parameter.Definition.Tab == "economy")', _stamina_sort_begin)
-_stamina_sort = _stamina_vm[_stamina_sort_begin:_stamina_sort_end]
+_stamina_main_vm = (ROOT / 'src/TrueCustomDifficulty/ViewModels/MainViewModel.cs').read_text(encoding='utf-8')
+_stamina_sort_begin = _stamina_main_vm.find('if (parameter.Definition.Tab == "stamina")')
+_stamina_sort_end = _stamina_main_vm.find('if (parameter.Definition.Tab == "economy")', _stamina_sort_begin)
+_stamina_sort = _stamina_main_vm[_stamina_sort_begin:_stamina_sort_end]
 _hidden_stamina_sort_ids = (
     'stamina.sprintRegenCoef', 'stamina.sprintUnderRunSpeedRegenCoef',
     'stamina.runRegenCoef', 'stamina.joggingRegenCoef',
@@ -5019,7 +5046,8 @@ for _token in ('public static void DrawRecessedCard(', 'rect.Top + 1.5',
                'rect.Bottom - 1.5'):
     if _token not in _eye_chrome:
         fail("Neutral recessed surface chrome missing: " + _token)
-if _eye_aggregate.count('IndustrialChrome.DrawRecessedCard(dc, card, panel, border);') != 2:
+if (not ('IndustrialChrome.DrawRecessedCard(dc, card, panel, border);' in _eye_aggregate
+         and 'IndustrialChrome.DrawRecessedCard(dc, card, panel,\n            enabled ? border : CloneWithOpacity(border, 0.55));' in _eye_aggregate)):
     fail("Both shared native slider-card renderers must use the recessed surface")
 if 'IndustrialChrome.DrawRecessedCard(dc, rect, background, border, 3.0);' not in _eye_drink:
     fail("Alcohol strength cards missing recessed visual treatment")
@@ -5114,7 +5142,7 @@ for _drunkenness_header_token in (
     'new Point(ActualWidth / 2.0, 21.0), VisualControlTypography.BoardTitle, accent, FontWeights.Bold);',
     'IndustrialChrome.DrawFrame(',
     'accentEdge: true,',
-    'technicalMarks: true,',
+    'technicalMarks: true);',
     'dc.PushTransform(new TranslateTransform(0.0, HeaderOffset));',
     'dc.Pop();',
     '_beerSliderRect = new Rect(sliderRect.X, sliderRect.Y + HeaderOffset, sliderRect.Width, sliderRect.Height);',
@@ -5281,7 +5309,7 @@ for _token in ("_difficultyMarkerHits.Add((", "_hoverDifficultyValue == marker.V
 
 # Physical Limits' selectable height/weight landmarks.
 _physical_markers_source = (ROOT / "src" / "TrueCustomDifficulty" / "Controls" / "AggregateVisualControl.cs").read_text(encoding="utf-8")
-for _token in ("landmarkHover ? Brushes.White : muted", "kgHover ? Brushes.White : muted", "kg, kg);"):
+for _token in ("fixedHover ? Brushes.White : muted", "kgHover ? Brushes.White : muted", "kg, kg);"):
     if _token not in _physical_markers_source:
         fail("Physical Limits landmark marker interaction drift: " + _token)
 
@@ -5313,7 +5341,7 @@ if any(t not in _tcd_deployment for t in (
         'File.Move(existing, backup)', 'File.Move(backup, original)', 'files.Count == 0')):
     fail("Owned triplet staging / rollback / no-difference uninstall drifted")
 if any(t not in _tcd_build_vm for t in (
-        '_modDestinationSettings.RequireConfiguredPath()', '_modDeploymentService.Install(modsFolder, result.Files)')):
+        '_modDestinationSettings.RequireConfiguredPath()', '_modDeploymentService.Install(modsFolder!, result.Files)')):
     fail("Build must require configured ~mods and install generated outputs")
 if any('Footer Settings and direct ~mods difficulty installation' not in (DOCS / f).read_text(encoding="utf-8")
        for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md")):
@@ -5362,7 +5390,7 @@ for _needed in (
     if _needed not in _game_install_locator:
         fail("Game-install discovery fallback or DLC source detection drifted: " + _needed)
 _tcd_destination_vm = (ROOT / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text(encoding="utf-8")
-if "_modDestinationSettings.RequireConfiguredPath()" not in _tcd_destination_vm or "_modDeploymentService.Install(modsFolder, result.Files)" not in _tcd_destination_vm:
+if "_modDestinationSettings.RequireConfiguredPath()" not in _tcd_destination_vm or "_modDeploymentService.Install(modsFolder!, result.Files)" not in _tcd_destination_vm:
     fail("Build Difficulty lost explicit user-selected ~mods deployment")
 for _catalog in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Remove unused game install path/provenance metadata" not in (DOCS / _catalog).read_text(encoding="utf-8"):
@@ -5426,9 +5454,9 @@ for _needle in (
         '"CORE STAMINA"', '"MAX STAMINA", "stamina"',
         '"BASE RECOVERY", "stamina/s"',
         '"WATER STAMINA GAIN"', '"ENERGY DRINK STAMINA GAIN"',
-        '"WATER STAMINA BUFF"', '"STAMINA RESTORE STRENGTH"',
+        '"WATER STAMINA BONUS"', '"STAMINA RESTORE STRENGTH"',
         '"WELL-FED STAMINA RECOVERY"', '"STAMINA RECOVERY LOSS"',
-        '"NO STAMINA COST DURATION"',
+        '"NO COST DURATION"',
         ):
     if _needle not in _stamina_labels:
         fail("All-caps stamina caption or lowercase unit drifted: " + _needle)
@@ -5744,7 +5772,7 @@ for _token in (
     'new Pen(laneBrush, IsSelected(parameter) ? 2.5 : 1.6)',
     'dc.DrawEllipse(laneBrush, null, new Point(currentX, y), 2.5, 2.5);',
     'DrawDrinkEffectLine(dc, shortEffect, timeline.Left,',
-    '(waterRegenTime, "WATER BONUS DURATION")',
+    'DrawMiniConsumableKnob(dc, waterRegenTime, "WATER BONUS DURATION"',
     'DrawMiniConsumableKnob(dc, waterCostReduction, "STAMINA COST",',
     'text, muted, border, accent, panel, WaterCostCutLineBrush);',
     'new[] { waterRegenTime }',
