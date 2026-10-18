@@ -45,10 +45,10 @@ expected = {
         "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"],
     "StashGear": ["loot.stashGearEnabled", "loot.stashGearCoveragePercent",
                   "loot.stashGearWeaponWeight", "loot.stashGearArmorWeight",
-                  "loot.stashGearArtifactWeight"],
+                  "loot.stashGearArtifactWeight", "loot.stashGearBonusChance"],
 }
 ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
-assert len(ids) == len(set(ids)) == 37
+assert len(ids) == len(set(ids)) == 38
 assert set(ids) == set(sum(expected.values(), []))
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for family, expected_ids in expected.items():
@@ -125,7 +125,10 @@ assert "StashMedicalPalette[0]" in medical and "StashMedicalPalette[3]" in medic
 assert '"MEDICAL COMPOSITION"' in medical
 assert "DrawStashMedicalModeSelector" in medical
 assert "DrawStashGearMode(" not in gear
-assert '=> 379.0;' in source
+assert 'P("loot.stashGearBonusChance")' in gear
+assert 'AddHorizontalTarget(chance,' in gear
+assert '"BONUS CHANCE · ALL ITEMS"' in gear
+assert '=> 444.0;' in source
 assert "DrawStashBiasPreview" not in source
 assert "DrawStashCountKnob" not in source
 assert "DrawStashGearDial" not in source

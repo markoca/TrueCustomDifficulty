@@ -104,7 +104,7 @@ internal static partial class Program
                     Check(Regex.Matches(body, @"(?m)^\s*MinCount = 1$").Count == 1
                         && Regex.Matches(body, @"(?m)^\s*MaxCount = 1$").Count == 1
                         && Regex.Matches(body, @"(?m)^\s*Chance = 0\.5$").Count == 1,
-                        "Bonus must have exactly one native non-guaranteed Chance=0.5 item");
+                        "Default bonus Chance must remain 0.5 across all categories");
                     Check(!new[] { "Gauss", "Trophy", "RPG", "Weird", "Quest",
                             "Fake", "Prolog", "CNPP", "Heart" }.Any(word =>
                             body.Contains(word, StringComparison.OrdinalIgnoreCase)),
@@ -130,6 +130,21 @@ internal static partial class Program
                 foreach (var other in new[] { "Weapon", "Armor", "Artifact" })
                     vm.AllParameters.Single(x => x.Id == "loot.stashGear" + other + "Weight")
                         .SnapCurrentNumberToMarker(other == kind ? 3 : 0);
+                // Verify shared native Chance also at exact 0%, 37%, 100%.
+                var desiredChance = kind switch
+                {
+                    "Weapon" => 0,
+                    "Armor" => 37,
+                    "Artifact" => 100,
+                    _ => throw new InvalidDataException("Unknown forced gear class")
+                };
+                var chance = vm.AllParameters.Single(
+                    x => x.Id == "loot.stashGearBonusChance");
+                Check(chance.IsControlEnabled && chance.IsSlider
+                    && chance.Minimum == 0 && chance.Maximum == 100
+                    && chance.TickFrequency == 1 && chance.ReferenceNumber == 50,
+                    "Shared Extra Gear Chance control has wrong default or slider range");
+                chance.SnapCurrentNumberToMarker(desiredChance);
                 var dir = Path.Combine(root, "forced-" + kind);
                 new CfgPatchWriterService().Write(vm, Catalog, null, dir);
                 var output = File.ReadAllText(OutputPath(dir, "GameData/ItemGeneratorPrototypes.cfg"));
@@ -138,6 +153,15 @@ internal static partial class Program
                     .Where(progression.ContainsKey).ToArray();
                 Check(ids.Length >= 800 && ids.All(id => progression[id].ItemClass == kind),
                     "Forced stash class mixer did not respect zero weight exclusions: " + kind);
+                var actualChances = Regex.Matches(output,
+                    @"(?m)^\s*Chance = ([^\r\n]+)$")
+                    .Select(m => m.Groups[1].Value).ToArray();
+                var expectedChance = (desiredChance / 100.0)
+                    .ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+                Check(actualChances.Length == ids.Length
+                    && actualChances.All(value => value == expectedChance),
+                    "Global Chance was not written to every " + kind +
+                    " candidate: expected " + expectedChance);
             }
         }
         finally

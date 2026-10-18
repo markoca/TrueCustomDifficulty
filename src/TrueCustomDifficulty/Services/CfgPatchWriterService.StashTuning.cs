@@ -40,7 +40,7 @@ public sealed partial class CfgPatchWriterService
     {
         "loot.stashGearEnabled", "loot.stashGearCoveragePercent",
         "loot.stashGearWeaponWeight", "loot.stashGearArmorWeight",
-        "loot.stashGearArtifactWeight"
+        "loot.stashGearArtifactWeight", "loot.stashGearBonusChance"
     };
 
     private static bool IsStashMedicalSourceInTier(string parameterId, string tier)

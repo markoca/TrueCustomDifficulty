@@ -573,7 +573,8 @@ public sealed class MainViewModel : ObservableObject
             "loot.stashGearCoveragePercent",
             "loot.stashGearWeaponWeight",
             "loot.stashGearArmorWeight",
-            "loot.stashGearArtifactWeight");
+            "loot.stashGearArtifactWeight",
+            "loot.stashGearBonusChance");
 
         WireVisualAggregate(
             "loot.cheapStashAmmoQuantity",
@@ -2158,6 +2159,7 @@ public sealed class MainViewModel : ObservableObject
                 "loot.stashGearWeaponWeight" => 332,
                 "loot.stashGearArmorWeight" => 333,
                 "loot.stashGearArtifactWeight" => 334,
+                "loot.stashGearBonusChance" => 335,
 
                 // Three native stash tier ammo quantities; RGD-5 Chance/Amount and
                 // Rare Coupon Chance are members of StashContentMix.

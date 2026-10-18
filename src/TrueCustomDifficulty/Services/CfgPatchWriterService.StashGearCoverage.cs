@@ -1,6 +1,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -200,6 +201,12 @@ public sealed partial class CfgPatchWriterService
         var percent = Math.Clamp((int)Math.Round(coverage.CurrentNumber), 0, 100);
         if (percent == 0)
             return 0;
+        if (!all.TryGetValue("loot.stashGearBonusChance", out var chanceControl))
+            throw new InvalidDataException("Missing global Extra Stash Gear bonus chance control.");
+        // Exact whole percent -> game-native [0,1] Chance, invariant for CFG syntax.
+        // Applies identically to weapons, armor and standard artifacts.
+        var itemChance = (Math.Clamp((int)Math.Round(chanceControl.CurrentNumber), 0, 100)
+                          / 100.0).ToString("0.##", CultureInfo.InvariantCulture);
 
         var approved = LoadStashGearActors();
         var chosen = SelectStashGearActors(approved.Where(x => x.Scope == "base"
@@ -268,9 +275,9 @@ public sealed partial class CfgPatchWriterService
                 var item = itemCategory.GetOrAddChild("PossibleItems", useBpatch: false)
                     .GetOrAddChild("[0]", useBpatch: false);
                 item.SetAssignment("ItemPrototypeSID", chosen.Sid);
-                // An explicitly authored native CFG Chance, not a UI prediction
-                // of how many real-world physical stashes will contain gear.
-                item.SetAssignment("Chance", "0.5");
+                // One user-authored native CFG Chance for all three bonus
+                // classes, not a predicted physical-stash drop frequency.
+                item.SetAssignment("Chance", itemChance);
                 item.SetAssignment("MinCount", "1");
                 item.SetAssignment("MaxCount", "1");
                 if (chosenClass != "Artifact")

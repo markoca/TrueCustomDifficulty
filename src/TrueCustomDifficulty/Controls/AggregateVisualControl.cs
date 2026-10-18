@@ -4896,6 +4896,43 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 new Rect(bar.Left - 7.0, bar.Top - 14.0, bar.Width + 14.0, 42.0),
                 bar, 0.0, 3.0);
         }
+
+        // One real CFG Chance setting, used for every optional bonus category.
+        // Unlike the relative mixer weights, this slider writes PossibleItems.Chance.
+        var chance = P("loot.stashGearBonusChance");
+        if (chance is null) return;
+        const double chanceY = 371.0;
+        var chanceEnabled = chance.IsControlEnabled;
+        DrawText(dc, "BONUS CHANCE · ALL ITEMS", new Point(left + 2.0, chanceY),
+            11.0, chanceEnabled ? text : muted, FontWeights.SemiBold);
+        DrawStashNumericReadout(dc, $"{(int)Math.Round(chance.CurrentNumber)}%",
+            new Point(left + width - 4.0, chanceY - 1.0), 13.0,
+            chanceEnabled, chance.IsValueModifiedFromReference(),
+            text, muted, accent);
+        var chanceRail = new Rect(left + 10.0, chanceY + 27.0,
+            Math.Max(1.0, width - 20.0), 2.0);
+        dc.DrawLine(new Pen(border, 2.0),
+            new Point(chanceRail.Left, chanceRail.Top),
+            new Point(chanceRail.Right, chanceRail.Top));
+        var chanceX = ValueToX(chance.CurrentNumber, 0.0, 100.0, chanceRail, false);
+        if (chanceEnabled)
+            dc.DrawLine(new Pen(accent, 2.0),
+                new Point(chanceRail.Left, chanceRail.Top),
+                new Point(chanceX, chanceRail.Top));
+        var chanceHover = chanceEnabled && ReferenceEquals(_hoverTarget?.Parameter, chance);
+        dc.DrawEllipse(panel, new Pen(chanceHover ? Brushes.White :
+            chanceEnabled ? accent : muted, chanceHover ? 2.6 : 2.0),
+            new Point(chanceX, chanceRail.Top), 6.0, 6.0);
+        if (chanceEnabled)
+            dc.DrawEllipse(accent, null, new Point(chanceX, chanceRail.Top), 2.4, 2.4);
+        DrawText(dc, "0%", new Point(chanceRail.Left, chanceRail.Top + 11.0),
+            9.8, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "100%",
+            new Point(chanceRail.Right, chanceRail.Top + 11.0),
+            9.8, muted, FontWeights.Normal);
+        AddHorizontalTarget(chance,
+            new Rect(chanceRail.Left - 7.0, chanceRail.Top - 14.0,
+                chanceRail.Width + 14.0, 42.0), chanceRail, 0.0, 100.0);
     }
 
     // The UI reads the SAME embedded ItemGenerator source templates as the
@@ -6986,7 +7023,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 345.0 : 607.0;
     private static double StashGearHeight(double width)
-        => 379.0;
+        => 444.0;
 
     // Renderer measurements and painted card extents must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
@@ -7088,7 +7125,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             {
                 "loot.stashGearEnabled", "loot.stashGearCoveragePercent",
                 "loot.stashGearWeaponWeight", "loot.stashGearArmorWeight",
-                "loot.stashGearArtifactWeight"
+                "loot.stashGearArtifactWeight", "loot.stashGearBonusChance"
             },
             "StashRewardProfile" => new[]
             {
