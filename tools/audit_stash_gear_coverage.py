@@ -102,7 +102,8 @@ ui = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read
 writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashGearCoverage.cs").read_text(encoding="utf-8")
 assert 'P("loot.stashGearCoveragePercent")' in ui and "DrawStashGearMode(" not in ui
 assert 'StashGearStableHash("ACTOR|" + x.Scope + "|" + x.ActorSid)' in writer
-assert 'ChooseStashGearClasses(all, actor.ActorSid, code, tier)' in writer
+assert 'ChooseStashGearClasses(' in writer
+assert 'all, actor.ActorSid, code, eligibleAttachments.Length > 0' in writer
 assert 'StashGearStableHash(key)' in writer
 assert '"MIX2|" + actorSid' in writer
 assert 'remaining.RemoveAt(i);' in writer
@@ -138,13 +139,26 @@ for kind in ("Weapon", "Armor", "Artifact", "Attachment"):
 assert 'MinCount", "1"' in writer and 'MaxCount", "1"' in writer
 assert '"Attachment" => "SubItemGenerator"' in writer
 assert 'item.SetAssignment("ItemGeneratorPrototypeSID",' in writer
-# T1 cannot select nested attachments: the current production predicate
-# admits that class only for tier >= 2. Test the actual guard, not a
-# superseded pre-refactor spelling (tier < 2).
-assert 'x.Class != "Attachment" || tier >= 2' in writer
+# Source-approved T1 firearm compatibility replaces the old T2+ lock.
+assert 'x.EligibleForRank(tier, t1Weapons)' in writer
+assert 'FittingWeaponsSids.Overlaps(t1Weapons)' in writer
+assert 'x.Class != "Attachment" || hasEligibleAttachments' in writer
+assert 'StashAttachmentResource, 6' in writer
 assert 'FittingWeaponsSIDs' not in writer
 attachment_rows = rows("stash-bonus-attachment-progressions.csv")
 assert len(attachment_rows) == 19
+t1_weapons = {r["ItemSID"] for r in pool
+              if r["ItemClass"] == "Weapon" and r["ProgressionTier"] == "T1"}
+assert len(t1_weapons) == 8
+t1_compatible = {r["ItemSID"] for r in attachment_rows
+                 if t1_weapons.intersection(r["FittingWeaponsSIDs"].split(";"))}
+assert t1_compatible == {
+    "GunAK74_MagIncreased", "GunUDP_MagIncreased", "RU_GLaunch_1"}
+assert all(r["FittingWeaponsSIDs"]
+           and len(set(r["FittingWeaponsSIDs"].split(";")))
+               == len(r["FittingWeaponsSIDs"].split(";"))
+           for r in attachment_rows)
+assert all("FittingWeaponsSIDs" in r for r in attachment_rows)
 assert Counter(r["ProgressionTier"] for r in attachment_rows) == {
     "T2": 8, "T3": 7, "T4": 4}
 source_pool = {r["item_sid"]: r for r in rows("world-attachment-shuffle-pool.csv")}
@@ -160,4 +174,4 @@ for candidate in attachment_rows:
         and r["entry_node_path"] == "ItemGenerator/[0]/PossibleItems/[0]"
         for r in originals)
 assert all("WeaponSID" not in candidate for candidate in attachment_rows)
-print("PASS: 800 base + 108 DLC eligible physical actors; rank metadata; 34 weapons + 39 suits + 69 standard artifacts; four category weights and 19 rank-only attachment candidates; shared Bonus Chance; coverage stable")
+print("PASS: 800 base + 108 DLC actors; 19 attachment sources, exactly 3 T1-weapon-compatible; T2+ unchanged; shared Bonus Chance and coverage stable")

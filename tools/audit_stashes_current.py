@@ -96,7 +96,8 @@ assert stash[bonus[0]]["control"] == "toggle" and stash[bonus[0]]["vanilla"]["Al
 for pid in bonus[2:6]:
     assert stash[pid]["slider"] == {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"}
 assert stash[bonus[1]]["slider"]["step"] == stash[bonus[6]]["slider"]["step"] == 1
-assert 'ChooseStashGearClasses(all, actor.ActorSid, code, tier)' in gear
+assert 'ChooseStashGearClasses(' in gear
+assert 'all, actor.ActorSid, code, eligibleAttachments.Length > 0' in gear
 assert 'item.SetAssignment("Chance", itemChance)' in gear
 assert 'for (var categoryIndex = 0; categoryIndex < selectedClasses.Count;' in gear
 assert 'selectedClasses.Count > 2' in gear
@@ -159,6 +160,13 @@ attachments = csv_rows("stash-bonus-attachment-progressions.csv")
 assert len(ranked) == 915 and Counter(r["Scope"] for r in ranked) == {"base": 803, "dlc1": 112}
 assert len(removals) == 13 and len(protection) == 106
 assert len(attachments) == 19
+t1_weapon_ids = {r["ItemSID"] for r in csv_rows("gear-progression-ranks.csv")
+                 if r["ItemClass"] == "Weapon" and r["ProgressionTier"] == "T1"}
+assert len(t1_weapon_ids) == 8
+t1_attachments = {r["ItemSID"] for r in attachments
+                  if t1_weapon_ids.intersection(r["FittingWeaponsSIDs"].split(";"))}
+assert t1_attachments == {
+    "GunAK74_MagIncreased", "GunUDP_MagIncreased", "RU_GLaunch_1"}
 assert not set(r["ActorSID"] for r in removals) & set(r["ActorSID"] for r in protection)
 assert all(r["ProgressionTier"] in ("T2", "T3", "T4") for r in attachments)
 

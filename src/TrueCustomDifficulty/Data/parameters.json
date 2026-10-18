@@ -6857,7 +6857,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Attachment Bonus Weight",
-      "description": "Relative share of source-audited standalone attachment bonuses, selected by stash rank only. It does not require any matching weapon inside the stash.",
+      "description": "Relative build-time weight of standalone attachment bonuses. T1 uses only source-confirmed attachments compatible with a T1 weapon; T2–T4 keep their existing progression tiers. A matching weapon need not be inside the stash. This is not a drop chance.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {"primary": "multiplier", "rawFormat": "0.0x", "valueLabel": "Relative mix weight"},

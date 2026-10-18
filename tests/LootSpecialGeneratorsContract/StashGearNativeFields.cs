@@ -12,7 +12,8 @@ namespace LootSpecialGeneratorsContract;
 
 internal static partial class Program
 {
-    private sealed record NestedAttachment(string Sid, string Kind, int Tier, string SourceGenerator);
+    private sealed record NestedAttachment(
+        string Sid, string Kind, int Tier, string SourceGenerator, bool FitsT1);
 
     private static Dictionary<string, NestedAttachment> AuditedNestedAttachments()
     {
@@ -31,7 +32,11 @@ internal static partial class Program
                 }).ToArray();
         }
 
-        var rows = Csv("stash-bonus-attachment-progressions.csv", 5);
+        var rows = Csv("stash-bonus-attachment-progressions.csv", 6);
+        var t1Weapons = Csv("gear-progression-ranks.csv", 8)
+            .Where(row => row[1] == "Weapon" && row[3] == "T1")
+            .Select(row => row[0]).ToHashSet(StringComparer.Ordinal);
+        Check(t1Weapons.Count == 8, "Native T1 weapon pool drifted");
         var originals = Csv("world-attachment-generator-manifest.csv", 10);
         var world = Csv("world-attachment-shuffle-pool.csv", 3)
             .ToDictionary(row => row[0], StringComparer.Ordinal);
@@ -51,15 +56,26 @@ internal static partial class Program
                     .All(o => o[7] == sid
                         && o[6] == "ItemGenerator/[0]/PossibleItems/[0]"),
                 "Nested attachment source is not an audited original singleton: " + sid);
+            var fittings = row[5].Split(';',
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            Check(fittings.Length > 0
+                && fittings.Distinct(StringComparer.Ordinal).Count() == fittings.Length,
+                "Malformed source weapon fitting evidence: " + sid);
             Check(candidates.TryAdd(source,
-                new NestedAttachment(sid, row[1], int.Parse(row[2][1..]), source)),
+                new NestedAttachment(sid, row[1], int.Parse(row[2][1..]),
+                    source, fittings.Any(t1Weapons.Contains))),
                 "Duplicate nested attachment source reference");
         }
         Check(candidates.Count == 19
             && candidates.Values.Count(c => c.Kind == "Magazine") == 16
             && candidates.Values.Count(c => c.Kind == "Suppressor") == 2
             && candidates.Values.Count(c => c.Kind == "Underbarrel") == 1
-            && candidates.Values.All(c => c.Kind != "Optic"),
+            && candidates.Values.All(c => c.Kind != "Optic")
+            && candidates.Values.Where(c => c.FitsT1).Select(c => c.Sid)
+                .ToHashSet(StringComparer.Ordinal).SetEquals(new[]
+                {
+                    "GunAK74_MagIncreased", "GunUDP_MagIncreased", "RU_GLaunch_1"
+                }),
             "Current 19-source attachment class inventory changed; re-audit optics separately");
         return candidates;
     }
@@ -148,8 +164,7 @@ internal static partial class Program
                 var ranks = sourceBySid[sid].RankCodes == "A"
                     ? "NEVM" : sourceBySid[sid].RankCodes;
                 foreach (var rank in ranks)
-                    if (weaponMix || rank != 'N')
-                        expected.Add("TCD_ExtraGear_" + sid + "_" + rank);
+                    expected.Add("TCD_ExtraGear_" + sid + "_" + rank);
             }
             Check(roots.Count == expected.Count
                 && roots.Keys.ToHashSet(StringComparer.Ordinal).SetEquals(expected),
@@ -177,7 +192,7 @@ internal static partial class Program
                 Check(rankTier > 0 && fields.TryGetValue("SID", out var declared)
                     && declared == root, name + ": incorrect private root SID");
 
-                var count = weaponMix && nativeRank != 'N' ? 2 : 1;
+                var count = weaponMix ? 2 : 1;
                 var categoryKeys = fields.Keys.Where(k => Regex.IsMatch(k,
                     @"^ItemGenerator/\[\d+\]/Category$")).ToArray();
                 Check(categoryKeys.Length == count
@@ -210,12 +225,13 @@ internal static partial class Program
                     };
                     if (nested)
                     {
-                        Check(nativeRank != 'N' && seen.Add("Attachment"),
-                            name + ": invalid or duplicated T1 nested attachment");
+                        Check(seen.Add("Attachment"),
+                            name + ": repeated nested attachment category");
                         var generator = Required(itemPrefix + "ItemGeneratorPrototypeSID");
                         allowed.Add(itemPrefix + "ItemGeneratorPrototypeSID");
                         Check(attachments.TryGetValue(generator, out var attachment)
-                            && attachment.Tier <= rankTier,
+                            && (attachment.Tier <= rankTier
+                                || rankTier == 1 && attachment.FitsT1),
                             name + ": invalid or overrank nested singleton reference");
                         nestedCount++;
                         // No outer MinCount/MaxCount, item SID, or fake inner
@@ -252,7 +268,7 @@ internal static partial class Program
                 }
                 Check(seen.Count == count
                     && (weaponMix ? seen.Contains("Weapon") : true)
-                    && (nativeRank != 'N' ? seen.Contains("Attachment") : true),
+                    && seen.Contains("Attachment"),
                     name + ": duplicate or missing selected native bonus category");
                 Check(fields.Keys.Count == fields.Keys.Distinct(StringComparer.Ordinal).Count(),
                     name + ": duplicate CFG field key");

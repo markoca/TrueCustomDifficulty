@@ -84,21 +84,36 @@ public sealed partial class CfgPatchWriterService
     }
 
     private sealed record StashBonusAttachment(
-        string Sid, string Category, int Tier, string SourceGeneratorSid);
+        string Sid, string Category, int Tier, string SourceGeneratorSid,
+        HashSet<string> FittingWeaponsSids)
+    {
+        // Higher-tier attachment items may be offered in a Newbie stash ONLY
+        // when their original FittingWeaponsSIDs includes an audited T1 gun.
+        public bool EligibleForRank(int rank, HashSet<string> t1Weapons)
+            => Tier <= rank || rank == 1 && FittingWeaponsSids.Overlaps(t1Weapons);
+    }
 
-    // Attachment is independent stash loot; no weapon fit or inventory
-    // pairing check. Original singleton attachment generators keep native
-    // item category behavior; neither the game source nor other actors change.
+    // Attachment bonuses remain loose and do NOT require the compatible gun
+    // in that stash. T1 eligibility uses the source item FittingWeaponsSIDs,
+    // not the attachment's separate world/trader progression tier.
+    // Original singleton generators and source items are never modified.
     private static IReadOnlyList<StashBonusAttachment> LoadStashBonusAttachments()
     {
         var originals = ReadStashCsv(SourceAttachmentManifestResource, 10);
         var worldPool = ReadStashCsv(SourceAttachmentPoolResource, 3)
             .ToDictionary(r => r[0], r => (Category: r[1], Tier: r[2]),
                 StringComparer.Ordinal);
-        var entries = ReadStashCsv(StashAttachmentResource, 5).Select(row =>
+        var entries = ReadStashCsv(StashAttachmentResource, 6).Select(row =>
         {
             var sid = row[0];
             var generator = row[3];
+            var fitting = row[5].Split(';',
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            if (fitting.Length == 0
+                || fitting.Distinct(StringComparer.Ordinal).Count() != fitting.Length
+                || fitting.Any(weapon => !weapon.StartsWith("Gun", StringComparison.Ordinal)
+                    && !weapon.StartsWith("nwpack_Gun", StringComparison.Ordinal)))
+                throw new InvalidDataException("Invalid source attachment fitting list: " + sid);
             if (row[4] != "EXACT_AUDITED_SINGLETON_GENERATOR"
                 || generator != "Stash_" + sid
                 || !worldPool.TryGetValue(sid, out var source)
@@ -112,7 +127,8 @@ public sealed partial class CfgPatchWriterService
                 || new[] { "Gauss", "Quest", "Unique", "Trophy", "Weird", "Fake" }
                     .Any(word => sid.Contains(word, StringComparison.OrdinalIgnoreCase)))
                 throw new InvalidDataException("Unsafe source attachment: " + sid);
-            return new StashBonusAttachment(sid, row[1], row[2][1] - '0', generator);
+            return new StashBonusAttachment(sid, row[1], row[2][1] - '0',
+                generator, fitting.ToHashSet(StringComparer.Ordinal));
         }).ToArray();
         if (entries.Length != 19
             || entries.Select(x => x.Sid).Distinct(StringComparer.Ordinal).Count() != 19
@@ -210,10 +226,11 @@ public sealed partial class CfgPatchWriterService
     // Pick up to two DIFFERENT classes without replacement. This prevents
     // repeated weapon/armor/artifact/attachment categories in one rank branch.
     // With one enabled class the actor receives only one candidate.
-    // For T1, Attachments is not a valid class (audited sources begin at T2).
+    // Attachments participate only when the current rank has an approved SID;
+    // T1 availability is sourced from matching T1 weapons, never from tier alone.
     private static IReadOnlyList<string> ChooseStashGearClasses(
         IReadOnlyDictionary<string, ParameterViewModel> all,
-        string actorSid, char code, int tier)
+        string actorSid, char code, bool hasEligibleAttachments)
     {
         var remaining = new[]
         {
@@ -226,7 +243,8 @@ public sealed partial class CfgPatchWriterService
                 ? parameter.CurrentNumber * 10.0
                 : pair.Item1 == "Attachment" ? 0.0 : 10.0),
             0, 30)))
-            .Where(x => x.Weight > 0 && (x.Class != "Attachment" || tier >= 2))
+            .Where(x => x.Weight > 0
+                && (x.Class != "Attachment" || hasEligibleAttachments))
             .ToList();
 
         var selected = new List<string>(capacity: 2);
@@ -283,6 +301,18 @@ public sealed partial class CfgPatchWriterService
             .ToArray();
         var pool = LoadStashGearPool();
         var attachmentPool = LoadStashBonusAttachments();
+        var t1Weapons = pool.Where(x => x.ItemClass == "Weapon" && x.Tier == 1)
+            .Select(x => x.Sid).ToHashSet(StringComparer.Ordinal);
+        var t1AttachmentSids = attachmentPool
+            .Where(x => x.EligibleForRank(1, t1Weapons))
+            .Select(x => x.Sid).ToHashSet(StringComparer.Ordinal);
+        if (t1Weapons.Count != 8
+            || !t1AttachmentSids.SetEquals(new[]
+            {
+                "GunAK74_MagIncreased", "GunUDP_MagIncreased", "RU_GLaunch_1"
+            }))
+            throw new InvalidDataException(
+                "T1 attachment-to-weapon compatibility audit drifted.");
         var prototypes = GetDocument(documents, "GameData/ItemGeneratorPrototypes.cfg");
         var written = 0;
         foreach (var actor in chosen)
@@ -304,8 +334,10 @@ public sealed partial class CfgPatchWriterService
                 // Preserve the authored stash generator references. Add only
                 // one PRIVATE generator per rank branch; every bonus category
                 // contains at most ONE possible item, and no class repeats.
+                var eligibleAttachments = attachmentPool
+                    .Where(x => x.EligibleForRank(tier, t1Weapons)).ToArray();
                 var selectedClasses = ChooseStashGearClasses(
-                    all, actor.ActorSid, code, tier);
+                    all, actor.ActorSid, code, eligibleAttachments.Length > 0);
                 if (selectedClasses.Count == 0)
                     continue;
                 if (selectedClasses.Count > 2
@@ -335,9 +367,6 @@ public sealed partial class CfgPatchWriterService
                         (int)(StashGearStableHash("ITEM|" + chosenClass
                             + "|" + actor.ActorSid + "|" + code)
                             % (ulong)eligible.Length)];
-                    var eligibleAttachments = chosenClass == "Attachment"
-                        ? attachmentPool.Where(x => x.Tier <= tier).ToArray()
-                        : Array.Empty<StashBonusAttachment>();
                     var selectedAttachment = chosenClass == "Attachment"
                         ? eligibleAttachments[(int)(StashGearStableHash(
                             "ITEM|Attachment|" + actor.ActorSid + "|" + code)

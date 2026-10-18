@@ -35,16 +35,26 @@ internal static partial class Program
             "TrueCustomDifficulty.Data.stash-bonus-attachment-progressions.csv")
             ?? throw new InvalidDataException("Embedded stash attachment pool absent");
         using var attachmentReader = new StreamReader(attachmentStream);
+        var t1Weapons = progression.Where(p => p.Value.ItemClass == "Weapon"
+                && p.Value.Tier == 1).Select(p => p.Key)
+            .ToHashSet(StringComparer.Ordinal);
         var attachments = attachmentReader.ReadToEnd().Split('\n',
                 StringSplitOptions.RemoveEmptyEntries).Skip(1)
             .Select(row => row.TrimEnd('\r').Split(','))
             .ToDictionary(row => row[3],
-                row => (Sid: row[0], Tier: int.Parse(row[2][1..])),
+                row => (Sid: row[0], Tier: int.Parse(row[2][1..]),
+                    FitsT1: row[5].Split(';').Any(t1Weapons.Contains)),
                 StringComparer.Ordinal);
         Check(attachments.Count == 19
             && attachments.Values.Count(x => x.Tier == 2) == 8
             && attachments.Values.Count(x => x.Tier == 3) == 7
-            && attachments.Values.Count(x => x.Tier == 4) == 4,
+            && attachments.Values.Count(x => x.Tier == 4) == 4
+            && t1Weapons.Count == 8
+            && attachments.Values.Where(x => x.FitsT1).Select(x => x.Sid)
+                .ToHashSet(StringComparer.Ordinal).SetEquals(new[]
+                {
+                    "GunAK74_MagIncreased", "GunUDP_MagIncreased", "RU_GLaunch_1"
+                }),
             "Attachment progression catalog size/tier mismatch");
         try
         {
@@ -130,7 +140,8 @@ internal static partial class Program
                     Check(itemSids.All(id => progression.TryGetValue(id, out var item)
                             && item.Tier <= maxTier)
                         && attachmentRefs.All(id => attachments.TryGetValue(id, out var entry)
-                            && entry.Tier <= maxTier && maxTier >= 2),
+                            && (entry.Tier <= maxTier
+                                || maxTier == 1 && entry.FitsT1)),
                         "Bonus pool may not select gear above native player rank");
                     Check(Regex.Matches(body, @"(?m)^\s*MinCount = 1$").Count == itemSids.Length
                         && Regex.Matches(body, @"(?m)^\s*MaxCount = 1$").Count == itemSids.Length
