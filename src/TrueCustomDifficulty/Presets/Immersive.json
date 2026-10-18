@@ -1092,6 +1092,46 @@
     "loot.expensiveStashGrenadesChance": {
       "kind": "slider",
       "number": 1
+    },
+    "loot.stashMedicalBandageChanceScale": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMedicalMedkitChanceScale": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMedicalArmyMedkitChanceScale": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashMedicalAntiRadChanceScale": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashGearEnabled": {
+      "kind": "toggle",
+      "boolean": false
+    },
+    "loot.stashGearWeaponWeight": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashGearArmorWeight": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashGearArtifactWeight": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.stashGearAttachmentWeight": {
+      "kind": "slider",
+      "number": 0
+    },
+    "loot.stashGearBonusChance": {
+      "kind": "slider",
+      "number": 50
     }
   }
 }

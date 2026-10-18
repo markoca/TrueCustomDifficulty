@@ -37,6 +37,9 @@ jobs:
       - name: Stashes A+C knob mixer layout/source contract
         run: python tools/audit_stashes_mixer_ui.py
 
+      - name: Stashes current catalog, WPF families, routing and presets
+        run: python tools/audit_stashes_current.py
+
       - name: Reserved gear queue and direct medical consumables source audit
         run: python tools/audit_regular_stash_consumables.py
 

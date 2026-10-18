@@ -4813,7 +4813,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawHalf(max, maxRail, -1.0, 6.0, false);
     }
 
-    // Actor coverage is a build-time subset; three compact category knobs
+    // Actor coverage is a build-time subset; four compact category knobs
     // set relative distribution weights, not physical drop percentages.
     private void DrawStashGear(
         DrawingContext dc, Brush text, Brush muted, Brush border,
@@ -7014,8 +7014,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         => width >= 700.0 ? 588.0 : 922.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 345.0 : 607.0;
+    // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP
+    // the FOUR-knob mixer still paints in two rows and needs 612 DIP.
     private static double StashGearHeight(double width)
-        => width < 540.0 ? 612.0 : 444.0;
+        => width < 570.0 ? 612.0 : 444.0;
 
     // Renderer measurements and painted card extents must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
@@ -7117,7 +7119,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             {
                 "loot.stashGearEnabled", "loot.stashGearCoveragePercent",
                 "loot.stashGearWeaponWeight", "loot.stashGearArmorWeight",
-                "loot.stashGearArtifactWeight", "loot.stashGearBonusChance"
+                "loot.stashGearArtifactWeight", "loot.stashGearAttachmentWeight",
+                "loot.stashGearBonusChance"
             },
             "StashRewardProfile" => new[]
             {

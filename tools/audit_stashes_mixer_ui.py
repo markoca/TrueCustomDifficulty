@@ -137,9 +137,12 @@ assert "DrawStashGearMode(" not in gear
 assert 'P("loot.stashGearBonusChance")' in gear
 assert 'AddHorizontalTarget(chance,' in gear
 assert '"BONUS CHANCE · ALL ITEMS"' in gear
-assert '=> width < 540.0 ? 612.0 : 444.0;' in source
+assert '=> width < 570.0 ? 612.0 : 444.0;' in source
 assert 'var chanceY = narrowMix ? 535.0 : 371.0;' in gear
 assert gear.count('DrawSourceKnob(dc, P(weights[i].Item1), weights[i].Item2,') == 1
+assert 'var width = Math.Min(630.0, Math.Max(1.0, ActualWidth - 30.0));' in gear
+assert 'var narrowMix = width < 540.0;' in gear
+assert '"loot.stashGearAttachmentWeight",' in family_ids
 for key in ("Weapon", "Armor", "Artifact", "Attachment"):
     row = next(p for p in catalog["parameters"]
                if p["id"] == "loot.stashGear" + key + "Weight")
