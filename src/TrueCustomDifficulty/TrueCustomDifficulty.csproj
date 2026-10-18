@@ -37,6 +37,7 @@
     <EmbeddedResource Include="Data\base-stash-protected-actor-manifest.csv" LogicalName="TrueCustomDifficulty.Data.base-stash-protected-actor-manifest.csv" />
     <EmbeddedResource Include="Data\smartloot-regular-world-actor-manifest.csv" LogicalName="TrueCustomDifficulty.Data.smartloot-regular-world-actor-manifest.csv" />
     <EmbeddedResource Include="Data\stash-authored-weapon-removal-manifest.csv" LogicalName="TrueCustomDifficulty.Data.stash-authored-weapon-removal-manifest.csv" />
+    <EmbeddedResource Include="Data\stash-weapon-source-inventory.csv" LogicalName="TrueCustomDifficulty.Data.stash-weapon-source-inventory.csv" />
     <EmbeddedResource Include="Data\smartloot-world-source-entries.csv" LogicalName="TrueCustomDifficulty.Data.smartloot-world-source-entries.csv" />
     <EmbeddedResource Include="Data\destructible-ammo-production-redirect-manifest.csv" LogicalName="TrueCustomDifficulty.Data.destructible-ammo-production-redirect-manifest.csv" />
     <EmbeddedResource Include="Data\destructible-grenade-production-redirect-manifest.csv" LogicalName="TrueCustomDifficulty.Data.destructible-grenade-production-redirect-manifest.csv" />

@@ -1,3 +1,28 @@
+## 2026-10-18 — FULL STASH WEAPON SOURCE AUDIT / REMOVAL POLICY (CURRENT)
+
+Original extracted **base game v2.0.5** source: `STALKER2-GameData-CFG(20261017-181645).zip`; corresponding DLC1 source: `STALKER2-DLC1-CFG(10).zip`. Audited physical `ESpawnType::ItemContainer` actors on `WorldMap_WP` **and quest world sublevels**, across both `SpawnActorPrototypes.cfg` files. Followed all explicit `ItemGeneratorSettings[*].PrototypeSID` references, direct `WeaponPrimary`/`WeaponSecondary`/`WeaponPistol` `PossibleItems` (without assuming `Gun` in the name) and nested `SubItemGenerator` links, including **DLC actor references to base GameData generators**. The source-audit result is `src/TrueCustomDifficulty/Data/stash-weapon-source-inventory.csv`; `tools/audit_all_stash_weapons.py` reproducibly checks the source ZIPs and fails on any added/missing weapon entry or classification drift.
+
+| Classification | CFG weapon entries | Policy |
+| --- | ---: | --- |
+| Approved ordinary base-game stash weapons | **13** | Remove original weapon item node when Extra Stash Gear ON |
+| Quest-associated base and DLC1 | **16** | Keep source reward entirely unchanged |
+| Potentially unique `Gun_Trophy_AR` | **1** | Keep; identity requires proof |
+| Source-protected STC Malachite stash | **1** | Keep under 106-actor protected gate |
+| DLC1 cross-archive weapons in non-allowlisted/special actors | **8** | Keep pending dedicated quest/identity/actor eligibility validation |
+| **Total source-authored entries** | **39** | **13 remove / 26 keep** |
+
+These are **39 distinct source entries in 38 physical actors**, not guaranteed live loot spawns. In particular, eight unapproved DLC1 actors reference ordinary weapon SIDs from base-game generator definitions, but their physical actors are not in the DLC1 112-actor approval manifest. Named quest/special generators and `Gun_Trophy_AR` remain protected without guessing. `StashPrototypes.cfg` contains no direct `Gun*` item declaration in this snapshot. The scan is CFG-literal and cannot prove third-party references, generated/previously opened inventory or engine runtime branch execution; nonresolved external generator references are reported, **not silently treated as weapon-free**.
+
+**Production enforcement:** The exact 13-row `stash-authored-weapon-removal-manifest.csv` stays separate and intentionally unchanged. When the master checkbox is ON, the writer validates its 13 rows against the embedded 39-row classification catalog, also applying the existing regular and protected actor gates before emitting precisely scoped `PossibleItems/[i] : removenode` edits. There is no category-wide deletion and no patch to quest/unique/DLC1/special entries. When OFF, zero original weapon removals occur. Six existing compact tier gear controls, 0/RARE/MOD/FREQ meanings, 1+1 bonus template constraint and World Weapon Shuffle exclusivity remain unchanged. The user-facing UI and `parameters.json` parameter IDs do **not** change.
+
+**Audit commands:** `python3 tools/audit_extra_stash_gear.py` validates catalog-to-writer source parity without raw ZIPs. For the original CFG source re-scan:
+```bash
+python3 tools/audit_all_stash_weapons.py \
+  --game-zip "/path/to/STALKER2-GameData-CFG(20261017-181645).zip" \
+  --dlc-zip "/path/to/STALKER2-DLC1-CFG(10).zip"
+```
+Source scan, static checks, C# compile, Wine and game testing are **distinct** forms of evidence; no claim of successful compile or live stash generation is made here. This section supersedes narrower older statements that the 14-row backlog covered every weapon-containing stash.
+
 ## 2026-10-18 — EXTRA STASH GEAR REPLACES SAFE AUTHORED WEAPONS (CURRENT)
 
 **Intentional change:** When `loot.stashGearEnabled` is ON, the writer removes precisely **13 source-audited regular original weapon entries** from separate world stash `ItemGeneratorPrototypes.cfg` generator SIDs by `ItemGenerator/[1]/PossibleItems/[0] : removenode`. This happens **even if all six Extra Stash Gear sliders are OFF**. No removal occurs while master is OFF. These source slots are listed in `Data/stash-authored-weapon-removal-manifest.csv`; runtime validates 13 distinct ActorSIDs, the 803-source regular allowlist, the 106-source protected denylist and strict exact node paths. Original non-weapon entries (medicine, ammo, attachments and armor) and the physical stash containers remain untouched. Original weapon-specific nested upgrades/attachments inside the removed weapon node naturally disappear with that weapon.

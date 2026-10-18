@@ -56,6 +56,27 @@ for tier, weapon, expr in lines:
 # authority from a broad actor classification or from a shuffled pool.
 with (data / "stash-authored-weapon-removal-manifest.csv").open(encoding="utf-8", newline="") as f:
     removals = list(csv.DictReader(f))
+with (data / "stash-weapon-source-inventory.csv").open(encoding="utf-8", newline="") as f:
+    inventory = list(csv.DictReader(f))
+from collections import Counter
+assert len(inventory) == 39
+assert Counter(row["status"] for row in inventory) == {
+    "REMOVE_REGULAR": 13, "KEEP_QUEST": 16,
+    "KEEP_UNIQUE_REVIEW": 1, "KEEP_PROTECTED": 1, "KEEP_DLC_SPECIAL_REVIEW": 8
+}, "Full source inventory status drift"
+assert len({(row["origin"], row["actor_sid"], row["generator_sid"],
+            row["category_index"], row["item_index"], row["item_sid"])
+            for row in inventory}) == 39
+approved_inventory = {
+    (row["actor_sid"], row["generator_sid"], row["item_sid"],
+     f'ItemGenerator/[{row["category_index"]}]/PossibleItems/[{row["item_index"]}]')
+    for row in inventory if row["status"] == "REMOVE_REGULAR"
+}
+excluded_inventory = [row for row in inventory if row["status"] != "REMOVE_REGULAR"]
+assert all(row["actor_sid"] not in {entry["ActorSID"] for entry in removals}
+           and row["generator_sid"] not in {entry["GeneratorSID"] for entry in removals}
+           for row in excluded_inventory), "Protected or quest actor leaked into production"
+
 with (data / "world-weapon-shuffle-manifest.csv").open(encoding="utf-8", newline="") as f:
     shuffle = {row["generator_sid"]: row for row in csv.DictReader(f)}
 with (data / "smartloot-regular-world-actor-manifest.csv").open(encoding="utf-8", newline="") as f:
@@ -68,7 +89,7 @@ approved = {(row["ActorSID"], row["GeneratorSID"], row["ItemPrototypeSID"],
 actual = {(row["ActorSID"], row["GeneratorSID"], row["ItemPrototypeSID"], row["NodePath"])
           for row in removals}
 assert len(approved) == len(actual) == len(removals) == 13, "Unsafe weapon-removal count drift"
-assert actual == approved, "Weapon-removal roster differs from audited original regular entries"
+assert actual == approved == approved_inventory, "Removal manifest differs from source-wide reviewed inventory"
 assert all(row["ActorSID"] in ordinary and row["ActorSID"] not in protected and
            statuses[row["ActorSID"]] == "REGULAR_SMARTLOOT" and
            row["GeneratorSID"].endswith("_" + row["ActorSID"]) and
@@ -85,7 +106,9 @@ assert 'document.AddRemovalNode(row.GeneratorSid, path[..^1], path[^1]);' in sup
 assert 'LoadSmartStashActors()' in suppression and 'BaseProtectedStashActors.Value' in suppression
 assert 'shuffle.CurrentBoolean' in suppression and 'cannot both be enabled' in suppression
 assert 'stash-authored-weapon-removal-manifest.csv' in csproj
+assert 'stash-weapon-source-inventory.csv' in csproj
+assert 'CompleteStashWeaponInventoryResource' in suppression
 assert len(catalog["loot.stashGearEnabled"]["targets"]) == 2
 assert any(t["operation"] == "removeNode" for t in catalog["loot.stashGearEnabled"]["targets"])
 
-print("OK: 13 exact regular authored weapon removal nodes, Trophy/STC excluded; six tier strengths gated and rank-safe; native cap still unverified")
+print("OK: 39 reviewed weapon source entries; exactly 13 approved regular removals; 26 protected/quest/review untouched")

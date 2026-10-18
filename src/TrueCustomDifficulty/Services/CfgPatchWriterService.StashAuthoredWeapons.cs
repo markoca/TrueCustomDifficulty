@@ -11,6 +11,9 @@ public sealed partial class CfgPatchWriterService
     private const string StashAuthoredWeaponRemovalResource =
         "TrueCustomDifficulty.Data.stash-authored-weapon-removal-manifest.csv";
 
+    private const string CompleteStashWeaponInventoryResource =
+        "TrueCustomDifficulty.Data.stash-weapon-source-inventory.csv";
+
     private sealed record StashAuthoredWeapon(
         string ActorSid, string GeneratorSid, string ItemSid, string NodePath);
 
@@ -41,6 +44,43 @@ public sealed partial class CfgPatchWriterService
                 "Extra Stash Gear authored-weapon removal allowlist drifted; refusing unsafe patch.");
         }
 
+        // The exact removal manifest is ONLY the approved subset of the
+        // source-wide base + DLC1 physical ItemContainer weapon inventory.
+        // Quest, unique, protected and unreviewed DLC rows must remain inert.
+        var inventory = ReadStashCsv(CompleteStashWeaponInventoryResource, 11);
+        var sourceCounts = inventory.GroupBy(x => x[9], StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal);
+        var expectedCounts = new Dictionary<string, int>(StringComparer.Ordinal)
+        {
+            ["REMOVE_REGULAR"] = 13,
+            ["KEEP_QUEST"] = 16,
+            ["KEEP_UNIQUE_REVIEW"] = 1,
+            ["KEEP_PROTECTED"] = 1,
+            ["KEEP_DLC_SPECIAL_REVIEW"] = 8
+        };
+        if (inventory.Count != 39
+            || sourceCounts.Count != expectedCounts.Count
+            || expectedCounts.Any(x => !sourceCounts.TryGetValue(x.Key, out var count)
+                || count != x.Value))
+            throw new InvalidDataException(
+                "Exhaustive stash weapon source inventory changed without review.");
+
+        var sourceApproved = inventory.Where(x => x[9] == "REMOVE_REGULAR").ToArray();
+        var approvedIdentity = sourceApproved
+            .Select(x => (Actor: x[1], Generator: x[4], Item: x[8],
+                Path: "ItemGenerator/[" + x[6] + "]/PossibleItems/[" + x[7] + "]"))
+            .ToHashSet();
+        if (approvedIdentity.Count != 13
+            || sourceApproved.Any(x => x[0] != "base" || x[2] != "WorldMap_WP"
+                || x[3] != "EmptyInherited"
+                || x[5] is not ("WeaponPrimary" or "WeaponPistol" or "WeaponSecondary"))
+            || entries.Any(x => !approvedIdentity.Contains(
+                (x.ActorSid, x.GeneratorSid, x.ItemSid, x.NodePath)))
+            || inventory.Where(x => x[9] != "REMOVE_REGULAR").Any(x =>
+                entries.Any(e => e.ActorSid == x[1] || e.GeneratorSid == x[4])))
+            throw new InvalidDataException(
+                "Extra stash weapon removals do not match the independently reviewed full inventory.");
+        
         return entries;
     }
 
