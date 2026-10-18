@@ -30,13 +30,9 @@ internal static partial class Program
             toggle.CurrentBoolean = true;
             // All six new gear selectors are still OFF, but existing ordinary
             // authored weapons must nevertheless disappear from eligible stashes.
-            foreach (var p in on.AllParameters.Where(x =>
-                x.Id.StartsWith("loot.stashGear", StringComparison.Ordinal)
-                && x.Id != "loot.stashGearEnabled"))
-            {
-                Check(p.CurrentNumber == 0 && p.IsControlEnabled,
-                    "Enabled Extra Gear should activate zero-strength child controls.");
-            }
+            var coverage = on.AllParameters.Single(x => x.Id == "loot.stashGearCoveragePercent");
+            Check(coverage.CurrentNumber == 0 && coverage.IsControlEnabled,
+                "Enabled Extra Gear must activate a 0-percent coverage control.");
 
             var result = new CfgPatchWriterService().Write(on, Catalog, null, enabledPath);
             var file = OutputPath(enabledPath, source);

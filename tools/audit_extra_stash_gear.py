@@ -25,32 +25,16 @@ assert len({row["ItemPrototypeSID"] for row in weapons}) == 9
 assert all(statuses[row["ActorSID"]] == "REGULAR_SMARTLOOT" for row in weapons)
 assert catalog["loot.stashGearEnabled"]["control"] == "toggle"
 assert catalog["loot.stashGearEnabled"]["vanilla"]["All"] is False
-for tier in ("Cheap", "Medium", "Expensive"):
-    for kind in ("Weapon", "Armor"):
-        p = catalog[f"loot.stashGear{tier}{kind}"]
-        assert p["requiresToggle"] == "loot.stashGearEnabled"
-        assert p["slider"] == {"min": 0, "max": 3, "step": 1, "stepMode": "absolute"}
-assert 'if (!all.TryGetValue("loot.stashGearEnabled", out var master) || !master.CurrentBoolean)' in svc
-assert 'category.SetAssignment("bAllowSameCategoryGeneration", "false")' in svc
-assert 'item.SetAssignment("MinCount", "1")' in svc
-assert 'item.SetAssignment("MaxCount", "1")' in svc
-assert 'DrawTogglePill(dc, P("loot.stashGearEnabled")' in ui
-# Every rank-specific SID in the writer maps to a rank and equipment cap
-# no higher than the current player rank and the selected stash tier.
-lines = re.findall(r'^\s*\("(Cheap|Medium|Expensive)", (true|false)\) => (.*),$', svc, re.M)
-assert len(lines) == 6, lines
-for tier, weapon, expr in lines:
-    values = re.findall(r'"([^"]+)"', expr)
-    assert len(values) in (1, 4)
-    if len(values) == 1:
-        values *= 4
-    for rank, sid in enumerate(values, 1):
-        row = ranks[sid]
-        assert row["ItemClass"] == ("Weapon" if weapon == "true" else "Armor")
-        item_tier = int(row["ProgressionTier"][1:])
-        assert item_tier <= rank
-        assert item_tier <= {"Cheap": 1, "Medium": 2, "Expensive": 4}[tier]
-        assert not re.search(r"Gauss|RPG|Trophy", sid, re.I)
+p = catalog["loot.stashGearCoveragePercent"]
+assert p["requiresToggle"] == "loot.stashGearEnabled"
+assert p["slider"] == {"min": 0, "max": 100, "step": 1, "stepMode": "absolute"}
+coverage = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashGearCoverage.cs").read_text(encoding="utf-8")
+assert 'P("loot.stashGearCoveragePercent")' in ui
+assert "WriteExtraStashGear(" not in svc
+assert "StashGearStableHash(" in coverage and "SelectStashGearActors(" in coverage
+assert "LoadStashGearPool(" in coverage and "LoadStashGearActors(" in coverage
+assert 'item.SetAssignment("MinCount", "1")' in coverage
+assert 'item.SetAssignment("MaxCount", "1")' in coverage
 
 # Opt-in suppression has its own strict subset manifest; never infer this
 # authority from a broad actor classification or from a shuffled pool.

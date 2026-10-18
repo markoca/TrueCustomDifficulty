@@ -6646,7 +6646,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Enable Extra Stash Gear",
-      "description": "When enabled, removes the original authored regular weapon from 13 verified ordinary weapon-stash generators; controls may then add progression-gated regular weapons and armor. Quest, unique and special weapons remain untouched.",
+      "description": "Enable optional fixed-percentage coverage of source-approved physical stash actors with one or two rank-appropriate regular equipment items. The 13 approved authored original weapon items are separately removed when enabled; quest, special, unique and unreviewed actors are excluded.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -6659,46 +6659,60 @@
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "TCD_Stash_{Cheap,Medium,Expensive}_*",
-          "path": "ItemGenerator[new rank-gated WeaponPrimary/BodyArmor categories]",
+          "prototype": "13 exact approved authored regular stash generator SIDs",
+          "path": "ItemGenerator/[1]/PossibleItems/[0]",
+          "operation": "removeNode"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/SpawnActorPrototypes.cfg",
+          "prototype": "Source-approved ordinary physical ItemContainer ActorSIDs",
+          "path": "ItemGeneratorSettings[*].ItemGenerators[new index].PrototypeSID",
           "operation": "conditionalAdd"
         },
         {
           "scope": "baseGame",
           "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "13 exact approved authored regular stash generator SIDs",
-          "path": "ItemGenerator/[1]/PossibleItems/[0]",
-          "operation": "removeNode"
+          "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}",
+          "path": "ItemGenerator[weapon, optional armor].PossibleItems",
+          "operation": "conditionalAdd"
+        },
+        {
+          "scope": "dlc1",
+          "file": "DLCGameData/DLC1/SpawnActorPrototypes.cfg",
+          "prototype": "Source-approved DLC1 ordinary physical ItemContainer ActorSIDs",
+          "path": "ItemGeneratorSettings[*].ItemGenerators[new index].PrototypeSID",
+          "operation": "conditionalAdd"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "With Extra Gear ON, 13 audited regular authored weapon PossibleItems nodes are removed even if all six gear-strength sliders are OFF; other authored rewards remain.",
-          "Gun_Trophy_AR and protected quest, unique, clue and special stash actors are excluded; already generated or opened stash contents may be saved.",
-          "Weapons/armor level OFF, RARE, MOD, FREQ authors Chance 0, 0.02, 0.07, 0.15 per new eligible item entry, not a physical-stash percentage.",
-          "New rank-gated categories each have MinCount=MaxCount=1 and disabled category repetition; a hard 2-item cap across native generator calls requires gameplay verification.",
-          "Extra Stash Gear conflicts with World Weapon Shuffle because both edit the same authored weapon slots; writer fails closed when both are enabled.",
-          "Rank is player-based rather than geographical; Gauss, RPG, quest and unique rewards are excluded."
+          "Coverage slider chooses an exact rounded percentage of source-approved physical actor IDs at build time (separately for base and installed DLC1); selection is deterministic per actor, not a fabricated runtime Chance.",
+          "0% adds no equipment; master ON still removes the 13 specifically approved original authored weapon item nodes. Master OFF changes no ordinary authored weapons or extra gear.",
+          "Chosen physical stash receives one weapon, optionally one armor; all item SIDs are from the 34 regular weapon and four suit rank catalog. Each native rank branch receives its own actor-unique generator; never alters shared vanilla gear pools.",
+          "The source player rank gate controls the maximum equipment tier. Existing master toggle keeps World Weapon Shuffle mutually exclusive, avoiding overlapping original weapon source edits.",
+          "Quest, unique, special, no-generator, ambiguous rank and separately reserved Trophy weapon actors are never selected.",
+          "Final native engine generation and existing-save behavior require in-game validation."
         ]
       },
       "rationale": "Opt-in replacement of fixed regular stash weapons with separately gated optional progression gear, preserving scripted, special and unique content.",
-      "logic": "Checkbox alone removes the 13 approved fixed weapon item nodes. The six tier/kind strength values independently add zero or one possible rank-gated bonus item category per source; native physical stash drop odds remain unproven.",
-      "interaction": "Checkbox removes source-approved authored regular weapons and enables the six compact tier/gear strength editors; OFF leaves those original weapon slots intact.",
+      "logic": "When enabled, remove only 13 vetted original regular weapon slots, then rank stable eligible physical actor IDs by SHA256 and choose round(N*percentage/100) per supported content scope; attach dedicated 1–2 item non-shared generator to an unused native ItemGenerators slot for each selected rank branch.",
+      "interaction": "One compact checkbox plus one 0–100% slider with 1% increments, aligned to existing Stamina Usage slider grammar.",
       "exposeInUi": true
     },
     {
-      "id": "loot.stashGearCheapWeapon",
+      "id": "loot.stashGearCoveragePercent",
       "tab": "stashes",
       "group": "Stash Gear",
-      "label": "Basic Stash Weapon",
-      "description": "Adds eligible non-unique weapon generator entries to basic world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
+      "label": "Eligible Stash Coverage",
+      "description": "Select the exact percentage of eligible ordinary physical stash actors that receive one or two rank-appropriate equipment items. Calculated deterministically at build time, separately for base and installed DLC1; not an item roll Chance.",
       "control": "slider",
       "valueKind": "integer",
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "Extra weapon frequency"
+        "valueLabel": "Stashes with extra gear"
       },
       "vanilla": {
         "All": 0
@@ -6708,276 +6722,38 @@
       },
       "slider": {
         "min": 0,
-        "max": 3,
+        "max": 100,
         "step": 1,
         "stepMode": "absolute"
       },
       "targets": [
         {
           "scope": "baseGame",
-          "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "TCD_Stash_Cheap_*",
-          "path": "ItemGenerator[new WeaponPrimary rank-gated categories].PossibleItems[*].Chance",
-          "operation": "set"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
-          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
-          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
-          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
-        ]
-      },
-      "rationale": "Optional extra weapon in basic stashes without affecting authored one-off items.",
-      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
-      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
-      "requiresToggle": "loot.stashGearEnabled",
-      "exposeInUi": true
-    },
-    {
-      "id": "loot.stashGearCheapArmor",
-      "tab": "stashes",
-      "group": "Stash Gear",
-      "label": "Basic Stash Armor",
-      "description": "Adds eligible non-unique armor generator entries to basic world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
-      "control": "slider",
-      "valueKind": "integer",
-      "display": {
-        "primary": "integer",
-        "rawFormat": "0",
-        "valueLabel": "Extra armor frequency"
-      },
-      "vanilla": {
-        "All": 0
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0,
-        "max": 3,
-        "step": 1,
-        "stepMode": "absolute"
-      },
-      "targets": [
+          "file": "GameData/SpawnActorPrototypes.cfg",
+          "prototype": "Approved physical stash actors",
+          "path": "ItemGeneratorSettings[*].ItemGenerators[unused slot].PrototypeSID",
+          "operation": "conditionalAdd"
+        },
         {
-          "scope": "baseGame",
-          "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "TCD_Stash_Cheap_*",
-          "path": "ItemGenerator[new BodyArmor rank-gated categories].PossibleItems[*].Chance",
-          "operation": "set"
+          "scope": "dlc1",
+          "file": "DLCGameData/DLC1/SpawnActorPrototypes.cfg",
+          "prototype": "Approved DLC1 physical stash actors",
+          "path": "ItemGeneratorSettings[*].ItemGenerators[unused slot].PrototypeSID",
+          "operation": "conditionalAdd"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
-          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
-          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
-          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
+          "Measured percentage is deterministic selected physical actors, not an engine per-roll Chance.",
+          "Eligibility excludes all protected/quest/unique/special actors and actors without a usable audited native generator/rank.",
+          "Exact physical items per stash require gameplay validation; source generator contains one weapon and optionally one suit per native rank, both count 1.",
+          "Rank tiers and 34+4 item SID pool originate from gear-progression-ranks.csv."
         ]
       },
-      "rationale": "Optional extra armor in basic stashes without affecting authored one-off items.",
-      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
-      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
-      "requiresToggle": "loot.stashGearEnabled",
-      "exposeInUi": true
-    },
-    {
-      "id": "loot.stashGearMediumWeapon",
-      "tab": "stashes",
-      "group": "Stash Gear",
-      "label": "Standard Stash Weapon",
-      "description": "Adds eligible non-unique weapon generator entries to standard world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
-      "control": "slider",
-      "valueKind": "integer",
-      "display": {
-        "primary": "integer",
-        "rawFormat": "0",
-        "valueLabel": "Extra weapon frequency"
-      },
-      "vanilla": {
-        "All": 0
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0,
-        "max": 3,
-        "step": 1,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "TCD_Stash_Medium_*",
-          "path": "ItemGenerator[new WeaponPrimary rank-gated categories].PossibleItems[*].Chance",
-          "operation": "set"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
-          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
-          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
-          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
-        ]
-      },
-      "rationale": "Optional extra weapon in standard stashes without affecting authored one-off items.",
-      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
-      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
-      "requiresToggle": "loot.stashGearEnabled",
-      "exposeInUi": true
-    },
-    {
-      "id": "loot.stashGearMediumArmor",
-      "tab": "stashes",
-      "group": "Stash Gear",
-      "label": "Standard Stash Armor",
-      "description": "Adds eligible non-unique armor generator entries to standard world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
-      "control": "slider",
-      "valueKind": "integer",
-      "display": {
-        "primary": "integer",
-        "rawFormat": "0",
-        "valueLabel": "Extra armor frequency"
-      },
-      "vanilla": {
-        "All": 0
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0,
-        "max": 3,
-        "step": 1,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "TCD_Stash_Medium_*",
-          "path": "ItemGenerator[new BodyArmor rank-gated categories].PossibleItems[*].Chance",
-          "operation": "set"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
-          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
-          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
-          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
-        ]
-      },
-      "rationale": "Optional extra armor in standard stashes without affecting authored one-off items.",
-      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
-      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
-      "requiresToggle": "loot.stashGearEnabled",
-      "exposeInUi": true
-    },
-    {
-      "id": "loot.stashGearExpensiveWeapon",
-      "tab": "stashes",
-      "group": "Stash Gear",
-      "label": "Rare Stash Weapon",
-      "description": "Adds eligible non-unique weapon generator entries to rare world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
-      "control": "slider",
-      "valueKind": "integer",
-      "display": {
-        "primary": "integer",
-        "rawFormat": "0",
-        "valueLabel": "Extra weapon frequency"
-      },
-      "vanilla": {
-        "All": 0
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0,
-        "max": 3,
-        "step": 1,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "TCD_Stash_Expensive_*",
-          "path": "ItemGenerator[new WeaponPrimary rank-gated categories].PossibleItems[*].Chance",
-          "operation": "set"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
-          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
-          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
-          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
-        ]
-      },
-      "rationale": "Optional extra weapon in rare stashes without affecting authored one-off items.",
-      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
-      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
-      "requiresToggle": "loot.stashGearEnabled",
-      "exposeInUi": true
-    },
-    {
-      "id": "loot.stashGearExpensiveArmor",
-      "tab": "stashes",
-      "group": "Stash Gear",
-      "label": "Rare Stash Armor",
-      "description": "Adds eligible non-unique armor generator entries to rare world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
-      "control": "slider",
-      "valueKind": "integer",
-      "display": {
-        "primary": "integer",
-        "rawFormat": "0",
-        "valueLabel": "Extra armor frequency"
-      },
-      "vanilla": {
-        "All": 0
-      },
-      "default": {
-        "mode": "fixedVanilla"
-      },
-      "slider": {
-        "min": 0,
-        "max": 3,
-        "step": 1,
-        "stepMode": "absolute"
-      },
-      "targets": [
-        {
-          "scope": "baseGame",
-          "file": "GameData/ItemGeneratorPrototypes.cfg",
-          "prototype": "TCD_Stash_Expensive_*",
-          "path": "ItemGenerator[new BodyArmor rank-gated categories].PossibleItems[*].Chance",
-          "operation": "set"
-        }
-      ],
-      "support": {
-        "status": "runtime_test_required",
-        "notes": [
-          "OFF adds no new generated gear; vanilla authored fixed gear remains untouched.",
-          "RARE/MODERATE/FREQUENT author 0.02/0.07/0.15 as each eligible item entry's Chance, not guaranteed stash-wide probabilities.",
-          "PlayerRank gates and production-only redirects are preserved; existing ammo/bonus settings compose.",
-          "Candidate gear SIDs taken from current GameData/ItemGeneratorPrototypes.cfg; live game verification still required."
-        ]
-      },
-      "rationale": "Optional extra armor in rare stashes without affecting authored one-off items.",
-      "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
-      "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "rationale": "One comprehensible coverage fraction instead of six nontransparent per-entry Chance sliders.",
+      "logic": "Apply coverage to eligible ActorSID list using stable SHA256 ordering and round N*p/100 per scope, never shared template-wide odds.",
+      "interaction": "Whole percentages 0%–100% with 1% increments, disabled when master is OFF.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },

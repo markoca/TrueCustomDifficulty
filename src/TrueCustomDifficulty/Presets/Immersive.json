@@ -1025,27 +1025,7 @@
       "kind": "slider",
       "number": 1
     },
-    "loot.stashGearCheapWeapon": {
-      "kind": "slider",
-      "number": 0
-    },
-    "loot.stashGearCheapArmor": {
-      "kind": "slider",
-      "number": 0
-    },
-    "loot.stashGearMediumWeapon": {
-      "kind": "slider",
-      "number": 0
-    },
-    "loot.stashGearMediumArmor": {
-      "kind": "slider",
-      "number": 0
-    },
-    "loot.stashGearExpensiveWeapon": {
-      "kind": "slider",
-      "number": 0
-    },
-    "loot.stashGearExpensiveArmor": {
+    "loot.stashGearCoveragePercent": {
       "kind": "slider",
       "number": 0
     },

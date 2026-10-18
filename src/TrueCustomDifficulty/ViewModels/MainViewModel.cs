@@ -570,12 +570,7 @@ public sealed class MainViewModel : ObservableObject
         WireVisualAggregate(
             "loot.stashGearEnabled",
             "loot.stashGearEnabled",
-            "loot.stashGearCheapWeapon",
-            "loot.stashGearCheapArmor",
-            "loot.stashGearMediumWeapon",
-            "loot.stashGearMediumArmor",
-            "loot.stashGearExpensiveWeapon",
-            "loot.stashGearExpensiveArmor");
+            "loot.stashGearCoveragePercent");
 
         WireVisualAggregate(
             "loot.cheapStashAmmoQuantity",
@@ -2156,12 +2151,7 @@ public sealed class MainViewModel : ObservableObject
                 "loot.stashArmyMedkitMaxCount" => 323,
                 // Additional weapons/armor are a separate final section.
                 "loot.stashGearEnabled" => 330,
-                "loot.stashGearCheapWeapon" => 331,
-                "loot.stashGearCheapArmor" => 332,
-                "loot.stashGearMediumWeapon" => 333,
-                "loot.stashGearMediumArmor" => 334,
-                "loot.stashGearExpensiveWeapon" => 335,
-                "loot.stashGearExpensiveArmor" => 336,
+                "loot.stashGearCoveragePercent" => 331,
 
                 // Three native stash tier ammo quantities; RGD-5 Chance/Amount and
                 // Rare Coupon Chance are members of StashContentMix.

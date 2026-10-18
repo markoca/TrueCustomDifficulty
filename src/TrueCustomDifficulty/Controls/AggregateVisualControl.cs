@@ -4813,81 +4813,48 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawHalf(max, maxRail, -1.0, 6.0, false);
     }
 
-    // Tier strength modes are newly authored per-item Chance, not physical stash odds.
+    // One clear, source-audited physical stash coverage control.
+    // Exactly 1% integer steps; never a fabricated runtime drop probability.
     private void DrawStashGear(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
         DrawHeader(dc, "EXTRA STASH GEAR", "", text, muted, accent);
-        var tiers = new (string Tier, string Weapon, string Armor)[]
-        {
-            ("BASIC", "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor"),
-            ("STANDARD", "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor"),
-            ("RARE", "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor")
-        };
-        var columns = ActualWidth >= 746.0 ? 3 : ActualWidth >= 580.0 ? 2 : 1;
-        var width = Math.Min(778.0, Math.Max(1.0, ActualWidth - 30.0));
+        var width = Math.Min(630.0, Math.Max(1.0, ActualWidth - 30.0));
         var left = (ActualWidth - width) / 2.0;
-        const double gap = 11.0;
-        const double cardHeight = 154.0;
         DrawTogglePill(dc, P("loot.stashGearEnabled"), "ENABLE EXTRA GEAR",
             new Rect(left + 2.0, 52.0, Math.Min(252.0, width - 4.0), 30.0),
             text, muted, border, accent, panel);
-        var cell = (width - gap * (columns - 1)) / columns;
-        for (var i = 0; i < tiers.Length; i++)
-        {
-            var x = left + (i % columns) * (cell + gap);
-            var y = 97.0 + (i / columns) * (cardHeight + gap);
-            var card = new Rect(x, y, cell, cardHeight);
-            var focused = ReferenceEquals(_selectedParameter, P(tiers[i].Weapon))
-                || ReferenceEquals(_selectedParameter, P(tiers[i].Armor));
-            dc.DrawRoundedRectangle(CloneWithOpacity(panel, focused ? .77 : .60),
-                new Pen(CloneWithOpacity(focused ? accent : border, focused ? .74 : .48),
-                    focused ? 1.3 : .9), card, 5.0, 5.0);
-            DrawCenteredText(dc, tiers[i].Tier,
-                new Point(x + cell / 2.0, y + 10.0), 11.5,
-                text, FontWeights.Bold);
-            DrawStashGearMode(dc, P(tiers[i].Weapon), "WEAPONS",
-                new Rect(x + 10.0, y + 35.0, cell - 20.0, 46.0),
-                text, muted, border, accent, panel);
-            DrawStashGearMode(dc, P(tiers[i].Armor), "ARMOR",
-                new Rect(x + 10.0, y + 88.0, cell - 20.0, 46.0),
-                text, muted, border, accent, panel);
-        }
-    }
 
-    private void DrawStashGearMode(
-        DrawingContext dc, ParameterViewModel? source, string caption, Rect row,
-        Brush text, Brush muted, Brush border, Brush accent, Brush panel)
-    {
-        if (source is null) return;
-        var enabled = source.IsControlEnabled;
-        var labels = new[] { "OFF", "RARE", "MOD", "FREQ" };
-        var selected = Math.Clamp((int)Math.Round(source.CurrentNumber), 0, 3);
-        var rail = new Rect(row.Left + 7.0, row.Top + 24.0,
-            Math.Max(1.0, row.Width - 14.0), 1.0);
-        DrawText(dc, caption, new Point(row.Left + 2.0, row.Top + 1.0),
-            10.4, enabled ? text : muted, FontWeights.Bold);
-        DrawRightAlignedText(dc, labels[selected],
-            new Point(row.Right - 2.0, row.Top + 1.0), 10.4,
-            enabled ? text : muted, FontWeights.SemiBold);
+        var coverage = P("loot.stashGearCoveragePercent");
+        if (coverage is null) return;
+        const double y = 99.0;
+        DrawText(dc, "ELIGIBLE STASHES", new Point(left + 2.0, y),
+            11.0, coverage.IsControlEnabled ? text : muted, FontWeights.SemiBold);
+        DrawRightAlignedText(dc, $"{(int)Math.Round(coverage.CurrentNumber)}%",
+            new Point(left + width - 4.0, y - 1.0), 13.0,
+            coverage.IsControlEnabled && coverage.IsValueModifiedFromReference()
+                ? accent : text, FontWeights.SemiBold);
+
+        var rail = new Rect(left + 10.0, y + 34.0,
+            Math.Max(1.0, width - 20.0), 2.0);
         dc.DrawLine(new Pen(border, 2.0),
             new Point(rail.Left, rail.Top), new Point(rail.Right, rail.Top));
-        for (var i = 0; i < labels.Length; i++)
-        {
-            var x = ValueToX(i, 0.0, 3.0, rail, false);
-            var active = i == selected;
-            dc.DrawEllipse(active ? accent : panel,
-                new Pen(active && enabled ? accent : muted, active ? 1.8 : 1.0),
-                new Point(x, rail.Top), active ? 5.3 : 4.0,
-                active ? 5.3 : 4.0);
-            DrawCenteredText(dc, labels[i], new Point(x, row.Top + 33.0),
-                8.9, active && enabled ? text : muted, FontWeights.SemiBold);
-        }
-        AddHorizontalTarget(source,
-            new Rect(rail.Left - 8.0, row.Top + 13.0,
-                rail.Width + 16.0, 33.0),
-            rail, 0.0, 3.0);
+        var position = ValueToX(coverage.CurrentNumber, 0.0, 100.0, rail, false);
+        var active = coverage.IsControlEnabled;
+        dc.DrawLine(new Pen(active ? accent : muted, 2.0),
+            new Point(rail.Left, rail.Top), new Point(position, rail.Top));
+        dc.DrawEllipse(panel, new Pen(active ? accent : muted, 2.2),
+            new Point(position, rail.Top), 6.5, 6.5);
+        if (active)
+            dc.DrawEllipse(accent, null, new Point(position, rail.Top), 2.5, 2.5);
+        DrawText(dc, "0%", new Point(rail.Left, rail.Top + 12.0),
+            10.0, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "100%", new Point(rail.Right, rail.Top + 12.0),
+            10.0, muted, FontWeights.Normal);
+        AddHorizontalTarget(coverage,
+            new Rect(rail.Left - 7.0, rail.Top - 15.0, rail.Width + 14.0, 34.0),
+            rail, 0.0, 100.0);
     }
 
     // The UI reads the SAME embedded ItemGenerator source templates as the
@@ -6978,7 +6945,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 345.0 : 607.0;
     private static double StashGearHeight(double width)
-        => width >= 746.0 ? 265.0 : width >= 580.0 ? 428.0 : 591.0;
+        => 184.0;
 
     // Renderer measurements and painted card extents must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
@@ -7078,10 +7045,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             },
             "StashGear" => new[]
             {
-                "loot.stashGearEnabled",
-                "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor",
-                "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
-                "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"
+                "loot.stashGearEnabled", "loot.stashGearCoveragePercent"
             },
             "StashRewardProfile" => new[]
             {

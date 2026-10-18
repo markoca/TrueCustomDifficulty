@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 277,
+  "supportedParameterCount": 276,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -22691,12 +22691,16 @@
         "loot.stashMixDrinks",
         "loot.stashMixGrenades",
         "loot.stashMixCoupons",
-        "loot.stashGearCheapWeapon",
-        "loot.stashGearCheapArmor",
-        "loot.stashGearMediumWeapon",
-        "loot.stashGearMediumArmor",
-        "loot.stashGearExpensiveWeapon",
-        "loot.stashGearExpensiveArmor"
+        "loot.stashGearCoveragePercent",
+        "loot.stashGearEnabled",
+        "loot.mediumStashMedicalChance",
+        "loot.mediumStashDrinksChance",
+        "loot.mediumStashCouponsChance",
+        "loot.expensiveStashAmmoChance",
+        "loot.expensiveStashMedicalChance",
+        "loot.expensiveStashFoodChance",
+        "loot.expensiveStashDrinksChance",
+        "loot.expensiveStashGrenadesChance"
       ],
       "source": "GameData/ItemGeneratorPrototypes.cfg",
       "templateTiers": [
@@ -22705,7 +22709,7 @@
         "Expensive"
       ],
       "scope": "TCD-owned production-only stash generator redirects",
-      "notes": "Joint writer composition with existing stash ammo/grenades/coupon patching, 0/1/2/3 gear states; explicit PlayerRank branch gates."
+      "notes": "Single deterministic whole-percentage physical stash selection; previous per-entry Chance modes retired"
     },
     "stashMedicalProduction": {
       "parameterIds": [
@@ -22716,7 +22720,11 @@
         "loot.stashMedkitMinCount",
         "loot.stashMedkitMaxCount",
         "loot.stashArmyMedkitMinCount",
-        "loot.stashArmyMedkitMaxCount"
+        "loot.stashArmyMedkitMaxCount",
+        "loot.stashMedicalBandageChanceScale",
+        "loot.stashMedicalMedkitChanceScale",
+        "loot.stashMedicalArmyMedkitChanceScale",
+        "loot.stashMedicalAntiRadChanceScale"
       ],
       "source": "GameData/ItemGeneratorPrototypes.cfg",
       "scope": "Existing TCD-owned production-only Cheap/Medium/Expensive stash copies; branch/candidate coverage from source 2.0.5",

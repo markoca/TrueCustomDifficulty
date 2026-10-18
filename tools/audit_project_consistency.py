@@ -574,9 +574,7 @@ _e2e_runtime = {
     "loot.ammoBoxWeight918",
     "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
     "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
-    "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor",
-    "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
-    "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor",
+    "loot.stashGearCoveragePercent",
     "loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
     "loot.stashMedicalArmyMedkitBias", "loot.stashMedicalAntiRadBias",
     "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
@@ -585,8 +583,8 @@ _e2e_runtime = {
 _e2e_all = _e2e_static | _e2e_runtime
 _catalog_ids = {p.get("id") for p in parameters}
 _missing_e2e = sorted(_e2e_all - _catalog_ids)
-if len(_e2e_all) != 52 or len(_e2e_static) != 16 or len(_e2e_runtime) != 36 or _missing_e2e:
-    fail(f"generator UI E2E gate drifted: total={len(_e2e_all)}, static={len(_e2e_static)}, runtime={len(_e2e_runtime)}, missing={_missing_e2e}; expected 52/16/36/0")
+if len(_e2e_all) != 47 or len(_e2e_static) != 16 or len(_e2e_runtime) != 31 or _missing_e2e:
+    fail(f"generator UI E2E gate drifted: total={len(_e2e_all)}, static={len(_e2e_static)}, runtime={len(_e2e_runtime)}, missing={_missing_e2e}; expected 47/16/31/0")
 elif not _e2e_doc.exists():
     fail("generator UI E2E verification document missing from docs/")
 else:
@@ -3736,7 +3734,7 @@ _stash_order_check = (
     '"loot.stashMixAmmo" => 310,'
     '"loot.stashMedicalBandageBias" => 316,'
     '"loot.stashMedkitMinCount" => 320,'
-    '"loot.stashGearCheapWeapon" => 330,'
+    '"loot.stashGearEnabled" => 330,'
 )
 if not all(t in _stash_sort_body for t in _stash_order_check):
     fail("Stashes sections drifted from Rewards > Content > Medical Composition > Quantity > Extra Gear")
@@ -3748,7 +3746,7 @@ _stash_ids = {p["id"] for p in _stash_rows}
 _stash_tabs = [t for t in parameters_doc.get("tabs", []) if t.get("id") == "stashes"]
 _stash_include = parameters_doc.get("scope", {}).get("includedTabs", [])
 _stash_tab_text = (ROOT / "src/TrueCustomDifficulty/ViewModels/TabViewModel.cs").read_text(encoding="utf-8")
-if (len(_stash_rows) != 34 or len(_stash_ids) != 34
+if (len(_stash_rows) != 29 or len(_stash_ids) != 29
     or _stash_tabs != [{"id": "stashes", "label": "Stashes", "order": 55}]
     or _stash_include.index("stashes") != _stash_include.index("loot") + 1
     or any(p.get("tab") != "stashes" or not p["id"].startswith("loot.") for p in _stash_rows)
@@ -3759,7 +3757,7 @@ if (len(_stash_rows) != 34 or len(_stash_ids) != 34
     or not all(f'"{pid}"' in _stash_vm_text for pid in _stash_ids)):
     fail("Stashes tab catalog and WPF ViewModel ownership drifted")
 else:
-    note("Stashes tab: 34 stable source IDs, 30 catalog-exposed parameters; four editable Basic pool knobs, two hidden legacy multipliers")
+    note("Stashes tab: 29 source IDs after replacing six tier modes with one percentage selector")
 
 # Global cross-domain control audit release gate (v0.2.50).
 _global_doc = DOCS / "GLOBAL-CROSS-DOMAIN-AUDIT.md"
@@ -3780,7 +3778,7 @@ _global_expected_tabs = {
     "master": 20,
     "environment": 6,
     "loot": 27,
-    "stashes": 30,
+    "stashes": 25,
     "alife": 2,
 }
 _global_confirmed = sum(p.get("support", {}).get("status") == "confirmed" for p in _global_visible)
@@ -4225,7 +4223,7 @@ if (len(_stash_med_caps) != 2
            p.get("slider", {}).get("max") != 6 or
            p.get("vanilla", {}).get("All") != 0 for p in _stash_med_caps)
     or "DrawStashQuantityDots(" not in _stash_ui
-    or "DrawStashGearMode(" not in _stash_ui
+    or 'P("loot.stashGearCoveragePercent")' not in _stash_ui
     or "DrawStashPoolBar(" not in _stash_ui
     or "DrawStashMedicalSourcePreview(" not in _stash_ui
     or "effective.TierField(" not in _stash_ui
