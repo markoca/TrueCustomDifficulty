@@ -1,3 +1,7 @@
+## Extra Stash Gear ON (updated 2026-10-18)
+
+The table below documents the game's **original source**, not necessarily what will be present when the Extra Gear checkbox is enabled. The **13 non-Trophy** confirmed weapon rows now have their **original item entry explicitly removed** by the opt-in feature. This applies even when the six Extra Gear strength controls remain OFF. The **one `Gun_Trophy_AR` row remains intact** pending uniqueness review. STC Malachite's separate protected original weapon slot remains intact too. See [the machine-readable 13-row authorisation and removal policy](STASH-AUTHORED-WEAPON-REMOVAL-2026-10-18.md). The older statement below that all 14 entries remain untouched is historical, superseded by this checkbox-specific behavior. Source quantities remain an audit record, not a generated-mod promise.
+
 # Existing authored weapon stashes — 2026-10-18
 
 **14 documented physical stash-generator actors** offer existing authored weapons (9 distinct item SIDs). Original fields are source evidence, **not guaranteed in-game drops**. Each ActorSID is present as `REGULAR_SMARTLOOT` in the physical safety catalog. This is an authored-weapon subset, **not a claim to enumerate all dynamic procedural, quest or scripted weapon rewards**.

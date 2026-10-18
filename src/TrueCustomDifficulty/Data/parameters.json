@@ -6646,7 +6646,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Enable Extra Stash Gear",
-      "description": "Enable optional rank-gated regular weapons and armor in eligible world stash generator clones. No added gear with checkbox OFF. At most one added weapon entry and one added suit entry per active player-rank/tier generator; runtime per-physical-stash limit requires testing.",
+      "description": "When enabled, removes the original authored regular weapon from 13 verified ordinary weapon-stash generators; controls may then add progression-gated regular weapons and armor. Quest, unique and special weapons remain untouched.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -6662,19 +6662,29 @@
           "prototype": "TCD_Stash_{Cheap,Medium,Expensive}_*",
           "path": "ItemGenerator[new rank-gated WeaponPrimary/BodyArmor categories]",
           "operation": "conditionalAdd"
+        },
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "13 exact approved authored regular stash generator SIDs",
+          "path": "ItemGenerator/[1]/PossibleItems/[0]",
+          "operation": "removeNode"
         }
       ],
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Gates the six existing stash gear tier selectors; disabled values stay in presets but do not produce extra CFG gear.",
-          "One possible added weapon and one suit per rank category, with MinCount=MaxCount=1 and no repeated generation of the same new category.",
-          "Player rank is not region; Gauss/RPG, uniques and quest gear are excluded. Per physical stash upper bound awaits gameplay test."
+          "With Extra Gear ON, 13 audited regular authored weapon PossibleItems nodes are removed even if all six gear-strength sliders are OFF; other authored rewards remain.",
+          "Gun_Trophy_AR and protected quest, unique, clue and special stash actors are excluded; already generated or opened stash contents may be saved.",
+          "Weapons/armor level OFF, RARE, MOD, FREQ authors Chance 0, 0.02, 0.07, 0.15 per new eligible item entry, not a physical-stash percentage.",
+          "New rank-gated categories each have MinCount=MaxCount=1 and disabled category repetition; a hard 2-item cap across native generator calls requires gameplay verification.",
+          "Extra Stash Gear conflicts with World Weapon Shuffle because both edit the same authored weapon slots; writer fails closed when both are enabled.",
+          "Rank is player-based rather than geographical; Gauss, RPG, quest and unique rewards are excluded."
         ]
       },
-      "rationale": "Opt-in progression-safe stash equipment without changing original authored weapons and armor.",
-      "logic": "Six independent category strengths are conditional on this master switch, each 1-item-cap new category is rank gated.",
-      "interaction": "Single checkbox enables/disables all six compact Basic/Standard/Rare weapons/armor selectors.",
+      "rationale": "Opt-in replacement of fixed regular stash weapons with separately gated optional progression gear, preserving scripted, special and unique content.",
+      "logic": "Checkbox alone removes the 13 approved fixed weapon item nodes. The six tier/kind strength values independently add zero or one possible rank-gated bonus item category per source; native physical stash drop odds remain unproven.",
+      "interaction": "Checkbox removes source-approved authored regular weapons and enables the six compact tier/gear strength editors; OFF leaves those original weapon slots intact.",
       "exposeInUi": true
     },
     {
@@ -6682,7 +6692,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Basic Stash Weapon",
-      "description": "Adds eligible non-unique weapon generator entries to basic world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "description": "Adds eligible non-unique weapon generator entries to basic world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
       "control": "slider",
       "valueKind": "integer",
       "display": {
@@ -6731,7 +6741,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Basic Stash Armor",
-      "description": "Adds eligible non-unique armor generator entries to basic world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "description": "Adds eligible non-unique armor generator entries to basic world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
       "control": "slider",
       "valueKind": "integer",
       "display": {
@@ -6780,7 +6790,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Standard Stash Weapon",
-      "description": "Adds eligible non-unique weapon generator entries to standard world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "description": "Adds eligible non-unique weapon generator entries to standard world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
       "control": "slider",
       "valueKind": "integer",
       "display": {
@@ -6829,7 +6839,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Standard Stash Armor",
-      "description": "Adds eligible non-unique armor generator entries to standard world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "description": "Adds eligible non-unique armor generator entries to standard world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
       "control": "slider",
       "valueKind": "integer",
       "display": {
@@ -6878,7 +6888,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Rare Stash Weapon",
-      "description": "Adds eligible non-unique weapon generator entries to rare world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "description": "Adds eligible non-unique weapon generator entries to rare world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
       "control": "slider",
       "valueKind": "integer",
       "display": {
@@ -6927,7 +6937,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Rare Stash Armor",
-      "description": "Adds eligible non-unique armor generator entries to rare world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, without replacing scripted or unique rewards.",
+      "description": "Adds eligible non-unique armor generator entries to rare world stash templates at OFF/RARE/MODERATE/FREQUENT per-entry Chance strengths, while source-authorized original regular weapon slots are independently removed (no protected or unique contents).",
       "control": "slider",
       "valueKind": "integer",
       "display": {

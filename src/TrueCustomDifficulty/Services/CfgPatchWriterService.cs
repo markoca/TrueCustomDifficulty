@@ -46,6 +46,16 @@ public sealed partial class CfgPatchWriterService
             .ToList();
         var modifiedById = modified.ToDictionary(p => p.Id, StringComparer.Ordinal);
         var allById = vm.AllParameters.ToDictionary(p => p.Id, StringComparer.Ordinal);
+        // Reject incompatible overlapping weapon-slot edits BEFORE touching the
+        // existing staging output directory or writing any mod files.
+        if (allById.TryGetValue("loot.stashGearEnabled", out var gearOn)
+            && gearOn.CurrentBoolean
+            && allById.TryGetValue("loot.worldWeaponShuffle", out var worldShuffle)
+            && worldShuffle.CurrentBoolean)
+            throw new InvalidDataException(
+                "Extra Stash Gear and World Weapon Shuffle cannot both be enabled. " +
+                "They edit the same authored weapon stash slots. Turn off one to build safely.");
+
         var deferred = baseline.DeferredParameterIds.ToHashSet(StringComparer.Ordinal);
 
         var blocked = modified
@@ -208,6 +218,10 @@ public sealed partial class CfgPatchWriterService
             documents,
             writtenParameters);
         editCount += worldWeaponDistribution.EditCount;
+
+        // Strictly allowlisted original regular weapon reward nodes disappear
+        // only while the Extra Stash Gear master checkbox is enabled.
+        editCount += WriteStashAuthoredWeaponRemovals(allById, documents);
 
         editCount += WriteWorldAttachmentShuffle(
             modifiedById,

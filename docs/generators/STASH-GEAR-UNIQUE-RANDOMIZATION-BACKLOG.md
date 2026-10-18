@@ -1,3 +1,7 @@
+## 2026-10-18 — authored regular weapon suppression exception
+
+This backlog continues to reserve all **45** original equipment entries from **randomization**. However, the optional `loot.stashGearEnabled` feature now deliberately **removes 13 confirmed regular WEAPON item nodes** from eligible stash generators while ON. This is not a shuffle and does not alter the original-source CSV. The 14th authored weapon `Gun_Trophy_AR` is withheld as potentially special; all 31 non-weapon authored entries remain untouched. Exact actor allowlist, original-versus-ON behavior and safety boundaries: [stash authored weapon removal](STASH-AUTHORED-WEAPON-REMOVAL-2026-10-18.md). Previous blanket statements about no changes to all 45 entries below are historical and superseded **only** for these 13 optional removal targets.
+
 # NEXT: Authored stash gear + special-weapon randomization backlog
 
 **FROZEN / RESERVED FOR FUTURE FEATURE — DO NOT RETUNE WITH STASH CONTENT OR MEDICAL SLIDERS.**

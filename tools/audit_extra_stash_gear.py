@@ -51,4 +51,41 @@ for tier, weapon, expr in lines:
         assert item_tier <= rank
         assert item_tier <= {"Cheap": 1, "Medium": 2, "Expensive": 4}[tier]
         assert not re.search(r"Gauss|RPG|Trophy", sid, re.I)
-print("OK: 14 authored weapon stashes; 6 gate-linked tier sources; rank/tier safe regular SIDs; 1+1 new-entry intent")
+
+# Opt-in suppression has its own strict subset manifest; never infer this
+# authority from a broad actor classification or from a shuffled pool.
+with (data / "stash-authored-weapon-removal-manifest.csv").open(encoding="utf-8", newline="") as f:
+    removals = list(csv.DictReader(f))
+with (data / "world-weapon-shuffle-manifest.csv").open(encoding="utf-8", newline="") as f:
+    shuffle = {row["generator_sid"]: row for row in csv.DictReader(f)}
+with (data / "smartloot-regular-world-actor-manifest.csv").open(encoding="utf-8", newline="") as f:
+    ordinary = {row["ActorSID"] for row in csv.DictReader(f)}
+with (data / "base-stash-protected-actor-manifest.csv").open(encoding="utf-8", newline="") as f:
+    protected = {row["ActorSID"] for row in csv.DictReader(f)}
+approved = {(row["ActorSID"], row["GeneratorSID"], row["ItemPrototypeSID"],
+             f'ItemGenerator/[{row["CategoryIndex"]}]/PossibleItems/[{row["ItemIndex"]}]')
+            for row in weapons if row["ItemPrototypeSID"] != "Gun_Trophy_AR"}
+actual = {(row["ActorSID"], row["GeneratorSID"], row["ItemPrototypeSID"], row["NodePath"])
+          for row in removals}
+assert len(approved) == len(actual) == len(removals) == 13, "Unsafe weapon-removal count drift"
+assert actual == approved, "Weapon-removal roster differs from audited original regular entries"
+assert all(row["ActorSID"] in ordinary and row["ActorSID"] not in protected and
+           statuses[row["ActorSID"]] == "REGULAR_SMARTLOOT" and
+           row["GeneratorSID"].endswith("_" + row["ActorSID"]) and
+           row["NodePath"] == "ItemGenerator/[1]/PossibleItems/[0]" and
+           shuffle[row["GeneratorSID"]]["item_sid"] == row["ItemPrototypeSID"]
+           for row in removals), "Unverified original weapon target or protected stash"
+assert not any(row["ItemPrototypeSID"] == "Gun_Trophy_AR" for row in removals)
+assert "464E8FB14AEEC7B154602AB22BEA1EBC" in protected, "Protected STC Malachite missing"
+suppression = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashAuthoredWeapons.cs").read_text(encoding="utf-8")
+writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
+csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text(encoding="utf-8")
+assert 'WriteStashAuthoredWeaponRemovals(allById, documents)' in writer
+assert 'document.AddRemovalNode(row.GeneratorSid, path[..^1], path[^1]);' in suppression
+assert 'LoadSmartStashActors()' in suppression and 'BaseProtectedStashActors.Value' in suppression
+assert 'shuffle.CurrentBoolean' in suppression and 'cannot both be enabled' in suppression
+assert 'stash-authored-weapon-removal-manifest.csv' in csproj
+assert len(catalog["loot.stashGearEnabled"]["targets"]) == 2
+assert any(t["operation"] == "removeNode" for t in catalog["loot.stashGearEnabled"]["targets"])
+
+print("OK: 13 exact regular authored weapon removal nodes, Trophy/STC excluded; six tier strengths gated and rank-safe; native cap still unverified")
