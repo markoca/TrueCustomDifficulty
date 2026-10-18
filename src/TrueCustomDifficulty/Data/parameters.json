@@ -6642,6 +6642,42 @@
       "exposeInUi": true
     },
     {
+      "id": "loot.stashGearEnabled",
+      "tab": "stashes",
+      "group": "Stash Gear",
+      "label": "Enable Extra Stash Gear",
+      "description": "Enable optional rank-gated regular weapons and armor in eligible world stash generator clones. No added gear with checkbox OFF. At most one added weapon entry and one added suit entry per active player-rank/tier generator; runtime per-physical-stash limit requires testing.",
+      "control": "toggle",
+      "valueKind": "boolean",
+      "vanilla": {
+        "All": false
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_Stash_{Cheap,Medium,Expensive}_*",
+          "path": "ItemGenerator[new rank-gated WeaponPrimary/BodyArmor categories]",
+          "operation": "conditionalAdd"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "Gates the six existing stash gear tier selectors; disabled values stay in presets but do not produce extra CFG gear.",
+          "One possible added weapon and one suit per rank category, with MinCount=MaxCount=1 and no repeated generation of the same new category.",
+          "Player rank is not region; Gauss/RPG, uniques and quest gear are excluded. Per physical stash upper bound awaits gameplay test."
+        ]
+      },
+      "rationale": "Opt-in progression-safe stash equipment without changing original authored weapons and armor.",
+      "logic": "Six independent category strengths are conditional on this master switch, each 1-item-cap new category is rank gated.",
+      "interaction": "Single checkbox enables/disables all six compact Basic/Standard/Rare weapons/armor selectors.",
+      "exposeInUi": true
+    },
+    {
       "id": "loot.stashGearCheapWeapon",
       "tab": "stashes",
       "group": "Stash Gear",
@@ -6687,6 +6723,7 @@
       "rationale": "Optional extra weapon in basic stashes without affecting authored one-off items.",
       "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
       "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
     {
@@ -6735,6 +6772,7 @@
       "rationale": "Optional extra armor in basic stashes without affecting authored one-off items.",
       "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
       "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
     {
@@ -6783,6 +6821,7 @@
       "rationale": "Optional extra weapon in standard stashes without affecting authored one-off items.",
       "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
       "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
     {
@@ -6831,6 +6870,7 @@
       "rationale": "Optional extra armor in standard stashes without affecting authored one-off items.",
       "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
       "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
     {
@@ -6879,6 +6919,7 @@
       "rationale": "Optional extra weapon in rare stashes without affecting authored one-off items.",
       "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
       "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
     {
@@ -6927,6 +6968,7 @@
       "rationale": "Optional extra armor in rare stashes without affecting authored one-off items.",
       "logic": "This is a discrete per-entry spawn bias; actual frequency depends on engine category selection and player rank.",
       "interaction": "Four discrete states: Off, Rare, Moderate, Frequent.",
+      "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
     {

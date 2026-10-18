@@ -547,6 +547,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.stashMedkitMaxCount"] = "StashMedicalComposition",
         ["loot.stashArmyMedkitMinCount"] = "StashMedicalComposition",
         ["loot.stashArmyMedkitMaxCount"] = "StashMedicalComposition",
+        ["loot.stashGearEnabled"] = "StashGear",
         ["loot.stashGearCheapWeapon"] = "StashGear",
         ["loot.stashGearCheapArmor"] = "StashGear",
         ["loot.stashGearMediumWeapon"] = "StashGear",
@@ -608,7 +609,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["WorldLootLayout"] = "loot.worldWeaponShuffle",
         ["StashContentMix"] = "loot.stashMixMedical",
         ["StashMedicalComposition"] = "loot.stashMedicalBandageBias",
-        ["StashGear"] = "loot.stashGearCheapWeapon",
+        ["StashGear"] = "loot.stashGearEnabled",
         ["StashRewardProfile"] = "loot.cheapStashAmmoQuantity",
          ["AmmoDistribution"] = "loot.ammoBoxWeight918"
     };

@@ -44,12 +44,12 @@ expected = {
         "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
         "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"],
     "StashGear": [
-        "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor",
+        "loot.stashGearEnabled", "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor",
         "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
         "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"],
 }
 ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
-assert len(ids) == len(set(ids)) == 38
+assert len(ids) == len(set(ids)) == 39
 assert set(ids) == set(sum(expected.values(), []))
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for family, expected_ids in expected.items():

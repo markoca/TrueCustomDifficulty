@@ -258,6 +258,16 @@ public sealed partial class CfgPatchWriterService
             modifiedById, outputRoot, writtenParameters);
         editCount += uniqueWeaponShuffle.EditCount;
 
+        // Disabled gear selectors may be modified in saved presets; their
+        // values intentionally produce no CFG output until the master is ON.
+        if (!allById.TryGetValue("loot.stashGearEnabled", out var gearMaster)
+            || !gearMaster.CurrentBoolean)
+        {
+            foreach (var id in StashGearParameterIds)
+                if (modifiedById.ContainsKey(id))
+                    writtenParameters.Add(id);
+        }
+
         // The writer must not demand concrete output for an unchanged aggregate
         // anchor flagged IsModified only because one of its child controls moved.
         var modifiedSupported = modified

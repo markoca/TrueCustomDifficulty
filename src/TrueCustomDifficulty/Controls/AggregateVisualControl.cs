@@ -4813,9 +4813,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawHalf(max, maxRail, -1.0, 6.0, false);
     }
 
-    // Source levels are 0 OFF, 1 RARE, 2 MOD, 3 FREQ. These are native
-    // frequency modes, not estimated equipment drop percentages.
-        private void DrawStashGear(
+    // Tier strength modes are newly authored per-item Chance, not physical stash odds.
+    private void DrawStashGear(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
     {
@@ -4831,11 +4830,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var left = (ActualWidth - width) / 2.0;
         const double gap = 11.0;
         const double cardHeight = 154.0;
+        DrawTogglePill(dc, P("loot.stashGearEnabled"), "ENABLE EXTRA GEAR",
+            new Rect(left + 2.0, 52.0, Math.Min(252.0, width - 4.0), 30.0),
+            text, muted, border, accent, panel);
         var cell = (width - gap * (columns - 1)) / columns;
         for (var i = 0; i < tiers.Length; i++)
         {
             var x = left + (i % columns) * (cell + gap);
-            var y = 52.0 + (i / columns) * (cardHeight + gap);
+            var y = 97.0 + (i / columns) * (cardHeight + gap);
             var card = new Rect(x, y, cell, cardHeight);
             var focused = ReferenceEquals(_selectedParameter, P(tiers[i].Weapon))
                 || ReferenceEquals(_selectedParameter, P(tiers[i].Armor));
@@ -6976,7 +6978,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 345.0 : 607.0;
     private static double StashGearHeight(double width)
-        => width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;
+        => width >= 746.0 ? 265.0 : width >= 580.0 ? 428.0 : 591.0;
 
     // Renderer measurements and painted card extents must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
@@ -7076,6 +7078,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             },
             "StashGear" => new[]
             {
+                "loot.stashGearEnabled",
                 "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor",
                 "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
                 "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"

@@ -38,6 +38,7 @@ public sealed partial class CfgPatchWriterService
 
     private static readonly string[] StashGearParameterIds =
     {
+        "loot.stashGearEnabled",
         "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor",
         "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
         "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"
@@ -64,6 +65,7 @@ public sealed partial class CfgPatchWriterService
                    StringComparison.Ordinal) && modified.ContainsKey(id))
            || StashMedicalParameterIds.Any(id =>
                IsStashMedicalSourceInTier(id, tier) && modified.ContainsKey(id))
+           || modified.ContainsKey("loot.stashGearEnabled")
            || modified.ContainsKey($"loot.stashGear{tier}Weapon")
            || modified.ContainsKey($"loot.stashGear{tier}Armor");
 
@@ -109,6 +111,8 @@ public sealed partial class CfgPatchWriterService
         foreach (var id in StashMedicalParameterIds)
             if (IsStashMedicalSourceInTier(id, tier) && modified.ContainsKey(id))
                 written.Add(id);
+        if (modified.ContainsKey("loot.stashGearEnabled"))
+            written.Add("loot.stashGearEnabled");
         foreach (var suffix in new[] { "Weapon", "Armor" })
         {
             var id = $"loot.stashGear{tier}{suffix}";
@@ -121,6 +125,8 @@ public sealed partial class CfgPatchWriterService
         IReadOnlyDictionary<string, ParameterViewModel> all,
         string tier, int firstFreeCategory)
     {
+        if (!all.TryGetValue("loot.stashGearEnabled", out var master) || !master.CurrentBoolean)
+            return 0;
         var weaponLevel = Math.Clamp((int)Math.Round(
             StashTuningCurrent(all, $"loot.stashGear{tier}Weapon", 0)), 0, 3);
         var armorLevel = Math.Clamp((int)Math.Round(
@@ -128,19 +134,18 @@ public sealed partial class CfgPatchWriterService
         if (weaponLevel == 0 && armorLevel == 0)
             return 0;
 
-        // Production ItemGeneratorPrototypes.cfg confirms these regular item
-        // SIDs and WeaponPrimary/BodyArmor category syntax. Item selection
-        // remains rank-gated. Chance is per-entry, not a promise that N% of
-        // unopened stashes will contain the extra gear.
+        // Source-audited gear tiers: Cheap <= T1, Medium <= T2,
+        // Expensive follows PlayerRank T1..T4. No Gauss/RPG/uniques/quests.
+        // This is player-rank gating, not unproven regional assignment.
         static string GearSid(string t, bool weapon, int rank) =>
             (t, weapon) switch
             {
-                ("Cheap", true) => new[] { "GunPM_HG", "GunUDP_HG", "GunM10_HG", "GunM860_SG" }[rank],
-                ("Medium", true) => new[] { "GunM860_SG", "GunAK74_ST", "GunViper_PP", "GunG37_ST" }[rank],
-                ("Expensive", true) => new[] { "GunAK74_ST", "GunG37_ST", "GunDnipro_ST", "GunKharod_ST" }[rank],
-                ("Cheap", false) => new[] { "Newbee_Neutral_Armor", "Jacket_Bandit_Armor", "SkinJacket_Bandit_Armor", "Middle_Bandit_Armor" }[rank],
-                ("Medium", false) => new[] { "Zorya_Neutral_Armor", "Jemmy_Neutral_Armor", "Light_Mercenaries_Armor", "Nasos_Neutral_Armor" }[rank],
-                ("Expensive", false) => new[] { "Jemmy_Neutral_Armor", "Nasos_Neutral_Armor", "SEVA_Neutral_Armor", "Exoskeleton_Neutral_Armor" }[rank],
+                ("Cheap", true) => new[] { "GunPM_HG", "GunUDP_HG", "GunViper_PP", "GunAKU_PP" }[rank],
+                ("Medium", true) => new[] { "GunAK74_ST", "GunM860_SG", "GunG37_ST", "GunSVDM_SP" }[rank],
+                ("Expensive", true) => new[] { "GunAK74_ST", "GunMark_SP", "GunGrim_ST", "GunKharod_ST" }[rank],
+                ("Cheap", false) => "Newbee_Neutral_Armor",
+                ("Medium", false) => new[] { "Newbee_Neutral_Armor", "Zorya_Neutral_Armor", "Zorya_Neutral_Armor", "Zorya_Neutral_Armor" }[rank],
+                ("Expensive", false) => new[] { "Newbee_Neutral_Armor", "Zorya_Neutral_Armor", "SEVA_Neutral_Armor", "Exoskeleton_Neutral_Armor" }[rank],
                 _ => throw new InvalidDataException($"Unknown stash gear tier '{t}'.")
             };
 
@@ -161,7 +166,7 @@ public sealed partial class CfgPatchWriterService
                     ? "EItemGenerationCategory::WeaponPrimary"
                     : "EItemGenerationCategory::BodyArmor");
                 category.SetAssignment("PlayerRank", $"ERank::{ranks[rank]}");
-                category.SetAssignment("bAllowSameCategoryGeneration", "true");
+                category.SetAssignment("bAllowSameCategoryGeneration", "false");
                 var item = category.GetOrAddChild("PossibleItems", useBpatch: false)
                     .GetOrAddChild("[0]", useBpatch: false);
                 item.SetAssignment("ItemPrototypeSID", GearSid(tier, isWeapon, rank));

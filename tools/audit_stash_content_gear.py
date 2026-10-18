@@ -23,7 +23,8 @@ medical = ["loot.stashMedical" + kind + "Bias" for kind in
 quantity = ["loot.stash" + kind + end + "Count" for kind in
             ("Medkit", "ArmyMedkit") for end in ("Min", "Max")]
 
-assert len(catalog["parameters"]) == baseline["supportedParameterCount"] == 276
+assert len(catalog["parameters"]) == 281
+assert baseline["supportedParameterCount"] == 277
 assert baseline["special"]["stashContentAndGearProduction"]["parameterIds"] == mix + gear
 assert baseline["special"]["stashMedicalProduction"]["parameterIds"] == medical + quantity
 assert len({*mix, *gear, *medical, *quantity}) == 20
@@ -44,8 +45,11 @@ for name in ("loot.stashMixMedical", "loot.stashMixFood",
              "loot.stashMixDrinks", "loot.stashMixCoupons"):
     assert parameters[name]["exposeInUi"] is True
 
+assert parameters["loot.stashGearEnabled"]["control"] == "toggle"
+assert parameters["loot.stashGearEnabled"]["vanilla"]["All"] is False
 for name in gear:
     p = parameters[name]
+    assert p["requiresToggle"] == "loot.stashGearEnabled"
     assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 3, 1)
     assert p["vanilla"]["All"] == 0
 for name in medical:
@@ -104,6 +108,7 @@ ids_match = re.search(
 assert ids_match, "missing mixer source binding array"
 assert re.findall(r'"(loot\.stashMix[A-Za-z]+)"', ids_match.group(1)) == mix
 
+assert 'DrawTogglePill(dc, P("loot.stashGearEnabled")' in ui
 assert 'DrawStashGearMode(dc, P(tiers[i].Weapon)' in ui
 assert 'DrawStashGearMode(dc, P(tiers[i].Armor)' in ui
 assert '\"StashGear\" => StashGearHeight(width)' in ui
@@ -143,6 +148,8 @@ assert "StashMixParameterIds.Concat(StashMedicalParameterIds)" in smart
 assert "WriteWorldStashSmartLoot(" in smart
 assert "GetOrAddReferencedRoot(" in smart
 assert "WriteExtraStashGear(" in writer
+assert 'category.SetAssignment("bAllowSameCategoryGeneration", "false")' in writer
+assert 'master.CurrentBoolean' in writer
 assert "MarkModifiedStashTuning(" in production
 assert "VerifyMedicalZeroExclusion();" in program
 assert "VerifyWorldStashSmartLoot();" in program
