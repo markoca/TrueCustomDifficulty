@@ -84,8 +84,9 @@ internal static partial class Program
                     StringComparison.Ordinal),
                     "Extra Stash Gear alone must not clone the DLC CheapNoFresh shared pool");
                 var generated = Regex.Matches(itemText, generatorPattern);
-                Check(generated.Count >= baseMatched.Count + dlcMatched.Count,
-                    "Missing a distinct rank-gated gear generator for a selected physical stash");
+                // Exact ActorSID, native rank/slot and emitted prototype parity.
+                // Unlike a >= count check, this also detects orphan generators.
+                VerifyExactGearCfgLinks(percent, dlc, baseText, dlcText, itemText);
                 Check(generated.Count == 0 == (percent == 0),
                     "Zero coverage must emit no extra equipment generators");
                 var prototypes = Regex.Matches(itemText,
@@ -213,6 +214,7 @@ internal static partial class Program
                     "Global Chance was not written to every " + kind +
                     " candidate: expected " + expectedChance);
             }
+            VerifyEmptyStashGearMix();
         }
         finally
         {
