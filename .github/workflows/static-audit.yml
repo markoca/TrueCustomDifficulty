@@ -43,6 +43,9 @@ jobs:
       - name: Stashes Extra Gear physical actor coverage and rank-safe pool
         run: python tools/audit_stash_gear_coverage.py
 
+      - name: Synthetic original nested-attachment CFG parser regression
+        run: python tools/test_nested_stash_attachment_sources.py
+
       - name: Stashes protected authored weapon removal allowlist
         run: python tools/audit_extra_stash_gear.py
 

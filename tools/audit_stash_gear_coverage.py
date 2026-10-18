@@ -138,7 +138,10 @@ for kind in ("Weapon", "Armor", "Artifact", "Attachment"):
 assert 'MinCount", "1"' in writer and 'MaxCount", "1"' in writer
 assert '"Attachment" => "SubItemGenerator"' in writer
 assert 'item.SetAssignment("ItemGeneratorPrototypeSID",' in writer
-assert 'tier < 2' in writer
+# T1 cannot select nested attachments: the current production predicate
+# admits that class only for tier >= 2. Test the actual guard, not a
+# superseded pre-refactor spelling (tier < 2).
+assert 'x.Class != "Attachment" || tier >= 2' in writer
 assert 'FittingWeaponsSIDs' not in writer
 attachment_rows = rows("stash-bonus-attachment-progressions.csv")
 assert len(attachment_rows) == 19
