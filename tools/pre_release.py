@@ -24,6 +24,7 @@ STATIC = (
     ("build-progress-contract", "tools/audit_build_progress_contract.py"),
     ("publish-directory-contract", "tools/audit_publish_directory_contract.py"),
     ("spawn-item-sid-catalog", "tools/audit_spawn_item_sids.py"),
+    ("stash-region-polygon-inventory", "tools/audit_stash_actor_regions.py"),
     ("rc-signal-preset", "tools/audit_rc_signal_preset.py"),
     ("world-weapon-nested-source", "tools/audit_world_weapon_nested_source.py"),
 )

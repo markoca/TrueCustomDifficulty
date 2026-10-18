@@ -1,6 +1,6 @@
 ## Ordinary stash actor region labels
 
-Regenerate 831 source-backed actor region labels with `python tools/generate_stash_actor_regions.py`; see `docs/STASH-REGIONS.md`. Labels come from generator SID prefixes, not geographic polygons.
+831 ordinary physical stash actors now use 22 locally vendored world-coordinate polygons (source: MIT-licensed StalkerMap), **not** item-generator prefix guesses. Regenerate `python3 tools/generate_stash_actor_regions.py`, audit `python3 tools/audit_stash_actor_regions.py` or `python3 tools/generate_stash_actor_regions.py --check`. The static pre-release suite includes the audit. See `docs/STASH-REGIONS.md` for sources, 21 naming conflicts and 2 unassigned border cases. No gameplay changes.
 
 ## Source-backed spawn-referenced item SID inventory
 

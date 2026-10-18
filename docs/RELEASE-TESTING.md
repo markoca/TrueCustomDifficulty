@@ -1,3 +1,7 @@
+## 2026-10-18 — Offline regional atlas validation
+
+`python3 tools/audit_stash_actor_regions.py` is included in the static pre-release audit: the 831 ordinary world SmartLoot actor coordinates are mapped to 22 pinned published game-coordinate polygons, with 829 interior assignments and 2 unresolved near-border cases. The audit verifies catalog consistency and historic name-mapping regressions; it does not test actual gameplay, quest states or map boundaries in the installed game. Details: `docs/STASH-REGIONS.md`.
+
 ## 2026-10-16 — A+C Stashes mixer visual acceptance (awaiting local Wine)
 
 Five original aggregate families and 26 `loot.*` sources remain; only four Stashes renderers were redesigned:
