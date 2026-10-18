@@ -119,7 +119,6 @@ internal static partial class Program
                 }
                 Console.WriteLine($"PASS Extra Gear {percent}%: {baseMatched.Count} base + {dlcMatched.Count} DLC actors; {generated.Count} rank-specific actor generators");
             }
-        }
             // 100%-coverage forced type mixes: every produced candidate
             // must belong to the sole enabled category, independent of DLC.
             foreach (var kind in new[] { "Weapon", "Armor", "Artifact" })
@@ -140,6 +139,7 @@ internal static partial class Program
                 Check(ids.Length >= 800 && ids.All(id => progression[id].ItemClass == kind),
                     "Forced stash class mixer did not respect zero weight exclusions: " + kind);
             }
+        }
         finally
         {
             if (Keep is null && Directory.Exists(root))
