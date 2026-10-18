@@ -8,7 +8,8 @@ import tempfile
 import zipfile
 from pathlib import Path
 from audit_nested_stash_attachment_sources import (
-    load_expected, load_original, parse_original,
+    LEDGER, PINNED_SOURCE_SHA256, POOL, load_expected, load_original,
+    parse_original,
 )
 
 rows = [
@@ -70,4 +71,29 @@ struct.end
         else:
             raise AssertionError("Unsafe or ambiguous original source accepted")
 
-print("PASS: nested attachment source inspector fixtures (19 roots, folder/ZIP, malformed-source guards)")
+# The small, reviewed evidence ledger is checked in CI without distributing
+# the proprietary 9 MB original GameData generator file.
+with LEDGER.open(encoding="utf-8", newline="") as f:
+    evidence = list(csv.DictReader(f))
+with POOL.open(encoding="utf-8", newline="") as f:
+    production_pool = list(csv.DictReader(f))
+assert len(evidence) == len(production_pool) == 19
+assert len(PINNED_SOURCE_SHA256) == 64
+assert {r["SourceGeneratorSID"] for r in evidence} == {
+    r["SourceGeneratorSID"] for r in production_pool}
+lookup = {r["SourceGeneratorSID"]: r for r in production_pool}
+for row in evidence:
+    pool_row = lookup[row["SourceGeneratorSID"]]
+    assert row["ItemSID"] == pool_row["ItemSID"]
+    assert row["AttachmentKind"] == pool_row["Category"]
+    assert row["ProgressionTier"] == pool_row["ProgressionTier"]
+    assert row["OriginalCategory"] == "EItemGenerationCategory::Attach"
+    assert row["OriginalChance"] == "1"
+    assert row["AuthoredMinCount"] == row["AuthoredMaxCount"] == "NOT_AUTHORED"
+    assert row["TemplateMinCountRaw"] == row["TemplateMaxCountRaw"] == "0"
+    assert row["ReferenceKey"] == "[0]"
+    assert row["RuntimeVerified"] == "NO"
+assert all(int(r["OriginalLine"]) > 0 for r in evidence)
+assert len({r["OriginalLine"] for r in evidence}) == 19
+
+print("PASS: nested attachment inspector synthetic CFG fixtures and 19 pinned native evidence rows; game runtime not checked")

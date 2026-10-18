@@ -1,3 +1,25 @@
+## 2026-10-18 — Original GameData recovered and all 19 original singleton roots verified (LATEST)
+
+**Source actually inspected:** user's previously supplied `STALKER2-GameData-CFG(20261017-140154).zip`, entry `GameData/ItemGeneratorPrototypes.cfg` (9,101,641 bytes); raw source SHA256 `4a06bc946eb9eaa7ff736421df7fd1bb6fe38fb91038bf5fffa005f680d64ac3`. This ZIP was recovered from the user's existing file library for the audit; **it is NOT embedded or redistributed in the GitHub repository**. The 19-row reviewed, minimal derived original-source evidence is now committed as [STASH-ATTACHMENT-ORIGINAL-SINGLETON-CFG-2026-10-17.csv](../evidence/STASH-ATTACHMENT-ORIGINAL-SINGLETON-CFG-2026-10-17.csv). Independently checked all 19 root names, SID assignment, exact singleton inner path, line numbers, parent `refurl/refkey`, and original item categories and values against the decoded GameData CFG.
+
+**Exact original authoring (19/19):** `Stash_<ItemSID> : struct.begin {refurl=../ItemGeneratorPrototypes.cfg;refkey=[0]}`, category `EItemGenerationCategory::Attach`, exactly one `ItemGenerator/[0]/PossibleItems/[0]/ItemPrototypeSID = <ItemSID>`, and explicit **inner `Chance=1`**. The singleton's **inner `MinCount` and `MaxCount` are NOT_AUTHORED**, and likewise no inner `Weight` is authored. The original template `[0]` contains the raw leaf defaults `Chance=0.f`, `MinCount=0`, `MaxCount=0`, `Category=None`; the singleton explicitly overrides category, item SID and Chance but omits counts. These inherited source raw defaults are now observable rather than labelled entirely unknown. **Do not infer from those zeros whether the engine yields 0, 1 or another count for the singleton**: the game's item generation semantics, overrides/fallbacks and nested execution remain untested in-game.
+
+**Original native syntax corroboration:** In the same original GameData file, `EItemGenerationCategory::SubItemGenerator` and `PossibleItems[0].ItemGeneratorPrototypeSID` are used in authored generator definitions (e.g., around lines 338–355 and 2137–2157). Those native examples can omit outer counts for a nested generator candidate, so the mod's *outer structural pattern* has a source precedent. This is **not** runtime proof that any one of our 19 specific `Stash_*` singleton references will execute and yield an attachment from a fresh physical stash.
+
+**Verification strengthened:** `tools/audit_nested_stash_attachment_sources.py` now resolves and inspects the original `[0]` parent raw fields, rejects any drift from the reviewed singleton category, explicit Chance, source-root inheritance, count omission or exactly four authored leaf assignments. Its optional `--verify-ledger` checks the exact original raw GameData SHA256 and all 19 recorded source lines/fields, and the source-independent CI fixture checks ledger/production pool parity and bad CFG syntax using synthetic data. Run:
+
+```bash
+python3 tools/audit_nested_stash_attachment_sources.py \
+  "STALKER2-GameData-CFG(20261017-140154).zip" \
+  --verify-ledger \
+  --out audit/stash-original-nested-attachments.csv
+python3 tools/test_nested_stash_attachment_sources.py
+```
+
+**Acceptance boundary:** Confirmed original CFG evidence: 19/19 singleton outer-source references plus inner `Attach`/Chance 1 and absence of authored counts. Unverified: engine interpretation of the `[0]` count defaults and actual `SubItemGenerator` nesting into freshly generated eligible physical stash inventories. **No changes to production loot, UI, control catalogs, preset values, candidate pools or protected-actor rules.** Static code inspection/independent ZIP field checks do not count as a successful in-game test.
+
+---
+
 # Extra Stash Gear — native nested attachment audit and game acceptance (2026-10-18)
 
 **Status: source reachability inspected; original singleton leaf CFG values NOT independently recovered; in-game execution NOT RUN.** This document deliberately separates three evidence tiers: (1) committed original-source manifest membership, (2) emitted TCD CFG semantics, and (3) actual Unreal-generated physical inventory. A reference to `ItemGeneratorPrototypeSID` is not proof that the engine produces its nested item, nor that a `Chance=1` outer entry overrides any inner condition.
