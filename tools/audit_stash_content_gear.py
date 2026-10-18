@@ -29,10 +29,21 @@ quantity = ["loot.stash" + kind + end + "Count" for kind in
 
 assert len(catalog["parameters"]) == 281
 assert baseline["supportedParameterCount"] == 281
-assert baseline["special"]["stashContentAndGearProduction"]["parameterIds"] == mix + gear + ["loot.stashGearEnabled"] + [
+# A master checkbox is ONE routable source ID, not an extra duplicate.
+# Match exact production dispatch order and require unique members so a
+# superseded Stashes roster cannot silently pass on set equivalence alone.
+tier_chance = [
     "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance", "loot.mediumStashCouponsChance",
     "loot.expensiveStashAmmoChance", "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
-    "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance"]
+    "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
+]
+stash_routes = baseline["special"]["stashContentAndGearProduction"]["parameterIds"]
+assert stash_routes == mix + gear + tier_chance, (
+    "Stashes production route differs from 6 mixer + 7 Extra Gear + "
+    "8 scoped native Chance source IDs")
+assert len(stash_routes) == len(set(stash_routes)) == 21, (
+    "Duplicate or missing Stashes writer route")
+assert stash_routes.count("loot.stashGearEnabled") == 1
 assert baseline["special"]["stashMedicalProduction"]["parameterIds"] == medical + quantity + [
     "loot.stashMedical" + kind + "ChanceScale" for kind in ("Bandage", "Medkit", "ArmyMedkit", "AntiRad")]
 assert len({*mix, *gear, *medical, *quantity}) == 21

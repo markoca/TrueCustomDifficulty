@@ -1,3 +1,21 @@
+## 2026-10-18 — LOCAL STASHES ROUTING AUDIT FIX (LATEST)
+
+This maintenance pass is about the **project's source contracts**, not external CI infrastructure. The production baseline for Stashes has precisely **21 unique** `stashContentAndGearProduction.parameterIds`: six native content Weight scalers, seven Extra Gear controls (including `loot.stashGearEnabled` **once**), and eight independently authored Standard/Rare native Chance scalers. The source catalog has 281 total parameters, of which 39 belong to Stashes across four live UI families.
+
+A previously shipped assertion in `tools/audit_stash_content_gear.py` erroneously expected the `loot.stashGearEnabled` master ID **twice** (`mix + gear + ["loot.stashGearEnabled"] + tierChance`). The **actual production registry is correct**, so the assertion guaranteed a false failure. The audit now requires exact ordered IDs, exactly 21 distinct members, and master cardinality one. The canonical `tools/audit_stashes_current.py` now makes the same independent full-route check and validates 12 unique medical native route IDs (four Weight, four Count, four Chance).
+
+Project-only local static commands from repo root:
+
+```bash
+python3 tools/audit_stashes_current.py
+python3 tools/audit_stash_content_gear.py
+python3 tools/audit_stashes_mixer_ui.py
+python3 tools/audit_extra_stash_gear.py
+python3 tools/audit_stash_gear_coverage.py
+```
+
+This change does **not** modify gameplay, BPatch generation, UI coordinates, actor allowlists, rank pools, or factory presets; only auditing and its relevant documentation. No successful local Python execution, .NET compilation, Wine launch or native-game drop testing is asserted by a GitHub push. The older discussion below is retained for provenance, but does not supersede this current Stashes route contract.
+
 ## 2026-10-18 — Stashes tab audit, current main (supersedes prior UI counts)
 
 Source-backed Stashes catalog contains **39 parameters**: Stash Content **17**, Stash Medical Composition **12**, Stash Gear **7**, and Stashes/Ammo Rewards **3**. **35 visible / 4 hidden aggregate backings**. All seven gear sources must be in the same aggregate binding (`GetFamilyIds("StashGear")`), `MainViewModel.WireVisualAggregate` and `ParameterViewModel` family map: Enabled, Coverage, Weapons, Armor, Artifacts, Attachments, Bonus Chance. Prior code omitted Attachments from the WPF family binding even though its knob was painted; the corrected family includes it.

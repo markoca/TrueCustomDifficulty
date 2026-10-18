@@ -118,8 +118,20 @@ def walk(o):
         routes.add(o)
 walk(baseline["special"])
 assert routes == set(catalog), "Missing writer route IDs: " + str(sorted(set(catalog) - routes))
-assert set(bonus).issubset(baseline["special"]["stashContentAndGearProduction"]["parameterIds"])
-assert len(baseline["special"]["stashContentAndGearProduction"]["parameterIds"]) == 21
+# Match all 21 production-routed Stashes IDs exactly and in their
+# deliberate order. The 7 Extra Gear members include the ONE master ID.
+# The two standalone Basic grenade controls and Rare coupons route via
+# their other concrete writers; do not fake a duplicate here.
+stash_routes = baseline["special"]["stashContentAndGearProduction"]["parameterIds"]
+expected_routes = mix[:6] + [bonus[1], bonus[0], *bonus[2:]] + mix[8:16]
+assert stash_routes == expected_routes, (
+    "Stashes writer routing diverged from its 6 mix / 7 gear / 8 chance sources")
+assert len(stash_routes) == len(set(stash_routes)) == 21
+assert stash_routes.count("loot.stashGearEnabled") == 1
+# Four Weight + four Quantity + four Chance-scale native medical sources.
+medical_routes = baseline["special"]["stashMedicalProduction"]["parameterIds"]
+assert medical_routes == medical[:4] + medical[8:12] + medical[4:8]
+assert len(medical_routes) == len(set(medical_routes)) == 12
 
 # All twelve shipped presets must have complete, typed values. Unchanged
 # new stash parameters retain vanilla semantics instead of being dropped.

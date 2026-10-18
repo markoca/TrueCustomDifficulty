@@ -1,5 +1,24 @@
 # P0 CI and stale-audit reconciliation — 2026-10-18 (main)
 
+## 2026-10-18 — LOCAL STASHES ROUTING AUDIT FIX (LATEST)
+
+This maintenance pass is about the **project's source contracts**, not external CI infrastructure. The production baseline for Stashes has precisely **21 unique** `stashContentAndGearProduction.parameterIds`: six native content Weight scalers, seven Extra Gear controls (including `loot.stashGearEnabled` **once**), and eight independently authored Standard/Rare native Chance scalers. The source catalog has 281 total parameters, of which 39 belong to Stashes across four live UI families.
+
+A previously shipped assertion in `tools/audit_stash_content_gear.py` erroneously expected the `loot.stashGearEnabled` master ID **twice** (`mix + gear + ["loot.stashGearEnabled"] + tierChance`). The **actual production registry is correct**, so the assertion guaranteed a false failure. The audit now requires exact ordered IDs, exactly 21 distinct members, and master cardinality one. The canonical `tools/audit_stashes_current.py` now makes the same independent full-route check and validates 12 unique medical native route IDs (four Weight, four Count, four Chance).
+
+Project-only local static commands from repo root:
+
+```bash
+python3 tools/audit_stashes_current.py
+python3 tools/audit_stash_content_gear.py
+python3 tools/audit_stashes_mixer_ui.py
+python3 tools/audit_extra_stash_gear.py
+python3 tools/audit_stash_gear_coverage.py
+```
+
+This change does **not** modify gameplay, BPatch generation, UI coordinates, actor allowlists, rank pools, or factory presets; only auditing and its relevant documentation. No successful local Python execution, .NET compilation, Wine launch or native-game drop testing is asserted by a GitHub push. The older discussion below is retained for provenance, but does not supersede this current Stashes route contract.
+
+
 ## Why the GitHub Actions run was red
 
 Inspected Actions run [39157521121](https://github.com/markoca/TrueCustomDifficulty/actions/runs/39157521121) on commit `337aae53816fcb807b256c4dffb627169e380f82`, before this P0 commit. GitHub reports all **14 jobs failed** in approximately 13 seconds. The billing/timing endpoint reports **0 ms runner execution** for every Windows and Ubuntu job; job-steps API returns an empty array for sampled jobs, and log retrieval returns Azure `BlobNotFound` (HTTP 404). Consequently **no test execution is evidenced**, and it is not defensible to attribute the red workflow to C# or the stash algorithms. This may be a GitHub account/runner/actions-availability or provisioning failure, but the precise cause is **not established** from the accessible API. This repository change cannot repair an external runner-provisioning failure.
