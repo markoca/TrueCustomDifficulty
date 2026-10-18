@@ -1,3 +1,7 @@
+## Ordinary stash actor region labels
+
+Regenerate 831 source-backed actor region labels with `python tools/generate_stash_actor_regions.py`; see `docs/STASH-REGIONS.md`. Labels come from generator SID prefixes, not geographic polygons.
+
 ## Source-backed spawn-referenced item SID inventory
 
 `docs/SPAWNABLE-ITEM-SIDS.md` lists every item SID backed by a base/DLC1 ItemPrototypes definition and a spawn-related CFG reference; the companion `src/TrueCustomDifficulty/Data/spawnable-item-sids.csv` retains the evidence paths and item type per SID. It is **not** an unconditional in-game spawn list; quest/rank/other gates still apply. The 7.62×39 cut ammo family (`A762D/A762A/A762E`) is excluded.

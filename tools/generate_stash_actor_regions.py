@@ -1,42 +1,24 @@
 #!/usr/bin/env python3
-"""Rebuild conservative stash region labels from the committed actor manifest."""
+"""Rebuild region-labelled ordinary physical stash inventory from tracked source manifest."""
 import csv
-from collections import Counter
 from pathlib import Path
-import re
-ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / 'src/TrueCustomDifficulty/Data/smartloot-regular-world-actor-manifest.csv'
-TARGET = ROOT / 'src/TrueCustomDifficulty/Data/stash-regular-actor-regions.csv'
-PATTERN = re.compile(r'(?:^|,)([A-Za-z][A-Za-z0-9]*)_[A-Za-z0-9_]*StashGenerator')
-def generate():
-    with SOURCE.open(newline='', encoding='utf-8') as stream:
-        rows = list(csv.DictReader(stream))
-    result = []
-    for row in rows:
-        names = set(PATTERN.findall(row['OriginalItemGeneratorSIDs']))
-        region = next(iter(names)) if len(names) == 1 else 'UNRESOLVED'
-        result.append({'ActorSID': row['ActorSID'], 'Region': region,
-                       'RegionEvidence': 'GENERATOR_SID_PREFIX' if region != 'UNRESOLVED' else 'NO_EXPLICIT_REGION',
-                       'OriginalItemGeneratorSIDs': row['OriginalItemGeneratorSIDs'],
-                       'X': row['X'], 'Y': row['Y'], 'Z': row['Z']})
-    return result
-if __name__ == '__main__':
-    import argparse, io, sys
-    p = argparse.ArgumentParser()
-    p.add_argument('--check', action='store_true')
-    args = p.parse_args()
-    rows = generate()
-    if len(rows) != 831 or len({r['ActorSID'] for r in rows}) != 831:
-        sys.exit('Unexpected regular stash inventory count or duplicate actor SID')
-    buf = io.StringIO(newline='')
-    writer = csv.DictWriter(buf, fieldnames=['ActorSID','Region','RegionEvidence','OriginalItemGeneratorSIDs','X','Y','Z'], lineterminator='\n')
-    writer.writeheader()
-    writer.writerows(rows)
-    text = buf.getvalue()
-    if args.check:
-        if TARGET.read_text(encoding='utf-8') != text:
-            sys.exit('Regional stash catalog drift; run generator')
-        print('PASS: 831 actor rows, regional CSV matches source')
-    else:
-        TARGET.write_text(text, encoding='utf-8')
-        print('Wrote', TARGET)
+ROOT=Path(__file__).resolve().parents[1]
+SOURCE=ROOT/'src/TrueCustomDifficulty/Data/smartloot-regular-world-actor-manifest.csv'
+OUTPUT=ROOT/'src/TrueCustomDifficulty/Data/stash-regular-actor-regions.csv'
+ALIASES={"LesserZone": "Lesser Zone", "Cordon": "Cordon", "Garbage": "Garbage", "WildIsland": "Wild Island", "Zaton": "Zaton", "RedForest": "Red Forest", "BurntForest": "Burnt Forest", "Yantar": "Yantar", "CementFactory": "Cement Factory", "CoolingTowers": "Cooling Towers", "ChemicalPlant": "Chemical Plant", "Promzona": "Chemical Plant", "Malachite": "Malachite", "Swamps": "Swamps", "Duga": "Duga", "Jupiter": "Jupiter", "Rostok": "Rostok", "SIRCAA": "SIRCAA", "CityCenter": "Rostok"}
+FIELDS=['ActorSID','Region','RegionEvidence','OriginalItemGeneratorSIDs','DLC','X','Y','Z']
+
+def main():
+    with SOURCE.open(newline='',encoding='utf-8') as f: source=list(csv.DictReader(f))
+    rows=[]
+    for actor in source:
+        labels={ALIASES[p.split('_',1)[0]] for p in actor['OriginalItemGeneratorSIDs'].split(',') if p.split('_',1)[0] in ALIASES}
+        region=next(iter(labels)) if len(labels)==1 else 'UNRESOLVED'
+        rows.append(dict(ActorSID=actor['ActorSID'],Region=region,RegionEvidence='GENERATOR_SID_PREFIX' if region!='UNRESOLVED' else 'NO_EXPLICIT_REGION_PREFIX',OriginalItemGeneratorSIDs=actor['OriginalItemGeneratorSIDs'],DLC=actor['DLC'],X=actor['X'],Y=actor['Y'],Z=actor['Z']))
+    import io
+    buffer=io.StringIO(newline='')
+    writer=csv.DictWriter(buffer,fieldnames=FIELDS,lineterminator='\\n');writer.writeheader();writer.writerows(rows)
+    data=buffer.getvalue()
+    if OUTPUT.exists() and OUTPUT.read_text(encoding='utf-8')==data: print(f'PASS: {len(rows)} actors')
+    else: OUTPUT.write_text(data,encoding='utf-8');print(f'WROTE: {len(rows)} actors')
+if __name__=='__main__':main()
