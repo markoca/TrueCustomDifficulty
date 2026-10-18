@@ -118,8 +118,12 @@ check("IsApprovedDlcStashTierRedirect" in smart_code and
       "tier redirects not safety-filtered")
 check("WriteDlcCheapNoFreshStashes(" in writer and
       "GetOrAddReferencedRoot(TcdCheapNoFreshSid" in dlc_code and
-      "WriteExtraStashGear(items, all, \"Cheap\", firstFreeCategory: 12)" in dlc_code,
-      "CheapNoFresh source clone contract missing")
+      "if (patch.Count == 0)" in dlc_code and
+      "WriteExtraStashGear(" not in dlc_code and
+      "loot.stashGearCheapWeapon" not in dlc_code and
+      "loot.stashGearCheapArmor" not in dlc_code and
+      "WriteStashGearCoverage(allById, hasDlc1, documents)" in writer,
+      "CheapNoFresh must clone only for source edits; actor-level gear is separate")
 check("if (!hasDlc1)" in dlc_code and
       'new[] { "ItemGeneratorSettings", "[0]" }' in dlc_code,
       "CheapNoFresh direct DLC-only patch path missing")

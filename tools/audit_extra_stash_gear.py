@@ -30,7 +30,18 @@ assert p["requiresToggle"] == "loot.stashGearEnabled"
 assert p["slider"] == {"min": 0, "max": 100, "step": 1, "stepMode": "absolute"}
 coverage = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashGearCoverage.cs").read_text(encoding="utf-8")
 assert 'P("loot.stashGearCoveragePercent")' in ui
-assert "WriteExtraStashGear(" not in svc
+# Reject dangling retired generator references in ANY partial service file.
+# A stale call in DLC1 previously bypassed this single-file check and broke CS0103.
+service_files = sorted((root / "src/TrueCustomDifficulty/Services")
+                       .glob("CfgPatchWriterService*.cs"))
+assert service_files, "No writer service files found"
+assert all("WriteExtraStashGear(" not in f.read_text(encoding="utf-8")
+           for f in service_files), "Retired WriteExtraStashGear reference in writer partial"
+dlc_code = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashDlc1.cs").read_text(encoding="utf-8")
+assert "loot.stashGearCheapWeapon" not in dlc_code
+assert "loot.stashGearCheapArmor" not in dlc_code
+assert "if (patch.Count == 0)" in dlc_code
+assert 'WriteStashGearCoverage(allById, hasDlc1, documents)' in svc
 assert "StashGearStableHash(" in coverage and "SelectStashGearActors(" in coverage
 assert "LoadStashGearPool(" in coverage and "LoadStashGearActors(" in coverage
 assert 'item.SetAssignment("MinCount", "1")' in coverage

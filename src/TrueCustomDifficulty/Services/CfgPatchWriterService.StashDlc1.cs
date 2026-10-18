@@ -52,9 +52,10 @@ public sealed partial class CfgPatchWriterService
         var ammoId = baseline.Special.CheapStashProduction.AmmoQuantityParameterId;
         var grenadeChanceId = baseline.Special.CheapStashProduction.GrenadeChanceParameterId;
         var grenadeAmountId = baseline.Special.CheapStashProduction.GrenadeQuantityParameterId;
+        // Extra Gear is produced per physical actor by WriteStashGearCoverage,
+        // not by extending the shared CheapNoFresh pool or its legacy gear IDs.
         var relevant = StashMixParameterIds.Concat(StashMedicalParameterIds)
-            .Concat(new[] { ammoId, grenadeChanceId, grenadeAmountId,
-                "loot.stashGearCheapWeapon", "loot.stashGearCheapArmor" })
+            .Concat(new[] { ammoId, grenadeChanceId, grenadeAmountId })
             .Where(modified.ContainsKey).ToArray();
         if (relevant.Length == 0)
             return 0;
@@ -139,9 +140,9 @@ public sealed partial class CfgPatchWriterService
             }
         }
 
-        var hasGear = StashTuningCurrent(all, "loot.stashGearCheapWeapon", 0) > 0
-            || StashTuningCurrent(all, "loot.stashGearCheapArmor", 0) > 0;
-        if (patch.Count == 0 && !hasGear)
+        // A NoFresh clone is needed only when its own authored source fields change.
+        // Stash bonus gear independently appends rank-gated actor-local generators.
+        if (patch.Count == 0)
             return 0;
 
         var doc = GetDocument(documents, "GameData/ItemGeneratorPrototypes.cfg");
@@ -158,7 +159,6 @@ public sealed partial class CfgPatchWriterService
                 .SetAssignment(field, value);
             edits++;
         }
-        edits += WriteExtraStashGear(items, all, "Cheap", firstFreeCategory: 12);
 
         var actorsDoc = GetDocument(documents, DlcSmartLootActorFile);
         foreach (var actor in actors)

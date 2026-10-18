@@ -65,6 +65,9 @@ internal static partial class Program
                     "Reserved Trophy / quest stash was touched by gear coverage");
                 var itemConfig = OutputPath(dir, "GameData/ItemGeneratorPrototypes.cfg");
                 var itemText = File.ReadAllText(itemConfig);
+                Check(!itemText.Contains("TCD_GamePass_Stash_ItemGenerator_CheapNoFresh",
+                    StringComparison.Ordinal),
+                    "Extra Stash Gear alone must not clone the DLC CheapNoFresh shared pool");
                 var generated = Regex.Matches(itemText, generatorPattern);
                 Check(generated.Count >= baseMatched.Count + dlcMatched.Count,
                     "Missing a distinct rank-gated gear generator for a selected physical stash");
