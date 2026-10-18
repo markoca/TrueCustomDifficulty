@@ -6853,6 +6853,35 @@
       "exposeInUi": true
     },
     {
+      "id": "loot.stashGearAttachmentWeight",
+      "tab": "stashes",
+      "group": "Stash Gear",
+      "label": "Attachment Bonus Weight",
+      "description": "Relative share of source-audited standalone attachment bonuses, selected by stash rank only. It does not require any matching weapon inside the stash.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {"primary": "multiplier", "rawFormat": "0.0x", "valueLabel": "Relative mix weight"},
+      "vanilla": {"All": 0.0},
+      "default": {"mode": "fixedVanilla"},
+      "slider": {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"},
+      "targets": [
+        {"scope": "baseGame", "file": "GameData/ItemGeneratorPrototypes.cfg", "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}", "path": "ItemGenerator[0].PossibleItems[0].ItemGeneratorPrototypeSID", "operation": "conditionalAdd"},
+        {"scope": "dlc1", "file": "GameData/ItemGeneratorPrototypes.cfg", "prototype": "TCD_ExtraGear_{ActorSID}_{Rank}", "path": "ItemGenerator[0].PossibleItems[0].ItemGeneratorPrototypeSID", "operation": "conditionalAdd"}
+      ],
+      "support": {"status": "runtime_test_required", "notes": [
+        "T2 (Experienced), T3 (Veteran), T4 (Master) source-audited tier progression; no T1 safe attachment candidates.",
+        "Initial pool contains 19 ordinary attachment models from native single-item Stash_* generators; the other safe-world entries require separate source approval.",
+        "Weapon fitting is NOT checked; attachments are independent inventory items rather than attached to a weapon.",
+        "Bonus Chance gates the outer SubItemGenerator; unchanged nested source Chance may further affect appearances.",
+        "Default weight 0x preserves existing three-category presets."
+      ]},
+      "rationale": "Progression-gated attachment bonus as a fourth independent class, not weapon pairing.",
+      "logic": "Choose a source-approved attachment whose tier is no higher than the native stash player rank and reference its singleton original generator.",
+      "interaction": "Fourth horizontal Bonus Mix knob, 0-3x in 0.1x steps; drag, wheel, keyboard, right-click reset; disabled with master toggle.",
+      "requiresToggle": "loot.stashGearEnabled",
+      "exposeInUi": true
+    },
+    {
       "id": "loot.stashGearBonusChance",
       "tab": "stashes",
       "group": "Stash Gear",

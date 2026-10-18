@@ -1,3 +1,15 @@
+## 2026-10-18 — CURRENT: rank-only loose attachment bonus
+
+**No weapon compatibility condition.** Attachments are standalone items in a stash. A selected attachment needs only its own progression tier to be at or below the stash actor's native player rank; it does not need to fit any weapon in the same stash. This supersedes the previous `FittingWeaponsSIDs` gating plan in the historical audit.
+
+Bonus Mix adds a fourth independent `ATTACHMENTS` 0–3×/0.1× knob, default **0×** (backward compatible). Four knobs are shown in one bounded 630-DIP row, or as 2×2 below 540 DIP; 444 DIP wide-section height / 612 DIP narrow. The single shared Bonus Chance remains below the knob bank. When only Attachments is positive, Newbie/T1 (no safe audited attachment candidates) emits no extra bonus; Experienced/T2, Veteran/T3 and Master/T4 can select current or lower tiers.
+
+**Conservative initial production roster:** 19 source-backed standard attachments (T2=8, T3=7, T4=4). Each is independently checked against the 39-item safe-world tier catalog and its exact original singleton `Stash_<ItemSID>` generator in the attachment generator manifest. The other 20 safe-world models do not yet have equivalent singleton source evidence and are not invented here. No quest, Gauss, default/internal or special attachment is promoted.
+
+The private per-actor bonus generator chooses an attachment tier/actor hash and authors native `EItemGenerationCategory::SubItemGenerator` plus `ItemGeneratorPrototypeSID = Stash_<ItemSID>`, without copying, rewriting or altering original source generator definitions. Global `Bonus Chance` writes the same **outer native Chance gate**; original referenced singleton generator Chance stays unchanged and may further reduce appearance. Thus slider is **not an asserted observed physical drop probability** for attachments. The original three categories, native rank branches, 800 base / 108 DLC eligible stash actors, and all protected quest lists remain unmodified. New attachment output still needs .NET build and actual unopened-stash game verification; previous successful user tests confirmed only weapon/armor/artifact bonuses.
+
+---
+
 ## 2026-10-18 — Weapon-compatible stash attachments: validation gate (CURRENT)
 
 The user requested additional weapon attachments as a fourth Bonus Gear class whose progression tracks compatible regular weapons. Current gameplay-verified Bonus Gear emission remains **unchanged** pending a reliable native CFG integration.

@@ -88,7 +88,7 @@ for scope, num in (("base", 800), ("dlc1", 108)):
         previous = current
 cfg = json.loads((data / "parameters.json").read_text(encoding="utf-8"))
 ids = {x["id"]: x for x in cfg["parameters"]}
-assert len(cfg["parameters"]) == 280
+assert len(cfg["parameters"]) == 281
 assert ids["loot.stashGearEnabled"]["control"] == "toggle"
 assert ids["loot.stashGearCoveragePercent"]["slider"] == {
     "min": 0, "max": 100, "step": 1, "stepMode": "absolute"}
@@ -97,20 +97,20 @@ assert not any(x in ids for x in ("loot.stashGearCheapWeapon", "loot.stashGearCh
     "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
     "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"))
 baseline = json.loads((data / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
-assert baseline["supportedParameterCount"] == 280
+assert baseline["supportedParameterCount"] == 281
 ui = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashGearCoverage.cs").read_text(encoding="utf-8")
 assert 'P("loot.stashGearCoveragePercent")' in ui and "DrawStashGearMode(" not in ui
 assert 'StashGearStableHash("ACTOR|" + x.Scope + "|" + x.ActorSid)' in writer
-assert 'ChooseStashGearClass(all, actor.ActorSid, code)' in writer
+assert 'ChooseStashGearClass(all, actor.ActorSid, code, tier)' in writer
 assert 'StashGearStableHash("MIX|" + actorSid' in writer
 assert '"ITEM|" + chosenClass' in writer
 # Avoid CS0136: 'chosen' is the outer selected-actor collection, never a
 # nested candidate local with the same name in the actor/rank loop.
 assert "var chosen = SelectStashGearActors(" in writer
-assert "var selectedItem = eligible[" in writer
-assert '"Weapon" when selectedItem.ItemType == "Pistol"' in writer
-assert 'item.SetAssignment("ItemPrototypeSID", selectedItem.Sid)' in writer
+assert 'var selectedItem = chosenClass == "Attachment" ? null : eligible[' in writer
+assert '"Weapon" when selectedItem!.ItemType == "Pistol"' in writer
+assert 'item.SetAssignment("ItemPrototypeSID", selectedItem!.Sid)' in writer
 assert writer.count("var chosen =") == 1
 assert 'item.SetAssignment("Chance", itemChance)' in writer
 assert 'all.TryGetValue("loot.stashGearBonusChance", out var chanceControl)' in writer
@@ -121,10 +121,31 @@ assert chance["control"] == "slider"
 assert chance["vanilla"] == {"All": 50}
 assert chance["slider"] == {"min": 0, "max": 100, "step": 1, "stepMode": "absolute"}
 assert 'P("loot.stashGearBonusChance")' in ui
-for kind in ("Weapon", "Armor", "Artifact"):
+for kind in ("Weapon", "Armor", "Artifact", "Attachment"):
     row = ids["loot.stashGear" + kind + "Weight"]
     assert row["requiresToggle"] == "loot.stashGearEnabled"
     assert row["slider"] == {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"}
     assert row["control"] == "slider"
 assert 'MinCount", "1"' in writer and 'MaxCount", "1"' in writer
-print("PASS: 800 base + 108 DLC eligible physical actors; rank metadata; 34 weapons + 39 suits + 69 standard artifacts; three class weights, user-controlled shared native Chance (default 0.5); all coverage levels stable")
+assert '"Attachment" => "SubItemGenerator"' in writer
+assert 'item.SetAssignment("ItemGeneratorPrototypeSID",' in writer
+assert 'tier < 2' in writer
+assert 'FittingWeaponsSIDs' not in writer
+attachment_rows = rows("stash-bonus-attachment-progressions.csv")
+assert len(attachment_rows) == 19
+assert Counter(r["ProgressionTier"] for r in attachment_rows) == {
+    "T2": 8, "T3": 7, "T4": 4}
+source_pool = {r["item_sid"]: r for r in rows("world-attachment-shuffle-pool.csv")}
+source_rows = rows("world-attachment-generator-manifest.csv")
+for candidate in attachment_rows:
+    sid = candidate["ItemSID"]
+    generator = candidate["SourceGeneratorSID"]
+    assert candidate["Evidence"] == "EXACT_AUDITED_SINGLETON_GENERATOR"
+    assert source_pool[sid]["tier"] == candidate["ProgressionTier"]
+    assert generator == "Stash_" + sid
+    originals = [r for r in source_rows if r["generator_sid"] == generator]
+    assert originals and all(r["item_sid"] == sid
+        and r["entry_node_path"] == "ItemGenerator/[0]/PossibleItems/[0]"
+        for r in originals)
+assert all("WeaponSID" not in candidate for candidate in attachment_rows)
+print("PASS: 800 base + 108 DLC eligible physical actors; rank metadata; 34 weapons + 39 suits + 69 standard artifacts; four category weights and 19 rank-only attachment candidates; shared Bonus Chance; coverage stable")

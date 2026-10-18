@@ -45,10 +45,11 @@ expected = {
         "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"],
     "StashGear": ["loot.stashGearEnabled", "loot.stashGearCoveragePercent",
                   "loot.stashGearWeaponWeight", "loot.stashGearArmorWeight",
-                  "loot.stashGearArtifactWeight", "loot.stashGearBonusChance"],
+                  "loot.stashGearArtifactWeight", "loot.stashGearAttachmentWeight",
+                  "loot.stashGearBonusChance"],
 }
 ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
-assert len(ids) == len(set(ids)) == 38
+assert len(ids) == len(set(ids)) == 39
 assert set(ids) == set(sum(expected.values(), []))
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for family, expected_ids in expected.items():
@@ -111,13 +112,15 @@ assert "DrawStashQuantityDots(" not in source
 assert "DrawStashMedicalSourcePreview(" not in source
 assert '=> width >= 700.0 ? 345.0 : 607.0;' in source
 assert 'P("loot.stashGearCoveragePercent")' in gear
-for key in ("Weapon", "Armor", "Artifact"):
+for key in ("Weapon", "Armor", "Artifact", "Attachment"):
     assert '"loot.stashGear' + key + 'Weight"' in gear
 assert 'var mixStrip = new Rect(left + 2.0, 194.0,' in gear
 assert 'mixStrip, 4.0, 4.0);' in gear
 assert 'var mixWidth = Math.Max(1.0,' in gear
 assert 'DrawSourceKnob(dc, P(weights[i].Item1), weights[i].Item2,' in gear
 assert 'dialScale: .74' in gear
+assert 'var mixColumns = narrowMix ? 2 : 4;' in gear
+assert '(i % mixColumns)' in gear and '(i / mixColumns)' in gear
 assert 'AddHorizontalTarget(weight,' not in gear
 assert 'labelY = 204.0 + i * 52.0' not in gear
 assert 'DrawSourceKnob(' not in content
@@ -134,10 +137,10 @@ assert "DrawStashGearMode(" not in gear
 assert 'P("loot.stashGearBonusChance")' in gear
 assert 'AddHorizontalTarget(chance,' in gear
 assert '"BONUS CHANCE · ALL ITEMS"' in gear
-assert '=> 444.0;' in source
-assert 'const double chanceY = 371.0;' in gear
+assert '=> width < 540.0 ? 612.0 : 444.0;' in source
+assert 'var chanceY = narrowMix ? 535.0 : 371.0;' in gear
 assert gear.count('DrawSourceKnob(dc, P(weights[i].Item1), weights[i].Item2,') == 1
-for key in ("Weapon", "Armor", "Artifact"):
+for key in ("Weapon", "Armor", "Artifact", "Attachment"):
     row = next(p for p in catalog["parameters"]
                if p["id"] == "loot.stashGear" + key + "Weight")
     assert row["slider"] == {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"}

@@ -31,6 +31,21 @@ internal static partial class Program
             && progression.Values.Count(x => x.ItemClass == "Armor") == 39
             && progression.Values.Count(x => x.ItemClass == "Artifact") == 69,
             "Gear progression catalog items/counts changed");
+        using var attachmentStream = typeof(CfgPatchWriterService).Assembly.GetManifestResourceStream(
+            "TrueCustomDifficulty.Data.stash-bonus-attachment-progressions.csv")
+            ?? throw new InvalidDataException("Embedded stash attachment pool absent");
+        using var attachmentReader = new StreamReader(attachmentStream);
+        var attachments = attachmentReader.ReadToEnd().Split('\n',
+                StringSplitOptions.RemoveEmptyEntries).Skip(1)
+            .Select(row => row.TrimEnd('\r').Split(','))
+            .ToDictionary(row => row[3],
+                row => (Sid: row[0], Tier: int.Parse(row[2][1..])),
+                StringComparer.Ordinal);
+        Check(attachments.Count == 19
+            && attachments.Values.Count(x => x.Tier == 2) == 8
+            && attachments.Values.Count(x => x.Tier == 3) == 7
+            && attachments.Values.Count(x => x.Tier == 4) == 4,
+            "Attachment progression catalog size/tier mismatch");
         try
         {
             foreach (var percent in new[] { 0, 1, 50, 100 })
@@ -98,18 +113,30 @@ internal static partial class Program
                         "N" => 1, "E" => 2, "V" => 3, "M" => 4,
                         _ => throw new InvalidDataException("Unknown native rank")
                     };
-                    Check(itemSids.Length == 1 && progression.ContainsKey(itemSids[0])
-                        && progression[itemSids[0]].Tier <= maxTier,
-                        "Bonus generator must contain exactly one rank-eligible item");
-                    Check(Regex.Matches(body, @"(?m)^\s*MinCount = 1$").Count == 1
-                        && Regex.Matches(body, @"(?m)^\s*MaxCount = 1$").Count == 1
+                    var attachmentRefs = Regex.Matches(body,
+                        @"(?m)^\s*ItemGeneratorPrototypeSID = (\S+)$")
+                        .Select(m => m.Groups[1].Value).ToArray();
+                    Check(itemSids.Length + attachmentRefs.Length == 1
+                        && (itemSids.Length == 1
+                            && progression.ContainsKey(itemSids[0])
+                            && progression[itemSids[0]].Tier <= maxTier
+                            || attachmentRefs.Length == 1
+                            && attachments.TryGetValue(attachmentRefs[0], out var bonusAttachment)
+                            && bonusAttachment.Tier <= maxTier && maxTier >= 2),
+                        "Exactly one native rank-eligible bonus candidate required");
+                    Check(Regex.Matches(body, @"(?m)^\s*MinCount = 1$").Count == itemSids.Length
+                        && Regex.Matches(body, @"(?m)^\s*MaxCount = 1$").Count == itemSids.Length
                         && Regex.Matches(body, @"(?m)^\s*Chance = 0\.5$").Count == 1,
                         "Default bonus Chance must remain 0.5 across all categories");
                     Check(!new[] { "Gauss", "Trophy", "RPG", "Weird", "Quest",
                             "Fake", "Prolog", "CNPP", "Heart" }.Any(word =>
                             body.Contains(word, StringComparison.OrdinalIgnoreCase)),
                         "Forbidden item entered stash bonus generator");
-                    var actualClass = progression[itemSids[0]].ItemClass;
+                    var actualClass = attachmentRefs.Length == 1
+                        ? "Attachment" : progression[itemSids[0]].ItemClass;
+                    if (actualClass == "Attachment")
+                        Check(body.Contains("Category = EItemGenerationCategory::SubItemGenerator",
+                            StringComparison.Ordinal), "Nested attachment generator category missing");
                     if (actualClass == "Artifact")
                         Check(body.Contains("Category = EItemGenerationCategory::Artifact",
                             StringComparison.Ordinal), "Artifact category not emitted");
@@ -121,13 +148,13 @@ internal static partial class Program
             }
             // 100%-coverage forced type mixes: every produced candidate
             // must belong to the sole enabled category, independent of DLC.
-            foreach (var kind in new[] { "Weapon", "Armor", "Artifact" })
+            foreach (var kind in new[] { "Weapon", "Armor", "Artifact", "Attachment" })
             {
                 var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
                 vm.AllParameters.Single(x => x.Id == "loot.stashGearEnabled").CurrentBoolean = true;
                 vm.AllParameters.Single(x => x.Id == "loot.stashGearCoveragePercent")
                     .SnapCurrentNumberToMarker(100);
-                foreach (var other in new[] { "Weapon", "Armor", "Artifact" })
+                foreach (var other in new[] { "Weapon", "Armor", "Artifact", "Attachment" })
                     vm.AllParameters.Single(x => x.Id == "loot.stashGear" + other + "Weight")
                         .SnapCurrentNumberToMarker(other == kind ? 3 : 0);
                 // Verify shared native Chance also at exact 0%, 37%, 100%.
@@ -136,6 +163,7 @@ internal static partial class Program
                     "Weapon" => 0,
                     "Armor" => 37,
                     "Artifact" => 100,
+                    "Attachment" => 50,
                     _ => throw new InvalidDataException("Unknown forced gear class")
                 };
                 var chance = vm.AllParameters.Single(
@@ -151,14 +179,21 @@ internal static partial class Program
                 var ids = Regex.Matches(output, @"(?m)^\s*ItemPrototypeSID = (\S+)$")
                     .Select(m => m.Groups[1].Value)
                     .Where(progression.ContainsKey).ToArray();
-                Check(ids.Length >= 800 && ids.All(id => progression[id].ItemClass == kind),
-                    "Forced stash class mixer did not respect zero weight exclusions: " + kind);
+                var refs = Regex.Matches(output,
+                    @"(?m)^\s*ItemGeneratorPrototypeSID = (\S+)$")
+                    .Select(m => m.Groups[1].Value).ToArray();
+                Check(kind == "Attachment"
+                    ? ids.Length == 0 && refs.Length > 100
+                        && refs.All(attachments.ContainsKey)
+                    : ids.Length >= 800 && refs.Length == 0
+                        && ids.All(id => progression[id].ItemClass == kind),
+                    "Forced bonus category did not exclude other classes: " + kind);
                 var actualChances = Regex.Matches(output,
                     @"(?m)^\s*Chance = ([^\r\n]+)$")
                     .Select(m => m.Groups[1].Value).ToArray();
                 var expectedChance = (desiredChance / 100.0)
                     .ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
-                Check(actualChances.Length == ids.Length
+                Check(actualChances.Length == ids.Length + refs.Length
                     && actualChances.All(value => value == expectedChance),
                     "Global Chance was not written to every " + kind +
                     " candidate: expected " + expectedChance);

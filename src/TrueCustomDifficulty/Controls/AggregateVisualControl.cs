@@ -4858,11 +4858,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawText(dc, "BONUS MIX", new Point(left + 2.0, 177.0),
             11.2, text, FontWeights.Bold);
 
-        // One shared compact horizontal strip with three native source knobs.
-        // Relative distribution weights are unchanged; only the presentation
-        // changes from three stacked slider rails to side-by-side dials.
+        // Four source knobs; two rows of two when a 4-wide dial bank
+        // would be too narrow for clear captions and hit targets.
+        var narrowMix = width < 540.0;
+        var mixColumns = narrowMix ? 2 : 4;
         var mixStrip = new Rect(left + 2.0, 194.0,
-            Math.Max(1.0, width - 4.0), 166.0);
+            Math.Max(1.0, width - 4.0), narrowMix ? 332.0 : 166.0);
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .56),
             new Pen(CloneWithOpacity(border, .65), .9),
             mixStrip, 4.0, 4.0);
@@ -4871,16 +4872,19 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             ("loot.stashGearWeaponWeight", "WEAPONS"),
             ("loot.stashGearArmorWeight", "ARMOR"),
-            ("loot.stashGearArtifactWeight", "ARTIFACTS")
+            ("loot.stashGearArtifactWeight", "ARTIFACTS"),
+            ("loot.stashGearAttachmentWeight", "ATTACHMENTS")
         };
         const double mixGap = 8.0;
         const double mixInset = 8.0;
         var mixWidth = Math.Max(1.0,
-            (mixStrip.Width - 2.0 * mixInset - 2.0 * mixGap) / 3.0);
+            (mixStrip.Width - 2.0 * mixInset
+                - (mixColumns - 1) * mixGap) / mixColumns);
         for (var i = 0; i < weights.Length; i++)
         {
-            var cell = new Rect(mixStrip.Left + mixInset + i * (mixWidth + mixGap),
-                mixStrip.Top, mixWidth, mixStrip.Height);
+            var cell = new Rect(mixStrip.Left + mixInset
+                    + (i % mixColumns) * (mixWidth + mixGap),
+                mixStrip.Top + (i / mixColumns) * 166.0, mixWidth, 166.0);
             DrawSourceKnob(dc, P(weights[i].Item1), weights[i].Item2,
                 cell, text, muted, border, accent, panel, dialScale: .74);
         }
@@ -4889,7 +4893,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Unlike the relative mixer weights, this slider writes PossibleItems.Chance.
         var chance = P("loot.stashGearBonusChance");
         if (chance is null) return;
-        const double chanceY = 371.0;
+        var chanceY = narrowMix ? 535.0 : 371.0;
         var chanceEnabled = chance.IsControlEnabled;
         DrawText(dc, "BONUS CHANCE · ALL ITEMS", new Point(left + 2.0, chanceY),
             11.0, chanceEnabled ? text : muted, FontWeights.SemiBold);
@@ -7011,7 +7015,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 345.0 : 607.0;
     private static double StashGearHeight(double width)
-        => 444.0;
+        => width < 540.0 ? 612.0 : 444.0;
 
     // Renderer measurements and painted card extents must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
