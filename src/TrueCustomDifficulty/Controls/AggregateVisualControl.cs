@@ -4813,6 +4813,26 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawHalf(max, maxRail, -1.0, 6.0, false);
     }
 
+    // Bonus Gear uses the writer's same 0.1x integer weight precision.
+    // These are fractions of authored relative CLASS weight, not physical
+    // stash drop odds or the final two-without-replacement pick frequency.
+    private static double[] StashGearWeightShares(IReadOnlyList<double> raw)
+    {
+        var ticks = raw.Select(value => Math.Clamp(
+            (int)Math.Round(value * 10.0), 0, 30)).ToArray();
+        var total = ticks.Sum();
+        return ticks.Select(value => total == 0 ? 0.0 :
+            (double)value / total).ToArray();
+    }
+
+    private static readonly Brush[] StashGearMixPalette =
+    {
+        new SolidColorBrush(Color.FromRgb(0xE8, 0xA0, 0x54)), // Weapons
+        new SolidColorBrush(Color.FromRgb(0x66, 0xAE, 0xD8)), // Armor
+        new SolidColorBrush(Color.FromRgb(0x61, 0xC9, 0x99)), // Artifacts
+        new SolidColorBrush(Color.FromRgb(0xAC, 0x94, 0xDE))  // Attachments
+    };
+
     // Actor coverage is a build-time subset; four compact category knobs
     // set relative distribution weights, not physical drop percentages.
     private void DrawStashGear(
@@ -4863,7 +4883,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var narrowMix = width < 540.0;
         var mixColumns = narrowMix ? 2 : 4;
         var mixStrip = new Rect(left + 2.0, 194.0,
-            Math.Max(1.0, width - 4.0), narrowMix ? 332.0 : 166.0);
+            Math.Max(1.0, width - 4.0), narrowMix ? 390.0 : 224.0);
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .56),
             new Pen(CloneWithOpacity(border, .65), .9),
             mixStrip, 4.0, 4.0);
@@ -4886,14 +4906,61 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                     + (i % mixColumns) * (mixWidth + mixGap),
                 mixStrip.Top + (i / mixColumns) * 166.0, mixWidth, 166.0);
             DrawSourceKnob(dc, P(weights[i].Item1), weights[i].Item2,
-                cell, text, muted, border, accent, panel, dialScale: .74);
+                cell, text, muted, border, accent, panel,
+                dialAccent: StashGearMixPalette[i], dialScale: .74);
+        }
+
+        // Read-only weight share. The color, order and label of every segment
+        // are tied directly to the corresponding knob, with no extra hit zone.
+        // Two class picks happen without replacement: displayed percentages
+        // are relative source WEIGHTS, never actual category/drop chances.
+        var shareTop = mixStrip.Top + (narrowMix ? 332.0 : 166.0);
+        var shareEnabled = P("loot.stashGearEnabled")?.CurrentBoolean == true;
+        var shares = StashGearWeightShares(weights.Select(channel =>
+            P(channel.Item1)?.CurrentNumber ?? 0.0).ToArray());
+        DrawText(dc, "WEIGHT SHARE",
+            new Point(mixStrip.Left + 10.0, shareTop + 1.0),
+            9.1, shareEnabled ? muted : CloneWithOpacity(muted, .55),
+            FontWeights.SemiBold);
+        var shareTrack = new Rect(mixStrip.Left + 10.0, shareTop + 20.0,
+            Math.Max(1.0, mixStrip.Width - 20.0), 8.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(border, .32), null,
+            shareTrack, 2.0, 2.0);
+        var shareX = shareTrack.Left;
+        for (var i = 0; i < shares.Length; i++)
+        {
+            var segmentWidth = i == shares.Length - 1
+                ? Math.Max(0.0, shareTrack.Right - shareX)
+                : Math.Max(0.0, shareTrack.Width * shares[i]);
+            if (shares[i] > Epsilon && segmentWidth > Epsilon)
+                dc.DrawRectangle(shareEnabled ? StashGearMixPalette[i] :
+                    CloneWithOpacity(muted, .25), null,
+                    new Rect(shareX, shareTrack.Top, segmentWidth, shareTrack.Height));
+            shareX += segmentWidth;
+        }
+        // The fixed legend stays readable even when a segment is zero or too
+        // narrow to contain text. No hover-only information or duplicate knob.
+        var shareCell = shareTrack.Width / shares.Length;
+        for (var i = 0; i < shares.Length; i++)
+        {
+            var x = shareTrack.Left + i * shareCell;
+            dc.DrawRectangle(shareEnabled ? StashGearMixPalette[i] :
+                CloneWithOpacity(muted, .35), null,
+                new Rect(x, shareTop + 37.0, 6.0, 6.0));
+            DrawText(dc, weights[i].Item2,
+                new Point(x + 9.0, shareTop + 33.0),
+                narrowMix ? 8.1 : 8.8,
+                shareEnabled ? text : muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, $"{shares[i] * 100.0:0.#}%",
+                new Point(x + shareCell - 3.0, shareTop + 33.0),
+                narrowMix ? 8.7 : 9.4, muted, FontWeights.SemiBold);
         }
 
         // One real CFG Chance setting, used for every optional bonus category.
         // Unlike the relative mixer weights, this slider writes PossibleItems.Chance.
         var chance = P("loot.stashGearBonusChance");
         if (chance is null) return;
-        var chanceY = narrowMix ? 535.0 : 371.0;
+        var chanceY = narrowMix ? 593.0 : 429.0;
         var chanceEnabled = chance.IsControlEnabled;
         DrawText(dc, "BONUS CHANCE · ALL ITEMS", new Point(left + 2.0, chanceY),
             11.0, chanceEnabled ? text : muted, FontWeights.SemiBold);
@@ -7017,7 +7084,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP
     // the FOUR-knob mixer still paints in two rows and needs 612 DIP.
     private static double StashGearHeight(double width)
-        => width < 570.0 ? 612.0 : 444.0;
+        => width < 570.0 ? 670.0 : 502.0;
 
     // Renderer measurements and painted card extents must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)

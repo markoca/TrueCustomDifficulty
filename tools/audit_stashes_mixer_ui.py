@@ -120,6 +120,22 @@ assert 'var mixWidth = Math.Max(1.0,' in gear
 assert 'DrawSourceKnob(dc, P(weights[i].Item1), weights[i].Item2,' in gear
 assert 'dialScale: .74' in gear
 assert 'var mixColumns = narrowMix ? 2 : 4;' in gear
+assert 'narrowMix ? 390.0 : 224.0' in gear
+assert 'var shareTop = mixStrip.Top + (narrowMix ? 332.0 : 166.0);' in gear
+assert 'var shareTrack = new Rect(mixStrip.Left + 10.0, shareTop + 20.0,' in gear
+assert 'DrawText(dc, "WEIGHT SHARE"' in gear
+assert 'var shares = StashGearWeightShares(weights.Select(channel =>' in gear
+assert 'P(channel.Item1)?.CurrentNumber ?? 0.0' in gear
+assert 'shareEnabled ? StashGearMixPalette[i]' in gear
+assert 'var shareCell = shareTrack.Width / shares.Length;' in gear
+assert 'DrawRightAlignedText(dc, $"{shares[i] * 100.0:0.#}%"' in gear
+assert '"ItemGeneratorPrototypeSID"' not in gear
+assert 'AddHorizontalTarget(' not in gear.split('// Read-only weight share.',1)[1].split('// One real CFG Chance setting',1)[0]
+assert 'private static double[] StashGearWeightShares(IReadOnlyList<double> raw)' in source
+assert '(int)Math.Round(value * 10.0), 0, 30' in source
+assert 'var total = ticks.Sum();' in source
+assert 'total == 0 ? 0.0' in source
+assert 'value / total' in source
 assert '(i % mixColumns)' in gear and '(i / mixColumns)' in gear
 assert 'AddHorizontalTarget(weight,' not in gear
 assert 'labelY = 204.0 + i * 52.0' not in gear
@@ -137,8 +153,8 @@ assert "DrawStashGearMode(" not in gear
 assert 'P("loot.stashGearBonusChance")' in gear
 assert 'AddHorizontalTarget(chance,' in gear
 assert '"BONUS CHANCE · ALL ITEMS"' in gear
-assert '=> width < 570.0 ? 612.0 : 444.0;' in source
-assert 'var chanceY = narrowMix ? 535.0 : 371.0;' in gear
+assert '=> width < 570.0 ? 670.0 : 502.0;' in source
+assert 'var chanceY = narrowMix ? 593.0 : 429.0;' in gear
 assert gear.count('DrawSourceKnob(dc, P(weights[i].Item1), weights[i].Item2,') == 1
 assert 'var width = Math.Min(630.0, Math.Max(1.0, ActualWidth - 30.0));' in gear
 assert 'var narrowMix = width < 540.0;' in gear

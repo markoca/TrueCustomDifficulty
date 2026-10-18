@@ -84,11 +84,14 @@ assert 'P("loot.stashGearCoveragePercent")' in ui
 # it paints two knob rows, so WPF must allocate tall height.
 assert 'Math.Min(630.0, Math.Max(1.0, ActualWidth - 30.0))' in ui
 assert 'var narrowMix = width < 540.0;' in ui
-assert '=> width < 570.0 ? 612.0 : 444.0;' in ui
+assert 'DrawText(dc, "WEIGHT SHARE"' in ui
+assert 'var chanceY = narrowMix ? 593.0 : 429.0;' in ui
+assert 'narrowMix ? 390.0 : 224.0' in ui
+assert '=> width < 570.0 ? 670.0 : 502.0;' in ui
 for host in (520, 540, 550, 569, 570, 600, 760):
     narrow = min(630.0, max(1.0, host - 30.0)) < 540.0
-    assigned_height = 612.0 if host < 570.0 else 444.0
-    assert assigned_height == (612.0 if narrow else 444.0)
+    assigned_height = 670.0 if host < 570.0 else 502.0
+    assert assigned_height == (670.0 if narrow else 502.0)
 
 for pid in bonus[1:]:
     assert stash[pid]["requiresToggle"] == bonus[0]
