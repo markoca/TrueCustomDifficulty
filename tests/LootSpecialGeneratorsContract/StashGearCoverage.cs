@@ -16,6 +16,21 @@ internal static partial class Program
         const string actorPattern = @"PrototypeSID = TCD_ExtraGear_([0-9A-F]{32})_[NEVM]";
         const string generatorPattern = @"(?m)^TCD_ExtraGear_([0-9A-F]{32})_[NEVM] : struct\.begin";
         var root = Path.Combine(Keep ?? Path.GetTempPath(), "TCD_Stash_Gear_Coverage");
+        using var stream = typeof(CfgPatchWriterService).Assembly.GetManifestResourceStream(
+            "TrueCustomDifficulty.Data.gear-progression-ranks.csv")
+            ?? throw new InvalidDataException("Embedded gear progression catalog absent");
+        using var reader = new StreamReader(stream);
+        var progression = reader.ReadToEnd().Split('\n',
+                StringSplitOptions.RemoveEmptyEntries).Skip(1)
+            .Select(line => line.TrimEnd('\r').Split(','))
+            .ToDictionary(row => row[0],
+                row => (ItemClass: row[1], Tier: int.Parse(row[3][1..])),
+                StringComparer.Ordinal);
+        Check(progression.Count == 142
+            && progression.Values.Count(x => x.ItemClass == "Weapon") == 34
+            && progression.Values.Count(x => x.ItemClass == "Armor") == 39
+            && progression.Values.Count(x => x.ItemClass == "Artifact") == 69,
+            "Gear progression catalog items/counts changed");
         try
         {
             foreach (var percent in new[] { 0, 1, 50, 100 })
@@ -70,17 +85,35 @@ internal static partial class Program
                         @"^[^\s].* : struct\.begin"))
                         to++;
                     var body = string.Join("\n", lines[from..to]);
-                    var gearCount = Regex.Matches(body,
-                        @"(?m)^\s*ItemPrototypeSID = (Gun\w+|\w+_Neutral_Armor)$").Count;
-                    Check(gearCount is 1 or 2,
-                        "Extra stash generator must contain exactly one weapon and zero or one armor");
-                    Check(Regex.Matches(body, @"(?m)^\s*MinCount = 1$").Count == gearCount
-                        && Regex.Matches(body, @"(?m)^\s*MaxCount = 1$").Count == gearCount,
-                        "Each added gear category must generate exactly one item");
-                    Check(!body.Contains("Gauss", StringComparison.OrdinalIgnoreCase)
-                        && !body.Contains("Trophy", StringComparison.OrdinalIgnoreCase)
-                        && !body.Contains("RPG", StringComparison.OrdinalIgnoreCase),
-                        "Extra stash gear contains disallowed item");
+                    var itemSids = Regex.Matches(body,
+                        @"(?m)^\s*ItemPrototypeSID = (\S+)$")
+                        .Select(m => m.Groups[1].Value).ToArray();
+                    var code = Regex.Match(lines[from], @"_([NEVM]) : struct\.begin")
+                        .Groups[1].Value;
+                    var maxTier = code switch
+                    {
+                        "N" => 1, "E" => 2, "V" => 3, "M" => 4,
+                        _ => throw new InvalidDataException("Unknown native rank")
+                    };
+                    Check(itemSids.Length is 1 or 2 && itemSids.All(progression.ContainsKey)
+                        && progression[itemSids[0]].ItemClass == "Weapon"
+                        && itemSids.Skip(1).All(sid =>
+                            progression[sid].ItemClass is "Armor" or "Artifact")
+                        && itemSids.All(sid => progression[sid].Tier <= maxTier),
+                        "Extra stash item class, count or native rank changed");
+                    Check(Regex.Matches(body, @"(?m)^\s*MinCount = 1$").Count == itemSids.Length
+                        && Regex.Matches(body, @"(?m)^\s*MaxCount = 1$").Count == itemSids.Length,
+                        "Each added gear category must generate one candidate");
+                    Check(!new[] { "Gauss", "Trophy", "RPG", "Weird", "Quest",
+                            "Fake", "Prolog", "CNPP", "Heart" }.Any(word =>
+                            body.Contains(word, StringComparison.OrdinalIgnoreCase)),
+                        "Forbidden item entered stash bonus generator");
+                    if (itemSids.Skip(1).Any(sid => progression[sid].ItemClass == "Artifact"))
+                        Check(body.Contains("Category = EItemGenerationCategory::Artifact",
+                            StringComparison.Ordinal), "Artifact category not emitted");
+                    if (itemSids.Skip(1).Any(sid => progression[sid].ItemClass == "Armor"))
+                        Check(body.Contains("Category = EItemGenerationCategory::BodyArmor",
+                            StringComparison.Ordinal), "Armor category not emitted");
                 }
                 Console.WriteLine($"PASS Extra Gear {percent}%: {baseMatched.Count} base + {dlcMatched.Count} DLC actors; {generated.Count} rank-specific actor generators");
             }

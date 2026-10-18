@@ -44,16 +44,34 @@ for r in ranks:
     if source_refs and sid != "1CBBBE27428A1766B7F911863C044833":
         selected.append(r)
 assert Counter(r["Scope"] for r in selected) == {"base": 800, "dlc1": 108}
-assert len(pool) == 38
+assert len(pool) == 142 and len({r["ItemSID"] for r in pool}) == 142
 assert Counter((r["ItemClass"], r["ProgressionTier"]) for r in pool) == {
     ("Weapon", "T1"): 8, ("Weapon", "T2"): 10,
     ("Weapon", "T3"): 10, ("Weapon", "T4"): 6,
-    ("Armor", "T1"): 1, ("Armor", "T2"): 1,
-    ("Armor", "T3"): 1, ("Armor", "T4"): 1
+    ("Armor", "T1"): 7, ("Armor", "T2"): 10,
+    ("Armor", "T3"): 13, ("Armor", "T4"): 9,
+    ("Artifact", "T1"): 39, ("Artifact", "T2"): 17,
+    ("Artifact", "T3"): 9, ("Artifact", "T4"): 4
 }
-assert all(r["UsagePolicy"] == "AUDIT_ONLY" and
-           r["Confidence"] in ("EXPLICIT_TRADER_TIER", "EXPLICIT_PLAYER_GEAR_ANCHOR")
-           and not any(x in r["ItemSID"].casefold() for x in ("gauss", "rpg", "trophy"))
+spawnable = {r["sid"]: r for r in rows("spawnable-item-sids.csv")}
+assert all(r["ItemSID"] in spawnable
+           and spawnable[r["ItemSID"]]["category"] == {
+               "Weapon": "weapons", "Armor": "armor", "Artifact": "artifacts"
+           }[r["ItemClass"]]
+           and r["UsagePolicy"] == "STASH_BONUS_POOL"
+           and not any(x in r["ItemSID"].lower() for x in (
+               "gauss", "rpg", "trophy", "weird", "quest",
+               "fake", "prolog", "cnpp", "heart"))
+           for r in pool)
+standard = {sid for sid, r in spawnable.items()
+            if r["category"] == "artifacts"
+            and r["definition_origin"] == "base"
+            and sid.startswith(("CArtifact", "EArtifact", "FArtifact", "GArtifact"))
+            and not sid.endswith("_Fake")}
+assert {r["ItemSID"] for r in pool if r["ItemClass"] == "Artifact"} == standard
+assert all(r["ItemClass"] != "Armor" or
+           (r["ItemSID"].endswith("_Armor")
+            and not r["ItemSID"].startswith("NPC_"))
            for r in pool)
 def h(row):
     key = "TCD-StashGear-2026-10-18|ACTOR|" + row["Scope"] + "|" + row["ActorSID"]
@@ -86,6 +104,8 @@ assert 'P("loot.stashGearCoveragePercent")' in ui and "DrawStashGearMode(" not i
 assert 'StashGearStableHash("ACTOR|" + x.Scope + "|" + x.ActorSid)' in writer
 assert 'StashGearStableHash("WEAPON|" + actor.ActorSid' in writer
 assert 'StashGearStableHash("ARMOR|" + actor.ActorSid' in writer
+assert 'StashGearStableHash("ARTIFACT|" + actor.ActorSid' in writer
+assert 'StashGearStableHash("BONUS_TYPE|" + actor.ActorSid' in writer
 assert 'StashGearStableHash("COUNT|" + actor.ActorSid' in writer
 assert 'MinCount", "1"' in writer and 'MaxCount", "1"' in writer
-print("PASS: 800 base + 108 DLC eligible physical actors; rank metadata; 34 weapons + four suits; all 101 whole-percent coverage levels deterministic and monotonic")
+print("PASS: 800 base + 108 DLC eligible physical actors; rank metadata; 34 weapons + 39 suits + 69 standard artifacts; all 101 whole-percent coverage levels deterministic and monotonic")

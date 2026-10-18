@@ -1,3 +1,5 @@
+> **2026-10-18 CURRENT BONUS POOL (supersedes the 34+4 pool below):** exactly 34 regular weapons, 39 normal player-facing suits and 69 ordinary artifacts in `gear-progression-ranks.csv`. Artifact rarity policy: Common=T1/Newbie (39), Uncommon=T2/Experienced (17), Rare=T3/Veteran (9), Epic=T4/Master (4); higher native player ranks may use lower tiers. Additional armor tiers are curated rather than claimed vanilla-derived. The six Weird/Arch artifacts and quest, fake, prolog, special/DLC-story items are excluded. The private per-actor generator emits one regular weapon plus **zero or one** additional suit **or** standard artifact (never both), and retains 1–2 candidate items. Existing original generator references, deterministic 800+108 actor percentage coverage, 13 removable authorized original weapons and two compact UI controls are unchanged. The new artifact category uses `EItemGenerationCategory::Artifact` without weapon or armor properties. In-game spawned artifact confirmation is still pending; native `Chance=1` is not a claimed physical stash probability.
+
 # Extra Stash Gear: deterministic physical stash coverage (2026-10-18)
 
 ## Eligibility

@@ -24,7 +24,12 @@ public sealed partial class CfgPatchWriterService
     private sealed record StashGearActor(
         string ActorSid, string Scope, string Ranks, int ExistingGenerators);
 
-    private sealed record StashGearItem(string Sid, bool Weapon, int Tier, string ItemType);
+    private sealed record StashGearItem(string Sid, string ItemClass, int Tier, string ItemType)
+    {
+        public bool Weapon => ItemClass == "Weapon";
+        public bool Armor => ItemClass == "Armor";
+        public bool Artifact => ItemClass == "Artifact";
+    }
 
     private static ulong StashGearStableHash(string key)
         => BinaryPrimitives.ReadUInt64BigEndian(
@@ -34,24 +39,40 @@ public sealed partial class CfgPatchWriterService
     {
         var entries = ReadStashCsv(StashGearPoolResource, 8).Select(row =>
         {
+            var evidence = row[1] switch
+            {
+                "Weapon" => row[6] == "EXPLICIT_TRADER_TIER",
+                "Armor" => row[6] is "EXPLICIT_PLAYER_GEAR_ANCHOR" or "CURATED_STASH_ARMOR_TIER",
+                "Artifact" => row[6] == "CURATED_ARTIFACT_RARITY",
+                _ => false
+            };
             if (row[3].Length != 2 || row[3][0] != 'T'
                 || row[3][1] is < '1' or > '4'
-                || row[1] is not ("Weapon" or "Armor")
-                || row[6] is not ("EXPLICIT_TRADER_TIER" or "EXPLICIT_PLAYER_GEAR_ANCHOR")
-                || row[0].Contains("Gauss", StringComparison.OrdinalIgnoreCase)
-                || row[0].Contains("RPG", StringComparison.OrdinalIgnoreCase)
-                || row[0].Contains("Trophy", StringComparison.OrdinalIgnoreCase))
-                throw new InvalidDataException("Unsafe progression gear candidate: " + row[0]);
-            return new StashGearItem(row[0], row[1] == "Weapon", row[3][1] - '0', row[2]);
+                || !evidence || row[7] != "STASH_BONUS_POOL"
+                || row[1] == "Armor" && (row[2] != "Suit"
+                    || !row[0].EndsWith("_Armor", StringComparison.Ordinal))
+                || row[1] == "Artifact" && (row[2] != "Artifact"
+                    || !new[] { "CArtifact", "EArtifact", "FArtifact", "GArtifact" }
+                        .Any(p => row[0].StartsWith(p, StringComparison.Ordinal)))
+                || row[0].StartsWith("NPC_", StringComparison.Ordinal)
+                || new[] { "Gauss", "RPG", "Trophy", "Weird", "Quest", "Prolog",
+                    "Fake", "CNPP", "Heart" }.Any(word =>
+                    row[0].Contains(word, StringComparison.OrdinalIgnoreCase)))
+                throw new InvalidDataException("Unsafe progression stash candidate: " + row[0]);
+            return new StashGearItem(row[0], row[1], row[3][1] - '0', row[2]);
         }).ToArray();
-
-        if (entries.Length != 38
-            || entries.Select(x => x.Sid).Distinct(StringComparer.Ordinal).Count() != 38
-            || Enumerable.Range(1, 4).Any(tier =>
-                entries.Count(x => x.Weapon && x.Tier == tier)
-                    != new[] { 8, 10, 10, 6 }[tier - 1]
-                || entries.Count(x => !x.Weapon && x.Tier == tier) != 1))
-            throw new InvalidDataException("Progression gear pool is no longer 34 regular weapons + four suits.");
+        var expected = new Dictionary<string, int[]>
+        {
+            ["Weapon"] = new[] { 8, 10, 10, 6 },
+            ["Armor"] = new[] { 7, 10, 13, 9 },
+            ["Artifact"] = new[] { 39, 17, 9, 4 }
+        };
+        if (entries.Length != 142
+            || entries.Select(x => x.Sid).Distinct(StringComparer.Ordinal).Count() != 142
+            || expected.Any(group => Enumerable.Range(1, 4).Any(tier =>
+                entries.Count(x => x.ItemClass == group.Key && x.Tier == tier)
+                    != group.Value[tier - 1])))
+            throw new InvalidDataException("Stash bonus item progression catalog drifted.");
         return entries;
     }
 
@@ -188,24 +209,30 @@ public sealed partial class CfgPatchWriterService
                 written++;
 
                 // Per-actor/per-native-rank source: one possible regular weapon,
-                // and optionally one suit, both selected from the full 34+4
+                // and optionally one suit or normal artifact from the 142-item
                 // source-backed pool. No generator is shared across physical actors.
                 var generator = prototypes.GetOrAddReferencedRoot(
                     generatorSid, "../ItemGeneratorPrototypes.cfg", "[0]");
                 generator.SetAssignment("SID", generatorSid);
                 var categories = generator.GetOrAddChild("ItemGenerator", useBpatch: false);
                 var weapons = pool.Where(x => x.Weapon && x.Tier <= tier).ToArray();
-                var armor = pool.Where(x => !x.Weapon && x.Tier <= tier).ToArray();
+                var armor = pool.Where(x => x.Armor && x.Tier <= tier).ToArray();
+                var artifacts = pool.Where(x => x.Artifact && x.Tier <= tier).ToArray();
                 var selectedWeapon = weapons[
                     (int)(StashGearStableHash("WEAPON|" + actor.ActorSid + "|" + code)
                           % (ulong)weapons.Length)];
                 var selectedArmor = armor[
                     (int)(StashGearStableHash("ARMOR|" + actor.ActorSid + "|" + code)
                           % (ulong)armor.Length)].Sid;
-                var includeArmor =
+                var selectedArtifact = artifacts[
+                    (int)(StashGearStableHash("ARTIFACT|" + actor.ActorSid + "|" + code)
+                          % (ulong)artifacts.Length)].Sid;
+                var includeBonus =
                     (StashGearStableHash("COUNT|" + actor.ActorSid + "|" + code) & 1UL) == 0;
+                var includeArtifact =
+                    (StashGearStableHash("BONUS_TYPE|" + actor.ActorSid + "|" + code) & 1UL) == 0;
 
-                void AddItem(int index, string categoryName, string sid, bool weapon)
+                void AddItem(int index, string categoryName, string sid, string itemClass)
                 {
                     var category = categories.GetOrAddChild($"[{index}]", useBpatch: false);
                     category.SetAssignment("Category", "EItemGenerationCategory::" + categoryName);
@@ -216,9 +243,12 @@ public sealed partial class CfgPatchWriterService
                     item.SetAssignment("Chance", "1");
                     item.SetAssignment("MinCount", "1");
                     item.SetAssignment("MaxCount", "1");
-                    item.SetAssignment("MinDurability", weapon ? "0.45" : "0.55");
-                    item.SetAssignment("MaxDurability", weapon ? "0.80" : "0.85");
-                    if (weapon)
+                    if (itemClass != "Artifact")
+                    {
+                        item.SetAssignment("MinDurability", itemClass == "Weapon" ? "0.45" : "0.55");
+                        item.SetAssignment("MaxDurability", itemClass == "Weapon" ? "0.80" : "0.85");
+                    }
+                    if (itemClass == "Weapon")
                     {
                         item.SetAssignment("AmmoMinCount", "0");
                         item.SetAssignment("AmmoMaxCount", "0");
@@ -226,9 +256,14 @@ public sealed partial class CfgPatchWriterService
                 }
 
                 AddItem(0, selectedWeapon.ItemType == "Pistol" ? "WeaponPistol" : "WeaponPrimary",
-                    selectedWeapon.Sid, weapon: true);
-                if (includeArmor)
-                    AddItem(1, "BodyArmor", selectedArmor, weapon: false);
+                    selectedWeapon.Sid, "Weapon");
+                if (includeBonus)
+                {
+                    if (includeArtifact)
+                        AddItem(1, "Artifact", selectedArtifact, "Artifact");
+                    else
+                        AddItem(1, "BodyArmor", selectedArmor, "Armor");
+                }
                 written++;
             }
         }

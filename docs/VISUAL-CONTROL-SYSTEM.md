@@ -1,3 +1,5 @@
+> **2026-10-18 Extra Stash Gear:** updated item pool adds no UI controls. Preserve the existing two compact controls, aligned slider indicators and no redundant Vanilla/Base emphasis. Details: `docs/generators/GEAR-PROGRESSION-RANK-CATALOG.md`.
+
 ## 2026-10-18 — EXTRA STASH GEAR: ONE ACTOR-COVERAGE PERCENT SLIDER (CURRENT)
 
 **Player-facing layout:** the **EXTRA STASH GEAR** family now has **exactly two live controls**: one compact `ENABLE EXTRA GEAR` checkbox (`loot.stashGearEnabled`, off by default), and one compact, disabled-while-off `ELIGIBLE STASHES` slider (`loot.stashGearCoveragePercent`, **0–100% in exact 1% steps**, default 0%). One shared narrow width (max 630 DIP), one slider rail with left 0% / right 100%, source-like Stamina Usage label/value placement; family height 184 DIP. Remove all six BASIC/STANDARD/RARE weapons/armor OFF/RARE/MOD/FREQ controls from the catalog, VM aggregate, renderer, emitted CFG writer and audits. No new faux chance, no full-width controls, no Vanilla/Base value prominence or verbose in-control copy. Old six-ID preset inputs are no longer supported controls.

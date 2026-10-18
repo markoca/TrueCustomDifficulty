@@ -1,3 +1,25 @@
+## 2026-10-18 — CURRENT: EXPANDED STASH BONUS POOL
+
+The authoritative runtime `gear-progression-ranks.csv` contains **142 unique regular items**: 34 weapons, 39 ordinary player-facing armor suits, 69 standard anomaly artifacts. T1–T4 map to native `Newbie/Experienced/Veteran/Master` player-rank branches. The UI remains the same two compact controls; no chance sliders or additional controls are introduced.
+
+| Tier / player rank | Weapons | Suits | Standard artifacts |
+|---|---:|---:|---:|
+| T1 Newbie | 8 | 7 | 39 common |
+| T2 Experienced | 10 | 10 | 17 uncommon |
+| T3 Veteran | 10 | 13 | 9 rare |
+| T4 Master | 6 | 9 | 4 epic |
+| **Total** | **34** | **39** | **69** |
+
+The existing four original suits retain their direct player-rank source anchors. Another 35 normal, spawn-referenced, non-NPC suits have explicitly **curated stash tiers**, not claimed universal vanilla armor ranks. The standard artifact pool uses published item SID/rarity mapping and the gameplay progression policy Common→T1, Uncommon→T2, Rare→T3, Epic→T4; this does not assert native rarity-derived drop chances. This is a **design mapping**, not a newly discovered global CFG progression contract.
+
+**Excluded:** all six Weird/Arch `AArtifactWeird*` items, fake/prolog/quest, DLC story and special artifacts; NPC-only armor, helmets, preinstalled special suits, and Gauss/RPG/unique weapon variants. Standard artifact SIDs are `CArtifact*`, `EArtifact*`, `FArtifact*`, `GArtifact*` and independently checked against the authoritative `spawnable-item-sids.csv` inventory.
+
+For each eligible actor's native rank, select one weapon, then optionally **one suit OR one ordinary artifact**, never both, from all tier ≤ rank options. Selection uses deterministic actor-specific hashes. Item `Chance=1` belongs to the private generator; it is **not a guaranteed physical drop rate**. Max two authored extra item candidates per branch. Artifacts receive native `Artifact` category without equipment durability/ammo properties. Exact engine loot-roll behavior remains subject to unopened-stash testing in game.
+
+The source manifest now carries `STASH_BONUS_POOL` usage, the 142-entry loader validates counts and special exclusions, and the production CFG output contract checks tier/class boundaries. This heading supersedes historical 34+4-only passages below.
+
+---
+
 ## 2026-10-18 — EXTRA STASH GEAR: ONE ACTOR-COVERAGE PERCENT SLIDER (CURRENT)
 
 **Player-facing layout:** the **EXTRA STASH GEAR** family now has **exactly two live controls**: one compact `ENABLE EXTRA GEAR` checkbox (`loot.stashGearEnabled`, off by default), and one compact, disabled-while-off `ELIGIBLE STASHES` slider (`loot.stashGearCoveragePercent`, **0–100% in exact 1% steps**, default 0%). One shared narrow width (max 630 DIP), one slider rail with left 0% / right 100%, source-like Stamina Usage label/value placement; family height 184 DIP. Remove all six BASIC/STANDARD/RARE weapons/armor OFF/RARE/MOD/FREQ controls from the catalog, VM aggregate, renderer, emitted CFG writer and audits. No new faux chance, no full-width controls, no Vanilla/Base value prominence or verbose in-control copy. Old six-ID preset inputs are no longer supported controls.
