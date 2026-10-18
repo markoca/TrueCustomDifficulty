@@ -1,3 +1,13 @@
+## 2026-10-18 — CURRENT: THREE-WAY EXTRA STASH BONUS MIXER
+
+`Extra Stash Gear` now has five compact controls: one master toggle, existing exact 0–100% `Eligible Stashes` **build-time actor selection**, and three **independent 0–3x, 0.1x** distribution Weight rails for `Weapons`, `Armor` and `Artifacts`. Default mix is 1x / 1x / 1x. A 0x weight excludes that category from the new bonus generator; all zero values create no bonus (the separate opt-in 13 authored weapon removal still applies). These are **design weights for actor/rank category assignment at build time**, NOT native `PossibleItems.Weight` fields or promised item drop percentages. They are compared per selected physical ActorSID and native rank branch using an independent deterministic SHA256 mixer, then a rank-eligible SID is chosen within the class. Across selected actors each eligible 142-item SID can be selected, but none is guaranteed.
+
+Each selected physical actor/rank receives **at most one new bonus item candidate**: a source-validated regular weapon, one of 39 normal suits, or one of 69 standard artifacts. Six Weird/Arch artifacts plus quest, fake, prolog, NPC/unique/special items remain excluded. Its private real CFG `PossibleItems[0].Chance = 0.5` is an **explicitly authored chance** (not measured whole-physical-stash odds); `MinCount = MaxCount = 1`. This means a selected actor has a possible bonus, not a guaranteed physical item. The final engine treatment of the `Chance` field still requires unopened-stash in-game confirmation; no RNG or probability semantics are fabricated in the visual mixer. No new shared pools, no quest stash edits. Eligible actors 800 base + 108 DLC and original source removal behavior unchanged.
+
+Implementation: `CfgPatchWriterService.StashGearCoverage.cs`; parameter count 279, StashGear aggregate and parameter-family mapping; current locked UI consists of compact toggle, Stamina Usage-style coverage slider and three compact aligned weight rails, section height 379 DIP. QA: `tools/audit_stash_gear_coverage.py`, `tools/audit_stashes_mixer_ui.py`, and generated CFG contract `VerifyStashGearCoverage` including category-only 0x exclusions. This is source-level evidence; a local .NET build, Wine UI inspection and actual game RNG remain to be run.
+
+---
+
 ## 2026-10-18 — CURRENT: EXPANDED STASH BONUS POOL
 
 The authoritative runtime `gear-progression-ranks.csv` contains **142 unique regular items**: 34 weapons, 39 ordinary player-facing armor suits, 69 standard anomaly artifacts. T1–T4 map to native `Newbie/Experienced/Veteran/Master` player-rank branches. The UI remains the same two compact controls; no chance sliders or additional controls are introduced.

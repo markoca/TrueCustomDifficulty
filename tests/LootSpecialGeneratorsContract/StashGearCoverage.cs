@@ -98,29 +98,48 @@ internal static partial class Program
                         "N" => 1, "E" => 2, "V" => 3, "M" => 4,
                         _ => throw new InvalidDataException("Unknown native rank")
                     };
-                    Check(itemSids.Length is 1 or 2 && itemSids.All(progression.ContainsKey)
-                        && progression[itemSids[0]].ItemClass == "Weapon"
-                        && itemSids.Skip(1).All(sid =>
-                            progression[sid].ItemClass is "Armor" or "Artifact")
-                        && itemSids.All(sid => progression[sid].Tier <= maxTier),
-                        "Extra stash item class, count or native rank changed");
-                    Check(Regex.Matches(body, @"(?m)^\s*MinCount = 1$").Count == itemSids.Length
-                        && Regex.Matches(body, @"(?m)^\s*MaxCount = 1$").Count == itemSids.Length,
-                        "Each added gear category must generate one candidate");
+                    Check(itemSids.Length == 1 && progression.ContainsKey(itemSids[0])
+                        && progression[itemSids[0]].Tier <= maxTier,
+                        "Bonus generator must contain exactly one rank-eligible item");
+                    Check(Regex.Matches(body, @"(?m)^\s*MinCount = 1$").Count == 1
+                        && Regex.Matches(body, @"(?m)^\s*MaxCount = 1$").Count == 1
+                        && Regex.Matches(body, @"(?m)^\s*Chance = 0\.5$").Count == 1,
+                        "Bonus must have exactly one native non-guaranteed Chance=0.5 item");
                     Check(!new[] { "Gauss", "Trophy", "RPG", "Weird", "Quest",
                             "Fake", "Prolog", "CNPP", "Heart" }.Any(word =>
                             body.Contains(word, StringComparison.OrdinalIgnoreCase)),
                         "Forbidden item entered stash bonus generator");
-                    if (itemSids.Skip(1).Any(sid => progression[sid].ItemClass == "Artifact"))
+                    var actualClass = progression[itemSids[0]].ItemClass;
+                    if (actualClass == "Artifact")
                         Check(body.Contains("Category = EItemGenerationCategory::Artifact",
                             StringComparison.Ordinal), "Artifact category not emitted");
-                    if (itemSids.Skip(1).Any(sid => progression[sid].ItemClass == "Armor"))
+                    if (actualClass == "Armor")
                         Check(body.Contains("Category = EItemGenerationCategory::BodyArmor",
                             StringComparison.Ordinal), "Armor category not emitted");
                 }
                 Console.WriteLine($"PASS Extra Gear {percent}%: {baseMatched.Count} base + {dlcMatched.Count} DLC actors; {generated.Count} rank-specific actor generators");
             }
         }
+            // 100%-coverage forced type mixes: every produced candidate
+            // must belong to the sole enabled category, independent of DLC.
+            foreach (var kind in new[] { "Weapon", "Armor", "Artifact" })
+            {
+                var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+                vm.AllParameters.Single(x => x.Id == "loot.stashGearEnabled").CurrentBoolean = true;
+                vm.AllParameters.Single(x => x.Id == "loot.stashGearCoveragePercent")
+                    .SnapCurrentNumberToMarker(100);
+                foreach (var other in new[] { "Weapon", "Armor", "Artifact" })
+                    vm.AllParameters.Single(x => x.Id == "loot.stashGear" + other + "Weight")
+                        .SnapCurrentNumberToMarker(other == kind ? 3 : 0);
+                var dir = Path.Combine(root, "forced-" + kind);
+                new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+                var output = File.ReadAllText(OutputPath(dir, "GameData/ItemGeneratorPrototypes.cfg"));
+                var ids = Regex.Matches(output, @"(?m)^\s*ItemPrototypeSID = (\S+)$")
+                    .Select(m => m.Groups[1].Value)
+                    .Where(progression.ContainsKey).ToArray();
+                Check(ids.Length >= 800 && ids.All(id => progression[id].ItemClass == kind),
+                    "Forced stash class mixer did not respect zero weight exclusions: " + kind);
+            }
         finally
         {
             if (Keep is null && Directory.Exists(root))

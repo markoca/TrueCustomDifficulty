@@ -1,3 +1,5 @@
+> **2026-10-18 Extra Stash Gear mixer:** The three compact Weapons / Armor / Artifacts relative weight rails sit below the existing coverage slider within a 630 DIP bounded section (379 DIP total). All rails share the same label-left/value-right Stamina Usage readout and hit-target geometry; changed numeric digits alone use accent. Do not normalize the displayed weights into invented drop probabilities. The separate actual authored 0.5 native CFG Chance is a writer detail, not a UI-guarantee label. See `docs/generators/GEAR-PROGRESSION-RANK-CATALOG.md`.
+
 > **2026-10-18 Extra Stash Gear:** updated item pool adds no UI controls. Preserve the existing two compact controls, aligned slider indicators and no redundant Vanilla/Base emphasis. Details: `docs/generators/GEAR-PROGRESSION-RANK-CATALOG.md`.
 
 ## 2026-10-18 — EXTRA STASH GEAR: ONE ACTOR-COVERAGE PERCENT SLIDER (CURRENT)

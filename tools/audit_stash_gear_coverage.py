@@ -88,7 +88,7 @@ for scope, num in (("base", 800), ("dlc1", 108)):
         previous = current
 cfg = json.loads((data / "parameters.json").read_text(encoding="utf-8"))
 ids = {x["id"]: x for x in cfg["parameters"]}
-assert len(cfg["parameters"]) == 276
+assert len(cfg["parameters"]) == 279
 assert ids["loot.stashGearEnabled"]["control"] == "toggle"
 assert ids["loot.stashGearCoveragePercent"]["slider"] == {
     "min": 0, "max": 100, "step": 1, "stepMode": "absolute"}
@@ -97,15 +97,19 @@ assert not any(x in ids for x in ("loot.stashGearCheapWeapon", "loot.stashGearCh
     "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
     "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"))
 baseline = json.loads((data / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
-assert baseline["supportedParameterCount"] == 276
+assert baseline["supportedParameterCount"] == 279
 ui = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashGearCoverage.cs").read_text(encoding="utf-8")
 assert 'P("loot.stashGearCoveragePercent")' in ui and "DrawStashGearMode(" not in ui
 assert 'StashGearStableHash("ACTOR|" + x.Scope + "|" + x.ActorSid)' in writer
-assert 'StashGearStableHash("WEAPON|" + actor.ActorSid' in writer
-assert 'StashGearStableHash("ARMOR|" + actor.ActorSid' in writer
-assert 'StashGearStableHash("ARTIFACT|" + actor.ActorSid' in writer
-assert 'StashGearStableHash("BONUS_TYPE|" + actor.ActorSid' in writer
-assert 'StashGearStableHash("COUNT|" + actor.ActorSid' in writer
+assert 'ChooseStashGearClass(all, actor.ActorSid, code)' in writer
+assert 'StashGearStableHash("MIX|" + actorSid' in writer
+assert '"ITEM|" + chosenClass' in writer
+assert 'item.SetAssignment("Chance", "0.5")' in writer
+for kind in ("Weapon", "Armor", "Artifact"):
+    row = ids["loot.stashGear" + kind + "Weight"]
+    assert row["requiresToggle"] == "loot.stashGearEnabled"
+    assert row["slider"] == {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"}
+    assert row["control"] == "slider"
 assert 'MinCount", "1"' in writer and 'MaxCount", "1"' in writer
-print("PASS: 800 base + 108 DLC eligible physical actors; rank metadata; 34 weapons + 39 suits + 69 standard artifacts; all 101 whole-percent coverage levels deterministic and monotonic")
+print("PASS: 800 base + 108 DLC eligible physical actors; rank metadata; 34 weapons + 39 suits + 69 standard artifacts; three class weights, real Chance 0.5; all coverage levels stable")

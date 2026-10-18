@@ -104,7 +104,7 @@ public sealed class ParameterViewModel : ObservableObject
                     "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
                     "StashContentMix" => "BASIC keeps the four real 0–1x Weight mixer knobs and separate RGD-5 chance/amount. STANDARD and RARE show interactive source-native per-entry Chance controls, with fill equal to the current native Chance, a muted Vanilla marker, and a range when native row probabilities differ. STANDARD Ammo is Weight-only, not a fake chance control. RARE Ammo has both Weight and Chance: only its native Chance rows move. The new tier-specific controls scale the actual authored chances in approved regular tiers; they do not create a global physical stash drop percentage or touch protected quest/unique rewards. Rare Coupons uses the existing native source control.",
                     "StashMedicalComposition" => "Weight and Chance Scale are separate. The two Veteran/Master rank bars show actual Medkit/Army Medkit Weight selection only, not stash-drop odds. Quantity MIN and MAX are source integers: AUTO preserves native values, and MAX 0 ITEMS excludes that subtype. Click the dots or drag a lane; right-click resets.",
-                    "StashGear" => "Choose the exact percentage of eligible ordinary physical stash actors receiving one or two regular progression-appropriate items. The selection is deterministic at build time and excludes quest, unique and special stashes.",
+                    "StashGear" => "Eligible Stashes selects physical actors at build time. Weapons, Armor and Artifacts set relative candidate weights, not drop odds. Each assigned item has a real native 0.5 Chance; no item is guaranteed. All candidates respect player rank, and quest, Weird, unique and special stashes stay excluded.",
                     "StashRewardProfile" => "Three compact chart rows edit BASIC/STANDARD/RARE ammo stack quantities only. Basic RGD-5 CHANCE and AMOUNT are paired in STASH CONTENT MIX; Rare Coupon Chance stays in the Rare source section. Each graph value is clickable/draggable; right-click resets that source.",
                     "AmmoDistribution" => "Use AMMO YIELD or GRENADE YIELD for quantities. Turn the four AMMO FAMILY WEIGHTS knobs to change which calibers are favored; SNG/NATO pool bars are read-only.",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
@@ -549,6 +549,9 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.stashArmyMedkitMaxCount"] = "StashMedicalComposition",
         ["loot.stashGearEnabled"] = "StashGear",
         ["loot.stashGearCoveragePercent"] = "StashGear",
+        ["loot.stashGearWeaponWeight"] = "StashGear",
+        ["loot.stashGearArmorWeight"] = "StashGear",
+        ["loot.stashGearArtifactWeight"] = "StashGear",
 
         ["loot.cheapStashAmmoQuantity"] = "StashRewardProfile",
         ["loot.mediumStashAmmoQuantity"] = "StashRewardProfile",

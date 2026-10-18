@@ -43,10 +43,12 @@ expected = {
         "loot.stashMedicalArmyMedkitChanceScale", "loot.stashMedicalAntiRadChanceScale",
         "loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
         "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"],
-    "StashGear": ["loot.stashGearEnabled", "loot.stashGearCoveragePercent"],
+    "StashGear": ["loot.stashGearEnabled", "loot.stashGearCoveragePercent",
+                  "loot.stashGearWeaponWeight", "loot.stashGearArmorWeight",
+                  "loot.stashGearArtifactWeight"],
 }
 ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
-assert len(ids) == len(set(ids)) == 34
+assert len(ids) == len(set(ids)) == 37
 assert set(ids) == set(sum(expected.values(), []))
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for family, expected_ids in expected.items():
@@ -109,6 +111,9 @@ assert "DrawStashQuantityDots(" not in source
 assert "DrawStashMedicalSourcePreview(" not in source
 assert '=> width >= 700.0 ? 345.0 : 607.0;' in source
 assert 'P("loot.stashGearCoveragePercent")' in gear
+for key in ("Weapon", "Armor", "Artifact"):
+    assert '"loot.stashGear' + key + 'Weight"' in gear
+assert 'DrawStashNumericReadout(dc' in gear and 'AddHorizontalTarget(weight,' in gear
 assert 'DrawSourceKnob(' not in content
 assert "DrawStashWeightMixer(dc," in content
 assert "DrawStashBasicNativePools(dc," in content
@@ -120,6 +125,7 @@ assert "StashMedicalPalette[0]" in medical and "StashMedicalPalette[3]" in medic
 assert '"MEDICAL COMPOSITION"' in medical
 assert "DrawStashMedicalModeSelector" in medical
 assert "DrawStashGearMode(" not in gear
+assert '=> 379.0;' in source
 assert "DrawStashBiasPreview" not in source
 assert "DrawStashCountKnob" not in source
 assert "DrawStashGearDial" not in source

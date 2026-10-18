@@ -4813,8 +4813,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawHalf(max, maxRail, -1.0, 6.0, false);
     }
 
-    // One clear, source-audited physical stash coverage control.
-    // Exactly 1% integer steps; never a fabricated runtime drop probability.
+    // Actor coverage is a build-time subset; the three compact category rails
+    // set relative distribution weights, not physical drop percentages.
     private void DrawStashGear(
         DrawingContext dc, Brush text, Brush muted, Brush border,
         Brush accent, Brush panel)
@@ -4831,17 +4831,16 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         const double y = 99.0;
         DrawText(dc, "ELIGIBLE STASHES", new Point(left + 2.0, y),
             11.0, coverage.IsControlEnabled ? text : muted, FontWeights.SemiBold);
-        DrawRightAlignedText(dc, $"{(int)Math.Round(coverage.CurrentNumber)}%",
+        DrawStashNumericReadout(dc, $"{(int)Math.Round(coverage.CurrentNumber)}%",
             new Point(left + width - 4.0, y - 1.0), 13.0,
-            coverage.IsControlEnabled && coverage.IsValueModifiedFromReference()
-                ? accent : text, FontWeights.SemiBold);
+            coverage.IsControlEnabled, coverage.IsValueModifiedFromReference(),
+            text, muted, accent);
 
-        var rail = new Rect(left + 10.0, y + 34.0,
-            Math.Max(1.0, width - 20.0), 2.0);
+        var rail = new Rect(left + 10.0, y + 34.0, Math.Max(1.0, width - 20.0), 2.0);
         dc.DrawLine(new Pen(border, 2.0),
             new Point(rail.Left, rail.Top), new Point(rail.Right, rail.Top));
-        var position = ValueToX(coverage.CurrentNumber, 0.0, 100.0, rail, false);
         var active = coverage.IsControlEnabled;
+        var position = ValueToX(coverage.CurrentNumber, 0.0, 100.0, rail, false);
         dc.DrawLine(new Pen(active ? accent : muted, 2.0),
             new Point(rail.Left, rail.Top), new Point(position, rail.Top));
         dc.DrawEllipse(panel, new Pen(active ? accent : muted, 2.2),
@@ -4853,8 +4852,50 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawRightAlignedText(dc, "100%", new Point(rail.Right, rail.Top + 12.0),
             10.0, muted, FontWeights.Normal);
         AddHorizontalTarget(coverage,
-            new Rect(rail.Left - 7.0, rail.Top - 15.0, rail.Width + 14.0, 34.0),
+            new Rect(rail.Left - 7.0, rail.Top - 15.0, rail.Width + 14.0, 44.0),
             rail, 0.0, 100.0);
+
+        DrawText(dc, "BONUS MIX", new Point(left + 2.0, 177.0),
+            11.2, text, FontWeights.Bold);
+        var weights = new[]
+        {
+            ("loot.stashGearWeaponWeight", "WEAPONS"),
+            ("loot.stashGearArmorWeight", "ARMOR"),
+            ("loot.stashGearArtifactWeight", "ARTIFACTS")
+        };
+        for (var i = 0; i < weights.Length; i++)
+        {
+            var weight = P(weights[i].Item1);
+            if (weight is null) continue;
+            var labelY = 204.0 + i * 52.0;
+            var enabled = weight.IsControlEnabled;
+            DrawText(dc, weights[i].Item2, new Point(left + 2.0, labelY),
+                10.8, enabled ? text : muted, FontWeights.SemiBold);
+            DrawStashNumericReadout(dc, $"{weight.CurrentNumber:0.0}x",
+                new Point(left + width - 4.0, labelY - 1.0), 12.6,
+                enabled, weight.IsValueModifiedFromReference(), text, muted, accent);
+            var bar = new Rect(left + 10.0, labelY + 26.0,
+                Math.Max(1.0, width - 20.0), 2.0);
+            dc.DrawLine(new Pen(border, 2.0),
+                new Point(bar.Left, bar.Top), new Point(bar.Right, bar.Top));
+            var x = ValueToX(weight.CurrentNumber, 0.0, 3.0, bar, false);
+            if (enabled)
+                dc.DrawLine(new Pen(accent, 2.0),
+                    new Point(bar.Left, bar.Top), new Point(x, bar.Top));
+            var hover = enabled && ReferenceEquals(_hoverTarget?.Parameter, weight);
+            dc.DrawEllipse(panel, new Pen(hover ? Brushes.White :
+                enabled ? accent : muted, hover ? 2.6 : 2.0),
+                new Point(x, bar.Top), 6.0, 6.0);
+            if (enabled)
+                dc.DrawEllipse(accent, null, new Point(x, bar.Top), 2.4, 2.4);
+            DrawText(dc, "0x", new Point(bar.Left, bar.Top + 11.0),
+                9.6, muted, FontWeights.Normal);
+            DrawRightAlignedText(dc, "3x", new Point(bar.Right, bar.Top + 11.0),
+                9.6, muted, FontWeights.Normal);
+            AddHorizontalTarget(weight,
+                new Rect(bar.Left - 7.0, bar.Top - 14.0, bar.Width + 14.0, 42.0),
+                bar, 0.0, 3.0);
+        }
     }
 
     // The UI reads the SAME embedded ItemGenerator source templates as the
@@ -6945,7 +6986,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 345.0 : 607.0;
     private static double StashGearHeight(double width)
-        => 184.0;
+        => 379.0;
 
     // Renderer measurements and painted card extents must agree at every breakpoint.
     private static double CompactFatigueHeight(double width)
@@ -7045,7 +7086,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             },
             "StashGear" => new[]
             {
-                "loot.stashGearEnabled", "loot.stashGearCoveragePercent"
+                "loot.stashGearEnabled", "loot.stashGearCoveragePercent",
+                "loot.stashGearWeaponWeight", "loot.stashGearArmorWeight",
+                "loot.stashGearArtifactWeight"
             },
             "StashRewardProfile" => new[]
             {

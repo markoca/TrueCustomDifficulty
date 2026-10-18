@@ -38,7 +38,9 @@ public sealed partial class CfgPatchWriterService
 
     private static readonly string[] StashGearParameterIds =
     {
-        "loot.stashGearEnabled", "loot.stashGearCoveragePercent"
+        "loot.stashGearEnabled", "loot.stashGearCoveragePercent",
+        "loot.stashGearWeaponWeight", "loot.stashGearArmorWeight",
+        "loot.stashGearArtifactWeight"
     };
 
     private static bool IsStashMedicalSourceInTier(string parameterId, string tier)

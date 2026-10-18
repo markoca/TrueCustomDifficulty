@@ -158,6 +158,35 @@ public sealed partial class CfgPatchWriterService
         return ordered.Take(count).ToArray();
     }
 
+
+    // Whole 0.1-step weights: deterministic class assignment across approved
+    // physical actor/rank pairs, never a claimed native Weight roll or a
+    // percentage of successful drops. Chance is the real per-item CFG field.
+    private static string? ChooseStashGearClass(
+        IReadOnlyDictionary<string, ParameterViewModel> all,
+        string actorSid, char code)
+    {
+        var weights = new[]
+        {
+            ("Weapon", "loot.stashGearWeaponWeight"),
+            ("Armor", "loot.stashGearArmorWeight"),
+            ("Artifact", "loot.stashGearArtifactWeight")
+        }.Select(pair => (pair.Item1, Weight: Math.Clamp(
+            (int)Math.Round(all.TryGetValue(pair.Item2, out var parameter)
+                ? parameter.CurrentNumber * 10.0 : 10.0),
+            0, 30))).ToArray();
+        var total = weights.Sum(x => x.Weight);
+        if (total == 0) return null;
+        var roll = (int)(StashGearStableHash(
+            "MIX|" + actorSid + "|" + code) % (ulong)total);
+        foreach (var entry in weights)
+        {
+            if (roll < entry.Weight) return entry.Item1;
+            roll -= entry.Weight;
+        }
+        throw new InvalidDataException("Stash item distribution weight selection drifted.");
+    }
+
     private static int WriteStashGearCoverage(
         IReadOnlyDictionary<string, ParameterViewModel> all,
         bool hasDlc1,
@@ -202,67 +231,57 @@ public sealed partial class CfgPatchWriterService
 
                 // Patch an EMPTY next slot, never overwrite an authored generator
                 // or its quest/attachment reward. Existing rank gate is preserved.
+                if (ChooseStashGearClass(all, actor.ActorSid, code) is null)
+                    continue;
                 var parent = actors.GetOrAddNode(actor.ActorSid,
                     new[] { "ItemGeneratorSettings", $"[{i}]", "ItemGenerators" });
                 parent.GetOrAddChild($"[{originalIndex}]", useBpatch: false)
                     .SetAssignment("PrototypeSID", generatorSid);
                 written++;
 
-                // Per-actor/per-native-rank source: one possible regular weapon,
-                // and optionally one suit or normal artifact from the 142-item
-                // source-backed pool. No generator is shared across physical actors.
+                // The mixer allocates ONE category and ONE possible item to
+                // this actor/rank. A genuine native per-item Chance below 1
+                // allows the actual game roll to yield no bonus item.
+                var chosenClass = ChooseStashGearClass(all, actor.ActorSid, code);
+                if (chosenClass is null)
+                    throw new InvalidDataException("Unexpected empty bonus mix after redirect.");
+                var eligible = pool.Where(x => x.ItemClass == chosenClass
+                    && x.Tier <= tier).ToArray();
+                var chosen = eligible[(int)(StashGearStableHash(
+                    "ITEM|" + chosenClass + "|" + actor.ActorSid + "|" + code)
+                    % (ulong)eligible.Length)];
+                var categoryName = chosenClass switch
+                {
+                    "Weapon" when chosen.ItemType == "Pistol" => "WeaponPistol",
+                    "Weapon" => "WeaponPrimary",
+                    "Armor" => "BodyArmor",
+                    "Artifact" => "Artifact",
+                    _ => throw new InvalidDataException("Unknown bonus equipment type.")
+                };
                 var generator = prototypes.GetOrAddReferencedRoot(
                     generatorSid, "../ItemGeneratorPrototypes.cfg", "[0]");
                 generator.SetAssignment("SID", generatorSid);
-                var categories = generator.GetOrAddChild("ItemGenerator", useBpatch: false);
-                var weapons = pool.Where(x => x.Weapon && x.Tier <= tier).ToArray();
-                var armor = pool.Where(x => x.Armor && x.Tier <= tier).ToArray();
-                var artifacts = pool.Where(x => x.Artifact && x.Tier <= tier).ToArray();
-                var selectedWeapon = weapons[
-                    (int)(StashGearStableHash("WEAPON|" + actor.ActorSid + "|" + code)
-                          % (ulong)weapons.Length)];
-                var selectedArmor = armor[
-                    (int)(StashGearStableHash("ARMOR|" + actor.ActorSid + "|" + code)
-                          % (ulong)armor.Length)].Sid;
-                var selectedArtifact = artifacts[
-                    (int)(StashGearStableHash("ARTIFACT|" + actor.ActorSid + "|" + code)
-                          % (ulong)artifacts.Length)].Sid;
-                var includeBonus =
-                    (StashGearStableHash("COUNT|" + actor.ActorSid + "|" + code) & 1UL) == 0;
-                var includeArtifact =
-                    (StashGearStableHash("BONUS_TYPE|" + actor.ActorSid + "|" + code) & 1UL) == 0;
-
-                void AddItem(int index, string categoryName, string sid, string itemClass)
+                var itemCategory = generator.GetOrAddChild("ItemGenerator", useBpatch: false)
+                    .GetOrAddChild("[0]", useBpatch: false);
+                itemCategory.SetAssignment("Category", "EItemGenerationCategory::" + categoryName);
+                itemCategory.SetAssignment("bAllowSameCategoryGeneration", "false");
+                var item = itemCategory.GetOrAddChild("PossibleItems", useBpatch: false)
+                    .GetOrAddChild("[0]", useBpatch: false);
+                item.SetAssignment("ItemPrototypeSID", chosen.Sid);
+                // An explicitly authored native CFG Chance, not a UI prediction
+                // of how many real-world physical stashes will contain gear.
+                item.SetAssignment("Chance", "0.5");
+                item.SetAssignment("MinCount", "1");
+                item.SetAssignment("MaxCount", "1");
+                if (chosenClass != "Artifact")
                 {
-                    var category = categories.GetOrAddChild($"[{index}]", useBpatch: false);
-                    category.SetAssignment("Category", "EItemGenerationCategory::" + categoryName);
-                    category.SetAssignment("bAllowSameCategoryGeneration", "false");
-                    var item = category.GetOrAddChild("PossibleItems", useBpatch: false)
-                        .GetOrAddChild("[0]", useBpatch: false);
-                    item.SetAssignment("ItemPrototypeSID", sid);
-                    item.SetAssignment("Chance", "1");
-                    item.SetAssignment("MinCount", "1");
-                    item.SetAssignment("MaxCount", "1");
-                    if (itemClass != "Artifact")
-                    {
-                        item.SetAssignment("MinDurability", itemClass == "Weapon" ? "0.45" : "0.55");
-                        item.SetAssignment("MaxDurability", itemClass == "Weapon" ? "0.80" : "0.85");
-                    }
-                    if (itemClass == "Weapon")
-                    {
-                        item.SetAssignment("AmmoMinCount", "0");
-                        item.SetAssignment("AmmoMaxCount", "0");
-                    }
+                    item.SetAssignment("MinDurability", chosenClass == "Weapon" ? "0.45" : "0.55");
+                    item.SetAssignment("MaxDurability", chosenClass == "Weapon" ? "0.80" : "0.85");
                 }
-
-                AddItem(0, selectedWeapon.ItemType == "Pistol" ? "WeaponPistol" : "WeaponPrimary",
-                    selectedWeapon.Sid, "Weapon");
-                if (includeBonus)
+                if (chosenClass == "Weapon")
                 {
-                    if (includeArtifact)
-                        AddItem(1, "Artifact", selectedArtifact, "Artifact");
-                    else
-                        AddItem(1, "BodyArmor", selectedArmor, "Armor");
+                    item.SetAssignment("AmmoMinCount", "0");
+                    item.SetAssignment("AmmoMaxCount", "0");
                 }
                 written++;
             }

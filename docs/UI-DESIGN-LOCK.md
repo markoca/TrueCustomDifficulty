@@ -1,3 +1,5 @@
+> **2026-10-18 Stash Bonus Mixer lock:** The Stash Gear family consists of compact `Enable Extra Gear` toggle, `Eligible Stashes` 0–100% rail and three 0–3x relative mix-weight rails (`Weapons`, `Armor`, `Artifacts`) with 0.1x steps and max family width 630 DIP. Five live catalog IDs must exactly match VM mapping, UI, writer, static and emitted-CFG tests. No extra per-item controls or false drop probability labels. Stamina Usage-aligned left labels/right readouts, changed digits only gold, endpoint markers neutral, weight zeros valid. Height 379 DIP; master-off disables dependent controls.
+
 > **2026-10-18 Extra Stash Gear pool:** expanded rank catalog (34 weapons, 39 suits, 69 standard non-Weird artifacts) changes no controls or layout. Keep the compact checkbox and bounded 0–100% slider with Stamina Usage-style alignment and neutral unchanged values. Source: `docs/generators/GEAR-PROGRESSION-RANK-CATALOG.md`.
 
 ## 2026-10-18 — EXTRA STASH GEAR: ONE ACTOR-COVERAGE PERCENT SLIDER (CURRENT)
