@@ -4813,7 +4813,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawHalf(max, maxRail, -1.0, 6.0, false);
     }
 
-    // Actor coverage is a build-time subset; the three compact category rails
+    // Actor coverage is a build-time subset; three compact category knobs
     // set relative distribution weights, not physical drop percentages.
     private void DrawStashGear(
         DrawingContext dc, Brush text, Brush muted, Brush border,
@@ -4857,44 +4857,32 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         DrawText(dc, "BONUS MIX", new Point(left + 2.0, 177.0),
             11.2, text, FontWeights.Bold);
+
+        // One shared compact horizontal strip with three native source knobs.
+        // Relative distribution weights are unchanged; only the presentation
+        // changes from three stacked slider rails to side-by-side dials.
+        var mixStrip = new Rect(left + 2.0, 194.0,
+            Math.Max(1.0, width - 4.0), 166.0);
+        dc.DrawRoundedRectangle(CloneWithOpacity(panel, .56),
+            new Pen(CloneWithOpacity(border, .65), .9),
+            mixStrip, 4.0, 4.0);
+
         var weights = new[]
         {
             ("loot.stashGearWeaponWeight", "WEAPONS"),
             ("loot.stashGearArmorWeight", "ARMOR"),
             ("loot.stashGearArtifactWeight", "ARTIFACTS")
         };
+        const double mixGap = 8.0;
+        const double mixInset = 8.0;
+        var mixWidth = Math.Max(1.0,
+            (mixStrip.Width - 2.0 * mixInset - 2.0 * mixGap) / 3.0);
         for (var i = 0; i < weights.Length; i++)
         {
-            var weight = P(weights[i].Item1);
-            if (weight is null) continue;
-            var labelY = 204.0 + i * 52.0;
-            var enabled = weight.IsControlEnabled;
-            DrawText(dc, weights[i].Item2, new Point(left + 2.0, labelY),
-                10.8, enabled ? text : muted, FontWeights.SemiBold);
-            DrawStashNumericReadout(dc, $"{weight.CurrentNumber:0.0}x",
-                new Point(left + width - 4.0, labelY - 1.0), 12.6,
-                enabled, weight.IsValueModifiedFromReference(), text, muted, accent);
-            var bar = new Rect(left + 10.0, labelY + 26.0,
-                Math.Max(1.0, width - 20.0), 2.0);
-            dc.DrawLine(new Pen(border, 2.0),
-                new Point(bar.Left, bar.Top), new Point(bar.Right, bar.Top));
-            var x = ValueToX(weight.CurrentNumber, 0.0, 3.0, bar, false);
-            if (enabled)
-                dc.DrawLine(new Pen(accent, 2.0),
-                    new Point(bar.Left, bar.Top), new Point(x, bar.Top));
-            var hover = enabled && ReferenceEquals(_hoverTarget?.Parameter, weight);
-            dc.DrawEllipse(panel, new Pen(hover ? Brushes.White :
-                enabled ? accent : muted, hover ? 2.6 : 2.0),
-                new Point(x, bar.Top), 6.0, 6.0);
-            if (enabled)
-                dc.DrawEllipse(accent, null, new Point(x, bar.Top), 2.4, 2.4);
-            DrawText(dc, "0x", new Point(bar.Left, bar.Top + 11.0),
-                9.6, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, "3x", new Point(bar.Right, bar.Top + 11.0),
-                9.6, muted, FontWeights.Normal);
-            AddHorizontalTarget(weight,
-                new Rect(bar.Left - 7.0, bar.Top - 14.0, bar.Width + 14.0, 42.0),
-                bar, 0.0, 3.0);
+            var cell = new Rect(mixStrip.Left + mixInset + i * (mixWidth + mixGap),
+                mixStrip.Top, mixWidth, mixStrip.Height);
+            DrawSourceKnob(dc, P(weights[i].Item1), weights[i].Item2,
+                cell, text, muted, border, accent, panel, dialScale: .74);
         }
 
         // One real CFG Chance setting, used for every optional bonus category.

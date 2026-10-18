@@ -6784,7 +6784,7 @@
       ]},
       "rationale": "Directly distribute extra gear item classes without treating Weight as whole-stash drop probability.",
       "logic": "Choose a source-approved rank-eligible weapon candidate using weighted per-actor deterministic allocation; keep actual per-item Chance distinct.",
-      "interaction": "Compact 0–3x weight rail, 0.1x steps, right-click reset, requires Enable Extra Gear.",
+      "interaction": "One of three compact knobs in a single horizontal Bonus Mix strip. Native 0–3x relative weight, 0.1x steps; drag, wheel, keyboard and right-click reset. Requires Enable Extra Gear.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -6816,7 +6816,7 @@
       ]},
       "rationale": "Directly distribute extra gear item classes without treating Weight as whole-stash drop probability.",
       "logic": "Choose a source-approved rank-eligible armor candidate using weighted per-actor deterministic allocation; keep actual per-item Chance distinct.",
-      "interaction": "Compact 0–3x weight rail, 0.1x steps, right-click reset, requires Enable Extra Gear.",
+      "interaction": "One of three compact knobs in a single horizontal Bonus Mix strip. Native 0–3x relative weight, 0.1x steps; drag, wheel, keyboard and right-click reset. Requires Enable Extra Gear.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -6848,7 +6848,7 @@
       ]},
       "rationale": "Directly distribute extra gear item classes without treating Weight as whole-stash drop probability.",
       "logic": "Choose a source-approved rank-eligible artifact candidate using weighted per-actor deterministic allocation; keep actual per-item Chance distinct.",
-      "interaction": "Compact 0–3x weight rail, 0.1x steps, right-click reset, requires Enable Extra Gear.",
+      "interaction": "One of three compact knobs in a single horizontal Bonus Mix strip. Native 0–3x relative weight, 0.1x steps; drag, wheel, keyboard and right-click reset. Requires Enable Extra Gear.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },

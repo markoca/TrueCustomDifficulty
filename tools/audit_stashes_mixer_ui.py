@@ -113,7 +113,13 @@ assert '=> width >= 700.0 ? 345.0 : 607.0;' in source
 assert 'P("loot.stashGearCoveragePercent")' in gear
 for key in ("Weapon", "Armor", "Artifact"):
     assert '"loot.stashGear' + key + 'Weight"' in gear
-assert 'DrawStashNumericReadout(dc' in gear and 'AddHorizontalTarget(weight,' in gear
+assert 'var mixStrip = new Rect(left + 2.0, 194.0,' in gear
+assert 'mixStrip, 4.0, 4.0);' in gear
+assert 'var mixWidth = Math.Max(1.0,' in gear
+assert 'DrawSourceKnob(dc, P(weights[i].Item1), weights[i].Item2,' in gear
+assert 'dialScale: .74' in gear
+assert 'AddHorizontalTarget(weight,' not in gear
+assert 'labelY = 204.0 + i * 52.0' not in gear
 assert 'DrawSourceKnob(' not in content
 assert "DrawStashWeightMixer(dc," in content
 assert "DrawStashBasicNativePools(dc," in content
@@ -129,6 +135,14 @@ assert 'P("loot.stashGearBonusChance")' in gear
 assert 'AddHorizontalTarget(chance,' in gear
 assert '"BONUS CHANCE · ALL ITEMS"' in gear
 assert '=> 444.0;' in source
+assert 'const double chanceY = 371.0;' in gear
+assert gear.count('DrawSourceKnob(dc, P(weights[i].Item1), weights[i].Item2,') == 1
+for key in ("Weapon", "Armor", "Artifact"):
+    row = next(p for p in catalog["parameters"]
+               if p["id"] == "loot.stashGear" + key + "Weight")
+    assert row["slider"] == {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"}
+    assert "knob" in row["interaction"].lower()
+assert "Bonus Mix" in lock and "three" in system
 assert "DrawStashBiasPreview" not in source
 assert "DrawStashCountKnob" not in source
 assert "DrawStashGearDial" not in source

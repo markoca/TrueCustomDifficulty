@@ -1,3 +1,9 @@
+## 2026-10-18 — Bonus Mix visual consolidation (CURRENT)
+
+Only the **three item-category weight editors** have changed appearance: Weapons / Armor / Artifacts are now three project-standard 270° rotary knobs inside **one horizontally bounded BONUS MIX strip**, rather than stacked horizontal slider tracks. The persisted `loot.stashGear{Weapon,Armor,Artifact}Weight` IDs retain native numeric `0–3x` and exact `0.1x` increments, default 1× each, and all existing relative selection semantics. The compact section stays max 630 DIP wide and 444 DIP high, with the unchanged actor coverage and shared absolute native Bonus Chance sliders. The knob's existing UI framework handles pointer dragging, scrolling, hover, reset and keyboard; no new controls, no new calculated probabilities, no changed runtime generator behavior or Chance values. Source guard `tools/audit_stashes_mixer_ui.py` now requires exactly the single horizontal knob strip and rejects the old three weight rails. Compilation/Wine and game tests remain separate acceptance steps.
+
+---
+
 ## 2026-10-18 — Compiler fix: CS0136 shadowed `chosen` local
 
 In `CfgPatchWriterService.StashGearCoverage.cs`, the outer `chosen` array stores eligible selected **physical stash actors**; the per-rank `eligible` item selection previously also declared `var chosen` inside the actor loop. C# disallows this shadowing (CS0136), so the latter local is now explicitly named `selectedItem` throughout the selected weapon/pistol-category and `ItemPrototypeSID` assignment path. This is a naming-only compiler repair: global Bonus Chance, three distribution weights, 142-item source pool, the 800/108 eligible actor set, native rank limits and quest/Weird exclusions are unchanged. A static regression in `tools/audit_stash_gear_coverage.py` rejects reuse of the conflicting name. This change is source-reviewed; successful .NET compilation and in-game behavior still require verification.
