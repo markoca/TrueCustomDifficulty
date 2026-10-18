@@ -119,22 +119,44 @@ def method_routes(special):
     add("WriteCheapStashProduction", *(
         special["cheapStashProduction"][key] for key in
         ("ammoQuantityParameterId", "grenadeChanceParameterId", "grenadeQuantityParameterId")))
-    # Twelve additional sources share the three audited production-only
-    # stash clone writers. A source is routed to the class it changes; content
-    # bias uses all three but represents one user control each.
+    # Current 21 Stash Content + Extra Gear sources and 12 independent
+    # medical/quantity sources. Route each ID to the *actual* production
+    # entrypoint, not an old 12-parameter cohort or synthetic 0.02/0.07/0.15
+    # gear Chance writer. Keep exact ordering so an unreviewed new source fails.
     stash_ids = special["stashContentAndGearProduction"]["parameterIds"]
-    require(len(stash_ids) == 12 and len(set(stash_ids)) == 12,
-            "stash content/gear source roster drift")
-    for pid in stash_ids[:6]:
+    mixer_ids = ["loot.stashMix" + kind for kind in (
+        "Ammo", "Medical", "Food", "Drinks", "Grenades", "Coupons")]
+    gear_ids = [
+        "loot.stashGearCoveragePercent", "loot.stashGearEnabled",
+        "loot.stashGearWeaponWeight", "loot.stashGearArmorWeight",
+        "loot.stashGearArtifactWeight", "loot.stashGearAttachmentWeight",
+        "loot.stashGearBonusChance",
+    ]
+    tier_chance_ids = [
+        "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
+        "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
+        "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
+        "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
+    ]
+    require(stash_ids == mixer_ids + gear_ids + tier_chance_ids,
+            "21-source Stash Content / Extra Gear routing drift")
+    for pid in mixer_ids:
         add("WriteCheapStashProduction", pid)
-    for pid in stash_ids[6:]:
-        tier = "Cheap" if "Cheap" in pid else ("Medium" if "Medium" in pid else "Expensive")
-        add({"Cheap":"WriteCheapStashProduction",
-             "Medium":"WriteMediumStashAmmoProduction",
-             "Expensive":"WriteExpensiveStashProduction"}[tier], pid)
+    for pid in gear_ids:
+        add("WriteStashGearCoverage", pid)
+    add("WriteStashAuthoredWeaponRemovals", "loot.stashGearEnabled")
+    for pid in tier_chance_ids:
+        add("WriteMediumStashAmmoProduction" if "mediumStash" in pid
+            else "WriteExpensiveStashProduction", pid)
     medical_ids = special["stashMedicalProduction"]["parameterIds"]
-    require(len(medical_ids) == 8 and len(set(medical_ids)) == 8,
-            "stash medical item/stack roster drift")
+    expected_medical = ["loot.stashMedical" + kind + "Bias" for kind in
+        ("Bandage", "Medkit", "ArmyMedkit", "AntiRad")]
+    expected_quantity = ["loot.stash" + kind + bound + "Count" for kind in
+        ("Medkit", "ArmyMedkit") for bound in ("Min", "Max")]
+    expected_medical_chance = ["loot.stashMedical" + kind + "ChanceScale"
+        for kind in ("Bandage", "Medkit", "ArmyMedkit", "AntiRad")]
+    require(medical_ids == expected_medical + expected_quantity + expected_medical_chance,
+            "12-source medical Weight/Chance/Quantity routing drift")
     for pid in medical_ids:
         add("WriteCheapStashProduction", pid)
     add("WriteMediumStashAmmoProduction", special["mediumStashAmmoProduction"]["parameterId"])
@@ -161,8 +183,8 @@ def main():
     baseline = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
     code = WRITER_PATH.read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
-    require(len(definitions) == len(catalog["parameters"]) == 276, "276 unique CFG source IDs expected")
-    require(baseline["supportedParameterCount"] == 276, "writer expected coverage drift")
+    require(len(definitions) == len(catalog["parameters"]) == 281, "281 unique CFG source IDs expected")
+    require(baseline["supportedParameterCount"] == 281, "writer expected coverage drift")
     require(not baseline["deferredParameterIds"], "deferred production parameters")
     require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.0.5", "source/game baseline mismatch")
     require(set(catalog["difficultyProfiles"]) == set(SIDS), "difficulty baseline drift")
@@ -193,10 +215,10 @@ def main():
     require(len(baseline["editPoints"]) == 1230 and len(direct) == 213,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
-    require(len(special) == 55, "special writer route count drift")
+    require(len(special) == 68, "special writer route count drift")
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     require(set(direct) | set(special) == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 255, "UI dimension count drift")
+    require(len(definitions) - len(NON_UI) == 268, "UI dimension count drift")
     require(NON_UI.issubset(definitions), "missing intentional hidden source")
     for pid in NON_UI:
         require(definitions[pid].get("exposeInUi") is False, "non-UI setting exposed " + pid)
@@ -215,12 +237,25 @@ def main():
             "production missing-output guard was removed")
     for operation in OPERATIONS:
         require('"' + operation + '" =>' in code, "direct transform not implemented: " + operation)
+    # The StashGear coverage and original-weapon removal methods are in
+    # production partials, not CfgPatchWriterService.cs. Check the actual
+    # entrypoint calls AND their implementation signatures in those partials.
+    extra_writer_files = {
+        "WriteStashGearCoverage": DATA.parent / "Services/CfgPatchWriterService.StashGearCoverage.cs",
+        "WriteStashAuthoredWeaponRemovals": DATA.parent / "Services/CfgPatchWriterService.StashAuthoredWeapons.cs",
+    }
     for pid, methods in special.items():
         for method in methods:
             require(re.search(r"\b" + method + r"\s*\(", main_write),
                     "special method not invoked by production Write: " + pid + " -> " + method)
-            require(code.count(method + "(") >= 2 and ("private static " in code.split(method + "(", 2)[1][-105:]),
-                    "special method implementation absent: " + method)
+            if method in extra_writer_files:
+                impl = extra_writer_files[method].read_text(encoding="utf-8")
+                require(re.search(r"private static int\s+" + method + r"\s*\(", impl),
+                        "StashGear writer partial implementation missing: " + method)
+            else:
+                require(code.count(method + "(") >= 2
+                        and ("private static " in code.split(method + "(", 2)[1][-105:]),
+                        "special method implementation absent: " + method)
     require("document.AddAssignment(point.Prototype, point.NodePath, point.Key, value)" in main_write,
             "direct nested BPatch source node write missing")
     require("fileName.EndsWith(\"Prototypes.cfg\"" in code and "_patch_{PatchSuffix}.cfg" in code
@@ -253,7 +288,8 @@ def main():
     inert = []
     for name in NAMES:
         doc = json.loads((PRESETS / (name + ".json")).read_text(encoding="utf-8"))
-        require(len(doc["values"]) == 276, "factory catalog source count drift " + name)
+        require(len(doc["values"]) == 281 and set(doc["values"]) == set(definitions),
+                "factory catalog source ID drift " + name)
         sid = SIDS[doc["referenceDifficulty"]]
         for pid, p in definitions.items():
             if pid not in direct:

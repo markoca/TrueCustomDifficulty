@@ -16,23 +16,30 @@ baseline = json.loads((data / "cfg-writer-baseline.json").read_text(encoding="ut
 parameters = {p["id"]: p for p in catalog["parameters"]}
 mix = ["loot.stashMix" + category for category in (
     "Ammo", "Medical", "Food", "Drinks", "Grenades", "Coupons")]
-gear = ["loot.stashGearCoveragePercent"]
+gear = [
+    "loot.stashGearCoveragePercent", "loot.stashGearEnabled",
+    "loot.stashGearWeaponWeight", "loot.stashGearArmorWeight",
+    "loot.stashGearArtifactWeight", "loot.stashGearAttachmentWeight",
+    "loot.stashGearBonusChance",
+]
 medical = ["loot.stashMedical" + kind + "Bias" for kind in
            ("Bandage", "Medkit", "ArmyMedkit", "AntiRad")]
 quantity = ["loot.stash" + kind + end + "Count" for kind in
             ("Medkit", "ArmyMedkit") for end in ("Min", "Max")]
 
-assert len(catalog["parameters"]) == 276
-assert baseline["supportedParameterCount"] == 276
+assert len(catalog["parameters"]) == 281
+assert baseline["supportedParameterCount"] == 281
 assert baseline["special"]["stashContentAndGearProduction"]["parameterIds"] == mix + gear + ["loot.stashGearEnabled"] + [
     "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance", "loot.mediumStashCouponsChance",
     "loot.expensiveStashAmmoChance", "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
     "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance"]
 assert baseline["special"]["stashMedicalProduction"]["parameterIds"] == medical + quantity + [
     "loot.stashMedical" + kind + "ChanceScale" for kind in ("Bandage", "Medkit", "ArmyMedkit", "AntiRad")]
-assert len({*mix, *gear, *medical, *quantity}) == 15
+assert len({*mix, *gear, *medical, *quantity}) == 21
 assert all(parameters[x]["tab"] == "stashes" and
-           parameters[x]["control"] == "slider" for x in mix + gear + medical + quantity)
+           parameters[x]["control"] == "slider"
+           for x in mix + [p for p in gear if p != "loot.stashGearEnabled"] + medical + quantity)
+assert parameters["loot.stashGearEnabled"]["tab"] == "stashes"
 for name in mix:
     p = parameters[name]
     assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 1, 0.1)
@@ -51,10 +58,17 @@ for name in ("loot.stashMixMedical", "loot.stashMixFood",
 assert parameters["loot.stashGearEnabled"]["control"] == "toggle"
 assert parameters["loot.stashGearEnabled"]["vanilla"]["All"] is False
 for name in gear:
+    if name == "loot.stashGearEnabled":
+        continue
     p = parameters[name]
     assert p["requiresToggle"] == "loot.stashGearEnabled"
-    assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 100, 1)
-    assert p["vanilla"]["All"] == 0
+    slider = p["slider"]
+    if name.endswith("Weight"):
+        assert (slider["min"], slider["max"], slider["step"]) == (0, 3, 0.1)
+        assert p["vanilla"]["All"] == 1
+    else:
+        assert (slider["min"], slider["max"], slider["step"]) == (0, 100, 1)
+        assert p["vanilla"]["All"] == (50 if name.endswith("BonusChance") else 0)
 for name in medical:
     p = parameters[name]
     assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (0, 3, .25)
@@ -116,10 +130,10 @@ assert 'P("loot.stashGearCoveragePercent")' in ui
 assert "DrawStashGearMode(" not in ui
 assert '\"StashGear\" => StashGearHeight(width)' in ui
 assert '\"StashMedicalComposition\" => StashMedicalCompositionHeight(width)' in ui
-assert '\"StashMedicalQuantity\" => StashMedicalQuantityHeight(width)' in ui
-assert 'DrawStashMedicalSourcePreview(dc,' in ui
-assert 'DrawStashQuantityDots(dc,' in ui
-assert '\"0 ITEMS\"' in ui and '\"AUTO\"' in ui
+assert '\"StashMedicalQuantity\" => StashMedicalQuantityHeight(width)' not in ui
+assert 'DrawStashMedicalModeSelector(dc,' in ui
+assert 'DrawStashQuantityDualRail(dc,' in ui
+assert 'value < -.5 ? "0"' in ui and '"VANILLA"' in ui
 assert "IsStashMedicalSelectionDisabled(" in writer
 assert "TuneStashMedicalCountField(" in writer
 assert "StashState(all).TuneSelection(" in writer

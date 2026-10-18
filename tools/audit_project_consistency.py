@@ -1966,7 +1966,7 @@ if _build_name_errors:
 else:
     note("preset-aware triplet naming locked: zzzzz_TrueCustomDifficulty_<loaded preset>; safe underscores; Custom fallback")
 
-# Current 12 source-backed factory presets, complete 276 controls after new medical stash controls.
+# Current twelve source-backed factory presets cover every one of the 281 live catalog IDs.
 _factory_preset_names = [
     "Anomaly Runner", "Field Medic", "Hardcore+", "Hardcore",
     "Immersive", "Mercenary", "Mutant Hunter", "Outcast",
@@ -1995,8 +1995,8 @@ for _name in _factory_preset_names:
         continue
     _preset = json.loads(_preset_path.read_text(encoding="utf-8"))
     _values = _preset.get("values", {})
-    if len(_values) != 276:
-        _factory_errors.append(f"{_name}: {len(_values)} values, expected 276")
+    if len(_values) != 281:
+        _factory_errors.append(f"{_name}: {len(_values)} values, expected 281")
     if _preset.get("referenceDifficulty") not in {"Novice", "Stalker", "Veteran", "Master"}:
         _factory_errors.append(f"{_name}: invalid referenceDifficulty={_preset.get('referenceDifficulty')}")
     if f'Presets\\{_name}.json' not in _factory_csproj_text:
@@ -2011,14 +2011,22 @@ for _name in _factory_preset_names:
 _factory_catalog = {p["id"]: p for p in parameters}
 # Frozen 2026-10-15 audit ledgers describe the preceding 248 IDs; never
 # retroactively pretend the newly introduced stash gear was source-audited then.
+_factory_new_tier_chance_ids = {
+    "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
+    "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
+    "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
+    "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
+}
 _factory_legacy_catalog = {pid: p for pid, p in _factory_catalog.items()
-                           if not pid.startswith(("loot.stashMix", "loot.stashGear", "loot.stashMedical", "loot.stashMedkit", "loot.stashArmyMedkit"))}
+                           if pid not in _factory_new_tier_chance_ids
+                           and not pid.startswith(("loot.stashMix", "loot.stashGear",
+                               "loot.stashMedical", "loot.stashMedkit", "loot.stashArmyMedkit"))}
 _factory_tuning = json.loads((ROOT / "tools/factory_preset_expansion.json").read_text(encoding="utf-8"))
 _factory_groups = _factory_tuning["groups"]
 _factory_tuning_profiles = _factory_tuning["profiles"]
 _factory_tuned_ids = [pid for members in _factory_groups.values() for pid in members]
-if len(_factory_catalog) != 276 or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
-    _factory_errors.append("expected 276 current source IDs and 34 historical + 3 drink duration matrix slots")
+if len(_factory_catalog) != 281 or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
+    _factory_errors.append("expected 281 current source IDs and 34 historical + 3 drink duration matrix slots")
 if set(_factory_tuning_profiles) != set(_factory_preset_names):
     _factory_errors.append("tuning matrix has missing/unknown factory names")
 
@@ -2213,7 +2221,7 @@ for _role, _signature in _role_matrix.get("profiles", {}).items():
     _path = _factory_preset_dir / f"{_role}.json"
     _document = json.loads(_path.read_text(encoding="utf-8"))
     _entries = _document["values"]
-    if len(_entries) != 276 or set(_entries) != set(_factory_catalog):
+    if len(_entries) != 281 or set(_entries) != set(_factory_catalog):
         _factory_errors.append(f"{_role}: incomplete native catalog")
     if len(_signature.get("changes", {})) < 30:
         _factory_errors.append(f"{_role}: insufficient role-specific rebalancing")
@@ -2299,7 +2307,7 @@ for _role, _settings in _consumable_matrix.get("profiles", {}).items():
         or _snapshot.get("medicalOverride") is not _medical_override
         or not _drink_override):
         _factory_errors.append(f"{_role}: missing or inconsistent override mode")
-    if len(_entries) != 276 or set(_entries) != set(_factory_catalog):
+    if len(_entries) != 281 or set(_entries) != set(_factory_catalog):
         _factory_errors.append(f"{_role}: lost native catalog values")
     if not _settings.get("intent"):
         _factory_errors.append(f"{_role}: missing balance intent")
@@ -2626,7 +2634,7 @@ else:
         or _final_cfg_index.get("counts", {}).get("editable") != 235
         or _final_cfg_index.get("counts", {}).get("directLeafPoints") != 1230):
         _factory_errors.append("final CFG mapping inventory differs from live catalogue/baseline")
-if "276 unique" not in (ROOT / "tools/audit_final_cfg_mapping.py").read_text(encoding="utf-8"):
+if "281 unique" not in (ROOT / "tools/audit_final_cfg_mapping.py").read_text(encoding="utf-8"):
     _factory_errors.append("new static CFG mapping writer audit entrypoint is missing")
 _final_workflow = (ROOT / ".github/workflows/static-audit.yml").read_text(encoding="utf-8")
 if ("python tools/audit_final_cfg_mapping.py" not in _final_workflow
@@ -2642,7 +2650,7 @@ if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legac
 if _factory_errors:
     fail("current 12 factory presets drifted: " + "; ".join(_factory_errors))
 else:
-    note("factory presets: twelve 276-source scarcity-first profiles with independent Water values; exact-stock upgrade preserves edits")
+    note("factory presets: twelve 281-source scarcity-first profiles with independent Water values; exact-stock upgrade preserves edits")
 
 # Originally twelve visual-only live projections approved 2026-10-14;
 # nine remain after retiring the Medical Items percentage / bleed stage
@@ -3740,13 +3748,13 @@ if not all(t in _stash_sort_body for t in _stash_order_check):
     fail("Stashes sections drifted from Rewards > Content > Medical Composition > Quantity > Extra Gear")
 
 
-_stash_groups = {"Stashes", "Stash Content", "Stash Medical Composition", "Stash Medical Quantity", "Stash Gear"}
+_stash_groups = {"Stashes", "Stash Content", "Stash Medical Composition", "Stash Gear"}
 _stash_rows = [p for p in parameters if p.get("group") in _stash_groups]
 _stash_ids = {p["id"] for p in _stash_rows}
 _stash_tabs = [t for t in parameters_doc.get("tabs", []) if t.get("id") == "stashes"]
 _stash_include = parameters_doc.get("scope", {}).get("includedTabs", [])
 _stash_tab_text = (ROOT / "src/TrueCustomDifficulty/ViewModels/TabViewModel.cs").read_text(encoding="utf-8")
-if (len(_stash_rows) != 29 or len(_stash_ids) != 29
+if (len(_stash_rows) != 39 or len(_stash_ids) != 39
     or _stash_tabs != [{"id": "stashes", "label": "Stashes", "order": 55}]
     or _stash_include.index("stashes") != _stash_include.index("loot") + 1
     or any(p.get("tab") != "stashes" or not p["id"].startswith("loot.") for p in _stash_rows)
@@ -3757,7 +3765,7 @@ if (len(_stash_rows) != 29 or len(_stash_ids) != 29
     or not all(f'"{pid}"' in _stash_vm_text for pid in _stash_ids)):
     fail("Stashes tab catalog and WPF ViewModel ownership drifted")
 else:
-    note("Stashes tab: 29 source IDs after replacing six tier modes with one percentage selector")
+    note("Stashes tab: 39 source IDs / 4 UI families / 7 opt-in bonus dimensions")
 
 # Global cross-domain control audit release gate (v0.2.50).
 _global_doc = DOCS / "GLOBAL-CROSS-DOMAIN-AUDIT.md"
@@ -3778,7 +3786,7 @@ _global_expected_tabs = {
     "master": 20,
     "environment": 6,
     "loot": 27,
-    "stashes": 25,
+    "stashes": 35,
     "alife": 2,
 }
 _global_confirmed = sum(p.get("support", {}).get("status") == "confirmed" for p in _global_visible)
@@ -3872,6 +3880,7 @@ _global_dependency_expected = {
     "advanced.fatigueMechanics": 5,
     "advanced.masterEffectModifierMechanics": 3,
     "loot.worldWeaponShuffle": 1,
+    "loot.stashGearEnabled": 6,
 }
 _global_dependency_actual = {}
 _global_dependency_bad = []
@@ -3915,7 +3924,7 @@ for _row in _global_visible:
     # not as a negative player-facing numeric value.
     if _row.get("id") in ("loot.stashMedkitMaxCount", "loot.stashArmyMedkitMaxCount"):
         if (_slider.get("min") != -1
-            or '"0 ITEMS"' not in (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")):
+            or 'value < -.5 ? "0"' not in (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")):
             _global_negative_visible.append(_row.get("id"))
         continue
     if any(isinstance(v, (int, float)) and v < 0 for v in _vanilla_values):
@@ -3938,14 +3947,14 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 276 or len(_global_visible) != 174 or len(_global_hidden) != 102:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 276/174/102")
+if len(parameters) != 281 or len(_global_visible) != 179 or len(_global_hidden) != 102:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 281/179/102")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 57:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/57")
-elif _global_control_counts != {"slider": 160, "toggle": 12, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 160 sliders / 12 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 62:
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/62")
+elif _global_control_counts != {"slider": 164, "toggle": 13, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 164 sliders / 13 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -3970,7 +3979,7 @@ elif _global_anomaly_missing or "SetEffectiveDamageMultiplierProvider" not in _g
 elif not _global_doc.exists():
     fail("global cross-domain audit document missing from docs/")
 else:
-    note("current cross-domain structural audit: 276 catalog / 174 visible / 102 hidden; 117 visible confirmed + 57 runtime-test-required; zero direct collisions")
+    note("current cross-domain structural audit: 281 catalog / 179 visible / 102 hidden; 117 visible confirmed + 62 runtime-test-required; zero direct collisions")
 
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("v0.2.51-v0.3.0 override/CFG-placement/provenance/production snapshots (current UI/Combat tools + active source checks are authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
@@ -4222,10 +4231,10 @@ if (len(_stash_med_caps) != 2
     or any(p.get("slider", {}).get("min") != -1 or
            p.get("slider", {}).get("max") != 6 or
            p.get("vanilla", {}).get("All") != 0 for p in _stash_med_caps)
-    or "DrawStashQuantityDots(" not in _stash_ui
+    or "DrawStashQuantityDualRail(" not in _stash_ui
     or 'P("loot.stashGearCoveragePercent")' not in _stash_ui
     or "DrawStashPoolBar(" not in _stash_ui
-    or "DrawStashMedicalSourcePreview(" not in _stash_ui
+    or "DrawStashMedicalModeSelector(" not in _stash_ui
     or "effective.TierField(" not in _stash_ui
     or _stash_tier.count("effective.TierField(") != 3
     or "effective.SmartSelection(" not in _stash_smart

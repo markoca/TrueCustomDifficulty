@@ -1,3 +1,42 @@
+# P0 CI and stale-audit reconciliation — 2026-10-18 (main)
+
+## Why the GitHub Actions run was red
+
+Inspected Actions run [39157521121](https://github.com/markoca/TrueCustomDifficulty/actions/runs/39157521121) on commit `337aae53816fcb807b256c4dffb627169e380f82`, before this P0 commit. GitHub reports all **14 jobs failed** in approximately 13 seconds. The billing/timing endpoint reports **0 ms runner execution** for every Windows and Ubuntu job; job-steps API returns an empty array for sampled jobs, and log retrieval returns Azure `BlobNotFound` (HTTP 404). Consequently **no test execution is evidenced**, and it is not defensible to attribute the red workflow to C# or the stash algorithms. This may be a GitHub account/runner/actions-availability or provisioning failure, but the precise cause is **not established** from the accessible API. This repository change cannot repair an external runner-provisioning failure.
+
+## Corrected source-level audit drift
+
+The current catalog contains **281 distinct IDs: 179 visible and 102 hidden**, with **268 player-editable dimensions** (13 audit-only hidden). **39 Stashes IDs** have four UI families: Content 17, Medical 12, Extra Gear 7, Ammo Rewards 3; **35 Stashes entries are visible**. The 12 committed factory profiles each contain 281 values. Native direct writer remains 213 IDs / 1,230 concrete edit points; the **68 special-route IDs** include all 21 stash content/extra-gear IDs and all 12 medical controls.
+
+- `tools/audit_final_cfg_mapping.py`: 281/268/68 cardinalities, exact special-stash and medical ID lists, production `WriteStashGearCoverage` and `WriteStashAuthoredWeaponRemovals` verification in their actual C# partials, factory preset membership. Historical 248-ID inventory is still checked *as an explicit 2026-10-15 snapshot*, not rewritten into a current count.
+- `tools/audit_project_consistency.py`: 281 total, 179 visible/102 hidden, support 117 confirmed/62 runtime-test-required, slider/toggle 164/13, Stashes 39 total/35 visible, six Extra Gear checkbox dependencies, current medical quantity dual-rail and WEIGHT/CHANCE mode-selector contracts, current zero-items rendering. The 248 historical mapping ledger now excludes precisely the eight subsequently added tier Chance source IDs instead of losing historical coverage.
+- `tools/audit_stash_content_gear.py`: all **seven** live Extra Gear controls, per-source Weight 0–3× and two 0–100% percentage sliders, current medical 2-way quantity rails and renderer method names, 281-source count and unchanged native parsing/actor safety checks.
+- Workflow names updated to 281 / 268 (rather than superseded 268 / 255). Workflow now explicitly runs the current stash coverage and safe authored-weapon removal static checks as separate fail-closed CI gates, in addition to existing `audit_stashes_current.py`.
+
+These are **audit/test maintenance changes**; gameplay code, WPF layout, saved preset values, protected stash rules and the 13-item approved weapon-removal allowlist are unchanged.
+
+## Verification limits and recovery
+
+The static checks require an actual Python execution and .NET compilation before being labelled **passing**. GitHub Actions cannot be declared green merely because audited code was pushed. If subsequent workflow runs still have 0-ms jobs, inspect GitHub repository **Actions** availability/usage/billing/runner state and contact GitHub support as needed; retry the exact workflow once external runner scheduling is restored. Do not lower assertions or disable failing tests to force a green status.
+
+Run locally from repository root:
+
+```bash
+python3 tools/audit_ui_cfg_contract.py
+python3 tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
+python3 tools/audit_stashes_mixer_ui.py
+python3 tools/audit_stashes_current.py
+python3 tools/audit_stash_content_gear.py
+python3 tools/audit_stash_gear_coverage.py
+python3 tools/audit_extra_stash_gear.py
+python3 tools/audit_project_consistency.py
+dotnet build tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release -r win-x64
+```
+
+A static catalog assertion cannot establish in-game loot probability or a passing Windows/Wine runtime test.
+
+---
+
 # Stashes tab audit — 2026-10-18 (main)
 
 ## Baseline inspected
