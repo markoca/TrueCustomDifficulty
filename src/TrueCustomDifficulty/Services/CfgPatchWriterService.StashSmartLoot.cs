@@ -119,6 +119,14 @@ public sealed partial class CfgPatchWriterService
         // A named stash clue can indicate an authored/quest-associated reward.
         // Protect those actors until individual actor/gameplay verification.
         var ordinary = actors.Where(x => x.ClueSid == "EmptyInherited").ToArray();
+        // The 28 withheld named-clue actors MUST match the full protected roster.
+        // A new clue or a renamed special container must fail closed instead
+        // of silently appearing as an ordinary documented stash.
+        var clueActors = actors.Where(x => x.ClueSid != "EmptyInherited").ToArray();
+        if (clueActors.Length != 28
+            || clueActors.Any(x => !BaseProtectedStashActors.Value.Contains(x.ActorSid)))
+            throw new InvalidDataException(
+                "Named-clue stash candidates are missing whole-actor protection.");
         // Entire protected stash is off-limits, even if its SmartLoot is generic:
         // never reroute one source layer of a quest/unique/clue-bearing container.
         if (ordinary.Length != 803

@@ -1,3 +1,7 @@
+## 2026-10-18 — Filtered documented stash inventory
+
+The original **1,569** physical containers and **831** regular SmartLoot *candidates* remain preserved as source evidence. For changes to ordinary stash loot, use the derived **915 eligible physical actors** (803 base no-clue + 112 DLC1 allowlisted) in `src/TrueCustomDifficulty/Data/physical-stash-eligible-catalog.csv`. The full safety catalog classifies the other 654 as 106 protected quest/unique/clue, 67 test/non-world and 481 unclassified. The 28 named-clue actors overlapping the 831 candidate list are **protected**, not eligible. This filtering does **not** turn geographic or candidate membership into permission to modify a shared generator. See [the safety audit](generators/PHYSICAL-STASH-SAFETY-AUDIT.md).
+
 # Full physical ItemContainer regional inventory (GameData + DLC1)
 
 **1,569** physically placed `ESpawnType::ItemContainer` actors from the 2026-10-17 GameData and DLC1 CFG dumps, joined by **ActorSID** with the existing **831** regular SmartLoot manifest entries. **738** additional ItemContainers are classified only as `OTHER_PLACED_CONTAINER` (not automatically ordinary stashes, safe to randomize, or even player-accessible).
@@ -12,7 +16,7 @@ The geographic labels are obtained from pinned third-party `tools/data/stalker2-
 
 Of the 102 outside actors, **36** have a `WorldMap_WP`-prefixed level, while **66** have other/blank levels, including test and dev maps. Outside actors remain **UNRESOLVED**; no nearest-region guess is made. The two previously audited regular stashes on polygon boundaries retain explicit inferred labels (`prypiat` and `cordon`).
 
-**All 831** regular actors are matched to the earlier geographic catalog by ActorSID, and their regional labels agree. The other 738 are not yet protected/quest/DLC-safe classified; use the existing protected actor inventory before touching game logic. This is an **inventory-only** change.
+**All 831** regular actors are matched to the earlier geographic catalog by ActorSID, and their regional labels agree. The other 738 have now been cross-classified with the protected actor and DLC allowlists: 78 protected, 112 DLC1 approved, 67 non-world/test and 481 unclassified; none is promoted merely because it appears on the map. This is an **inventory-only** change.
 
 ## Regional counts (all ItemContainers, including test and quest actors)
 

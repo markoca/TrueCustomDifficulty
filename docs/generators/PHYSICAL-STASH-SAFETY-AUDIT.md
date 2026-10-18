@@ -1,17 +1,27 @@
-# Physical ItemContainer safety classification audit
+# Physical ItemContainer safety classification — filtered inventory (2026-10-18)
 
-This audit classifies **all 1,569** physically placed base and DLC1 ItemContainer actors by **existing evidence only**. It does **not** authorize additional gameplay patching.
+The game CFG inventories **1,569** placed ItemContainer actors. **Only 915 actor SIDs are included in the filtered eligible inventory**, by direct intersection with the existing source-backed, guarded writer manifests. A map location, apparent regular item, generic ItemGenerator, or stash name never grants permission to edit an actor.
 
-| Safety class | Actors | Meaning |
+| Safety class | Count | Eligible for existing guarded stash edits? |
 |---|---:|---|
-| `REGULAR_SMARTLOOT` | 831 | Present in the existing regular 831-actor catalog; not a new approval |
-| `DLC1_ELIGIBLE_MANIFEST` | 112 | Present in existing DLC1 eligible manifest; retain its existing scope and guards |
-| `PROTECTED_BASE` | 78 | Present in base protected actor manifest; must remain untouched |
-| `NON_WORLD_OR_TEST` | 67 | Not on a `WorldMap_WP` level; dev/test/blank/other maps, not automatically gameplay stashes |
-| `WORLD_UNCLASSIFIED` | 481 | World-placed but **not yet proven safe**; must not be edited merely because of map placement |
+| `REGULAR_SMARTLOOT` | **803** | Yes — base WorldMap, exact no-clue regular SmartLoot manifest |
+| `DLC1_ELIGIBLE_MANIFEST` | **112** | Yes — exact DLC1 no-clue allowlist, subject to DLC-specific writer guards |
+| `PROTECTED_BASE` | **106** | **No** — quest/unique/blueprint generators or named clue, including **28** otherwise regular SmartLoot candidates |
+| `NON_WORLD_OR_TEST` | **67** | No — dev/test/blank/non-main-world levels |
+| `WORLD_UNCLASSIFIED` | **481** | **No** — world container without positive ordinary-stash evidence |
+| **Total** | **1,569** | **915 eligible / 654 excluded** |
 
-The source files are `physical-stash-map-regions.csv`, `base-stash-protected-actor-manifest.csv`, and `dlc1-stash-eligible-actor-manifest.csv`. ActorSID is the only join key. Protection wins over DLC eligibility, and regular-manifest membership is preserved. No heuristic on container name, map region or stash prototype can upgrade a container to safe/regular. Some `WORLD_UNCLASSIFIED` actors can be quest/special; further source-graph/CFG validation is required before expansion.
+**Whole-container rule:** if an actor is protected, do not modify even its ordinary ammo, consumables or medical entries. In particular, the 28 named-clue actors in the 831-row *candidate* SmartLoot catalog are excluded from the **803** eligible base actors. The 106 protected actors take precedence over inventory classification and DLC approval. The underlying base 106-ID denylist and DLC 112-ID allowlist remain the runtime source-of-truth protections.
 
-**Regional unresolved:** of the 102 actors outside polygons, 36 have `WorldMap_WP`-prefixed levels; the rest are non-world/test/blank. These regional uncertainties do not change safety classifications.
+**Machine-readable outputs:**
+- `src/TrueCustomDifficulty/Data/physical-stash-safety-catalog.csv` — complete 1,569-row classified inventory, preserving all originally extracted coordinates/region context.
+- `src/TrueCustomDifficulty/Data/physical-stash-eligible-catalog.csv` — 915-row derived, filtered **reference inventory** for the existing writer scope; not an independent authorization table.
+- `src/TrueCustomDifficulty/Data/smartloot-regular-world-actor-manifest.csv` — original **831** candidates with 28 clues, retained as evidence.
+- `src/TrueCustomDifficulty/Data/base-stash-protected-actor-manifest.csv` — 106 exact protected base ActorSIDs.
+- `src/TrueCustomDifficulty/Data/dlc1-stash-eligible-actor-manifest.csv` — 112 source-approved DLC actors.
 
-Regenerate or verify: `python3 tools/audit_physical_stash_safety.py` or `python3 tools/audit_physical_stash_safety.py --check`. This is an inventory and documentation change only.
+Run `python3 tools/audit_physical_stash_safety.py --check` to assert both generated catalogs are exact and check actor identities, scope/origin, protection precedence and the 803/112/106/67/481 partition. Run without `--check` to regenerate both CSVs.
+
+**Scope caveat:** the filtered file is an actor-level safety inventory, not proof that all 915 actors are spawned, accessible, discoverable or affected by every knob. Tier ItemGenerator wrappers, world SmartLoot, direct medical and DLC1 paths have distinct native consumers and additional production guards. Shared wrappers remain blocked whenever any linked actor is protected. A physical actor inventory also does not certify that a *shared source generator* has no special consumers elsewhere; never extend a writer from this CSV alone. Unclassified and quest-associated objects remain excluded until separately source-validated and deliberately allowlisted. No UI controls, presets, parameters or probability semantics were changed in this filtering update.
+
+Region labels are derived from community polygons and do not decide safety. See [PHYSICAL-STASH-MAP-REGIONS.md](../PHYSICAL-STASH-MAP-REGIONS.md) and [BASE-STASH-PROTECTED-ACTORS-2026-10-16.md](BASE-STASH-PROTECTED-ACTORS-2026-10-16.md).
