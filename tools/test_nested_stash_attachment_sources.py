@@ -26,17 +26,32 @@ with tempfile.TemporaryDirectory() as directory:
         writer.writeheader()
         writer.writerows(rows)
     expected = load_expected(path)
-    source = "".join(f"""Stash_Attach{i} : struct.begin {{refurl=../ItemGeneratorPrototypes.cfg; refkey=[0]}}
+    # Match the actual, source-pinned [0] parent and 19 singleton leaf
+    # structures. These SIDs remain deliberately synthetic.
+    parent = """[0] : struct.begin
+    ItemGenerator : struct.begin
+        [0] : struct.begin
+            Category = EItemGenerationCategory::None
+            PossibleItems : struct.begin
+                [0] : struct.begin
+                    Chance = 0.f
+                    MinCount = 0
+                    MaxCount = 0
+                struct.end
+            struct.end
+        struct.end
+    struct.end
+struct.end
+"""
+    source = parent + "".join(f"""Stash_Attach{i} : struct.begin {{refurl=../ItemGeneratorPrototypes.cfg;refkey=[0]}}
     SID = Stash_Attach{i}
     ItemGenerator : struct.begin
         [0] : struct.begin
-            Category = EItemGenerationCategory::SubItemGenerator
+            Category = EItemGenerationCategory::Attach
             PossibleItems : struct.begin
                 [0] : struct.begin
                     ItemPrototypeSID = Attach{i}
-                    Chance = 0.5
-                    MinCount = 1
-                    MaxCount = 1
+                    Chance = 1
                 struct.end
             struct.end
         struct.end
@@ -45,8 +60,15 @@ struct.end
 """ for i in range(19))
     parsed = parse_original(source, expected)
     assert len(parsed) == 19
-    assert parsed[0]["AuthoredInnerChance"] == "0.5"
-    assert parsed[0]["EffectiveInheritedValues"] == "UNRESOLVED"
+    assert all(row["AuthoredInnerChance"] == "1" for row in parsed)
+    assert all(row["AuthoredCategory"] == "EItemGenerationCategory::Attach" for row in parsed)
+    assert all(row["AuthoredMinCount"] == row["AuthoredMaxCount"] == "NOT_AUTHORED"
+               for row in parsed)
+    assert all(row["ParentMinCountRaw"] == row["ParentMaxCountRaw"] == "0"
+               for row in parsed)
+    assert all(row["EffectiveInheritedValues"]
+               == "PARENT_FIELDS_RESOLVED_RUNTIME_SEMANTICS_UNVERIFIED"
+               for row in parsed)
     file = root / "GameData" / "ItemGeneratorPrototypes.cfg"
     file.parent.mkdir()
     file.write_text(source, encoding="utf-8")
@@ -56,12 +78,21 @@ struct.end
         archive.writestr("STALKER2/GameData/ItemGeneratorPrototypes.cfg", source)
     assert load_original(zipped)[0].decode("utf-8") == source
     invalid = [
-        source.replace("Stash_Attach0", "InvalidGenerator", 1),
+        # Each mutation changes just one audited source contract.
+        source.replace("Stash_Attach0 : struct.begin",
+                       "InvalidGenerator : struct.begin", 1),
         source.replace("ItemPrototypeSID = Attach0", "ItemPrototypeSID = WrongSID", 1),
-        source.replace("Chance = 0.5",
-                       "Chance = 0.5\n                    ItemGeneratorPrototypeSID = Loop", 1),
-        source.replace("Chance = 0.5",
-                       "Chance = 0.5\n                    Chance = 0.9", 1),
+        source.replace("Chance = 1", "Chance = 0.5", 1),
+        source.replace("Category = EItemGenerationCategory::Attach",
+                       "Category = EItemGenerationCategory::SubItemGenerator", 1),
+        source.replace("Chance = 1", "Chance = 1\n                    MinCount = 1", 1),
+        source.replace("Chance = 1", "Chance = 1\n                    Chance = 0.8", 1),
+        source.replace("Chance = 1",
+                       "Chance = 1\n                    ItemGeneratorPrototypeSID = Cycle", 1),
+        source.replace("{refurl=../ItemGeneratorPrototypes.cfg;refkey=[0]}",
+                       "{refurl=../ItemGeneratorPrototypes.cfg;refkey=[1]}", 1),
+        source.replace("Chance = 0.f", "Chance = 1.f", 1),
+        source.replace("MaxCount = 0", "MaxCount = 1", 1),
     ]
     for broken in invalid:
         try:
@@ -96,4 +127,4 @@ for row in evidence:
 assert all(int(r["OriginalLine"]) > 0 for r in evidence)
 assert len({r["OriginalLine"] for r in evidence}) == 19
 
-print("PASS: nested attachment inspector synthetic CFG fixtures and 19 pinned native evidence rows; game runtime not checked")
+print("PASS: source-shaped synthetic nested attachment fixtures and 19 pinned original-source evidence rows; no game-runtime claim")
