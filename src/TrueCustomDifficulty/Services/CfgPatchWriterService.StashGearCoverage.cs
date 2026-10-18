@@ -254,12 +254,12 @@ public sealed partial class CfgPatchWriterService
                     throw new InvalidDataException("Unexpected empty bonus mix after redirect.");
                 var eligible = pool.Where(x => x.ItemClass == chosenClass
                     && x.Tier <= tier).ToArray();
-                var chosen = eligible[(int)(StashGearStableHash(
+                var selectedItem = eligible[(int)(StashGearStableHash(
                     "ITEM|" + chosenClass + "|" + actor.ActorSid + "|" + code)
                     % (ulong)eligible.Length)];
                 var categoryName = chosenClass switch
                 {
-                    "Weapon" when chosen.ItemType == "Pistol" => "WeaponPistol",
+                    "Weapon" when selectedItem.ItemType == "Pistol" => "WeaponPistol",
                     "Weapon" => "WeaponPrimary",
                     "Armor" => "BodyArmor",
                     "Artifact" => "Artifact",
@@ -274,7 +274,7 @@ public sealed partial class CfgPatchWriterService
                 itemCategory.SetAssignment("bAllowSameCategoryGeneration", "false");
                 var item = itemCategory.GetOrAddChild("PossibleItems", useBpatch: false)
                     .GetOrAddChild("[0]", useBpatch: false);
-                item.SetAssignment("ItemPrototypeSID", chosen.Sid);
+                item.SetAssignment("ItemPrototypeSID", selectedItem.Sid);
                 // One user-authored native CFG Chance for all three bonus
                 // classes, not a predicted physical-stash drop frequency.
                 item.SetAssignment("Chance", itemChance);

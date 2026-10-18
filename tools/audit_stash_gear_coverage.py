@@ -105,6 +105,13 @@ assert 'StashGearStableHash("ACTOR|" + x.Scope + "|" + x.ActorSid)' in writer
 assert 'ChooseStashGearClass(all, actor.ActorSid, code)' in writer
 assert 'StashGearStableHash("MIX|" + actorSid' in writer
 assert '"ITEM|" + chosenClass' in writer
+# Avoid CS0136: 'chosen' is the outer selected-actor collection, never a
+# nested candidate local with the same name in the actor/rank loop.
+assert "var chosen = SelectStashGearActors(" in writer
+assert "var selectedItem = eligible[" in writer
+assert '"Weapon" when selectedItem.ItemType == "Pistol"' in writer
+assert 'item.SetAssignment("ItemPrototypeSID", selectedItem.Sid)' in writer
+assert writer.count("var chosen =") == 1
 assert 'item.SetAssignment("Chance", itemChance)' in writer
 assert 'all.TryGetValue("loot.stashGearBonusChance", out var chanceControl)' in writer
 assert 'CultureInfo.InvariantCulture' in writer and '/ 100.0).ToString("0.##"' in writer

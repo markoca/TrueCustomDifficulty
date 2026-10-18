@@ -1,3 +1,9 @@
+## 2026-10-18 — Compiler fix: CS0136 shadowed `chosen` local
+
+In `CfgPatchWriterService.StashGearCoverage.cs`, the outer `chosen` array stores eligible selected **physical stash actors**; the per-rank `eligible` item selection previously also declared `var chosen` inside the actor loop. C# disallows this shadowing (CS0136), so the latter local is now explicitly named `selectedItem` throughout the selected weapon/pistol-category and `ItemPrototypeSID` assignment path. This is a naming-only compiler repair: global Bonus Chance, three distribution weights, 142-item source pool, the 800/108 eligible actor set, native rank limits and quest/Weird exclusions are unchanged. A static regression in `tools/audit_stash_gear_coverage.py` rejects reuse of the conflicting name. This change is source-reviewed; successful .NET compilation and in-game behavior still require verification.
+
+---
+
 ## 2026-10-18 — CURRENT: SHARED BONUS CHANCE EDITOR
 
 `Extra Stash Gear` has **six** live controls: opt-in toggle, 0–100% `Eligible Stashes` actor coverage, the three independent `WEAPONS / ARMOR / ARTIFACTS` build-time relative mix weights (0–3× in 0.1× steps), and **one** `BONUS CHANCE · ALL ITEMS` 0–100% native item Chance slider in exact 1% steps. It is placed below the mixer, no per-category chance controls. The default is **50%** and preserves the previous fixed `Chance = 0.5`, including loading old presets without this new key.
