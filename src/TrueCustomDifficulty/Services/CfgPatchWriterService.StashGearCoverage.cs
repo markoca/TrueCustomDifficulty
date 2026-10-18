@@ -11,8 +11,8 @@ using TrueCustomDifficulty.ViewModels;
 namespace TrueCustomDifficulty.Services;
 
 // Selects a deterministic percentage of physical, source-approved stash actors.
-// Every chosen rank branch receives a private one-candidate bonus
-// generator. Original vanilla source loot pools are never edited.
+// Each selected rank branch receives a private generator with a bounded
+// 1-2 distinct bonus categories. Original native loot pools are never edited.
 public sealed partial class CfgPatchWriterService
 {
     private const string StashGearActorRanksResource =
@@ -206,36 +206,51 @@ public sealed partial class CfgPatchWriterService
     }
 
 
-    // Whole 0.1-step weights: deterministic class assignment across approved
-    // physical actor/rank pairs, never a claimed native Weight roll or a
-    // percentage of successful drops. Chance is the real per-item CFG field.
-    private static string? ChooseStashGearClass(
+    // Mixer weights are build-time relative CLASS weights, not native loot odds.
+    // Pick up to two DIFFERENT classes without replacement. This prevents
+    // repeated weapon/armor/artifact/attachment categories in one rank branch.
+    // With one enabled class the actor receives only one candidate.
+    // For T1, Attachments is not a valid class (audited sources begin at T2).
+    private static IReadOnlyList<string> ChooseStashGearClasses(
         IReadOnlyDictionary<string, ParameterViewModel> all,
         string actorSid, char code, int tier)
     {
-        var weights = new[]
+        var remaining = new[]
         {
             ("Weapon", "loot.stashGearWeaponWeight"),
             ("Armor", "loot.stashGearArmorWeight"),
             ("Artifact", "loot.stashGearArtifactWeight"),
             ("Attachment", "loot.stashGearAttachmentWeight")
-        }.Select(pair => (pair.Item1, Weight: Math.Clamp(
+        }.Select(pair => (Class: pair.Item1, Weight: Math.Clamp(
             (int)Math.Round(all.TryGetValue(pair.Item2, out var parameter)
                 ? parameter.CurrentNumber * 10.0
                 : pair.Item1 == "Attachment" ? 0.0 : 10.0),
             0, 30)))
-            .Select(x => x.Item1 == "Attachment" && tier < 2
-                ? (x.Item1, Weight: 0) : x).ToArray();
-        var total = weights.Sum(x => x.Weight);
-        if (total == 0) return null;
-        var roll = (int)(StashGearStableHash(
-            "MIX|" + actorSid + "|" + code) % (ulong)total);
-        foreach (var entry in weights)
+            .Where(x => x.Weight > 0 && (x.Class != "Attachment" || tier >= 2))
+            .ToList();
+
+        var selected = new List<string>(capacity: 2);
+        for (var slot = 0; slot < 2 && remaining.Count > 0; slot++)
         {
-            if (roll < entry.Weight) return entry.Item1;
-            roll -= entry.Weight;
+            var total = remaining.Sum(x => x.Weight);
+            var key = (slot == 0 ? "MIX|" : "MIX2|") + actorSid + "|" + code;
+            var roll = (int)(StashGearStableHash(key) % (ulong)total);
+            var found = false;
+            for (var i = 0; i < remaining.Count; i++)
+            {
+                if (roll < remaining[i].Weight)
+                {
+                    selected.Add(remaining[i].Class);
+                    remaining.RemoveAt(i);
+                    found = true;
+                    break;
+                }
+                roll -= remaining[i].Weight;
+            }
+            if (!found)
+                throw new InvalidDataException("Stash bonus weighted-class selection drift.");
         }
-        throw new InvalidDataException("Stash item distribution weight selection drifted.");
+        return selected;
     }
 
     private static int WriteStashGearCoverage(
@@ -286,75 +301,94 @@ public sealed partial class CfgPatchWriterService
                 var generatorSid = "TCD_ExtraGear_" + actor.ActorSid + "_" + code;
                 var originalIndex = actor.Ranks == "A" ? 1 : actor.ExistingGenerators;
 
-                // Patch an EMPTY next slot, never overwrite an authored generator
-                // or its quest/attachment reward. Existing rank gate is preserved.
-                var chosenClass = ChooseStashGearClass(all, actor.ActorSid, code, tier);
-                if (chosenClass is null)
+                // Preserve the authored stash generator references. Add only
+                // one PRIVATE generator per rank branch; every bonus category
+                // contains at most ONE possible item, and no class repeats.
+                var selectedClasses = ChooseStashGearClasses(
+                    all, actor.ActorSid, code, tier);
+                if (selectedClasses.Count == 0)
                     continue;
+                if (selectedClasses.Count > 2
+                    || selectedClasses.Distinct(StringComparer.Ordinal).Count()
+                        != selectedClasses.Count)
+                    throw new InvalidDataException("More than two stash bonus classes.");
+
                 var parent = actors.GetOrAddNode(actor.ActorSid,
                     new[] { "ItemGeneratorSettings", $"[{i}]", "ItemGenerators" });
                 parent.GetOrAddChild($"[{originalIndex}]", useBpatch: false)
                     .SetAssignment("PrototypeSID", generatorSid);
                 written++;
 
-                // The mixer allocates ONE category and ONE possible item to
-                // this actor/rank. A genuine native per-item Chance below 1
-                // allows the actual game roll to yield no bonus item.
-                var eligible = pool.Where(x => x.ItemClass == chosenClass
-                    && x.Tier <= tier).ToArray();
-                var selectedItem = chosenClass == "Attachment" ? null : eligible[
-                    (int)(StashGearStableHash("ITEM|" + chosenClass
-                        + "|" + actor.ActorSid + "|" + code) % (ulong)eligible.Length)];
-                var eligibleAttachments = chosenClass == "Attachment"
-                    ? attachmentPool.Where(x => x.Tier <= tier).ToArray()
-                    : Array.Empty<StashBonusAttachment>();
-                var selectedAttachment = chosenClass == "Attachment"
-                    ? eligibleAttachments[(int)(StashGearStableHash(
-                        "ITEM|Attachment|" + actor.ActorSid + "|" + code)
-                        % (ulong)eligibleAttachments.Length)]
-                    : null;
-                var categoryName = chosenClass switch
-                {
-                    "Weapon" when selectedItem!.ItemType == "Pistol" => "WeaponPistol",
-                    "Weapon" => "WeaponPrimary",
-                    "Armor" => "BodyArmor",
-                    "Artifact" => "Artifact",
-                    "Attachment" => "SubItemGenerator",
-                    _ => throw new InvalidDataException("Unknown bonus equipment type.")
-                };
                 var generator = prototypes.GetOrAddReferencedRoot(
                     generatorSid, "../ItemGeneratorPrototypes.cfg", "[0]");
                 generator.SetAssignment("SID", generatorSid);
-                var itemCategory = generator.GetOrAddChild("ItemGenerator", useBpatch: false)
-                    .GetOrAddChild("[0]", useBpatch: false);
-                itemCategory.SetAssignment("Category", "EItemGenerationCategory::" + categoryName);
-                itemCategory.SetAssignment("bAllowSameCategoryGeneration", "false");
-                var item = itemCategory.GetOrAddChild("PossibleItems", useBpatch: false)
-                    .GetOrAddChild("[0]", useBpatch: false);
-                if (selectedAttachment is not null)
-                    item.SetAssignment("ItemGeneratorPrototypeSID",
-                        selectedAttachment.SourceGeneratorSid);
-                else
-                    item.SetAssignment("ItemPrototypeSID", selectedItem!.Sid);
-                // Shared Chance applies to the outer item/generator gate;
-                // the referenced original singleton keeps any inner Chance.
-                item.SetAssignment("Chance", itemChance);
-                if (chosenClass != "Attachment")
+                var itemGenerator = generator.GetOrAddChild(
+                    "ItemGenerator", useBpatch: false);
+
+                for (var categoryIndex = 0; categoryIndex < selectedClasses.Count;
+                    categoryIndex++)
                 {
-                    item.SetAssignment("MinCount", "1");
-                    item.SetAssignment("MaxCount", "1");
+                    var chosenClass = selectedClasses[categoryIndex];
+                    var eligible = pool.Where(x => x.ItemClass == chosenClass
+                        && x.Tier <= tier).ToArray();
+                    var selectedItem = chosenClass == "Attachment" ? null : eligible[
+                        (int)(StashGearStableHash("ITEM|" + chosenClass
+                            + "|" + actor.ActorSid + "|" + code)
+                            % (ulong)eligible.Length)];
+                    var eligibleAttachments = chosenClass == "Attachment"
+                        ? attachmentPool.Where(x => x.Tier <= tier).ToArray()
+                        : Array.Empty<StashBonusAttachment>();
+                    var selectedAttachment = chosenClass == "Attachment"
+                        ? eligibleAttachments[(int)(StashGearStableHash(
+                            "ITEM|Attachment|" + actor.ActorSid + "|" + code)
+                            % (ulong)eligibleAttachments.Length)]
+                        : null;
+                    var categoryName = chosenClass switch
+                    {
+                        "Weapon" when selectedItem!.ItemType == "Pistol" => "WeaponPistol",
+                        "Weapon" => "WeaponPrimary",
+                        "Armor" => "BodyArmor",
+                        "Artifact" => "Artifact",
+                        "Attachment" => "SubItemGenerator",
+                        _ => throw new InvalidDataException("Unknown bonus equipment type.")
+                    };
+                    var itemCategory = itemGenerator.GetOrAddChild(
+                        $"[{categoryIndex}]", useBpatch: false);
+                    itemCategory.SetAssignment("Category",
+                        "EItemGenerationCategory::" + categoryName);
+                    itemCategory.SetAssignment("bAllowSameCategoryGeneration", "false");
+                    var item = itemCategory.GetOrAddChild(
+                        "PossibleItems", useBpatch: false)
+                        .GetOrAddChild("[0]", useBpatch: false);
+                    if (selectedAttachment is not null)
+                        item.SetAssignment("ItemGeneratorPrototypeSID",
+                            selectedAttachment.SourceGeneratorSid);
+                    else
+                        item.SetAssignment("ItemPrototypeSID", selectedItem!.Sid);
+
+                    // A distinct, real native Chance roll per candidate.
+                    // Coverage selects actor IDs; Chance does not change
+                    // their number. Chance=1 still requires native QA.
+                    item.SetAssignment("Chance", itemChance);
+                    if (chosenClass != "Attachment")
+                    {
+                        item.SetAssignment("MinCount", "1");
+                        item.SetAssignment("MaxCount", "1");
+                    }
+                    if (chosenClass is "Weapon" or "Armor")
+                    {
+                        item.SetAssignment("MinDurability",
+                            chosenClass == "Weapon" ? "0.45" : "0.55");
+                        item.SetAssignment("MaxDurability",
+                            chosenClass == "Weapon" ? "0.80" : "0.85");
+                    }
+                    if (chosenClass == "Weapon")
+                    {
+                        item.SetAssignment("AmmoMinCount", "0");
+                        item.SetAssignment("AmmoMaxCount", "0");
+                    }
+                    written++;
                 }
-                if (chosenClass is "Weapon" or "Armor")
-                {
-                    item.SetAssignment("MinDurability", chosenClass == "Weapon" ? "0.45" : "0.55");
-                    item.SetAssignment("MaxDurability", chosenClass == "Weapon" ? "0.80" : "0.85");
-                }
-                if (chosenClass == "Weapon")
-                {
-                    item.SetAssignment("AmmoMinCount", "0");
-                    item.SetAssignment("AmmoMaxCount", "0");
-                }
-                written++;
             }
         }
         return written;

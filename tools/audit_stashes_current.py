@@ -96,8 +96,11 @@ assert stash[bonus[0]]["control"] == "toggle" and stash[bonus[0]]["vanilla"]["Al
 for pid in bonus[2:6]:
     assert stash[pid]["slider"] == {"min": 0, "max": 3, "step": 0.1, "stepMode": "absolute"}
 assert stash[bonus[1]]["slider"]["step"] == stash[bonus[6]]["slider"]["step"] == 1
-assert 'ChooseStashGearClass(all, actor.ActorSid, code, tier)' in gear
+assert 'ChooseStashGearClasses(all, actor.ActorSid, code, tier)' in gear
 assert 'item.SetAssignment("Chance", itemChance)' in gear
+assert 'for (var categoryIndex = 0; categoryIndex < selectedClasses.Count;' in gear
+assert 'selectedClasses.Count > 2' in gear
+assert 'remaining.RemoveAt(i);' in gear
 assert 'item.SetAssignment("MinCount", "1")' in gear
 assert 'item.SetAssignment("MaxCount", "1")' in gear
 assert 'WriteStashAuthoredWeaponRemovals(allById, documents)' in writer

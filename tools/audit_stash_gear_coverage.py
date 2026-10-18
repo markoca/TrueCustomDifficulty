@@ -102,16 +102,25 @@ ui = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read
 writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashGearCoverage.cs").read_text(encoding="utf-8")
 assert 'P("loot.stashGearCoveragePercent")' in ui and "DrawStashGearMode(" not in ui
 assert 'StashGearStableHash("ACTOR|" + x.Scope + "|" + x.ActorSid)' in writer
-assert 'ChooseStashGearClass(all, actor.ActorSid, code, tier)' in writer
-assert 'StashGearStableHash("MIX|" + actorSid' in writer
+assert 'ChooseStashGearClasses(all, actor.ActorSid, code, tier)' in writer
+assert 'StashGearStableHash(key)' in writer
+assert '"MIX2|" + actorSid' in writer
+assert 'remaining.RemoveAt(i);' in writer
+assert 'slot < 2' in writer
+assert 'selectedClasses.Count > 2' in writer
+assert 'selectedClasses.Distinct(StringComparer.Ordinal).Count()' in writer
 assert '"ITEM|" + chosenClass' in writer
-# Avoid CS0136: 'chosen' is the outer selected-actor collection, never a
-# nested candidate local with the same name in the actor/rank loop.
+# Avoid CS0136: 'chosen' is the outer selected-actor collection,
+# never a nested candidate local with the same name in rank loops.
 assert "var chosen = SelectStashGearActors(" in writer
 assert 'var selectedItem = chosenClass == "Attachment" ? null : eligible[' in writer
 assert '"Weapon" when selectedItem!.ItemType == "Pistol"' in writer
 assert 'item.SetAssignment("ItemPrototypeSID", selectedItem!.Sid)' in writer
 assert writer.count("var chosen =") == 1
+assert 'for (var categoryIndex = 0; categoryIndex < selectedClasses.Count;' in writer
+assert 'itemGenerator.GetOrAddChild(' in writer
+assert 'item.SetAssignment("Chance", itemChance)' in writer
+assert 'itemCategory.SetAssignment("bAllowSameCategoryGeneration", "false");' in writer
 assert 'item.SetAssignment("Chance", itemChance)' in writer
 assert 'all.TryGetValue("loot.stashGearBonusChance", out var chanceControl)' in writer
 assert 'CultureInfo.InvariantCulture' in writer and '/ 100.0).ToString("0.##"' in writer

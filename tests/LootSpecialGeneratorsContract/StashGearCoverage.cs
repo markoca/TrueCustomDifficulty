@@ -116,33 +116,44 @@ internal static partial class Program
                     var attachmentRefs = Regex.Matches(body,
                         @"(?m)^\s*ItemGeneratorPrototypeSID = (\S+)$")
                         .Select(m => m.Groups[1].Value).ToArray();
-                    Check(itemSids.Length + attachmentRefs.Length == 1
-                        && (itemSids.Length == 1
-                            && progression.ContainsKey(itemSids[0])
-                            && progression[itemSids[0]].Tier <= maxTier
-                            || attachmentRefs.Length == 1
-                            && attachments.TryGetValue(attachmentRefs[0], out var bonusAttachment)
-                            && bonusAttachment.Tier <= maxTier && maxTier >= 2),
-                        "Exactly one native rank-eligible bonus candidate required");
+                    // By default Weapon, Armor and Artifact are each enabled,
+                    // so the writer must select TWO distinct categories, one
+                    // candidate each. No added item can exceed player rank.
+                    var categoryNames = Regex.Matches(body,
+                        @"(?m)^\s*Category = EItemGenerationCategory::(\w+)$")
+                        .Select(m => m.Groups[1].Value).ToArray();
+                    Check(itemSids.Length + attachmentRefs.Length == 2
+                        && categoryNames.Length == 2
+                        && categoryNames.Distinct(StringComparer.Ordinal).Count() == 2,
+                        "Default bonus generator must offer two different item categories");
+                    Check(itemSids.All(id => progression.TryGetValue(id, out var item)
+                            && item.Tier <= maxTier)
+                        && attachmentRefs.All(id => attachments.TryGetValue(id, out var entry)
+                            && entry.Tier <= maxTier && maxTier >= 2),
+                        "Bonus pool may not select gear above native player rank");
                     Check(Regex.Matches(body, @"(?m)^\s*MinCount = 1$").Count == itemSids.Length
                         && Regex.Matches(body, @"(?m)^\s*MaxCount = 1$").Count == itemSids.Length
-                        && Regex.Matches(body, @"(?m)^\s*Chance = 0\.5$").Count == 1,
-                        "Default bonus Chance must remain 0.5 across all categories");
+                        && Regex.Matches(body, @"(?m)^\s*Chance = 0\.5$").Count == 2,
+                        "Both bonus candidates must have native Chance 0.5 and one-item counts");
                     Check(!new[] { "Gauss", "Trophy", "RPG", "Weird", "Quest",
                             "Fake", "Prolog", "CNPP", "Heart" }.Any(word =>
                             body.Contains(word, StringComparison.OrdinalIgnoreCase)),
                         "Forbidden item entered stash bonus generator");
-                    var actualClass = attachmentRefs.Length == 1
-                        ? "Attachment" : progression[itemSids[0]].ItemClass;
-                    if (actualClass == "Attachment")
-                        Check(body.Contains("Category = EItemGenerationCategory::SubItemGenerator",
-                            StringComparison.Ordinal), "Nested attachment generator category missing");
-                    if (actualClass == "Artifact")
-                        Check(body.Contains("Category = EItemGenerationCategory::Artifact",
-                            StringComparison.Ordinal), "Artifact category not emitted");
-                    if (actualClass == "Armor")
-                        Check(body.Contains("Category = EItemGenerationCategory::BodyArmor",
-                            StringComparison.Ordinal), "Armor category not emitted");
+                    if (attachmentRefs.Length > 0)
+                        Check(categoryNames.Contains("SubItemGenerator", StringComparer.Ordinal),
+                            "Nested attachment generator category missing");
+                    foreach (var candidate in itemSids)
+                    {
+                        var category = progression[candidate].ItemClass;
+                        Check(category switch
+                        {
+                            "Artifact" => categoryNames.Contains("Artifact", StringComparer.Ordinal),
+                            "Armor" => categoryNames.Contains("BodyArmor", StringComparer.Ordinal),
+                            "Weapon" => categoryNames.Contains("WeaponPrimary", StringComparer.Ordinal)
+                                || categoryNames.Contains("WeaponPistol", StringComparer.Ordinal),
+                            _ => false
+                        }, "Bonus category does not match its audited item type");
+                    }
                 }
                 Console.WriteLine($"PASS Extra Gear {percent}%: {baseMatched.Count} base + {dlcMatched.Count} DLC actors; {generated.Count} rank-specific actor generators");
             }
@@ -188,6 +199,10 @@ internal static partial class Program
                     : ids.Length >= 800 && refs.Length == 0
                         && ids.All(id => progression[id].ItemClass == kind),
                     "Forced bonus category did not exclude other classes: " + kind);
+                var forcedCategories = Regex.Matches(output,
+                    @"(?m)^\s*Category = EItemGenerationCategory::(\w+)$").Count;
+                Check(forcedCategories == ids.Length + refs.Length,
+                    "One enabled bonus class must produce one candidate per generator");
                 var actualChances = Regex.Matches(output,
                     @"(?m)^\s*Chance = ([^\r\n]+)$")
                     .Select(m => m.Groups[1].Value).ToArray();

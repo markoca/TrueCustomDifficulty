@@ -6646,7 +6646,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Enable Extra Stash Gear",
-      "description": "Enable optional fixed-percentage coverage of source-approved physical stash actors with a possible rank-appropriate equipment, suit or standard artifact bonus. The 13 approved authored original weapon items are separately removed when enabled; quest, special, unique and unreviewed actors are excluded.",
+      "description": "Opt in to deterministic coverage of eligible regular physical stashes. Each selected native rank branch may add up to two distinct progression-appropriate bonus categories; original 13 approved regular weapon entries are separately removed whenever enabled. Quest, unique and protected actors stay excluded.",
       "control": "toggle",
       "valueKind": "boolean",
       "vanilla": {
@@ -6697,8 +6697,8 @@
         ]
       },
       "rationale": "Opt-in replacement of fixed regular stash weapons with separately gated optional progression gear, preserving scripted, special and unique content.",
-      "logic": "When enabled, remove only 13 vetted original regular weapon slots, then rank stable eligible physical actor IDs by SHA256 and choose round(N*percentage/100) per supported content scope; attach dedicated one-candidate non-shared generator to an unused native ItemGenerators slot for each selected rank branch.",
-      "interaction": "One compact checkbox plus one 0–100% slider with 1% increments, aligned to existing Stamina Usage slider grammar.",
+      "logic": "On: remove only 13 vetted original regular weapon slots; select the exact rounded build-time actor percentage per scope; for each selected native rank branch generate one private rank-gated template with up to two different nonzero-weight class candidates, each one-item-cap. Original source rewards other than those 13 are untouched.",
+      "interaction": "Compact enable checkbox gates Eligible Stashes, four Bonus Mix knobs, and the separate native Bonus Chance rail.",
       "exposeInUi": true
     },
     {
@@ -6706,7 +6706,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Eligible Stash Coverage",
-      "description": "Select the exact percentage of eligible ordinary physical stash actors that receive a possible rank-appropriate weapon, suit or standard artifact. Calculated deterministically at build time, separately for base and installed DLC1; not an item roll Chance.",
+      "description": "Select the build-time percentage of 800 base and 108 DLC1 eligible physical stash actors. Each selected actor receives a private progression-gated generator with up to two possible distinct bonus items when class weights permit; Bonus Chance is a separate native item roll, not this percentage.",
       "control": "slider",
       "valueKind": "integer",
       "display": {
@@ -6752,7 +6752,7 @@
         ]
       },
       "rationale": "One comprehensible coverage fraction instead of six nontransparent per-entry Chance sliders.",
-      "logic": "Apply coverage to eligible ActorSID list using stable SHA256 ordering and round N*p/100 per scope, never shared template-wide odds.",
+      "logic": "Stable SHA256 ActorSID order selects round(N*percent/100) per scope; each active rank branch offers up to two distinct, rank-appropriate item categories. Neither successful rolls nor physical inventory count are promised by the coverage percentage.",
       "interaction": "Whole percentages 0%–100% with 1% increments, disabled when master is OFF.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
@@ -6762,7 +6762,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Weapon Bonus Weight",
-      "description": "Relative share of weapon candidates among eligible physical stash bonus generators. This is a deterministic build-time distribution weight, not a drop chance. Zero excludes this class from additional gear.",
+      "description": "Relative share of weapon candidates among the up-to-two distinct category slots offered by each eligible physical stash bonus generator. This is a deterministic without-replacement build-time class weight, not a drop chance. Zero excludes this class from additional gear.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6783,8 +6783,8 @@
         "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
       ]},
       "rationale": "Directly distribute extra gear item classes without treating Weight as whole-stash drop probability.",
-      "logic": "Choose a source-approved rank-eligible weapon candidate using weighted per-actor deterministic allocation; keep actual per-item Chance distinct.",
-      "interaction": "One of three compact knobs in a single horizontal Bonus Mix strip. Native 0–3x relative weight, 0.1x steps; drag, wheel, keyboard and right-click reset. Requires Enable Extra Gear.",
+      "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
+      "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -6794,7 +6794,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Armor Bonus Weight",
-      "description": "Relative share of armor candidates among eligible physical stash bonus generators. This is a deterministic build-time distribution weight, not a drop chance. Zero excludes this class from additional gear.",
+      "description": "Relative share of armor candidates among the up-to-two distinct category slots offered by each eligible physical stash bonus generator. This is a deterministic without-replacement build-time class weight, not a drop chance. Zero excludes this class from additional gear.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6815,8 +6815,8 @@
         "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
       ]},
       "rationale": "Directly distribute extra gear item classes without treating Weight as whole-stash drop probability.",
-      "logic": "Choose a source-approved rank-eligible armor candidate using weighted per-actor deterministic allocation; keep actual per-item Chance distinct.",
-      "interaction": "One of three compact knobs in a single horizontal Bonus Mix strip. Native 0–3x relative weight, 0.1x steps; drag, wheel, keyboard and right-click reset. Requires Enable Extra Gear.",
+      "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
+      "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -6826,7 +6826,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Artifact Bonus Weight",
-      "description": "Relative share of artifact candidates among eligible physical stash bonus generators. This is a deterministic build-time distribution weight, not a drop chance. Zero excludes this class from additional gear.",
+      "description": "Relative share of artifact candidates among the up-to-two distinct category slots offered by each eligible physical stash bonus generator. This is a deterministic without-replacement build-time class weight, not a drop chance. Zero excludes this class from additional gear.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6847,8 +6847,8 @@
         "Quest/Weird/special/unique items are excluded. If all three weights are zero, no extra generators are emitted."
       ]},
       "rationale": "Directly distribute extra gear item classes without treating Weight as whole-stash drop probability.",
-      "logic": "Choose a source-approved rank-eligible artifact candidate using weighted per-actor deterministic allocation; keep actual per-item Chance distinct.",
-      "interaction": "One of three compact knobs in a single horizontal Bonus Mix strip. Native 0–3x relative weight, 0.1x steps; drag, wheel, keyboard and right-click reset. Requires Enable Extra Gear.",
+      "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
+      "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -6876,8 +6876,8 @@
         "Default weight 0x preserves existing three-category presets."
       ]},
       "rationale": "Progression-gated attachment bonus as a fourth independent class, not weapon pairing.",
-      "logic": "Choose a source-approved attachment whose tier is no higher than the native stash player rank and reference its singleton original generator.",
-      "interaction": "Fourth horizontal Bonus Mix knob, 0-3x in 0.1x steps; drag, wheel, keyboard, right-click reset; disabled with master toggle.",
+      "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
+      "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -6886,7 +6886,7 @@
       "tab": "stashes",
       "group": "Stash Gear",
       "label": "Bonus Chance",
-      "description": "Set the single native PossibleItems.Chance value written for every added progression bonus item, whether weapon, armor or standard artifact. This does not control the eligible actor count or category weight distribution, and does not claim an observed whole-stash drop probability.",
+      "description": "Real native PossibleItems.Chance applied independently to each of up to two different bonus item entries in an actor-private rank generator. Distinct from physical stash Coverage and relative Bonus Mix; native engine behavior still needs game validation.",
       "control": "slider",
       "valueKind": "integer",
       "display": {
@@ -6924,7 +6924,7 @@
         ]
       },
       "rationale": "Expose the genuine CFG chance shared by all extra stash item categories rather than hardcode 0.5.",
-      "logic": "Write one configured whole-percent number divided by 100 into every added bonus PossibleItems[0].Chance, with invariant-culture formatting and no changes to original source loot.",
+      "logic": "Write native per-item Chance = slider/100 separately to each authored bonus category, not to the ActorSID selection; 0 means no possible bonus reward and 100 is one native chance gate per candidate, not proof of two physical rewards.",
       "interaction": "Compact 0–100% rail with exact 1% steps; drag, hover, wheel, arrow keys, right-click reset, family reset. Requires Enable Extra Gear.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
