@@ -533,8 +533,8 @@ public sealed class MainViewModel : ObservableObject
             "loot.worldDetectors",
             "loot.blueprintShuffle");
 
-        // Independent native category Chance controls are visible; two legacy
-        // tier-wide multipliers remain instantiated for saved profiles.
+        // Tier ammo quantity and independent native Chance editors share one
+        // visual family; legacy tier-wide multipliers remain preset-compatible.
         WireVisualAggregate(
             "loot.stashMixMedical",
             "loot.stashMixAmmo",
@@ -543,6 +543,9 @@ public sealed class MainViewModel : ObservableObject
             "loot.stashMixDrinks",
             "loot.stashMixGrenades",
             "loot.stashMixCoupons",
+            "loot.cheapStashAmmoQuantity",
+            "loot.mediumStashAmmoQuantity",
+            "loot.expensiveStashAmmoQuantity",
             "loot.standardStashChanceScale",
             "loot.rareStashChanceScale",
             "loot.mediumStashMedicalChance",
@@ -583,12 +586,6 @@ public sealed class MainViewModel : ObservableObject
             "loot.stashGearArtifactWeight",
             "loot.stashGearAttachmentWeight",
             "loot.stashGearBonusChance");
-
-        WireVisualAggregate(
-            "loot.cheapStashAmmoQuantity",
-            "loot.cheapStashAmmoQuantity",
-            "loot.mediumStashAmmoQuantity",
-            "loot.expensiveStashAmmoQuantity");
 
         // Breakable box quantities and relative SNG/NATO ammo weights are
         // independent sources in one compact control, not duplicate editors.

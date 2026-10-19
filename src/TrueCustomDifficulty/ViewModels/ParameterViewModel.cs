@@ -102,10 +102,9 @@ public sealed class ParameterViewModel : ObservableObject
                     "AnomalySpecialEffects" => "Drag the Razor, Diamond or Psy track you want to change; each is independent.",
                     "NpcLootLoadout" => "Choose a corpse bonus icon, tune medical or bonus ammo drops, or adjust weapon condition MIN/MAX. Bonus ammo only applies with Medicine + Ammo; regular weapon ammo stays unchanged.",
                     "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
-                    "StashContentMix" => "BASIC keeps Medical, Food and Drinks Weight knobs and the Veteran native mix bar, plus RGD-5 chance/amount. STANDARD has separate Medical, Drinks and Coupons Chance rails; RARE has separate Ammo, Medical, Food, Drinks, Grenades and Coupons Chance rails. NATIVE values are real per-item source Chances, not physical-stash drop odds. Standard Ammo is Weight-only, and hidden old tier-wide scales remain effective for legacy presets.",
+                    "StashContentMix" => "Each BASIC, STANDARD and RARE tier has its own AMMO QUANTITY (0.25–2×). BASIC also retains RGD-5 Chance/Amount and native Weight mix. STANDARD and RARE retain separate Chance category rails. Chance and Weight never mean whole-stash odds. Right-click resets one source; R resets the whole Content Mix panel.",
                     "StashMedicalComposition" => "Weight and Chance Scale are separate. The two Veteran/Master rank bars show actual Medkit/Army Medkit Weight selection only, not stash-drop odds. Quantity MIN and MAX are source integers: AUTO preserves native values, and MAX 0 ITEMS excludes that subtype. Click the dots or drag a lane; right-click resets.",
                     "StashGear" => "Eligible Stashes selects ordinary actors. The four relative weights distribute Weapons, Armor, Artifacts and independent Attachments. Bonus Chance sets the outer native Chance (default 50%); attachment source generators may also have internal rules. Rank and quest/Weird exclusions remain enforced.",
-                    "StashRewardProfile" => "Three compact chart rows edit BASIC/STANDARD/RARE ammo stack quantities only. Basic RGD-5 CHANCE and AMOUNT are paired in STASH CONTENT MIX; Rare Coupon Chance stays in the Rare source section. Each graph value is clickable/draggable; right-click resets that source.",
                     "AmmoDistribution" => "Use AMMO YIELD or GRENADE YIELD for quantities. Turn the four AMMO FAMILY WEIGHTS knobs to change which calibers are favored; SNG/NATO pool bars are read-only.",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
                     "PlayerWeaponProfile" => "Turn WEAPON DAMAGE, HEADSHOT DAMAGE or JAM FREQUENCY using its knob. Scroll over a knob or use arrow keys for precise adjustment.",
@@ -133,9 +132,6 @@ public sealed class ParameterViewModel : ObservableObject
             if (IsMedicalHealingMember)
                 return "Four HEAL/BLEED pairs and four RAD columns (Scientific, Anti-Rad, Beer, Vodka) edit independent effects."
                     + Environment.NewLine + "Drag a column to adjust it, right-click to reset one source, or press R to reset this card. Food Healing is independent.";
-            if (IsStashAmmoMember)
-                return "Drag BASIC, STANDARD or RARE to change the ammo stacks shown in the preview."
-                    + Environment.NewLine + "Right-click one tier to reset it; R resets all three.";
             if (IsWorldLootRemovalMember)
                 return "Drag one box or loose-loot track: left keeps more pickups, right removes more."
                     + Environment.NewLine + "Right-click one category to reset it; R resets all five.";
@@ -203,18 +199,6 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsToggle => Control == "toggle";
     // The only string-valued gameplay control is rendered as a discrete slider.
     public bool IsChoiceSlider => Control == "choiceSlider";
-
-    private static readonly HashSet<string> StashAmmoParameterIds = new(StringComparer.Ordinal)
-    {
-        "loot.cheapStashAmmoQuantity",
-        "loot.mediumStashAmmoQuantity",
-        "loot.expensiveStashAmmoQuantity"
-    };
-
-    // The stash tiers are now native members of StashRewardProfile rather than
-    // a second overlapping special StashAmmo radar.
-    public bool IsStashAmmoMember => StashAmmoParameterIds.Contains(Id) && !IsVisualAggregateMember;
-    public bool IsStashAmmoAnchor => Id == "loot.cheapStashAmmoQuantity" && !IsVisualAggregateMember;
 
     private static readonly HashSet<string> MutantDropParameterIds = new(StringComparer.Ordinal)
     {
@@ -555,9 +539,9 @@ public sealed class ParameterViewModel : ObservableObject
         ["loot.stashGearAttachmentWeight"] = "StashGear",
         ["loot.stashGearBonusChance"] = "StashGear",
 
-        ["loot.cheapStashAmmoQuantity"] = "StashRewardProfile",
-        ["loot.mediumStashAmmoQuantity"] = "StashRewardProfile",
-        ["loot.expensiveStashAmmoQuantity"] = "StashRewardProfile",
+        ["loot.cheapStashAmmoQuantity"] = "StashContentMix",
+        ["loot.mediumStashAmmoQuantity"] = "StashContentMix",
+        ["loot.expensiveStashAmmoQuantity"] = "StashContentMix",
         ["loot.cheapStashGrenadeChance"] = "StashContentMix",
         ["loot.cheapStashGrenadeQuantity"] = "StashContentMix",
         ["loot.standardStashChanceScale"] = "StashContentMix",
@@ -612,7 +596,6 @@ public sealed class ParameterViewModel : ObservableObject
         ["StashContentMix"] = "loot.stashMixMedical",
         ["StashMedicalComposition"] = "loot.stashMedicalBandageBias",
         ["StashGear"] = "loot.stashGearEnabled",
-        ["StashRewardProfile"] = "loot.cheapStashAmmoQuantity",
          ["AmmoDistribution"] = "loot.ammoBoxWeight918"
     };
 
@@ -636,7 +619,6 @@ public sealed class ParameterViewModel : ObservableObject
     public bool IsDrunkennessAnchor => Id == "survival.beerDrunknessStrength";
 
     public bool IsVisualControlAnchor =>
-        IsStashAmmoAnchor ||
         IsMutantDropAnchor ||
         IsIndividualAnomalyDamageAnchor ||
         IsWorldLootRemovalAnchor ||
@@ -668,7 +650,6 @@ public sealed class ParameterViewModel : ObservableObject
         // Hidden Combat sources remain mapped for preset/CFG output but have no visible editor.
         && !Id.StartsWith("combat.psy", StringComparison.Ordinal)
         && !Id.StartsWith("combat.accumulatedDamage", StringComparison.Ordinal)
-        && (!IsStashAmmoMember || IsStashAmmoAnchor)
         && (!IsMutantDropMember || IsMutantDropAnchor)
         && (!IsIndividualAnomalyDamageMember || IsIndividualAnomalyDamageAnchor)
         && (!IsWorldLootRemovalMember || IsWorldLootRemovalAnchor)

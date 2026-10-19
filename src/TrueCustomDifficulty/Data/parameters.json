@@ -6932,9 +6932,9 @@
     {
       "id": "loot.cheapStashAmmoQuantity",
       "tab": "stashes",
-      "group": "Stashes",
-      "label": "Stash Ammo Amounts",
-      "description": "Changes ammo amounts in Basic, Standard, and Rare stashes.",
+      "group": "Stash Content",
+      "label": "Basic Stash Ammo",
+      "description": "Scales only eligible Basic stash ammo stack counts. Standard and Rare have separate quantity controls.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6966,16 +6966,16 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "Three radar axes: Basic, Standard and Rare stash ammo amount.",
+          "Three independent tier-local ammo amount editors.",
           "Each axis scales only the existing vanilla ammo MinCount/MaxCount values for that stash tier.",
           "1x preserves vanilla stack counts.",
           "Chance, Weight, rank gates and PossibleItems membership remain unchanged.",
           "The existing production-only stash fan-out and exclusions remain unchanged."
         ]
       },
-      "rationale": "Set how much ammo Basic, Standard, and Rare stashes contain. The ammo types available in each stash tier stay vanilla.",
+      "rationale": "Scale only Basic stash ammo stack counts without affecting other tiers or item selection.",
       "logic": "",
-      "interaction": "",
+      "interaction": "Compact tier-local AMMO QUANTITY 0.25–2× rail. This scales native MinCount/MaxCount, not item Chance, Weight, or reward type.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
@@ -7110,7 +7110,7 @@
     {
       "id": "loot.mediumStashAmmoQuantity",
       "tab": "stashes",
-      "group": "Stashes",
+      "group": "Stash Content",
       "label": "Standard Stash Ammo",
       "description": "Changes how much ammo Standard stashes give you. Which calibers can appear still follows vanilla progression.",
       "control": "slider",
@@ -7152,7 +7152,7 @@
       },
       "rationale": "Changes only the number of rounds found in Standard stashes, not which ammo types can appear.",
       "logic": "25-200% scales the amount of ammo found in Standard stashes. For example, a vanilla 18-24 round stack becomes about 9-12 at 50% and 36-48 at 200%.",
-      "interaction": "Changes ammo amounts in ordinary Standard stashes. Story/scripted stashes and other special loot sources stay vanilla.",
+      "interaction": "Compact tier-local AMMO QUANTITY 0.25–2× rail. This scales native MinCount/MaxCount, not item Chance, Weight, or reward type.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
@@ -7550,7 +7550,7 @@
     {
       "id": "loot.expensiveStashAmmoQuantity",
       "tab": "stashes",
-      "group": "Stashes",
+      "group": "Stash Content",
       "label": "Rare Stash Ammo",
       "description": "Changes how much ammo Rare stashes give you. Vanilla rarity, progression and ammo-type selection remain unchanged; only the amount found changes.",
       "control": "slider",
@@ -7592,7 +7592,7 @@
       },
       "rationale": "Changes only the number of rounds found in Rare stashes, not which ammo types can appear.",
       "logic": "25-200% changes the amount of ammo found in Rare stashes. 100% keeps vanilla amounts.",
-      "interaction": "Changes ammo amounts in ordinary Rare stashes. Story/scripted stashes and other special loot sources stay vanilla.",
+      "interaction": "Compact tier-local AMMO QUANTITY 0.25–2× rail. This scales native MinCount/MaxCount, not item Chance, Weight, or reward type.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",

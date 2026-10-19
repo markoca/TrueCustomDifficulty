@@ -98,9 +98,9 @@ assert "DrawStashBasicNativePools(dc," in ui
 assert '"RGD-5 AMOUNT"' in ui
 assert "percentage: false" in ui
 assert "wide ? 146.0 : 300.0" in ui
-assert "=> width >= 700.0 ? 751.0 : 1097.0;" in ui
+assert "=> width >= 700.0 ? 895.0 : 1305.0;" in ui
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in ui
-assert "wide ? 140.0 : 236.0" in ui
+assert "wide ? 212.0 : 308.0" in ui
 assert "private void DrawStashChanceTier(" in mixer
 tier_preview = mixer.split("private void DrawStashChanceTier(", 1)[1]
 assert "StashSourceGroups.Value" in tier_preview
@@ -109,7 +109,7 @@ assert "hasWeight[kind] = true" in tier_preview
 assert "hasChance[kind] = true" in tier_preview
 assert "hasWeight[k] || hasChance[k]" in tier_preview
 assert 'var chanceKinds = present.Where(k => hasChance[k]).ToArray();' in tier_preview
-assert 'label + " · CHANCE"' in tier_preview
+assert 'CreateText(label, 11.4, text' in tier_preview
 assert '"loot.mediumStashCouponsChance"' in tier_preview
 assert '"loot.expensiveStashMoneyChance"' in tier_preview
 assert "100.0 * totals" not in tier_preview
@@ -149,7 +149,7 @@ assert 'value < -.5 ? "0"' in ui and '"VANILLA"' in ui
 assert "IsStashMedicalSelectionDisabled(" in writer
 assert "TuneStashMedicalCountField(" in writer
 assert "StashState(all).TuneSelection(" in writer
-assert "StashContentMix" in vm and "source-native per-entry Chance controls" in vm
+assert "StashContentMix" in vm and "AMMO QUANTITY" in vm
 assert "StashMedicalComposition" in vm
 for doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md",
             "STASHES-TAB-AND-REDESIGN-PROPOSAL.md",

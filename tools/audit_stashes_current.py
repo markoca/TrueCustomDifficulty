@@ -22,10 +22,9 @@ assert len(parameters) == baseline["supportedParameterCount"] == 283
 assert len(stash) == 41
 assert len(catalog) == len(parameters), "Duplicate parameter ID"
 assert Counter(p["group"] for p in stash.values()) == {
-    "Stash Content": 19,
+    "Stash Content": 22,
     "Stash Medical Composition": 12,
     "Stash Gear": 7,
-    "Stashes": 3,
 }
 assert sum(p.get("exposeInUi", True) for p in stash.values()) == 34
 
@@ -62,15 +61,34 @@ bonus = [
     "loot.stashGearBonusChance",
 ]
 families = {
-    "StashRewardProfile": rewards, "StashContentMix": mix,
+    "StashContentMix": mix[:6] + rewards + mix[6:],
     "StashMedicalComposition": medical, "StashGear": bonus
 }
+family_source = ui.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for name, expected in families.items():
-    match = re.search(r'"' + re.escape(name) + r'"\s*=>\s*new\[\]\s*\{(.*?)\}', ui, re.S)
+    match = re.search(r'"' + re.escape(name) + r'"\s*=>\s*new\[\]\s*\{(.*?)\}', family_source, re.S)
     assert match, "Missing UI family: " + name
     actual = re.findall(r'"(loot\.[A-Za-z0-9.]+)"', match.group(1))
     assert actual == expected, f"Missing/misordered UI family controls: {name}: {actual}"
 assert set(stash) == set(rewards + mix + medical + bonus)
+assert '"StashRewardProfile" => new[]' not in ui
+assert 'case "StashRewardProfile":' not in ui
+assert 'DrawCompactStashRewards(' not in ui
+assert '"StashRewardProfile"' not in pvm
+assert '=> width >= 700.0 ? 895.0 : 1305.0;' in ui
+content_body = ui.split("private void DrawStashContentMix(", 1)[1].split("private void DrawStashMedicalComposition(", 1)[0]
+tier_body = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split("private void DrawStashChanceTier(", 1)[1]
+assert '"loot.cheapStashAmmoQuantity"' in content_body
+assert '"loot.mediumStashAmmoQuantity"' in tier_body
+assert '"loot.expensiveStashAmmoQuantity"' in tier_body
+assert 'percentage: false, multiplier: true' in content_body
+assert 'percentage: false, multiplier: true' in tier_body
+for pid in rewards:
+    assert stash[pid]["group"] == "Stash Content"
+    assert stash[pid]["exposeInUi"] is True
+    assert stash[pid]["slider"] == {"min": 0.25, "max": 2, "step": 0.25, "stepMode": "absolute"}
+    assert f'["{pid}"] = "StashContentMix"' in pvm
+    assert f'"{pid}"' in vm
 for pid in bonus:
     assert f'"{pid}"' in vm, "Missing MainViewModel member: " + pid
     assert f'["{pid}"] = "StashGear"' in pvm, "Missing PVM family: " + pid

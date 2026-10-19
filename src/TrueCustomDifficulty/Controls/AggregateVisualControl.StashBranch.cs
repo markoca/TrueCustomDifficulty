@@ -127,7 +127,7 @@ public sealed partial class AggregateVisualControl
     private void DrawStashNativeRollControl(
         DrawingContext dc, string id, string label, int category,
         Rect card, Brush text, Brush muted, Brush border,
-        Brush accent, Brush panel, bool percentage = true)
+        Brush accent, Brush panel, bool percentage = true, bool multiplier = false)
     {
         var p = P(id);
         if (p is null) return;
@@ -144,10 +144,10 @@ public sealed partial class AggregateVisualControl
             new Point(x + 14.0, y + 5.0));
 
         var digits = (percentage ? p.CurrentNumber * 100.0 : p.CurrentNumber)
-            .ToString(percentage ? "0.#" : "0",
+            .ToString(multiplier ? "0.##" : percentage ? "0.#" : "0",
                 System.Globalization.CultureInfo.InvariantCulture);
         var modified = enabled && p.IsValueModifiedFromReference();
-        var number = CreateText(digits + (percentage ? "%" : ""),
+        var number = CreateText(digits + (multiplier ? "×" : percentage ? "%" : ""),
             modified ? 12.6 : 11.8,
             enabled ? text : muted, FontWeights.Bold);
         if (modified) number.SetForegroundBrush(accent, 0, digits.Length);
@@ -190,8 +190,10 @@ public sealed partial class AggregateVisualControl
                 && Math.Abs(target.VisualMinimum - stop) < Epsilon
                 && Math.Abs(target.VisualMaximum - stop) < Epsilon;
             var stopValue = percentage ? stop * 100.0 : stop;
+            var endValue = stopValue.ToString(multiplier ? "0.##" : "0",
+                System.Globalization.CultureInfo.InvariantCulture);
             var glyph = CreateText(
-                $"{stopValue:0}{(percentage ? "%" : "")}", 9.1,
+                endValue + (multiplier ? "×" : percentage ? "%" : ""), 9.1,
                 markerHover ? Brushes.White : muted, FontWeights.SemiBold);
             var glyphX = stop <= p.Minimum + Epsilon ? rail.Left
                 : rail.Right - glyph.WidthIncludingTrailingWhitespace;
@@ -235,6 +237,18 @@ public sealed partial class AggregateVisualControl
             throw new InvalidDataException(
                 "Basic native mixer categories changed; review visible knobs.");
 
+        // One tier-local ammo count multiplier, independent of all native
+        // Chance and Weight fields; the parent owns exactly these sources.
+        var ammoId = tierName == "Medium"
+            ? "loot.mediumStashAmmoQuantity" : "loot.expensiveStashAmmoQuantity";
+        DrawStashNativeRollControl(dc, ammoId, "AMMO QUANTITY", 0,
+            new Rect(outer.Left + 12.0, outer.Top + 30.0,
+                Math.Min(360.0, Math.Max(1.0, outer.Width - 24.0)), 56.0),
+            text, muted, border, accent, panel,
+            percentage: false, multiplier: true);
+        DrawText(dc, "CHANCE",
+            new Point(outer.Left + 12.0, outer.Top + 92.0),
+            10.0, muted, FontWeights.SemiBold);
         var columns = outer.Width >= 670.0 ? 3 : 2;
         const double inset = 12.0;
         const double gap = 8.0;
@@ -336,7 +350,7 @@ public sealed partial class AggregateVisualControl
             throw new InvalidDataException("Tier Chance category mapping drift");
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .65),
             new Pen(CloneWithOpacity(border, .61), .9), outer, 4.0, 4.0);
-        dc.DrawText(CreateText(label + " · CHANCE", 11.4, text, FontWeights.Bold),
+        dc.DrawText(CreateText(label, 11.4, text, FontWeights.Bold),
             new Point(outer.Left + 12.0, outer.Top + 8.0));
         var columns = outer.Width >= 670.0 ? 3 : 2;
         const double inset = 12.0;
@@ -382,7 +396,7 @@ public sealed partial class AggregateVisualControl
             if (rows.Length == 0)
                 throw new InvalidDataException("Native Chance rows missing " + id);
             var x = outer.Left + inset + n % columns * (cellWidth + gap);
-            var y = outer.Top + 35.0 + n / columns * pitch;
+            var y = outer.Top + 112.0 + n / columns * pitch;
             var cell = new Rect(x, y, cellWidth, 88.0);
             var tone = StashMixPalette[kind];
             dc.DrawRoundedRectangle(CloneWithOpacity(panel, .5),
