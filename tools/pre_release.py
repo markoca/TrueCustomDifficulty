@@ -32,6 +32,7 @@ STATIC = (
     ("stash-region-polygon-inventory", "tools/audit_stash_actor_regions.py"),
     ("rc-signal-preset", "tools/audit_rc_signal_preset.py"),
     ("world-weapon-nested-source", "tools/audit_world_weapon_nested_source.py"),
+    ("world-placement-cross-routes", "tools/audit_world_placement_cross_routes.py"),
 )
 SOURCE = (
     ("original-files-and-hp", "tools/audit_cfg_dump_provenance.py"),
@@ -61,7 +62,7 @@ WRITERS = (
     ("loot-direct-bpatch-writer", "LootDirectPatchContract", "loot-direct-patch-fixtures", 117),
     ("loot-special-generators-writer", "LootSpecialGeneratorsContract", "loot-special-generators-fixtures", 63),
     ("loot-world-removals-writer", "LootWorldRemovalsContract", "loot-world-removals-fixtures", 27),
-    ("loot-world-placement-writer", "LootWorldPlacementContract", "loot-world-placement-fixtures", 24),
+    ("loot-world-placement-writer", "LootWorldPlacementContract", "loot-world-placement-fixtures", 26),
     ("rc-signal-production-writer", "RCSignalPatchContract", "rc-signal-patch-fixtures", 13),
 )
 MANUAL = (

@@ -61,11 +61,16 @@ internal static class Program
             Case("Veteran",true,false,null,false,true,true,"detectors-and-blueprints");
             Case("Veteran",true,false,null,true,true,false,"detectors-and-attachments");
             Case("Veteran",true,true,0.5,false,true,false,"weapons-and-detectors");
+            // A single original ChemicalPlant generator owns both an ordinary
+            // weapon slot and a different attachment slot. Verify that the
+            // two enabled shuffles emit non-overlapping patches together.
+            foreach (var dlc in new[] { false, true })
+                Case("Veteran",dlc,true,0.5,true,false,false,"weapons-and-attachments");
             Case("Veteran",false,false,null,false,false,false,"unique-only",unique:true);
             Case("Veteran",true,false,null,false,false,false,"unique-with-dlc",unique:true);
             Case("Veteran",false,true,0.5,false,false,false,"unique-and-regular",unique:true);
             Case("Veteran",true,false,null,true,true,true,"unique-and-other-placement",unique:true);
-            Check(Passed==24,"Expected 24 world-placement production writer scenarios including unique weapon shuffle");
+            Check(Passed==26,"Expected 26 world-placement writer scenarios including combined weapon and attachment shuffle");
             Console.WriteLine($"PASS: {Passed} World Loot placement production BPatch scenarios");
             Console.WriteLine("NOT VERIFIED: original physical manifest ZIP provenance, Unreal loading, gameplay");
             return 0;
@@ -93,6 +98,28 @@ internal static class Program
             "Attachment inventory drift");
         Check(Blueprint.Count==77 && DetectorDirect.Count==7 && DetectorStash.Count==1,
             "World blueprint or detector inventory drift");
+
+        // The two shuffle writers may legitimately operate on ONE shared
+        // original ItemGeneratorPrototypes root, but NEVER on the same leaf.
+        // The attachment writer redirects an actor to its private refurl clone;
+        // the regular weapon writer changes only the inherited weapon slot.
+        // Assert the exact source-owned overlap before exercising both together.
+        const string sharedGenerator =
+            "ChemicalPlant_ChemicalTanks_StashGenerator6_8E3157704F88075AAB9F519551CDA57D";
+        var weaponRoots = WeaponGenerator.Select(row => row[1])
+            .ToHashSet(StringComparer.Ordinal);
+        var attachmentRoots = AttachmentGenerator.Select(row => row[4])
+            .ToHashSet(StringComparer.Ordinal);
+        Check(weaponRoots.Intersect(attachmentRoots, StringComparer.Ordinal)
+                .SequenceEqual(new[] { sharedGenerator }),
+            "Unexpected regular weapon / attachment source generator overlap");
+        var weaponPaths = WeaponGenerator.Where(row => row[1] == sharedGenerator)
+            .Select(row => row[6]).ToArray();
+        var attachmentPaths = AttachmentGenerator.Where(row => row[4] == sharedGenerator)
+            .Select(row => row[6]).ToArray();
+        Check(weaponPaths.SequenceEqual(new[] { "ItemGenerator/[1]/PossibleItems/[0]" })
+            && attachmentPaths.SequenceEqual(new[] { "ItemGenerator/[2]/PossibleItems/[0]" }),
+            "Original weapon and attachment shuffle paths now collide in shared generator");
         Check(UniqueWeapons.Count==9 &&
             UniqueWeapons.Select(x=>x[3]).Distinct(StringComparer.Ordinal).Count()==9 &&
             UniqueWeapons.Select(x=>x[4]).Distinct(StringComparer.Ordinal).Count()==9,
