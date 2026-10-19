@@ -201,3 +201,7 @@ User-provided execution evidence: **1 PASS / 12 FAIL**, with `RCSignalPatchContr
 - **AllControls:** 287 catalogue sources include 13 previously defined non-UI sources plus 4 legacy/unmounted IDs (the two Diamond and `loot.standardStashChanceScale`/`loot.rareStashChanceScale`). Tests therefore probe exactly **270 mounted editable sources**, while retaining source-level audit coverage for the other 17.
 
 All corrections above change **tests and documentation only**, not writer/gameplay values, control layout or source mappings. Re-run real Wine contracts; no PASS claimed for the new SHA.
+
+
+## Segment 02 — CFG-only first-report triage (2026-10-20)
+First uploaded cfg-routes report at commit `930677c0`: 2 PASS (World Shuffle / Physical Actors), 4 FAIL. Two outdated source string checks in full mapping and Extra Gear have been corrected, and Stash Content now offers a CFG-only source branch that does not check WPF geometry. Incremental Delta cannot be diagnosed from the initial summary alone because it lacked exception messages; the report now includes `failureExcerpt`. New source gates are not claimed PASS until actually executed. No production writer/gameplay/default-value changes.

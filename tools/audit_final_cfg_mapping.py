@@ -248,7 +248,8 @@ def main():
             and "!dormantSavedOnly.Contains(id)" in main_write
             and "corpseChoice.CurrentText.Split" in main_write,
             "dormant NPC ammo values must stay saved without triggering the missing-output guard")
-    require("modifiedSupported.Where(id => !writtenParameters.Contains(id))" in main_write,
+    require("var missing = modifiedSupported" in main_write
+            and "!writtenParameters.Contains(id) && !dormantSavedOnly.Contains(id)" in main_write,
             "production missing-output guard was removed")
     for operation in OPERATIONS:
         require('"' + operation + '" =>' in code, "direct transform not implemented: " + operation)

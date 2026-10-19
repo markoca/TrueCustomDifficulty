@@ -6,6 +6,7 @@ in-game loot probability can be inferred from these assertions.
 """
 import json
 import re
+import sys
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
@@ -87,6 +88,38 @@ for name in quantity:
     p = parameters[name]
     assert (p["slider"]["min"], p["slider"]["max"], p["slider"]["step"]) == (
         -1 if name.endswith("MaxCount") else 0, 6, 1)
+
+# CFG-only selection: preserve the default full UI audit separately.
+if sys.argv[1:] == ["--cfg-only"]:
+    main = (src / "Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
+    tuning = (src / "Services/CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
+    smart = (src / "Services/CfgPatchWriterService.StashSmartLoot.cs").read_text(encoding="utf-8")
+    gear_writer = (src / "Services/CfgPatchWriterService.StashGearCoverage.cs").read_text(encoding="utf-8")
+    removals = (src / "Services/CfgPatchWriterService.StashAuthoredWeapons.cs").read_text(encoding="utf-8")
+    entry = main.split("public CfgWriteResult Write(", 1)[1].split("private static void ValidateBaseline", 1)[0]
+    for method in ("WriteCheapStashProduction", "WriteMediumStashAmmoProduction",
+                   "WriteExpensiveStashProduction", "WriteWorldStashSmartLoot",
+                   "WriteStashGearCoverage", "WriteStashAuthoredWeaponRemovals"):
+        assert method + "(" in entry, "Missing production dispatch: " + method
+    assert "StashMixParameterIds.Any(modified.ContainsKey)" in tuning
+    assert "StashMedicalParameterIds.Any(id =>" in tuning
+    assert "StashTierChanceParameterIds.Any(id =>" in tuning
+    assert "StashMixParameterIds.Concat(StashMedicalParameterIds)" in smart
+    assert "StashState(all).TuneSelection(" in tuning
+    assert "GetOrAddReferencedRoot(" in smart
+    assert 'GetDocument(documents, "GameData/ItemGeneratorPrototypes.cfg")' in gear_writer
+    assert 'GetDocument(documents, "GameData/ItemGeneratorPrototypes.cfg")' in removals
+    assert "document.AddRemovalNode(row.GeneratorSid" in removals
+    assert 'all.TryGetValue("loot.stashGearBonusChance", out var chanceControl)' in gear_writer
+    assert 'item.SetAssignment("Chance", itemChance)' in gear_writer
+    effective = (src / "Services/StashEffectiveState.cs").read_text(encoding="utf-8")
+    assert '"Weight" => TierFactor(sid)' in effective
+    assert '"Chance" => ChanceFactor(sid)' in effective
+    print("PASS: Stashes CFG route ownership, Weight/Chance logic, generator emission paths and authored removals")
+    print("NOT RUN: UI layout, C# executable writer, emitted patch verification")
+    raise SystemExit(0)
+if sys.argv[1:]:
+    raise SystemExit("usage: audit_stash_content_gear.py [--cfg-only]")
 
 ui = (src / "Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 mixer = (src / "Controls/AggregateVisualControl.StashBranch.cs").read_text(encoding="utf-8")

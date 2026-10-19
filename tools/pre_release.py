@@ -112,8 +112,11 @@ def execute(label, command, out):
         print(output, end="" if output.endswith("\n") else "\n")
     status = "PASS" if code == 0 else "FAIL"
     print(f"[{status}] {label} (log {log})")
-    return {"name": label, "status": status, "returnCode": code,
-            "command": command, "log": str(log)}
+    result = {"name": label, "status": status, "returnCode": code,
+              "command": command, "log": str(log)}
+    if code != 0:
+        result["failureExcerpt"] = "\n".join(output.splitlines()[-14:])[-3500:]
+    return result
 
 
 def not_run(label, why):
@@ -176,6 +179,8 @@ def main():
                 command.extend(["--out", str(out / "mapping")])
             elif label == "incremental-cfg-route-delta":
                 command.extend(["--out", str(out / "incremental-stash-routes.csv")])
+            elif label == "stash-content-gear-routing":
+                command.append("--cfg-only")
             steps.append(execute(label, command, out))
         failed = sum(s["status"] == "FAIL" for s in steps)
         overall = "FAIL" if failed else "PASS"

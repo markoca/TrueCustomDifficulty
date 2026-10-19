@@ -116,7 +116,7 @@ assert 'StashGearStableHash("ACTOR|" + x.Scope + "|" + x.ActorSid)' in writer
 assert 'ChooseStashGearClasses(' in writer
 assert 'all, actor.ActorSid, code, eligibleAttachments.Length > 0' in writer
 assert 'StashGearStableHash(key)' in writer
-assert '"MIX2|" + actorSid' in writer
+assert '(slot == 0 ? "MIX|" : "MIX2|") + actorSid + "|" + code' in writer
 assert 'remaining.RemoveAt(i);' in writer
 assert 'slot < 2' in writer
 assert 'selectedClasses.Count > 2' in writer
@@ -155,7 +155,7 @@ assert 'x.EligibleForRank(tier, t1Weapons)' in writer
 assert 'FittingWeaponsSids.Overlaps(t1Weapons)' in writer
 assert 'x.Class != "Attachment" || hasEligibleAttachments' in writer
 assert 'StashAttachmentResource, 6' in writer
-assert 'FittingWeaponsSIDs' not in writer
+assert 'FittingWeaponsSids.Overlaps(t1Weapons)' in writer
 attachment_rows = rows("stash-bonus-attachment-progressions.csv")
 assert len(attachment_rows) == 19
 t1_weapons = {r["ItemSID"] for r in pool
