@@ -25,7 +25,7 @@ critical = {
     "loot.stashGearCoveragePercent": ("share", "not the chance"),
     "loot.stashGearBonusChance": ("each", "not guarantee"),
     "loot.stashMixMedical": ("priority", "not a drop percentage"),
-    "loot.mediumStashMedicalChance": ("original chance", "not a guaranteed drop"),
+    "loot.mediumStashMedicalChance": ("original chance", "does not guarantee"),
     "loot.expensiveStashMoneyChance": ("coupon", "progression"),
     "loot.cheapStashAmmoQuantity": ("Basic, Standard and Rare", "stacks"),
     "survival.starvationStaminaDrain": ("actions", "not passive"),

@@ -589,7 +589,7 @@ elif not _e2e_doc.exists():
     fail("generator UI E2E verification document missing from docs/")
 else:
     _bayun = next((p for p in parameters if p.get("id") == "loot.mutant.catChance"), None)
-    if not _bayun or _bayun.get("label") != "Bayun Part Drop Chance":
+    if not _bayun or _bayun.get("label") != "Bayun Part Chance":
         fail("Bayun compatibility contract drifted: legacy loot.mutant.catChance must retain player-facing Bayun label")
     else:
         note("generator UI E2E gate: 52 controls = 16 static 1:1 + 36 runtime-test-required; 0 invalid/partial; Ammo Box Distribution + Stash Ammo Amounts + Mutant Part Drop Chances aggregate radars included")
@@ -1506,9 +1506,9 @@ elif len(_survival_points) != 82:
 elif (any(p["id"].startswith("equipment.") for p in _survival_ui)
       or any(e["parameterId"].startswith("equipment.") for e in _survival_points)):
     fail("equipment sources leaked into Survival tab or Survival writer inventory")
-elif _hunger_medium.get("label") != "Hunger Stamina Recovery Penalty" or (_hunger_medium.get("vanilla") or {}).get("All") != 0.33:
+elif _hunger_medium.get("label") != "Hunger Stamina Regen Loss" or (_hunger_medium.get("vanilla") or {}).get("All") != 0.33:
     fail("medium hunger stamina recovery player-facing penalty contract drifted")
-elif _hunger_strong.get("label") != "Severe Hunger Stamina Recovery Penalty" or (_hunger_strong.get("vanilla") or {}).get("All") != 0.7:
+elif _hunger_strong.get("label") != "Severe Hunger Regen Loss" or (_hunger_strong.get("vanilla") or {}).get("All") != 0.7:
     fail("severe hunger stamina recovery player-facing penalty contract drifted")
 elif (_hunger_medium.get("slider") or {}).get("min") != 0.0 or (_hunger_medium.get("slider") or {}).get("max") != 0.66:
     fail("medium hunger stamina penalty range drifted: expected 0..66%")

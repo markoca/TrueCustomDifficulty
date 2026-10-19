@@ -259,7 +259,7 @@
       "id": "combat.npcWeaponDamage",
       "tab": "combat",
       "group": "Human Enemies",
-      "label": "Human Enemy Gun Damage",
+      "label": "Enemy Gun Damage",
       "description": "Changes how much damage you take from firearm hits by human enemies.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -340,13 +340,13 @@
       },
       "rationale": "Controls how quickly human enemies can attack again. Higher attack rate means less time between attacks, not faster gunfire.",
       "logic": "100% is vanilla. Above 100% shortens the underlying attack cooldown and makes attacks more frequent; below 100% lengthens the cooldown and gives you more breathing room. This does not change weapon fire rate or burst length.",
-      "interaction": "Combine this with Human Enemy Gun Damage and Human Enemy Fire Accuracy to shape how relentless human firefights feel."
+      "interaction": "Combine this with Enemy Gun Damage and Enemy Shot Accuracy to shape how relentless human firefights feel."
     },
     {
       "id": "combat.npcHipAccuracy",
       "tab": "combat",
       "group": "Human Enemies",
-      "label": "Human Enemy Fire Accuracy",
+      "label": "Enemy Shot Accuracy",
       "description": "Changes how accurate human enemy gunfire is.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -382,7 +382,7 @@
       },
       "rationale": "Makes human enemy shots more or less accurate without changing their damage.",
       "logic": "",
-      "interaction": "Pair it with Human Enemy Gun Damage to tune how threatening firefights feel. It affects human gunfire, not mutant attacks, melee, or grenades."
+      "interaction": "Pair it with Enemy Gun Damage to tune how threatening firefights feel. It affects human gunfire, not mutant attacks, melee, or grenades."
     },
     {
       "id": "combat.explosionDamage",
@@ -610,7 +610,7 @@
       "id": "combat.accumulatedDamageWeightMax",
       "tab": "combat",
       "group": "Taking Repeated Hits",
-      "label": "Repeated-Hit Protection - Maximum",
+      "label": "Peak Hit Protection",
       "description": "Sets the stronger end of the hidden protection the game can apply when several hits land close together.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -649,13 +649,13 @@
       },
       "rationale": "Sets the strongest protection against several hits in quick succession. Higher means more protection.",
       "logic": "Higher values give more protection against rapid hits; lower values make them harsher. The number is protection strength, not a literal damage-reduction percentage.",
-      "interaction": "Use it together with Repeated-Hit Protection - Minimum. Human Enemy Gun Damage still controls the damage of each individual bullet hit."
+      "interaction": "Minimum Hit Protection sets the weakest protection in the same repeated-hit system. Incoming gun damage is independent."
     },
     {
       "id": "combat.accumulatedDamageWeightMin",
       "tab": "combat",
       "group": "Taking Repeated Hits",
-      "label": "Repeated-Hit Protection - Minimum",
+      "label": "Minimum Hit Protection",
       "description": "Sets the weaker end of the hidden protection the game can apply when several hits land close together.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -694,7 +694,7 @@
       },
       "rationale": "Sets the weakest protection against several quick hits. Raising it makes sustained incoming fire less punishing.",
       "logic": "Higher values give more protection at the weak end; lower values make rapid hits harsher. This is not a literal damage-reduction percentage.",
-      "interaction": "Use it together with Repeated-Hit Protection - Maximum. For a vanilla-like setup, keep Minimum at or below Maximum."
+      "interaction": "Peak Hit Protection sets the strongest protection in the same system. Incoming gun damage is independent."
     },
     {
       "id": "combat.accumulatedDamageIncludesHealedHealth",
@@ -728,7 +728,7 @@
       },
       "rationale": "Decides whether damage you've already healed still counts toward repeated-hit protection. Your healing amount stays unchanged.",
       "logic": "OFF matches Novice and Stalker. ON matches Veteran and Master. Healing always restores HP normally; this toggle only decides whether the healed portion is still remembered by the repeated-hit protection system.",
-      "interaction": "Works with Repeated-Hit Protection - Minimum and Maximum. Healing can either clear old damage from the protection system or let it continue to count, depending on this switch."
+      "interaction": "Works with Minimum and Peak Hit Protection; healing always restores HP even when past hits remain counted."
     },
     {
       "id": "combat.mutantHealth.bloodsucker",
@@ -1522,7 +1522,7 @@
       },
       "rationale": "Lets phantoms in affected Master Psy encounters cause bleeding on top of their usual attacks.",
       "logic": "OFF keeps this extra bleeding rule disabled. ON matches the Master override.",
-      "interaction": "Bleeding Effect Strength and bleeding treatment still control how dangerous and recoverable the resulting bleeding is."
+      "interaction": "Bleeding Severity and medical treatment determine how serious the extra bleeding becomes."
     },
     {
       "id": "combat.psyDurabilityDamage",
@@ -1619,7 +1619,7 @@
       },
       "rationale": "Controls how quickly hunger builds up. Higher means you'll need food sooner.",
       "logic": "",
-      "interaction": "Vanilla hunger states still decide when their effects become active. Food Fullness Effect and consumables determine how quickly hunger is pushed back down."
+      "interaction": "Food Hunger Relief changes how much hunger each item removes. Hunger-state thresholds still decide when penalties apply."
     },
     {
       "id": "survival.breadSatiety",
@@ -1664,8 +1664,8 @@
         ]
       },
       "rationale": "Eating bread removes this many hunger points.",
-      "logic": "This changes hunger relief from one item, not the speed at which hunger builds up.",
-      "interaction": "More points means greater relief per item. The usual food healing and special effects are separate.",
+      "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
+      "interaction": "Hunger Rate controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
     },
     {
@@ -1711,8 +1711,8 @@
         ]
       },
       "rationale": "Eating sausage removes this many hunger points.",
-      "logic": "This changes hunger relief from one item, not the speed at which hunger builds up.",
-      "interaction": "More points means greater relief per item. The usual food healing and special effects are separate.",
+      "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
+      "interaction": "Hunger Rate controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
     },
     {
@@ -1758,8 +1758,8 @@
         ]
       },
       "rationale": "Eating canned food removes this many hunger points.",
-      "logic": "This changes hunger relief from one item, not the speed at which hunger builds up.",
-      "interaction": "More points means greater relief per item. The usual food healing and special effects are separate.",
+      "logic": "Higher means more hunger removed by that item. At zero it gives no normal hunger relief.",
+      "interaction": "Hunger Rate controls how quickly hunger returns; food healing and special effects stay separate.",
       "exposeInUi": true
     },
     {
@@ -1806,8 +1806,8 @@
         ]
       },
       "rationale": "Condensed milk normally removes all 100 hunger points. Lowering this value makes each tin less filling.",
-      "logic": "The player's normal hunger meter tops out at 100 points. Greater relief than 100 cannot lower an empty meter further.",
-      "interaction": "Adjusts the normal condensed milk satiety effect only, not alternate Weird Kettle or other food effects.",
+      "logic": "At zero, condensed milk stops relieving hunger. Higher settings remove more hunger until the 100-point meter is cleared.",
+      "interaction": "Normal HP healing and Weird Kettle alternative effects stay separate.",
       "exposeInUi": true
     },
     {
@@ -1955,7 +1955,7 @@
       "id": "survival.hungerMediumStaminaRegen",
       "tab": "survival",
       "group": "Hunger",
-      "label": "Hunger Stamina Recovery Penalty",
+      "label": "Hunger Stamina Regen Loss",
       "description": "Controls how strongly medium hunger reduces stamina recovery.",
       "control": "slider",
       "valueKind": "raw",
@@ -1997,7 +1997,7 @@
       "id": "survival.hungerStrongStaminaRegen",
       "tab": "survival",
       "group": "Hunger",
-      "label": "Severe Hunger Stamina Recovery Penalty",
+      "label": "Severe Hunger Regen Loss",
       "description": "Controls how strongly severe hunger reduces stamina recovery.",
       "control": "slider",
       "valueKind": "raw",
@@ -2559,7 +2559,7 @@
       "id": "survival.waterEffectDuration",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Water Effect Duration",
+      "label": "Water Buff Duration",
       "description": "Scales Water's main stamina-cost reduction duration; the shorter regeneration duration is independently adjustable.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -2596,7 +2596,7 @@
         ]
       },
       "rationale": "Changes how long Water's stamina-saving effect lasts. Its shorter regeneration buff cannot outlast it.",
-      "logic": "1x restores the authored 30-second stamina-cost effect; the separate regeneration control starts at its authored 5 seconds and cannot outlast the main effect.",
+      "logic": "1x restores the original 30-second stamina-cost effect; the separate regeneration control starts at its original 5 seconds and cannot outlast the main effect.",
       "interaction": "Water Instant Stamina Restore controls the immediate refill separately."
     },
     {
@@ -2649,7 +2649,7 @@
       "id": "survival.energyDrinkEffectDuration",
       "tab": "survival",
       "group": "Consumable Effects",
-      "label": "Energy Drink Effect Duration",
+      "label": "Energy Drink Regen Duration",
       "description": "Scales both normal and Limited Energy Drink's 45-second stamina regeneration; the two action-cost effect durations are independent.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -3934,7 +3934,7 @@
       "id": "health.regenerationScalar",
       "tab": "health",
       "group": "Core Health",
-      "label": "Health Recovery Multiplier",
+      "label": "Health Regen Strength",
       "description": "Scales health regeneration produced by compatible recovery effects. It does not create passive healing by itself: 100% keeps full effect strength, while lower values weaken that recovery.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -3978,7 +3978,7 @@
       "id": "health.lowHealthRegen",
       "tab": "health",
       "group": "Low Health",
-      "label": "Low-Health Recovery Rate",
+      "label": "Low-HP Recovery Rate",
       "description": "Controls the positive health-regeneration rate supplied by the normal low-health recovery effect. Vanilla uses 1.0; higher values recover health faster while the effect is active, and 0 disables this recovery contribution.",
       "control": "slider",
       "valueKind": "raw",
@@ -4014,13 +4014,13 @@
       },
       "rationale": "Changes the recovery speed of the game's normal low-health effect. Master penalties can reduce it.",
       "logic": "",
-      "interaction": "Health Recovery Multiplier can scale this effect, and the Master low-health penalty can reduce it further."
+      "interaction": "Health Regen Strength can scale this effect, and the Master low-health penalty can reduce it further."
     },
     {
       "id": "advanced.lowHealthMechanics",
       "tab": "master",
       "group": "Low Health",
-      "label": "Master Low-Health Mechanics",
+      "label": "Master Low-HP Penalties",
       "description": "Turns on the extra low-health punishment used by vanilla Master.",
       "control": "toggle",
       "valueKind": "listMembership",
@@ -4055,7 +4055,7 @@
       "id": "health.masterLowHealthPenalty",
       "tab": "master",
       "group": "Low Health",
-      "label": "Master Low-Health Recovery Penalty",
+      "label": "Master Low-HP Regen Loss",
       "description": "Controls how strongly Master difficulty slows health recovery when you are badly wounded.",
       "control": "slider",
       "valueKind": "raw",
@@ -4090,7 +4090,7 @@
       },
       "rationale": "Slows HP recovery while badly wounded when Master low-health penalties are enabled.",
       "logic": "Higher values suppress health regeneration more strongly; zero removes this penalty component.",
-      "interaction": "This remains inactive while Master Low-Health Mechanics is OFF. It layers on top of ordinary low-health recovery and the Health Recovery Multiplier setting.",
+      "interaction": "This remains inactive while Master Low-HP Penalties is OFF. It layers on top of ordinary low-health recovery and the Health Regen Strength setting.",
       "requiresToggle": "advanced.lowHealthMechanics"
     },
     {
@@ -4452,7 +4452,7 @@
       "id": "health.bandageBleeding",
       "tab": "health",
       "group": "Bleeding Treatment",
-      "label": "Bandage Bleeding Removal",
+      "label": "Bandage Bleed Removal",
       "description": "Controls how much bleeding the Bandage removes when used.",
       "control": "slider",
       "valueKind": "raw",
@@ -4495,7 +4495,7 @@
       "id": "health.medkitBleeding",
       "tab": "health",
       "group": "Bleeding Treatment",
-      "label": "Medkit Bleeding Removal",
+      "label": "Medkit Bleed Removal",
       "description": "Controls how much bleeding the Medkit removes when used.",
       "control": "slider",
       "valueKind": "raw",
@@ -4538,7 +4538,7 @@
       "id": "health.armyMedkitBleeding",
       "tab": "health",
       "group": "Bleeding Treatment",
-      "label": "Army Medkit Bleeding Removal",
+      "label": "Army Medkit Bleed Removal",
       "description": "Controls how much bleeding the Army Medkit removes when used.",
       "control": "slider",
       "valueKind": "raw",
@@ -4581,7 +4581,7 @@
       "id": "health.ecoMedkitBleeding",
       "tab": "health",
       "group": "Bleeding Treatment",
-      "label": "Scientific Medkit Bleeding Removal",
+      "label": "Scientific Medkit Bleed Removal",
       "description": "Controls how much bleeding the Scientific Medkit removes when used.",
       "control": "slider",
       "valueKind": "raw",
@@ -5115,8 +5115,8 @@
       "label": "Vault Height",
       "description": "Changes the tallest obstacle you can vault over. The WAIST / EYES / ABOVE EYES markers are simple player-friendly height references.",
       "rationale": "Changes the tallest obstacle you can vault over. Waist and eye-height markers are visual guides.",
-      "logic": "Higher values let the vault search accept taller obstacles; lower values restrict vaulting to lower obstacles. The slider is capped at 300 to keep the requested range around vanilla through slightly-above-eye/head traversal rather than turning this into extreme parkour.",
-      "interaction": "Vault Stamina Cost still controls the stamina cost of a successful vault. MinObstacleHeight, landing checks, search radius and other vault geometry remain vanilla.",
+      "logic": "Higher lets you vault taller obstacles; lower restricts vaulting. This changes height reach, not jump distance.",
+      "interaction": "Vault stamina cost, landing rules and collision checks remain independent.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -5788,14 +5788,14 @@
         "notes": []
       },
       "rationale": "Choose the extra loot package added to ordinary human corpses: Medicine + Ammo, Water, or None.",
-      "logic": "Choose what extra loot ordinary human corpses can carry: Medicine + Ammo, Water, or None. Enemy progression still affects which items can appear.",
-      "interaction": "This sits on top of normal NPC inventory generation. The other NPC loot controls change normal drops and do not replace this extra corpse-loot package."
+      "logic": "",
+      "interaction": "Normal corpse loot is generated separately. Extra Corpse Loot selects an additional package."
     },
     {
       "id": "loot.npcMedicalChance",
       "tab": "loot",
       "group": "NPC Loot & Equipment",
-      "label": "NPC Medical Drop",
+      "label": "NPC Medical Drop Chance",
       "description": "Changes how often ordinary human enemies carry Bandages, Medkits, Army Medkits, or Anti-Rad. It does not change how many items are in each stack.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -5884,8 +5884,8 @@
         ]
       },
       "rationale": "Changes the bonus ammo found on ordinary human corpses when Medicine + Ammo is selected. Loaded weapon ammo is unaffected.",
-      "logic": "At 1x, use the source stack amounts from NPC_Ammo_Smart. At 0x, source item counts are zero. Higher settings scale existing counts with integer-half-up, without altering chance or caliber eligibility. Water/None disables the package while retaining this preset value.",
-      "interaction": "Extra Corpse Loot activates the bonus package, while the NPC Ammo slider adjusts its item counts. Newbie rank source examples: 12 Gauge 2–6, 5.45 15–20, .45 ACP 8–12. These examples are independent of the Breakable Box Ammo Yield slider."
+      "logic": "Higher gives more rounds in the extra Medicine + Ammo corpse package; zero removes those bonus ammo stacks. Loaded gun ammo does not change.",
+      "interaction": "Extra Corpse Loot must be set to Medicine + Ammo. The game still limits calibers by enemy progression."
     },
     {
       "id": "loot.droppedWeaponCondition",
@@ -5931,7 +5931,7 @@
         ]
       },
       "rationale": "Sets the minimum and maximum condition of weapons found on ordinary human enemies.",
-      "logic": "Default keeps vanilla condition. After changing it, MIN sets the lowest dropped condition and MAX sets the highest; MIN can never be above MAX.",
+      "logic": "Higher MIN improves the worst condition you can find. Higher MAX allows better-condition weapons; MIN cannot exceed MAX.",
       "interaction": "Changes only the condition of weapons dropped by ordinary human enemies. It does not change which weapons they use, their ammo, health, traders, zombies, or story characters."
     },
     {
@@ -6038,8 +6038,8 @@
         ]
       },
       "rationale": "Makes medical items more or less favored in eligible stash loot pools. This is priority, not a drop percentage.",
-      "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
-      "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
+      "logic": "Higher priority favors medical loot against other eligible stash categories. Zero removes its relative weight where supported.",
+      "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
     },
     {
@@ -6092,8 +6092,8 @@
         ]
       },
       "rationale": "Makes food more or less favored in eligible stash loot pools. This is priority, not a drop percentage.",
-      "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
-      "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
+      "logic": "Higher priority favors food against other eligible stash categories. Zero removes its relative weight where supported.",
+      "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
     },
     {
@@ -6146,8 +6146,8 @@
         ]
       },
       "rationale": "Makes drinks more or less favored in eligible stash loot pools. This is priority, not a drop percentage.",
-      "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
-      "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
+      "logic": "Higher priority favors drinks against other eligible stash categories. Zero removes its relative weight where supported.",
+      "interaction": "Priority does not raise original chance checks or bypass a stash's rank and loot restrictions.",
       "exposeInUi": true
     },
     {
@@ -6301,15 +6301,15 @@
         ]
       },
       "rationale": "Changes how strongly Bandages compete for a place in eligible medical loot pools. Chance is separate.",
-      "logic": "Visible WEIGHT knob: 0–1×, step 0.25×; 1× retains the authored native Weight. The underlying legacy slider max remains 3× solely to preserve earlier saved presets (>1× values are displayed unchanged until edited).",
-      "interaction": "Independent LOOT PRIORITY knob with visible 0–1× bounds, hover/drag/wheel/keys/right-click reset. Legacy factor >1× is preserved until user editing; only native Weight is touched, never separate Chance.",
+      "logic": "Higher priority favors Bandages relative to other supported medical loot. Zero excludes this type from the weighted selection.",
+      "interaction": "The separate Bandage Chance Modifier still controls original chance rolls.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalBandageChanceScale",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Bandages Stash Chance Scale",
+      "label": "Bandage Chance Modifier",
       "description": "Scales the actual authored per-entry Chance for Bandages in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6348,8 +6348,8 @@
         ]
       },
       "rationale": "Scales the original chance for eligible Bandages. 100% keeps that chance, without changing priority.",
-      "logic": "Original Chance multiplied by user percent / 100 and clamped to [0,1]. Source 40% at slider 50% becomes 20%.",
-      "interaction": "A separate medical Chance Scale rotary knob with the same item color as its Weight mixer dial.",
+      "logic": "100% keeps the original Bandage chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
+      "interaction": "Bandage priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true
     },
     {
@@ -6395,15 +6395,15 @@
         ]
       },
       "rationale": "Changes how strongly Medkits compete for a place in eligible medical loot pools. Chance is separate.",
-      "logic": "Visible WEIGHT knob: 0–1×, step 0.25×; 1× retains the authored native Weight. The underlying legacy slider max remains 3× solely to preserve earlier saved presets (>1× values are displayed unchanged until edited).",
-      "interaction": "Independent LOOT PRIORITY knob with visible 0–1× bounds, hover/drag/wheel/keys/right-click reset. Legacy factor >1× is preserved until user editing; only native Weight is touched, never separate Chance.",
+      "logic": "Higher priority favors Medkits relative to other supported medical loot. Zero excludes this type from the weighted selection.",
+      "interaction": "The separate Medkit Chance Modifier still controls original chance rolls.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalMedkitChanceScale",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Medkits Stash Chance Scale",
+      "label": "Medkit Chance Modifier",
       "description": "Scales the actual authored per-entry Chance for Medkits in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6442,8 +6442,8 @@
         ]
       },
       "rationale": "Scales the original chance for eligible Medkits. 100% keeps that chance, without changing priority.",
-      "logic": "Original Chance multiplied by user percent / 100 and clamped to [0,1]. Source 40% at slider 50% becomes 20%.",
-      "interaction": "A separate medical Chance Scale rotary knob with the same item color as its Weight mixer dial.",
+      "logic": "100% keeps the original Medkit chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
+      "interaction": "Medkit priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true
     },
     {
@@ -6489,15 +6489,15 @@
         ]
       },
       "rationale": "Changes how strongly Army Medkits compete for a place in eligible medical loot pools. Chance is separate.",
-      "logic": "Visible WEIGHT knob: 0–1×, step 0.25×; 1× retains the authored native Weight. The underlying legacy slider max remains 3× solely to preserve earlier saved presets (>1× values are displayed unchanged until edited).",
-      "interaction": "Independent LOOT PRIORITY knob with visible 0–1× bounds, hover/drag/wheel/keys/right-click reset. Legacy factor >1× is preserved until user editing; only native Weight is touched, never separate Chance.",
+      "logic": "Higher priority favors Army Medkits relative to other supported medical loot. Zero excludes this type from the weighted selection.",
+      "interaction": "The separate Army Medkit Chance Modifier still controls original chance rolls.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalArmyMedkitChanceScale",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Army Medkits Stash Chance Scale",
+      "label": "Army Medkit Chance Modifier",
       "description": "Scales the actual authored per-entry Chance for Army Medkits in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6536,15 +6536,15 @@
         ]
       },
       "rationale": "Scales the original chance for eligible Army Medkits. 100% keeps that chance, without changing priority.",
-      "logic": "Original Chance multiplied by user percent / 100 and clamped to [0,1]. Source 40% at slider 50% becomes 20%.",
-      "interaction": "A separate medical Chance Scale rotary knob with the same item color as its Weight mixer dial.",
+      "logic": "100% keeps the original Army Medkit chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
+      "interaction": "Army Medkit priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalAntiRadBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Anti-Rad Stash Priority",
+      "label": "Anti-Rad Availability",
       "description": "Two-state visual editor for authored singleton Anti-Rad SmartLoot Weight pools: OFF writes Weight 0; ON writes source multiplier 1. The Anti-Rad Chance control is independent. Legacy numeric preset values above 1 stay intact until this two-state control is operated.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6583,15 +6583,15 @@
         ]
       },
       "rationale": "Enables or disables Anti-Rad entries in eligible medical stash loot pools. Drop chance is controlled separately.",
-      "logic": "OFF removes eligible Anti-Rad entries from this priority pool; ON keeps them eligible. The separate Anti-Rad chance check still applies.",
-      "interaction": "There is no meaningful multi-item competition in this particular pool, so this control is an ON/OFF choice.",
+      "logic": "ON allows Anti-Rad in its eligible stash pool; OFF excludes it from that pool. The original chance check still applies.",
+      "interaction": "Anti-Rad Chance Modifier scales the separate chance check while Anti-Rad is allowed.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedicalAntiRadChanceScale",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Anti-Rad Stash Chance Scale",
+      "label": "Anti-Rad Chance Modifier",
       "description": "Scales the actual authored per-entry Chance for Anti-Rad in eligible production stash and SmartLoot branches. 100% preserves each original CFG Chance, 50% halves it, 0% disables only the matching Chance entries. This does not represent physical-stash drop odds.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6630,15 +6630,15 @@
         ]
       },
       "rationale": "Scales the original chance for eligible Anti-Rad items. 100% keeps that chance.",
-      "logic": "Original Chance multiplied by user percent / 100 and clamped to [0,1]. Source 40% at slider 50% becomes 20%.",
-      "interaction": "A separate medical Chance Scale rotary knob with the same item color as its Weight mixer dial.",
+      "logic": "100% keeps the original Anti-Rad chance; 50% halves it and 0% disables that chance roll. This is not a whole-stash drop rate.",
+      "interaction": "Anti-Rad priority or availability is separate; the stash's existing eligibility rules still apply.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedkitMinCount",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Medkits Minimum Count",
+      "label": "Minimum Medkits",
       "description": "Numeric 0–5 minimum floor: 0 retains the original minimum, 1–5 impose a higher floor. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
@@ -6678,15 +6678,15 @@
         ]
       },
       "rationale": "Sets the minimum number of Medkits in an eligible stack when that loot entry appears. It does not guarantee a drop.",
-      "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One shared 0–5 Dropped Weapon Condition-style MIN/MAX range: separate handles, source values, hover, drag, wheel, keyboard and reset. MIN 0 keeps the original floor.",
+      "logic": "Raises or lowers the minimum Medkit stack size. Zero keeps the original minimum where the item is eligible.",
+      "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashMedkitMaxCount",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Medkits Maximum Count",
+      "label": "Maximum Medkits",
       "description": "Numeric 0–5 maximum cap: 0 excludes, 5 retains the original source cap; 1–4 impose a smaller maximum. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
@@ -6726,15 +6726,15 @@
         ]
       },
       "rationale": "Sets the maximum number of Medkits in an eligible stack when that loot entry appears. Zero can exclude them.",
-      "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One shared 0–5 Dropped Weapon Condition-style MIN/MAX range: separate handles even when overlapping. MAX 0 excludes (stored -1); MAX 5 preserves the authored cap (stored 0).",
+      "logic": "Caps the Medkit stack size. Zero excludes it from eligible stacks; five preserves the original supported maximum.",
+      "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashArmyMedkitMinCount",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Army Medkits Minimum Count",
+      "label": "Minimum Army Medkits",
       "description": "Numeric 0–5 minimum floor: 0 retains the original minimum, 1–5 impose a higher floor. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
@@ -6774,15 +6774,15 @@
         ]
       },
       "rationale": "Sets the minimum Army Medkits in an eligible stack when that loot entry appears. It does not guarantee a drop.",
-      "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One shared 0–5 Dropped Weapon Condition-style MIN/MAX range: separate handles, source values, hover, drag, wheel, keyboard and reset. MIN 0 keeps the original floor.",
+      "logic": "Raises or lowers the minimum Army Medkit stack size. Zero keeps the original minimum where the item is eligible.",
+      "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
     {
       "id": "loot.stashArmyMedkitMaxCount",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Army Medkits Maximum Count",
+      "label": "Maximum Army Medkits",
       "description": "Numeric 0–5 maximum cap: 0 excludes, 5 retains the original source cap; 1–4 impose a smaller maximum. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
@@ -6822,8 +6822,8 @@
         ]
       },
       "rationale": "Sets the maximum Army Medkits in an eligible stack when that loot entry appears. Zero can exclude them.",
-      "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One shared 0–5 Dropped Weapon Condition-style MIN/MAX range: separate handles even when overlapping. MAX 0 excludes (stored -1); MAX 5 preserves the authored cap (stored 0).",
+      "logic": "Caps the Army Medkit stack size. Zero excludes it from eligible stacks; five preserves the original supported maximum.",
+      "interaction": "Only stack size changes; chance checks and which stashes may contain this item stay separate.",
       "exposeInUi": true
     },
     {
@@ -6882,8 +6882,8 @@
         ]
       },
       "rationale": "Adds optional progression gear to eligible regular stashes. Scripted, unique and quest rewards stay protected.",
-      "logic": "On: remove only 13 vetted original regular weapon slots; select the exact rounded build-time actor percentage per scope; for each selected native rank branch generate one private rank-gated template with up to two different nonzero-weight class candidates, each one-item-cap. Original source rewards other than those 13 are untouched.",
-      "interaction": "Switch ON to edit bonus gear coverage, category priority and bonus-item chance. Quest and unique rewards remain protected.",
+      "logic": "ON enables extra, rank-appropriate gear in eligible stashes. OFF disables that bonus system.",
+      "interaction": "The bonus system also replaces 13 verified regular-weapon stash placements. Quest and unique rewards remain protected.",
       "exposeInUi": true
     },
     {
@@ -6937,8 +6937,8 @@
         ]
       },
       "rationale": "Sets the share of eligible regular stash locations offered bonus gear. It is not the chance of getting an item.",
-      "logic": "Selects a percentage of eligible stash locations at build time. Each can offer up to two different bonus categories; getting the items still depends on their own chance checks.",
-      "interaction": "0% selects no eligible locations; 100% selects them all. Neither value guarantees bonus gear will appear.",
+      "logic": "Higher covers more eligible stashes; zero covers none. Full coverage still does not guarantee an item.",
+      "interaction": "Bonus Chance controls each offered item's roll; category priorities choose which gear can be offered.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -6992,8 +6992,8 @@
         ]
       },
       "rationale": "Favors or discourages weapons as a bonus gear category. Zero removes weapons from that bonus mix.",
-      "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
-      "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
+      "logic": "Higher priority favors weapons when a supported stash chooses its bonus gear types. Zero excludes this category.",
+      "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -7047,8 +7047,8 @@
         ]
       },
       "rationale": "Favors or discourages armor as a bonus gear category. Zero removes armor from that bonus mix.",
-      "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
-      "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
+      "logic": "Higher priority favors armor when a supported stash chooses its bonus gear types. Zero excludes this category.",
+      "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -7102,8 +7102,8 @@
         ]
       },
       "rationale": "Favors or discourages artifacts as a bonus gear category. Zero removes artifacts from that bonus mix.",
-      "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
-      "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
+      "logic": "Higher priority favors artifacts when a supported stash chooses its bonus gear types. Zero excludes this category.",
+      "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -7159,8 +7159,8 @@
         ]
       },
       "rationale": "Favors or discourages attachments as bonus gear. Only suitable progression tiers are used.",
-      "logic": "Use this relative 0–3x build-time weight to select up to two different class candidates without replacement on each active native rank branch; 0 excludes this class. Source-approved candidates cannot exceed the rank tier; only one item may be authored per selected class.",
-      "interaction": "Compact shared Bonus Mix knob with 0–3x in 0.1x increments; zero excludes class; original shared dial geometry and input controls retained.",
+      "logic": "Higher priority favors attachments when a supported stash chooses its bonus gear types. Zero excludes this category.",
+      "interaction": "Coverage decides which stashes participate; Bonus Chance checks each offered item. Rank limits still apply.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
     },
@@ -7216,7 +7216,7 @@
         ]
       },
       "rationale": "Sets the chance check for each eligible bonus gear candidate. Even 100% does not guarantee gear in every stash.",
-      "logic": "This is the chance check for each offered bonus item, not a chance to select the stash location. Two different bonus categories may be offered, but neither is guaranteed.",
+      "logic": "Higher improves the odds for each offered bonus item. Even 100% still needs an eligible stash and item candidate.",
       "interaction": "Use Bonus Gear Coverage for the number of eligible locations and category priority for the types of gear offered.",
       "requiresToggle": "loot.stashGearEnabled",
       "exposeInUi": true
@@ -7637,8 +7637,8 @@
         ]
       },
       "rationale": "Favors or discourages ammo types in breakable boxes. This changes the mix, not the number of rounds.",
-      "logic": "1x keeps the vanilla mix. Move a family outward to make it more common or inward to make it less common.",
-      "interaction": "Ammo yield changes rounds per box independently. The four source knobs, SNG/NATO pool segments and matching legend swatches share the same ammo-family colors.",
+      "logic": "Higher priority makes an ammo family more likely within supported box pools. 1× preserves the original mix.",
+      "interaction": "Ammo per Box changes how many rounds appear, not which caliber families are favored.",
       "exposeInUi": true
     },
     {
@@ -8083,8 +8083,8 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
+      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "interaction": "Affects eligible Standard stash medical items only. Availability, selection priority and stack size remain separate.",
       "rationale": "Scales the original chance of medical items in Standard stashes. 100% keeps their original odds; it does not guarantee a drop."
     },
     {
@@ -8129,8 +8129,8 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
+      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "interaction": "Affects eligible Standard stash drinks only. Availability, selection priority and stack size remain separate.",
       "rationale": "Scales the original chance of drinks in Standard stashes. 100% keeps their original odds; it does not guarantee a drop."
     },
     {
@@ -8175,8 +8175,8 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
+      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "interaction": "Affects eligible Standard stash coupons only. Availability, selection priority and stack size remain separate.",
       "rationale": "Scales the original chance of coupons in Standard stashes. 100% keeps their original odds; it does not guarantee a payout."
     },
     {
@@ -8221,8 +8221,8 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
+      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "interaction": "Affects eligible Rare stash ammo only. Availability, selection priority and stack size remain separate.",
       "rationale": "Scales the original chance of ammo in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
     },
     {
@@ -8267,8 +8267,8 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
+      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "interaction": "Affects eligible Rare stash medical items only. Availability, selection priority and stack size remain separate.",
       "rationale": "Scales the original chance of medical items in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
     },
     {
@@ -8313,8 +8313,8 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
+      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "interaction": "Affects eligible Rare stash food only. Availability, selection priority and stack size remain separate.",
       "rationale": "Scales the original chance of food in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
     },
     {
@@ -8359,8 +8359,8 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
+      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "interaction": "Affects eligible Rare stash drinks only. Availability, selection priority and stack size remain separate.",
       "rationale": "Scales the original chance of drinks in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
     },
     {
@@ -8405,8 +8405,8 @@
           "operation": "scaleClampedChance"
         }
       ],
-      "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
+      "logic": "100% preserves each original item chance; 50% halves it and 0% disables that roll. This never guarantees a whole stash.",
+      "interaction": "Affects eligible Rare stash grenades only. Availability, selection priority and stack size remain separate.",
       "rationale": "Scales the original chance of grenades in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
     },
     {
@@ -8452,7 +8452,7 @@
         ]
       },
       "rationale": "Changes the chance for coupon rewards in eligible Rare stashes. Reward size still depends on progression.",
-      "logic": "Novice and Stalker use 20%; Veteran and Master use 10%. Changing this slider changes only whether coupons are included, not which Common, Rare, Epic or Legendary coupon tier is selected.",
+      "logic": "Novice and Stalker use 20%; Veteran and Master use 10%. This setting only changes whether coupons can appear, not which Common, Rare, Epic or Legendary coupon tier is selected.",
       "interaction": "This is a chance for the eligible Rare coupon reward entry, not the chance to find a Rare stash or its reward tier.",
       "exposeInUi": true,
       "lootHint": {
@@ -8504,7 +8504,7 @@
       },
       "rationale": "Sets how many coupons you begin a new game with. It does not add money to existing saves.",
       "logic": "",
-      "interaction": "This only changes the starting wallet for a new game. It does not add coupons to an existing save. The slider moves in 10-coupon steps."
+      "interaction": "This only changes the starting wallet for a new game. It does not add coupons to an existing save."
     },
     {
       "id": "economy.buyCondition",
@@ -8547,8 +8547,8 @@
         "notes": []
       },
       "rationale": "Changes the prices traders offer when you sell items. Their other pricing rules still apply.",
-      "logic": "This is the trader-buying-from-you side of the economy. Do not read the percentage as the exact payout: the final price also depends on trader-specific modifiers and other shop rules.",
-      "interaction": "Use the difficulty markers as reference points. Exact payouts also depend on the trader and the item."
+      "logic": "Higher raises what traders offer when you sell; lower reduces it. This is a price modifier, not an exact payout.",
+      "interaction": "Broken Gear Value and item condition also affect what you can sell and for how much."
     },
     {
       "id": "economy.sellCondition",
@@ -8591,8 +8591,8 @@
         "notes": []
       },
       "rationale": "Changes the prices traders charge when you buy items. Their other pricing rules still apply.",
-      "logic": "This is the trader-selling-to-you side of the economy. Do not read the percentage as the exact shop price: the final price also depends on trader-specific modifiers and other shop rules.",
-      "interaction": "Use the difficulty markers as reference points. Exact shop prices also depend on the trader and the item."
+      "logic": "Higher makes buying more expensive; lower makes it cheaper. Each trader still applies their own pricing rules.",
+      "interaction": "Item Values changes underlying prices; Prices Traders Pay applies when you sell instead."
     },
     {
       "id": "economy.traderMinBuyCondition",
@@ -9281,7 +9281,7 @@
       "id": "economy.repairCostBase",
       "tab": "economy",
       "group": "Services",
-      "label": "Base Repair Price",
+      "label": "Base Repair Cost",
       "description": "Sets the overall baseline for repair prices. Vanilla is 70%. Use it to make repairs cheaper or more expensive everywhere.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -9356,8 +9356,8 @@
         "notes": []
       },
       "rationale": "Changes repair costs when a technician's faction is hostile to you.",
-      "logic": "100% means the service uses the unmodified repair layer; values above 100% charge more and values below 100% charge less for this relation tier.",
-      "interaction": "Base Repair Price sets the overall repair cost. This reputation setting then makes repairs cheaper or more expensive for that relationship tier."
+      "logic": "Higher means more expensive repairs from hostile technicians; lower means cheaper repairs at this reputation level.",
+      "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
     },
     {
       "id": "economy.repairDisaffection",
@@ -9397,8 +9397,8 @@
         "notes": []
       },
       "rationale": "Changes repair costs when a technician's faction dislikes you.",
-      "logic": "100% means the service uses the unmodified repair layer; values above 100% charge more and values below 100% charge less for this relation tier.",
-      "interaction": "Base Repair Price sets the overall repair cost. This reputation setting then makes repairs cheaper or more expensive for that relationship tier."
+      "logic": "Higher means more expensive repairs from disliked technicians; lower means cheaper repairs at this reputation level.",
+      "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
     },
     {
       "id": "economy.repairNeutral",
@@ -9438,8 +9438,8 @@
         "notes": []
       },
       "rationale": "Changes repair costs when your reputation with a technician's faction is neutral.",
-      "logic": "100% means the service uses the unmodified repair layer; values above 100% charge more and values below 100% charge less for this relation tier.",
-      "interaction": "Base Repair Price sets the overall repair cost. This reputation setting then makes repairs cheaper or more expensive for that relationship tier."
+      "logic": "Higher means more expensive repairs from neutral technicians; lower means cheaper repairs at this reputation level.",
+      "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
     },
     {
       "id": "economy.repairFriend",
@@ -9479,14 +9479,14 @@
         "notes": []
       },
       "rationale": "Changes repair costs when a technician's faction is friendly to you.",
-      "logic": "100% means the service uses the unmodified repair layer; values above 100% charge more and values below 100% charge less for this relation tier.",
-      "interaction": "Base Repair Price sets the overall repair cost. This reputation setting then makes repairs cheaper or more expensive for that relationship tier."
+      "logic": "Higher means more expensive repairs from friendly technicians; lower means cheaper repairs at this reputation level.",
+      "interaction": "Base Repair Cost and the faction's current attitude both affect the final price."
     },
     {
       "id": "economy.mainQuestReward",
       "tab": "economy",
       "group": "Coupon Rewards",
-      "label": "Main Quest Coupon Rewards",
+      "label": "Main Quest Coupons",
       "description": "Changes the coupon rewards paid by main quests while preserving the vanilla difficulty-based reward scaling.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -9524,13 +9524,13 @@
       },
       "rationale": "Changes coupon payouts from main quests. Side quests and stash rewards are separate.",
       "logic": "",
-      "interaction": "This does not change stash coupon rolls, starting coupons or trader prices. Main- and side-line quest income remain independently tunable."
+      "interaction": "Side Quest Coupons are adjusted independently. This does not change stash rewards or starting money."
     },
     {
       "id": "economy.sideQuestReward",
       "tab": "economy",
       "group": "Coupon Rewards",
-      "label": "Side Quest Coupon Rewards",
+      "label": "Side Quest Coupons",
       "description": "Changes the coupon rewards paid by side quests while preserving the vanilla difficulty-based reward scaling.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -9568,7 +9568,7 @@
       },
       "rationale": "Changes coupon payouts from side quests. Main quests and stash rewards are separate.",
       "logic": "",
-      "interaction": "This does not change stash coupon rolls, starting coupons or trader prices. Main- and side-line quest income remain independently tunable."
+      "interaction": "Main Quest Coupons are adjusted independently. This does not change stash rewards or starting money."
     },
     {
       "id": "equipment.armorDurability",
@@ -9750,8 +9750,8 @@
         "notes": []
       },
       "rationale": "Scales damage from all supported harmful anomalies. Individual anomaly damage still matters.",
-      "logic": "Total damage before protection combines the individual anomaly setting with the global multiplier. For example, 60 damage at 145% becomes about 87 before protection.",
-      "interaction": "Individual Base Damage sliders below are a second layer. Changing both layers compounds the result: for example, Fire base 60 at 145% global produces about 87 pre-protection damage; raising Fire base as well increases that result again."
+      "logic": "Higher raises the global damage multiplier; lower reduces it. Individual anomaly damage settings still apply.",
+      "interaction": "Individual anomaly damage and this global setting combine before armor and other protection."
     },
     {
       "id": "advanced.starvationMechanics",
@@ -9940,7 +9940,7 @@
       },
       "rationale": "Makes actions cost more stamina while Master's starvation effect is active. This is not passive drain.",
       "logic": "100% means +100% extra stamina cost, not normal cost. 0% removes this extra starvation cost.",
-      "interaction": "Severe Hunger can also slow stamina recovery; this setting changes stamina drain instead.",
+      "interaction": "Severe hunger also slows stamina recovery. This changes the extra cost of actions, not an ongoing drain.",
       "requiresToggle": "advanced.starvationMechanics"
     },
     {
@@ -10134,7 +10134,7 @@
       "id": "survival.fatigueLowAimPenalty",
       "tab": "survival",
       "group": "Fatigue / Sleepiness",
-      "label": "Low Fatigue Aim-Time Penalty",
+      "label": "Light Fatigue Aim Delay",
       "description": "At the Low Sleepiness state, vanilla increases aiming time by 15%.",
       "control": "slider",
       "valueKind": "raw",
@@ -10175,7 +10175,7 @@
       "id": "survival.fatigueMediumAimPenalty",
       "tab": "survival",
       "group": "Fatigue / Sleepiness",
-      "label": "Medium Fatigue Aim-Time Penalty",
+      "label": "Medium Fatigue Aim Delay",
       "description": "Vanilla raises the aiming-time penalty to +25% in the medium fatigue state.",
       "control": "slider",
       "valueKind": "raw",
@@ -10216,7 +10216,7 @@
       "id": "survival.fatigueStrongAimPenalty",
       "tab": "survival",
       "group": "Fatigue / Sleepiness",
-      "label": "Severe Fatigue Aim-Time Penalty",
+      "label": "Severe Fatigue Aim Delay",
       "description": "Vanilla increases aiming time by +40% in the severe fatigue state.",
       "control": "slider",
       "valueKind": "raw",
@@ -10257,7 +10257,7 @@
       "id": "survival.fatigueMediumReloadPenalty",
       "tab": "survival",
       "group": "Fatigue / Sleepiness",
-      "label": "Medium Fatigue Reload-Time Penalty",
+      "label": "Medium Fatigue Reload Delay",
       "description": "Medium fatigue adds +15% to the reload-time effect in vanilla.",
       "control": "slider",
       "valueKind": "raw",
@@ -10298,7 +10298,7 @@
       "id": "survival.fatigueStrongReloadPenalty",
       "tab": "survival",
       "group": "Fatigue / Sleepiness",
-      "label": "Severe Fatigue Reload-Time Penalty",
+      "label": "Severe Fatigue Reload Delay",
       "description": "Controls how much severe fatigue slows your reloads. Vanilla severe fatigue adds 18.75% reload time.",
       "control": "slider",
       "valueKind": "raw",
@@ -10339,7 +10339,7 @@
       "id": "survival.sleepHealthRestore",
       "tab": "survival",
       "group": "Sleeping",
-      "label": "Post-Sleep Health Restore",
+      "label": "Sleep HP Restore",
       "description": "Controls the direct health restore you receive after normal sleep. The tool starts at 100 HP (1x), adjustable from 0 to 200 HP; the vanilla CFG remains 300 HP.",
       "control": "slider",
       "valueKind": "raw",
@@ -10377,13 +10377,13 @@
       },
       "rationale": "Sets how much HP you regain after normal sleep. This tool defaults to 100 HP, unlike the game's original 300 HP.",
       "logic": "The editor's 1x means 100 HP restored on waking (0–200 HP range). The game's original value was 300 HP, so a reset returns to this tool's 100 HP default.",
-      "interaction": "Does not change passive healing or medkit strength. Values above the 200 HP editor limit do not fit this control."
+      "interaction": "Medkits and passive HP regeneration remain separate."
     },
     {
       "id": "survival.sleepStaminaRestore",
       "tab": "survival",
       "group": "Sleeping",
-      "label": "Post-Sleep Stamina Restore",
+      "label": "Sleep Stamina Restore",
       "description": "Normal sleep restores stamina with a vanilla +100% Stamina effect.",
       "control": "slider",
       "valueKind": "raw",
@@ -10424,7 +10424,7 @@
       "id": "survival.severeFatigueMaxStamina",
       "tab": "master",
       "group": "Severe Fatigue",
-      "label": "Severe-Fatigue Max Stamina Loss",
+      "label": "Severe Fatigue Stamina Loss",
       "description": "Vanilla Master reduces maximum stamina by 20% while its severe-fatigue bundle is active.",
       "control": "slider",
       "valueKind": "raw",
@@ -10459,14 +10459,14 @@
       },
       "rationale": "Reduces maximum stamina while Master's severe-fatigue effect is active.",
       "logic": "Higher values reduce the available stamina pool further; zero removes this component.",
-      "interaction": "This changes maximum stamina, not regeneration rate or action cost.",
+      "interaction": "Max Stamina defines your normal pool; this loss applies only during Master severe fatigue.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
     {
       "id": "survival.severeFatigueCarryWeight",
       "tab": "master",
       "group": "Severe Fatigue",
-      "label": "Severe-Fatigue Carry Capacity Loss",
+      "label": "Severe Fatigue Carry Loss",
       "description": "Vanilla Master applies a 20% loss to both the additional-inventory-weight and penalty-less-weight fatigue effects.",
       "control": "slider",
       "valueKind": "raw",
@@ -10508,14 +10508,14 @@
       },
       "rationale": "Reduces how much you can carry while Master's severe-fatigue effect is active.",
       "logic": "Higher values make fatigue reduce carrying capability more strongly; zero removes both carry-related components together.",
-      "interaction": "Base carry capacity and equipment-derived carry bonuses remain controlled elsewhere.",
+      "interaction": "Your normal carrying limit and equipment carry bonuses remain separate.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
     {
       "id": "survival.severeFatigueRecoil",
       "tab": "master",
       "group": "Severe Fatigue",
-      "label": "Severe-Fatigue Recoil Increase",
+      "label": "Severe Fatigue Recoil",
       "description": "Vanilla Master adds a +55% recoil effect while the severe-fatigue bundle is active.",
       "control": "slider",
       "valueKind": "raw",
@@ -10550,7 +10550,7 @@
       },
       "rationale": "Increases weapon recoil during Master's severe-fatigue effect.",
       "logic": "",
-      "interaction": "This is an extra Master fatigue layer and is independent from the standard aim-time/reload penalties.",
+      "interaction": "This stacks with other recoil sources but does not change reload or aim-time penalties.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
     {
@@ -10599,14 +10599,14 @@
       },
       "rationale": "Makes your aim sway more during Master's severe-fatigue effect.",
       "logic": "",
-      "interaction": "This works alongside the separate recoil and shot-spread penalties in the same Master severe-fatigue bundle.",
+      "interaction": "Recoil and bullet spread are separate penalties in the same Master fatigue bundle.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
     {
       "id": "survival.severeFatigueDispersion",
       "tab": "master",
       "group": "Severe Fatigue",
-      "label": "Severe-Fatigue Shot Spread",
+      "label": "Severe Fatigue Bullet Spread",
       "description": "Changes how much severe fatigue increases weapon spread.",
       "control": "slider",
       "valueKind": "raw",
@@ -10641,7 +10641,7 @@
       },
       "rationale": "Makes shots spread wider during Master's severe-fatigue effect.",
       "logic": "",
-      "interaction": "This is separate from recoil and aim sway, so all three can contribute to degraded weapon handling.",
+      "interaction": "Recoil and aim sway are separate penalties in the same Master fatigue bundle.",
       "requiresToggle": "advanced.fatigueMechanics"
     },
     {
@@ -11720,14 +11720,14 @@
         ]
       },
       "rationale": "Sets the chance to find one mutant part after an eligible kill. Each mutant family has its own setting.",
-      "logic": "The percentage shown is the actual drop chance for that mutant.",
+      "logic": "",
       "interaction": ""
     },
     {
       "id": "loot.mutant.bloodsuckerChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Bloodsucker Part Drop Chance",
+      "label": "Bloodsucker Part Chance",
       "description": "Controls how often an eligible Bloodsucker kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -11768,14 +11768,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Bloodsucker part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 50%. At 40%, roughly 40 successful part drops are expected per 100 eligible Bloodsucker kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.boarChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Boar Part Drop Chance",
+      "label": "Boar Part Chance",
       "description": "Controls how often an eligible Boar kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -11816,14 +11816,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Boar part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 20%. At 40%, roughly 40 successful part drops are expected per 100 eligible Boar kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.burerChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Burer Part Drop Chance",
+      "label": "Burer Part Chance",
       "description": "Controls how often an eligible Burer kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -11864,14 +11864,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Burer part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 100%. At 40%, roughly 40 successful part drops are expected per 100 eligible Burer kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.catChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Bayun Part Drop Chance",
+      "label": "Bayun Part Chance",
       "description": "Controls how often an eligible Bayun kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -11912,14 +11912,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Bayun part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 100%. At 40%, roughly 40 successful part drops are expected per 100 eligible Bayun kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.chimeraChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Chimera Part Drop Chance",
+      "label": "Chimera Part Chance",
       "description": "Controls how often an eligible Chimera kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -11960,14 +11960,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Chimera part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 100%. At 40%, roughly 40 successful part drops are expected per 100 eligible Chimera kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.controllerChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Controller Part Drop Chance",
+      "label": "Controller Part Chance",
       "description": "Controls how often an eligible Controller kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -12008,14 +12008,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Controller part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 100%. At 40%, roughly 40 successful part drops are expected per 100 eligible Controller kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.deerChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Deer Part Drop Chance",
+      "label": "Deer Part Chance",
       "description": "Controls how often an eligible Deer kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -12056,14 +12056,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Deer part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 100%. At 40%, roughly 40 successful part drops are expected per 100 eligible Deer kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.fleshChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Flesh Part Drop Chance",
+      "label": "Flesh Part Chance",
       "description": "Controls how often an eligible Flesh kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -12104,14 +12104,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Flesh part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 20%. At 40%, roughly 40 successful part drops are expected per 100 eligible Flesh kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.poltergeistChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Poltergeist Part Drop Chance",
+      "label": "Poltergeist Part Chance",
       "description": "Controls how often an eligible Poltergeist kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -12152,14 +12152,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Poltergeist part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 65%. At 40%, roughly 40 successful part drops are expected per 100 eligible Poltergeist kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.pseudodogChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Pseudodog Part Drop Chance",
+      "label": "Pseudodog Part Chance",
       "description": "Controls how often an eligible Pseudodog kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -12200,14 +12200,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Pseudodog part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 100%. At 40%, roughly 40 successful part drops are expected per 100 eligible Pseudodog kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.pseudogiantChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Pseudogiant Part Drop Chance",
+      "label": "Pseudogiant Part Chance",
       "description": "Controls how often an eligible Pseudogiant kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -12248,14 +12248,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Pseudogiant part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 100%. At 40%, roughly 40 successful part drops are expected per 100 eligible Pseudogiant kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.tushkanChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Tushkan Part Drop Chance",
+      "label": "Tushkan Part Chance",
       "description": "Controls how often an eligible Tushkan kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -12296,14 +12296,14 @@
         ]
       },
       "rationale": "Changes the chance of finding one Tushkan part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 10%. At 40%, roughly 40 successful part drops are expected per 100 eligible Tushkan kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "loot.mutant.snorkChance",
       "tab": "loot",
       "group": "Mutant Part Drop Chances",
-      "label": "Snork Part Drop Chance",
+      "label": "Snork Part Chance",
       "description": "Controls how often an eligible Snork kill drops its mutant part. When it drops, you get 1 part.",
       "control": "slider",
       "valueKind": "probability",
@@ -12344,8 +12344,8 @@
         ]
       },
       "rationale": "Changes the chance of finding one Snork part after an eligible kill. It doesn't change mutant spawns.",
-      "logic": "This is an absolute probability, not a setting. Vanilla is 20%. At 40%, roughly 40 successful part drops are expected per 100 eligible Snork kills over a large sample.",
-      "interaction": "Changes only this mutant-part drop chance. It does not change mutant spawns, health, item value, or progression. Each successful drop gives 1 part."
+      "logic": "",
+      "interaction": ""
     },
     {
       "id": "equipment.weaponWearPerShot",
@@ -12820,7 +12820,7 @@
       },
       "rationale": "Controls how many eligible world weapon spots stay filled after shuffling. All supported regular models remain represented.",
       "logic": "Higher density leaves more world weapon locations populated; lower density makes found weapons scarcer. Every regular weapon model is still kept in the pool.",
-      "interaction": "The live helper shows occupied locations and the exact guaranteed minimum for every weapon at the current slider value."
+      "interaction": "Only shuffled regular weapons use this density; quest and unique weapon placements remain separate."
     },
     {
       "id": "loot.worldAttachmentShuffle",
@@ -12870,7 +12870,7 @@
       },
       "rationale": "Shuffles eligible world attachments between suitable spots without adding extra copies.",
       "logic": "OFF keeps vanilla attachment placement. ON reshuffles world attachments across compatible locations without changing how many exist.",
-      "interaction": "Independent from Shuffle World Weapons and Blueprint Shuffle."
+      "interaction": "Weapon and blueprint shuffles remain independent."
     },
     {
       "id": "loot.worldDetectors",
@@ -12924,7 +12924,7 @@
       },
       "rationale": "Removes eligible non-quest detector pickups from the world. Quest and trader detectors stay untouched.",
       "logic": "OFF keeps vanilla detector placement. ON removes supported non-quest detector pickups from the world while leaving quest detectors alone.",
-      "interaction": "Independent from Shuffle World Weapons, World Attachment Shuffle and Blueprint Shuffle."
+      "interaction": "Quest detectors and trader supplies stay untouched."
     },
     {
       "id": "loot.blueprintShuffle",
@@ -12962,7 +12962,7 @@
       },
       "rationale": "Shuffles eligible world blueprint locations when building. Quest blueprints and total counts stay unchanged.",
       "logic": "OFF keeps vanilla blueprint locations. ON reshuffles the supported world blueprints so each build gives you a fresh layout with no duplicates.",
-      "interaction": "Independent of Shuffle World Weapons and the other World Loot controls."
+      "interaction": "Quest blueprint placements and total eligible blueprint counts remain unchanged."
     },
     {
       "id": "alife.humanGroupSize.newbie",

@@ -1498,17 +1498,15 @@ public sealed class ParameterViewModel : ObservableObject
             if (Definition.Tab != "loot")
                 return string.Empty;
 
-            if (IsChoiceSlider)
-                return "Chooses which extra loot preset ordinary human corpses can use. This is a named choice, not a percentage.";
-
-            if (IsToggle)
-                return "Turns this extra vanilla loot rule on or off. It does not change stack size or drop chance by itself.";
+            // Choice/toggle state is already clear in its control and WHAT IT
+            // DOES. Avoid a second block repeating the very same information.
+            if (IsChoiceSlider || IsToggle)
+                return string.Empty;
 
             if (IsRange)
             {
                 if (Definition.ValueKind == "durabilityAbsoluteRange")
-                    return $"MIN {RangeMinDisplay} and MAX {RangeMaxDisplay} are the actual condition limits for dropped NPC weapons. " +
-                           "Vanilla is kept exactly until you move either bound; after that, ordinary human NPC drops use the selected range.";
+                    return "MIN is the lowest dropped condition; MAX is the highest. Editing either replaces the normal NPC weapon-condition range.";
 
                 if (Definition.ValueKind == "durabilityRangeMultiplier")
                     return $"MIN {RangeMinDisplay} changes the low end of dropped weapon condition; MAX {RangeMaxDisplay} changes the high end. " +
@@ -1518,15 +1516,21 @@ public sealed class ParameterViewModel : ObservableObject
                        "100% / 100% keeps the original ranges, including differences between difficulty and Progression Rank.";
             }
 
+            if (Id.StartsWith("loot.mutant.", StringComparison.Ordinal))
+                return "Each eligible mutant kill rolls for one part. This changes how often a part appears, not how many parts drop.";
+
+            if (Id == "loot.cheapStashGrenadeChance")
+                return "This chance applies to eligible Basic stash grenade entries, not every physical stash.";
+
+            if (Id == "loot.expensiveStashMoneyChance")
+                return "This controls coupon rewards in eligible Rare stashes, not how often you find stashes.";
+
             if (Definition.ValueKind == "probability")
-                return $"{CurrentDisplay} is the actual drop chance. Roughly speaking, that means about {CurrentNumber * 100:0.#} successful drops out of 100 eligible chances.";
+                return string.Empty;
 
             if (Definition.Display?.Primary == "percentOfVanilla")
             {
-                var reference = GetReferenceNumber();
-                var scale = Math.Abs(reference) > Epsilon ? CurrentNumber / reference : 0.0;
-                return $"This keeps the original vanilla differences and scales them to {scale * 100:0.#}%. " +
-                       "It is not a flat drop chance: for example, a vanilla 20% chance becomes 10% when this control is set to 50%.";
+                return "This scales each original item chance rather than setting a flat drop rate. For example, 50% turns an original 20% chance into 10%.";
             }
 
             return string.Empty;
