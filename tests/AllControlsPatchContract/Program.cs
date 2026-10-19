@@ -47,6 +47,7 @@ internal static class Program
             // NPC_Ammo_Smart, so that source must be explicitly probed where
             // the real native ammo package is active (Novice).
             VerifyDormantNpcAmmoNotCounted();
+            VerifySingletonCfgPatchAndFileAccounting();
             var executed = 0;
             var failed = new List<string>();
             foreach (var id in tested)
@@ -223,13 +224,49 @@ internal static class Program
                 p => p.Id == "loot.npcCorpseBonus").CurrentText),
                 "Master extra corpse package was expected to be None");
             var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
-            var output = Directory.EnumerateFiles(dir, "*.cfg",
+            // The writer counts every staged file, including global
+            // .cfg_patch_TrueCustomDifficulty outputs without a .cfg suffix.
+            var output = Directory.EnumerateFiles(dir, "*",
                 SearchOption.AllDirectories).ToArray();
             Check(result.ParameterCount == 1 && result.FileCount == output.Length,
                 "Dormant Master ammo multiplier inflated applied writer accounting");
             Check(output.Length > 0 && output.All(file => !File.ReadAllText(file)
                     .Contains("TCD_NPC_Ammo_Smart", StringComparison.Ordinal)),
                 "Dormant Master ammo setting generated a forbidden ammo clone");
+        }
+        finally
+        {
+            if (Directory.Exists(dir)) Directory.Delete(dir, true);
+        }
+    }
+
+    // Prove the singleton/global output format separately from prototype
+    // BPatch files. A test that enumerates only "*.cfg" silently misses
+    // CoreVariables.cfg_patch_TrueCustomDifficulty and can miscount output.
+    private static void VerifySingletonCfgPatchAndFileAccounting()
+    {
+        var dir = Path.Combine(Path.GetTempPath(),
+            "TCD_SingletonCfgPatch_Count_" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Master" };
+            var money = vm.AllParameters.Single(p => p.Id == "economy.startingMoney");
+            money.SnapCurrentNumberToMarker(100.0);
+            Check(money.IsControlEnabled && money.IsValueModifiedFromReference(),
+                "Starting Money singleton probe did not change a live source");
+
+            var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+            var output = Directory.EnumerateFiles(dir, "*", SearchOption.AllDirectories).ToArray();
+            var singleton = Path.Combine(dir, "Stalker2", "Content", "GameLite",
+                "GameData", "CoreVariables.cfg_patch_TrueCustomDifficulty");
+
+            Check(File.Exists(singleton),
+                "Starting Money did not emit its native singleton cfg_patch destination");
+            Check(File.ReadAllText(singleton).Contains(
+                    "PlayerStartingMoney = 100", StringComparison.Ordinal),
+                "Starting Money singleton cfg_patch did not contain its actual changed value");
+            Check(output.Length == result.FileCount && result.EditCount > 0,
+                "Global singleton output was omitted from physical CFG file accounting");
         }
         finally
         {
