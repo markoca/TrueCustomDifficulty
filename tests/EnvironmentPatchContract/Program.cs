@@ -31,9 +31,16 @@ internal static class Program
             var vm = new MainViewModel(Catalog);
             var active = vm.AllParameters.Where(p => p.Id.StartsWith("environment.", StringComparison.Ordinal)).ToArray();
             var points = Baseline.EditPoints.Where(p => p.ParameterId.StartsWith("environment.", StringComparison.Ordinal)).ToArray();
-            Check(ids.Length == 17 && active.Length == 17 &&
-                active.All(p => p.IsSlider && p.IsControlEnabled) &&
-                active.Select(p => p.Id).ToHashSet(StringComparer.Ordinal).SetEquals(ids), "17 app source controls");
+            Check(ids.Length == 17 && active.Length == 17,
+                "17 catalog/VM Environment sources; catalog=" + ids.Length +
+                " VM=" + active.Length);
+            var inaccessible = active.Where(p => !p.IsSlider || !p.IsControlEnabled)
+                .Select(p => p.Id).ToArray();
+            Check(inaccessible.Length == 0,
+                "Environment sources unexpectedly disabled or not sliders: " +
+                string.Join(", ", inaccessible));
+            Check(active.Select(p => p.Id).ToHashSet(StringComparer.Ordinal).SetEquals(ids),
+                "Environment catalog and VM source IDs disagree");
             // RazorAnomaly is the in-game Glass Shards hazard. Keep actual
             // CFG prototype IDs stable but expose player-facing wording.
             Check(definitions.Single(p => p.Id == "environment.razorHealthDamage").Label ==

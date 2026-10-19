@@ -255,9 +255,14 @@ internal static partial class Program
             // The ordinary ReadOutput parser remains removal-intolerant.
             var cfg = ReadOutput(dir, allowAuthoredStashRemovals: true);
             Check(built.EditCount > 0
-                && cfg.TryGetValue("GameData/SpawnActorPrototypes.cfg", out var actorFields)
-                && cfg.TryGetValue("GameData/ItemGeneratorPrototypes.cfg", out var itemFields),
+                && cfg.ContainsKey("GameData/SpawnActorPrototypes.cfg")
+                && cfg.ContainsKey("GameData/ItemGeneratorPrototypes.cfg"),
                 "Combined attachment and stash gear writer omitted physical CFG output");
+            // Our Check() method is not annotated with [DoesNotReturnIf],
+            // so C# definite assignment needs these locals initialized
+            // independently of the assertion's && short-circuit.
+            var actorFields = cfg["GameData/SpawnActorPrototypes.cfg"];
+            var itemFields = cfg["GameData/ItemGeneratorPrototypes.cfg"];
 
             foreach (var row in shared)
             {

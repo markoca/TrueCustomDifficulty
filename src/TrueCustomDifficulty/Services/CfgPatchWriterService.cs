@@ -382,8 +382,12 @@ public sealed partial class CfgPatchWriterService
         // Logical writer route counts must agree with the physical staged
         // output. Cross-domain overwrites or an omitted file otherwise make
         // Build Mod report a plausible but false number of CFG patches.
+        // Prototype BPatch files end in .cfg, but global/singleton patches
+        // intentionally end in .cfg_patch_TrueCustomDifficulty (no trailing
+        // .cfg). Enumerate all files in our freshly recreated staging tree,
+        // not only files matched by the "*.cfg" filter.
         var stagedFileCount = Directory.EnumerateFiles(
-            outputRoot, "*.cfg", SearchOption.AllDirectories).Count();
+            outputRoot, "*", SearchOption.AllDirectories).Count();
         if (stagedFileCount != fileCount)
             throw new InvalidDataException(
                 $"CFG output accounting mismatch: {fileCount} writer-counted files " +

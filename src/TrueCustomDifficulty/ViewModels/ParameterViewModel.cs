@@ -430,6 +430,7 @@ public sealed class ParameterViewModel : ObservableObject
         ["survival.waterInstantStaminaRestore"] = "ConsumableMixer",
         ["survival.energyDrinkInstantStaminaRestore"] = "ConsumableMixer",
         ["survival.waterStaminaEffectStrength"] = "ConsumableMixer",
+        ["survival.waterStaminaCostReduction"] = "ConsumableMixer",
         ["survival.energyDrinkStaminaRecoveryStrength"] = "ConsumableMixer",
         ["survival.waterEffectDuration"] = "ConsumableMixer",
         ["survival.waterRegenDuration"] = "ConsumableMixer",
