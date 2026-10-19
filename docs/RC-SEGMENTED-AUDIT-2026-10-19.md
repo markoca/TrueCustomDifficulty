@@ -45,3 +45,27 @@ The [final RC copy pass](RC-FINAL-COPY-AUDIT-2026-10-19.md) already reviewed all
 ## Handoff and revision discipline
 
 For every gate: source evidence → defects with affected paths/IDs → minimal code+test+documentation change on main → verify pushed SHA → local pull/build/test command block → record test results. Update this document with completed/blocked checks and evidence URLs without changing audit results retrospectively.
+
+
+## Gate 01 — execution attempt 2 and environment limitations (2026-10-19)
+
+- **GitHub rerun requested and accepted:** [latest main workflow run 39320831462](https://github.com/markoca/TrueCustomDifficulty/actions/runs/39320831462), SHA `e622a2923d485488d63fdcd6ccdcd424e103f8b2`, rerun attempt **2**. At the immediate status check, several jobs again reported `failure` while remaining jobs were queued; there was no test-step or compiler-output evidence to attribute those failures to source defects. **The rerun's final outcome must be checked again**.
+- The predecessor run `39316871215` has **0 ms billable job runtime for all fourteen jobs** (12 Windows, 2 Ubuntu). Its `audit` job returned no recorded steps and its job-log endpoint returned 404. This is stronger evidence that hosted jobs never started, **but does not identify the exact account/runner/billing/policy cause**.
+- **Local execution environment cannot verify Gate 01 here:** the available execution container has `git` but **no `dotnet` or `wine`**, no mounted repository checkout, and external GitHub DNS/clone is unavailable. Therefore `python tools/pre_release.py static`, Linux WPF cross-build, Windows/Wine writer contracts and `publish.sh` have **NOT RUN** here. GitHub connector source inspection is not a substitute for executing these checks.
+
+### Isolation commands for the maintainer workstation
+
+From the *current* main-branch checkout (with .NET 10/Wine present), run these independently, preserving the first failing output. Do not change original CFG or generated files on the basis of CI's zero-runtime badges:
+
+```bash
+cd /home/marko/s2tools/TrueCustomDifficulty/
+git pull
+git rev-parse HEAD
+python3 tools/pre_release.py static --output audit/pre-release/rc-static
+python3 tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
+python3 tools/audit_rc_final_copy.py
+dotnet build tests/LootSpecialGeneratorsContract/LootSpecialGeneratorsContract.csproj -c Release -r win-x64
+WINEPREFIX="$HOME/.wine-s2" WINEDEBUG=-all ./tests/run-wine.sh LootSpecialGeneratorsContract
+```
+
+**Disposition:** Gate 01 remains **BLOCKED / NOT RUN** for CI and real-binary contracts. No application-source correction or PASS is claimed. Next: inspect the final rerun jobs (step arrays/logs); use the first actual failing test if execution begins, or diagnose GitHub Actions administrative status outside code if zero-duration failure repeats.
