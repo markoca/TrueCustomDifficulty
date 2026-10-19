@@ -103,3 +103,8 @@ Existing domain-specific production writer tests remain in `tests/*PatchContract
 5. Run targeted in-game checks for the 51 runtime-pending controls, including negative/difficulty/dependent states and standalone special-writer behavior.
 
 Until these steps pass, the defensible statement is **“248/248 mapped and production-writer-routed; factory no-op direct edits removed; live game effects partially unverified”**, not **“all 248 gameplay effects confirmed.”**
+
+
+## 2026-10-19 — Direct mapping audit scope correction
+
+The factory profile effectiveness check now considers applicable source-backed direct edit points in both `baseGame` and `dlc1` scopes. Requiring a base-game point for every changed direct parameter incorrectly rejected DLC-only mappings, including `combat.psySpawnCycleDelay`. The check still requires an applicable mapping and checks concrete source-value effects. This audit is static; local Python and .NET tests remain required.

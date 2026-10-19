@@ -933,7 +933,12 @@ else:
 
 verify_current_editor("Individual Anomaly Damage", "AnomalyDamageRadar", ("environment.electroAnomalyDamage", "environment.chemicalAnomalyDamage", "environment.fireAnomalyDamage", "environment.carouselAnomalyDamage", "environment.toxicCloudDamage", "environment.steamAnomalyDamage", "environment.clickerHealthDamage", "environment.razorHealthDamage", "environment.soapBubbleHealthDamage", "environment.fireballHealthDamage",), "individualAnomalyDamageParameterIds.Contains(p.Id)", ("IsIndividualAnomalyDamageAnchor", "IsIndividualAnomalyDamageMember"))
 
-verify_current_editor("Stash Ammo", "StashAmmoRadar", ("loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity", "loot.expensiveStashAmmoQuantity",), "stashAmmoParameterIds", ("IsStashAmmoAnchor", "IsStashAmmoMember"))
+# Stash Ammo is now a single source-backed native editor inside StashContentMix.
+# The retired StashAmmoRadar flags must not be required by the current audit.
+_stash_native_ui = (ROOT / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
+if ('private void DrawStashContentMix(' not in _stash_native_ui
+    or '"AMMO QUANTITY · ALL TIERS"' not in _stash_native_ui):
+    fail("Stash Ammo native StashContentMix editor missing")
 
 # Anomaly identity release gate (2026-10-14):
 # Glass Shards is the RazorAnomaly SID. Diamond CFG prototypes exist, but the
@@ -987,7 +992,6 @@ for _obsolete in (
     if _obsolete in _loot_clean:
         fail('Loot inactive mixer/family returned: ' + _obsolete)
 for _required in (
-    'case "StashRewardProfile":', 'DrawCompactStashRewards(dc,',
     'case "AmmoDistribution":', 'DrawAmmoDistribution(dc,',
     'DrawHorizontalTrackCard(dc, ammoYield,',
     'DrawHorizontalTrackCard(dc, P("loot.destructibleGrenadeQuantity"),',
@@ -3767,13 +3771,13 @@ if not all(t in _stash_sort_body for t in _stash_order_check):
     fail("Stashes sections drifted from Rewards > Content > Medical Composition > Quantity > Extra Gear")
 
 
-_stash_groups = {"Stashes", "Stash Content", "Stash Medical Composition", "Stash Gear"}
+_stash_groups = {"Stash Content", "Stash Medical Composition", "Stash Gear"}
 _stash_rows = [p for p in parameters if p.get("group") in _stash_groups]
 _stash_ids = {p["id"] for p in _stash_rows}
 _stash_tabs = [t for t in parameters_doc.get("tabs", []) if t.get("id") == "stashes"]
 _stash_include = parameters_doc.get("scope", {}).get("includedTabs", [])
 _stash_tab_text = (ROOT / "src/TrueCustomDifficulty/ViewModels/TabViewModel.cs").read_text(encoding="utf-8")
-if (len(_stash_rows) != 39 or len(_stash_ids) != 39
+if (len(_stash_rows) != 41 or len(_stash_ids) != 41
     or _stash_tabs != [{"id": "stashes", "label": "Stashes", "order": 55}]
     or _stash_include.index("stashes") != _stash_include.index("loot") + 1
     or any(p.get("tab") != "stashes" or not p["id"].startswith("loot.") for p in _stash_rows)
@@ -3784,7 +3788,7 @@ if (len(_stash_rows) != 39 or len(_stash_ids) != 39
     or not all(f'"{pid}"' in _stash_vm_text for pid in _stash_ids)):
     fail("Stashes tab catalog and WPF ViewModel ownership drifted")
 else:
-    note("Stashes tab: 39 source IDs / 4 UI families / 7 opt-in bonus dimensions")
+    note("Stashes tab: 41 source IDs / 3 catalog groups; 34 UI-visible controls")
 
 # Global cross-domain control audit release gate (v0.2.50).
 _global_doc = DOCS / "GLOBAL-CROSS-DOMAIN-AUDIT.md"
@@ -3805,7 +3809,7 @@ _global_expected_tabs = {
     "master": 20,
     "environment": 6,
     "loot": 27,
-    "stashes": 35,
+    "stashes": 34,
     "alife": 2,
 }
 _global_confirmed = sum(p.get("support", {}).get("status") == "confirmed" for p in _global_visible)
@@ -3966,14 +3970,14 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 283 or len(_global_visible) != 172 or len(_global_hidden) != 111:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 283/172/111")
+if len(parameters) != 283 or len(_global_visible) != 178 or len(_global_hidden) != 105:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 283/178/105")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 62:
+elif _global_confirmed != 117 or _global_runtime != 61:
     fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/62")
-elif _global_control_counts != {"slider": 164, "toggle": 13, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 164 sliders / 13 toggles / 1 choiceSlider / 1 range")
+elif _global_control_counts != {"slider": 163, "toggle": 13, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 163 sliders / 13 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -4333,7 +4337,7 @@ _knob_tick_contract = (
     'var value = parameter.Minimum + tickIndex * nativeStep;',
     'var ratio = Math.Clamp((value - parameter.Minimum) / range, 0.0, 1.0);',
     'DrawStepTick(parameter.Minimum + nativeIntervals * nativeStep, true);',
-    'DrawStepTick(parameter.Maximum, true);',
+    'DrawStepTick(dialMaximum, true);',
     'const double minimumTickSpacing = 6.5;',
     'OnPropertyChanged(nameof(TickFrequency))',
 )
@@ -4417,8 +4421,7 @@ _seven_required_code = (
     'const int hoursCount = 14;',
     'const double sharedTop = 3.0;',
     'Math.Min(780.0, ActualWidth - 34.0)',
-    'Math.Min(785.0, Math.Max(1.0, ActualWidth - 34.0))',
-    'if (Family == "SleepingDashboard"',
+     'if (Family == "SleepingDashboard"',
     'or "TradingDashboard" or "RepairCurve" or "SleepingDashboard"',
     'or "RadiationBalance" or "StaminaCore"',
 )

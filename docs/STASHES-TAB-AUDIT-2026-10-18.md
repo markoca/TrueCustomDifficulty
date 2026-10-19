@@ -113,3 +113,8 @@ Legacy mixer check: `python3 tools/audit_stashes_mixer_ui.py` (some other old au
 For native generation: build `tests/LootSpecialGeneratorsContract` and inspect base/DLC output for supported actors, then use Wine to review compact 4-/2-column layout (especially host widths ~550 and ~570 DIP) and test unopened eligible/protected in-game stash actors.
 
 The source audit and GitHub push do not demonstrate a passing .NET build or gameplay acceptance.
+
+
+## 2026-10-19 — Current Stashes audit contract reconciliation
+
+The current Stashes catalogue contains **41 source parameters**, with **34 visible** and three groups: Stash Content, Stash Medical Composition, and Stash Gear. Ammo quantity is edited through the native `StashContentMix` panel; `StashAmmoRadar`, `IsStashAmmoAnchor` and `IsStashAmmoMember` are retired. The old `StashRewardProfile` / `DrawCompactStashRewards` path must not be reintroduced to satisfy an obsolete global audit assertion. The current `audit_stashes_current.py` contract is the regression authority for the active Stashes structure.

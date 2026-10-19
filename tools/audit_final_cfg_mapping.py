@@ -311,9 +311,11 @@ def main():
             parent = p.get("requiresToggle")
             if parent and not doc["values"][parent]["boolean"]:
                 continue
-            points = [e for e in direct[pid] if e["scope"] == "baseGame"
-                      and e.get("difficultySid", "") in ("", sid)]
-            require(points, name + ": no base-game direct points for changed " + pid)
+            points = [e for e in direct[pid]
+                      if e.get("difficultySid", "") in ("", sid)]
+            # A direct catalog mapping may legitimately target DLC1 only.
+            # Reject genuinely unmapped changes, not source-backed DLC-only ones.
+            require(points, name + ": no applicable direct points for changed " + pid)
             if all(same(emitted_value(e, value), parse_source(e["sourceRaw"])) for e in points):
                 inert.append({"profile": name, "parameterId": pid, "value": value,
                               "source": [(e["sourceRaw"], e["operation"]) for e in points]})
