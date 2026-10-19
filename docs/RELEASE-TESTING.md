@@ -1,3 +1,7 @@
+## 2026-10-19 — Current Stashes checks in local pre-release
+
+`python3 tools/pre_release.py static --output audit/pre-release/rc-static` now includes three additional tests: `audit_stashes_current.py`, `audit_stash_content_gear.py` and `audit_stash_gear_coverage.py`. They validate the current Stashes catalog/UI/writer bindings, native bonus category mix/Chance, source-owned stash ranks, 800 base + 108 DLC1 extra-gear actor selection, and shared attachment-slot safety. A local static PASS proves only these source checks, not a compiled writer or in-game drops. The combined Windows/Wine `LootSpecialGeneratorsContract` fixture separately accepts exactly thirteen approved `PossibleItems/[0] : removenode` directives and checks that existing attachment redirects and appended gear bonus slots coexist.
+
 ## 2026-10-18 — Offline regional atlas validation
 
 `python3 tools/audit_stash_actor_regions.py` is included in the static pre-release audit: the 831 ordinary world SmartLoot actor coordinates are mapped to 22 pinned published game-coordinate polygons, with 829 interior assignments and 2 unresolved near-border cases. The audit verifies catalog consistency and historic name-mapping regressions; it does not test actual gameplay, quest states or map boundaries in the installed game. Details: `docs/STASH-REGIONS.md`.

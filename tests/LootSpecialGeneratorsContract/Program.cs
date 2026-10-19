@@ -1249,9 +1249,11 @@ internal static partial class Program
 
     // No naive text substring check: each generated file is parsed into
     // concrete full-path leaf identities, retaining clone and bpatch nesting.
-    static Dictionary<string,Dictionary<string,string>> ReadOutput(string folder)
+    static Dictionary<string,Dictionary<string,string>> ReadOutput(
+        string folder, bool allowAuthoredStashRemovals = false)
     {
         var docs=new Dictionary<string,Dictionary<string,string>>(StringComparer.Ordinal);
+        var approvedRemovals = new HashSet<string>(StringComparer.Ordinal);
         foreach(var path in Directory.GetFiles(folder,"*TrueCustomDifficulty*",SearchOption.AllDirectories))
         {
             var full=path.Replace('\\','/');
@@ -1288,6 +1290,23 @@ internal static partial class Program
                         "Top-level root is neither patch nor referenced clone: "+line);
                     stack.Add(name);continue;
                 }
+                // The combined Extra Gear + Attachment fixture includes 13
+                // deliberate original weapon entry removals. Ordinary writer
+                // tests must still reject ANY removenode rather than hide it.
+                // In this one opt-in fixture the exact 13 nested [0] nodes
+                // are checked separately from ordinary scalar assignments.
+                if (line.Contains(": removenode", StringComparison.Ordinal))
+                {
+                    var removal = Regex.Match(line, @"^\[0\]\s*:\s*removenode$");
+                    Check(allowAuthoredStashRemovals
+                        && file == "GameData/ItemGeneratorPrototypes.cfg"
+                        && stack.Count >= 3 && stack.Contains("PossibleItems")
+                        && removal.Success,
+                        "Unexpected item removal in source-only writer fixture: " + file + "/" + line);
+                    Check(approvedRemovals.Add(file + "|" + string.Join("/",stack) + "/[0]"),
+                        "Duplicate authored weapon removal: " + file + "/" + string.Join("/",stack));
+                    continue;
+                }
                 var kv=Regex.Match(line,@"^(?<name>\S+)\s*=\s*(?<value>.*)$");
                 Check(kv.Success && stack.Count>0,"Unparsed special CFG syntax: "+line);
                 Check(fields.TryAdd(string.Join("/",stack)+"/"+kv.Groups["name"].Value,
@@ -1296,6 +1315,10 @@ internal static partial class Program
             Check(stack.Count==0,"Unclosed CFG doc "+file);
             Check(docs.TryAdd(file,fields),"Duplicate emitted physical CFG "+file);
         }
+        if (allowAuthoredStashRemovals)
+            Check(approvedRemovals.Count == 13,
+                "Expected exactly 13 approved original weapon entry removals; found "
+                    + approvedRemovals.Count);
         return docs;
     }
     static void Check(bool valid,string msg)

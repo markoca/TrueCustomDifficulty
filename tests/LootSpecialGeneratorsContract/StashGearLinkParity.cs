@@ -250,7 +250,10 @@ internal static partial class Program
         try
         {
             var built = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
-            var cfg = ReadOutput(dir);
+            // This fixture intentionally removes 13 original stash weapon
+            // entries in addition to writing both kinds of private generators.
+            // The ordinary ReadOutput parser remains removal-intolerant.
+            var cfg = ReadOutput(dir, allowAuthoredStashRemovals: true);
             Check(built.EditCount > 0
                 && cfg.TryGetValue("GameData/SpawnActorPrototypes.cfg", out var actorFields)
                 && cfg.TryGetValue("GameData/ItemGeneratorPrototypes.cfg", out var itemFields),
