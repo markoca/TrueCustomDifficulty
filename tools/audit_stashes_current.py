@@ -172,7 +172,18 @@ content_body = ui.split("private void DrawStashContentMix(", 1)[1].split("privat
 tier_body = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split("private void DrawStashChanceTier(", 1)[1]
 assert '"NATIVE' not in tier_body, "Standard/Rare Chance renderer reintroduced a NATIVE label/value"
 assert 'stash_chance_native_row=absent' in read(root / "publish.sh")
+assert 'stash_tier_source_sha256=%s' in read(root / "publish.sh")
 assert 'grep -nF' in read(root / "publish.sh")
+verified_runner = read(root / "run-latest.sh")
+assert 'git pull --ff-only origin main' in verified_runner
+assert 'bash "$ROOT/publish.sh"' in verified_runner
+assert 'stash_tier_source_sha256=' in verified_runner
+assert 'EXPECTED_STASH_SHA' in verified_runner
+assert 'ACTUAL_STASH_SHA' in verified_runner
+assert '"$EXPECTED_STASH_SHA" != "$ACTUAL_STASH_SHA"' in verified_runner
+assert '"$NATIVE_ROW_STATUS" != "absent"' in verified_runner
+assert 'grep -nF' in verified_runner
+assert 'exec env WINEPREFIX=' in verified_runner
 assert '"loot.cheapStashAmmoQuantity"' in content
 assert '"AMMO QUANTITY · ALL TIERS"' in content_body
 assert '"AMMO QUANTITY · ALL TIERS"' in content_body
@@ -292,7 +303,7 @@ assert t1_attachments == {
 assert not set(r["ActorSID"] for r in removals) & set(r["ActorSID"] for r in protection)
 assert all(r["ProgressionTier"] in ("T2", "T3", "T4") for r in attachments)
 
-print("PASS: Stashes 39 catalog parameters / 4 exact UI families / 7 bonus controls")
+print("PASS: Stashes 41 catalog parameters / 3 exact catalog groups / 7 bonus controls")
 print("PASS: responsive 4-to-2 knob layout, all writer routes, 12 complete presets")
 print("PASS: 13 original regular removals exclude protected actors; 19 audit-backed attachments")
 print("LIMIT: static contract; no .NET/Wine/native RNG or unopened-stash validation")

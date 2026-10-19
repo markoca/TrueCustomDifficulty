@@ -1,3 +1,9 @@
+## 2026-10-19 — CURRENT: verified Wine launch for NATIVE-free Stashes cards
+
+The active `DrawStashChanceTier` has **no `NATIVE` text or native-percent renderer**. Repeated screenshots showing the obsolete caption indicate that the displayed executable/window has not yet been proven to come from current `main`; they are not grounds to reintroduce or merely hide the same row a second time. **Use `bash run-latest.sh` from the project root** for the one-step `git pull --ff-only origin main` → clean publish → source/binary integrity check → Wine launch. A running old app blocks the workflow instead of being silently reused.
+
+`publish.sh` writes `BUILD-INFO.txt` with `source_commit`, `exe_sha256`, `stash_tier_source_sha256` and `stash_chance_native_row=absent`. The runner verifies all four against the current checkout and published EXE, then checks the active C# renderer itself. If any check fails, Wine does **not** launch. The run prints the identities being tested; this is terminal-only build diagnosis, **not** a new player-facing control or label. `tools/audit_stashes_current.py` enforces this contract. No changes to loot probability, source IDs, CFG writer, presets, UI layout, or other visual families.
+
 ## 2026-10-19 — CURRENT: Standard / Rare NATIVE caption is forbidden in published builds
 
 **The nine tier Chance cards must not contain a player-facing `NATIVE` caption or any native per-item Chance percentage/range.** The current renderer already removes both; the visible card consists solely of the category label, selected 0–100% value, editable rail, reference tick and small endpoints. Hover help explains relative percent-of-source semantics (with the Rare Coupons absolute exception), without exposing CFG diagnostics. No changes to per-entry Chance calculations, parameter IDs, presets or CFG writing.

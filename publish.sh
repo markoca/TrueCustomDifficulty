@@ -194,8 +194,11 @@ done < <(find "$TEMP_OUTPUT" -mindepth 1 -maxdepth 1 ! -name '*.pdb' -print0)
 SIZE_BYTES="$(stat -c '%s' "$BUILT_EXE")"
 SIZE_MB="$(awk -v bytes="$SIZE_BYTES" 'BEGIN { printf "%.1f", bytes / 1048576 }')"
 EXE_SHA256="$(sha256sum "$BUILT_EXE" | cut -d' ' -f1)"
+STASH_TIER_SHA256="$(sha256sum "$STASH_TIER_SOURCE" | cut -d' ' -f1)"
 # Publish the matching source/binary receipt as part of the same transaction.
-printf 'source_commit=%s\nexe_sha256=%s\nstash_chance_native_row=absent\n' "$GIT_HEAD" "$EXE_SHA256" > "$PUBLISH_STAGING/BUILD-INFO.txt"
+# The renderer checksum differentiates this source-backed UI from an older
+# executable or another checkout that still paints the removed NATIVE row.
+printf 'source_commit=%s\nexe_sha256=%s\nstash_tier_source_sha256=%s\nstash_chance_native_row=absent\n' "$GIT_HEAD" "$EXE_SHA256" "$STASH_TIER_SHA256" > "$PUBLISH_STAGING/BUILD-INFO.txt"
 RUNTIME_NAMES+=("BUILD-INFO.txt")
 
 TRANSACTION_STARTED=1
@@ -222,9 +225,11 @@ echo "Location: $PUBLISH_DIR"
 # BUILD-INFO.txt was installed alongside the executable transactionally.
 echo "Build receipt: $PUBLISH_DIR/BUILD-INFO.txt"
 echo "Executable SHA-256: $EXE_SHA256"
+echo "Stashes Chance renderer SHA-256: $STASH_TIER_SHA256"
 echo
-echo "Run on Linux with wine-s2:"
-echo '  WINEPREFIX="$HOME/.wine-s2" WINEDEBUG=-all wine "'"$FINAL_EXE"'"'
+echo "For a verified, fresh main-branch launch, use:"
+echo "  bash \"$ROOT/run-latest.sh\""
+echo "It closes no other Wine processes; an already-running app must be closed manually."
 
 mapfile -d '' EXTRA_FILES < <(find "$TEMP_OUTPUT" -maxdepth 1 -type f ! -name '*.pdb' ! -name "$EXE_NAME" -print0)
 if (( ${#EXTRA_FILES[@]} > 0 )); then
