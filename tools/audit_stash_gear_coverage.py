@@ -7,6 +7,7 @@ Does not replace generated BPatch or in-game runtime acceptance tests.
 import csv
 import hashlib
 import json
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -88,7 +89,7 @@ for scope, num in (("base", 800), ("dlc1", 108)):
         previous = current
 cfg = json.loads((data / "parameters.json").read_text(encoding="utf-8"))
 ids = {x["id"]: x for x in cfg["parameters"]}
-assert len(cfg["parameters"]) == 283
+assert len(cfg["parameters"]) == 287
 assert ids["loot.stashGearEnabled"]["control"] == "toggle"
 assert ids["loot.stashGearCoveragePercent"]["slider"] == {
     "min": 0, "max": 100, "step": 1, "stepMode": "absolute"}
@@ -97,7 +98,7 @@ assert not any(x in ids for x in ("loot.stashGearCheapWeapon", "loot.stashGearCh
     "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
     "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"))
 baseline = json.loads((data / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
-assert baseline["supportedParameterCount"] == 283
+assert baseline["supportedParameterCount"] == 287
 ui = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashGearCoverage.cs").read_text(encoding="utf-8")
 main_writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
@@ -109,7 +110,6 @@ assert 'VerifyZeroCoverageRejectsUnusedTunings();' in gear_test
 assert 'VerifyEmptyMixRejectsUnusedChance();' in gear_test
 assert 'Extra Stash Gear Bonus Mix has no enabled categories' in main_writer
 assert 'id.EndsWith("Weight", StringComparison.Ordinal)' in main_writer
-assert 'File.ReadAllText(sentinel) == "preserved"' in gear_test
 assert 'File.ReadAllText(sentinel) == "preserved"' in gear_test
 assert 'P("loot.stashGearCoveragePercent")' in ui and "DrawStashGearMode(" not in ui
 assert 'StashGearStableHash("ACTOR|" + x.Scope + "|" + x.ActorSid)' in writer
@@ -174,6 +174,34 @@ assert Counter(r["ProgressionTier"] for r in attachment_rows) == {
     "T2": 8, "T3": 7, "T4": 4}
 source_pool = {r["item_sid"]: r for r in rows("world-attachment-shuffle-pool.csv")}
 source_rows = rows("world-attachment-generator-manifest.csv")
+
+# The attachment shuffle intentionally redirects native generator slots on
+# regular physical stash actors also eligible for Extra Stash Gear. Keep those
+# native slots strictly below the new private ExtraGear append slot.
+# This checks real actor identities and every authored redirect path, not just
+# a guessed disjointness of unrelated world-loot domains.
+rank_by_sid = {r["ActorSID"]: r for r in ranks}
+shared_attachment_rows = [
+    r for r in source_rows
+    if r["actor_scope"] == "base" and r["actor_sid"] in rank_by_sid
+]
+assert len(shared_attachment_rows) == 51
+assert len({r["actor_sid"] for r in shared_attachment_rows}) == 44
+for attachment in shared_attachment_rows:
+    actor = rank_by_sid[attachment["actor_sid"]]
+    bonus_index = (1 if actor["RankCodes"] == "A"
+                   else int(actor["ExistingGeneratorCount"]))
+    rank_count = 4 if actor["RankCodes"] == "A" else 1
+    for redirect in attachment["redirect_node_paths"].split(";"):
+        match = re.fullmatch(
+            r"ItemGeneratorSettings/\[(\d+)\]/ItemGenerators/\[(\d+)\]",
+            redirect)
+        assert match is not None, (attachment["actor_sid"], redirect)
+        rank_index, native_index = map(int, match.groups())
+        assert 0 <= rank_index < rank_count, (attachment["actor_sid"], redirect)
+        assert 0 <= native_index < bonus_index, (
+            attachment["actor_sid"], redirect, bonus_index)
+
 for candidate in attachment_rows:
     sid = candidate["ItemSID"]
     generator = candidate["SourceGeneratorSID"]
@@ -185,4 +213,4 @@ for candidate in attachment_rows:
         and r["entry_node_path"] == "ItemGenerator/[0]/PossibleItems/[0]"
         for r in originals)
 assert all("WeaponSID" not in candidate for candidate in attachment_rows)
-print("PASS: 800 base + 108 DLC actors; 19 attachment sources, exactly 3 T1-weapon-compatible; T2+ unchanged; shared Bonus Chance and coverage stable")
+print("PASS: 287 sources; 800 base + 108 DLC gear actors; 44 shared attachment actors / 51 safe native redirect rows; 19 attachment sources; shared Bonus Chance stable")

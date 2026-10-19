@@ -18,7 +18,7 @@ parameters = json.loads(read(data / "parameters.json"))["parameters"]
 catalog = {p["id"]: p for p in parameters}
 baseline = json.loads(read(data / "cfg-writer-baseline.json"))
 stash = {p["id"]: p for p in parameters if p["tab"] == "stashes"}
-assert len(parameters) == baseline["supportedParameterCount"] == 283
+assert len(parameters) == baseline["supportedParameterCount"] == 287
 assert len(stash) == 41
 assert len(catalog) == len(parameters), "Duplicate parameter ID"
 assert Counter(p["group"] for p in stash.values()) == {

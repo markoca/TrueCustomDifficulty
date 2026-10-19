@@ -106,6 +106,7 @@ internal static partial class Program
             VerifyGenericLootPreGame();
             VerifyExtraStashGearWeaponRemoval();
             VerifyStashGearCoverage();
+            VerifySharedAttachmentAndGearActorSlots();
             VerifyNativeStashGearChancesAndNestedAttachments();
             VerifyStashGearVisualWeightShares();
             VerifyStashTierUniversalChanceScale();

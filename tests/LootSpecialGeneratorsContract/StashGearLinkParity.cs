@@ -192,4 +192,108 @@ internal static partial class Program
                 Directory.Delete(dir, true);
         }
     }
+
+    // World Attachment Shuffle and Extra Stash Gear legitimately share
+    // 44 ordinary base-game physical stash actors. The former edits existing
+    // generator slot references; the latter must APPEND in a distinct slot.
+    // Validate the actual merged production CFG, not only a manifest set.
+    private static void VerifySharedAttachmentAndGearActorSlots()
+    {
+        using var stream = typeof(CfgPatchWriterService).Assembly.GetManifestResourceStream(
+            "TrueCustomDifficulty.Data.world-attachment-generator-manifest.csv")
+            ?? throw new InvalidDataException("Embedded attachment generator manifest missing");
+        using var reader = new StreamReader(stream);
+        var attachmentRows = reader.ReadToEnd()
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Skip(1)
+            .Select(line => line.TrimEnd('\r').Split(','))
+            .Where(row => row.Length == 10 && row[0] == "base")
+            .ToArray();
+        var byActor = SourceStashGearActors()
+            .Where(actor => actor.Scope == "base")
+            .ToDictionary(actor => actor.Sid, StringComparer.Ordinal);
+        var shared = attachmentRows.Where(row => byActor.ContainsKey(row[2]))
+            .ToArray();
+        Check(shared.Length == 51
+            && shared.Select(row => row[2]).Distinct(StringComparer.Ordinal).Count() == 44,
+            "Shared physical stash/attachment actor inventory changed");
+
+        foreach (var row in shared)
+        {
+            var actor = byActor[row[2]];
+            var bonusIndex = actor.RankCodes == "A" ? 1 : actor.OriginalSlotCount;
+            var rankCount = actor.RankCodes == "A" ? 4 : 1;
+            foreach (var redirect in row[3].Split(';', StringSplitOptions.RemoveEmptyEntries))
+            {
+                var match = Regex.Match(redirect,
+                    @"^ItemGeneratorSettings/\[(\d+)\]/ItemGenerators/\[(\d+)\]$");
+                Check(match.Success, "Unexpected source attachment actor path " + redirect);
+                var rankIndex = int.Parse(match.Groups[1].Value);
+                var originalIndex = int.Parse(match.Groups[2].Value);
+                Check(rankIndex >= 0 && rankIndex < rankCount
+                    && originalIndex >= 0 && originalIndex < bonusIndex,
+                    "Attachment shuffle overwrites Extra Stash Gear slot " + row[2]
+                        + " / " + redirect);
+            }
+        }
+
+        var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+        vm.AllParameters.Single(p => p.Id == "loot.stashGearEnabled")
+            .CurrentBoolean = true;
+        vm.AllParameters.Single(p => p.Id == "loot.stashGearCoveragePercent")
+            .SnapCurrentNumberToMarker(100);
+        vm.AllParameters.Single(p => p.Id == "loot.worldAttachmentShuffle")
+            .CurrentBoolean = true;
+
+        var dir = Path.Combine(Keep ?? Path.GetTempPath(),
+            "TCD_Attach_ExtraGear_Shared_Actor_Slots");
+        try
+        {
+            var built = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+            var cfg = ReadOutput(dir);
+            Check(built.EditCount > 0
+                && cfg.TryGetValue("GameData/SpawnActorPrototypes.cfg", out var actorFields)
+                && cfg.TryGetValue("GameData/ItemGeneratorPrototypes.cfg", out var itemFields),
+                "Combined attachment and stash gear writer omitted physical CFG output");
+
+            foreach (var row in shared)
+            {
+                var actor = byActor[row[2]];
+                // Each original attachment redirect retains its private clone
+                // rather than being overwritten by a bonus generator link.
+                foreach (var redirect in row[3].Split(';', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var field = row[2] + "/" + redirect + "/PrototypeSID";
+                    Check(actorFields!.TryGetValue(field, out var assigned)
+                        && assigned == row[5],
+                        "World attachment redirect was lost at shared actor " + field);
+                }
+                Check(itemFields!.TryGetValue(row[5] + "/SID", out var cloneSid)
+                    && cloneSid == row[5],
+                    "Shared attachment generator clone was lost: " + row[5]);
+
+                var rankCodes = actor.RankCodes == "A" ? "NEVM" : actor.RankCodes;
+                var bonusIndex = actor.RankCodes == "A" ? 1 : actor.OriginalSlotCount;
+                for (var rankIndex = 0; rankIndex < rankCodes.Length; rankIndex++)
+                {
+                    var bonusSid = "TCD_ExtraGear_" + row[2] + "_" + rankCodes[rankIndex];
+                    var field = row[2] + "/ItemGeneratorSettings/[" + rankIndex
+                        + "]/ItemGenerators/[" + bonusIndex + "]/PrototypeSID";
+                    Check(actorFields!.TryGetValue(field, out var assigned)
+                        && assigned == bonusSid,
+                        "Extra Gear bonus slot was lost at shared actor " + field);
+                    Check(itemFields!.TryGetValue(bonusSid + "/SID", out var source)
+                        && source == bonusSid,
+                        "Shared Extra Gear private generator missing: " + bonusSid);
+                }
+            }
+            Console.WriteLine("PASS merged World Attachment Shuffle + Extra Stash Gear:"
+                + " 44 shared actors, 51 native rows and separate private bonus slots");
+        }
+        finally
+        {
+            if (Keep is null && Directory.Exists(dir))
+                Directory.Delete(dir, true);
+        }
+    }
 }

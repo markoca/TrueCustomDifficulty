@@ -80,7 +80,7 @@ internal static class Program
         // generic editPoint for a manifest-based per-actor BPatch operation.
         var uniqueRoute = WriterBaseline.Special.LooseUniqueWeaponShuffle;
         Check(WriterBaseline.SupportedParameterCount==Catalog.Parameters.Count &&
-            WriterBaseline.SupportedParameterCount==245,
+            WriterBaseline.SupportedParameterCount==287,
             "Writer baseline/catalog count must include unique world weapon shuffle");
         Check(uniqueRoute.ParameterId=="loot.looseUniqueWeaponShuffle" &&
             uniqueRoute.ManifestResource==
