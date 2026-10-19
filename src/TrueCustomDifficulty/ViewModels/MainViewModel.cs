@@ -1191,11 +1191,18 @@ public sealed class MainViewModel : ObservableObject
 
             var min = AllParameters.First(p => p.Id == pair.Min);
             var max = AllParameters.First(p => p.Id == pair.Max);
-            // MIN=0 means unchanged vanilla floor. With that floor only,
-            // MAX=-1 remains the genuine zero-items override; an active MIN
-            // cannot coexist with exclusion or a smaller explicit MAX.
-            if (min.CurrentNumber > 0.0 && max.CurrentNumber < min.CurrentNumber)
-                max.CurrentNumber = min.CurrentNumber;
+            // UI MAX=0 is stored -1, UI MAX=5 uses stored 0.
+            // When MAX is dragged below MIN, lower MIN first; when MIN is
+            // raised above MAX, raise MAX instead. Old presets remain intact.
+            var cap = max.CurrentNumber < 0.0 ? 0.0 :
+                max.CurrentNumber == 0.0 ? 5.0 : max.CurrentNumber;
+            if (min.CurrentNumber > cap)
+            {
+                if (edited?.Id == pair.Max)
+                    min.CurrentNumber = Math.Max(0.0, cap);
+                else
+                    max.CurrentNumber = min.CurrentNumber;
+            }
         }
     }
 

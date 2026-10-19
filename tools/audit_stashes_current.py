@@ -76,7 +76,7 @@ assert 'DrawStashMedicalPairShares(dc,' in ui
 assert '_medicalWeightRankTargets.Add((rect, rank));' in ui
 assert ui.count('visualMaximum: 1.0') == 3
 assert '_medicalWeightPreviewRank = rank.Rank;' in ui
-assert '"ANTI-RAD · WEIGHT"' in ui
+assert '"ANTI-RAD · PRIORITY"' in ui
 assert 'var shareWidth = Math.Max(1.0, innerWidth * .64);' in ui
 assert 'DrawStashAntiRadWeightSwitch(dc,' in ui
 assert '_stashMedicalShowChance' not in ui
@@ -162,7 +162,7 @@ assert 'P("loot.stashGearCoveragePercent")' in ui
 # it paints two knob rows, so WPF must allocate tall height.
 assert 'Math.Min(630.0, Math.Max(1.0, ActualWidth - 30.0))' in ui
 assert 'var narrowMix = width < 540.0;' in ui
-assert 'DrawText(dc, "WEIGHT SHARE"' in ui
+assert 'DrawText(dc, "PRIORITY SHARE"' in ui
 assert 'var chanceY = narrowMix ? 593.0 : 429.0;' in ui
 assert 'narrowMix ? 390.0 : 224.0' in ui
 assert '=> width < 570.0 ? 670.0 : 502.0;' in ui

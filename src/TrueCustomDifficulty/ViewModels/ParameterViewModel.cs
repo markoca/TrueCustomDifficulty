@@ -103,8 +103,8 @@ public sealed class ParameterViewModel : ObservableObject
                     "NpcLootLoadout" => "Choose a corpse bonus icon, tune medical or bonus ammo drops, or adjust weapon condition MIN/MAX. Bonus ammo only applies with Medicine + Ammo; regular weapon ammo stays unchanged.",
                     "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
                     "StashContentMix" => "One AMMO QUANTITY multiplier changes Basic, Standard and Rare stacks together. Source-native Chance categories are independently adjustable as percentages of their original per-item Chance; NATIVE shows actual resulting Chance or range. A displayed 100% means unchanged source Chance, not guaranteed loot. Basic RGD-5 Chance remains absolute; right-click resets one source and R resets the panel.",
-                    "StashMedicalComposition" => "DROP ROLLS adjusts independent per-entry Chance percentages, not whole-stash odds. LOOT PRIORITY scales the existing Basic Bandage Weight and Veteran/Master Medkit-versus-Army-Medkit native pools between 0 and 1×. The single EFFECTIVE PICK bar shows one genuine rank at a time; its Veteran/Master tabs only change the preview. Anti-Rad's solo Weight source is an adjacent OFF/ON switch; its Chance roll remains independent. Source backend and legacy preset values above 1× remain preserved until a Weight knob is edited. MEDKIT/ARMY MIN/MAX are separate native amounts; right-click resets one source.",
-                    "StashGear" => "Eligible Stashes selects ordinary actors. The four relative weights distribute Weapons, Armor, Artifacts and independent Attachments. Bonus Chance sets the outer native Chance (default 50%); attachment source generators may also have internal rules. Rank and quest/Weird exclusions remain enforced.",
+                    "StashMedicalComposition" => "DROP ROLLS adjusts independent per-entry Chance percentages, not whole-stash odds. LOOT PRIORITY scales the existing Basic Bandage Weight and Veteran/Master Medkit-versus-Army-Medkit native pools between 0 and 1×. The single EFFECTIVE PICK bar shows one genuine rank at a time; its Veteran/Master tabs only change the preview. Anti-Rad's solo Weight source is an adjacent OFF/ON switch; its Chance roll remains independent. Source backend and legacy preset values above 1× remain preserved until a Weight knob is edited. MEDKIT/ARMY MIN/MAX show 0–5 bounds; MAX 0 excludes, MAX 5 preserves the original source maximum. Right-click resets one source.",
+                    "StashGear" => "Eligible Stashes selects ordinary actors. Four PRIORITY settings favor Weapons, Armor, Artifacts and independent Attachments in build-time category picks; these are not drop odds. Bonus Chance sets the outer native Chance (default 50%); attachment source generators may also have internal rules. Rank and quest/Weird exclusions remain enforced.",
                     "AmmoDistribution" => "Use AMMO YIELD or GRENADE YIELD for quantities. Turn the four AMMO FAMILY WEIGHTS knobs to change which calibers are favored; SNG/NATO pool bars are read-only.",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
                     "PlayerWeaponProfile" => "Turn WEAPON DAMAGE, HEADSHOT DAMAGE or JAM FREQUENCY using its knob. Scroll over a knob or use arrow keys for precise adjustment.",
@@ -1000,10 +1000,10 @@ public sealed class ParameterViewModel : ObservableObject
     private string FormatPlayerFacingCurrentValue()
     {
         if (Id is "loot.stashMedkitMaxCount" or "loot.stashArmyMedkitMaxCount")
-            return CurrentNumber < 0 ? "0 items" : CurrentNumber == 0
-                ? "VANILLA" : $"{CurrentNumber:0} items max";
+            return CurrentNumber < 0 ? "0 items max" : CurrentNumber == 0
+                ? "5 items max (source cap)" : $"{Math.Min(5, CurrentNumber):0} items max";
         if (Id is "loot.stashMedkitMinCount" or "loot.stashArmyMedkitMinCount")
-            return CurrentNumber == 0 ? "VANILLA" : $"{CurrentNumber:0} items min";
+            return $"{Math.Clamp(CurrentNumber, 0, 5):0} items min";
         return Id switch
         {
             // Combat: keep true scalers as scalers, but say what is being scaled.

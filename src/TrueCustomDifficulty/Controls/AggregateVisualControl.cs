@@ -4619,7 +4619,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel,
             percentage: false, multiplier: true);
 
-        DrawText(dc, "WEIGHT MIX · ALL TIERS",
+        DrawText(dc, "LOOT PRIORITY · ALL TIERS",
             new Point(left + 13.0, 125.0), 10.7, text, FontWeights.Bold);
         DrawStashWeightMixer(dc, new Rect(left, 141.0, width,
                 wide ? 146.0 : 300.0), text, muted, border, accent, panel);
@@ -4693,7 +4693,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
 
         var weightHeading = wide ? 213.0 : 367.0;
-        DrawText(dc, "LOOT PRIORITY · WEIGHT",
+        DrawText(dc, "LOOT PRIORITY · NATIVE WEIGHTS",
             new Point(left + 12.0, weightHeading), 10.1, text, FontWeights.Bold);
         var weightTop = wide ? 230.0 : 384.0;
         var weightColumns = wide ? 3 : 2;
@@ -4829,7 +4829,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .58),
             new Pen(CloneWithOpacity(border, .68), .9), card, 3.0, 3.0);
         var enabled = p?.IsControlEnabled == true;
-        DrawText(dc, "ANTI-RAD · WEIGHT",
+        DrawText(dc, "ANTI-RAD · PRIORITY",
             new Point(card.Left + 10.0, card.Top + 5.0), 9.4,
             enabled ? text : muted, FontWeights.SemiBold);
         if (p is null) return;
@@ -4857,13 +4857,21 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         }
         // A hidden 2× value from a legacy preset is treated as ON,
         // without altering it until the user actually operates this switch.
-        if (enabled && p.IsValueModifiedFromReference())
-            dc.DrawRectangle(accent, null,
-                new Rect(card.Left + 8.0, card.Top + 7.0, 3.0, 13.0));
+        // Two-state selection and hover borders are sufficient; no gold dot.
     }
 
     // Two independently editable handles on ONE two-way rail per item.
-    // MIN: 0 (VANILLA) to 6, MAX: -1 (0 items) / 0 (VANILLA) to 6.
+    // UI 0..5: MAX 0=stored -1 (off), MAX 5=stored 0 (source cap).
+    private static bool IsStashMedicalMax(string id)
+        => id is "loot.stashMedkitMaxCount" or "loot.stashArmyMedkitMaxCount";
+
+    private static double StashMedicalMaxDisplay(double stored)
+        => stored < -.5 ? 0.0 : stored < .5 ? 5.0 : Math.Clamp(stored, 0.0, 5.0);
+
+    private static double StashMedicalMaxStore(double displayed)
+        => displayed < .5 ? -1.0 : displayed >= 4.5 ? 0.0
+            : Math.Clamp(Math.Round(displayed), 1.0, 4.0);
+
     private void DrawStashMedicalQuantityCards(
         DrawingContext dc, double left, double width, double top, bool wide,
         Brush text, Brush muted, Brush border, Brush panel)
@@ -4911,17 +4919,19 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             return;
         }
 
-        static string CountLabel(double value) => value < -.5 ? "0"
-            : Math.Abs(value) < .5 ? "VANILLA"
-            : Math.Round(value).ToString(CultureInfo.InvariantCulture);
+        static string CountLabel(ParameterViewModel p)
+            => Math.Round(IsStashMedicalMax(p.Id)
+                ? StashMedicalMaxDisplay(p.CurrentNumber)
+                : Math.Clamp(p.CurrentNumber, 0.0, 5.0))
+                .ToString(CultureInfo.InvariantCulture);
         void DrawCaption(ParameterViewModel p, string title, Point point)
         {
-            var label = CountLabel(p.CurrentNumber);
+            var label = CountLabel(p);
             var rendered = CreateText(title + "  " + label, 10.7,
                 p.IsControlEnabled ? text : muted, FontWeights.SemiBold,
                 Math.Max(1.0, card.Width / 2.0 - 18.0));
             if (p.IsControlEnabled && p.IsValueModifiedFromReference()
-                && label != "VANILLA")
+                )
                 rendered.SetForegroundBrush(Brushes.Yellow, title.Length + 2,
                     label.Length);
             dc.DrawText(rendered, point);
@@ -4941,8 +4951,12 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             dc.DrawLine(new Pen(CloneWithOpacity(border, .94), 3.0),
                 new Point(rail.Left, y), new Point(rail.Right, y));
-            var pos = ValueToX(p.CurrentNumber, minimum, maximum, rail, reverse);
-            var origin = ValueToX(0.0, minimum, maximum, rail, reverse);
+            var display = IsStashMedicalMax(p.Id)
+                ? StashMedicalMaxDisplay(p.CurrentNumber)
+                : Math.Clamp(p.CurrentNumber, 0.0, 5.0);
+            var pos = ValueToX(display, minimum, maximum, rail, reverse);
+            var origin = ValueToX(IsStashMedicalMax(p.Id) ? 5.0 : 0.0,
+                minimum, maximum, rail, reverse);
             if (p.IsControlEnabled)
                 dc.DrawLine(new Pen(CloneWithOpacity(tone, .84), 3.2),
                     new Point(origin, y), new Point(pos, y));
@@ -4956,12 +4970,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 new Point(pos, y), 7.0, 7.0);
             if (p.IsControlEnabled)
                 dc.DrawEllipse(tone, null, new Point(pos, y), 2.5, 2.5);
+            DrawText(dc, "0", new Point(reverse ? rail.Right - 6.0 : rail.Left, y + 9.0),
+                9.0, muted, FontWeights.Normal);
+            DrawRightAlignedText(dc, "5",
+                new Point(reverse ? rail.Left + 6.0 : rail.Right, y + 9.0),
+                9.0, muted, FontWeights.Normal);
             AddHorizontalTarget(p,
                 new Rect(rail.Left - 6.0, y - 14.0, rail.Width + 12.0, 32.0),
                 rail, minimum, maximum, reverse);
         }
-        DrawHalf(min, minRail, 0.0, 6.0, true);
-        DrawHalf(max, maxRail, -1.0, 6.0, false);
+        DrawHalf(min, minRail, 0.0, 5.0, true);
+        DrawHalf(max, maxRail, 0.0, 5.0, false);
     }
 
     // Bonus Gear uses the writer's same 0.1x integer weight precision.
@@ -5026,7 +5045,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             new Rect(rail.Left - 7.0, rail.Top - 15.0, rail.Width + 14.0, 44.0),
             rail, 0.0, 100.0);
 
-        DrawText(dc, "BONUS MIX", new Point(left + 2.0, 177.0),
+        DrawText(dc, "BONUS PRIORITY", new Point(left + 2.0, 177.0),
             11.2, text, FontWeights.Bold);
 
         // Four source knobs; two rows of two when a 4-wide dial bank
@@ -5069,7 +5088,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var shareEnabled = P("loot.stashGearEnabled")?.CurrentBoolean == true;
         var shares = StashGearWeightShares(weights.Select(channel =>
             P(channel.Item1)?.CurrentNumber ?? 0.0).ToArray());
-        DrawText(dc, "WEIGHT SHARE",
+        DrawText(dc, "PRIORITY SHARE",
             new Point(mixStrip.Left + 10.0, shareTop + 1.0),
             9.1, shareEnabled ? muted : CloneWithOpacity(muted, .55),
             FontWeights.SemiBold);
@@ -6259,6 +6278,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (Family == "StashMedicalComposition"
             && target.Parameter.Id == "loot.stashMedicalAntiRadBias")
             target.Parameter.SnapCurrentNumberToMarker(direction > 0 ? 1.0 : 0.0);
+        else if (Family == "StashMedicalComposition"
+            && IsStashMedicalMax(target.Parameter.Id))
+        {
+            var next = StashMedicalMaxDisplay(target.Parameter.CurrentNumber) + direction;
+            target.Parameter.CurrentNumber =
+                StashMedicalMaxStore(Math.Clamp(next, 0.0, 5.0));
+        }
         else
         {
             var next = target.Parameter.CurrentNumber
@@ -6523,14 +6549,18 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             _ => 0
         };
 
-        var minimum = isChoice ? _selectedParameter.ChoiceMinimum : _selectedParameter.Minimum;
+        var isMedicalMax = Family == "StashMedicalComposition"
+            && IsStashMedicalMax(_selectedParameter.Id);
+        var minimum = isChoice ? _selectedParameter.ChoiceMinimum
+            : isMedicalMax ? 0.0 : _selectedParameter.Minimum;
         var maximum = isChoice ? _selectedParameter.ChoiceMaximum
             : Family == "StashMedicalComposition"
                 && IsMedicalPriorityWeight(_selectedParameter)
-                ? 1.0 : _selectedParameter.Maximum;
+                ? 1.0 : isMedicalMax ? 5.0 : _selectedParameter.Maximum;
         var current = isChoice ? _selectedParameter.ChoiceIndex
             : isRangeMin ? _selectedParameter.CurrentMinNumber
             : isRangeMax ? _selectedParameter.CurrentMaxNumber
+            : isMedicalMax ? StashMedicalMaxDisplay(_selectedParameter.CurrentNumber)
             : _selectedParameter.CurrentNumber;
         var step = isChoice ? _selectedParameter.ChoiceTickFrequency :
             ConsumableDurationStep(_selectedParameter);
@@ -6554,6 +6584,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             _selectedParameter.CurrentMinNumber = Snap(_selectedParameter, next);
         else if (isRangeMax)
             _selectedParameter.CurrentMaxNumber = Snap(_selectedParameter, next);
+        else if (isMedicalMax)
+            _selectedParameter.CurrentNumber =
+                StashMedicalMaxStore(Math.Clamp(Math.Round(next), 0.0, 5.0));
         else
             _selectedParameter.CurrentNumber = Snap(_selectedParameter, next);
 
@@ -6707,6 +6740,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             target.Parameter.CurrentMinNumber = Snap(target.Parameter, raw);
         else if (target.Kind == HitKind.RangeMax)
             target.Parameter.CurrentMaxNumber = Snap(target.Parameter, raw);
+        else if (Family == "StashMedicalComposition"
+            && IsStashMedicalMax(target.Parameter.Id))
+            target.Parameter.CurrentNumber =
+                StashMedicalMaxStore(Math.Clamp(Math.Round(raw), 0.0, 5.0));
         else
             target.Parameter.CurrentNumber = Snap(target.Parameter, raw);
 

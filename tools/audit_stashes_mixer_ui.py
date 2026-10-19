@@ -89,15 +89,16 @@ assert "DrawStashMedicalWeightPreview(" not in medical
 assert "wide ? 473.0 : 782.0" in medical
 assert "cardWidth, 98.0" in quantity
 assert "DrawStashQuantityDualRail(dc, P(family.Min), P(family.Max)" in quantity
-assert "DrawHalf(min, minRail, 0.0, 6.0, true);" in quantity_rail
-assert "DrawHalf(max, maxRail, -1.0, 6.0, false);" in quantity_rail
-assert 'value < -.5 ? "0"' in quantity_rail
-assert '"VANILLA"' in quantity_rail
+assert "DrawHalf(min, minRail, 0.0, 5.0, true);" in quantity_rail
+assert "DrawHalf(max, maxRail, 0.0, 5.0, false);" in quantity_rail
+assert '"VANILLA"' not in quantity_rail and '"AUTO"' not in quantity_rail
+assert 'StashMedicalMaxDisplay(p.CurrentNumber)' in quantity_rail
+assert 'StashMedicalMaxStore(Math.Clamp(Math.Round(raw), 0.0, 5.0))' in source
 assert "AddHorizontalTarget(p," in quantity_rail
 # The same source-backed MIN/MAX coupling is applied to live input and bulk
 # preset/save/build normalization without removing the native MAX=-1 exclusion.
 assert "EnforceStashMedicalQuantityBounds(p);" in main_vm_source
-assert "if (min.CurrentNumber > 0.0 && max.CurrentNumber < min.CurrentNumber)" in main_vm_source
+assert "var cap = max.CurrentNumber < 0.0 ? 0.0 :" in main_vm_source
 assert "max.CurrentNumber = min.CurrentNumber;" in main_vm_source
 assert '("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount")' in main_vm_source
 assert '("loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount")' in main_vm_source
@@ -118,7 +119,8 @@ assert 'for (var i = 0; i < groups.Length; i++)' not in pair
 assert '_medicalWeightRankTargets.Add((rect, rank));' in pair
 assert 'var medkitShare = total > Epsilon ? medkit / total : 0.0;' in pair
 assert 'DrawStashAntiRadWeightSwitch(dc,' in medical
-assert '"ANTI-RAD · WEIGHT"' in anti_weight
+assert '"ANTI-RAD · PRIORITY"' in anti_weight
+assert "dc.DrawRectangle(accent, null" not in anti_weight
 assert 'new Rect(x + i * cellWidth, card.Top + 24.0, cellWidth, 25.0)' in anti_weight
 assert 'var dialMaximum = visualMaximum ?? parameter.Maximum;' in source
 assert source.count('visualMaximum: 1.0') == 3
@@ -135,7 +137,7 @@ for pid in ("loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
 assert "DrawStashMedicalPairShares(dc," in medical
 assert "DrawStashAntiRadWeightSwitch(dc," in medical
 assert '"DROP ROLLS · CHANCE %"' in medical
-assert '"LOOT PRIORITY · WEIGHT"' in medical
+assert '"LOOT PRIORITY · NATIVE WEIGHTS"' in medical
 assert 'var chanceColumns = wide ? 4 : 2;' in medical
 assert 'var weightColumns = wide ? 3 : 2;' in medical
 assert 'percentageReadout: true, dialAccent: source.Color' in medical
@@ -170,7 +172,7 @@ assert 'var mixColumns = narrowMix ? 2 : 4;' in gear
 assert 'narrowMix ? 390.0 : 224.0' in gear
 assert 'var shareTop = mixStrip.Top + (narrowMix ? 332.0 : 166.0);' in gear
 assert 'var shareTrack = new Rect(mixStrip.Left + 10.0, shareTop + 20.0,' in gear
-assert 'DrawText(dc, "WEIGHT SHARE"' in gear
+assert 'DrawText(dc, "PRIORITY SHARE"' in gear
 assert 'var shares = StashGearWeightShares(weights.Select(channel =>' in gear
 assert 'P(channel.Item1)?.CurrentNumber ?? 0.0' in gear
 assert 'shareEnabled ? StashGearMixPalette[i]' in gear

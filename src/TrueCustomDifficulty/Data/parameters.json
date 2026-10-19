@@ -5803,7 +5803,7 @@
       "id": "loot.stashMixMedical",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Medical Stash Weight",
+      "label": "Medical Stash Priority",
       "description": "Global relative medical Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -5857,7 +5857,7 @@
       "id": "loot.stashMixFood",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Food Stash Weight",
+      "label": "Food Stash Priority",
       "description": "Global relative food Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -5911,7 +5911,7 @@
       "id": "loot.stashMixDrinks",
       "tab": "stashes",
       "group": "Stash Content",
-      "label": "Drinks Stash Weight",
+      "label": "Drinks Stash Priority",
       "description": "Global relative drinks Weight multiplier across all eligible stash groups and ranks. 1x keeps native Weight, 0x zeros supported Weight entries, 0.1–1x reduces the source Weight compared with unchanged categories. Native Chance entries are not changed by this knob; native bonus Chance has separate controls where exposed.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6073,7 +6073,7 @@
       "id": "loot.stashMedicalBandageBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Bandages Stash Weight",
+      "label": "Bandages Stash Priority",
       "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control. Visible LOOT PRIORITY dial is intentionally capped at 1×; original numeric backend up to 3× remains for saved presets.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6167,7 +6167,7 @@
       "id": "loot.stashMedicalMedkitBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Medkits Stash Weight",
+      "label": "Medkits Stash Priority",
       "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control. Visible LOOT PRIORITY dial is intentionally capped at 1×; original numeric backend up to 3× remains for saved presets.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6261,7 +6261,7 @@
       "id": "loot.stashMedicalArmyMedkitBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Army Medkits Stash Weight",
+      "label": "Army Medkits Stash Priority",
       "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control. Visible LOOT PRIORITY dial is intentionally capped at 1×; original numeric backend up to 3× remains for saved presets.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6355,7 +6355,7 @@
       "id": "loot.stashMedicalAntiRadBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Anti-Rad SmartLoot Weight",
+      "label": "Anti-Rad SmartLoot Priority",
       "description": "Two-state visual editor for authored singleton Anti-Rad SmartLoot Weight pools: OFF writes Weight 0; ON writes source multiplier 1. The Anti-Rad Chance control is independent. Legacy numeric preset values above 1 stay intact until this two-state control is operated.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6450,13 +6450,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Medkits Minimum Count",
-      "description": "Controls the minimum stack floor for existing Medkit entries, retaining the original source value at 0 (VANILLA). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "description": "Numeric 0–5 minimum floor: 0 retains the original minimum, 1–5 impose a higher floor. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "MIN: VANILLA retains source count; 1–6 sets floor",
+        "valueLabel": "MIN 0–5: 0 leaves source floor",
         "unit": "items"
       },
       "vanilla": {
@@ -6483,15 +6483,14 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "0 VANILLA leaves the corresponding source limit intact; it does not mean zero items.",
-          "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
-          "The editor auto-raises MAX to MIN on a conflicting setting; MAX=-1 zero-items exclusion remains available with MIN=VANILLA. The CFG writer still reconciles edited limits with each entry's native floor and cap.",
-          "MAX CAP=1 makes eligible Medkit stacks no larger than 1, including originally 2–4 item Easy/Rare entries."
+          "Numeric 0–5 only in visible UI; no VANILLA or AUTO mark.",
+          "MIN 0 retains source floor; 1–5 increase it.",
+          "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
       "rationale": "Control medkits stack floor separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One two-way Quantity rail: left MIN handle. VANILLA retains native floor; 1–6 sets floor. Raising MIN above MAX also raises MAX to match. Right-click resets MIN only.",
+      "interaction": "Numeric 0–5 MIN rail with hover, click, drag, wheel, keyboard and reset. 0 leaves source floor. Matching MIN/MAX bound follows when needed.",
       "exposeInUi": true
     },
     {
@@ -6499,13 +6498,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Medkits Maximum Count",
-      "description": "Controls the maximum stack cap for existing Medkit entries, retaining the original source value at 0 (VANILLA); selecting the explicit 0 ITEMS graph stop writes zero generated items. Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "description": "Numeric 0–5 maximum cap: 0 excludes, 5 retains the original source cap; 1–4 impose a smaller maximum. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "MAX: VANILLA retains source count; 0 excludes items; 1–6 caps count",
+        "valueLabel": "MAX 0–5: 0 excludes; 5 leaves source cap",
         "unit": "items"
       },
       "vanilla": {
@@ -6532,15 +6531,14 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "0 VANILLA leaves the corresponding source limit intact; the separate 0 ITEMS stop stores -1 and writes MinCount=MaxCount=0.",
-          "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
-          "The editor auto-raises MAX to MIN on a conflicting setting; MAX=-1 zero-items exclusion remains available with MIN=VANILLA. The CFG writer still reconciles edited limits with each entry's native floor and cap.",
-          "MAX CAP=1 makes eligible Medkit stacks no larger than 1. Explicit 0 ITEMS sets both native stack fields to zero; actual game behavior needs in-game validation."
+          "Numeric 0–5 only in visible UI; no VANILLA or AUTO mark.",
+          "MAX 0 excludes the item, MAX 5 retains original native cap.",
+          "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
       "rationale": "Control medkits stack cap separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One two-way Quantity rail: right MAX handle. VANILLA retains native cap; display 0 stores native -1 exclusion with MIN=VANILLA; 1–6 sets cap. MAX cannot go below an active MIN and is raised to match it. Right-click resets MAX only.",
+      "interaction": "Numeric 0–5 MAX rail with hover, click, drag, wheel, keyboard and reset. 0 maps to legacy -1; 5 maps to legacy 0 (no extra cap). Matching MIN/MAX bound follows when needed.",
       "exposeInUi": true
     },
     {
@@ -6548,13 +6546,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Army Medkits Minimum Count",
-      "description": "Controls the minimum stack floor for existing ArmyMedkit entries, retaining the original source value at 0 (VANILLA). Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "description": "Numeric 0–5 minimum floor: 0 retains the original minimum, 1–5 impose a higher floor. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "MIN: VANILLA retains source count; 1–6 sets floor",
+        "valueLabel": "MIN 0–5: 0 leaves source floor",
         "unit": "items"
       },
       "vanilla": {
@@ -6581,15 +6579,14 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "0 VANILLA leaves the corresponding source limit intact; it does not mean zero items.",
-          "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
-          "The editor auto-raises MAX to MIN on a conflicting setting; MAX=-1 zero-items exclusion remains available with MIN=VANILLA. The CFG writer still reconciles edited limits with each entry's native floor and cap.",
-          "MAX CAP=1 makes eligible Medkit stacks no larger than 1, including originally 2–4 item Easy/Rare entries."
+          "Numeric 0–5 only in visible UI; no VANILLA or AUTO mark.",
+          "MIN 0 retains source floor; 1–5 increase it.",
+          "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
       "rationale": "Control army medkits stack floor separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One two-way Quantity rail: left MIN handle. VANILLA retains native floor; 1–6 sets floor. Raising MIN above MAX also raises MAX to match. Right-click resets MIN only.",
+      "interaction": "Numeric 0–5 MIN rail with hover, click, drag, wheel, keyboard and reset. 0 leaves source floor. Matching MIN/MAX bound follows when needed.",
       "exposeInUi": true
     },
     {
@@ -6597,13 +6594,13 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Army Medkits Maximum Count",
-      "description": "Controls the maximum stack cap for existing ArmyMedkit entries, retaining the original source value at 0 (VANILLA); selecting the explicit 0 ITEMS graph stop writes zero generated items. Applies only to regular TCD-owned production stash generators, not authored special/quest loot.",
+      "description": "Numeric 0–5 maximum cap: 0 excludes, 5 retains the original source cap; 1–4 impose a smaller maximum. Quest and protected loot remain untouched.",
       "control": "slider",
       "valueKind": "integer",
       "display": {
         "primary": "integer",
         "rawFormat": "0",
-        "valueLabel": "MAX: VANILLA retains source count; 0 excludes items; 1–6 caps count",
+        "valueLabel": "MAX 0–5: 0 excludes; 5 leaves source cap",
         "unit": "items"
       },
       "vanilla": {
@@ -6630,15 +6627,14 @@
       "support": {
         "status": "runtime_test_required",
         "notes": [
-          "0 VANILLA leaves the corresponding source limit intact; the separate 0 ITEMS stop stores -1 and writes MinCount=MaxCount=0.",
-          "MIN FLOOR cannot decrease vanilla minimum; MAX CAP cannot increase vanilla maximum.",
-          "The editor auto-raises MAX to MIN on a conflicting setting; MAX=-1 zero-items exclusion remains available with MIN=VANILLA. The CFG writer still reconciles edited limits with each entry's native floor and cap.",
-          "MAX CAP=1 makes eligible Medkit stacks no larger than 1. Explicit 0 ITEMS sets both native stack fields to zero; actual game behavior needs in-game validation."
+          "Numeric 0–5 only in visible UI; no VANILLA or AUTO mark.",
+          "MAX 0 excludes the item, MAX 5 retains original native cap.",
+          "Underlying -1/0/1–6 sentinel values are retained for legacy preset compatibility."
         ]
       },
       "rationale": "Control army medkits stack cap separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "One two-way Quantity rail: right MAX handle. VANILLA retains native cap; display 0 stores native -1 exclusion with MIN=VANILLA; 1–6 sets cap. MAX cannot go below an active MIN and is raised to match it. Right-click resets MAX only.",
+      "interaction": "Numeric 0–5 MAX rail with hover, click, drag, wheel, keyboard and reset. 0 maps to legacy -1; 5 maps to legacy 0 (no extra cap). Matching MIN/MAX bound follows when needed.",
       "exposeInUi": true
     },
     {
@@ -6761,7 +6757,7 @@
       "id": "loot.stashGearWeaponWeight",
       "tab": "stashes",
       "group": "Stash Gear",
-      "label": "Weapon Bonus Weight",
+      "label": "Weapon Bonus Priority",
       "description": "Relative share of weapon candidates among the up-to-two distinct category slots offered by each eligible physical stash bonus generator. This is a deterministic without-replacement build-time class weight, not a drop chance. Zero excludes this class from additional gear.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6793,7 +6789,7 @@
       "id": "loot.stashGearArmorWeight",
       "tab": "stashes",
       "group": "Stash Gear",
-      "label": "Armor Bonus Weight",
+      "label": "Armor Bonus Priority",
       "description": "Relative share of armor candidates among the up-to-two distinct category slots offered by each eligible physical stash bonus generator. This is a deterministic without-replacement build-time class weight, not a drop chance. Zero excludes this class from additional gear.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6825,7 +6821,7 @@
       "id": "loot.stashGearArtifactWeight",
       "tab": "stashes",
       "group": "Stash Gear",
-      "label": "Artifact Bonus Weight",
+      "label": "Artifact Bonus Priority",
       "description": "Relative share of artifact candidates among the up-to-two distinct category slots offered by each eligible physical stash bonus generator. This is a deterministic without-replacement build-time class weight, not a drop chance. Zero excludes this class from additional gear.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6856,7 +6852,7 @@
       "id": "loot.stashGearAttachmentWeight",
       "tab": "stashes",
       "group": "Stash Gear",
-      "label": "Attachment Bonus Weight",
+      "label": "Attachment Bonus Priority",
       "description": "Relative build-time weight of standalone attachment bonuses. T1 uses only source-confirmed attachments compatible with a T1 weapon; T2–T4 keep their existing progression tiers. A matching weapon need not be inside the stash. This is not a drop chance.",
       "control": "slider",
       "valueKind": "multiplier",

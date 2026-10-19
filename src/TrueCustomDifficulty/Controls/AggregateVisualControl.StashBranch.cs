@@ -96,7 +96,7 @@ public sealed partial class AggregateVisualControl
             if (factors.Any(f => f <= 0.0000001)) return "PARTIAL";
             if (factors.Any(f => f > 1.0000001)) return "ADJUSTED";
         }
-        if (value <= 0.0000001) return "WEIGHT OFF";
+        if (value <= 0.0000001) return "PRIORITY ZERO";
         if (value < 0.9999999) return "REDUCED";
         if (value > 1.0000001) return "INCREASED";
         return "ORIGINAL";
@@ -115,7 +115,7 @@ public sealed partial class AggregateVisualControl
         return status switch
         {
             "EXCLUDED" => "MEDICAL SUBTYPES DISABLED",
-            "WEIGHT OFF" => "WEIGHT OFF · INDEPENDENT CHANCE MAY STILL ROLL",
+            "PRIORITY ZERO" => "PRIORITY ZERO · INDEPENDENT CHANCE MAY STILL ROLL",
             "ADJUSTED" => "MEDICAL SOURCE SETTINGS MODIFIED",
             _ => GlobalStashItemDescriptions[category]
         };
