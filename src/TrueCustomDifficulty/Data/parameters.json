@@ -6975,7 +6975,7 @@
       },
       "rationale": "Scale only Basic stash ammo stack counts without affecting other tiers or item selection.",
       "logic": "",
-      "interaction": "Compact tier-local AMMO QUANTITY 0.25–2× rail. This scales native MinCount/MaxCount, not item Chance, Weight, or reward type.",
+      "interaction": "One global AMMO QUANTITY slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
@@ -7152,7 +7152,7 @@
       },
       "rationale": "Changes only the number of rounds found in Standard stashes, not which ammo types can appear.",
       "logic": "25-200% scales the amount of ammo found in Standard stashes. For example, a vanilla 18-24 round stack becomes about 9-12 at 50% and 36-48 at 200%.",
-      "interaction": "Compact tier-local AMMO QUANTITY 0.25–2× rail. This scales native MinCount/MaxCount, not item Chance, Weight, or reward type.",
+      "interaction": "One global AMMO QUANTITY slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
@@ -7592,7 +7592,7 @@
       },
       "rationale": "Changes only the number of rounds found in Rare stashes, not which ammo types can appear.",
       "logic": "25-200% changes the amount of ammo found in Rare stashes. 100% keeps vanilla amounts.",
-      "interaction": "Compact tier-local AMMO QUANTITY 0.25–2× rail. This scales native MinCount/MaxCount, not item Chance, Weight, or reward type.",
+      "interaction": "One global AMMO QUANTITY slider adjusts native MinCount/MaxCount in Basic, Standard and Rare with the same multiplier; tier-specific IDs remain CFG/preset backings.",
       "lootHint": {
         "kind": "scaledCountEntries",
         "label": "Contents",
@@ -7756,9 +7756,9 @@
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Multiplier of source-native Chance"
+        "primary": "percentOfVanilla",
+        "rawFormat": "0.##%",
+        "valueLabel": "Percent of authored per-item native Chance"
       },
       "vanilla": {
         "All": 1
@@ -7792,7 +7792,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
+      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
     },
     {
       "id": "loot.mediumStashDrinksChance",
@@ -7801,9 +7801,9 @@
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Multiplier of source-native Chance"
+        "primary": "percentOfVanilla",
+        "rawFormat": "0.##%",
+        "valueLabel": "Percent of authored per-item native Chance"
       },
       "vanilla": {
         "All": 1
@@ -7837,7 +7837,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
+      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
     },
     {
       "id": "loot.mediumStashCouponsChance",
@@ -7846,9 +7846,9 @@
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Multiplier of source-native Chance"
+        "primary": "percentOfVanilla",
+        "rawFormat": "0.##%",
+        "valueLabel": "Percent of authored per-item native Chance"
       },
       "vanilla": {
         "All": 1
@@ -7882,7 +7882,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
+      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
     },
     {
       "id": "loot.expensiveStashAmmoChance",
@@ -7891,9 +7891,9 @@
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Multiplier of source-native Chance"
+        "primary": "percentOfVanilla",
+        "rawFormat": "0.##%",
+        "valueLabel": "Percent of authored per-item native Chance"
       },
       "vanilla": {
         "All": 1
@@ -7927,7 +7927,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
+      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
     },
     {
       "id": "loot.expensiveStashMedicalChance",
@@ -7936,9 +7936,9 @@
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Multiplier of source-native Chance"
+        "primary": "percentOfVanilla",
+        "rawFormat": "0.##%",
+        "valueLabel": "Percent of authored per-item native Chance"
       },
       "vanilla": {
         "All": 1
@@ -7972,7 +7972,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
+      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
     },
     {
       "id": "loot.expensiveStashFoodChance",
@@ -7981,9 +7981,9 @@
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Multiplier of source-native Chance"
+        "primary": "percentOfVanilla",
+        "rawFormat": "0.##%",
+        "valueLabel": "Percent of authored per-item native Chance"
       },
       "vanilla": {
         "All": 1
@@ -8017,7 +8017,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
+      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
     },
     {
       "id": "loot.expensiveStashDrinksChance",
@@ -8026,9 +8026,9 @@
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Multiplier of source-native Chance"
+        "primary": "percentOfVanilla",
+        "rawFormat": "0.##%",
+        "valueLabel": "Percent of authored per-item native Chance"
       },
       "vanilla": {
         "All": 1
@@ -8062,7 +8062,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
+      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
     },
     {
       "id": "loot.expensiveStashGrenadesChance",
@@ -8071,9 +8071,9 @@
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
-        "primary": "multiplier",
-        "rawFormat": "0.##x",
-        "valueLabel": "Multiplier of source-native Chance"
+        "primary": "percentOfVanilla",
+        "rawFormat": "0.##%",
+        "valueLabel": "Percent of authored per-item native Chance"
       },
       "vanilla": {
         "All": 1
@@ -8107,7 +8107,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
+      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
     },
     {
       "id": "loot.expensiveStashMoneyChance",
@@ -8153,7 +8153,7 @@
       },
       "rationale": "Changes how often Rare stashes include coupon rewards. Your progression still decides how large that reward can be.",
       "logic": "Novice and Stalker use 20%; Veteran and Master use 10%. Changing this slider changes only whether coupons are included, not which Common, Rare, Epic or Legendary coupon tier is selected.",
-      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds.",
+      "interaction": "Real absolute native Rare coupon Chance, 0–100%; not whole-stash drop probability.",
       "exposeInUi": true,
       "lootHint": {
         "kind": "absoluteChancePer100",

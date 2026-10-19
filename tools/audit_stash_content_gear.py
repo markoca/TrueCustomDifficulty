@@ -93,14 +93,14 @@ ui = (src / "Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 mixer = (src / "Controls/AggregateVisualControl.StashBranch.cs").read_text(encoding="utf-8")
 vm = (src / "ViewModels/ParameterViewModel.cs").read_text(encoding="utf-8")
 writer = (src / "Services/CfgPatchWriterService.StashTuning.cs").read_text(encoding="utf-8")
-assert "DrawStashWeightMixer(dc, new Rect(left, 53.0, width," in ui
+assert "DrawStashWeightMixer(dc, new Rect(left, 141.0, width," in ui
 assert "DrawStashBasicNativePools(dc," in ui
 assert '"RGD-5 AMOUNT"' in ui
 assert "percentage: false" in ui
 assert "wide ? 146.0 : 300.0" in ui
-assert "=> width >= 700.0 ? 895.0 : 1305.0;" in ui
+assert "=> width >= 700.0 ? 839.0 : 1185.0;" in ui
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in ui
-assert "wide ? 212.0 : 308.0" in ui
+assert "wide ? 140.0 : 236.0" in ui
 assert "private void DrawStashChanceTier(" in mixer
 tier_preview = mixer.split("private void DrawStashChanceTier(", 1)[1]
 assert "StashSourceGroups.Value" in tier_preview

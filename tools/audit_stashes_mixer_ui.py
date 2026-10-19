@@ -71,7 +71,7 @@ quantity_rail = method("DrawStashQuantityDualRail", "DrawStashGear")
 gear = method("DrawStashGear", "DrawStashPoolBar")
 preview = method("DrawStashPoolBar", "DrawStashNumericReadout")
 
-assert 'DrawStashWeightMixer(dc, new Rect(left, 53.0, width,' in content
+assert 'DrawStashWeightMixer(dc, new Rect(left, 141.0, width,' in content
 assert all(f'("{label}"' in medical for label in
     ("BANDAGES", "MEDKITS", "ARMY MEDKITS", "ANTI-RAD"))
 assert quantity.count('("MEDKITS"') + quantity.count('("ARMY MEDKITS"') == 2
@@ -175,12 +175,12 @@ assert "MULTIPLIERS, NOT DROP ODDS" not in source
 assert "weights.Sum()" not in preview # normalized six source multipliers retired
 assert 'DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",' in content
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in content
-assert "wide ? 353.0 : 571.0, width," in content
-assert "wide ? 212.0 : 308.0" in content
-assert "wide ? 573.0 : 887.0, width," in content
-assert "wide ? 308.0 : 404.0" in content
-assert "wide ? 207.0 : 361.0, width, 74.0" in content
-assert "var pairTop = wide ? 289.0 : 507.0;" in content
+assert "wide ? 441.0 : 595.0, width," in content
+assert "wide ? 140.0 : 236.0" in content
+assert "wide ? 589.0 : 839.0, width," in content
+assert "wide ? 236.0 : 332.0" in content
+assert "wide ? 295.0 : 449.0, width, 74.0" in content
+assert "var pairTop = wide ? 377.0 : 531.0;" in content
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
@@ -298,20 +298,20 @@ mixer_match = re.search(
 )
 assert height_match is not None, "missing StashContentMix measured height"
 assert mixer_match is not None, "missing StashContentMix mixer"
-assert tuple(map(float, height_match.groups())) == (700.0, 895.0, 1305.0)
-assert tuple(map(float, mixer_match.groups())) == (53.0, 146.0, 300.0)
-assert "wide ? 353.0 : 571.0, width," in content
-assert "wide ? 212.0 : 308.0" in content
-assert "wide ? 573.0 : 887.0, width," in content
-assert "wide ? 308.0 : 404.0" in content
-assert "wide ? 207.0 : 361.0, width, 74.0" in content
-assert "var pairTop = wide ? 289.0 : 507.0;" in content
+assert tuple(map(float, height_match.groups())) == (700.0, 839.0, 1185.0)
+assert tuple(map(float, mixer_match.groups())) == (141.0, 146.0, 300.0)
+assert "wide ? 441.0 : 595.0, width," in content
+assert "wide ? 140.0 : 236.0" in content
+assert "wide ? 589.0 : 839.0, width," in content
+assert "wide ? 236.0 : 332.0" in content
+assert "wide ? 295.0 : 449.0, width, 74.0" in content
+assert "var pairTop = wide ? 377.0 : 531.0;" in content
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
 assert "var wide = width >= 670.0;" in content
-assert 895.0 - (573.0 + 308.0) == 14.0
-assert 1305.0 - (887.0 + 404.0) == 14.0
+assert 839.0 - (589.0 + 236.0) == 14.0
+assert 1185.0 - (839.0 + 332.0) == 14.0
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -393,7 +393,7 @@ for pid in mix_ids:
 coverage = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.StashBranch.cs").read_text()
 branches = (root / "src/TrueCustomDifficulty/Services/StashBranchPreviewCatalog.cs").read_text()
 csproj = (root / "src/TrueCustomDifficulty/TrueCustomDifficulty.csproj").read_text()
-assert 'DrawStashWeightMixer(dc, new Rect(left, 53.0, width,' in content
+assert 'DrawStashWeightMixer(dc, new Rect(left, 141.0, width,' in content
 assert "StashContentMixHeight(width)" in source
 assert '"loot.mediumStashMedicalChance"' in source
 assert '"loot.mediumStashCouponsChance"' in source
@@ -405,7 +405,7 @@ assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * multiplier, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
 
-assert '=> width >= 700.0 ? 895.0 : 1305.0;' in source
+assert '=> width >= 700.0 ? 839.0 : 1185.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
@@ -529,8 +529,6 @@ for pid in tier_chance_ids:
 # The three ammo rails remain independent existing native MinCount/MaxCount
 # multipliers and must be drawn exactly once: one BASIC, two within tier cards.
 assert content.count('"loot.cheapStashAmmoQuantity"') == 1
-assert tier_preview.count('"loot.mediumStashAmmoQuantity"') == 1
-assert tier_preview.count('"loot.expensiveStashAmmoQuantity"') == 1
 assert 'endValue + (multiplier ? "×" : percentage ? "%" : "")' in coverage
 assert 'multiplier ? "0.##"' in coverage
 # Regression: the Basic WEIGHT mixer has no tierName in scope. Tier-local
@@ -542,13 +540,7 @@ tier_method = coverage.split("private void DrawStashChanceTier(", 1)[1]
 assert "tierName" not in mixer_method
 assert "ammoId" not in mixer_method
 assert "DrawStashNativeRollControl(" not in mixer_method
-assert 'var ammoId = tierName == "Medium"' in tier_method
-assert tier_method.count('DrawStashNativeRollControl(dc, ammoId, "AMMO QUANTITY", 0,') == 1
-assert 'new Point(outer.Left + 12.0, outer.Top + 92.0)' in tier_method
-assert '"AMMO QUANTITY"' in tier_method
-assert '"CHANCE"' in tier_method
-assert 'DrawStashNativeRollControl(dc, ammoId, "AMMO QUANTITY", 0,' in tier_preview
-assert 'var y = outer.Top + 112.0 + n / columns * pitch;' in tier_preview
+assert 'var y = outer.Top + 35.0 + n / columns * pitch;' in tier_preview
 assert '"StashRewardProfile"' not in viewmodel and '"StashRewardProfile"' not in main_vm
 assert 'Parameters="{Binding DataContext.AllParameters' in (
     root / "src/TrueCustomDifficulty/MainWindow.xaml").read_text()
@@ -573,6 +565,25 @@ assert any(item["fields"].get("ItemPrototypeSID") == "Bandage"
            for group in baseline["cheapStashProduction"]["templateCategories"]
            for item in group["items"])
 
+# New global ammo UI does not invent a fourth CFG source.
+assert 'DrawStashNativeRollControl(dc, "loot.cheapStashAmmoQuantity",' in content
+assert '"loot.mediumStashAmmoQuantity"' not in content
+assert '"loot.expensiveStashAmmoQuantity"' not in content
+assert '"loot.mediumStashAmmoQuantity"' not in tier_preview
+assert '"loot.expensiveStashAmmoQuantity"' not in tier_preview
+assert "SyncStashAmmoQuantity();" in main_vm_source
+assert "stashAmmoSources.Skip(1)" in main_vm_source
+assert 'var digits = (parameter.CurrentNumber * 100.0).ToString("0.##"' in tier_preview
+assert 'var number = CreateText(digits + "%", 11.8,' in tier_preview
+assert 'DrawText(dc, "0%"' in tier_preview
+assert 'DrawRightAlignedText(dc, maximum + "%"' in tier_preview
+assert 'digits + (absolute ? "%" : "×")' not in tier_preview
+for pid in ("loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
+            "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
+            "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
+            "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance"):
+    assert next(p for p in catalog["parameters"] if p["id"] == pid)["display"]["primary"] == "percentOfVanilla"
+
 assert "StashSourceGroups.Value" in tier_preview
 assert "!g.IsSmart && g.Tier == tierName" in tier_preview
 assert "hasWeight[kind] = true" in tier_preview
@@ -593,8 +604,7 @@ assert 'var id = tierName == "Medium"' in tier_preview
 assert 'var parameter = P(id);' in tier_preview
 assert 'AddHorizontalTarget(parameter,' in tier_preview
 assert 'AddHorizontalTarget(scale,' not in tier_preview
-assert 'DrawText(dc, "CHANCE"' in tier_preview
-assert 'var y = outer.Top + 112.0' in tier_preview
+assert 'var y = outer.Top + 35.0' in tier_preview
 assert 'var currentText = PercentRange(activeValues.Min(), activeValues.Max());' in tier_preview
 assert 'if (parameter is null)' in tier_preview
 assert 'var label = Parameters is null' not in tier_preview
@@ -637,10 +647,7 @@ assert '"StashRewardProfile" => new[]' not in source
 assert 'case "StashRewardProfile":' not in source
 assert '"loot.cheapStashGrenadeQuantity"' in content
 assert '"loot.cheapStashAmmoQuantity"' in content
-assert '"loot.mediumStashAmmoQuantity"' in tier_preview
-assert '"loot.expensiveStashAmmoQuantity"' in tier_preview
-assert 'DrawStashNativeRollControl(dc, ammoId, "AMMO QUANTITY", 0,' in tier_preview
-assert 'percentage: false, multiplier: true' in tier_preview
+assert '"AMMO QUANTITY · ALL TIERS"' in content
 assert 'percentage: false, multiplier: true' in content
 assert 'ToString(multiplier ? "0.##"' in coverage
 for pid in ("loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",

@@ -4597,48 +4597,44 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         var left = (ActualWidth - width) / 2.0;
         var wide = width >= 670.0;
 
-        DrawText(dc, "WEIGHT MIX · ALL TIERS",
-            new Point(left + 13.0, 37.0), 10.7, text, FontWeights.Bold);
-        DrawStashWeightMixer(dc, new Rect(left, 53.0, width,
-                wide ? 146.0 : 300.0), text, muted, border, accent, panel);
-
-        // The one retained Basic source preview excludes the coupon-only
-        // difference of the removed Easy/Medium Experienced weight branch.
-        // The other source branches keep their exact authored CFG behavior.
-        DrawStashBasicNativePools(dc,
-            new Rect(left, wide ? 207.0 : 361.0, width, 74.0),
-            text, muted, border, panel);
-
-        // BASIC ammo quantity shares its tier with the authored RGD-5
-        // Chance/Amount controls, never a second global Rewards board.
-        const double gap = 10.0;
-        var columns = wide ? 3 : 2;
-        var slotWidth = Math.Max(1.0,
-            (width - 28.0 - (columns - 1) * gap) / columns);
-        var pairTop = wide ? 289.0 : 507.0;
+        // Single global source-facing quantity control; the VM propagates
+        // this real source multiplier to all three eligible stash tiers.
         DrawStashNativeRollControl(dc, "loot.cheapStashAmmoQuantity",
-            "BASIC · AMMO QUANTITY", 0,
-            new Rect(left + 14.0, wide ? pairTop : 443.0,
-                wide ? slotWidth : Math.Min(360.0, width - 28.0), 56.0),
+            "AMMO QUANTITY · ALL TIERS", 0,
+            new Rect(left + 14.0, 53.0,
+                Math.Min(360.0, Math.Max(1.0, width - 28.0)), 56.0),
             text, muted, border, accent, panel,
             percentage: false, multiplier: true);
+
+        DrawText(dc, "WEIGHT MIX · ALL TIERS",
+            new Point(left + 13.0, 125.0), 10.7, text, FontWeights.Bold);
+        DrawStashWeightMixer(dc, new Rect(left, 141.0, width,
+                wide ? 146.0 : 300.0), text, muted, border, accent, panel);
+
+        DrawStashBasicNativePools(dc,
+            new Rect(left, wide ? 295.0 : 449.0, width, 74.0),
+            text, muted, border, panel);
+
+        // Basic RGD-5 Chance is a native absolute probability, while
+        // Amount is an integer stack override. Neither is ammo quantity.
+        const double pairGap = 10.0;
+        var pairWidth = Math.Max(1.0, (width - 28.0 - pairGap) / 2.0);
+        var pairTop = wide ? 377.0 : 531.0;
         DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",
             "RGD-5 CHANCE", 4,
-            new Rect(left + 14.0 + (wide ? slotWidth + gap : 0.0),
-                pairTop, slotWidth, 56.0),
+            new Rect(left + 14.0, pairTop, pairWidth, 56.0),
             text, muted, border, accent, panel);
         DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeQuantity",
             "RGD-5 AMOUNT", 4,
-            new Rect(left + 14.0 + (wide ? 2.0 : 1.0) * (slotWidth + gap),
-                pairTop, slotWidth, 56.0),
+            new Rect(left + 14.0 + pairWidth + pairGap, pairTop, pairWidth, 56.0),
             text, muted, border, accent, panel, percentage: false);
 
         DrawStashChanceTier(dc, "STANDARD", "Medium", 10,
-            new Rect(left, wide ? 353.0 : 571.0, width,
-                wide ? 212.0 : 308.0), text, muted, border, accent, panel);
+            new Rect(left, wide ? 441.0 : 595.0, width,
+                wide ? 140.0 : 236.0), text, muted, border, accent, panel);
         DrawStashChanceTier(dc, "RARE", "Expensive", 19,
-            new Rect(left, wide ? 573.0 : 887.0, width,
-                wide ? 308.0 : 404.0), text, muted, border, accent, panel);
+            new Rect(left, wide ? 589.0 : 839.0, width,
+                wide ? 236.0 : 332.0), text, muted, border, accent, panel);
     }
 
 
@@ -6995,7 +6991,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 895.0 : 1305.0;
+        => width >= 700.0 ? 839.0 : 1185.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 345.0 : 607.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP

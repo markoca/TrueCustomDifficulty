@@ -560,6 +560,35 @@ public sealed class MainViewModel : ObservableObject
             "loot.cheapStashGrenadeQuantity",
             "loot.expensiveStashMoneyChance");
 
+        // One visible global Ammo Quantity is authoritative. The existing
+        // three persisted writer IDs remain the separate actual CFG routes.
+        // Mirror changes to all three, including presets and reset paths.
+        var stashAmmoSources = new[]
+        {
+            "loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity",
+            "loot.expensiveStashAmmoQuantity"
+        }.Select(id => parametersById[id]).ToArray();
+        bool syncingStashAmmo = false;
+        void SyncStashAmmoQuantity()
+        {
+            if (syncingStashAmmo) return;
+            syncingStashAmmo = true;
+            try
+            {
+                var value = stashAmmoSources[0].CurrentNumber;
+                foreach (var dependent in stashAmmoSources.Skip(1))
+                    if (Math.Abs(dependent.CurrentNumber - value) > 0.0000001)
+                        dependent.SnapCurrentNumberToMarker(value);
+            }
+            finally { syncingStashAmmo = false; }
+        }
+        stashAmmoSources[0].PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ParameterViewModel.CurrentNumber))
+                SyncStashAmmoQuantity();
+        };
+        SyncStashAmmoQuantity();
+
         // One native relative-bias chart for actual medical ItemPrototypeSIDs
         // and one separate Medkit/Army stack floor/cap editor (0 = AUTO).
         WireVisualAggregate(
@@ -1174,6 +1203,18 @@ public sealed class MainViewModel : ObservableObject
     {
         _sliderConstraintCoordinator.NormalizeAll();
         EnforceStashMedicalQuantityBounds();
+        // Called after preset load, reference changes and before CFG builds:
+        // the single visible Basic anchor controls all three native routes.
+        var ammoIds = new[] { "loot.cheapStashAmmoQuantity",
+            "loot.mediumStashAmmoQuantity", "loot.expensiveStashAmmoQuantity" };
+        var ammo = AllParameters.FirstOrDefault(p => p.Id == ammoIds[0]);
+        if (ammo is not null)
+            foreach (var id in ammoIds.Skip(1))
+            {
+                var target = AllParameters.FirstOrDefault(p => p.Id == id);
+                if (target is not null && Math.Abs(target.CurrentNumber - ammo.CurrentNumber) > 0.0000001)
+                    target.SnapCurrentNumberToMarker(ammo.CurrentNumber);
+            }
     }
 
     private void ApplyReferenceDifficulty(bool resetAll)

@@ -341,18 +341,6 @@ public sealed partial class AggregateVisualControl
         dc.DrawText(CreateText(label, 11.4, text, FontWeights.Bold),
             new Point(outer.Left + 12.0, outer.Top + 8.0));
 
-        // One tier-local ammo count multiplier, independent of all native
-        // Chance and Weight fields; the parent owns exactly these sources.
-        var ammoId = tierName == "Medium"
-            ? "loot.mediumStashAmmoQuantity" : "loot.expensiveStashAmmoQuantity";
-        DrawStashNativeRollControl(dc, ammoId, "AMMO QUANTITY", 0,
-            new Rect(outer.Left + 12.0, outer.Top + 30.0,
-                Math.Min(360.0, Math.Max(1.0, outer.Width - 24.0)), 56.0),
-            text, muted, border, accent, panel,
-            percentage: false, multiplier: true);
-        DrawText(dc, "CHANCE",
-            new Point(outer.Left + 12.0, outer.Top + 92.0),
-            10.0, muted, FontWeights.SemiBold);
         var columns = outer.Width >= 670.0 ? 3 : 2;
         const double inset = 12.0;
         const double gap = 8.0;
@@ -397,7 +385,7 @@ public sealed partial class AggregateVisualControl
             if (rows.Length == 0)
                 throw new InvalidDataException("Native Chance rows missing " + id);
             var x = outer.Left + inset + n % columns * (cellWidth + gap);
-            var y = outer.Top + 112.0 + n / columns * pitch;
+            var y = outer.Top + 35.0 + n / columns * pitch;
             var cell = new Rect(x, y, cellWidth, 88.0);
             var tone = StashMixPalette[kind];
             dc.DrawRoundedRectangle(CloneWithOpacity(panel, .5),
@@ -415,10 +403,11 @@ public sealed partial class AggregateVisualControl
             }
             var enabled = parameter.IsControlEnabled;
             var absolute = id == "loot.expensiveStashMoneyChance";
-            var digits = (absolute ? parameter.CurrentNumber * 100.0
-                : parameter.CurrentNumber).ToString("0.##",
+            // Category sliders are percentages OF authored native Chance;
+            // only Rare Coupons edits a genuinely absolute source Chance.
+            var digits = (parameter.CurrentNumber * 100.0).ToString("0.##",
                 System.Globalization.CultureInfo.InvariantCulture);
-            var number = CreateText(digits + (absolute ? "%" : "×"), 11.8,
+            var number = CreateText(digits + "%", 11.8,
                 enabled ? text : muted, FontWeights.Bold);
             if (enabled && parameter.IsValueModifiedFromReference())
                 number.SetForegroundBrush(accent, 0, digits.Length);
@@ -444,12 +433,11 @@ public sealed partial class AggregateVisualControl
                 new Pen(hovered ? Brushes.White : enabled ? tone : muted,
                     hovered || IsSelected(parameter) ? 2.3 : 1.5),
                 new Point(now, cy), 5.0, 5.0);
-            var maximum = (absolute ? parameter.Maximum * 100.0 :
-                parameter.Maximum).ToString("0.##",
+            var maximum = (parameter.Maximum * 100.0).ToString("0.##",
                 System.Globalization.CultureInfo.InvariantCulture);
-            DrawText(dc, absolute ? "0%" : "0×",
+            DrawText(dc, "0%",
                 new Point(rail.Left, y + 53.0), 9.1, muted, FontWeights.SemiBold);
-            DrawRightAlignedText(dc, maximum + (absolute ? "%" : "×"),
+            DrawRightAlignedText(dc, maximum + "%",
                 new Point(rail.Right, y + 53.0), 9.1, muted, FontWeights.SemiBold);
             var activeValues = rows.Select(r =>
                 StashEffectiveState.Number(r.Group.EffectiveSelection(

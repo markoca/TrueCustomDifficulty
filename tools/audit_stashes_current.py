@@ -75,20 +75,19 @@ assert '"StashRewardProfile" => new[]' not in ui
 assert 'case "StashRewardProfile":' not in ui
 assert 'DrawCompactStashRewards(' not in ui
 assert '"StashRewardProfile"' not in pvm
-assert '=> width >= 700.0 ? 895.0 : 1305.0;' in ui
+assert '=> width >= 700.0 ? 839.0 : 1185.0;' in ui
 content_body = ui.split("private void DrawStashContentMix(", 1)[1].split("private void DrawStashMedicalComposition(", 1)[0]
 tier_body = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split("private void DrawStashChanceTier(", 1)[1]
-assert '"loot.cheapStashAmmoQuantity"' in content_body
-assert '"loot.mediumStashAmmoQuantity"' in tier_body
-assert '"loot.expensiveStashAmmoQuantity"' in tier_body
+assert '"loot.cheapStashAmmoQuantity"' in content
+assert '"AMMO QUANTITY · ALL TIERS"' in content_body
+assert '"AMMO QUANTITY · ALL TIERS"' in content_body
 basic_mixer = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split(
     "private void DrawStashWeightMixer(", 1)[1].split(
     "private void DrawStashBasicNativePools(", 1)[0]
 assert "tierName" not in basic_mixer
 assert "ammoId" not in basic_mixer
-assert 'DrawStashNativeRollControl(dc, ammoId, "AMMO QUANTITY"' in tier_body
 assert 'percentage: false, multiplier: true' in content_body
-assert 'percentage: false, multiplier: true' in tier_body
+assert 'percentage: false, multiplier: true' in content_body
 for pid in rewards:
     assert stash[pid]["group"] == "Stash Content"
     assert stash[pid]["exposeInUi"] is True
