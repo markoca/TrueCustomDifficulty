@@ -185,7 +185,7 @@ def main():
     baseline = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
     code = WRITER_PATH.read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
-    require(len(definitions) == len(catalog["parameters"]) == 283, "281 unique CFG source IDs expected")
+    require(len(definitions) == len(catalog["parameters"]) == 283, "283 unique CFG source IDs expected")
     require(baseline["supportedParameterCount"] == 283, "writer expected coverage drift")
     require(not baseline["deferredParameterIds"], "deferred production parameters")
     require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.0.5", "source/game baseline mismatch")
@@ -217,10 +217,10 @@ def main():
     require(len(baseline["editPoints"]) == 1230 and len(direct) == 213,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
-    require(len(special) == 68, "special writer route count drift")
+    require(len(special) == 70, "special writer route count drift")
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     require(set(direct) | set(special) == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 268, "UI dimension count drift")
+    require(len(definitions) - len(NON_UI) == 270, "UI dimension count drift")
     require(NON_UI.issubset(definitions), "missing intentional hidden source")
     for pid in NON_UI:
         require(definitions[pid].get("exposeInUi") is False, "non-UI setting exposed " + pid)

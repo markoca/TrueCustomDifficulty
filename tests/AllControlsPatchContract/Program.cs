@@ -35,8 +35,8 @@ internal static class Program
 
             var ids = Catalog.Parameters.Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var tested = ids.Except(NonUi, StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToArray();
-            Check(ids.Count == 268 && NonUi.IsSubsetOf(ids) && tested.Length == 255,
-                "Expected complete 268-source / 255-editable audit scope");
+            Check(ids.Count == 283 && NonUi.IsSubsetOf(ids) && tested.Length == 270,
+                "Expected complete 283-source / 270-editable audit scope");
 
             var executed = 0;
             var failed = new List<string>();
@@ -66,6 +66,17 @@ internal static class Program
                                     .CurrentBoolean = true;
 
                             SetEnd(target, end == "maximum");
+                            // A changed gear priority or native bonus Chance has no
+                            // physical actor to patch while default coverage is 0%.
+                            // Exercise a *real* 1%-coverage source route, not only
+                            // a fake writtenParameters marker in the C# writer.
+                            if (id.StartsWith("loot.stashGear", StringComparison.Ordinal))
+                            {
+                                vm.AllParameters.Single(p => p.Id == "loot.stashGearEnabled")
+                                    .CurrentBoolean = true;
+                                vm.AllParameters.Single(p => p.Id == "loot.stashGearCoveragePercent")
+                                    .SnapCurrentNumberToMarker(1.0);
+                            }
                             if (!target.IsControlEnabled || !target.IsValueModifiedFromReference())
                             {
                                 issues.Add($"{difficulty}/{end}: no live source modification");
@@ -79,6 +90,25 @@ internal static class Program
 
                             Check(result.FileCount > 0 && result.EditCount > 0 && cfg.Length > 0,
                                 "No staged BPatch/cfg_patch files were generated");
+
+                            // Incremental Stashes controls must emit a physical
+                            // generator BPatch, not merely claim a routed value.
+                            // Prior 248-source domain tests remain authoritative.
+                            if (id.StartsWith("loot.stashGear", StringComparison.Ordinal)
+                                || id.StartsWith("loot.stashMix", StringComparison.Ordinal)
+                                || id.StartsWith("loot.stashMedical", StringComparison.Ordinal)
+                                || id.StartsWith("loot.stashMedkit", StringComparison.Ordinal)
+                                || id.StartsWith("loot.stashArmyMedkit", StringComparison.Ordinal)
+                                || id is "loot.standardStashChanceScale" or "loot.rareStashChanceScale"
+                                || id.StartsWith("loot.mediumStash", StringComparison.Ordinal)
+                                || id.StartsWith("loot.expensiveStash", StringComparison.Ordinal))
+                            {
+                                var generator = Path.Combine(path, "Stalker2", "Content",
+                                    "GameLite", "GameData", "ItemGeneratorPrototypes",
+                                    "ItemGeneratorPrototypes_patch_TrueCustomDifficulty.cfg");
+                                Check(File.Exists(generator),
+                                    "Stashes source produced no ItemGeneratorPrototypes BPatch: " + id);
+                            }
 
                             foreach (var file in cfg)
                                 Check(file.Contains("_patch_", StringComparison.OrdinalIgnoreCase)
@@ -121,8 +151,8 @@ internal static class Program
                     failed.Add(id + ": " + string.Join(" | ", issues));
             }
             Check(failed.Count == 0, "Writer probe failures:\n" + string.Join("\n", failed));
-            Check(executed == 255, "Not every effective source was executed");
-            Console.WriteLine($"PASS: {executed}/255 editable native source IDs produced actual production staged CFG output.");
+            Check(executed == 270, "Not every effective source was executed");
+            Console.WriteLine($"PASS: {executed}/270 editable native source IDs produced actual production staged CFG output.");
             Console.WriteLine("NOT VERIFIED: in-game STALKER 2 CFG merge, UI interaction via Wine, or gameplay effects.");
             return 0;
         }

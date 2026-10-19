@@ -88,7 +88,7 @@ for scope, num in (("base", 800), ("dlc1", 108)):
         previous = current
 cfg = json.loads((data / "parameters.json").read_text(encoding="utf-8"))
 ids = {x["id"]: x for x in cfg["parameters"]}
-assert len(cfg["parameters"]) == 281
+assert len(cfg["parameters"]) == 283
 assert ids["loot.stashGearEnabled"]["control"] == "toggle"
 assert ids["loot.stashGearCoveragePercent"]["slider"] == {
     "min": 0, "max": 100, "step": 1, "stepMode": "absolute"}
@@ -97,7 +97,7 @@ assert not any(x in ids for x in ("loot.stashGearCheapWeapon", "loot.stashGearCh
     "loot.stashGearMediumWeapon", "loot.stashGearMediumArmor",
     "loot.stashGearExpensiveWeapon", "loot.stashGearExpensiveArmor"))
 baseline = json.loads((data / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
-assert baseline["supportedParameterCount"] == 281
+assert baseline["supportedParameterCount"] == 283
 ui = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashGearCoverage.cs").read_text(encoding="utf-8")
 assert 'P("loot.stashGearCoveragePercent")' in ui and "DrawStashGearMode(" not in ui

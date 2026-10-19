@@ -25,8 +25,11 @@ jobs:
       - name: Active UI-to-CFG contract
         run: python tools/audit_ui_cfg_contract.py
 
-      - name: Current 281-source CFG to actual BPatch writer route and factory-output audit
+      - name: Current 283-source CFG to actual BPatch writer route and factory-output audit
         run: python tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
+
+      - name: Incremental CFG destination audit for 35 newer Stashes sources
+        run: python tools/audit_cfg_route_delta.py --out audit/stashes-cfg-route-delta.csv
 
       - name: Generic world stash 45-case in-game test source matrix
         run: python tools/audit_stash_ingame_test_matrix.py
@@ -380,7 +383,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-      - name: Exercise all 268 player-editable native CFG source IDs through production writer
+      - name: Exercise all 270 player-editable native CFG source IDs through production writer
         shell: pwsh
         run: dotnet run --project tests/AllControlsPatchContract/AllControlsPatchContract.csproj -c Release
 
