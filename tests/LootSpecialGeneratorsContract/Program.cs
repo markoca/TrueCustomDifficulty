@@ -108,6 +108,7 @@ internal static partial class Program
             VerifyStashGearCoverage();
             VerifyNativeStashGearChancesAndNestedAttachments();
             VerifyStashGearVisualWeightShares();
+            VerifyStashTierUniversalChanceScale();
             Console.WriteLine($"PASS: {Passed} Loot SPECIAL generator and corpse writer scenarios plus 3 medical-zero production CFG scenarios");
             Console.WriteLine("NOT VERIFIED: original decoded CFG source values, world shuffle/removal writers, Unreal patch loading or gameplay");
             return 0;

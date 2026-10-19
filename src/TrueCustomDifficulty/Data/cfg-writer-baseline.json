@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 281,
+  "supportedParameterCount": 283,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -22698,6 +22698,8 @@
         "loot.stashGearArtifactWeight",
         "loot.stashGearAttachmentWeight",
         "loot.stashGearBonusChance",
+        "loot.standardStashChanceScale",
+        "loot.rareStashChanceScale",
         "loot.mediumStashMedicalChance",
         "loot.mediumStashDrinksChance",
         "loot.mediumStashCouponsChance",

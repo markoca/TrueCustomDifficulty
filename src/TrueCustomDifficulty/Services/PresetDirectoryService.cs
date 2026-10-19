@@ -352,6 +352,25 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "55677a66b97b0ef8faead62fb0da418514adf139",
     };
 
+    // Exact preceding 281-key factory stock IDs. Upgrade to the new
+    // 283-key stock only if the disk file is byte-for-byte untouched.
+    private static readonly Dictionary<string, string> PreTierChanceFactoryBlobs =
+        new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "e3f897d92836fab4690761158887376dede7d710",
+        ["Field Medic"] = "35a88ad612dc9170d896789b5196c1078e8acc1c",
+        ["Hardcore+"] = "db775605f6c92882cbf81c98e2a4277a623b2467",
+        ["Hardcore"] = "bfa250c476a490893f6572fd6ba2de7cb0d2c2cd",
+        ["Immersive"] = "c45b7851f9b0605be469b4220dc93b6a89fe1007",
+        ["Mercenary"] = "d86e37a623c968af971b66b2c82cd6e0c51debfd",
+        ["Mutant Hunter"] = "a2eee097916ab04e490a74942624fd4f496a6c52",
+        ["Outcast"] = "85dd96298a965c580791c23cf6e70b585ef227ac",
+        ["Scavenger"] = "f6b46be6e64be17e080f68be401e01375e6b8118",
+        ["Smuggler"] = "1cb4c81d0172d92be24a87297106c0bd47a17118",
+        ["Tactical"] = "a72ac83e7267a9f4e24d34c8ea08265b6c6f7c16",
+        ["Wanderer"] = "bf7d2e1c12d06efd6c8e975be8daca5fe567652d"
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -367,7 +386,8 @@ public sealed class PresetDirectoryService
             && !PreFinalCfgAuditFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreEffectiveALifeFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreStashContentGearFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreStashMedicalFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreStashMedicalFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreTierChanceFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -407,7 +427,9 @@ public sealed class PresetDirectoryService
                 || (PreStashContentGearFactoryBlobs.TryGetValue(name, out var preStashHash)
                     && actual.Equals(preStashHash, StringComparison.OrdinalIgnoreCase))
                 || (PreStashMedicalFactoryBlobs.TryGetValue(name, out var preMedicalHash)
-                    && actual.Equals(preMedicalHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(preMedicalHash, StringComparison.OrdinalIgnoreCase))
+                || (PreTierChanceFactoryBlobs.TryGetValue(name, out var tierChanceHash)
+                    && actual.Equals(tierChanceHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

@@ -303,13 +303,18 @@ public sealed class StashEffectiveState
         }
         else throw new InvalidDataException($"Unsupported stash tier {tier}.");
         updated = TuneSelection(sid, field, updated);
-        if (field == "Chance" && TierChanceParameterId(tier, sid) is { } scopedId)
+        if (field == "Chance")
         {
-            var multiplier = Value(scopedId);
-            if (Math.Abs(multiplier - 1.0) > 0.0000001)
+            // Retain hidden legacy category Chance factors from older presets.
+            // The universal tier control scales the actual native row Chance
+            // AFTER the category factor, without creating synthetic drop odds.
+            var scoped = TierChanceParameterId(tier, sid);
+            var factor = (scoped is null ? 1.0 : Value(scoped))
+                * (tier == "Medium" ? Value("loot.standardStashChanceScale")
+                    : tier == "Expensive" ? Value("loot.rareStashChanceScale") : 1.0);
+            if (Math.Abs(factor - 1.0) > 0.0000001)
                 updated = FormatLikeSource(
-                    Math.Clamp(Number(updated) * multiplier, 0.0, 1.0),
-                    updated);
+                    Math.Clamp(Number(updated) * factor, 0.0, 1.0), updated);
         }
         return TuneCount(item.Fields, field, updated);
     }

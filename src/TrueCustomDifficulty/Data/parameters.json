@@ -7656,6 +7656,98 @@
       "exposeInUi": false
     },
     {
+      "id": "loot.standardStashChanceScale",
+      "tab": "stashes",
+      "group": "Stash Content",
+      "label": "Standard Chance Scale",
+      "description": "Scale all existing native Standard stash Chance entries without changing their individual authored values, category gating or Weight groups.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Multiplier of each original per-item Chance — not whole-stash probability"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GamePass_Stash_ItemGenerator_Common_Var1 and tier wrappers",
+          "path": "ItemGenerator[*].PossibleItems[*].Chance for original regular Medium Chance entries",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "1× preserves original per-item native Chance; 0× sets authored Chance to zero; values above 1× are clamped at native 100%.",
+          "Only original Chance entries in this tier are affected; Weight-only entries, protected content and other tiers are not changed.",
+          "Original hidden per-category multipliers and coupon presets remain effective."
+        ]
+      },
+      "rationale": "Scale eligible Standard stash native Chance entries together without removing original per-item differences.",
+      "logic": "One multiplier per tier is applied after legacy per-category modifiers to the authored native per-entry Chance. Results are clamped 0–1; no global stash drop chance is invented.",
+      "interaction": "Drag the single STANDARD CHANCE SCALE rail; the read-only category breakdown shows actual resulting native entry Chance values."
+    },
+    {
+      "id": "loot.rareStashChanceScale",
+      "tab": "stashes",
+      "group": "Stash Content",
+      "label": "Rare Chance Scale",
+      "description": "Scale all existing native Rare stash Chance entries without changing their individual authored values, category gating or Weight groups.",
+      "control": "slider",
+      "valueKind": "multiplier",
+      "display": {
+        "primary": "multiplier",
+        "rawFormat": "0.##x",
+        "valueLabel": "Multiplier of each original per-item Chance — not whole-stash probability"
+      },
+      "vanilla": {
+        "All": 1
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 2,
+        "step": 0.01,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/ItemGeneratorPrototypes.cfg",
+          "prototype": "TCD_GamePass_Stash_ItemGenerator_Rare and tier wrappers",
+          "path": "ItemGenerator[*].PossibleItems[*].Chance for original regular Expensive Chance entries",
+          "operation": "scaleClampedChance"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "1× preserves original per-item native Chance; 0× sets authored Chance to zero; values above 1× are clamped at native 100%.",
+          "Only original Chance entries in this tier are affected; Weight-only entries, protected content and other tiers are not changed.",
+          "Original hidden per-category multipliers and coupon presets remain effective."
+        ]
+      },
+      "rationale": "Scale eligible Rare stash native Chance entries together without removing original per-item differences.",
+      "logic": "One multiplier per tier is applied after legacy per-category modifiers to the authored native per-entry Chance. Results are clamped 0–1; no global stash drop chance is invented.",
+      "interaction": "Drag the single RARE CHANCE SCALE rail; the read-only category breakdown shows actual resulting native entry Chance values."
+    },
+    {
       "id": "loot.mediumStashMedicalChance",
       "tab": "stashes",
       "group": "Stash Content",
@@ -7679,7 +7771,7 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": true,
+      "exposeInUi": false,
       "label": "Standard medical Chance",
       "description": "Source-native Bandage and Medkit source Chance entries, originally 40%/100% across branches. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
@@ -7724,7 +7816,7 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": true,
+      "exposeInUi": false,
       "label": "Standard drinks Chance",
       "description": "Source-native Vodka and Energetic source Chance entries, originally 50%/100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
@@ -7769,7 +7861,7 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": true,
+      "exposeInUi": false,
       "label": "Standard coupons Chance",
       "description": "Source-native Rank-gated coupon reward source Chance, originally 10%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
@@ -7814,7 +7906,7 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": true,
+      "exposeInUi": false,
       "label": "Rare ammo Chance",
       "description": "Source-native Newbie ammo Chance entries, originally 50%/100%; other ranks use Weight and remain unaffected. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
@@ -7859,7 +7951,7 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": true,
+      "exposeInUi": false,
       "label": "Rare medical Chance",
       "description": "Source-native Bandage, Medkit, AntiRad and ArmyMedkit source Chance entries, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
@@ -7904,7 +7996,7 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": true,
+      "exposeInUi": false,
       "label": "Rare food Chance",
       "description": "Source-native CannedFood source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
@@ -7949,7 +8041,7 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": true,
+      "exposeInUi": false,
       "label": "Rare drinks Chance",
       "description": "Source-native Energetic source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
@@ -7994,7 +8086,7 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": true,
+      "exposeInUi": false,
       "label": "Rare grenades Chance",
       "description": "Source-native RGD-5 source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
@@ -8060,6 +8152,7 @@
       "rationale": "Changes how often Rare stashes include coupon rewards. Your progression still decides how large that reward can be.",
       "logic": "Novice and Stalker use 20%; Veteran and Master use 10%. Changing this slider changes only whether coupons are included, not which Common, Rare, Epic or Legendary coupon tier is selected.",
       "interaction": "This affects coupons in eligible rare stashes only. Quest coupon payouts, starting coupons and trader prices are separate systems.",
+      "exposeInUi": false,
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Coupon drop chance",

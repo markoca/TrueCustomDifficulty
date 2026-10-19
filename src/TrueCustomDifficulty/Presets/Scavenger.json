@@ -1061,6 +1061,8 @@
       "kind": "slider",
       "number": 0
     },
+    "loot.standardStashChanceScale": {"kind": "slider", "number": 1},
+    "loot.rareStashChanceScale": {"kind": "slider", "number": 1},
     "loot.mediumStashMedicalChance": {
       "kind": "slider",
       "number": 1

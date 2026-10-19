@@ -261,7 +261,12 @@ public sealed class MainViewModel : ObservableObject
         // source patch compatibility, without showing inert Basic mixer knobs.
         var legacyStashWeightIds = new HashSet<string>(StringComparer.Ordinal)
         {
-            "loot.stashMixAmmo", "loot.stashMixGrenades"
+            "loot.stashMixAmmo", "loot.stashMixGrenades", "loot.stashMixCoupons",
+            "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
+            "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
+            "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
+            "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
+            "loot.expensiveStashMoneyChance"
         };
 
         // Every slider constraint member needs a live VM, even when its
@@ -528,8 +533,8 @@ public sealed class MainViewModel : ObservableObject
             "loot.worldDetectors",
             "loot.blueprintShuffle");
 
-        // Visual Basic mixer has three source-effective weight knobs; legacy coupons remains persisted.
-        // The two hidden historic scalars still load through the preset graph.
+        // Three Basic Weight knobs and two tier-wide Chance sliders are visible.
+        // Hidden category Chance VMs are still instantiated for old presets.
         WireVisualAggregate(
             "loot.stashMixMedical",
             "loot.stashMixAmmo",
@@ -538,6 +543,8 @@ public sealed class MainViewModel : ObservableObject
             "loot.stashMixDrinks",
             "loot.stashMixGrenades",
             "loot.stashMixCoupons",
+            "loot.standardStashChanceScale",
+            "loot.rareStashChanceScale",
             "loot.mediumStashMedicalChance",
             "loot.mediumStashDrinksChance",
             "loot.mediumStashCouponsChance",

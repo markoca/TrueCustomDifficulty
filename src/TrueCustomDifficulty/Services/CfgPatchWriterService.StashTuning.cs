@@ -19,6 +19,7 @@ public sealed partial class CfgPatchWriterService
 
     private static readonly string[] StashTierChanceParameterIds =
     {
+        "loot.standardStashChanceScale", "loot.rareStashChanceScale",
         "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
         "loot.mediumStashCouponsChance",
         "loot.expensiveStashAmmoChance", "loot.expensiveStashMedicalChance",
@@ -60,9 +61,11 @@ public sealed partial class CfgPatchWriterService
         IReadOnlyDictionary<string, ParameterViewModel> modified, string tier)
         => StashMixParameterIds.Any(modified.ContainsKey)
            || StashTierChanceParameterIds.Any(id =>
-               id.StartsWith(tier == "Medium" ? "loot.mediumStash"
-                   : tier == "Expensive" ? "loot.expensiveStash" : "loot.cheapStash",
-                   StringComparison.Ordinal) && modified.ContainsKey(id))
+               ((tier == "Medium" && id == "loot.standardStashChanceScale")
+                || (tier == "Expensive" && id == "loot.rareStashChanceScale")
+                || id.StartsWith(tier == "Medium" ? "loot.mediumStash"
+                    : tier == "Expensive" ? "loot.expensiveStash" : "loot.cheapStash",
+                    StringComparison.Ordinal)) && modified.ContainsKey(id))
            || StashMedicalParameterIds.Any(id =>
                IsStashMedicalSourceInTier(id, tier) && modified.ContainsKey(id))
            ;
@@ -102,9 +105,11 @@ public sealed partial class CfgPatchWriterService
         foreach (var id in StashMixParameterIds)
             if (modified.ContainsKey(id)) written.Add(id);
         foreach (var id in StashTierChanceParameterIds)
-            if (id.StartsWith(tier == "Medium" ? "loot.mediumStash"
-                : tier == "Expensive" ? "loot.expensiveStash" : "loot.cheapStash",
-                StringComparison.Ordinal) && modified.ContainsKey(id))
+            if (((tier == "Medium" && id == "loot.standardStashChanceScale")
+                || (tier == "Expensive" && id == "loot.rareStashChanceScale")
+                || id.StartsWith(tier == "Medium" ? "loot.mediumStash"
+                    : tier == "Expensive" ? "loot.expensiveStash" : "loot.cheapStash",
+                    StringComparison.Ordinal)) && modified.ContainsKey(id))
                 written.Add(id);
         foreach (var id in StashMedicalParameterIds)
             if (IsStashMedicalSourceInTier(id, tier) && modified.ContainsKey(id))

@@ -133,20 +133,22 @@ def method_routes(special):
         "loot.stashGearBonusChance",
     ]
     tier_chance_ids = [
+        "loot.standardStashChanceScale", "loot.rareStashChanceScale",
         "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
         "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
         "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
         "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
     ]
     require(stash_ids == mixer_ids + gear_ids + tier_chance_ids,
-            "21-source Stash Content / Extra Gear routing drift")
+            "23-source Stash Content / Extra Gear routing drift")
     for pid in mixer_ids:
         add("WriteCheapStashProduction", pid)
     for pid in gear_ids:
         add("WriteStashGearCoverage", pid)
     add("WriteStashAuthoredWeaponRemovals", "loot.stashGearEnabled")
     for pid in tier_chance_ids:
-        add("WriteMediumStashAmmoProduction" if "mediumStash" in pid
+        add("WriteMediumStashAmmoProduction" if pid == "loot.standardStashChanceScale"
+            or "mediumStash" in pid
             else "WriteExpensiveStashProduction", pid)
     medical_ids = special["stashMedicalProduction"]["parameterIds"]
     expected_medical = ["loot.stashMedical" + kind + "Bias" for kind in
@@ -183,8 +185,8 @@ def main():
     baseline = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
     code = WRITER_PATH.read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
-    require(len(definitions) == len(catalog["parameters"]) == 281, "281 unique CFG source IDs expected")
-    require(baseline["supportedParameterCount"] == 281, "writer expected coverage drift")
+    require(len(definitions) == len(catalog["parameters"]) == 283, "281 unique CFG source IDs expected")
+    require(baseline["supportedParameterCount"] == 283, "writer expected coverage drift")
     require(not baseline["deferredParameterIds"], "deferred production parameters")
     require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.0.5", "source/game baseline mismatch")
     require(set(catalog["difficultyProfiles"]) == set(SIDS), "difficulty baseline drift")
@@ -288,7 +290,7 @@ def main():
     inert = []
     for name in NAMES:
         doc = json.loads((PRESETS / (name + ".json")).read_text(encoding="utf-8"))
-        require(len(doc["values"]) == 281 and set(doc["values"]) == set(definitions),
+        require(len(doc["values"]) == 283 and set(doc["values"]) == set(definitions),
                 "factory catalog source ID drift " + name)
         sid = SIDS[doc["referenceDifficulty"]]
         for pid, p in definitions.items():

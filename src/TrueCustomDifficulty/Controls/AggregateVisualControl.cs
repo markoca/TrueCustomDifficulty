@@ -4631,10 +4631,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         DrawStashChanceTier(dc, "STANDARD", "Medium", 10,
             new Rect(left, wide ? 353.0 : 507.0, width,
-                wide ? 86.0 : 146.0), text, muted, border, accent, panel);
+                wide ? 152.0 : 204.0), text, muted, border, accent, panel);
         DrawStashChanceTier(dc, "RARE", "Expensive", 19,
-            new Rect(left, wide ? 447.0 : 661.0, width,
-                wide ? 86.0 : 206.0), text, muted, border, accent, panel);
+            new Rect(left, wide ? 513.0 : 719.0, width,
+                wide ? 152.0 : 266.0), text, muted, border, accent, panel);
     }
 
 
@@ -7078,7 +7078,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 547.0 : 881.0;
+        => width >= 700.0 ? 679.0 : 999.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 345.0 : 607.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP
@@ -7166,6 +7166,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             {
                 "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
                 "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
+                "loot.standardStashChanceScale", "loot.rareStashChanceScale",
                 "loot.cheapStashGrenadeChance", "loot.cheapStashGrenadeQuantity",
                 "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
                 "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",

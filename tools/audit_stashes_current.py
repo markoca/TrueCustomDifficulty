@@ -18,16 +18,16 @@ parameters = json.loads(read(data / "parameters.json"))["parameters"]
 catalog = {p["id"]: p for p in parameters}
 baseline = json.loads(read(data / "cfg-writer-baseline.json"))
 stash = {p["id"]: p for p in parameters if p["tab"] == "stashes"}
-assert len(parameters) == baseline["supportedParameterCount"] == 281
-assert len(stash) == 39
+assert len(parameters) == baseline["supportedParameterCount"] == 283
+assert len(stash) == 41
 assert len(catalog) == len(parameters), "Duplicate parameter ID"
 assert Counter(p["group"] for p in stash.values()) == {
-    "Stash Content": 17,
+    "Stash Content": 19,
     "Stash Medical Composition": 12,
     "Stash Gear": 7,
     "Stashes": 3,
 }
-assert sum(p.get("exposeInUi", True) for p in stash.values()) == 34
+assert sum(p.get("exposeInUi", True) for p in stash.values()) == 27
 
 ui = read(src / "Controls/AggregateVisualControl.cs")
 vm = read(src / "ViewModels/MainViewModel.cs")
@@ -39,6 +39,7 @@ rewards = ["loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity", "loot.
 mix = [
     "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
     "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
+    "loot.standardStashChanceScale", "loot.rareStashChanceScale",
     "loot.cheapStashGrenadeChance", "loot.cheapStashGrenadeQuantity",
     "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
     "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
@@ -130,10 +131,10 @@ assert routes == set(catalog), "Missing writer route IDs: " + str(sorted(set(cat
 # The two standalone Basic grenade controls and Rare coupons route via
 # their other concrete writers; do not fake a duplicate here.
 stash_routes = baseline["special"]["stashContentAndGearProduction"]["parameterIds"]
-expected_routes = mix[:6] + [bonus[1], bonus[0], *bonus[2:]] + mix[8:16]
+expected_routes = mix[:6] + [bonus[1], bonus[0], *bonus[2:]] + mix[6:8] + mix[10:18]
 assert stash_routes == expected_routes, (
-    "Stashes writer routing diverged from its 6 mix / 7 gear / 8 chance sources")
-assert len(stash_routes) == len(set(stash_routes)) == 21
+    "Stashes writer routing diverged from its 6 mix / 7 gear / 2 common / 8 legacy Chance sources")
+assert len(stash_routes) == len(set(stash_routes)) == 23
 assert stash_routes.count("loot.stashGearEnabled") == 1
 # Four Weight + four Quantity + four Chance-scale native medical sources.
 medical_routes = baseline["special"]["stashMedicalProduction"]["parameterIds"]

@@ -27,12 +27,13 @@ medical = ["loot.stashMedical" + kind + "Bias" for kind in
 quantity = ["loot.stash" + kind + end + "Count" for kind in
             ("Medkit", "ArmyMedkit") for end in ("Min", "Max")]
 
-assert len(catalog["parameters"]) == 281
-assert baseline["supportedParameterCount"] == 281
+assert len(catalog["parameters"]) == 283
+assert baseline["supportedParameterCount"] == 283
 # A master checkbox is ONE routable source ID, not an extra duplicate.
 # Match exact production dispatch order and require unique members so a
 # superseded Stashes roster cannot silently pass on set equivalence alone.
 tier_chance = [
+    "loot.standardStashChanceScale", "loot.rareStashChanceScale",
     "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance", "loot.mediumStashCouponsChance",
     "loot.expensiveStashAmmoChance", "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
     "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
@@ -40,8 +41,8 @@ tier_chance = [
 stash_routes = baseline["special"]["stashContentAndGearProduction"]["parameterIds"]
 assert stash_routes == mix + gear + tier_chance, (
     "Stashes production route differs from 6 mixer + 7 Extra Gear + "
-    "8 scoped native Chance source IDs")
-assert len(stash_routes) == len(set(stash_routes)) == 21, (
+    "2 common scale + 8 original category Chance IDs")
+assert len(stash_routes) == len(set(stash_routes)) == 23, (
     "Duplicate or missing Stashes writer route")
 assert stash_routes.count("loot.stashGearEnabled") == 1
 assert baseline["special"]["stashMedicalProduction"]["parameterIds"] == medical + quantity + [
@@ -97,9 +98,9 @@ assert "DrawStashBasicNativePools(dc," in ui
 assert '"RGD-5 AMOUNT"' in ui
 assert "percentage: false" in ui
 assert "wide ? 146.0 : 300.0" in ui
-assert "=> width >= 700.0 ? 547.0 : 881.0;" in ui
+assert "=> width >= 700.0 ? 679.0 : 999.0;" in ui
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in ui
-assert "wide ? 86.0 : 146.0" in ui
+assert "wide ? 152.0 : 204.0" in ui
 assert "private void DrawStashChanceTier(" in mixer
 tier_preview = mixer.split("private void DrawStashChanceTier(", 1)[1]
 assert "StashSourceGroups.Value" in tier_preview
@@ -108,12 +109,12 @@ assert "hasWeight[kind] = true" in tier_preview
 assert "hasChance[kind] = true" in tier_preview
 assert "hasWeight[k] || hasChance[k]" in tier_preview
 assert '"WEIGHT ONLY"' in tier_preview
-assert '"NATIVE CHANCE"' in tier_preview
-assert '"NATIVE CHANCE"' in tier_preview
-assert '"NATIVE CHANCE"' in tier_preview
+assert '"CHANCE SCALE"' in tier_preview
+assert '"loot.standardStashChanceScale"' in tier_preview
+assert '"loot.rareStashChanceScale"' in tier_preview
 assert "100.0 * totals" not in tier_preview
 assert "EffectiveSelection(" in tier_preview
-assert "AddHorizontalTarget(parameter," in tier_preview
+assert "AddHorizontalTarget(scale," in tier_preview
 assert "const double cardHeight = 146.0;" in mixer
 assert "BasicVisibleWeightKinds = { 1, 2, 3 }" in mixer
 assert "previewGroup.Items" in mixer

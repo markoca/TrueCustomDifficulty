@@ -30,6 +30,7 @@ expected = {
     "StashContentMix": [
         "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
         "loot.stashMixDrinks", "loot.stashMixGrenades", "loot.stashMixCoupons",
+        "loot.standardStashChanceScale", "loot.rareStashChanceScale",
         "loot.cheapStashGrenadeChance", "loot.cheapStashGrenadeQuantity",
         "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
         "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
@@ -49,7 +50,7 @@ expected = {
                   "loot.stashGearBonusChance"],
 }
 ids = [p["id"] for p in catalog["parameters"] if p["tab"] == "stashes"]
-assert len(ids) == len(set(ids)) == 39
+assert len(ids) == len(set(ids)) == 41
 assert set(ids) == set(sum(expected.values(), []))
 family_ids = source.split("private static IReadOnlyList<string> GetFamilyIds(", 1)[1]
 for family, expected_ids in expected.items():
@@ -175,9 +176,9 @@ assert "weights.Sum()" not in preview # normalized six source multipliers retire
 assert 'DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",' in content
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in content
 assert "wide ? 353.0 : 507.0, width," in content
-assert "wide ? 86.0 : 146.0" in content
-assert "wide ? 447.0 : 661.0, width," in content
-assert "wide ? 86.0 : 206.0" in content
+assert "wide ? 152.0 : 204.0" in content
+assert "wide ? 513.0 : 719.0, width," in content
+assert "wide ? 152.0 : 266.0" in content
 assert "wide ? 207.0 : 361.0, width, 74.0" in content
 assert "var pairTop = wide ? 289.0 : 443.0;" in content
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
@@ -297,20 +298,20 @@ mixer_match = re.search(
 )
 assert height_match is not None, "missing StashContentMix measured height"
 assert mixer_match is not None, "missing StashContentMix mixer"
-assert tuple(map(float, height_match.groups())) == (700.0, 547.0, 881.0)
+assert tuple(map(float, height_match.groups())) == (700.0, 679.0, 999.0)
 assert tuple(map(float, mixer_match.groups())) == (53.0, 146.0, 300.0)
 assert "wide ? 353.0 : 507.0, width," in content
-assert "wide ? 86.0 : 146.0" in content
-assert "wide ? 447.0 : 661.0, width," in content
-assert "wide ? 86.0 : 206.0" in content
+assert "wide ? 152.0 : 204.0" in content
+assert "wide ? 513.0 : 719.0, width," in content
+assert "wide ? 152.0 : 266.0" in content
 assert "wide ? 207.0 : 361.0, width, 74.0" in content
 assert "var pairTop = wide ? 289.0 : 443.0;" in content
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
 assert "var wide = width >= 670.0;" in content
-assert 547.0 - (447.0 + 86.0) == 14.0
-assert 881.0 - (661.0 + 206.0) == 14.0
+assert 679.0 - (513.0 + 152.0) == 14.0
+assert 999.0 - (719.0 + 266.0) == 14.0
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -404,7 +405,7 @@ assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * multiplier, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
 
-assert '=> width >= 700.0 ? 547.0 : 881.0;' in source
+assert '=> width >= 700.0 ? 679.0 : 999.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
@@ -499,7 +500,7 @@ assert 'DrawStashPoolBar(dc, hard, "VETERAN"' in native_preview_method
 assert '"EASY/MEDIUM · EXPERIENCED"' not in coverage
 assert 'CreateText(label, 11.4, text' in coverage
 assert 'CreateText(name, 10.2, text' in coverage
-assert 'CreateText(currentText, 10.4,' in coverage
+assert 'CreateText(currentText, 12.2,' in coverage
 assert "row.Width < 440.0 ? 9.6 : 10.8" in source
 assert "row.Width >= 580.0 ? 10.0 : 8.9" in source
 
@@ -508,17 +509,19 @@ assert "row.Width >= 580.0 ? 10.0 : 8.9" in source
 # parameters must be present in the embedded catalog, aggregate family and
 # main ViewModel, but missing early VMs must never throw during OnRender.
 tier_chance_ids = [
+    "loot.standardStashChanceScale", "loot.rareStashChanceScale",
     "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
     "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
     "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
     "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
+    "loot.expensiveStashMoneyChance",
 ]
 catalog_by_id = {p["id"]: p for p in catalog["parameters"]}
 viewmodel = (root / "src/TrueCustomDifficulty/ViewModels/ParameterViewModel.cs").read_text()
 main_vm = (root / "src/TrueCustomDifficulty/ViewModels/MainViewModel.cs").read_text()
 for pid in tier_chance_ids:
     entry = catalog_by_id[pid]
-    assert entry["exposeInUi"] is True, pid
+    assert entry["exposeInUi"] is (pid in ("loot.standardStashChanceScale", "loot.rareStashChanceScale")), pid
     assert entry["group"] == "Stash Content", pid
     assert pid in expected["StashContentMix"], pid
     assert f'["{pid}"] = "StashContentMix"' in viewmodel, pid
@@ -553,7 +556,7 @@ assert "hasWeight[kind] = true" in tier_preview
 assert "hasChance[kind] = true" in tier_preview
 assert "hasWeight[k] || hasChance[k]" in tier_preview
 assert '"NATIVE CHANCE"' not in tier_preview
-assert 'CreateText("WEIGHT", 9.1' in tier_preview
+assert 'CreateText("WEIGHT", 10.1' in tier_preview
 assert '"WEIGHT ONLY"' not in tier_preview
 assert "const double pitch = 60.0;" in tier_preview
 assert "cellWidth, 53.0" in tier_preview
@@ -563,11 +566,14 @@ assert "var expected = tierName == \"Medium\"" in tier_preview
 assert "SequenceEqual(expected)" in tier_preview
 assert "100.0 * totals" not in tier_preview
 assert "totals.Sum()" not in tier_preview
-assert "AddHorizontalTarget(parameter," in tier_preview
-assert "var parameter = P(id);" in tier_preview
-assert "if (parameter is null)" in tier_preview
-assert 'var unavailableText = Parameters is null ? "LOADING" : "CONTROL UNAVAILABLE";' in tier_preview
-assert "CreateText(unavailableText, 9.0" in tier_preview
+assert 'var scaleId = tierName == "Medium"' in tier_preview
+assert 'var scale = P(scaleId);' in tier_preview
+assert 'AddHorizontalTarget(scale,' in tier_preview
+assert 'AddHorizontalTarget(parameter,' not in tier_preview
+assert 'DrawText(dc, "CHANCE SCALE"' in tier_preview
+assert 'var y = outer.Top + 82.0' in tier_preview
+assert 'var currentText = PercentRange(nowMin, nowMax);' in tier_preview
+assert 'if (scale is null)' in tier_preview
 assert 'var label = Parameters is null' not in tier_preview
 assert "continue;" in tier_preview
 assert 'throw new InvalidDataException(\n                "Missing live stash Chance control "' not in tier_preview

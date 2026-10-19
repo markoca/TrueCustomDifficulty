@@ -334,6 +334,53 @@ public sealed partial class AggregateVisualControl
             new Pen(CloneWithOpacity(border, .61), .9), outer, 4.0, 4.0);
         dc.DrawText(CreateText(label, 11.4, text, FontWeights.Bold),
             new Point(outer.Left + 12.0, outer.Top + 8.0));
+
+        var scaleId = tierName == "Medium"
+            ? "loot.standardStashChanceScale" : "loot.rareStashChanceScale";
+        var scale = P(scaleId);
+        if (scale is not null)
+        {
+            var enabled = scale.IsControlEnabled;
+            var changedScale = enabled && scale.IsValueModifiedFromReference();
+            DrawText(dc, "CHANCE SCALE",
+                new Point(outer.Left + 12.0, outer.Top + 29.0),
+                10.0, enabled ? text : muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, $"{scale.CurrentNumber:0.##}×",
+                new Point(outer.Right - 13.0, outer.Top + 27.0),
+                11.3, enabled ? changedScale ? accent : text : muted,
+                FontWeights.Bold);
+            var scaleRail = new Rect(outer.Left + 21.0, outer.Top + 56.0,
+                Math.Max(1.0, outer.Width - 42.0), 2.0);
+            var now = ValueToX(scale.CurrentNumber,
+                scale.Minimum, scale.Maximum, scaleRail, false);
+            dc.DrawLine(new Pen(border, 2.0),
+                new Point(scaleRail.Left, scaleRail.Top),
+                new Point(scaleRail.Right, scaleRail.Top));
+            if (enabled)
+                dc.DrawLine(new Pen(accent, 2.0),
+                    new Point(scaleRail.Left, scaleRail.Top),
+                    new Point(now, scaleRail.Top));
+            var centerX = ValueToX(1.0, scale.Minimum, scale.Maximum,
+                scaleRail, false);
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .7), 1.3),
+                new Point(centerX, scaleRail.Top - 5.0),
+                new Point(centerX, scaleRail.Top + 5.0));
+            var over = enabled && ReferenceEquals(_hoverTarget?.Parameter, scale);
+            dc.DrawEllipse(panel, new Pen(over ? Brushes.White :
+                enabled ? accent : muted, over ? 2.5 : 1.7),
+                new Point(now, scaleRail.Top), 5.0, 5.0);
+            DrawText(dc, "0×", new Point(scaleRail.Left, outer.Top + 64.0),
+                9.2, muted, FontWeights.SemiBold);
+            DrawCenteredText(dc, "1×", new Point(centerX, outer.Top + 64.0),
+                9.2, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, "2×",
+                new Point(scaleRail.Right, outer.Top + 64.0),
+                9.2, muted, FontWeights.SemiBold);
+            AddHorizontalTarget(scale,
+                new Rect(scaleRail.Left - 8.0, scaleRail.Top - 13.0,
+                    scaleRail.Width + 16.0, 24.0),
+                scaleRail, scale.Minimum, scale.Maximum);
+        }
         var columns = outer.Width >= 670.0 ? present.Length : 2;
         const double inset = 12.0;
         const double gap = 6.0;
@@ -360,7 +407,7 @@ public sealed partial class AggregateVisualControl
                     .Where(item => StashCategoryIndex(item.ItemSid) == kind)
                     .Select(item => (Group: g, Item: item))).ToArray();
             var x = outer.Left + inset + (n % columns) * (cellWidth + gap);
-            var y = outer.Top + 27.0 + (n / columns) * pitch;
+            var y = outer.Top + 82.0 + (n / columns) * pitch;
             var cell = new Rect(x, y, cellWidth, 53.0);
             var tone = StashMixPalette[kind];
             dc.DrawRoundedRectangle(CloneWithOpacity(panel, .5),
@@ -380,26 +427,13 @@ public sealed partial class AggregateVisualControl
                 continue;
             }
 
-            var id = StashEffectiveState.TierChanceParameterId(
-                tierName, rows[0].Item.ItemSid);
-            if (tierName == "Expensive" && kind == 5)
-                id = "loot.expensiveStashMoneyChance";
-            if (id is null || rows.Any(r =>
-                    (StashEffectiveState.TierChanceParameterId(tierName,
-                        r.Item.ItemSid) ?? (tierName == "Expensive" && kind == 5
-                            ? "loot.expensiveStashMoneyChance" : "")) != id))
-                throw new InvalidDataException("Unmapped tier-native Chance " + name);
-            // WPF may invoke OnRender after Family is bound but before
-            // the Window-level AllParameters binding is available. This is
-            // a transient UI state, not malformed native stash CFG. Never
-            // crash the entire app while waiting for the actual live VM.
-            var parameter = P(id);
-            if (parameter is null)
+            // Snapshot is computed by the exact same native per-entry
+            // transformer used by the CFG writer. These cards have NO hit
+            // zones and do not pretend every item has identical Chance.
+            if (scale is null)
             {
-                var unavailableText = Parameters is null ? "LOADING" : "CONTROL UNAVAILABLE";
-                dc.DrawText(CreateText(unavailableText, 9.0, muted, FontWeights.SemiBold,
-                        Math.Max(1.0, cell.Width - 16.0)),
-                    new Point(x + 8.0, y + 23.0));
+                DrawText(dc, "LOADING", new Point(x + 8.0, y + 26.0),
+                    9.1, muted, FontWeights.SemiBold);
                 continue;
             }
             var sourceValues = rows.Select(r =>
@@ -407,42 +441,14 @@ public sealed partial class AggregateVisualControl
             var activeValues = rows.Select(r =>
                 StashEffectiveState.Number(r.Group.EffectiveSelection(
                     StashPreviewBaseline.Value, effective, r.Item))).ToArray();
-            var baseMax = sourceValues.Max();
             var nowMin = activeValues.Min();
             var nowMax = activeValues.Max();
-            var changed = parameter.IsControlEnabled &&
-                parameter.IsValueModifiedFromReference();
             var currentText = PercentRange(nowMin, nowMax);
-            var currentLabel = CreateText(currentText, 10.4,
-                changed ? accent : text, FontWeights.Bold,
-                Math.Max(1.0, cell.Width - 14.0));
-            dc.DrawText(currentLabel, new Point(x + 8.0, y + 21.0));
+            dc.DrawText(CreateText(currentText, 12.2, text, FontWeights.Bold,
+                    Math.Max(1.0, cell.Width - 18.0)),
+                new Point(x + 9.0, y + 24.0));
+            // Source percentages are read-only facts, not a second slider.
 
-            var rail = new Rect(x + 9.0, y + 42.0,
-                Math.Max(1.0, cell.Width - 18.0), 5.0);
-            var trackY = rail.Top + rail.Height / 2.0;
-            var nativeX = rail.Left + rail.Width * nowMax;
-            dc.DrawLine(new Pen(CloneWithOpacity(border, .9), 3.6),
-                new Point(rail.Left, trackY), new Point(rail.Right, trackY));
-            dc.DrawLine(new Pen(CloneWithOpacity(tone, .95), 3.6),
-                new Point(rail.Left, trackY), new Point(nativeX, trackY));
-            var hovered = parameter.IsControlEnabled &&
-                _hoverTarget?.Kind == HitKind.Horizontal
-                && ReferenceEquals(_hoverTarget.Parameter, parameter);
-            dc.DrawEllipse(panel, new Pen(hovered ? Brushes.White : tone, 1.6),
-                new Point(nativeX, trackY), 3.4, 3.4);
-            // For the scope-specific multipliers native maximum is 100%
-            // except Standard Coupons, whose 10% native value is scaled
-            // 0..10x to expose a truthful 0..100% per-entry Chance.
-            // For Rare coupons keep the existing absolute Chance parameter.
-            var nativeMax = baseMax <= 0.0000001 ? 1.0 : baseMax;
-            var hitMin = 0.0;
-            var hitMax = tierName == "Expensive" && kind == 5
-                ? 1.0 : 1.0 / nativeMax;
-            AddHorizontalTarget(parameter,
-                new Rect(rail.Left - 5.0, rail.Top - 8.0,
-                    rail.Width + 10.0, rail.Height + 16.0),
-                rail, hitMin, hitMax);
         }
     }
 
