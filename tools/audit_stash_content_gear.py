@@ -58,12 +58,12 @@ for name in mix:
     assert len(p["targets"]) == 2
     assert "Weight" in p["targets"][0]["path"]
     assert all("Chance" not in entry["path"] for entry in p["targets"])
-# The mixer only displays four source-effective categories; the old Ammo
-# and Grenades backend IDs remain hidden to preserve legacy preset loading.
-for name in ("loot.stashMixAmmo", "loot.stashMixGrenades"):
+# The remaining three knobs all belong to the retained Veteran source
+# branch. Ammo, grenades and coupons remain persisted legacy sources.
+for name in ("loot.stashMixAmmo", "loot.stashMixGrenades", "loot.stashMixCoupons"):
     assert parameters[name]["exposeInUi"] is False
 for name in ("loot.stashMixMedical", "loot.stashMixFood",
-             "loot.stashMixDrinks", "loot.stashMixCoupons"):
+             "loot.stashMixDrinks"):
     assert parameters[name]["exposeInUi"] is True
 
 assert parameters["loot.stashGearEnabled"]["control"] == "toggle"
@@ -97,9 +97,9 @@ assert "DrawStashBasicNativePools(dc," in ui
 assert '"RGD-5 AMOUNT"' in ui
 assert "percentage: false" in ui
 assert "wide ? 146.0 : 300.0" in ui
-assert "=> width >= 700.0 ? 637.0 : 1019.0;" in ui
+assert "=> width >= 700.0 ? 547.0 : 881.0;" in ui
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in ui
-assert "wide ? 100.0 : 177.0" in ui
+assert "wide ? 86.0 : 146.0" in ui
 assert "private void DrawStashChanceTier(" in mixer
 tier_preview = mixer.split("private void DrawStashChanceTier(", 1)[1]
 assert "StashSourceGroups.Value" in tier_preview
@@ -115,9 +115,9 @@ assert "100.0 * totals" not in tier_preview
 assert "EffectiveSelection(" in tier_preview
 assert "AddHorizontalTarget(parameter," in tier_preview
 assert "const double cardHeight = 146.0;" in mixer
-assert "BasicVisibleWeightKinds = { 1, 2, 3, 5 }" in mixer
-assert "previewGroups.Where(g => g is not null)" in mixer
-assert "var columns = outer.Width >= 670.0 ? 4 : 2;" in mixer
+assert "BasicVisibleWeightKinds = { 1, 2, 3 }" in mixer
+assert "previewGroup.Items" in mixer
+assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in mixer
 assert "AddHorizontalTarget(p," in mixer
 assert "foreach (var stop in new[] { p.Minimum, p.Maximum })" in mixer
 assert "p.IsValueModifiedFromReference()" in mixer
@@ -193,5 +193,5 @@ assert "groups.Count != 463" in mixer
 assert "groups.Sum(x => x.Items.Count) != 1124" in mixer
 assert not re.search(r'new\[\] \{ .*?1\.0 / 6', mixer)
 
-print("PASS: four visible 0–1x native Basic weight knobs; six legacy IDs retained, source-native Chance kept separate.")
+print("PASS: three visible 0–1x Basic weight knobs and one native Veteran mix bar; six source IDs retained, coupon Chance untouched.")
 print("NOT RUN: Windows .NET publish, Wine interaction, real game RNG acceptance.")

@@ -6066,8 +6066,8 @@
       },
       "rationale": "Adjust relative coupons presence without touching ammo stack size or quest rewards.",
       "logic": "Native Weight is relative within its own generator group. Multiplying all members of a single-category pool may leave its normalized ratios unchanged; independent Chance is never modified by this global control.",
-      "interaction": "Changes only currently eligible category entries, preserving rank/difficulty gates.",
-      "exposeInUi": true
+      "interaction": "Legacy preset compatibility only. Not an editable Stash Content mixer knob; the retained Veteran Basic source pool has no coupon Weight member.",
+      "exposeInUi": false
     },
     {
       "id": "loot.stashMedicalBandageBias",

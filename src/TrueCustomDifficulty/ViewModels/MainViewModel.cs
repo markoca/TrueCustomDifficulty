@@ -528,7 +528,7 @@ public sealed class MainViewModel : ObservableObject
             "loot.worldDetectors",
             "loot.blueprintShuffle");
 
-        // Visual Basic mixer now has only four source-effective weight knobs.
+        // Visual Basic mixer has three source-effective weight knobs; legacy coupons remains persisted.
         // The two hidden historic scalars still load through the preset graph.
         WireVisualAggregate(
             "loot.stashMixMedical",

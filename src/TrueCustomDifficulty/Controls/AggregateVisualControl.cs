@@ -4608,18 +4608,18 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         DrawStashWeightMixer(dc, new Rect(left, 53.0, width,
                 wide ? 146.0 : 300.0), text, muted, border, accent, panel);
 
-        // Two demonstrably independent source Weight groups, exactly as the
-        // SNG and NATO compositions in Breakable Boxes. Their shares are
-        // computed from the same embedded CFG snapshot as the writer.
+        // The one retained Basic source preview excludes the coupon-only
+        // difference of the removed Easy/Medium Experienced weight branch.
+        // The other source branches keep their exact authored CFG behavior.
         DrawStashBasicNativePools(dc,
-            new Rect(left, wide ? 207.0 : 361.0, width, 115.0),
+            new Rect(left, wide ? 207.0 : 361.0, width, 74.0),
             text, muted, border, panel);
 
         // RGD-5's real authored Chance and its separate integer stack amount
         // stay physically adjacent, and both use their ORIGINAL parameter IDs.
         var pairGap = 10.0;
         var pairWidth = (width - 28.0 - pairGap) / 2.0;
-        var pairTop = wide ? 330.0 : 484.0;
+        var pairTop = wide ? 289.0 : 443.0;
         DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",
             "RGD-5 CHANCE", 4,
             new Rect(left + 14.0, pairTop, pairWidth, 56.0),
@@ -4630,10 +4630,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             text, muted, border, accent, panel, percentage: false);
 
         DrawStashChanceTier(dc, "STANDARD", "Medium", 10,
-            new Rect(left, wide ? 394.0 : 548.0, width,
+            new Rect(left, wide ? 353.0 : 507.0, width,
                 wide ? 86.0 : 146.0), text, muted, border, accent, panel);
         DrawStashChanceTier(dc, "RARE", "Expensive", 19,
-            new Rect(left, wide ? 488.0 : 702.0, width,
+            new Rect(left, wide ? 447.0 : 661.0, width,
                 wide ? 86.0 : 206.0), text, muted, border, accent, panel);
     }
 
@@ -7078,7 +7078,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 588.0 : 922.0;
+        => width >= 700.0 ? 547.0 : 881.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 345.0 : 607.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP

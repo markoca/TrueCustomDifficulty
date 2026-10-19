@@ -12,7 +12,7 @@ namespace TrueCustomDifficulty.Controls;
 // Native Chance belongs to separate real CFG controls, not this scale.
 public sealed partial class AggregateVisualControl
 {
-    // Read-only backing catalog for the six editable Weight lanes. These
+    // Read-only backing catalog for the six retained Weight source IDs. These
     // descriptions match the audited native item SIDs; they are not drop odds.
     private static readonly Lazy<IReadOnlyList<StashBranchPreview>> StashSourceGroups =
         new(() => StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value));
@@ -206,12 +206,11 @@ public sealed partial class AggregateVisualControl
         }
     }
 
-    // Exactly the categories that can shift relative choice INSIDE either
-    // displayed Basic source-native multi-category Weight pool. Global AMMO
-    // only occurs in isolated ammo groups here; Basic grenade is Chance-only.
-    // Keep both historic IDs cataloged for preset compatibility, but never
-    // misrepresent either as an adjustable member of these two mixer pools.
-    private static readonly int[] BasicVisibleWeightKinds = { 1, 2, 3, 5 };
+    // The retained Veteran Basic Weight pool contains only MEDICAL, FOOD and
+    // DRINKS. Coupons belong to a separate Easy/Medium Experienced branch;
+    // they stay native and preset-compatible but have no mixer knob.
+    // Ammo and grenade Weight IDs likewise remain hidden legacy inputs.
+    private static readonly int[] BasicVisibleWeightKinds = { 1, 2, 3 };
 
     // Breakable Boxes-style compact source dials; global eligible Weight
     // behavior stays independent of these Basic-only preview samples.
@@ -225,21 +224,18 @@ public sealed partial class AggregateVisualControl
         if (basicGroups.Length != 12 || basicGroups.Sum(g => g.Items.Count) != 52)
             throw new InvalidDataException("Native Basic stash source coverage changed.");
 
-        var previewGroups = new[] {
-            StashPreviewGroup("BASIC", 7),
-            StashPreviewGroup("BASIC", 1)
-        };
-        if (previewGroups.Any(g => g is null))
-            throw new InvalidDataException("Basic weight preview source missing.");
-        var relevant = previewGroups.Where(g => g is not null)
-            .SelectMany(g => g!.Items)
+        var previewGroup = StashPreviewGroup("BASIC", 1);
+        if (previewGroup is null
+            || previewGroup.Fields.GetValueOrDefault("Diff") != "EGameDifficulty::Hard")
+            throw new InvalidDataException("Veteran Basic weight source missing.");
+        var relevant = previewGroup.Items
             .Select(item => StashCategoryIndex(item.Fields["ItemPrototypeSID"]))
             .Distinct().OrderBy(k => k).ToArray();
         if (!relevant.SequenceEqual(BasicVisibleWeightKinds))
             throw new InvalidDataException(
                 "Basic native mixer categories changed; review visible knobs.");
 
-        var columns = outer.Width >= 670.0 ? 4 : 2;
+        var columns = outer.Width >= 670.0 ? 3 : 2;
         const double inset = 12.0;
         const double gap = 8.0;
         const double cardHeight = 146.0;
@@ -251,7 +247,9 @@ public sealed partial class AggregateVisualControl
         for (var i = 0; i < BasicVisibleWeightKinds.Length; i++)
         {
             var kind = BasicVisibleWeightKinds[i];
-            var x = outer.Left + inset + (i % columns) * (cardWidth + gap);
+            var x = columns == 2 && i == 2
+                ? outer.Left + (outer.Width - cardWidth) / 2.0
+                : outer.Left + inset + (i % columns) * (cardWidth + gap);
             var y = outer.Top + (i / columns) * (cardHeight + gap);
             // True 0..1x bounds / 0.1x steps, original at 1x. Reducing one
             // category boosts other positive categories' RELATIVE share.
@@ -263,38 +261,30 @@ public sealed partial class AggregateVisualControl
         }
     }
 
-    // Breakable Boxes-inspired read-only distribution. Two ACTUAL distinct
-    // Basic ItemGenerator Weight branches, no across-branch normalization.
-    // Only four of the six cataloged global IDs influence these two pools;
-    // chance-only grenade and other rows remain independent of these bars.
+    // One representative source-native Weight branch is enough to explain
+    // the visible three-way mix. This preview is strictly read-only;
+    // difficulty-specific coupon branches are intentionally not charted.
     private void DrawStashBasicNativePools(
         DrawingContext dc, Rect outer,
         Brush text, Brush muted, Brush border, Brush panel)
     {
-        var experienced = StashPreviewGroup("BASIC", 7);
         var hard = StashPreviewGroup("BASIC", 1);
-        if (experienced is null || hard is null
-            || experienced.Items.Any(item => !item.Fields.ContainsKey("Weight")
-                || item.Fields.ContainsKey("Chance"))
+        if (hard is null
             || hard.Items.Any(item => !item.Fields.ContainsKey("Weight")
-                || item.Fields.ContainsKey("Chance")))
+                || item.Fields.ContainsKey("Chance"))
+            || hard.Items.Any(item => StashCategoryIndex(
+                item.Fields["ItemPrototypeSID"]) is not (1 or 2 or 3)))
             throw new InvalidDataException(
-                "Basic source Weight groups are no longer native-only.");
+                "Veteran Basic source Weight categories changed.");
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .66),
             new Pen(CloneWithOpacity(border, .66), .9), outer, 4.0, 4.0);
-        // Basic stash pool examples: difficulty and player-rank gates
-        // are distinct. Easy/Medium/Hard map to Novice/Stalker/Veteran.
-        DrawText(dc, "BASIC · LOOT EXAMPLES",
+        DrawText(dc, "BASIC · LOOT EXAMPLE",
             new Point(outer.Left + 12.0, outer.Top + 3.0),
             10.6, text, FontWeights.Bold);
-        var inside = new Rect(outer.Left + 12.0, outer.Top + 21.0,
+        var inner = new Rect(outer.Left + 12.0, outer.Top + 21.0,
             Math.Max(1.0, outer.Width - 24.0), 43.0);
-        DrawStashPoolBar(dc, experienced,
-            "NOVICE / STALKER", inside, text, muted, border,
-            rankCaption: "RANK: EXPERIENCED");
-        DrawStashPoolBar(dc, hard,
-            "VETERAN", new Rect(inside.Left, inside.Top + 47.0,
-                inside.Width, inside.Height), text, muted, border);
+        DrawStashPoolBar(dc, hard, "VETERAN", inner,
+            text, muted, border);
     }
 
     // A filled rail is the ACTUAL native per-item Chance (or its min/max

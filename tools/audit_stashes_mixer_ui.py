@@ -174,12 +174,12 @@ assert "MULTIPLIERS, NOT DROP ODDS" not in source
 assert "weights.Sum()" not in preview # normalized six source multipliers retired
 assert 'DrawStashNativeRollControl(dc, "loot.cheapStashGrenadeChance",' in content
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in content
-assert "wide ? 394.0 : 548.0, width," in content
+assert "wide ? 353.0 : 507.0, width," in content
 assert "wide ? 86.0 : 146.0" in content
-assert "wide ? 488.0 : 702.0, width," in content
+assert "wide ? 447.0 : 661.0, width," in content
 assert "wide ? 86.0 : 206.0" in content
-assert "wide ? 207.0 : 361.0, width, 115.0" in content
-assert "var pairTop = wide ? 330.0 : 484.0;" in content
+assert "wide ? 207.0 : 361.0, width, 74.0" in content
+assert "var pairTop = wide ? 289.0 : 443.0;" in content
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
@@ -194,8 +194,9 @@ assert "DrawStashBasicNativePools(dc," in content
 assert '"RGD-5 AMOUNT"' in content
 assert "percentage: false" in content
 assert source.count("new SolidColorBrush(Color.FromRgb(") >= 6
-assert 'StashPreviewGroup("BASIC", 7)' in preview
 assert 'StashPreviewGroup("BASIC", 1)' in preview
+assert 'StashPreviewGroup("BASIC", 7)' in preview  # retained only in dormant source-inspection helper
+assert 'DrawStashPoolBar(dc, hard, "VETERAN"' in coverage
 assert 'StashPreviewGroup("RARE", 11)' not in preview  # chance only, never a weight pool
 assert "StashChanceSample(" in preview
 assert '"SOURCE CHANCE FIELDS"' in preview
@@ -235,15 +236,17 @@ def native_group_weights(group, multipliers):
         out[category[sid]] += float(row["Weight"].rstrip("fF")) * multipliers[category[sid]]
     return out
 
-# Only categories that actually change the two rendered native
-# multi-category Weight pools have knobs.
+# Only the three categories in the retained HARD/Veteran native source
+# pool have visible knobs. The excluded Easy/Medium Experienced branch
+# contains the coupon entry, which remains untouched in game/presets.
 pool_kinds = sorted({category[row["fields"]["ItemPrototypeSID"]]
-    for group in (hard, exp) for row in group["items"]})
-assert pool_kinds == [1, 2, 3, 5], pool_kinds
-for pid in ("loot.stashMixAmmo", "loot.stashMixGrenades"):
+    for row in hard["items"]})
+assert pool_kinds == [1, 2, 3], pool_kinds
+assert sorted({category[row["fields"]["ItemPrototypeSID"]]
+    for row in exp["items"]}) == [1, 2, 3, 5]
+for pid in ("loot.stashMixAmmo", "loot.stashMixGrenades", "loot.stashMixCoupons"):
     assert next(p for p in catalog["parameters"] if p["id"] == pid)["exposeInUi"] is False
-for pid in ("loot.stashMixMedical", "loot.stashMixFood",
-            "loot.stashMixDrinks", "loot.stashMixCoupons"):
+for pid in ("loot.stashMixMedical", "loot.stashMixFood", "loot.stashMixDrinks"):
     assert next(p for p in catalog["parameters"] if p["id"] == pid)["exposeInUi"] is True
 
 base = native_group_weights(exp, [1] * 6)
@@ -294,20 +297,20 @@ mixer_match = re.search(
 )
 assert height_match is not None, "missing StashContentMix measured height"
 assert mixer_match is not None, "missing StashContentMix mixer"
-assert tuple(map(float, height_match.groups())) == (700.0, 637.0, 1019.0)
+assert tuple(map(float, height_match.groups())) == (700.0, 547.0, 881.0)
 assert tuple(map(float, mixer_match.groups())) == (53.0, 146.0, 300.0)
-assert "wide ? 394.0 : 548.0, width," in content
+assert "wide ? 353.0 : 507.0, width," in content
 assert "wide ? 86.0 : 146.0" in content
-assert "wide ? 488.0 : 702.0, width," in content
+assert "wide ? 447.0 : 661.0, width," in content
 assert "wide ? 86.0 : 206.0" in content
-assert "wide ? 207.0 : 361.0, width, 115.0" in content
-assert "var pairTop = wide ? 330.0 : 484.0;" in content
+assert "wide ? 207.0 : 361.0, width, 74.0" in content
+assert "var pairTop = wide ? 289.0 : 443.0;" in content
 assert '"WEIGHT APPLIES TO ALL TIERS"' not in content
 assert '"RELATIVE SELECTION"' not in source
 assert '"BASIC POOL COMPOSITION"' not in coverage
 assert "var wide = width >= 670.0;" in content
-assert 637.0 - (523.0 + 100.0) == 14.0
-assert 1019.0 - (754.0 + 251.0) == 14.0
+assert 547.0 - (447.0 + 86.0) == 14.0
+assert 881.0 - (661.0 + 206.0) == 14.0
 assert "=> width >= 700.0 ? 373.0 : 409.0;" in source
 assert "=> width >= 700.0 ? 220.0 : 383.0;" in source
 assert "=> width >= 746.0 ? 220.0 : width >= 580.0 ? 383.0 : 546.0;" in source
@@ -401,7 +404,7 @@ assert 'CreateText("V "' not in tier_preview and "vanillaX" not in tier_preview
 assert "Math.Clamp(Number(updated) * multiplier, 0.0, 1.0)" in effective
 assert 'StashTierChanceParameterIds.Any(id =>' in tuning
 
-assert '=> width >= 700.0 ? 588.0 : 922.0;' in source
+assert '=> width >= 700.0 ? 547.0 : 881.0;' in source
 assert "GlobalStashKindsVerified.Value" in coverage
 assert "StashBranchPreviewCatalog.Load(StashPreviewBaseline.Value)" in coverage
 assert "groups.Sum(x => x.Items.Count) != 1124" in coverage
@@ -475,8 +478,8 @@ for source_key, tier_id, group_count, item_count, expected_weight, expected_chan
     assert chance == expected_chance, (tier_id, chance)
 
 
-# These two visible Basic source pools have different difficulty and rank
-# gates; neither is a distinct stash tier or a percentage drop chance.
+# Only Veteran's original Basic source pool remains visible, not the
+# nearly identical Easy/Medium Experienced variant containing coupons.
 basic_preview = baseline["cheapStashProduction"]["templateCategories"]
 assert basic_preview[7]["fields"]["Diff"] == (
     "EGameDifficulty::Easy, EGameDifficulty::Medium")
@@ -486,10 +489,13 @@ assert "PlayerRank" not in basic_preview[1]["fields"]
 
 assert '"WEIGHT MIX · ALL TIERS"' in content
 assert '"BASIC  ·  WEIGHT MIX"' not in content
-assert '"BASIC · LOOT EXAMPLES"' in coverage
-assert '"NOVICE / STALKER"' in coverage
-assert 'rankCaption: "RANK: EXPERIENCED"' in coverage
-assert '"VETERAN"' in coverage
+assert '"BASIC · LOOT EXAMPLE"' in coverage
+native_preview_method = coverage.split("private void DrawStashBasicNativePools(", 1)[1].split("private void DrawStashChanceTier(", 1)[0]
+assert '"NOVICE / STALKER"' not in native_preview_method
+assert 'rankCaption: "RANK: EXPERIENCED"' not in native_preview_method
+assert 'StashPreviewGroup("BASIC", 7)' not in native_preview_method
+assert 'StashPreviewGroup("BASIC", 1)' in native_preview_method
+assert 'DrawStashPoolBar(dc, hard, "VETERAN"' in native_preview_method
 assert '"EASY/MEDIUM · EXPERIENCED"' not in coverage
 assert 'CreateText(label, 11.4, text' in coverage
 assert 'CreateText(name, 10.2, text' in coverage
@@ -569,14 +575,14 @@ assert "var vanillaValues = rows.Select(" not in tier_preview
 assert "OnBindingChanged" in source and "Loaded += (_, _) => RebindParameters();" in source
 assert "CurrentNumber =" not in tier_preview
 assert "DrawStashNativeRollControl(" in coverage
-assert "DrawStashPoolBar(dc, experienced," in coverage
-assert "DrawStashPoolBar(dc, hard," in coverage
-assert 'StashPreviewGroup("BASIC", 7)' in coverage
+assert 'DrawStashPoolBar(dc, hard, "VETERAN"' in coverage
+assert '"NOVICE / STALKER"' not in coverage
 assert 'StashPreviewGroup("BASIC", 1)' in coverage
 assert "dialAccent: StashMixPalette[kind], dialScale: .74" in coverage
-assert "private static readonly int[] BasicVisibleWeightKinds = { 1, 2, 3, 5 };" in coverage
+assert "private static readonly int[] BasicVisibleWeightKinds = { 1, 2, 3 };" in coverage
 assert "BasicVisibleWeightKinds.Length" in coverage
-assert "previewGroups.Where(g => g is not null)" in coverage
+assert "previewGroup.Items" in coverage
+assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in coverage
 assert '"BASIC RGD-5 CHANCE"' in source
 assert '"RARE COUPON CHANCE"' in source
 for doc in (lock, system, proposal):
