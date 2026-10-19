@@ -112,3 +112,11 @@ Source review confirms the 287/287 direct/special routing inventory, 217 direct 
 **Regression:** `tests/LootSpecialGeneratorsContract/StashGearCoverage.cs` now checks the 0%-case error, preservation of a pre-existing sentinel, and successful private generator creation after switching to Coverage 1%. `tools/audit_stash_gear_coverage.py` enforces the guard's presence. Runtime test execution still required; never present static inspection as .NET PASS.
 
 **Gate 02:** partial source-level findings and fix committed; real C# writer/game confirmation **NOT RUN**.
+
+## Gate 02 — inert Bonus Chance with all-zero Extra Gear mix (2026-10-19)
+
+**Source-level finding:** a positive Coverage with **all four Extra Stash Gear class Weights set to zero** selects physical actors, but `ChooseStashGearClasses` returns no categories. `WriteStashGearCoverage` therefore emits no private item candidates, while the parent opt-in still emits 13 approved authored weapon reward removals. A separately modified Bonus Chance had no actual bonus item to influence, but `Write()` previously acknowledged it unconditionally.
+
+**Correction on main:** reject **only changed Bonus Chance** in this exact zero-category case, before touching staging. Preserve all-zero Weight as a valid remove-only configuration if Bonus Chance is neutral; preserve nonzero class weights, normal Chance/Weight behavior, actor allowlists and game-native Chance. A new production writer regression checks pre-stage failure and remove-only output; static gate and domain documentation updated in the same commit.
+
+**Verification:** code and catalog semantics independently inspected; .NET/Wine/game execution **NOT RUN**. Gate 02 remains **PARTIAL (source correction applied, executable acceptance pending)**.

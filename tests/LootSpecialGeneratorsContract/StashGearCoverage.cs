@@ -227,6 +227,7 @@ internal static partial class Program
             }
             VerifyEmptyStashGearMix();
             VerifyZeroCoverageRejectsUnusedTunings();
+            VerifyEmptyMixRejectsUnusedChance();
         }
         finally
         {
@@ -284,6 +285,62 @@ internal static partial class Program
                     StringComparison.Ordinal),
                 "Positive coverage did not emit a real private gear generator");
             Console.WriteLine("PASS zero-Coverage unused-bonus rejection / 1% gear output");
+        }
+        finally
+        {
+            if (Keep is null && Directory.Exists(dir))
+                Directory.Delete(dir, true);
+        }
+    }
+
+    // A deliberately empty class mix still removes the 13 approved original
+    // rewards, but changing Bonus Chance cannot influence nonexistent items.
+    // Invalid builds must preserve staging; restoring neutral Chance must
+    // allow the valid remove-only mode without private generator entries.
+    private static void VerifyEmptyMixRejectsUnusedChance()
+    {
+        var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+        vm.AllParameters.Single(p => p.Id == "loot.stashGearEnabled").CurrentBoolean = true;
+        vm.AllParameters.Single(p => p.Id == "loot.stashGearCoveragePercent")
+            .SnapCurrentNumberToMarker(100);
+        foreach (var kind in new[] { "Weapon", "Armor", "Artifact", "Attachment" })
+            vm.AllParameters.Single(p => p.Id == "loot.stashGear" + kind + "Weight")
+                .SnapCurrentNumberToMarker(0);
+        var chance = vm.AllParameters.Single(p => p.Id == "loot.stashGearBonusChance");
+        chance.SnapCurrentNumberToMarker(75);
+        Check(chance.IsValueModifiedFromReference(),
+            "Empty Bonus Mix changed-chance scenario has no modified Chance");
+
+        var dir = Path.Combine(Keep ?? Path.GetTempPath(),
+            "TCD_Stash_Gear_Empty_Mix_Chance");
+        try
+        {
+            Directory.CreateDirectory(dir);
+            var sentinel = Path.Combine(dir, "keep-before-validation.txt");
+            File.WriteAllText(sentinel, "preserved");
+            var rejected = false;
+            try
+            {
+                new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+            }
+            catch (InvalidDataException ex)
+            {
+                rejected = ex.Message.Contains("Bonus Mix has no enabled categories",
+                    StringComparison.Ordinal)
+                    && ex.Message.Contains("Bonus Chance", StringComparison.Ordinal);
+            }
+            Check(rejected, "Unused Bonus Chance on all-zero mix was silently accepted");
+            Check(File.Exists(sentinel) && File.ReadAllText(sentinel) == "preserved",
+                "Empty-mix validation destroyed previously staged files");
+
+            chance.SnapCurrentNumberToMarker(50);
+            new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+            var item = File.ReadAllText(OutputPath(dir,
+                "GameData/ItemGeneratorPrototypes.cfg"));
+            Check(!item.Contains("TCD_ExtraGear_", StringComparison.Ordinal)
+                && Regex.Matches(item, @"(?m)^\s*\[0\]\s*:\s*removenode\s*$").Count == 13,
+                "Empty mix with neutral Chance must keep only 13 original weapon removals");
+            Console.WriteLine("PASS empty Bonus Mix rejects inert Chance and preserves remove-only mode");
         }
         finally
         {

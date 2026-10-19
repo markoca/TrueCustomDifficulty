@@ -78,6 +78,27 @@ public sealed partial class CfgPatchWriterService
                         inactiveGearTunings.Select(id => "  - " + allById[id].Label)));
         }
 
+        // A 1-100% actor coverage with all four class weights zero is a
+        // legitimate "remove approved original gear, add none" configuration.
+        // However Bonus Chance cannot affect any loot there: no private item
+        // generator candidate will be emitted. Do not count its edited value
+        // as a successful CFG change merely because removals still occur.
+        if (allById.TryGetValue("loot.stashGearEnabled", out var emptyMixMaster)
+            && emptyMixMaster.CurrentBoolean
+            && allById.TryGetValue("loot.stashGearCoveragePercent", out var emptyMixCoverage)
+            && Math.Clamp((int)Math.Round(emptyMixCoverage.CurrentNumber), 0, 100) > 0
+            && modifiedById.ContainsKey("loot.stashGearBonusChance")
+            && StashGearParameterIds
+                .Where(id => id.EndsWith("Weight", StringComparison.Ordinal))
+                .All(id => allById.TryGetValue(id, out var weight)
+                    && Math.Clamp((int)Math.Round(weight.CurrentNumber * 10.0), 0, 30) == 0))
+        {
+            throw new InvalidDataException(
+                "Extra Stash Gear Bonus Mix has no enabled categories: Bonus Chance " +
+                "cannot affect any added gear. Raise at least one category weight " +
+                "or reset Bonus Chance.");
+        }
+
         var deferred = baseline.DeferredParameterIds.ToHashSet(StringComparer.Ordinal);
 
         var blocked = modified

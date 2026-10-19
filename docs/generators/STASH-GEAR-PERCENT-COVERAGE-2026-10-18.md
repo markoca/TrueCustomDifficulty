@@ -1,3 +1,10 @@
+## 2026-10-19 — Prazan Bonus Mix i neefektivni Bonus Chance
+
+Kada je Extra Stash Gear uključen i Coverage je veći od 0%, ali sve četiri relativne Bonus Mix kategorije imaju Weight 0, **nijedan dodatni item kandidat ne postoji**. To je dozvoljen način da se zadrži uklanjanje 13 odobrenih originalnih weapon reward unosa bez novih bonusa. Ipak, promenjen `Bonus Chance` u takvoj konfiguraciji više ne prolazi neprimećeno: writer pre čišćenja staging direktorijuma odbija neefektivnu izmenu i predlaže povećanje makar jednog Weight-a ili resetovanje Chance-a. Neutralni `Bonus Chance` i sva četiri Weight-a na 0 i dalje generišu samo ranije odobrena uklanjanja. Nisu menjani 0–100% opseg, procenti, težine, deterministički izbor, originalni loot niti čuvari za quest/unique stasheve.
+
+Regresioni `LootSpecialGeneratorsContract` proverava odbijanje, očuvanje prethodnog staging fajla i validan remove-only izlaz posle vraćanja Chance-a na neutralnu vrednost. Statički gate proverava prisustvo uslova i poziva testa. Izvorna statička analiza nije isto što i izvršen .NET/Wine/game test.
+
+
 ## 2026-10-19 — Validacija neaktivnih bonus kontrola na Coverage 0%
 
 Ako je Extra Stash Gear uključen, ali je Coverage 0%, promenjeni Bonus Mix (Weight) ili Bonus Chance više ne mogu lažno da prođu kroz CFG writer: aplikacija prikazuje jasnu grešku i traži da se Coverage poveća ili neiskorišćene vrednosti resetuju. Provera se radi **pre čišćenja staging direktorijuma**. Uključivanje Extra Stash Gear pri 0% sa neizmenjenim bonus kontrolama i dalje je dozvoljeno i i dalje uklanja 13 izvorno odobrenih authored weapon reward unosa. Coverage veći od 0%, Bonus Chance 0% i eksplicitno sve četiri Weight vrednosti na nuli **nisu promenjeni**. Produkcioni writer test pokriva odbijanje neiskorišćenih izmena, očuvanje prethodnog staging fajla i stvarni private generator pri Coverage 1%. Statički test čuva ovaj contract; izvršavanje .NET/Wine/game nije potvrđeno ovim auditom.
