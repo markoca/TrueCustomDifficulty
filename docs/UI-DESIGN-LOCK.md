@@ -1,3 +1,9 @@
+## 2026-10-19 — RC gamer-label and redundancy pass (182 visible controls)
+
+Reviewed all 182 exposed catalog controls across Combat, Survival, Health, Master, Stamina, Loot, Stashes, Economy, Equipment, Environment and A-Life. This pass makes **10 targeted label/rationale corrections**: removes internal `SmartLoot` from Anti-Rad, fixes inconsistent Standard/Rare stash chance capitalization, uses singular "Grenade Chance" for the roll and shortens Psy gear damage. No source IDs, CFG mappings, controls, units, slider ranges, groups, game logic or preset keys are renamed. In particular, `100%` on scaled stash chance controls means **original odds**, not guaranteed drops. Controls remain compact; keep source caveats in WHAT IT DOES rather than duplicating label text in card chrome.
+
+**RC wording gate:** use short nouns for labels; no backend jargon, avoid restating a label in adjacent prose, and keep genuinely different source semantics (priority vs chance, damage vs durability, passive drain vs action cost) explicit. More extensive text compression should be checked visually against the right-hand WHAT IT DOES and CONTROLS panes before any deletion; never delete a gameplay caveat merely to shorten copy. This is a text-only RC pass; build/Wine/gameplay acceptance remains pending.
+
 ## 2026-10-19 — CURRENT: Food Hunger Relief integrated into the Hunger card
 
 Survival → **Hunger** is one `HungerLadder` visual board. Beneath the unchanged Hunger Rate / Well-Fed rulers, stage preview and interactive Hunger Survival Profile, a quiet **FOOD HUNGER RELIEF** subsection now contains four independent native sliders in strict order: **Bread**, **Sausage**, **Canned Food**, **Condensed Milk**. These sources are aggregate members (not additional standalone UI rows). Their own CFG values, presets, saved-state identities and hover/selection remain independent; the Hunger family modified state and card-wide `R` reset now include them.

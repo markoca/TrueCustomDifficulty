@@ -1528,7 +1528,7 @@
       "id": "combat.psyDurabilityDamage",
       "tab": "combat",
       "group": "Psy Combat",
-      "label": "Psy Equipment Durability Damage",
+      "label": "Psy Gear Damage",
       "description": "Controls how much equipment durability the affected Master Psy enemies damage.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -1574,7 +1574,7 @@
           "Novice/Stalker/Veteran contain no PsyPhantomNPCOverrides block; the UI represents absence as neutral 1.0 / Off. Creating equivalent overrides in Novice/Stalker/Veteran requires runtime validation."
         ]
       },
-      "rationale": "Changes how much condition damage affected Master Psy enemies deal to your equipment.",
+      "rationale": "Affected Master Psy enemies wear down your equipment faster or slower. Direct HP damage is unchanged.",
       "logic": "100% keeps normal durability damage. 200% matches vanilla Master and doubles this durability damage.",
       "interaction": "This does not change their direct health damage. Armor/helmet durability settings still affect how your gear wears overall."
     },
@@ -6544,7 +6544,7 @@
       "id": "loot.stashMedicalAntiRadBias",
       "tab": "stashes",
       "group": "Stash Medical Composition",
-      "label": "Anti-Rad SmartLoot Priority",
+      "label": "Anti-Rad Stash Priority",
       "description": "Two-state visual editor for authored singleton Anti-Rad SmartLoot Weight pools: OFF writes Weight 0; ON writes source multiplier 1. The Anti-Rad Chance control is independent. Legacy numeric preset values above 1 stay intact until this two-state control is operated.",
       "control": "slider",
       "valueKind": "multiplier",
@@ -6582,7 +6582,7 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Turns eligible Anti-Rad loot-pool entries on or off. Their separate chance setting still applies.",
+      "rationale": "Enables or disables Anti-Rad entries in eligible medical stash loot pools. Drop chance is controlled separately.",
       "logic": "OFF removes eligible Anti-Rad entries from this priority pool; ON keeps them eligible. The separate Anti-Rad chance check still applies.",
       "interaction": "There is no meaningful multi-item competition in this particular pool, so this control is an ON/OFF choice.",
       "exposeInUi": true
@@ -8066,7 +8066,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Standard medical Chance",
+      "label": "Standard Medical Chance",
       "description": "Source-native Bandage and Medkit source Chance entries, originally 40%/100% across branches. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -8085,7 +8085,7 @@
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
       "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
-      "rationale": "Scales each medical item's original chance in Standard stash loot entries. 100% is not a guaranteed drop."
+      "rationale": "Scales the original chance of medical items in Standard stashes. 100% keeps their original odds; it does not guarantee a drop."
     },
     {
       "id": "loot.mediumStashDrinksChance",
@@ -8112,7 +8112,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Standard drinks Chance",
+      "label": "Standard Drinks Chance",
       "description": "Source-native Vodka and Energetic source Chance entries, originally 50%/100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -8131,7 +8131,7 @@
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
       "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
-      "rationale": "Scales each drink's original chance in Standard stash loot entries. 100% is not a guaranteed drop."
+      "rationale": "Scales the original chance of drinks in Standard stashes. 100% keeps their original odds; it does not guarantee a drop."
     },
     {
       "id": "loot.mediumStashCouponsChance",
@@ -8158,7 +8158,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Standard coupons Chance",
+      "label": "Standard Coupon Chance",
       "description": "Source-native Rank-gated coupon reward source Chance, originally 10%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -8177,7 +8177,7 @@
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
       "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
-      "rationale": "Scales the original coupon chance in Standard stash loot entries. 100% does not guarantee a payout."
+      "rationale": "Scales the original chance of coupons in Standard stashes. 100% keeps their original odds; it does not guarantee a payout."
     },
     {
       "id": "loot.expensiveStashAmmoChance",
@@ -8204,7 +8204,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Rare ammo Chance",
+      "label": "Rare Ammo Chance",
       "description": "Source-native Newbie ammo Chance entries, originally 50%/100%; other ranks use Weight and remain unaffected. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -8223,7 +8223,7 @@
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
       "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
-      "rationale": "Scales eligible ammo entries' original chances in Rare stashes. 100% does not guarantee ammo."
+      "rationale": "Scales the original chance of ammo in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
     },
     {
       "id": "loot.expensiveStashMedicalChance",
@@ -8250,7 +8250,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Rare medical Chance",
+      "label": "Rare Medical Chance",
       "description": "Source-native Bandage, Medkit, AntiRad and ArmyMedkit source Chance entries, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -8269,7 +8269,7 @@
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
       "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
-      "rationale": "Scales each medical item's original chance in Rare stashes. 100% does not guarantee a drop."
+      "rationale": "Scales the original chance of medical items in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
     },
     {
       "id": "loot.expensiveStashFoodChance",
@@ -8296,7 +8296,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Rare food Chance",
+      "label": "Rare Food Chance",
       "description": "Source-native CannedFood source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -8315,7 +8315,7 @@
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
       "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
-      "rationale": "Scales each food item's original chance in Rare stashes. 100% does not guarantee a drop."
+      "rationale": "Scales the original chance of food in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
     },
     {
       "id": "loot.expensiveStashDrinksChance",
@@ -8342,7 +8342,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Rare drinks Chance",
+      "label": "Rare Drinks Chance",
       "description": "Source-native Energetic source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -8361,7 +8361,7 @@
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
       "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
-      "rationale": "Scales each drink's original chance in Rare stashes. 100% does not guarantee a drop."
+      "rationale": "Scales the original chance of drinks in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
     },
     {
       "id": "loot.expensiveStashGrenadesChance",
@@ -8388,7 +8388,7 @@
         ]
       },
       "exposeInUi": true,
-      "label": "Rare grenades Chance",
+      "label": "Rare Grenade Chance",
       "description": "Source-native RGD-5 source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
@@ -8407,7 +8407,7 @@
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
       "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop.",
-      "rationale": "Scales each grenade entry's original chance in Rare stashes. 100% does not guarantee a drop."
+      "rationale": "Scales the original chance of grenades in Rare stashes. 100% keeps the original odds, not a guaranteed drop."
     },
     {
       "id": "loot.expensiveStashMoneyChance",
