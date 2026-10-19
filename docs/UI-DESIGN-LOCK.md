@@ -1,3 +1,9 @@
+## 2026-10-19 — CURRENT: Standard / Rare NATIVE caption is forbidden in published builds
+
+**The nine tier Chance cards must not contain a player-facing `NATIVE` caption or any native per-item Chance percentage/range.** The current renderer already removes both; the visible card consists solely of the category label, selected 0–100% value, editable rail, reference tick and small endpoints. Hover help explains relative percent-of-source semantics (with the Rare Coupons absolute exception), without exposing CFG diagnostics. No changes to per-entry Chance calculations, parameter IDs, presets or CFG writing.
+
+A stale running Wine instance or an outdated `publish/win-x64/TrueCustomDifficulty.exe` can still display the old row even though `main` does not render it. `publish.sh` now rejects any literal `"NATIVE` in the dedicated tier renderer, and records `stash_chance_native_row=absent` beside `source_commit` and `exe_sha256` in `publish/win-x64/BUILD-INFO.txt`. The Stashes static audit independently checks the active renderer and the build guard. After a successful pull/publish, compare `git rev-parse --short HEAD` with `source_commit` and `sha256sum publish/win-x64/TrueCustomDifficulty.exe` with `exe_sha256`. Close old Wine instances before testing; never use a previous build as evidence of current UI.
+
 ## 2026-10-19 — CURRENT: compact Standard / Rare Chance cards without NATIVE captions
 
 **Supersedes earlier 88-DIP Chance card layouts and NATIVE row descriptions.** All nine Standard/Rare category cards display only their category label, live percentage, source/reference rail marker, horizontal slider and small 0%/100% endpoints. The technical `NATIVE XX–YY%` CFG-value readout is **not drawn** in player-facing tier cards. The underlying nine Chance source IDs, source-native mapping, CFG writer, 1%-step editing, presets and other Stashes controls are unchanged.

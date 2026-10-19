@@ -160,6 +160,8 @@ assert 'wide ? 571.0 : 803.0' in ui
 assert 'wide ? 200.0 : 278.0' in ui
 assert 'const double pitch = 78.0;' in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
 assert 'new Rect(x, y, cellWidth, 70.0)' in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
+# No visible native Chance label or value expression is permitted in the
+# active tier renderer; this also catches renamed or reinstated labels.
 assert 'CreateText("NATIVE " + currentText' not in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
 assert '_stashChanceTooltipAreas.Add((cell, id == "loot.expensiveStashMoneyChance"))' in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
 assert 'UpdateStashChanceTooltip(point);' in ui
@@ -168,6 +170,9 @@ assert 'per-entry Chance for Rare Coupons' in ui
 assert 'NATIVE shows actual resulting Chance' not in pvm
 content_body = ui.split("private void DrawStashContentMix(", 1)[1].split("private void DrawStashMedicalComposition(", 1)[0]
 tier_body = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split("private void DrawStashChanceTier(", 1)[1]
+assert '"NATIVE' not in tier_body, "Standard/Rare Chance renderer reintroduced a NATIVE label/value"
+assert 'stash_chance_native_row=absent' in read(root / "publish.sh")
+assert 'grep -nF' in read(root / "publish.sh")
 assert '"loot.cheapStashAmmoQuantity"' in content
 assert '"AMMO QUANTITY · ALL TIERS"' in content_body
 assert '"AMMO QUANTITY · ALL TIERS"' in content_body

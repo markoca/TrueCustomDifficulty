@@ -22,6 +22,7 @@ fi
 
 PROJECT="$ROOT/src/TrueCustomDifficulty/TrueCustomDifficulty.csproj"
 PROJECT_DIR="$(dirname "$PROJECT")"
+STASH_TIER_SOURCE="$PROJECT_DIR/Controls/AggregateVisualControl.StashBranch.cs"
 EXE_NAME="TrueCustomDifficulty.exe"
 PUBLISH_DIR="$ROOT/publish/win-x64"
 FINAL_EXE="$PUBLISH_DIR/$EXE_NAME"
@@ -86,6 +87,18 @@ fi
 if [[ ! -f "$PROJECT" ]]; then
     echo "ERROR: Project file was not found:" >&2
     echo "  $PROJECT" >&2
+    exit 1
+fi
+
+# STANDARD/RARE stash chance cards contain a user percentage and a slider,
+# not a duplicate NATIVE source percentage. Refuse to package regressed UI
+# so a successful publish cannot accidentally restore the removed third row.
+if [[ ! -f "$STASH_TIER_SOURCE" ]]; then
+    echo "ERROR: Stashes Chance renderer was not found: $STASH_TIER_SOURCE" >&2
+    exit 1
+fi
+if grep -nF '"NATIVE' "$STASH_TIER_SOURCE" >&2; then
+    echo "ERROR: NATIVE text reappeared in the Standard/Rare Stashes Chance renderer." >&2
     exit 1
 fi
 
@@ -182,7 +195,7 @@ SIZE_BYTES="$(stat -c '%s' "$BUILT_EXE")"
 SIZE_MB="$(awk -v bytes="$SIZE_BYTES" 'BEGIN { printf "%.1f", bytes / 1048576 }')"
 EXE_SHA256="$(sha256sum "$BUILT_EXE" | cut -d' ' -f1)"
 # Publish the matching source/binary receipt as part of the same transaction.
-printf 'source_commit=%s\nexe_sha256=%s\n' "$GIT_HEAD" "$EXE_SHA256" > "$PUBLISH_STAGING/BUILD-INFO.txt"
+printf 'source_commit=%s\nexe_sha256=%s\nstash_chance_native_row=absent\n' "$GIT_HEAD" "$EXE_SHA256" > "$PUBLISH_STAGING/BUILD-INFO.txt"
 RUNTIME_NAMES+=("BUILD-INFO.txt")
 
 TRANSACTION_STARTED=1
