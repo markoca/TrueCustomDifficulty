@@ -120,3 +120,13 @@ Source review confirms the 287/287 direct/special routing inventory, 217 direct 
 **Correction on main:** reject **only changed Bonus Chance** in this exact zero-category case, before touching staging. Preserve all-zero Weight as a valid remove-only configuration if Bonus Chance is neutral; preserve nonzero class weights, normal Chance/Weight behavior, actor allowlists and game-native Chance. A new production writer regression checks pre-stage failure and remove-only output; static gate and domain documentation updated in the same commit.
 
 **Verification:** code and catalog semantics independently inspected; .NET/Wine/game execution **NOT RUN**. Gate 02 remains **PARTIAL (source correction applied, executable acceptance pending)**.
+
+## Gate 02 — NPC corpse bonus ammo: saved setting versus emitted source (2026-10-19)
+
+**Confirmed accounting defect:** `loot.npcWeaponAmmoSupply` can retain a non-vanilla multiplier while `loot.npcCorpseBonus` selects Water or None. In this state the production `WriteNpcCorpseAmmoProduction` deliberately emits **no** `NPC_Ammo_Smart` clone or redirect, but previously recorded the dormant control as an applied writer parameter. This inflated `CfgWriteResult.ParameterCount` without any CFG work.
+
+**Correction:** retain the editor and preset value and preserve successful Build Mod with Water/None; do not add the dormant ammo ID to `writtenParameters`, and narrowly exclude it from the missing-CFG-output error **only while the current corpse bonus choice lacks `NPC_Ammo_Smart`**. Medicine + Ammo still emits the original 43-row source clone and selected difficulty redirect; no loot, chances, UI controls or vanilla baselines changed.
+
+**Regression:** the existing 63-scenario `LootSpecialGeneratorsContract` counts actually emitted parameters (including inactive Water/None case), and `GenericLootPreGame` asserts dormant Stalker/Water ammo contributes zero applied parameters while keeping its edited VM value. `tools/audit_final_cfg_mapping.py` adds a source structural guard. All files are updated in the same main commit. This is **source-level verified**, not executed .NET/Wine or gameplay proof.
+
+**Scope note:** GitHub Actions execution is not a prerequisite for this segment by user decision. Native writer execution and in-game acceptance are separate verification items, not secretly treated as passed.

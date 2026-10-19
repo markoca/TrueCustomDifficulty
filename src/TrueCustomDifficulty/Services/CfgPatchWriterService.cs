@@ -329,7 +329,21 @@ public sealed partial class CfgPatchWriterService
             .Where(p => p.IsValueModifiedFromReference() && !deferred.Contains(p.Id))
             .Select(p => p.Id)
             .ToHashSet(StringComparer.Ordinal);
-        var missing = modifiedSupported.Where(id => !writtenParameters.Contains(id)).OrderBy(id => id).ToList();
+        // NPC Bonus Ammo Drops remains editable and serializable when the
+        // current corpse package is Water or None. Those stored values are
+        // dormant, not writer failures or applied CFG changes.
+        var dormantSavedOnly = new HashSet<string>(StringComparer.Ordinal);
+        var corpseAmmo = baseline.Special.NpcCorpseAmmoProduction;
+        if (modifiedSupported.Contains(corpseAmmo.ParameterId)
+            && allById.TryGetValue(corpseAmmo.CorpseChoiceParameterId, out var corpseChoice)
+            && !corpseChoice.CurrentText.Split(',',
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Contains(corpseAmmo.SourceSid, StringComparer.Ordinal))
+            dormantSavedOnly.Add(corpseAmmo.ParameterId);
+
+        var missing = modifiedSupported
+            .Where(id => !writtenParameters.Contains(id) && !dormantSavedOnly.Contains(id))
+            .OrderBy(id => id).ToList();
         if (missing.Count > 0)
         {
             // Integer source-backed A-Life limits are quantized per rank. A 0.95x
@@ -782,7 +796,9 @@ public sealed partial class CfgPatchWriterService
             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (!packages.Contains(config.SourceSid, StringComparer.Ordinal))
         {
-            writtenParameters.Add(config.ParameterId);
+            // This multiplier stays saved for a future Medicine + Ammo
+            // selection, but has no current CFG destination. Do not count
+            // an ignored player setting as an emitted writer parameter.
             return 0;
         }
 

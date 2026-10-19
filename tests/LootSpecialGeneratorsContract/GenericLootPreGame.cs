@@ -69,7 +69,16 @@ internal static partial class Program
                     scenario.Name + ": unexpected modified Loot source controls");
                 if (Directory.Exists(dir))
                     Directory.Delete(dir, recursive: true);
-                new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+                var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+                if (scenario.Name == "npc-ammo-stalker-water-inactive")
+                {
+                    // The fixed 100-HP Sleep Health Restore is the ONLY emitted
+                    // source. The edited ammo amount is saved but Water does not
+                    // enable NPC_Ammo_Smart, so it cannot count as applied.
+                    Check(result.ParameterCount == 1 && parameter.CurrentNumber == 3
+                        && parameter.IsValueModifiedFromReference(),
+                        "Water package incorrectly counted dormant NPC ammo tuning as applied");
+                }
                 var output = ReadOutput(dir);
                 AssertProtectedBaseStashesUntouched(output, scenario.Name);
                 Check(!output.ContainsKey("DLCGameData/DLC1/SpawnActorPrototypes.cfg"),

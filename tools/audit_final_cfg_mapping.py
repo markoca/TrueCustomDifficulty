@@ -235,6 +235,19 @@ def main():
             "difficulty/DLC guards missing from direct dispatch")
     require("writtenParameters.Add(parameter.Id)" in main_write,
             "direct writer does not record actual edits")
+    # The NPC ammo amount may be edited/saved while a Water/None corpse package
+    # is active. Never acknowledge it as emitted unless the chosen package
+    # actually references NPC_Ammo_Smart.
+    npc_ammo_body = code.split("private static int WriteNpcCorpseAmmoProduction(", 1)[1].split(
+        "private static int WriteNpcMedicalLootProduction(", 1)[0]
+    inactive_branch = npc_ammo_body.split("if (!packages.Contains(config.SourceSid", 1)[1].split(
+        "if (config.Entries.Count != 43", 1)[0]
+    require("writtenParameters.Add(config.ParameterId)" not in inactive_branch,
+            "inactive Water/None corpse ammo was counted as produced")
+    require("dormantSavedOnly" in main_write
+            and "!dormantSavedOnly.Contains(id)" in main_write
+            and "corpseChoice.CurrentText.Split" in main_write,
+            "dormant NPC ammo values must stay saved without triggering the missing-output guard")
     require("modifiedSupported.Where(id => !writtenParameters.Contains(id))" in main_write,
             "production missing-output guard was removed")
     for operation in OPERATIONS:

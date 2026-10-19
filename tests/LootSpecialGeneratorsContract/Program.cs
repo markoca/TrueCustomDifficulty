@@ -1173,8 +1173,17 @@ internal static partial class Program
                     && text.Contains(refval,StringComparison.Ordinal),
                     label+": missing clone/physical refurl root: "+key);
             }
-            Check(actual.FileCount==paths.Count && actual.ParameterCount==expectedIDs.Count,
-                label+": writer file/control counts disagree with source modifications: "
+            // A changed ammo multiplier is allowed to stay in the saved
+            // profile when Water/None is selected, but it emits no CFG and
+            // must NOT inflate the applied production parameter count.
+            var actuallyAppliedIDs = expectedIDs.ToHashSet(StringComparer.Ordinal);
+            if (changes.ContainsKey("loot.npcWeaponAmmoSupply") &&
+                !vm.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus").CurrentText
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Contains("NPC_Ammo_Smart", StringComparer.Ordinal))
+                actuallyAppliedIDs.Remove("loot.npcWeaponAmmoSupply");
+            Check(actual.FileCount==paths.Count && actual.ParameterCount==actuallyAppliedIDs.Count,
+                label+": writer file/control counts disagree with actual CFG output: "
                 +actual.FileCount+"/"+actual.ParameterCount+"/"+actual.EditCount);
             if(!dlcFreshExtension && corpseChoice==null && !changes.ContainsKey("loot.npcWeaponAmmoSupply"))
                 Check(actual.EditCount==expected.Count,label+": one emitted assignment per intended field drift");
