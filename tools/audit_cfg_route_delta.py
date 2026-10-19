@@ -43,13 +43,18 @@ def main() -> int:
 
     require(old["counts"]["catalog"] == 248 and len(previous) == 248,
             "Frozen 248-source audited inventory changed")
-    require(len(definitions) == baseline["supportedParameterCount"] == 283,
-            "Current catalog must have 283 registered sources")
-    require(len(added) == 35 and all(definitions[x]["tab"] == "stashes" for x in added),
-            "Current mapping delta is no longer exactly 35 Stashes sources")
-    require(not (added & direct), "A newly introduced source acquired direct edit points")
-    require(len(direct) == 213 and len(baseline["editPoints"]) == 1230,
-            "Prior source-audited direct mapping changed; re-audit old scope")
+    require(len(definitions) == baseline["supportedParameterCount"] == 287,
+            "Current catalog must have 287 registered sources")
+    food = {"survival.breadSatiety", "survival.sausageSatiety",
+            "survival.cannedFoodSatiety", "survival.milkSatiety"}
+    require(len(added) == 39 and food.issubset(added)
+            and len(added - food) == 35
+            and all(definitions[x]["tab"] == "stashes" for x in added - food),
+            "Frozen 248 -> 35 Stashes + 4 Food direct source boundary drift")
+    require(added & direct == food,
+            "Only new food satiety effects may add direct source routes")
+    require(len(direct) == 217 and len(baseline["editPoints"]) == 1238,
+            "Old direct and new food leaf count drift")
     # Reuse earlier source audit, but prove that the previously verified leaf
     # identities have not drifted. Counts alone can hide silent reassignment.
     direct_by_id = {}
@@ -57,7 +62,7 @@ def main() -> int:
         direct_by_id.setdefault(point["parameterId"], []).append(point)
     previous_direct = {pid: row for pid, row in old["parameters"].items()
                        if row["writerType"] == "direct"}
-    require(len(previous_direct) == 213 and set(previous_direct) == direct,
+    require(len(previous_direct) == 213 and set(previous_direct) == direct - food,
             "Previously source-audited direct parameter ownership changed")
     keys = ("scope", "file", "prototype", "key", "operation", "sourceRaw")
     for pid, record in previous_direct.items():
@@ -69,6 +74,11 @@ def main() -> int:
                     point.get("nodePath", []) == leaf.get("nodePath", [])
                     for point in points),
                 "Previously audited direct CFG destination/value drift: " + pid)
+    for pid in food:
+        points = [p for p in baseline["editPoints"] if p["parameterId"] == pid]
+        require(len(points) == 2 and {p["key"] for p in points} == {"ValueMin", "ValueMax"}
+                and all(p["operation"] == "negateSet" and p["file"] == "GameData/EffectPrototypes.cfg"
+                        for p in points), "New food signed direct writer pair drift: " + pid)
     require(len(routed) == 70 and set(routed) | direct == set(definitions)
             and not set(routed) & direct, "Writer route coverage/ownership drift")
 
@@ -86,7 +96,7 @@ def main() -> int:
             "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance"}
     require([len(mix), len(medical), len(gear), len(tier)] == [6, 12, 7, 10],
             "Changed Stashes source cohorts")
-    require(added == mix | medical | gear | tier
+    require(added == mix | medical | gear | tier | food
             and sum(map(len, (mix, medical, gear, tier))) == 35,
             "Unidentified or doubly owned incremental source ID")
     registered_mix = baseline["special"]["stashContentAndGearProduction"]["parameterIds"]
@@ -189,8 +199,8 @@ def main() -> int:
             writer = csv.DictWriter(out, fieldnames=list(rows[0]))
             writer.writeheader()
             writer.writerows(rows)
-    print("PASS: 248 prior audited IDs reused + 35 added Stashes IDs")
-    print("PASS: 213 old direct sources, 70 special routes, zero unmapped sources")
+    print("PASS: 248 frozen + 35 Stashes + 4 native food satiety IDs")
+    print("PASS: 213 old + 4 new direct sources, 70 special routes, zero unmapped sources")
     print("PASS: 35/35 new controls -> called production writers -> concrete CFG destinations")
     print("NOT VERIFIED: C# build / real emitted patches / Unreal game runtime")
     return 0

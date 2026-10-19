@@ -1,7 +1,7 @@
 {
   "writerBaselineVersion": 1,
   "gameVersion": "2.0.5",
-  "supportedParameterCount": 283,
+  "supportedParameterCount": 287,
   "deferredParameterIds": [],
   "editPoints": [
     {
@@ -688,6 +688,102 @@
       "sourceRaw": "0.015",
       "operation": "set",
       "role": "",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.breadSatiety",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "BreadSatiety2",
+      "nodePath": [],
+      "key": "ValueMin",
+      "sourceRaw": "-20",
+      "operation": "negateSet",
+      "role": "min",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.breadSatiety",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "BreadSatiety2",
+      "nodePath": [],
+      "key": "ValueMax",
+      "sourceRaw": "-20",
+      "operation": "negateSet",
+      "role": "max",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.sausageSatiety",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "SausageSatiety2",
+      "nodePath": [],
+      "key": "ValueMin",
+      "sourceRaw": "-30",
+      "operation": "negateSet",
+      "role": "min",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.sausageSatiety",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "SausageSatiety2",
+      "nodePath": [],
+      "key": "ValueMax",
+      "sourceRaw": "-30",
+      "operation": "negateSet",
+      "role": "max",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.cannedFoodSatiety",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "CannedSatiety3",
+      "nodePath": [],
+      "key": "ValueMin",
+      "sourceRaw": "-50",
+      "operation": "negateSet",
+      "role": "min",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.cannedFoodSatiety",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "CannedSatiety3",
+      "nodePath": [],
+      "key": "ValueMax",
+      "sourceRaw": "-50",
+      "operation": "negateSet",
+      "role": "max",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.milkSatiety",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "MilkSatiety4",
+      "nodePath": [],
+      "key": "ValueMin",
+      "sourceRaw": "-100",
+      "operation": "negateSet",
+      "role": "min",
+      "difficultySid": ""
+    },
+    {
+      "parameterId": "survival.milkSatiety",
+      "scope": "baseGame",
+      "file": "GameData/EffectPrototypes.cfg",
+      "prototype": "MilkSatiety4",
+      "nodePath": [],
+      "key": "ValueMax",
+      "sourceRaw": "-100",
+      "operation": "negateSet",
+      "role": "max",
       "difficultySid": ""
     },
     {

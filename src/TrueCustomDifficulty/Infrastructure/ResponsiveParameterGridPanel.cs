@@ -29,6 +29,10 @@ public sealed class ResponsiveParameterGridPanel : Panel
 
             // Survival
             ["survival.hungerRate"] = new("survival-hunger-1", 0),
+            ["survival.breadSatiety"] = new("survival-food-satiety-1", 0),
+            ["survival.sausageSatiety"] = new("survival-food-satiety-1", 1),
+            ["survival.cannedFoodSatiety"] = new("survival-food-satiety-2", 0),
+            ["survival.milkSatiety"] = new("survival-food-satiety-2", 1),
             ["survival.wellFedStaminaRegen"] = new("survival-hunger-1", 1),
             ["survival.hungerMediumStaminaRegen"] = new("survival-hunger-2", 0),
             ["survival.hungerStrongStaminaRegen"] = new("survival-hunger-2", 1),

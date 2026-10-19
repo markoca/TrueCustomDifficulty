@@ -104,6 +104,22 @@
       "kind": "slider",
       "number": 1.3
     },
+    "survival.breadSatiety": {
+      "kind": "slider",
+      "number": 20
+    },
+    "survival.sausageSatiety": {
+      "kind": "slider",
+      "number": 30
+    },
+    "survival.cannedFoodSatiety": {
+      "kind": "slider",
+      "number": 50
+    },
+    "survival.milkSatiety": {
+      "kind": "slider",
+      "number": 100
+    },
     "survival.hungerRate": {
       "kind": "slider",
       "number": 0.01

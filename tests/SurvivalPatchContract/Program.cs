@@ -11,6 +11,41 @@ namespace SurvivalPatchContract;
 // This DOES NOT load UE, prove original source ZIPs or test gameplay.
 internal static class Program
 {
+    // All four normal food effects have one exact signed native source pair.
+    private static void FoodSatietySourceContract()
+    {
+        var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+        foreach (var (id, sid, native) in new[]
+        {
+            ("survival.breadSatiety", "BreadSatiety2", 20.0),
+            ("survival.sausageSatiety", "SausageSatiety2", 30.0),
+            ("survival.cannedFoodSatiety", "CannedSatiety3", 50.0),
+            ("survival.milkSatiety", "MilkSatiety4", 100.0)
+        })
+        {
+            var source = vm.AllParameters.Single(p => p.Id == id);
+            var points = Baseline.EditPoints.Where(p => p.ParameterId == id).ToArray();
+            Check(source.Group == "Hunger" && source.IsControlVisible
+                  && !source.IsVisualAggregateMember
+                  && source.Minimum == 0 && source.Maximum == native * 2
+                  && source.TickFrequency == 5 && source.ReferenceNumber == native,
+                "Food Hunger Relief source card is not independent/native: " + id);
+            Check(points.Length == 2
+                  && points.Select(p => p.Key).ToHashSet(StringComparer.Ordinal)
+                      .SetEquals(new[] { "ValueMin", "ValueMax" })
+                  && points.All(p => p.Prototype == sid
+                       && p.File == "GameData/EffectPrototypes.cfg"
+                       && p.Operation == "negateSet"
+                       && p.SourceRaw == "-" + native.ToString("0", CultureInfo.InvariantCulture)),
+                "Food Hunger Relief writer pair drifted: " + id);
+            source.CurrentNumber = native + 5;
+            Check(source.CurrentDisplay.Contains((native + 5).ToString("0", CultureInfo.InvariantCulture)),
+                "Food player-facing relief number became negative: " + id);
+            source.ResetToReference();
+        }
+        _passed++;
+    }
+
     // Verify both independent Master conditional knobs remain real source-
     // backed parameters and retain their pre-redesign writer/dependency data.
     private static void MasterPenaltyKnobSourceContract()
@@ -167,8 +202,9 @@ internal static class Program
             var cohort = Catalog.Parameters
                 .Where(p => p.Id.StartsWith("survival.", StringComparison.Ordinal))
                 .OrderBy(p => p.Id, StringComparer.Ordinal).ToArray();
-            Check(cohort.Length == 64, "Survival catalog no longer contains exactly 64 parameters");
+            Check(cohort.Length == 68, "Survival catalog no longer contains exactly 68 parameters");
 
+            FoodSatietySourceContract();
             MasterPenaltyKnobSourceContract();
             StarvationKnobRangeContract();
             NativeHungerFatiguePrimarySourceContract();
@@ -183,14 +219,14 @@ internal static class Program
                 "Survival catalog-to-live-VM exclusions changed: "
                 + string.Join(", ", unmounted));
             var live = cohort.Where(p => loaded.Contains(p.Id)).ToArray();
-            Check(live.Length == 63, "Expected 63 live Survival source-backed parameters");
+            Check(live.Length == 67, "Expected 67 live Survival source-backed parameters");
 
             var points = Baseline.EditPoints
                 .Where(p => p.ParameterId.StartsWith("survival.", StringComparison.Ordinal))
                 .ToArray();
-            Check(points.Length == 145, "Survival manifest no longer contains 145 source edit points");
+            Check(points.Length == 153, "Survival manifest no longer contains 153 source edit points");
             Check(points.All(p => p.Scope == "baseGame"), "Survival source unexpectedly targets DLC");
-            Check(points.Select(p => p.ParameterId).Distinct().Count() == 64,
+            Check(points.Select(p => p.ParameterId).Distinct().Count() == 68,
                 "Survival manifest-to-catalog parameter inventory differs");
             Check(points.Select(p => p.ParameterId).ToHashSet(StringComparer.Ordinal)
                       .SetEquals(cohort.Select(p => p.Id)),

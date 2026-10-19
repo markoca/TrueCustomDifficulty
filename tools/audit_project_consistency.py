@@ -1988,7 +1988,7 @@ if _build_name_errors:
 else:
     note("preset-aware triplet naming locked: zzzzz_TrueCustomDifficulty_<loaded preset>; safe underscores; Custom fallback")
 
-# Current twelve source-backed factory presets cover every one of the 283 live catalog IDs.
+# Current twelve source-backed factory presets cover every one of the 287 live catalog IDs.
 _factory_preset_names = [
     "Anomaly Runner", "Field Medic", "Hardcore+", "Hardcore",
     "Immersive", "Mercenary", "Mutant Hunter", "Outcast",
@@ -2017,8 +2017,8 @@ for _name in _factory_preset_names:
         continue
     _preset = json.loads(_preset_path.read_text(encoding="utf-8"))
     _values = _preset.get("values", {})
-    if len(_values) != 283:
-        _factory_errors.append(f"{_name}: {len(_values)} values, expected 283")
+    if len(_values) != 287:
+        _factory_errors.append(f"{_name}: {len(_values)} values, expected 287")
     if _preset.get("referenceDifficulty") not in {"Novice", "Stalker", "Veteran", "Master"}:
         _factory_errors.append(f"{_name}: invalid referenceDifficulty={_preset.get('referenceDifficulty')}")
     if f'Presets\\{_name}.json' not in _factory_csproj_text:
@@ -2041,15 +2041,17 @@ _factory_new_tier_chance_ids = {
     "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
 }
 _factory_legacy_catalog = {pid: p for pid, p in _factory_catalog.items()
-                           if pid not in _factory_new_tier_chance_ids
+                           if pid not in {"survival.breadSatiety", "survival.sausageSatiety",
+                               "survival.cannedFoodSatiety", "survival.milkSatiety"}
+                           and pid not in _factory_new_tier_chance_ids
                            and not pid.startswith(("loot.stashMix", "loot.stashGear",
                                "loot.stashMedical", "loot.stashMedkit", "loot.stashArmyMedkit"))}
 _factory_tuning = json.loads((ROOT / "tools/factory_preset_expansion.json").read_text(encoding="utf-8"))
 _factory_groups = _factory_tuning["groups"]
 _factory_tuning_profiles = _factory_tuning["profiles"]
 _factory_tuned_ids = [pid for members in _factory_groups.values() for pid in members]
-if len(_factory_catalog) != 283 or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
-    _factory_errors.append("expected 283 current source IDs and 34 historical + 3 drink duration matrix slots")
+if len(_factory_catalog) != 287 or len(_factory_tuned_ids) != 37 or len(set(_factory_tuned_ids)) != 37:
+    _factory_errors.append("expected 287 current source IDs and 34 historical + 3 drink duration matrix slots")
 if set(_factory_tuning_profiles) != set(_factory_preset_names):
     _factory_errors.append("tuning matrix has missing/unknown factory names")
 
@@ -2244,7 +2246,7 @@ for _role, _signature in _role_matrix.get("profiles", {}).items():
     _path = _factory_preset_dir / f"{_role}.json"
     _document = json.loads(_path.read_text(encoding="utf-8"))
     _entries = _document["values"]
-    if len(_entries) != 283 or set(_entries) != set(_factory_catalog):
+    if len(_entries) != 287 or set(_entries) != set(_factory_catalog):
         _factory_errors.append(f"{_role}: incomplete native catalog")
     if len(_signature.get("changes", {})) < 30:
         _factory_errors.append(f"{_role}: insufficient role-specific rebalancing")
@@ -2330,7 +2332,7 @@ for _role, _settings in _consumable_matrix.get("profiles", {}).items():
         or _snapshot.get("medicalOverride") is not _medical_override
         or not _drink_override):
         _factory_errors.append(f"{_role}: missing or inconsistent override mode")
-    if len(_entries) != 283 or set(_entries) != set(_factory_catalog):
+    if len(_entries) != 287 or set(_entries) != set(_factory_catalog):
         _factory_errors.append(f"{_role}: lost native catalog values")
     if not _settings.get("intent"):
         _factory_errors.append(f"{_role}: missing balance intent")
@@ -2657,7 +2659,7 @@ else:
         or _final_cfg_index.get("counts", {}).get("editable") != 235
         or _final_cfg_index.get("counts", {}).get("directLeafPoints") != 1230):
         _factory_errors.append("final CFG mapping inventory differs from live catalogue/baseline")
-if "283 unique" not in (ROOT / "tools/audit_final_cfg_mapping.py").read_text(encoding="utf-8"):
+if "287 unique" not in (ROOT / "tools/audit_final_cfg_mapping.py").read_text(encoding="utf-8"):
     _factory_errors.append("new static CFG mapping writer audit entrypoint is missing")
 _final_workflow = (ROOT / ".github/workflows/static-audit.yml").read_text(encoding="utf-8")
 if ("python tools/audit_final_cfg_mapping.py" not in _final_workflow
@@ -2673,7 +2675,7 @@ if "LegacyFactoryPresetNames" not in _factory_service_text or "File.Delete(legac
 if _factory_errors:
     fail("current 12 factory presets drifted: " + "; ".join(_factory_errors))
 else:
-    note("factory presets: twelve 283-source scarcity-first profiles with independent Water values; exact-stock upgrade preserves edits")
+    note("factory presets: twelve 287-source scarcity-first profiles with independent Water values; exact-stock upgrade preserves edits")
 
 # Originally twelve visual-only live projections approved 2026-10-14;
 # nine remain after retiring the Medical Items percentage / bleed stage
@@ -3803,7 +3805,7 @@ _global_expected_tabs = {
     "combat": 17,
     "health": 13,
     "stamina": 7,
-    "survival": 31,
+    "survival": 35,
     "economy": 17,
     "equipment": 4,
     "master": 20,
@@ -3970,14 +3972,14 @@ _global_anomaly_ids = {
 }
 _global_anomaly_missing = sorted(pid for pid in _global_anomaly_ids if f'"{pid}"' not in _global_vm_source)
 
-if len(parameters) != 283 or len(_global_visible) != 178 or len(_global_hidden) != 105:
-    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 283/178/105")
+if len(parameters) != 287 or len(_global_visible) != 182 or len(_global_hidden) != 105:
+    fail(f"global UI accounting drifted: catalog={len(parameters)} visible={len(_global_visible)} hidden={len(_global_hidden)}; expected 287/182/105")
 elif _global_tab_counts != _global_expected_tabs:
     fail(f"global visible tab counts drifted: {_global_tab_counts}; expected {_global_expected_tabs}")
-elif _global_confirmed != 117 or _global_runtime != 61:
-    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/62")
-elif _global_control_counts != {"slider": 163, "toggle": 13, "choiceSlider": 1, "range": 1}:
-    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 163 sliders / 13 toggles / 1 choiceSlider / 1 range")
+elif _global_confirmed != 117 or _global_runtime != 65:
+    fail(f"global visible status split drifted: confirmed={_global_confirmed} runtime={_global_runtime}; expected 117/65")
+elif _global_control_counts != {"slider": 167, "toggle": 13, "choiceSlider": 1, "range": 1}:
+    fail(f"global visible control-type split drifted: {_global_control_counts}; expected 167 sliders / 13 toggles / 1 choiceSlider / 1 range")
 elif _global_duplicate_labels:
     fail(f"duplicate player-facing labels detected: {_global_duplicate_labels}")
 elif _global_out_of_range:
@@ -4002,7 +4004,7 @@ elif _global_anomaly_missing or "SetEffectiveDamageMultiplierProvider" not in _g
 elif not _global_doc.exists():
     fail("global cross-domain audit document missing from docs/")
 else:
-    note("current cross-domain structural audit: 283 catalog / 172 visible / 111 hidden; current visible sources audited by status; zero direct collisions")
+    note("current cross-domain structural audit: 287 catalog / 182 visible / 105 hidden; current visible sources audited by status; zero direct collisions")
 
 # Historical evidence (not shipped in current repo) - never report as verified.
 not_run("v0.2.51-v0.3.0 override/CFG-placement/provenance/production snapshots (current UI/Combat tools + active source checks are authoritative): archived CSV/patch snapshot absent; current active catalog/manifest contracts checked elsewhere")
@@ -5758,8 +5760,8 @@ note('Master healing three source sliders 0–100% / original references; starva
 _water_test = (ROOT / "tests/SurvivalPatchContract/Program.cs").read_text(encoding="utf-8")
 if ('TestIndependentWaterStrengths();' not in _water_test
     or 'Veteran-Independent-Water-Strengths' not in _water_test
-    or 'cohort.Length == 64' not in _water_test
-    or 'points.Select(p => p.ParameterId).Distinct().Count() == 64' not in _water_test):
+    or 'cohort.Length == 68' not in _water_test
+    or 'points.Select(p => p.ParameterId).Distinct().Count() == 68' not in _water_test):
     fail("Water independent source writer regression coverage missing")
 for _doc in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
     if "Independent green Water stamina bonus and cost-cut bars (HISTORICAL; SUPERSEDED)" not in (DOCS / _doc).read_text(encoding="utf-8"):

@@ -1,5 +1,19 @@
 # Survival CFG Mapping — v0.2.47
 
+## 2026-10-19 — CURRENT: native food hunger relief
+
+Four independent Survival → Hunger controls change **normal per-item hunger reduction**, not global hunger build-up or the not-runtime-verified difficulty `Effect_Satiety` scalar. Each positive visible number is negated by the production direct CFG writer into both `ValueMin` and `ValueMax` of `GameData/EffectPrototypes.cfg`.
+
+| Parameter ID | Native effect prototype | Native signed min/max | Visible max | Native step |
+|---|---|---:|---:|---:|
+| `survival.breadSatiety` | `BreadSatiety2` | -20 / -20 | 40 pts | 5 pts |
+| `survival.sausageSatiety` | `SausageSatiety2` | -30 / -30 | 60 pts | 5 pts |
+| `survival.cannedFoodSatiety` | `CannedSatiety3` | -50 / -50 | 100 pts | 5 pts |
+| `survival.milkSatiety` | `MilkSatiety4` | -100 / -100 | 200 pts | 5 pts |
+
+At 0 the normal food source removes no HungerPoints; larger values remove more. The four direct source IDs add eight writer leaves and four visible sliders in two compact pairs, without altering Bread/Sausage/Canned Food healing, Fresh Bread, alcohol removal, drink hunger effects, Weird Kettle alternatives or difficulty scaler values. In-game runtime check remains outstanding.
+
+
 ### 2026-10-14 — Bleeding UI only: remove timeline and scenario controls (CURRENT)
 
 Bleeding's seven CFG-backed controls still cover severity/inflicted, natural recovery, LOW/MEDIUM/SEVERE HP damage per tick, Medium threshold and Severe threshold. The interactive **BLEEDING DAMAGE PROFILE** remains the sole way to adjust HP/TICK and thresholds, while its three LOW/MEDIUM/SEVERE readout cards are now passive. Remove the separate hypothetical death/tick timeline and scenario selection; the retired preview had no CFG writer and is no longer projected from Health-tab Max HP. Compact the board and host to 466 DIP. No CFG, edit-point, value, preset or scenario-dependent gameplay logic was changed. Older descriptions of time estimates below are historical.
@@ -288,7 +302,7 @@ These Master-only bundles are configured in the **Master** tab. Their activation
 
 ## v0.1.32 cleanup
 
-`Effect_Satiety` and `SleepHoursMultiplier` remain documented as runtime fields but are no longer exposed as player controls. The tuner uses `Hunger Build-up Rate` as its single hunger-speed control.
+`Effect_Satiety` and `SleepHoursMultiplier` remain documented as runtime fields but are no longer exposed as player controls. The tuner uses `Hunger Build-up Rate` as its single passive hunger-speed control. Four normal per-item hunger-relief strengths were added in October 2026.
 
 ### Radiation Damage
 

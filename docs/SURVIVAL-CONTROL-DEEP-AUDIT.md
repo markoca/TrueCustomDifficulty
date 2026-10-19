@@ -1,5 +1,19 @@
 # Survival Control Deep Audit — v0.2.47
 
+## 2026-10-19 — CURRENT: native food hunger relief
+
+Four independent Survival → Hunger controls change **normal per-item hunger reduction**, not global hunger build-up or the not-runtime-verified difficulty `Effect_Satiety` scalar. Each positive visible number is negated by the production direct CFG writer into both `ValueMin` and `ValueMax` of `GameData/EffectPrototypes.cfg`.
+
+| Parameter ID | Native effect prototype | Native signed min/max | Visible max | Native step |
+|---|---|---:|---:|---:|
+| `survival.breadSatiety` | `BreadSatiety2` | -20 / -20 | 40 pts | 5 pts |
+| `survival.sausageSatiety` | `SausageSatiety2` | -30 / -30 | 60 pts | 5 pts |
+| `survival.cannedFoodSatiety` | `CannedSatiety3` | -50 / -50 | 100 pts | 5 pts |
+| `survival.milkSatiety` | `MilkSatiety4` | -100 / -100 | 200 pts | 5 pts |
+
+At 0 the normal food source removes no HungerPoints; larger values remove more. The four direct source IDs add eight writer leaves and four visible sliders in two compact pairs, without altering Bread/Sausage/Canned Food healing, Fresh Bread, alcohol removal, drink hunger effects, Weird Kettle alternatives or difficulty scaler values. In-game runtime check remains outstanding.
+
+
 ## 2026-10-15 Bleeding visual ruler extension
 
 Remove the redundant `GLOBAL EFFECTS` caption. The same compact editable Bleeding Damage Profile graph now has a 0–6 HP/tick **visual ruler** (seven ticks). `DamageToY` and vertical drag use the shared 6-point scale, but native gameplay source domains remain Low 0–2, Medium 0–3 and Severe 0–4 HP/tick. All seven source controls, thresholds, reference marks, stage readouts, CFG/preset serialization and 466-DIP frame remain unchanged.

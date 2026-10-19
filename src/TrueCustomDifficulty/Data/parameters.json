@@ -1622,6 +1622,194 @@
       "interaction": "Vanilla hunger states still decide when their effects become active. Food Fullness Effect and consumables determine how quickly hunger is pushed back down."
     },
     {
+      "id": "survival.breadSatiety",
+      "tab": "survival",
+      "group": "Hunger",
+      "label": "Bread Hunger Relief",
+      "description": "Changes how many hunger points bread removes when eaten. Does not affect food healing, alcohol recovery or Weird Kettle alternatives.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "pts",
+        "valueLabel": "Hunger points removed"
+      },
+      "vanilla": {
+        "All": 20
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 40,
+        "step": 5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "BreadSatiety2",
+          "path": "ValueMin|ValueMax",
+          "operation": "negateSet"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "2.0.5 native effect BreadSatiety2: both source bounds are -20. Confirm final gameplay behavior in game.",
+          "Normal food effect only; no edits to healing, alternate effect lists or other consumables."
+        ]
+      },
+      "rationale": "Eating bread removes this many hunger points.",
+      "logic": "This changes hunger relief from one item, not the speed at which hunger builds up.",
+      "interaction": "More points means greater relief per item. The usual food healing and special effects are separate.",
+      "exposeInUi": true
+    },
+    {
+      "id": "survival.sausageSatiety",
+      "tab": "survival",
+      "group": "Hunger",
+      "label": "Sausage Hunger Relief",
+      "description": "Changes how many hunger points sausage removes when eaten. Does not affect food healing, alcohol recovery or Weird Kettle alternatives.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "pts",
+        "valueLabel": "Hunger points removed"
+      },
+      "vanilla": {
+        "All": 30
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 60,
+        "step": 5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "SausageSatiety2",
+          "path": "ValueMin|ValueMax",
+          "operation": "negateSet"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "2.0.5 native effect SausageSatiety2: both source bounds are -30. Confirm final gameplay behavior in game.",
+          "Normal food effect only; no edits to healing, alternate effect lists or other consumables."
+        ]
+      },
+      "rationale": "Eating sausage removes this many hunger points.",
+      "logic": "This changes hunger relief from one item, not the speed at which hunger builds up.",
+      "interaction": "More points means greater relief per item. The usual food healing and special effects are separate.",
+      "exposeInUi": true
+    },
+    {
+      "id": "survival.cannedFoodSatiety",
+      "tab": "survival",
+      "group": "Hunger",
+      "label": "Canned Food Hunger Relief",
+      "description": "Changes how many hunger points canned food removes when eaten. Does not affect food healing, alcohol recovery or Weird Kettle alternatives.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "pts",
+        "valueLabel": "Hunger points removed"
+      },
+      "vanilla": {
+        "All": 50
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "CannedSatiety3",
+          "path": "ValueMin|ValueMax",
+          "operation": "negateSet"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "2.0.5 native effect CannedSatiety3: both source bounds are -50. Confirm final gameplay behavior in game.",
+          "Normal food effect only; no edits to healing, alternate effect lists or other consumables."
+        ]
+      },
+      "rationale": "Eating canned food removes this many hunger points.",
+      "logic": "This changes hunger relief from one item, not the speed at which hunger builds up.",
+      "interaction": "More points means greater relief per item. The usual food healing and special effects are separate.",
+      "exposeInUi": true
+    },
+    {
+      "id": "survival.milkSatiety",
+      "tab": "survival",
+      "group": "Hunger",
+      "label": "Condensed Milk Hunger Relief",
+      "description": "Changes how many hunger points condensed milk removes when eaten. Does not affect food healing, alcohol recovery or Weird Kettle alternatives.",
+      "control": "slider",
+      "valueKind": "raw",
+      "display": {
+        "primary": "raw",
+        "rawFormat": "0",
+        "unit": "pts",
+        "valueLabel": "Hunger points removed"
+      },
+      "vanilla": {
+        "All": 100
+      },
+      "default": {
+        "mode": "fixedVanilla"
+      },
+      "slider": {
+        "min": 0,
+        "max": 200,
+        "step": 5,
+        "stepMode": "absolute"
+      },
+      "targets": [
+        {
+          "scope": "baseGame",
+          "file": "GameData/EffectPrototypes.cfg",
+          "prototype": "MilkSatiety4",
+          "path": "ValueMin|ValueMax",
+          "operation": "negateSet"
+        }
+      ],
+      "support": {
+        "status": "runtime_test_required",
+        "notes": [
+          "2.0.5 native effect MilkSatiety4: both source bounds are -100. Confirm final gameplay behavior in game.",
+          "Normal food effect only; no edits to healing, alternate effect lists or other consumables."
+        ]
+      },
+      "rationale": "Eating condensed milk removes this many hunger points.",
+      "logic": "This changes hunger relief from one item, not the speed at which hunger builds up.",
+      "interaction": "More points means greater relief per item. The usual food healing and special effects are separate.",
+      "exposeInUi": true
+    },
+    {
       "id": "survival.hungerLowThreshold",
       "tab": "survival",
       "group": "Hunger",

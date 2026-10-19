@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Release gate: 178 clear WHAT IT DOES explanations, source semantics protected."""
+"""Release gate: 182 clear WHAT IT DOES explanations, source semantics protected."""
 import json
 import re
 from pathlib import Path
@@ -9,7 +9,7 @@ src = ROOT / "src/TrueCustomDifficulty"
 catalog = json.loads((src / "Data/parameters.json").read_text(encoding="utf-8"))
 rows = catalog["parameters"]
 visible = {p["id"]: p for p in rows if p.get("exposeInUi", True)}
-assert len(rows) == 283 and len(visible) == 178, "Catalog census changed"
+assert len(rows) == 287 and len(visible) == 182, "Catalog census changed"
 banned = ("CFG", "ActorSID", "SmartLoot", "ItemGenerator", "SHA256",
           "per-entry", "source-native", "native Weight", "authored", "prototype",
           "backend")
@@ -51,7 +51,7 @@ for key in ('"StashContentMix" => "Ammo Quantity changes',
             '"HumanCombatProfile" => "Drag the bottom ring'):
     assert key in vm, ("Outdated player guidance", key)
 for f in ("UI-DESIGN-LOCK.md", "VISUAL-CONTROL-SYSTEM.md"):
-    assert "CURRENT RC rationale readability lock (178 visible)" in (
+    assert "CURRENT RC rationale readability lock (182 visible)" in (
         ROOT / "docs" / f).read_text(encoding="utf-8"), f
-print("PASS: 178 readable player rationales, 8 new stash descriptions, 25 help families and source distinctions")
+print("PASS: 182 readable player rationales, 8 new stash descriptions, 25 help families and source distinctions")
 print("NOT RUN: .NET build, Wine visual inspection or gameplay tests")

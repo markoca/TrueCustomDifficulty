@@ -75,3 +75,7 @@ Additional source details: drink `Water` has `WaterStamina2` `Stamina` 25% / 5s,
 - `survival.psiBlockRecovery`, `survival.psiBlockDuration`
 
 All six appear in **Survival → Consumable Effects**, within the existing `ConsumableMixer` family. Magnitudes are direct `set` writes to raw effect `ValueMin` and `ValueMax`; durations are direct seconds `set` writes, preserving original `KeepNew`. The shared `OVERRIDE LIMITS` preset flag sets the medicine editor ceiling to 900s when ON and preserves their individual native caps when OFF; it does not add a CFG boolean. In-game acceptance is still pending.
+
+### 2026-10-19 — Normal food hunger-relief editors
+
+Bread, Sausage, CannedFood and Milk are now four independent Survival → Hunger sliders, from `BreadSatiety2` (-20), `SausageSatiety2` (-30), `CannedSatiety3` (-50), `MilkSatiety4` (-100). Positive hunger points in the editor become negative native `ValueMin`/`ValueMax` through the writer. Fresh Bread, healing, drunkness, Weird Kettle, alcohol and the difficulty `Effect_Satiety` scalar remain unchanged. Four compact cards and 12 neutral factory preset keys; in-game acceptance pending.

@@ -371,6 +371,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "bf7d2e1c12d06efd6c8e975be8daca5fe567652d"
     };
 
+    // Git blob identities of pristine 283-source stock presets before the
+    // four new native Food Hunger Relief controls. Player edits are preserved.
+    private static readonly Dictionary<string, string> PreFoodSatietyFactoryBlobs = new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "545b42bcf25017b101ec422d9551bef8e253fe91",
+        ["Field Medic"] = "eba521229774053fb5a8d90533b800dc485b9fce",
+        ["Hardcore"] = "00a5a6509379e0488bcf3ab853708a14e2336d0a",
+        ["Hardcore+"] = "6a6d863efec3c2c5f1a59879be1f621b4b7bb974",
+        ["Immersive"] = "3c8b97563572ce671fd682baa3fdad308dd95f04",
+        ["Mercenary"] = "5e2bee980a627bb6a017040d81333288cb0a2123",
+        ["Mutant Hunter"] = "1a9992be16f440ed21c968469ed27b4634f68c77",
+        ["Outcast"] = "30a9b2d9a0b395c1e2e02018915abd9e463fe2c9",
+        ["Scavenger"] = "21b55b3aa26a841058ac93e80484fe57ba5c10c1",
+        ["Smuggler"] = "28e4ab24a8fc8b94c227867d233426a016704f51",
+        ["Tactical"] = "daef93d5471073e2a1bdefa43e577389191442f5",
+        ["Wanderer"] = "ad38cee1ba7dd95c87a2d6b9cb6a7ad2d6a15d3a",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -387,7 +405,8 @@ public sealed class PresetDirectoryService
             && !PreEffectiveALifeFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreStashContentGearFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreStashMedicalFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreTierChanceFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreTierChanceFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreFoodSatietyFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -429,7 +448,9 @@ public sealed class PresetDirectoryService
                 || (PreStashMedicalFactoryBlobs.TryGetValue(name, out var preMedicalHash)
                     && actual.Equals(preMedicalHash, StringComparison.OrdinalIgnoreCase))
                 || (PreTierChanceFactoryBlobs.TryGetValue(name, out var tierChanceHash)
-                    && actual.Equals(tierChanceHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(tierChanceHash, StringComparison.OrdinalIgnoreCase))
+                || (PreFoodSatietyFactoryBlobs.TryGetValue(name, out var foodBeforeHash)
+                    && actual.Equals(foodBeforeHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {

@@ -185,8 +185,8 @@ def main():
     baseline = json.loads((DATA / "cfg-writer-baseline.json").read_text(encoding="utf-8"))
     code = WRITER_PATH.read_text(encoding="utf-8")
     definitions = {p["id"]: p for p in catalog["parameters"]}
-    require(len(definitions) == len(catalog["parameters"]) == 283, "283 unique CFG source IDs expected")
-    require(baseline["supportedParameterCount"] == 283, "writer expected coverage drift")
+    require(len(definitions) == len(catalog["parameters"]) == 287, "287 unique CFG source IDs expected")
+    require(baseline["supportedParameterCount"] == 287, "writer expected coverage drift")
     require(not baseline["deferredParameterIds"], "deferred production parameters")
     require(baseline["gameVersion"] == catalog["source"]["gameVersion"] == "2.0.5", "source/game baseline mismatch")
     require(set(catalog["difficultyProfiles"]) == set(SIDS), "difficulty baseline drift")
@@ -214,13 +214,13 @@ def main():
         if point["operation"] not in ("set", "toggleSourceOrZero"):
             parse_source(point["sourceRaw"])
         direct[pid].append(point)
-    require(len(baseline["editPoints"]) == 1230 and len(direct) == 213,
+    require(len(baseline["editPoints"]) == 1238 and len(direct) == 217,
             "direct writer point count drift")
     special = method_routes(baseline["special"])
     require(len(special) == 70, "special writer route count drift")
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     require(set(direct) | set(special) == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 270, "UI dimension count drift")
+    require(len(definitions) - len(NON_UI) == 274, "UI dimension count drift")
     require(NON_UI.issubset(definitions), "missing intentional hidden source")
     for pid in NON_UI:
         require(definitions[pid].get("exposeInUi") is False, "non-UI setting exposed " + pid)
@@ -290,7 +290,7 @@ def main():
     inert = []
     for name in NAMES:
         doc = json.loads((PRESETS / (name + ".json")).read_text(encoding="utf-8"))
-        require(len(doc["values"]) == 283 and set(doc["values"]) == set(definitions),
+        require(len(doc["values"]) == 287 and set(doc["values"]) == set(definitions),
                 "factory catalog source ID drift " + name)
         sid = SIDS[doc["referenceDifficulty"]]
         for pid, p in definitions.items():
