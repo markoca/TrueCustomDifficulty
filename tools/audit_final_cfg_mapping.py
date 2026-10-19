@@ -36,6 +36,10 @@ NON_UI = {
     "stamina.lowRecoveryDuration", "stamina.sprintUnderRunSpeedRegenCoef",
     "stamina.joggingRegenCoef", "stamina.slowRunRegenCoef",
     "stamina.sprintRegenCoef", "stamina.runRegenCoef",
+    # Retained source/preset IDs that do not instantiate ParameterViewModels.
+    # They are still covered by static direct/special CFG ownership checks.
+    "environment.diamondHealthDamage", "environment.diamondBleeding",
+    "loot.standardStashChanceScale", "loot.rareStashChanceScale",
 }
 
 def require(value, message):
@@ -220,8 +224,9 @@ def main():
     require(len(special) == 70, "special writer route count drift")
     require(not set(direct).intersection(special), "direct/special parameter double ownership")
     require(set(direct) | set(special) == set(definitions), "unrouted CFG IDs")
-    require(len(definitions) - len(NON_UI) == 274, "UI dimension count drift")
-    require(NON_UI.issubset(definitions), "missing intentional hidden source")
+    require(len(definitions) - len(NON_UI) == 270, "UI dimension count drift")
+    require(len(NON_UI) == 17 and NON_UI.issubset(definitions),
+            "17 non-mounted catalog source IDs required")
     for pid in NON_UI:
         require(definitions[pid].get("exposeInUi") is False, "non-UI setting exposed " + pid)
     for pid, p in definitions.items():
@@ -235,6 +240,14 @@ def main():
             "difficulty/DLC guards missing from direct dispatch")
     require("writtenParameters.Add(parameter.Id)" in main_write,
             "direct writer does not record actual edits")
+    # Keep the CLI static mapping receipt aligned with the actual production
+    # AllControlsPatchContract probe cohort, not all serializable IDs. These
+    # 17 sources remain in the mapping inventory but are not VM probes.
+    all_controls = (ROOT / "tests/AllControlsPatchContract/Program.cs").read_text(encoding="utf-8")
+    non_ui_section = all_controls.split("HashSet<string> NonUi =", 1)[1].split("};", 1)[0]
+    contract_non_ui = set(re.findall(r'"([^"]+)"', non_ui_section))
+    require(contract_non_ui == NON_UI,
+            "all-controls executable contract and static mapper exclude different IDs")
     # The NPC ammo amount may be edited/saved while a Water/None corpse package
     # is active. Never acknowledge it as emitted unless the chosen package
     # actually references NPC_Ammo_Smart.
