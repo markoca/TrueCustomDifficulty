@@ -1,3 +1,11 @@
+## 2026-10-19 — CURRENT: compact Standard / Rare Chance cards without NATIVE captions
+
+**Supersedes earlier 88-DIP Chance card layouts and NATIVE row descriptions.** All nine Standard/Rare category cards display only their category label, live percentage, source/reference rail marker, horizontal slider and small 0%/100% endpoints. The technical `NATIVE XX–YY%` CFG-value readout is **not drawn** in player-facing tier cards. The underlying nine Chance source IDs, source-native mapping, CFG writer, 1%-step editing, presets and other Stashes controls are unchanged.
+
+**Player-facing hover help:** Hovering any of the eight relative Chance cards gives: “100% keeps each item's original Chance. It does not guarantee that the item or category will appear in a stash.” Rare Coupons alone uses an absolute Chance field; its hover text explains that the per-entry Chance is not a stash-wide guaranteed reward. The existing contextual CONTROLS help is synchronized. Hover hints do not invent a drop chance or display individual CFG ranges.
+
+**Compact responsive geometry (DIP):** width remains capped at 778; tier cards are 70 high, pitched every 78 (was 88/96). STANDARD retains 3 wide / 2 narrow columns at y441/595, outer height 122/200. RARE begins y571/803, outer height 200/278 with 3 wide / 2 narrow columns. Measured `StashContentMixHeight` is **785 wide / 1095 narrow** (host 700-DIP threshold, matching paint width 670). All tier hit targets and the original Stamina Usage-style 0–100% slider alignment remain intact. The BASIC controls and editor family are not modified.
+
 ## 2026-10-19 — CURRENT: Standard / Rare Chance controls max 100%
 
 All nine visible Standard (Medical, Drinks, Coupons) and Rare (Ammo, Medical, Food, Drinks, Grenades, Coupons) Chance rails have a real 0–100% range in 1-percentage-point increments. Eight relative category Chance factors use existing IDs and numeric 0..1 instead of 0..2 (Standard Coupons previously allowed 0..10). The ninth, Rare Coupons, retains its genuine absolute native 0..1 Chance. The WPF range and endpoint labels already read ParameterViewModel.Minimum/Maximum from the catalog, so handle mapping and right endpoint now agree at 100%, without a fake hardcoded ruler. Keep the compact 88-DIP cards, same selection/hover, wheel, drag, keyboard, right-click reset, and source-backed read-only NATIVE percentages.

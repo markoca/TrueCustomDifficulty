@@ -154,7 +154,18 @@ assert '"StashRewardProfile" => new[]' not in ui
 assert 'case "StashRewardProfile":' not in ui
 assert 'DrawCompactStashRewards(' not in ui
 assert '"StashRewardProfile"' not in pvm
-assert '=> width >= 700.0 ? 839.0 : 1185.0;' in ui
+assert '=> width >= 700.0 ? 785.0 : 1095.0;' in ui
+assert 'wide ? 122.0 : 200.0' in ui
+assert 'wide ? 571.0 : 803.0' in ui
+assert 'wide ? 200.0 : 278.0' in ui
+assert 'const double pitch = 78.0;' in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
+assert 'new Rect(x, y, cellWidth, 70.0)' in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
+assert 'CreateText("NATIVE " + currentText' not in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
+assert '_stashChanceTooltipAreas.Add((cell, id == "loot.expensiveStashMoneyChance"))' in read(src / "Controls/AggregateVisualControl.StashBranch.cs")
+assert 'UpdateStashChanceTooltip(point);' in ui
+assert '100% keeps each item\'s original Chance.' in ui
+assert 'per-entry Chance for Rare Coupons' in ui
+assert 'NATIVE shows actual resulting Chance' not in pvm
 content_body = ui.split("private void DrawStashContentMix(", 1)[1].split("private void DrawStashMedicalComposition(", 1)[0]
 tier_body = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split("private void DrawStashChanceTier(", 1)[1]
 assert '"loot.cheapStashAmmoQuantity"' in content

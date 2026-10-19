@@ -344,22 +344,9 @@ public sealed partial class AggregateVisualControl
         var columns = outer.Width >= 670.0 ? 3 : 2;
         const double inset = 12.0;
         const double gap = 8.0;
-        const double pitch = 96.0;
+        const double pitch = 78.0;
         var cellWidth = Math.Max(1.0,
             (outer.Width - 2.0 * inset - (columns - 1) * gap) / columns);
-        var selectedDifficulty = SelectedReferenceDifficulty switch
-        {
-            "Novice" => "Easy", "Stalker" => "Medium",
-            "Veteran" => "Hard", "Master" => "Stalker",
-            _ => "Easy"
-        };
-        var effective = CurrentStashEffectiveState(selectedDifficulty);
-        static string PercentRange(double minimum, double maximum) =>
-            Math.Abs(minimum - maximum) < 0.000001
-                ? $"{maximum * 100.0:0.#}%"
-                : $"{minimum * 100.0:0.#}–{maximum * 100.0:0.#}%";
-
-
         for (var n = 0; n < chanceKinds.Length; n++)
         {
             var kind = chanceKinds[n];
@@ -386,7 +373,10 @@ public sealed partial class AggregateVisualControl
                 throw new InvalidDataException("Native Chance rows missing " + id);
             var x = outer.Left + inset + n % columns * (cellWidth + gap);
             var y = outer.Top + 35.0 + n / columns * pitch;
-            var cell = new Rect(x, y, cellWidth, 88.0);
+            var cell = new Rect(x, y, cellWidth, 70.0);
+            // Source Chance diagnostics stay in the backend, not on player cards.
+            // The card itself owns a brief contextual tooltip on hover.
+            _stashChanceTooltipAreas.Add((cell, id == "loot.expensiveStashMoneyChance"));
             var tone = StashMixPalette[kind];
             dc.DrawRoundedRectangle(CloneWithOpacity(panel, .5),
                 new Pen(CloneWithOpacity(tone, .75), .9), cell, 3.0, 3.0);
@@ -439,13 +429,6 @@ public sealed partial class AggregateVisualControl
                 new Point(rail.Left, y + 53.0), 9.1, muted, FontWeights.SemiBold);
             DrawRightAlignedText(dc, maximum + "%",
                 new Point(rail.Right, y + 53.0), 9.1, muted, FontWeights.SemiBold);
-            var activeValues = rows.Select(r =>
-                StashEffectiveState.Number(r.Group.EffectiveSelection(
-                    StashPreviewBaseline.Value, effective, r.Item))).ToArray();
-            var currentText = PercentRange(activeValues.Min(), activeValues.Max());
-            dc.DrawText(CreateText("NATIVE " + currentText, 10.4, muted,
-                    FontWeights.SemiBold, Math.Max(1.0, cell.Width - 22.0)),
-                new Point(x + 11.0, y + 70.0));
             AddHorizontalTarget(parameter,
                 new Rect(rail.Left - 8.0, y + 29.0,
                     rail.Width + 16.0, 38.0),

@@ -118,3 +118,8 @@ The source audit and GitHub push do not demonstrate a passing .NET build or game
 ## 2026-10-19 — Current Stashes audit contract reconciliation
 
 The current Stashes catalogue contains **41 source parameters**, with **34 visible** and three groups: Stash Content, Stash Medical Composition, and Stash Gear. Ammo quantity is edited through the native `StashContentMix` panel; `StashAmmoRadar`, `IsStashAmmoAnchor` and `IsStashAmmoMember` are retired. The old `StashRewardProfile` / `DrawCompactStashRewards` path must not be reintroduced to satisfy an obsolete global audit assertion. The current `audit_stashes_current.py` contract is the regression authority for the active Stashes structure.
+
+
+## 2026-10-19 — Compact Chance cards / tooltip contract
+
+Standard (Medical / Drinks / Coupons) and Rare (Ammo / Medical / Food / Drinks / Grenades / Coupons) retain their nine source-backed Chance parameters and CFG writer semantics. The additional per-item `NATIVE` range label is now removed **only from the nine player-facing cards**; native CFG source values remain available to internal auditing. Cards have a 70-DIP body with a 78-DIP row pitch, 3/2 responsive columns and matching measured editor heights (785/1095 DIP). Hover offers a short warning that a relative 100% preserves original item Chance and does not guarantee a stash drop; Rare Coupons gets its separate absolute per-entry Chance clarification. `tools/audit_stashes_current.py` guards the revised geometry, tooltip wiring and removal of the old row. No source ID, probability, preset or CFG-generation change.

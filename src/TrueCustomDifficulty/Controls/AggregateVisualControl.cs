@@ -28,6 +28,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Deliberately excluded from the Starvation family's editable/reset members.
     private ParameterViewModel? _starvationMaxHp;
     private readonly List<HitTarget> _hitTargets = new();
+    // Nine compact Standard/Rare Chance cards; tooltips are confined to their bounds.
+    private readonly List<(Rect Area, bool AbsoluteChance)> _stashChanceTooltipAreas = new();
     // A single source-realistic effective Weight bar with rank tabs.
     private int _medicalWeightPreviewRank = 2;
     private int _medicalWeightHoveredRank = -1;
@@ -127,6 +129,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         MinHeight = 0.0;
         SnapsToDevicePixels = true;
         Cursor = Cursors.Arrow;
+        ToolTipService.SetInitialShowDelay(this, 450);
+        ToolTipService.SetShowDuration(this, 12000);
         Loaded += (_, _) => RebindParameters();
     }
 
@@ -236,6 +240,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         _radRingCompleted = false;
         _dragTarget = null;
         _hoverTarget = null;
+        ToolTip = null;
         Cursor = Cursors.Arrow;
         _selectedParameter = null;
         _selectedHitKind = null;
@@ -267,6 +272,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         base.OnRender(dc);
         _hitTargets.Clear();
+        _stashChanceTooltipAreas.Clear();
 
         var text = FindBrush("TextBrush", Brushes.White);
         var muted = FindBrush("RadarMutedTextBrush", Brushes.Gray);
@@ -4644,10 +4650,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         DrawStashChanceTier(dc, "STANDARD", "Medium", 10,
             new Rect(left, wide ? 441.0 : 595.0, width,
-                wide ? 140.0 : 236.0), text, muted, border, accent, panel);
+                wide ? 122.0 : 200.0), text, muted, border, accent, panel);
         DrawStashChanceTier(dc, "RARE", "Expensive", 19,
-            new Rect(left, wide ? 589.0 : 839.0, width,
-                wide ? 236.0 : 332.0), text, muted, border, accent, panel);
+            new Rect(left, wide ? 571.0 : 803.0, width,
+                wide ? 200.0 : 278.0), text, muted, border, accent, panel);
     }
 
 
@@ -6197,11 +6203,31 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         e.Handled = true;
     }
 
+    private void UpdateStashChanceTooltip(Point point)
+    {
+        string? hint = null;
+        if (Family == "StashContentMix")
+        {
+            foreach (var (area, absoluteChance) in _stashChanceTooltipAreas)
+            {
+                if (!area.Contains(point))
+                    continue;
+                hint = absoluteChance
+                    ? "Sets the per-entry Chance for Rare Coupons. This is not a guaranteed stash-wide reward."
+                    : "100% keeps each item's original Chance. It does not guarantee that the item or category will appear in a stash.";
+                break;
+            }
+        }
+        if (!string.Equals(ToolTip as string, hint, StringComparison.Ordinal))
+            ToolTip = hint;
+    }
+
     protected override void OnMouseMove(MouseEventArgs e)
     {
         base.OnMouseMove(e);
 
         var point = e.GetPosition(this);
+        UpdateStashChanceTooltip(point);
         if (Family == "StashMedicalComposition" && _dragTarget is null)
         {
             var rank = _medicalWeightRankTargets.FirstOrDefault(x => x.Hit.Contains(point));
@@ -6367,6 +6393,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
+        ToolTip = null;
         if (_medicalWeightHoveredRank >= 0)
         {
             _medicalWeightHoveredRank = -1;
@@ -7294,7 +7321,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 839.0 : 1185.0;
+        => width >= 700.0 ? 785.0 : 1095.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 609.0 : 1050.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP
