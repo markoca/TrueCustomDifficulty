@@ -204,33 +204,39 @@ internal static class Program
     private static void SleepHealthDefaultContract()
     {
         var definition = Catalog.Parameters.Single(p => p.Id == "survival.sleepHealthRestore");
-        Check(definition.Default.Mode == "fixedValue"
-              && definition.Default.Value == 100.0
-              && definition.Slider is { Min: 0.0, Max: 200.0, Step: 5.0 },
-            "Sleep HP tool default and source-backed 0..200 HP range drifted");
-        var vanilla = definition.Vanilla["All"].GetDouble();
-        Check(Math.Abs(vanilla - 300.0) < 0.000001,
-            "Sleep HP vanilla source must remain 300, not the tool default");
+        Check(definition.Default.Mode == "fixedVanilla"
+              && definition.Slider is { Min: 0.0, Max: 600.0, Step: 5.0 },
+            "Sleep HP must default to native 300 HP on a 0..600 HP slider");
+        Check(Math.Abs(definition.Vanilla["All"].GetDouble() - 300.0) < 0.000001,
+            "Sleep HP source reference changed");
         foreach (var difficulty in new[] { "Novice", "Stalker", "Veteran", "Master" })
         {
             var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = difficulty };
             var source = vm.AllParameters.Single(p => p.Id == definition.Id);
-            Check(Math.Abs(source.CurrentNumber - 100.0) < 0.000001
+            Check(Math.Abs(source.CurrentNumber - 300.0) < 0.000001
                   && Math.Abs(source.ReferenceNumber - 300.0) < 0.000001
-                  && source.IsValueModifiedFromReference(),
-                "Sleep editor did not start at 100 HP while retaining 300 HP provenance");
+                  && !source.IsValueModifiedFromReference(),
+                "Sleep editor must start source-neutral at 300 HP");
             source.ApplyPresetValue(new PresetValue { Kind = "slider", Number = 300.0 });
-            Check(Math.Abs(source.CurrentNumber - 200.0) < 0.000001,
-                "Legacy 300-HP preset value did not clamp to 200 HP");
+            Check(Math.Abs(source.CurrentNumber - 300.0) < 0.000001,
+                "Existing 300-HP preset value must remain exactly 300 HP");
+            source.ApplyPresetValue(new PresetValue { Kind = "slider", Number = 500.0 });
+            Check(Math.Abs(source.CurrentNumber - 500.0) < 0.000001
+                  && source.IsValueModifiedFromReference(),
+                "Custom 500-HP preset must survive the expanded range");
+            source.ApplyPresetValue(new PresetValue { Kind = "slider", Number = 700.0 });
+            Check(Math.Abs(source.CurrentNumber - 600.0) < 0.000001,
+                "Preset values beyond 600 HP must clamp");
             source.ResetToReference();
-            Check(Math.Abs(source.CurrentNumber - 100.0) < 0.000001,
-                "Sleep editor reset must restore the tool 100-HP default");
+            Check(Math.Abs(source.CurrentNumber - 300.0) < 0.000001
+                  && !source.IsValueModifiedFromReference(),
+                "Sleep reset must restore unchanged 300 HP");
             source.SnapCurrentNumberToMarker(0.0);
             Check(Math.Abs(source.CurrentNumber) < 0.000001,
-                "Sleep editor cannot select its 0x/0 HP minimum");
-            source.SnapCurrentNumberToMarker(200.0);
-            Check(Math.Abs(source.CurrentNumber - 200.0) < 0.000001,
-                "Sleep editor cannot select its 2x/200 HP maximum");
+                "Sleep editor cannot select zero HP");
+            source.SnapCurrentNumberToMarker(600.0);
+            Check(Math.Abs(source.CurrentNumber - 600.0) < 0.000001,
+                "Sleep editor cannot select 600 HP");
         }
         _passed++;
     }
@@ -724,7 +730,6 @@ internal static class Program
                 p.Id.StartsWith("survival.", StringComparison.Ordinal)
                 && p.IsValueModifiedFromReference())
                 .Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
-            expected.Add("survival.sleepHealthRestore", 100.0);
             Check(actual.SetEquals(expected.Keys), name + ": unexpected modified sliders: "
                 + string.Join(", ", actual));
             CheckWriter(vm, actual, folder, name);
@@ -774,12 +779,9 @@ internal static class Program
             var offFolder = Path.Combine(folder, "bundle-off");
             var offResult = new CfgPatchWriterService().Write(vm, Catalog, null, offFolder);
             Check(offResult.FileCount > 0, name + ": parent OFF did not write its bundle change");
-            // The deliberate 100-HP sleep default now owns one unrelated
-            // EffectPrototypes patch. Verify the disabled child did not leak.
-            Check(Directory.EnumerateFiles(offFolder, "*.cfg", SearchOption.AllDirectories)
-                    .Where(f => f.Contains("EffectPrototypes", StringComparison.OrdinalIgnoreCase))
-                    .All(f => Parse(File.ReadAllText(f)).Children.Keys
-                        .All(prototype => prototype == "SleepHealthRestore")),
+            // The inactive child must not emit an unrelated EffectPrototypes CFG.
+            Check(!Directory.EnumerateFiles(offFolder, "*.cfg", SearchOption.AllDirectories)
+                    .Any(f => f.Contains("EffectPrototypes", StringComparison.OrdinalIgnoreCase)),
                 name + ": inactive child leaked into EffectPrototypes BPatch");
             parent.CurrentBoolean = true;
             Check(child.IsControlEnabled && child.IsValueModifiedFromReference()
@@ -804,11 +806,6 @@ internal static class Program
     private static void CheckWriter(MainViewModel vm, HashSet<string> changed, string folder,
         string name)
     {
-        // 100 HP is a deliberate startup patch, not native 300 HP.
-        changed = new HashSet<string>(changed, StringComparer.Ordinal)
-        {
-            "survival.sleepHealthRestore"
-        };
         var sid = Catalog.DifficultyProfiles[vm.SelectedReferenceDifficulty].Sid;
         var mapped = Baseline.EditPoints.Where(p => changed.Contains(p.ParameterId)
             && (string.IsNullOrEmpty(p.DifficultySid) || p.DifficultySid == sid)).ToArray();
@@ -862,23 +859,17 @@ internal static class Program
         try
         {
             var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = difficulty };
+            var sleep = vm.AllParameters.Single(p => p.Id == "survival.sleepHealthRestore");
+            Check(Math.Abs(sleep.CurrentNumber - 300.0) < 0.000001
+                  && !sleep.IsValueModifiedFromReference(),
+                name + ": sleep HP must be source-neutral");
             var result = new CfgPatchWriterService().Write(vm, Catalog, null, path);
-            Check(result.FileCount == 1 && result.EditCount == 2 && result.ParameterCount == 1,
-                name + ": expected only 100-HP sleep default's two CFG leaves");
-            var source = vm.AllParameters.Single(p => p.Id == "survival.sleepHealthRestore");
-            var file = ExpectedFile(path, "GameData/EffectPrototypes.cfg");
-            Check(Math.Abs(source.CurrentNumber - 100.0) < 0.000001 && File.Exists(file),
-                name + ": missing 100 HP default BPatch");
-            var patch = Parse(File.ReadAllText(file));
-            Check(patch.Children.Keys.ToHashSet(StringComparer.Ordinal).SetEquals(
-                      new[] { "SleepHealthRestore" }),
-                name + ": unexpected source prototypes in default BPatch");
-            Approx(patch.Get("SleepHealthRestore").Value("ValueMin"), 100.0,
-                name + ": default SleepHealthRestore.ValueMin");
-            Approx(patch.Get("SleepHealthRestore").Value("ValueMax"), 100.0,
-                name + ": default SleepHealthRestore.ValueMax");
+            Check(result.FileCount == 0 && result.EditCount == 0 && result.ParameterCount == 0,
+                name + ": untouched project wrote CFG changes");
+            Check(!Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories).Any(),
+                name + ": untouched project wrote files");
             _passed++;
-            Console.WriteLine("PASS " + name + " (sleep default writes 2 CFG values)");
+            Console.WriteLine("PASS " + name + " (zero CFG edits)");
         }
         finally
         {
@@ -900,11 +891,9 @@ internal static class Program
             Check(child.IsValueModifiedFromReference() && !child.IsControlEnabled,
                 name + ": edited child should remain inactive");
             var result = new CfgPatchWriterService().Write(vm, Catalog, null, path);
-            Check(result.FileCount == 1 && result.EditCount == 2 && result.ParameterCount == 1,
-                name + ": disabled Master child wrote unrelated CFG fields");
-            Check(Directory.EnumerateFiles(path, "*.cfg", SearchOption.AllDirectories)
-                  .All(file => Parse(File.ReadAllText(file)).Children.Keys
-                      .All(prototype => prototype == "SleepHealthRestore")),
+            Check(result.FileCount == 0 && result.EditCount == 0 && result.ParameterCount == 0,
+                name + ": disabled Master child emitted CFG changes");
+            Check(!Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories).Any(),
                 name + ": inactive child unexpectedly wrote its own CFG prototype");
             _passed++;
             Console.WriteLine("PASS " + name + " (gated value not emitted)");
@@ -988,7 +977,6 @@ internal static class Program
             var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = difficulty };
             var ids = changes.Select(x => x.Id).ToHashSet(StringComparer.Ordinal);
             Check(ids.Count == changes.Length, label + ": duplicate parameter ID");
-            ids.Add("survival.sleepHealthRestore"); // intentional default patch
             foreach (var (id, value) in changes)
             {
                 var p = vm.AllParameters.Single(x => x.Id == id);
@@ -1068,20 +1056,18 @@ internal static class Program
             var par = vm.AllParameters.Single(p => p.Id == id);
             Check(par.IsSlider && par.IsControlEnabled,
                 label + ": expected enabled real numeric editor");
-            var sleepDefault = id == "survival.sleepHealthRestore";
-            Check(par.IsValueModifiedFromReference() == sleepDefault,
-                label + ": unexpected startup source state");
+            Check(!par.IsValueModifiedFromReference(), label + ": unexpected startup edit");
             var step = Math.Max(0.01, par.Definition.Slider?.Step ?? 0.1);
-            var candidate = (sleepDefault ? par.CurrentNumber : par.ReferenceNumber) + step;
+            var candidate = par.ReferenceNumber + step;
             if (candidate > par.Maximum)
-                candidate = (sleepDefault ? par.CurrentNumber : par.ReferenceNumber) - step;
+                candidate = par.ReferenceNumber - step;
             par.SnapCurrentNumberToMarker(candidate);
             Check(par.IsValueModifiedFromReference() && par.IsControlEnabled,
                 label + ": slider not active/modified");
 
             var sid = Catalog.DifficultyProfiles[difficulty].Sid;
             var points = Baseline.EditPoints.Where(p =>
-                (p.ParameterId == id || p.ParameterId == "survival.sleepHealthRestore")
+                p.ParameterId == id
                 && (string.IsNullOrWhiteSpace(p.DifficultySid) || p.DifficultySid == sid))
                 .ToArray();
             Check(points.Length > 0, label + ": no matching CFG source mapping");
@@ -1091,7 +1077,7 @@ internal static class Program
                 p.Id.StartsWith("survival.", StringComparison.Ordinal)
                 && p.IsValueModifiedFromReference()).Select(p => p.Id).ToArray();
             Check(allChanged.ToHashSet(StringComparer.Ordinal).SetEquals(
-                      new[] { id, "survival.sleepHealthRestore" }),
+                      new[] { id }),
                 label + ": slider constraint moved another actual parameter: "
                 + string.Join(", ", allChanged));
 
@@ -1099,7 +1085,7 @@ internal static class Program
             var files = points.Select(p => ExpectedFile(path, p.File))
                 .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
             Check(result.FileCount == files.Length
-                  && result.ParameterCount == (sleepDefault ? 1 : 2)
+                  && result.ParameterCount == 1
                   && result.EditCount == points.Length,
                 label + ": incorrect file/parameter/edit counts ("
                 + result.FileCount + "/" + result.ParameterCount + "/"

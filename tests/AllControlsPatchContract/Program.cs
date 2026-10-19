@@ -106,9 +106,8 @@ internal static class Program
                                 "Reported CFG FileCount differs from physical staged CFG files: " + id);
                             if (id == "loot.npcWeaponAmmoSupply")
                             {
-                                // A non-default Sleep HP Restore generates a
-                                // separate CFG in every test scenario. It must
-                                // NOT pass the ammo probe by itself.
+                                // Require the actual ammo clone and its
+                                // difficulty redirect, not just any staged CFG file.
                                 var stashPath = Path.Combine(path, "Stalker2", "Content",
                                     "GameLite", "GameData", "StashPrototypes",
                                     "StashPrototypes_patch_TrueCustomDifficulty.cfg");
@@ -128,7 +127,7 @@ internal static class Program
                                     && difficultyCfg.Contains(
                                         "GeneralNPC = NPC_Medicine_Smart, TCD_NPC_Ammo_Smart",
                                         StringComparison.Ordinal)
-                                    && result.ParameterCount >= 2,
+                                    && result.ParameterCount >= 1,
                                     "Bonus Ammo Drops counted unrelated source output instead of "
                                     + "its NPC_Ammo_Smart clone and active Novice redirect");
                             }
@@ -207,8 +206,8 @@ internal static class Program
 
     // Master has no extra corpse package. An edited ammo multiplier stays in
     // the preset, but must NOT contribute to the writer's applied count or
-    // produce an NPC_Ammo_Smart clone. The fixed Sleep HP Restore still emits
-    // its unrelated source and proves that "some CFG exists" is insufficient.
+    // produce an NPC_Ammo_Smart clone. Native sleep recovery is unchanged:
+    // this probe should produce no files at all.
     private static void VerifyDormantNpcAmmoNotCounted()
     {
         var dir = Path.Combine(Path.GetTempPath(),
@@ -228,11 +227,9 @@ internal static class Program
             // .cfg_patch_TrueCustomDifficulty outputs without a .cfg suffix.
             var output = Directory.EnumerateFiles(dir, "*",
                 SearchOption.AllDirectories).ToArray();
-            Check(result.ParameterCount == 1 && result.FileCount == output.Length,
-                "Dormant Master ammo multiplier inflated applied writer accounting");
-            Check(output.Length > 0 && output.All(file => !File.ReadAllText(file)
-                    .Contains("TCD_NPC_Ammo_Smart", StringComparison.Ordinal)),
-                "Dormant Master ammo setting generated a forbidden ammo clone");
+            Check(result.ParameterCount == 0 && result.FileCount == 0
+                  && result.EditCount == 0 && output.Length == 0,
+                "Dormant Master ammo setting generated unexpected CFG output");
         }
         finally
         {

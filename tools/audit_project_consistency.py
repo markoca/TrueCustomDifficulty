@@ -3838,8 +3838,7 @@ for _row in _global_visible:
                     and isinstance(_start, (int, float))
                     and _lo <= _start <= _hi):
                     _global_out_of_range.append((_row.get("id"), _name, _value, _lo, _hi))
-# Sleep's UI default is intentionally different from the immutable game
-# source: this must not silently reclassify vanilla 300 HP as 100 HP.
+# Sleep starts at its original 300 HP, with no implicit startup patch.
 _sleep_hp = next(p for p in parameters if p["id"] == "survival.sleepHealthRestore")
 _sleep_default = _sleep_hp.get("default") or {}
 _sleep_range = _sleep_hp.get("slider") or {}
@@ -3848,14 +3847,14 @@ _sleep_original = [
     if e.get("parameterId") == "survival.sleepHealthRestore"
 ]
 if (next(iter(_sleep_hp["vanilla"].values())) != 300
-    or _sleep_default != {"mode": "fixedValue", "value": 100}
+    or _sleep_default != {"mode": "fixedVanilla"}
     or any(_sleep_range.get(k) != v
-           for k, v in (("min", 0), ("max", 200), ("step", 5), ("stepMode", "absolute")))
+           for k, v in (("min", 0), ("max", 600), ("step", 5), ("stepMode", "absolute")))
     or sorted(e.get("sourceRaw") for e in _sleep_original) != ["300", "300"]
     or set(e.get("key") for e in _sleep_original) != {"ValueMin", "ValueMax"}):
-    fail("Sleep HP 100 editor default / 0..200 UI range / 300 vanilla CFG parity drifted")
+    fail("Sleep HP default 300 / 0..600 UI range / 300 source CFG parity drifted")
 else:
-    note("Sleep: actual 300 HP source preserved; tool default 100 HP, editor 0..200 HP")
+    note("Sleep: native 300 HP source and tool default; editor 0..600 HP")
 
 _global_generator_visible = _global_visible_ids & _e2e_all
 _global_non_generator_visible = _global_visible_ids - _e2e_all

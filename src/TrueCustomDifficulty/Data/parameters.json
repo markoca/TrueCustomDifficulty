@@ -10340,7 +10340,7 @@
       "tab": "survival",
       "group": "Sleeping",
       "label": "Sleep HP Restore",
-      "description": "Controls the direct health restore you receive after normal sleep. The tool starts at 100 HP (1x), adjustable from 0 to 200 HP; the vanilla CFG remains 300 HP.",
+      "description": "Controls how much HP normal sleep restores when you wake up. Starts at 300 HP; adjustable from 0 to 600 HP.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -10353,12 +10353,11 @@
         "All": 300
       },
       "default": {
-        "mode": "fixedValue",
-        "value": 100
+        "mode": "fixedVanilla"
       },
       "slider": {
         "min": 0,
-        "max": 200,
+        "max": 600,
         "step": 5,
         "stepMode": "absolute"
       },
@@ -10375,8 +10374,8 @@
         "status": "confirmed",
         "notes": []
       },
-      "rationale": "Sets how much HP you regain after normal sleep. This tool defaults to 100 HP, unlike the game's original 300 HP.",
-      "logic": "The editor's 1x means 100 HP restored on waking (0–200 HP range). The game's original value was 300 HP, so a reset returns to this tool's 100 HP default.",
+      "rationale": "Normal sleep restores 300 HP by default. Lower or raise the amount to change how much health you recover.",
+      "logic": "The original effect restores 300 HP on waking. Set 0 HP to disable this recovery or up to 600 HP to increase it; reset returns to 300 HP.",
       "interaction": "Medkits and passive HP regeneration remain separate."
     },
     {

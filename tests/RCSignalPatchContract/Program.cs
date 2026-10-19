@@ -60,11 +60,9 @@ internal static class Program
                 p => p.IsValueModifiedFromReference() && p.IsControlEnabled)
                 .Select(p => p.Id).ToHashSet(StringComparer.Ordinal);
             var expectedApplied = preset.Values.Keys.ToHashSet(StringComparer.Ordinal);
-            // Sleep HP Restore intentionally defaults to 100 HP in TCD, while
-            // the original source is 300 HP. It is an independent baseline
-            // patch even for sparse diagnostic presets.
-            expectedApplied.Add("survival.sleepHealthRestore");
-            Check(modified.SetEquals(expectedApplied) && modified.Count == ExpectedSources + 1,
+            // Unspecified controls, including native 300-HP sleep recovery,
+            // remain neutral in this sparse diagnostic preset.
+            Check(modified.SetEquals(expectedApplied) && modified.Count == ExpectedSources,
                 "Sparse RC preset modified unrelated controls or omitted expected sources: " +
                 string.Join(", ", modified.Except(preset.Values.Keys)));
 
@@ -79,7 +77,7 @@ internal static class Program
             {
                 var result = new CfgPatchWriterService().Write(vm, catalog, null, output);
                 Check(result.FileCount > 0 && result.EditCount >= ExpectedSources &&
-                      result.ParameterCount == ExpectedSources + 1,
+                      result.ParameterCount == ExpectedSources,
                     "Production writer did not emit all thirteen diagnostic source settings");
                 var files = Directory.EnumerateFiles(output, "*", SearchOption.AllDirectories)
                     .ToArray();

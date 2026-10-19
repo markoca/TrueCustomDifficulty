@@ -31,7 +31,7 @@ critical = {
     "survival.starvationStaminaDrain": ("actions", "not passive"),
     "economy.buyCondition": ("traders offer", "sell"),
     "economy.sellCondition": ("traders charge", "buy"),
-    "survival.sleepHealthRestore": ("100 HP", "300 HP")
+    "survival.sleepHealthRestore": ("normal sleep", "300 HP")
 }
 for pid, parts in critical.items():
     text = visible[pid]["rationale"].lower()

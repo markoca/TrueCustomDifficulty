@@ -95,7 +95,7 @@ internal static partial class Program
             Run("Veteran",false,new(){["loot.npcWeaponAmmoSupply"]=2.0},"corpse-ammo-absent");
             Check(Passed==63,"Expected 63 special Loot scenarios, got "+Passed);
             VerifyBaseTierRedirectProtection();
-            VerifyFixedSleepRestoreBaseline();
+            VerifyNativeSleepRestoreBaseline();
             VerifyMedicalZeroExclusion();
             VerifyWorldStashSmartLoot();
             VerifyCabinDirectMedical();
@@ -118,11 +118,7 @@ internal static partial class Program
     }
 
 
-    // The app deliberately starts Sleep Health Restore at 100 HP although the
-    // original source has 300 HP. The UI editor is capped at 200 HP: do NOT
-    // "neutralize" the test by trying to set an out-of-range 300 HP.
-    // Every loot-only contract must expect this independent fixed-default CFG
-    // override, and must reject any *other* non-loot writes.
+    // Native 300-HP sleep recovery must not emit an unrelated CFG on startup.
     static void AssertOnlyExpectedNonLootDefault(MainViewModel vm)
     {
         var modified = vm.AllParameters
@@ -131,39 +127,32 @@ internal static partial class Program
             .Select(p => p.Id)
             .OrderBy(id => id, StringComparer.Ordinal)
             .ToArray();
-        Check(modified.SequenceEqual(new[] { "survival.sleepHealthRestore" }),
+        Check(modified.Length == 0,
             "Unexpected non-Loot modified controls: " + string.Join(",", modified));
         var sleep = vm.AllParameters.Single(p => p.Id == "survival.sleepHealthRestore");
-        Check(sleep.IsSlider && sleep.CurrentNumber == 100
-            && sleep.ReferenceNumber == 300 && sleep.Maximum == 200,
-            "The intentional 100-HP fixed default / 300-HP source contract changed");
+        Check(sleep.IsSlider && sleep.CurrentNumber == 300
+            && sleep.ReferenceNumber == 300 && sleep.Maximum == 600
+            && !sleep.IsValueModifiedFromReference(),
+            "Sleep HP must remain native 300 HP with no startup patch");
     }
 
-    static void VerifyFixedSleepRestoreBaseline()
+    static void VerifyNativeSleepRestoreBaseline()
     {
         var dir = Path.Combine(Keep ?? Path.GetTempPath(),
-            "TCD_LootSpecial_FixedDefault", "default-only");
+            "TCD_LootSpecial_NativeDefault", "default-only");
         try
         {
             var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Novice" };
             AssertOnlyExpectedNonLootDefault(vm);
             Check(!vm.AllParameters.Any(p => p.Id.StartsWith("loot.", StringComparison.Ordinal)
                 && p.IsValueModifiedFromReference()),
-                "A freshly initialized vanilla Loot tab has modified sources");
-
+                "Fresh Loot editor unexpectedly modified source values");
             var built = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
             var output = ReadOutput(dir);
-            Check(output.Count == 1
-                && output.TryGetValue("GameData/EffectPrototypes.cfg", out var fields)
-                && fields!.Count == 2
-                && fields.TryGetValue("SleepHealthRestore/ValueMin", out var min)
-                && fields.TryGetValue("SleepHealthRestore/ValueMax", out var max)
-                && min == "100" && max == "100",
-                "Intentional fixed Sleep Health Restore should produce exactly two 100-HP CFG leaves");
-            Check(built.FileCount == 1 && built.EditCount == 2
-                && built.ParameterCount == 1,
-                "The one modified non-Loot default generated unexpected output");
-            Console.WriteLine("PASS baseline fixed-default: 100-HP SleepHealthRestore ValueMin/ValueMax only");
+            Check(output.Count == 0 && built.FileCount == 0 && built.EditCount == 0
+                && built.ParameterCount == 0,
+                "Native Sleep Health Restore must not emit unrelated CFG changes");
+            Console.WriteLine("PASS native 300 HP baseline: no implicit CFG edits");
         }
         finally
         {
@@ -536,8 +525,8 @@ internal static partial class Program
                 Check(control.IsValueModifiedFromReference(), name + ": control is unchanged");
                 AssertOnlyExpectedNonLootDefault(vm);
                 var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
-                Check(result.ParameterCount == 2,
-                    name + ": missing fixed Sleep Health default or medical control");
+                Check(result.ParameterCount == 1,
+                    name + ": modified medical source count mismatch");
                 var output = ReadOutput(dir);
                 Check(output.TryGetValue("GameData/ItemGeneratorPrototypes.cfg", out var gen),
                     name + ": missing Cabin ItemGenerator patch");
@@ -928,12 +917,25 @@ internal static partial class Program
             AssertOnlyExpectedNonLootDefault(vm);
             var changed=vm.AllParameters.Where(p=>p.Id.StartsWith("loot.",StringComparison.Ordinal)
                 && p.IsValueModifiedFromReference()).Select(p=>p.Id).ToHashSet(StringComparer.Ordinal);
-            var expectedIDs=changes.Keys.ToHashSet(StringComparer.Ordinal);
+            // A single visible Ammo Quantity control intentionally mirrors
+            // Cheap into Standard and Rare CFG source IDs. Treat the two extra
+            // source writes as expected ONLY when the Cheap control was changed.
+            var effectiveChanges = new Dictionary<string, double>(changes, StringComparer.Ordinal);
+            if (changes.ContainsKey("loot.cheapStashAmmoQuantity"))
+            {
+                var cheap = vm.AllParameters.Single(p => p.Id == "loot.cheapStashAmmoQuantity");
+                foreach (var id in new[] { "loot.mediumStashAmmoQuantity", "loot.expensiveStashAmmoQuantity" })
+                {
+                    var linked = vm.AllParameters.Single(p => p.Id == id);
+                    Check(Math.Abs(linked.CurrentNumber - cheap.CurrentNumber) < 0.0000001,
+                        label + ": Ammo Quantity backing diverged for " + id);
+                    if (linked.IsValueModifiedFromReference())
+                        effectiveChanges[id] = linked.CurrentNumber;
+                }
+            }
+            var expectedIDs=effectiveChanges.Keys.ToHashSet(StringComparer.Ordinal);
             if(corpseChoice!=null)expectedIDs.Add("loot.npcCorpseBonus");
             Check(changed.SetEquals(expectedIDs),"Unexpected unrelated Loot changes: "+string.Join(",",changed));
-            // Count the intentional non-Loot 100-HP default only after checking
-            // the requested Loot parameter set itself.
-            expectedIDs.Add("survival.sleepHealthRestore");
             // Only source-level modifications can activate special generators.
             var actual=new CfgPatchWriterService().Write(vm,Catalog,
                 dlc?new GameInstallInfo{HasDlc1=true}:null,dir);
@@ -946,11 +948,6 @@ internal static partial class Program
                 var key=file+"|"+path;
                 Check(expected.TryAdd(key,value),"Expected special CFG leaf collision: "+key);
             }
-            // Explicitly account for the source-backed default outside Loot.
-            // Otherwise a valid fresh app profile incorrectly looks like two
-            // unexpected edits in every vanilla Loot-only scenario.
-            Add("GameData/EffectPrototypes.cfg", "SleepHealthRestore/ValueMin", "100");
-            Add("GameData/EffectPrototypes.cfg", "SleepHealthRestore/ValueMax", "100");
             void Generator(string configName,double quantity,double? chance=null,double? grenadeQty=null)
             {
                 var config=Special.GetProperty(configName);
@@ -1075,7 +1072,7 @@ internal static partial class Program
                             {
                                 var sid=Str(item.GetProperty("fields"),"ItemPrototypeSID");
                                 var parameterId=Str(config.GetProperty("weightParameterIds"),sid);
-                                var weight=changes.GetValueOrDefault(parameterId,1.0);
+                                var weight=effectiveChanges.GetValueOrDefault(parameterId,1.0);
                                 value=(Num(value)*weight).ToString("0.###",CultureInfo.InvariantCulture);
                             }
                             Add(file,root+"/ItemGenerator/"+cat+"/PossibleItems/"+entry+"/"+field.Name,value);
@@ -1087,22 +1084,22 @@ internal static partial class Program
             }
 
             var cheapIDs=new[]{"loot.cheapStashAmmoQuantity","loot.cheapStashGrenadeChance","loot.cheapStashGrenadeQuantity"};
-            if(cheapIDs.Any(changes.ContainsKey))
-                Generator("cheapStashProduction",changes.GetValueOrDefault(cheapIDs[0],1),
-                    changes.GetValueOrDefault(cheapIDs[1],0.1),
-                    changes.GetValueOrDefault(cheapIDs[2],1));
-            if(changes.ContainsKey("loot.mediumStashAmmoQuantity"))
-                Generator("mediumStashAmmoProduction",changes["loot.mediumStashAmmoQuantity"]);
-            if(changes.ContainsKey("loot.expensiveStashAmmoQuantity"))
-                Generator("expensiveStashProduction",changes["loot.expensiveStashAmmoQuantity"]);
-            if(changes.ContainsKey("loot.npcMedicalChance"))
-                Medical(changes["loot.npcMedicalChance"]);
+            if(cheapIDs.Any(effectiveChanges.ContainsKey))
+                Generator("cheapStashProduction",effectiveChanges.GetValueOrDefault(cheapIDs[0],1),
+                    effectiveChanges.GetValueOrDefault(cheapIDs[1],0.1),
+                    effectiveChanges.GetValueOrDefault(cheapIDs[2],1));
+            if(effectiveChanges.ContainsKey("loot.mediumStashAmmoQuantity"))
+                Generator("mediumStashAmmoProduction",effectiveChanges["loot.mediumStashAmmoQuantity"]);
+            if(effectiveChanges.ContainsKey("loot.expensiveStashAmmoQuantity"))
+                Generator("expensiveStashProduction",effectiveChanges["loot.expensiveStashAmmoQuantity"]);
+            if(effectiveChanges.ContainsKey("loot.npcMedicalChance"))
+                Medical(effectiveChanges["loot.npcMedicalChance"]);
             var boxIDs=new[]{"loot.destructibleAmmoQuantity","loot.ammoBoxWeight918",
                 "loot.ammoBoxWeight045","loot.ammoBoxWeight545","loot.ammoBoxWeight012"};
-            if(boxIDs.Any(changes.ContainsKey))
-                Boxes("destructibleAmmoProduction",changes.GetValueOrDefault(boxIDs[0],1));
-            if(changes.ContainsKey("loot.destructibleGrenadeQuantity"))
-                Boxes("destructibleGrenadeProduction",changes["loot.destructibleGrenadeQuantity"]);
+            if(boxIDs.Any(effectiveChanges.ContainsKey))
+                Boxes("destructibleAmmoProduction",effectiveChanges.GetValueOrDefault(boxIDs[0],1));
+            if(effectiveChanges.ContainsKey("loot.destructibleGrenadeQuantity"))
+                Boxes("destructibleGrenadeProduction",effectiveChanges["loot.destructibleGrenadeQuantity"]);
 
             // Corpse choice is difficulty-specific and intentionally replaces
             // only EconomyDifficulty.CorpseSmartLoot rather than vanilla NPC pools.
@@ -1114,7 +1111,7 @@ internal static partial class Program
                 else Add("GameData/DifficultyPrototypes.cfg",sid+"/EconomyDifficulty/CorpseSmartLoot/GeneralNPC",corpseChoice);
             }
 
-            if(changes.ContainsKey("loot.npcWeaponAmmoSupply") &&
+            if(effectiveChanges.ContainsKey("loot.npcWeaponAmmoSupply") &&
                 vm.AllParameters.Single(p=>p.Id=="loot.npcCorpseBonus").CurrentText
                     .Split(',',StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries)
                     .Contains("NPC_Ammo_Smart",StringComparer.Ordinal))
@@ -1125,7 +1122,7 @@ internal static partial class Program
                 refs[file+"|"+root]="refurl="+Str(config,"baseTemplateRefUrl")
                     +";refkey="+Str(config,"baseTemplateRefKey");
                 Add(file,root+"/SID",root);
-                var multiplier=changes["loot.npcWeaponAmmoSupply"];
+                var multiplier=effectiveChanges["loot.npcWeaponAmmoSupply"];
                 foreach(var entry in config.GetProperty("entries").EnumerateArray())
                 {
                     var path=root+"/ItemGenerators/["+entry.GetProperty("rankIndex").GetInt32()+"]/SmartLootParams/PrimaryWeaponParams/["
@@ -1141,7 +1138,7 @@ internal static partial class Program
             }
             var dlcFreshExtension=dlc && new[]{
                 "loot.cheapStashAmmoQuantity","loot.cheapStashGrenadeChance",
-                "loot.cheapStashGrenadeQuantity" }.Any(changes.ContainsKey);
+                "loot.cheapStashGrenadeQuantity" }.Any(effectiveChanges.ContainsKey);
             Check(dlcFreshExtension
                 ? paths.Values.SelectMany(x=>x.Keys).Count()>=expected.Count
                 : paths.Values.SelectMany(x=>x.Keys).Count()==expected.Count,
@@ -1179,7 +1176,7 @@ internal static partial class Program
             // profile when Water/None is selected, but it emits no CFG and
             // must NOT inflate the applied production parameter count.
             var actuallyAppliedIDs = expectedIDs.ToHashSet(StringComparer.Ordinal);
-            if (changes.ContainsKey("loot.npcWeaponAmmoSupply") &&
+            if (effectiveChanges.ContainsKey("loot.npcWeaponAmmoSupply") &&
                 !vm.AllParameters.Single(p => p.Id == "loot.npcCorpseBonus").CurrentText
                     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                     .Contains("NPC_Ammo_Smart", StringComparer.Ordinal))
@@ -1187,7 +1184,7 @@ internal static partial class Program
             Check(actual.FileCount==paths.Count && actual.ParameterCount==actuallyAppliedIDs.Count,
                 label+": writer file/control counts disagree with actual CFG output: "
                 +actual.FileCount+"/"+actual.ParameterCount+"/"+actual.EditCount);
-            if(!dlcFreshExtension && corpseChoice==null && !changes.ContainsKey("loot.npcWeaponAmmoSupply"))
+            if(!dlcFreshExtension && corpseChoice==null && !effectiveChanges.ContainsKey("loot.npcWeaponAmmoSupply"))
                 Check(actual.EditCount==expected.Count,label+": one emitted assignment per intended field drift");
             Console.WriteLine("PASS "+difficulty+" "+label+(dlc?" +DLC1":" BASE")
                 +" ("+paths.Count+" files / "+expected.Count+" exact assigned fields)");
