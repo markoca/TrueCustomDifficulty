@@ -34,6 +34,15 @@ pvm = read(src / "ViewModels/ParameterViewModel.cs")
 tuning = read(src / "Services/CfgPatchWriterService.StashTuning.cs")
 gear = read(src / "Services/CfgPatchWriterService.StashGearCoverage.cs")
 writer = read(src / "Services/CfgPatchWriterService.cs")
+# Toggling either side ON turns its conflicting counterpart OFF.
+assert 'var weaponShuffle = parametersById["loot.worldWeaponShuffle"];' in vm
+assert 'var extraGear = parametersById["loot.stashGearEnabled"];' in vm
+assert "weaponShuffle.CurrentBoolean && extraGear.CurrentBoolean" in vm
+assert "extraGear.CurrentBoolean && weaponShuffle.CurrentBoolean" in vm
+assert "extraGear.CurrentBoolean = false;" in vm
+assert "weaponShuffle.CurrentBoolean = false;" in vm
+assert "if (gear.CurrentBoolean && shuffle.CurrentBoolean)" in vm
+assert "Extra Stash Gear and World Weapon Shuffle cannot both be enabled." in writer
 rewards = ["loot.cheapStashAmmoQuantity", "loot.mediumStashAmmoQuantity", "loot.expensiveStashAmmoQuantity"]
 mix = [
     "loot.stashMixAmmo", "loot.stashMixMedical", "loot.stashMixFood",
@@ -86,7 +95,7 @@ assert 'g.RankIndex is 2 or 3' in ui
 assert 'group.EffectiveSelection(StashPreviewBaseline.Value, state,' in ui
 assert 'AddHorizontalTarget(p, rect, rect, value, value);' in ui
 assert 'target.Parameter.Id == "loot.stashMedicalAntiRadBias"' in ui
-assert '=> width >= 700.0 ? 585.0 : 1001.0;' in ui
+assert '=> width >= 700.0 ? 609.0 : 1050.0;' in ui
 anti = stash["loot.stashMedicalAntiRadBias"]
 assert anti["slider"] == {"min": 0, "max": 3, "step": 0.25, "stepMode": "absolute"}
 assert "two-state" in anti["interaction"].lower()

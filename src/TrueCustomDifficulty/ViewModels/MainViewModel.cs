@@ -533,6 +533,25 @@ public sealed class MainViewModel : ObservableObject
             "loot.worldDetectors",
             "loot.blueprintShuffle");
 
+        // Mutually exclusive overlapping stash weapon transformations:
+        // the last toggle switched ON wins, regardless of which tab is open.
+        var weaponShuffle = parametersById["loot.worldWeaponShuffle"];
+        var extraGear = parametersById["loot.stashGearEnabled"];
+        weaponShuffle.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ParameterViewModel.CurrentBoolean)
+                && !_suspendSliderConstraints && !_isApplyingReference
+                && weaponShuffle.CurrentBoolean && extraGear.CurrentBoolean)
+                extraGear.CurrentBoolean = false;
+        };
+        extraGear.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(ParameterViewModel.CurrentBoolean)
+                && !_suspendSliderConstraints && !_isApplyingReference
+                && extraGear.CurrentBoolean && weaponShuffle.CurrentBoolean)
+                weaponShuffle.CurrentBoolean = false;
+        };
+
         // Tier ammo quantity and independent native Chance editors share one
         // visual family; legacy tier-wide multipliers remain preset-compatible.
         WireVisualAggregate(
@@ -1208,6 +1227,11 @@ public sealed class MainViewModel : ObservableObject
 
     private void NormalizeEditorConstraints()
     {
+        // Legacy presets with both ON: deterministically prefer Extra Gear.
+        var gear = AllParameters.First(p => p.Id == "loot.stashGearEnabled");
+        var shuffle = AllParameters.First(p => p.Id == "loot.worldWeaponShuffle");
+        if (gear.CurrentBoolean && shuffle.CurrentBoolean)
+            shuffle.CurrentBoolean = false;
         _sliderConstraintCoordinator.NormalizeAll();
         EnforceStashMedicalQuantityBounds();
         // Called after preset load, reference changes and before CFG builds:
