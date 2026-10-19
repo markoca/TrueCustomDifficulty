@@ -1,3 +1,7 @@
+## 2026-10-19 — RC detail-pane redundancy cleanup
+
+The per-parameter right-hand help pane ends after the single `CONTROLS` guide. Remove the repeated `TabSummary` footer from that pane: the selected tab already establishes context, while `WHAT IT DOES`, conditional value semantics, `WORKS WITH`, and `CONTROLS` provide specific guidance. Keep all gameplay caveats and the 182-entry frozen copy ledger intact. This is a layout-only text removal, not a change to controls, CFG routes or source semantics. WPF visual acceptance remains pending.
+
 ## 2026-10-19 — CURRENT FINAL RC COPY FREEZE — 182 visible controls
 
 **Authoritative RC wording:** all **182** exposed parameter labels, WHAT IT DOES rationales, HIGHER / LOWER notes and WORKS WITH notes are reviewed in `docs/RC-FINAL-COPY-INDEX-2026-10-19.csv` and enforced against `src/TrueCustomDifficulty/Data/parameters.json` by `tools/audit_rc_final_copy.py`. Exactly **104** of the visible controls received copy cleanup, including **62** shorter or more accurate labels. Previous copy and naming lists lower in this document are historical where superseded by this heading.
