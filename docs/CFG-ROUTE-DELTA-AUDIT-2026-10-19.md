@@ -39,3 +39,10 @@ python3 tools/audit_stashes_current.py
 python3 tools/audit_stash_gear_coverage.py
 dotnet run --project tests/AllControlsPatchContract/AllControlsPatchContract.csproj -c Release
 ```
+
+
+## GitHub Actions execution blocker observed on 2026-10-19
+
+The GitHub Actions run [39266941185](https://github.com/markoca/TrueCustomDifficulty/actions/runs/39266941185), for commit `2efc582`, failed **before any job step started**: every job reported `steps: null`, including the `audit` job. The Actions job log download returned HTTP 404 `BlobNotFound`. Re-running just the failed audit job produced attempt 2, also `failure` without steps. These observations **do not identify a failed test assertion or a .NET compilation failure**; they are consistent with an Actions scheduling/runner or account-level execution issue, for which the GitHub Actions UI/account owner must provide resolution. Do not treat CI as passing or silently blame the CFG code without an actual job log.
+
+The delta auditor now additionally cross-checks the **213 preexisting direct parameter owners**, their exact per-ID direct-leaf counts, and each frozen audit's representative `scope,file,prototype,nodePath,key,operation,sourceRaw` identity. On the current `main` content those baseline comparisons showed **0 discrepancies**. These are read-only identity regressions, not a repeat of all prior source evidence. Execution of the Python scripts and Windows .NET production contract still must be performed in a runtime with the repository and dependencies available.

@@ -50,6 +50,25 @@ def main() -> int:
     require(not (added & direct), "A newly introduced source acquired direct edit points")
     require(len(direct) == 213 and len(baseline["editPoints"]) == 1230,
             "Prior source-audited direct mapping changed; re-audit old scope")
+    # Reuse earlier source audit, but prove that the previously verified leaf
+    # identities have not drifted. Counts alone can hide silent reassignment.
+    direct_by_id = {}
+    for point in baseline["editPoints"]:
+        direct_by_id.setdefault(point["parameterId"], []).append(point)
+    previous_direct = {pid: row for pid, row in old["parameters"].items()
+                       if row["writerType"] == "direct"}
+    require(len(previous_direct) == 213 and set(previous_direct) == direct,
+            "Previously source-audited direct parameter ownership changed")
+    keys = ("scope", "file", "prototype", "key", "operation", "sourceRaw")
+    for pid, record in previous_direct.items():
+        points = direct_by_id[pid]
+        leaf = record["representativeDirectLeaf"]
+        require(len(points) == record["directEditPointCount"],
+                "Previously audited direct leaf count changed: " + pid)
+        require(any(all(point[k] == leaf[k] for k in keys) and
+                    point.get("nodePath", []) == leaf.get("nodePath", [])
+                    for point in points),
+                "Previously audited direct CFG destination/value drift: " + pid)
     require(len(routed) == 70 and set(routed) | direct == set(definitions)
             and not set(routed) & direct, "Writer route coverage/ownership drift")
 
