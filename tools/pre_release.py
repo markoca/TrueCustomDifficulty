@@ -33,6 +33,7 @@ STATIC = (
     ("rc-signal-preset", "tools/audit_rc_signal_preset.py"),
     ("world-weapon-nested-source", "tools/audit_world_weapon_nested_source.py"),
     ("world-placement-cross-routes", "tools/audit_world_placement_cross_routes.py"),
+    ("world-physical-actor-isolation", "tools/audit_world_physical_actor_isolation.py"),
 )
 SOURCE = (
     ("original-files-and-hp", "tools/audit_cfg_dump_provenance.py"),

@@ -55,6 +55,7 @@ internal static class Program
                 "Original physical actor inventory count drift");
             Check(Candidates.Select(a => a.Key).Distinct(StringComparer.Ordinal).Count() == Candidates.Count,
                 "World physical actor domain manifests overlap: duplicated physical actor identity");
+            VerifyPhysicalActorDomainIsolation();
             Check(Candidates.GroupBy(a => a.ParameterId).All(g =>
                 g.Select(x => x.ActorSid).Distinct(StringComparer.Ordinal).Count() == g.Count()),
                 "World physical actor manifest contains repeated ActorSID");
@@ -98,6 +99,74 @@ internal static class Program
             return 0;
         }
         catch (Exception ex) { Console.Error.WriteLine("FAIL: " + ex); return 1; }
+    }
+
+
+    // All physical-removal surfaces must remain disjoint from usable regular
+    // weapons, direct attachments/detectors, unique weapons, protected stash
+    // containers and all Extra Stash Gear actor candidates. These are literal
+    // ActorSIDs in source manifests, not coincidentally similar item SIDs.
+    private static void VerifyPhysicalActorDomainIsolation()
+    {
+        var removed = Candidates.Select(x => x.ActorSid)
+            .ToHashSet(StringComparer.Ordinal);
+        Check(removed.Count == 10725,
+            "Physical-removal domains no longer contain 10,725 unique ActorSIDs");
+
+        var otherDomains = new (string Name, string Manifest, int Column, int Count)[]
+        {
+            ("regular world weapons", "world-weapon-direct-manifest.csv", 3, 362),
+            ("world attachments", "world-attachment-direct-manifest.csv", 3, 7),
+            ("world detectors", "world-detector-direct-manifest.csv", 2, 7),
+            ("unique world weapons", "loose-unique-weapon-shuffle-manifest.csv", 3, 9),
+            ("protected stashes", "base-stash-protected-actor-manifest.csv", 0, 106),
+            ("Extra Stash Gear actors", "stash-gear-actor-ranks.csv", 0, 915)
+        };
+        var union = removed.ToHashSet(StringComparer.Ordinal);
+        foreach (var domain in otherDomains)
+        {
+            var ids = EmbeddedActorSids(domain.Manifest, domain.Column, domain.Count);
+            Check(!union.Overlaps(ids),
+                "Physical world actor source safety overlap: " + domain.Name);
+            union.UnionWith(ids);
+        }
+        Check(union.Count == 12131,
+            "World physical ActorSID union must contain 12,131 disjoint source actors");
+        Console.WriteLine("PASS world-actor domain boundary: 10,725 removals vs "
+            + "362 weapons, 7 attachments, 7 detectors, 9 unique weapons, "
+            + "106 protected stashes and 915 Extra Gear actors");
+    }
+
+    private static HashSet<string> EmbeddedActorSids(
+        string manifestName, int sidColumn, int expectedCount)
+    {
+        using var stream = typeof(CfgPatchWriterService).Assembly.GetManifestResourceStream(
+            "TrueCustomDifficulty.Data." + manifestName)
+            ?? throw new InvalidDataException(
+                "Missing source-owned physical actor manifest: " + manifestName);
+        using var reader = new StreamReader(stream);
+        Check(!string.IsNullOrWhiteSpace(reader.ReadLine()),
+            "Empty world actor manifest header: " + manifestName);
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        var count = 0;
+        string? line;
+        while ((line = reader.ReadLine()) is not null)
+        {
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+            var columns = line.Split(',');
+            Check(columns.Length > sidColumn,
+                "Missing actor identity column: " + manifestName);
+            var sid = columns[sidColumn];
+            Check(sid.Length == 32 && sid.All(Uri.IsHexDigit),
+                "Invalid 32-digit physical ActorSID: " + manifestName);
+            Check(ids.Add(sid),
+                "Repeated ActorSID in source manifest: " + manifestName + "/" + sid);
+            count++;
+        }
+        Check(count == expectedCount && ids.Count == expectedCount,
+            "Physical actor source manifest count drift: " + manifestName);
+        return ids;
     }
 
     private static void Run(string difficulty, bool dlc, Dictionary<string, double> changes,

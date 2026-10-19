@@ -157,3 +157,11 @@ Source review confirms the 287/287 direct/special routing inventory, 217 direct 
 **Test gap closed:** previously `LootWorldPlacementContract` checked weapons and attachments separately, but never together. Two `Case` scenarios (base and DLC1, 50% weapon density, both shuffles ON) now drive the real production writer and verify that output fields, removals, clone references and unchanged source ownership are all accounted for together. Count updated **24 → 26** in the entrypoint and `tools/pre_release.py`. Added offline `tools/audit_world_placement_cross_routes.py` to the standard `pre_release.py static` suite to lock the exact shared generator, disjoint leaves, blueprint/detector isolation and 13 guarded authored collisions. Source manifests/production code/UI/catalog unchanged.
 
 **Evidence:** the manifest root/leaf comparisons were executed through the GitHub connection; the newly committed Python file and C# writer test have **NOT** been executed here. No runtime or gameplay PASS is claimed.
+
+## Gate 02 — world physical actor removal safety across remaining writer routes (2026-10-19)
+
+Independently cross-joined all nine current source manifests (not generated fixture assumptions): **3,391 crate**, **101 dedicated F1**, **7,233 loose item** removals = **10,725 distinct ActorSIDs**; direct world placement/protection sets of **362 regular weapons**, **7 attachments**, **7 detectors**, **9 unique weapons**, **106 protected base stash actors**, **915 Extra Stash Gear eligible actor identities** are pairwise disjoint, totaling **12,131 distinct physical actors**. In current data: **zero collisions**. That includes the categories previously tested only within each writer family.
+
+**Regression committed:** new `tools/audit_world_physical_actor_isolation.py` enforces manifest counts, 32-hex actor syntax, uniqueness and pairwise disjointness, included in the normal cross-platform `pre_release.py static` suite. The existing `LootWorldRemovalsContract` now also checks these embedded source-owned manifests before its **27** genuine production writer scenarios. Neither world percentages nor source pool membership have been altered.
+
+**Verification:** independent live GitHub data join PASSED; new Python/C# tests not executed in this environment. No CI is required; .NET/Wine and gameplay remain NOT RUN, not retrospectively PASS.
