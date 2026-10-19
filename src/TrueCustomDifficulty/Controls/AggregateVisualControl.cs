@@ -4860,8 +4860,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         // Two-state selection and hover borders are sufficient; no gold dot.
     }
 
-    // Two independently editable handles on ONE two-way rail per item.
-    // UI 0..5: MAX 0=stored -1 (off), MAX 5=stored 0 (source cap).
+    // Two native source values on one shared range rail like dropped weapon
+    // condition. MAX 0=stored -1 (off); MAX 5=stored 0 (native source cap).
+    private static bool IsStashMedicalMin(string id)
+        => id is "loot.stashMedkitMinCount" or "loot.stashArmyMedkitMinCount";
+
     private static bool IsStashMedicalMax(string id)
         => id is "loot.stashMedkitMaxCount" or "loot.stashArmyMedkitMaxCount";
 
@@ -4890,13 +4893,15 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         {
             var family = families[i];
             var x = left + (i % columns) * (cardWidth + gap);
-            var y = top + (i / columns) * 107.0;
+            var y = top + (i / columns) * 132.0;
             DrawStashQuantityDualRail(dc, P(family.Min), P(family.Max),
-                family.Name, new Rect(x, y, cardWidth, 98.0),
+                family.Name, new Rect(x, y, cardWidth, 122.0),
                 text, muted, border, panel, family.Tone);
         }
     }
 
+    // Same shared-rail two-endpoint grammar as DROPPED WEAPON CONDITION,
+    // but two independent, persisted native MIN/MAX source parameters.
     private void DrawStashQuantityDualRail(
         DrawingContext dc, ParameterViewModel? min, ParameterViewModel? max,
         string name, Rect card, Brush text, Brush muted, Brush border,
@@ -4914,75 +4919,94 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         if (min is null || max is null)
         {
             DrawCenteredText(dc, "LOADING",
-                new Point(card.Left + card.Width / 2.0, card.Top + 48.0),
+                new Point(card.Left + card.Width / 2.0, card.Top + 53.0),
                 10.0, muted, FontWeights.SemiBold);
             return;
         }
 
-        static string CountLabel(ParameterViewModel p)
-            => Math.Round(IsStashMedicalMax(p.Id)
-                ? StashMedicalMaxDisplay(p.CurrentNumber)
-                : Math.Clamp(p.CurrentNumber, 0.0, 5.0))
-                .ToString(CultureInfo.InvariantCulture);
-        void DrawCaption(ParameterViewModel p, string title, Point point)
-        {
-            var label = CountLabel(p);
-            var rendered = CreateText(title + "  " + label, 10.7,
-                p.IsControlEnabled ? text : muted, FontWeights.SemiBold,
-                Math.Max(1.0, card.Width / 2.0 - 18.0));
-            if (p.IsControlEnabled && p.IsValueModifiedFromReference()
-                )
-                rendered.SetForegroundBrush(Brushes.Yellow, title.Length + 2,
-                    label.Length);
-            dc.DrawText(rendered, point);
-        }
-        DrawCaption(min, "MIN", new Point(card.Left + 13.0, card.Top + 33.0));
-        DrawCaption(max, "MAX",
-            new Point(card.Left + card.Width / 2.0 + 9.0, card.Top + 33.0));
-        var middle = card.Left + card.Width / 2.0;
-        var y = card.Top + 68.0;
-        var minRail = new Rect(card.Left + 18.0, y,
-            Math.Max(1.0, middle - card.Left - 30.0), 1.0);
-        var maxRail = new Rect(middle + 12.0, y,
-            Math.Max(1.0, card.Right - middle - 30.0), 1.0);
+        var minValue = Math.Clamp(Math.Round(min.CurrentNumber), 0.0, 5.0);
+        var maxValue = Math.Round(StashMedicalMaxDisplay(max.CurrentNumber));
+        var center = card.Left + card.Width / 2.0;
+        var minReadoutX = center - 62.0;
+        var maxReadoutX = center + 62.0;
 
-        void DrawHalf(ParameterViewModel p, Rect rail,
-            double minimum, double maximum)
+        // Fixed readouts do not follow handles and cannot overlap at MIN=MAX.
+        DrawCenteredText(dc, "MIN", new Point(minReadoutX, card.Top + 27.0),
+            9.6, muted, FontWeights.Bold);
+        DrawCenteredText(dc, "MAX", new Point(maxReadoutX, card.Top + 27.0),
+            9.6, muted, FontWeights.Bold);
+        DrawCenteredText(dc, minValue.ToString(CultureInfo.InvariantCulture),
+            new Point(minReadoutX, card.Top + 43.0),
+            min.IsValueModifiedFromReference() ? 14.2 : 13.0,
+            !min.IsControlEnabled ? muted :
+                min.IsValueModifiedFromReference() ? Brushes.Yellow : text,
+            FontWeights.SemiBold);
+        DrawCenteredText(dc, maxValue.ToString(CultureInfo.InvariantCulture),
+            new Point(maxReadoutX, card.Top + 43.0),
+            max.IsValueModifiedFromReference() ? 14.2 : 13.0,
+            !max.IsControlEnabled ? muted :
+                max.IsValueModifiedFromReference() ? Brushes.Yellow : text,
+            FontWeights.SemiBold);
+        dc.DrawLine(new Pen(CloneWithOpacity(border, .60), .8),
+            new Point(center, card.Top + 28.0),
+            new Point(center, card.Top + 61.0));
+
+        var rail = new Rect(card.Left + 20.0, card.Top + 80.0,
+            Math.Max(1.0, card.Width - 40.0), 12.0);
+        var y = rail.Top + rail.Height / 2.0;
+        var xMin = ValueToX(minValue, 0.0, 5.0, rail, false);
+        var xMax = ValueToX(maxValue, 0.0, 5.0, rail, false);
+        var enabled = min.IsControlEnabled && max.IsControlEnabled;
+        var backPen = new Pen(CloneWithOpacity(border, .85), 3.5)
         {
-            dc.DrawLine(new Pen(CloneWithOpacity(border, .94), 3.0),
-                new Point(rail.Left, y), new Point(rail.Right, y));
-            var display = IsStashMedicalMax(p.Id)
-                ? StashMedicalMaxDisplay(p.CurrentNumber)
-                : Math.Clamp(p.CurrentNumber, 0.0, 5.0);
-            var pos = ValueToX(display, minimum, maximum, rail, false);
-            var origin = ValueToX(IsStashMedicalMax(p.Id) ? 5.0 : 0.0,
-                minimum, maximum, rail, false);
-            if (p.IsControlEnabled)
-                dc.DrawLine(new Pen(CloneWithOpacity(tone, .84), 3.2),
-                    new Point(origin, y), new Point(pos, y));
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, .6), 1.4),
-                new Point(origin, y - 7.0), new Point(origin, y + 7.0));
-            var hover = _hoverTarget is { Kind: HitKind.Horizontal } target
-                && ReferenceEquals(target.Parameter, p);
-            dc.DrawEllipse(panel,
-                new Pen(hover ? Brushes.White : p.IsControlEnabled ? tone : muted,
-                    hover ? 2.8 : 2.0),
-                new Point(pos, y), 7.0, 7.0);
-            if (p.IsControlEnabled)
-                dc.DrawEllipse(tone, null, new Point(pos, y), 2.5, 2.5);
-            // Both quantity axes increase from LEFT 0 to RIGHT 5; MIN is
-            // never mirrored. Keep labels and mouse hit mapping identical.
-            DrawText(dc, "0", new Point(rail.Left, y + 9.0),
-                9.0, muted, FontWeights.Normal);
-            DrawRightAlignedText(dc, "5",
-                new Point(rail.Right, y + 9.0),
-                9.0, muted, FontWeights.Normal);
-            AddHorizontalTarget(p,
-                new Rect(rail.Left - 6.0, y - 14.0, rail.Width + 12.0, 32.0),
-                rail, minimum, maximum);
+            StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round
+        };
+        dc.DrawLine(backPen, new Point(rail.Left, y), new Point(rail.Right, y));
+
+        // One active range band; no fabricated whole-stash chance.
+        var activePen = new Pen(enabled ? tone : muted, 4.5)
+        {
+            StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round
+        };
+        dc.DrawLine(activePen, new Point(xMin, y), new Point(xMax, y));
+
+        // Like NPC weapon condition, offset near-equal handles vertically so
+        // both are visible and can be independently selected in two dimensions.
+        var overlap = Math.Abs(xMax - xMin) < 16.0;
+        var separation = overlap ? 7.0 : 0.0;
+        var minPoint = new Point(xMin, y - separation);
+        var maxPoint = new Point(xMax, y + separation);
+        if (overlap)
+        {
+            var stem = new Pen(CloneWithOpacity(tone, .80), 1.5);
+            dc.DrawLine(stem, minPoint, new Point(xMin, y));
+            dc.DrawLine(stem, maxPoint, new Point(xMax, y));
         }
-        DrawHalf(min, minRail, 0.0, 5.0);
-        DrawHalf(max, maxRail, 0.0, 5.0);
+        foreach (var handle in new[] { (Parameter: min, Position: minPoint),
+                     (Parameter: max, Position: maxPoint) })
+        {
+            var hovered = _hoverTarget is { Kind: HitKind.Horizontal } target
+                && ReferenceEquals(target.Parameter, handle.Parameter);
+            dc.DrawEllipse(panel,
+                new Pen(hovered ? Brushes.White : enabled ? tone : muted,
+                    hovered ? 2.8 : 1.8),
+                handle.Position, 6.5, 6.5);
+            dc.DrawEllipse(enabled ? tone : muted, null,
+                handle.Position, 2.3, 2.3);
+        }
+
+        // Nearest-handle FindTarget disambiguates these identical hit regions
+        // and the drag continues to own its original native source parameter.
+        var fullHit = new Rect(rail.Left - 14.0, y - 19.0,
+            rail.Width + 28.0, 38.0);
+        AddHorizontalTarget(min, fullHit, rail, 0.0, 5.0);
+        AddHorizontalTarget(max, fullHit, rail, 0.0, 5.0);
+
+        DrawText(dc, "0", new Point(rail.Left, card.Bottom - 19.0),
+            9.5, muted, FontWeights.Normal);
+        DrawRightAlignedText(dc, "5",
+            new Point(rail.Right, card.Bottom - 19.0),
+            9.5, muted, FontWeights.Normal);
     }
 
     // Bonus Gear uses the writer's same 0.1x integer weight precision.
@@ -6298,6 +6322,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             target.Parameter.CurrentNumber =
                 StashMedicalMaxStore(Math.Clamp(next, 0.0, 5.0));
         }
+        else if (Family == "StashMedicalComposition"
+            && IsStashMedicalMin(target.Parameter.Id))
+            target.Parameter.CurrentNumber = Math.Clamp(
+                target.Parameter.CurrentNumber + direction * target.Parameter.TickFrequency,
+                0.0, 5.0);
         else
         {
             var next = target.Parameter.CurrentNumber
@@ -6564,12 +6593,14 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         var isMedicalMax = Family == "StashMedicalComposition"
             && IsStashMedicalMax(_selectedParameter.Id);
+        var isMedicalMin = Family == "StashMedicalComposition"
+            && IsStashMedicalMin(_selectedParameter.Id);
         var minimum = isChoice ? _selectedParameter.ChoiceMinimum
             : isMedicalMax ? 0.0 : _selectedParameter.Minimum;
         var maximum = isChoice ? _selectedParameter.ChoiceMaximum
             : Family == "StashMedicalComposition"
                 && IsMedicalPriorityWeight(_selectedParameter)
-                ? 1.0 : isMedicalMax ? 5.0 : _selectedParameter.Maximum;
+                ? 1.0 : isMedicalMax || isMedicalMin ? 5.0 : _selectedParameter.Maximum;
         var current = isChoice ? _selectedParameter.ChoiceIndex
             : isRangeMin ? _selectedParameter.CurrentMinNumber
             : isRangeMax ? _selectedParameter.CurrentMaxNumber
@@ -6600,6 +6631,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         else if (isMedicalMax)
             _selectedParameter.CurrentNumber =
                 StashMedicalMaxStore(Math.Clamp(Math.Round(next), 0.0, 5.0));
+        else if (isMedicalMin)
+            _selectedParameter.CurrentNumber = Math.Clamp(Math.Round(next), 0.0, 5.0);
         else
             _selectedParameter.CurrentNumber = Snap(_selectedParameter, next);
 
@@ -6757,6 +6790,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             && IsStashMedicalMax(target.Parameter.Id))
             target.Parameter.CurrentNumber =
                 StashMedicalMaxStore(Math.Clamp(Math.Round(raw), 0.0, 5.0));
+        else if (Family == "StashMedicalComposition"
+            && IsStashMedicalMin(target.Parameter.Id))
+            target.Parameter.CurrentNumber = Math.Clamp(Math.Round(raw), 0.0, 5.0);
         else
             target.Parameter.CurrentNumber = Snap(target.Parameter, raw);
 
@@ -6863,6 +6899,51 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
     private HitTarget? FindTarget(Point point)
     {
+        // Medical quantity: two independent source values occupy one shared
+        // physical rail. Choose the nearest handle, breaking ties by Y when
+        // almost coincident, exactly as the dropped-weapon condition editor.
+        if (Family == "StashMedicalComposition")
+        {
+            foreach (var pair in new[]
+            {
+                (Min: "loot.stashMedkitMinCount", Max: "loot.stashMedkitMaxCount"),
+                (Min: "loot.stashArmyMedkitMinCount", Max: "loot.stashArmyMedkitMaxCount")
+            })
+            {
+                var min = P(pair.Min);
+                var max = P(pair.Max);
+                var lower = _hitTargets.FirstOrDefault(t =>
+                    ReferenceEquals(t.Parameter, min) && t.Kind == HitKind.Horizontal);
+                var upper = _hitTargets.FirstOrDefault(t =>
+                    ReferenceEquals(t.Parameter, max) && t.Kind == HitKind.Horizontal);
+                if (min is null || max is null || lower is null || upper is null
+                    || !lower.HitRect.Contains(point))
+                    continue;
+                var minX = ValueToX(Math.Clamp(min.CurrentNumber, 0.0, 5.0),
+                    0.0, 5.0, lower.MapRect, false);
+                var maxX = ValueToX(StashMedicalMaxDisplay(max.CurrentNumber),
+                    0.0, 5.0, upper.MapRect, false);
+                var dMinX = Math.Abs(point.X - minX);
+                var dMaxX = Math.Abs(point.X - maxX);
+                var centerY = lower.MapRect.Top + lower.MapRect.Height / 2.0;
+                if (dMinX <= 14.0 && dMaxX <= 14.0)
+                {
+                    var separation = Math.Abs(maxX - minX) < 16.0 ? 7.0 : 0.0;
+                    var dMin = Math.Pow(dMinX, 2) +
+                        Math.Pow(point.Y - (centerY - separation), 2);
+                    var dMax = Math.Pow(dMaxX, 2) +
+                        Math.Pow(point.Y - (centerY + separation), 2);
+                    if (Math.Abs(dMin - dMax) > Epsilon)
+                        return dMin < dMax ? lower : upper;
+                }
+                if (Math.Abs(dMinX - dMaxX) > .001)
+                    return dMinX < dMaxX ? lower : upper;
+                return ReferenceEquals(_selectedParameter, max) ? upper
+                    : ReferenceEquals(_selectedParameter, min) ? lower
+                    : point.Y > centerY ? upper : lower;
+            }
+        }
+
         if (Family == "NpcLootLoadout")
         {
             var condition = P("loot.droppedWeaponCondition");
@@ -7215,7 +7296,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     private double StashContentMixHeight(double width)
         => width >= 700.0 ? 839.0 : 1185.0;
     private static double StashMedicalCompositionHeight(double width)
-        => width >= 700.0 ? 585.0 : 1001.0;
+        => width >= 700.0 ? 609.0 : 1050.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP
     // the FOUR-knob mixer still paints in two rows and needs 612 DIP.
     private static double StashGearHeight(double width)

@@ -6490,7 +6490,7 @@
       },
       "rationale": "Control medkits stack floor separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "Numeric 0–5 MIN rail with hover, click, drag, wheel, keyboard and reset. 0 leaves source floor. Matching MIN/MAX bound follows when needed.",
+      "interaction": "One shared 0–5 Dropped Weapon Condition-style MIN/MAX range: separate handles, source values, hover, drag, wheel, keyboard and reset. MIN 0 keeps the original floor.",
       "exposeInUi": true
     },
     {
@@ -6538,7 +6538,7 @@
       },
       "rationale": "Control medkits stack cap separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "Numeric 0–5 MAX rail with hover, click, drag, wheel, keyboard and reset. 0 maps to legacy -1; 5 maps to legacy 0 (no extra cap). Matching MIN/MAX bound follows when needed.",
+      "interaction": "One shared 0–5 Dropped Weapon Condition-style MIN/MAX range: separate handles even when overlapping. MAX 0 excludes (stored -1); MAX 5 preserves the authored cap (stored 0).",
       "exposeInUi": true
     },
     {
@@ -6586,7 +6586,7 @@
       },
       "rationale": "Control army medkits stack floor separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "Numeric 0–5 MIN rail with hover, click, drag, wheel, keyboard and reset. 0 leaves source floor. Matching MIN/MAX bound follows when needed.",
+      "interaction": "One shared 0–5 Dropped Weapon Condition-style MIN/MAX range: separate handles, source values, hover, drag, wheel, keyboard and reset. MIN 0 keeps the original floor.",
       "exposeInUi": true
     },
     {
@@ -6634,7 +6634,7 @@
       },
       "rationale": "Control army medkits stack cap separately from selection chance.",
       "logic": "Preserve native tier/rank variation unless the floor/cap is changed; enforce MinCount <= MaxCount in each output entry.",
-      "interaction": "Numeric 0–5 MAX rail with hover, click, drag, wheel, keyboard and reset. 0 maps to legacy -1; 5 maps to legacy 0 (no extra cap). Matching MIN/MAX bound follows when needed.",
+      "interaction": "One shared 0–5 Dropped Weapon Condition-style MIN/MAX range: separate handles even when overlapping. MAX 0 excludes (stored -1); MAX 5 preserves the authored cap (stored 0).",
       "exposeInUi": true
     },
     {

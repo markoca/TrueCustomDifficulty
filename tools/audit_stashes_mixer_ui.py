@@ -87,15 +87,22 @@ assert "DrawStashMedicalQuantityCards(dc, left, width," in medical
 assert "DrawStashMedicalWeightPreview(" not in coverage
 assert "DrawStashMedicalWeightPreview(" not in medical
 assert "wide ? 473.0 : 782.0" in medical
-assert "cardWidth, 98.0" in quantity
+assert "cardWidth, 122.0" in quantity
+assert "(i / columns) * 132.0" in quantity
 assert "DrawStashQuantityDualRail(dc, P(family.Min), P(family.Max)" in quantity
-assert "DrawHalf(min, minRail, 0.0, 5.0);" in quantity_rail
-assert "DrawHalf(max, maxRail, 0.0, 5.0);" in quantity_rail
-assert "bool reverse" not in quantity_rail
-assert "ValueToX(display, minimum, maximum, rail, false)" in quantity_rail
-assert 'DrawText(dc, "0", new Point(rail.Left, y + 9.0)' in quantity_rail
-assert 'new Point(rail.Right, y + 9.0)' in quantity_rail
-assert "rail, minimum, maximum);" in quantity_rail
+assert "DrawHalf(" not in quantity_rail
+assert "var rail = new Rect(card.Left + 20.0, card.Top + 80.0," in quantity_rail
+assert "var xMin = ValueToX(minValue, 0.0, 5.0, rail, false);" in quantity_rail
+assert "var xMax = ValueToX(maxValue, 0.0, 5.0, rail, false);" in quantity_rail
+assert "dc.DrawLine(activePen, new Point(xMin, y), new Point(xMax, y));" in quantity_rail
+assert "AddHorizontalTarget(min, fullHit, rail, 0.0, 5.0);" in quantity_rail
+assert "AddHorizontalTarget(max, fullHit, rail, 0.0, 5.0);" in quantity_rail
+assert "var overlap = Math.Abs(xMax - xMin) < 16.0;" in quantity_rail
+assert "ReferenceEquals(t.Parameter, min) && t.Kind == HitKind.Horizontal" in source
+assert "ReferenceEquals(t.Parameter, max) && t.Kind == HitKind.Horizontal" in source
+assert "dMin < dMax ? lower : upper" in source
+assert "private static bool IsStashMedicalMin(string id)" in source
+assert "width >= 700.0 ? 609.0 : 1050.0" in source
 assert '"VANILLA"' not in quantity_rail and '"AUTO"' not in quantity_rail
 assert 'StashMedicalMaxDisplay(p.CurrentNumber)' in quantity_rail
 assert 'StashMedicalMaxStore(Math.Clamp(Math.Round(raw), 0.0, 5.0))' in source
