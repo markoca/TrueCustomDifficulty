@@ -76,39 +76,39 @@ public sealed class ParameterViewModel : ObservableObject
             {
                 var instruction = VisualAggregateFamily switch
                 {
-                    "HumanCombatProfile" => "The health and gun damage readouts reflect the live sources. Drag the bottom ring for health, the left ring for gun damage, or the center for both. Turn the attack frequency, fire accuracy and explosion damage knobs independently; scroll for native-step precision.",
-                    "EquipmentWearBalance" => "Drag the bottom ring for armor toughness, the left ring for weapon wear, or the center ring to change both.",
+                    "HumanCombatProfile" => "Drag the bottom ring for enemy HP, the left ring for enemy gun damage, or the center for both. The three knobs change attack rate, accuracy and explosion damage.",
+                    "EquipmentWearBalance" => "Drag the bottom ring for armor durability, the left ring for weapon wear, or the center for both.",
                     "FlycatcherSlowdown" => "Drag the bottom ring to change movement speed, the left ring for turning speed, or the center to adjust both.",
-                    "HungerLadder" => "The two upper native rulers set hunger points gained each second and the Well-Fed stamina recovery bonus. Move LOW/MEDIUM/SEVERE thresholds on the graph; stamina penalties remain separate.",
-                    "FatigueCurve" => "The upper native rulers set fatigue points gained per second and energy drink fatigue relief. Below, adjust stage thresholds and combat penalties independently.",
-                    "RadiationBalance" => "Turn ACCUMULATION RATE and HP DAMAGE as multipliers; RECOVERY is real radiation points per second (0–0.10 PTS/S). Select 1–100 RAD on the ring or RAD CONTROLS bar to inspect its source damage and a fixed-RAD full-HP death estimate (one assumed charge/sec, no healing). ACCUMULATION RATE and RECOVERY do not affect this fixed-level estimate.",
-                    "StarvationTimeline" => "Adjust when penalties begin, how often damage ticks occur and the three penalty strengths using their individual controls. The timeline is a preview.",
-                    "ConsumableMixer" => "WATER STAMINA GAIN and ENERGY DRINK STAMINA GAIN independently set immediate stamina restored in percent (vanilla 38% and 50%). WATER STAMINA BUFF changes Water regeneration and action-cost reduction; ENERGY DRINK REGEN adjusts sustained stamina recovery. Drag duration markers below; OVERRIDE LIMITS expands duration ranges. Limited Energy Drink keeps its vanilla 100% instant refill.",
-                    "SleepingDashboard" => "Select 1–14 minimum sleep hours directly in the step row; other tracks set sleep eligibility and wake-up recovery.",
-                    "CoreHealthDashboard" => "Set MAX HP and PASSIVE RECOVERY directly; below, Recovery Delay, Recovery Multiplier and Low-HP Recovery Rate are independent CFG sources. Medical items stay in their own section; no synthetic health threshold.",
-                    "StaminaCore" => "CORE STAMINA sets Maximum stamina and Base Recovery with matching native resource rulers. MOVEMENT LIMITS keeps the vault-height ruler and calibrated Carry Weight in KG; all four sources remain independent.",
+                    "HungerLadder" => "Use the upper tracks for hunger buildup and the well-fed stamina bonus. Move the stage markers below to choose when hunger penalties begin.",
+                    "FatigueCurve" => "Set fatigue buildup and Energy Drink relief at the top. Adjust fatigue-stage thresholds and combat penalties below.",
+                    "RadiationBalance" => "Adjust radiation buildup, HP damage and natural recovery separately. Select a radiation level on the ring to preview its danger. The estimate assumes no healing.",
+                    "StarvationTimeline" => "Set when starvation penalties start, how often damage strikes and how strong each penalty is. The timeline is only a preview.",
+                    "ConsumableMixer" => "Set Water and Energy Drink instant stamina gains, lasting buffs and effect durations separately. OVERRIDE LIMITS allows longer durations.",
+                    "SleepingDashboard" => "Set when you can sleep, the minimum hours and how much HP and stamina you regain when you wake up.",
+                    "CoreHealthDashboard" => "Set Max HP and Passive HP Regen at the top. Recovery delay, recovery strength and low-HP recovery use separate tracks.",
+                    "StaminaCore" => "Set Max Stamina and Stamina Regen at the top. The tracks below change vault height and carry weight independently.",
                     "WaterStaminaPressure" => "Drag the MEDIUM WATER or DEEP WATER track separately.",
                     "SevereFatiguePenaltyBoard" => "Enable severe-fatigue mechanics, then drag each of the five vertical penalty equalizer bars independently.",
                     "MasterLowHealth" => "Enable low-health mechanics and turn the HEALTH RECOVERY LOSS knob; the percentage controls HP regeneration loss below the authored low-health trigger.",
-                    "MasterRadiationPenalty" => "Enable radiation mechanics and turn the ACTION STAMINA COST knob; the percentage controls extra action stamina cost while the penalty applies.",
+                    "MasterRadiationPenalty" => "Enable the heavy-radiation stamina penalty, then choose how much extra stamina actions cost while it applies.",
                     "MasterMedicalHealing" => "Switch the Master effect bundle on or off; adjust the Bandage, Medkit or Army Medkit healing tracks independently.",
-                    "CouponFlow" => "Drag the Starting Coupons rail directly from 0 to 100,000 (10-coupon native steps), or use arrow/Home/End keys for precision. Main and Side Quest reward meters are independent.",
-                    "TradingDashboard" => "Use the mirrored YOU SELL / YOU BUY price meters; condition acceptance and broken-value remain separate controls.",
+                    "CouponFlow" => "Drag Starting Coupons to change your new-game wallet. Main and side quest payouts are separate.",
+                    "TradingDashboard" => "PRICES TRADERS PAY controls selling; PRICES YOU PAY controls buying. The lower tracks handle sellable condition and broken-gear value.",
                     "RepairCurve" => "Drag one reputation point vertically to set its repair-price multiplier. Linked values follow the existing source-value ordering.",
-                    "TraderStockBoard" => "Turn the independent AMMO STOCK and MEDIC STOCK knobs; each edits its own native supply quantities.",
-                    "ServiceCostsBoard" => "Turn the separate Fast Travel, Upgrade and Base Repair knobs. Base Repair shows a percentage of the source multiplier, not a final repair bill.",
+                    "TraderStockBoard" => "AMMO SUPPLY and MEDIC SUPPLIES change quantities carried by traders and medics, not the items they can unlock.",
+                    "ServiceCostsBoard" => "Adjust guide travel, upgrades and repairs separately. Discounts and reputation may still affect final prices.",
                     "ItemWeightBoard" => "Drag AMMUNITION WEIGHT or FOOD & MEDICINE WEIGHT independently.",
-                    "AnomalyGlobalDamage" => "Turn GLOBAL to scale damage for all anomalies. Each column shows FINAL (combined, before protection) and BASE (editable individual damage); bars compare BASE with vanilla.",
-                    "AnomalySpecialEffects" => "Drag the Razor, Diamond or Psy track you want to change; each is independent.",
-                    "NpcLootLoadout" => "Choose a corpse bonus icon, tune medical or bonus ammo drops, or adjust weapon condition MIN/MAX. Bonus ammo only applies with Medicine + Ammo; regular weapon ammo stays unchanged.",
-                    "WorldLootLayout" => "Click SHUFFLE WEAPONS or SHUFFLE UNIQUE WEAPONS independently. Weapon Density is adjustable only when regular weapon shuffle is on; the three right-hand switches are separate.",
-                    "StashContentMix" => "AMMO QUANTITY changes Basic, Standard and Rare stacks together. The Standard/Rare category sliders adjust each item's original Chance; 100% preserves that source Chance and does not guarantee loot. Rare Coupons uses an absolute per-entry Chance. Hover a category card for this distinction. Basic RGD-5 Chance is also absolute; right-click resets one setting and R resets the panel.",
-                    "StashMedicalComposition" => "DROP ROLLS adjusts independent per-entry Chance percentages, not whole-stash odds. LOOT PRIORITY scales the existing Basic Bandage Weight and Veteran/Master Medkit-versus-Army-Medkit native pools between 0 and 1×. The single EFFECTIVE PICK bar shows one genuine rank at a time; its Veteran/Master tabs only change the preview. Anti-Rad's solo Weight source is an adjacent OFF/ON switch; its Chance roll remains independent. Source backend and legacy preset values above 1× remain preserved until a Weight knob is edited. MEDKIT/ARMY MIN/MAX show 0–5 bounds; MAX 0 excludes, MAX 5 preserves the original source maximum. Right-click resets one source.",
-                    "StashGear" => "Eligible Stashes selects ordinary actors. Four PRIORITY settings favor Weapons, Armor, Artifacts and independent Attachments in build-time category picks; these are not drop odds. Bonus Chance sets the outer native Chance (default 50%); attachment source generators may also have internal rules. Rank and quest/Weird exclusions remain enforced.",
-                    "AmmoDistribution" => "Use AMMO YIELD or GRENADE YIELD for quantities. Turn the four AMMO FAMILY WEIGHTS knobs to change which calibers are favored; SNG/NATO pool bars are read-only.",
+                    "AnomalyGlobalDamage" => "GLOBAL affects all supported anomaly damage. Each anomaly also has its own damage setting; FINAL includes both before protection.",
+                    "AnomalySpecialEffects" => "Adjust Glass Shards bleeding and Psy drain independently. Their other damage effects remain separate.",
+                    "NpcLootLoadout" => "Choose extra corpse loot, medical or bonus ammo drops, and dropped weapon condition. Bonus ammo requires Medicine + Ammo.",
+                    "WorldLootLayout" => "Shuffle regular weapons, unique weapons, attachments and blueprints separately. Weapon density applies only with regular weapon shuffle.",
+                    "StashContentMix" => "Ammo Quantity changes Basic, Standard and Rare stacks together. Chance sliders scale original item chances; 100% does not guarantee loot. Rare Coupons and Basic RGD-5 have separate absolute chances.",
+                    "StashMedicalComposition" => "DROP ROLLS changes medical-item chances, not whole-stash odds. LOOT PRIORITY favors items inside their actual pools; Veteran/Master tabs only change the preview. MIN/MAX sets stack sizes.",
+                    "StashGear" => "BONUS GEAR COVERAGE chooses eligible stash locations. PRIORITY favors item categories; BONUS CHANCE checks each candidate. Quest and unique loot are protected.",
+                    "AmmoDistribution" => "AMMO PER BOX and GRENADES PER BOX change amounts. Ammo type settings favor calibers; SNG/NATO bars only preview the mix.",
                     "BreakableBoxYields" => "Drag the ammo or grenade yield track to change only that box's contents.",
-                    "PlayerWeaponProfile" => "Turn WEAPON DAMAGE, HEADSHOT DAMAGE or JAM FREQUENCY using its knob. Scroll over a knob or use arrow keys for precise adjustment.",
-                    "HumanGroupSizeRadar" => "Drag a rank track to set its human squad cap.",
+                    "PlayerWeaponProfile" => "Turn Weapon Damage, Headshot Damage and Jam Rate independently. Scroll or use arrow keys for fine adjustments.",
+                    "HumanGroupSizeRadar" => "Drag each player-rank track to change that rank's maximum human squad size.",
                     _ => "Select a setting and click or drag its control. Each active handle edits its own value."
                 };
                 return instruction + Environment.NewLine
@@ -119,15 +119,15 @@ public sealed class ParameterViewModel : ObservableObject
                 return "Drag BEER or VODKA to change that drink's intoxication strength. The stages update in the preview."
                     + Environment.NewLine + "Right-click one drink to reset it; R resets both.";
             if (IsBleedingCurveMember)
-                return "BLEEDING SEVERITY and NATURAL RECOVERY edit their native CFG values. On the BLEEDING DAMAGE PROFILE, drag the LOW/MEDIUM/SEVERE damage handles or the Medium/Severe threshold markers."
+                return "BLEEDING SEVERITY and NATURAL RECOVERY control bleeding strength and how quickly it fades. On the BLEEDING DAMAGE PROFILE, drag the LOW/MEDIUM/SEVERE damage handles or the Medium/Severe threshold markers."
                     + Environment.NewLine + "The three stage cards below show current bleeding-point thresholds and HP per tick only. They are not clickable and no death-time simulation is shown."
-                    + Environment.NewLine + "Right-click a real graph control to reset it; R resets all seven bleeding CFG sources.";
+                    + Environment.NewLine + "Right-click a real graph control to reset it; R resets all seven bleeding settings.";
 
             if (IsActionCostMember)
                 return "Drag an action's track to change how much stamina that move costs."
                     + Environment.NewLine + "Right-click one track to reset it; R resets all Stamina Usage actions.";
             if (IsExhaustionRecoveryMember)
-                return "On the STAMINA THRESHOLDS ruler, drag the top marker to choose when sprint stops, or the bottom marker to choose when the low-stamina boost starts. The ruler uses 100 stamina by default and expands with Maximum Stamina above 100; each marker keeps its own native limit."
+                return "On the STAMINA THRESHOLDS ruler, drag the top marker to choose when sprint stops, or the bottom marker to choose when the low-stamina boost starts. The ruler uses 100 stamina by default and expands when Max Stamina exceeds 100; each marker keeps its own limit."
                     + Environment.NewLine + "Aiming, exhaustion delay and low-stamina boost stay independent. Right-click one source or press R for all.";
             if (IsMedicalHealingMember)
                 return "Four HEAL/BLEED pairs and four RAD columns (Scientific, Anti-Rad, Beer, Vodka) edit independent effects."

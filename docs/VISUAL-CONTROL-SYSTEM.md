@@ -1,3 +1,11 @@
+## 2026-10-19 — CURRENT RC rationale readability lock (178 visible)
+
+Authoritative player-facing copy for **all 178 visible settings**, including eight formerly missing Standard/Rare stash Chance rationales. The 105 hidden source/preset dimensions keep their technical documentation. `WHAT IT DOES` now gives the effect in-game in one or two concise sentences; it does **not** explain CFG structures, authored patches, generic source Weight or UI gestures. More detailed number interpretation belongs to `WHAT THIS VALUE MEANS`; direction belongs to `HIGHER / LOWER`; related mechanics belong to `WORKS WITH`; gestures belong to `CONTROLS`. Twenty-five specialized contextual control-help families have also been shortened and matched to the current RC labels.
+
+**Semantics protected:** Stash category `Priority` is selection preference within existing loot pools, not a whole-stash drop percentage. Category `Chance` scales existing chances, and 100% need not guarantee an item. Stash `Quantity` affects stack counts. `Bonus Gear Coverage` chooses which eligible stash actors are candidates; `Bonus Chance` controls the chance checks for their offered items. NPC Bonus Ammo is independent from loaded weapon ammo. Trader purchase and sale directions stay distinct. `Starvation Action Cost` never claims passive stamina drain. The tool's sleep heal default is 100 HP although the original game's source was 300 HP.
+
+`tools/audit_rc_rationale_readability.py` is the release gate for every visible rationale and high-risk caveats. The global detail-panel structure remains covered by `tools/audit_rationale_ui.py`, with a single CONTROLS heading and no repeated interaction paragraphs in WHAT IT DOES. This is a text-only change: no gameplay source ID, CFG writer, preset value, control geometry, layout or slider behavior changes.
+
 ## 2026-10-19 — CURRENT RC player-facing labels (41 approved)
 
 Authoritative labels for this release candidate supersede older terminology in historical sections below. 36 player-facing catalog labels, four WPF headings (STASH LOOT MIX, LOOT POOLS, BASIC · LOOT PREVIEW, HUMAN ENEMY COMBAT), and GEAR WEAR were approved, with catalog groups Item Values, Gear Wear, Damage by Anomaly and Human Squad Size aligned. All 283 parameter identities, CFG routes, values, preset schemas, and slider geometry are unchanged.

@@ -1,3 +1,7 @@
+## 2026-10-19 — Stashes rationale clarity
+
+The RC Stashes text clearly separates **relative loot priority**, **per-item chance**, **stack quantity**, **eligible stash coverage** and **bonus candidate chance**. All eight previously blank tier Chance rationales are now specific to the displayed category and explain why 100% is not guaranteed loot. The native WPF Stash panels and writer have no gameplay changes; the gameplay-language `ControlHelp` is synchronized with the 178-setting rationale pass.
+
 ## 2026-10-19 — CURRENT RC player-facing labels (41 approved)
 
 Authoritative labels for this release candidate supersede older terminology in historical sections below. 36 player-facing catalog labels, four WPF headings (STASH LOOT MIX, LOOT POOLS, BASIC · LOOT PREVIEW, HUMAN ENEMY COMBAT), and GEAR WEAR were approved, with catalog groups Item Values, Gear Wear, Damage by Anomaly and Human Squad Size aligned. All 283 parameter identities, CFG routes, values, preset schemas, and slider geometry are unchanged.

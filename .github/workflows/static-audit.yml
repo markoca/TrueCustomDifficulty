@@ -70,6 +70,9 @@ jobs:
       - name: RC player-facing labels
         run: python tools/audit_rc_player_labels.py
 
+      - name: RC rationale readability and in-game meaning
+        run: python tools/audit_rc_rationale_readability.py
+
       - name: Build Difficulty activity rail contract
         run: python tools/audit_build_progress_contract.py
 
