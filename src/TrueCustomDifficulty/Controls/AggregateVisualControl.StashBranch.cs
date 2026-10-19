@@ -237,18 +237,6 @@ public sealed partial class AggregateVisualControl
             throw new InvalidDataException(
                 "Basic native mixer categories changed; review visible knobs.");
 
-        // One tier-local ammo count multiplier, independent of all native
-        // Chance and Weight fields; the parent owns exactly these sources.
-        var ammoId = tierName == "Medium"
-            ? "loot.mediumStashAmmoQuantity" : "loot.expensiveStashAmmoQuantity";
-        DrawStashNativeRollControl(dc, ammoId, "AMMO QUANTITY", 0,
-            new Rect(outer.Left + 12.0, outer.Top + 30.0,
-                Math.Min(360.0, Math.Max(1.0, outer.Width - 24.0)), 56.0),
-            text, muted, border, accent, panel,
-            percentage: false, multiplier: true);
-        DrawText(dc, "CHANCE",
-            new Point(outer.Left + 12.0, outer.Top + 92.0),
-            10.0, muted, FontWeights.SemiBold);
         var columns = outer.Width >= 670.0 ? 3 : 2;
         const double inset = 12.0;
         const double gap = 8.0;
@@ -352,6 +340,19 @@ public sealed partial class AggregateVisualControl
             new Pen(CloneWithOpacity(border, .61), .9), outer, 4.0, 4.0);
         dc.DrawText(CreateText(label, 11.4, text, FontWeights.Bold),
             new Point(outer.Left + 12.0, outer.Top + 8.0));
+
+        // One tier-local ammo count multiplier, independent of all native
+        // Chance and Weight fields; the parent owns exactly these sources.
+        var ammoId = tierName == "Medium"
+            ? "loot.mediumStashAmmoQuantity" : "loot.expensiveStashAmmoQuantity";
+        DrawStashNativeRollControl(dc, ammoId, "AMMO QUANTITY", 0,
+            new Rect(outer.Left + 12.0, outer.Top + 30.0,
+                Math.Min(360.0, Math.Max(1.0, outer.Width - 24.0)), 56.0),
+            text, muted, border, accent, panel,
+            percentage: false, multiplier: true);
+        DrawText(dc, "CHANCE",
+            new Point(outer.Left + 12.0, outer.Top + 92.0),
+            10.0, muted, FontWeights.SemiBold);
         var columns = outer.Width >= 670.0 ? 3 : 2;
         const double inset = 12.0;
         const double gap = 8.0;

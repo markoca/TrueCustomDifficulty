@@ -533,6 +533,20 @@ assert tier_preview.count('"loot.mediumStashAmmoQuantity"') == 1
 assert tier_preview.count('"loot.expensiveStashAmmoQuantity"') == 1
 assert 'endValue + (multiplier ? "×" : percentage ? "%" : "")' in coverage
 assert 'multiplier ? "0.##"' in coverage
+# Regression: the Basic WEIGHT mixer has no tierName in scope. Tier-local
+# ammo quantity was accidentally injected here, causing CS0103 on build.
+# The Standard/Rare cards must own it, not the Basic Weight mixer.
+mixer_method = coverage.split("private void DrawStashWeightMixer(", 1)[1].split(
+    "private void DrawStashBasicNativePools(", 1)[0]
+tier_method = coverage.split("private void DrawStashChanceTier(", 1)[1]
+assert "tierName" not in mixer_method
+assert "ammoId" not in mixer_method
+assert "DrawStashNativeRollControl(" not in mixer_method
+assert 'var ammoId = tierName == "Medium"' in tier_method
+assert tier_method.count('DrawStashNativeRollControl(dc, ammoId, "AMMO QUANTITY", 0,') == 1
+assert 'new Point(outer.Left + 12.0, outer.Top + 92.0)' in tier_method
+assert '"AMMO QUANTITY"' in tier_method
+assert '"CHANCE"' in tier_method
 assert 'DrawStashNativeRollControl(dc, ammoId, "AMMO QUANTITY", 0,' in tier_preview
 assert 'var y = outer.Top + 112.0 + n / columns * pitch;' in tier_preview
 assert '"StashRewardProfile"' not in viewmodel and '"StashRewardProfile"' not in main_vm

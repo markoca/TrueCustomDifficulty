@@ -81,6 +81,12 @@ tier_body = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split("
 assert '"loot.cheapStashAmmoQuantity"' in content_body
 assert '"loot.mediumStashAmmoQuantity"' in tier_body
 assert '"loot.expensiveStashAmmoQuantity"' in tier_body
+basic_mixer = read(src / "Controls/AggregateVisualControl.StashBranch.cs").split(
+    "private void DrawStashWeightMixer(", 1)[1].split(
+    "private void DrawStashBasicNativePools(", 1)[0]
+assert "tierName" not in basic_mixer
+assert "ammoId" not in basic_mixer
+assert 'DrawStashNativeRollControl(dc, ammoId, "AMMO QUANTITY"' in tier_body
 assert 'percentage: false, multiplier: true' in content_body
 assert 'percentage: false, multiplier: true' in tier_body
 for pid in rewards:
