@@ -299,21 +299,26 @@ def main():
 
     by_id = {}
     for pid, p in definitions.items():
+        # defaultdict.__getitem__ would create empty 'direct' entries for all
+        # special-only IDs, corrupting the later factory direct-leaf audit.
+        points = direct.get(pid, ())
         by_id[pid] = {
             "tab": p["tab"], "control": p["control"], "exposeInUi": p.get("exposeInUi", True),
             "evidence": p["support"]["status"], "route": "direct" if pid in direct else "special",
-            "directCount": len(direct[pid]),
+            "directCount": len(points),
             "writerMethods": ["TransformValue"] if pid in direct else sorted(special[pid]),
-            "directOperations": sorted(set(e["operation"] for e in direct[pid])),
+            "directOperations": sorted(set(e["operation"] for e in points)),
             "directTargets": [{
                 "scope": e["scope"], "file": e["file"], "prototype": e["prototype"],
                 "nodePath": e.get("nodePath", []), "key": e["key"],
                 "operation": e["operation"], "sourceRaw": e["sourceRaw"],
                 "difficultySid": e.get("difficultySid", "")
-            } for e in direct[pid]],
+            } for e in points],
             "declaredTargets": p["targets"],
             "runtimeVerified": False,
         }
+    require(len(direct) == 217,
+            "direct route inventory mutated while building source report")
     inert = []
     for name in NAMES:
         doc = json.loads((PRESETS / (name + ".json")).read_text(encoding="utf-8"))

@@ -172,6 +172,15 @@ def main() -> int:
             files = (prototype, actors, dlc_actors)
             require({t["file"] for t in p["targets"]} & {prototype, actors, dlc_actors},
                     "Extra Gear catalog has no output target: " + pid)
+        elif pid in food:
+            # Four new Food/Hunger controls are native direct EffectPrototypes
+            # ValueMin/ValueMax edits, never Stash tier generator Chance routes.
+            group = "Food Satiety (direct)"
+            methods = ("TransformValue",)
+            files = ("GameData/EffectPrototypes.cfg",)
+            require({t["file"] for t in p["targets"]} == set(files)
+                    and {t["operation"] for t in p["targets"]} == {"negateSet"},
+                    "Food catalog lost its native EffectPrototypes target: " + pid)
         else:
             group = "Standard/Rare native Chance"
             methods = (production[1],) if pid == "loot.standardStashChanceScale" or pid.startswith(
@@ -183,12 +192,14 @@ def main() -> int:
         # The registered method is a PRIMARY dispatch anchor. Composite tier
         # clone / SmartLoot fan-out is separately proven above and is not
         # misrepresented as an independent new UI control.
-        require(set(routed[pid]).issubset(methods),
+        require(set(routed.get(pid, ())).issubset(methods),
                 "Source is registered under an unrelated production method: " + pid)
         require(p["support"]["status"] in ("confirmed", "runtime_test_required"),
                 "Missing source evidence class: " + pid)
-        rows.append({"parameterId": pid, "group": group, "primaryWriter": ";".join(
-            sorted(routed[pid])), "productionWriters": ";".join(methods),
+        rows.append({"parameterId": pid, "group": group,
+                     "primaryWriter": "TransformValue" if pid in food else ";".join(
+                         sorted(routed.get(pid, ()))),
+                     "productionWriters": ";".join(methods),
             "possibleCfgDestinations": ";".join(files),
             "sourceStatus": p["support"]["status"],
             "verified": "static route+destination, NOT runtime"})

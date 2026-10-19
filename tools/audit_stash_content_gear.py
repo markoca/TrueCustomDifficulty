@@ -77,7 +77,11 @@ for name in gear:
     slider = p["slider"]
     if name.endswith("Weight"):
         assert (slider["min"], slider["max"], slider["step"]) == (0, 3, 0.1)
-        assert p["vanilla"]["All"] == 1
+        # Attachment bonuses are intentionally opt-in (0x); the three
+        # original classes retain 1x. Never rewrite source defaults to
+        # satisfy a stale generic test expectation.
+        expected = 0 if name == "loot.stashGearAttachmentWeight" else 1
+        assert p["vanilla"]["All"] == expected, name
     else:
         assert (slider["min"], slider["max"], slider["step"]) == (0, 100, 1)
         assert p["vanilla"]["All"] == (50 if name.endswith("BonusChance") else 0)
