@@ -536,7 +536,7 @@ assert basic_preview[7]["fields"]["PlayerRank"] == "ERank::Experienced"
 assert basic_preview[1]["fields"]["Diff"] == "EGameDifficulty::Hard"
 assert "PlayerRank" not in basic_preview[1]["fields"]
 
-assert '"WEIGHT MIX · ALL TIERS"' in content
+assert '"LOOT PRIORITY · ALL TIERS"' in content
 assert '"BASIC  ·  WEIGHT MIX"' not in content
 assert '"BASIC · LOOT EXAMPLE"' in coverage
 native_preview_method = coverage.split("private void DrawStashBasicNativePools(", 1)[1].split("private void DrawStashChanceTier(", 1)[0]
