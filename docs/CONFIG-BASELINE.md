@@ -635,7 +635,7 @@ rather than modifying only item files.
 
 ## 15.1 Food and hunger effects
 
-**Implementation updated 2026-10-19:** Four normal direct food effects (Bread -20, Sausage -30, Canned Food -50 and Condensed Milk -100) now expose independent native Hunger Relief sliders. UI values are positive magnitude 0..2× original with 5-point steps, while `negateSet` writes both negative effect bounds. These are one-time item effects, not the unverified `Effect_Satiety` difficulty scalar. Fresh Bread and Weird Kettle alternatives are outside this control family.
+**Implementation updated 2026-10-19:** Four normal direct food effects (Bread -20, Sausage -30, Canned Food -50 and Condensed Milk -100) now expose independent native Hunger Relief sliders. UI values are positive magnitudes with 5-point steps (Bread 0–40, Sausage 0–60, Canned Food 0–100 and Milk 0–100 due to the 100-point hunger-meter ceiling), while `negateSet` writes both negative effect bounds. These are one-time item effects, not the unverified `Effect_Satiety` difficulty scalar. Fresh Bread and Weird Kettle alternatives are outside this control family.
 
 | Item | Effect SID | HungerPoints effect |
 |---|---|---:|

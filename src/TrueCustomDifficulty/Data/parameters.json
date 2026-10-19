@@ -1767,7 +1767,7 @@
       "tab": "survival",
       "group": "Hunger",
       "label": "Condensed Milk Hunger Relief",
-      "description": "Changes how many hunger points condensed milk removes when eaten. Does not affect food healing, alcohol recovery or Weird Kettle alternatives.",
+      "description": "Condensed milk already clears the full 100-point hunger meter. Reduce its hunger relief to make it less filling; healing and other effects stay unchanged.",
       "control": "slider",
       "valueKind": "raw",
       "display": {
@@ -1784,7 +1784,7 @@
       },
       "slider": {
         "min": 0,
-        "max": 200,
+        "max": 100,
         "step": 5,
         "stepMode": "absolute"
       },
@@ -1801,12 +1801,13 @@
         "status": "runtime_test_required",
         "notes": [
           "2.0.5 native effect MilkSatiety4: both source bounds are -100. Confirm final gameplay behavior in game.",
-          "Normal food effect only; no edits to healing, alternate effect lists or other consumables."
+          "Normal food effect only; no edits to healing, alternate effect lists or other consumables.",
+          "Player.MaxHungerPoints = 100 in the 2.0.5 project baseline. Limit editable relief to 0–100 rather than exposing an inert 100–200 range."
         ]
       },
-      "rationale": "Eating condensed milk removes this many hunger points.",
-      "logic": "This changes hunger relief from one item, not the speed at which hunger builds up.",
-      "interaction": "More points means greater relief per item. The usual food healing and special effects are separate.",
+      "rationale": "Condensed milk normally removes all 100 hunger points. Lowering this value makes each tin less filling.",
+      "logic": "The player's normal hunger meter tops out at 100 points. Greater relief than 100 cannot lower an empty meter further.",
+      "interaction": "Adjusts the normal condensed milk satiety effect only, not alternate Weird Kettle or other food effects.",
       "exposeInUi": true
     },
     {

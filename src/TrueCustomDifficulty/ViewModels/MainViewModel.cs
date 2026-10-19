@@ -1932,6 +1932,12 @@ public sealed class MainViewModel : ObservableObject
             {
                 // Hunger
                 "survival.hungerRate" => 0,
+                // Normal per-food hunger relief: two compact rows immediately
+                // after the Hunger Ladder, never default/alphabetic fallback.
+                "survival.breadSatiety" => 10,
+                "survival.sausageSatiety" => 20,
+                "survival.cannedFoodSatiety" => 30,
+                "survival.milkSatiety" => 35,
                 "survival.wellFedStaminaRegen" => 40,
                 "survival.hungerMediumStaminaRegen" => 50,
                 "survival.hungerStrongStaminaRegen" => 60,

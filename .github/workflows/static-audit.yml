@@ -25,10 +25,13 @@ jobs:
       - name: Active UI-to-CFG contract
         run: python tools/audit_ui_cfg_contract.py
 
-      - name: Current 283-source CFG to actual BPatch writer route and factory-output audit
+      - name: Four native Food Hunger Relief source, UI, and preset audit
+        run: python tools/audit_food_satiety_source.py
+
+      - name: Current 287-source CFG to actual BPatch writer route and factory-output audit
         run: python tools/audit_final_cfg_mapping.py --out audit/final-cfg-mapping
 
-      - name: Incremental CFG destination audit for 35 newer Stashes sources
+      - name: Incremental CFG destination audit for 35 Stashes and 4 Food sources
         run: python tools/audit_cfg_route_delta.py --out audit/stashes-cfg-route-delta.csv
 
       - name: Generic world stash 45-case in-game test source matrix

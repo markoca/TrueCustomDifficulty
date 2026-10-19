@@ -27,7 +27,7 @@ internal static class Program
             var points = Baseline.EditPoints.Where(p => p.ParameterId == id).ToArray();
             Check(source.Group == "Hunger" && source.IsControlVisible
                   && !source.IsVisualAggregateMember
-                  && source.Minimum == 0 && source.Maximum == native * 2
+                  && source.Minimum == 0 && source.Maximum == Math.Min(native * 2, 100.0)
                   && source.TickFrequency == 5 && source.ReferenceNumber == native,
                 "Food Hunger Relief source card is not independent/native: " + id);
             Check(points.Length == 2
@@ -38,12 +38,66 @@ internal static class Program
                        && p.Operation == "negateSet"
                        && p.SourceRaw == "-" + native.ToString("0", CultureInfo.InvariantCulture)),
                 "Food Hunger Relief writer pair drifted: " + id);
-            source.CurrentNumber = native + 5;
-            Check(source.CurrentDisplay.Contains((native + 5).ToString("0", CultureInfo.InvariantCulture)),
-                "Food player-facing relief number became negative: " + id);
+            source.CurrentNumber = Math.Min(native + 5, source.Maximum);
+            Check(source.CurrentDisplay == source.CurrentNumber.ToString("0", CultureInfo.InvariantCulture) + " pts",
+                "Food player-facing relief value or units drifted: " + id);
+            source.CurrentNumber = 900;
+            Check(Math.Abs(source.CurrentNumber - source.Maximum) < 0.000001,
+                "Food upper clamp allowed an unreachable hunger meter value: " + id);
+            source.CurrentNumber = -900;
+            Check(source.CurrentNumber == 0,
+                "Food lower clamp allowed negative player-facing relief: " + id);
             source.ResetToReference();
+            Check(Math.Abs(source.CurrentNumber - native) < 0.000001,
+                "Food reset lost original satiety: " + id);
         }
+        var foodOrder = vm.Tabs.Single(t => t.Id == "survival").Parameters
+            .Where(p => p.Id is "survival.breadSatiety" or "survival.sausageSatiety"
+                or "survival.cannedFoodSatiety" or "survival.milkSatiety")
+            .Select(p => p.Id).ToArray();
+        Check(foodOrder.SequenceEqual(new[]
+            { "survival.breadSatiety", "survival.sausageSatiety",
+              "survival.cannedFoodSatiety", "survival.milkSatiety" }),
+            "Food cards are not in two native compact rows under Hunger Ladder");
         _passed++;
+    }
+
+    // Zero, max-relevant and mixed per-food edits must produce exact isolated
+    // signed ValueMin/ValueMax leaves through the real Windows WPF writer.
+    private static void FoodSatietyBoundaryWriterContract()
+    {
+        foreach (var (id, native, max) in new[]
+        {
+            ("survival.breadSatiety", 20.0, 40.0),
+            ("survival.sausageSatiety", 30.0, 60.0),
+            ("survival.cannedFoodSatiety", 50.0, 100.0),
+            ("survival.milkSatiety", 100.0, 100.0)
+        })
+        {
+            foreach (var value in new[] { 0.0, max })
+            {
+                if (Math.Abs(value - native) < 0.000001)
+                    continue; // milk at 100 is vanilla, so produces no food patch.
+                var name = "FoodSatiety-" + id.Replace('.', '-') + "-" + value.ToString("0", CultureInfo.InvariantCulture);
+                var directory = Path.Combine(_keep ?? Path.GetTempPath(), "TCD_Survival_Patch", name);
+                try
+                {
+                    var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+                    var parameter = vm.AllParameters.Single(p => p.Id == id);
+                    parameter.CurrentNumber = value;
+                    Check(parameter.IsValueModifiedFromReference()
+                          && Math.Abs(parameter.CurrentNumber - value) < 0.000001,
+                        name + ": native boundary did not remain editable");
+                    CheckWriter(vm, new HashSet<string>(StringComparer.Ordinal) { id }, directory, name);
+                    _passed++;
+                }
+                finally
+                {
+                    if (_keep is null && Directory.Exists(directory))
+                        Directory.Delete(directory, recursive: true);
+                }
+            }
+        }
     }
 
     // Verify both independent Master conditional knobs remain real source-
@@ -205,6 +259,7 @@ internal static class Program
             Check(cohort.Length == 68, "Survival catalog no longer contains exactly 68 parameters");
 
             FoodSatietySourceContract();
+            FoodSatietyBoundaryWriterContract();
             MasterPenaltyKnobSourceContract();
             StarvationKnobRangeContract();
             NativeHungerFatiguePrimarySourceContract();
@@ -297,6 +352,13 @@ internal static class Program
                 ("survival.psiBlockDuration", 135.0)
             });
 
+            TestCombined("Veteran-Four-Normal-Food-Effects", "Veteran", new[]
+            {
+                ("survival.breadSatiety", 35.0),
+                ("survival.sausageSatiety", 10.0),
+                ("survival.cannedFoodSatiety", 85.0),
+                ("survival.milkSatiety", 75.0)
+            });
             TestCombined("Veteran-Hunger-Fatigue", "Veteran", new[]
             {
                 ("survival.hungerMediumStaminaRegen", 0.43),

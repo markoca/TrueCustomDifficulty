@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 STATIC = (
     ("combat-catalog", "tools/audit_combat_contract.py"),
     ("ui-cfg", "tools/audit_ui_cfg_contract.py"),
+    ("food-satiety-source", "tools/audit_food_satiety_source.py"),
     ("project-consistency", "tools/audit_project_consistency.py"),
     ("build-progress-contract", "tools/audit_build_progress_contract.py"),
     ("publish-directory-contract", "tools/audit_publish_directory_contract.py"),

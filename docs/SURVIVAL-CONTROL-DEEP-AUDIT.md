@@ -9,9 +9,9 @@ Four independent Survival → Hunger controls change **normal per-item hunger re
 | `survival.breadSatiety` | `BreadSatiety2` | -20 / -20 | 40 pts | 5 pts |
 | `survival.sausageSatiety` | `SausageSatiety2` | -30 / -30 | 60 pts | 5 pts |
 | `survival.cannedFoodSatiety` | `CannedSatiety3` | -50 / -50 | 100 pts | 5 pts |
-| `survival.milkSatiety` | `MilkSatiety4` | -100 / -100 | 200 pts | 5 pts |
+| `survival.milkSatiety` | `MilkSatiety4` | -100 / -100 | 100 pts | 5 pts |
 
-At 0 the normal food source removes no HungerPoints; larger values remove more. The four direct source IDs add eight writer leaves and four visible sliders in two compact pairs, without altering Bread/Sausage/Canned Food healing, Fresh Bread, alcohol removal, drink hunger effects, Weird Kettle alternatives or difficulty scaler values. In-game runtime check remains outstanding.
+At 0 the normal food source removes no HungerPoints; larger values remove more up to the documented Player.MaxHungerPoints 100. Milk already reaches 100 in vanilla; 101–200 has no additional legitimate hunger-meter relief, so Milk is deliberately capped at 100. The four direct source IDs add eight writer leaves and four visible sliders in two compact pairs, without altering Bread/Sausage/Canned Food healing, Fresh Bread, alcohol removal, drink hunger effects, Weird Kettle alternatives or difficulty scaler values. In-game runtime check remains outstanding.
 
 
 ## 2026-10-15 Bleeding visual ruler extension
