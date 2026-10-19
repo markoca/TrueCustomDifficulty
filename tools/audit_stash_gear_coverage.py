@@ -100,6 +100,13 @@ baseline = json.loads((data / "cfg-writer-baseline.json").read_text(encoding="ut
 assert baseline["supportedParameterCount"] == 283
 ui = (root / "src/TrueCustomDifficulty/Controls/AggregateVisualControl.cs").read_text(encoding="utf-8")
 writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.StashGearCoverage.cs").read_text(encoding="utf-8")
+main_writer = (root / "src/TrueCustomDifficulty/Services/CfgPatchWriterService.cs").read_text(encoding="utf-8")
+gear_test = (root / "tests/LootSpecialGeneratorsContract/StashGearCoverage.cs").read_text(encoding="utf-8")
+assert 'inactiveGearTunings = StashGearParameterIds' in main_writer
+assert 'Math.Clamp((int)Math.Round(gearCoverage.CurrentNumber), 0, 100) == 0' in main_writer
+assert 'Extra Stash Gear Coverage is 0%' in main_writer
+assert 'VerifyZeroCoverageRejectsUnusedTunings();' in gear_test
+assert 'File.ReadAllText(sentinel) == "preserved"' in gear_test
 assert 'P("loot.stashGearCoveragePercent")' in ui and "DrawStashGearMode(" not in ui
 assert 'StashGearStableHash("ACTOR|" + x.Scope + "|" + x.ActorSid)' in writer
 assert 'ChooseStashGearClasses(' in writer

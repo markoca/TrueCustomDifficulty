@@ -102,3 +102,13 @@ Factory modified-source evaluation used the exact operation semantics documented
 **Actual execution blockers:** tool container has no `dotnet`, no `wine`, does not mount the maintainer's `/home/marko/s2tools/TrueCustomDifficulty/` checkout, and cannot resolve GitHub DNS to clone. Hence the original Python audit suite, Linux cross-build, actual C# writer contracts and user-machine Wine/game test remain **NOT RUN** here. The independent source checks above provide bounded evidence but must not be substituted for those native executables.
 
 **Gate 01 disposition:** **PARTIAL SOURCE PASS / BUILD & RUNTIME BLOCKED**. No production-code defect has been substantiated from the CI failures. When independent Windows/.NET execution is possible, record the concrete return codes/fixtures before changing this gate to PASS.
+
+## Gate 02 — CFG writer semantic finding and correction (2026-10-19)
+
+Source review confirms the 287/287 direct/special routing inventory, 217 direct IDs and 1,238 exact concrete edit points, 70 special IDs, disjoint target ownership and 20 embedded special resources. Production writer sources were inspected, but original source archives, .NET execution and STALKER 2 runtime have **not** been executed in this review.
+
+**Confirmed source-level defect:** when Extra Stash Gear is enabled but Coverage rounds to 0%, non-default Bonus Mix weights or Bonus Chance cannot affect any private bonus generator. The writer previously unconditionally acknowledged changed gear controls as written. **Fix:** reject changed bonus tunings at 0% before recreating staging, list the controls to reset and keep the intentional master-only 13 authored reward removals unchanged. Positive coverage and explicit empty-mix mode remain untouched.
+
+**Regression:** `tests/LootSpecialGeneratorsContract/StashGearCoverage.cs` now checks the 0%-case error, preservation of a pre-existing sentinel, and successful private generator creation after switching to Coverage 1%. `tools/audit_stash_gear_coverage.py` enforces the guard's presence. Runtime test execution still required; never present static inspection as .NET PASS.
+
+**Gate 02:** partial source-level findings and fix committed; real C# writer/game confirmation **NOT RUN**.

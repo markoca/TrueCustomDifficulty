@@ -226,11 +226,69 @@ internal static partial class Program
                     " candidate: expected " + expectedChance);
             }
             VerifyEmptyStashGearMix();
+            VerifyZeroCoverageRejectsUnusedTunings();
         }
         finally
         {
             if (Keep is null && Directory.Exists(root))
                 Directory.Delete(root, true);
+        }
+    }
+
+    // Coverage zero permits master-only removal, but modified bonus tunings
+    // cannot silently claim output when no actor receives a bonus generator.
+    private static void VerifyZeroCoverageRejectsUnusedTunings()
+    {
+        var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Veteran" };
+        vm.AllParameters.Single(p => p.Id == "loot.stashGearEnabled").CurrentBoolean = true;
+        vm.AllParameters.Single(p => p.Id == "loot.stashGearWeaponWeight")
+            .SnapCurrentNumberToMarker(2.0);
+        vm.AllParameters.Single(p => p.Id == "loot.stashGearBonusChance")
+            .SnapCurrentNumberToMarker(75);
+        var coverage = vm.AllParameters.Single(p => p.Id == "loot.stashGearCoveragePercent");
+        Check(coverage.CurrentNumber == 0
+            && vm.AllParameters.Single(p => p.Id == "loot.stashGearWeaponWeight")
+                .IsValueModifiedFromReference()
+            && vm.AllParameters.Single(p => p.Id == "loot.stashGearBonusChance")
+                .IsValueModifiedFromReference(),
+            "Zero-Coverage unused-tuning test setup changed");
+
+        var dir = Path.Combine(Keep ?? Path.GetTempPath(),
+            "TCD_Stash_Gear_Zero_Coverage_Unused");
+        try
+        {
+            Directory.CreateDirectory(dir);
+            var sentinel = Path.Combine(dir, "keep-before-validation.txt");
+            File.WriteAllText(sentinel, "preserved");
+            var rejected = false;
+            try
+            {
+                new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+            }
+            catch (InvalidDataException ex)
+            {
+                rejected = ex.Message.Contains("Coverage is 0%", StringComparison.Ordinal)
+                    && ex.Message.Contains("Weapon", StringComparison.Ordinal)
+                    && ex.Message.Contains("Chance", StringComparison.Ordinal);
+            }
+            Check(rejected, "Unused bonus changes at 0% coverage were silently accepted");
+            Check(File.Exists(sentinel) && File.ReadAllText(sentinel) == "preserved",
+                "Zero-coverage validation destroyed pre-existing staging data");
+
+            // Same custom bonus values become effective at positive coverage.
+            coverage.SnapCurrentNumberToMarker(1);
+            var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+            var itemGenerator = OutputPath(dir, "GameData/ItemGeneratorPrototypes.cfg");
+            Check(result.EditCount > 13 && File.Exists(itemGenerator)
+                && File.ReadAllText(itemGenerator).Contains("TCD_ExtraGear_",
+                    StringComparison.Ordinal),
+                "Positive coverage did not emit a real private gear generator");
+            Console.WriteLine("PASS zero-Coverage unused-bonus rejection / 1% gear output");
+        }
+        finally
+        {
+            if (Keep is null && Directory.Exists(dir))
+                Directory.Delete(dir, true);
         }
     }
 }

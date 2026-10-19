@@ -56,6 +56,28 @@ public sealed partial class CfgPatchWriterService
                 "Extra Stash Gear and World Weapon Shuffle cannot both be enabled. " +
                 "They edit the same authored weapon stash slots. Turn off one to build safely.");
 
+        // At zero coverage no private gear generators exist, so modified bonus
+        // Weight/Chance knobs cannot affect produced CFG. The separate master
+        // opt-in at 0% remains valid for its 13 approved authored removals.
+        // Validate BEFORE touching staging to avoid destroying previous output.
+        if (allById.TryGetValue("loot.stashGearEnabled", out var gearMaster)
+            && gearMaster.CurrentBoolean
+            && allById.TryGetValue("loot.stashGearCoveragePercent", out var gearCoverage)
+            && Math.Clamp((int)Math.Round(gearCoverage.CurrentNumber), 0, 100) == 0)
+        {
+            var inactiveGearTunings = StashGearParameterIds
+                .Where(id => id is not ("loot.stashGearEnabled"
+                    or "loot.stashGearCoveragePercent") && modifiedById.ContainsKey(id))
+                .ToArray();
+            if (inactiveGearTunings.Length > 0)
+                throw new InvalidDataException(
+                    "Extra Stash Gear Coverage is 0%: Bonus Mix and Bonus Chance changes " +
+                    "cannot affect added gear. Increase Coverage or reset these settings:" +
+                    Environment.NewLine +
+                    string.Join(Environment.NewLine,
+                        inactiveGearTunings.Select(id => "  - " + allById[id].Label)));
+        }
+
         var deferred = baseline.DeferredParameterIds.ToHashSet(StringComparer.Ordinal);
 
         var blocked = modified
