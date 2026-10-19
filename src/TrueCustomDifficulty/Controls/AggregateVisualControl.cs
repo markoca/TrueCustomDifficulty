@@ -3969,6 +3969,36 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         StageCaption(0, "LOW", low, null);
         StageCaption(1, "MEDIUM", medium, mediumPenalty);
         StageCaption(2, "SEVERE", severe, severePenalty);
+
+        // These are the same four independent native sources, now part of the
+        // Hunger board. One heading supplies the shared meaning; each compact
+        // slider names only its food and displays actual points removed.
+        DrawCenteredText(dc, "FOOD HUNGER RELIEF",
+            new Point(ActualWidth / 2.0, frame.Bottom + HungerFoodHeadingOffset),
+            11.0, text, FontWeights.Bold);
+        var foodColumns = ActualWidth >= 700.0 ? 2 : 1;
+        var gridWidth = Math.Min(HungerFoodMaxGridWidth, Math.Max(1.0, ActualWidth - 34.0));
+        var cardWidth = foodColumns == 2
+            ? (gridWidth - CompactColumnGap) / 2.0
+            : Math.Min(360.0, gridWidth);
+        var paintedWidth = foodColumns == 2 ? gridWidth : cardWidth;
+        var gridLeft = (ActualWidth - paintedWidth) / 2.0;
+        var foods = new[]
+        {
+            (Id: "survival.breadSatiety", Name: "BREAD"),
+            (Id: "survival.sausageSatiety", Name: "SAUSAGE"),
+            (Id: "survival.cannedFoodSatiety", Name: "CANNED FOOD"),
+            (Id: "survival.milkSatiety", Name: "CONDENSED MILK")
+        };
+        for (var i = 0; i < foods.Length; i++)
+        {
+            var card = new Rect(
+                gridLeft + (i % foodColumns) * (cardWidth + CompactColumnGap),
+                frame.Bottom + HungerFoodCardsOffset + (i / foodColumns) * HungerFoodRowPitch,
+                cardWidth, HungerFoodCardHeight);
+            DrawHorizontalTrackCard(dc, P(foods[i].Id), foods[i].Name, card,
+                text, muted, border, accent, panel);
+        }
     }
 
     // Elapsed REAL seconds from a zero-point hunger pool, assuming the
@@ -5675,6 +5705,13 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     }
     // Reserved space for plot ticks plus three independently readable stage lines.
     private const double HungerProfileHeight = 344.0;
+    // Keep the four food editors bounded within HungerLadder at all host widths.
+    // The same geometry constants drive painting and measured board height.
+    private const double HungerFoodHeadingOffset = 18.0;
+    private const double HungerFoodCardsOffset = 41.0;
+    private const double HungerFoodCardHeight = 70.0;
+    private const double HungerFoodRowPitch = 78.0;
+    private const double HungerFoodMaxGridWidth = 740.0;
     private const double CompactRowGap = 8.0;
     private const double CompactColumnGap = 10.0;
 
@@ -7346,7 +7383,9 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     {
         var previewBottom = SurvivalPrimaryPreviewTop + 80.0;
         var frameBottom = previewBottom + 55.0 + HungerProfileHeight;
-        return frameBottom + 12.0;
+        var foodRows = width >= 700.0 ? 2 : 4;
+        return frameBottom + HungerFoodCardsOffset
+            + (foodRows - 1) * HungerFoodRowPitch + HungerFoodCardHeight + 12.0;
     }
 
     private static IReadOnlyList<string> GetFamilyIds(string family)
@@ -7542,7 +7581,11 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 "survival.hungerStrongThreshold",
                 "survival.hungerMediumStaminaRegen",
                 "survival.hungerStrongStaminaRegen",
-                "survival.wellFedStaminaRegen"
+                "survival.wellFedStaminaRegen",
+                "survival.breadSatiety",
+                "survival.sausageSatiety",
+                "survival.cannedFoodSatiety",
+                "survival.milkSatiety"
             },
             "StarvationTimeline" => new[]
             {

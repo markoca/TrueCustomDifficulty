@@ -25,11 +25,11 @@ internal static class Program
         {
             var source = vm.AllParameters.Single(p => p.Id == id);
             var points = Baseline.EditPoints.Where(p => p.ParameterId == id).ToArray();
-            Check(source.Group == "Hunger" && source.IsControlVisible
-                  && !source.IsVisualAggregateMember
+            Check(source.Group == "Hunger" && !source.IsControlVisible
+                  && source.IsVisualAggregateMember && source.VisualAggregateFamily == "HungerLadder"
                   && source.Minimum == 0 && source.Maximum == Math.Min(native * 2, 100.0)
                   && source.TickFrequency == 5 && source.ReferenceNumber == native,
-                "Food Hunger Relief source card is not independent/native: " + id);
+                "Food Hunger Relief is not an independent native HungerLadder child: " + id);
             Check(points.Length == 2
                   && points.Select(p => p.Key).ToHashSet(StringComparer.Ordinal)
                       .SetEquals(new[] { "ValueMin", "ValueMax" })
@@ -58,7 +58,7 @@ internal static class Program
         Check(foodOrder.SequenceEqual(new[]
             { "survival.breadSatiety", "survival.sausageSatiety",
               "survival.cannedFoodSatiety", "survival.milkSatiety" }),
-            "Food cards are not in two native compact rows under Hunger Ladder");
+            "HungerLadder food sources lost their locked Bread/Sausage/Canned/Milk order");
         _passed++;
     }
 

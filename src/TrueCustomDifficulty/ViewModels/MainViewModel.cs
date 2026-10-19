@@ -437,7 +437,11 @@ public sealed class MainViewModel : ObservableObject
             "survival.hungerStrongThreshold",
             "survival.hungerMediumStaminaRegen",
             "survival.hungerStrongStaminaRegen",
-            "survival.wellFedStaminaRegen");
+            "survival.wellFedStaminaRegen",
+            "survival.breadSatiety",
+            "survival.sausageSatiety",
+            "survival.cannedFoodSatiety",
+            "survival.milkSatiety");
 
         WireVisualAggregate(
             "survival.starvationStaminaDrain",
