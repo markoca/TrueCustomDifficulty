@@ -144,9 +144,13 @@ assert '\"StashGear\" => StashGearHeight(width)' in ui
 assert '\"StashMedicalComposition\" => StashMedicalCompositionHeight(width)' in ui
 assert '\"StashMedicalQuantity\" => StashMedicalQuantityHeight(width)' not in ui
 assert 'DrawStashMedicalPairShares(dc,' in ui
+assert 'var shareWidth = Math.Max(1.0, innerWidth * .64);' in ui
+assert '_medicalWeightRankTargets.Add((rect, rank));' in ui
+assert 'source.count' not in ui
+assert ui.count('visualMaximum: 1.0') == 3
 assert 'DrawStashAntiRadWeightSwitch(dc,' in ui
 assert 'DrawStashMedicalModeSelector(' not in ui
-assert '=> width >= 700.0 ? 653.0 : 1067.0;' in ui
+assert '=> width >= 700.0 ? 585.0 : 1001.0;' in ui
 assert 'DrawStashQuantityDualRail(dc,' in ui
 assert 'value < -.5 ? "0"' in ui and '"VANILLA"' in ui
 assert "IsStashMedicalSelectionDisabled(" in writer

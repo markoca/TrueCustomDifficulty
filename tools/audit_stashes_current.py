@@ -73,15 +73,20 @@ for name, expected in families.items():
 assert set(stash) == set(rewards + mix + medical + bonus)
 # Medical Weight is never a fabricated four-medical-item selection.
 assert 'DrawStashMedicalPairShares(dc,' in ui
+assert '_medicalWeightRankTargets.Add((rect, rank));' in ui
+assert ui.count('visualMaximum: 1.0') == 3
+assert '_medicalWeightPreviewRank = rank.Rank;' in ui
+assert '"ANTI-RAD · WEIGHT"' in ui
+assert 'var shareWidth = Math.Max(1.0, innerWidth * .64);' in ui
 assert 'DrawStashAntiRadWeightSwitch(dc,' in ui
 assert '_stashMedicalShowChance' not in ui
-assert '"CHANCE · % OF SOURCE"' in ui
+assert '"DROP ROLLS · CHANCE %"' in ui
 assert 'g.Prototype == "StashMedicine_Smart"' in ui
 assert 'g.RankIndex is 2 or 3' in ui
 assert 'group.EffectiveSelection(StashPreviewBaseline.Value, state,' in ui
 assert 'AddHorizontalTarget(p, rect, rect, value, value);' in ui
 assert 'target.Parameter.Id == "loot.stashMedicalAntiRadBias"' in ui
-assert '=> width >= 700.0 ? 653.0 : 1067.0;' in ui
+assert '=> width >= 700.0 ? 585.0 : 1001.0;' in ui
 anti = stash["loot.stashMedicalAntiRadBias"]
 assert anti["slider"] == {"min": 0, "max": 3, "step": 0.25, "stepMode": "absolute"}
 assert "two-state" in anti["interaction"].lower()

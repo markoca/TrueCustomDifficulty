@@ -86,7 +86,7 @@ assert '"StashMedicalQuantity" => StashMedicalQuantityHeight' not in source
 assert "DrawStashMedicalQuantityCards(dc, left, width," in medical
 assert "DrawStashMedicalWeightPreview(" not in coverage
 assert "DrawStashMedicalWeightPreview(" not in medical
-assert "wide ? 541.0 : 850.0" in medical
+assert "wide ? 473.0 : 782.0" in medical
 assert "cardWidth, 98.0" in quantity
 assert "DrawStashQuantityDualRail(dc, P(family.Min), P(family.Max)" in quantity
 assert "DrawHalf(min, minRail, 0.0, 6.0, true);" in quantity_rail
@@ -107,10 +107,35 @@ for medical_id in ("loot.stashMedkitMinCount", "loot.stashMedkitMaxCount",
                    "loot.stashArmyMedkitMinCount", "loot.stashArmyMedkitMaxCount"):
     entry = next(p for p in catalog["parameters"] if p["id"] == medical_id)
     assert "MAX" in entry["interaction"] and "MIN" in entry["interaction"]
+assert 'var shareWidth = Math.Max(1.0, innerWidth * .64);' in medical
+assert '_medicalWeightRankTargets.Clear();' in medical
+assert 'innerWidth - shareWidth - gap' in medical
+assert 'previewTop + 2.0' in medical
+assert 'var group = groups.Single(g => g.RankIndex == _medicalWeightPreviewRank);' in pair
+assert 'const double rankWidth = 62.0;' in pair
+assert 'var rail = new Rect(outer.Left + 9.0, outer.Top + 28.0,' in pair
+assert 'for (var i = 0; i < groups.Length; i++)' not in pair
+assert '_medicalWeightRankTargets.Add((rect, rank));' in pair
+assert 'var medkitShare = total > Epsilon ? medkit / total : 0.0;' in pair
+assert 'DrawStashAntiRadWeightSwitch(dc,' in medical
+assert '"ANTI-RAD · WEIGHT"' in anti_weight
+assert 'new Rect(x + i * cellWidth, card.Top + 24.0, cellWidth, 25.0)' in anti_weight
+assert 'var dialMaximum = visualMaximum ?? parameter.Maximum;' in source
+assert source.count('visualMaximum: 1.0') == 3
+assert 'IsMedicalPriorityWeight(target.Parameter)' in source
+assert 'IsMedicalPriorityWeight(_selectedParameter)' in source
+assert '_medicalWeightPreviewRank = rank.Rank;' in source
+assert 'hoveredRank != _medicalWeightHoveredRank' in source
+for pid in ("loot.stashMedicalBandageBias", "loot.stashMedicalMedkitBias",
+            "loot.stashMedicalArmyMedkitBias"):
+    entry = next(p for p in catalog["parameters"] if p["id"] == pid)
+    assert entry["slider"] == {"min": 0, "max": 3,
+        "step": 0.25, "stepMode": "absolute"}
+    assert "0–1×" in entry["interaction"]
 assert "DrawStashMedicalPairShares(dc," in medical
 assert "DrawStashAntiRadWeightSwitch(dc," in medical
-assert '"CHANCE · % OF SOURCE"' in medical
-assert '"WEIGHT · NATIVE POOLS"' in medical
+assert '"DROP ROLLS · CHANCE %"' in medical
+assert '"LOOT PRIORITY · WEIGHT"' in medical
 assert 'var chanceColumns = wide ? 4 : 2;' in medical
 assert 'var weightColumns = wide ? 3 : 2;' in medical
 assert 'percentageReadout: true, dialAccent: source.Color' in medical
@@ -132,7 +157,7 @@ assert '"OFF"' in anti_weight and '"ON"' in anti_weight
 assert "_stashMedicalShowChance" not in source
 assert "DrawStashQuantityDots(" not in source
 assert "DrawStashMedicalSourcePreview(" not in source
-assert '=> width >= 700.0 ? 653.0 : 1067.0;' in source
+assert '=> width >= 700.0 ? 585.0 : 1001.0;' in source
 assert 'P("loot.stashGearCoveragePercent")' in gear
 for key in ("Weapon", "Armor", "Artifact", "Attachment"):
     assert '"loot.stashGear' + key + 'Weight"' in gear

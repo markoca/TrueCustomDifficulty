@@ -6074,7 +6074,7 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Bandages Stash Weight",
-      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control.",
+      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control. Visible LOOT PRIORITY dial is intentionally capped at 1×; original numeric backend up to 3× remains for saved presets.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6111,9 +6111,9 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Control native relative Weight independently from item-specific Chance.",
-      "logic": "0×–3× of native Weight; 1× retains authored source. A weighted pool's outcome remains relative to its other entries.",
-      "interaction": "Medical Weight Mix rotary knob; does not change native Chance.",
+      "rationale": "Control native relative Weight independently from item-specific Chance. Only source-native competitors are compared; a preview does not invent whole-stash probabilities.",
+      "logic": "Visible WEIGHT knob: 0–1×, step 0.25×; 1× retains the authored native Weight. The underlying legacy slider max remains 3× solely to preserve earlier saved presets (>1× values are displayed unchanged until edited).",
+      "interaction": "Independent LOOT PRIORITY knob with visible 0–1× bounds, hover/drag/wheel/keys/right-click reset. Legacy factor >1× is preserved until user editing; only native Weight is touched, never separate Chance.",
       "exposeInUi": true
     },
     {
@@ -6168,7 +6168,7 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Medkits Stash Weight",
-      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control.",
+      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control. Visible LOOT PRIORITY dial is intentionally capped at 1×; original numeric backend up to 3× remains for saved presets.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6205,9 +6205,9 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Control native relative Weight independently from item-specific Chance.",
-      "logic": "0×–3× of native Weight; 1× retains authored source. A weighted pool's outcome remains relative to its other entries.",
-      "interaction": "Medical Weight Mix rotary knob; does not change native Chance.",
+      "rationale": "Control native relative Weight independently from item-specific Chance. Only source-native competitors are compared; a preview does not invent whole-stash probabilities.",
+      "logic": "Visible WEIGHT knob: 0–1×, step 0.25×; 1× retains the authored native Weight. The underlying legacy slider max remains 3× solely to preserve earlier saved presets (>1× values are displayed unchanged until edited).",
+      "interaction": "Independent LOOT PRIORITY knob with visible 0–1× bounds, hover/drag/wheel/keys/right-click reset. Legacy factor >1× is preserved until user editing; only native Weight is touched, never separate Chance.",
       "exposeInUi": true
     },
     {
@@ -6262,7 +6262,7 @@
       "tab": "stashes",
       "group": "Stash Medical Composition",
       "label": "Army Medkits Stash Weight",
-      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control.",
+      "description": "Scales only authored Weight for this medical item in eligible TCD stash/SmartLoot branches. Weight is relative selection, not a drop probability; independent Chance Scale has its own control. Visible LOOT PRIORITY dial is intentionally capped at 1×; original numeric backend up to 3× remains for saved presets.",
       "control": "slider",
       "valueKind": "multiplier",
       "display": {
@@ -6299,9 +6299,9 @@
           "0× disables the matching Weight entries, not separate Chance rolls. Source eligibility and excluded quest/unique stashes remain unchanged."
         ]
       },
-      "rationale": "Control native relative Weight independently from item-specific Chance.",
-      "logic": "0×–3× of native Weight; 1× retains authored source. A weighted pool's outcome remains relative to its other entries.",
-      "interaction": "Medical Weight Mix rotary knob; does not change native Chance.",
+      "rationale": "Control native relative Weight independently from item-specific Chance. Only source-native competitors are compared; a preview does not invent whole-stash probabilities.",
+      "logic": "Visible WEIGHT knob: 0–1×, step 0.25×; 1× retains the authored native Weight. The underlying legacy slider max remains 3× solely to preserve earlier saved presets (>1× values are displayed unchanged until edited).",
+      "interaction": "Independent LOOT PRIORITY knob with visible 0–1× bounds, hover/drag/wheel/keys/right-click reset. Legacy factor >1× is preserved until user editing; only native Weight is touched, never separate Chance.",
       "exposeInUi": true
     },
     {
