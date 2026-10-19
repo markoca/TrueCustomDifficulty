@@ -6,7 +6,7 @@
   "referenceDifficulty": "Veteran",
   "drinkDurationOverride": true,
   "medicalOverride": false,
-  "savedAtUtc": "2026-10-14T14:30:00Z",
+  "savedAtUtc": "2026-10-19T18:00:00Z",
   "values": {
     "combat.npcHealth": {
       "kind": "slider",
@@ -106,19 +106,19 @@
     },
     "survival.breadSatiety": {
       "kind": "slider",
-      "number": 20
+      "number": 10
     },
     "survival.sausageSatiety": {
       "kind": "slider",
-      "number": 30
+      "number": 15
     },
     "survival.cannedFoodSatiety": {
       "kind": "slider",
-      "number": 50
+      "number": 25
     },
     "survival.milkSatiety": {
       "kind": "slider",
-      "number": 100
+      "number": 50
     },
     "survival.hungerRate": {
       "kind": "slider",
@@ -331,7 +331,7 @@
     },
     "loot.cheapStashGrenadeQuantity": {
       "kind": "slider",
-      "number": 1
+      "number": 0
     },
     "loot.mediumStashAmmoQuantity": {
       "kind": "slider",
@@ -743,55 +743,55 @@
     },
     "survival.hungerLowThreshold": {
       "kind": "slider",
-      "number": 17
+      "number": 13
     },
     "survival.hungerMediumThreshold": {
       "kind": "slider",
-      "number": 33
+      "number": 28
     },
     "survival.hungerStrongThreshold": {
       "kind": "slider",
-      "number": 83
+      "number": 74
     },
     "survival.sleepLowThreshold": {
       "kind": "slider",
-      "number": 50
+      "number": 45
     },
     "survival.sleepMediumThreshold": {
       "kind": "slider",
-      "number": 60
+      "number": 56
     },
     "survival.sleepStrongThreshold": {
       "kind": "slider",
-      "number": 80
+      "number": 76
     },
     "survival.bleedingMediumThreshold": {
       "kind": "slider",
-      "number": 50
+      "number": 42
     },
     "survival.bleedingStrongThreshold": {
       "kind": "slider",
-      "number": 75
+      "number": 66
     },
     "stamina.sprintDisableThreshold": {
       "kind": "slider",
-      "number": 16.1
+      "number": 22
     },
     "stamina.sprintRecoveryDelay": {
       "kind": "slider",
-      "number": 1
+      "number": 1.5
     },
     "stamina.lowRecoveryThreshold": {
       "kind": "slider",
-      "number": 30
+      "number": 23
     },
     "stamina.lowRecoveryStrength": {
       "kind": "slider",
-      "number": 10
+      "number": 6.5
     },
     "stamina.lowRecoveryDuration": {
       "kind": "slider",
-      "number": 4
+      "number": 2.5
     },
     "alife.humanGroupSize.newbie": {
       "kind": "slider",
@@ -1023,15 +1023,15 @@
     },
     "loot.stashMixMedical": {
       "kind": "slider",
-      "number": 1
+      "number": 0.5
     },
     "loot.stashMixFood": {
       "kind": "slider",
-      "number": 1
+      "number": 0.6
     },
     "loot.stashMixDrinks": {
       "kind": "slider",
-      "number": 1
+      "number": 0.6
     },
     "loot.stashMixGrenades": {
       "kind": "slider",
@@ -1047,19 +1047,19 @@
     },
     "loot.stashMedicalBandageBias": {
       "kind": "slider",
-      "number": 1
+      "number": 0.75
     },
     "loot.stashMedicalMedkitBias": {
       "kind": "slider",
-      "number": 1
+      "number": 0.5
     },
     "loot.stashMedicalArmyMedkitBias": {
       "kind": "slider",
-      "number": 1
+      "number": 0.25
     },
     "loot.stashMedicalAntiRadBias": {
       "kind": "slider",
-      "number": 1
+      "number": 0.5
     },
     "loot.stashMedkitMinCount": {
       "kind": "slider",
@@ -1067,7 +1067,7 @@
     },
     "loot.stashMedkitMaxCount": {
       "kind": "slider",
-      "number": 0
+      "number": 1
     },
     "loot.stashArmyMedkitMinCount": {
       "kind": "slider",
@@ -1075,57 +1075,63 @@
     },
     "loot.stashArmyMedkitMaxCount": {
       "kind": "slider",
-      "number": 0
+      "number": 1
     },
-    "loot.standardStashChanceScale": {"kind": "slider", "number": 1},
-    "loot.rareStashChanceScale": {"kind": "slider", "number": 1},
-    "loot.mediumStashMedicalChance": {
+    "loot.standardStashChanceScale": {
       "kind": "slider",
       "number": 1
+    },
+    "loot.rareStashChanceScale": {
+      "kind": "slider",
+      "number": 1
+    },
+    "loot.mediumStashMedicalChance": {
+      "kind": "slider",
+      "number": 0.6
     },
     "loot.mediumStashDrinksChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.6
     },
     "loot.mediumStashCouponsChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.55
     },
     "loot.expensiveStashAmmoChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.55
     },
     "loot.expensiveStashMedicalChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.5
     },
     "loot.expensiveStashFoodChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.6
     },
     "loot.expensiveStashDrinksChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.6
     },
     "loot.expensiveStashGrenadesChance": {
       "kind": "slider",
-      "number": 1
+      "number": 0.5
     },
     "loot.stashMedicalBandageChanceScale": {
       "kind": "slider",
-      "number": 1
+      "number": 0.65
     },
     "loot.stashMedicalMedkitChanceScale": {
       "kind": "slider",
-      "number": 1
+      "number": 0.5
     },
     "loot.stashMedicalArmyMedkitChanceScale": {
       "kind": "slider",
-      "number": 1
+      "number": 0.35
     },
     "loot.stashMedicalAntiRadChanceScale": {
       "kind": "slider",
-      "number": 1
+      "number": 0.6
     },
     "loot.stashGearEnabled": {
       "kind": "toggle",

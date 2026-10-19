@@ -1,5 +1,16 @@
 # Factory Presets
 
+### 2026-10-19 — CURRENT 287-source role coverage (supersedes earlier factory snapshots)
+
+The 12 official profiles still carry **all 287 source-backed parameter IDs** (3,444 serialized entries); **49 distinct real controls** were rebalanced in **445 actual value changes** versus the immediately preceding shipped stock profiles. Source: `tools/factory_profile_role_coverage_2026_10_19.json`, gate: `python3 tools/audit_factory_profile_role_coverage.py`. The earlier 248-ID tables below are HISTORICAL, not current numerical profile values. The diagnostic RC CFG Signal preset is separate and unchanged.
+
+This pass tunes Bread/Sausage/Canned Food/Condensed Milk relief as actual HungerPoints removed; Hunger, Fatigue and Bleeding thresholds; Stamina exhaustion/low-recovery sources; three active Basic stash-category priorities; Medical priority, native Chance and MIN/MAX; Standard/Rare per-category source Chance; and Basic grenade quantity. **Chance scales per-entry authored odds, not a whole-stash guaranteed drop.** Priority changes source preference; MIN/MAX set authored floor/cap, not guaranteed exact counts. The already-curated world abundance, NPC resources, trader costs, overall hunger growth, HP healing and weapon economics remain intact. Do not adjust retired global stash Weight sources or integer-no-op A-Life dimensions to increase changed counts artificially.
+
+**Extra Stash Gear (ON)** for Anomaly Runner, Mercenary, Mutant Hunter, Scavenger and Smuggler uses role-specific weapon/armor/artifact/attachment priorities and limited **8–12% eligible stash coverage** with **20–30% bonus candidate Chance**. To respect the live mutual-exclusion contract, **Shuffle Weapons is OFF** in precisely those five roles. Other seven roles retain Shuffle Weapons ON and Extra Stash Gear OFF. Dormant World Weapon Density is intentionally preserved for later manual toggling. No protected or quest stash entry list, source eligibility, original CFG writer, UI control catalog or game difficulty reference was changed.
+
+`PresetDirectoryService.PreRoleCoverageFactoryBlobs` recognizes exact Git blob identities of the previous pristine 287-ID factory JSON files; startup migrates only byte-identical official copies, never modified factory-named or custom presets. Profiles remain balance hypotheses awaiting actual Windows/Wine and STALKER 2 in-game verification. The old 248-control rationale ledger stays available for provenance but is not the newest role value authority.
+
+
 ### 2026-10-17 — Current factory/audit reconciliation
 
 The twelve official role presets remain v1 snapshots of 248 source-backed parameters; exact-stock migration protects edited factory files and all custom presets. The 2026-10-15 role-first rebalance is **HISTORICAL; SUPERSEDED** by the current full source-backed review and canonical A-Life mapping. RC CFG Signal is an opt-in diagnostic, not a thirteenth factory role. Static checks must not expect the retired role-first section to be labelled CURRENT. No factory values, migration rules or JSON schema change in this revision.

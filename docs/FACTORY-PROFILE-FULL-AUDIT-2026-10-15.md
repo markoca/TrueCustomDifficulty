@@ -1,5 +1,7 @@
 # Full factory-profile source and decision audit — 2026-10-15
 
+**2026-10-19 scope note:** The 248-ID decisions below are a historical audit. Current 287-ID factory values are tracked in `docs/FACTORY-PRESETS.md`, `tools/factory_profile_role_coverage_2026_10_19.json` and its regression gate. Treat earlier numbers as provenance, not current shipped snapshots.
+
 ### 2026-10-15 — Canonical A-Life factory mapping (CURRENT)
 
 All twelve 248-source role profiles now persist canonical A-Life integer-effective UI stops. Exactly **39 stored multipliers** changed, with **216/216 source/rank-group integer `MaxCount` results unchanged** before and after: four human rank sources and 14 mutant-species sources remain independent. The per-source/per-role previous values, current values, original rank caps and unchanged difficulty references are locked by [`tools/factory_preset_alife_effective_mapping.json`](../tools/factory_preset_alife_effective_mapping.json). The A-Life table below, 2,976-source decision ledger and role matrix are synchronized.

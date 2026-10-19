@@ -389,6 +389,24 @@ public sealed class PresetDirectoryService
         ["Wanderer"] = "ad38cee1ba7dd95c87a2d6b9cb6a7ad2d6a15d3a",
     };
 
+    // Pristine 287-ID stock profiles immediately before the current role coverage.
+    // Byte-identical only: never replace user edits.
+    private static readonly Dictionary<string, string> PreRoleCoverageFactoryBlobs = new(StringComparer.Ordinal)
+    {
+        ["Anomaly Runner"] = "c703a1171d5f1573d1b386a2b5bf15efa83e634d",
+        ["Field Medic"] = "4dfb85a3c3b1274192d9a9acf1568eb63e78278f",
+        ["Hardcore+"] = "fa51f7c6da648a1afe7edc07816b87caeff1446b",
+        ["Hardcore"] = "559106747f9f309e7a7c0067c708e419eaac5500",
+        ["Immersive"] = "e41c0cda92a70a137bd89a9d19a8cc63e19e3577",
+        ["Mercenary"] = "0fe9da89fac19557dca890a1d4ddd7287541f2d3",
+        ["Mutant Hunter"] = "cbd1b1e1d862ecd6bda981d46ce4c820e6e35e67",
+        ["Outcast"] = "c1deb9f74e9c9603707186f6aed9c52d74a6e2ad",
+        ["Scavenger"] = "50fea3e770d020d419282d62d4376d31f708ab7e",
+        ["Smuggler"] = "c8356b534b707a9b461f8a76070215b59bf169f3",
+        ["Tactical"] = "b46b0110f0356e6dd6515b93604be5102f6963f9",
+        ["Wanderer"] = "ab4b9c07b2411e9f0c644aa642045bb1a620e828",
+    };
+
     private static bool IsUnmodifiedPreviousFactory(string name, string path)
     {
         if (!PreviousFactoryBlobs.TryGetValue(name, out var knownHash)
@@ -406,7 +424,8 @@ public sealed class PresetDirectoryService
             && !PreStashContentGearFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreStashMedicalFactoryBlobs.TryGetValue(name, out knownHash)
             && !PreTierChanceFactoryBlobs.TryGetValue(name, out knownHash)
-            && !PreFoodSatietyFactoryBlobs.TryGetValue(name, out knownHash))
+            && !PreFoodSatietyFactoryBlobs.TryGetValue(name, out knownHash)
+            && !PreRoleCoverageFactoryBlobs.TryGetValue(name, out knownHash))
             return false;
 
         try
@@ -450,7 +469,9 @@ public sealed class PresetDirectoryService
                 || (PreTierChanceFactoryBlobs.TryGetValue(name, out var tierChanceHash)
                     && actual.Equals(tierChanceHash, StringComparison.OrdinalIgnoreCase))
                 || (PreFoodSatietyFactoryBlobs.TryGetValue(name, out var foodBeforeHash)
-                    && actual.Equals(foodBeforeHash, StringComparison.OrdinalIgnoreCase));
+                    && actual.Equals(foodBeforeHash, StringComparison.OrdinalIgnoreCase))
+                || (PreRoleCoverageFactoryBlobs.TryGetValue(name, out var preRoleCoverageHash)
+                    && actual.Equals(preRoleCoverageHash, StringComparison.OrdinalIgnoreCase));
         }
         catch (IOException)
         {
