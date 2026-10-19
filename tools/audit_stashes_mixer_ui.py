@@ -89,8 +89,13 @@ assert "DrawStashMedicalWeightPreview(" not in medical
 assert "wide ? 473.0 : 782.0" in medical
 assert "cardWidth, 98.0" in quantity
 assert "DrawStashQuantityDualRail(dc, P(family.Min), P(family.Max)" in quantity
-assert "DrawHalf(min, minRail, 0.0, 5.0, true);" in quantity_rail
-assert "DrawHalf(max, maxRail, 0.0, 5.0, false);" in quantity_rail
+assert "DrawHalf(min, minRail, 0.0, 5.0);" in quantity_rail
+assert "DrawHalf(max, maxRail, 0.0, 5.0);" in quantity_rail
+assert "bool reverse" not in quantity_rail
+assert "ValueToX(display, minimum, maximum, rail, false)" in quantity_rail
+assert 'DrawText(dc, "0", new Point(rail.Left, y + 9.0)' in quantity_rail
+assert 'new Point(rail.Right, y + 9.0)' in quantity_rail
+assert "rail, minimum, maximum);" in quantity_rail
 assert '"VANILLA"' not in quantity_rail and '"AUTO"' not in quantity_rail
 assert 'StashMedicalMaxDisplay(p.CurrentNumber)' in quantity_rail
 assert 'StashMedicalMaxStore(Math.Clamp(Math.Round(raw), 0.0, 5.0))' in source

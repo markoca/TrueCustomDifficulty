@@ -1,3 +1,7 @@
+## 2026-10-19 — Medical quantity direction correction (current)
+
+The Medkit and Army Medkit 98-DIP cards now each show two compact, separate **left-to-right 0..5** sliders: MIN 0 → 5 and MAX 0 → 5. This corrects the earlier reversed MIN rail (5 → 0) that displayed a misleading left-hand 5 beside the initial MIN=0 and MAX=5 readouts. Endpoint rendering and hit mapping use the same forward direction. Native floor/cap meanings, stored MAX off/uncapped compatibility, and pair constraints do not change. No VANILLA/AUTO labels return. See the current UI lock docs.
+
 ## 2026-10-19 — CURRENT Stashes numeric medical bounds and player-facing Priority
 
 Every player-facing Stashes **Weight** label is now **Priority**: `LOOT PRIORITY · ALL TIERS`, `LOOT PRIORITY · NATIVE WEIGHTS`, `ANTI-RAD · PRIORITY`, `BONUS PRIORITY`, and `PRIORITY SHARE`. The underlying `Weight` CFG property is NOT renamed or replaced. Priority describes relative selection preference inside the actual authored native candidate pool, not a physical-stash probability. The read-only Extra Gear priority-share strip normalizes build-time class weights but does not calculate the final two distinct picks or Chance. Native Chance controls remain independent. The separate yellow modified-state mark beside Anti-Rad OFF/ON is removed; selected/hovered boundaries stay visible.

@@ -4947,16 +4947,16 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             Math.Max(1.0, card.Right - middle - 30.0), 1.0);
 
         void DrawHalf(ParameterViewModel p, Rect rail,
-            double minimum, double maximum, bool reverse)
+            double minimum, double maximum)
         {
             dc.DrawLine(new Pen(CloneWithOpacity(border, .94), 3.0),
                 new Point(rail.Left, y), new Point(rail.Right, y));
             var display = IsStashMedicalMax(p.Id)
                 ? StashMedicalMaxDisplay(p.CurrentNumber)
                 : Math.Clamp(p.CurrentNumber, 0.0, 5.0);
-            var pos = ValueToX(display, minimum, maximum, rail, reverse);
+            var pos = ValueToX(display, minimum, maximum, rail, false);
             var origin = ValueToX(IsStashMedicalMax(p.Id) ? 5.0 : 0.0,
-                minimum, maximum, rail, reverse);
+                minimum, maximum, rail, false);
             if (p.IsControlEnabled)
                 dc.DrawLine(new Pen(CloneWithOpacity(tone, .84), 3.2),
                     new Point(origin, y), new Point(pos, y));
@@ -4970,17 +4970,19 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 new Point(pos, y), 7.0, 7.0);
             if (p.IsControlEnabled)
                 dc.DrawEllipse(tone, null, new Point(pos, y), 2.5, 2.5);
-            DrawText(dc, "0", new Point(reverse ? rail.Right - 6.0 : rail.Left, y + 9.0),
+            // Both quantity axes increase from LEFT 0 to RIGHT 5; MIN is
+            // never mirrored. Keep labels and mouse hit mapping identical.
+            DrawText(dc, "0", new Point(rail.Left, y + 9.0),
                 9.0, muted, FontWeights.Normal);
             DrawRightAlignedText(dc, "5",
-                new Point(reverse ? rail.Left + 6.0 : rail.Right, y + 9.0),
+                new Point(rail.Right, y + 9.0),
                 9.0, muted, FontWeights.Normal);
             AddHorizontalTarget(p,
                 new Rect(rail.Left - 6.0, y - 14.0, rail.Width + 12.0, 32.0),
-                rail, minimum, maximum, reverse);
+                rail, minimum, maximum);
         }
-        DrawHalf(min, minRail, 0.0, 5.0, true);
-        DrawHalf(max, maxRail, 0.0, 5.0, false);
+        DrawHalf(min, minRail, 0.0, 5.0);
+        DrawHalf(max, maxRail, 0.0, 5.0);
     }
 
     // Bonus Gear uses the writer's same 0.1x integer weight precision.
@@ -5385,6 +5387,17 @@ public sealed partial class AggregateVisualControl : FrameworkElement
         dc.DrawText(formatted, new Point(x, right.Y));
     }
 
+    // Stable native ammo-family identity shared by source knobs, each pool
+    // segment and its permanent legend; never shade one gold accent four ways.
+    // Index: 918 / 045 / 545 / 012. NATO/SNG reuse source-family colors.
+    private static readonly Brush[] BreakableAmmoPalette =
+    {
+        new SolidColorBrush(Color.FromRgb(0xF4, 0xC1, 0x3C)), // 9×18 / 9×19 · amber
+        new SolidColorBrush(Color.FromRgb(0x67, 0xB6, 0xE7)), // .45 ACP · blue
+        new SolidColorBrush(Color.FromRgb(0x53, 0xCC, 0x9F)), // 5.45 / 5.56 · green
+        new SolidColorBrush(Color.FromRgb(0xB6, 0x96, 0xE9))  // 12 Gauge · violet
+    };
+
     // The real SNG/NATO generator pools are distinct. Their previews show the
     // normalized composition *inside* each pool, never global drop probability.
     // The preview is read-only; every family has one independent full-width editor.
@@ -5534,7 +5547,8 @@ public sealed partial class AggregateVisualControl : FrameworkElement
             DrawSourceKnob(dc, weights[i].Parameter, weights[i].Label,
                 new Rect(knobLeft + i * (knobWidth + knobGap),
                     knobCardTop, knobWidth, knobCardHeight),
-                text, muted, border, accent, panel);
+                text, muted, border, accent, panel,
+                dialAccent: BreakableAmmoPalette[i]);
         }
 
         DrawText(dc, "AMMO POOL COMPOSITION", new Point(margin, 490.0),
@@ -5567,7 +5581,6 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 Math.Max(1.0, card.Width - 20.0), 13.0);
             dc.DrawRoundedRectangle(CloneWithOpacity(border, 0.22),
                 new Pen(border, 0.7), bar, 2.0, 2.0);
-            var tones = new[] { 0.95, 0.72, 0.50, 0.30 };
             var cursor = bar.Left;
             for (var i = 0; i < percentages.Count; i++)
             {
@@ -5575,7 +5588,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                     ? Math.Max(0.0, bar.Right - cursor)
                     : Math.Max(0.0, bar.Width * percentages[i]);
                 if (percentages[i] > Epsilon && span > Epsilon)
-                    dc.DrawRectangle(CloneWithOpacity(accent, tones[colorIndices[i]]), null,
+                    dc.DrawRectangle(BreakableAmmoPalette[colorIndices[i]], null,
                         new Rect(cursor, bar.Top, span, bar.Height));
                 cursor += span;
             }
@@ -5589,7 +5602,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
                 var x = bar.Left + i * legendWidth;
                 var labelWidth = Math.Max(1.0, legendWidth - 17.0);
                 var swatch = new Rect(x, top + 49.0, 10.0, 10.0);
-                dc.DrawRectangle(CloneWithOpacity(accent, tones[colorIndices[i]]), null, swatch);
+                dc.DrawRectangle(BreakableAmmoPalette[colorIndices[i]], null, swatch);
                 dc.DrawText(CreateText(calibers[i], 10.2,
                         text, FontWeights.SemiBold, labelWidth),
                     new Point(x + 14.0, top + 46.0));

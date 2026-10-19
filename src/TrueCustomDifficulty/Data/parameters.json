@@ -7342,7 +7342,7 @@
       },
       "rationale": "Choose which ammo families are more or less common in breakable ammo boxes. This changes the ammo mix, not the number of rounds per box.",
       "logic": "1x keeps the vanilla mix. Move a family outward to make it more common or inward to make it less common.",
-      "interaction": "Ammo from Breakable Boxes separately controls how many rounds each box gives.",
+      "interaction": "Ammo yield changes rounds per box independently. The four source knobs, SNG/NATO pool segments and matching legend swatches share the same ammo-family colors.",
       "exposeInUi": true
     },
     {

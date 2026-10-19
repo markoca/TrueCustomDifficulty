@@ -1193,12 +1193,30 @@ else:
         'knobBankWidth = Math.Min(780.0, ActualWidth - margin * 2.0)',
         'const double knobCardTop = 298.0',
         'const double knobCardHeight = 181.0',
+        'dialAccent: BreakableAmmoPalette[i]',
     )
     for _token in _abd_knob_expected:
         if _token not in _abd_knob_code:
             _abd_errors.append(f"ammo-family rotary UI missing {_token!r}")
     if "DrawHorizontalTrackCard" in _abd_knob_code:
         _abd_errors.append("ammo-family horizontal sliders returned")
+    # Stable per-family palette, shared by knob arcs, pool segments and legends.
+    _abd_palette = _abd_control_text.split(
+        'private static readonly Brush[] BreakableAmmoPalette =', 1)
+    _abd_palette_code = (_abd_palette[1].split('};', 1)[0]
+                         if len(_abd_palette) == 2 else '')
+    _abd_colors = (
+        '(0xF4, 0xC1, 0x3C)',  # 918 amber
+        '(0x67, 0xB6, 0xE7)',  # 045 blue
+        '(0x53, 0xCC, 0x9F)',  # 545 green
+        '(0xB6, 0x96, 0xE9)',  # 012 violet
+    )
+    if any(color not in _abd_palette_code for color in _abd_colors):
+        _abd_errors.append("breakable ammo family palette missing unique four-color mapping")
+    if _abd_control_text.count('dc.DrawRectangle(BreakableAmmoPalette[colorIndices[i]], null') != 2:
+        _abd_errors.append("pool segments and legend must use the same family brush")
+    if 'var tones = new[] { 0.95, 0.72, 0.50, 0.30 };' in _abd_control_text:
+        _abd_errors.append("legacy single-yellow pool tint mix returned")
     _abd_knob_input = (
         'if (!stashGraph && Family is not (',
         'if (target.Kind == HitKind.Knob)',
