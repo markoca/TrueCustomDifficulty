@@ -1,3 +1,7 @@
+
+## 2026-10-19 — RC diagnostic preset with Sleep HP tool default
+
+The RC CFG Signal preset contains 13 intentional diagnostic settings. The application independently emits `survival.sleepHealthRestore = 100 HP` versus the original 300 HP source even when the RC preset does not override sleep. `RCSignalPatchContract` therefore expects the precise 13 preset controls plus Sleep HP as the only 14th applied source. A different unrelated modified source still fails the check. This keeps the established tool default unchanged.
 ## 2026-10-19 — Writer Wine failure triage and file extension accounting
 
 Real local `python3 tools/pre_release.py writer --wine` executed 13 test suites and returned 0 PASS / 13 FAIL on the previous SHA. The global/singleton `GameData/CoreVariables.cfg_patch_TrueCustomDifficulty` type of staged patch has **no trailing .cfg extension**; the FileCount regression had erroneously counted only `*.cfg`. Writer accounting now counts all files in its own recreated staging directory, covering both singleton `cfg_patch` and prototype `_patch_TrueCustomDifficulty.cfg`. This does not relax rejection of a true physical/count mismatch. Native Water Cost Cut backing binding, the 35-source Loot test count and C# definite-assignment regression were also corrected. Full PASS needs a new user-machine Wine run.
