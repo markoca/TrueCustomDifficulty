@@ -1,3 +1,11 @@
+## 2026-10-19 — Local pull blocked by chmod +x on tracked launch scripts (resolved on main)
+
+The earlier `publish.sh` and `run-latest.sh` were committed with Git mode **100644**, even though the documented local workflow executed `chmod +x` on both. On Linux, `chmod +x` changes the **tracked executable bit**, so Git treats the scripts as locally modified and will refuse `git pull` when an incoming main commit also changes those files. The blocked pull is **not evidence of stale .NET build caching**; it never updated the source checkout at all.
+
+**Permanent Git fix:** both scripts now use Git tree mode **100755**, committed directly on `main`. Fresh clones and future pulls will have their executable bits already set. Do not ask users to run `chmod +x` for these scripts after syncing. Run the checked-in `./run-latest.sh`, which pulls `main`, publishes and checks the EXE/source fingerprints before Wine launch.
+
+**One-time recovery for existing dirty working trees:** first inspect `git diff --summary -- publish.sh run-latest.sh` and `git diff -- publish.sh run-latest.sh`. To preserve any local edits instead of destroying them, use `git stash push -m "local script changes before main sync" -- publish.sh run-latest.sh`, then `git pull --ff-only origin main`, then `./run-latest.sh`. The stash stays safely saved for manual review; **do not automatically pop it**, because restoring old scripts could undo the main-only workflow. This is a user-side working-tree recovery; the GitHub connector cannot alter local disk state. No changes to UI controls, loot semantics, CFG writer or presets.
+
 ## 2026-10-19 — CURRENT: verified Wine launch for NATIVE-free Stashes cards
 
 The active `DrawStashChanceTier` has **no `NATIVE` text or native-percent renderer**. Repeated screenshots showing the obsolete caption indicate that the displayed executable/window has not yet been proven to come from current `main`; they are not grounds to reintroduce or merely hide the same row a second time. **Use `bash run-latest.sh` from the project root** for the one-step `git pull --ff-only origin main` → clean publish → source/binary integrity check → Wine launch. A running old app blocks the workflow instead of being silently reused.
