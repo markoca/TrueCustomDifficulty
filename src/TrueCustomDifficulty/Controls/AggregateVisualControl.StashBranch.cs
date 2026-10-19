@@ -402,9 +402,9 @@ public sealed partial class AggregateVisualControl
                 continue;
             }
             var enabled = parameter.IsControlEnabled;
-            var absolute = id == "loot.expensiveStashMoneyChance";
-            // Category sliders are percentages OF authored native Chance;
-            // only Rare Coupons edits a genuinely absolute source Chance.
+            // Visible category factors are 0..100% of authored native
+            // per-entry Chance; 100% retains its source, not guaranteed loot.
+            // Only Rare Coupons edits a truly absolute native Chance.
             var digits = (parameter.CurrentNumber * 100.0).ToString("0.##",
                 System.Globalization.CultureInfo.InvariantCulture);
             var number = CreateText(digits + "%", 11.8,

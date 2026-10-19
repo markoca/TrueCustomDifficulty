@@ -7774,7 +7774,7 @@
       "description": "Source-native Bandage and Medkit source Chance entries, originally 40%/100% across branches. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 2,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -7788,7 +7788,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
+      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop."
     },
     {
       "id": "loot.mediumStashDrinksChance",
@@ -7819,7 +7819,7 @@
       "description": "Source-native Vodka and Energetic source Chance entries, originally 50%/100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 2,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -7833,7 +7833,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
+      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop."
     },
     {
       "id": "loot.mediumStashCouponsChance",
@@ -7864,7 +7864,7 @@
       "description": "Source-native Rank-gated coupon reward source Chance, originally 10%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 10,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -7878,7 +7878,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
+      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop."
     },
     {
       "id": "loot.expensiveStashAmmoChance",
@@ -7909,7 +7909,7 @@
       "description": "Source-native Newbie ammo Chance entries, originally 50%/100%; other ranks use Weight and remain unaffected. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 2,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -7923,7 +7923,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
+      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop."
     },
     {
       "id": "loot.expensiveStashMedicalChance",
@@ -7954,7 +7954,7 @@
       "description": "Source-native Bandage, Medkit, AntiRad and ArmyMedkit source Chance entries, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 2,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -7968,7 +7968,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
+      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop."
     },
     {
       "id": "loot.expensiveStashFoodChance",
@@ -7999,7 +7999,7 @@
       "description": "Source-native CannedFood source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 2,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -8013,7 +8013,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
+      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop."
     },
     {
       "id": "loot.expensiveStashDrinksChance",
@@ -8044,7 +8044,7 @@
       "description": "Source-native Energetic source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 2,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -8058,7 +8058,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
+      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop."
     },
     {
       "id": "loot.expensiveStashGrenadesChance",
@@ -8089,7 +8089,7 @@
       "description": "Source-native RGD-5 source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 2,
+        "max": 1,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -8103,7 +8103,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Edit source native Chance factor as 0–200% (Standard coupons 0–1000%). 100% preserves every original source Chance, not the chance to find an item."
+      "interaction": "Edit a 0–100% factor of original per-entry Chance. 100% preserves native Chance; it never guarantees an item or whole-stash drop."
     },
     {
       "id": "loot.expensiveStashMoneyChance",

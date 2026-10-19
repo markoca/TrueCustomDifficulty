@@ -134,6 +134,22 @@ assert all("ArmyMedkit" not in {x["fields"]["ItemPrototypeSID"]
                  "expensiveStashProduction")
     for g in baseline["special"][tier]["templateCategories"])
 
+# The 9 visible Standard/Rare Chance controls have real 0..100% input axes.
+visible_tier_chance = [
+    "loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
+    "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
+    "loot.expensiveStashMedicalChance", "loot.expensiveStashFoodChance",
+    "loot.expensiveStashDrinksChance", "loot.expensiveStashGrenadesChance",
+    "loot.expensiveStashMoneyChance"
+]
+for pid in visible_tier_chance:
+    assert stash[pid]["slider"]["min"] == 0, pid
+    assert stash[pid]["slider"]["max"] == 1, pid
+    assert stash[pid]["slider"]["step"] == 0.01, pid
+for pid in ("loot.standardStashChanceScale", "loot.rareStashChanceScale"):
+    assert stash[pid]["slider"]["max"] == 2
+    assert not stash[pid]["exposeInUi"]
+
 assert '"StashRewardProfile" => new[]' not in ui
 assert 'case "StashRewardProfile":' not in ui
 assert 'DrawCompactStashRewards(' not in ui

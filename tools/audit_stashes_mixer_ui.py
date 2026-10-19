@@ -583,6 +583,12 @@ for pid in tier_chance_ids:
     entry = catalog_by_id[pid]
     assert entry["exposeInUi"] is (pid not in ("loot.standardStashChanceScale", "loot.rareStashChanceScale")), pid
     assert entry["group"] == "Stash Content", pid
+    if entry["exposeInUi"]:
+        assert entry["slider"]["min"] == 0, pid
+        assert entry["slider"]["max"] == 1, pid
+        assert entry["slider"]["step"] == 0.01, pid
+    else:
+        assert entry["slider"]["max"] == 2, pid
     assert pid in expected["StashContentMix"], pid
     assert f'["{pid}"] = "StashContentMix"' in viewmodel, pid
     assert f'"{pid}"' in main_vm, pid
@@ -637,6 +643,9 @@ assert 'var digits = (parameter.CurrentNumber * 100.0).ToString("0.##"' in tier_
 assert 'var number = CreateText(digits + "%", 11.8,' in tier_preview
 assert 'DrawText(dc, "0%"' in tier_preview
 assert 'DrawRightAlignedText(dc, maximum + "%"' in tier_preview
+assert 'var now = ValueToX(parameter.CurrentNumber,' in tier_preview
+assert 'rail, parameter.Minimum, parameter.Maximum);' in tier_preview
+assert 'Visible category factors are 0..100%' in tier_preview
 assert 'digits + (absolute ? "%" : "×")' not in tier_preview
 for pid in ("loot.mediumStashMedicalChance", "loot.mediumStashDrinksChance",
             "loot.mediumStashCouponsChance", "loot.expensiveStashAmmoChance",
