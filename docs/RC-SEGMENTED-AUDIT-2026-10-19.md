@@ -187,3 +187,14 @@ The user executed the new `pre_release.py writer --wine` runner on Linux: **0 PA
 ## Gate 02 — RC sparse preset and non-vanilla Sleep HP baseline (2026-10-19)
 
 The real Wine log showed `RCSignalPatchContract` failing because it treated a sparse 13-control RC diagnostic preset as if the tool-wide initial state were completely vanilla. The intentional `survival.sleepHealthRestore` tool default is **100 HP**, whereas its original source is 300 HP. The RC suite now expects the 13 diagnostic changes **plus this one pre-existing baseline patch**, retaining strict rejection of any other unrelated source IDs. Its writer `ParameterCount` assertion is updated to 14. This is a test correction only: no preset payload, tool default, original CFG mapping or gameplay value is changed. Execution after this commit remains unverified.
+
+## Segment 02 — second local Wine run: current inventory and locked duration contract (2026-10-19)
+
+User-provided execution evidence: **1 PASS / 12 FAIL**, with `RCSignalPatchContract` passing (8 files, 61 edits), while test suites report a mix of outdated source inventories, Sleep HP tool-baseline assumptions and unverified output. This is actual Wine/.NET execution for the previous main SHA, not evidence that the new changes have passed.
+
+- **Survival duration:** the newest UI contracts in `UI-DESIGN-LOCK.md` and `VISUAL-CONTROL-SYSTEM.md` say secondary Water and Energy Drink effects may never outlast their **current parent** in either Override Limits mode. Updated `SurvivalPatchContract` to check the linked parent duration (native initial 30/45s and expanded 180s), rather than incorrectly expecting a detached child ceiling of 270s immediately on enabling Override. The implementation and UI are unchanged.
+- **Environment:** 17 catalog/source IDs include 2 legacy Diamond entries excluded from the active VM for unverified gameplay. Tests now require precisely **15 mounted Environment controls**, leave both Diamond IDs catalog-only, and exercise **78 current live scenarios**. This avoids reintroducing unsupported Diamond controls.
+- **Loot taxonomy:** ID prefix `loot.` covers both the 35 Loot-tab and 41 Stashes-tab parameters, **76 total**, with 16 direct and 60 special ID routes. Both Loot contract inventories now assert those real identities instead of old 35 / 61 snapshots.
+- **AllControls:** 287 catalogue sources include 13 previously defined non-UI sources plus 4 legacy/unmounted IDs (the two Diamond and `loot.standardStashChanceScale`/`loot.rareStashChanceScale`). Tests therefore probe exactly **270 mounted editable sources**, while retaining source-level audit coverage for the other 17.
+
+All corrections above change **tests and documentation only**, not writer/gameplay values, control layout or source mappings. Re-run real Wine contracts; no PASS claimed for the new SHA.

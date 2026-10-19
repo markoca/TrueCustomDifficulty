@@ -58,7 +58,7 @@ WRITERS = (
     ("survival-bpatch-writer", "SurvivalPatchContract", "survival-patch-fixtures", 94),
     ("economy-bpatch-writer", "EconomyPatchContract", "economy-patch-fixtures", 34),
     ("equipment-bpatch-writer", "EquipmentPatchContract", "equipment-patch-fixtures", 32),
-    ("environment-bpatch-writer", "EnvironmentPatchContract", "environment-patch-fixtures", 90),
+    ("environment-bpatch-writer", "EnvironmentPatchContract", "environment-patch-fixtures", 78),
     ("alife-bpatch-writer", "ALifePatchContract", "alife-patch-fixtures", 92),
     ("loot-direct-bpatch-writer", "LootDirectPatchContract", "loot-direct-patch-fixtures", 117),
     ("loot-special-generators-writer", "LootSpecialGeneratorsContract", "loot-special-generators-fixtures", 63),
@@ -66,7 +66,7 @@ WRITERS = (
     ("loot-world-placement-writer", "LootWorldPlacementContract", "loot-world-placement-fixtures", 26),
     # This smoke test has no --out CLI; it validates every UI-editable
     # source against the actual writer's staged CFG output in temporary dirs.
-    ("all-controls-writer", "AllControlsPatchContract", None, 274),
+    ("all-controls-writer", "AllControlsPatchContract", None, 270),
     ("rc-signal-production-writer", "RCSignalPatchContract", "rc-signal-patch-fixtures", 13),
 )
 MANUAL = (

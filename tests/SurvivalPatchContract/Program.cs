@@ -539,9 +539,18 @@ internal static class Program
             foreach (var (id, vanilla) in primary)
                 Check(Math.Abs(Source(id).Maximum * vanilla - 270.0) < 0.000001,
                     name + ": ON missing common 270-second maximum for " + id);
-            foreach (var childId in children)
-                Check(Math.Abs(Source(childId).Maximum - 270.0) < 0.000001,
-                    name + ": ON still caps secondary effect to its parent");
+            // Each secondary effect is independent in value, but it can never
+            // outlast its actual parent drink. The Override checkbox expands
+            // the parent ceiling; it does NOT uncouple the child from the
+            // parent's current seconds (both UI design locks).
+            Check(Math.Abs(Source("survival.waterRegenDuration").Maximum
+                - Source("survival.waterEffectDuration").CurrentNumber * 30.0) < 0.000001,
+                name + ": ON lost Water child/parent live bound");
+            foreach (var childId in children.Where(id =>
+                         id.StartsWith("survival.energy", StringComparison.Ordinal)))
+                Check(Math.Abs(Source(childId).Maximum
+                    - Source("survival.energyDrinkEffectDuration").CurrentNumber * 45.0) < 0.000001,
+                    name + ": ON lost Energy child/parent live bound");
             foreach (var (id, _) in medicines)
                 Check(Math.Abs(Source(id).Maximum - 900.0) < 0.000001,
                     name + ": ON does not set " + id + " to a 900s maximum");
@@ -557,7 +566,11 @@ internal static class Program
             foreach (var (id, vanilla) in primary)
                 Source(id).SnapCurrentNumberToMarker(180.0 / vanilla);
             foreach (var childId in children)
+            {
+                Check(Math.Abs(Source(childId).Maximum - 180.0) < 0.000001,
+                    name + ": expanded parent did not raise child's live maximum");
                 Source(childId).SnapCurrentNumberToMarker(180.0);
+            }
             foreach (var (id, _) in medicines)
             {
                 Source(id).SnapCurrentNumberToMarker(900.0);

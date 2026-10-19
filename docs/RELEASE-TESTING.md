@@ -1,3 +1,7 @@
+## 2026-10-19 — Current RC Wine contract inventory
+
+The current source catalog has **287 IDs**; `loot.*` spans **76** across Loot (35) and Stashes (41). The full writer suite probes **270 active, mounted sources** and keeps 17 non-active or legacy IDs under source-level catalog checks. The Environment contract has **17 source IDs but 15 active UI controls**, intentionally excluding the two unverified Diamond hazard settings; **78 live** test cases are expected. The drink duration contract requires each short Water/Energy child maximum to equal its **current parent duration** in both Override Limits modes, not to jump unconditionally to 270 seconds. These changes update stale tests without modifying source CFG targets, gameplay defaults or user controls. In-game and executable PASS still require a post-change run.
+
 
 ## 2026-10-19 — RC diagnostic preset with Sleep HP tool default
 

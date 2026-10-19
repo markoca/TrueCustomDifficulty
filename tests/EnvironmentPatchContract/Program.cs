@@ -31,16 +31,23 @@ internal static class Program
             var vm = new MainViewModel(Catalog);
             var active = vm.AllParameters.Where(p => p.Id.StartsWith("environment.", StringComparison.Ordinal)).ToArray();
             var points = Baseline.EditPoints.Where(p => p.ParameterId.StartsWith("environment.", StringComparison.Ordinal)).ToArray();
-            Check(ids.Length == 17 && active.Length == 17,
-                "17 catalog/VM Environment sources; catalog=" + ids.Length +
+            // Two legacy Diamond sources retain their authored mapping but
+            // have no verified gameplay encounter. They must stay out of the
+            // active ViewModel and the player UI, not be mounted for a test.
+            var legacyDiamond = new[] {
+                "environment.diamondHealthDamage", "environment.diamondBleeding"
+            }.ToHashSet(StringComparer.Ordinal);
+            Check(ids.Length == 17 && active.Length == 15,
+                "Environment catalog/VM inventory drift: catalog=" + ids.Length +
                 " VM=" + active.Length);
             var inaccessible = active.Where(p => !p.IsSlider || !p.IsControlEnabled)
                 .Select(p => p.Id).ToArray();
             Check(inaccessible.Length == 0,
                 "Environment sources unexpectedly disabled or not sliders: " +
                 string.Join(", ", inaccessible));
-            Check(active.Select(p => p.Id).ToHashSet(StringComparer.Ordinal).SetEquals(ids),
-                "Environment catalog and VM source IDs disagree");
+            Check(active.Select(p => p.Id).ToHashSet(StringComparer.Ordinal)
+                    .SetEquals(ids.Except(legacyDiamond, StringComparer.Ordinal)),
+                "Environment VM must exclude only the two unmapped Diamond hazards");
             // RazorAnomaly is the in-game Glass Shards hazard. Keep actual
             // CFG prototype IDs stable but expose player-facing wording.
             Check(definitions.Single(p => p.Id == "environment.razorHealthDamage").Label ==
@@ -54,10 +61,9 @@ internal static class Program
                 "environment.diamondHealthDamage", "environment.diamondBleeding"
             })
             {
-                var parameter = active.Single(p => p.Id == diamondId);
-                Check(!parameter.Definition.ExposeInUi && !parameter.IsControlVisible &&
-                    !parameter.IsIndividualAnomalyDamageMember &&
-                    !parameter.IsVisualAggregateMember, "Diamond must be hidden: " + diamondId);
+                var definition = definitions.Single(p => p.Id == diamondId);
+                Check(!definition.ExposeInUi && active.All(p => p.Id != diamondId),
+                    "Unverified Diamond hazard was reintroduced into live UI: " + diamondId);
             }
             Check(active.Single(p => p.Id == "environment.razorHealthDamage")
                 .IsIndividualAnomalyDamageMember, "Glass Shards remains in anomaly damage editor");
@@ -97,7 +103,7 @@ internal static class Program
             Check(effects.Where(p => p.ParameterId == "environment.psyAnomalyIntensity")
                 .All(p => p.Operation == "scale" && Num(p.SourceRaw) < 0), "negative PSY source");
             foreach (var diff in Diffs) CheckCase(diff, new Dictionary<string,double>(), "vanilla");
-            foreach (var id in ids) foreach (var diff in Diffs)
+            foreach (var id in active.Select(p => p.Id)) foreach (var diff in Diffs)
             {
                 var p = new MainViewModel(Catalog) { SelectedReferenceDifficulty = diff }
                     .AllParameters.Single(x => x.Id == id);
@@ -112,7 +118,6 @@ internal static class Program
                 ("environment.flycatcherMovementSpeed",0,1),
                 ("environment.flycatcherTurnSpeed",0,1),
                 ("environment.psyAnomalyIntensity",0,2),
-                ("environment.diamondBleeding",0,20),
                 ("environment.razorHealthDamage",0,2)
             })
             {
@@ -124,12 +129,10 @@ internal static class Program
                 ("environment.anomalyDamage",1.8,"environment.electroAnomalyDamage",80.0),
                 ("environment.flycatcherMovementSpeed",0.8,"environment.flycatcherTurnSpeed",0.4),
                 ("environment.razorHealthDamage",0.6,"environment.razorBleeding",1.6),
-                ("environment.razorBleeding",1.5,"environment.diamondBleeding",12.0),
-                ("environment.psyAnomalyIntensity",1.2,"environment.diamondBleeding",11.0),
                 ("environment.chemicalAnomalyDamage",40.0,"environment.fireAnomalyDamage",90.0)
             })
                 CheckCase("Veteran",new(){{pair.Item1,pair.Item2},{pair.Item3,pair.Item4}},"pair");
-            Check(Passed == 90,"exact 90 scenarios");
+            Check(Passed == 78,"exact 78 live Environment scenarios; Diamond legacy IDs remain catalog-only");
             Console.WriteLine($"PASS: {Passed} Environment production writer scenarios");
             Console.WriteLine("NOT VERIFIED: Unreal merge semantics or effects in game");
             return 0;
