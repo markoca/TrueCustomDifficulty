@@ -1,5 +1,7 @@
 # Documentation index
 
+- [RC segmented acceptance audit (2026-10-19)](RC-SEGMENTED-AUDIT-2026-10-19.md): seven scoped gates, current main/CI evidence, status and exit conditions.
+
 - [Final 248-source CFG mapping and production BPatch writer audit (2026-10-15)](FINAL-CFG-MAPPING-AUDIT-2026-10-15.md): direct vs special source coverage, 108 A-Life integer no-op corrections, per-ID inventory, repeatable Python and Windows writer gates, explicit runtime limitations.
 - [Consumable medicines — Vinca/Cinnamon, Psi Block, Hercules source audit (2026-10-11)](CONSUMABLE-MEDICINE-CFG-AUDIT-2026-10-11.md): verified source mappings, six implemented UI/CFG editors and outstanding runtime safeguards.
 All project documentation lives under `docs/`. The repository root is intentionally reserved for build/run entry points.
