@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Pre-release test runner; preserves PASS/FAIL/NOT RUN and logs.
 
-Modes: list, static, source, writer, all.
+Modes: list, cfg-routes, static, source, writer, all.
 See docs/RELEASE-TESTING.md. A PASS never verifies in-game behavior.
 """
 from __future__ import annotations
@@ -33,6 +33,17 @@ STATIC = (
     ("rc-signal-preset", "tools/audit_rc_signal_preset.py"),
     ("world-weapon-nested-source", "tools/audit_world_weapon_nested_source.py"),
     ("world-placement-cross-routes", "tools/audit_world_placement_cross_routes.py"),
+    ("world-physical-actor-isolation", "tools/audit_world_physical_actor_isolation.py"),
+)
+# Focused platform-independent CFG route/value/ownership audit.
+# This deliberately does NOT execute WPF, C# or any compiled writer;
+# a static PASS must never be called proof of emitted BPatch bytes.
+CFG_ROUTES = (
+    ("full-cfg-route-mapping", "tools/audit_final_cfg_mapping.py"),
+    ("incremental-cfg-route-delta", "tools/audit_cfg_route_delta.py"),
+    ("stash-content-gear-routing", "tools/audit_stash_content_gear.py"),
+    ("stash-gear-actor-and-chance-routing", "tools/audit_stash_gear_coverage.py"),
+    ("world-shuffle-field-isolation", "tools/audit_world_placement_cross_routes.py"),
     ("world-physical-actor-isolation", "tools/audit_world_physical_actor_isolation.py"),
 )
 SOURCE = (
@@ -112,7 +123,7 @@ def not_run(label, why):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=("list", "static", "source", "writer", "all"),
+    parser.add_argument("mode", choices=("list", "cfg-routes", "static", "source", "writer", "all"),
                         default="static", nargs="?")
     parser.add_argument("--wine", action="store_true",
                         help="Run Windows WPF writer contracts using tests/run-wine.sh on Linux")
@@ -125,6 +136,9 @@ def main():
         parser.error("--wine is supported only in writer or all mode")
 
     if args.mode == "list":
+        print("CFG-ROUTES (offline Linux/Windows, no GUI/Wine):")
+        for label, path in CFG_ROUTES:
+            print(f"  {label}: python {path}")
         print("STATIC (Linux/Windows):")
         for label, path in STATIC:
             print(f"  {label}: python {path}")
@@ -152,6 +166,43 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     start = datetime.now(timezone.utc).isoformat()
     steps = []
+
+    # Writer-source-only acceptance for this RC audit: no Wine, UI, CI or
+    # game dependencies and no unrelated NOT RUN rows in the summary.
+    if args.mode == "cfg-routes":
+        for label, script in CFG_ROUTES:
+            command = [sys.executable, str(ROOT / script)]
+            if label == "full-cfg-route-mapping":
+                command.extend(["--out", str(out / "mapping")])
+            elif label == "incremental-cfg-route-delta":
+                command.extend(["--out", str(out / "incremental-stash-routes.csv")])
+            steps.append(execute(label, command, out))
+        failed = sum(s["status"] == "FAIL" for s in steps)
+        overall = "FAIL" if failed else "PASS"
+        result = {
+            "schemaVersion": 1,
+            "mode": "cfg-routes",
+            "result": overall,
+            "gitCommit": sha,
+            "platform": platform.platform(),
+            "startedUtc": start,
+            "finishedUtc": datetime.now(timezone.utc).isoformat(),
+            "steps": steps,
+            "interpretation": (
+                "PASS verifies static CFG source identities, declared writer "
+                "routes/transforms and protected actor/slot boundaries only. "
+                "No C# writer was executed; no generated BPatch contents, "
+                "Windows UI or gameplay are verified."
+            ),
+        }
+        summary_path = out / "summary.json"
+        summary_path.write_text(
+            json.dumps(result, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8")
+        print(f"\n[{overall}] {len(steps)-failed} PASS / {failed} FAIL")
+        print(f"CFG routing evidence: {summary_path}")
+        print("Generated CFG output validation: NOT PERFORMED by static audit")
+        return 1 if failed else 0
 
     if args.mode in ("static", "all"):
         for label, script in STATIC:

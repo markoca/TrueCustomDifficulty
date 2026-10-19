@@ -1,5 +1,8 @@
 # TrueCustomDifficulty — segmented RC acceptance audit (2026-10-19)
 
+> **Current CFG audit scope (2026-10-20):** [CFG writer audit — current acceptance scope](CFG-WRITER-AUDIT-SCOPE.md) supersedes earlier Wine/CI/gameplay gating instructions **for Segment 02**. We now audit CFG route/value/source consistency and, when actual staged files are provided, emitted CFG contents. Use `python3 tools/pre_release.py cfg-routes --output audit/pre-release/cfg-routes` without Wine. Source-only PASS is not an executed writer-output PASS. Historical results below remain unchanged.
+
+
 ## Rules and scope
 
 Use **main** as the only source of truth. Each functional/UI correction must update source code, applicable catalog(s), tests and documentation in the **same commit**, then be pushed and verified on main before handing over local pull/build/Wine steps. Do not mistake an unexecuted CI check, static route, packaged binary or screenshot for an in-game gameplay PASS. Keep all previously signed-off RC copy decisions unless a source-proven contradiction is found.

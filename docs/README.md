@@ -1,5 +1,7 @@
 # Documentation index
 
+- [Current CFG writer audit scope (2026-10-20)](CFG-WRITER-AUDIT-SCOPE.md): verify CFG routes and produced patch contents; no Wine/CI/gameplay gate.
+
 - [RC segmented acceptance audit (2026-10-19)](RC-SEGMENTED-AUDIT-2026-10-19.md): seven scoped gates, current main/CI evidence, status and exit conditions.
 
 - [Final 248-source CFG mapping and production BPatch writer audit (2026-10-15)](FINAL-CFG-MAPPING-AUDIT-2026-10-15.md): direct vs special source coverage, 108 A-Life integer no-op corrections, per-ID inventory, repeatable Python and Windows writer gates, explicit runtime limitations.
