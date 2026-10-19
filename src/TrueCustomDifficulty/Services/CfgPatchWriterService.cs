@@ -379,10 +379,21 @@ public sealed partial class CfgPatchWriterService
             fileCount++;
         }
 
+        // Logical writer route counts must agree with the physical staged
+        // output. Cross-domain overwrites or an omitted file otherwise make
+        // Build Mod report a plausible but false number of CFG patches.
+        var stagedFileCount = Directory.EnumerateFiles(
+            outputRoot, "*.cfg", SearchOption.AllDirectories).Count();
+        if (stagedFileCount != fileCount)
+            throw new InvalidDataException(
+                $"CFG output accounting mismatch: {fileCount} writer-counted files " +
+                $"but {stagedFileCount} physical staged CFG files. " +
+                "Inspect colliding source actor paths or missing BPatch output.");
+
         return new CfgWriteResult
         {
             OutputRoot = outputRoot,
-            FileCount = fileCount,
+            FileCount = stagedFileCount,
             ParameterCount = writtenParameters.Count,
             EditCount = editCount
         };

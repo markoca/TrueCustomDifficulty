@@ -64,6 +64,9 @@ WRITERS = (
     ("loot-special-generators-writer", "LootSpecialGeneratorsContract", "loot-special-generators-fixtures", 63),
     ("loot-world-removals-writer", "LootWorldRemovalsContract", "loot-world-removals-fixtures", 27),
     ("loot-world-placement-writer", "LootWorldPlacementContract", "loot-world-placement-fixtures", 26),
+    # This smoke test has no --out CLI; it validates every UI-editable
+    # source against the actual writer's staged CFG output in temporary dirs.
+    ("all-controls-writer", "AllControlsPatchContract", None, 274),
     ("rc-signal-production-writer", "RCSignalPatchContract", "rc-signal-patch-fixtures", 13),
 )
 MANUAL = (
@@ -111,11 +114,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("mode", choices=("list", "static", "source", "writer", "all"),
                         default="static", nargs="?")
+    parser.add_argument("--wine", action="store_true",
+                        help="Run Windows WPF writer contracts using tests/run-wine.sh on Linux")
     parser.add_argument("--base-zip", type=Path)
     parser.add_argument("--dlc1-zip", type=Path)
     parser.add_argument("--output", type=Path,
                         help="Evidence folder; defaults to audit/pre-release/<UTC>-<SHA>")
     args = parser.parse_args()
+    if args.wine and args.mode not in ("writer", "all"):
+        parser.error("--wine is supported only in writer or all mode")
 
     if args.mode == "list":
         print("STATIC (Linux/Windows):")
@@ -201,9 +208,20 @@ def main():
 
     if args.mode in ("writer", "all"):
         if os.name != "nt":
-            for label, _, _, _ in WRITERS:
-                steps.append(not_run(label, "Windows WPF required; verify the "
-                                     "corresponding Windows GitHub Actions job at this SHA"))
+            if not args.wine:
+                for label, _, _, _ in WRITERS:
+                    steps.append(not_run(label,
+                        "Windows WPF required; on Linux use --wine with .NET 10 and Wine"))
+            elif not all(shutil.which(x) for x in ("dotnet", "wine", "bash")):
+                for label, _, _, _ in WRITERS:
+                    steps.append(not_run(label, "--wine requires dotnet, wine and bash"))
+            else:
+                for label, project, _, _ in WRITERS:
+                    # The shared harness creates a self-contained win-x64
+                    # binary in /tmp, runs it via Wine and leaves portable
+                    # publish/win-x64/Presets/Output untouched.
+                    command = ["bash", str(ROOT / "tests/run-wine.sh"), project]
+                    steps.append(execute(label, command, out))
         elif not shutil.which("dotnet"):
             for label, _, _, _ in WRITERS:
                 steps.append({"name": label, "status": "FAIL",
@@ -214,8 +232,10 @@ def main():
                 command = [
                     "dotnet", "run", "--project",
                     str(ROOT / "tests" / project / (project + ".csproj")),
-                    "-c", "Release", "--", "--out", str(out / folder)
+                    "-c", "Release", "--"
                 ]
+                if folder is not None:
+                    command.extend(["--out", str(out / folder)])
                 steps.append(execute(label, command, out))
     else:
         steps.extend(not_run(label, "not selected; check Windows CI separately")

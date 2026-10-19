@@ -38,6 +38,10 @@ internal static class Program
             Check(ids.Count == 287 && NonUi.IsSubsetOf(ids) && tested.Length == 274,
                 "Expected complete 287-source / 274-editable audit scope");
 
+            // The ordinary Master/Stalker corpse package contains no bonus
+            // NPC_Ammo_Smart, so that source must be explicitly probed where
+            // the real native ammo package is active (Novice).
+            VerifyDormantNpcAmmoNotCounted();
             var executed = 0;
             var failed = new List<string>();
             foreach (var id in tested)
@@ -46,7 +50,9 @@ internal static class Program
                 var issues = new List<string>();
                 // Master enables the Master-mechanics dependencies; Stalker
                 // also exercises the alternative difficulty-section layout.
-                foreach (var difficulty in new[] { "Master", "Stalker" })
+                foreach (var difficulty in id == "loot.npcWeaponAmmoSupply"
+                    ? new[] { "Novice" }
+                    : new[] { "Master", "Stalker" })
                 {
                     foreach (var end in new[] { "maximum", "minimum" })
                     {
@@ -90,6 +96,36 @@ internal static class Program
 
                             Check(result.FileCount > 0 && result.EditCount > 0 && cfg.Length > 0,
                                 "No staged BPatch/cfg_patch files were generated");
+                            Check(result.FileCount == cfg.Length,
+                                "Reported CFG FileCount differs from physical staged CFG files: " + id);
+                            if (id == "loot.npcWeaponAmmoSupply")
+                            {
+                                // A non-default Sleep HP Restore generates a
+                                // separate CFG in every test scenario. It must
+                                // NOT pass the ammo probe by itself.
+                                var stashPath = Path.Combine(path, "Stalker2", "Content",
+                                    "GameLite", "GameData", "StashPrototypes",
+                                    "StashPrototypes_patch_TrueCustomDifficulty.cfg");
+                                var difficultyPath = Path.Combine(path, "Stalker2", "Content",
+                                    "GameLite", "GameData", "DifficultyPrototypes",
+                                    "DifficultyPrototypes_patch_TrueCustomDifficulty.cfg");
+                                Check(File.Exists(stashPath) && File.Exists(difficultyPath),
+                                    "NPC ammo setting has no private stash clone and selected difficulty redirect");
+                                var stashCfg = File.ReadAllText(stashPath);
+                                var difficultyCfg = File.ReadAllText(difficultyPath);
+                                Check(stashCfg.Contains("TCD_NPC_Ammo_Smart : struct.begin",
+                                        StringComparison.Ordinal)
+                                    && stashCfg.Contains("SID = TCD_NPC_Ammo_Smart",
+                                        StringComparison.Ordinal)
+                                    && stashCfg.Contains("MinCount =", StringComparison.Ordinal)
+                                    && stashCfg.Contains("MaxCount =", StringComparison.Ordinal)
+                                    && difficultyCfg.Contains(
+                                        "GeneralNPC = NPC_Medicine_Smart, TCD_NPC_Ammo_Smart",
+                                        StringComparison.Ordinal)
+                                    && result.ParameterCount >= 2,
+                                    "Bonus Ammo Drops counted unrelated source output instead of "
+                                    + "its NPC_Ammo_Smart clone and active Novice redirect");
+                            }
 
                             // Incremental Stashes controls must emit a physical
                             // generator BPatch, not merely claim a routed value.
@@ -160,6 +196,39 @@ internal static class Program
         {
             Console.Error.WriteLine("FAIL: " + ex);
             return 1;
+        }
+    }
+
+    // Master has no extra corpse package. An edited ammo multiplier stays in
+    // the preset, but must NOT contribute to the writer's applied count or
+    // produce an NPC_Ammo_Smart clone. The fixed Sleep HP Restore still emits
+    // its unrelated source and proves that "some CFG exists" is insufficient.
+    private static void VerifyDormantNpcAmmoNotCounted()
+    {
+        var dir = Path.Combine(Path.GetTempPath(),
+            "TCD_DormantNpcAmmo_Count_" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var vm = new MainViewModel(Catalog) { SelectedReferenceDifficulty = "Master" };
+            var ammo = vm.AllParameters.Single(p => p.Id == "loot.npcWeaponAmmoSupply");
+            ammo.SnapCurrentNumberToMarker(2.0);
+            Check(ammo.IsValueModifiedFromReference(),
+                "Dormant ammo probe failed to change its real source control");
+            Check(string.IsNullOrEmpty(vm.AllParameters.Single(
+                p => p.Id == "loot.npcCorpseBonus").CurrentText),
+                "Master extra corpse package was expected to be None");
+            var result = new CfgPatchWriterService().Write(vm, Catalog, null, dir);
+            var output = Directory.EnumerateFiles(dir, "*.cfg",
+                SearchOption.AllDirectories).ToArray();
+            Check(result.ParameterCount == 1 && result.FileCount == output.Length,
+                "Dormant Master ammo multiplier inflated applied writer accounting");
+            Check(output.Length > 0 && output.All(file => !File.ReadAllText(file)
+                    .Contains("TCD_NPC_Ammo_Smart", StringComparison.Ordinal)),
+                "Dormant Master ammo setting generated a forbidden ammo clone");
+        }
+        finally
+        {
+            if (Directory.Exists(dir)) Directory.Delete(dir, true);
         }
     }
 
