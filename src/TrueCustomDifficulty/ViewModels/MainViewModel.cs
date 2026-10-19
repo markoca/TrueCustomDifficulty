@@ -533,8 +533,8 @@ public sealed class MainViewModel : ObservableObject
             "loot.worldDetectors",
             "loot.blueprintShuffle");
 
-        // Three Basic Weight knobs and two tier-wide Chance sliders are visible.
-        // Hidden category Chance VMs are still instantiated for old presets.
+        // Independent native category Chance controls are visible; two legacy
+        // tier-wide multipliers remain instantiated for saved profiles.
         WireVisualAggregate(
             "loot.stashMixMedical",
             "loot.stashMixAmmo",

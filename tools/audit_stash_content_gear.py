@@ -98,9 +98,9 @@ assert "DrawStashBasicNativePools(dc," in ui
 assert '"RGD-5 AMOUNT"' in ui
 assert "percentage: false" in ui
 assert "wide ? 146.0 : 300.0" in ui
-assert "=> width >= 700.0 ? 679.0 : 999.0;" in ui
+assert "=> width >= 700.0 ? 751.0 : 1097.0;" in ui
 assert 'DrawStashChanceTier(dc, "STANDARD", "Medium", 10,' in ui
-assert "wide ? 152.0 : 204.0" in ui
+assert "wide ? 140.0 : 236.0" in ui
 assert "private void DrawStashChanceTier(" in mixer
 tier_preview = mixer.split("private void DrawStashChanceTier(", 1)[1]
 assert "StashSourceGroups.Value" in tier_preview
@@ -108,13 +108,13 @@ assert "!g.IsSmart && g.Tier == tierName" in tier_preview
 assert "hasWeight[kind] = true" in tier_preview
 assert "hasChance[kind] = true" in tier_preview
 assert "hasWeight[k] || hasChance[k]" in tier_preview
-assert '"WEIGHT ONLY"' in tier_preview
-assert '"CHANCE SCALE"' in tier_preview
-assert '"loot.standardStashChanceScale"' in tier_preview
-assert '"loot.rareStashChanceScale"' in tier_preview
+assert 'var chanceKinds = present.Where(k => hasChance[k]).ToArray();' in tier_preview
+assert 'label + " · CHANCE"' in tier_preview
+assert '"loot.mediumStashCouponsChance"' in tier_preview
+assert '"loot.expensiveStashMoneyChance"' in tier_preview
 assert "100.0 * totals" not in tier_preview
 assert "EffectiveSelection(" in tier_preview
-assert "AddHorizontalTarget(scale," in tier_preview
+assert "AddHorizontalTarget(parameter," in tier_preview
 assert "const double cardHeight = 146.0;" in mixer
 assert "BasicVisibleWeightKinds = { 1, 2, 3 }" in mixer
 assert "previewGroup.Items" in mixer

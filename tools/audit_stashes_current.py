@@ -27,7 +27,7 @@ assert Counter(p["group"] for p in stash.values()) == {
     "Stash Gear": 7,
     "Stashes": 3,
 }
-assert sum(p.get("exposeInUi", True) for p in stash.values()) == 27
+assert sum(p.get("exposeInUi", True) for p in stash.values()) == 34
 
 ui = read(src / "Controls/AggregateVisualControl.cs")
 vm = read(src / "ViewModels/MainViewModel.cs")

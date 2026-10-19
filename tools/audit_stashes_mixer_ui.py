@@ -499,7 +499,7 @@ assert 'StashPreviewGroup("BASIC", 1)' in native_preview_method
 assert 'DrawStashPoolBar(dc, hard, "VETERAN"' in native_preview_method
 assert '"EASY/MEDIUM · EXPERIENCED"' not in coverage
 assert 'CreateText(label, 11.4, text' in coverage
-assert 'CreateText(name, 10.2, text' in coverage
+assert 'GlobalStashCategoryNames[kind], 10.2, text,' in coverage
 assert 'CreateText(currentText, 12.2,' in coverage
 assert "row.Width < 440.0 ? 9.6 : 10.8" in source
 assert "row.Width >= 580.0 ? 10.0 : 8.9" in source
@@ -589,8 +589,8 @@ assert "private static readonly int[] BasicVisibleWeightKinds = { 1, 2, 3 };" in
 assert "BasicVisibleWeightKinds.Length" in coverage
 assert "previewGroup.Items" in coverage
 assert "var columns = outer.Width >= 670.0 ? 3 : 2;" in coverage
-assert '"BASIC RGD-5 CHANCE"' in source
-assert '"RARE COUPON CHANCE"' in source
+assert '"RGD-5 CHANCE"' in source
+assert '"loot.expensiveStashMoneyChance"' in coverage
 for doc in (lock, system, proposal):
     assert "STASHES — ACTUAL TIER CONTENT / WEIGHT-CHANCE COVERAGE (CURRENT)" in doc
 

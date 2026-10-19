@@ -7699,7 +7699,8 @@
       },
       "rationale": "Scale eligible Standard stash native Chance entries together without removing original per-item differences.",
       "logic": "One multiplier per tier is applied after legacy per-category modifiers to the authored native per-entry Chance. Results are clamped 0–1; no global stash drop chance is invented.",
-      "interaction": "Drag the single STANDARD CHANCE SCALE rail; the read-only category breakdown shows actual resulting native entry Chance values."
+      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds.",
+      "exposeInUi": false
     },
     {
       "id": "loot.rareStashChanceScale",
@@ -7745,7 +7746,8 @@
       },
       "rationale": "Scale eligible Rare stash native Chance entries together without removing original per-item differences.",
       "logic": "One multiplier per tier is applied after legacy per-category modifiers to the authored native per-entry Chance. Results are clamped 0–1; no global stash drop chance is invented.",
-      "interaction": "Drag the single RARE CHANCE SCALE rail; the read-only category breakdown shows actual resulting native entry Chance values."
+      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds.",
+      "exposeInUi": false
     },
     {
       "id": "loot.mediumStashMedicalChance",
@@ -7771,12 +7773,12 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": false,
+      "exposeInUi": true,
       "label": "Standard medical Chance",
       "description": "Source-native Bandage and Medkit source Chance entries, originally 40%/100% across branches. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 2,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -7790,7 +7792,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
     },
     {
       "id": "loot.mediumStashDrinksChance",
@@ -7816,12 +7818,12 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": false,
+      "exposeInUi": true,
       "label": "Standard drinks Chance",
       "description": "Source-native Vodka and Energetic source Chance entries, originally 50%/100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 2,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -7835,7 +7837,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
     },
     {
       "id": "loot.mediumStashCouponsChance",
@@ -7861,7 +7863,7 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": false,
+      "exposeInUi": true,
       "label": "Standard coupons Chance",
       "description": "Source-native Rank-gated coupon reward source Chance, originally 10%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
@@ -7880,7 +7882,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
     },
     {
       "id": "loot.expensiveStashAmmoChance",
@@ -7906,12 +7908,12 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": false,
+      "exposeInUi": true,
       "label": "Rare ammo Chance",
       "description": "Source-native Newbie ammo Chance entries, originally 50%/100%; other ranks use Weight and remain unaffected. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 2,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -7925,7 +7927,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
     },
     {
       "id": "loot.expensiveStashMedicalChance",
@@ -7951,12 +7953,12 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": false,
+      "exposeInUi": true,
       "label": "Rare medical Chance",
       "description": "Source-native Bandage, Medkit, AntiRad and ArmyMedkit source Chance entries, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 2,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -7970,7 +7972,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
     },
     {
       "id": "loot.expensiveStashFoodChance",
@@ -7996,12 +7998,12 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": false,
+      "exposeInUi": true,
       "label": "Rare food Chance",
       "description": "Source-native CannedFood source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 2,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -8015,7 +8017,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
     },
     {
       "id": "loot.expensiveStashDrinksChance",
@@ -8041,12 +8043,12 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": false,
+      "exposeInUi": true,
       "label": "Rare drinks Chance",
       "description": "Source-native Energetic source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 2,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -8060,7 +8062,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
     },
     {
       "id": "loot.expensiveStashGrenadesChance",
@@ -8086,12 +8088,12 @@
           "Vanilla 1x leaves every authored probability unchanged. Does not represent the chance of discovering any item in a physical stash."
         ]
       },
-      "exposeInUi": false,
+      "exposeInUi": true,
       "label": "Rare grenades Chance",
       "description": "Source-native RGD-5 source Chance, originally 100%. Edit its relative Chance multiplier; the colored tier card shows the effective native probability or min–max range with a Vanilla marker. Does not define a category-wide physical stash drop probability.",
       "slider": {
         "min": 0,
-        "max": 1,
+        "max": 2,
         "step": 0.01,
         "stepMode": "absolute"
       },
@@ -8105,7 +8107,7 @@
         }
       ],
       "logic": "Per-entry native Chance is multiplied by this value and clamped to 0..1. All rows retain their own original chance and scope; 1x is exact vanilla.",
-      "interaction": "Editable color rail within source-backed Standard/Rare tier coverage. Readout may show a range when a category has different source Chance values."
+      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds."
     },
     {
       "id": "loot.expensiveStashMoneyChance",
@@ -8151,8 +8153,8 @@
       },
       "rationale": "Changes how often Rare stashes include coupon rewards. Your progression still decides how large that reward can be.",
       "logic": "Novice and Stalker use 20%; Veteran and Master use 10%. Changing this slider changes only whether coupons are included, not which Common, Rare, Epic or Legendary coupon tier is selected.",
-      "interaction": "This affects coupons in eligible rare stashes only. Quest coupon payouts, starting coupons and trader prices are separate systems.",
-      "exposeInUi": false,
+      "interaction": "Edit independent native per-category Chance. NATIVE is a source percentage, never whole-stash drop odds.",
+      "exposeInUi": true,
       "lootHint": {
         "kind": "absoluteChancePer100",
         "label": "Coupon drop chance",

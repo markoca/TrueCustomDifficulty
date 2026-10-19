@@ -4631,10 +4631,10 @@ public sealed partial class AggregateVisualControl : FrameworkElement
 
         DrawStashChanceTier(dc, "STANDARD", "Medium", 10,
             new Rect(left, wide ? 353.0 : 507.0, width,
-                wide ? 152.0 : 204.0), text, muted, border, accent, panel);
+                wide ? 140.0 : 236.0), text, muted, border, accent, panel);
         DrawStashChanceTier(dc, "RARE", "Expensive", 19,
-            new Rect(left, wide ? 513.0 : 719.0, width,
-                wide ? 152.0 : 266.0), text, muted, border, accent, panel);
+            new Rect(left, wide ? 501.0 : 751.0, width,
+                wide ? 236.0 : 332.0), text, muted, border, accent, panel);
     }
 
 
@@ -7078,7 +7078,7 @@ public sealed partial class AggregateVisualControl : FrameworkElement
     // Measured heights follow the painted responsive editors, so the
     // last mixer lane and every remaining gear/medical dial stay visible.
     private double StashContentMixHeight(double width)
-        => width >= 700.0 ? 679.0 : 999.0;
+        => width >= 700.0 ? 751.0 : 1097.0;
     private static double StashMedicalCompositionHeight(double width)
         => width >= 700.0 ? 345.0 : 607.0;
     // Paint width is ActualWidth - 30 DIP. At host widths 540–569 DIP

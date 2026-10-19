@@ -287,9 +287,7 @@ public sealed partial class AggregateVisualControl
             text, muted, border);
     }
 
-    // A filled rail is the ACTUAL native per-item Chance (or its min/max
-    // across differently authored rows), never a stash-wide drop chance.
-    // W-only rows are informational and must not resemble editable rails.
+    // Existing source-native Chance categories only; Weight stays independent.
     private void DrawStashChanceTier(
         DrawingContext dc, string label, string tierName, int expectedGroups,
         Rect outer, Brush text, Brush muted, Brush border, Brush accent, Brush panel)
@@ -330,61 +328,20 @@ public sealed partial class AggregateVisualControl
                 || present.Where(k => k != 0).Any(k => hasWeight[k] || !hasChance[k])))
             throw new InvalidDataException("Native stash Chance/Weight shape drift");
 
+
+        var chanceKinds = present.Where(k => hasChance[k]).ToArray();
+        var required = tierName == "Medium" ? new[] { 1, 3, 5 }
+            : new[] { 0, 1, 2, 3, 4, 5 };
+        if (!chanceKinds.SequenceEqual(required))
+            throw new InvalidDataException("Tier Chance category mapping drift");
         dc.DrawRoundedRectangle(CloneWithOpacity(panel, .65),
             new Pen(CloneWithOpacity(border, .61), .9), outer, 4.0, 4.0);
-        dc.DrawText(CreateText(label, 11.4, text, FontWeights.Bold),
+        dc.DrawText(CreateText(label + " · CHANCE", 11.4, text, FontWeights.Bold),
             new Point(outer.Left + 12.0, outer.Top + 8.0));
-
-        var scaleId = tierName == "Medium"
-            ? "loot.standardStashChanceScale" : "loot.rareStashChanceScale";
-        var scale = P(scaleId);
-        if (scale is not null)
-        {
-            var enabled = scale.IsControlEnabled;
-            var changedScale = enabled && scale.IsValueModifiedFromReference();
-            DrawText(dc, "CHANCE SCALE",
-                new Point(outer.Left + 12.0, outer.Top + 29.0),
-                10.0, enabled ? text : muted, FontWeights.SemiBold);
-            DrawRightAlignedText(dc, $"{scale.CurrentNumber:0.##}×",
-                new Point(outer.Right - 13.0, outer.Top + 27.0),
-                11.3, enabled ? changedScale ? accent : text : muted,
-                FontWeights.Bold);
-            var scaleRail = new Rect(outer.Left + 21.0, outer.Top + 56.0,
-                Math.Max(1.0, outer.Width - 42.0), 2.0);
-            var now = ValueToX(scale.CurrentNumber,
-                scale.Minimum, scale.Maximum, scaleRail, false);
-            dc.DrawLine(new Pen(border, 2.0),
-                new Point(scaleRail.Left, scaleRail.Top),
-                new Point(scaleRail.Right, scaleRail.Top));
-            if (enabled)
-                dc.DrawLine(new Pen(accent, 2.0),
-                    new Point(scaleRail.Left, scaleRail.Top),
-                    new Point(now, scaleRail.Top));
-            var centerX = ValueToX(1.0, scale.Minimum, scale.Maximum,
-                scaleRail, false);
-            dc.DrawLine(new Pen(CloneWithOpacity(muted, .7), 1.3),
-                new Point(centerX, scaleRail.Top - 5.0),
-                new Point(centerX, scaleRail.Top + 5.0));
-            var over = enabled && ReferenceEquals(_hoverTarget?.Parameter, scale);
-            dc.DrawEllipse(panel, new Pen(over ? Brushes.White :
-                enabled ? accent : muted, over ? 2.5 : 1.7),
-                new Point(now, scaleRail.Top), 5.0, 5.0);
-            DrawText(dc, "0×", new Point(scaleRail.Left, outer.Top + 64.0),
-                9.2, muted, FontWeights.SemiBold);
-            DrawCenteredText(dc, "1×", new Point(centerX, outer.Top + 64.0),
-                9.2, muted, FontWeights.SemiBold);
-            DrawRightAlignedText(dc, "2×",
-                new Point(scaleRail.Right, outer.Top + 64.0),
-                9.2, muted, FontWeights.SemiBold);
-            AddHorizontalTarget(scale,
-                new Rect(scaleRail.Left - 8.0, scaleRail.Top - 13.0,
-                    scaleRail.Width + 16.0, 24.0),
-                scaleRail, scale.Minimum, scale.Maximum);
-        }
-        var columns = outer.Width >= 670.0 ? present.Length : 2;
+        var columns = outer.Width >= 670.0 ? 3 : 2;
         const double inset = 12.0;
-        const double gap = 6.0;
-        const double pitch = 60.0;
+        const double gap = 8.0;
+        const double pitch = 96.0;
         var cellWidth = Math.Max(1.0,
             (outer.Width - 2.0 * inset - (columns - 1) * gap) / columns);
         var selectedDifficulty = SelectedReferenceDifficulty switch
@@ -399,56 +356,97 @@ public sealed partial class AggregateVisualControl
                 ? $"{maximum * 100.0:0.#}%"
                 : $"{minimum * 100.0:0.#}–{maximum * 100.0:0.#}%";
 
-        for (var n = 0; n < present.Length; n++)
+
+        for (var n = 0; n < chanceKinds.Length; n++)
         {
-            var kind = present[n];
+            var kind = chanceKinds[n];
+            var id = tierName == "Medium" ? kind switch
+            {
+                1 => "loot.mediumStashMedicalChance",
+                3 => "loot.mediumStashDrinksChance",
+                5 => "loot.mediumStashCouponsChance",
+                _ => throw new InvalidDataException("Unexpected Standard Chance")
+            } : kind switch
+            {
+                0 => "loot.expensiveStashAmmoChance",
+                1 => "loot.expensiveStashMedicalChance",
+                2 => "loot.expensiveStashFoodChance",
+                3 => "loot.expensiveStashDrinksChance",
+                4 => "loot.expensiveStashGrenadesChance",
+                5 => "loot.expensiveStashMoneyChance",
+                _ => throw new InvalidDataException("Unexpected Rare Chance")
+            };
             var rows = groups.Where(g => g.Field == "Chance")
-                .SelectMany(g => g.Items
-                    .Where(item => StashCategoryIndex(item.ItemSid) == kind)
-                    .Select(item => (Group: g, Item: item))).ToArray();
-            var x = outer.Left + inset + (n % columns) * (cellWidth + gap);
-            var y = outer.Top + 82.0 + (n / columns) * pitch;
-            var cell = new Rect(x, y, cellWidth, 53.0);
+                .SelectMany(g => g.Items.Where(i => StashCategoryIndex(i.ItemSid) == kind)
+                    .Select(i => (Group: g, Item: i))).ToArray();
+            if (rows.Length == 0)
+                throw new InvalidDataException("Native Chance rows missing " + id);
+            var x = outer.Left + inset + n % columns * (cellWidth + gap);
+            var y = outer.Top + 35.0 + n / columns * pitch;
+            var cell = new Rect(x, y, cellWidth, 88.0);
             var tone = StashMixPalette[kind];
             dc.DrawRoundedRectangle(CloneWithOpacity(panel, .5),
                 new Pen(CloneWithOpacity(tone, .75), .9), cell, 3.0, 3.0);
             dc.DrawRectangle(tone, null, new Rect(x + 6.0, y + 6.0, 3.0, 12.0));
-            var name = GlobalStashCategoryNames[kind];
-            dc.DrawText(CreateText(name, 10.2, text, FontWeights.Bold,
-                    Math.Max(1.0, cell.Width - 15.0)),
-                new Point(x + 13.0, y + 4.0));
-
-            if (rows.Length == 0)
+            dc.DrawText(CreateText(GlobalStashCategoryNames[kind], 10.2, text,
+                FontWeights.Bold, Math.Max(1.0, cell.Width - 80.0)),
+                new Point(x + 14.0, y + 5.0));
+            var parameter = P(id);
+            if (parameter is null)
             {
-                // Ammo has native Weight, not Chance: no phantom slider.
-                dc.DrawText(CreateText("WEIGHT", 10.1, muted,
-                        FontWeights.SemiBold),
-                    new Point(x + 8.0, y + 23.0));
-                continue;
-            }
-
-            // Snapshot is computed by the exact same native per-entry
-            // transformer used by the CFG writer. These cards have NO hit
-            // zones and do not pretend every item has identical Chance.
-            if (scale is null)
-            {
-                DrawText(dc, "LOADING", new Point(x + 8.0, y + 26.0),
+                DrawText(dc, "LOADING", new Point(x + 14.0, y + 30.0),
                     9.1, muted, FontWeights.SemiBold);
                 continue;
             }
-            var sourceValues = rows.Select(r =>
-                StashEffectiveState.Number(r.Item.SourceRaw)).ToArray();
+            var enabled = parameter.IsControlEnabled;
+            var absolute = id == "loot.expensiveStashMoneyChance";
+            var digits = (absolute ? parameter.CurrentNumber * 100.0
+                : parameter.CurrentNumber).ToString("0.##",
+                System.Globalization.CultureInfo.InvariantCulture);
+            var number = CreateText(digits + (absolute ? "%" : "×"), 11.8,
+                enabled ? text : muted, FontWeights.Bold);
+            if (enabled && parameter.IsValueModifiedFromReference())
+                number.SetForegroundBrush(accent, 0, digits.Length);
+            dc.DrawText(number,
+                new Point(cell.Right - number.WidthIncludingTrailingWhitespace - 10.0, y + 3.0));
+            var rail = new Rect(x + 16.0, y + 38.0,
+                Math.Max(1.0, cell.Width - 32.0), 8.0);
+            var cy = rail.Top + rail.Height / 2.0;
+            var now = ValueToX(parameter.CurrentNumber,
+                parameter.Minimum, parameter.Maximum, rail, false);
+            var original = ValueToX(parameter.ReferenceNumber,
+                parameter.Minimum, parameter.Maximum, rail, false);
+            var hovered = enabled && _hoverTarget?.Kind == HitKind.Horizontal
+                && ReferenceEquals(_hoverTarget.Parameter, parameter);
+            dc.DrawLine(new Pen(CloneWithOpacity(border, .9), 3.2),
+                new Point(rail.Left, cy), new Point(rail.Right, cy));
+            dc.DrawLine(new Pen(CloneWithOpacity(enabled ? tone : muted,
+                    enabled ? .94 : .34), 3.2),
+                new Point(rail.Left, cy), new Point(now, cy));
+            dc.DrawLine(new Pen(CloneWithOpacity(muted, .7), 1.4),
+                new Point(original, cy - 5.0), new Point(original, cy + 5.0));
+            dc.DrawEllipse(panel,
+                new Pen(hovered ? Brushes.White : enabled ? tone : muted,
+                    hovered || IsSelected(parameter) ? 2.3 : 1.5),
+                new Point(now, cy), 5.0, 5.0);
+            var maximum = (absolute ? parameter.Maximum * 100.0 :
+                parameter.Maximum).ToString("0.##",
+                System.Globalization.CultureInfo.InvariantCulture);
+            DrawText(dc, absolute ? "0%" : "0×",
+                new Point(rail.Left, y + 53.0), 9.1, muted, FontWeights.SemiBold);
+            DrawRightAlignedText(dc, maximum + (absolute ? "%" : "×"),
+                new Point(rail.Right, y + 53.0), 9.1, muted, FontWeights.SemiBold);
             var activeValues = rows.Select(r =>
                 StashEffectiveState.Number(r.Group.EffectiveSelection(
                     StashPreviewBaseline.Value, effective, r.Item))).ToArray();
-            var nowMin = activeValues.Min();
-            var nowMax = activeValues.Max();
-            var currentText = PercentRange(nowMin, nowMax);
-            dc.DrawText(CreateText(currentText, 12.2, text, FontWeights.Bold,
-                    Math.Max(1.0, cell.Width - 18.0)),
-                new Point(x + 9.0, y + 24.0));
-            // Source percentages are read-only facts, not a second slider.
-
+            var currentText = PercentRange(activeValues.Min(), activeValues.Max());
+            dc.DrawText(CreateText("NATIVE " + currentText, 10.4, muted,
+                    FontWeights.SemiBold, Math.Max(1.0, cell.Width - 22.0)),
+                new Point(x + 11.0, y + 70.0));
+            AddHorizontalTarget(parameter,
+                new Rect(rail.Left - 8.0, y + 29.0,
+                    rail.Width + 16.0, 38.0),
+                rail, parameter.Minimum, parameter.Maximum);
         }
     }
 
